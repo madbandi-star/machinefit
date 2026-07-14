@@ -30,7 +30,7 @@ function App() {
           background: "#FFD400",
           cursor: "pointer",
         }}
-        onClick={() => alert("정상적으로 동작합니다!")}
+        onClick={() => alert("정상적으로 동작합니다!진짜루")}
       >
         테스트 버튼
       </button>
