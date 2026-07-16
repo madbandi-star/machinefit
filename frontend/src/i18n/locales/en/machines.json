@@ -8,6 +8,20 @@
   },
   "recommend": "Get Recommendation",
   "recommendLoading": "Generating recommendation...",
+  "recommendation": {
+    "title": "Recommended Settings",
+    "emptySettings": "No setting data available for this machine.",
+    "tipsTitle": "Tips",
+    "warningsTitle": "Warnings",
+    "saveFavorite": "Save to Favorites",
+    "retryRecommend": "Recommend Again",
+    "findGyms": "Find Gyms with This Machine"
+  },
+  "history": {
+    "subtitle": "Your recent recommendation history",
+    "empty": "No history yet. Get a recommendation first!",
+    "clearAll": "Clear All"
+  },
   "settings": {
     "seat": "Seat Position",
     "backPad": "Back Pad",

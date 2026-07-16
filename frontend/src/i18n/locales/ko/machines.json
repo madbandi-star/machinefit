@@ -8,6 +8,20 @@
   },
   "recommend": "추천 받기",
   "recommendLoading": "추천 생성 중...",
+  "recommendation": {
+    "title": "추천 설정",
+    "emptySettings": "이 기구에 대한 설정 데이터가 없습니다.",
+    "tipsTitle": "팁",
+    "warningsTitle": "주의",
+    "saveFavorite": "즐겨찾기 저장",
+    "retryRecommend": "다시 추천",
+    "findGyms": "이 기구 있는 헬스장"
+  },
+  "history": {
+    "subtitle": "최근 추천 기록",
+    "empty": "기록이 없습니다. 머신 추천을 받아보세요.",
+    "clearAll": "전체 삭제"
+  },
   "settings": {
     "seat": "시트 위치",
     "backPad": "백 패드",

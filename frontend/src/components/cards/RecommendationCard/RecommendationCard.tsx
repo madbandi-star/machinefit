@@ -1,44 +1,31 @@
 import type { RecommendationResult } from '@machinefit/shared';
-import { useUserUnits } from '@/hooks/useUserUnits';
-import '@/styles/components.css';
+import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
+import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
+import '@/styles/recommendation.css';
 
 interface RecommendationCardProps {
   result: RecommendationResult;
+  variant?: 'hero' | 'compact';
+  showTips?: boolean;
 }
 
-export function RecommendationCard({ result }: RecommendationCardProps) {
-  const { settings } = result;
-  const { formatWeight } = useUserUnits();
-
+export function RecommendationCard({
+  result,
+  variant = 'hero',
+  showTips = variant === 'hero',
+}: RecommendationCardProps) {
   return (
     <div className="card">
-      <h3 style={{ color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
-        {result.machineName ?? result.machineCode}
-      </h3>
-      <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
-        {settings.seatPosition != null && (
-          <>
-            <dt>Seat</dt><dd>{settings.seatPosition}</dd>
-          </>
-        )}
-        {settings.backPadPosition != null && (
-          <>
-            <dt>Back Pad</dt><dd>{settings.backPadPosition}</dd>
-          </>
-        )}
-        {settings.recommendedWeightKg != null && (
-          <>
-            <dt>Weight</dt>
-            <dd>{formatWeight(settings.recommendedWeightKg)}</dd>
-          </>
-        )}
-      </dl>
-      {result.tips.length > 0 && (
-        <ul style={{ marginTop: '0.75rem', fontSize: '0.85rem', paddingLeft: '1.25rem' }}>
-          {result.tips.map((tip, i) => (
-            <li key={i}>{tip}</li>
-          ))}
-        </ul>
+      {variant === 'hero' && (
+        <h3 style={{ color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
+          {result.machineName ?? result.machineCode}
+        </h3>
+      )}
+      <RecommendationSettingsPanel settings={result.settings} variant={variant} />
+      {showTips && result.tips.length > 0 && (
+        <div style={{ marginTop: '0.75rem' }}>
+          <RecommendationTips tips={result.tips} />
+        </div>
       )}
     </div>
   );

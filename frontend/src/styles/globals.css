@@ -15,6 +15,14 @@
   --bottom-nav-height: 64px;
   --max-width: 1200px;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --font-size-setting-label: 0.6875rem;
+  --font-size-setting-value: 3rem;
+  --font-size-setting-value-sm: 2rem;
+  --font-size-setting-value-compact: 1.5rem;
+  --setting-card-min-height: 5.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
 }
 
 [data-theme='light'] {
