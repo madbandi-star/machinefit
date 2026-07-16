@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Header } from '@/components/layout/Header/Header';
 import { BottomNavigation } from '@/components/layout/BottomNavigation/BottomNavigation';
-import { Toast } from '@/components/feedback/Toast/Toast';
 import '@/styles/layout.css';
 
 export function MainLayout() {
@@ -14,7 +13,6 @@ export function MainLayout() {
         </div>
       </main>
       <BottomNavigation />
-      <Toast />
     </div>
   );
 }
