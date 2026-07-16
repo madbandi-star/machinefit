@@ -1,4 +1,4 @@
-import type { RoleCode, User } from '@machinefit/shared';
+import type { RoleCode, User, Gender } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
 interface UserRow {
@@ -85,6 +85,7 @@ export const userRepository = {
     email: string;
     passwordHash: string;
     displayName: string;
+    gender?: Gender;
     languageCode?: string;
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
@@ -112,16 +113,17 @@ export const userRepository = {
 
     const result = await pool.query<UserRow>(
       `INSERT INTO users (
-         role_id, email, password_hash, display_name, language_id,
+         role_id, email, password_hash, display_name, gender, language_id,
          unit_height, unit_weight, height_cm, weight_kg, experience_level
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
       [
         roleId,
         data.email,
         data.passwordHash,
         data.displayName,
+        data.gender ?? null,
         languageId,
         data.unitHeight ?? 'cm',
         data.unitWeight ?? 'kg',
@@ -140,7 +142,7 @@ export const userRepository = {
     userId: string,
     data: {
       displayName?: string;
-      gender?: 'male' | 'female' | 'other';
+      gender?: Gender;
       heightCm?: number;
       weightKg?: number;
       unitHeight?: 'cm' | 'ft_in';

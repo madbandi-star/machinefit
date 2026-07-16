@@ -7,9 +7,18 @@ function normalizeApiBaseUrl(url: string): string {
   return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
 }
 
-export const API_BASE_URL = normalizeApiBaseUrl(
-  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api/v1'
-);
+const PRODUCTION_API_DEFAULT = 'https://machinefit-api.onrender.com/api/v1';
+
+function resolveApiBaseUrl(): string {
+  if (import.meta.env.DEV) {
+    return '/api/v1';
+  }
+
+  const configured = import.meta.env.VITE_API_BASE_URL?.trim();
+  return normalizeApiBaseUrl(configured || PRODUCTION_API_DEFAULT);
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

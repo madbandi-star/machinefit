@@ -1,16 +1,17 @@
 import { z } from 'zod';
-import { experienceLevelSchema } from './user.schema.js';
+import { experienceLevelSchema, genderSchema } from './user.schema.js';
 
 export const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(128),
   displayName: z.string().min(2).max(100),
+  gender: genderSchema,
   languageCode: z.enum(['ko', 'en', 'ja', 'zh']).optional(),
   unitHeight: z.enum(['cm', 'ft_in']).optional(),
   unitWeight: z.enum(['kg', 'lb']).optional(),
-  heightCm: z.number().min(100).max(250).optional(),
-  weightKg: z.number().min(30).max(300).optional(),
-  experienceLevel: experienceLevelSchema.optional(),
+  heightCm: z.coerce.number().min(100).max(250),
+  weightKg: z.coerce.number().min(30).max(300),
+  experienceLevel: experienceLevelSchema,
 });
 
 export const loginSchema = z.object({

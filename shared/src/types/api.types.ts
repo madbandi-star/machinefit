@@ -1,6 +1,6 @@
 export type RoleCode = 'guest' | 'member' | 'owner' | 'admin';
 
-export type Gender = 'male' | 'female' | 'other';
+export type Gender = 'male' | 'female';
 
 export type ExperienceLevel =
   | 'beginner'

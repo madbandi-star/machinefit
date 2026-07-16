@@ -8,7 +8,6 @@ import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyM
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
 import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
-import { LanguageSelector } from '@/components/settings/LanguageSelector/LanguageSelector';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
@@ -81,18 +80,22 @@ export function SettingsPage() {
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
           <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            <GenderPicker value={gender} onChange={setGender} />
             <BodyMetricsFields
               unitHeight={unitHeight}
               unitWeight={unitWeight}
               heightCm={heightCm}
               weightKg={weightKg}
-              onHeightCmChange={setHeightCm}
+              onHeightCmChange={(value) => {
+                if (value != null) setHeightCm(value);
+              }}
               onWeightKgChange={setWeightKg}
             />
-            <GenderPicker value={gender} onChange={setGender} />
             <ExperienceSelector
               value={experienceLevel}
-              onChange={setExperienceLevel}
+              onChange={(value) => {
+                if (value != null) setExperienceLevel(value);
+              }}
             />
           </div>
           <button
@@ -106,10 +109,6 @@ export function SettingsPage() {
           </button>
         </section>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.language')}</h3>
-          <LanguageSelector />
-        </section>
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.unitSettings')}</h3>
           <UnitSelector />

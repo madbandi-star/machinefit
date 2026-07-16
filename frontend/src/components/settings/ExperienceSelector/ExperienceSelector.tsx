@@ -10,22 +10,34 @@ const EXPERIENCE_LEVELS: ExperienceLevel[] = [
 ];
 
 interface ExperienceSelectorProps {
-  value: ExperienceLevel;
-  onChange: (value: ExperienceLevel) => void;
+  value: ExperienceLevel | undefined;
+  onChange: (value: ExperienceLevel | undefined) => void;
+  allowEmpty?: boolean;
+  invalid?: boolean;
 }
 
-export function ExperienceSelector({ value, onChange }: ExperienceSelectorProps) {
+export function ExperienceSelector({
+  value,
+  onChange,
+  allowEmpty = false,
+  invalid = false,
+}: ExperienceSelectorProps) {
   const { t } = useTranslation();
 
   return (
     <label>
       {t('auth.experienceLevel')}
       <select
-        className="input"
-        value={value}
-        onChange={(e) => onChange(e.target.value as ExperienceLevel)}
-        required
+        className={`input${invalid ? ' input--invalid' : ''}`}
+        value={value ?? ''}
+        onChange={(e) => {
+          const next = e.target.value;
+          onChange(next ? (next as ExperienceLevel) : undefined);
+        }}
       >
+        {allowEmpty && (
+          <option value="">{t('auth.experienceLevelPlaceholder')}</option>
+        )}
         {EXPERIENCE_LEVELS.map((level) => (
           <option key={level} value={level}>
             {t(`auth.experienceLevels.${level}`)}

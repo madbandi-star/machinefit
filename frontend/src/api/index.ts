@@ -10,6 +10,7 @@ import type {
   RecommendationInput,
   RecommendationResult,
   User,
+  Gender,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -43,11 +44,12 @@ export const authApi = {
     email: string;
     password: string;
     displayName: string;
+    gender: Gender;
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
-    heightCm?: number;
-    weightKg?: number;
-    experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
+    heightCm: number;
+    weightKg: number;
+    experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
     apiClient.post('/auth/refresh', { refreshToken }),
@@ -57,7 +59,7 @@ export const userApi = {
   getMe: () => apiClient.get<ApiResponse<User>>('/users/me'),
   updateMe: (data: {
     displayName?: string;
-    gender?: 'male' | 'female' | 'other';
+    gender?: Gender;
     heightCm?: number;
     weightKg?: number;
     unitHeight?: 'cm' | 'ft_in';

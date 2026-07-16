@@ -15,9 +15,12 @@ interface BodyMetricsFieldsProps {
   unitWeight: UnitWeight;
   heightCm?: number;
   weightKg?: number;
-  onHeightCmChange: (heightCm: number) => void;
+  onHeightCmChange: (heightCm: number | undefined) => void;
   onWeightKgChange: (weightKg: number | undefined) => void;
+  heightOptional?: boolean;
   weightOptional?: boolean;
+  heightInvalid?: boolean;
+  weightInvalid?: boolean;
 }
 
 export function BodyMetricsFields({
@@ -27,24 +30,31 @@ export function BodyMetricsFields({
   weightKg,
   onHeightCmChange,
   onWeightKgChange,
+  heightOptional = false,
   weightOptional = true,
+  heightInvalid = false,
+  weightInvalid = false,
 }: BodyMetricsFieldsProps) {
   const { t } = useTranslation();
-  const [heightFeet, setHeightFeet] = useState(5);
-  const [heightInches, setHeightInches] = useState(9);
+  const [heightFeet, setHeightFeet] = useState<number | undefined>(undefined);
+  const [heightInches, setHeightInches] = useState<number | undefined>(undefined);
   const [weightLb, setWeightLb] = useState<number | undefined>(
     weightKg != null ? kgToLb(weightKg) : undefined
   );
 
-  const resolvedHeightCm = heightCm ?? 175;
-
   useEffect(() => {
-    const converted = fromStandardHeight(resolvedHeightCm, unitHeight);
+    if (heightCm == null) {
+      setHeightFeet(undefined);
+      setHeightInches(undefined);
+      return;
+    }
+
+    const converted = fromStandardHeight(heightCm, unitHeight);
     if (typeof converted === 'object') {
       setHeightFeet(converted.feet);
       setHeightInches(converted.inches);
     }
-  }, [unitHeight, resolvedHeightCm]);
+  }, [unitHeight, heightCm]);
 
   useEffect(() => {
     if (weightKg != null) {
@@ -61,9 +71,15 @@ export function BodyMetricsFields({
     setHeightInches(inches);
   };
 
-  const handleFeetInchesChange = (feet: number, inches: number) => {
+  const handleFeetInchesChange = (feet: number | undefined, inches: number | undefined) => {
     setHeightFeet(feet);
     setHeightInches(inches);
+
+    if (feet == null || inches == null || Number.isNaN(feet) || Number.isNaN(inches)) {
+      onHeightCmChange(undefined);
+      return;
+    }
+
     onHeightCmChange(toStandardHeight(feet, 'ft_in', inches));
   };
 
@@ -71,47 +87,54 @@ export function BodyMetricsFields({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {unitHeight === 'cm' ? (
         <label>
-          {t('auth.heightLabel')} (CM)
+          {t('auth.heightLabel')} (CM{heightOptional ? `, ${t('auth.optional')}` : ''})
           <input
-            className="input"
+            className={`input${heightInvalid ? ' input--invalid' : ''}`}
             type="number"
             min={100}
             max={250}
-            value={resolvedHeightCm}
-            onChange={(e) => handleHeightCmChange(Number(e.target.value))}
-            required
+            value={heightCm ?? ''}
+            onChange={(e) => {
+              if (!e.target.value) {
+                onHeightCmChange(undefined);
+                return;
+              }
+              handleHeightCmChange(Number(e.target.value));
+            }}
           />
         </label>
       ) : (
         <div className="form-row-group">
-          <span className="form-row-group__label">{t('auth.heightLabel')} (FT)</span>
+          <span className="form-row-group__label">
+            {t('auth.heightLabel')} (FT{heightOptional ? `, ${t('auth.optional')}` : ''})
+          </span>
           <div className="form-row-group__inputs">
             <label>
               ft
               <input
-                className="input"
+                className={`input${heightInvalid ? ' input--invalid' : ''}`}
                 type="number"
                 min={3}
                 max={8}
-                value={heightFeet}
-                onChange={(e) =>
-                  handleFeetInchesChange(Number(e.target.value), heightInches)
-                }
-                required
+                value={heightFeet ?? ''}
+                onChange={(e) => {
+                  const nextFeet = e.target.value ? Number(e.target.value) : undefined;
+                  handleFeetInchesChange(nextFeet, heightInches);
+                }}
               />
             </label>
             <label>
               in
               <input
-                className="input"
+                className={`input${heightInvalid ? ' input--invalid' : ''}`}
                 type="number"
                 min={0}
                 max={11}
-                value={heightInches}
-                onChange={(e) =>
-                  handleFeetInchesChange(heightFeet, Number(e.target.value))
-                }
-                required
+                value={heightInches ?? ''}
+                onChange={(e) => {
+                  const nextInches = e.target.value ? Number(e.target.value) : undefined;
+                  handleFeetInchesChange(heightFeet, nextInches);
+                }}
               />
             </label>
           </div>
@@ -122,7 +145,7 @@ export function BodyMetricsFields({
         {t('auth.weightLabel')} ({unitWeight === 'kg' ? 'KG' : 'LB'}
         {weightOptional ? `, ${t('auth.optional')}` : ''})
         <input
-          className="input"
+          className={`input${weightInvalid ? ' input--invalid' : ''}`}
           type="number"
           value={unitWeight === 'kg' ? (weightKg ?? '') : (weightLb ?? '')}
           onChange={(e) => {
@@ -140,7 +163,6 @@ export function BodyMetricsFields({
               onWeightKgChange(toStandardWeight(value, 'lb'));
             }
           }}
-          required={!weightOptional}
         />
       </label>
     </div>

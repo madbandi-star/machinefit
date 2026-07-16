@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
-import type { ExperienceLevel, UnitHeight, UnitWeight } from '@machinefit/shared';
+import type { ExperienceLevel, Gender, UnitHeight, UnitWeight } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
+import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
 import {
   HEIGHT_UNIT_OPTIONS,
   UnitPicker,
@@ -15,9 +16,20 @@ import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import {
+  getMissingRegisterFields,
+  type RegisterFormField,
+} from '@/utils/validateRegisterForm';
 import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
+
+function formatMissingFieldLabels(
+  fields: RegisterFormField[],
+  t: (key: string) => string
+): string {
+  return fields.map((field) => t(`auth.registerFieldLabels.${field}`)).join(', ');
+}
 
 export function RegisterPage() {
   const { t } = useTranslation();
@@ -30,21 +42,24 @@ export function RegisterPage() {
   const [displayName, setDisplayName] = useState('');
   const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
-  const [heightCm, setHeightCm] = useState(175);
+  const [heightCm, setHeightCm] = useState<number | undefined>(undefined);
   const [weightKg, setWeightKg] = useState<number | undefined>(undefined);
-  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>('intermediate');
+  const [gender, setGender] = useState<Gender | undefined>(undefined);
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | undefined>(undefined);
+  const [missingFields, setMissingFields] = useState<RegisterFormField[]>([]);
 
   const mutation = useMutation({
     mutationFn: () =>
       authApi.register({
-        email,
+        email: email.trim(),
         password,
-        displayName,
+        displayName: displayName.trim(),
+        gender: gender!,
         unitHeight,
         unitWeight,
-        heightCm,
-        weightKg,
-        experienceLevel,
+        heightCm: heightCm!,
+        weightKg: weightKg!,
+        experienceLevel: experienceLevel!,
       }),
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
@@ -56,42 +71,72 @@ export function RegisterPage() {
     onError: () => showToast(t('auth.registrationFailed'), 'error'),
   });
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const missing = getMissingRegisterFields({
+      displayName,
+      email,
+      password,
+      gender,
+      heightCm,
+      weightKg,
+      experienceLevel,
+    });
+
+    if (missing.length > 0) {
+      setMissingFields(missing);
+      const fieldLabels = formatMissingFieldLabels(missing, t);
+      showToast(t('auth.registerMissingFields', { fields: fieldLabels }), 'error');
+      return;
+    }
+
+    setMissingFields([]);
+    mutation.mutate();
+  };
+
+  const hasError = (field: RegisterFormField) => missingFields.includes(field);
+
   return (
     <PageShell title={t('nav.register')}>
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          mutation.mutate();
-        }}
+        onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        noValidate
       >
+        {missingFields.length > 0 && (
+          <div className="form-error-summary" role="alert">
+            {t('auth.registerMissingFields', {
+              fields: formatMissingFieldLabels(missingFields, t),
+            })}
+          </div>
+        )}
+
         <input
-          className="input"
+          className={`input${hasError('displayName') ? ' input--invalid' : ''}`}
           type="text"
           placeholder={t('auth.displayNamePlaceholder')}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           minLength={2}
-          required
+          autoComplete="name"
         />
         <input
-          className="input"
+          className={`input${hasError('email') ? ' input--invalid' : ''}`}
           type="email"
           placeholder={t('auth.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
-          required
         />
         <input
-          className="input"
+          className={`input${hasError('password') ? ' input--invalid' : ''}`}
           type="password"
           placeholder={t('auth.passwordMinPlaceholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           minLength={8}
           autoComplete="new-password"
-          required
         />
 
         <section className="form-section">
@@ -114,6 +159,11 @@ export function RegisterPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
           <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
+          <GenderPicker
+            value={gender}
+            onChange={setGender}
+            invalid={hasError('gender')}
+          />
           <BodyMetricsFields
             unitHeight={unitHeight}
             unitWeight={unitWeight}
@@ -121,10 +171,15 @@ export function RegisterPage() {
             weightKg={weightKg}
             onHeightCmChange={setHeightCm}
             onWeightKgChange={setWeightKg}
+            weightOptional={false}
+            heightInvalid={hasError('heightCm')}
+            weightInvalid={hasError('weightKg')}
           />
           <ExperienceSelector
             value={experienceLevel}
             onChange={setExperienceLevel}
+            allowEmpty
+            invalid={hasError('experienceLevel')}
           />
         </section>
 

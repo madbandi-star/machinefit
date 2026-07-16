@@ -1,4 +1,4 @@
-import type { RegisterInput, LoginInput, RoleCode } from '@machinefit/shared';
+import type { RegisterInput, LoginInput, RoleCode, Gender } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -14,6 +14,7 @@ function buildAuthResponse(user: {
   email: string;
   displayName: string;
   roleCode: RoleCode;
+  gender?: Gender;
   unitHeight?: 'cm' | 'ft_in';
   unitWeight?: 'kg' | 'lb';
   heightCm?: number;
@@ -40,6 +41,7 @@ function buildAuthResponse(user: {
       email: user.email,
       displayName: user.displayName,
       roleCode: user.roleCode,
+      gender: user.gender,
       unitHeight: user.unitHeight ?? ('cm' as const),
       unitWeight: user.unitWeight ?? ('kg' as const),
       heightCm: user.heightCm,
@@ -84,8 +86,12 @@ export const authService = {
         email: input.email,
         displayName: input.displayName,
         roleCode: 'member',
+        gender: input.gender,
         unitHeight: input.unitHeight ?? 'cm',
         unitWeight: input.unitWeight ?? 'kg',
+        heightCm: input.heightCm,
+        weightKg: input.weightKg,
+        experienceLevel: input.experienceLevel,
       });
     }
 
@@ -98,6 +104,7 @@ export const authService = {
       email: input.email,
       passwordHash,
       displayName: input.displayName,
+      gender: input.gender,
       languageCode: input.languageCode,
       unitHeight: input.unitHeight,
       unitWeight: input.unitWeight,

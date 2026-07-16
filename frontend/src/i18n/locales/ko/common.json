@@ -61,6 +61,7 @@
     "bodyMetrics": "신체 정보",
     "bodyMetricsDesc": "키와 몸무게를 입력하면 맞춤 추천에 활용됩니다.",
     "experienceLevel": "운동 경력",
+    "experienceLevelPlaceholder": "선택",
     "experienceLevels": {
       "beginner": "초급",
       "intermediate": "중급",
@@ -72,10 +73,20 @@
     "gender": "성별",
     "genders": {
       "male": "남",
-      "female": "여",
-      "other": "기타"
+      "female": "여"
     },
     "genderUnset": "성별 미설정",
+    "genderRequired": "성별을 선택해 주세요.",
+    "registerMissingFields": "다음 항목을 입력해 주세요: {{fields}}",
+    "registerFieldLabels": {
+      "displayName": "표시 이름",
+      "email": "이메일",
+      "password": "비밀번호",
+      "gender": "성별",
+      "heightCm": "키",
+      "weightKg": "몸무게",
+      "experienceLevel": "운동 경력"
+    },
     "profileSummary": "추천 프로필",
     "profileUnset": "키 미설정",
     "profileIncompleteHint": "키와 성별을 입력하면 더 정확한 추천을 받을 수 있습니다."

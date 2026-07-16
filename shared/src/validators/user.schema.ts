@@ -7,9 +7,11 @@ export const experienceLevelSchema = z.enum([
   'professional',
 ]);
 
+export const genderSchema = z.enum(['male', 'female']);
+
 export const updateProfileSchema = z.object({
   displayName: z.string().min(2).max(100).optional(),
-  gender: z.enum(['male', 'female', 'other']).optional(),
+  gender: genderSchema.optional(),
   heightCm: z.number().min(100).max(250).optional(),
   weightKg: z.number().min(30).max(300).optional(),
   unitHeight: z.enum(['cm', 'ft_in']).optional(),
