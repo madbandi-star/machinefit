@@ -9,16 +9,19 @@ import { MuscleGroupShortcuts } from '@/components/home/MuscleGroupShortcuts/Mus
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
+import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
 
 export function HomePage() {
   const { t } = useTranslation();
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const showHero = !isAuthenticated || !isProfileReadyForRecommend(user);
 
   return (
     <div className="home-page">
-      <HomeHero isAuthenticated={isAuthenticated} />
+      {showHero && <HomeHero isAuthenticated={isAuthenticated} />}
 
       <section className="home-search-section">
         <h2 className="home-section__title home-section__title--spaced">
