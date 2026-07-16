@@ -28,7 +28,7 @@ export const useSettingsStore = create<SettingsState>()(
       locale: DEFAULT_LOCALE,
       unitHeight: DEFAULT_UNIT_HEIGHT,
       unitWeight: DEFAULT_UNIT_WEIGHT,
-      theme: 'dark',
+      theme: 'light',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       setLocale: (locale) => set({ locale }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),

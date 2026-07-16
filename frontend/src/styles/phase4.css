@@ -6,7 +6,7 @@
   padding: 0.75rem 1rem;
   margin-bottom: var(--space-md);
   border-radius: var(--radius-md);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
 }
 
@@ -74,7 +74,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #111;
+  color: var(--color-primary-on);
   background: var(--color-primary);
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
@@ -113,7 +113,7 @@
   content: '✓';
   position: absolute;
   left: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 700;
 }
 

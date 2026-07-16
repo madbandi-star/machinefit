@@ -78,7 +78,9 @@
   },
   "settings": {
     "language": "Language",
-    "theme": "Theme"
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark"
   },
   "pages": {
     "home": {

@@ -78,7 +78,9 @@
   },
   "settings": {
     "language": "언어",
-    "theme": "테마"
+    "theme": "테마",
+    "themeLight": "라이트",
+    "themeDark": "다크"
   },
   "pages": {
     "home": {

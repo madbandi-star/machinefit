@@ -25,7 +25,7 @@
 .admin-stat__value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .admin-stat__label {
@@ -62,11 +62,11 @@
 
 .admin-select {
   padding: 0.4rem 0.6rem;
-  border: 1px solid var(--color-border, #ddd);
-  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 0.85rem;
-  background: var(--color-surface, #fff);
-  color: var(--color-text, inherit);
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .admin-tabs {

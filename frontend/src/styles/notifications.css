@@ -9,8 +9,9 @@
   width: 100%;
   text-align: left;
   cursor: pointer;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--color-border);
   transition: border-color 0.15s, opacity 0.15s;
+  box-shadow: var(--shadow-sm);
 }
 
 .notification-item--read {
@@ -33,8 +34,8 @@
   font-size: 0.7rem;
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
-  background: var(--color-primary, #e6b800);
-  color: #000;
+  background: var(--color-primary);
+  color: var(--color-primary-on);
   font-weight: 600;
 }
 

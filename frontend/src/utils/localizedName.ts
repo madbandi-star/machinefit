@@ -9,8 +9,8 @@ export function getLocalizedName(
   const shortLang = lang.split('-')[0];
   return name[lang as keyof LocalizedString]
     ?? name[shortLang as keyof LocalizedString]
-    ?? name.en
     ?? name.ko
+    ?? name.en
     ?? Object.values(name).find(Boolean)
     ?? fallback;
 }

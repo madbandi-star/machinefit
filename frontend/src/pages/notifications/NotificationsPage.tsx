@@ -46,7 +46,7 @@ export function NotificationsPage() {
     onError: () => showToast(t('error'), 'error'),
   });
 
-  const lang = i18n.language?.slice(0, 2) ?? 'en';
+  const lang = i18n.language?.slice(0, 2) ?? 'ko';
 
   return (
     <PageShell

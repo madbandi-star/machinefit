@@ -1,13 +1,33 @@
 :root {
+  /* Brand */
   --color-primary: #ffd400;
+  --color-primary-text: #ffd400;
+  --color-primary-on: #111111;
+  --color-link: #ffd400;
+
+  /* Surfaces */
   --color-bg: #111111;
   --color-bg-secondary: #1a1a1a;
   --color-surface: #222222;
+  --color-surface-alt: #2a2a2a;
   --color-text: #ffffff;
   --color-text-muted: #999999;
   --color-border: #333333;
   --color-error: #ff4444;
   --color-success: #44cc44;
+  --color-warning: #e6b800;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-fab: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  /* Overlays & sticky regions */
+  --overlay-backdrop: rgba(0, 0, 0, 0.55);
+  --sticky-bar-bg: color-mix(in srgb, var(--color-bg) 92%, transparent);
+  --theme-color-meta: #111111;
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
@@ -33,12 +53,30 @@
 }
 
 [data-theme='light'] {
+  --color-primary: #ffd400;
+  --color-primary-text: #8a6900;
+  --color-primary-on: #111111;
+  --color-link: #7a5e00;
+
   --color-bg: #f5f5f5;
-  --color-bg-secondary: #ffffff;
+  --color-bg-secondary: #eef0f2;
   --color-surface: #ffffff;
+  --color-surface-alt: #f3f4f6;
   --color-text: #111111;
-  --color-text-muted: #666666;
-  --color-border: #e0e0e0;
+  --color-text-muted: #5c5c5c;
+  --color-border: #d4d4d4;
+  --color-error: #d32f2f;
+  --color-success: #2e7d32;
+  --color-warning: #b8860b;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-fab: 0 3px 10px rgba(0, 0, 0, 0.14);
+
+  --overlay-backdrop: rgba(0, 0, 0, 0.4);
+  --sticky-bar-bg: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  --theme-color-meta: #f5f5f5;
 }
 
 *,
@@ -63,7 +101,7 @@ body {
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-link);
   text-decoration: none;
 }
 

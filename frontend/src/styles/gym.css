@@ -19,7 +19,7 @@
 
 .gym-card__badge {
   font-size: 0.7rem;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   white-space: nowrap;
 }
 
@@ -39,7 +39,7 @@
   display: flex;
   gap: 1rem;
   font-size: 0.8rem;
-  color: var(--color-primary);
+  color: var(--color-link);
 }
 
 .gym-filters {
@@ -71,7 +71,7 @@
 .gym-detail__section h3 {
   font-size: 1rem;
   margin-bottom: 0.75rem;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .hours-grid {

@@ -19,7 +19,7 @@
   font-weight: 700;
   line-height: 1rem;
   text-align: center;
-  color: #fff;
-  background: var(--color-primary, #e6b800);
+  color: var(--color-primary-on);
+  background: var(--color-primary);
   border-radius: 999px;
 }

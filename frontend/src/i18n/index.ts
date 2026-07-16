@@ -29,11 +29,12 @@ void i18n
       ja: { common: ja, machines: enMachines, gyms: enGyms, community: enCommunity, notifications: enNotifications, admin: enAdmin },
       zh: { common: zh, machines: enMachines, gyms: enGyms, community: enCommunity, notifications: enNotifications, admin: enAdmin },
     },
+    lng: DEFAULT_LOCALE,
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: 'common',
     interpolation: { escapeValue: false },
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       caches: ['localStorage'],
     },
   });

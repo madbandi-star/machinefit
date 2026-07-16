@@ -6,6 +6,7 @@
   height: var(--bottom-nav-height);
   background: var(--color-bg-secondary);
   border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: stretch;
   z-index: 100;
@@ -24,7 +25,7 @@
 }
 
 .bottom-nav__item--active {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .bottom-nav__item--fab {
@@ -40,9 +41,9 @@
   justify-content: center;
   border-radius: 50%;
   background: var(--color-primary);
-  color: #111;
+  color: var(--color-primary-on);
   font-size: 1.35rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-fab);
 }
 
 .bottom-nav__item--fab.bottom-nav__item--active .bottom-nav__icon {

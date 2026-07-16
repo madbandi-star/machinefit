@@ -17,7 +17,7 @@ export function RecommendationCard({
   return (
     <div className="card">
       {variant === 'hero' && (
-        <h3 style={{ color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
+        <h3 style={{ color: 'var(--color-primary-text)', marginBottom: '0.75rem' }}>
           {result.machineName ?? result.machineCode}
         </h3>
       )}

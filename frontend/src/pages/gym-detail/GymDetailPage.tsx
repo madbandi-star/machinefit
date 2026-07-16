@@ -43,7 +43,7 @@ export function GymDetailPage() {
       <p style={{ marginBottom: '1rem', color: 'var(--color-text-muted)' }}>
         📍 {gym.address}
         {gym.isVerified && (
-          <span style={{ marginLeft: '0.5rem', color: 'var(--color-primary)' }}>
+          <span style={{ marginLeft: '0.5rem', color: 'var(--color-primary-text)' }}>
             ✓ Verified
           </span>
         )}
