@@ -9,3 +9,14 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   ja: '日本語',
   zh: '中文',
 };
+
+export const LOCALE_FLAGS: Record<Locale, string> = {
+  ko: '🇰🇷',
+  en: '🇺🇸',
+  ja: '🇯🇵',
+  zh: '🇨🇳',
+};
+
+export function formatLocaleLabel(locale: Locale): string {
+  return `${LOCALE_FLAGS[locale]} ${LOCALE_LABELS[locale]}`;
+}

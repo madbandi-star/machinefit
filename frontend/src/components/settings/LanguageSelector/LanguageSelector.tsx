@@ -1,7 +1,8 @@
-import { LOCALES, LOCALE_LABELS } from '@machinefit/shared';
+import { LOCALES, formatLocaleLabel } from '@machinefit/shared';
 import type { Locale } from '@machinefit/shared';
 import { useSettingsStore } from '@/store/settings.store';
 import i18n from '@/i18n';
+import './LanguageSelector.css';
 
 export function LanguageSelector() {
   const locale = useSettingsStore((s) => s.locale);
@@ -17,13 +18,12 @@ export function LanguageSelector() {
     <select
       value={locale}
       onChange={handleChange}
-      className="input"
-      style={{ width: 'auto', padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+      className="language-selector"
       aria-label="Language"
     >
       {LOCALES.map((code) => (
         <option key={code} value={code}>
-          {LOCALE_LABELS[code]}
+          {formatLocaleLabel(code)}
         </option>
       ))}
     </select>

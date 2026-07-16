@@ -18,6 +18,7 @@ export function FavoriteMachinesRow() {
       const res = await favoriteApi.list();
       return res.data.data;
     },
+    refetchOnMount: 'always',
   });
 
   return (

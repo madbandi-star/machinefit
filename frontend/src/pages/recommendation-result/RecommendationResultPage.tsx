@@ -1,5 +1,5 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationResult } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -10,6 +10,7 @@ import { RecommendationWarnings } from '@/components/recommendation/Recommendati
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { favoriteApi, recommendationApi } from '@/api';
 import { useUIStore } from '@/store/ui.store';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -34,6 +35,7 @@ export function RecommendationResultPage() {
   const { t } = useTranslation(['machines', 'common']);
   const stateResult = location.state?.result as RecommendationResult | undefined;
   const showToast = useUIStore((s) => s.showToast);
+  const queryClient = useQueryClient();
 
   const { data: fetchedResult, isLoading, isError } = useQuery({
     queryKey: ['recommendation', recommendationId],
@@ -48,7 +50,10 @@ export function RecommendationResultPage() {
 
   const favoriteMutation = useMutation({
     mutationFn: () => favoriteApi.add(result!.machineCode, result!.id),
-    onSuccess: () => showToast(t('common:actions.save'), 'success'),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites });
+      showToast(t('common:actions.save'), 'success');
+    },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 

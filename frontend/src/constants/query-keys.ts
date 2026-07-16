@@ -8,6 +8,10 @@ export const QUERY_KEYS = {
   recommendations: ['recommendations'] as const,
   favorites: ['favorites'] as const,
   history: ['history'] as const,
+  historyList: (params?: { limit?: number }) =>
+    ['history', 'list', params ?? {}] as const,
+  historyForMachine: (machineCode: string) =>
+    ['history', 'machine', machineCode] as const,
   posts: ['posts'] as const,
   machineRequests: ['machine-requests'] as const,
   ownerDashboard: ['owner', 'dashboard'] as const,

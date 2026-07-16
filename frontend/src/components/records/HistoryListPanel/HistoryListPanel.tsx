@@ -19,7 +19,7 @@ export function HistoryListPanel() {
   const showToast = useUIStore((s) => s.showToast);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.history,
+    queryKey: QUERY_KEYS.historyList(),
     queryFn: async () => {
       const res = await historyApi.list();
       return res.data.data;

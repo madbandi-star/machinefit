@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/home.css';
-import '@/styles/phase4.css';
 
 export function QuickSearchBar() {
   const { t } = useTranslation();
@@ -24,23 +23,29 @@ export function QuickSearchBar() {
         goToSearch();
       }}
     >
-      <input
-        className="input"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={t('pages.home.searchPlaceholder')}
-        aria-label={t('pages.home.searchPlaceholder')}
-      />
+      <div className="home-quick-search__field">
+        <Icon name="search" size={18} className="home-quick-search__leading-icon" aria-hidden />
+        <input
+          className="input home-quick-search__input"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('pages.home.searchPlaceholder')}
+          aria-label={t('pages.home.searchPlaceholder')}
+        />
+      </div>
       <Link
         to={ROUTES.SCAN}
-        className="btn btn--secondary icon-btn home-quick-search__qr"
+        className="btn btn--secondary icon-btn home-quick-search__action"
         aria-label={t('qr.scanTitle')}
       >
         <Icon name="qr" size={20} />
       </Link>
-      <button type="submit" className="btn btn--primary home-quick-search__submit" aria-label={t('actions.search')}>
-        <Icon name="search" size={20} className="home-quick-search__submit-icon" />
-        <span className="home-quick-search__submit-label">{t('actions.search')}</span>
+      <button
+        type="submit"
+        className="btn btn--secondary icon-btn home-quick-search__action"
+        aria-label={t('actions.search')}
+      >
+        <Icon name="search" size={20} />
       </button>
     </form>
   );

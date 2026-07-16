@@ -30,8 +30,12 @@ const PATHS: Record<IconName, ReactElement> = {
   ),
   machines: (
     <>
-      <path d="M14.7 6.3a1 1 0 0 0 0-1.4l-2.6-2.6a1 1 0 0 0-1.4 0l-1.6 1.6 4 4 1.6-1.6ZM3 17l3.8-3.8 4 4L7 21H3v-4ZM18 3l-1.5 1.5 2 2L20 5l-2-2Z" />
-      <path d="m11.5 8.5 6 6" />
+      <path d="M9 4h6" />
+      <path d="M8 7h8" />
+      <path d="M9 10h6" />
+      <path d="M8 13h8" />
+      <path d="M9 16h6" />
+      <path d="M12 4v16" />
     </>
   ),
   records: (

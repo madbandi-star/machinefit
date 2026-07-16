@@ -13,11 +13,12 @@ export function RecentMachinesRow() {
   const { t } = useTranslation();
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.history,
+    queryKey: QUERY_KEYS.historyList({ limit: 8 }),
     queryFn: async () => {
       const res = await historyApi.list({ limit: 8 });
       return res.data.data;
     },
+    refetchOnMount: 'always',
   });
 
   const unique = data?.filter(

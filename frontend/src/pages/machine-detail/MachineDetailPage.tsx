@@ -29,7 +29,7 @@ export function MachineDetailPage() {
   });
 
   const { data: lastHistory } = useQuery({
-    queryKey: [...QUERY_KEYS.history, machineCode],
+    queryKey: QUERY_KEYS.historyForMachine(machineCode!),
     queryFn: async () => {
       const res = await historyApi.list({ machineCode: machineCode!, limit: 1 });
       return res.data.data[0] ?? null;

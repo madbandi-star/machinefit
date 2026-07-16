@@ -55,7 +55,7 @@ export function BottomNavigation() {
           <span
             className={`bottom-nav__icon-wrap${fab ? ' bottom-nav__icon-wrap--fab' : ''}`}
           >
-            <Icon name={icon} size={fab ? 22 : 20} />
+            <Icon name={icon} size={fab ? 24 : 20} />
           </span>
           <span className="bottom-nav__label">{t(labelKey)}</span>
         </NavLink>

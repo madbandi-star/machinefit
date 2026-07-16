@@ -20,7 +20,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data } = useQuery({
-    queryKey: [...QUERY_KEYS.history, machineCode],
+    queryKey: QUERY_KEYS.historyForMachine(machineCode),
     queryFn: async () => {
       const res = await historyApi.list({ machineCode, limit: 1 });
       return res.data.data[0] ?? null;

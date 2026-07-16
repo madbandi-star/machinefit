@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, RecommendationInput } from '@machinefit/shared';
 import { recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 
 function buildProfileInput(machineCode: string): RecommendationInput | null {
@@ -33,6 +34,7 @@ function buildProfileInput(machineCode: string): RecommendationInput | null {
 
 export function useRecommendMachine(machineCode: string | undefined) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { t } = useTranslation('common');
   const showToast = useUIStore((s) => s.showToast);
 
@@ -44,7 +46,8 @@ export function useRecommendMachine(machineCode: string | undefined) {
       const res = await recommendationApi.create(input);
       return res.data.data;
     },
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
       navigate(
         `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', result.machineCode)}?id=${result.id}`,
         { state: { result }, replace: true }
