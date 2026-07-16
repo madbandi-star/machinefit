@@ -88,6 +88,8 @@ export const userRepository = {
     languageCode?: string;
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
+    heightCm?: number;
+    weightKg?: number;
   }): Promise<User> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -108,8 +110,11 @@ export const userRepository = {
     }
 
     const result = await pool.query<UserRow>(
-      `INSERT INTO users (role_id, email, password_hash, display_name, language_id, unit_height, unit_weight)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO users (
+         role_id, email, password_hash, display_name, language_id,
+         unit_height, unit_weight, height_cm, weight_kg
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [
         roleId,
@@ -119,12 +124,65 @@ export const userRepository = {
         languageId,
         data.unitHeight ?? 'cm',
         data.unitWeight ?? 'kg',
+        data.heightCm ?? null,
+        data.weightKg ?? null,
       ]
     );
 
     const created = await this.findById(result.rows[0].id);
     if (!created) throw new Error('Failed to create user');
     return created;
+  },
+
+  async updateProfile(
+    userId: string,
+    data: {
+      displayName?: string;
+      heightCm?: number;
+      weightKg?: number;
+      unitHeight?: 'cm' | 'ft_in';
+      unitWeight?: 'kg' | 'lb';
+    }
+  ): Promise<User | null> {
+    const pool = getPool();
+    if (!pool) return null;
+
+    const fields: string[] = [];
+    const values: unknown[] = [];
+    let index = 1;
+
+    if (data.displayName !== undefined) {
+      fields.push(`display_name = $${index++}`);
+      values.push(data.displayName);
+    }
+    if (data.heightCm !== undefined) {
+      fields.push(`height_cm = $${index++}`);
+      values.push(data.heightCm);
+    }
+    if (data.weightKg !== undefined) {
+      fields.push(`weight_kg = $${index++}`);
+      values.push(data.weightKg);
+    }
+    if (data.unitHeight !== undefined) {
+      fields.push(`unit_height = $${index++}`);
+      values.push(data.unitHeight);
+    }
+    if (data.unitWeight !== undefined) {
+      fields.push(`unit_weight = $${index++}`);
+      values.push(data.unitWeight);
+    }
+
+    if (fields.length === 0) {
+      return this.findById(userId);
+    }
+
+    values.push(userId);
+    await pool.query(
+      `UPDATE users SET ${fields.join(', ')} WHERE id = $${index}`,
+      values
+    );
+
+    return this.findById(userId);
   },
 
   async updateLastLogin(userId: string): Promise<void> {

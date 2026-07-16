@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import type { UnitHeight, UnitWeight } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import {
   HEIGHT_UNIT_OPTIONS,
   UnitPicker,
@@ -11,7 +12,6 @@ import {
 } from '@/components/settings/UnitPicker/UnitPicker';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
-import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { ROUTES } from '@/constants/routes';
@@ -29,16 +29,24 @@ export function RegisterPage() {
   const [displayName, setDisplayName] = useState('');
   const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
+  const [heightCm, setHeightCm] = useState(175);
+  const [weightKg, setWeightKg] = useState<number | undefined>(undefined);
 
   const mutation = useMutation({
     mutationFn: () =>
-      authApi.register({ email, password, displayName, unitHeight, unitWeight }),
+      authApi.register({
+        email,
+        password,
+        displayName,
+        unitHeight,
+        unitWeight,
+        heightCm,
+        weightKg,
+      }),
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
       syncUserSettings(user);
-      useSettingsStore.getState().setUnitHeight(unitHeight);
-      useSettingsStore.getState().setUnitWeight(unitWeight);
       showToast(t('auth.accountCreated'), 'success');
       navigate(ROUTES.HOME, { replace: true });
     },
@@ -97,6 +105,19 @@ export function RegisterPage() {
             value={unitWeight}
             options={WEIGHT_UNIT_OPTIONS}
             onChange={setUnitWeight}
+          />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
+          <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
+          <BodyMetricsFields
+            unitHeight={unitHeight}
+            unitWeight={unitWeight}
+            heightCm={heightCm}
+            weightKg={weightKg}
+            onHeightCmChange={setHeightCm}
+            onWeightKgChange={setWeightKg}
           />
         </section>
 

@@ -16,6 +16,8 @@ function buildAuthResponse(user: {
   roleCode: RoleCode;
   unitHeight?: 'cm' | 'ft_in';
   unitWeight?: 'kg' | 'lb';
+  heightCm?: number;
+  weightKg?: number;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -39,6 +41,8 @@ function buildAuthResponse(user: {
       roleCode: user.roleCode,
       unitHeight: user.unitHeight ?? ('cm' as const),
       unitWeight: user.unitWeight ?? ('kg' as const),
+      heightCm: user.heightCm,
+      weightKg: user.weightKg,
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
       updatedAt: user.updatedAt ?? new Date().toISOString(),
@@ -95,6 +99,8 @@ export const authService = {
       languageCode: input.languageCode,
       unitHeight: input.unitHeight,
       unitWeight: input.unitWeight,
+      heightCm: input.heightCm,
+      weightKg: input.weightKg,
     });
 
     return buildAuthResponse(user);

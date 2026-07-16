@@ -4,7 +4,7 @@ import '@/styles/components.css';
 interface LogoutDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (clearSavedCredentials: boolean) => void;
+  onConfirm: () => void;
 }
 
 export function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
@@ -28,18 +28,7 @@ export function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
           {t('auth.logoutConfirmMessage')}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <button
-            type="button"
-            className="btn btn--secondary btn--block"
-            onClick={() => onConfirm(false)}
-          >
-            {t('auth.logoutKeepCredentials')}
-          </button>
-          <button
-            type="button"
-            className="btn btn--primary btn--block"
-            onClick={() => onConfirm(true)}
-          >
+          <button type="button" className="btn btn--primary btn--block" onClick={onConfirm}>
             {t('auth.logoutClearCredentials')}
           </button>
           <button type="button" className="btn btn--secondary btn--block" onClick={onClose}>

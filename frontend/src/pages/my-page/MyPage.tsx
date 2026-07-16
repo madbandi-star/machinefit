@@ -47,10 +47,8 @@ export function MyPage() {
     }
   };
 
-  const handleLogout = (clearSavedCredentials: boolean) => {
-    if (clearSavedCredentials) {
-      clearCredentials();
-    }
+  const handleLogout = () => {
+    clearCredentials();
     clearAuth();
     setShowLogout(false);
   };

@@ -7,6 +7,8 @@ export const registerSchema = z.object({
   languageCode: z.enum(['ko', 'en', 'ja', 'zh']).optional(),
   unitHeight: z.enum(['cm', 'ft_in']).optional(),
   unitWeight: z.enum(['kg', 'lb']).optional(),
+  heightCm: z.number().min(100).max(250).optional(),
+  weightKg: z.number().min(30).max(300).optional(),
 });
 
 export const loginSchema = z.object({

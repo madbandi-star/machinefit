@@ -43,6 +43,8 @@ export const authApi = {
     displayName: string;
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
+    heightCm?: number;
+    weightKg?: number;
   }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
     apiClient.post('/auth/refresh', { refreshToken }),
@@ -50,6 +52,13 @@ export const authApi = {
 
 export const userApi = {
   getMe: () => apiClient.get<ApiResponse<User>>('/users/me'),
+  updateMe: (data: {
+    displayName?: string;
+    heightCm?: number;
+    weightKg?: number;
+    unitHeight?: 'cm' | 'ft_in';
+    unitWeight?: 'kg' | 'lb';
+  }) => apiClient.patch<ApiResponse<User>>('/users/me', data),
 };
 
 export interface FavoriteItem {

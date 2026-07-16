@@ -48,9 +48,14 @@
     "heightUnit": "길이 단위",
     "weightUnit": "무게 단위",
     "logoutConfirmTitle": "로그아웃",
-    "logoutConfirmMessage": "저장된 로그인 정보도 함께 삭제할까요?",
-    "logoutKeepCredentials": "로그인 정보 유지하고 로그아웃",
-    "logoutClearCredentials": "로그인 정보 삭제하고 로그아웃"
+    "logoutConfirmMessage": "로그아웃하면 저장된 로그인 정보가 삭제됩니다.",
+    "logoutClearCredentials": "로그아웃",
+    "heightLabel": "키",
+    "weightLabel": "몸무게",
+    "optional": "선택",
+    "bodyMetrics": "신체 정보",
+    "bodyMetricsDesc": "키와 몸무게를 입력하면 맞춤 추천에 활용됩니다.",
+    "profileSaved": "프로필이 저장되었습니다."
   },
   "pages": {
     "home": {
