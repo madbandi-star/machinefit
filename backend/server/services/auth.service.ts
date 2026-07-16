@@ -18,6 +18,7 @@ function buildAuthResponse(user: {
   unitWeight?: 'kg' | 'lb';
   heightCm?: number;
   weightKg?: number;
+  experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -43,6 +44,7 @@ function buildAuthResponse(user: {
       unitWeight: user.unitWeight ?? ('kg' as const),
       heightCm: user.heightCm,
       weightKg: user.weightKg,
+      experienceLevel: user.experienceLevel,
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
       updatedAt: user.updatedAt ?? new Date().toISOString(),
@@ -101,6 +103,7 @@ export const authService = {
       unitWeight: input.unitWeight,
       heightCm: input.heightCm,
       weightKg: input.weightKg,
+      experienceLevel: input.experienceLevel,
     });
 
     return buildAuthResponse(user);

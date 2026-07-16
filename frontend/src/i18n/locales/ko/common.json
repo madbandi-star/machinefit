@@ -55,7 +55,15 @@
     "optional": "선택",
     "bodyMetrics": "신체 정보",
     "bodyMetricsDesc": "키와 몸무게를 입력하면 맞춤 추천에 활용됩니다.",
-    "profileSaved": "프로필이 저장되었습니다."
+    "experienceLevel": "운동 경력",
+    "experienceLevels": {
+      "beginner": "초급",
+      "intermediate": "중급",
+      "advanced": "상급",
+      "professional": "전문가"
+    },
+    "profileSaved": "프로필이 저장되었습니다.",
+    "profileRequiredForRecommend": "키 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요."
   },
   "pages": {
     "home": {

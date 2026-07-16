@@ -55,7 +55,15 @@
     "optional": "optional",
     "bodyMetrics": "Body metrics",
     "bodyMetricsDesc": "Enter your height and weight for personalized recommendations.",
-    "profileSaved": "Profile saved."
+    "experienceLevel": "Experience",
+    "experienceLevels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "professional": "Professional"
+    },
+    "profileSaved": "Profile saved.",
+    "profileRequiredForRecommend": "Height is required. Please enter your body metrics in Settings."
   },
   "pages": {
     "home": {

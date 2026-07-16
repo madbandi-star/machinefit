@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
+import type { ExperienceLevel } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
+import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { LanguageSelector } from '@/components/settings/LanguageSelector/LanguageSelector';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
@@ -24,11 +26,15 @@ export function SettingsPage() {
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? 175);
   const [weightKg, setWeightKg] = useState<number | undefined>(user?.weightKg);
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
+    user?.experienceLevel ?? 'intermediate'
+  );
 
   useEffect(() => {
     if (user?.heightCm != null) setHeightCm(user.heightCm);
     setWeightKg(user?.weightKg);
-  }, [user?.heightCm, user?.weightKg]);
+    if (user?.experienceLevel) setExperienceLevel(user.experienceLevel);
+  }, [user?.heightCm, user?.weightKg, user?.experienceLevel]);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -37,6 +43,7 @@ export function SettingsPage() {
         weightKg,
         unitHeight,
         unitWeight,
+        experienceLevel,
       }),
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
@@ -53,14 +60,20 @@ export function SettingsPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
           <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
-          <BodyMetricsFields
-            unitHeight={unitHeight}
-            unitWeight={unitWeight}
-            heightCm={heightCm}
-            weightKg={weightKg}
-            onHeightCmChange={setHeightCm}
-            onWeightKgChange={setWeightKg}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <BodyMetricsFields
+              unitHeight={unitHeight}
+              unitWeight={unitWeight}
+              heightCm={heightCm}
+              weightKg={weightKg}
+              onHeightCmChange={setHeightCm}
+              onWeightKgChange={setWeightKg}
+            />
+            <ExperienceSelector
+              value={experienceLevel}
+              onChange={setExperienceLevel}
+            />
+          </div>
           <button
             type="button"
             className="btn btn--primary btn--block"

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { experienceLevelSchema } from './user.schema.js';
 
 export const registerSchema = z.object({
   email: z.string().email(),
@@ -9,6 +10,7 @@ export const registerSchema = z.object({
   unitWeight: z.enum(['kg', 'lb']).optional(),
   heightCm: z.number().min(100).max(250).optional(),
   weightKg: z.number().min(30).max(300).optional(),
+  experienceLevel: experienceLevelSchema.optional(),
 });
 
 export const loginSchema = z.object({

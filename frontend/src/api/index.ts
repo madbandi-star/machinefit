@@ -45,6 +45,7 @@ export const authApi = {
     unitWeight?: 'kg' | 'lb';
     heightCm?: number;
     weightKg?: number;
+    experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
     apiClient.post('/auth/refresh', { refreshToken }),
@@ -58,6 +59,7 @@ export const userApi = {
     weightKg?: number;
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
+    experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }) => apiClient.patch<ApiResponse<User>>('/users/me', data),
 };
 

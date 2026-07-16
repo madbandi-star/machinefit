@@ -90,6 +90,7 @@ export const userRepository = {
     unitWeight?: 'kg' | 'lb';
     heightCm?: number;
     weightKg?: number;
+    experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }): Promise<User> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -112,9 +113,9 @@ export const userRepository = {
     const result = await pool.query<UserRow>(
       `INSERT INTO users (
          role_id, email, password_hash, display_name, language_id,
-         unit_height, unit_weight, height_cm, weight_kg
+         unit_height, unit_weight, height_cm, weight_kg, experience_level
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
         roleId,
@@ -126,6 +127,7 @@ export const userRepository = {
         data.unitWeight ?? 'kg',
         data.heightCm ?? null,
         data.weightKg ?? null,
+        data.experienceLevel ?? 'intermediate',
       ]
     );
 
@@ -142,6 +144,7 @@ export const userRepository = {
       weightKg?: number;
       unitHeight?: 'cm' | 'ft_in';
       unitWeight?: 'kg' | 'lb';
+      experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
     }
   ): Promise<User | null> {
     const pool = getPool();
@@ -170,6 +173,10 @@ export const userRepository = {
     if (data.unitWeight !== undefined) {
       fields.push(`unit_weight = $${index++}`);
       values.push(data.unitWeight);
+    }
+    if (data.experienceLevel !== undefined) {
+      fields.push(`experience_level = $${index++}`);
+      values.push(data.experienceLevel);
     }
 
     if (fields.length === 0) {

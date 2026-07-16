@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
-import type { UnitHeight, UnitWeight } from '@machinefit/shared';
+import type { ExperienceLevel, UnitHeight, UnitWeight } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
+import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import {
   HEIGHT_UNIT_OPTIONS,
   UnitPicker,
@@ -31,6 +32,7 @@ export function RegisterPage() {
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
   const [heightCm, setHeightCm] = useState(175);
   const [weightKg, setWeightKg] = useState<number | undefined>(undefined);
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>('intermediate');
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -42,6 +44,7 @@ export function RegisterPage() {
         unitWeight,
         heightCm,
         weightKg,
+        experienceLevel,
       }),
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
@@ -118,6 +121,10 @@ export function RegisterPage() {
             weightKg={weightKg}
             onHeightCmChange={setHeightCm}
             onWeightKgChange={setWeightKg}
+          />
+          <ExperienceSelector
+            value={experienceLevel}
+            onChange={setExperienceLevel}
           />
         </section>
 

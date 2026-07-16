@@ -1,17 +1,18 @@
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
-import { ROUTES } from '@/constants/routes';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { machineApi } from '@/api';
+import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import '@/styles/components.css';
 
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
   const { t } = useTranslation('machines');
+  const { requestRecommendation, isPending } = useRecommendMachine(machineCode);
 
   const { data: machine, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!),
@@ -33,12 +34,14 @@ export function MachineDetailPage() {
       <p style={{ marginBottom: '1rem', color: 'var(--color-text-muted)' }}>
         {machine.muscleGroup} · {machine.machineType}
       </p>
-      <Link
-        to={ROUTES.RECOMMEND.replace(':machineCode', machine.code)}
+      <button
+        type="button"
         className="btn btn--primary btn--block"
+        onClick={() => requestRecommendation()}
+        disabled={isPending}
       >
-        {t('recommend')}
-      </Link>
+        {isPending ? t('recommendLoading', { defaultValue: 'Generating recommendation...' }) : t('recommend')}
+      </button>
     </PageShell>
   );
 }

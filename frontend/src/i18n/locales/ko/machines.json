@@ -7,6 +7,7 @@
     "shoulders": "어깨"
   },
   "recommend": "추천 받기",
+  "recommendLoading": "추천 생성 중...",
   "settings": {
     "seat": "시트 위치",
     "backPad": "백 패드",
