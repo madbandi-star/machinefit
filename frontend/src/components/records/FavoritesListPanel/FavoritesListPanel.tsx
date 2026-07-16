@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
+import '@/styles/components.css';
 
 export function FavoritesListPanel() {
   const { t } = useTranslation(['common', 'machines']);
@@ -30,23 +32,30 @@ export function FavoritesListPanel() {
   if (isLoading) return <Skeleton count={3} height={80} />;
   if (isError) return <QueryErrorMessage />;
   if (!data?.length) {
-    return <p style={{ color: 'var(--color-text-muted)' }}>{t('machines:favorites.empty')}</p>;
+    return (
+      <EmptyState
+        icon="heart"
+        title={t('machines:favorites.empty')}
+        action={
+          <Link to={ROUTES.MACHINES} className="btn btn--primary">
+            {t('common:emptyState.browseMachines')}
+          </Link>
+        }
+      />
+    );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
       {data.map((item) => (
-        <div
-          key={item.id}
-          className="card"
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}
-        >
+        <div key={item.id} className="card record-card record-card__row">
           <Link
             to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
-            style={{ textDecoration: 'none', color: 'inherit', minWidth: 0 }}
+            className="record-card__header"
+            style={{ flex: 1, minWidth: 0 }}
           >
-            <strong>{item.machineName}</strong>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{item.machineCode}</p>
+            <strong className="record-card__title">{item.machineName}</strong>
+            <span className="record-card__meta">{item.machineCode}</span>
           </Link>
           <button
             type="button"

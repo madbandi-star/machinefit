@@ -40,7 +40,7 @@ export function AdminDashboardPage() {
     <PageShell title={t('title')} subtitle={t('subtitle')}>
       <div className="admin-stats">
         {cards.map((card) => (
-          <Link key={card.label} to={card.to} className="card admin-stat">
+          <Link key={card.label} to={card.to} className="card card--interactive admin-stat">
             <div className="admin-stat__value">{card.value}</div>
             <div className="admin-stat__label">{card.label}</div>
           </Link>

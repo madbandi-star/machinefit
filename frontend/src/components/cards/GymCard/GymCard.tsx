@@ -11,7 +11,7 @@ export function GymCard({ gym }: GymCardProps) {
   const href = ROUTES.GYM_DETAIL.replace(':gymId', gym.slug ?? gym.id);
 
   return (
-    <Link to={href} className="card gym-card">
+    <Link to={href} className="card card--interactive gym-card">
       <div className="gym-card__header">
         <h3 className="gym-card__name">{gym.name}</h3>
         {gym.isVerified && <span className="gym-card__badge">✓ Verified</span>}

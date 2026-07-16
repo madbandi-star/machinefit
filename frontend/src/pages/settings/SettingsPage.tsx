@@ -76,11 +76,11 @@ export function SettingsPage() {
   return (
     <PageShell title={t('nav.settings')}>
       <ProfileSummaryCard user={user} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div className="settings-stack">
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
           <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
             <BodyMetricsFields
               unitHeight={unitHeight}
               unitWeight={unitWeight}
@@ -98,26 +98,24 @@ export function SettingsPage() {
           <button
             type="button"
             className="btn btn--primary btn--block"
-            style={{ marginTop: '1rem' }}
+            style={{ marginTop: 'var(--space-md)' }}
             onClick={() => mutation.mutate()}
             disabled={mutation.isPending}
           >
-            {mutation.isPending ? '...' : t('actions.save')}
+            {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
         </section>
 
-        <section>
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '0.95rem' }}>
-            {t('settings.language')}
-          </h3>
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.language')}</h3>
           <LanguageSelector />
         </section>
-        <section>
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '0.95rem' }}>{t('auth.unitSettings')}</h3>
+        <section className="form-section">
+          <h3 className="form-section__title">{t('auth.unitSettings')}</h3>
           <UnitSelector />
         </section>
-        <section>
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '0.95rem' }}>{t('settings.theme')}</h3>
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.theme')}</h3>
           <ThemeSwitch />
         </section>
 

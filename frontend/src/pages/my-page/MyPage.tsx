@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { Icon } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
@@ -10,6 +11,15 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/community.css';
+
+function ListNavLink({ to, label }: { to: string; label: string }) {
+  return (
+    <Link to={to} className="list-nav__item">
+      {label}
+      <Icon name="chevronRight" size={18} className="list-nav__chevron" />
+    </Link>
+  );
+}
 
 export function MyPage() {
   const { t } = useTranslation();
@@ -55,48 +65,32 @@ export function MyPage() {
 
   return (
     <PageShell title={t('nav.myPage')} subtitle={user?.email}>
-      <div className="card" style={{ marginBottom: '1rem' }}>
-        <h3 style={{ marginBottom: '0.5rem' }}>{user?.displayName}</h3>
-        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+      <div className="card profile-card">
+        <h2 className="profile-card__name">{user?.displayName}</h2>
+        <p className="profile-card__meta">
           {t('myPage.role')}: {user?.roleCode}
         </p>
       </div>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h3 className="form-section__title" style={{ marginBottom: '0.75rem' }}>
-          {t('myPage.quickLinks')}
-        </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <Link to={`${ROUTES.RECORDS}?tab=history`} className="btn btn--secondary btn--block">
-            {t('nav.records')}
-          </Link>
-          <Link to={ROUTES.SETTINGS} className="btn btn--secondary btn--block">
-            {t('nav.settings')}
-          </Link>
-          <Link to={ROUTES.NOTIFICATIONS} className="btn btn--secondary btn--block">
-            {t('nav.notifications')}
-          </Link>
-        </div>
+      <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
+          <ListNavLink to={`${ROUTES.RECORDS}?tab=history`} label={t('nav.records')} />
+          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
+          <ListNavLink to={ROUTES.NOTIFICATIONS} label={t('nav.notifications')} />
+        </nav>
       </section>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h3 className="form-section__title" style={{ marginBottom: '0.75rem' }}>
-          {t('myPage.explore')}
-        </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <Link to={ROUTES.GYMS} className="btn btn--secondary btn--block">
-            {t('nav.gyms')}
-          </Link>
-          <Link to={ROUTES.COMMUNITY} className="btn btn--secondary btn--block">
-            {t('nav.community')}
-          </Link>
-          <Link to={ROUTES.BRANDS} className="btn btn--secondary btn--block">
-            {t('nav.brands')}
-          </Link>
-        </div>
+      <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.explore')}>
+          <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />
+          <ListNavLink to={ROUTES.COMMUNITY} label={t('nav.community')} />
+          <ListNavLink to={ROUTES.BRANDS} label={t('nav.brands')} />
+        </nav>
       </section>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
         {isAdmin && (
           <Link to={ROUTES.ADMIN} className="btn btn--primary btn--block">
             {t('myPage.adminDashboard')}
@@ -109,31 +103,30 @@ export function MyPage() {
         )}
         {!isOwner && (
           <>
-            <button className="btn btn--primary btn--block" onClick={() => setShowApply(!showApply)}>
+            <button type="button" className="btn btn--primary btn--block" onClick={() => setShowApply(!showApply)}>
               {tc('applyOwner')}
             </button>
             {showApply && (
               <form className="card" onSubmit={handleApply}>
-                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-                  {tc('applyOwnerDesc')}
-                </p>
+                <p className="form-section__desc">{tc('applyOwnerDesc')}</p>
                 <div className="form-row">
                   <label htmlFor="biz-name">{tc('businessName')}</label>
                   <input
                     id="biz-name"
+                    className="input"
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
                     required
                   />
                 </div>
                 <button type="submit" className="btn btn--primary btn--block" disabled={applying}>
-                  {tc('submit')}
+                  {applying ? <span className="btn__spinner" aria-hidden /> : tc('submit')}
                 </button>
               </form>
             )}
           </>
         )}
-        <button className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
+        <button type="button" className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
           {t('nav.logout')}
         </button>
       </div>

@@ -44,7 +44,7 @@ export function RecordsPage() {
         activeId={activeTab}
         onChange={handleTabChange}
       />
-      <div role="tabpanel" style={{ marginTop: '1rem' }}>
+      <div role="tabpanel" className="records-panel">
         {activeTab === 'history' ? <HistoryListPanel /> : <FavoritesListPanel />}
       </div>
     </PageShell>

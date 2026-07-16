@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
+import { Icon } from '@/components/icons/Icon';
 import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/machines.css';
 
@@ -29,11 +30,11 @@ export function MachineHero({ machine }: MachineHeroProps) {
           />
         ) : (
           <div className="machine-hero__placeholder" aria-hidden>
-            🏋️
+            <Icon name="dumbbell" size={48} />
           </div>
         )}
       </div>
-      <h2 className="machine-hero__title">{name}</h2>
+      <h1 className="machine-hero__title">{name}</h1>
       <p className="machine-hero__code">{machine.code}</p>
       <div className="machine-hero__badges">
         <span className="machine-badge machine-badge--muscle">{muscleLabel}</span>

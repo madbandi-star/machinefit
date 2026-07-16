@@ -9,7 +9,7 @@ export function MuscleGroupShortcuts() {
 
   return (
     <section className="home-section">
-      <h2 className="home-section__title" style={{ marginBottom: '0.75rem' }}>
+      <h2 className="home-section__title home-section__title--spaced">
         {t('pages.home.muscleShortcuts')}
       </h2>
       <div className="home-muscle-shortcuts">

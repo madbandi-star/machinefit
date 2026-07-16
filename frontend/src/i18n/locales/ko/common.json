@@ -1,7 +1,11 @@
 {
   "appName": "MachineFit",
   "tagline": "나에게 맞는 머신 세팅을 찾아보세요",
+  "emptyState": {
+    "browseMachines": "기구 찾아보기"
+  },
   "nav": {
+    "main": "주요 메뉴",
     "home": "홈",
     "machines": "머신",
     "brands": "브랜드",

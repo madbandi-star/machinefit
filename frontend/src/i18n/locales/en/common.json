@@ -1,7 +1,11 @@
 {
   "appName": "MachineFit",
   "tagline": "Find your perfect machine settings",
+  "emptyState": {
+    "browseMachines": "Browse machines"
+  },
   "nav": {
+    "main": "Main navigation",
     "home": "Home",
     "machines": "Machines",
     "brands": "Brands",

@@ -13,12 +13,12 @@
 .layout__content {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--space-md);
   width: 100%;
 }
 
 @media (min-width: 768px) {
   .layout__main {
-    padding-bottom: 1rem;
+    padding-bottom: var(--space-md);
   }
 }

@@ -80,16 +80,18 @@ export function RecommendationResultPage() {
   const machineTitle = result.machineName ?? result.machineCode;
 
   return (
-    <PageShell title={machineTitle} subtitle={result.machineCode}>
-      <RecommendationSettingsPanel settings={result.settings} variant="hero" />
-      <RecommendationWarnings warnings={result.warnings} />
-      <RecommendationTips tips={result.tips} />
-      <RecommendationActionBar
-        machineCode={result.machineCode}
-        onSave={() => favoriteMutation.mutate()}
-        isSaving={favoriteMutation.isPending}
-      />
-      <ProUpsellBanner compact />
-    </PageShell>
+    <div className="recommendation-result-page">
+      <PageShell title={machineTitle} subtitle={result.machineCode}>
+        <RecommendationSettingsPanel settings={result.settings} variant="hero" />
+        <RecommendationWarnings warnings={result.warnings} />
+        <RecommendationTips tips={result.tips} />
+        <RecommendationActionBar
+          machineCode={result.machineCode}
+          onSave={() => favoriteMutation.mutate()}
+          isSaving={favoriteMutation.isPending}
+        />
+        <ProUpsellBanner compact />
+      </PageShell>
+    </div>
   );
 }

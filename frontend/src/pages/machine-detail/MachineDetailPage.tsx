@@ -9,13 +9,12 @@ import { LastRecommendationSnippet } from '@/components/machines/LastRecommendat
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { machineApi } from '@/api';
-import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/components.css';
 import '@/styles/machines.css';
 
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
-  const { t, i18n } = useTranslation('machines');
+  const { t } = useTranslation('machines');
 
   const { data: machine, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!),
@@ -38,10 +37,8 @@ export function MachineDetailPage() {
     return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
   }
 
-  const name = getLocalizedName(machine.name, i18n.language, machine.code);
-
   return (
-    <PageShell title={name}>
+    <PageShell subtitle={machine.code}>
       <div className="machine-detail-content">
         <MachineHero machine={machine} />
         {machineCode && <LastRecommendationSnippet machineCode={machineCode} />}

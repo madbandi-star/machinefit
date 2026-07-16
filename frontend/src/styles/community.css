@@ -1,12 +1,14 @@
-.post-card {
+.community-link-card {
   display: block;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s;
 }
 
-.post-card:hover {
-  border-color: var(--color-primary);
+.community-link-card__desc {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-xs);
+  line-height: 1.4;
 }
 
 .post-card__title {

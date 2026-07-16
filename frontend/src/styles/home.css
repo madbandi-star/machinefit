@@ -1,11 +1,40 @@
 .home-quick-search {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   margin-bottom: var(--space-md);
+  align-items: stretch;
 }
 
 .home-quick-search .input {
   flex: 1;
+  min-width: 0;
+}
+
+.home-quick-search__submit {
+  flex-shrink: 0;
+  min-width: var(--touch-target-min);
+  padding-inline: var(--space-md);
+}
+
+.home-quick-search__submit-label {
+  display: none;
+}
+
+.home-quick-search__qr {
+  flex-shrink: 0;
+}
+
+@media (max-width: 399px) {
+  .home-quick-search__submit {
+    width: var(--touch-target-min);
+    padding-inline: 0;
+  }
+}
+
+@media (min-width: 400px) {
+  .home-quick-search__submit-icon {
+    display: none;
+  }
 }
 
 .profile-incomplete-banner {
@@ -35,6 +64,10 @@
   margin-bottom: var(--space-xl);
 }
 
+.home-section__title--spaced {
+  margin-bottom: var(--space-sm);
+}
+
 .home-section__header {
   display: flex;
   align-items: center;
@@ -44,15 +77,23 @@
 }
 
 .home-section__title {
-  font-size: var(--font-size-h2, 1.125rem);
-  font-weight: 600;
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .home-section__link {
-  font-size: 0.85rem;
-  color: var(--color-link);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-text-muted);
   text-decoration: none;
   font-weight: 600;
+  min-height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+}
+
+.home-section__link:active {
+  color: var(--color-link);
 }
 
 .home-scroll-row {
@@ -193,36 +234,41 @@
 }
 
 .home-muscle-shortcut {
-  min-height: 48px;
+  min-height: var(--touch-target-min);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  font-size: 0.9rem;
+  font-size: var(--font-size-body-sm);
   font-weight: 600;
   text-decoration: none;
-  color: inherit;
-  transition: border-color 0.2s;
+  color: var(--color-text);
+  transition: transform var(--motion-fast), border-color var(--motion-fast);
+  box-shadow: var(--shadow-sm);
 }
 
-.home-muscle-shortcut:hover {
-  border-color: var(--color-primary);
+.home-muscle-shortcut:active {
+  transform: scale(0.98);
 }
 
 .home-muscle-shortcut--back {
-  border-color: color-mix(in srgb, var(--color-muscle-back, #3498db) 50%, var(--color-border));
+  background: color-mix(in srgb, var(--color-muscle-back) 14%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-muscle-back) 45%, var(--color-border));
 }
 
 .home-muscle-shortcut--chest {
-  border-color: color-mix(in srgb, var(--color-muscle-chest, #e74c3c) 50%, var(--color-border));
+  background: color-mix(in srgb, var(--color-muscle-chest) 14%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-muscle-chest) 45%, var(--color-border));
 }
 
 .home-muscle-shortcut--legs {
-  border-color: color-mix(in srgb, var(--color-muscle-legs, #2ecc71) 50%, var(--color-border));
+  background: color-mix(in srgb, var(--color-muscle-legs) 14%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-muscle-legs) 45%, var(--color-border));
 }
 
 .home-muscle-shortcut--shoulders {
-  border-color: color-mix(in srgb, var(--color-muscle-shoulders, #9b59b6) 50%, var(--color-border));
+  background: color-mix(in srgb, var(--color-muscle-shoulders) 14%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-muscle-shoulders) 45%, var(--color-border));
 }

@@ -13,7 +13,7 @@ export function MachineCard({ machine }: MachineCardProps) {
   return (
     <Link
       to={ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code)}
-      className="card"
+      className="card card--interactive"
     >
       <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>{name}</h3>
       <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>

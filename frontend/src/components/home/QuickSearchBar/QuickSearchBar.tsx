@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/home.css';
 import '@/styles/phase4.css';
@@ -30,11 +31,16 @@ export function QuickSearchBar() {
         placeholder={t('pages.home.searchPlaceholder')}
         aria-label={t('pages.home.searchPlaceholder')}
       />
-      <Link to={ROUTES.SCAN} className="btn btn--secondary home-quick-search__qr" aria-label={t('qr.scanTitle')}>
-        📷
+      <Link
+        to={ROUTES.SCAN}
+        className="btn btn--secondary icon-btn home-quick-search__qr"
+        aria-label={t('qr.scanTitle')}
+      >
+        <Icon name="qr" size={20} />
       </Link>
-      <button type="submit" className="btn btn--primary">
-        {t('actions.search')}
+      <button type="submit" className="btn btn--primary home-quick-search__submit" aria-label={t('actions.search')}>
+        <Icon name="search" size={20} className="home-quick-search__submit-icon" />
+        <span className="home-quick-search__submit-label">{t('actions.search')}</span>
       </button>
     </form>
   );

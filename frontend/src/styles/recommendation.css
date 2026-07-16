@@ -32,16 +32,17 @@
 
 .setting-value-card__value {
   font-size: var(--font-size-setting-value);
-  font-weight: 700;
-  line-height: 1.1;
+  font-weight: 800;
+  line-height: 1.05;
   font-variant-numeric: tabular-nums;
-  color: var(--color-primary-text);
+  letter-spacing: -0.03em;
+  color: var(--color-text);
 }
 
 .setting-value-card__unit {
   font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
+  font-weight: 700;
+  color: var(--color-primary-text);
 }
 
 .setting-value-card__hint {
@@ -132,15 +133,19 @@
 .recommendation-action-bar {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   margin-top: var(--space-lg);
   position: sticky;
-  bottom: calc(var(--bottom-nav-height) + 0.5rem);
-  padding: 0.5rem 0 0.25rem;
+  bottom: calc(var(--bottom-nav-height) + var(--space-sm));
+  padding: var(--space-sm) 0 var(--space-xs);
   background: var(--sticky-bar-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 10;
+}
+
+.recommendation-result-page {
+  padding-bottom: var(--sticky-action-height);
 }
 
 .recommendation-action-bar__row {

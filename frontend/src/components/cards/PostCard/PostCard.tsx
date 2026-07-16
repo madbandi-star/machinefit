@@ -19,7 +19,7 @@ export function PostCard({ post }: PostCardProps) {
   const href = ROUTES.POST_DETAIL.replace(':postId', post.id);
 
   return (
-    <Link to={href} className="card post-card">
+    <Link to={href} className="card card--interactive post-card">
       <h3 className="post-card__title">{post.title}</h3>
       <p className="post-card__excerpt">
         {post.content.length > 120 ? `${post.content.slice(0, 120)}…` : post.content}

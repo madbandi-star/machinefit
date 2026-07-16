@@ -11,17 +11,13 @@ export function CommunityPage() {
   return (
     <PageShell title={t('nav.community')} subtitle="Connect with the MachineFit community">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        <Link to={ROUTES.MACHINE_REQUESTS} className="card btn--block" style={{ textAlign: 'left' }}>
+        <Link to={ROUTES.MACHINE_REQUESTS} className="card card--interactive community-link-card">
           <strong>{tc('machineRequests')}</strong>
-          <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
-            {tc('machineRequestsSubtitle')}
-          </p>
+          <p className="community-link-card__desc">{tc('machineRequestsSubtitle')}</p>
         </Link>
-        <Link to={ROUTES.FREE_BOARD} className="card btn--block" style={{ textAlign: 'left' }}>
+        <Link to={ROUTES.FREE_BOARD} className="card card--interactive community-link-card">
           <strong>{tc('freeBoard')}</strong>
-          <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
-            {tc('freeBoardSubtitle')}
-          </p>
+          <p className="community-link-card__desc">{tc('freeBoardSubtitle')}</p>
         </Link>
       </div>
     </PageShell>

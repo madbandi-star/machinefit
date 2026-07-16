@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { notificationApi } from '@/api';
@@ -93,7 +94,7 @@ export function NotificationsPage() {
           />
         </>
       ) : (
-        <p style={{ color: 'var(--color-text-muted)' }}>{t('empty')}</p>
+        <EmptyState icon="bell" title={t('empty')} compact />
       )}
     </PageShell>
   );

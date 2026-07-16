@@ -1,55 +1,82 @@
 :root {
   /* Brand */
   --color-primary: #ffd400;
-  --color-primary-text: #ffd400;
+  --color-primary-text: #e6c200;
   --color-primary-on: #111111;
-  --color-link: #ffd400;
+  --color-link: #e6c200;
 
-  /* Surfaces */
-  --color-bg: #111111;
-  --color-bg-secondary: #1a1a1a;
-  --color-surface: #222222;
-  --color-surface-alt: #2a2a2a;
+  /* Surfaces — wider hierarchy for mobile legibility */
+  --color-bg: #0a0a0a;
+  --color-bg-secondary: #121212;
+  --color-surface: #1a1a1a;
+  --color-surface-alt: #242424;
   --color-text: #ffffff;
-  --color-text-muted: #999999;
-  --color-border: #333333;
-  --color-error: #ff4444;
-  --color-success: #44cc44;
+  --color-text-muted: #9a9a9a;
+  --color-border: #2e2e2e;
+  --color-error: #ff5252;
+  --color-success: #4caf50;
   --color-warning: #e6b800;
 
   /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.45);
-  --shadow-fab: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-fab: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-nav: 0 -2px 12px rgba(0, 0, 0, 0.35);
 
   /* Overlays & sticky regions */
-  --overlay-backdrop: rgba(0, 0, 0, 0.55);
-  --sticky-bar-bg: color-mix(in srgb, var(--color-bg) 92%, transparent);
-  --theme-color-meta: #111111;
+  --overlay-backdrop: rgba(0, 0, 0, 0.6);
+  --sticky-bar-bg: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  --theme-color-meta: #0a0a0a;
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  /* Safe area (mobile-first) */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --header-base-height: 56px;
+  --bottom-nav-base-height: 56px;
+  --sticky-action-height: 52px;
+  --header-height: calc(var(--header-base-height) + var(--safe-area-top));
+  --bottom-nav-height: calc(var(--bottom-nav-base-height) + var(--safe-area-bottom));
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
-  --header-height: 56px;
-  --bottom-nav-height: 64px;
+
+  /* Layout */
   --max-width: 1200px;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
+  /* Typography scale */
+  --font-size-caption: 0.75rem;
+  --font-size-body-sm: 0.875rem;
+  --font-size-body: 1rem;
+  --font-size-h3: 1rem;
+  --font-size-h2: 1.125rem;
+  --font-size-h1: 1.375rem;
+  --font-size-display: 3rem;
   --font-size-setting-label: 0.6875rem;
-  --font-size-setting-value: 3rem;
+  --font-size-setting-value: var(--font-size-display);
   --font-size-setting-value-sm: 2rem;
   --font-size-setting-value-compact: 1.5rem;
   --setting-card-min-height: 5.5rem;
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
-  --font-size-h2: 1.125rem;
+  --space-2xl: 2.5rem;
+
   --touch-target-min: 44px;
   --color-muscle-chest: #e74c3c;
   --color-muscle-back: #3498db;
   --color-muscle-legs: #2ecc71;
   --color-muscle-shoulders: #9b59b6;
+
+  --motion-fast: 0.15s ease;
+  --motion-normal: 0.25s ease;
 }
 
 [data-theme='light'] {
@@ -58,25 +85,26 @@
   --color-primary-on: #111111;
   --color-link: #7a5e00;
 
-  --color-bg: #f5f5f5;
-  --color-bg-secondary: #eef0f2;
+  --color-bg: #f2f2f4;
+  --color-bg-secondary: #e8eaed;
   --color-surface: #ffffff;
-  --color-surface-alt: #f3f4f6;
+  --color-surface-alt: #f5f6f8;
   --color-text: #111111;
   --color-text-muted: #5c5c5c;
-  --color-border: #d4d4d4;
+  --color-border: #d0d0d0;
   --color-error: #d32f2f;
   --color-success: #2e7d32;
   --color-warning: #b8860b;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-fab: 0 3px 10px rgba(0, 0, 0, 0.14);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.09);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.11);
+  --shadow-fab: 0 3px 12px rgba(0, 0, 0, 0.14);
+  --shadow-nav: 0 -2px 12px rgba(0, 0, 0, 0.06);
 
-  --overlay-backdrop: rgba(0, 0, 0, 0.4);
+  --overlay-backdrop: rgba(0, 0, 0, 0.45);
   --sticky-bar-bg: color-mix(in srgb, var(--color-bg) 88%, transparent);
-  --theme-color-meta: #f5f5f5;
+  --theme-color-meta: #f2f2f4;
 }
 
 *,
@@ -98,6 +126,7 @@ body {
   color: var(--color-text);
   line-height: 1.5;
   min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
@@ -119,4 +148,23 @@ img {
 
 #root {
   min-height: 100dvh;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .empty-state,
+  .machine-list-item,
+  .list-nav__item {
+    animation: fade-in-up var(--motion-normal) both;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

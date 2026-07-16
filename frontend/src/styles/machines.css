@@ -24,7 +24,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
   color: var(--color-text-muted);
   background: linear-gradient(
     135deg,
@@ -33,10 +32,15 @@
   );
 }
 
+.machine-detail-content {
+  padding-bottom: var(--sticky-action-height);
+}
+
 .machine-hero__title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin-bottom: 0.35rem;
+  font-size: var(--font-size-h1);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-xs);
   line-height: 1.25;
 }
 
@@ -91,8 +95,8 @@
 
 .filter-chip {
   flex-shrink: 0;
-  min-height: 36px;
-  padding: 0.4rem 0.9rem;
+  min-height: var(--touch-target-min);
+  padding: 0.5rem 1rem;
   border-radius: 999px;
   border: 1px solid var(--color-border);
   background: var(--color-bg-secondary);
@@ -239,19 +243,15 @@
 
 .recommend-cta {
   position: sticky;
-  bottom: calc(var(--bottom-nav-height) + 0.5rem);
-  padding: 0.5rem 0 0.25rem;
+  bottom: calc(var(--bottom-nav-height) + var(--space-sm));
+  padding: var(--space-sm) 0 var(--space-xs);
   background: var(--sticky-bar-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 10;
 }
 
 .recommend-cta .btn {
-  min-height: 48px;
-  font-size: 1rem;
-}
-
-.machine-detail-content {
-  padding-bottom: 0.5rem;
+  min-height: var(--touch-target-min);
+  font-size: var(--font-size-body);
 }
