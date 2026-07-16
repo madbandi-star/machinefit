@@ -38,3 +38,25 @@ export function formatWeight(
   if (unit === 'kg') return `${kg} kg`;
   return `${kgToLb(kg)} lb`;
 }
+
+export function toStandardHeight(
+  value: number,
+  unit: 'cm' | 'ft_in',
+  inches = 0
+): number {
+  if (unit === 'cm') return value;
+  return feetInchesToCm(value, inches);
+}
+
+export function toStandardWeight(value: number, unit: 'kg' | 'lb'): number {
+  if (unit === 'kg') return value;
+  return lbToKg(value);
+}
+
+export function fromStandardHeight(
+  cm: number,
+  unit: 'cm' | 'ft_in'
+): number | { feet: number; inches: number } {
+  if (unit === 'cm') return cm;
+  return cmToFeetInches(cm);
+}

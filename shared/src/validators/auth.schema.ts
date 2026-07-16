@@ -5,6 +5,8 @@ export const registerSchema = z.object({
   password: z.string().min(8).max(128),
   displayName: z.string().min(2).max(100),
   languageCode: z.enum(['ko', 'en', 'ja', 'zh']).optional(),
+  unitHeight: z.enum(['cm', 'ft_in']).optional(),
+  unitWeight: z.enum(['kg', 'lb']).optional(),
 });
 
 export const loginSchema = z.object({

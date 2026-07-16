@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { useAuthStore } from '@/store/auth.store';
+import { useCredentialsStore } from '@/store/credentials.store';
 import { ownerApi } from '@/api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -15,9 +17,11 @@ export function MyPage() {
   const user = useAuthStore((s) => s.user);
   const setAuth = useAuthStore((s) => s.setAuth);
   const clearAuth = useAuthStore((s) => s.clearAuth);
+  const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
   const showToast = useUIStore((s) => s.showToast);
 
   const [showApply, setShowApply] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
   const [businessName, setBusinessName] = useState('');
   const [applying, setApplying] = useState(false);
 
@@ -41,6 +45,14 @@ export function MyPage() {
     } finally {
       setApplying(false);
     }
+  };
+
+  const handleLogout = (clearSavedCredentials: boolean) => {
+    if (clearSavedCredentials) {
+      clearCredentials();
+    }
+    clearAuth();
+    setShowLogout(false);
   };
 
   return (
@@ -100,10 +112,15 @@ export function MyPage() {
             )}
           </>
         )}
-        <button className="btn btn--secondary btn--block" onClick={clearAuth}>
+        <button className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
           {t('nav.logout')}
         </button>
       </div>
+      <LogoutDialog
+        open={showLogout}
+        onClose={() => setShowLogout(false)}
+        onConfirm={handleLogout}
+      />
     </PageShell>
   );
 }

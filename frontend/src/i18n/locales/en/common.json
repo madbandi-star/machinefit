@@ -35,7 +35,22 @@
     "invalidCredentials": "Invalid email or password",
     "accountCreated": "Account created!",
     "registrationFailed": "Registration failed",
-    "displayNameMin": "Display name must be at least 2 characters"
+    "displayNameMin": "Display name must be at least 2 characters",
+    "rememberLogin": "Remember login",
+    "autoLoggingIn": "Signing in automatically...",
+    "autoLoginFailed": "Auto login failed. Please sign in again.",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "passwordMinPlaceholder": "Password (min 8 chars)",
+    "displayNamePlaceholder": "Display Name",
+    "unitSettings": "Unit preferences",
+    "unitSettingsDesc": "Choose your default units for the app.",
+    "heightUnit": "Height unit",
+    "weightUnit": "Weight unit",
+    "logoutConfirmTitle": "Log out",
+    "logoutConfirmMessage": "Do you also want to remove saved login credentials?",
+    "logoutKeepCredentials": "Log out and keep saved login",
+    "logoutClearCredentials": "Log out and clear saved login"
   },
   "pages": {
     "home": {

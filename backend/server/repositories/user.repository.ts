@@ -86,6 +86,8 @@ export const userRepository = {
     passwordHash: string;
     displayName: string;
     languageCode?: string;
+    unitHeight?: 'cm' | 'ft_in';
+    unitWeight?: 'kg' | 'lb';
   }): Promise<User> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -106,10 +108,18 @@ export const userRepository = {
     }
 
     const result = await pool.query<UserRow>(
-      `INSERT INTO users (role_id, email, password_hash, display_name, language_id)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO users (role_id, email, password_hash, display_name, language_id, unit_height, unit_weight)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [roleId, data.email, data.passwordHash, data.displayName, languageId]
+      [
+        roleId,
+        data.email,
+        data.passwordHash,
+        data.displayName,
+        languageId,
+        data.unitHeight ?? 'cm',
+        data.unitWeight ?? 'kg',
+      ]
     );
 
     const created = await this.findById(result.rows[0].id);

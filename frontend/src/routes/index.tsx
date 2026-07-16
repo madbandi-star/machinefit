@@ -4,6 +4,7 @@ import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { AuthGuard } from '@/routes/guards/AuthGuard';
+import { GuestGuard } from '@/routes/guards/GuestGuard';
 import { ROUTES } from '@/constants/routes';
 
 import { HomePage } from '@/pages/home/HomePage';
@@ -36,7 +37,11 @@ import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
 export const router = createBrowserRouter(
   [
     {
-      element: <MainLayout />,
+      element: (
+        <AuthGuard>
+          <MainLayout />
+        </AuthGuard>
+      ),
       children: [
         { path: ROUTES.HOME, element: <HomePage /> },
         { path: ROUTES.MACHINES, element: <MachineSearchPage /> },
@@ -50,51 +55,20 @@ export const router = createBrowserRouter(
         { path: ROUTES.MACHINE_REQUESTS, element: <MachineRequestBoardPage /> },
         { path: ROUTES.FREE_BOARD, element: <FreeBoardPage /> },
         { path: ROUTES.POST_DETAIL, element: <PostDetailPage /> },
-        {
-          path: ROUTES.FAVORITES,
-          element: (
-            <AuthGuard>
-              <FavoritesPage />
-            </AuthGuard>
-          ),
-        },
-        {
-          path: ROUTES.HISTORY,
-          element: (
-            <AuthGuard>
-              <RecentHistoryPage />
-            </AuthGuard>
-          ),
-        },
-        {
-          path: ROUTES.MY_PAGE,
-          element: (
-            <AuthGuard>
-              <MyPage />
-            </AuthGuard>
-          ),
-        },
-        {
-          path: ROUTES.SETTINGS,
-          element: (
-            <AuthGuard>
-              <SettingsPage />
-            </AuthGuard>
-          ),
-        },
-        {
-          path: ROUTES.NOTIFICATIONS,
-          element: (
-            <AuthGuard>
-              <NotificationsPage />
-            </AuthGuard>
-          ),
-        },
+        { path: ROUTES.FAVORITES, element: <FavoritesPage /> },
+        { path: ROUTES.HISTORY, element: <RecentHistoryPage /> },
+        { path: ROUTES.MY_PAGE, element: <MyPage /> },
+        { path: ROUTES.SETTINGS, element: <SettingsPage /> },
+        { path: ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
         { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
       ],
     },
     {
-      element: <AuthLayout />,
+      element: (
+        <GuestGuard>
+          <AuthLayout />
+        </GuestGuard>
+      ),
       children: [
         { path: ROUTES.LOGIN, element: <LoginPage /> },
         { path: ROUTES.REGISTER, element: <RegisterPage /> },

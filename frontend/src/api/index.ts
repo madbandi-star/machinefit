@@ -37,8 +37,13 @@ export const recommendationApi = {
 export const authApi = {
   login: (email: string, password: string) =>
     apiClient.post('/auth/login', { email, password }),
-  register: (data: { email: string; password: string; displayName: string }) =>
-    apiClient.post('/auth/register', data),
+  register: (data: {
+    email: string;
+    password: string;
+    displayName: string;
+    unitHeight?: 'cm' | 'ft_in';
+    unitWeight?: 'kg' | 'lb';
+  }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
     apiClient.post('/auth/refresh', { refreshToken }),
 };

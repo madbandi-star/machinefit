@@ -1,4 +1,5 @@
 import type { RecommendationResult } from '@machinefit/shared';
+import { useUserUnits } from '@/hooks/useUserUnits';
 import '@/styles/components.css';
 
 interface RecommendationCardProps {
@@ -7,6 +8,7 @@ interface RecommendationCardProps {
 
 export function RecommendationCard({ result }: RecommendationCardProps) {
   const { settings } = result;
+  const { formatWeight } = useUserUnits();
 
   return (
     <div className="card">
@@ -26,7 +28,8 @@ export function RecommendationCard({ result }: RecommendationCardProps) {
         )}
         {settings.recommendedWeightKg != null && (
           <>
-            <dt>Weight</dt><dd>{settings.recommendedWeightKg} kg</dd>
+            <dt>Weight</dt>
+            <dd>{formatWeight(settings.recommendedWeightKg)}</dd>
           </>
         )}
       </dl>

@@ -2,10 +2,18 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
+import type { UnitHeight, UnitWeight } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import {
+  HEIGHT_UNIT_OPTIONS,
+  UnitPicker,
+  WEIGHT_UNIT_OPTIONS,
+} from '@/components/settings/UnitPicker/UnitPicker';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
+import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
+import { syncUserSettings } from '@/utils/syncUserSettings';
 import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
@@ -19,12 +27,18 @@ export function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
+  const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
 
   const mutation = useMutation({
-    mutationFn: () => authApi.register({ email, password, displayName }),
+    mutationFn: () =>
+      authApi.register({ email, password, displayName, unitHeight, unitWeight }),
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
+      syncUserSettings(user);
+      useSettingsStore.getState().setUnitHeight(unitHeight);
+      useSettingsStore.getState().setUnitWeight(unitWeight);
       showToast(t('auth.accountCreated'), 'success');
       navigate(ROUTES.HOME, { replace: true });
     },
@@ -43,7 +57,7 @@ export function RegisterPage() {
         <input
           className="input"
           type="text"
-          placeholder="Display Name"
+          placeholder={t('auth.displayNamePlaceholder')}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           minLength={2}
@@ -52,22 +66,42 @@ export function RegisterPage() {
         <input
           className="input"
           type="email"
-          placeholder="Email"
+          placeholder={t('auth.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
           required
         />
         <input
           className="input"
           type="password"
-          placeholder="Password (min 8 chars)"
+          placeholder={t('auth.passwordMinPlaceholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           minLength={8}
+          autoComplete="new-password"
           required
         />
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('auth.unitSettings')}</h3>
+          <p className="form-section__desc">{t('auth.unitSettingsDesc')}</p>
+          <UnitPicker
+            label={t('auth.heightUnit')}
+            value={unitHeight}
+            options={HEIGHT_UNIT_OPTIONS}
+            onChange={setUnitHeight}
+          />
+          <UnitPicker
+            label={t('auth.weightUnit')}
+            value={unitWeight}
+            options={WEIGHT_UNIT_OPTIONS}
+            onChange={setUnitWeight}
+          />
+        </section>
+
         <button type="submit" className="btn btn--primary btn--block" disabled={mutation.isPending}>
-          {t('nav.register')}
+          {mutation.isPending ? '...' : t('nav.register')}
         </button>
       </form>
       <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem' }}>

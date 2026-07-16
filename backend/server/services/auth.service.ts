@@ -78,6 +78,8 @@ export const authService = {
         email: input.email,
         displayName: input.displayName,
         roleCode: 'member',
+        unitHeight: input.unitHeight ?? 'cm',
+        unitWeight: input.unitWeight ?? 'kg',
       });
     }
 
@@ -91,6 +93,8 @@ export const authService = {
       passwordHash,
       displayName: input.displayName,
       languageCode: input.languageCode,
+      unitHeight: input.unitHeight,
+      unitWeight: input.unitWeight,
     });
 
     return buildAuthResponse(user);
