@@ -25,6 +25,8 @@ export const brandApi = {
   list: () => apiClient.get<ApiResponse<Brand[]>>('/brands'),
   getByCode: (code: string) =>
     apiClient.get<ApiResponse<Brand>>(`/brands/${code}`),
+  getMachines: (code: string) =>
+    apiClient.get<ApiResponse<Machine[]>>(`/brands/${code}/machines`),
 };
 
 export const recommendationApi = {
@@ -55,6 +57,7 @@ export const userApi = {
   getMe: () => apiClient.get<ApiResponse<User>>('/users/me'),
   updateMe: (data: {
     displayName?: string;
+    gender?: 'male' | 'female' | 'other';
     heightCm?: number;
     weightKg?: number;
     unitHeight?: 'cm' | 'ft_in';
@@ -92,7 +95,8 @@ export const favoriteApi = {
 };
 
 export const historyApi = {
-  list: () => apiClient.get<ApiResponse<HistoryItem[]>>('/history'),
+  list: (params?: { machineCode?: string; limit?: number }) =>
+    apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params }),
   clear: () => apiClient.delete('/history'),
 };
 
@@ -110,6 +114,19 @@ export const gymApi = {
     apiClient.get<ApiResponse<Gym[]>>('/gyms/nearby', {
       params: { lat, lng, ...params },
     }),
+};
+
+export interface QrResolveResult {
+  machineCode: string;
+  deepLinkPath: string;
+  machineId: string;
+}
+
+export const qrApi = {
+  resolve: (qrCode: string) =>
+    apiClient.get<ApiResponse<QrResolveResult>>(`/qr/${encodeURIComponent(qrCode)}`),
+  scan: (qrCode: string, body?: { sessionId?: string }) =>
+    apiClient.post<ApiResponse<QrResolveResult>>(`/qr/${encodeURIComponent(qrCode)}/scan`, body ?? {}),
 };
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';

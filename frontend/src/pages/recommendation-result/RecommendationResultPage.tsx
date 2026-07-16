@@ -8,11 +8,13 @@ import { RecommendationSettingsPanel } from '@/components/recommendation/Recomme
 import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
+import { ProUpsellBanner } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { favoriteApi, recommendationApi } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
+import '@/styles/phase4.css';
 
 function ResultLoadingSkeleton() {
   return (
@@ -87,6 +89,7 @@ export function RecommendationResultPage() {
         onSave={() => favoriteMutation.mutate()}
         isSaving={favoriteMutation.isPending}
       />
+      <ProUpsellBanner compact />
     </PageShell>
   );
 }

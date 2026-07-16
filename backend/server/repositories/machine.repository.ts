@@ -28,7 +28,7 @@ interface BrandRow {
   is_active: boolean;
 }
 
-function mapMachine(row: MachineRow): Machine {
+function mapMachine(row: MachineRow, primaryImageUrl?: string | null): Machine {
   return {
     id: row.id,
     brandId: row.brand_id,
@@ -43,6 +43,7 @@ function mapMachine(row: MachineRow): Machine {
     hasHandle: row.has_handle,
     romType: row.rom_type ?? undefined,
     isActive: row.is_active,
+    primaryImageUrl: primaryImageUrl ?? undefined,
   };
 }
 
@@ -126,18 +127,28 @@ export const machineRepository = {
       [...params, filters.limit, filters.offset]
     );
 
-    return { items: result.rows.map(mapMachine), total };
+    return { items: result.rows.map((row) => mapMachine(row)), total };
   },
 
   async findByCode(code: string): Promise<Machine | null> {
     const pool = getPool();
     if (!pool) return MOCK_MACHINES.find((m) => m.code === code) ?? null;
 
-    const result = await pool.query<MachineRow>(
-      'SELECT * FROM machines WHERE code = $1 AND is_active = true',
+    const result = await pool.query<MachineRow & { primary_image_url: string | null }>(
+      `SELECT m.*,
+              (
+                SELECT mi.image_url
+                FROM machine_images mi
+                WHERE mi.machine_id = m.id
+                ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                LIMIT 1
+              ) AS primary_image_url
+       FROM machines m
+       WHERE m.code = $1 AND m.is_active = true`,
       [code]
     );
-    return result.rows[0] ? mapMachine(result.rows[0]) : null;
+    const row = result.rows[0];
+    return row ? mapMachine(row, row.primary_image_url) : null;
   },
 
   async findByBrandCode(brandCode: string): Promise<Machine[]> {
@@ -154,7 +165,7 @@ export const machineRepository = {
        ORDER BY m.code ASC`,
       [brandCode]
     );
-    return result.rows.map(mapMachine);
+    return result.rows.map((row) => mapMachine(row));
   },
 
   async findIdByCode(code: string): Promise<string | null> {

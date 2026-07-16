@@ -58,25 +58,48 @@ export function MyPage() {
       <div className="card" style={{ marginBottom: '1rem' }}>
         <h3 style={{ marginBottom: '0.5rem' }}>{user?.displayName}</h3>
         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-          Role: {user?.roleCode}
+          {t('myPage.role')}: {user?.roleCode}
         </p>
       </div>
+
+      <section style={{ marginBottom: '1.5rem' }}>
+        <h3 className="form-section__title" style={{ marginBottom: '0.75rem' }}>
+          {t('myPage.quickLinks')}
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <Link to={`${ROUTES.RECORDS}?tab=history`} className="btn btn--secondary btn--block">
+            {t('nav.records')}
+          </Link>
+          <Link to={ROUTES.SETTINGS} className="btn btn--secondary btn--block">
+            {t('nav.settings')}
+          </Link>
+          <Link to={ROUTES.NOTIFICATIONS} className="btn btn--secondary btn--block">
+            {t('nav.notifications')}
+          </Link>
+        </div>
+      </section>
+
+      <section style={{ marginBottom: '1.5rem' }}>
+        <h3 className="form-section__title" style={{ marginBottom: '0.75rem' }}>
+          {t('myPage.explore')}
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <Link to={ROUTES.GYMS} className="btn btn--secondary btn--block">
+            {t('nav.gyms')}
+          </Link>
+          <Link to={ROUTES.COMMUNITY} className="btn btn--secondary btn--block">
+            {t('nav.community')}
+          </Link>
+          <Link to={ROUTES.BRANDS} className="btn btn--secondary btn--block">
+            {t('nav.brands')}
+          </Link>
+        </div>
+      </section>
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <Link to={ROUTES.FAVORITES} className="btn btn--secondary btn--block">
-          {t('nav.favorites')}
-        </Link>
-        <Link to={ROUTES.HISTORY} className="btn btn--secondary btn--block">
-          {t('nav.history')}
-        </Link>
-        <Link to={ROUTES.SETTINGS} className="btn btn--secondary btn--block">
-          {t('nav.settings')}
-        </Link>
-        <Link to={ROUTES.NOTIFICATIONS} className="btn btn--secondary btn--block">
-          {t('nav.notifications', { defaultValue: 'Notifications' })}
-        </Link>
         {isAdmin && (
           <Link to={ROUTES.ADMIN} className="btn btn--primary btn--block">
-            Admin Dashboard
+            {t('myPage.adminDashboard')}
           </Link>
         )}
         {isOwner && !isAdmin && (

@@ -27,6 +27,29 @@
   color: var(--color-primary);
 }
 
+.bottom-nav__item--fab {
+  position: relative;
+  top: -0.65rem;
+}
+
+.bottom-nav__item--fab .bottom-nav__icon {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #111;
+  font-size: 1.35rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.bottom-nav__item--fab.bottom-nav__item--active .bottom-nav__icon {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .bottom-nav__icon {
   font-size: 1.25rem;
 }

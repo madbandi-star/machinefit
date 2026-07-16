@@ -23,6 +23,13 @@
   --setting-card-min-height: 5.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --font-size-h2: 1.125rem;
+  --touch-target-min: 44px;
+  --color-muscle-chest: #e74c3c;
+  --color-muscle-back: #3498db;
+  --color-muscle-legs: #2ecc71;
+  --color-muscle-shoulders: #9b59b6;
 }
 
 [data-theme='light'] {

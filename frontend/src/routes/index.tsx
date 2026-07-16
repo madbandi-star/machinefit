@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
@@ -10,13 +11,13 @@ import { ROUTES } from '@/constants/routes';
 import { HomePage } from '@/pages/home/HomePage';
 import { MachineSearchPage } from '@/pages/machine-search/MachineSearchPage';
 import { BrandListPage } from '@/pages/brand-list/BrandListPage';
+import { BrandDetailPage } from '@/pages/brand-detail/BrandDetailPage';
 import { MachineDetailPage } from '@/pages/machine-detail/MachineDetailPage';
 import { RecommendationFormPage } from '@/pages/recommendation-result/RecommendationFormPage';
 import { RecommendationResultPage } from '@/pages/recommendation-result/RecommendationResultPage';
 import { GymFinderPage } from '@/pages/gym-finder/GymFinderPage';
 import { GymDetailPage } from '@/pages/gym-detail/GymDetailPage';
-import { FavoritesPage } from '@/pages/favorites/FavoritesPage';
-import { RecentHistoryPage } from '@/pages/recent-history/RecentHistoryPage';
+import { RecordsPage } from '@/pages/records/RecordsPage';
 import { CommunityPage } from '@/pages/community/CommunityPage';
 import { PostDetailPage } from '@/pages/community/PostDetailPage';
 import { MachineRequestBoardPage } from '@/pages/machine-request-board/MachineRequestBoardPage';
@@ -33,33 +34,58 @@ import { AdminMachinesPage } from '@/pages/admin/machines/AdminMachinesPage';
 import { AdminModerationPage } from '@/pages/admin/moderation/AdminModerationPage';
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage';
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
+import { QrRedirectPage } from '@/pages/qr-redirect/QrRedirectPage';
+import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+
+const QrScanPage = lazy(() =>
+  import('@/pages/qr-scan/QrScanPage').then((m) => ({ default: m.QrScanPage }))
+);
+
+function QrScanPageLazy() {
+  return (
+    <Suspense fallback={<Skeleton count={3} height={100} />}>
+      <QrScanPage />
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter(
   [
     {
-      element: (
-        <AuthGuard>
-          <MainLayout />
-        </AuthGuard>
-      ),
+      element: <MainLayout />,
       children: [
         { path: ROUTES.HOME, element: <HomePage /> },
         { path: ROUTES.MACHINES, element: <MachineSearchPage /> },
         { path: ROUTES.BRANDS, element: <BrandListPage /> },
+        { path: ROUTES.BRAND_DETAIL, element: <BrandDetailPage /> },
         { path: ROUTES.MACHINE_DETAIL, element: <MachineDetailPage /> },
-        { path: ROUTES.RECOMMEND, element: <RecommendationFormPage /> },
-        { path: ROUTES.RECOMMEND_RESULT, element: <RecommendationResultPage /> },
+        { path: ROUTES.SCAN, element: <QrScanPageLazy /> },
+        { path: ROUTES.QR, element: <QrRedirectPage /> },
         { path: ROUTES.GYMS, element: <GymFinderPage /> },
         { path: ROUTES.GYM_DETAIL, element: <GymDetailPage /> },
         { path: ROUTES.COMMUNITY, element: <CommunityPage /> },
         { path: ROUTES.MACHINE_REQUESTS, element: <MachineRequestBoardPage /> },
         { path: ROUTES.FREE_BOARD, element: <FreeBoardPage /> },
         { path: ROUTES.POST_DETAIL, element: <PostDetailPage /> },
-        { path: ROUTES.FAVORITES, element: <FavoritesPage /> },
-        { path: ROUTES.HISTORY, element: <RecentHistoryPage /> },
-        { path: ROUTES.MY_PAGE, element: <MyPage /> },
-        { path: ROUTES.SETTINGS, element: <SettingsPage /> },
-        { path: ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
+        {
+          path: ROUTES.HISTORY,
+          element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
+        },
+        {
+          path: ROUTES.FAVORITES,
+          element: <Navigate to={`${ROUTES.RECORDS}?tab=favorites`} replace />,
+        },
+        {
+          element: <AuthGuard />,
+          children: [
+            { path: ROUTES.RECORDS, element: <RecordsPage /> },
+            { path: ROUTES.RECOMMEND, element: <RecommendationFormPage /> },
+            { path: ROUTES.RECOMMEND_RESULT, element: <RecommendationResultPage /> },
+            { path: ROUTES.MY_PAGE, element: <MyPage /> },
+            { path: ROUTES.SETTINGS, element: <SettingsPage /> },
+            { path: ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
+          ],
+        },
         { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
       ],
     },

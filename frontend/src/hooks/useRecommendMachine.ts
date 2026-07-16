@@ -53,7 +53,13 @@ export function useRecommendMachine(machineCode: string | undefined) {
     onError: (error: unknown) => {
       if (error instanceof Error && error.message === 'missing_profile') {
         showToast(t('auth.profileRequiredForRecommend'), 'error');
-        navigate(ROUTES.SETTINGS);
+        navigate(ROUTES.SETTINGS, {
+          state: {
+            returnTo: machineCode
+              ? ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)
+              : undefined,
+          },
+        });
         return;
       }
       showToast(t('errors.submitFailed'), 'error');

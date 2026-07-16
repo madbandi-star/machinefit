@@ -10,3 +10,10 @@ export const machineListQuerySchema = z.object({
 });
 
 export type MachineListQuery = z.infer<typeof machineListQuerySchema>;
+
+export const historyListQuerySchema = z.object({
+  machineCode: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
+
+export type HistoryListQuery = z.infer<typeof historyListQuerySchema>;

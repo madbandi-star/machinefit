@@ -1,12 +1,37 @@
 {
-  "search": "Search machines",
+  "searchTitle": "Search machines",
+  "searchPlaceholder": "Search by name or code",
+  "filterAll": "All",
+  "filterByMuscle": "Filter by muscle group",
+  "notFound": "Machine not found",
+  "error": "Error",
   "muscleGroups": {
     "back": "Back",
     "chest": "Chest",
     "legs": "Legs",
     "shoulders": "Shoulders"
   },
+  "machineTypes": {
+    "plate_loaded": "Plate Loaded",
+    "selectorized": "Selectorized",
+    "cable": "Cable",
+    "smith": "Smith"
+  },
+  "search": {
+    "empty": "No machines available",
+    "emptyHint": "Try a different muscle filter or search term.",
+    "noResults": "No results found",
+    "noResultsHint": "Shorten your search or clear filters."
+  },
+  "detail": {
+    "lastRecommend": "Last recommendation",
+    "viewLastResult": "View last result"
+  },
+  "brandDetail": {
+    "subtitle": "Machines by {{code}}"
+  },
   "recommend": "Get Recommendation",
+  "recommendLogin": "Sign in to get recommendation",
   "recommendLoading": "Generating recommendation...",
   "recommendation": {
     "title": "Recommended Settings",
@@ -21,6 +46,14 @@
     "subtitle": "Your recent recommendation history",
     "empty": "No history yet. Get a recommendation first!",
     "clearAll": "Clear All"
+  },
+  "records": {
+    "subtitle": "Recent recommendations and favorites",
+    "tabsLabel": "Records tabs"
+  },
+  "favorites": {
+    "empty": "No favorites yet.",
+    "remove": "Remove"
   },
   "settings": {
     "seat": "Seat Position",

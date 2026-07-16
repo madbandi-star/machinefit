@@ -18,9 +18,22 @@ export interface HistoryItem {
 }
 
 export const historyRepository = {
-  async listByUser(userId: string, limit = 20): Promise<HistoryItem[]> {
+  async listByUser(
+    userId: string,
+    options: { limit?: number; machineCode?: string } = {}
+  ): Promise<HistoryItem[]> {
     const pool = getPool();
     if (!pool) return [];
+
+    const limit = options.limit ?? 20;
+    const params: unknown[] = [userId];
+    let machineFilter = '';
+
+    if (options.machineCode) {
+      params.push(options.machineCode);
+      machineFilter = ` AND m.code = $${params.length}`;
+    }
+    params.push(limit);
 
     const result = await pool.query<{
       id: string;
@@ -43,10 +56,10 @@ export const historyRepository = {
        FROM recent_history h
        JOIN machines m ON m.id = h.machine_id
        JOIN machine_recommendations r ON r.id = h.recommendation_id
-       WHERE h.user_id = $1
+       WHERE h.user_id = $1${machineFilter}
        ORDER BY h.viewed_at DESC
-       LIMIT $2`,
-      [userId, limit]
+       LIMIT $${params.length}`,
+      params
     );
 
     return result.rows.map((row) => ({

@@ -1,68 +1,45 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { MachineCard } from '@/components/cards/MachineCard/MachineCard';
-import { BrandCard } from '@/components/cards/BrandCard/BrandCard';
-import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
-import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { QuickSearchBar } from '@/components/home/QuickSearchBar/QuickSearchBar';
+import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
+import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
+import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
+import { MuscleGroupShortcuts } from '@/components/home/MuscleGroupShortcuts/MuscleGroupShortcuts';
+import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
+import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
-import { QUERY_KEYS } from '@/constants/query-keys';
-import { machineApi, brandApi } from '@/api';
-import '@/styles/components.css';
+import '@/styles/home.css';
 
 export function HomePage() {
   const { t } = useTranslation();
-
-  const { data: machines, isLoading: machinesLoading, isError: machinesError } = useQuery({
-    queryKey: QUERY_KEYS.machines,
-    queryFn: async () => {
-      const res = await machineApi.list({ limit: 6 });
-      return res.data.data.items;
-    },
-  });
-
-  const { data: brands, isLoading: brandsLoading, isError: brandsError } = useQuery({
-    queryKey: QUERY_KEYS.brands,
-    queryFn: async () => {
-      const res = await brandApi.list();
-      return res.data.data;
-    },
-  });
+  const location = useLocation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   return (
     <PageShell title={t('pages.home.title')} subtitle={t('pages.home.subtitle')}>
-      <div style={{ marginBottom: '2rem' }}>
-        <Link to={ROUTES.MACHINES} className="btn btn--primary btn--block">
-          🔧 {t('nav.machines')}
-        </Link>
-      </div>
-
-      <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>{t('nav.brands')}</h2>
-      {brandsLoading ? (
-        <Skeleton count={3} height={60} />
-      ) : brandsError ? (
-        <QueryErrorMessage />
-      ) : (
-        <div className="card-grid">
-          {brands?.map((brand) => (
-            <BrandCard key={brand.id} brand={brand} />
-          ))}
+      <QuickSearchBar />
+      <InstallPromptBanner />
+      {!isAuthenticated && (
+        <div className="profile-incomplete-banner" style={{ marginBottom: 'var(--space-lg)' }}>
+          <div className="profile-incomplete-banner__text">
+            <strong>{t('pages.home.guestTitle')}</strong>
+            {t('pages.home.guestHint')}
+          </div>
+          <Link
+            to={ROUTES.LOGIN}
+            state={{ from: location }}
+            className="btn btn--primary"
+            style={{ flexShrink: 0 }}
+          >
+            {t('nav.login')}
+          </Link>
         </div>
       )}
-
-      <h2 style={{ fontSize: '1.1rem', margin: '2rem 0 1rem' }}>{t('nav.machines')}</h2>
-      {machinesLoading ? (
-        <Skeleton count={3} height={80} />
-      ) : machinesError ? (
-        <QueryErrorMessage />
-      ) : (
-        <div className="card-grid">
-          {machines?.map((machine) => (
-            <MachineCard key={machine.id} machine={machine} />
-          ))}
-        </div>
-      )}
+      {isAuthenticated && <ProfileIncompleteBanner />}
+      {isAuthenticated && <RecentMachinesRow />}
+      {isAuthenticated && <FavoriteMachinesRow />}
+      <MuscleGroupShortcuts />
     </PageShell>
   );
 }

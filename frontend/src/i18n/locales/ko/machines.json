@@ -1,12 +1,37 @@
 {
-  "search": "머신 검색",
+  "searchTitle": "머신 검색",
+  "searchPlaceholder": "머신 이름 또는 코드 검색",
+  "filterAll": "전체",
+  "filterByMuscle": "부위별 필터",
+  "notFound": "머신을 찾을 수 없습니다",
+  "error": "오류",
   "muscleGroups": {
     "back": "등",
     "chest": "가슴",
     "legs": "다리",
     "shoulders": "어깨"
   },
+  "machineTypes": {
+    "plate_loaded": "플레이트 로드",
+    "selectorized": "셀렉터라이즈드",
+    "cable": "케이블",
+    "smith": "스미스"
+  },
+  "search": {
+    "empty": "등록된 머신이 없습니다",
+    "emptyHint": "다른 부위 필터를 선택하거나 검색어를 바꿔보세요.",
+    "noResults": "검색 결과가 없습니다",
+    "noResultsHint": "검색어를 줄이거나 필터를 해제해 보세요."
+  },
+  "detail": {
+    "lastRecommend": "마지막 추천 설정",
+    "viewLastResult": "마지막 결과 보기"
+  },
+  "brandDetail": {
+    "subtitle": "{{code}} 브랜드 머신"
+  },
   "recommend": "추천 받기",
+  "recommendLogin": "로그인 후 추천 받기",
   "recommendLoading": "추천 생성 중...",
   "recommendation": {
     "title": "추천 설정",
@@ -21,6 +46,14 @@
     "subtitle": "최근 추천 기록",
     "empty": "기록이 없습니다. 머신 추천을 받아보세요.",
     "clearAll": "전체 삭제"
+  },
+  "records": {
+    "subtitle": "최근 추천과 즐겨찾기",
+    "tabsLabel": "기록 탭"
+  },
+  "favorites": {
+    "empty": "즐겨찾기가 없습니다.",
+    "remove": "삭제"
   },
   "settings": {
     "seat": "시트 위치",

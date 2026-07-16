@@ -10,6 +10,7 @@ export const ROUTES = {
   GYM_DETAIL: '/gyms/:gymId',
   FAVORITES: '/favorites',
   HISTORY: '/history',
+  RECORDS: '/records',
   COMMUNITY: '/community',
   MACHINE_REQUESTS: '/community/requests',
   FREE_BOARD: '/community/free',
@@ -28,5 +29,7 @@ export const ROUTES = {
   ADMIN_MACHINES: '/admin/machines',
   ADMIN_MODERATION: '/admin/moderation',
   NOTIFICATIONS: '/notifications',
+  SCAN: '/scan',
+  QR: '/qr/:qrCode',
   NOT_FOUND: '*',
 } as const;

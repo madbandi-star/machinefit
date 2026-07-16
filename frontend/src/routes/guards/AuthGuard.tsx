@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
@@ -7,7 +7,7 @@ import { ROLE_HIERARCHY } from '@machinefit/shared';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 
 interface AuthGuardProps {
-  children: ReactNode;
+  children?: ReactNode;
   minRole?: RoleCode;
 }
 
@@ -27,5 +27,6 @@ export function AuthGuard({ children, minRole = 'member' }: AuthGuardProps) {
     return <Navigate to={ROUTES.HOME} replace />;
   }
 
-  return <>{children}</>;
+  if (children) return <>{children}</>;
+  return <Outlet />;
 }

@@ -1,0 +1,76 @@
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
+import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
+import { QUERY_KEYS } from '@/constants/query-keys';
+import { brandApi } from '@/api';
+import { getLocalizedName } from '@/utils/localizedName';
+import '@/styles/machines.css';
+
+export function BrandDetailPage() {
+  const { brandCode } = useParams<{ brandCode: string }>();
+  const { t, i18n } = useTranslation('machines');
+
+  const { data: brand, isLoading: brandLoading, isError: brandError } = useQuery({
+    queryKey: QUERY_KEYS.brand(brandCode!),
+    queryFn: async () => {
+      const res = await brandApi.getByCode(brandCode!);
+      return res.data.data;
+    },
+    enabled: !!brandCode,
+  });
+
+  const { data: machines, isLoading: machinesLoading } = useQuery({
+    queryKey: [...QUERY_KEYS.machines, 'brand', brandCode],
+    queryFn: async () => {
+      const res = await brandApi.getMachines(brandCode!);
+      return res.data.data;
+    },
+    enabled: !!brandCode,
+  });
+
+  if (brandLoading) return <Skeleton count={3} height={80} />;
+  if (brandError) {
+    return (
+      <PageShell title={t('error', { defaultValue: 'Error' })}>
+        <QueryErrorMessage />
+      </PageShell>
+    );
+  }
+  if (!brand) {
+    return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
+  }
+
+  const name = getLocalizedName(brand.name, i18n.language, brand.code);
+
+  return (
+    <PageShell title={name} subtitle={t('brandDetail.subtitle', { code: brand.code })}>
+      {brand.logoUrl && (
+        <img
+          src={brand.logoUrl}
+          alt={name}
+          style={{
+            maxHeight: 48,
+            marginBottom: '1rem',
+            objectFit: 'contain',
+          }}
+        />
+      )}
+      {machinesLoading ? (
+        <Skeleton count={4} height={72} />
+      ) : !machines?.length ? (
+        <MachineEmptyState />
+      ) : (
+        <div className="machine-list">
+          {machines.map((machine) => (
+            <MachineListItem key={machine.id} machine={machine} />
+          ))}
+        </div>
+      )}
+    </PageShell>
+  );
+}

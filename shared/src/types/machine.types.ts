@@ -24,6 +24,7 @@ export interface Machine {
   hasHandle: boolean;
   romType?: string;
   isActive: boolean;
+  primaryImageUrl?: string;
 }
 
 export interface MachineImage {

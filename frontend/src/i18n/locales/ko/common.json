@@ -9,6 +9,7 @@
     "community": "커뮤니티",
     "favorites": "즐겨찾기",
     "history": "최근 기록",
+    "records": "기록",
     "myPage": "마이페이지",
     "settings": "설정",
     "login": "로그인",
@@ -63,16 +64,77 @@
       "professional": "전문가"
     },
     "profileSaved": "프로필이 저장되었습니다.",
-    "profileRequiredForRecommend": "키 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요."
+    "profileRequiredForRecommend": "키 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요.",
+    "gender": "성별",
+    "genders": {
+      "male": "남",
+      "female": "여",
+      "other": "기타"
+    },
+    "genderUnset": "성별 미설정",
+    "profileSummary": "추천 프로필",
+    "profileUnset": "키 미설정",
+    "profileIncompleteHint": "키와 성별을 입력하면 더 정확한 추천을 받을 수 있습니다."
+  },
+  "settings": {
+    "language": "언어",
+    "theme": "테마"
   },
   "pages": {
     "home": {
-      "title": "MachineFit에 오신 것을 환영합니다",
-      "subtitle": "신체 측정값을 기반으로 최적의 근력 운동 머신 세팅을 추천받으세요"
+      "title": "MachineFit",
+      "subtitle": "기구 앞에서 바로 맞춤 세팅 확인",
+      "searchPlaceholder": "기구 검색...",
+      "profileIncomplete": "프로필 설정 필요",
+      "completeProfile": "설정하기",
+      "recentMachines": "최근 본 기구",
+      "recentEmpty": "아직 추천 기록이 없습니다.",
+      "favorites": "즐겨찾기",
+      "favoritesEmpty": "저장한 기구가 없습니다.",
+      "muscleShortcuts": "부위별 바로가기",
+      "guestTitle": "로그인하고 맞춤 추천 받기",
+      "guestHint": "머신 검색은 로그인 없이 이용할 수 있습니다."
     },
     "notFound": {
       "title": "페이지를 찾을 수 없습니다",
       "message": "요청하신 페이지가 존재하지 않습니다."
     }
+  },
+  "myPage": {
+    "role": "역할",
+    "quickLinks": "바로가기",
+    "explore": "더보기",
+    "adminDashboard": "관리자 대시보드"
+  },
+  "pwa": {
+    "installTitle": "앱으로 설치하기",
+    "installHint": "홈 화면에 추가하면 헬스장에서 더 빠르게 열 수 있습니다.",
+    "installAction": "설치"
+  },
+  "pro": {
+    "badge": "Pro",
+    "title": "MachineFit Pro",
+    "description": "더 정밀한 추천과 헬스장 기능을 곧 제공합니다.",
+    "features": [
+      "AI 카메라 기구 인식",
+      "무제한 추천 히스토리",
+      "헬스장별 세팅 저장",
+      "광고 없는 경험"
+    ],
+    "comingSoon": "출시 예정",
+    "upsellTitle": "Pro로 더 정밀한 추천",
+    "upsellDesc": "AI 카메라 인식과 헬스장 맞춤 기능이 곧 추가됩니다.",
+    "learnMore": "Pro 알아보기"
+  },
+  "qr": {
+    "scanTitle": "QR 스캔",
+    "scanSubtitle": "기구 QR 코드를 스캔하거나 코드를 직접 입력하세요",
+    "scanHint": "QR 코드 형식: MF-머신코드",
+    "cameraUnavailable": "카메라를 사용할 수 없습니다. 아래에 코드를 입력하세요.",
+    "manualLabel": "QR / 머신 코드",
+    "manualPlaceholder": "MF-HS_LEG_EXTENSION",
+    "submit": "기구 찾기",
+    "notFound": "QR 코드를 찾을 수 없습니다.",
+    "resolving": "기구 연결 중..."
   }
 }

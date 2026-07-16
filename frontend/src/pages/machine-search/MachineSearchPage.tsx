@@ -1,40 +1,62 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
-import { MachineCard } from '@/components/cards/MachineCard/MachineCard';
+import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
+import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
+import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { machineApi } from '@/api';
+import '@/styles/machines.css';
 
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
   const { t: tCommon } = useTranslation();
-  const [query, setQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
+  const [muscleGroup, setMuscleGroup] = useState<string | null>(
+    () => searchParams.get('muscle')
+  );
+
+  useEffect(() => {
+    setQuery(searchParams.get('q') ?? '');
+    setMuscleGroup(searchParams.get('muscle'));
+  }, [searchParams]);
 
   const { data, isLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, query],
+    queryKey: [...QUERY_KEYS.machines, query, muscleGroup],
     queryFn: async (): Promise<Machine[]> => {
-      if (query) {
-        const res = await machineApi.search(query);
-        return res.data.data;
+      if (query.trim()) {
+        const res = await machineApi.search(query.trim());
+        const items = res.data.data;
+        if (!muscleGroup) return items;
+        return items.filter((m) => m.muscleGroup === muscleGroup);
       }
-      const res = await machineApi.list();
+      const params: Record<string, string | number> = { limit: 100 };
+      if (muscleGroup) params.muscleGroup = muscleGroup;
+      const res = await machineApi.list(params);
       return res.data.data.items;
     },
   });
 
+  const hasFilters = !!query.trim() || !!muscleGroup;
+
   return (
-    <PageShell title={t('search')} subtitle={tCommon('nav.machines')}>
-      <SearchBar value={query} onChange={setQuery} placeholder={t('search')} />
+    <PageShell title={t('searchTitle')} subtitle={tCommon('nav.machines')}>
+      <SearchBar value={query} onChange={setQuery} placeholder={t('searchPlaceholder')} />
+      <FilterChips value={muscleGroup} onChange={setMuscleGroup} />
       {isLoading ? (
-        <Skeleton count={5} height={80} />
+        <Skeleton count={5} height={72} />
+      ) : !data?.length ? (
+        <MachineEmptyState hasQuery={hasFilters} />
       ) : (
-        <div className="card-grid">
-          {data?.map((machine) => (
-            <MachineCard key={machine.id} machine={machine} />
+        <div className="machine-list">
+          {data.map((machine) => (
+            <MachineListItem key={machine.id} machine={machine} />
           ))}
         </div>
       )}

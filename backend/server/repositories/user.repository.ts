@@ -140,6 +140,7 @@ export const userRepository = {
     userId: string,
     data: {
       displayName?: string;
+      gender?: 'male' | 'female' | 'other';
       heightCm?: number;
       weightKg?: number;
       unitHeight?: 'cm' | 'ft_in';
@@ -157,6 +158,10 @@ export const userRepository = {
     if (data.displayName !== undefined) {
       fields.push(`display_name = $${index++}`);
       values.push(data.displayName);
+    }
+    if (data.gender !== undefined) {
+      fields.push(`gender = $${index++}`);
+      values.push(data.gender);
     }
     if (data.heightCm !== undefined) {
       fields.push(`height_cm = $${index++}`);
