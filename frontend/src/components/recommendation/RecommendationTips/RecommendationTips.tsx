@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/components/icons/Icon';
 import '@/styles/recommendation.css';
 
 interface RecommendationTipsProps {
@@ -11,13 +12,19 @@ export function RecommendationTips({ tips }: RecommendationTipsProps) {
   if (tips.length === 0) return null;
 
   return (
-    <aside className="recommendation-tips" role="note" aria-label={t('recommendation.tipsTitle')}>
-      <h3 className="recommendation-tips__title">{t('recommendation.tipsTitle')}</h3>
+    <details className="recommendation-collapsible recommendation-tips">
+      <summary className="recommendation-collapsible__summary">
+        <span className="recommendation-collapsible__label">
+          {t('recommendation.tipsTitle')}
+          <span className="recommendation-collapsible__count">{tips.length}</span>
+        </span>
+        <Icon name="chevronDown" size={18} className="recommendation-collapsible__chevron" />
+      </summary>
       <ul className="recommendation-tips__list">
         {tips.map((tip, i) => (
           <li key={i}>{tip}</li>
         ))}
       </ul>
-    </aside>
+    </details>
   );
 }

@@ -72,19 +72,53 @@ export function RecommendationSettingsPanel({
     );
   }
 
+  if (!compact && items.length > 0) {
+    const [hero, ...rest] = items;
+
+    return (
+      <div
+        className="recommendation-settings-panel recommendation-settings-panel--dashboard"
+        role="list"
+        aria-label={t('recommendation.title')}
+      >
+        <div role="listitem">
+          <SettingValueCard
+            label={hero.label}
+            value={hero.value}
+            unit={hero.unit}
+            highlight
+          />
+        </div>
+        {rest.length > 0 && (
+          <div className="recommendation-settings-panel__grid" role="presentation">
+            {rest.map((item) => (
+              <div key={item.key} role="listitem">
+                <SettingValueCard
+                  label={item.label}
+                  value={item.value}
+                  unit={item.unit}
+                  compact
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={`recommendation-settings-panel${compact ? ' recommendation-settings-panel--compact' : ''}`}
       role="list"
       aria-label={t('recommendation.title')}
     >
-      {items.map((item, index) => (
+      {items.map((item) => (
         <div key={item.key} role="listitem">
           <SettingValueCard
             label={item.label}
             value={item.value}
             unit={item.unit}
-            highlight={!compact && index === 0}
             compact={compact}
           />
         </div>

@@ -49,6 +49,7 @@
   --header-base-height: 56px;
   --bottom-nav-base-height: 56px;
   --sticky-action-height: 52px;
+  --recommendation-action-height: 4.25rem;
   --header-height: calc(var(--header-base-height) + var(--safe-area-top));
   --bottom-nav-height: calc(var(--bottom-nav-base-height) + var(--safe-area-bottom));
 
@@ -68,10 +69,13 @@
   --font-size-h1: 1.5rem;
   --font-size-display: 3.25rem;
   --font-size-setting-label: 0.6875rem;
+  --font-size-setting-label-compact: 0.625rem;
   --font-size-setting-value: var(--font-size-display);
+  --font-size-setting-value-mobile: 2.75rem;
   --font-size-setting-value-sm: 2.25rem;
   --font-size-setting-value-compact: 1.625rem;
   --setting-card-min-height: 6rem;
+  --setting-card-min-height-mobile: 4.75rem;
 
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;

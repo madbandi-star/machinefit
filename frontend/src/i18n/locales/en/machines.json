@@ -40,7 +40,8 @@
     "warningsTitle": "Warnings",
     "saveFavorite": "Save to Favorites",
     "retryRecommend": "Recommend Again",
-    "findGyms": "Find Gyms with This Machine"
+    "findGyms": "Find Gyms with This Machine",
+    "moreActions": "More actions"
   },
   "history": {
     "subtitle": "Your recent recommendation history",

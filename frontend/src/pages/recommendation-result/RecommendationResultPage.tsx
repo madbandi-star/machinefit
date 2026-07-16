@@ -8,20 +8,21 @@ import { RecommendationSettingsPanel } from '@/components/recommendation/Recomme
 import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
-import { ProUpsellBanner } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { favoriteApi, recommendationApi } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
-import '@/styles/phase4.css';
 
 function ResultLoadingSkeleton() {
   return (
-    <div className="recommendation-settings-panel" aria-hidden="true">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="setting-value-card-skeleton skeleton" />
-      ))}
+    <div className="recommendation-settings-panel recommendation-settings-panel--dashboard" aria-hidden="true">
+      <div className="setting-value-card-skeleton skeleton" />
+      <div className="recommendation-settings-panel__grid">
+        {[0, 1].map((i) => (
+          <div key={i} className="setting-value-card-skeleton skeleton" />
+        ))}
+      </div>
     </div>
   );
 }
@@ -81,17 +82,23 @@ export function RecommendationResultPage() {
 
   return (
     <div className="recommendation-result-page">
-      <PageShell title={machineTitle} subtitle={result.machineCode}>
-        <RecommendationSettingsPanel settings={result.settings} variant="hero" />
+      <header className="recommendation-result-page__header">
+        <h1 className="recommendation-result-page__title">{machineTitle}</h1>
+        <span className="recommendation-result-page__code">{result.machineCode}</span>
+      </header>
+
+      <div className="recommendation-result-page__content">
         <RecommendationWarnings warnings={result.warnings} />
+        <RecommendationSettingsPanel settings={result.settings} variant="hero" />
         <RecommendationTips tips={result.tips} />
-        <RecommendationActionBar
-          machineCode={result.machineCode}
-          onSave={() => favoriteMutation.mutate()}
-          isSaving={favoriteMutation.isPending}
-        />
-        <ProUpsellBanner compact />
-      </PageShell>
+      </div>
+
+      <RecommendationActionBar
+        machineCode={result.machineCode}
+        onSave={() => favoriteMutation.mutate()}
+        isSaving={favoriteMutation.isPending}
+        fixed
+      />
     </div>
   );
 }
