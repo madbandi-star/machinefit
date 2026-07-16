@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { HomeHero } from '@/components/home/HomeHero/HomeHero';
 import { QuickSearchBar } from '@/components/home/QuickSearchBar/QuickSearchBar';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
@@ -17,11 +17,20 @@ export function HomePage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   return (
-    <PageShell title={t('pages.home.title')} subtitle={t('pages.home.subtitle')}>
-      <QuickSearchBar />
+    <div className="home-page">
+      <HomeHero isAuthenticated={isAuthenticated} />
+
+      <section className="home-search-section">
+        <h2 className="home-section__title home-section__title--spaced">
+          {t('pages.home.searchSectionTitle')}
+        </h2>
+        <QuickSearchBar />
+      </section>
+
       <InstallPromptBanner />
+
       {!isAuthenticated && (
-        <div className="profile-incomplete-banner" style={{ marginBottom: 'var(--space-lg)' }}>
+        <div className="profile-incomplete-banner">
           <div className="profile-incomplete-banner__text">
             <strong>{t('pages.home.guestTitle')}</strong>
             {t('pages.home.guestHint')}
@@ -29,17 +38,18 @@ export function HomePage() {
           <Link
             to={ROUTES.LOGIN}
             state={{ from: location }}
-            className="btn btn--primary"
+            className="btn btn--secondary"
             style={{ flexShrink: 0 }}
           >
             {t('nav.login')}
           </Link>
         </div>
       )}
+
       {isAuthenticated && <ProfileIncompleteBanner />}
       {isAuthenticated && <RecentMachinesRow />}
       {isAuthenticated && <FavoriteMachinesRow />}
       <MuscleGroupShortcuts />
-    </PageShell>
+    </div>
   );
 }

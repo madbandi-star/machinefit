@@ -17,7 +17,7 @@ export function Header() {
         <span className="header__logo-icon" aria-hidden>
           <Icon name="dumbbell" size={18} />
         </span>
-        {t('appName')}
+        Machine<span className="header__logo-fit">Fit</span>
       </Link>
       <div className="header__actions">
         <LanguageSelector />
