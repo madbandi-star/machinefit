@@ -1,8 +1,11 @@
+# Reference for manual free-tier Web Service setup (Blueprint may require paid/card).
+# Create via Render Dashboard: New → Web Service (not Blueprint).
 services:
   - type: web
     name: machinefit-api
+    plan: free
     runtime: node
-    buildCommand: npm install && npm run build --workspace=shared && npm run build --workspace=backend
+    buildCommand: npm ci --include=dev && npm run build:render
     startCommand: npm run start --workspace=backend
     healthCheckPath: /api/v1/health
     envVars:

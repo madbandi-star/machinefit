@@ -67,9 +67,37 @@ Then set these in **GitHub → Settings → Secrets → Actions**:
 |--------|-------|
 | `VITE_API_BASE_URL` | `https://YOUR-RENDER-APP.onrender.com/api/v1` |
 
-Set in **Render → Environment** (see `config/env/deployment-secrets.example`):
+Print copy-paste values from local `backend/.env`:
 
-- `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`
+```powershell
+.\scripts\print-deploy-env.ps1
+```
+
+#### Render (free Web Service — not Blueprint)
+
+1. [render.com](https://render.com) → **New +** → **Web Service** (Blueprint is paid/card-required)
+2. Connect repo `madbandi-star/machinefit`, branch `main`
+3. Settings:
+
+| Field | Value |
+|-------|-------|
+| Name | `machinefit-api` |
+| Root Directory | *(leave empty — repo root, not `frontend`)* |
+| Runtime | Node |
+| Build Command | `npm ci --include=dev && npm run build:render` |
+| Start Command | `npm run start --workspace=backend` |
+| Instance Type | **Free** |
+| Health Check Path | `/api/v1/health` |
+
+4. **Environment** — paste from `print-deploy-env.ps1`:
+
+- `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`
+- `CORS_ORIGIN` = `https://madbandi-star.github.io`
+- `NODE_ENV` = `production`, `PORT` = `3001`, `API_BASE_PATH` = `/api/v1`
+
+5. Deploy → copy URL → set GitHub secret `VITE_API_BASE_URL` = `https://YOUR-APP.onrender.com/api/v1`
+
+See `config/env/deployment-secrets.example` and `render.yaml` (reference only).
 
 ### Development
 
