@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: machinefit-api
+    runtime: node
+    buildCommand: npm install && npm run build --workspace=shared && npm run build --workspace=backend
+    startCommand: npm run start --workspace=backend
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: API_BASE_PATH
+        value: /api/v1
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://madbandi-star.github.io
