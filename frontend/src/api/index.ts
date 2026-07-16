@@ -93,7 +93,9 @@ export const favoriteApi = {
     apiClient.post<ApiResponse<FavoriteItem>>('/favorites', { machineCode, recommendationId }),
   remove: (id: string) => apiClient.delete(`/favorites/${id}`),
   check: (machineCode: string) =>
-    apiClient.get<ApiResponse<{ favorited: boolean }>>(`/favorites/check/${machineCode}`),
+    apiClient.get<ApiResponse<{ favorited: boolean; favoriteId?: string }>>(
+      `/favorites/check/${machineCode}`
+    ),
 };
 
 export const historyApi = {

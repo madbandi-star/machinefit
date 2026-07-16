@@ -7,6 +7,7 @@ export const QUERY_KEYS = {
   gym: (id: string) => ['gyms', id] as const,
   recommendations: ['recommendations'] as const,
   favorites: ['favorites'] as const,
+  favoriteCheck: (machineCode: string) => ['favorites', 'check', machineCode] as const,
   history: ['history'] as const,
   historyList: (params?: { limit?: number }) =>
     ['history', 'list', params ?? {}] as const,

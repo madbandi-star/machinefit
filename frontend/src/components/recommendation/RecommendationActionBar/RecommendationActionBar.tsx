@@ -8,15 +8,17 @@ import '@/styles/recommendation.css';
 
 interface RecommendationActionBarProps {
   machineCode: string;
-  onSave: () => void;
-  isSaving: boolean;
+  isFavorited: boolean;
+  onToggleFavorite: () => void;
+  isFavoritePending: boolean;
   fixed?: boolean;
 }
 
 export function RecommendationActionBar({
   machineCode,
-  onSave,
-  isSaving,
+  isFavorited,
+  onToggleFavorite,
+  isFavoritePending,
   fixed = false,
 }: RecommendationActionBarProps) {
   const { t } = useTranslation('machines');
@@ -35,12 +37,20 @@ export function RecommendationActionBar({
       <div className="recommendation-action-bar__primary-row">
         <button
           type="button"
-          className="btn btn--primary recommendation-action-bar__save"
-          onClick={onSave}
-          disabled={isSaving}
+          className={[
+            'btn recommendation-action-bar__save',
+            isFavorited ? 'btn--secondary recommendation-action-bar__save--active' : 'btn--primary',
+          ].join(' ')}
+          onClick={onToggleFavorite}
+          disabled={isFavoritePending}
+          aria-pressed={isFavorited}
         >
           <Icon name="heart" size={18} />
-          {isSaving ? '...' : t('recommendation.saveFavorite')}
+          {isFavoritePending
+            ? '...'
+            : isFavorited
+              ? t('recommendation.removeFavorite')
+              : t('recommendation.saveFavorite')}
         </button>
         <button
           type="button"

@@ -20,7 +20,10 @@ export const favoriteService = {
   },
 
   async check(userId: string, machineCode: string) {
-    const favorited = await favoriteRepository.isFavorited(userId, machineCode);
-    return { favorited };
+    const favoriteId = await favoriteRepository.findIdByUserAndMachineCode(
+      userId,
+      machineCode
+    );
+    return { favorited: favoriteId != null, favoriteId: favoriteId ?? undefined };
   },
 };

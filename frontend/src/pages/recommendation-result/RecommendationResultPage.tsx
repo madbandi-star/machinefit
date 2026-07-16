@@ -1,4 +1,4 @@
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationResult } from '@machinefit/shared';
@@ -9,6 +9,7 @@ import { RecommendationTips } from '@/components/recommendation/RecommendationTi
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { favoriteApi, recommendationApi } from '@/api';
+import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -33,11 +34,13 @@ export function RecommendationResultPage() {
   const [searchParams] = useSearchParams();
   const recommendationId = searchParams.get('id');
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation(['machines', 'common']);
   const stateResult = location.state?.result as RecommendationResult | undefined;
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
   const locale = useSettingsStore((s) => s.locale);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data: fetchedResult, isLoading, isError } = useQuery({
     queryKey: ['recommendation', recommendationId, locale],
@@ -51,14 +54,51 @@ export function RecommendationResultPage() {
 
   const result = fetchedResult ?? stateResult;
 
-  const favoriteMutation = useMutation({
-    mutationFn: () => favoriteApi.add(result!.machineCode, result!.id),
-    onSuccess: async () => {
+  const { data: favoriteCheck } = useQuery({
+    queryKey: QUERY_KEYS.favoriteCheck(result?.machineCode ?? ''),
+    queryFn: async () => {
+      const res = await favoriteApi.check(result!.machineCode);
+      return res.data.data;
+    },
+    enabled: isAuthenticated && !!result?.machineCode,
+  });
+
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: async () => {
+      if (!result) throw new Error('missing_result');
+
+      if (favoriteCheck?.favorited && favoriteCheck.favoriteId) {
+        await favoriteApi.remove(favoriteCheck.favoriteId);
+        return { favorited: false as const };
+      }
+
+      const res = await favoriteApi.add(result.machineCode, result.id);
+      return {
+        favorited: true as const,
+        favoriteId: res.data.data.id,
+      };
+    },
+    onSuccess: async (data) => {
+      if (!result) return;
+      queryClient.setQueryData(QUERY_KEYS.favoriteCheck(result.machineCode), data);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites });
-      showToast(t('common:actions.save'), 'success');
+      showToast(
+        data.favorited
+          ? t('common:actions.save')
+          : t('machines:recommendation.removedFavorite'),
+        'success'
+      );
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
+
+  const handleToggleFavorite = () => {
+    if (!isAuthenticated) {
+      navigate(ROUTES.LOGIN, { state: { from: location } });
+      return;
+    }
+    toggleFavoriteMutation.mutate();
+  };
 
   if (recommendationId && isLoading && !result) {
     return (
@@ -103,8 +143,9 @@ export function RecommendationResultPage() {
 
       <RecommendationActionBar
         machineCode={result.machineCode}
-        onSave={() => favoriteMutation.mutate()}
-        isSaving={favoriteMutation.isPending}
+        isFavorited={favoriteCheck?.favorited ?? false}
+        onToggleFavorite={handleToggleFavorite}
+        isFavoritePending={toggleFavoriteMutation.isPending}
         fixed
       />
     </div>

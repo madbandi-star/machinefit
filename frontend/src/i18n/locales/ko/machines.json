@@ -39,6 +39,8 @@
     "tipsTitle": "팁",
     "warningsTitle": "주의",
     "saveFavorite": "즐겨찾기 저장",
+    "removeFavorite": "즐겨찾기 취소",
+    "removedFavorite": "즐겨찾기에서 제거했습니다",
     "retryRecommend": "다시 추천",
     "findGyms": "이 기구 있는 헬스장",
     "moreActions": "추가 작업"

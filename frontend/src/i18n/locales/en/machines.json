@@ -39,6 +39,8 @@
     "tipsTitle": "Tips",
     "warningsTitle": "Warnings",
     "saveFavorite": "Save to Favorites",
+    "removeFavorite": "Remove from Favorites",
+    "removedFavorite": "Removed from favorites",
     "retryRecommend": "Recommend Again",
     "findGyms": "Find Gyms with This Machine",
     "moreActions": "More actions"

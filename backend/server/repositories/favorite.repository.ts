@@ -69,15 +69,24 @@ export const favoriteRepository = {
   },
 
   async isFavorited(userId: string, machineCode: string): Promise<boolean> {
-    const pool = getPool();
-    if (!pool) return false;
+    const id = await this.findIdByUserAndMachineCode(userId, machineCode);
+    return id != null;
+  },
 
-    const result = await pool.query(
-      `SELECT 1 FROM favorites f
+  async findIdByUserAndMachineCode(
+    userId: string,
+    machineCode: string
+  ): Promise<string | null> {
+    const pool = getPool();
+    if (!pool) return null;
+
+    const result = await pool.query<{ id: string }>(
+      `SELECT f.id
+       FROM favorites f
        JOIN machines m ON m.id = f.machine_id
        WHERE f.user_id = $1 AND m.code = $2`,
       [userId, machineCode]
     );
-    return result.rows.length > 0;
+    return result.rows[0]?.id ?? null;
   },
 };

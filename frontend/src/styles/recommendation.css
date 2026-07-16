@@ -330,6 +330,11 @@
   padding: 0.65rem 1rem;
 }
 
+.recommendation-action-bar__save--active {
+  color: var(--color-primary);
+  border-color: rgba(0, 230, 118, 0.35);
+}
+
 .recommendation-action-bar__more {
   display: inline-flex;
   align-items: center;
