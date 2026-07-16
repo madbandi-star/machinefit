@@ -7,18 +7,29 @@ interface BeforeInstallPromptEvent extends Event {
 
 const DISMISS_KEY = 'machinefit-pwa-install-dismissed';
 
+function getIsStandalone(): boolean {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+  );
+}
+
+function getIsIos(): boolean {
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+}
+
 export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(getIsStandalone);
   const [dismissed, setDismissed] = useState(
     () => localStorage.getItem(DISMISS_KEY) === '1'
   );
 
   useEffect(() => {
-    const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
-    if (isStandalone) {
+    if (getIsStandalone()) {
       setIsInstalled(true);
       return;
     }
@@ -59,7 +70,18 @@ export function usePwaInstall() {
     setDismissed(true);
   }, []);
 
-  const canPrompt = !!deferredPrompt && !isInstalled && !dismissed;
+  const hasNativePrompt = !!deferredPrompt;
+  const needsManualInstall = !isInstalled && !deferredPrompt && getIsIos();
+  const canInstall = !isInstalled && (hasNativePrompt || needsManualInstall);
+  const canPrompt = hasNativePrompt && !isInstalled && !dismissed;
 
-  return { canPrompt, install, dismiss, isInstalled };
+  return {
+    canPrompt,
+    canInstall,
+    hasNativePrompt,
+    needsManualInstall,
+    install,
+    dismiss,
+    isInstalled,
+  };
 }

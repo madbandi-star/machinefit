@@ -138,7 +138,10 @@
   "pwa": {
     "installTitle": "Install the app",
     "installHint": "Add to your home screen for faster access at the gym.",
-    "installAction": "Install"
+    "installAction": "Install",
+    "addToHome": "Add to Home",
+    "installSuccess": "Added to your home screen.",
+    "iosInstallHint": "Tap Share in Safari, then choose \"Add to Home Screen\"."
   },
   "pro": {
     "badge": "Pro",

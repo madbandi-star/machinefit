@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
+import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
 import { ownerApi } from '@/api';
@@ -64,7 +65,11 @@ export function MyPage() {
   };
 
   return (
-    <PageShell title={t('nav.myPage')} subtitle={user?.email}>
+    <PageShell
+      title={t('nav.myPage')}
+      subtitle={user?.email}
+      action={<PwaInstallButton />}
+    >
       <div className="card profile-card">
         <h2 className="profile-card__name">{user?.displayName}</h2>
         <p className="profile-card__meta">
