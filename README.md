@@ -52,6 +52,25 @@ Copy `config/env/.env.example` values into:
 
 See [docs/database/design.md](docs/database/design.md) for full schema design.
 
+### Deployment (secrets not in Git)
+
+Local `.env` files are gitignored. Use:
+
+```powershell
+# Windows — DB password 입력 후 backend/.env + JWT 자동 생성
+.\scripts\setup-backend-env.ps1 -DbPassword "YOUR_SUPABASE_DB_PASSWORD"
+```
+
+Then set these in **GitHub → Settings → Secrets → Actions**:
+
+| Secret | Value |
+|--------|-------|
+| `VITE_API_BASE_URL` | `https://YOUR-RENDER-APP.onrender.com/api/v1` |
+
+Set in **Render → Environment** (see `config/env/deployment-secrets.example`):
+
+- `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`
+
 ### Development
 
 ```bash
