@@ -1,0 +1,36 @@
+{
+  "appName": "MachineFit",
+  "tagline": "最適なマシン設定を見つけよう",
+  "nav": {
+    "home": "ホーム",
+    "machines": "マシン",
+    "brands": "ブランド",
+    "gyms": "ジム",
+    "community": "コミュニティ",
+    "favorites": "お気に入り",
+    "history": "履歴",
+    "myPage": "マイページ",
+    "settings": "設定",
+    "login": "ログイン",
+    "register": "登録",
+    "logout": "ログアウト"
+  },
+  "actions": {
+    "search": "検索",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "submit": "送信",
+    "back": "戻る",
+    "viewAll": "すべて見る"
+  },
+  "pages": {
+    "home": {
+      "title": "MachineFitへようこそ",
+      "subtitle": "身体測定に基づいた最適な筋力トレーニングマシン設定を取得"
+    },
+    "notFound": {
+      "title": "ページが見つかりません",
+      "message": "お探しのページは存在しません。"
+    }
+  }
+}

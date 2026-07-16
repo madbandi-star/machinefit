@@ -1,0 +1,150 @@
+.post-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+
+.post-card:hover {
+  border-color: var(--color-primary);
+}
+
+.post-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.post-card__excerpt {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.post-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.post-detail__content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+.post-detail__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.comment-item {
+  padding: 0.75rem;
+  background: var(--color-surface-alt, rgba(0, 0, 0, 0.03));
+  border-radius: var(--radius-md, 8px);
+}
+
+.comment-item__author {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.comment-item__date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.request-card {
+  display: block;
+}
+
+.request-card__status {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-surface-alt, rgba(0, 0, 0, 0.06));
+  text-transform: capitalize;
+}
+
+.request-card__status--pending {
+  color: var(--color-warning, #b8860b);
+}
+
+.owner-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.owner-stat {
+  text-align: center;
+  padding: 1rem 0.5rem;
+}
+
+.owner-stat__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.owner-stat__label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.owner-gym-section {
+  margin-top: 1.5rem;
+}
+
+.inventory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+}
+
+.inventory-item:last-child {
+  border-bottom: none;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.form-row label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.9rem;
+  background: var(--color-surface, #fff);
+  color: var(--color-text, inherit);
+}
+
+.form-row textarea {
+  min-height: 80px;
+  resize: vertical;
+}

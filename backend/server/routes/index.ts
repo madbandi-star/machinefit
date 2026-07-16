@@ -1,0 +1,34 @@
+import { Router } from 'express';
+import { healthRouter } from './health.routes.js';
+import { authRouter } from './auth.routes.js';
+import { machineRouter } from './machine.routes.js';
+import { brandRouter } from './brand.routes.js';
+import { recommendationRouter } from './recommendation.routes.js';
+import { metaRouter } from './meta.routes.js';
+import { userRouter } from './user.routes.js';
+import { favoriteRouter } from './favorite.routes.js';
+import { historyRouter } from './history.routes.js';
+import { gymRouter } from './gym.routes.js';
+import { communityRouter } from './community.routes.js';
+import { machineRequestRouter } from './machine-request.routes.js';
+import { ownerRouter } from './owner.routes.js';
+import { notificationRouter } from './notification.routes.js';
+import { adminRouter } from './admin.routes.js';
+
+export const apiRouter = Router();
+
+apiRouter.use(healthRouter);
+apiRouter.use('/auth', authRouter);
+apiRouter.use('/users', userRouter);
+apiRouter.use('/machines', machineRouter);
+apiRouter.use('/brands', brandRouter);
+apiRouter.use('/recommendations', recommendationRouter);
+apiRouter.use('/favorites', favoriteRouter);
+apiRouter.use('/history', historyRouter);
+apiRouter.use('/gyms', gymRouter);
+apiRouter.use('/meta', metaRouter);
+apiRouter.use('/community', communityRouter);
+apiRouter.use('/machine-requests', machineRequestRouter);
+apiRouter.use('/owner', ownerRouter);
+apiRouter.use('/notifications', notificationRouter);
+apiRouter.use('/admin', adminRouter);

@@ -1,0 +1,36 @@
+{
+  "appName": "MachineFit",
+  "tagline": "Find your perfect machine settings",
+  "nav": {
+    "home": "Home",
+    "machines": "Machines",
+    "brands": "Brands",
+    "gyms": "Gyms",
+    "community": "Community",
+    "favorites": "Favorites",
+    "history": "History",
+    "myPage": "My Page",
+    "settings": "Settings",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "actions": {
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "back": "Back",
+    "viewAll": "View All"
+  },
+  "pages": {
+    "home": {
+      "title": "Welcome to MachineFit",
+      "subtitle": "Get optimal settings for strength training machines based on your body measurements"
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "message": "The page you are looking for does not exist."
+    }
+  }
+}

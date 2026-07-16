@@ -1,0 +1,18 @@
+{
+  "search": "Search machines",
+  "muscleGroups": {
+    "back": "Back",
+    "chest": "Chest",
+    "legs": "Legs",
+    "shoulders": "Shoulders"
+  },
+  "recommend": "Get Recommendation",
+  "settings": {
+    "seat": "Seat Position",
+    "backPad": "Back Pad",
+    "foot": "Foot Position",
+    "handle": "Handle Position",
+    "rom": "Range of Motion",
+    "weight": "Recommended Weight"
+  }
+}

@@ -1,0 +1,117 @@
+.gym-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.gym-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.gym-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.gym-card__badge {
+  font-size: 0.7rem;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.gym-card__location {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.gym-card__address {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.gym-card__meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--color-primary);
+}
+
+.gym-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.gym-filters__row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.gym-detail__photo {
+  width: 100%;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: var(--color-surface);
+}
+
+.gym-detail__section {
+  margin-bottom: 1.5rem;
+}
+
+.gym-detail__section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-primary);
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.hours-grid dt {
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+}
+
+.amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.amenity-tag {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
+.machine-inventory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.machine-inventory-item:last-child {
+  border-bottom: none;
+}
+
+.machine-inventory-item--unavailable {
+  opacity: 0.5;
+}

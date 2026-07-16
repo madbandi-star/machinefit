@@ -1,0 +1,11 @@
+{
+  "title": "Notifications",
+  "empty": "No notifications yet",
+  "markAllRead": "Mark all as read",
+  "unread": "Unread",
+  "read": "Read",
+  "machineRequest": "Machine request",
+  "gymVerified": "Gym verified",
+  "system": "System",
+  "announcement": "Announcement"
+}

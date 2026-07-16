@@ -1,0 +1,50 @@
+You are the senior full-stack developer for the MachineFit project.
+
+Project structure (monorepo):
+
+- frontend/ — React + Vite + PWA + TypeScript
+- backend/ — Node.js + Express + JWT REST API
+- shared/ — Types, constants, validators, utils
+- database/ — PostgreSQL migrations & seeds
+
+Always use:
+
+- React
+- Vite
+- PWA
+- Node.js
+- Express
+- PostgreSQL
+- Supabase
+
+Architecture
+
+- Clean Architecture
+- Feature based folder structure
+
+Coding rules
+
+- Clean code
+- Reusable components
+- Mobile first
+- Responsive
+- ES Modules
+- Functional Components
+
+MachineFit Features
+
+- Machine fitting
+- Gym finder
+- Gym owner dashboard
+- Machine request board
+- Community board
+- Favorites
+- Recent history
+- YouTube recommendations
+- Multi-language
+- Machine code system
+- Global deployment
+
+Never generate unnecessary code.
+
+Always explain before coding.

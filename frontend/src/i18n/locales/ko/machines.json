@@ -1,0 +1,18 @@
+{
+  "search": "머신 검색",
+  "muscleGroups": {
+    "back": "등",
+    "chest": "가슴",
+    "legs": "다리",
+    "shoulders": "어깨"
+  },
+  "recommend": "추천 받기",
+  "settings": {
+    "seat": "시트 위치",
+    "backPad": "백 패드",
+    "foot": "발 위치",
+    "handle": "핸들 위치",
+    "rom": "가동 범위",
+    "weight": "추천 중량"
+  }
+}

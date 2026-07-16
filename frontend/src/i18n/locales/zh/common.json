@@ -1,0 +1,36 @@
+{
+  "appName": "MachineFit",
+  "tagline": "找到最适合您的器械设置",
+  "nav": {
+    "home": "首页",
+    "machines": "器械",
+    "brands": "品牌",
+    "gyms": "健身房",
+    "community": "社区",
+    "favorites": "收藏",
+    "history": "历史记录",
+    "myPage": "我的",
+    "settings": "设置",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出"
+  },
+  "actions": {
+    "search": "搜索",
+    "save": "保存",
+    "cancel": "取消",
+    "submit": "提交",
+    "back": "返回",
+    "viewAll": "查看全部"
+  },
+  "pages": {
+    "home": {
+      "title": "欢迎使用 MachineFit",
+      "subtitle": "根据您的身体测量数据获取最佳力量训练器械设置"
+    },
+    "notFound": {
+      "title": "页面未找到",
+      "message": "您访问的页面不存在。"
+    }
+  }
+}

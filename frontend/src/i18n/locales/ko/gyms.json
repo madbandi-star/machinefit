@@ -1,0 +1,20 @@
+{
+  "title": "체육관 찾기",
+  "subtitle": "원하는 머신이 있는 체육관을 찾아보세요",
+  "searchPlaceholder": "체육관 이름 또는 도시로 검색",
+  "filterMachine": "머신으로 필터",
+  "filterCity": "도시",
+  "allMachines": "전체 머신",
+  "nearMe": "내 주변",
+  "locating": "위치 확인 중...",
+  "locationError": "위치를 가져올 수 없습니다",
+  "noResults": "체육관을 찾을 수 없습니다. 필터를 조정해 보세요.",
+  "machineInventory": "머신 목록",
+  "businessHours": "운영 시간",
+  "amenities": "편의시설",
+  "contact": "연락처",
+  "available": "사용 가능",
+  "unavailable": "사용 불가",
+  "units": "대",
+  "viewMachine": "머신 보기"
+}

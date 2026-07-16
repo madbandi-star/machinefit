@@ -1,0 +1,20 @@
+{
+  "title": "Gym Finder",
+  "subtitle": "Find gyms with your machines nearby",
+  "searchPlaceholder": "Search gyms by name or city",
+  "filterMachine": "Filter by machine",
+  "filterCity": "City",
+  "allMachines": "All machines",
+  "nearMe": "Near me",
+  "locating": "Getting location...",
+  "locationError": "Could not get your location",
+  "noResults": "No gyms found. Try adjusting your filters.",
+  "machineInventory": "Machine Inventory",
+  "businessHours": "Business Hours",
+  "amenities": "Amenities",
+  "contact": "Contact",
+  "available": "Available",
+  "unavailable": "Unavailable",
+  "units": "units",
+  "viewMachine": "View machine"
+}
