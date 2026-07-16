@@ -39,6 +39,8 @@ export const authApi = {
     apiClient.post('/auth/login', { email, password }),
   register: (data: { email: string; password: string; displayName: string }) =>
     apiClient.post('/auth/register', data),
+  refresh: (refreshToken: string) =>
+    apiClient.post('/auth/refresh', { refreshToken }),
 };
 
 export const userApi = {

@@ -4,13 +4,16 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { historyApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useUIStore } from '@/store/ui.store';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import '@/styles/components.css';
 
 export function RecentHistoryPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const showToast = useUIStore((s) => s.showToast);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.history,
     queryFn: async () => {
       const res = await historyApi.list();
@@ -21,12 +24,15 @@ export function RecentHistoryPage() {
   const clearMutation = useMutation({
     mutationFn: () => historyApi.clear(),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
 
   return (
     <PageShell title={t('nav.history')} subtitle="Your recent recommendation history">
       {isLoading ? (
         <Skeleton count={3} height={80} />
+      ) : isError ? (
+        <QueryErrorMessage />
       ) : data?.length === 0 ? (
         <p style={{ color: 'var(--color-text-muted)' }}>No history yet. Get a recommendation first!</p>
       ) : (

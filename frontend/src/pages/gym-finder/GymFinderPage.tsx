@@ -110,7 +110,7 @@ export function GymFinderPage() {
         </div>
         <div className="gym-filters__row">
           <button className="btn btn--primary" onClick={handleSearch}>
-            Search
+            {t('actions.search')}
           </button>
           <button
             className="btn btn--secondary"

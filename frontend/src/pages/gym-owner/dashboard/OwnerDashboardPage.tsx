@@ -155,8 +155,7 @@ export function OwnerDashboardPage() {
             <input
               id="gym-slug"
               value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              pattern="[a-z0-9-]+"
+              onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
               required
             />
           </div>

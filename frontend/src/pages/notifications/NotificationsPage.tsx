@@ -43,6 +43,7 @@ export function NotificationsPage() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.notifications });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.notificationCount });
     },
+    onError: () => showToast(t('error'), 'error'),
   });
 
   const lang = i18n.language?.slice(0, 2) ?? 'en';

@@ -1,31 +1,69 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import type { RecommendationResult } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationCard } from '@/components/cards/RecommendationCard/RecommendationCard';
-import { favoriteApi } from '@/api';
+import { favoriteApi, recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 
 export function RecommendationResultPage() {
+  const [searchParams] = useSearchParams();
+  const recommendationId = searchParams.get('id');
   const location = useLocation();
   const navigate = useNavigate();
-  const result = location.state?.result as RecommendationResult | undefined;
+  const { t } = useTranslation();
+  const stateResult = location.state?.result as RecommendationResult | undefined;
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showToast = useUIStore((s) => s.showToast);
+
+  const { data: fetchedResult, isLoading, isError } = useQuery({
+    queryKey: ['recommendation', recommendationId],
+    queryFn: async () => {
+      const res = await recommendationApi.getById(recommendationId!);
+      return res.data.data;
+    },
+    enabled: !!recommendationId && !stateResult,
+  });
+
+  const result = stateResult ?? fetchedResult;
 
   const favoriteMutation = useMutation({
     mutationFn: () =>
       favoriteApi.add(result!.machineCode, result!.id),
-    onSuccess: () => showToast('Saved to favorites!', 'success'),
-    onError: () => showToast('Failed to save favorite', 'error'),
+    onSuccess: () => showToast(t('actions.save'), 'success'),
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
 
+  if (!stateResult && recommendationId && isLoading) {
+    return (
+      <PageShell title={t('nav.machines')}>
+        <Skeleton count={3} height={100} />
+      </PageShell>
+    );
+  }
+
+  if (!stateResult && recommendationId && isError) {
+    return (
+      <PageShell title={t('errors.notFound')}>
+        <QueryErrorMessage />
+      </PageShell>
+    );
+  }
+
   if (!result) {
-    return <PageShell title="No Result" subtitle="Please submit a recommendation first." />;
+    return (
+      <PageShell title={t('errors.notFound')} subtitle={t('errors.loadFailed')}>
+        <Link to={ROUTES.MACHINES} className="btn btn--secondary btn--block">
+          {t('nav.machines')}
+        </Link>
+      </PageShell>
+    );
   }
 
   return (
@@ -48,24 +86,24 @@ export function RecommendationResultPage() {
             onClick={() => favoriteMutation.mutate()}
             disabled={favoriteMutation.isPending}
           >
-            ⭐ Save to Favorites
+            ⭐ {t('actions.save')}
           </button>
         ) : (
           <Link to={ROUTES.LOGIN} className="btn btn--secondary btn--block">
-            Login to save favorites
+            {t('nav.login')}
           </Link>
         )}
         <Link
           to={`${ROUTES.GYMS}?machineCode=${result.machineCode}`}
           className="btn btn--secondary btn--block"
         >
-          📍 Find Gyms with this Machine
+          📍 {t('nav.gyms')}
         </Link>
         <button
           className="btn btn--secondary btn--block"
           onClick={() => navigate(ROUTES.MACHINE_DETAIL.replace(':machineCode', result.machineCode))}
         >
-          Back to Machine
+          {t('actions.back')}
         </button>
       </div>
     </PageShell>

@@ -25,10 +25,10 @@ export function RegisterPage() {
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
-      showToast('Account created!', 'success');
+      showToast(t('auth.accountCreated'), 'success');
       navigate(ROUTES.HOME, { replace: true });
     },
-    onError: () => showToast('Registration failed', 'error'),
+    onError: () => showToast(t('auth.registrationFailed'), 'error'),
   });
 
   return (
@@ -46,6 +46,7 @@ export function RegisterPage() {
           placeholder="Display Name"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
+          minLength={2}
           required
         />
         <input

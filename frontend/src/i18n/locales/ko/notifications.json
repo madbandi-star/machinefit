@@ -7,5 +7,6 @@
   "machineRequest": "기구 요청",
   "gymVerified": "헬스장 인증",
   "system": "시스템",
-  "announcement": "공지"
+  "announcement": "공지",
+  "error": "오류가 발생했습니다"
 }

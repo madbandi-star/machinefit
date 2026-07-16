@@ -5,13 +5,15 @@ import { useMutation } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { recommendationApi } from '@/api';
+import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 
 export function RecommendationFormPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation('machines');
+  const { t } = useTranslation(['machines', 'common']);
+  const showToast = useUIStore((s) => s.showToast);
 
   const [gender, setGender] = useState<Gender>('male');
   const [heightCm, setHeightCm] = useState(175);
@@ -28,19 +30,27 @@ export function RecommendationFormPage() {
         experienceLevel,
       }),
     onSuccess: (res) => {
-      navigate(ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode!), {
+      const id = res.data.data.id;
+      navigate(`${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode!)}?id=${id}`, {
         state: { result: res.data.data },
       });
     },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (heightCm < 100 || heightCm > 250) {
+      showToast(t('heightRange', { defaultValue: 'Height must be between 100 and 250 cm' }), 'error');
+      return;
+    }
+    mutation.mutate();
+  };
 
   return (
     <PageShell title={t('recommend')} subtitle={machineCode}>
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          mutation.mutate();
-        }}
+        onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
       >
         <label>
@@ -53,7 +63,15 @@ export function RecommendationFormPage() {
         </label>
         <label>
           Height (cm)
-          <input className="input" type="number" value={heightCm} onChange={(e) => setHeightCm(Number(e.target.value))} />
+          <input
+            className="input"
+            type="number"
+            min={100}
+            max={250}
+            value={heightCm}
+            onChange={(e) => setHeightCm(Number(e.target.value))}
+            required
+          />
         </label>
         <label>
           Weight (kg, optional)

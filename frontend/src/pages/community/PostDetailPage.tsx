@@ -10,11 +10,12 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
-import '@/styles/community.css';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 
 export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const { t } = useTranslation('community');
+  const { t: tc } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
@@ -22,7 +23,7 @@ export function PostDetailPage() {
   const showToast = useUIStore((s) => s.showToast);
   const [comment, setComment] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [...QUERY_KEYS.posts, postId],
     queryFn: async () => {
       const res = await communityApi.getPost(postId!);
@@ -81,10 +82,24 @@ export function PostDetailPage() {
     }
   };
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return (
       <PageShell title={t('freeBoard')}>
         <Skeleton count={4} />
+      </PageShell>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <PageShell title={t('freeBoard')}>
+        <QueryErrorMessage />
+        <button className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }} onClick={() => refetch()}>
+          {tc('actions.retry')}
+        </button>
+        <Link to={ROUTES.FREE_BOARD} className="btn btn--secondary btn--block" style={{ marginTop: '0.5rem' }}>
+          ← {t('freeBoard')}
+        </Link>
       </PageShell>
     );
   }

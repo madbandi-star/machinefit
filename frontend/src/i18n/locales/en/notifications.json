@@ -7,5 +7,6 @@
   "machineRequest": "Machine request",
   "gymVerified": "Gym verified",
   "system": "System",
-  "announcement": "Announcement"
+  "announcement": "Announcement",
+  "error": "Something went wrong"
 }

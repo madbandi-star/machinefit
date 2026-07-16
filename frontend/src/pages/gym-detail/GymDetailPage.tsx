@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BusinessHoursDisplay } from '@/components/display/BusinessHours/BusinessHoursDisplay';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi } from '@/api';
@@ -14,7 +15,7 @@ export function GymDetailPage() {
   const { gymId } = useParams<{ gymId: string }>();
   const { t } = useTranslation('gyms');
 
-  const { data: gym, isLoading } = useQuery({
+  const { data: gym, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.gym(gymId!),
     queryFn: async () => {
       const res = await gymApi.getById(gymId!);
@@ -24,7 +25,8 @@ export function GymDetailPage() {
   });
 
   if (isLoading) return <Skeleton count={4} height={80} />;
-  if (!gym) return <PageShell title="Not Found" />;
+  if (isError) return <PageShell title={t('error', { defaultValue: 'Error' })}><QueryErrorMessage /></PageShell>;
+  if (!gym) return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
 
   return (
     <PageShell title={gym.name} subtitle={`${gym.city ?? ''} ${gym.countryCode ?? ''}`.trim()}>

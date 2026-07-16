@@ -27,10 +27,10 @@ export function LoginPage() {
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
-      showToast('Welcome back!', 'success');
+      showToast(t('auth.welcomeBack'), 'success');
       navigate(from, { replace: true });
     },
-    onError: () => showToast('Invalid email or password', 'error'),
+    onError: () => showToast(t('auth.invalidCredentials'), 'error'),
   });
 
   return (

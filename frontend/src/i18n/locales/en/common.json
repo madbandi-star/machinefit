@@ -13,7 +13,8 @@
     "settings": "Settings",
     "login": "Login",
     "register": "Register",
-    "logout": "Logout"
+    "logout": "Logout",
+    "notifications": "Notifications"
   },
   "actions": {
     "search": "Search",
@@ -21,7 +22,20 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "back": "Back",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "retry": "Retry"
+  },
+  "errors": {
+    "loadFailed": "Failed to load data. Please try again.",
+    "notFound": "Not found.",
+    "submitFailed": "Request failed. Please try again."
+  },
+  "auth": {
+    "welcomeBack": "Welcome back!",
+    "invalidCredentials": "Invalid email or password",
+    "accountCreated": "Account created!",
+    "registrationFailed": "Registration failed",
+    "displayNameMin": "Display name must be at least 2 characters"
   },
   "pages": {
     "home": {

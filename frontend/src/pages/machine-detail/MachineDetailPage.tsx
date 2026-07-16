@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { ROUTES } from '@/constants/routes';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -12,7 +13,7 @@ export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
   const { t } = useTranslation('machines');
 
-  const { data: machine, isLoading } = useQuery({
+  const { data: machine, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!),
     queryFn: async () => {
       const res = await machineApi.getByCode(machineCode!);
@@ -22,7 +23,8 @@ export function MachineDetailPage() {
   });
 
   if (isLoading) return <Skeleton count={3} height={100} />;
-  if (!machine) return <PageShell title="Not Found" />;
+  if (isError) return <PageShell title={t('error', { defaultValue: 'Error' })}><QueryErrorMessage /></PageShell>;
+  if (!machine) return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
 
   const name = machine.name.en ?? machine.code;
 
