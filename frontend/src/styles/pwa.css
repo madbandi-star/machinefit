@@ -32,6 +32,25 @@
   outline-offset: 2px;
 }
 
+.pwa-install-button--header {
+  align-self: center;
+  min-height: 1.875rem;
+  padding: 0.28rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .pwa-install-button--header .pwa-install-button__label {
+    display: none;
+  }
+
+  .pwa-install-button--header {
+    width: 1.875rem;
+    min-height: 1.875rem;
+    padding: 0;
+  }
+}
+
 @media (max-width: 360px) {
   .pwa-install-button__label {
     display: none;
