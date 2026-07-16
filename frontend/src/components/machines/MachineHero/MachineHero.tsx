@@ -6,9 +6,10 @@ import '@/styles/machines.css';
 
 interface MachineHeroProps {
   machine: Machine;
+  compact?: boolean;
 }
 
-export function MachineHero({ machine }: MachineHeroProps) {
+export function MachineHero({ machine, compact = false }: MachineHeroProps) {
   const { t, i18n } = useTranslation('machines');
   const name = getLocalizedName(machine.name, i18n.language, machine.code);
   const muscleLabel = t(`muscleGroups.${machine.muscleGroup}`, {
@@ -19,21 +20,23 @@ export function MachineHero({ machine }: MachineHeroProps) {
   });
 
   return (
-    <div className="machine-hero">
-      <div className="machine-hero__image-wrap">
-        {machine.primaryImageUrl ? (
-          <img
-            className="machine-hero__image"
-            src={machine.primaryImageUrl}
-            alt={name}
-            loading="lazy"
-          />
-        ) : (
-          <div className="machine-hero__placeholder" aria-hidden>
-            <Icon name="dumbbell" size={48} />
-          </div>
-        )}
-      </div>
+    <div className={`machine-hero${compact ? ' machine-hero--compact' : ''}`}>
+      {!compact && (
+        <div className="machine-hero__image-wrap">
+          {machine.primaryImageUrl ? (
+            <img
+              className="machine-hero__image"
+              src={machine.primaryImageUrl}
+              alt={name}
+              loading="lazy"
+            />
+          ) : (
+            <div className="machine-hero__placeholder" aria-hidden>
+              <Icon name="dumbbell" size={48} />
+            </div>
+          )}
+        </div>
+      )}
       <h1 className="machine-hero__title">{name}</h1>
       <p className="machine-hero__code">{machine.code}</p>
       <div className="machine-hero__badges">

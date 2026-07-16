@@ -8,6 +8,7 @@ interface MachineMiniCardProps {
   machineName: string;
   muscleGroup?: string;
   imageUrl?: string;
+  recommendationId?: string;
 }
 
 export function MachineMiniCard({
@@ -15,17 +16,19 @@ export function MachineMiniCard({
   machineName,
   muscleGroup,
   imageUrl,
+  recommendationId,
 }: MachineMiniCardProps) {
   const { t } = useTranslation('machines');
   const muscleLabel = muscleGroup
     ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
     : undefined;
 
+  const to = recommendationId
+    ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${recommendationId}`
+    : ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode);
+
   return (
-    <Link
-      to={ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)}
-      className="machine-mini-card"
-    >
+    <Link to={to} className="machine-mini-card">
       <div className="machine-mini-card__thumb">
         {imageUrl ? (
           <img src={imageUrl} alt="" loading="lazy" />

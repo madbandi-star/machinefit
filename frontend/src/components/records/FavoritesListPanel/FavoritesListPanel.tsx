@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/components/icons/Icon';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -8,7 +9,7 @@ import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
-import '@/styles/components.css';
+import '@/styles/records.css';
 
 export function FavoritesListPanel() {
   const { t } = useTranslation(['common', 'machines']);
@@ -29,7 +30,7 @@ export function FavoritesListPanel() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  if (isLoading) return <Skeleton count={3} height={80} />;
+  if (isLoading) return <Skeleton count={3} height={56} />;
   if (isError) return <QueryErrorMessage />;
   if (!data?.length) {
     return (
@@ -46,28 +47,30 @@ export function FavoritesListPanel() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-      {data.map((item) => (
-        <div key={item.id} className="card record-card record-card__row">
-          <Link
-            to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
-            className="record-card__header"
-            style={{ flex: 1, minWidth: 0 }}
-          >
-            <strong className="record-card__title">{item.machineName}</strong>
-            <span className="record-card__meta">{item.machineCode}</span>
-          </Link>
-          <button
-            type="button"
-            className="btn btn--secondary"
-            style={{ flexShrink: 0 }}
-            onClick={() => removeMutation.mutate(item.id)}
-            disabled={removeMutation.isPending}
-          >
-            {t('machines:favorites.remove')}
-          </button>
-        </div>
-      ))}
+    <div className="records-list">
+      {data.map((item) => {
+        const primaryUrl = item.recommendationId
+          ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`
+          : ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode);
+
+        return (
+          <article key={item.id} className="favorite-row">
+            <Link to={primaryUrl} className="favorite-row__link">
+              <strong className="favorite-row__name">{item.machineName}</strong>
+              <span className="favorite-row__code">{item.machineCode}</span>
+            </Link>
+            <button
+              type="button"
+              className="favorite-row__remove"
+              aria-label={t('machines:favorites.remove')}
+              onClick={() => removeMutation.mutate(item.id)}
+              disabled={removeMutation.isPending}
+            >
+              <Icon name="heart" size={18} />
+            </button>
+          </article>
+        );
+      })}
     </div>
   );
 }

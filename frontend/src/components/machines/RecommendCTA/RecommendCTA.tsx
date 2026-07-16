@@ -7,9 +7,10 @@ import '@/styles/machines.css';
 
 interface RecommendCTAProps {
   machineCode: string;
+  fixed?: boolean;
 }
 
-export function RecommendCTA({ machineCode }: RecommendCTAProps) {
+export function RecommendCTA({ machineCode, fixed = false }: RecommendCTAProps) {
   const { t } = useTranslation('machines');
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +26,7 @@ export function RecommendCTA({ machineCode }: RecommendCTAProps) {
   };
 
   return (
-    <div className="recommend-cta">
+    <div className={`recommend-cta${fixed ? ' recommend-cta--fixed' : ''}`}>
       <button
         type="button"
         className="btn btn--primary btn--block"

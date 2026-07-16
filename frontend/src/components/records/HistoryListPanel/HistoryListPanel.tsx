@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/components/icons/Icon';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -10,7 +11,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/recommendation.css';
-import '@/styles/components.css';
+import '@/styles/records.css';
 
 export function HistoryListPanel() {
   const { t } = useTranslation(['common', 'machines']);
@@ -31,7 +32,7 @@ export function HistoryListPanel() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  if (isLoading) return <Skeleton count={3} height={80} />;
+  if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
   if (!data?.length) {
     return (
@@ -48,42 +49,44 @@ export function HistoryListPanel() {
   }
 
   return (
-    <>
-      <button
-        type="button"
-        className="btn btn--secondary"
-        style={{ marginBottom: 'var(--space-md)' }}
-        onClick={() => clearMutation.mutate()}
-        disabled={clearMutation.isPending}
-      >
-        {clearMutation.isPending ? (
-          <span className="btn__spinner" aria-hidden />
-        ) : (
-          t('machines:history.clearAll')
-        )}
-      </button>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-        {data.map((item) => (
-          <div key={item.id} className="card record-card">
-            <Link
-              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
-              className="record-card__header"
-            >
-              <strong className="record-card__title">{item.machineName}</strong>
-              <span className="record-card__meta">
-                {item.machineCode} · {new Date(item.viewedAt).toLocaleDateString()}
-              </span>
-            </Link>
-            <RecommendationSettingsPanel settings={item.settings} variant="compact" />
-            <Link
-              to={`${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`}
-              className="btn btn--secondary btn--block"
-            >
-              {t('machines:detail.viewLastResult')}
-            </Link>
-          </div>
-        ))}
+    <div className="records-list">
+      <div className="records-list__toolbar">
+        <span className="records-list__count">{data.length}</span>
+        <button
+          type="button"
+          className="records-list__clear"
+          onClick={() => clearMutation.mutate()}
+          disabled={clearMutation.isPending}
+        >
+          {clearMutation.isPending ? '...' : t('machines:history.clearAll')}
+        </button>
       </div>
-    </>
+
+      {data.map((item) => {
+        const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
+
+        return (
+          <article key={item.id} className="saved-settings-card">
+            <div className="saved-settings-card__header">
+              <Link
+                to={resultUrl}
+                className="saved-settings-card__machine"
+              >
+                <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
+                <span className="saved-settings-card__machine-code">{item.machineCode}</span>
+              </Link>
+              <Link to={resultUrl} className="saved-settings-card__link">
+                {t('machines:detail.viewLastResult')}
+                <Icon name="chevronRight" size={16} />
+              </Link>
+            </div>
+            <RecommendationSettingsPanel settings={item.settings} variant="hero" />
+            <p className="saved-settings-card__date">
+              {new Date(item.viewedAt).toLocaleDateString()}
+            </p>
+          </article>
+        );
+      })}
+    </div>
   );
 }

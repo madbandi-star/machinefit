@@ -50,6 +50,7 @@ export function FavoriteMachinesRow() {
               key={item.id}
               machineCode={item.machineCode}
               machineName={item.machineName}
+              recommendationId={item.recommendationId}
             />
           ))}
         </div>

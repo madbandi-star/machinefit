@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { TabBar } from '@/components/navigation/TabBar/TabBar';
 import { HistoryListPanel } from '@/components/records/HistoryListPanel/HistoryListPanel';
 import { FavoritesListPanel } from '@/components/records/FavoritesListPanel/FavoritesListPanel';
+import '@/styles/records.css';
 
 const TABS = ['history', 'favorites'] as const;
 type RecordsTab = (typeof TABS)[number];
@@ -34,7 +34,11 @@ export function RecordsPage() {
   };
 
   return (
-    <PageShell title={t('common:nav.records')} subtitle={t('machines:records.subtitle')}>
+    <div className="records-page">
+      <header className="records-page__header">
+        <h1 className="records-page__title">{t('common:nav.records')}</h1>
+      </header>
+
       <TabBar
         ariaLabel={t('machines:records.tabsLabel')}
         tabs={[
@@ -44,9 +48,10 @@ export function RecordsPage() {
         activeId={activeTab}
         onChange={handleTabChange}
       />
-      <div role="tabpanel" className="records-panel">
+
+      <div role="tabpanel" className="records-page__panel">
         {activeTab === 'history' ? <HistoryListPanel /> : <FavoritesListPanel />}
       </div>
-    </PageShell>
+    </div>
   );
 }

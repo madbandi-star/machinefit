@@ -8,13 +8,16 @@ import { MachineHero } from '@/components/machines/MachineHero/MachineHero';
 import { LastRecommendationSnippet } from '@/components/machines/LastRecommendationSnippet/LastRecommendationSnippet';
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { machineApi } from '@/api';
+import { historyApi, machineApi } from '@/api';
+import { useAuthStore } from '@/store/auth.store';
 import '@/styles/components.css';
 import '@/styles/machines.css';
+import '@/styles/records.css';
 
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
   const { t } = useTranslation('machines');
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data: machine, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!),
@@ -23,6 +26,15 @@ export function MachineDetailPage() {
       return res.data.data;
     },
     enabled: !!machineCode,
+  });
+
+  const { data: lastHistory } = useQuery({
+    queryKey: [...QUERY_KEYS.history, machineCode],
+    queryFn: async () => {
+      const res = await historyApi.list({ machineCode: machineCode!, limit: 1 });
+      return res.data.data[0] ?? null;
+    },
+    enabled: !!machineCode && isAuthenticated,
   });
 
   if (isLoading) return <Skeleton count={3} height={100} />;
@@ -37,13 +49,13 @@ export function MachineDetailPage() {
     return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
   }
 
+  const hasSavedSettings = !!lastHistory;
+
   return (
-    <PageShell subtitle={machine.code}>
-      <div className="machine-detail-content">
-        <MachineHero machine={machine} />
-        {machineCode && <LastRecommendationSnippet machineCode={machineCode} />}
-        {machineCode && <RecommendCTA machineCode={machineCode} />}
-      </div>
-    </PageShell>
+    <div className={`machine-detail-page${hasSavedSettings ? ' machine-detail-page--compact' : ''}`}>
+      <MachineHero machine={machine} compact={hasSavedSettings} />
+      {machineCode && <LastRecommendationSnippet machineCode={machineCode} />}
+      {machineCode && <RecommendCTA machineCode={machineCode} fixed={hasSavedSettings} />}
+    </div>
   );
 }

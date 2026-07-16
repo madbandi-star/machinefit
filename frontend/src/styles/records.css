@@ -1,0 +1,228 @@
+/* Records & saved settings — mobile-first compact layouts */
+
+.records-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.records-page__header {
+  margin-bottom: var(--space-xs);
+}
+
+.records-page__title {
+  font-size: var(--font-size-h2);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.records-page__panel {
+  min-height: 0;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.records-list__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: calc(var(--space-xs) * -1);
+}
+
+.records-list__count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.04em;
+}
+
+.records-list__clear {
+  border: none;
+  background: none;
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.records-list__clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.saved-settings-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.saved-settings-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.saved-settings-card__machine {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.saved-settings-card__machine-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-settings-card__machine-code {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.saved-settings-card__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.02em;
+}
+
+.saved-settings-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-link);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.saved-settings-card__date {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
+.favorite-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 52px;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.favorite-row__link {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.favorite-row__name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.favorite-row__code {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.favorite-row__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background var(--motion-fast), border-color var(--motion-fast);
+}
+
+.favorite-row__remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Machine detail — compact when saved settings exist */
+.machine-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.machine-detail-page--compact {
+  min-height: calc(
+    100dvh - var(--header-height) - var(--bottom-nav-height) - var(--space-md) * 2
+  );
+  padding-bottom: var(--recommendation-action-height);
+}
+
+.machine-detail-page--compact .machine-hero {
+  margin-bottom: 0;
+}
+
+.machine-detail-page--compact .saved-settings-card {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 0;
+  padding: 0.65rem 0.75rem;
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+@media (min-width: 768px) {
+  .records-page__title {
+    font-size: var(--font-size-h1);
+  }
+
+  .machine-detail-page--compact {
+    min-height: auto;
+    padding-bottom: 0;
+  }
+}

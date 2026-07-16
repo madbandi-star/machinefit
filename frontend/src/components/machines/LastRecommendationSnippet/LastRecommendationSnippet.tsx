@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { Icon } from '@/components/icons/Icon';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { historyApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -8,6 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import '@/styles/machines.css';
 import '@/styles/recommendation.css';
+import '@/styles/records.css';
 
 interface LastRecommendationSnippetProps {
   machineCode: string;
@@ -28,22 +30,21 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
 
   if (!isAuthenticated || !data) return null;
 
+  const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${data.recommendationId}`;
+
   return (
-    <div className="last-recommend-snippet">
-      <div className="last-recommend-snippet__header">
-        <span className="last-recommend-snippet__title">{t('detail.lastRecommend')}</span>
-        <span className="last-recommend-snippet__date">
-          {new Date(data.viewedAt).toLocaleDateString()}
-        </span>
+    <section className="saved-settings-card" aria-label={t('detail.lastRecommend')}>
+      <div className="saved-settings-card__header">
+        <span className="saved-settings-card__title">{t('detail.lastRecommend')}</span>
+        <Link to={resultUrl} className="saved-settings-card__link">
+          {t('detail.viewLastResult')}
+          <Icon name="chevronRight" size={16} />
+        </Link>
       </div>
-      <RecommendationSettingsPanel settings={data.settings} variant="compact" />
-      <Link
-        to={`${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${data.recommendationId}`}
-        className="btn btn--secondary btn--block"
-        style={{ marginTop: '0.75rem' }}
-      >
-        {t('detail.viewLastResult')}
-      </Link>
-    </div>
+      <RecommendationSettingsPanel settings={data.settings} variant="hero" />
+      <p className="saved-settings-card__date">
+        {new Date(data.viewedAt).toLocaleDateString()}
+      </p>
+    </section>
   );
 }
