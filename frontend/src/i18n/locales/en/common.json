@@ -141,7 +141,9 @@
     "installAction": "Install",
     "addToHome": "Add to Home",
     "installSuccess": "Added to your home screen.",
-    "iosInstallHint": "Tap Share in Safari, then choose \"Add to Home Screen\"."
+    "iosInstallHint": "Tap Share in Safari, then choose \"Add to Home Screen\".",
+    "chromeInstallHint": "Use the install icon in the address bar or Menu (⋮) → \"Install MachineFit\".",
+    "chromeMobileInstallHint": "Open Chrome Menu (⋮) → \"Install app\" or \"Add to Home screen\"."
   },
   "pro": {
     "badge": "Pro",

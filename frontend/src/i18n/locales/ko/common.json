@@ -141,7 +141,9 @@
     "installAction": "설치",
     "addToHome": "홈에 추가",
     "installSuccess": "홈 화면에 추가되었습니다.",
-    "iosInstallHint": "Safari 공유 버튼(↑) → '홈 화면에 추가'를 선택하세요."
+    "iosInstallHint": "Safari 공유 버튼(↑) → '홈 화면에 추가'를 선택하세요.",
+    "chromeInstallHint": "주소창 오른쪽 설치 아이콘 또는 메뉴(⋮) → 'MachineFit 설치'를 선택하세요.",
+    "chromeMobileInstallHint": "Chrome 메뉴(⋮) → '앱 설치' 또는 '홈 화면에 추가'를 선택하세요."
   },
   "pro": {
     "badge": "Pro",

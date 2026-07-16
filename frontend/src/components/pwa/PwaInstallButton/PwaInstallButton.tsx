@@ -7,7 +7,7 @@ import '@/styles/pwa.css';
 export function PwaInstallButton() {
   const { t } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
-  const { canInstall, hasNativePrompt, install } = usePwaInstall();
+  const { canInstall, hasNativePrompt, installMode, install } = usePwaInstall();
 
   if (!canInstall) return null;
 
@@ -20,7 +20,14 @@ export function PwaInstallButton() {
       return;
     }
 
-    showToast(t('pwa.iosInstallHint'), 'info');
+    const hintKey =
+      installMode === 'ios'
+        ? 'pwa.iosInstallHint'
+        : installMode === 'android'
+          ? 'pwa.chromeMobileInstallHint'
+          : 'pwa.chromeInstallHint';
+
+    showToast(t(hintKey), 'info');
   };
 
   return (
