@@ -1,6 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import type { AuthTokens } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
+import { useSettingsStore } from '@/store/settings.store';
 
 function normalizeApiBaseUrl(url: string): string {
   const trimmed = url.replace(/\/+$/, '');
@@ -56,6 +57,7 @@ apiClient.interceptors.request.use((config) => {
   if (tokens?.accessToken) {
     config.headers.Authorization = `Bearer ${tokens.accessToken}`;
   }
+  config.headers['Accept-Language'] = useSettingsStore.getState().locale;
   return config;
 });
 

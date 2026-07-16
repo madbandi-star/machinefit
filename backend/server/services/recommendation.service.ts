@@ -5,6 +5,13 @@ import { pickLocalizedArray } from '../utils/localize.util.js';
 import { machineService } from './machine.service.js';
 import type { MockSettingRule } from '../data/mock.js';
 
+const DEFAULT_TIPS: Record<string, string[]> = {
+  en: ['Adjust settings to comfort'],
+  ko: ['편한 설정으로 조절하세요'],
+  ja: ['快適な設定に調整してください'],
+  zh: ['调整到舒适的设置'],
+};
+
 function findBestMatch(rules: MockSettingRule[], input: RecommendationInput) {
   const exact = rules.find(
     (r) =>
@@ -78,7 +85,7 @@ export const recommendationService = {
       },
       tips: match
         ? pickLocalizedArray(match.tips, locale)
-        : ['Adjust settings to comfort'],
+        : pickLocalizedArray(DEFAULT_TIPS, locale),
       warnings: match ? pickLocalizedArray(match.warnings, locale) : [],
       youtubeVideos,
       createdAt: new Date().toISOString(),

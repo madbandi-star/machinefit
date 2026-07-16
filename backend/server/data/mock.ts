@@ -32,13 +32,79 @@ export interface MockSettingRule {
 
 export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
   [MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW]: [
-    { gender: 'male', experienceLevel: 'intermediate', heightMinCm: 170, heightMaxCm: 180, seatPosition: 5, backPadPosition: 3, handlePosition: 2, romSetting: 'full', weightKg: 40, tips: { en: ['Keep chest against pad', 'Pull elbows back in line with shoulders'], ko: ['가슴을 패드에 밀착', '팔꿈치를 어깨 라인에 맞춰 당기기'] }, warnings: { en: ['Do not round lower back'], ko: ['허리를 굽히지 마세요'] } },
+    {
+      gender: 'male',
+      experienceLevel: 'intermediate',
+      heightMinCm: 170,
+      heightMaxCm: 180,
+      seatPosition: 5,
+      backPadPosition: 3,
+      handlePosition: 2,
+      romSetting: 'full',
+      weightKg: 40,
+      tips: {
+        en: ['Keep chest against pad', 'Pull elbows back in line with shoulders'],
+        ko: ['가슴을 패드에 밀착', '팔꿈치를 어깨 라인에 맞춰 당기기'],
+        ja: ['胸をパッドに密着', '肘を肩のラインに合わせて引く'],
+        zh: ['胸部贴紧垫子', '肘部与肩部对齐后拉'],
+      },
+      warnings: {
+        en: ['Do not round lower back'],
+        ko: ['허리를 굽히지 마세요'],
+        ja: ['腰を丸めない'],
+        zh: ['不要弯腰弓背'],
+      },
+    },
   ],
   [MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS]: [
-    { gender: 'male', experienceLevel: 'intermediate', heightMinCm: 170, heightMaxCm: 180, seatPosition: 4, backPadPosition: 3, handlePosition: 2, romSetting: 'full', weightKg: 50, tips: { en: ['Retract shoulder blades'], ko: ['견갑골을 모으고'] }, warnings: { en: ['Do not lock elbows aggressively'], ko: ['팔꿈치를 과도하게 잠그지 마세요'] } },
+    {
+      gender: 'male',
+      experienceLevel: 'intermediate',
+      heightMinCm: 170,
+      heightMaxCm: 180,
+      seatPosition: 4,
+      backPadPosition: 3,
+      handlePosition: 2,
+      romSetting: 'full',
+      weightKg: 50,
+      tips: {
+        en: ['Retract shoulder blades'],
+        ko: ['견갑골을 모으고'],
+        ja: ['肩甲骨を寄せる'],
+        zh: ['收紧肩胛骨'],
+      },
+      warnings: {
+        en: ['Do not lock elbows aggressively'],
+        ko: ['팔꿈치를 과도하게 잠그지 마세요'],
+        ja: ['肘を強く伸ばし切らない'],
+        zh: ['不要过度锁死肘部'],
+      },
+    },
   ],
   [MACHINE_CODES.HS_LEG_EXTENSION]: [
-    { gender: 'male', experienceLevel: 'intermediate', heightMinCm: 170, heightMaxCm: 180, seatPosition: 5, backPadPosition: 4, footPosition: 3, romSetting: 'full', weightKg: 45, tips: { en: ['Align knee with machine pivot'], ko: ['무릎을 머신 피벗에 맞추기'] }, warnings: { en: ['Avoid hyperextension'], ko: ['과도한 신전 금지'] } },
+    {
+      gender: 'male',
+      experienceLevel: 'intermediate',
+      heightMinCm: 170,
+      heightMaxCm: 180,
+      seatPosition: 5,
+      backPadPosition: 4,
+      footPosition: 3,
+      romSetting: 'full',
+      weightKg: 45,
+      tips: {
+        en: ['Align knee with machine pivot'],
+        ko: ['무릎을 머신 피벗에 맞추기'],
+        ja: ['膝をマシンのピボットに合わせる'],
+        zh: ['膝盖对准器械 pivot'],
+      },
+      warnings: {
+        en: ['Avoid hyperextension'],
+        ko: ['과도한 신전 금지'],
+        ja: ['過度な伸展を避ける'],
+        zh: ['避免过度伸展'],
+      },
+    },
   ],
 };
 

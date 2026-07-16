@@ -10,6 +10,7 @@ import { RecommendationWarnings } from '@/components/recommendation/Recommendati
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { favoriteApi, recommendationApi } from '@/api';
 import { useUIStore } from '@/store/ui.store';
+import { useSettingsStore } from '@/store/settings.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
@@ -36,17 +37,19 @@ export function RecommendationResultPage() {
   const stateResult = location.state?.result as RecommendationResult | undefined;
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
+  const locale = useSettingsStore((s) => s.locale);
 
   const { data: fetchedResult, isLoading, isError } = useQuery({
-    queryKey: ['recommendation', recommendationId],
+    queryKey: ['recommendation', recommendationId, locale],
     queryFn: async () => {
       const res = await recommendationApi.getById(recommendationId!);
       return res.data.data;
     },
-    enabled: !!recommendationId && !stateResult,
+    enabled: !!recommendationId,
+    placeholderData: stateResult,
   });
 
-  const result = stateResult ?? fetchedResult;
+  const result = fetchedResult ?? stateResult;
 
   const favoriteMutation = useMutation({
     mutationFn: () => favoriteApi.add(result!.machineCode, result!.id),
@@ -57,7 +60,7 @@ export function RecommendationResultPage() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  if (!stateResult && recommendationId && isLoading) {
+  if (recommendationId && isLoading && !result) {
     return (
       <PageShell title={t('recommendation.title')}>
         <ResultLoadingSkeleton />
@@ -65,7 +68,7 @@ export function RecommendationResultPage() {
     );
   }
 
-  if (!stateResult && recommendationId && isError) {
+  if (recommendationId && isError && !result) {
     return (
       <PageShell title={t('common:errors.notFound')}>
         <QueryErrorMessage />
