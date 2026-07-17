@@ -19,7 +19,7 @@ INSERT INTO machine_settings (
 SELECT m.id, v.gender, v.experience_level,
   v.height_min, v.height_max,
   NULL, NULL, NULL, NULL,
-  v.rom_setting, v.weight_kg, v.tips::jsonb, v.warnings::jsonb
+  v.rom_setting, v.weight_kg::numeric, v.tips::jsonb, v.warnings::jsonb
 FROM machines m
 CROSS JOIN (VALUES
   ('FW_SMITH', 'male', 'intermediate', 160, 190, 'variable', 60,

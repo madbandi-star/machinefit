@@ -8,7 +8,7 @@ INSERT INTO machine_settings (
 SELECT m.id, v.gender, v.experience_level,
   v.height_min, v.height_max,
   v.seat_pos, v.back_pad_pos, v.foot_pos, v.handle_pos,
-  v.rom_setting, v.weight_kg, v.tips::jsonb, v.warnings::jsonb
+  v.rom_setting, v.weight_kg::numeric, v.tips::jsonb, v.warnings::jsonb
 FROM machines m
 CROSS JOIN (VALUES
   -- HS_ISO_LATERAL_HIGH_ROW
