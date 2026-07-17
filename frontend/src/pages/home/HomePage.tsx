@@ -20,10 +20,7 @@ export function HomePage() {
     <div className="home-page">
       {showHero && <HomeHero isAuthenticated={isAuthenticated} />}
 
-      <section className="home-search-section">
-        <h2 className="home-section__title home-section__title--spaced">
-          {t('pages.home.searchSectionTitle')}
-        </h2>
+      <section className="home-search-section" aria-label={t('pages.home.quickActionsLabel')}>
         <QuickSearchBar />
       </section>
 
