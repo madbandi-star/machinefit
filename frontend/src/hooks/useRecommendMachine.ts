@@ -14,7 +14,11 @@ function buildProfileInput(machineCode: string): RecommendationInput | null {
   const { unitHeight, unitWeight } = useSettingsStore.getState();
 
   const heightCm = user?.heightCm;
+  const weightKg = user?.weightKg;
   if (heightCm == null || heightCm < 100 || heightCm > 250) {
+    return null;
+  }
+  if (weightKg == null || weightKg < 30 || weightKg > 300) {
     return null;
   }
 
@@ -25,7 +29,7 @@ function buildProfileInput(machineCode: string): RecommendationInput | null {
     machineCode,
     gender,
     heightCm,
-    weightKg: user?.weightKg,
+    weightKg,
     experienceLevel,
     unitHeight,
     unitWeight,

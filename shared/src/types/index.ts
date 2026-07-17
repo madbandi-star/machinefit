@@ -5,5 +5,6 @@ export * from './gym.types.js';
 export * from './community.types.js';
 export * from './notification.types.js';
 export * from './recommendation.types.js';
+export * from './weight-basis.types.js';
 export * from './workout.types.js';
 export * from './workout-insights.types.js';

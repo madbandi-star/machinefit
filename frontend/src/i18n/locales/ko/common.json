@@ -71,7 +71,7 @@
       "professional": "전문가"
     },
     "profileSaved": "프로필이 저장되었습니다.",
-    "profileRequiredForRecommend": "키 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요.",
+    "profileRequiredForRecommend": "키와 몸무게 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요.",
     "gender": "성별",
     "genders": {
       "male": "남",

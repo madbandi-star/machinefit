@@ -138,7 +138,11 @@ export function RecommendationResultPage() {
 
       <div className="recommendation-result-page__content">
         <RecommendationWarnings warnings={result.warnings} />
-        <RecommendationSettingsPanel settings={result.settings} variant="hero" />
+        <RecommendationSettingsPanel
+          settings={result.settings}
+          weightBasis={result.weightBasis}
+          variant="hero"
+        />
         <RecommendationTips tips={result.tips} />
         <WorkoutLogPanel
           machineCode={result.machineCode}

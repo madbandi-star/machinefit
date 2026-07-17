@@ -712,3 +712,103 @@
     backdrop-filter: none;
   }
 }
+
+.setting-value-card__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.weight-basis-trigger {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.weight-basis-trigger:hover {
+  color: var(--color-accent);
+}
+
+.weight-basis-dialog {
+  max-width: min(28rem, 92vw);
+  max-height: min(80vh, 640px);
+  overflow-y: auto;
+}
+
+.weight-basis-dialog__title {
+  margin-bottom: 0.5rem;
+}
+
+.weight-basis-dialog__summary {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.weight-basis-dialog__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.weight-basis-dialog__item {
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-bg) 40%, transparent);
+}
+
+.weight-basis-dialog__item--primary {
+  border-color: rgba(0, 230, 118, 0.45);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+.weight-basis-dialog__item-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.weight-basis-dialog__item-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.weight-basis-dialog__item-value {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.weight-basis-dialog__item-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.weight-basis-dialog__item-badge {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
+}

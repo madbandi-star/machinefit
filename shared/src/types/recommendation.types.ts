@@ -1,11 +1,12 @@
 import type { ExperienceLevel, Gender, UnitHeight, UnitWeight } from './api.types.js';
 import type { YoutubeVideo } from './machine.types.js';
+import type { WeightRecommendationBasis } from './weight-basis.types.js';
 
 export interface RecommendationInput {
   machineCode: string;
   gender: Gender;
   heightCm: number;
-  weightKg?: number;
+  weightKg: number;
   experienceLevel: ExperienceLevel;
   unitHeight?: UnitHeight;
   unitWeight?: UnitWeight;
@@ -29,4 +30,5 @@ export interface RecommendationResult {
   warnings: string[];
   youtubeVideos: YoutubeVideo[];
   createdAt: string;
+  weightBasis?: WeightRecommendationBasis;
 }

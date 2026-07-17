@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import '@/styles/recommendation.css';
 
 interface SettingValueCardProps {
@@ -7,6 +8,7 @@ interface SettingValueCardProps {
   hint?: string;
   highlight?: boolean;
   compact?: boolean;
+  labelExtra?: ReactNode;
 }
 
 export function SettingValueCard({
@@ -16,6 +18,7 @@ export function SettingValueCard({
   hint,
   highlight = false,
   compact = false,
+  labelExtra,
 }: SettingValueCardProps) {
   const className = [
     'setting-value-card',
@@ -27,7 +30,10 @@ export function SettingValueCard({
 
   return (
     <div className={className}>
-      <span className="setting-value-card__label">{label}</span>
+      <div className="setting-value-card__label-row">
+        <span className="setting-value-card__label">{label}</span>
+        {labelExtra}
+      </div>
       <div className="setting-value-card__value-row">
         <span className="setting-value-card__value" aria-label={`${label} ${value}`}>
           {value}

@@ -87,5 +87,63 @@
     "handle": "핸들 위치",
     "rom": "가동 범위",
     "weight": "추천 중량"
+  },
+  "weightBasis": {
+    "label": "계산근거",
+    "dialogTitle": "추천 중량 계산 근거",
+    "finalWeight": "최종 추천 중량: {{weight}}",
+    "usedInFinal": "최종값 반영",
+    "profileContext": {
+      "title": "프로필 정보",
+      "description": "성별 {{gender}}, 키 {{heightCm}}cm, 체중 {{weightKg}}kg, 운동경력 {{experienceLevel}}을 기준으로 계산합니다."
+    },
+    "profileFormula": {
+      "title": "체중·경력 기반 추정",
+      "description": "체중 {{weightKg}}kg × 경력계수 {{multiplier}} × 0.5 공식으로 산출한 참고 중량입니다."
+    },
+    "bodyReference": {
+      "title": "신체 기반 참조 (성장분석)",
+      "description": "체중 {{weightKg}}kg, 성별 {{gender}}, 경력 {{experienceLevel}}에 따른 신체 기반 참조 중량입니다."
+    },
+    "machineSettingMatch": {
+      "title": "머신 설정표 매칭",
+      "description": "성별 {{gender}}, 경력 {{experienceLevel}}, 키 {{heightCm}}cm 구간에 맞는 머신 설정표 중량입니다."
+    },
+    "machineReferenceDb": {
+      "title": "DB 참조 중량",
+      "description": "동일 프로필 구간의 머신 설정 DB에서 조회한 참조 중량입니다."
+    },
+    "personalRecord": {
+      "title": "개인 최고 중량 (PR)",
+      "description": "이 머신에서 기록한 {{workoutCount}}회 운동 중 세트 최대 중량입니다."
+    },
+    "lastSessionMax": {
+      "title": "최근 세션 최대 중량",
+      "description": "가장 최근 운동 기록의 세트 최대 중량입니다."
+    },
+    "avgSessionVolume": {
+      "title": "평균 세션 볼륨",
+      "description": "{{workoutCount}}회 기록의 세트 중량 합계 평균입니다."
+    },
+    "volumeGrowth": {
+      "title": "볼륨 성장률",
+      "description": "첫 기록 대비 최근 기록의 볼륨 변화율 {{pct}}%입니다."
+    },
+    "cohortAvgMax": {
+      "title": "동일 코호트 평균",
+      "description": "키·체급·성별·경력이 유사한 {{sampleSize}}명의 평균 최대 중량입니다 (키 {{heightMinCm}}–{{heightMaxCm}}cm)."
+    },
+    "progressiveTarget": {
+      "title": "점진적 과부하 목표",
+      "description": "최근 최대 {{baseKg}}kg 기준 다음 단계 목표 중량입니다."
+    },
+    "growthNextTarget": {
+      "title": "성장 분석 다음 목표",
+      "description": "개인 PR {{baseKg}}kg 기준 성장 분석 알고리즘의 다음 목표 중량입니다."
+    },
+    "blendedSelection": {
+      "title": "다중 근거 혼합",
+      "description": "기록이 없어 {{count}}개 참고값의 평균으로 최종 중량을 산출했습니다."
+    }
   }
 }

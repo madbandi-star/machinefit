@@ -87,5 +87,63 @@
     "handle": "Handle Position",
     "rom": "Range of Motion",
     "weight": "Recommended Weight"
+  },
+  "weightBasis": {
+    "label": "Calculation basis",
+    "dialogTitle": "Recommended weight calculation basis",
+    "finalWeight": "Final recommended weight: {{weight}}",
+    "usedInFinal": "Used in final value",
+    "profileContext": {
+      "title": "Profile",
+      "description": "Based on gender {{gender}}, height {{heightCm}} cm, weight {{weightKg}} kg, experience {{experienceLevel}}."
+    },
+    "profileFormula": {
+      "title": "Body weight & experience estimate",
+      "description": "Reference weight from body weight {{weightKg}} kg × experience factor {{multiplier}} × 0.5."
+    },
+    "bodyReference": {
+      "title": "Body-based reference (growth analysis)",
+      "description": "Body reference weight from weight {{weightKg}} kg, gender {{gender}}, experience {{experienceLevel}}."
+    },
+    "machineSettingMatch": {
+      "title": "Matched machine setting",
+      "description": "Machine setting weight for gender {{gender}}, experience {{experienceLevel}}, height {{heightCm}} cm."
+    },
+    "machineReferenceDb": {
+      "title": "DB reference weight",
+      "description": "Reference weight from machine settings DB for the same profile range."
+    },
+    "personalRecord": {
+      "title": "Personal record (PR)",
+      "description": "Max set weight across {{workoutCount}} logged sessions on this machine."
+    },
+    "lastSessionMax": {
+      "title": "Last session max weight",
+      "description": "Max set weight from your most recent workout log."
+    },
+    "avgSessionVolume": {
+      "title": "Average session volume",
+      "description": "Average total set weight across {{workoutCount}} logged sessions."
+    },
+    "volumeGrowth": {
+      "title": "Volume growth rate",
+      "description": "Volume change from first to latest log: {{pct}}%."
+    },
+    "cohortAvgMax": {
+      "title": "Similar cohort average",
+      "description": "Average max weight of {{sampleSize}} users with similar height, weight class, gender, and experience (height {{heightMinCm}}–{{heightMaxCm}} cm)."
+    },
+    "progressiveTarget": {
+      "title": "Progressive overload target",
+      "description": "Next-step target based on recent max {{baseKg}} kg."
+    },
+    "growthNextTarget": {
+      "title": "Growth analysis next target",
+      "description": "Next target from growth analysis based on PR {{baseKg}} kg."
+    },
+    "blendedSelection": {
+      "title": "Blended from multiple sources",
+      "description": "No workout logs yet; final weight is the average of {{count}} reference values."
+    }
   }
 }

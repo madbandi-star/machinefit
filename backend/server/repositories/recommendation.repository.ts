@@ -1,5 +1,4 @@
-import type { RecommendationInput, YoutubeVideo } from '@machinefit/shared';
-import { EXPERIENCE_WEIGHT_MULTIPLIERS } from '@machinefit/shared';
+import type { RecommendationInput, WeightRecommendationBasis, YoutubeVideo } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_SETTINGS, type MockSettingRule } from '../data/mock.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
@@ -39,6 +38,7 @@ interface RecommendationRow {
   recommended_weight_kg: string | null;
   tips: Record<string, string[]> | null;
   warnings: Record<string, string[]> | null;
+  weight_basis: WeightRecommendationBasis | null;
   created_at: string;
 }
 
@@ -109,6 +109,7 @@ export const recommendationRepository = {
     settingId: string | null,
     match: MockSettingRule | undefined,
     recommendedWeightKg: number | undefined,
+    weightBasis: WeightRecommendationBasis | undefined,
     userId?: string,
     sessionId?: string
   ): Promise<string> {
@@ -122,8 +123,8 @@ export const recommendationRepository = {
         id, user_id, machine_id, machine_setting_id,
         gender, height_cm, weight_kg, experience_level,
         seat_position, back_pad_position, foot_position, handle_position,
-        rom_setting, recommended_weight_kg, tips, warnings, session_id
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
+        rom_setting, recommended_weight_kg, tips, warnings, weight_basis, session_id
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
       [
         id,
         userId ?? null,
@@ -131,7 +132,7 @@ export const recommendationRepository = {
         settingId,
         input.gender,
         input.heightCm,
-        input.weightKg ?? null,
+        input.weightKg,
         input.experienceLevel,
         match?.seatPosition ?? null,
         match?.backPadPosition ?? null,
@@ -141,6 +142,7 @@ export const recommendationRepository = {
         recommendedWeightKg ?? null,
         match?.tips ? JSON.stringify(match.tips) : null,
         match?.warnings ? JSON.stringify(match.warnings) : null,
+        weightBasis ? JSON.stringify(weightBasis) : null,
         sessionId ?? null,
       ]
     );
@@ -182,18 +184,7 @@ export const recommendationRepository = {
       warnings: pickLocalizedArray(row.warnings, locale),
       youtubeVideos: await this.findYoutubeVideos(row.machine_id),
       createdAt: row.created_at,
+      weightBasis: row.weight_basis ?? undefined,
     };
-  },
-
-  computeRecommendedWeight(
-    input: RecommendationInput,
-    baseWeight?: number
-  ): number | undefined {
-    if (!baseWeight && !input.weightKg) return baseWeight;
-    if (input.weightKg) {
-      const multiplier = EXPERIENCE_WEIGHT_MULTIPLIERS[input.experienceLevel];
-      return Math.round(input.weightKg * multiplier * 0.5 * 10) / 10;
-    }
-    return baseWeight;
   },
 };

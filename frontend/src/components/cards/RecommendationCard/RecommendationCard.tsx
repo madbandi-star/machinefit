@@ -21,7 +21,11 @@ export function RecommendationCard({
           {result.machineName ?? result.machineCode}
         </h3>
       )}
-      <RecommendationSettingsPanel settings={result.settings} variant={variant} />
+      <RecommendationSettingsPanel
+        settings={result.settings}
+        weightBasis={result.weightBasis}
+        variant={variant}
+      />
       {showTips && result.tips.length > 0 && (
         <div style={{ marginTop: '0.75rem' }}>
           <RecommendationTips tips={result.tips} />

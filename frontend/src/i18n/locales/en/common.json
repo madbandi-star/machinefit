@@ -71,7 +71,7 @@
       "professional": "Professional"
     },
     "profileSaved": "Profile saved.",
-    "profileRequiredForRecommend": "Height is required. Please enter your body metrics in Settings.",
+    "profileRequiredForRecommend": "Height and weight are required. Please enter your body metrics in Settings.",
     "gender": "Gender",
     "genders": {
       "male": "Male",

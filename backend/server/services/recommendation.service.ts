@@ -3,6 +3,7 @@ import { recommendationRepository } from '../repositories/recommendation.reposit
 import { historyRepository } from '../repositories/history.repository.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
 import { machineService } from './machine.service.js';
+import { computeRecommendationWeight } from './recommendation-weight.service.js';
 import type { MockSettingRule } from '../data/mock.js';
 
 const DEFAULT_TIPS: Record<string, string[]> = {
@@ -51,10 +52,12 @@ export const recommendationService = {
     );
 
     const match = rules.length > 0 ? findBestMatch(rules, input) : undefined;
-    const recommendedWeightKg = recommendationRepository.computeRecommendedWeight(
+    const { recommendedWeightKg, weightBasis } = await computeRecommendationWeight({
       input,
-      match?.weightKg
-    );
+      userId,
+      machineId,
+      matchedSettingWeightKg: match?.weightKg,
+    });
 
     const id = await recommendationRepository.save(
       input,
@@ -62,6 +65,7 @@ export const recommendationService = {
       null,
       match,
       recommendedWeightKg,
+      weightBasis,
       userId
     );
 
@@ -89,6 +93,7 @@ export const recommendationService = {
       warnings: match ? pickLocalizedArray(match.warnings, locale) : [],
       youtubeVideos,
       createdAt: new Date().toISOString(),
+      weightBasis,
     };
   },
 
