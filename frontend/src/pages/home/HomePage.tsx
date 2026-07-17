@@ -1,4 +1,3 @@
-import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { HomeHero } from '@/components/home/HomeHero/HomeHero';
 import { QuickSearchBar } from '@/components/home/QuickSearchBar/QuickSearchBar';
@@ -8,13 +7,11 @@ import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/Favor
 import { MuscleGroupShortcuts } from '@/components/home/MuscleGroupShortcuts/MuscleGroupShortcuts';
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
 import { useAuthStore } from '@/store/auth.store';
-import { ROUTES } from '@/constants/routes';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
 
 export function HomePage() {
   const { t } = useTranslation();
-  const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const showHero = !isAuthenticated || !isProfileReadyForRecommend(user);
@@ -31,22 +28,6 @@ export function HomePage() {
       </section>
 
       <InstallPromptBanner />
-
-      {!isAuthenticated && (
-        <div className="profile-incomplete-banner">
-          <div className="profile-incomplete-banner__text">
-            <strong>{t('pages.home.guestTitle')}</strong>
-          </div>
-          <Link
-            to={ROUTES.LOGIN}
-            state={{ from: location }}
-            className="btn btn--secondary"
-            style={{ flexShrink: 0 }}
-          >
-            {t('nav.login')}
-          </Link>
-        </div>
-      )}
 
       {isAuthenticated && <ProfileIncompleteBanner />}
       {isAuthenticated && <RecentMachinesRow />}
