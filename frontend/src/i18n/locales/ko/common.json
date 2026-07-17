@@ -133,7 +133,8 @@
     "role": "역할",
     "quickLinks": "바로가기",
     "explore": "더보기",
-    "adminDashboard": "관리자 대시보드"
+    "adminDashboard": "관리자 대시보드",
+    "browseByBrand": "브랜드별 조회"
   },
   "pwa": {
     "installTitle": "앱으로 설치하기",

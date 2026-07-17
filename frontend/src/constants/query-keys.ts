@@ -9,7 +9,7 @@ export const QUERY_KEYS = {
   favorites: ['favorites'] as const,
   favoriteCheck: (machineCode: string) => ['favorites', 'check', machineCode] as const,
   history: ['history'] as const,
-  historyList: (params?: { limit?: number }) =>
+  historyList: (params?: { limit?: number; from?: string; to?: string }) =>
     ['history', 'list', params ?? {}] as const,
   historyForMachine: (machineCode: string) =>
     ['history', 'machine', machineCode] as const,

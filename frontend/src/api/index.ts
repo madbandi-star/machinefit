@@ -99,7 +99,7 @@ export const favoriteApi = {
 };
 
 export const historyApi = {
-  list: (params?: { machineCode?: string; limit?: number }) =>
+  list: (params?: { machineCode?: string; limit?: number; from?: string; to?: string }) =>
     apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params }),
   clear: () => apiClient.delete('/history'),
 };

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/components/icons/Icon';
 import { notificationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -27,7 +28,7 @@ export function NotificationBell() {
 
   return (
     <Link to={ROUTES.NOTIFICATIONS} className="notification-bell" aria-label={t('title')}>
-      🔔
+      <Icon name="bell" size={17} />
       {count > 0 && <span className="notification-bell__badge">{count > 9 ? '9+' : count}</span>}
     </Link>
   );

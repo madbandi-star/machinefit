@@ -30,7 +30,17 @@ export function RecordsPage() {
   const handleTabChange = (tabId: string) => {
     if (!isRecordsTab(tabId)) return;
     setActiveTab(tabId);
-    setSearchParams({ tab: tabId }, { replace: true });
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('tab', tabId);
+        if (tabId !== 'history') {
+          next.delete('date');
+        }
+        return next;
+      },
+      { replace: true }
+    );
   };
 
   return (

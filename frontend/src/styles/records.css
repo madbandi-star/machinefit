@@ -32,14 +32,67 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+  flex-wrap: wrap;
   margin-bottom: calc(var(--space-xs) * -1);
 }
 
-.records-list__count {
+.records-list__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.records-list__date-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.records-list__date-filter-label {
   font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.records-list__date-input {
+  font-size: 0.8125rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  color: var(--color-text);
+  max-width: 100%;
+}
+
+.records-list__date-reset {
+  border: none;
+  background: none;
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.records-list__date-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.records-list__date-heading {
+  margin: 0;
+  padding: 0.15rem 0 0.35rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--color-accent);
-  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .records-list__clear {
@@ -123,7 +176,7 @@
   white-space: nowrap;
 }
 
-.saved-settings-card__date {
+.saved-settings-card__time {
   margin: 0;
   font-size: 0.6875rem;
   color: var(--color-text-muted);

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import '@/styles/components.css';
+import { Icon } from '@/components/icons/Icon';
+import './SearchBar.css';
 
 interface SearchBarProps {
   value: string;
@@ -13,21 +14,29 @@ export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarP
 
   return (
     <form
+      className="search-bar"
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit?.();
       }}
-      style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}
     >
-      <input
-        className="input"
-        type="search"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder ?? t('actions.search')}
-      />
-      <button type="submit" className="btn btn--primary">
-        {t('actions.search')}
+      <div className="search-bar__field">
+        <Icon name="search" size={18} className="search-bar__leading-icon" aria-hidden />
+        <input
+          className="input search-bar__input"
+          type="search"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder ?? t('actions.search')}
+          aria-label={placeholder ?? t('actions.search')}
+        />
+      </div>
+      <button
+        type="submit"
+        className="btn btn--secondary icon-btn search-bar__submit"
+        aria-label={t('actions.search')}
+      >
+        <Icon name="search" size={20} />
       </button>
     </form>
   );

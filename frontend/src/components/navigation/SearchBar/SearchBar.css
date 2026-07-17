@@ -1,0 +1,33 @@
+.search-bar {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  align-items: stretch;
+}
+
+.search-bar__field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar__leading-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.search-bar__input {
+  flex: 1;
+  min-width: 0;
+  padding-left: 2.5rem;
+}
+
+.search-bar__submit {
+  flex-shrink: 0;
+  min-width: var(--touch-target-min);
+  padding-inline: 0.75rem;
+}

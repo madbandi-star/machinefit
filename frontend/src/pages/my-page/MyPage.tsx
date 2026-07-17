@@ -7,11 +7,14 @@ import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
-import { ownerApi } from '@/api';
+// import { ownerApi } from '@/api';
 import { ROUTES } from '@/constants/routes';
-import { useUIStore } from '@/store/ui.store';
+// import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/community.css';
+
+/** TODO: restore when gym browse link returns to My Page */
+const SHOW_GYMS_LINK = false;
 
 function ListNavLink({ to, label }: { to: string; label: string }) {
   return (
@@ -26,19 +29,20 @@ export function MyPage() {
   const { t } = useTranslation();
   const { t: tc } = useTranslation('community');
   const user = useAuthStore((s) => s.user);
-  const setAuth = useAuthStore((s) => s.setAuth);
+  // const setAuth = useAuthStore((s) => s.setAuth);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
-  const showToast = useUIStore((s) => s.showToast);
+  // const showToast = useUIStore((s) => s.showToast);
 
-  const [showApply, setShowApply] = useState(false);
+  // const [showApply, setShowApply] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
-  const [businessName, setBusinessName] = useState('');
-  const [applying, setApplying] = useState(false);
+  // const [businessName, setBusinessName] = useState('');
+  // const [applying, setApplying] = useState(false);
 
-  const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
+  // const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
   const isAdmin = user?.roleCode === 'admin';
 
+  /*
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!businessName.trim() || !user) return;
@@ -57,6 +61,7 @@ export function MyPage() {
       setApplying(false);
     }
   };
+  */
 
   const handleLogout = () => {
     clearCredentials();
@@ -89,9 +94,10 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
         <nav className="list-nav" aria-label={t('myPage.explore')}>
-          <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />
-          <ListNavLink to={ROUTES.COMMUNITY} label={t('nav.community')} />
-          <ListNavLink to={ROUTES.BRANDS} label={t('nav.brands')} />
+          {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
+          <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
+          <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
+          <ListNavLink to={ROUTES.BRANDS} label={t('myPage.browseByBrand')} />
         </nav>
       </section>
 
@@ -101,6 +107,7 @@ export function MyPage() {
             {t('myPage.adminDashboard')}
           </Link>
         )}
+        {/* TODO(owner): set SHOW_OWNER_MENU true and restore block below
         {isOwner && !isAdmin && (
           <Link to={ROUTES.OWNER} className="btn btn--primary btn--block">
             {tc('ownerDashboard')}
@@ -131,6 +138,7 @@ export function MyPage() {
             )}
           </>
         )}
+        */}
         <button type="button" className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
           {t('nav.logout')}
         </button>

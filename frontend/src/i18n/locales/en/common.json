@@ -133,7 +133,8 @@
     "role": "Role",
     "quickLinks": "Quick links",
     "explore": "Explore",
-    "adminDashboard": "Admin Dashboard"
+    "adminDashboard": "Admin Dashboard",
+    "browseByBrand": "Browse by Brand"
   },
   "pwa": {
     "installTitle": "Install the app",

@@ -10,6 +10,8 @@ export async function listHistory(req: Request, res: Response): Promise<void> {
   const items = await historyService.list(req.user.userId, {
     machineCode: query.machineCode,
     limit: query.limit,
+    from: query.from,
+    to: query.to,
   });
   res.json({ success: true, data: items });
 }

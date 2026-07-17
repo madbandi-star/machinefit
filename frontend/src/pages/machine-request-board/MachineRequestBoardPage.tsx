@@ -14,6 +14,7 @@ import '@/styles/community.css';
 
 export function MachineRequestBoardPage() {
   const { t } = useTranslation('community');
+  const { t: tCommon } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -144,8 +145,8 @@ export function MachineRequestBoardPage() {
         <p style={{ color: 'var(--color-text-muted)' }}>{t('noRequests')}</p>
       )}
 
-      <Link to={ROUTES.COMMUNITY} className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }}>
-        ← {t('title')}
+      <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }}>
+        ← {tCommon('nav.myPage')}
       </Link>
     </PageShell>
   );

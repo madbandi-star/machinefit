@@ -48,6 +48,8 @@
   "history": {
     "subtitle": "Your recent recommendation history",
     "empty": "No history yet. Get a recommendation first!",
+    "emptyOnDate": "No records on the selected date.",
+    "filterByDate": "Filter by date",
     "clearAll": "Clear All"
   },
   "records": {

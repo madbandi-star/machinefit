@@ -48,6 +48,8 @@
   "history": {
     "subtitle": "최근 추천 기록",
     "empty": "기록이 없습니다. 머신 추천을 받아보세요.",
+    "emptyOnDate": "선택한 날짜에 기록이 없습니다.",
+    "filterByDate": "일자 조회",
     "clearAll": "전체 삭제"
   },
   "records": {

@@ -13,7 +13,9 @@ export type MachineListQuery = z.infer<typeof machineListQuerySchema>;
 
 export const historyListQuerySchema = z.object({
   machineCode: z.string().optional(),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  from: z.string().datetime({ offset: true }).optional(),
+  to: z.string().datetime({ offset: true }).optional(),
 });
 
 export type HistoryListQuery = z.infer<typeof historyListQuerySchema>;

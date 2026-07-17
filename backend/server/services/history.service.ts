@@ -3,7 +3,10 @@ import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 export const historyService = {
-  async list(userId: string, options: { limit?: number; machineCode?: string } = {}) {
+  async list(
+    userId: string,
+    options: { limit?: number; machineCode?: string; from?: string; to?: string } = {}
+  ) {
     return historyRepository.listByUser(userId, options);
   },
 
