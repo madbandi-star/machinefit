@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { LineChart } from '@/components/progressive-overload/LineChart/LineChart';
-import { workoutLogApi } from '@/api';
+import { fetchAllWorkoutLogs } from '@/api/workout-log';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
   type GrowthPeriod,
@@ -28,15 +29,12 @@ export function GrowthAnalysisPage() {
   const [selectedMachineCode, setSelectedMachineCode] = useState('');
 
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
-    queryKey: ['workoutLogs', 'all'],
-    queryFn: async () => {
-      const res = await workoutLogApi.list();
-      return res.data.data ?? [];
-    },
+    queryKey: QUERY_KEYS.workoutLogsAll,
+    queryFn: fetchAllWorkoutLogs,
   });
 
   const periodLogs = useMemo(() => filterLogsByPeriod(logs, period), [logs, period]);
-  const machineOptions = useMemo(() => getMachineOptions(periodLogs), [periodLogs]);
+  const machineOptions = useMemo(() => getMachineOptions(logs), [logs]);
 
   useEffect(() => {
     if (machineOptions.length === 0) {

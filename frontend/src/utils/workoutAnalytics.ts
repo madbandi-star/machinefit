@@ -36,6 +36,22 @@ export interface MachineKpis {
   previousPr: number | null;
 }
 
+function normalizeLogDate(logDate: string): string {
+  if (/^\d{4}-\d{2}-\d{2}/.test(logDate)) {
+    return logDate.slice(0, 10);
+  }
+
+  const parsed = new Date(logDate);
+  if (!Number.isNaN(parsed.getTime())) {
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, '0');
+    const d = String(parsed.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  return logDate;
+}
+
 function todayDateKey(): string {
   const now = new Date();
   const y = now.getFullYear();
@@ -60,8 +76,14 @@ export function getPeriodStartDate(period: GrowthPeriod): string | null {
 
 export function filterLogsByPeriod(logs: WorkoutLog[], period: GrowthPeriod): WorkoutLog[] {
   const from = getPeriodStartDate(period);
-  if (!from) return [...logs];
-  return logs.filter((log) => log.logDate >= from && log.logDate <= todayDateKey());
+  const to = todayDateKey();
+  const normalized = logs.map((log) => ({
+    ...log,
+    logDate: normalizeLogDate(log.logDate),
+  }));
+
+  if (!from) return normalized;
+  return normalized.filter((log) => log.logDate >= from && log.logDate <= to);
 }
 
 export function computeVolume(weights: number[]): number {

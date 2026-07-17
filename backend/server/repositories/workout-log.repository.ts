@@ -14,9 +14,19 @@ interface WorkoutLogRow {
   updated_at: string;
 }
 
+function formatLogDate(value: string | Date): string {
+  if (typeof value === 'string') {
+    return value.slice(0, 10);
+  }
+
+  const y = value.getFullYear();
+  const m = String(value.getMonth() + 1).padStart(2, '0');
+  const d = String(value.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 function mapRow(row: WorkoutLogRow): WorkoutLog {
-  const logDate =
-    typeof row.log_date === 'string' ? row.log_date.slice(0, 10) : String(row.log_date);
+  const logDate = formatLogDate(row.log_date);
 
   return {
     id: row.id,

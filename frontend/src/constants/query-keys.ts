@@ -14,6 +14,7 @@ export const QUERY_KEYS = {
   historyForMachine: (machineCode: string) =>
     ['history', 'machine', machineCode] as const,
   workoutLogs: ['workout-logs'] as const,
+  workoutLogsAll: ['workout-logs', 'all'] as const,
   workoutLogToday: (machineCode: string, logDate: string) =>
     ['workout-logs', machineCode, logDate] as const,
   posts: ['posts'] as const,
