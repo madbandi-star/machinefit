@@ -5,11 +5,13 @@ import { Icon } from '@/components/icons/Icon';
 import { notificationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import './NotificationBell.css';
 
 export function NotificationBell() {
   const { t } = useTranslation('notifications');
+  const authHydrated = useAuthHydration();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data } = useQuery({
@@ -18,9 +20,13 @@ export function NotificationBell() {
       const res = await notificationApi.unreadCount();
       return res.data.data.count;
     },
-    enabled: isAuthenticated,
+    enabled: authHydrated && isAuthenticated,
     refetchInterval: 60_000,
   });
+
+  if (!authHydrated) {
+    return <span className="notification-bell notification-bell--placeholder" aria-hidden />;
+  }
 
   if (!isAuthenticated) return null;
 

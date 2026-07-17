@@ -1,7 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   getInstallMode,
   initPwaInstallListeners,
+  markPwaInstalled,
+  refreshPwaInstalledState,
   usePwaStore,
 } from '@/store/pwa.store';
 
@@ -12,8 +14,11 @@ export function usePwaInstall() {
   const isInstalled = usePwaStore((s) => s.isInstalled);
   const dismissed = usePwaStore((s) => s.dismissed);
   const setDeferredPrompt = usePwaStore((s) => s.setDeferredPrompt);
-  const setIsInstalled = usePwaStore((s) => s.setIsInstalled);
   const setDismissed = usePwaStore((s) => s.setDismissed);
+
+  useEffect(() => {
+    void refreshPwaInstalledState();
+  }, []);
 
   const install = useCallback(async () => {
     if (!deferredPrompt) return false;
@@ -21,11 +26,11 @@ export function usePwaInstall() {
     const choice = await deferredPrompt.userChoice;
     setDeferredPrompt(null);
     if (choice.outcome === 'accepted') {
-      setIsInstalled(true);
+      markPwaInstalled();
       return true;
     }
     return false;
-  }, [deferredPrompt, setDeferredPrompt, setIsInstalled]);
+  }, [deferredPrompt, setDeferredPrompt]);
 
   const dismiss = useCallback(() => {
     localStorage.setItem('machinefit-pwa-install-dismissed', '1');

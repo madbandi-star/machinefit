@@ -17,6 +17,11 @@
     background var(--motion-fast);
 }
 
+.notification-bell--placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .notification-bell:hover {
   color: var(--color-link);
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
