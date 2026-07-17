@@ -179,8 +179,8 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
           </div>
           {coachingSummary ? <p className="growth-insights-coaching__summary">{coachingSummary}</p> : null}
           <ul className="growth-insights-coaching__tips">
-            {coachingTips.map((tip) => (
-              <li key={tip}>{tip}</li>
+            {coachingTips.map((tip, index) => (
+              <li key={`${index}-${tip}`}>{tip}</li>
             ))}
           </ul>
         </div>

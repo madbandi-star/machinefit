@@ -1,11 +1,13 @@
 import type { TFunction } from 'i18next';
 import type { WorkoutInsightsCoaching } from '@machinefit/shared';
 
+const COACHING_PREFIX = 'growthAnalysis.insights.coaching';
+
 export function getCoachingSummary(
   t: TFunction,
   coaching: WorkoutInsightsCoaching
 ): string {
-  const key = `growthAnalysis.coaching.summary.${coaching.focus}.${coaching.comparisonLevel}`;
+  const key = `${COACHING_PREFIX}.summary.${coaching.focus}.${coaching.comparisonLevel}`;
   return t(key);
 }
 
@@ -14,25 +16,25 @@ export function getCoachingTips(
   coaching: WorkoutInsightsCoaching
 ): string[] {
   const tips: string[] = [];
-  tips.push(t(`growthAnalysis.coaching.tips.${coaching.focus}`));
+  tips.push(t(`${COACHING_PREFIX}.tips.${coaching.focus}`));
 
   if (coaching.plateau) {
-    tips.push(t('growthAnalysis.coaching.tips.plateau'));
+    tips.push(t(`${COACHING_PREFIX}.tips.plateau`));
   }
 
   if (coaching.lowFrequency) {
-    tips.push(t('growthAnalysis.coaching.tips.lowFrequency'));
+    tips.push(t(`${COACHING_PREFIX}.tips.lowFrequency`));
   }
 
   if (coaching.comparisonLevel === 'above') {
-    tips.push(t('growthAnalysis.coaching.tips.abovePeer'));
+    tips.push(t(`${COACHING_PREFIX}.tips.abovePeer`));
   } else if (coaching.comparisonLevel === 'below') {
-    tips.push(t('growthAnalysis.coaching.tips.belowPeer'));
+    tips.push(t(`${COACHING_PREFIX}.tips.belowPeer`));
   }
 
-  return tips;
+  return [...new Set(tips)];
 }
 
 export function getCoachingFocusLabel(t: TFunction, focus: WorkoutInsightsCoaching['focus']): string {
-  return t(`growthAnalysis.coaching.focusLabel.${focus}`);
+  return t(`${COACHING_PREFIX}.focusLabel.${focus}`);
 }
