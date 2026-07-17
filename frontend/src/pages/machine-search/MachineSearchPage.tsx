@@ -38,10 +38,14 @@ export function MachineSearchPage() {
     },
   });
 
+const PRIORITY_BRAND_CODES: string[] = [BRAND_CODES.FREE_WEIGHT, BRAND_CODES.BODYWEIGHT];
+
   const sortedBrands = useMemo(() => {
-    const freeWeight = brands.find((brand) => brand.code === BRAND_CODES.FREE_WEIGHT);
-    const others = brands.filter((brand) => brand.code !== BRAND_CODES.FREE_WEIGHT);
-    return freeWeight ? [freeWeight, ...others] : brands;
+    const priority = PRIORITY_BRAND_CODES.map((code) =>
+      brands.find((brand) => brand.code === code)
+    ).filter((brand): brand is NonNullable<typeof brand> => !!brand);
+    const rest = brands.filter((brand) => !PRIORITY_BRAND_CODES.includes(brand.code));
+    return [...priority, ...rest];
   }, [brands]);
 
   const { data, isLoading } = useQuery({

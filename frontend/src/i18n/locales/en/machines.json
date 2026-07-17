@@ -17,7 +17,8 @@
     "selectorized": "Selectorized",
     "cable": "Cable",
     "smith": "Smith",
-    "free_weight": "Free weight"
+    "free_weight": "Free weight",
+    "bodyweight": "Bodyweight"
   },
   "search": {
     "empty": "No machines available",

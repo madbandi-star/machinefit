@@ -74,7 +74,27 @@ CROSS JOIN (VALUES
   -- FW_KETTLEBELL
   ('FW_KETTLEBELL', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', 16,
     '{"en":["Grip the handle firmly","Use hip drive on swings"],"ko":["손잡이를 단단히 잡기","스윙 시 엉덩이 힘 활용"],"ja":["ハンドルをしっかり握る","スイング時は股関節を使う"],"zh":["握紧把手","摆动时使用髋部发力"]}',
-    '{"en":["Keep clearance around your body"],"ko":["주변에 충분한 공간 확보"],"ja":["周囲に十分なスペースを確保"],"zh":["确保周围有足够空间"]}')
+    '{"en":["Keep clearance around your body"],"ko":["주변에 충분한 공간 확보"],"ja":["周囲に十分なスペースを確保"],"zh":["确保周围有足够空间"]}'),
+
+  -- BW_PULL_UP
+  ('BW_PULL_UP', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Start from a dead hang","Pull chest toward the bar"],"ko":["데드행에서 시작","가슴을 바 쪽으로 당기기"],"ja":["デッドハングから開始","胸をバーに引き寄せる"],"zh":["从悬垂开始","将胸部拉向横杆"]}',
+    '{"en":["Avoid kipping if focusing on strength"],"ko":["근력 위주면 키핑 피하기"],"ja":["筋力重視ならキップを避ける"],"zh":["侧重力量时避免借力摆动"]}'),
+
+  -- BW_CHIN_UP
+  ('BW_CHIN_UP', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Use supinated grip","Keep elbows close to body"],"ko":["손바닥 자신 쪽 그립","팔꿈치를 몸 가까이"],"ja":["手のひらを自分側に","肘を体の近くに"],"zh":["采用反手抓握","肘部贴近身体"]}',
+    '{"en":["Do not swing the torso"],"ko":["상체를 흔들지 마세요"],"ja":["体幹を揺らさない"],"zh":["不要摆动躯干"]}'),
+
+  -- BW_DIPS
+  ('BW_DIPS', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Keep shoulders down on descent","Lean slightly forward for chest focus"],"ko":["하강 시 어깨 내리기","가슴 자극을 위해 약간 숙이기"],"ja":["下ろす時は肩を下げる","胸に効かせるためやや前傾"],"zh":["下降时沉肩","略前倾以刺激胸部"]}',
+    '{"en":["Stop if shoulder pain occurs"],"ko":["어깨 통증 시 즉시 중단"],"ja":["肩に痛みがあれば中止"],"zh":["肩部疼痛时立即停止"]}'),
+
+  -- BW_PUSH_UP
+  ('BW_PUSH_UP', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Keep body in a straight line","Lower chest near the floor"],"ko":["몸을 일자로 유지","가슴을 바닥 가까이"],"ja":["体を一直線に","胸を床近くまで"],"zh":["身体保持一条直线","胸部接近地面"]}',
+    '{"en":["Do not sag the hips"],"ko":["엉덩이가 처지지 않게"],"ja":["腰が落ちないように"],"zh":["不要塌腰"]}')
 ) AS v(machine_code, gender, experience_level, height_min, height_max, seat_pos, back_pad_pos, foot_pos, handle_pos, rom_setting, weight_kg, tips, warnings)
 WHERE m.code = v.machine_code
 ON CONFLICT DO NOTHING;
