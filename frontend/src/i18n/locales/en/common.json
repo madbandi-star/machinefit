@@ -245,11 +245,22 @@
         }
       },
       "peerComparison": {
-        "title": "Same height & gender growth",
-        "desc": "{{gender}} · {{min}}–{{max}} cm cohort",
-        "myGrowth": "Your growth",
-        "peerAvg": "Cohort avg",
-        "relative": "Difference"
+        "title": "Cohort volume growth rate",
+        "desc": "{{machine}} · {{gender}} · {{min}}–{{max}} cm · {{period}}",
+        "definitionTitle": "What is growth rate?",
+        "definition": "In {{period}}, how much your total volume (sum of all set weights) on this machine changed from your first log to your last log, shown as a percentage.",
+        "definitionExample": "Example: 300 kg → 360 kg = +20% growth",
+        "myGrowth": "Your volume growth",
+        "myGrowthHint": "First vs last log in the period",
+        "peerAvg": "Cohort average",
+        "peerAvgHint": "Average growth for similar height & gender",
+        "relative": "Vs cohort avg",
+        "relativeHint": "Your growth minus cohort avg (%p)",
+        "sampleSize": "Based on {{count}} similar users",
+        "interpretAbove": "You are growing faster than similar users.",
+        "interpretNear": "You are growing at a similar pace to the cohort average.",
+        "interpretBelow": "Growth is slower than the cohort average. Try increasing sets or load gradually.",
+        "interpretUnknown": "Log at least two workouts to compare growth rates."
       },
       "coaching": {
         "title": "AI workout coaching",

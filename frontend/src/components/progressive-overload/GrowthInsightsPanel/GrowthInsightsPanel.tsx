@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { WorkoutInsights } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
-import { formatGrowthPct } from '@/utils/workoutAnalytics';
+import { formatGrowthPct, formatRelativeGrowthPct, getGrowthValueClass } from '@/utils/workoutAnalytics';
 import { getCoachingFocusLabel, getCoachingSummary, getCoachingTips } from '@/utils/growthCoaching';
 import { ProfileCompareMetric } from '@/components/progressive-overload/ProfileCompareMetric/ProfileCompareMetric';
 
@@ -15,6 +15,20 @@ interface GrowthInsightsPanelProps {
 
 function CohortBadge({ label }: { label: string }) {
   return <span className="profile-compare-cohort__chip">{label}</span>;
+}
+
+function getPeerInterpretationKey(relativePct: number | null): string {
+  if (relativePct == null) return 'growthAnalysis.insights.peerComparison.interpretUnknown';
+  if (relativePct >= 5) return 'growthAnalysis.insights.peerComparison.interpretAbove';
+  if (relativePct <= -5) return 'growthAnalysis.insights.peerComparison.interpretBelow';
+  return 'growthAnalysis.insights.peerComparison.interpretNear';
+}
+
+function getPeerInterpretationClass(relativePct: number | null): string {
+  if (relativePct == null) return 'peer-growth-compare__interpretation--neutral';
+  if (relativePct >= 5) return '';
+  if (relativePct <= -5) return 'peer-growth-compare__interpretation--below';
+  return 'peer-growth-compare__interpretation--neutral';
 }
 
 export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: GrowthInsightsPanelProps) {
@@ -143,39 +157,69 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
       </div>
 
       {insights.peerComparison ? (
-        <div className="card growth-insights-panel__section">
+        <div className="card growth-insights-panel__section peer-growth-compare">
           <h2>{t('growthAnalysis.insights.peerComparison.title')}</h2>
           <p className="growth-analysis-chart-section__desc">
             {t('growthAnalysis.insights.peerComparison.desc', {
+              machine: insights.machineName ?? insights.machineCode,
               gender: t(`auth.genders.${insights.peerComparison.gender}`),
               min: insights.peerComparison.heightMinCm,
               max: insights.peerComparison.heightMaxCm,
+              period: periodLabel,
             })}
           </p>
-          <div className="growth-insights-peer">
-            <div>
-              <span>{t('growthAnalysis.insights.peerComparison.myGrowth')}</span>
-              <strong className="growth-analysis-kpi__value--up">
-                {formatGrowthPct(insights.peerComparison.userVolumeGrowthPct)}
-              </strong>
-            </div>
-            <div>
-              <span>{t('growthAnalysis.insights.peerComparison.peerAvg')}</span>
-              <strong>{formatGrowthPct(insights.peerComparison.peerAvgVolumeGrowthPct)}</strong>
-            </div>
-            <div>
-              <span>{t('growthAnalysis.insights.peerComparison.relative')}</span>
-              <strong
-                className={
-                  (insights.peerComparison.relativePct ?? 0) >= 0
-                    ? 'growth-analysis-kpi__value--up'
-                    : 'growth-analysis-kpi__value--down'
-                }
-              >
-                {formatGrowthPct(insights.peerComparison.relativePct)}
-              </strong>
-            </div>
+
+          <div className="peer-growth-compare__definition" role="note">
+            <strong>{t('growthAnalysis.insights.peerComparison.definitionTitle')}</strong>
+            <p>{t('growthAnalysis.insights.peerComparison.definition', { period: periodLabel })}</p>
+            <p className="peer-growth-compare__example">
+              {t('growthAnalysis.insights.peerComparison.definitionExample')}
+            </p>
           </div>
+
+          {insights.peerComparison.sampleSize > 0 ? (
+            <p className="peer-growth-compare__sample">
+              {t('growthAnalysis.insights.peerComparison.sampleSize', {
+                count: insights.peerComparison.sampleSize,
+              })}
+            </p>
+          ) : null}
+
+          <dl className="peer-growth-compare__metrics">
+            <div className="peer-growth-compare__metric">
+              <dt>
+                <span>{t('growthAnalysis.insights.peerComparison.myGrowth')}</span>
+                <small>{t('growthAnalysis.insights.peerComparison.myGrowthHint')}</small>
+              </dt>
+              <dd className={getGrowthValueClass(insights.peerComparison.userVolumeGrowthPct).trim()}>
+                {formatGrowthPct(insights.peerComparison.userVolumeGrowthPct)}
+              </dd>
+            </div>
+            <div className="peer-growth-compare__metric">
+              <dt>
+                <span>{t('growthAnalysis.insights.peerComparison.peerAvg')}</span>
+                <small>{t('growthAnalysis.insights.peerComparison.peerAvgHint')}</small>
+              </dt>
+              <dd>{formatGrowthPct(insights.peerComparison.peerAvgVolumeGrowthPct)}</dd>
+            </div>
+            <div className="peer-growth-compare__metric">
+              <dt>
+                <span>{t('growthAnalysis.insights.peerComparison.relative')}</span>
+                <small>{t('growthAnalysis.insights.peerComparison.relativeHint')}</small>
+              </dt>
+              <dd className={getGrowthValueClass(insights.peerComparison.relativePct).trim()}>
+                {formatRelativeGrowthPct(insights.peerComparison.relativePct)}
+              </dd>
+            </div>
+          </dl>
+
+          <p
+            className={`peer-growth-compare__interpretation ${getPeerInterpretationClass(
+              insights.peerComparison.relativePct
+            )}`}
+          >
+            {t(getPeerInterpretationKey(insights.peerComparison.relativePct))}
+          </p>
         </div>
       ) : null}
 

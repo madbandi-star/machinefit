@@ -245,11 +245,22 @@
         }
       },
       "peerComparison": {
-        "title": "동일 키·성별 성장률 비교",
-        "desc": "{{gender}} · {{min}}~{{max}}cm 사용자 대비",
-        "myGrowth": "내 성장률",
+        "title": "동일 키·성별 총 수행량 성장률",
+        "desc": "{{machine}} · {{gender}} · {{min}}~{{max}}cm · {{period}}",
+        "definitionTitle": "성장률이란?",
+        "definition": "선택한 기간({{period}}) 동안, 이 머신에서 첫 운동과 마지막 운동의 총 수행량(모든 세트 무게 합)이 얼마나 변했는지를 퍼센트로 나타낸 값입니다.",
+        "definitionExample": "예: 첫 기록 300kg → 마지막 360kg이면 +20% 성장",
+        "myGrowth": "내 총 수행량 성장률",
+        "myGrowthHint": "내 첫 기록 대비 마지막 기록 변화",
         "peerAvg": "동일 조건 평균",
-        "relative": "차이"
+        "peerAvgHint": "같은 키·성별 사용자들의 평균 성장률",
+        "relative": "평균 대비",
+        "relativeHint": "내 성장률 − 평균 (%p, 퍼센트포인트)",
+        "sampleSize": "비교군 {{count}}명 기준",
+        "interpretAbove": "동일 조건 사용자보다 빠르게 성장하고 있습니다.",
+        "interpretNear": "동일 조건 평균과 비슷한 속도로 성장 중입니다.",
+        "interpretBelow": "동일 조건 평균보다 성장 속도가 느립니다. 세트·무게를 단계적으로 늘려 보세요.",
+        "interpretUnknown": "기록이 2회 이상 쌓이면 성장률을 비교할 수 있습니다."
       },
       "coaching": {
         "title": "AI 운동 코칭",
