@@ -343,90 +343,106 @@ export function GrowthAnalysisPage() {
             {t('growthAnalysis.periodNote', { period: periodLabel })}
           </p>
 
-          <section className="card growth-analysis-chart-section">
-            <div className="growth-analysis-chart-section__header">
-              <h2>
-                {isDailyView
-                  ? t('growthAnalysis.daily.volumeChart.title')
-                  : t('growthAnalysis.volumeChart.title')}
-              </h2>
-              {volumeGrowthPct !== null ? (
-                <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
-                  {formatGrowthPct(volumeGrowthPct)} {t('growthAnalysis.growth')}
-                </span>
-              ) : null}
-            </div>
-            <p className="growth-analysis-chart-section__desc">
-              {isDailyView
-                ? t('growthAnalysis.daily.volumeChart.desc')
-                : t('growthAnalysis.volumeChart.desc')}
-            </p>
-            {volumeChartPoints.length > 0 ? (
-              <LineChart
-                points={volumeChartPoints}
-                unit="kg"
-                showTrend
-                ariaLabel={
-                  isDailyView
-                    ? t('growthAnalysis.daily.volumeChart.title')
-                    : t('growthAnalysis.volumeChart.title')
-                }
-              />
-            ) : (
-              <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
-            )}
-          </section>
-
-          <section className="card growth-analysis-chart-section">
-            <div className="growth-analysis-chart-section__header">
-              <h2>{t('growthAnalysis.maxWeightChart.title')}</h2>
-            </div>
-            <p className="growth-analysis-chart-section__desc">
-              {isDailyView
-                ? t('growthAnalysis.daily.maxWeightChart.desc')
-                : t('growthAnalysis.maxWeightChart.desc')}
-            </p>
-            {currentPr !== null ? (
-              <div className="growth-analysis-pr-summary">
-                <div>
-                  <span>{t('growthAnalysis.maxWeightChart.previousPr')}</span>
-                  <strong>{previousPr}kg</strong>
+          <section className="card growth-analysis-charts-panel">
+            <article className="growth-analysis-chart-block">
+              <div className="growth-analysis-chart-section__header">
+                <div className="growth-analysis-chart-section__title-group">
+                  <h2>
+                    {isDailyView
+                      ? t('growthAnalysis.daily.volumeChart.title')
+                      : t('growthAnalysis.volumeChart.title')}
+                  </h2>
+                  <p className="growth-analysis-chart-section__desc">
+                    {isDailyView
+                      ? t('growthAnalysis.daily.volumeChart.desc')
+                      : t('growthAnalysis.volumeChart.desc')}
+                  </p>
                 </div>
-                <div>
-                  <span>{t('growthAnalysis.maxWeightChart.currentPr')}</span>
-                  <strong>{currentPr}kg</strong>
-                </div>
-                {maxWeightDelta !== null ? (
-                  <div className="growth-analysis-kpi__value--up">
-                    {formatWeightDelta(maxWeightDelta)} {t('growthAnalysis.maxWeightChart.rise')}
-                  </div>
+                {volumeGrowthPct !== null ? (
+                  <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
+                    {formatGrowthPct(volumeGrowthPct)} {t('growthAnalysis.growth')}
+                  </span>
                 ) : null}
               </div>
-            ) : null}
-            {maxWeightChartPoints.length > 0 ? (
-              <LineChart
-                points={maxWeightChartPoints}
-                unit="kg"
-                accentColor="var(--color-accent, #f59e0b)"
-                ariaLabel={t('growthAnalysis.maxWeightChart.title')}
-              />
-            ) : (
-              <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
-            )}
+              {volumeChartPoints.length > 0 ? (
+                <LineChart
+                  points={volumeChartPoints}
+                  unit="kg"
+                  showTrend
+                  compact
+                  ariaLabel={
+                    isDailyView
+                      ? t('growthAnalysis.daily.volumeChart.title')
+                      : t('growthAnalysis.volumeChart.title')
+                  }
+                />
+              ) : (
+                <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
+              )}
+            </article>
+
+            <div className="growth-analysis-charts-panel__divider" aria-hidden />
+
+            <article className="growth-analysis-chart-block">
+              <div className="growth-analysis-chart-section__header">
+                <div className="growth-analysis-chart-section__title-group">
+                  <h2>{t('growthAnalysis.maxWeightChart.title')}</h2>
+                  <p className="growth-analysis-chart-section__desc">
+                    {isDailyView
+                      ? t('growthAnalysis.daily.maxWeightChart.desc')
+                      : t('growthAnalysis.maxWeightChart.desc')}
+                  </p>
+                </div>
+              </div>
+              {currentPr !== null ? (
+                <div className="growth-analysis-pr-summary growth-analysis-pr-summary--compact">
+                  <span>
+                    {t('growthAnalysis.maxWeightChart.previousPr')}{' '}
+                    <strong>{previousPr}kg</strong>
+                  </span>
+                  <span className="growth-analysis-pr-summary__arrow" aria-hidden>
+                    →
+                  </span>
+                  <span>
+                    {t('growthAnalysis.maxWeightChart.currentPr')}{' '}
+                    <strong>{currentPr}kg</strong>
+                  </span>
+                  {maxWeightDelta !== null ? (
+                    <span className="growth-analysis-kpi__value--up">
+                      {formatWeightDelta(maxWeightDelta)}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+              {maxWeightChartPoints.length > 0 ? (
+                <LineChart
+                  points={maxWeightChartPoints}
+                  unit="kg"
+                  compact
+                  accentColor="var(--color-accent, #f59e0b)"
+                  ariaLabel={t('growthAnalysis.maxWeightChart.title')}
+                />
+              ) : (
+                <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
+              )}
+            </article>
           </section>
 
           {isDailyView ? (
-            <section className="card growth-analysis-chart-section">
+            <section className="card growth-analysis-chart-section growth-analysis-chart-section--compact">
               <div className="growth-analysis-chart-section__header">
-                <h2>{t('growthAnalysis.daily.machineChart.title')}</h2>
+                <div className="growth-analysis-chart-section__title-group">
+                  <h2>{t('growthAnalysis.daily.machineChart.title')}</h2>
+                  <p className="growth-analysis-chart-section__desc">
+                    {t('growthAnalysis.daily.machineChart.desc')}
+                  </p>
+                </div>
               </div>
-              <p className="growth-analysis-chart-section__desc">
-                {t('growthAnalysis.daily.machineChart.desc')}
-              </p>
               {machineCountChartPoints.length > 0 ? (
                 <LineChart
                   points={machineCountChartPoints}
                   unit={t('growthAnalysis.daily.machineChart.unit')}
+                  compact
                   accentColor="var(--color-primary)"
                   ariaLabel={t('growthAnalysis.daily.machineChart.title')}
                 />

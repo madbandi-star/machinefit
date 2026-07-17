@@ -12,11 +12,24 @@ interface LineChartProps {
   showTrend?: boolean;
   accentColor?: string;
   ariaLabel: string;
+  compact?: boolean;
+  showValueList?: boolean;
 }
 
-const CHART_WIDTH = 320;
-const CHART_HEIGHT = 160;
-const PADDING = { top: 16, right: 12, bottom: 28, left: 36 };
+const CHART_LAYOUT = {
+  default: {
+    width: 320,
+    height: 160,
+    padding: { top: 16, right: 12, bottom: 28, left: 36 },
+    dotRadius: 4,
+  },
+  compact: {
+    width: 320,
+    height: 108,
+    padding: { top: 10, right: 8, bottom: 22, left: 30 },
+    dotRadius: 3,
+  },
+} as const;
 
 function buildPath(values: { x: number; y: number }[]): string {
   if (values.length === 0) return '';
@@ -31,12 +44,18 @@ export function LineChart({
   showTrend = false,
   accentColor = 'var(--color-primary)',
   ariaLabel,
+  compact = false,
+  showValueList,
 }: LineChartProps) {
+  const layout = compact ? CHART_LAYOUT.compact : CHART_LAYOUT.default;
+  const shouldShowValueList = showValueList ?? !compact;
+
   const chart = useMemo(() => {
     if (points.length === 0) return null;
 
-    const innerWidth = CHART_WIDTH - PADDING.left - PADDING.right;
-    const innerHeight = CHART_HEIGHT - PADDING.top - PADDING.bottom;
+    const { width: chartWidth, height: chartHeight, padding } = layout;
+    const innerWidth = chartWidth - padding.left - padding.right;
+    const innerHeight = chartHeight - padding.top - padding.bottom;
     const values = points.map((point) => point.value);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
@@ -45,25 +64,28 @@ export function LineChart({
     const plotPoints = points.map((point, index) => {
       const x =
         points.length === 1
-          ? PADDING.left + innerWidth / 2
-          : PADDING.left + (index / (points.length - 1)) * innerWidth;
+          ? padding.left + innerWidth / 2
+          : padding.left + (index / (points.length - 1)) * innerWidth;
       const normalized = (point.value - minValue) / valueRange;
-      const y = PADDING.top + innerHeight - normalized * innerHeight;
+      const y = padding.top + innerHeight - normalized * innerHeight;
       return { x, y, label: point.label, value: point.value };
     });
 
     const regressionInput = points.map((point, index) => ({ x: index, y: point.value }));
     const trend = linearRegression(regressionInput);
     const trendStartY =
-      PADDING.top +
+      padding.top +
       innerHeight -
       ((trend.intercept - minValue) / valueRange) * innerHeight;
     const trendEndY =
-      PADDING.top +
+      padding.top +
       innerHeight -
       ((trend.intercept + trend.slope * (points.length - 1) - minValue) / valueRange) * innerHeight;
 
     return {
+      chartWidth,
+      chartHeight,
+      padding,
       plotPoints,
       linePath: buildPath(plotPoints),
       trendPath:
@@ -73,35 +95,39 @@ export function LineChart({
       minValue,
       maxValue,
     };
-  }, [points]);
+  }, [layout, points]);
 
   if (!chart) return null;
 
   return (
-    <div className="po-line-chart" role="img" aria-label={ariaLabel}>
+    <div
+      className={`po-line-chart${compact ? ' po-line-chart--compact' : ''}`}
+      role="img"
+      aria-label={ariaLabel}
+    >
       <svg
-        viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
+        viewBox={`0 0 ${chart.chartWidth} ${chart.chartHeight}`}
         className="po-line-chart__svg"
         preserveAspectRatio="xMidYMid meet"
       >
         <line
-          x1={PADDING.left}
-          y1={CHART_HEIGHT - PADDING.bottom}
-          x2={CHART_WIDTH - PADDING.right}
-          y2={CHART_HEIGHT - PADDING.bottom}
+          x1={chart.padding.left}
+          y1={chart.chartHeight - chart.padding.bottom}
+          x2={chart.chartWidth - chart.padding.right}
+          y2={chart.chartHeight - chart.padding.bottom}
           className="po-line-chart__axis"
         />
         <text
-          x={PADDING.left - 6}
-          y={PADDING.top + 4}
+          x={chart.padding.left - 6}
+          y={chart.padding.top + 4}
           className="po-line-chart__axis-label"
           textAnchor="end"
         >
           {Math.round(chart.maxValue)}
         </text>
         <text
-          x={PADDING.left - 6}
-          y={CHART_HEIGHT - PADDING.bottom}
+          x={chart.padding.left - 6}
+          y={chart.chartHeight - chart.padding.bottom}
           className="po-line-chart__axis-label"
           textAnchor="end"
         >
@@ -119,13 +145,13 @@ export function LineChart({
             <circle
               cx={point.x}
               cy={point.y}
-              r={4}
+              r={layout.dotRadius}
               className="po-line-chart__dot"
               fill={accentColor}
             />
             <text
               x={point.x}
-              y={CHART_HEIGHT - 8}
+              y={chart.chartHeight - 6}
               className="po-line-chart__x-label"
               textAnchor="middle"
             >
@@ -135,17 +161,19 @@ export function LineChart({
         ))}
       </svg>
 
-      <ul className="po-line-chart__values">
-        {points.map((point) => (
-          <li key={point.label} className="po-line-chart__value-item">
-            <span className="po-line-chart__value-date">{point.label}</span>
-            <span className="po-line-chart__value-amount">
-              {point.value.toLocaleString()}
-              {unit}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {shouldShowValueList ? (
+        <ul className="po-line-chart__values">
+          {points.map((point) => (
+            <li key={point.label} className="po-line-chart__value-item">
+              <span className="po-line-chart__value-date">{point.label}</span>
+              <span className="po-line-chart__value-amount">
+                {point.value.toLocaleString()}
+                {unit}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }
