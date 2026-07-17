@@ -49,6 +49,7 @@
     "title": "Workout log",
     "setCount": "Sets completed",
     "weights": "Weight per set",
+    "totalWeight": "Total weight",
     "setLabel": "Set {{number}}",
     "save": "Save log",
     "saving": "Saving...",

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUtf8ByteLength, truncateUtf8, WORKOUT_DIARY_MAX_BYTES } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
@@ -8,6 +8,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { formatHistoryDateHeader, getTodayDateKey } from '@/utils/historyDate';
+import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
 import '@/styles/recommendation.css';
 
@@ -40,6 +41,10 @@ function resizeWeights(current: number[], nextCount: number, fallback?: number):
     ...current,
     ...Array.from({ length: nextCount - current.length }, () => last),
   ];
+}
+
+function formatTotalWeightKg(total: number): string {
+  return total.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
 export function WorkoutLogPanel({
@@ -78,6 +83,7 @@ export function WorkoutLogPanel({
   });
 
   const existingLog = existingLogs?.[0];
+  const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
 
   useEffect(() => {
     setInitialized(false);
@@ -261,6 +267,17 @@ export function WorkoutLogPanel({
     </button>
   );
 
+  const totalWeightSummary = (
+    <div className="recommendation-workout-log__total">
+      <span className="recommendation-workout-log__total-label">
+        {t('machines:workoutLog.totalWeight')}
+      </span>
+      <strong className="recommendation-workout-log__total-value">
+        {formatTotalWeightKg(totalWeightKg)}kg
+      </strong>
+    </div>
+  );
+
   if (compact) {
     return (
       <section
@@ -274,6 +291,7 @@ export function WorkoutLogPanel({
         <div className="recommendation-workout-log__weights">
           {weightGrid}
         </div>
+        {totalWeightSummary}
         {diaryField}
         {saveButton}
       </section>
@@ -297,7 +315,12 @@ export function WorkoutLogPanel({
       </div>
 
       <div className="recommendation-workout-log__weights">
-        <p className="recommendation-workout-log__field-label">{t('machines:workoutLog.weights')}</p>
+        <div className="recommendation-workout-log__weights-header">
+          <p className="recommendation-workout-log__field-label recommendation-workout-log__field-label--inline">
+            {t('machines:workoutLog.weights')}
+          </p>
+          {totalWeightSummary}
+        </div>
         {weightGrid}
       </div>
 

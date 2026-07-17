@@ -49,6 +49,7 @@
     "title": "수행 기록",
     "setCount": "수행 세트 수",
     "weights": "수행 무게",
+    "totalWeight": "총 무게",
     "setLabel": "{{number}}세트",
     "save": "기록 저장",
     "saving": "저장 중...",
