@@ -1,5 +1,7 @@
 export type WorkoutInsightPeriod = '30d' | '3m' | 'all';
 
+export type WorkoutInsightViewMode = 'machine' | 'daily';
+
 export type WorkoutCoachingFocus =
   | 'consistency'
   | 'intensity'
@@ -38,6 +40,11 @@ export interface WorkoutInsightsNextTarget {
   setCount: number;
 }
 
+export interface WorkoutInsightsNextVolumeTarget {
+  currentTotalVolumeKg: number;
+  suggestedTotalVolumeKg: number;
+}
+
 export interface WorkoutInsightsCoaching {
   focus: WorkoutCoachingFocus;
   comparisonLevel: WorkoutComparisonLevel;
@@ -46,8 +53,9 @@ export interface WorkoutInsightsCoaching {
 }
 
 export interface WorkoutInsights {
+  viewMode: WorkoutInsightViewMode;
   hasProfile: boolean;
-  machineCode: string;
+  machineCode?: string;
   machineName?: string;
   period: WorkoutInsightPeriod;
   userVolumeGrowthPct: number | null;
@@ -57,5 +65,6 @@ export interface WorkoutInsights {
   profileAverage: WorkoutInsightsProfileAverage | null;
   peerComparison: WorkoutInsightsPeerComparison | null;
   nextTarget: WorkoutInsightsNextTarget | null;
+  nextVolumeTarget: WorkoutInsightsNextVolumeTarget | null;
   coaching: WorkoutInsightsCoaching | null;
 }

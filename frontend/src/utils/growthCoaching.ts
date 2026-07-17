@@ -1,40 +1,56 @@
 import type { TFunction } from 'i18next';
 import type { WorkoutInsightsCoaching } from '@machinefit/shared';
 
-const COACHING_PREFIX = 'growthAnalysis.insights.coaching';
-
 export function getCoachingSummary(
   t: TFunction,
-  coaching: WorkoutInsightsCoaching
+  coaching: WorkoutInsightsCoaching,
+  viewMode: 'machine' | 'daily' = 'machine'
 ): string {
-  const key = `${COACHING_PREFIX}.summary.${coaching.focus}.${coaching.comparisonLevel}`;
+  const prefix =
+    viewMode === 'daily'
+      ? 'growthAnalysis.daily.insights.coaching'
+      : 'growthAnalysis.insights.coaching';
+  const key = `${prefix}.summary.${coaching.focus}.${coaching.comparisonLevel}`;
   return t(key);
 }
 
 export function getCoachingTips(
   t: TFunction,
-  coaching: WorkoutInsightsCoaching
+  coaching: WorkoutInsightsCoaching,
+  viewMode: 'machine' | 'daily' = 'machine'
 ): string[] {
+  const prefix =
+    viewMode === 'daily'
+      ? 'growthAnalysis.daily.insights.coaching'
+      : 'growthAnalysis.insights.coaching';
   const tips: string[] = [];
-  tips.push(t(`${COACHING_PREFIX}.tips.${coaching.focus}`));
+  tips.push(t(`${prefix}.tips.${coaching.focus}`));
 
   if (coaching.plateau) {
-    tips.push(t(`${COACHING_PREFIX}.tips.plateau`));
+    tips.push(t(`${prefix}.tips.plateau`));
   }
 
   if (coaching.lowFrequency) {
-    tips.push(t(`${COACHING_PREFIX}.tips.lowFrequency`));
+    tips.push(t(`${prefix}.tips.lowFrequency`));
   }
 
   if (coaching.comparisonLevel === 'above') {
-    tips.push(t(`${COACHING_PREFIX}.tips.abovePeer`));
+    tips.push(t(`${prefix}.tips.abovePeer`));
   } else if (coaching.comparisonLevel === 'below') {
-    tips.push(t(`${COACHING_PREFIX}.tips.belowPeer`));
+    tips.push(t(`${prefix}.tips.belowPeer`));
   }
 
   return [...new Set(tips)];
 }
 
-export function getCoachingFocusLabel(t: TFunction, focus: WorkoutInsightsCoaching['focus']): string {
-  return t(`${COACHING_PREFIX}.focusLabel.${focus}`);
+export function getCoachingFocusLabel(
+  t: TFunction,
+  focus: WorkoutInsightsCoaching['focus'],
+  viewMode: 'machine' | 'daily' = 'machine'
+): string {
+  const prefix =
+    viewMode === 'daily'
+      ? 'growthAnalysis.daily.insights.coaching'
+      : 'growthAnalysis.insights.coaching';
+  return t(`${prefix}.focusLabel.${focus}`);
 }

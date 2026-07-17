@@ -153,10 +153,17 @@ export function GrowthAnalysisPage() {
     data: insights,
     isLoading: isInsightsLoading,
   } = useQuery({
-    queryKey: QUERY_KEYS.workoutInsights(selectedMachineCode, periodPreset, customFrom, customTo),
+    queryKey: QUERY_KEYS.workoutInsights(
+      isDailyView ? 'daily' : 'machine',
+      selectedMachineCode,
+      periodPreset,
+      customFrom,
+      customTo
+    ),
     queryFn: () =>
       fetchWorkoutInsights({
-        machineCode: selectedMachineCode,
+        viewMode: isDailyView ? 'daily' : 'machine',
+        machineCode: isDailyView ? undefined : selectedMachineCode,
         period: periodPreset,
         customFrom: periodPreset === 'custom' ? customFrom : undefined,
         customTo: periodPreset === 'custom' ? customTo : undefined,
@@ -165,9 +172,9 @@ export function GrowthAnalysisPage() {
         machineName: selectedMachineName,
       }),
     enabled:
-      !isDailyView &&
-      Boolean(selectedMachineCode) &&
-      (periodPreset !== 'custom' || Boolean(customFrom && customTo)),
+      periodPreset !== 'custom' || Boolean(customFrom && customTo)
+        ? isDailyView || Boolean(selectedMachineCode)
+        : false,
   });
 
   const volumeChartPoints = useMemo(() => {
@@ -489,13 +496,11 @@ export function GrowthAnalysisPage() {
             ) : null}
           </section>
 
-          {!isDailyView ? (
-            <GrowthInsightsPanel
-              insights={insights ?? null}
-              isLoading={isInsightsLoading}
-              periodLabel={periodLabel}
-            />
-          ) : null}
+          <GrowthInsightsPanel
+            insights={insights ?? null}
+            isLoading={isInsightsLoading}
+            periodLabel={periodLabel}
+          />
 
           {isDailyView ? (
             <DailyBreakdownList days={dailyPoints} locale={i18n.language} />

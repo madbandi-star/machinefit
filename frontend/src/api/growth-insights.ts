@@ -3,12 +3,15 @@ import type {
   User,
   WorkoutInsightPeriod,
   WorkoutInsights,
+  WorkoutInsightViewMode,
   WorkoutLog,
 } from '@machinefit/shared';
 import {
+  computeDailyInsightMetrics,
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
+  nextRecommendVolumeKg,
   nextRecommendWeightKg,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
@@ -56,7 +59,35 @@ function estimateReferenceWeight(user: User & { weightKg: number }): number {
   return round1(user.weightKg * 0.45 * genderFactor * experienceFactor);
 }
 
-function buildLocalInsights(
+function buildPeerComparison(
+  user: User,
+  userGrowth: number | null,
+  benchmarkGrowth: number
+): WorkoutInsights['peerComparison'] {
+  const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm!);
+  const {
+    weightMinKg,
+    weightMaxKg,
+    weightClassKey,
+    isUnlimited: weightClassUnlimited,
+  } = getBoxingWeightClassRange(user.gender, user.weightKg!);
+
+  return {
+    userVolumeGrowthPct: userGrowth == null ? null : round1(userGrowth),
+    peerAvgVolumeGrowthPct: benchmarkGrowth,
+    relativePct: userGrowth == null ? null : round1(userGrowth - benchmarkGrowth),
+    sampleSize: 0,
+    heightMinCm,
+    heightMaxCm,
+    weightMinKg,
+    weightMaxKg,
+    weightClassKey,
+    weightClassUnlimited,
+    gender: user.gender as Gender,
+  };
+}
+
+function buildLocalMachineInsights(
   user: User,
   machineCode: string,
   machineName: string | undefined,
@@ -87,6 +118,7 @@ function buildLocalInsights(
   const userGrowth = computeVolumeGrowthPct(sessions);
 
   return {
+    viewMode: 'machine',
     hasProfile,
     machineCode,
     machineName,
@@ -101,30 +133,7 @@ function buildLocalInsights(
           ),
     userWorkoutCount: kpis.workoutCount,
     profileAverage,
-    peerComparison: hasProfile
-      ? (() => {
-          const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm!);
-          const {
-            weightMinKg,
-            weightMaxKg,
-            weightClassKey,
-            isUnlimited: weightClassUnlimited,
-          } = getBoxingWeightClassRange(user.gender, user.weightKg!);
-          return {
-            userVolumeGrowthPct: userGrowth == null ? null : round1(userGrowth),
-            peerAvgVolumeGrowthPct: benchmarkGrowth,
-            relativePct: userGrowth == null ? null : round1(userGrowth - benchmarkGrowth),
-            sampleSize: 0,
-            heightMinCm,
-            heightMaxCm,
-            weightMinKg,
-            weightMaxKg,
-            weightClassKey,
-            weightClassUnlimited,
-            gender: user.gender as Gender,
-          };
-        })()
-      : null,
+    peerComparison: hasProfile ? buildPeerComparison(user, userGrowth, benchmarkGrowth) : null,
     nextTarget:
       sessions.length > 0 || hasProfile
         ? {
@@ -134,6 +143,7 @@ function buildLocalInsights(
             setCount,
           }
         : null,
+    nextVolumeTarget: null,
     coaching:
       sessions.length > 0
         ? {
@@ -157,8 +167,79 @@ function buildLocalInsights(
   };
 }
 
+function buildLocalDailyInsights(
+  user: User,
+  period: WorkoutInsightPeriod,
+  logs: WorkoutLog[]
+): WorkoutInsights {
+  const dailyMetrics = computeDailyInsightMetrics(logs);
+  const hasProfile = hasGrowthBodyProfile(user);
+  const benchmarkGrowth = period === '30d' ? 12 : period === '3m' ? 25 : 35;
+  const referenceWeight = hasProfile ? estimateReferenceWeight(user as User & { weightKg: number }) : 0;
+  const benchmarkDailyVolume = Math.round(referenceWeight * 3 * 2);
+
+  const profileAverage = hasProfile
+    ? {
+        avgMaxWeightKg: referenceWeight,
+        avgSessionVolumeKg: benchmarkDailyVolume,
+        avgVolumeGrowthPct: benchmarkGrowth,
+        avgWorkoutCount: period === '30d' ? 8 : 12,
+        sampleSize: 0,
+      }
+    : null;
+
+  const userGrowth = dailyMetrics.volumeGrowthPct;
+  const currentVolume =
+    dailyMetrics.lastDailyVolumeKg > 0 ? dailyMetrics.lastDailyVolumeKg : benchmarkDailyVolume;
+
+  return {
+    viewMode: 'daily',
+    hasProfile,
+    period,
+    userVolumeGrowthPct: userGrowth == null ? null : round1(userGrowth),
+    userMaxWeightKg:
+      dailyMetrics.maxWeightKg == null ? null : round1(dailyMetrics.maxWeightKg),
+    userAvgSessionVolumeKg:
+      dailyMetrics.avgDailyVolumeKg == null
+        ? null
+        : Math.round(dailyMetrics.avgDailyVolumeKg),
+    userWorkoutCount: dailyMetrics.workoutDayCount,
+    profileAverage,
+    peerComparison: hasProfile ? buildPeerComparison(user, userGrowth, benchmarkGrowth) : null,
+    nextTarget: null,
+    nextVolumeTarget:
+      dailyMetrics.workoutDayCount > 0 || hasProfile
+        ? {
+            currentTotalVolumeKg: Math.round(currentVolume),
+            suggestedTotalVolumeKg: nextRecommendVolumeKg(currentVolume),
+          }
+        : null,
+    coaching:
+      dailyMetrics.workoutDayCount > 0
+        ? {
+            focus:
+              dailyMetrics.workoutDayCount < 4
+                ? 'consistency'
+                : (userGrowth ?? 0) >= benchmarkGrowth
+                  ? 'maintain'
+                  : 'volume',
+            comparisonLevel:
+              (userGrowth ?? 0) >= benchmarkGrowth + 5
+                ? 'above'
+                : (userGrowth ?? 0) <= benchmarkGrowth - 5
+                  ? 'below'
+                  : 'near',
+            plateau:
+              userGrowth != null && Math.abs(userGrowth) < 3 && dailyMetrics.workoutDayCount >= 3,
+            lowFrequency: dailyMetrics.workoutDayCount < 4,
+          }
+        : null,
+  };
+}
+
 export async function fetchWorkoutInsights(options: {
-  machineCode: string;
+  viewMode: WorkoutInsightViewMode;
+  machineCode?: string;
   period: GrowthPeriod;
   customFrom?: string;
   customTo?: string;
@@ -166,23 +247,30 @@ export async function fetchWorkoutInsights(options: {
   logs: WorkoutLog[];
   machineName?: string;
 }): Promise<WorkoutInsights | null> {
-  if (!options.machineCode) return null;
+  if (options.viewMode === 'machine' && !options.machineCode) return null;
 
   const insightPeriod = mapToInsightPeriod(options.period, options.customFrom, options.customTo);
 
   try {
     const res = await apiClient.get<ApiResponse<WorkoutInsights>>('/workout-logs/insights', {
-      params: {
-        machineCode: options.machineCode,
-        period: insightPeriod,
-      },
+      params:
+        options.viewMode === 'daily'
+          ? { viewMode: 'daily', period: insightPeriod }
+          : {
+              viewMode: 'machine',
+              machineCode: options.machineCode,
+              period: insightPeriod,
+            },
     });
     return res.data.data ?? null;
   } catch {
     if (!options.user) return null;
-    return buildLocalInsights(
+    if (options.viewMode === 'daily') {
+      return buildLocalDailyInsights(options.user, insightPeriod, options.logs);
+    }
+    return buildLocalMachineInsights(
       options.user,
-      options.machineCode,
+      options.machineCode!,
       options.machineName,
       insightPeriod,
       options.logs

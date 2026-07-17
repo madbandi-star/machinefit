@@ -8,9 +8,11 @@ import type {
   WorkoutLog,
 } from '@machinefit/shared';
 import {
+  computeDailyInsightMetrics,
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
+  nextRecommendVolumeKg,
   nextRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
@@ -110,6 +112,14 @@ function buildNextTarget(
   };
 }
 
+function buildNextVolumeTarget(currentTotalVolumeKg: number) {
+  const base = currentTotalVolumeKg > 0 ? currentTotalVolumeKg : 500;
+  return {
+    currentTotalVolumeKg: Math.round(base),
+    suggestedTotalVolumeKg: nextRecommendVolumeKg(base),
+  };
+}
+
 function buildCoaching(
   userMetrics: ReturnType<typeof computeUserMetrics>,
   peerAvgGrowthPct: number,
@@ -166,15 +176,168 @@ function hasBodyProfile(
 
 export const workoutInsightsService = {
   async getInsights(userId: string, query: WorkoutInsightsQuery): Promise<WorkoutInsights> {
+    if (query.viewMode === 'daily') {
+      return this.getDailyInsights(userId, query);
+    }
+
+    return this.getMachineInsights(userId, query);
+  },
+
+  async getDailyInsights(userId: string, query: WorkoutInsightsQuery): Promise<WorkoutInsights> {
     const user = await userRepository.findById(userId);
     if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
 
-    const machineId = await machineRepository.findIdByCode(query.machineCode);
-    if (!machineId) {
-      throw new AppError(404, 'NOT_FOUND', `Machine not found: ${query.machineCode}`);
+    const period = query.period ?? '30d';
+    const { from, to } = getPeriodRange(period);
+
+    const logs = await workoutLogRepository.listByUser(userId, {
+      from: from ?? undefined,
+      to,
+    });
+
+    const dailyMetrics = computeDailyInsightMetrics(logs);
+    const profileReady = hasBodyProfile(user);
+
+    let profileAverage: WorkoutInsights['profileAverage'] = null;
+    let peerComparison: WorkoutInsights['peerComparison'] = null;
+    let bodyReferenceWeightKg: number | null = null;
+
+    if (profileReady) {
+      const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm);
+      const {
+        weightMinKg,
+        weightMaxKg,
+        weightClassKey,
+        isUnlimited: weightClassUnlimited,
+      } = getBoxingWeightClassRange(user.gender, user.weightKg);
+      bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
+      const benchmarkDailyVolume = Math.round(bodyReferenceWeightKg * 3 * 2);
+
+      const profileStats = await workoutLogRepository.getDailyCohortStats({
+        from: from ?? '1970-01-01',
+        to,
+        gender: user.gender,
+        heightMinCm,
+        heightMaxCm,
+        weightMinKg,
+        weightMaxKg,
+        experienceLevel: user.experienceLevel ?? undefined,
+        excludeUserId: userId,
+      });
+
+      if (profileStats.sampleSize >= MIN_COHORT_SAMPLE) {
+        profileAverage = {
+          avgMaxWeightKg: Math.round(profileStats.avgMaxWeightKg * 10) / 10,
+          avgSessionVolumeKg: Math.round(profileStats.avgSessionVolumeKg),
+          avgVolumeGrowthPct: Math.round(profileStats.avgVolumeGrowthPct * 10) / 10,
+          avgWorkoutCount: Math.round(profileStats.avgWorkoutCount * 10) / 10,
+          sampleSize: profileStats.sampleSize,
+        };
+      } else {
+        profileAverage = {
+          avgMaxWeightKg: bodyReferenceWeightKg,
+          avgSessionVolumeKg: benchmarkDailyVolume,
+          avgVolumeGrowthPct: period === '30d' ? 12 : period === '3m' ? 25 : 35,
+          avgWorkoutCount: period === '30d' ? 8 : 12,
+          sampleSize: 0,
+        };
+      }
+
+      const peerStats = await workoutLogRepository.getDailyCohortStats({
+        from: from ?? '1970-01-01',
+        to,
+        gender: user.gender,
+        heightMinCm,
+        heightMaxCm,
+        weightMinKg,
+        weightMaxKg,
+        excludeUserId: userId,
+      });
+
+      const peerAvgGrowthPct =
+        peerStats.sampleSize >= MIN_COHORT_SAMPLE
+          ? peerStats.avgVolumeGrowthPct
+          : profileAverage.avgVolumeGrowthPct;
+
+      peerComparison = {
+        userVolumeGrowthPct: dailyMetrics.volumeGrowthPct,
+        peerAvgVolumeGrowthPct: Math.round(peerAvgGrowthPct * 10) / 10,
+        relativePct:
+          dailyMetrics.volumeGrowthPct == null
+            ? null
+            : Math.round((dailyMetrics.volumeGrowthPct - peerAvgGrowthPct) * 10) / 10,
+        sampleSize: peerStats.sampleSize,
+        heightMinCm,
+        heightMaxCm,
+        weightMinKg,
+        weightMaxKg,
+        weightClassKey,
+        weightClassUnlimited,
+        gender: user.gender,
+      };
     }
 
-    const machine = await machineRepository.findByCode(query.machineCode);
+    const userMetrics = {
+      volumeGrowthPct: dailyMetrics.volumeGrowthPct,
+      maxWeightKg: dailyMetrics.maxWeightKg,
+      avgSessionVolumeKg: dailyMetrics.avgDailyVolumeKg,
+      workoutCount: dailyMetrics.workoutDayCount,
+      lastSetCount: 3,
+      lastMaxWeightKg: dailyMetrics.maxWeightKg ?? 0,
+    };
+
+    const nextVolumeTarget =
+      dailyMetrics.workoutDayCount > 0
+        ? buildNextVolumeTarget(dailyMetrics.lastDailyVolumeKg)
+        : profileReady && bodyReferenceWeightKg
+          ? buildNextVolumeTarget(Math.round(bodyReferenceWeightKg * 3 * 2))
+          : null;
+
+    const coaching =
+      dailyMetrics.workoutDayCount > 0 && peerComparison
+        ? buildCoaching(
+            userMetrics,
+            peerComparison.peerAvgVolumeGrowthPct,
+            profileAverage?.avgVolumeGrowthPct ?? peerComparison.peerAvgVolumeGrowthPct
+          )
+        : dailyMetrics.workoutDayCount > 0
+          ? buildCoaching(userMetrics, 12, 12)
+          : null;
+
+    return {
+      viewMode: 'daily',
+      hasProfile: profileReady,
+      period,
+      userVolumeGrowthPct:
+        dailyMetrics.volumeGrowthPct == null
+          ? null
+          : Math.round(dailyMetrics.volumeGrowthPct * 10) / 10,
+      userMaxWeightKg:
+        dailyMetrics.maxWeightKg == null ? null : Math.round(dailyMetrics.maxWeightKg * 10) / 10,
+      userAvgSessionVolumeKg:
+        dailyMetrics.avgDailyVolumeKg == null
+          ? null
+          : Math.round(dailyMetrics.avgDailyVolumeKg),
+      userWorkoutCount: dailyMetrics.workoutDayCount,
+      profileAverage,
+      peerComparison,
+      nextTarget: null,
+      nextVolumeTarget,
+      coaching,
+    };
+  },
+
+  async getMachineInsights(userId: string, query: WorkoutInsightsQuery): Promise<WorkoutInsights> {
+    const user = await userRepository.findById(userId);
+    if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
+
+    const machineCode = query.machineCode!;
+    const machineId = await machineRepository.findIdByCode(machineCode);
+    if (!machineId) {
+      throw new AppError(404, 'NOT_FOUND', `Machine not found: ${machineCode}`);
+    }
+
+    const machine = await machineRepository.findByCode(machineCode);
     const period = query.period ?? '30d';
     const { from, to } = getPeriodRange(period);
 
@@ -301,9 +464,10 @@ export const workoutInsightsService = {
           : null;
 
     return {
+      viewMode: 'machine',
       hasProfile: profileReady,
-      machineCode: query.machineCode,
-      machineName: machine?.name?.ko ?? machine?.name?.en ?? query.machineCode,
+      machineCode,
+      machineName: machine?.name?.ko ?? machine?.name?.en ?? machineCode,
       period,
       userVolumeGrowthPct:
         userMetrics.volumeGrowthPct == null
@@ -319,6 +483,7 @@ export const workoutInsightsService = {
       profileAverage,
       peerComparison,
       nextTarget,
+      nextVolumeTarget: null,
       coaching,
     };
   },

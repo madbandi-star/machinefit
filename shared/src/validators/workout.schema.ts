@@ -48,9 +48,15 @@ export type DeleteWorkoutLogInput = z.infer<typeof deleteWorkoutLogSchema>;
 
 export const workoutInsightPeriodSchema = z.enum(['30d', '3m', 'all']);
 
-export const workoutInsightsQuerySchema = z.object({
-  machineCode: z.string().min(1),
-  period: workoutInsightPeriodSchema.optional().default('30d'),
-});
+export const workoutInsightsQuerySchema = z
+  .object({
+    viewMode: z.enum(['machine', 'daily']).default('machine'),
+    machineCode: z.string().min(1).optional(),
+    period: workoutInsightPeriodSchema.optional().default('30d'),
+  })
+  .refine((value) => value.viewMode !== 'machine' || Boolean(value.machineCode), {
+    message: 'machineCode is required for machine insights',
+    path: ['machineCode'],
+  });
 
 export type WorkoutInsightsQuery = z.infer<typeof workoutInsightsQuerySchema>;

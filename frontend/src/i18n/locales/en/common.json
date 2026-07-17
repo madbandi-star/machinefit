@@ -180,6 +180,111 @@
       },
       "prAlert": {
         "desc": "Period max weight on {{date}}"
+      },
+      "insights": {
+        "title": "Personalized growth insights",
+        "loading": "Analyzing insights…",
+        "profileRequired": "Add height, weight, and gender in Settings to compare with similar users.",
+        "goSettings": "Go to Settings",
+        "sampleSize": "Based on {{count}} users",
+        "estimatedBenchmark": "Estimated from similar-profile benchmarks",
+        "noBenchmark": "Comparison data is being prepared.",
+        "me": "Me",
+        "average": "Average",
+        "profileAverage": {
+          "title": "Profile-based average comparison",
+          "desc": "{{period}} · Compare daily metrics with similar users",
+          "cohortAvgShort": "Similar-profile avg",
+          "heightChip": "{{min}}–{{max}} cm",
+          "myHeightChip": "My height {{height}} cm",
+          "myWeightChip": "My weight {{weight}}",
+          "metrics": {
+            "maxWeight": {
+              "title": "Daily max weight",
+              "hint": "Heaviest set across all machines on a workout day"
+            },
+            "sessionVolume": {
+              "title": "Daily total volume",
+              "hint": "Average sum of all machine volumes on workout days"
+            },
+            "growth": {
+              "title": "Daily total volume growth",
+              "hint": "Change from first to last workout day in {{period}}"
+            }
+          }
+        },
+        "peerComparison": {
+          "title": "Peer total volume growth (same height, class, gender)",
+          "desc": "{{gender}} · {{min}}–{{max}} cm · {{weightClass}} · {{period}} · all machines combined",
+          "definitionTitle": "What is growth rate?",
+          "definition": "Percent change in daily total volume (all machines) from your first workout day to your last in {{period}}.",
+          "definitionExample": "Example: 800 kg first day → 960 kg last day = +20% growth",
+          "myGrowth": "My total volume growth",
+          "myGrowthHint": "First workout day vs last workout day",
+          "peerAvg": "Peer average",
+          "peerAvgHint": "Average daily volume growth for similar users",
+          "relative": "vs average",
+          "relativeHint": "My growth − peer avg (%p)",
+          "sampleSize": "Based on {{count}} users",
+          "interpretAbove": "You are growing faster than similar users.",
+          "interpretNear": "You are growing at a similar pace to peers.",
+          "interpretBelow": "Growth is slower than peers. Try increasing daily total volume step by step.",
+          "interpretUnknown": "Log at least 2 workout days to compare growth."
+        },
+        "coaching": {
+          "title": "AI workout coaching",
+          "focusLabel": {
+            "consistency": "Consistency",
+            "intensity": "Intensity",
+            "volume": "Volume",
+            "recovery": "Recovery",
+            "maintain": "Maintain"
+          },
+          "summary": {
+            "consistency": {
+              "above": "More workout days can help you outgrow similar users.",
+              "near": "Workout days are low. Aim for 2–3 logged days per week.",
+              "below": "Long gaps slow progress. Restart with a shorter cycle."
+            },
+            "intensity": {
+              "above": "Volume is steady but plateauing. Try the next total volume target.",
+              "near": "Daily total volume is flat. Add a little weight or sets.",
+              "below": "Time to raise intensity. Increase daily total volume gradually."
+            },
+            "volume": {
+              "above": "Strong growth. Balance workout days and total volume.",
+              "near": "Average growth. Try raising daily total volume a bit more.",
+              "below": "Slower than peers. Increase total volume step by step."
+            },
+            "recovery": {
+              "above": "Recent daily volume dropped. Recover, then build back up.",
+              "near": "Volume decreased. Resume within a comfortable range.",
+              "below": "Signs of overload. Consider a lighter recovery week."
+            },
+            "maintain": {
+              "above": "Ahead of similar users. Keep your current pace.",
+              "near": "Doing well vs average. Avoid big jumps.",
+              "below": "Good progress. Focus on the next total volume target."
+            }
+          },
+          "tips": {
+            "consistency": "Logging on similar weekdays makes daily trends easier to read.",
+            "intensity": "Track both daily max weight and total volume for balanced progress.",
+            "volume": "A ~10% daily volume increase is a safe progression.",
+            "recovery": "Prioritize sleep and protein; focus on volume recovery this week.",
+            "maintain": "Raise your daily volume target in ~50 kg steps every 2–3 weeks.",
+            "plateau": "If total volume stalls 2+ weeks, add a machine or an extra set.",
+            "lowFrequency": "Few workout days in this period. Aim for at least 2 per week.",
+            "abovePeer": "Growth is above similar users. Watch for overtraining.",
+            "belowPeer": "To match peers, try increasing daily total volume by 10–15%."
+          }
+        },
+        "nextVolumeTarget": {
+          "title": "Next workout total volume target",
+          "desc": "Based on your latest daily total volume and progressive overload",
+          "current": "Current total volume",
+          "suggested": "Next target"
+        }
       }
     },
     "noMachines": "No logged machines",
