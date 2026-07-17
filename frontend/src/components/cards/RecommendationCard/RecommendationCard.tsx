@@ -18,7 +18,7 @@ export function RecommendationCard({
     <div className="card">
       {variant === 'hero' && (
         <h3 style={{ color: 'var(--color-text)', marginBottom: '0.75rem' }}>
-          {result.machineName ?? result.machineCode}
+          {result.machineName ?? ''}
         </h3>
       )}
       <RecommendationSettingsPanel

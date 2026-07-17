@@ -13,7 +13,7 @@ interface MachineHeroProps {
 
 export function MachineHero({ machine, compact = false }: MachineHeroProps) {
   const { t, i18n } = useTranslation('machines');
-  const name = getLocalizedName(machine.name, i18n.language, machine.code);
+  const name = getLocalizedName(machine.name, i18n.language, '');
   const muscleLabel = t(`muscleGroups.${machine.muscleGroup}`, {
     defaultValue: machine.muscleGroup,
   });
@@ -51,7 +51,6 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
           labelClassName="machine-hero__title-text"
         />
       </h1>
-      <p className="machine-hero__code">{machine.code}</p>
       <div className="machine-hero__badges">
         <span className="machine-badge machine-badge--muscle">{muscleLabel}</span>
         <span className="machine-badge machine-badge--type">{typeLabel}</span>

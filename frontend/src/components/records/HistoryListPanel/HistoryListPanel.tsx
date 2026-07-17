@@ -299,7 +299,6 @@ export function HistoryListPanel() {
                             : t('machines:history.workoutUnsavedBadge')}
                         </span>
                       </div>
-                      <span className="saved-settings-card__machine-code">{item.machineCode}</span>
                       <span className="saved-settings-card__time saved-settings-card__time--inline">
                         {formatHistoryTime(item.viewedAt, i18n.language)}
                       </span>

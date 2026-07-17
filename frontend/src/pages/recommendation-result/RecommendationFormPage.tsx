@@ -18,7 +18,7 @@ export function RecommendationFormPage() {
   }, [machineCode, requestRecommendation]);
 
   return (
-    <PageShell title={t('recommend')} subtitle={machineCode}>
+    <PageShell title={t('recommend')}>
       <Skeleton count={3} height={100} />
       {isPending && (
         <p style={{ marginTop: '1rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { ROUTES } from '@/constants/routes';
+import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/components.css';
 
 interface MachineCardProps {
@@ -11,7 +12,7 @@ interface MachineCardProps {
 
 export function MachineCard({ machine }: MachineCardProps) {
   const { i18n } = useTranslation();
-  const name = machine.name[i18n.language as keyof typeof machine.name] ?? machine.name.en ?? machine.code;
+  const name = getLocalizedName(machine.name, i18n.language, '');
 
   return (
     <Link
@@ -21,7 +22,6 @@ export function MachineCard({ machine }: MachineCardProps) {
       <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
         <MachineNameWithMuscle muscleGroup={machine.muscleGroup} name={name} iconSize={20} />
       </h3>
-      <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{machine.code}</p>
     </Link>
   );
 }

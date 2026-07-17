@@ -188,7 +188,7 @@ export function getMachineOptions(logs: WorkoutLog[]): MachineOption[] {
     if (!map.has(log.machineCode)) {
       map.set(log.machineCode, {
         machineCode: log.machineCode,
-        machineName: log.machineName ?? log.machineCode,
+        machineName: log.machineName ?? '',
       });
     }
   }
@@ -217,7 +217,7 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
     .map(([logDate, dayLogs]) => {
       const machines = dayLogs.map((entry) => ({
         machineCode: entry.machineCode,
-        machineName: entry.machineName ?? entry.machineCode,
+        machineName: entry.machineName ?? '',
         volume: computeVolume(entry.setWeightsKg),
       }));
 
@@ -355,7 +355,7 @@ export function detectPrAlert(logs: WorkoutLog[], machineCode: string): PrAlert 
 
   return {
     machineCode: latest.machineCode,
-    machineName: latest.machineName ?? latest.machineCode,
+    machineName: latest.machineName ?? '',
     previousPr,
     currentPr,
     achievedDate: latest.logDate,

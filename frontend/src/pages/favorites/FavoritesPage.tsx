@@ -41,7 +41,6 @@ export function FavoritesPage() {
             <div key={item.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong>{item.machineName}</strong>
-                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{item.machineCode}</p>
               </div>
               <button
                 className="btn btn--secondary"

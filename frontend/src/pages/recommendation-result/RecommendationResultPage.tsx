@@ -127,13 +127,12 @@ export function RecommendationResultPage() {
     );
   }
 
-  const machineTitle = result.machineName ?? result.machineCode;
+  const machineTitle = result.machineName ?? t('recommendation.title');
 
   return (
     <div className="recommendation-result-page">
       <header className="recommendation-result-page__header">
         <h1 className="recommendation-result-page__title">{machineTitle}</h1>
-        <span className="recommendation-result-page__code">{result.machineCode}</span>
       </header>
 
       <div className="recommendation-result-page__content">

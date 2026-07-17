@@ -8,12 +8,13 @@ import { GymCard } from '@/components/cards/GymCard/GymCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi, machineApi } from '@/api';
+import { getLocalizedName } from '@/utils/localizedName';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/gym.css';
 
 export function GymFinderPage() {
-  const { t } = useTranslation('gyms');
+  const { t, i18n } = useTranslation('gyms');
   const [searchParams, setSearchParams] = useSearchParams();
   const showToast = useUIStore((s) => s.showToast);
 
@@ -103,7 +104,7 @@ export function GymFinderPage() {
             <option value="">{t('allMachines')}</option>
             {machines?.map((m) => (
               <option key={m.code} value={m.code}>
-                {m.name.en ?? m.code}
+                {getLocalizedName(m.name, i18n.language, '')}
               </option>
             ))}
           </select>

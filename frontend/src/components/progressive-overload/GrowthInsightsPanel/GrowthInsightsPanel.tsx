@@ -196,7 +196,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
                   period: periodLabel,
                 })
               : t(`${insightKey}.peerComparison.desc`, {
-                  machine: insights.machineName ?? insights.machineCode,
+                  machine: insights.machineName ?? '',
                   gender: t(`auth.genders.${insights.peerComparison.gender}`),
                   min: insights.peerComparison.heightMinCm,
                   max: insights.peerComparison.heightMaxCm,

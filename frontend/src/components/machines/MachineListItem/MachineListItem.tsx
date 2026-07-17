@@ -14,7 +14,7 @@ interface MachineListItemProps {
 
 export function MachineListItem({ machine }: MachineListItemProps) {
   const { i18n } = useTranslation('machines');
-  const name = getLocalizedName(machine.name, i18n.language, machine.code);
+  const name = getLocalizedName(machine.name, i18n.language, '');
   const brandName = machine.brandName
     ? getLocalizedName(machine.brandName, i18n.language, '')
     : null;

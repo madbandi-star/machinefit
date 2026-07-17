@@ -63,7 +63,6 @@ export function FavoritesListPanel() {
                 iconSize={22}
                 labelClassName="favorite-row__name"
               />
-              <span className="favorite-row__code">{item.machineCode}</span>
             </Link>
             <button
               type="button"

@@ -92,11 +92,11 @@ export function GymDetailPage() {
               className={`machine-inventory-item${!item.isAvailable ? ' machine-inventory-item--unavailable' : ''}`}
             >
               <div>
-                <strong>{item.machineName ?? item.machineCode}</strong>
+                <strong>{item.machineName ?? ''}</strong>
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                  {item.machineCode}
-                  {item.floorZone && ` · ${item.floorZone}`}
-                  {item.quantity > 1 && ` · ${item.quantity} ${t('units')}`}
+                  {[item.floorZone, item.quantity > 1 ? `${item.quantity} ${t('units')}` : null]
+                    .filter(Boolean)
+                    .join(' · ')}
                 </p>
                 {!item.isAvailable && item.notes && (
                   <p style={{ fontSize: '0.75rem', color: 'var(--color-error)' }}>{item.notes}</p>

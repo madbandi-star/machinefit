@@ -52,7 +52,7 @@ export function RecentHistoryPage() {
               <div key={item.id} className="card">
                 <strong>{item.machineName}</strong>
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-                  {item.machineCode} · {new Date(item.viewedAt).toLocaleDateString()}
+                  {new Date(item.viewedAt).toLocaleDateString()}
                 </p>
                 <RecommendationSettingsPanel settings={item.settings} variant="compact" />
               </div>
