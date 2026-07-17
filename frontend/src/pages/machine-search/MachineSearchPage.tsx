@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
-import { BRAND_CODES } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
@@ -13,6 +12,7 @@ import { MachineEmptyState } from '@/components/machines/MachineEmptyState/Machi
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi, machineApi } from '@/api';
+import { prepareBrandsForMachineSearch } from '@/utils/sortBrandsForSearch';
 import '@/styles/machines.css';
 
 export function MachineSearchPage() {
@@ -38,15 +38,10 @@ export function MachineSearchPage() {
     },
   });
 
-const PRIORITY_BRAND_CODES: string[] = [BRAND_CODES.FREE_WEIGHT, BRAND_CODES.BODYWEIGHT];
-
-  const sortedBrands = useMemo(() => {
-    const priority = PRIORITY_BRAND_CODES.map((code) =>
-      brands.find((brand) => brand.code === code)
-    ).filter((brand): brand is NonNullable<typeof brand> => !!brand);
-    const rest = brands.filter((brand) => !PRIORITY_BRAND_CODES.includes(brand.code));
-    return [...priority, ...rest];
-  }, [brands]);
+  const sortedBrands = useMemo(
+    () => prepareBrandsForMachineSearch(brands),
+    [brands]
+  );
 
   const { data, isLoading } = useQuery({
     queryKey: [...QUERY_KEYS.machines, query, muscleGroup, brandCode],

@@ -205,7 +205,16 @@ export const brandRepository = {
     if (!pool) return MOCK_BRANDS;
 
     const result = await pool.query<BrandRow>(
-      'SELECT * FROM brands WHERE is_active = true ORDER BY code ASC'
+      `SELECT * FROM brands WHERE is_active = true
+       ORDER BY CASE code
+         WHEN 'HAMMER_STRENGTH' THEN 1
+         WHEN 'LIFE_FITNESS' THEN 2
+         WHEN 'FREE_WEIGHT' THEN 3
+         WHEN 'BODYWEIGHT' THEN 4
+         WHEN 'CYBEX' THEN 5
+         WHEN 'TECHNOGYM' THEN 6
+         ELSE 99
+       END, code ASC`
     );
     return result.rows.map(mapBrand);
   },
