@@ -4,10 +4,10 @@ import type { WorkoutInsights } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { formatBoxingWeightClassLabel } from '@/utils/boxingWeightClassLabel';
-import { getBoxingWeightClassRange } from '@machinefit/shared';
 import { getCoachingFocusLabel, getCoachingSummary, getCoachingTips } from '@/utils/growthCoaching';
 import { formatGrowthPct, formatRelativeGrowthPct, getGrowthValueClass } from '@/utils/workoutAnalytics';
 import { ProfileCompareMetric } from '@/components/progressive-overload/ProfileCompareMetric/ProfileCompareMetric';
+import { useUserUnits } from '@/hooks/useUserUnits';
 
 interface GrowthInsightsPanelProps {
   insights: WorkoutInsights | null;
@@ -36,6 +36,7 @@ function getPeerInterpretationClass(relativePct: number | null): string {
 export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: GrowthInsightsPanelProps) {
   const { t } = useTranslation('common');
   const user = useAuthStore((s) => s.user);
+  const { formatWeight } = useUserUnits();
 
   if (isLoading) {
     return (
@@ -117,10 +118,9 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
               ) : null}
               {user?.weightKg ? (
                 <CohortBadge
-                  label={formatBoxingWeightClassLabel(
-                    t,
-                    getBoxingWeightClassRange(user.gender, user.weightKg)
-                  )}
+                  label={t('growthAnalysis.insights.profileAverage.myWeightChip', {
+                    weight: formatWeight(user.weightKg),
+                  })}
                 />
               ) : null}
               <CohortBadge

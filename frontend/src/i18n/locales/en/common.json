@@ -186,7 +186,17 @@
     "period": {
       "30d": "Last 30 days",
       "3m": "Last 3 months",
-      "all": "All time"
+      "all": "All time",
+      "custom": "Custom"
+    },
+    "periodRange": {
+      "calendarLabel": "Period calendar",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "calendarHint": "Tap a start date, then an end date to set FROM~TO. Dotted days have workout logs.",
+      "selectTo": "Select end date",
+      "selected": "{{from}} – {{to}}",
+      "selectedShort": "{{from}} – {{to}}"
     },
     "kpi": {
       "volume": "Total volume",
@@ -236,6 +246,7 @@
         "weightClassChipRange": "{{name}} ({{min}}–{{max}} kg)",
         "weightClassChipOver": "{{name}} (>{{min}} kg)",
         "myHeightChip": "You · {{height}} cm",
+        "myWeightChip": "You · {{weight}}",
         "deltaAbove": "▲ {{value}} · above average",
         "deltaBelow": "▼ {{value}} · below average",
         "deltaEven": "● near cohort average",

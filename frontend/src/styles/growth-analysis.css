@@ -49,12 +49,74 @@
   transition: border-color var(--motion-fast), color var(--motion-fast), background var(--motion-fast);
 }
 
+.growth-analysis-period--with-custom {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-xs);
+}
+
+.growth-analysis-period--with-custom .growth-analysis-period__btn {
+  min-width: 0;
+  padding: 0.45rem 0.35rem;
+  font-size: 0.75rem;
+}
+
+.growth-period-filter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.growth-period-filter__custom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.growth-period-filter__range-label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.growth-period-range-calendar {
+  width: 100%;
+}
+
+.history-calendar__day--selectable {
+  opacity: 1;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.history-calendar__day--selectable:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--glass-bg));
+}
+
+.history-calendar__day--in-range {
+  border-color: color-mix(in srgb, var(--color-primary) 25%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--glass-bg));
+  color: var(--color-text);
+}
+
+.history-calendar__day--range-start,
+.history-calendar__day--range-end {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--glass-bg));
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
 .growth-analysis-period__btn--active {
   border-color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   color: var(--color-primary);
   font-weight: 600;
 }
+
 
 .growth-analysis-kpis {
   display: grid;

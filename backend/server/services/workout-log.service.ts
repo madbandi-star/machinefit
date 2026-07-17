@@ -1,4 +1,4 @@
-import type { UpsertWorkoutLogInput, WorkoutLogListQuery } from '@machinefit/shared';
+import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -45,5 +45,22 @@ export const workoutLogService = {
       setWeightsKg: input.setWeightsKg,
       diary: input.diary,
     });
+  },
+
+  async remove(userId: string, input: DeleteWorkoutLogInput) {
+    const machineId = await machineRepository.findIdByCode(input.machineCode);
+    if (!machineId) {
+      throw new AppError(404, 'NOT_FOUND', `Machine not found: ${input.machineCode}`);
+    }
+
+    const deleted = await workoutLogRepository.deleteByUserMachineDate(
+      userId,
+      machineId,
+      input.logDate
+    );
+
+    if (!deleted) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout log not found');
+    }
   },
 };

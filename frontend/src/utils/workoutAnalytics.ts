@@ -1,6 +1,12 @@
 import type { WorkoutLog } from '@machinefit/shared';
 
-export type GrowthPeriod = '30d' | '3m' | 'all';
+export type GrowthPeriod = '30d' | '3m' | 'all' | 'custom';
+
+export interface GrowthPeriodFilter {
+  preset: GrowthPeriod;
+  customFrom?: string;
+  customTo?: string;
+}
 
 export type GrowthViewMode = 'machine' | 'daily';
 
@@ -83,7 +89,7 @@ function todayDateKey(): string {
   return `${y}-${m}-${d}`;
 }
 
-export function getPeriodStartDate(period: GrowthPeriod): string | null {
+export function getPeriodStartDate(period: Exclude<GrowthPeriod, 'custom'>): string | null {
   if (period === 'all') return null;
   const date = new Date();
   if (period === '30d') {
@@ -97,9 +103,44 @@ export function getPeriodStartDate(period: GrowthPeriod): string | null {
   return `${y}-${m}-${d}`;
 }
 
-export function filterLogsByPeriod(logs: WorkoutLog[], period: GrowthPeriod): WorkoutLog[] {
-  const from = getPeriodStartDate(period);
+export function extractWorkoutLogDateKeys(logs: WorkoutLog[]): Set<string> {
+  return new Set(logs.map((log) => normalizeLogDate(log.logDate)));
+}
+
+export function getDefaultCustomRange(logs: WorkoutLog[]): { from: string; to: string } {
+  const keys = [...extractWorkoutLogDateKeys(logs)].sort();
   const to = todayDateKey();
+  if (keys.length === 0) {
+    return { from: getPeriodStartDate('30d')!, to };
+  }
+  return { from: keys[0], to: keys[keys.length - 1] };
+}
+
+export function resolveGrowthPeriodBounds(filter: GrowthPeriodFilter): {
+  from: string | null;
+  to: string;
+} {
+  if (filter.preset === 'all') {
+    return { from: null, to: todayDateKey() };
+  }
+
+  if (filter.preset === '30d' || filter.preset === '3m') {
+    return { from: getPeriodStartDate(filter.preset), to: todayDateKey() };
+  }
+
+  const from = filter.customFrom ?? todayDateKey();
+  const to = filter.customTo ?? todayDateKey();
+  if (from <= to) {
+    return { from, to };
+  }
+  return { from: to, to: from };
+}
+
+export function filterLogsByGrowthPeriod(
+  logs: WorkoutLog[],
+  filter: GrowthPeriodFilter
+): WorkoutLog[] {
+  const { from, to } = resolveGrowthPeriodBounds(filter);
   const normalized = logs.map((log) => ({
     ...log,
     logDate: normalizeLogDate(log.logDate),
@@ -107,6 +148,14 @@ export function filterLogsByPeriod(logs: WorkoutLog[], period: GrowthPeriod): Wo
 
   if (!from) return normalized;
   return normalized.filter((log) => log.logDate >= from && log.logDate <= to);
+}
+
+/** @deprecated Use filterLogsByGrowthPeriod */
+export function filterLogsByPeriod(logs: WorkoutLog[], period: GrowthPeriod): WorkoutLog[] {
+  if (period === 'custom') {
+    return filterLogsByGrowthPeriod(logs, { preset: 'all' });
+  }
+  return filterLogsByGrowthPeriod(logs, { preset: period });
 }
 
 export function computeVolume(weights: number[]): number {
@@ -291,8 +340,12 @@ export function detectPrAlert(logs: WorkoutLog[], machineCode: string): PrAlert 
   };
 }
 
-export function computeGrowthRanking(logs: WorkoutLog[], period: GrowthPeriod, limit = 5): GrowthRankingItem[] {
-  const filtered = filterLogsByPeriod(logs, period);
+export function computeGrowthRanking(
+  logs: WorkoutLog[],
+  filter: GrowthPeriodFilter,
+  limit = 5
+): GrowthRankingItem[] {
+  const filtered = filterLogsByGrowthPeriod(logs, filter);
   const options = getMachineOptions(filtered);
 
   const ranked = options

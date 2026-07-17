@@ -112,6 +112,8 @@ export const workoutLogApi = {
     apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
   upsert: (body: UpsertWorkoutLogInput) =>
     apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),
+  remove: (body: { machineCode: string; logDate: string }) =>
+    apiClient.delete<ApiResponse<{ message: string }>>('/workout-logs', { data: body }),
 };
 
 export interface GymDetail extends Gym {

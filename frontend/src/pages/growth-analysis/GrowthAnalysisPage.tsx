@@ -9,28 +9,32 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthInsightsPanel/GrowthInsightsPanel';
 import { fetchWorkoutInsights } from '@/api/growth-insights';
 import { useAuthStore } from '@/store/auth.store';
+import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeriodFilter/GrowthPeriodFilter';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
   type GrowthPeriod,
+  type GrowthPeriodFilter as GrowthPeriodFilterState,
   type GrowthViewMode,
   aggregateDailySessions,
   computeDailyKpis,
   computeGrowthRanking,
   computeMachineKpis,
   detectPrAlert,
-  filterLogsByPeriod,
+  extractWorkoutLogDateKeys,
+  filterLogsByGrowthPeriod,
   formatGrowthPct,
   formatShortDate,
   formatWeightDelta,
   getDailyMaxWeightChartPoints,
+  getDefaultCustomRange,
   getMachineOptions,
-  getPeriodStartDate,
   getSessionsForMachine,
+  resolveGrowthPeriodBounds,
 } from '@/utils/workoutAnalytics';
+import { formatHistoryDateHeader } from '@/utils/historyDate';
 import '@/styles/growth-analysis.css';
 
-const PERIODS: GrowthPeriod[] = ['30d', '3m', 'all'];
-const VIEW_MODES: GrowthViewMode[] = ['machine', 'daily'];
+const VIEW_MODES: GrowthViewMode[] = ['daily', 'machine'];
 
 function KpiCard({
   label,
@@ -59,16 +63,32 @@ function KpiCard({
 export function GrowthAnalysisPage() {
   const { t, i18n } = useTranslation('common');
   const user = useAuthStore((s) => s.user);
-  const [period, setPeriod] = useState<GrowthPeriod>('30d');
+  const [periodPreset, setPeriodPreset] = useState<GrowthPeriod>('30d');
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo] = useState('');
   const [viewMode, setViewMode] = useState<GrowthViewMode>('machine');
   const [selectedMachineCode, setSelectedMachineCode] = useState('');
+
+  const periodFilter: GrowthPeriodFilterState = useMemo(
+    () => ({
+      preset: periodPreset,
+      customFrom: periodPreset === 'custom' ? customFrom : undefined,
+      customTo: periodPreset === 'custom' ? customTo : undefined,
+    }),
+    [periodPreset, customFrom, customTo]
+  );
 
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.workoutLogsAll,
     queryFn: fetchAllWorkoutLogs,
   });
 
-  const periodLogs = useMemo(() => filterLogsByPeriod(logs, period), [logs, period]);
+  const datesWithData = useMemo(() => extractWorkoutLogDateKeys(logs), [logs]);
+
+  const periodLogs = useMemo(
+    () => filterLogsByGrowthPeriod(logs, periodFilter),
+    [logs, periodFilter]
+  );
   const machineOptions = useMemo(() => getMachineOptions(logs), [logs]);
   const dailyPoints = useMemo(() => aggregateDailySessions(periodLogs), [periodLogs]);
   const isDailyView = viewMode === 'daily';
@@ -98,26 +118,49 @@ export function GrowthAnalysisPage() {
     () => (selectedMachineCode ? detectPrAlert(logs, selectedMachineCode) : null),
     [logs, selectedMachineCode]
   );
-  const ranking = useMemo(() => computeGrowthRanking(logs, period), [logs, period]);
+  const ranking = useMemo(() => computeGrowthRanking(logs, periodFilter), [logs, periodFilter]);
 
   const selectedMachineName = machineOptions.find(
     (option) => option.machineCode === selectedMachineCode
   )?.machineName;
 
+  const periodLabel = useMemo(() => {
+    if (periodPreset === 'custom' && customFrom && customTo) {
+      return t('growthAnalysis.periodRange.selectedShort', {
+        from: formatHistoryDateHeader(customFrom, i18n.language),
+        to: formatHistoryDateHeader(customTo, i18n.language),
+      });
+    }
+    return t(`growthAnalysis.period.${periodPreset}`);
+  }, [periodPreset, customFrom, customTo, i18n.language, t]);
+
+  const periodStart = resolveGrowthPeriodBounds(periodFilter).from;
+
+  const handlePeriodPresetChange = (preset: GrowthPeriod) => {
+    setPeriodPreset(preset);
+    if (preset === 'custom') {
+      const range = getDefaultCustomRange(logs);
+      setCustomFrom(range.from);
+      setCustomTo(range.to);
+    }
+  };
+
   const {
     data: insights,
     isLoading: isInsightsLoading,
   } = useQuery({
-    queryKey: QUERY_KEYS.workoutInsights(selectedMachineCode, period),
+    queryKey: QUERY_KEYS.workoutInsights(selectedMachineCode, periodPreset, customFrom, customTo),
     queryFn: () =>
       fetchWorkoutInsights({
         machineCode: selectedMachineCode,
-        period,
+        period: periodPreset,
+        customFrom: periodPreset === 'custom' ? customFrom : undefined,
+        customTo: periodPreset === 'custom' ? customTo : undefined,
         user,
         logs: periodLogs,
         machineName: selectedMachineName,
       }),
-    enabled: Boolean(selectedMachineCode),
+    enabled: Boolean(selectedMachineCode) && (periodPreset !== 'custom' || Boolean(customFrom && customTo)),
   });
 
   const volumeChartPoints = useMemo(() => {
@@ -133,6 +176,8 @@ export function GrowthAnalysisPage() {
       value: session.totalVolume,
     }));
   }, [isDailyView, dailyPoints, sessions, i18n.language]);
+
+  const hasData = machineOptions.length > 0;
 
   const maxWeightChartPoints = useMemo(() => {
     if (isDailyView) {
@@ -162,9 +207,6 @@ export function GrowthAnalysisPage() {
     [dailyPoints, i18n.language]
   );
 
-  const periodLabel = t(`growthAnalysis.period.${period}`);
-  const periodStart = getPeriodStartDate(period);
-  const hasData = machineOptions.length > 0;
 
   const volumeGrowthPct = isDailyView ? dailyKpis.volumeGrowthPct : machineKpis.volumeGrowthPct;
   const maxWeightDelta = isDailyView ? dailyKpis.maxWeightDelta : machineKpis.maxWeightDelta;
@@ -227,41 +269,42 @@ export function GrowthAnalysisPage() {
           </div>
         </div>
 
-        <div className="form-row">
-          <label htmlFor="growth-machine">{t('growthAnalysis.machineSelect')}</label>
-          <select
-            id="growth-machine"
-            className="input"
-            value={selectedMachineCode}
-            onChange={(event) => setSelectedMachineCode(event.target.value)}
-            disabled={machineOptions.length === 0}
-          >
-            {machineOptions.length === 0 ? (
-              <option value="">{t('growthAnalysis.noMachines')}</option>
-            ) : (
-              machineOptions.map((option) => (
-                <option key={option.machineCode} value={option.machineCode}>
-                  {option.machineName}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
+        {!isDailyView ? (
+          <div className="form-row">
+            <label htmlFor="growth-machine">{t('growthAnalysis.machineSelect')}</label>
+            <select
+              id="growth-machine"
+              className="input"
+              value={selectedMachineCode}
+              onChange={(event) => setSelectedMachineCode(event.target.value)}
+              disabled={machineOptions.length === 0}
+            >
+              {machineOptions.length === 0 ? (
+                <option value="">{t('growthAnalysis.noMachines')}</option>
+              ) : (
+                machineOptions.map((option) => (
+                  <option key={option.machineCode} value={option.machineCode}>
+                    {option.machineName}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+        ) : null}
 
         <div className="form-row">
-          <span className="form-row__label">{t('growthAnalysis.periodSelect')}</span>
-          <div className="growth-analysis-period" role="group" aria-label={t('growthAnalysis.periodSelect')}>
-            {PERIODS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                className={`growth-analysis-period__btn${period === value ? ' growth-analysis-period__btn--active' : ''}`}
-                onClick={() => setPeriod(value)}
-              >
-                {t(`growthAnalysis.period.${value}`)}
-              </button>
-            ))}
-          </div>
+          <GrowthPeriodFilter
+            preset={periodPreset}
+            customFrom={customFrom}
+            customTo={customTo}
+            datesWithData={datesWithData}
+            locale={i18n.language}
+            onPresetChange={handlePeriodPresetChange}
+            onCustomRangeChange={(from, to) => {
+              setCustomFrom(from);
+              setCustomTo(to);
+            }}
+          />
         </div>
       </div>
 

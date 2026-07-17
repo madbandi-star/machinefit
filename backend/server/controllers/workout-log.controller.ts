@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { upsertWorkoutLogSchema, workoutLogListQuerySchema, workoutInsightsQuerySchema } from '@machinefit/shared';
+import { upsertWorkoutLogSchema, workoutLogListQuerySchema, workoutInsightsQuerySchema, deleteWorkoutLogSchema } from '@machinefit/shared';
 import { workoutLogService } from '../services/workout-log.service.js';
 import { workoutInsightsService } from '../services/workout-insights.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -23,4 +23,11 @@ export async function upsertWorkoutLog(req: Request, res: Response): Promise<voi
   const body = upsertWorkoutLogSchema.parse(req.body);
   const item = await workoutLogService.upsert(req.user.userId, body);
   res.json({ success: true, data: item });
+}
+
+export async function deleteWorkoutLog(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const body = deleteWorkoutLogSchema.parse(req.body);
+  await workoutLogService.remove(req.user.userId, body);
+  res.json({ success: true, data: { message: 'Deleted' } });
 }

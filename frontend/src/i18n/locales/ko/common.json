@@ -186,7 +186,17 @@
     "period": {
       "30d": "최근 30일",
       "3m": "최근 3개월",
-      "all": "전체"
+      "all": "전체",
+      "custom": "직접 선택"
+    },
+    "periodRange": {
+      "calendarLabel": "기간 캘린더",
+      "prevMonth": "이전 달",
+      "nextMonth": "다음 달",
+      "calendarHint": "시작일을 누른 뒤 종료일을 눌러 FROM~TO 기간을 선택하세요. 점이 있는 날은 운동 기록이 있습니다.",
+      "selectTo": "종료일을 선택하세요",
+      "selected": "{{from}} ~ {{to}}",
+      "selectedShort": "{{from}} ~ {{to}}"
     },
     "kpi": {
       "volume": "총 수행량",
@@ -236,6 +246,7 @@
         "weightClassChipRange": "{{name}} ({{min}}~{{max}}kg)",
         "weightClassChipOver": "{{name}} ({{min}}kg 초과)",
         "myHeightChip": "내 키 {{height}}cm",
+        "myWeightChip": "내 체중 {{weight}}",
         "deltaAbove": "▲ {{value}} · 평균보다 높음",
         "deltaBelow": "▼ {{value}} · 평균보다 낮음",
         "deltaEven": "● 평균과 비슷함",

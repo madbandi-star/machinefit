@@ -83,7 +83,15 @@ export function WorkoutLogPanel({
   });
 
   const existingLog = existingLogs?.[0];
+  const isLogSaved = Boolean(existingLog);
   const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
+
+  const invalidateLogQueries = async () => {
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+    await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+  };
 
   useEffect(() => {
     setInitialized(false);
@@ -116,13 +124,31 @@ export function WorkoutLogPanel({
         diary: diary.trim() || undefined,
       }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
-      await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+      await invalidateLogQueries();
       showToast(t('machines:workoutLog.saved'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
+
+  const removeMutation = useMutation({
+    mutationFn: () => workoutLogApi.remove({ machineCode, logDate }),
+    onSuccess: async () => {
+      setInitialized(false);
+      await invalidateLogQueries();
+      showToast(t('machines:workoutLog.canceled'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const isActionPending = saveMutation.isPending || removeMutation.isPending;
+
+  const handleLogAction = () => {
+    if (isLogSaved) {
+      removeMutation.mutate();
+      return;
+    }
+    saveMutation.mutate();
+  };
 
   const handleSetCountChange = (value: number) => {
     const next = Math.min(MAX_SET_COUNT, Math.max(MIN_SET_COUNT, value));
@@ -168,7 +194,7 @@ export function WorkoutLogPanel({
         className="recommendation-workout-log__stepper"
         aria-label={t('machines:workoutLog.decreaseSets')}
         onClick={() => handleSetCountChange(setCount - 1)}
-        disabled={setCount <= MIN_SET_COUNT || saveMutation.isPending}
+        disabled={setCount <= MIN_SET_COUNT || isActionPending}
       >
         -
       </button>
@@ -188,7 +214,7 @@ export function WorkoutLogPanel({
           max={MAX_SET_COUNT}
           value={setCount}
           onChange={(e) => handleSetCountChange(Number.parseInt(e.target.value, 10) || MIN_SET_COUNT)}
-          disabled={saveMutation.isPending}
+          disabled={isActionPending}
           aria-label={t('machines:workoutLog.setCount')}
         />
       )}
@@ -197,7 +223,7 @@ export function WorkoutLogPanel({
         className="recommendation-workout-log__stepper"
         aria-label={t('machines:workoutLog.increaseSets')}
         onClick={() => handleSetCountChange(setCount + 1)}
-        disabled={setCount >= MAX_SET_COUNT || saveMutation.isPending}
+        disabled={setCount >= MAX_SET_COUNT || isActionPending}
       >
         +
       </button>
@@ -225,7 +251,7 @@ export function WorkoutLogPanel({
               value={weight === 0 ? '' : weight}
               placeholder="0"
               onChange={(e) => handleWeightChange(index, e.target.value)}
-              disabled={saveMutation.isPending}
+              disabled={isActionPending}
             />
             <span className="setting-value-card__unit">kg</span>
           </div>
@@ -251,7 +277,7 @@ export function WorkoutLogPanel({
         value={diary}
         placeholder={t('machines:workoutLog.diaryPlaceholder')}
         onChange={(e) => handleDiaryChange(e.target.value)}
-        disabled={saveMutation.isPending}
+        disabled={isActionPending}
       />
     </div>
   );
@@ -259,11 +285,22 @@ export function WorkoutLogPanel({
   const saveButton = (
     <button
       type="button"
-      className={`btn btn--primary recommendation-workout-log__save${compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block'}`}
-      onClick={() => saveMutation.mutate()}
-      disabled={saveMutation.isPending || isLoading}
+      className={[
+        'btn recommendation-workout-log__save',
+        compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block',
+        isLogSaved ? 'btn--secondary recommendation-workout-log__save--saved' : 'btn--primary',
+      ].join('')}
+      onClick={handleLogAction}
+      disabled={isActionPending || isLoading}
+      aria-pressed={isLogSaved}
     >
-      {saveMutation.isPending ? t('machines:workoutLog.saving') : t('machines:workoutLog.save')}
+      {isActionPending
+        ? isLogSaved
+          ? t('machines:workoutLog.canceling')
+          : t('machines:workoutLog.saving')
+        : isLogSaved
+          ? t('machines:workoutLog.cancel')
+          : t('machines:workoutLog.save')}
     </button>
   );
 

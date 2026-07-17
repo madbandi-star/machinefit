@@ -405,6 +405,13 @@
   margin-top: 0.15rem;
 }
 
+.recommendation-workout-log__save--saved {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
 .recommendation-workout-log__diary {
   display: flex;
   flex-direction: column;

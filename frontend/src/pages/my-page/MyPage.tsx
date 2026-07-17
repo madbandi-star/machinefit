@@ -109,7 +109,6 @@ export function MyPage() {
             <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
-          <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
         </nav>
       </section>
 

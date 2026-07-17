@@ -160,6 +160,23 @@ export const workoutLogRepository = {
     return mapRow(row);
   },
 
+  async deleteByUserMachineDate(
+    userId: string,
+    machineId: string,
+    logDate: string
+  ): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+
+    const result = await pool.query(
+      `DELETE FROM workout_logs
+       WHERE user_id = $1 AND machine_id = $2 AND log_date = $3::date`,
+      [userId, machineId, logDate]
+    );
+
+    return (result.rowCount ?? 0) > 0;
+  },
+
   async getReferenceWeightKg(
     machineId: string,
     gender: string,

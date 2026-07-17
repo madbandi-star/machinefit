@@ -19,6 +19,25 @@ import {
   type GrowthPeriod,
 } from '@/utils/workoutAnalytics';
 
+function mapToInsightPeriod(
+  period: GrowthPeriod,
+  customFrom?: string,
+  customTo?: string
+): WorkoutInsightPeriod {
+  if (period !== 'custom') return period;
+  if (!customFrom || !customTo) return '30d';
+
+  const [fy, fm, fd] = customFrom.split('-').map(Number);
+  const [ty, tm, td] = customTo.split('-').map(Number);
+  const fromDate = new Date(fy, fm - 1, fd);
+  const toDate = new Date(ty, tm - 1, td);
+  const days = Math.max(1, Math.round((toDate.getTime() - fromDate.getTime()) / 86400000) + 1);
+
+  if (days <= 35) return '30d';
+  if (days <= 100) return '3m';
+  return 'all';
+}
+
 function round1(value: number): number {
   return Math.round(value * 10) / 10;
 }
@@ -141,17 +160,21 @@ function buildLocalInsights(
 export async function fetchWorkoutInsights(options: {
   machineCode: string;
   period: GrowthPeriod;
+  customFrom?: string;
+  customTo?: string;
   user: User | null;
   logs: WorkoutLog[];
   machineName?: string;
 }): Promise<WorkoutInsights | null> {
   if (!options.machineCode) return null;
 
+  const insightPeriod = mapToInsightPeriod(options.period, options.customFrom, options.customTo);
+
   try {
     const res = await apiClient.get<ApiResponse<WorkoutInsights>>('/workout-logs/insights', {
       params: {
         machineCode: options.machineCode,
-        period: options.period,
+        period: insightPeriod,
       },
     });
     return res.data.data ?? null;
@@ -161,7 +184,7 @@ export async function fetchWorkoutInsights(options: {
       options.user,
       options.machineCode,
       options.machineName,
-      options.period,
+      insightPeriod,
       options.logs
     );
   }

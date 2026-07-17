@@ -39,6 +39,13 @@ export const upsertWorkoutLogSchema = z
 
 export type UpsertWorkoutLogInput = z.infer<typeof upsertWorkoutLogSchema>;
 
+export const deleteWorkoutLogSchema = z.object({
+  machineCode: z.string().min(1),
+  logDate: dateKeySchema,
+});
+
+export type DeleteWorkoutLogInput = z.infer<typeof deleteWorkoutLogSchema>;
+
 export const workoutInsightPeriodSchema = z.enum(['30d', '3m', 'all']);
 
 export const workoutInsightsQuerySchema = z.object({
