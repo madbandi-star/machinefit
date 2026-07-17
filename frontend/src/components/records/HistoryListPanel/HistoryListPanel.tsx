@@ -11,11 +11,14 @@ import { historyApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
+import { useAuthStore } from '@/store/auth.store';
+import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import {
   extractHistoryDateKeys,
   formatHistoryDateHeader,
   formatHistoryTime,
   getLocalDayRange,
+  getLocalDateKey,
   groupHistoryByDate,
 } from '@/utils/historyDate';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
@@ -28,6 +31,7 @@ export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
 
@@ -112,7 +116,7 @@ export function HistoryListPanel() {
   }
 
   return (
-    <div className="records-list">
+    <div className="records-list records-list--history">
       <div className="records-list__toolbar">
         <div className="records-list__date-filter-block">
           <div className="records-list__filters">
@@ -183,34 +187,39 @@ export function HistoryListPanel() {
 
             {group.items.map((item) => {
               const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
+              const logDate = getLocalDateKey(item.viewedAt);
 
               return (
-                <article key={item.id} className="saved-settings-card">
+                <article key={item.id} className="saved-settings-card saved-settings-card--history">
                   <div className="saved-settings-card__header">
                     <Link to={resultUrl} className="saved-settings-card__machine">
                       <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
                       <span className="saved-settings-card__machine-code">{item.machineCode}</span>
+                      <span className="saved-settings-card__time saved-settings-card__time--inline">
+                        {formatHistoryTime(item.viewedAt, i18n.language)}
+                      </span>
                     </Link>
-                    <div className="saved-settings-card__actions">
-                      <Link to={resultUrl} className="saved-settings-card__link">
-                        {t('machines:detail.viewLastResult')}
-                        <Icon name="chevronRight" size={16} />
-                      </Link>
-                      <button
-                        type="button"
-                        className="saved-settings-card__remove"
-                        aria-label={t('machines:history.remove')}
-                        onClick={() => removeMutation.mutate(item.id)}
-                        disabled={removeMutation.isPending}
-                      >
-                        ×
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      className="saved-settings-card__remove"
+                      aria-label={t('machines:history.remove')}
+                      onClick={() => removeMutation.mutate(item.id)}
+                      disabled={removeMutation.isPending}
+                    >
+                      ×
+                    </button>
                   </div>
-                  <RecommendationSettingsPanel settings={item.settings} variant="hero" />
-                  <p className="saved-settings-card__time">
-                    {formatHistoryTime(item.viewedAt, i18n.language)}
-                  </p>
+                  <RecommendationSettingsPanel settings={item.settings} variant="compact" />
+                  <WorkoutLogPanel
+                    key={`${item.machineCode}-${logDate}`}
+                    machineCode={item.machineCode}
+                    recommendationId={item.recommendationId}
+                    suggestedWeightKg={item.settings.recommendedWeightKg}
+                    isAuthenticated={isAuthenticated}
+                    variant="compact"
+                    logDate={logDate}
+                    idPrefix={`history-workout-${item.id}`}
+                  />
                 </article>
               );
             })}

@@ -56,7 +56,7 @@
 .records-list__calendar-details {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch;
   width: 100%;
 }
 
@@ -64,6 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  align-self: flex-end;
   gap: var(--space-xs);
   min-width: 0;
   list-style: none;
@@ -94,8 +95,7 @@
 
 .records-list__calendar-details .history-calendar {
   margin-top: var(--space-xs);
-  width: min(100%, 17.5rem);
-  margin-left: auto;
+  width: 100%;
 }
 
 .records-list__date-selected {
@@ -374,6 +374,86 @@
   margin: 0;
   font-size: 0.6875rem;
   color: var(--color-text-muted);
+}
+
+/* History tab — dense cards (~2 per iPhone 15 Pro Max viewport) */
+.records-list--history {
+  gap: var(--space-sm);
+}
+
+.records-list--history .records-list__toolbar {
+  margin-bottom: 0;
+}
+
+.records-list--history .records-list__date-group {
+  gap: 0.35rem;
+}
+
+.records-list--history .records-list__date-heading {
+  padding: 0.1rem 0 0.2rem;
+  font-size: 0.75rem;
+}
+
+.saved-settings-card--history {
+  gap: 0.35rem;
+  padding: 0.45rem 0.5rem;
+}
+
+.saved-settings-card--history .saved-settings-card__header {
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.saved-settings-card--history .saved-settings-card__machine {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.35rem;
+  row-gap: 0.05rem;
+}
+
+.saved-settings-card--history .saved-settings-card__machine-name {
+  font-size: 0.8125rem;
+}
+
+.saved-settings-card--history .saved-settings-card__machine-code {
+  font-size: 0.625rem;
+}
+
+.saved-settings-card--history .saved-settings-card__time--inline {
+  flex-basis: 100%;
+  font-size: 0.625rem;
+  line-height: 1.2;
+}
+
+.saved-settings-card--history .saved-settings-card__remove {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1rem;
+}
+
+.saved-settings-card--history .recommendation-settings-panel--compact {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.saved-settings-card--history .setting-value-card--compact {
+  padding: 0.3rem 0.35rem;
+  min-height: 0;
+}
+
+.saved-settings-card--history .setting-value-card--compact .setting-value-card__label {
+  font-size: 0.5625rem;
+  line-height: 1.15;
+}
+
+.saved-settings-card--history .setting-value-card--compact .setting-value-card__value {
+  font-size: 0.8125rem;
+}
+
+.saved-settings-card--history .setting-value-card--compact .setting-value-card__unit {
+  font-size: 0.5625rem;
 }
 
 .favorite-row {

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -19,6 +19,9 @@ interface WorkoutLogPanelProps {
   recommendationId: string;
   suggestedWeightKg?: number;
   isAuthenticated: boolean;
+  variant?: 'default' | 'compact';
+  logDate?: string;
+  idPrefix?: string;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -43,13 +46,18 @@ export function WorkoutLogPanel({
   recommendationId,
   suggestedWeightKg,
   isAuthenticated,
+  variant = 'default',
+  logDate: logDateProp,
+  idPrefix = 'workout',
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
-  const logDate = useMemo(() => getTodayDateKey(), []);
+  const compact = variant === 'compact';
+  const logDate = logDateProp ?? getTodayDateKey();
+  const setCountInputId = `${idPrefix}-set-count`;
 
   const [setCount, setSetCount] = useState(DEFAULT_SET_COUNT);
   const [weights, setWeights] = useState<number[]>(() =>
@@ -67,6 +75,10 @@ export function WorkoutLogPanel({
   });
 
   const existingLog = existingLogs?.[0];
+
+  useEffect(() => {
+    setInitialized(false);
+  }, [machineCode, logDate, recommendationId]);
 
   useEffect(() => {
     if (!isAuthenticated || isLoading || initialized) return;
@@ -115,13 +127,111 @@ export function WorkoutLogPanel({
 
   if (!isAuthenticated) {
     return (
-      <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
+      <section
+        className={`recommendation-workout-log${compact ? ' recommendation-workout-log--compact' : ''}`}
+        aria-label={t('machines:workoutLog.title')}
+      >
         <p className="recommendation-workout-log__login-hint">
           {t('machines:workoutLog.loginRequired')}
         </p>
-        <Link to={ROUTES.LOGIN} state={{ from: location }} className="btn btn--secondary btn--block">
-          {t('machines:recommendLogin')}
-        </Link>
+        {!compact ? (
+          <Link to={ROUTES.LOGIN} state={{ from: location }} className="btn btn--secondary btn--block">
+            {t('machines:recommendLogin')}
+          </Link>
+        ) : null}
+      </section>
+    );
+  }
+
+  const setCountControl = (
+    <div className="recommendation-workout-log__set-count-row">
+      <button
+        type="button"
+        className="recommendation-workout-log__stepper"
+        aria-label={t('machines:workoutLog.decreaseSets')}
+        onClick={() => handleSetCountChange(setCount - 1)}
+        disabled={setCount <= MIN_SET_COUNT || saveMutation.isPending}
+      >
+        −
+      </button>
+      <input
+        id={setCountInputId}
+        className="input recommendation-workout-log__set-input"
+        type="number"
+        min={MIN_SET_COUNT}
+        max={MAX_SET_COUNT}
+        value={setCount}
+        onChange={(e) => handleSetCountChange(Number.parseInt(e.target.value, 10) || MIN_SET_COUNT)}
+        disabled={saveMutation.isPending}
+        aria-label={t('machines:workoutLog.setCount')}
+      />
+      <button
+        type="button"
+        className="recommendation-workout-log__stepper"
+        aria-label={t('machines:workoutLog.increaseSets')}
+        onClick={() => handleSetCountChange(setCount + 1)}
+        disabled={setCount >= MAX_SET_COUNT || saveMutation.isPending}
+      >
+        +
+      </button>
+    </div>
+  );
+
+  const weightGrid = (
+    <div className="recommendation-workout-log__weight-grid">
+      {weights.map((weight, index) => (
+        <div
+          key={index}
+          className="setting-value-card setting-value-card--compact recommendation-workout-log__weight-card"
+        >
+          <label className="setting-value-card__label" htmlFor={`${idPrefix}-weight-${index}`}>
+            {t('machines:workoutLog.setLabel', { number: index + 1 })}
+          </label>
+          <div className="setting-value-card__value-row">
+            <input
+              id={`${idPrefix}-weight-${index}`}
+              className="input recommendation-workout-log__weight-input"
+              type="number"
+              min={0}
+              step="0.5"
+              inputMode="decimal"
+              value={weight === 0 ? '' : weight}
+              placeholder="0"
+              onChange={(e) => handleWeightChange(index, e.target.value)}
+              disabled={saveMutation.isPending}
+            />
+            <span className="setting-value-card__unit">kg</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const saveButton = (
+    <button
+      type="button"
+      className={`btn btn--primary recommendation-workout-log__save${compact ? ' recommendation-workout-log__save--compact' : ' btn--block'}`}
+      onClick={() => saveMutation.mutate()}
+      disabled={saveMutation.isPending || isLoading}
+    >
+      {saveMutation.isPending ? t('machines:workoutLog.saving') : t('machines:workoutLog.save')}
+    </button>
+  );
+
+  if (compact) {
+    return (
+      <section
+        className="recommendation-workout-log recommendation-workout-log--compact"
+        aria-label={t('machines:workoutLog.title')}
+      >
+        <div className="recommendation-workout-log__toolbar">
+          <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
+          {setCountControl}
+          {saveButton}
+        </div>
+        <div className="recommendation-workout-log__weights">
+          {weightGrid}
+        </div>
       </section>
     );
   }
@@ -136,80 +246,18 @@ export function WorkoutLogPanel({
       </div>
 
       <div className="recommendation-workout-log__set-count">
-        <label className="recommendation-workout-log__field-label" htmlFor="workout-set-count">
+        <label className="recommendation-workout-log__field-label" htmlFor={setCountInputId}>
           {t('machines:workoutLog.setCount')}
         </label>
-        <div className="recommendation-workout-log__set-count-row">
-          <button
-            type="button"
-            className="recommendation-workout-log__stepper"
-            aria-label={t('machines:workoutLog.decreaseSets')}
-            onClick={() => handleSetCountChange(setCount - 1)}
-            disabled={setCount <= MIN_SET_COUNT || saveMutation.isPending}
-          >
-            −
-          </button>
-          <input
-            id="workout-set-count"
-            className="input recommendation-workout-log__set-input"
-            type="number"
-            min={MIN_SET_COUNT}
-            max={MAX_SET_COUNT}
-            value={setCount}
-            onChange={(e) => handleSetCountChange(Number.parseInt(e.target.value, 10) || MIN_SET_COUNT)}
-            disabled={saveMutation.isPending}
-          />
-          <button
-            type="button"
-            className="recommendation-workout-log__stepper"
-            aria-label={t('machines:workoutLog.increaseSets')}
-            onClick={() => handleSetCountChange(setCount + 1)}
-            disabled={setCount >= MAX_SET_COUNT || saveMutation.isPending}
-          >
-            +
-          </button>
-        </div>
+        {setCountControl}
       </div>
 
       <div className="recommendation-workout-log__weights">
         <p className="recommendation-workout-log__field-label">{t('machines:workoutLog.weights')}</p>
-        <div className="recommendation-workout-log__weight-grid">
-          {weights.map((weight, index) => (
-            <div key={index} className="setting-value-card setting-value-card--compact recommendation-workout-log__weight-card">
-              <label
-                className="setting-value-card__label"
-                htmlFor={`workout-weight-${index}`}
-              >
-                {t('machines:workoutLog.setLabel', { number: index + 1 })}
-              </label>
-              <div className="setting-value-card__value-row">
-                <input
-                  id={`workout-weight-${index}`}
-                  className="input recommendation-workout-log__weight-input"
-                  type="number"
-                  min={0}
-                  step="0.5"
-                  inputMode="decimal"
-                  value={weight === 0 ? '' : weight}
-                  placeholder="0"
-                  onChange={(e) => handleWeightChange(index, e.target.value)}
-                  disabled={saveMutation.isPending}
-                />
-                <span className="setting-value-card__unit">kg</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        {weightGrid}
       </div>
 
-      <button
-        type="button"
-        className="btn btn--primary btn--block recommendation-workout-log__save"
-        onClick={() => saveMutation.mutate()}
-        disabled={saveMutation.isPending || isLoading}
-      >
-        {saveMutation.isPending ? t('machines:workoutLog.saving') : t('machines:workoutLog.save')}
-      </button>
+      {saveButton}
     </section>
   );
 }
