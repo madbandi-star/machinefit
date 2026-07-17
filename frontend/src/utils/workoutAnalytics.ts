@@ -53,6 +53,10 @@ export interface DailyKpis {
   workoutDayCount: number;
   avgMachinesPerDay: number | null;
   peakDayVolume: number | null;
+  maxWeightDelta: number | null;
+  currentPeakWeight: number | null;
+  previousPeakWeight: number | null;
+  totalLogCount: number;
 }
 
 function normalizeLogDate(logDate: string): string {
@@ -173,7 +177,7 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
     });
 }
 
-export function computeDailyKpis(dailyPoints: DailyPoint[]): DailyKpis {
+export function computeDailyKpis(dailyPoints: DailyPoint[], periodLogCount = 0): DailyKpis {
   if (dailyPoints.length === 0) {
     return {
       volumeGrowthPct: null,
@@ -181,12 +185,26 @@ export function computeDailyKpis(dailyPoints: DailyPoint[]): DailyKpis {
       workoutDayCount: 0,
       avgMachinesPerDay: null,
       peakDayVolume: null,
+      maxWeightDelta: null,
+      currentPeakWeight: null,
+      previousPeakWeight: null,
+      totalLogCount: periodLogCount,
     };
   }
 
   const volumes = dailyPoints.map((point) => point.totalVolume);
   const firstVolume = volumes[0];
   const lastVolume = volumes[volumes.length - 1];
+
+  let runningPeak = 0;
+  const runningPeaks = dailyPoints.map((point) => {
+    runningPeak = Math.max(runningPeak, point.peakSetWeight);
+    return runningPeak;
+  });
+  const firstDayPeak = dailyPoints[0].peakSetWeight;
+  const currentPeakWeight = runningPeaks[runningPeaks.length - 1];
+  const previousPeakWeight =
+    runningPeaks.length > 1 ? runningPeaks[runningPeaks.length - 2] : null;
 
   return {
     volumeGrowthPct:
@@ -198,7 +216,19 @@ export function computeDailyKpis(dailyPoints: DailyPoint[]): DailyKpis {
     avgMachinesPerDay:
       dailyPoints.reduce((sum, point) => sum + point.machineCount, 0) / dailyPoints.length,
     peakDayVolume: Math.max(...volumes),
+    maxWeightDelta: dailyPoints.length >= 2 ? currentPeakWeight - firstDayPeak : null,
+    currentPeakWeight,
+    previousPeakWeight,
+    totalLogCount: periodLogCount,
   };
+}
+
+export function getDailyMaxWeightChartPoints(dailyPoints: DailyPoint[]): number[] {
+  let runningMax = 0;
+  return dailyPoints.map((point) => {
+    runningMax = Math.max(runningMax, point.peakSetWeight);
+    return runningMax;
+  });
 }
 
 export function computeGrowthPct(first: number, last: number): number | null {

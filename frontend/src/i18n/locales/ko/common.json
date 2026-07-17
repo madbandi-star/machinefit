@@ -149,15 +149,21 @@
     },
     "daily": {
       "subtitle": "날짜별 총 운동량으로 하루 단위 성장 추이를 확인하세요",
+      "kpiSection": "일자별 추가 지표",
       "kpi": {
         "volumeGrowth": "총 운동량 성장률",
         "avgVolume": "일평균 운동량",
         "workoutDays": "운동 일수",
-        "days": "일"
+        "days": "일",
+        "totalLogs": "총 기록 수",
+        "logs": "건"
       },
       "volumeChart": {
         "title": "일별 총 운동량",
         "desc": "하루 동안 모든 머신의 총 수행량 합계입니다."
+      },
+      "maxWeightChart": {
+        "desc": "하루 동안 모든 머신에서 들어 올린 최고 중량의 누적 변화입니다."
       },
       "machineChart": {
         "title": "일별 운동 머신 수",

@@ -149,15 +149,21 @@
     },
     "daily": {
       "subtitle": "Compare daily total volume across all machines",
+      "kpiSection": "Daily-only metrics",
       "kpi": {
         "volumeGrowth": "Total volume growth",
         "avgVolume": "Avg daily volume",
         "workoutDays": "Workout days",
-        "days": " days"
+        "days": " days",
+        "totalLogs": "Total logs",
+        "logs": ""
       },
       "volumeChart": {
         "title": "Daily total volume",
         "desc": "Sum of all machine volumes for each workout day."
+      },
+      "maxWeightChart": {
+        "desc": "Cumulative peak set weight across all machines each day."
       },
       "machineChart": {
         "title": "Machines per day",
