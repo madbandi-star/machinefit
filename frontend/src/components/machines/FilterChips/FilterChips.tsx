@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import '@/styles/machines.css';
 
@@ -26,7 +27,8 @@ export function FilterChips({ value, onChange }: FilterChipsProps) {
           className={`filter-chip${value === group ? ' filter-chip--active' : ''}`}
           onClick={() => onChange(value === group ? null : group)}
         >
-          {t(`muscleGroups.${group}`)}
+          <MuscleGroupIcon group={group} size={22} className="filter-chip__icon" />
+          <span>{t(`muscleGroups.${group}`)}</span>
         </button>
       ))}
     </div>

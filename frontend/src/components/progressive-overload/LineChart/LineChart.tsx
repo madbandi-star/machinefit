@@ -12,7 +12,9 @@ interface LineChartProps {
   showTrend?: boolean;
   accentColor?: string;
   ariaLabel: string;
+  /** @deprecated Use size="compact" instead */
   compact?: boolean;
+  size?: 'default' | 'compact' | 'mini' | 'large';
   showValueList?: boolean;
 }
 
@@ -28,6 +30,18 @@ const CHART_LAYOUT = {
     height: 108,
     padding: { top: 10, right: 8, bottom: 22, left: 30 },
     dotRadius: 3,
+  },
+  mini: {
+    width: 280,
+    height: 56,
+    padding: { top: 6, right: 6, bottom: 14, left: 24 },
+    dotRadius: 2.5,
+  },
+  large: {
+    width: 340,
+    height: 220,
+    padding: { top: 20, right: 16, bottom: 34, left: 42 },
+    dotRadius: 5,
   },
 } as const;
 
@@ -45,10 +59,13 @@ export function LineChart({
   accentColor = 'var(--color-primary)',
   ariaLabel,
   compact = false,
+  size,
   showValueList,
 }: LineChartProps) {
-  const layout = compact ? CHART_LAYOUT.compact : CHART_LAYOUT.default;
-  const shouldShowValueList = showValueList ?? !compact;
+  const resolvedSize = size ?? (compact ? 'compact' : 'default');
+  const layout = CHART_LAYOUT[resolvedSize];
+  const shouldShowValueList =
+    showValueList ?? (resolvedSize === 'default' || resolvedSize === 'large');
 
   const chart = useMemo(() => {
     if (points.length === 0) return null;
@@ -101,7 +118,7 @@ export function LineChart({
 
   return (
     <div
-      className={`po-line-chart${compact ? ' po-line-chart--compact' : ''}`}
+      className={`po-line-chart po-line-chart--${resolvedSize}`}
       role="img"
       aria-label={ariaLabel}
     >

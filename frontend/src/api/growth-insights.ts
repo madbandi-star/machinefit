@@ -9,6 +9,7 @@ import {
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
+  nextRecommendWeightKg,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
 import type { ApiResponse } from '@machinefit/shared';
@@ -71,8 +72,7 @@ function buildLocalInsights(
   const lastSession = sessions[sessions.length - 1];
   const setCount = lastSession?.setCount ?? 3;
   const currentMax = kpis.currentPr ?? referenceWeight;
-  const increment = currentMax >= 80 ? 5 : 2.5;
-  const suggestedMax = Math.round((currentMax + increment) / 2.5) * 2.5;
+  const suggestedMax = nextRecommendWeightKg(currentMax);
 
   const profileAverage = hasProfile
     ? {
@@ -128,7 +128,7 @@ function buildLocalInsights(
     nextTarget:
       sessions.length > 0 || hasProfile
         ? {
-            currentMaxWeightKg: round1(currentMax),
+            currentMaxWeightKg: Math.round(currentMax),
             suggestedMaxWeightKg: suggestedMax,
             suggestedSetWeightsKg: Array.from({ length: setCount }, () => suggestedMax),
             setCount,

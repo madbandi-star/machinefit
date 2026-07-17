@@ -30,7 +30,8 @@
     "submit": "Submit",
     "back": "Back",
     "viewAll": "View All",
-    "retry": "Retry"
+    "retry": "Retry",
+    "close": "Close"
   },
   "errors": {
     "loadFailed": "Failed to load data. Please try again.",
@@ -225,6 +226,10 @@
       "title": "My growth TOP 5",
       "periodNote": "Volume growth rate · {{period}}",
       "allTimeNote": "Volume growth rate · all time"
+    },
+    "chartExpand": {
+      "hint": "Tap to enlarge",
+      "open": "Enlarge {{title}} chart"
     },
     "insights": {
       "title": "Personalized growth insights",

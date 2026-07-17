@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { LineChart } from '@/components/progressive-overload/LineChart/LineChart';
+import { GrowthChartBlock } from '@/components/progressive-overload/GrowthChartBlock/GrowthChartBlock';
+import { CollapsibleCard } from '@/components/progressive-overload/CollapsibleCard/CollapsibleCard';
 import { DailyBreakdownList } from '@/components/progressive-overload/DailyBreakdownList/DailyBreakdownList';
 import { fetchAllWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -66,7 +67,7 @@ export function GrowthAnalysisPage() {
   const [periodPreset, setPeriodPreset] = useState<GrowthPeriod>('30d');
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
-  const [viewMode, setViewMode] = useState<GrowthViewMode>('machine');
+  const [viewMode, setViewMode] = useState<GrowthViewMode>('daily');
   const [selectedMachineCode, setSelectedMachineCode] = useState('');
 
   const periodFilter: GrowthPeriodFilterState = useMemo(
@@ -386,114 +387,85 @@ export function GrowthAnalysisPage() {
             {t('growthAnalysis.periodNote', { period: periodLabel })}
           </p>
 
-          <section className="card growth-analysis-charts-panel">
-            <article className="growth-analysis-chart-block">
-              <div className="growth-analysis-chart-section__header">
-                <div className="growth-analysis-chart-section__title-group">
-                  <h2>
-                    {isDailyView
-                      ? t('growthAnalysis.daily.volumeChart.title')
-                      : t('growthAnalysis.volumeChart.title')}
-                  </h2>
-                  <p className="growth-analysis-chart-section__desc">
-                    {isDailyView
-                      ? t('growthAnalysis.daily.volumeChart.desc')
-                      : t('growthAnalysis.volumeChart.desc')}
-                  </p>
-                </div>
-                {volumeGrowthPct !== null ? (
+          <section
+            className={`growth-analysis-charts-grid${isDailyView ? ' growth-analysis-charts-grid--daily' : ''}`}
+            aria-label={t('growthAnalysis.kpiSection')}
+          >
+            <GrowthChartBlock
+              title={
+                isDailyView
+                  ? t('growthAnalysis.daily.volumeChart.title')
+                  : t('growthAnalysis.volumeChart.title')
+              }
+              description={
+                isDailyView
+                  ? t('growthAnalysis.daily.volumeChart.desc')
+                  : t('growthAnalysis.volumeChart.desc')
+              }
+              badge={
+                volumeGrowthPct !== null ? (
                   <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
                     {formatGrowthPct(volumeGrowthPct)} {t('growthAnalysis.growth')}
                   </span>
-                ) : null}
-              </div>
-              {volumeChartPoints.length > 0 ? (
-                <LineChart
-                  points={volumeChartPoints}
-                  unit="kg"
-                  showTrend
-                  compact
-                  ariaLabel={
-                    isDailyView
-                      ? t('growthAnalysis.daily.volumeChart.title')
-                      : t('growthAnalysis.volumeChart.title')
-                  }
-                />
-              ) : (
-                <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
-              )}
-            </article>
+                ) : undefined
+              }
+              points={volumeChartPoints}
+              unit="kg"
+              showTrend
+              ariaLabel={
+                isDailyView
+                  ? t('growthAnalysis.daily.volumeChart.title')
+                  : t('growthAnalysis.volumeChart.title')
+              }
+            />
 
-            <div className="growth-analysis-charts-panel__divider" aria-hidden />
-
-            <article className="growth-analysis-chart-block">
-              <div className="growth-analysis-chart-section__header">
-                <div className="growth-analysis-chart-section__title-group">
-                  <h2>{t('growthAnalysis.maxWeightChart.title')}</h2>
-                  <p className="growth-analysis-chart-section__desc">
-                    {isDailyView
-                      ? t('growthAnalysis.daily.maxWeightChart.desc')
-                      : t('growthAnalysis.maxWeightChart.desc')}
-                  </p>
-                </div>
-              </div>
-              {currentPr !== null ? (
-                <div className="growth-analysis-pr-summary growth-analysis-pr-summary--compact">
-                  <span>
-                    {t('growthAnalysis.maxWeightChart.previousPr')}{' '}
-                    <strong>{previousPr}kg</strong>
-                  </span>
-                  <span className="growth-analysis-pr-summary__arrow" aria-hidden>
-                    →
-                  </span>
-                  <span>
-                    {t('growthAnalysis.maxWeightChart.currentPr')}{' '}
-                    <strong>{currentPr}kg</strong>
-                  </span>
-                  {maxWeightDelta !== null ? (
-                    <span className="growth-analysis-kpi__value--up">
-                      {formatWeightDelta(maxWeightDelta)}
+            <GrowthChartBlock
+              title={t('growthAnalysis.maxWeightChart.title')}
+              description={
+                isDailyView
+                  ? t('growthAnalysis.daily.maxWeightChart.desc')
+                  : t('growthAnalysis.maxWeightChart.desc')
+              }
+              points={maxWeightChartPoints}
+              unit="kg"
+              accentColor="var(--color-accent, #f59e0b)"
+              ariaLabel={t('growthAnalysis.maxWeightChart.title')}
+              headerExtra={
+                currentPr !== null ? (
+                  <div className="growth-analysis-pr-summary growth-analysis-pr-summary--compact">
+                    <span>
+                      {t('growthAnalysis.maxWeightChart.previousPr')}{' '}
+                      <strong>{previousPr}kg</strong>
                     </span>
-                  ) : null}
-                </div>
-              ) : null}
-              {maxWeightChartPoints.length > 0 ? (
-                <LineChart
-                  points={maxWeightChartPoints}
-                  unit="kg"
-                  compact
-                  accentColor="var(--color-accent, #f59e0b)"
-                  ariaLabel={t('growthAnalysis.maxWeightChart.title')}
-                />
-              ) : (
-                <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
-              )}
-            </article>
-          </section>
+                    <span className="growth-analysis-pr-summary__arrow" aria-hidden>
+                      →
+                    </span>
+                    <span>
+                      {t('growthAnalysis.maxWeightChart.currentPr')}{' '}
+                      <strong>{currentPr}kg</strong>
+                    </span>
+                    {maxWeightDelta !== null ? (
+                      <span className="growth-analysis-kpi__value--up">
+                        {formatWeightDelta(maxWeightDelta)}
+                      </span>
+                    ) : null}
+                  </div>
+                ) : undefined
+              }
+            />
 
-          {isDailyView ? (
-            <section className="card growth-analysis-chart-section growth-analysis-chart-section--compact">
-              <div className="growth-analysis-chart-section__header">
-                <div className="growth-analysis-chart-section__title-group">
-                  <h2>{t('growthAnalysis.daily.machineChart.title')}</h2>
-                  <p className="growth-analysis-chart-section__desc">
-                    {t('growthAnalysis.daily.machineChart.desc')}
-                  </p>
-                </div>
-              </div>
-              {machineCountChartPoints.length > 0 ? (
-                <LineChart
-                  points={machineCountChartPoints}
-                  unit={t('growthAnalysis.daily.machineChart.unit')}
-                  compact
-                  accentColor="var(--color-primary)"
-                  ariaLabel={t('growthAnalysis.daily.machineChart.title')}
-                />
-              ) : (
-                <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
-              )}
-            </section>
-          ) : null}
+            {isDailyView ? (
+              <GrowthChartBlock
+                className="growth-analysis-charts-grid__span-half"
+                title={t('growthAnalysis.daily.machineChart.title')}
+                description={t('growthAnalysis.daily.machineChart.desc')}
+                points={machineCountChartPoints}
+                unit={t('growthAnalysis.daily.machineChart.unit')}
+                accentColor="var(--color-primary)"
+                ariaLabel={t('growthAnalysis.daily.machineChart.title')}
+              />
+            ) : null}
+          </section>
 
           <GrowthInsightsPanel
             insights={insights ?? null}
@@ -508,8 +480,18 @@ export function GrowthAnalysisPage() {
       )}
 
       {ranking.length > 0 ? (
-        <section className="card growth-analysis-ranking">
-          <h2>{t('growthAnalysis.ranking.title')}</h2>
+        <CollapsibleCard
+          title={t('growthAnalysis.ranking.title')}
+          summary={
+            <span className="growth-analysis-period-note">
+              {periodStart
+                ? t('growthAnalysis.ranking.periodNote', { period: periodLabel })
+                : t('growthAnalysis.ranking.allTimeNote')}
+            </span>
+          }
+          defaultOpen={false}
+          className="growth-analysis-ranking"
+        >
           <ol className="growth-analysis-ranking__list">
             {ranking.map((item, index) => (
               <li key={item.machineCode} className="growth-analysis-ranking__item">
@@ -523,12 +505,7 @@ export function GrowthAnalysisPage() {
               </li>
             ))}
           </ol>
-          <p className="growth-analysis-period-note">
-            {periodStart
-              ? t('growthAnalysis.ranking.periodNote', { period: periodLabel })
-              : t('growthAnalysis.ranking.allTimeNote')}
-          </p>
-        </section>
+        </CollapsibleCard>
       ) : null}
     </div>
   );

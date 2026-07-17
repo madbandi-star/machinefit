@@ -8,6 +8,8 @@ import {
   EXPERIENCE_WEIGHT_MULTIPLIERS,
   getBoxingWeightClassRange,
   getPeerHeightRange,
+  nextRecommendWeightKg,
+  roundRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 
@@ -22,11 +24,7 @@ function todayDateKey(): string {
 }
 
 function roundKg(value: number): number {
-  return Math.round(value * 10) / 10;
-}
-
-function roundToStep(value: number, step: number): number {
-  return Math.round(value / step) * step;
+  return Math.round(value);
 }
 
 function sumWeights(weights: number[]): number {
@@ -102,8 +100,7 @@ function buildNextTarget(
         ? referenceWeightKg
         : 20;
 
-  const increment = base >= 80 ? 5 : 2.5;
-  const suggestedMaxWeightKg = roundToStep(base + increment, 2.5);
+  const suggestedMaxWeightKg = nextRecommendWeightKg(base);
 
   return {
     base,
@@ -324,9 +321,8 @@ export async function computeRecommendationWeight(options: {
     ].filter((value) => value > 0);
     const cap = capCandidates.length > 0 ? Math.max(...capCandidates) : nextTarget.suggestedMaxWeightKg;
 
-    finalWeight = roundToStep(
-      Math.min(Math.max(nextTarget.suggestedMaxWeightKg, floor), cap),
-      2.5
+    finalWeight = roundRecommendWeightKg(
+      Math.min(Math.max(nextTarget.suggestedMaxWeightKg, floor), cap)
     );
     primarySourceId = 'progressiveTarget';
   } else if (userMetrics.workoutCount > 0 && (userMetrics.maxWeightKg ?? 0) > 0) {
@@ -363,7 +359,7 @@ export async function computeRecommendationWeight(options: {
       finalWeight = undefined;
       primarySourceId = 'profileContext';
     } else if (candidates.length === 1) {
-      finalWeight = roundToStep(candidates[0], 2.5);
+      finalWeight = roundRecommendWeightKg(candidates[0]);
       if (candidates[0] === profileFormula) primarySourceId = 'profileFormula';
       else if (candidates[0] === bodyReference) primarySourceId = 'bodyReference';
       else if (candidates[0] === matchedSettingWeightKg) primarySourceId = 'machineSettingMatch';
@@ -371,7 +367,7 @@ export async function computeRecommendationWeight(options: {
       else primarySourceId = 'cohortAvgMax';
     } else {
       const blended = candidates.reduce((total, value) => total + value, 0) / candidates.length;
-      finalWeight = roundToStep(blended, 2.5);
+      finalWeight = roundRecommendWeightKg(blended);
 
       entries.push({
         id: 'blendedSelection',
@@ -389,11 +385,14 @@ export async function computeRecommendationWeight(options: {
     markPrimary(entries, primarySourceId);
   }
 
+  const normalizedFinalWeight =
+    finalWeight != null ? roundRecommendWeightKg(finalWeight) : undefined;
+
   return {
-    recommendedWeightKg: finalWeight,
+    recommendedWeightKg: normalizedFinalWeight,
     weightBasis: {
       entries,
-      finalWeightKg: finalWeight,
+      finalWeightKg: normalizedFinalWeight,
       primarySourceId,
     },
   };

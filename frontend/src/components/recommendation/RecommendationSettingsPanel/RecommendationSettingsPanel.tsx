@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, WeightRecommendationBasis } from '@machinefit/shared';
+import { roundRecommendWeightKg } from '@machinefit/shared';
 import { SettingValueCard } from '@/components/recommendation/SettingValueCard/SettingValueCard';
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
 import { useUserUnits } from '@/hooks/useUserUnits';
@@ -67,7 +68,7 @@ export function RecommendationSettingsPanel({
     if (raw == null) continue;
 
     if (field.isWeight && typeof raw === 'number') {
-      const formatted = formatWeight(raw);
+      const formatted = formatWeight(roundRecommendWeightKg(raw));
       const parts = formatted.split(' ');
       items.push({
         key: field.key,

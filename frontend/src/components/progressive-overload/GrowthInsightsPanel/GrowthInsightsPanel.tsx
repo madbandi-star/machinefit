@@ -7,6 +7,7 @@ import { formatBoxingWeightClassLabel } from '@/utils/boxingWeightClassLabel';
 import { getCoachingFocusLabel, getCoachingSummary, getCoachingTips } from '@/utils/growthCoaching';
 import { formatGrowthPct, formatRelativeGrowthPct, getGrowthValueClass } from '@/utils/workoutAnalytics';
 import { ProfileCompareMetric } from '@/components/progressive-overload/ProfileCompareMetric/ProfileCompareMetric';
+import { CollapsibleCard } from '@/components/progressive-overload/CollapsibleCard/CollapsibleCard';
 import { useUserUnits } from '@/hooks/useUserUnits';
 
 interface GrowthInsightsPanelProps {
@@ -74,16 +75,12 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
 
   return (
     <section className="growth-insights-panel" aria-label={t('growthAnalysis.insights.title')}>
-      <div className="card growth-insights-panel__section profile-compare-section">
-        <div className="profile-compare-section__head">
-          <div>
-            <h2>{t('growthAnalysis.insights.profileAverage.title')}</h2>
-            <p className="growth-analysis-chart-section__desc">
-              {t('growthAnalysis.insights.profileAverage.desc', { period: periodLabel })}
-            </p>
-          </div>
-        </div>
-
+      <CollapsibleCard
+        title={t('growthAnalysis.insights.profileAverage.title')}
+        summary={t('growthAnalysis.insights.profileAverage.desc', { period: periodLabel })}
+        defaultOpen
+        className="growth-insights-panel__section profile-compare-section"
+      >
         {insights.profileAverage ? (
           <>
             <div className="profile-compare-cohort">
@@ -172,27 +169,27 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
         ) : (
           <p className="growth-analysis-chart-empty">{t('growthAnalysis.insights.noBenchmark')}</p>
         )}
-      </div>
+      </CollapsibleCard>
 
       {insights.peerComparison ? (
-        <div className="card growth-insights-panel__section peer-growth-compare">
-          <h2>{t('growthAnalysis.insights.peerComparison.title')}</h2>
-          <p className="growth-analysis-chart-section__desc">
-            {t('growthAnalysis.insights.peerComparison.desc', {
-              machine: insights.machineName ?? insights.machineCode,
-              gender: t(`auth.genders.${insights.peerComparison.gender}`),
-              min: insights.peerComparison.heightMinCm,
-              max: insights.peerComparison.heightMaxCm,
-              weightClass: formatBoxingWeightClassLabel(t, {
-                weightClassKey: insights.peerComparison.weightClassKey,
-                weightMinKg: insights.peerComparison.weightMinKg,
-                weightMaxKg: insights.peerComparison.weightMaxKg,
-                weightClassUnlimited: insights.peerComparison.weightClassUnlimited,
-              }),
-              period: periodLabel,
-            })}
-          </p>
-
+        <CollapsibleCard
+          title={t('growthAnalysis.insights.peerComparison.title')}
+          summary={t('growthAnalysis.insights.peerComparison.desc', {
+            machine: insights.machineName ?? insights.machineCode,
+            gender: t(`auth.genders.${insights.peerComparison.gender}`),
+            min: insights.peerComparison.heightMinCm,
+            max: insights.peerComparison.heightMaxCm,
+            weightClass: formatBoxingWeightClassLabel(t, {
+              weightClassKey: insights.peerComparison.weightClassKey,
+              weightMinKg: insights.peerComparison.weightMinKg,
+              weightMaxKg: insights.peerComparison.weightMaxKg,
+              weightClassUnlimited: insights.peerComparison.weightClassUnlimited,
+            }),
+            period: periodLabel,
+          })}
+          defaultOpen={false}
+          className="growth-insights-panel__section peer-growth-compare"
+        >
           <div className="peer-growth-compare__definition" role="note">
             <strong>{t('growthAnalysis.insights.peerComparison.definitionTitle')}</strong>
             <p>{t('growthAnalysis.insights.peerComparison.definition', { period: periodLabel })}</p>
@@ -244,32 +241,36 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
           >
             {t(getPeerInterpretationKey(insights.peerComparison.relativePct))}
           </p>
-        </div>
+        </CollapsibleCard>
       ) : null}
 
       {insights.coaching ? (
-        <div className="card growth-insights-panel__section growth-insights-coaching">
+        <CollapsibleCard
+          title={t('growthAnalysis.insights.coaching.title')}
+          summary={coachingSummary}
+          defaultOpen={false}
+          className="growth-insights-panel__section growth-insights-coaching"
+        >
           <div className="growth-insights-coaching__header">
-            <h2>{t('growthAnalysis.insights.coaching.title')}</h2>
             <span className="growth-insights-coaching__badge">
               {getCoachingFocusLabel(t, insights.coaching.focus)}
             </span>
           </div>
-          {coachingSummary ? <p className="growth-insights-coaching__summary">{coachingSummary}</p> : null}
           <ul className="growth-insights-coaching__tips">
             {coachingTips.map((tip, index) => (
               <li key={`${index}-${tip}`}>{tip}</li>
             ))}
           </ul>
-        </div>
+        </CollapsibleCard>
       ) : null}
 
       {insights.nextTarget ? (
-        <div className="card growth-insights-panel__section growth-insights-target">
-          <h2>{t('growthAnalysis.insights.nextTarget.title')}</h2>
-          <p className="growth-analysis-chart-section__desc">
-            {t('growthAnalysis.insights.nextTarget.desc')}
-          </p>
+        <CollapsibleCard
+          title={t('growthAnalysis.insights.nextTarget.title')}
+          summary={t('growthAnalysis.insights.nextTarget.desc')}
+          defaultOpen={false}
+          className="growth-insights-panel__section growth-insights-target"
+        >
           <div className="growth-insights-target__weights">
             <div>
               <span>{t('growthAnalysis.insights.nextTarget.current')}</span>
@@ -291,7 +292,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
               weights: insights.nextTarget.suggestedSetWeightsKg.join('kg / ') + 'kg',
             })}
           </p>
-        </div>
+        </CollapsibleCard>
       ) : null}
     </section>
   );

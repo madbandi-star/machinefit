@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { WeightRecommendationBasis } from '@machinefit/shared';
+import { roundRecommendWeightKg } from '@machinefit/shared';
 import { useUserUnits } from '@/hooks/useUserUnits';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -46,7 +47,7 @@ export function WeightBasisDialog({ open, basis, onClose }: WeightBasisDialogPro
         {basis.finalWeightKg != null && (
           <p className="weight-basis-dialog__summary">
             {t('weightBasis.finalWeight', {
-              weight: formatWeight(basis.finalWeightKg),
+              weight: formatWeight(roundRecommendWeightKg(basis.finalWeightKg)),
             })}
           </p>
         )}
@@ -70,7 +71,7 @@ export function WeightBasisDialog({ open, basis, onClose }: WeightBasisDialogPro
                   <span className="weight-basis-dialog__item-title">{t(entry.titleKey)}</span>
                   {entry.valueKg != null && (
                     <span className="weight-basis-dialog__item-value">
-                      {formatWeight(entry.valueKg)}
+                      {formatWeight(roundRecommendWeightKg(entry.valueKg))}
                     </span>
                   )}
                 </div>

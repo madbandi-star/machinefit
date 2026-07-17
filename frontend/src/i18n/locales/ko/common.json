@@ -30,7 +30,8 @@
     "submit": "제출",
     "back": "뒤로",
     "viewAll": "전체 보기",
-    "retry": "다시 시도"
+    "retry": "다시 시도",
+    "close": "닫기"
   },
   "errors": {
     "loadFailed": "데이터를 불러오지 못했습니다. 다시 시도해 주세요.",
@@ -225,6 +226,10 @@
       "title": "나의 성장 TOP 5",
       "periodNote": "{{period}} 기준 총 수행량 성장률",
       "allTimeNote": "전체 기간 총 수행량 성장률"
+    },
+    "chartExpand": {
+      "hint": "탭하여 크게 보기",
+      "open": "{{title}} 차트 크게 보기"
     },
     "insights": {
       "title": "맞춤 성장 인사이트",

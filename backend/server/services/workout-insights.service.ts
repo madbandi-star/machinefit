@@ -11,6 +11,7 @@ import {
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
+  nextRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
@@ -50,10 +51,6 @@ function sumWeights(weights: number[]): number {
 
 function maxWeight(weights: number[]): number {
   return weights.length === 0 ? 0 : Math.max(...weights);
-}
-
-function roundToStep(value: number, step: number): number {
-  return Math.round(value / step) * step;
 }
 
 function computeUserMetrics(logs: WorkoutLog[]) {
@@ -102,8 +99,7 @@ function buildNextTarget(
         ? referenceWeightKg
         : 20;
 
-  const increment = base >= 80 ? 5 : base >= 40 ? 2.5 : 2.5;
-  const suggestedMaxWeightKg = roundToStep(base + increment, 2.5);
+  const suggestedMaxWeightKg = nextRecommendWeightKg(base);
   const suggestedSetWeightsKg = Array.from({ length: setCount }, () => suggestedMaxWeightKg);
 
   return {

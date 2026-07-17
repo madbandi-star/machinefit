@@ -233,6 +233,14 @@
   align-items: center;
   justify-content: center;
   background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-secondary));
+  overflow: hidden;
+}
+
+.machine-mini-card__muscle-icon .muscle-group-icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: cover;
 }
 
 .machine-mini-card__name {
@@ -387,6 +395,8 @@
 
 .home-muscle-shortcut__icon {
   flex-shrink: 0;
+  border-radius: var(--radius-md);
+  object-fit: cover;
 }
 
 .home-muscle-shortcut__label {
