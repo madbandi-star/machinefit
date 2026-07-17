@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
+import { HomeSectionEmptyPrompt } from '@/components/home/HomeSectionEmptyPrompt/HomeSectionEmptyPrompt';
 import { MachineMiniCard } from '@/components/home/MachineMiniCard/MachineMiniCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { historyApi } from '@/api';
@@ -36,17 +36,13 @@ export function RecentMachinesRow() {
         )}
       </div>
       {isLoading ? (
-        <Skeleton count={1} height={100} />
+        <Skeleton count={1} height={76} />
       ) : !unique?.length ? (
-        <EmptyState
-          compact
+        <HomeSectionEmptyPrompt
           icon="history"
-          title={t('pages.home.recentEmpty')}
-          action={
-            <Link to={ROUTES.MACHINES} className="btn btn--secondary">
-              {t('emptyState.browseMachines')}
-            </Link>
-          }
+          title={t('pages.home.recentEmptyAction')}
+          description={t('pages.home.recentEmptyHint')}
+          to={ROUTES.MACHINES}
         />
       ) : (
         <div className="home-scroll-row">

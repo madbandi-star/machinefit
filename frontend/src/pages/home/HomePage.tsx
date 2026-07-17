@@ -4,7 +4,6 @@ import { QuickSearchBar } from '@/components/home/QuickSearchBar/QuickSearchBar'
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
-import { MuscleGroupShortcuts } from '@/components/home/MuscleGroupShortcuts/MuscleGroupShortcuts';
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
@@ -29,7 +28,6 @@ export function HomePage() {
       {isAuthenticated && <ProfileIncompleteBanner />}
       {isAuthenticated && <RecentMachinesRow />}
       {isAuthenticated && <FavoriteMachinesRow />}
-      <MuscleGroupShortcuts />
     </div>
   );
 }

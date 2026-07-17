@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
+import { HomeSectionEmptyPrompt } from '@/components/home/HomeSectionEmptyPrompt/HomeSectionEmptyPrompt';
 import { MachineMiniCard } from '@/components/home/MachineMiniCard/MachineMiniCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { favoriteApi } from '@/api';
@@ -32,17 +32,13 @@ export function FavoriteMachinesRow() {
         )}
       </div>
       {isLoading ? (
-        <Skeleton count={1} height={100} />
+        <Skeleton count={1} height={76} />
       ) : !data?.length ? (
-        <EmptyState
-          compact
+        <HomeSectionEmptyPrompt
           icon="heart"
-          title={t('pages.home.favoritesEmpty')}
-          action={
-            <Link to={ROUTES.MACHINES} className="btn btn--secondary">
-              {t('emptyState.browseMachines')}
-            </Link>
-          }
+          title={t('pages.home.favoritesEmptyAction')}
+          description={t('pages.home.favoritesEmptyHint')}
+          to={ROUTES.MACHINES}
         />
       ) : (
         <div className="home-scroll-row">

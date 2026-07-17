@@ -120,10 +120,11 @@
       "profileIncomplete": "Profile setup needed",
       "completeProfile": "Go to Settings",
       "recentMachines": "Recent machines",
-      "recentEmpty": "No recommendation history yet.",
+      "recentEmptyAction": "Search machines",
+      "recentEmptyHint": "Pick a machine to get settings and see it here",
       "favorites": "Favorites",
-      "favoritesEmpty": "No saved machines yet.",
-      "muscleShortcuts": "Browse by muscle group"
+      "favoritesEmptyAction": "Browse machines",
+      "favoritesEmptyHint": "Tap ♥ on a machine detail page to save it here"
     },
     "notFound": {
       "title": "Page Not Found",

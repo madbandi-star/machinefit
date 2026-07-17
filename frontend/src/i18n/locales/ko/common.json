@@ -120,10 +120,11 @@
       "profileIncomplete": "프로필 설정 필요",
       "completeProfile": "설정하기",
       "recentMachines": "최근 기록",
-      "recentEmpty": "아직 추천 기록이 없습니다.",
+      "recentEmptyAction": "기구 검색하기",
+      "recentEmptyHint": "기구를 고르면 맞춤 세팅과 기록이 여기에 쌓여요",
       "favorites": "즐겨찾기",
-      "favoritesEmpty": "저장한 기구가 없습니다.",
-      "muscleShortcuts": "부위별 바로가기"
+      "favoritesEmptyAction": "기구 둘러보기",
+      "favoritesEmptyHint": "상세 화면에서 ♥를 눌러 저장할 수 있어요"
     },
     "notFound": {
       "title": "페이지를 찾을 수 없습니다",
