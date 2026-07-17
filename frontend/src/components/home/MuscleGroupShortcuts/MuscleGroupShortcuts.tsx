@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/home.css';
@@ -19,7 +20,10 @@ export function MuscleGroupShortcuts() {
             to={`${ROUTES.MACHINES}?muscle=${group}`}
             className={`home-muscle-shortcut home-muscle-shortcut--${group}`}
           >
-            {t(`machines:muscleGroups.${group}`)}
+            <MuscleGroupIcon group={group} size={40} className="home-muscle-shortcut__icon" />
+            <span className="home-muscle-shortcut__label">
+              {t(`machines:muscleGroups.${group}`)}
+            </span>
           </Link>
         ))}
       </div>

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { Icon } from '@/components/icons/Icon';
+import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -267,7 +268,12 @@ export function HistoryListPanel() {
                   <div className="saved-settings-card__header">
                     <Link to={resultUrl} className="saved-settings-card__machine">
                       <div className="saved-settings-card__machine-title-row">
-                        <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
+                        <MachineNameWithMuscle
+                          muscleGroup={item.muscleGroup}
+                          name={item.machineName}
+                          iconSize={20}
+                          labelClassName="saved-settings-card__machine-name"
+                        />
                         <span
                           className={`saved-settings-card__log-badge${hasWorkoutLog ? ' saved-settings-card__log-badge--saved' : ' saved-settings-card__log-badge--unsaved'}`}
                         >

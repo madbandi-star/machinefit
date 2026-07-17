@@ -51,6 +51,7 @@ export function FavoriteMachinesRow() {
               key={item.id}
               machineCode={item.machineCode}
               machineName={item.machineName}
+              muscleGroup={item.muscleGroup}
               recommendationId={item.recommendationId}
             />
           ))}

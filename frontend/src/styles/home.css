@@ -226,10 +226,29 @@
   color: var(--color-text-muted);
 }
 
+.machine-mini-card__muscle-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-secondary));
+}
+
 .machine-mini-card__name {
   font-size: 0.78rem;
   font-weight: 600;
   line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.machine-mini-card__name-text {
+  font-size: inherit;
+  font-weight: inherit;
+  white-space: normal;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -326,8 +345,11 @@
 .home-muscle-shortcut {
   min-height: var(--touch-target-min);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.5rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -361,4 +383,14 @@
 .home-muscle-shortcut--shoulders {
   background: color-mix(in srgb, var(--color-muscle-shoulders) 14%, var(--color-surface));
   border-color: color-mix(in srgb, var(--color-muscle-shoulders) 45%, var(--color-border));
+}
+
+.home-muscle-shortcut__icon {
+  flex-shrink: 0;
+}
+
+.home-muscle-shortcut__label {
+  font-size: var(--font-size-body-sm);
+  font-weight: 700;
+  line-height: 1.2;
 }

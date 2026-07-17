@@ -1,0 +1,37 @@
+.muscle-group-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.muscle-group-icon__highlight {
+  opacity: 0.92;
+}
+
+.muscle-group-icon__highlight--chest {
+  fill: var(--color-muscle-chest);
+}
+
+.muscle-group-icon__highlight--back {
+  fill: var(--color-muscle-back);
+}
+
+.muscle-group-icon__highlight--legs {
+  fill: var(--color-muscle-legs);
+}
+
+.muscle-group-icon__highlight--shoulders {
+  fill: var(--color-muscle-shoulders);
+}
+
+.machine-name-with-muscle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.machine-name-with-muscle__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

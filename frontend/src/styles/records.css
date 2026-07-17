@@ -339,6 +339,10 @@
   font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1.2;
+}
+
+.saved-settings-card__machine-name,
+.favorite-row__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -581,9 +585,6 @@
 .favorite-row__name {
   font-size: 0.9375rem;
   font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .favorite-row__code {

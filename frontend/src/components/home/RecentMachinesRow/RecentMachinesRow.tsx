@@ -55,6 +55,7 @@ export function RecentMachinesRow() {
               key={item.machineCode}
               machineCode={item.machineCode}
               machineName={item.machineName}
+              muscleGroup={item.muscleGroup}
               recommendationId={item.recommendationId}
             />
           ))}
