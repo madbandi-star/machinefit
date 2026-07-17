@@ -410,6 +410,8 @@
   align-items: baseline;
   column-gap: 0.35rem;
   row-gap: 0.05rem;
+  min-width: 0;
+  flex: 1;
 }
 
 .saved-settings-card--history .saved-settings-card__machine-name {
