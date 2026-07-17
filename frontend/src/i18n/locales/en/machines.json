@@ -45,6 +45,18 @@
     "findGyms": "Find Gyms with This Machine",
     "moreActions": "More actions"
   },
+  "workoutLog": {
+    "title": "Workout log",
+    "setCount": "Sets completed",
+    "weights": "Weight per set",
+    "setLabel": "Set {{number}}",
+    "save": "Save log",
+    "saving": "Saving...",
+    "saved": "Today's workout log saved.",
+    "loginRequired": "Sign in to save sets and weights.",
+    "increaseSets": "Increase sets",
+    "decreaseSets": "Decrease sets"
+  },
   "history": {
     "subtitle": "Your recent recommendation history",
     "empty": "No history yet. Get a recommendation first!",

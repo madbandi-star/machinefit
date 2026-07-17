@@ -11,6 +11,8 @@ import type {
   RecommendationResult,
   User,
   Gender,
+  WorkoutLog,
+  UpsertWorkoutLogInput,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -103,6 +105,13 @@ export const historyApi = {
     apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params }),
   clear: () => apiClient.delete('/history'),
   remove: (id: string) => apiClient.delete(`/history/${id}`),
+};
+
+export const workoutLogApi = {
+  list: (params: { machineCode: string; logDate?: string; from?: string; to?: string }) =>
+    apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
+  upsert: (body: UpsertWorkoutLogInput) =>
+    apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),
 };
 
 export interface GymDetail extends Gym {

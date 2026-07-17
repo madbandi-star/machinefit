@@ -15,6 +15,7 @@ import { ownerRouter } from './owner.routes.js';
 import { notificationRouter } from './notification.routes.js';
 import { adminRouter } from './admin.routes.js';
 import { qrRouter } from './qr.routes.js';
+import { workoutLogRouter } from './workout-log.routes.js';
 
 export const apiRouter = Router();
 
@@ -34,3 +35,4 @@ apiRouter.use('/owner', ownerRouter);
 apiRouter.use('/notifications', notificationRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/qr', qrRouter);
+apiRouter.use('/workout-logs', workoutLogRouter);

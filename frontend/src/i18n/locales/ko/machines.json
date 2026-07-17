@@ -45,6 +45,18 @@
     "findGyms": "이 기구 있는 헬스장",
     "moreActions": "추가 작업"
   },
+  "workoutLog": {
+    "title": "수행 기록",
+    "setCount": "수행 세트 수",
+    "weights": "수행 무게",
+    "setLabel": "{{number}}세트",
+    "save": "기록 저장",
+    "saving": "저장 중...",
+    "saved": "오늘 수행 기록을 저장했습니다.",
+    "loginRequired": "로그인 후 세트·무게 기록을 저장할 수 있습니다.",
+    "increaseSets": "세트 수 늘리기",
+    "decreaseSets": "세트 수 줄이기"
+  },
   "history": {
     "subtitle": "최근 추천 기록",
     "empty": "기록이 없습니다. 머신 추천을 받아보세요.",

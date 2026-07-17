@@ -266,6 +266,103 @@
   margin-top: 0.3rem;
 }
 
+.recommendation-workout-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.recommendation-workout-log__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.recommendation-workout-log__date {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.recommendation-workout-log__login-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.recommendation-workout-log__field-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.recommendation-workout-log__set-count-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.recommendation-workout-log__stepper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.recommendation-workout-log__stepper:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.recommendation-workout-log__set-input {
+  width: 4rem;
+  text-align: center;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+.recommendation-workout-log__weight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.recommendation-workout-log__weight-card {
+  min-width: 0;
+}
+
+.recommendation-workout-log__weight-input {
+  width: 100%;
+  min-width: 0;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.recommendation-workout-log__save {
+  margin-top: 0.15rem;
+}
+
 .recommendation-warnings {
   padding: 0.65rem 0.85rem;
   border: 1px solid var(--color-warning);

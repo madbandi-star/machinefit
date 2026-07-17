@@ -1,0 +1,18 @@
+import type { Request, Response } from 'express';
+import { upsertWorkoutLogSchema, workoutLogListQuerySchema } from '@machinefit/shared';
+import { workoutLogService } from '../services/workout-log.service.js';
+import { AppError } from '../middlewares/error.middleware.js';
+
+export async function listWorkoutLogs(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const query = workoutLogListQuerySchema.parse(req.query);
+  const items = await workoutLogService.list(req.user.userId, query);
+  res.json({ success: true, data: items });
+}
+
+export async function upsertWorkoutLog(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const body = upsertWorkoutLogSchema.parse(req.body);
+  const item = await workoutLogService.upsert(req.user.userId, body);
+  res.json({ success: true, data: item });
+}

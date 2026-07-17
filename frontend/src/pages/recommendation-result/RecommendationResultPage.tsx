@@ -6,6 +6,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
+import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { favoriteApi, recommendationApi } from '@/api';
@@ -139,6 +140,12 @@ export function RecommendationResultPage() {
         <RecommendationWarnings warnings={result.warnings} />
         <RecommendationSettingsPanel settings={result.settings} variant="hero" />
         <RecommendationTips tips={result.tips} />
+        <WorkoutLogPanel
+          machineCode={result.machineCode}
+          recommendationId={result.id}
+          suggestedWeightKg={result.settings.recommendedWeightKg}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
 
       <RecommendationActionBar

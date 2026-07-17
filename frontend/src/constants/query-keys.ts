@@ -13,6 +13,9 @@ export const QUERY_KEYS = {
     ['history', 'list', params ?? {}] as const,
   historyForMachine: (machineCode: string) =>
     ['history', 'machine', machineCode] as const,
+  workoutLogs: ['workout-logs'] as const,
+  workoutLogToday: (machineCode: string, logDate: string) =>
+    ['workout-logs', machineCode, logDate] as const,
   posts: ['posts'] as const,
   machineRequests: ['machine-requests'] as const,
   ownerDashboard: ['owner', 'dashboard'] as const,

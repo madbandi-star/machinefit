@@ -6,6 +6,10 @@ export function getLocalDateKey(iso: string): string {
   return `${y}-${m}-${day}`;
 }
 
+export function getTodayDateKey(): string {
+  return getLocalDateKey(new Date().toISOString());
+}
+
 export function formatHistoryDateHeader(dateKey: string, locale: string): string {
   const [y, m, d] = dateKey.split('-').map(Number);
   const date = new Date(y, m - 1, d);
