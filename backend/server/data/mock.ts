@@ -2,11 +2,12 @@ import type { Brand, Machine, Gym, GymMachine, GymPhoto, BusinessHours } from '@
 import { MACHINE_CODES, BRAND_CODES } from '@machinefit/shared';
 
 export const MOCK_BRANDS: Brand[] = [
+  { id: '5', code: BRAND_CODES.BODYWEIGHT, name: { ko: '맨몸운동', en: 'Bodyweight', ja: '自重トレ', zh: '自重训练' }, isActive: true },
+  { id: '4', code: BRAND_CODES.FREE_WEIGHT, name: { ko: '프리웨이트', en: 'Free Weight', ja: 'フリーウェイト', zh: '自由重量' }, isActive: true },
   { id: '1', code: BRAND_CODES.HAMMER_STRENGTH, name: { ko: '해머 스트렝스', en: 'Hammer Strength', ja: 'ハンマーストレングス', zh: '悍马力量' }, isActive: true },
   { id: '2', code: BRAND_CODES.LIFE_FITNESS, name: { ko: '라이프 피트니스', en: 'Life Fitness', ja: 'ライフフィットネス', zh: '力健' }, isActive: true },
-  { id: '4', code: BRAND_CODES.FREE_WEIGHT, name: { ko: '프리웨이트', en: 'Free Weight', ja: 'フリーウェイト', zh: '自由重量' }, isActive: true },
-  { id: '5', code: BRAND_CODES.BODYWEIGHT, name: { ko: '맨몸운동', en: 'Bodyweight', ja: '自重トレ', zh: '自重训练' }, isActive: true },
   { id: '3', code: BRAND_CODES.CYBEX, name: { ko: '사이벡스', en: 'Cybex', ja: 'サイベックス', zh: '赛百斯' }, isActive: true },
+  { id: '6', code: BRAND_CODES.TECHNOGYM, name: { ko: '테크노짐', en: 'Technogym', ja: 'テクノジム', zh: '泰诺健' }, isActive: true },
 ];
 
 export const MOCK_MACHINES: Machine[] = [

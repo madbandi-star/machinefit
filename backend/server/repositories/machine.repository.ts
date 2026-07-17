@@ -207,10 +207,10 @@ export const brandRepository = {
     const result = await pool.query<BrandRow>(
       `SELECT * FROM brands WHERE is_active = true
        ORDER BY CASE code
-         WHEN 'HAMMER_STRENGTH' THEN 1
-         WHEN 'LIFE_FITNESS' THEN 2
-         WHEN 'FREE_WEIGHT' THEN 3
-         WHEN 'BODYWEIGHT' THEN 4
+         WHEN 'BODYWEIGHT' THEN 1
+         WHEN 'FREE_WEIGHT' THEN 2
+         WHEN 'HAMMER_STRENGTH' THEN 3
+         WHEN 'LIFE_FITNESS' THEN 4
          WHEN 'CYBEX' THEN 5
          WHEN 'TECHNOGYM' THEN 6
          ELSE 99
