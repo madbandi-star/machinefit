@@ -4,6 +4,7 @@ export type IconName =
   | 'home'
   | 'machines'
   | 'records'
+  | 'growthAnalysis'
   | 'user'
   | 'search'
   | 'qr'
@@ -41,6 +42,13 @@ const PATHS: Record<IconName, ReactElement> = {
   records: (
     <>
       <path d="M7 4h10a2 2 0 0 1 2 2v14l-4-2.5L11 20V6a2 2 0 0 1 2-2H7a2 2 0 0 0-2 2v12h12" />
+    </>
+  ),
+  growthAnalysis: (
+    <>
+      <path d="M7 4h10a2 2 0 0 1 2 2v14" />
+      <path d="M7 20V6a2 2 0 0 1 2-2" />
+      <path d="M9 16l3-3.5 2.5 2 4-5" />
     </>
   ),
   user: (
