@@ -34,7 +34,6 @@ function ResultLoadingSkeleton() {
 export function RecommendationResultPage() {
   const [searchParams] = useSearchParams();
   const recommendationId = searchParams.get('id');
-  const fromFavorites = searchParams.get('from') === 'favorites';
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation(['machines', 'common']);
@@ -141,14 +140,12 @@ export function RecommendationResultPage() {
         <RecommendationWarnings warnings={result.warnings} />
         <RecommendationSettingsPanel settings={result.settings} variant="hero" />
         <RecommendationTips tips={result.tips} />
-        {!fromFavorites ? (
-          <WorkoutLogPanel
-            machineCode={result.machineCode}
-            recommendationId={result.id}
-            suggestedWeightKg={result.settings.recommendedWeightKg}
-            isAuthenticated={isAuthenticated}
-          />
-        ) : null}
+        <WorkoutLogPanel
+          machineCode={result.machineCode}
+          recommendationId={result.id}
+          suggestedWeightKg={result.settings.recommendedWeightKg}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
 
       <RecommendationActionBar
