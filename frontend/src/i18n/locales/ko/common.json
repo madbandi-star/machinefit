@@ -134,7 +134,53 @@
     "quickLinks": "바로가기",
     "explore": "더보기",
     "adminDashboard": "관리자 대시보드",
-    "browseByBrand": "브랜드별 조회"
+    "browseByBrand": "브랜드별 조회",
+    "growthAnalysis": "성장 분석"
+  },
+  "growthAnalysis": {
+    "title": "성장 분석",
+    "subtitle": "머신별 운동 기록으로 근력 향상 추이를 확인하세요",
+    "machineSelect": "머신 선택",
+    "periodSelect": "기간 선택",
+    "noMachines": "기록된 머신 없음",
+    "empty": "아직 수행 기록이 없습니다. 추천 결과 화면에서 운동을 기록해 보세요.",
+    "noDataInPeriod": "선택한 기간에 기록이 없습니다.",
+    "growth": "성장",
+    "periodNote": "기간: {{period}} 기준",
+    "kpiSection": "성장률 요약",
+    "period": {
+      "30d": "최근 30일",
+      "3m": "최근 3개월",
+      "all": "전체"
+    },
+    "kpi": {
+      "volume": "총 수행량",
+      "maxWeight": "최고 중량",
+      "workoutCount": "운동 횟수",
+      "times": "회"
+    },
+    "volumeChart": {
+      "title": "총 수행량 변화",
+      "desc": "날짜별 총 수행량과 상승 추세를 확인하세요."
+    },
+    "maxWeightChart": {
+      "title": "최고 중량 변화",
+      "desc": "최고 수행 중량(PR) 변화를 확인하세요.",
+      "previousPr": "기존 PR",
+      "currentPr": "현재 PR",
+      "rise": "상승"
+    },
+    "prAlert": {
+      "title": "🔥 새로운 기록 달성!",
+      "previous": "기존 최고",
+      "current": "현재",
+      "delta": "증가"
+    },
+    "ranking": {
+      "title": "나의 성장 TOP 5",
+      "periodNote": "{{period}} 기준 총 수행량 성장률",
+      "allTimeNote": "전체 기간 총 수행량 성장률"
+    }
   },
   "pwa": {
     "installTitle": "앱으로 설치하기",

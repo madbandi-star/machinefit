@@ -24,6 +24,7 @@ import { MachineRequestBoardPage } from '@/pages/machine-request-board/MachineRe
 import { FreeBoardPage } from '@/pages/free-board/FreeBoardPage';
 import { LoginPage } from '@/pages/auth/login/LoginPage';
 import { RegisterPage } from '@/pages/auth/register/RegisterPage';
+import { GrowthAnalysisPage } from '@/pages/growth-analysis/GrowthAnalysisPage';
 import { MyPage } from '@/pages/my-page/MyPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { OwnerDashboardPage } from '@/pages/gym-owner/dashboard/OwnerDashboardPage';
@@ -82,6 +83,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.RECOMMEND, element: <RecommendationFormPage /> },
             { path: ROUTES.RECOMMEND_RESULT, element: <RecommendationResultPage /> },
             { path: ROUTES.MY_PAGE, element: <MyPage /> },
+            { path: ROUTES.GROWTH_ANALYSIS, element: <GrowthAnalysisPage /> },
             { path: ROUTES.SETTINGS, element: <SettingsPage /> },
             { path: ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
           ],

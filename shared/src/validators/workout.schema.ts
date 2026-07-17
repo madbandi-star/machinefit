@@ -15,7 +15,7 @@ const diarySchema = z
   });
 
 export const workoutLogListQuerySchema = z.object({
-  machineCode: z.string().min(1),
+  machineCode: z.string().min(1).optional(),
   logDate: dateKeySchema.optional(),
   from: dateKeySchema.optional(),
   to: dateKeySchema.optional(),

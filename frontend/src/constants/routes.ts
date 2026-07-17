@@ -18,6 +18,7 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   MY_PAGE: '/my-page',
+  GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
   OWNER: '/owner',
   OWNER_GYMS: '/owner/gyms',

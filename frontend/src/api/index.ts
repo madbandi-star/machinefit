@@ -108,7 +108,7 @@ export const historyApi = {
 };
 
 export const workoutLogApi = {
-  list: (params: { machineCode: string; logDate?: string; from?: string; to?: string }) =>
+  list: (params?: { machineCode?: string; logDate?: string; from?: string; to?: string }) =>
     apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
   upsert: (body: UpsertWorkoutLogInput) =>
     apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),

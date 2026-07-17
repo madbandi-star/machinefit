@@ -134,7 +134,53 @@
     "quickLinks": "Quick links",
     "explore": "Explore",
     "adminDashboard": "Admin Dashboard",
-    "browseByBrand": "Browse by Brand"
+    "browseByBrand": "Browse by Brand",
+    "growthAnalysis": "Growth Analysis"
+  },
+  "growthAnalysis": {
+    "title": "Growth Analysis",
+    "subtitle": "Track strength progress from your workout logs",
+    "machineSelect": "Select machine",
+    "periodSelect": "Select period",
+    "noMachines": "No logged machines",
+    "empty": "No workout logs yet. Log sets on a recommendation result page to get started.",
+    "noDataInPeriod": "No records in the selected period.",
+    "growth": "growth",
+    "periodNote": "Period: {{period}}",
+    "kpiSection": "Growth summary",
+    "period": {
+      "30d": "Last 30 days",
+      "3m": "Last 3 months",
+      "all": "All time"
+    },
+    "kpi": {
+      "volume": "Total volume",
+      "maxWeight": "Max weight",
+      "workoutCount": "Workouts",
+      "times": ""
+    },
+    "volumeChart": {
+      "title": "Volume over time",
+      "desc": "Daily total volume with trend line."
+    },
+    "maxWeightChart": {
+      "title": "Max weight over time",
+      "desc": "Personal record (PR) progression.",
+      "previousPr": "Previous PR",
+      "currentPr": "Current PR",
+      "rise": "increase"
+    },
+    "prAlert": {
+      "title": "🔥 New personal record!",
+      "previous": "Previous best",
+      "current": "Current",
+      "delta": "Gain"
+    },
+    "ranking": {
+      "title": "My growth TOP 5",
+      "periodNote": "Volume growth rate · {{period}}",
+      "allTimeNote": "Volume growth rate · all time"
+    }
   },
   "pwa": {
     "installTitle": "Install the app",

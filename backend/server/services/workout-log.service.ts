@@ -13,9 +13,13 @@ function todayDateKey(): string {
 
 export const workoutLogService = {
   async list(userId: string, query: WorkoutLogListQuery) {
-    const machineId = await machineRepository.findIdByCode(query.machineCode);
-    if (!machineId) {
-      throw new AppError(404, 'NOT_FOUND', `Machine not found: ${query.machineCode}`);
+    let machineId: string | undefined;
+    if (query.machineCode) {
+      const foundId = await machineRepository.findIdByCode(query.machineCode);
+      if (!foundId) {
+        throw new AppError(404, 'NOT_FOUND', `Machine not found: ${query.machineCode}`);
+      }
+      machineId = foundId;
     }
 
     return workoutLogRepository.listByUser(userId, {
