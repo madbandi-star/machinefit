@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import type { WorkoutInsights } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
-import { formatGrowthPct, formatRelativeGrowthPct, getGrowthValueClass } from '@/utils/workoutAnalytics';
+import { formatBoxingWeightClassLabel } from '@/utils/boxingWeightClassLabel';
+import { getBoxingWeightClassRange } from '@machinefit/shared';
 import { getCoachingFocusLabel, getCoachingSummary, getCoachingTips } from '@/utils/growthCoaching';
+import { formatGrowthPct, formatRelativeGrowthPct, getGrowthValueClass } from '@/utils/workoutAnalytics';
 import { ProfileCompareMetric } from '@/components/progressive-overload/ProfileCompareMetric/ProfileCompareMetric';
 
 interface GrowthInsightsPanelProps {
@@ -94,9 +96,11 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
                     })}
                   />
                   <CohortBadge
-                    label={t('growthAnalysis.insights.profileAverage.weightChip', {
-                      min: peer.weightMinKg,
-                      max: peer.weightMaxKg,
+                    label={formatBoxingWeightClassLabel(t, {
+                      weightClassKey: peer.weightClassKey,
+                      weightMinKg: peer.weightMinKg,
+                      weightMaxKg: peer.weightMaxKg,
+                      weightClassUnlimited: peer.weightClassUnlimited,
                     })}
                   />
                 </>
@@ -113,9 +117,10 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
               ) : null}
               {user?.weightKg ? (
                 <CohortBadge
-                  label={t('growthAnalysis.insights.profileAverage.myWeightChip', {
-                    weight: user.weightKg,
-                  })}
+                  label={formatBoxingWeightClassLabel(
+                    t,
+                    getBoxingWeightClassRange(user.gender, user.weightKg)
+                  )}
                 />
               ) : null}
               <CohortBadge
@@ -178,8 +183,12 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
               gender: t(`auth.genders.${insights.peerComparison.gender}`),
               min: insights.peerComparison.heightMinCm,
               max: insights.peerComparison.heightMaxCm,
-              weightMin: insights.peerComparison.weightMinKg,
-              weightMax: insights.peerComparison.weightMaxKg,
+              weightClass: formatBoxingWeightClassLabel(t, {
+                weightClassKey: insights.peerComparison.weightClassKey,
+                weightMinKg: insights.peerComparison.weightMinKg,
+                weightMaxKg: insights.peerComparison.weightMaxKg,
+                weightClassUnlimited: insights.peerComparison.weightClassUnlimited,
+              }),
               period: periodLabel,
             })}
           </p>

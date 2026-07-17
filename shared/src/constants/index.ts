@@ -4,3 +4,4 @@ export * from './units.js';
 export * from './experience-levels.js';
 export * from './machine-codes.js';
 export * from './growth-insights.js';
+export * from './boxing-weight-classes.js';

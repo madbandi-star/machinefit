@@ -7,7 +7,7 @@ import type {
 } from '@machinefit/shared';
 import {
   getPeerHeightRange,
-  getPeerWeightRange,
+  getBoxingWeightClassRange,
   hasGrowthBodyProfile,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
@@ -85,7 +85,12 @@ function buildLocalInsights(
     peerComparison: hasProfile
       ? (() => {
           const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm!);
-          const { weightMinKg, weightMaxKg } = getPeerWeightRange(user.weightKg!);
+          const {
+            weightMinKg,
+            weightMaxKg,
+            weightClassKey,
+            isUnlimited: weightClassUnlimited,
+          } = getBoxingWeightClassRange(user.gender, user.weightKg!);
           return {
             userVolumeGrowthPct: userGrowth == null ? null : round1(userGrowth),
             peerAvgVolumeGrowthPct: benchmarkGrowth,
@@ -95,6 +100,8 @@ function buildLocalInsights(
             heightMaxCm,
             weightMinKg,
             weightMaxKg,
+            weightClassKey,
+            weightClassUnlimited,
             gender: user.gender as Gender,
           };
         })()

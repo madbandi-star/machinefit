@@ -232,9 +232,14 @@ export const workoutLogRepository = {
       userFilters += ` AND u.height_cm BETWEEN $${params.length - 1} AND $${params.length}`;
     }
 
-    if (options.weightMinKg != null && options.weightMaxKg != null) {
-      params.push(options.weightMinKg, options.weightMaxKg);
-      userFilters += ` AND u.weight_kg BETWEEN $${params.length - 1} AND $${params.length}`;
+    if (options.weightMaxKg != null) {
+      if (options.weightMinKg === 0) {
+        params.push(options.weightMaxKg);
+        userFilters += ` AND u.weight_kg <= $${params.length}`;
+      } else if (options.weightMinKg != null) {
+        params.push(options.weightMinKg, options.weightMaxKg);
+        userFilters += ` AND u.weight_kg > $${params.length - 1} AND u.weight_kg <= $${params.length}`;
+      }
     }
 
     if (options.experienceLevel) {

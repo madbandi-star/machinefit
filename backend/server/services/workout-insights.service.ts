@@ -9,7 +9,7 @@ import type {
 } from '@machinefit/shared';
 import {
   getPeerHeightRange,
-  getPeerWeightRange,
+  getBoxingWeightClassRange,
   hasGrowthBodyProfile,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
@@ -198,7 +198,12 @@ export const workoutInsightsService = {
 
     if (profileReady) {
       const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm);
-      const { weightMinKg, weightMaxKg } = getPeerWeightRange(user.weightKg);
+      const {
+        weightMinKg,
+        weightMaxKg,
+        weightClassKey,
+        isUnlimited: weightClassUnlimited,
+      } = getBoxingWeightClassRange(user.gender, user.weightKg);
       bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
 
       referenceWeightKg = await workoutLogRepository.getReferenceWeightKg(
@@ -269,6 +274,8 @@ export const workoutInsightsService = {
         heightMaxCm,
         weightMinKg,
         weightMaxKg,
+        weightClassKey,
+        weightClassUnlimited,
         gender: user.gender,
       };
     }
