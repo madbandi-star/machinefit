@@ -194,7 +194,27 @@
       "growthRate": "Growth rate",
       "profileAverage": {
         "title": "Body profile average comparison",
-        "desc": "{{period}} · same height, gender, and experience cohort"
+        "desc": "{{period}} · three metrics vs your similar-user cohort",
+        "cohortAvgShort": "Cohort avg",
+        "heightChip": "{{min}}–{{max}} cm",
+        "myHeightChip": "You · {{height}} cm",
+        "deltaAbove": "▲ {{value}} · above average",
+        "deltaBelow": "▼ {{value}} · below average",
+        "deltaEven": "● near cohort average",
+        "metrics": {
+          "maxWeight": {
+            "title": "Max weight (PR)",
+            "hint": "Heaviest weight lifted on this machine"
+          },
+          "sessionVolume": {
+            "title": "Volume per session",
+            "hint": "Average total weight per workout (all sets)"
+          },
+          "growth": {
+            "title": "Volume growth rate",
+            "hint": "First vs last log change in {{period}}"
+          }
+        }
       },
       "peerComparison": {
         "title": "Same height & gender growth",

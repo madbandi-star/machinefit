@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { WorkoutInsights } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/store/auth.store';
 import { formatGrowthPct } from '@/utils/workoutAnalytics';
 import { getCoachingFocusLabel, getCoachingSummary, getCoachingTips } from '@/utils/growthCoaching';
+import { ProfileCompareMetric } from '@/components/progressive-overload/ProfileCompareMetric/ProfileCompareMetric';
 
 interface GrowthInsightsPanelProps {
   insights: WorkoutInsights | null;
@@ -11,53 +13,13 @@ interface GrowthInsightsPanelProps {
   periodLabel: string;
 }
 
-function ComparisonBar({
-  meLabel,
-  avgLabel,
-  userValue,
-  avgValue,
-  unit,
-}: {
-  meLabel: string;
-  avgLabel: string;
-  userValue: number | null;
-  avgValue: number;
-  unit: string;
-}) {
-  const max = Math.max(userValue ?? 0, avgValue, 1);
-  const userWidth = userValue == null ? 0 : (userValue / max) * 100;
-  const avgWidth = (avgValue / max) * 100;
-
-  return (
-    <div className="growth-insights-compare">
-      <div className="growth-insights-compare__bars">
-        <div className="growth-insights-compare__row">
-          <span>{meLabel}</span>
-          <div className="growth-insights-compare__track">
-            <div
-              className="growth-insights-compare__fill growth-insights-compare__fill--user"
-              style={{ width: `${userWidth}%` }}
-            />
-          </div>
-          <strong>{userValue == null ? '—' : `${userValue}${unit}`}</strong>
-        </div>
-        <div className="growth-insights-compare__row">
-          <span>{avgLabel}</span>
-          <div className="growth-insights-compare__track">
-            <div
-              className="growth-insights-compare__fill growth-insights-compare__fill--avg"
-              style={{ width: `${avgWidth}%` }}
-            />
-          </div>
-          <strong>{avgValue}{unit}</strong>
-        </div>
-      </div>
-    </div>
-  );
+function CohortBadge({ label }: { label: string }) {
+  return <span className="profile-compare-cohort__chip">{label}</span>;
 }
 
 export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: GrowthInsightsPanelProps) {
   const { t } = useTranslation('common');
+  const user = useAuthStore((s) => s.user);
 
   if (isLoading) {
     return (
@@ -84,48 +46,96 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
 
   const coachingTips = insights.coaching ? getCoachingTips(t, insights.coaching) : [];
   const coachingSummary = insights.coaching ? getCoachingSummary(t, insights.coaching) : null;
+  const peer = insights.peerComparison;
+  const avgLabel = peer
+    ? t('growthAnalysis.insights.profileAverage.cohortAvgShort', {
+        gender: t(`auth.genders.${peer.gender}`),
+        min: peer.heightMinCm,
+        max: peer.heightMaxCm,
+      })
+    : t('growthAnalysis.insights.average');
 
   return (
     <section className="growth-insights-panel" aria-label={t('growthAnalysis.insights.title')}>
-      <div className="card growth-insights-panel__section">
-        <h2>{t('growthAnalysis.insights.profileAverage.title')}</h2>
-        <p className="growth-analysis-chart-section__desc">
-          {t('growthAnalysis.insights.profileAverage.desc', { period: periodLabel })}
-        </p>
+      <div className="card growth-insights-panel__section profile-compare-section">
+        <div className="profile-compare-section__head">
+          <div>
+            <h2>{t('growthAnalysis.insights.profileAverage.title')}</h2>
+            <p className="growth-analysis-chart-section__desc">
+              {t('growthAnalysis.insights.profileAverage.desc', { period: periodLabel })}
+            </p>
+          </div>
+        </div>
+
         {insights.profileAverage ? (
           <>
-            {insights.profileAverage.sampleSize > 0 ? (
-              <p className="growth-analysis-period-note">
-                {t('growthAnalysis.insights.sampleSize', {
-                  count: insights.profileAverage.sampleSize,
+            <div className="profile-compare-cohort">
+              {peer ? (
+                <>
+                  <CohortBadge label={t(`auth.genders.${peer.gender}`)} />
+                  <CohortBadge
+                    label={t('growthAnalysis.insights.profileAverage.heightChip', {
+                      min: peer.heightMinCm,
+                      max: peer.heightMaxCm,
+                    })}
+                  />
+                </>
+              ) : null}
+              {user?.experienceLevel ? (
+                <CohortBadge label={t(`auth.experienceLevels.${user.experienceLevel}`)} />
+              ) : null}
+              {user?.heightCm ? (
+                <CohortBadge
+                  label={t('growthAnalysis.insights.profileAverage.myHeightChip', {
+                    height: user.heightCm,
+                  })}
+                />
+              ) : null}
+              <CohortBadge
+                label={
+                  insights.profileAverage.sampleSize > 0
+                    ? t('growthAnalysis.insights.sampleSize', {
+                        count: insights.profileAverage.sampleSize,
+                      })
+                    : t('growthAnalysis.insights.estimatedBenchmark')
+                }
+              />
+            </div>
+
+            <div className="profile-compare-metrics">
+              <ProfileCompareMetric
+                icon="🏋️"
+                title={t('growthAnalysis.insights.profileAverage.metrics.maxWeight.title')}
+                hint={t('growthAnalysis.insights.profileAverage.metrics.maxWeight.hint')}
+                userValue={insights.userMaxWeightKg}
+                avgValue={insights.profileAverage.avgMaxWeightKg}
+                unit="kg"
+                meLabel={t('growthAnalysis.insights.me')}
+                avgLabel={avgLabel}
+              />
+              <ProfileCompareMetric
+                icon="📊"
+                title={t('growthAnalysis.insights.profileAverage.metrics.sessionVolume.title')}
+                hint={t('growthAnalysis.insights.profileAverage.metrics.sessionVolume.hint')}
+                userValue={insights.userAvgSessionVolumeKg}
+                avgValue={insights.profileAverage.avgSessionVolumeKg}
+                unit="kg"
+                meLabel={t('growthAnalysis.insights.me')}
+                avgLabel={avgLabel}
+              />
+              <ProfileCompareMetric
+                icon="📈"
+                title={t('growthAnalysis.insights.profileAverage.metrics.growth.title')}
+                hint={t('growthAnalysis.insights.profileAverage.metrics.growth.hint', {
+                  period: periodLabel,
                 })}
-              </p>
-            ) : (
-              <p className="growth-analysis-period-note">
-                {t('growthAnalysis.insights.estimatedBenchmark')}
-              </p>
-            )}
-            <ComparisonBar
-              meLabel={t('growthAnalysis.insights.me')}
-              avgLabel={t('growthAnalysis.insights.average')}
-              userValue={insights.userMaxWeightKg}
-              avgValue={insights.profileAverage.avgMaxWeightKg}
-              unit="kg"
-            />
-            <ComparisonBar
-              meLabel={t('growthAnalysis.insights.me')}
-              avgLabel={t('growthAnalysis.insights.average')}
-              userValue={insights.userAvgSessionVolumeKg}
-              avgValue={insights.profileAverage.avgSessionVolumeKg}
-              unit="kg"
-            />
-            <ComparisonBar
-              meLabel={t('growthAnalysis.insights.me')}
-              avgLabel={t('growthAnalysis.insights.average')}
-              userValue={insights.userVolumeGrowthPct}
-              avgValue={insights.profileAverage.avgVolumeGrowthPct}
-              unit="%"
-            />
+                userValue={insights.userVolumeGrowthPct}
+                avgValue={insights.profileAverage.avgVolumeGrowthPct}
+                unit="%"
+                meLabel={t('growthAnalysis.insights.me')}
+                avgLabel={avgLabel}
+              />
+            </div>
           </>
         ) : (
           <p className="growth-analysis-chart-empty">{t('growthAnalysis.insights.noBenchmark')}</p>

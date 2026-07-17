@@ -194,7 +194,27 @@
       "growthRate": "성장률",
       "profileAverage": {
         "title": "신체정보 기반 평균 비교",
-        "desc": "{{period}} 기준, 같은 키·성별·경력대 사용자 평균과 비교"
+        "desc": "{{period}} 기준 · 아래 3개 지표를 동일 조건 사용자 평균과 비교",
+        "cohortAvgShort": "동일조건 평균",
+        "heightChip": "{{min}}~{{max}}cm",
+        "myHeightChip": "내 키 {{height}}cm",
+        "deltaAbove": "▲ {{value}} · 평균보다 높음",
+        "deltaBelow": "▼ {{value}} · 평균보다 낮음",
+        "deltaEven": "● 평균과 비슷함",
+        "metrics": {
+          "maxWeight": {
+            "title": "최고 중량 (PR)",
+            "hint": "이 머신에서 들어 올린 최대 무게"
+          },
+          "sessionVolume": {
+            "title": "회당 총 수행량",
+            "hint": "운동 1회당 세트 무게 합계 평균"
+          },
+          "growth": {
+            "title": "총 수행량 성장률",
+            "hint": "{{period}} 동안 첫 기록 대비 마지막 기록 변화"
+          }
+        }
       },
       "peerComparison": {
         "title": "동일 키·성별 성장률 비교",
