@@ -95,9 +95,9 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
         <nav className="list-nav" aria-label={t('myPage.explore')}>
           {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
+          <ListNavLink to={ROUTES.BRANDS} label={t('myPage.browseByBrand')} />
           <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
-          <ListNavLink to={ROUTES.BRANDS} label={t('myPage.browseByBrand')} />
         </nav>
       </section>
 
