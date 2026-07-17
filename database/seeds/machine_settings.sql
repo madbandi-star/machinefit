@@ -94,7 +94,22 @@ CROSS JOIN (VALUES
   -- BW_PUSH_UP
   ('BW_PUSH_UP', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
     '{"en":["Keep body in a straight line","Lower chest near the floor"],"ko":["몸을 일자로 유지","가슴을 바닥 가까이"],"ja":["体を一直線に","胸を床近くまで"],"zh":["身体保持一条直线","胸部接近地面"]}',
-    '{"en":["Do not sag the hips"],"ko":["엉덩이가 처지지 않게"],"ja":["腰が落ちないように"],"zh":["不要塌腰"]}')
+    '{"en":["Do not sag the hips"],"ko":["엉덩이가 처지지 않게"],"ja":["腰が落ちないように"],"zh":["不要塌腰"]}'),
+
+  -- BW_SQUAT
+  ('BW_SQUAT', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Keep knees in line with toes","Sit hips back and down"],"ko":["무릎을 발끝과 같은 방향","엉덩이를 뒤로 빼며 앉기"],"ja":["膝をつま先と同じ方向に","股関節を後ろに引いて下ろす"],"zh":["膝盖与脚尖同向","髋部后坐下"]}',
+    '{"en":["Do not let knees cave inward"],"ko":["무릎이 안쪽으로 모이지 않게"],"ja":["膝が内側に入らないように"],"zh":["不要让膝盖内扣"]}'),
+
+  -- BW_LUNGE
+  ('BW_LUNGE', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Keep front knee over ankle","Torso upright"],"ko":["앞무릎을 발목 위에","상체 세우기"],"ja":["前膝を足首の上に","上体を起こす"],"zh":["前膝在脚踝上方","上身挺直"]}',
+    '{"en":["Avoid pushing front knee too far forward"],"ko":["앞무릎이 과도하게 앞으로 나가지 않게"],"ja":["前膝が過度に前に出ないように"],"zh":["前膝不要过度前移"]}'),
+
+  -- BW_BULGARIAN_SPLIT_SQUAT
+  ('BW_BULGARIAN_SPLIT_SQUAT', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', NULL,
+    '{"en":["Rear foot on bench for balance","Lower until front thigh is parallel"],"ko":["뒷발을 벤치에 올려 균형","앞 허벅지가 수평까지"],"ja":["後ろ足をベンチに","前ももが水平まで"],"zh":["后脚放凳上保持平衡","前大腿蹲至水平"]}',
+    '{"en":["Keep most weight on front leg"],"ko":["체중은 앞다리에 집중"],"ja":["体重は前足に"],"zh":["重心放在前腿"]}')
 ) AS v(machine_code, gender, experience_level, height_min, height_max, seat_pos, back_pad_pos, foot_pos, handle_pos, rom_setting, weight_kg, tips, warnings)
 WHERE m.code = v.machine_code
 ON CONFLICT DO NOTHING;

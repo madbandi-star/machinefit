@@ -13,6 +13,9 @@ export const MACHINE_CODES = {
   BW_CHIN_UP: 'BW_CHIN_UP',
   BW_DIPS: 'BW_DIPS',
   BW_PUSH_UP: 'BW_PUSH_UP',
+  BW_SQUAT: 'BW_SQUAT',
+  BW_LUNGE: 'BW_LUNGE',
+  BW_BULGARIAN_SPLIT_SQUAT: 'BW_BULGARIAN_SPLIT_SQUAT',
 } as const;
 
 export type MachineCode = (typeof MACHINE_CODES)[keyof typeof MACHINE_CODES];
