@@ -165,7 +165,8 @@
         "desc": "Sum of all machine volumes for each workout day."
       },
       "maxWeightChart": {
-        "desc": "Cumulative peak set weight across all machines each day."
+        "title": "Daily max weight",
+        "desc": "Heaviest set lifted across all machines on each day."
       },
       "machineChart": {
         "title": "Machines per day",
@@ -175,7 +176,11 @@
       "breakdown": {
         "title": "Daily breakdown",
         "desc": "Volume contribution by machine for each day.",
-        "meta": "{{machines}} machines · {{sets}} sets"
+        "meta": "{{machines}} machines · {{sets}} sets",
+        "contribution": "{{pct}}% contribution"
+      },
+      "prAlert": {
+        "desc": "Period max weight on {{date}}"
       }
     },
     "noMachines": "No logged machines",

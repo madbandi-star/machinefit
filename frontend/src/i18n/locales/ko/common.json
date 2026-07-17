@@ -165,7 +165,8 @@
         "desc": "하루 동안 모든 머신의 총 수행량 합계입니다."
       },
       "maxWeightChart": {
-        "desc": "하루 동안 모든 머신에서 들어 올린 최고 중량의 누적 변화입니다."
+        "title": "일별 최고 중량",
+        "desc": "각 날짜에 모든 머신에서 들어 올린 가장 무거운 세트 중량입니다."
       },
       "machineChart": {
         "title": "일별 운동 머신 수",
@@ -175,7 +176,11 @@
       "breakdown": {
         "title": "일별 상세",
         "desc": "각 날짜의 머신별 기여량을 확인하세요.",
-        "meta": "머신 {{machines}}대 · 세트 {{sets}}회"
+        "meta": "머신 {{machines}}대 · 세트 {{sets}}회",
+        "contribution": "{{pct}}% 기여"
+      },
+      "prAlert": {
+        "desc": "{{date}}에 기간 내 최고 중량 기록"
       }
     },
     "noMachines": "기록된 머신 없음",

@@ -44,7 +44,12 @@ export function DailyBreakdownList({ days, locale }: DailyBreakdownListProps) {
                 {day.machines.map((machine) => (
                   <li key={`${day.logDate}-${machine.machineCode}`}>
                     <span>{machine.machineName}</span>
-                    <span>{machine.volume.toLocaleString()}kg</span>
+                    <span>
+                      {machine.volume.toLocaleString()}kg,{' '}
+                      {t('growthAnalysis.daily.breakdown.contribution', {
+                        pct: machine.contributionPct,
+                      })}
+                    </span>
                   </li>
                 ))}
               </ul>

@@ -20,6 +20,7 @@ import {
   computeDailyKpis,
   computeGrowthRanking,
   computeMachineKpis,
+  detectDailyPeakAlert,
   detectPrAlert,
   extractWorkoutLogDateKeys,
   filterLogsByGrowthPeriod,
@@ -115,10 +116,12 @@ export function GrowthAnalysisPage() {
     [dailyPoints, periodLogs.length]
   );
 
-  const prAlert = useMemo(
-    () => (selectedMachineCode ? detectPrAlert(logs, selectedMachineCode) : null),
-    [logs, selectedMachineCode]
-  );
+  const prAlert = useMemo(() => {
+    if (isDailyView) {
+      return detectDailyPeakAlert(dailyPoints);
+    }
+    return selectedMachineCode ? detectPrAlert(logs, selectedMachineCode) : null;
+  }, [isDailyView, dailyPoints, logs, selectedMachineCode]);
   const ranking = useMemo(() => computeGrowthRanking(logs, periodFilter), [logs, periodFilter]);
 
   const selectedMachineName = machineOptions.find(
@@ -161,7 +164,10 @@ export function GrowthAnalysisPage() {
         logs: periodLogs,
         machineName: selectedMachineName,
       }),
-    enabled: Boolean(selectedMachineCode) && (periodPreset !== 'custom' || Boolean(customFrom && customTo)),
+    enabled:
+      !isDailyView &&
+      Boolean(selectedMachineCode) &&
+      (periodPreset !== 'custom' || Boolean(customFrom && customTo)),
   });
 
   const volumeChartPoints = useMemo(() => {
@@ -318,7 +324,15 @@ export function GrowthAnalysisPage() {
           {prAlert ? (
             <div className="card growth-analysis-pr-alert" role="status">
               <p className="growth-analysis-pr-alert__title">{t('growthAnalysis.prAlert.title')}</p>
-              <p className="growth-analysis-pr-alert__machine">{prAlert.machineName}</p>
+              {isDailyView ? (
+                <p className="growth-analysis-pr-alert__machine">
+                  {t('growthAnalysis.daily.prAlert.desc', {
+                    date: formatShortDate(prAlert.achievedDate, i18n.language),
+                  })}
+                </p>
+              ) : (
+                <p className="growth-analysis-pr-alert__machine">{prAlert.machineName}</p>
+              )}
               <dl className="growth-analysis-pr-alert__stats">
                 <div>
                   <dt>{t('growthAnalysis.prAlert.previous')}</dt>
@@ -420,7 +434,11 @@ export function GrowthAnalysisPage() {
             />
 
             <GrowthChartBlock
-              title={t('growthAnalysis.maxWeightChart.title')}
+              title={
+                isDailyView
+                  ? t('growthAnalysis.daily.maxWeightChart.title')
+                  : t('growthAnalysis.maxWeightChart.title')
+              }
               description={
                 isDailyView
                   ? t('growthAnalysis.daily.maxWeightChart.desc')
@@ -429,7 +447,11 @@ export function GrowthAnalysisPage() {
               points={maxWeightChartPoints}
               unit="kg"
               accentColor="var(--color-accent, #f59e0b)"
-              ariaLabel={t('growthAnalysis.maxWeightChart.title')}
+              ariaLabel={
+                isDailyView
+                  ? t('growthAnalysis.daily.maxWeightChart.title')
+                  : t('growthAnalysis.maxWeightChart.title')
+              }
               headerExtra={
                 currentPr !== null ? (
                   <div className="growth-analysis-pr-summary growth-analysis-pr-summary--compact">
@@ -467,11 +489,13 @@ export function GrowthAnalysisPage() {
             ) : null}
           </section>
 
-          <GrowthInsightsPanel
-            insights={insights ?? null}
-            isLoading={isInsightsLoading}
-            periodLabel={periodLabel}
-          />
+          {!isDailyView ? (
+            <GrowthInsightsPanel
+              insights={insights ?? null}
+              isLoading={isInsightsLoading}
+              periodLabel={periodLabel}
+            />
+          ) : null}
 
           {isDailyView ? (
             <DailyBreakdownList days={dailyPoints} locale={i18n.language} />
@@ -479,7 +503,7 @@ export function GrowthAnalysisPage() {
         </>
       )}
 
-      {ranking.length > 0 ? (
+      {!isDailyView && ranking.length > 0 ? (
         <CollapsibleCard
           title={t('growthAnalysis.ranking.title')}
           summary={

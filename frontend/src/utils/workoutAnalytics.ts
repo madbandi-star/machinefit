@@ -49,7 +49,13 @@ export interface DailyPoint {
   totalVolume: number;
   totalSets: number;
   machineCount: number;
-  machines: { machineCode: string; machineName: string; volume: number }[];
+  machines: {
+    machineCode: string;
+    machineName: string;
+    volume: number;
+    contributionPct: number;
+  }[];
+  /** Heaviest single-set weight across all machines on this day. */
   peakSetWeight: number;
 }
 
@@ -215,12 +221,18 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
         volume: computeVolume(entry.setWeightsKg),
       }));
 
+      const totalVolume = machines.reduce((sum, machine) => sum + machine.volume, 0);
+
       return {
         logDate,
-        totalVolume: machines.reduce((sum, machine) => sum + machine.volume, 0),
+        totalVolume,
         totalSets: dayLogs.reduce((sum, entry) => sum + entry.setCount, 0),
         machineCount: dayLogs.length,
-        machines,
+        machines: machines.map((machine) => ({
+          ...machine,
+          contributionPct:
+            totalVolume > 0 ? Math.round((machine.volume / totalVolume) * 100) : 0,
+        })),
         peakSetWeight: Math.max(...dayLogs.flatMap((entry) => entry.setWeightsKg), 0),
       };
     });
@@ -244,16 +256,9 @@ export function computeDailyKpis(dailyPoints: DailyPoint[], periodLogCount = 0):
   const volumes = dailyPoints.map((point) => point.totalVolume);
   const firstVolume = volumes[0];
   const lastVolume = volumes[volumes.length - 1];
-
-  let runningPeak = 0;
-  const runningPeaks = dailyPoints.map((point) => {
-    runningPeak = Math.max(runningPeak, point.peakSetWeight);
-    return runningPeak;
-  });
-  const firstDayPeak = dailyPoints[0].peakSetWeight;
-  const currentPeakWeight = runningPeaks[runningPeaks.length - 1];
-  const previousPeakWeight =
-    runningPeaks.length > 1 ? runningPeaks[runningPeaks.length - 2] : null;
+  const dailyPeaks = dailyPoints.map((point) => point.peakSetWeight);
+  const firstDayPeak = dailyPeaks[0];
+  const periodPeakWeight = dailyPeaks.length > 0 ? Math.max(...dailyPeaks) : null;
 
   return {
     volumeGrowthPct:
@@ -265,19 +270,18 @@ export function computeDailyKpis(dailyPoints: DailyPoint[], periodLogCount = 0):
     avgMachinesPerDay:
       dailyPoints.reduce((sum, point) => sum + point.machineCount, 0) / dailyPoints.length,
     peakDayVolume: Math.max(...volumes),
-    maxWeightDelta: dailyPoints.length >= 2 ? currentPeakWeight - firstDayPeak : null,
-    currentPeakWeight,
-    previousPeakWeight,
+    maxWeightDelta:
+      dailyPoints.length >= 2 && periodPeakWeight != null
+        ? periodPeakWeight - firstDayPeak
+        : null,
+    currentPeakWeight: periodPeakWeight,
+    previousPeakWeight: firstDayPeak,
     totalLogCount: periodLogCount,
   };
 }
 
 export function getDailyMaxWeightChartPoints(dailyPoints: DailyPoint[]): number[] {
-  let runningMax = 0;
-  return dailyPoints.map((point) => {
-    runningMax = Math.max(runningMax, point.peakSetWeight);
-    return runningMax;
-  });
+  return dailyPoints.map((point) => point.peakSetWeight);
 }
 
 export function computeGrowthPct(first: number, last: number): number | null {
@@ -312,6 +316,24 @@ export function computeMachineKpis(sessions: SessionPoint[]): MachineKpis {
     workoutCount: sessions.length,
     currentPr,
     previousPr: sessions.length > 1 ? previousPr : null,
+  };
+}
+
+export function detectDailyPeakAlert(dailyPoints: DailyPoint[]): PrAlert | null {
+  if (dailyPoints.length < 2) return null;
+
+  const lastDay = dailyPoints[dailyPoints.length - 1];
+  const previousPeaks = dailyPoints.slice(0, -1).map((day) => day.peakSetWeight);
+  const previousPeak = Math.max(...previousPeaks);
+
+  if (lastDay.peakSetWeight <= previousPeak) return null;
+
+  return {
+    machineCode: '',
+    machineName: '',
+    previousPr: previousPeak,
+    currentPr: lastDay.peakSetWeight,
+    achievedDate: lastDay.logDate,
   };
 }
 
