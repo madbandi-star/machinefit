@@ -24,7 +24,7 @@ export function PostCard({ post, showDelete, onDelete, isDeleting }: PostCardPro
   const href = ROUTES.POST_DETAIL.replace(':postId', post.id);
 
   return (
-    <div className="post-card-wrap">
+    <div className={`post-card-wrap${showDelete && onDelete ? ' post-card-wrap--with-delete' : ''}`}>
       <Link to={href} className="card card--interactive post-card">
         <h3 className="post-card__title">{post.title}</h3>
         <p className="post-card__excerpt">
@@ -44,7 +44,11 @@ export function PostCard({ post, showDelete, onDelete, isDeleting }: PostCardPro
           className="post-card__delete"
           disabled={isDeleting}
           aria-label={t('deletePost')}
-          onClick={() => onDelete(post.id)}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onDelete(post.id);
+          }}
         >
           ×
         </button>

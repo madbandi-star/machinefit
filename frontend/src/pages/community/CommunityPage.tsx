@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
+import '@/styles/community.css';
 
 export function CommunityPage() {
   const { t } = useTranslation();

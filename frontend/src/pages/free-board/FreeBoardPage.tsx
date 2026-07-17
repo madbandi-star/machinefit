@@ -82,68 +82,74 @@ export function FreeBoardPage() {
   };
 
   return (
-    <PageShell
-      title={t('freeBoard')}
-      subtitle={t('freeBoardSubtitle')}
-      action={
-        <button className="btn btn--primary" onClick={handleNewPost}>
-          {t('newPost')}
-        </button>
-      }
-    >
-      {showForm && (
-        <form className="card" style={{ marginBottom: '1rem' }} onSubmit={handleSubmit}>
-          <div className="form-row">
-            <label htmlFor="post-title">{t('postTitle')}</label>
-            <input
-              id="post-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={200}
-              required
-            />
-          </div>
-          <div className="form-row">
-            <label htmlFor="post-content">{t('postContent')}</label>
-            <textarea
-              id="post-content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-            />
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button type="submit" className="btn btn--primary" disabled={createMutation.isPending}>
-              {t('submit')}
-            </button>
-            <button type="button" className="btn btn--secondary" onClick={() => setShowForm(false)}>
-              {t('cancel')}
+    <div className="community-board-page">
+      <PageShell
+        title={t('freeBoard')}
+        subtitle={t('freeBoardSubtitle')}
+        action={
+          <div className="page-shell__header-action">
+            <button type="button" className="btn btn--primary" onClick={handleNewPost}>
+              {t('newPost')}
             </button>
           </div>
-        </form>
-      )}
+        }
+      >
+        {showForm && (
+          <form className="card community-board-page__form" onSubmit={handleSubmit}>
+            <div className="form-row">
+              <label htmlFor="post-title">{t('postTitle')}</label>
+              <input
+                id="post-title"
+                className="input"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={200}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="post-content">{t('postContent')}</label>
+              <textarea
+                id="post-content"
+                className="input"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+              />
+            </div>
+            <div className="community-board-page__form-actions">
+              <button type="submit" className="btn btn--primary" disabled={createMutation.isPending}>
+                {t('submit')}
+              </button>
+              <button type="button" className="btn btn--secondary" onClick={() => setShowForm(false)}>
+                {t('cancel')}
+              </button>
+            </div>
+          </form>
+        )}
 
-      {isLoading ? (
-        <Skeleton count={3} />
-      ) : data?.items.length ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {data.items.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              showDelete={isAdmin}
-              onDelete={handleDeletePost}
-              isDeleting={deletingPostId === post.id && deleteMutation.isPending}
-            />
-          ))}
-        </div>
-      ) : (
-        <p style={{ color: 'var(--color-text-muted)' }}>{t('noPosts')}</p>
-      )}
+        {isLoading ? (
+          <Skeleton count={3} />
+        ) : data?.items.length ? (
+          <div className="community-board-page__list">
+            {data.items.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                showDelete={isAdmin}
+                onDelete={handleDeletePost}
+                isDeleting={deletingPostId === post.id && deleteMutation.isPending}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="community-board-page__empty">{t('noPosts')}</p>
+        )}
 
-      <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }}>
-        ← {tCommon('nav.myPage')}
-      </Link>
-    </PageShell>
+        <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block community-board-page__back">
+          ← {tCommon('nav.myPage')}
+        </Link>
+      </PageShell>
+    </div>
   );
 }
