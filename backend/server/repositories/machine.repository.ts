@@ -68,6 +68,12 @@ function attachBrandName(machine: Machine): Machine {
   return brand ? { ...machine, brandName: brand.name } : machine;
 }
 
+function filterMockMachinesByBrand(brandCode: string): Machine[] {
+  const brand = MOCK_BRANDS.find((b) => b.code === brandCode);
+  if (!brand) return [];
+  return MOCK_MACHINES.filter((m) => m.brandId === brand.id);
+}
+
 export const machineRepository = {
   async findMany(filters: {
     brandCode?: string;
@@ -81,8 +87,7 @@ export const machineRepository = {
     if (!pool) {
       let items = [...MOCK_MACHINES];
       if (filters.brandCode) {
-        const prefix = filters.brandCode.split('_')[0];
-        items = items.filter((m) => m.code.startsWith(prefix));
+        items = filterMockMachinesByBrand(filters.brandCode);
       }
       if (filters.muscleGroup) items = items.filter((m) => m.muscleGroup === filters.muscleGroup);
       if (filters.q) {
@@ -169,8 +174,7 @@ export const machineRepository = {
   async findByBrandCode(brandCode: string): Promise<Machine[]> {
     const pool = getPool();
     if (!pool) {
-      const prefix = brandCode.split('_')[0];
-      return MOCK_MACHINES.filter((m) => m.code.startsWith(prefix)).map(attachBrandName);
+      return filterMockMachinesByBrand(brandCode).map(attachBrandName);
     }
 
     const result = await pool.query<MachineRow & { brand_name: Record<string, string> | null }>(

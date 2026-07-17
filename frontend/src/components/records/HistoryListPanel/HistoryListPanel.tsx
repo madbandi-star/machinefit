@@ -16,7 +16,8 @@ import { useAuthStore } from '@/store/auth.store';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import {
   extractHistoryDateKeys,
-  formatHistoryDateHeader,
+  collectMuscleGroupsInOrder,
+  formatHistoryDateHeaderWithMuscles,
   formatHistoryTime,
   getLocalDayRange,
   getLocalDateKey,
@@ -103,6 +104,17 @@ export function HistoryListPanel() {
     () => (filteredData.length ? groupHistoryByDate(filteredData) : []),
     [filteredData]
   );
+
+  const translateMuscleGroup = (group: string) =>
+    t(`machines:muscleGroups.${group}`, { defaultValue: group });
+
+  const selectedDayMuscleGroups = useMemo(() => {
+    if (!selectedDate) return [];
+    const dayItems = filteredAllHistory.filter(
+      (item) => getLocalDateKey(item.viewedAt) === selectedDate
+    );
+    return collectMuscleGroupsInOrder(dayItems);
+  }, [filteredAllHistory, selectedDate]);
 
   const isLoading = isAllHistoryLoading || isListLoading || isWorkoutLogsLoading;
 
@@ -204,7 +216,12 @@ export function HistoryListPanel() {
                 <summary className="records-list__calendar-summary">
                   {selectedDate ? (
                     <span className="records-list__date-selected">
-                      {formatHistoryDateHeader(selectedDate, i18n.language)}
+                      {formatHistoryDateHeaderWithMuscles(
+                        selectedDate,
+                        i18n.language,
+                        selectedDayMuscleGroups,
+                        translateMuscleGroup
+                      )}
                     </span>
                   ) : null}
                   <span className="records-list__calendar-toggle">
@@ -268,7 +285,12 @@ export function HistoryListPanel() {
         groupedItems.map((group) => (
           <section key={group.dateKey} className="records-list__date-group">
             <h2 className="records-list__date-heading">
-              {formatHistoryDateHeader(group.dateKey, i18n.language)}
+              {formatHistoryDateHeaderWithMuscles(
+                group.dateKey,
+                i18n.language,
+                collectMuscleGroupsInOrder(group.items),
+                translateMuscleGroup
+              )}
             </h2>
 
             {group.items.map((item) => {

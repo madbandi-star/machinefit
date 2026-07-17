@@ -49,7 +49,17 @@ CROSS JOIN (VALUES
   -- HS_SHOULDER_PRESS
   ('HS_SHOULDER_PRESS', 'male', 'intermediate', 170, 180, 5, 3, NULL, 2, 'variable', 35,
     '{"en":["Keep core braced","Do not arch lower back"],"ko":["코어 긴장 유지","허리 과신전 금지"],"ja":["コアを固定","腰を反らさない"],"zh":["保持核心收紧","不要挺腰"]}',
-    '{"en":["Stop if shoulder pain occurs"],"ko":["어깨 통증 시 즉시 중단"],"ja":["肩に痛みがあれば中止"],"zh":["肩部疼痛时立即停止"]}')
+    '{"en":["Stop if shoulder pain occurs"],"ko":["어깨 통증 시 즉시 중단"],"ja":["肩に痛みがあれば中止"],"zh":["肩部疼痛时立即停止"]}'),
+
+  -- FW_DUMBBELL
+  ('FW_DUMBBELL', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', 12,
+    '{"en":["Choose a weight you can control for your target reps","Keep wrists neutral"],"ko":["목표 횟수를 컨트롤할 수 있는 중량 선택","손목 중립 유지"],"ja":["目標回数をコントロールできる重量を選ぶ","手首をニュートラルに"],"zh":["选择能控制目标次数的重量","保持手腕中立"]}',
+    '{"en":["Do not drop dumbbells from height"],"ko":["덤벨을 높은 곳에서 떨어뜨리지 마세요"],"ja":["ダンベルを高い位置から落とさない"],"zh":["不要从高处扔下哑铃"]}'),
+
+  -- FW_BARBELL
+  ('FW_BARBELL', 'male', 'intermediate', 160, 190, NULL, NULL, NULL, NULL, 'full', 40,
+    '{"en":["Use collars on both sides","Brace core before each set"],"ko":["양쪽에 칼라 고정","세트 전 코어 브레이싱"],"ja":["両側にカラーで固定","セット前にコアを固める"],"zh":["两侧使用卡扣","每组前收紧核心"]}',
+    '{"en":["Do not lift without spotter on heavy sets if unsure"],"ko":["무거운 중량은 보조 없이 무리하지 마세요"],"ja":["重い重量は無理に一人で行わない"],"zh":["大重量不确定时不要独自训练"]}')
 ) AS v(machine_code, gender, experience_level, height_min, height_max, seat_pos, back_pad_pos, foot_pos, handle_pos, rom_setting, weight_kg, tips, warnings)
 WHERE m.code = v.machine_code
 ON CONFLICT DO NOTHING;

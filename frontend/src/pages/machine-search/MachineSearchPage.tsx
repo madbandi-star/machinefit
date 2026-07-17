@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
+import { BRAND_CODES } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
@@ -37,6 +38,12 @@ export function MachineSearchPage() {
     },
   });
 
+  const sortedBrands = useMemo(() => {
+    const freeWeight = brands.find((brand) => brand.code === BRAND_CODES.FREE_WEIGHT);
+    const others = brands.filter((brand) => brand.code !== BRAND_CODES.FREE_WEIGHT);
+    return freeWeight ? [freeWeight, ...others] : brands;
+  }, [brands]);
+
   const { data, isLoading } = useQuery({
     queryKey: [...QUERY_KEYS.machines, query, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
@@ -56,7 +63,7 @@ export function MachineSearchPage() {
       <PageShell title={t('searchTitle')}>
         <SearchBar value={query} onChange={setQuery} placeholder={t('searchPlaceholder')} />
         <FilterChips value={muscleGroup} onChange={setMuscleGroup} />
-        <BrandFilterChips brands={brands} value={brandCode} onChange={setBrandCode} />
+        <BrandFilterChips brands={sortedBrands} value={brandCode} onChange={setBrandCode} />
         {isLoading ? (
           <Skeleton count={5} height={72} />
         ) : !data?.length ? (

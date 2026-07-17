@@ -3,6 +3,8 @@ INSERT INTO machines (brand_id, code, name, muscle_group, machine_type, has_seat
 SELECT b.id, v.code, v.name::jsonb, v.muscle_group, v.machine_type, v.has_seat, v.has_back_pad, v.has_foot_plate, v.has_handle, v.rom_type, true
 FROM brands b
 CROSS JOIN (VALUES
+  ('FREE_WEIGHT', 'FW_DUMBBELL', '{"ko":"덤벨","en":"Dumbbell","ja":"ダンベル","zh":"哑铃"}', 'shoulders', 'free_weight', false, false, false, true, 'variable'),
+  ('FREE_WEIGHT', 'FW_BARBELL', '{"ko":"바벨","en":"Barbell","ja":"バーベル","zh":"杠铃"}', 'chest', 'free_weight', false, false, false, true, 'variable'),
   ('HAMMER_STRENGTH', 'HS_ISO_LATERAL_HIGH_ROW', '{"ko":"아이소 레터럴 하이 로우","en":"Iso-Lateral High Row","ja":"アイソラテラルハイロー","zh":"等轴高位拉"}', 'back', 'plate_loaded', true, true, false, true, 'variable'),
   ('HAMMER_STRENGTH', 'HS_SELECTORIZED_CHEST_PRESS', '{"ko":"셀렉터라이즈드 체스트 프레스","en":"Selectorized Chest Press","ja":"セレクタライズドチェストプレス","zh":"选择式胸部推举"}', 'chest', 'selectorized', true, true, false, true, 'fixed'),
   ('HAMMER_STRENGTH', 'HS_LEG_EXTENSION', '{"ko":"레그 익스텐션","en":"Leg Extension","ja":"レッグエクステンション","zh":"腿部伸展"}', 'legs', 'selectorized', true, true, true, false, 'fixed'),

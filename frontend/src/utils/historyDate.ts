@@ -21,6 +21,40 @@ export function formatHistoryDateHeader(dateKey: string, locale: string): string
   });
 }
 
+export function collectMuscleGroupsInOrder<T extends { muscleGroup?: string }>(
+  items: T[]
+): string[] {
+  const seen = new Set<string>();
+  const groups: string[] = [];
+
+  for (const item of items) {
+    const group = item.muscleGroup;
+    if (!group || seen.has(group)) continue;
+    seen.add(group);
+    groups.push(group);
+  }
+
+  return groups;
+}
+
+export function formatMuscleGroupSummary(
+  groups: string[],
+  translateMuscleGroup: (group: string) => string
+): string {
+  return groups.map((group) => translateMuscleGroup(group)).join(' ');
+}
+
+export function formatHistoryDateHeaderWithMuscles(
+  dateKey: string,
+  locale: string,
+  muscleGroups: string[],
+  translateMuscleGroup: (group: string) => string
+): string {
+  const dateLabel = formatHistoryDateHeader(dateKey, locale);
+  if (muscleGroups.length === 0) return dateLabel;
+  return `${dateLabel} ${formatMuscleGroupSummary(muscleGroups, translateMuscleGroup)}`;
+}
+
 export function formatHistoryTime(iso: string, locale: string): string {
   return new Date(iso).toLocaleTimeString(locale, {
     hour: '2-digit',

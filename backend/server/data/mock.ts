@@ -2,12 +2,15 @@ import type { Brand, Machine, Gym, GymMachine, GymPhoto, BusinessHours } from '@
 import { MACHINE_CODES, BRAND_CODES } from '@machinefit/shared';
 
 export const MOCK_BRANDS: Brand[] = [
+  { id: '4', code: BRAND_CODES.FREE_WEIGHT, name: { ko: '프리웨이트', en: 'Free Weight', ja: 'フリーウェイト', zh: '自由重量' }, isActive: true },
   { id: '1', code: BRAND_CODES.HAMMER_STRENGTH, name: { ko: '해머 스트렝스', en: 'Hammer Strength', ja: 'ハンマーストレングス', zh: '悍马力量' }, isActive: true },
   { id: '2', code: BRAND_CODES.LIFE_FITNESS, name: { ko: '라이프 피트니스', en: 'Life Fitness', ja: 'ライフフィットネス', zh: '力健' }, isActive: true },
   { id: '3', code: BRAND_CODES.CYBEX, name: { ko: '사이벡스', en: 'Cybex', ja: 'サイベックス', zh: '赛百斯' }, isActive: true },
 ];
 
 export const MOCK_MACHINES: Machine[] = [
+  { id: '6', brandId: '4', code: MACHINE_CODES.FW_DUMBBELL, name: { ko: '덤벨', en: 'Dumbbell', ja: 'ダンベル', zh: '哑铃' }, muscleGroup: 'shoulders', machineType: 'free_weight', hasSeat: false, hasBackPad: false, hasFootPlate: false, hasHandle: true, isActive: true },
+  { id: '7', brandId: '4', code: MACHINE_CODES.FW_BARBELL, name: { ko: '바벨', en: 'Barbell', ja: 'バーベル', zh: '杠铃' }, muscleGroup: 'chest', machineType: 'free_weight', hasSeat: false, hasBackPad: false, hasFootPlate: false, hasHandle: true, isActive: true },
   { id: '1', brandId: '1', code: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, name: { ko: '아이소 레터럴 하이 로우', en: 'Iso-Lateral High Row', ja: 'アイソラテラルハイロー', zh: '等轴高位拉' }, muscleGroup: 'back', machineType: 'plate_loaded', hasSeat: true, hasBackPad: true, hasFootPlate: false, hasHandle: true, isActive: true },
   { id: '2', brandId: '1', code: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, name: { ko: '셀렉터라이즈드 체스트 프레스', en: 'Selectorized Chest Press', ja: 'セレクタライズドチェストプレス', zh: '选择式胸部推举' }, muscleGroup: 'chest', machineType: 'selectorized', hasSeat: true, hasBackPad: true, hasFootPlate: false, hasHandle: true, isActive: true },
   { id: '3', brandId: '1', code: MACHINE_CODES.HS_LEG_EXTENSION, name: { ko: '레그 익스텐션', en: 'Leg Extension', ja: 'レッグエクステンション', zh: '腿部伸展' }, muscleGroup: 'legs', machineType: 'selectorized', hasSeat: true, hasBackPad: true, hasFootPlate: true, hasHandle: false, isActive: true },
@@ -103,6 +106,50 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
         ko: ['과도한 신전 금지'],
         ja: ['過度な伸展を避ける'],
         zh: ['避免过度伸展'],
+      },
+    },
+  ],
+  [MACHINE_CODES.FW_DUMBBELL]: [
+    {
+      gender: 'male',
+      experienceLevel: 'intermediate',
+      heightMinCm: 160,
+      heightMaxCm: 190,
+      romSetting: 'full',
+      weightKg: 12,
+      tips: {
+        en: ['Choose a weight you can control for your target reps'],
+        ko: ['목표 횟수를 컨트롤할 수 있는 중량 선택'],
+        ja: ['目標回数をコントロールできる重量を選ぶ'],
+        zh: ['选择能控制目标次数的重量'],
+      },
+      warnings: {
+        en: ['Do not drop dumbbells from height'],
+        ko: ['덤벨을 높은 곳에서 떨어뜨리지 마세요'],
+        ja: ['ダンベルを高い位置から落とさない'],
+        zh: ['不要从高处扔下哑铃'],
+      },
+    },
+  ],
+  [MACHINE_CODES.FW_BARBELL]: [
+    {
+      gender: 'male',
+      experienceLevel: 'intermediate',
+      heightMinCm: 160,
+      heightMaxCm: 190,
+      romSetting: 'full',
+      weightKg: 40,
+      tips: {
+        en: ['Use collars on both sides', 'Brace core before each set'],
+        ko: ['양쪽에 칼라 고정', '세트 전 코어 브레이싱'],
+        ja: ['両側にカラーで固定', 'セット前にコアを固める'],
+        zh: ['两侧使用卡扣', '每组前收紧核心'],
+      },
+      warnings: {
+        en: ['Do not lift without spotter on heavy sets if unsure'],
+        ko: ['무거운 중량은 보조 없이 무리하지 마세요'],
+        ja: ['重い重量は無理に一人で行わない'],
+        zh: ['大重量不确定时不要独自训练'],
       },
     },
   ],
