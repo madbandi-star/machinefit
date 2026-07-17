@@ -1,4 +1,5 @@
 import type { Brand, Machine } from '@machinefit/shared';
+import { BRAND_CODES } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
 
@@ -74,6 +75,15 @@ function filterMockMachinesByBrand(brandCode: string): Machine[] {
   return MOCK_MACHINES.filter((m) => m.brandId === brand.id);
 }
 
+function isFreeWeightMachine(machine: Machine): boolean {
+  const brand = MOCK_BRANDS.find((b) => b.id === machine.brandId);
+  return brand?.code === BRAND_CODES.FREE_WEIGHT;
+}
+
+function matchesMuscleGroupFilter(machine: Machine, muscleGroup: string): boolean {
+  return machine.muscleGroup === muscleGroup || isFreeWeightMachine(machine);
+}
+
 export const machineRepository = {
   async findMany(filters: {
     brandCode?: string;
@@ -89,7 +99,9 @@ export const machineRepository = {
       if (filters.brandCode) {
         items = filterMockMachinesByBrand(filters.brandCode);
       }
-      if (filters.muscleGroup) items = items.filter((m) => m.muscleGroup === filters.muscleGroup);
+      if (filters.muscleGroup) {
+        items = items.filter((m) => matchesMuscleGroupFilter(m, filters.muscleGroup!));
+      }
       if (filters.q) {
         const q = filters.q.toLowerCase();
         items = items.filter((m) =>
@@ -112,8 +124,9 @@ export const machineRepository = {
       params.push(filters.brandCode);
     }
     if (filters.muscleGroup) {
-      conditions.push(`m.muscle_group = $${idx++}`);
-      params.push(filters.muscleGroup);
+      conditions.push(`(m.muscle_group = $${idx} OR b.code = $${idx + 1})`);
+      params.push(filters.muscleGroup, BRAND_CODES.FREE_WEIGHT);
+      idx += 2;
     }
     if (filters.machineType) {
       conditions.push(`m.machine_type = $${idx++}`);
