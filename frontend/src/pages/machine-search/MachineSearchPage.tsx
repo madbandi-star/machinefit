@@ -15,7 +15,6 @@ import '@/styles/machines.css';
 
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
-  const { t: tCommon } = useTranslation();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const [muscleGroup, setMuscleGroup] = useState<string | null>(
@@ -46,20 +45,22 @@ export function MachineSearchPage() {
   const hasFilters = !!query.trim() || !!muscleGroup;
 
   return (
-    <PageShell title={t('searchTitle')} subtitle={tCommon('nav.machines')}>
-      <SearchBar value={query} onChange={setQuery} placeholder={t('searchPlaceholder')} />
-      <FilterChips value={muscleGroup} onChange={setMuscleGroup} />
-      {isLoading ? (
-        <Skeleton count={5} height={72} />
-      ) : !data?.length ? (
-        <MachineEmptyState hasQuery={hasFilters} />
-      ) : (
-        <div className="machine-list">
-          {data.map((machine) => (
-            <MachineListItem key={machine.id} machine={machine} />
-          ))}
-        </div>
-      )}
-    </PageShell>
+    <div className="machine-search">
+      <PageShell title={t('searchTitle')}>
+        <SearchBar value={query} onChange={setQuery} placeholder={t('searchPlaceholder')} />
+        <FilterChips value={muscleGroup} onChange={setMuscleGroup} />
+        {isLoading ? (
+          <Skeleton count={5} height={72} />
+        ) : !data?.length ? (
+          <MachineEmptyState hasQuery={hasFilters} />
+        ) : (
+          <div className="machine-list">
+            {data.map((machine) => (
+              <MachineListItem key={machine.id} machine={machine} />
+            ))}
+          </div>
+        )}
+      </PageShell>
+    </div>
   );
 }

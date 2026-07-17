@@ -477,25 +477,71 @@
   margin-bottom: var(--space-md);
 }
 
+.profile-card__identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.45rem;
+  margin-bottom: 0.2rem;
+}
+
 .profile-card__name {
   font-size: var(--font-size-h3);
   font-weight: 700;
-  margin-bottom: var(--space-xs);
+  margin: 0;
+}
+
+.profile-card__sep {
+  color: var(--color-text-muted);
+  opacity: 0.55;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.profile-card__email {
+  font-size: var(--font-size-body-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  word-break: break-all;
 }
 
 .profile-card__meta {
   font-size: var(--font-size-body-sm);
   color: var(--color-text-muted);
+  margin: 0;
+}
+
+.my-page .page-shell__header--no-subtitle {
+  margin-bottom: var(--space-sm);
+}
+
+.my-page .profile-card {
+  padding: 0.75rem var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
 .my-page-section {
   margin-bottom: var(--space-lg);
 }
 
+.my-page .my-page-section {
+  margin-bottom: var(--space-md);
+}
+
 .my-page-section__title {
   font-size: var(--font-size-h3);
   font-weight: 600;
   margin-bottom: var(--space-sm);
+}
+
+.my-page .my-page-section__title {
+  margin-bottom: var(--space-xs);
+}
+
+.my-page__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 .record-card {

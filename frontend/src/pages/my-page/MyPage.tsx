@@ -73,17 +73,24 @@ export function MyPage() {
   };
 
   return (
-    <PageShell
-      title={t('nav.myPage')}
-      subtitle={user?.email}
-      action={<PwaInstallButton />}
-    >
-      <div className="card profile-card">
-        <h2 className="profile-card__name">{user?.displayName}</h2>
-        <p className="profile-card__meta">
-          {t('myPage.role')}: {user?.roleCode}
-        </p>
-      </div>
+    <div className="my-page">
+      <PageShell title={t('nav.myPage')} action={<PwaInstallButton />}>
+        <div className="card profile-card">
+          <div className="profile-card__identity">
+            <h2 className="profile-card__name">{user?.displayName}</h2>
+            {user?.email ? (
+              <>
+                <span className="profile-card__sep" aria-hidden>
+                  ·
+                </span>
+                <span className="profile-card__email">{user.email}</span>
+              </>
+            ) : null}
+          </div>
+          <p className="profile-card__meta">
+            {t('myPage.role')}: {user?.roleCode}
+          </p>
+        </div>
 
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
@@ -106,7 +113,7 @@ export function MyPage() {
         </nav>
       </section>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+      <div className="my-page__actions">
         {isAdmin && (
           <Link to={ROUTES.ADMIN} className="btn btn--primary btn--block">
             {t('myPage.adminDashboard')}
@@ -153,6 +160,7 @@ export function MyPage() {
         onClose={() => setShowLogout(false)}
         onConfirm={handleLogout}
       />
-    </PageShell>
+      </PageShell>
+    </div>
   );
 }

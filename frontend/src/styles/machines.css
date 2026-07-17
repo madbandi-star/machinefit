@@ -1,3 +1,15 @@
+.machine-search .page-shell__header--no-subtitle {
+  margin-bottom: var(--space-xs);
+}
+
+.machine-search .page-title {
+  margin-bottom: 0;
+}
+
+.machine-search .search-bar {
+  margin-bottom: var(--space-sm);
+}
+
 .machine-hero {
   margin-bottom: var(--space-lg);
 }
