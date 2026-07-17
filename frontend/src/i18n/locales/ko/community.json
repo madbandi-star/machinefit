@@ -18,6 +18,7 @@
   "comments": "댓글",
   "writeComment": "댓글을 입력하세요…",
   "deletePost": "삭제",
+  "deleteSuccess": "게시글이 삭제되었습니다.",
   "confirmDelete": "이 게시글을 삭제할까요?",
   "brandName": "브랜드 (선택)",
   "machineName": "기구명",

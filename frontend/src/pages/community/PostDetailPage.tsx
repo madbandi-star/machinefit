@@ -106,6 +106,8 @@ export function PostDetailPage() {
 
   const { post, comments } = data;
   const isAuthor = user?.id === post.userId;
+  const isAdmin = user?.roleCode === 'admin';
+  const canDelete = isAuthor || (isAdmin && post.boardType === 'free');
 
   return (
     <PageShell title={post.title}>
@@ -118,7 +120,7 @@ export function PostDetailPage() {
           <button className="btn btn--secondary" onClick={handleLike} disabled={likeMutation.isPending}>
             ♥ {t('like')} {post.likeCount != null ? `(${post.likeCount})` : ''}
           </button>
-          {isAuthor && (
+          {canDelete && (
             <button className="btn btn--secondary" onClick={handleDelete} disabled={deleteMutation.isPending}>
               {t('deletePost')}
             </button>

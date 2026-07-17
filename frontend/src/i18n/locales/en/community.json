@@ -18,6 +18,7 @@
   "comments": "Comments",
   "writeComment": "Write a comment…",
   "deletePost": "Delete",
+  "deleteSuccess": "Post deleted.",
   "confirmDelete": "Delete this post?",
   "brandName": "Brand (optional)",
   "machineName": "Machine name",

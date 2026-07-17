@@ -1,4 +1,4 @@
-import type { BoardType, Post, Comment, MachineRequest } from '@machinefit/shared';
+import type { BoardType, Post, Comment, MachineRequest, RoleCode } from '@machinefit/shared';
 import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
@@ -175,14 +175,36 @@ export const communityRepository = {
     };
   },
 
-  async deletePost(postId: string, userId: string): Promise<void> {
+  async deletePost(postId: string, userId: string, roleCode: RoleCode): Promise<void> {
     const pool = getPool();
+    const isAdmin = roleCode === 'admin';
+
     if (!pool) {
-      const idx = mockPosts.findIndex((p) => p.id === postId && p.userId === userId);
-      if (idx === -1) throw new AppError(404, 'NOT_FOUND', 'Post not found');
+      const post = mockPosts.find((p) => p.id === postId);
+      if (!post) throw new AppError(404, 'NOT_FOUND', 'Post not found');
+      if (isAdmin) {
+        if (post.boardType !== 'free') {
+          throw new AppError(403, 'FORBIDDEN', 'Admins can only delete free board posts');
+        }
+      } else if (post.userId !== userId) {
+        throw new AppError(404, 'NOT_FOUND', 'Post not found');
+      }
+      const idx = mockPosts.findIndex((p) => p.id === postId);
       mockPosts.splice(idx, 1);
       return;
     }
+
+    if (isAdmin) {
+      const result = await pool.query(
+        "DELETE FROM posts WHERE id = $1 AND board_type = 'free' RETURNING id",
+        [postId]
+      );
+      if (!result.rows[0]) {
+        throw new AppError(404, 'NOT_FOUND', 'Post not found');
+      }
+      return;
+    }
+
     const result = await pool.query(
       'DELETE FROM posts WHERE id = $1 AND user_id = $2 RETURNING id',
       [postId, userId]

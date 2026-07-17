@@ -1,4 +1,4 @@
-import type { BoardType } from '@machinefit/shared';
+import type { BoardType, RoleCode } from '@machinefit/shared';
 import type {
   CreatePostInput,
   CreateCommentInput,
@@ -43,8 +43,8 @@ export const communityService = {
     return communityRepository.createPost(userId, user?.displayName ?? 'User', input);
   },
 
-  async deletePost(postId: string, userId: string) {
-    await communityRepository.deletePost(postId, userId);
+  async deletePost(postId: string, userId: string, roleCode: RoleCode) {
+    await communityRepository.deletePost(postId, userId, roleCode);
   },
 
   async createComment(postId: string, userId: string, input: CreateCommentInput) {

@@ -11,6 +11,40 @@
   line-height: 1.4;
 }
 
+.post-card-wrap {
+  position: relative;
+}
+
+.post-card__delete {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.post-card__delete:hover:not(:disabled) {
+  color: var(--color-danger, #c62828);
+  border-color: color-mix(in srgb, #c62828 35%, var(--glass-border));
+}
+
+.post-card__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .post-card__title {
   font-size: 1rem;
   font-weight: 600;

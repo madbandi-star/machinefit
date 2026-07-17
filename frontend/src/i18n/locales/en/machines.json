@@ -50,6 +50,9 @@
     "empty": "No history yet. Get a recommendation first!",
     "emptyOnDate": "No records on the selected date.",
     "filterByDate": "Filter by date",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "calendarHint": "Only dotted dates have history records.",
     "clearAll": "Clear All"
   },
   "records": {

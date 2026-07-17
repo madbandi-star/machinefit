@@ -27,7 +27,11 @@ export async function createPost(req: Request, res: Response): Promise<void> {
 
 export async function deletePost(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  await communityService.deletePost(getParam(req.params.postId), req.user.userId);
+  await communityService.deletePost(
+    getParam(req.params.postId),
+    req.user.userId,
+    req.user.roleCode
+  );
   res.json({ success: true, data: { message: 'Deleted' } });
 }
 

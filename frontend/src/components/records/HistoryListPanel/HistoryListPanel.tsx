@@ -12,12 +12,13 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import {
+  extractHistoryDateKeys,
   formatHistoryDateHeader,
   formatHistoryTime,
-  getLocalDateKey,
   getLocalDayRange,
   groupHistoryByDate,
 } from '@/utils/historyDate';
+import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
 
@@ -29,6 +30,16 @@ export function HistoryListPanel() {
   const showToast = useUIStore((s) => s.showToast);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
+
+  const calendarQueryKey = QUERY_KEYS.historyList({ limit: HISTORY_LIST_LIMIT });
+
+  const { data: allHistory } = useQuery({
+    queryKey: calendarQueryKey,
+    queryFn: async () => {
+      const res = await historyApi.list({ limit: HISTORY_LIST_LIMIT });
+      return res.data.data;
+    },
+  });
 
   const listParams = useMemo(() => {
     if (!selectedDate) {
@@ -53,15 +64,15 @@ export function HistoryListPanel() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
+  const datesWithData = useMemo(
+    () => extractHistoryDateKeys(allHistory ?? []),
+    [allHistory]
+  );
+
   const groupedItems = useMemo(
     () => (data?.length ? groupHistoryByDate(data) : []),
     [data]
   );
-
-  const availableDates = useMemo(() => {
-    if (selectedDate || !data?.length) return [];
-    return groupedItems.map((group) => group.dateKey);
-  }, [data, groupedItems, selectedDate]);
 
   const handleDateChange = (value: string) => {
     setSearchParams(
@@ -103,27 +114,28 @@ export function HistoryListPanel() {
   return (
     <div className="records-list">
       <div className="records-list__toolbar">
-        <div className="records-list__filters">
-          <label className="records-list__date-filter">
+        <div className="records-list__date-filter-block">
+          <div className="records-list__filters">
             <span className="records-list__date-filter-label">
               {t('machines:history.filterByDate')}
             </span>
-            <input
-              type="date"
-              className="records-list__date-input"
-              value={selectedDate}
-              max={availableDates[0] ?? getLocalDateKey(new Date().toISOString())}
-              onChange={(event) => handleDateChange(event.target.value)}
+            {selectedDate ? (
+              <button
+                type="button"
+                className="records-list__date-reset"
+                onClick={() => handleDateChange('')}
+              >
+                {t('machines:filterAll')}
+              </button>
+            ) : null}
+          </div>
+          {datesWithData.size > 0 ? (
+            <HistoryDateCalendar
+              datesWithData={datesWithData}
+              selectedDate={selectedDate}
+              onSelect={handleDateChange}
+              locale={i18n.language}
             />
-          </label>
-          {selectedDate ? (
-            <button
-              type="button"
-              className="records-list__date-reset"
-              onClick={() => handleDateChange('')}
-            >
-              {t('machines:filterAll')}
-            </button>
           ) : null}
         </div>
 

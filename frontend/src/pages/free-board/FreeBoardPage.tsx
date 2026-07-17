@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { PostCard } from '@/components/cards/PostCard/PostCard';
@@ -19,11 +19,14 @@ export function FreeBoardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = user?.roleCode === 'admin';
   const showToast = useUIStore((s) => s.showToast);
 
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: [...QUERY_KEYS.posts, 'free'],
@@ -46,6 +49,22 @@ export function FreeBoardPage() {
     },
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (postId: string) => communityApi.deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.posts });
+      showToast(t('deleteSuccess'), 'success');
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+    onSettled: () => setDeletingPostId(null),
+  });
+
+  const handleDeletePost = (postId: string) => {
+    if (!window.confirm(t('confirmDelete'))) return;
+    setDeletingPostId(postId);
+    deleteMutation.mutate(postId);
+  };
 
   const handleNewPost = () => {
     if (!isAuthenticated) {
@@ -109,7 +128,13 @@ export function FreeBoardPage() {
       ) : data?.items.length ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {data.items.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard
+              key={post.id}
+              post={post}
+              showDelete={isAdmin}
+              onDelete={handleDeletePost}
+              isDeleting={deletingPostId === post.id && deleteMutation.isPending}
+            />
           ))}
         </div>
       ) : (

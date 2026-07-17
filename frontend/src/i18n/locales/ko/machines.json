@@ -50,6 +50,9 @@
     "empty": "기록이 없습니다. 머신 추천을 받아보세요.",
     "emptyOnDate": "선택한 날짜에 기록이 없습니다.",
     "filterByDate": "일자 조회",
+    "prevMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "calendarHint": "점이 있는 날짜에만 기록이 있습니다.",
     "clearAll": "전체 삭제"
   },
   "records": {
