@@ -123,8 +123,7 @@
       "favorites": "Favorites",
       "favoritesEmpty": "No saved machines yet.",
       "muscleShortcuts": "Browse by muscle group",
-      "guestTitle": "Sign in for personalized recommendations",
-      "guestHint": "You can browse machines without an account."
+      "guestTitle": "Sign in for personalized recommendations"
     },
     "notFound": {
       "title": "Page Not Found",

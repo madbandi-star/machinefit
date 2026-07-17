@@ -36,7 +36,6 @@ export function HomePage() {
         <div className="profile-incomplete-banner">
           <div className="profile-incomplete-banner__text">
             <strong>{t('pages.home.guestTitle')}</strong>
-            {t('pages.home.guestHint')}
           </div>
           <Link
             to={ROUTES.LOGIN}
