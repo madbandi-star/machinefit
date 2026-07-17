@@ -3,6 +3,7 @@
   "searchPlaceholder": "Search by name or code",
   "filterAll": "All",
   "filterByMuscle": "Filter by muscle group",
+  "filterByBrand": "Filter by brand",
   "notFound": "Machine not found",
   "error": "Error",
   "muscleGroups": {

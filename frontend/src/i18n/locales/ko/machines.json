@@ -3,6 +3,7 @@
   "searchPlaceholder": "머신 이름 또는 코드 검색",
   "filterAll": "전체",
   "filterByMuscle": "부위별 필터",
+  "filterByBrand": "브랜드별 필터",
   "notFound": "머신을 찾을 수 없습니다",
   "error": "오류",
   "muscleGroups": {

@@ -160,6 +160,11 @@
   scrollbar-width: none;
 }
 
+.filter-chips--brand {
+  margin-top: 0.35rem;
+  margin-bottom: 1rem;
+}
+
 .filter-chips::-webkit-scrollbar {
   display: none;
 }
