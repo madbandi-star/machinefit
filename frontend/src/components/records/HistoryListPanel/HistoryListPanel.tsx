@@ -7,7 +7,8 @@ import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
-import { historyApi } from '@/api';
+import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
+import { historyApi, workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -21,6 +22,13 @@ import {
   getLocalDateKey,
   groupHistoryByDate,
 } from '@/utils/historyDate';
+import {
+  buildLoggedWorkoutKeys,
+  filterHistoryByLogStatus,
+  historyItemHasWorkoutLog,
+  parseHistoryLogStatus,
+  type HistoryLogStatus,
+} from '@/utils/historyLogStatus';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
@@ -34,16 +42,31 @@ export function HistoryListPanel() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
+  const logStatus = parseHistoryLogStatus(searchParams.get('logStatus'));
 
   const calendarQueryKey = QUERY_KEYS.historyList({ limit: HISTORY_LIST_LIMIT });
 
-  const { data: allHistory } = useQuery({
+  const { data: allHistory, isLoading: isAllHistoryLoading } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
       const res = await historyApi.list({ limit: HISTORY_LIST_LIMIT });
       return res.data.data;
     },
   });
+
+  const { data: workoutLogs, isLoading: isWorkoutLogsLoading } = useQuery({
+    queryKey: QUERY_KEYS.workoutLogsAll,
+    queryFn: async () => {
+      const res = await workoutLogApi.list();
+      return res.data.data;
+    },
+    enabled: isAuthenticated,
+  });
+
+  const loggedKeys = useMemo(
+    () => buildLoggedWorkoutKeys(workoutLogs ?? []),
+    [workoutLogs]
+  );
 
   const listParams = useMemo(() => {
     if (!selectedDate) {
@@ -54,13 +77,23 @@ export function HistoryListPanel() {
     return { limit: HISTORY_LIST_LIMIT, from, to };
   }, [selectedDate]);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading: isListLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.historyList(listParams),
     queryFn: async () => {
       const res = await historyApi.list(listParams);
       return res.data.data;
     },
   });
+
+  const filteredAllHistory = useMemo(
+    () => filterHistoryByLogStatus(allHistory ?? [], loggedKeys, logStatus),
+    [allHistory, loggedKeys, logStatus]
+  );
+
+  const filteredData = useMemo(
+    () => filterHistoryByLogStatus(data ?? [], loggedKeys, logStatus),
+    [data, loggedKeys, logStatus]
+  );
 
   const removeMutation = useMutation({
     mutationFn: (id: string) => historyApi.remove(id),
@@ -69,24 +102,20 @@ export function HistoryListPanel() {
   });
 
   const datesWithData = useMemo(
-    () => extractHistoryDateKeys(allHistory ?? []),
-    [allHistory]
+    () => extractHistoryDateKeys(filteredAllHistory),
+    [filteredAllHistory]
   );
 
   const groupedItems = useMemo(
-    () => (data?.length ? groupHistoryByDate(data) : []),
-    [data]
+    () => (filteredData.length ? groupHistoryByDate(filteredData) : []),
+    [filteredData]
   );
 
-  const handleDateChange = (value: string) => {
+  const updateSearchParams = (mutate: (next: URLSearchParams) => void) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        if (value) {
-          next.set('date', value);
-        } else {
-          next.delete('date');
-        }
+        mutate(next);
         if (!next.get('tab')) {
           next.set('tab', 'history');
         }
@@ -96,12 +125,34 @@ export function HistoryListPanel() {
     );
   };
 
+  const handleDateChange = (value: string) => {
+    updateSearchParams((next) => {
+      if (value) {
+        next.set('date', value);
+      } else {
+        next.delete('date');
+      }
+    });
+  };
+
+  const handleLogStatusChange = (value: HistoryLogStatus) => {
+    updateSearchParams((next) => {
+      if (value === 'all') {
+        next.delete('logStatus');
+      } else {
+        next.set('logStatus', value);
+      }
+    });
+  };
+
+  const isLoading = isAllHistoryLoading || isListLoading || isWorkoutLogsLoading;
+
   if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
 
-  const hasAnyHistory = Boolean(data?.length) || Boolean(selectedDate);
+  const hasAnyHistory = Boolean(allHistory?.length);
 
-  if (!hasAnyHistory && !selectedDate) {
+  if (!hasAnyHistory) {
     return (
       <EmptyState
         icon="history"
@@ -115,9 +166,20 @@ export function HistoryListPanel() {
     );
   }
 
+  const emptyFilterTitle =
+    logStatus === 'saved'
+      ? t('machines:history.emptySaved')
+      : logStatus === 'unsaved'
+        ? t('machines:history.emptyUnsaved')
+        : selectedDate
+          ? t('machines:history.emptyOnDate')
+          : t('machines:history.empty');
+
   return (
     <div className="records-list records-list--history">
       <div className="records-list__toolbar">
+        <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
+
         <div className="records-list__date-filter-block">
           <div className="records-list__filters">
             {datesWithData.size > 0 ? (
@@ -164,18 +226,25 @@ export function HistoryListPanel() {
         </div>
       </div>
 
-      {!data?.length ? (
+      {filteredData.length === 0 ? (
         <EmptyState
           icon="history"
-          title={t('machines:history.emptyOnDate')}
+          title={emptyFilterTitle}
           action={
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => handleDateChange('')}
-            >
-              {t('machines:filterAll')}
-            </button>
+            selectedDate || logStatus !== 'all' ? (
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => {
+                  updateSearchParams((next) => {
+                    next.delete('date');
+                    next.delete('logStatus');
+                  });
+                }}
+              >
+                {t('machines:filterAll')}
+              </button>
+            ) : undefined
           }
         />
       ) : (
@@ -188,12 +257,25 @@ export function HistoryListPanel() {
             {group.items.map((item) => {
               const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
               const logDate = getLocalDateKey(item.viewedAt);
+              const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys);
 
               return (
-                <article key={item.id} className="saved-settings-card saved-settings-card--history">
+                <article
+                  key={item.id}
+                  className={`saved-settings-card saved-settings-card--history${hasWorkoutLog ? ' saved-settings-card--logged' : ' saved-settings-card--unlogged'}`}
+                >
                   <div className="saved-settings-card__header">
                     <Link to={resultUrl} className="saved-settings-card__machine">
-                      <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
+                      <div className="saved-settings-card__machine-title-row">
+                        <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
+                        <span
+                          className={`saved-settings-card__log-badge${hasWorkoutLog ? ' saved-settings-card__log-badge--saved' : ' saved-settings-card__log-badge--unsaved'}`}
+                        >
+                          {hasWorkoutLog
+                            ? t('machines:history.workoutSavedBadge')
+                            : t('machines:history.workoutUnsavedBadge')}
+                        </span>
+                      </div>
                       <span className="saved-settings-card__machine-code">{item.machineCode}</span>
                       <span className="saved-settings-card__time saved-settings-card__time--inline">
                         {formatHistoryTime(item.viewedAt, i18n.language)}
