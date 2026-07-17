@@ -180,6 +180,84 @@
       "title": "My growth TOP 5",
       "periodNote": "Volume growth rate · {{period}}",
       "allTimeNote": "Volume growth rate · all time"
+    },
+    "insights": {
+      "title": "Personalized growth insights",
+      "loading": "Analyzing insights…",
+      "profileRequired": "Add height and gender in settings to compare with similar users.",
+      "goSettings": "Update body profile",
+      "sampleSize": "Based on {{count}} similar users",
+      "estimatedBenchmark": "Estimated average from recommendation benchmarks",
+      "noBenchmark": "Comparison data is not ready yet.",
+      "me": "You",
+      "average": "Avg",
+      "growthRate": "Growth rate",
+      "profileAverage": {
+        "title": "Body profile average comparison",
+        "desc": "{{period}} · same height, gender, and experience cohort"
+      },
+      "peerComparison": {
+        "title": "Same height & gender growth",
+        "desc": "{{gender}} · {{min}}–{{max}} cm cohort",
+        "myGrowth": "Your growth",
+        "peerAvg": "Cohort avg",
+        "relative": "Difference"
+      },
+      "coaching": {
+        "title": "AI workout coaching",
+        "focusLabel": {
+          "consistency": "Consistency",
+          "intensity": "Intensity",
+          "volume": "Volume",
+          "recovery": "Recovery",
+          "maintain": "Maintain"
+        },
+        "summary": {
+          "consistency": {
+            "above": "Increasing workout frequency can accelerate growth further.",
+            "near": "Workout frequency is low. Aim for 2–3 logged sessions per week.",
+            "below": "Long gaps between sessions are slowing progress. Restart with a shorter cycle."
+          },
+          "intensity": {
+            "above": "Volume is steady but max weight has plateaued. Try the next target load.",
+            "near": "Weight has stalled. Increase load slightly on each set.",
+            "below": "It is time to raise intensity with small load increases."
+          },
+          "volume": {
+            "above": "Growth is strong. Balance load and set count carefully.",
+            "near": "You are growing at an average pace. Try raising total volume a bit.",
+            "below": "Growth is below cohort average. Increase sets or load gradually."
+          },
+          "recovery": {
+            "above": "Recent volume dropped. Resume after recovery.",
+            "near": "Volume decreased recently. Restart within a comfortable range.",
+            "below": "Signs of fatigue. Use a lighter recovery week."
+          },
+          "maintain": {
+            "above": "You are outpacing similar users. Keep the current pace.",
+            "near": "You are ahead of average. Prefer small jumps over big leaps.",
+            "below": "Growth is healthy. Focus on the next target weight."
+          }
+        },
+        "tips": {
+          "consistency": "Logging on the same weekdays makes trends easier to read.",
+          "intensity": "Train around RPE 7–8 instead of failure every set for sustainable gains.",
+          "volume": "Adding 2.5 kg per set while keeping set count is a safe progression.",
+          "recovery": "Prioritize sleep and protein; focus on form over PRs this week.",
+          "maintain": "Try a 2.5–5 kg increase every 2–3 weeks for progressive overload.",
+          "plateau": "If weight stalls for 2+ weeks, add one set or shorten rest periods.",
+          "lowFrequency": "Recent logs are sparse. Target at least twice per week.",
+          "abovePeer": "You are growing faster than similar users. Watch for overtraining.",
+          "belowPeer": "To match the cohort average, try raising total volume by 10–15%."
+        }
+      },
+      "nextTarget": {
+        "title": "Next workout target weight",
+        "desc": "Suggested from recent logs and progressive overload",
+        "current": "Current PR",
+        "suggested": "Next target",
+        "sets": "{{count}} sets · {{weights}}"
+      }
     }
   },
   "pwa": {

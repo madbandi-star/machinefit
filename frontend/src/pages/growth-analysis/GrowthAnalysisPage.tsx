@@ -5,6 +5,9 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { LineChart } from '@/components/progressive-overload/LineChart/LineChart';
 import { fetchAllWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthInsightsPanel/GrowthInsightsPanel';
+import { fetchWorkoutInsights } from '@/api/growth-insights';
+import { useAuthStore } from '@/store/auth.store';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
   type GrowthPeriod,
@@ -25,6 +28,7 @@ const PERIODS: GrowthPeriod[] = ['30d', '3m', 'all'];
 
 export function GrowthAnalysisPage() {
   const { t, i18n } = useTranslation('common');
+  const user = useAuthStore((s) => s.user);
   const [period, setPeriod] = useState<GrowthPeriod>('30d');
   const [selectedMachineCode, setSelectedMachineCode] = useState('');
 
@@ -57,6 +61,26 @@ export function GrowthAnalysisPage() {
     [logs, selectedMachineCode]
   );
   const ranking = useMemo(() => computeGrowthRanking(logs, period), [logs, period]);
+
+  const selectedMachineName = machineOptions.find(
+    (option) => option.machineCode === selectedMachineCode
+  )?.machineName;
+
+  const {
+    data: insights,
+    isLoading: isInsightsLoading,
+  } = useQuery({
+    queryKey: QUERY_KEYS.workoutInsights(selectedMachineCode, period),
+    queryFn: () =>
+      fetchWorkoutInsights({
+        machineCode: selectedMachineCode,
+        period,
+        user,
+        logs: periodLogs,
+        machineName: selectedMachineName,
+      }),
+    enabled: Boolean(selectedMachineCode),
+  });
 
   const volumeChartPoints = useMemo(
     () =>
@@ -267,6 +291,12 @@ export function GrowthAnalysisPage() {
               <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
             )}
           </section>
+
+          <GrowthInsightsPanel
+            insights={insights ?? null}
+            isLoading={isInsightsLoading}
+            periodLabel={periodLabel}
+          />
         </>
       )}
 

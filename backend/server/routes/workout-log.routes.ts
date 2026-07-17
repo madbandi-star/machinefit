@@ -7,5 +7,6 @@ import { upsertWorkoutLogSchema } from '@machinefit/shared';
 export const workoutLogRouter = Router();
 
 workoutLogRouter.use(authMiddleware);
+workoutLogRouter.get('/insights', workoutLogController.getWorkoutInsights);
 workoutLogRouter.get('/', workoutLogController.listWorkoutLogs);
 workoutLogRouter.put('/', validateBody(upsertWorkoutLogSchema), workoutLogController.upsertWorkoutLog);

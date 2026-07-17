@@ -159,4 +159,156 @@ export const workoutLogRepository = {
     if (!row) throw new Error('Failed to upsert workout log');
     return mapRow(row);
   },
+
+  async getReferenceWeightKg(
+    machineId: string,
+    gender: string,
+    experienceLevel: string,
+    heightCm: number
+  ): Promise<number | null> {
+    const pool = getPool();
+    if (!pool) return null;
+
+    const result = await pool.query<{ weight_kg: string | null }>(
+      `SELECT weight_kg
+       FROM machine_settings
+       WHERE machine_id = $1
+         AND gender = $2
+         AND experience_level = $3
+         AND height_min_cm <= $4
+         AND height_max_cm >= $4
+       ORDER BY height_min_cm DESC
+       LIMIT 1`,
+      [machineId, gender, experienceLevel, heightCm]
+    );
+
+    const value = result.rows[0]?.weight_kg;
+    return value ? parseFloat(value) : null;
+  },
+
+  async getCohortStats(options: {
+    machineId: string;
+    from: string;
+    to: string;
+    gender?: string;
+    heightMinCm?: number;
+    heightMaxCm?: number;
+    experienceLevel?: string;
+    excludeUserId?: string;
+  }): Promise<{
+    sampleSize: number;
+    avgMaxWeightKg: number;
+    avgSessionVolumeKg: number;
+    avgVolumeGrowthPct: number;
+    avgWorkoutCount: number;
+  }> {
+    const pool = getPool();
+    if (!pool) {
+      return {
+        sampleSize: 0,
+        avgMaxWeightKg: 0,
+        avgSessionVolumeKg: 0,
+        avgVolumeGrowthPct: 0,
+        avgWorkoutCount: 0,
+      };
+    }
+
+    const params: unknown[] = [
+      options.machineId,
+      options.from,
+      options.to,
+    ];
+    let userFilters = 'AND u.is_active = true';
+
+    if (options.gender) {
+      params.push(options.gender);
+      userFilters += ` AND u.gender = $${params.length}`;
+    }
+
+    if (options.heightMinCm != null && options.heightMaxCm != null) {
+      params.push(options.heightMinCm, options.heightMaxCm);
+      userFilters += ` AND u.height_cm BETWEEN $${params.length - 1} AND $${params.length}`;
+    }
+
+    if (options.experienceLevel) {
+      params.push(options.experienceLevel);
+      userFilters += ` AND u.experience_level = $${params.length}`;
+    }
+
+    if (options.excludeUserId) {
+      params.push(options.excludeUserId);
+      userFilters += ` AND wl.user_id <> $${params.length}`;
+    }
+
+    const result = await pool.query<{
+      sample_size: string;
+      avg_pr: string | null;
+      avg_session_volume: string | null;
+      avg_volume_growth_pct: string | null;
+      avg_workout_count: string | null;
+    }>(
+      `WITH sessions AS (
+         SELECT
+           wl.user_id,
+           wl.log_date,
+           (
+             SELECT COALESCE(SUM((elem)::numeric), 0)
+             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+           ) AS session_volume,
+           (
+             SELECT COALESCE(MAX((elem)::numeric), 0)
+             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+           ) AS max_weight
+         FROM workout_logs wl
+         INNER JOIN users u ON u.id = wl.user_id
+         WHERE wl.machine_id = $1
+           AND wl.log_date >= $2::date
+           AND wl.log_date <= $3::date
+           ${userFilters}
+       ),
+       ranked AS (
+         SELECT
+           user_id,
+           session_volume,
+           max_weight,
+           ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY log_date ASC) AS rn_asc,
+           ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY log_date DESC) AS rn_desc
+         FROM sessions
+       ),
+       user_agg AS (
+         SELECT
+           user_id,
+           COUNT(*) AS workout_count,
+           MAX(max_weight) AS pr,
+           AVG(session_volume) AS avg_session_volume,
+           MAX(CASE WHEN rn_asc = 1 THEN session_volume END) AS first_volume,
+           MAX(CASE WHEN rn_desc = 1 THEN session_volume END) AS last_volume
+         FROM ranked
+         GROUP BY user_id
+       )
+       SELECT
+         COUNT(*)::text AS sample_size,
+         AVG(pr)::text AS avg_pr,
+         AVG(avg_session_volume)::text AS avg_session_volume,
+         AVG(
+           CASE
+             WHEN workout_count >= 2 AND first_volume > 0
+               THEN ((last_volume - first_volume) / first_volume) * 100
+             ELSE NULL
+           END
+         )::text AS avg_volume_growth_pct,
+         AVG(workout_count)::text AS avg_workout_count
+       FROM user_agg`,
+      params
+    );
+
+    const row = result.rows[0];
+    return {
+      sampleSize: row ? parseInt(row.sample_size, 10) : 0,
+      avgMaxWeightKg: row?.avg_pr ? parseFloat(row.avg_pr) : 0,
+      avgSessionVolumeKg: row?.avg_session_volume ? parseFloat(row.avg_session_volume) : 0,
+      avgVolumeGrowthPct: row?.avg_volume_growth_pct ? parseFloat(row.avg_volume_growth_pct) : 0,
+      avgWorkoutCount: row?.avg_workout_count ? parseFloat(row.avg_workout_count) : 0,
+    };
+  },
 };

@@ -112,6 +112,7 @@ export function WorkoutLogPanel({
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
+      await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
       showToast(t('machines:workoutLog.saved'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),

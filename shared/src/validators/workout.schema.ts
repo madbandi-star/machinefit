@@ -38,3 +38,12 @@ export const upsertWorkoutLogSchema = z
   });
 
 export type UpsertWorkoutLogInput = z.infer<typeof upsertWorkoutLogSchema>;
+
+export const workoutInsightPeriodSchema = z.enum(['30d', '3m', 'all']);
+
+export const workoutInsightsQuerySchema = z.object({
+  machineCode: z.string().min(1),
+  period: workoutInsightPeriodSchema.optional().default('30d'),
+});
+
+export type WorkoutInsightsQuery = z.infer<typeof workoutInsightsQuerySchema>;

@@ -1,7 +1,15 @@
 import type { Request, Response } from 'express';
-import { upsertWorkoutLogSchema, workoutLogListQuerySchema } from '@machinefit/shared';
+import { upsertWorkoutLogSchema, workoutLogListQuerySchema, workoutInsightsQuerySchema } from '@machinefit/shared';
 import { workoutLogService } from '../services/workout-log.service.js';
+import { workoutInsightsService } from '../services/workout-insights.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+
+export async function getWorkoutInsights(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const query = workoutInsightsQuerySchema.parse(req.query);
+  const data = await workoutInsightsService.getInsights(req.user.userId, query);
+  res.json({ success: true, data });
+}
 
 export async function listWorkoutLogs(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
