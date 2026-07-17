@@ -7,12 +7,16 @@ import type {
   WorkoutInsightsQuery,
   WorkoutLog,
 } from '@machinefit/shared';
+import {
+  getPeerHeightRange,
+  getPeerWeightRange,
+  hasGrowthBodyProfile,
+} from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
-const HEIGHT_PEER_RANGE_CM = 5;
 const MIN_COHORT_SAMPLE = 2;
 
 function todayDateKey(): string {
@@ -145,8 +149,23 @@ function buildCoaching(
   };
 }
 
-function hasBodyProfile(user: User): user is User & { gender: Gender; heightCm: number } {
-  return Boolean(user.gender && user.heightCm && user.heightCm >= 100 && user.heightCm <= 250);
+function computeBodyBasedReferenceWeight(user: User & { weightKg: number; gender: Gender }): number {
+  const genderFactor = user.gender === 'female' ? 0.65 : 1;
+  const experienceFactor =
+    {
+      beginner: 0.75,
+      intermediate: 1,
+      advanced: 1.15,
+      professional: 1.3,
+    }[user.experienceLevel ?? 'intermediate'] ?? 1;
+
+  return Math.round(user.weightKg * 0.45 * genderFactor * experienceFactor * 10) / 10;
+}
+
+function hasBodyProfile(
+  user: User
+): user is User & { gender: Gender; heightCm: number; weightKg: number } {
+  return hasGrowthBodyProfile(user);
 }
 
 export const workoutInsightsService = {
@@ -175,22 +194,30 @@ export const workoutInsightsService = {
     let profileAverage: WorkoutInsights['profileAverage'] = null;
     let peerComparison: WorkoutInsights['peerComparison'] = null;
     let referenceWeightKg: number | null = null;
+    let bodyReferenceWeightKg: number | null = null;
 
     if (profileReady) {
+      const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm);
+      const { weightMinKg, weightMaxKg } = getPeerWeightRange(user.weightKg);
+      bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
+
       referenceWeightKg = await workoutLogRepository.getReferenceWeightKg(
         machineId,
         user.gender,
         user.experienceLevel ?? 'intermediate',
         user.heightCm
       );
+      const benchmarkWeightKg = referenceWeightKg ?? bodyReferenceWeightKg;
 
       const profileStats = await workoutLogRepository.getCohortStats({
         machineId,
         from: from ?? '1970-01-01',
         to,
         gender: user.gender,
-        heightMinCm: user.heightCm - HEIGHT_PEER_RANGE_CM,
-        heightMaxCm: user.heightCm + HEIGHT_PEER_RANGE_CM,
+        heightMinCm,
+        heightMaxCm,
+        weightMinKg,
+        weightMaxKg,
         experienceLevel: user.experienceLevel ?? undefined,
         excludeUserId: userId,
       });
@@ -203,10 +230,10 @@ export const workoutInsightsService = {
           avgWorkoutCount: Math.round(profileStats.avgWorkoutCount * 10) / 10,
           sampleSize: profileStats.sampleSize,
         };
-      } else if (referenceWeightKg) {
+      } else if (benchmarkWeightKg) {
         profileAverage = {
-          avgMaxWeightKg: referenceWeightKg,
-          avgSessionVolumeKg: Math.round(referenceWeightKg * (userMetrics.lastSetCount || 3)),
+          avgMaxWeightKg: benchmarkWeightKg,
+          avgSessionVolumeKg: Math.round(benchmarkWeightKg * (userMetrics.lastSetCount || 3)),
           avgVolumeGrowthPct: period === '30d' ? 12 : period === '3m' ? 25 : 35,
           avgWorkoutCount: period === '30d' ? 8 : 12,
           sampleSize: 0,
@@ -218,8 +245,10 @@ export const workoutInsightsService = {
         from: from ?? '1970-01-01',
         to,
         gender: user.gender,
-        heightMinCm: user.heightCm - HEIGHT_PEER_RANGE_CM,
-        heightMaxCm: user.heightCm + HEIGHT_PEER_RANGE_CM,
+        heightMinCm,
+        heightMaxCm,
+        weightMinKg,
+        weightMaxKg,
         excludeUserId: userId,
       });
 
@@ -236,21 +265,25 @@ export const workoutInsightsService = {
             ? null
             : Math.round((userMetrics.volumeGrowthPct - peerAvgGrowthPct) * 10) / 10,
         sampleSize: peerStats.sampleSize,
-        heightMinCm: user.heightCm - HEIGHT_PEER_RANGE_CM,
-        heightMaxCm: user.heightCm + HEIGHT_PEER_RANGE_CM,
+        heightMinCm,
+        heightMaxCm,
+        weightMinKg,
+        weightMaxKg,
         gender: user.gender,
       };
     }
+
+    const fallbackReferenceWeightKg = referenceWeightKg ?? bodyReferenceWeightKg;
 
     const nextTarget =
       userMetrics.workoutCount > 0
         ? buildNextTarget(
             userMetrics.lastMaxWeightKg,
             userMetrics.lastSetCount,
-            referenceWeightKg
+            fallbackReferenceWeightKg
           )
-        : referenceWeightKg
-          ? buildNextTarget(0, 3, referenceWeightKg)
+        : fallbackReferenceWeightKg
+          ? buildNextTarget(0, 3, fallbackReferenceWeightKg)
           : null;
 
     const coaching =

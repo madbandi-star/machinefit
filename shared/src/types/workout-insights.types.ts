@@ -24,6 +24,8 @@ export interface WorkoutInsightsPeerComparison {
   sampleSize: number;
   heightMinCm: number;
   heightMaxCm: number;
+  weightMinKg: number;
+  weightMaxKg: number;
   gender: string;
 }
 

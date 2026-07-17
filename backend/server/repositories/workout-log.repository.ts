@@ -193,6 +193,8 @@ export const workoutLogRepository = {
     gender?: string;
     heightMinCm?: number;
     heightMaxCm?: number;
+    weightMinKg?: number;
+    weightMaxKg?: number;
     experienceLevel?: string;
     excludeUserId?: string;
   }): Promise<{
@@ -228,6 +230,11 @@ export const workoutLogRepository = {
     if (options.heightMinCm != null && options.heightMaxCm != null) {
       params.push(options.heightMinCm, options.heightMaxCm);
       userFilters += ` AND u.height_cm BETWEEN $${params.length - 1} AND $${params.length}`;
+    }
+
+    if (options.weightMinKg != null && options.weightMaxKg != null) {
+      params.push(options.weightMinKg, options.weightMaxKg);
+      userFilters += ` AND u.weight_kg BETWEEN $${params.length - 1} AND $${params.length}`;
     }
 
     if (options.experienceLevel) {

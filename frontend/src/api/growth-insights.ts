@@ -5,6 +5,11 @@ import type {
   WorkoutInsights,
   WorkoutLog,
 } from '@machinefit/shared';
+import {
+  getPeerHeightRange,
+  getPeerWeightRange,
+  hasGrowthBodyProfile,
+} from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
 import type { ApiResponse } from '@machinefit/shared';
 import {
@@ -18,8 +23,7 @@ function round1(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-function estimateReferenceWeight(user: User): number {
-  const bodyWeight = user.weightKg ?? 70;
+function estimateReferenceWeight(user: User & { weightKg: number }): number {
   const genderFactor = user.gender === 'female' ? 0.65 : 1;
   const experienceFactor =
     {
@@ -29,7 +33,7 @@ function estimateReferenceWeight(user: User): number {
       professional: 1.3,
     }[user.experienceLevel ?? 'intermediate'] ?? 1;
 
-  return round1(bodyWeight * 0.45 * genderFactor * experienceFactor);
+  return round1(user.weightKg * 0.45 * genderFactor * experienceFactor);
 }
 
 function buildLocalInsights(
@@ -41,10 +45,10 @@ function buildLocalInsights(
 ): WorkoutInsights {
   const sessions = getSessionsForMachine(logs, machineCode);
   const kpis = computeMachineKpis(sessions);
-  const hasProfile = Boolean(user.gender && user.heightCm && user.heightCm >= 100);
+  const hasProfile = hasGrowthBodyProfile(user);
 
   const benchmarkGrowth = period === '30d' ? 12 : period === '3m' ? 25 : 35;
-  const referenceWeight = estimateReferenceWeight(user);
+  const referenceWeight = hasProfile ? estimateReferenceWeight(user as User & { weightKg: number }) : 0;
   const lastSession = sessions[sessions.length - 1];
   const setCount = lastSession?.setCount ?? 3;
   const currentMax = kpis.currentPr ?? referenceWeight;
@@ -79,15 +83,21 @@ function buildLocalInsights(
     userWorkoutCount: kpis.workoutCount,
     profileAverage,
     peerComparison: hasProfile
-      ? {
-          userVolumeGrowthPct: userGrowth == null ? null : round1(userGrowth),
-          peerAvgVolumeGrowthPct: benchmarkGrowth,
-          relativePct: userGrowth == null ? null : round1(userGrowth - benchmarkGrowth),
-          sampleSize: 0,
-          heightMinCm: (user.heightCm ?? 170) - 5,
-          heightMaxCm: (user.heightCm ?? 170) + 5,
-          gender: user.gender as Gender,
-        }
+      ? (() => {
+          const { heightMinCm, heightMaxCm } = getPeerHeightRange(user.heightCm!);
+          const { weightMinKg, weightMaxKg } = getPeerWeightRange(user.weightKg!);
+          return {
+            userVolumeGrowthPct: userGrowth == null ? null : round1(userGrowth),
+            peerAvgVolumeGrowthPct: benchmarkGrowth,
+            relativePct: userGrowth == null ? null : round1(userGrowth - benchmarkGrowth),
+            sampleSize: 0,
+            heightMinCm,
+            heightMaxCm,
+            weightMinKg,
+            weightMaxKg,
+            gender: user.gender as Gender,
+          };
+        })()
       : null,
     nextTarget:
       sessions.length > 0 || hasProfile

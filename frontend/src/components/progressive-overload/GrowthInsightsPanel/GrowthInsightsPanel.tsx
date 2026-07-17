@@ -93,6 +93,12 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
                       max: peer.heightMaxCm,
                     })}
                   />
+                  <CohortBadge
+                    label={t('growthAnalysis.insights.profileAverage.weightChip', {
+                      min: peer.weightMinKg,
+                      max: peer.weightMaxKg,
+                    })}
+                  />
                 </>
               ) : null}
               {user?.experienceLevel ? (
@@ -102,6 +108,13 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
                 <CohortBadge
                   label={t('growthAnalysis.insights.profileAverage.myHeightChip', {
                     height: user.heightCm,
+                  })}
+                />
+              ) : null}
+              {user?.weightKg ? (
+                <CohortBadge
+                  label={t('growthAnalysis.insights.profileAverage.myWeightChip', {
+                    weight: user.weightKg,
                   })}
                 />
               ) : null}
@@ -165,6 +178,8 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
               gender: t(`auth.genders.${insights.peerComparison.gender}`),
               min: insights.peerComparison.heightMinCm,
               max: insights.peerComparison.heightMaxCm,
+              weightMin: insights.peerComparison.weightMinKg,
+              weightMax: insights.peerComparison.weightMaxKg,
               period: periodLabel,
             })}
           </p>
