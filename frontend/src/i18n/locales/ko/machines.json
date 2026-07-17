@@ -42,6 +42,7 @@
     "removeFavorite": "즐겨찾기 취소",
     "removedFavorite": "즐겨찾기에서 제거했습니다",
     "retryRecommend": "다시 추천",
+    "duplicate": "중복 추천입니다. 최근 기록에서 확인하세요.",
     "findGyms": "이 기구 있는 헬스장",
     "moreActions": "추가 작업"
   },

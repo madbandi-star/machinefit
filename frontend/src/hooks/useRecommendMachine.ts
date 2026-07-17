@@ -2,12 +2,16 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, RecommendationInput } from '@machinefit/shared';
-import { recommendationApi } from '@/api';
+import { historyApi, recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import {
+  buildRecordsHistoryFocusUrl,
+  DuplicateRecommendationError,
+} from '@/utils/recommendationDuplicate';
 
 function buildProfileInput(machineCode: string): RecommendationInput | null {
   const user = useAuthStore.getState().user;
@@ -39,7 +43,7 @@ function buildProfileInput(machineCode: string): RecommendationInput | null {
 export function useRecommendMachine(machineCode: string | undefined) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'machines']);
   const showToast = useUIStore((s) => s.showToast);
 
   const mutation = useMutation({
@@ -47,6 +51,16 @@ export function useRecommendMachine(machineCode: string | undefined) {
       if (!machineCode) throw new Error('missing_machine');
       const input = buildProfileInput(machineCode);
       if (!input) throw new Error('missing_profile');
+
+      const isAuthenticated = useAuthStore.getState().isAuthenticated;
+      if (isAuthenticated) {
+        const historyRes = await historyApi.list({ machineCode, limit: 1 });
+        const existing = historyRes.data.data[0];
+        if (existing) {
+          throw new DuplicateRecommendationError(existing);
+        }
+      }
+
       const res = await recommendationApi.create(input);
       return res.data.data;
     },
@@ -58,8 +72,13 @@ export function useRecommendMachine(machineCode: string | undefined) {
       );
     },
     onError: (error: unknown) => {
+      if (error instanceof DuplicateRecommendationError) {
+        showToast(t('machines:recommendation.duplicate'), 'info');
+        navigate(buildRecordsHistoryFocusUrl(error.historyItem), { replace: true });
+        return;
+      }
       if (error instanceof Error && error.message === 'missing_profile') {
-        showToast(t('auth.profileRequiredForRecommend'), 'error');
+        showToast(t('common:auth.profileRequiredForRecommend'), 'error');
         navigate(ROUTES.SETTINGS, {
           state: {
             returnTo: machineCode
@@ -69,7 +88,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
         });
         return;
       }
-      showToast(t('errors.submitFailed'), 'error');
+      showToast(t('common:errors.submitFailed'), 'error');
     },
   });
 

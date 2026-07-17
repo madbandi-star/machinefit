@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Icon } from '@/components/icons/Icon';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
@@ -12,7 +12,6 @@ import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFil
 import { historyApi, workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import {
@@ -38,11 +37,10 @@ const HISTORY_LIST_LIMIT = 100;
 
 export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
-  const queryClient = useQueryClient();
-  const showToast = useUIStore((s) => s.showToast);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
+  const focusId = searchParams.get('focus') ?? '';
   const logStatus = parseHistoryLogStatus(searchParams.get('logStatus'));
 
   const calendarQueryKey = QUERY_KEYS.historyList({ limit: HISTORY_LIST_LIMIT });
@@ -96,12 +94,6 @@ export function HistoryListPanel() {
     [data, loggedKeys, logStatus]
   );
 
-  const removeMutation = useMutation({
-    mutationFn: (id: string) => historyApi.remove(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
-  });
-
   const datesWithData = useMemo(
     () => extractHistoryDateKeys(filteredAllHistory),
     [filteredAllHistory]
@@ -111,6 +103,32 @@ export function HistoryListPanel() {
     () => (filteredData.length ? groupHistoryByDate(filteredData) : []),
     [filteredData]
   );
+
+  const isLoading = isAllHistoryLoading || isListLoading || isWorkoutLogsLoading;
+
+  useEffect(() => {
+    if (!focusId || isLoading || filteredData.length === 0) return;
+
+    const element = document.getElementById(`history-item-${focusId}`);
+    if (!element) return;
+
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    element.classList.add('saved-settings-card--focused');
+
+    const timer = window.setTimeout(() => {
+      element.classList.remove('saved-settings-card--focused');
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete('focus');
+          return next;
+        },
+        { replace: true }
+      );
+    }, 3000);
+
+    return () => window.clearTimeout(timer);
+  }, [focusId, isLoading, filteredData, setSearchParams]);
 
   const updateSearchParams = (mutate: (next: URLSearchParams) => void) => {
     setSearchParams(
@@ -145,8 +163,6 @@ export function HistoryListPanel() {
       }
     });
   };
-
-  const isLoading = isAllHistoryLoading || isListLoading || isWorkoutLogsLoading;
 
   if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
@@ -263,7 +279,8 @@ export function HistoryListPanel() {
               return (
                 <article
                   key={item.id}
-                  className={`saved-settings-card saved-settings-card--history${hasWorkoutLog ? ' saved-settings-card--logged' : ' saved-settings-card--unlogged'}`}
+                  id={`history-item-${item.id}`}
+                  className={`saved-settings-card saved-settings-card--history${hasWorkoutLog ? ' saved-settings-card--logged' : ' saved-settings-card--unlogged'}${focusId === item.id ? ' saved-settings-card--focused' : ''}`}
                 >
                   <div className="saved-settings-card__header">
                     <Link to={resultUrl} className="saved-settings-card__machine">
@@ -287,15 +304,6 @@ export function HistoryListPanel() {
                         {formatHistoryTime(item.viewedAt, i18n.language)}
                       </span>
                     </Link>
-                    <button
-                      type="button"
-                      className="saved-settings-card__remove"
-                      aria-label={t('machines:history.remove')}
-                      onClick={() => removeMutation.mutate(item.id)}
-                      disabled={removeMutation.isPending}
-                    >
-                      ×
-                    </button>
                   </div>
                   <Link
                     to={resultUrl}

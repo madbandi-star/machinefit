@@ -42,6 +42,7 @@
     "removeFavorite": "Remove from Favorites",
     "removedFavorite": "Removed from favorites",
     "retryRecommend": "Recommend Again",
+    "duplicate": "Duplicate recommendation. See your recent history.",
     "findGyms": "Find Gyms with This Machine",
     "moreActions": "More actions"
   },
