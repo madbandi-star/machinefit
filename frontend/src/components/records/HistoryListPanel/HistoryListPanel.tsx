@@ -9,7 +9,8 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
-import { historyApi, workoutLogApi } from '@/api';
+import { historyApi } from '@/api';
+import { fetchAllWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
@@ -56,10 +57,7 @@ export function HistoryListPanel() {
 
   const { data: workoutLogs, isLoading: isWorkoutLogsLoading } = useQuery({
     queryKey: QUERY_KEYS.workoutLogsAll,
-    queryFn: async () => {
-      const res = await workoutLogApi.list();
-      return res.data.data;
-    },
+    queryFn: fetchAllWorkoutLogs,
     enabled: isAuthenticated,
   });
 
@@ -334,7 +332,7 @@ export function HistoryListPanel() {
                     <RecommendationSettingsPanel settings={item.settings} variant="compact" />
                   </Link>
                   <WorkoutLogPanel
-                    key={`${item.machineCode}-${logDate}`}
+                    key={item.id}
                     machineCode={item.machineCode}
                     recommendationId={item.recommendationId}
                     suggestedWeightKg={item.settings.recommendedWeightKg}

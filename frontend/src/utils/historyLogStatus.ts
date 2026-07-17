@@ -1,5 +1,5 @@
 import type { WorkoutLog } from '@machinefit/shared';
-import { getLocalDateKey } from '@/utils/historyDate';
+import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 
 export const HISTORY_LOG_STATUS_VALUES = ['all', 'saved', 'unsaved'] as const;
 export type HistoryLogStatus = (typeof HISTORY_LOG_STATUS_VALUES)[number];
@@ -16,7 +16,7 @@ export function buildLoggedWorkoutKey(machineCode: string, logDate: string): str
 export function buildLoggedWorkoutKeys(logs: WorkoutLog[]): Set<string> {
   const keys = new Set<string>();
   for (const log of logs) {
-    keys.add(buildLoggedWorkoutKey(log.machineCode, log.logDate));
+    keys.add(buildLoggedWorkoutKey(log.machineCode, normalizeDateKey(log.logDate)));
   }
   return keys;
 }

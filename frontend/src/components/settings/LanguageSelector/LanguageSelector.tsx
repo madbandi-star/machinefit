@@ -1,4 +1,4 @@
-import { LOCALES, formatLocaleLabel } from '@machinefit/shared';
+import { LOCALES, LOCALE_FLAGS, LOCALE_LABELS } from '@machinefit/shared';
 import type { Locale } from '@machinefit/shared';
 import { useSettingsStore } from '@/store/settings.store';
 import i18n from '@/i18n';
@@ -19,11 +19,11 @@ export function LanguageSelector() {
       value={locale}
       onChange={handleChange}
       className="language-selector"
-      aria-label="Language"
+      aria-label={`Language: ${LOCALE_LABELS[locale]}`}
     >
       {LOCALES.map((code) => (
-        <option key={code} value={code}>
-          {formatLocaleLabel(code)}
+        <option key={code} value={code} title={LOCALE_LABELS[code]}>
+          {LOCALE_FLAGS[code]}
         </option>
       ))}
     </select>

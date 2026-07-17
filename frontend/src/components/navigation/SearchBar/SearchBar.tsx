@@ -31,13 +31,15 @@ export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarP
           aria-label={placeholder ?? t('actions.search')}
         />
       </div>
-      <button
-        type="submit"
-        className="btn btn--secondary icon-btn search-bar__submit"
-        aria-label={t('actions.search')}
-      >
-        <Icon name="search" size={20} />
-      </button>
+      {onSubmit ? (
+        <button
+          type="submit"
+          className="btn btn--secondary icon-btn search-bar__submit"
+          aria-label={t('actions.search')}
+        >
+          <Icon name="search" size={20} />
+        </button>
+      ) : null}
     </form>
   );
 }

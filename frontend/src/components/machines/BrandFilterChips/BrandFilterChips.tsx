@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
 import { getLocalizedName } from '@/utils/localizedName';
+import { prepareBrandsForMachineSearch } from '@/utils/sortBrandsForSearch';
 import '@/styles/machines.css';
 
 interface BrandFilterChipsProps {
@@ -11,8 +12,9 @@ interface BrandFilterChipsProps {
 
 export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsProps) {
   const { t, i18n } = useTranslation('machines');
+  const orderedBrands = prepareBrandsForMachineSearch(brands);
 
-  if (brands.length === 0) return null;
+  if (orderedBrands.length === 0) return null;
 
   return (
     <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
@@ -23,7 +25,7 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
       >
         {t('filterAll')}
       </button>
-      {brands.map((brand) => (
+      {orderedBrands.map((brand) => (
         <button
           key={brand.id}
           type="button"

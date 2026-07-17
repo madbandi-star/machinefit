@@ -7,7 +7,7 @@ import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
-import { formatHistoryDateHeader, getTodayDateKey } from '@/utils/historyDate';
+import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
 import '@/styles/recommendation.css';
@@ -62,7 +62,7 @@ export function WorkoutLogPanel({
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const compact = variant === 'compact';
-  const logDate = logDateProp ?? getTodayDateKey();
+  const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
 
   const [setCount, setSetCount] = useState(DEFAULT_SET_COUNT);

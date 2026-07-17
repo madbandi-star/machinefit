@@ -1,15 +1,22 @@
 import type { ApiResponse, WorkoutLog } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
 import type { FavoriteItem, HistoryItem } from '@/api/index';
+import { normalizeDateKey } from '@/utils/historyDate';
 
 function dedupeWorkoutLogs(logs: WorkoutLog[]): WorkoutLog[] {
-  const seen = new Set<string>();
-  return logs.filter((log) => {
-    const key = `${log.machineCode}:${log.logDate.slice(0, 10)}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const byKey = new Map<string, WorkoutLog>();
+
+  for (const log of logs) {
+    const key = `${log.machineCode}:${normalizeDateKey(log.logDate)}`;
+    const existing = byKey.get(key);
+    const normalizedLog = { ...log, logDate: normalizeDateKey(log.logDate) };
+
+    if (!existing || normalizedLog.updatedAt > existing.updatedAt) {
+      byKey.set(key, normalizedLog);
+    }
+  }
+
+  return [...byKey.values()];
 }
 
 async function listWorkoutLogsForMachine(machineCode: string): Promise<WorkoutLog[]> {
@@ -52,11 +59,8 @@ async function listWorkoutLogsViaKnownMachines(): Promise<WorkoutLog[]> {
 export async function fetchAllWorkoutLogs(): Promise<WorkoutLog[]> {
   try {
     const res = await apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs');
-    const logs = dedupeWorkoutLogs(res.data.data ?? []);
-    if (logs.length > 0) return logs;
+    return dedupeWorkoutLogs(res.data.data ?? []);
   } catch {
-    return listWorkoutLogsViaKnownMachines();
+    return dedupeWorkoutLogs(await listWorkoutLogsViaKnownMachines());
   }
-
-  return listWorkoutLogsViaKnownMachines();
 }

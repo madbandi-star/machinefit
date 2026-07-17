@@ -15,6 +15,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { getLocalDateKey } from '@/utils/historyDate';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 
@@ -148,6 +149,7 @@ export function RecommendationResultPage() {
           recommendationId={result.id}
           suggestedWeightKg={result.settings.recommendedWeightKg}
           isAuthenticated={isAuthenticated}
+          logDate={getLocalDateKey(result.createdAt)}
         />
       </div>
 

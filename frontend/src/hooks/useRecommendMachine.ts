@@ -12,6 +12,7 @@ import {
   buildRecordsHistoryFocusUrl,
   DuplicateRecommendationError,
 } from '@/utils/recommendationDuplicate';
+import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 
 function buildProfileInput(machineCode: string): RecommendationInput | null {
   const user = useAuthStore.getState().user;
@@ -54,10 +55,12 @@ export function useRecommendMachine(machineCode: string | undefined) {
 
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
       if (isAuthenticated) {
-        const historyRes = await historyApi.list({ machineCode, limit: 1 });
-        const existing = historyRes.data.data[0];
-        if (existing) {
-          throw new DuplicateRecommendationError(existing);
+        const today = getTodayDateKey();
+        const { from, to } = getLocalDayRange(today);
+        const historyRes = await historyApi.list({ machineCode, limit: 1, from, to });
+        const existingToday = historyRes.data.data[0];
+        if (existingToday) {
+          throw new DuplicateRecommendationError(existingToday);
         }
       }
 

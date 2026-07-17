@@ -1,4 +1,5 @@
 import type { WorkoutLog } from '@machinefit/shared';
+import { normalizeDateKey } from '@/utils/historyDate';
 
 export type GrowthPeriod = '30d' | '3m' | 'all' | 'custom';
 
@@ -71,22 +72,6 @@ export interface DailyKpis {
   totalLogCount: number;
 }
 
-function normalizeLogDate(logDate: string): string {
-  if (/^\d{4}-\d{2}-\d{2}/.test(logDate)) {
-    return logDate.slice(0, 10);
-  }
-
-  const parsed = new Date(logDate);
-  if (!Number.isNaN(parsed.getTime())) {
-    const y = parsed.getFullYear();
-    const m = String(parsed.getMonth() + 1).padStart(2, '0');
-    const d = String(parsed.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  }
-
-  return logDate;
-}
-
 function todayDateKey(): string {
   const now = new Date();
   const y = now.getFullYear();
@@ -110,7 +95,7 @@ export function getPeriodStartDate(period: Exclude<GrowthPeriod, 'custom'>): str
 }
 
 export function extractWorkoutLogDateKeys(logs: WorkoutLog[]): Set<string> {
-  return new Set(logs.map((log) => normalizeLogDate(log.logDate)));
+  return new Set(logs.map((log) => normalizeDateKey(log.logDate)));
 }
 
 export function getDefaultCustomRange(logs: WorkoutLog[]): { from: string; to: string } {
@@ -149,7 +134,7 @@ export function filterLogsByGrowthPeriod(
   const { from, to } = resolveGrowthPeriodBounds(filter);
   const normalized = logs.map((log) => ({
     ...log,
-    logDate: normalizeLogDate(log.logDate),
+    logDate: normalizeDateKey(log.logDate),
   }));
 
   if (!from) return normalized;
@@ -206,7 +191,7 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
   const byDate = new Map<string, WorkoutLog[]>();
 
   for (const log of logs) {
-    const logDate = normalizeLogDate(log.logDate);
+    const logDate = normalizeDateKey(log.logDate);
     const dayLogs = byDate.get(logDate) ?? [];
     dayLogs.push({ ...log, logDate });
     byDate.set(logDate, dayLogs);
