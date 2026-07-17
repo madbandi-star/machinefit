@@ -5,6 +5,9 @@ FROM brands b
 CROSS JOIN (VALUES
   ('FREE_WEIGHT', 'FW_DUMBBELL', '{"ko":"덤벨","en":"Dumbbell","ja":"ダンベル","zh":"哑铃"}', 'shoulders', 'free_weight', false, false, false, true, 'variable'),
   ('FREE_WEIGHT', 'FW_BARBELL', '{"ko":"바벨","en":"Barbell","ja":"バーベル","zh":"杠铃"}', 'chest', 'free_weight', false, false, false, true, 'variable'),
+  ('FREE_WEIGHT', 'FW_SMITH', '{"ko":"스미스 머신","en":"Smith Machine","ja":"スミスマシン","zh":"史密斯机"}', 'legs', 'smith', false, false, true, true, 'variable'),
+  ('FREE_WEIGHT', 'FW_CABLE', '{"ko":"케이블","en":"Cable","ja":"ケーブル","zh":"绳索"}', 'back', 'cable', false, false, false, true, 'variable'),
+  ('FREE_WEIGHT', 'FW_KETTLEBELL', '{"ko":"케틀벨","en":"Kettlebell","ja":"ケトルベル","zh":"壶铃"}', 'shoulders', 'free_weight', false, false, false, true, 'variable'),
   ('HAMMER_STRENGTH', 'HS_ISO_LATERAL_HIGH_ROW', '{"ko":"아이소 레터럴 하이 로우","en":"Iso-Lateral High Row","ja":"アイソラテラルハイロー","zh":"等轴高位拉"}', 'back', 'plate_loaded', true, true, false, true, 'variable'),
   ('HAMMER_STRENGTH', 'HS_SELECTORIZED_CHEST_PRESS', '{"ko":"셀렉터라이즈드 체스트 프레스","en":"Selectorized Chest Press","ja":"セレクタライズドチェストプレス","zh":"选择式胸部推举"}', 'chest', 'selectorized', true, true, false, true, 'fixed'),
   ('HAMMER_STRENGTH', 'HS_LEG_EXTENSION', '{"ko":"레그 익스텐션","en":"Leg Extension","ja":"レッグエクステンション","zh":"腿部伸展"}', 'legs', 'selectorized', true, true, true, false, 'fixed'),

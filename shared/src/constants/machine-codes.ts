@@ -6,6 +6,9 @@ export const MACHINE_CODES = {
   HS_SHOULDER_PRESS: 'HS_SHOULDER_PRESS',
   FW_DUMBBELL: 'FW_DUMBBELL',
   FW_BARBELL: 'FW_BARBELL',
+  FW_SMITH: 'FW_SMITH',
+  FW_CABLE: 'FW_CABLE',
+  FW_KETTLEBELL: 'FW_KETTLEBELL',
 } as const;
 
 export type MachineCode = (typeof MACHINE_CODES)[keyof typeof MACHINE_CODES];
