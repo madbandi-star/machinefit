@@ -58,8 +58,8 @@ export function HistoryListPanel() {
     },
   });
 
-  const clearMutation = useMutation({
-    mutationFn: () => historyApi.clear(),
+  const removeMutation = useMutation({
+    mutationFn: (id: string) => historyApi.remove(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -116,9 +116,35 @@ export function HistoryListPanel() {
       <div className="records-list__toolbar">
         <div className="records-list__date-filter-block">
           <div className="records-list__filters">
-            <span className="records-list__date-filter-label">
-              {t('machines:history.filterByDate')}
-            </span>
+            {datesWithData.size > 0 ? (
+              <details className="records-list__calendar-details">
+                <summary className="records-list__calendar-summary">
+                  <span className="records-list__date-filter-label">
+                    {t('machines:history.filterByDate')}
+                  </span>
+                  {selectedDate ? (
+                    <span className="records-list__date-selected">
+                      {formatHistoryDateHeader(selectedDate, i18n.language)}
+                    </span>
+                  ) : null}
+                  <Icon
+                    name="chevronDown"
+                    size={16}
+                    className="records-list__calendar-chevron"
+                  />
+                </summary>
+                <HistoryDateCalendar
+                  datesWithData={datesWithData}
+                  selectedDate={selectedDate}
+                  onSelect={handleDateChange}
+                  locale={i18n.language}
+                />
+              </details>
+            ) : (
+              <span className="records-list__date-filter-label">
+                {t('machines:history.filterByDate')}
+              </span>
+            )}
             {selectedDate ? (
               <button
                 type="button"
@@ -129,24 +155,7 @@ export function HistoryListPanel() {
               </button>
             ) : null}
           </div>
-          {datesWithData.size > 0 ? (
-            <HistoryDateCalendar
-              datesWithData={datesWithData}
-              selectedDate={selectedDate}
-              onSelect={handleDateChange}
-              locale={i18n.language}
-            />
-          ) : null}
         </div>
-
-        <button
-          type="button"
-          className="records-list__clear"
-          onClick={() => clearMutation.mutate()}
-          disabled={clearMutation.isPending || !data?.length}
-        >
-          {clearMutation.isPending ? '...' : t('machines:history.clearAll')}
-        </button>
       </div>
 
       {!data?.length ? (
@@ -180,10 +189,21 @@ export function HistoryListPanel() {
                       <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
                       <span className="saved-settings-card__machine-code">{item.machineCode}</span>
                     </Link>
-                    <Link to={resultUrl} className="saved-settings-card__link">
-                      {t('machines:detail.viewLastResult')}
-                      <Icon name="chevronRight" size={16} />
-                    </Link>
+                    <div className="saved-settings-card__actions">
+                      <Link to={resultUrl} className="saved-settings-card__link">
+                        {t('machines:detail.viewLastResult')}
+                        <Icon name="chevronRight" size={16} />
+                      </Link>
+                      <button
+                        type="button"
+                        className="saved-settings-card__remove"
+                        aria-label={t('machines:history.remove')}
+                        onClick={() => removeMutation.mutate(item.id)}
+                        disabled={removeMutation.isPending}
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
                   <RecommendationSettingsPanel settings={item.settings} variant="hero" />
                   <p className="saved-settings-card__time">

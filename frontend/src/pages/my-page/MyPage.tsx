@@ -95,7 +95,6 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
-          <ListNavLink to={`${ROUTES.RECORDS}?tab=history`} label={t('nav.records')} />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
           <ListNavLink to={ROUTES.NOTIFICATIONS} label={t('nav.notifications')} />
         </nav>

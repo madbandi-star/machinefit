@@ -49,6 +49,48 @@
   align-items: center;
   gap: var(--space-xs);
   min-width: 0;
+  flex-wrap: wrap;
+}
+
+.records-list__calendar-details {
+  flex: 1;
+  min-width: min(100%, 17.5rem);
+}
+
+.records-list__calendar-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.records-list__calendar-summary::-webkit-details-marker {
+  display: none;
+}
+
+.records-list__calendar-chevron {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.records-list__calendar-details[open] .records-list__calendar-chevron {
+  transform: rotate(180deg);
+}
+
+.records-list__calendar-details .history-calendar {
+  margin-top: var(--space-xs);
+}
+
+.records-list__date-selected {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
 }
 
 .records-list__date-filter-label {
@@ -219,23 +261,6 @@
   border-bottom: 1px solid var(--glass-border);
 }
 
-.records-list__clear {
-  border: none;
-  background: none;
-  padding: 0.25rem 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.records-list__clear:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .saved-settings-card {
   display: flex;
   flex-direction: column;
@@ -298,6 +323,39 @@
   color: var(--color-link);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.saved-settings-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.saved-settings-card__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.saved-settings-card__remove:hover:not(:disabled) {
+  color: var(--color-danger, #c62828);
+  border-color: color-mix(in srgb, #c62828 35%, var(--glass-border));
+}
+
+.saved-settings-card__remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .saved-settings-card__time {

@@ -53,7 +53,8 @@
     "prevMonth": "이전 달",
     "nextMonth": "다음 달",
     "calendarHint": "점이 있는 날짜에만 기록이 있습니다.",
-    "clearAll": "전체 삭제"
+    "clearAll": "전체 삭제",
+    "remove": "삭제"
   },
   "records": {
     "subtitle": "최근 추천과 즐겨찾기",

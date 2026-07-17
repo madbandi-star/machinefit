@@ -102,6 +102,7 @@ export const historyApi = {
   list: (params?: { machineCode?: string; limit?: number; from?: string; to?: string }) =>
     apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params }),
   clear: () => apiClient.delete('/history'),
+  remove: (id: string) => apiClient.delete(`/history/${id}`),
 };
 
 export interface GymDetail extends Gym {

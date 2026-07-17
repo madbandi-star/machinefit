@@ -53,7 +53,8 @@
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "calendarHint": "Only dotted dates have history records.",
-    "clearAll": "Clear All"
+    "clearAll": "Clear All",
+    "remove": "Remove"
   },
   "records": {
     "subtitle": "Recent recommendations and favorites",
