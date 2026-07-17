@@ -19,7 +19,7 @@ export function DailyBreakdownList({ days, locale }: DailyBreakdownListProps) {
     <CollapsibleCard
       title={t('growthAnalysis.daily.breakdown.title')}
       summary={t('growthAnalysis.daily.breakdown.desc')}
-      defaultOpen={false}
+      defaultOpen
       className="growth-analysis-daily-list"
     >
       <ol className="growth-analysis-daily-list__items">
@@ -36,7 +36,7 @@ export function DailyBreakdownList({ days, locale }: DailyBreakdownListProps) {
                   })}
                 </span>
               }
-              defaultOpen={false}
+              defaultOpen
               className="growth-analysis-daily-list__day-card collapsible-card--nested"
               bodyClassName="growth-analysis-daily-list__day-body"
             >

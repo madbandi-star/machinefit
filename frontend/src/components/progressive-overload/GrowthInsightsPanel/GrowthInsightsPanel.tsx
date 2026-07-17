@@ -187,7 +187,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
             }),
             period: periodLabel,
           })}
-          defaultOpen={false}
+          defaultOpen
           className="growth-insights-panel__section peer-growth-compare"
         >
           <div className="peer-growth-compare__definition" role="note">
@@ -248,7 +248,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
         <CollapsibleCard
           title={t('growthAnalysis.insights.coaching.title')}
           summary={coachingSummary}
-          defaultOpen={false}
+          defaultOpen
           className="growth-insights-panel__section growth-insights-coaching"
         >
           <div className="growth-insights-coaching__header">
@@ -268,7 +268,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
         <CollapsibleCard
           title={t('growthAnalysis.insights.nextTarget.title')}
           summary={t('growthAnalysis.insights.nextTarget.desc')}
-          defaultOpen={false}
+          defaultOpen
           className="growth-insights-panel__section growth-insights-target"
         >
           <div className="growth-insights-target__weights">

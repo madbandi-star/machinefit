@@ -489,7 +489,7 @@ export function GrowthAnalysisPage() {
                 : t('growthAnalysis.ranking.allTimeNote')}
             </span>
           }
-          defaultOpen={false}
+          defaultOpen
           className="growth-analysis-ranking"
         >
           <ol className="growth-analysis-ranking__list">
