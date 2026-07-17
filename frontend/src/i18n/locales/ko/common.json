@@ -142,6 +142,34 @@
     "subtitle": "머신별 운동 기록으로 근력 향상 추이를 확인하세요",
     "machineSelect": "머신 선택",
     "periodSelect": "기간 선택",
+    "viewMode": {
+      "label": "보기 방식",
+      "machine": "머신별",
+      "daily": "일자별"
+    },
+    "daily": {
+      "subtitle": "날짜별 총 운동량으로 하루 단위 성장 추이를 확인하세요",
+      "kpi": {
+        "volumeGrowth": "총 운동량 성장률",
+        "avgVolume": "일평균 운동량",
+        "workoutDays": "운동 일수",
+        "days": "일"
+      },
+      "volumeChart": {
+        "title": "일별 총 운동량",
+        "desc": "하루 동안 모든 머신의 총 수행량 합계입니다."
+      },
+      "machineChart": {
+        "title": "일별 운동 머신 수",
+        "desc": "그날 기록한 머신 개수로 운동 다양성을 확인하세요.",
+        "unit": "대"
+      },
+      "breakdown": {
+        "title": "일별 상세",
+        "desc": "각 날짜의 머신별 기여량을 확인하세요.",
+        "meta": "머신 {{machines}}대 · 세트 {{sets}}회"
+      }
+    },
     "noMachines": "기록된 머신 없음",
     "empty": "아직 수행 기록이 없습니다. 추천 결과 화면에서 운동을 기록해 보세요.",
     "noDataInPeriod": "선택한 기간에 기록이 없습니다.",

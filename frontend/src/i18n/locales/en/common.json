@@ -142,6 +142,34 @@
     "subtitle": "Track strength progress from your workout logs",
     "machineSelect": "Select machine",
     "periodSelect": "Select period",
+    "viewMode": {
+      "label": "View",
+      "machine": "By machine",
+      "daily": "By date"
+    },
+    "daily": {
+      "subtitle": "Compare daily total volume across all machines",
+      "kpi": {
+        "volumeGrowth": "Total volume growth",
+        "avgVolume": "Avg daily volume",
+        "workoutDays": "Workout days",
+        "days": " days"
+      },
+      "volumeChart": {
+        "title": "Daily total volume",
+        "desc": "Sum of all machine volumes for each workout day."
+      },
+      "machineChart": {
+        "title": "Machines per day",
+        "desc": "How many machines you logged each day.",
+        "unit": "machines"
+      },
+      "breakdown": {
+        "title": "Daily breakdown",
+        "desc": "Volume contribution by machine for each day.",
+        "meta": "{{machines}} machines · {{sets}} sets"
+      }
+    },
     "noMachines": "No logged machines",
     "empty": "No workout logs yet. Log sets on a recommendation result page to get started.",
     "noDataInPeriod": "No records in the selected period.",

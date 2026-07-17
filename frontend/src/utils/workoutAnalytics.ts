@@ -2,6 +2,8 @@ import type { WorkoutLog } from '@machinefit/shared';
 
 export type GrowthPeriod = '30d' | '3m' | 'all';
 
+export type GrowthViewMode = 'machine' | 'daily';
+
 export interface SessionPoint {
   logDate: string;
   totalVolume: number;
@@ -34,6 +36,23 @@ export interface MachineKpis {
   workoutCount: number;
   currentPr: number | null;
   previousPr: number | null;
+}
+
+export interface DailyPoint {
+  logDate: string;
+  totalVolume: number;
+  totalSets: number;
+  machineCount: number;
+  machines: { machineCode: string; machineName: string; volume: number }[];
+  peakSetWeight: number;
+}
+
+export interface DailyKpis {
+  volumeGrowthPct: number | null;
+  avgDailyVolume: number | null;
+  workoutDayCount: number;
+  avgMachinesPerDay: number | null;
+  peakDayVolume: number | null;
 }
 
 function normalizeLogDate(logDate: string): string {
@@ -122,6 +141,64 @@ export function getSessionsForMachine(logs: WorkoutLog[], machineCode: string): 
     .filter((log) => log.machineCode === machineCode)
     .sort((a, b) => a.logDate.localeCompare(b.logDate))
     .map(toSessionPoint);
+}
+
+export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
+  const byDate = new Map<string, WorkoutLog[]>();
+
+  for (const log of logs) {
+    const logDate = normalizeLogDate(log.logDate);
+    const dayLogs = byDate.get(logDate) ?? [];
+    dayLogs.push({ ...log, logDate });
+    byDate.set(logDate, dayLogs);
+  }
+
+  return [...byDate.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([logDate, dayLogs]) => {
+      const machines = dayLogs.map((entry) => ({
+        machineCode: entry.machineCode,
+        machineName: entry.machineName ?? entry.machineCode,
+        volume: computeVolume(entry.setWeightsKg),
+      }));
+
+      return {
+        logDate,
+        totalVolume: machines.reduce((sum, machine) => sum + machine.volume, 0),
+        totalSets: dayLogs.reduce((sum, entry) => sum + entry.setCount, 0),
+        machineCount: dayLogs.length,
+        machines,
+        peakSetWeight: Math.max(...dayLogs.flatMap((entry) => entry.setWeightsKg), 0),
+      };
+    });
+}
+
+export function computeDailyKpis(dailyPoints: DailyPoint[]): DailyKpis {
+  if (dailyPoints.length === 0) {
+    return {
+      volumeGrowthPct: null,
+      avgDailyVolume: null,
+      workoutDayCount: 0,
+      avgMachinesPerDay: null,
+      peakDayVolume: null,
+    };
+  }
+
+  const volumes = dailyPoints.map((point) => point.totalVolume);
+  const firstVolume = volumes[0];
+  const lastVolume = volumes[volumes.length - 1];
+
+  return {
+    volumeGrowthPct:
+      dailyPoints.length >= 2 && firstVolume > 0
+        ? computeGrowthPct(firstVolume, lastVolume)
+        : null,
+    avgDailyVolume: volumes.reduce((sum, volume) => sum + volume, 0) / volumes.length,
+    workoutDayCount: dailyPoints.length,
+    avgMachinesPerDay:
+      dailyPoints.reduce((sum, point) => sum + point.machineCount, 0) / dailyPoints.length,
+    peakDayVolume: Math.max(...volumes),
+  };
 }
 
 export function computeGrowthPct(first: number, last: number): number | null {

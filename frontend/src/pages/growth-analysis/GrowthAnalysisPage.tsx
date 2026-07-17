@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { LineChart } from '@/components/progressive-overload/LineChart/LineChart';
+import { DailyBreakdownList } from '@/components/progressive-overload/DailyBreakdownList/DailyBreakdownList';
 import { fetchAllWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthInsightsPanel/GrowthInsightsPanel';
@@ -11,6 +12,9 @@ import { useAuthStore } from '@/store/auth.store';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
   type GrowthPeriod,
+  type GrowthViewMode,
+  aggregateDailySessions,
+  computeDailyKpis,
   computeGrowthRanking,
   computeMachineKpis,
   detectPrAlert,
@@ -25,11 +29,13 @@ import {
 import '@/styles/growth-analysis.css';
 
 const PERIODS: GrowthPeriod[] = ['30d', '3m', 'all'];
+const VIEW_MODES: GrowthViewMode[] = ['machine', 'daily'];
 
 export function GrowthAnalysisPage() {
   const { t, i18n } = useTranslation('common');
   const user = useAuthStore((s) => s.user);
   const [period, setPeriod] = useState<GrowthPeriod>('30d');
+  const [viewMode, setViewMode] = useState<GrowthViewMode>('machine');
   const [selectedMachineCode, setSelectedMachineCode] = useState('');
 
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
@@ -39,6 +45,8 @@ export function GrowthAnalysisPage() {
 
   const periodLogs = useMemo(() => filterLogsByPeriod(logs, period), [logs, period]);
   const machineOptions = useMemo(() => getMachineOptions(logs), [logs]);
+  const dailyPoints = useMemo(() => aggregateDailySessions(periodLogs), [periodLogs]);
+  const isDailyView = viewMode === 'daily';
 
   useEffect(() => {
     if (machineOptions.length === 0) {
@@ -55,10 +63,13 @@ export function GrowthAnalysisPage() {
     [periodLogs, selectedMachineCode]
   );
 
-  const kpis = useMemo(() => computeMachineKpis(sessions), [sessions]);
+  const machineKpis = useMemo(() => computeMachineKpis(sessions), [sessions]);
+  const dailyKpis = useMemo(() => computeDailyKpis(dailyPoints), [dailyPoints]);
+
   const prAlert = useMemo(
-    () => (selectedMachineCode ? detectPrAlert(logs, selectedMachineCode) : null),
-    [logs, selectedMachineCode]
+    () =>
+      !isDailyView && selectedMachineCode ? detectPrAlert(logs, selectedMachineCode) : null,
+    [isDailyView, logs, selectedMachineCode]
   );
   const ranking = useMemo(() => computeGrowthRanking(logs, period), [logs, period]);
 
@@ -79,19 +90,31 @@ export function GrowthAnalysisPage() {
         logs: periodLogs,
         machineName: selectedMachineName,
       }),
-    enabled: Boolean(selectedMachineCode),
+    enabled: Boolean(selectedMachineCode) && !isDailyView,
   });
 
-  const volumeChartPoints = useMemo(
-    () =>
-      sessions.map((session) => ({
-        label: formatShortDate(session.logDate, i18n.language),
-        value: session.totalVolume,
-      })),
-    [sessions, i18n.language]
-  );
+  const volumeChartPoints = useMemo(() => {
+    if (isDailyView) {
+      return dailyPoints.map((day) => ({
+        label: formatShortDate(day.logDate, i18n.language),
+        value: day.totalVolume,
+      }));
+    }
 
-  const maxWeightChartPoints = useMemo(() => {
+    return sessions.map((session) => ({
+      label: formatShortDate(session.logDate, i18n.language),
+      value: session.totalVolume,
+    }));
+  }, [isDailyView, dailyPoints, sessions, i18n.language]);
+
+  const secondaryChartPoints = useMemo(() => {
+    if (isDailyView) {
+      return dailyPoints.map((day) => ({
+        label: formatShortDate(day.logDate, i18n.language),
+        value: day.machineCount,
+      }));
+    }
+
     let runningMax = 0;
     return sessions.map((session) => {
       runningMax = Math.max(runningMax, session.maxWeight);
@@ -100,10 +123,11 @@ export function GrowthAnalysisPage() {
         value: runningMax,
       };
     });
-  }, [sessions, i18n.language]);
+  }, [isDailyView, dailyPoints, sessions, i18n.language]);
 
   const periodLabel = t(`growthAnalysis.period.${period}`);
   const periodStart = getPeriodStartDate(period);
+  const hasData = machineOptions.length > 0;
 
   if (isLoading) {
     return (
@@ -132,30 +156,54 @@ export function GrowthAnalysisPage() {
     <div className="growth-analysis-page">
       <PageShell
         title={t('growthAnalysis.title')}
-        subtitle={t('growthAnalysis.subtitle')}
+        subtitle={
+          isDailyView ? t('growthAnalysis.daily.subtitle') : t('growthAnalysis.subtitle')
+        }
       />
 
       <div className="growth-analysis-filters card">
         <div className="form-row">
-          <label htmlFor="growth-machine">{t('growthAnalysis.machineSelect')}</label>
-          <select
-            id="growth-machine"
-            className="input"
-            value={selectedMachineCode}
-            onChange={(event) => setSelectedMachineCode(event.target.value)}
-            disabled={machineOptions.length === 0}
+          <span className="form-row__label">{t('growthAnalysis.viewMode.label')}</span>
+          <div
+            className="growth-analysis-period"
+            role="group"
+            aria-label={t('growthAnalysis.viewMode.label')}
           >
-            {machineOptions.length === 0 ? (
-              <option value="">{t('growthAnalysis.noMachines')}</option>
-            ) : (
-              machineOptions.map((option) => (
-                <option key={option.machineCode} value={option.machineCode}>
-                  {option.machineName}
-                </option>
-              ))
-            )}
-          </select>
+            {VIEW_MODES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={`growth-analysis-period__btn${viewMode === value ? ' growth-analysis-period__btn--active' : ''}`}
+                onClick={() => setViewMode(value)}
+              >
+                {t(`growthAnalysis.viewMode.${value}`)}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {!isDailyView ? (
+          <div className="form-row">
+            <label htmlFor="growth-machine">{t('growthAnalysis.machineSelect')}</label>
+            <select
+              id="growth-machine"
+              className="input"
+              value={selectedMachineCode}
+              onChange={(event) => setSelectedMachineCode(event.target.value)}
+              disabled={machineOptions.length === 0}
+            >
+              {machineOptions.length === 0 ? (
+                <option value="">{t('growthAnalysis.noMachines')}</option>
+              ) : (
+                machineOptions.map((option) => (
+                  <option key={option.machineCode} value={option.machineCode}>
+                    {option.machineName}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+        ) : null}
 
         <div className="form-row">
           <span className="form-row__label">{t('growthAnalysis.periodSelect')}</span>
@@ -174,13 +222,13 @@ export function GrowthAnalysisPage() {
         </div>
       </div>
 
-      {machineOptions.length === 0 ? (
+      {!hasData ? (
         <div className="card growth-analysis-empty">
           <p>{t('growthAnalysis.empty')}</p>
         </div>
       ) : (
         <>
-          {prAlert ? (
+          {!isDailyView && prAlert ? (
             <div className="card growth-analysis-pr-alert" role="status">
               <p className="growth-analysis-pr-alert__title">{t('growthAnalysis.prAlert.title')}</p>
               <p className="growth-analysis-pr-alert__machine">{prAlert.machineName}</p>
@@ -204,32 +252,72 @@ export function GrowthAnalysisPage() {
           ) : null}
 
           <section className="growth-analysis-kpis" aria-label={t('growthAnalysis.kpiSection')}>
-            <div className="growth-analysis-kpi card">
-              <span className="growth-analysis-kpi__label">{t('growthAnalysis.kpi.volume')}</span>
-              <strong
-                className={`growth-analysis-kpi__value${
-                  (kpis.volumeGrowthPct ?? 0) >= 0 ? ' growth-analysis-kpi__value--up' : ' growth-analysis-kpi__value--down'
-                }`}
-              >
-                {(kpis.volumeGrowthPct ?? 0) >= 0 ? '▲ ' : '▼ '}
-                {formatGrowthPct(kpis.volumeGrowthPct)}
-              </strong>
-            </div>
-            <div className="growth-analysis-kpi card">
-              <span className="growth-analysis-kpi__label">{t('growthAnalysis.kpi.maxWeight')}</span>
-              <strong
-                className={`growth-analysis-kpi__value${
-                  (kpis.maxWeightDelta ?? 0) >= 0 ? ' growth-analysis-kpi__value--up' : ' growth-analysis-kpi__value--down'
-                }`}
-              >
-                {(kpis.maxWeightDelta ?? 0) >= 0 ? '▲ ' : '▼ '}
-                {formatWeightDelta(kpis.maxWeightDelta)}
-              </strong>
-            </div>
-            <div className="growth-analysis-kpi card">
-              <span className="growth-analysis-kpi__label">{t('growthAnalysis.kpi.workoutCount')}</span>
-              <strong className="growth-analysis-kpi__value">{kpis.workoutCount}{t('growthAnalysis.kpi.times')}</strong>
-            </div>
+            {isDailyView ? (
+              <>
+                <div className="growth-analysis-kpi card">
+                  <span className="growth-analysis-kpi__label">{t('growthAnalysis.daily.kpi.volumeGrowth')}</span>
+                  <strong
+                    className={`growth-analysis-kpi__value${
+                      (dailyKpis.volumeGrowthPct ?? 0) >= 0
+                        ? ' growth-analysis-kpi__value--up'
+                        : ' growth-analysis-kpi__value--down'
+                    }`}
+                  >
+                    {(dailyKpis.volumeGrowthPct ?? 0) >= 0 ? '▲ ' : '▼ '}
+                    {formatGrowthPct(dailyKpis.volumeGrowthPct)}
+                  </strong>
+                </div>
+                <div className="growth-analysis-kpi card">
+                  <span className="growth-analysis-kpi__label">{t('growthAnalysis.daily.kpi.avgVolume')}</span>
+                  <strong className="growth-analysis-kpi__value">
+                    {dailyKpis.avgDailyVolume == null
+                      ? '—'
+                      : `${Math.round(dailyKpis.avgDailyVolume).toLocaleString()}kg`}
+                  </strong>
+                </div>
+                <div className="growth-analysis-kpi card">
+                  <span className="growth-analysis-kpi__label">{t('growthAnalysis.daily.kpi.workoutDays')}</span>
+                  <strong className="growth-analysis-kpi__value">
+                    {dailyKpis.workoutDayCount}{t('growthAnalysis.daily.kpi.days')}
+                  </strong>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="growth-analysis-kpi card">
+                  <span className="growth-analysis-kpi__label">{t('growthAnalysis.kpi.volume')}</span>
+                  <strong
+                    className={`growth-analysis-kpi__value${
+                      (machineKpis.volumeGrowthPct ?? 0) >= 0
+                        ? ' growth-analysis-kpi__value--up'
+                        : ' growth-analysis-kpi__value--down'
+                    }`}
+                  >
+                    {(machineKpis.volumeGrowthPct ?? 0) >= 0 ? '▲ ' : '▼ '}
+                    {formatGrowthPct(machineKpis.volumeGrowthPct)}
+                  </strong>
+                </div>
+                <div className="growth-analysis-kpi card">
+                  <span className="growth-analysis-kpi__label">{t('growthAnalysis.kpi.maxWeight')}</span>
+                  <strong
+                    className={`growth-analysis-kpi__value${
+                      (machineKpis.maxWeightDelta ?? 0) >= 0
+                        ? ' growth-analysis-kpi__value--up'
+                        : ' growth-analysis-kpi__value--down'
+                    }`}
+                  >
+                    {(machineKpis.maxWeightDelta ?? 0) >= 0 ? '▲ ' : '▼ '}
+                    {formatWeightDelta(machineKpis.maxWeightDelta)}
+                  </strong>
+                </div>
+                <div className="growth-analysis-kpi card">
+                  <span className="growth-analysis-kpi__label">{t('growthAnalysis.kpi.workoutCount')}</span>
+                  <strong className="growth-analysis-kpi__value">
+                    {machineKpis.workoutCount}{t('growthAnalysis.kpi.times')}
+                  </strong>
+                </div>
+              </>
+            )}
           </section>
 
           <p className="growth-analysis-period-note">
@@ -238,20 +326,33 @@ export function GrowthAnalysisPage() {
 
           <section className="card growth-analysis-chart-section">
             <div className="growth-analysis-chart-section__header">
-              <h2>{t('growthAnalysis.volumeChart.title')}</h2>
-              {kpis.volumeGrowthPct !== null ? (
+              <h2>
+                {isDailyView
+                  ? t('growthAnalysis.daily.volumeChart.title')
+                  : t('growthAnalysis.volumeChart.title')}
+              </h2>
+              {(isDailyView ? dailyKpis.volumeGrowthPct : machineKpis.volumeGrowthPct) !== null ? (
                 <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
-                  {formatGrowthPct(kpis.volumeGrowthPct)} {t('growthAnalysis.growth')}
+                  {formatGrowthPct(isDailyView ? dailyKpis.volumeGrowthPct : machineKpis.volumeGrowthPct)}{' '}
+                  {t('growthAnalysis.growth')}
                 </span>
               ) : null}
             </div>
-            <p className="growth-analysis-chart-section__desc">{t('growthAnalysis.volumeChart.desc')}</p>
+            <p className="growth-analysis-chart-section__desc">
+              {isDailyView
+                ? t('growthAnalysis.daily.volumeChart.desc')
+                : t('growthAnalysis.volumeChart.desc')}
+            </p>
             {volumeChartPoints.length > 0 ? (
               <LineChart
                 points={volumeChartPoints}
                 unit="kg"
                 showTrend
-                ariaLabel={t('growthAnalysis.volumeChart.title')}
+                ariaLabel={
+                  isDailyView
+                    ? t('growthAnalysis.daily.volumeChart.title')
+                    : t('growthAnalysis.volumeChart.title')
+                }
               />
             ) : (
               <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
@@ -260,43 +361,60 @@ export function GrowthAnalysisPage() {
 
           <section className="card growth-analysis-chart-section">
             <div className="growth-analysis-chart-section__header">
-              <h2>{t('growthAnalysis.maxWeightChart.title')}</h2>
+              <h2>
+                {isDailyView
+                  ? t('growthAnalysis.daily.machineChart.title')
+                  : t('growthAnalysis.maxWeightChart.title')}
+              </h2>
             </div>
-            <p className="growth-analysis-chart-section__desc">{t('growthAnalysis.maxWeightChart.desc')}</p>
-            {kpis.currentPr !== null ? (
+            <p className="growth-analysis-chart-section__desc">
+              {isDailyView
+                ? t('growthAnalysis.daily.machineChart.desc')
+                : t('growthAnalysis.maxWeightChart.desc')}
+            </p>
+            {!isDailyView && machineKpis.currentPr !== null ? (
               <div className="growth-analysis-pr-summary">
                 <div>
                   <span>{t('growthAnalysis.maxWeightChart.previousPr')}</span>
-                  <strong>{kpis.previousPr ?? sessions[0]?.maxWeight ?? 0}kg</strong>
+                  <strong>{machineKpis.previousPr ?? sessions[0]?.maxWeight ?? 0}kg</strong>
                 </div>
                 <div>
                   <span>{t('growthAnalysis.maxWeightChart.currentPr')}</span>
-                  <strong>{kpis.currentPr}kg</strong>
+                  <strong>{machineKpis.currentPr}kg</strong>
                 </div>
-                {kpis.maxWeightDelta !== null ? (
+                {machineKpis.maxWeightDelta !== null ? (
                   <div className="growth-analysis-kpi__value--up">
-                    {formatWeightDelta(kpis.maxWeightDelta)} {t('growthAnalysis.maxWeightChart.rise')}
+                    {formatWeightDelta(machineKpis.maxWeightDelta)}{' '}
+                    {t('growthAnalysis.maxWeightChart.rise')}
                   </div>
                 ) : null}
               </div>
             ) : null}
-            {maxWeightChartPoints.length > 0 ? (
+            {secondaryChartPoints.length > 0 ? (
               <LineChart
-                points={maxWeightChartPoints}
-                unit="kg"
+                points={secondaryChartPoints}
+                unit={isDailyView ? t('growthAnalysis.daily.machineChart.unit') : 'kg'}
                 accentColor="var(--color-accent, #f59e0b)"
-                ariaLabel={t('growthAnalysis.maxWeightChart.title')}
+                ariaLabel={
+                  isDailyView
+                    ? t('growthAnalysis.daily.machineChart.title')
+                    : t('growthAnalysis.maxWeightChart.title')
+                }
               />
             ) : (
               <p className="growth-analysis-chart-empty">{t('growthAnalysis.noDataInPeriod')}</p>
             )}
           </section>
 
-          <GrowthInsightsPanel
-            insights={insights ?? null}
-            isLoading={isInsightsLoading}
-            periodLabel={periodLabel}
-          />
+          {isDailyView ? (
+            <DailyBreakdownList days={dailyPoints} locale={i18n.language} />
+          ) : (
+            <GrowthInsightsPanel
+              insights={insights ?? null}
+              isLoading={isInsightsLoading}
+              periodLabel={periodLabel}
+            />
+          )}
         </>
       )}
 
