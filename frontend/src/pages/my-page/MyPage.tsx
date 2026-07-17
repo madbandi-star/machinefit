@@ -16,6 +16,9 @@ import '@/styles/community.css';
 /** TODO: restore when gym browse link returns to My Page */
 const SHOW_GYMS_LINK = false;
 
+/** TODO: restore when machine request board returns to My Page */
+const SHOW_MACHINE_REQUESTS_LINK = false;
+
 function ListNavLink({ to, label }: { to: string; label: string }) {
   return (
     <Link to={to} className="list-nav__item">
@@ -96,7 +99,9 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.explore')}>
           {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
           <ListNavLink to={ROUTES.BRANDS} label={t('myPage.browseByBrand')} />
-          <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
+          {SHOW_MACHINE_REQUESTS_LINK && (
+            <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
+          )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
         </nav>
       </section>
