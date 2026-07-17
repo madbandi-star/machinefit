@@ -28,12 +28,16 @@ interface BrandRow {
   is_active: boolean;
 }
 
-function mapMachine(row: MachineRow, primaryImageUrl?: string | null): Machine {
+function mapMachine(
+  row: MachineRow,
+  extras?: { primaryImageUrl?: string | null; brandName?: Record<string, string> | null }
+): Machine {
   return {
     id: row.id,
     brandId: row.brand_id,
     code: row.code,
     name: row.name,
+    brandName: extras?.brandName ?? undefined,
     muscleGroup: row.muscle_group,
     machineType: row.machine_type,
     description: row.description ?? undefined,
@@ -43,7 +47,7 @@ function mapMachine(row: MachineRow, primaryImageUrl?: string | null): Machine {
     hasHandle: row.has_handle,
     romType: row.rom_type ?? undefined,
     isActive: row.is_active,
-    primaryImageUrl: primaryImageUrl ?? undefined,
+    primaryImageUrl: extras?.primaryImageUrl ?? undefined,
   };
 }
 
@@ -57,6 +61,11 @@ function mapBrand(row: BrandRow): Brand {
     countryId: row.country_id ?? undefined,
     isActive: row.is_active,
   };
+}
+
+function attachBrandName(machine: Machine): Machine {
+  const brand = MOCK_BRANDS.find((b) => b.id === machine.brandId);
+  return brand ? { ...machine, brandName: brand.name } : machine;
 }
 
 export const machineRepository = {
@@ -78,14 +87,15 @@ export const machineRepository = {
       if (filters.muscleGroup) items = items.filter((m) => m.muscleGroup === filters.muscleGroup);
       if (filters.q) {
         const q = filters.q.toLowerCase();
-        items = items.filter(
-          (m) =>
-            m.code.toLowerCase().includes(q) ||
-            Object.values(m.name).some((n) => n?.toLowerCase().includes(q))
+        items = items.filter((m) =>
+          Object.values(m.name).some((n) => n?.toLowerCase().includes(q))
         );
       }
       const total = items.length;
-      return { items: items.slice(filters.offset, filters.offset + filters.limit), total };
+      return {
+        items: items.slice(filters.offset, filters.offset + filters.limit).map(attachBrandName),
+        total,
+      };
     }
 
     const conditions: string[] = ['m.is_active = true'];
@@ -105,7 +115,7 @@ export const machineRepository = {
       params.push(filters.machineType);
     }
     if (filters.q) {
-      conditions.push(`(m.code ILIKE $${idx} OR m.name::text ILIKE $${idx})`);
+      conditions.push(`m.name::text ILIKE $${idx}`);
       params.push(`%${filters.q}%`);
       idx++;
     }
@@ -118,8 +128,8 @@ export const machineRepository = {
     );
     const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-    const result = await pool.query<MachineRow>(
-      `SELECT m.* FROM machines m
+    const result = await pool.query<MachineRow & { brand_name: Record<string, string> | null }>(
+      `SELECT m.*, b.name AS brand_name FROM machines m
        LEFT JOIN brands b ON b.id = m.brand_id
        ${where}
        ORDER BY m.code ASC
@@ -127,7 +137,12 @@ export const machineRepository = {
       [...params, filters.limit, filters.offset]
     );
 
-    return { items: result.rows.map((row) => mapMachine(row)), total };
+    return {
+      items: result.rows.map((row) =>
+        mapMachine(row, { brandName: row.brand_name ?? undefined })
+      ),
+      total,
+    };
   },
 
   async findByCode(code: string): Promise<Machine | null> {
@@ -148,24 +163,24 @@ export const machineRepository = {
       [code]
     );
     const row = result.rows[0];
-    return row ? mapMachine(row, row.primary_image_url) : null;
+    return row ? mapMachine(row, { primaryImageUrl: row.primary_image_url }) : null;
   },
 
   async findByBrandCode(brandCode: string): Promise<Machine[]> {
     const pool = getPool();
     if (!pool) {
       const prefix = brandCode.split('_')[0];
-      return MOCK_MACHINES.filter((m) => m.code.startsWith(prefix));
+      return MOCK_MACHINES.filter((m) => m.code.startsWith(prefix)).map(attachBrandName);
     }
 
-    const result = await pool.query<MachineRow>(
-      `SELECT m.* FROM machines m
+    const result = await pool.query<MachineRow & { brand_name: Record<string, string> | null }>(
+      `SELECT m.*, b.name AS brand_name FROM machines m
        JOIN brands b ON b.id = m.brand_id
        WHERE b.code = $1 AND m.is_active = true
        ORDER BY m.code ASC`,
       [brandCode]
     );
-    return result.rows.map((row) => mapMachine(row));
+    return result.rows.map((row) => mapMachine(row, { brandName: row.brand_name ?? undefined }));
   },
 
   async findIdByCode(code: string): Promise<string | null> {

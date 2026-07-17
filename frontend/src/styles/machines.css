@@ -300,6 +300,16 @@
   text-overflow: ellipsis;
 }
 
+.machine-list-item__brand {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
 .machine-list-item__chevron {
   flex-shrink: 0;
   color: var(--color-text-muted);

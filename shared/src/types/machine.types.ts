@@ -15,6 +15,8 @@ export interface Machine {
   brandId: string;
   code: string;
   name: LocalizedString;
+  /** Populated when machines are joined with brands (list/search). */
+  brandName?: LocalizedString;
   muscleGroup: string;
   machineType: string;
   description?: LocalizedString;
