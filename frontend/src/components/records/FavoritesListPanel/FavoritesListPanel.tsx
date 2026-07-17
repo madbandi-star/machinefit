@@ -50,7 +50,7 @@ export function FavoritesListPanel() {
     <div className="records-list">
       {data.map((item) => {
         const primaryUrl = item.recommendationId
-          ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`
+          ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}&from=favorites`
           : ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode);
 
         return (

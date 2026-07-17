@@ -119,19 +119,21 @@ export function HistoryListPanel() {
             {datesWithData.size > 0 ? (
               <details className="records-list__calendar-details">
                 <summary className="records-list__calendar-summary">
-                  <span className="records-list__date-filter-label">
-                    {t('machines:history.filterByDate')}
-                  </span>
                   {selectedDate ? (
                     <span className="records-list__date-selected">
                       {formatHistoryDateHeader(selectedDate, i18n.language)}
                     </span>
                   ) : null}
-                  <Icon
-                    name="chevronDown"
-                    size={16}
-                    className="records-list__calendar-chevron"
-                  />
+                  <span className="records-list__calendar-toggle">
+                    <span className="records-list__date-filter-label">
+                      {t('machines:history.filterByDate')}
+                    </span>
+                    <Icon
+                      name="chevronDown"
+                      size={16}
+                      className="records-list__calendar-chevron"
+                    />
+                  </span>
                 </summary>
                 <HistoryDateCalendar
                   datesWithData={datesWithData}
