@@ -36,5 +36,6 @@ Write-Host ''
 Write-Host '=== GitHub -> Settings -> Secrets -> Actions ===' -ForegroundColor Cyan
 Write-Host ''
 Write-Host "VITE_API_BASE_URL=$RenderApiUrl"
+Write-Host 'RENDER_DEPLOY_HOOK_URL=(Render -> machinefit-api -> Settings -> Deploy Hook URL)'
 Write-Host ''
-Write-Host 'Render URL may differ after first deploy. Update GitHub secret if needed.' -ForegroundColor Yellow
+Write-Host 'After adding RENDER_DEPLOY_HOOK_URL, push backend changes to main or run Actions -> Deploy Backend to Render.' -ForegroundColor Yellow

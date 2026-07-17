@@ -66,12 +66,27 @@ Then set these in **GitHub → Settings → Secrets → Actions**:
 | Secret | Value |
 |--------|-------|
 | `VITE_API_BASE_URL` | `https://YOUR-RENDER-APP.onrender.com/api/v1` |
+| `RENDER_DEPLOY_HOOK_URL` | Render Deploy Hook URL (see below) |
 
 Print copy-paste values from local `backend/.env`:
 
 ```powershell
 .\scripts\print-deploy-env.ps1
 ```
+
+#### Render backend auto-deploy (GitHub Actions)
+
+1. Render → **machinefit-api** → **Settings** → **Deploy Hook** → **Create Deploy Hook**
+2. Copy the hook URL
+3. GitHub → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+   - Name: `RENDER_DEPLOY_HOOK_URL`
+   - Value: paste the hook URL
+
+On push to `main` (when `backend/`, `shared/`, or root `package*.json` change), workflow `.github/workflows/backend-deploy.yml` POSTs to the hook and triggers a Render rebuild.
+
+Manual redeploy: GitHub → **Actions** → **Deploy Backend to Render** → **Run workflow**.
+
+If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** off on Render *or* skip adding the secret — otherwise each push may deploy twice.
 
 #### Render (free Web Service — not Blueprint)
 
@@ -137,8 +152,8 @@ Base URL: `http://localhost:3001/api/v1`
 
 ## Deployment
 
-- **Frontend**: GitHub Pages at `/machinefit/` base path
-- **Backend**: Render via `backend/render.yaml`
+- **Frontend**: GitHub Pages at `/machinefit/` base path (`.github/workflows/frontend-deploy.yml`)
+- **Backend**: Render Web Service — manual dashboard deploy, Render GitHub Auto-Deploy, or GitHub Actions deploy hook (`.github/workflows/backend-deploy.yml`)
 
 ## Roadmap
 
