@@ -1,0 +1,21 @@
+---
+description: Auto commit and push to main after completing implementation work
+alwaysApply: true
+---
+
+# Deploy workflow (default)
+
+After finishing implementation or bugfix tasks in this repo, **commit and push to `main` automatically** unless the user explicitly says not to (e.g. "don't commit", "로컬만", "커밋하지 마").
+
+## Steps
+
+1. Run `git status` / `git diff` — do not commit secrets, `.env`, or unused scratch files (e.g. `getApiErrorMessage.ts`).
+2. Commit with a clear message (why, not just what).
+3. Push `origin main` to trigger GitHub Pages frontend deploy.
+4. If `backend/` or `shared/` changed, remind that Render redeploy is needed (Deploy Hook workflow or Render dashboard).
+
+## When to skip auto-deploy
+
+- User-only questions / reviews with no code changes
+- User explicitly forbids commit or push
+- No meaningful changes to commit
