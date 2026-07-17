@@ -389,22 +389,29 @@
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__set-count-row {
-  flex: 1;
+  flex: 0 0 auto;
   justify-content: center;
-  min-width: 0;
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__stepper {
   width: 1.625rem;
   height: 1.625rem;
   font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.recommendation-workout-log--compact .recommendation-workout-log__set-input {
-  width: 2.25rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  font-size: 0.8125rem;
+.recommendation-workout-log__set-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.375rem;
+  padding: 0 0.1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  line-height: 1;
 }
 
 .recommendation-workout-log__save--compact {

@@ -152,19 +152,28 @@ export function WorkoutLogPanel({
         onClick={() => handleSetCountChange(setCount - 1)}
         disabled={setCount <= MIN_SET_COUNT || saveMutation.isPending}
       >
-        −
+        -
       </button>
-      <input
-        id={setCountInputId}
-        className="input recommendation-workout-log__set-input"
-        type="number"
-        min={MIN_SET_COUNT}
-        max={MAX_SET_COUNT}
-        value={setCount}
-        onChange={(e) => handleSetCountChange(Number.parseInt(e.target.value, 10) || MIN_SET_COUNT)}
-        disabled={saveMutation.isPending}
-        aria-label={t('machines:workoutLog.setCount')}
-      />
+      {compact ? (
+        <span
+          className="recommendation-workout-log__set-value"
+          aria-label={t('machines:workoutLog.setCount')}
+        >
+          {setCount}
+        </span>
+      ) : (
+        <input
+          id={setCountInputId}
+          className="input recommendation-workout-log__set-input"
+          type="number"
+          min={MIN_SET_COUNT}
+          max={MAX_SET_COUNT}
+          value={setCount}
+          onChange={(e) => handleSetCountChange(Number.parseInt(e.target.value, 10) || MIN_SET_COUNT)}
+          disabled={saveMutation.isPending}
+          aria-label={t('machines:workoutLog.setCount')}
+        />
+      )}
       <button
         type="button"
         className="recommendation-workout-log__stepper"
