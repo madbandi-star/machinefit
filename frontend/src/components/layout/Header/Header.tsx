@@ -21,9 +21,9 @@ export function Header() {
         Machine<span className="header__logo-fit">Fit</span>
       </Link>
       <div className="header__actions">
-        <PwaInstallButton variant="header" />
         <LanguageSelector />
         <NotificationBell />
+        <PwaInstallButton variant="header" />
         {isAuthenticated ? (
           <Link to={ROUTES.MY_PAGE} className="header__link header__link--desktop">
             {t('nav.myPage')}
