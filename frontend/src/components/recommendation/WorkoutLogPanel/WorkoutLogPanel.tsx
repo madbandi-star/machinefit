@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getUtf8ByteLength, truncateUtf8, WORKOUT_DIARY_MAX_BYTES } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -63,7 +64,9 @@ export function WorkoutLogPanel({
   const [weights, setWeights] = useState<number[]>(() =>
     buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg)
   );
+  const [diary, setDiary] = useState('');
   const [initialized, setInitialized] = useState(false);
+  const diaryBytes = getUtf8ByteLength(diary);
 
   const { data: existingLogs, isLoading } = useQuery({
     queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate),
@@ -86,9 +89,11 @@ export function WorkoutLogPanel({
     if (existingLog) {
       setSetCount(existingLog.setCount);
       setWeights(existingLog.setWeightsKg);
+      setDiary(existingLog.diary ?? '');
     } else {
       setSetCount(DEFAULT_SET_COUNT);
       setWeights(buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg));
+      setDiary('');
     }
 
     setInitialized(true);
@@ -102,6 +107,7 @@ export function WorkoutLogPanel({
         logDate,
         setCount,
         setWeightsKg: weights,
+        diary: diary.trim() || undefined,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
@@ -123,6 +129,10 @@ export function WorkoutLogPanel({
       next[index] = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
       return next;
     });
+  };
+
+  const handleDiaryChange = (value: string) => {
+    setDiary(truncateUtf8(value, WORKOUT_DIARY_MAX_BYTES));
   };
 
   if (!isAuthenticated) {
@@ -216,10 +226,32 @@ export function WorkoutLogPanel({
     </div>
   );
 
+  const diaryField = (
+    <div className="recommendation-workout-log__diary">
+      <div className="recommendation-workout-log__diary-header">
+        <label className="recommendation-workout-log__field-label" htmlFor={`${idPrefix}-diary`}>
+          {t('machines:workoutLog.diaryTitle')}
+        </label>
+        <span className="recommendation-workout-log__diary-bytes">
+          {t('machines:workoutLog.diaryBytes', { used: diaryBytes })}
+        </span>
+      </div>
+      <textarea
+        id={`${idPrefix}-diary`}
+        className="input recommendation-workout-log__diary-input"
+        rows={compact ? 2 : 3}
+        value={diary}
+        placeholder={t('machines:workoutLog.diaryPlaceholder')}
+        onChange={(e) => handleDiaryChange(e.target.value)}
+        disabled={saveMutation.isPending}
+      />
+    </div>
+  );
+
   const saveButton = (
     <button
       type="button"
-      className={`btn btn--primary recommendation-workout-log__save${compact ? ' recommendation-workout-log__save--compact' : ' btn--block'}`}
+      className={`btn btn--primary recommendation-workout-log__save${compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block'}`}
       onClick={() => saveMutation.mutate()}
       disabled={saveMutation.isPending || isLoading}
     >
@@ -236,11 +268,12 @@ export function WorkoutLogPanel({
         <div className="recommendation-workout-log__toolbar">
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
           {setCountControl}
-          {saveButton}
         </div>
         <div className="recommendation-workout-log__weights">
           {weightGrid}
         </div>
+        {diaryField}
+        {saveButton}
       </section>
     );
   }
@@ -265,6 +298,8 @@ export function WorkoutLogPanel({
         <p className="recommendation-workout-log__field-label">{t('machines:workoutLog.weights')}</p>
         {weightGrid}
       </div>
+
+      {diaryField}
 
       {saveButton}
     </section>

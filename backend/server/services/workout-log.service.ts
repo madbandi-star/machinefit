@@ -39,6 +39,7 @@ export const workoutLogService = {
       logDate,
       setCount: input.setCount,
       setWeightsKg: input.setWeightsKg,
+      diary: input.diary,
     });
   },
 };

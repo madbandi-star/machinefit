@@ -412,6 +412,18 @@
   row-gap: 0.05rem;
   min-width: 0;
   flex: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.saved-settings-card--history .saved-settings-card__detail-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.saved-settings-card--history .saved-settings-card__detail-link:active {
+  opacity: 0.92;
 }
 
 .saved-settings-card--history .saved-settings-card__machine-name {

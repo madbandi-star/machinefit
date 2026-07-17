@@ -186,18 +186,19 @@ export function HistoryListPanel() {
             </h2>
 
             {group.items.map((item) => {
+              const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
               const logDate = getLocalDateKey(item.viewedAt);
 
               return (
                 <article key={item.id} className="saved-settings-card saved-settings-card--history">
                   <div className="saved-settings-card__header">
-                    <div className="saved-settings-card__machine">
+                    <Link to={resultUrl} className="saved-settings-card__machine">
                       <strong className="saved-settings-card__machine-name">{item.machineName}</strong>
                       <span className="saved-settings-card__machine-code">{item.machineCode}</span>
                       <span className="saved-settings-card__time saved-settings-card__time--inline">
                         {formatHistoryTime(item.viewedAt, i18n.language)}
                       </span>
-                    </div>
+                    </Link>
                     <button
                       type="button"
                       className="saved-settings-card__remove"
@@ -208,7 +209,13 @@ export function HistoryListPanel() {
                       ×
                     </button>
                   </div>
-                  <RecommendationSettingsPanel settings={item.settings} variant="compact" />
+                  <Link
+                    to={resultUrl}
+                    className="saved-settings-card__detail-link"
+                    aria-label={t('machines:detail.viewLastResult')}
+                  >
+                    <RecommendationSettingsPanel settings={item.settings} variant="compact" />
+                  </Link>
                   <WorkoutLogPanel
                     key={`${item.machineCode}-${logDate}`}
                     machineCode={item.machineCode}

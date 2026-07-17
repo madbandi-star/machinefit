@@ -55,7 +55,10 @@
     "saved": "오늘 수행 기록을 저장했습니다.",
     "loginRequired": "로그인 후 세트·무게 기록을 저장할 수 있습니다.",
     "increaseSets": "세트 수 늘리기",
-    "decreaseSets": "세트 수 줄이기"
+    "decreaseSets": "세트 수 줄이기",
+    "diaryTitle": "운동일지",
+    "diaryPlaceholder": "오늘 운동 메모 (100byte 이내)",
+    "diaryBytes": "{{used}}/100 byte"
   },
   "history": {
     "subtitle": "최근 추천 기록",

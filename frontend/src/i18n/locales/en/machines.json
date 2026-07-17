@@ -55,7 +55,10 @@
     "saved": "Today's workout log saved.",
     "loginRequired": "Sign in to save sets and weights.",
     "increaseSets": "Increase sets",
-    "decreaseSets": "Decrease sets"
+    "decreaseSets": "Decrease sets",
+    "diaryTitle": "Workout diary",
+    "diaryPlaceholder": "Today's workout note (max 100 bytes)",
+    "diaryBytes": "{{used}}/100 bytes"
   },
   "history": {
     "subtitle": "Your recent recommendation history",
