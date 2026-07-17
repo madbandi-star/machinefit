@@ -479,19 +479,23 @@
 
 .profile-card__identity {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.25rem 0.45rem;
-  margin-bottom: 0.2rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
 }
 
 .profile-card__name {
+  flex-shrink: 0;
   font-size: var(--font-size-h3);
   font-weight: 700;
   margin: 0;
 }
 
 .profile-card__sep {
+  flex-shrink: 0;
   color: var(--color-text-muted);
   opacity: 0.55;
   font-size: 0.875rem;
@@ -499,16 +503,22 @@
 }
 
 .profile-card__email {
+  flex: 1;
+  min-width: 0;
   font-size: var(--font-size-body-sm);
   font-weight: 500;
   color: var(--color-text-muted);
-  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.profile-card__meta {
+.profile-card__role {
+  flex-shrink: 0;
   font-size: var(--font-size-body-sm);
+  font-weight: 600;
   color: var(--color-text-muted);
-  margin: 0;
+  text-transform: lowercase;
 }
 
 .my-page .page-shell__header--no-subtitle {

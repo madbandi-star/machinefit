@@ -76,8 +76,8 @@ export function MyPage() {
     <div className="my-page">
       <PageShell title={t('nav.myPage')} action={<PwaInstallButton />}>
         <div className="card profile-card">
-          <div className="profile-card__identity">
-            <h2 className="profile-card__name">{user?.displayName}</h2>
+          <p className="profile-card__identity">
+            <strong className="profile-card__name">{user?.displayName}</strong>
             {user?.email ? (
               <>
                 <span className="profile-card__sep" aria-hidden>
@@ -86,9 +86,14 @@ export function MyPage() {
                 <span className="profile-card__email">{user.email}</span>
               </>
             ) : null}
-          </div>
-          <p className="profile-card__meta">
-            {t('myPage.role')}: {user?.roleCode}
+            {user?.roleCode ? (
+              <>
+                <span className="profile-card__sep" aria-hidden>
+                  ·
+                </span>
+                <span className="profile-card__role">{user.roleCode}</span>
+              </>
+            ) : null}
           </p>
         </div>
 

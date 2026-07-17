@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
-import { Icon } from '@/components/icons/Icon';
+import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
+import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
+import type { MuscleGroup } from '@/constants/muscle-groups';
 import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/machines.css';
 
@@ -30,14 +32,25 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
               alt={name}
               loading="lazy"
             />
+          ) : machine.muscleGroup ? (
+            <div className="machine-hero__muscle-icon" aria-hidden>
+              <MuscleGroupIcon group={machine.muscleGroup as MuscleGroup} size={120} />
+            </div>
           ) : (
             <div className="machine-hero__placeholder" aria-hidden>
-              <Icon name="dumbbell" size={48} />
+              🏋️
             </div>
           )}
         </div>
       )}
-      <h1 className="machine-hero__title">{name}</h1>
+      <h1 className="machine-hero__title">
+        <MachineNameWithMuscle
+          muscleGroup={machine.muscleGroup}
+          name={name}
+          iconSize={28}
+          labelClassName="machine-hero__title-text"
+        />
+      </h1>
       <p className="machine-hero__code">{machine.code}</p>
       <div className="machine-hero__badges">
         <span className="machine-badge machine-badge--muscle">{muscleLabel}</span>
