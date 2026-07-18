@@ -8,13 +8,21 @@ interface GenderPickerProps {
   value: Gender | undefined;
   onChange: (value: Gender) => void;
   invalid?: boolean;
+  compact?: boolean;
 }
 
-export function GenderPicker({ value, onChange, invalid = false }: GenderPickerProps) {
+export function GenderPicker({
+  value,
+  onChange,
+  invalid = false,
+  compact = false,
+}: GenderPickerProps) {
   const { t } = useTranslation();
 
   return (
-    <div className={`gender-picker${invalid ? ' gender-picker--invalid' : ''}`}>
+    <div
+      className={`gender-picker${compact ? ' gender-picker--compact' : ''}${invalid ? ' gender-picker--invalid' : ''}`}
+    >
       <span className="gender-picker__label">{t('auth.gender')}</span>
       <div className="gender-picker__options" role="group" aria-label={t('auth.gender')}>
         {GENDERS.map((gender) => (

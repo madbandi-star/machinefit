@@ -115,24 +115,29 @@ export function LoginPage() {
         <p className="auth-hero__eyebrow">{t('auth.loginEyebrow')}</p>
         <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
         <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
-        <ul className="auth-hero__features">
-          <li>
-            <Icon name="dumbbell" size={18} />
-            <span>{t('auth.loginFeature1')}</span>
-          </li>
-          <li>
-            <Icon name="machines" size={18} />
-            <span>{t('auth.loginFeature2')}</span>
-          </li>
-          <li>
-            <Icon name="growthAnalysis" size={18} />
-            <span>{t('auth.loginFeature3')}</span>
-          </li>
-        </ul>
-        <Link to={ROUTES.MACHINES} className="auth-hero__browse-btn">
-          <Icon name="machines" size={16} />
-          <span>{t('auth.loginBrowseMachines')}</span>
-        </Link>
+        <div className="auth-hero__bottom">
+          <ul className="auth-hero__features">
+            <li>
+              <Icon name="dumbbell" size={18} />
+              <span>{t('auth.loginFeature1')}</span>
+            </li>
+            <li>
+              <Icon name="machines" size={18} />
+              <span>{t('auth.loginFeature2')}</span>
+            </li>
+            <li>
+              <Icon name="growthAnalysis" size={18} />
+              <span>{t('auth.loginFeature3')}</span>
+            </li>
+          </ul>
+          <Link to={ROUTES.MACHINES} className="auth-hero__browse-btn">
+            <span className="auth-hero__browse-btn-icon" aria-hidden>
+              <Icon name="search" size={18} />
+            </span>
+            <span className="auth-hero__browse-btn-label">{t('auth.loginBrowseMachines')}</span>
+            <Icon name="chevronRight" size={16} className="auth-hero__browse-btn-chevron" />
+          </Link>
+        </div>
       </section>
 
       <form className="auth-form" onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }}>

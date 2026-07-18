@@ -75,6 +75,8 @@
     "emailLabel": "이메일",
     "emailLocalPlaceholder": "아이디",
     "emailDomainLabel": "이메일 도메인",
+    "emailDomainCustom": "직접 입력",
+    "emailCustomDomainPlaceholder": "example.com",
     "passwordPlaceholder": "비밀번호",
     "passwordMinPlaceholder": "비밀번호 (8자 이상)",
     "displayNamePlaceholder": "표시 이름",

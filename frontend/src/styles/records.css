@@ -594,6 +594,20 @@
   padding-top: 0.35rem;
 }
 
+.saved-settings-card--history .recommendation-workout-log--compact .recommendation-workout-log__actions .btn,
+.saved-settings-card--history .recommendation-workout-log--compact > .btn.recommendation-workout-log__save--compact {
+  min-height: var(--touch-target-min);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+
+.saved-settings-card--history .recommendation-workout-log__actions {
+  gap: 0.4rem;
+}
+
 .favorite-row {
   display: flex;
   align-items: center;

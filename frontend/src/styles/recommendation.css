@@ -194,6 +194,126 @@
   gap: 0.5rem;
 }
 
+.recommendation-settings-panel--result {
+  gap: 0;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg) 35%, var(--glass-bg));
+}
+
+.recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card {
+  min-height: auto;
+  padding: 0.4rem 0.45rem;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: var(--color-surface);
+  gap: 0.2rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card--highlight {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  box-shadow: none;
+}
+
+.recommendation-settings-panel--result .setting-value-card__label {
+  font-size: 0.5625rem;
+  letter-spacing: 0.05em;
+}
+
+.recommendation-settings-panel--result .setting-value-card__value {
+  font-size: 1.0625rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card__unit {
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.recommendation-settings-panel--result .weight-basis-trigger {
+  font-size: 0.625rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card__value-row--compare {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.35rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card__compare-block {
+  flex: 1 1 4.5rem;
+  min-width: 0;
+}
+
+.recommendation-settings-panel--result .setting-value-card__compare-block--adjust {
+  flex: 1.35 1 6.5rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.recommendation-settings-panel--result .setting-value-card__compare-label {
+  font-size: 0.5625rem;
+  flex: 0 0 auto;
+  min-width: 1.75rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card__compare-block:not(.setting-value-card__compare-block--adjust) .setting-value-card__value {
+  font-size: 0.9375rem;
+}
+
+.recommendation-settings-panel--result .setting-value-card__compare-block--adjust .numeric-stepper {
+  flex: 1;
+  min-width: 0;
+}
+
+.recommendation-settings-panel--result .setting-value-card__adjust-input {
+  min-height: var(--control-height-dense);
+  padding: 0.3rem 0.4rem;
+  font-size: 0.8125rem;
+}
+
+.recommendation-settings-panel--result.recommendation-settings-panel--adjusting .recommendation-settings-panel__grid--dense {
+  grid-template-columns: 1fr;
+  gap: 0.3rem;
+}
+
+.recommendation-settings-panel--result .recommendation-settings-panel__save-row {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.recommendation-settings-panel--result .recommendation-settings-panel__save-row .btn {
+  min-height: var(--control-height-compact);
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 768px) {
+  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .recommendation-settings-panel__empty {
   color: var(--color-text-muted);
   font-size: 0.9rem;
@@ -516,11 +636,15 @@
   margin-top: 0.15rem;
 }
 
+.recommendation-workout-log--compact .recommendation-workout-log__save {
+  margin-top: 0.35rem;
+}
+
 .recommendation-workout-log__save--saved {
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
   color: var(--color-primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .recommendation-workout-log__actions {
@@ -744,10 +868,14 @@
   line-height: 1.35;
 }
 
-.recommendation-workout-log--compact .recommendation-workout-log__save--compact {
-  min-height: 1.625rem;
-  padding: 0.28rem 0.45rem;
-  font-size: 0.625rem;
+.recommendation-workout-log--compact .recommendation-workout-log__actions .btn,
+.recommendation-workout-log--compact > .btn.recommendation-workout-log__save--compact {
+  min-height: var(--control-height-compact);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__actions {
@@ -802,15 +930,17 @@
 
 .recommendation-workout-log__save--compact {
   flex-shrink: 0;
-  margin-top: 0;
-  padding: 0.35rem 0.55rem;
-  font-size: 0.6875rem;
-  line-height: 1.2;
-  min-height: 1.75rem;
+  margin-top: 0.15rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25;
+  min-height: var(--control-height-compact);
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__save--compact {
   width: 100%;
+  margin-top: 0.35rem;
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__weight-grid {
@@ -987,8 +1117,12 @@
 }
 
 .recommendation-settings-panel__grid .setting-value-card-skeleton {
-  min-height: 3.5rem;
-  border-radius: var(--radius-md);
+  min-height: 3.25rem;
+  border-radius: var(--radius-sm);
+}
+
+.recommendation-settings-panel--result .setting-value-card-skeleton {
+  min-height: 2.75rem;
 }
 
 @media (min-width: 768px) {
@@ -1260,6 +1394,10 @@
 }
 
 .fit-feedback-panel__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   background: var(--color-bg-secondary);
@@ -1269,6 +1407,15 @@
   line-height: 1.25;
   text-align: center;
   cursor: pointer;
+}
+
+.fit-feedback-panel__btn svg {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.fit-feedback-panel__btn--active svg {
+  color: var(--color-primary);
 }
 
 .fit-feedback-panel__btn--active {

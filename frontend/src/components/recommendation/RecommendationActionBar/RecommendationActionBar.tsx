@@ -1,9 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
-import { ROUTES } from '@/constants/routes';
-import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import '@/styles/recommendation.css';
 
 interface RecommendationActionBarProps {
@@ -15,15 +11,12 @@ interface RecommendationActionBarProps {
 }
 
 export function RecommendationActionBar({
-  machineCode,
   isFavorited,
   onToggleFavorite,
   isFavoritePending,
   fixed = false,
 }: RecommendationActionBarProps) {
   const { t } = useTranslation('machines');
-  const { requestRecommendation, isPending: isRetrying } = useRecommendMachine(machineCode);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const barClass = [
     'recommendation-action-bar',
@@ -38,7 +31,7 @@ export function RecommendationActionBar({
         <button
           type="button"
           className={[
-            'btn recommendation-action-bar__save',
+            'btn recommendation-action-bar__save btn--block',
             isFavorited ? 'btn--secondary recommendation-action-bar__save--active' : 'btn--primary',
           ].join(' ')}
           onClick={onToggleFavorite}
@@ -52,42 +45,7 @@ export function RecommendationActionBar({
               ? t('recommendation.removeFavorite')
               : t('recommendation.saveFavorite')}
         </button>
-        <button
-          type="button"
-          className="recommendation-action-bar__more"
-          aria-expanded={menuOpen}
-          aria-label={t('recommendation.moreActions')}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <Icon name="moreHorizontal" size={20} />
-        </button>
       </div>
-      {menuOpen && (
-        <div className="recommendation-action-bar__menu" role="menu">
-          <button
-            type="button"
-            className="recommendation-action-bar__menu-item"
-            role="menuitem"
-            onClick={() => {
-              setMenuOpen(false);
-              requestRecommendation();
-            }}
-            disabled={isRetrying}
-          >
-            <Icon name="refresh" size={18} />
-            {isRetrying ? '...' : t('recommendation.retryRecommend')}
-          </button>
-          <Link
-            to={`${ROUTES.GYMS}?machineCode=${machineCode}`}
-            className="recommendation-action-bar__menu-item"
-            role="menuitem"
-            onClick={() => setMenuOpen(false)}
-          >
-            <Icon name="mapPin" size={18} />
-            {t('recommendation.findGyms')}
-          </Link>
-        </div>
-      )}
     </div>
   );
 }

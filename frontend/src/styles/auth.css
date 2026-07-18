@@ -5,7 +5,6 @@
 
 .auth-hero {
   padding: var(--space-lg);
-  padding-bottom: 3.5rem;
   margin-bottom: var(--space-lg);
   position: relative;
   overflow: hidden;
@@ -51,6 +50,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.auth-hero__bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: 0.15rem;
 }
 
 .auth-hero__features li {
@@ -67,34 +76,61 @@
 }
 
 .auth-hero__browse-btn {
-  position: absolute;
-  right: var(--space-md);
-  bottom: var(--space-md);
-  z-index: 1;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  min-height: 2.125rem;
-  padding: 0.4rem 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  gap: 0.5rem;
+  min-height: var(--touch-target-min);
+  padding: 0.55rem 0.85rem 0.55rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--glass-bg));
-  color: var(--color-primary);
-  font-size: 0.8125rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 16%, var(--color-surface)) 0%,
+    color-mix(in srgb, var(--color-primary) 8%, var(--color-surface-alt)) 100%
+  );
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  font-size: 0.875rem;
   font-weight: 700;
   line-height: 1.2;
   text-decoration: none;
-  white-space: nowrap;
   transition:
     background var(--motion-fast),
     border-color var(--motion-fast),
-    color var(--motion-fast);
+    transform var(--motion-fast);
+}
+
+.auth-hero__browse-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary);
+}
+
+.auth-hero__browse-btn-label {
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.auth-hero__browse-btn-chevron {
+  flex-shrink: 0;
+  color: var(--color-primary);
+  opacity: 0.9;
 }
 
 .auth-hero__browse-btn:hover {
-  background: color-mix(in srgb, var(--color-primary) 16%, var(--glass-bg));
-  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--glass-border));
-  color: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--glass-border));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 22%, var(--color-surface)) 0%,
+    color-mix(in srgb, var(--color-primary) 12%, var(--color-surface-alt)) 100%
+  );
+  transform: translateY(-1px);
 }
 
 .auth-hero__browse-btn:focus-visible {
@@ -102,8 +138,16 @@
   outline-offset: 2px;
 }
 
-.auth-hero__browse-btn svg {
-  flex-shrink: 0;
+@media (max-width: 420px) {
+  .auth-hero__bottom {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .auth-hero__browse-btn {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .auth-form {

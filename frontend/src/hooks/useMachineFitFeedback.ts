@@ -2,18 +2,39 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings } from '@machinefit/shared';
+import { roundRecommendWeightKg } from '@machinefit/shared';
 import { machinePreferenceApi, recommendationFeedbackApi, type FitRating } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 
 interface UseMachineFitFeedbackOptions {
   recommendationId: string;
   machineCode: string;
+  recommendedSettings?: RecommendationSettings;
   enabled?: boolean;
+}
+
+function seedCustomSettingsFromRecommendation(
+  settings: RecommendationSettings
+): Partial<RecommendationSettings> {
+  const seeded: Partial<RecommendationSettings> = {
+    seatPosition: settings.seatPosition,
+    backPadPosition: settings.backPadPosition,
+    footPosition: settings.footPosition,
+    handlePosition: settings.handlePosition,
+    romSetting: settings.romSetting,
+  };
+
+  if (settings.recommendedWeightKg != null) {
+    seeded.recommendedWeightKg = roundRecommendWeightKg(settings.recommendedWeightKg);
+  }
+
+  return seeded;
 }
 
 export function useMachineFitFeedback({
   recommendationId,
   machineCode,
+  recommendedSettings,
   enabled = true,
 }: UseMachineFitFeedbackOptions) {
   const { t } = useTranslation(['machines', 'common']);
@@ -38,10 +59,23 @@ export function useMachineFitFeedback({
   useEffect(() => {
     if (savedPreferences) {
       setCustomSettings(savedPreferences);
-    } else {
-      setCustomSettings({});
+      return;
     }
+
+    setCustomSettings({});
   }, [savedPreferences]);
+
+  useEffect(() => {
+    if (savedRating !== 'bad' || !recommendedSettings) return;
+
+    setCustomSettings((prev) => {
+      if (savedPreferences && Object.keys(savedPreferences).length > 0) {
+        return savedPreferences;
+      }
+      if (Object.keys(prev).length > 0) return prev;
+      return seedCustomSettingsFromRecommendation(recommendedSettings);
+    });
+  }, [savedRating, recommendedSettings, savedPreferences]);
 
   const feedbackMutation = useMutation({
     mutationFn: (fitRating: FitRating) =>
@@ -72,6 +106,16 @@ export function useMachineFitFeedback({
   });
 
   const handleRating = (fitRating: FitRating) => {
+    if (fitRating === 'bad' && recommendedSettings) {
+      setCustomSettings((prev) => {
+        if (savedPreferences && Object.keys(savedPreferences).length > 0) {
+          return savedPreferences;
+        }
+        if (Object.keys(prev).length > 0) return prev;
+        return seedCustomSettingsFromRecommendation(recommendedSettings);
+      });
+    }
+
     feedbackMutation.mutate(fitRating);
   };
 

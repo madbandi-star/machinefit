@@ -7,6 +7,7 @@ interface WeightStepperProps {
   value: number;
   onChange: (value: number) => void;
   step?: number;
+  manualStep?: number;
   size?: 'default' | 'compact';
   disabled?: boolean;
   id?: string;
@@ -28,6 +29,7 @@ export function WeightStepper({
   value,
   onChange,
   step = 5,
+  manualStep = 1,
   size = 'default',
   disabled = false,
   id,
@@ -43,7 +45,7 @@ export function WeightStepper({
   const { t } = useTranslation('machines');
 
   const handleChange = (next: number | undefined) => {
-    onChange(roundToWeightStep(next ?? 0, step));
+    onChange(formatWeight(next ?? 0));
   };
 
   const suggested =
@@ -87,12 +89,13 @@ export function WeightStepper({
         min={0}
         max={999}
         step={step}
+        manualStep={manualStep}
         unit="kg"
         size={size}
         disabled={disabled}
         ariaLabel={ariaLabel}
         emptyLabel="0"
-        allowManualInput={size !== 'compact'}
+        allowManualInput
       />
       {showQuickActions && visibleChips.length > 0 ? (
         <div className="weight-stepper__chips" role="group" aria-label={t('workoutLog.quickActions')}>

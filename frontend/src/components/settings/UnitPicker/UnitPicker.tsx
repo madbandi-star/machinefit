@@ -11,6 +11,7 @@ interface UnitPickerProps<T extends string> {
   value: T;
   options: UnitOption<T>[];
   onChange: (value: T) => void;
+  compact?: boolean;
 }
 
 export function UnitPicker<T extends string>({
@@ -18,9 +19,10 @@ export function UnitPicker<T extends string>({
   value,
   options,
   onChange,
+  compact = false,
 }: UnitPickerProps<T>) {
   return (
-    <div className="unit-picker">
+    <div className={`unit-picker${compact ? ' unit-picker--compact' : ''}`}>
       <span className="unit-picker__label">{label}</span>
       <div className="unit-picker__options" role="group" aria-label={label}>
         {options.map((option) => (

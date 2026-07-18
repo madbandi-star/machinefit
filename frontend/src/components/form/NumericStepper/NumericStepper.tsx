@@ -16,6 +16,7 @@ interface NumericStepperProps {
   min?: number;
   max?: number;
   step?: number;
+  manualStep?: number;
   size?: 'default' | 'compact';
   disabled?: boolean;
   unit?: string;
@@ -32,6 +33,7 @@ export function NumericStepper({
   min = 0,
   max = 999,
   step = 1,
+  manualStep,
   size = 'default',
   disabled = false,
   unit,
@@ -45,12 +47,14 @@ export function NumericStepper({
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const [manualOpen, setManualOpen] = useState(false);
+  const inputStep = manualStep ?? step;
   const decimalPlaces = getDecimalPlaces(step);
+  const manualDecimalPlaces = getDecimalPlaces(inputStep);
   const hasValue = value != null && Number.isFinite(value);
   const currentValue = hasValue ? clampNumber(value, min, max) : min;
 
-  const emitChange = (next: number) => {
-    onChange(clampNumber(roundToStep(next, step), min, max));
+  const emitChange = (next: number, roundingStep = step) => {
+    onChange(clampNumber(roundToStep(next, roundingStep), min, max));
   };
 
   const decrease = () => {
@@ -83,7 +87,7 @@ export function NumericStepper({
     }
     const parsed = Number.parseFloat(raw);
     if (!Number.isFinite(parsed)) return;
-    emitChange(parsed);
+    emitChange(parsed, inputStep);
   };
 
   return (
@@ -115,10 +119,10 @@ export function NumericStepper({
             id={inputId}
             className="numeric-stepper__manual-input"
             type="number"
-            inputMode={decimalPlaces > 0 ? 'decimal' : 'numeric'}
+            inputMode={manualDecimalPlaces > 0 ? 'decimal' : 'numeric'}
             min={min}
             max={max}
-            step={step}
+            step={inputStep}
             value={hasValue ? currentValue : ''}
             disabled={disabled}
             aria-label={ariaLabel}

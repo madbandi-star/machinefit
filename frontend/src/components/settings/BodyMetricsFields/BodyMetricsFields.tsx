@@ -189,14 +189,12 @@ export function BodyMetricsFields({
               onChange={handleWeightKgValue}
               min={30}
               max={300}
-              step={0.5}
+              step={1}
               size={pickerSize}
               defaultValue={DEFAULT_WEIGHT_KG}
               initializeOnMount={initWeight}
               ariaLabel={t('auth.weightLabel')}
-              formatValue={(value) =>
-                Number.isInteger(value) ? String(value) : value.toFixed(1)
-              }
+              formatValue={(value) => String(value)}
             />
           ) : (
             <ScrollPicker

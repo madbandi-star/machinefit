@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { FitRating } from '@/api';
+import { Icon } from '@/components/icons/Icon';
 import '@/styles/recommendation.css';
 
 interface FitFeedbackPanelProps {
@@ -21,6 +22,7 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           disabled={isPending}
           aria-pressed={savedRating === 'good'}
         >
+          <Icon name="thumbUp" size={18} />
           {t('feedback.good')}
         </button>
         <button
@@ -30,6 +32,7 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           disabled={isPending}
           aria-pressed={savedRating === 'bad'}
         >
+          <Icon name="thumbDown" size={18} />
           {t('feedback.bad')}
         </button>
       </div>

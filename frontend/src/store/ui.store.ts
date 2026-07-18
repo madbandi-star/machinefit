@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const TOAST_DURATION_MS = 3000;
+export const TOAST_DURATION_MS = 1500;
 
 interface ToastState {
   message: string;

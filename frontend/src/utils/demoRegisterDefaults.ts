@@ -46,5 +46,13 @@ export function markDemoRegisterSlotUsed(): void {
 }
 
 export function buildDemoEmail(localPart: string, domain: string): string {
-  return `${localPart.trim()}@${domain}`;
+  return `${localPart.trim()}@${normalizeEmailDomain(domain)}`;
+}
+
+export function normalizeEmailDomain(domain: string): string {
+  return domain.trim().replace(/^@+/, '').toLowerCase();
+}
+
+export function isPopularEmailDomain(domain: string): domain is PopularEmailDomain {
+  return (POPULAR_EMAIL_DOMAINS as readonly string[]).includes(domain);
 }

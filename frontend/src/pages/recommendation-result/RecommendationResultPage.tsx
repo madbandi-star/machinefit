@@ -25,10 +25,9 @@ import '@/styles/recommendation.css';
 
 function ResultLoadingSkeleton() {
   return (
-    <div className="recommendation-settings-panel recommendation-settings-panel--dashboard" aria-hidden="true">
-      <div className="setting-value-card-skeleton skeleton" />
-      <div className="recommendation-settings-panel__grid">
-        {[0, 1].map((i) => (
+    <div className="recommendation-settings-panel recommendation-settings-panel--result" aria-hidden="true">
+      <div className="recommendation-settings-panel__grid recommendation-settings-panel__grid--dense">
+        {[0, 1, 2, 3, 4].map((i) => (
           <div key={i} className="setting-value-card-skeleton skeleton" />
         ))}
       </div>
@@ -63,6 +62,7 @@ export function RecommendationResultPage() {
   const fitFeedback = useMachineFitFeedback({
     recommendationId: result?.id ?? '',
     machineCode: result?.machineCode ?? '',
+    recommendedSettings: result?.settings,
     enabled: isAuthenticated && !!result?.id,
   });
 
@@ -154,11 +154,10 @@ export function RecommendationResultPage() {
 
       <div className="recommendation-result-page__content">
         <RecommendationWarnings warnings={result.warnings} />
-        <RecommendationTips tips={result.tips} />
         <RecommendationSettingsPanel
           settings={result.settings}
           weightBasis={result.weightBasis}
-          variant="hero"
+          variant="result"
           showAdjustment={fitFeedback.showAdjustment}
           customSettings={fitFeedback.customSettings}
           onCustomChange={fitFeedback.handleCustomChange}
@@ -179,9 +178,11 @@ export function RecommendationResultPage() {
           suggestedWeightKg={result.settings.recommendedWeightKg}
           isAuthenticated={isAuthenticated}
           variant="compact"
+          diaryDefaultOpen
           logDate={getLocalDateKey(result.createdAt)}
           targetMuscleGroup={result.targetMuscleGroup}
         />
+        <RecommendationTips tips={result.tips} />
       </div>
 
       <RecommendationActionBar

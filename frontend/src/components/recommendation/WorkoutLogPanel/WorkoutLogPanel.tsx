@@ -35,6 +35,7 @@ interface WorkoutLogPanelProps {
   idPrefix?: string;
   targetMuscleGroup?: TargetMuscleGroup;
   lockTargetMuscle?: boolean;
+  diaryDefaultOpen?: boolean;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -69,6 +70,16 @@ function resizeCompleted(current: boolean[], nextCount: number): boolean[] {
   return [...current, ...Array.from({ length: nextCount - current.length }, () => false)];
 }
 
+function booleansEqual(a: boolean[], b: boolean[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+}
+
+function weightsEqual(a: number[], b: number[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+}
+
 export function WorkoutLogPanel({
   machineCode,
   machineName: _machineName,
@@ -80,6 +91,7 @@ export function WorkoutLogPanel({
   idPrefix = 'workout',
   targetMuscleGroup,
   lockTargetMuscle = false,
+  diaryDefaultOpen = false,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -105,6 +117,7 @@ export function WorkoutLogPanel({
     buildDefaultCompleted(DEFAULT_SET_COUNT)
   );
   const [diary, setDiary] = useState('');
+  const [diaryExpanded, setDiaryExpanded] = useState(diaryDefaultOpen);
   const [initialized, setInitialized] = useState(false);
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
@@ -144,9 +157,9 @@ export function WorkoutLogPanel({
     isLogSaved &&
     initialized &&
     (setCount !== savedSnapshot.setCount ||
-      JSON.stringify(weights) !== JSON.stringify(savedSnapshot.weights) ||
-      JSON.stringify(setCompleted) !== JSON.stringify(savedSnapshot.setCompleted) ||
-      diary !== savedSnapshot.diary);
+      !weightsEqual(weights, savedSnapshot.weights) ||
+      !booleansEqual(setCompleted, savedSnapshot.setCompleted) ||
+      diary.trim() !== savedSnapshot.diary.trim());
 
   const invalidateLogQueries = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
@@ -201,6 +214,7 @@ export function WorkoutLogPanel({
       }),
     onSuccess: async () => {
       await invalidateLogQueries();
+      setInitialized(false);
       showToast(
         isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
         'success'
@@ -448,7 +462,11 @@ export function WorkoutLogPanel({
   );
 
   const diaryField = compact ? (
-    <details className="recommendation-workout-log__diary-details">
+    <details
+      className="recommendation-workout-log__diary-details"
+      open={diaryExpanded}
+      onToggle={(e) => setDiaryExpanded(e.currentTarget.open)}
+    >
       <summary className="recommendation-workout-log__diary-summary">
         <span>{t('machines:workoutLog.diaryTitle')}</span>
         {diary.trim() ? (
@@ -509,19 +527,17 @@ export function WorkoutLogPanel({
 
   const saveButton = isLogSaved ? (
     <div className="recommendation-workout-log__actions">
-      {isDirty ? (
-        <button
-          type="button"
-          className={[
-            'btn recommendation-workout-log__save btn--primary',
-            compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block',
-          ].join('')}
-          onClick={handleSave}
-          disabled={isActionPending || isLoading}
-        >
-          {saveMutation.isPending ? t('machines:workoutLog.updating') : t('machines:workoutLog.update')}
-        </button>
-      ) : null}
+      <button
+        type="button"
+        className={[
+          'btn recommendation-workout-log__save btn--primary',
+          compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block',
+        ].join('')}
+        onClick={handleSave}
+        disabled={!isDirty || isActionPending || isLoading}
+      >
+        {saveMutation.isPending ? t('machines:workoutLog.updating') : t('machines:workoutLog.update')}
+      </button>
       <button
         type="button"
         className={[

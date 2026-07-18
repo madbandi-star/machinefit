@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, UnitHeight, UnitWeight, WorkoutGoal } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { RegisterEmailField } from '@/components/auth/RegisterEmailField/RegisterEmailField';
+import { RegisterEmailField, type EmailDomainPreset } from '@/components/auth/RegisterEmailField/RegisterEmailField';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
@@ -27,7 +27,7 @@ import {
   DEMO_REGISTER_PASSWORD,
   getDemoRegisterSlot,
   markDemoRegisterSlotUsed,
-  type PopularEmailDomain,
+  normalizeEmailDomain,
 } from '@/utils/demoRegisterDefaults';
 import {
   getMissingRegisterFields,
@@ -53,7 +53,8 @@ export function RegisterPage() {
   const demoSlot = useMemo(() => getDemoRegisterSlot(), []);
 
   const [emailLocal, setEmailLocal] = useState(demoSlot.emailLocal);
-  const [emailDomain, setEmailDomain] = useState<PopularEmailDomain>('gmail.com');
+  const [emailDomainPreset, setEmailDomainPreset] = useState<EmailDomainPreset>('gmail.com');
+  const [emailCustomDomain, setEmailCustomDomain] = useState('');
   const [password, setPassword] = useState(DEMO_REGISTER_PASSWORD);
   const [displayName, setDisplayName] = useState(demoSlot.displayName);
   const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
@@ -61,7 +62,7 @@ export function RegisterPage() {
   const [heightCm, setHeightCm] = useState<number | undefined>(undefined);
   const [weightKg, setWeightKg] = useState<number | undefined>(undefined);
   const [age, setAge] = useState<number | undefined>(undefined);
-  const [gender, setGender] = useState<Gender | undefined>(undefined);
+  const [gender, setGender] = useState<Gender>('male');
   const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal>('hypertrophy');
   const [homeGym, setHomeGym] = useState<HomeGymValue>({ homeGymName: DEMO_HOME_GYM_NAME });
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>('beginner');
@@ -71,7 +72,11 @@ export function RegisterPage() {
     message: '',
   });
 
-  const email = buildDemoEmail(emailLocal, emailDomain);
+  const resolvedEmailDomain =
+    emailDomainPreset === 'custom'
+      ? normalizeEmailDomain(emailCustomDomain)
+      : emailDomainPreset;
+  const email = buildDemoEmail(emailLocal, resolvedEmailDomain);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -157,9 +162,11 @@ export function RegisterPage() {
         />
         <RegisterEmailField
           localPart={emailLocal}
-          domain={emailDomain}
+          domainPreset={emailDomainPreset}
+          customDomain={emailCustomDomain}
           onLocalPartChange={setEmailLocal}
-          onDomainChange={setEmailDomain}
+          onDomainPresetChange={setEmailDomainPreset}
+          onCustomDomainChange={setEmailCustomDomain}
           invalid={hasError('email')}
         />
         <input
@@ -173,30 +180,30 @@ export function RegisterPage() {
         />
 
         <section className="form-section">
-          <h3 className="form-section__title">{t('auth.unitSettings')}</h3>
-          <p className="form-section__desc">{t('auth.unitSettingsDesc')}</p>
-          <UnitPicker
-            label={t('auth.heightUnit')}
-            value={unitHeight}
-            options={HEIGHT_UNIT_OPTIONS}
-            onChange={setUnitHeight}
-          />
-          <UnitPicker
-            label={t('auth.weightUnit')}
-            value={unitWeight}
-            options={WEIGHT_UNIT_OPTIONS}
-            onChange={setUnitWeight}
-          />
-        </section>
-
-        <section className="form-section">
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
           <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
-          <GenderPicker
-            value={gender}
-            onChange={setGender}
-            invalid={hasError('gender')}
-          />
+          <div className="register-unit-settings" aria-label={t('auth.unitSettings')}>
+            <UnitPicker
+              compact
+              label={t('auth.heightLabel')}
+              value={unitHeight}
+              options={HEIGHT_UNIT_OPTIONS}
+              onChange={setUnitHeight}
+            />
+            <UnitPicker
+              compact
+              label={t('auth.weightLabel')}
+              value={unitWeight}
+              options={WEIGHT_UNIT_OPTIONS}
+              onChange={setUnitWeight}
+            />
+            <GenderPicker
+              compact
+              value={gender}
+              onChange={setGender}
+              invalid={hasError('gender')}
+            />
+          </div>
           <BodyMetricsFields
             unitHeight={unitHeight}
             unitWeight={unitWeight}

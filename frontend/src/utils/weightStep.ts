@@ -1,4 +1,4 @@
-/** Workout / machine weight increments (kg). Body profile weight uses its own finer step. */
+/** Workout / machine weight increments (kg). Body profile weight uses 1 kg steps in ScrollPicker. */
 export const WORKOUT_WEIGHT_STEP_KG = 5;
 
 export function getWeightStepKg(_machineCode?: string): number {

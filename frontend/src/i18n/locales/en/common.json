@@ -75,6 +75,8 @@
     "emailLabel": "Email",
     "emailLocalPlaceholder": "Username",
     "emailDomainLabel": "Email domain",
+    "emailDomainCustom": "Custom",
+    "emailCustomDomainPlaceholder": "example.com",
     "passwordPlaceholder": "Password",
     "passwordMinPlaceholder": "Password (min 8 chars)",
     "displayNamePlaceholder": "Display Name",

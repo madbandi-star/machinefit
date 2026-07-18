@@ -36,7 +36,7 @@ interface SettingDisplayItem {
 interface RecommendationSettingsPanelProps {
   settings: RecommendationSettings;
   weightBasis?: WeightRecommendationBasis;
-  variant?: 'hero' | 'compact';
+  variant?: 'hero' | 'compact' | 'result';
   showAdjustment?: boolean;
   customSettings?: Partial<RecommendationSettings>;
   onCustomChange?: (
@@ -76,7 +76,7 @@ function renderSettingCard(
     adjustedLabel: string;
   }
 ) {
-  const adjusted = options.customSettings?.[item.key];
+  const adjusted = options.customSettings?.[item.key] ?? item.rawValue;
   const adjustedValue = adjusted != null ? String(adjusted) : '';
 
   return (
@@ -113,7 +113,7 @@ export function RecommendationSettingsPanel({
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
   const [basisOpen, setBasisOpen] = useState(false);
-  const compact = variant === 'compact';
+  const compact = variant === 'compact' || variant === 'result';
 
   const items: SettingDisplayItem[] = [];
 
@@ -188,6 +188,38 @@ export function RecommendationSettingsPanel({
         onClose={() => setBasisOpen(false)}
       />
     ) : null;
+
+  if (variant === 'result' && items.length > 0) {
+    return (
+      <>
+        <div
+          className={`recommendation-settings-panel recommendation-settings-panel--result${
+            showAdjustment ? ' recommendation-settings-panel--adjusting' : ''
+          }`}
+          role="list"
+          aria-label={t('machines:recommendation.title')}
+        >
+          <div
+            className="recommendation-settings-panel__grid recommendation-settings-panel__grid--dense"
+            role="presentation"
+          >
+            {items.map((item) => (
+              <div key={item.key} role="listitem">
+                {renderSettingCard(item, {
+                  compact: true,
+                  highlight: item.isWeight,
+                  labelExtra: renderLabelExtra(item),
+                  ...cardOptions,
+                })}
+              </div>
+            ))}
+          </div>
+          {saveFooter}
+        </div>
+        {basisDialog}
+      </>
+    );
+  }
 
   if (!compact && items.length > 0) {
     const [hero, ...rest] = items;
