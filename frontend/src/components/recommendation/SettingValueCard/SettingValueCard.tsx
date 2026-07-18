@@ -12,6 +12,7 @@ interface SettingValueCardProps {
   compact?: boolean;
   labelExtra?: ReactNode;
   labelIcon?: IconName;
+  labelIconNode?: ReactNode;
   showAdjustment?: boolean;
   adjustmentReadOnly?: boolean;
   recommendedLabel?: string;
@@ -33,6 +34,7 @@ export function SettingValueCard({
   compact = false,
   labelExtra,
   labelIcon,
+  labelIconNode,
   showAdjustment = false,
   adjustmentReadOnly = false,
   recommendedLabel,
@@ -48,13 +50,14 @@ export function SettingValueCard({
     'setting-value-card',
     highlight ? 'setting-value-card--highlight' : '',
     compact ? 'setting-value-card--compact' : '',
+    labelIconNode ? ' setting-value-card--history-mini' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
-  const labelIconNode = labelIcon ? (
+  const labelIconRendered = labelIconNode ?? (labelIcon ? (
     <Icon name={labelIcon} size={compact ? 12 : 14} className="setting-value-card__label-icon" />
-  ) : null;
+  ) : null);
 
   const parsedAdjustedNumber =
     adjustedValue.trim() === '' ? undefined : Number.parseFloat(adjustedValue);
@@ -64,11 +67,16 @@ export function SettingValueCard({
 
   return (
     <div className={className}>
-      {!(showAdjustment && adjustmentReadOnly) ? (
+      {!(showAdjustment && adjustmentReadOnly && !labelIconNode) ? (
         <div className="setting-value-card__label-row">
-          {labelIconNode}
+          {labelIconRendered}
           <span className="setting-value-card__label">{label}</span>
           {labelExtra}
+        </div>
+      ) : labelIconNode ? (
+        <div className="setting-value-card__label-row setting-value-card__label-row--mini-head">
+          {labelIconRendered}
+          <span className="setting-value-card__label">{label}</span>
         </div>
       ) : null}
       <div
@@ -79,10 +87,7 @@ export function SettingValueCard({
         {showAdjustment ? (
           <>
             <div className="setting-value-card__compare-block">
-              <span className="setting-value-card__compare-label">
-                {labelIconNode}
-                {recommendedLabel}
-              </span>
+              <span className="setting-value-card__compare-label">{recommendedLabel}</span>
               <div className="setting-value-card__compare-value-line">
                 <span className="setting-value-card__value" aria-label={`${recommendedLabel} ${value}`}>
                   {value}

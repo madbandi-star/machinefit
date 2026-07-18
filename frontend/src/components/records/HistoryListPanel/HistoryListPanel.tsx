@@ -41,6 +41,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
 import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
 import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
+import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
 
@@ -278,7 +279,7 @@ export function HistoryListPanel() {
           : t('machines:history.empty');
 
   return (
-    <div className="records-list records-list--history">
+    <div className="records-list records-list--history history-page-premium">
       <div className="records-list__toolbar">
         <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
 

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
-import { Icon } from '@/components/icons/Icon';
+import { Check, Pencil } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -531,9 +531,9 @@ export function WorkoutLogPanel({
               <span
                 className={`recommendation-workout-log__set-index${
                   completed ? ' recommendation-workout-log__set-index--completed' : ''
-                }`}
+                }${!completed ? ' recommendation-workout-log__set-index--active' : ''}`}
               >
-                {index + 1}
+                {completed ? <Check size={12} strokeWidth={3} aria-hidden /> : index + 1}
               </span>
             ) : (
               <button
@@ -742,7 +742,7 @@ export function WorkoutLogPanel({
             <div className="history-workout-log__performance-controls">
               {setCountControl}
               <span className="history-workout-log__edit-label">
-                <Icon name="pencil" size={12} className="history-workout-log__edit-icon" />
+                <Pencil size={12} strokeWidth={2.25} className="history-workout-log__edit-icon" aria-hidden />
                 {t('machines:history.editSets')}
               </span>
             </div>

@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { Icon, type IconName } from '@/components/icons/Icon';
+import { Activity, Clock, Dumbbell, Flame } from 'lucide-react';
 import type { HistorySummaryStats as HistorySummaryStatsData } from '@/utils/historySummaryStats';
+import {
+  HistoryMetricCard,
+  parseHistoryMetricValue,
+  type HistoryMetricTone,
+} from '@/components/records/history-ui/HistoryMetricCard';
+import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 
 interface HistorySummaryStatsProps {
   stats: HistorySummaryStatsData;
@@ -12,62 +18,65 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
   const items: Array<{
     key: string;
     label: string;
-    value: string;
-    tone: 'green' | 'blue' | 'purple' | 'orange';
-    icon: IconName;
+    rawValue: string;
+    tone: HistoryMetricTone;
+    icon: typeof Activity;
   }> = [
     {
       key: 'sets',
       label: t('history.summaryTotalSets'),
-      value: t('history.summaryTotalSetsValue', { count: stats.totalSets }),
+      rawValue: t('history.summaryTotalSetsValue', { count: stats.totalSets }),
       tone: 'green',
-      icon: 'weightPlate',
+      icon: Activity,
     },
     {
       key: 'weight',
       label: t('history.summaryTotalWeight'),
-      value: t('history.summaryTotalWeightValue', {
+      rawValue: t('history.summaryTotalWeightValue', {
         weight: stats.totalWeightKg.toLocaleString(),
       }),
       tone: 'blue',
-      icon: 'kettlebell',
+      icon: Dumbbell,
     },
     {
       key: 'volume',
       label: t('history.summaryTotalVolume'),
-      value: t('history.summaryTotalVolumeValue', {
+      rawValue: t('history.summaryTotalVolumeValue', {
         weight: stats.totalVolumeDummyKg.toLocaleString(),
       }),
       tone: 'purple',
-      icon: 'flame',
+      icon: Flame,
     },
     {
       key: 'time',
       label: t('history.summaryWorkoutTime'),
-      value: t('history.summaryWorkoutTimeValue', { minutes: stats.workoutMinutesDummy }),
+      rawValue: t('history.summaryWorkoutTimeValue', { minutes: stats.workoutMinutesDummy }),
       tone: 'orange',
-      icon: 'clock',
+      icon: Clock,
     },
   ];
 
   return (
-    <div className="history-summary-stats" aria-label={t('history.summaryLabel')}>
-      {items.map((item) => (
-        <article
-          key={item.key}
-          className={`history-summary-stats__card history-summary-stats__card--${item.tone}`}
-        >
-          <div className="history-summary-stats__label-row">
-            <Icon
-              name={item.icon}
-              size={14}
-              className={`history-summary-stats__icon history-summary-stats__icon--${item.tone}`}
+    <section className="history-dashboard" aria-label={t('history.summaryLabel')}>
+      <HistorySectionHeader
+        title={t('history.dashboardTitle')}
+        icon={<Activity size={15} strokeWidth={2.25} aria-hidden />}
+      />
+      <div className="history-dashboard__grid">
+        {items.map((item) => {
+          const { main, unit } = parseHistoryMetricValue(item.rawValue);
+          return (
+            <HistoryMetricCard
+              key={item.key}
+              label={item.label}
+              valueMain={main}
+              valueUnit={unit}
+              tone={item.tone}
+              icon={item.icon}
             />
-            <span className="history-summary-stats__label">{item.label}</span>
-          </div>
-          <strong className="history-summary-stats__value">{item.value}</strong>
-        </article>
-      ))}
-    </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }

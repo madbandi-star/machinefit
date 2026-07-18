@@ -1,16 +1,20 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Bookmark, Clock3, SlidersHorizontal, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
-import { Icon } from '@/components/icons/Icon';
-import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
+import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
+import type { MuscleGroup } from '@/constants/muscle-groups';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
+import { HistoryEquipmentMeta } from '@/components/records/history-ui/HistoryEquipmentMeta';
+import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { formatHistoryTime } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
+import '@/styles/history-premium.css';
 
 interface HistoryRecordCardProps {
   card: HistoryRecordCardData;
@@ -77,31 +81,41 @@ export function HistoryRecordCard({
   return (
     <article
       id={`history-item-${card.cardId}`}
-      className={`history-record-card${hasWorkoutLog ? ' history-record-card--logged' : ' history-record-card--unlogged'}${isFocused ? ' history-record-card--focused' : ''}`}
+      className={`history-record-card history-record-card--premium${
+        hasWorkoutLog ? ' history-record-card--logged' : ' history-record-card--unlogged'
+      }${isFocused ? ' history-record-card--focused' : ''}`}
     >
       <header className="history-record-card__header">
-        <Link to={resultUrl} className="history-record-card__title-link">
-          <div className="history-record-card__title-row">
-            <MachineNameWithMuscle
-              muscleGroup={muscleGroup}
-              name={displayName}
-              iconSize={20}
-              labelClassName="history-record-card__machine-name"
-            />
-          </div>
-          <div className="history-record-card__meta">
-            <span className="history-record-card__time">
-              {formatHistoryTime(card.viewedAt, i18n.language)}
-            </span>
-            <span
-              className={`history-record-card__status${
-                hasWorkoutLog ? ' history-record-card__status--saved' : ''
-              }`}
-            >
-              {hasWorkoutLog
-                ? t('machines:history.workoutSavedBadge')
-                : t('machines:history.workoutUnsavedBadge')}
-            </span>
+        <Link to={resultUrl} className="history-record-card__hero-link">
+          <div className="history-record-card__hero">
+            <div className="history-record-card__thumb" aria-hidden>
+              {muscleGroup ? (
+                <MuscleGroupIcon group={muscleGroup as MuscleGroup} size={36} />
+              ) : (
+                <div className="history-record-card__thumb-fallback" />
+              )}
+            </div>
+            <div className="history-record-card__hero-body">
+              <div className="history-record-card__title-row">
+                <h2 className="history-record-card__machine-name">{displayName}</h2>
+              </div>
+              <HistoryEquipmentMeta muscleGroup={muscleGroup} machineCode={card.machineCode} />
+              <div className="history-record-card__meta">
+                <span className="history-record-card__time">
+                  <Clock3 size={12} strokeWidth={2.25} aria-hidden />
+                  {formatHistoryTime(card.viewedAt, i18n.language)}
+                </span>
+                <span
+                  className={`history-record-card__status${
+                    hasWorkoutLog ? ' history-record-card__status--saved' : ''
+                  }`}
+                >
+                  {hasWorkoutLog
+                    ? t('machines:history.workoutSavedBadge')
+                    : t('machines:history.workoutUnsavedBadge')}
+                </span>
+              </div>
+            </div>
           </div>
         </Link>
 
@@ -115,7 +129,7 @@ export function HistoryRecordCard({
             onClick={handleBookmarkClick}
             disabled={!isAuthenticated || bookmarkPending || !logControl}
           >
-            <Icon name="bookmark" size={18} />
+            <Bookmark size={17} strokeWidth={2.25} />
           </button>
           <button
             type="button"
@@ -124,25 +138,31 @@ export function HistoryRecordCard({
             onClick={onDelete}
             disabled={deleteDisabled}
           >
-            <Icon name="close" size={18} />
+            <X size={17} strokeWidth={2.25} />
           </button>
         </div>
       </header>
 
-      <Link
-        to={resultUrl}
-        className="history-record-card__settings-link"
-        aria-label={t('machines:detail.viewLastResult')}
-      >
-        <RecommendationSettingsPanel
-          settings={card.settings}
-          variant="history"
-          showAdjustment={showSettingsCompare}
-          adjustmentReadOnly
-          customSettings={customSettings}
-          historyTotalWeightKg={logControl?.totalWeightKg}
+      <div className="history-record-card__section">
+        <HistorySectionHeader
+          title={t('machines:history.settingsSectionTitle')}
+          icon={<SlidersHorizontal size={14} strokeWidth={2.25} aria-hidden />}
         />
-      </Link>
+        <Link
+          to={resultUrl}
+          className="history-record-card__settings-link"
+          aria-label={t('machines:detail.viewLastResult')}
+        >
+          <RecommendationSettingsPanel
+            settings={card.settings}
+            variant="history"
+            showAdjustment={showSettingsCompare}
+            adjustmentReadOnly
+            customSettings={customSettings}
+            historyTotalWeightKg={logControl?.totalWeightKg}
+          />
+        </Link>
+      </div>
 
       <WorkoutLogPanel
         key={card.cardId}

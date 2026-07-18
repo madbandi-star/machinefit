@@ -154,7 +154,15 @@
     "memoLabel": "Memo",
     "bookmarkSave": "Save workout log",
     "bookmarkUpdate": "Save log changes",
-    "bookmarkRemove": "Remove workout log"
+    "bookmarkRemove": "Remove workout log",
+    "dashboardTitle": "Workout dashboard",
+    "settingsSectionTitle": "Machine settings",
+    "compareRecommended": "Rec.",
+    "compareCurrent": "Current",
+    "metaLabel": "Equipment info",
+    "metaBrandPlaceholder": "Brand",
+    "metaMusclePlaceholder": "Muscle group",
+    "metaMachinePlaceholder": "Machine"
   },
   "records": {
     "subtitle": "Recent recommendations and favorites",

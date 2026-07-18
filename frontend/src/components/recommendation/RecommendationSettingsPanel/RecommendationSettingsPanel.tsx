@@ -6,8 +6,12 @@ import { SettingValueCard } from '@/components/recommendation/SettingValueCard/S
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
 import { ROM_SETTING_PRESETS } from '@/constants/rom-setting-presets';
 import { HISTORY_SETTING_ICON } from '@/constants/history-setting-icons';
+import {
+  HISTORY_LUCIDE_SETTING_ICON,
+  HISTORY_TOTAL_WEIGHT_ICON,
+} from '@/constants/history-lucide-icons';
 import { useUserUnits } from '@/hooks/useUserUnits';
-import { Icon, type IconName } from '@/components/icons/Icon';
+import type { IconName } from '@/components/icons/Icon';
 import '@/styles/recommendation.css';
 
 type SettingField = {
@@ -137,11 +141,19 @@ function getCompareLabels(
   options: {
     showAdjustment?: boolean;
     adjustmentReadOnly?: boolean;
+    historyVariant?: boolean;
     t: (key: string) => string;
     recommendedLabel: string;
     adjustedLabel: string;
   }
 ) {
+  if (options.showAdjustment && options.adjustmentReadOnly && options.historyVariant) {
+    return {
+      recommendedLabel: options.t('machines:history.compareRecommended'),
+      adjustedLabel: options.t('machines:history.compareCurrent'),
+    };
+  }
+
   const compareKeys = COMPARE_LABEL_KEYS[item.key];
   if (options.showAdjustment && options.adjustmentReadOnly && compareKeys) {
     return {
@@ -171,6 +183,8 @@ function renderSettingCard(
     formatWeight: (kg: number) => string;
     t: (key: string) => string;
     labelIcon?: IconName;
+    labelIconNode?: ReactNode;
+    historyVariant?: boolean;
   }
 ) {
   const adjustedValue = resolveAdjustedValue(item, options);
@@ -186,6 +200,7 @@ function renderSettingCard(
       compact={options.compact}
       labelExtra={options.labelExtra}
       labelIcon={options.labelIcon}
+      labelIconNode={options.labelIconNode}
       showAdjustment={options.showAdjustment}
       adjustmentReadOnly={options.adjustmentReadOnly}
       recommendedLabel={recommendedLabel}
@@ -321,21 +336,28 @@ export function RecommendationSettingsPanel({
             className="recommendation-settings-panel__grid recommendation-settings-panel__grid--history"
             role="presentation"
           >
-            {items.map((item) => (
-              <div key={item.key} role="listitem">
-                {renderSettingCard(item, {
-                  compact: true,
-                  highlight: item.isWeight,
-                  labelExtra: renderLabelExtra(item),
-                  labelIcon: HISTORY_SETTING_ICON[item.key],
-                  ...cardOptions,
-                })}
-              </div>
-            ))}
+            {items.map((item) => {
+              const LucideIcon = HISTORY_LUCIDE_SETTING_ICON[item.key];
+              return (
+                <div key={item.key} role="listitem" className="history-mini-setting-wrap">
+                  {renderSettingCard(item, {
+                    compact: true,
+                    highlight: item.isWeight,
+                    labelExtra: renderLabelExtra(item),
+                    labelIcon: HISTORY_SETTING_ICON[item.key],
+                    labelIconNode: LucideIcon ? (
+                      <LucideIcon size={13} strokeWidth={2.25} className="history-mini-setting__lucide" />
+                    ) : undefined,
+                    historyVariant: true,
+                    ...cardOptions,
+                  })}
+                </div>
+              );
+            })}
             {historyTotalWeightKg != null ? (
               <div className="history-settings-total-tile" role="listitem">
                 <span className="history-settings-total-tile__label">
-                  <Icon name="totalWeightBag" size={12} className="history-settings-total-tile__icon" />
+                  <HISTORY_TOTAL_WEIGHT_ICON size={13} strokeWidth={2.25} className="history-settings-total-tile__icon" />
                   {t('machines:workoutLog.totalWeight')}
                 </span>
                 <strong className="history-settings-total-tile__value">

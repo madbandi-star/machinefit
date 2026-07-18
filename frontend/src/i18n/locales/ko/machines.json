@@ -154,7 +154,15 @@
     "memoLabel": "메모",
     "bookmarkSave": "운동 기록 저장",
     "bookmarkUpdate": "기록 변경 저장",
-    "bookmarkRemove": "운동 기록 해제"
+    "bookmarkRemove": "운동 기록 해제",
+    "dashboardTitle": "운동 대시보드",
+    "settingsSectionTitle": "머신 세팅",
+    "compareRecommended": "추천",
+    "compareCurrent": "현재",
+    "metaLabel": "장비 정보",
+    "metaBrandPlaceholder": "브랜드",
+    "metaMusclePlaceholder": "운동부위",
+    "metaMachinePlaceholder": "머신"
   },
   "records": {
     "subtitle": "최근 추천과 즐겨찾기",
