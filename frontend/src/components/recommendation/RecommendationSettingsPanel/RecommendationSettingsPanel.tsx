@@ -366,6 +366,7 @@ export function RecommendationSettingsPanel({
               </div>
             ) : null}
           </div>
+          {saveFooter}
         </div>
         {basisDialog}
       </>

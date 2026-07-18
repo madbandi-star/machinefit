@@ -49,6 +49,7 @@ interface WorkoutLogPanelProps {
   targetMuscleGroup?: TargetMuscleGroup;
   lockTargetMuscle?: boolean;
   diaryDefaultOpen?: boolean;
+  showSaveButton?: boolean;
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
 }
 
@@ -160,6 +161,7 @@ export function WorkoutLogPanel({
   targetMuscleGroup,
   lockTargetMuscle = false,
   diaryDefaultOpen = false,
+  showSaveButton = false,
   onControlReady,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
@@ -750,6 +752,7 @@ export function WorkoutLogPanel({
           {weightList}
         </div>
         {diaryField}
+        {showSaveButton ? saveButton : null}
       </section>
     );
   }

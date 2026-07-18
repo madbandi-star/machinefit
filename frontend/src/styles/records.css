@@ -1100,6 +1100,18 @@
   backdrop-filter: none;
 }
 
+.machine-detail-last-settings {
+  width: 100%;
+}
+
+.machine-detail-last-settings__card {
+  margin: 0;
+}
+
+.machine-detail-page--compact .machine-detail-last-settings__card {
+  border-radius: var(--history-card-radius, 20px);
+}
+
 @media (min-width: 768px) {
   .records-page__title {
     font-size: var(--font-size-h1);

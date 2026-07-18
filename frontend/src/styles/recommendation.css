@@ -408,6 +408,35 @@
   min-height: 0;
 }
 
+.recommendation-result-page__content.history-page-premium {
+  gap: var(--history-gap-section, 0.75rem);
+}
+
+.recommendation-result-page__body-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--history-gap-grid, 12px);
+}
+
+.recommendation-result-page__body-card .history-record-card__section {
+  margin-bottom: 0;
+}
+
+.recommendation-result-page__body-card .recommendation-workout-log--history {
+  margin-top: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--history-card-border, rgba(138, 148, 166, 0.14));
+}
+
+.recommendation-result-page__body-card .recommendation-workout-log__save,
+.recommendation-result-page__body-card .recommendation-workout-log__actions {
+  margin-top: 0.35rem;
+}
+
+.history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__save-row {
+  margin-top: 0.5rem;
+}
+
 /* Collapsible sections (P1) */
 .recommendation-collapsible {
   border-radius: var(--radius-md);

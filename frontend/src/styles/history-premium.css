@@ -750,6 +750,29 @@
   font-size: var(--history-font-sm);
 }
 
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-compare
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper,
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-compare
+  .setting-value-card__compare-block--adjust
+  .setting-value-card__adjust-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-compare
+  .setting-value-card__compare-block--adjust
+  .setting-value-card__quick-picks {
+  width: 100%;
+  justify-content: center;
+}
+
 .history-page-premium .history-settings-total-tile__label {
   font-size: var(--history-font-xs);
 }
