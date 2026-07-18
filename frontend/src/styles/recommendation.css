@@ -1630,10 +1630,22 @@
 }
 
 .history-workout-log__performance-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
+}
+
+.history-workout-log__performance-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.history-workout-log__performance-title-row .numeric-stepper {
+  flex-shrink: 0;
 }
 
 .history-workout-log__performance-title {
@@ -1641,6 +1653,7 @@
   font-weight: 700;
   line-height: 1.25;
   color: var(--color-text);
+  white-space: nowrap;
 }
 
 .history-workout-log__performance-controls {
@@ -1654,6 +1667,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  flex-shrink: 0;
+  margin-left: auto;
   font-size: 0.6875rem;
   font-weight: 600;
   line-height: 1;

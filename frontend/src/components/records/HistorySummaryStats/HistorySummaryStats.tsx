@@ -6,7 +6,6 @@ import {
   parseHistoryMetricValue,
   type HistoryMetricTone,
 } from '@/components/records/history-ui/HistoryMetricCard';
-import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 
 interface HistorySummaryStatsProps {
   stats: HistorySummaryStatsData;
@@ -58,10 +57,6 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
 
   return (
     <section className="history-dashboard" aria-label={t('history.summaryLabel')}>
-      <HistorySectionHeader
-        title={t('history.dashboardTitle')}
-        icon={<Activity size={15} strokeWidth={2.25} aria-hidden />}
-      />
       <div className="history-dashboard__grid">
         {items.map((item) => {
           const { main, unit } = parseHistoryMetricValue(item.rawValue);

@@ -635,6 +635,31 @@
   margin-left: 0;
 }
 
+.records-list--history
+  .records-list__toolbar:has(.records-list__calendar-details[open])
+  .records-list__filters {
+  width: 100%;
+}
+
+.records-list--history
+  .records-list__toolbar:has(.records-list__calendar-details[open])
+  .records-list__calendar-details {
+  width: 100%;
+}
+
+.records-list--history
+  .records-list__toolbar:has(.records-list__calendar-details[open])
+  .records-list__calendar-summary {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.records-list--history
+  .records-list__toolbar:has(.records-list__calendar-details[open])
+  .history-calendar {
+  width: 100%;
+}
+
 .records-list__calendar-icon {
   flex-shrink: 0;
   color: var(--color-text-muted);

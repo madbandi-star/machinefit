@@ -736,16 +736,16 @@ export function WorkoutLogPanel({
         {targetMusclePicker}
         <div className="history-workout-log__performance">
           <div className="history-workout-log__performance-header">
-            <span className="history-workout-log__performance-title">
-              {t('machines:history.performanceTitle', { count: setCount })}
-            </span>
-            <div className="history-workout-log__performance-controls">
-              {setCountControl}
-              <span className="history-workout-log__edit-label">
-                <Pencil size={12} strokeWidth={2.25} className="history-workout-log__edit-icon" aria-hidden />
-                {t('machines:history.editSets')}
+            <div className="history-workout-log__performance-title-row">
+              <span className="history-workout-log__performance-title">
+                {t('machines:history.performanceTitle', { count: setCount })}
               </span>
+              {setCountControl}
             </div>
+            <span className="history-workout-log__edit-label">
+              <Pencil size={12} strokeWidth={2.25} className="history-workout-log__edit-icon" aria-hidden />
+              {t('machines:history.editSets')}
+            </span>
           </div>
           {weightList}
         </div>
