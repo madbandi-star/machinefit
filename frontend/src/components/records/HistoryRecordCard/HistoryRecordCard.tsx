@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, Clock3, SlidersHorizontal, X } from 'lucide-react';
+import { Bookmark, Clock3, SlidersHorizontal, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
@@ -10,7 +10,6 @@ import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
-import { HistoryEquipmentMeta } from '@/components/records/history-ui/HistoryEquipmentMeta';
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { formatHistoryTime } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
@@ -61,6 +60,9 @@ export function HistoryRecordCard({
   const bookmarkActive = Boolean(logControl?.isLogSaved);
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
+  const muscleLabel = muscleGroup
+    ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
+    : null;
 
   const handleBookmarkClick = () => {
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
@@ -99,11 +101,24 @@ export function HistoryRecordCard({
               <div className="history-record-card__title-row">
                 <h2 className="history-record-card__machine-name">{displayName}</h2>
               </div>
-              <HistoryEquipmentMeta muscleGroup={muscleGroup} machineCode={card.machineCode} />
               <div className="history-record-card__meta">
-                <span className="history-record-card__time">
+                {muscleLabel ? (
+                  <>
+                    <span className="history-record-card__meta-item history-record-card__muscle">
+                      <Target size={12} strokeWidth={2.25} aria-hidden />
+                      {muscleLabel}
+                    </span>
+                    <span className="history-record-card__meta-divider" aria-hidden>
+                      |
+                    </span>
+                  </>
+                ) : null}
+                <span className="history-record-card__meta-item history-record-card__time">
                   <Clock3 size={12} strokeWidth={2.25} aria-hidden />
                   {formatHistoryTime(card.viewedAt, i18n.language)}
+                </span>
+                <span className="history-record-card__meta-divider" aria-hidden>
+                  |
                 </span>
                 <span
                   className={`history-record-card__status${

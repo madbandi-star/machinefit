@@ -1645,7 +1645,43 @@
 }
 
 .history-workout-log__performance-title-row .numeric-stepper {
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+}
+
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__row {
+  grid-template-columns: 1.25rem 1.125rem 1.25rem;
+  gap: 0.2rem;
+  width: auto;
+  min-height: 1.5rem;
+}
+
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn,
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value,
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__manual-input {
+  min-height: 1.5rem;
+  max-height: 1.5rem;
+}
+
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn {
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value {
+  min-width: 1.125rem;
+  width: 1.125rem;
+  padding: 0;
+  border-radius: 6px;
+}
+
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value-text {
+  width: 1ch;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
 }
 
 .history-workout-log__performance-title {
