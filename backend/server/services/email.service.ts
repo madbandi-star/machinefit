@@ -1,9 +1,15 @@
+import { spawnSync } from 'node:child_process';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 export type SendEmailInput = {
   to: string;
   subject: string;
   text: string;
   html?: string;
 };
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -63,8 +69,21 @@ async function sendViaResend(input: SendEmailInput): Promise<boolean> {
   return true;
 }
 
+function sendViaBrowserScript(input: SendEmailInput): boolean {
+  if (process.env.EMAIL_BROWSER_FALLBACK !== 'true') return false;
+
+  const scriptPath = join(__dirname, '..', '..', '..', '..', 'scripts', 'send-email-browser.mjs');
+  const result = spawnSync(
+    process.execPath,
+    [scriptPath, input.to, input.subject, input.text],
+    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }
+  );
+
+  return result.status === 0;
+}
+
 export const emailService = {
-  async send(input: SendEmailInput): Promise<{ method: 'smtp' | 'resend' }> {
+  async send(input: SendEmailInput): Promise<{ method: 'smtp' | 'resend' | 'browser' }> {
     if (await sendViaSmtp(input)) {
       return { method: 'smtp' };
     }
@@ -73,8 +92,12 @@ export const emailService = {
       return { method: 'resend' };
     }
 
+    if (sendViaBrowserScript(input)) {
+      return { method: 'browser' };
+    }
+
     throw new Error(
-      '이메일 설정 없음. backend/.env에 SMTP_HOST/SMTP_USER/SMTP_PASS 또는 RESEND_API_KEY를 추가하세요.'
+      'Email not configured. Set SMTP_*, RESEND_API_KEY, or EMAIL_BROWSER_FALLBACK=true with Playwright.'
     );
   },
 };

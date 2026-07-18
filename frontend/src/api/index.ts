@@ -92,83 +92,35 @@ export interface MachinePreferenceInput {
   customSettings: Partial<RecommendationSettings>;
 }
 
-const FEEDBACK_STORAGE_KEY = 'machinefit:recommendation-feedback';
-const PREFERENCE_STORAGE_KEY = 'machinefit:machine-preferences';
-
-function readLocalJson<T>(key: string): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : ({} as T);
-  } catch {
-    return {} as T;
-  }
-}
-
-function writeLocalJson(key: string, value: unknown): void {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    /* ignore quota errors */
-  }
-}
-
 export const recommendationFeedbackApi = {
   async submit(input: RecommendationFeedbackInput): Promise<{ fitRating: FitRating }> {
-    try {
-      const res = await apiClient.post<ApiResponse<{ fitRating: FitRating }>>(
-        '/recommendations/feedback',
-        input
-      );
-      return res.data.data;
-    } catch {
-      const store = readLocalJson<Record<string, FitRating>>(FEEDBACK_STORAGE_KEY);
-      store[input.recommendationId] = input.fitRating;
-      writeLocalJson(FEEDBACK_STORAGE_KEY, store);
-      return { fitRating: input.fitRating };
-    }
+    const res = await apiClient.post<ApiResponse<{ fitRating: FitRating }>>(
+      '/recommendations/feedback',
+      input
+    );
+    return res.data.data;
   },
   async get(recommendationId: string): Promise<FitRating | null> {
-    try {
-      const res = await apiClient.get<ApiResponse<{ fitRating: FitRating | null }>>(
-        `/recommendations/${recommendationId}/feedback`
-      );
-      return res.data.data.fitRating;
-    } catch {
-      const store = readLocalJson<Record<string, FitRating>>(FEEDBACK_STORAGE_KEY);
-      return store[recommendationId] ?? null;
-    }
+    const res = await apiClient.get<ApiResponse<{ fitRating: FitRating | null }>>(
+      `/recommendations/${recommendationId}/feedback`
+    );
+    return res.data.data.fitRating;
   },
 };
 
 export const machinePreferenceApi = {
   async upsert(input: MachinePreferenceInput): Promise<MachinePreferenceInput> {
-    try {
-      const res = await apiClient.put<ApiResponse<MachinePreferenceInput>>(
-        `/machines/${encodeURIComponent(input.machineCode)}/preferences`,
-        { customSettings: input.customSettings }
-      );
-      return res.data.data;
-    } catch {
-      const store = readLocalJson<Record<string, Partial<RecommendationSettings>>>(
-        PREFERENCE_STORAGE_KEY
-      );
-      store[input.machineCode] = input.customSettings;
-      writeLocalJson(PREFERENCE_STORAGE_KEY, store);
-      return input;
-    }
+    const res = await apiClient.put<ApiResponse<MachinePreferenceInput>>(
+      `/machines/${encodeURIComponent(input.machineCode)}/preferences`,
+      { customSettings: input.customSettings }
+    );
+    return res.data.data;
   },
   async get(machineCode: string): Promise<Partial<RecommendationSettings> | null> {
-    try {
-      const res = await apiClient.get<ApiResponse<{ customSettings: Partial<RecommendationSettings> }>>(
-        `/machines/${encodeURIComponent(machineCode)}/preferences`
-      );
-      return res.data.data.customSettings;
-    } catch {
-      const store = readLocalJson<Record<string, Partial<RecommendationSettings>>>(
-        PREFERENCE_STORAGE_KEY
-      );
-      return store[machineCode] ?? null;
-    }
+    const res = await apiClient.get<ApiResponse<{ customSettings: Partial<RecommendationSettings> }>>(
+      `/machines/${encodeURIComponent(machineCode)}/preferences`
+    );
+    return res.data.data.customSettings;
   },
 };
 
@@ -178,9 +130,16 @@ export interface WorkoutReportRequest {
   period: WorkoutReportPeriod;
 }
 
+export interface WorkoutReportResult {
+  message: string;
+  emailSent: boolean;
+  reportHtml?: string;
+  reportSubject?: string;
+}
+
 export const workoutReportApi = {
   send: (body: WorkoutReportRequest) =>
-    apiClient.post<ApiResponse<{ message: string }>>('/users/me/workout-reports', body),
+    apiClient.post<ApiResponse<WorkoutReportResult>>('/users/me/workout-reports', body),
 };
 
 export interface FavoriteItem {

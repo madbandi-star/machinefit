@@ -1,21 +1,28 @@
 ---
-description: Shell/run 명령이 승인 대기·차단될 때 madbandi@gmail.com으로 이메일 알림
+description: 작업 완료·run 승인/차단 시 madbandi@gmail.com으로 이메일 알림 (필수)
 alwaysApply: true
 ---
 
-# Run 승인/차단 시 이메일 알림
+# MachineFit 이메일 알림 (madbandi@gmail.com) — 필수
 
-Shell 또는 `run` 명령이 **사용자 승인 대기**, **Auto-review 차단**, **실행 실패**로 멈출 때:
-
-1. `node scripts/send-email.mjs "제목" "본문"` 로 **madbandi@gmail.com** 에 알림을 보낸다.
-2. SMTP/Resend 없으면 `send-email-browser.mjs`(FormSubmit + Playwright)로 자동 fallback.
-2. 제목 예: `[MachineFit] run 승인 필요 — <명령 요약>`
-3. 본문에 포함: 차단/대기 사유, 실행하려던 명령, 다음에 사용자가 할 일(승인 등).
-
-SMTP(`backend/.env`의 `SMTP_*`) 또는 `RESEND_API_KEY`가 있으면 우선 사용. 없으면 FormSubmit 브라우저 fallback.
-
-테스트/수동 발송:
+**모든 작업 세션**에서 요청을 마치면 반드시 이메일을 보낸다. 사용자가 따로 말하지 않아도 보낸다.
 
 ```bash
-node scripts/send-email.mjs "제목" "본문"
+node scripts/send-email.mjs "[MachineFit] 작업 완료 — <요약>" "<본문>"
 ```
+
+## 1. 작업 완료 시 (필수)
+
+- 구현, 버그 수정, 커밋, 배포, QA, 마이그레이션 등 **끝날 때마다** 위 명령 실행
+- 본문: 완료 내용, 커밋 해시/URL, 확인 사항
+
+## 2. Run 승인/차단 시
+
+- 제목: `[MachineFit] run 승인 필요 — <명령 요약>`
+- 본문: 차단 사유, 실행하려던 명령
+
+## 발송
+
+`send-email.mjs` → SMTP/Resend 우선 → FormSubmit 브라우저 fallback.
+
+수신: **madbandi@gmail.com**

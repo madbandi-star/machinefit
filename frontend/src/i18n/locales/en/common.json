@@ -99,6 +99,7 @@
     "profileExtrasDesc": "Your workout goal and home gym help personalize recommendations.",
     "profileSaved": "Profile saved.",
     "profileRequiredForRecommend": "Height and weight are required. Please enter your body metrics in Settings.",
+    "genderRequiredForRecommend": "Gender is required. Please select your gender in Settings.",
     "gender": "Gender",
     "genders": {
       "male": "Male",
@@ -533,7 +534,12 @@
     "send": "Send report to my email",
     "sending": "Sending…",
     "sent": "Report sent to your email.",
-    "failed": "Could not send the report. Please try again."
+    "failed": "Could not send the report. Please try again.",
+    "fallbackReady": "Email server not configured — preview and copy the report below.",
+    "fallbackHint": "Until SMTP/Resend is set, use preview, copy, or your mail app.",
+    "openMailApp": "Open in mail app",
+    "copyReport": "Copy report text",
+    "copied": "Report copied to clipboard."
   },
   "pwa": {
     "installTitle": "Install the app",

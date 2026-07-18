@@ -21,21 +21,24 @@ export function buildLoggedWorkoutKeys(logs: WorkoutLog[]): Set<string> {
   return keys;
 }
 
-export function historyItemHasWorkoutLog<T extends { machineCode: string; viewedAt: string }>(
-  item: T,
-  loggedKeys: Set<string>
-): boolean {
-  return loggedKeys.has(buildLoggedWorkoutKey(item.machineCode, getLocalDateKey(item.viewedAt)));
+export function historyItemHasWorkoutLog<
+  T extends { machineCode: string; viewedAt: string; recommendationId?: string },
+>(item: T, loggedKeys: Set<string>, logs?: WorkoutLog[]): boolean {
+  if (loggedKeys.has(buildLoggedWorkoutKey(item.machineCode, getLocalDateKey(item.viewedAt)))) {
+    return true;
+  }
+  if (item.recommendationId && logs?.length) {
+    return logs.some((log) => log.recommendationId === item.recommendationId);
+  }
+  return false;
 }
 
-export function filterHistoryByLogStatus<T extends { machineCode: string; viewedAt: string }>(
-  items: T[],
-  loggedKeys: Set<string>,
-  status: HistoryLogStatus
-): T[] {
+export function filterHistoryByLogStatus<
+  T extends { machineCode: string; viewedAt: string; recommendationId?: string },
+>(items: T[], loggedKeys: Set<string>, status: HistoryLogStatus, logs?: WorkoutLog[]): T[] {
   if (status === 'all') return items;
   return items.filter((item) => {
-    const hasLog = historyItemHasWorkoutLog(item, loggedKeys);
+    const hasLog = historyItemHasWorkoutLog(item, loggedKeys, logs);
     return status === 'saved' ? hasLog : !hasLog;
   });
 }

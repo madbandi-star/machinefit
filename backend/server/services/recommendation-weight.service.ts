@@ -134,6 +134,9 @@ export async function computeRecommendationWeight(options: {
       heightCm: input.heightCm,
       weightKg: input.weightKg,
       experienceLevel: input.experienceLevel,
+      ...(input.age != null ? { age: input.age } : {}),
+      ...(input.workoutGoal ? { workoutGoal: input.workoutGoal } : {}),
+      ...(input.targetMuscleGroup ? { targetMuscleGroup: input.targetMuscleGroup } : {}),
     },
     usedInFinal: false,
   });

@@ -1,5 +1,11 @@
 import type { RecommendationInput } from '@machinefit/shared';
+import {
+  applyPersonalizationToWeight,
+  buildPersonalizedTips,
+  mergeSettingsWithPreferences,
+} from '@machinefit/shared';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
+import { preferenceRepository } from '../repositories/preference.repository.js';
 import { historyRepository } from '../repositories/history.repository.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
 import { machineService } from './machine.service.js';
@@ -59,12 +65,34 @@ export const recommendationService = {
       matchedSettingWeightKg: match?.weightKg,
     });
 
+    const personalizedWeight = applyPersonalizationToWeight(recommendedWeightKg, {
+      workoutGoal: input.workoutGoal,
+      age: input.age,
+      targetMuscleGroup: input.targetMuscleGroup,
+    });
+
+    const savedPreferences =
+      userId != null
+        ? await preferenceRepository.findByUserMachine(userId, machineId)
+        : null;
+
+    const baseSettings = {
+      seatPosition: match?.seatPosition,
+      backPadPosition: match?.backPadPosition,
+      footPosition: match?.footPosition,
+      handlePosition: match?.handlePosition,
+      romSetting: match?.romSetting,
+      recommendedWeightKg: personalizedWeight,
+    };
+
+    const settings = mergeSettingsWithPreferences(baseSettings, savedPreferences);
+
     const id = await recommendationRepository.save(
       input,
       machineId,
       null,
       match,
-      recommendedWeightKg,
+      settings.recommendedWeightKg,
       weightBasis,
       userId
     );
@@ -75,21 +103,24 @@ export const recommendationService = {
       await historyRepository.record(userId, machineId, id);
     }
 
+    const baseTips = match
+      ? pickLocalizedArray(match.tips, locale)
+      : pickLocalizedArray(DEFAULT_TIPS, locale);
+
+    const tips = buildPersonalizedTips(baseTips, locale, {
+      workoutGoal: input.workoutGoal,
+      targetMuscleGroup: input.targetMuscleGroup,
+      hasCustomPreferences: Boolean(
+        savedPreferences && Object.keys(savedPreferences).length > 0
+      ),
+    });
+
     return {
       id,
       machineCode: machine.code,
       machineName: machine.name[locale as keyof typeof machine.name] ?? machine.name.en,
-      settings: {
-        seatPosition: match?.seatPosition,
-        backPadPosition: match?.backPadPosition,
-        footPosition: match?.footPosition,
-        handlePosition: match?.handlePosition,
-        romSetting: match?.romSetting,
-        recommendedWeightKg,
-      },
-      tips: match
-        ? pickLocalizedArray(match.tips, locale)
-        : pickLocalizedArray(DEFAULT_TIPS, locale),
+      settings,
+      tips,
       warnings: match ? pickLocalizedArray(match.warnings, locale) : [],
       youtubeVideos,
       createdAt: new Date().toISOString(),

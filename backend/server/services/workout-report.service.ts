@@ -87,14 +87,17 @@ export const workoutReportService = {
         text,
         html,
       });
+      return {
+        message: logs.length ? 'Report sent to your email.' : 'Report sent (no logs in period).',
+        emailSent: true,
+      };
     } catch {
-      throw new AppError(
-        503,
-        'EMAIL_NOT_CONFIGURED',
-        'Email service is not configured. Add SMTP or Resend settings on the server.'
-      );
+      return {
+        message: 'Email service unavailable. Report is ready to copy or share.',
+        emailSent: false,
+        reportHtml: html,
+        reportSubject: subject,
+      };
     }
-
-    return { message: logs.length ? 'Report sent to your email.' : 'Report sent (no logs in period).' };
   },
 };

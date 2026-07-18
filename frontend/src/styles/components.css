@@ -718,3 +718,20 @@
   gap: 0.35rem;
   margin-bottom: var(--space-md);
 }
+
+.workout-report-section__fallback {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.workout-report-section__preview {
+  max-height: 240px;
+  overflow: auto;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  background: var(--color-surface);
+}

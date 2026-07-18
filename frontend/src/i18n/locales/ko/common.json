@@ -99,6 +99,7 @@
     "profileExtrasDesc": "운동 목표와 헬스장 정보로 추천을 맞춤화합니다.",
     "profileSaved": "프로필이 저장되었습니다.",
     "profileRequiredForRecommend": "키와 몸무게 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요.",
+    "genderRequiredForRecommend": "성별이 필요합니다. 설정에서 성별을 선택해 주세요.",
     "gender": "성별",
     "genders": {
       "male": "남",
@@ -533,7 +534,12 @@
     "send": "내 이메일로 리포트 보내기",
     "sending": "전송 중…",
     "sent": "리포트가 이메일로 전송되었습니다.",
-    "failed": "리포트 전송에 실패했습니다. 다시 시도해 주세요."
+    "failed": "리포트 전송에 실패했습니다. 다시 시도해 주세요.",
+    "fallbackReady": "이메일 서버 미설정 — 아래에서 리포트를 확인·복사할 수 있습니다.",
+    "fallbackHint": "SMTP/Resend 설정 전까지는 미리보기·복사·메일 앱으로 보낼 수 있습니다.",
+    "openMailApp": "메일 앱으로 보내기",
+    "copyReport": "리포트 텍스트 복사",
+    "copied": "리포트가 클립보드에 복사되었습니다."
   },
   "pwa": {
     "installTitle": "앱으로 설치하기",

@@ -15,11 +15,10 @@ import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/community.css';
 
-/** TODO: restore when gym browse link returns to My Page */
-const SHOW_GYMS_LINK = false;
+/** Gym browse and machine requests restored for full My Page navigation */
+const SHOW_GYMS_LINK = true;
 
-/** TODO: restore when machine request board returns to My Page */
-const SHOW_MACHINE_REQUESTS_LINK = false;
+const SHOW_MACHINE_REQUESTS_LINK = true;
 
 function ListNavLink({ to, label }: { to: string; label: string }) {
   return (

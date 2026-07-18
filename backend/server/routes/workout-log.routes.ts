@@ -11,4 +11,3 @@ workoutLogRouter.get('/insights', workoutLogController.getWorkoutInsights);
 workoutLogRouter.get('/', workoutLogController.listWorkoutLogs);
 workoutLogRouter.put('/', validateBody(upsertWorkoutLogSchema), workoutLogController.upsertWorkoutLog);
 workoutLogRouter.delete('/', validateBody(deleteWorkoutLogSchema), workoutLogController.deleteWorkoutLog);
-workoutLogRouter.delete('/', validateBody(deleteWorkoutLogSchema), workoutLogController.deleteWorkoutLog);

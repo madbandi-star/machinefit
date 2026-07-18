@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { genderSchema } from './user.schema.js';
-import { TARGET_MUSCLE_GROUPS } from '../constants/workout-goals.js';
+import { TARGET_MUSCLE_GROUPS, WORKOUT_GOALS } from '../constants/workout-goals.js';
 
 export const recommendationSchema = z.object({
   machineCode: z.string().min(1).max(80),
@@ -16,6 +16,8 @@ export const recommendationSchema = z.object({
   unitHeight: z.enum(['cm', 'ft_in']).optional(),
   unitWeight: z.enum(['kg', 'lb']).optional(),
   targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
+  age: z.number().int().min(13).max(100).optional(),
+  workoutGoal: z.enum(WORKOUT_GOALS).optional(),
 });
 
 export type RecommendationInputSchema = z.infer<typeof recommendationSchema>;

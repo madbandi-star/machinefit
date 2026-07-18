@@ -45,7 +45,8 @@ const HISTORY_DELETE_DISMISS_KEY = 'history-delete-confirm-dismiss';
 interface PendingDelete {
   id: string;
   machineCode: string;
-  logDate: string;
+  recommendationId: string;
+  viewedAt: string;
 }
 
 export function HistoryListPanel() {
@@ -98,13 +99,13 @@ export function HistoryListPanel() {
   });
 
   const filteredAllHistory = useMemo(
-    () => filterHistoryByLogStatus(allHistory ?? [], loggedKeys, logStatus),
-    [allHistory, loggedKeys, logStatus]
+    () => filterHistoryByLogStatus(allHistory ?? [], loggedKeys, logStatus, workoutLogs),
+    [allHistory, loggedKeys, logStatus, workoutLogs]
   );
 
   const filteredData = useMemo(
-    () => filterHistoryByLogStatus(data ?? [], loggedKeys, logStatus),
-    [data, loggedKeys, logStatus]
+    () => filterHistoryByLogStatus(data ?? [], loggedKeys, logStatus, workoutLogs),
+    [data, loggedKeys, logStatus, workoutLogs]
   );
 
   const datesWithData = useMemo(
@@ -189,8 +190,15 @@ export function HistoryListPanel() {
   };
 
   const deleteMutation = useMutation({
-    mutationFn: async ({ id, machineCode, logDate }: PendingDelete) => {
+    mutationFn: async ({ id, machineCode, recommendationId, viewedAt }: PendingDelete) => {
       await historyApi.remove(id);
+      const viewedDate = getLocalDateKey(viewedAt);
+      const matchingLog = workoutLogs?.find(
+        (log) =>
+          log.machineCode === machineCode &&
+          (log.recommendationId === recommendationId || log.logDate === viewedDate)
+      );
+      const logDate = matchingLog?.logDate ?? viewedDate;
       try {
         await workoutLogApi.remove({ machineCode, logDate });
       } catch {
@@ -342,7 +350,7 @@ export function HistoryListPanel() {
             {group.items.map((item) => {
               const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
               const logDate = getLocalDateKey(item.viewedAt);
-              const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys);
+              const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys, workoutLogs);
 
               return (
                 <article
@@ -379,7 +387,8 @@ export function HistoryListPanel() {
                         requestDelete({
                           id: item.id,
                           machineCode: item.machineCode,
-                          logDate,
+                          recommendationId: item.recommendationId,
+                          viewedAt: item.viewedAt,
                         })
                       }
                       disabled={deleteMutation.isPending}

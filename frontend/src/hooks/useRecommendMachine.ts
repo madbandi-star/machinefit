@@ -34,9 +34,12 @@ function buildProfileInput(
   if (weightKg == null || weightKg < 30 || weightKg > 300) {
     return null;
   }
+  if (!user?.gender) {
+    return null;
+  }
 
-  const gender: Gender = user?.gender ?? 'male';
-  const experienceLevel: ExperienceLevel = user?.experienceLevel ?? 'intermediate';
+  const gender: Gender = user.gender;
+  const experienceLevel: ExperienceLevel = user.experienceLevel ?? 'intermediate';
 
   return {
     machineCode,
@@ -46,6 +49,8 @@ function buildProfileInput(
     experienceLevel,
     unitHeight,
     unitWeight,
+    ...(user.age != null ? { age: user.age } : {}),
+    ...(user.workoutGoal ? { workoutGoal: user.workoutGoal } : {}),
     ...(targetMuscleGroup ? { targetMuscleGroup } : {}),
   };
 }
@@ -64,7 +69,11 @@ export function useRecommendMachine(machineCode: string | undefined) {
     mutationFn: async (options: RecommendMachineOptions = {}) => {
       if (!machineCode) throw new Error('missing_machine');
       const input = buildProfileInput(machineCode, options?.targetMuscleGroup);
-      if (!input) throw new Error('missing_profile');
+      if (!input) {
+        const user = useAuthStore.getState().user;
+        if (!user?.gender) throw new Error('missing_gender');
+        throw new Error('missing_profile');
+      }
 
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
       if (isAuthenticated) {
@@ -91,6 +100,17 @@ export function useRecommendMachine(machineCode: string | undefined) {
       if (error instanceof DuplicateRecommendationError) {
         showToast(t('machines:recommendation.duplicate'), 'info');
         navigate(buildRecordsHistoryFocusUrl(error.historyItem), { replace: true });
+        return;
+      }
+      if (error instanceof Error && error.message === 'missing_gender') {
+        showToast(t('common:auth.genderRequiredForRecommend'), 'error');
+        navigate(ROUTES.SETTINGS, {
+          state: {
+            returnTo: machineCode
+              ? ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)
+              : undefined,
+          },
+        });
         return;
       }
       if (error instanceof Error && error.message === 'missing_profile') {

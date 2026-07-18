@@ -6,11 +6,12 @@ import { historyApi, workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { computeVolume } from '@/utils/workoutAnalytics';
-import { isDismissedToday } from '@/utils/dismissToday';
+import { isDismissedToday, dismissForToday } from '@/utils/dismissToday';
 import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 import '@/styles/home.css';
 
 const DISMISS_KEY = 'daily-briefing';
+const SHOWN_KEY = 'daily-briefing-shown';
 
 interface DailyBriefingModalProps {
   open: boolean;
@@ -105,12 +106,15 @@ export function useDailyBriefing(): {
       setShowBriefing(false);
       return;
     }
-    if (isDismissedToday(DISMISS_KEY)) return;
+    if (isDismissedToday(DISMISS_KEY) || isDismissedToday(SHOWN_KEY)) return;
     setShowBriefing(true);
   }, [isAuthenticated]);
 
   return {
     showBriefing,
-    closeBriefing: () => setShowBriefing(false),
+    closeBriefing: () => {
+      dismissForToday(SHOWN_KEY);
+      setShowBriefing(false);
+    },
   };
 }
