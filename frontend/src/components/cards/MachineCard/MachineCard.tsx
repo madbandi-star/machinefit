@@ -4,7 +4,7 @@ import type { Machine } from '@machinefit/shared';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
-import { getMachinePrimaryDisplayName, shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/components.css';
 
 interface MachineCardProps {
@@ -12,13 +12,8 @@ interface MachineCardProps {
 }
 
 export function MachineCard({ machine }: MachineCardProps) {
-  const { t, i18n } = useTranslation('machines');
-  const localizedName = getLocalizedName(machine.name, i18n.language, '');
-  const name = getMachinePrimaryDisplayName(
-    machine.code,
-    localizedName,
-    t('machineTypes.free_weight')
-  );
+  const { i18n } = useTranslation('machines');
+  const name = getLocalizedName(machine.name, i18n.language, '');
 
   return (
     <Link

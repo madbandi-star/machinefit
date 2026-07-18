@@ -7,7 +7,7 @@ import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
-import { getMachinePrimaryDisplayName, shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/machines.css';
 
 interface MachineListItemProps {
@@ -18,16 +18,13 @@ interface MachineListItemProps {
 export function MachineListItem({ machine, selectedMuscle }: MachineListItemProps) {
   const { t, i18n } = useTranslation('machines');
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
-  const name = getMachinePrimaryDisplayName(
-    machine.code,
-    localizedName,
-    t('machineTypes.free_weight')
-  );
+  const isFreeWeight = isFreeWeightMachineCode(machine.code);
   const showMuscle = shouldShowDefaultMachineMuscle(machine.code);
   const brandName =
-    machine.brandName && !isFreeWeightMachineCode(machine.code)
+    machine.brandName && !isFreeWeight
       ? getLocalizedName(machine.brandName, i18n.language, '')
       : null;
+  const typeLabel = isFreeWeight ? t('machineTypes.free_weight') : null;
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
   const detailTo =
@@ -43,7 +40,7 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       <div className="machine-list-item__thumb">
         {machine.primaryImageUrl ? (
           <img src={machine.primaryImageUrl} alt="" loading="lazy" />
-        ) : machine.muscleGroup ? (
+        ) : showMuscle && machine.muscleGroup ? (
           <div className="machine-list-item__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={machine.muscleGroup as MuscleGroup} size={52} />
           </div>
@@ -57,12 +54,16 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
         <p className="machine-list-item__name">
           <MachineNameWithMuscle
             muscleGroup={showMuscle ? machine.muscleGroup : undefined}
-            name={name}
+            name={localizedName}
             iconSize={20}
             labelClassName="machine-list-item__name-text"
           />
         </p>
-        {brandName ? <p className="machine-list-item__brand">{brandName}</p> : null}
+        {typeLabel ? (
+          <p className="machine-list-item__brand">{typeLabel}</p>
+        ) : brandName ? (
+          <p className="machine-list-item__brand">{brandName}</p>
+        ) : null}
       </div>
       <span className="machine-list-item__chevron" aria-hidden>
         ›

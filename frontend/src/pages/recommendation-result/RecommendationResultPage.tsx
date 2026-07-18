@@ -2,7 +2,6 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationResult } from '@machinefit/shared';
-import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
@@ -130,9 +129,7 @@ export function RecommendationResultPage() {
     );
   }
 
-  const machineTitle = isFreeWeightMachineCode(result.machineCode)
-    ? t('machineTypes.free_weight')
-    : (result.machineName ?? t('recommendation.title'));
+  const machineTitle = result.machineName ?? t('recommendation.title');
 
   return (
     <div className="recommendation-result-page">

@@ -10,10 +10,7 @@ import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
-import {
-  getMachinePrimaryDisplayName,
-  shouldShowDefaultMachineMuscle,
-} from '@/utils/freeWeightDisplay';
+import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/records.css';
 
 export function FavoritesListPanel() {
@@ -57,11 +54,7 @@ export function FavoritesListPanel() {
         const primaryUrl = item.recommendationId
           ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}&from=favorites`
           : ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode);
-        const displayName = getMachinePrimaryDisplayName(
-          item.machineCode,
-          item.machineName,
-          t('machines:machineTypes.free_weight')
-        );
+        const displayName = item.machineName;
 
         return (
           <article key={item.id} className="favorite-row">

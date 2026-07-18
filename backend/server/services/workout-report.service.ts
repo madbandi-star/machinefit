@@ -48,7 +48,7 @@ function formatLogMachineLabel(
     const muscle = log.targetMuscleGroup
       ? (TARGET_MUSCLE_LABELS[log.targetMuscleGroup] ?? log.targetMuscleGroup)
       : '';
-    return muscle ? `프리웨이트 (${equipment} · ${muscle})` : `프리웨이트 (${equipment})`;
+    return muscle ? `${equipment} · ${muscle}` : equipment;
   }
   return log.machineName ?? log.machineCode;
 }

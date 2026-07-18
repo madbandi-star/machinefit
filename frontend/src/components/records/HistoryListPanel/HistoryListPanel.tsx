@@ -36,11 +36,7 @@ import {
 } from '@/utils/historyLogStatus';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import { isDismissedToday } from '@/utils/dismissToday';
-import {
-  getHistoryEquipmentSubtitle,
-  getHistoryMuscleGroup,
-  getMachinePrimaryDisplayName,
-} from '@/utils/freeWeightDisplay';
+import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
@@ -370,19 +366,11 @@ export function HistoryListPanel() {
               const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
               const logDate = getLocalDateKey(item.viewedAt);
               const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys, workoutLogs);
-              const displayName = getMachinePrimaryDisplayName(
-                item.machineCode,
-                item.machineName,
-                t('machines:machineTypes.free_weight')
-              );
+              const displayName = item.machineName;
               const muscleGroup = getHistoryMuscleGroup(
                 item.machineCode,
                 item.muscleGroup,
                 item.targetMuscleGroup
-              );
-              const equipmentSubtitle = getHistoryEquipmentSubtitle(
-                item.machineCode,
-                item.machineName
               );
 
               return (
@@ -408,11 +396,6 @@ export function HistoryListPanel() {
                             : t('machines:history.workoutUnsavedBadge')}
                         </span>
                       </div>
-                      {equipmentSubtitle ? (
-                        <span className="saved-settings-card__equipment-subtitle">
-                          {equipmentSubtitle}
-                        </span>
-                      ) : null}
                       <span className="saved-settings-card__time saved-settings-card__time--inline">
                         {formatHistoryTime(item.viewedAt, i18n.language)}
                       </span>
