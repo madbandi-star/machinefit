@@ -154,13 +154,7 @@ export function RecommendationResultPage() {
 
       <div className="recommendation-result-page__content">
         <RecommendationWarnings warnings={result.warnings} />
-        {isAuthenticated ? (
-          <FitFeedbackPanel
-            savedRating={fitFeedback.savedRating}
-            onRating={fitFeedback.handleRating}
-            isPending={fitFeedback.isFeedbackPending}
-          />
-        ) : null}
+        <RecommendationTips tips={result.tips} />
         <RecommendationSettingsPanel
           settings={result.settings}
           weightBasis={result.weightBasis}
@@ -171,7 +165,13 @@ export function RecommendationResultPage() {
           onSavePreferences={fitFeedback.savePreferences}
           isPreferencesPending={fitFeedback.isPreferencesPending}
         />
-        <RecommendationTips tips={result.tips} />
+        {isAuthenticated ? (
+          <FitFeedbackPanel
+            savedRating={fitFeedback.savedRating}
+            onRating={fitFeedback.handleRating}
+            isPending={fitFeedback.isFeedbackPending}
+          />
+        ) : null}
         <WorkoutLogPanel
           machineCode={result.machineCode}
           machineName={result.machineName}
