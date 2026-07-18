@@ -11,9 +11,9 @@ import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymFi
 import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
-import { AgePickerField } from '@/components/settings/AgePickerField/AgePickerField';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
+import { DEFAULT_HEIGHT_CM } from '@/constants/body-metrics-defaults';
 import { userApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -39,7 +39,7 @@ export function SettingsPage() {
   const unitHeight = useSettingsStore((s) => s.unitHeight);
   const unitWeight = useSettingsStore((s) => s.unitWeight);
 
-  const [heightCm, setHeightCm] = useState(user?.heightCm ?? 175);
+  const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState<number | undefined>(user?.weightKg);
   const [age, setAge] = useState<number | undefined>(user?.age);
   const [gender, setGender] = useState<Gender | undefined>(user?.gender);
@@ -114,12 +114,13 @@ export function SettingsPage() {
               unitWeight={unitWeight}
               heightCm={heightCm}
               weightKg={weightKg}
+              age={age}
               onHeightCmChange={(value) => {
                 if (value != null) setHeightCm(value);
               }}
               onWeightKgChange={setWeightKg}
+              onAgeChange={setAge}
             />
-            <AgePickerField value={age} onChange={setAge} />
             <ExperienceSelector
               value={experienceLevel}
               onChange={(value) => {

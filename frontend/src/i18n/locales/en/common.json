@@ -96,6 +96,7 @@
       "professional": "Professional"
     },
     "ageLabel": "Age",
+    "ageUnitShort": "yrs",
     "workoutGoal": "Workout goal",
     "workoutGoalPlaceholder": "Select",
     "workoutGoals": {

@@ -3,8 +3,10 @@ import { buildPickerRange, findClosestPickerValue } from '@/utils/pickerRange';
 import { formatNumericValue, getDecimalPlaces } from '@/utils/numericStep';
 import '@/styles/components.css';
 
-const ITEM_HEIGHT = 36;
-const VISIBLE_ROWS = 5;
+const ITEM_HEIGHT_DEFAULT = 36;
+const ITEM_HEIGHT_COMPACT = 32;
+const VISIBLE_ROWS_DEFAULT = 5;
+const VISIBLE_ROWS_COMPACT = 3;
 
 interface ScrollPickerProps {
   value: number | undefined;
@@ -17,6 +19,7 @@ interface ScrollPickerProps {
   formatValue?: (value: number) => string;
   defaultValue?: number;
   initializeOnMount?: boolean;
+  size?: 'default' | 'compact';
 }
 
 export function ScrollPicker({
@@ -30,7 +33,10 @@ export function ScrollPicker({
   formatValue,
   defaultValue,
   initializeOnMount = false,
+  size = 'default',
 }: ScrollPickerProps) {
+  const itemHeight = size === 'compact' ? ITEM_HEIGHT_COMPACT : ITEM_HEIGHT_DEFAULT;
+  const visibleRows = size === 'compact' ? VISIBLE_ROWS_COMPACT : VISIBLE_ROWS_DEFAULT;
   const containerRef = useRef<HTMLDivElement>(null);
   const syncingRef = useRef(false);
   const scrollEndTimerRef = useRef<number | null>(null);
@@ -58,7 +64,7 @@ export function ScrollPicker({
     if (!container) return;
 
     syncingRef.current = true;
-    container.scrollTo({ top: index * ITEM_HEIGHT, behavior });
+    container.scrollTo({ top: index * itemHeight, behavior });
     window.setTimeout(() => {
       syncingRef.current = false;
     }, behavior === 'smooth' ? 180 : 0);
@@ -80,11 +86,11 @@ export function ScrollPicker({
     const container = containerRef.current;
     if (!container || syncingRef.current || options.length === 0) return;
 
-    const rawIndex = Math.round(container.scrollTop / ITEM_HEIGHT);
+    const rawIndex = Math.round(container.scrollTop / itemHeight);
     const index = Math.max(0, Math.min(options.length - 1, rawIndex));
     const next = options[index];
 
-    if (container.scrollTop !== index * ITEM_HEIGHT) {
+    if (container.scrollTop !== index * itemHeight) {
       scrollToIndex(index);
     }
 
@@ -112,12 +118,15 @@ export function ScrollPicker({
     []
   );
 
-  const padding = ((VISIBLE_ROWS - 1) / 2) * ITEM_HEIGHT;
+  const padding = ((visibleRows - 1) / 2) * itemHeight;
 
   return (
-    <div className="scroll-picker" aria-label={ariaLabel}>
+    <div
+      className={`scroll-picker${size === 'compact' ? ' scroll-picker--compact' : ''}`}
+      aria-label={ariaLabel}
+    >
       <div className="scroll-picker__frame">
-        <div className="scroll-picker__highlight" aria-hidden />
+        <div className="scroll-picker__highlight" aria-hidden style={{ height: itemHeight }} />
         <div
           ref={containerRef}
           className="scroll-picker__list"
@@ -125,7 +134,7 @@ export function ScrollPicker({
           aria-label={ariaLabel}
           onScroll={handleScroll}
           style={{
-            height: ITEM_HEIGHT * VISIBLE_ROWS,
+            height: itemHeight * visibleRows,
             paddingTop: padding,
             paddingBottom: padding,
           }}
@@ -139,7 +148,7 @@ export function ScrollPicker({
                 role="option"
                 aria-selected={isSelected}
                 className={`scroll-picker__item${isSelected ? ' scroll-picker__item--selected' : ''}`}
-                style={{ height: ITEM_HEIGHT }}
+                style={{ height: itemHeight }}
                 onClick={() => {
                   scrollToIndex(index, 'smooth');
                   onChange(option);

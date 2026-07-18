@@ -96,6 +96,7 @@
       "professional": "전문가"
     },
     "ageLabel": "나이",
+    "ageUnitShort": "세",
     "workoutGoal": "운동 목표",
     "workoutGoalPlaceholder": "선택",
     "workoutGoals": {

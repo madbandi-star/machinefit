@@ -14,7 +14,6 @@ import {
   UnitPicker,
   WEIGHT_UNIT_OPTIONS,
 } from '@/components/settings/UnitPicker/UnitPicker';
-import { AgePickerField } from '@/components/settings/AgePickerField/AgePickerField';
 import { authApi } from '@/api';
 import { AlertDialog } from '@/components/feedback/AlertDialog/AlertDialog';
 import { useAuthStore } from '@/store/auth.store';
@@ -189,16 +188,14 @@ export function RegisterPage() {
             unitWeight={unitWeight}
             heightCm={heightCm}
             weightKg={weightKg}
+            age={age}
             onHeightCmChange={setHeightCm}
             onWeightKgChange={setWeightKg}
+            onAgeChange={setAge}
             weightOptional={false}
             heightInvalid={hasError('heightCm')}
             weightInvalid={hasError('weightKg')}
-          />
-          <AgePickerField
-            value={age}
-            onChange={setAge}
-            invalid={hasError('age')}
+            ageInvalid={hasError('age')}
             initializeOnMount
           />
           <ExperienceSelector
