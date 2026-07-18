@@ -54,6 +54,69 @@
   color: var(--color-text-muted);
 }
 
+.setting-value-card__value-row--compare {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.setting-value-card__compare-block {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.35rem;
+}
+
+.setting-value-card__compare-block--adjust {
+  padding-top: 0.15rem;
+  border-top: 1px dashed color-mix(in srgb, var(--glass-border) 80%, transparent);
+}
+
+.setting-value-card__compare-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  flex: 0 0 auto;
+}
+
+.setting-value-card__compare-block--adjust .setting-value-card__compare-label {
+  color: var(--color-primary);
+}
+
+.setting-value-card__adjust-input {
+  flex: 1 1 3rem;
+  min-width: 3rem;
+  max-width: 5.5rem;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.45rem;
+  font-size: inherit;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.setting-value-card--compact .setting-value-card__value-row--compare {
+  gap: 0.3rem;
+}
+
+.setting-value-card--compact .setting-value-card__adjust-input {
+  min-height: 2rem;
+  max-width: 4.5rem;
+  font-size: 0.875rem;
+}
+
+.recommendation-settings-panel--adjusting .setting-value-card--highlight {
+  border-color: color-mix(in srgb, var(--color-warning) 45%, var(--glass-border));
+}
+
+.recommendation-settings-panel__save-row {
+  margin-top: 0.65rem;
+}
+
+.recommendation-settings-panel--dashboard .recommendation-settings-panel__save-row {
+  grid-column: 1 / -1;
+}
+
 .setting-value-card--compact {
   min-height: auto;
   padding: 0.75rem 0.85rem;
@@ -945,6 +1008,7 @@
 
 .fit-feedback-panel {
   margin-top: var(--space-md);
+  margin-bottom: var(--space-sm);
   padding: var(--space-md);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);

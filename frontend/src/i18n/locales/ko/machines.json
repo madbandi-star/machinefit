@@ -91,7 +91,9 @@
     "good": "잘 맞음",
     "bad": "조정 필요",
     "savedGood": "피드백 감사합니다!",
-    "savedBad": "선호하는 세팅값을 아래에 입력해 주세요.",
+    "savedBad": "추천값 옆에서 조정값을 입력해 주세요.",
+    "recommendedShort": "추천",
+    "adjustedShort": "조정",
     "customTitle": "선호 세팅값",
     "customDesc": "이 기구에 대한 맞춤 값을 저장합니다.",
     "savePreferences": "선호값 저장"

@@ -91,7 +91,9 @@
     "good": "Good fit",
     "bad": "Needs adjustment",
     "savedGood": "Thanks for the feedback!",
-    "savedBad": "Tell us your preferred settings below.",
+    "savedBad": "Enter your adjusted values next to each recommendation.",
+    "recommendedShort": "Rec.",
+    "adjustedShort": "Adj.",
     "customTitle": "Your preferred settings",
     "customDesc": "Save custom values for this machine.",
     "savePreferences": "Save preferences"

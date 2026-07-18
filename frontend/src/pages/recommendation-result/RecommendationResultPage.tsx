@@ -11,6 +11,7 @@ import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/F
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { favoriteApi, recommendationApi } from '@/api';
+import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -56,6 +57,12 @@ export function RecommendationResultPage() {
   });
 
   const result = fetchedResult ?? stateResult;
+
+  const fitFeedback = useMachineFitFeedback({
+    recommendationId: result?.id ?? '',
+    machineCode: result?.machineCode ?? '',
+    enabled: isAuthenticated && !!result?.id,
+  });
 
   const { data: favoriteCheck } = useQuery({
     queryKey: QUERY_KEYS.favoriteCheck(result?.machineCode ?? ''),
@@ -139,19 +146,24 @@ export function RecommendationResultPage() {
 
       <div className="recommendation-result-page__content">
         <RecommendationWarnings warnings={result.warnings} />
+        {isAuthenticated ? (
+          <FitFeedbackPanel
+            savedRating={fitFeedback.savedRating}
+            onRating={fitFeedback.handleRating}
+            isPending={fitFeedback.isFeedbackPending}
+          />
+        ) : null}
         <RecommendationSettingsPanel
           settings={result.settings}
           weightBasis={result.weightBasis}
           variant="hero"
+          showAdjustment={fitFeedback.showAdjustment}
+          customSettings={fitFeedback.customSettings}
+          onCustomChange={fitFeedback.handleCustomChange}
+          onSavePreferences={fitFeedback.savePreferences}
+          isPreferencesPending={fitFeedback.isPreferencesPending}
         />
         <RecommendationTips tips={result.tips} />
-        {isAuthenticated ? (
-          <FitFeedbackPanel
-            recommendationId={result.id}
-            machineCode={result.machineCode}
-            settings={result.settings}
-          />
-        ) : null}
         <WorkoutLogPanel
           machineCode={result.machineCode}
           recommendationId={result.id}

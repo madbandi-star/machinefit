@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, WeightRecommendationBasis } from '@machinefit/shared';
 import { roundRecommendWeightKg } from '@machinefit/shared';
@@ -11,29 +11,41 @@ type SettingField = {
   key: keyof RecommendationSettings;
   labelKey: string;
   isWeight?: boolean;
+  inputType: 'number' | 'text';
 };
 
 const SETTING_FIELDS: SettingField[] = [
-  { key: 'recommendedWeightKg', labelKey: 'settings.weight', isWeight: true },
-  { key: 'seatPosition', labelKey: 'settings.seat' },
-  { key: 'backPadPosition', labelKey: 'settings.backPad' },
-  { key: 'footPosition', labelKey: 'settings.foot' },
-  { key: 'handlePosition', labelKey: 'settings.handle' },
-  { key: 'romSetting', labelKey: 'settings.rom' },
+  { key: 'recommendedWeightKg', labelKey: 'settings.weight', isWeight: true, inputType: 'number' },
+  { key: 'seatPosition', labelKey: 'settings.seat', inputType: 'number' },
+  { key: 'backPadPosition', labelKey: 'settings.backPad', inputType: 'number' },
+  { key: 'footPosition', labelKey: 'settings.foot', inputType: 'number' },
+  { key: 'handlePosition', labelKey: 'settings.handle', inputType: 'number' },
+  { key: 'romSetting', labelKey: 'settings.rom', inputType: 'text' },
 ];
 
 interface SettingDisplayItem {
   key: keyof RecommendationSettings;
   label: string;
   value: string | number;
+  rawValue: string | number;
   unit?: string;
   isWeight?: boolean;
+  inputType: 'number' | 'text';
 }
 
 interface RecommendationSettingsPanelProps {
   settings: RecommendationSettings;
   weightBasis?: WeightRecommendationBasis;
   variant?: 'hero' | 'compact';
+  showAdjustment?: boolean;
+  customSettings?: Partial<RecommendationSettings>;
+  onCustomChange?: (
+    key: keyof RecommendationSettings,
+    raw: string,
+    type: 'number' | 'text'
+  ) => void;
+  onSavePreferences?: () => void;
+  isPreferencesPending?: boolean;
 }
 
 function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
@@ -51,12 +63,54 @@ function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
   );
 }
 
+function renderSettingCard(
+  item: SettingDisplayItem,
+  options: {
+    highlight?: boolean;
+    compact?: boolean;
+    labelExtra?: ReactNode;
+    showAdjustment?: boolean;
+    customSettings?: Partial<RecommendationSettings>;
+    onCustomChange?: RecommendationSettingsPanelProps['onCustomChange'];
+    recommendedLabel: string;
+    adjustedLabel: string;
+  }
+) {
+  const adjusted = options.customSettings?.[item.key];
+  const adjustedValue = adjusted != null ? String(adjusted) : '';
+
+  return (
+    <SettingValueCard
+      label={item.label}
+      value={item.value}
+      unit={item.unit}
+      highlight={options.highlight}
+      compact={options.compact}
+      labelExtra={options.labelExtra}
+      showAdjustment={options.showAdjustment}
+      recommendedLabel={options.recommendedLabel}
+      adjustedLabel={options.adjustedLabel}
+      adjustedValue={adjustedValue}
+      adjustedPlaceholder={String(item.rawValue)}
+      adjustedInputType={item.inputType}
+      onAdjustedChange={(raw) =>
+        options.onCustomChange?.(item.key, raw, item.inputType)
+      }
+    />
+  );
+}
+
 export function RecommendationSettingsPanel({
   settings,
   weightBasis,
   variant = 'hero',
+  showAdjustment = false,
+  customSettings,
+  onCustomChange,
+  onSavePreferences,
+  isPreferencesPending = false,
 }: RecommendationSettingsPanelProps) {
-  const { t } = useTranslation('machines');
+  const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
   const [basisOpen, setBasisOpen] = useState(false);
   const compact = variant === 'compact';
@@ -72,18 +126,22 @@ export function RecommendationSettingsPanel({
       const parts = formatted.split(' ');
       items.push({
         key: field.key,
-        label: t(field.labelKey),
+        label: t(`machines:${field.labelKey}`),
         value: parts[0] ?? formatted,
+        rawValue: roundRecommendWeightKg(raw),
         unit: parts.slice(1).join(' ') || undefined,
         isWeight: true,
+        inputType: field.inputType,
       });
       continue;
     }
 
     items.push({
       key: field.key,
-      label: t(field.labelKey),
+      label: t(`machines:${field.labelKey}`),
       value: raw,
+      rawValue: raw,
+      inputType: field.inputType,
     });
   }
 
@@ -92,10 +150,32 @@ export function RecommendationSettingsPanel({
     return <WeightBasisTrigger onClick={() => setBasisOpen(true)} />;
   };
 
+  const cardOptions = {
+    showAdjustment,
+    customSettings,
+    onCustomChange,
+    recommendedLabel: t('machines:feedback.recommendedShort'),
+    adjustedLabel: t('machines:feedback.adjustedShort'),
+  };
+
+  const saveFooter =
+    showAdjustment && onSavePreferences ? (
+      <div className="recommendation-settings-panel__save-row">
+        <button
+          type="button"
+          className="btn btn--primary btn--block"
+          onClick={onSavePreferences}
+          disabled={isPreferencesPending}
+        >
+          {isPreferencesPending ? t('common:actions.submit') : t('machines:feedback.savePreferences')}
+        </button>
+      </div>
+    ) : null;
+
   if (items.length === 0) {
     return (
       <p className="recommendation-settings-panel__empty">
-        {t('recommendation.emptySettings')}
+        {t('machines:recommendation.emptySettings')}
       </p>
     );
   }
@@ -115,34 +195,33 @@ export function RecommendationSettingsPanel({
     return (
       <>
         <div
-          className="recommendation-settings-panel recommendation-settings-panel--dashboard"
+          className={`recommendation-settings-panel recommendation-settings-panel--dashboard${
+            showAdjustment ? ' recommendation-settings-panel--adjusting' : ''
+          }`}
           role="list"
-          aria-label={t('recommendation.title')}
+          aria-label={t('machines:recommendation.title')}
         >
           <div role="listitem">
-            <SettingValueCard
-              label={hero.label}
-              value={hero.value}
-              unit={hero.unit}
-              highlight
-              labelExtra={renderLabelExtra(hero)}
-            />
+            {renderSettingCard(hero, {
+              highlight: true,
+              labelExtra: renderLabelExtra(hero),
+              ...cardOptions,
+            })}
           </div>
           {rest.length > 0 && (
             <div className="recommendation-settings-panel__grid" role="presentation">
               {rest.map((item) => (
                 <div key={item.key} role="listitem">
-                  <SettingValueCard
-                    label={item.label}
-                    value={item.value}
-                    unit={item.unit}
-                    compact
-                    labelExtra={renderLabelExtra(item)}
-                  />
+                  {renderSettingCard(item, {
+                    compact: true,
+                    labelExtra: renderLabelExtra(item),
+                    ...cardOptions,
+                  })}
                 </div>
               ))}
             </div>
           )}
+          {saveFooter}
         </div>
         {basisDialog}
       </>
@@ -152,21 +231,22 @@ export function RecommendationSettingsPanel({
   return (
     <>
       <div
-        className={`recommendation-settings-panel${compact ? ' recommendation-settings-panel--compact' : ''}`}
+        className={`recommendation-settings-panel${compact ? ' recommendation-settings-panel--compact' : ''}${
+          showAdjustment ? ' recommendation-settings-panel--adjusting' : ''
+        }`}
         role="list"
-        aria-label={t('recommendation.title')}
+        aria-label={t('machines:recommendation.title')}
       >
         {items.map((item) => (
           <div key={item.key} role="listitem">
-            <SettingValueCard
-              label={item.label}
-              value={item.value}
-              unit={item.unit}
-              compact={compact}
-              labelExtra={renderLabelExtra(item)}
-            />
+            {renderSettingCard(item, {
+              compact,
+              labelExtra: renderLabelExtra(item),
+              ...cardOptions,
+            })}
           </div>
         ))}
+        {saveFooter}
       </div>
       {basisDialog}
     </>
