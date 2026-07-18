@@ -588,8 +588,10 @@
   font-size: 0.8125rem;
 }
 
-.saved-settings-card--history .setting-value-card--compact .setting-value-card__unit {
-  font-size: 0.5625rem;
+.saved-settings-card--history .recommendation-workout-log--compact {
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 0.35rem;
 }
 
 .favorite-row {

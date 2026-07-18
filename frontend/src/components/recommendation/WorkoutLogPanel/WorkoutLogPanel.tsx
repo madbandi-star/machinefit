@@ -398,7 +398,11 @@ export function WorkoutLogPanel({
   );
 
   const weightList = (
-    <div className="recommendation-workout-log__weight-list">
+    <div
+      className={`recommendation-workout-log__weight-list${
+        compact ? ' recommendation-workout-log__weight-list--compact' : ''
+      }`}
+    >
       {weights.map((weight, index) => {
         const completed = setCompleted[index] ?? false;
         const previousWeight = index > 0 ? weights[index - 1] : undefined;
@@ -406,25 +410,26 @@ export function WorkoutLogPanel({
           <div
             key={index}
             className={`recommendation-workout-log__weight-row${
-              completed ? ' recommendation-workout-log__weight-row--completed' : ''
-            }`}
+              compact ? ' recommendation-workout-log__weight-row--compact' : ''
+            }${completed ? ' recommendation-workout-log__weight-row--completed' : ''}`}
           >
             <button
               type="button"
               className={`recommendation-workout-log__set-toggle${
-                completed ? ' recommendation-workout-log__set-toggle--completed' : ''
-              }`}
+                compact ? ' recommendation-workout-log__set-toggle--compact' : ''
+              }${completed ? ' recommendation-workout-log__set-toggle--completed' : ''}`}
               onClick={() => handleToggleSetCompleted(index)}
               disabled={isActionPending}
               aria-pressed={completed}
               aria-label={t('machines:workoutLog.setLabel', { number: index + 1 })}
             >
-              {t('machines:workoutLog.setLabel', { number: index + 1 })}
+              {compact ? index + 1 : t('machines:workoutLog.setLabel', { number: index + 1 })}
             </button>
             <WeightStepper
               id={`${idPrefix}-weight-${index}`}
               value={weight}
               step={weightStepKg}
+              size={compact ? 'compact' : 'default'}
               disabled={isActionPending}
               ariaLabel={t('machines:workoutLog.setLabel', { number: index + 1 })}
               suggestedWeightKg={suggestedWeightKg}
@@ -433,6 +438,7 @@ export function WorkoutLogPanel({
               onCopyPrevious={() => handleCopyPreviousWeight(index)}
               onApplyToAll={() => handleApplyWeightToAll(index)}
               showApplyToAll={setCount > 1}
+              showQuickActions={!compact}
               onChange={(next) => handleWeightChange(index, next)}
             />
           </div>
@@ -441,7 +447,28 @@ export function WorkoutLogPanel({
     </div>
   );
 
-  const diaryField = (
+  const diaryField = compact ? (
+    <details className="recommendation-workout-log__diary-details">
+      <summary className="recommendation-workout-log__diary-summary">
+        <span>{t('machines:workoutLog.diaryTitle')}</span>
+        {diary.trim() ? (
+          <span className="recommendation-workout-log__diary-preview">
+            {diary.trim().slice(0, 24)}
+            {diary.trim().length > 24 ? '…' : ''}
+          </span>
+        ) : null}
+      </summary>
+      <textarea
+        id={`${idPrefix}-diary`}
+        className="input recommendation-workout-log__diary-input"
+        rows={2}
+        value={diary}
+        placeholder={t('machines:workoutLog.diaryPlaceholder')}
+        onChange={(e) => handleDiaryChange(e.target.value)}
+        disabled={isActionPending}
+      />
+    </details>
+  ) : (
     <div className="recommendation-workout-log__diary">
       <div className="recommendation-workout-log__diary-header">
         <label className="recommendation-workout-log__field-label" htmlFor={`${idPrefix}-diary`}>
@@ -471,7 +498,7 @@ export function WorkoutLogPanel({
       <textarea
         id={`${idPrefix}-diary`}
         className="input recommendation-workout-log__diary-input"
-        rows={compact ? 2 : 3}
+        rows={3}
         value={diary}
         placeholder={t('machines:workoutLog.diaryPlaceholder')}
         onChange={(e) => handleDiaryChange(e.target.value)}
@@ -553,9 +580,11 @@ export function WorkoutLogPanel({
         <div className="recommendation-workout-log__toolbar">
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
           {setCountControl}
+          <span className="recommendation-workout-log__toolbar-total">
+            {formatTotalWeightKg(totalWeightKg)}kg
+          </span>
         </div>
         <div className="recommendation-workout-log__weights">{weightList}</div>
-        {totalWeightSummary}
         {diaryField}
         {saveButton}
       </section>

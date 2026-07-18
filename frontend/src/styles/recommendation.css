@@ -588,8 +588,171 @@
 }
 
 .recommendation-workout-log--compact {
+  gap: 0.28rem;
+  padding: 0.3rem 0.4rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__weight-list--compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__weight-row--compact {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.28rem 0.32rem;
+  min-width: 0;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__set-toggle--compact {
+  flex-shrink: 0;
+  width: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  border-bottom-width: 1px;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__set-toggle--compact::after {
+  display: none;
+}
+
+.recommendation-workout-log--compact
+  .recommendation-workout-log__set-toggle--compact.recommendation-workout-log__set-toggle--completed {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__set-toggle--completed::before {
+  content: none;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__weight-row .weight-stepper {
+  flex: 1;
+  min-width: 0;
+}
+
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row {
+  gap: 0.2rem;
+}
+
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn {
+  min-width: 2rem;
+  min-height: 2rem;
+  font-size: 1rem;
+}
+
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input {
+  min-height: 2rem;
+  padding: 0.15rem 0.2rem;
+}
+
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text {
+  font-size: 0.8125rem;
+}
+
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__unit {
+  font-size: 0.625rem;
+}
+
+.recommendation-workout-log--compact .numeric-stepper__manual-link {
+  display: none;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar {
+  gap: 0.25rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
+  flex: 0 1 auto;
+  max-width: 7.5rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  font-size: 0.9375rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
+  min-height: 1.75rem;
+  padding: 0.1rem 0.15rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
+  font-size: 0.8125rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar-total {
+  margin-left: auto;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.recommendation-workout-log__diary-details {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+}
+
+.recommendation-workout-log__diary-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.35rem;
-  padding: 0.4rem 0.5rem;
+  padding: 0.35rem 0.45rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  list-style: none;
+}
+
+.recommendation-workout-log__diary-summary::-webkit-details-marker {
+  display: none;
+}
+
+.recommendation-workout-log__diary-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55%;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.recommendation-workout-log__diary-details[open] .recommendation-workout-log__diary-input {
+  margin: 0 0.35rem 0.35rem;
+  width: calc(100% - 0.7rem);
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__diary-input {
+  padding: 0.3rem 0.4rem;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__save--compact {
+  min-height: 1.625rem;
+  padding: 0.28rem 0.45rem;
+  font-size: 0.625rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__actions {
+  gap: 0.3rem;
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__login-hint {
@@ -1010,12 +1173,6 @@
   font-size: 1.125rem;
   font-weight: 800;
   line-height: 1;
-}
-
-.recommendation-workout-log--compact .recommendation-workout-log__set-toggle {
-  min-height: 2.5rem;
-  padding: 0.45rem 0.5rem;
-  font-size: 0.75rem;
 }
 
 .rest-timer-banner {

@@ -7,6 +7,7 @@ interface WeightStepperProps {
   value: number;
   onChange: (value: number) => void;
   step?: number;
+  size?: 'default' | 'compact';
   disabled?: boolean;
   id?: string;
   ariaLabel?: string;
@@ -16,6 +17,7 @@ interface WeightStepperProps {
   onCopyPrevious?: () => void;
   onApplyToAll?: () => void;
   showApplyToAll?: boolean;
+  showQuickActions?: boolean;
 }
 
 function formatWeight(value: number): number {
@@ -26,6 +28,7 @@ export function WeightStepper({
   value,
   onChange,
   step = 2.5,
+  size = 'default',
   disabled = false,
   id,
   ariaLabel,
@@ -35,6 +38,7 @@ export function WeightStepper({
   onCopyPrevious,
   onApplyToAll,
   showApplyToAll = false,
+  showQuickActions = true,
 }: WeightStepperProps) {
   const { t } = useTranslation('machines');
 
@@ -75,7 +79,7 @@ export function WeightStepper({
   const visibleChips = chips.filter((chip) => !chip.hidden);
 
   return (
-    <div className="weight-stepper">
+    <div className={`weight-stepper${size === 'compact' ? ' weight-stepper--compact' : ''}`}>
       <NumericStepper
         id={id}
         value={formatWeight(value)}
@@ -84,12 +88,13 @@ export function WeightStepper({
         max={999}
         step={step}
         unit="kg"
+        size={size}
         disabled={disabled}
         ariaLabel={ariaLabel}
         emptyLabel="0"
-        allowManualInput
+        allowManualInput={size !== 'compact'}
       />
-      {visibleChips.length > 0 ? (
+      {showQuickActions && visibleChips.length > 0 ? (
         <div className="weight-stepper__chips" role="group" aria-label={t('workoutLog.quickActions')}>
           {visibleChips.map((chip) => (
             <button

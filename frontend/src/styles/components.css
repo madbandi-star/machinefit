@@ -1140,9 +1140,12 @@
   border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
 }
 
-.weight-stepper__chip:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.weight-stepper--compact {
+  gap: 0.2rem;
+}
+
+.weight-stepper--compact .weight-stepper__chips {
+  display: none;
 }
 
 .body-metrics-stepper {
