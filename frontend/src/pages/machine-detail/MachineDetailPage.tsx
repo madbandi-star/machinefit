@@ -8,23 +8,20 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { MachineHero } from '@/components/machines/MachineHero/MachineHero';
 import { LastRecommendationSnippet } from '@/components/machines/LastRecommendationSnippet/LastRecommendationSnippet';
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
-import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { historyApi, machineApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
-import { getLocalizedName } from '@/utils/localizedName';
-import { getTodayDateKey } from '@/utils/historyDate';
 import '@/styles/components.css';
 import '@/styles/machines.css';
 import '@/styles/records.css';
-import '@/styles/recommendation.css';
 
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
   const [searchParams] = useSearchParams();
   const muscleParam = searchParams.get('muscle') as TargetMuscleGroup | null;
-  const { t, i18n } = useTranslation('machines');
+  const { t } = useTranslation('machines');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isFreeWeightCode = machineCode ? isFreeWeightMachineCode(machineCode) : false;
 
   const { data: machine, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!),
@@ -41,7 +38,7 @@ export function MachineDetailPage() {
       const res = await historyApi.list({ machineCode: machineCode!, limit: 1 });
       return res.data.data[0] ?? null;
     },
-    enabled: !!machineCode && isAuthenticated,
+    enabled: !!machineCode && isAuthenticated && !isFreeWeightCode,
   });
 
   if (isLoading) return <Skeleton count={3} height={100} />;
@@ -56,33 +53,22 @@ export function MachineDetailPage() {
     return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
   }
 
-  const hasSavedSettings = !!lastHistory;
-  const localizedName = getLocalizedName(machine.name, i18n.language, '');
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
+  const hasSavedSettings = !isFreeWeight && !!lastHistory;
 
   return (
     <div className={`machine-detail-page${hasSavedSettings ? ' machine-detail-page--compact' : ''}`}>
       <MachineHero machine={machine} compact={hasSavedSettings} />
-      {machineCode && <LastRecommendationSnippet machineCode={machineCode} />}
-      {isAuthenticated && isFreeWeight && machineCode ? (
-        <WorkoutLogPanel
-          machineCode={machineCode}
-          machineName={localizedName}
-          recommendationId={lastHistory?.recommendationId}
-          suggestedWeightKg={lastHistory?.settings.recommendedWeightKg}
-          isAuthenticated={isAuthenticated}
-          logDate={getTodayDateKey()}
-          targetMuscleGroup={muscleParam ?? undefined}
-          idPrefix="machine-detail-workout"
-        />
+      {!isFreeWeight && machineCode ? (
+        <LastRecommendationSnippet machineCode={machineCode} />
       ) : null}
-      {machineCode && (
+      {machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
           fixed={hasSavedSettings}
           initialMuscle={muscleParam}
         />
-      )}
+      ) : null}
     </div>
   );
 }
