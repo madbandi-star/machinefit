@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import '@/styles/recommendation.css';
 
@@ -10,6 +11,7 @@ interface SettingValueCardProps {
   highlight?: boolean;
   compact?: boolean;
   labelExtra?: ReactNode;
+  labelIcon?: IconName;
   showAdjustment?: boolean;
   adjustmentReadOnly?: boolean;
   recommendedLabel?: string;
@@ -30,6 +32,7 @@ export function SettingValueCard({
   highlight = false,
   compact = false,
   labelExtra,
+  labelIcon,
   showAdjustment = false,
   adjustmentReadOnly = false,
   recommendedLabel,
@@ -49,6 +52,10 @@ export function SettingValueCard({
     .filter(Boolean)
     .join(' ');
 
+  const labelIconNode = labelIcon ? (
+    <Icon name={labelIcon} size={compact ? 12 : 14} className="setting-value-card__label-icon" />
+  ) : null;
+
   const parsedAdjustedNumber =
     adjustedValue.trim() === '' ? undefined : Number.parseFloat(adjustedValue);
   const adjustStep = unit?.toLowerCase().includes('kg') ? 5 : 1;
@@ -59,6 +66,7 @@ export function SettingValueCard({
     <div className={className}>
       {!(showAdjustment && adjustmentReadOnly) ? (
         <div className="setting-value-card__label-row">
+          {labelIconNode}
           <span className="setting-value-card__label">{label}</span>
           {labelExtra}
         </div>
@@ -71,7 +79,10 @@ export function SettingValueCard({
         {showAdjustment ? (
           <>
             <div className="setting-value-card__compare-block">
-              <span className="setting-value-card__compare-label">{recommendedLabel}</span>
+              <span className="setting-value-card__compare-label">
+                {labelIconNode}
+                {recommendedLabel}
+              </span>
               <span className="setting-value-card__value" aria-label={`${recommendedLabel} ${value}`}>
                 {value}
               </span>

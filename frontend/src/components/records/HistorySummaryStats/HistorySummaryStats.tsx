@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import type { HistorySummaryStats as HistorySummaryStatsData } from '@/utils/historySummaryStats';
 
 interface HistorySummaryStatsProps {
@@ -8,12 +9,19 @@ interface HistorySummaryStatsProps {
 export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
   const { t } = useTranslation('machines');
 
-  const items = [
+  const items: Array<{
+    key: string;
+    label: string;
+    value: string;
+    tone: 'green' | 'blue' | 'purple' | 'orange';
+    icon: IconName;
+  }> = [
     {
       key: 'sets',
       label: t('history.summaryTotalSets'),
       value: t('history.summaryTotalSetsValue', { count: stats.totalSets }),
       tone: 'green',
+      icon: 'weightPlate',
     },
     {
       key: 'weight',
@@ -22,6 +30,7 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
         weight: stats.totalWeightKg.toLocaleString(),
       }),
       tone: 'blue',
+      icon: 'kettlebell',
     },
     {
       key: 'volume',
@@ -30,16 +39,16 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
         weight: stats.totalVolumeDummyKg.toLocaleString(),
       }),
       tone: 'purple',
-      dummy: true,
+      icon: 'flame',
     },
     {
       key: 'time',
       label: t('history.summaryWorkoutTime'),
       value: t('history.summaryWorkoutTimeValue', { minutes: stats.workoutMinutesDummy }),
       tone: 'orange',
-      dummy: true,
+      icon: 'clock',
     },
-  ] as const;
+  ];
 
   return (
     <div className="history-summary-stats" aria-label={t('history.summaryLabel')}>
@@ -48,7 +57,14 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
           key={item.key}
           className={`history-summary-stats__card history-summary-stats__card--${item.tone}`}
         >
-          <span className="history-summary-stats__label">{item.label}</span>
+          <div className="history-summary-stats__label-row">
+            <Icon
+              name={item.icon}
+              size={14}
+              className={`history-summary-stats__icon history-summary-stats__icon--${item.tone}`}
+            />
+            <span className="history-summary-stats__label">{item.label}</span>
+          </div>
           <strong className="history-summary-stats__value">{item.value}</strong>
         </article>
       ))}

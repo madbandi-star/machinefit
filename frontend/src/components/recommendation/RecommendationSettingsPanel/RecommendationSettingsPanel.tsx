@@ -5,7 +5,9 @@ import { roundRecommendWeightKg } from '@machinefit/shared';
 import { SettingValueCard } from '@/components/recommendation/SettingValueCard/SettingValueCard';
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
 import { ROM_SETTING_PRESETS } from '@/constants/rom-setting-presets';
+import { HISTORY_SETTING_ICON } from '@/constants/history-setting-icons';
 import { useUserUnits } from '@/hooks/useUserUnits';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import '@/styles/recommendation.css';
 
 type SettingField = {
@@ -168,6 +170,7 @@ function renderSettingCard(
     adjustedLabel: string;
     formatWeight: (kg: number) => string;
     t: (key: string) => string;
+    labelIcon?: IconName;
   }
 ) {
   const adjustedValue = resolveAdjustedValue(item, options);
@@ -182,6 +185,7 @@ function renderSettingCard(
       highlight={options.highlight}
       compact={options.compact}
       labelExtra={options.labelExtra}
+      labelIcon={options.labelIcon}
       showAdjustment={options.showAdjustment}
       adjustmentReadOnly={options.adjustmentReadOnly}
       recommendedLabel={recommendedLabel}
@@ -323,6 +327,7 @@ export function RecommendationSettingsPanel({
                   compact: true,
                   highlight: item.isWeight,
                   labelExtra: renderLabelExtra(item),
+                  labelIcon: HISTORY_SETTING_ICON[item.key],
                   ...cardOptions,
                 })}
               </div>
@@ -330,6 +335,7 @@ export function RecommendationSettingsPanel({
             {historyTotalWeightKg != null ? (
               <div className="history-settings-total-tile" role="listitem">
                 <span className="history-settings-total-tile__label">
+                  <Icon name="totalWeightBag" size={12} className="history-settings-total-tile__icon" />
                   {t('machines:workoutLog.totalWeight')}
                 </span>
                 <strong className="history-settings-total-tile__value">

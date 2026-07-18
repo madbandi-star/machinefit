@@ -1192,6 +1192,18 @@
   gap: 0.5rem;
 }
 
+.setting-value-card__label-icon {
+  flex-shrink: 0;
+  color: var(--color-primary);
+  opacity: 0.9;
+}
+
+.setting-value-card__compare-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
 .weight-basis-trigger {
   border: none;
   background: none;
@@ -1549,6 +1561,14 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.history-settings-total-tile__icon {
+  flex-shrink: 0;
+  color: var(--color-primary);
 }
 
 .history-settings-total-tile__value {
@@ -1596,10 +1616,18 @@
 }
 
 .history-workout-log__edit-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
   font-size: 0.625rem;
   font-weight: 600;
   color: var(--color-text-muted);
   white-space: nowrap;
+}
+
+.history-workout-log__edit-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .recommendation-workout-log__weight-list--history {
@@ -1610,13 +1638,38 @@
 
 .recommendation-workout-log__weight-row--history {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.3rem;
+  gap: 0.2rem;
+  padding: 0.3rem 0.35rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--glass-border);
   background: color-mix(in srgb, var(--color-bg-secondary) 60%, transparent);
+  min-width: 0;
+}
+
+.history-workout-log__diary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+.history-workout-log__diary-tags-pane,
+.history-workout-log__diary-memo-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.history-workout-log__diary-tags-pane {
+  border-right: 1px solid color-mix(in srgb, var(--glass-border) 70%, transparent);
+  padding-right: 0.35rem;
+}
+
+.history-workout-log__diary-memo-pane {
+  padding-left: 0.05rem;
 }
 
 .recommendation-workout-log__weight-row--history.recommendation-workout-log__weight-row--completed {
@@ -1660,20 +1713,6 @@
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
-.history-workout-log__diary-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0.45rem;
-}
-
-.history-workout-log__diary-tags-pane,
-.history-workout-log__diary-memo-pane {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  min-width: 0;
-}
-
 .history-workout-log__pane-label {
   font-size: 0.625rem;
   font-weight: 700;
@@ -1682,7 +1721,7 @@
 
 .history-workout-log__memo-input {
   flex: 1;
-  min-height: 4.5rem;
+  min-height: 5.5rem;
   resize: vertical;
   font-size: 0.75rem;
   line-height: 1.35;
@@ -1692,6 +1731,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+  align-content: flex-start;
 }
 
 .history-record-card .recommendation-workout-log__diary-tag {
@@ -1703,14 +1743,4 @@
   font-weight: 600;
   color: var(--color-primary);
   cursor: pointer;
-}
-
-@media (max-width: 480px) {
-  .recommendation-workout-log__weight-list--history {
-    grid-template-columns: 1fr;
-  }
-
-  .history-workout-log__diary-grid {
-    grid-template-columns: 1fr;
-  }
 }

@@ -23,7 +23,17 @@ export type IconName =
   | 'calendar'
   | 'circleCheck'
   | 'sliders'
-  | 'trendingUp';
+  | 'trendingUp'
+  | 'weightPlate'
+  | 'kettlebell'
+  | 'flame'
+  | 'clock'
+  | 'weightStack'
+  | 'barbell'
+  | 'seatBack'
+  | 'cableHandle'
+  | 'totalWeightBag'
+  | 'pencil';
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;
@@ -167,6 +177,73 @@ const PATHS: Record<IconName, ReactElement> = {
     <>
       <path d="M4 18h16" />
       <path d="M7 15l3-3 3 2 5-7" />
+    </>
+  ),
+  weightPlate: (
+    <>
+      <circle cx="12" cy="12" r="7" />
+      <circle cx="12" cy="12" r="2.5" />
+    </>
+  ),
+  kettlebell: (
+    <>
+      <path d="M9.5 8.5a2.5 2.5 0 0 1 5 0" />
+      <path d="M12 8.5V11" />
+      <path d="M8.5 11.5h7l-1.2 8.5h-4.6L8.5 11.5Z" />
+    </>
+  ),
+  flame: (
+    <>
+      <path d="M12 21c3.2-2.6 5-5.6 5-9.2a5 5 0 0 0-9.2-2.8C7.2 11.5 5 13.5 5 16.8 5 18.4 5.6 19.9 6.6 21Z" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8v4.5l2.5 1.5" />
+    </>
+  ),
+  weightStack: (
+    <>
+      <rect x="7" y="5" width="10" height="2.5" rx="0.75" />
+      <rect x="7" y="9" width="10" height="2.5" rx="0.75" />
+      <rect x="7" y="13" width="10" height="2.5" rx="0.75" />
+      <path d="M12 16v4" />
+    </>
+  ),
+  barbell: (
+    <>
+      <path d="M4 12h16" />
+      <path d="M6 9v6M18 9v6" />
+      <rect x="7.5" y="10" width="2" height="4" rx="0.5" />
+      <rect x="14.5" y="10" width="2" height="4" rx="0.5" />
+    </>
+  ),
+  seatBack: (
+    <>
+      <path d="M6 18v-4a2 2 0 0 1 2-2h6" />
+      <path d="M8 12V8h4v4" />
+      <path d="M16 14h2v4" />
+    </>
+  ),
+  cableHandle: (
+    <>
+      <path d="M12 4v4.5" />
+      <path d="M9.5 8.5h5" />
+      <path d="M10 8.5v9a2 2 0 0 0 4 0v-9" />
+    </>
+  ),
+  totalWeightBag: (
+    <>
+      <path d="M8.5 8h7l1 12H7.5l1-12Z" />
+      <path d="M10 8V6.5a2 2 0 0 1 4 0V8" />
+      <path d="M12 11.5v3.5M10.5 13h3" />
+    </>
+  ),
+  pencil: (
+    <>
+      <path d="M14 5l5 5-9 9H5v-5l9-9Z" />
+      <path d="M13 6l5 5" />
     </>
   ),
 };
