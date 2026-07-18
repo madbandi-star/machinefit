@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { userRepository } from '../repositories/user.repository.js';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -31,6 +32,26 @@ const PERIOD_LABELS: Record<z.infer<typeof reportPeriodSchema>, string> = {
   month: '이번 달',
   year: '올해',
 };
+
+const TARGET_MUSCLE_LABELS: Record<string, string> = {
+  back: '등',
+  chest: '가슴',
+  legs: '하체',
+  shoulders: '어깨',
+};
+
+function formatLogMachineLabel(
+  log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number]
+): string {
+  if (isFreeWeightMachineCode(log.machineCode)) {
+    const equipment = log.machineName ?? log.machineCode;
+    const muscle = log.targetMuscleGroup
+      ? (TARGET_MUSCLE_LABELS[log.targetMuscleGroup] ?? log.targetMuscleGroup)
+      : '';
+    return muscle ? `프리웨이트 (${equipment} · ${muscle})` : `프리웨이트 (${equipment})`;
+  }
+  return log.machineName ?? log.machineCode;
+}
 
 function getLogVolumeKg(log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number]): number {
   return log.setWeightsKg.reduce((sum, weight) => sum + weight, 0);
@@ -72,7 +93,7 @@ function buildReportText(options: {
 
   lines.push('[상세 기록]');
   for (const log of options.logs) {
-    const machineLabel = log.machineName ?? log.machineCode;
+    const machineLabel = formatLogMachineLabel(log);
     const volume = getLogVolumeKg(log);
     lines.push(
       `· ${log.logDate} | ${machineLabel} | ${log.setCount}세트 | ${formatSetWeights(log.setWeightsKg)} (합 ${volume.toFixed(1)}kg)`
@@ -96,7 +117,7 @@ function buildReportHtml(options: {
   const rows = options.logs
     .map((log) => {
       const volume = getLogVolumeKg(log);
-      const machineLabel = log.machineName ?? log.machineCode;
+      const machineLabel = formatLogMachineLabel(log);
       return `<tr><td>${log.logDate}</td><td>${machineLabel}</td><td>${log.setCount}</td><td>${formatSetWeights(log.setWeightsKg)}</td><td>${volume.toFixed(1)}kg</td></tr>`;
     })
     .join('');

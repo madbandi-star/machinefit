@@ -6,3 +6,4 @@ export * from './recommend-volume.js';
 export * from './daily-insights.js';
 export * from './rest-timer.js';
 export * from './recommendation-personalization.js';
+export * from './free-weight.js';

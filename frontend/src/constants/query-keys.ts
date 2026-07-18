@@ -22,8 +22,8 @@ export const QUERY_KEYS = {
     customFrom?: string,
     customTo?: string
   ) => ['workout-logs', 'insights', viewMode, machineCode, period, customFrom ?? '', customTo ?? ''] as const,
-  workoutLogToday: (machineCode: string, logDate: string) =>
-    ['workout-logs', machineCode, logDate] as const,
+  workoutLogToday: (machineCode: string, logDate: string, targetMuscleGroup?: string) =>
+    ['workout-logs', machineCode, logDate, targetMuscleGroup ?? ''] as const,
   posts: ['posts'] as const,
   machineRequests: ['machine-requests'] as const,
   ownerDashboard: ['owner', 'dashboard'] as const,

@@ -1,15 +1,21 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
+import {
+  getHistoryMuscleGroup,
+  getMachinePrimaryDisplayName,
+} from '@/utils/freeWeightDisplay';
 import '@/styles/home.css';
 
 interface MachineMiniCardProps {
   machineCode: string;
   machineName: string;
   muscleGroup?: string;
+  targetMuscleGroup?: string;
   imageUrl?: string;
   recommendationId?: string;
 }
@@ -18,12 +24,19 @@ export function MachineMiniCard({
   machineCode,
   machineName,
   muscleGroup,
+  targetMuscleGroup,
   imageUrl,
   recommendationId,
 }: MachineMiniCardProps) {
   const { t } = useTranslation('machines');
-  const muscleLabel = muscleGroup
-    ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
+  const displayName = getMachinePrimaryDisplayName(
+    machineCode,
+    machineName,
+    t('machineTypes.free_weight')
+  );
+  const displayMuscle = getHistoryMuscleGroup(machineCode, muscleGroup, targetMuscleGroup);
+  const muscleLabel = displayMuscle
+    ? t(`muscleGroups.${displayMuscle}`, { defaultValue: displayMuscle })
     : undefined;
 
   const to = recommendationId
@@ -35,9 +48,9 @@ export function MachineMiniCard({
       <div className="machine-mini-card__thumb">
         {imageUrl ? (
           <img src={imageUrl} alt="" loading="lazy" />
-        ) : muscleGroup ? (
+        ) : displayMuscle ? (
           <div className="machine-mini-card__muscle-icon" aria-hidden>
-            <MuscleGroupIcon group={muscleGroup as MuscleGroup} size={44} />
+            <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={44} />
           </div>
         ) : (
           <div className="machine-mini-card__placeholder" aria-hidden>
@@ -46,18 +59,18 @@ export function MachineMiniCard({
         )}
       </div>
       <p className="machine-mini-card__name">
-        {muscleGroup ? (
+        {displayMuscle && !isFreeWeightMachineCode(machineCode) ? (
           <MachineNameWithMuscle
-            muscleGroup={muscleGroup}
-            name={machineName}
+            muscleGroup={displayMuscle}
+            name={displayName}
             iconSize={14}
             labelClassName="machine-mini-card__name-text"
           />
         ) : (
-          machineName
+          displayName
         )}
       </p>
-      {muscleLabel && !muscleGroup && (
+      {muscleLabel && !displayMuscle && (
         <p className="machine-mini-card__meta">{muscleLabel}</p>
       )}
     </Link>

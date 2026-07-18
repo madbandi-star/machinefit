@@ -2,9 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES } from '@machinefit/shared';
+import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
+import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
+import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -27,6 +29,7 @@ interface WorkoutLogPanelProps {
   variant?: 'default' | 'compact';
   logDate?: string;
   idPrefix?: string;
+  targetMuscleGroup?: TargetMuscleGroup;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -69,6 +72,7 @@ export function WorkoutLogPanel({
   variant = 'default',
   logDate: logDateProp,
   idPrefix = 'workout',
+  targetMuscleGroup,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -79,6 +83,11 @@ export function WorkoutLogPanel({
   const compact = variant === 'compact';
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
+  const isFreeWeight = isFreeWeightMachineCode(machineCode);
+  const [selectedMuscle, setSelectedMuscle] = useState<TargetMuscleGroup | null>(
+    targetMuscleGroup ?? null
+  );
+  const activeTargetMuscle = targetMuscleGroup ?? selectedMuscle;
 
   const [setCount, setSetCount] = useState(DEFAULT_SET_COUNT);
   const [weights, setWeights] = useState<number[]>(() =>
@@ -93,12 +102,18 @@ export function WorkoutLogPanel({
   const diaryBytes = getUtf8ByteLength(diary);
 
   const { data: existingLogs, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate),
+    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, activeTargetMuscle ?? undefined),
     queryFn: async () => {
-      const res = await workoutLogApi.list({ machineCode, logDate });
+      const res = await workoutLogApi.list({
+        machineCode,
+        logDate,
+        ...(isFreeWeight && activeTargetMuscle
+          ? { targetMuscleGroup: activeTargetMuscle }
+          : {}),
+      });
       return res.data.data;
     },
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && (!isFreeWeight || !!activeTargetMuscle),
   });
 
   const existingLog = existingLogs?.[0];
@@ -134,7 +149,8 @@ export function WorkoutLogPanel({
 
   useEffect(() => {
     setInitialized(false);
-  }, [machineCode, logDate, recommendationId]);
+    setSelectedMuscle(targetMuscleGroup ?? null);
+  }, [machineCode, logDate, recommendationId, targetMuscleGroup]);
 
   useEffect(() => {
     if (!isAuthenticated || isLoading || initialized) return;
@@ -156,6 +172,10 @@ export function WorkoutLogPanel({
     setInitialized(true);
   }, [existingLog, initialized, isAuthenticated, isLoading, suggestedWeightKg]);
 
+  useEffect(() => {
+    setInitialized(false);
+  }, [activeTargetMuscle]);
+
   const saveMutation = useMutation({
     mutationFn: () =>
       workoutLogApi.upsert({
@@ -166,6 +186,9 @@ export function WorkoutLogPanel({
         setWeightsKg: weights,
         setCompleted,
         diary: diary.trim() || undefined,
+        ...(isFreeWeight && activeTargetMuscle
+          ? { targetMuscleGroup: activeTargetMuscle }
+          : {}),
       }),
     onSuccess: async () => {
       await invalidateLogQueries();
@@ -178,7 +201,14 @@ export function WorkoutLogPanel({
   });
 
   const removeMutation = useMutation({
-    mutationFn: () => workoutLogApi.remove({ machineCode, logDate }),
+    mutationFn: () =>
+      workoutLogApi.remove({
+        machineCode,
+        logDate,
+        ...(isFreeWeight && activeTargetMuscle
+          ? { targetMuscleGroup: activeTargetMuscle }
+          : {}),
+      }),
     onSuccess: async () => {
       setInitialized(false);
       await invalidateLogQueries();
@@ -189,7 +219,32 @@ export function WorkoutLogPanel({
 
   const isActionPending = saveMutation.isPending || removeMutation.isPending;
 
+  const targetMusclePicker =
+    isFreeWeight && !targetMuscleGroup ? (
+      <div className="recommendation-workout-log__muscle-picker" role="group" aria-label={t('machines:targetMuscleLabel')}>
+        <p className="recommendation-workout-log__field-label">{t('machines:targetMuscleLabel')}</p>
+        <div className="filter-chips">
+          {MUSCLE_GROUPS.map((group) => (
+            <button
+              key={group}
+              type="button"
+              className={`filter-chip${activeTargetMuscle === group ? ' filter-chip--active' : ''}`}
+              onClick={() => setSelectedMuscle(group)}
+              disabled={isActionPending}
+            >
+              <MuscleGroupIcon group={group} size={22} className="filter-chip__icon" />
+              <span>{t(`machines:muscleGroups.${group}`)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    ) : null;
+
   const handleSave = () => {
+    if (isFreeWeight && !activeTargetMuscle) {
+      showToast(t('machines:targetMuscleRequired'), 'error');
+      return;
+    }
     saveMutation.mutate();
   };
 
@@ -454,6 +509,7 @@ export function WorkoutLogPanel({
         aria-label={t('machines:workoutLog.title')}
       >
         {restTimerBanner}
+        {targetMusclePicker}
         <div className="recommendation-workout-log__toolbar">
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
           {setCountControl}
@@ -475,6 +531,8 @@ export function WorkoutLogPanel({
           {formatHistoryDateHeader(logDate, locale)}
         </span>
       </div>
+
+      {targetMusclePicker}
 
       <div className="recommendation-workout-log__set-count">
         <label className="recommendation-workout-log__field-label" htmlFor={setCountInputId}>

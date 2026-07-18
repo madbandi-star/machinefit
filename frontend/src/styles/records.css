@@ -543,6 +543,13 @@
   font-size: 0.625rem;
 }
 
+.saved-settings-card__equipment-subtitle {
+  flex-basis: 100%;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted, #64748b);
+  line-height: 1.2;
+}
+
 .saved-settings-card--history .saved-settings-card__time--inline {
   flex-basis: 100%;
   font-size: 0.625rem;

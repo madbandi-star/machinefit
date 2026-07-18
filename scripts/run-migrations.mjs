@@ -24,6 +24,7 @@ const MIGRATIONS = [
   '023_recommendation_feedback_prefs.sql',
   '024_smith_all_muscle.sql',
   '025_recommendation_target_muscle.sql',
+  '026_workout_log_target_muscle.sql',
 ];
 
 const pool = new pg.Pool({ connectionString: loadDatabaseUrl() });

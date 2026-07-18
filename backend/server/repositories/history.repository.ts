@@ -6,6 +6,7 @@ export interface HistoryItem {
   machineCode: string;
   machineName: string;
   muscleGroup: string;
+  targetMuscleGroup?: string;
   recommendationId: string;
   settings: {
     seatPosition?: number;
@@ -60,12 +61,14 @@ export const historyRepository = {
       handle_position: number | null;
       rom_setting: string | null;
       recommended_weight_kg: string | null;
+      target_muscle_group: string | null;
       viewed_at: string;
     }>(
       `SELECT h.id, h.machine_id, h.recommendation_id, h.viewed_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               r.seat_position, r.back_pad_position, r.foot_position,
-              r.handle_position, r.rom_setting, r.recommended_weight_kg
+              r.handle_position, r.rom_setting, r.recommended_weight_kg,
+              r.target_muscle_group
        FROM recent_history h
        JOIN machines m ON m.id = h.machine_id
        JOIN machine_recommendations r ON r.id = h.recommendation_id
@@ -81,6 +84,7 @@ export const historyRepository = {
       machineCode: row.machine_code,
       machineName: row.machine_name.en ?? row.machine_code,
       muscleGroup: row.muscle_group,
+      targetMuscleGroup: row.target_muscle_group ?? undefined,
       recommendationId: row.recommendation_id,
       settings: {
         seatPosition: row.seat_position ?? undefined,

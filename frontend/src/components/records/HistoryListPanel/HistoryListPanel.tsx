@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { TargetMuscleGroup } from '@machinefit/shared';
 import { useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
@@ -35,6 +36,11 @@ import {
 } from '@/utils/historyLogStatus';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import { isDismissedToday } from '@/utils/dismissToday';
+import {
+  getHistoryEquipmentSubtitle,
+  getHistoryMuscleGroup,
+  getMachinePrimaryDisplayName,
+} from '@/utils/freeWeightDisplay';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
@@ -47,6 +53,7 @@ interface PendingDelete {
   machineCode: string;
   recommendationId: string;
   viewedAt: string;
+  targetMuscleGroup?: string;
 }
 
 export function HistoryListPanel() {
@@ -190,17 +197,29 @@ export function HistoryListPanel() {
   };
 
   const deleteMutation = useMutation({
-    mutationFn: async ({ id, machineCode, recommendationId, viewedAt }: PendingDelete) => {
+    mutationFn: async ({
+      id,
+      machineCode,
+      recommendationId,
+      viewedAt,
+      targetMuscleGroup,
+    }: PendingDelete) => {
       await historyApi.remove(id);
       const viewedDate = getLocalDateKey(viewedAt);
       const matchingLog = workoutLogs?.find(
         (log) =>
           log.machineCode === machineCode &&
-          (log.recommendationId === recommendationId || log.logDate === viewedDate)
+          (log.recommendationId === recommendationId || log.logDate === viewedDate) &&
+          (targetMuscleGroup ? log.targetMuscleGroup === targetMuscleGroup : true)
       );
       const logDate = matchingLog?.logDate ?? viewedDate;
+      const logTargetMuscle = matchingLog?.targetMuscleGroup ?? targetMuscleGroup;
       try {
-        await workoutLogApi.remove({ machineCode, logDate });
+        await workoutLogApi.remove({
+          machineCode,
+          logDate,
+          ...(logTargetMuscle ? { targetMuscleGroup: logTargetMuscle } : {}),
+        });
       } catch {
         /* workout log may not exist */
       }
@@ -351,6 +370,20 @@ export function HistoryListPanel() {
               const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
               const logDate = getLocalDateKey(item.viewedAt);
               const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys, workoutLogs);
+              const displayName = getMachinePrimaryDisplayName(
+                item.machineCode,
+                item.machineName,
+                t('machines:machineTypes.free_weight')
+              );
+              const muscleGroup = getHistoryMuscleGroup(
+                item.machineCode,
+                item.muscleGroup,
+                item.targetMuscleGroup
+              );
+              const equipmentSubtitle = getHistoryEquipmentSubtitle(
+                item.machineCode,
+                item.machineName
+              );
 
               return (
                 <article
@@ -362,8 +395,8 @@ export function HistoryListPanel() {
                     <Link to={resultUrl} className="saved-settings-card__machine">
                       <div className="saved-settings-card__machine-title-row">
                         <MachineNameWithMuscle
-                          muscleGroup={item.muscleGroup}
-                          name={item.machineName}
+                          muscleGroup={muscleGroup}
+                          name={displayName}
                           iconSize={20}
                           labelClassName="saved-settings-card__machine-name"
                         />
@@ -375,6 +408,11 @@ export function HistoryListPanel() {
                             : t('machines:history.workoutUnsavedBadge')}
                         </span>
                       </div>
+                      {equipmentSubtitle ? (
+                        <span className="saved-settings-card__equipment-subtitle">
+                          {equipmentSubtitle}
+                        </span>
+                      ) : null}
                       <span className="saved-settings-card__time saved-settings-card__time--inline">
                         {formatHistoryTime(item.viewedAt, i18n.language)}
                       </span>
@@ -389,6 +427,7 @@ export function HistoryListPanel() {
                           machineCode: item.machineCode,
                           recommendationId: item.recommendationId,
                           viewedAt: item.viewedAt,
+                          targetMuscleGroup: item.targetMuscleGroup,
                         })
                       }
                       disabled={deleteMutation.isPending}
@@ -412,6 +451,7 @@ export function HistoryListPanel() {
                     variant="compact"
                     logDate={logDate}
                     idPrefix={`history-workout-${item.id}`}
+                    targetMuscleGroup={item.targetMuscleGroup as TargetMuscleGroup | undefined}
                   />
                 </article>
               );

@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { getLocalizedName } from '@/utils/localizedName';
+import { getMachinePrimaryDisplayName } from '@/utils/freeWeightDisplay';
 import '@/styles/machines.css';
 
 interface MachineHeroProps {
@@ -13,13 +15,14 @@ interface MachineHeroProps {
 
 export function MachineHero({ machine, compact = false }: MachineHeroProps) {
   const { t, i18n } = useTranslation('machines');
-  const name = getLocalizedName(machine.name, i18n.language, '');
-  const muscleLabel = t(`muscleGroups.${machine.muscleGroup}`, {
-    defaultValue: machine.muscleGroup,
-  });
-  const typeLabel = t(`machineTypes.${machine.machineType}`, {
-    defaultValue: machine.machineType.replace(/_/g, ' '),
-  });
+  const localizedName = getLocalizedName(machine.name, i18n.language, '');
+  const isFreeWeight = isFreeWeightMachineCode(machine.code);
+  const name = getMachinePrimaryDisplayName(
+    machine.code,
+    localizedName,
+    t('machineTypes.free_weight')
+  );
+  const typeLabel = t('machineTypes.free_weight');
 
   return (
     <div className={`machine-hero${compact ? ' machine-hero--compact' : ''}`}>
@@ -44,16 +47,34 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
         </div>
       )}
       <h1 className="machine-hero__title">
-        <MachineNameWithMuscle
-          muscleGroup={machine.muscleGroup}
-          name={name}
-          iconSize={28}
-          labelClassName="machine-hero__title-text"
-        />
+        {isFreeWeight ? (
+          <span className="machine-name-with-muscle">
+            <span className="machine-name-with-muscle__label machine-hero__title-text">{name}</span>
+          </span>
+        ) : (
+          <MachineNameWithMuscle
+            muscleGroup={machine.muscleGroup}
+            name={name}
+            iconSize={28}
+            labelClassName="machine-hero__title-text"
+          />
+        )}
       </h1>
       <div className="machine-hero__badges">
-        <span className="machine-badge machine-badge--muscle">{muscleLabel}</span>
-        <span className="machine-badge machine-badge--type">{typeLabel}</span>
+        {isFreeWeight ? (
+          <span className="machine-badge machine-badge--type">{typeLabel}</span>
+        ) : (
+          <>
+            <span className="machine-badge machine-badge--muscle">
+              {t(`muscleGroups.${machine.muscleGroup}`, { defaultValue: machine.muscleGroup })}
+            </span>
+            <span className="machine-badge machine-badge--type">
+              {t(`machineTypes.${machine.machineType}`, {
+                defaultValue: machine.machineType.replace(/_/g, ' '),
+              })}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );

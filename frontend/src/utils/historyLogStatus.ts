@@ -9,22 +9,42 @@ export function parseHistoryLogStatus(value: string | null): HistoryLogStatus {
   return 'all';
 }
 
-export function buildLoggedWorkoutKey(machineCode: string, logDate: string): string {
-  return `${machineCode}:${logDate}`;
+export function buildLoggedWorkoutKey(
+  machineCode: string,
+  logDate: string,
+  targetMuscleGroup?: string
+): string {
+  return `${machineCode}:${logDate}:${targetMuscleGroup ?? ''}`;
 }
 
 export function buildLoggedWorkoutKeys(logs: WorkoutLog[]): Set<string> {
   const keys = new Set<string>();
   for (const log of logs) {
-    keys.add(buildLoggedWorkoutKey(log.machineCode, normalizeDateKey(log.logDate)));
+    keys.add(
+      buildLoggedWorkoutKey(
+        log.machineCode,
+        normalizeDateKey(log.logDate),
+        log.targetMuscleGroup
+      )
+    );
   }
   return keys;
 }
 
 export function historyItemHasWorkoutLog<
-  T extends { machineCode: string; viewedAt: string; recommendationId?: string },
+  T extends {
+    machineCode: string;
+    viewedAt: string;
+    recommendationId?: string;
+    targetMuscleGroup?: string;
+  },
 >(item: T, loggedKeys: Set<string>, logs?: WorkoutLog[]): boolean {
-  if (loggedKeys.has(buildLoggedWorkoutKey(item.machineCode, getLocalDateKey(item.viewedAt)))) {
+  const key = buildLoggedWorkoutKey(
+    item.machineCode,
+    getLocalDateKey(item.viewedAt),
+    item.targetMuscleGroup
+  );
+  if (loggedKeys.has(key)) {
     return true;
   }
   if (item.recommendationId && logs?.length) {
@@ -34,7 +54,12 @@ export function historyItemHasWorkoutLog<
 }
 
 export function filterHistoryByLogStatus<
-  T extends { machineCode: string; viewedAt: string; recommendationId?: string },
+  T extends {
+    machineCode: string;
+    viewedAt: string;
+    recommendationId?: string;
+    targetMuscleGroup?: string;
+  },
 >(items: T[], loggedKeys: Set<string>, status: HistoryLogStatus, logs?: WorkoutLog[]): T[] {
   if (status === 'all') return items;
   return items.filter((item) => {

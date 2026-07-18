@@ -1,5 +1,5 @@
 import { getPool } from '../config/database.js';
-import type { WorkoutLog } from '@machinefit/shared';
+import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
 
 interface WorkoutLogRow {
   id: string;
@@ -7,6 +7,7 @@ interface WorkoutLogRow {
   machine_name: Record<string, string>;
   recommendation_id: string | null;
   log_date: string;
+  target_muscle_group: string;
   set_count: number;
   set_weights_kg: number[];
   set_completed: boolean[] | null;
@@ -36,6 +37,9 @@ function mapRow(row: WorkoutLogRow): WorkoutLog {
     machineName: row.machine_name.en ?? row.machine_code,
     recommendationId: row.recommendation_id ?? undefined,
     logDate,
+    targetMuscleGroup: row.target_muscle_group
+      ? (row.target_muscle_group as TargetMuscleGroup)
+      : undefined,
     setCount: row.set_count,
     setWeightsKg: row.set_weights_kg,
     setCompleted:
@@ -48,7 +52,7 @@ function mapRow(row: WorkoutLogRow): WorkoutLog {
   };
 }
 
-const SELECT_FIELDS = `wl.id, wl.recommendation_id, wl.log_date, wl.set_count, wl.set_weights_kg,
+const SELECT_FIELDS = `wl.id, wl.recommendation_id, wl.log_date, wl.target_muscle_group, wl.set_count, wl.set_weights_kg,
               wl.set_completed, wl.diary, wl.created_at, wl.updated_at,
               m.code AS machine_code, m.name AS machine_name`;
 
@@ -56,7 +60,8 @@ export const workoutLogRepository = {
   async findByUserMachineDate(
     userId: string,
     machineId: string,
-    logDate: string
+    logDate: string,
+    targetMuscleGroup = ''
   ): Promise<WorkoutLog | null> {
     const pool = getPool();
     if (!pool) return null;
@@ -65,8 +70,9 @@ export const workoutLogRepository = {
       `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
        JOIN machines m ON m.id = wl.machine_id
-       WHERE wl.user_id = $1 AND wl.machine_id = $2 AND wl.log_date = $3::date`,
-      [userId, machineId, logDate]
+       WHERE wl.user_id = $1 AND wl.machine_id = $2 AND wl.log_date = $3::date
+         AND wl.target_muscle_group = $4`,
+      [userId, machineId, logDate, targetMuscleGroup]
     );
 
     const row = result.rows[0];
@@ -80,6 +86,7 @@ export const workoutLogRepository = {
       logDate?: string;
       from?: string;
       to?: string;
+      targetMuscleGroup?: string;
     }
   ): Promise<WorkoutLog[]> {
     const pool = getPool();
@@ -108,6 +115,11 @@ export const workoutLogRepository = {
       filters += ` AND wl.log_date <= $${params.length}::date`;
     }
 
+    if (options.targetMuscleGroup !== undefined) {
+      params.push(options.targetMuscleGroup);
+      filters += ` AND wl.target_muscle_group = $${params.length}`;
+    }
+
     const result = await pool.query<WorkoutLogRow>(
       `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
@@ -126,6 +138,7 @@ export const workoutLogRepository = {
     data: {
       recommendationId?: string;
       logDate: string;
+      targetMuscleGroup?: string;
       setCount: number;
       setWeightsKg: number[];
       setCompleted?: boolean[];
@@ -142,10 +155,11 @@ export const workoutLogRepository = {
 
     const result = await pool.query<WorkoutLogRow>(
       `INSERT INTO workout_logs (
-         user_id, machine_id, recommendation_id, log_date, set_count, set_weights_kg, set_completed, diary
+         user_id, machine_id, recommendation_id, log_date, target_muscle_group,
+         set_count, set_weights_kg, set_completed, diary
        )
-       VALUES ($1, $2, $3, $4::date, $5, $6::jsonb, $7::jsonb, $8)
-       ON CONFLICT (user_id, machine_id, log_date)
+       VALUES ($1, $2, $3, $4::date, $5, $6, $7::jsonb, $8::jsonb, $9)
+       ON CONFLICT (user_id, machine_id, log_date, target_muscle_group)
        DO UPDATE SET
          set_count = EXCLUDED.set_count,
          set_weights_kg = EXCLUDED.set_weights_kg,
@@ -153,7 +167,7 @@ export const workoutLogRepository = {
          diary = EXCLUDED.diary,
          recommendation_id = COALESCE(EXCLUDED.recommendation_id, workout_logs.recommendation_id),
          updated_at = NOW()
-       RETURNING id, recommendation_id, log_date, set_count, set_weights_kg, set_completed, diary,
+       RETURNING id, recommendation_id, log_date, target_muscle_group, set_count, set_weights_kg, set_completed, diary,
                  created_at, updated_at,
                  (SELECT code FROM machines WHERE id = $2) AS machine_code,
                  (SELECT name FROM machines WHERE id = $2) AS machine_name`,
@@ -162,6 +176,7 @@ export const workoutLogRepository = {
         machineId,
         data.recommendationId ?? null,
         data.logDate,
+        data.targetMuscleGroup ?? '',
         data.setCount,
         JSON.stringify(data.setWeightsKg),
         JSON.stringify(setCompleted),
@@ -177,15 +192,17 @@ export const workoutLogRepository = {
   async deleteByUserMachineDate(
     userId: string,
     machineId: string,
-    logDate: string
+    logDate: string,
+    targetMuscleGroup = ''
   ): Promise<boolean> {
     const pool = getPool();
     if (!pool) return false;
 
     const result = await pool.query(
       `DELETE FROM workout_logs
-       WHERE user_id = $1 AND machine_id = $2 AND log_date = $3::date`,
-      [userId, machineId, logDate]
+       WHERE user_id = $1 AND machine_id = $2 AND log_date = $3::date
+         AND target_muscle_group = $4`,
+      [userId, machineId, logDate, targetMuscleGroup]
     );
 
     return (result.rowCount ?? 0) > 0;

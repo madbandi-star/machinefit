@@ -39,6 +39,7 @@ interface RecommendationRow {
   tips: Record<string, string[]> | null;
   warnings: Record<string, string[]> | null;
   weight_basis: WeightRecommendationBasis | null;
+  target_muscle_group: string | null;
   created_at: string;
 }
 
@@ -187,6 +188,9 @@ export const recommendationRepository = {
       youtubeVideos: await this.findYoutubeVideos(row.machine_id),
       createdAt: row.created_at,
       weightBasis: row.weight_basis ?? undefined,
+      targetMuscleGroup: row.target_muscle_group
+        ? (row.target_muscle_group as RecommendationInput['targetMuscleGroup'])
+        : undefined,
     };
   },
 };

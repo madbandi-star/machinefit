@@ -1,4 +1,5 @@
 import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput } from '@machinefit/shared';
+import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -22,11 +23,17 @@ export const workoutLogService = {
       machineId = foundId;
     }
 
+    const targetMuscleGroup =
+      query.machineCode && query.targetMuscleGroup !== undefined
+        ? normalizeWorkoutLogTargetMuscle(query.machineCode, query.targetMuscleGroup)
+        : undefined;
+
     return workoutLogRepository.listByUser(userId, {
       machineId,
       logDate: query.logDate,
       from: query.from,
       to: query.to,
+      targetMuscleGroup,
     });
   },
 
@@ -36,11 +43,21 @@ export const workoutLogService = {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${input.machineCode}`);
     }
 
+    const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
+      input.machineCode,
+      input.targetMuscleGroup
+    );
+
+    if (isFreeWeightMachineCode(input.machineCode) && !targetMuscleKey) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'targetMuscleGroup is required for free-weight logs');
+    }
+
     const logDate = input.logDate ?? todayDateKey();
 
     return workoutLogRepository.upsert(userId, machineId, {
       recommendationId: input.recommendationId,
       logDate,
+      targetMuscleGroup: targetMuscleKey,
       setCount: input.setCount,
       setWeightsKg: input.setWeightsKg,
       setCompleted: input.setCompleted,
@@ -54,10 +71,16 @@ export const workoutLogService = {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${input.machineCode}`);
     }
 
+    const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
+      input.machineCode,
+      input.targetMuscleGroup
+    );
+
     const deleted = await workoutLogRepository.deleteByUserMachineDate(
       userId,
       machineId,
-      input.logDate
+      input.logDate,
+      targetMuscleKey
     );
 
     if (!deleted) {

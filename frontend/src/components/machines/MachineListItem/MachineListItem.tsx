@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
+import { getMachinePrimaryDisplayName, shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/machines.css';
 
 interface MachineListItemProps {
@@ -14,11 +16,18 @@ interface MachineListItemProps {
 }
 
 export function MachineListItem({ machine, selectedMuscle }: MachineListItemProps) {
-  const { i18n } = useTranslation('machines');
-  const name = getLocalizedName(machine.name, i18n.language, '');
-  const brandName = machine.brandName
-    ? getLocalizedName(machine.brandName, i18n.language, '')
-    : null;
+  const { t, i18n } = useTranslation('machines');
+  const localizedName = getLocalizedName(machine.name, i18n.language, '');
+  const name = getMachinePrimaryDisplayName(
+    machine.code,
+    localizedName,
+    t('machineTypes.free_weight')
+  );
+  const showMuscle = shouldShowDefaultMachineMuscle(machine.code);
+  const brandName =
+    machine.brandName && !isFreeWeightMachineCode(machine.code)
+      ? getLocalizedName(machine.brandName, i18n.language, '')
+      : null;
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
   const detailTo =
@@ -47,7 +56,7 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       <div className="machine-list-item__body">
         <p className="machine-list-item__name">
           <MachineNameWithMuscle
-            muscleGroup={machine.muscleGroup}
+            muscleGroup={showMuscle ? machine.muscleGroup : undefined}
             name={name}
             iconSize={20}
             labelClassName="machine-list-item__name-text"

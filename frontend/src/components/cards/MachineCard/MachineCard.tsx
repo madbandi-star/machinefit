@@ -4,6 +4,7 @@ import type { Machine } from '@machinefit/shared';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
+import { getMachinePrimaryDisplayName, shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/components.css';
 
 interface MachineCardProps {
@@ -11,8 +12,13 @@ interface MachineCardProps {
 }
 
 export function MachineCard({ machine }: MachineCardProps) {
-  const { i18n } = useTranslation();
-  const name = getLocalizedName(machine.name, i18n.language, '');
+  const { t, i18n } = useTranslation('machines');
+  const localizedName = getLocalizedName(machine.name, i18n.language, '');
+  const name = getMachinePrimaryDisplayName(
+    machine.code,
+    localizedName,
+    t('machineTypes.free_weight')
+  );
 
   return (
     <Link
@@ -20,7 +26,11 @@ export function MachineCard({ machine }: MachineCardProps) {
       className="card card--interactive"
     >
       <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-        <MachineNameWithMuscle muscleGroup={machine.muscleGroup} name={name} iconSize={20} />
+        <MachineNameWithMuscle
+          muscleGroup={shouldShowDefaultMachineMuscle(machine.code) ? machine.muscleGroup : undefined}
+          name={name}
+          iconSize={20}
+        />
       </h3>
     </Link>
   );

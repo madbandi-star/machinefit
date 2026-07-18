@@ -161,6 +161,7 @@ export interface HistoryItem {
   machineCode: string;
   machineName: string;
   muscleGroup?: string;
+  targetMuscleGroup?: string;
   recommendationId: string;
   settings: RecommendationResult['settings'];
   viewedAt: string;
@@ -185,11 +186,16 @@ export const historyApi = {
 };
 
 export const workoutLogApi = {
-  list: (params?: { machineCode?: string; logDate?: string; from?: string; to?: string }) =>
-    apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
+  list: (params?: {
+    machineCode?: string;
+    logDate?: string;
+    from?: string;
+    to?: string;
+    targetMuscleGroup?: string;
+  }) => apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
   upsert: (body: UpsertWorkoutLogInput) =>
     apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),
-  remove: (body: { machineCode: string; logDate: string }) =>
+  remove: (body: { machineCode: string; logDate: string; targetMuscleGroup?: string }) =>
     apiClient.delete<ApiResponse<{ message: string }>>('/workout-logs', { data: body }),
 };
 

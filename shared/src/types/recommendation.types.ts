@@ -35,4 +35,5 @@ export interface RecommendationResult {
   youtubeVideos: YoutubeVideo[];
   createdAt: string;
   weightBasis?: WeightRecommendationBasis;
+  targetMuscleGroup?: TargetMuscleGroup;
 }

@@ -1,3 +1,5 @@
+import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
+
 export function getLocalDateKey(iso: string): string {
   const d = new Date(iso);
   const y = d.getFullYear();
@@ -34,14 +36,16 @@ export function formatHistoryDateHeader(dateKey: string, locale: string): string
   });
 }
 
-export function collectMuscleGroupsInOrder<T extends { muscleGroup?: string }>(
-  items: T[]
-): string[] {
+export function collectMuscleGroupsInOrder<
+  T extends { muscleGroup?: string; machineCode?: string; targetMuscleGroup?: string },
+>(items: T[]): string[] {
   const seen = new Set<string>();
   const groups: string[] = [];
 
   for (const item of items) {
-    const group = item.muscleGroup;
+    const group = item.machineCode
+      ? getHistoryMuscleGroup(item.machineCode, item.muscleGroup, item.targetMuscleGroup)
+      : item.muscleGroup;
     if (!group || seen.has(group)) continue;
     seen.add(group);
     groups.push(group);
