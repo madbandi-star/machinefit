@@ -1615,7 +1615,6 @@
 
 /* History record — workout log */
 .recommendation-workout-log--history {
-  --history-control-height: 2.125rem;
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
@@ -1667,19 +1666,38 @@
   color: var(--color-text-muted);
 }
 
+.recommendation-workout-log--history {
+  --history-control-height: 1.75rem;
+  --history-stepper-btn-width: 1.5rem;
+}
+
 .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__row {
-  grid-template-columns: var(--history-control-height) minmax(0, 1fr) var(--history-control-height);
+  grid-template-columns: var(--history-stepper-btn-width) minmax(0, 1fr) var(--history-stepper-btn-width);
   min-height: var(--history-control-height);
+  gap: 0.15rem;
 }
 
 .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__btn,
 .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value,
 .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__manual-input {
   min-height: var(--history-control-height);
+  max-height: var(--history-control-height);
+}
+
+.recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__btn {
+  font-size: 0.8125rem;
+}
+
+.recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value {
+  padding: 0 0.12rem;
 }
 
 .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value-text {
-  font-size: 0.8125rem;
+  font-size: 0.6875rem;
+}
+
+.recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__unit {
+  font-size: 0.5625rem;
 }
 
 .recommendation-workout-log--history .weight-stepper {
@@ -1694,10 +1712,10 @@
 
 .recommendation-workout-log__weight-row--history {
   display: grid;
-  grid-template-columns: 1.375rem minmax(0, 1fr) auto;
+  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.4rem 0.45rem;
+  gap: 0.25rem;
+  padding: 0.35rem 0.38rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--glass-border);
   background: color-mix(in srgb, var(--color-bg-secondary) 60%, transparent);
@@ -1713,8 +1731,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 999px;
   font-size: 0.6875rem;
   font-weight: 800;
@@ -1732,9 +1750,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.25rem;
-  min-height: var(--history-control-height);
-  padding: 0 0.4rem;
+  min-width: 1.75rem;
+  max-width: 2rem;
+  min-height: var(--history-control-height, 1.75rem);
+  padding: 0 0.28rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--glass-border);
   background: transparent;

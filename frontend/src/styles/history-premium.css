@@ -354,7 +354,8 @@
   gap: var(--history-gap-grid);
   padding-top: 0.75rem;
   border-top: 1px solid var(--history-card-border);
-  --history-control-height: 2.125rem;
+  --history-control-height: 1.75rem;
+  --history-stepper-btn-width: 1.5rem;
 }
 
 .history-page-premium .recommendation-workout-log__weight-list--history {
@@ -362,10 +363,69 @@
 }
 
 .history-page-premium .recommendation-workout-log__weight-row--history {
-  padding: 0.45rem 0.5rem;
+  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+  gap: 0.25rem;
+  padding: 0.35rem 0.38rem;
   border-radius: 14px;
   border: 1px solid var(--history-card-border);
   background: rgba(255, 255, 255, 0.03);
+  min-width: 0;
+}
+
+.history-page-premium .recommendation-workout-log--history .weight-stepper {
+  min-width: 0;
+  width: 100%;
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__row {
+  grid-template-columns: var(--history-stepper-btn-width) minmax(0, 1fr) var(--history-stepper-btn-width);
+  min-height: var(--history-control-height);
+  gap: 0.15rem;
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__btn,
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value,
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__manual-input {
+  min-height: var(--history-control-height);
+  max-height: var(--history-control-height);
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__btn {
+  font-size: 0.8125rem;
+  border-radius: 8px;
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value {
+  padding: 0 0.12rem;
+  border-radius: 8px;
+  gap: 0.1rem;
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value-text {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__unit {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.history-page-premium .recommendation-workout-log__set-index {
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 0.625rem;
+}
+
+.history-page-premium .recommendation-workout-log__complete-btn {
+  min-width: 1.75rem;
+  max-width: 2rem;
+  min-height: var(--history-control-height);
+  padding: 0 0.28rem;
+  font-size: 0.5625rem;
+  line-height: 1.1;
 }
 
 .history-page-premium .recommendation-workout-log__set-index--active {
