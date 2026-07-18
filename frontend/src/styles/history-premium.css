@@ -12,6 +12,17 @@
   --history-text-muted-value: rgba(138, 148, 166, 0.75);
   --history-green-glow: 0 0 20px rgba(0, 230, 118, 0.22);
   --history-shadow-card: 0 8px 28px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --history-font-2xs: 0.6875rem;
+  --history-font-xs: 0.75rem;
+  --history-font-sm: 0.8125rem;
+  --history-font-md: 0.875rem;
+  --history-font-base: 0.9375rem;
+  --history-font-lg: 1rem;
+  --history-font-xl: 1.125rem;
+  --history-font-2xl: 1.25rem;
+  --history-font-3xl: 1.375rem;
+  --history-control-height: 2rem;
+  --history-stepper-btn-width: 1.75rem;
 
   gap: var(--history-gap-section);
 }
@@ -22,7 +33,7 @@
 
 .history-page-premium .records-list__date-heading {
   padding: 0.35rem 0 0.55rem;
-  font-size: 0.8125rem;
+  font-size: var(--history-font-base);
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--history-text-dim);
@@ -52,7 +63,7 @@
 
 .history-section-header__title {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: var(--history-font-base);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -122,7 +133,7 @@
 .history-metric-card__icon--orange { color: #ff9800; }
 
 .history-metric-card__label {
-  font-size: 0.625rem;
+  font-size: var(--history-font-xs);
   font-weight: 600;
   line-height: 1.25;
   color: var(--history-text-dim);
@@ -138,7 +149,7 @@
 }
 
 .history-metric-card__value {
-  font-size: 1.125rem;
+  font-size: var(--history-font-2xl);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -147,7 +158,7 @@
 }
 
 .history-metric-card__unit {
-  font-size: 0.6875rem;
+  font-size: var(--history-font-sm);
   font-weight: 600;
   color: var(--history-text-dim);
 }
@@ -235,7 +246,7 @@
 
 .history-page-premium .history-record-card__machine-name {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--history-font-xl);
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -256,13 +267,13 @@
   border-radius: 999px;
   border: 1px solid rgba(138, 148, 166, 0.18);
   background: rgba(255, 255, 255, 0.03);
-  font-size: 0.625rem;
+  font-size: var(--history-font-xs);
   font-weight: 600;
   color: var(--history-text-dim);
 }
 
 .history-equipment-meta__chip--muted { color: var(--history-text-muted-value); }
-.history-equipment-meta__divider { color: rgba(138, 148, 166, 0.35); font-size: 0.625rem; }
+.history-equipment-meta__divider { color: rgba(138, 148, 166, 0.35); font-size: var(--history-font-xs); }
 
 .history-page-premium .history-record-card__meta {
   display: flex;
@@ -276,14 +287,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.6875rem;
+  font-size: var(--history-font-sm);
   font-weight: 500;
   color: var(--history-text-dim);
 }
 
 .history-page-premium .history-record-card__meta-divider {
   color: rgba(138, 148, 166, 0.35);
-  font-size: 0.625rem;
+  font-size: var(--history-font-xs);
   line-height: 1;
 }
 
@@ -291,9 +302,17 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.6875rem;
+  font-size: var(--history-font-sm);
   font-weight: 500;
   color: var(--history-text-dim);
+}
+
+.history-page-premium .history-record-card__status {
+  font-size: var(--history-font-xs);
+}
+
+.history-page-premium .history-record-card__status--saved::before {
+  font-size: var(--history-font-xs);
 }
 
 .history-page-premium .history-record-card__bookmark,
@@ -422,13 +441,7 @@
 
 .history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-label {
   flex: 0 0 auto;
-  font-size: 0.625rem;
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--history-text-muted-value);
-}
-
-.history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-value-line {
+  font-size: var(--history-font-xs);
   display: inline-flex;
   align-items: baseline;
   gap: 0.15rem;
@@ -455,7 +468,7 @@
 }
 
 .history-page-premium .setting-value-card__compare-label {
-  font-size: 0.625rem;
+  font-size: var(--history-font-xs);
   font-weight: 600;
   color: var(--history-text-muted-value);
 }
@@ -504,7 +517,7 @@
 }
 
 .history-page-premium .history-settings-total-tile__value {
-  font-size: 1.25rem;
+  font-size: var(--history-font-3xl);
   font-weight: 800;
 }
 
@@ -512,8 +525,6 @@
   gap: var(--history-gap-grid);
   padding-top: 0.75rem;
   border-top: 1px solid var(--history-card-border);
-  --history-control-height: 1.75rem;
-  --history-stepper-btn-width: 1.5rem;
 }
 
 .history-page-premium .recommendation-workout-log__weight-list--history {
@@ -521,7 +532,7 @@
 }
 
 .history-page-premium .recommendation-workout-log__weight-row--history {
-  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+  grid-template-columns: 1.35rem minmax(0, 1fr) auto;
   gap: 0.25rem;
   padding: 0.35rem 0.38rem;
   border-radius: 14px;
@@ -566,14 +577,7 @@
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__btn {
-  font-size: 0.75rem;
-  border-radius: 6px;
-}
-
-.history-page-premium
-  .history-workout-log__performance-title-row
-  .numeric-stepper--compact
-  .numeric-stepper__value {
+  font-size: var(--history-font-sm);
   min-width: 1.125rem;
   width: 1.125rem;
   padding: 0;
@@ -586,7 +590,7 @@
   .numeric-stepper--compact
   .numeric-stepper__value-text {
   width: 1ch;
-  font-size: 0.75rem;
+  font-size: var(--history-font-sm);
   font-weight: 800;
   line-height: 1;
   text-align: center;
@@ -611,40 +615,22 @@
 }
 
 .history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__btn {
-  font-size: 0.8125rem;
-  border-radius: 8px;
-}
-
-.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value {
+  font-size: var(--history-font-md);
   padding: 0 0.12rem;
   border-radius: 8px;
   gap: 0.1rem;
 }
 
 .history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__value-text {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__unit {
-  font-size: 0.5625rem;
+  font-size: var(--history-font-sm);
   font-weight: 600;
   line-height: 1;
 }
 
 .history-page-premium .recommendation-workout-log__set-index {
-  width: 1.25rem;
-  height: 1.25rem;
-  font-size: 0.625rem;
-}
-
-.history-page-premium .recommendation-workout-log__complete-btn {
-  min-width: 1.75rem;
-  max-width: 2rem;
-  min-height: var(--history-control-height);
-  padding: 0 0.28rem;
-  font-size: 0.5625rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: var(--history-font-sm);
   line-height: 1.1;
 }
 
@@ -670,6 +656,79 @@
   border-radius: 14px;
   border: 1px solid var(--history-card-border);
   background: rgba(0, 0, 0, 0.22);
+  font-size: var(--history-font-sm);
+  line-height: 1.45;
+}
+
+/* Typography — toolbar, calendar, settings, workout log (scoped overrides) */
+.history-page-premium .history-log-status-filter__item {
+  font-size: var(--history-font-sm);
+}
+
+.history-page-premium .records-list__date-filter-label,
+.history-page-premium .records-list__date-selected,
+.history-page-premium .records-list__calendar-summary {
+  font-size: var(--history-font-sm);
+}
+
+.history-page-premium .history-calendar__month {
+  font-size: var(--history-font-md);
+}
+
+.history-page-premium .history-calendar__weekday {
+  font-size: var(--history-font-xs);
+}
+
+.history-page-premium .history-calendar__day-num {
+  font-size: var(--history-font-sm);
+}
+
+.history-page-premium .history-calendar__hint {
+  font-size: var(--history-font-xs);
+}
+
+.history-page-premium .history-record-card .setting-value-card--history-mini .setting-value-card__label,
+.history-page-premium .history-record-card .recommendation-settings-panel--history .setting-value-card--compact .setting-value-card__label {
+  font-size: var(--history-font-xs);
+}
+
+.history-page-premium .history-record-card .setting-value-card--history-mini .setting-value-card__value,
+.history-page-premium .history-record-card .recommendation-settings-panel--history .setting-value-card--compact .setting-value-card__value,
+.history-page-premium .history-record-card .setting-value-card__compare-block .setting-value-card__value {
+  font-size: var(--history-font-md);
+}
+
+.history-page-premium .history-record-card .setting-value-card__compare-block .setting-value-card__unit {
+  font-size: var(--history-font-sm);
+}
+
+.history-page-premium .history-settings-total-tile__label {
+  font-size: var(--history-font-xs);
+}
+
+.history-page-premium .history-workout-log__performance-title {
+  font-size: var(--history-font-md);
+}
+
+.history-page-premium .history-workout-log__edit-label {
+  font-size: var(--history-font-sm);
+}
+
+.history-page-premium .history-workout-log__pane-label {
+  font-size: var(--history-font-sm);
+}
+
+.history-page-premium .history-record-card .recommendation-workout-log__diary-tag {
+  font-size: var(--history-font-xs);
+  padding: 0.3rem 0.35rem;
+}
+
+.history-page-premium .recommendation-workout-log--history .numeric-stepper--compact .numeric-stepper__unit {
+  font-size: var(--history-font-2xs);
+}
+
+.history-page-premium .recommendation-workout-log__complete-btn {
+  font-size: var(--history-font-2xs);
 }
 
 @media (max-width: 420px) {
