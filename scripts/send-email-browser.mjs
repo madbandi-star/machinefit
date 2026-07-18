@@ -4,7 +4,6 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_TO = 'madbandi@gmail.com';
 
 function escapeJsString(value) {
   return JSON.stringify(value);
@@ -63,7 +62,11 @@ function startStaticServer(html) {
   });
 }
 
-const to = process.argv[2] ?? DEFAULT_TO;
+const to = process.argv[2]?.trim();
+if (!to) {
+  console.error('Usage: node send-email-browser.mjs <to> [subject] [message]');
+  process.exit(1);
+}
 const subject = process.argv[3] ?? '[MachineFit] 알림';
 const message =
   process.argv[4] ??
