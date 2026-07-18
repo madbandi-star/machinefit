@@ -122,7 +122,6 @@ export function BottomSheetPicker({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('picker.searchPlaceholder')}
-              autoFocus
             />
 
             <ul className="bottom-sheet__list" role="listbox">

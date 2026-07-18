@@ -11,7 +11,7 @@ import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthIns
 import { fetchWorkoutInsights } from '@/api/growth-insights';
 import { useAuthStore } from '@/store/auth.store';
 import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeriodFilter/GrowthPeriodFilter';
-import { BottomSheetPicker } from '@/components/form/BottomSheetPicker/BottomSheetPicker';
+import { GrowthMachineSelector } from '@/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import {
@@ -108,14 +108,13 @@ export function GrowthAnalysisPage() {
     [logs, periodFilter]
   );
   const machineOptions = useMemo(() => getMachineOptions(logs), [logs]);
-  const machinePickerOptions = useMemo(
+  const machineSelectorOptions = useMemo(
     () =>
       machineOptions.map((option) => ({
-        value: option.optionKey,
+        optionKey: option.optionKey,
         label: formatMachineOptionLabel(option),
-        group: isFreeWeightMachineCode(option.machineCode)
-          ? t('growthAnalysis.machineGroups.freeWeight')
-          : t('growthAnalysis.machineGroups.machines'),
+        isFreeWeight: isFreeWeightMachineCode(option.machineCode),
+        targetMuscleGroup: option.targetMuscleGroup,
       })),
     [machineOptions, t]
   );
@@ -327,16 +326,13 @@ export function GrowthAnalysisPage() {
         </div>
 
         {!isDailyView ? (
-          <div className="form-row">
-            <BottomSheetPicker
-              id="growth-machine"
-              label={t('growthAnalysis.machineSelect')}
-              value={selectedMachineKey}
-              options={machinePickerOptions}
-              onChange={setSelectedMachineKey}
-              disabled={machineOptions.length === 0}
-            />
-          </div>
+          <GrowthMachineSelector
+            label={t('growthAnalysis.machineSelect')}
+            options={machineSelectorOptions}
+            value={selectedMachineKey}
+            onChange={setSelectedMachineKey}
+            disabled={machineOptions.length === 0}
+          />
         ) : null}
 
         <div className="form-row">
@@ -558,22 +554,32 @@ export function GrowthAnalysisPage() {
         >
           <ol className="growth-analysis-ranking__list">
             {ranking.map((item, index) => (
-              <li key={item.optionKey} className="growth-analysis-ranking__item">
-                <span className="growth-analysis-ranking__rank">{index + 1}</span>
-                <div className="growth-analysis-ranking__info">
-                  <strong>
-                    {item.targetMuscleGroup
-                      ? formatFreeWeightRecordLabel(
-                          item.machineName,
-                          item.targetMuscleGroup,
-                          translateMuscleGroup
-                        )
-                      : item.machineName}
-                  </strong>
-                  <span className="growth-analysis-kpi__value--up">
-                    {formatGrowthPct(item.growthPct)}
-                  </span>
-                </div>
+              <li key={item.optionKey}>
+                <button
+                  type="button"
+                  className={`growth-analysis-ranking__item growth-analysis-ranking__item--selectable${
+                    item.optionKey === selectedMachineKey
+                      ? ' growth-analysis-ranking__item--active'
+                      : ''
+                  }`}
+                  onClick={() => setSelectedMachineKey(item.optionKey)}
+                >
+                  <span className="growth-analysis-ranking__rank">{index + 1}</span>
+                  <div className="growth-analysis-ranking__info">
+                    <strong>
+                      {item.targetMuscleGroup
+                        ? formatFreeWeightRecordLabel(
+                            item.machineName,
+                            item.targetMuscleGroup,
+                            translateMuscleGroup
+                          )
+                        : item.machineName}
+                    </strong>
+                    <span className="growth-analysis-kpi__value--up">
+                      {formatGrowthPct(item.growthPct)}
+                    </span>
+                  </div>
+                </button>
               </li>
             ))}
           </ol>

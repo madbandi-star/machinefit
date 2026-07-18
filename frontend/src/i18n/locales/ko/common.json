@@ -200,6 +200,13 @@
       "freeWeight": "프리웨이트",
       "machines": "머신"
     },
+    "machineSelector": {
+      "all": "전체",
+      "previous": "이전 머신",
+      "next": "다음 머신",
+      "counter": "{{current}} / {{total}}",
+      "groupFilter": "머신 종류 필터"
+    },
     "periodSelect": "기간 선택",
     "viewMode": {
       "label": "보기 방식",

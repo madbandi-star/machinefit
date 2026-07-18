@@ -200,6 +200,13 @@
       "freeWeight": "Free weight",
       "machines": "Machines"
     },
+    "machineSelector": {
+      "all": "All",
+      "previous": "Previous machine",
+      "next": "Next machine",
+      "counter": "{{current}} / {{total}}",
+      "groupFilter": "Machine type filter"
+    },
     "periodSelect": "Select period",
     "viewMode": {
       "label": "View",
