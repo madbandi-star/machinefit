@@ -311,6 +311,16 @@
 .history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--history-gap-grid);
+  align-items: stretch;
+}
+
+.history-page-premium .history-mini-setting-wrap,
+.history-page-premium .history-settings-total-tile {
+  height: 100%;
+}
+
+.history-page-premium .history-mini-setting-wrap .setting-value-card--history-mini {
+  height: 100%;
 }
 
 .history-page-premium .setting-value-card--history-mini {
@@ -359,12 +369,24 @@
 }
 
 .history-page-premium .history-settings-total-tile {
-  min-height: 6.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.35rem;
+  min-height: 4.75rem;
+  height: 100%;
   padding: 0.65rem 0.7rem;
   border-radius: var(--history-mini-radius);
   border: 1px solid rgba(0, 230, 118, 0.35);
   background: linear-gradient(165deg, rgba(0, 230, 118, 0.12) 0%, rgba(16, 20, 28, 0.92) 100%);
   box-shadow: var(--history-green-glow);
+}
+
+.history-page-premium
+  .recommendation-settings-panel--history.recommendation-settings-panel--compare
+  .history-settings-total-tile {
+  min-height: 6.75rem;
+  gap: 0.45rem;
 }
 
 .history-page-premium .history-settings-total-tile__value {
