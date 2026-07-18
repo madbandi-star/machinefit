@@ -113,10 +113,6 @@ export function LoginPage() {
     <PageShell title={t('nav.login')}>
       <section className="auth-hero card" aria-label={t('auth.loginHeroLabel')}>
         <div className="auth-hero__head">
-          <div className="auth-hero__badge">
-            <Icon name="dumbbell" size={15} aria-hidden />
-            <span>{t('auth.loginBadge')}</span>
-          </div>
           <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
           <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
         </div>
