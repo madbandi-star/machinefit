@@ -152,7 +152,7 @@
     "performanceTitle": "수행 기록 ({{count}}세트)",
     "editSets": "세트 편집",
     "memoLabel": "오늘 운동메모",
-    "memoPlaceholder": "[선피로][본세트][본세트] 총 3세트 수행.",
+    "memoPlaceholder": "총 3세트 수행.\n[선피로][본세트][본세트]",
     "bookmarkSave": "운동 기록 저장",
     "bookmarkUpdate": "기록 변경 저장",
     "bookmarkRemove": "운동 기록 해제",

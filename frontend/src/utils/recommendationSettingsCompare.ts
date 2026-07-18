@@ -45,10 +45,7 @@ export function hasAdjustedSettings(
 }
 
 export function shouldShowHistorySettingsCompare(
-  fitRating: FitRating | null | undefined,
-  recommended: RecommendationSettings,
-  customSettings?: Partial<RecommendationSettings> | null
+  fitRating: FitRating | null | undefined
 ): boolean {
-  if (fitRating !== 'bad') return false;
-  return hasAdjustedSettings(recommended, customSettings);
+  return fitRating === 'bad';
 }

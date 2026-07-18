@@ -404,11 +404,7 @@ export function HistoryListPanel() {
                 const fitRating = card.recommendationId
                   ? comparisonData?.feedbackByRecommendation[card.recommendationId]
                   : null;
-                const showSettingsCompare = shouldShowHistorySettingsCompare(
-                  fitRating,
-                  card.settings,
-                  customSettings
-                );
+                const showSettingsCompare = shouldShowHistorySettingsCompare(fitRating);
 
                 return (
                   <HistoryRecordCard

@@ -152,7 +152,7 @@
     "performanceTitle": "Performance ({{count}} sets)",
     "editSets": "Edit sets",
     "memoLabel": "Today's workout note",
-    "memoPlaceholder": "[Pre-fatigue][Working set][Working set] 3 sets total.",
+    "memoPlaceholder": "3 sets total.\n[Pre-fatigue][Working set][Working set]",
     "bookmarkSave": "Save workout log",
     "bookmarkUpdate": "Save log changes",
     "bookmarkRemove": "Remove workout log",

@@ -173,7 +173,7 @@ export function HistoryRecordCard({
             variant="history"
             showAdjustment={showSettingsCompare}
             adjustmentReadOnly
-            customSettings={customSettings}
+            customSettings={showSettingsCompare ? customSettings : undefined}
             historyTotalWeightKg={logControl?.totalWeightKg}
           />
         </Link>

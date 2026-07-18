@@ -80,8 +80,9 @@ export function useMachineFitFeedback({
   const feedbackMutation = useMutation({
     mutationFn: (fitRating: FitRating) =>
       recommendationFeedbackApi.submit({ recommendationId, fitRating }),
-    onSuccess: (_data, fitRating) => {
+    onSuccess: async (_data, fitRating) => {
       queryClient.setQueryData(feedbackQueryKey, fitRating);
+      await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
       showToast(
         fitRating === 'bad'
           ? t('machines:feedback.savedBad')

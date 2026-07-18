@@ -50,7 +50,10 @@ export function SettingValueCard({
     'setting-value-card',
     highlight ? 'setting-value-card--highlight' : '',
     compact ? 'setting-value-card--compact' : '',
-    labelIconNode ? ' setting-value-card--history-mini' : '',
+    labelIconNode ? 'setting-value-card--history-mini' : '',
+    labelIconNode && showAdjustment && adjustmentReadOnly
+      ? 'setting-value-card--history-compare'
+      : '',
   ]
     .filter(Boolean)
     .join(' ');
