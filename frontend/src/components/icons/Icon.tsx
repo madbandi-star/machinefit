@@ -20,7 +20,9 @@ export type IconName =
   | 'close'
   | 'share'
   | 'thumbUp'
-  | 'thumbDown';
+  | 'thumbDown'
+  | 'sliders'
+  | 'trendingUp';
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;
@@ -145,6 +147,20 @@ const PATHS: Record<IconName, ReactElement> = {
     <>
       <path d="M17 13V5a1 1 0 0 0-1-1h-2.5a1 1 0 0 0-.96.73l-1.5 5.5A1 1 0 0 0 11.5 12h3a1 1 0 0 1 1 1v3a2 2 0 0 1-2 2h-.5" />
       <path d="M17 13h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 8h16" />
+      <path d="M4 16h16" />
+      <circle cx="9" cy="8" r="2" />
+      <circle cx="15" cy="16" r="2" />
+    </>
+  ),
+  trendingUp: (
+    <>
+      <path d="M4 18h16" />
+      <path d="M7 15l3-3 3 2 5-7" />
     </>
   ),
 };

@@ -147,9 +147,9 @@
     "profileIncompleteHint": "Add height and gender for more accurate recommendations.",
     "loginHeroLabel": "About MachineFit",
     "loginBadge": "For machine maniacs",
-    "loginHeroTitle": "Settings tuned to your body",
-    "loginHeroDesc": "Get seat, pin, ROM, and weight settings tailored to your body — by brand and machine.",
-    "loginFeature1": "Body-based personalized recommendations",
+    "loginHeroTitle": "Settings tuned\nto your body",
+    "loginHeroDesc": "Seat, pin, ROM, and weight settings\nby brand and machine — all in one place.",
+    "loginFeature1": "Body-based recommendations",
     "loginFeature2": "Brand-specific machine settings",
     "loginFeature3": "Workout logs and growth analysis",
     "loginBrowseMachines": "Browse machines"

@@ -122,25 +122,31 @@ export function LoginPage() {
         </div>
         <div className="auth-hero__bottom">
           <ul className="auth-hero__features">
-            <li>
-              <Icon name="dumbbell" size={18} />
-              <span>{t('auth.loginFeature1')}</span>
+            <li className="auth-hero__feature auth-hero__feature--primary">
+              <span className="auth-hero__feature-icon" aria-hidden>
+                <Icon name="user" size={16} />
+              </span>
+              <span className="auth-hero__feature-text">{t('auth.loginFeature1')}</span>
             </li>
-            <li>
-              <Icon name="machines" size={18} />
-              <span>{t('auth.loginFeature2')}</span>
+            <li className="auth-hero__feature">
+              <span className="auth-hero__feature-icon" aria-hidden>
+                <Icon name="sliders" size={16} />
+              </span>
+              <span className="auth-hero__feature-text">{t('auth.loginFeature2')}</span>
             </li>
-            <li>
-              <Icon name="growthAnalysis" size={18} />
-              <span>{t('auth.loginFeature3')}</span>
+            <li className="auth-hero__feature">
+              <span className="auth-hero__feature-icon" aria-hidden>
+                <Icon name="trendingUp" size={16} />
+              </span>
+              <span className="auth-hero__feature-text">{t('auth.loginFeature3')}</span>
             </li>
           </ul>
           <Link to={ROUTES.MACHINES} className="auth-hero__browse-btn">
             <span className="auth-hero__browse-btn-icon" aria-hidden>
-              <Icon name="search" size={18} />
+              <Icon name="search" size={20} />
             </span>
             <span className="auth-hero__browse-btn-label">{t('auth.loginBrowseMachines')}</span>
-            <Icon name="chevronRight" size={16} className="auth-hero__browse-btn-chevron" />
+            <Icon name="chevronRight" size={18} className="auth-hero__browse-btn-chevron" />
           </Link>
         </div>
       </section>
