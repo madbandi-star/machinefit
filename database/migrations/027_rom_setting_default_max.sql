@@ -4,7 +4,7 @@ UPDATE machine_settings
 SET rom_setting = '최대'
 WHERE rom_setting = 'full';
 
-UPDATE recommendations
+UPDATE machine_recommendations
 SET rom_setting = '최대'
 WHERE rom_setting = 'full';
 
