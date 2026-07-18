@@ -461,6 +461,26 @@ export function WorkoutLogPanel({
     </div>
   );
 
+  const diaryTags = (
+    <div
+      className="recommendation-workout-log__diary-tags"
+      role="group"
+      aria-label={t('machines:workoutLog.diaryTagsLabel')}
+    >
+      {WORKOUT_DIARY_TAGS.map((tag) => (
+        <button
+          key={tag}
+          type="button"
+          className="recommendation-workout-log__diary-tag"
+          onClick={() => handleDiaryTagClick(tag)}
+          disabled={isActionPending}
+        >
+          {formatDiaryTag(tag)}
+        </button>
+      ))}
+    </div>
+  );
+
   const diaryField = compact ? (
     <details
       className="recommendation-workout-log__diary-details"
@@ -469,13 +489,8 @@ export function WorkoutLogPanel({
     >
       <summary className="recommendation-workout-log__diary-summary">
         <span>{t('machines:workoutLog.diaryTitle')}</span>
-        {diary.trim() ? (
-          <span className="recommendation-workout-log__diary-preview">
-            {diary.trim().slice(0, 24)}
-            {diary.trim().length > 24 ? '…' : ''}
-          </span>
-        ) : null}
       </summary>
+      {diaryTags}
       <textarea
         id={`${idPrefix}-diary`}
         className="input recommendation-workout-log__diary-input"
@@ -496,23 +511,7 @@ export function WorkoutLogPanel({
           {t('machines:workoutLog.diaryBytes', { used: diaryBytes })}
         </span>
       </div>
-      <div
-        className="recommendation-workout-log__diary-tags"
-        role="group"
-        aria-label={t('machines:workoutLog.diaryTagsLabel')}
-      >
-        {WORKOUT_DIARY_TAGS.map((tag) => (
-          <button
-            key={tag}
-            type="button"
-            className="recommendation-workout-log__diary-tag"
-            onClick={() => handleDiaryTagClick(tag)}
-            disabled={isActionPending}
-          >
-            {formatDiaryTag(tag)}
-          </button>
-        ))}
-      </div>
+      {diaryTags}
       <textarea
         id={`${idPrefix}-diary`}
         className="input recommendation-workout-log__diary-input"

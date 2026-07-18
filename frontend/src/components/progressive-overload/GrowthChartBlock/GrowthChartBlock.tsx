@@ -16,6 +16,7 @@ interface GrowthChartBlockProps {
   ariaLabel: string;
   defaultOpen?: boolean;
   className?: string;
+  chartSize?: 'default' | 'compact' | 'mini' | 'micro' | 'large';
 }
 
 export function GrowthChartBlock({
@@ -30,6 +31,7 @@ export function GrowthChartBlock({
   ariaLabel,
   defaultOpen = true,
   className,
+  chartSize = 'mini',
 }: GrowthChartBlockProps) {
   const { t } = useTranslation('common');
   const [expanded, setExpanded] = useState(false);
@@ -64,7 +66,7 @@ export function GrowthChartBlock({
               showTrend={showTrend}
               accentColor={accentColor}
               ariaLabel={ariaLabel}
-              size="mini"
+              size={chartSize}
             />
             <span className="growth-chart-block__expand-hint">
               {t('growthAnalysis.chartExpand.hint')}

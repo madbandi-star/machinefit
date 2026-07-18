@@ -171,6 +171,7 @@ export function RecommendationResultPage() {
             isPending={fitFeedback.isFeedbackPending}
           />
         ) : null}
+        <RecommendationTips tips={result.tips} />
         <WorkoutLogPanel
           machineCode={result.machineCode}
           machineName={result.machineName}
@@ -182,7 +183,6 @@ export function RecommendationResultPage() {
           logDate={getLocalDateKey(result.createdAt)}
           targetMuscleGroup={result.targetMuscleGroup}
         />
-        <RecommendationTips tips={result.tips} />
       </div>
 
       <RecommendationActionBar

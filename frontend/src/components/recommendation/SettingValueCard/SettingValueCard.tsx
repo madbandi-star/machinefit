@@ -46,6 +46,7 @@ export function SettingValueCard({
   const parsedAdjustedNumber =
     adjustedValue.trim() === '' ? undefined : Number.parseFloat(adjustedValue);
   const adjustStep = unit?.toLowerCase().includes('kg') ? 5 : 1;
+  const adjustManualStep = unit?.toLowerCase().includes('kg') ? 1 : adjustStep;
   const adjustMax = unit?.toLowerCase().includes('kg') ? 999 : 99;
 
   return (
@@ -83,6 +84,7 @@ export function SettingValueCard({
                   min={0}
                   max={adjustMax}
                   step={adjustStep}
+                  manualStep={adjustManualStep}
                   unit={unit}
                   size={compact ? 'compact' : 'default'}
                   ariaLabel={`${adjustedLabel} ${label}`}

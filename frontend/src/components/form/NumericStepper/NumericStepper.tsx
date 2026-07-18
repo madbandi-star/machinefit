@@ -47,6 +47,7 @@ export function NumericStepper({
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const [manualOpen, setManualOpen] = useState(false);
+  const [manualDraft, setManualDraft] = useState('');
   const inputStep = manualStep ?? step;
   const decimalPlaces = getDecimalPlaces(step);
   const manualDecimalPlaces = getDecimalPlaces(inputStep);
@@ -57,38 +58,68 @@ export function NumericStepper({
     onChange(clampNumber(roundToStep(next, roundingStep), min, max));
   };
 
+  const formatDraftValue = (next: number) =>
+    formatNumericValue(next, decimalPlaces > 0 ? decimalPlaces : undefined);
+
+  const openManualInput = () => {
+    if (!allowManualInput || disabled) return;
+    setManualDraft(hasValue ? formatDraftValue(currentValue) : '');
+    setManualOpen(true);
+  };
+
+  const commitManualInput = () => {
+    setManualOpen(false);
+    const trimmed = manualDraft.trim();
+    if (!trimmed) {
+      onChange(undefined);
+      return;
+    }
+    const parsed = Number.parseFloat(trimmed);
+    if (!Number.isFinite(parsed)) return;
+    emitChange(parsed, inputStep);
+  };
+
+  const cancelManualInput = () => {
+    setManualOpen(false);
+  };
+
+  const resolveEditableValue = (): number | null => {
+    if (!manualOpen) {
+      return hasValue ? currentValue : null;
+    }
+
+    setManualOpen(false);
+    const trimmed = manualDraft.trim();
+    if (!trimmed) return null;
+    const parsed = Number.parseFloat(trimmed);
+    if (!Number.isFinite(parsed)) return hasValue ? currentValue : null;
+    return clampNumber(roundToStep(parsed, inputStep), min, max);
+  };
+
   const decrease = () => {
-    if (!hasValue) {
+    const resolved = resolveEditableValue();
+    if (resolved == null) {
       onChange(min);
       return;
     }
-    emitChange(stepNumber(currentValue, step, -1, min, max));
+    emitChange(stepNumber(resolved, step, -1, min, max));
   };
 
   const increase = () => {
-    if (!hasValue) {
+    const resolved = resolveEditableValue();
+    if (resolved == null) {
       onChange(min);
       return;
     }
-    emitChange(stepNumber(currentValue, step, 1, min, max));
+    emitChange(stepNumber(resolved, step, 1, min, max));
   };
 
   const decreaseRepeat = useLongPressRepeat(decrease);
   const increaseRepeat = useLongPressRepeat(increase);
 
   const displayValue = hasValue
-    ? formatNumericValue(currentValue, decimalPlaces > 0 ? decimalPlaces : undefined)
+    ? formatDraftValue(currentValue)
     : emptyLabel;
-
-  const handleManualChange = (raw: string) => {
-    if (!raw.trim()) {
-      onChange(undefined);
-      return;
-    }
-    const parsed = Number.parseFloat(raw);
-    if (!Number.isFinite(parsed)) return;
-    emitChange(parsed, inputStep);
-  };
 
   return (
     <div
@@ -118,17 +149,25 @@ export function NumericStepper({
           <input
             id={inputId}
             className="numeric-stepper__manual-input"
-            type="number"
+            type="text"
             inputMode={manualDecimalPlaces > 0 ? 'decimal' : 'numeric'}
-            min={min}
-            max={max}
-            step={inputStep}
-            value={hasValue ? currentValue : ''}
+            value={manualDraft}
             disabled={disabled}
             aria-label={ariaLabel}
             autoFocus
-            onBlur={() => setManualOpen(false)}
-            onChange={(event) => handleManualChange(event.target.value)}
+            onFocus={(event) => event.target.select()}
+            onBlur={commitManualInput}
+            onChange={(event) => setManualDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                event.currentTarget.blur();
+              }
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelManualInput();
+              }
+            }}
           />
         ) : (
           <button
@@ -137,9 +176,7 @@ export function NumericStepper({
             className="numeric-stepper__value"
             disabled={disabled}
             aria-label={ariaLabel}
-            onClick={() => {
-              if (allowManualInput && !disabled) setManualOpen(true);
-            }}
+            onClick={openManualInput}
           >
             <span className="numeric-stepper__value-text">{displayValue}</span>
             {unit ? <span className="numeric-stepper__unit">{unit}</span> : null}
@@ -169,7 +206,7 @@ export function NumericStepper({
           type="button"
           className="numeric-stepper__manual-link"
           disabled={disabled}
-          onClick={() => setManualOpen(true)}
+          onClick={openManualInput}
         >
           {t('numericStepper.manualInput')}
         </button>

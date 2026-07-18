@@ -14,7 +14,7 @@ interface LineChartProps {
   ariaLabel: string;
   /** @deprecated Use size="compact" instead */
   compact?: boolean;
-  size?: 'default' | 'compact' | 'mini' | 'large';
+  size?: 'default' | 'compact' | 'mini' | 'micro' | 'large';
   showValueList?: boolean;
 }
 
@@ -36,6 +36,12 @@ const CHART_LAYOUT = {
     height: 56,
     padding: { top: 6, right: 6, bottom: 14, left: 24 },
     dotRadius: 2.5,
+  },
+  micro: {
+    width: 240,
+    height: 28,
+    padding: { top: 4, right: 4, bottom: 10, left: 18 },
+    dotRadius: 2,
   },
   large: {
     width: 340,

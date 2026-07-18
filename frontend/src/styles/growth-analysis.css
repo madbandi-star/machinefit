@@ -304,6 +304,47 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.growth-analysis-charts-grid--machine {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 100%;
+}
+
+.growth-analysis-charts-grid--daily > .growth-chart-block--daily-primary {
+  grid-column: 1 / -1;
+}
+
+.growth-chart-block--chart-secondary .collapsible-card__header,
+.growth-chart-block--daily-secondary .collapsible-card__header {
+  padding: 0.35rem 0.45rem;
+}
+
+.growth-chart-block--chart-secondary .collapsible-card__title,
+.growth-chart-block--daily-secondary .collapsible-card__title {
+  font-size: 0.6875rem;
+}
+
+.growth-chart-block--chart-secondary .collapsible-card__summary,
+.growth-chart-block--daily-secondary .collapsible-card__summary {
+  margin-top: 0.08rem;
+  font-size: 0.5625rem;
+  line-height: 1.3;
+}
+
+.growth-chart-block--chart-secondary .collapsible-card__body,
+.growth-chart-block--daily-secondary .collapsible-card__body {
+  padding: 0 0.45rem 0.35rem;
+}
+
+.growth-chart-block--chart-secondary .growth-chart-block__chart-trigger,
+.growth-chart-block--daily-secondary .growth-chart-block__chart-trigger {
+  padding: 0.15rem 0.1rem 0.1rem;
+}
+
+.growth-chart-block--chart-secondary .growth-chart-block__expand-hint,
+.growth-chart-block--daily-secondary .growth-chart-block__expand-hint {
+  font-size: 0.5rem;
+}
+
 .growth-analysis-charts-grid__span-half {
   grid-column: 1 / 2;
 }
@@ -469,6 +510,19 @@
 .po-line-chart--mini .po-line-chart__x-label,
 .po-line-chart--mini .po-line-chart__axis-label {
   font-size: 7px;
+}
+
+.po-line-chart--micro .po-line-chart__svg {
+  max-height: 1.375rem;
+}
+
+.po-line-chart--micro .po-line-chart__line {
+  stroke-width: 1.5;
+}
+
+.po-line-chart--micro .po-line-chart__x-label,
+.po-line-chart--micro .po-line-chart__axis-label {
+  font-size: 6px;
 }
 
 .po-line-chart--large .po-line-chart__svg {

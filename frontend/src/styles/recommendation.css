@@ -857,6 +857,10 @@
   color: var(--color-text);
 }
 
+.recommendation-workout-log__diary-details[open] .recommendation-workout-log__diary-tags {
+  margin: 0 0.35rem 0.35rem;
+}
+
 .recommendation-workout-log__diary-details[open] .recommendation-workout-log__diary-input {
   margin: 0 0.35rem 0.35rem;
   width: calc(100% - 0.7rem);

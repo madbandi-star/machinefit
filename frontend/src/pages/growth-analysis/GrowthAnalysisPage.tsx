@@ -267,10 +267,6 @@ export function GrowthAnalysisPage() {
   const volumeGrowthPct = isDailyView ? dailyKpis.volumeGrowthPct : machineKpis.volumeGrowthPct;
   const maxWeightDelta = isDailyView ? dailyKpis.maxWeightDelta : machineKpis.maxWeightDelta;
   const workoutCount = isDailyView ? dailyKpis.totalLogCount : machineKpis.workoutCount;
-  const currentPr = isDailyView ? dailyKpis.currentPeakWeight : machineKpis.currentPr;
-  const previousPr = isDailyView
-    ? dailyKpis.previousPeakWeight ?? dailyPoints[0]?.peakSetWeight ?? 0
-    : machineKpis.previousPr ?? sessions[0]?.maxWeight ?? 0;
 
   if (isLoading) {
     return (
@@ -440,90 +436,83 @@ export function GrowthAnalysisPage() {
           </p>
 
           <section
-            className={`growth-analysis-charts-grid${isDailyView ? ' growth-analysis-charts-grid--daily' : ''}`}
+            className={`growth-analysis-charts-grid${
+              isDailyView ? ' growth-analysis-charts-grid--daily' : ' growth-analysis-charts-grid--machine'
+            }`}
             aria-label={t('growthAnalysis.kpiSection')}
           >
-            <GrowthChartBlock
-              title={
-                isDailyView
-                  ? t('growthAnalysis.daily.volumeChart.title')
-                  : t('growthAnalysis.volumeChart.title')
-              }
-              description={
-                isDailyView
-                  ? t('growthAnalysis.daily.volumeChart.desc')
-                  : t('growthAnalysis.volumeChart.desc')
-              }
-              badge={
-                volumeGrowthPct !== null ? (
-                  <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
-                    {formatGrowthPct(volumeGrowthPct)} {t('growthAnalysis.growth')}
-                  </span>
-                ) : undefined
-              }
-              points={volumeChartPoints}
-              unit="kg"
-              showTrend
-              ariaLabel={
-                isDailyView
-                  ? t('growthAnalysis.daily.volumeChart.title')
-                  : t('growthAnalysis.volumeChart.title')
-              }
-            />
-
-            <GrowthChartBlock
-              title={
-                isDailyView
-                  ? t('growthAnalysis.daily.maxWeightChart.title')
-                  : t('growthAnalysis.maxWeightChart.title')
-              }
-              description={
-                isDailyView
-                  ? t('growthAnalysis.daily.maxWeightChart.desc')
-                  : t('growthAnalysis.maxWeightChart.desc')
-              }
-              points={maxWeightChartPoints}
-              unit="kg"
-              accentColor="var(--color-accent, #f59e0b)"
-              ariaLabel={
-                isDailyView
-                  ? t('growthAnalysis.daily.maxWeightChart.title')
-                  : t('growthAnalysis.maxWeightChart.title')
-              }
-              headerExtra={
-                currentPr !== null ? (
-                  <div className="growth-analysis-pr-summary growth-analysis-pr-summary--compact">
-                    <span>
-                      {t('growthAnalysis.maxWeightChart.previousPr')}{' '}
-                      <strong>{previousPr}kg</strong>
-                    </span>
-                    <span className="growth-analysis-pr-summary__arrow" aria-hidden>
-                      →
-                    </span>
-                    <span>
-                      {t('growthAnalysis.maxWeightChart.currentPr')}{' '}
-                      <strong>{currentPr}kg</strong>
-                    </span>
-                    {maxWeightDelta !== null ? (
-                      <span className="growth-analysis-kpi__value--up">
-                        {formatWeightDelta(maxWeightDelta)}
-                      </span>
-                    ) : null}
-                  </div>
-                ) : undefined
-              }
-            />
-
             {isDailyView ? (
               <GrowthChartBlock
-                className="growth-analysis-charts-grid__span-half"
-                title={t('growthAnalysis.daily.machineChart.title')}
-                description={t('growthAnalysis.daily.machineChart.desc')}
-                points={machineCountChartPoints}
-                unit={t('growthAnalysis.daily.machineChart.unit')}
-                accentColor="var(--color-primary)"
-                ariaLabel={t('growthAnalysis.daily.machineChart.title')}
+                className="growth-chart-block--daily-primary"
+                title={t('growthAnalysis.daily.volumeChart.title')}
+                description={t('growthAnalysis.daily.volumeChart.desc')}
+                badge={
+                  volumeGrowthPct !== null ? (
+                    <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
+                      {formatGrowthPct(volumeGrowthPct)} {t('growthAnalysis.growth')}
+                    </span>
+                  ) : undefined
+                }
+                points={volumeChartPoints}
+                unit="kg"
+                showTrend
+                ariaLabel={t('growthAnalysis.daily.volumeChart.title')}
               />
+            ) : (
+              <>
+                <GrowthChartBlock
+                  className="growth-chart-block--chart-secondary"
+                  chartSize="micro"
+                  title={t('growthAnalysis.volumeChart.title')}
+                  description={t('growthAnalysis.volumeChart.desc')}
+                  badge={
+                    volumeGrowthPct !== null ? (
+                      <span className="growth-analysis-chart-section__badge growth-analysis-kpi__value--up">
+                        {formatGrowthPct(volumeGrowthPct)} {t('growthAnalysis.growth')}
+                      </span>
+                    ) : undefined
+                  }
+                  points={volumeChartPoints}
+                  unit="kg"
+                  showTrend
+                  ariaLabel={t('growthAnalysis.volumeChart.title')}
+                />
+                <GrowthChartBlock
+                  className="growth-chart-block--chart-secondary"
+                  chartSize="micro"
+                  title={t('growthAnalysis.maxWeightChart.title')}
+                  description={t('growthAnalysis.maxWeightChart.desc')}
+                  points={maxWeightChartPoints}
+                  unit="kg"
+                  accentColor="var(--color-accent, #f59e0b)"
+                  ariaLabel={t('growthAnalysis.maxWeightChart.title')}
+                />
+              </>
+            )}
+
+            {isDailyView ? (
+              <>
+                <GrowthChartBlock
+                  className="growth-chart-block--chart-secondary"
+                  chartSize="micro"
+                  title={t('growthAnalysis.daily.maxWeightChart.title')}
+                  description={t('growthAnalysis.daily.maxWeightChart.desc')}
+                  points={maxWeightChartPoints}
+                  unit="kg"
+                  accentColor="var(--color-accent, #f59e0b)"
+                  ariaLabel={t('growthAnalysis.daily.maxWeightChart.title')}
+                />
+                <GrowthChartBlock
+                  className="growth-chart-block--chart-secondary"
+                  chartSize="micro"
+                  title={t('growthAnalysis.daily.machineChart.title')}
+                  description={t('growthAnalysis.daily.machineChart.desc')}
+                  points={machineCountChartPoints}
+                  unit={t('growthAnalysis.daily.machineChart.unit')}
+                  accentColor="var(--color-primary)"
+                  ariaLabel={t('growthAnalysis.daily.machineChart.title')}
+                />
+              </>
             ) : null}
           </section>
 

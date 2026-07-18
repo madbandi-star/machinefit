@@ -85,7 +85,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
       <CollapsibleCard
         title={t(`${insightKey}.profileAverage.title`)}
         summary={t(`${insightKey}.profileAverage.desc`, { period: periodLabel })}
-        defaultOpen
+        defaultOpen={false}
         className="growth-insights-panel__section profile-compare-section"
       >
         {insights.profileAverage ? (
@@ -209,7 +209,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
                   period: periodLabel,
                 })
           }
-          defaultOpen
+          defaultOpen={false}
           className="growth-insights-panel__section peer-growth-compare"
         >
           <div className="peer-growth-compare__definition" role="note">
@@ -270,7 +270,7 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
         <CollapsibleCard
           title={t(`${insightKey}.coaching.title`)}
           summary={coachingSummary}
-          defaultOpen
+          defaultOpen={false}
           className="growth-insights-panel__section growth-insights-coaching"
         >
           <div className="growth-insights-coaching__header">
