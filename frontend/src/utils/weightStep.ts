@@ -1,10 +1,8 @@
-const BARBELL_LIKE_CODES = new Set(['FW_BARBELL', 'FW_SMITH']);
+/** Workout / machine weight increments (kg). Body profile weight uses its own finer step. */
+export const WORKOUT_WEIGHT_STEP_KG = 5;
 
-export function getWeightStepKg(machineCode?: string): number {
-  if (machineCode && BARBELL_LIKE_CODES.has(machineCode)) {
-    return 5;
-  }
-  return 2.5;
+export function getWeightStepKg(_machineCode?: string): number {
+  return WORKOUT_WEIGHT_STEP_KG;
 }
 
 export function roundToWeightStep(value: number, step: number): number {

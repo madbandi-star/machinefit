@@ -56,16 +56,16 @@ export function LanguageSelector() {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
-        title={LOCALE_LABELS[locale]}
+        aria-label={`${t('settings.language')}: ${LOCALE_LABELS[locale]}`}
         onClick={() => setOpen((prev) => !prev)}
       >
         <span className="language-picker__flag" aria-hidden>
           {LOCALE_FLAGS[locale]}
         </span>
-        <Icon name="chevronDown" size={14} className="language-picker__chevron" />
-        <span className="visually-hidden">
-          {t('settings.language')}: {LOCALE_LABELS[locale]}
+        <span className="language-picker__code" aria-hidden>
+          {locale.toUpperCase()}
         </span>
+        <Icon name="chevronDown" size={11} className="language-picker__chevron" />
       </button>
 
       {open ? (
@@ -88,6 +88,11 @@ export function LanguageSelector() {
                   {LOCALE_FLAGS[code]}
                 </span>
                 <span className="language-picker__option-label">{LOCALE_LABELS[code]}</span>
+                {locale === code ? (
+                  <span className="language-picker__option-check" aria-hidden>
+                    ✓
+                  </span>
+                ) : null}
               </button>
             </li>
           ))}

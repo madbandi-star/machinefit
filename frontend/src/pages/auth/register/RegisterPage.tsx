@@ -14,7 +14,7 @@ import {
   UnitPicker,
   WEIGHT_UNIT_OPTIONS,
 } from '@/components/settings/UnitPicker/UnitPicker';
-import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
+import { AgePickerField } from '@/components/settings/AgePickerField/AgePickerField';
 import { authApi } from '@/api';
 import { AlertDialog } from '@/components/feedback/AlertDialog/AlertDialog';
 import { useAuthStore } from '@/store/auth.store';
@@ -195,17 +195,12 @@ export function RegisterPage() {
             heightInvalid={hasError('heightCm')}
             weightInvalid={hasError('weightKg')}
           />
-          <div className={`body-metrics-stepper${hasError('age') ? ' body-metrics-stepper--invalid' : ''}`}>
-            <span className="body-metrics-stepper__label">{t('auth.ageLabel')}</span>
-            <NumericStepper
-              value={age}
-              onChange={setAge}
-              min={13}
-              max={100}
-              step={1}
-              ariaLabel={t('auth.ageLabel')}
-            />
-          </div>
+          <AgePickerField
+            value={age}
+            onChange={setAge}
+            invalid={hasError('age')}
+            initializeOnMount
+          />
           <ExperienceSelector
             value={experienceLevel}
             onChange={setExperienceLevel}

@@ -45,7 +45,7 @@ export function SettingValueCard({
 
   const parsedAdjustedNumber =
     adjustedValue.trim() === '' ? undefined : Number.parseFloat(adjustedValue);
-  const adjustStep = unit?.toLowerCase().includes('kg') ? 2.5 : 1;
+  const adjustStep = unit?.toLowerCase().includes('kg') ? 5 : 1;
   const adjustMax = unit?.toLowerCase().includes('kg') ? 999 : 99;
 
   return (

@@ -178,6 +178,7 @@ export function RecommendationResultPage() {
           recommendationId={result.id}
           suggestedWeightKg={result.settings.recommendedWeightKg}
           isAuthenticated={isAuthenticated}
+          variant="compact"
           logDate={getLocalDateKey(result.createdAt)}
           targetMuscleGroup={result.targetMuscleGroup}
         />

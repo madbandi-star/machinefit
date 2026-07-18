@@ -27,7 +27,7 @@ function formatWeight(value: number): number {
 export function WeightStepper({
   value,
   onChange,
-  step = 2.5,
+  step = 5,
   size = 'default',
   disabled = false,
   id,
