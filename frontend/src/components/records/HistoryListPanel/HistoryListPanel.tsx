@@ -299,6 +299,11 @@ export function HistoryListPanel() {
                     </span>
                   ) : null}
                   <span className="records-list__calendar-toggle">
+                    <Icon
+                      name="calendar"
+                      size={14}
+                      className="records-list__calendar-icon"
+                    />
                     <span className="records-list__date-filter-label">
                       {t('machines:history.filterByDate')}
                     </span>
@@ -317,8 +322,15 @@ export function HistoryListPanel() {
                 />
               </details>
             ) : (
-              <span className="records-list__date-filter-label">
-                {t('machines:history.filterByDate')}
+              <span className="records-list__calendar-toggle records-list__calendar-toggle--static">
+                <Icon
+                  name="calendar"
+                  size={14}
+                  className="records-list__calendar-icon"
+                />
+                <span className="records-list__date-filter-label">
+                  {t('machines:history.filterByDate')}
+                </span>
               </span>
             )}
             {selectedDate ? (

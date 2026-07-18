@@ -583,8 +583,67 @@
 }
 
 .records-list--history .records-list__toolbar {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0;
+}
+
+.records-list--history .history-log-status-filter {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  max-width: min(100%, 16.5rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.records-list--history .history-log-status-filter__item {
+  padding: 0.35rem 0.25rem;
+  font-size: 0.6875rem;
+}
+
+.records-list--history .records-list__date-filter-block {
+  flex: 0 0 auto;
+  width: auto;
+  margin-left: auto;
+}
+
+.records-list--history .records-list__filters {
+  justify-content: flex-end;
+  width: auto;
+  flex-wrap: nowrap;
+}
+
+.records-list--history .records-list__calendar-details {
+  width: auto;
+}
+
+.records-list--history .records-list__calendar-summary {
+  align-self: auto;
+  justify-content: flex-end;
+}
+
+.records-list--history .records-list__toolbar:has(.records-list__calendar-details[open]) {
+  flex-wrap: wrap;
+}
+
+.records-list--history
+  .records-list__toolbar:has(.records-list__calendar-details[open])
+  .records-list__date-filter-block {
+  width: 100%;
+  margin-left: 0;
+}
+
+.records-list__calendar-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.records-list__calendar-toggle--static {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .records-list--history .records-list__date-group {

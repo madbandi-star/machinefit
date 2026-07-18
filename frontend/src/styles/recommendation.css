@@ -1813,20 +1813,22 @@
 }
 
 .history-record-card .recommendation-workout-log__diary-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem 0.4rem;
+  align-content: start;
 }
 
 .history-record-card .recommendation-workout-log__diary-tag {
-  padding: 0.2rem 0.4rem;
+  width: 100%;
+  padding: 0.25rem 0.35rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
   background: transparent;
   font-size: 0.625rem;
   font-weight: 600;
   line-height: 1.2;
+  text-align: center;
   color: var(--color-primary);
   cursor: pointer;
 }

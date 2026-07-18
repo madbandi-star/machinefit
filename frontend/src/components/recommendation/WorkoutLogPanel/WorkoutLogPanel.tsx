@@ -617,7 +617,7 @@ export function WorkoutLogPanel({
           className="input history-workout-log__memo-input"
           rows={4}
           value={diary}
-          placeholder={t('machines:workoutLog.diaryPlaceholder')}
+          placeholder={t('machines:history.memoPlaceholder')}
           onChange={(e) => handleDiaryChange(e.target.value)}
           disabled={isActionPending}
         />
