@@ -2,6 +2,7 @@
   "searchTitle": "Search machines",
   "searchPlaceholder": "Search by machine name",
   "filterAll": "All",
+  "filterMachinesOnly": "Machines only",
   "filterByMuscle": "Filter by muscle group",
   "filterByBrand": "Filter by brand",
   "notFound": "Machine not found",

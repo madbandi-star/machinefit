@@ -12,7 +12,7 @@ import { MachineEmptyState } from '@/components/machines/MachineEmptyState/Machi
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi, machineApi } from '@/api';
-import '@/styles/machines.css';
+import { filterMachinesByEquipmentScope, type EquipmentScope } from '@/utils/machineEquipmentScope';
 
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
@@ -22,6 +22,7 @@ export function MachineSearchPage() {
     () => searchParams.get('muscle')
   );
   const [brandCode, setBrandCode] = useState<string | null>(() => searchParams.get('brand'));
+  const [equipmentScope, setEquipmentScope] = useState<EquipmentScope>('machines_only');
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
@@ -38,14 +39,14 @@ export function MachineSearchPage() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, query, muscleGroup, brandCode],
+    queryKey: [...QUERY_KEYS.machines, query, muscleGroup, brandCode, equipmentScope],
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = { limit: 100 };
       if (muscleGroup) params.muscleGroup = muscleGroup;
       if (brandCode) params.brandCode = brandCode;
       if (query.trim()) params.q = query.trim();
       const res = await machineApi.list(params);
-      return res.data.data.items;
+      return filterMachinesByEquipmentScope(res.data.data.items, equipmentScope);
     },
   });
 
@@ -56,7 +57,13 @@ export function MachineSearchPage() {
       <PageShell title={t('searchTitle')}>
         <SearchBar value={query} onChange={setQuery} placeholder={t('searchPlaceholder')} />
         <FilterChips value={muscleGroup} onChange={setMuscleGroup} />
-        <BrandFilterChips brands={brands} value={brandCode} onChange={setBrandCode} />
+        <BrandFilterChips
+          brands={brands}
+          value={brandCode}
+          onChange={setBrandCode}
+          equipmentScope={equipmentScope}
+          onEquipmentScopeChange={setEquipmentScope}
+        />
         {isLoading ? (
           <Skeleton count={5} height={72} />
         ) : !data?.length ? (

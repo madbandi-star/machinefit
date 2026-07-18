@@ -77,12 +77,7 @@ export function MyPage() {
     <div className="my-page">
       <PageShell
         title={t('nav.myPage')}
-        action={
-          <>
-            <ShareAppButton variant="header" />
-            <PwaInstallButton />
-          </>
-        }
+        action={<PwaInstallButton />}
       >
         <div className="card profile-card">
           <p className="profile-card__identity">
