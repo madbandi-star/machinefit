@@ -25,37 +25,93 @@ function getPeriodRange(period: z.infer<typeof reportPeriodSchema>): { from: str
   return { from: start.toISOString().slice(0, 10), to };
 }
 
-function buildReportHtml(options: {
+const PERIOD_LABELS: Record<z.infer<typeof reportPeriodSchema>, string> = {
+  day: '오늘',
+  week: '이번 주',
+  month: '이번 달',
+  year: '올해',
+};
+
+function getLogVolumeKg(log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number]): number {
+  return log.setWeightsKg.reduce((sum, weight) => sum + weight, 0);
+}
+
+function formatSetWeights(setWeightsKg: number[]): string {
+  if (setWeightsKg.length === 0) return '-';
+  return setWeightsKg.map((weight) => `${weight}kg`).join(', ');
+}
+
+function buildReportText(options: {
   displayName: string;
-  period: string;
+  period: z.infer<typeof reportPeriodSchema>;
   from: string;
   to: string;
   logs: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>;
 }): string {
   const totalSets = options.logs.reduce((sum, log) => sum + log.setCount, 0);
-  const totalVolume = options.logs.reduce(
-    (sum, log) => sum + log.setWeightsKg.reduce((a, b) => a + b, 0),
-    0
-  );
+  const totalVolume = options.logs.reduce((sum, log) => sum + getLogVolumeKg(log), 0);
+  const periodLabel = PERIOD_LABELS[options.period];
+
+  const lines = [
+    'MachineFit 운동 보고서',
+    '',
+    `${options.displayName}님`,
+    `기간: ${periodLabel} (${options.from} ~ ${options.to})`,
+    '',
+    '[요약]',
+    `- 운동 기록: ${options.logs.length}건`,
+    `- 총 세트: ${totalSets}회`,
+    `- 총 수행량: ${totalVolume.toFixed(1)}kg`,
+    '',
+  ];
+
+  if (options.logs.length === 0) {
+    lines.push('선택한 기간에 운동 기록이 없습니다.');
+    return lines.join('\n');
+  }
+
+  lines.push('[상세 기록]');
+  for (const log of options.logs) {
+    const machineLabel = log.machineName ?? log.machineCode;
+    const volume = getLogVolumeKg(log);
+    lines.push(
+      `· ${log.logDate} | ${machineLabel} | ${log.setCount}세트 | ${formatSetWeights(log.setWeightsKg)} (합 ${volume.toFixed(1)}kg)`
+    );
+  }
+
+  return lines.join('\n');
+}
+
+function buildReportHtml(options: {
+  displayName: string;
+  period: z.infer<typeof reportPeriodSchema>;
+  from: string;
+  to: string;
+  logs: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>;
+}): string {
+  const totalSets = options.logs.reduce((sum, log) => sum + log.setCount, 0);
+  const totalVolume = options.logs.reduce((sum, log) => sum + getLogVolumeKg(log), 0);
+  const periodLabel = PERIOD_LABELS[options.period];
 
   const rows = options.logs
-    .map(
-      (log) =>
-        `<tr><td>${log.logDate}</td><td>${log.machineName ?? log.machineCode}</td><td>${log.setCount}</td><td>${log.setWeightsKg.reduce((a, b) => a + b, 0).toFixed(1)}kg</td></tr>`
-    )
+    .map((log) => {
+      const volume = getLogVolumeKg(log);
+      const machineLabel = log.machineName ?? log.machineCode;
+      return `<tr><td>${log.logDate}</td><td>${machineLabel}</td><td>${log.setCount}</td><td>${formatSetWeights(log.setWeightsKg)}</td><td>${volume.toFixed(1)}kg</td></tr>`;
+    })
     .join('');
 
   return `<!DOCTYPE html><html><body>
     <h1>MachineFit 운동 보고서</h1>
-    <p>${options.displayName}님 · ${options.period} (${options.from} ~ ${options.to})</p>
+    <p>${options.displayName}님 · ${periodLabel} (${options.from} ~ ${options.to})</p>
     <ul>
       <li>기록 수: ${options.logs.length}건</li>
       <li>총 세트: ${totalSets}회</li>
       <li>총 수행량: ${totalVolume.toFixed(1)}kg</li>
     </ul>
     <table border="1" cellpadding="6" cellspacing="0">
-      <thead><tr><th>날짜</th><th>머신</th><th>세트</th><th>수행량</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="4">기록 없음</td></tr>'}</tbody>
+      <thead><tr><th>날짜</th><th>머신</th><th>세트</th><th>중량</th><th>수행량</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5">기록 없음</td></tr>'}</tbody>
     </table>
   </body></html>`;
 }
@@ -76,9 +132,15 @@ export const workoutReportService = {
       to,
       logs,
     });
+    const text = buildReportText({
+      displayName: user.displayName,
+      period,
+      from,
+      to,
+      logs,
+    });
 
-    const subject = `[MachineFit] ${period} 운동 보고서 (${from}~${to})`;
-    const text = `${user.displayName}님 · ${period} 운동 보고서 (${from} ~ ${to})\n기록 ${logs.length}건`;
+    const subject = `[MachineFit] ${PERIOD_LABELS[period]} 운동 보고서 (${from}~${to})`;
 
     try {
       const delivery = await emailService.send({
@@ -91,6 +153,7 @@ export const workoutReportService = {
         message: logs.length ? 'Report sent to your email.' : 'Report sent (no logs in period).',
         emailSent: true,
         emailMethod: delivery.method,
+        reportText: text,
       };
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'Email delivery failed';

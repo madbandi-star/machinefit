@@ -43,9 +43,14 @@ export async function sendEmailViaFormSubmit(options: {
 export function htmlReportToPlainText(html: string): string {
   return html
     .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/tr>/gi, '\n')
     .replace(/<\/li>/gi, '\n')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
+    .replace(/<\/tr>/gi, '\n')
+    .replace(/<\/td>/gi, ' | ')
+    .replace(/<\/th>/gi, ' | ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/[ \t]+\|/g, ' |')
+    .replace(/\|\s+/g, '| ')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]+/g, ' ')
     .trim();
 }
