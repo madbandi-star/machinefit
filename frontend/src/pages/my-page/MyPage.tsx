@@ -15,8 +15,8 @@ import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/community.css';
 
-/** Gym browse and machine requests restored for full My Page navigation */
-const SHOW_GYMS_LINK = true;
+/** Hidden until gym browse is ready for My Page (set true to restore). */
+const SHOW_GYMS_LINK = false;
 
 const SHOW_MACHINE_REQUESTS_LINK = true;
 
