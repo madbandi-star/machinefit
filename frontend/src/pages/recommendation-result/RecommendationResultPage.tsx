@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Bookmark, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -14,7 +14,6 @@ import {
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
-import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { favoriteApi, recommendationApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
@@ -29,6 +28,7 @@ import { isFreeWeightMachineCode } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 import '@/styles/history-premium.css';
+import '@/styles/records.css';
 
 function ResultLoadingSkeleton() {
   return (
@@ -49,6 +49,16 @@ function ResultLoadingSkeleton() {
       </div>
     </div>
   );
+}
+
+function getBookmarkAriaLabel(
+  control: WorkoutLogPanelControl | null,
+  t: (key: string) => string
+): string {
+  if (!control) return t('machines:history.bookmarkSave');
+  if (!control.isLogSaved) return t('machines:history.bookmarkSave');
+  if (control.isDirty) return t('machines:history.bookmarkUpdate');
+  return t('machines:history.bookmarkRemove');
 }
 
 export function RecommendationResultPage() {
@@ -130,6 +140,64 @@ export function RecommendationResultPage() {
     toggleFavoriteMutation.mutate();
   };
 
+  const bookmarkActive = Boolean(logControl?.isLogSaved);
+  const bookmarkDirty = Boolean(logControl?.isDirty);
+  const bookmarkPending = Boolean(logControl?.isActionPending);
+  const isFavorited = favoriteCheck?.favorited ?? false;
+
+  const handleBookmarkClick = () => {
+    if (!logControl || logControl.isActionPending || logControl.isLoading) return;
+
+    if (!logControl.isLogSaved) {
+      logControl.save();
+      return;
+    }
+
+    if (logControl.isDirty) {
+      logControl.save();
+      return;
+    }
+
+    logControl.remove();
+  };
+
+  const settingsHeaderActions =
+    isAuthenticated ? (
+      <div className="recommendation-result-page__header-actions">
+        <button
+          type="button"
+          className={`history-record-card__bookmark${
+            bookmarkActive ? ' history-record-card__bookmark--active' : ''
+          }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
+          aria-label={getBookmarkAriaLabel(logControl, t)}
+          onClick={handleBookmarkClick}
+          disabled={bookmarkPending || !logControl}
+        >
+          <Bookmark size={17} strokeWidth={2.25} />
+        </button>
+        <button
+          type="button"
+          className={`history-record-card__bookmark recommendation-result-page__favorite${
+            isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
+          }`}
+          aria-label={
+            isFavorited
+              ? t('machines:recommendation.removeFavorite')
+              : t('machines:recommendation.saveFavorite')
+          }
+          aria-pressed={isFavorited}
+          onClick={handleToggleFavorite}
+          disabled={toggleFavoriteMutation.isPending}
+        >
+          <Heart
+            size={17}
+            strokeWidth={2.25}
+            fill={isFavorited ? 'currentColor' : 'none'}
+          />
+        </button>
+      </div>
+    ) : null;
+
   if (recommendationId && isLoading && !result) {
     return (
       <PageShell title={t('recommendation.title')}>
@@ -167,7 +235,7 @@ export function RecommendationResultPage() {
     : (result.machineName ?? t('recommendation.title'));
 
   return (
-    <div className="recommendation-result-page">
+    <div className="recommendation-result-page recommendation-result-page--inline-actions">
       <header className="recommendation-result-page__header">
         <h1 className="recommendation-result-page__title">{machineTitle}</h1>
       </header>
@@ -179,6 +247,7 @@ export function RecommendationResultPage() {
             <HistorySectionHeader
               title={t('history.settingsSectionTitle')}
               icon={<SlidersHorizontal size={14} strokeWidth={2.25} aria-hidden />}
+              action={settingsHeaderActions}
             />
             <RecommendationSettingsPanel
               settings={result.settings}
@@ -207,7 +276,6 @@ export function RecommendationResultPage() {
             suggestedWeightKg={result.settings.recommendedWeightKg}
             isAuthenticated={isAuthenticated}
             variant="history"
-            showSaveButton
             logDate={normalizeDateKey(logDateParam ?? getLocalDateKey(result.createdAt))}
             idPrefix={`result-workout-${result.id}`}
             targetMuscleGroup={result.targetMuscleGroup}
@@ -216,14 +284,6 @@ export function RecommendationResultPage() {
           />
         </article>
       </div>
-
-      <RecommendationActionBar
-        machineCode={result.machineCode}
-        isFavorited={favoriteCheck?.favorited ?? false}
-        onToggleFavorite={handleToggleFavorite}
-        isFavoritePending={toggleFavoriteMutation.isPending}
-        fixed
-      />
     </div>
   );
 }

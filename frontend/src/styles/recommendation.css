@@ -428,13 +428,22 @@
   border-top: 1px solid var(--history-card-border, rgba(138, 148, 166, 0.14));
 }
 
-.recommendation-result-page__body-card .recommendation-workout-log__save,
-.recommendation-result-page__body-card .recommendation-workout-log__actions {
-  margin-top: 0.35rem;
-}
-
 .history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__save-row {
   margin-top: 0.5rem;
+}
+
+.recommendation-result-page--inline-actions {
+  padding-bottom: var(--space-md);
+}
+
+.recommendation-result-page__header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.recommendation-result-page__favorite--active {
+  color: var(--color-primary);
 }
 
 /* Collapsible sections (P1) */
