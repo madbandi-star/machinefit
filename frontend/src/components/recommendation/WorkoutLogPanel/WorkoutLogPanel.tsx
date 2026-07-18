@@ -371,12 +371,13 @@ export function WorkoutLogPanel({
           >
             <button
               type="button"
-              className={`setting-value-card__label recommendation-workout-log__set-toggle${
+              className={`recommendation-workout-log__set-toggle${
                 completed ? ' recommendation-workout-log__set-toggle--completed' : ''
               }`}
               onClick={() => handleToggleSetCompleted(index)}
               disabled={isActionPending}
               aria-pressed={completed}
+              aria-label={t('machines:workoutLog.setLabel', { number: index + 1 })}
             >
               {t('machines:workoutLog.setLabel', { number: index + 1 })}
             </button>
