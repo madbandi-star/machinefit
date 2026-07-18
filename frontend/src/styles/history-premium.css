@@ -75,12 +75,15 @@
   flex-direction: column;
   gap: 0;
   margin-top: -0.35rem;
+  width: 100%;
+  --history-metric-gap: clamp(0.2rem, 1.1vw, 0.5rem);
 }
 
 .history-dashboard__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: var(--history-metric-gap);
+  width: 100%;
 }
 
 .history-metric-card {
@@ -89,16 +92,19 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
-  gap: 0.35rem;
-  min-height: 5.25rem;
-  padding: 0.6rem 0.4rem 0.7rem;
-  border-radius: var(--history-mini-radius);
+  gap: clamp(0.15rem, 0.75vw, 0.35rem);
+  min-height: 0;
+  padding: clamp(0.4rem, 1.2vw, 0.6rem) clamp(0.15rem, 0.85vw, 0.4rem)
+    clamp(0.45rem, 1.3vw, 0.7rem);
+  border-radius: clamp(10px, 2.8vw, var(--history-mini-radius));
   border: 1px solid var(--history-card-border);
   background: linear-gradient(165deg, rgba(28, 34, 46, 0.95) 0%, rgba(14, 18, 26, 0.98) 100%);
   box-shadow: var(--history-shadow-card);
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   min-width: 0;
+  container-type: inline-size;
+  container-name: history-metric;
 }
 
 .history-metric-card:hover {
@@ -116,7 +122,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
+  gap: clamp(0.1rem, 0.55vw, 0.2rem);
   min-width: 0;
   text-align: center;
 }
@@ -125,11 +131,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: clamp(0.875rem, 3.2vw, 1.25rem);
+  height: clamp(0.875rem, 3.2vw, 1.25rem);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
   flex-shrink: 0;
+}
+
+.history-metric-card__icon svg {
+  width: clamp(11px, 2.8vw, 16px);
+  height: clamp(11px, 2.8vw, 16px);
 }
 
 .history-metric-card__icon--green { color: var(--color-primary); }
@@ -138,39 +149,53 @@
 .history-metric-card__icon--orange { color: #ff9800; }
 
 .history-metric-card__label {
-  font-size: var(--history-font-xs);
+  font-size: clamp(0.5625rem, 11cqi, 0.75rem);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--history-text-dim);
   width: 100%;
+  max-width: 100%;
   text-align: center;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
-  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .history-metric-card__value-row {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 0.15rem;
+  gap: 0.1rem;
   min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  flex-wrap: nowrap;
 }
 
 .history-metric-card__value {
-  font-size: var(--history-font-xl);
+  font-size: clamp(0.6875rem, 20cqi, 1.125rem);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .history-metric-card__unit {
-  font-size: var(--history-font-sm);
+  font-size: clamp(0.5625rem, 9cqi, 0.8125rem);
   font-weight: 600;
   color: var(--history-text-dim);
+  flex-shrink: 0;
+}
+
+@container history-metric (max-width: 4.75rem) {
+  .history-metric-card__icon {
+    display: none;
+  }
+
+  .history-metric-card__top {
+    gap: 0;
+  }
 }
 
 .history-metric-card__accent {
@@ -434,22 +459,18 @@
 .history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-block {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   flex-wrap: nowrap;
   gap: 0.3rem;
   width: 100%;
   min-width: 0;
 }
 
-.history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-block:first-child {
-  justify-content: center;
-  align-items: center;
-}
-
 .history-page-premium
   .history-record-card
   .setting-value-card--history-compare
-  .setting-value-card__compare-block:first-child
+  .setting-value-card__compare-block
   .setting-value-card__compare-value-line {
   display: inline-flex;
   align-items: baseline;
@@ -464,7 +485,6 @@
   padding-left: 0;
   border-top: 1px solid rgba(138, 148, 166, 0.28);
   border-left: none;
-  justify-content: flex-start;
 }
 
 .history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-label {
@@ -757,22 +777,6 @@
 
 .history-page-premium .recommendation-workout-log__complete-btn {
   font-size: var(--history-font-2xs);
-}
-
-@media (max-width: 520px) {
-  .history-dashboard__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
-  }
-
-  .history-metric-card {
-    min-height: 4.85rem;
-    padding: 0.65rem 0.55rem 0.75rem;
-  }
-
-  .history-metric-card__value {
-    font-size: var(--history-font-2xl);
-  }
 }
 
 @media (max-width: 420px) {
