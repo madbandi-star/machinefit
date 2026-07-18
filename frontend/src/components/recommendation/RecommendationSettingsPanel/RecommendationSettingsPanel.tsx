@@ -147,10 +147,12 @@ function getCompareLabels(
     adjustedLabel: string;
   }
 ) {
-  if (options.showAdjustment && options.adjustmentReadOnly && options.historyVariant) {
+  if (options.showAdjustment && options.historyVariant) {
     return {
       recommendedLabel: options.t('machines:history.compareRecommended'),
-      adjustedLabel: options.t('machines:history.compareCurrent'),
+      adjustedLabel: options.adjustmentReadOnly
+        ? options.t('machines:history.compareCurrent')
+        : options.t('machines:feedback.adjustedShort'),
     };
   }
 
@@ -246,7 +248,7 @@ export function RecommendationSettingsPanel({
   const items: SettingDisplayItem[] = [];
 
   for (const field of SETTING_FIELDS) {
-    if (showAdjustment && adjustmentReadOnly && !COMPARE_LABEL_KEYS[field.key]) continue;
+    if (showAdjustment && !COMPARE_LABEL_KEYS[field.key]) continue;
 
     const raw = settings[field.key];
     if (raw == null) continue;
@@ -328,7 +330,7 @@ export function RecommendationSettingsPanel({
         <div
           className={`recommendation-settings-panel recommendation-settings-panel--history${
             showAdjustment ? ' recommendation-settings-panel--compare' : ''
-          }`}
+          }${showAdjustment && !adjustmentReadOnly ? ' recommendation-settings-panel--adjusting' : ''}`}
           role="list"
           aria-label={t('machines:recommendation.title')}
         >

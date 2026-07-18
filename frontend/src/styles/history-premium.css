@@ -780,6 +780,136 @@
   justify-content: center;
 }
 
+/* Editable compare (셋팅값 조정) — match recent history tile layout */
+.history-page-premium
+  .recommendation-settings-panel--history.recommendation-settings-panel--compare.recommendation-settings-panel--adjusting
+  .recommendation-settings-panel__grid--history {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.history-page-premium
+  .recommendation-settings-panel--history.recommendation-settings-panel--compare.recommendation-settings-panel--adjusting
+  .history-mini-setting-wrap:has(.setting-value-card--highlight) {
+  grid-column: 1 / -1;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .setting-value-card__compare-label {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__row {
+  grid-template-columns: var(--history-stepper-btn-width) minmax(0, 1fr) var(--history-stepper-btn-width);
+  min-height: var(--history-control-height);
+  gap: 0.15rem;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__btn,
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__value,
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__manual-input {
+  min-height: var(--history-control-height);
+  max-height: var(--history-control-height);
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__btn {
+  font-size: var(--history-font-md);
+  padding: 0 0.12rem;
+  border-radius: 8px;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__value-text {
+  font-size: var(--history-font-sm);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__compare-block--adjust
+  .numeric-stepper--compact
+  .numeric-stepper__unit {
+  font-size: var(--history-font-2xs);
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__adjust-input {
+  min-height: var(--history-control-height);
+  padding: 0.28rem 0.4rem;
+  font-size: var(--history-font-sm);
+  width: 100%;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__quick-picks {
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  justify-content: flex-start;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .setting-value-card__quick-pick {
+  font-size: var(--history-font-2xs);
+  padding: 0.12rem 0.28rem;
+}
+
+.history-page-premium
+  .history-record-card
+  .setting-value-card--history-adjusting
+  .weight-basis-trigger {
+  font-size: var(--history-font-2xs);
+  white-space: nowrap;
+}
+
 .history-page-premium .history-settings-total-tile__label {
   font-size: var(--history-font-xs);
 }
@@ -812,6 +942,12 @@
 @media (max-width: 420px) {
   .history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .history-page-premium
+    .recommendation-settings-panel--history.recommendation-settings-panel--compare.recommendation-settings-panel--adjusting
+    .recommendation-settings-panel__grid--history {
+    grid-template-columns: 1fr;
   }
 }
 
