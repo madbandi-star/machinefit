@@ -103,7 +103,7 @@ export function expandHistoryRecordCards(
   for (const item of historyItems) {
     if (!isFreeWeightMachineCode(item.machineCode) || !item.targetMuscleGroup) continue;
 
-    const logDate = getLocalDateKey(item.viewedAt);
+    const logDate = normalizeDateKey(getLocalDateKey(item.viewedAt));
     const key = buildFreeWeightCardKey(item.machineCode, logDate, item.targetMuscleGroup);
     if (freeWeightKeys.has(key)) continue;
     freeWeightKeys.add(key);
@@ -131,7 +131,11 @@ export function historyRecordCardHasLog(
   loggedKeys: Set<string>
 ): boolean {
   return loggedKeys.has(
-    buildLoggedWorkoutKey(card.machineCode, card.logDate, card.targetMuscleGroup)
+    buildLoggedWorkoutKey(
+      card.machineCode,
+      normalizeDateKey(card.logDate),
+      card.targetMuscleGroup
+    )
   );
 }
 

@@ -7,7 +7,7 @@ function dedupeWorkoutLogs(logs: WorkoutLog[]): WorkoutLog[] {
   const byKey = new Map<string, WorkoutLog>();
 
   for (const log of logs) {
-    const key = `${log.machineCode}:${normalizeDateKey(log.logDate)}`;
+    const key = `${log.machineCode}:${normalizeDateKey(log.logDate)}:${log.targetMuscleGroup ?? ''}`;
     const existing = byKey.get(key);
     const normalizedLog = { ...log, logDate: normalizeDateKey(log.logDate) };
 
