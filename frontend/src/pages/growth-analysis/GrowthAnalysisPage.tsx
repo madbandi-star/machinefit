@@ -16,6 +16,7 @@ import {
   type GrowthPeriod,
   type GrowthPeriodFilter as GrowthPeriodFilterState,
   type GrowthViewMode,
+  type MachineOption,
   aggregateDailySessions,
   computeDailyKpis,
   computeGrowthRanking,
@@ -30,9 +31,10 @@ import {
   getDailyMaxWeightChartPoints,
   getDefaultCustomRange,
   getMachineOptions,
-  getSessionsForMachine,
+  getSessionsForMachineOption,
   resolveGrowthPeriodBounds,
 } from '@/utils/workoutAnalytics';
+import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import { formatHistoryDateHeader } from '@/utils/historyDate';
 import '@/styles/growth-analysis.css';
 
@@ -63,13 +65,25 @@ function KpiCard({
 }
 
 export function GrowthAnalysisPage() {
-  const { t, i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation(['common', 'machines']);
   const user = useAuthStore((s) => s.user);
   const [periodPreset, setPeriodPreset] = useState<GrowthPeriod>('30d');
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
   const [viewMode, setViewMode] = useState<GrowthViewMode>('daily');
-  const [selectedMachineCode, setSelectedMachineCode] = useState('');
+  const [selectedMachineKey, setSelectedMachineKey] = useState('');
+
+  const translateMuscleGroup = (group: string) =>
+    t(`machines:muscleGroups.${group}`, { defaultValue: group });
+
+  const formatMachineOptionLabel = (option: MachineOption) =>
+    option.targetMuscleGroup
+      ? formatFreeWeightRecordLabel(
+          option.machineName,
+          option.targetMuscleGroup,
+          translateMuscleGroup
+        )
+      : option.machineName;
 
   const periodFilter: GrowthPeriodFilterState = useMemo(
     () => ({
@@ -97,17 +111,25 @@ export function GrowthAnalysisPage() {
 
   useEffect(() => {
     if (machineOptions.length === 0) {
-      setSelectedMachineCode('');
+      setSelectedMachineKey('');
       return;
     }
-    if (!machineOptions.some((option) => option.machineCode === selectedMachineCode)) {
-      setSelectedMachineCode(machineOptions[0].machineCode);
+    if (!machineOptions.some((option) => option.optionKey === selectedMachineKey)) {
+      setSelectedMachineKey(machineOptions[0].optionKey);
     }
-  }, [machineOptions, selectedMachineCode]);
+  }, [machineOptions, selectedMachineKey]);
+
+  const selectedMachineOption = useMemo(
+    () => machineOptions.find((option) => option.optionKey === selectedMachineKey),
+    [machineOptions, selectedMachineKey]
+  );
 
   const sessions = useMemo(
-    () => (selectedMachineCode ? getSessionsForMachine(periodLogs, selectedMachineCode) : []),
-    [periodLogs, selectedMachineCode]
+    () =>
+      selectedMachineOption
+        ? getSessionsForMachineOption(periodLogs, selectedMachineOption)
+        : [],
+    [periodLogs, selectedMachineOption]
   );
 
   const machineKpis = useMemo(() => computeMachineKpis(sessions), [sessions]);
@@ -120,13 +142,19 @@ export function GrowthAnalysisPage() {
     if (isDailyView) {
       return detectDailyPeakAlert(dailyPoints);
     }
-    return selectedMachineCode ? detectPrAlert(logs, selectedMachineCode) : null;
-  }, [isDailyView, dailyPoints, logs, selectedMachineCode]);
+    return selectedMachineOption
+      ? detectPrAlert(
+          logs,
+          selectedMachineOption.machineCode,
+          selectedMachineOption.targetMuscleGroup
+        )
+      : null;
+  }, [isDailyView, dailyPoints, logs, selectedMachineOption]);
   const ranking = useMemo(() => computeGrowthRanking(logs, periodFilter), [logs, periodFilter]);
 
-  const selectedMachineName = machineOptions.find(
-    (option) => option.machineCode === selectedMachineCode
-  )?.machineName;
+  const selectedMachineName = selectedMachineOption
+    ? formatMachineOptionLabel(selectedMachineOption)
+    : undefined;
 
   const periodLabel = useMemo(() => {
     if (periodPreset === 'custom' && customFrom && customTo) {
@@ -155,7 +183,8 @@ export function GrowthAnalysisPage() {
   } = useQuery({
     queryKey: QUERY_KEYS.workoutInsights(
       isDailyView ? 'daily' : 'machine',
-      selectedMachineCode,
+      selectedMachineOption?.machineCode ?? '',
+      selectedMachineOption?.targetMuscleGroup ?? '',
       periodPreset,
       customFrom,
       customTo
@@ -163,7 +192,8 @@ export function GrowthAnalysisPage() {
     queryFn: () =>
       fetchWorkoutInsights({
         viewMode: isDailyView ? 'daily' : 'machine',
-        machineCode: isDailyView ? undefined : selectedMachineCode,
+        machineCode: isDailyView ? undefined : selectedMachineOption?.machineCode,
+        targetMuscleGroup: isDailyView ? undefined : selectedMachineOption?.targetMuscleGroup,
         period: periodPreset,
         customFrom: periodPreset === 'custom' ? customFrom : undefined,
         customTo: periodPreset === 'custom' ? customTo : undefined,
@@ -173,7 +203,7 @@ export function GrowthAnalysisPage() {
       }),
     enabled:
       periodPreset !== 'custom' || Boolean(customFrom && customTo)
-        ? isDailyView || Boolean(selectedMachineCode)
+        ? isDailyView || Boolean(selectedMachineOption)
         : false,
   });
 
@@ -289,16 +319,16 @@ export function GrowthAnalysisPage() {
             <select
               id="growth-machine"
               className="input"
-              value={selectedMachineCode}
-              onChange={(event) => setSelectedMachineCode(event.target.value)}
+              value={selectedMachineKey}
+              onChange={(event) => setSelectedMachineKey(event.target.value)}
               disabled={machineOptions.length === 0}
             >
               {machineOptions.length === 0 ? (
                 <option value="">{t('growthAnalysis.noMachines')}</option>
               ) : (
                 machineOptions.map((option) => (
-                  <option key={option.machineCode} value={option.machineCode}>
-                    {option.machineName}
+                  <option key={option.optionKey} value={option.optionKey}>
+                    {formatMachineOptionLabel(option)}
                   </option>
                 ))
               )}
@@ -338,7 +368,9 @@ export function GrowthAnalysisPage() {
                   })}
                 </p>
               ) : (
-                <p className="growth-analysis-pr-alert__machine">{prAlert.machineName}</p>
+                <p className="growth-analysis-pr-alert__machine">
+                  {selectedMachineName ?? prAlert.machineName}
+                </p>
               )}
               <dl className="growth-analysis-pr-alert__stats">
                 <div>
@@ -523,10 +555,18 @@ export function GrowthAnalysisPage() {
         >
           <ol className="growth-analysis-ranking__list">
             {ranking.map((item, index) => (
-              <li key={item.machineCode} className="growth-analysis-ranking__item">
+              <li key={item.optionKey} className="growth-analysis-ranking__item">
                 <span className="growth-analysis-ranking__rank">{index + 1}</span>
                 <div className="growth-analysis-ranking__info">
-                  <strong>{item.machineName}</strong>
+                  <strong>
+                    {item.targetMuscleGroup
+                      ? formatFreeWeightRecordLabel(
+                          item.machineName,
+                          item.targetMuscleGroup,
+                          translateMuscleGroup
+                        )
+                      : item.machineName}
+                  </strong>
                   <span className="growth-analysis-kpi__value--up">
                     {formatGrowthPct(item.growthPct)}
                   </span>

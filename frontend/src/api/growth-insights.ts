@@ -5,6 +5,7 @@ import type {
   WorkoutInsights,
   WorkoutInsightViewMode,
   WorkoutLog,
+  TargetMuscleGroup,
 } from '@machinefit/shared';
 import {
   computeDailyInsightMetrics,
@@ -92,9 +93,10 @@ function buildLocalMachineInsights(
   machineCode: string,
   machineName: string | undefined,
   period: WorkoutInsightPeriod,
-  logs: WorkoutLog[]
+  logs: WorkoutLog[],
+  targetMuscleGroup?: TargetMuscleGroup
 ): WorkoutInsights {
-  const sessions = getSessionsForMachine(logs, machineCode);
+  const sessions = getSessionsForMachine(logs, machineCode, targetMuscleGroup);
   const kpis = computeMachineKpis(sessions);
   const hasProfile = hasGrowthBodyProfile(user);
 
@@ -240,6 +242,7 @@ function buildLocalDailyInsights(
 export async function fetchWorkoutInsights(options: {
   viewMode: WorkoutInsightViewMode;
   machineCode?: string;
+  targetMuscleGroup?: TargetMuscleGroup;
   period: GrowthPeriod;
   customFrom?: string;
   customTo?: string;
@@ -250,6 +253,18 @@ export async function fetchWorkoutInsights(options: {
   if (options.viewMode === 'machine' && !options.machineCode) return null;
 
   const insightPeriod = mapToInsightPeriod(options.period, options.customFrom, options.customTo);
+
+  if (options.viewMode === 'machine' && options.targetMuscleGroup) {
+    if (!options.user) return null;
+    return buildLocalMachineInsights(
+      options.user,
+      options.machineCode!,
+      options.machineName,
+      insightPeriod,
+      options.logs,
+      options.targetMuscleGroup
+    );
+  }
 
   try {
     const res = await apiClient.get<ApiResponse<WorkoutInsights>>('/workout-logs/insights', {

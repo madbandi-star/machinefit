@@ -18,10 +18,21 @@ export const QUERY_KEYS = {
   workoutInsights: (
     viewMode: string,
     machineCode: string,
+    targetMuscleGroup: string,
     period: string,
     customFrom?: string,
     customTo?: string
-  ) => ['workout-logs', 'insights', viewMode, machineCode, period, customFrom ?? '', customTo ?? ''] as const,
+  ) =>
+    [
+      'workout-logs',
+      'insights',
+      viewMode,
+      machineCode,
+      targetMuscleGroup,
+      period,
+      customFrom ?? '',
+      customTo ?? '',
+    ] as const,
   workoutLogToday: (machineCode: string, logDate: string, targetMuscleGroup?: string) =>
     ['workout-logs', machineCode, logDate, targetMuscleGroup ?? ''] as const,
   posts: ['posts'] as const,

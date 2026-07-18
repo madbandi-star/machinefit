@@ -1,4 +1,5 @@
 import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { normalizeDateKey } from '@/utils/historyDate';
 
 export type GrowthPeriod = '30d' | '3m' | 'all' | 'custom';
@@ -19,8 +20,33 @@ export interface SessionPoint {
 }
 
 export interface MachineOption {
+  optionKey: string;
   machineCode: string;
   machineName: string;
+  targetMuscleGroup?: TargetMuscleGroup;
+}
+
+export function buildMachineOptionKey(
+  machineCode: string,
+  targetMuscleGroup?: TargetMuscleGroup
+): string {
+  if (targetMuscleGroup) return `${machineCode}:${targetMuscleGroup}`;
+  return machineCode;
+}
+
+export function parseMachineOptionKey(optionKey: string): {
+  machineCode: string;
+  targetMuscleGroup?: TargetMuscleGroup;
+} {
+  const separator = optionKey.indexOf(':');
+  if (separator === -1) {
+    return { machineCode: optionKey };
+  }
+
+  return {
+    machineCode: optionKey.slice(0, separator),
+    targetMuscleGroup: optionKey.slice(separator + 1) as TargetMuscleGroup,
+  };
 }
 
 export interface PrAlert {
@@ -32,8 +58,10 @@ export interface PrAlert {
 }
 
 export interface GrowthRankingItem {
+  optionKey: string;
   machineCode: string;
   machineName: string;
+  targetMuscleGroup?: TargetMuscleGroup;
   growthPct: number;
 }
 
@@ -170,22 +198,51 @@ export function toSessionPoint(log: WorkoutLog): SessionPoint {
 
 export function getMachineOptions(logs: WorkoutLog[]): MachineOption[] {
   const map = new Map<string, MachineOption>();
+
   for (const log of logs) {
-    if (!map.has(log.machineCode)) {
-      map.set(log.machineCode, {
+    const splitByMuscle =
+      isFreeWeightMachineCode(log.machineCode) && Boolean(log.targetMuscleGroup);
+    const optionKey = splitByMuscle
+      ? buildMachineOptionKey(log.machineCode, log.targetMuscleGroup)
+      : log.machineCode;
+
+    if (!map.has(optionKey)) {
+      map.set(optionKey, {
+        optionKey,
         machineCode: log.machineCode,
         machineName: log.machineName ?? '',
+        targetMuscleGroup: splitByMuscle ? log.targetMuscleGroup : undefined,
       });
     }
   }
-  return [...map.values()].sort((a, b) => a.machineName.localeCompare(b.machineName));
+
+  return [...map.values()].sort((a, b) => {
+    const nameCompare = a.machineName.localeCompare(b.machineName);
+    if (nameCompare !== 0) return nameCompare;
+    return (a.targetMuscleGroup ?? '').localeCompare(b.targetMuscleGroup ?? '');
+  });
 }
 
-export function getSessionsForMachine(logs: WorkoutLog[], machineCode: string): SessionPoint[] {
+export function getSessionsForMachine(
+  logs: WorkoutLog[],
+  machineCode: string,
+  targetMuscleGroup?: TargetMuscleGroup
+): SessionPoint[] {
   return logs
-    .filter((log) => log.machineCode === machineCode)
+    .filter((log) => {
+      if (log.machineCode !== machineCode) return false;
+      if (targetMuscleGroup) return log.targetMuscleGroup === targetMuscleGroup;
+      return true;
+    })
     .sort((a, b) => a.logDate.localeCompare(b.logDate))
     .map(toSessionPoint);
+}
+
+export function getSessionsForMachineOption(
+  logs: WorkoutLog[],
+  option: MachineOption
+): SessionPoint[] {
+  return getSessionsForMachine(logs, option.machineCode, option.targetMuscleGroup);
 }
 
 export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
@@ -324,9 +381,17 @@ export function detectDailyPeakAlert(dailyPoints: DailyPoint[]): PrAlert | null 
   };
 }
 
-export function detectPrAlert(logs: WorkoutLog[], machineCode: string): PrAlert | null {
+export function detectPrAlert(
+  logs: WorkoutLog[],
+  machineCode: string,
+  targetMuscleGroup?: TargetMuscleGroup
+): PrAlert | null {
   const machineLogs = logs
-    .filter((log) => log.machineCode === machineCode)
+    .filter((log) => {
+      if (log.machineCode !== machineCode) return false;
+      if (targetMuscleGroup) return log.targetMuscleGroup === targetMuscleGroup;
+      return true;
+    })
     .sort((a, b) => a.logDate.localeCompare(b.logDate));
 
   if (machineLogs.length === 0) return null;
@@ -357,22 +422,23 @@ export function computeGrowthRanking(
   const filtered = filterLogsByGrowthPeriod(logs, filter);
   const options = getMachineOptions(filtered);
 
-  const ranked = options
-    .map((option) => {
-      const sessions = getSessionsForMachine(filtered, option.machineCode);
-      const growthPct = computeVolumeGrowthPct(sessions);
-      return growthPct === null
-        ? null
-        : {
-            machineCode: option.machineCode,
-            machineName: option.machineName,
-            growthPct,
-          };
-    })
-    .filter((item): item is GrowthRankingItem => item !== null && item.growthPct > 0)
-    .sort((a, b) => b.growthPct - a.growthPct);
+  const ranked: GrowthRankingItem[] = [];
 
-  return ranked.slice(0, limit);
+  for (const option of options) {
+    const sessions = getSessionsForMachineOption(filtered, option);
+    const growthPct = computeVolumeGrowthPct(sessions);
+    if (growthPct === null || growthPct <= 0) continue;
+
+    ranked.push({
+      optionKey: option.optionKey,
+      machineCode: option.machineCode,
+      machineName: option.machineName,
+      targetMuscleGroup: option.targetMuscleGroup,
+      growthPct,
+    });
+  }
+
+  return ranked.sort((a, b) => b.growthPct - a.growthPct).slice(0, limit);
 }
 
 export interface TrendLine {
