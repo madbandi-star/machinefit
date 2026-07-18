@@ -54,15 +54,30 @@ export const workoutLogService = {
 
     const logDate = input.logDate ?? todayDateKey();
 
-    return workoutLogRepository.upsert(userId, machineId, {
-      recommendationId: input.recommendationId,
-      logDate,
-      targetMuscleGroup: targetMuscleKey,
-      setCount: input.setCount,
-      setWeightsKg: input.setWeightsKg,
-      setCompleted: input.setCompleted,
-      diary: input.diary,
-    });
+    try {
+      return await workoutLogRepository.upsert(userId, machineId, {
+        recommendationId: input.recommendationId,
+        logDate,
+        targetMuscleGroup: targetMuscleKey,
+        setCount: input.setCount,
+        setWeightsKg: input.setWeightsKg,
+        setCompleted: input.setCompleted,
+        diary: input.diary,
+      });
+    } catch (error) {
+      const pgCode =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : '';
+      if (pgCode === '23505') {
+        throw new AppError(
+          409,
+          'DUPLICATE_LOG',
+          'A workout log already exists for this machine, date, and target muscle'
+        );
+      }
+      throw error;
+    }
   },
 
   async remove(userId: string, input: DeleteWorkoutLogInput) {

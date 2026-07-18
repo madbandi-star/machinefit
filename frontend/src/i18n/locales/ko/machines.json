@@ -50,7 +50,7 @@
     "removeFavorite": "즐겨찾기 취소",
     "removedFavorite": "즐겨찾기에서 제거했습니다",
     "retryRecommend": "다시 추천",
-    "duplicate": "중복 추천입니다. 최근 기록에서 확인하세요.",
+    "duplicate": "오늘 같은 부위 추천이 이미 있습니다. 다른 부위는 새로 추천하거나, 기록에서 부위를 바꿔 저장하세요.",
     "findGyms": "이 기구 있는 헬스장",
     "moreActions": "추가 작업"
   },

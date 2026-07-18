@@ -7,6 +7,7 @@ import type {
   RecommendationInput,
   TargetMuscleGroup,
 } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { historyApi, recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -79,10 +80,21 @@ export function useRecommendMachine(machineCode: string | undefined) {
       if (isAuthenticated) {
         const today = getTodayDateKey();
         const { from, to } = getLocalDayRange(today);
-        const historyRes = await historyApi.list({ machineCode, limit: 1, from, to });
-        const existingToday = historyRes.data.data[0];
-        if (existingToday) {
-          throw new DuplicateRecommendationError(existingToday);
+        const historyRes = await historyApi.list({ machineCode, limit: 20, from, to });
+        const todayItems = historyRes.data.data;
+        const requestedMuscle = options?.targetMuscleGroup;
+
+        if (isFreeWeightMachineCode(machineCode)) {
+          if (requestedMuscle) {
+            const sameMuscleToday = todayItems.find(
+              (item) => item.targetMuscleGroup === requestedMuscle
+            );
+            if (sameMuscleToday) {
+              throw new DuplicateRecommendationError(sameMuscleToday);
+            }
+          }
+        } else if (todayItems.length > 0) {
+          throw new DuplicateRecommendationError(todayItems[0]);
         }
       }
 

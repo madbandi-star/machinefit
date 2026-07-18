@@ -50,7 +50,7 @@
     "removeFavorite": "Remove from Favorites",
     "removedFavorite": "Removed from favorites",
     "retryRecommend": "Recommend Again",
-    "duplicate": "Duplicate recommendation. See your recent history.",
+    "duplicate": "You already have a recommendation for this muscle today. Pick another muscle to recommend, or switch muscle in the workout log to save.",
     "findGyms": "Find Gyms with This Machine",
     "moreActions": "More actions"
   },

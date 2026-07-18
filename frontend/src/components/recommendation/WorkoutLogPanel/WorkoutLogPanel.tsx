@@ -90,7 +90,7 @@ export function WorkoutLogPanel({
   const [selectedMuscle, setSelectedMuscle] = useState<TargetMuscleGroup | null>(
     targetMuscleGroup ?? null
   );
-  const activeTargetMuscle = targetMuscleGroup ?? selectedMuscle;
+  const activeTargetMuscle = selectedMuscle ?? targetMuscleGroup ?? null;
 
   const [setCount, setSetCount] = useState(DEFAULT_SET_COUNT);
   const [weights, setWeights] = useState<number[]>(() =>
