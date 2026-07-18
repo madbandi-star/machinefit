@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { SearchableSelect } from '@/components/form/SearchableSelect/SearchableSelect';
+import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { ownerApi, machineApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
@@ -234,12 +235,15 @@ export function OwnerDashboardPage() {
                       </div>
                       <div className="form-row">
                         <label htmlFor={`qty-${gym.id}`}>{t('quantity')}</label>
-                        <input
+                        <NumericStepper
                           id={`qty-${gym.id}`}
-                          type="number"
-                          min={1}
                           value={quantity}
-                          onChange={(e) => setQuantity(parseInt(e.target.value, 10) || 1)}
+                          onChange={(next) => setQuantity(next ?? 1)}
+                          min={1}
+                          max={99}
+                          step={1}
+                          ariaLabel={t('quantity')}
+                          allowManualInput={false}
                         />
                       </div>
                       <button type="submit" className="btn btn--primary" disabled={addMachineMutation.isPending}>

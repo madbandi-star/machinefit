@@ -80,8 +80,12 @@
   flex: 0 0 auto;
 }
 
-.setting-value-card__compare-block--adjust .setting-value-card__compare-label {
-  color: var(--color-primary);
+.setting-value-card__compare-block--adjust .numeric-stepper {
+  width: 100%;
+}
+
+.setting-value-card__compare-block--adjust .numeric-stepper__manual-link {
+  display: none;
 }
 
 .setting-value-card__adjust-input {
@@ -415,6 +419,41 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
+}
+
+.recommendation-workout-log__set-count .numeric-stepper,
+.recommendation-workout-log__toolbar .numeric-stepper {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.recommendation-workout-log__weight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.recommendation-workout-log__weight-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+}
+
+.recommendation-workout-log__weight-row--completed {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--glass-bg));
+}
+
+.recommendation-workout-log__weight-row .weight-stepper {
+  width: 100%;
+}
+
+.recommendation-workout-log__weight-row .recommendation-workout-log__set-toggle {
+  align-self: flex-start;
 }
 
 .recommendation-workout-log__stepper {

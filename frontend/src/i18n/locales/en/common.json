@@ -40,6 +40,11 @@
     "selectOption": "Select an option",
     "all": "All"
   },
+  "numericStepper": {
+    "decrease": "Decrease value",
+    "increase": "Increase value",
+    "manualInput": "Enter manually"
+  },
   "dismissToday": "Don't show again today",
   "share": {
     "title": "MachineFit",

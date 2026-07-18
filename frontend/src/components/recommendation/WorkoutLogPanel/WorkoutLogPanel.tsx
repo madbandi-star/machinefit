@@ -15,6 +15,9 @@ import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/ut
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
+import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
+import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
+import { getWeightStepKg } from '@/utils/weightStep';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -87,6 +90,7 @@ export function WorkoutLogPanel({
   const compact = variant === 'compact';
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
+  const weightStepKg = getWeightStepKg(machineCode);
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
   const [selectedMuscle, setSelectedMuscle] = useState<TargetMuscleGroup | null>(
     targetMuscleGroup ?? null
@@ -305,13 +309,27 @@ export function WorkoutLogPanel({
     setSetCompleted((prev) => resizeCompleted(prev, next));
   };
 
-  const handleWeightChange = (index: number, raw: string) => {
-    const parsed = raw === '' ? 0 : Number.parseFloat(raw);
+  const handleWeightChange = (index: number, next: number) => {
     setWeights((prev) => {
-      const next = [...prev];
-      next[index] = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
-      return next;
+      const updated = [...prev];
+      updated[index] = next >= 0 ? next : 0;
+      return updated;
     });
+  };
+
+  const handleApplySuggestedWeight = (index: number) => {
+    if (suggestedWeightKg == null || suggestedWeightKg <= 0) return;
+    handleWeightChange(index, suggestedWeightKg);
+  };
+
+  const handleCopyPreviousWeight = (index: number) => {
+    if (index <= 0) return;
+    handleWeightChange(index, weights[index - 1] ?? 0);
+  };
+
+  const handleApplyWeightToAll = (sourceIndex: number) => {
+    const source = weights[sourceIndex] ?? 0;
+    setWeights((prev) => prev.map(() => source));
   };
 
   const handleDiaryChange = (value: string) => {
@@ -362,57 +380,33 @@ export function WorkoutLogPanel({
   }
 
   const setCountControl = (
-    <div className="recommendation-workout-log__set-count-row">
-      <button
-        type="button"
-        className="recommendation-workout-log__stepper"
-        aria-label={t('machines:workoutLog.decreaseSets')}
-        onClick={() => handleSetCountChange(setCount - 1)}
-        disabled={setCount <= MIN_SET_COUNT || isActionPending}
-      >
-        -
-      </button>
-      {compact ? (
-        <span
-          className="recommendation-workout-log__set-value"
-          aria-label={t('machines:workoutLog.setCount')}
-        >
-          {setCount}
-        </span>
-      ) : (
-        <input
-          id={setCountInputId}
-          className="input recommendation-workout-log__set-input"
-          type="number"
-          min={MIN_SET_COUNT}
-          max={MAX_SET_COUNT}
-          value={setCount}
-          onChange={(e) => handleSetCountChange(Number.parseInt(e.target.value, 10) || MIN_SET_COUNT)}
-          disabled={isActionPending}
-          aria-label={t('machines:workoutLog.setCount')}
-        />
-      )}
-      <button
-        type="button"
-        className="recommendation-workout-log__stepper"
-        aria-label={t('machines:workoutLog.increaseSets')}
-        onClick={() => handleSetCountChange(setCount + 1)}
-        disabled={setCount >= MAX_SET_COUNT || isActionPending}
-      >
-        +
-      </button>
-    </div>
+    <NumericStepper
+      id={setCountInputId}
+      value={setCount}
+      onChange={(next) => {
+        if (next == null) return;
+        handleSetCountChange(next);
+      }}
+      min={MIN_SET_COUNT}
+      max={MAX_SET_COUNT}
+      step={1}
+      size={compact ? 'compact' : 'default'}
+      disabled={isActionPending}
+      ariaLabel={t('machines:workoutLog.setCount')}
+      allowManualInput={false}
+    />
   );
 
-  const weightGrid = (
-    <div className="recommendation-workout-log__weight-grid">
+  const weightList = (
+    <div className="recommendation-workout-log__weight-list">
       {weights.map((weight, index) => {
         const completed = setCompleted[index] ?? false;
+        const previousWeight = index > 0 ? weights[index - 1] : undefined;
         return (
           <div
             key={index}
-            className={`setting-value-card setting-value-card--compact recommendation-workout-log__weight-card${
-              completed ? ' recommendation-workout-log__weight-card--completed' : ''
+            className={`recommendation-workout-log__weight-row${
+              completed ? ' recommendation-workout-log__weight-row--completed' : ''
             }`}
           >
             <button
@@ -427,21 +421,20 @@ export function WorkoutLogPanel({
             >
               {t('machines:workoutLog.setLabel', { number: index + 1 })}
             </button>
-            <div className="setting-value-card__value-row">
-              <input
-                id={`${idPrefix}-weight-${index}`}
-                className="input recommendation-workout-log__weight-input"
-                type="number"
-                min={0}
-                step="0.5"
-                inputMode="decimal"
-                value={weight === 0 ? '' : weight}
-                placeholder="0"
-                onChange={(e) => handleWeightChange(index, e.target.value)}
-                disabled={isActionPending}
-              />
-              <span className="setting-value-card__unit">kg</span>
-            </div>
+            <WeightStepper
+              id={`${idPrefix}-weight-${index}`}
+              value={weight}
+              step={weightStepKg}
+              disabled={isActionPending}
+              ariaLabel={t('machines:workoutLog.setLabel', { number: index + 1 })}
+              suggestedWeightKg={suggestedWeightKg}
+              previousWeightKg={previousWeight}
+              onApplySuggested={() => handleApplySuggestedWeight(index)}
+              onCopyPrevious={() => handleCopyPreviousWeight(index)}
+              onApplyToAll={() => handleApplyWeightToAll(index)}
+              showApplyToAll={setCount > 1}
+              onChange={(next) => handleWeightChange(index, next)}
+            />
           </div>
         );
       })}
@@ -561,7 +554,7 @@ export function WorkoutLogPanel({
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
           {setCountControl}
         </div>
-        <div className="recommendation-workout-log__weights">{weightGrid}</div>
+        <div className="recommendation-workout-log__weights">{weightList}</div>
         {totalWeightSummary}
         {diaryField}
         {saveButton}
@@ -595,7 +588,7 @@ export function WorkoutLogPanel({
           </p>
           {totalWeightSummary}
         </div>
-        {weightGrid}
+        {weightList}
       </div>
 
       {diaryField}

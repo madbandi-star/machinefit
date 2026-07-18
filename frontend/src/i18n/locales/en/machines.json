@@ -76,7 +76,11 @@
     "diaryPlaceholder": "Today's workout note (max 100 bytes)",
     "diaryBytes": "{{used}}/100 bytes",
     "diaryTagsLabel": "Quick tags",
-    "setCompletedHint": "Tap set label when done"
+    "setCompletedHint": "Tap set label when done",
+    "applySuggested": "Suggested {{weight}}kg",
+    "copyPreviousSet": "Previous set",
+    "applyAllSets": "Apply to all",
+    "quickActions": "Quick weight actions"
   },
   "restTimer": {
     "label": "Rest after set {{setNumber}}",

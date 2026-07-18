@@ -76,7 +76,11 @@
     "diaryPlaceholder": "오늘 운동 메모 (100byte 이내)",
     "diaryBytes": "{{used}}/100 byte",
     "diaryTagsLabel": "추천 태그",
-    "setCompletedHint": "세트 완료 시 라벨을 탭하세요"
+    "setCompletedHint": "세트 완료 시 라벨을 탭하세요",
+    "applySuggested": "추천 {{weight}}kg",
+    "copyPreviousSet": "이전 세트",
+    "applyAllSets": "전체 적용",
+    "quickActions": "빠른 무게 입력"
   },
   "restTimer": {
     "label": "{{setNumber}}세트 후 휴식",

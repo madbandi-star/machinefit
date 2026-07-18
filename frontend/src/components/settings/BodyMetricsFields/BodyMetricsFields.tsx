@@ -8,6 +8,7 @@ import {
   toStandardHeight,
   toStandardWeight,
 } from '@machinefit/shared';
+import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import '@/styles/components.css';
 
 interface BodyMetricsFieldsProps {
@@ -64,7 +65,14 @@ export function BodyMetricsFields({
     }
   }, [unitWeight, weightKg]);
 
-  const handleHeightCmChange = (value: number) => {
+  const handleHeightCmChange = (value: number | undefined) => {
+    if (value == null) {
+      onHeightCmChange(undefined);
+      setHeightFeet(undefined);
+      setHeightInches(undefined);
+      return;
+    }
+
     onHeightCmChange(value);
     const { feet, inches } = cmToFeetInches(value);
     setHeightFeet(feet);
@@ -83,88 +91,104 @@ export function BodyMetricsFields({
     onHeightCmChange(toStandardHeight(feet, 'ft_in', inches));
   };
 
+  const handleWeightKgValue = (value: number | undefined) => {
+    if (value == null) {
+      onWeightKgChange(undefined);
+      setWeightLb(undefined);
+      return;
+    }
+
+    onWeightKgChange(value);
+    setWeightLb(kgToLb(value));
+  };
+
+  const handleWeightLbValue = (value: number | undefined) => {
+    if (value == null) {
+      onWeightKgChange(undefined);
+      setWeightLb(undefined);
+      return;
+    }
+
+    setWeightLb(value);
+    onWeightKgChange(toStandardWeight(value, 'lb'));
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {unitHeight === 'cm' ? (
-        <label>
-          {t('auth.heightLabel')} (CM{heightOptional ? `, ${t('auth.optional')}` : ''})
-          <input
-            className={`input${heightInvalid ? ' input--invalid' : ''}`}
-            type="number"
+        <div className={`body-metrics-stepper${heightInvalid ? ' body-metrics-stepper--invalid' : ''}`}>
+          <span className="body-metrics-stepper__label">
+            {t('auth.heightLabel')} (CM{heightOptional ? `, ${t('auth.optional')}` : ''})
+          </span>
+          <NumericStepper
+            value={heightCm}
+            onChange={handleHeightCmChange}
             min={100}
             max={250}
-            value={heightCm ?? ''}
-            onChange={(e) => {
-              if (!e.target.value) {
-                onHeightCmChange(undefined);
-                return;
-              }
-              handleHeightCmChange(Number(e.target.value));
-            }}
+            step={1}
+            unit="cm"
+            ariaLabel={t('auth.heightLabel')}
           />
-        </label>
+        </div>
       ) : (
         <div className="form-row-group">
           <span className="form-row-group__label">
             {t('auth.heightLabel')} (FT{heightOptional ? `, ${t('auth.optional')}` : ''})
           </span>
           <div className="form-row-group__inputs">
-            <label>
-              ft
-              <input
-                className={`input${heightInvalid ? ' input--invalid' : ''}`}
-                type="number"
+            <div className="body-metrics-stepper">
+              <span className="body-metrics-stepper__label">ft</span>
+              <NumericStepper
+                value={heightFeet}
+                onChange={(next) => handleFeetInchesChange(next, heightInches)}
                 min={3}
                 max={8}
-                value={heightFeet ?? ''}
-                onChange={(e) => {
-                  const nextFeet = e.target.value ? Number(e.target.value) : undefined;
-                  handleFeetInchesChange(nextFeet, heightInches);
-                }}
+                step={1}
+                ariaLabel={`${t('auth.heightLabel')} ft`}
               />
-            </label>
-            <label>
-              in
-              <input
-                className={`input${heightInvalid ? ' input--invalid' : ''}`}
-                type="number"
+            </div>
+            <div className="body-metrics-stepper">
+              <span className="body-metrics-stepper__label">in</span>
+              <NumericStepper
+                value={heightInches}
+                onChange={(next) => handleFeetInchesChange(heightFeet, next)}
                 min={0}
                 max={11}
-                value={heightInches ?? ''}
-                onChange={(e) => {
-                  const nextInches = e.target.value ? Number(e.target.value) : undefined;
-                  handleFeetInchesChange(heightFeet, nextInches);
-                }}
+                step={1}
+                ariaLabel={`${t('auth.heightLabel')} in`}
               />
-            </label>
+            </div>
           </div>
         </div>
       )}
 
-      <label>
-        {t('auth.weightLabel')} ({unitWeight === 'kg' ? 'KG' : 'LB'}
-        {weightOptional ? `, ${t('auth.optional')}` : ''})
-        <input
-          className={`input${weightInvalid ? ' input--invalid' : ''}`}
-          type="number"
-          value={unitWeight === 'kg' ? (weightKg ?? '') : (weightLb ?? '')}
-          onChange={(e) => {
-            if (!e.target.value) {
-              onWeightKgChange(undefined);
-              setWeightLb(undefined);
-              return;
-            }
-            const value = Number(e.target.value);
-            if (unitWeight === 'kg') {
-              onWeightKgChange(value);
-              setWeightLb(kgToLb(value));
-            } else {
-              setWeightLb(value);
-              onWeightKgChange(toStandardWeight(value, 'lb'));
-            }
-          }}
-        />
-      </label>
+      <div className={`body-metrics-stepper${weightInvalid ? ' body-metrics-stepper--invalid' : ''}`}>
+        <span className="body-metrics-stepper__label">
+          {t('auth.weightLabel')} ({unitWeight === 'kg' ? 'KG' : 'LB'}
+          {weightOptional ? `, ${t('auth.optional')}` : ''})
+        </span>
+        {unitWeight === 'kg' ? (
+          <NumericStepper
+            value={weightKg}
+            onChange={handleWeightKgValue}
+            min={30}
+            max={300}
+            step={0.5}
+            unit="kg"
+            ariaLabel={t('auth.weightLabel')}
+          />
+        ) : (
+          <NumericStepper
+            value={weightLb}
+            onChange={handleWeightLbValue}
+            min={66}
+            max={660}
+            step={1}
+            unit="lb"
+            ariaLabel={t('auth.weightLabel')}
+          />
+        )}
+      </div>
     </div>
   );
 }

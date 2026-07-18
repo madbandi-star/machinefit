@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import '@/styles/recommendation.css';
 
 interface SettingValueCardProps {
@@ -42,6 +43,11 @@ export function SettingValueCard({
     .filter(Boolean)
     .join(' ');
 
+  const parsedAdjustedNumber =
+    adjustedValue.trim() === '' ? undefined : Number.parseFloat(adjustedValue);
+  const adjustStep = unit?.toLowerCase().includes('kg') ? 2.5 : 1;
+  const adjustMax = unit?.toLowerCase().includes('kg') ? 999 : 99;
+
   return (
     <div className={className}>
       <div className="setting-value-card__label-row">
@@ -64,17 +70,34 @@ export function SettingValueCard({
             </div>
             <div className="setting-value-card__compare-block setting-value-card__compare-block--adjust">
               <span className="setting-value-card__compare-label">{adjustedLabel}</span>
-              <input
-                className="input setting-value-card__adjust-input"
-                type={adjustedInputType}
-                step={adjustedInputType === 'number' ? '0.5' : undefined}
-                inputMode={adjustedInputType === 'number' ? 'decimal' : 'text'}
-                placeholder={adjustedPlaceholder}
-                value={adjustedValue}
-                onChange={(e) => onAdjustedChange?.(e.target.value)}
-                aria-label={`${adjustedLabel} ${label}`}
-              />
-              {unit ? <span className="setting-value-card__unit">{unit}</span> : null}
+              {adjustedInputType === 'number' ? (
+                <NumericStepper
+                  value={
+                    parsedAdjustedNumber != null && Number.isFinite(parsedAdjustedNumber)
+                      ? parsedAdjustedNumber
+                      : undefined
+                  }
+                  onChange={(next) =>
+                    onAdjustedChange?.(next == null ? '' : String(next))
+                  }
+                  min={0}
+                  max={adjustMax}
+                  step={adjustStep}
+                  unit={unit}
+                  size={compact ? 'compact' : 'default'}
+                  ariaLabel={`${adjustedLabel} ${label}`}
+                  allowManualInput
+                />
+              ) : (
+                <input
+                  className="input setting-value-card__adjust-input"
+                  type="text"
+                  placeholder={adjustedPlaceholder}
+                  value={adjustedValue}
+                  onChange={(e) => onAdjustedChange?.(e.target.value)}
+                  aria-label={`${adjustedLabel} ${label}`}
+                />
+              )}
             </div>
           </>
         ) : (

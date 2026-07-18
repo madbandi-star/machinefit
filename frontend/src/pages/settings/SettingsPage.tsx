@@ -11,6 +11,7 @@ import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymFi
 import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
+import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { userApi } from '@/api';
@@ -118,23 +119,17 @@ export function SettingsPage() {
               }}
               onWeightKgChange={setWeightKg}
             />
-            <label>
-              {t('auth.ageLabel')}
-              <input
-                className="input"
-                type="number"
+            <div className="body-metrics-stepper">
+              <span className="body-metrics-stepper__label">{t('auth.ageLabel')}</span>
+              <NumericStepper
+                value={age}
+                onChange={setAge}
                 min={13}
                 max={100}
-                value={age ?? ''}
-                onChange={(e) => {
-                  if (!e.target.value) {
-                    setAge(undefined);
-                    return;
-                  }
-                  setAge(Number.parseInt(e.target.value, 10));
-                }}
+                step={1}
+                ariaLabel={t('auth.ageLabel')}
               />
-            </label>
+            </div>
             <ExperienceSelector
               value={experienceLevel}
               onChange={(value) => {

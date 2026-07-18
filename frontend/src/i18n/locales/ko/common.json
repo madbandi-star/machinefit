@@ -40,6 +40,11 @@
     "selectOption": "선택하세요",
     "all": "전체"
   },
+  "numericStepper": {
+    "decrease": "값 줄이기",
+    "increase": "값 늘리기",
+    "manualInput": "직접 입력"
+  },
   "dismissToday": "오늘 다시 안 보기",
   "share": {
     "title": "MachineFit",
