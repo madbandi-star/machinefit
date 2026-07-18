@@ -81,7 +81,7 @@ export const workoutReportService = {
     const text = `${user.displayName}님 · ${period} 운동 보고서 (${from} ~ ${to})\n기록 ${logs.length}건`;
 
     try {
-      await emailService.send({
+      const delivery = await emailService.send({
         to: user.email,
         subject,
         text,
@@ -90,13 +90,17 @@ export const workoutReportService = {
       return {
         message: logs.length ? 'Report sent to your email.' : 'Report sent (no logs in period).',
         emailSent: true,
+        emailMethod: delivery.method,
       };
-    } catch {
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : 'Email delivery failed';
       return {
         message: 'Email service unavailable. Report is ready to copy or share.',
         emailSent: false,
         reportHtml: html,
         reportSubject: subject,
+        reportText: text,
+        emailError: reason,
       };
     }
   },

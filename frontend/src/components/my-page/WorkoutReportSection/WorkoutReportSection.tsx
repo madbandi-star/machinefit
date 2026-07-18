@@ -4,6 +4,10 @@ import { useMutation } from '@tanstack/react-query';
 import { workoutReportApi, type WorkoutReportPeriod } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
+import {
+  htmlReportToPlainText,
+  sendEmailViaFormSubmit,
+} from '@/utils/sendEmailViaFormSubmit';
 import '@/styles/components.css';
 
 const PERIODS: WorkoutReportPeriod[] = ['day', 'week', 'month', 'year'];
@@ -20,11 +24,36 @@ export function WorkoutReportSection() {
       const res = await workoutReportApi.send({ period });
       return res.data.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.emailSent) {
         setPreviewHtml(null);
         showToast(t('workoutReport.sent'), 'success');
         return;
+      }
+
+      const subject = data.reportSubject ?? `[MachineFit] ${period} workout report`;
+      const message =
+        data.reportText ??
+        (data.reportHtml ? htmlReportToPlainText(data.reportHtml) : '');
+
+      if (userEmail && message) {
+        const browserResult = await sendEmailViaFormSubmit({
+          to: userEmail,
+          subject,
+          message,
+        });
+
+        if (browserResult.success) {
+          setPreviewHtml(null);
+          showToast(t('workoutReport.sent'), 'success');
+          return;
+        }
+
+        if (browserResult.needsActivation) {
+          setPreviewHtml(data.reportHtml ?? null);
+          showToast(t('workoutReport.activationRequired'), 'error');
+          return;
+        }
       }
 
       setPreviewHtml(data.reportHtml ?? null);
@@ -35,7 +64,7 @@ export function WorkoutReportSection() {
 
   const handleMailtoFallback = () => {
     if (!previewHtml || !userEmail) return;
-    const plain = previewHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const plain = htmlReportToPlainText(previewHtml);
     const subject = encodeURIComponent(`[MachineFit] ${period} workout report`);
     const body = encodeURIComponent(plain.slice(0, 1800));
     window.location.href = `mailto:${userEmail}?subject=${subject}&body=${body}`;
@@ -43,7 +72,7 @@ export function WorkoutReportSection() {
 
   const handleCopyReport = async () => {
     if (!previewHtml) return;
-    const plain = previewHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const plain = htmlReportToPlainText(previewHtml);
     try {
       await navigator.clipboard.writeText(plain);
       showToast(t('workoutReport.copied'), 'success');
@@ -76,10 +105,14 @@ export function WorkoutReportSection() {
         type="button"
         className="btn btn--primary btn--block"
         onClick={() => mutation.mutate()}
-        disabled={mutation.isPending}
+        disabled={mutation.isPending || !userEmail}
       >
         {mutation.isPending ? t('workoutReport.sending') : t('workoutReport.send')}
       </button>
+
+      {!userEmail ? (
+        <p className="form-section__desc">{t('workoutReport.emailRequired')}</p>
+      ) : null}
 
       {previewHtml ? (
         <div className="workout-report-section__fallback">

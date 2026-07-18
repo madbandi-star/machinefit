@@ -133,8 +133,11 @@ export interface WorkoutReportRequest {
 export interface WorkoutReportResult {
   message: string;
   emailSent: boolean;
+  emailMethod?: string;
+  emailError?: string;
   reportHtml?: string;
   reportSubject?: string;
+  reportText?: string;
 }
 
 export const workoutReportApi = {

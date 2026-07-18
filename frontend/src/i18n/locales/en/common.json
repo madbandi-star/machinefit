@@ -540,8 +540,10 @@
     "sending": "Sending…",
     "sent": "Report sent to your email.",
     "failed": "Could not send the report. Please try again.",
-    "fallbackReady": "Email server not configured — preview and copy the report below.",
-    "fallbackHint": "Until SMTP/Resend is set, use preview, copy, or your mail app.",
+    "emailRequired": "An email address is required on your account to send reports.",
+    "activationRequired": "Email activation is required. Check your inbox for the FormSubmit activation link, then try again.",
+    "fallbackReady": "Automatic delivery failed — you can review or copy the report below.",
+    "fallbackHint": "Open your mail app or copy the report text below.",
     "openMailApp": "Open in mail app",
     "copyReport": "Copy report text",
     "copied": "Report copied to clipboard."
