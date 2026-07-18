@@ -3,7 +3,10 @@ import type { Brand } from '@machinefit/shared';
 import { getLocalizedName } from '@/utils/localizedName';
 import { prepareBrandsForMachineSearch } from '@/utils/sortBrandsForSearch';
 import type { EquipmentScope } from '@/utils/machineEquipmentScope';
-import { isNonMachineBrandCode } from '@/utils/machineEquipmentScope';
+import {
+  filterBrandsByEquipmentScope,
+  isNonMachineBrandCode,
+} from '@/utils/machineEquipmentScope';
 import '@/styles/machines.css';
 
 interface BrandFilterChipsProps {
@@ -23,36 +26,54 @@ export function BrandFilterChips({
 }: BrandFilterChipsProps) {
   const { t, i18n } = useTranslation('machines');
   const orderedBrands = prepareBrandsForMachineSearch(brands);
+  const visibleBrands = filterBrandsByEquipmentScope(orderedBrands, equipmentScope);
 
   if (orderedBrands.length === 0) return null;
 
-  const toggleScope = () => {
-    onEquipmentScopeChange(equipmentScope === 'machines_only' ? 'all' : 'machines_only');
-  };
-
-  const handleBrandClick = (brandCode: string) => {
-    if (equipmentScope === 'machines_only' && isNonMachineBrandCode(brandCode)) {
-      onEquipmentScopeChange('all');
+  const setScope = (next: EquipmentScope) => {
+    if (next === 'machines_only' && value && isNonMachineBrandCode(value)) {
+      onChange(null);
     }
-    onChange(value === brandCode ? null : brandCode);
+    onEquipmentScopeChange(next);
   };
 
   return (
     <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
-      <button
-        type="button"
-        className="filter-chip filter-chip--active filter-chip--scope"
-        onClick={toggleScope}
-        aria-pressed={equipmentScope === 'machines_only'}
+      <div
+        className="filter-chip-scope"
+        role="group"
+        aria-label={t('filterEquipmentScope')}
       >
-        {equipmentScope === 'machines_only' ? t('filterMachinesOnly') : t('filterAll')}
-      </button>
-      {orderedBrands.map((brand) => (
+        <button
+          type="button"
+          className={`filter-chip-scope__option${
+            equipmentScope === 'all' ? ' filter-chip-scope__option--active' : ''
+          }`}
+          onClick={() => setScope('all')}
+          aria-pressed={equipmentScope === 'all'}
+        >
+          {t('filterAll')}
+        </button>
+        <span className="filter-chip-scope__sep" aria-hidden>
+          /
+        </span>
+        <button
+          type="button"
+          className={`filter-chip-scope__option${
+            equipmentScope === 'machines_only' ? ' filter-chip-scope__option--active' : ''
+          }`}
+          onClick={() => setScope('machines_only')}
+          aria-pressed={equipmentScope === 'machines_only'}
+        >
+          {t('filterMachinesOnly')}
+        </button>
+      </div>
+      {visibleBrands.map((brand) => (
         <button
           key={brand.id}
           type="button"
           className={`filter-chip${value === brand.code ? ' filter-chip--active' : ''}`}
-          onClick={() => handleBrandClick(brand.code)}
+          onClick={() => onChange(value === brand.code ? null : brand.code)}
         >
           {getLocalizedName(brand.name, i18n.language, brand.code)}
         </button>

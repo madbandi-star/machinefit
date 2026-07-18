@@ -1,5 +1,5 @@
 import { BRAND_CODES } from '@machinefit/shared';
-import type { Machine } from '@machinefit/shared';
+import type { Brand, Machine } from '@machinefit/shared';
 
 export type EquipmentScope = 'machines_only' | 'all';
 
@@ -28,4 +28,9 @@ export function filterMachinesByEquipmentScope(
 
 export function isNonMachineBrandCode(brandCode: string): boolean {
   return NON_MACHINE_BRAND_CODES.includes(brandCode);
+}
+
+export function filterBrandsByEquipmentScope(brands: Brand[], scope: EquipmentScope): Brand[] {
+  if (scope === 'all') return brands;
+  return brands.filter((brand) => !isNonMachineBrandCode(brand.code));
 }
