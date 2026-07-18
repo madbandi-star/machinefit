@@ -26,6 +26,11 @@ export async function sendWorkoutReport(req: Request, res: Response): Promise<vo
   }
   const { workoutReportService } = await import('../services/workout-report.service.js');
   const period = (req.body as { period?: string }).period ?? 'week';
-  const result = await workoutReportService.send(req.user.userId, period as 'day' | 'week' | 'month' | 'year');
+  const previewOnly = (req.body as { previewOnly?: boolean }).previewOnly ?? false;
+  const result = await workoutReportService.send(
+    req.user.userId,
+    period as 'day' | 'week' | 'month' | 'year',
+    { previewOnly }
+  );
   res.json({ success: true, data: result });
 }

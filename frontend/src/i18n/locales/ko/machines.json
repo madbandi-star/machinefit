@@ -73,7 +73,7 @@
     "increaseSets": "세트 수 늘리기",
     "decreaseSets": "세트 수 줄이기",
     "diaryTitle": "운동일지",
-    "diaryPlaceholder": "오늘 운동 메모 (100byte 이내)",
+    "diaryPlaceholder": "오늘 운동 메모 (100byte 이내) [선피로][본세트][본세트] 총 3세트 수행.",
     "diaryBytes": "{{used}}/100 byte",
     "diaryTagsLabel": "추천 태그",
     "setCompletedHint": "세트 완료 시 라벨을 탭하세요",

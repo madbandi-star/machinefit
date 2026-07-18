@@ -17,7 +17,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { getLocalDateKey } from '@/utils/historyDate';
+import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import '@/styles/components.css';
@@ -38,6 +38,7 @@ function ResultLoadingSkeleton() {
 export function RecommendationResultPage() {
   const [searchParams] = useSearchParams();
   const recommendationId = searchParams.get('id');
+  const logDateParam = searchParams.get('logDate');
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation(['machines', 'common']);
@@ -180,8 +181,9 @@ export function RecommendationResultPage() {
           isAuthenticated={isAuthenticated}
           variant="compact"
           diaryDefaultOpen
-          logDate={getLocalDateKey(result.createdAt)}
+          logDate={normalizeDateKey(logDateParam ?? getLocalDateKey(result.createdAt))}
           targetMuscleGroup={result.targetMuscleGroup}
+          lockTargetMuscle={Boolean(result.targetMuscleGroup && isFreeWeightMachineCode(result.machineCode))}
         />
       </div>
 

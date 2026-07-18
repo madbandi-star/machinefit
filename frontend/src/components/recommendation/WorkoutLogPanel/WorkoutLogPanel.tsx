@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
@@ -80,6 +80,60 @@ function weightsEqual(a: number[], b: number[]): boolean {
   return a.every((value, index) => value === b[index]);
 }
 
+interface WorkoutFormSnapshot {
+  setCount: number;
+  weights: number[];
+  setCompleted: boolean[];
+  diary: string;
+}
+
+function cloneWorkoutFormSnapshot(source: WorkoutFormSnapshot): WorkoutFormSnapshot {
+  return {
+    setCount: source.setCount,
+    weights: [...source.weights],
+    setCompleted: [...source.setCompleted],
+    diary: source.diary,
+  };
+}
+
+function buildSnapshotFromLog(log: {
+  setCount: number;
+  setWeightsKg: number[];
+  setCompleted?: boolean[];
+  diary?: string;
+}): WorkoutFormSnapshot {
+  return {
+    setCount: log.setCount,
+    weights: [...log.setWeightsKg],
+    setCompleted: [...(log.setCompleted ?? buildDefaultCompleted(log.setCount))],
+    diary: log.diary ?? '',
+  };
+}
+
+function buildDefaultSnapshot(suggestedWeightKg?: number): WorkoutFormSnapshot {
+  return {
+    setCount: DEFAULT_SET_COUNT,
+    weights: buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg),
+    setCompleted: buildDefaultCompleted(DEFAULT_SET_COUNT),
+    diary: '',
+  };
+}
+
+function applyWorkoutFormSnapshot(
+  snapshot: WorkoutFormSnapshot,
+  setters: {
+    setSetCount: (value: number) => void;
+    setWeights: (value: number[]) => void;
+    setSetCompleted: (value: boolean[]) => void;
+    setDiary: (value: string) => void;
+  }
+) {
+  setters.setSetCount(snapshot.setCount);
+  setters.setWeights([...snapshot.weights]);
+  setters.setSetCompleted([...snapshot.setCompleted]);
+  setters.setDiary(snapshot.diary);
+}
+
 export function WorkoutLogPanel({
   machineCode,
   machineName: _machineName,
@@ -118,11 +172,13 @@ export function WorkoutLogPanel({
   );
   const [diary, setDiary] = useState('');
   const [diaryExpanded, setDiaryExpanded] = useState(diaryDefaultOpen);
-  const [initialized, setInitialized] = useState(false);
+  const [baseline, setBaseline] = useState<WorkoutFormSnapshot | null>(null);
+  const lastHydrateKeyRef = useRef('');
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
+  const queryEnabled = isAuthenticated && (!isFreeWeight || !!activeTargetMuscle);
 
-  const { data: existingLogs, isLoading } = useQuery({
+  const { data: existingLogs, isLoading, isFetched } = useQuery({
     queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, activeTargetMuscle ?? undefined),
     queryFn: async () => {
       const res = await workoutLogApi.list({
@@ -134,32 +190,21 @@ export function WorkoutLogPanel({
       });
       return res.data.data;
     },
-    enabled: isAuthenticated && (!isFreeWeight || !!activeTargetMuscle),
+    enabled: queryEnabled,
   });
 
   const existingLog = existingLogs?.[0];
   const isLogSaved = Boolean(existingLog);
   const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
-
-  const savedSnapshot = useMemo(
-    () => ({
-      setCount: existingLog?.setCount ?? DEFAULT_SET_COUNT,
-      weights: existingLog?.setWeightsKg ?? buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg),
-      setCompleted:
-        existingLog?.setCompleted ??
-        buildDefaultCompleted(existingLog?.setCount ?? DEFAULT_SET_COUNT),
-      diary: existingLog?.diary ?? '',
-    }),
-    [existingLog, suggestedWeightKg]
-  );
+  const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}`;
 
   const isDirty =
     isLogSaved &&
-    initialized &&
-    (setCount !== savedSnapshot.setCount ||
-      !weightsEqual(weights, savedSnapshot.weights) ||
-      !booleansEqual(setCompleted, savedSnapshot.setCompleted) ||
-      diary.trim() !== savedSnapshot.diary.trim());
+    baseline !== null &&
+    (setCount !== baseline.setCount ||
+      !weightsEqual(weights, baseline.weights) ||
+      !booleansEqual(setCompleted, baseline.setCompleted) ||
+      diary.trim() !== baseline.diary.trim());
 
   const invalidateLogQueries = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
@@ -170,33 +215,36 @@ export function WorkoutLogPanel({
   };
 
   useEffect(() => {
-    setInitialized(false);
+    lastHydrateKeyRef.current = '';
+    setBaseline(null);
     setSelectedMuscle(targetMuscleGroup ?? null);
   }, [machineCode, logDate, recommendationId, targetMuscleGroup]);
 
   useEffect(() => {
-    if (!isAuthenticated || isLoading || initialized) return;
+    if (!isAuthenticated) return;
+    if (queryEnabled && !isFetched) return;
+    if (lastHydrateKeyRef.current === hydrateKey) return;
 
-    if (existingLog) {
-      setSetCount(existingLog.setCount);
-      setWeights(existingLog.setWeightsKg);
-      setSetCompleted(
-        existingLog.setCompleted ?? buildDefaultCompleted(existingLog.setCount)
-      );
-      setDiary(existingLog.diary ?? '');
-    } else {
-      setSetCount(DEFAULT_SET_COUNT);
-      setWeights(buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg));
-      setSetCompleted(buildDefaultCompleted(DEFAULT_SET_COUNT));
-      setDiary('');
-    }
+    lastHydrateKeyRef.current = hydrateKey;
+    const snapshot = existingLog
+      ? buildSnapshotFromLog(existingLog)
+      : buildDefaultSnapshot(suggestedWeightKg);
 
-    setInitialized(true);
-  }, [existingLog, initialized, isAuthenticated, isLoading, suggestedWeightKg]);
-
-  useEffect(() => {
-    setInitialized(false);
-  }, [activeTargetMuscle]);
+    applyWorkoutFormSnapshot(snapshot, {
+      setSetCount,
+      setWeights,
+      setSetCompleted,
+      setDiary,
+    });
+    setBaseline(cloneWorkoutFormSnapshot(snapshot));
+  }, [
+    isAuthenticated,
+    queryEnabled,
+    isFetched,
+    hydrateKey,
+    existingLog,
+    suggestedWeightKg,
+  ]);
 
   const saveMutation = useMutation({
     mutationFn: () =>
@@ -214,7 +262,6 @@ export function WorkoutLogPanel({
       }),
     onSuccess: async () => {
       await invalidateLogQueries();
-      setInitialized(false);
       showToast(
         isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
         'success'
@@ -233,7 +280,8 @@ export function WorkoutLogPanel({
           : {}),
       }),
     onSuccess: async () => {
-      setInitialized(false);
+      lastHydrateKeyRef.current = '';
+      setBaseline(null);
       await invalidateLogQueries();
       showToast(t('machines:workoutLog.canceled'), 'success');
     },

@@ -358,8 +358,8 @@ export function HistoryListPanel() {
 
             {group.items.map((card) => {
               const resultUrl = card.recommendationId
-                ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}`
-                : ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode);
+                ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
+                : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}`;
               const hasWorkoutLog = historyRecordCardHasLog(card, loggedKeys);
               const displayName = isFreeWeightMachineCode(card.machineCode)
                 ? formatFreeWeightRecordLabel(

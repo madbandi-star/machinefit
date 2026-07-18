@@ -138,7 +138,11 @@ function buildReportHtml(options: {
 }
 
 export const workoutReportService = {
-  async send(userId: string, period: z.infer<typeof reportPeriodSchema>) {
+  async send(
+    userId: string,
+    period: z.infer<typeof reportPeriodSchema>,
+    options?: { previewOnly?: boolean }
+  ) {
     reportPeriodSchema.parse(period);
 
     const user = await userRepository.findById(userId);
@@ -162,6 +166,19 @@ export const workoutReportService = {
     });
 
     const subject = `[MachineFit] ${PERIOD_LABELS[period]} 운동 보고서 (${from}~${to})`;
+    const reportPayload = {
+      reportHtml: html,
+      reportSubject: subject,
+      reportText: text,
+    };
+
+    if (options?.previewOnly) {
+      return {
+        message: 'Report preview ready.',
+        emailSent: false,
+        ...reportPayload,
+      };
+    }
 
     try {
       const delivery = await emailService.send({
@@ -174,17 +191,15 @@ export const workoutReportService = {
         message: logs.length ? 'Report sent to your email.' : 'Report sent (no logs in period).',
         emailSent: true,
         emailMethod: delivery.method,
-        reportText: text,
+        ...reportPayload,
       };
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'Email delivery failed';
       return {
         message: 'Email service unavailable. Report is ready to copy or share.',
         emailSent: false,
-        reportHtml: html,
-        reportSubject: subject,
-        reportText: text,
         emailError: reason,
+        ...reportPayload,
       };
     }
   },

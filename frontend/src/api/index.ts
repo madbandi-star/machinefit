@@ -128,6 +128,7 @@ export type WorkoutReportPeriod = 'day' | 'week' | 'month' | 'year';
 
 export interface WorkoutReportRequest {
   period: WorkoutReportPeriod;
+  previewOnly?: boolean;
 }
 
 export interface WorkoutReportResult {
