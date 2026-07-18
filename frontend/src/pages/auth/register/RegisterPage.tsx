@@ -15,9 +15,11 @@ import {
   WEIGHT_UNIT_OPTIONS,
 } from '@/components/settings/UnitPicker/UnitPicker';
 import { authApi } from '@/api';
+import { AlertDialog } from '@/components/feedback/AlertDialog/AlertDialog';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import { resolveRegisterErrorMessage } from '@/utils/getApiErrorMessage';
 import {
   getMissingRegisterFields,
   type RegisterFormField,
@@ -52,6 +54,10 @@ export function RegisterPage() {
   const [homeGym, setHomeGym] = useState<HomeGymValue>({});
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | undefined>(undefined);
   const [missingFields, setMissingFields] = useState<RegisterFormField[]>([]);
+  const [errorDialog, setErrorDialog] = useState<{ open: boolean; message: string }>({
+    open: false,
+    message: '',
+  });
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -77,7 +83,12 @@ export function RegisterPage() {
       showToast(t('auth.accountCreated'), 'success');
       navigate(ROUTES.HOME, { replace: true });
     },
-    onError: () => showToast(t('auth.registrationFailed'), 'error'),
+    onError: (error) => {
+      setErrorDialog({
+        open: true,
+        message: resolveRegisterErrorMessage(error, t),
+      });
+    },
   });
 
   const handleSubmit = (e: FormEvent) => {
@@ -235,6 +246,12 @@ export function RegisterPage() {
       <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem' }}>
         {t('nav.login')}? <Link to={ROUTES.LOGIN}>{t('nav.login')}</Link>
       </p>
+      <AlertDialog
+        open={errorDialog.open}
+        title={t('auth.registrationFailedTitle')}
+        message={errorDialog.message}
+        onClose={() => setErrorDialog({ open: false, message: '' })}
+      />
     </PageShell>
   );
 }

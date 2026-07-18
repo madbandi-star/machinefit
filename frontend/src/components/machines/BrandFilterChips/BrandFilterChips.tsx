@@ -37,37 +37,37 @@ export function BrandFilterChips({
     onEquipmentScopeChange(next);
   };
 
+  const toggleScope = () => {
+    setScope(equipmentScope === 'machines_only' ? 'all' : 'machines_only');
+  };
+
   return (
     <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
-      <div
-        className="filter-chip-scope"
-        role="group"
+      <button
+        type="button"
+        className="filter-chip filter-chip--active filter-chip-scope filter-chip-scope--toggle"
+        onClick={toggleScope}
         aria-label={t('filterEquipmentScope')}
+        aria-pressed={equipmentScope === 'machines_only'}
       >
-        <button
-          type="button"
-          className={`filter-chip-scope__option${
-            equipmentScope === 'all' ? ' filter-chip-scope__option--active' : ''
+        <span
+          className={`filter-chip-scope__label${
+            equipmentScope === 'all' ? ' filter-chip-scope__label--active' : ''
           }`}
-          onClick={() => setScope('all')}
-          aria-pressed={equipmentScope === 'all'}
         >
           {t('filterAll')}
-        </button>
+        </span>
         <span className="filter-chip-scope__sep" aria-hidden>
           /
         </span>
-        <button
-          type="button"
-          className={`filter-chip-scope__option${
-            equipmentScope === 'machines_only' ? ' filter-chip-scope__option--active' : ''
+        <span
+          className={`filter-chip-scope__label${
+            equipmentScope === 'machines_only' ? ' filter-chip-scope__label--active' : ''
           }`}
-          onClick={() => setScope('machines_only')}
-          aria-pressed={equipmentScope === 'machines_only'}
         >
           {t('filterMachinesOnly')}
-        </button>
-      </div>
+        </span>
+      </button>
       {visibleBrands.map((brand) => (
         <button
           key={brand.id}
