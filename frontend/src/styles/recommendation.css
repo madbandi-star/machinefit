@@ -440,6 +440,24 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.recommendation-result-page__header .history-record-card__bookmark {
+  flex-shrink: 0;
+}
+
+.recommendation-result-page__log-save:not(.history-record-card__bookmark--active) {
+  color: var(--color-text-muted);
+  border-color: var(--glass-border);
+  background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
+}
+
+.recommendation-result-page__favorite:not(.history-record-card__bookmark--active) {
+  color: var(--color-text-muted);
+  border-color: var(--glass-border);
+  background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
 }
 
 .recommendation-result-page__favorite--active {

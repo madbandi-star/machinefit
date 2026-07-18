@@ -31,7 +31,9 @@
   },
   "detail": {
     "lastRecommend": "마지막 추천 설정",
-    "viewLastResult": "마지막 결과 보기"
+    "viewLastResult": "마지막 결과 보기",
+    "lastRecommendEmpty": "아직 추천 기록이 없습니다",
+    "lastRecommendEmptyHint": "아래 추천 받기를 눌러 맞춤 세팅을 확인해 보세요."
   },
   "brandDetail": {
     "subtitle": "{{code}} 브랜드 머신"

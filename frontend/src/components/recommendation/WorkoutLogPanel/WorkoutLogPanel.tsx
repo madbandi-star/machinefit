@@ -299,7 +299,18 @@ export function WorkoutLogPanel({
       }),
     onSuccess: async () => {
       lastHydrateKeyRef.current = '';
+      const snapshot = buildDefaultSnapshot(suggestedWeightKg);
+      applyWorkoutFormSnapshot(snapshot, {
+        setSetCount,
+        setWeights,
+        setSetCompleted,
+        setDiary,
+      });
       setBaseline(null);
+      queryClient.setQueryData(
+        QUERY_KEYS.workoutLogToday(machineCode, logDate, activeTargetMuscle ?? undefined),
+        []
+      );
       await invalidateLogQueries();
       showToast(t('machines:workoutLog.canceled'), 'success');
     },

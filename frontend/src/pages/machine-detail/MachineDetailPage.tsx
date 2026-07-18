@@ -9,7 +9,7 @@ import { MachineHero } from '@/components/machines/MachineHero/MachineHero';
 import { LastRecommendationSnippet } from '@/components/machines/LastRecommendationSnippet/LastRecommendationSnippet';
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { historyApi, machineApi } from '@/api';
+import { machineApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import '@/styles/components.css';
 import '@/styles/machines.css';
@@ -21,7 +21,6 @@ export function MachineDetailPage() {
   const muscleParam = searchParams.get('muscle') as TargetMuscleGroup | null;
   const { t } = useTranslation('machines');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const isFreeWeightCode = machineCode ? isFreeWeightMachineCode(machineCode) : false;
 
   const { data: machine, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!),
@@ -30,15 +29,6 @@ export function MachineDetailPage() {
       return res.data.data;
     },
     enabled: !!machineCode,
-  });
-
-  const { data: lastHistory } = useQuery({
-    queryKey: QUERY_KEYS.historyForMachine(machineCode!),
-    queryFn: async () => {
-      const res = await historyApi.list({ machineCode: machineCode!, limit: 1 });
-      return res.data.data[0] ?? null;
-    },
-    enabled: !!machineCode && isAuthenticated && !isFreeWeightCode,
   });
 
   if (isLoading) return <Skeleton count={3} height={100} />;
@@ -54,18 +44,18 @@ export function MachineDetailPage() {
   }
 
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
-  const hasSavedSettings = !isFreeWeight && !!lastHistory;
+  const useCompactMachineDetail = !isFreeWeight && isAuthenticated;
 
   return (
-    <div className={`machine-detail-page${hasSavedSettings ? ' machine-detail-page--compact' : ''}`}>
-      <MachineHero machine={machine} compact={hasSavedSettings} />
-      {!isFreeWeight && machineCode ? (
+    <div className={`machine-detail-page${useCompactMachineDetail ? ' machine-detail-page--compact' : ''}`}>
+      <MachineHero machine={machine} compact={useCompactMachineDetail} />
+      {!isFreeWeight && machineCode && isAuthenticated ? (
         <LastRecommendationSnippet machineCode={machineCode} />
       ) : null}
       {machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
-          fixed={hasSavedSettings}
+          fixed={useCompactMachineDetail}
           initialMuscle={muscleParam}
         />
       ) : null}

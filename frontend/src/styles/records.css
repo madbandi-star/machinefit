@@ -1112,6 +1112,37 @@
   border-radius: var(--history-card-radius, 20px);
 }
 
+.machine-detail-last-settings__card--empty {
+  min-height: 8.5rem;
+}
+
+.machine-detail-last-settings__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 5.5rem;
+  padding: 0.75rem 0.85rem 0.85rem;
+  text-align: center;
+}
+
+.machine-detail-last-settings__empty-title {
+  margin: 0;
+  font-size: var(--history-font-sm, 0.8125rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--history-text-dim, var(--color-text-muted));
+}
+
+.machine-detail-last-settings__empty-hint {
+  margin: 0;
+  font-size: var(--history-font-xs, 0.75rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--history-text-muted-value, var(--color-text-muted));
+}
+
 @media (min-width: 768px) {
   .records-page__title {
     font-size: var(--font-size-h1);

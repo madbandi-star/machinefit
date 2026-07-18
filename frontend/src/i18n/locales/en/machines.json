@@ -31,7 +31,9 @@
   },
   "detail": {
     "lastRecommend": "Last recommendation",
-    "viewLastResult": "View last result"
+    "viewLastResult": "View last result",
+    "lastRecommendEmpty": "No recommendation yet",
+    "lastRecommendEmptyHint": "Tap Get recommendation below to see your custom settings."
   },
   "brandDetail": {
     "subtitle": "Machines by {{code}}"

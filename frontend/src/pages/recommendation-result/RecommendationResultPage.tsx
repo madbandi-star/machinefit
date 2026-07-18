@@ -109,7 +109,7 @@ export function RecommendationResultPage() {
 
       if (favoriteCheck?.favorited && favoriteCheck.favoriteId) {
         await favoriteApi.remove(favoriteCheck.favoriteId);
-        return { favorited: false as const };
+        return { favorited: false as const, favoriteId: undefined };
       }
 
       const res = await favoriteApi.add(result.machineCode, result.id);
@@ -117,6 +117,18 @@ export function RecommendationResultPage() {
         favorited: true as const,
         favoriteId: res.data.data.id,
       };
+    },
+    onMutate: async () => {
+      if (!result) return;
+      const key = QUERY_KEYS.favoriteCheck(result.machineCode);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(key);
+      const nextFavorited = !previous?.favorited;
+      queryClient.setQueryData(key, {
+        favorited: nextFavorited,
+        favoriteId: nextFavorited ? previous?.favoriteId : undefined,
+      });
+      return { previous };
     },
     onSuccess: async (data) => {
       if (!result) return;
@@ -129,7 +141,12 @@ export function RecommendationResultPage() {
         'success'
       );
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (_error, _variables, context) => {
+      if (result && context?.previous) {
+        queryClient.setQueryData(QUERY_KEYS.favoriteCheck(result.machineCode), context.previous);
+      }
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   const handleToggleFavorite = () => {
@@ -166,36 +183,44 @@ export function RecommendationResultPage() {
       <div className="recommendation-result-page__header-actions">
         <button
           type="button"
-          className={`history-record-card__bookmark${
+          className={`history-record-card__bookmark recommendation-result-page__log-save${
             bookmarkActive ? ' history-record-card__bookmark--active' : ''
           }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
           aria-label={getBookmarkAriaLabel(logControl, t)}
           onClick={handleBookmarkClick}
           disabled={bookmarkPending || !logControl}
         >
-          <Bookmark size={17} strokeWidth={2.25} />
-        </button>
-        <button
-          type="button"
-          className={`history-record-card__bookmark recommendation-result-page__favorite${
-            isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
-          }`}
-          aria-label={
-            isFavorited
-              ? t('machines:recommendation.removeFavorite')
-              : t('machines:recommendation.saveFavorite')
-          }
-          aria-pressed={isFavorited}
-          onClick={handleToggleFavorite}
-          disabled={toggleFavoriteMutation.isPending}
-        >
-          <Heart
+          <Bookmark
             size={17}
             strokeWidth={2.25}
-            fill={isFavorited ? 'currentColor' : 'none'}
+            fill={bookmarkActive ? 'currentColor' : 'none'}
           />
         </button>
       </div>
+    ) : null;
+
+  const titleHeaderActions =
+    isAuthenticated ? (
+      <button
+        type="button"
+        className={`history-record-card__bookmark recommendation-result-page__favorite${
+          isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
+        }`}
+        aria-label={
+          isFavorited
+            ? t('machines:recommendation.removeFavorite')
+            : t('machines:recommendation.saveFavorite')
+        }
+        aria-pressed={isFavorited}
+        onClick={handleToggleFavorite}
+        disabled={toggleFavoriteMutation.isPending}
+      >
+        <Heart
+          size={17}
+          strokeWidth={2.25}
+          fill={isFavorited ? 'currentColor' : 'none'}
+        />
+      </button>
     ) : null;
 
   if (recommendationId && isLoading && !result) {
@@ -238,6 +263,7 @@ export function RecommendationResultPage() {
     <div className="recommendation-result-page recommendation-result-page--inline-actions">
       <header className="recommendation-result-page__header">
         <h1 className="recommendation-result-page__title">{machineTitle}</h1>
+        {titleHeaderActions}
       </header>
 
       <div className="recommendation-result-page__content history-page-premium">
