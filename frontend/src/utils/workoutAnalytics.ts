@@ -1,4 +1,4 @@
-import type { WorkoutLog } from '@machinefit/shared';
+import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
 import { normalizeDateKey } from '@/utils/historyDate';
 
 export type GrowthPeriod = '30d' | '3m' | 'all' | 'custom';
@@ -53,6 +53,7 @@ export interface DailyPoint {
   machines: {
     machineCode: string;
     machineName: string;
+    targetMuscleGroup?: TargetMuscleGroup;
     volume: number;
     contributionPct: number;
   }[];
@@ -203,6 +204,7 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
       const machines = dayLogs.map((entry) => ({
         machineCode: entry.machineCode,
         machineName: entry.machineName ?? '',
+        targetMuscleGroup: entry.targetMuscleGroup,
         volume: computeVolume(entry.setWeightsKg),
       }));
 

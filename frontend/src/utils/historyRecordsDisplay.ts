@@ -30,19 +30,13 @@ function findHistoryForFreeWeightCard(
   historyItems: HistoryItem[],
   machineCode: string,
   logDate: string,
-  targetMuscleGroup: TargetMuscleGroup,
-  recommendationId?: string
+  targetMuscleGroup: TargetMuscleGroup
 ): HistoryItem | undefined {
-  const sameDay = historyItems.filter(
-    (item) => item.machineCode === machineCode && getLocalDateKey(item.viewedAt) === logDate
-  );
-
-  return (
-    sameDay.find((item) => item.targetMuscleGroup === targetMuscleGroup) ??
-    (recommendationId
-      ? sameDay.find((item) => item.recommendationId === recommendationId)
-      : undefined) ??
-    sameDay[0]
+  return historyItems.find(
+    (item) =>
+      item.machineCode === machineCode &&
+      getLocalDateKey(item.viewedAt) === logDate &&
+      item.targetMuscleGroup === targetMuscleGroup
   );
 }
 
@@ -81,14 +75,12 @@ export function expandHistoryRecordCards(
       historyItems,
       log.machineCode,
       logDate,
-      log.targetMuscleGroup,
-      log.recommendationId
+      log.targetMuscleGroup
     );
 
     cards.push({
       cardId: key,
-      historyId:
-        history?.targetMuscleGroup === log.targetMuscleGroup ? history.id : undefined,
+      historyId: history?.id,
       machineCode: log.machineCode,
       machineName: log.machineName ?? history?.machineName ?? log.machineCode,
       muscleGroup: history?.muscleGroup,

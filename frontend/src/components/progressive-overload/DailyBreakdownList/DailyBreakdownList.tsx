@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import type { DailyPoint } from '@/utils/workoutAnalytics';
 import { formatShortDate } from '@/utils/workoutAnalytics';
+import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import { CollapsibleCard } from '@/components/progressive-overload/CollapsibleCard/CollapsibleCard';
 
 interface DailyBreakdownListProps {
@@ -9,11 +11,14 @@ interface DailyBreakdownListProps {
 }
 
 export function DailyBreakdownList({ days, locale }: DailyBreakdownListProps) {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'machines']);
 
   if (days.length === 0) return null;
 
   const sorted = [...days].reverse();
+
+  const translateMuscleGroup = (group: string) =>
+    t(`machines:muscleGroups.${group}`, { defaultValue: group });
 
   return (
     <CollapsibleCard
@@ -41,17 +46,29 @@ export function DailyBreakdownList({ days, locale }: DailyBreakdownListProps) {
               bodyClassName="growth-analysis-daily-list__day-body"
             >
               <ul className="growth-analysis-daily-list__machines">
-                {day.machines.map((machine) => (
-                  <li key={`${day.logDate}-${machine.machineCode}`}>
-                    <span>{machine.machineName}</span>
-                    <span>
-                      {machine.volume.toLocaleString()}kg,{' '}
-                      {t('growthAnalysis.daily.breakdown.contribution', {
-                        pct: machine.contributionPct,
-                      })}
-                    </span>
-                  </li>
-                ))}
+                {day.machines.map((machine) => {
+                  const displayName = isFreeWeightMachineCode(machine.machineCode)
+                    ? formatFreeWeightRecordLabel(
+                        machine.machineName,
+                        machine.targetMuscleGroup,
+                        translateMuscleGroup
+                      )
+                    : machine.machineName;
+
+                  return (
+                    <li
+                      key={`${day.logDate}-${machine.machineCode}-${machine.targetMuscleGroup ?? ''}`}
+                    >
+                      <span>{displayName}</span>
+                      <span>
+                        {machine.volume.toLocaleString()}kg,{' '}
+                        {t('growthAnalysis.daily.breakdown.contribution', {
+                          pct: machine.contributionPct,
+                        })}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </CollapsibleCard>
           </li>
