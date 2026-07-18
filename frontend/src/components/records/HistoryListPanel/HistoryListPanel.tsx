@@ -19,21 +19,23 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import {
-  extractHistoryDateKeys,
   collectMuscleGroupsInOrder,
   formatHistoryDateHeaderWithMuscles,
   formatHistoryTime,
-  getLocalDayRange,
-  getLocalDateKey,
-  groupHistoryByDate,
 } from '@/utils/historyDate';
 import {
   buildLoggedWorkoutKeys,
-  filterHistoryByLogStatus,
-  historyItemHasWorkoutLog,
   parseHistoryLogStatus,
   type HistoryLogStatus,
 } from '@/utils/historyLogStatus';
+import {
+  expandHistoryRecordCards,
+  extractRecordCardDateKeys,
+  filterHistoryRecordCardsByLogStatus,
+  groupRecordCardsByDate,
+  historyRecordCardHasLog,
+  type HistoryRecordCard,
+} from '@/utils/historyRecordsDisplay';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import { isDismissedToday } from '@/utils/dismissToday';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
@@ -46,10 +48,11 @@ const HISTORY_LIST_LIMIT = 100;
 const HISTORY_DELETE_DISMISS_KEY = 'history-delete-confirm-dismiss';
 
 interface PendingDelete {
-  id: string;
+  cardId: string;
+  historyId?: string;
   machineCode: string;
-  recommendationId: string;
-  viewedAt: string;
+  recommendationId?: string;
+  logDate: string;
   targetMuscleGroup?: string;
 }
 
@@ -66,7 +69,7 @@ export function HistoryListPanel() {
 
   const calendarQueryKey = QUERY_KEYS.historyList({ limit: HISTORY_LIST_LIMIT });
 
-  const { data: allHistory, isLoading: isAllHistoryLoading } = useQuery({
+  const { data: allHistory, isLoading: isAllHistoryLoading, isError } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
       const res = await historyApi.list({ limit: HISTORY_LIST_LIMIT });
@@ -85,41 +88,32 @@ export function HistoryListPanel() {
     [workoutLogs]
   );
 
-  const listParams = useMemo(() => {
-    if (!selectedDate) {
-      return { limit: HISTORY_LIST_LIMIT };
-    }
-
-    const { from, to } = getLocalDayRange(selectedDate);
-    return { limit: HISTORY_LIST_LIMIT, from, to };
-  }, [selectedDate]);
-
-  const { data, isLoading: isListLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.historyList(listParams),
-    queryFn: async () => {
-      const res = await historyApi.list(listParams);
-      return res.data.data;
-    },
-  });
-
-  const filteredAllHistory = useMemo(
-    () => filterHistoryByLogStatus(allHistory ?? [], loggedKeys, logStatus, workoutLogs),
-    [allHistory, loggedKeys, logStatus, workoutLogs]
+  const allRecordCards = useMemo(
+    () => expandHistoryRecordCards(allHistory ?? [], workoutLogs ?? []),
+    [allHistory, workoutLogs]
   );
 
-  const filteredData = useMemo(
-    () => filterHistoryByLogStatus(data ?? [], loggedKeys, logStatus, workoutLogs),
-    [data, loggedKeys, logStatus, workoutLogs]
+  const filteredAllCards = useMemo(
+    () => filterHistoryRecordCardsByLogStatus(allRecordCards, loggedKeys, logStatus),
+    [allRecordCards, loggedKeys, logStatus]
+  );
+
+  const displayCards = useMemo(
+    () =>
+      selectedDate
+        ? filteredAllCards.filter((card) => card.logDate === selectedDate)
+        : filteredAllCards,
+    [filteredAllCards, selectedDate]
   );
 
   const datesWithData = useMemo(
-    () => extractHistoryDateKeys(filteredAllHistory),
-    [filteredAllHistory]
+    () => extractRecordCardDateKeys(filteredAllCards),
+    [filteredAllCards]
   );
 
-  const groupedItems = useMemo(
-    () => (filteredData.length ? groupHistoryByDate(filteredData) : []),
-    [filteredData]
+  const groupedCards = useMemo(
+    () => (displayCards.length ? groupRecordCardsByDate(displayCards) : []),
+    [displayCards]
   );
 
   const translateMuscleGroup = (group: string) =>
@@ -127,16 +121,14 @@ export function HistoryListPanel() {
 
   const selectedDayMuscleGroups = useMemo(() => {
     if (!selectedDate) return [];
-    const dayItems = filteredAllHistory.filter(
-      (item) => getLocalDateKey(item.viewedAt) === selectedDate
-    );
-    return collectMuscleGroupsInOrder(dayItems);
-  }, [filteredAllHistory, selectedDate]);
+    const dayCards = filteredAllCards.filter((card) => card.logDate === selectedDate);
+    return collectMuscleGroupsInOrder(dayCards);
+  }, [filteredAllCards, selectedDate]);
 
-  const isLoading = isAllHistoryLoading || isListLoading || isWorkoutLogsLoading;
+  const isLoading = isAllHistoryLoading || isWorkoutLogsLoading;
 
   useEffect(() => {
-    if (!focusId || isLoading || filteredData.length === 0) return;
+    if (!focusId || isLoading || displayCards.length === 0) return;
 
     const element = document.getElementById(`history-item-${focusId}`);
     if (!element) return;
@@ -157,7 +149,7 @@ export function HistoryListPanel() {
     }, 3000);
 
     return () => window.clearTimeout(timer);
-  }, [focusId, isLoading, filteredData, setSearchParams]);
+  }, [focusId, isLoading, displayCards, setSearchParams]);
 
   const updateSearchParams = (mutate: (next: URLSearchParams) => void) => {
     setSearchParams(
@@ -195,27 +187,19 @@ export function HistoryListPanel() {
 
   const deleteMutation = useMutation({
     mutationFn: async ({
-      id,
+      historyId,
       machineCode,
-      recommendationId,
-      viewedAt,
+      logDate,
       targetMuscleGroup,
     }: PendingDelete) => {
-      await historyApi.remove(id);
-      const viewedDate = getLocalDateKey(viewedAt);
-      const matchingLog = workoutLogs?.find(
-        (log) =>
-          log.machineCode === machineCode &&
-          (log.recommendationId === recommendationId || log.logDate === viewedDate) &&
-          (targetMuscleGroup ? log.targetMuscleGroup === targetMuscleGroup : true)
-      );
-      const logDate = matchingLog?.logDate ?? viewedDate;
-      const logTargetMuscle = matchingLog?.targetMuscleGroup ?? targetMuscleGroup;
+      if (historyId) {
+        await historyApi.remove(historyId);
+      }
       try {
         await workoutLogApi.remove({
           machineCode,
           logDate,
-          ...(logTargetMuscle ? { targetMuscleGroup: logTargetMuscle } : {}),
+          ...(targetMuscleGroup ? { targetMuscleGroup } : {}),
         });
       } catch {
         /* workout log may not exist */
@@ -232,12 +216,21 @@ export function HistoryListPanel() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  const requestDelete = (item: PendingDelete) => {
+  const requestDelete = (card: HistoryRecordCard) => {
+    const payload: PendingDelete = {
+      cardId: card.cardId,
+      historyId: card.historyId,
+      machineCode: card.machineCode,
+      recommendationId: card.recommendationId,
+      logDate: card.logDate,
+      targetMuscleGroup: card.targetMuscleGroup,
+    };
+
     if (isDismissedToday(HISTORY_DELETE_DISMISS_KEY)) {
-      deleteMutation.mutate(item);
+      deleteMutation.mutate(payload);
       return;
     }
-    setPendingDelete(item);
+    setPendingDelete(payload);
   };
 
   const confirmDelete = () => {
@@ -249,9 +242,9 @@ export function HistoryListPanel() {
   if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
 
-  const hasAnyHistory = Boolean(allHistory?.length);
+  const hasAnyRecords = allRecordCards.length > 0;
 
-  if (!hasAnyHistory) {
+  if (!hasAnyRecords) {
     return (
       <EmptyState
         icon="history"
@@ -330,7 +323,7 @@ export function HistoryListPanel() {
         </div>
       </div>
 
-      {filteredData.length === 0 ? (
+      {displayCards.length === 0 ? (
         <EmptyState
           icon="history"
           title={emptyFilterTitle}
@@ -352,7 +345,7 @@ export function HistoryListPanel() {
           }
         />
       ) : (
-        groupedItems.map((group) => (
+        groupedCards.map((group) => (
           <section key={group.dateKey} className="records-list__date-group">
             <h2 className="records-list__date-heading">
               {formatHistoryDateHeaderWithMuscles(
@@ -363,28 +356,30 @@ export function HistoryListPanel() {
               )}
             </h2>
 
-            {group.items.map((item) => {
-              const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
-              const logDate = getLocalDateKey(item.viewedAt);
-              const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys, workoutLogs);
-              const displayName = isFreeWeightMachineCode(item.machineCode)
+            {group.items.map((card) => {
+              const resultUrl = card.recommendationId
+                ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}`
+                : ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode);
+              const hasWorkoutLog = historyRecordCardHasLog(card, loggedKeys);
+              const displayName = isFreeWeightMachineCode(card.machineCode)
                 ? formatFreeWeightRecordLabel(
-                    item.machineName,
-                    item.targetMuscleGroup,
+                    card.machineName,
+                    card.targetMuscleGroup,
                     translateMuscleGroup
                   )
-                : item.machineName;
+                : card.machineName;
               const muscleGroup = getHistoryMuscleGroup(
-                item.machineCode,
-                item.muscleGroup,
-                item.targetMuscleGroup
+                card.machineCode,
+                card.muscleGroup,
+                card.targetMuscleGroup
               );
+              const lockTargetMuscle = isFreeWeightMachineCode(card.machineCode);
 
               return (
                 <article
-                  key={item.id}
-                  id={`history-item-${item.id}`}
-                  className={`saved-settings-card saved-settings-card--history${hasWorkoutLog ? ' saved-settings-card--logged' : ' saved-settings-card--unlogged'}${focusId === item.id ? ' saved-settings-card--focused' : ''}`}
+                  key={card.cardId}
+                  id={`history-item-${card.cardId}`}
+                  className={`saved-settings-card saved-settings-card--history${hasWorkoutLog ? ' saved-settings-card--logged' : ' saved-settings-card--unlogged'}${focusId === card.cardId ? ' saved-settings-card--focused' : ''}`}
                 >
                   <div className="saved-settings-card__header">
                     <Link to={resultUrl} className="saved-settings-card__machine">
@@ -404,22 +399,14 @@ export function HistoryListPanel() {
                         </span>
                       </div>
                       <span className="saved-settings-card__time saved-settings-card__time--inline">
-                        {formatHistoryTime(item.viewedAt, i18n.language)}
+                        {formatHistoryTime(card.viewedAt, i18n.language)}
                       </span>
                     </Link>
                     <button
                       type="button"
                       className="saved-settings-card__remove"
                       aria-label={t('machines:history.remove')}
-                      onClick={() =>
-                        requestDelete({
-                          id: item.id,
-                          machineCode: item.machineCode,
-                          recommendationId: item.recommendationId,
-                          viewedAt: item.viewedAt,
-                          targetMuscleGroup: item.targetMuscleGroup,
-                        })
-                      }
+                      onClick={() => requestDelete(card)}
                       disabled={deleteMutation.isPending}
                     >
                       <Icon name="close" size={18} />
@@ -430,19 +417,20 @@ export function HistoryListPanel() {
                     className="saved-settings-card__detail-link"
                     aria-label={t('machines:detail.viewLastResult')}
                   >
-                    <RecommendationSettingsPanel settings={item.settings} variant="compact" />
+                    <RecommendationSettingsPanel settings={card.settings} variant="compact" />
                   </Link>
                   <WorkoutLogPanel
-                    key={item.id}
-                    machineCode={item.machineCode}
-                    machineName={item.machineName}
-                    recommendationId={item.recommendationId}
-                    suggestedWeightKg={item.settings.recommendedWeightKg}
+                    key={card.cardId}
+                    machineCode={card.machineCode}
+                    machineName={card.machineName}
+                    recommendationId={card.recommendationId}
+                    suggestedWeightKg={card.settings.recommendedWeightKg}
                     isAuthenticated={isAuthenticated}
                     variant="compact"
-                    logDate={logDate}
-                    idPrefix={`history-workout-${item.id}`}
-                    targetMuscleGroup={item.targetMuscleGroup as TargetMuscleGroup | undefined}
+                    logDate={card.logDate}
+                    idPrefix={`history-workout-${card.cardId}`}
+                    targetMuscleGroup={card.targetMuscleGroup as TargetMuscleGroup | undefined}
+                    lockTargetMuscle={lockTargetMuscle}
                   />
                 </article>
               );

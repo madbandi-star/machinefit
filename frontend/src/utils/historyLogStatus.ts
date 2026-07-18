@@ -1,4 +1,5 @@
 import type { WorkoutLog } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 
 export const HISTORY_LOG_STATUS_VALUES = ['all', 'saved', 'unsaved'] as const;
@@ -47,6 +48,11 @@ export function historyItemHasWorkoutLog<
   if (loggedKeys.has(key)) {
     return true;
   }
+
+  if (isFreeWeightMachineCode(item.machineCode)) {
+    return false;
+  }
+
   if (item.recommendationId && logs?.length) {
     return logs.some((log) => log.recommendationId === item.recommendationId);
   }

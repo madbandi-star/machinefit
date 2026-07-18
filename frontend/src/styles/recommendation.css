@@ -1013,17 +1013,23 @@
   margin-bottom: 0.5rem;
 }
 
-.recommendation-workout-log__muscle-hint {
-  margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
 .recommendation-workout-log__muscle-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+}
+
+.recommendation-workout-log__muscle-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.recommendation-workout-log__muscle-locked {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
 .recommendation-workout-log__muscle-chips .filter-chip {
@@ -1042,34 +1048,9 @@
   line-height: 1;
 }
 
-.recommendation-workout-log__day-records {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0.15rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.recommendation-workout-log__day-record {
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-full, 999px);
-  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
-  padding: 0.25rem 0.6rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.recommendation-workout-log__day-record--active {
-  border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface));
-  color: var(--color-primary);
-}
-
-.recommendation-workout-log--compact .recommendation-workout-log__muscle-hint {
-  font-size: 0.6875rem;
+.filter-chip--readonly {
+  cursor: default;
+  pointer-events: none;
 }
 
 .fit-feedback-panel {
