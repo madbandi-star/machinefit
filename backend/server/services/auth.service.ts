@@ -1,4 +1,4 @@
-import type { RegisterInput, LoginInput, RoleCode, Gender } from '@machinefit/shared';
+import type { RegisterInput, LoginInput, User, RoleCode } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -8,22 +8,7 @@ import { devUsers, findDevUserByEmail, findDevUserById } from '../data/dev-users
 import { notificationService } from './notification.service.js';
 import crypto from 'crypto';
 
-function buildAuthResponse(user: {
-  id: string;
-  roleId: string;
-  email: string;
-  displayName: string;
-  roleCode: RoleCode;
-  gender?: Gender;
-  unitHeight?: 'cm' | 'ft_in';
-  unitWeight?: 'kg' | 'lb';
-  heightCm?: number;
-  weightKg?: number;
-  experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
-  isActive?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}) {
+function buildAuthResponse(user: User) {
   const tokens = {
     accessToken: signAccessToken({
       userId: user.id,
@@ -46,6 +31,10 @@ function buildAuthResponse(user: {
       unitWeight: user.unitWeight ?? ('kg' as const),
       heightCm: user.heightCm,
       weightKg: user.weightKg,
+      age: user.age,
+      workoutGoal: user.workoutGoal,
+      homeGymId: user.homeGymId,
+      homeGymName: user.homeGymName,
       experienceLevel: user.experienceLevel,
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
@@ -91,7 +80,14 @@ export const authService = {
         unitWeight: input.unitWeight ?? 'kg',
         heightCm: input.heightCm,
         weightKg: input.weightKg,
+        age: input.age,
+        workoutGoal: input.workoutGoal,
+        homeGymId: input.homeGymId,
+        homeGymName: input.homeGymName,
         experienceLevel: input.experienceLevel,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
     }
 
@@ -110,6 +106,10 @@ export const authService = {
       unitWeight: input.unitWeight,
       heightCm: input.heightCm,
       weightKg: input.weightKg,
+      age: input.age,
+      workoutGoal: input.workoutGoal,
+      homeGymId: input.homeGymId ?? null,
+      homeGymName: input.homeGymName ?? null,
       experienceLevel: input.experienceLevel,
     });
 
@@ -130,8 +130,11 @@ export const authService = {
         email: user.email,
         displayName: user.displayName,
         roleCode: user.roleCode,
+        unitHeight: 'cm',
+        unitWeight: 'kg',
         isActive: user.isActive,
         createdAt: user.createdAt,
+        updatedAt: user.createdAt,
       });
     }
 

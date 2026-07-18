@@ -1,4 +1,5 @@
 import type { ExperienceLevel, Gender, UnitHeight, UnitWeight } from './api.types.js';
+import type { TargetMuscleGroup } from '../constants/workout-goals.js';
 import type { YoutubeVideo } from './machine.types.js';
 import type { WeightRecommendationBasis } from './weight-basis.types.js';
 
@@ -10,6 +11,7 @@ export interface RecommendationInput {
   experienceLevel: ExperienceLevel;
   unitHeight?: UnitHeight;
   unitWeight?: UnitWeight;
+  targetMuscleGroup?: TargetMuscleGroup;
 }
 
 export interface RecommendationSettings {

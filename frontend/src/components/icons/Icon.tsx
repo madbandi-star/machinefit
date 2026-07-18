@@ -16,7 +16,11 @@ export type IconName =
   | 'bell'
   | 'refresh'
   | 'mapPin'
-  | 'moreHorizontal';
+  | 'moreHorizontal'
+  | 'close'
+  | 'share'
+  | 'thumbUp'
+  | 'thumbDown';
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;
@@ -117,6 +121,30 @@ const PATHS: Record<IconName, ReactElement> = {
       <circle cx="6" cy="12" r="1.25" fill="currentColor" stroke="none" />
       <circle cx="12" cy="12" r="1.25" fill="currentColor" stroke="none" />
       <circle cx="18" cy="12" r="1.25" fill="currentColor" stroke="none" />
+    </>
+  ),
+  close: (
+    <>
+      <path d="m6 6 12 12M18 6 6 18" />
+    </>
+  ),
+  share: (
+    <>
+      <path d="M12 3v12" />
+      <path d="m8 7 4-4 4 4" />
+      <path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+    </>
+  ),
+  thumbUp: (
+    <>
+      <path d="M7 11v8a1 1 0 0 0 1 1h2.5a1 1 0 0 0 .96-.73l1.5-5.5A1 1 0 0 0 12.5 12H9.5a1 1 0 0 1-1-1V8a2 2 0 0 1 2-2h.5" />
+      <path d="M7 11H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2" />
+    </>
+  ),
+  thumbDown: (
+    <>
+      <path d="M17 13V5a1 1 0 0 0-1-1h-2.5a1 1 0 0 0-.96.73l-1.5 5.5A1 1 0 0 0 11.5 12h3a1 1 0 0 1 1 1v3a2 2 0 0 1-2 2h-.5" />
+      <path d="M17 13h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
     </>
   ),
 };

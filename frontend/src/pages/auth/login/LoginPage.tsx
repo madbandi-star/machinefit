@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
+import { Icon } from '@/components/icons/Icon';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
@@ -12,6 +13,7 @@ import { syncUserSettings } from '@/utils/syncUserSettings';
 import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
+import '@/styles/auth.css';
 
 export function LoginPage() {
   const { t } = useTranslation();
@@ -102,22 +104,34 @@ export function LoginPage() {
   if (!credentialsHydrated || autoLoggingIn) {
     return (
       <PageShell title={t('nav.login')}>
-        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)' }}>
-          {t('auth.autoLoggingIn')}
-        </p>
+        <p className="auth-page__loading">{t('auth.autoLoggingIn')}</p>
       </PageShell>
     );
   }
 
   return (
     <PageShell title={t('nav.login')}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          mutation.mutate();
-        }}
-        style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-      >
+      <section className="auth-hero card" aria-label={t('auth.loginHeroLabel')}>
+        <p className="auth-hero__eyebrow">{t('auth.loginEyebrow')}</p>
+        <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
+        <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
+        <ul className="auth-hero__features">
+          <li>
+            <Icon name="dumbbell" size={18} />
+            <span>{t('auth.loginFeature1')}</span>
+          </li>
+          <li>
+            <Icon name="machines" size={18} />
+            <span>{t('auth.loginFeature2')}</span>
+          </li>
+          <li>
+            <Icon name="growthAnalysis" size={18} />
+            <span>{t('auth.loginFeature3')}</span>
+          </li>
+        </ul>
+      </section>
+
+      <form className="auth-form" onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }}>
         <input
           className="input"
           type="email"
@@ -148,7 +162,8 @@ export function LoginPage() {
           {mutation.isPending ? '...' : t('nav.login')}
         </button>
       </form>
-      <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem' }}>
+
+      <p className="auth-page__footer">
         {t('nav.register')}?{' '}
         <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
       </p>

@@ -5,6 +5,8 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
+import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
+import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
 // import { ownerApi } from '@/api';
@@ -74,7 +76,15 @@ export function MyPage() {
 
   return (
     <div className="my-page">
-      <PageShell title={t('nav.myPage')} action={<PwaInstallButton />}>
+      <PageShell
+        title={t('nav.myPage')}
+        action={
+          <>
+            <ShareAppButton variant="header" />
+            <PwaInstallButton />
+          </>
+        }
+      >
         <div className="card profile-card">
           <p className="profile-card__identity">
             <strong className="profile-card__name">{user?.displayName}</strong>
@@ -106,6 +116,10 @@ export function MyPage() {
       </section>
 
       <section className="my-page-section">
+        <WorkoutReportSection />
+      </section>
+
+      <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
         <nav className="list-nav" aria-label={t('myPage.explore')}>
           {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
@@ -117,6 +131,7 @@ export function MyPage() {
       </section>
 
       <div className="my-page__actions">
+        <ShareAppButton />
         {isAdmin && (
           <Link to={ROUTES.ADMIN} className="btn btn--primary btn--block">
             {t('myPage.adminDashboard')}

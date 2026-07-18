@@ -31,7 +31,15 @@
     "back": "Back",
     "viewAll": "View All",
     "retry": "Retry",
+    "confirm": "Confirm",
     "close": "Close"
+  },
+  "dismissToday": "Don't show again today",
+  "share": {
+    "title": "MachineFit",
+    "text": "MachineFit — personalized gym machine settings for enthusiasts",
+    "action": "Share app",
+    "copied": "Link copied to clipboard."
   },
   "errors": {
     "loadFailed": "Failed to load data. Please try again.",
@@ -71,6 +79,24 @@
       "advanced": "Advanced",
       "professional": "Professional"
     },
+    "ageLabel": "Age",
+    "workoutGoal": "Workout goal",
+    "workoutGoalPlaceholder": "Select",
+    "workoutGoals": {
+      "hypertrophy": "Hypertrophy",
+      "strength": "Strength",
+      "diet": "Fat loss",
+      "conditioning": "Conditioning",
+      "rehab": "Rehab",
+      "posture": "Posture"
+    },
+    "homeGym": "Home gym",
+    "homeGymDesc": "Search registered gyms or enter your gym name.",
+    "homeGymPlaceholder": "Search or type gym name",
+    "homeGymSearching": "Searching…",
+    "homeGymUseTyped": "Use \"{{name}}\" as your gym",
+    "profileExtras": "Gym & goals",
+    "profileExtrasDesc": "Your workout goal and home gym help personalize recommendations.",
     "profileSaved": "Profile saved.",
     "profileRequiredForRecommend": "Height and weight are required. Please enter your body metrics in Settings.",
     "gender": "Gender",
@@ -88,11 +114,21 @@
       "gender": "Gender",
       "heightCm": "Height",
       "weightKg": "Weight",
+      "age": "Age",
+      "workoutGoal": "Workout goal",
+      "homeGym": "Home gym",
       "experienceLevel": "Experience"
     },
     "profileSummary": "Recommendation profile",
     "profileUnset": "Height not set",
-    "profileIncompleteHint": "Add height and gender for more accurate recommendations."
+    "profileIncompleteHint": "Add height and gender for more accurate recommendations.",
+    "loginHeroLabel": "About MachineFit",
+    "loginEyebrow": "For Machine Maniacs",
+    "loginHeroTitle": "Built for gym machine enthusiasts",
+    "loginHeroDesc": "Get seat, pin, ROM, and weight settings tailored to your body — by brand and machine.",
+    "loginFeature1": "Body-based personalized recommendations",
+    "loginFeature2": "Brand-specific machine settings",
+    "loginFeature3": "Workout logs and growth analysis"
   },
   "settings": {
     "language": "Language",
@@ -283,6 +319,7 @@
         "nextVolumeTarget": {
           "title": "Next workout total volume target",
           "desc": "Based on your latest daily total volume and progressive overload",
+          "previous": "Previous total",
           "current": "Current total volume",
           "suggested": "Next target"
         }
@@ -469,11 +506,34 @@
       "nextTarget": {
         "title": "Next workout target weight",
         "desc": "Suggested from recent logs and progressive overload",
+        "previous": "Previous PR",
         "current": "Current PR",
         "suggested": "Next target",
         "sets": "{{count}} sets · {{weights}}"
       }
     }
+  },
+  "briefing": {
+    "title": "Today's workout briefing",
+    "loading": "Loading today's activity…",
+    "summary": "Today: {{recommendations}} recommendations · {{logs}} saved logs · {{machines}} machines · {{volume}} kg total volume · max {{maxWeight}} kg",
+    "empty": "No workouts logged yet today. Search a machine and get your settings!",
+    "cta": "Got it"
+  },
+  "workoutReport": {
+    "title": "Workout report email",
+    "desc": "Receive a summary of your workout logs for the selected period.",
+    "periodLabel": "Report period",
+    "periods": {
+      "day": "Today",
+      "week": "This week",
+      "month": "This month",
+      "year": "This year"
+    },
+    "send": "Send report to my email",
+    "sending": "Sending…",
+    "sent": "Report sent to your email.",
+    "failed": "Could not send the report. Please try again."
   },
   "pwa": {
     "installTitle": "Install the app",

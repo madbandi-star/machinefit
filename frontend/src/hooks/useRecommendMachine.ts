@@ -1,7 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { ExperienceLevel, Gender, RecommendationInput } from '@machinefit/shared';
+import type {
+  ExperienceLevel,
+  Gender,
+  RecommendationInput,
+  TargetMuscleGroup,
+} from '@machinefit/shared';
 import { historyApi, recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -14,7 +19,10 @@ import {
 } from '@/utils/recommendationDuplicate';
 import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 
-function buildProfileInput(machineCode: string): RecommendationInput | null {
+function buildProfileInput(
+  machineCode: string,
+  targetMuscleGroup?: TargetMuscleGroup
+): RecommendationInput | null {
   const user = useAuthStore.getState().user;
   const { unitHeight, unitWeight } = useSettingsStore.getState();
 
@@ -38,7 +46,12 @@ function buildProfileInput(machineCode: string): RecommendationInput | null {
     experienceLevel,
     unitHeight,
     unitWeight,
+    ...(targetMuscleGroup ? { targetMuscleGroup } : {}),
   };
+}
+
+export interface RecommendMachineOptions {
+  targetMuscleGroup?: TargetMuscleGroup;
 }
 
 export function useRecommendMachine(machineCode: string | undefined) {
@@ -48,9 +61,9 @@ export function useRecommendMachine(machineCode: string | undefined) {
   const showToast = useUIStore((s) => s.showToast);
 
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (options: RecommendMachineOptions = {}) => {
       if (!machineCode) throw new Error('missing_machine');
-      const input = buildProfileInput(machineCode);
+      const input = buildProfileInput(machineCode, options?.targetMuscleGroup);
       if (!input) throw new Error('missing_profile');
 
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
@@ -96,7 +109,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
   });
 
   return {
-    requestRecommendation: mutation.mutate,
+    requestRecommendation: (options?: RecommendMachineOptions) => mutation.mutate(options ?? {}),
     isPending: mutation.isPending,
   };
 }

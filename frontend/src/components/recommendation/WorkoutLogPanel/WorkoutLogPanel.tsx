@@ -2,14 +2,17 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, truncateUtf8, WORKOUT_DIARY_MAX_BYTES } from '@machinefit/shared';
+import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
+import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
+import { useAuthStore } from '@/store/auth.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
+import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -47,6 +50,17 @@ function formatTotalWeightKg(total: number): string {
   return total.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
+function buildDefaultCompleted(count: number): boolean[] {
+  return Array.from({ length: count }, () => false);
+}
+
+function resizeCompleted(current: boolean[], nextCount: number): boolean[] {
+  if (nextCount <= current.length) {
+    return current.slice(0, nextCount);
+  }
+  return [...current, ...Array.from({ length: nextCount - current.length }, () => false)];
+}
+
 export function WorkoutLogPanel({
   machineCode,
   recommendationId,
@@ -61,6 +75,7 @@ export function WorkoutLogPanel({
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
   const compact = variant === 'compact';
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
@@ -69,8 +84,12 @@ export function WorkoutLogPanel({
   const [weights, setWeights] = useState<number[]>(() =>
     buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg)
   );
+  const [setCompleted, setSetCompleted] = useState<boolean[]>(() =>
+    buildDefaultCompleted(DEFAULT_SET_COUNT)
+  );
   const [diary, setDiary] = useState('');
   const [initialized, setInitialized] = useState(false);
+  const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
 
   const { data: existingLogs, isLoading } = useQuery({
@@ -85,6 +104,26 @@ export function WorkoutLogPanel({
   const existingLog = existingLogs?.[0];
   const isLogSaved = Boolean(existingLog);
   const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
+
+  const savedSnapshot = useMemo(
+    () => ({
+      setCount: existingLog?.setCount ?? DEFAULT_SET_COUNT,
+      weights: existingLog?.setWeightsKg ?? buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg),
+      setCompleted:
+        existingLog?.setCompleted ??
+        buildDefaultCompleted(existingLog?.setCount ?? DEFAULT_SET_COUNT),
+      diary: existingLog?.diary ?? '',
+    }),
+    [existingLog, suggestedWeightKg]
+  );
+
+  const isDirty =
+    isLogSaved &&
+    initialized &&
+    (setCount !== savedSnapshot.setCount ||
+      JSON.stringify(weights) !== JSON.stringify(savedSnapshot.weights) ||
+      JSON.stringify(setCompleted) !== JSON.stringify(savedSnapshot.setCompleted) ||
+      diary !== savedSnapshot.diary);
 
   const invalidateLogQueries = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
@@ -103,10 +142,14 @@ export function WorkoutLogPanel({
     if (existingLog) {
       setSetCount(existingLog.setCount);
       setWeights(existingLog.setWeightsKg);
+      setSetCompleted(
+        existingLog.setCompleted ?? buildDefaultCompleted(existingLog.setCount)
+      );
       setDiary(existingLog.diary ?? '');
     } else {
       setSetCount(DEFAULT_SET_COUNT);
       setWeights(buildDefaultWeights(DEFAULT_SET_COUNT, suggestedWeightKg));
+      setSetCompleted(buildDefaultCompleted(DEFAULT_SET_COUNT));
       setDiary('');
     }
 
@@ -121,11 +164,15 @@ export function WorkoutLogPanel({
         logDate,
         setCount,
         setWeightsKg: weights,
+        setCompleted,
         diary: diary.trim() || undefined,
       }),
     onSuccess: async () => {
       await invalidateLogQueries();
-      showToast(t('machines:workoutLog.saved'), 'success');
+      showToast(
+        isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
+        'success'
+      );
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -142,18 +189,19 @@ export function WorkoutLogPanel({
 
   const isActionPending = saveMutation.isPending || removeMutation.isPending;
 
-  const handleLogAction = () => {
-    if (isLogSaved) {
-      removeMutation.mutate();
-      return;
-    }
+  const handleSave = () => {
     saveMutation.mutate();
+  };
+
+  const handleRemoveLog = () => {
+    removeMutation.mutate();
   };
 
   const handleSetCountChange = (value: number) => {
     const next = Math.min(MAX_SET_COUNT, Math.max(MIN_SET_COUNT, value));
     setSetCount(next);
     setWeights((prev) => resizeWeights(prev, next, suggestedWeightKg));
+    setSetCompleted((prev) => resizeCompleted(prev, next));
   };
 
   const handleWeightChange = (index: number, raw: string) => {
@@ -167,6 +215,31 @@ export function WorkoutLogPanel({
 
   const handleDiaryChange = (value: string) => {
     setDiary(truncateUtf8(value, WORKOUT_DIARY_MAX_BYTES));
+  };
+
+  const handleDiaryTagClick = (tag: string) => {
+    const token = formatDiaryTag(tag);
+    const next = diary.trim() ? `${diary.trim()} ${token}` : token;
+    handleDiaryChange(next);
+  };
+
+  const handleToggleSetCompleted = (index: number) => {
+    setSetCompleted((prev) => {
+      const next = [...prev];
+      const wasCompleted = next[index] ?? false;
+      next[index] = !wasCompleted;
+
+      if (!wasCompleted && next[index]) {
+        const seconds = recommendRestSeconds({
+          workoutGoal,
+          setIndex: index,
+          weightKg: weights[index],
+        });
+        setRestTimer({ setNumber: index + 1, seconds });
+      }
+
+      return next;
+    });
   };
 
   if (!isAuthenticated) {
@@ -232,31 +305,44 @@ export function WorkoutLogPanel({
 
   const weightGrid = (
     <div className="recommendation-workout-log__weight-grid">
-      {weights.map((weight, index) => (
-        <div
-          key={index}
-          className="setting-value-card setting-value-card--compact recommendation-workout-log__weight-card"
-        >
-          <label className="setting-value-card__label" htmlFor={`${idPrefix}-weight-${index}`}>
-            {t('machines:workoutLog.setLabel', { number: index + 1 })}
-          </label>
-          <div className="setting-value-card__value-row">
-            <input
-              id={`${idPrefix}-weight-${index}`}
-              className="input recommendation-workout-log__weight-input"
-              type="number"
-              min={0}
-              step="0.5"
-              inputMode="decimal"
-              value={weight === 0 ? '' : weight}
-              placeholder="0"
-              onChange={(e) => handleWeightChange(index, e.target.value)}
+      {weights.map((weight, index) => {
+        const completed = setCompleted[index] ?? false;
+        return (
+          <div
+            key={index}
+            className={`setting-value-card setting-value-card--compact recommendation-workout-log__weight-card${
+              completed ? ' recommendation-workout-log__weight-card--completed' : ''
+            }`}
+          >
+            <button
+              type="button"
+              className={`setting-value-card__label recommendation-workout-log__set-toggle${
+                completed ? ' recommendation-workout-log__set-toggle--completed' : ''
+              }`}
+              onClick={() => handleToggleSetCompleted(index)}
               disabled={isActionPending}
-            />
-            <span className="setting-value-card__unit">kg</span>
+              aria-pressed={completed}
+            >
+              {t('machines:workoutLog.setLabel', { number: index + 1 })}
+            </button>
+            <div className="setting-value-card__value-row">
+              <input
+                id={`${idPrefix}-weight-${index}`}
+                className="input recommendation-workout-log__weight-input"
+                type="number"
+                min={0}
+                step="0.5"
+                inputMode="decimal"
+                value={weight === 0 ? '' : weight}
+                placeholder="0"
+                onChange={(e) => handleWeightChange(index, e.target.value)}
+                disabled={isActionPending}
+              />
+              <span className="setting-value-card__unit">kg</span>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
@@ -270,6 +356,23 @@ export function WorkoutLogPanel({
           {t('machines:workoutLog.diaryBytes', { used: diaryBytes })}
         </span>
       </div>
+      <div
+        className="recommendation-workout-log__diary-tags"
+        role="group"
+        aria-label={t('machines:workoutLog.diaryTagsLabel')}
+      >
+        {WORKOUT_DIARY_TAGS.map((tag) => (
+          <button
+            key={tag}
+            type="button"
+            className="recommendation-workout-log__diary-tag"
+            onClick={() => handleDiaryTagClick(tag)}
+            disabled={isActionPending}
+          >
+            {formatDiaryTag(tag)}
+          </button>
+        ))}
+      </div>
       <textarea
         id={`${idPrefix}-diary`}
         className="input recommendation-workout-log__diary-input"
@@ -282,25 +385,45 @@ export function WorkoutLogPanel({
     </div>
   );
 
-  const saveButton = (
+  const saveButton = isLogSaved ? (
+    <div className="recommendation-workout-log__actions">
+      {isDirty ? (
+        <button
+          type="button"
+          className={[
+            'btn recommendation-workout-log__save btn--primary',
+            compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block',
+          ].join('')}
+          onClick={handleSave}
+          disabled={isActionPending || isLoading}
+        >
+          {saveMutation.isPending ? t('machines:workoutLog.updating') : t('machines:workoutLog.update')}
+        </button>
+      ) : null}
+      <button
+        type="button"
+        className={[
+          'btn recommendation-workout-log__save btn--secondary recommendation-workout-log__save--saved',
+          compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block',
+        ].join('')}
+        onClick={handleRemoveLog}
+        disabled={isActionPending || isLoading}
+      >
+        {removeMutation.isPending ? t('machines:workoutLog.canceling') : t('machines:workoutLog.cancel')}
+      </button>
+    </div>
+  ) : (
     <button
       type="button"
       className={[
         'btn recommendation-workout-log__save',
         compact ? ' recommendation-workout-log__save--compact btn--block' : ' btn--block',
-        isLogSaved ? 'btn--secondary recommendation-workout-log__save--saved' : 'btn--primary',
+        'btn--primary',
       ].join('')}
-      onClick={handleLogAction}
+      onClick={handleSave}
       disabled={isActionPending || isLoading}
-      aria-pressed={isLogSaved}
     >
-      {isActionPending
-        ? isLogSaved
-          ? t('machines:workoutLog.canceling')
-          : t('machines:workoutLog.saving')
-        : isLogSaved
-          ? t('machines:workoutLog.cancel')
-          : t('machines:workoutLog.save')}
+      {saveMutation.isPending ? t('machines:workoutLog.saving') : t('machines:workoutLog.save')}
     </button>
   );
 
@@ -315,19 +438,27 @@ export function WorkoutLogPanel({
     </div>
   );
 
+  const restTimerBanner =
+    restTimer != null ? (
+      <RestTimerBanner
+        seconds={restTimer.seconds}
+        setNumber={restTimer.setNumber}
+        onDismiss={() => setRestTimer(null)}
+      />
+    ) : null;
+
   if (compact) {
     return (
       <section
         className="recommendation-workout-log recommendation-workout-log--compact"
         aria-label={t('machines:workoutLog.title')}
       >
+        {restTimerBanner}
         <div className="recommendation-workout-log__toolbar">
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
           {setCountControl}
         </div>
-        <div className="recommendation-workout-log__weights">
-          {weightGrid}
-        </div>
+        <div className="recommendation-workout-log__weights">{weightGrid}</div>
         {totalWeightSummary}
         {diaryField}
         {saveButton}
@@ -337,6 +468,7 @@ export function WorkoutLogPanel({
 
   return (
     <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
+      {restTimerBanner}
       <div className="recommendation-workout-log__header">
         <span className="recommendation-collapsible__label">{t('machines:workoutLog.title')}</span>
         <span className="recommendation-workout-log__date">

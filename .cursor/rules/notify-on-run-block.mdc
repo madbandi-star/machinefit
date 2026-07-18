@@ -1,0 +1,21 @@
+---
+description: Shell/run 명령이 승인 대기·차단될 때 madbandi@gmail.com으로 이메일 알림
+alwaysApply: true
+---
+
+# Run 승인/차단 시 이메일 알림
+
+Shell 또는 `run` 명령이 **사용자 승인 대기**, **Auto-review 차단**, **실행 실패**로 멈출 때:
+
+1. `node scripts/send-email.mjs "제목" "본문"` 로 **madbandi@gmail.com** 에 알림을 보낸다.
+2. SMTP/Resend 없으면 `send-email-browser.mjs`(FormSubmit + Playwright)로 자동 fallback.
+2. 제목 예: `[MachineFit] run 승인 필요 — <명령 요약>`
+3. 본문에 포함: 차단/대기 사유, 실행하려던 명령, 다음에 사용자가 할 일(승인 등).
+
+SMTP(`backend/.env`의 `SMTP_*`) 또는 `RESEND_API_KEY`가 있으면 우선 사용. 없으면 FormSubmit 브라우저 fallback.
+
+테스트/수동 발송:
+
+```bash
+node scripts/send-email.mjs "제목" "본문"
+```

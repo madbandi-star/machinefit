@@ -7,6 +7,7 @@ import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/Query
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
+import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { RecommendationActionBar } from '@/components/recommendation/RecommendationActionBar/RecommendationActionBar';
 import { favoriteApi, recommendationApi } from '@/api';
@@ -144,6 +145,13 @@ export function RecommendationResultPage() {
           variant="hero"
         />
         <RecommendationTips tips={result.tips} />
+        {isAuthenticated ? (
+          <FitFeedbackPanel
+            recommendationId={result.id}
+            machineCode={result.machineCode}
+            settings={result.settings}
+          />
+        ) : null}
         <WorkoutLogPanel
           machineCode={result.machineCode}
           recommendationId={result.id}

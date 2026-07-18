@@ -34,6 +34,7 @@ export interface WorkoutInsightsPeerComparison {
 }
 
 export interface WorkoutInsightsNextTarget {
+  previousMaxWeightKg?: number | null;
   currentMaxWeightKg: number;
   suggestedMaxWeightKg: number;
   suggestedSetWeightsKg: number[];
@@ -41,6 +42,7 @@ export interface WorkoutInsightsNextTarget {
 }
 
 export interface WorkoutInsightsNextVolumeTarget {
+  previousTotalVolumeKg?: number | null;
   currentTotalVolumeKg: number;
   suggestedTotalVolumeKg: number;
 }

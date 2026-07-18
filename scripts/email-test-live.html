@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>MachineFit 이메일 테스트</title>
+</head>
+<body data-status="pending">
+  <p id="status">전송 중…</p>
+  <script>
+    const sentAt = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+
+    fetch('https://formsubmit.co/ajax/madbandi@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        _subject: '[MachineFit] 재발송 테스트',
+        _template: 'table',
+        _captcha: 'false',
+        message: '로컬 서버 브라우저 테스트\n\n발송 시각: ' + sentAt + '\n\n— MachineFit',
+        email: 'machinefit@noreply.local',
+        name: 'MachineFit',
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const ok = data.success === 'true' || data.success === true;
+        const needsActivation = /activation|activate/i.test(data.message ?? '');
+        document.body.dataset.status = ok ? 'ok' : needsActivation ? 'activation' : 'error';
+        document.getElementById('status').textContent = ok
+          ? '전송 요청 완료'
+          : needsActivation
+            ? data.message
+            : '실패: ' + (data.message || JSON.stringify(data));
+      })
+      .catch((err) => {
+        document.body.dataset.status = 'error';
+        document.getElementById('status').textContent = '오류: ' + err.message;
+      });
+  </script>
+</body>
+</html>

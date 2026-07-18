@@ -64,6 +64,8 @@ function computeUserMetrics(logs: WorkoutLog[]) {
       workoutCount: 0,
       lastSetCount: 3,
       lastMaxWeightKg: 0,
+      previousMaxWeightKg: null as number | null,
+      previousTotalVolumeKg: null as number | null,
     };
   }
 
@@ -78,6 +80,7 @@ function computeUserMetrics(logs: WorkoutLog[]) {
   const maxWeightKg = Math.max(...logs.flatMap((log) => log.setWeightsKg));
   const avgSessionVolumeKg = volumes.reduce((total, volume) => total + volume, 0) / volumes.length;
   const lastLog = logs[logs.length - 1];
+  const previousLog = logs.length >= 2 ? logs[logs.length - 2] : null;
 
   return {
     volumeGrowthPct,
@@ -86,13 +89,16 @@ function computeUserMetrics(logs: WorkoutLog[]) {
     workoutCount: logs.length,
     lastSetCount: lastLog.setCount,
     lastMaxWeightKg: maxWeight(lastLog.setWeightsKg),
+    previousMaxWeightKg: previousLog ? maxWeight(previousLog.setWeightsKg) : null,
+    previousTotalVolumeKg: previousLog ? sumWeights(previousLog.setWeightsKg) : null,
   };
 }
 
 function buildNextTarget(
   currentMaxWeightKg: number,
   setCount: number,
-  referenceWeightKg?: number | null
+  referenceWeightKg?: number | null,
+  previousMaxWeightKg?: number | null
 ) {
   const base =
     currentMaxWeightKg > 0
@@ -105,6 +111,7 @@ function buildNextTarget(
   const suggestedSetWeightsKg = Array.from({ length: setCount }, () => suggestedMaxWeightKg);
 
   return {
+    previousMaxWeightKg: previousMaxWeightKg ?? null,
     currentMaxWeightKg: base,
     suggestedMaxWeightKg,
     suggestedSetWeightsKg,
@@ -112,9 +119,10 @@ function buildNextTarget(
   };
 }
 
-function buildNextVolumeTarget(currentTotalVolumeKg: number) {
+function buildNextVolumeTarget(currentTotalVolumeKg: number, previousTotalVolumeKg?: number | null) {
   const base = currentTotalVolumeKg > 0 ? currentTotalVolumeKg : 500;
   return {
+    previousTotalVolumeKg: previousTotalVolumeKg ?? null,
     currentTotalVolumeKg: Math.round(base),
     suggestedTotalVolumeKg: nextRecommendVolumeKg(base),
   };
@@ -284,6 +292,8 @@ export const workoutInsightsService = {
       workoutCount: dailyMetrics.workoutDayCount,
       lastSetCount: 3,
       lastMaxWeightKg: dailyMetrics.maxWeightKg ?? 0,
+      previousMaxWeightKg: null as number | null,
+      previousTotalVolumeKg: null as number | null,
     };
 
     const nextVolumeTarget =
@@ -446,10 +456,11 @@ export const workoutInsightsService = {
         ? buildNextTarget(
             userMetrics.lastMaxWeightKg,
             userMetrics.lastSetCount,
-            fallbackReferenceWeightKg
+            fallbackReferenceWeightKg,
+            userMetrics.previousMaxWeightKg
           )
         : fallbackReferenceWeightKg
-          ? buildNextTarget(0, 3, fallbackReferenceWeightKg)
+          ? buildNextTarget(0, 3, fallbackReferenceWeightKg, null)
           : null;
 
     const coaching =

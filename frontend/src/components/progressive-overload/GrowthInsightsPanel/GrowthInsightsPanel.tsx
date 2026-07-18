@@ -293,7 +293,18 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
           defaultOpen
           className="growth-insights-panel__section growth-insights-target"
         >
-          <div className="growth-insights-target__weights">
+          <div className="growth-insights-target__weights growth-insights-target__weights--triple">
+            {insights.nextTarget.previousMaxWeightKg != null ? (
+              <>
+                <div>
+                  <span>{t(`${insightKey}.nextTarget.previous`)}</span>
+                  <strong>{insights.nextTarget.previousMaxWeightKg}kg</strong>
+                </div>
+                <div className="growth-insights-target__arrow" aria-hidden>
+                  →
+                </div>
+              </>
+            ) : null}
             <div>
               <span>{t(`${insightKey}.nextTarget.current`)}</span>
               <strong>{insights.nextTarget.currentMaxWeightKg}kg</strong>
@@ -324,7 +335,20 @@ export function GrowthInsightsPanel({ insights, isLoading, periodLabel }: Growth
           defaultOpen
           className="growth-insights-panel__section growth-insights-target"
         >
-          <div className="growth-insights-target__weights">
+          <div className="growth-insights-target__weights growth-insights-target__weights--triple">
+            {insights.nextVolumeTarget.previousTotalVolumeKg != null ? (
+              <>
+                <div>
+                  <span>{t(`${insightKey}.nextVolumeTarget.previous`)}</span>
+                  <strong>
+                    {insights.nextVolumeTarget.previousTotalVolumeKg.toLocaleString()}kg
+                  </strong>
+                </div>
+                <div className="growth-insights-target__arrow" aria-hidden>
+                  →
+                </div>
+              </>
+            ) : null}
             <div>
               <span>{t(`${insightKey}.nextVolumeTarget.current`)}</span>
               <strong>{insights.nextVolumeTarget.currentTotalVolumeKg.toLocaleString()}kg</strong>

@@ -1053,3 +1053,7 @@
 .growth-analysis-daily-list__machines li span:last-child {
   font-variant-numeric: tabular-nums;
 }
+
+.growth-insights-target__weights--triple {
+  flex-wrap: wrap;
+}

@@ -6,6 +6,7 @@ export interface WorkoutLog {
   logDate: string;
   setCount: number;
   setWeightsKg: number[];
+  setCompleted?: boolean[];
   diary?: string;
   createdAt: string;
   updatedAt: string;

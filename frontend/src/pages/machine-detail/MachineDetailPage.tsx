@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -9,6 +9,7 @@ import { LastRecommendationSnippet } from '@/components/machines/LastRecommendat
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { historyApi, machineApi } from '@/api';
+import type { TargetMuscleGroup } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
 import '@/styles/components.css';
 import '@/styles/machines.css';
@@ -16,6 +17,8 @@ import '@/styles/records.css';
 
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
+  const [searchParams] = useSearchParams();
+  const muscleParam = searchParams.get('muscle') as TargetMuscleGroup | null;
   const { t } = useTranslation('machines');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
@@ -55,7 +58,13 @@ export function MachineDetailPage() {
     <div className={`machine-detail-page${hasSavedSettings ? ' machine-detail-page--compact' : ''}`}>
       <MachineHero machine={machine} compact={hasSavedSettings} />
       {machineCode && <LastRecommendationSnippet machineCode={machineCode} />}
-      {machineCode && <RecommendCTA machineCode={machineCode} fixed={hasSavedSettings} />}
+      {machineCode && (
+        <RecommendCTA
+          machineCode={machineCode}
+          fixed={hasSavedSettings}
+          initialMuscle={muscleParam}
+        />
+      )}
     </div>
   );
 }

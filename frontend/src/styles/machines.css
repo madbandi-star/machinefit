@@ -388,3 +388,17 @@
     border-top: none;
   }
 }
+
+.recommend-cta__muscle-picker {
+  margin-bottom: var(--space-sm);
+}
+
+.recommend-cta__muscle-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.recommend-cta__muscle-chips {
+  margin-bottom: 0.25rem;
+}

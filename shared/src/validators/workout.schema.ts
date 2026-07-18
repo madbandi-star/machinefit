@@ -30,12 +30,21 @@ export const upsertWorkoutLogSchema = z
     logDate: dateKeySchema.optional(),
     setCount: z.number().int().min(1).max(20),
     setWeightsKg: z.array(z.number().min(0).max(999)).min(1).max(20),
+    setCompleted: z.array(z.boolean()).optional(),
     diary: diarySchema,
   })
   .refine((data) => data.setWeightsKg.length === data.setCount, {
     message: 'setWeightsKg length must match setCount',
     path: ['setWeightsKg'],
-  });
+  })
+  .refine(
+    (data) =>
+      data.setCompleted === undefined || data.setCompleted.length === data.setCount,
+    {
+      message: 'setCompleted length must match setCount',
+      path: ['setCompleted'],
+    }
+  );
 
 export type UpsertWorkoutLogInput = z.infer<typeof upsertWorkoutLogSchema>;
 

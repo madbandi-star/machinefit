@@ -10,7 +10,8 @@
     "back": "Back",
     "chest": "Chest",
     "legs": "Legs",
-    "shoulders": "Shoulders"
+    "shoulders": "Shoulders",
+    "full_body": "Full body"
   },
   "machineTypes": {
     "plate_loaded": "Plate Loaded",
@@ -36,6 +37,8 @@
   "recommend": "Get Recommendation",
   "recommendLogin": "Sign in to get recommendation",
   "recommendLoading": "Generating recommendation...",
+  "targetMuscleLabel": "Target muscle group",
+  "targetMuscleRequired": "Select a target muscle group first.",
   "recommendation": {
     "title": "Recommended Settings",
     "emptySettings": "No setting data available for this machine.",
@@ -56,17 +59,40 @@
     "totalWeight": "Total weight",
     "setLabel": "Set {{number}}",
     "save": "Save log",
+    "update": "Save changes",
     "cancel": "Remove log",
     "saving": "Saving...",
+    "updating": "Saving changes...",
     "canceling": "Removing...",
     "saved": "Today's workout log saved.",
+    "updated": "Workout log updated.",
     "canceled": "Workout log removed.",
     "loginRequired": "Sign in to save sets and weights.",
     "increaseSets": "Increase sets",
     "decreaseSets": "Decrease sets",
     "diaryTitle": "Workout diary",
     "diaryPlaceholder": "Today's workout note (max 100 bytes)",
-    "diaryBytes": "{{used}}/100 bytes"
+    "diaryBytes": "{{used}}/100 bytes",
+    "diaryTagsLabel": "Quick tags",
+    "setCompletedHint": "Tap set label when done"
+  },
+  "restTimer": {
+    "label": "Rest after set {{setNumber}}",
+    "skip": "Skip rest",
+    "done": "Rest complete",
+    "notificationTitle": "Rest complete",
+    "notificationBody": "Set {{setNumber}} rest is over. Ready for the next set!"
+  },
+  "feedback": {
+    "title": "How did the settings fit?",
+    "desc": "Your feedback helps improve future recommendations.",
+    "good": "Good fit",
+    "bad": "Needs adjustment",
+    "savedGood": "Thanks for the feedback!",
+    "savedBad": "Tell us your preferred settings below.",
+    "customTitle": "Your preferred settings",
+    "customDesc": "Save custom values for this machine.",
+    "savePreferences": "Save preferences"
   },
   "history": {
     "subtitle": "Your recent recommendation history",
@@ -85,7 +111,11 @@
     "nextMonth": "Next month",
     "calendarHint": "Only dotted dates have history records.",
     "clearAll": "Clear All",
-    "remove": "Remove"
+    "remove": "Remove",
+    "removed": "Record deleted.",
+    "deleteTitle": "Delete record",
+    "deleteMessage": "Delete this recommendation record? Linked workout logs will also be removed and cannot be restored.",
+    "deleteConfirm": "Delete"
   },
   "records": {
     "subtitle": "Recent recommendations and favorites",

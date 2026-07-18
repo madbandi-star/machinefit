@@ -31,7 +31,15 @@
     "back": "뒤로",
     "viewAll": "전체 보기",
     "retry": "다시 시도",
+    "confirm": "확인",
     "close": "닫기"
+  },
+  "dismissToday": "오늘 다시 안 보기",
+  "share": {
+    "title": "MachineFit",
+    "text": "헬스머신 마니아를 위한 맞춤 세팅 앱 MachineFit",
+    "action": "앱 공유하기",
+    "copied": "공유 링크를 복사했습니다."
   },
   "errors": {
     "loadFailed": "데이터를 불러오지 못했습니다. 다시 시도해 주세요.",
@@ -71,6 +79,24 @@
       "advanced": "상급",
       "professional": "전문가"
     },
+    "ageLabel": "나이",
+    "workoutGoal": "운동 목표",
+    "workoutGoalPlaceholder": "선택",
+    "workoutGoals": {
+      "hypertrophy": "근비대",
+      "strength": "근력",
+      "diet": "다이어트",
+      "conditioning": "컨디셔닝",
+      "rehab": "재활",
+      "posture": "체형 교정"
+    },
+    "homeGym": "다니는 헬스장",
+    "homeGymDesc": "등록된 헬스장을 검색하거나 이름을 직접 입력하세요.",
+    "homeGymPlaceholder": "헬스장 검색 또는 이름 입력",
+    "homeGymSearching": "검색 중…",
+    "homeGymUseTyped": "\"{{name}}\"(으)로 저장",
+    "profileExtras": "헬스장 · 목표",
+    "profileExtrasDesc": "운동 목표와 헬스장 정보로 추천을 맞춤화합니다.",
     "profileSaved": "프로필이 저장되었습니다.",
     "profileRequiredForRecommend": "키와 몸무게 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요.",
     "gender": "성별",
@@ -88,11 +114,21 @@
       "gender": "성별",
       "heightCm": "키",
       "weightKg": "몸무게",
+      "age": "나이",
+      "workoutGoal": "운동 목표",
+      "homeGym": "다니는 헬스장",
       "experienceLevel": "운동 경력"
     },
     "profileSummary": "추천 프로필",
     "profileUnset": "키 미설정",
-    "profileIncompleteHint": "키와 성별을 입력하면 더 정확한 추천을 받을 수 있습니다."
+    "profileIncompleteHint": "키와 성별을 입력하면 더 정확한 추천을 받을 수 있습니다.",
+    "loginHeroLabel": "MachineFit 소개",
+    "loginEyebrow": "For Machine Maniacs",
+    "loginHeroTitle": "헬스머신 마니아를 위한 서비스",
+    "loginHeroDesc": "브랜드·기구별로 내 몸에 맞는 시트·핀·가동범위·중량을 한 번에 확인하세요.",
+    "loginFeature1": "신체 정보 기반 맞춤 추천",
+    "loginFeature2": "브랜드별 기구 세팅값",
+    "loginFeature3": "수행 기록과 성장 분석"
   },
   "settings": {
     "language": "언어",
@@ -283,6 +319,7 @@
         "nextVolumeTarget": {
           "title": "다음 운동 목표 총 수행량",
           "desc": "최근 운동일 총 수행량과 점진적 과부하 원칙 기반 추천",
+          "previous": "이전 총 수행량",
           "current": "현재 총 수행량",
           "suggested": "다음 목표"
         }
@@ -469,11 +506,34 @@
       "nextTarget": {
         "title": "다음 운동 목표 무게",
         "desc": "최근 기록과 점진적 과부하 원칙 기반 추천",
+        "previous": "이전 PR",
         "current": "현재 PR",
         "suggested": "다음 목표",
         "sets": "{{count}}세트 · {{weights}}"
       }
     }
+  },
+  "briefing": {
+    "title": "오늘의 운동 브리핑",
+    "loading": "오늘 활동 불러오는 중…",
+    "summary": "오늘: 추천 {{recommendations}}회 · 저장 기록 {{logs}}건 · {{machines}}개 기구 · 총 {{volume}}kg · 최대 {{maxWeight}}kg",
+    "empty": "오늘 아직 운동 기록이 없습니다. 기구를 검색하고 맞춤 세팅을 받아보세요!",
+    "cta": "확인"
+  },
+  "workoutReport": {
+    "title": "운동 리포트 이메일",
+    "desc": "선택한 기간의 운동 기록 요약을 이메일로 받습니다.",
+    "periodLabel": "리포트 기간",
+    "periods": {
+      "day": "오늘",
+      "week": "이번 주",
+      "month": "이번 달",
+      "year": "올해"
+    },
+    "send": "내 이메일로 리포트 보내기",
+    "sending": "전송 중…",
+    "sent": "리포트가 이메일로 전송되었습니다.",
+    "failed": "리포트 전송에 실패했습니다. 다시 시도해 주세요."
   },
   "pwa": {
     "installTitle": "앱으로 설치하기",

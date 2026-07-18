@@ -123,8 +123,9 @@ export const recommendationRepository = {
         id, user_id, machine_id, machine_setting_id,
         gender, height_cm, weight_kg, experience_level,
         seat_position, back_pad_position, foot_position, handle_position,
-        rom_setting, recommended_weight_kg, tips, warnings, weight_basis, session_id
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
+        rom_setting, recommended_weight_kg, tips, warnings, weight_basis, session_id,
+        target_muscle_group
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
       [
         id,
         userId ?? null,
@@ -144,6 +145,7 @@ export const recommendationRepository = {
         match?.warnings ? JSON.stringify(match.warnings) : null,
         weightBasis ? JSON.stringify(weightBasis) : null,
         sessionId ?? null,
+        input.targetMuscleGroup ?? null,
       ]
     );
 

@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
-import type { ExperienceLevel, Gender } from '@machinefit/shared';
+import type { ExperienceLevel, Gender, WorkoutGoal } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
+import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
 import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
+import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { userApi } from '@/api';
@@ -38,27 +40,52 @@ export function SettingsPage() {
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? 175);
   const [weightKg, setWeightKg] = useState<number | undefined>(user?.weightKg);
+  const [age, setAge] = useState<number | undefined>(user?.age);
   const [gender, setGender] = useState<Gender | undefined>(user?.gender);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
     user?.experienceLevel ?? 'intermediate'
   );
+  const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal | undefined>(user?.workoutGoal);
+  const [homeGym, setHomeGym] = useState<HomeGymValue>({
+    homeGymId: user?.homeGymId,
+    homeGymName: user?.homeGymName,
+  });
 
   useEffect(() => {
     if (user?.heightCm != null) setHeightCm(user.heightCm);
     setWeightKg(user?.weightKg);
+    setAge(user?.age);
     setGender(user?.gender);
     if (user?.experienceLevel) setExperienceLevel(user.experienceLevel);
-  }, [user?.heightCm, user?.weightKg, user?.gender, user?.experienceLevel]);
+    setWorkoutGoal(user?.workoutGoal);
+    setHomeGym({
+      homeGymId: user?.homeGymId,
+      homeGymName: user?.homeGymName,
+    });
+  }, [
+    user?.heightCm,
+    user?.weightKg,
+    user?.age,
+    user?.gender,
+    user?.experienceLevel,
+    user?.workoutGoal,
+    user?.homeGymId,
+    user?.homeGymName,
+  ]);
 
   const mutation = useMutation({
     mutationFn: () =>
       userApi.updateMe({
         heightCm,
         weightKg,
+        age,
         gender,
         unitHeight,
         unitWeight,
         experienceLevel,
+        workoutGoal,
+        homeGymId: homeGym.homeGymId ?? null,
+        homeGymName: homeGym.homeGymName?.trim() || null,
       }),
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
@@ -91,12 +118,38 @@ export function SettingsPage() {
               }}
               onWeightKgChange={setWeightKg}
             />
+            <label>
+              {t('auth.ageLabel')}
+              <input
+                className="input"
+                type="number"
+                min={13}
+                max={100}
+                value={age ?? ''}
+                onChange={(e) => {
+                  if (!e.target.value) {
+                    setAge(undefined);
+                    return;
+                  }
+                  setAge(Number.parseInt(e.target.value, 10));
+                }}
+              />
+            </label>
             <ExperienceSelector
               value={experienceLevel}
               onChange={(value) => {
                 if (value != null) setExperienceLevel(value);
               }}
             />
+          </div>
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
+          <p className="form-section__desc">{t('auth.profileExtrasDesc')}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            <WorkoutGoalSelector value={workoutGoal} onChange={setWorkoutGoal} />
+            <HomeGymField value={homeGym} onChange={setHomeGym} />
           </div>
           <button
             type="button"

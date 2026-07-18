@@ -64,7 +64,7 @@ export function MachineSearchPage() {
         ) : (
           <div className="machine-list">
             {data.map((machine) => (
-              <MachineListItem key={machine.id} machine={machine} />
+              <MachineListItem key={machine.id} machine={machine} selectedMuscle={muscleGroup} />
             ))}
           </div>
         )}

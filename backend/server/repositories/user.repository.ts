@@ -12,6 +12,10 @@ interface UserRow {
   height_cm: string | null;
   weight_kg: string | null;
   experience_level: string | null;
+  age: number | null;
+  workout_goal: string | null;
+  home_gym_id: string | null;
+  home_gym_name: string | null;
   country_id: string | null;
   language_id: string | null;
   language_code: string | null;
@@ -36,6 +40,10 @@ function mapUser(row: UserRow): User {
     heightCm: row.height_cm ? parseFloat(row.height_cm) : undefined,
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
     experienceLevel: row.experience_level as User['experienceLevel'],
+    age: row.age ?? undefined,
+    workoutGoal: row.workout_goal as User['workoutGoal'],
+    homeGymId: row.home_gym_id ?? undefined,
+    homeGymName: row.home_gym_name ?? undefined,
     countryId: row.country_id ?? undefined,
     languageId: row.language_id ?? undefined,
     languageCode: row.language_code ?? undefined,
@@ -91,6 +99,10 @@ export const userRepository = {
     unitWeight?: 'kg' | 'lb';
     heightCm?: number;
     weightKg?: number;
+    age?: number;
+    workoutGoal?: User['workoutGoal'];
+    homeGymId?: string | null;
+    homeGymName?: string | null;
     experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }): Promise<User> {
     const pool = getPool();
@@ -114,9 +126,10 @@ export const userRepository = {
     const result = await pool.query<UserRow>(
       `INSERT INTO users (
          role_id, email, password_hash, display_name, gender, language_id,
-         unit_height, unit_weight, height_cm, weight_kg, experience_level
+         unit_height, unit_weight, height_cm, weight_kg, age, workout_goal,
+         home_gym_id, home_gym_name, experience_level
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
        RETURNING *`,
       [
         roleId,
@@ -129,6 +142,10 @@ export const userRepository = {
         data.unitWeight ?? 'kg',
         data.heightCm ?? null,
         data.weightKg ?? null,
+        data.age ?? null,
+        data.workoutGoal ?? null,
+        data.homeGymId ?? null,
+        data.homeGymName ?? null,
         data.experienceLevel ?? 'intermediate',
       ]
     );
@@ -145,6 +162,10 @@ export const userRepository = {
       gender?: Gender;
       heightCm?: number;
       weightKg?: number;
+      age?: number;
+      workoutGoal?: User['workoutGoal'];
+      homeGymId?: string | null;
+      homeGymName?: string | null;
       unitHeight?: 'cm' | 'ft_in';
       unitWeight?: 'kg' | 'lb';
       experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
@@ -172,6 +193,22 @@ export const userRepository = {
     if (data.weightKg !== undefined) {
       fields.push(`weight_kg = $${index++}`);
       values.push(data.weightKg);
+    }
+    if (data.age !== undefined) {
+      fields.push(`age = $${index++}`);
+      values.push(data.age);
+    }
+    if (data.workoutGoal !== undefined) {
+      fields.push(`workout_goal = $${index++}`);
+      values.push(data.workoutGoal);
+    }
+    if (data.homeGymId !== undefined) {
+      fields.push(`home_gym_id = $${index++}`);
+      values.push(data.homeGymId);
+    }
+    if (data.homeGymName !== undefined) {
+      fields.push(`home_gym_name = $${index++}`);
+      values.push(data.homeGymName);
     }
     if (data.unitHeight !== undefined) {
       fields.push(`unit_height = $${index++}`);

@@ -5,6 +5,10 @@ import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBann
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
+import {
+  DailyBriefingModal,
+  useDailyBriefing,
+} from '@/components/home/DailyBriefingModal/DailyBriefingModal';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
@@ -14,9 +18,11 @@ export function HomePage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const showHero = !isAuthenticated || !isProfileReadyForRecommend(user);
+  const { showBriefing, closeBriefing } = useDailyBriefing();
 
   return (
     <div className="home-page">
+      <DailyBriefingModal open={showBriefing} onClose={closeBriefing} />
       {showHero && <HomeHero isAuthenticated={isAuthenticated} />}
 
       <section className="home-search-section" aria-label={t('pages.home.quickActionsLabel')}>

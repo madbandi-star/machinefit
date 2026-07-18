@@ -1,4 +1,5 @@
-import type { ExperienceLevel, Gender, UnitWeight } from '@machinefit/shared';
+import type { ExperienceLevel, Gender, UnitWeight, WorkoutGoal } from '@machinefit/shared';
+import type { HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
 
 export type RegisterFormField =
   | 'displayName'
@@ -7,6 +8,9 @@ export type RegisterFormField =
   | 'gender'
   | 'heightCm'
   | 'weightKg'
+  | 'age'
+  | 'workoutGoal'
+  | 'homeGym'
   | 'experienceLevel';
 
 export interface RegisterFormValues {
@@ -16,6 +20,9 @@ export interface RegisterFormValues {
   gender?: Gender;
   heightCm?: number;
   weightKg?: number;
+  age?: number;
+  workoutGoal?: WorkoutGoal;
+  homeGym?: HomeGymValue;
   experienceLevel?: ExperienceLevel;
   unitWeight?: UnitWeight;
 }
@@ -23,6 +30,8 @@ export interface RegisterFormValues {
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_WEIGHT_KG = 30;
 const MAX_WEIGHT_KG = 300;
+const MIN_AGE = 13;
+const MAX_AGE = 100;
 
 function isHeightValid(heightCm?: number): boolean {
   return heightCm != null && Number.isFinite(heightCm) && heightCm >= 100 && heightCm <= 250;
@@ -35,6 +44,16 @@ function isWeightValid(weightKg?: number): boolean {
     weightKg >= MIN_WEIGHT_KG &&
     weightKg <= MAX_WEIGHT_KG
   );
+}
+
+function isAgeValid(age?: number): boolean {
+  return age != null && Number.isInteger(age) && age >= MIN_AGE && age <= MAX_AGE;
+}
+
+function isHomeGymValid(homeGym?: HomeGymValue): boolean {
+  if (!homeGym) return false;
+  if (homeGym.homeGymId) return true;
+  return Boolean(homeGym.homeGymName?.trim());
 }
 
 export function getMissingRegisterFields(values: RegisterFormValues): RegisterFormField[] {
@@ -64,6 +83,18 @@ export function getMissingRegisterFields(values: RegisterFormValues): RegisterFo
 
   if (!isWeightValid(values.weightKg)) {
     missing.push('weightKg');
+  }
+
+  if (!isAgeValid(values.age)) {
+    missing.push('age');
+  }
+
+  if (!values.workoutGoal) {
+    missing.push('workoutGoal');
+  }
+
+  if (!isHomeGymValid(values.homeGym)) {
+    missing.push('homeGym');
   }
 
   if (!values.experienceLevel) {

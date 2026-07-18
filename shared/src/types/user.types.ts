@@ -5,6 +5,7 @@ import type {
   UnitHeight,
   UnitWeight,
 } from './api.types.js';
+import type { WorkoutGoal } from '../constants/workout-goals.js';
 
 export interface User {
   id: string;
@@ -15,6 +16,10 @@ export interface User {
   gender?: Gender;
   heightCm?: number;
   weightKg?: number;
+  age?: number;
+  workoutGoal?: WorkoutGoal;
+  homeGymId?: string;
+  homeGymName?: string;
   experienceLevel?: ExperienceLevel;
   countryId?: string;
   languageId?: string;

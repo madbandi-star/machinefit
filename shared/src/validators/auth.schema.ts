@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { experienceLevelSchema, genderSchema } from './user.schema.js';
+import { experienceLevelSchema, genderSchema, workoutGoalSchema } from './user.schema.js';
 
 export const registerSchema = z.object({
   email: z.string().email(),
@@ -11,6 +11,10 @@ export const registerSchema = z.object({
   unitWeight: z.enum(['kg', 'lb']).optional(),
   heightCm: z.coerce.number().min(100).max(250),
   weightKg: z.coerce.number().min(30).max(300),
+  age: z.coerce.number().int().min(13).max(100),
+  workoutGoal: workoutGoalSchema,
+  homeGymId: z.string().uuid().optional(),
+  homeGymName: z.string().min(1).max(120).optional(),
   experienceLevel: experienceLevelSchema,
 });
 

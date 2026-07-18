@@ -9,8 +9,10 @@ import type {
   GymPhoto,
   RecommendationInput,
   RecommendationResult,
+  RecommendationSettings,
   User,
   Gender,
+  WorkoutGoal,
   WorkoutLog,
   UpsertWorkoutLogInput,
 } from '@machinefit/shared';
@@ -51,6 +53,10 @@ export const authApi = {
     unitWeight?: 'kg' | 'lb';
     heightCm: number;
     weightKg: number;
+    age: number;
+    workoutGoal: WorkoutGoal;
+    homeGymId?: string;
+    homeGymName?: string;
     experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
@@ -64,10 +70,117 @@ export const userApi = {
     gender?: Gender;
     heightCm?: number;
     weightKg?: number;
+    age?: number;
+    workoutGoal?: WorkoutGoal;
+    homeGymId?: string | null;
+    homeGymName?: string | null;
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
     experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
   }) => apiClient.patch<ApiResponse<User>>('/users/me', data),
+};
+
+export type FitRating = 'good' | 'bad';
+
+export interface RecommendationFeedbackInput {
+  recommendationId: string;
+  fitRating: FitRating;
+}
+
+export interface MachinePreferenceInput {
+  machineCode: string;
+  customSettings: Partial<RecommendationSettings>;
+}
+
+const FEEDBACK_STORAGE_KEY = 'machinefit:recommendation-feedback';
+const PREFERENCE_STORAGE_KEY = 'machinefit:machine-preferences';
+
+function readLocalJson<T>(key: string): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : ({} as T);
+  } catch {
+    return {} as T;
+  }
+}
+
+function writeLocalJson(key: string, value: unknown): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* ignore quota errors */
+  }
+}
+
+export const recommendationFeedbackApi = {
+  async submit(input: RecommendationFeedbackInput): Promise<{ fitRating: FitRating }> {
+    try {
+      const res = await apiClient.post<ApiResponse<{ fitRating: FitRating }>>(
+        '/recommendations/feedback',
+        input
+      );
+      return res.data.data;
+    } catch {
+      const store = readLocalJson<Record<string, FitRating>>(FEEDBACK_STORAGE_KEY);
+      store[input.recommendationId] = input.fitRating;
+      writeLocalJson(FEEDBACK_STORAGE_KEY, store);
+      return { fitRating: input.fitRating };
+    }
+  },
+  async get(recommendationId: string): Promise<FitRating | null> {
+    try {
+      const res = await apiClient.get<ApiResponse<{ fitRating: FitRating | null }>>(
+        `/recommendations/${recommendationId}/feedback`
+      );
+      return res.data.data.fitRating;
+    } catch {
+      const store = readLocalJson<Record<string, FitRating>>(FEEDBACK_STORAGE_KEY);
+      return store[recommendationId] ?? null;
+    }
+  },
+};
+
+export const machinePreferenceApi = {
+  async upsert(input: MachinePreferenceInput): Promise<MachinePreferenceInput> {
+    try {
+      const res = await apiClient.put<ApiResponse<MachinePreferenceInput>>(
+        `/machines/${encodeURIComponent(input.machineCode)}/preferences`,
+        { customSettings: input.customSettings }
+      );
+      return res.data.data;
+    } catch {
+      const store = readLocalJson<Record<string, Partial<RecommendationSettings>>>(
+        PREFERENCE_STORAGE_KEY
+      );
+      store[input.machineCode] = input.customSettings;
+      writeLocalJson(PREFERENCE_STORAGE_KEY, store);
+      return input;
+    }
+  },
+  async get(machineCode: string): Promise<Partial<RecommendationSettings> | null> {
+    try {
+      const res = await apiClient.get<ApiResponse<{ customSettings: Partial<RecommendationSettings> }>>(
+        `/machines/${encodeURIComponent(machineCode)}/preferences`
+      );
+      return res.data.data.customSettings;
+    } catch {
+      const store = readLocalJson<Record<string, Partial<RecommendationSettings>>>(
+        PREFERENCE_STORAGE_KEY
+      );
+      return store[machineCode] ?? null;
+    }
+  },
+};
+
+export type WorkoutReportPeriod = 'day' | 'week' | 'month' | 'year';
+
+export interface WorkoutReportRequest {
+  period: WorkoutReportPeriod;
+}
+
+export const workoutReportApi = {
+  send: (body: WorkoutReportRequest) =>
+    apiClient.post<ApiResponse<{ message: string }>>('/users/me/workout-reports', body),
 };
 
 export interface FavoriteItem {

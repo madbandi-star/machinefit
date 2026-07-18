@@ -9,6 +9,7 @@ interface WorkoutLogRow {
   log_date: string;
   set_count: number;
   set_weights_kg: number[];
+  set_completed: boolean[] | null;
   diary: string | null;
   created_at: string;
   updated_at: string;
@@ -37,6 +38,10 @@ function mapRow(row: WorkoutLogRow): WorkoutLog {
     logDate,
     setCount: row.set_count,
     setWeightsKg: row.set_weights_kg,
+    setCompleted:
+      row.set_completed && row.set_completed.length > 0
+        ? row.set_completed
+        : row.set_weights_kg.map(() => true),
     diary: row.diary ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -44,7 +49,7 @@ function mapRow(row: WorkoutLogRow): WorkoutLog {
 }
 
 const SELECT_FIELDS = `wl.id, wl.recommendation_id, wl.log_date, wl.set_count, wl.set_weights_kg,
-              wl.diary, wl.created_at, wl.updated_at,
+              wl.set_completed, wl.diary, wl.created_at, wl.updated_at,
               m.code AS machine_code, m.name AS machine_name`;
 
 export const workoutLogRepository = {
@@ -123,25 +128,32 @@ export const workoutLogRepository = {
       logDate: string;
       setCount: number;
       setWeightsKg: number[];
+      setCompleted?: boolean[];
       diary?: string;
     }
   ): Promise<WorkoutLog> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
 
+    const setCompleted =
+      data.setCompleted && data.setCompleted.length === data.setCount
+        ? data.setCompleted
+        : Array.from({ length: data.setCount }, () => false);
+
     const result = await pool.query<WorkoutLogRow>(
       `INSERT INTO workout_logs (
-         user_id, machine_id, recommendation_id, log_date, set_count, set_weights_kg, diary
+         user_id, machine_id, recommendation_id, log_date, set_count, set_weights_kg, set_completed, diary
        )
-       VALUES ($1, $2, $3, $4::date, $5, $6::jsonb, $7)
+       VALUES ($1, $2, $3, $4::date, $5, $6::jsonb, $7::jsonb, $8)
        ON CONFLICT (user_id, machine_id, log_date)
        DO UPDATE SET
          set_count = EXCLUDED.set_count,
          set_weights_kg = EXCLUDED.set_weights_kg,
+         set_completed = EXCLUDED.set_completed,
          diary = EXCLUDED.diary,
          recommendation_id = COALESCE(EXCLUDED.recommendation_id, workout_logs.recommendation_id),
          updated_at = NOW()
-       RETURNING id, recommendation_id, log_date, set_count, set_weights_kg, diary,
+       RETURNING id, recommendation_id, log_date, set_count, set_weights_kg, set_completed, diary,
                  created_at, updated_at,
                  (SELECT code FROM machines WHERE id = $2) AS machine_code,
                  (SELECT name FROM machines WHERE id = $2) AS machine_name`,
@@ -152,6 +164,7 @@ export const workoutLogRepository = {
         data.logDate,
         data.setCount,
         JSON.stringify(data.setWeightsKg),
+        JSON.stringify(setCompleted),
         data.diary ?? null,
       ]
     );

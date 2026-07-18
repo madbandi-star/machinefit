@@ -10,7 +10,8 @@
     "back": "등",
     "chest": "가슴",
     "legs": "하체",
-    "shoulders": "어깨"
+    "shoulders": "어깨",
+    "full_body": "전신"
   },
   "machineTypes": {
     "plate_loaded": "플레이트 로드",
@@ -36,6 +37,8 @@
   "recommend": "추천 받기",
   "recommendLogin": "로그인 후 추천 받기",
   "recommendLoading": "추천 생성 중...",
+  "targetMuscleLabel": "타겟 부위",
+  "targetMuscleRequired": "먼저 타겟 부위를 선택해 주세요.",
   "recommendation": {
     "title": "추천 설정",
     "emptySettings": "이 기구에 대한 설정 데이터가 없습니다.",
@@ -56,17 +59,40 @@
     "totalWeight": "총 무게",
     "setLabel": "{{number}}세트",
     "save": "기록 저장",
-    "cancel": "기록 취소",
+    "update": "변경 저장",
+    "cancel": "기록 해제",
     "saving": "저장 중...",
-    "canceling": "취소 중...",
+    "updating": "변경 저장 중...",
+    "canceling": "해제 중...",
     "saved": "오늘 수행 기록을 저장했습니다.",
-    "canceled": "수행 기록을 취소했습니다.",
+    "updated": "수행 기록을 변경 저장했습니다.",
+    "canceled": "수행 기록을 해제했습니다.",
     "loginRequired": "로그인 후 세트·무게 기록을 저장할 수 있습니다.",
     "increaseSets": "세트 수 늘리기",
     "decreaseSets": "세트 수 줄이기",
     "diaryTitle": "운동일지",
     "diaryPlaceholder": "오늘 운동 메모 (100byte 이내)",
-    "diaryBytes": "{{used}}/100 byte"
+    "diaryBytes": "{{used}}/100 byte",
+    "diaryTagsLabel": "추천 태그",
+    "setCompletedHint": "세트 완료 시 라벨을 탭하세요"
+  },
+  "restTimer": {
+    "label": "{{setNumber}}세트 후 휴식",
+    "skip": "휴식 건너뛰기",
+    "done": "휴식 완료",
+    "notificationTitle": "휴식 완료",
+    "notificationBody": "{{setNumber}}세트 휴식이 끝났습니다. 다음 세트 준비!"
+  },
+  "feedback": {
+    "title": "세팅이 잘 맞았나요?",
+    "desc": "피드백은 다음 추천 개선에 활용됩니다.",
+    "good": "잘 맞음",
+    "bad": "조정 필요",
+    "savedGood": "피드백 감사합니다!",
+    "savedBad": "선호하는 세팅값을 아래에 입력해 주세요.",
+    "customTitle": "선호 세팅값",
+    "customDesc": "이 기구에 대한 맞춤 값을 저장합니다.",
+    "savePreferences": "선호값 저장"
   },
   "history": {
     "subtitle": "최근 추천 기록",
@@ -85,7 +111,11 @@
     "nextMonth": "다음 달",
     "calendarHint": "점이 있는 날짜에만 기록이 있습니다.",
     "clearAll": "전체 삭제",
-    "remove": "삭제"
+    "remove": "삭제",
+    "removed": "기록을 삭제했습니다.",
+    "deleteTitle": "기록 삭제",
+    "deleteMessage": "이 추천 기록을 삭제할까요? 연결된 운동 기록도 함께 삭제되며, 복구할 수 없습니다.",
+    "deleteConfirm": "삭제하기"
   },
   "records": {
     "subtitle": "최근 추천과 즐겨찾기",

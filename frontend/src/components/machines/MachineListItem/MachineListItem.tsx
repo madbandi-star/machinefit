@@ -10,18 +10,25 @@ import '@/styles/machines.css';
 
 interface MachineListItemProps {
   machine: Machine;
+  selectedMuscle?: string | null;
 }
 
-export function MachineListItem({ machine }: MachineListItemProps) {
+export function MachineListItem({ machine, selectedMuscle }: MachineListItemProps) {
   const { i18n } = useTranslation('machines');
   const name = getLocalizedName(machine.name, i18n.language, '');
   const brandName = machine.brandName
     ? getLocalizedName(machine.brandName, i18n.language, '')
     : null;
 
+  const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
+  const detailTo =
+    selectedMuscle && machine.code.startsWith('FW_')
+      ? `${detailPath}?muscle=${encodeURIComponent(selectedMuscle)}`
+      : detailPath;
+
   return (
     <Link
-      to={ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code)}
+      to={detailTo}
       className="machine-list-item"
     >
       <div className="machine-list-item__thumb">

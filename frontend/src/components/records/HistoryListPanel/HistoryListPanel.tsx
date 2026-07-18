@@ -1,8 +1,9 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/icons/Icon';
+import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -11,6 +12,7 @@ import { RecommendationSettingsPanel } from '@/components/recommendation/Recomme
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
 import { historyApi } from '@/api';
 import { fetchAllWorkoutLogs } from '@/api/workout-log';
+import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
@@ -32,14 +34,26 @@ import {
   type HistoryLogStatus,
 } from '@/utils/historyLogStatus';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
+import { isDismissedToday } from '@/utils/dismissToday';
+import { useUIStore } from '@/store/ui.store';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
 
 const HISTORY_LIST_LIMIT = 100;
+const HISTORY_DELETE_DISMISS_KEY = 'history-delete-confirm-dismiss';
+
+interface PendingDelete {
+  id: string;
+  machineCode: string;
+  logDate: string;
+}
 
 export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const queryClient = useQueryClient();
+  const showToast = useUIStore((s) => s.showToast);
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
   const focusId = searchParams.get('focus') ?? '';
@@ -172,6 +186,40 @@ export function HistoryListPanel() {
         next.set('logStatus', value);
       }
     });
+  };
+
+  const deleteMutation = useMutation({
+    mutationFn: async ({ id, machineCode, logDate }: PendingDelete) => {
+      await historyApi.remove(id);
+      try {
+        await workoutLogApi.remove({ machineCode, logDate });
+      } catch {
+        /* workout log may not exist */
+      }
+    },
+    onSuccess: async () => {
+      setPendingDelete(null);
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
+      await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+      showToast(t('machines:history.removed'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const requestDelete = (item: PendingDelete) => {
+    if (isDismissedToday(HISTORY_DELETE_DISMISS_KEY)) {
+      deleteMutation.mutate(item);
+      return;
+    }
+    setPendingDelete(item);
+  };
+
+  const confirmDelete = () => {
+    if (pendingDelete) {
+      deleteMutation.mutate(pendingDelete);
+    }
   };
 
   if (isLoading) return <Skeleton count={2} height={120} />;
@@ -323,6 +371,21 @@ export function HistoryListPanel() {
                         {formatHistoryTime(item.viewedAt, i18n.language)}
                       </span>
                     </Link>
+                    <button
+                      type="button"
+                      className="saved-settings-card__remove"
+                      aria-label={t('machines:history.remove')}
+                      onClick={() =>
+                        requestDelete({
+                          id: item.id,
+                          machineCode: item.machineCode,
+                          logDate,
+                        })
+                      }
+                      disabled={deleteMutation.isPending}
+                    >
+                      <Icon name="close" size={18} />
+                    </button>
                   </div>
                   <Link
                     to={resultUrl}
@@ -347,6 +410,17 @@ export function HistoryListPanel() {
           </section>
         ))
       )}
+
+      <ConfirmDialog
+        open={Boolean(pendingDelete)}
+        title={t('machines:history.deleteTitle')}
+        message={t('machines:history.deleteMessage')}
+        confirmLabel={t('machines:history.deleteConfirm')}
+        confirmVariant="danger"
+        dismissTodayKey={HISTORY_DELETE_DISMISS_KEY}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

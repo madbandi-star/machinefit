@@ -2,11 +2,13 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
-import type { ExperienceLevel, Gender, UnitHeight, UnitWeight } from '@machinefit/shared';
+import type { ExperienceLevel, Gender, UnitHeight, UnitWeight, WorkoutGoal } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
+import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
+import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import {
   HEIGHT_UNIT_OPTIONS,
   UnitPicker,
@@ -44,7 +46,10 @@ export function RegisterPage() {
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
   const [heightCm, setHeightCm] = useState<number | undefined>(undefined);
   const [weightKg, setWeightKg] = useState<number | undefined>(undefined);
+  const [age, setAge] = useState<number | undefined>(undefined);
   const [gender, setGender] = useState<Gender | undefined>(undefined);
+  const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal | undefined>(undefined);
+  const [homeGym, setHomeGym] = useState<HomeGymValue>({});
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | undefined>(undefined);
   const [missingFields, setMissingFields] = useState<RegisterFormField[]>([]);
 
@@ -59,6 +64,10 @@ export function RegisterPage() {
         unitWeight,
         heightCm: heightCm!,
         weightKg: weightKg!,
+        age: age!,
+        workoutGoal: workoutGoal!,
+        homeGymId: homeGym.homeGymId,
+        homeGymName: homeGym.homeGymName?.trim(),
         experienceLevel: experienceLevel!,
       }),
     onSuccess: (res) => {
@@ -81,6 +90,9 @@ export function RegisterPage() {
       gender,
       heightCm,
       weightKg,
+      age,
+      workoutGoal,
+      homeGym,
       experienceLevel,
     });
 
@@ -175,11 +187,44 @@ export function RegisterPage() {
             heightInvalid={hasError('heightCm')}
             weightInvalid={hasError('weightKg')}
           />
+          <label>
+            {t('auth.ageLabel')}
+            <input
+              className={`input${hasError('age') ? ' input--invalid' : ''}`}
+              type="number"
+              min={13}
+              max={100}
+              value={age ?? ''}
+              onChange={(e) => {
+                if (!e.target.value) {
+                  setAge(undefined);
+                  return;
+                }
+                setAge(Number.parseInt(e.target.value, 10));
+              }}
+            />
+          </label>
           <ExperienceSelector
             value={experienceLevel}
             onChange={setExperienceLevel}
             allowEmpty
             invalid={hasError('experienceLevel')}
+          />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
+          <p className="form-section__desc">{t('auth.profileExtrasDesc')}</p>
+          <WorkoutGoalSelector
+            value={workoutGoal}
+            onChange={setWorkoutGoal}
+            allowEmpty
+            invalid={hasError('workoutGoal')}
+          />
+          <HomeGymField
+            value={homeGym}
+            onChange={setHomeGym}
+            invalid={hasError('homeGym')}
           />
         </section>
 

@@ -331,8 +331,28 @@
   flex-direction: column;
   gap: 0.15rem;
   min-width: 0;
+  flex: 1;
   text-decoration: none;
   color: inherit;
+}
+
+.saved-settings-card__remove {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.saved-settings-card__remove:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-error, #e53935) 10%, transparent);
+  color: var(--color-error, #e53935);
 }
 
 .saved-settings-card__machine-name {
