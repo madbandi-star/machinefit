@@ -1472,3 +1472,245 @@
   gap: 0.35rem;
   font-size: 0.85rem;
 }
+
+/* History record — settings grid */
+.recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.recommendation-settings-panel--history.recommendation-settings-panel--compare
+  .recommendation-settings-panel__grid--history {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.history-record-card .recommendation-settings-panel--history .setting-value-card--compact {
+  padding: 0.3rem 0.35rem;
+  min-height: 0;
+}
+
+.history-record-card .recommendation-settings-panel--history .setting-value-card--compact .setting-value-card__label {
+  font-size: 0.5625rem;
+  line-height: 1.15;
+}
+
+.history-record-card .recommendation-settings-panel--history .setting-value-card--compact .setting-value-card__value {
+  font-size: 0.8125rem;
+}
+
+.history-record-card
+  .recommendation-settings-panel--compare
+  .setting-value-card__value-row--compare {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.35rem;
+}
+
+.history-record-card .recommendation-settings-panel--compare .setting-value-card__compare-block {
+  flex: 1 1 4.5rem;
+  min-width: 0;
+}
+
+.history-record-card
+  .recommendation-settings-panel--compare
+  .setting-value-card__compare-block--adjust {
+  flex: 1.35 1 6.5rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.history-record-card .recommendation-settings-panel--compare .setting-value-card__compare-label {
+  font-size: 0.5625rem;
+  flex: 0 0 auto;
+  min-width: 1.75rem;
+}
+
+.history-settings-total-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 230, 118, 0.45);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--glass-bg));
+  min-height: 0;
+}
+
+.history-settings-total-tile__label {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.history-settings-total-tile__value {
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* History record — workout log */
+.recommendation-workout-log--history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 0.4rem;
+}
+
+.history-workout-log__performance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.history-workout-log__performance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.history-workout-log__performance-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.history-workout-log__performance-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.history-workout-log__edit-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.recommendation-workout-log__weight-list--history {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.recommendation-workout-log__weight-row--history {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.3rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-bg-secondary) 60%, transparent);
+}
+
+.recommendation-workout-log__weight-row--history.recommendation-workout-log__weight-row--completed {
+  border-color: rgba(0, 230, 118, 0.35);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.recommendation-workout-log__set-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+}
+
+.recommendation-workout-log__set-index--completed {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.recommendation-workout-log__complete-btn {
+  padding: 0.2rem 0.35rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.recommendation-workout-log__complete-btn--completed {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.history-workout-log__diary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.45rem;
+}
+
+.history-workout-log__diary-tags-pane,
+.history-workout-log__diary-memo-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.history-workout-log__pane-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.history-workout-log__memo-input {
+  flex: 1;
+  min-height: 4.5rem;
+  resize: vertical;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.history-record-card .recommendation-workout-log__diary-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.history-record-card .recommendation-workout-log__diary-tag {
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  background: transparent;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .recommendation-workout-log__weight-list--history {
+    grid-template-columns: 1fr;
+  }
+
+  .history-workout-log__diary-grid {
+    grid-template-columns: 1fr;
+  }
+}

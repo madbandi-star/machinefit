@@ -37,10 +37,11 @@ interface SettingDisplayItem {
 interface RecommendationSettingsPanelProps {
   settings: RecommendationSettings;
   weightBasis?: WeightRecommendationBasis;
-  variant?: 'hero' | 'compact' | 'result';
+  variant?: 'hero' | 'compact' | 'result' | 'history';
   showAdjustment?: boolean;
   adjustmentReadOnly?: boolean;
   customSettings?: Partial<RecommendationSettings>;
+  historyTotalWeightKg?: number;
   onCustomChange?: (
     key: keyof RecommendationSettings,
     raw: string,
@@ -216,6 +217,7 @@ export function RecommendationSettingsPanel({
   onCustomChange,
   onSavePreferences,
   isPreferencesPending = false,
+  historyTotalWeightKg,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
@@ -300,6 +302,47 @@ export function RecommendationSettingsPanel({
         onClose={() => setBasisOpen(false)}
       />
     ) : null;
+
+  if (variant === 'history' && items.length > 0) {
+    return (
+      <>
+        <div
+          className={`recommendation-settings-panel recommendation-settings-panel--history${
+            showAdjustment ? ' recommendation-settings-panel--compare' : ''
+          }`}
+          role="list"
+          aria-label={t('machines:recommendation.title')}
+        >
+          <div
+            className="recommendation-settings-panel__grid recommendation-settings-panel__grid--history"
+            role="presentation"
+          >
+            {items.map((item) => (
+              <div key={item.key} role="listitem">
+                {renderSettingCard(item, {
+                  compact: true,
+                  highlight: item.isWeight,
+                  labelExtra: renderLabelExtra(item),
+                  ...cardOptions,
+                })}
+              </div>
+            ))}
+            {historyTotalWeightKg != null ? (
+              <div className="history-settings-total-tile" role="listitem">
+                <span className="history-settings-total-tile__label">
+                  {t('machines:workoutLog.totalWeight')}
+                </span>
+                <strong className="history-settings-total-tile__value">
+                  {formatWeight(roundRecommendWeightKg(historyTotalWeightKg))}
+                </strong>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        {basisDialog}
+      </>
+    );
+  }
 
   if (variant === 'result' && items.length > 0) {
     return (

@@ -19,6 +19,8 @@ export type IconName =
   | 'moreHorizontal'
   | 'close'
   | 'share'
+  | 'bookmark'
+  | 'calendar'
   | 'circleCheck'
   | 'sliders'
   | 'trendingUp';
@@ -134,6 +136,17 @@ const PATHS: Record<IconName, ReactElement> = {
       <path d="M12 3v12" />
       <path d="m8 7 4-4 4 4" />
       <path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+    </>
+  ),
+  bookmark: (
+    <>
+      <path d="M7 4.5h10a1 1 0 0 1 1 1v14l-6-3.5L6 19.5v-14a1 1 0 0 1 1-1Z" />
+    </>
+  ),
+  calendar: (
+    <>
+      <path d="M7 3v2M17 3v2M5 8h14" />
+      <rect x="4" y="5" width="16" height="16" rx="2" />
     </>
   ),
   circleCheck: (

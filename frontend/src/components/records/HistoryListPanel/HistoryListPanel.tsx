@@ -1,15 +1,12 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { TargetMuscleGroup } from '@machinefit/shared';
 import { useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
-import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
-import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
 import { historyApi } from '@/api';
 import { fetchAllWorkoutLogs } from '@/api/workout-log';
@@ -17,11 +14,9 @@ import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
-import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import {
   collectMuscleGroupsInOrder,
   formatHistoryDateHeaderWithMuscles,
-  formatHistoryTime,
 } from '@/utils/historyDate';
 import {
   buildLoggedWorkoutKeys,
@@ -34,15 +29,18 @@ import {
   filterHistoryRecordCardsByLogStatus,
   groupRecordCardsByDate,
   historyRecordCardHasLog,
-  type HistoryRecordCard,
+  type HistoryRecordCard as HistoryRecordCardData,
 } from '@/utils/historyRecordsDisplay';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
+import { HistorySummaryStats } from '@/components/records/HistorySummaryStats/HistorySummaryStats';
+import { HistoryRecordCard } from '@/components/records/HistoryRecordCard/HistoryRecordCard';
 import { isDismissedToday } from '@/utils/dismissToday';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
 import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
+import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
 
@@ -123,6 +121,11 @@ export function HistoryListPanel() {
     isAuthenticated
   );
 
+  const summaryStats = useMemo(
+    () => computeHistorySummaryStats(displayCards, workoutLogs ?? []),
+    [displayCards, workoutLogs]
+  );
+
   const translateMuscleGroup = (group: string) =>
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
 
@@ -141,10 +144,10 @@ export function HistoryListPanel() {
     if (!element) return;
 
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    element.classList.add('saved-settings-card--focused');
+    element.classList.add('history-record-card--focused');
 
     const timer = window.setTimeout(() => {
-      element.classList.remove('saved-settings-card--focused');
+      element.classList.remove('history-record-card--focused');
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
@@ -223,7 +226,7 @@ export function HistoryListPanel() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  const requestDelete = (card: HistoryRecordCard) => {
+  const requestDelete = (card: HistoryRecordCardData) => {
     const payload: PendingDelete = {
       cardId: card.cardId,
       historyId: card.historyId,
@@ -352,114 +355,69 @@ export function HistoryListPanel() {
           }
         />
       ) : (
-        groupedCards.map((group) => (
-          <section key={group.dateKey} className="records-list__date-group">
-            <h2 className="records-list__date-heading">
-              {formatHistoryDateHeaderWithMuscles(
-                group.dateKey,
-                i18n.language,
-                collectMuscleGroupsInOrder(group.items),
-                translateMuscleGroup
-              )}
-            </h2>
+        <>
+          {displayCards.length > 0 ? <HistorySummaryStats stats={summaryStats} /> : null}
 
-            {group.items.map((card) => {
-              const resultUrl = card.recommendationId
-                ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
-                : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}`;
-              const hasWorkoutLog = historyRecordCardHasLog(card, loggedKeys);
-              const displayName = isFreeWeightMachineCode(card.machineCode)
-                ? formatFreeWeightRecordLabel(
-                    card.machineName,
-                    card.targetMuscleGroup,
-                    translateMuscleGroup
-                  )
-                : card.machineName;
-              const muscleGroup = getHistoryMuscleGroup(
-                card.machineCode,
-                card.muscleGroup,
-                card.targetMuscleGroup
-              );
-              const lockTargetMuscle = isFreeWeightMachineCode(card.machineCode);
-              const customSettings = comparisonData?.preferencesByMachine[card.machineCode];
-              const fitRating = card.recommendationId
-                ? comparisonData?.feedbackByRecommendation[card.recommendationId]
-                : null;
-              const showSettingsCompare = shouldShowHistorySettingsCompare(
-                fitRating,
-                card.settings,
-                customSettings
-              );
+          {groupedCards.map((group) => (
+            <section key={group.dateKey} className="records-list__date-group">
+              <h2 className="records-list__date-heading">
+                <Icon name="calendar" size={16} className="records-list__date-icon" />
+                {formatHistoryDateHeaderWithMuscles(
+                  group.dateKey,
+                  i18n.language,
+                  collectMuscleGroupsInOrder(group.items),
+                  translateMuscleGroup
+                )}
+              </h2>
 
-              return (
-                <article
-                  key={card.cardId}
-                  id={`history-item-${card.cardId}`}
-                  className={`saved-settings-card saved-settings-card--history${hasWorkoutLog ? ' saved-settings-card--logged' : ' saved-settings-card--unlogged'}${focusId === card.cardId ? ' saved-settings-card--focused' : ''}`}
-                >
-                  <div className="saved-settings-card__header">
-                    <Link to={resultUrl} className="saved-settings-card__machine">
-                      <div className="saved-settings-card__machine-title-row">
-                        <MachineNameWithMuscle
-                          muscleGroup={muscleGroup}
-                          name={displayName}
-                          iconSize={20}
-                          labelClassName="saved-settings-card__machine-name"
-                        />
-                        <span
-                          className={`saved-settings-card__log-badge${hasWorkoutLog ? ' saved-settings-card__log-badge--saved' : ' saved-settings-card__log-badge--unsaved'}`}
-                        >
-                          {hasWorkoutLog
-                            ? t('machines:history.workoutSavedBadge')
-                            : t('machines:history.workoutUnsavedBadge')}
-                        </span>
-                      </div>
-                      <span className="saved-settings-card__time saved-settings-card__time--inline">
-                        {formatHistoryTime(card.viewedAt, i18n.language)}
-                      </span>
-                    </Link>
-                    <button
-                      type="button"
-                      className="saved-settings-card__remove"
-                      aria-label={t('machines:history.remove')}
-                      onClick={() => requestDelete(card)}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Icon name="close" size={18} />
-                    </button>
-                  </div>
-                  <Link
-                    to={resultUrl}
-                    className="saved-settings-card__detail-link"
-                    aria-label={t('machines:detail.viewLastResult')}
-                  >
-                    <RecommendationSettingsPanel
-                      settings={card.settings}
-                      variant="compact"
-                      showAdjustment={showSettingsCompare}
-                      adjustmentReadOnly
-                      customSettings={customSettings}
-                    />
-                  </Link>
-                  <WorkoutLogPanel
+              {group.items.map((card) => {
+                const resultUrl = card.recommendationId
+                  ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
+                  : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}`;
+                const hasWorkoutLog = historyRecordCardHasLog(card, loggedKeys);
+                const displayName = isFreeWeightMachineCode(card.machineCode)
+                  ? formatFreeWeightRecordLabel(
+                      card.machineName,
+                      card.targetMuscleGroup,
+                      translateMuscleGroup
+                    )
+                  : card.machineName;
+                const muscleGroup = getHistoryMuscleGroup(
+                  card.machineCode,
+                  card.muscleGroup,
+                  card.targetMuscleGroup
+                );
+                const customSettings = comparisonData?.preferencesByMachine[card.machineCode];
+                const fitRating = card.recommendationId
+                  ? comparisonData?.feedbackByRecommendation[card.recommendationId]
+                  : null;
+                const showSettingsCompare = shouldShowHistorySettingsCompare(
+                  fitRating,
+                  card.settings,
+                  customSettings
+                );
+
+                return (
+                  <HistoryRecordCard
                     key={card.cardId}
-                    machineCode={card.machineCode}
-                    machineName={card.machineName}
-                    recommendationId={card.recommendationId}
-                    suggestedWeightKg={card.settings.recommendedWeightKg}
+                    card={card}
+                    resultUrl={resultUrl}
+                    displayName={displayName}
+                    muscleGroup={muscleGroup}
+                    hasWorkoutLog={hasWorkoutLog}
+                    showSettingsCompare={showSettingsCompare}
+                    customSettings={customSettings}
                     isAuthenticated={isAuthenticated}
-                    variant="compact"
-                    diaryDefaultOpen
-                    logDate={card.logDate}
-                    idPrefix={`history-workout-${card.cardId}`}
-                    targetMuscleGroup={card.targetMuscleGroup as TargetMuscleGroup | undefined}
-                    lockTargetMuscle={lockTargetMuscle}
+                    lockTargetMuscle={isFreeWeightMachineCode(card.machineCode)}
+                    isFocused={focusId === card.cardId}
+                    onDelete={() => requestDelete(card)}
+                    deleteDisabled={deleteMutation.isPending}
                   />
-                </article>
-              );
-            })}
-          </section>
-        ))
+                );
+              })}
+            </section>
+          ))}
+        </>
       )}
 
       <ConfirmDialog

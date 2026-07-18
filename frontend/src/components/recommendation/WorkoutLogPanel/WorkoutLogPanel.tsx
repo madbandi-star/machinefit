@@ -24,18 +24,31 @@ const DEFAULT_SET_COUNT = 3;
 const MIN_SET_COUNT = 1;
 const MAX_SET_COUNT = 20;
 
+export interface WorkoutLogPanelControl {
+  isLogSaved: boolean;
+  isDirty: boolean;
+  isActionPending: boolean;
+  isLoading: boolean;
+  canSave: boolean;
+  totalWeightKg: number;
+  setCount: number;
+  save: () => void;
+  remove: () => void;
+}
+
 interface WorkoutLogPanelProps {
   machineCode: string;
   machineName?: string;
   recommendationId?: string;
   suggestedWeightKg?: number;
   isAuthenticated: boolean;
-  variant?: 'default' | 'compact';
+  variant?: 'default' | 'compact' | 'history';
   logDate?: string;
   idPrefix?: string;
   targetMuscleGroup?: TargetMuscleGroup;
   lockTargetMuscle?: boolean;
   diaryDefaultOpen?: boolean;
+  onControlReady?: (control: WorkoutLogPanelControl | null) => void;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -146,6 +159,7 @@ export function WorkoutLogPanel({
   targetMuscleGroup,
   lockTargetMuscle = false,
   diaryDefaultOpen = false,
+  onControlReady,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -153,7 +167,8 @@ export function WorkoutLogPanel({
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
-  const compact = variant === 'compact';
+  const isHistory = variant === 'history';
+  const compact = variant === 'compact' || isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
   const weightStepKg = getWeightStepKg(machineCode);
@@ -364,6 +379,38 @@ export function WorkoutLogPanel({
     removeMutation.mutate();
   };
 
+  useEffect(() => {
+    if (!onControlReady) return;
+
+    if (!isAuthenticated) {
+      onControlReady(null);
+      return;
+    }
+
+    onControlReady({
+      isLogSaved,
+      isDirty,
+      isActionPending,
+      isLoading,
+      canSave: isLogSaved ? isDirty && !isLoading : !isLoading,
+      totalWeightKg,
+      setCount,
+      save: handleSave,
+      remove: handleRemoveLog,
+    });
+
+    return () => onControlReady(null);
+  }, [
+    onControlReady,
+    isAuthenticated,
+    isLogSaved,
+    isDirty,
+    isActionPending,
+    isLoading,
+    totalWeightKg,
+    setCount,
+  ]);
+
   const handleSetCountChange = (value: number) => {
     const next = Math.min(MAX_SET_COUNT, Math.max(MIN_SET_COUNT, value));
     setSetCount(next);
@@ -463,7 +510,7 @@ export function WorkoutLogPanel({
     <div
       className={`recommendation-workout-log__weight-list${
         compact ? ' recommendation-workout-log__weight-list--compact' : ''
-      }`}
+      }${isHistory ? ' recommendation-workout-log__weight-list--history' : ''}`}
     >
       {weights.map((weight, index) => {
         const completed = setCompleted[index] ?? false;
@@ -473,20 +520,32 @@ export function WorkoutLogPanel({
             key={index}
             className={`recommendation-workout-log__weight-row${
               compact ? ' recommendation-workout-log__weight-row--compact' : ''
-            }${completed ? ' recommendation-workout-log__weight-row--completed' : ''}`}
+            }${isHistory ? ' recommendation-workout-log__weight-row--history' : ''}${
+              completed ? ' recommendation-workout-log__weight-row--completed' : ''
+            }`}
           >
-            <button
-              type="button"
-              className={`recommendation-workout-log__set-toggle${
-                compact ? ' recommendation-workout-log__set-toggle--compact' : ''
-              }${completed ? ' recommendation-workout-log__set-toggle--completed' : ''}`}
-              onClick={() => handleToggleSetCompleted(index)}
-              disabled={isActionPending}
-              aria-pressed={completed}
-              aria-label={t('machines:workoutLog.setLabel', { number: index + 1 })}
-            >
-              {compact ? index + 1 : t('machines:workoutLog.setLabel', { number: index + 1 })}
-            </button>
+            {isHistory ? (
+              <span
+                className={`recommendation-workout-log__set-index${
+                  completed ? ' recommendation-workout-log__set-index--completed' : ''
+                }`}
+              >
+                {index + 1}
+              </span>
+            ) : (
+              <button
+                type="button"
+                className={`recommendation-workout-log__set-toggle${
+                  compact ? ' recommendation-workout-log__set-toggle--compact' : ''
+                }${completed ? ' recommendation-workout-log__set-toggle--completed' : ''}`}
+                onClick={() => handleToggleSetCompleted(index)}
+                disabled={isActionPending}
+                aria-pressed={completed}
+                aria-label={t('machines:workoutLog.setLabel', { number: index + 1 })}
+              >
+                {compact ? index + 1 : t('machines:workoutLog.setLabel', { number: index + 1 })}
+              </button>
+            )}
             <WeightStepper
               id={`${idPrefix}-weight-${index}`}
               value={weight}
@@ -503,6 +562,19 @@ export function WorkoutLogPanel({
               showQuickActions={!compact}
               onChange={(next) => handleWeightChange(index, next)}
             />
+            {isHistory ? (
+              <button
+                type="button"
+                className={`recommendation-workout-log__complete-btn${
+                  completed ? ' recommendation-workout-log__complete-btn--completed' : ''
+                }`}
+                onClick={() => handleToggleSetCompleted(index)}
+                disabled={isActionPending}
+                aria-pressed={completed}
+              >
+                {t('machines:workoutLog.setComplete')}
+              </button>
+            ) : null}
           </div>
         );
       })}
@@ -529,7 +601,26 @@ export function WorkoutLogPanel({
     </div>
   );
 
-  const diaryField = compact ? (
+  const diaryField = isHistory ? (
+    <div className="history-workout-log__diary-grid">
+      <div className="history-workout-log__diary-tags-pane">
+        <span className="history-workout-log__pane-label">{t('machines:workoutLog.diaryTitle')}</span>
+        {diaryTags}
+      </div>
+      <div className="history-workout-log__diary-memo-pane">
+        <span className="history-workout-log__pane-label">{t('machines:history.memoLabel')}</span>
+        <textarea
+          id={`${idPrefix}-diary`}
+          className="input history-workout-log__memo-input"
+          rows={4}
+          value={diary}
+          placeholder={t('machines:workoutLog.diaryPlaceholder')}
+          onChange={(e) => handleDiaryChange(e.target.value)}
+          disabled={isActionPending}
+        />
+      </div>
+    </div>
+  ) : compact ? (
     <details
       className="recommendation-workout-log__diary-details"
       open={diaryExpanded}
@@ -632,6 +723,33 @@ export function WorkoutLogPanel({
       />
     ) : null;
 
+  if (isHistory) {
+    return (
+      <section
+        className="recommendation-workout-log recommendation-workout-log--history"
+        aria-label={t('machines:workoutLog.title')}
+      >
+        {restTimerBanner}
+        {targetMusclePicker}
+        <div className="history-workout-log__performance">
+          <div className="history-workout-log__performance-header">
+            <span className="history-workout-log__performance-title">
+              {t('machines:history.performanceTitle', { count: setCount })}
+            </span>
+            <div className="history-workout-log__performance-controls">
+              {setCountControl}
+              <span className="history-workout-log__edit-label">
+                {t('machines:history.editSets')}
+              </span>
+            </div>
+          </div>
+          {weightList}
+        </div>
+        {diaryField}
+      </section>
+    );
+  }
+
   if (compact) {
     return (
       <section
@@ -649,7 +767,7 @@ export function WorkoutLogPanel({
         </div>
         <div className="recommendation-workout-log__weights">{weightList}</div>
         {diaryField}
-        {saveButton}
+        {!isHistory ? saveButton : null}
       </section>
     );
   }
