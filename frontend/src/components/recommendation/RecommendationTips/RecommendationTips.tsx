@@ -12,7 +12,7 @@ export function RecommendationTips({ tips }: RecommendationTipsProps) {
   if (tips.length === 0) return null;
 
   return (
-    <details className="recommendation-collapsible recommendation-tips" open>
+    <details className="recommendation-collapsible recommendation-tips">
       <summary className="recommendation-collapsible__summary">
         <span className="recommendation-collapsible__label">
           {t('recommendation.tipsTitle')}

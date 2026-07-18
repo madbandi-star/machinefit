@@ -15,7 +15,7 @@ export function RecommendationWarnings({ warnings }: RecommendationWarningsProps
   const extraCount = warnings.length - 1;
 
   return (
-    <details className="recommendation-collapsible recommendation-warnings" open>
+    <details className="recommendation-collapsible recommendation-warnings">
       <summary className="recommendation-collapsible__summary">
         <span className="recommendation-collapsible__label recommendation-warnings__summary-text">
           <span className="recommendation-warnings__badge">{t('recommendation.warningsTitle')}</span>
