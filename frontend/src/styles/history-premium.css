@@ -333,9 +333,60 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
 }
 
+.history-page-premium .setting-value-card--history-mini:not(.setting-value-card--history-compare) {
+  justify-content: flex-start;
+}
+
+.history-page-premium
+  .setting-value-card--history-mini:not(.setting-value-card--history-compare)
+  .setting-value-card__value-row:not(.setting-value-card__value-row--compare) {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  width: 100%;
+  min-height: 0;
+  text-align: center;
+}
+
+.history-page-premium
+  .setting-value-card--history-mini:not(.setting-value-card--history-compare)
+  .setting-value-card__value {
+  line-height: 1.1;
+}
+
+.history-page-premium
+  .setting-value-card--history-mini:not(.setting-value-card--history-compare)
+  .setting-value-card__unit {
+  line-height: 1.1;
+}
+
 .history-page-premium .setting-value-card--history-mini.setting-value-card--history-compare {
-  min-height: 6.75rem;
-  gap: 0.45rem;
+  min-height: auto;
+  height: auto;
+  gap: 0.3rem;
+  justify-content: flex-start;
+  padding: 0.55rem 0.7rem 0.45rem;
+}
+
+.history-page-premium .setting-value-card--history-mini.setting-value-card--history-compare .setting-value-card__value-row--compare {
+  flex: 0 0 auto;
+}
+
+.history-page-premium
+  .recommendation-settings-panel--history.recommendation-settings-panel--compare
+  .recommendation-settings-panel__grid--history {
+  align-items: start;
+}
+
+.history-page-premium
+  .recommendation-settings-panel--history.recommendation-settings-panel--compare
+  .history-mini-setting-wrap,
+.history-page-premium
+  .recommendation-settings-panel--history.recommendation-settings-panel--compare
+  .history-settings-total-tile {
+  height: auto;
 }
 
 .history-page-premium .setting-value-card__value-row--compare {
@@ -436,17 +487,20 @@
 .history-page-premium
   .recommendation-settings-panel--history.recommendation-settings-panel--compare
   .history-settings-total-tile {
-  min-height: 6.75rem;
-  gap: 0.45rem;
+  min-height: auto;
+  height: auto;
+  gap: 0.3rem;
   justify-content: flex-start;
+  padding-bottom: 0.45rem;
 }
 
 .history-page-premium
   .recommendation-settings-panel--history.recommendation-settings-panel--compare
   .history-settings-total-tile__value {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
+  margin-top: 0.15rem;
 }
 
 .history-page-premium .history-settings-total-tile__value {
