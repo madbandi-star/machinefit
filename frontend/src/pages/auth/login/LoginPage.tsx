@@ -112,9 +112,14 @@ export function LoginPage() {
   return (
     <PageShell title={t('nav.login')}>
       <section className="auth-hero card" aria-label={t('auth.loginHeroLabel')}>
-        <p className="auth-hero__eyebrow">{t('auth.loginEyebrow')}</p>
-        <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
-        <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
+        <div className="auth-hero__head">
+          <div className="auth-hero__badge">
+            <Icon name="dumbbell" size={15} aria-hidden />
+            <span>{t('auth.loginBadge')}</span>
+          </div>
+          <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
+          <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
+        </div>
         <div className="auth-hero__bottom">
           <ul className="auth-hero__features">
             <li>
@@ -173,7 +178,6 @@ export function LoginPage() {
       </form>
 
       <p className="auth-page__footer">
-        {t('nav.register')}?{' '}
         <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
       </p>
     </PageShell>
