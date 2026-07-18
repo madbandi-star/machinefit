@@ -13,7 +13,7 @@ import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
-import { DEFAULT_HEIGHT_CM } from '@/constants/body-metrics-defaults';
+import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { userApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -40,8 +40,8 @@ export function SettingsPage() {
   const unitWeight = useSettingsStore((s) => s.unitWeight);
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
-  const [weightKg, setWeightKg] = useState<number | undefined>(user?.weightKg);
-  const [age, setAge] = useState<number | undefined>(user?.age);
+  const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
+  const [age, setAge] = useState(user?.age ?? DEFAULT_AGE);
   const [gender, setGender] = useState<Gender | undefined>(user?.gender);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
     user?.experienceLevel ?? 'intermediate'
@@ -54,8 +54,9 @@ export function SettingsPage() {
 
   useEffect(() => {
     if (user?.heightCm != null) setHeightCm(user.heightCm);
-    setWeightKg(user?.weightKg);
-    setAge(user?.age);
+    else setHeightCm(DEFAULT_HEIGHT_CM);
+    setWeightKg(user?.weightKg ?? DEFAULT_WEIGHT_KG);
+    setAge(user?.age ?? DEFAULT_AGE);
     setGender(user?.gender);
     if (user?.experienceLevel) setExperienceLevel(user.experienceLevel);
     setWorkoutGoal(user?.workoutGoal);
@@ -118,8 +119,11 @@ export function SettingsPage() {
               onHeightCmChange={(value) => {
                 if (value != null) setHeightCm(value);
               }}
-              onWeightKgChange={setWeightKg}
+              onWeightKgChange={(value) => {
+                if (value != null) setWeightKg(value);
+              }}
               onAgeChange={setAge}
+              pickerSize="default"
             />
             <ExperienceSelector
               value={experienceLevel}

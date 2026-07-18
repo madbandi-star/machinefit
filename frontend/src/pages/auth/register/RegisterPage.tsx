@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, UnitHeight, UnitWeight, WorkoutGoal } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { RegisterEmailField } from '@/components/auth/RegisterEmailField/RegisterEmailField';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
@@ -20,6 +21,14 @@ import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { resolveRegisterErrorMessage } from '@/utils/getApiErrorMessage';
+import {
+  buildDemoEmail,
+  DEMO_HOME_GYM_NAME,
+  DEMO_REGISTER_PASSWORD,
+  getDemoRegisterSlot,
+  markDemoRegisterSlotUsed,
+  type PopularEmailDomain,
+} from '@/utils/demoRegisterDefaults';
 import {
   getMissingRegisterFields,
   type RegisterFormField,
@@ -41,23 +50,28 @@ export function RegisterPage() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const showToast = useUIStore((s) => s.showToast);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const demoSlot = useMemo(() => getDemoRegisterSlot(), []);
+
+  const [emailLocal, setEmailLocal] = useState(demoSlot.emailLocal);
+  const [emailDomain, setEmailDomain] = useState<PopularEmailDomain>('gmail.com');
+  const [password, setPassword] = useState(DEMO_REGISTER_PASSWORD);
+  const [displayName, setDisplayName] = useState(demoSlot.displayName);
   const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
   const [heightCm, setHeightCm] = useState<number | undefined>(undefined);
   const [weightKg, setWeightKg] = useState<number | undefined>(undefined);
   const [age, setAge] = useState<number | undefined>(undefined);
   const [gender, setGender] = useState<Gender | undefined>(undefined);
-  const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal | undefined>(undefined);
-  const [homeGym, setHomeGym] = useState<HomeGymValue>({});
-  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | undefined>(undefined);
+  const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal>('hypertrophy');
+  const [homeGym, setHomeGym] = useState<HomeGymValue>({ homeGymName: DEMO_HOME_GYM_NAME });
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>('beginner');
   const [missingFields, setMissingFields] = useState<RegisterFormField[]>([]);
   const [errorDialog, setErrorDialog] = useState<{ open: boolean; message: string }>({
     open: false,
     message: '',
   });
+
+  const email = buildDemoEmail(emailLocal, emailDomain);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -77,6 +91,7 @@ export function RegisterPage() {
         experienceLevel: experienceLevel!,
       }),
     onSuccess: (res) => {
+      markDemoRegisterSlotUsed();
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
       syncUserSettings(user);
@@ -140,13 +155,12 @@ export function RegisterPage() {
           minLength={2}
           autoComplete="name"
         />
-        <input
-          className={`input${hasError('email') ? ' input--invalid' : ''}`}
-          type="email"
-          placeholder={t('auth.emailPlaceholder')}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
+        <RegisterEmailField
+          localPart={emailLocal}
+          domain={emailDomain}
+          onLocalPartChange={setEmailLocal}
+          onDomainChange={setEmailDomain}
+          invalid={hasError('email')}
         />
         <input
           className={`input${hasError('password') ? ' input--invalid' : ''}`}
@@ -197,11 +211,13 @@ export function RegisterPage() {
             weightInvalid={hasError('weightKg')}
             ageInvalid={hasError('age')}
             initializeOnMount
+            pickerSize="default"
           />
           <ExperienceSelector
             value={experienceLevel}
-            onChange={setExperienceLevel}
-            allowEmpty
+            onChange={(value) => {
+              if (value != null) setExperienceLevel(value);
+            }}
             invalid={hasError('experienceLevel')}
           />
         </section>
@@ -211,8 +227,9 @@ export function RegisterPage() {
           <p className="form-section__desc">{t('auth.profileExtrasDesc')}</p>
           <WorkoutGoalSelector
             value={workoutGoal}
-            onChange={setWorkoutGoal}
-            allowEmpty
+            onChange={(value) => {
+              if (value != null) setWorkoutGoal(value);
+            }}
             invalid={hasError('workoutGoal')}
           />
           <HomeGymField

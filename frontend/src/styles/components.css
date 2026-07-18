@@ -1505,3 +1505,67 @@
 .form-row-group__inputs .scroll-picker {
   flex: 1;
 }
+
+.register-email-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.register-email-field__label {
+  font-size: var(--font-size-body-sm);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.register-email-field__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.register-email-field__local {
+  min-width: 0;
+}
+
+.register-email-field__at {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.register-email-field__domain-display {
+  padding: 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.register-email-field__domains {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.register-email-field__domain {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  padding: 0.28rem 0.55rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.register-email-field__domain--active {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.register-email-field--invalid .register-email-field__local {
+  border-color: var(--color-warning);
+}

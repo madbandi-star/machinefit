@@ -129,6 +129,10 @@ export function LoginPage() {
             <span>{t('auth.loginFeature3')}</span>
           </li>
         </ul>
+        <Link to={ROUTES.MACHINES} className="auth-hero__browse-btn">
+          <Icon name="machines" size={16} />
+          <span>{t('auth.loginBrowseMachines')}</span>
+        </Link>
       </section>
 
       <form className="auth-form" onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }}>

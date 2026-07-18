@@ -72,6 +72,9 @@
     "autoLoggingIn": "Signing in automatically...",
     "autoLoginFailed": "Auto login failed. Please sign in again.",
     "emailPlaceholder": "Email",
+    "emailLabel": "Email",
+    "emailLocalPlaceholder": "Username",
+    "emailDomainLabel": "Email domain",
     "passwordPlaceholder": "Password",
     "passwordMinPlaceholder": "Password (min 8 chars)",
     "displayNamePlaceholder": "Display Name",
@@ -146,7 +149,8 @@
     "loginHeroDesc": "Get seat, pin, ROM, and weight settings tailored to your body — by brand and machine.",
     "loginFeature1": "Body-based personalized recommendations",
     "loginFeature2": "Brand-specific machine settings",
-    "loginFeature3": "Workout logs and growth analysis"
+    "loginFeature3": "Workout logs and growth analysis",
+    "loginBrowseMachines": "Browse machines"
   },
   "settings": {
     "language": "Language",

@@ -5,6 +5,7 @@
 
 .auth-hero {
   padding: var(--space-lg);
+  padding-bottom: 3.5rem;
   margin-bottom: var(--space-lg);
   position: relative;
   overflow: hidden;
@@ -63,6 +64,46 @@
 .auth-hero__features svg {
   flex-shrink: 0;
   color: var(--color-primary);
+}
+
+.auth-hero__browse-btn {
+  position: absolute;
+  right: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.125rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--glass-bg));
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--motion-fast),
+    border-color var(--motion-fast),
+    color var(--motion-fast);
+}
+
+.auth-hero__browse-btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 16%, var(--glass-bg));
+  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--glass-border));
+  color: var(--color-primary);
+}
+
+.auth-hero__browse-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.auth-hero__browse-btn svg {
+  flex-shrink: 0;
 }
 
 .auth-form {

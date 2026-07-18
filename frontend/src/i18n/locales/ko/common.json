@@ -72,6 +72,9 @@
     "autoLoggingIn": "자동 로그인 중...",
     "autoLoginFailed": "자동 로그인에 실패했습니다. 다시 로그인해 주세요.",
     "emailPlaceholder": "이메일",
+    "emailLabel": "이메일",
+    "emailLocalPlaceholder": "아이디",
+    "emailDomainLabel": "이메일 도메인",
     "passwordPlaceholder": "비밀번호",
     "passwordMinPlaceholder": "비밀번호 (8자 이상)",
     "displayNamePlaceholder": "표시 이름",
@@ -146,7 +149,8 @@
     "loginHeroDesc": "브랜드·기구별로 내 몸에 맞는 시트·핀·가동범위·중량을 한 번에 확인하세요.",
     "loginFeature1": "신체 정보 기반 맞춤 추천",
     "loginFeature2": "브랜드별 기구 세팅값",
-    "loginFeature3": "수행 기록과 성장 분석"
+    "loginFeature3": "수행 기록과 성장 분석",
+    "loginBrowseMachines": "기구 둘러보기"
   },
   "settings": {
     "language": "언어",

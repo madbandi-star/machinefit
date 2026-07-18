@@ -32,6 +32,7 @@ interface BodyMetricsFieldsProps {
   weightInvalid?: boolean;
   ageInvalid?: boolean;
   initializeOnMount?: boolean;
+  pickerSize?: 'default' | 'compact';
 }
 
 export function BodyMetricsFields({
@@ -49,6 +50,7 @@ export function BodyMetricsFields({
   weightInvalid = false,
   ageInvalid = false,
   initializeOnMount = false,
+  pickerSize = 'default',
 }: BodyMetricsFieldsProps) {
   const { t } = useTranslation();
   const defaultFeetInches = useMemo(() => cmToFeetInches(DEFAULT_HEIGHT_CM), []);
@@ -133,7 +135,7 @@ export function BodyMetricsFields({
               min={100}
               max={250}
               step={1}
-              size="compact"
+              size={pickerSize}
               defaultValue={DEFAULT_HEIGHT_CM}
               initializeOnMount={initHeight}
               ariaLabel={t('auth.heightLabel')}
@@ -149,7 +151,7 @@ export function BodyMetricsFields({
                 min={3}
                 max={8}
                 step={1}
-                size="compact"
+                size={pickerSize}
                 defaultValue={defaultFeetInches.feet}
                 initializeOnMount={initHeight}
                 ariaLabel={`${t('auth.heightLabel')} ft`}
@@ -163,7 +165,7 @@ export function BodyMetricsFields({
                 min={0}
                 max={11}
                 step={1}
-                size="compact"
+                size={pickerSize}
                 defaultValue={defaultFeetInches.inches}
                 ariaLabel={`${t('auth.heightLabel')} in`}
                 formatValue={(value) => `${value}"`}
@@ -188,7 +190,7 @@ export function BodyMetricsFields({
               min={30}
               max={300}
               step={0.5}
-              size="compact"
+              size={pickerSize}
               defaultValue={DEFAULT_WEIGHT_KG}
               initializeOnMount={initWeight}
               ariaLabel={t('auth.weightLabel')}
@@ -203,7 +205,7 @@ export function BodyMetricsFields({
               min={66}
               max={660}
               step={1}
-              size="compact"
+              size={pickerSize}
               defaultValue={DEFAULT_WEIGHT_LB}
               initializeOnMount={initWeight}
               ariaLabel={t('auth.weightLabel')}
@@ -228,7 +230,7 @@ export function BodyMetricsFields({
               min={13}
               max={100}
               step={1}
-              size="compact"
+              size={pickerSize}
               defaultValue={DEFAULT_AGE}
               initializeOnMount={initAge}
               ariaLabel={t('auth.ageLabel')}
