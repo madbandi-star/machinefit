@@ -221,10 +221,14 @@
 .form-row input,
 .form-row textarea,
 .form-row select {
-  padding: 0.6rem 0.75rem;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0.65rem 0.75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  font-size: 0.9rem;
+  font-size: 0.9375rem;
+  line-height: 1.25;
   background: var(--color-surface);
   color: var(--color-text);
 }

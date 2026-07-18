@@ -114,7 +114,7 @@ export function BodyMetricsFields({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div className="form-stack">
       {unitHeight === 'cm' ? (
         <div className={`body-metrics-stepper${heightInvalid ? ' body-metrics-stepper--invalid' : ''}`}>
           <span className="body-metrics-stepper__label">

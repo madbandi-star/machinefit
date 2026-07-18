@@ -107,7 +107,7 @@ export function SettingsPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
           <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          <div className="form-stack">
             <GenderPicker value={gender} onChange={setGender} />
             <BodyMetricsFields
               unitHeight={unitHeight}
@@ -142,7 +142,7 @@ export function SettingsPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
           <p className="form-section__desc">{t('auth.profileExtrasDesc')}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+          <div className="form-stack">
             <WorkoutGoalSelector value={workoutGoal} onChange={setWorkoutGoal} />
             <HomeGymField value={homeGym} onChange={setHomeGym} />
           </div>

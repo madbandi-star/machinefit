@@ -85,6 +85,9 @@
   --space-2xl: 2.5rem;
 
   --touch-target-min: 48px;
+  --control-height: var(--touch-target-min);
+  --control-height-compact: 2.75rem;
+  --control-height-dense: 2rem;
   --color-muscle-chest: #ff6b6b;
   --color-muscle-back: #4dabf7;
   --color-muscle-legs: #51cf66;

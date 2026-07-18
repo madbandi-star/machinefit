@@ -22,6 +22,7 @@ interface NumericStepperProps {
   id?: string;
   ariaLabel?: string;
   allowManualInput?: boolean;
+  showManualLink?: boolean;
   emptyLabel?: string;
 }
 
@@ -37,6 +38,7 @@ export function NumericStepper({
   id,
   ariaLabel,
   allowManualInput = true,
+  showManualLink = false,
   emptyLabel = '—',
 }: NumericStepperProps) {
   const { t } = useTranslation('common');
@@ -86,7 +88,9 @@ export function NumericStepper({
 
   return (
     <div
-      className={`numeric-stepper numeric-stepper--${size}${disabled ? ' numeric-stepper--disabled' : ''}`}
+      className={`numeric-stepper numeric-stepper--${size}${
+        showManualLink && allowManualInput ? ' numeric-stepper--with-manual-link' : ''
+      }${disabled ? ' numeric-stepper--disabled' : ''}`}
     >
       <div className="numeric-stepper__row" role="group" aria-label={ariaLabel}>
         <button
@@ -109,7 +113,7 @@ export function NumericStepper({
         {manualOpen ? (
           <input
             id={inputId}
-            className="input numeric-stepper__manual-input"
+            className="numeric-stepper__manual-input"
             type="number"
             inputMode={decimalPlaces > 0 ? 'decimal' : 'numeric'}
             min={min}
@@ -156,7 +160,7 @@ export function NumericStepper({
         </button>
       </div>
 
-      {allowManualInput && !manualOpen ? (
+      {showManualLink && allowManualInput && !manualOpen ? (
         <button
           type="button"
           className="numeric-stepper__manual-link"

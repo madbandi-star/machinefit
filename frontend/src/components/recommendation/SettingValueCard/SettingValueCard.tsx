@@ -87,6 +87,7 @@ export function SettingValueCard({
                   size={compact ? 'compact' : 'default'}
                   ariaLabel={`${adjustedLabel} ${label}`}
                   allowManualInput
+                  showManualLink={false}
                 />
               ) : (
                 <input

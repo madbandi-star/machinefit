@@ -62,12 +62,15 @@
 
 .setting-value-card__compare-block {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
   gap: 0.25rem 0.35rem;
 }
 
 .setting-value-card__compare-block--adjust {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
   padding-top: 0.15rem;
   border-top: 1px dashed color-mix(in srgb, var(--glass-border) 80%, transparent);
 }
@@ -89,14 +92,13 @@
 }
 
 .setting-value-card__adjust-input {
-  flex: 1 1 3rem;
-  min-width: 3rem;
-  max-width: 5.5rem;
-  min-height: 2.25rem;
-  padding: 0.3rem 0.45rem;
-  font-size: inherit;
-  font-weight: 800;
+  width: 100%;
+  min-height: var(--control-height-compact);
+  padding: 0.45rem 0.55rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .setting-value-card--compact .setting-value-card__value-row--compare {
@@ -104,8 +106,7 @@
 }
 
 .setting-value-card--compact .setting-value-card__adjust-input {
-  min-height: 2rem;
-  max-width: 4.5rem;
+  min-height: var(--control-height-dense);
   font-size: 0.875rem;
 }
 
@@ -421,10 +422,9 @@
   gap: 0.35rem;
 }
 
-.recommendation-workout-log__set-count .numeric-stepper,
-.recommendation-workout-log__toolbar .numeric-stepper {
-  flex: 1 1 auto;
-  min-width: 0;
+.recommendation-workout-log__set-count .numeric-stepper__row,
+.recommendation-workout-log__toolbar .numeric-stepper__row {
+  width: 100%;
 }
 
 .recommendation-workout-log__weight-list {
@@ -608,14 +608,16 @@
 
 .recommendation-workout-log--compact .recommendation-workout-log__set-toggle--compact {
   flex-shrink: 0;
-  width: 2rem;
-  min-width: 2rem;
-  min-height: 2rem;
+  width: var(--control-height-dense);
+  min-width: var(--control-height-dense);
+  height: var(--control-height-dense);
+  min-height: var(--control-height-dense);
   padding: 0;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   border-bottom-width: 1px;
   justify-content: center;
+  align-items: center;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -640,20 +642,25 @@
   min-width: 0;
 }
 
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
+  flex: 0 1 auto;
+  max-width: 8rem;
+}
+
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
+  font-size: 0.8125rem;
+}
+
 .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row {
+  grid-template-columns: var(--control-height-dense) minmax(0, 1fr) var(--control-height-dense);
+  min-height: var(--control-height-dense);
   gap: 0.2rem;
 }
 
-.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn {
-  min-width: 2rem;
-  min-height: 2rem;
-  font-size: 1rem;
-}
-
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
 .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
 .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input {
-  min-height: 2rem;
-  padding: 0.15rem 0.2rem;
+  min-height: var(--control-height-dense);
 }
 
 .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text {
@@ -669,28 +676,20 @@
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__toolbar {
+  align-items: center;
   gap: 0.25rem;
 }
 
-.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
-  flex: 0 1 auto;
-  max-width: 7.5rem;
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__row {
+  grid-template-columns: var(--control-height-dense) minmax(0, 1fr) var(--control-height-dense);
+  min-height: var(--control-height-dense);
+  gap: 0.2rem;
 }
 
-.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
-  min-width: 1.75rem;
-  min-height: 1.75rem;
-  font-size: 0.9375rem;
-}
-
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn,
 .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
 .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
-  min-height: 1.75rem;
-  padding: 0.1rem 0.15rem;
-}
-
-.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
-  font-size: 0.8125rem;
+  min-height: var(--control-height-dense);
 }
 
 .recommendation-workout-log--compact .recommendation-workout-log__toolbar-total {
