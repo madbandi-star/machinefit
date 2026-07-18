@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { ExperienceLevel } from '@machinefit/shared';
+import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import '@/styles/components.css';
 
 const EXPERIENCE_LEVELS: ExperienceLevel[] = [
@@ -25,25 +26,20 @@ export function ExperienceSelector({
   const { t } = useTranslation();
 
   return (
-    <label>
-      {t('auth.experienceLevel')}
-      <select
-        className={`input${invalid ? ' input--invalid' : ''}`}
-        value={value ?? ''}
-        onChange={(e) => {
-          const next = e.target.value;
-          onChange(next ? (next as ExperienceLevel) : undefined);
-        }}
-      >
-        {allowEmpty && (
-          <option value="">{t('auth.experienceLevelPlaceholder')}</option>
-        )}
-        {EXPERIENCE_LEVELS.map((level) => (
-          <option key={level} value={level}>
-            {t(`auth.experienceLevels.${level}`)}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div className={invalid ? 'form-row form-row--invalid' : 'form-row'}>
+      <span className="form-row__label">{t('auth.experienceLevel')}</span>
+      {allowEmpty && !value ? (
+        <p className="form-section__desc">{t('auth.experienceLevelPlaceholder')}</p>
+      ) : null}
+      <SegmentedControl
+        value={value}
+        options={EXPERIENCE_LEVELS.map((level) => ({
+          value: level,
+          label: t(`auth.experienceLevels.${level}`),
+        }))}
+        onChange={onChange}
+        ariaLabel={t('auth.experienceLevel')}
+      />
+    </div>
   );
 }

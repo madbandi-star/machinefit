@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { SearchableSelect } from '@/components/form/SearchableSelect/SearchableSelect';
 import { ownerApi, machineApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
@@ -46,6 +47,15 @@ export function OwnerDashboardPage() {
       return res.data.data.items;
     },
   });
+
+  const machineSelectOptions = useMemo(
+    () =>
+      (machines ?? []).map((machine) => ({
+        value: machine.code,
+        label: `${machine.code} — ${machine.name.en ?? machine.code}`,
+      })),
+    [machines]
+  );
 
   const { data: gymMachines, isLoading: machinesLoading } = useQuery({
     queryKey: [...QUERY_KEYS.ownerGyms, expandedGym, 'machines'],
@@ -214,18 +224,13 @@ export function OwnerDashboardPage() {
                     <form onSubmit={handleAddMachine} style={{ marginTop: '1rem' }}>
                       <div className="form-row">
                         <label htmlFor={`machine-${gym.id}`}>{t('selectMachine')}</label>
-                        <select
+                        <SearchableSelect
                           id={`machine-${gym.id}`}
                           value={selectedMachine}
-                          onChange={(e) => setSelectedMachine(e.target.value)}
-                        >
-                          <option value="">—</option>
-                          {machines?.map((m) => (
-                            <option key={m.code} value={m.code}>
-                              {m.code} — {m.name.en}
-                            </option>
-                          ))}
-                        </select>
+                          options={machineSelectOptions}
+                          onChange={setSelectedMachine}
+                          placeholder={t('selectMachine')}
+                        />
                       </div>
                       <div className="form-row">
                         <label htmlFor={`qty-${gym.id}`}>{t('quantity')}</label>

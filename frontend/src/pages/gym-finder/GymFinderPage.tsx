@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { GymCard } from '@/components/cards/GymCard/GymCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi, machineApi } from '@/api';
+import { SearchableSelect } from '@/components/form/SearchableSelect/SearchableSelect';
 import { getLocalizedName } from '@/utils/localizedName';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
@@ -69,6 +70,15 @@ export function GymFinderPage() {
     );
   };
 
+  const machineSelectOptions = useMemo(
+    () =>
+      (machines ?? []).map((machine) => ({
+        value: machine.code,
+        label: getLocalizedName(machine.name, i18n.language, ''),
+      })),
+    [machines, i18n.language]
+  );
+
   const handleSearch = () => {
     setNearbyCoords(null);
     const params = new URLSearchParams();
@@ -95,19 +105,14 @@ export function GymFinderPage() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
-          <select
-            className="input"
-            style={{ flex: 1, minWidth: 140 }}
+          <SearchableSelect
             value={machineCode}
-            onChange={(e) => setMachineCode(e.target.value)}
-          >
-            <option value="">{t('allMachines')}</option>
-            {machines?.map((m) => (
-              <option key={m.code} value={m.code}>
-                {getLocalizedName(m.name, i18n.language, '')}
-              </option>
-            ))}
-          </select>
+            options={machineSelectOptions}
+            onChange={setMachineCode}
+            allowEmpty
+            emptyLabel={t('allMachines')}
+            placeholder={t('allMachines')}
+          />
         </div>
         <div className="gym-filters__row">
           <button className="btn btn--primary" onClick={handleSearch}>

@@ -34,6 +34,12 @@
     "confirm": "Confirm",
     "close": "Close"
   },
+  "picker": {
+    "searchPlaceholder": "Search...",
+    "noResults": "No results found",
+    "selectOption": "Select an option",
+    "all": "All"
+  },
   "dismissToday": "Don't show again today",
   "share": {
     "title": "MachineFit",
@@ -185,6 +191,10 @@
     "title": "Growth Analysis",
     "subtitle": "Track strength progress from your workout logs",
     "machineSelect": "Select machine",
+    "machineGroups": {
+      "freeWeight": "Free weight",
+      "machines": "Machines"
+    },
     "periodSelect": "Select period",
     "viewMode": {
       "label": "View",

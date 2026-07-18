@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { WORKOUT_GOALS, type WorkoutGoal } from '@machinefit/shared';
+import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import '@/styles/components.css';
 
 interface WorkoutGoalSelectorProps {
@@ -18,23 +19,20 @@ export function WorkoutGoalSelector({
   const { t } = useTranslation();
 
   return (
-    <label>
-      {t('auth.workoutGoal')}
-      <select
-        className={`input${invalid ? ' input--invalid' : ''}`}
-        value={value ?? ''}
-        onChange={(e) => {
-          const next = e.target.value;
-          onChange(next ? (next as WorkoutGoal) : undefined);
-        }}
-      >
-        {allowEmpty && <option value="">{t('auth.workoutGoalPlaceholder')}</option>}
-        {WORKOUT_GOALS.map((goal) => (
-          <option key={goal} value={goal}>
-            {t(`auth.workoutGoals.${goal}`)}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div className={invalid ? 'form-row form-row--invalid' : 'form-row'}>
+      <span className="form-row__label">{t('auth.workoutGoal')}</span>
+      {allowEmpty && !value ? (
+        <p className="form-section__desc">{t('auth.workoutGoalPlaceholder')}</p>
+      ) : null}
+      <SegmentedControl
+        value={value}
+        options={WORKOUT_GOALS.map((goal) => ({
+          value: goal,
+          label: t(`auth.workoutGoals.${goal}`),
+        }))}
+        onChange={onChange}
+        ariaLabel={t('auth.workoutGoal')}
+      />
+    </div>
   );
 }

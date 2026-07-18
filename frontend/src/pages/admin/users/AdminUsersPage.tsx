@@ -5,7 +5,14 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
+import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import '@/styles/admin.css';
+
+const ROLE_OPTIONS = [
+  { value: 'member' as const, label: 'member' },
+  { value: 'owner' as const, label: 'owner' },
+  { value: 'admin' as const, label: 'admin' },
+];
 
 export function AdminUsersPage() {
   const { t } = useTranslation('admin');
@@ -48,20 +55,19 @@ export function AdminUsersPage() {
               <p className="admin-table__meta">{user.email}</p>
             </div>
             <div className="admin-table__actions">
-              <select
-                value={user.roleCode}
-                onChange={(e) =>
+              <SegmentedControl
+                className="admin-role-segment"
+                size="compact"
+                value={user.roleCode as 'member' | 'owner' | 'admin'}
+                options={ROLE_OPTIONS}
+                onChange={(roleCode) =>
                   updateMutation.mutate({
                     id: user.id,
-                    roleCode: e.target.value as 'member' | 'owner' | 'admin',
+                    roleCode,
                   })
                 }
-                className="admin-select"
-              >
-                <option value="member">member</option>
-                <option value="owner">owner</option>
-                <option value="admin">admin</option>
-              </select>
+                ariaLabel={t('users')}
+              />
               <button
                 className="btn btn--secondary"
                 onClick={() =>

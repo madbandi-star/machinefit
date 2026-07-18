@@ -11,7 +11,9 @@ import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthIns
 import { fetchWorkoutInsights } from '@/api/growth-insights';
 import { useAuthStore } from '@/store/auth.store';
 import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeriodFilter/GrowthPeriodFilter';
+import { BottomSheetPicker } from '@/components/form/BottomSheetPicker/BottomSheetPicker';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import {
   type GrowthPeriod,
   type GrowthPeriodFilter as GrowthPeriodFilterState,
@@ -106,6 +108,17 @@ export function GrowthAnalysisPage() {
     [logs, periodFilter]
   );
   const machineOptions = useMemo(() => getMachineOptions(logs), [logs]);
+  const machinePickerOptions = useMemo(
+    () =>
+      machineOptions.map((option) => ({
+        value: option.optionKey,
+        label: formatMachineOptionLabel(option),
+        group: isFreeWeightMachineCode(option.machineCode)
+          ? t('growthAnalysis.machineGroups.freeWeight')
+          : t('growthAnalysis.machineGroups.machines'),
+      })),
+    [machineOptions, t]
+  );
   const dailyPoints = useMemo(() => aggregateDailySessions(periodLogs), [periodLogs]);
   const isDailyView = viewMode === 'daily';
 
@@ -315,24 +328,14 @@ export function GrowthAnalysisPage() {
 
         {!isDailyView ? (
           <div className="form-row">
-            <label htmlFor="growth-machine">{t('growthAnalysis.machineSelect')}</label>
-            <select
+            <BottomSheetPicker
               id="growth-machine"
-              className="input"
+              label={t('growthAnalysis.machineSelect')}
               value={selectedMachineKey}
-              onChange={(event) => setSelectedMachineKey(event.target.value)}
+              options={machinePickerOptions}
+              onChange={setSelectedMachineKey}
               disabled={machineOptions.length === 0}
-            >
-              {machineOptions.length === 0 ? (
-                <option value="">{t('growthAnalysis.noMachines')}</option>
-              ) : (
-                machineOptions.map((option) => (
-                  <option key={option.optionKey} value={option.optionKey}>
-                    {formatMachineOptionLabel(option)}
-                  </option>
-                ))
-              )}
-            </select>
+            />
           </div>
         ) : null}
 

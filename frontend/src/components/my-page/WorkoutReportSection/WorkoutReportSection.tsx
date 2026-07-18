@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { workoutReportApi, type WorkoutReportPeriod } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
+import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import {
   htmlReportToPlainText,
   sendEmailViaFormSubmit,
@@ -86,20 +87,18 @@ export function WorkoutReportSection() {
       <h3 className="form-section__title">{t('workoutReport.title')}</h3>
       <p className="form-section__desc">{t('workoutReport.desc')}</p>
 
-      <label className="workout-report-section__field">
-        {t('workoutReport.periodLabel')}
-        <select
-          className="input"
+      <div className="workout-report-section__field">
+        <span className="form-row__label">{t('workoutReport.periodLabel')}</span>
+        <SegmentedControl
           value={period}
-          onChange={(e) => setPeriod(e.target.value as WorkoutReportPeriod)}
-        >
-          {PERIODS.map((value) => (
-            <option key={value} value={value}>
-              {t(`workoutReport.periods.${value}`)}
-            </option>
-          ))}
-        </select>
-      </label>
+          options={PERIODS.map((value) => ({
+            value,
+            label: t(`workoutReport.periods.${value}`),
+          }))}
+          onChange={setPeriod}
+          ariaLabel={t('workoutReport.periodLabel')}
+        />
+      </div>
 
       <button
         type="button"

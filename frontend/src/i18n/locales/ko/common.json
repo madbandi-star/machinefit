@@ -34,6 +34,12 @@
     "confirm": "확인",
     "close": "닫기"
   },
+  "picker": {
+    "searchPlaceholder": "검색...",
+    "noResults": "검색 결과가 없습니다",
+    "selectOption": "선택하세요",
+    "all": "전체"
+  },
   "dismissToday": "오늘 다시 안 보기",
   "share": {
     "title": "MachineFit",
@@ -185,6 +191,10 @@
     "title": "성장 분석",
     "subtitle": "머신별 운동 기록으로 근력 향상 추이를 확인하세요",
     "machineSelect": "머신 선택",
+    "machineGroups": {
+      "freeWeight": "프리웨이트",
+      "machines": "머신"
+    },
     "periodSelect": "기간 선택",
     "viewMode": {
       "label": "보기 방식",
