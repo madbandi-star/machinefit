@@ -92,8 +92,9 @@
   "feedback": {
     "title": "How did the settings fit?",
     "desc": "Your feedback helps improve future recommendations.",
-    "good": "Good fit",
-    "bad": "Needs adjustment",
+    "actionsLabel": "Recommendation fit feedback",
+    "good": "Recommendations fit well",
+    "bad": "Settings need adjustment",
     "savedGood": "Thanks for the feedback!",
     "savedBad": "Enter your adjusted values next to each recommendation.",
     "recommendedShort": "Rec.",

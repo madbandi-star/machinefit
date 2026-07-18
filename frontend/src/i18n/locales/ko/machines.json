@@ -92,8 +92,9 @@
   "feedback": {
     "title": "세팅이 잘 맞았나요?",
     "desc": "피드백은 다음 추천 개선에 활용됩니다.",
-    "good": "잘 맞음",
-    "bad": "조정 필요",
+    "actionsLabel": "추천 세팅 피드백",
+    "good": "추천값 잘 맞음",
+    "bad": "셋팅값 조정 필요",
     "savedGood": "피드백 감사합니다!",
     "savedBad": "추천값 옆에서 조정값을 입력해 주세요.",
     "recommendedShort": "추천",
