@@ -81,12 +81,14 @@ export function HistoryRecordCard({
     >
       <header className="history-record-card__header">
         <Link to={resultUrl} className="history-record-card__title-link">
-          <MachineNameWithMuscle
-            muscleGroup={muscleGroup}
-            name={displayName}
-            iconSize={22}
-            labelClassName="history-record-card__machine-name"
-          />
+          <div className="history-record-card__title-row">
+            <MachineNameWithMuscle
+              muscleGroup={muscleGroup}
+              name={displayName}
+              iconSize={20}
+              labelClassName="history-record-card__machine-name"
+            />
+          </div>
           <div className="history-record-card__meta">
             <span className="history-record-card__time">
               {formatHistoryTime(card.viewedAt, i18n.language)}

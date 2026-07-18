@@ -489,6 +489,8 @@ export function WorkoutLogPanel({
     );
   }
 
+  const controlSize = compact || isHistory ? 'compact' : 'default';
+
   const setCountControl = (
     <NumericStepper
       id={setCountInputId}
@@ -500,7 +502,7 @@ export function WorkoutLogPanel({
       min={MIN_SET_COUNT}
       max={MAX_SET_COUNT}
       step={1}
-      size={compact ? 'compact' : 'default'}
+      size={controlSize}
       disabled={isActionPending}
       ariaLabel={t('machines:workoutLog.setCount')}
       allowManualInput={false}
@@ -551,7 +553,7 @@ export function WorkoutLogPanel({
               id={`${idPrefix}-weight-${index}`}
               value={weight}
               step={weightStepKg}
-              size={compact ? 'compact' : 'default'}
+              size={controlSize}
               disabled={isActionPending}
               ariaLabel={t('machines:workoutLog.setLabel', { number: index + 1 })}
               suggestedWeightKg={suggestedWeightKg}
@@ -560,7 +562,7 @@ export function WorkoutLogPanel({
               onCopyPrevious={() => handleCopyPreviousWeight(index)}
               onApplyToAll={() => handleApplyWeightToAll(index)}
               showApplyToAll={setCount > 1}
-              showQuickActions={!compact}
+              showQuickActions={!compact && !isHistory}
               onChange={(next) => handleWeightChange(index, next)}
             />
             {isHistory ? (

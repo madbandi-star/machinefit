@@ -83,15 +83,17 @@ export function SettingValueCard({
                 {labelIconNode}
                 {recommendedLabel}
               </span>
-              <span className="setting-value-card__value" aria-label={`${recommendedLabel} ${value}`}>
-                {value}
-              </span>
-              {unit ? <span className="setting-value-card__unit">{unit}</span> : null}
+              <div className="setting-value-card__compare-value-line">
+                <span className="setting-value-card__value" aria-label={`${recommendedLabel} ${value}`}>
+                  {value}
+                </span>
+                {unit ? <span className="setting-value-card__unit">{unit}</span> : null}
+              </div>
             </div>
             <div className="setting-value-card__compare-block setting-value-card__compare-block--adjust">
               <span className="setting-value-card__compare-label">{adjustedLabel}</span>
               {adjustmentReadOnly ? (
-                <>
+                <div className="setting-value-card__compare-value-line">
                   <span
                     className="setting-value-card__value"
                     aria-label={`${adjustedLabel} ${adjustedValue || value}`}
@@ -99,7 +101,7 @@ export function SettingValueCard({
                     {adjustedValue || value}
                   </span>
                   {unit ? <span className="setting-value-card__unit">{unit}</span> : null}
-                </>
+                </div>
               ) : adjustedInputType === 'number' ? (
                 <NumericStepper
                   value={
