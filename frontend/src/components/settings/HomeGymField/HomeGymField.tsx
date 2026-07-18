@@ -16,9 +16,15 @@ interface HomeGymFieldProps {
   value: HomeGymValue;
   onChange: (value: HomeGymValue) => void;
   invalid?: boolean;
+  showDesc?: boolean;
 }
 
-export function HomeGymField({ value, onChange, invalid = false }: HomeGymFieldProps) {
+export function HomeGymField({
+  value,
+  onChange,
+  invalid = false,
+  showDesc = true,
+}: HomeGymFieldProps) {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState(value.homeGymName ?? '');
   const [open, setOpen] = useState(false);
@@ -68,7 +74,9 @@ export function HomeGymField({ value, onChange, invalid = false }: HomeGymFieldP
       <label className="home-gym-field__label" htmlFor="home-gym-input">
         {t('auth.homeGym')}
       </label>
-      <p className="form-section__desc home-gym-field__desc">{t('auth.homeGymDesc')}</p>
+      {showDesc ? (
+        <p className="form-section__desc home-gym-field__desc">{t('auth.homeGymDesc')}</p>
+      ) : null}
       <div className="home-gym-field__input-wrap">
         <input
           id="home-gym-input"

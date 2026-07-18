@@ -231,7 +231,6 @@ export function RegisterPage() {
 
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
-          <p className="form-section__desc">{t('auth.profileExtrasDesc')}</p>
           <WorkoutGoalSelector
             value={workoutGoal}
             onChange={(value) => {
@@ -243,6 +242,7 @@ export function RegisterPage() {
             value={homeGym}
             onChange={setHomeGym}
             invalid={hasError('homeGym')}
+            showDesc={false}
           />
         </section>
 
@@ -250,8 +250,8 @@ export function RegisterPage() {
           {mutation.isPending ? '...' : t('nav.register')}
         </button>
       </form>
-      <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem' }}>
-        {t('nav.login')}? <Link to={ROUTES.LOGIN}>{t('nav.login')}</Link>
+      <p className="auth-page__footer">
+        <Link to={ROUTES.LOGIN}>{t('nav.login')}</Link>
       </p>
       <AlertDialog
         open={errorDialog.open}
