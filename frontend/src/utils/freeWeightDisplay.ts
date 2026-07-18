@@ -15,3 +15,12 @@ export function getHistoryMuscleGroup(
   }
   return machineMuscleGroup;
 }
+
+export function formatFreeWeightRecordLabel(
+  machineName: string,
+  targetMuscleGroup: string | undefined,
+  translateMuscleGroup: (group: string) => string
+): string {
+  if (!targetMuscleGroup) return machineName;
+  return `${machineName} · ${translateMuscleGroup(targetMuscleGroup)}`;
+}

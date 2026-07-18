@@ -76,7 +76,8 @@
     "diaryPlaceholder": "Today's workout note (max 100 bytes)",
     "diaryBytes": "{{used}}/100 bytes",
     "diaryTagsLabel": "Quick tags",
-    "setCompletedHint": "Tap set label when done"
+    "setCompletedHint": "Tap set label when done",
+    "multiMuscleHint": "Log each target muscle separately on the same day (e.g. dumbbell chest, dumbbell back)."
   },
   "restTimer": {
     "label": "Rest after set {{setNumber}}",

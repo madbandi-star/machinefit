@@ -76,7 +76,8 @@
     "diaryPlaceholder": "오늘 운동 메모 (100byte 이내)",
     "diaryBytes": "{{used}}/100 byte",
     "diaryTagsLabel": "추천 태그",
-    "setCompletedHint": "세트 완료 시 라벨을 탭하세요"
+    "setCompletedHint": "세트 완료 시 라벨을 탭하세요",
+    "multiMuscleHint": "같은 날 종목별·부위별로 각각 기록할 수 있습니다. (예: 덤벨 가슴, 덤벨 등)"
   },
   "restTimer": {
     "label": "{{setNumber}}세트 후 휴식",

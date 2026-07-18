@@ -15,6 +15,7 @@ import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/ut
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
+import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -23,7 +24,8 @@ const MAX_SET_COUNT = 20;
 
 interface WorkoutLogPanelProps {
   machineCode: string;
-  recommendationId: string;
+  machineName?: string;
+  recommendationId?: string;
   suggestedWeightKg?: number;
   isAuthenticated: boolean;
   variant?: 'default' | 'compact';
@@ -66,6 +68,7 @@ function resizeCompleted(current: boolean[], nextCount: number): boolean[] {
 
 export function WorkoutLogPanel({
   machineCode,
+  machineName,
   recommendationId,
   suggestedWeightKg,
   isAuthenticated,
@@ -100,6 +103,25 @@ export function WorkoutLogPanel({
   const [initialized, setInitialized] = useState(false);
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
+
+  const { data: dayLogs } = useQuery({
+    queryKey: ['workout-logs', machineCode, logDate, 'by-muscle'],
+    queryFn: async () => {
+      const res = await workoutLogApi.list({ machineCode, logDate });
+      return res.data.data;
+    },
+    enabled: isAuthenticated && isFreeWeight,
+  });
+
+  const loggedMuscleSet = useMemo(() => {
+    const muscles = new Set<TargetMuscleGroup>();
+    for (const log of dayLogs ?? []) {
+      if (log.targetMuscleGroup) {
+        muscles.add(log.targetMuscleGroup);
+      }
+    }
+    return muscles;
+  }, [dayLogs]);
 
   const { data: existingLogs, isLoading } = useQuery({
     queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, activeTargetMuscle ?? undefined),
@@ -145,6 +167,7 @@ export function WorkoutLogPanel({
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
     await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+    await queryClient.invalidateQueries({ queryKey: ['workout-logs', machineCode, logDate] });
   };
 
   useEffect(() => {
@@ -180,12 +203,12 @@ export function WorkoutLogPanel({
     mutationFn: () =>
       workoutLogApi.upsert({
         machineCode,
-        recommendationId,
         logDate,
         setCount,
         setWeightsKg: weights,
         setCompleted,
         diary: diary.trim() || undefined,
+        ...(recommendationId ? { recommendationId } : {}),
         ...(isFreeWeight && activeTargetMuscle
           ? { targetMuscleGroup: activeTargetMuscle }
           : {}),
@@ -219,26 +242,71 @@ export function WorkoutLogPanel({
 
   const isActionPending = saveMutation.isPending || removeMutation.isPending;
 
-  const targetMusclePicker =
-    isFreeWeight && !targetMuscleGroup ? (
-      <div className="recommendation-workout-log__muscle-picker" role="group" aria-label={t('machines:targetMuscleLabel')}>
-        <p className="recommendation-workout-log__field-label">{t('machines:targetMuscleLabel')}</p>
-        <div className="filter-chips">
-          {MUSCLE_GROUPS.map((group) => (
+  const translateMuscleGroup = (group: string) =>
+    t(`machines:muscleGroups.${group}`, { defaultValue: group });
+
+  const targetMusclePicker = isFreeWeight ? (
+    <div
+      className="recommendation-workout-log__muscle-picker"
+      role="group"
+      aria-label={t('machines:targetMuscleLabel')}
+    >
+      <p className="recommendation-workout-log__field-label">{t('machines:targetMuscleLabel')}</p>
+      <p className="recommendation-workout-log__muscle-hint">{t('machines:workoutLog.multiMuscleHint')}</p>
+      <div className="filter-chips recommendation-workout-log__muscle-chips">
+        {MUSCLE_GROUPS.map((group) => {
+          const isActive = activeTargetMuscle === group;
+          const isLogged = loggedMuscleSet.has(group);
+          return (
             <button
               key={group}
               type="button"
-              className={`filter-chip${activeTargetMuscle === group ? ' filter-chip--active' : ''}`}
+              className={`filter-chip${isActive ? ' filter-chip--active' : ''}${
+                isLogged ? ' filter-chip--logged' : ''
+              }`}
               onClick={() => setSelectedMuscle(group)}
               disabled={isActionPending}
+              aria-pressed={isActive}
             >
               <MuscleGroupIcon group={group} size={22} className="filter-chip__icon" />
-              <span>{t(`machines:muscleGroups.${group}`)}</span>
+              <span>{translateMuscleGroup(group)}</span>
+              {isLogged ? (
+                <span className="filter-chip__logged-mark" aria-hidden>
+                  ✓
+                </span>
+              ) : null}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    ) : null;
+      {dayLogs && dayLogs.length > 0 && machineName ? (
+        <ul className="recommendation-workout-log__day-records">
+          {dayLogs.map((log) =>
+            log.targetMuscleGroup ? (
+              <li key={log.targetMuscleGroup}>
+                <button
+                  type="button"
+                  className={`recommendation-workout-log__day-record${
+                    activeTargetMuscle === log.targetMuscleGroup
+                      ? ' recommendation-workout-log__day-record--active'
+                      : ''
+                  }`}
+                  onClick={() => setSelectedMuscle(log.targetMuscleGroup!)}
+                  disabled={isActionPending}
+                >
+                  {formatFreeWeightRecordLabel(
+                    machineName,
+                    log.targetMuscleGroup,
+                    translateMuscleGroup
+                  )}
+                </button>
+              </li>
+            ) : null
+          )}
+        </ul>
+      ) : null}
+    </div>
+  ) : null;
 
   const handleSave = () => {
     if (isFreeWeight && !activeTargetMuscle) {

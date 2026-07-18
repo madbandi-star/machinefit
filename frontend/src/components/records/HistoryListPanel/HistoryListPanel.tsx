@@ -36,7 +36,8 @@ import {
 } from '@/utils/historyLogStatus';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import { isDismissedToday } from '@/utils/dismissToday';
-import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
+import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
@@ -366,7 +367,13 @@ export function HistoryListPanel() {
               const resultUrl = `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', item.machineCode)}?id=${item.recommendationId}`;
               const logDate = getLocalDateKey(item.viewedAt);
               const hasWorkoutLog = historyItemHasWorkoutLog(item, loggedKeys, workoutLogs);
-              const displayName = item.machineName;
+              const displayName = isFreeWeightMachineCode(item.machineCode)
+                ? formatFreeWeightRecordLabel(
+                    item.machineName,
+                    item.targetMuscleGroup,
+                    translateMuscleGroup
+                  )
+                : item.machineName;
               const muscleGroup = getHistoryMuscleGroup(
                 item.machineCode,
                 item.muscleGroup,
@@ -428,6 +435,7 @@ export function HistoryListPanel() {
                   <WorkoutLogPanel
                     key={item.id}
                     machineCode={item.machineCode}
+                    machineName={item.machineName}
                     recommendationId={item.recommendationId}
                     suggestedWeightKg={item.settings.recommendedWeightKg}
                     isAuthenticated={isAuthenticated}

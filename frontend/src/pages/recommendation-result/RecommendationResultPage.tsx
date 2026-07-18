@@ -18,6 +18,8 @@ import { useSettingsStore } from '@/store/settings.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey } from '@/utils/historyDate';
+import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 
@@ -136,7 +138,13 @@ export function RecommendationResultPage() {
     );
   }
 
-  const machineTitle = result.machineName ?? t('recommendation.title');
+  const machineTitle = result.targetMuscleGroup && isFreeWeightMachineCode(result.machineCode)
+    ? formatFreeWeightRecordLabel(
+        result.machineName ?? t('recommendation.title'),
+        result.targetMuscleGroup,
+        (group) => t(`muscleGroups.${group}`, { defaultValue: group })
+      )
+    : (result.machineName ?? t('recommendation.title'));
 
   return (
     <div className="recommendation-result-page">
@@ -166,6 +174,7 @@ export function RecommendationResultPage() {
         <RecommendationTips tips={result.tips} />
         <WorkoutLogPanel
           machineCode={result.machineCode}
+          machineName={result.machineName}
           recommendationId={result.id}
           suggestedWeightKg={result.settings.recommendedWeightKg}
           isAuthenticated={isAuthenticated}
