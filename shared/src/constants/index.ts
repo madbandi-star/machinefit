@@ -6,3 +6,4 @@ export * from './machine-codes.js';
 export * from './growth-insights.js';
 export * from './boxing-weight-classes.js';
 export * from './workout-goals.js';
+export * from './recommendation-settings.js';

@@ -22,7 +22,7 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           disabled={isPending}
           aria-pressed={savedRating === 'good'}
         >
-          <Icon name="thumbUp" size={18} />
+          <Icon name="circleCheck" size={20} />
           {t('feedback.good')}
         </button>
         <button
@@ -32,7 +32,7 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           disabled={isPending}
           aria-pressed={savedRating === 'bad'}
         >
-          <Icon name="thumbDown" size={18} />
+          <Icon name="sliders" size={20} />
           {t('feedback.bad')}
         </button>
       </div>

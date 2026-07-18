@@ -41,6 +41,8 @@ import { isDismissedToday } from '@/utils/dismissToday';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
+import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
+import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
 
@@ -114,6 +116,11 @@ export function HistoryListPanel() {
   const groupedCards = useMemo(
     () => (displayCards.length ? groupRecordCardsByDate(displayCards) : []),
     [displayCards]
+  );
+
+  const { data: comparisonData } = useHistorySettingsComparisonData(
+    allRecordCards,
+    isAuthenticated
   );
 
   const translateMuscleGroup = (group: string) =>
@@ -374,6 +381,15 @@ export function HistoryListPanel() {
                 card.targetMuscleGroup
               );
               const lockTargetMuscle = isFreeWeightMachineCode(card.machineCode);
+              const customSettings = comparisonData?.preferencesByMachine[card.machineCode];
+              const fitRating = card.recommendationId
+                ? comparisonData?.feedbackByRecommendation[card.recommendationId]
+                : null;
+              const showSettingsCompare = shouldShowHistorySettingsCompare(
+                fitRating,
+                card.settings,
+                customSettings
+              );
 
               return (
                 <article
@@ -417,7 +433,13 @@ export function HistoryListPanel() {
                     className="saved-settings-card__detail-link"
                     aria-label={t('machines:detail.viewLastResult')}
                   >
-                    <RecommendationSettingsPanel settings={card.settings} variant="compact" />
+                    <RecommendationSettingsPanel
+                      settings={card.settings}
+                      variant="compact"
+                      showAdjustment={showSettingsCompare}
+                      adjustmentReadOnly
+                      customSettings={customSettings}
+                    />
                   </Link>
                   <WorkoutLogPanel
                     key={card.cardId}
@@ -427,6 +449,7 @@ export function HistoryListPanel() {
                     suggestedWeightKg={card.settings.recommendedWeightKg}
                     isAuthenticated={isAuthenticated}
                     variant="compact"
+                    diaryDefaultOpen
                     logDate={card.logDate}
                     idPrefix={`history-workout-${card.cardId}`}
                     targetMuscleGroup={card.targetMuscleGroup as TargetMuscleGroup | undefined}

@@ -100,9 +100,10 @@ export function useMachineFitFeedback({
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['machine-preferences', machineCode] });
+      await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
       showToast(t('machines:feedback.preferencesSaved'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: () => showToast(t('machines:feedback.preferencesSaveFailed'), 'error'),
   });
 
   const handleRating = (fitRating: FitRating) => {
@@ -135,7 +136,7 @@ export function useMachineFitFeedback({
 
     setCustomSettings((prev) => ({
       ...prev,
-      [key]: raw.trim() || undefined,
+      [key]: raw.trim(),
     }));
   };
 

@@ -55,7 +55,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       seatPosition: 5,
       backPadPosition: 3,
       handlePosition: 2,
-      romSetting: 'full',
+      romSetting: '최대',
       weightKg: 40,
       tips: {
         en: ['Keep chest against pad', 'Pull elbows back in line with shoulders'],
@@ -80,7 +80,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       seatPosition: 4,
       backPadPosition: 3,
       handlePosition: 2,
-      romSetting: 'full',
+      romSetting: '최대',
       weightKg: 50,
       tips: {
         en: ['Retract shoulder blades'],
@@ -105,7 +105,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       seatPosition: 5,
       backPadPosition: 4,
       footPosition: 3,
-      romSetting: 'full',
+      romSetting: '최대',
       weightKg: 45,
       tips: {
         en: ['Align knee with machine pivot'],
@@ -127,7 +127,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       weightKg: 12,
       tips: {
         en: ['Choose a weight you can control for your target reps'],
@@ -149,7 +149,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       weightKg: 40,
       tips: {
         en: ['Use collars on both sides', 'Brace core before each set'],
@@ -215,7 +215,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       weightKg: 16,
       tips: {
         en: ['Grip the handle firmly', 'Use hip drive on swings'],
@@ -237,7 +237,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Start from a dead hang', 'Pull chest toward the bar'],
         ko: ['데드행에서 시작', '가슴을 바 쪽으로 당기기'],
@@ -258,7 +258,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Use supinated grip', 'Keep elbows close to body'],
         ko: ['손바닥 자신 쪽 그립', '팔꿈치를 몸 가까이'],
@@ -279,7 +279,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Keep shoulders down on descent', 'Lean slightly forward for chest focus'],
         ko: ['하강 시 어깨 내리기', '가슴 자극을 위해 약간 숙이기'],
@@ -300,7 +300,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Keep body in a straight line', 'Lower chest near the floor'],
         ko: ['몸을 일자로 유지', '가슴을 바닥 가까이'],
@@ -321,7 +321,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Keep knees in line with toes', 'Sit hips back and down'],
         ko: ['무릎을 발끝과 같은 방향', '엉덩이를 뒤로 빼며 앉기'],
@@ -342,7 +342,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Keep front knee over ankle', 'Torso upright'],
         ko: ['앞무릎을 발목 위에', '상체 세우기'],
@@ -363,7 +363,7 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       experienceLevel: 'intermediate',
       heightMinCm: 160,
       heightMaxCm: 190,
-      romSetting: 'full',
+      romSetting: '최대',
       tips: {
         en: ['Rear foot on bench for balance', 'Lower until front thigh is parallel'],
         ko: ['뒷발을 벤치에 올려 균형', '앞 허벅지가 수평까지'],

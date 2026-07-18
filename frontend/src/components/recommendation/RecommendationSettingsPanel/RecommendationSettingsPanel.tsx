@@ -4,6 +4,7 @@ import type { RecommendationSettings, WeightRecommendationBasis } from '@machine
 import { roundRecommendWeightKg } from '@machinefit/shared';
 import { SettingValueCard } from '@/components/recommendation/SettingValueCard/SettingValueCard';
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
+import { ROM_SETTING_PRESETS } from '@/constants/rom-setting-presets';
 import { useUserUnits } from '@/hooks/useUserUnits';
 import '@/styles/recommendation.css';
 
@@ -38,6 +39,7 @@ interface RecommendationSettingsPanelProps {
   weightBasis?: WeightRecommendationBasis;
   variant?: 'hero' | 'compact' | 'result';
   showAdjustment?: boolean;
+  adjustmentReadOnly?: boolean;
   customSettings?: Partial<RecommendationSettings>;
   onCustomChange?: (
     key: keyof RecommendationSettings,
@@ -63,6 +65,94 @@ function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
   );
 }
 
+const COMPARE_LABEL_KEYS: Partial<
+  Record<keyof RecommendationSettings, { recommended: string; adjusted: string }>
+> = {
+  recommendedWeightKg: {
+    recommended: 'feedback.compareRecommendedWeight',
+    adjusted: 'feedback.compareAdjustedWeight',
+  },
+  seatPosition: {
+    recommended: 'feedback.compareRecommendedSeat',
+    adjusted: 'feedback.compareAdjustedSeat',
+  },
+  backPadPosition: {
+    recommended: 'feedback.compareRecommendedBackPad',
+    adjusted: 'feedback.compareAdjustedBackPad',
+  },
+  handlePosition: {
+    recommended: 'feedback.compareRecommendedHandle',
+    adjusted: 'feedback.compareAdjustedHandle',
+  },
+  romSetting: {
+    recommended: 'feedback.compareRecommendedRom',
+    adjusted: 'feedback.compareAdjustedRom',
+  },
+};
+
+function formatAdjustedDisplayValue(
+  item: SettingDisplayItem,
+  customSettings: Partial<RecommendationSettings> | undefined,
+  formatWeight: (kg: number) => string
+): string {
+  const raw = customSettings?.[item.key];
+  if (raw == null) return String(item.rawValue);
+
+  if (item.isWeight && typeof raw === 'number') {
+    const formatted = formatWeight(roundRecommendWeightKg(raw));
+    return formatted.split(' ')[0] ?? formatted;
+  }
+
+  return String(raw);
+}
+
+function resolveAdjustedValue(
+  item: SettingDisplayItem,
+  options: {
+    showAdjustment?: boolean;
+    adjustmentReadOnly?: boolean;
+    customSettings?: Partial<RecommendationSettings>;
+    formatWeight: (kg: number) => string;
+  }
+): string {
+  if (options.customSettings && item.key in options.customSettings) {
+    const raw = options.customSettings[item.key];
+    if (raw == null || raw === '') return '';
+
+    if (options.showAdjustment && options.adjustmentReadOnly && item.isWeight && typeof raw === 'number') {
+      return formatAdjustedDisplayValue(item, options.customSettings, options.formatWeight);
+    }
+
+    return String(raw);
+  }
+
+  return String(item.rawValue);
+}
+
+function getCompareLabels(
+  item: SettingDisplayItem,
+  options: {
+    showAdjustment?: boolean;
+    adjustmentReadOnly?: boolean;
+    t: (key: string) => string;
+    recommendedLabel: string;
+    adjustedLabel: string;
+  }
+) {
+  const compareKeys = COMPARE_LABEL_KEYS[item.key];
+  if (options.showAdjustment && options.adjustmentReadOnly && compareKeys) {
+    return {
+      recommendedLabel: options.t(`machines:${compareKeys.recommended}`),
+      adjustedLabel: options.t(`machines:${compareKeys.adjusted}`),
+    };
+  }
+
+  return {
+    recommendedLabel: options.recommendedLabel,
+    adjustedLabel: options.adjustedLabel,
+  };
+}
+
 function renderSettingCard(
   item: SettingDisplayItem,
   options: {
@@ -70,14 +160,18 @@ function renderSettingCard(
     compact?: boolean;
     labelExtra?: ReactNode;
     showAdjustment?: boolean;
+    adjustmentReadOnly?: boolean;
     customSettings?: Partial<RecommendationSettings>;
     onCustomChange?: RecommendationSettingsPanelProps['onCustomChange'];
     recommendedLabel: string;
     adjustedLabel: string;
+    formatWeight: (kg: number) => string;
+    t: (key: string) => string;
   }
 ) {
-  const adjusted = options.customSettings?.[item.key] ?? item.rawValue;
-  const adjustedValue = adjusted != null ? String(adjusted) : '';
+  const adjustedValue = resolveAdjustedValue(item, options);
+
+  const { recommendedLabel, adjustedLabel } = getCompareLabels(item, options);
 
   return (
     <SettingValueCard
@@ -88,11 +182,23 @@ function renderSettingCard(
       compact={options.compact}
       labelExtra={options.labelExtra}
       showAdjustment={options.showAdjustment}
-      recommendedLabel={options.recommendedLabel}
-      adjustedLabel={options.adjustedLabel}
+      adjustmentReadOnly={options.adjustmentReadOnly}
+      recommendedLabel={recommendedLabel}
+      adjustedLabel={adjustedLabel}
       adjustedValue={adjustedValue}
       adjustedPlaceholder={String(item.rawValue)}
       adjustedInputType={item.inputType}
+      quickPickOptions={
+        options.showAdjustment && !options.adjustmentReadOnly && item.key === 'romSetting'
+          ? ROM_SETTING_PRESETS.map((preset) => ({
+              label: preset.label,
+              value: preset.value,
+            }))
+          : undefined
+      }
+      quickPicksAriaLabel={
+        item.key === 'romSetting' ? options.t('machines:feedback.romPresetsLabel') : undefined
+      }
       onAdjustedChange={(raw) =>
         options.onCustomChange?.(item.key, raw, item.inputType)
       }
@@ -105,6 +211,7 @@ export function RecommendationSettingsPanel({
   weightBasis,
   variant = 'hero',
   showAdjustment = false,
+  adjustmentReadOnly = false,
   customSettings,
   onCustomChange,
   onSavePreferences,
@@ -118,6 +225,8 @@ export function RecommendationSettingsPanel({
   const items: SettingDisplayItem[] = [];
 
   for (const field of SETTING_FIELDS) {
+    if (showAdjustment && adjustmentReadOnly && !COMPARE_LABEL_KEYS[field.key]) continue;
+
     const raw = settings[field.key];
     if (raw == null) continue;
 
@@ -152,10 +261,13 @@ export function RecommendationSettingsPanel({
 
   const cardOptions = {
     showAdjustment,
+    adjustmentReadOnly,
     customSettings,
     onCustomChange,
     recommendedLabel: t('machines:feedback.recommendedShort'),
     adjustedLabel: t('machines:feedback.adjustedShort'),
+    formatWeight,
+    t,
   };
 
   const saveFooter =
@@ -167,7 +279,7 @@ export function RecommendationSettingsPanel({
           onClick={onSavePreferences}
           disabled={isPreferencesPending}
         >
-          {isPreferencesPending ? t('common:actions.submit') : t('machines:feedback.savePreferences')}
+          {isPreferencesPending ? t('machines:feedback.preferencesSaving') : t('machines:feedback.savePreferences')}
         </button>
       </div>
     ) : null;
@@ -265,7 +377,7 @@ export function RecommendationSettingsPanel({
       <div
         className={`recommendation-settings-panel${compact ? ' recommendation-settings-panel--compact' : ''}${
           showAdjustment ? ' recommendation-settings-panel--adjusting' : ''
-        }`}
+        }${showAdjustment && adjustmentReadOnly ? ' recommendation-settings-panel--compare' : ''}`}
         role="list"
         aria-label={t('machines:recommendation.title')}
       >

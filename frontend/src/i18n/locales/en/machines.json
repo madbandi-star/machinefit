@@ -101,7 +101,21 @@
     "adjustedShort": "Adj.",
     "customTitle": "Your preferred settings",
     "customDesc": "Save custom values for this machine.",
-    "savePreferences": "Save preferences"
+    "savePreferences": "Save preferences",
+    "preferencesSaving": "Saving…",
+    "preferencesSaved": "Preferred settings saved",
+    "preferencesSaveFailed": "Could not save preferences. Please try again.",
+    "compareRecommendedWeight": "Rec. weight",
+    "compareAdjustedWeight": "Adj. weight",
+    "compareRecommendedSeat": "Rec. seat",
+    "compareAdjustedSeat": "Adj. seat",
+    "compareRecommendedBackPad": "Rec. back pad",
+    "compareAdjustedBackPad": "Adj. back pad",
+    "compareRecommendedHandle": "Rec. handle",
+    "compareAdjustedHandle": "Adj. handle",
+    "compareRecommendedRom": "Rec. ROM",
+    "compareAdjustedRom": "Adj. ROM",
+    "romPresetsLabel": "ROM presets"
   },
   "history": {
     "subtitle": "Your recent recommendation history",

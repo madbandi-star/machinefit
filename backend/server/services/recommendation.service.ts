@@ -2,6 +2,7 @@ import type { RecommendationInput } from '@machinefit/shared';
 import {
   applyPersonalizationToWeight,
   buildPersonalizedTips,
+  DEFAULT_ROM_SETTING,
   mergeSettingsWithPreferences,
 } from '@machinefit/shared';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
@@ -81,7 +82,7 @@ export const recommendationService = {
       backPadPosition: match?.backPadPosition,
       footPosition: match?.footPosition,
       handlePosition: match?.handlePosition,
-      romSetting: match?.romSetting,
+      romSetting: match?.romSetting ?? DEFAULT_ROM_SETTING,
       recommendedWeightKg: personalizedWeight,
     };
 

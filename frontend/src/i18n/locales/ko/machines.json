@@ -101,7 +101,21 @@
     "adjustedShort": "조정",
     "customTitle": "선호 세팅값",
     "customDesc": "이 기구에 대한 맞춤 값을 저장합니다.",
-    "savePreferences": "선호값 저장"
+    "savePreferences": "선호값 저장",
+    "preferencesSaving": "저장 중…",
+    "preferencesSaved": "선호 세팅값 저장 완료",
+    "preferencesSaveFailed": "선호값 저장에 실패했습니다. 다시 시도해 주세요.",
+    "compareRecommendedWeight": "추천중량",
+    "compareAdjustedWeight": "조정중량",
+    "compareRecommendedSeat": "추천 시트",
+    "compareAdjustedSeat": "조정 시트",
+    "compareRecommendedBackPad": "추천 백패드",
+    "compareAdjustedBackPad": "조정 백패드",
+    "compareRecommendedHandle": "추천 핸들",
+    "compareAdjustedHandle": "조정 핸들",
+    "compareRecommendedRom": "추천 가동",
+    "compareAdjustedRom": "조정 가동",
+    "romPresetsLabel": "가동 범위 추천"
   },
   "history": {
     "subtitle": "최근 추천 기록",

@@ -101,6 +101,32 @@
   text-align: center;
 }
 
+.setting-value-card__quick-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.setting-value-card__quick-pick {
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  color: var(--color-text);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.setting-value-card__quick-pick:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
+}
+
+.setting-value-card__compare-block--adjust .setting-value-card__quick-picks {
+  margin-top: 0.15rem;
+}
+
 .setting-value-card--compact .setting-value-card__value-row--compare {
   gap: 0.3rem;
 }
