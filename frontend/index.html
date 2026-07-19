@@ -19,11 +19,16 @@
             navigator.userAgentData && navigator.userAgentData.platform
               ? navigator.userAgentData.platform
               : '';
-          var platform = /Android/i.test(ua) || /Android/i.test(uaPlatform)
-            ? 'android'
-            : (/iPhone|iPad|iPod/i.test(ua) ||
-                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
-              ? 'ios'
+          var isIos =
+            /iPhone|iPad|iPod/i.test(ua) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+            /iOS|iPhone|iPad/i.test(uaPlatform);
+          var platform = isIos
+            ? 'ios'
+            : /Android/i.test(ua) ||
+                /Android/i.test(uaPlatform) ||
+                (navigator.userAgentData && navigator.userAgentData.mobile)
+              ? 'android'
               : 'other';
           document.documentElement.setAttribute('data-platform', platform);
         } catch (e) {}

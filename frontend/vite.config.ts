@@ -27,9 +27,9 @@ export default defineConfig({
         theme_color: '#111827',
         background_color: '#111827',
         display: 'standalone',
-        start_url: '/machinefit/',
+        start_url: '/machinefit/?v=3',
         scope: '/machinefit/',
-        id: '/machinefit/',
+        id: '/machinefit/?v=3',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

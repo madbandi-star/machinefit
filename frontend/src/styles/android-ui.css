@@ -1,141 +1,133 @@
 /**
- * Android Chrome visual overrides only.
- * Scoped to html[data-platform="android"] so iOS Safari/Chrome keep existing UI.
- * Do not put business logic here — CSS only.
- * v2 — stronger deltas so Android differences are visible after cache refresh.
+ * Non-iOS readability fixes for recommendation / workout steppers.
+ * Improved sizes apply by default; html[data-platform="ios"] restores the exact prior UI.
+ * v3 — do not rely on Android UA (desktop-site mode often drops "Android").
  */
 
-/* Phase 1 — result machine settings */
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card {
+/* ========== Improved defaults (Android / other) ========== */
+
+.recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+  gap: 0.5rem !important;
+}
+
+.recommendation-settings-panel--result .setting-value-card {
   padding: 0.65rem 0.7rem !important;
   gap: 0.35rem !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__label {
+.recommendation-settings-panel--result .setting-value-card__label {
   font-size: 0.6875rem !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__value {
+.recommendation-settings-panel--result .setting-value-card__value {
   font-size: 1.375rem !important;
   line-height: 1.2 !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__unit {
+.recommendation-settings-panel--result .setting-value-card__unit {
   font-size: 0.8125rem !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__value-row--compare {
+.recommendation-settings-panel--result .setting-value-card__value-row--compare {
   gap: 0.35rem 0.5rem !important;
   flex-wrap: nowrap !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__compare-block {
+.recommendation-settings-panel--result .setting-value-card__compare-block {
   flex: 1 1 5.5rem !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__compare-block--adjust {
+.recommendation-settings-panel--result .setting-value-card__compare-block--adjust {
   flex: 1.35 1 7.5rem !important;
   gap: 0.35rem !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__compare-label {
+.recommendation-settings-panel--result .setting-value-card__compare-label {
   font-size: 0.6875rem !important;
   min-width: 2.25rem !important;
 }
 
-html[data-platform='android']
-  .recommendation-settings-panel--result
+.recommendation-settings-panel--result
   .setting-value-card__compare-block:not(.setting-value-card__compare-block--adjust)
   .setting-value-card__value {
   font-size: 1.125rem !important;
 }
 
-html[data-platform='android'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-  gap: 0.5rem !important;
+.recommendation-settings-panel--result .setting-value-card__adjust-input {
+  font-size: 1rem !important;
 }
 
-/* Phase 1 — workout log compact − / number / + (match compact control height) */
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__row {
-  --android-stepper-size: 2.75rem;
-  grid-template-columns: var(--android-stepper-size) minmax(0, 1fr) var(--android-stepper-size) !important;
-  min-height: var(--android-stepper-size) !important;
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__row {
+  --mf-stepper-size: 2.75rem !important;
+  grid-template-columns: var(--mf-stepper-size) minmax(0, 1fr) var(--mf-stepper-size) !important;
+  min-height: var(--mf-stepper-size) !important;
   gap: 0.3rem !important;
 }
 
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
   min-height: 2.75rem !important;
 }
 
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
   font-size: 1rem !important;
   line-height: 1.2 !important;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums !important;
 }
 
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__unit {
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__unit {
   font-size: 0.75rem !important;
 }
 
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
   max-width: 10.5rem !important;
 }
 
-html[data-platform='android'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
+.recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
+.recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
   font-size: 1.35rem !important;
 }
 
-/* Phase 1 — focusable inputs ≥16px (Android only) */
-html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card__adjust-input,
-html[data-platform='android'] .setting-value-card__adjust-input,
-html[data-platform='android'] .recommendation-workout-log__diary-input,
-html[data-platform='android'] .recommendation-workout-log--compact .recommendation-workout-log__diary-input,
-html[data-platform='android'] .numeric-stepper__manual-input,
-html[data-platform='android'] .numeric-stepper--compact .numeric-stepper__manual-input {
+.recommendation-workout-log__diary-input,
+.recommendation-workout-log--compact .recommendation-workout-log__diary-input,
+.numeric-stepper__manual-input,
+.numeric-stepper--compact .numeric-stepper__manual-input {
   font-size: 1rem !important;
 }
 
-html[data-platform='android'] {
-  text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-}
-
-/* Phase 2 — history performance mini stepper */
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__row {
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__row {
   grid-template-columns: 2rem 1.75rem 2rem !important;
   gap: 0.3rem !important;
   min-height: 2.25rem !important;
 }
 
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn,
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value,
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__manual-input {
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn,
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value,
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__manual-input {
   min-height: 2.25rem !important;
   max-height: 2.25rem !important;
 }
 
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn {
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn {
   font-size: 1rem !important;
 }
 
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value {
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value {
   min-width: 1.75rem !important;
   width: 1.75rem !important;
 }
 
-html[data-platform='android'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value-text {
+.history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value-text {
   font-size: 0.875rem !important;
 }
 
-html[data-platform='android']
-  .history-page-premium
+.history-page-premium
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__row {
@@ -144,18 +136,15 @@ html[data-platform='android']
   min-height: 2.25rem !important;
 }
 
-html[data-platform='android']
-  .history-page-premium
+.history-page-premium
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__btn,
-html[data-platform='android']
-  .history-page-premium
+.history-page-premium
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__value,
-html[data-platform='android']
-  .history-page-premium
+.history-page-premium
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__manual-input {
@@ -163,8 +152,7 @@ html[data-platform='android']
   max-height: 2.25rem !important;
 }
 
-html[data-platform='android']
-  .history-page-premium
+.history-page-premium
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__btn {
@@ -173,8 +161,7 @@ html[data-platform='android']
   width: 1.75rem !important;
 }
 
-html[data-platform='android']
-  .history-page-premium
+.history-page-premium
   .history-workout-log__performance-title-row
   .numeric-stepper--compact
   .numeric-stepper__value {
@@ -182,43 +169,203 @@ html[data-platform='android']
   width: 1.75rem !important;
 }
 
-/* Phase 2 — kill sticky :hover after tap on Android touch */
+.weight-basis-dialog {
+  max-height: min(80dvh, 640px) !important;
+}
+
 @media (hover: none) {
-  html[data-platform='android'] .setting-value-card__quick-pick:hover:not(:disabled) {
+  .setting-value-card__quick-pick:hover:not(:disabled) {
     border-color: var(--glass-border) !important;
   }
 
-  html[data-platform='android'] .recommendation-workout-log__diary-tag:hover:not(:disabled) {
+  .recommendation-workout-log__diary-tag:hover:not(:disabled) {
     border-color: var(--glass-border) !important;
   }
 
-  html[data-platform='android'] .history-record-card .recommendation-workout-log__diary-tag:hover:not(:disabled) {
+  .history-record-card .recommendation-workout-log__diary-tag:hover:not(:disabled) {
     border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border)) !important;
   }
 
-  html[data-platform='android'] .weight-basis-trigger:hover {
+  .weight-basis-trigger:hover {
     color: var(--color-primary) !important;
   }
 
-  html[data-platform='android'] .recommendation-action-bar__menu-item:hover {
+  .recommendation-action-bar__menu-item:hover {
     background: transparent !important;
   }
 }
 
-/* Phase 2 — dialog height uses dvh on Android address-bar chrome */
-html[data-platform='android'] .weight-basis-dialog {
-  max-height: min(80dvh, 640px) !important;
+/* ========== iOS restore (exact prior UI — do not change) ========== */
+
+html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+  gap: 0.35rem !important;
 }
 
-/* Phase 3 — solid fallbacks when color-mix is unavailable */
-@supports not (background: color-mix(in srgb, #000 50%, #fff)) {
-  html[data-platform='android'] .recommendation-settings-panel--result .setting-value-card--highlight {
-    border-color: var(--color-primary) !important;
-    background: var(--color-surface) !important;
-  }
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card {
+  padding: 0.4rem 0.45rem !important;
+  gap: 0.2rem !important;
+}
 
-  html[data-platform='android'] .fit-feedback-panel__btn--active {
-    border-color: var(--color-primary) !important;
-    background: var(--color-surface) !important;
-  }
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__label {
+  font-size: 0.5625rem !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__value {
+  font-size: 1.0625rem !important;
+  line-height: normal !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__unit {
+  font-size: 0.6875rem !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__value-row--compare {
+  gap: 0.25rem 0.35rem !important;
+  flex-wrap: wrap !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__compare-block {
+  flex: 1 1 4.5rem !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__compare-block--adjust {
+  flex: 1.35 1 6.5rem !important;
+  gap: 0.25rem !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__compare-label {
+  font-size: 0.5625rem !important;
+  min-width: 1.75rem !important;
+}
+
+html[data-platform='ios']
+  .recommendation-settings-panel--result
+  .setting-value-card__compare-block:not(.setting-value-card__compare-block--adjust)
+  .setting-value-card__value {
+  font-size: 0.9375rem !important;
+}
+
+html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__adjust-input {
+  font-size: 0.8125rem !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row,
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__row {
+  grid-template-columns: var(--control-height-dense) minmax(0, 1fr) var(--control-height-dense) !important;
+  min-height: var(--control-height-dense) !important;
+  gap: 0.2rem !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input,
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn,
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
+  min-height: var(--control-height-dense) !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text,
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
+  font-size: 0.8125rem !important;
+  line-height: normal !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__unit {
+  font-size: 0.625rem !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
+  max-width: 8rem !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
+  font-size: 1.25rem !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log__diary-input {
+  font-size: 0.8125rem !important;
+}
+
+html[data-platform='ios'] .recommendation-workout-log--compact .recommendation-workout-log__diary-input {
+  font-size: 0.75rem !important;
+}
+
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__row {
+  grid-template-columns: 1.25rem 1.125rem 1.25rem !important;
+  gap: 0.2rem !important;
+  min-height: 1.5rem !important;
+}
+
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn,
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value,
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__manual-input {
+  min-height: 1.5rem !important;
+  max-height: 1.5rem !important;
+}
+
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__btn {
+  font-size: 0.75rem !important;
+}
+
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value {
+  min-width: 1.125rem !important;
+  width: 1.125rem !important;
+}
+
+html[data-platform='ios'] .history-workout-log__performance-title-row .numeric-stepper--compact .numeric-stepper__value-text {
+  font-size: 0.75rem !important;
+}
+
+html[data-platform='ios']
+  .history-page-premium
+  .history-workout-log__performance-title-row
+  .numeric-stepper--compact
+  .numeric-stepper__row {
+  grid-template-columns: 1.25rem 1.125rem 1.25rem !important;
+  gap: 0.2rem !important;
+  min-height: 1.5rem !important;
+}
+
+html[data-platform='ios']
+  .history-page-premium
+  .history-workout-log__performance-title-row
+  .numeric-stepper--compact
+  .numeric-stepper__btn,
+html[data-platform='ios']
+  .history-page-premium
+  .history-workout-log__performance-title-row
+  .numeric-stepper--compact
+  .numeric-stepper__value,
+html[data-platform='ios']
+  .history-page-premium
+  .history-workout-log__performance-title-row
+  .numeric-stepper--compact
+  .numeric-stepper__manual-input {
+  min-height: 1.5rem !important;
+  max-height: 1.5rem !important;
+}
+
+html[data-platform='ios']
+  .history-page-premium
+  .history-workout-log__performance-title-row
+  .numeric-stepper--compact
+  .numeric-stepper__btn {
+  font-size: var(--history-font-sm, 0.75rem) !important;
+  min-width: 1.125rem !important;
+  width: 1.125rem !important;
+}
+
+html[data-platform='ios']
+  .history-page-premium
+  .history-workout-log__performance-title-row
+  .numeric-stepper--compact
+  .numeric-stepper__value {
+  min-width: 1.125rem !important;
+  width: 1.125rem !important;
+}
+
+html[data-platform='ios'] .weight-basis-dialog {
+  max-height: min(80vh, 640px) !important;
 }
