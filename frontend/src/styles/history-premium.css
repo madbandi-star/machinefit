@@ -337,8 +337,6 @@
   flex-wrap: nowrap;
   gap: 0.25rem;
   padding-left: 0;
-  min-width: 0;
-  overflow: hidden;
 }
 
 .history-page-premium .history-record-card__meta-item {
@@ -348,13 +346,7 @@
   font-size: var(--history-font-sm);
   font-weight: 500;
   color: var(--history-text-dim);
-  min-width: 0;
-}
-
-.history-page-premium .history-record-card__meta-item.history-record-card__muscle {
-  flex: 1 1 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-shrink: 0;
   white-space: nowrap;
 }
 

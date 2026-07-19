@@ -477,8 +477,6 @@
   flex-wrap: nowrap;
   gap: 0.35rem;
   padding-left: calc(20px + 0.35rem);
-  min-width: 0;
-  overflow: hidden;
 }
 
 .history-record-card__time {
