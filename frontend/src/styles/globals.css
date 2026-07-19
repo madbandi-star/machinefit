@@ -1,4 +1,6 @@
 :root {
+  color-scheme: dark;
+
   /* Brand palette */
   --color-brand-black: #0b0f14;
   --color-brand-green: #00e676;
@@ -98,6 +100,8 @@
 }
 
 [data-theme='light'] {
+  color-scheme: light;
+
   --color-primary: #00c853;
   --color-primary-text: #00897b;
   --color-primary-on: #ffffff;
@@ -161,6 +165,7 @@ a {
 
 button {
   font-family: inherit;
+  color: inherit;
   cursor: pointer;
   border: none;
   background: none;

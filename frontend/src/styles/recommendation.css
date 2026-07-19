@@ -1507,6 +1507,7 @@
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   background: var(--color-bg-secondary);
+  color: var(--color-text);
   padding: 0.65rem 0.5rem;
   font-size: 0.8125rem;
   font-weight: 600;
