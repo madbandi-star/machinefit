@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
+import type { TargetMuscleGroup } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 
 interface UseWorkoutLogSavedOptions {
   machineCode: string;
@@ -17,15 +19,17 @@ export function useWorkoutLogSaved({
   isAuthenticated,
 }: UseWorkoutLogSavedOptions) {
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
-  const queryEnabled = isAuthenticated && Boolean(machineCode && logDate) && (!isFreeWeight || !!targetMuscleGroup);
+  const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, targetMuscleGroup);
+  const queryEnabled =
+    isAuthenticated && Boolean(machineCode && logDate) && (!isFreeWeight || !!queryTargetMuscle);
 
   const { data: logs } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, targetMuscleGroup),
+    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, queryTargetMuscle),
     queryFn: async () => {
       const res = await workoutLogApi.list({
         machineCode,
         logDate,
-        ...(isFreeWeight && targetMuscleGroup ? { targetMuscleGroup } : {}),
+        ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
       });
       return res.data.data;
     },

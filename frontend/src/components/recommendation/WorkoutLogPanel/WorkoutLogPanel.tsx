@@ -19,7 +19,7 @@ import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-ta
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
 import { getWeightStepKg } from '@/utils/weightStep';
-import { removeWorkoutLogFromCache } from '@/utils/workoutLogCache';
+import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache } from '@/utils/workoutLogCache';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -181,6 +181,7 @@ export function WorkoutLogPanel({
     targetMuscleGroup ?? null
   );
   const activeTargetMuscle = selectedMuscle ?? targetMuscleGroup ?? null;
+  const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, activeTargetMuscle);
 
   const [setCount, setSetCount] = useState(DEFAULT_SET_COUNT);
   const [weights, setWeights] = useState<number[]>(() =>
@@ -195,17 +196,15 @@ export function WorkoutLogPanel({
   const lastHydrateKeyRef = useRef('');
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
-  const queryEnabled = isAuthenticated && (!isFreeWeight || !!activeTargetMuscle);
+  const queryEnabled = isAuthenticated && (!isFreeWeight || !!queryTargetMuscle);
 
   const { data: existingLogs, isLoading, isFetched } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, activeTargetMuscle ?? undefined),
+    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, queryTargetMuscle),
     queryFn: async () => {
       const res = await workoutLogApi.list({
         machineCode,
         logDate,
-        ...(isFreeWeight && activeTargetMuscle
-          ? { targetMuscleGroup: activeTargetMuscle }
-          : {}),
+        ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
       });
       return res.data.data;
     },
@@ -234,7 +233,6 @@ export function WorkoutLogPanel({
   };
 
   const invalidateLogSideEffects = async (options?: { skipWorkoutLogsAll?: boolean }) => {
-    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
     if (!options?.skipWorkoutLogsAll) {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
     }
@@ -242,16 +240,12 @@ export function WorkoutLogPanel({
     await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 
-  const workoutLogQueryKey = QUERY_KEYS.workoutLogToday(
-    machineCode,
-    logDate,
-    activeTargetMuscle ?? undefined
-  );
+  const workoutLogQueryKey = QUERY_KEYS.workoutLogToday(machineCode, logDate, queryTargetMuscle);
   const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll;
   const removeLogParams = {
     machineCode,
     logDate,
-    targetMuscleGroup: isFreeWeight && activeTargetMuscle ? activeTargetMuscle : undefined,
+    targetMuscleGroup: queryTargetMuscle,
   };
 
   useEffect(() => {
@@ -296,9 +290,7 @@ export function WorkoutLogPanel({
         setCompleted,
         diary: diary.trim() || undefined,
         ...(recommendationId ? { recommendationId } : {}),
-        ...(isFreeWeight && activeTargetMuscle
-          ? { targetMuscleGroup: activeTargetMuscle }
-          : {}),
+        ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
       }),
     onSuccess: async () => {
       await invalidateLogQueries();
@@ -315,9 +307,7 @@ export function WorkoutLogPanel({
       workoutLogApi.remove({
         machineCode,
         logDate,
-        ...(isFreeWeight && activeTargetMuscle
-          ? { targetMuscleGroup: activeTargetMuscle }
-          : {}),
+        ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
       }),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
@@ -352,6 +342,7 @@ export function WorkoutLogPanel({
         )
       );
       await invalidateLogSideEffects({ skipWorkoutLogsAll: true });
+      queryClient.setQueryData(workoutLogQueryKey, []);
       showToast(t('machines:workoutLog.canceled'), 'success');
     },
     onError: (_error, _variables, context) => {

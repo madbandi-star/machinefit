@@ -1,5 +1,16 @@
-import type { WorkoutLog } from '@machinefit/shared';
+import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { normalizeDateKey } from '@/utils/historyDate';
+
+/** Must match between WorkoutLogPanel, useWorkoutLogSaved, and cache updates. */
+export function getWorkoutLogQueryTargetMuscle(
+  machineCode: string,
+  targetMuscleGroup?: TargetMuscleGroup | null
+): TargetMuscleGroup | undefined {
+  return isFreeWeightMachineCode(machineCode) && targetMuscleGroup
+    ? targetMuscleGroup
+    : undefined;
+}
 
 export function matchesWorkoutLogEntry(
   log: WorkoutLog,

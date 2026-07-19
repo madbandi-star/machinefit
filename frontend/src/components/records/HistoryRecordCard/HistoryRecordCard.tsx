@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, Clock3, Heart, SlidersHorizontal, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
-import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
@@ -16,6 +15,7 @@ import { formatHistoryTime } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
+import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/history-premium.css';
 
 interface HistoryRecordCardProps {
@@ -58,10 +58,10 @@ export function HistoryRecordCard({
 }: HistoryRecordCardProps) {
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
-  const cardTargetMuscle =
-    card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)
-      ? (card.targetMuscleGroup as TargetMuscleGroup)
-      : undefined;
+  const cardTargetMuscle = getWorkoutLogQueryTargetMuscle(
+    card.machineCode,
+    card.targetMuscleGroup as TargetMuscleGroup | undefined
+  );
   const isWorkoutLogSaved = useWorkoutLogSaved({
     machineCode: card.machineCode,
     logDate: card.logDate,

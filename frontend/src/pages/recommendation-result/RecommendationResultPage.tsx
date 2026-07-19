@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SlidersHorizontal, Bookmark, Heart } from 'lucide-react';
@@ -15,13 +15,12 @@ import {
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
-import { favoriteApi, recommendationApi } from '@/api';
+import { recommendationApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
+import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { useAuthStore } from '@/store/auth.store';
-import { useUIStore } from '@/store/ui.store';
 import { useSettingsStore } from '@/store/settings.store';
-import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
@@ -72,8 +71,6 @@ export function RecommendationResultPage() {
   const navigate = useNavigate();
   const { t } = useTranslation(['machines', 'common']);
   const stateResult = location.state?.result as RecommendationResult | undefined;
-  const showToast = useUIStore((s) => s.showToast);
-  const queryClient = useQueryClient();
   const locale = useSettingsStore((s) => s.locale);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
@@ -101,6 +98,12 @@ export function RecommendationResultPage() {
     isAuthenticated: isAuthenticated && !!result,
   });
 
+  const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
+    machineCode: result?.machineCode ?? '',
+    recommendationId: result?.id,
+    isAuthenticated: isAuthenticated && !!result,
+  });
+
   const fitFeedback = useMachineFitFeedback({
     recommendationId: result?.id ?? '',
     machineCode: result?.machineCode ?? '',
@@ -108,84 +111,17 @@ export function RecommendationResultPage() {
     enabled: isAuthenticated && !!result?.id,
   });
 
-  const { data: favoriteCheck } = useQuery({
-    queryKey: QUERY_KEYS.favoriteCheck(result?.machineCode ?? ''),
-    queryFn: async () => {
-      const res = await favoriteApi.check(result!.machineCode);
-      return res.data.data;
-    },
-    enabled: isAuthenticated && !!result?.machineCode,
-  });
-
-  const toggleFavoriteMutation = useMutation({
-    mutationFn: async ({
-      shouldFavorite,
-      favoriteId,
-    }: {
-      shouldFavorite: boolean;
-      favoriteId?: string;
-    }) => {
-      if (!result) throw new Error('missing_result');
-
-      if (!shouldFavorite) {
-        if (!favoriteId) throw new Error('missing_favorite_id');
-        await favoriteApi.remove(favoriteId);
-        return { favorited: false as const, favoriteId: undefined };
-      }
-
-      const res = await favoriteApi.add(result.machineCode, result.id);
-      return {
-        favorited: true as const,
-        favoriteId: res.data.data.id,
-      };
-    },
-    onMutate: async ({ shouldFavorite, favoriteId }) => {
-      if (!result) return;
-      const key = QUERY_KEYS.favoriteCheck(result.machineCode);
-      await queryClient.cancelQueries({ queryKey: key });
-      const previous = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(key);
-      queryClient.setQueryData(key, {
-        favorited: shouldFavorite,
-        favoriteId: shouldFavorite ? favoriteId : undefined,
-      });
-      return { previous, key };
-    },
-    onSuccess: async (data, _variables, context) => {
-      if (!result) return;
-      const key = context?.key ?? QUERY_KEYS.favoriteCheck(result.machineCode);
-      queryClient.setQueryData(key, data);
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites, exact: true });
-      queryClient.setQueryData(key, data);
-      showToast(
-        data.favorited
-          ? t('common:actions.save')
-          : t('machines:recommendation.removedFavorite'),
-        'success'
-      );
-    },
-    onError: (_error, _variables, context) => {
-      if (result && context?.previous && context.key) {
-        queryClient.setQueryData(context.key, context.previous);
-      }
-      showToast(t('common:errors.submitFailed'), 'error');
-    },
-  });
-
   const handleToggleFavorite = () => {
     if (!isAuthenticated) {
       navigate(ROUTES.LOGIN, { state: { from: location } });
       return;
     }
-    toggleFavoriteMutation.mutate({
-      shouldFavorite: !isFavorited,
-      favoriteId: favoriteCheck?.favoriteId,
-    });
+    toggleFavorite();
   };
 
   const bookmarkActive = isWorkoutLogSaved;
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
-  const isFavorited = favoriteCheck?.favorited ?? false;
 
   const bookmarkDisabled =
     bookmarkPending || !logControl || logControl.isLoading || logControl.isActionPending;
@@ -241,7 +177,7 @@ export function RecommendationResultPage() {
         }
         aria-pressed={isFavorited}
         onClick={handleToggleFavorite}
-        disabled={toggleFavoriteMutation.isPending}
+        disabled={isFavoritePending}
       >
         <Heart
           size={17}
