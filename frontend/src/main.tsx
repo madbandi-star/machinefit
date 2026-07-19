@@ -7,7 +7,7 @@ import '@/styles/android-ui.css';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
 
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v3';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v4';
 
 function applyPlatformAttribute() {
   try {

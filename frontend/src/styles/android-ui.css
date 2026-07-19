@@ -8,6 +8,19 @@
 
 .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
   gap: 0.5rem !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+  .recommendation-settings-panel__grid--dense {
+  grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 768px) {
+  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+    .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
 
 .recommendation-settings-panel--result .setting-value-card {
@@ -199,6 +212,25 @@
 
 html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
   gap: 0.35rem !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+html[data-platform='ios']
+  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+  .recommendation-settings-panel__grid--dense {
+  grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 768px) {
+  html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  html[data-platform='ios']
+    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+    .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
 
 html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card {
