@@ -28,12 +28,16 @@ export function normalizeDateKey(value: string): string {
 export function formatHistoryDateHeader(dateKey: string, locale: string): string {
   const [y, m, d] = dateKey.split('-').map(Number);
   const date = new Date(y, m - 1, d);
-  return date.toLocaleDateString(locale, {
+  const datePart = date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    weekday: 'short',
   });
+  const weekday = date
+    .toLocaleDateString(locale, { weekday: 'short' })
+    .replace(/[().]/g, '')
+    .trim();
+  return `${datePart}(${weekday})`;
 }
 
 export function collectMuscleGroupsInOrder<
