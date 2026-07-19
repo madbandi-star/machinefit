@@ -64,6 +64,9 @@ export function HistoryRecordCard({
     ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
     : null;
 
+  const bookmarkDisabled =
+    !isAuthenticated || bookmarkPending || !logControl || logControl.isLoading || logControl.isActionPending;
+
   const handleBookmarkClick = () => {
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
@@ -142,7 +145,7 @@ export function HistoryRecordCard({
             }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
             aria-label={getBookmarkAriaLabel(logControl, t)}
             onClick={handleBookmarkClick}
-            disabled={!isAuthenticated || bookmarkPending || !logControl}
+            disabled={bookmarkDisabled}
           >
             <Bookmark size={17} strokeWidth={2.25} />
           </button>

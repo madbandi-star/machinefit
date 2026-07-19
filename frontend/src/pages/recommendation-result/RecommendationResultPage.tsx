@@ -105,11 +105,16 @@ export function RecommendationResultPage() {
   });
 
   const toggleFavoriteMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (shouldFavorite: boolean) => {
       if (!result) throw new Error('missing_result');
 
-      if (favoriteCheck?.favorited && favoriteCheck.favoriteId) {
-        await favoriteApi.remove(favoriteCheck.favoriteId);
+      if (!shouldFavorite) {
+        const cached = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(
+          QUERY_KEYS.favoriteCheck(result.machineCode)
+        );
+        const favoriteId = cached?.favoriteId ?? favoriteCheck?.favoriteId;
+        if (!favoriteId) throw new Error('missing_favorite_id');
+        await favoriteApi.remove(favoriteId);
         return { favorited: false as const, favoriteId: undefined };
       }
 
@@ -119,15 +124,14 @@ export function RecommendationResultPage() {
         favoriteId: res.data.data.id,
       };
     },
-    onMutate: async () => {
+    onMutate: async (shouldFavorite) => {
       if (!result) return;
       const key = QUERY_KEYS.favoriteCheck(result.machineCode);
       await queryClient.cancelQueries({ queryKey: key });
       const previous = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(key);
-      const nextFavorited = !previous?.favorited;
       queryClient.setQueryData(key, {
-        favorited: nextFavorited,
-        favoriteId: nextFavorited ? previous?.favoriteId : undefined,
+        favorited: shouldFavorite,
+        favoriteId: shouldFavorite ? previous?.favoriteId : undefined,
       });
       return { previous };
     },
@@ -155,13 +159,16 @@ export function RecommendationResultPage() {
       navigate(ROUTES.LOGIN, { state: { from: location } });
       return;
     }
-    toggleFavoriteMutation.mutate();
+    toggleFavoriteMutation.mutate(!isFavorited);
   };
 
   const bookmarkActive = Boolean(logControl?.isLogSaved);
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
   const isFavorited = favoriteCheck?.favorited ?? false;
+
+  const bookmarkDisabled =
+    bookmarkPending || !logControl || logControl.isLoading || logControl.isActionPending;
 
   const handleBookmarkClick = () => {
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
@@ -189,7 +196,7 @@ export function RecommendationResultPage() {
           }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
           aria-label={getBookmarkAriaLabel(logControl, t)}
           onClick={handleBookmarkClick}
-          disabled={bookmarkPending || !logControl}
+          disabled={bookmarkDisabled}
         >
           <Bookmark
             size={17}
@@ -295,7 +302,6 @@ export function RecommendationResultPage() {
               isPending={fitFeedback.isFeedbackPending}
             />
           ) : null}
-          <RecommendationTips tips={result.tips} />
           <WorkoutLogPanel
             machineCode={result.machineCode}
             machineName={result.machineName}
@@ -309,6 +315,7 @@ export function RecommendationResultPage() {
             lockTargetMuscle={Boolean(result.targetMuscleGroup && isFreeWeightMachineCode(result.machineCode))}
             onControlReady={setLogControl}
           />
+          <RecommendationTips tips={result.tips} />
         </article>
       </div>
     </div>

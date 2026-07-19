@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
@@ -381,17 +381,22 @@ export function WorkoutLogPanel({
     </div>
   ) : null;
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (isFreeWeight && !activeTargetMuscle) {
       showToast(t('machines:targetMuscleRequired'), 'error');
       return;
     }
     saveMutation.mutate();
-  };
+  }, [activeTargetMuscle, isFreeWeight, saveMutation, showToast, t]);
 
-  const handleRemoveLog = () => {
+  const handleRemoveLog = useCallback(() => {
     removeMutation.mutate();
-  };
+  }, [removeMutation]);
+
+  const saveRef = useRef(handleSave);
+  const removeRef = useRef(handleRemoveLog);
+  saveRef.current = handleSave;
+  removeRef.current = handleRemoveLog;
 
   useEffect(() => {
     if (!onControlReady) return;
@@ -409,11 +414,9 @@ export function WorkoutLogPanel({
       canSave: isLogSaved ? isDirty && !isLoading : !isLoading,
       totalWeightKg,
       setCount,
-      save: handleSave,
-      remove: handleRemoveLog,
+      save: () => saveRef.current(),
+      remove: () => removeRef.current(),
     });
-
-    return () => onControlReady(null);
   }, [
     onControlReady,
     isAuthenticated,
@@ -424,6 +427,10 @@ export function WorkoutLogPanel({
     totalWeightKg,
     setCount,
   ]);
+
+  useEffect(() => {
+    return () => onControlReady?.(null);
+  }, [onControlReady]);
 
   const handleSetCountChange = (value: number) => {
     const next = Math.min(MAX_SET_COUNT, Math.max(MIN_SET_COUNT, value));
