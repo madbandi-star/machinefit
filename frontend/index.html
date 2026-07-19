@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>MachineFit</title>
-    <style id="mf-app-frame-v12">
+    <style id="mf-app-frame-v13">
       /* iPhone 15 Pro Max frame — critical before CSS bundle loads */
       :root {
         --app-frame-width: 430px;
@@ -27,6 +27,19 @@
     </style>
     <script>
       (function () {
+        /* Mobile: lock layout viewport to iPhone 15 Pro Max CSS width so media queries + flex match */
+        try {
+          var ua = navigator.userAgent || '';
+          var isMobile =
+            /Android|iPhone|iPad|iPod/i.test(ua) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+          if (isMobile) {
+            var vp = document.querySelector('meta[name="viewport"]');
+            if (vp) {
+              vp.setAttribute('content', 'width=430, initial-scale=1, viewport-fit=cover');
+            }
+          }
+        } catch (e) {}
         try {
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -38,25 +51,6 @@
               keys.forEach(function (key) { caches.delete(key); });
             });
           }
-        } catch (e) {}
-        try {
-          var ua = navigator.userAgent || '';
-          var uaPlatform =
-            navigator.userAgentData && navigator.userAgentData.platform
-              ? navigator.userAgentData.platform
-              : '';
-          var isIos =
-            /iPhone|iPad|iPod/i.test(ua) ||
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
-            /iOS|iPhone|iPad/i.test(uaPlatform);
-          var platform = isIos
-            ? 'ios'
-            : /Android/i.test(ua) ||
-                /Android/i.test(uaPlatform) ||
-                (navigator.userAgentData && navigator.userAgentData.mobile)
-              ? 'android'
-              : 'other';
-          document.documentElement.setAttribute('data-platform', platform);
         } catch (e) {}
         try {
           var raw = localStorage.getItem('machinefit-settings');

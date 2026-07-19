@@ -6,32 +6,7 @@ import '@/styles/android-ui.css';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
 
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v12';
-
-function applyPlatformAttribute() {
-  try {
-    const ua = navigator.userAgent || '';
-    const uaPlatform = navigator.userAgentData?.platform ?? '';
-    const isIos =
-      /iPhone|iPad|iPod/i.test(ua) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
-      /iOS|iPhone|iPad/i.test(uaPlatform);
-
-    let platform: 'android' | 'ios' | 'other' = 'other';
-    if (isIos) {
-      platform = 'ios';
-    } else if (
-      /Android/i.test(ua) ||
-      /Android/i.test(uaPlatform) ||
-      Boolean(navigator.userAgentData?.mobile)
-    ) {
-      platform = 'android';
-    }
-    document.documentElement.setAttribute('data-platform', platform);
-  } catch {
-    /* ignore */
-  }
-}
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v13';
 
 async function clearServiceWorkerAndCaches(): Promise<void> {
   try {
@@ -49,8 +24,6 @@ async function clearServiceWorkerAndCaches(): Promise<void> {
 }
 
 async function boot() {
-  applyPlatformAttribute();
-
   // Temporarily disable PWA caching so Android Chrome always gets fresh CSS/JS.
   await clearServiceWorkerAndCaches();
 

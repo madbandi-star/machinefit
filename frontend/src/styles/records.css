@@ -681,12 +681,6 @@
   line-height: 1.3;
 }
 
-@media (max-width: 420px) {
-  .history-summary-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 .saved-settings-card {
   display: flex;
   flex-direction: column;

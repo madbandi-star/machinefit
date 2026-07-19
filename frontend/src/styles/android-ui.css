@@ -1,6 +1,5 @@
 /**
- * Touch / non-iOS helpers only — no layout divergence from the iPhone baseline.
- * Layout is unified via --app-frame-width (430px) in globals.css.
+ * Touch helpers shared by all platforms — no OS-specific layout rules.
  */
 
 .weight-basis-dialog {
@@ -27,8 +26,4 @@
   .recommendation-action-bar__menu-item:hover {
     background: transparent;
   }
-}
-
-html[data-platform='ios'] .weight-basis-dialog {
-  max-height: min(80vh, 640px);
 }

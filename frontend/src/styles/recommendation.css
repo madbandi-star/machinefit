@@ -168,25 +168,18 @@
   font-size: 0.9375rem;
 }
 
-@media (max-width: 767px) {
-  .setting-value-card:not(.setting-value-card--compact) {
-    min-height: var(--setting-card-min-height-mobile);
-    padding: 0.75rem 1rem;
-  }
-
-  .setting-value-card:not(.setting-value-card--compact) .setting-value-card__value {
-    font-size: var(--font-size-setting-value-mobile);
-  }
-
-  .setting-value-card--compact {
-    padding: 0.6rem 0.7rem;
-  }
+/* Phone baseline (iPhone 15 Pro Max) — same on every device; no viewport forks */
+.setting-value-card:not(.setting-value-card--compact) {
+  min-height: var(--setting-card-min-height-mobile);
+  padding: 0.75rem 1rem;
 }
 
-@media (max-width: 360px) {
-  .setting-value-card:not(.setting-value-card--compact) .setting-value-card__value {
-    font-size: var(--font-size-setting-value-sm);
-  }
+.setting-value-card:not(.setting-value-card--compact) .setting-value-card__value {
+  font-size: var(--font-size-setting-value-mobile);
+}
+
+.setting-value-card--compact {
+  padding: 0.6rem 0.7rem;
 }
 
 .recommendation-settings-panel {
@@ -1237,8 +1230,8 @@
 }
 
 .weight-basis-dialog {
-  max-width: min(28rem, 92vw);
-  max-height: min(80vh, 640px);
+  max-width: min(28rem, calc(var(--app-frame-width) - 2rem));
+  max-height: min(80dvh, 640px);
   overflow-y: auto;
 }
 

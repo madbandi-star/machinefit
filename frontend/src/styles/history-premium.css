@@ -937,21 +937,3 @@
 .history-page-premium .recommendation-workout-log__complete-btn {
   font-size: var(--history-font-2xs);
 }
-
-@media (max-width: 420px) {
-  .history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .history-page-premium
-    .recommendation-settings-panel--history.recommendation-settings-panel--compare.recommendation-settings-panel--adjusting
-    .recommendation-settings-panel__grid--history {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 360px) {
-  .history-page-premium .history-record-card__hero {
-    grid-template-columns: 1fr;
-  }
-}
