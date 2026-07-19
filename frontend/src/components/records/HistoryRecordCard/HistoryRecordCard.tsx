@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, Clock3, SlidersHorizontal, Target, X } from 'lucide-react';
+import { Bookmark, Clock3, Heart, SlidersHorizontal, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
@@ -13,6 +14,8 @@ import {
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { formatHistoryTime } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
+import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
+import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import '@/styles/history-premium.css';
 
 interface HistoryRecordCardProps {
@@ -20,7 +23,6 @@ interface HistoryRecordCardProps {
   resultUrl: string;
   displayName: string;
   muscleGroup?: string;
-  hasWorkoutLog: boolean;
   showSettingsCompare: boolean;
   customSettings?: Partial<RecommendationSettings>;
   isAuthenticated: boolean;
@@ -32,10 +34,11 @@ interface HistoryRecordCardProps {
 
 function getBookmarkAriaLabel(
   control: WorkoutLogPanelControl | null,
+  isLogSaved: boolean,
   t: (key: string) => string
 ): string {
   if (!control) return t('machines:history.bookmarkSave');
-  if (!control.isLogSaved) return t('machines:history.bookmarkSave');
+  if (!isLogSaved) return t('machines:history.bookmarkSave');
   if (control.isDirty) return t('machines:history.bookmarkUpdate');
   return t('machines:history.bookmarkRemove');
 }
@@ -45,7 +48,6 @@ export function HistoryRecordCard({
   resultUrl,
   displayName,
   muscleGroup,
-  hasWorkoutLog,
   showSettingsCompare,
   customSettings,
   isAuthenticated,
@@ -56,8 +58,23 @@ export function HistoryRecordCard({
 }: HistoryRecordCardProps) {
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
+  const cardTargetMuscle =
+    card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)
+      ? (card.targetMuscleGroup as TargetMuscleGroup)
+      : undefined;
+  const isWorkoutLogSaved = useWorkoutLogSaved({
+    machineCode: card.machineCode,
+    logDate: card.logDate,
+    targetMuscleGroup: cardTargetMuscle,
+    isAuthenticated,
+  });
+  const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
+    machineCode: card.machineCode,
+    recommendationId: card.recommendationId,
+    isAuthenticated,
+  });
 
-  const bookmarkActive = Boolean(logControl?.isLogSaved);
+  const bookmarkActive = isWorkoutLogSaved;
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
   const muscleLabel = muscleGroup
@@ -70,7 +87,7 @@ export function HistoryRecordCard({
   const handleBookmarkClick = () => {
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
-    if (!logControl.isLogSaved) {
+    if (!isWorkoutLogSaved) {
       logControl.save();
       return;
     }
@@ -87,7 +104,7 @@ export function HistoryRecordCard({
     <article
       id={`history-item-${card.cardId}`}
       className={`history-record-card history-record-card--premium${
-        hasWorkoutLog ? ' history-record-card--logged' : ' history-record-card--unlogged'
+        isWorkoutLogSaved ? ' history-record-card--logged' : ' history-record-card--unlogged'
       }${isFocused ? ' history-record-card--focused' : ''}`}
     >
       <header className="history-record-card__header">
@@ -125,10 +142,10 @@ export function HistoryRecordCard({
                 </span>
                 <span
                   className={`history-record-card__status${
-                    hasWorkoutLog ? ' history-record-card__status--saved' : ''
+                    isWorkoutLogSaved ? ' history-record-card__status--saved' : ''
                   }`}
                 >
-                  {hasWorkoutLog
+                  {isWorkoutLogSaved
                     ? t('machines:history.workoutSavedBadge')
                     : t('machines:history.workoutUnsavedBadge')}
                 </span>
@@ -140,14 +157,38 @@ export function HistoryRecordCard({
         <div className="history-record-card__header-actions">
           <button
             type="button"
+            className={`history-record-card__bookmark recommendation-result-page__favorite${
+              isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
+            }`}
+            aria-label={
+              isFavorited
+                ? t('machines:recommendation.removeFavorite')
+                : t('machines:recommendation.saveFavorite')
+            }
+            aria-pressed={isFavorited}
+            onClick={toggleFavorite}
+            disabled={isFavoritePending}
+          >
+            <Heart
+              size={17}
+              strokeWidth={2.25}
+              fill={isFavorited ? 'currentColor' : 'none'}
+            />
+          </button>
+          <button
+            type="button"
             className={`history-record-card__bookmark${
               bookmarkActive ? ' history-record-card__bookmark--active' : ''
             }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
-            aria-label={getBookmarkAriaLabel(logControl, t)}
+            aria-label={getBookmarkAriaLabel(logControl, isWorkoutLogSaved, t)}
             onClick={handleBookmarkClick}
             disabled={bookmarkDisabled}
           >
-            <Bookmark size={17} strokeWidth={2.25} />
+            <Bookmark
+              size={17}
+              strokeWidth={2.25}
+              fill={bookmarkActive ? 'currentColor' : 'none'}
+            />
           </button>
           <button
             type="button"

@@ -27,9 +27,43 @@ export function FavoritesListPanel() {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (id: string) => favoriteApi.remove(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites }),
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    mutationFn: (item: { id: string; machineCode: string }) => favoriteApi.remove(item.id),
+    onMutate: async (item) => {
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.favorites });
+      const previous = queryClient.getQueryData<
+        Array<{ id: string; machineCode: string; machineName: string }>
+      >(QUERY_KEYS.favorites);
+      if (previous) {
+        queryClient.setQueryData(
+          QUERY_KEYS.favorites,
+          previous.filter((favorite) => favorite.id !== item.id)
+        );
+      }
+
+      const favoriteCheckKey = QUERY_KEYS.favoriteCheck(item.machineCode);
+      await queryClient.cancelQueries({ queryKey: favoriteCheckKey });
+      const previousCheck = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(
+        favoriteCheckKey
+      );
+      queryClient.setQueryData(favoriteCheckKey, { favorited: false, favoriteId: undefined });
+
+      return { previous, previousCheck, favoriteCheckKey };
+    },
+    onSuccess: async (_data, item, context) => {
+      const favoriteCheckKey = context?.favoriteCheckKey ?? QUERY_KEYS.favoriteCheck(item.machineCode);
+      queryClient.setQueryData(favoriteCheckKey, { favorited: false, favoriteId: undefined });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites, exact: true });
+      showToast(t('machines:recommendation.removedFavorite'), 'success');
+    },
+    onError: (_error, _item, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(QUERY_KEYS.favorites, context.previous);
+      }
+      if (context?.previousCheck && context.favoriteCheckKey) {
+        queryClient.setQueryData(context.favoriteCheckKey, context.previousCheck);
+      }
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   if (isLoading) return <Skeleton count={3} height={56} />;
@@ -72,7 +106,7 @@ export function FavoritesListPanel() {
               type="button"
               className="favorite-row__remove"
               aria-label={t('machines:favorites.remove')}
-              onClick={() => removeMutation.mutate(item.id)}
+              onClick={() => removeMutation.mutate({ id: item.id, machineCode: item.machineCode })}
               disabled={removeMutation.isPending}
             >
               <Icon name="heart" size={18} />

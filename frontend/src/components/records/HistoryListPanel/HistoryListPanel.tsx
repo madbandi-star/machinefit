@@ -28,7 +28,6 @@ import {
   extractRecordCardDateKeys,
   filterHistoryRecordCardsByLogStatus,
   groupRecordCardsByDate,
-  historyRecordCardHasLog,
   type HistoryRecordCard as HistoryRecordCardData,
 } from '@/utils/historyRecordsDisplay';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
@@ -387,7 +386,6 @@ export function HistoryListPanel() {
                 const resultUrl = card.recommendationId
                   ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
                   : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}`;
-                const hasWorkoutLog = historyRecordCardHasLog(card, loggedKeys);
                 const displayName = isFreeWeightMachineCode(card.machineCode)
                   ? formatFreeWeightRecordLabel(
                       card.machineName,
@@ -413,7 +411,6 @@ export function HistoryListPanel() {
                     resultUrl={resultUrl}
                     displayName={displayName}
                     muscleGroup={muscleGroup}
-                    hasWorkoutLog={hasWorkoutLog}
                     showSettingsCompare={showSettingsCompare}
                     customSettings={customSettings}
                     isAuthenticated={isAuthenticated}

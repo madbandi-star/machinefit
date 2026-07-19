@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
+import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { Check, Pencil } from 'lucide-react';
@@ -19,6 +19,7 @@ import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-ta
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
 import { getWeightStepKg } from '@/utils/weightStep';
+import { removeWorkoutLogFromCache } from '@/utils/workoutLogCache';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -232,6 +233,27 @@ export function WorkoutLogPanel({
     await queryClient.invalidateQueries({ queryKey: ['workout-logs', machineCode, logDate] });
   };
 
+  const invalidateLogSideEffects = async (options?: { skipWorkoutLogsAll?: boolean }) => {
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
+    if (!options?.skipWorkoutLogsAll) {
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
+    }
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+    await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+  };
+
+  const workoutLogQueryKey = QUERY_KEYS.workoutLogToday(
+    machineCode,
+    logDate,
+    activeTargetMuscle ?? undefined
+  );
+  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll;
+  const removeLogParams = {
+    machineCode,
+    logDate,
+    targetMuscleGroup: isFreeWeight && activeTargetMuscle ? activeTargetMuscle : undefined,
+  };
+
   useEffect(() => {
     lastHydrateKeyRef.current = '';
     setBaseline(null);
@@ -297,7 +319,12 @@ export function WorkoutLogPanel({
           ? { targetMuscleGroup: activeTargetMuscle }
           : {}),
       }),
-    onSuccess: async () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
+      await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
+      const previousLogs = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
+      const previousAllLogs = queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey);
+
       lastHydrateKeyRef.current = '';
       const snapshot = buildDefaultSnapshot(suggestedWeightKg);
       applyWorkoutFormSnapshot(snapshot, {
@@ -307,14 +334,35 @@ export function WorkoutLogPanel({
         setDiary,
       });
       setBaseline(null);
+      queryClient.setQueryData(workoutLogQueryKey, []);
       queryClient.setQueryData(
-        QUERY_KEYS.workoutLogToday(machineCode, logDate, activeTargetMuscle ?? undefined),
-        []
+        workoutLogsAllKey,
+        removeWorkoutLogFromCache(previousAllLogs, removeLogParams)
       );
-      await invalidateLogQueries();
+
+      return { previousLogs, previousAllLogs };
+    },
+    onSuccess: async () => {
+      queryClient.setQueryData(workoutLogQueryKey, []);
+      queryClient.setQueryData(
+        workoutLogsAllKey,
+        removeWorkoutLogFromCache(
+          queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
+          removeLogParams
+        )
+      );
+      await invalidateLogSideEffects({ skipWorkoutLogsAll: true });
       showToast(t('machines:workoutLog.canceled'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (_error, _variables, context) => {
+      if (context?.previousLogs !== undefined) {
+        queryClient.setQueryData(workoutLogQueryKey, context.previousLogs);
+      }
+      if (context?.previousAllLogs !== undefined) {
+        queryClient.setQueryData(workoutLogsAllKey, context.previousAllLogs);
+      }
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   const isActionPending = saveMutation.isPending || removeMutation.isPending;

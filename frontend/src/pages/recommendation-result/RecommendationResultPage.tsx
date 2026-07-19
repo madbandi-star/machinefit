@@ -17,6 +17,7 @@ import { RecommendationWarnings } from '@/components/recommendation/Recommendati
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { favoriteApi, recommendationApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
+import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -54,10 +55,11 @@ function ResultLoadingSkeleton() {
 
 function getBookmarkAriaLabel(
   control: WorkoutLogPanelControl | null,
+  isLogSaved: boolean,
   t: (key: string) => string
 ): string {
   if (!control) return t('machines:history.bookmarkSave');
-  if (!control.isLogSaved) return t('machines:history.bookmarkSave');
+  if (!isLogSaved) return t('machines:history.bookmarkSave');
   if (control.isDirty) return t('machines:history.bookmarkUpdate');
   return t('machines:history.bookmarkRemove');
 }
@@ -87,6 +89,17 @@ export function RecommendationResultPage() {
   });
 
   const result = fetchedResult ?? stateResult;
+  const resultLogDate = normalizeDateKey(logDateParam ?? getLocalDateKey(result?.createdAt ?? ''));
+  const resultTargetMuscle =
+    result?.targetMuscleGroup && result && isFreeWeightMachineCode(result.machineCode)
+      ? result.targetMuscleGroup
+      : undefined;
+  const isWorkoutLogSaved = useWorkoutLogSaved({
+    machineCode: result?.machineCode ?? '',
+    logDate: resultLogDate,
+    targetMuscleGroup: resultTargetMuscle,
+    isAuthenticated: isAuthenticated && !!result,
+  });
 
   const fitFeedback = useMachineFitFeedback({
     recommendationId: result?.id ?? '',
@@ -105,14 +118,16 @@ export function RecommendationResultPage() {
   });
 
   const toggleFavoriteMutation = useMutation({
-    mutationFn: async (shouldFavorite: boolean) => {
+    mutationFn: async ({
+      shouldFavorite,
+      favoriteId,
+    }: {
+      shouldFavorite: boolean;
+      favoriteId?: string;
+    }) => {
       if (!result) throw new Error('missing_result');
 
       if (!shouldFavorite) {
-        const cached = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(
-          QUERY_KEYS.favoriteCheck(result.machineCode)
-        );
-        const favoriteId = cached?.favoriteId ?? favoriteCheck?.favoriteId;
         if (!favoriteId) throw new Error('missing_favorite_id');
         await favoriteApi.remove(favoriteId);
         return { favorited: false as const, favoriteId: undefined };
@@ -124,21 +139,23 @@ export function RecommendationResultPage() {
         favoriteId: res.data.data.id,
       };
     },
-    onMutate: async (shouldFavorite) => {
+    onMutate: async ({ shouldFavorite, favoriteId }) => {
       if (!result) return;
       const key = QUERY_KEYS.favoriteCheck(result.machineCode);
       await queryClient.cancelQueries({ queryKey: key });
       const previous = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(key);
       queryClient.setQueryData(key, {
         favorited: shouldFavorite,
-        favoriteId: shouldFavorite ? previous?.favoriteId : undefined,
+        favoriteId: shouldFavorite ? favoriteId : undefined,
       });
-      return { previous };
+      return { previous, key };
     },
-    onSuccess: async (data) => {
+    onSuccess: async (data, _variables, context) => {
       if (!result) return;
-      queryClient.setQueryData(QUERY_KEYS.favoriteCheck(result.machineCode), data);
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites });
+      const key = context?.key ?? QUERY_KEYS.favoriteCheck(result.machineCode);
+      queryClient.setQueryData(key, data);
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites, exact: true });
+      queryClient.setQueryData(key, data);
       showToast(
         data.favorited
           ? t('common:actions.save')
@@ -147,8 +164,8 @@ export function RecommendationResultPage() {
       );
     },
     onError: (_error, _variables, context) => {
-      if (result && context?.previous) {
-        queryClient.setQueryData(QUERY_KEYS.favoriteCheck(result.machineCode), context.previous);
+      if (result && context?.previous && context.key) {
+        queryClient.setQueryData(context.key, context.previous);
       }
       showToast(t('common:errors.submitFailed'), 'error');
     },
@@ -159,10 +176,13 @@ export function RecommendationResultPage() {
       navigate(ROUTES.LOGIN, { state: { from: location } });
       return;
     }
-    toggleFavoriteMutation.mutate(!isFavorited);
+    toggleFavoriteMutation.mutate({
+      shouldFavorite: !isFavorited,
+      favoriteId: favoriteCheck?.favoriteId,
+    });
   };
 
-  const bookmarkActive = Boolean(logControl?.isLogSaved);
+  const bookmarkActive = isWorkoutLogSaved;
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
   const isFavorited = favoriteCheck?.favorited ?? false;
@@ -173,7 +193,7 @@ export function RecommendationResultPage() {
   const handleBookmarkClick = () => {
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
-    if (!logControl.isLogSaved) {
+    if (!isWorkoutLogSaved) {
       logControl.save();
       return;
     }
@@ -194,7 +214,7 @@ export function RecommendationResultPage() {
           className={`history-record-card__bookmark recommendation-result-page__log-save${
             bookmarkActive ? ' history-record-card__bookmark--active' : ''
           }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
-          aria-label={getBookmarkAriaLabel(logControl, t)}
+          aria-label={getBookmarkAriaLabel(logControl, isWorkoutLogSaved, t)}
           onClick={handleBookmarkClick}
           disabled={bookmarkDisabled}
         >
@@ -309,7 +329,7 @@ export function RecommendationResultPage() {
             suggestedWeightKg={result.settings.recommendedWeightKg}
             isAuthenticated={isAuthenticated}
             variant="history"
-            logDate={normalizeDateKey(logDateParam ?? getLocalDateKey(result.createdAt))}
+            logDate={resultLogDate}
             idPrefix={`result-workout-${result.id}`}
             targetMuscleGroup={result.targetMuscleGroup}
             lockTargetMuscle={Boolean(result.targetMuscleGroup && isFreeWeightMachineCode(result.machineCode))}
