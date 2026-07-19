@@ -688,12 +688,11 @@ export function WorkoutLogPanel({
   const diaryField = isHistory ? (
     <div className="history-workout-log__diary-grid">
       <div className="history-workout-log__diary-tags-pane">
-        <span className="history-workout-log__pane-label">{t('machines:workoutLog.diaryTitle')}</span>
+        <span className="history-workout-log__pane-label">{t('machines:history.diaryMemoTitle')}</span>
         {diaryTags}
       </div>
       <div className="history-workout-log__diary-memo-pane">
         <div className="history-workout-log__memo-header">
-          <span className="history-workout-log__pane-label">{t('machines:history.memoLabel')}</span>
           <button
             type="button"
             className="btn btn--secondary history-workout-log__memo-save"

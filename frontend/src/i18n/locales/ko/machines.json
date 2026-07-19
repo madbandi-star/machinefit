@@ -153,6 +153,7 @@
     "summaryWorkoutTimeValue": "{{minutes}}분",
     "performanceTitle": "수행 기록 ({{count}}세트)",
     "editSets": "세트 편집",
+    "diaryMemoTitle": "운동일지 메모",
     "memoLabel": "오늘 운동메모",
     "memoPlaceholder": "예시)\n[선피로][본세트][본세트]",
     "memoSave": "메모저장",

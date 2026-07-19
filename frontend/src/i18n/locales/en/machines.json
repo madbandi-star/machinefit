@@ -153,6 +153,7 @@
     "summaryWorkoutTimeValue": "{{minutes}} min",
     "performanceTitle": "Performance ({{count}} sets)",
     "editSets": "Edit sets",
+    "diaryMemoTitle": "Workout diary memo",
     "memoLabel": "Today's workout note",
     "memoPlaceholder": "e.g.)\n[Pre-fatigue][Working set][Working set]",
     "memoSave": "Save note",
