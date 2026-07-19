@@ -1,13 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { registerSW } from 'virtual:pwa-register';
 import '@/styles/globals.css';
 import '@/styles/components.css';
 import '@/styles/android-ui.css';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
 
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v4';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v5';
 
 function applyPlatformAttribute() {
   try {
@@ -26,7 +25,6 @@ function applyPlatformAttribute() {
       /Android/i.test(uaPlatform) ||
       Boolean(navigator.userAgentData?.mobile)
     ) {
-      // Desktop-site mode on Android often drops "Android" from UA.
       platform = 'android';
     }
     document.documentElement.setAttribute('data-platform', platform);
@@ -35,11 +33,8 @@ function applyPlatformAttribute() {
   }
 }
 
-async function bustStalePwaCacheOnce(): Promise<boolean> {
+async function clearServiceWorkerAndCaches(): Promise<void> {
   try {
-    if (localStorage.getItem(PWA_CACHE_BUST_KEY)) return false;
-    localStorage.setItem(PWA_CACHE_BUST_KEY, '1');
-
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map((registration) => registration.unregister()));
@@ -48,30 +43,26 @@ async function bustStalePwaCacheOnce(): Promise<boolean> {
       const keys = await caches.keys();
       await Promise.all(keys.map((key) => caches.delete(key)));
     }
-    window.location.reload();
-    return true;
   } catch {
-    return false;
+    /* ignore */
   }
 }
 
-function boot() {
+async function boot() {
   applyPlatformAttribute();
 
-  registerSW({
-    immediate: true,
-    onRegisteredSW(_swUrl, registration) {
-      if (!registration) return;
-      const checkForUpdate = () => {
-        void registration.update();
-      };
-      checkForUpdate();
-      setInterval(checkForUpdate, 30_000);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') checkForUpdate();
-      });
-    },
-  });
+  // Temporarily disable PWA caching so Android Chrome always gets fresh CSS/JS.
+  await clearServiceWorkerAndCaches();
+
+  try {
+    if (!localStorage.getItem(PWA_CACHE_BUST_KEY)) {
+      localStorage.setItem(PWA_CACHE_BUST_KEY, '1');
+      window.location.reload();
+      return;
+    }
+  } catch {
+    /* ignore */
+  }
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -82,6 +73,4 @@ function boot() {
   );
 }
 
-void bustStalePwaCacheOnce().then((reloading) => {
-  if (!reloading) boot();
-});
+void boot();

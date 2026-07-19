@@ -1,7 +1,7 @@
 /**
  * Non-iOS readability fixes for recommendation / workout steppers.
  * Improved sizes apply by default; html[data-platform="ios"] restores the exact prior UI.
- * v3 — do not rely on Android UA (desktop-site mode often drops "Android").
+ * v5 — result settings grid is 3-col in recommendation.css; iOS restored below.
  */
 
 /* ========== Improved defaults (Android / other) ========== */
