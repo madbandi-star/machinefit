@@ -45,10 +45,6 @@ export function RecordsPage() {
 
   return (
     <div className="records-page">
-      <header className="records-page__header">
-        <h1 className="records-page__title">{t('common:nav.records')}</h1>
-      </header>
-
       <TabBar
         ariaLabel={t('machines:records.tabsLabel')}
         tabs={[

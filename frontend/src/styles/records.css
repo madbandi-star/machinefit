@@ -6,17 +6,6 @@
   gap: var(--space-sm);
 }
 
-.records-page__header {
-  margin-bottom: var(--space-xs);
-}
-
-.records-page__title {
-  font-size: var(--font-size-h2);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin: 0;
-}
-
 .records-page__panel {
   min-height: 0;
 }
