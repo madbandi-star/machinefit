@@ -27,6 +27,10 @@ const DEFAULT_SET_COUNT = 3;
 const MIN_SET_COUNT = 1;
 const MAX_SET_COUNT = 20;
 
+interface SaveWorkoutLogVariables {
+  setCompleted?: boolean[];
+}
+
 export interface WorkoutLogPanelControl {
   isLogSaved: boolean;
   isDirty: boolean;
@@ -281,13 +285,13 @@ export function WorkoutLogPanel({
   ]);
 
   const saveMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (variables?: SaveWorkoutLogVariables) => {
       const res = await workoutLogApi.upsert({
         machineCode,
         logDate,
         setCount,
         setWeightsKg: weights,
-        setCompleted,
+        setCompleted: variables?.setCompleted ?? setCompleted,
         diary: diary.trim() || undefined,
         ...(recommendationId ? { recommendationId } : {}),
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
@@ -447,7 +451,7 @@ export function WorkoutLogPanel({
       showToast(t('machines:targetMuscleRequired'), 'error');
       return;
     }
-    saveMutation.mutate();
+    saveMutation.mutate({});
   }, [activeTargetMuscle, isFreeWeight, saveMutation, showToast, t]);
 
   const handleRemoveLog = useCallback(() => {
@@ -552,6 +556,30 @@ export function WorkoutLogPanel({
     });
   };
 
+  const handleHistorySetComplete = (index: number) => {
+    const next = [...setCompleted];
+    const wasCompleted = next[index] ?? false;
+    next[index] = !wasCompleted;
+
+    setSetCompleted(next);
+
+    if (!wasCompleted && next[index]) {
+      const seconds = recommendRestSeconds({
+        workoutGoal,
+        setIndex: index,
+        weightKg: weights[index],
+      });
+      setRestTimer({ setNumber: index + 1, seconds });
+    }
+
+    if (isFreeWeight && !activeTargetMuscle) {
+      showToast(t('machines:targetMuscleRequired'), 'error');
+      return;
+    }
+
+    saveMutation.mutate({ setCompleted: next });
+  };
+
   if (!isAuthenticated) {
     return (
       <section
@@ -652,7 +680,7 @@ export function WorkoutLogPanel({
                 className={`recommendation-workout-log__complete-btn${
                   completed ? ' recommendation-workout-log__complete-btn--completed' : ''
                 }`}
-                onClick={() => handleToggleSetCompleted(index)}
+                onClick={() => handleHistorySetComplete(index)}
                 disabled={isActionPending}
                 aria-pressed={completed}
               >
