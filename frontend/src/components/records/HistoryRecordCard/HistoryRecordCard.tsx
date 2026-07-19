@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, Clock3, Heart, SlidersHorizontal, Target, X } from 'lucide-react';
+import { Bookmark, Clock3, Heart, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
@@ -10,7 +10,6 @@ import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
-import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -220,10 +219,6 @@ export function HistoryRecordCard({
       </header>
 
       <div className="history-record-card__section">
-        <HistorySectionHeader
-          title={t('machines:history.settingsSectionTitle')}
-          icon={<SlidersHorizontal size={14} strokeWidth={2.25} aria-hidden />}
-        />
         <Link
           to={resultUrl}
           className="history-record-card__settings-link"

@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal, Bookmark, Heart } from 'lucide-react';
+import { Bookmark, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -247,11 +247,7 @@ export function RecommendationResultPage() {
         <RecommendationWarnings warnings={result.warnings} />
         <article className="history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card">
           <div className="history-record-card__section">
-            <HistorySectionHeader
-              title={t('history.settingsSectionTitle')}
-              icon={<SlidersHorizontal size={14} strokeWidth={2.25} aria-hidden />}
-              action={settingsHeaderActions}
-            />
+            <HistorySectionHeader action={settingsHeaderActions} />
             <RecommendationSettingsPanel
               settings={result.settings}
               weightBasis={result.weightBasis}

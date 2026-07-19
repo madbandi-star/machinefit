@@ -77,6 +77,11 @@
   margin-left: auto;
 }
 
+.history-section-header:not(:has(.history-section-header__title-wrap)) {
+  justify-content: flex-end;
+  margin-bottom: 0.4rem;
+}
+
 .history-dashboard {
   display: flex;
   flex-direction: column;
