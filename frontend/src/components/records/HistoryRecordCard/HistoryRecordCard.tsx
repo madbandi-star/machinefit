@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, Clock3, Heart, SlidersHorizontal, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
@@ -91,7 +91,8 @@ export function HistoryRecordCard({
   const bookmarkDisabled =
     !isAuthenticated || bookmarkPending || !logControl || logControl.isLoading || logControl.isActionPending;
 
-  const handleBookmarkClick = () => {
+  const handleBookmarkClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.blur();
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
     if (!isWorkoutLogSaved) {
@@ -107,6 +108,11 @@ export function HistoryRecordCard({
 
     setWorkoutLogSavedOverride(false);
     logControl.remove();
+  };
+
+  const handleFavoriteClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.blur();
+    toggleFavorite();
   };
 
   return (
@@ -175,10 +181,11 @@ export function HistoryRecordCard({
                 : t('machines:recommendation.saveFavorite')
             }
             aria-pressed={isFavorited}
-            onClick={toggleFavorite}
+            onClick={handleFavoriteClick}
             disabled={isFavoritePending}
           >
             <Heart
+              key={isFavorited ? 'favorited' : 'unfavorited'}
               size={17}
               strokeWidth={2.25}
               fill={isFavorited ? 'currentColor' : 'none'}
@@ -194,6 +201,7 @@ export function HistoryRecordCard({
             disabled={bookmarkDisabled}
           >
             <Bookmark
+              key={bookmarkActive ? 'saved' : 'unsaved'}
               size={17}
               strokeWidth={2.25}
               fill={bookmarkActive ? 'currentColor' : 'none'}

@@ -544,12 +544,16 @@
   background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
   color: var(--color-text-muted);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.history-record-card__bookmark:hover:not(:disabled),
-.history-record-card__remove:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
-  color: var(--color-primary);
+@media (hover: hover) and (pointer: fine) {
+  .history-record-card__bookmark:hover:not(:disabled),
+  .history-record-card__remove:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
+    color: var(--color-primary);
+  }
 }
 
 .history-record-card__bookmark--active {

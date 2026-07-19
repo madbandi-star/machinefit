@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SlidersHorizontal, Bookmark, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
@@ -118,7 +118,8 @@ export function RecommendationResultPage() {
     enabled: isAuthenticated && !!result?.id,
   });
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.blur();
     if (!isAuthenticated) {
       navigate(ROUTES.LOGIN, { state: { from: location } });
       return;
@@ -133,7 +134,8 @@ export function RecommendationResultPage() {
   const bookmarkDisabled =
     bookmarkPending || !logControl || logControl.isLoading || logControl.isActionPending;
 
-  const handleBookmarkClick = () => {
+  const handleBookmarkClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.blur();
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
     if (!isWorkoutLogSaved) {
@@ -164,6 +166,7 @@ export function RecommendationResultPage() {
           disabled={bookmarkDisabled}
         >
           <Bookmark
+            key={bookmarkActive ? 'saved' : 'unsaved'}
             size={17}
             strokeWidth={2.25}
             fill={bookmarkActive ? 'currentColor' : 'none'}
@@ -189,6 +192,7 @@ export function RecommendationResultPage() {
         disabled={isFavoritePending}
       >
         <Heart
+          key={isFavorited ? 'favorited' : 'unfavorited'}
           size={17}
           strokeWidth={2.25}
           fill={isFavorited ? 'currentColor' : 'none'}

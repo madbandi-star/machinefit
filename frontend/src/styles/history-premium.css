@@ -228,9 +228,11 @@
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.history-page-premium .history-record-card--premium:hover {
-  transform: scale(1.01);
-  border-color: rgba(0, 230, 118, 0.22);
+@media (hover: hover) and (pointer: fine) {
+  .history-page-premium .history-record-card--premium:hover {
+    transform: scale(1.01);
+    border-color: rgba(0, 230, 118, 0.22);
+  }
 }
 
 .history-page-premium .history-record-card--logged {

@@ -26,4 +26,20 @@
   .recommendation-action-bar__menu-item:hover {
     background: transparent;
   }
+
+  /* iOS Safari keeps :hover after tap — reset unless the active class is set */
+  .history-record-card__bookmark:not(.history-record-card__bookmark--active):hover:not(:disabled),
+  .history-record-card__remove:hover:not(:disabled) {
+    border-color: var(--glass-border);
+    color: var(--color-text-muted);
+    background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
+  }
+
+  .history-page-premium .history-record-card--premium:hover {
+    transform: none;
+  }
+
+  .history-page-premium .history-record-card--unlogged:hover {
+    border-color: color-mix(in srgb, var(--color-text-muted) 35%, var(--glass-border));
+  }
 }
