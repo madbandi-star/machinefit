@@ -38,3 +38,16 @@ export function removeWorkoutLogFromCache(
   if (!logs?.length) return [];
   return logs.filter((log) => !matchesWorkoutLogEntry(log, params));
 }
+
+export function upsertWorkoutLogInCache(
+  logs: WorkoutLog[] | undefined,
+  log: WorkoutLog,
+  params: {
+    machineCode: string;
+    logDate: string;
+    targetMuscleGroup?: string;
+  }
+): WorkoutLog[] {
+  const normalizedLog = { ...log, logDate: normalizeDateKey(log.logDate) };
+  return [...removeWorkoutLogFromCache(logs, params), normalizedLog];
+}

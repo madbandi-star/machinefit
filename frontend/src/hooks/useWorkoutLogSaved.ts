@@ -3,6 +3,7 @@ import type { TargetMuscleGroup } from '@machinefit/shared';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { normalizeDateKey } from '@/utils/historyDate';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 
 interface UseWorkoutLogSavedOptions {
@@ -18,17 +19,20 @@ export function useWorkoutLogSaved({
   targetMuscleGroup,
   isAuthenticated,
 }: UseWorkoutLogSavedOptions) {
+  const normalizedLogDate = normalizeDateKey(logDate);
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
   const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, targetMuscleGroup);
   const queryEnabled =
-    isAuthenticated && Boolean(machineCode && logDate) && (!isFreeWeight || !!queryTargetMuscle);
+    isAuthenticated &&
+    Boolean(machineCode && normalizedLogDate) &&
+    (!isFreeWeight || !!queryTargetMuscle);
 
   const { data: logs } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, queryTargetMuscle),
+    queryKey: QUERY_KEYS.workoutLogToday(machineCode, normalizedLogDate, queryTargetMuscle),
     queryFn: async () => {
       const res = await workoutLogApi.list({
         machineCode,
-        logDate,
+        logDate: normalizedLogDate,
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
       });
       return res.data.data;

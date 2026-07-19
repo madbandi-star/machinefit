@@ -19,7 +19,7 @@ import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-ta
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
 import { getWeightStepKg } from '@/utils/weightStep';
-import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache } from '@/utils/workoutLogCache';
+import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, upsertWorkoutLogInCache } from '@/utils/workoutLogCache';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -224,14 +224,6 @@ export function WorkoutLogPanel({
       !booleansEqual(setCompleted, baseline.setCompleted) ||
       diary.trim() !== baseline.diary.trim());
 
-  const invalidateLogQueries = async () => {
-    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
-    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
-    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-    await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
-    await queryClient.invalidateQueries({ queryKey: ['workout-logs', machineCode, logDate] });
-  };
-
   const invalidateLogSideEffects = async (options?: { skipWorkoutLogsAll?: boolean }) => {
     if (!options?.skipWorkoutLogsAll) {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
@@ -281,8 +273,8 @@ export function WorkoutLogPanel({
   ]);
 
   const saveMutation = useMutation({
-    mutationFn: () =>
-      workoutLogApi.upsert({
+    mutationFn: async () => {
+      const res = await workoutLogApi.upsert({
         machineCode,
         logDate,
         setCount,
@@ -291,9 +283,25 @@ export function WorkoutLogPanel({
         diary: diary.trim() || undefined,
         ...(recommendationId ? { recommendationId } : {}),
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
-      }),
-    onSuccess: async () => {
-      await invalidateLogQueries();
+      });
+      return res.data.data;
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
+      await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
+    },
+    onSuccess: async (savedLog) => {
+      queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
+      queryClient.setQueryData(
+        workoutLogsAllKey,
+        upsertWorkoutLogInCache(
+          queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
+          savedLog,
+          removeLogParams
+        )
+      );
+      await invalidateLogSideEffects();
+      queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
       showToast(
         isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
         'success'

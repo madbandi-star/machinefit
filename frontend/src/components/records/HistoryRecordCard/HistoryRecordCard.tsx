@@ -11,7 +11,7 @@ import {
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
-import { formatHistoryTime } from '@/utils/historyDate';
+import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
@@ -58,13 +58,14 @@ export function HistoryRecordCard({
 }: HistoryRecordCardProps) {
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
+  const logDate = normalizeDateKey(card.logDate);
   const cardTargetMuscle = getWorkoutLogQueryTargetMuscle(
     card.machineCode,
     card.targetMuscleGroup as TargetMuscleGroup | undefined
   );
   const isWorkoutLogSaved = useWorkoutLogSaved({
     machineCode: card.machineCode,
-    logDate: card.logDate,
+    logDate,
     targetMuscleGroup: cardTargetMuscle,
     isAuthenticated,
   });
@@ -231,9 +232,9 @@ export function HistoryRecordCard({
         suggestedWeightKg={card.settings.recommendedWeightKg}
         isAuthenticated={isAuthenticated}
         variant="history"
-        logDate={card.logDate}
+        logDate={logDate}
         idPrefix={`history-workout-${card.cardId}`}
-        targetMuscleGroup={card.targetMuscleGroup as TargetMuscleGroup | undefined}
+        targetMuscleGroup={cardTargetMuscle}
         lockTargetMuscle={lockTargetMuscle}
         onControlReady={setLogControl}
       />

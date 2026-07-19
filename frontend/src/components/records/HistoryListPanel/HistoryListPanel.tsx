@@ -218,7 +218,6 @@ export function HistoryListPanel() {
     onSuccess: async () => {
       setPendingDelete(null);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
       await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
       showToast(t('machines:history.removed'), 'success');

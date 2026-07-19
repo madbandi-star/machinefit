@@ -74,10 +74,8 @@ export function useFavoriteToggle({
 
       return { previous, previousFavorites, favoriteKey };
     },
-    onSuccess: async (data, _variables, context) => {
+    onSuccess: (data, _variables, context) => {
       const key = context?.favoriteKey ?? favoriteKey;
-      queryClient.setQueryData(key, data);
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites, exact: true });
       queryClient.setQueryData(key, data);
       showToast(
         data.favorited ? t('common:actions.save') : t('machines:recommendation.removedFavorite'),

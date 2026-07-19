@@ -52,7 +52,6 @@ export function FavoritesListPanel() {
     onSuccess: async (_data, item, context) => {
       const favoriteCheckKey = context?.favoriteCheckKey ?? QUERY_KEYS.favoriteCheck(item.machineCode);
       queryClient.setQueryData(favoriteCheckKey, { favorited: false, favoriteId: undefined });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites, exact: true });
       showToast(t('machines:recommendation.removedFavorite'), 'success');
     },
     onError: (_error, _item, context) => {
