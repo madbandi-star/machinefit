@@ -86,6 +86,14 @@
   --history-metric-gap: 4px;
 }
 
+.history-page-premium .history-dashboard + .records-list__date-group {
+  margin-top: -0.35rem;
+}
+
+.history-page-premium .history-dashboard + .records-list__date-group .records-list__date-heading {
+  padding-top: 0.12rem;
+}
+
 .history-dashboard__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

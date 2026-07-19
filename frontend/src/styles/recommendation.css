@@ -387,16 +387,21 @@
 .recommendation-result-page__body-card {
   display: flex;
   flex-direction: column;
-  gap: var(--history-gap-grid, 12px);
+  gap: 0.5rem;
 }
 
 .recommendation-result-page__body-card .history-record-card__section {
   margin-bottom: 0;
 }
 
+.recommendation-result-page__body-card .fit-feedback-panel {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .recommendation-result-page__body-card .recommendation-workout-log--history {
   margin-top: 0;
-  padding-top: 0.75rem;
+  padding-top: 0.45rem;
   border-top: 1px solid var(--history-card-border, rgba(138, 148, 166, 0.14));
 }
 
