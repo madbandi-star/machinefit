@@ -230,7 +230,8 @@
 
 .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Default 3-up: Android portrait must not depend on min-width:768 (landscape-only trap). */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.35rem;
 }
 
@@ -1941,46 +1942,24 @@
   cursor: pointer;
 }
 
-/* —— Phone settings grid: iPhone 2-col (unchanged), Android 3-col (2 rows × 3) —— */
+/* —— Phones (portrait + landscape): always 2-col; iPhone unchanged —— */
 @media (max-width: 1023px), (hover: none), (pointer: coarse) {
-  html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.35rem !important;
   }
 
-  html[data-platform='ios']
-    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
     .recommendation-settings-panel__grid--dense {
     grid-template-columns: 1fr !important;
   }
+}
 
-  html:not([data-platform='ios']) .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 0.3rem !important;
-  }
-
-  html:not([data-platform='ios'])
-    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
-    .recommendation-settings-panel__grid--dense {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Keep Android result cards dense enough for 3-up */
-  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card {
-    padding: 0.35rem 0.3rem !important;
-    gap: 0.15rem !important;
-  }
-
-  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card__label {
-    font-size: 0.5rem !important;
-  }
-
-  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card__value {
-    font-size: 0.9375rem !important;
-  }
-
-  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card__unit {
-    font-size: 0.625rem !important;
+/* Portrait explicitly (Galaxy S25 ~360px must stay 2-col, never inherit landscape 3-col caches) */
+@media (orientation: portrait) {
+  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
   }
 }
 

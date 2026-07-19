@@ -29,7 +29,7 @@ export default defineConfig({
     react(),
     spaGitHubPagesFallback(),
     VitePWA({
-      // Keep destroying stuck SWs this release so Android picks up 404.html + fresh assets.
+      filename: 'sw-v11.js',
       selfDestroying: true,
       registerType: 'autoUpdate',
       injectRegister: null,

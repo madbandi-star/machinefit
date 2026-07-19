@@ -1,6 +1,6 @@
 /**
- * Non-iOS helpers. Phone settings grid is forced 2-col in recommendation.css.
- * v10 — Android result settings: 3 per row; iPhone stays 2-col.
+ * Non-iOS helpers.
+ * v11 — result settings default/phone = 2-col (portrait + landscape under 1024).
  */
 
 .weight-basis-dialog {

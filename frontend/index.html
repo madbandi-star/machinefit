@@ -11,6 +11,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>MachineFit</title>
+    <style id="mf-settings-grid-v11">
+      /* Critical: phones stay 2-col even if an old CSS bundle is cached */
+      .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+      @media (orientation: portrait) {
+        .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+      }
+    </style>
     <script>
       (function () {
         try {
