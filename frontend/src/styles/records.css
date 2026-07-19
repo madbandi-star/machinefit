@@ -474,15 +474,19 @@
 .history-record-card__meta {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
   padding-left: calc(20px + 0.35rem);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .history-record-card__time {
   font-size: 0.6875rem;
   line-height: 1.2;
   color: var(--color-text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .history-record-card__status {
@@ -496,6 +500,7 @@
   letter-spacing: 0.01em;
   line-height: 1;
   white-space: nowrap;
+  flex-shrink: 0;
   color: var(--color-text-muted);
   background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text-muted) 18%, transparent);

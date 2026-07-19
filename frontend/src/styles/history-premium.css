@@ -334,9 +334,11 @@
 .history-page-premium .history-record-card__meta {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
   padding-left: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .history-page-premium .history-record-card__meta-item {
@@ -346,12 +348,21 @@
   font-size: var(--history-font-sm);
   font-weight: 500;
   color: var(--history-text-dim);
+  min-width: 0;
+}
+
+.history-page-premium .history-record-card__meta-item.history-record-card__muscle {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .history-page-premium .history-record-card__meta-divider {
   color: rgba(138, 148, 166, 0.35);
   font-size: var(--history-font-xs);
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .history-page-premium .history-record-card__time {
@@ -361,10 +372,13 @@
   font-size: var(--history-font-sm);
   font-weight: 500;
   color: var(--history-text-dim);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .history-page-premium .history-record-card__status {
   font-size: var(--history-font-xs);
+  flex-shrink: 0;
 }
 
 .history-page-premium .history-record-card__status--saved::before {
