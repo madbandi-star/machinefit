@@ -14,7 +14,6 @@ import {
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
-import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { recommendationApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -153,9 +152,30 @@ export function RecommendationResultPage() {
     logControl.remove();
   };
 
-  const settingsHeaderActions =
+  const titleHeaderActions =
     isAuthenticated ? (
       <div className="recommendation-result-page__header-actions">
+        <button
+          type="button"
+          className={`history-record-card__bookmark recommendation-result-page__favorite${
+            isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
+          }`}
+          aria-label={
+            isFavorited
+              ? t('machines:recommendation.removeFavorite')
+              : t('machines:recommendation.saveFavorite')
+          }
+          aria-pressed={isFavorited}
+          onClick={handleToggleFavorite}
+          disabled={isFavoritePending}
+        >
+          <Heart
+            key={isFavorited ? 'favorited' : 'unfavorited'}
+            size={17}
+            strokeWidth={2.25}
+            fill={isFavorited ? 'currentColor' : 'none'}
+          />
+        </button>
         <button
           type="button"
           className={`history-record-card__bookmark recommendation-result-page__log-save${
@@ -173,31 +193,6 @@ export function RecommendationResultPage() {
           />
         </button>
       </div>
-    ) : null;
-
-  const titleHeaderActions =
-    isAuthenticated ? (
-      <button
-        type="button"
-        className={`history-record-card__bookmark recommendation-result-page__favorite${
-          isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
-        }`}
-        aria-label={
-          isFavorited
-            ? t('machines:recommendation.removeFavorite')
-            : t('machines:recommendation.saveFavorite')
-        }
-        aria-pressed={isFavorited}
-        onClick={handleToggleFavorite}
-        disabled={isFavoritePending}
-      >
-        <Heart
-          key={isFavorited ? 'favorited' : 'unfavorited'}
-          size={17}
-          strokeWidth={2.25}
-          fill={isFavorited ? 'currentColor' : 'none'}
-        />
-      </button>
     ) : null;
 
   if (recommendationId && isLoading && !result) {
@@ -247,7 +242,6 @@ export function RecommendationResultPage() {
         <RecommendationWarnings warnings={result.warnings} />
         <article className="history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card">
           <div className="history-record-card__section">
-            <HistorySectionHeader action={settingsHeaderActions} />
             <RecommendationSettingsPanel
               settings={result.settings}
               weightBasis={result.weightBasis}

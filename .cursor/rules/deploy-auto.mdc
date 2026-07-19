@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Deploy workflow (default)
 
-After finishing implementation or bugfix tasks in this repo, **commit and push to `main` automatically** unless the user explicitly says not to (e.g. "don't commit", "로컬만", "커밋하지 마").
+User confirmed auto-deploy for this project (2026-07-19). After finishing implementation or bugfix tasks, **commit and push to `main` automatically** unless the user explicitly says not to (e.g. "don't commit", "로컬만", "커밋하지 마", "배포하지 마").
 
 ## Steps
 
