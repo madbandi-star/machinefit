@@ -1,24 +1,7 @@
 /**
- * Non-iOS helpers. iPhone baseline lives in recommendation.css —
- * html[data-platform="ios"] restores any remaining diffs below.
- * v8 — no enlarged workout/settings overrides (match iPhone density).
+ * Non-iOS helpers. Phone settings grid is forced 2-col in recommendation.css.
+ * v9 — phone 2-col is viewport/pointer based (not UA-only).
  */
-
-/* Phone: always 2 setting cards per row (avoid stale 3-col caches / wide viewport quirks) */
-@media (max-width: 767px) {
-  html:not([data-platform='ios'])
-    .recommendation-settings-panel--result
-    .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-  }
-
-  html:not([data-platform='ios'])
-    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
-    .recommendation-settings-panel__grid--dense {
-    grid-template-columns: 1fr !important;
-  }
-}
 
 .weight-basis-dialog {
   max-height: min(80dvh, 640px);
@@ -47,8 +30,6 @@
     background: transparent;
   }
 }
-
-/* ========== iOS restore (exact prior UI — do not change) ========== */
 
 html[data-platform='ios'] .weight-basis-dialog {
   max-height: min(80vh, 640px);
