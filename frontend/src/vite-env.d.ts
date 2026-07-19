@@ -8,3 +8,12 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface NavigatorUAData {
+  readonly platform: string;
+  readonly mobile: boolean;
+}
+
+interface Navigator {
+  readonly userAgentData?: NavigatorUAData;
+}

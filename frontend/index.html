@@ -15,7 +15,11 @@
       (function () {
         try {
           var ua = navigator.userAgent || '';
-          var platform = /Android/i.test(ua)
+          var uaPlatform =
+            navigator.userAgentData && navigator.userAgentData.platform
+              ? navigator.userAgentData.platform
+              : '';
+          var platform = /Android/i.test(ua) || /Android/i.test(uaPlatform)
             ? 'android'
             : (/iPhone|iPad|iPod/i.test(ua) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
