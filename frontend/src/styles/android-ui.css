@@ -1,14 +1,14 @@
 /**
  * Non-iOS readability fixes for recommendation / workout steppers.
  * Improved sizes apply by default; html[data-platform="ios"] restores the exact prior UI.
- * v5 — result settings grid is 3-col in recommendation.css; iOS restored below.
+ * v6 — result settings grid stays 2-col on phones (iPhone + Galaxy).
  */
 
 /* ========== Improved defaults (Android / other) ========== */
 
 .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
   gap: 0.5rem !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 }
 
 .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
@@ -17,6 +17,10 @@
 }
 
 @media (min-width: 768px) {
+  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
   .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
     .recommendation-settings-panel__grid--dense {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
