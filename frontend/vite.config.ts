@@ -1,7 +1,22 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import fs from 'node:fs';
 import path from 'path';
+
+function spaGitHubPagesFallback(): Plugin {
+  return {
+    name: 'spa-github-pages-fallback',
+    closeBundle() {
+      const distDir = path.resolve(__dirname, 'dist');
+      const indexHtml = path.join(distDir, 'index.html');
+      const notFoundHtml = path.join(distDir, '404.html');
+      if (fs.existsSync(indexHtml)) {
+        fs.copyFileSync(indexHtml, notFoundHtml);
+      }
+    },
+  };
+}
 
 export default defineConfig({
   base: '/machinefit/',
@@ -12,8 +27,9 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    spaGitHubPagesFallback(),
     VitePWA({
-      // One release: uninstall stuck service workers on client devices.
+      // Keep destroying stuck SWs this release so Android picks up 404.html + fresh assets.
       selfDestroying: true,
       registerType: 'autoUpdate',
       injectRegister: null,
@@ -29,9 +45,9 @@ export default defineConfig({
         theme_color: '#111827',
         background_color: '#111827',
         display: 'standalone',
-        start_url: '/machinefit/?v=5',
+        start_url: '/machinefit/',
         scope: '/machinefit/',
-        id: '/machinefit/?v=5',
+        id: '/machinefit/',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
