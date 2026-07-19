@@ -692,7 +692,17 @@ export function WorkoutLogPanel({
         {diaryTags}
       </div>
       <div className="history-workout-log__diary-memo-pane">
-        <span className="history-workout-log__pane-label">{t('machines:history.memoLabel')}</span>
+        <div className="history-workout-log__memo-header">
+          <span className="history-workout-log__pane-label">{t('machines:history.memoLabel')}</span>
+          <button
+            type="button"
+            className="btn btn--secondary history-workout-log__memo-save"
+            onClick={handleSave}
+            disabled={isActionPending || isLoading}
+          >
+            {saveMutation.isPending ? t('machines:history.memoSaving') : t('machines:history.memoSave')}
+          </button>
+        </div>
         <textarea
           id={`${idPrefix}-diary`}
           className="input history-workout-log__memo-input"
