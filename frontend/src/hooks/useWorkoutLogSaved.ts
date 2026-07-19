@@ -13,22 +13,39 @@ interface UseWorkoutLogSavedOptions {
   isAuthenticated: boolean;
 }
 
+export function buildWorkoutLogSavedQueryKey(
+  machineCode: string,
+  logDate: string,
+  targetMuscleGroup?: TargetMuscleGroup
+) {
+  const normalizedLogDate = normalizeDateKey(logDate);
+  const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, targetMuscleGroup);
+  return {
+    queryKey: QUERY_KEYS.workoutLogToday(machineCode, normalizedLogDate, queryTargetMuscle),
+    normalizedLogDate,
+    queryTargetMuscle,
+  };
+}
+
 export function useWorkoutLogSaved({
   machineCode,
   logDate,
   targetMuscleGroup,
   isAuthenticated,
 }: UseWorkoutLogSavedOptions) {
-  const normalizedLogDate = normalizeDateKey(logDate);
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
-  const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, targetMuscleGroup);
+  const { queryKey, normalizedLogDate, queryTargetMuscle } = buildWorkoutLogSavedQueryKey(
+    machineCode,
+    logDate,
+    targetMuscleGroup
+  );
   const queryEnabled =
     isAuthenticated &&
     Boolean(machineCode && normalizedLogDate) &&
     (!isFreeWeight || !!queryTargetMuscle);
 
   const { data: logs } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogToday(machineCode, normalizedLogDate, queryTargetMuscle),
+    queryKey,
     queryFn: async () => {
       const res = await workoutLogApi.list({
         machineCode,
@@ -38,6 +55,10 @@ export function useWorkoutLogSaved({
       return res.data.data;
     },
     enabled: queryEnabled,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   return Boolean(logs?.[0]);

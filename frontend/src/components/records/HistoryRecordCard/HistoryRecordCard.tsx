@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, Clock3, Heart, SlidersHorizontal, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
@@ -58,17 +58,23 @@ export function HistoryRecordCard({
 }: HistoryRecordCardProps) {
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
+  const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const logDate = normalizeDateKey(card.logDate);
   const cardTargetMuscle = getWorkoutLogQueryTargetMuscle(
     card.machineCode,
     card.targetMuscleGroup as TargetMuscleGroup | undefined
   );
-  const isWorkoutLogSaved = useWorkoutLogSaved({
+  const cachedWorkoutLogSaved = useWorkoutLogSaved({
     machineCode: card.machineCode,
     logDate,
     targetMuscleGroup: cardTargetMuscle,
     isAuthenticated,
   });
+  const isWorkoutLogSaved = workoutLogSavedOverride ?? cachedWorkoutLogSaved;
+
+  useEffect(() => {
+    setWorkoutLogSavedOverride(null);
+  }, [card.cardId]);
   const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
     machineCode: card.machineCode,
     recommendationId: card.recommendationId,
@@ -237,6 +243,7 @@ export function HistoryRecordCard({
         targetMuscleGroup={cardTargetMuscle}
         lockTargetMuscle={lockTargetMuscle}
         onControlReady={setLogControl}
+        onSavedChange={setWorkoutLogSavedOverride}
       />
     </article>
   );

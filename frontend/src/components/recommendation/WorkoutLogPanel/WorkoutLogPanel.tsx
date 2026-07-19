@@ -20,6 +20,7 @@ import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper'
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
 import { getWeightStepKg } from '@/utils/weightStep';
 import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, upsertWorkoutLogInCache } from '@/utils/workoutLogCache';
+import { buildWorkoutLogSavedQueryKey } from '@/hooks/useWorkoutLogSaved';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -52,6 +53,7 @@ interface WorkoutLogPanelProps {
   diaryDefaultOpen?: boolean;
   showSaveButton?: boolean;
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
+  onSavedChange?: (saved: boolean) => void;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -164,6 +166,7 @@ export function WorkoutLogPanel({
   diaryDefaultOpen = false,
   showSaveButton = false,
   onControlReady,
+  onSavedChange,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -182,6 +185,11 @@ export function WorkoutLogPanel({
   );
   const activeTargetMuscle = selectedMuscle ?? targetMuscleGroup ?? null;
   const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, activeTargetMuscle);
+  const { queryKey: workoutLogQueryKey } = buildWorkoutLogSavedQueryKey(
+    machineCode,
+    logDate,
+    queryTargetMuscle
+  );
 
   const [setCount, setSetCount] = useState(DEFAULT_SET_COUNT);
   const [weights, setWeights] = useState<number[]>(() =>
@@ -199,7 +207,7 @@ export function WorkoutLogPanel({
   const queryEnabled = isAuthenticated && (!isFreeWeight || !!queryTargetMuscle);
 
   const { data: existingLogs, isLoading, isFetched } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogToday(machineCode, logDate, queryTargetMuscle),
+    queryKey: workoutLogQueryKey,
     queryFn: async () => {
       const res = await workoutLogApi.list({
         machineCode,
@@ -209,6 +217,10 @@ export function WorkoutLogPanel({
       return res.data.data;
     },
     enabled: queryEnabled,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const existingLog = existingLogs?.[0];
@@ -224,21 +236,21 @@ export function WorkoutLogPanel({
       !booleansEqual(setCompleted, baseline.setCompleted) ||
       diary.trim() !== baseline.diary.trim());
 
-  const invalidateLogSideEffects = async (options?: { skipWorkoutLogsAll?: boolean }) => {
-    if (!options?.skipWorkoutLogsAll) {
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
-    }
+  const invalidateLogSideEffects = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
     await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 
-  const workoutLogQueryKey = QUERY_KEYS.workoutLogToday(machineCode, logDate, queryTargetMuscle);
   const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll;
   const removeLogParams = {
     machineCode,
     logDate,
     targetMuscleGroup: queryTargetMuscle,
   };
+
+  useEffect(() => {
+    onSavedChange?.(isLogSaved);
+  }, [isLogSaved, onSavedChange]);
 
   useEffect(() => {
     lastHydrateKeyRef.current = '';
@@ -292,6 +304,7 @@ export function WorkoutLogPanel({
     },
     onSuccess: async (savedLog) => {
       queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
+      onSavedChange?.(true);
       queryClient.setQueryData(
         workoutLogsAllKey,
         upsertWorkoutLogInCache(
@@ -300,7 +313,7 @@ export function WorkoutLogPanel({
           removeLogParams
         )
       );
-      await invalidateLogSideEffects();
+      void invalidateLogSideEffects();
       queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
       showToast(
         isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
@@ -333,6 +346,7 @@ export function WorkoutLogPanel({
       });
       setBaseline(null);
       queryClient.setQueryData(workoutLogQueryKey, []);
+      onSavedChange?.(false);
       queryClient.setQueryData(
         workoutLogsAllKey,
         removeWorkoutLogFromCache(previousAllLogs, removeLogParams)
@@ -342,6 +356,7 @@ export function WorkoutLogPanel({
     },
     onSuccess: async () => {
       queryClient.setQueryData(workoutLogQueryKey, []);
+      onSavedChange?.(false);
       queryClient.setQueryData(
         workoutLogsAllKey,
         removeWorkoutLogFromCache(
@@ -349,13 +364,14 @@ export function WorkoutLogPanel({
           removeLogParams
         )
       );
-      await invalidateLogSideEffects({ skipWorkoutLogsAll: true });
+      void invalidateLogSideEffects();
       queryClient.setQueryData(workoutLogQueryKey, []);
       showToast(t('machines:workoutLog.canceled'), 'success');
     },
     onError: (_error, _variables, context) => {
       if (context?.previousLogs !== undefined) {
         queryClient.setQueryData(workoutLogQueryKey, context.previousLogs);
+        onSavedChange?.(Boolean(context.previousLogs?.[0]));
       }
       if (context?.previousAllLogs !== undefined) {
         queryClient.setQueryData(workoutLogsAllKey, context.previousAllLogs);

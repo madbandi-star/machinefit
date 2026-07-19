@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SlidersHorizontal, Bookmark, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
@@ -25,6 +25,7 @@ import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
+import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 import '@/styles/history-premium.css';
@@ -74,6 +75,7 @@ export function RecommendationResultPage() {
   const locale = useSettingsStore((s) => s.locale);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
+  const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
 
   const { data: fetchedResult, isLoading, isError } = useQuery({
     queryKey: ['recommendation', recommendationId, locale],
@@ -87,16 +89,21 @@ export function RecommendationResultPage() {
 
   const result = fetchedResult ?? stateResult;
   const resultLogDate = normalizeDateKey(logDateParam ?? getLocalDateKey(result?.createdAt ?? ''));
-  const resultTargetMuscle =
-    result?.targetMuscleGroup && result && isFreeWeightMachineCode(result.machineCode)
-      ? result.targetMuscleGroup
-      : undefined;
-  const isWorkoutLogSaved = useWorkoutLogSaved({
+  const resultTargetMuscle = getWorkoutLogQueryTargetMuscle(
+    result?.machineCode ?? '',
+    result?.targetMuscleGroup
+  );
+  const cachedWorkoutLogSaved = useWorkoutLogSaved({
     machineCode: result?.machineCode ?? '',
     logDate: resultLogDate,
     targetMuscleGroup: resultTargetMuscle,
     isAuthenticated: isAuthenticated && !!result,
   });
+  const isWorkoutLogSaved = workoutLogSavedOverride ?? cachedWorkoutLogSaved;
+
+  useEffect(() => {
+    setWorkoutLogSavedOverride(null);
+  }, [result?.id, resultLogDate, resultTargetMuscle]);
 
   const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
     machineCode: result?.machineCode ?? '',
@@ -267,9 +274,10 @@ export function RecommendationResultPage() {
             variant="history"
             logDate={resultLogDate}
             idPrefix={`result-workout-${result.id}`}
-            targetMuscleGroup={result.targetMuscleGroup}
-            lockTargetMuscle={Boolean(result.targetMuscleGroup && isFreeWeightMachineCode(result.machineCode))}
+            targetMuscleGroup={resultTargetMuscle}
+            lockTargetMuscle={Boolean(resultTargetMuscle && isFreeWeightMachineCode(result.machineCode))}
             onControlReady={setLogControl}
+            onSavedChange={setWorkoutLogSavedOverride}
           />
           <RecommendationTips tips={result.tips} />
         </article>

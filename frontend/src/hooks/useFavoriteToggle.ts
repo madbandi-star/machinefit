@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -19,6 +20,7 @@ export function useFavoriteToggle({
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const favoriteKey = QUERY_KEYS.favoriteCheck(machineCode);
+  const [pendingFavorited, setPendingFavorited] = useState<boolean | null>(null);
 
   const { data: favoriteCheck } = useQuery({
     queryKey: favoriteKey,
@@ -27,9 +29,14 @@ export function useFavoriteToggle({
       return res.data.data;
     },
     enabled: isAuthenticated && Boolean(machineCode),
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
-  const isFavorited = favoriteCheck?.favorited ?? false;
+  const cachedFavorited = favoriteCheck?.favorited ?? false;
+  const isFavorited = pendingFavorited ?? cachedFavorited;
 
   const toggleFavoriteMutation = useMutation({
     mutationFn: async ({
@@ -52,6 +59,7 @@ export function useFavoriteToggle({
       };
     },
     onMutate: async ({ shouldFavorite, favoriteId }) => {
+      setPendingFavorited(shouldFavorite);
       await queryClient.cancelQueries({ queryKey: favoriteKey });
       const previous = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(
         favoriteKey
@@ -77,12 +85,14 @@ export function useFavoriteToggle({
     onSuccess: (data, _variables, context) => {
       const key = context?.favoriteKey ?? favoriteKey;
       queryClient.setQueryData(key, data);
+      setPendingFavorited(data.favorited);
       showToast(
         data.favorited ? t('common:actions.save') : t('machines:recommendation.removedFavorite'),
         'success'
       );
     },
     onError: (_error, _variables, context) => {
+      setPendingFavorited(null);
       if (context?.previous && context.favoriteKey) {
         queryClient.setQueryData(context.favoriteKey, context.previous);
       }
@@ -94,8 +104,9 @@ export function useFavoriteToggle({
   });
 
   const toggleFavorite = () => {
+    const shouldFavorite = !isFavorited;
     toggleFavoriteMutation.mutate({
-      shouldFavorite: !isFavorited,
+      shouldFavorite,
       favoriteId: favoriteCheck?.favoriteId,
     });
   };
