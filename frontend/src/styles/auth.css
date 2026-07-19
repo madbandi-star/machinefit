@@ -28,7 +28,7 @@
 }
 
 .auth-hero__title {
-  font-size: clamp(1.3125rem, 4.8vw, 1.6875rem);
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.025em;
   line-height: 1.25;

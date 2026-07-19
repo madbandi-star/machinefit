@@ -48,6 +48,8 @@
 
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
   --header-base-height: 56px;
   --bottom-nav-base-height: 56px;
   --sticky-action-height: 52px;
@@ -55,20 +57,22 @@
   --header-height: calc(var(--header-base-height) + var(--safe-area-top));
   --bottom-nav-height: calc(var(--bottom-nav-base-height) + var(--safe-area-bottom));
 
-  --radius-sm: 10px;
+  --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 20px;
 
-  --max-width: 1200px;
+  /* iPhone 15 Pro Max CSS width — lock all devices to this frame */
+  --app-frame-width: 430px;
+  --max-width: var(--app-frame-width);
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Inter', ui-monospace, 'SF Mono', monospace;
 
-  --font-size-caption: 0.75rem;
-  --font-size-body-sm: 0.875rem;
-  --font-size-body: 1rem;
-  --font-size-h3: 1rem;
-  --font-size-h2: 1.125rem;
-  --font-size-h1: 1.5rem;
+  --font-size-caption: 13px;
+  --font-size-body-sm: 14px;
+  --font-size-body: 16px;
+  --font-size-h3: 16px;
+  --font-size-h2: 20px;
+  --font-size-h1: 28px;
   --font-size-display: 3.25rem;
   --font-size-setting-label: 0.6875rem;
   --font-size-setting-label-compact: 0.625rem;
@@ -79,17 +83,18 @@
   --setting-card-min-height: 6rem;
   --setting-card-min-height-mobile: 4.75rem;
 
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 2.5rem;
+  /* Fixed spacing scale (px) — same on every device at 16px root */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
 
   --touch-target-min: 48px;
   --control-height: var(--touch-target-min);
-  --control-height-compact: 2.75rem;
-  --control-height-dense: 2rem;
+  --control-height-compact: 44px;
+  --control-height-dense: 32px;
   --color-muscle-chest: #ff6b6b;
   --color-muscle-back: #4dabf7;
   --color-muscle-legs: #51cf66;
@@ -143,11 +148,20 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Match iPhone chrome insets on Android / other — iOS keeps real safe-area only */
+html:not([data-platform='ios']) {
+  --safe-area-top: max(env(safe-area-inset-top, 0px), 12px);
+  --safe-area-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+  --safe-area-left: max(env(safe-area-inset-left, 0px), 0px);
+  --safe-area-right: max(env(safe-area-inset-right, 0px), 0px);
 }
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-bg);
+  background: var(--color-bg-secondary);
   background-image:
     radial-gradient(ellipse 90% 60% at 50% -30%, rgba(0, 230, 118, 0.07), transparent),
     radial-gradient(ellipse 60% 40% at 100% 0%, rgba(138, 148, 166, 0.06), transparent);
@@ -156,6 +170,8 @@ body {
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
   font-feature-settings: 'tnum' 1;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 a {
@@ -178,6 +194,15 @@ img {
 
 #root {
   min-height: 100dvh;
+  width: 100%;
+  max-width: var(--app-frame-width);
+  margin-inline: auto;
+  position: relative;
+  background: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -30%, rgba(0, 230, 118, 0.07), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(138, 148, 166, 0.06), transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--glass-border) 70%, transparent);
 }
 
 .font-tabular {

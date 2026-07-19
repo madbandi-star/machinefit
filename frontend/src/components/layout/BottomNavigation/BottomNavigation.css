@@ -1,8 +1,11 @@
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  right: auto;
+  width: 100%;
+  max-width: var(--app-frame-width);
+  transform: translateX(-50%);
   height: var(--bottom-nav-height);
   padding-bottom: var(--safe-area-bottom);
   background: var(--glass-bg);
@@ -59,10 +62,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-@media (min-width: 768px) {
-  .bottom-nav {
-    display: none;
-  }
 }

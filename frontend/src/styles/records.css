@@ -1142,14 +1142,3 @@
   line-height: 1.4;
   color: var(--history-text-muted-value, var(--color-text-muted));
 }
-
-@media (min-width: 768px) {
-  .records-page__title {
-    font-size: var(--font-size-h1);
-  }
-
-  .machine-detail-page--compact {
-    min-height: auto;
-    padding-bottom: 0;
-  }
-}

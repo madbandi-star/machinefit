@@ -2,6 +2,9 @@
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: var(--app-frame-width);
+  margin-inline: auto;
 }
 
 .layout__main {
@@ -11,14 +14,8 @@
 }
 
 .layout__content {
-  max-width: var(--max-width);
+  max-width: var(--app-frame-width);
   margin: 0 auto;
   padding: var(--space-md);
   width: 100%;
-}
-
-@media (min-width: 768px) {
-  .layout__main {
-    padding-bottom: var(--space-md);
-  }
 }

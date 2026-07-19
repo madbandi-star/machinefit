@@ -32,7 +32,7 @@
 }
 
 .home-hero__title {
-  font-size: clamp(1.5rem, 5vw, 1.875rem);
+  font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.2;

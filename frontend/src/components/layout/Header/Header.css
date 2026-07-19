@@ -1,8 +1,11 @@
 .header {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  right: auto;
+  width: 100%;
+  max-width: var(--app-frame-width);
+  transform: translateX(-50%);
   height: var(--header-height);
   padding-top: var(--safe-area-top);
   background: var(--glass-bg);
@@ -64,8 +67,7 @@
   color: var(--color-link);
 }
 
-@media (max-width: 767px) {
-  .header__link--desktop {
-    display: none;
-  }
+/* Phone chrome only — hide desktop-only links inside the 430px frame */
+.header__link--desktop {
+  display: none;
 }

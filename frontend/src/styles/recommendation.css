@@ -205,17 +205,6 @@
   gap: 0.5rem;
 }
 
-@media (min-width: 768px) {
-  .recommendation-settings-panel--dashboard {
-    gap: 0.75rem;
-  }
-
-  .recommendation-settings-panel__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.65rem;
-  }
-}
-
 .recommendation-settings-panel--compact {
   gap: 0.5rem;
 }
@@ -230,8 +219,8 @@
 
 .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
   display: grid;
-  /* Default 3-up: Android portrait must not depend on min-width:768 (landscape-only trap). */
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* iPhone 15 Pro Max baseline — 2 columns on every device */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.35rem;
 }
 
@@ -328,17 +317,6 @@
   padding-top: 0.45rem;
   padding-bottom: 0.45rem;
   font-size: 0.8125rem;
-}
-
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.4rem;
-  }
-
-  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 .recommendation-settings-panel__empty {
@@ -1212,36 +1190,6 @@
   min-height: 2.75rem;
 }
 
-@media (min-width: 768px) {
-  .recommendation-result-page {
-    min-height: auto;
-    padding-bottom: 0;
-  }
-
-  .recommendation-result-page__header {
-    position: static;
-    margin-bottom: var(--space-md);
-    padding-bottom: 0;
-    border-bottom: none;
-    background: transparent;
-    backdrop-filter: none;
-  }
-
-  .recommendation-result-page__title {
-    font-size: var(--font-size-h1);
-    white-space: normal;
-  }
-
-  .recommendation-action-bar--fixed {
-    position: static;
-    transform: none;
-    padding: var(--space-md) 0 0;
-    background: transparent;
-    border-top: none;
-    backdrop-filter: none;
-  }
-}
-
 .setting-value-card__label-row {
   display: flex;
   align-items: center;
@@ -1940,115 +1888,5 @@
   text-align: center;
   color: var(--color-primary);
   cursor: pointer;
-}
-
-/* —— Phones (portrait + landscape): always 2-col; iPhone unchanged —— */
-@media (max-width: 1023px), (hover: none), (pointer: coarse) {
-  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-  }
-
-  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
-    .recommendation-settings-panel__grid--dense {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* Portrait explicitly (Galaxy S25 ~360px must stay 2-col, never inherit landscape 3-col caches) */
-@media (orientation: portrait) {
-  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-  }
-}
-
-/* —— Non-iOS compact workout steppers: no overlap; 1-digit number slot + kg —— */
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__weight-list--compact {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 0.35rem !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__weight-row--compact {
-  gap: 0.3rem !important;
-  min-width: 0 !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__weight-row .weight-stepper,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper {
-  min-width: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__row {
-  display: grid !important;
-  grid-template-columns: 2rem max-content 2rem !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  gap: 0.25rem !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: 2rem !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
-  width: 2rem !important;
-  min-width: 2rem !important;
-  max-width: 2rem !important;
-  min-height: 2rem !important;
-  padding: 0 !important;
-  flex-shrink: 0 !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
-  width: max-content !important;
-  min-width: 2.25rem !important;
-  max-width: 4rem !important;
-  min-height: 2rem !important;
-  padding: 0 0.25rem !important;
-  gap: 0.12rem !important;
-  overflow: hidden !important;
-  flex-shrink: 0 !important;
-  white-space: nowrap !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text {
-  display: inline-block !important;
-  min-width: 1ch !important;
-  max-width: 1ch !important;
-  width: 1ch !important;
-  overflow: hidden !important;
-  text-align: center !important;
-  font-variant-numeric: tabular-nums !important;
-  line-height: 1 !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
-  display: inline-block !important;
-  width: 1ch !important;
-  min-width: 1ch !important;
-  max-width: 1ch !important;
-  overflow: hidden !important;
-  text-align: center !important;
-  font-variant-numeric: tabular-nums !important;
-  line-height: 1 !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__unit {
-  flex-shrink: 0 !important;
-  font-size: 0.625rem !important;
-  line-height: 1 !important;
-}
-
-html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
-  max-width: none !important;
-  flex: 0 0 auto !important;
 }
 

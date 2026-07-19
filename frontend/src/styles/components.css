@@ -70,20 +70,9 @@
 
 .card-grid {
   display: grid;
+  /* Locked to iPhone portrait density inside the 430px frame */
   grid-template-columns: 1fr;
   gap: 1rem;
-}
-
-@media (min-width: 480px) {
-  .card-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 768px) {
-  .card-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .btn {
@@ -267,13 +256,7 @@
   -webkit-backdrop-filter: blur(var(--glass-blur));
   z-index: 1000;
   font-size: var(--font-size-body-sm);
-  max-width: min(90vw, 420px);
-}
-
-@media (min-width: 768px) {
-  .toast {
-    bottom: var(--space-lg);
-  }
+  max-width: min(100%, calc(var(--app-frame-width) - 2rem));
 }
 
 .toast--success { border-color: var(--color-success); }
@@ -898,7 +881,7 @@
 
 .bottom-sheet {
   width: 100%;
-  max-width: 32rem;
+  max-width: var(--app-frame-width);
   max-height: min(75vh, 640px);
   display: flex;
   flex-direction: column;

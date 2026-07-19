@@ -403,18 +403,6 @@
   font-size: var(--font-size-body-sm);
 }
 
-@media (min-width: 768px) {
-  .recommend-cta--fixed {
-    position: sticky;
-    transform: none;
-    left: auto;
-    width: auto;
-    max-width: none;
-    padding: var(--space-sm) 0 var(--space-xs);
-    border-top: none;
-  }
-}
-
 .recommend-cta__muscle-picker {
   margin-bottom: var(--space-sm);
 }

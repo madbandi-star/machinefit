@@ -1,6 +1,6 @@
 /**
- * Non-iOS helpers.
- * v11 — result settings default/phone = 2-col (portrait + landscape under 1024).
+ * Touch / non-iOS helpers only — no layout divergence from the iPhone baseline.
+ * Layout is unified via --app-frame-width (430px) in globals.css.
  */
 
 .weight-basis-dialog {
@@ -8,25 +8,23 @@
 }
 
 @media (hover: none) {
-  html:not([data-platform='ios']) .setting-value-card__quick-pick:hover:not(:disabled) {
+  .setting-value-card__quick-pick:hover:not(:disabled) {
     border-color: var(--glass-border);
   }
 
-  html:not([data-platform='ios']) .recommendation-workout-log__diary-tag:hover:not(:disabled) {
+  .recommendation-workout-log__diary-tag:hover:not(:disabled) {
     border-color: var(--glass-border);
   }
 
-  html:not([data-platform='ios'])
-    .history-record-card
-    .recommendation-workout-log__diary-tag:hover:not(:disabled) {
+  .history-record-card .recommendation-workout-log__diary-tag:hover:not(:disabled) {
     border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
   }
 
-  html:not([data-platform='ios']) .weight-basis-trigger:hover {
+  .weight-basis-trigger:hover {
     color: var(--color-primary);
   }
 
-  html:not([data-platform='ios']) .recommendation-action-bar__menu-item:hover {
+  .recommendation-action-bar__menu-item:hover {
     background: transparent;
   }
 }
