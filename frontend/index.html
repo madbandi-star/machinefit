@@ -14,6 +14,16 @@
     <script>
       (function () {
         try {
+          var ua = navigator.userAgent || '';
+          var platform = /Android/i.test(ua)
+            ? 'android'
+            : (/iPhone|iPad|iPod/i.test(ua) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+              ? 'ios'
+              : 'other';
+          document.documentElement.setAttribute('data-platform', platform);
+        } catch (e) {}
+        try {
           var raw = localStorage.getItem('machinefit-settings');
           if (!raw) return;
           var parsed = JSON.parse(raw);
