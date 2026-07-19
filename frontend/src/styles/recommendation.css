@@ -1941,16 +1941,46 @@
   cursor: pointer;
 }
 
-/* —— Phones always 2-col (Galaxy desktop-site / stale 768 quirks); iPhone look unchanged —— */
+/* —— Phone settings grid: iPhone 2-col (unchanged), Android 3-col (2 rows × 3) —— */
 @media (max-width: 1023px), (hover: none), (pointer: coarse) {
-  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+  html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.35rem !important;
   }
 
-  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+  html[data-platform='ios']
+    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
     .recommendation-settings-panel__grid--dense {
     grid-template-columns: 1fr !important;
+  }
+
+  html:not([data-platform='ios']) .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.3rem !important;
+  }
+
+  html:not([data-platform='ios'])
+    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+    .recommendation-settings-panel__grid--dense {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Keep Android result cards dense enough for 3-up */
+  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card {
+    padding: 0.35rem 0.3rem !important;
+    gap: 0.15rem !important;
+  }
+
+  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card__label {
+    font-size: 0.5rem !important;
+  }
+
+  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card__value {
+    font-size: 0.9375rem !important;
+  }
+
+  html:not([data-platform='ios']) .recommendation-settings-panel--result .setting-value-card__unit {
+    font-size: 0.625rem !important;
   }
 }
 
