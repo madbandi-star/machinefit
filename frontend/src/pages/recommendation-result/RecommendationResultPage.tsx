@@ -137,6 +137,7 @@ export function RecommendationResultPage() {
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
     if (!isWorkoutLogSaved) {
+      setWorkoutLogSavedOverride(true);
       logControl.save();
       return;
     }
@@ -146,6 +147,7 @@ export function RecommendationResultPage() {
       return;
     }
 
+    setWorkoutLogSavedOverride(false);
     logControl.remove();
   };
 

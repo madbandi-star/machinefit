@@ -236,9 +236,9 @@ export function WorkoutLogPanel({
       !booleansEqual(setCompleted, baseline.setCompleted) ||
       diary.trim() !== baseline.diary.trim());
 
-  const invalidateLogSideEffects = async () => {
-    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-    await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+  const invalidateLogSideEffects = () => {
+    void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+    void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 
   const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll;
@@ -247,10 +247,6 @@ export function WorkoutLogPanel({
     logDate,
     targetMuscleGroup: queryTargetMuscle,
   };
-
-  useEffect(() => {
-    onSavedChange?.(isLogSaved);
-  }, [isLogSaved, onSavedChange]);
 
   useEffect(() => {
     lastHydrateKeyRef.current = '';
@@ -302,7 +298,7 @@ export function WorkoutLogPanel({
       await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
     },
-    onSuccess: async (savedLog) => {
+    onSuccess: (savedLog) => {
       queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
       onSavedChange?.(true);
       queryClient.setQueryData(
@@ -313,14 +309,17 @@ export function WorkoutLogPanel({
           removeLogParams
         )
       );
-      void invalidateLogSideEffects();
-      queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
+      invalidateLogSideEffects();
       showToast(
         isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
         'success'
       );
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: () => {
+      const current = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
+      onSavedChange?.(Boolean(current?.[0]));
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   const removeMutation = useMutation({
@@ -354,7 +353,7 @@ export function WorkoutLogPanel({
 
       return { previousLogs, previousAllLogs };
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.setQueryData(workoutLogQueryKey, []);
       onSavedChange?.(false);
       queryClient.setQueryData(
@@ -364,8 +363,7 @@ export function WorkoutLogPanel({
           removeLogParams
         )
       );
-      void invalidateLogSideEffects();
-      queryClient.setQueryData(workoutLogQueryKey, []);
+      invalidateLogSideEffects();
       showToast(t('machines:workoutLog.canceled'), 'success');
     },
     onError: (_error, _variables, context) => {

@@ -95,6 +95,7 @@ export function HistoryRecordCard({
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
     if (!isWorkoutLogSaved) {
+      setWorkoutLogSavedOverride(true);
       logControl.save();
       return;
     }
@@ -104,6 +105,7 @@ export function HistoryRecordCard({
       return;
     }
 
+    setWorkoutLogSavedOverride(false);
     logControl.remove();
   };
 
