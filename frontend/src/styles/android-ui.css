@@ -1,178 +1,55 @@
 /**
- * Non-iOS readability fixes for recommendation / workout steppers.
- * Improved sizes apply by default; html[data-platform="ios"] restores the exact prior UI.
- * v7 — workout log uses shared recommendation.css (iPhone baseline) on Android too.
+ * Non-iOS helpers. iPhone baseline lives in recommendation.css —
+ * html[data-platform="ios"] restores any remaining diffs below.
+ * v8 — no enlarged workout/settings overrides (match iPhone density).
  */
 
-/* ========== Improved defaults (Android / other) ========== */
-
-.recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-  gap: 0.5rem !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-}
-
-.recommendation-settings-panel--result.recommendation-settings-panel--adjusting
-  .recommendation-settings-panel__grid--dense {
-  grid-template-columns: 1fr !important;
-}
-
-@media (min-width: 768px) {
-  .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  }
-
-  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+/* Phone: always 2 setting cards per row (avoid stale 3-col caches / wide viewport quirks) */
+@media (max-width: 767px) {
+  html:not([data-platform='ios'])
+    .recommendation-settings-panel--result
     .recommendation-settings-panel__grid--dense {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
   }
-}
 
-.recommendation-settings-panel--result .setting-value-card {
-  padding: 0.65rem 0.7rem !important;
-  gap: 0.35rem !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__label {
-  font-size: 0.6875rem !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__value {
-  font-size: 1.375rem !important;
-  line-height: 1.2 !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__unit {
-  font-size: 0.8125rem !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__value-row--compare {
-  gap: 0.35rem 0.5rem !important;
-  flex-wrap: nowrap !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__compare-block {
-  flex: 1 1 5.5rem !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__compare-block--adjust {
-  flex: 1.35 1 7.5rem !important;
-  gap: 0.35rem !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__compare-label {
-  font-size: 0.6875rem !important;
-  min-width: 2.25rem !important;
-}
-
-.recommendation-settings-panel--result
-  .setting-value-card__compare-block:not(.setting-value-card__compare-block--adjust)
-  .setting-value-card__value {
-  font-size: 1.125rem !important;
-}
-
-.recommendation-settings-panel--result .setting-value-card__adjust-input {
-  font-size: 1rem !important;
+  html:not([data-platform='ios'])
+    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+    .recommendation-settings-panel__grid--dense {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .weight-basis-dialog {
-  max-height: min(80dvh, 640px) !important;
+  max-height: min(80dvh, 640px);
 }
 
 @media (hover: none) {
-  .setting-value-card__quick-pick:hover:not(:disabled) {
-    border-color: var(--glass-border) !important;
+  html:not([data-platform='ios']) .setting-value-card__quick-pick:hover:not(:disabled) {
+    border-color: var(--glass-border);
   }
 
-  .recommendation-workout-log__diary-tag:hover:not(:disabled) {
-    border-color: var(--glass-border) !important;
+  html:not([data-platform='ios']) .recommendation-workout-log__diary-tag:hover:not(:disabled) {
+    border-color: var(--glass-border);
   }
 
-  .history-record-card .recommendation-workout-log__diary-tag:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border)) !important;
+  html:not([data-platform='ios'])
+    .history-record-card
+    .recommendation-workout-log__diary-tag:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
   }
 
-  .weight-basis-trigger:hover {
-    color: var(--color-primary) !important;
+  html:not([data-platform='ios']) .weight-basis-trigger:hover {
+    color: var(--color-primary);
   }
 
-  .recommendation-action-bar__menu-item:hover {
-    background: transparent !important;
+  html:not([data-platform='ios']) .recommendation-action-bar__menu-item:hover {
+    background: transparent;
   }
 }
 
 /* ========== iOS restore (exact prior UI — do not change) ========== */
 
-html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-  gap: 0.35rem !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-}
-
-html[data-platform='ios']
-  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
-  .recommendation-settings-panel__grid--dense {
-  grid-template-columns: 1fr !important;
-}
-
-@media (min-width: 768px) {
-  html[data-platform='ios'] .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  }
-
-  html[data-platform='ios']
-    .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
-    .recommendation-settings-panel__grid--dense {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card {
-  padding: 0.4rem 0.45rem !important;
-  gap: 0.2rem !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__label {
-  font-size: 0.5625rem !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__value {
-  font-size: 1.0625rem !important;
-  line-height: normal !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__unit {
-  font-size: 0.6875rem !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__value-row--compare {
-  gap: 0.25rem 0.35rem !important;
-  flex-wrap: wrap !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__compare-block {
-  flex: 1 1 4.5rem !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__compare-block--adjust {
-  flex: 1.35 1 6.5rem !important;
-  gap: 0.25rem !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__compare-label {
-  font-size: 0.5625rem !important;
-  min-width: 1.75rem !important;
-}
-
-html[data-platform='ios']
-  .recommendation-settings-panel--result
-  .setting-value-card__compare-block:not(.setting-value-card__compare-block--adjust)
-  .setting-value-card__value {
-  font-size: 0.9375rem !important;
-}
-
-html[data-platform='ios'] .recommendation-settings-panel--result .setting-value-card__adjust-input {
-  font-size: 0.8125rem !important;
-}
-
 html[data-platform='ios'] .weight-basis-dialog {
-  max-height: min(80vh, 640px) !important;
+  max-height: min(80vh, 640px);
 }

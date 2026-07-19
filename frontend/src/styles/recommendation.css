@@ -1940,3 +1940,104 @@
   color: var(--color-primary);
   cursor: pointer;
 }
+
+/* —— Non-iOS phones (Galaxy etc.; iPhone untouched): 2-col + non-overlapping − N kg + —— */
+html:not([data-platform='ios']) .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.35rem !important;
+}
+
+html:not([data-platform='ios'])
+  .recommendation-settings-panel--result.recommendation-settings-panel--adjusting
+  .recommendation-settings-panel__grid--dense {
+  grid-template-columns: 1fr !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__weight-list--compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.35rem !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__weight-row--compact {
+  gap: 0.3rem !important;
+  min-width: 0 !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__weight-row .weight-stepper,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__row,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__row {
+  display: grid !important;
+  grid-template-columns: 2rem max-content 2rem !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2rem !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__btn,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__btn {
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__manual-input,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value,
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__manual-input {
+  width: max-content !important;
+  min-width: 2.25rem !important;
+  max-width: 4rem !important;
+  min-height: 2rem !important;
+  padding: 0 0.25rem !important;
+  gap: 0.12rem !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__value-text {
+  display: inline-block !important;
+  min-width: 1ch !important;
+  max-width: 1ch !important;
+  width: 1ch !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper__value-text {
+  display: inline-block !important;
+  width: 1ch !important;
+  min-width: 1ch !important;
+  max-width: 1ch !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .weight-stepper--compact .numeric-stepper__unit {
+  flex-shrink: 0 !important;
+  font-size: 0.625rem !important;
+  line-height: 1 !important;
+}
+
+html:not([data-platform='ios']) .recommendation-workout-log--compact .recommendation-workout-log__toolbar .numeric-stepper {
+  max-width: none !important;
+  flex: 0 0 auto !important;
+}
+

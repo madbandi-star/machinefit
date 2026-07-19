@@ -29,6 +29,7 @@ import '@/styles/components.css';
 import '@/styles/recommendation.css';
 import '@/styles/history-premium.css';
 import '@/styles/records.css';
+import '@/styles/android-ui.css';
 
 function ResultLoadingSkeleton() {
   return (
