@@ -255,16 +255,26 @@
 }
 
 .history-page-premium .history-record-card__header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 0.65rem;
+  display: block;
 }
 
-.history-page-premium .history-record-card__hero-link {
+.history-page-premium .history-record-card__thumb-link {
   text-decoration: none;
   color: inherit;
+  align-self: center;
+}
+
+.history-page-premium .history-record-card__meta-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.history-page-premium .history-record-card__title-link {
+  flex: 1 1 auto;
   min-width: 0;
+  text-decoration: none;
+  color: inherit;
 }
 
 .history-page-premium .history-record-card__hero {
@@ -272,6 +282,13 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0.75rem;
   align-items: start;
+}
+
+.history-page-premium .history-record-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
 }
 
 .history-page-premium .history-record-card__thumb {
