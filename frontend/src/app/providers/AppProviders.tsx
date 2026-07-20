@@ -4,7 +4,27 @@ import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { Toast } from '@/components/feedback/Toast/Toast';
 import { API_BASE_URL } from '@/services/http/axios-client';
+import { useSettingsStore } from '@/store/settings.store';
+import { speechManager } from '@/utils/speechManager';
+import { normalizeVoiceCoachVoice } from '@/utils/voiceCoach';
 import '@/i18n';
+
+function SpeechManagerBootstrap() {
+  const voiceCoachVoice = useSettingsStore((s) => s.voiceCoachVoice);
+
+  useEffect(() => {
+    const gender = normalizeVoiceCoachVoice(voiceCoachVoice);
+    void speechManager.init(gender).then(() => {
+      speechManager.setGender(gender);
+    });
+  }, []);
+
+  useEffect(() => {
+    speechManager.setGender(normalizeVoiceCoachVoice(voiceCoachVoice));
+  }, [voiceCoachVoice]);
+
+  return null;
+}
 
 export function AppProviders({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -16,6 +36,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <QueryProvider>
       <I18nProvider>
         <ThemeProvider>
+          <SpeechManagerBootstrap />
           {children}
           <Toast />
         </ThemeProvider>

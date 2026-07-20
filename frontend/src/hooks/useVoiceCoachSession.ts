@@ -80,7 +80,11 @@ export function useVoiceCoachSession({
             if (runIdRef.current !== runId) return;
             setPhase(nextPhase);
             if (detail?.rep != null) setCurrentRep(detail.rep);
-            if (detail?.countdown != null) setCountdown(detail.countdown);
+            if (nextPhase === 'countdown') {
+              setCountdown(typeof detail?.countdown === 'number' ? detail.countdown : null);
+            } else if (detail?.countdown != null) {
+              setCountdown(detail.countdown);
+            }
             if (nextPhase === 'done' || nextPhase === 'idle') {
               setCountdown(null);
             }

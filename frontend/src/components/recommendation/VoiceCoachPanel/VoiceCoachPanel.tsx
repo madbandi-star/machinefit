@@ -48,7 +48,8 @@ function statusLabel(
     case 'beep':
       return t('machines:voiceCoach.statusBeep');
     case 'countdown':
-      return t('machines:voiceCoach.statusCountdown', { count: countdown ?? 5 });
+      if (countdown == null) return t('machines:voiceCoach.statusReady');
+      return t('machines:voiceCoach.statusCountdown', { count: countdown });
     case 'start':
       return t('machines:voiceCoach.statusStart');
     case 'counting':

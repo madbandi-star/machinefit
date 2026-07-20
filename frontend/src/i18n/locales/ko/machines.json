@@ -116,7 +116,8 @@
     "statusCountdown": "{{count}}",
     "statusStart": "시작!",
     "statusCounting": "{{rep}}회",
-    "statusOneMore": "하나더! ({{rep}})"
+    "statusOneMore": "하나더! ({{rep}})",
+    "statusReady": "준비"
   },
   "feedback": {
     "title": "세팅이 잘 맞았나요?",

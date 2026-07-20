@@ -116,7 +116,8 @@
     "statusCountdown": "{{count}}",
     "statusStart": "Start!",
     "statusCounting": "Rep {{rep}}",
-    "statusOneMore": "One more! ({{rep}})"
+    "statusOneMore": "One more! ({{rep}})",
+    "statusReady": "Ready"
   },
   "feedback": {
     "title": "How did the settings fit?",

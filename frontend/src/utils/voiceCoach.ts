@@ -1,4 +1,6 @@
-/** Voice set coach: beeps → countdown → start → rep count → optional "one more". */
+/** Voice set coach: beeps → 준비 → 5–1 → 시작 → reps → optional "하나더". All speech via SpeechManager. */
+
+import { speechManager, type SpeechGender } from '@/utils/speechManager';
 
 export type VoiceCoachPhase =
   | 'idle'
@@ -9,8 +11,8 @@ export type VoiceCoachPhase =
   | 'oneMore'
   | 'done';
 
-/** Pre-recorded coach voices (sample #4 male / #3 female). */
-export type VoiceCoachVoice = 'male' | 'female';
+/** Coach voice gender (maps to SpeechManager male/female Voice). */
+export type VoiceCoachVoice = SpeechGender;
 
 export const DEFAULT_VOICE_COACH_VOICE: VoiceCoachVoice = 'male';
 
@@ -26,7 +28,7 @@ export interface VoiceCoachOptions {
   /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
   repGapMs?: number;
   locale?: string;
-  /** Pre-recorded coach voice. Default male (drill count). */
+  /** Male/female coach voice. Default male. */
   voice?: VoiceCoachVoice;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: { rep?: number; countdown?: number }) => void;
   signal?: AbortSignal;
@@ -86,15 +88,8 @@ const EN_ONES = [
 
 const EN_TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'] as const;
 
-/** Max rep clip bundled under public/voice-coach/{voice}/rep-N.mp3 */
-const MAX_CLIP_REP = 30;
-
 function isKoreanLocale(locale?: string): boolean {
   return (locale ?? 'ko').toLowerCase().startsWith('ko');
-}
-
-function speechLang(locale?: string): string {
-  return isKoreanLocale(locale) ? 'ko-KR' : 'en-US';
 }
 
 /** Native Korean counting used by trainers for reps (하나, 둘, … 열하나). */
@@ -127,12 +122,15 @@ export function formatRepWord(n: number, locale?: string): string {
 }
 
 function formatCountdownWord(n: number, locale?: string): string {
-  // Speak digits clearly for the pre-start countdown (5 4 3 2 1).
   if (isKoreanLocale(locale)) {
     const map: Record<number, string> = { 5: '오', 4: '사', 3: '삼', 2: '이', 1: '일' };
     return map[n] ?? String(n);
   }
   return String(n);
+}
+
+function readyPhrase(locale?: string): string {
+  return isKoreanLocale(locale) ? '준비' : 'Ready';
 }
 
 function startPhrase(locale?: string): string {
@@ -161,15 +159,8 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
-/** Shared AudioContext — stays unlocked after a user gesture so later reps still play. */
+/** Shared AudioContext for beeps only (speech is SpeechManager / TTS). */
 let sharedAudioCtx: AudioContext | null = null;
-let currentSource: AudioBufferSourceNode | null = null;
-let currentHtmlAudio: HTMLAudioElement | null = null;
-/** HTMLAudio warmed during a user gesture — can play later without a fresh tap. */
-let warmedHtmlAudio: HTMLAudioElement | null = null;
-const clipBufferCache = new Map<string, AudioBuffer>();
-/** In-flight fetches so parallel preload/play share one decode. */
-const clipBufferInflight = new Map<string, Promise<AudioBuffer | null>>();
 
 function getSharedAudioContext(): AudioContext | null {
   const Ctx =
@@ -203,7 +194,7 @@ async function playBeep(
   durationSec = 0.11
 ): Promise<void> {
   if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-  if (ctx.state === 'suspended') {
+  if ((ctx.state as string) === 'suspended') {
     await ctx.resume();
   }
 
@@ -222,40 +213,6 @@ async function playBeep(
   await sleep(Math.round(durationSec * 1000) + 40, signal);
 }
 
-function cancelSpeech(): void {
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-  }
-}
-
-function stopCurrentClip(): void {
-  if (currentHtmlAudio) {
-    try {
-      currentHtmlAudio.onended = null;
-      currentHtmlAudio.onerror = null;
-      currentHtmlAudio.pause();
-      currentHtmlAudio.removeAttribute('src');
-      currentHtmlAudio.load();
-    } catch {
-      // ignore
-    }
-    currentHtmlAudio = null;
-  }
-  if (!currentSource) return;
-  try {
-    currentSource.onended = null;
-    currentSource.stop();
-  } catch {
-    // already stopped
-  }
-  try {
-    currentSource.disconnect();
-  } catch {
-    // ignore
-  }
-  currentSource = null;
-}
-
 function publicAssetUrl(path: string): string {
   const base = import.meta.env.BASE_URL || '/';
   const normalizedBase = base.endsWith('/') ? base : `${base}/`;
@@ -263,11 +220,7 @@ function publicAssetUrl(path: string): string {
   return `${normalizedBase}${normalizedPath}`;
 }
 
-export function voiceCoachClipUrl(voice: VoiceCoachVoice, key: string): string {
-  return publicAssetUrl(`voice-coach/${normalizeVoiceCoachVoice(voice)}/${key}.mp3`);
-}
-
-/** Full sample used on the listen page (male=#4 drill, female=#3 pro). */
+/** Full sample used on the settings listen buttons (male=#4 drill, female=#3 pro). */
 export function voiceCoachPreviewSampleUrl(voice: VoiceCoachVoice): string {
   const file =
     normalizeVoiceCoachVoice(voice) === 'female'
@@ -276,372 +229,23 @@ export function voiceCoachPreviewSampleUrl(voice: VoiceCoachVoice): string {
   return publicAssetUrl(file);
 }
 
-function isSpeechActive(): boolean {
-  if (!('speechSynthesis' in window)) return false;
-  return window.speechSynthesis.speaking || window.speechSynthesis.pending;
-}
-
-function waitForSpeechVoices(timeoutMs = 400): Promise<void> {
-  if (!('speechSynthesis' in window)) return Promise.resolve();
-  if (window.speechSynthesis.getVoices().length > 0) return Promise.resolve();
-
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
-      resolve();
-    };
-    const onVoices = () => finish();
-    window.speechSynthesis.addEventListener('voiceschanged', onVoices);
-    window.setTimeout(finish, timeoutMs);
-  });
-}
-
-async function loadClipBuffer(url: string, ctx: AudioContext): Promise<AudioBuffer | null> {
-  const cached = clipBufferCache.get(url);
-  if (cached) return cached;
-
-  const inflight = clipBufferInflight.get(url);
-  if (inflight) return inflight;
-
-  const task = (async (): Promise<AudioBuffer | null> => {
-    try {
-      const response = await fetch(url, { cache: 'no-cache' });
-      if (!response.ok) return null;
-      const data = await response.arrayBuffer();
-      // Copy — decodeAudioData may detach the original buffer.
-      const copy = data.slice(0);
-      const buffer = await ctx.decodeAudioData(copy);
-      clipBufferCache.set(url, buffer);
-      return buffer;
-    } catch {
-      return null;
-    } finally {
-      clipBufferInflight.delete(url);
-    }
-  })();
-
-  clipBufferInflight.set(url, task);
-  return task;
-}
-
-async function preloadCoachClips(
-  voice: VoiceCoachVoice,
-  reps: number,
-  oneMoreEnabled: boolean,
-  signal?: AbortSignal,
-  mode: 'countdown' | 'all' = 'all'
-): Promise<void> {
-  const ctx = await ensureSharedAudioRunning();
-  if (!ctx) return;
-
-  const keys: string[] = ['cd-5', 'cd-4', 'cd-3', 'cd-2', 'cd-1', 'start'];
-  if (mode === 'all') {
-    if (oneMoreEnabled) keys.push('one-more');
-    const maxRep = Math.min(MAX_CLIP_REP, Math.max(1, reps));
-    for (let rep = 1; rep <= maxRep; rep += 1) {
-      keys.push(`rep-${rep}`);
-    }
-  } else {
-    keys.push('rep-1');
-  }
-
-  await Promise.all(
-    keys.map(async (key) => {
-      if (signal?.aborted) return;
-      await loadClipBuffer(voiceCoachClipUrl(voice, key), ctx);
-    })
-  );
-}
-
-function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new DOMException('Aborted', 'AbortError'));
-      return;
-    }
-
-    const audio = warmedHtmlAudio ?? new Audio();
-    warmedHtmlAudio = audio;
-    currentHtmlAudio = audio;
-    audio.preload = 'auto';
-    audio.volume = 1;
-    // Absolute URL helps some mobile WebViews after SPA navigation.
-    audio.src = new URL(url, window.location.href).href;
-
-    const onAbort = () => {
-      try {
-        audio.pause();
-      } catch {
-        // ignore
-      }
-      cleanup();
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-
-    const cleanup = () => {
-      signal?.removeEventListener('abort', onAbort);
-      audio.onended = null;
-      audio.onerror = null;
-      if (currentHtmlAudio === audio) currentHtmlAudio = null;
-    };
-
-    audio.onended = () => {
-      cleanup();
-      resolve(true);
-    };
-    audio.onerror = () => {
-      cleanup();
-      resolve(false);
-    };
-
-    signal?.addEventListener('abort', onAbort, { once: true });
-    void audio.play().then(
-      () => undefined,
-      () => {
-        cleanup();
-        resolve(false);
-      }
-    );
-  });
-}
-
-/**
- * Play a pre-recorded clip via Web Audio so playback keeps working after the
- * long rep-gap (HTMLAudioElement.play() often fails once the user-gesture window ends).
- * Falls back to warmed HTMLAudio when decode/Web Audio fails.
- */
-async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
-  if (signal?.aborted) {
-    throw new DOMException('Aborted', 'AbortError');
-  }
-
-  stopCurrentClip();
-  cancelSpeech();
-
-  const ctx = await ensureSharedAudioRunning();
-  if (ctx) {
-    const buffer = await loadClipBuffer(url, ctx);
-    if (buffer) {
-      if (signal?.aborted) {
-        throw new DOMException('Aborted', 'AbortError');
-      }
-
-      // Resume again right before start — mobile can suspend during preload/beeps.
-      try {
-        if ((ctx.state as string) !== 'running') {
-          await ctx.resume();
-        }
-      } catch {
-        // fall through to HTMLAudio
-      }
-
-      if ((ctx.state as string) === 'running') {
-        const played = await new Promise<boolean>((resolve, reject) => {
-          const source = ctx.createBufferSource();
-          const gain = ctx.createGain();
-          gain.gain.value = 1;
-          source.buffer = buffer;
-          source.connect(gain);
-          gain.connect(ctx.destination);
-          currentSource = source;
-
-          const safetyMs = Math.max(400, Math.ceil(buffer.duration * 1000) + 250);
-          let settled = false;
-          let timeoutId = 0;
-
-          const onAbort = () => {
-            try {
-              source.stop();
-            } catch {
-              // ignore
-            }
-            finishReject(new DOMException('Aborted', 'AbortError'));
-          };
-
-          const cleanup = () => {
-            if (timeoutId) window.clearTimeout(timeoutId);
-            signal?.removeEventListener('abort', onAbort);
-            source.onended = null;
-            if (currentSource === source) currentSource = null;
-          };
-
-          const finishResolve = (value: boolean) => {
-            if (settled) return;
-            settled = true;
-            cleanup();
-            resolve(value);
-          };
-
-          const finishReject = (error: DOMException) => {
-            if (settled) return;
-            settled = true;
-            cleanup();
-            reject(error);
-          };
-
-          source.onended = () => finishResolve(true);
-          signal?.addEventListener('abort', onAbort, { once: true });
-          timeoutId = window.setTimeout(() => finishResolve(true), safetyMs);
-
-          try {
-            source.start(0);
-          } catch {
-            finishResolve(false);
-          }
-        });
-        if (played) return true;
-      }
-    }
-  }
-
-  return playHtmlAudioClip(url, signal);
-}
-
-function pickSpeechVoice(
-  locale: string | undefined,
-  gender: VoiceCoachVoice
-): SpeechSynthesisVoice | undefined {
-  if (!('speechSynthesis' in window)) return undefined;
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length === 0) return undefined;
-
-  const lang = speechLang(locale).toLowerCase();
-  const langPrefix = lang.slice(0, 2);
-  const langVoices = voices.filter((voice) => {
-    const voiceLang = voice.lang.toLowerCase();
-    return voiceLang === lang || voiceLang.startsWith(`${langPrefix}-`) || voiceLang.startsWith(langPrefix);
-  });
-  const pool = langVoices.length > 0 ? langVoices : voices;
-
-  const maleHints = [/male/i, /남성/i, /\bman\b/i, /injoon/i, /hyunsu/i, /jinho/i, /minsu/i];
-  const femaleHints = [/female/i, /여성/i, /\bwoman\b/i, /sunhi/i, /yuna/i, /sora/i, /heami/i];
-  const hints = gender === 'male' ? maleHints : femaleHints;
-  const opposite = gender === 'male' ? femaleHints : maleHints;
-
-  const preferred = pool.find((voice) => hints.some((hint) => hint.test(voice.name)));
-  if (preferred) return preferred;
-
-  const nonOpposite = pool.find((voice) => !opposite.some((hint) => hint.test(voice.name)));
-  return nonOpposite ?? pool[0];
-}
-
-function speak(
-  text: string,
-  locale: string | undefined,
-  signal?: AbortSignal,
-  voiceGender: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new DOMException('Aborted', 'AbortError'));
-      return;
-    }
-    if (!('speechSynthesis' in window)) {
-      resolve();
-      return;
-    }
-
-    const trimmed = text.trim();
-    if (!trimmed) {
-      resolve();
-      return;
-    }
-
-    void waitForSpeechVoices().then(() => {
-      if (signal?.aborted) {
-        reject(new DOMException('Aborted', 'AbortError'));
-        return;
-      }
-
-      stopCurrentClip();
-      if (isSpeechActive()) {
-        cancelSpeech();
-      }
-
-      const gender = normalizeVoiceCoachVoice(voiceGender);
-      const utterance = new SpeechSynthesisUtterance(trimmed);
-      utterance.lang = speechLang(locale);
-      utterance.rate = isKoreanLocale(locale) ? 1.08 : 1.05;
-      // Nudge pitch when OS has no clearly gendered Korean voice.
-      utterance.pitch = gender === 'male' ? 0.92 : 1.12;
-      utterance.volume = 1;
-      const matchedVoice = pickSpeechVoice(locale, gender);
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
-        utterance.lang = matchedVoice.lang || utterance.lang;
-      }
-
-      const maxMs = Math.min(12_000, Math.max(2_500, trimmed.length * 700));
-      let timeoutId = 0;
-
-      const onAbort = () => {
-        cancelSpeech();
-        cleanup();
-        reject(new DOMException('Aborted', 'AbortError'));
-      };
-
-      const cleanup = () => {
-        if (timeoutId) window.clearTimeout(timeoutId);
-        signal?.removeEventListener('abort', onAbort);
-        utterance.onend = null;
-        utterance.onerror = null;
-      };
-
-      const finish = () => {
-        cleanup();
-        resolve();
-      };
-
-      utterance.onend = finish;
-      utterance.onerror = finish;
-
-      timeoutId = window.setTimeout(() => {
-        cancelSpeech();
-        finish();
-      }, maxMs);
-
-      signal?.addEventListener('abort', onAbort, { once: true });
-      window.speechSynthesis.speak(utterance);
-    });
-  });
-}
-
-async function speakCoachPhrase(options: {
-  clipKey: string | null;
-  text: string;
-  locale: string | undefined;
-  voice: VoiceCoachVoice;
-  signal?: AbortSignal;
-}): Promise<void> {
-  const { clipKey, text, locale, voice, signal } = options;
-  if (isKoreanLocale(locale) && clipKey) {
-    try {
-      const played = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
-      if (played) return;
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') throw error;
-    }
-  }
-  // Always fall back to OS TTS (gender-matched) so count never goes silent.
-  await speak(text, locale, signal, voice);
+export function voiceCoachClipUrl(voice: VoiceCoachVoice, key: string): string {
+  return publicAssetUrl(`voice-coach/${normalizeVoiceCoachVoice(voice)}/${key}.mp3`);
 }
 
 export function stopVoiceCoach(): void {
-  cancelSpeech();
-  stopCurrentClip();
+  speechManager.cancel();
 }
 
-/** Speak a single phrase (cancels any current utterance). */
+/** Speak a single phrase through SpeechManager (cancels any current queue). */
 export function speakVoiceText(
   text: string,
-  locale?: string,
+  _locale?: string,
   signal?: AbortSignal,
   voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
 ): Promise<void> {
-  return speak(text, locale, signal, voice);
+  speechManager.setGender(normalizeVoiceCoachVoice(voice));
+  return speechManager.speak(text, signal);
 }
 
 export interface RestVoiceCoachingOptions {
@@ -649,7 +253,7 @@ export interface RestVoiceCoachingOptions {
   tips?: string[];
   locale?: string;
   signal?: AbortSignal;
-  /** Prefer male/female OS TTS voice to match coach setting. */
+  /** Prefer male/female voice to match coach setting. */
   voice?: VoiceCoachVoice;
   /** Max warning lines to speak (default 3). */
   maxWarnings?: number;
@@ -658,7 +262,7 @@ export interface RestVoiceCoachingOptions {
 }
 
 /**
- * During rest: speak cautions first, then workout tips (trainer pacing).
+ * During rest: speak cautions first, then workout tips — same SpeechManager Voice/queue.
  */
 export async function speakRestTipsAndWarnings(
   options: RestVoiceCoachingOptions
@@ -678,27 +282,23 @@ export async function speakRestTipsAndWarnings(
   if (warningLines.length === 0 && tipLines.length === 0) return;
 
   const ko = isKoreanLocale(locale);
-  const gender = normalizeVoiceCoachVoice(voice);
+  speechManager.setGender(normalizeVoiceCoachVoice(voice));
+
+  const queue: string[] = [];
+  if (warningLines.length > 0) {
+    queue.push(ko ? '주의사항.' : 'Cautions.');
+    queue.push(...warningLines);
+  }
+  if (tipLines.length > 0) {
+    queue.push(ko ? '운동 팁.' : 'Workout tips.');
+    queue.push(...tipLines);
+  }
 
   try {
-    if (warningLines.length > 0) {
-      await speak(ko ? '주의사항.' : 'Cautions.', locale, signal, gender);
-      await sleep(280, signal);
-      for (let i = 0; i < warningLines.length; i += 1) {
-        await speak(warningLines[i], locale, signal, gender);
-        if (i < warningLines.length - 1) await sleep(420, signal);
-      }
-    }
-
-    if (tipLines.length > 0) {
-      if (warningLines.length > 0) await sleep(500, signal);
-      await speak(ko ? '운동 팁.' : 'Workout tips.', locale, signal, gender);
-      await sleep(280, signal);
-      for (let i = 0; i < tipLines.length; i += 1) {
-        await speak(tipLines[i], locale, signal, gender);
-        if (i < tipLines.length - 1) await sleep(420, signal);
-      }
-    }
+    await speechManager.speakQueue(queue, {
+      signal,
+      gapMs: 320,
+    });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       stopVoiceCoach();
@@ -709,73 +309,22 @@ export async function speakRestTipsAndWarnings(
 }
 
 /**
- * Warm audio/speech inside a user-gesture turn so countdown clips keep playing
- * after the beep lead-in. Must be awaited from the start button handler.
+ * Warm audio/TTS inside a user-gesture turn.
+ * Must be awaited from the start button handler.
  */
 export async function unlockVoiceCoachAudio(
   voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
 ): Promise<void> {
-  const normalized = normalizeVoiceCoachVoice(voice);
-  const warmUrl = voiceCoachClipUrl(normalized, 'cd-5');
-
-  // 1) Resume Web Audio while we still have the tap gesture.
-  const ctx = await ensureSharedAudioRunning();
-
-  // 2) Warm HTMLAudio with a real play()/pause() so later fallback can play.
-  try {
-    const audio = warmedHtmlAudio ?? new Audio();
-    warmedHtmlAudio = audio;
-    audio.preload = 'auto';
-    audio.src = new URL(warmUrl, window.location.href).href;
-    audio.volume = 0.001;
-    await audio.play();
-    audio.pause();
-    audio.currentTime = 0;
-    audio.volume = 1;
-  } catch {
-    // Some browsers block even gesture play if muted tabs — continue with Web Audio.
-  }
-
-  // 3) Decode the first countdown clips while the context is still hot.
-  if (ctx) {
-    try {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      gain.gain.value = 0.0001;
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      const now = ctx.currentTime;
-      osc.start(now);
-      osc.stop(now + 0.02);
-    } catch {
-      // ignore
-    }
-    await Promise.all([
-      loadClipBuffer(warmUrl, ctx),
-      loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-4'), ctx),
-      loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-3'), ctx),
-      loadClipBuffer(voiceCoachClipUrl(normalized, 'start'), ctx),
-      loadClipBuffer(voiceCoachClipUrl(normalized, 'rep-1'), ctx),
-    ]);
-  }
-
-  // 4) Unlock speechSynthesis without immediately cancelling (cancel undoes unlock on some WebViews).
-  if ('speechSynthesis' in window) {
-    try {
-      const utterance = new SpeechSynthesisUtterance('\u200B');
-      utterance.volume = 0;
-      utterance.rate = 2;
-      utterance.lang = 'ko-KR';
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // ignore
-    }
-  }
+  const gender = normalizeVoiceCoachVoice(voice);
+  await speechManager.init(gender);
+  speechManager.setGender(gender);
+  speechManager.unlock();
+  await ensureSharedAudioRunning();
 }
 
 /**
- * Full set coach sequence:
- * tip tip tip → 5 4 3 2 1 → 시작! → 하나 둘 … → (optional) 하나더!
+ * Full set coach sequence (all spoken lines share one SpeechManager Voice):
+ * tip tip tip → 준비 → 5 4 3 2 1 → 시작! → 하나 둘 … → (optional) 하나더!
  */
 export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<void> {
   const {
@@ -792,88 +341,76 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const voice = normalizeVoiceCoachVoice(voiceOption ?? DEFAULT_VOICE_COACH_VOICE);
   const reps = Math.max(1, Math.min(50, Math.round(targetReps)));
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
-  /** Keep one-more slightly slower than the count gap, but still follow user tempo. */
   const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
+
+  await speechManager.init(voice);
+  speechManager.setGender(voice);
+
   const audioCtx = await ensureSharedAudioRunning();
 
   try {
-    // Only warm countdown clips before beeps — full rep preload can suspend mobile audio.
-    if (isKoreanLocale(locale)) {
-      await preloadCoachClips(voice, reps, oneMoreEnabled, signal, 'countdown');
-    }
-
     onPhaseChange?.('beep');
-    const beepCtx = (await ensureSharedAudioRunning()) ?? audioCtx;
-    if (beepCtx) {
+    if (audioCtx) {
       for (let i = 0; i < 3; i += 1) {
-        await playBeep(beepCtx, signal, 880 + i * 40);
+        await playBeep(audioCtx, signal, 880 + i * 40);
         if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
       }
     } else {
-      // Fallback when AudioContext is unavailable: short spoken ticks.
-      for (let i = 0; i < 3; i += 1) {
-        await speak(isKoreanLocale(locale) ? '띡' : 'tick', locale, signal, voice);
-        if (i < 2) await sleep(120, signal);
-      }
-    }
-
-    // Prefetch remaining reps in the background while countdown speaks.
-    if (isKoreanLocale(locale)) {
-      void preloadCoachClips(voice, reps, oneMoreEnabled, signal, 'all');
+      await speechManager.speakQueue(
+        isKoreanLocale(locale) ? ['띡', '띡', '띡'] : ['tick', 'tick', 'tick'],
+        { signal, gapMs: 120 }
+      );
     }
 
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 
+    // Single queue: 준비 → 5 → 4 → 3 → 2 → 1 (same Voice for every item).
     onPhaseChange?.('countdown');
-    for (let n = 5; n >= 1; n -= 1) {
-      onPhaseChange?.('countdown', { countdown: n });
-      await speakCoachPhrase({
-        clipKey: `cd-${n}`,
-        text: formatCountdownWord(n, locale),
-        locale,
-        voice,
-        signal,
-      });
-      if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
-    }
+    const countdownItems = [
+      readyPhrase(locale),
+      formatCountdownWord(5, locale),
+      formatCountdownWord(4, locale),
+      formatCountdownWord(3, locale),
+      formatCountdownWord(2, locale),
+      formatCountdownWord(1, locale),
+    ];
+    await speechManager.speakQueue(countdownItems, {
+      signal,
+      gapMs: VOICE_COACH_TIMING.countdownGapMs,
+      onItemStart: (index) => {
+        if (index === 0) {
+          onPhaseChange?.('countdown');
+          return;
+        }
+        onPhaseChange?.('countdown', { countdown: 6 - index });
+      },
+    });
 
     await sleep(VOICE_COACH_TIMING.afterCountdownMs, signal);
     onPhaseChange?.('start');
-    await speakCoachPhrase({
-      clipKey: 'start',
-      text: startPhrase(locale),
-      locale,
-      voice,
-      signal,
-    });
+    await speechManager.speak(startPhrase(locale), signal);
     await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
 
     onPhaseChange?.('counting', { rep: 0 });
-    for (let rep = 1; rep <= reps; rep += 1) {
-      onPhaseChange?.('counting', { rep });
-      await speakCoachPhrase({
-        clipKey: rep <= MAX_CLIP_REP ? `rep-${rep}` : null,
-        text: formatRepWord(rep, locale),
-        locale,
-        voice,
-        signal,
-      });
-      if (rep < reps) await sleep(repGapMs, signal);
-    }
+    const repWords = Array.from({ length: reps }, (_, i) => formatRepWord(i + 1, locale));
+    await speechManager.speakQueue(repWords, {
+      signal,
+      gapMs: repGapMs,
+      onItemStart: (index) => {
+        onPhaseChange?.('counting', { rep: index + 1 });
+      },
+    });
 
     if (oneMoreEnabled) {
       onPhaseChange?.('oneMore', { rep: reps });
-      for (let extra = 1; extra <= maxOneMore; extra += 1) {
-        await sleep(oneMoreGapMs, signal);
-        onPhaseChange?.('oneMore', { rep: reps + extra });
-        await speakCoachPhrase({
-          clipKey: 'one-more',
-          text: oneMorePhrase(locale),
-          locale,
-          voice,
-          signal,
-        });
-      }
+      const oneMoreWords = Array.from({ length: maxOneMore }, () => oneMorePhrase(locale));
+      await speechManager.speakQueue(oneMoreWords, {
+        signal,
+        gapMs: oneMoreGapMs,
+        onItemStart: (index) => {
+          onPhaseChange?.('oneMore', { rep: reps + index + 1 });
+        },
+      });
     }
 
     onPhaseChange?.('done', { rep: oneMoreEnabled ? reps + maxOneMore : reps });
