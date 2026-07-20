@@ -374,6 +374,7 @@
     },
     "noMachines": "No logged machines",
     "empty": "No workout logs yet. Log sets on a recommendation result page to get started.",
+    "emptyCta": "Search machines",
     "noDataInPeriod": "No records in the selected period.",
     "growth": "growth",
     "periodNote": "Period: {{period}}",

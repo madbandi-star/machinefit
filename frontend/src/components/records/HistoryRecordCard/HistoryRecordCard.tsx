@@ -39,7 +39,7 @@ function getBookmarkAriaLabel(
   if (!control) return t('machines:history.bookmarkSave');
   if (!isLogSaved) return t('machines:history.bookmarkSave');
   if (control.isDirty) return t('machines:history.bookmarkUpdate');
-  return t('machines:history.bookmarkRemove');
+  return t('machines:history.bookmarkSaved');
 }
 
 export function HistoryRecordCard({
@@ -56,7 +56,7 @@ export function HistoryRecordCard({
   deleteDisabled = false,
 }: HistoryRecordCardProps) {
   const { t, i18n } = useTranslation(['machines', 'common']);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(isFocused);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const logDate = normalizeDateKey(card.logDate);
@@ -107,11 +107,8 @@ export function HistoryRecordCard({
 
     if (logControl.isDirty) {
       logControl.save();
-      return;
     }
-
-    setWorkoutLogSavedOverride(false);
-    logControl.remove();
+    /* Clean saved state: bookmark is save/update only; remove via cancel/delete. */
   };
 
   const handleFavoriteClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -280,6 +277,7 @@ export function HistoryRecordCard({
         idPrefix={`history-workout-${card.cardId}`}
         targetMuscleGroup={cardTargetMuscle}
         lockTargetMuscle={lockTargetMuscle}
+        showVoiceCoach={isFocused}
         onControlReady={setLogControl}
         onSavedChange={setWorkoutLogSavedOverride}
       />

@@ -57,7 +57,9 @@ export function RecommendCTA({ machineCode, fixed = false, initialMuscle = null 
                 key={group}
                 type="button"
                 className={`filter-chip${selectedMuscle === group ? ' filter-chip--active' : ''}`}
-                onClick={() => setSelectedMuscle(group)}
+                onClick={() =>
+                  setSelectedMuscle((prev) => (prev === group ? null : group))
+                }
               >
                 <MuscleGroupIcon group={group} size={22} className="filter-chip__icon" />
                 <span>{t(`muscleGroups.${group}`)}</span>

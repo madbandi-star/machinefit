@@ -41,7 +41,7 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
       key: 'volume',
       label: t('history.summaryTotalVolume'),
       rawValue: t('history.summaryTotalVolumeValue', {
-        weight: stats.totalVolumeDummyKg.toLocaleString(),
+        weight: stats.totalVolumeKg.toLocaleString(),
       }),
       tone: 'purple',
       icon: Flame,
@@ -49,7 +49,7 @@ export function HistorySummaryStats({ stats }: HistorySummaryStatsProps) {
     {
       key: 'time',
       label: t('history.summaryWorkoutTime'),
-      rawValue: t('history.summaryWorkoutTimeValue', { minutes: stats.workoutMinutesDummy }),
+      rawValue: t('history.summaryWorkoutTimeValue', { minutes: stats.workoutMinutes }),
       tone: 'orange',
       icon: Clock,
     },

@@ -21,8 +21,8 @@
   --history-font-xl: 1.125rem;
   --history-font-2xl: 1.25rem;
   --history-font-3xl: 1.375rem;
-  --history-control-height: 2rem;
-  --history-stepper-btn-width: 1.75rem;
+  --history-control-height: 2.75rem;
+  --history-stepper-btn-width: 2.75rem;
 
   gap: var(--history-gap-section);
 }
@@ -973,5 +973,30 @@
 }
 
 .history-page-premium .recommendation-workout-log__complete-btn {
-  font-size: var(--history-font-2xs);
+  font-size: var(--history-font-xs);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+/* Light theme — history cards should match app theme, not force dark glass */
+[data-theme='light'] .history-page-premium {
+  --history-card-bg: rgba(255, 255, 255, 0.92);
+  --history-card-border: rgba(107, 114, 128, 0.18);
+  --history-text-dim: rgba(107, 114, 128, 0.95);
+  --history-text-muted-value: rgba(107, 114, 128, 0.75);
+  --history-green-glow: 0 0 16px rgba(0, 200, 83, 0.18);
+  --history-shadow-card: 0 8px 24px rgba(17, 24, 39, 0.08), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+[data-theme='light'] .history-page-premium .history-record-card--premium {
+  background: var(--history-card-bg);
+  border-color: var(--history-card-border);
+  box-shadow: var(--history-shadow-card);
+  color: var(--color-text);
+}
+
+[data-theme='light'] .history-page-premium .history-workout-log__memo-input {
+  background: rgba(243, 244, 246, 0.95);
+  border-color: var(--history-card-border);
+  color: var(--color-text);
 }

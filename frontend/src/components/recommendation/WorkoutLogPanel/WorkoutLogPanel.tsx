@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
+import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, formatWeight, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
@@ -36,6 +36,8 @@ const MAX_SET_COUNT = 20;
 
 interface SaveWorkoutLogVariables {
   setCompleted?: boolean[];
+  /** Skip success toast (e.g. autosave on set complete). */
+  silent?: boolean;
 }
 
 export interface WorkoutLogPanelControl {
@@ -67,6 +69,8 @@ interface WorkoutLogPanelProps {
   /** Spoken during rest (warnings first, then tips). */
   tips?: string[];
   warnings?: string[];
+  /** When false, hide VoiceCoachPanel (avoids duplicate panels in history list). */
+  showVoiceCoach?: boolean;
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
   onSavedChange?: (saved: boolean) => void;
 }
@@ -86,10 +90,6 @@ function resizeWeights(current: number[], nextCount: number, fallback?: number):
     ...current,
     ...Array.from({ length: nextCount - current.length }, () => last),
   ];
-}
-
-function formatTotalWeightKg(total: number): string {
-  return total.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
 function buildDefaultCompleted(count: number): boolean[] {
@@ -183,11 +183,13 @@ export function WorkoutLogPanel({
   showPersonalTipMemo,
   tips: tipsProp,
   warnings: warningsProp,
+  showVoiceCoach = true,
   onControlReady,
   onSavedChange,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
+  const unitWeight = useSettingsStore((s) => s.unitWeight);
   const voiceCoachEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
@@ -449,7 +451,7 @@ export function WorkoutLogPanel({
       await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
     },
-    onSuccess: async (savedLog) => {
+    onSuccess: async (savedLog, variables) => {
       let personalTipSaved = true;
       if (showPersonalTip && isAuthenticated) {
         try {
@@ -476,7 +478,7 @@ export function WorkoutLogPanel({
         )
       );
       invalidateLogSideEffects();
-      if (personalTipSaved) {
+      if (personalTipSaved && !variables?.silent) {
         showToast(
           isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
           'success'
@@ -719,6 +721,8 @@ export function WorkoutLogPanel({
           weightKg: weights[index],
         });
         setRestTimer({ setNumber: index + 1, seconds });
+      } else if (wasCompleted) {
+        setRestTimer(null);
       }
 
       return next;
@@ -745,9 +749,11 @@ export function WorkoutLogPanel({
         weightKg: weights[index],
       });
       setRestTimer({ setNumber: index + 1, seconds });
+    } else if (wasCompleted) {
+      setRestTimer(null);
     }
 
-    saveMutation.mutate({ setCompleted: next });
+    saveMutation.mutate({ setCompleted: next, silent: true });
   };
 
   if (!isAuthenticated) {
@@ -1032,7 +1038,7 @@ export function WorkoutLogPanel({
         {t('machines:workoutLog.totalWeight')}
       </span>
       <strong className="recommendation-workout-log__total-value">
-        {formatTotalWeightKg(totalWeightKg)}kg
+        {formatWeight(totalWeightKg, unitWeight)}
       </strong>
     </div>
   );
@@ -1047,7 +1053,7 @@ export function WorkoutLogPanel({
       />
     ) : null;
 
-  const voiceCoachPanel = (
+  const voiceCoachPanel = showVoiceCoach ? (
     <VoiceCoachPanel
       enabled={voiceCoachEnabled}
       onEnabledChange={setVoiceCoachEnabled}
@@ -1070,7 +1076,7 @@ export function WorkoutLogPanel({
       idPrefix={`${idPrefix}-voice-coach`}
       compact={compact}
     />
-  );
+  ) : null;
 
   if (isHistory) {
     return (
@@ -1117,7 +1123,7 @@ export function WorkoutLogPanel({
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
           {setCountControl}
           <span className="recommendation-workout-log__toolbar-total">
-            {formatTotalWeightKg(totalWeightKg)}kg
+            {formatWeight(totalWeightKg, unitWeight)}
           </span>
         </div>
         <div className="recommendation-workout-log__weights">{weightList}</div>

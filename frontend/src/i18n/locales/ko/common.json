@@ -374,6 +374,7 @@
     },
     "noMachines": "기록된 머신 없음",
     "empty": "아직 수행 기록이 없습니다. 추천 결과 화면에서 운동을 기록해 보세요.",
+    "emptyCta": "머신 검색하기",
     "noDataInPeriod": "선택한 기간에 기록이 없습니다.",
     "growth": "성장",
     "periodNote": "기간: {{period}} 기준",

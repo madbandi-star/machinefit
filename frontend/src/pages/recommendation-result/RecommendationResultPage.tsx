@@ -60,7 +60,7 @@ function getBookmarkAriaLabel(
   if (!control) return t('machines:history.bookmarkSave');
   if (!isLogSaved) return t('machines:history.bookmarkSave');
   if (control.isDirty) return t('machines:history.bookmarkUpdate');
-  return t('machines:history.bookmarkRemove');
+  return t('machines:history.bookmarkSaved');
 }
 
 export function RecommendationResultPage() {
@@ -146,11 +146,8 @@ export function RecommendationResultPage() {
 
     if (logControl.isDirty) {
       logControl.save();
-      return;
     }
-
-    setWorkoutLogSavedOverride(false);
-    logControl.remove();
+    /* Clean saved: bookmark saves/updates only; remove via cancel button. */
   };
 
   const titleHeaderActions =
