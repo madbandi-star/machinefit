@@ -1,0 +1,45 @@
+---
+description: Handoff protocol between coding agent and Program test agent
+alwaysApply: true
+---
+
+# Test handoff protocol (프로그램수정 ↔ Program test)
+
+There is a dedicated **Program test** cloud agent:
+https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4
+
+## When you change application code (코딩 / 프로그램수정 agent)
+
+After finishing implementation (before or with the deploy commit), **always** update:
+
+1. `.cursor/handoff/latest.json` — machine-readable
+2. `.cursor/handoff/LATEST_TEST_HANDOFF.md` — human/agent readable
+
+Include at minimum:
+
+- `title`, `summary` (1–3 sentences)
+- `git.branch`, `git.commit` (or PR number once known)
+- `changedFiles` (paths only)
+- `testFocus` — what to verify (not whole app)
+- `fastChecks` — shell/assertions Program test can run **without waiting for GitHub Pages**
+- `productionChecks` — optional Pages/API checks after deploy
+- `deploy` — Actions run URL / expected status when known
+- `asIs` / `toBe` — for Program test’s report format
+
+Then in your final user message, tell them Program test can pick up `.cursor/handoff/LATEST_TEST_HANDOFF.md` (and link the Program test agent URL).
+
+Do **not** rely on transcript scraping as the primary handoff.
+
+## When you are Program test
+
+1. Read `.cursor/handoff/latest.json` + `LATEST_TEST_HANDOFF.md` **first** (prefer over MCP transcript digging).
+2. Prefer **fast path** (no Pages queue wait):
+   - `npm run test:smoke:changed`
+   - or the `fastChecks` listed in the handoff
+3. Use production/Pages checks only if handoff marks them required, or after Deploy Frontend is `success`.
+4. Report in **as-is → to-be** for the scoped change only.
+
+## Skip handoff when
+
+- Docs-only / questions with no app behavior change
+- User forbids commit/handoff

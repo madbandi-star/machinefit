@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-20T02:40:00Z",
+  "title": "Add Program test handoff + fast smoke path",
+  "summary": "프로그램수정 에이전트가 변경 내용을 Program test 에이전트에 넘길 수 있도록 handoff 파일/룰과 로컬 빠른 스모크(npm run test:smoke:changed)를 추가했습니다. GitHub Pages 대기 없이 수정분만 검증 가능합니다.",
+  "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
+  "git": {
+    "branch": "cursor/test-handoff-protocol-35b3",
+    "commit": "b2fd972",
+    "pr": null,
+    "base": "main"
+  },
+  "changedFiles": [
+    ".cursor/rules/test-handoff.mdc",
+    ".cursor/rules/deploy-auto.mdc",
+    ".cursor/handoff/latest.json",
+    ".cursor/handoff/LATEST_TEST_HANDOFF.md",
+    "scripts/smoke-changed.mjs",
+    "package.json"
+  ],
+  "testFocus": [
+    "Handoff files exist and are readable",
+    "npm run test:smoke:changed exits 0",
+    "smoke script reports handoff title"
+  ],
+  "fastChecks": [
+    {
+      "id": "handoff-md-exists",
+      "type": "file_contains",
+      "path": ".cursor/handoff/LATEST_TEST_HANDOFF.md",
+      "pattern": "Latest test handoff"
+    },
+    {
+      "id": "handoff-json-title",
+      "type": "file_contains",
+      "path": ".cursor/handoff/latest.json",
+      "pattern": "Add Program test handoff"
+    },
+    {
+      "id": "smoke-script",
+      "type": "file_contains",
+      "path": "scripts/smoke-changed.mjs",
+      "pattern": "Fast smoke for Program test agent"
+    },
+    {
+      "id": "npm-script",
+      "type": "file_contains",
+      "path": "package.json",
+      "pattern": "test:smoke:changed"
+    }
+  ],
+  "productionChecks": [],
+  "deploy": {
+    "workflow": "optional",
+    "runUrl": null,
+    "status": "n/a — tooling only; Pages UI not required"
+  },
+  "asIs": "Program test had to scrape coding-agent transcripts / wait on Pages to know what changed.",
+  "toBe": "Coding agent writes .cursor/handoff/*; Program test runs npm run test:smoke:changed for a fast scoped check."
+}
