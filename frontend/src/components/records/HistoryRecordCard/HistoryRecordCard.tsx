@@ -39,7 +39,7 @@ function getBookmarkAriaLabel(
   if (!control) return t('machines:history.bookmarkSave');
   if (!isLogSaved) return t('machines:history.bookmarkSave');
   if (control.isDirty) return t('machines:history.bookmarkUpdate');
-  return t('machines:history.bookmarkSaved');
+  return t('machines:history.bookmarkRemove');
 }
 
 export function HistoryRecordCard({
@@ -107,8 +107,11 @@ export function HistoryRecordCard({
 
     if (logControl.isDirty) {
       logControl.save();
+      return;
     }
-    /* Clean saved state: bookmark is save/update only; remove via cancel/delete. */
+
+    setWorkoutLogSavedOverride(false);
+    logControl.remove();
   };
 
   const handleFavoriteClick = (event: MouseEvent<HTMLButtonElement>) => {
