@@ -1,0 +1,16 @@
+{
+  "code": "HAMMER_STRENGTH",
+  "slug": "hammer_strength",
+  "name": {
+    "ko": "해머 스트렝스",
+    "en": "Hammer Strength",
+    "ja": "ハンマーストレングス",
+    "zh": "悍马力量"
+  },
+  "description": {
+    "ko": "해머 스트렝스는 플레이트 로디드와 아이소 레터럴 머신으로 잘 알려진 스트렝스 장비 브랜드입니다. 자연스러운 힘의 곡선과 좌우 독립 움직임을 강조해, 초보자부터 상급자까지 안정적으로 강한 수축을 연습할 수 있습니다.",
+    "en": "Hammer Strength is known for plate-loaded and iso-lateral strength machines that emphasize natural strength curves. The line supports stable, powerful training for beginners through advanced lifters while making left-right balance easier to notice."
+  },
+  "websiteUrl": "https://www.hammerstrength.com",
+  "logoFile": "hammer_strength.svg"
+}

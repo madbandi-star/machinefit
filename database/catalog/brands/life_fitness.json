@@ -1,0 +1,16 @@
+{
+  "code": "LIFE_FITNESS",
+  "slug": "life_fitness",
+  "name": {
+    "ko": "라이프 피트니스",
+    "en": "Life Fitness",
+    "ja": "ライフフィットネス",
+    "zh": "力健"
+  },
+  "description": {
+    "ko": "라이프 피트니스는 상업용 피트니스 센터에서 널리 쓰이는 글로벌 운동 장비 브랜드입니다. 부드러운 셀렉터라이즈드 저항과 직관적인 조절부가 특징이라, 처음 사용하는 사람도 자세를 차분히 익히기 좋습니다.",
+    "en": "Life Fitness is a global fitness equipment brand widely used in commercial gyms. Its selectorized machines are known for smooth resistance, intuitive adjustments, and approachable setup for steady technique practice."
+  },
+  "websiteUrl": "https://www.lifefitness.com",
+  "logoFile": "life_fitness.svg"
+}

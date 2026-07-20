@@ -1,0 +1,16 @@
+{
+  "code": "CYBEX",
+  "slug": "cybex",
+  "name": {
+    "ko": "사이벡스",
+    "en": "Cybex",
+    "ja": "サイベックス",
+    "zh": "赛百斯"
+  },
+  "description": {
+    "ko": "사이벡스는 인체공학적 설계와 명확한 조절 포인트로 알려진 머신 브랜드입니다. 관절 정렬을 세심하게 맞추기 쉬워, 목표 근육을 느끼면서도 불필요한 긴장을 줄이는 데 도움이 됩니다.",
+    "en": "Cybex is recognized for ergonomic machine design and clear adjustment points. Its equipment helps lifters align joints carefully, feel the target muscles, and reduce unnecessary strain during guided strength work."
+  },
+  "websiteUrl": "https://www.cybexintl.com",
+  "logoFile": "cybex.svg"
+}

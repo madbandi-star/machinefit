@@ -1,0 +1,16 @@
+{
+  "code": "TECHNOGYM",
+  "slug": "technogym",
+  "name": {
+    "ko": "테크노짐",
+    "en": "Technogym",
+    "ja": "テクノジム",
+    "zh": "泰诺健"
+  },
+  "description": {
+    "ko": "테크노짐은 프리미엄 피트니스 시설에서 자주 만나는 이탈리아 기반 운동 장비 브랜드입니다. 세련된 디자인과 안정적인 가이드 동작이 특징이며, 일정한 리듬으로 근육 자극을 관리하기 좋습니다.",
+    "en": "Technogym is an Italian fitness equipment brand often found in premium training facilities. Its machines combine refined design with stable guided motion, making it easy to manage rhythm and muscle tension consistently."
+  },
+  "websiteUrl": "https://www.technogym.com",
+  "logoFile": "technogym.svg"
+}
