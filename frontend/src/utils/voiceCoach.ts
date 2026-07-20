@@ -161,10 +161,33 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
-function ensureAudioContext(): AudioContext | null {
-  const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+/** Shared AudioContext — stays unlocked after a user gesture so later reps still play. */
+let sharedAudioCtx: AudioContext | null = null;
+let currentSource: AudioBufferSourceNode | null = null;
+const clipBufferCache = new Map<string, AudioBuffer>();
+
+function getSharedAudioContext(): AudioContext | null {
+  const Ctx =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!Ctx) return null;
-  return new Ctx();
+  if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
+    sharedAudioCtx = new Ctx();
+  }
+  return sharedAudioCtx;
+}
+
+async function ensureSharedAudioRunning(): Promise<AudioContext | null> {
+  const ctx = getSharedAudioContext();
+  if (!ctx) return null;
+  if (ctx.state === 'suspended') {
+    try {
+      await ctx.resume();
+    } catch {
+      return null;
+    }
+  }
+  return ctx;
 }
 
 async function playBeep(
@@ -199,20 +222,20 @@ function cancelSpeech(): void {
   }
 }
 
-let currentClip: HTMLAudioElement | null = null;
-
 function stopCurrentClip(): void {
-  if (!currentClip) return;
+  if (!currentSource) return;
   try {
-    currentClip.onended = null;
-    currentClip.onerror = null;
-    currentClip.pause();
-    currentClip.removeAttribute('src');
-    currentClip.load();
+    currentSource.onended = null;
+    currentSource.stop();
+  } catch {
+    // already stopped
+  }
+  try {
+    currentSource.disconnect();
   } catch {
     // ignore
   }
-  currentClip = null;
+  currentSource = null;
 }
 
 function publicAssetUrl(path: string): string {
@@ -258,47 +281,100 @@ function waitForSpeechVoices(timeoutMs = 400): Promise<void> {
   });
 }
 
-function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new DOMException('Aborted', 'AbortError'));
-      return;
-    }
+async function loadClipBuffer(url: string, ctx: AudioContext): Promise<AudioBuffer | null> {
+  const cached = clipBufferCache.get(url);
+  if (cached) return cached;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const data = await response.arrayBuffer();
+    const buffer = await ctx.decodeAudioData(data.slice(0));
+    clipBufferCache.set(url, buffer);
+    return buffer;
+  } catch {
+    return null;
+  }
+}
 
-    stopCurrentClip();
-    cancelSpeech();
+async function preloadCoachClips(
+  voice: VoiceCoachVoice,
+  reps: number,
+  oneMoreEnabled: boolean,
+  signal?: AbortSignal
+): Promise<void> {
+  const ctx = await ensureSharedAudioRunning();
+  if (!ctx) return;
 
-    const audio = new Audio(url);
-    audio.preload = 'auto';
-    currentClip = audio;
+  const keys: string[] = ['cd-5', 'cd-4', 'cd-3', 'cd-2', 'cd-1', 'start'];
+  if (oneMoreEnabled) keys.push('one-more');
+  const maxRep = Math.min(MAX_CLIP_REP, Math.max(1, reps));
+  for (let rep = 1; rep <= maxRep; rep += 1) {
+    keys.push(`rep-${rep}`);
+  }
+
+  await Promise.all(
+    keys.map(async (key) => {
+      if (signal?.aborted) return;
+      await loadClipBuffer(voiceCoachClipUrl(voice, key), ctx);
+    })
+  );
+}
+
+/**
+ * Play a pre-recorded clip via Web Audio so playback keeps working after the
+ * long rep-gap (HTMLAudioElement.play() often fails once the user-gesture window ends).
+ */
+async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
+
+  stopCurrentClip();
+  cancelSpeech();
+
+  const ctx = await ensureSharedAudioRunning();
+  if (!ctx) return false;
+
+  const buffer = await loadClipBuffer(url, ctx);
+  if (!buffer) return false;
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
+
+  return new Promise<boolean>((resolve, reject) => {
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    currentSource = source;
 
     const onAbort = () => {
-      stopCurrentClip();
+      try {
+        source.stop();
+      } catch {
+        // ignore
+      }
       cleanup();
       reject(new DOMException('Aborted', 'AbortError'));
     };
 
     const cleanup = () => {
       signal?.removeEventListener('abort', onAbort);
-      audio.onended = null;
-      audio.onerror = null;
-      if (currentClip === audio) currentClip = null;
+      source.onended = null;
+      if (currentSource === source) currentSource = null;
     };
 
-    audio.onended = () => {
+    source.onended = () => {
       cleanup();
       resolve(true);
     };
-    audio.onerror = () => {
-      cleanup();
-      resolve(false);
-    };
 
     signal?.addEventListener('abort', onAbort, { once: true });
-    void audio.play().catch(() => {
+    try {
+      source.start(0);
+    } catch {
       cleanup();
       resolve(false);
-    });
+    }
   });
 }
 
@@ -382,8 +458,17 @@ async function speakCoachPhrase(options: {
   if (isKoreanLocale(locale) && clipKey) {
     const played = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
     if (played) return;
+    // Retry once after re-resuming audio (mobile can suspend mid-session).
+    const ctx = await ensureSharedAudioRunning();
+    if (ctx) {
+      const retried = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
+      if (retried) return;
+    }
   }
-  await speak(text, locale, signal);
+  // English / missing clip only — avoid OS TTS for Korean coach counts when possible.
+  if (!isKoreanLocale(locale) || !clipKey) {
+    await speak(text, locale, signal);
+  }
 }
 
 export function stopVoiceCoach(): void {
@@ -462,33 +547,13 @@ export async function speakRestTipsAndWarnings(
 
 /** Warm audio/speech after a user gesture so auto-start after rest can play. */
 export function unlockVoiceCoachAudio(voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE): void {
-  try {
-    const ctx = ensureAudioContext();
-    if (ctx && ctx.state === 'suspended') {
-      void ctx.resume().finally(() => {
-        void ctx.close().catch(() => undefined);
-      });
-    } else if (ctx) {
-      void ctx.close().catch(() => undefined);
-    }
-  } catch {
-    // ignore
-  }
-
-  try {
-    const unlock = new Audio(voiceCoachClipUrl(normalizeVoiceCoachVoice(voice), 'cd-5'));
-    unlock.volume = 0.01;
-    void unlock
-      .play()
-      .then(() => {
-        unlock.pause();
-        unlock.removeAttribute('src');
-        unlock.load();
-      })
-      .catch(() => undefined);
-  } catch {
-    // ignore
-  }
+  const normalized = normalizeVoiceCoachVoice(voice);
+  void ensureSharedAudioRunning().then(async (ctx) => {
+    if (!ctx) return;
+    await loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-5'), ctx);
+    await loadClipBuffer(voiceCoachClipUrl(normalized, 'start'), ctx);
+    await loadClipBuffer(voiceCoachClipUrl(normalized, 'rep-1'), ctx);
+  });
 
   if ('speechSynthesis' in window) {
     try {
@@ -524,9 +589,13 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
   /** Keep one-more slightly slower than the count gap, but still follow user tempo. */
   const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
-  const audioCtx = ensureAudioContext();
+  const audioCtx = await ensureSharedAudioRunning();
 
   try {
+    if (isKoreanLocale(locale)) {
+      await preloadCoachClips(voice, reps, oneMoreEnabled, signal);
+    }
+
     onPhaseChange?.('beep');
     if (audioCtx) {
       for (let i = 0; i < 3; i += 1) {
@@ -603,9 +672,5 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       return;
     }
     throw error;
-  } finally {
-    if (audioCtx && audioCtx.state !== 'closed') {
-      void audioCtx.close().catch(() => undefined);
-    }
   }
 }
