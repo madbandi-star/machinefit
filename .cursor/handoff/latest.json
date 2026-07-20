@@ -7,7 +7,7 @@
   "programTestAgentName": "프로그램테스트",
   "git": {
     "branch": "cursor/add-machine-personal-tip-memo-35b3",
-    "commit": null,
+    "commit": "12bac80",
     "pr": 8,
     "base": "main"
   },
