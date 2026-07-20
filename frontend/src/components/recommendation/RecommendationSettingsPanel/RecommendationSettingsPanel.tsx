@@ -246,6 +246,7 @@ export function RecommendationSettingsPanel({
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
   const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
+  const experienceLevel = useAuthStore((s) => s.user?.experienceLevel);
   const [basisOpen, setBasisOpen] = useState(false);
   const compact = variant === 'compact' || variant === 'result';
 
@@ -261,7 +262,7 @@ export function RecommendationSettingsPanel({
               min: settings.recommendedRepsMin,
               max: settings.recommendedRepsMax ?? settings.recommendedRepsMin,
             }
-          : recommendRepsForGoal(workoutGoal);
+          : recommendRepsForGoal(workoutGoal, experienceLevel ?? 'intermediate');
       const value =
         range.max !== range.min ? `${range.min}–${range.max}` : String(range.min);
       items.push({

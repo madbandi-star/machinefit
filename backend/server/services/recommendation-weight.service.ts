@@ -89,10 +89,10 @@ function computeBodyBasedReferenceWeight(input: RecommendationInput): number {
   const genderFactor = input.gender === 'female' ? 0.65 : 1;
   const experienceFactor =
     {
-      beginner: 0.75,
+      beginner: 0.78,
       intermediate: 1,
-      advanced: 1.15,
-      professional: 1.3,
+      advanced: 1.18,
+      professional: 1.32,
     }[input.experienceLevel] ?? 1;
 
   return roundKg(input.weightKg * 0.45 * genderFactor * experienceFactor);

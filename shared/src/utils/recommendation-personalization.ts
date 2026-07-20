@@ -1,15 +1,120 @@
+import type { ExperienceLevel } from '../types/api.types.js';
 import type { WorkoutGoal, TargetMuscleGroup } from '../constants/workout-goals.js';
 import type { RecommendationSettings } from '../types/recommendation.types.js';
 import { roundRecommendWeightKg } from './recommend-weight.js';
 
-/** Workout goal adjusts working weight (strength = heavier, rehab = lighter). */
+/**
+ * Evidence-informed loading & rep prescription.
+ *
+ * Primary sources (summarized for product defaults — not medical advice):
+ * - ACSM Position Stand: Progression Models in Resistance Training for Healthy
+ *   Adults (Med Sci Sports Exerc. 2009;41(3):687–708). Strength ≈ ≥85% 1RM / ≤6
+ *   reps; hypertrophy ≈ 67–85% 1RM / 6–12 reps; endurance ≈ ≤67% 1RM / ≥12 reps;
+ *   novices often start ~60–70% 1RM with moderate reps for motor learning.
+ * - Schoenfeld BJ et al. meta-analyses on hypertrophy: muscle growth occurs across
+ *   a spectrum of loads when sets approach failure / adequate volume; beginners
+ *   benefit from slightly higher-rep practice ranges.
+ * - NSCA Essentials of Strength Training and Conditioning: novices prioritize
+ *   technique with conservative loads; advanced trainees tolerate higher intensity.
+ */
+
+/** Relative working load vs intermediate hypertrophy baseline (= 1.0). */
 export const WORKOUT_GOAL_WEIGHT_MULTIPLIERS: Record<WorkoutGoal, number> = {
   hypertrophy: 1,
-  strength: 1.08,
-  diet: 0.92,
-  conditioning: 0.88,
-  rehab: 0.75,
-  posture: 0.85,
+  /** ACSM strength intensities sit above typical hypertrophy working sets. */
+  strength: 1.12,
+  /** Fat-loss / metabolic work → endurance-biased relative load. */
+  diet: 0.88,
+  conditioning: 0.85,
+  /** Rehab: submaximal, pain-free loading (conservative). */
+  rehab: 0.7,
+  posture: 0.82,
+};
+
+/**
+ * Experience modulates goal intensity (ACSM/NSCA: novices avoid max-effort
+ * strength loading; advanced lifters can express higher relative intensity).
+ */
+export const EXPERIENCE_GOAL_WEIGHT_FACTORS: Record<
+  ExperienceLevel,
+  Record<WorkoutGoal, number>
+> = {
+  beginner: {
+    hypertrophy: 0.92,
+    strength: 0.86,
+    diet: 0.95,
+    conditioning: 0.95,
+    rehab: 0.9,
+    posture: 0.92,
+  },
+  intermediate: {
+    hypertrophy: 1,
+    strength: 1,
+    diet: 1,
+    conditioning: 1,
+    rehab: 1,
+    posture: 1,
+  },
+  advanced: {
+    hypertrophy: 1.03,
+    strength: 1.06,
+    diet: 1,
+    conditioning: 1,
+    rehab: 1,
+    posture: 1,
+  },
+  professional: {
+    hypertrophy: 1.05,
+    strength: 1.1,
+    diet: 1.02,
+    conditioning: 1.02,
+    rehab: 1,
+    posture: 1.02,
+  },
+};
+
+/**
+ * Rep ranges by goal × experience.
+ * Novices: slightly higher reps for motor learning (ACSM/NSCA).
+ * Strength: ACSM ≤6 for trained; beginners 5–8 as technique bridge.
+ * Hypertrophy: Schoenfeld — effective across ~6–15 with effort/volume.
+ */
+export const EXPERIENCE_GOAL_REP_RANGES: Record<
+  ExperienceLevel,
+  Record<WorkoutGoal, { min: number; max: number }>
+> = {
+  beginner: {
+    strength: { min: 5, max: 8 },
+    hypertrophy: { min: 10, max: 15 },
+    diet: { min: 12, max: 15 },
+    conditioning: { min: 12, max: 15 },
+    rehab: { min: 12, max: 15 },
+    posture: { min: 12, max: 15 },
+  },
+  intermediate: {
+    strength: { min: 3, max: 6 },
+    hypertrophy: { min: 8, max: 12 },
+    diet: { min: 10, max: 15 },
+    conditioning: { min: 12, max: 15 },
+    rehab: { min: 12, max: 15 },
+    posture: { min: 10, max: 12 },
+  },
+  advanced: {
+    strength: { min: 2, max: 5 },
+    hypertrophy: { min: 6, max: 12 },
+    diet: { min: 10, max: 12 },
+    conditioning: { min: 10, max: 15 },
+    rehab: { min: 10, max: 15 },
+    posture: { min: 10, max: 12 },
+  },
+  professional: {
+    strength: { min: 2, max: 5 },
+    hypertrophy: { min: 6, max: 10 },
+    diet: { min: 8, max: 12 },
+    conditioning: { min: 10, max: 15 },
+    rehab: { min: 10, max: 15 },
+    posture: { min: 8, max: 12 },
+  },
 };
 
 const TARGET_MUSCLE_WEIGHT_BIAS: Record<TargetMuscleGroup, number> = {
@@ -39,41 +144,74 @@ const TARGET_MUSCLE_TIPS_EN: Record<TargetMuscleGroup, string> = {
   triceps: 'Triceps focus today — tuck elbows and fully extend at the top.',
 };
 
-const GOAL_TIPS_KO: Record<WorkoutGoal, string> = {
-  hypertrophy: '목표: 근비대 — 8~12회, 마지막 2~3세트 RIR 1~2.',
-  strength: '목표: 근력 — 3~6회, 긴 휴식, 폼 우선.',
-  diet: '목표: 다이어트 — 중량 유지·볼륨 점진적 조절.',
-  conditioning: '목표: 컨디셔닝 — 짧은 휴식, 전신 펌핑.',
-  rehab: '목표: 재활 — 가벼운 중량, 통증 없는 범위.',
-  posture: '목표: 체형 — 가동범위와 자세 교정 우선.',
-};
+function formatRepTip(min: number, max: number, localeKo: boolean): string {
+  return localeKo ? `${min}~${max}회` : `${min}–${max} reps`;
+}
 
-const GOAL_TIPS_EN: Record<WorkoutGoal, string> = {
-  hypertrophy: 'Goal: hypertrophy — 8–12 reps, last 2–3 sets at RIR 1–2.',
-  strength: 'Goal: strength — 3–6 reps, longer rest, form first.',
-  diet: 'Goal: fat loss — maintain load, manage volume.',
-  conditioning: 'Goal: conditioning — short rest, full-body pump.',
-  rehab: 'Goal: rehab — light load, pain-free range.',
-  posture: 'Goal: posture — ROM and alignment over load.',
-};
+function buildGoalTip(
+  goal: WorkoutGoal,
+  experience: ExperienceLevel | undefined,
+  localeKo: boolean
+): string {
+  const reps = recommendRepsForGoal(goal, experience);
+  const repLabel = formatRepTip(reps.min, reps.max, localeKo);
 
-/** Recommended working-rep range by training goal (trainer defaults). */
-export function recommendRepsForGoal(goal?: WorkoutGoal): { min: number; max: number } {
+  if (localeKo) {
+    switch (goal) {
+      case 'strength':
+        return `목표: 근력 — ${repLabel}, 여유 있는 휴식, 폼 우선 (ACSM 근력 구간).`;
+      case 'diet':
+        return `목표: 다이어트 — ${repLabel}, 중량은 무리 없이·볼륨을 관리하세요.`;
+      case 'conditioning':
+        return `목표: 컨디셔닝 — ${repLabel}, 짧은 휴식으로 전신 펌핑.`;
+      case 'rehab':
+        return `목표: 재활 — ${repLabel}, 가벼운 중량·통증 없는 범위.`;
+      case 'posture':
+        return `목표: 체형 — ${repLabel}, 가동범위와 정렬을 우선하세요.`;
+      case 'hypertrophy':
+      default:
+        return `목표: 근비대 — ${repLabel}, 마지막 세트 RIR 1~2 (Schoenfeld 등).`;
+    }
+  }
+
   switch (goal) {
     case 'strength':
-      return { min: 3, max: 6 };
+      return `Goal: strength — ${repLabel}, longer rest, form first (ACSM strength zone).`;
     case 'diet':
-      return { min: 10, max: 15 };
+      return `Goal: fat loss — ${repLabel}, keep load manageable and watch volume.`;
     case 'conditioning':
-      return { min: 12, max: 15 };
+      return `Goal: conditioning — ${repLabel}, shorter rest, full-body pump.`;
     case 'rehab':
-      return { min: 12, max: 15 };
+      return `Goal: rehab — ${repLabel}, light load, pain-free range.`;
     case 'posture':
-      return { min: 10, max: 12 };
+      return `Goal: posture — ${repLabel}, prioritize ROM and alignment.`;
     case 'hypertrophy':
     default:
-      return { min: 8, max: 12 };
+      return `Goal: hypertrophy — ${repLabel}, last sets near RIR 1–2 (Schoenfeld et al.).`;
   }
+}
+
+/** Working-rep range by training goal × experience (ACSM / Schoenfeld / NSCA). */
+export function recommendRepsForGoal(
+  goal?: WorkoutGoal,
+  experienceLevel: ExperienceLevel = 'intermediate'
+): { min: number; max: number } {
+  const resolvedGoal: WorkoutGoal = goal ?? 'hypertrophy';
+  const byExperience =
+    EXPERIENCE_GOAL_REP_RANGES[experienceLevel] ?? EXPERIENCE_GOAL_REP_RANGES.intermediate;
+  return { ...byExperience[resolvedGoal] };
+}
+
+/** Combined goal × experience load factor (before age / muscle bias). */
+export function resolveGoalExperienceWeightFactor(
+  workoutGoal?: WorkoutGoal,
+  experienceLevel: ExperienceLevel = 'intermediate'
+): number {
+  if (!workoutGoal) return 1;
+  const goalFactor = WORKOUT_GOAL_WEIGHT_MULTIPLIERS[workoutGoal];
+  const experienceFactor =
+    EXPERIENCE_GOAL_WEIGHT_FACTORS[experienceLevel]?.[workoutGoal] ?? 1;
+  return goalFactor * experienceFactor;
 }
 
 /** Age factor vs reference age 30 (13–100). */
@@ -89,6 +227,7 @@ export function applyPersonalizationToWeight(
   weightKg: number | undefined,
   options: {
     workoutGoal?: WorkoutGoal;
+    experienceLevel?: ExperienceLevel;
     age?: number;
     targetMuscleGroup?: TargetMuscleGroup;
   }
@@ -96,9 +235,10 @@ export function applyPersonalizationToWeight(
   if (weightKg == null || weightKg <= 0) return weightKg;
 
   let value = weightKg;
-  if (options.workoutGoal) {
-    value *= WORKOUT_GOAL_WEIGHT_MULTIPLIERS[options.workoutGoal];
-  }
+  value *= resolveGoalExperienceWeightFactor(
+    options.workoutGoal,
+    options.experienceLevel ?? 'intermediate'
+  );
   value *= ageWeightFactor(options.age);
   if (options.targetMuscleGroup) {
     value *= TARGET_MUSCLE_WEIGHT_BIAS[options.targetMuscleGroup];
@@ -133,6 +273,7 @@ export function buildPersonalizedTips(
   locale: string,
   options: {
     workoutGoal?: WorkoutGoal;
+    experienceLevel?: ExperienceLevel;
     targetMuscleGroup?: TargetMuscleGroup;
     hasCustomPreferences?: boolean;
   }
@@ -141,7 +282,7 @@ export function buildPersonalizedTips(
   const isKo = locale.startsWith('ko');
 
   if (options.workoutGoal) {
-    tips.unshift(isKo ? GOAL_TIPS_KO[options.workoutGoal] : GOAL_TIPS_EN[options.workoutGoal]);
+    tips.unshift(buildGoalTip(options.workoutGoal, options.experienceLevel, isKo));
   }
 
   if (options.targetMuscleGroup) {
