@@ -9,6 +9,7 @@ import {
   restDurationParts,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
@@ -23,7 +24,7 @@ import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { userApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
-import { useSettingsStore } from '@/store/settings.store';
+import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import {
@@ -70,6 +71,8 @@ export function SettingsPage() {
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCoachVoice = useSettingsStore((s) => s.setVoiceCoachVoice);
   const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
+  const resetSettings = useSettingsStore((s) => s.resetSettings);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -409,8 +412,36 @@ export function SettingsPage() {
           </div>
         </section>
 
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.reset')}</h3>
+          <p className="form-section__desc">{t('settings.resetDesc')}</p>
+          <button
+            type="button"
+            className="btn btn--danger btn--block"
+            onClick={() => setResetConfirmOpen(true)}
+          >
+            {t('settings.reset')}
+          </button>
+        </section>
+
         <ProUpgradeCard />
       </div>
+
+      <ConfirmDialog
+        open={resetConfirmOpen}
+        title={t('settings.resetConfirmTitle')}
+        message={t('settings.resetConfirmMessage')}
+        confirmLabel={t('settings.resetConfirm')}
+        confirmVariant="danger"
+        onClose={() => setResetConfirmOpen(false)}
+        onConfirm={() => {
+          resetSettings();
+          setDraftUnitHeight(SETTINGS_DEFAULTS.unitHeight);
+          setDraftUnitWeight(SETTINGS_DEFAULTS.unitWeight);
+          setResetConfirmOpen(false);
+          showToast(t('settings.resetDone'), 'success');
+        }}
+      />
     </PageShell>
   );
 }

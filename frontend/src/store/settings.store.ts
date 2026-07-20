@@ -21,6 +21,31 @@ import {
 type Theme = 'light' | 'dark';
 
 const DEFAULT_VOICE_COACH_REPS = 12;
+const DEFAULT_THEME: Theme = 'dark';
+
+function getDefaultTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return 'UTC';
+  }
+}
+
+export const SETTINGS_DEFAULTS = {
+  locale: DEFAULT_LOCALE,
+  unitHeight: DEFAULT_UNIT_HEIGHT,
+  unitWeight: DEFAULT_UNIT_WEIGHT,
+  theme: DEFAULT_THEME,
+  voiceCoachEnabled: true,
+  voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
+  voiceCoachOneMore: true,
+  voiceCoachAutoAfterRest: true,
+  voiceRestTipsEnabled: true,
+  voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
+  voiceCoachVoice: DEFAULT_VOICE_COACH_VOICE,
+  restDurationSeconds: REST_DURATION.defaultSeconds,
+  weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
+} as const;
 
 interface SettingsState {
   locale: Locale;
@@ -56,25 +81,15 @@ interface SettingsState {
   setVoiceCoachVoice: (voice: VoiceCoachVoice) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setWeightDifficulty: (value: number) => void;
+  /** Restore app preferences (theme, units, voice, rest, etc.) to defaults. */
+  resetSettings: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      locale: DEFAULT_LOCALE,
-      unitHeight: DEFAULT_UNIT_HEIGHT,
-      unitWeight: DEFAULT_UNIT_WEIGHT,
-      theme: 'dark',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      voiceCoachEnabled: true,
-      voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
-      voiceCoachOneMore: true,
-      voiceCoachAutoAfterRest: true,
-      voiceRestTipsEnabled: true,
-      voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
-      voiceCoachVoice: DEFAULT_VOICE_COACH_VOICE,
-      restDurationSeconds: REST_DURATION.defaultSeconds,
-      weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
+      ...SETTINGS_DEFAULTS,
+      timezone: getDefaultTimezone(),
       setLocale: (locale) => set({ locale }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),
       setUnitWeight: (unitWeight) => set({ unitWeight }),
@@ -91,6 +106,11 @@ export const useSettingsStore = create<SettingsState>()(
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
       setWeightDifficulty: (value) =>
         set({ weightDifficulty: clampWeightDifficulty(value) }),
+      resetSettings: () =>
+        set({
+          ...SETTINGS_DEFAULTS,
+          timezone: getDefaultTimezone(),
+        }),
     }),
     { name: 'machinefit-settings' }
   )

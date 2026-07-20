@@ -190,7 +190,13 @@
     "weightDifficultyHeavy": "10 (heavy)",
     "weightDifficultyReset": "Reset",
     "weightDifficultyHintDefault": "Uses the algorithmic recommended weight as-is.",
-    "weightDifficultyHintScaled": "Recommended weight is scaled to {{percent}}."
+    "weightDifficultyHintScaled": "Recommended weight is scaled to {{percent}}.",
+    "reset": "Reset settings",
+    "resetDesc": "Restore app preferences (theme, units, rest time, voice count, weight difficulty) to defaults. Body profile values are kept.",
+    "resetConfirmTitle": "Reset settings?",
+    "resetConfirmMessage": "Theme, units, rest time, voice count, and weight difficulty will return to defaults. Your body profile will not change.",
+    "resetConfirm": "Reset",
+    "resetDone": "Settings restored to defaults."
   },
   "pages": {
     "home": {
