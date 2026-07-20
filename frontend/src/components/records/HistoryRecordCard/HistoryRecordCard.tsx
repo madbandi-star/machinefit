@@ -279,7 +279,7 @@ export function HistoryRecordCard({
         idPrefix={`history-workout-${card.cardId}`}
         targetMuscleGroup={cardTargetMuscle}
         lockTargetMuscle={lockTargetMuscle}
-        showVoiceCoach={isFocused}
+        showVoiceCoach={expanded}
         onControlReady={setLogControl}
         onSavedChange={setWorkoutLogSavedOverride}
       />
