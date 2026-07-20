@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>음성 카운트 샘플</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #12141a;
+        --card: #1c2030;
+        --text: #f4f6fb;
+        --muted: #a8b0c4;
+        --accent: #3dd68c;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        background: radial-gradient(circle at top, #1b2438, var(--bg) 55%);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 1.25rem;
+      }
+      h1 {
+        font-size: 1.35rem;
+        margin: 0 0 0.35rem;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin: 0 0 1.25rem;
+        line-height: 1.45;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 0.85rem;
+      }
+      .card h2 {
+        font-size: 1.05rem;
+        margin: 0 0 0.25rem;
+      }
+      .card p {
+        margin: 0 0 0.75rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      audio {
+        width: 100%;
+        height: 2.5rem;
+      }
+      .hint {
+        margin-top: 1.25rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+      .accent { color: var(--accent); font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <h1>음성 카운트 샘플 5종</h1>
+    <p class="sub">재생 버튼을 눌러 들어보세요. 마음에 드는 <span class="accent">번호</span>를 알려주시면 앱에 적용합니다.</p>
+
+    <section class="card">
+      <h2>1. 파워 트레이너</h2>
+      <p>낮고 묵직한 남성 · 스트렝스</p>
+      <audio controls preload="metadata" src="./01-power-trainer.mp3"></audio>
+    </section>
+
+    <section class="card">
+      <h2>2. 에너지 코치</h2>
+      <p>또렷하고 빠른 남성 · 펌핑</p>
+      <audio controls preload="metadata" src="./02-energy-coach.mp3"></audio>
+    </section>
+
+    <section class="card">
+      <h2>3. 프로 여성 코치</h2>
+      <p>단호하고 깔끔한 여성 · 폼 집중</p>
+      <audio controls preload="metadata" src="./03-pro-female.mp3"></audio>
+    </section>
+
+    <section class="card">
+      <h2>4. 드릴 카운트</h2>
+      <p>짧고 강한 남성 · 템포</p>
+      <audio controls preload="metadata" src="./04-drill-count.mp3"></audio>
+    </section>
+
+    <section class="card">
+      <h2>5. 하이프 코치</h2>
+      <p>밝게 밀어주는 여성 · 동기부여</p>
+      <audio controls preload="metadata" src="./05-hype-coach.mp3"></audio>
+    </section>
+
+    <p class="hint">안 들리면 재생을 한 번 더 누르거나, 무음 모드를 해제해 주세요.</p>
+  </body>
+</html>
