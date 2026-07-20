@@ -86,6 +86,14 @@ export function HistoryRecordCard({
   });
   const savedRating = fitFeedback.savedRating ?? initialFitRating;
   const showAdjustment = savedRating === 'bad';
+  /** Prefer editing after tapping 셋팅값 조정 필요; after 선호값 저장 show read-only compare. */
+  const [isEditingAdjustments, setIsEditingAdjustments] = useState(false);
+  const [prefsSavedLocally, setPrefsSavedLocally] = useState(false);
+  const hasSavedPreferences =
+    prefsSavedLocally ||
+    fitFeedback.hasSavedPreferences ||
+    Boolean(initialCustomSettings && Object.keys(initialCustomSettings).length > 0);
+  const adjustmentReadOnly = showAdjustment && hasSavedPreferences && !isEditingAdjustments;
   const customSettings =
     Object.keys(fitFeedback.customSettings).length > 0
       ? fitFeedback.customSettings
@@ -93,7 +101,15 @@ export function HistoryRecordCard({
 
   useEffect(() => {
     setWorkoutLogSavedOverride(null);
+    setIsEditingAdjustments(false);
+    setPrefsSavedLocally(false);
   }, [card.cardId]);
+
+  useEffect(() => {
+    if (savedRating !== 'bad') {
+      setIsEditingAdjustments(false);
+    }
+  }, [savedRating]);
 
   useEffect(() => {
     if (isFocused) setExpanded(true);
@@ -149,10 +165,20 @@ export function HistoryRecordCard({
       settings={card.settings}
       variant="history"
       showAdjustment={showAdjustment}
-      adjustmentReadOnly={false}
+      adjustmentReadOnly={adjustmentReadOnly}
       customSettings={showAdjustment ? customSettings : undefined}
-      onCustomChange={showAdjustment ? fitFeedback.handleCustomChange : undefined}
-      onSavePreferences={showAdjustment ? fitFeedback.savePreferences : undefined}
+      onCustomChange={
+        showAdjustment && !adjustmentReadOnly ? fitFeedback.handleCustomChange : undefined
+      }
+      onSavePreferences={
+        showAdjustment && !adjustmentReadOnly
+          ? () =>
+              fitFeedback.savePreferences(() => {
+                setPrefsSavedLocally(true);
+                setIsEditingAdjustments(false);
+              })
+          : undefined
+      }
       isPreferencesPending={fitFeedback.isPreferencesPending}
     />
   );
@@ -299,7 +325,11 @@ export function HistoryRecordCard({
           {canUseFitFeedback ? (
             <FitFeedbackPanel
               savedRating={savedRating}
-              onRating={fitFeedback.handleRating}
+              onRating={(rating) => {
+                if (rating === 'bad') setIsEditingAdjustments(true);
+                else setIsEditingAdjustments(false);
+                fitFeedback.handleRating(rating);
+              }}
               isPending={fitFeedback.isFeedbackPending}
             />
           ) : null}

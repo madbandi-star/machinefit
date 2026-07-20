@@ -136,6 +136,8 @@
     "preferencesSaveFailed": "Couldn't save your preferences. Please try again in a moment.",
     "compareRecommendedWeight": "Rec. weight",
     "compareAdjustedWeight": "Adj. weight",
+    "compareRecommendedReps": "Rec. reps",
+    "compareAdjustedReps": "Adj. reps",
     "compareRecommendedSeat": "Rec. seat",
     "compareAdjustedSeat": "Adj. seat",
     "compareRecommendedBackPad": "Rec. back pad",

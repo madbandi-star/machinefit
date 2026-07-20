@@ -136,6 +136,8 @@
     "preferencesSaveFailed": "선호 세팅을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
     "compareRecommendedWeight": "추천중량",
     "compareAdjustedWeight": "조정중량",
+    "compareRecommendedReps": "추천횟수",
+    "compareAdjustedReps": "조정횟수",
     "compareRecommendedSeat": "추천 시트",
     "compareAdjustedSeat": "조정 시트",
     "compareRecommendedBackPad": "추천 백패드",

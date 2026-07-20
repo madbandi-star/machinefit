@@ -27,6 +27,12 @@ function seedCustomSettingsFromRecommendation(
   if (settings.recommendedWeightKg != null) {
     seeded.recommendedWeightKg = roundRecommendWeightKg(settings.recommendedWeightKg);
   }
+  if (settings.recommendedRepsMin != null) {
+    seeded.recommendedRepsMin = settings.recommendedRepsMin;
+  }
+  if (settings.recommendedRepsMax != null) {
+    seeded.recommendedRepsMax = settings.recommendedRepsMax;
+  }
 
   return seeded;
 }
@@ -143,14 +149,23 @@ export function useMachineFitFeedback({
   };
 
   const showAdjustment = savedRating === 'bad';
+  const hasSavedPreferences = Boolean(
+    savedPreferences && Object.keys(savedPreferences).length > 0
+  );
 
   return {
     savedRating,
     customSettings,
     showAdjustment,
+    hasSavedPreferences,
     handleRating,
     handleCustomChange,
-    savePreferences: () => preferenceMutation.mutate(),
+    savePreferences: (onDone?: () => void) =>
+      preferenceMutation.mutate(undefined, {
+        onSuccess: () => {
+          onDone?.();
+        },
+      }),
     isFeedbackPending: feedbackMutation.isPending,
     isPreferencesPending: preferenceMutation.isPending,
   };

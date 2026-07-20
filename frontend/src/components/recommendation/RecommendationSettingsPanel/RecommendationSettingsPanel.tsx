@@ -80,6 +80,10 @@ const COMPARE_LABEL_KEYS: Partial<
     recommended: 'feedback.compareRecommendedWeight',
     adjusted: 'feedback.compareAdjustedWeight',
   },
+  recommendedRepsMin: {
+    recommended: 'feedback.compareRecommendedReps',
+    adjusted: 'feedback.compareAdjustedReps',
+  },
   seatPosition: {
     recommended: 'feedback.compareRecommendedSeat',
     adjusted: 'feedback.compareAdjustedSeat',
@@ -148,7 +152,16 @@ function getCompareLabels(
     adjustedLabel: string;
   }
 ) {
+  const compareKeys = COMPARE_LABEL_KEYS[item.key];
+
   if (options.showAdjustment && options.historyVariant) {
+    // After 선호값 저장 (read-only): show 추천중량/조정중량, 추천횟수/조정횟수, etc.
+    if (options.adjustmentReadOnly && compareKeys) {
+      return {
+        recommendedLabel: options.t(`machines:${compareKeys.recommended}`),
+        adjustedLabel: options.t(`machines:${compareKeys.adjusted}`),
+      };
+    }
     return {
       recommendedLabel: options.t('machines:history.compareRecommended'),
       adjustedLabel: options.adjustmentReadOnly
@@ -157,7 +170,6 @@ function getCompareLabels(
     };
   }
 
-  const compareKeys = COMPARE_LABEL_KEYS[item.key];
   if (options.showAdjustment && options.adjustmentReadOnly && compareKeys) {
     return {
       recommendedLabel: options.t(`machines:${compareKeys.recommended}`),
@@ -317,7 +329,7 @@ export function RecommendationSettingsPanel({
   };
 
   const saveFooter =
-    showAdjustment && onSavePreferences ? (
+    showAdjustment && onSavePreferences && !adjustmentReadOnly ? (
       <div className="recommendation-settings-panel__save-row">
         <button
           type="button"
