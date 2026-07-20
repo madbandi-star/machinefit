@@ -7,6 +7,7 @@ export interface FavoriteItem {
   machineId: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   muscleGroup: string;
   recommendationId?: string;
   createdAt: string;
@@ -23,13 +24,16 @@ export const favoriteRepository = {
       machine_code: string;
       muscle_group: string;
       machine_name: Record<string, string>;
+      brand_name: Record<string, string> | null;
       recommendation_id: string | null;
       created_at: string;
     }>(
       `SELECT f.id, f.machine_id, f.recommendation_id, f.created_at,
-              m.code AS machine_code, m.muscle_group, m.name AS machine_name
+              m.code AS machine_code, m.muscle_group, m.name AS machine_name,
+              b.name AS brand_name
        FROM favorites f
        JOIN machines m ON m.id = f.machine_id
+       LEFT JOIN brands b ON b.id = m.brand_id
        WHERE f.user_id = $1
        ORDER BY f.created_at DESC`,
       [userId]
@@ -40,6 +44,9 @@ export const favoriteRepository = {
       machineId: row.machine_id,
       machineCode: row.machine_code,
       machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
+      brandName: row.brand_name
+        ? pickLocalized(row.brand_name, locale) ?? undefined
+        : undefined,
       muscleGroup: row.muscle_group,
       recommendationId: row.recommendation_id ?? undefined,
       createdAt: row.created_at,

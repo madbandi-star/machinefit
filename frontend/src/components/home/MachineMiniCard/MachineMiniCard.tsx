@@ -5,12 +5,13 @@ import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroup
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
-import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import '@/styles/home.css';
 
 interface MachineMiniCardProps {
   machineCode: string;
   machineName: string;
+  brandName?: string;
   muscleGroup?: string;
   targetMuscleGroup?: string;
   imageUrl?: string;
@@ -20,6 +21,7 @@ interface MachineMiniCardProps {
 export function MachineMiniCard({
   machineCode,
   machineName,
+  brandName,
   muscleGroup,
   targetMuscleGroup,
   imageUrl,
@@ -27,8 +29,9 @@ export function MachineMiniCard({
 }: MachineMiniCardProps) {
   const { t } = useTranslation('machines');
   const displayMuscle = getHistoryMuscleGroup(machineCode, muscleGroup, targetMuscleGroup);
+  const baseName = formatBrandedMachineLabel(machineName, brandName, machineCode);
   const displayName = formatFreeWeightRecordLabel(
-    machineName,
+    baseName,
     isFreeWeightMachineCode(machineCode) ? targetMuscleGroup : undefined,
     (group) => t(`muscleGroups.${group}`, { defaultValue: group })
   );

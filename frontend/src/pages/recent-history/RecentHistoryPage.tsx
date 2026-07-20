@@ -7,6 +7,7 @@ import { historyApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 
@@ -50,7 +51,9 @@ export function RecentHistoryPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {data?.map((item) => (
               <div key={item.id} className="card">
-                <strong>{item.machineName}</strong>
+                <strong>
+                  {formatBrandedMachineLabel(item.machineName, item.brandName, item.machineCode)}
+                </strong>
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
                   {new Date(item.viewedAt).toLocaleDateString()}
                 </p>

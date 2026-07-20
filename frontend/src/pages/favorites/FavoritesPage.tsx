@@ -6,6 +6,7 @@ import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import '@/styles/components.css';
 
 export function FavoritesPage() {
@@ -40,7 +41,9 @@ export function FavoritesPage() {
           {data?.map((item) => (
             <div key={item.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <strong>{item.machineName}</strong>
+                <strong>
+                  {formatBrandedMachineLabel(item.machineName, item.brandName, item.machineCode)}
+                </strong>
               </div>
               <button
                 className="btn btn--secondary"

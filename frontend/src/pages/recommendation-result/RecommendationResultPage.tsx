@@ -22,7 +22,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
-import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
@@ -230,7 +230,11 @@ export function RecommendationResultPage() {
         result.targetMuscleGroup,
         (group) => t(`muscleGroups.${group}`, { defaultValue: group })
       )
-    : (result.machineName ?? t('recommendation.title'));
+    : formatBrandedMachineLabel(
+        result.machineName ?? t('recommendation.title'),
+        result.brandName,
+        result.machineCode
+      );
 
   return (
     <div className="recommendation-result-page recommendation-result-page--inline-actions">

@@ -36,7 +36,7 @@ import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/Hi
 import { HistorySummaryStats } from '@/components/records/HistorySummaryStats/HistorySummaryStats';
 import { HistoryRecordCard } from '@/components/records/HistoryRecordCard/HistoryRecordCard';
 import { isDismissedToday } from '@/utils/dismissToday';
-import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
@@ -400,7 +400,11 @@ export function HistoryListPanel() {
                       card.targetMuscleGroup,
                       translateMuscleGroup
                     )
-                  : card.machineName;
+                  : formatBrandedMachineLabel(
+                      card.machineName,
+                      card.brandName,
+                      card.machineCode
+                    );
                 const muscleGroup = getHistoryMuscleGroup(
                   card.machineCode,
                   card.muscleGroup,

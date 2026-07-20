@@ -6,6 +6,7 @@ interface WorkoutLogRow {
   id: string;
   machine_code: string;
   machine_name: Record<string, string>;
+  brand_name: Record<string, string> | null;
   recommendation_id: string | null;
   log_date: string;
   target_muscle_group: string;
@@ -36,6 +37,9 @@ function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
     id: row.id,
     machineCode: row.machine_code,
     machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
+    brandName: row.brand_name
+      ? pickLocalized(row.brand_name, locale) ?? undefined
+      : undefined,
     recommendationId: row.recommendation_id ?? undefined,
     logDate,
     targetMuscleGroup: row.target_muscle_group
@@ -55,7 +59,10 @@ function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
 
 const SELECT_FIELDS = `wl.id, wl.recommendation_id, wl.log_date, wl.target_muscle_group, wl.set_count, wl.set_weights_kg,
               wl.set_completed, wl.diary, wl.created_at, wl.updated_at,
-              m.code AS machine_code, m.name AS machine_name`;
+              m.code AS machine_code, m.name AS machine_name, b.name AS brand_name`;
+
+const MACHINE_JOINS = `JOIN machines m ON m.id = wl.machine_id
+       LEFT JOIN brands b ON b.id = m.brand_id`;
 
 export const workoutLogRepository = {
   async findByUserMachineDate(
@@ -70,7 +77,7 @@ export const workoutLogRepository = {
     const result = await pool.query<WorkoutLogRow>(
       `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
-       JOIN machines m ON m.id = wl.machine_id
+       ${MACHINE_JOINS}
        WHERE wl.user_id = $1 AND wl.machine_id = $2 AND wl.log_date = $3::date
          AND wl.target_muscle_group = $4`,
       [userId, machineId, logDate, targetMuscleGroup]
@@ -125,7 +132,7 @@ export const workoutLogRepository = {
 
     let query = `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
-       JOIN machines m ON m.id = wl.machine_id
+       ${MACHINE_JOINS}
        WHERE wl.user_id = $1${filters}`;
 
     if (options.limit !== undefined) {

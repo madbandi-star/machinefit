@@ -7,6 +7,7 @@ export interface HistoryItem {
   machineId: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   muscleGroup: string;
   targetMuscleGroup?: string;
   recommendationId: string;
@@ -59,6 +60,7 @@ export const historyRepository = {
       machine_code: string;
       muscle_group: string;
       machine_name: Record<string, string>;
+      brand_name: Record<string, string> | null;
       recommendation_id: string;
       seat_position: number | null;
       back_pad_position: number | null;
@@ -73,12 +75,14 @@ export const historyRepository = {
     }>(
       `SELECT h.id, h.machine_id, h.recommendation_id, h.viewed_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
+              b.name AS brand_name,
               r.seat_position, r.back_pad_position, r.foot_position,
               r.handle_position, r.rom_setting, r.recommended_weight_kg,
               r.recommended_reps_min, r.recommended_reps_max,
               r.target_muscle_group
        FROM recent_history h
        JOIN machines m ON m.id = h.machine_id
+       LEFT JOIN brands b ON b.id = m.brand_id
        JOIN machine_recommendations r ON r.id = h.recommendation_id
        WHERE h.user_id = $1${filters}
        ORDER BY h.viewed_at DESC
@@ -91,6 +95,9 @@ export const historyRepository = {
       machineId: row.machine_id,
       machineCode: row.machine_code,
       machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
+      brandName: row.brand_name
+        ? pickLocalized(row.brand_name, locale) ?? undefined
+        : undefined,
       muscleGroup: row.muscle_group,
       targetMuscleGroup: row.target_muscle_group ?? undefined,
       recommendationId: row.recommendation_id,

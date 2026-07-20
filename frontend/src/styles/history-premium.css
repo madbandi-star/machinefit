@@ -600,7 +600,7 @@
   gap: var(--history-gap-grid);
 }
 
-@media (max-width: 430px) {
+@media (max-width: 520px) {
   .history-page-premium .recommendation-workout-log__weight-list--history {
     grid-template-columns: minmax(0, 1fr);
   }

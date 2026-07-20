@@ -185,10 +185,15 @@ export const recommendationService = {
       await historyRepository.record(userId, machineId, id);
     }
 
+    const brandName =
+      machine.brandName?.[locale as keyof typeof machine.brandName] ??
+      machine.brandName?.en;
+
     return {
       id,
       machineCode: machine.code,
       machineName: machine.name[locale as keyof typeof machine.name] ?? machine.name.en,
+      ...(brandName ? { brandName } : {}),
       settings,
       tips,
       warnings,

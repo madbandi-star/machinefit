@@ -195,6 +195,7 @@ export interface FavoriteItem {
   machineId: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   muscleGroup?: string;
   recommendationId?: string;
   createdAt: string;
@@ -205,6 +206,7 @@ export interface HistoryItem {
   machineId: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   muscleGroup?: string;
   targetMuscleGroup?: string;
   recommendationId: string;

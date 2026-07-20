@@ -51,6 +51,10 @@ const TARGET_MUSCLE_LABELS: Record<string, string> = {
 function formatLogMachineLabel(
   log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number]
 ): string {
+  const brandPrefix =
+    log.brandName && !isFreeWeightMachineCode(log.machineCode)
+      ? `${log.brandName} · `
+      : '';
   if (isFreeWeightMachineCode(log.machineCode)) {
     const equipment = log.machineName ?? log.machineCode;
     const muscle = log.targetMuscleGroup
@@ -58,7 +62,7 @@ function formatLogMachineLabel(
       : '';
     return muscle ? `${equipment} · ${muscle}` : equipment;
   }
-  return log.machineName ?? log.machineCode;
+  return `${brandPrefix}${log.machineName ?? log.machineCode}`;
 }
 
 function getLogVolumeKg(log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number]): number {

@@ -38,7 +38,7 @@ import {
   getSessionsForMachineOption,
   resolveGrowthPeriodBounds,
 } from '@/utils/workoutAnalytics';
-import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { formatHistoryDateHeader } from '@/utils/historyDate';
 import '@/styles/growth-analysis.css';
 
@@ -91,14 +91,20 @@ export function GrowthAnalysisPage() {
   const translateMuscleGroup = (group: string) =>
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
 
-  const formatMachineOptionLabel = (option: MachineOption) =>
-    option.targetMuscleGroup
+  const formatMachineOptionLabel = (option: MachineOption) => {
+    const branded = formatBrandedMachineLabel(
+      option.machineName,
+      option.brandName,
+      option.machineCode
+    );
+    return option.targetMuscleGroup
       ? formatFreeWeightRecordLabel(
-          option.machineName,
+          branded,
           option.targetMuscleGroup,
           translateMuscleGroup
         )
-      : option.machineName;
+      : branded;
+  };
 
   const periodFilter: GrowthPeriodFilterState = useMemo(
     () => ({
@@ -401,7 +407,12 @@ export function GrowthAnalysisPage() {
                 </p>
               ) : (
                 <p className="growth-analysis-pr-alert__machine">
-                  {selectedMachineName ?? prAlert.machineName}
+                  {selectedMachineName ??
+                    formatBrandedMachineLabel(
+                      prAlert.machineName,
+                      prAlert.brandName,
+                      prAlert.machineCode
+                    )}
                 </p>
               )}
               <dl className="growth-analysis-pr-alert__stats">
@@ -595,11 +606,19 @@ export function GrowthAnalysisPage() {
                     <strong>
                       {item.targetMuscleGroup
                         ? formatFreeWeightRecordLabel(
-                            item.machineName,
+                            formatBrandedMachineLabel(
+                              item.machineName,
+                              item.brandName,
+                              item.machineCode
+                            ),
                             item.targetMuscleGroup,
                             translateMuscleGroup
                           )
-                        : item.machineName}
+                        : formatBrandedMachineLabel(
+                            item.machineName,
+                            item.brandName,
+                            item.machineCode
+                          )}
                     </strong>
                     <span className="growth-analysis-kpi__value--up">
                       {formatGrowthPct(item.growthPct)}

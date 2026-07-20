@@ -193,16 +193,27 @@ export const machineRepository = {
 
   async findByCode(code: string): Promise<Machine | null> {
     const pool = getPool();
-    if (!pool) return MOCK_MACHINES.find((m) => m.code === code) ?? null;
+    if (!pool) {
+      const machine = MOCK_MACHINES.find((m) => m.code === code) ?? null;
+      return machine ? attachBrandName(machine) : null;
+    }
 
-    const result = await pool.query<MachineRow & { primary_image_url: string | null }>(
-      `SELECT m.*, ${PRIMARY_IMAGE_SQL}
+    const result = await pool.query<
+      MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
+    >(
+      `SELECT m.*, b.name AS brand_name, ${PRIMARY_IMAGE_SQL}
        FROM machines m
+       LEFT JOIN brands b ON b.id = m.brand_id
        WHERE m.code = $1 AND m.is_active = true`,
       [code]
     );
     const row = result.rows[0];
-    return row ? mapMachine(row, { primaryImageUrl: row.primary_image_url }) : null;
+    return row
+      ? mapMachine(row, {
+          brandName: row.brand_name ?? undefined,
+          primaryImageUrl: row.primary_image_url,
+        })
+      : null;
   },
 
   async findByBrandCode(brandCode: string): Promise<Machine[]> {

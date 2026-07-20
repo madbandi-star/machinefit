@@ -34,6 +34,8 @@ export interface RecommendationResult {
   id: string;
   machineCode: string;
   machineName?: string;
+  /** Localized brand label for disambiguating same-named machines. */
+  brandName?: string;
   settings: RecommendationSettings;
   tips: string[];
   warnings: string[];

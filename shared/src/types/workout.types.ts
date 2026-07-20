@@ -4,6 +4,8 @@ export interface WorkoutLog {
   id: string;
   machineCode: string;
   machineName?: string;
+  /** Localized brand label for disambiguating same-named machines (e.g. Cybex vs HS Leg Curl). */
+  brandName?: string;
   recommendationId?: string;
   logDate: string;
   targetMuscleGroup?: TargetMuscleGroup;

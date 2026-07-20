@@ -10,6 +10,7 @@ export interface HistoryRecordCard {
   historyId?: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   muscleGroup?: string;
   targetMuscleGroup?: TargetMuscleGroup;
   recommendationId?: string;
@@ -55,6 +56,7 @@ export function expandHistoryRecordCards(
       historyId: item.id,
       machineCode: item.machineCode,
       machineName: item.machineName,
+      brandName: item.brandName,
       muscleGroup: item.muscleGroup,
       recommendationId: item.recommendationId,
       settings: item.settings,
@@ -83,6 +85,7 @@ export function expandHistoryRecordCards(
       historyId: history?.id,
       machineCode: log.machineCode,
       machineName: log.machineName ?? history?.machineName ?? log.machineCode,
+      brandName: log.brandName ?? history?.brandName,
       muscleGroup: history?.muscleGroup,
       targetMuscleGroup: log.targetMuscleGroup,
       recommendationId: log.recommendationId ?? history?.recommendationId,
@@ -107,6 +110,7 @@ export function expandHistoryRecordCards(
         historyId: item.id,
         machineCode: item.machineCode,
         machineName: item.machineName,
+        brandName: item.brandName,
         muscleGroup: item.muscleGroup,
         targetMuscleGroup: item.targetMuscleGroup as TargetMuscleGroup,
         recommendationId: item.recommendationId,
@@ -126,6 +130,7 @@ export function expandHistoryRecordCards(
       historyId: item.id,
       machineCode: item.machineCode,
       machineName: item.machineName,
+      brandName: item.brandName,
       recommendationId: item.recommendationId,
       settings: item.settings,
       viewedAt: item.viewedAt,

@@ -31,6 +31,7 @@ interface RecommendationRow {
   machine_id: string;
   machine_code: string;
   machine_name: Record<string, string>;
+  brand_name: Record<string, string> | null;
   gender: string;
   height_cm: string;
   weight_kg: string | null;
@@ -171,9 +172,11 @@ export const recommendationRepository = {
     if (!pool) throw new AppError(404, 'NOT_FOUND', `Recommendation not found: ${id}`);
 
     const result = await pool.query<RecommendationRow>(
-      `SELECT r.*, m.code AS machine_code, m.name AS machine_name, m.id AS machine_id
+      `SELECT r.*, m.code AS machine_code, m.name AS machine_name, m.id AS machine_id,
+              b.name AS brand_name
        FROM machine_recommendations r
        JOIN machines m ON m.id = r.machine_id
+       LEFT JOIN brands b ON b.id = m.brand_id
        WHERE r.id = $1`,
       [id]
     );
@@ -186,6 +189,9 @@ export const recommendationRepository = {
       id: row.id,
       machineCode: row.machine_code,
       machineName: row.machine_name[locale] ?? row.machine_name.en,
+      brandName: row.brand_name
+        ? (row.brand_name[locale] ?? row.brand_name.en)
+        : undefined,
       settings: {
         seatPosition: row.seat_position ?? undefined,
         backPadPosition: row.back_pad_position ?? undefined,

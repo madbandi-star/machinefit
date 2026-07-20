@@ -23,6 +23,7 @@ export interface MachineOption {
   optionKey: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   targetMuscleGroup?: TargetMuscleGroup;
 }
 
@@ -52,6 +53,7 @@ export function parseMachineOptionKey(optionKey: string): {
 export interface PrAlert {
   machineCode: string;
   machineName: string;
+  brandName?: string;
   previousPr: number;
   currentPr: number;
   achievedDate: string;
@@ -61,6 +63,7 @@ export interface GrowthRankingItem {
   optionKey: string;
   machineCode: string;
   machineName: string;
+  brandName?: string;
   targetMuscleGroup?: TargetMuscleGroup;
   growthPct: number;
 }
@@ -81,6 +84,7 @@ export interface DailyPoint {
   machines: {
     machineCode: string;
     machineName: string;
+    brandName?: string;
     targetMuscleGroup?: TargetMuscleGroup;
     volume: number;
     contributionPct: number;
@@ -211,6 +215,7 @@ export function getMachineOptions(logs: WorkoutLog[]): MachineOption[] {
         optionKey,
         machineCode: log.machineCode,
         machineName: log.machineName ?? '',
+        brandName: log.brandName,
         targetMuscleGroup: splitByMuscle ? log.targetMuscleGroup : undefined,
       });
     }
@@ -261,6 +266,7 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
       const machines = dayLogs.map((entry) => ({
         machineCode: entry.machineCode,
         machineName: entry.machineName ?? '',
+        brandName: entry.brandName,
         targetMuscleGroup: entry.targetMuscleGroup,
         volume: computeVolume(entry.setWeightsKg),
       }));
@@ -408,6 +414,7 @@ export function detectPrAlert(
   return {
     machineCode: latest.machineCode,
     machineName: latest.machineName ?? '',
+    brandName: latest.brandName,
     previousPr,
     currentPr,
     achievedDate: latest.logDate,
@@ -433,6 +440,7 @@ export function computeGrowthRanking(
       optionKey: option.optionKey,
       machineCode: option.machineCode,
       machineName: option.machineName,
+      brandName: option.brandName,
       targetMuscleGroup: option.targetMuscleGroup,
       growthPct,
     });

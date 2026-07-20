@@ -47,6 +47,7 @@ export function FavoriteMachinesRow() {
               key={item.id}
               machineCode={item.machineCode}
               machineName={item.machineName}
+              brandName={item.brandName}
               muscleGroup={
                 shouldShowDefaultMachineMuscle(item.machineCode) ? item.muscleGroup : undefined
               }

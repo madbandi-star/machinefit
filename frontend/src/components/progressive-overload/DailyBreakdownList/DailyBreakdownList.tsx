@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import type { DailyPoint } from '@/utils/workoutAnalytics';
 import { formatShortDate } from '@/utils/workoutAnalytics';
-import { formatFreeWeightRecordLabel } from '@/utils/freeWeightDisplay';
+import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { CollapsibleCard } from '@/components/progressive-overload/CollapsibleCard/CollapsibleCard';
 
 interface DailyBreakdownListProps {
@@ -49,11 +49,19 @@ export function DailyBreakdownList({ days, locale }: DailyBreakdownListProps) {
                 {day.machines.map((machine) => {
                   const displayName = isFreeWeightMachineCode(machine.machineCode)
                     ? formatFreeWeightRecordLabel(
-                        machine.machineName,
+                        formatBrandedMachineLabel(
+                          machine.machineName,
+                          machine.brandName,
+                          machine.machineCode
+                        ),
                         machine.targetMuscleGroup,
                         translateMuscleGroup
                       )
-                    : machine.machineName;
+                    : formatBrandedMachineLabel(
+                        machine.machineName,
+                        machine.brandName,
+                        machine.machineCode
+                      );
 
                   return (
                     <li
