@@ -106,6 +106,8 @@
     "targetRepsUnit": "reps",
     "countInterval": "Count interval",
     "countIntervalUnit": "s",
+    "oneMoreCount": "One more count",
+    "oneMoreCountUnit": "reps",
     "oneMore": "Count one more",
     "autoAfterRest": "Auto-start after rest",
     "restTips": "Hear cautions & tips during rest",

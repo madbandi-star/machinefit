@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
+  clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
+  VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
   type VoiceCoachPhase,
 } from '@/utils/voiceCoach';
@@ -21,6 +23,8 @@ interface VoiceCoachPanelProps {
   onRepGapMsChange: (ms: number) => void;
   oneMoreEnabled: boolean;
   onOneMoreChange: (enabled: boolean) => void;
+  oneMoreCount: number;
+  onOneMoreCountChange: (count: number) => void;
   autoStartAfterRest: boolean;
   onAutoStartAfterRestChange: (enabled: boolean) => void;
   restTipsEnabled: boolean;
@@ -67,6 +71,8 @@ export function VoiceCoachPanel({
   onRepGapMsChange,
   oneMoreEnabled,
   onOneMoreChange,
+  oneMoreCount,
+  onOneMoreCountChange,
   autoStartAfterRest,
   onAutoStartAfterRestChange,
   restTipsEnabled,
@@ -116,7 +122,7 @@ export function VoiceCoachPanel({
               role="group"
               aria-label={t('machines:voiceCoach.title')}
             >
-              <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
+              <div className="body-metrics-inline__grid">
                 <div className="body-metrics-inline__cell">
                   <span className="body-metrics-inline__label">
                     {t('machines:voiceCoach.targetReps')}
@@ -155,6 +161,25 @@ export function VoiceCoachPanel({
                     defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
                     ariaLabel={t('machines:voiceCoach.countInterval')}
                     formatValue={(value) => value.toFixed(1)}
+                  />
+                </div>
+                <div className="body-metrics-inline__cell">
+                  <span className="body-metrics-inline__label">
+                    {t('machines:voiceCoach.oneMoreCount')}
+                    <span className="body-metrics-inline__unit">
+                      {t('machines:voiceCoach.oneMoreCountUnit')}
+                    </span>
+                  </span>
+                  <ScrollPicker
+                    value={clampVoiceCoachOneMoreCount(oneMoreCount)}
+                    onChange={onOneMoreCountChange}
+                    min={VOICE_COACH_ONE_MORE.minCount}
+                    max={VOICE_COACH_ONE_MORE.maxCount}
+                    step={VOICE_COACH_ONE_MORE.step}
+                    size={compact ? 'compact' : 'default'}
+                    defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
+                    ariaLabel={t('machines:voiceCoach.oneMoreCount')}
+                    formatValue={(value) => String(value)}
                   />
                 </div>
               </div>

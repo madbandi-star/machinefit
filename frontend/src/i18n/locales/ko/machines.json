@@ -106,6 +106,8 @@
     "targetRepsUnit": "회",
     "countInterval": "카운트 간격",
     "countIntervalUnit": "초",
+    "oneMoreCount": "원모어 횟수",
+    "oneMoreCountUnit": "회",
     "oneMore": "하나더(원모어) 세기",
     "autoAfterRest": "휴식 후 자동 시작",
     "restTips": "휴식 중 주의사항·운동팁 듣기",
