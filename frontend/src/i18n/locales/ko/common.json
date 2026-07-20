@@ -167,7 +167,8 @@
     "voiceCoachEnable": "음성 카운트 사용",
     "voiceCoachOneMore": "하나더(원모어) 세기",
     "voiceCoachAutoAfterRest": "휴식 후 자동 시작",
-    "voiceCoachTargetReps": "기본 목표 횟수"
+    "voiceCoachTargetReps": "기본 목표 횟수",
+    "voiceRestTips": "휴식 중 주의사항·운동팁 음성"
   },
   "pages": {
     "home": {

@@ -3,11 +3,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
-import { workoutLogApi, machinePreferenceApi } from '@/api';
+import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
-import { unlockVoiceCoachAudio } from '@/utils/voiceCoach';
+import {
+  unlockVoiceCoachAudio,
+  speakRestTipsAndWarnings,
+  stopVoiceCoach,
+} from '@/utils/voiceCoach';
 import { Check, Pencil } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
@@ -60,6 +64,9 @@ interface WorkoutLogPanelProps {
   diaryDefaultOpen?: boolean;
   showSaveButton?: boolean;
   showPersonalTipMemo?: boolean;
+  /** Spoken during rest (warnings first, then tips). */
+  tips?: string[];
+  warnings?: string[];
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
   onSavedChange?: (saved: boolean) => void;
 }
@@ -174,6 +181,8 @@ export function WorkoutLogPanel({
   diaryDefaultOpen = false,
   showSaveButton = false,
   showPersonalTipMemo,
+  tips: tipsProp,
+  warnings: warningsProp,
   onControlReady,
   onSavedChange,
 }: WorkoutLogPanelProps) {
@@ -183,10 +192,12 @@ export function WorkoutLogPanel({
   const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
+  const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
+  const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
@@ -201,11 +212,19 @@ export function WorkoutLogPanel({
   voiceCoachStartRef.current = voiceCoach.start;
   const voiceCoachRunningRef = useRef(voiceCoach.isRunning);
   voiceCoachRunningRef.current = voiceCoach.isRunning;
+  const restSpeechAbortRef = useRef<AbortController | null>(null);
   const handleRestReadyForNextSet = useCallback(() => {
+    restSpeechAbortRef.current?.abort();
+    stopVoiceCoach();
     if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
     if (voiceCoachRunningRef.current) return;
     voiceCoachStartRef.current();
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
+  const startVoiceCoach = useCallback(() => {
+    restSpeechAbortRef.current?.abort();
+    stopVoiceCoach();
+    voiceCoachStartRef.current();
+  }, []);
   const isHistory = variant === 'history';
   const compact = variant === 'compact' || isHistory;
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
@@ -240,6 +259,71 @@ export function WorkoutLogPanel({
   const diaryBytes = getUtf8ByteLength(diary);
   const personalTipBytes = getUtf8ByteLength(personalTipMemo);
   const queryEnabled = isAuthenticated && (!isFreeWeight || !!queryTargetMuscle);
+
+  const needsFetchedCoaching =
+    voiceCoachEnabled &&
+    voiceRestTipsEnabled &&
+    Boolean(recommendationId) &&
+    tipsProp == null &&
+    warningsProp == null;
+
+  const { data: fetchedCoaching } = useQuery({
+    queryKey: ['recommendation-coaching', recommendationId, locale],
+    queryFn: async () => {
+      const res = await recommendationApi.getById(recommendationId!);
+      return {
+        tips: res.data.data.tips ?? [],
+        warnings: res.data.data.warnings ?? [],
+      };
+    },
+    enabled: needsFetchedCoaching,
+    staleTime: 60_000,
+  });
+
+  const coachingTips = tipsProp ?? fetchedCoaching?.tips ?? [];
+  const coachingWarnings = warningsProp ?? fetchedCoaching?.warnings ?? [];
+  const coachingTipsRef = useRef(coachingTips);
+  coachingTipsRef.current = coachingTips;
+  const coachingWarningsRef = useRef(coachingWarnings);
+  coachingWarningsRef.current = coachingWarnings;
+  const hasRestCoaching =
+    coachingTips.length > 0 || coachingWarnings.length > 0;
+  /** Fingerprint so late-fetched history tips still start speech during an active rest. */
+  const restCoachingFingerprint = hasRestCoaching
+    ? `${coachingWarnings.join('\u0001')}\u0002${coachingTips.join('\u0001')}`
+    : '';
+
+  useEffect(() => {
+    if (!restTimer) return;
+    if (!voiceCoachEnabled || !voiceRestTipsEnabled) return;
+    if (!hasRestCoaching) return;
+
+    const controller = new AbortController();
+    restSpeechAbortRef.current = controller;
+    void speakRestTipsAndWarnings({
+      warnings: coachingWarningsRef.current,
+      tips: coachingTipsRef.current,
+      locale,
+      signal: controller.signal,
+    });
+
+    return () => {
+      controller.abort();
+      if (restSpeechAbortRef.current === controller) {
+        restSpeechAbortRef.current = null;
+      }
+      stopVoiceCoach();
+    };
+  }, [
+    restTimer?.setNumber,
+    restTimer?.seconds,
+    voiceCoachEnabled,
+    voiceRestTipsEnabled,
+    hasRestCoaching,
+    restCoachingFingerprint,
+    locale,
+  ]);
+
 
   const { data: machinePreferences, isFetched: isPreferencesFetched } = useQuery({
     queryKey: ['machine-preferences', machineCode],
@@ -963,11 +1047,13 @@ export function WorkoutLogPanel({
       onOneMoreChange={setVoiceCoachOneMore}
       autoStartAfterRest={voiceCoachAutoAfterRest}
       onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
+      restTipsEnabled={voiceRestTipsEnabled}
+      onRestTipsEnabledChange={setVoiceRestTipsEnabled}
       phase={voiceCoach.phase}
       currentRep={voiceCoach.currentRep}
       countdown={voiceCoach.countdown}
       isRunning={voiceCoach.isRunning}
-      onStart={voiceCoach.start}
+      onStart={startVoiceCoach}
       onStop={voiceCoach.stop}
       idPrefix={`${idPrefix}-voice-coach`}
       compact={compact}

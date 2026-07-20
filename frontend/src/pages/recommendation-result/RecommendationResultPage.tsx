@@ -279,6 +279,8 @@ export function RecommendationResultPage() {
             idPrefix={`result-workout-${result.id}`}
             targetMuscleGroup={resultTargetMuscle}
             lockTargetMuscle={Boolean(resultTargetMuscle && isFreeWeightMachineCode(result.machineCode))}
+            tips={result.tips}
+            warnings={result.warnings}
             onControlReady={setLogControl}
             onSavedChange={setWorkoutLogSavedOverride}
           />

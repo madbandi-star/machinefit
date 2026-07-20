@@ -42,10 +42,12 @@ export function SettingsPage() {
   const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
+  const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
+  const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -198,6 +200,15 @@ export function SettingsPage() {
                 disabled={!voiceCoachEnabled}
               />
               <span>{t('settings.voiceCoachAutoAfterRest')}</span>
+            </label>
+            <label className="settings-voice-coach__row">
+              <input
+                type="checkbox"
+                checked={voiceRestTipsEnabled}
+                onChange={(e) => setVoiceRestTipsEnabled(e.target.checked)}
+                disabled={!voiceCoachEnabled}
+              />
+              <span>{t('settings.voiceRestTips')}</span>
             </label>
             <div className="settings-voice-coach__reps">
               <span className="settings-voice-coach__reps-label">{t('settings.voiceCoachTargetReps')}</span>
