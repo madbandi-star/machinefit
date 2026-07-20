@@ -143,7 +143,7 @@ export function OwnerApplyPage() {
           </label>
 
           <button type="submit" className="btn btn--primary btn--block" disabled={submitting}>
-            {submitting ? t('common:loading') : t('gyms:ownerApply.submit')}
+            {submitting ? t('gyms:ownerApply.submitting') : t('gyms:ownerApply.submit')}
           </button>
         </form>
       )}
