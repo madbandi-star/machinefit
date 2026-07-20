@@ -42,29 +42,38 @@ export function RestTimerBanner({
   onReadyRef.current = onReadyForNextSet;
 
   useEffect(() => {
-    setRemaining(seconds);
     completedRef.current = false;
-  }, [seconds, setNumber]);
+    setRemaining(seconds);
 
-  useEffect(() => {
-    if (remaining <= 0) {
-      if (!completedRef.current) {
-        completedRef.current = true;
-        void notifyRestComplete(
-          t('restTimer.notificationTitle'),
-          t('restTimer.notificationBody', { setNumber })
-        );
-        onReadyRef.current?.();
-      }
+    const finish = () => {
+      if (completedRef.current) return;
+      completedRef.current = true;
+      setRemaining(0);
+      void notifyRestComplete(
+        t('restTimer.notificationTitle'),
+        t('restTimer.notificationBody', { setNumber })
+      );
+      onReadyRef.current?.();
+    };
+
+    if (seconds <= 0) {
+      finish();
       return undefined;
     }
 
+    const startedAt = Date.now();
     const timer = window.setInterval(() => {
-      setRemaining((prev) => Math.max(0, prev - 1));
-    }, 1000);
+      const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
+      const next = Math.max(0, seconds - elapsedSec);
+      setRemaining(next);
+      if (next <= 0) {
+        window.clearInterval(timer);
+        finish();
+      }
+    }, 250);
 
     return () => window.clearInterval(timer);
-  }, [remaining, setNumber, t]);
+  }, [seconds, setNumber, t]);
 
   const handleDismiss = () => {
     if (remaining > 0 && !completedRef.current) {

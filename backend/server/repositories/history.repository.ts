@@ -1,4 +1,6 @@
+import type { Locale } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import { pickLocalized } from '../utils/localize.util.js';
 
 export interface HistoryItem {
   id: string;
@@ -24,7 +26,8 @@ export interface HistoryItem {
 export const historyRepository = {
   async listByUser(
     userId: string,
-    options: { limit?: number; machineCode?: string; from?: string; to?: string } = {}
+    options: { limit?: number; machineCode?: string; from?: string; to?: string } = {},
+    locale: Locale = 'en'
   ): Promise<HistoryItem[]> {
     const pool = getPool();
     if (!pool) return [];
@@ -87,7 +90,7 @@ export const historyRepository = {
       id: row.id,
       machineId: row.machine_id,
       machineCode: row.machine_code,
-      machineName: row.machine_name.en ?? row.machine_code,
+      machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
       muscleGroup: row.muscle_group,
       targetMuscleGroup: row.target_muscle_group ?? undefined,
       recommendationId: row.recommendation_id,

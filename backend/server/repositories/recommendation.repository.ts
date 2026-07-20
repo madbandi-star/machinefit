@@ -1,4 +1,9 @@
-import type { RecommendationInput, WeightRecommendationBasis, YoutubeVideo } from '@machinefit/shared';
+import type {
+  RecommendationInput,
+  RecommendationSettings,
+  WeightRecommendationBasis,
+  YoutubeVideo,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_SETTINGS, type MockSettingRule } from '../data/mock.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
@@ -110,12 +115,14 @@ export const recommendationRepository = {
     input: RecommendationInput,
     machineId: string,
     settingId: string | null,
-    match: MockSettingRule | undefined,
+    settings: RecommendationSettings,
     recommendedWeightKg: number | undefined,
     weightBasis: WeightRecommendationBasis | undefined,
     userId?: string,
     sessionId?: string,
-    recommendedReps?: { min: number; max: number }
+    recommendedReps?: { min: number; max: number },
+    tips?: Record<string, string[]> | null,
+    warnings?: Record<string, string[]> | null
   ): Promise<string> {
     const pool = getPool();
     const id = crypto.randomUUID();
@@ -140,16 +147,16 @@ export const recommendationRepository = {
         input.heightCm,
         input.weightKg,
         input.experienceLevel,
-        match?.seatPosition ?? null,
-        match?.backPadPosition ?? null,
-        match?.footPosition ?? null,
-        match?.handlePosition ?? null,
-        match?.romSetting ?? null,
+        settings.seatPosition ?? null,
+        settings.backPadPosition ?? null,
+        settings.footPosition ?? null,
+        settings.handlePosition ?? null,
+        settings.romSetting ?? null,
         recommendedWeightKg ?? null,
         recommendedReps?.min ?? null,
         recommendedReps?.max ?? null,
-        match?.tips ? JSON.stringify(match.tips) : null,
-        match?.warnings ? JSON.stringify(match.warnings) : null,
+        tips ? JSON.stringify(tips) : null,
+        warnings ? JSON.stringify(warnings) : null,
         weightBasis ? JSON.stringify(weightBasis) : null,
         sessionId ?? null,
         input.targetMuscleGroup ?? null,

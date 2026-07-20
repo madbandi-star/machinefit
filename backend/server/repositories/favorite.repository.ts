@@ -1,4 +1,6 @@
+import type { Locale } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import { pickLocalized } from '../utils/localize.util.js';
 
 export interface FavoriteItem {
   id: string;
@@ -11,7 +13,7 @@ export interface FavoriteItem {
 }
 
 export const favoriteRepository = {
-  async listByUser(userId: string): Promise<FavoriteItem[]> {
+  async listByUser(userId: string, locale: Locale = 'en'): Promise<FavoriteItem[]> {
     const pool = getPool();
     if (!pool) return [];
 
@@ -37,14 +39,19 @@ export const favoriteRepository = {
       id: row.id,
       machineId: row.machine_id,
       machineCode: row.machine_code,
-      machineName: row.machine_name.en ?? row.machine_code,
+      machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
       muscleGroup: row.muscle_group,
       recommendationId: row.recommendation_id ?? undefined,
       createdAt: row.created_at,
     }));
   },
 
-  async add(userId: string, machineId: string, recommendationId?: string): Promise<FavoriteItem> {
+  async add(
+    userId: string,
+    machineId: string,
+    recommendationId?: string,
+    locale: Locale = 'en'
+  ): Promise<FavoriteItem> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
 
@@ -56,7 +63,7 @@ export const favoriteRepository = {
       [userId, machineId, recommendationId ?? null]
     );
 
-    const items = await this.listByUser(userId);
+    const items = await this.listByUser(userId, locale);
     const item = items.find((f) => f.id === result.rows[0].id);
     if (!item) throw new Error('Failed to add favorite');
     return item;

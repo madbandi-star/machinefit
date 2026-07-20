@@ -9,9 +9,12 @@ const reportPeriodSchema = z.enum(['day', 'week', 'month', 'year']);
 
 function getPeriodRange(period: z.infer<typeof reportPeriodSchema>): { from: string; to: string } {
   const now = new Date();
-  const to = now.toISOString().slice(0, 10);
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const to = `${y}-${m}-${d}`;
 
-  const start = new Date(now);
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   if (period === 'day') {
     return { from: to, to };
   }
@@ -23,7 +26,10 @@ function getPeriodRange(period: z.infer<typeof reportPeriodSchema>): { from: str
     start.setFullYear(start.getFullYear() - 1);
   }
 
-  return { from: start.toISOString().slice(0, 10), to };
+  return {
+    from: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`,
+    to,
+  };
 }
 
 const PERIOD_LABELS: Record<z.infer<typeof reportPeriodSchema>, string> = {

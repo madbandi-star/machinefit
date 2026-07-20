@@ -1,3 +1,4 @@
+import type { Locale } from '@machinefit/shared';
 import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -5,9 +6,10 @@ import { AppError } from '../middlewares/error.middleware.js';
 export const historyService = {
   async list(
     userId: string,
-    options: { limit?: number; machineCode?: string; from?: string; to?: string } = {}
+    options: { limit?: number; machineCode?: string; from?: string; to?: string } = {},
+    locale: Locale = 'en'
   ) {
-    return historyRepository.listByUser(userId, options);
+    return historyRepository.listByUser(userId, options, locale);
   },
 
   async record(userId: string, machineCode: string, recommendationId: string) {

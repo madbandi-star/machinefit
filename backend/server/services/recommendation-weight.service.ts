@@ -8,7 +8,9 @@ import {
   EXPERIENCE_WEIGHT_MULTIPLIERS,
   getBoxingWeightClassRange,
   getPeerHeightRange,
+  isFreeWeightMachineCode,
   nextRecommendWeightKg,
+  normalizeWorkoutLogTargetMuscle,
   roundRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
@@ -35,8 +37,21 @@ function maxWeight(weights: number[]): number {
   return weights.length === 0 ? 0 : Math.max(...weights);
 }
 
+function getCompletedWeights(log: WorkoutLog): number[] {
+  const { setWeightsKg, setCompleted } = log;
+  if (!setCompleted || setCompleted.length === 0) {
+    return setWeightsKg;
+  }
+
+  return setWeightsKg.filter((_, index) => setCompleted[index] === true);
+}
+
 function computeUserMetrics(logs: WorkoutLog[]) {
-  if (logs.length === 0) {
+  const logsWithWeights = logs
+    .map((log) => ({ log, weights: getCompletedWeights(log) }))
+    .filter(({ weights }) => weights.length > 0);
+
+  if (logsWithWeights.length === 0) {
     return {
       volumeGrowthPct: null as number | null,
       maxWeightKg: null as number | null,
@@ -47,26 +62,26 @@ function computeUserMetrics(logs: WorkoutLog[]) {
     };
   }
 
-  const volumes = logs.map((log) => sumWeights(log.setWeightsKg));
+  const volumes = logsWithWeights.map(({ weights }) => sumWeights(weights));
   const firstVolume = volumes[0];
   const lastVolume = volumes[volumes.length - 1];
   const volumeGrowthPct =
-    logs.length >= 2 && firstVolume > 0
+    logsWithWeights.length >= 2 && firstVolume > 0
       ? ((lastVolume - firstVolume) / firstVolume) * 100
       : null;
 
-  const maxWeightKg = Math.max(...logs.flatMap((log) => log.setWeightsKg));
+  const maxWeightKg = Math.max(...logsWithWeights.flatMap(({ weights }) => weights));
   const avgSessionVolumeKg =
     volumes.reduce((total, volume) => total + volume, 0) / volumes.length;
-  const lastLog = logs[logs.length - 1];
+  const lastEntry = logsWithWeights[logsWithWeights.length - 1];
 
   return {
     volumeGrowthPct,
     maxWeightKg,
     avgSessionVolumeKg,
-    workoutCount: logs.length,
-    lastSetCount: lastLog.setCount,
-    lastMaxWeightKg: maxWeight(lastLog.setWeightsKg),
+    workoutCount: logsWithWeights.length,
+    lastSetCount: lastEntry.log.setCount,
+    lastMaxWeightKg: maxWeight(lastEntry.weights),
   };
 }
 
@@ -205,9 +220,18 @@ export async function computeRecommendationWeight(options: {
     });
   }
 
+  const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
+    input.machineCode,
+    input.targetMuscleGroup
+  );
   const logs =
     userId != null
-      ? await workoutLogRepository.listByUser(userId, { machineId })
+      ? await workoutLogRepository.listByUser(userId, {
+          machineId,
+          ...(isFreeWeightMachineCode(input.machineCode)
+            ? { targetMuscleGroup: targetMuscleKey }
+            : {}),
+        })
       : [];
 
   const userMetrics = computeUserMetrics(logs);
@@ -271,6 +295,9 @@ export async function computeRecommendationWeight(options: {
     weightMaxKg,
     experienceLevel: input.experienceLevel,
     excludeUserId: userId,
+    ...(isFreeWeightMachineCode(input.machineCode)
+      ? { targetMuscleGroup: targetMuscleKey }
+      : {}),
   });
 
   if (cohortStats.sampleSize >= MIN_COHORT_SAMPLE && cohortStats.avgMaxWeightKg > 0) {

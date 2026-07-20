@@ -110,7 +110,15 @@ export function useRecommendMachine(machineCode: string | undefined) {
     },
     onError: (error: unknown) => {
       if (error instanceof DuplicateRecommendationError) {
-        showToast(t('machines:recommendation.duplicate'), 'info');
+        const isFreeWeight = isFreeWeightMachineCode(error.historyItem.machineCode);
+        showToast(
+          t(
+            isFreeWeight
+              ? 'machines:recommendation.duplicate'
+              : 'machines:recommendation.duplicateMachine'
+          ),
+          'info'
+        );
         navigate(buildRecordsHistoryFocusUrl(error.historyItem), { replace: true });
         return;
       }

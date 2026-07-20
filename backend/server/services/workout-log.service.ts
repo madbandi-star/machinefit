@@ -1,4 +1,4 @@
-import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput } from '@machinefit/shared';
+import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput, Locale } from '@machinefit/shared';
 import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
@@ -13,7 +13,7 @@ function todayDateKey(): string {
 }
 
 export const workoutLogService = {
-  async list(userId: string, query: WorkoutLogListQuery) {
+  async list(userId: string, query: WorkoutLogListQuery, locale: Locale = 'en') {
     let machineId: string | undefined;
     if (query.machineCode) {
       const foundId = await machineRepository.findIdByCode(query.machineCode);
@@ -34,7 +34,7 @@ export const workoutLogService = {
       from: query.from,
       to: query.to,
       targetMuscleGroup,
-    });
+    }, locale);
   },
 
   async upsert(userId: string, input: UpsertWorkoutLogInput) {
@@ -90,6 +90,10 @@ export const workoutLogService = {
       input.machineCode,
       input.targetMuscleGroup
     );
+
+    if (isFreeWeightMachineCode(input.machineCode) && !targetMuscleKey) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'targetMuscleGroup is required for free-weight logs');
+    }
 
     const deleted = await workoutLogRepository.deleteByUserMachineDate(
       userId,

@@ -1,5 +1,6 @@
+import type { Locale, TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
-import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
+import { pickLocalized } from '../utils/localize.util.js';
 
 interface WorkoutLogRow {
   id: string;
@@ -28,13 +29,13 @@ function formatLogDate(value: string | Date): string {
   return `${y}-${m}-${d}`;
 }
 
-function mapRow(row: WorkoutLogRow): WorkoutLog {
+function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
   const logDate = formatLogDate(row.log_date);
 
   return {
     id: row.id,
     machineCode: row.machine_code,
-    machineName: row.machine_name.en ?? row.machine_code,
+    machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
     recommendationId: row.recommendation_id ?? undefined,
     logDate,
     targetMuscleGroup: row.target_muscle_group
@@ -45,7 +46,7 @@ function mapRow(row: WorkoutLogRow): WorkoutLog {
     setCompleted:
       row.set_completed && row.set_completed.length > 0
         ? row.set_completed
-        : row.set_weights_kg.map(() => true),
+        : row.set_weights_kg.map(() => false),
     diary: row.diary ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -87,7 +88,8 @@ export const workoutLogRepository = {
       from?: string;
       to?: string;
       targetMuscleGroup?: string;
-    }
+    },
+    locale: Locale = 'en'
   ): Promise<WorkoutLog[]> {
     const pool = getPool();
     if (!pool) return [];
@@ -129,7 +131,7 @@ export const workoutLogRepository = {
       params
     );
 
-    return result.rows.map(mapRow);
+    return result.rows.map((row) => mapRow(row, locale));
   },
 
   async upsert(
@@ -245,6 +247,8 @@ export const workoutLogRepository = {
     weightMaxKg?: number;
     experienceLevel?: string;
     excludeUserId?: string;
+    /** Free-weight: scope cohort to the same target muscle. */
+    targetMuscleGroup?: string;
   }): Promise<{
     sampleSize: number;
     avgMaxWeightKg: number;
@@ -298,6 +302,11 @@ export const workoutLogRepository = {
     if (options.excludeUserId) {
       params.push(options.excludeUserId);
       userFilters += ` AND wl.user_id <> $${params.length}`;
+    }
+
+    if (options.targetMuscleGroup !== undefined) {
+      params.push(options.targetMuscleGroup);
+      userFilters += ` AND wl.target_muscle_group = $${params.length}`;
     }
 
     const result = await pool.query<{
