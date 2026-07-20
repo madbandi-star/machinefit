@@ -382,6 +382,7 @@ export function WorkoutLogPanel({
 
   const invalidateLogSideEffects = () => {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+    void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 

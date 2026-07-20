@@ -27,7 +27,6 @@ export function RecentMachinesRow() {
       const res = await historyApi.list({ limit: 8 });
       return res.data.data;
     },
-    refetchOnMount: 'always',
   });
 
   const unique = useMemo(() => {

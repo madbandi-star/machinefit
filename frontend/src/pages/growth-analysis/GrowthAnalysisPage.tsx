@@ -5,7 +5,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { GrowthChartBlock } from '@/components/progressive-overload/GrowthChartBlock/GrowthChartBlock';
 import { CollapsibleCard } from '@/components/progressive-overload/CollapsibleCard/CollapsibleCard';
 import { DailyBreakdownList } from '@/components/progressive-overload/DailyBreakdownList/DailyBreakdownList';
-import { fetchAllWorkoutLogs } from '@/api/workout-log';
+import { fetchWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthInsightsPanel/GrowthInsightsPanel';
 import { fetchWorkoutInsights } from '@/api/growth-insights';
@@ -41,6 +41,17 @@ import { formatHistoryDateHeader } from '@/utils/historyDate';
 import '@/styles/growth-analysis.css';
 
 const VIEW_MODES: GrowthViewMode[] = ['daily', 'machine'];
+const GROWTH_LOG_LIMIT = 500;
+const DEFAULT_GROWTH_LOOKBACK_DAYS = 365;
+
+function getDateKeyDaysAgo(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 
 function KpiCard({
   label,
@@ -96,9 +107,30 @@ export function GrowthAnalysisPage() {
     [periodPreset, customFrom, customTo]
   );
 
+  const logsQueryOptions = useMemo(() => {
+    if (periodPreset === 'all') {
+      return { limit: GROWTH_LOG_LIMIT };
+    }
+
+    if (periodPreset === 'custom' && !(customFrom && customTo)) {
+      return {
+        from: getDateKeyDaysAgo(DEFAULT_GROWTH_LOOKBACK_DAYS),
+        to: getDateKeyDaysAgo(0),
+        limit: GROWTH_LOG_LIMIT,
+      };
+    }
+
+    const { from, to } = resolveGrowthPeriodBounds(periodFilter);
+    return {
+      from: from ?? undefined,
+      to,
+      limit: GROWTH_LOG_LIMIT,
+    };
+  }, [customFrom, customTo, periodFilter, periodPreset]);
+
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsAll,
-    queryFn: fetchAllWorkoutLogs,
+    queryKey: QUERY_KEYS.workoutLogsList(logsQueryOptions),
+    queryFn: () => fetchWorkoutLogs(logsQueryOptions),
   });
 
   const datesWithData = useMemo(() => extractWorkoutLogDateKeys(logs), [logs]);

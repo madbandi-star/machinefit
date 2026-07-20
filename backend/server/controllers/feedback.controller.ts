@@ -12,6 +12,11 @@ const feedbackSchema = z.object({
   fitRating: z.enum(['good', 'bad']),
 });
 
+function parseCsvQueryParam(value: unknown): string[] {
+  if (typeof value !== 'string') return [];
+  return [...new Set(value.split(',').map((item) => item.trim()).filter(Boolean))];
+}
+
 function paramString(value: string | string[]): string {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -35,6 +40,16 @@ export async function getFeedback(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
   const fitRating = await feedbackRepository.findByUserRecommendation(userId, paramString(id));
   res.json({ success: true, data: { fitRating } });
+}
+
+export async function getFeedbackBatch(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.userId;
+  const recommendationIds = parseCsvQueryParam(req.query.ids);
+  const feedbackByRecommendation = await feedbackRepository.findByUserRecommendationIds(
+    userId,
+    recommendationIds
+  );
+  res.json({ success: true, data: feedbackByRecommendation });
 }
 
 export async function upsertPreference(req: Request, res: Response): Promise<void> {
@@ -75,4 +90,14 @@ export async function getPreference(req: Request, res: Response): Promise<void> 
       personalTipMemo: prefs?.personalTipMemo ?? '',
     },
   });
+}
+
+export async function getPreferenceBatch(req: Request, res: Response): Promise<void> {
+  const userId = req.user!.userId;
+  const machineCodes = parseCsvQueryParam(req.query.codes);
+  const preferencesByMachine = await preferenceRepository.findCustomSettingsByUserMachineCodes(
+    userId,
+    machineCodes
+  );
+  res.json({ success: true, data: preferencesByMachine });
 }

@@ -20,6 +20,7 @@ export const workoutLogListQuerySchema = z.object({
   logDate: dateKeySchema.optional(),
   from: dateKeySchema.optional(),
   to: dateKeySchema.optional(),
+  limit: z.coerce.number().int().min(1).max(500).optional(),
   targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
 });
 

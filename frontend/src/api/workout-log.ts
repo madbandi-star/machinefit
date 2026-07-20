@@ -3,6 +3,12 @@ import { apiClient } from '@/services/http/axios-client';
 import type { FavoriteItem, HistoryItem } from '@/api/index';
 import { normalizeDateKey } from '@/utils/historyDate';
 
+interface FetchWorkoutLogsOptions {
+  from?: string;
+  to?: string;
+  limit?: number;
+}
+
 function dedupeWorkoutLogs(logs: WorkoutLog[]): WorkoutLog[] {
   const byKey = new Map<string, WorkoutLog>();
 
@@ -19,16 +25,40 @@ function dedupeWorkoutLogs(logs: WorkoutLog[]): WorkoutLog[] {
   return [...byKey.values()];
 }
 
-async function listWorkoutLogsForMachine(machineCode: string): Promise<WorkoutLog[]> {
+function sortWorkoutLogsAscending(logs: WorkoutLog[]): WorkoutLog[] {
+  return [...logs].sort((left, right) => {
+    const dateCompare = normalizeDateKey(left.logDate).localeCompare(normalizeDateKey(right.logDate));
+    if (dateCompare !== 0) return dateCompare;
+    return left.createdAt.localeCompare(right.createdAt);
+  });
+}
+
+function limitToMostRecent(logs: WorkoutLog[], limit?: number): WorkoutLog[] {
+  if (!limit || logs.length <= limit) return sortWorkoutLogsAscending(logs);
+  return sortWorkoutLogsAscending(
+    [...logs]
+      .sort((left, right) => {
+        const dateCompare = normalizeDateKey(right.logDate).localeCompare(normalizeDateKey(left.logDate));
+        if (dateCompare !== 0) return dateCompare;
+        return right.createdAt.localeCompare(left.createdAt);
+      })
+      .slice(0, limit)
+  );
+}
+
+async function listWorkoutLogsForMachine(
+  machineCode: string,
+  options?: FetchWorkoutLogsOptions
+): Promise<WorkoutLog[]> {
   const res = await apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', {
-    params: { machineCode },
+    params: { machineCode, from: options?.from, to: options?.to },
   });
   return res.data.data ?? [];
 }
 
-async function listWorkoutLogsViaKnownMachines(): Promise<WorkoutLog[]> {
+async function listWorkoutLogsViaKnownMachines(options?: FetchWorkoutLogsOptions): Promise<WorkoutLog[]> {
   const [historyRes, favoritesRes] = await Promise.all([
-    apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { limit: 200 } }),
+    apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { limit: 100 } }),
     apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites'),
   ]);
 
@@ -45,22 +75,28 @@ async function listWorkoutLogsViaKnownMachines(): Promise<WorkoutLog[]> {
   const batches = await Promise.all(
     [...machineCodes].map(async (machineCode) => {
       try {
-        return await listWorkoutLogsForMachine(machineCode);
+        return await listWorkoutLogsForMachine(machineCode, options);
       } catch {
         return [];
       }
     })
   );
 
-  return dedupeWorkoutLogs(batches.flat());
+  return limitToMostRecent(dedupeWorkoutLogs(batches.flat()), options?.limit);
 }
 
-/** List all workout logs; falls back to per-machine fetch when bulk list is unavailable. */
-export async function fetchAllWorkoutLogs(): Promise<WorkoutLog[]> {
+export async function fetchWorkoutLogs(options?: FetchWorkoutLogsOptions): Promise<WorkoutLog[]> {
   try {
-    const res = await apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs');
+    const res = await apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', {
+      params: options,
+    });
     return dedupeWorkoutLogs(res.data.data ?? []);
   } catch {
-    return dedupeWorkoutLogs(await listWorkoutLogsViaKnownMachines());
+    return dedupeWorkoutLogs(await listWorkoutLogsViaKnownMachines(options));
   }
+}
+
+/** @deprecated Prefer fetchWorkoutLogs with explicit bounds and limit. */
+export function fetchAllWorkoutLogs(): Promise<WorkoutLog[]> {
+  return fetchWorkoutLogs({ limit: 200 });
 }

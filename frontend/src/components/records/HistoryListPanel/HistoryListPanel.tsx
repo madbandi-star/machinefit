@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
 import { historyApi } from '@/api';
-import { fetchAllWorkoutLogs } from '@/api/workout-log';
+import { fetchWorkoutLogs } from '@/api/workout-log';
 import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -47,6 +47,7 @@ import '@/styles/recommendation.css';
 import '@/styles/records.css';
 
 const HISTORY_LIST_LIMIT = 100;
+const HISTORY_WORKOUT_LOG_LIMIT = 200;
 const HISTORY_DELETE_DISMISS_KEY = 'history-delete-confirm-dismiss';
 
 interface PendingDelete {
@@ -79,9 +80,9 @@ export function HistoryListPanel() {
     },
   });
 
-  const { data: workoutLogs, isLoading: isWorkoutLogsLoading } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsAll,
-    queryFn: fetchAllWorkoutLogs,
+  const { data: workoutLogs } = useQuery({
+    queryKey: QUERY_KEYS.workoutLogsList({ limit: HISTORY_WORKOUT_LOG_LIMIT }),
+    queryFn: () => fetchWorkoutLogs({ limit: HISTORY_WORKOUT_LOG_LIMIT }),
     enabled: isAuthenticated,
   });
 
@@ -137,7 +138,7 @@ export function HistoryListPanel() {
     return collectMuscleGroupsInOrder(dayCards);
   }, [filteredAllCards, selectedDate]);
 
-  const isLoading = isAllHistoryLoading || isWorkoutLogsLoading;
+  const isLoading = isAllHistoryLoading;
 
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;
@@ -222,7 +223,7 @@ export function HistoryListPanel() {
     onSuccess: async () => {
       setPendingDelete(null);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogsAll });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
       await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
       showToast(t('machines:history.removed'), 'success');
     },

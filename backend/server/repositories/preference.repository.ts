@@ -74,4 +74,38 @@ export const preferenceRepository = {
       personalTipMemo: row.personal_tip_memo ?? '',
     };
   },
+
+  async findCustomSettingsByUserMachineCodes(
+    userId: string,
+    machineCodes: string[]
+  ): Promise<Record<string, Partial<RecommendationSettings> | null>> {
+    if (machineCodes.length === 0) return {};
+
+    const pool = getPool();
+    if (!pool) {
+      return Object.fromEntries(machineCodes.map((machineCode) => [machineCode, null]));
+    }
+
+    const result = await pool.query<{
+      machine_code: string;
+      custom_settings: Partial<RecommendationSettings>;
+    }>(
+      `SELECT m.code AS machine_code, ump.custom_settings
+       FROM user_machine_preferences ump
+       JOIN machines m ON m.id = ump.machine_id
+       WHERE ump.user_id = $1
+         AND m.code = ANY($2::text[])`,
+      [userId, machineCodes]
+    );
+
+    const preferencesByMachine = Object.fromEntries(
+      machineCodes.map((machineCode) => [machineCode, null])
+    ) as Record<string, Partial<RecommendationSettings> | null>;
+
+    for (const row of result.rows) {
+      preferencesByMachine[row.machine_code] = row.custom_settings ?? {};
+    }
+
+    return preferencesByMachine;
+  },
 };

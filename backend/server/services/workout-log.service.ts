@@ -33,6 +33,7 @@ export const workoutLogService = {
       logDate: query.logDate,
       from: query.from,
       to: query.to,
+      limit: query.limit,
       targetMuscleGroup,
     }, locale);
   },

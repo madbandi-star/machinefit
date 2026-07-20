@@ -37,32 +37,40 @@ export function useHistorySettingsComparisonData(
   return useQuery({
     queryKey: ['history-settings-comparison', machineCodes, recommendationIds],
     queryFn: async (): Promise<HistorySettingsComparisonData> => {
-      const [preferenceEntries, feedbackEntries] = await Promise.all([
-        Promise.all(
-          machineCodes.map(async (machineCode) => {
-            try {
-              const customSettings = await machinePreferenceApi.get(machineCode);
-              return [machineCode, customSettings ?? {}] as const;
-            } catch {
-              return [machineCode, {}] as const;
-            }
-          })
-        ),
-        Promise.all(
-          recommendationIds.map(async (recommendationId) => {
-            try {
-              const fitRating = await recommendationFeedbackApi.get(recommendationId);
-              return [recommendationId, fitRating ?? null] as const;
-            } catch {
-              return [recommendationId, null] as const;
-            }
-          })
-        ),
+      const emptyPreferencesByMachine = Object.fromEntries(
+        machineCodes.map((machineCode) => [machineCode, null])
+      ) as Record<string, Partial<RecommendationSettings> | null>;
+      const emptyFeedbackByRecommendation = Object.fromEntries(
+        recommendationIds.map((recommendationId) => [recommendationId, null])
+      ) as Record<string, FitRating | null>;
+
+      const [preferencesByMachineResponse, feedbackByRecommendationResponse]: [
+        Record<string, Partial<RecommendationSettings> | null>,
+        Record<string, FitRating | null>,
+      ] = await Promise.all([
+        machineCodes.length > 0
+          ? machinePreferenceApi.getBatch(machineCodes).catch(() => emptyPreferencesByMachine)
+          : Promise.resolve(emptyPreferencesByMachine),
+        recommendationIds.length > 0
+          ? recommendationFeedbackApi
+              .getBatch(recommendationIds)
+              .catch(() => emptyFeedbackByRecommendation)
+          : Promise.resolve(emptyFeedbackByRecommendation),
       ]);
 
       return {
-        preferencesByMachine: Object.fromEntries(preferenceEntries),
-        feedbackByRecommendation: Object.fromEntries(feedbackEntries),
+        preferencesByMachine: Object.fromEntries(
+          machineCodes.map((machineCode) => [
+            machineCode,
+            preferencesByMachineResponse[machineCode] ?? {},
+          ])
+        ),
+        feedbackByRecommendation: Object.fromEntries(
+          recommendationIds.map((recommendationId) => [
+            recommendationId,
+            feedbackByRecommendationResponse[recommendationId] ?? null,
+          ])
+        ),
       };
     },
     enabled: enabled && (machineCodes.length > 0 || recommendationIds.length > 0),

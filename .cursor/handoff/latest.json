@@ -1,50 +1,53 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T05:30:00Z",
-  "title": "Fix reported bugs batch",
-  "summary": "보고된 버그 일괄 수정: FW 포커스/부위 중량/휴식TTS/기록 완료검증/세팅 저장/이름 로케일/Zod 400 등.",
+  "updatedAt": "2026-07-20T05:25:00Z",
+  "title": "Perf: faster screen data loading",
+  "summary": "홈 캐시, History N+1→배치 API, workout-logs limit, Growth 기간 스코프, cohort 인덱스 031, boot health ping.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3",
   "programTestAgentName": "프로그램수정",
   "git": {
-    "branch": "cursor/fix-reported-bugs-batch-35b3",
-    "commit": "d80160d",
+    "branch": "cursor/perf-data-fetch-speed-35b3",
+    "commit": null,
     "pr": null,
     "base": "main"
   },
   "changedFiles": [
-    "backend/server/**",
-    "frontend/src/**",
-    "database/seeds/machines.sql"
+    "frontend/src/hooks/useHistorySettingsComparisonData.ts",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
+    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
+    "frontend/src/api/workout-log.ts",
+    "backend/server/controllers/feedback.controller.ts",
+    "backend/server/repositories/preference.repository.ts",
+    "backend/server/repositories/feedback.repository.ts",
+    "database/migrations/031_workout_logs_machine_date_index.sql"
   ],
   "testFocus": [
-    "프리웨이트 중복 추천 → 기록 카드 스크롤/하이라이트",
-    "부위 없이 히스토리 세트 완료 시 UI만 바뀌지 않음",
-    "휴식 후 음성 카운트가 팁 TTS에 끊기지 않음",
-    "홈 최근: 덤벨 이두/가슴 각각 표시",
-    "덤벨 부위별 추천 중량이 섞이지 않음",
-    "진행형 중량에 이두 0.88 배율이 다시 안 곱해짐",
-    "빈 set_completed가 전부 미완료로 표시",
-    "추천 재조회 시 merge된 시트/팁 유지",
+    "홈 재진입 시 최근/즐겨찾기가 60초 내 재요청 안 함",
+    "기록 화면: history 먼저 보이고 logs는 백그라운드",
+    "기록 비교 데이터: prefs/feedback가 배치 2콜로 로드",
+    "성장분석: 기간별 logs limit",
+    "마이그레이션 031 적용",
     "typecheck"
   ],
   "fastChecks": [
     {
-      "id": "focus-helper",
+      "id": "batch-prefs-route",
       "type": "file_contains",
-      "path": "frontend/src/utils/historyRecordsDisplay.ts",
-      "pattern": "historyCardMatchesFocus"
+      "path": "backend/server/routes/machine.routes.ts",
+      "pattern": "getPreferenceBatch"
     },
     {
-      "id": "muscle-weight-scope",
+      "id": "batch-feedback-route",
       "type": "file_contains",
-      "path": "backend/server/services/recommendation-weight.service.ts",
-      "pattern": "targetMuscleKey"
+      "path": "backend/server/routes/recommendation.routes.ts",
+      "pattern": "feedback/batch"
     },
     {
-      "id": "zod-400",
+      "id": "migration-031",
       "type": "file_contains",
-      "path": "backend/server/middlewares/error.middleware.ts",
-      "pattern": "ZodError"
+      "path": "database/migrations/031_workout_logs_machine_date_index.sql",
+      "pattern": "idx_workout_logs_machine_date"
     },
     {
       "id": "typecheck",
@@ -56,7 +59,12 @@
     {
       "id": "render-redeploy",
       "type": "note",
-      "detail": "Backend/shared changed — Manual Deploy on Render after merge"
+      "detail": "Backend/shared changed — Manual Deploy on Render + apply migration 031"
+    },
+    {
+      "id": "cold-start",
+      "type": "note",
+      "detail": "Render Free still sleeps; boot /health ping only mitigates. Paid plan needed for no cold start."
     }
   ],
   "deploy": {
@@ -64,6 +72,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "Multiple free-weight / voice / history / recommendation bugs.",
-  "toBe": "Reported bugs fixed with typecheck green."
+  "asIs": "Screens slow due to N+1, unbounded logs, refetch always, cold start.",
+  "toBe": "Batch APIs, bounded logs, home cache, index 031, health wake ping."
 }
