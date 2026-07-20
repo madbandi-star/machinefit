@@ -8,7 +8,7 @@
   "git": {
     "branch": "cursor/voice-set-count-coach-35b3",
     "commit": "a18754b",
-    "pr": null,
+    "pr": 9,
     "base": "main"
   },
   "changedFiles": [
