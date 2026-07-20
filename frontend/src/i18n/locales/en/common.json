@@ -171,6 +171,8 @@
     "voiceCoachTargetRepsUnit": "reps",
     "voiceCoachCountInterval": "Count interval",
     "voiceCoachCountIntervalUnit": "s",
+    "voiceCoachOneMoreCount": "One more count",
+    "voiceCoachOneMoreCountUnit": "reps",
     "voiceRestTips": "Speak cautions & tips during rest",
     "restDuration": "Rest time",
     "restDurationDesc": "Countdown length after you complete a set. Minutes step by 1, seconds by 5. Default is 1 minute 30 seconds.",

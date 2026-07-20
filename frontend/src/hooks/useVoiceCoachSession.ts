@@ -9,6 +9,7 @@ import {
 interface UseVoiceCoachSessionOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
+  oneMoreCount: number;
   repGapMs: number;
   locale: string;
   enabled: boolean;
@@ -26,6 +27,7 @@ export interface VoiceCoachSessionState {
 export function useVoiceCoachSession({
   targetReps,
   oneMoreEnabled,
+  oneMoreCount,
   repGapMs,
   locale,
   enabled,
@@ -69,6 +71,7 @@ export function useVoiceCoachSession({
         await runVoiceCoachSession({
           targetReps,
           oneMoreEnabled,
+          maxOneMore: oneMoreCount,
           repGapMs,
           locale,
           signal: controller.signal,
@@ -96,7 +99,7 @@ export function useVoiceCoachSession({
         setCountdown(null);
       }
     })();
-  }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps]);
+  }, [enabled, locale, oneMoreCount, oneMoreEnabled, repGapMs, targetReps]);
 
   useEffect(
     () => () => {

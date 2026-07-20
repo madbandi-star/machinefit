@@ -28,7 +28,9 @@ import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import {
+  clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
+  VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
 import type { User } from '@machinefit/shared';
@@ -55,6 +57,7 @@ export function SettingsPage() {
   const voiceCoachEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
+  const voiceCoachOneMoreCount = useSettingsStore((s) => s.voiceCoachOneMoreCount);
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
@@ -62,6 +65,7 @@ export function SettingsPage() {
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
+  const setVoiceCoachOneMoreCount = useSettingsStore((s) => s.setVoiceCoachOneMoreCount);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
@@ -321,7 +325,7 @@ export function SettingsPage() {
               role="group"
               aria-label={t('settings.voiceCoach')}
             >
-              <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
+              <div className="body-metrics-inline__grid">
                 <div className="body-metrics-inline__cell">
                   <span className="body-metrics-inline__label">
                     {t('settings.voiceCoachTargetReps')}
@@ -358,6 +362,24 @@ export function SettingsPage() {
                     defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
                     ariaLabel={t('settings.voiceCoachCountInterval')}
                     formatValue={(value) => value.toFixed(1)}
+                  />
+                </div>
+                <div className="body-metrics-inline__cell">
+                  <span className="body-metrics-inline__label">
+                    {t('settings.voiceCoachOneMoreCount')}
+                    <span className="body-metrics-inline__unit">
+                      {t('settings.voiceCoachOneMoreCountUnit')}
+                    </span>
+                  </span>
+                  <ScrollPicker
+                    value={clampVoiceCoachOneMoreCount(voiceCoachOneMoreCount)}
+                    onChange={setVoiceCoachOneMoreCount}
+                    min={VOICE_COACH_ONE_MORE.minCount}
+                    max={VOICE_COACH_ONE_MORE.maxCount}
+                    step={VOICE_COACH_ONE_MORE.step}
+                    defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
+                    ariaLabel={t('settings.voiceCoachOneMoreCount')}
+                    formatValue={(value) => String(value)}
                   />
                 </div>
               </div>

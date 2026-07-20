@@ -171,6 +171,8 @@
     "voiceCoachTargetRepsUnit": "회",
     "voiceCoachCountInterval": "카운트 간격",
     "voiceCoachCountIntervalUnit": "초",
+    "voiceCoachOneMoreCount": "원모어 횟수",
+    "voiceCoachOneMoreCountUnit": "회",
     "voiceRestTips": "휴식 중 주의사항·운동팁 음성",
     "restDuration": "휴식 시간",
     "restDurationDesc": "세트 완료 후 휴식 타이머 길이입니다. 분은 1분, 초는 5초 단위입니다. 기본값은 1분 30초입니다.",

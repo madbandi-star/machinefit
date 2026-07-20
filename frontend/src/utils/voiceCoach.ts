@@ -14,7 +14,7 @@ export type VoiceCoachPhase =
 export interface VoiceCoachOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
-  /** Safety cap when one-more keeps going (default 8). */
+  /** How many times to speak "하나더" after target reps (default 3). */
   maxOneMore?: number;
   /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
   repGapMs?: number;
@@ -43,10 +43,28 @@ export const VOICE_COACH_REP_GAP = {
   stepMs: 100,
 } as const;
 
+/** How many "하나더" cues after the target reps. */
+export const VOICE_COACH_ONE_MORE = {
+  defaultCount: 3,
+  minCount: 1,
+  maxCount: 10,
+  step: 1,
+} as const;
+
 export function clampVoiceCoachRepGapMs(ms: number): number {
   if (!Number.isFinite(ms)) return VOICE_COACH_REP_GAP.defaultMs;
   const stepped = Math.round(ms / VOICE_COACH_REP_GAP.stepMs) * VOICE_COACH_REP_GAP.stepMs;
   return Math.min(VOICE_COACH_REP_GAP.maxMs, Math.max(VOICE_COACH_REP_GAP.minMs, stepped));
+}
+
+export function clampVoiceCoachOneMoreCount(count: number): number {
+  if (!Number.isFinite(count)) return VOICE_COACH_ONE_MORE.defaultCount;
+  const stepped =
+    Math.round(count / VOICE_COACH_ONE_MORE.step) * VOICE_COACH_ONE_MORE.step;
+  return Math.min(
+    VOICE_COACH_ONE_MORE.maxCount,
+    Math.max(VOICE_COACH_ONE_MORE.minCount, stepped)
+  );
 }
 
 const NATIVE_ONES = ['', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉'] as const;
@@ -289,7 +307,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const {
     targetReps,
     oneMoreEnabled,
-    maxOneMore = 8,
+    maxOneMore = VOICE_COACH_ONE_MORE.defaultCount,
     repGapMs: repGapMsOption,
     locale = 'ko',
     onPhaseChange,
@@ -297,6 +315,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   } = options;
 
   const reps = Math.max(1, Math.min(50, Math.round(targetReps)));
+  const oneMoreReps = clampVoiceCoachOneMoreCount(maxOneMore);
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
   const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
 
@@ -359,7 +378,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
 
     if (oneMoreEnabled) {
       onPhaseChange?.('oneMore', { rep: reps });
-      const oneMoreWords = Array.from({ length: maxOneMore }, () => oneMorePhrase(locale));
+      const oneMoreWords = Array.from({ length: oneMoreReps }, () => oneMorePhrase(locale));
       await speechManager.speakQueue(oneMoreWords, {
         signal,
         gapMs: oneMoreGapMs,
@@ -369,7 +388,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       });
     }
 
-    onPhaseChange?.('done', { rep: oneMoreEnabled ? reps + maxOneMore : reps });
+    onPhaseChange?.('done', { rep: oneMoreEnabled ? reps + oneMoreReps : reps });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       stopVoiceCoach();

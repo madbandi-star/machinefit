@@ -10,7 +10,12 @@ import {
   clampRestDurationSeconds,
   clampWeightDifficulty,
 } from '@machinefit/shared';
-import { clampVoiceCoachRepGapMs, VOICE_COACH_REP_GAP } from '@/utils/voiceCoach';
+import {
+  clampVoiceCoachOneMoreCount,
+  clampVoiceCoachRepGapMs,
+  VOICE_COACH_ONE_MORE,
+  VOICE_COACH_REP_GAP,
+} from '@/utils/voiceCoach';
 
 type Theme = 'light' | 'dark';
 
@@ -33,6 +38,7 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachEnabled: true,
   voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
   voiceCoachOneMore: true,
+  voiceCoachOneMoreCount: VOICE_COACH_ONE_MORE.defaultCount,
   voiceCoachAutoAfterRest: true,
   voiceRestTipsEnabled: true,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
@@ -49,6 +55,8 @@ interface SettingsState {
   voiceCoachEnabled: boolean;
   voiceCoachTargetReps: number;
   voiceCoachOneMore: boolean;
+  /** How many "하나더" cues after target reps. */
+  voiceCoachOneMoreCount: number;
   voiceCoachAutoAfterRest: boolean;
   /** Speak warnings + tips during rest between sets. */
   voiceRestTipsEnabled: boolean;
@@ -66,6 +74,7 @@ interface SettingsState {
   setVoiceCoachEnabled: (enabled: boolean) => void;
   setVoiceCoachTargetReps: (reps: number) => void;
   setVoiceCoachOneMore: (enabled: boolean) => void;
+  setVoiceCoachOneMoreCount: (count: number) => void;
   setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
   setVoiceCoachRepGapMs: (ms: number) => void;
@@ -88,6 +97,8 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachEnabled: (voiceCoachEnabled) => set({ voiceCoachEnabled }),
       setVoiceCoachTargetReps: (voiceCoachTargetReps) => set({ voiceCoachTargetReps }),
       setVoiceCoachOneMore: (voiceCoachOneMore) => set({ voiceCoachOneMore }),
+      setVoiceCoachOneMoreCount: (count) =>
+        set({ voiceCoachOneMoreCount: clampVoiceCoachOneMoreCount(count) }),
       setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
       setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
       setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
