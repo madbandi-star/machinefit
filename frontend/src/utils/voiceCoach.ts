@@ -1,6 +1,6 @@
 /** Voice set coach: beeps → 준비 → 5–1 → 시작 → reps → optional "하나더". All speech via SpeechManager. */
 
-import { speechManager, type SpeechGender } from '@/utils/speechManager';
+import { speechManager } from '@/utils/speechManager';
 
 export type VoiceCoachPhase =
   | 'idle'
@@ -11,15 +11,6 @@ export type VoiceCoachPhase =
   | 'oneMore'
   | 'done';
 
-/** Coach voice gender (maps to SpeechManager male/female Voice). */
-export type VoiceCoachVoice = SpeechGender;
-
-export const DEFAULT_VOICE_COACH_VOICE: VoiceCoachVoice = 'male';
-
-export function normalizeVoiceCoachVoice(value: unknown): VoiceCoachVoice {
-  return value === 'female' ? 'female' : 'male';
-}
-
 export interface VoiceCoachOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
@@ -28,8 +19,6 @@ export interface VoiceCoachOptions {
   /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
   repGapMs?: number;
   locale?: string;
-  /** Male/female coach voice. Default male. */
-  voice?: VoiceCoachVoice;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: { rep?: number; countdown?: number }) => void;
   signal?: AbortSignal;
 }
@@ -213,26 +202,6 @@ async function playBeep(
   await sleep(Math.round(durationSec * 1000) + 40, signal);
 }
 
-function publicAssetUrl(path: string): string {
-  const base = import.meta.env.BASE_URL || '/';
-  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
-  const normalizedPath = path.replace(/^\//, '');
-  return `${normalizedBase}${normalizedPath}`;
-}
-
-/** Full sample used on the settings listen buttons (male=#4 drill, female=#3 pro). */
-export function voiceCoachPreviewSampleUrl(voice: VoiceCoachVoice): string {
-  const file =
-    normalizeVoiceCoachVoice(voice) === 'female'
-      ? 'voice-samples/03-pro-female.mp3'
-      : 'voice-samples/04-drill-count.mp3';
-  return publicAssetUrl(file);
-}
-
-export function voiceCoachClipUrl(voice: VoiceCoachVoice, key: string): string {
-  return publicAssetUrl(`voice-coach/${normalizeVoiceCoachVoice(voice)}/${key}.mp3`);
-}
-
 export function stopVoiceCoach(): void {
   speechManager.cancel();
 }
@@ -241,10 +210,8 @@ export function stopVoiceCoach(): void {
 export function speakVoiceText(
   text: string,
   _locale?: string,
-  signal?: AbortSignal,
-  voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
+  signal?: AbortSignal
 ): Promise<void> {
-  speechManager.setGender(normalizeVoiceCoachVoice(voice));
   return speechManager.speak(text, signal);
 }
 
@@ -253,8 +220,6 @@ export interface RestVoiceCoachingOptions {
   tips?: string[];
   locale?: string;
   signal?: AbortSignal;
-  /** Prefer male/female voice to match coach setting. */
-  voice?: VoiceCoachVoice;
   /** Max warning lines to speak (default 3). */
   maxWarnings?: number;
   /** Max tip lines to speak (default 3). */
@@ -272,7 +237,6 @@ export async function speakRestTipsAndWarnings(
     tips = [],
     locale = 'ko',
     signal,
-    voice = DEFAULT_VOICE_COACH_VOICE,
     maxWarnings = 3,
     maxTips = 3,
   } = options;
@@ -282,7 +246,6 @@ export async function speakRestTipsAndWarnings(
   if (warningLines.length === 0 && tipLines.length === 0) return;
 
   const ko = isKoreanLocale(locale);
-  speechManager.setGender(normalizeVoiceCoachVoice(voice));
 
   const queue: string[] = [];
   if (warningLines.length > 0) {
@@ -312,12 +275,8 @@ export async function speakRestTipsAndWarnings(
  * Warm audio/TTS inside a user-gesture turn.
  * Must be awaited from the start button handler.
  */
-export async function unlockVoiceCoachAudio(
-  voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
-): Promise<void> {
-  const gender = normalizeVoiceCoachVoice(voice);
-  await speechManager.init(gender);
-  speechManager.setGender(gender);
+export async function unlockVoiceCoachAudio(): Promise<void> {
+  await speechManager.init();
   speechManager.unlock();
   await ensureSharedAudioRunning();
 }
@@ -333,18 +292,15 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     maxOneMore = 8,
     repGapMs: repGapMsOption,
     locale = 'ko',
-    voice: voiceOption,
     onPhaseChange,
     signal,
   } = options;
 
-  const voice = normalizeVoiceCoachVoice(voiceOption ?? DEFAULT_VOICE_COACH_VOICE);
   const reps = Math.max(1, Math.min(50, Math.round(targetReps)));
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
   const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
 
-  await speechManager.init(voice);
-  speechManager.setGender(voice);
+  await speechManager.init();
 
   const audioCtx = await ensureSharedAudioRunning();
 

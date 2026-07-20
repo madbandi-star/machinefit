@@ -29,10 +29,7 @@ import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import {
   clampVoiceCoachRepGapMs,
-  DEFAULT_VOICE_COACH_VOICE,
-  voiceCoachPreviewSampleUrl,
   VOICE_COACH_REP_GAP,
-  type VoiceCoachVoice,
 } from '@/utils/voiceCoach';
 import type { User } from '@machinefit/shared';
 import '@/styles/components.css';
@@ -61,7 +58,6 @@ export function SettingsPage() {
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
-  const voiceCoachVoice = useSettingsStore((s) => s.voiceCoachVoice);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
@@ -69,7 +65,6 @@ export function SettingsPage() {
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
-  const setVoiceCoachVoice = useSettingsStore((s) => s.setVoiceCoachVoice);
   const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
   const resetSettings = useSettingsStore((s) => s.resetSettings);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
@@ -318,48 +313,6 @@ export function SettingsPage() {
               />
               <span>{t('settings.voiceRestTips')}</span>
             </label>
-
-            <div
-              className="settings-voice-coach__voice"
-              role="radiogroup"
-              aria-label={t('settings.voiceCoachVoice')}
-            >
-              <span className="settings-voice-coach__reps-label">{t('settings.voiceCoachVoice')}</span>
-              <p className="settings-voice-coach__voice-desc">{t('settings.voiceCoachVoiceDesc')}</p>
-              {([
-                { value: 'male' as VoiceCoachVoice, labelKey: 'settings.voiceCoachVoiceMale' },
-                { value: 'female' as VoiceCoachVoice, labelKey: 'settings.voiceCoachVoiceFemale' },
-              ]).map((option) => {
-                const selected =
-                  (voiceCoachVoice ?? DEFAULT_VOICE_COACH_VOICE) === option.value;
-                return (
-                  <div key={option.value} className="settings-voice-coach__voice-option">
-                    <label className="settings-voice-coach__row">
-                      <input
-                        type="radio"
-                        name="voice-coach-voice"
-                        value={option.value}
-                        checked={selected}
-                        disabled={!voiceCoachEnabled}
-                        onChange={() => setVoiceCoachVoice(option.value)}
-                      />
-                      <span>{t(option.labelKey)}</span>
-                    </label>
-                    <button
-                      type="button"
-                      className="btn btn--secondary settings-voice-coach__preview"
-                      disabled={!voiceCoachEnabled}
-                      onClick={() => {
-                        const audio = new Audio(voiceCoachPreviewSampleUrl(option.value));
-                        void audio.play().catch(() => undefined);
-                      }}
-                    >
-                      {t('settings.voiceCoachVoicePreview')}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
 
             <div
               className={`body-metrics-inline${

@@ -10,13 +10,7 @@ import {
   clampRestDurationSeconds,
   clampWeightDifficulty,
 } from '@machinefit/shared';
-import {
-  clampVoiceCoachRepGapMs,
-  DEFAULT_VOICE_COACH_VOICE,
-  normalizeVoiceCoachVoice,
-  VOICE_COACH_REP_GAP,
-  type VoiceCoachVoice,
-} from '@/utils/voiceCoach';
+import { clampVoiceCoachRepGapMs, VOICE_COACH_REP_GAP } from '@/utils/voiceCoach';
 
 type Theme = 'light' | 'dark';
 
@@ -42,7 +36,6 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachAutoAfterRest: true,
   voiceRestTipsEnabled: true,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
-  voiceCoachVoice: DEFAULT_VOICE_COACH_VOICE,
   restDurationSeconds: REST_DURATION.defaultSeconds,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
 } as const;
@@ -61,8 +54,6 @@ interface SettingsState {
   voiceRestTipsEnabled: boolean;
   /** Silence after each spoken rep count (ms). */
   voiceCoachRepGapMs: number;
-  /** Pre-recorded coach voice: male (#4 drill) or female (#3 pro). */
-  voiceCoachVoice: VoiceCoachVoice;
   /** Rest between sets (seconds). Default 90 (1:30). */
   restDurationSeconds: number;
   /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 10 = 1000%) */
@@ -78,7 +69,6 @@ interface SettingsState {
   setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
   setVoiceCoachRepGapMs: (ms: number) => void;
-  setVoiceCoachVoice: (voice: VoiceCoachVoice) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setWeightDifficulty: (value: number) => void;
   /** Restore app preferences (theme, units, voice, rest, etc.) to defaults. */
@@ -101,7 +91,6 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
       setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
       setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
-      setVoiceCoachVoice: (voice) => set({ voiceCoachVoice: normalizeVoiceCoachVoice(voice) }),
       setRestDurationSeconds: (seconds) =>
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
       setWeightDifficulty: (value) =>

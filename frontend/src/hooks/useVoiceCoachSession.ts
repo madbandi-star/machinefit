@@ -4,7 +4,6 @@ import {
   stopVoiceCoach,
   unlockVoiceCoachAudio,
   type VoiceCoachPhase,
-  type VoiceCoachVoice,
 } from '@/utils/voiceCoach';
 
 interface UseVoiceCoachSessionOptions {
@@ -12,7 +11,6 @@ interface UseVoiceCoachSessionOptions {
   oneMoreEnabled: boolean;
   repGapMs: number;
   locale: string;
-  voice: VoiceCoachVoice;
   enabled: boolean;
 }
 
@@ -30,7 +28,6 @@ export function useVoiceCoachSession({
   oneMoreEnabled,
   repGapMs,
   locale,
-  voice,
   enabled,
 }: UseVoiceCoachSessionOptions): VoiceCoachSessionState {
   const [phase, setPhase] = useState<VoiceCoachPhase>('idle');
@@ -66,7 +63,7 @@ export function useVoiceCoachSession({
     void (async () => {
       try {
         // Await unlock inside the tap turn so mobile keeps Web Audio / HTMLAudio alive.
-        await unlockVoiceCoachAudio(voice);
+        await unlockVoiceCoachAudio();
         if (controller.signal.aborted || runIdRef.current !== runId) return;
 
         await runVoiceCoachSession({
@@ -74,7 +71,6 @@ export function useVoiceCoachSession({
           oneMoreEnabled,
           repGapMs,
           locale,
-          voice,
           signal: controller.signal,
           onPhaseChange: (nextPhase, detail) => {
             if (runIdRef.current !== runId) return;
@@ -100,7 +96,7 @@ export function useVoiceCoachSession({
         setCountdown(null);
       }
     })();
-  }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps, voice]);
+  }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps]);
 
   useEffect(
     () => () => {

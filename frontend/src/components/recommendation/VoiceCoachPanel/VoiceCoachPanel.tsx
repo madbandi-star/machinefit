@@ -2,10 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
   clampVoiceCoachRepGapMs,
-  DEFAULT_VOICE_COACH_VOICE,
   VOICE_COACH_REP_GAP,
   type VoiceCoachPhase,
-  type VoiceCoachVoice,
 } from '@/utils/voiceCoach';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -27,7 +25,6 @@ interface VoiceCoachPanelProps {
   onAutoStartAfterRestChange: (enabled: boolean) => void;
   restTipsEnabled: boolean;
   onRestTipsEnabledChange: (enabled: boolean) => void;
-  voice?: VoiceCoachVoice;
   phase: VoiceCoachPhase;
   currentRep: number;
   countdown: number | null;
@@ -74,7 +71,6 @@ export function VoiceCoachPanel({
   onAutoStartAfterRestChange,
   restTipsEnabled,
   onRestTipsEnabledChange,
-  voice: _voice = DEFAULT_VOICE_COACH_VOICE,
   phase,
   currentRep,
   countdown,
