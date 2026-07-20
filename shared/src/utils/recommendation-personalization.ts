@@ -337,37 +337,3 @@ export function buildPersonalizedTips(
 
   return tips;
 }
-
-/** Single rep count for volume math (uses stored min, else goal×experience default). */
-export function resolveRecommendedRepCount(
-  settings: RecommendationSettings,
-  experienceLevel: ExperienceLevel = 'intermediate',
-  workoutGoal?: WorkoutGoal
-): number | null {
-  if (settings.recommendedRepsMin != null && settings.recommendedRepsMin > 0) {
-    return settings.recommendedRepsMin;
-  }
-  const range = recommendRepsForGoal(workoutGoal, experienceLevel);
-  return range.min > 0 ? range.min : null;
-}
-
-/** Recommended card total weight = recommended weight × rep count. */
-export function computeRecommendedTotalWeightKg(
-  settings: RecommendationSettings,
-  options?: {
-    workoutGoal?: WorkoutGoal;
-    experienceLevel?: ExperienceLevel;
-  }
-): number | null {
-  const weightKg = settings.recommendedWeightKg;
-  if (weightKg == null || weightKg <= 0) return null;
-
-  const reps = resolveRecommendedRepCount(
-    settings,
-    options?.experienceLevel ?? 'intermediate',
-    options?.workoutGoal
-  );
-  if (reps == null || reps <= 0) return null;
-
-  return Math.round(weightKg * reps);
-}

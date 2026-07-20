@@ -5,7 +5,6 @@ import {
   GripVertical,
   Layers3,
   MoveHorizontal,
-  Package,
   Repeat2,
 } from 'lucide-react';
 import type { RecommendationSettings } from '@machinefit/shared';
@@ -21,5 +20,3 @@ export const HISTORY_LUCIDE_SETTING_ICON: Partial<
   handlePosition: GripVertical,
   romSetting: MoveHorizontal,
 };
-
-export const HISTORY_TOTAL_WEIGHT_ICON = Package;

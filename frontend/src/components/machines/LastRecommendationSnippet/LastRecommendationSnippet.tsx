@@ -124,7 +124,6 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
                   showAdjustment={showSettingsCompare}
                   adjustmentReadOnly
                   customSettings={showSettingsCompare ? machinePreferences?.customSettings : undefined}
-                  preferencesPageUrl={resultUrl!}
                 />
               </Link>
             ) : isLoading ? (

@@ -1,20 +1,13 @@
 import { useState, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal } from 'lucide-react';
 import type { RecommendationSettings, WeightRecommendationBasis } from '@machinefit/shared';
-import {
-  computeRecommendedTotalWeightKg,
-  recommendRepsForGoal,
-  roundRecommendWeightKg,
-} from '@machinefit/shared';
+import { recommendRepsForGoal, roundRecommendWeightKg } from '@machinefit/shared';
 import { SettingValueCard } from '@/components/recommendation/SettingValueCard/SettingValueCard';
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
 import { ROM_SETTING_PRESETS } from '@/constants/rom-setting-presets';
 import { HISTORY_SETTING_ICON } from '@/constants/history-setting-icons';
 import {
   HISTORY_LUCIDE_SETTING_ICON,
-  HISTORY_TOTAL_WEIGHT_ICON,
 } from '@/constants/history-lucide-icons';
 import { useUserUnits } from '@/hooks/useUserUnits';
 import { useAuthStore } from '@/store/auth.store';
@@ -56,8 +49,6 @@ interface RecommendationSettingsPanelProps {
   showAdjustment?: boolean;
   adjustmentReadOnly?: boolean;
   customSettings?: Partial<RecommendationSettings>;
-  /** Same destination as tapping the record recommendation card (result page). */
-  preferencesPageUrl?: string;
   onCustomChange?: (
     key: keyof RecommendationSettings,
     raw: string,
@@ -245,22 +236,16 @@ export function RecommendationSettingsPanel({
   showAdjustment = false,
   adjustmentReadOnly = false,
   customSettings,
-  preferencesPageUrl,
   onCustomChange,
   onSavePreferences,
   isPreferencesPending = false,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
-  const navigate = useNavigate();
   const { formatWeight } = useUserUnits();
   const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
   const experienceLevel = useAuthStore((s) => s.user?.experienceLevel);
   const [basisOpen, setBasisOpen] = useState(false);
   const compact = variant === 'compact' || variant === 'result';
-  const recommendedTotalWeightKg = computeRecommendedTotalWeightKg(settings, {
-    workoutGoal,
-    experienceLevel: experienceLevel ?? 'intermediate',
-  });
 
   const items: SettingDisplayItem[] = [];
 
@@ -394,40 +379,6 @@ export function RecommendationSettingsPanel({
                 </div>
               );
             })}
-            {recommendedTotalWeightKg != null || preferencesPageUrl ? (
-              <div className="history-settings-total-row" role="listitem">
-                {recommendedTotalWeightKg != null ? (
-                  <div className="history-settings-total-tile">
-                    <span className="history-settings-total-tile__label">
-                      <HISTORY_TOTAL_WEIGHT_ICON
-                        size={13}
-                        strokeWidth={2.25}
-                        className="history-settings-total-tile__icon"
-                      />
-                      {t('machines:workoutLog.totalWeight')}
-                    </span>
-                    <strong className="history-settings-total-tile__value">
-                      {formatWeight(recommendedTotalWeightKg)}
-                    </strong>
-                  </div>
-                ) : null}
-                {preferencesPageUrl ? (
-                  <button
-                    type="button"
-                    className="history-settings-preferences-btn"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      navigate(preferencesPageUrl);
-                    }}
-                    aria-label={t('machines:recommendation.openPreferencesPage')}
-                  >
-                    <SlidersHorizontal size={18} strokeWidth={2.25} aria-hidden />
-                    <span>{t('machines:recommendation.openPreferencesPage')}</span>
-                  </button>
-                ) : null}
-              </div>
-            ) : null}
           </div>
           {saveFooter}
         </div>

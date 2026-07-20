@@ -412,13 +412,8 @@
   align-items: stretch;
 }
 
-.history-page-premium .history-mini-setting-wrap,
-.history-page-premium .history-settings-total-row {
+.history-page-premium .history-mini-setting-wrap {
   height: 100%;
-}
-
-.history-page-premium .history-settings-total-row .history-settings-total-tile {
-  height: auto;
 }
 
 .history-page-premium .history-mini-setting-wrap .setting-value-card--history-mini {
@@ -484,10 +479,7 @@
 
 .history-page-premium
   .recommendation-settings-panel--history.recommendation-settings-panel--compare
-  .history-mini-setting-wrap,
-.history-page-premium
-  .recommendation-settings-panel--history.recommendation-settings-panel--compare
-  .history-settings-total-row {
+  .history-mini-setting-wrap {
   height: auto;
 }
 
@@ -576,44 +568,6 @@
 
 .history-page-premium .setting-value-card__compare-block--adjust .setting-value-card__value {
   color: var(--color-primary);
-  font-weight: 800;
-}
-
-.history-page-premium .history-settings-total-tile {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.35rem;
-  min-height: 4.75rem;
-  height: 100%;
-  padding: 0.65rem 0.7rem;
-  border-radius: var(--history-mini-radius);
-  border: 1px solid rgba(0, 230, 118, 0.35);
-  background: linear-gradient(165deg, rgba(0, 230, 118, 0.12) 0%, rgba(16, 20, 28, 0.92) 100%);
-  box-shadow: var(--history-green-glow);
-}
-
-.history-page-premium
-  .recommendation-settings-panel--history.recommendation-settings-panel--compare
-  .history-settings-total-tile {
-  min-height: auto;
-  height: auto;
-  gap: 0.3rem;
-  justify-content: flex-start;
-  padding-bottom: 0.45rem;
-}
-
-.history-page-premium
-  .recommendation-settings-panel--history.recommendation-settings-panel--compare
-  .history-settings-total-tile__value {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  margin-top: 0.15rem;
-}
-
-.history-page-premium .history-settings-total-tile__value {
-  font-size: var(--history-font-3xl);
   font-weight: 800;
 }
 
@@ -949,10 +903,6 @@
   .weight-basis-trigger {
   font-size: var(--history-font-2xs);
   white-space: nowrap;
-}
-
-.history-page-premium .history-settings-total-tile__label {
-  font-size: var(--history-font-xs);
 }
 
 .history-page-premium .history-workout-log__performance-title {
