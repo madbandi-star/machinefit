@@ -13,6 +13,8 @@
     "chest": "가슴",
     "legs": "하체",
     "shoulders": "어깨",
+    "biceps": "이두",
+    "triceps": "삼두",
     "full_body": "전신"
   },
   "machineTypes": {

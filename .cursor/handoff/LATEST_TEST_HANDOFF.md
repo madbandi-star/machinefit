@@ -6,32 +6,36 @@
 
 ## Summary
 
-테스트 에이전트 표기를 `Program test` → `프로그램테스트`로 통일했습니다. (URL 동일)
+타겟 근육 그룹에 **이두(biceps)·삼두(triceps)** 추가.
+
+## as-is → to-be
+
+- **as-is:** 등 · 가슴 · 하체 · 어깨
+- **to-be:** 등 · 가슴 · 하체 · 어깨 · **이두 · 삼두**
 
 ## Changed files
 
-- `.cursor/rules/test-handoff.mdc`
-- `.cursor/rules/deploy-auto.mdc`
-- `.cursor/handoff/latest.json`
-- `.cursor/handoff/LATEST_TEST_HANDOFF.md`
-- `scripts/smoke-changed.mjs`
+- `shared/src/constants/workout-goals.ts`
+- `shared/src/utils/recommendation-personalization.ts`
+- `frontend/src/constants/muscle-groups.ts`
+- `frontend/src/i18n/locales/ko/machines.json`, `en/machines.json`
+- `frontend/src/components/muscle/MuscleGroupIcon/*` (이두/삼두 아이콘 폴백)
+- `backend/server/services/workout-report.service.ts`
+- `database/migrations/028_biceps_triceps_target_muscle.sql`
 
-## Test focus (only this)
+## Test focus
 
-1. 룰/핸드오프에 `프로그램테스트`가 쓰이는지
-2. 예전 영문 `Program test`가 룰에 남아있지 않은지
+1. 머신 검색 필터·프리웨이트 부위 선택에 이두/삼두 표시
+2. `npm run typecheck` / frontend build 통과
+3. (배포 후) DB `npm run db:migrate`로 028 적용
 
-## Fast checks (prefer — no Pages wait)
+## Fast checks
 
 ```bash
 npm run test:smoke:changed
 ```
 
-## Production check
+## Production
 
-불필요
-
-## as-is → to-be
-
-- **as-is:** 문서/룰에 Program test 표기
-- **to-be:** 프로그램테스트로 통일 (bcId/URL 동일)
+- Frontend: GitHub Pages 배포 후 UI 확인
+- DB: `npm run db:migrate` (Supabase)

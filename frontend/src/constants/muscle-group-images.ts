@@ -4,7 +4,7 @@ import muscleChest from '@/assets/muscle-groups/muscle-chest.png';
 import muscleLegs from '@/assets/muscle-groups/muscle-legs.png';
 import muscleShoulders from '@/assets/muscle-groups/muscle-shoulders.png';
 
-export const MUSCLE_GROUP_IMAGES: Record<MuscleGroup, string> = {
+export const MUSCLE_GROUP_IMAGES: Partial<Record<MuscleGroup, string>> = {
   back: muscleBack,
   chest: muscleChest,
   legs: muscleLegs,
