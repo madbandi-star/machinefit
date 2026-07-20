@@ -378,7 +378,40 @@ async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
   });
 }
 
-function speak(text: string, locale: string | undefined, signal?: AbortSignal): Promise<void> {
+function pickSpeechVoice(
+  locale: string | undefined,
+  gender: VoiceCoachVoice
+): SpeechSynthesisVoice | undefined {
+  if (!('speechSynthesis' in window)) return undefined;
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length === 0) return undefined;
+
+  const lang = speechLang(locale).toLowerCase();
+  const langPrefix = lang.slice(0, 2);
+  const langVoices = voices.filter((voice) => {
+    const voiceLang = voice.lang.toLowerCase();
+    return voiceLang === lang || voiceLang.startsWith(`${langPrefix}-`) || voiceLang.startsWith(langPrefix);
+  });
+  const pool = langVoices.length > 0 ? langVoices : voices;
+
+  const maleHints = [/male/i, /남성/i, /\bman\b/i, /injoon/i, /hyunsu/i, /jinho/i, /minsu/i];
+  const femaleHints = [/female/i, /여성/i, /\bwoman\b/i, /sunhi/i, /yuna/i, /sora/i, /heami/i];
+  const hints = gender === 'male' ? maleHints : femaleHints;
+  const opposite = gender === 'male' ? femaleHints : maleHints;
+
+  const preferred = pool.find((voice) => hints.some((hint) => hint.test(voice.name)));
+  if (preferred) return preferred;
+
+  const nonOpposite = pool.find((voice) => !opposite.some((hint) => hint.test(voice.name)));
+  return nonOpposite ?? pool[0];
+}
+
+function speak(
+  text: string,
+  locale: string | undefined,
+  signal?: AbortSignal,
+  voiceGender: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
+): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
       reject(new DOMException('Aborted', 'AbortError'));
@@ -406,11 +439,18 @@ function speak(text: string, locale: string | undefined, signal?: AbortSignal): 
         cancelSpeech();
       }
 
+      const gender = normalizeVoiceCoachVoice(voiceGender);
       const utterance = new SpeechSynthesisUtterance(trimmed);
       utterance.lang = speechLang(locale);
       utterance.rate = isKoreanLocale(locale) ? 1.08 : 1.05;
-      utterance.pitch = 1.05;
+      // Nudge pitch when OS has no clearly gendered Korean voice.
+      utterance.pitch = gender === 'male' ? 0.92 : 1.12;
       utterance.volume = 1;
+      const matchedVoice = pickSpeechVoice(locale, gender);
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+        utterance.lang = matchedVoice.lang || utterance.lang;
+      }
 
       const maxMs = Math.min(12_000, Math.max(2_500, trimmed.length * 700));
       let timeoutId = 0;
@@ -480,9 +520,10 @@ export function stopVoiceCoach(): void {
 export function speakVoiceText(
   text: string,
   locale?: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
 ): Promise<void> {
-  return speak(text, locale, signal);
+  return speak(text, locale, signal, voice);
 }
 
 export interface RestVoiceCoachingOptions {
@@ -490,6 +531,8 @@ export interface RestVoiceCoachingOptions {
   tips?: string[];
   locale?: string;
   signal?: AbortSignal;
+  /** Prefer male/female OS TTS voice to match coach setting. */
+  voice?: VoiceCoachVoice;
   /** Max warning lines to speak (default 3). */
   maxWarnings?: number;
   /** Max tip lines to speak (default 3). */
@@ -507,6 +550,7 @@ export async function speakRestTipsAndWarnings(
     tips = [],
     locale = 'ko',
     signal,
+    voice = DEFAULT_VOICE_COACH_VOICE,
     maxWarnings = 3,
     maxTips = 3,
   } = options;
@@ -516,23 +560,24 @@ export async function speakRestTipsAndWarnings(
   if (warningLines.length === 0 && tipLines.length === 0) return;
 
   const ko = isKoreanLocale(locale);
+  const gender = normalizeVoiceCoachVoice(voice);
 
   try {
     if (warningLines.length > 0) {
-      await speak(ko ? '주의사항.' : 'Cautions.', locale, signal);
+      await speak(ko ? '주의사항.' : 'Cautions.', locale, signal, gender);
       await sleep(280, signal);
       for (let i = 0; i < warningLines.length; i += 1) {
-        await speak(warningLines[i], locale, signal);
+        await speak(warningLines[i], locale, signal, gender);
         if (i < warningLines.length - 1) await sleep(420, signal);
       }
     }
 
     if (tipLines.length > 0) {
       if (warningLines.length > 0) await sleep(500, signal);
-      await speak(ko ? '운동 팁.' : 'Workout tips.', locale, signal);
+      await speak(ko ? '운동 팁.' : 'Workout tips.', locale, signal, gender);
       await sleep(280, signal);
       for (let i = 0; i < tipLines.length; i += 1) {
-        await speak(tipLines[i], locale, signal);
+        await speak(tipLines[i], locale, signal, gender);
         if (i < tipLines.length - 1) await sleep(420, signal);
       }
     }

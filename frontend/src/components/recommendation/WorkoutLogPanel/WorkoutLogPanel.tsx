@@ -318,6 +318,7 @@ export function WorkoutLogPanel({
       warnings: coachingWarningsRef.current,
       tips: coachingTipsRef.current,
       locale,
+      voice: voiceCoachVoice,
       signal: controller.signal,
     });
 
@@ -337,6 +338,7 @@ export function WorkoutLogPanel({
     hasRestCoaching,
     restCoachingFingerprint,
     locale,
+    voiceCoachVoice,
   ]);
 
 
