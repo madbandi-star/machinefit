@@ -52,6 +52,7 @@
     "evidenceUrl": "Business license / proof URL (optional)",
     "memo": "Notes",
     "submit": "Submit application",
+    "submitting": "Submitting…",
     "submittedPending": "Application submitted. An admin will review it.",
     "submittedApproved": "Owner verification completed.",
     "alreadyPending": "You already have a pending application.",
