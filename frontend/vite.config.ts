@@ -29,7 +29,7 @@ export default defineConfig({
     react(),
     spaGitHubPagesFallback(),
     VitePWA({
-      filename: 'sw-v15.js',
+      filename: 'sw-v16.js',
       selfDestroying: true,
       registerType: 'autoUpdate',
       injectRegister: null,
