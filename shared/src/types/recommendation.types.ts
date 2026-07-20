@@ -14,7 +14,7 @@ export interface RecommendationInput {
   targetMuscleGroup?: TargetMuscleGroup;
   age?: number;
   workoutGoal?: WorkoutGoal;
-  /** 0.1–2.0 user scale on recommended weight (default 1). */
+  /** 0.1–10.0 user scale on recommended weight (default 1). */
   weightDifficulty?: number;
 }
 

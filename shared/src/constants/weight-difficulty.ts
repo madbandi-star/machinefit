@@ -1,6 +1,6 @@
 /** User preference: scales algorithmic recommended weight (1.0 = as calculated). */
 export const WEIGHT_DIFFICULTY_MIN = 0.1;
-export const WEIGHT_DIFFICULTY_MAX = 2;
+export const WEIGHT_DIFFICULTY_MAX = 10;
 export const WEIGHT_DIFFICULTY_DEFAULT = 1;
 export const WEIGHT_DIFFICULTY_STEP = 0.1;
 

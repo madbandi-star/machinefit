@@ -9,7 +9,7 @@ export function roundRecommendWeightKg(value: number): number {
   return Math.ceil(rounded / RECOMMEND_WEIGHT_STEP_KG) * RECOMMEND_WEIGHT_STEP_KG;
 }
 
-/** Scale recommended weight by user difficulty (0.1×–2×, default 1×). */
+/** Scale recommended weight by user difficulty (0.1×–10×, default 1×). */
 export function applyWeightDifficultyMultiplier(
   weightKg: number | undefined,
   multiplier: number

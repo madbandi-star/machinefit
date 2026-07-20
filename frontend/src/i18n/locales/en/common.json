@@ -175,7 +175,7 @@
     "weightDifficultyDesc": "Make recommended weights lighter or heavier. Default uses the algorithm as-is.",
     "weightDifficultyLight": "0.1 (light)",
     "weightDifficultyDefault": "1 (default)",
-    "weightDifficultyHeavy": "2 (heavy)",
+    "weightDifficultyHeavy": "10 (heavy)",
     "weightDifficultyReset": "Reset",
     "weightDifficultyHintDefault": "Uses the algorithmic recommended weight as-is.",
     "weightDifficultyHintScaled": "Recommended weight is scaled to {{percent}}."

@@ -31,7 +31,7 @@ interface SettingsState {
   voiceRestTipsEnabled: boolean;
   /** Silence after each spoken rep count (ms). */
   voiceCoachRepGapMs: number;
-  /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 2 = 200%) */
+  /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 10 = 1000%) */
   weightDifficulty: number;
   setLocale: (locale: Locale) => void;
   setUnitHeight: (unit: 'cm' | 'ft_in') => void;
