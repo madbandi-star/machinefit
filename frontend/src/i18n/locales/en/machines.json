@@ -13,6 +13,8 @@
     "chest": "Chest",
     "legs": "Legs",
     "shoulders": "Shoulders",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
     "full_body": "Full body"
   },
   "machineTypes": {

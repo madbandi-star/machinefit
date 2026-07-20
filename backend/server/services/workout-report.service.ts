@@ -38,6 +38,8 @@ const TARGET_MUSCLE_LABELS: Record<string, string> = {
   chest: '가슴',
   legs: '하체',
   shoulders: '어깨',
+  biceps: '이두',
+  triceps: '삼두',
 };
 
 function formatLogMachineLabel(

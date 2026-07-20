@@ -1,3 +1,4 @@
-export const MUSCLE_GROUPS = ['back', 'chest', 'legs', 'shoulders'] as const;
-
-export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
+export {
+  TARGET_MUSCLE_GROUPS as MUSCLE_GROUPS,
+  type TargetMuscleGroup as MuscleGroup,
+} from '@machinefit/shared';

@@ -17,6 +17,8 @@ const TARGET_MUSCLE_WEIGHT_BIAS: Record<TargetMuscleGroup, number> = {
   chest: 1.02,
   legs: 1.05,
   shoulders: 0.95,
+  biceps: 0.88,
+  triceps: 0.9,
 };
 
 const TARGET_MUSCLE_TIPS_KO: Record<TargetMuscleGroup, string> = {
@@ -24,6 +26,8 @@ const TARGET_MUSCLE_TIPS_KO: Record<TargetMuscleGroup, string> = {
   chest: '오늘은 가슴 중심 — 견갑 고정 후 가슴으로 밀어주세요.',
   legs: '오늘은 하체 중심 — 무릎 트래킹과 힙 힌지를 확인하세요.',
   shoulders: '오늘은 어깨 중심 — 과도한 승모 개입을 줄이세요.',
+  biceps: '오늘은 이두 중심 — 팔꿈치 고정 후 수축 구간을 천천히.',
+  triceps: '오늘은 삼두 중심 — 팔꿈치를 몸 가까이 두고 끝까지 펴세요.',
 };
 
 const TARGET_MUSCLE_TIPS_EN: Record<TargetMuscleGroup, string> = {
@@ -31,6 +35,8 @@ const TARGET_MUSCLE_TIPS_EN: Record<TargetMuscleGroup, string> = {
   chest: 'Chest focus today — keep shoulders set and press through the chest.',
   legs: 'Leg focus today — track knees and control the hip hinge.',
   shoulders: 'Shoulder focus today — limit trap takeover on pressing.',
+  biceps: 'Biceps focus today — keep elbows fixed and control the squeeze.',
+  triceps: 'Triceps focus today — tuck elbows and fully extend at the top.',
 };
 
 const GOAL_TIPS_KO: Record<WorkoutGoal, string> = {
