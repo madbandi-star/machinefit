@@ -260,6 +260,7 @@ export function HistoryRecordCard({
             showAdjustment={showSettingsCompare}
             adjustmentReadOnly
             customSettings={showSettingsCompare ? customSettings : undefined}
+            preferencesPageUrl={resultUrl}
           />
         </Link>
       </div>

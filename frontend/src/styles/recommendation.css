@@ -1694,6 +1694,59 @@
   line-height: 1.2;
 }
 
+.history-settings-total-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.history-settings-total-row .history-settings-total-tile {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.history-settings-preferences-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 3.25rem;
+  min-height: 4.75rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--glass-bg));
+  color: var(--color-primary-text);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.history-settings-preferences-btn span {
+  max-width: 3.4rem;
+  word-break: keep-all;
+}
+
+.history-settings-preferences-btn:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--glass-bg));
+}
+
+.history-settings-preferences-btn:active {
+  transform: scale(0.97);
+}
+
+.history-settings-preferences-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .history-settings-total-tile {
   display: flex;
   flex-direction: column;

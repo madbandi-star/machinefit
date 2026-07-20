@@ -413,8 +413,12 @@
 }
 
 .history-page-premium .history-mini-setting-wrap,
-.history-page-premium .history-settings-total-tile {
+.history-page-premium .history-settings-total-row {
   height: 100%;
+}
+
+.history-page-premium .history-settings-total-row .history-settings-total-tile {
+  height: auto;
 }
 
 .history-page-premium .history-mini-setting-wrap .setting-value-card--history-mini {
@@ -483,7 +487,7 @@
   .history-mini-setting-wrap,
 .history-page-premium
   .recommendation-settings-panel--history.recommendation-settings-panel--compare
-  .history-settings-total-tile {
+  .history-settings-total-row {
   height: auto;
 }
 
