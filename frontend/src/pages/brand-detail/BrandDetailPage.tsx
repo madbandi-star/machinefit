@@ -46,20 +46,33 @@ export function BrandDetailPage() {
   }
 
   const name = getLocalizedName(brand.name, i18n.language, brand.code);
+  const description = brand.description
+    ? getLocalizedName(brand.description, i18n.language, '')
+    : '';
 
   return (
     <PageShell title={name} subtitle={t('brandDetail.subtitle', { code: brand.code })}>
-      {brand.logoUrl && (
-        <img
-          src={brand.logoUrl}
-          alt={name}
-          style={{
-            maxHeight: 48,
-            marginBottom: '1rem',
-            objectFit: 'contain',
-          }}
-        />
-      )}
+      <div className="brand-detail__header">
+        {brand.logoUrl ? (
+          <img
+            src={brand.logoUrl}
+            alt={name}
+            className="brand-detail__logo"
+            loading="lazy"
+          />
+        ) : null}
+        {description ? <p className="brand-detail__desc">{description}</p> : null}
+        {brand.websiteUrl ? (
+          <a
+            className="brand-detail__website"
+            href={brand.websiteUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {brand.websiteUrl.replace(/^https?:\/\//, '')}
+          </a>
+        ) : null}
+      </div>
       {machinesLoading ? (
         <Skeleton count={4} height={72} />
       ) : !machines?.length ? (

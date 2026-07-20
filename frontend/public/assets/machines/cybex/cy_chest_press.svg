@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Chest Press">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" rx="32" fill="url(#g)"/>
+  <rect x="40" y="40" width="720" height="520" rx="24" fill="#0b1220" stroke="#fb7185" stroke-width="2" opacity="0.9"/>
+  <rect x="90" y="120" width="280" height="320" rx="18" fill="#1f2937"/>
+  <rect x="130" y="170" width="200" height="28" rx="8" fill="#fb7185" opacity="0.85"/>
+  <rect x="130" y="220" width="160" height="18" rx="6" fill="#64748b"/>
+  <rect x="130" y="256" width="180" height="18" rx="6" fill="#475569"/>
+  <circle cx="560" cy="260" r="110" fill="#fb7185" opacity="0.16"/>
+  <circle cx="560" cy="260" r="64" fill="none" stroke="#fb7185" stroke-width="10"/>
+  <text x="90" y="90" fill="#e2e8f0" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700">Cybex</text>
+  <text x="90" y="500" fill="#f8fafc" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">Chest Press</text>
+  <text x="90" y="540" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="20">chest · selectorized</text>
+</svg>

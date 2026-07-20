@@ -52,9 +52,12 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={52} />
           </div>
         ) : (
-          <div className="machine-list-item__thumb-placeholder" aria-hidden>
-            🏋️
-          </div>
+          <img
+            className="machine-list-item__placeholder-img"
+            src={`${import.meta.env.BASE_URL}assets/machines/placeholder.svg`}
+            alt=""
+            loading="lazy"
+          />
         )}
       </div>
       <div className="machine-list-item__body">

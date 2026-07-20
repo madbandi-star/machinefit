@@ -74,3 +74,19 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+
+.admin-table__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-table__brand-logo {
+  width: 48px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  flex: 0 0 auto;
+}

@@ -1,7 +1,12 @@
 import type { Brand, Machine, Gym, GymMachine, GymPhoto, BusinessHours } from '@machinefit/shared';
 import { MACHINE_CODES, BRAND_CODES } from '@machinefit/shared';
+import {
+  CATALOG_BRANDS,
+  CATALOG_MACHINES,
+  CATALOG_SETTINGS,
+} from './catalog.generated.js';
 
-export const MOCK_BRANDS: Brand[] = [
+const BASE_BRANDS: Brand[] = [
   { id: '5', code: BRAND_CODES.BODYWEIGHT, name: { ko: '맨몸운동', en: 'Bodyweight', ja: '自重トレ', zh: '自重训练' }, isActive: true },
   { id: '4', code: BRAND_CODES.FREE_WEIGHT, name: { ko: '프리웨이트', en: 'Free Weight', ja: 'フリーウェイト', zh: '自由重量' }, isActive: true },
   { id: '1', code: BRAND_CODES.HAMMER_STRENGTH, name: { ko: '해머 스트렝스', en: 'Hammer Strength', ja: 'ハンマーストレングス', zh: '悍马力量' }, isActive: true },
@@ -10,7 +15,16 @@ export const MOCK_BRANDS: Brand[] = [
   { id: '6', code: BRAND_CODES.TECHNOGYM, name: { ko: '테크노짐', en: 'Technogym', ja: 'テクノジム', zh: '泰诺健' }, isActive: true },
 ];
 
-export const MOCK_MACHINES: Machine[] = [
+function mergeBrands(base: Brand[], catalog: Brand[]): Brand[] {
+  const byCode = new Map(base.map((b) => [b.code, b]));
+  for (const brand of catalog) {
+    const existing = byCode.get(brand.code);
+    byCode.set(brand.code, existing ? { ...existing, ...brand, id: existing.id } : brand);
+  }
+  return [...byCode.values()];
+}
+
+const BASE_MACHINES: Machine[] = [
   { id: '6', brandId: '4', code: MACHINE_CODES.FW_DUMBBELL, name: { ko: '덤벨', en: 'Dumbbell', ja: 'ダンベル', zh: '哑铃' }, muscleGroup: 'shoulders', machineType: 'free_weight', hasSeat: false, hasBackPad: false, hasFootPlate: false, hasHandle: true, isActive: true },
   { id: '7', brandId: '4', code: MACHINE_CODES.FW_BARBELL, name: { ko: '바벨', en: 'Barbell', ja: 'バーベル', zh: '杠铃' }, muscleGroup: 'chest', machineType: 'free_weight', hasSeat: false, hasBackPad: false, hasFootPlate: false, hasHandle: true, isActive: true },
   { id: '8', brandId: '4', code: MACHINE_CODES.FW_SMITH, name: { ko: '스미스 머신', en: 'Smith Machine', ja: 'スミスマシン', zh: '史密斯机' }, muscleGroup: 'full_body', machineType: 'smith', hasSeat: false, hasBackPad: false, hasFootPlate: true, hasHandle: true, isActive: true },
@@ -23,12 +37,22 @@ export const MOCK_MACHINES: Machine[] = [
   { id: '15', brandId: '5', code: MACHINE_CODES.BW_SQUAT, name: { ko: '스쿼트', en: 'Squat', ja: 'スクワット', zh: '深蹲' }, muscleGroup: 'legs', machineType: 'bodyweight', hasSeat: false, hasBackPad: false, hasFootPlate: true, hasHandle: false, isActive: true },
   { id: '16', brandId: '5', code: MACHINE_CODES.BW_LUNGE, name: { ko: '런지', en: 'Lunge', ja: 'ランジ', zh: '弓步' }, muscleGroup: 'legs', machineType: 'bodyweight', hasSeat: false, hasBackPad: false, hasFootPlate: true, hasHandle: false, isActive: true },
   { id: '17', brandId: '5', code: MACHINE_CODES.BW_BULGARIAN_SPLIT_SQUAT, name: { ko: '불가리안 스플릿스쿼트', en: 'Bulgarian Split Squat', ja: 'ブルガリアンスプリットスクワット', zh: '保加利亚分腿蹲' }, muscleGroup: 'legs', machineType: 'bodyweight', hasSeat: false, hasBackPad: false, hasFootPlate: true, hasHandle: false, isActive: true },
-  { id: '1', brandId: '1', code: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, name: { ko: '아이소 레터럴 하이 로우', en: 'Iso-Lateral High Row', ja: 'アイソラテラルハイロー', zh: '等轴高位拉' }, muscleGroup: 'back', machineType: 'plate_loaded', hasSeat: true, hasBackPad: true, hasFootPlate: false, hasHandle: true, isActive: true },
-  { id: '2', brandId: '1', code: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, name: { ko: '셀렉터라이즈드 체스트 프레스', en: 'Selectorized Chest Press', ja: 'セレクタライズドチェストプレス', zh: '选择式胸部推举' }, muscleGroup: 'chest', machineType: 'selectorized', hasSeat: true, hasBackPad: true, hasFootPlate: false, hasHandle: true, isActive: true },
-  { id: '3', brandId: '1', code: MACHINE_CODES.HS_LEG_EXTENSION, name: { ko: '레그 익스텐션', en: 'Leg Extension', ja: 'レッグエクステンション', zh: '腿部伸展' }, muscleGroup: 'legs', machineType: 'selectorized', hasSeat: true, hasBackPad: true, hasFootPlate: true, hasHandle: false, isActive: true },
-  { id: '4', brandId: '1', code: MACHINE_CODES.HS_LEG_CURL, name: { ko: '레그 컬', en: 'Leg Curl', ja: 'レッグカール', zh: '腿部弯举' }, muscleGroup: 'legs', machineType: 'selectorized', hasSeat: true, hasBackPad: true, hasFootPlate: true, hasHandle: false, isActive: true },
-  { id: '5', brandId: '1', code: MACHINE_CODES.HS_SHOULDER_PRESS, name: { ko: '숄더 프레스', en: 'Shoulder Press', ja: 'ショルダープレス', zh: '肩部推举' }, muscleGroup: 'shoulders', machineType: 'plate_loaded', hasSeat: true, hasBackPad: true, hasFootPlate: false, hasHandle: true, isActive: true },
 ];
+
+function mergeMachines(base: Machine[], catalog: Machine[]): Machine[] {
+  const byCode = new Map(base.map((m) => [m.code, m]));
+  for (const machine of catalog) {
+    const existing = byCode.get(machine.code);
+    byCode.set(
+      machine.code,
+      existing ? { ...existing, ...machine, id: existing.id, brandId: existing.brandId } : machine
+    );
+  }
+  return [...byCode.values()];
+}
+
+export const MOCK_BRANDS: Brand[] = mergeBrands(BASE_BRANDS, CATALOG_BRANDS);
+export const MOCK_MACHINES: Machine[] = mergeMachines(BASE_MACHINES, CATALOG_MACHINES);
 
 export interface MockSettingRule {
   gender: string;
@@ -45,7 +69,7 @@ export interface MockSettingRule {
   warnings: Record<string, string[]>;
 }
 
-export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
+export const BASE_MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
   [MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW]: [
     {
       gender: 'male',
@@ -378,6 +402,12 @@ export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
       },
     },
   ],
+};
+
+/** Catalog settings fill gaps; existing hand-tuned rules win on conflict. */
+export const MOCK_SETTINGS: Record<string, MockSettingRule[]> = {
+  ...CATALOG_SETTINGS,
+  ...BASE_MOCK_SETTINGS,
 };
 
 export interface MockGym extends Gym {

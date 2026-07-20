@@ -11,6 +11,11 @@ interface MachineRow {
   muscle_group: string;
   machine_type: string;
   description: Record<string, string> | null;
+  how_to: Record<string, string[]> | null;
+  warnings: Record<string, string[]> | null;
+  tips: Record<string, string[]> | null;
+  beginner_tips: Record<string, string[]> | null;
+  recommended_experience: string | null;
   has_seat: boolean;
   has_back_pad: boolean;
   has_foot_plate: boolean;
@@ -23,6 +28,7 @@ interface BrandRow {
   id: string;
   code: string;
   name: Record<string, string>;
+  description: Record<string, string> | null;
   logo_url: string | null;
   website_url: string | null;
   country_id: string | null;
@@ -42,6 +48,11 @@ function mapMachine(
     muscleGroup: row.muscle_group,
     machineType: row.machine_type,
     description: row.description ?? undefined,
+    howTo: row.how_to ?? undefined,
+    warnings: row.warnings ?? undefined,
+    tips: row.tips ?? undefined,
+    beginnerTips: row.beginner_tips ?? undefined,
+    recommendedExperience: row.recommended_experience ?? undefined,
     hasSeat: row.has_seat,
     hasBackPad: row.has_back_pad,
     hasFootPlate: row.has_foot_plate,
@@ -57,6 +68,7 @@ function mapBrand(row: BrandRow): Brand {
     id: row.id,
     code: row.code,
     name: row.name,
+    description: row.description ?? undefined,
     logoUrl: row.logo_url ?? undefined,
     websiteUrl: row.website_url ?? undefined,
     countryId: row.country_id ?? undefined,
@@ -74,6 +86,14 @@ function filterMockMachinesByBrand(brandCode: string): Machine[] {
   if (!brand) return [];
   return MOCK_MACHINES.filter((m) => m.brandId === brand.id);
 }
+
+const PRIMARY_IMAGE_SQL = `(
+                SELECT mi.image_url
+                FROM machine_images mi
+                WHERE mi.machine_id = m.id
+                ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                LIMIT 1
+              ) AS primary_image_url`;
 
 export const machineRepository = {
   async findMany(filters: {
@@ -142,8 +162,11 @@ export const machineRepository = {
     );
     const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-    const result = await pool.query<MachineRow & { brand_name: Record<string, string> | null }>(
-      `SELECT m.*, b.name AS brand_name FROM machines m
+    const result = await pool.query<
+      MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
+    >(
+      `SELECT m.*, b.name AS brand_name, ${PRIMARY_IMAGE_SQL}
+       FROM machines m
        LEFT JOIN brands b ON b.id = m.brand_id
        ${where}
        ORDER BY m.code ASC
@@ -153,7 +176,10 @@ export const machineRepository = {
 
     return {
       items: result.rows.map((row) =>
-        mapMachine(row, { brandName: row.brand_name ?? undefined })
+        mapMachine(row, {
+          brandName: row.brand_name ?? undefined,
+          primaryImageUrl: row.primary_image_url,
+        })
       ),
       total,
     };
@@ -164,14 +190,7 @@ export const machineRepository = {
     if (!pool) return MOCK_MACHINES.find((m) => m.code === code) ?? null;
 
     const result = await pool.query<MachineRow & { primary_image_url: string | null }>(
-      `SELECT m.*,
-              (
-                SELECT mi.image_url
-                FROM machine_images mi
-                WHERE mi.machine_id = m.id
-                ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                LIMIT 1
-              ) AS primary_image_url
+      `SELECT m.*, ${PRIMARY_IMAGE_SQL}
        FROM machines m
        WHERE m.code = $1 AND m.is_active = true`,
       [code]
@@ -186,14 +205,22 @@ export const machineRepository = {
       return filterMockMachinesByBrand(brandCode).map(attachBrandName);
     }
 
-    const result = await pool.query<MachineRow & { brand_name: Record<string, string> | null }>(
-      `SELECT m.*, b.name AS brand_name FROM machines m
+    const result = await pool.query<
+      MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
+    >(
+      `SELECT m.*, b.name AS brand_name, ${PRIMARY_IMAGE_SQL}
+       FROM machines m
        JOIN brands b ON b.id = m.brand_id
        WHERE b.code = $1 AND m.is_active = true
        ORDER BY m.code ASC`,
       [brandCode]
     );
-    return result.rows.map((row) => mapMachine(row, { brandName: row.brand_name ?? undefined }));
+    return result.rows.map((row) =>
+      mapMachine(row, {
+        brandName: row.brand_name ?? undefined,
+        primaryImageUrl: row.primary_image_url,
+      })
+    );
   },
 
   async findIdByCode(code: string): Promise<string | null> {

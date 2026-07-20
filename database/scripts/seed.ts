@@ -17,6 +17,10 @@ const SEED_ORDER = [
   'brands.sql',
   'machines.sql',
   'machine_settings.sql',
+  'catalog_brands.sql',
+  'catalog_machines.sql',
+  'catalog_machine_images.sql',
+  'catalog_machine_settings.sql',
   'future_features.sql',
   'gyms.sql',
 ];

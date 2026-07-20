@@ -4,6 +4,8 @@ export interface Brand {
   id: string;
   code: string;
   name: LocalizedString;
+  /** Short brand intro (localized). */
+  description?: LocalizedString;
   logoUrl?: string;
   websiteUrl?: string;
   countryId?: string;
@@ -20,6 +22,12 @@ export interface Machine {
   muscleGroup: string;
   machineType: string;
   description?: LocalizedString;
+  /** Usage steps for coaching / TTS (localized arrays). */
+  howTo?: Record<string, string[]>;
+  warnings?: Record<string, string[]>;
+  tips?: Record<string, string[]>;
+  beginnerTips?: Record<string, string[]>;
+  recommendedExperience?: ExperienceLevel | string;
   hasSeat: boolean;
   hasBackPad: boolean;
   hasFootPlate: boolean;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Hammer Strength">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg)"/>
+  <rect x="28" y="28" width="584" height="304" rx="20" fill="none" stroke="#33eb91" stroke-width="3" opacity="0.55"/>
+  <circle cx="112" cy="180" r="54" fill="#33eb91" opacity="0.18"/>
+  <circle cx="112" cy="180" r="28" fill="#33eb91"/>
+  <text x="190" y="168" fill="#f8fafc" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800">Hammer</text>
+  <text x="190" y="214" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">HAMMER STRENGTH</text>
+</svg>

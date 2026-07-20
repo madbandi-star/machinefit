@@ -36,9 +36,12 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
               <MuscleGroupIcon group={machine.muscleGroup as MuscleGroup} size={120} />
             </div>
           ) : (
-            <div className="machine-hero__placeholder" aria-hidden>
-              🏋️
-            </div>
+            <img
+              className="machine-hero__image"
+              src={`${import.meta.env.BASE_URL}assets/machines/placeholder.svg`}
+              alt=""
+              loading="lazy"
+            />
           )}
         </div>
       )}

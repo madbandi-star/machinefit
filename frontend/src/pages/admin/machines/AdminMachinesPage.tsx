@@ -62,9 +62,14 @@ export function AdminMachinesPage() {
       <div className="admin-table" style={{ marginBottom: '1.5rem' }}>
         {brands?.map((brand) => (
           <div key={brand.id} className="card admin-table__row">
-            <div>
-              <strong>{brand.code}</strong>
-              <p className="admin-table__meta">{brand.name.en}</p>
+            <div className="admin-table__brand">
+              {brand.logoUrl ? (
+                <img src={brand.logoUrl} alt="" className="admin-table__brand-logo" loading="lazy" />
+              ) : null}
+              <div>
+                <strong>{brand.code}</strong>
+                <p className="admin-table__meta">{brand.name.en}</p>
+              </div>
             </div>
             <button
               className="btn btn--secondary"
@@ -80,9 +85,21 @@ export function AdminMachinesPage() {
       <div className="admin-table">
         {machines?.map((machine) => (
           <div key={machine.id} className="card admin-table__row">
-            <div>
-              <strong>{machine.code}</strong>
-              <p className="admin-table__meta">{machine.name.en} · {machine.muscleGroup}</p>
+            <div className="admin-table__brand">
+              {machine.primaryImageUrl ? (
+                <img
+                  src={machine.primaryImageUrl}
+                  alt=""
+                  className="admin-table__brand-logo"
+                  loading="lazy"
+                />
+              ) : null}
+              <div>
+                <strong>{machine.code}</strong>
+                <p className="admin-table__meta">
+                  {machine.name.en} · {machine.muscleGroup}
+                </p>
+              </div>
             </div>
             <button
               className="btn btn--secondary"

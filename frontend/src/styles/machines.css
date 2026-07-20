@@ -416,3 +416,85 @@
 .recommend-cta__muscle-chips {
   margin-bottom: 0.25rem;
 }
+
+.brand-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-card__media {
+  flex: 0 0 auto;
+}
+
+.brand-card__logo,
+.brand-card__logo-fallback {
+  width: 72px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--color-surface-alt);
+}
+
+.brand-card__logo-fallback {
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.brand-card__body {
+  min-width: 0;
+}
+
+.brand-card__title {
+  font-size: 1rem;
+  margin: 0 0 0.2rem;
+}
+
+.brand-card__desc {
+  margin: 0 0 0.25rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.brand-card__code {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+.brand-detail__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.brand-detail__logo {
+  max-height: 64px;
+  width: fit-content;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+
+.brand-detail__desc {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.brand-detail__website {
+  font-size: 0.82rem;
+  color: var(--color-primary);
+  word-break: break-all;
+}
