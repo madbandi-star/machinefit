@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T02:50:00Z",
+  "updatedAt": "2026-07-20T02:53:00Z",
   "title": "Add biceps and triceps target muscle groups",
   "summary": "프리웨이트/필터용 타겟 근육에 이두(biceps)·삼두(triceps)를 추가했습니다. DB 마이그레이션 028에서 CHECK 제약과 컬럼 주석을 갱신합니다.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
   "programTestAgentName": "프로그램테스트",
   "git": {
-    "branch": "cursor/add-biceps-triceps-muscle-groups-35b3",
-    "commit": "2107305",
-    "pr": null,
+    "branch": "main",
+    "commit": "04d18ab",
+    "pr": 7,
     "base": "main"
   },
   "changedFiles": [
