@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Fast smoke for Program test agent — reads .cursor/handoff/latest.json
+ * Fast smoke for 프로그램테스트 agent — reads .cursor/handoff/latest.json
  * Prefer this over waiting for GitHub Pages.
  *
  * Usage: npm run test:smoke:changed

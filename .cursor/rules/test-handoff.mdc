@@ -1,11 +1,11 @@
 ---
-description: Handoff protocol between coding agent and Program test agent
+description: Handoff protocol between coding agent and 프로그램테스트 agent
 alwaysApply: true
 ---
 
-# Test handoff protocol (프로그램수정 ↔ Program test)
+# Test handoff protocol (프로그램수정 ↔ 프로그램테스트)
 
-There is a dedicated **Program test** cloud agent:
+There is a dedicated **프로그램테스트** cloud agent:
 https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4
 
 ## When you change application code (코딩 / 프로그램수정 agent)
@@ -21,16 +21,16 @@ Include at minimum:
 - `git.branch`, `git.commit` (or PR number once known)
 - `changedFiles` (paths only)
 - `testFocus` — what to verify (not whole app)
-- `fastChecks` — shell/assertions Program test can run **without waiting for GitHub Pages**
+- `fastChecks` — shell/assertions 프로그램테스트 can run **without waiting for GitHub Pages**
 - `productionChecks` — optional Pages/API checks after deploy
 - `deploy` — Actions run URL / expected status when known
-- `asIs` / `toBe` — for Program test’s report format
+- `asIs` / `toBe` — for 프로그램테스트’s report format
 
-Then in your final user message, tell them Program test can pick up `.cursor/handoff/LATEST_TEST_HANDOFF.md` (and link the Program test agent URL).
+Then in your final user message, tell them 프로그램테스트 can pick up `.cursor/handoff/LATEST_TEST_HANDOFF.md` (and link the 프로그램테스트 agent URL).
 
 Do **not** rely on transcript scraping as the primary handoff.
 
-## When you are Program test
+## When you are 프로그램테스트
 
 1. Read `.cursor/handoff/latest.json` + `LATEST_TEST_HANDOFF.md` **first** (prefer over MCP transcript digging).
 2. Prefer **fast path** (no Pages queue wait):
