@@ -1,70 +1,65 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T04:10:00Z",
-  "title": "Recommended reps on record cards",
-  "summary": "기록/추천 설정 카드에서 추천 중량 오른쪽에 추천 횟수(목표별 범위, 예: 8–12회)를 표시합니다. DB 마이그레이션 030.",
-  "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
-  "programTestAgentName": "프로그램테스트",
+  "updatedAt": "2026-07-20T04:20:00Z",
+  "title": "Rest-time voice tips and warnings",
+  "summary": "휴식 타이머 시작 시 추천 주의사항·운동팁을 TTS로 재생. 설정/음성코치 토글, 다음 세트 코치와 겹치지 않도록 abort.",
+  "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3",
+  "programTestAgentName": "프로그램수정",
   "git": {
-    "branch": "cursor/record-card-recommended-reps-35b3",
-    "commit": null,
-    "pr": null,
+    "branch": "cursor/rest-voice-tips-warnings-35b3",
+    "commit": "3ff9043",
+    "pr": "https://github.com/madbandi-star/machinefit/pull/11",
     "base": "main"
   },
   "changedFiles": [
-    "database/migrations/030_recommendation_reps.sql",
-    "shared/src/types/recommendation.types.ts",
-    "shared/src/utils/recommendation-personalization.ts",
-    "backend/server/repositories/recommendation.repository.ts",
-    "backend/server/repositories/history.repository.ts",
-    "backend/server/services/recommendation.service.ts",
-    "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
-    "frontend/src/constants/history-lucide-icons.tsx",
+    "frontend/src/utils/voiceCoach.ts",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/store/settings.store.ts",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ko/machines.json",
     "frontend/src/i18n/locales/en/machines.json"
   ],
   "testFocus": [
-    "History/record card shows 추천 횟수 to the right of 추천 중량",
-    "Rep range follows workout goal (hypertrophy 8–12, strength 3–6, …)",
-    "Old records without stored reps still show goal-based fallback",
-    "Migration 030 applied",
-    "typecheck + build"
+    "세트 완료 후 휴식 시작 시 주의사항 → 운동팁 음성 재생",
+    "설정/음성코치에서 휴식 팁 토글 OFF 시 미재생",
+    "휴식 스킵 또는 다음 세트 코치 시작 시 휴식 TTS 중단",
+    "히스토리 카드(recommendationId)에서도 동일 동작",
+    "typecheck"
   ],
   "fastChecks": [
     {
-      "id": "migration-030",
+      "id": "speak-rest-fn",
       "type": "file_contains",
-      "path": "database/migrations/030_recommendation_reps.sql",
-      "pattern": "recommended_reps_min"
+      "path": "frontend/src/utils/voiceCoach.ts",
+      "pattern": "speakRestTipsAndWarnings"
+    },
+    {
+      "id": "settings-flag",
+      "type": "file_contains",
+      "path": "frontend/src/store/settings.store.ts",
+      "pattern": "voiceRestTipsEnabled"
     },
     {
       "id": "ko-i18n",
       "type": "file_contains",
       "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "\"reps\": \"추천 횟수\""
-    },
-    {
-      "id": "panel-field",
-      "type": "file_contains",
-      "path": "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
-      "pattern": "recommendedRepsMin"
+      "pattern": "휴식 중 주의사항·운동팁 듣기"
     },
     {
       "id": "typecheck",
       "type": "npm",
       "command": "npm run typecheck"
-    },
-    {
-      "id": "build-frontend",
-      "type": "npm",
-      "command": "npm run build --workspace=shared && npm run build:frontend"
     }
   ],
   "productionChecks": [
     {
-      "id": "render-redeploy",
+      "id": "pages-only",
       "type": "note",
-      "detail": "Backend changed — Manual Deploy on Render after merge"
+      "detail": "Frontend-only — GitHub Pages deploy; no Render Manual Deploy needed"
     }
   ],
   "deploy": {
@@ -72,6 +67,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "Record cards show recommended weight only among load-related tiles.",
-  "toBe": "Recommended reps tile sits immediately to the right of recommended weight."
+  "asIs": "Rest timer is silent aside from optional next-set voice coach.",
+  "toBe": "During rest, warnings then tips are spoken when voice coach + rest tips are enabled."
 }
