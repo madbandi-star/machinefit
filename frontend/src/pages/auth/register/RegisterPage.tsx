@@ -143,7 +143,6 @@ export function RegisterPage() {
   return (
     <PageShell title={t('nav.register')}>
       <form className="form-stack" onSubmit={handleSubmit} noValidate>
-        <p>가</p>
         {missingFields.length > 0 && (
           <div className="form-error-summary" role="alert">
             {t('auth.registerMissingFields', {
