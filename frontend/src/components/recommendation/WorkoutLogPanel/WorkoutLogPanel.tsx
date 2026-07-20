@@ -1069,6 +1069,7 @@ export function WorkoutLogPanel({
       onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
       restTipsEnabled={voiceRestTipsEnabled}
       onRestTipsEnabledChange={setVoiceRestTipsEnabled}
+      voice={voiceCoachVoice}
       phase={voiceCoach.phase}
       currentRep={voiceCoach.currentRep}
       countdown={voiceCoach.countdown}

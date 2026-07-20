@@ -164,7 +164,10 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
 /** Shared AudioContext — stays unlocked after a user gesture so later reps still play. */
 let sharedAudioCtx: AudioContext | null = null;
 let currentSource: AudioBufferSourceNode | null = null;
+let currentHtmlAudio: HTMLAudioElement | null = null;
 const clipBufferCache = new Map<string, AudioBuffer>();
+/** In-flight fetches so parallel preload/play share one decode. */
+const clipBufferInflight = new Map<string, Promise<AudioBuffer | null>>();
 
 function getSharedAudioContext(): AudioContext | null {
   const Ctx =
@@ -223,6 +226,18 @@ function cancelSpeech(): void {
 }
 
 function stopCurrentClip(): void {
+  if (currentHtmlAudio) {
+    try {
+      currentHtmlAudio.onended = null;
+      currentHtmlAudio.onerror = null;
+      currentHtmlAudio.pause();
+      currentHtmlAudio.removeAttribute('src');
+      currentHtmlAudio.load();
+    } catch {
+      // ignore
+    }
+    currentHtmlAudio = null;
+  }
   if (!currentSource) return;
   try {
     currentSource.onended = null;
@@ -284,16 +299,29 @@ function waitForSpeechVoices(timeoutMs = 400): Promise<void> {
 async function loadClipBuffer(url: string, ctx: AudioContext): Promise<AudioBuffer | null> {
   const cached = clipBufferCache.get(url);
   if (cached) return cached;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) return null;
-    const data = await response.arrayBuffer();
-    const buffer = await ctx.decodeAudioData(data.slice(0));
-    clipBufferCache.set(url, buffer);
-    return buffer;
-  } catch {
-    return null;
-  }
+
+  const inflight = clipBufferInflight.get(url);
+  if (inflight) return inflight;
+
+  const task = (async (): Promise<AudioBuffer | null> => {
+    try {
+      const response = await fetch(url, { cache: 'force-cache' });
+      if (!response.ok) return null;
+      const data = await response.arrayBuffer();
+      // Copy — decodeAudioData may detach the original buffer.
+      const copy = data.slice(0);
+      const buffer = await ctx.decodeAudioData(copy);
+      clipBufferCache.set(url, buffer);
+      return buffer;
+    } catch {
+      return null;
+    } finally {
+      clipBufferInflight.delete(url);
+    }
+  })();
+
+  clipBufferInflight.set(url, task);
+  return task;
 }
 
 async function preloadCoachClips(
@@ -320,9 +348,51 @@ async function preloadCoachClips(
   );
 }
 
+function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException('Aborted', 'AbortError'));
+      return;
+    }
+
+    const audio = new Audio(url);
+    audio.preload = 'auto';
+    currentHtmlAudio = audio;
+
+    const onAbort = () => {
+      stopCurrentClip();
+      cleanup();
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+
+    const cleanup = () => {
+      signal?.removeEventListener('abort', onAbort);
+      audio.onended = null;
+      audio.onerror = null;
+      if (currentHtmlAudio === audio) currentHtmlAudio = null;
+    };
+
+    audio.onended = () => {
+      cleanup();
+      resolve(true);
+    };
+    audio.onerror = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    signal?.addEventListener('abort', onAbort, { once: true });
+    void audio.play().catch(() => {
+      cleanup();
+      resolve(false);
+    });
+  });
+}
+
 /**
  * Play a pre-recorded clip via Web Audio so playback keeps working after the
  * long rep-gap (HTMLAudioElement.play() often fails once the user-gesture window ends).
+ * Falls back to HTMLAudio when decode/Web Audio fails.
  */
 async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
   if (signal?.aborted) {
@@ -333,49 +403,53 @@ async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
   cancelSpeech();
 
   const ctx = await ensureSharedAudioRunning();
-  if (!ctx) return false;
+  if (ctx) {
+    const buffer = await loadClipBuffer(url, ctx);
+    if (buffer) {
+      if (signal?.aborted) {
+        throw new DOMException('Aborted', 'AbortError');
+      }
 
-  const buffer = await loadClipBuffer(url, ctx);
-  if (!buffer) return false;
-  if (signal?.aborted) {
-    throw new DOMException('Aborted', 'AbortError');
+      const played = await new Promise<boolean>((resolve, reject) => {
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        currentSource = source;
+
+        const onAbort = () => {
+          try {
+            source.stop();
+          } catch {
+            // ignore
+          }
+          cleanup();
+          reject(new DOMException('Aborted', 'AbortError'));
+        };
+
+        const cleanup = () => {
+          signal?.removeEventListener('abort', onAbort);
+          source.onended = null;
+          if (currentSource === source) currentSource = null;
+        };
+
+        source.onended = () => {
+          cleanup();
+          resolve(true);
+        };
+
+        signal?.addEventListener('abort', onAbort, { once: true });
+        try {
+          source.start(0);
+        } catch {
+          cleanup();
+          resolve(false);
+        }
+      });
+      if (played) return true;
+    }
   }
 
-  return new Promise<boolean>((resolve, reject) => {
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(ctx.destination);
-    currentSource = source;
-
-    const onAbort = () => {
-      try {
-        source.stop();
-      } catch {
-        // ignore
-      }
-      cleanup();
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-
-    const cleanup = () => {
-      signal?.removeEventListener('abort', onAbort);
-      source.onended = null;
-      if (currentSource === source) currentSource = null;
-    };
-
-    source.onended = () => {
-      cleanup();
-      resolve(true);
-    };
-
-    signal?.addEventListener('abort', onAbort, { once: true });
-    try {
-      source.start(0);
-    } catch {
-      cleanup();
-      resolve(false);
-    }
-  });
+  return playHtmlAudioClip(url, signal);
 }
 
 function pickSpeechVoice(
@@ -505,10 +579,8 @@ async function speakCoachPhrase(options: {
       if (retried) return;
     }
   }
-  // English / missing clip only — avoid OS TTS for Korean coach counts when possible.
-  if (!isKoreanLocale(locale) || !clipKey) {
-    await speak(text, locale, signal);
-  }
+  // Always fall back to OS TTS (gender-matched) so count never goes silent.
+  await speak(text, locale, signal, voice);
 }
 
 export function stopVoiceCoach(): void {
@@ -595,6 +667,19 @@ export function unlockVoiceCoachAudio(voice: VoiceCoachVoice = DEFAULT_VOICE_COA
   const normalized = normalizeVoiceCoachVoice(voice);
   void ensureSharedAudioRunning().then(async (ctx) => {
     if (!ctx) return;
+    // Tiny silent tick keeps the shared context unlocked on mobile.
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      gain.gain.value = 0.0001;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const now = ctx.currentTime;
+      osc.start(now);
+      osc.stop(now + 0.01);
+    } catch {
+      // ignore
+    }
     await loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-5'), ctx);
     await loadClipBuffer(voiceCoachClipUrl(normalized, 'start'), ctx);
     await loadClipBuffer(voiceCoachClipUrl(normalized, 'rep-1'), ctx);
