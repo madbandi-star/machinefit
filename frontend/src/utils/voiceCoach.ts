@@ -28,8 +28,9 @@ export const VOICE_COACH_TIMING = {
   countdownGapMs: 880,
   afterCountdownMs: 350,
   afterStartMs: 950,
-  repGapMs: 1400,
-  oneMoreGapMs: 1600,
+  /** Default post-speech gap — ~2s is a calm, form-friendly tempo. */
+  repGapMs: 2000,
+  oneMoreGapMs: 2200,
 } as const;
 
 /** User-configurable gap between spoken counts. */
