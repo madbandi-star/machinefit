@@ -1,0 +1,168 @@
+.collapsible-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.collapsible-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.collapsible-card__heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.collapsible-card__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.collapsible-card__summary {
+  margin-top: 0.12rem;
+  font-size: 0.625rem;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+
+.collapsible-card__chevron {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: var(--color-text-muted);
+  transition: transform var(--motion-fast);
+}
+
+.collapsible-card__chevron--open {
+  transform: rotate(180deg);
+}
+
+.collapsible-card__body {
+  padding: 0 0.6rem 0.55rem;
+}
+
+.collapsible-card--collapsed .collapsible-card__header {
+  border-bottom: none;
+}
+
+.collapsible-card--nested {
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
+.collapsible-card--nested .collapsible-card__header {
+  padding: 0.4rem 0.5rem;
+}
+
+.collapsible-card--nested .collapsible-card__body {
+  padding: 0 0.5rem 0.45rem;
+}
+
+.history-record-card__collapse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--history-card-border, var(--glass-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--motion-fast),
+    border-color var(--motion-fast),
+    background var(--motion-fast);
+}
+
+.history-record-card__collapse:hover,
+.history-record-card__collapse:focus-visible {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  outline: none;
+}
+
+.history-record-card__collapse-icon {
+  transition: transform var(--motion-fast);
+}
+
+.history-record-card__collapse-icon--open {
+  transform: rotate(180deg);
+}
+
+.history-record-card--collapsed .history-record-card__section,
+.history-record-card--collapsed .recommendation-workout-log {
+  display: none;
+}
+
+.history-record-card__body-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem var(--history-card-padding, 1rem) 0;
+  border: none;
+  border-top: 1px solid var(--history-card-border, var(--glass-border));
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--history-font-xs, 0.75rem);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.history-record-card__body-toggle:hover,
+.history-record-card__body-toggle:focus-visible {
+  color: var(--color-text);
+  outline: none;
+}
+
+.history-record-card__body-toggle-label {
+  flex: 1;
+  text-align: left;
+}
+
+.saved-settings-card__header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.saved-settings-card__expand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md, 0.75rem);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.saved-settings-card__expand:hover,
+.saved-settings-card__expand:focus-visible {
+  color: var(--color-text);
+  outline: none;
+}
+
+.recommendation-result-page__body-card.history-record-card--collapsed .history-record-card__body-toggle {
+  border-top: none;
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}

@@ -1884,6 +1884,24 @@
   padding: 0.45rem 0.5rem;
 }
 
+.history-workout-log__personal-tip {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.history-workout-log__personal-tip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.history-workout-log__personal-tip-input {
+  min-height: 4.5rem;
+}
+
 .history-record-card .recommendation-workout-log__diary-tags {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

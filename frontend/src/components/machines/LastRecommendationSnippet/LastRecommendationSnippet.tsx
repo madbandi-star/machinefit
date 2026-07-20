@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { Icon } from '@/components/icons/Icon';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
@@ -34,7 +35,8 @@ function LastRecommendationSettingsSkeleton() {
 }
 
 export function LastRecommendationSnippet({ machineCode }: LastRecommendationSnippetProps) {
-  const { t } = useTranslation('machines');
+  const { t } = useTranslation(['machines', 'common']);
+  const [expanded, setExpanded] = useState(true);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data, isLoading, isFetched } = useQuery({
@@ -58,12 +60,9 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
     staleTime: 60_000,
   });
 
-  const { data: customSettings } = useQuery({
+  const { data: machinePreferences } = useQuery({
     queryKey: ['machine-preferences', machineCode],
-    queryFn: async () => {
-      const settings = await machinePreferenceApi.get(machineCode);
-      return settings ?? {};
-    },
+    queryFn: async () => machinePreferenceApi.get(machineCode),
     enabled: isAuthenticated && Boolean(data),
     staleTime: 60_000,
   });
@@ -76,16 +75,36 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   const showSettingsCompare = shouldShowHistorySettingsCompare(fitRating);
 
   return (
-    <section className="saved-settings-card" aria-label={t('detail.lastRecommend')}>
+    <section className="saved-settings-card" aria-label={t('machines:detail.lastRecommend')}>
       <div className="saved-settings-card__header">
-        <span className="saved-settings-card__title">{t('detail.lastRecommend')}</span>
-        {resultUrl ? (
-          <Link to={resultUrl} className="saved-settings-card__link">
-            {t('detail.viewLastResult')}
-            <Icon name="chevronRight" size={16} />
-          </Link>
-        ) : null}
+        <span className="saved-settings-card__title">{t('machines:detail.lastRecommend')}</span>
+        <div className="saved-settings-card__header-actions">
+          {data ? (
+            <button
+              type="button"
+              className="history-record-card__collapse"
+              aria-expanded={expanded}
+              aria-label={expanded ? t('common:collapse') : t('common:expand')}
+              onClick={() => setExpanded((prev) => !prev)}
+            >
+              <ChevronDown
+                size={17}
+                strokeWidth={2.25}
+                className={`history-record-card__collapse-icon${
+                  expanded ? ' history-record-card__collapse-icon--open' : ''
+                }`}
+              />
+            </button>
+          ) : null}
+          {resultUrl ? (
+            <Link to={resultUrl} className="saved-settings-card__link">
+              {t('machines:detail.viewLastResult')}
+              <Icon name="chevronRight" size={16} />
+            </Link>
+          ) : null}
+        </div>
       </div>
+      {expanded ? (
       <div className="history-page-premium machine-detail-last-settings">
         <article
           className={`history-record-card history-record-card--premium history-record-card--unlogged machine-detail-last-settings__card${
@@ -104,7 +123,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
                   variant="history"
                   showAdjustment={showSettingsCompare}
                   adjustmentReadOnly
-                  customSettings={showSettingsCompare ? customSettings : undefined}
+                  customSettings={showSettingsCompare ? machinePreferences?.customSettings : undefined}
                 />
               </Link>
             ) : isLoading ? (
@@ -128,7 +147,18 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
           </div>
         </article>
       </div>
-      {data ? (
+      ) : data ? (
+        <button
+          type="button"
+          className="saved-settings-card__expand"
+          aria-expanded={false}
+          onClick={() => setExpanded(true)}
+        >
+          <span>{t('common:expandCardDetails')}</span>
+          <ChevronDown size={16} strokeWidth={2.25} aria-hidden />
+        </button>
+      ) : null}
+      {data && expanded ? (
         <p className="saved-settings-card__date">
           {new Date(data.viewedAt).toLocaleDateString()}
         </p>

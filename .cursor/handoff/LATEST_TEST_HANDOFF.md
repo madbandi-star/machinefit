@@ -6,28 +6,20 @@
 
 ## Summary
 
-타겟 근육 그룹에 **이두(biceps)·삼두(triceps)** 추가.
+운동기록 카드·추천 결과·기구 상세 최근 추천 카드에 **접기/펴기** 추가. 기구별 **나만의 팁 메모장**은 운동팁 위에 표시되며 기존 **저장하기**와 함께 저장.
 
 ## as-is → to-be
 
-- **as-is:** 등 · 가슴 · 하체 · 어깨
-- **to-be:** 등 · 가슴 · 하체 · 어깨 · **이두 · 삼두**
-
-## Changed files
-
-- `shared/src/constants/workout-goals.ts`
-- `shared/src/utils/recommendation-personalization.ts`
-- `frontend/src/constants/muscle-groups.ts`
-- `frontend/src/i18n/locales/ko/machines.json`, `en/machines.json`
-- `frontend/src/components/muscle/MuscleGroupIcon/*` (이두/삼두 아이콘 폴백)
-- `backend/server/services/workout-report.service.ts`
-- `database/migrations/028_biceps_triceps_target_muscle.sql`
+- **as-is:** 카드 섹션 항상 펼침, 기구별 개인 팁 저장 없음
+- **to-be:** 카드 접기/펴기, `personal_tip_memo` DB 저장
 
 ## Test focus
 
-1. 머신 검색 필터·프리웨이트 부위 선택에 이두/삼두 표시
-2. `npm run typecheck` / frontend build 통과
-3. (배포 후) DB `npm run db:migrate`로 028 적용
+1. History record cards — 헤더 chevron 접기/펴기
+2. Recommendation result — 본문 카드 접기
+3. Machine detail — 최근 추천 카드 접기
+4. Personal tip — 저장하기로 함께 저장
+5. typecheck + build
 
 ## Fast checks
 
@@ -35,7 +27,7 @@
 npm run test:smoke:changed
 ```
 
-## Production
+## After merge
 
-- Frontend: GitHub Pages 배포 후 UI 확인
-- DB: `npm run db:migrate` (Supabase)
+- `npm run db:migrate` (029, 028 미적용 시)
+- Render 백엔드 재배포

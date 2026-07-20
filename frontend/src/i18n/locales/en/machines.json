@@ -160,6 +160,8 @@
     "memoPlaceholder": "e.g.)\n[Pre-fatigue][Working set][Working set]",
     "memoSave": "Save",
     "memoSaving": "Saving...",
+    "personalTipTitle": "My tip notebook",
+    "personalTipPlaceholder": "Record your personal tips for this machine.",
     "bookmarkSave": "Save workout log",
     "bookmarkUpdate": "Save log changes",
     "bookmarkRemove": "Remove workout log",

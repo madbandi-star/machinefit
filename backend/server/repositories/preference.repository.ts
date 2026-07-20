@@ -1,40 +1,77 @@
-import type { RecommendationSettings } from '@machinefit/shared';
+import type { MachineUserPreferences, RecommendationSettings } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
 export const preferenceRepository = {
   async upsert(
     userId: string,
     machineId: string,
-    customSettings: Partial<RecommendationSettings>
-  ): Promise<Partial<RecommendationSettings>> {
+    fields: {
+      customSettings?: Partial<RecommendationSettings>;
+      personalTipMemo?: string;
+    }
+  ): Promise<MachineUserPreferences> {
     const pool = getPool();
-    if (!pool) return customSettings;
+    if (!pool) {
+      return {
+        customSettings: fields.customSettings ?? {},
+        personalTipMemo: fields.personalTipMemo ?? '',
+      };
+    }
 
-    const result = await pool.query<{ custom_settings: Partial<RecommendationSettings> }>(
-      `INSERT INTO user_machine_preferences (user_id, machine_id, custom_settings)
-       VALUES ($1, $2, $3::jsonb)
+    const existing = await this.findByUserMachine(userId, machineId);
+    const customSettings =
+      fields.customSettings !== undefined
+        ? fields.customSettings
+        : (existing?.customSettings ?? {});
+    const personalTipMemo =
+      fields.personalTipMemo !== undefined
+        ? fields.personalTipMemo
+        : (existing?.personalTipMemo ?? '');
+
+    const result = await pool.query<{
+      custom_settings: Partial<RecommendationSettings>;
+      personal_tip_memo: string;
+    }>(
+      `INSERT INTO user_machine_preferences (user_id, machine_id, custom_settings, personal_tip_memo)
+       VALUES ($1, $2, $3::jsonb, $4)
        ON CONFLICT (user_id, machine_id)
-       DO UPDATE SET custom_settings = EXCLUDED.custom_settings, updated_at = NOW()
-       RETURNING custom_settings`,
-      [userId, machineId, JSON.stringify(customSettings)]
+       DO UPDATE SET
+         custom_settings = EXCLUDED.custom_settings,
+         personal_tip_memo = EXCLUDED.personal_tip_memo,
+         updated_at = NOW()
+       RETURNING custom_settings, personal_tip_memo`,
+      [userId, machineId, JSON.stringify(customSettings), personalTipMemo]
     );
 
-    return result.rows[0]?.custom_settings ?? customSettings;
+    const row = result.rows[0];
+    return {
+      customSettings: row?.custom_settings ?? customSettings,
+      personalTipMemo: row?.personal_tip_memo ?? personalTipMemo,
+    };
   },
 
   async findByUserMachine(
     userId: string,
     machineId: string
-  ): Promise<Partial<RecommendationSettings> | null> {
+  ): Promise<MachineUserPreferences | null> {
     const pool = getPool();
     if (!pool) return null;
 
-    const result = await pool.query<{ custom_settings: Partial<RecommendationSettings> }>(
-      `SELECT custom_settings FROM user_machine_preferences
+    const result = await pool.query<{
+      custom_settings: Partial<RecommendationSettings>;
+      personal_tip_memo: string;
+    }>(
+      `SELECT custom_settings, personal_tip_memo FROM user_machine_preferences
        WHERE user_id = $1 AND machine_id = $2`,
       [userId, machineId]
     );
 
-    return result.rows[0]?.custom_settings ?? null;
+    const row = result.rows[0];
+    if (!row) return null;
+
+    return {
+      customSettings: row.custom_settings ?? {},
+      personalTipMemo: row.personal_tip_memo ?? '',
+    };
   },
 };

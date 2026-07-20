@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, Heart } from 'lucide-react';
+import { Bookmark, ChevronDown, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -75,6 +75,7 @@ export function RecommendationResultPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
+  const [bodyExpanded, setBodyExpanded] = useState(true);
 
   const { data: fetchedResult, isLoading, isError } = useQuery({
     queryKey: ['recommendation', recommendationId, locale],
@@ -240,7 +241,13 @@ export function RecommendationResultPage() {
 
       <div className="recommendation-result-page__content history-page-premium">
         <RecommendationWarnings warnings={result.warnings} />
-        <article className="history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card">
+        <article
+          className={`history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card${
+            bodyExpanded ? '' : ' history-record-card--collapsed'
+          }`}
+        >
+          {bodyExpanded ? (
+            <>
           <div className="history-record-card__section">
             <RecommendationSettingsPanel
               settings={result.settings}
@@ -276,6 +283,41 @@ export function RecommendationResultPage() {
             onSavedChange={setWorkoutLogSavedOverride}
           />
           <RecommendationTips tips={result.tips} />
+          <button
+            type="button"
+            className="history-record-card__body-toggle"
+            aria-expanded={true}
+            onClick={() => setBodyExpanded(false)}
+          >
+            <span className="history-record-card__body-toggle-label">
+              {t('common:collapseCardDetails')}
+            </span>
+            <ChevronDown
+              size={16}
+              strokeWidth={2.25}
+              className="history-record-card__collapse-icon history-record-card__collapse-icon--open"
+              aria-hidden
+            />
+          </button>
+            </>
+          ) : (
+          <button
+            type="button"
+            className="history-record-card__body-toggle"
+            aria-expanded={false}
+            onClick={() => setBodyExpanded(true)}
+          >
+            <span className="history-record-card__body-toggle-label">
+              {t('common:expandCardDetails')}
+            </span>
+            <ChevronDown
+              size={16}
+              strokeWidth={2.25}
+              className="history-record-card__collapse-icon"
+              aria-hidden
+            />
+          </button>
+          )}
         </article>
       </div>
     </div>

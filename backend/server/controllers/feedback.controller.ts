@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { machinePreferenceBodySchema } from '@machinefit/shared';
 import { feedbackRepository } from '../repositories/feedback.repository.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
@@ -9,10 +10,6 @@ import { AppError } from '../middlewares/error.middleware.js';
 const feedbackSchema = z.object({
   recommendationId: z.string().uuid(),
   fitRating: z.enum(['good', 'bad']),
-});
-
-const preferenceSchema = z.object({
-  customSettings: z.record(z.unknown()),
 });
 
 function paramString(value: string | string[]): string {
@@ -43,15 +40,22 @@ export async function getFeedback(req: Request, res: Response): Promise<void> {
 export async function upsertPreference(req: Request, res: Response): Promise<void> {
   const userId = req.user!.userId;
   const machineCode = paramString(req.params.machineCode);
-  const { customSettings } = preferenceSchema.parse(req.body);
+  const body = machinePreferenceBodySchema.parse(req.body);
 
   const machineId = await machineRepository.findIdByCode(machineCode);
   if (!machineId) {
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
   }
 
-  const saved = await preferenceRepository.upsert(userId, machineId, customSettings);
-  res.json({ success: true, data: { machineCode, customSettings: saved } });
+  const saved = await preferenceRepository.upsert(userId, machineId, body);
+  res.json({
+    success: true,
+    data: {
+      machineCode,
+      customSettings: saved.customSettings,
+      personalTipMemo: saved.personalTipMemo,
+    },
+  });
 }
 
 export async function getPreference(req: Request, res: Response): Promise<void> {
@@ -63,6 +67,12 @@ export async function getPreference(req: Request, res: Response): Promise<void> 
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
   }
 
-  const customSettings = await preferenceRepository.findByUserMachine(userId, machineId);
-  res.json({ success: true, data: { customSettings: customSettings ?? {} } });
+  const prefs = await preferenceRepository.findByUserMachine(userId, machineId);
+  res.json({
+    success: true,
+    data: {
+      customSettings: prefs?.customSettings ?? {},
+      personalTipMemo: prefs?.personalTipMemo ?? '',
+    },
+  });
 }

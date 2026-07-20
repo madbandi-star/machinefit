@@ -1,4 +1,5 @@
 export const WORKOUT_DIARY_MAX_BYTES = 100;
+export const MACHINE_PERSONAL_TIP_MAX_BYTES = 500;
 
 export function getUtf8ByteLength(value: string): number {
   return new TextEncoder().encode(value).length;
