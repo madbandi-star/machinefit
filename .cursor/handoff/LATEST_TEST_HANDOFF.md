@@ -6,28 +6,21 @@
 
 ## Summary
 
-타겟 근육 그룹에 **이두(biceps)·삼두(triceps)** 추가.
+세트 사이 **음성 카운트** 추가: `띠띠띠 → 5 4 3 2 1 → 시작! → 하나 둘 …` + 선택 **하나더(원모어)**.
 
 ## as-is → to-be
 
-- **as-is:** 등 · 가슴 · 하체 · 어깨
-- **to-be:** 등 · 가슴 · 하체 · 어깨 · **이두 · 삼두**
-
-## Changed files
-
-- `shared/src/constants/workout-goals.ts`
-- `shared/src/utils/recommendation-personalization.ts`
-- `frontend/src/constants/muscle-groups.ts`
-- `frontend/src/i18n/locales/ko/machines.json`, `en/machines.json`
-- `frontend/src/components/muscle/MuscleGroupIcon/*` (이두/삼두 아이콘 폴백)
-- `backend/server/services/workout-report.service.ts`
-- `database/migrations/028_biceps_triceps_target_muscle.sql`
+- **as-is:** 휴식 타이머만 있고 음성 안내 없음
+- **to-be:** 트레이너 페이스 음성 카운트 + 원모어 옵션 + 휴식 후 자동 시작
 
 ## Test focus
 
-1. 머신 검색 필터·프리웨이트 부위 선택에 이두/삼두 표시
-2. `npm run typecheck` / frontend build 통과
-3. (배포 후) DB `npm run db:migrate`로 028 적용
+1. 운동 기록 패널에 **음성 카운트** UI
+2. **카운트 시작** → 비프 → 카운트다운 → 시작 → 한글 횟수
+3. **하나더** 켜면 목표 횟수 후 `하나더!` 반복 (중지 버튼으로 종료)
+4. **휴식 후 자동 시작** 옵션
+5. 설정 페이지에서 기본값 저장
+6. `npm run typecheck` / `npm run build:frontend`
 
 ## Fast checks
 
@@ -35,7 +28,6 @@
 npm run test:smoke:changed
 ```
 
-## Production
+## Notes
 
-- Frontend: GitHub Pages 배포 후 UI 확인
-- DB: `npm run db:migrate` (Supabase)
+- 모바일: 세트 완료 또는 시작 버튼을 한 번 눌러야 브라우저 오디오가 잠금 해제됩니다.

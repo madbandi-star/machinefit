@@ -9,17 +9,27 @@ import {
 
 type Theme = 'light' | 'dark';
 
+const DEFAULT_VOICE_COACH_REPS = 12;
+
 interface SettingsState {
   locale: Locale;
   unitHeight: 'cm' | 'ft_in';
   unitWeight: 'kg' | 'lb';
   theme: Theme;
   timezone: string;
+  voiceCoachEnabled: boolean;
+  voiceCoachTargetReps: number;
+  voiceCoachOneMore: boolean;
+  voiceCoachAutoAfterRest: boolean;
   setLocale: (locale: Locale) => void;
   setUnitHeight: (unit: 'cm' | 'ft_in') => void;
   setUnitWeight: (unit: 'kg' | 'lb') => void;
   setTheme: (theme: Theme) => void;
   setTimezone: (tz: string) => void;
+  setVoiceCoachEnabled: (enabled: boolean) => void;
+  setVoiceCoachTargetReps: (reps: number) => void;
+  setVoiceCoachOneMore: (enabled: boolean) => void;
+  setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -30,11 +40,19 @@ export const useSettingsStore = create<SettingsState>()(
       unitWeight: DEFAULT_UNIT_WEIGHT,
       theme: 'dark',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      voiceCoachEnabled: true,
+      voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
+      voiceCoachOneMore: true,
+      voiceCoachAutoAfterRest: true,
       setLocale: (locale) => set({ locale }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),
       setUnitWeight: (unitWeight) => set({ unitWeight }),
       setTheme: (theme) => set({ theme }),
       setTimezone: (timezone) => set({ timezone }),
+      setVoiceCoachEnabled: (voiceCoachEnabled) => set({ voiceCoachEnabled }),
+      setVoiceCoachTargetReps: (voiceCoachTargetReps) => set({ voiceCoachTargetReps }),
+      setVoiceCoachOneMore: (voiceCoachOneMore) => set({ voiceCoachOneMore }),
+      setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
     }),
     { name: 'machinefit-settings' }
   )

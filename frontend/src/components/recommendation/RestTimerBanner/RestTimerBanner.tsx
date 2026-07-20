@@ -6,6 +6,8 @@ interface RestTimerBannerProps {
   seconds: number;
   setNumber: number;
   onDismiss: () => void;
+  /** Fired when rest finishes (timer → 0) or user skips early — next set ready. */
+  onReadyForNextSet?: () => void;
 }
 
 function formatCountdown(totalSeconds: number): string {
@@ -27,10 +29,17 @@ async function notifyRestComplete(title: string, body: string): Promise<void> {
   }
 }
 
-export function RestTimerBanner({ seconds, setNumber, onDismiss }: RestTimerBannerProps) {
+export function RestTimerBanner({
+  seconds,
+  setNumber,
+  onDismiss,
+  onReadyForNextSet,
+}: RestTimerBannerProps) {
   const { t } = useTranslation('machines');
   const [remaining, setRemaining] = useState(seconds);
   const completedRef = useRef(false);
+  const onReadyRef = useRef(onReadyForNextSet);
+  onReadyRef.current = onReadyForNextSet;
 
   useEffect(() => {
     setRemaining(seconds);
@@ -45,6 +54,7 @@ export function RestTimerBanner({ seconds, setNumber, onDismiss }: RestTimerBann
           t('restTimer.notificationTitle'),
           t('restTimer.notificationBody', { setNumber })
         );
+        onReadyRef.current?.();
       }
       return undefined;
     }
@@ -56,6 +66,14 @@ export function RestTimerBanner({ seconds, setNumber, onDismiss }: RestTimerBann
     return () => window.clearInterval(timer);
   }, [remaining, setNumber, t]);
 
+  const handleDismiss = () => {
+    if (remaining > 0 && !completedRef.current) {
+      completedRef.current = true;
+      onReadyRef.current?.();
+    }
+    onDismiss();
+  };
+
   return (
     <div className="rest-timer-banner" role="status" aria-live="polite">
       <div className="rest-timer-banner__content">
@@ -64,7 +82,7 @@ export function RestTimerBanner({ seconds, setNumber, onDismiss }: RestTimerBann
         </span>
         <strong className="rest-timer-banner__time">{formatCountdown(remaining)}</strong>
       </div>
-      <button type="button" className="btn btn--secondary rest-timer-banner__dismiss" onClick={onDismiss}>
+      <button type="button" className="btn btn--secondary rest-timer-banner__dismiss" onClick={handleDismiss}>
         {remaining <= 0 ? t('restTimer.done') : t('restTimer.skip')}
       </button>
     </div>

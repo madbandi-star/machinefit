@@ -157,7 +157,13 @@
     "language": "Language",
     "theme": "Theme",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "voiceCoach": "Voice count",
+    "voiceCoachDesc": "Spoken countdown and reps between sets. You can also adjust this on the workout log screen.",
+    "voiceCoachEnable": "Enable voice count",
+    "voiceCoachOneMore": "Count one more",
+    "voiceCoachAutoAfterRest": "Auto-start after rest",
+    "voiceCoachTargetReps": "Default target reps"
   },
   "pages": {
     "home": {
