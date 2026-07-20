@@ -9,6 +9,7 @@ import type {
 } from '@machinefit/shared';
 import {
   computeDailyInsightMetrics,
+  genderWeightFactor,
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
@@ -178,7 +179,6 @@ function buildCoaching(
 }
 
 function computeBodyBasedReferenceWeight(user: User & { weightKg: number; gender: Gender }): number {
-  const genderFactor = user.gender === 'female' ? 0.65 : 1;
   const experienceFactor =
     {
       beginner: 0.78,
@@ -187,7 +187,11 @@ function computeBodyBasedReferenceWeight(user: User & { weightKg: number; gender
       professional: 1.32,
     }[user.experienceLevel ?? 'intermediate'] ?? 1;
 
-  return Math.round(user.weightKg * 0.45 * genderFactor * experienceFactor * 10) / 10;
+  return (
+    Math.round(
+      user.weightKg * 0.45 * genderWeightFactor(user.gender) * experienceFactor * 10
+    ) / 10
+  );
 }
 
 function hasBodyProfile(

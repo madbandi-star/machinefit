@@ -86,7 +86,6 @@ function computeUserMetrics(logs: WorkoutLog[]) {
 }
 
 function computeBodyBasedReferenceWeight(input: RecommendationInput): number {
-  const genderFactor = input.gender === 'female' ? 0.65 : 1;
   const experienceFactor =
     {
       beginner: 0.78,
@@ -95,7 +94,8 @@ function computeBodyBasedReferenceWeight(input: RecommendationInput): number {
       professional: 1.32,
     }[input.experienceLevel] ?? 1;
 
-  return roundKg(input.weightKg * 0.45 * genderFactor * experienceFactor);
+  // Gender is applied once in applyPersonalizationToWeight (cold-start final step).
+  return roundKg(input.weightKg * 0.45 * experienceFactor);
 }
 
 function computeProfileFormula(input: RecommendationInput): number {
