@@ -58,8 +58,7 @@
     "duplicate": "오늘 같은 부위 추천이 이미 있어요. 기록에서 확인하거나, 다른 부위를 골라 주세요.",
     "duplicateMachine": "오늘 이 기구 추천이 이미 있어요. 기록에서 이어서 확인하세요.",
     "findGyms": "이 기구 있는 헬스장",
-    "moreActions": "추가 작업",
-    "romDetailAdjustHint": "⬆️클릭 시, 상세조정으로 이동."
+    "moreActions": "추가 작업"
   },
   "workoutLog": {
     "title": "수행 기록",

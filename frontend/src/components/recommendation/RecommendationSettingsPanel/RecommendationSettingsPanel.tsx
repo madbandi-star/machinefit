@@ -56,8 +56,6 @@ interface RecommendationSettingsPanelProps {
   ) => void;
   onSavePreferences?: () => void;
   isPreferencesPending?: boolean;
-  /** Show detail-adjust hint on the ROM tile (history cards). */
-  showDetailAdjustNavHint?: boolean;
 }
 
 function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
@@ -241,7 +239,6 @@ export function RecommendationSettingsPanel({
   onCustomChange,
   onSavePreferences,
   isPreferencesPending = false,
-  showDetailAdjustNavHint = false,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
@@ -383,11 +380,6 @@ export function RecommendationSettingsPanel({
               );
             })}
           </div>
-          {showDetailAdjustNavHint && items.some((item) => item.key === 'romSetting') ? (
-            <p className="history-mini-setting__nav-hint" aria-hidden="true">
-              {t('machines:recommendation.romDetailAdjustHint')}
-            </p>
-          ) : null}
           {saveFooter}
         </div>
         {basisDialog}

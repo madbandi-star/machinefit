@@ -262,7 +262,6 @@ export function HistoryRecordCard({
               showAdjustment={showSettingsCompare}
               adjustmentReadOnly
               customSettings={showSettingsCompare ? customSettings : undefined}
-              showDetailAdjustNavHint
             />
           </Link>
         </div>

@@ -58,8 +58,7 @@
     "duplicate": "You already have a recommendation for this muscle today. Check Records, or pick another muscle.",
     "duplicateMachine": "You already have a recommendation for this machine today. Open it from Records.",
     "findGyms": "Find Gyms with This Machine",
-    "moreActions": "More actions",
-    "romDetailAdjustHint": "⬆️Tap to open detail adjustment."
+    "moreActions": "More actions"
   },
   "workoutLog": {
     "title": "Workout log",
