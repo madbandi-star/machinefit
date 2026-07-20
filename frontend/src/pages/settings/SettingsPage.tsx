@@ -11,6 +11,7 @@ import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymFi
 import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
+import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
@@ -176,6 +177,12 @@ export function SettingsPage() {
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.weightDifficulty')}</h3>
+          <p className="form-section__desc">{t('settings.weightDifficultyDesc')}</p>
+          <WeightDifficultySlider />
         </section>
 
         <section className="form-section">

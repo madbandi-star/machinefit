@@ -25,7 +25,7 @@ function buildProfileInput(
   targetMuscleGroup?: TargetMuscleGroup
 ): RecommendationInput | null {
   const user = useAuthStore.getState().user;
-  const { unitHeight, unitWeight } = useSettingsStore.getState();
+  const { unitHeight, unitWeight, weightDifficulty } = useSettingsStore.getState();
 
   const heightCm = user?.heightCm;
   const weightKg = user?.weightKg;
@@ -50,6 +50,7 @@ function buildProfileInput(
     experienceLevel,
     unitHeight,
     unitWeight,
+    weightDifficulty,
     ...(user.age != null ? { age: user.age } : {}),
     ...(user.workoutGoal ? { workoutGoal: user.workoutGoal } : {}),
     ...(targetMuscleGroup ? { targetMuscleGroup } : {}),

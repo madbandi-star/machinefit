@@ -1,7 +1,8 @@
 import type { ExperienceLevel, Gender } from '../types/api.types.js';
 import type { WorkoutGoal, TargetMuscleGroup } from '../constants/workout-goals.js';
+import { clampWeightDifficulty } from '../constants/weight-difficulty.js';
 import type { RecommendationSettings } from '../types/recommendation.types.js';
-import { roundRecommendWeightKg } from './recommend-weight.js';
+import { applyWeightDifficultyMultiplier, roundRecommendWeightKg } from './recommend-weight.js';
 
 /**
  * Evidence-informed loading & rep prescription.
@@ -269,6 +270,15 @@ export function applyPersonalizationToWeight(
   }
 
   return roundRecommendWeightKg(value);
+}
+
+/** Apply user weight-difficulty preference on top of algorithm output. */
+export function applyWeightDifficultyToRecommendation(
+  weightKg: number | undefined,
+  weightDifficulty?: number
+): number | undefined {
+  const multiplier = clampWeightDifficulty(weightDifficulty ?? 1);
+  return applyWeightDifficultyMultiplier(weightKg, multiplier);
 }
 
 export function mergeSettingsWithPreferences(

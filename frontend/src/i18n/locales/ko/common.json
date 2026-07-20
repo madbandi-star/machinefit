@@ -170,7 +170,15 @@
     "voiceCoachTargetReps": "기본 목표 횟수",
     "voiceCoachCountInterval": "카운트 간격",
     "voiceCoachCountIntervalUnit": "초",
-    "voiceRestTips": "휴식 중 주의사항·운동팁 음성"
+    "voiceRestTips": "휴식 중 주의사항·운동팁 음성",
+    "weightDifficulty": "중량 난이도",
+    "weightDifficultyDesc": "추천 중량의 가벼움·무거움을 조절합니다. 기본값은 알고리즘 추천 그대로입니다.",
+    "weightDifficultyLight": "0.1 (가볍게)",
+    "weightDifficultyDefault": "1 (기본)",
+    "weightDifficultyHeavy": "2 (무겁게)",
+    "weightDifficultyReset": "기본값",
+    "weightDifficultyHintDefault": "알고리즘 추천 중량을 그대로 사용합니다.",
+    "weightDifficultyHintScaled": "추천 중량의 {{percent}}로 계산합니다."
   },
   "pages": {
     "home": {

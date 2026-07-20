@@ -1,6 +1,7 @@
 import type { RecommendationInput } from '@machinefit/shared';
 import {
   applyPersonalizationToWeight,
+  applyWeightDifficultyToRecommendation,
   buildPersonalizedTips,
   DEFAULT_ROM_SETTING,
   isFreeWeightMachineCode,
@@ -99,7 +100,7 @@ export const recommendationService = {
       weightBasis.primarySourceId === 'progressiveTarget' ||
       weightBasis.primarySourceId === 'growthNextTarget';
 
-    const personalizedWeight = fromUserHistory
+    const afterPersonalization = fromUserHistory
       ? recommendedWeightKg
       : applyPersonalizationToWeight(recommendedWeightKg, {
           gender: input.gender,
@@ -108,6 +109,11 @@ export const recommendationService = {
           age: input.age,
           targetMuscleGroup: input.targetMuscleGroup,
         });
+
+    const personalizedWeight = applyWeightDifficultyToRecommendation(
+      afterPersonalization,
+      input.weightDifficulty
+    );
 
     const savedPreferences =
       userId != null

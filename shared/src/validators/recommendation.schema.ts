@@ -18,6 +18,7 @@ export const recommendationSchema = z.object({
   targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
   age: z.number().int().min(13).max(100).optional(),
   workoutGoal: z.enum(WORKOUT_GOALS).optional(),
+  weightDifficulty: z.number().min(0.1).max(2).optional(),
 });
 
 export type RecommendationInputSchema = z.infer<typeof recommendationSchema>;

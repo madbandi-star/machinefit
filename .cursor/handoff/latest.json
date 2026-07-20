@@ -1,8 +1,7 @@
 {
-  "branch": "cursor/experience-goal-recommend-weight-reps-35b3",
-  "topic": "experience-goal-recommend-weight-reps",
+  "branch": "cursor/gender-recommend-weight-35b3",
+  "topic": "gender-recommend-weight",
   "frontendOnly": false,
   "backendDeployNeeded": true,
-  "evidence": ["ACSM 2009 Position Stand", "Schoenfeld hypertrophy metas", "NSCA Essentials"],
   "typecheck": "passed"
 }
