@@ -1,21 +1,21 @@
 # Latest test handoff
 
-> 프로그램테스트 에이전트: 이 파일 + `latest.json`을 먼저 읽으세요.  
-> Agent URL: https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3  
-> Agent name: **프로그램수정**
+> 프로그램테스트 에이전트: 이 파일 + `latest.json`을 먼저 읽으세요.
 
 ## Summary
 
-음성 카운트 **횟수 사이 간격**을 사용자가 설정 (0.8–3.0초, 기본 1.4초).
+보고된 버그 일괄 수정 (포커스, 부위 중량, 휴식 TTS, 세트 완료 검증, 세팅 저장, 로케일 이름, Zod 400 등).
 
 ## Test focus
 
-1. 설정 → 음성 카운트 → 카운트 간격 ±
-2. 운동 기록 패널 음성 카운트에서도 동일 조절
-3. 간격 변경 후 카운트 시작 시 템포 반영
-4. typecheck
+1. FW 중복 추천 → 기록 카드 포커스
+2. 부위 없이 히스토리 세트 완료 차단
+3. 휴식 후 음성 카운트 유지
+4. 홈 최근 FW 부위별 카드
+5. 부위별 추천 중량 / 진행형 배율
+6. typecheck
 
 ## After merge
 
 - GitHub Pages 자동 배포
-- Render Manual Deploy **불필요** (frontend-only)
+- **Render Manual Deploy 필요**

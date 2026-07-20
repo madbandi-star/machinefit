@@ -1,52 +1,50 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T04:35:00Z",
-  "title": "Voice count interval setting",
-  "summary": "음성 카운트 횟수 사이 간격을 사용자가 0.8–3.0초(기본 1.4초)로 설정. 설정 화면·운동 기록 패널 모두 지원.",
+  "updatedAt": "2026-07-20T05:30:00Z",
+  "title": "Fix reported bugs batch",
+  "summary": "보고된 버그 일괄 수정: FW 포커스/부위 중량/휴식TTS/기록 완료검증/세팅 저장/이름 로케일/Zod 400 등.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3",
   "programTestAgentName": "프로그램수정",
   "git": {
-    "branch": "cursor/voice-count-interval-setting-35b3",
-    "commit": "a54704e",
+    "branch": "cursor/fix-reported-bugs-batch-35b3",
+    "commit": "d80160d",
     "pr": null,
     "base": "main"
   },
   "changedFiles": [
-    "frontend/src/utils/voiceCoach.ts",
-    "frontend/src/store/settings.store.ts",
-    "frontend/src/hooks/useVoiceCoachSession.ts",
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "backend/server/**",
+    "frontend/src/**",
+    "database/seeds/machines.sql"
   ],
   "testFocus": [
-    "설정 → 음성 카운트 → 카운트 간격 ± 조절 (0.8~3.0초)",
-    "운동 기록 패널에서도 동일 간격 조절",
-    "간격 짧게/길게 바꾼 뒤 카운트 시작 시 템포 반영",
+    "프리웨이트 중복 추천 → 기록 카드 스크롤/하이라이트",
+    "부위 없이 히스토리 세트 완료 시 UI만 바뀌지 않음",
+    "휴식 후 음성 카운트가 팁 TTS에 끊기지 않음",
+    "홈 최근: 덤벨 이두/가슴 각각 표시",
+    "덤벨 부위별 추천 중량이 섞이지 않음",
+    "진행형 중량에 이두 0.88 배율이 다시 안 곱해짐",
+    "빈 set_completed가 전부 미완료로 표시",
+    "추천 재조회 시 merge된 시트/팁 유지",
     "typecheck"
   ],
   "fastChecks": [
     {
-      "id": "rep-gap-const",
+      "id": "focus-helper",
       "type": "file_contains",
-      "path": "frontend/src/utils/voiceCoach.ts",
-      "pattern": "VOICE_COACH_REP_GAP"
+      "path": "frontend/src/utils/historyRecordsDisplay.ts",
+      "pattern": "historyCardMatchesFocus"
     },
     {
-      "id": "settings-field",
+      "id": "muscle-weight-scope",
       "type": "file_contains",
-      "path": "frontend/src/store/settings.store.ts",
-      "pattern": "voiceCoachRepGapMs"
+      "path": "backend/server/services/recommendation-weight.service.ts",
+      "pattern": "targetMuscleKey"
     },
     {
-      "id": "ko-i18n",
+      "id": "zod-400",
       "type": "file_contains",
-      "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "\"countInterval\": \"카운트 간격\""
+      "path": "backend/server/middlewares/error.middleware.ts",
+      "pattern": "ZodError"
     },
     {
       "id": "typecheck",
@@ -56,9 +54,9 @@
   ],
   "productionChecks": [
     {
-      "id": "pages-only",
+      "id": "render-redeploy",
       "type": "note",
-      "detail": "Frontend-only — GitHub Pages deploy; no Render Manual Deploy needed"
+      "detail": "Backend/shared changed — Manual Deploy on Render after merge"
     }
   ],
   "deploy": {
@@ -66,6 +64,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "Rep count gap fixed at 1400ms.",
-  "toBe": "User sets count interval 0.8–3.0s (default 1.4s) in settings and workout panel."
+  "asIs": "Multiple free-weight / voice / history / recommendation bugs.",
+  "toBe": "Reported bugs fixed with typecheck green."
 }
