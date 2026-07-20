@@ -7,7 +7,7 @@
   "allMachines": "All machines",
   "nearMe": "Near me",
   "locating": "Getting location...",
-  "locationError": "Could not get your location",
+  "locationError": "We couldn't get your location. Check that location access is allowed.",
   "noResults": "No gyms found. Try adjusting your filters.",
   "machineInventory": "Machine Inventory",
   "businessHours": "Business Hours",

@@ -7,7 +7,7 @@
   "allMachines": "전체 머신",
   "nearMe": "내 주변",
   "locating": "위치 확인 중...",
-  "locationError": "위치를 가져올 수 없습니다",
+  "locationError": "위치를 확인하지 못했어요. 권한을 허용했는지 봐 주세요.",
   "noResults": "체육관을 찾을 수 없습니다. 필터를 조정해 보세요.",
   "machineInventory": "머신 목록",
   "businessHours": "운영 시간",

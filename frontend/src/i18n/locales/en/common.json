@@ -54,17 +54,17 @@
     "title": "MachineFit",
     "text": "MachineFit — personalized gym machine settings for enthusiasts",
     "action": "Share app",
-    "copied": "Link copied to clipboard."
+    "copied": "Link copied. Share it with a friend!"
   },
   "errors": {
-    "loadFailed": "Failed to load data. Please try again.",
-    "notFound": "Not found.",
-    "submitFailed": "Request failed. Please try again."
+    "loadFailed": "We couldn't load that. Please try again in a moment.",
+    "notFound": "We couldn't find that.",
+    "submitFailed": "We couldn't complete that. Please try again in a moment."
   },
   "auth": {
-    "welcomeBack": "Welcome back!",
-    "invalidCredentials": "Invalid email or password",
-    "accountCreated": "Account created!",
+    "welcomeBack": "Welcome back — good to see you!",
+    "invalidCredentials": "Please check your email or password and try again.",
+    "accountCreated": "You're in! Welcome to MachineFit.",
     "registrationFailed": "Registration failed",
     "registrationFailedTitle": "Registration failed",
     "emailExists": "This email is already registered.",
@@ -74,7 +74,7 @@
     "displayNameMin": "Display name must be at least 2 characters",
     "rememberLogin": "Remember login",
     "autoLoggingIn": "Signing in automatically...",
-    "autoLoginFailed": "Auto login failed. Please sign in again.",
+    "autoLoginFailed": "We couldn't sign you in automatically. Please log in again.",
     "emailPlaceholder": "Email",
     "emailLabel": "Email",
     "emailLocalPlaceholder": "Username",
@@ -123,9 +123,9 @@
     "homeGymUseTyped": "Use \"{{name}}\" as your gym",
     "profileExtras": "Gym & goals",
     "profileExtrasDesc": "Your workout goal and home gym help personalize recommendations.",
-    "profileSaved": "Profile saved.",
-    "profileRequiredForRecommend": "Height and weight are required. Please enter your body metrics in Settings.",
-    "genderRequiredForRecommend": "Gender is required. Please select your gender in Settings.",
+    "profileSaved": "Your profile is saved.",
+    "profileRequiredForRecommend": "We need your height and weight for recommendations. Add them in Settings.",
+    "genderRequiredForRecommend": "We need your gender for recommendations. Choose it in Settings.",
     "gender": "Gender",
     "genders": {
       "male": "Male",
@@ -133,7 +133,7 @@
     },
     "genderUnset": "Gender not set",
     "genderRequired": "Please select your gender.",
-    "registerMissingFields": "Please fill in the following: {{fields}}",
+    "registerMissingFields": "Please fill in: {{fields}}",
     "registerFieldLabels": {
       "displayName": "Display name",
       "email": "Email",
@@ -580,24 +580,24 @@
     },
     "send": "Send report to my email",
     "sending": "Sending…",
-    "sent": "Report sent to your email.",
-    "failed": "Could not send the report. Please try again.",
+    "sent": "Your workout report was emailed.",
+    "failed": "We couldn't send the report. Please try again in a moment.",
     "emailRequired": "An email address is required on your account to send reports.",
     "openMailApp": "Open in mail app",
     "viewReport": "MachineFit report",
     "actionsLabel": "More report actions",
     "copyReport": "Copy report text",
-    "copied": "Report copied to clipboard."
+    "copied": "Report copied. Paste it wherever you like."
   },
   "pwa": {
     "installTitle": "Install the app",
     "installHint": "Add to your home screen for faster access at the gym.",
     "installAction": "Install",
     "addToHome": "Add to Home",
-    "installSuccess": "Added to your home screen.",
-    "iosInstallHint": "Tap Share in Safari, then choose \"Add to Home Screen\".",
-    "chromeInstallHint": "Use the install icon in the address bar or Menu (⋮) → \"Install MachineFit\".",
-    "chromeMobileInstallHint": "Open Chrome Menu (⋮) → \"Install app\" or \"Add to Home screen\"."
+    "installSuccess": "Added to your home screen — open it even faster next time.",
+    "iosInstallHint": "In Safari, tap Share (↑), then “Add to Home Screen”.",
+    "chromeInstallHint": "Use the install icon in the address bar, or Menu (⋮) → “Install MachineFit”.",
+    "chromeMobileInstallHint": "In Chrome, open Menu (⋮) → “Install app” or “Add to Home screen”."
   },
   "pro": {
     "badge": "Pro",

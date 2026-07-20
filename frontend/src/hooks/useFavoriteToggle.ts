@@ -73,7 +73,9 @@ export function useFavoriteToggle({
       setIsFavorited(data.favorited);
       setFavoriteId(data.favoriteId);
       showToast(
-        data.favorited ? t('common:actions.save') : t('machines:recommendation.removedFavorite'),
+        data.favorited
+          ? t('machines:recommendation.savedFavorite')
+          : t('machines:recommendation.removedFavorite'),
         'success'
       );
     },

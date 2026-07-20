@@ -12,13 +12,13 @@
   "postContent": "Content",
   "submit": "Submit",
   "cancel": "Cancel",
-  "loginRequired": "Please log in to continue",
+  "loginRequired": "Please sign in to continue.",
   "like": "Like",
   "comment": "Comment",
   "comments": "Comments",
   "writeComment": "Write a comment…",
   "deletePost": "Delete",
-  "deleteSuccess": "Post deleted.",
+  "deleteSuccess": "The post was deleted.",
   "confirmDelete": "Delete this post?",
   "brandName": "Brand (optional)",
   "machineName": "Machine name",
@@ -41,7 +41,7 @@
   "applyOwner": "Become a Gym Owner",
   "applyOwnerDesc": "Register your gym and manage machine inventory",
   "businessName": "Business name",
-  "ownerApproved": "Owner access granted!",
-  "createSuccess": "Created successfully",
-  "errorGeneric": "Something went wrong"
+  "ownerApproved": "Owner access is ready!",
+  "createSuccess": "Saved successfully.",
+  "errorGeneric": "Something went wrong. Please try again."
 }

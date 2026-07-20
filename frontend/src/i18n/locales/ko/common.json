@@ -54,17 +54,17 @@
     "title": "MachineFit",
     "text": "헬스머신 마니아를 위한 맞춤 세팅 앱 MachineFit",
     "action": "앱 공유하기",
-    "copied": "공유 링크를 복사했습니다."
+    "copied": "공유 링크를 복사했어요. 친구에게 보내 보세요."
   },
   "errors": {
-    "loadFailed": "데이터를 불러오지 못했습니다. 다시 시도해 주세요.",
-    "notFound": "찾을 수 없습니다.",
-    "submitFailed": "요청에 실패했습니다. 다시 시도해 주세요."
+    "loadFailed": "불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
+    "notFound": "찾을 수 없어요.",
+    "submitFailed": "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요."
   },
   "auth": {
-    "welcomeBack": "다시 오신 것을 환영합니다!",
-    "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다",
-    "accountCreated": "계정이 생성되었습니다!",
+    "welcomeBack": "다시 오신 걸 환영해요!",
+    "invalidCredentials": "이메일 또는 비밀번호를 다시 확인해 주세요.",
+    "accountCreated": "가입이 완료됐어요. MachineFit과 함께해요!",
     "registrationFailed": "회원가입에 실패했습니다",
     "registrationFailedTitle": "회원가입 실패",
     "emailExists": "이미 등록된 이메일입니다.",
@@ -74,7 +74,7 @@
     "displayNameMin": "표시 이름은 2자 이상이어야 합니다",
     "rememberLogin": "로그인 정보 저장",
     "autoLoggingIn": "자동 로그인 중...",
-    "autoLoginFailed": "자동 로그인에 실패했습니다. 다시 로그인해 주세요.",
+    "autoLoginFailed": "자동 로그인에 실패했어요. 다시 로그인해 주세요.",
     "emailPlaceholder": "이메일",
     "emailLabel": "이메일",
     "emailLocalPlaceholder": "아이디",
@@ -123,9 +123,9 @@
     "homeGymUseTyped": "\"{{name}}\"(으)로 저장",
     "profileExtras": "헬스장 · 목표",
     "profileExtrasDesc": "운동 목표와 헬스장 정보로 추천을 맞춤화합니다.",
-    "profileSaved": "프로필이 저장되었습니다.",
-    "profileRequiredForRecommend": "키와 몸무게 정보가 필요합니다. 설정에서 신체 정보를 입력해 주세요.",
-    "genderRequiredForRecommend": "성별이 필요합니다. 설정에서 성별을 선택해 주세요.",
+    "profileSaved": "프로필을 저장했어요.",
+    "profileRequiredForRecommend": "맞춤 추천을 위해 키·몸무게가 필요해요. 설정에서 입력해 주세요.",
+    "genderRequiredForRecommend": "맞춤 추천을 위해 성별이 필요해요. 설정에서 선택해 주세요.",
     "gender": "성별",
     "genders": {
       "male": "남",
@@ -133,7 +133,7 @@
     },
     "genderUnset": "성별 미설정",
     "genderRequired": "성별을 선택해 주세요.",
-    "registerMissingFields": "다음 항목을 입력해 주세요: {{fields}}",
+    "registerMissingFields": "이 항목을 채워 주세요: {{fields}}",
     "registerFieldLabels": {
       "displayName": "표시 이름",
       "email": "이메일",
@@ -580,24 +580,24 @@
     },
     "send": "내 이메일로 리포트 보내기",
     "sending": "전송 중…",
-    "sent": "리포트가 이메일로 전송되었습니다.",
-    "failed": "리포트 전송에 실패했습니다. 다시 시도해 주세요.",
+    "sent": "운동 리포트를 이메일로 보냈어요.",
+    "failed": "리포트를 보내지 못했어요. 잠시 후 다시 시도해 주세요.",
     "emailRequired": "이메일이 등록된 계정에서만 리포트를 보낼 수 있습니다.",
     "openMailApp": "메일 앱으로 보내기",
     "viewReport": "머신핏운동보고서",
     "actionsLabel": "리포트 추가 작업",
     "copyReport": "리포트 텍스트 복사",
-    "copied": "리포트가 클립보드에 복사되었습니다."
+    "copied": "리포트를 복사했어요. 원하는 곳에 붙여넣기 하세요."
   },
   "pwa": {
     "installTitle": "앱으로 설치하기",
     "installHint": "홈 화면에 추가하면 헬스장에서 더 빠르게 열 수 있습니다.",
     "installAction": "설치",
     "addToHome": "홈에 추가",
-    "installSuccess": "홈 화면에 추가되었습니다.",
-    "iosInstallHint": "Safari 공유 버튼(↑) → '홈 화면에 추가'를 선택하세요.",
-    "chromeInstallHint": "주소창 오른쪽 설치 아이콘 또는 메뉴(⋮) → 'MachineFit 설치'를 선택하세요.",
-    "chromeMobileInstallHint": "Chrome 메뉴(⋮) → '앱 설치' 또는 '홈 화면에 추가'를 선택하세요."
+    "installSuccess": "홈 화면에 추가했어요. 이제 더 빨리 열 수 있어요.",
+    "iosInstallHint": "Safari 공유(↑) → '홈 화면에 추가'를 눌러 주세요.",
+    "chromeInstallHint": "주소창 설치 아이콘 또는 메뉴(⋮) → 'MachineFit 설치'를 선택해 주세요.",
+    "chromeMobileInstallHint": "Chrome 메뉴(⋮) → '앱 설치' 또는 '홈 화면에 추가'를 선택해 주세요."
   },
   "pro": {
     "badge": "Pro",

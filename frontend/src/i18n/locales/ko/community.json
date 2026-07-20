@@ -12,13 +12,13 @@
   "postContent": "내용",
   "submit": "등록",
   "cancel": "취소",
-  "loginRequired": "로그인이 필요합니다",
+  "loginRequired": "이 기능을 쓰려면 로그인해 주세요.",
   "like": "좋아요",
   "comment": "댓글",
   "comments": "댓글",
   "writeComment": "댓글을 입력하세요…",
   "deletePost": "삭제",
-  "deleteSuccess": "게시글이 삭제되었습니다.",
+  "deleteSuccess": "게시글을 삭제했어요.",
   "confirmDelete": "이 게시글을 삭제할까요?",
   "brandName": "브랜드 (선택)",
   "machineName": "기구명",
@@ -41,7 +41,7 @@
   "applyOwner": "헬스장 사장님 되기",
   "applyOwnerDesc": "헬스장을 등록하고 기구를 관리하세요",
   "businessName": "사업자명",
-  "ownerApproved": "사장님 권한이 부여되었습니다!",
-  "createSuccess": "등록되었습니다",
-  "errorGeneric": "오류가 발생했습니다"
+  "ownerApproved": "사장님 권한이 준비됐어요!",
+  "createSuccess": "등록했어요.",
+  "errorGeneric": "잠시 문제가 생겼어요. 다시 시도해 주세요."
 }
