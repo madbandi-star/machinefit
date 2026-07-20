@@ -4,6 +4,7 @@ import {
   buildPersonalizedTips,
   DEFAULT_ROM_SETTING,
   mergeSettingsWithPreferences,
+  recommendRepsForGoal,
 } from '@machinefit/shared';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
@@ -77,6 +78,8 @@ export const recommendationService = {
         ? await preferenceRepository.findByUserMachine(userId, machineId)
         : null;
 
+    const recommendedReps = recommendRepsForGoal(input.workoutGoal);
+
     const baseSettings = {
       seatPosition: match?.seatPosition,
       backPadPosition: match?.backPadPosition,
@@ -84,6 +87,8 @@ export const recommendationService = {
       handlePosition: match?.handlePosition,
       romSetting: match?.romSetting ?? DEFAULT_ROM_SETTING,
       recommendedWeightKg: personalizedWeight,
+      recommendedRepsMin: recommendedReps.min,
+      recommendedRepsMax: recommendedReps.max,
     };
 
     const settings = mergeSettingsWithPreferences(baseSettings, savedPreferences?.customSettings ?? null);
@@ -95,7 +100,12 @@ export const recommendationService = {
       match,
       settings.recommendedWeightKg,
       weightBasis,
-      userId
+      userId,
+      undefined,
+      {
+        min: settings.recommendedRepsMin ?? recommendedReps.min,
+        max: settings.recommendedRepsMax ?? recommendedReps.max,
+      }
     );
 
     const youtubeVideos = await recommendationRepository.findYoutubeVideos(machineId);

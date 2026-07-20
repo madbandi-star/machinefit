@@ -57,6 +57,25 @@ const GOAL_TIPS_EN: Record<WorkoutGoal, string> = {
   posture: 'Goal: posture — ROM and alignment over load.',
 };
 
+/** Recommended working-rep range by training goal (trainer defaults). */
+export function recommendRepsForGoal(goal?: WorkoutGoal): { min: number; max: number } {
+  switch (goal) {
+    case 'strength':
+      return { min: 3, max: 6 };
+    case 'diet':
+      return { min: 10, max: 15 };
+    case 'conditioning':
+      return { min: 12, max: 15 };
+    case 'rehab':
+      return { min: 12, max: 15 };
+    case 'posture':
+      return { min: 10, max: 12 };
+    case 'hypertrophy':
+    default:
+      return { min: 8, max: 12 };
+  }
+}
+
 /** Age factor vs reference age 30 (13–100). */
 export function ageWeightFactor(age?: number): number {
   if (age == null || age < 13) return 1;
@@ -104,6 +123,8 @@ export function mergeSettingsWithPreferences(
       preferences.recommendedWeightKg != null
         ? preferences.recommendedWeightKg
         : base.recommendedWeightKg,
+    recommendedRepsMin: preferences.recommendedRepsMin ?? base.recommendedRepsMin,
+    recommendedRepsMax: preferences.recommendedRepsMax ?? base.recommendedRepsMax,
   };
 }
 

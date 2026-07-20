@@ -209,7 +209,9 @@
     "foot": "발 위치",
     "handle": "핸들 위치",
     "rom": "가동 범위",
-    "weight": "추천 중량"
+    "weight": "추천 중량",
+    "reps": "추천 횟수",
+    "repsUnit": "회"
   },
   "weightBasis": {
     "label": "계산근거",

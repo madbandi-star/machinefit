@@ -36,6 +36,8 @@ interface RecommendationRow {
   handle_position: number | null;
   rom_setting: string | null;
   recommended_weight_kg: string | null;
+  recommended_reps_min: number | null;
+  recommended_reps_max: number | null;
   tips: Record<string, string[]> | null;
   warnings: Record<string, string[]> | null;
   weight_basis: WeightRecommendationBasis | null;
@@ -112,7 +114,8 @@ export const recommendationRepository = {
     recommendedWeightKg: number | undefined,
     weightBasis: WeightRecommendationBasis | undefined,
     userId?: string,
-    sessionId?: string
+    sessionId?: string,
+    recommendedReps?: { min: number; max: number }
   ): Promise<string> {
     const pool = getPool();
     const id = crypto.randomUUID();
@@ -124,9 +127,10 @@ export const recommendationRepository = {
         id, user_id, machine_id, machine_setting_id,
         gender, height_cm, weight_kg, experience_level,
         seat_position, back_pad_position, foot_position, handle_position,
-        rom_setting, recommended_weight_kg, tips, warnings, weight_basis, session_id,
+        rom_setting, recommended_weight_kg, recommended_reps_min, recommended_reps_max,
+        tips, warnings, weight_basis, session_id,
         target_muscle_group
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
       [
         id,
         userId ?? null,
@@ -142,6 +146,8 @@ export const recommendationRepository = {
         match?.handlePosition ?? null,
         match?.romSetting ?? null,
         recommendedWeightKg ?? null,
+        recommendedReps?.min ?? null,
+        recommendedReps?.max ?? null,
         match?.tips ? JSON.stringify(match.tips) : null,
         match?.warnings ? JSON.stringify(match.warnings) : null,
         weightBasis ? JSON.stringify(weightBasis) : null,
@@ -182,6 +188,8 @@ export const recommendationRepository = {
         recommendedWeightKg: row.recommended_weight_kg
           ? parseFloat(row.recommended_weight_kg)
           : undefined,
+        recommendedRepsMin: row.recommended_reps_min ?? undefined,
+        recommendedRepsMax: row.recommended_reps_max ?? undefined,
       },
       tips: pickLocalizedArray(row.tips, locale),
       warnings: pickLocalizedArray(row.warnings, locale),

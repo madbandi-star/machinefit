@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, WeightRecommendationBasis } from '@machinefit/shared';
-import { roundRecommendWeightKg } from '@machinefit/shared';
+import { recommendRepsForGoal, roundRecommendWeightKg } from '@machinefit/shared';
 import { SettingValueCard } from '@/components/recommendation/SettingValueCard/SettingValueCard';
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
 import { ROM_SETTING_PRESETS } from '@/constants/rom-setting-presets';
@@ -11,6 +11,7 @@ import {
   HISTORY_TOTAL_WEIGHT_ICON,
 } from '@/constants/history-lucide-icons';
 import { useUserUnits } from '@/hooks/useUserUnits';
+import { useAuthStore } from '@/store/auth.store';
 import type { IconName } from '@/components/icons/Icon';
 import '@/styles/recommendation.css';
 
@@ -18,11 +19,13 @@ type SettingField = {
   key: keyof RecommendationSettings;
   labelKey: string;
   isWeight?: boolean;
+  isReps?: boolean;
   inputType: 'number' | 'text';
 };
 
 const SETTING_FIELDS: SettingField[] = [
   { key: 'recommendedWeightKg', labelKey: 'settings.weight', isWeight: true, inputType: 'number' },
+  { key: 'recommendedRepsMin', labelKey: 'settings.reps', isReps: true, inputType: 'number' },
   { key: 'seatPosition', labelKey: 'settings.seat', inputType: 'number' },
   { key: 'backPadPosition', labelKey: 'settings.backPad', inputType: 'number' },
   { key: 'footPosition', labelKey: 'settings.foot', inputType: 'number' },
@@ -242,13 +245,35 @@ export function RecommendationSettingsPanel({
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
+  const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
   const [basisOpen, setBasisOpen] = useState(false);
   const compact = variant === 'compact' || variant === 'result';
 
   const items: SettingDisplayItem[] = [];
 
   for (const field of SETTING_FIELDS) {
-    if (showAdjustment && !COMPARE_LABEL_KEYS[field.key]) continue;
+    if (showAdjustment && !COMPARE_LABEL_KEYS[field.key] && !field.isReps) continue;
+
+    if (field.isReps) {
+      const range =
+        settings.recommendedRepsMin != null
+          ? {
+              min: settings.recommendedRepsMin,
+              max: settings.recommendedRepsMax ?? settings.recommendedRepsMin,
+            }
+          : recommendRepsForGoal(workoutGoal);
+      const value =
+        range.max !== range.min ? `${range.min}–${range.max}` : String(range.min);
+      items.push({
+        key: field.key,
+        label: t(`machines:${field.labelKey}`),
+        value,
+        rawValue: range.min,
+        unit: t('machines:settings.repsUnit'),
+        inputType: field.inputType,
+      });
+      continue;
+    }
 
     const raw = settings[field.key];
     if (raw == null) continue;
