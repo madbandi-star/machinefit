@@ -21,8 +21,8 @@
   --history-font-xl: 1.125rem;
   --history-font-2xl: 1.25rem;
   --history-font-3xl: 1.375rem;
-  --history-control-height: 2.75rem;
-  --history-stepper-btn-width: 2.75rem;
+  --history-control-height: 2rem;
+  --history-stepper-btn-width: 1.75rem;
 
   gap: var(--history-gap-section);
 }
@@ -589,6 +589,7 @@
   border: 1px solid var(--history-card-border);
   background: rgba(255, 255, 255, 0.03);
   min-width: 0;
+  overflow: hidden;
 }
 
 .history-page-premium .history-workout-log__performance-title-row .numeric-stepper {
