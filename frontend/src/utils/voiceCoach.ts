@@ -377,6 +377,8 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     });
 
     if (oneMoreEnabled) {
+      // Match the same pause used between regular reps before the first "하나더".
+      await sleep(repGapMs, signal);
       onPhaseChange?.('oneMore', { rep: reps });
       const oneMoreWords = Array.from({ length: oneMoreReps }, () => oneMorePhrase(locale));
       await speechManager.speakQueue(oneMoreWords, {
