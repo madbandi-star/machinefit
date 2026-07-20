@@ -12,28 +12,77 @@ export const SPEECH_DEFAULTS = {
   volume: 1.0,
 } as const;
 
+/** Pitch nudges only when male/female resolve to the same OS voice. */
+const SAME_VOICE_PITCH: Record<SpeechGender, number> = {
+  male: 0.82,
+  female: 1.18,
+};
+
+/**
+ * Explicit Korean male voice names / patterns.
+ * Google ko-KR: A/B ≈ female, C/D ≈ male.
+ */
 const MALE_NAME_HINTS = [
   /male/i,
   /남성/i,
   /\bman\b/i,
   /injoon/i,
+  /in-joon/i,
   /hyunsu/i,
+  /hyun-su/i,
   /jinho/i,
   /minsu/i,
   /yunsang/i,
+  /bongjin/i,
+  /gookhwa/i,
+  /standard-c/i,
+  /standard-d/i,
+  /wavenet-c/i,
+  /wavenet-d/i,
+  /neural2-c/i,
+  /neural2-d/i,
+  /\(c\)/i,
+  /\(d\)/i,
+  /#c\b/i,
+  /#d\b/i,
+  /ko-kr-.*[-_]c\b/i,
+  /ko-kr-.*[-_]d\b/i,
 ];
+
 const FEMALE_NAME_HINTS = [
   /female/i,
   /여성/i,
   /\bwoman\b/i,
   /sunhi/i,
+  /sun-hi/i,
   /yuna/i,
   /sora/i,
   /heami/i,
   /sumi/i,
+  /jihyun/i,
+  /standard-a/i,
+  /standard-b/i,
+  /wavenet-a/i,
+  /wavenet-b/i,
+  /neural2-b/i,
+  /\(a\)/i,
+  /\(b\)/i,
+  /#a\b/i,
+  /#b\b/i,
+  /ko-kr-.*[-_]a\b/i,
+  /ko-kr-.*[-_]b\b/i,
 ];
 
-type VoiceScore = { voice: SpeechSynthesisVoice; score: number };
+function isKoreanVoice(voice: SpeechSynthesisVoice): boolean {
+  const lang = voice.lang.toLowerCase();
+  return lang === 'ko-kr' || lang.startsWith('ko');
+}
+
+function hasGenderHint(voice: SpeechSynthesisVoice, gender: SpeechGender): boolean {
+  const name = `${voice.name} ${voice.voiceURI}`;
+  const hints = gender === 'male' ? MALE_NAME_HINTS : FEMALE_NAME_HINTS;
+  return hints.some((hint) => hint.test(name));
+}
 
 function scoreVoiceQuality(voice: SpeechSynthesisVoice): number {
   const name = voice.name;
@@ -45,6 +94,7 @@ function scoreVoiceQuality(voice: SpeechSynthesisVoice): number {
   else score -= 500;
 
   if (/google/i.test(name)) score += 120;
+  if (/microsoft/i.test(name)) score += 110;
   if (/premium/i.test(name)) score += 100;
   if (/enhanced/i.test(name)) score += 90;
   if (/natural/i.test(name)) score += 80;
@@ -56,39 +106,56 @@ function scoreVoiceQuality(voice: SpeechSynthesisVoice): number {
   return score;
 }
 
-function scoreVoiceForGender(voice: SpeechSynthesisVoice, gender: SpeechGender): number {
-  let score = scoreVoiceQuality(voice);
-  const name = voice.name;
-  const hints = gender === 'male' ? MALE_NAME_HINTS : FEMALE_NAME_HINTS;
-  const opposite = gender === 'male' ? FEMALE_NAME_HINTS : MALE_NAME_HINTS;
-
-  if (hints.some((hint) => hint.test(name))) score += 200;
-  if (opposite.some((hint) => hint.test(name))) score -= 250;
-
-  return score;
+function voiceKey(voice: SpeechSynthesisVoice): string {
+  return `${voice.voiceURI}::${voice.name}::${voice.lang}`;
 }
 
+function sortByQuality(a: SpeechSynthesisVoice, b: SpeechSynthesisVoice): number {
+  return scoreVoiceQuality(b) - scoreVoiceQuality(a);
+}
+
+/**
+ * Prefer explicitly gendered Korean voices. Never pick an opposite-gender
+ * named voice when a same-gender or neutral option exists.
+ */
 function pickBestVoice(
   voices: SpeechSynthesisVoice[],
-  gender: SpeechGender
+  gender: SpeechGender,
+  avoidKey?: string | null
 ): SpeechSynthesisVoice | null {
   if (voices.length === 0) return null;
 
-  const ranked: VoiceScore[] = voices
-    .map((voice) => ({ voice, score: scoreVoiceForGender(voice, gender) }))
-    .sort((a, b) => b.score - a.score);
+  const opposite: SpeechGender = gender === 'male' ? 'female' : 'male';
+  const korean = voices.filter(isKoreanVoice);
+  const pool = korean.length > 0 ? korean : voices;
 
-  const best = ranked[0];
-  if (!best || best.score < 0) {
-    const byQuality = [...voices].sort(
-      (a, b) => scoreVoiceQuality(b) - scoreVoiceQuality(a)
-    );
-    return byQuality[0] ?? null;
+  const matched = pool.filter((v) => hasGenderHint(v, gender)).sort(sortByQuality);
+  if (matched.length > 0) {
+    const preferred = avoidKey
+      ? matched.find((v) => voiceKey(v) !== avoidKey) ?? matched[0]
+      : matched[0];
+    return preferred;
   }
-  return best.voice;
+
+  // No explicit gender label — prefer voices not labeled as the opposite gender.
+  const neutral = pool
+    .filter((v) => !hasGenderHint(v, opposite))
+    .sort(sortByQuality);
+  if (neutral.length > 0) {
+    const preferred = avoidKey
+      ? neutral.find((v) => voiceKey(v) !== avoidKey) ?? neutral[0]
+      : neutral[0];
+    return preferred;
+  }
+
+  const fallback = [...pool].sort(sortByQuality);
+  if (avoidKey) {
+    return fallback.find((v) => voiceKey(v) !== avoidKey) ?? fallback[0] ?? null;
+  }
+  return fallback[0] ?? null;
 }
 
-function waitForVoices(timeoutMs = 1500): Promise<SpeechSynthesisVoice[]> {
+function waitForVoices(timeoutMs = 2500): Promise<SpeechSynthesisVoice[]> {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
     return Promise.resolve([]);
   }
@@ -124,6 +191,8 @@ class SpeechManagerImpl {
   private femaleVoice: SpeechSynthesisVoice | null = null;
   private selectedVoice: SpeechSynthesisVoice | null = null;
   private gender: SpeechGender = 'male';
+  /** True when male/female share one OS voice — pitch differentiates. */
+  private usePitchFallback = false;
   private queueGeneration = 0;
 
   /** Load voices once and lock male/female selections for the app lifetime. */
@@ -139,9 +208,36 @@ class SpeechManagerImpl {
     }
 
     this.initPromise = (async () => {
-      const voices = await waitForVoices();
-      this.maleVoice = pickBestVoice(voices, 'male');
+      // Chrome often populates voices asynchronously — try twice.
+      let voices = await waitForVoices();
+      if (voices.length === 0) {
+        await new Promise((r) => window.setTimeout(r, 400));
+        voices = window.speechSynthesis?.getVoices?.() ?? [];
+      }
+
       this.femaleVoice = pickBestVoice(voices, 'female');
+      const femaleKey = this.femaleVoice ? voiceKey(this.femaleVoice) : null;
+      this.maleVoice = pickBestVoice(voices, 'male', femaleKey);
+
+      // If still identical, try forcing male to any other Korean voice.
+      if (
+        this.maleVoice &&
+        this.femaleVoice &&
+        voiceKey(this.maleVoice) === voiceKey(this.femaleVoice)
+      ) {
+        const korean = voices.filter(isKoreanVoice);
+        const other = korean.find((v) => voiceKey(v) !== femaleKey) ?? null;
+        if (other) {
+          this.maleVoice = other;
+        }
+      }
+
+      this.usePitchFallback = Boolean(
+        this.maleVoice &&
+          this.femaleVoice &&
+          voiceKey(this.maleVoice) === voiceKey(this.femaleVoice)
+      );
+
       this.gender = preferredGender;
       this.selectedVoice =
         preferredGender === 'female'
@@ -152,6 +248,15 @@ class SpeechManagerImpl {
       console.log('Selected Voice :', this.selectedVoice?.name ?? '(none)');
       console.log('Male Voice mapping :', this.maleVoice?.name ?? '(none)');
       console.log('Female Voice mapping :', this.femaleVoice?.name ?? '(none)');
+      console.log(
+        'Pitch fallback (same OS voice) :',
+        this.usePitchFallback,
+        this.usePitchFallback ? SAME_VOICE_PITCH : SPEECH_DEFAULTS.pitch
+      );
+      console.log(
+        'Available Korean voices :',
+        voices.filter(isKoreanVoice).map((v) => v.name)
+      );
     })();
 
     await this.initPromise;
@@ -164,6 +269,14 @@ class SpeechManagerImpl {
       this.gender === 'female'
         ? this.femaleVoice ?? this.maleVoice
         : this.maleVoice ?? this.femaleVoice;
+    console.log(
+      'Active coach gender :',
+      this.gender,
+      '| Voice :',
+      this.selectedVoice?.name ?? '(none)',
+      '| pitch :',
+      this.effectivePitch()
+    );
   }
 
   getGender(): SpeechGender {
@@ -184,6 +297,11 @@ class SpeechManagerImpl {
       female: this.femaleVoice?.name ?? null,
       selected: this.selectedVoice?.name ?? null,
     };
+  }
+
+  private effectivePitch(): number {
+    if (this.usePitchFallback) return SAME_VOICE_PITCH[this.gender];
+    return SPEECH_DEFAULTS.pitch;
   }
 
   /** Cancel any in-flight utterance / queue. */
@@ -213,11 +331,12 @@ class SpeechManagerImpl {
   private createUtterance(text: string): SpeechSynthesisUtterance {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = SPEECH_DEFAULTS.lang;
-    utterance.pitch = SPEECH_DEFAULTS.pitch;
+    utterance.pitch = this.effectivePitch();
     utterance.rate = SPEECH_DEFAULTS.rate;
     utterance.volume = SPEECH_DEFAULTS.volume;
     if (this.selectedVoice) {
       utterance.voice = this.selectedVoice;
+      // Keep lang fixed to ko-KR; some engines ignore voice if lang mismatches.
       utterance.lang = SPEECH_DEFAULTS.lang;
     }
     return utterance;
