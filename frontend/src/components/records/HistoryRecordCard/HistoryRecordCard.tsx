@@ -3,27 +3,32 @@ import { useState, useEffect, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
+import type { FitRating } from '@/api';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
+import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
+import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/history-premium.css';
+import '@/styles/recommendation.css';
 
 interface HistoryRecordCardProps {
   card: HistoryRecordCardData;
   resultUrl: string;
   displayName: string;
   muscleGroup?: string;
-  showSettingsCompare: boolean;
-  customSettings?: Partial<RecommendationSettings>;
+  /** Batch-loaded fit rating (keeps 셋팅값 조정 필요 pressed before per-card fetch). */
+  initialFitRating?: FitRating | null;
+  initialCustomSettings?: Partial<RecommendationSettings>;
   isAuthenticated: boolean;
   lockTargetMuscle: boolean;
   isFocused?: boolean;
@@ -47,8 +52,8 @@ export function HistoryRecordCard({
   resultUrl,
   displayName,
   muscleGroup,
-  showSettingsCompare,
-  customSettings,
+  initialFitRating = null,
+  initialCustomSettings,
   isAuthenticated,
   lockTargetMuscle,
   isFocused = false,
@@ -71,6 +76,20 @@ export function HistoryRecordCard({
     isAuthenticated,
   });
   const isWorkoutLogSaved = workoutLogSavedOverride ?? cachedWorkoutLogSaved;
+
+  const canUseFitFeedback = isAuthenticated && Boolean(card.recommendationId);
+  const fitFeedback = useMachineFitFeedback({
+    recommendationId: card.recommendationId ?? '',
+    machineCode: card.machineCode,
+    recommendedSettings: card.settings,
+    enabled: canUseFitFeedback && expanded,
+  });
+  const savedRating = fitFeedback.savedRating ?? initialFitRating;
+  const showAdjustment = savedRating === 'bad';
+  const customSettings =
+    Object.keys(fitFeedback.customSettings).length > 0
+      ? fitFeedback.customSettings
+      : (initialCustomSettings ?? {});
 
   useEffect(() => {
     setWorkoutLogSavedOverride(null);
@@ -124,6 +143,19 @@ export function HistoryRecordCard({
     event.stopPropagation();
     setExpanded((prev) => !prev);
   };
+
+  const settingsPanel = (
+    <RecommendationSettingsPanel
+      settings={card.settings}
+      variant="history"
+      showAdjustment={showAdjustment}
+      adjustmentReadOnly={false}
+      customSettings={showAdjustment ? customSettings : undefined}
+      onCustomChange={showAdjustment ? fitFeedback.handleCustomChange : undefined}
+      onSavePreferences={showAdjustment ? fitFeedback.savePreferences : undefined}
+      isPreferencesPending={fitFeedback.isPreferencesPending}
+    />
+  );
 
   return (
     <article
@@ -250,21 +282,28 @@ export function HistoryRecordCard({
       </header>
 
       {expanded ? (
-        <div className="history-record-card__section">
-          <Link
-            to={resultUrl}
-            className="history-record-card__settings-link"
-            aria-label={t('machines:detail.viewLastResult')}
-          >
-            <RecommendationSettingsPanel
-              settings={card.settings}
-              variant="history"
-              showAdjustment={showSettingsCompare}
-              adjustmentReadOnly
-              customSettings={showSettingsCompare ? customSettings : undefined}
+        <>
+          <div className="history-record-card__section">
+            {showAdjustment ? (
+              settingsPanel
+            ) : (
+              <Link
+                to={resultUrl}
+                className="history-record-card__settings-link"
+                aria-label={t('machines:detail.viewLastResult')}
+              >
+                {settingsPanel}
+              </Link>
+            )}
+          </div>
+          {canUseFitFeedback ? (
+            <FitFeedbackPanel
+              savedRating={savedRating}
+              onRating={fitFeedback.handleRating}
+              isPending={fitFeedback.isFeedbackPending}
             />
-          </Link>
-        </div>
+          ) : null}
+        </>
       ) : null}
 
       {/* Keep mounted while collapsed so header 기록 (bookmark) stays enabled. */}

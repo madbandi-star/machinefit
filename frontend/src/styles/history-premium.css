@@ -241,6 +241,17 @@
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
+.history-page-premium .history-record-card .fit-feedback-panel {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.history-page-premium .history-record-card .recommendation-workout-log--history {
+  margin-top: 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--history-card-border, rgba(138, 148, 166, 0.14));
+}
+
 @media (hover: hover) and (pointer: fine) {
   .history-page-premium .history-record-card--premium:hover {
     transform: scale(1.01);

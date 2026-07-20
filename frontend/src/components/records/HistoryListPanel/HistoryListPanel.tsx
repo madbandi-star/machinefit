@@ -40,7 +40,6 @@ import { getHistoryMuscleGroup, formatFreeWeightRecordLabel } from '@/utils/free
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
-import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
 import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
@@ -411,7 +410,6 @@ export function HistoryListPanel() {
                 const fitRating = card.recommendationId
                   ? comparisonData?.feedbackByRecommendation[card.recommendationId]
                   : null;
-                const showSettingsCompare = shouldShowHistorySettingsCompare(fitRating);
 
                 return (
                   <HistoryRecordCard
@@ -420,8 +418,8 @@ export function HistoryListPanel() {
                     resultUrl={resultUrl}
                     displayName={displayName}
                     muscleGroup={muscleGroup}
-                    showSettingsCompare={showSettingsCompare}
-                    customSettings={customSettings}
+                    initialFitRating={fitRating}
+                    initialCustomSettings={customSettings}
                     isAuthenticated={isAuthenticated}
                     lockTargetMuscle={Boolean(
                       card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)
