@@ -14,6 +14,8 @@ export interface VoiceCoachOptions {
   oneMoreEnabled: boolean;
   /** Safety cap when one-more keeps going (default 8). */
   maxOneMore?: number;
+  /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
+  repGapMs?: number;
   locale?: string;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: { rep?: number; countdown?: number }) => void;
   signal?: AbortSignal;
@@ -29,6 +31,20 @@ export const VOICE_COACH_TIMING = {
   repGapMs: 1400,
   oneMoreGapMs: 1600,
 } as const;
+
+/** User-configurable gap between spoken counts. */
+export const VOICE_COACH_REP_GAP = {
+  defaultMs: VOICE_COACH_TIMING.repGapMs,
+  minMs: 800,
+  maxMs: 3000,
+  stepMs: 100,
+} as const;
+
+export function clampVoiceCoachRepGapMs(ms: number): number {
+  if (!Number.isFinite(ms)) return VOICE_COACH_REP_GAP.defaultMs;
+  const stepped = Math.round(ms / VOICE_COACH_REP_GAP.stepMs) * VOICE_COACH_REP_GAP.stepMs;
+  return Math.min(VOICE_COACH_REP_GAP.maxMs, Math.max(VOICE_COACH_REP_GAP.minMs, stepped));
+}
 
 const NATIVE_ONES = ['', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉'] as const;
 const NATIVE_TENS = ['', '열', '스물', '서른', '마흔', '쉰', '예순', '일흔', '여든', '아흔'] as const;
@@ -322,12 +338,16 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     targetReps,
     oneMoreEnabled,
     maxOneMore = 8,
+    repGapMs: repGapMsOption,
     locale = 'ko',
     onPhaseChange,
     signal,
   } = options;
 
   const reps = Math.max(1, Math.min(50, Math.round(targetReps)));
+  const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
+  /** Keep one-more slightly slower than the count gap, but still follow user tempo. */
+  const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
   const audioCtx = ensureAudioContext();
 
   try {
@@ -363,13 +383,13 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     for (let rep = 1; rep <= reps; rep += 1) {
       onPhaseChange?.('counting', { rep });
       await speak(formatRepWord(rep, locale), locale, signal);
-      if (rep < reps) await sleep(VOICE_COACH_TIMING.repGapMs, signal);
+      if (rep < reps) await sleep(repGapMs, signal);
     }
 
     if (oneMoreEnabled) {
       onPhaseChange?.('oneMore', { rep: reps });
       for (let extra = 1; extra <= maxOneMore; extra += 1) {
-        await sleep(VOICE_COACH_TIMING.oneMoreGapMs, signal);
+        await sleep(oneMoreGapMs, signal);
         onPhaseChange?.('oneMore', { rep: reps + extra });
         await speak(oneMorePhrase(locale), locale, signal);
       }

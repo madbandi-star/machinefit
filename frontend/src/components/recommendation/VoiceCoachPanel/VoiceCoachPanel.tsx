@@ -1,6 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
-import type { VoiceCoachPhase } from '@/utils/voiceCoach';
+import {
+  clampVoiceCoachRepGapMs,
+  VOICE_COACH_REP_GAP,
+  type VoiceCoachPhase,
+} from '@/utils/voiceCoach';
 import '@/styles/recommendation.css';
 
 const MIN_REPS = 1;
@@ -11,6 +15,8 @@ interface VoiceCoachPanelProps {
   onEnabledChange: (enabled: boolean) => void;
   targetReps: number;
   onTargetRepsChange: (reps: number) => void;
+  repGapMs: number;
+  onRepGapMsChange: (ms: number) => void;
   oneMoreEnabled: boolean;
   onOneMoreChange: (enabled: boolean) => void;
   autoStartAfterRest: boolean;
@@ -54,6 +60,8 @@ export function VoiceCoachPanel({
   onEnabledChange,
   targetReps,
   onTargetRepsChange,
+  repGapMs,
+  onRepGapMsChange,
   oneMoreEnabled,
   onOneMoreChange,
   autoStartAfterRest,
@@ -70,6 +78,7 @@ export function VoiceCoachPanel({
   compact = false,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
+  const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
 
   return (
     <section
@@ -114,6 +123,28 @@ export function VoiceCoachPanel({
                 size={compact ? 'compact' : 'default'}
                 disabled={isRunning}
                 ariaLabel={t('machines:voiceCoach.targetReps')}
+                allowManualInput={false}
+              />
+            </div>
+
+            <div className="voice-coach-panel__reps">
+              <label className="voice-coach-panel__label" htmlFor={`${idPrefix}-gap`}>
+                {t('machines:voiceCoach.countInterval')}
+              </label>
+              <NumericStepper
+                id={`${idPrefix}-gap`}
+                value={gapSec}
+                onChange={(next) => {
+                  if (next == null) return;
+                  onRepGapMsChange(clampVoiceCoachRepGapMs(next * 1000));
+                }}
+                min={VOICE_COACH_REP_GAP.minMs / 1000}
+                max={VOICE_COACH_REP_GAP.maxMs / 1000}
+                step={VOICE_COACH_REP_GAP.stepMs / 1000}
+                unit={t('machines:voiceCoach.countIntervalUnit')}
+                size={compact ? 'compact' : 'default'}
+                disabled={isRunning}
+                ariaLabel={t('machines:voiceCoach.countInterval')}
                 allowManualInput={false}
               />
             </div>

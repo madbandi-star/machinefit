@@ -1,47 +1,52 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T04:25:00Z",
-  "title": "Free-weight all muscles in search (biceps/triceps)",
-  "summary": "이두/삼두 등 부위 필터 시 프리웨이트 전 기구가 나오도록 검색 수정. 추천 생성 응답에 targetMuscleGroup 포함, FW 추천 시 부위 필수.",
+  "updatedAt": "2026-07-20T04:35:00Z",
+  "title": "Voice count interval setting",
+  "summary": "음성 카운트 횟수 사이 간격을 사용자가 0.8–3.0초(기본 1.4초)로 설정. 설정 화면·운동 기록 패널 모두 지원.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3",
   "programTestAgentName": "프로그램수정",
   "git": {
-    "branch": "cursor/freeweight-biceps-triceps-all-35b3",
-    "commit": "81bbdc5",
+    "branch": "cursor/voice-count-interval-setting-35b3",
+    "commit": "a54704e",
     "pr": null,
     "base": "main"
   },
   "changedFiles": [
-    "shared/src/utils/free-weight.ts",
-    "backend/server/repositories/machine.repository.ts",
-    "backend/server/services/recommendation.service.ts",
-    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
-    "scripts/qa-production.mjs"
+    "frontend/src/utils/voiceCoach.ts",
+    "frontend/src/store/settings.store.ts",
+    "frontend/src/hooks/useVoiceCoachSession.ts",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json"
   ],
   "testFocus": [
-    "기구 검색에서 이두/삼두 칩 선택 시 덤벨·바벨·스미스·케이블·케틀벨 모두 표시",
-    "프리웨이트 상세에서 이두/삼두 선택 후 추천 생성·결과·기록에 부위 반영",
-    "리스트에서 부위 칩 선택 시 FW 항목에 선택 부위 아이콘 표시",
+    "설정 → 음성 카운트 → 카운트 간격 ± 조절 (0.8~3.0초)",
+    "운동 기록 패널에서도 동일 간격 조절",
+    "간격 짧게/길게 바꾼 뒤 카운트 시작 시 템포 반영",
     "typecheck"
   ],
   "fastChecks": [
     {
-      "id": "filter-helper",
+      "id": "rep-gap-const",
       "type": "file_contains",
-      "path": "shared/src/utils/free-weight.ts",
-      "pattern": "machineMatchesMuscleGroupFilter"
+      "path": "frontend/src/utils/voiceCoach.ts",
+      "pattern": "VOICE_COACH_REP_GAP"
     },
     {
-      "id": "sql-free-weight-brand",
+      "id": "settings-field",
       "type": "file_contains",
-      "path": "backend/server/repositories/machine.repository.ts",
-      "pattern": "BRAND_CODES.FREE_WEIGHT"
+      "path": "frontend/src/store/settings.store.ts",
+      "pattern": "voiceCoachRepGapMs"
     },
     {
-      "id": "recommend-return-muscle",
+      "id": "ko-i18n",
       "type": "file_contains",
-      "path": "backend/server/services/recommendation.service.ts",
-      "pattern": "targetMuscleGroup: input.targetMuscleGroup"
+      "path": "frontend/src/i18n/locales/ko/machines.json",
+      "pattern": "\"countInterval\": \"카운트 간격\""
     },
     {
       "id": "typecheck",
@@ -51,9 +56,9 @@
   ],
   "productionChecks": [
     {
-      "id": "render-redeploy",
+      "id": "pages-only",
       "type": "note",
-      "detail": "Backend/shared changed — Manual Deploy on Render after merge"
+      "detail": "Frontend-only — GitHub Pages deploy; no Render Manual Deploy needed"
     }
   ],
   "deploy": {
@@ -61,6 +66,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "Muscle filter only special-cased FW_SMITH; other free-weight gear vanished for biceps/triceps.",
-  "toBe": "All FREE_WEIGHT machines match any muscle filter; recommend create returns targetMuscleGroup."
+  "asIs": "Rep count gap fixed at 1400ms.",
+  "toBe": "User sets count interval 0.8–3.0s (default 1.4s) in settings and workout panel."
 }

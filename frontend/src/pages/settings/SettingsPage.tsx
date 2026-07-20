@@ -19,6 +19,10 @@ import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import {
+  clampVoiceCoachRepGapMs,
+  VOICE_COACH_REP_GAP,
+} from '@/utils/voiceCoach';
 import type { User } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/home.css';
@@ -43,11 +47,13 @@ export function SettingsPage() {
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
+  const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
+  const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -227,6 +233,43 @@ export function SettingsPage() {
                   className="btn btn--secondary"
                   disabled={!voiceCoachEnabled || voiceCoachTargetReps >= 30}
                   onClick={() => setVoiceCoachTargetReps(Math.min(30, voiceCoachTargetReps + 1))}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="settings-voice-coach__reps">
+              <span className="settings-voice-coach__reps-label">{t('settings.voiceCoachCountInterval')}</span>
+              <div
+                className="settings-voice-coach__reps-controls"
+                role="group"
+                aria-label={t('settings.voiceCoachCountInterval')}
+              >
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  disabled={!voiceCoachEnabled || voiceCoachRepGapMs <= VOICE_COACH_REP_GAP.minMs}
+                  onClick={() =>
+                    setVoiceCoachRepGapMs(
+                      clampVoiceCoachRepGapMs(voiceCoachRepGapMs - VOICE_COACH_REP_GAP.stepMs)
+                    )
+                  }
+                >
+                  −
+                </button>
+                <strong>
+                  {(clampVoiceCoachRepGapMs(voiceCoachRepGapMs) / 1000).toFixed(1)}
+                  {t('settings.voiceCoachCountIntervalUnit')}
+                </strong>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  disabled={!voiceCoachEnabled || voiceCoachRepGapMs >= VOICE_COACH_REP_GAP.maxMs}
+                  onClick={() =>
+                    setVoiceCoachRepGapMs(
+                      clampVoiceCoachRepGapMs(voiceCoachRepGapMs + VOICE_COACH_REP_GAP.stepMs)
+                    )
+                  }
                 >
                   +
                 </button>
