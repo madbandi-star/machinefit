@@ -7,7 +7,7 @@
   "programTestAgentName": "프로그램테스트",
   "git": {
     "branch": "cursor/add-biceps-triceps-muscle-groups-35b3",
-    "commit": null,
+    "commit": "2107305",
     "pr": null,
     "base": "main"
   },
