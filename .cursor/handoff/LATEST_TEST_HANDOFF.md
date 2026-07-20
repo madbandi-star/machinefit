@@ -1,21 +1,22 @@
 # Latest test handoff
 
 > 프로그램테스트 에이전트: 이 파일 + `latest.json`을 먼저 읽으세요.  
-> Agent URL: https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4  
-> Agent name: **프로그램테스트**
+> Agent URL: https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3  
+> Agent name: **프로그램수정** (또는 프로그램테스트)
 
 ## Summary
 
-기록 카드에서 **추천 중량** 오른쪽에 **추천 횟수** (예: `8–12회`) 표시.
+휴식 타이머 시작 시 추천 **주의사항 → 운동 팁**을 TTS로 재생.
 
 ## Test focus
 
-1. 최근 기록 / 추천 결과 설정 그리드: 중량 다음 칸이 추천 횟수
-2. 목표별 범위: 근비대 8–12, 근력 3–6 등
-3. 예전 기록(DB에 reps 없음)도 프로필 목표로 fallback 표시
-4. typecheck + build
+1. 세트 완료 → 휴식 시작 시 주의사항·팁 음성
+2. 설정 / 음성 코치 패널의 「휴식 중 주의사항·운동팁」 토글 OFF 시 미재생
+3. 휴식 스킵 또는 다음 세트 코치 시작 시 휴식 TTS 즉시 중단
+4. 히스토리 카드(`recommendationId` 있음)에서도 동일
+5. typecheck
 
 ## After merge
 
 - GitHub Pages 자동 배포
-- Render Manual Deploy (backend)
+- Render Manual Deploy **불필요** (frontend-only)
