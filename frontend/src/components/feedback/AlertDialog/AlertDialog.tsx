@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/components.css';
 
 interface AlertDialogProps {
@@ -17,12 +18,14 @@ export function AlertDialog({
   onClose,
 }: AlertDialogProps) {
   const { t } = useTranslation();
+  const dialogRef = useModalAccessibility({ open, onClose });
 
   if (!open) return null;
 
   return (
     <div className="dialog-overlay" role="presentation" onClick={onClose}>
       <div
+        ref={dialogRef}
         className="dialog card"
         role="alertdialog"
         aria-modal="true"

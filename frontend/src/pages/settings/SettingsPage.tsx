@@ -42,6 +42,8 @@ export function SettingsPage() {
   const showToast = useUIStore((s) => s.showToast);
   const unitHeight = useSettingsStore((s) => s.unitHeight);
   const unitWeight = useSettingsStore((s) => s.unitWeight);
+  const setUnitHeight = useSettingsStore((s) => s.setUnitHeight);
+  const setUnitWeight = useSettingsStore((s) => s.setUnitWeight);
   const voiceCoachEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
@@ -67,6 +69,8 @@ export function SettingsPage() {
     homeGymId: user?.homeGymId,
     homeGymName: user?.homeGymName,
   });
+  const [draftUnitHeight, setDraftUnitHeight] = useState(unitHeight);
+  const [draftUnitWeight, setDraftUnitWeight] = useState(unitWeight);
 
   useEffect(() => {
     if (user?.heightCm != null) setHeightCm(user.heightCm);
@@ -80,6 +84,8 @@ export function SettingsPage() {
       homeGymId: user?.homeGymId,
       homeGymName: user?.homeGymName,
     });
+    setDraftUnitHeight(unitHeight);
+    setDraftUnitWeight(unitWeight);
   }, [
     user?.heightCm,
     user?.weightKg,
@@ -89,6 +95,8 @@ export function SettingsPage() {
     user?.workoutGoal,
     user?.homeGymId,
     user?.homeGymName,
+    unitHeight,
+    unitWeight,
   ]);
 
   const mutation = useMutation({
@@ -98,8 +106,8 @@ export function SettingsPage() {
         weightKg,
         age,
         gender,
-        unitHeight,
-        unitWeight,
+        unitHeight: draftUnitHeight,
+        unitWeight: draftUnitWeight,
         experienceLevel,
         workoutGoal,
         homeGymId: homeGym.homeGymId ?? null,
@@ -108,6 +116,8 @@ export function SettingsPage() {
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
       updateUser(updatedUser);
+      setUnitHeight(draftUnitHeight);
+      setUnitWeight(draftUnitWeight);
       syncUserSettings(updatedUser);
       showToast(t('auth.profileSaved'), 'success');
       if (returnTo) {
@@ -127,8 +137,8 @@ export function SettingsPage() {
           <div className="form-stack">
             <GenderPicker value={gender} onChange={setGender} />
             <BodyMetricsFields
-              unitHeight={unitHeight}
-              unitWeight={unitWeight}
+              unitHeight={draftUnitHeight}
+              unitWeight={draftUnitWeight}
               heightCm={heightCm}
               weightKg={weightKg}
               age={age}
@@ -170,7 +180,21 @@ export function SettingsPage() {
 
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.unitSettings')}</h3>
-          <UnitSelector />
+          <UnitSelector
+            unitHeight={draftUnitHeight}
+            unitWeight={draftUnitWeight}
+            onUnitHeightChange={setDraftUnitHeight}
+            onUnitWeightChange={setDraftUnitWeight}
+          />
+          <button
+            type="button"
+            className="btn btn--primary btn--block"
+            style={{ marginTop: 'var(--space-md)' }}
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
+          </button>
         </section>
         <section className="form-section">
           <h3 className="form-section__title">{t('settings.theme')}</h3>

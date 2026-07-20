@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { kgToLb, lbToKg } from '@machinefit/shared';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
+import { useUserUnits } from '@/hooks/useUserUnits';
 import { roundToWeightStep } from '@/utils/weightStep';
 import '@/styles/components.css';
 
@@ -43,9 +45,18 @@ export function WeightStepper({
   showQuickActions = true,
 }: WeightStepperProps) {
   const { t } = useTranslation('machines');
+  const { unitWeight } = useUserUnits();
+
+  const displayValue =
+    unitWeight === 'lb' ? kgToLb(formatWeight(value)) : formatWeight(value);
+  const displayStep = unitWeight === 'lb' ? Math.max(1, Math.round(kgToLb(step))) : step;
+  const displayManualStep =
+    unitWeight === 'lb' ? Math.max(0.5, Math.round(kgToLb(manualStep) * 2) / 2) : manualStep;
 
   const handleChange = (next: number | undefined) => {
-    onChange(formatWeight(next ?? 0));
+    const raw = next ?? 0;
+    const kg = unitWeight === 'lb' ? lbToKg(raw) : raw;
+    onChange(formatWeight(kg));
   };
 
   const suggested =
@@ -57,10 +68,16 @@ export function WeightStepper({
       ? roundToWeightStep(previousWeightKg, step)
       : undefined;
 
+  const formatChipWeight = (kg: number) =>
+    unitWeight === 'lb' ? kgToLb(kg) : kg;
+
   const chips: Array<{ key: string; label: string; onClick: () => void; hidden?: boolean }> = [
     {
       key: 'suggested',
-      label: suggested != null ? t('workoutLog.applySuggested', { weight: suggested }) : '',
+      label:
+        suggested != null
+          ? t('workoutLog.applySuggested', { weight: formatChipWeight(suggested) })
+          : '',
       onClick: () => onApplySuggested?.(),
       hidden: suggested == null || !onApplySuggested,
     },
@@ -84,13 +101,13 @@ export function WeightStepper({
     <div className={`weight-stepper${size === 'compact' ? ' weight-stepper--compact' : ''}`}>
       <NumericStepper
         id={id}
-        value={formatWeight(value)}
+        value={displayValue}
         onChange={handleChange}
         min={0}
-        max={999}
-        step={step}
-        manualStep={manualStep}
-        unit="kg"
+        max={unitWeight === 'lb' ? 2000 : 999}
+        step={displayStep}
+        manualStep={displayManualStep}
+        unit={unitWeight}
         size={size}
         disabled={disabled}
         ariaLabel={ariaLabel}

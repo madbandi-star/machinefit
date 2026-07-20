@@ -146,13 +146,14 @@ export function HistoryListPanel() {
     const focusedCard = findHistoryCardByFocusId(displayCards, focusId);
     const elementId = focusedCard ? focusedCard.cardId : focusId;
     const element = document.getElementById(`history-item-${elementId}`);
-    if (!element) return;
 
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    element.classList.add('history-record-card--focused');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('history-record-card--focused');
+    }
 
     const timer = window.setTimeout(() => {
-      element.classList.remove('history-record-card--focused');
+      element?.classList.remove('history-record-card--focused');
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
@@ -161,7 +162,7 @@ export function HistoryListPanel() {
         },
         { replace: true }
       );
-    }, 3000);
+    }, element ? 3000 : 0);
 
     return () => window.clearTimeout(timer);
   }, [focusId, isLoading, displayCards, setSearchParams]);
@@ -389,7 +390,11 @@ export function HistoryListPanel() {
               {group.items.map((card) => {
                 const resultUrl = card.recommendationId
                   ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
-                  : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}`;
+                  : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}${
+                      card.targetMuscleGroup
+                        ? `&muscle=${encodeURIComponent(card.targetMuscleGroup)}`
+                        : ''
+                    }`;
                 const displayName = isFreeWeightMachineCode(card.machineCode)
                   ? formatFreeWeightRecordLabel(
                       card.machineName,
@@ -418,7 +423,9 @@ export function HistoryListPanel() {
                     showSettingsCompare={showSettingsCompare}
                     customSettings={customSettings}
                     isAuthenticated={isAuthenticated}
-                    lockTargetMuscle={isFreeWeightMachineCode(card.machineCode)}
+                    lockTargetMuscle={Boolean(
+                      card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)
+                    )}
                     isFocused={historyCardMatchesFocus(card, focusId)}
                     onDelete={() => requestDelete(card)}
                     deleteDisabled={deleteMutation.isPending}

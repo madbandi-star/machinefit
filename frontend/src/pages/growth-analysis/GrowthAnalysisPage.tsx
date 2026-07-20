@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -14,6 +15,7 @@ import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeri
 import { GrowthMachineSelector } from '@/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
+import { ROUTES } from '@/constants/routes';
 import {
   type GrowthPeriod,
   type GrowthPeriodFilter as GrowthPeriodFilterState,
@@ -382,6 +384,9 @@ export function GrowthAnalysisPage() {
       {!hasData ? (
         <div className="card growth-analysis-empty">
           <p>{t('growthAnalysis.empty')}</p>
+          <Link to={ROUTES.MACHINES} className="btn btn--primary">
+            {t('growthAnalysis.emptyCta', { defaultValue: t('nav.search') })}
+          </Link>
         </div>
       ) : (
         <>

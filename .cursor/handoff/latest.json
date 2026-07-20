@@ -1,77 +1,8 @@
 {
-  "version": 1,
-  "updatedAt": "2026-07-20T05:25:00Z",
-  "title": "Perf: faster screen data loading",
-  "summary": "홈 캐시, History N+1→배치 API, workout-logs limit, Growth 기간 스코프, cohort 인덱스 031, boot health ping.",
-  "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3",
-  "programTestAgentName": "프로그램수정",
-  "git": {
-    "branch": "cursor/perf-data-fetch-speed-35b3",
-    "commit": null,
-    "pr": null,
-    "base": "main"
-  },
-  "changedFiles": [
-    "frontend/src/hooks/useHistorySettingsComparisonData.ts",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
-    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
-    "frontend/src/api/workout-log.ts",
-    "backend/server/controllers/feedback.controller.ts",
-    "backend/server/repositories/preference.repository.ts",
-    "backend/server/repositories/feedback.repository.ts",
-    "database/migrations/031_workout_logs_machine_date_index.sql"
-  ],
-  "testFocus": [
-    "홈 재진입 시 최근/즐겨찾기가 60초 내 재요청 안 함",
-    "기록 화면: history 먼저 보이고 logs는 백그라운드",
-    "기록 비교 데이터: prefs/feedback가 배치 2콜로 로드",
-    "성장분석: 기간별 logs limit",
-    "마이그레이션 031 적용",
-    "typecheck"
-  ],
-  "fastChecks": [
-    {
-      "id": "batch-prefs-route",
-      "type": "file_contains",
-      "path": "backend/server/routes/machine.routes.ts",
-      "pattern": "getPreferenceBatch"
-    },
-    {
-      "id": "batch-feedback-route",
-      "type": "file_contains",
-      "path": "backend/server/routes/recommendation.routes.ts",
-      "pattern": "feedback/batch"
-    },
-    {
-      "id": "migration-031",
-      "type": "file_contains",
-      "path": "database/migrations/031_workout_logs_machine_date_index.sql",
-      "pattern": "idx_workout_logs_machine_date"
-    },
-    {
-      "id": "typecheck",
-      "type": "npm",
-      "command": "npm run typecheck"
-    }
-  ],
-  "productionChecks": [
-    {
-      "id": "render-redeploy",
-      "type": "note",
-      "detail": "Backend/shared changed — Manual Deploy on Render + apply migration 031"
-    },
-    {
-      "id": "cold-start",
-      "type": "note",
-      "detail": "Render Free still sleeps; boot /health ping only mitigates. Paid plan needed for no cold start."
-    }
-  ],
-  "deploy": {
-    "workflow": "Deploy Frontend to GitHub Pages",
-    "runUrl": null,
-    "status": "pending after merge"
-  },
-  "asIs": "Screens slow due to N+1, unbounded logs, refetch always, cold start.",
-  "toBe": "Batch APIs, bounded logs, home cache, index 031, health wake ping."
+  "branch": "cursor/fix-uiux-bugs-batch-35b3",
+  "topic": "uiux-bugs-batch-1-26",
+  "frontendOnly": true,
+  "backendDeployNeeded": false,
+  "bugsFixed": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+  "typecheck": "passed"
 }

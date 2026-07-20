@@ -97,6 +97,7 @@ export function VoiceCoachPanel({
             type="checkbox"
             checked={enabled}
             onChange={(e) => onEnabledChange(e.target.checked)}
+            disabled={isRunning}
             aria-label={t('machines:voiceCoach.enable')}
           />
           <span>{enabled ? t('machines:voiceCoach.on') : t('machines:voiceCoach.off')}</span>

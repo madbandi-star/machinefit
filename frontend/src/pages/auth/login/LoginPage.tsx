@@ -35,7 +35,12 @@ export function LoginPage() {
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
   const autoLoginAttempted = useRef(false);
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? ROUTES.HOME;
+  const fromLocation = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })
+    ?.from;
+  const from =
+    fromLocation?.pathname != null
+      ? `${fromLocation.pathname}${fromLocation.search ?? ''}${fromLocation.hash ?? ''}`
+      : ROUTES.HOME;
 
   const completeLogin = (user: User, tokens: AuthTokens, shouldSave: boolean) => {
     setAuth(user, tokens);

@@ -520,6 +520,13 @@
   color: var(--color-text-muted);
 }
 
+.growth-analysis-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
 .growth-analysis-pr-alert {
   border-color: color-mix(in srgb, var(--color-success, #16a34a) 35%, var(--glass-border));
   background: color-mix(in srgb, var(--color-success, #16a34a) 8%, var(--glass-bg));
@@ -1162,3 +1169,4 @@
 .growth-insights-target__weights--triple {
   flex-wrap: wrap;
 }
+

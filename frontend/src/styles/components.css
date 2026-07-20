@@ -244,7 +244,9 @@
 
 .toast {
   position: fixed;
-  bottom: calc(var(--bottom-nav-height) + var(--space-md));
+  bottom: calc(
+    var(--bottom-nav-height) + var(--recommendation-action-height, 4.25rem) + var(--space-md)
+  );
   left: 50%;
   transform: translateX(-50%);
   padding: 0.85rem 1.5rem;
@@ -1294,6 +1296,11 @@
   cursor: not-allowed;
 }
 
+.numeric-stepper__value--readonly {
+  cursor: default;
+  pointer-events: none;
+}
+
 .numeric-stepper__value-text {
   font-size: 1rem;
   font-weight: 800;
@@ -1673,4 +1680,11 @@
 
 .register-email-field--invalid .register-email-field__local {
   border-color: var(--color-warning);
+}
+
+.query-error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
 }

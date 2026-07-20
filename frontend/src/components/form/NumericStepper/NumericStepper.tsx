@@ -169,7 +169,7 @@ export function NumericStepper({
               }
             }}
           />
-        ) : (
+        ) : allowManualInput ? (
           <button
             type="button"
             id={inputId}
@@ -181,6 +181,15 @@ export function NumericStepper({
             <span className="numeric-stepper__value-text">{displayValue}</span>
             {unit ? <span className="numeric-stepper__unit">{unit}</span> : null}
           </button>
+        ) : (
+          <div
+            id={inputId}
+            className="numeric-stepper__value numeric-stepper__value--readonly"
+            aria-label={ariaLabel}
+          >
+            <span className="numeric-stepper__value-text">{displayValue}</span>
+            {unit ? <span className="numeric-stepper__unit">{unit}</span> : null}
+          </div>
         )}
 
         <button

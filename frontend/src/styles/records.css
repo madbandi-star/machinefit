@@ -1092,6 +1092,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  /* Room for sticky RecommendCTA (FW muscle chips need extra space). */
+  padding-bottom: calc(var(--recommendation-action-height) + 7.5rem);
 }
 
 .machine-detail-page--compact {

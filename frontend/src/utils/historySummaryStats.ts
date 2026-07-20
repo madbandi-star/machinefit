@@ -1,16 +1,16 @@
 import type { WorkoutLog } from '@machinefit/shared';
-import { computeVolume } from '@/utils/workoutAnalytics';
+import { computeMaxWeight, computeVolume } from '@/utils/workoutAnalytics';
 import { buildLoggedWorkoutKey } from '@/utils/historyLogStatus';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
 
-export const HISTORY_SUMMARY_VOLUME_DUMMY_KG = 3870;
-export const HISTORY_SUMMARY_DURATION_DUMMY_MIN = 48;
+/** Rough minutes per set including rest — used when no timed session data exists. */
+const ESTIMATED_MINUTES_PER_SET = 2;
 
 export interface HistorySummaryStats {
   totalSets: number;
   totalWeightKg: number;
-  totalVolumeDummyKg: number;
-  workoutMinutesDummy: number;
+  totalVolumeKg: number;
+  workoutMinutes: number;
 }
 
 export function findWorkoutLogForCard(
@@ -35,18 +35,21 @@ export function computeHistorySummaryStats(
 ): HistorySummaryStats {
   let totalSets = 0;
   let totalWeightKg = 0;
+  let totalVolumeKg = 0;
 
   for (const card of cards) {
     const log = findWorkoutLogForCard(card, logs);
     if (!log) continue;
     totalSets += log.setCount;
-    totalWeightKg += computeVolume(log.setWeightsKg);
+    totalWeightKg += computeMaxWeight(log.setWeightsKg);
+    totalVolumeKg += computeVolume(log.setWeightsKg);
   }
 
   return {
     totalSets,
     totalWeightKg,
-    totalVolumeDummyKg: HISTORY_SUMMARY_VOLUME_DUMMY_KG,
-    workoutMinutesDummy: HISTORY_SUMMARY_DURATION_DUMMY_MIN,
+    totalVolumeKg,
+    workoutMinutes:
+      totalSets > 0 ? Math.max(1, Math.round(totalSets * ESTIMATED_MINUTES_PER_SET)) : 0,
   };
 }

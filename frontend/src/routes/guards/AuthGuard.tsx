@@ -5,6 +5,7 @@ import { ROUTES } from '@/constants/routes';
 import type { RoleCode } from '@machinefit/shared';
 import { ROLE_HIERARCHY } from '@machinefit/shared';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 
 interface AuthGuardProps {
   children?: ReactNode;
@@ -17,7 +18,13 @@ export function AuthGuard({ children, minRole = 'member' }: AuthGuardProps) {
   const user = useAuthStore((s) => s.user);
   const location = useLocation();
 
-  if (!hydrated) return null;
+  if (!hydrated) {
+    return (
+      <div className="auth-guard-loading" aria-busy="true" aria-live="polite">
+        <Skeleton count={2} height={72} />
+      </div>
+    );
+  }
 
   if (!isAuthenticated || !user) {
     return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;

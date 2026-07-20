@@ -151,5 +151,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
   return {
     requestRecommendation: (options?: RecommendMachineOptions) => mutation.mutate(options ?? {}),
     isPending: mutation.isPending,
+    isError: mutation.isError,
+    reset: mutation.reset,
   };
 }

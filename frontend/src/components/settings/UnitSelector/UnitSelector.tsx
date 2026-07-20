@@ -1,17 +1,25 @@
 import { useTranslation } from 'react-i18next';
-import { useSettingsStore } from '@/store/settings.store';
+import type { UnitHeight, UnitWeight } from '@machinefit/shared';
 import {
   HEIGHT_UNIT_OPTIONS,
   UnitPicker,
   WEIGHT_UNIT_OPTIONS,
 } from '@/components/settings/UnitPicker/UnitPicker';
 
-export function UnitSelector() {
+interface UnitSelectorProps {
+  unitHeight: UnitHeight;
+  unitWeight: UnitWeight;
+  onUnitHeightChange: (unit: UnitHeight) => void;
+  onUnitWeightChange: (unit: UnitWeight) => void;
+}
+
+export function UnitSelector({
+  unitHeight,
+  unitWeight,
+  onUnitHeightChange,
+  onUnitWeightChange,
+}: UnitSelectorProps) {
   const { t } = useTranslation();
-  const unitHeight = useSettingsStore((s) => s.unitHeight);
-  const unitWeight = useSettingsStore((s) => s.unitWeight);
-  const setUnitHeight = useSettingsStore((s) => s.setUnitHeight);
-  const setUnitWeight = useSettingsStore((s) => s.setUnitWeight);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -19,13 +27,13 @@ export function UnitSelector() {
         label={t('auth.heightUnit')}
         value={unitHeight}
         options={HEIGHT_UNIT_OPTIONS}
-        onChange={setUnitHeight}
+        onChange={onUnitHeightChange}
       />
       <UnitPicker
         label={t('auth.weightUnit')}
         value={unitWeight}
         options={WEIGHT_UNIT_OPTIONS}
-        onChange={setUnitWeight}
+        onChange={onUnitWeightChange}
       />
     </div>
   );

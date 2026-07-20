@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dismissForToday } from '@/utils/dismissToday';
+import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/components.css';
 
 interface ConfirmDialogProps {
@@ -12,6 +13,8 @@ interface ConfirmDialogProps {
   confirmVariant?: 'primary' | 'danger';
   dismissTodayKey?: string;
   dismissTodayLabel?: string;
+  /** When true (default for danger), backdrop click does not dismiss. */
+  preventBackdropClose?: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -25,11 +28,15 @@ export function ConfirmDialog({
   confirmVariant = 'primary',
   dismissTodayKey,
   dismissTodayLabel,
+  preventBackdropClose,
   onClose,
   onConfirm,
 }: ConfirmDialogProps) {
   const { t } = useTranslation();
   const [dismissToday, setDismissToday] = useState(false);
+  const blockBackdrop =
+    preventBackdropClose ?? confirmVariant === 'danger';
+  const dialogRef = useModalAccessibility({ open, onClose });
 
   if (!open) return null;
 
@@ -47,8 +54,13 @@ export function ConfirmDialog({
   };
 
   return (
-    <div className="dialog-overlay" role="presentation" onClick={handleClose}>
+    <div
+      className="dialog-overlay"
+      role="presentation"
+      onClick={blockBackdrop ? undefined : handleClose}
+    >
       <div
+        ref={dialogRef}
         className="dialog card"
         role="dialog"
         aria-modal="true"
