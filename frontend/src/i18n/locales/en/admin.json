@@ -30,8 +30,8 @@
   "reports": "Reports",
   "status": "Status",
   "reason": "Reason",
-  "saved": "Saved",
-  "error": "Something went wrong",
+  "saved": "Your changes are saved.",
+  "error": "We couldn't finish that. Please try again in a moment.",
   "enable": "Enable",
   "disable": "Disable"
 }
