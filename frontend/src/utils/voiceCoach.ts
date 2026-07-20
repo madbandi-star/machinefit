@@ -9,6 +9,15 @@ export type VoiceCoachPhase =
   | 'oneMore'
   | 'done';
 
+/** Pre-recorded coach voices (sample #4 male / #3 female). */
+export type VoiceCoachVoice = 'male' | 'female';
+
+export const DEFAULT_VOICE_COACH_VOICE: VoiceCoachVoice = 'male';
+
+export function normalizeVoiceCoachVoice(value: unknown): VoiceCoachVoice {
+  return value === 'female' ? 'female' : 'male';
+}
+
 export interface VoiceCoachOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
@@ -17,6 +26,8 @@ export interface VoiceCoachOptions {
   /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
   repGapMs?: number;
   locale?: string;
+  /** Pre-recorded coach voice. Default male (drill count). */
+  voice?: VoiceCoachVoice;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: { rep?: number; countdown?: number }) => void;
   signal?: AbortSignal;
 }
@@ -74,6 +85,9 @@ const EN_ONES = [
 ] as const;
 
 const EN_TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'] as const;
+
+/** Max rep clip bundled under public/voice-coach/{voice}/rep-N.mp3 */
+const MAX_CLIP_REP = 30;
 
 function isKoreanLocale(locale?: string): boolean {
   return (locale ?? 'ko').toLowerCase().startsWith('ko');
@@ -185,6 +199,42 @@ function cancelSpeech(): void {
   }
 }
 
+let currentClip: HTMLAudioElement | null = null;
+
+function stopCurrentClip(): void {
+  if (!currentClip) return;
+  try {
+    currentClip.onended = null;
+    currentClip.onerror = null;
+    currentClip.pause();
+    currentClip.removeAttribute('src');
+    currentClip.load();
+  } catch {
+    // ignore
+  }
+  currentClip = null;
+}
+
+function publicAssetUrl(path: string): string {
+  const base = import.meta.env.BASE_URL || '/';
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+  const normalizedPath = path.replace(/^\//, '');
+  return `${normalizedBase}${normalizedPath}`;
+}
+
+export function voiceCoachClipUrl(voice: VoiceCoachVoice, key: string): string {
+  return publicAssetUrl(`voice-coach/${normalizeVoiceCoachVoice(voice)}/${key}.mp3`);
+}
+
+/** Full sample used on the listen page (male=#4 drill, female=#3 pro). */
+export function voiceCoachPreviewSampleUrl(voice: VoiceCoachVoice): string {
+  const file =
+    normalizeVoiceCoachVoice(voice) === 'female'
+      ? 'voice-samples/03-pro-female.mp3'
+      : 'voice-samples/04-drill-count.mp3';
+  return publicAssetUrl(file);
+}
+
 function isSpeechActive(): boolean {
   if (!('speechSynthesis' in window)) return false;
   return window.speechSynthesis.speaking || window.speechSynthesis.pending;
@@ -205,6 +255,50 @@ function waitForSpeechVoices(timeoutMs = 400): Promise<void> {
     const onVoices = () => finish();
     window.speechSynthesis.addEventListener('voiceschanged', onVoices);
     window.setTimeout(finish, timeoutMs);
+  });
+}
+
+function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException('Aborted', 'AbortError'));
+      return;
+    }
+
+    stopCurrentClip();
+    cancelSpeech();
+
+    const audio = new Audio(url);
+    audio.preload = 'auto';
+    currentClip = audio;
+
+    const onAbort = () => {
+      stopCurrentClip();
+      cleanup();
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+
+    const cleanup = () => {
+      signal?.removeEventListener('abort', onAbort);
+      audio.onended = null;
+      audio.onerror = null;
+      if (currentClip === audio) currentClip = null;
+    };
+
+    audio.onended = () => {
+      cleanup();
+      resolve(true);
+    };
+    audio.onerror = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    signal?.addEventListener('abort', onAbort, { once: true });
+    void audio.play().catch(() => {
+      cleanup();
+      resolve(false);
+    });
   });
 }
 
@@ -231,6 +325,7 @@ function speak(text: string, locale: string | undefined, signal?: AbortSignal): 
         return;
       }
 
+      stopCurrentClip();
       if (isSpeechActive()) {
         cancelSpeech();
       }
@@ -276,8 +371,24 @@ function speak(text: string, locale: string | undefined, signal?: AbortSignal): 
   });
 }
 
+async function speakCoachPhrase(options: {
+  clipKey: string | null;
+  text: string;
+  locale: string | undefined;
+  voice: VoiceCoachVoice;
+  signal?: AbortSignal;
+}): Promise<void> {
+  const { clipKey, text, locale, voice, signal } = options;
+  if (isKoreanLocale(locale) && clipKey) {
+    const played = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
+    if (played) return;
+  }
+  await speak(text, locale, signal);
+}
+
 export function stopVoiceCoach(): void {
   cancelSpeech();
+  stopCurrentClip();
 }
 
 /** Speak a single phrase (cancels any current utterance). */
@@ -342,7 +453,7 @@ export async function speakRestTipsAndWarnings(
     }
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      cancelSpeech();
+      stopVoiceCoach();
       return;
     }
     throw error;
@@ -350,7 +461,7 @@ export async function speakRestTipsAndWarnings(
 }
 
 /** Warm audio/speech after a user gesture so auto-start after rest can play. */
-export function unlockVoiceCoachAudio(): void {
+export function unlockVoiceCoachAudio(voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE): void {
   try {
     const ctx = ensureAudioContext();
     if (ctx && ctx.state === 'suspended') {
@@ -360,6 +471,21 @@ export function unlockVoiceCoachAudio(): void {
     } else if (ctx) {
       void ctx.close().catch(() => undefined);
     }
+  } catch {
+    // ignore
+  }
+
+  try {
+    const unlock = new Audio(voiceCoachClipUrl(normalizeVoiceCoachVoice(voice), 'cd-5'));
+    unlock.volume = 0.01;
+    void unlock
+      .play()
+      .then(() => {
+        unlock.pause();
+        unlock.removeAttribute('src');
+        unlock.load();
+      })
+      .catch(() => undefined);
   } catch {
     // ignore
   }
@@ -388,10 +514,12 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     maxOneMore = 8,
     repGapMs: repGapMsOption,
     locale = 'ko',
+    voice: voiceOption,
     onPhaseChange,
     signal,
   } = options;
 
+  const voice = normalizeVoiceCoachVoice(voiceOption ?? DEFAULT_VOICE_COACH_VOICE);
   const reps = Math.max(1, Math.min(50, Math.round(targetReps)));
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
   /** Keep one-more slightly slower than the count gap, but still follow user tempo. */
@@ -418,19 +546,37 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     onPhaseChange?.('countdown');
     for (let n = 5; n >= 1; n -= 1) {
       onPhaseChange?.('countdown', { countdown: n });
-      await speak(formatCountdownWord(n, locale), locale, signal);
+      await speakCoachPhrase({
+        clipKey: `cd-${n}`,
+        text: formatCountdownWord(n, locale),
+        locale,
+        voice,
+        signal,
+      });
       if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
     }
 
     await sleep(VOICE_COACH_TIMING.afterCountdownMs, signal);
     onPhaseChange?.('start');
-    await speak(startPhrase(locale), locale, signal);
+    await speakCoachPhrase({
+      clipKey: 'start',
+      text: startPhrase(locale),
+      locale,
+      voice,
+      signal,
+    });
     await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
 
     onPhaseChange?.('counting', { rep: 0 });
     for (let rep = 1; rep <= reps; rep += 1) {
       onPhaseChange?.('counting', { rep });
-      await speak(formatRepWord(rep, locale), locale, signal);
+      await speakCoachPhrase({
+        clipKey: rep <= MAX_CLIP_REP ? `rep-${rep}` : null,
+        text: formatRepWord(rep, locale),
+        locale,
+        voice,
+        signal,
+      });
       if (rep < reps) await sleep(repGapMs, signal);
     }
 
@@ -439,14 +585,20 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       for (let extra = 1; extra <= maxOneMore; extra += 1) {
         await sleep(oneMoreGapMs, signal);
         onPhaseChange?.('oneMore', { rep: reps + extra });
-        await speak(oneMorePhrase(locale), locale, signal);
+        await speakCoachPhrase({
+          clipKey: 'one-more',
+          text: oneMorePhrase(locale),
+          locale,
+          voice,
+          signal,
+        });
       }
     }
 
     onPhaseChange?.('done', { rep: oneMoreEnabled ? reps + maxOneMore : reps });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      cancelSpeech();
+      stopVoiceCoach();
       onPhaseChange?.('idle');
       return;
     }

@@ -195,6 +195,7 @@ export function WorkoutLogPanel({
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const voiceCoachVoice = useSettingsStore((s) => s.voiceCoachVoice);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
@@ -210,6 +211,7 @@ export function WorkoutLogPanel({
     oneMoreEnabled: voiceCoachOneMore,
     repGapMs: voiceCoachRepGapMs,
     locale,
+    voice: voiceCoachVoice,
     enabled: voiceCoachEnabled,
   });
   const voiceCoachStartRef = useRef(voiceCoach.start);
@@ -225,16 +227,16 @@ export function WorkoutLogPanel({
     if (voiceCoachRunningRef.current) return;
     stopVoiceCoach();
     if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
-    unlockVoiceCoachAudio();
+    unlockVoiceCoachAudio(voiceCoachVoice);
     voiceCoachStartRef.current();
-  }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
+  }, [voiceCoachAutoAfterRest, voiceCoachEnabled, voiceCoachVoice]);
   const startVoiceCoach = useCallback(() => {
-    unlockVoiceCoachAudio();
+    unlockVoiceCoachAudio(voiceCoachVoice);
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
     setRestTimer(null);
     voiceCoachStartRef.current();
-  }, []);
+  }, [voiceCoachVoice]);
   const isHistory = variant === 'history';
   const compact = variant === 'compact' || isHistory;
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
@@ -716,7 +718,7 @@ export function WorkoutLogPanel({
       next[index] = !wasCompleted;
 
       if (!wasCompleted && next[index]) {
-        unlockVoiceCoachAudio();
+        unlockVoiceCoachAudio(voiceCoachVoice);
         setRestTimer({
           setNumber: index + 1,
           seconds: clampRestDurationSeconds(restDurationSeconds),
@@ -742,7 +744,7 @@ export function WorkoutLogPanel({
     setSetCompleted(next);
 
     if (!wasCompleted && next[index]) {
-      unlockVoiceCoachAudio();
+      unlockVoiceCoachAudio(voiceCoachVoice);
       setRestTimer({
         setNumber: index + 1,
         seconds: clampRestDurationSeconds(restDurationSeconds),

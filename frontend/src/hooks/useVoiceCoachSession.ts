@@ -4,6 +4,7 @@ import {
   stopVoiceCoach,
   unlockVoiceCoachAudio,
   type VoiceCoachPhase,
+  type VoiceCoachVoice,
 } from '@/utils/voiceCoach';
 
 interface UseVoiceCoachSessionOptions {
@@ -11,6 +12,7 @@ interface UseVoiceCoachSessionOptions {
   oneMoreEnabled: boolean;
   repGapMs: number;
   locale: string;
+  voice: VoiceCoachVoice;
   enabled: boolean;
 }
 
@@ -28,6 +30,7 @@ export function useVoiceCoachSession({
   oneMoreEnabled,
   repGapMs,
   locale,
+  voice,
   enabled,
 }: UseVoiceCoachSessionOptions): VoiceCoachSessionState {
   const [phase, setPhase] = useState<VoiceCoachPhase>('idle');
@@ -48,7 +51,7 @@ export function useVoiceCoachSession({
   const start = useCallback(() => {
     if (!enabled) return;
 
-    unlockVoiceCoachAudio();
+    unlockVoiceCoachAudio(voice);
     abortRef.current?.abort();
     stopVoiceCoach();
 
@@ -66,6 +69,7 @@ export function useVoiceCoachSession({
       oneMoreEnabled,
       repGapMs,
       locale,
+      voice,
       signal: controller.signal,
       onPhaseChange: (nextPhase, detail) => {
         if (runIdRef.current !== runId) return;
@@ -85,7 +89,7 @@ export function useVoiceCoachSession({
       setPhase((prev) => (prev === 'done' ? prev : 'idle'));
       setCountdown(null);
     });
-  }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps]);
+  }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps, voice]);
 
   useEffect(() => () => {
     abortRef.current?.abort();
