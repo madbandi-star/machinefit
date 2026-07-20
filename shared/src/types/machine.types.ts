@@ -27,6 +27,12 @@ export interface Machine {
   warnings?: Record<string, string[]>;
   tips?: Record<string, string[]>;
   beginnerTips?: Record<string, string[]>;
+  /** Reserved for future UI — not displayed yet. */
+  intermediateTips?: Record<string, string[]>;
+  /** Reserved for future UI — not displayed yet. */
+  advancedTips?: Record<string, string[]>;
+  /** Reserved for future UI — not displayed yet. */
+  proTips?: Record<string, string[]>;
   recommendedExperience?: ExperienceLevel | string;
   hasSeat: boolean;
   hasBackPad: boolean;

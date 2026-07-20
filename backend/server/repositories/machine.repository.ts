@@ -15,6 +15,9 @@ interface MachineRow {
   warnings: Record<string, string[]> | null;
   tips: Record<string, string[]> | null;
   beginner_tips: Record<string, string[]> | null;
+  intermediate_tips: Record<string, string[]> | null;
+  advanced_tips: Record<string, string[]> | null;
+  pro_tips: Record<string, string[]> | null;
   recommended_experience: string | null;
   has_seat: boolean;
   has_back_pad: boolean;
@@ -52,6 +55,9 @@ function mapMachine(
     warnings: row.warnings ?? undefined,
     tips: row.tips ?? undefined,
     beginnerTips: row.beginner_tips ?? undefined,
+    intermediateTips: row.intermediate_tips ?? undefined,
+    advancedTips: row.advanced_tips ?? undefined,
+    proTips: row.pro_tips ?? undefined,
     recommendedExperience: row.recommended_experience ?? undefined,
     hasSeat: row.has_seat,
     hasBackPad: row.has_back_pad,

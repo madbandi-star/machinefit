@@ -27,6 +27,9 @@
 | warnings | localized string[] | Cautions (≥10) |
 | tips | localized string[] | Form tips (≥10) |
 | beginnerTips | localized string[] | Beginner tips (≥10) |
+| intermediateTips | localized string[] | Intermediate tips (future UI; optional for now) |
+| advancedTips | localized string[] | Advanced tips (future UI; optional for now) |
+| proTips | localized string[] | Pro tips (future UI; optional for now) |
 | recommendedExperience | beginner \| intermediate \| advanced | |
 | imageFile | string | Relative under `public/assets/machines/{slug}/` |
 | thumbnailFile | string? | Defaults to imageFile |

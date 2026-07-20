@@ -157,7 +157,9 @@ function writeMachineSeed(packs) {
       lines.push(`INSERT INTO machines (`);
       lines.push(`  brand_id, code, name, muscle_group, machine_type, description,`);
       lines.push(`  has_seat, has_back_pad, has_foot_plate, has_handle, rom_type,`);
-      lines.push(`  how_to, warnings, tips, beginner_tips, recommended_experience, is_active`);
+      lines.push(`  how_to, warnings, tips, beginner_tips,`);
+      lines.push(`  intermediate_tips, advanced_tips, pro_tips,`);
+      lines.push(`  recommended_experience, is_active`);
       lines.push(`)`);
       lines.push(`SELECT b.id,`);
       lines.push(`  ${sqlString(m.code)},`);
@@ -173,7 +175,10 @@ function writeMachineSeed(packs) {
       lines.push(`  ${sqlJson(m.howTo)}::jsonb,`);
       lines.push(`  ${sqlJson(m.warnings)}::jsonb,`);
       lines.push(`  ${sqlJson(m.tips)}::jsonb,`);
-      lines.push(`  ${sqlJson(m.beginnerTips)}::jsonb,`);
+      lines.push(`  ${sqlJson(m.beginnerTips ?? {})}::jsonb,`);
+      lines.push(`  ${sqlJson(m.intermediateTips ?? {})}::jsonb,`);
+      lines.push(`  ${sqlJson(m.advancedTips ?? {})}::jsonb,`);
+      lines.push(`  ${sqlJson(m.proTips ?? {})}::jsonb,`);
       lines.push(`  ${sqlString(m.recommendedExperience)},`);
       lines.push(`  true`);
       lines.push(`FROM brands b`);
@@ -193,6 +198,9 @@ function writeMachineSeed(packs) {
       lines.push(`  warnings = EXCLUDED.warnings,`);
       lines.push(`  tips = EXCLUDED.tips,`);
       lines.push(`  beginner_tips = EXCLUDED.beginner_tips,`);
+      lines.push(`  intermediate_tips = EXCLUDED.intermediate_tips,`);
+      lines.push(`  advanced_tips = EXCLUDED.advanced_tips,`);
+      lines.push(`  pro_tips = EXCLUDED.pro_tips,`);
       lines.push(`  recommended_experience = EXCLUDED.recommended_experience,`);
       lines.push(`  is_active = true,`);
       lines.push(`  updated_at = NOW();`);
@@ -369,6 +377,9 @@ function writeBackendMock(packs) {
         warnings: m.warnings,
         tips: m.tips,
         beginnerTips: m.beginnerTips,
+        intermediateTips: m.intermediateTips,
+        advancedTips: m.advancedTips,
+        proTips: m.proTips,
         recommendedExperience: m.recommendedExperience,
       });
 
