@@ -19,7 +19,7 @@ import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/W
 import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
-import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
+import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { userApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
@@ -226,48 +226,50 @@ export function SettingsPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('settings.restDuration')}</h3>
           <p className="form-section__desc">{t('settings.restDurationDesc')}</p>
-          <div className="settings-rest-duration">
-            <div
-              className="settings-rest-duration__controls"
-              role="group"
-              aria-label={t('settings.restDuration')}
-            >
-              <div className="settings-rest-duration__unit">
-                <NumericStepper
-                  id="settings-rest-minutes"
+          <div
+            className="body-metrics-inline"
+            role="group"
+            aria-label={t('settings.restDuration')}
+          >
+            <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
+              <div className="body-metrics-inline__cell">
+                <span className="body-metrics-inline__label">
+                  {t('settings.restDurationMinutesLabel')}
+                  <span className="body-metrics-inline__unit">
+                    {t('settings.restDurationMinutes')}
+                  </span>
+                </span>
+                <ScrollPicker
                   value={restParts.minutes}
-                  onChange={(next) => {
-                    if (next == null) return;
-                    setRestDurationSeconds(
-                      restDurationFromParts(next, restParts.seconds)
-                    );
-                  }}
+                  onChange={(next) =>
+                    setRestDurationSeconds(restDurationFromParts(next, restParts.seconds))
+                  }
                   min={0}
                   max={REST_DURATION.maxMinutes}
                   step={REST_DURATION.minuteStep}
-                  size="compact"
-                  unit={t('settings.restDurationMinutes')}
+                  defaultValue={Math.floor(REST_DURATION.defaultSeconds / 60)}
                   ariaLabel={t('settings.restDurationMinutes')}
-                  allowManualInput
+                  formatValue={(value) => String(value).padStart(2, '0')}
                 />
               </div>
-              <div className="settings-rest-duration__unit">
-                <NumericStepper
-                  id="settings-rest-seconds"
+              <div className="body-metrics-inline__cell">
+                <span className="body-metrics-inline__label">
+                  {t('settings.restDurationSecondsLabel')}
+                  <span className="body-metrics-inline__unit">
+                    {t('settings.restDurationSeconds')}
+                  </span>
+                </span>
+                <ScrollPicker
                   value={restParts.seconds}
-                  onChange={(next) => {
-                    if (next == null) return;
-                    setRestDurationSeconds(
-                      restDurationFromParts(restParts.minutes, next)
-                    );
-                  }}
+                  onChange={(next) =>
+                    setRestDurationSeconds(restDurationFromParts(restParts.minutes, next))
+                  }
                   min={0}
                   max={60 - REST_DURATION.secondStep}
                   step={REST_DURATION.secondStep}
-                  size="compact"
-                  unit={t('settings.restDurationSeconds')}
+                  defaultValue={REST_DURATION.defaultSeconds % 60}
                   ariaLabel={t('settings.restDurationSeconds')}
-                  allowManualInput
+                  formatValue={(value) => String(value).padStart(2, '0')}
                 />
               </div>
             </div>
@@ -356,63 +358,52 @@ export function SettingsPage() {
               })}
             </div>
 
-            <div className="settings-voice-coach__reps">
-              <span className="settings-voice-coach__reps-label">{t('settings.voiceCoachTargetReps')}</span>
-              <div className="settings-voice-coach__reps-controls" role="group" aria-label={t('settings.voiceCoachTargetReps')}>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  disabled={!voiceCoachEnabled || voiceCoachTargetReps <= 1}
-                  onClick={() => setVoiceCoachTargetReps(Math.max(1, voiceCoachTargetReps - 1))}
-                >
-                  −
-                </button>
-                <strong>{voiceCoachTargetReps}</strong>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  disabled={!voiceCoachEnabled || voiceCoachTargetReps >= 30}
-                  onClick={() => setVoiceCoachTargetReps(Math.min(30, voiceCoachTargetReps + 1))}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            <div className="settings-voice-coach__reps">
-              <span className="settings-voice-coach__reps-label">{t('settings.voiceCoachCountInterval')}</span>
-              <div
-                className="settings-voice-coach__reps-controls"
-                role="group"
-                aria-label={t('settings.voiceCoachCountInterval')}
-              >
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  disabled={!voiceCoachEnabled || voiceCoachRepGapMs <= VOICE_COACH_REP_GAP.minMs}
-                  onClick={() =>
-                    setVoiceCoachRepGapMs(
-                      clampVoiceCoachRepGapMs(voiceCoachRepGapMs - VOICE_COACH_REP_GAP.stepMs)
-                    )
-                  }
-                >
-                  −
-                </button>
-                <strong>
-                  {(clampVoiceCoachRepGapMs(voiceCoachRepGapMs) / 1000).toFixed(1)}
-                  {t('settings.voiceCoachCountIntervalUnit')}
-                </strong>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  disabled={!voiceCoachEnabled || voiceCoachRepGapMs >= VOICE_COACH_REP_GAP.maxMs}
-                  onClick={() =>
-                    setVoiceCoachRepGapMs(
-                      clampVoiceCoachRepGapMs(voiceCoachRepGapMs + VOICE_COACH_REP_GAP.stepMs)
-                    )
-                  }
-                >
-                  +
-                </button>
+            <div
+              className={`body-metrics-inline${
+                !voiceCoachEnabled ? ' body-metrics-inline--disabled' : ''
+              }`}
+              role="group"
+              aria-label={t('settings.voiceCoach')}
+            >
+              <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
+                <div className="body-metrics-inline__cell">
+                  <span className="body-metrics-inline__label">
+                    {t('settings.voiceCoachTargetReps')}
+                    <span className="body-metrics-inline__unit">
+                      {t('settings.voiceCoachTargetRepsUnit')}
+                    </span>
+                  </span>
+                  <ScrollPicker
+                    value={voiceCoachTargetReps}
+                    onChange={setVoiceCoachTargetReps}
+                    min={1}
+                    max={30}
+                    step={1}
+                    defaultValue={12}
+                    ariaLabel={t('settings.voiceCoachTargetReps')}
+                    formatValue={(value) => String(value)}
+                  />
+                </div>
+                <div className="body-metrics-inline__cell">
+                  <span className="body-metrics-inline__label">
+                    {t('settings.voiceCoachCountInterval')}
+                    <span className="body-metrics-inline__unit">
+                      {t('settings.voiceCoachCountIntervalUnit')}
+                    </span>
+                  </span>
+                  <ScrollPicker
+                    value={clampVoiceCoachRepGapMs(voiceCoachRepGapMs) / 1000}
+                    onChange={(sec) =>
+                      setVoiceCoachRepGapMs(clampVoiceCoachRepGapMs(sec * 1000))
+                    }
+                    min={VOICE_COACH_REP_GAP.minMs / 1000}
+                    max={VOICE_COACH_REP_GAP.maxMs / 1000}
+                    step={VOICE_COACH_REP_GAP.stepMs / 1000}
+                    defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
+                    ariaLabel={t('settings.voiceCoachCountInterval')}
+                    formatValue={(value) => value.toFixed(1)}
+                  />
+                </div>
               </div>
             </div>
           </div>

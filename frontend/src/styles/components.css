@@ -550,29 +550,8 @@
   font-size: 0.85rem;
 }
 
-.settings-rest-duration {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.settings-rest-duration__controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1rem 1.25rem;
-}
-
-.settings-rest-duration__unit {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.35rem;
-  min-width: 9.5rem;
-}
-
-.settings-rest-duration__unit .numeric-stepper {
-  width: 100%;
+.settings-voice-coach .body-metrics-inline {
+  margin-top: 0.25rem;
 }
 
 .weight-difficulty-slider {
@@ -1653,6 +1632,15 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
+}
+
+.body-metrics-inline__grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.body-metrics-inline--disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .body-metrics-inline--invalid .body-metrics-inline__grid {
