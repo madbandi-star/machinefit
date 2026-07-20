@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, Clock3, Heart, Target, X } from 'lucide-react';
+import { Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
 import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
@@ -56,6 +56,7 @@ export function HistoryRecordCard({
   deleteDisabled = false,
 }: HistoryRecordCardProps) {
   const { t, i18n } = useTranslation(['machines', 'common']);
+  const [expanded, setExpanded] = useState(true);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const logDate = normalizeDateKey(card.logDate);
@@ -74,6 +75,10 @@ export function HistoryRecordCard({
   useEffect(() => {
     setWorkoutLogSavedOverride(null);
   }, [card.cardId]);
+
+  useEffect(() => {
+    if (isFocused) setExpanded(true);
+  }, [isFocused]);
   const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
     machineCode: card.machineCode,
     recommendationId: card.recommendationId,
@@ -114,12 +119,20 @@ export function HistoryRecordCard({
     toggleFavorite();
   };
 
+  const handleCollapseClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.blur();
+    event.stopPropagation();
+    setExpanded((prev) => !prev);
+  };
+
   return (
     <article
       id={`history-item-${card.cardId}`}
       className={`history-record-card history-record-card--premium${
         isWorkoutLogSaved ? ' history-record-card--logged' : ' history-record-card--unlogged'
-      }${isFocused ? ' history-record-card--focused' : ''}`}
+      }${isFocused ? ' history-record-card--focused' : ''}${
+        expanded ? '' : ' history-record-card--collapsed'
+      }`}
     >
       <header className="history-record-card__header">
         <div className="history-record-card__hero">
@@ -138,6 +151,21 @@ export function HistoryRecordCard({
                 <h2 className="history-record-card__machine-name">{displayName}</h2>
               </Link>
               <div className="history-record-card__header-actions">
+                <button
+                  type="button"
+                  className="history-record-card__collapse"
+                  aria-expanded={expanded}
+                  aria-label={expanded ? t('common:collapse') : t('common:expand')}
+                  onClick={handleCollapseClick}
+                >
+                  <ChevronDown
+                    size={17}
+                    strokeWidth={2.25}
+                    className={`history-record-card__collapse-icon${
+                      expanded ? ' history-record-card__collapse-icon--open' : ''
+                    }`}
+                  />
+                </button>
                 <button
                   type="button"
                   className={`history-record-card__bookmark recommendation-result-page__favorite${
@@ -221,6 +249,8 @@ export function HistoryRecordCard({
         </div>
       </header>
 
+      {expanded ? (
+        <>
       <div className="history-record-card__section">
         <Link
           to={resultUrl}
@@ -253,6 +283,20 @@ export function HistoryRecordCard({
         onControlReady={setLogControl}
         onSavedChange={setWorkoutLogSavedOverride}
       />
+        </>
+      ) : (
+        <button
+          type="button"
+          className="history-record-card__body-toggle"
+          aria-expanded={false}
+          onClick={() => setExpanded(true)}
+        >
+          <span className="history-record-card__body-toggle-label">
+            {t('common:expandCardDetails')}
+          </span>
+          <ChevronDown size={16} strokeWidth={2.25} aria-hidden />
+        </button>
+      )}
     </article>
   );
 }

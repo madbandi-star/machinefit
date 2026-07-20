@@ -2,8 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
-import { workoutLogApi } from '@/api';
+import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
+import { workoutLogApi, machinePreferenceApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { Check, Pencil } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
@@ -56,6 +56,7 @@ interface WorkoutLogPanelProps {
   lockTargetMuscle?: boolean;
   diaryDefaultOpen?: boolean;
   showSaveButton?: boolean;
+  showPersonalTipMemo?: boolean;
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
   onSavedChange?: (saved: boolean) => void;
 }
@@ -169,6 +170,7 @@ export function WorkoutLogPanel({
   lockTargetMuscle = false,
   diaryDefaultOpen = false,
   showSaveButton = false,
+  showPersonalTipMemo,
   onControlReady,
   onSavedChange,
 }: WorkoutLogPanelProps) {
@@ -180,6 +182,7 @@ export function WorkoutLogPanel({
   const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
   const isHistory = variant === 'history';
   const compact = variant === 'compact' || isHistory;
+  const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
   const weightStepKg = getWeightStepKg(machineCode);
@@ -203,12 +206,24 @@ export function WorkoutLogPanel({
     buildDefaultCompleted(DEFAULT_SET_COUNT)
   );
   const [diary, setDiary] = useState('');
+  const [personalTipMemo, setPersonalTipMemo] = useState('');
   const [diaryExpanded, setDiaryExpanded] = useState(diaryDefaultOpen);
   const [baseline, setBaseline] = useState<WorkoutFormSnapshot | null>(null);
   const lastHydrateKeyRef = useRef('');
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
+  const personalTipBytes = getUtf8ByteLength(personalTipMemo);
   const queryEnabled = isAuthenticated && (!isFreeWeight || !!queryTargetMuscle);
+
+  const { data: machinePreferences, isFetched: isPreferencesFetched } = useQuery({
+    queryKey: ['machine-preferences', machineCode],
+    queryFn: () => machinePreferenceApi.get(machineCode),
+    enabled: isAuthenticated && showPersonalTip,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const { data: existingLogs, isLoading, isFetched } = useQuery({
     queryKey: workoutLogQueryKey,
@@ -232,13 +247,19 @@ export function WorkoutLogPanel({
   const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
   const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}`;
 
+  const isPersonalTipDirty =
+    showPersonalTip &&
+    isPreferencesFetched &&
+    personalTipMemo.trim() !== (machinePreferences?.personalTipMemo ?? '').trim();
+
   const isDirty =
-    isLogSaved &&
-    baseline !== null &&
-    (setCount !== baseline.setCount ||
-      !weightsEqual(weights, baseline.weights) ||
-      !booleansEqual(setCompleted, baseline.setCompleted) ||
-      diary.trim() !== baseline.diary.trim());
+    (isLogSaved &&
+      baseline !== null &&
+      (setCount !== baseline.setCount ||
+        !weightsEqual(weights, baseline.weights) ||
+        !booleansEqual(setCompleted, baseline.setCompleted) ||
+        diary.trim() !== baseline.diary.trim())) ||
+    isPersonalTipDirty;
 
   const invalidateLogSideEffects = () => {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
@@ -256,7 +277,13 @@ export function WorkoutLogPanel({
     lastHydrateKeyRef.current = '';
     setBaseline(null);
     setSelectedMuscle(targetMuscleGroup ?? null);
+    setPersonalTipMemo('');
   }, [machineCode, logDate, recommendationId, targetMuscleGroup]);
+
+  useEffect(() => {
+    if (!showPersonalTip || !isPreferencesFetched) return;
+    setPersonalTipMemo(machinePreferences?.personalTipMemo ?? '');
+  }, [showPersonalTip, isPreferencesFetched, machinePreferences?.personalTipMemo, machineCode]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -302,7 +329,22 @@ export function WorkoutLogPanel({
       await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
     },
-    onSuccess: (savedLog) => {
+    onSuccess: async (savedLog) => {
+      let personalTipSaved = true;
+      if (showPersonalTip && isAuthenticated) {
+        try {
+          const savedPrefs = await machinePreferenceApi.upsert({
+            machineCode,
+            personalTipMemo: personalTipMemo.trim(),
+          });
+          setPersonalTipMemo(savedPrefs.personalTipMemo ?? personalTipMemo.trim());
+          void queryClient.invalidateQueries({ queryKey: ['machine-preferences', machineCode] });
+        } catch {
+          personalTipSaved = false;
+          showToast(t('machines:history.personalTipSaveFailed'), 'error');
+        }
+      }
+
       queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
       onSavedChange?.(true);
       queryClient.setQueryData(
@@ -314,10 +356,12 @@ export function WorkoutLogPanel({
         )
       );
       invalidateLogSideEffects();
-      showToast(
-        isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
-        'success'
-      );
+      if (personalTipSaved) {
+        showToast(
+          isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
+          'success'
+        );
+      }
     },
     onError: () => {
       const current = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
@@ -531,6 +575,10 @@ export function WorkoutLogPanel({
     setDiary(truncateUtf8(value, WORKOUT_DIARY_MAX_BYTES));
   };
 
+  const handlePersonalTipChange = (value: string) => {
+    setPersonalTipMemo(truncateUtf8(value, MACHINE_PERSONAL_TIP_MAX_BYTES));
+  };
+
   const handleDiaryTagClick = (tag: string) => {
     const token = formatDiaryTag(tag);
     const next = diary.trim() ? `${diary.trim()} ${token}` : token;
@@ -720,16 +768,9 @@ export function WorkoutLogPanel({
         {diaryTags}
       </div>
       <div className="history-workout-log__diary-memo-pane">
-        <div className="history-workout-log__memo-header">
-          <button
-            type="button"
-            className="btn btn--secondary history-workout-log__memo-save"
-            onClick={handleSave}
-            disabled={isActionPending || isLoading}
-          >
-            {saveMutation.isPending ? t('machines:history.memoSaving') : t('machines:history.memoSave')}
-          </button>
-        </div>
+        <label className="history-workout-log__pane-label" htmlFor={`${idPrefix}-diary`}>
+          {t('machines:history.memoLabel')}
+        </label>
         <textarea
           id={`${idPrefix}-diary`}
           className="input history-workout-log__memo-input"
@@ -783,6 +824,45 @@ export function WorkoutLogPanel({
       />
     </div>
   );
+
+  const personalTipField =
+    isHistory && showPersonalTip && isAuthenticated ? (
+      <div className="history-workout-log__personal-tip">
+        <div className="history-workout-log__personal-tip-header">
+          <label className="history-workout-log__pane-label" htmlFor={`${idPrefix}-personal-tip`}>
+            {t('machines:history.personalTipTitle')}
+          </label>
+          <span className="recommendation-workout-log__diary-bytes">
+            {t('machines:history.personalTipBytes', { used: personalTipBytes })}
+          </span>
+        </div>
+        <textarea
+          id={`${idPrefix}-personal-tip`}
+          className="input history-workout-log__memo-input history-workout-log__personal-tip-input"
+          rows={3}
+          value={personalTipMemo}
+          placeholder={t('machines:history.personalTipPlaceholder')}
+          onChange={(e) => handlePersonalTipChange(e.target.value)}
+          disabled={isActionPending}
+        />
+        <p className="history-workout-log__personal-tip-hint">
+          {t('machines:history.personalTipSaveHint')}
+        </p>
+      </div>
+    ) : null;
+
+  const historyMemoSaveButton = isHistory ? (
+    <div className="history-workout-log__memo-save-row">
+      <button
+        type="button"
+        className="btn btn--secondary history-workout-log__memo-save"
+        onClick={handleSave}
+        disabled={isActionPending || isLoading}
+      >
+        {saveMutation.isPending ? t('machines:history.memoSaving') : t('machines:history.memoSave')}
+      </button>
+    </div>
+  ) : null;
 
   const saveButton = isLogSaved ? (
     <div className="recommendation-workout-log__actions">
@@ -868,6 +948,8 @@ export function WorkoutLogPanel({
           {weightList}
         </div>
         {diaryField}
+        {personalTipField}
+        {historyMemoSaveButton}
         {showSaveButton ? saveButton : null}
       </section>
     );

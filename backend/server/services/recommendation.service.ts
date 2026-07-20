@@ -86,7 +86,7 @@ export const recommendationService = {
       recommendedWeightKg: personalizedWeight,
     };
 
-    const settings = mergeSettingsWithPreferences(baseSettings, savedPreferences);
+    const settings = mergeSettingsWithPreferences(baseSettings, savedPreferences?.customSettings ?? null);
 
     const id = await recommendationRepository.save(
       input,

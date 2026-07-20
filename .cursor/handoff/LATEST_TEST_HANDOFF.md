@@ -6,36 +6,24 @@
 
 ## Summary
 
-타겟 근육 그룹에 **이두(biceps)·삼두(triceps)** 추가.
+기구별 **나만의 팁 메모장** 마무리 + 카드 접기/펴기.
 
-## as-is → to-be
+## Layout (추천 결과)
 
-- **as-is:** 등 · 가슴 · 하체 · 어깨
-- **to-be:** 등 · 가슴 · 하체 · 어깨 · **이두 · 삼두**
-
-## Changed files
-
-- `shared/src/constants/workout-goals.ts`
-- `shared/src/utils/recommendation-personalization.ts`
-- `frontend/src/constants/muscle-groups.ts`
-- `frontend/src/i18n/locales/ko/machines.json`, `en/machines.json`
-- `frontend/src/components/muscle/MuscleGroupIcon/*` (이두/삼두 아이콘 폴백)
-- `backend/server/services/workout-report.service.ts`
-- `database/migrations/028_biceps_triceps_target_muscle.sql`
+1. 운동일지  
+2. **나만의 팁 메모장** (기구별, 운동팁 바로 위)  
+3. **저장하기** (일지+팁 함께 저장, 별도 팁 저장 버튼 없음)  
+4. RecommendationTips (운동팁)
 
 ## Test focus
 
-1. 머신 검색 필터·프리웨이트 부위 선택에 이두/삼두 표시
-2. `npm run typecheck` / frontend build 통과
-3. (배포 후) DB `npm run db:migrate`로 028 적용
+1. 팁 입력 후 저장하기 → 새로고침해도 유지  
+2. 바이트 `n/500`  
+3. 팁만 수정해도 북마크가 “변경 저장”  
+4. 카드 접기/펴기  
+5. typecheck + build
 
-## Fast checks
+## After merge
 
-```bash
-npm run test:smoke:changed
-```
-
-## Production
-
-- Frontend: GitHub Pages 배포 후 UI 확인
-- DB: `npm run db:migrate` (Supabase)
+- `npm run db:migrate` (029)
+- Render 백엔드 재배포

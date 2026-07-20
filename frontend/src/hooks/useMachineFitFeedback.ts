@@ -50,11 +50,12 @@ export function useMachineFitFeedback({
     enabled,
   });
 
-  const { data: savedPreferences } = useQuery({
+  const { data: machinePreferences } = useQuery({
     queryKey: ['machine-preferences', machineCode],
     queryFn: () => machinePreferenceApi.get(machineCode),
     enabled,
   });
+  const savedPreferences = machinePreferences?.customSettings;
 
   useEffect(() => {
     if (savedPreferences) {

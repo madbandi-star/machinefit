@@ -1,52 +1,62 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T02:53:00Z",
-  "title": "Add biceps and triceps target muscle groups",
-  "summary": "프리웨이트/필터용 타겟 근육에 이두(biceps)·삼두(triceps)를 추가했습니다. DB 마이그레이션 028에서 CHECK 제약과 컬럼 주석을 갱신합니다.",
+  "updatedAt": "2026-07-20T03:45:00Z",
+  "title": "Card collapse/expand + machine personal tip memo (finished)",
+  "summary": "기구별 나만의 팁 메모장 마무리: 운동팁 위 표시, 저장하기로 함께 저장, 바이트 카운터/dirty/실패 UX 수정. 카드 접기/펴기 포함. DB 마이그레이션 029.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
   "programTestAgentName": "프로그램테스트",
   "git": {
-    "branch": "main",
-    "commit": "04d18ab",
-    "pr": 7,
+    "branch": "cursor/add-machine-personal-tip-memo-35b3",
+    "commit": "12bac80",
+    "pr": 8,
     "base": "main"
   },
   "changedFiles": [
-    "shared/src/constants/workout-goals.ts",
-    "shared/src/utils/recommendation-personalization.ts",
-    "frontend/src/constants/muscle-groups.ts",
-    "frontend/src/constants/muscle-group-images.ts",
-    "frontend/src/components/muscle/MuscleGroupIcon/MuscleGroupIcon.tsx",
-    "frontend/src/styles/muscle-group-icon.css",
+    "database/migrations/029_machine_personal_tip_memo.sql",
+    "shared/src/types/machine-preferences.types.ts",
+    "shared/src/validators/machine-preference.schema.ts",
+    "backend/server/repositories/preference.repository.ts",
+    "backend/server/controllers/feedback.controller.ts",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
     "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "backend/server/services/workout-report.service.ts",
-    "database/migrations/028_biceps_triceps_target_muscle.sql"
+    "frontend/src/i18n/locales/en/machines.json"
   ],
   "testFocus": [
-    "Filter chips / free-weight muscle picker show 이두·삼두",
-    "TARGET_MUSCLE_GROUPS includes biceps, triceps",
-    "Migration 028 SQL is valid",
-    "typecheck + build pass"
+    "Recommendation result: personal tip above RecommendationTips",
+    "Save via 저장하기 persists tip with workout diary (no separate tip button)",
+    "Byte counter shows /500",
+    "Tip-only edit marks dirty (bookmark updates instead of remove)",
+    "Tip save failure shows personalTipSaveFailed without false success",
+    "History cards collapse/expand",
+    "Migration 029 present",
+    "typecheck + build"
   ],
   "fastChecks": [
     {
-      "id": "shared-groups",
+      "id": "migration-029",
       "type": "file_contains",
-      "path": "shared/src/constants/workout-goals.ts",
-      "pattern": "'biceps'"
+      "path": "database/migrations/029_machine_personal_tip_memo.sql",
+      "pattern": "personal_tip_memo"
     },
     {
-      "id": "ko-i18n",
+      "id": "personal-tip-i18n",
       "type": "file_contains",
       "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "\"biceps\": \"이두\""
+      "pattern": "personalTipTitle"
     },
     {
-      "id": "migration",
+      "id": "personal-tip-bytes",
       "type": "file_contains",
-      "path": "database/migrations/028_biceps_triceps_target_muscle.sql",
-      "pattern": "biceps"
+      "path": "frontend/src/i18n/locales/ko/machines.json",
+      "pattern": "personalTipBytes"
+    },
+    {
+      "id": "save-hint",
+      "type": "file_contains",
+      "path": "frontend/src/i18n/locales/ko/machines.json",
+      "pattern": "personalTipSaveHint"
     },
     {
       "id": "typecheck",
@@ -63,7 +73,17 @@
     {
       "id": "db-migrate",
       "type": "note",
-      "detail": "After merge: run npm run db:migrate on Supabase to apply 028_biceps_triceps_target_muscle.sql"
+      "detail": "Run npm run db:migrate on Supabase for 029 (and 028 if needed)"
+    },
+    {
+      "id": "render-redeploy",
+      "type": "note",
+      "detail": "Backend/shared changed — redeploy Render"
+    },
+    {
+      "id": "ui-tip",
+      "type": "note",
+      "detail": "On result page: diary → 나만의 팁 메모장 → 저장하기 → RecommendationTips"
     }
   ],
   "deploy": {
@@ -71,6 +91,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "Target muscle groups: 등, 가슴, 하체, 어깨 (back, chest, legs, shoulders).",
-  "toBe": "Target muscle groups: 등, 가슴, 하체, 어깨, 이두, 삼두 (back, chest, legs, shoulders, biceps, triceps)."
+  "asIs": "No per-machine personal tip notebook; cards always expanded.",
+  "toBe": "Personal tip memo per machine saved with 저장하기; cards collapsible."
 }

@@ -89,7 +89,8 @@ export interface RecommendationFeedbackInput {
 
 export interface MachinePreferenceInput {
   machineCode: string;
-  customSettings: Partial<RecommendationSettings>;
+  customSettings?: Partial<RecommendationSettings>;
+  personalTipMemo?: string;
 }
 
 export const recommendationFeedbackApi = {
@@ -109,18 +110,38 @@ export const recommendationFeedbackApi = {
 };
 
 export const machinePreferenceApi = {
-  async upsert(input: MachinePreferenceInput): Promise<MachinePreferenceInput> {
-    const res = await apiClient.put<ApiResponse<MachinePreferenceInput>>(
-      `/machines/${encodeURIComponent(input.machineCode)}/preferences`,
-      { customSettings: input.customSettings }
-    );
+  async upsert(input: MachinePreferenceInput): Promise<{
+    machineCode: string;
+    customSettings: Partial<RecommendationSettings>;
+    personalTipMemo: string;
+  }> {
+    const body: {
+      customSettings?: Partial<RecommendationSettings>;
+      personalTipMemo?: string;
+    } = {};
+    if (input.customSettings !== undefined) {
+      body.customSettings = input.customSettings;
+    }
+    if (input.personalTipMemo !== undefined) {
+      body.personalTipMemo = input.personalTipMemo;
+    }
+    const res = await apiClient.put<
+      ApiResponse<{
+        machineCode: string;
+        customSettings: Partial<RecommendationSettings>;
+        personalTipMemo: string;
+      }>
+    >(`/machines/${encodeURIComponent(input.machineCode)}/preferences`, body);
     return res.data.data;
   },
-  async get(machineCode: string): Promise<Partial<RecommendationSettings> | null> {
-    const res = await apiClient.get<ApiResponse<{ customSettings: Partial<RecommendationSettings> }>>(
-      `/machines/${encodeURIComponent(machineCode)}/preferences`
-    );
-    return res.data.data.customSettings;
+  async get(machineCode: string): Promise<{
+    customSettings: Partial<RecommendationSettings>;
+    personalTipMemo: string;
+  }> {
+    const res = await apiClient.get<
+      ApiResponse<{ customSettings: Partial<RecommendationSettings>; personalTipMemo: string }>
+    >(`/machines/${encodeURIComponent(machineCode)}/preferences`);
+    return res.data.data;
   },
 };
 

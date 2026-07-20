@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@/styles/globals.css';
 import '@/styles/components.css';
+import '@/styles/collapsible-card.css';
 import '@/styles/android-ui.css';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
