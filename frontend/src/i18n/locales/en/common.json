@@ -159,9 +159,6 @@
   },
   "settings": {
     "language": "Language",
-    "theme": "Theme",
-    "themeLight": "Light",
-    "themeDark": "Dark",
     "voiceCoach": "Voice count",
     "voiceCoachDesc": "Spoken countdown and reps between sets. You can also adjust this on the workout log screen.",
     "voiceCoachEnable": "Enable voice count",
@@ -189,9 +186,9 @@
     "weightDifficultyHintDefault": "Uses the algorithmic recommended weight as-is.",
     "weightDifficultyHintScaled": "Recommended weight is scaled to {{percent}}.",
     "reset": "Reset settings",
-    "resetDesc": "Restore app preferences (theme, units, rest time, voice count, weight difficulty) to defaults. Body profile values are kept.",
+    "resetDesc": "Restore app preferences (units, rest time, voice count, weight difficulty) to defaults. Body profile values are kept.",
     "resetConfirmTitle": "Reset settings?",
-    "resetConfirmMessage": "Theme, units, rest time, voice count, and weight difficulty will return to defaults. Your body profile will not change.",
+    "resetConfirmMessage": "Units, rest time, voice count, and weight difficulty will return to defaults. Your body profile will not change.",
     "resetConfirm": "Reset",
     "resetDone": "Settings restored to defaults."
   },

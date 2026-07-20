@@ -17,10 +17,7 @@ import {
   VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
 
-type Theme = 'light' | 'dark';
-
 const DEFAULT_VOICE_COACH_REPS = 12;
-const DEFAULT_THEME: Theme = 'dark';
 
 function getDefaultTimezone(): string {
   try {
@@ -34,7 +31,6 @@ export const SETTINGS_DEFAULTS = {
   locale: DEFAULT_LOCALE,
   unitHeight: DEFAULT_UNIT_HEIGHT,
   unitWeight: DEFAULT_UNIT_WEIGHT,
-  theme: DEFAULT_THEME,
   voiceCoachEnabled: true,
   voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
   voiceCoachOneMore: true,
@@ -50,7 +46,6 @@ interface SettingsState {
   locale: Locale;
   unitHeight: 'cm' | 'ft_in';
   unitWeight: 'kg' | 'lb';
-  theme: Theme;
   timezone: string;
   voiceCoachEnabled: boolean;
   voiceCoachTargetReps: number;
@@ -69,7 +64,6 @@ interface SettingsState {
   setLocale: (locale: Locale) => void;
   setUnitHeight: (unit: 'cm' | 'ft_in') => void;
   setUnitWeight: (unit: 'kg' | 'lb') => void;
-  setTheme: (theme: Theme) => void;
   setTimezone: (tz: string) => void;
   setVoiceCoachEnabled: (enabled: boolean) => void;
   setVoiceCoachTargetReps: (reps: number) => void;
@@ -80,7 +74,7 @@ interface SettingsState {
   setVoiceCoachRepGapMs: (ms: number) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setWeightDifficulty: (value: number) => void;
-  /** Restore app preferences (theme, units, voice, rest, etc.) to defaults. */
+  /** Restore app preferences (units, voice, rest, etc.) to defaults. */
   resetSettings: () => void;
 }
 
@@ -92,7 +86,6 @@ export const useSettingsStore = create<SettingsState>()(
       setLocale: (locale) => set({ locale }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),
       setUnitWeight: (unitWeight) => set({ unitWeight }),
-      setTheme: (theme) => set({ theme }),
       setTimezone: (timezone) => set({ timezone }),
       setVoiceCoachEnabled: (voiceCoachEnabled) => set({ voiceCoachEnabled }),
       setVoiceCoachTargetReps: (voiceCoachTargetReps) => set({ voiceCoachTargetReps }),

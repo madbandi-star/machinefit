@@ -1,8 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
-import { useSettingsStore } from '@/store/settings.store';
-import { usePersistHydration } from '@/hooks/usePersistHydration';
 
 const THEME_COLOR_META = 'theme-color';
+const APP_THEME = 'dark';
 
 function setThemeColorMeta(color: string) {
   let meta = document.querySelector(`meta[name="${THEME_COLOR_META}"]`);
@@ -14,21 +13,17 @@ function setThemeColorMeta(color: string) {
   meta.setAttribute('content', color);
 }
 
+/** App currently supports dark theme only. */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const theme = useSettingsStore((s) => s.theme);
-  const hydrated = usePersistHydration(useSettingsStore.persist);
-
   useEffect(() => {
-    if (!hydrated) return;
-
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-theme', APP_THEME);
 
     const rootStyle = getComputedStyle(document.documentElement);
     const themeColor = rootStyle.getPropertyValue('--theme-color-meta').trim();
     if (themeColor) {
       setThemeColorMeta(themeColor);
     }
-  }, [hydrated, theme]);
+  }, []);
 
   return <>{children}</>;
 }

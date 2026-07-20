@@ -52,13 +52,6 @@
             });
           }
         } catch (e) {}
-        try {
-          var raw = localStorage.getItem('machinefit-settings');
-          if (!raw) return;
-          var parsed = JSON.parse(raw);
-          var theme = parsed && parsed.state && parsed.state.theme;
-          if (theme) document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) {}
       })();
     </script>
   </head>

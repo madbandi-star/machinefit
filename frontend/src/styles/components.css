@@ -449,31 +449,6 @@
   z-index: 10;
 }
 
-.theme-switch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-}
-
-.theme-switch__option {
-  min-height: var(--touch-target-min, 44px);
-  padding: 0.65rem 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
-  box-shadow: var(--shadow-sm);
-}
-
-.theme-switch__option--active {
-  border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 15%, var(--color-surface));
-  color: var(--color-primary-text);
-}
-
 .settings-voice-coach {
   display: flex;
   flex-direction: column;

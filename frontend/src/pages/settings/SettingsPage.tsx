@@ -18,7 +18,6 @@ import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/Pro
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
-import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
@@ -220,11 +219,6 @@ export function SettingsPage() {
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
         </section>
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.theme')}</h3>
-          <ThemeSwitch />
-        </section>
-
         <section className="form-section">
           <h3 className="form-section__title">{t('settings.restDuration')}</h3>
           <p className="form-section__desc">{t('settings.restDurationDesc')}</p>
