@@ -9,6 +9,7 @@ import { MachineEmptyState } from '@/components/machines/MachineEmptyState/Machi
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
+import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
 export function BrandDetailPage() {
@@ -49,17 +50,13 @@ export function BrandDetailPage() {
   const description = brand.description
     ? getLocalizedName(brand.description, i18n.language, '')
     : '';
+  const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
 
   return (
     <PageShell title={name} subtitle={t('brandDetail.subtitle', { code: brand.code })}>
       <div className="brand-detail__header">
-        {brand.logoUrl ? (
-          <img
-            src={brand.logoUrl}
-            alt={name}
-            className="brand-detail__logo"
-            loading="lazy"
-          />
+        {logoUrl ? (
+          <img src={logoUrl} alt={name} className="brand-detail__logo" loading="lazy" />
         ) : null}
         {description ? <p className="brand-detail__desc">{description}</p> : null}
         {brand.websiteUrl ? (

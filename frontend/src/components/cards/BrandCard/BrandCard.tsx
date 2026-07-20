@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
+import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/components.css';
 import '@/styles/machines.css';
 
@@ -16,6 +17,7 @@ export function BrandCard({ brand }: BrandCardProps) {
   const description = brand.description
     ? getLocalizedName(brand.description, i18n.language, '')
     : '';
+  const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
 
   return (
     <Link
@@ -23,8 +25,8 @@ export function BrandCard({ brand }: BrandCardProps) {
       className="card card--interactive brand-card"
     >
       <div className="brand-card__media">
-        {brand.logoUrl ? (
-          <img src={brand.logoUrl} alt="" className="brand-card__logo" loading="lazy" />
+        {logoUrl ? (
+          <img src={logoUrl} alt="" className="brand-card__logo" loading="lazy" />
         ) : (
           <div className="brand-card__logo-fallback" aria-hidden>
             {name.slice(0, 1)}

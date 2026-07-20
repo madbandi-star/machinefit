@@ -6,6 +6,7 @@ import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { getLocalizedName } from '@/utils/localizedName';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
 interface MachineHeroProps {
@@ -19,15 +20,16 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
   const showDefaultMuscle = shouldShowDefaultMachineMuscle(machine.code);
   const typeLabel = t('machineTypes.free_weight');
+  const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
 
   return (
     <div className={`machine-hero${compact ? ' machine-hero--compact' : ''}`}>
       {!compact && (
         <div className="machine-hero__image-wrap">
-          {machine.primaryImageUrl ? (
+          {imageUrl ? (
             <img
               className="machine-hero__image"
-              src={machine.primaryImageUrl}
+              src={imageUrl}
               alt={localizedName}
               loading="lazy"
             />
@@ -38,7 +40,7 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
           ) : (
             <img
               className="machine-hero__image"
-              src={`${import.meta.env.BASE_URL}assets/machines/placeholder.svg`}
+              src={machinePlaceholderUrl()}
               alt=""
               loading="lazy"
             />

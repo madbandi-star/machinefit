@@ -8,6 +8,7 @@ import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
 interface MachineListItemProps {
@@ -32,6 +33,7 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       ? getLocalizedName(machine.brandName, i18n.language, '')
       : null;
   const typeLabel = isFreeWeight ? t('machineTypes.free_weight') : null;
+  const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
   const detailTo =
@@ -45,8 +47,8 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       className="machine-list-item"
     >
       <div className="machine-list-item__thumb">
-        {machine.primaryImageUrl ? (
-          <img src={machine.primaryImageUrl} alt="" loading="lazy" />
+        {imageUrl ? (
+          <img src={imageUrl} alt="" loading="lazy" />
         ) : displayMuscle ? (
           <div className="machine-list-item__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={52} />
@@ -54,7 +56,7 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
         ) : (
           <img
             className="machine-list-item__placeholder-img"
-            src={`${import.meta.env.BASE_URL}assets/machines/placeholder.svg`}
+            src={machinePlaceholderUrl()}
             alt=""
             loading="lazy"
           />
