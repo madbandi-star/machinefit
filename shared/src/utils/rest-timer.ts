@@ -7,13 +7,17 @@ export const REST_DURATION = {
   /** Cap at 30 minutes. */
   maxSeconds: 30 * 60,
   maxMinutes: 30,
+  minuteStep: 1,
+  secondStep: 5,
 } as const;
 
 export function clampRestDurationSeconds(seconds: number): number {
   if (!Number.isFinite(seconds)) return REST_DURATION.defaultSeconds;
+  const stepped =
+    Math.round(seconds / REST_DURATION.secondStep) * REST_DURATION.secondStep;
   return Math.min(
     REST_DURATION.maxSeconds,
-    Math.max(REST_DURATION.minSeconds, Math.round(seconds))
+    Math.max(REST_DURATION.minSeconds, stepped)
   );
 }
 
@@ -27,8 +31,10 @@ export function restDurationParts(totalSeconds: number): { minutes: number; seco
 
 export function restDurationFromParts(minutes: number, seconds: number): number {
   const m = Number.isFinite(minutes) ? Math.round(minutes) : 0;
-  const s = Number.isFinite(seconds) ? Math.round(seconds) : 0;
-  return clampRestDurationSeconds(m * 60 + s);
+  const rawSeconds = Number.isFinite(seconds) ? seconds : 0;
+  const snappedSeconds =
+    Math.round(rawSeconds / REST_DURATION.secondStep) * REST_DURATION.secondStep;
+  return clampRestDurationSeconds(m * 60 + snappedSeconds);
 }
 
 const REST_SECONDS_BY_GOAL: Record<WorkoutGoal, number> = {

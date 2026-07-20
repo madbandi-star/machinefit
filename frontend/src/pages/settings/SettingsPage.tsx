@@ -19,6 +19,7 @@ import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/W
 import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
 import { ThemeSwitch } from '@/components/settings/ThemeSwitch/ThemeSwitch';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
+import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { userApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
@@ -141,8 +142,6 @@ export function SettingsPage() {
   });
 
   const restParts = restDurationParts(restDurationSeconds);
-  const restAtMin = restDurationSeconds <= REST_DURATION.minSeconds;
-  const restAtMax = restDurationSeconds >= REST_DURATION.maxSeconds;
 
   return (
     <PageShell title={t('nav.settings')}>
@@ -234,72 +233,42 @@ export function SettingsPage() {
               aria-label={t('settings.restDuration')}
             >
               <div className="settings-rest-duration__unit">
-                <div className="settings-rest-duration__stepper">
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    disabled={restAtMin || restParts.minutes <= 0}
-                    aria-label={t('settings.restDurationMinutesDecrease')}
-                    onClick={() =>
-                      setRestDurationSeconds(
-                        restDurationFromParts(restParts.minutes - 1, restParts.seconds)
-                      )
-                    }
-                  >
-                    −
-                  </button>
-                  <strong className="settings-rest-duration__value">
-                    {String(restParts.minutes).padStart(2, '0')}
-                  </strong>
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    disabled={restAtMax || restParts.minutes >= REST_DURATION.maxMinutes}
-                    aria-label={t('settings.restDurationMinutesIncrease')}
-                    onClick={() =>
-                      setRestDurationSeconds(
-                        restDurationFromParts(restParts.minutes + 1, restParts.seconds)
-                      )
-                    }
-                  >
-                    +
-                  </button>
-                </div>
-                <span className="settings-rest-duration__unit-label">
-                  {t('settings.restDurationMinutes')}
-                </span>
+                <NumericStepper
+                  id="settings-rest-minutes"
+                  value={restParts.minutes}
+                  onChange={(next) => {
+                    if (next == null) return;
+                    setRestDurationSeconds(
+                      restDurationFromParts(next, restParts.seconds)
+                    );
+                  }}
+                  min={0}
+                  max={REST_DURATION.maxMinutes}
+                  step={REST_DURATION.minuteStep}
+                  size="compact"
+                  unit={t('settings.restDurationMinutes')}
+                  ariaLabel={t('settings.restDurationMinutes')}
+                  allowManualInput
+                />
               </div>
               <div className="settings-rest-duration__unit">
-                <div className="settings-rest-duration__stepper">
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    disabled={restAtMin}
-                    aria-label={t('settings.restDurationSecondsDecrease')}
-                    onClick={() =>
-                      setRestDurationSeconds(restDurationSeconds - 1)
-                    }
-                  >
-                    −
-                  </button>
-                  <strong className="settings-rest-duration__value">
-                    {String(restParts.seconds).padStart(2, '0')}
-                  </strong>
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    disabled={restAtMax}
-                    aria-label={t('settings.restDurationSecondsIncrease')}
-                    onClick={() =>
-                      setRestDurationSeconds(restDurationSeconds + 1)
-                    }
-                  >
-                    +
-                  </button>
-                </div>
-                <span className="settings-rest-duration__unit-label">
-                  {t('settings.restDurationSeconds')}
-                </span>
+                <NumericStepper
+                  id="settings-rest-seconds"
+                  value={restParts.seconds}
+                  onChange={(next) => {
+                    if (next == null) return;
+                    setRestDurationSeconds(
+                      restDurationFromParts(restParts.minutes, next)
+                    );
+                  }}
+                  min={0}
+                  max={60 - REST_DURATION.secondStep}
+                  step={REST_DURATION.secondStep}
+                  size="compact"
+                  unit={t('settings.restDurationSeconds')}
+                  ariaLabel={t('settings.restDurationSeconds')}
+                  allowManualInput
+                />
               </div>
             </div>
           </div>

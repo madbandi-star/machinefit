@@ -566,34 +566,13 @@
 .settings-rest-duration__unit {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 0.35rem;
+  min-width: 9.5rem;
 }
 
-.settings-rest-duration__stepper {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.settings-rest-duration__stepper .btn {
-  min-width: 2.5rem;
-  min-height: 2.5rem;
-  padding: 0;
-}
-
-.settings-rest-duration__value {
-  min-width: 2.25rem;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
-}
-
-.settings-rest-duration__unit-label {
-  font-size: 0.85rem;
-  color: var(--color-text-muted, inherit);
-  opacity: 0.85;
+.settings-rest-duration__unit .numeric-stepper {
+  width: 100%;
 }
 
 .weight-difficulty-slider {
