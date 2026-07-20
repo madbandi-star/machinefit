@@ -28,9 +28,11 @@ import { GrowthAnalysisPage } from '@/pages/growth-analysis/GrowthAnalysisPage';
 import { MyPage } from '@/pages/my-page/MyPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { OwnerDashboardPage } from '@/pages/gym-owner/dashboard/OwnerDashboardPage';
+import { OwnerApplyPage } from '@/pages/gym-owner/apply/OwnerApplyPage';
 import { AdminDashboardPage } from '@/pages/admin/dashboard/AdminDashboardPage';
 import { AdminUsersPage } from '@/pages/admin/users/AdminUsersPage';
 import { AdminGymsPage } from '@/pages/admin/gyms/AdminGymsPage';
+import { AdminOwnerApplicationsPage } from '@/pages/admin/owner-applications/AdminOwnerApplicationsPage';
 import { AdminMachinesPage } from '@/pages/admin/machines/AdminMachinesPage';
 import { AdminModerationPage } from '@/pages/admin/moderation/AdminModerationPage';
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage';
@@ -83,6 +85,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.RECOMMEND, element: <RecommendationFormPage /> },
             { path: ROUTES.RECOMMEND_RESULT, element: <RecommendationResultPage /> },
             { path: ROUTES.MY_PAGE, element: <MyPage /> },
+            { path: ROUTES.OWNER_APPLY, element: <OwnerApplyPage /> },
             { path: ROUTES.GROWTH_ANALYSIS, element: <GrowthAnalysisPage /> },
             { path: ROUTES.SETTINGS, element: <SettingsPage /> },
             { path: ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
@@ -122,6 +125,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN, element: <AdminDashboardPage /> },
         { path: ROUTES.ADMIN_USERS, element: <AdminUsersPage /> },
         { path: ROUTES.ADMIN_GYMS, element: <AdminGymsPage /> },
+        { path: ROUTES.ADMIN_OWNER_APPLICATIONS, element: <AdminOwnerApplicationsPage /> },
         { path: ROUTES.ADMIN_MACHINES, element: <AdminMachinesPage /> },
         { path: ROUTES.ADMIN_MODERATION, element: <AdminModerationPage /> },
       ],

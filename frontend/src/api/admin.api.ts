@@ -8,6 +8,10 @@ import type {
   Brand,
   Machine,
   User,
+  OwnerApplication,
+  GymMachine,
+  ReviewOwnerApplicationInput,
+  AdminGymMachineActionInput,
 } from '@machinefit/shared';
 import type {
   UpdateUserAdminInput,
@@ -100,4 +104,19 @@ export const adminApi = {
 
   resolveReport: (id: string, input: ResolveReportInput) =>
     apiClient.patch<ApiResponse<Report>>(`/admin/reports/${id}`, input),
+
+  listOwnerApplications: (params?: { status?: string }) =>
+    apiClient.get<ApiResponse<OwnerApplication[]>>('/admin/owner-applications', { params }),
+
+  reviewOwnerApplication: (id: string, input: ReviewOwnerApplicationInput) =>
+    apiClient.patch<ApiResponse<OwnerApplication>>(`/admin/owner-applications/${id}`, input),
+
+  listGymInventory: (gymId: string, params?: { includeDeleted?: boolean }) =>
+    apiClient.get<ApiResponse<GymMachine[]>>(`/admin/gyms/${gymId}/inventory`, { params }),
+
+  gymMachineAction: (itemId: string, input: AdminGymMachineActionInput) =>
+    apiClient.post<ApiResponse<{ message: string }>>(
+      `/admin/gym-machines/${itemId}/actions`,
+      input
+    ),
 };

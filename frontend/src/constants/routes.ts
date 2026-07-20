@@ -29,6 +29,8 @@ export const ROUTES = {
   ADMIN_GYMS: '/admin/gyms',
   ADMIN_MACHINES: '/admin/machines',
   ADMIN_MODERATION: '/admin/moderation',
+  ADMIN_OWNER_APPLICATIONS: '/admin/owner-applications',
+  OWNER_APPLY: '/owner/apply',
   NOTIFICATIONS: '/notifications',
   SCAN: '/scan',
   QR: '/qr/:qrCode',

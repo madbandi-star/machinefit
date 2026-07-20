@@ -4,7 +4,7 @@ import {
   createOwnerGymSchema,
   addGymMachineSchema,
 } from '@machinefit/shared';
-import { ownerService } from '../services/community.service.js';
+import { ownerService } from '../services/owner.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getParam } from '../utils/params.util.js';
 
@@ -23,27 +23,27 @@ export async function dashboard(req: Request, res: Response): Promise<void> {
 
 export async function listGyms(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const gyms = ownerService.listGyms(req.user.userId);
+  const gyms = await ownerService.listGyms(req.user.userId);
   res.json({ success: true, data: gyms });
 }
 
 export async function createGym(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = createOwnerGymSchema.parse(req.body);
-  const gym = ownerService.createGym(req.user.userId, input);
+  const gym = await ownerService.createGym(req.user.userId, input);
   res.status(201).json({ success: true, data: gym });
 }
 
 export async function getGymMachines(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const machines = ownerService.getGymMachines(req.user.userId, getParam(req.params.gymId));
+  const machines = await ownerService.getGymMachines(req.user.userId, getParam(req.params.gymId));
   res.json({ success: true, data: machines });
 }
 
 export async function addGymMachine(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = addGymMachineSchema.parse(req.body);
-  const item = ownerService.addGymMachine(
+  const item = await ownerService.addGymMachine(
     req.user.userId,
     getParam(req.params.gymId),
     input
@@ -53,7 +53,7 @@ export async function addGymMachine(req: Request, res: Response): Promise<void> 
 
 export async function removeGymMachine(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  ownerService.removeGymMachine(
+  await ownerService.removeGymMachine(
     req.user.userId,
     getParam(req.params.gymId),
     getParam(req.params.itemId)

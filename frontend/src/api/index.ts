@@ -252,6 +252,16 @@ export interface GymDetail extends Gym {
   machines: GymMachine[];
 }
 
+export interface GymInventoryResponse {
+  items: GymMachine[];
+  capabilities: {
+    canAdd: boolean;
+    canManageOfficial: boolean;
+    isGymOperator: boolean;
+    roleCode?: string;
+  };
+}
+
 export const gymApi = {
   list: (params?: Record<string, string | number>) =>
     apiClient.get<ApiResponse<PaginatedResponse<Gym>>>('/gyms', { params }),
@@ -261,6 +271,14 @@ export const gymApi = {
     apiClient.get<ApiResponse<Gym[]>>('/gyms/nearby', {
       params: { lat, lng, ...params },
     }),
+  listInventory: (gymId: string, params?: { brandCode?: string; q?: string }) =>
+    apiClient.get<ApiResponse<GymInventoryResponse>>(`/gyms/${gymId}/inventory`, { params }),
+  addInventory: (
+    gymId: string,
+    input: { machineCode: string; quantity?: number; notes?: string; floorZone?: string }
+  ) => apiClient.post<ApiResponse<GymMachine>>(`/gyms/${gymId}/inventory`, input),
+  removeInventory: (gymId: string, itemId: string) =>
+    apiClient.delete(`/gyms/${gymId}/inventory/${itemId}`),
 };
 
 export interface QrResolveResult {

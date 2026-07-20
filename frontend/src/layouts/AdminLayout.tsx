@@ -7,6 +7,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN, labelKey: 'title' },
   { to: ROUTES.ADMIN_USERS, labelKey: 'users' },
   { to: ROUTES.ADMIN_GYMS, labelKey: 'gyms' },
+  { to: ROUTES.ADMIN_OWNER_APPLICATIONS, labelKey: 'ownerApplications.nav' },
   { to: ROUTES.ADMIN_MACHINES, labelKey: 'machines' },
   { to: ROUTES.ADMIN_MODERATION, labelKey: 'moderation' },
 ] as const;
