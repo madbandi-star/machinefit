@@ -165,3 +165,5 @@ Base URL: `http://localhost:3001/api/v1`
 - [ ] Phase 5: Community
 - [ ] Phase 6: Gym owner dashboard
 - [ ] Phase 7: Admin dashboard
+
+Cloud Agent test
