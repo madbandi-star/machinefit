@@ -553,6 +553,10 @@
   font-weight: 700;
 }
 
+.history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-block:first-child .setting-value-card__unit {
+  color: var(--history-text-muted-value);
+}
+
 .history-page-premium .history-record-card .setting-value-card--history-compare .setting-value-card__compare-block--adjust .setting-value-card__value {
   color: var(--color-primary);
   font-weight: 800;
@@ -575,6 +579,10 @@
 .history-page-premium .setting-value-card__compare-block:first-child .setting-value-card__value {
   color: var(--history-text-muted-value);
   font-weight: 700;
+}
+
+.history-page-premium .setting-value-card__compare-block:first-child .setting-value-card__unit {
+  color: var(--history-text-muted-value);
 }
 
 .history-page-premium .setting-value-card__compare-block--adjust .setting-value-card__value {
