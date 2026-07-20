@@ -110,7 +110,11 @@ export const recommendationFeedbackApi = {
 };
 
 export const machinePreferenceApi = {
-  async upsert(input: MachinePreferenceInput): Promise<MachinePreferenceInput> {
+  async upsert(input: MachinePreferenceInput): Promise<{
+    machineCode: string;
+    customSettings: Partial<RecommendationSettings>;
+    personalTipMemo: string;
+  }> {
     const body: {
       customSettings?: Partial<RecommendationSettings>;
       personalTipMemo?: string;
@@ -121,10 +125,13 @@ export const machinePreferenceApi = {
     if (input.personalTipMemo !== undefined) {
       body.personalTipMemo = input.personalTipMemo;
     }
-    const res = await apiClient.put<ApiResponse<MachinePreferenceInput>>(
-      `/machines/${encodeURIComponent(input.machineCode)}/preferences`,
-      body
-    );
+    const res = await apiClient.put<
+      ApiResponse<{
+        machineCode: string;
+        customSettings: Partial<RecommendationSettings>;
+        personalTipMemo: string;
+      }>
+    >(`/machines/${encodeURIComponent(input.machineCode)}/preferences`, body);
     return res.data.data;
   },
   async get(machineCode: string): Promise<{

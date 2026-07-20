@@ -1902,6 +1902,19 @@
   min-height: 4.5rem;
 }
 
+.history-workout-log__personal-tip-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+
+.history-workout-log__memo-save-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.65rem;
+}
+
 .history-record-card .recommendation-workout-log__diary-tags {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

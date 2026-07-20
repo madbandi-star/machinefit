@@ -247,13 +247,19 @@ export function WorkoutLogPanel({
   const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
   const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}`;
 
+  const isPersonalTipDirty =
+    showPersonalTip &&
+    isPreferencesFetched &&
+    personalTipMemo.trim() !== (machinePreferences?.personalTipMemo ?? '').trim();
+
   const isDirty =
-    isLogSaved &&
-    baseline !== null &&
-    (setCount !== baseline.setCount ||
-      !weightsEqual(weights, baseline.weights) ||
-      !booleansEqual(setCompleted, baseline.setCompleted) ||
-      diary.trim() !== baseline.diary.trim());
+    (isLogSaved &&
+      baseline !== null &&
+      (setCount !== baseline.setCount ||
+        !weightsEqual(weights, baseline.weights) ||
+        !booleansEqual(setCompleted, baseline.setCompleted) ||
+        diary.trim() !== baseline.diary.trim())) ||
+    isPersonalTipDirty;
 
   const invalidateLogSideEffects = () => {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
@@ -324,16 +330,18 @@ export function WorkoutLogPanel({
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
     },
     onSuccess: async (savedLog) => {
-      if (showPersonalTip) {
+      let personalTipSaved = true;
+      if (showPersonalTip && isAuthenticated) {
         try {
-          await machinePreferenceApi.upsert({
+          const savedPrefs = await machinePreferenceApi.upsert({
             machineCode,
             personalTipMemo: personalTipMemo.trim(),
           });
-          setPersonalTipMemo(personalTipMemo.trim());
+          setPersonalTipMemo(savedPrefs.personalTipMemo ?? personalTipMemo.trim());
           void queryClient.invalidateQueries({ queryKey: ['machine-preferences', machineCode] });
         } catch {
-          showToast(t('common:errors.submitFailed'), 'error');
+          personalTipSaved = false;
+          showToast(t('machines:history.personalTipSaveFailed'), 'error');
         }
       }
 
@@ -348,10 +356,12 @@ export function WorkoutLogPanel({
         )
       );
       invalidateLogSideEffects();
-      showToast(
-        isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
-        'success'
-      );
+      if (personalTipSaved) {
+        showToast(
+          isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
+          'success'
+        );
+      }
     },
     onError: () => {
       const current = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
@@ -758,16 +768,9 @@ export function WorkoutLogPanel({
         {diaryTags}
       </div>
       <div className="history-workout-log__diary-memo-pane">
-        <div className="history-workout-log__memo-header">
-          <button
-            type="button"
-            className="btn btn--secondary history-workout-log__memo-save"
-            onClick={handleSave}
-            disabled={isActionPending || isLoading}
-          >
-            {saveMutation.isPending ? t('machines:history.memoSaving') : t('machines:history.memoSave')}
-          </button>
-        </div>
+        <label className="history-workout-log__pane-label" htmlFor={`${idPrefix}-diary`}>
+          {t('machines:history.memoLabel')}
+        </label>
         <textarea
           id={`${idPrefix}-diary`}
           className="input history-workout-log__memo-input"
@@ -823,14 +826,14 @@ export function WorkoutLogPanel({
   );
 
   const personalTipField =
-    isHistory && showPersonalTip ? (
+    isHistory && showPersonalTip && isAuthenticated ? (
       <div className="history-workout-log__personal-tip">
         <div className="history-workout-log__personal-tip-header">
           <label className="history-workout-log__pane-label" htmlFor={`${idPrefix}-personal-tip`}>
             {t('machines:history.personalTipTitle')}
           </label>
           <span className="recommendation-workout-log__diary-bytes">
-            {t('machines:workoutLog.diaryBytes', { used: personalTipBytes })}
+            {t('machines:history.personalTipBytes', { used: personalTipBytes })}
           </span>
         </div>
         <textarea
@@ -842,8 +845,24 @@ export function WorkoutLogPanel({
           onChange={(e) => handlePersonalTipChange(e.target.value)}
           disabled={isActionPending}
         />
+        <p className="history-workout-log__personal-tip-hint">
+          {t('machines:history.personalTipSaveHint')}
+        </p>
       </div>
     ) : null;
+
+  const historyMemoSaveButton = isHistory ? (
+    <div className="history-workout-log__memo-save-row">
+      <button
+        type="button"
+        className="btn btn--secondary history-workout-log__memo-save"
+        onClick={handleSave}
+        disabled={isActionPending || isLoading}
+      >
+        {saveMutation.isPending ? t('machines:history.memoSaving') : t('machines:history.memoSave')}
+      </button>
+    </div>
+  ) : null;
 
   const saveButton = isLogSaved ? (
     <div className="recommendation-workout-log__actions">
@@ -930,6 +949,7 @@ export function WorkoutLogPanel({
         </div>
         {diaryField}
         {personalTipField}
+        {historyMemoSaveButton}
         {showSaveButton ? saveButton : null}
       </section>
     );

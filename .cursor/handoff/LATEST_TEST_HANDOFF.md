@@ -6,28 +6,24 @@
 
 ## Summary
 
-운동기록 카드·추천 결과·기구 상세 최근 추천 카드에 **접기/펴기** 추가. 기구별 **나만의 팁 메모장**은 운동팁 위에 표시되며 기존 **저장하기**와 함께 저장.
+기구별 **나만의 팁 메모장** 마무리 + 카드 접기/펴기.
 
-## as-is → to-be
+## Layout (추천 결과)
 
-- **as-is:** 카드 섹션 항상 펼침, 기구별 개인 팁 저장 없음
-- **to-be:** 카드 접기/펴기, `personal_tip_memo` DB 저장
+1. 운동일지  
+2. **나만의 팁 메모장** (기구별, 운동팁 바로 위)  
+3. **저장하기** (일지+팁 함께 저장, 별도 팁 저장 버튼 없음)  
+4. RecommendationTips (운동팁)
 
 ## Test focus
 
-1. History record cards — 헤더 chevron 접기/펴기
-2. Recommendation result — 본문 카드 접기
-3. Machine detail — 최근 추천 카드 접기
-4. Personal tip — 저장하기로 함께 저장
+1. 팁 입력 후 저장하기 → 새로고침해도 유지  
+2. 바이트 `n/500`  
+3. 팁만 수정해도 북마크가 “변경 저장”  
+4. 카드 접기/펴기  
 5. typecheck + build
-
-## Fast checks
-
-```bash
-npm run test:smoke:changed
-```
 
 ## After merge
 
-- `npm run db:migrate` (029, 028 미적용 시)
+- `npm run db:migrate` (029)
 - Render 백엔드 재배포
