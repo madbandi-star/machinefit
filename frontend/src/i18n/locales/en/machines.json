@@ -101,6 +101,8 @@
     "on": "On",
     "off": "Off",
     "targetReps": "Target reps",
+    "countInterval": "Count interval",
+    "countIntervalUnit": "s",
     "oneMore": "Count one more",
     "autoAfterRest": "Auto-start after rest",
     "restTips": "Hear cautions & tips during rest",

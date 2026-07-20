@@ -6,6 +6,10 @@ import {
   DEFAULT_UNIT_HEIGHT,
   DEFAULT_UNIT_WEIGHT,
 } from '@machinefit/shared';
+import {
+  clampVoiceCoachRepGapMs,
+  VOICE_COACH_REP_GAP,
+} from '@/utils/voiceCoach';
 
 type Theme = 'light' | 'dark';
 
@@ -23,6 +27,8 @@ interface SettingsState {
   voiceCoachAutoAfterRest: boolean;
   /** Speak warnings + tips during rest between sets. */
   voiceRestTipsEnabled: boolean;
+  /** Silence after each spoken rep count (ms). */
+  voiceCoachRepGapMs: number;
   setLocale: (locale: Locale) => void;
   setUnitHeight: (unit: 'cm' | 'ft_in') => void;
   setUnitWeight: (unit: 'kg' | 'lb') => void;
@@ -33,6 +39,7 @@ interface SettingsState {
   setVoiceCoachOneMore: (enabled: boolean) => void;
   setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
+  setVoiceCoachRepGapMs: (ms: number) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -48,6 +55,7 @@ export const useSettingsStore = create<SettingsState>()(
       voiceCoachOneMore: true,
       voiceCoachAutoAfterRest: true,
       voiceRestTipsEnabled: true,
+      voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
       setLocale: (locale) => set({ locale }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),
       setUnitWeight: (unitWeight) => set({ unitWeight }),
@@ -58,6 +66,7 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachOneMore: (voiceCoachOneMore) => set({ voiceCoachOneMore }),
       setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
       setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
+      setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
     }),
     { name: 'machinefit-settings' }
   )

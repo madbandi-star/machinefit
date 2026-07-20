@@ -8,6 +8,7 @@ import {
 interface UseVoiceCoachSessionOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
+  repGapMs: number;
   locale: string;
   enabled: boolean;
 }
@@ -24,6 +25,7 @@ export interface VoiceCoachSessionState {
 export function useVoiceCoachSession({
   targetReps,
   oneMoreEnabled,
+  repGapMs,
   locale,
   enabled,
 }: UseVoiceCoachSessionOptions): VoiceCoachSessionState {
@@ -60,6 +62,7 @@ export function useVoiceCoachSession({
     void runVoiceCoachSession({
       targetReps,
       oneMoreEnabled,
+      repGapMs,
       locale,
       signal: controller.signal,
       onPhaseChange: (nextPhase, detail) => {
@@ -79,7 +82,7 @@ export function useVoiceCoachSession({
       setPhase('idle');
       setCountdown(null);
     });
-  }, [enabled, locale, oneMoreEnabled, targetReps]);
+  }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps]);
 
   useEffect(() => () => {
     abortRef.current?.abort();

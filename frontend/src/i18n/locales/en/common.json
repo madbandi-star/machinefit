@@ -168,6 +168,8 @@
     "voiceCoachOneMore": "Count one more",
     "voiceCoachAutoAfterRest": "Auto-start after rest",
     "voiceCoachTargetReps": "Default target reps",
+    "voiceCoachCountInterval": "Count interval",
+    "voiceCoachCountIntervalUnit": "s",
     "voiceRestTips": "Speak cautions & tips during rest"
   },
   "pages": {
