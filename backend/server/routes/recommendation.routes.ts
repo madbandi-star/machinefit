@@ -14,5 +14,6 @@ recommendationRouter.post(
   recommendationController.createRecommendation
 );
 recommendationRouter.post('/feedback', authMiddleware, feedbackController.submitFeedback);
+recommendationRouter.get('/feedback/batch', authMiddleware, feedbackController.getFeedbackBatch);
 recommendationRouter.get('/:id/feedback', authMiddleware, feedbackController.getFeedback);
 recommendationRouter.get('/:id', recommendationController.getRecommendation);

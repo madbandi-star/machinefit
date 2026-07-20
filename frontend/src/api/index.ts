@@ -107,6 +107,17 @@ export const recommendationFeedbackApi = {
     );
     return res.data.data.fitRating;
   },
+  async getBatch(recommendationIds: string[]): Promise<Record<string, FitRating | null>> {
+    if (recommendationIds.length === 0) return {};
+
+    const res = await apiClient.get<ApiResponse<Record<string, FitRating | null>>>(
+      '/recommendations/feedback/batch',
+      {
+        params: { ids: recommendationIds.join(',') },
+      }
+    );
+    return res.data.data;
+  },
 };
 
 export const machinePreferenceApi = {
@@ -141,6 +152,18 @@ export const machinePreferenceApi = {
     const res = await apiClient.get<
       ApiResponse<{ customSettings: Partial<RecommendationSettings>; personalTipMemo: string }>
     >(`/machines/${encodeURIComponent(machineCode)}/preferences`);
+    return res.data.data;
+  },
+  async getBatch(
+    machineCodes: string[]
+  ): Promise<Record<string, Partial<RecommendationSettings> | null>> {
+    if (machineCodes.length === 0) return {};
+
+    const res = await apiClient.get<
+      ApiResponse<Record<string, Partial<RecommendationSettings> | null>>
+    >('/machines/preferences', {
+      params: { codes: machineCodes.join(',') },
+    });
     return res.data.data;
   },
 };
@@ -213,6 +236,7 @@ export const workoutLogApi = {
     logDate?: string;
     from?: string;
     to?: string;
+    limit?: number;
     targetMuscleGroup?: string;
   }) => apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
   upsert: (body: UpsertWorkoutLogInput) =>

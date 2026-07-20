@@ -1,21 +1,19 @@
 # Latest test handoff
 
-> 프로그램테스트 에이전트: 이 파일 + `latest.json`을 먼저 읽으세요.
-
 ## Summary
 
-보고된 버그 일괄 수정 (포커스, 부위 중량, 휴식 TTS, 세트 완료 검증, 세팅 저장, 로케일 이름, Zod 400 등).
+화면 데이터 로딩 성능: History N+1 → 배치 API, workout-logs limit, 홈 캐시, Growth 기간 스코프, 인덱스 031, boot health ping.
 
 ## Test focus
 
-1. FW 중복 추천 → 기록 카드 포커스
-2. 부위 없이 히스토리 세트 완료 차단
-3. 휴식 후 음성 카운트 유지
-4. 홈 최근 FW 부위별 카드
-5. 부위별 추천 중량 / 진행형 배율
-6. typecheck
+1. 홈 재진입 캐시(60초)
+2. 기록: history 먼저 표시
+3. prefs/feedback 배치 2요청
+4. 마이그레이션 031
+5. typecheck
 
 ## After merge
 
-- GitHub Pages 자동 배포
-- **Render Manual Deploy 필요**
+- GitHub Pages 자동
+- **Render Manual Deploy + DB migration 031 적용 필요**
+- Render Free 콜드스타트는 ping으로만 완화 (완전 해결은 유료 플랜)

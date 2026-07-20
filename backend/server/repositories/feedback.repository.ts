@@ -34,4 +34,39 @@ export const feedbackRepository = {
 
     return result.rows[0]?.fit_rating ?? null;
   },
+
+  async findByUserRecommendationIds(
+    userId: string,
+    recommendationIds: string[]
+  ): Promise<Record<string, 'good' | 'bad' | null>> {
+    if (recommendationIds.length === 0) return {};
+
+    const pool = getPool();
+    if (!pool) {
+      return Object.fromEntries(
+        recommendationIds.map((recommendationId) => [recommendationId, null])
+      );
+    }
+
+    const result = await pool.query<{
+      recommendation_id: string;
+      fit_rating: 'good' | 'bad';
+    }>(
+      `SELECT recommendation_id, fit_rating
+       FROM recommendation_feedback
+       WHERE user_id = $1
+         AND recommendation_id = ANY($2::uuid[])`,
+      [userId, recommendationIds]
+    );
+
+    const feedbackByRecommendation = Object.fromEntries(
+      recommendationIds.map((recommendationId) => [recommendationId, null])
+    ) as Record<string, 'good' | 'bad' | null>;
+
+    for (const row of result.rows) {
+      feedbackByRecommendation[row.recommendation_id] = row.fit_rating;
+    }
+
+    return feedbackByRecommendation;
+  },
 };

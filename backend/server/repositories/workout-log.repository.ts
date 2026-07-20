@@ -87,6 +87,7 @@ export const workoutLogRepository = {
       logDate?: string;
       from?: string;
       to?: string;
+      limit?: number;
       targetMuscleGroup?: string;
     },
     locale: Locale = 'en'
@@ -122,16 +123,21 @@ export const workoutLogRepository = {
       filters += ` AND wl.target_muscle_group = $${params.length}`;
     }
 
-    const result = await pool.query<WorkoutLogRow>(
-      `SELECT ${SELECT_FIELDS}
+    let query = `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
        JOIN machines m ON m.id = wl.machine_id
-       WHERE wl.user_id = $1${filters}
-       ORDER BY wl.log_date ASC, wl.created_at ASC`,
-      params
-    );
+       WHERE wl.user_id = $1${filters}`;
 
-    return result.rows.map((row) => mapRow(row, locale));
+    if (options.limit !== undefined) {
+      params.push(options.limit);
+      query += ` ORDER BY wl.log_date DESC, wl.created_at DESC LIMIT $${params.length}`;
+    } else {
+      query += ' ORDER BY wl.log_date ASC, wl.created_at ASC';
+    }
+
+    const result = await pool.query<WorkoutLogRow>(query, params);
+    const rows = options.limit !== undefined ? [...result.rows].reverse() : result.rows;
+    return rows.map((row) => mapRow(row, locale));
   },
 
   async upsert(
