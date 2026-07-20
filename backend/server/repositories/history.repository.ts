@@ -15,6 +15,8 @@ export interface HistoryItem {
     handlePosition?: number;
     romSetting?: string;
     recommendedWeightKg?: number;
+    recommendedRepsMin?: number;
+    recommendedRepsMax?: number;
   };
   viewedAt: string;
 }
@@ -61,6 +63,8 @@ export const historyRepository = {
       handle_position: number | null;
       rom_setting: string | null;
       recommended_weight_kg: string | null;
+      recommended_reps_min: number | null;
+      recommended_reps_max: number | null;
       target_muscle_group: string | null;
       viewed_at: string;
     }>(
@@ -68,6 +72,7 @@ export const historyRepository = {
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               r.seat_position, r.back_pad_position, r.foot_position,
               r.handle_position, r.rom_setting, r.recommended_weight_kg,
+              r.recommended_reps_min, r.recommended_reps_max,
               r.target_muscle_group
        FROM recent_history h
        JOIN machines m ON m.id = h.machine_id
@@ -95,6 +100,8 @@ export const historyRepository = {
         recommendedWeightKg: row.recommended_weight_kg
           ? parseFloat(row.recommended_weight_kg)
           : undefined,
+        recommendedRepsMin: row.recommended_reps_min ?? undefined,
+        recommendedRepsMax: row.recommended_reps_max ?? undefined,
       },
       viewedAt: row.viewed_at,
     }));

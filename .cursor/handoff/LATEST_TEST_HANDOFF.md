@@ -6,19 +6,16 @@
 
 ## Summary
 
-세트 사이 **음성 카운트** 추가: `띠띠띠 → 5 4 3 2 1 → 시작! → 하나 둘 …` + 선택 **하나더(원모어)**.
+기록 카드에서 **추천 중량** 오른쪽에 **추천 횟수** (예: `8–12회`) 표시.
 
 ## Test focus
 
-1. 운동 기록 패널에 **음성 카운트** UI
-2. **카운트 시작** → 비프 → 카운트다운 → 시작 → 한글 횟수
-3. **하나더** 켜면 목표 횟수 후 `하나더!` 반복 (중지 버튼으로 종료)
-4. **휴식 후 자동 시작** 옵션
-5. 나만의 팁 메모장 + 저장하기 정상 동작 (main 머지분)
-6. `npm run typecheck` / `npm run build:frontend`
+1. 최근 기록 / 추천 결과 설정 그리드: 중량 다음 칸이 추천 횟수
+2. 목표별 범위: 근비대 8–12, 근력 3–6 등
+3. 예전 기록(DB에 reps 없음)도 프로필 목표로 fallback 표시
+4. typecheck + build
 
 ## After merge
 
-- GitHub Pages 프론트 자동 배포
-- Render 백엔드: 대시보드에서 Manual Deploy
-- Supabase: `npm run db:migrate` (028, 029 미적용 시)
+- GitHub Pages 자동 배포
+- Render Manual Deploy (backend)

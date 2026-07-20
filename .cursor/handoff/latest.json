@@ -1,58 +1,53 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T03:30:00Z",
-  "title": "Voice set count coach with one-more option",
-  "summary": "세트 사이 음성 카운트: 띠띠띠 → 5·4·3·2·1 → 시작! → 하나·둘… 그리고 선택적 하나더(원모어). 휴식 후 자동 시작 옵션 포함.",
+  "updatedAt": "2026-07-20T04:10:00Z",
+  "title": "Recommended reps on record cards",
+  "summary": "기록/추천 설정 카드에서 추천 중량 오른쪽에 추천 횟수(목표별 범위, 예: 8–12회)를 표시합니다. DB 마이그레이션 030.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
   "programTestAgentName": "프로그램테스트",
   "git": {
-    "branch": "cursor/voice-set-count-coach-35b3",
+    "branch": "cursor/record-card-recommended-reps-35b3",
     "commit": null,
-    "pr": 9,
+    "pr": null,
     "base": "main"
   },
   "changedFiles": [
-    "frontend/src/utils/voiceCoach.ts",
-    "frontend/src/hooks/useVoiceCoachSession.ts",
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/components/recommendation/RestTimerBanner/RestTimerBanner.tsx",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/store/settings.store.ts",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/styles/components.css",
+    "database/migrations/030_recommendation_reps.sql",
+    "shared/src/types/recommendation.types.ts",
+    "shared/src/utils/recommendation-personalization.ts",
+    "backend/server/repositories/recommendation.repository.ts",
+    "backend/server/repositories/history.repository.ts",
+    "backend/server/services/recommendation.service.ts",
+    "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
+    "frontend/src/constants/history-lucide-icons.tsx",
     "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/i18n/locales/en/machines.json"
   ],
   "testFocus": [
-    "Workout log shows Voice count panel",
-    "Start plays beep → countdown → 시작 → Korean rep count",
-    "One more option continues with 하나더!",
-    "Auto-start after rest when enabled",
-    "Settings page persists voice coach prefs",
-    "Personal tip memo still saves with 저장하기",
-    "typecheck + build pass"
+    "History/record card shows 추천 횟수 to the right of 추천 중량",
+    "Rep range follows workout goal (hypertrophy 8–12, strength 3–6, …)",
+    "Old records without stored reps still show goal-based fallback",
+    "Migration 030 applied",
+    "typecheck + build"
   ],
   "fastChecks": [
     {
-      "id": "voice-util",
+      "id": "migration-030",
       "type": "file_contains",
-      "path": "frontend/src/utils/voiceCoach.ts",
-      "pattern": "runVoiceCoachSession"
+      "path": "database/migrations/030_recommendation_reps.sql",
+      "pattern": "recommended_reps_min"
     },
     {
       "id": "ko-i18n",
       "type": "file_contains",
       "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "\"voiceCoach\""
+      "pattern": "\"reps\": \"추천 횟수\""
     },
     {
-      "id": "one-more",
+      "id": "panel-field",
       "type": "file_contains",
-      "path": "frontend/src/utils/voiceCoach.ts",
-      "pattern": "하나더!"
+      "path": "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
+      "pattern": "recommendedRepsMin"
     },
     {
       "id": "typecheck",
@@ -62,24 +57,14 @@
     {
       "id": "build-frontend",
       "type": "npm",
-      "command": "npm run build:frontend"
+      "command": "npm run build --workspace=shared && npm run build:frontend"
     }
   ],
   "productionChecks": [
     {
-      "id": "mobile-audio",
-      "type": "note",
-      "detail": "On mobile, complete a set (or tap Start) once so the browser unlocks audio before auto-start after rest."
-    },
-    {
-      "id": "db-migrate",
-      "type": "note",
-      "detail": "If not yet applied: npm run db:migrate for 028 (biceps/triceps) and 029 (personal tip memo)"
-    },
-    {
       "id": "render-redeploy",
       "type": "note",
-      "detail": "Manual Render redeploy needed (RENDER_DEPLOY_HOOK_URL secret missing)"
+      "detail": "Backend changed — Manual Deploy on Render after merge"
     }
   ],
   "deploy": {
@@ -87,6 +72,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "No spoken set coaching; rest timer only shows notification.",
-  "toBe": "Trainer-paced voice coach: beeps, countdown, rep count, optional one-more; settings + in-log controls."
+  "asIs": "Record cards show recommended weight only among load-related tiles.",
+  "toBe": "Recommended reps tile sits immediately to the right of recommended weight."
 }

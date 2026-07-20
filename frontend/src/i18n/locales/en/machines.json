@@ -209,7 +209,9 @@
     "foot": "Foot Position",
     "handle": "Handle Position",
     "rom": "Range of Motion",
-    "weight": "Recommended Weight"
+    "weight": "Recommended Weight",
+    "reps": "Recommended Reps",
+    "repsUnit": "reps"
   },
   "weightBasis": {
     "label": "Calculation basis",

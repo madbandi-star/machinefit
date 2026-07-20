@@ -23,6 +23,9 @@ export interface RecommendationSettings {
   handlePosition?: number;
   romSetting?: string;
   recommendedWeightKg?: number;
+  /** Inclusive recommended rep range (e.g. hypertrophy 8–12). */
+  recommendedRepsMin?: number;
+  recommendedRepsMax?: number;
 }
 
 export interface RecommendationResult {
