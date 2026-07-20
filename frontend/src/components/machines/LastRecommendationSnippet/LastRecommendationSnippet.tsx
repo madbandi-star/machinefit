@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { Icon } from '@/components/icons/Icon';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
+import { DetailAdjustNavLink } from '@/components/recommendation/DetailAdjustNavLink/DetailAdjustNavLink';
 import { HistorySectionHeader } from '@/components/records/history-ui/HistorySectionHeader';
 import { historyApi, machinePreferenceApi, recommendationFeedbackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -113,10 +114,9 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
         >
           <div className="history-record-card__section">
             {data ? (
-              <Link
+              <DetailAdjustNavLink
                 to={resultUrl!}
-                className="history-record-card__settings-link"
-                aria-label={t('detail.viewLastResult')}
+                ariaLabel={t('recommendation.detailAdjustHintTitle')}
               >
                 <RecommendationSettingsPanel
                   settings={data.settings}
@@ -125,7 +125,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
                   adjustmentReadOnly
                   customSettings={showSettingsCompare ? machinePreferences?.customSettings : undefined}
                 />
-              </Link>
+              </DetailAdjustNavLink>
             ) : isLoading ? (
               <LastRecommendationSettingsSkeleton />
             ) : (

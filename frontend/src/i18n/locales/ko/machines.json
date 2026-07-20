@@ -58,7 +58,12 @@
     "duplicate": "오늘 같은 부위 추천이 이미 있어요. 기록에서 확인하거나, 다른 부위를 골라 주세요.",
     "duplicateMachine": "오늘 이 기구 추천이 이미 있어요. 기록에서 이어서 확인하세요.",
     "findGyms": "이 기구 있는 헬스장",
-    "moreActions": "추가 작업"
+    "moreActions": "추가 작업",
+    "detailAdjustNavHint": "추천 중량~가동 범위 타일을 누르면 상세조정으로 이동해요",
+    "detailAdjustHintTitle": "상세조정",
+    "detailAdjustHintMessage": "추천 중량부터 가동 범위까지 세팅 타일을 누르면 상세조정(추천 결과) 화면으로 이동해요. 여기서 추천값을 확인하고 선호 세팅을 조정할 수 있어요.",
+    "detailAdjustHintConfirm": "상세조정으로 이동",
+    "detailAdjustHintDismiss": "닫기"
   },
   "workoutLog": {
     "title": "수행 기록",

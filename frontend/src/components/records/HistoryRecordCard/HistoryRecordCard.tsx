@@ -6,6 +6,7 @@ import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shar
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
+import { DetailAdjustNavLink } from '@/components/recommendation/DetailAdjustNavLink/DetailAdjustNavLink';
 import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
@@ -251,10 +252,9 @@ export function HistoryRecordCard({
 
       {expanded ? (
         <div className="history-record-card__section">
-          <Link
+          <DetailAdjustNavLink
             to={resultUrl}
-            className="history-record-card__settings-link"
-            aria-label={t('machines:detail.viewLastResult')}
+            ariaLabel={t('machines:recommendation.detailAdjustHintTitle')}
           >
             <RecommendationSettingsPanel
               settings={card.settings}
@@ -263,7 +263,7 @@ export function HistoryRecordCard({
               adjustmentReadOnly
               customSettings={showSettingsCompare ? customSettings : undefined}
             />
-          </Link>
+          </DetailAdjustNavLink>
         </div>
       ) : null}
 
