@@ -103,6 +103,7 @@ export const recommendationService = {
       ? recommendedWeightKg
       : applyPersonalizationToWeight(recommendedWeightKg, {
           workoutGoal: input.workoutGoal,
+          experienceLevel: input.experienceLevel,
           age: input.age,
           targetMuscleGroup: input.targetMuscleGroup,
         });
@@ -112,7 +113,10 @@ export const recommendationService = {
         ? await preferenceRepository.findByUserMachine(userId, machineId)
         : null;
 
-    const recommendedReps = recommendRepsForGoal(input.workoutGoal);
+    const recommendedReps = recommendRepsForGoal(
+      input.workoutGoal,
+      input.experienceLevel
+    );
 
     const baseSettings = {
       seatPosition: match?.seatPosition,
@@ -140,6 +144,7 @@ export const recommendationService = {
 
     const tips = buildPersonalizedTips(baseTips, locale, {
       workoutGoal: input.workoutGoal,
+      experienceLevel: input.experienceLevel,
       targetMuscleGroup: input.targetMuscleGroup,
       hasCustomPreferences: hasCustomSettings,
     });

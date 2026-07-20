@@ -7,9 +7,14 @@ export const EXPERIENCE_LEVELS: ExperienceLevel[] = [
   'professional',
 ];
 
+/**
+ * Cold-start profile formula multipliers (bodyweight × factor × 0.5).
+ * Tuned toward ACSM novice→advanced relative loading progression:
+ * beginners ~60% effort zone; advanced/pro closer to trained working loads.
+ */
 export const EXPERIENCE_WEIGHT_MULTIPLIERS: Record<ExperienceLevel, number> = {
-  beginner: 0.5,
-  intermediate: 0.65,
-  advanced: 0.8,
-  professional: 0.9,
+  beginner: 0.55,
+  intermediate: 0.7,
+  advanced: 0.85,
+  professional: 0.95,
 };
