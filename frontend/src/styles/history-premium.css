@@ -581,6 +581,12 @@
   gap: var(--history-gap-grid);
 }
 
+@media (max-width: 430px) {
+  .history-page-premium .recommendation-workout-log__weight-list--history {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .history-page-premium .recommendation-workout-log__weight-row--history {
   grid-template-columns: 1.35rem minmax(0, 1fr) auto;
   gap: 0.25rem;
