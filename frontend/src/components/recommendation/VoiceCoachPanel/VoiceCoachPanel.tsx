@@ -15,6 +15,8 @@ interface VoiceCoachPanelProps {
   onOneMoreChange: (enabled: boolean) => void;
   autoStartAfterRest: boolean;
   onAutoStartAfterRestChange: (enabled: boolean) => void;
+  restTipsEnabled: boolean;
+  onRestTipsEnabledChange: (enabled: boolean) => void;
   phase: VoiceCoachPhase;
   currentRep: number;
   countdown: number | null;
@@ -56,6 +58,8 @@ export function VoiceCoachPanel({
   onOneMoreChange,
   autoStartAfterRest,
   onAutoStartAfterRestChange,
+  restTipsEnabled,
+  onRestTipsEnabledChange,
   phase,
   currentRep,
   countdown,
@@ -132,6 +136,16 @@ export function VoiceCoachPanel({
                 disabled={isRunning}
               />
               <span>{t('machines:voiceCoach.autoAfterRest')}</span>
+            </label>
+
+            <label className="voice-coach-panel__check">
+              <input
+                type="checkbox"
+                checked={restTipsEnabled}
+                onChange={(e) => onRestTipsEnabledChange(e.target.checked)}
+                disabled={isRunning}
+              />
+              <span>{t('machines:voiceCoach.restTips')}</span>
             </label>
           </div>
 

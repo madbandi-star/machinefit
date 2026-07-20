@@ -216,6 +216,75 @@ export function stopVoiceCoach(): void {
   cancelSpeech();
 }
 
+/** Speak a single phrase (cancels any current utterance). */
+export function speakVoiceText(
+  text: string,
+  locale?: string,
+  signal?: AbortSignal
+): Promise<void> {
+  return speak(text, locale, signal);
+}
+
+export interface RestVoiceCoachingOptions {
+  warnings?: string[];
+  tips?: string[];
+  locale?: string;
+  signal?: AbortSignal;
+  /** Max warning lines to speak (default 3). */
+  maxWarnings?: number;
+  /** Max tip lines to speak (default 3). */
+  maxTips?: number;
+}
+
+/**
+ * During rest: speak cautions first, then workout tips (trainer pacing).
+ */
+export async function speakRestTipsAndWarnings(
+  options: RestVoiceCoachingOptions
+): Promise<void> {
+  const {
+    warnings = [],
+    tips = [],
+    locale = 'ko',
+    signal,
+    maxWarnings = 3,
+    maxTips = 3,
+  } = options;
+
+  const warningLines = warnings.map((w) => w.trim()).filter(Boolean).slice(0, maxWarnings);
+  const tipLines = tips.map((t) => t.trim()).filter(Boolean).slice(0, maxTips);
+  if (warningLines.length === 0 && tipLines.length === 0) return;
+
+  const ko = isKoreanLocale(locale);
+
+  try {
+    if (warningLines.length > 0) {
+      await speak(ko ? '주의사항.' : 'Cautions.', locale, signal);
+      await sleep(280, signal);
+      for (let i = 0; i < warningLines.length; i += 1) {
+        await speak(warningLines[i], locale, signal);
+        if (i < warningLines.length - 1) await sleep(420, signal);
+      }
+    }
+
+    if (tipLines.length > 0) {
+      if (warningLines.length > 0) await sleep(500, signal);
+      await speak(ko ? '운동 팁.' : 'Workout tips.', locale, signal);
+      await sleep(280, signal);
+      for (let i = 0; i < tipLines.length; i += 1) {
+        await speak(tipLines[i], locale, signal);
+        if (i < tipLines.length - 1) await sleep(420, signal);
+      }
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      cancelSpeech();
+      return;
+    }
+    throw error;
+  }
+}
+
 /** Warm audio/speech after a user gesture so auto-start after rest can play. */
 export function unlockVoiceCoachAudio(): void {
   try {

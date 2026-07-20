@@ -167,7 +167,8 @@
     "voiceCoachEnable": "Enable voice count",
     "voiceCoachOneMore": "Count one more",
     "voiceCoachAutoAfterRest": "Auto-start after rest",
-    "voiceCoachTargetReps": "Default target reps"
+    "voiceCoachTargetReps": "Default target reps",
+    "voiceRestTips": "Speak cautions & tips during rest"
   },
   "pages": {
     "home": {

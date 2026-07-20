@@ -103,6 +103,7 @@
     "targetReps": "Target reps",
     "oneMore": "Count one more",
     "autoAfterRest": "Auto-start after rest",
+    "restTips": "Hear cautions & tips during rest",
     "start": "Start count",
     "stop": "Stop",
     "statusIdle": "Ready — tap start or auto-start after rest.",

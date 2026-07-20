@@ -21,6 +21,8 @@ interface SettingsState {
   voiceCoachTargetReps: number;
   voiceCoachOneMore: boolean;
   voiceCoachAutoAfterRest: boolean;
+  /** Speak warnings + tips during rest between sets. */
+  voiceRestTipsEnabled: boolean;
   setLocale: (locale: Locale) => void;
   setUnitHeight: (unit: 'cm' | 'ft_in') => void;
   setUnitWeight: (unit: 'kg' | 'lb') => void;
@@ -30,6 +32,7 @@ interface SettingsState {
   setVoiceCoachTargetReps: (reps: number) => void;
   setVoiceCoachOneMore: (enabled: boolean) => void;
   setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
+  setVoiceRestTipsEnabled: (enabled: boolean) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -44,6 +47,7 @@ export const useSettingsStore = create<SettingsState>()(
       voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
       voiceCoachOneMore: true,
       voiceCoachAutoAfterRest: true,
+      voiceRestTipsEnabled: true,
       setLocale: (locale) => set({ locale }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),
       setUnitWeight: (unitWeight) => set({ unitWeight }),
@@ -53,6 +57,7 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachTargetReps: (voiceCoachTargetReps) => set({ voiceCoachTargetReps }),
       setVoiceCoachOneMore: (voiceCoachOneMore) => set({ voiceCoachOneMore }),
       setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
+      setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
     }),
     { name: 'machinefit-settings' }
   )
