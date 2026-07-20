@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   runVoiceCoachSession,
   stopVoiceCoach,
+  unlockVoiceCoachAudio,
   type VoiceCoachPhase,
 } from '@/utils/voiceCoach';
 
@@ -47,6 +48,7 @@ export function useVoiceCoachSession({
   const start = useCallback(() => {
     if (!enabled) return;
 
+    unlockVoiceCoachAudio();
     abortRef.current?.abort();
     stopVoiceCoach();
 
@@ -79,7 +81,8 @@ export function useVoiceCoachSession({
       if (abortRef.current === controller) {
         abortRef.current = null;
       }
-      setPhase('idle');
+      // runVoiceCoachSession already signals idle on abort; on success it ends at done.
+      setPhase((prev) => (prev === 'done' ? prev : 'idle'));
       setCountdown(null);
     });
   }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps]);

@@ -185,6 +185,29 @@ function cancelSpeech(): void {
   }
 }
 
+function isSpeechActive(): boolean {
+  if (!('speechSynthesis' in window)) return false;
+  return window.speechSynthesis.speaking || window.speechSynthesis.pending;
+}
+
+function waitForSpeechVoices(timeoutMs = 400): Promise<void> {
+  if (!('speechSynthesis' in window)) return Promise.resolve();
+  if (window.speechSynthesis.getVoices().length > 0) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
+      resolve();
+    };
+    const onVoices = () => finish();
+    window.speechSynthesis.addEventListener('voiceschanged', onVoices);
+    window.setTimeout(finish, timeoutMs);
+  });
+}
+
 function speak(text: string, locale: string | undefined, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -196,36 +219,60 @@ function speak(text: string, locale: string | undefined, signal?: AbortSignal): 
       return;
     }
 
-    cancelSpeech();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = speechLang(locale);
-    utterance.rate = isKoreanLocale(locale) ? 1.08 : 1.05;
-    utterance.pitch = 1.05;
-    utterance.volume = 1;
-
-    const onAbort = () => {
-      cancelSpeech();
-      cleanup();
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-
-    const cleanup = () => {
-      signal?.removeEventListener('abort', onAbort);
-      utterance.onend = null;
-      utterance.onerror = null;
-    };
-
-    utterance.onend = () => {
-      cleanup();
+    const trimmed = text.trim();
+    if (!trimmed) {
       resolve();
-    };
-    utterance.onerror = () => {
-      cleanup();
-      resolve();
-    };
+      return;
+    }
 
-    signal?.addEventListener('abort', onAbort, { once: true });
-    window.speechSynthesis.speak(utterance);
+    void waitForSpeechVoices().then(() => {
+      if (signal?.aborted) {
+        reject(new DOMException('Aborted', 'AbortError'));
+        return;
+      }
+
+      if (isSpeechActive()) {
+        cancelSpeech();
+      }
+
+      const utterance = new SpeechSynthesisUtterance(trimmed);
+      utterance.lang = speechLang(locale);
+      utterance.rate = isKoreanLocale(locale) ? 1.08 : 1.05;
+      utterance.pitch = 1.05;
+      utterance.volume = 1;
+
+      const maxMs = Math.min(12_000, Math.max(2_500, trimmed.length * 700));
+      let timeoutId = 0;
+
+      const onAbort = () => {
+        cancelSpeech();
+        cleanup();
+        reject(new DOMException('Aborted', 'AbortError'));
+      };
+
+      const cleanup = () => {
+        if (timeoutId) window.clearTimeout(timeoutId);
+        signal?.removeEventListener('abort', onAbort);
+        utterance.onend = null;
+        utterance.onerror = null;
+      };
+
+      const finish = () => {
+        cleanup();
+        resolve();
+      };
+
+      utterance.onend = finish;
+      utterance.onerror = finish;
+
+      timeoutId = window.setTimeout(() => {
+        cancelSpeech();
+        finish();
+      }, maxMs);
+
+      signal?.addEventListener('abort', onAbort, { once: true });
+      window.speechSynthesis.speak(utterance);
+    });
   });
 }
 

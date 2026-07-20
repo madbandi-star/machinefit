@@ -221,16 +221,19 @@ export function WorkoutLogPanel({
   const handleRestReadyForNextSet = useCallback(() => {
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
-    stopVoiceCoach();
     setRestTimer(null);
-    if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
+    // Keep an active set-count session running when rest ends or is skipped.
     if (voiceCoachRunningRef.current) return;
+    stopVoiceCoach();
+    if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
+    unlockVoiceCoachAudio();
     voiceCoachStartRef.current();
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
+    unlockVoiceCoachAudio();
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
-    stopVoiceCoach();
+    setRestTimer(null);
     voiceCoachStartRef.current();
   }, []);
   const isHistory = variant === 'history';

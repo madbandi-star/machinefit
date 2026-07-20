@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import {
   clampVoiceCoachRepGapMs,
+  unlockVoiceCoachAudio,
   VOICE_COACH_REP_GAP,
   type VoiceCoachPhase,
 } from '@/utils/voiceCoach';
@@ -187,7 +188,14 @@ export function VoiceCoachPanel({
                 {t('machines:voiceCoach.stop')}
               </button>
             ) : (
-              <button type="button" className="btn btn--primary btn--block" onClick={onStart}>
+              <button
+                type="button"
+                className="btn btn--primary btn--block"
+                onClick={() => {
+                  unlockVoiceCoachAudio();
+                  onStart();
+                }}
+              >
                 {t('machines:voiceCoach.start')}
               </button>
             )}
