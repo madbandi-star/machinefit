@@ -58,12 +58,7 @@
     "duplicate": "You already have a recommendation for this muscle today. Check Records, or pick another muscle.",
     "duplicateMachine": "You already have a recommendation for this machine today. Open it from Records.",
     "findGyms": "Find Gyms with This Machine",
-    "moreActions": "More actions",
-    "detailAdjustNavHint": "Tap a tile from weight to ROM to open detail adjustment",
-    "detailAdjustHintTitle": "Detail adjustment",
-    "detailAdjustHintMessage": "Tapping a setting tile from recommended weight through range of motion opens the recommendation result page, where you can review and adjust preferred settings.",
-    "detailAdjustHintConfirm": "Go to detail adjustment",
-    "detailAdjustHintDismiss": "Close"
+    "moreActions": "More actions"
   },
   "workoutLog": {
     "title": "Workout log",
