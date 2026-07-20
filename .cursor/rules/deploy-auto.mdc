@@ -10,11 +10,11 @@ User confirmed auto-deploy for this project (2026-07-19). After finishing implem
 ## Steps
 
 1. Run `git status` / `git diff` — do not commit secrets, `.env`, or unused scratch files (e.g. `getApiErrorMessage.ts`).
-2. Update `.cursor/handoff/latest.json` + `LATEST_TEST_HANDOFF.md` for the Program test agent (see `test-handoff` rule).
+2. Update `.cursor/handoff/latest.json` + `LATEST_TEST_HANDOFF.md` for the 프로그램테스트 agent (see `test-handoff` rule).
 3. Commit with a clear message (why, not just what).
 4. Push `origin main` to trigger GitHub Pages frontend deploy.
 5. If `backend/` or `shared/` changed, remind that Render redeploy is needed (Deploy Hook workflow or Render dashboard).
-6. Point the user at Program test: https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4 and the handoff files.
+6. Point the user at 프로그램테스트: https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4 and the handoff files.
 
 ## When to skip auto-deploy
 
