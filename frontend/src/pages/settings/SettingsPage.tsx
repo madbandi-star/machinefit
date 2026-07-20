@@ -38,6 +38,14 @@ export function SettingsPage() {
   const showToast = useUIStore((s) => s.showToast);
   const unitHeight = useSettingsStore((s) => s.unitHeight);
   const unitWeight = useSettingsStore((s) => s.unitWeight);
+  const voiceCoachEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
+  const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
+  const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
+  const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
+  const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
+  const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
+  const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
+  const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -159,6 +167,61 @@ export function SettingsPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('settings.theme')}</h3>
           <ThemeSwitch />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.voiceCoach')}</h3>
+          <p className="form-section__desc">{t('settings.voiceCoachDesc')}</p>
+          <div className="settings-voice-coach">
+            <label className="settings-voice-coach__row">
+              <input
+                type="checkbox"
+                checked={voiceCoachEnabled}
+                onChange={(e) => setVoiceCoachEnabled(e.target.checked)}
+              />
+              <span>{t('settings.voiceCoachEnable')}</span>
+            </label>
+            <label className="settings-voice-coach__row">
+              <input
+                type="checkbox"
+                checked={voiceCoachOneMore}
+                onChange={(e) => setVoiceCoachOneMore(e.target.checked)}
+                disabled={!voiceCoachEnabled}
+              />
+              <span>{t('settings.voiceCoachOneMore')}</span>
+            </label>
+            <label className="settings-voice-coach__row">
+              <input
+                type="checkbox"
+                checked={voiceCoachAutoAfterRest}
+                onChange={(e) => setVoiceCoachAutoAfterRest(e.target.checked)}
+                disabled={!voiceCoachEnabled}
+              />
+              <span>{t('settings.voiceCoachAutoAfterRest')}</span>
+            </label>
+            <div className="settings-voice-coach__reps">
+              <span className="settings-voice-coach__reps-label">{t('settings.voiceCoachTargetReps')}</span>
+              <div className="settings-voice-coach__reps-controls" role="group" aria-label={t('settings.voiceCoachTargetReps')}>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  disabled={!voiceCoachEnabled || voiceCoachTargetReps <= 1}
+                  onClick={() => setVoiceCoachTargetReps(Math.max(1, voiceCoachTargetReps - 1))}
+                >
+                  −
+                </button>
+                <strong>{voiceCoachTargetReps}</strong>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  disabled={!voiceCoachEnabled || voiceCoachTargetReps >= 30}
+                  onClick={() => setVoiceCoachTargetReps(Math.min(30, voiceCoachTargetReps + 1))}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <ProUpgradeCard />

@@ -161,7 +161,13 @@
     "language": "언어",
     "theme": "테마",
     "themeLight": "라이트",
-    "themeDark": "다크"
+    "themeDark": "다크",
+    "voiceCoach": "음성 카운트",
+    "voiceCoachDesc": "세트 사이 카운트다운과 반복 수 음성 안내. 운동 기록 화면에서도 조절할 수 있습니다.",
+    "voiceCoachEnable": "음성 카운트 사용",
+    "voiceCoachOneMore": "하나더(원모어) 세기",
+    "voiceCoachAutoAfterRest": "휴식 후 자동 시작",
+    "voiceCoachTargetReps": "기본 목표 횟수"
   },
   "pages": {
     "home": {

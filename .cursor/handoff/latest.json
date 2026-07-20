@@ -1,62 +1,58 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T03:45:00Z",
-  "title": "Card collapse/expand + machine personal tip memo (finished)",
-  "summary": "기구별 나만의 팁 메모장 마무리: 운동팁 위 표시, 저장하기로 함께 저장, 바이트 카운터/dirty/실패 UX 수정. 카드 접기/펴기 포함. DB 마이그레이션 029.",
+  "updatedAt": "2026-07-20T03:30:00Z",
+  "title": "Voice set count coach with one-more option",
+  "summary": "세트 사이 음성 카운트: 띠띠띠 → 5·4·3·2·1 → 시작! → 하나·둘… 그리고 선택적 하나더(원모어). 휴식 후 자동 시작 옵션 포함.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
   "programTestAgentName": "프로그램테스트",
   "git": {
-    "branch": "cursor/add-machine-personal-tip-memo-35b3",
-    "commit": "12bac80",
-    "pr": 8,
+    "branch": "cursor/voice-set-count-coach-35b3",
+    "commit": null,
+    "pr": 9,
     "base": "main"
   },
   "changedFiles": [
-    "database/migrations/029_machine_personal_tip_memo.sql",
-    "shared/src/types/machine-preferences.types.ts",
-    "shared/src/validators/machine-preference.schema.ts",
-    "backend/server/repositories/preference.repository.ts",
-    "backend/server/controllers/feedback.controller.ts",
+    "frontend/src/utils/voiceCoach.ts",
+    "frontend/src/hooks/useVoiceCoachSession.ts",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/components/recommendation/RestTimerBanner/RestTimerBanner.tsx",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/store/settings.store.ts",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/styles/components.css",
     "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Recommendation result: personal tip above RecommendationTips",
-    "Save via 저장하기 persists tip with workout diary (no separate tip button)",
-    "Byte counter shows /500",
-    "Tip-only edit marks dirty (bookmark updates instead of remove)",
-    "Tip save failure shows personalTipSaveFailed without false success",
-    "History cards collapse/expand",
-    "Migration 029 present",
-    "typecheck + build"
+    "Workout log shows Voice count panel",
+    "Start plays beep → countdown → 시작 → Korean rep count",
+    "One more option continues with 하나더!",
+    "Auto-start after rest when enabled",
+    "Settings page persists voice coach prefs",
+    "Personal tip memo still saves with 저장하기",
+    "typecheck + build pass"
   ],
   "fastChecks": [
     {
-      "id": "migration-029",
+      "id": "voice-util",
       "type": "file_contains",
-      "path": "database/migrations/029_machine_personal_tip_memo.sql",
-      "pattern": "personal_tip_memo"
+      "path": "frontend/src/utils/voiceCoach.ts",
+      "pattern": "runVoiceCoachSession"
     },
     {
-      "id": "personal-tip-i18n",
+      "id": "ko-i18n",
       "type": "file_contains",
       "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "personalTipTitle"
+      "pattern": "\"voiceCoach\""
     },
     {
-      "id": "personal-tip-bytes",
+      "id": "one-more",
       "type": "file_contains",
-      "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "personalTipBytes"
-    },
-    {
-      "id": "save-hint",
-      "type": "file_contains",
-      "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "personalTipSaveHint"
+      "path": "frontend/src/utils/voiceCoach.ts",
+      "pattern": "하나더!"
     },
     {
       "id": "typecheck",
@@ -66,24 +62,24 @@
     {
       "id": "build-frontend",
       "type": "npm",
-      "command": "npm run build --workspace=shared && npm run build:frontend"
+      "command": "npm run build:frontend"
     }
   ],
   "productionChecks": [
     {
+      "id": "mobile-audio",
+      "type": "note",
+      "detail": "On mobile, complete a set (or tap Start) once so the browser unlocks audio before auto-start after rest."
+    },
+    {
       "id": "db-migrate",
       "type": "note",
-      "detail": "Run npm run db:migrate on Supabase for 029 (and 028 if needed)"
+      "detail": "If not yet applied: npm run db:migrate for 028 (biceps/triceps) and 029 (personal tip memo)"
     },
     {
       "id": "render-redeploy",
       "type": "note",
-      "detail": "Backend/shared changed — redeploy Render"
-    },
-    {
-      "id": "ui-tip",
-      "type": "note",
-      "detail": "On result page: diary → 나만의 팁 메모장 → 저장하기 → RecommendationTips"
+      "detail": "Manual Render redeploy needed (RENDER_DEPLOY_HOOK_URL secret missing)"
     }
   ],
   "deploy": {
@@ -91,6 +87,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "No per-machine personal tip notebook; cards always expanded.",
-  "toBe": "Personal tip memo per machine saved with 저장하기; cards collapsible."
+  "asIs": "No spoken set coaching; rest timer only shows notification.",
+  "toBe": "Trainer-paced voice coach: beeps, countdown, rep count, optional one-more; settings + in-log controls."
 }

@@ -452,6 +452,53 @@
   color: var(--color-primary-text);
 }
 
+.settings-voice-coach {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.settings-voice-coach__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.settings-voice-coach__row input {
+  margin: 0;
+}
+
+.settings-voice-coach__reps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.settings-voice-coach__reps-label {
+  font-size: 0.9rem;
+}
+
+.settings-voice-coach__reps-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-voice-coach__reps-controls .btn {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+}
+
+.settings-voice-coach__reps-controls strong {
+  min-width: 1.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
 .tab-bar {
   display: grid;
   grid-template-columns: 1fr 1fr;

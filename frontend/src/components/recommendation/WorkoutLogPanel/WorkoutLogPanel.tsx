@@ -5,6 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
+import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
+import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
+import { unlockVoiceCoachAudio } from '@/utils/voiceCoach';
 import { Check, Pencil } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
@@ -176,10 +179,33 @@ export function WorkoutLogPanel({
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
+  const voiceCoachEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
+  const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
+  const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
+  const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
+  const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
+  const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
+  const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
+  const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
+  const voiceCoach = useVoiceCoachSession({
+    targetReps: voiceCoachTargetReps,
+    oneMoreEnabled: voiceCoachOneMore,
+    locale,
+    enabled: voiceCoachEnabled,
+  });
+  const voiceCoachStartRef = useRef(voiceCoach.start);
+  voiceCoachStartRef.current = voiceCoach.start;
+  const voiceCoachRunningRef = useRef(voiceCoach.isRunning);
+  voiceCoachRunningRef.current = voiceCoach.isRunning;
+  const handleRestReadyForNextSet = useCallback(() => {
+    if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
+    if (voiceCoachRunningRef.current) return;
+    voiceCoachStartRef.current();
+  }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const isHistory = variant === 'history';
   const compact = variant === 'compact' || isHistory;
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
@@ -592,6 +618,7 @@ export function WorkoutLogPanel({
       next[index] = !wasCompleted;
 
       if (!wasCompleted && next[index]) {
+        unlockVoiceCoachAudio();
         const seconds = recommendRestSeconds({
           workoutGoal,
           setIndex: index,
@@ -612,6 +639,7 @@ export function WorkoutLogPanel({
     setSetCompleted(next);
 
     if (!wasCompleted && next[index]) {
+      unlockVoiceCoachAudio();
       const seconds = recommendRestSeconds({
         workoutGoal,
         setIndex: index,
@@ -921,8 +949,30 @@ export function WorkoutLogPanel({
         seconds={restTimer.seconds}
         setNumber={restTimer.setNumber}
         onDismiss={() => setRestTimer(null)}
+        onReadyForNextSet={handleRestReadyForNextSet}
       />
     ) : null;
+
+  const voiceCoachPanel = (
+    <VoiceCoachPanel
+      enabled={voiceCoachEnabled}
+      onEnabledChange={setVoiceCoachEnabled}
+      targetReps={voiceCoachTargetReps}
+      onTargetRepsChange={setVoiceCoachTargetReps}
+      oneMoreEnabled={voiceCoachOneMore}
+      onOneMoreChange={setVoiceCoachOneMore}
+      autoStartAfterRest={voiceCoachAutoAfterRest}
+      onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
+      phase={voiceCoach.phase}
+      currentRep={voiceCoach.currentRep}
+      countdown={voiceCoach.countdown}
+      isRunning={voiceCoach.isRunning}
+      onStart={voiceCoach.start}
+      onStop={voiceCoach.stop}
+      idPrefix={`${idPrefix}-voice-coach`}
+      compact={compact}
+    />
+  );
 
   if (isHistory) {
     return (
@@ -931,6 +981,7 @@ export function WorkoutLogPanel({
         aria-label={t('machines:workoutLog.title')}
       >
         {restTimerBanner}
+        {voiceCoachPanel}
         {targetMusclePicker}
         <div className="history-workout-log__performance">
           <div className="history-workout-log__performance-header">
@@ -962,6 +1013,7 @@ export function WorkoutLogPanel({
         aria-label={t('machines:workoutLog.title')}
       >
         {restTimerBanner}
+        {voiceCoachPanel}
         {targetMusclePicker}
         <div className="recommendation-workout-log__toolbar">
           <span className="recommendation-workout-log__title">{t('machines:workoutLog.title')}</span>
@@ -980,6 +1032,7 @@ export function WorkoutLogPanel({
   return (
     <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
       {restTimerBanner}
+      {voiceCoachPanel}
       <div className="recommendation-workout-log__header">
         <span className="recommendation-collapsible__label">{t('machines:workoutLog.title')}</span>
         <span className="recommendation-workout-log__date">

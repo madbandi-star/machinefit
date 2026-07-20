@@ -94,6 +94,24 @@
     "notificationTitle": "Rest complete",
     "notificationBody": "Set {{setNumber}} rest is over. Ready for the next set!"
   },
+  "voiceCoach": {
+    "title": "Voice count",
+    "desc": "Countdown before the set, then spoken rep counting.",
+    "enable": "Enable voice count",
+    "on": "On",
+    "off": "Off",
+    "targetReps": "Target reps",
+    "oneMore": "Count one more",
+    "autoAfterRest": "Auto-start after rest",
+    "start": "Start count",
+    "stop": "Stop",
+    "statusIdle": "Ready — tap start or auto-start after rest.",
+    "statusBeep": "Get ready…",
+    "statusCountdown": "{{count}}",
+    "statusStart": "Start!",
+    "statusCounting": "Rep {{rep}}",
+    "statusOneMore": "One more! ({{rep}})"
+  },
   "feedback": {
     "title": "How did the settings fit?",
     "desc": "Your feedback helps improve future recommendations.",
