@@ -6,7 +6,7 @@
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
   "git": {
     "branch": "cursor/test-handoff-protocol-35b3",
-    "commit": null,
+    "commit": "b2fd972",
     "pr": null,
     "base": "main"
   },
