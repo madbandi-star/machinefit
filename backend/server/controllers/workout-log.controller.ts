@@ -3,6 +3,7 @@ import { upsertWorkoutLogSchema, workoutLogListQuerySchema, workoutInsightsQuery
 import { workoutLogService } from '../services/workout-log.service.js';
 import { workoutInsightsService } from '../services/workout-insights.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { resolveRequestLocale } from '../utils/locale.util.js';
 
 export async function getWorkoutInsights(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
@@ -14,7 +15,8 @@ export async function getWorkoutInsights(req: Request, res: Response): Promise<v
 export async function listWorkoutLogs(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const query = workoutLogListQuerySchema.parse(req.query);
-  const items = await workoutLogService.list(req.user.userId, query);
+  const locale = resolveRequestLocale(req);
+  const items = await workoutLogService.list(req.user.userId, query, locale);
   res.json({ success: true, data: items });
 }
 

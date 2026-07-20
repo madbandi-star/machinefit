@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { useSettingsStore } from '@/store/settings.store';
+import { usePersistHydration } from '@/hooks/usePersistHydration';
 
 const THEME_COLOR_META = 'theme-color';
 
@@ -15,8 +16,11 @@ function setThemeColorMeta(color: string) {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSettingsStore((s) => s.theme);
+  const hydrated = usePersistHydration(useSettingsStore.persist);
 
   useEffect(() => {
+    if (!hydrated) return;
+
     document.documentElement.setAttribute('data-theme', theme);
 
     const rootStyle = getComputedStyle(document.documentElement);
@@ -24,7 +28,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (themeColor) {
       setThemeColorMeta(themeColor);
     }
-  }, [theme]);
+  }, [hydrated, theme]);
 
   return <>{children}</>;
 }

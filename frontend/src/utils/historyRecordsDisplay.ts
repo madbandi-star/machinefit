@@ -93,20 +93,39 @@ export function expandHistoryRecordCards(
   }
 
   for (const item of historyItems) {
-    if (!isFreeWeightMachineCode(item.machineCode) || !item.targetMuscleGroup) continue;
+    if (!isFreeWeightMachineCode(item.machineCode)) continue;
 
     const logDate = normalizeDateKey(getLocalDateKey(item.viewedAt));
-    const key = buildFreeWeightCardKey(item.machineCode, logDate, item.targetMuscleGroup);
-    if (freeWeightKeys.has(key)) continue;
-    freeWeightKeys.add(key);
+
+    if (item.targetMuscleGroup) {
+      const key = buildFreeWeightCardKey(item.machineCode, logDate, item.targetMuscleGroup);
+      if (freeWeightKeys.has(key)) continue;
+      freeWeightKeys.add(key);
+
+      cards.push({
+        cardId: `history-${item.id}`,
+        historyId: item.id,
+        machineCode: item.machineCode,
+        machineName: item.machineName,
+        muscleGroup: item.muscleGroup,
+        targetMuscleGroup: item.targetMuscleGroup as TargetMuscleGroup,
+        recommendationId: item.recommendationId,
+        settings: item.settings,
+        viewedAt: item.viewedAt,
+        logDate,
+      });
+      continue;
+    }
+
+    const cardId = `history-${item.id}`;
+    if (freeWeightKeys.has(cardId)) continue;
+    freeWeightKeys.add(cardId);
 
     cards.push({
-      cardId: `history-${item.id}`,
+      cardId,
       historyId: item.id,
       machineCode: item.machineCode,
       machineName: item.machineName,
-      muscleGroup: item.muscleGroup,
-      targetMuscleGroup: item.targetMuscleGroup as TargetMuscleGroup,
       recommendationId: item.recommendationId,
       settings: item.settings,
       viewedAt: item.viewedAt,
@@ -116,6 +135,22 @@ export function expandHistoryRecordCards(
 
   cards.sort((a, b) => new Date(b.viewedAt).getTime() - new Date(a.viewedAt).getTime());
   return cards;
+}
+
+export function historyCardMatchesFocus(
+  card: Pick<HistoryRecordCard, 'cardId' | 'historyId'>,
+  focusId: string
+): boolean {
+  if (!focusId) return false;
+  return card.cardId === focusId || card.historyId === focusId;
+}
+
+export function findHistoryCardByFocusId(
+  cards: HistoryRecordCard[],
+  focusId: string
+): HistoryRecordCard | undefined {
+  if (!focusId) return undefined;
+  return cards.find((card) => historyCardMatchesFocus(card, focusId));
 }
 
 export function historyRecordCardHasLog(

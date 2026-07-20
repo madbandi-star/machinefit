@@ -218,13 +218,16 @@ export function WorkoutLogPanel({
   const restSpeechAbortRef = useRef<AbortController | null>(null);
   const handleRestReadyForNextSet = useCallback(() => {
     restSpeechAbortRef.current?.abort();
+    restSpeechAbortRef.current = null;
     stopVoiceCoach();
+    setRestTimer(null);
     if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
     if (voiceCoachRunningRef.current) return;
     voiceCoachStartRef.current();
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
     restSpeechAbortRef.current?.abort();
+    restSpeechAbortRef.current = null;
     stopVoiceCoach();
     voiceCoachStartRef.current();
   }, []);
@@ -300,6 +303,8 @@ export function WorkoutLogPanel({
     if (!restTimer) return;
     if (!voiceCoachEnabled || !voiceRestTipsEnabled) return;
     if (!hasRestCoaching) return;
+    // Never restart rest tips over an active set-count session.
+    if (voiceCoachRunningRef.current) return;
 
     const controller = new AbortController();
     restSpeechAbortRef.current = controller;
@@ -315,7 +320,8 @@ export function WorkoutLogPanel({
       if (restSpeechAbortRef.current === controller) {
         restSpeechAbortRef.current = null;
       }
-      stopVoiceCoach();
+      // Abort rest tips only — do not stopVoiceCoach() here.
+      // Clearing restTimer / late tip fetch would otherwise cancel auto-started set counting.
     };
   }, [
     restTimer?.setNumber,
@@ -719,6 +725,11 @@ export function WorkoutLogPanel({
   };
 
   const handleHistorySetComplete = (index: number) => {
+    if (isFreeWeight && !activeTargetMuscle) {
+      showToast(t('machines:targetMuscleRequired'), 'error');
+      return;
+    }
+
     const next = [...setCompleted];
     const wasCompleted = next[index] ?? false;
     next[index] = !wasCompleted;
@@ -733,11 +744,6 @@ export function WorkoutLogPanel({
         weightKg: weights[index],
       });
       setRestTimer({ setNumber: index + 1, seconds });
-    }
-
-    if (isFreeWeight && !activeTargetMuscle) {
-      showToast(t('machines:targetMuscleRequired'), 'error');
-      return;
     }
 
     saveMutation.mutate({ setCompleted: next });

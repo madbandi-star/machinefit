@@ -27,7 +27,9 @@ import {
   expandHistoryRecordCards,
   extractRecordCardDateKeys,
   filterHistoryRecordCardsByLogStatus,
+  findHistoryCardByFocusId,
   groupRecordCardsByDate,
+  historyCardMatchesFocus,
   type HistoryRecordCard as HistoryRecordCardData,
 } from '@/utils/historyRecordsDisplay';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
@@ -140,7 +142,9 @@ export function HistoryListPanel() {
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;
 
-    const element = document.getElementById(`history-item-${focusId}`);
+    const focusedCard = findHistoryCardByFocusId(displayCards, focusId);
+    const elementId = focusedCard ? focusedCard.cardId : focusId;
+    const element = document.getElementById(`history-item-${elementId}`);
     if (!element) return;
 
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -414,7 +418,7 @@ export function HistoryListPanel() {
                     customSettings={customSettings}
                     isAuthenticated={isAuthenticated}
                     lockTargetMuscle={isFreeWeightMachineCode(card.machineCode)}
-                    isFocused={focusId === card.cardId}
+                    isFocused={historyCardMatchesFocus(card, focusId)}
                     onDelete={() => requestDelete(card)}
                     deleteDisabled={deleteMutation.isPending}
                   />

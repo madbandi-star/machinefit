@@ -1,18 +1,19 @@
+import type { Locale } from '@machinefit/shared';
 import { favoriteRepository } from '../repositories/favorite.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 export const favoriteService = {
-  async list(userId: string) {
-    return favoriteRepository.listByUser(userId);
+  async list(userId: string, locale: Locale = 'en') {
+    return favoriteRepository.listByUser(userId, locale);
   },
 
-  async add(userId: string, machineCode: string, recommendationId?: string) {
+  async add(userId: string, machineCode: string, recommendationId?: string, locale: Locale = 'en') {
     const machineId = await machineRepository.findIdByCode(machineCode);
     if (!machineId) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${machineCode}`);
     }
-    return favoriteRepository.add(userId, machineId, recommendationId);
+    return favoriteRepository.add(userId, machineId, recommendationId, locale);
   },
 
   async remove(userId: string, favoriteId: string) {

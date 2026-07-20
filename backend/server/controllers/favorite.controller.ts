@@ -1,11 +1,13 @@
 import type { Request, Response } from 'express';
 import { favoriteService } from '../services/favorite.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { resolveRequestLocale } from '../utils/locale.util.js';
 import { getParam } from '../utils/params.util.js';
 
 export async function listFavorites(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const items = await favoriteService.list(req.user.userId);
+  const locale = resolveRequestLocale(req);
+  const items = await favoriteService.list(req.user.userId, locale);
   res.json({ success: true, data: items });
 }
 
@@ -16,7 +18,8 @@ export async function addFavorite(req: Request, res: Response): Promise<void> {
     recommendationId?: string;
   };
   if (!machineCode) throw new AppError(400, 'VALIDATION_ERROR', 'machineCode required');
-  const item = await favoriteService.add(req.user.userId, machineCode, recommendationId);
+  const locale = resolveRequestLocale(req);
+  const item = await favoriteService.add(req.user.userId, machineCode, recommendationId, locale);
   res.status(201).json({ success: true, data: item });
 }
 

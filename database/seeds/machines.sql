@@ -5,7 +5,7 @@ FROM brands b
 CROSS JOIN (VALUES
   ('FREE_WEIGHT', 'FW_DUMBBELL', '{"ko":"덤벨","en":"Dumbbell","ja":"ダンベル","zh":"哑铃"}', 'shoulders', 'free_weight', false, false, false, true, 'variable'),
   ('FREE_WEIGHT', 'FW_BARBELL', '{"ko":"바벨","en":"Barbell","ja":"バーベル","zh":"杠铃"}', 'chest', 'free_weight', false, false, false, true, 'variable'),
-  ('FREE_WEIGHT', 'FW_SMITH', '{"ko":"스미스 머신","en":"Smith Machine","ja":"スミスマシン","zh":"史密斯机"}', 'legs', 'smith', false, false, true, true, 'variable'),
+  ('FREE_WEIGHT', 'FW_SMITH', '{"ko":"스미스 머신","en":"Smith Machine","ja":"スミスマシン","zh":"史密斯机"}', 'full_body', 'smith', false, false, true, true, 'variable'),
   ('FREE_WEIGHT', 'FW_CABLE', '{"ko":"케이블","en":"Cable","ja":"ケーブル","zh":"绳索"}', 'back', 'cable', false, false, false, true, 'variable'),
   ('FREE_WEIGHT', 'FW_KETTLEBELL', '{"ko":"케틀벨","en":"Kettlebell","ja":"ケトルベル","zh":"壶铃"}', 'shoulders', 'free_weight', false, false, false, true, 'variable'),
   ('BODYWEIGHT', 'BW_PULL_UP', '{"ko":"풀업","en":"Pull-up","ja":"懸垂","zh":"引体向上"}', 'back', 'bodyweight', false, false, false, true, '최대'),

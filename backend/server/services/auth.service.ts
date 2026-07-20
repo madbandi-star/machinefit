@@ -96,22 +96,34 @@ export const authService = {
     }
 
     const passwordHash = await hashPassword(input.password);
-    const user = await userRepository.create({
-      email: input.email,
-      passwordHash,
-      displayName: input.displayName,
-      gender: input.gender,
-      languageCode: input.languageCode,
-      unitHeight: input.unitHeight,
-      unitWeight: input.unitWeight,
-      heightCm: input.heightCm,
-      weightKg: input.weightKg,
-      age: input.age,
-      workoutGoal: input.workoutGoal,
-      homeGymId: input.homeGymId ?? null,
-      homeGymName: input.homeGymName ?? null,
-      experienceLevel: input.experienceLevel,
-    });
+    let user;
+    try {
+      user = await userRepository.create({
+        email: input.email,
+        passwordHash,
+        displayName: input.displayName,
+        gender: input.gender,
+        languageCode: input.languageCode,
+        unitHeight: input.unitHeight,
+        unitWeight: input.unitWeight,
+        heightCm: input.heightCm,
+        weightKg: input.weightKg,
+        age: input.age,
+        workoutGoal: input.workoutGoal,
+        homeGymId: input.homeGymId ?? null,
+        homeGymName: input.homeGymName ?? null,
+        experienceLevel: input.experienceLevel,
+      });
+    } catch (error) {
+      const pgCode =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : '';
+      if (pgCode === '23505') {
+        throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
+      }
+      throw error;
+    }
 
     return buildAuthResponse(user);
   },

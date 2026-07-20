@@ -23,6 +23,20 @@ const DEFAULT_TIPS: Record<string, string[]> = {
   zh: ['调整到舒适的设置'],
 };
 
+function pickClosestHeightRule(rules: MockSettingRule[], heightCm: number): MockSettingRule {
+  return rules.reduce((best, r) => {
+    const bestDist = Math.min(
+      Math.abs(heightCm - best.heightMinCm),
+      Math.abs(heightCm - best.heightMaxCm)
+    );
+    const rDist = Math.min(
+      Math.abs(heightCm - r.heightMinCm),
+      Math.abs(heightCm - r.heightMaxCm)
+    );
+    return rDist < bestDist ? r : best;
+  });
+}
+
 function findBestMatch(rules: MockSettingRule[], input: RecommendationInput) {
   const exact = rules.find(
     (r) =>
@@ -36,19 +50,21 @@ function findBestMatch(rules: MockSettingRule[], input: RecommendationInput) {
   const sameProfile = rules.filter(
     (r) => r.gender === input.gender && r.experienceLevel === input.experienceLevel
   );
-  if (sameProfile.length === 0) return rules[0];
+  if (sameProfile.length > 0) {
+    return pickClosestHeightRule(sameProfile, input.heightCm);
+  }
 
-  return sameProfile.reduce((best, r) => {
-    const bestDist = Math.min(
-      Math.abs(input.heightCm - best.heightMinCm),
-      Math.abs(input.heightCm - best.heightMaxCm)
-    );
-    const rDist = Math.min(
-      Math.abs(input.heightCm - r.heightMinCm),
-      Math.abs(input.heightCm - r.heightMaxCm)
-    );
-    return rDist < bestDist ? r : best;
-  });
+  const sameGender = rules.filter((r) => r.gender === input.gender);
+  if (sameGender.length > 0) {
+    return pickClosestHeightRule(sameGender, input.heightCm);
+  }
+
+  const sameExperience = rules.filter((r) => r.experienceLevel === input.experienceLevel);
+  if (sameExperience.length > 0) {
+    return pickClosestHeightRule(sameExperience, input.heightCm);
+  }
+
+  return rules[0];
 }
 
 export const recommendationService = {
@@ -77,11 +93,19 @@ export const recommendationService = {
       matchedSettingWeightKg: match?.weightKg,
     });
 
-    const personalizedWeight = applyPersonalizationToWeight(recommendedWeightKg, {
-      workoutGoal: input.workoutGoal,
-      age: input.age,
-      targetMuscleGroup: input.targetMuscleGroup,
-    });
+    // Progressive / growth targets already come from the user's real logs for that
+    // machine (and muscle). Do not re-scale them with goal/muscle bias.
+    const fromUserHistory =
+      weightBasis.primarySourceId === 'progressiveTarget' ||
+      weightBasis.primarySourceId === 'growthNextTarget';
+
+    const personalizedWeight = fromUserHistory
+      ? recommendedWeightKg
+      : applyPersonalizationToWeight(recommendedWeightKg, {
+          workoutGoal: input.workoutGoal,
+          age: input.age,
+          targetMuscleGroup: input.targetMuscleGroup,
+        });
 
     const savedPreferences =
       userId != null
@@ -103,11 +127,34 @@ export const recommendationService = {
 
     const settings = mergeSettingsWithPreferences(baseSettings, savedPreferences?.customSettings ?? null);
 
+    const baseTips = match
+      ? pickLocalizedArray(match.tips, locale)
+      : pickLocalizedArray(DEFAULT_TIPS, locale);
+
+    const hasCustomSettings = Boolean(
+      savedPreferences?.customSettings &&
+        Object.values(savedPreferences.customSettings).some(
+          (value) => value != null && value !== ''
+        )
+    );
+
+    const tips = buildPersonalizedTips(baseTips, locale, {
+      workoutGoal: input.workoutGoal,
+      targetMuscleGroup: input.targetMuscleGroup,
+      hasCustomPreferences: hasCustomSettings,
+    });
+
+    const warnings = match ? pickLocalizedArray(match.warnings, locale) : [];
+    const tipsByLocale = { [locale]: tips, ...(match?.tips ?? {}) };
+    // Prefer the response locale's personalized tips; keep other catalog locales as fallback.
+    tipsByLocale[locale] = tips;
+    const warningsByLocale = match?.warnings ?? (warnings.length ? { [locale]: warnings } : null);
+
     const id = await recommendationRepository.save(
       input,
       machineId,
       null,
-      match,
+      settings,
       settings.recommendedWeightKg,
       weightBasis,
       userId,
@@ -115,7 +162,9 @@ export const recommendationService = {
       {
         min: settings.recommendedRepsMin ?? recommendedReps.min,
         max: settings.recommendedRepsMax ?? recommendedReps.max,
-      }
+      },
+      tipsByLocale,
+      warningsByLocale
     );
 
     const youtubeVideos = await recommendationRepository.findYoutubeVideos(machineId);
@@ -124,25 +173,13 @@ export const recommendationService = {
       await historyRepository.record(userId, machineId, id);
     }
 
-    const baseTips = match
-      ? pickLocalizedArray(match.tips, locale)
-      : pickLocalizedArray(DEFAULT_TIPS, locale);
-
-    const tips = buildPersonalizedTips(baseTips, locale, {
-      workoutGoal: input.workoutGoal,
-      targetMuscleGroup: input.targetMuscleGroup,
-      hasCustomPreferences: Boolean(
-        savedPreferences && Object.keys(savedPreferences).length > 0
-      ),
-    });
-
     return {
       id,
       machineCode: machine.code,
       machineName: machine.name[locale as keyof typeof machine.name] ?? machine.name.en,
       settings,
       tips,
-      warnings: match ? pickLocalizedArray(match.warnings, locale) : [],
+      warnings,
       youtubeVideos,
       createdAt: new Date().toISOString(),
       weightBasis,

@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/home.css';
 
 export function FavoriteMachinesRow() {
@@ -47,7 +48,9 @@ export function FavoriteMachinesRow() {
               key={item.id}
               machineCode={item.machineCode}
               machineName={item.machineName}
-              muscleGroup={item.muscleGroup}
+              muscleGroup={
+                shouldShowDefaultMachineMuscle(item.machineCode) ? item.muscleGroup : undefined
+              }
               recommendationId={item.recommendationId}
             />
           ))}
