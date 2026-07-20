@@ -366,15 +366,8 @@ export function RecommendationSettingsPanel({
           >
             {items.map((item) => {
               const LucideIcon = HISTORY_LUCIDE_SETTING_ICON[item.key];
-              const showRomNavHint = showDetailAdjustNavHint && item.key === 'romSetting';
               return (
-                <div
-                  key={item.key}
-                  role="listitem"
-                  className={`history-mini-setting-wrap${
-                    showRomNavHint ? ' history-mini-setting-wrap--rom-nav' : ''
-                  }`}
-                >
+                <div key={item.key} role="listitem" className="history-mini-setting-wrap">
                   {renderSettingCard(item, {
                     compact: true,
                     highlight: item.isWeight,
@@ -386,15 +379,15 @@ export function RecommendationSettingsPanel({
                     historyVariant: true,
                     ...cardOptions,
                   })}
-                  {showRomNavHint ? (
-                    <span className="history-mini-setting__nav-hint">
-                      {t('machines:recommendation.romDetailAdjustHint')}
-                    </span>
-                  ) : null}
                 </div>
               );
             })}
           </div>
+          {showDetailAdjustNavHint && items.some((item) => item.key === 'romSetting') ? (
+            <p className="history-mini-setting__nav-hint" aria-hidden="true">
+              {t('machines:recommendation.romDetailAdjustHint')}
+            </p>
+          ) : null}
           {saveFooter}
         </div>
         {basisDialog}
