@@ -7,7 +7,7 @@
   "programTestAgentName": "프로그램테스트",
   "git": {
     "branch": "cursor/voice-set-count-coach-35b3",
-    "commit": "a18754b",
+    "commit": null,
     "pr": 9,
     "base": "main"
   },
@@ -32,6 +32,7 @@
     "One more option continues with 하나더!",
     "Auto-start after rest when enabled",
     "Settings page persists voice coach prefs",
+    "Personal tip memo still saves with 저장하기",
     "typecheck + build pass"
   ],
   "fastChecks": [
@@ -71,9 +72,14 @@
       "detail": "On mobile, complete a set (or tap Start) once so the browser unlocks audio before auto-start after rest."
     },
     {
-      "id": "ui-flow",
+      "id": "db-migrate",
       "type": "note",
-      "detail": "Open recommendation result or history card → Voice count panel → set target reps → enable one more → Start"
+      "detail": "If not yet applied: npm run db:migrate for 028 (biceps/triceps) and 029 (personal tip memo)"
+    },
+    {
+      "id": "render-redeploy",
+      "type": "note",
+      "detail": "Manual Render redeploy needed (RENDER_DEPLOY_HOOK_URL secret missing)"
     }
   ],
   "deploy": {

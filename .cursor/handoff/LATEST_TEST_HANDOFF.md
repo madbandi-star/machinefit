@@ -8,26 +8,17 @@
 
 세트 사이 **음성 카운트** 추가: `띠띠띠 → 5 4 3 2 1 → 시작! → 하나 둘 …` + 선택 **하나더(원모어)**.
 
-## as-is → to-be
-
-- **as-is:** 휴식 타이머만 있고 음성 안내 없음
-- **to-be:** 트레이너 페이스 음성 카운트 + 원모어 옵션 + 휴식 후 자동 시작
-
 ## Test focus
 
 1. 운동 기록 패널에 **음성 카운트** UI
 2. **카운트 시작** → 비프 → 카운트다운 → 시작 → 한글 횟수
 3. **하나더** 켜면 목표 횟수 후 `하나더!` 반복 (중지 버튼으로 종료)
 4. **휴식 후 자동 시작** 옵션
-5. 설정 페이지에서 기본값 저장
+5. 나만의 팁 메모장 + 저장하기 정상 동작 (main 머지분)
 6. `npm run typecheck` / `npm run build:frontend`
 
-## Fast checks
+## After merge
 
-```bash
-npm run test:smoke:changed
-```
-
-## Notes
-
-- 모바일: 세트 완료 또는 시작 버튼을 한 번 눌러야 브라우저 오디오가 잠금 해제됩니다.
+- GitHub Pages 프론트 자동 배포
+- Render 백엔드: 대시보드에서 Manual Deploy
+- Supabase: `npm run db:migrate` (028, 029 미적용 시)

@@ -34,6 +34,10 @@
     "confirm": "확인",
     "close": "닫기"
   },
+  "collapse": "접기",
+  "expand": "펼치기",
+  "expandCardDetails": "상세 내용 펼치기",
+  "collapseCardDetails": "상세 내용 접기",
   "picker": {
     "searchPlaceholder": "검색...",
     "noResults": "검색 결과가 없습니다",
