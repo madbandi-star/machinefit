@@ -1,53 +1,47 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T04:20:00Z",
-  "title": "Rest-time voice tips and warnings",
-  "summary": "휴식 타이머 시작 시 추천 주의사항·운동팁을 TTS로 재생. 설정/음성코치 토글, 다음 세트 코치와 겹치지 않도록 abort.",
+  "updatedAt": "2026-07-20T04:25:00Z",
+  "title": "Free-weight all muscles in search (biceps/triceps)",
+  "summary": "이두/삼두 등 부위 필터 시 프리웨이트 전 기구가 나오도록 검색 수정. 추천 생성 응답에 targetMuscleGroup 포함, FW 추천 시 부위 필수.",
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d00-6eb1-7076-b7ca-db19d20335b3",
   "programTestAgentName": "프로그램수정",
   "git": {
-    "branch": "cursor/rest-voice-tips-warnings-35b3",
-    "commit": "3ff9043",
-    "pr": "https://github.com/madbandi-star/machinefit/pull/11",
+    "branch": "cursor/freeweight-biceps-triceps-all-35b3",
+    "commit": "81bbdc5",
+    "pr": null,
     "base": "main"
   },
   "changedFiles": [
-    "frontend/src/utils/voiceCoach.ts",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/store/settings.store.ts",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "shared/src/utils/free-weight.ts",
+    "backend/server/repositories/machine.repository.ts",
+    "backend/server/services/recommendation.service.ts",
+    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
+    "scripts/qa-production.mjs"
   ],
   "testFocus": [
-    "세트 완료 후 휴식 시작 시 주의사항 → 운동팁 음성 재생",
-    "설정/음성코치에서 휴식 팁 토글 OFF 시 미재생",
-    "휴식 스킵 또는 다음 세트 코치 시작 시 휴식 TTS 중단",
-    "히스토리 카드(recommendationId)에서도 동일 동작",
+    "기구 검색에서 이두/삼두 칩 선택 시 덤벨·바벨·스미스·케이블·케틀벨 모두 표시",
+    "프리웨이트 상세에서 이두/삼두 선택 후 추천 생성·결과·기록에 부위 반영",
+    "리스트에서 부위 칩 선택 시 FW 항목에 선택 부위 아이콘 표시",
     "typecheck"
   ],
   "fastChecks": [
     {
-      "id": "speak-rest-fn",
+      "id": "filter-helper",
       "type": "file_contains",
-      "path": "frontend/src/utils/voiceCoach.ts",
-      "pattern": "speakRestTipsAndWarnings"
+      "path": "shared/src/utils/free-weight.ts",
+      "pattern": "machineMatchesMuscleGroupFilter"
     },
     {
-      "id": "settings-flag",
+      "id": "sql-free-weight-brand",
       "type": "file_contains",
-      "path": "frontend/src/store/settings.store.ts",
-      "pattern": "voiceRestTipsEnabled"
+      "path": "backend/server/repositories/machine.repository.ts",
+      "pattern": "BRAND_CODES.FREE_WEIGHT"
     },
     {
-      "id": "ko-i18n",
+      "id": "recommend-return-muscle",
       "type": "file_contains",
-      "path": "frontend/src/i18n/locales/ko/machines.json",
-      "pattern": "휴식 중 주의사항·운동팁 듣기"
+      "path": "backend/server/services/recommendation.service.ts",
+      "pattern": "targetMuscleGroup: input.targetMuscleGroup"
     },
     {
       "id": "typecheck",
@@ -57,9 +51,9 @@
   ],
   "productionChecks": [
     {
-      "id": "pages-only",
+      "id": "render-redeploy",
       "type": "note",
-      "detail": "Frontend-only — GitHub Pages deploy; no Render Manual Deploy needed"
+      "detail": "Backend/shared changed — Manual Deploy on Render after merge"
     }
   ],
   "deploy": {
@@ -67,6 +61,6 @@
     "runUrl": null,
     "status": "pending after merge"
   },
-  "asIs": "Rest timer is silent aside from optional next-set voice coach.",
-  "toBe": "During rest, warnings then tips are spoken when voice coach + rest tips are enabled."
+  "asIs": "Muscle filter only special-cased FW_SMITH; other free-weight gear vanished for biceps/triceps.",
+  "toBe": "All FREE_WEIGHT machines match any muscle filter; recommend create returns targetMuscleGroup."
 }
