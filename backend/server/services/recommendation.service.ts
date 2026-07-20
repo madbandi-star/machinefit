@@ -3,6 +3,7 @@ import {
   applyPersonalizationToWeight,
   buildPersonalizedTips,
   DEFAULT_ROM_SETTING,
+  isFreeWeightMachineCode,
   mergeSettingsWithPreferences,
   recommendRepsForGoal,
 } from '@machinefit/shared';
@@ -10,6 +11,7 @@ import { recommendationRepository } from '../repositories/recommendation.reposit
 import { preferenceRepository } from '../repositories/preference.repository.js';
 import { historyRepository } from '../repositories/history.repository.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
+import { AppError } from '../middlewares/error.middleware.js';
 import { machineService } from './machine.service.js';
 import { computeRecommendationWeight } from './recommendation-weight.service.js';
 import type { MockSettingRule } from '../data/mock.js';
@@ -51,6 +53,14 @@ function findBestMatch(rules: MockSettingRule[], input: RecommendationInput) {
 
 export const recommendationService = {
   async generate(input: RecommendationInput, userId?: string, locale = 'en') {
+    if (isFreeWeightMachineCode(input.machineCode) && !input.targetMuscleGroup) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'targetMuscleGroup is required for free-weight recommendations'
+      );
+    }
+
     const machine = await machineService.getByCode(input.machineCode);
     const machineId = machine.id;
 
@@ -136,6 +146,7 @@ export const recommendationService = {
       youtubeVideos,
       createdAt: new Date().toISOString(),
       weightBasis,
+      ...(input.targetMuscleGroup ? { targetMuscleGroup: input.targetMuscleGroup } : {}),
     };
   },
 

@@ -20,6 +20,13 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
   const showMuscle = shouldShowDefaultMachineMuscle(machine.code);
+  /** Free-weight list under a muscle chip shows the selected target (e.g. biceps/triceps). */
+  const displayMuscle =
+    isFreeWeight && selectedMuscle
+      ? selectedMuscle
+      : showMuscle
+        ? machine.muscleGroup
+        : undefined;
   const brandName =
     machine.brandName && !isFreeWeight
       ? getLocalizedName(machine.brandName, i18n.language, '')
@@ -28,7 +35,7 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
   const detailTo =
-    selectedMuscle && machine.code.startsWith('FW_')
+    selectedMuscle && isFreeWeight
       ? `${detailPath}?muscle=${encodeURIComponent(selectedMuscle)}`
       : detailPath;
 
@@ -40,9 +47,9 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       <div className="machine-list-item__thumb">
         {machine.primaryImageUrl ? (
           <img src={machine.primaryImageUrl} alt="" loading="lazy" />
-        ) : showMuscle && machine.muscleGroup ? (
+        ) : displayMuscle ? (
           <div className="machine-list-item__muscle-icon" aria-hidden>
-            <MuscleGroupIcon group={machine.muscleGroup as MuscleGroup} size={52} />
+            <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={52} />
           </div>
         ) : (
           <div className="machine-list-item__thumb-placeholder" aria-hidden>
@@ -53,7 +60,7 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       <div className="machine-list-item__body">
         <p className="machine-list-item__name">
           <MachineNameWithMuscle
-            muscleGroup={showMuscle ? machine.muscleGroup : undefined}
+            muscleGroup={displayMuscle}
             name={localizedName}
             iconSize={20}
             labelClassName="machine-list-item__name-text"

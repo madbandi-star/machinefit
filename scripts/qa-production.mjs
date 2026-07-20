@@ -99,6 +99,21 @@ try {
   fail('Smith FW_SMITH detail', e.message);
 }
 
+// Free-weight machines appear for biceps/triceps muscle filters
+try {
+  const biceps = await api('/machines?muscleGroup=biceps&limit=50');
+  const codes = (biceps.json?.data ?? []).map((m) => m.code);
+  const expectedFw = ['FW_DUMBBELL', 'FW_BARBELL', 'FW_SMITH', 'FW_CABLE', 'FW_KETTLEBELL'];
+  const missing = expectedFw.filter((code) => !codes.includes(code));
+  if (biceps.status === 200 && missing.length === 0) {
+    pass('FW machines for biceps filter', codes.filter((c) => c.startsWith('FW_')).join(','));
+  } else {
+    fail('FW machines for biceps filter', `missing=${missing.join(',') || 'n/a'} status=${biceps.status}`);
+  }
+} catch (e) {
+  fail('FW machines for biceps filter', e.message);
+}
+
 // Auth validation
 try {
   const badLogin = await api('/auth/login', {

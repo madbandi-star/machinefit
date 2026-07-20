@@ -1,5 +1,5 @@
 import type { Brand, Machine } from '@machinefit/shared';
-import { MACHINE_CODES } from '@machinefit/shared';
+import { BRAND_CODES, machineMatchesMuscleGroupFilter } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
 
@@ -75,14 +75,6 @@ function filterMockMachinesByBrand(brandCode: string): Machine[] {
   return MOCK_MACHINES.filter((m) => m.brandId === brand.id);
 }
 
-function isSmithMachine(machine: Machine): boolean {
-  return machine.code === MACHINE_CODES.FW_SMITH || machine.muscleGroup === 'full_body';
-}
-
-function matchesMuscleGroupFilter(machine: Machine, muscleGroup: string): boolean {
-  return machine.muscleGroup === muscleGroup || isSmithMachine(machine);
-}
-
 export const machineRepository = {
   async findMany(filters: {
     brandCode?: string;
@@ -99,7 +91,9 @@ export const machineRepository = {
         items = filterMockMachinesByBrand(filters.brandCode);
       }
       if (filters.muscleGroup) {
-        items = items.filter((m) => matchesMuscleGroupFilter(m, filters.muscleGroup!));
+        items = items.filter((m) =>
+          machineMatchesMuscleGroupFilter(m.code, m.muscleGroup, filters.muscleGroup!)
+        );
       }
       if (filters.q) {
         const q = filters.q.toLowerCase();
@@ -123,8 +117,11 @@ export const machineRepository = {
       params.push(filters.brandCode);
     }
     if (filters.muscleGroup) {
-      conditions.push(`(m.muscle_group = $${idx} OR m.code = $${idx + 1})`);
-      params.push(filters.muscleGroup, MACHINE_CODES.FW_SMITH);
+      // Free-weight brand: every FW_* can target any muscle (biceps/triceps included).
+      conditions.push(
+        `(m.muscle_group = $${idx} OR b.code = $${idx + 1} OR m.muscle_group = 'full_body')`
+      );
+      params.push(filters.muscleGroup, BRAND_CODES.FREE_WEIGHT);
       idx += 2;
     }
     if (filters.machineType) {
