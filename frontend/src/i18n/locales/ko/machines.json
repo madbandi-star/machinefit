@@ -103,6 +103,7 @@
     "on": "켜짐",
     "off": "꺼짐",
     "targetReps": "목표 횟수",
+    "targetRepsUnit": "회",
     "countInterval": "카운트 간격",
     "countIntervalUnit": "초",
     "oneMore": "하나더(원모어) 세기",

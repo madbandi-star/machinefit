@@ -1,15 +1,17 @@
 import { useTranslation } from 'react-i18next';
-import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
+import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
   clampVoiceCoachRepGapMs,
   unlockVoiceCoachAudio,
   VOICE_COACH_REP_GAP,
   type VoiceCoachPhase,
 } from '@/utils/voiceCoach';
+import '@/styles/components.css';
 import '@/styles/recommendation.css';
 
 const MIN_REPS = 1;
 const MAX_REPS = 30;
+const DEFAULT_REPS = 12;
 
 interface VoiceCoachPanelProps {
   enabled: boolean;
@@ -75,7 +77,6 @@ export function VoiceCoachPanel({
   isRunning,
   onStart,
   onStop,
-  idPrefix = 'voice-coach',
   compact = false,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
@@ -108,47 +109,55 @@ export function VoiceCoachPanel({
       {enabled ? (
         <>
           <div className="voice-coach-panel__controls">
-            <div className="voice-coach-panel__reps">
-              <label className="voice-coach-panel__label" htmlFor={`${idPrefix}-reps`}>
-                {t('machines:voiceCoach.targetReps')}
-              </label>
-              <NumericStepper
-                id={`${idPrefix}-reps`}
-                value={targetReps}
-                onChange={(next) => {
-                  if (next == null) return;
-                  onTargetRepsChange(Math.max(MIN_REPS, Math.min(MAX_REPS, next)));
-                }}
-                min={MIN_REPS}
-                max={MAX_REPS}
-                step={1}
-                size={compact ? 'compact' : 'default'}
-                disabled={isRunning}
-                ariaLabel={t('machines:voiceCoach.targetReps')}
-                allowManualInput={false}
-              />
-            </div>
-
-            <div className="voice-coach-panel__reps">
-              <label className="voice-coach-panel__label" htmlFor={`${idPrefix}-gap`}>
-                {t('machines:voiceCoach.countInterval')}
-              </label>
-              <NumericStepper
-                id={`${idPrefix}-gap`}
-                value={gapSec}
-                onChange={(next) => {
-                  if (next == null) return;
-                  onRepGapMsChange(clampVoiceCoachRepGapMs(next * 1000));
-                }}
-                min={VOICE_COACH_REP_GAP.minMs / 1000}
-                max={VOICE_COACH_REP_GAP.maxMs / 1000}
-                step={VOICE_COACH_REP_GAP.stepMs / 1000}
-                unit={t('machines:voiceCoach.countIntervalUnit')}
-                size={compact ? 'compact' : 'default'}
-                disabled={isRunning}
-                ariaLabel={t('machines:voiceCoach.countInterval')}
-                allowManualInput={false}
-              />
+            <div
+              className={`body-metrics-inline voice-coach-panel__pickers${
+                isRunning ? ' body-metrics-inline--disabled' : ''
+              }`}
+              role="group"
+              aria-label={t('machines:voiceCoach.title')}
+            >
+              <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
+                <div className="body-metrics-inline__cell">
+                  <span className="body-metrics-inline__label">
+                    {t('machines:voiceCoach.targetReps')}
+                    <span className="body-metrics-inline__unit">
+                      {t('machines:voiceCoach.targetRepsUnit')}
+                    </span>
+                  </span>
+                  <ScrollPicker
+                    value={targetReps}
+                    onChange={(next) =>
+                      onTargetRepsChange(Math.max(MIN_REPS, Math.min(MAX_REPS, next)))
+                    }
+                    min={MIN_REPS}
+                    max={MAX_REPS}
+                    step={1}
+                    size={compact ? 'compact' : 'default'}
+                    defaultValue={DEFAULT_REPS}
+                    ariaLabel={t('machines:voiceCoach.targetReps')}
+                    formatValue={(value) => String(value)}
+                  />
+                </div>
+                <div className="body-metrics-inline__cell">
+                  <span className="body-metrics-inline__label">
+                    {t('machines:voiceCoach.countInterval')}
+                    <span className="body-metrics-inline__unit">
+                      {t('machines:voiceCoach.countIntervalUnit')}
+                    </span>
+                  </span>
+                  <ScrollPicker
+                    value={gapSec}
+                    onChange={(sec) => onRepGapMsChange(clampVoiceCoachRepGapMs(sec * 1000))}
+                    min={VOICE_COACH_REP_GAP.minMs / 1000}
+                    max={VOICE_COACH_REP_GAP.maxMs / 1000}
+                    step={VOICE_COACH_REP_GAP.stepMs / 1000}
+                    size={compact ? 'compact' : 'default'}
+                    defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
+                    ariaLabel={t('machines:voiceCoach.countInterval')}
+                    formatValue={(value) => value.toFixed(1)}
+                  />
+                </div>
+              </div>
             </div>
 
             <label className="voice-coach-panel__check">

@@ -1452,21 +1452,13 @@
 
 .voice-coach-panel__controls {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem 0.85rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
 }
 
-.voice-coach-panel__reps {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.voice-coach-panel__label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
+.voice-coach-panel__pickers {
+  width: 100%;
 }
 
 .voice-coach-panel__check {
