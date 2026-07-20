@@ -231,12 +231,11 @@ export function WorkoutLogPanel({
     voiceCoachStartRef.current();
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled, voiceCoachVoice]);
   const startVoiceCoach = useCallback(() => {
-    unlockVoiceCoachAudio(voiceCoachVoice);
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
     setRestTimer(null);
     voiceCoachStartRef.current();
-  }, [voiceCoachVoice]);
+  }, []);
   const isHistory = variant === 'history';
   const compact = variant === 'compact' || isHistory;
   const showPersonalTip = showPersonalTipMemo ?? isHistory;

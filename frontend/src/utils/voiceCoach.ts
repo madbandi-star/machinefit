@@ -165,6 +165,8 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
 let sharedAudioCtx: AudioContext | null = null;
 let currentSource: AudioBufferSourceNode | null = null;
 let currentHtmlAudio: HTMLAudioElement | null = null;
+/** HTMLAudio warmed during a user gesture — can play later without a fresh tap. */
+let warmedHtmlAudio: HTMLAudioElement | null = null;
 const clipBufferCache = new Map<string, AudioBuffer>();
 /** In-flight fetches so parallel preload/play share one decode. */
 const clipBufferInflight = new Map<string, Promise<AudioBuffer | null>>();
@@ -183,14 +185,15 @@ function getSharedAudioContext(): AudioContext | null {
 async function ensureSharedAudioRunning(): Promise<AudioContext | null> {
   const ctx = getSharedAudioContext();
   if (!ctx) return null;
-  if (ctx.state === 'suspended') {
+  const state = ctx.state as string;
+  if (state === 'suspended' || state === 'interrupted') {
     try {
       await ctx.resume();
     } catch {
       return null;
     }
   }
-  return ctx;
+  return ctx.state === 'closed' ? null : ctx;
 }
 
 async function playBeep(
@@ -305,7 +308,7 @@ async function loadClipBuffer(url: string, ctx: AudioContext): Promise<AudioBuff
 
   const task = (async (): Promise<AudioBuffer | null> => {
     try {
-      const response = await fetch(url, { cache: 'force-cache' });
+      const response = await fetch(url, { cache: 'no-cache' });
       if (!response.ok) return null;
       const data = await response.arrayBuffer();
       // Copy — decodeAudioData may detach the original buffer.
@@ -328,16 +331,21 @@ async function preloadCoachClips(
   voice: VoiceCoachVoice,
   reps: number,
   oneMoreEnabled: boolean,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  mode: 'countdown' | 'all' = 'all'
 ): Promise<void> {
   const ctx = await ensureSharedAudioRunning();
   if (!ctx) return;
 
   const keys: string[] = ['cd-5', 'cd-4', 'cd-3', 'cd-2', 'cd-1', 'start'];
-  if (oneMoreEnabled) keys.push('one-more');
-  const maxRep = Math.min(MAX_CLIP_REP, Math.max(1, reps));
-  for (let rep = 1; rep <= maxRep; rep += 1) {
-    keys.push(`rep-${rep}`);
+  if (mode === 'all') {
+    if (oneMoreEnabled) keys.push('one-more');
+    const maxRep = Math.min(MAX_CLIP_REP, Math.max(1, reps));
+    for (let rep = 1; rep <= maxRep; rep += 1) {
+      keys.push(`rep-${rep}`);
+    }
+  } else {
+    keys.push('rep-1');
   }
 
   await Promise.all(
@@ -355,12 +363,20 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
       return;
     }
 
-    const audio = new Audio(url);
-    audio.preload = 'auto';
+    const audio = warmedHtmlAudio ?? new Audio();
+    warmedHtmlAudio = audio;
     currentHtmlAudio = audio;
+    audio.preload = 'auto';
+    audio.volume = 1;
+    // Absolute URL helps some mobile WebViews after SPA navigation.
+    audio.src = new URL(url, window.location.href).href;
 
     const onAbort = () => {
-      stopCurrentClip();
+      try {
+        audio.pause();
+      } catch {
+        // ignore
+      }
       cleanup();
       reject(new DOMException('Aborted', 'AbortError'));
     };
@@ -382,17 +398,20 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
     };
 
     signal?.addEventListener('abort', onAbort, { once: true });
-    void audio.play().catch(() => {
-      cleanup();
-      resolve(false);
-    });
+    void audio.play().then(
+      () => undefined,
+      () => {
+        cleanup();
+        resolve(false);
+      }
+    );
   });
 }
 
 /**
  * Play a pre-recorded clip via Web Audio so playback keeps working after the
  * long rep-gap (HTMLAudioElement.play() often fails once the user-gesture window ends).
- * Falls back to HTMLAudio when decode/Web Audio fails.
+ * Falls back to warmed HTMLAudio when decode/Web Audio fails.
  */
 async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
   if (signal?.aborted) {
@@ -410,42 +429,71 @@ async function playClip(url: string, signal?: AbortSignal): Promise<boolean> {
         throw new DOMException('Aborted', 'AbortError');
       }
 
-      const played = await new Promise<boolean>((resolve, reject) => {
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        currentSource = source;
-
-        const onAbort = () => {
-          try {
-            source.stop();
-          } catch {
-            // ignore
-          }
-          cleanup();
-          reject(new DOMException('Aborted', 'AbortError'));
-        };
-
-        const cleanup = () => {
-          signal?.removeEventListener('abort', onAbort);
-          source.onended = null;
-          if (currentSource === source) currentSource = null;
-        };
-
-        source.onended = () => {
-          cleanup();
-          resolve(true);
-        };
-
-        signal?.addEventListener('abort', onAbort, { once: true });
-        try {
-          source.start(0);
-        } catch {
-          cleanup();
-          resolve(false);
+      // Resume again right before start — mobile can suspend during preload/beeps.
+      try {
+        if ((ctx.state as string) !== 'running') {
+          await ctx.resume();
         }
-      });
-      if (played) return true;
+      } catch {
+        // fall through to HTMLAudio
+      }
+
+      if ((ctx.state as string) === 'running') {
+        const played = await new Promise<boolean>((resolve, reject) => {
+          const source = ctx.createBufferSource();
+          const gain = ctx.createGain();
+          gain.gain.value = 1;
+          source.buffer = buffer;
+          source.connect(gain);
+          gain.connect(ctx.destination);
+          currentSource = source;
+
+          const safetyMs = Math.max(400, Math.ceil(buffer.duration * 1000) + 250);
+          let settled = false;
+          let timeoutId = 0;
+
+          const onAbort = () => {
+            try {
+              source.stop();
+            } catch {
+              // ignore
+            }
+            finishReject(new DOMException('Aborted', 'AbortError'));
+          };
+
+          const cleanup = () => {
+            if (timeoutId) window.clearTimeout(timeoutId);
+            signal?.removeEventListener('abort', onAbort);
+            source.onended = null;
+            if (currentSource === source) currentSource = null;
+          };
+
+          const finishResolve = (value: boolean) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            resolve(value);
+          };
+
+          const finishReject = (error: DOMException) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            reject(error);
+          };
+
+          source.onended = () => finishResolve(true);
+          signal?.addEventListener('abort', onAbort, { once: true });
+          timeoutId = window.setTimeout(() => finishResolve(true), safetyMs);
+
+          try {
+            source.start(0);
+          } catch {
+            finishResolve(false);
+          }
+        });
+        if (played) return true;
+      }
     }
   }
 
@@ -570,13 +618,11 @@ async function speakCoachPhrase(options: {
 }): Promise<void> {
   const { clipKey, text, locale, voice, signal } = options;
   if (isKoreanLocale(locale) && clipKey) {
-    const played = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
-    if (played) return;
-    // Retry once after re-resuming audio (mobile can suspend mid-session).
-    const ctx = await ensureSharedAudioRunning();
-    if (ctx) {
-      const retried = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
-      if (retried) return;
+    try {
+      const played = await playClip(voiceCoachClipUrl(voice, clipKey), signal);
+      if (played) return;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
     }
   }
   // Always fall back to OS TTS (gender-matched) so count never goes silent.
@@ -662,12 +708,36 @@ export async function speakRestTipsAndWarnings(
   }
 }
 
-/** Warm audio/speech after a user gesture so auto-start after rest can play. */
-export function unlockVoiceCoachAudio(voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE): void {
+/**
+ * Warm audio/speech inside a user-gesture turn so countdown clips keep playing
+ * after the beep lead-in. Must be awaited from the start button handler.
+ */
+export async function unlockVoiceCoachAudio(
+  voice: VoiceCoachVoice = DEFAULT_VOICE_COACH_VOICE
+): Promise<void> {
   const normalized = normalizeVoiceCoachVoice(voice);
-  void ensureSharedAudioRunning().then(async (ctx) => {
-    if (!ctx) return;
-    // Tiny silent tick keeps the shared context unlocked on mobile.
+  const warmUrl = voiceCoachClipUrl(normalized, 'cd-5');
+
+  // 1) Resume Web Audio while we still have the tap gesture.
+  const ctx = await ensureSharedAudioRunning();
+
+  // 2) Warm HTMLAudio with a real play()/pause() so later fallback can play.
+  try {
+    const audio = warmedHtmlAudio ?? new Audio();
+    warmedHtmlAudio = audio;
+    audio.preload = 'auto';
+    audio.src = new URL(warmUrl, window.location.href).href;
+    audio.volume = 0.001;
+    await audio.play();
+    audio.pause();
+    audio.currentTime = 0;
+    audio.volume = 1;
+  } catch {
+    // Some browsers block even gesture play if muted tabs — continue with Web Audio.
+  }
+
+  // 3) Decode the first countdown clips while the context is still hot.
+  if (ctx) {
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -676,22 +746,27 @@ export function unlockVoiceCoachAudio(voice: VoiceCoachVoice = DEFAULT_VOICE_COA
       gain.connect(ctx.destination);
       const now = ctx.currentTime;
       osc.start(now);
-      osc.stop(now + 0.01);
+      osc.stop(now + 0.02);
     } catch {
       // ignore
     }
-    await loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-5'), ctx);
-    await loadClipBuffer(voiceCoachClipUrl(normalized, 'start'), ctx);
-    await loadClipBuffer(voiceCoachClipUrl(normalized, 'rep-1'), ctx);
-  });
+    await Promise.all([
+      loadClipBuffer(warmUrl, ctx),
+      loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-4'), ctx),
+      loadClipBuffer(voiceCoachClipUrl(normalized, 'cd-3'), ctx),
+      loadClipBuffer(voiceCoachClipUrl(normalized, 'start'), ctx),
+      loadClipBuffer(voiceCoachClipUrl(normalized, 'rep-1'), ctx),
+    ]);
+  }
 
+  // 4) Unlock speechSynthesis without immediately cancelling (cancel undoes unlock on some WebViews).
   if ('speechSynthesis' in window) {
     try {
-      const utterance = new SpeechSynthesisUtterance(' ');
+      const utterance = new SpeechSynthesisUtterance('\u200B');
       utterance.volume = 0;
       utterance.rate = 2;
+      utterance.lang = 'ko-KR';
       window.speechSynthesis.speak(utterance);
-      window.speechSynthesis.cancel();
     } catch {
       // ignore
     }
@@ -722,22 +797,29 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const audioCtx = await ensureSharedAudioRunning();
 
   try {
+    // Only warm countdown clips before beeps — full rep preload can suspend mobile audio.
     if (isKoreanLocale(locale)) {
-      await preloadCoachClips(voice, reps, oneMoreEnabled, signal);
+      await preloadCoachClips(voice, reps, oneMoreEnabled, signal, 'countdown');
     }
 
     onPhaseChange?.('beep');
-    if (audioCtx) {
+    const beepCtx = (await ensureSharedAudioRunning()) ?? audioCtx;
+    if (beepCtx) {
       for (let i = 0; i < 3; i += 1) {
-        await playBeep(audioCtx, signal, 880 + i * 40);
+        await playBeep(beepCtx, signal, 880 + i * 40);
         if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
       }
     } else {
       // Fallback when AudioContext is unavailable: short spoken ticks.
       for (let i = 0; i < 3; i += 1) {
-        await speak(isKoreanLocale(locale) ? '띡' : 'tick', locale, signal);
+        await speak(isKoreanLocale(locale) ? '띡' : 'tick', locale, signal, voice);
         if (i < 2) await sleep(120, signal);
       }
+    }
+
+    // Prefetch remaining reps in the background while countdown speaks.
+    if (isKoreanLocale(locale)) {
+      void preloadCoachClips(voice, reps, oneMoreEnabled, signal, 'all');
     }
 
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);

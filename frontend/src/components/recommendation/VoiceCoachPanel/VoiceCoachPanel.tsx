@@ -3,7 +3,6 @@ import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
   clampVoiceCoachRepGapMs,
   DEFAULT_VOICE_COACH_VOICE,
-  unlockVoiceCoachAudio,
   VOICE_COACH_REP_GAP,
   type VoiceCoachPhase,
   type VoiceCoachVoice,
@@ -74,7 +73,7 @@ export function VoiceCoachPanel({
   onAutoStartAfterRestChange,
   restTipsEnabled,
   onRestTipsEnabledChange,
-  voice = DEFAULT_VOICE_COACH_VOICE,
+  voice: _voice = DEFAULT_VOICE_COACH_VOICE,
   phase,
   currentRep,
   countdown,
@@ -205,7 +204,6 @@ export function VoiceCoachPanel({
                 type="button"
                 className="btn btn--primary btn--block"
                 onClick={() => {
-                  unlockVoiceCoachAudio(voice);
                   onStart();
                 }}
               >

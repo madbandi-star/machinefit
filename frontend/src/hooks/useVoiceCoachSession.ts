@@ -51,7 +51,6 @@ export function useVoiceCoachSession({
   const start = useCallback(() => {
     if (!enabled) return;
 
-    unlockVoiceCoachAudio(voice);
     abortRef.current?.abort();
     stopVoiceCoach();
 
@@ -64,37 +63,48 @@ export function useVoiceCoachSession({
     setCurrentRep(0);
     setCountdown(null);
 
-    void runVoiceCoachSession({
-      targetReps,
-      oneMoreEnabled,
-      repGapMs,
-      locale,
-      voice,
-      signal: controller.signal,
-      onPhaseChange: (nextPhase, detail) => {
+    void (async () => {
+      try {
+        // Await unlock inside the tap turn so mobile keeps Web Audio / HTMLAudio alive.
+        await unlockVoiceCoachAudio(voice);
+        if (controller.signal.aborted || runIdRef.current !== runId) return;
+
+        await runVoiceCoachSession({
+          targetReps,
+          oneMoreEnabled,
+          repGapMs,
+          locale,
+          voice,
+          signal: controller.signal,
+          onPhaseChange: (nextPhase, detail) => {
+            if (runIdRef.current !== runId) return;
+            setPhase(nextPhase);
+            if (detail?.rep != null) setCurrentRep(detail.rep);
+            if (detail?.countdown != null) setCountdown(detail.countdown);
+            if (nextPhase === 'done' || nextPhase === 'idle') {
+              setCountdown(null);
+            }
+          },
+        });
+      } finally {
         if (runIdRef.current !== runId) return;
-        setPhase(nextPhase);
-        if (detail?.rep != null) setCurrentRep(detail.rep);
-        if (detail?.countdown != null) setCountdown(detail.countdown);
-        if (nextPhase === 'done' || nextPhase === 'idle') {
-          setCountdown(null);
+        if (abortRef.current === controller) {
+          abortRef.current = null;
         }
-      },
-    }).finally(() => {
-      if (runIdRef.current !== runId) return;
-      if (abortRef.current === controller) {
-        abortRef.current = null;
+        // runVoiceCoachSession already signals idle on abort; on success it ends at done.
+        setPhase((prev) => (prev === 'done' ? prev : 'idle'));
+        setCountdown(null);
       }
-      // runVoiceCoachSession already signals idle on abort; on success it ends at done.
-      setPhase((prev) => (prev === 'done' ? prev : 'idle'));
-      setCountdown(null);
-    });
+    })();
   }, [enabled, locale, oneMoreEnabled, repGapMs, targetReps, voice]);
 
-  useEffect(() => () => {
-    abortRef.current?.abort();
-    stopVoiceCoach();
-  }, []);
+  useEffect(
+    () => () => {
+      abortRef.current?.abort();
+      stopVoiceCoach();
+    },
+    []
+  );
 
   useEffect(() => {
     if (!enabled && abortRef.current) {
