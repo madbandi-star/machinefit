@@ -521,6 +521,52 @@
   font-variant-numeric: tabular-nums;
 }
 
+.settings-rest-duration {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.settings-rest-duration__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.25rem;
+}
+
+.settings-rest-duration__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.settings-rest-duration__stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-rest-duration__stepper .btn {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+}
+
+.settings-rest-duration__value {
+  min-width: 2.25rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.settings-rest-duration__unit-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, inherit);
+  opacity: 0.85;
+}
+
 .weight-difficulty-slider {
   display: flex;
   flex-direction: column;

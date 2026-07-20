@@ -3,6 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, WorkoutGoal } from '@machinefit/shared';
+import {
+  REST_DURATION,
+  restDurationFromParts,
+  restDurationParts,
+} from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
@@ -51,12 +56,14 @@ export function SettingsPage() {
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
+  const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -127,6 +134,10 @@ export function SettingsPage() {
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
+
+  const restParts = restDurationParts(restDurationSeconds);
+  const restAtMin = restDurationSeconds <= REST_DURATION.minSeconds;
+  const restAtMax = restDurationSeconds >= REST_DURATION.maxSeconds;
 
   return (
     <PageShell title={t('nav.settings')}>
@@ -206,6 +217,87 @@ export function SettingsPage() {
         <section className="form-section">
           <h3 className="form-section__title">{t('settings.theme')}</h3>
           <ThemeSwitch />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.restDuration')}</h3>
+          <p className="form-section__desc">{t('settings.restDurationDesc')}</p>
+          <div className="settings-rest-duration">
+            <div
+              className="settings-rest-duration__controls"
+              role="group"
+              aria-label={t('settings.restDuration')}
+            >
+              <div className="settings-rest-duration__unit">
+                <div className="settings-rest-duration__stepper">
+                  <button
+                    type="button"
+                    className="btn btn--secondary"
+                    disabled={restAtMin || restParts.minutes <= 0}
+                    aria-label={t('settings.restDurationMinutesDecrease')}
+                    onClick={() =>
+                      setRestDurationSeconds(
+                        restDurationFromParts(restParts.minutes - 1, restParts.seconds)
+                      )
+                    }
+                  >
+                    −
+                  </button>
+                  <strong className="settings-rest-duration__value">
+                    {String(restParts.minutes).padStart(2, '0')}
+                  </strong>
+                  <button
+                    type="button"
+                    className="btn btn--secondary"
+                    disabled={restAtMax || restParts.minutes >= REST_DURATION.maxMinutes}
+                    aria-label={t('settings.restDurationMinutesIncrease')}
+                    onClick={() =>
+                      setRestDurationSeconds(
+                        restDurationFromParts(restParts.minutes + 1, restParts.seconds)
+                      )
+                    }
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="settings-rest-duration__unit-label">
+                  {t('settings.restDurationMinutes')}
+                </span>
+              </div>
+              <div className="settings-rest-duration__unit">
+                <div className="settings-rest-duration__stepper">
+                  <button
+                    type="button"
+                    className="btn btn--secondary"
+                    disabled={restAtMin}
+                    aria-label={t('settings.restDurationSecondsDecrease')}
+                    onClick={() =>
+                      setRestDurationSeconds(restDurationSeconds - 1)
+                    }
+                  >
+                    −
+                  </button>
+                  <strong className="settings-rest-duration__value">
+                    {String(restParts.seconds).padStart(2, '0')}
+                  </strong>
+                  <button
+                    type="button"
+                    className="btn btn--secondary"
+                    disabled={restAtMax}
+                    aria-label={t('settings.restDurationSecondsIncrease')}
+                    onClick={() =>
+                      setRestDurationSeconds(restDurationSeconds + 1)
+                    }
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="settings-rest-duration__unit-label">
+                  {t('settings.restDurationSeconds')}
+                </span>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="form-section">

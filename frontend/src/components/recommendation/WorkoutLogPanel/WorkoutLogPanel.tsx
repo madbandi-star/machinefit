@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, recommendRestSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, formatWeight, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
+import { getUtf8ByteLength, clampRestDurationSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, formatWeight, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
@@ -18,7 +18,6 @@ import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
-import { useAuthStore } from '@/store/auth.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
@@ -196,6 +195,7 @@ export function WorkoutLogPanel({
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
@@ -205,7 +205,6 @@ export function WorkoutLogPanel({
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
-  const workoutGoal = useAuthStore((s) => s.user?.workoutGoal);
   const voiceCoach = useVoiceCoachSession({
     targetReps: voiceCoachTargetReps,
     oneMoreEnabled: voiceCoachOneMore,
@@ -718,12 +717,10 @@ export function WorkoutLogPanel({
 
       if (!wasCompleted && next[index]) {
         unlockVoiceCoachAudio();
-        const seconds = recommendRestSeconds({
-          workoutGoal,
-          setIndex: index,
-          weightKg: weights[index],
+        setRestTimer({
+          setNumber: index + 1,
+          seconds: clampRestDurationSeconds(restDurationSeconds),
         });
-        setRestTimer({ setNumber: index + 1, seconds });
       } else if (wasCompleted) {
         setRestTimer(null);
       }
@@ -746,12 +743,10 @@ export function WorkoutLogPanel({
 
     if (!wasCompleted && next[index]) {
       unlockVoiceCoachAudio();
-      const seconds = recommendRestSeconds({
-        workoutGoal,
-        setIndex: index,
-        weightKg: weights[index],
+      setRestTimer({
+        setNumber: index + 1,
+        seconds: clampRestDurationSeconds(restDurationSeconds),
       });
-      setRestTimer({ setNumber: index + 1, seconds });
     } else if (wasCompleted) {
       setRestTimer(null);
     }
