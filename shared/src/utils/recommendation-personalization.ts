@@ -1,4 +1,4 @@
-import type { ExperienceLevel } from '../types/api.types.js';
+import type { ExperienceLevel, Gender } from '../types/api.types.js';
 import type { WorkoutGoal, TargetMuscleGroup } from '../constants/workout-goals.js';
 import type { RecommendationSettings } from '../types/recommendation.types.js';
 import { roundRecommendWeightKg } from './recommend-weight.js';
@@ -16,7 +16,23 @@ import { roundRecommendWeightKg } from './recommend-weight.js';
  *   benefit from slightly higher-rep practice ranges.
  * - NSCA Essentials of Strength Training and Conditioning: novices prioritize
  *   technique with conservative loads; advanced trainees tolerate higher intensity.
+ * - Sex differences in strength at matched body mass (e.g. Miller et al. Eur J
+ *   Appl Physiol 1993; Leyk et al. Eur J Appl Physiol 2007): women typically
+ *   ~65–75% of men's absolute machine/compound strength at similar anthropometry;
+ *   lower-body gap is smaller than upper-body. Product default ≈0.72 overall.
  */
+
+/**
+ * Relative absolute-strength bias vs male at matched height/weight/experience/goal.
+ * Applied once in cold-start personalization (not on progressive log-based targets).
+ */
+export const GENDER_WEIGHT_BIAS: Record<Gender, number> = {
+  male: 1,
+  female: 0.72,
+};
+
+/** @deprecated Use GENDER_WEIGHT_BIAS via genderWeightFactor(). */
+export const FEMALE_STRENGTH_RATIO_DEFAULT = GENDER_WEIGHT_BIAS.female;
 
 /** Relative working load vs intermediate hypertrophy baseline (= 1.0). */
 export const WORKOUT_GOAL_WEIGHT_MULTIPLIERS: Record<WorkoutGoal, number> = {
@@ -223,9 +239,16 @@ export function ageWeightFactor(age?: number): number {
   return Math.max(0.75, 1 - (age - 40) * 0.008);
 }
 
+/** Sex-based absolute strength adjustment (male baseline = 1). */
+export function genderWeightFactor(gender?: Gender): number {
+  if (!gender) return 1;
+  return GENDER_WEIGHT_BIAS[gender];
+}
+
 export function applyPersonalizationToWeight(
   weightKg: number | undefined,
   options: {
+    gender?: Gender;
     workoutGoal?: WorkoutGoal;
     experienceLevel?: ExperienceLevel;
     age?: number;
@@ -235,6 +258,7 @@ export function applyPersonalizationToWeight(
   if (weightKg == null || weightKg <= 0) return weightKg;
 
   let value = weightKg;
+  value *= genderWeightFactor(options.gender);
   value *= resolveGoalExperienceWeightFactor(
     options.workoutGoal,
     options.experienceLevel ?? 'intermediate'

@@ -102,6 +102,7 @@ export const recommendationService = {
     const personalizedWeight = fromUserHistory
       ? recommendedWeightKg
       : applyPersonalizationToWeight(recommendedWeightKg, {
+          gender: input.gender,
           workoutGoal: input.workoutGoal,
           experienceLevel: input.experienceLevel,
           age: input.age,
