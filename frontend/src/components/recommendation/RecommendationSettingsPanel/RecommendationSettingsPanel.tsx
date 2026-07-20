@@ -372,7 +372,7 @@ export function RecommendationSettingsPanel({
                   key={item.key}
                   role="listitem"
                   className={`history-mini-setting-wrap${
-                    showRomNavHint ? ' history-mini-setting-wrap--with-nav-hint' : ''
+                    showRomNavHint ? ' history-mini-setting-wrap--rom-nav' : ''
                   }`}
                 >
                   {renderSettingCard(item, {

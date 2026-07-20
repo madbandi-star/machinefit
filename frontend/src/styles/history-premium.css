@@ -416,31 +416,32 @@
   height: 100%;
 }
 
-.history-page-premium .history-mini-setting-wrap--with-nav-hint {
-  position: relative;
+.history-page-premium .history-mini-setting-wrap--rom-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.28rem;
+  height: auto;
 }
 
-.history-page-premium .history-mini-setting-wrap--with-nav-hint .setting-value-card--history-mini {
-  padding-bottom: 1.15rem;
+.history-page-premium .history-mini-setting-wrap--rom-nav .setting-value-card--history-mini {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 4.75rem;
 }
 
 .history-page-premium .history-mini-setting__nav-hint {
-  position: absolute;
-  right: 0.35rem;
-  bottom: 0.3rem;
-  max-width: calc(100% - 0.5rem);
+  display: block;
+  align-self: flex-end;
   margin: 0;
-  padding: 0;
-  font-size: 0.58rem;
+  padding: 0 0.1rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.3;
   letter-spacing: -0.01em;
   text-align: right;
   color: var(--color-text-muted, #9aa3b5);
-  pointer-events: none;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .history-page-premium .history-mini-setting-wrap .setting-value-card--history-mini {
