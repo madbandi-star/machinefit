@@ -1,0 +1,17 @@
+{
+  "code": "MATRIX",
+  "slug": "matrix",
+  "name": {
+    "ko": "매트릭스",
+    "en": "Matrix",
+    "ja": "マトリックス",
+    "zh": "迈特瑞斯"
+  },
+  "description": {
+    "ko": "브랜드 소개를 여기에 작성합니다.",
+    "en": "Write a short brand intro here."
+  },
+  "websiteUrl": "https://example.com",
+  "logoFile": "matrix.svg",
+  "_comment": "Copy to brands/matrix.json and add machines/matrix.json, then run node database/scripts/build-catalog.mjs"
+}
