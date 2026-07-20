@@ -250,23 +250,24 @@ export function HistoryRecordCard({
       </header>
 
       {expanded ? (
-        <>
-      <div className="history-record-card__section">
-        <Link
-          to={resultUrl}
-          className="history-record-card__settings-link"
-          aria-label={t('machines:detail.viewLastResult')}
-        >
-          <RecommendationSettingsPanel
-            settings={card.settings}
-            variant="history"
-            showAdjustment={showSettingsCompare}
-            adjustmentReadOnly
-            customSettings={showSettingsCompare ? customSettings : undefined}
-          />
-        </Link>
-      </div>
+        <div className="history-record-card__section">
+          <Link
+            to={resultUrl}
+            className="history-record-card__settings-link"
+            aria-label={t('machines:detail.viewLastResult')}
+          >
+            <RecommendationSettingsPanel
+              settings={card.settings}
+              variant="history"
+              showAdjustment={showSettingsCompare}
+              adjustmentReadOnly
+              customSettings={showSettingsCompare ? customSettings : undefined}
+            />
+          </Link>
+        </div>
+      ) : null}
 
+      {/* Keep mounted while collapsed so header 기록 (bookmark) stays enabled. */}
       <WorkoutLogPanel
         key={card.cardId}
         machineCode={card.machineCode}
@@ -283,8 +284,8 @@ export function HistoryRecordCard({
         onControlReady={setLogControl}
         onSavedChange={setWorkoutLogSavedOverride}
       />
-        </>
-      ) : (
+
+      {!expanded ? (
         <button
           type="button"
           className="history-record-card__body-toggle"
@@ -296,7 +297,7 @@ export function HistoryRecordCard({
           </span>
           <ChevronDown size={16} strokeWidth={2.25} aria-hidden />
         </button>
-      )}
+      ) : null}
     </article>
   );
 }

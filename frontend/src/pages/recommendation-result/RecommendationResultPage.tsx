@@ -248,25 +248,29 @@ export function RecommendationResultPage() {
         >
           {bodyExpanded ? (
             <>
-          <div className="history-record-card__section">
-            <RecommendationSettingsPanel
-              settings={result.settings}
-              weightBasis={result.weightBasis}
-              variant="history"
-              showAdjustment={fitFeedback.showAdjustment}
-              customSettings={fitFeedback.customSettings}
-              onCustomChange={fitFeedback.handleCustomChange}
-              onSavePreferences={fitFeedback.savePreferences}
-              isPreferencesPending={fitFeedback.isPreferencesPending}
-            />
-          </div>
-          {isAuthenticated ? (
-            <FitFeedbackPanel
-              savedRating={fitFeedback.savedRating}
-              onRating={fitFeedback.handleRating}
-              isPending={fitFeedback.isFeedbackPending}
-            />
+              <div className="history-record-card__section">
+                <RecommendationSettingsPanel
+                  settings={result.settings}
+                  weightBasis={result.weightBasis}
+                  variant="history"
+                  showAdjustment={fitFeedback.showAdjustment}
+                  customSettings={fitFeedback.customSettings}
+                  onCustomChange={fitFeedback.handleCustomChange}
+                  onSavePreferences={fitFeedback.savePreferences}
+                  isPreferencesPending={fitFeedback.isPreferencesPending}
+                />
+              </div>
+              {isAuthenticated ? (
+                <FitFeedbackPanel
+                  savedRating={fitFeedback.savedRating}
+                  onRating={fitFeedback.handleRating}
+                  isPending={fitFeedback.isFeedbackPending}
+                />
+              ) : null}
+            </>
           ) : null}
+
+          {/* Keep mounted while collapsed so header 기록 (bookmark) stays enabled. */}
           <WorkoutLogPanel
             machineCode={result.machineCode}
             machineName={result.machineName}
@@ -283,41 +287,44 @@ export function RecommendationResultPage() {
             onControlReady={setLogControl}
             onSavedChange={setWorkoutLogSavedOverride}
           />
-          <RecommendationTips tips={result.tips} />
-          <button
-            type="button"
-            className="history-record-card__body-toggle"
-            aria-expanded={true}
-            onClick={() => setBodyExpanded(false)}
-          >
-            <span className="history-record-card__body-toggle-label">
-              {t('common:collapseCardDetails')}
-            </span>
-            <ChevronDown
-              size={16}
-              strokeWidth={2.25}
-              className="history-record-card__collapse-icon history-record-card__collapse-icon--open"
-              aria-hidden
-            />
-          </button>
+
+          {bodyExpanded ? (
+            <>
+              <RecommendationTips tips={result.tips} />
+              <button
+                type="button"
+                className="history-record-card__body-toggle"
+                aria-expanded={true}
+                onClick={() => setBodyExpanded(false)}
+              >
+                <span className="history-record-card__body-toggle-label">
+                  {t('common:collapseCardDetails')}
+                </span>
+                <ChevronDown
+                  size={16}
+                  strokeWidth={2.25}
+                  className="history-record-card__collapse-icon history-record-card__collapse-icon--open"
+                  aria-hidden
+                />
+              </button>
             </>
           ) : (
-          <button
-            type="button"
-            className="history-record-card__body-toggle"
-            aria-expanded={false}
-            onClick={() => setBodyExpanded(true)}
-          >
-            <span className="history-record-card__body-toggle-label">
-              {t('common:expandCardDetails')}
-            </span>
-            <ChevronDown
-              size={16}
-              strokeWidth={2.25}
-              className="history-record-card__collapse-icon"
-              aria-hidden
-            />
-          </button>
+            <button
+              type="button"
+              className="history-record-card__body-toggle"
+              aria-expanded={false}
+              onClick={() => setBodyExpanded(true)}
+            >
+              <span className="history-record-card__body-toggle-label">
+                {t('common:expandCardDetails')}
+              </span>
+              <ChevronDown
+                size={16}
+                strokeWidth={2.25}
+                className="history-record-card__collapse-icon"
+                aria-hidden
+              />
+            </button>
           )}
         </article>
       </div>
