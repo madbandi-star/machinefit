@@ -33,5 +33,22 @@
   "saved": "Your changes are saved.",
   "error": "We couldn't finish that. Please try again in a moment.",
   "enable": "Enable",
-  "disable": "Disable"
+  "disable": "Disable",
+  "motivation": {
+    "nav": "Motivation",
+    "title": "Motivation music & video",
+    "subtitle": "Register up to 5 music and 5 video items, then choose order and which ones play.",
+    "musicSection": "Motivation music",
+    "videoSection": "Motivation video",
+    "musicHint": "Use a direct audio URL (mp3, etc.). Only checked items are included in the play button playlist.",
+    "videoHint": "Paste a YouTube URL. Only checked items are included in the play button playlist.",
+    "fieldTitle": "Title",
+    "fieldUrl": "URL",
+    "includeInPlaylist": "Include in playlist",
+    "moveUp": "Up",
+    "moveDown": "Down",
+    "clear": "Clear",
+    "save": "Save this list",
+    "order": "Order"
+  }
 }

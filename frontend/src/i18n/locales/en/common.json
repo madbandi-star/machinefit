@@ -56,6 +56,16 @@
     "action": "Share app",
     "copied": "Link copied. Share it with a friend!"
   },
+  "motivation": {
+    "music": "Play motivation music",
+    "video": "Play motivation video",
+    "musicEmpty": "No motivation music is set yet.",
+    "videoEmpty": "No motivation video is set yet.",
+    "nowPlaying": "Playing: {{title}}",
+    "playFailed": "Couldn't play that. Please check the URL.",
+    "next": "Next",
+    "close": "Close"
+  },
   "errors": {
     "loadFailed": "We couldn't load that. Please try again in a moment.",
     "notFound": "We couldn't find that.",

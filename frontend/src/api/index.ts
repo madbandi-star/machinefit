@@ -278,5 +278,5 @@ export const qrApi = {
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
 export type { OwnerDashboardStats, OwnerApplyResult } from './community.api';
-export { adminApi, notificationApi } from './admin.api';
+export { adminApi, notificationApi, motivationMediaApi } from './admin.api';
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';

@@ -8,6 +8,9 @@ import type {
   Brand,
   Machine,
   User,
+  MotivationMediaAdminState,
+  MotivationPlaylist,
+  ReplaceMotivationMediaInput,
 } from '@machinefit/shared';
 import type {
   UpdateUserAdminInput,
@@ -100,4 +103,17 @@ export const adminApi = {
 
   resolveReport: (id: string, input: ResolveReportInput) =>
     apiClient.patch<ApiResponse<Report>>(`/admin/reports/${id}`, input),
+
+  listMotivationMedia: () =>
+    apiClient.get<ApiResponse<MotivationMediaAdminState>>('/admin/motivation-media'),
+
+  replaceMotivationMedia: (input: ReplaceMotivationMediaInput) =>
+    apiClient.put<
+      ApiResponse<{ mediaType: ReplaceMotivationMediaInput['mediaType']; items: MotivationMediaAdminState['music'] }>
+    >('/admin/motivation-media', input),
+};
+
+export const motivationMediaApi = {
+  playlist: () =>
+    apiClient.get<ApiResponse<MotivationPlaylist>>('/motivation-media'),
 };
