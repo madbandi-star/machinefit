@@ -1,7 +1,11 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, WeightRecommendationBasis } from '@machinefit/shared';
-import { recommendRepsForGoal, roundRecommendWeightKg } from '@machinefit/shared';
+import {
+  computeRecommendedTotalWeightKg,
+  recommendRepsForGoal,
+  roundRecommendWeightKg,
+} from '@machinefit/shared';
 import { SettingValueCard } from '@/components/recommendation/SettingValueCard/SettingValueCard';
 import { WeightBasisDialog } from '@/components/recommendation/WeightBasisDialog/WeightBasisDialog';
 import { ROM_SETTING_PRESETS } from '@/constants/rom-setting-presets';
@@ -50,7 +54,6 @@ interface RecommendationSettingsPanelProps {
   showAdjustment?: boolean;
   adjustmentReadOnly?: boolean;
   customSettings?: Partial<RecommendationSettings>;
-  historyTotalWeightKg?: number;
   onCustomChange?: (
     key: keyof RecommendationSettings,
     raw: string,
@@ -241,7 +244,6 @@ export function RecommendationSettingsPanel({
   onCustomChange,
   onSavePreferences,
   isPreferencesPending = false,
-  historyTotalWeightKg,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
@@ -249,6 +251,10 @@ export function RecommendationSettingsPanel({
   const experienceLevel = useAuthStore((s) => s.user?.experienceLevel);
   const [basisOpen, setBasisOpen] = useState(false);
   const compact = variant === 'compact' || variant === 'result';
+  const recommendedTotalWeightKg = computeRecommendedTotalWeightKg(settings, {
+    workoutGoal,
+    experienceLevel: experienceLevel ?? 'intermediate',
+  });
 
   const items: SettingDisplayItem[] = [];
 
@@ -382,14 +388,14 @@ export function RecommendationSettingsPanel({
                 </div>
               );
             })}
-            {historyTotalWeightKg != null ? (
+            {recommendedTotalWeightKg != null ? (
               <div className="history-settings-total-tile" role="listitem">
                 <span className="history-settings-total-tile__label">
                   <HISTORY_TOTAL_WEIGHT_ICON size={13} strokeWidth={2.25} className="history-settings-total-tile__icon" />
                   {t('machines:workoutLog.totalWeight')}
                 </span>
                 <strong className="history-settings-total-tile__value">
-                  {formatWeight(roundRecommendWeightKg(historyTotalWeightKg))}
+                  {formatWeight(recommendedTotalWeightKg)}
                 </strong>
               </div>
             ) : null}

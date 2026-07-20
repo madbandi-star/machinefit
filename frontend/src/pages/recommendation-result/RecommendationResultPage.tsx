@@ -255,7 +255,6 @@ export function RecommendationResultPage() {
               onCustomChange={fitFeedback.handleCustomChange}
               onSavePreferences={fitFeedback.savePreferences}
               isPreferencesPending={fitFeedback.isPreferencesPending}
-              historyTotalWeightKg={logControl?.totalWeightKg}
             />
           </div>
           {isAuthenticated ? (

@@ -260,7 +260,6 @@ export function HistoryRecordCard({
             showAdjustment={showSettingsCompare}
             adjustmentReadOnly
             customSettings={showSettingsCompare ? customSettings : undefined}
-            historyTotalWeightKg={logControl?.totalWeightKg}
           />
         </Link>
       </div>
