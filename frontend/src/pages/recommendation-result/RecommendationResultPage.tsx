@@ -33,18 +33,24 @@ import '@/styles/android-ui.css';
 
 function ResultLoadingSkeleton() {
   return (
-    <div
-      className="history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card"
-      aria-hidden="true"
-    >
-      <div className="history-record-card__section">
-        <div className="recommendation-settings-panel recommendation-settings-panel--history">
-          <div className="recommendation-settings-panel__grid recommendation-settings-panel__grid--history">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="history-mini-setting-wrap">
-                <div className="setting-value-card-skeleton skeleton" />
+    <div className="recommendation-result-page recommendation-result-page--inline-actions">
+      <header className="recommendation-result-page__header" aria-hidden="true">
+        <div className="recommendation-result-page__title-skeleton skeleton" />
+      </header>
+      <div className="recommendation-result-page__content history-page-premium">
+        <div
+          className="history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card"
+        >
+          <div className="history-record-card__section">
+            <div className="recommendation-settings-panel recommendation-settings-panel--history">
+              <div className="recommendation-settings-panel__grid recommendation-settings-panel__grid--history">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <div key={i} className="history-mini-setting-wrap">
+                    <div className="setting-value-card-skeleton skeleton" />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
@@ -194,13 +200,7 @@ export function RecommendationResultPage() {
     ) : null;
 
   if (recommendationId && isLoading && !result) {
-    return (
-      <PageShell title={t('recommendation.title')}>
-        <div className="history-page-premium">
-          <ResultLoadingSkeleton />
-        </div>
-      </PageShell>
-    );
+    return <ResultLoadingSkeleton />;
   }
 
   if (recommendationId && isError && !result) {

@@ -359,6 +359,12 @@
   white-space: nowrap;
 }
 
+.recommendation-result-page__title-skeleton {
+  width: min(12rem, 55%);
+  height: 1.35rem;
+  border-radius: 0.35rem;
+}
+
 .recommendation-result-page__code {
   flex-shrink: 0;
   font-size: 0.6875rem;
