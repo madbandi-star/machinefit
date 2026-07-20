@@ -56,6 +56,8 @@ interface RecommendationSettingsPanelProps {
   ) => void;
   onSavePreferences?: () => void;
   isPreferencesPending?: boolean;
+  /** Show detail-adjust hint on the ROM tile (history cards). */
+  showDetailAdjustNavHint?: boolean;
 }
 
 function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
@@ -239,6 +241,7 @@ export function RecommendationSettingsPanel({
   onCustomChange,
   onSavePreferences,
   isPreferencesPending = false,
+  showDetailAdjustNavHint = false,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
@@ -363,8 +366,15 @@ export function RecommendationSettingsPanel({
           >
             {items.map((item) => {
               const LucideIcon = HISTORY_LUCIDE_SETTING_ICON[item.key];
+              const showRomNavHint = showDetailAdjustNavHint && item.key === 'romSetting';
               return (
-                <div key={item.key} role="listitem" className="history-mini-setting-wrap">
+                <div
+                  key={item.key}
+                  role="listitem"
+                  className={`history-mini-setting-wrap${
+                    showRomNavHint ? ' history-mini-setting-wrap--with-nav-hint' : ''
+                  }`}
+                >
                   {renderSettingCard(item, {
                     compact: true,
                     highlight: item.isWeight,
@@ -376,6 +386,11 @@ export function RecommendationSettingsPanel({
                     historyVariant: true,
                     ...cardOptions,
                   })}
+                  {showRomNavHint ? (
+                    <span className="history-mini-setting__nav-hint">
+                      {t('machines:recommendation.romDetailAdjustHint')}
+                    </span>
+                  ) : null}
                 </div>
               );
             })}
