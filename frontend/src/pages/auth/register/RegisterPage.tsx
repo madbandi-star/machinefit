@@ -143,9 +143,6 @@ export function RegisterPage() {
   return (
     <PageShell title={t('nav.register')}>
       <form className="form-stack" onSubmit={handleSubmit} noValidate>
-        <p aria-label="mobile-cursor-test" style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-          가
-        </p>
         {missingFields.length > 0 && (
           <div className="form-error-summary" role="alert">
             {t('auth.registerMissingFields', {
