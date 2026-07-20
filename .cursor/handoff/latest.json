@@ -6,9 +6,9 @@
   "programTestAgentUrl": "https://cursor.com/agents/bc-019f7d59-bc4b-7526-a842-4068cf31def4",
   "programTestAgentName": "프로그램테스트",
   "git": {
-    "branch": "cursor/rename-program-test-agent-ko-35b3",
-    "commit": "0dfed9c",
-    "pr": null,
+    "branch": "main",
+    "commit": "88927b2",
+    "pr": 6,
     "base": "main"
   },
   "changedFiles": [
