@@ -161,24 +161,47 @@ export const machineRepository = {
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const countResult = await pool.query<{ count: string }>(
+    const countPromise = pool.query<{ count: string }>(
       `SELECT COUNT(*)::text AS count FROM machines m
        LEFT JOIN brands b ON b.id = m.brand_id ${where}`,
       params
     );
-    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-    const result = await pool.query<
+    // List projection: skip tip/how_to blobs — detail page fetches full machine.
+    const listPromise = pool.query<
       MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
     >(
-      `SELECT m.*, b.name AS brand_name, ${PRIMARY_IMAGE_SQL}
+      `SELECT
+         m.id, m.brand_id, m.code, m.name, m.muscle_group, m.machine_type,
+         m.description, m.recommended_experience,
+         m.has_seat, m.has_back_pad, m.has_foot_plate, m.has_handle,
+         m.rom_type, m.is_active,
+         NULL::jsonb AS how_to,
+         NULL::jsonb AS warnings,
+         NULL::jsonb AS tips,
+         NULL::jsonb AS beginner_tips,
+         NULL::jsonb AS intermediate_tips,
+         NULL::jsonb AS advanced_tips,
+         NULL::jsonb AS pro_tips,
+         b.name AS brand_name,
+         img.image_url AS primary_image_url
        FROM machines m
        LEFT JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN LATERAL (
+         SELECT mi.image_url
+         FROM machine_images mi
+         WHERE mi.machine_id = m.id
+         ORDER BY mi.is_primary DESC, mi.sort_order ASC
+         LIMIT 1
+       ) img ON TRUE
        ${where}
        ORDER BY m.code ASC
        LIMIT $${idx++} OFFSET $${idx}`,
       [...params, filters.limit, filters.offset]
     );
+
+    const [countResult, result] = await Promise.all([countPromise, listPromise]);
+    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
     return {
       items: result.rows.map((row) =>

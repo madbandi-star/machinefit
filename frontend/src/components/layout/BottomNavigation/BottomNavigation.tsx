@@ -3,7 +3,11 @@ import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon, type IconName } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
+import { queryClient } from '@/app/providers/QueryProvider';
+import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
+import { useGymStore } from '@/store/gym.store';
 import './BottomNavigation.css';
 
 const NAV_ITEMS: {
@@ -24,16 +28,52 @@ const NAV_ITEMS: {
   { to: ROUTES.MY_PAGE, icon: 'user', labelKey: 'nav.myPage', requireAuth: true },
 ];
 
+function prefetchForRoute(to: string, gymId: string | null, isAuthenticated: boolean) {
+  if (to === ROUTES.MACHINES) {
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.brands,
+      queryFn: async () => (await brandApi.list()).data.data,
+      staleTime: 10 * 60_000,
+    });
+    void queryClient.prefetchQuery({
+      queryKey: [...QUERY_KEYS.machines, '', null, null, 'machines_only'],
+      queryFn: async () => {
+        const res = await machineApi.list({ limit: 100 });
+        return res.data.data.items;
+      },
+      staleTime: 60_000,
+    });
+  }
+
+  if (!isAuthenticated || !gymId) return;
+
+  if (to === ROUTES.RECORDS || to === ROUTES.HOME) {
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.historyList(gymId, { limit: 100 }),
+      queryFn: async () => (await historyApi.list(gymId, { limit: 100 })).data.data,
+      staleTime: 60_000,
+    });
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.favorites(gymId),
+      queryFn: async () => (await favoriteApi.list(gymId)).data.data,
+      staleTime: 60_000,
+    });
+  }
+}
+
 export function BottomNavigation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const gymId = useGymStore((s) => s.activeGymId);
 
   const handleNavClick = (
     event: MouseEvent<HTMLAnchorElement>,
-    requireAuth: boolean
+    requireAuth: boolean,
+    to: string
   ) => {
+    prefetchForRoute(to, gymId, isAuthenticated);
     if (requireAuth && !isAuthenticated) {
       event.preventDefault();
       navigate(ROUTES.LOGIN, { state: { from: location } });
@@ -46,7 +86,9 @@ export function BottomNavigation() {
         <NavLink
           key={to}
           to={to}
-          onClick={(e) => handleNavClick(e, requireAuth)}
+          onClick={(e) => handleNavClick(e, requireAuth, to)}
+          onMouseEnter={() => prefetchForRoute(to, gymId, isAuthenticated)}
+          onTouchStart={() => prefetchForRoute(to, gymId, isAuthenticated)}
           className={({ isActive }) =>
             ['bottom-nav__item', isActive ? 'bottom-nav__item--active' : '']
               .filter(Boolean)

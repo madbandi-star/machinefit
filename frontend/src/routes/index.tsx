@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type ComponentType } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
@@ -7,52 +7,109 @@ import { AdminLayout } from '@/layouts/AdminLayout';
 import { AuthGuard } from '@/routes/guards/AuthGuard';
 import { GuestGuard } from '@/routes/guards/GuestGuard';
 import { ROUTES } from '@/constants/routes';
-
-import { HomePage } from '@/pages/home/HomePage';
-import { MachineSearchPage } from '@/pages/machine-search/MachineSearchPage';
-import { BrandListPage } from '@/pages/brand-list/BrandListPage';
-import { BrandDetailPage } from '@/pages/brand-detail/BrandDetailPage';
-import { MachineDetailPage } from '@/pages/machine-detail/MachineDetailPage';
-import { RecommendationFormPage } from '@/pages/recommendation-result/RecommendationFormPage';
-import { RecommendationResultPage } from '@/pages/recommendation-result/RecommendationResultPage';
-import { GymFinderPage } from '@/pages/gym-finder/GymFinderPage';
-import { GymDetailPage } from '@/pages/gym-detail/GymDetailPage';
-import { RecordsPage } from '@/pages/records/RecordsPage';
-import { CommunityPage } from '@/pages/community/CommunityPage';
-import { PostDetailPage } from '@/pages/community/PostDetailPage';
-import { MachineRequestBoardPage } from '@/pages/machine-request-board/MachineRequestBoardPage';
-import { FreeBoardPage } from '@/pages/free-board/FreeBoardPage';
-import { LoginPage } from '@/pages/auth/login/LoginPage';
-import { RegisterPage } from '@/pages/auth/register/RegisterPage';
-import { GrowthAnalysisPage } from '@/pages/growth-analysis/GrowthAnalysisPage';
-import { MyPage } from '@/pages/my-page/MyPage';
-import { GymMemberManagePage } from '@/pages/gym-member-manage/GymMemberManagePage';
-import { SettingsPage } from '@/pages/settings/SettingsPage';
-import { OwnerDashboardPage } from '@/pages/gym-owner/dashboard/OwnerDashboardPage';
-import { OwnerApplyPage } from '@/pages/gym-owner/apply/OwnerApplyPage';
-import { AdminDashboardPage } from '@/pages/admin/dashboard/AdminDashboardPage';
-import { AdminUsersPage } from '@/pages/admin/users/AdminUsersPage';
-import { AdminGymsPage } from '@/pages/admin/gyms/AdminGymsPage';
-import { AdminOwnerApplicationsPage } from '@/pages/admin/owner-applications/AdminOwnerApplicationsPage';
-import { AdminMachinesPage } from '@/pages/admin/machines/AdminMachinesPage';
-import { AdminModerationPage } from '@/pages/admin/moderation/AdminModerationPage';
-import { AdminMotivationPage } from '@/pages/admin/motivation/AdminMotivationPage';
-import { NotificationsPage } from '@/pages/notifications/NotificationsPage';
-import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
-import { QrRedirectPage } from '@/pages/qr-redirect/QrRedirectPage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { HomePage } from '@/pages/home/HomePage';
 
-const QrScanPage = lazy(() =>
-  import('@/pages/qr-scan/QrScanPage').then((m) => ({ default: m.QrScanPage }))
-);
+function PageFallback() {
+  return <Skeleton count={4} height={88} />;
+}
 
-function QrScanPageLazy() {
+function lazyRoute(loader: () => Promise<{ default: ComponentType }>) {
+  const Comp = lazy(loader);
   return (
-    <Suspense fallback={<Skeleton count={3} height={100} />}>
-      <QrScanPage />
+    <Suspense fallback={<PageFallback />}>
+      <Comp />
     </Suspense>
   );
 }
+
+const machineSearch = () =>
+  import('@/pages/machine-search/MachineSearchPage').then((m) => ({ default: m.MachineSearchPage }));
+const brandList = () =>
+  import('@/pages/brand-list/BrandListPage').then((m) => ({ default: m.BrandListPage }));
+const brandDetail = () =>
+  import('@/pages/brand-detail/BrandDetailPage').then((m) => ({ default: m.BrandDetailPage }));
+const machineDetail = () =>
+  import('@/pages/machine-detail/MachineDetailPage').then((m) => ({ default: m.MachineDetailPage }));
+const recommendForm = () =>
+  import('@/pages/recommendation-result/RecommendationFormPage').then((m) => ({
+    default: m.RecommendationFormPage,
+  }));
+const recommendResult = () =>
+  import('@/pages/recommendation-result/RecommendationResultPage').then((m) => ({
+    default: m.RecommendationResultPage,
+  }));
+const gymFinder = () =>
+  import('@/pages/gym-finder/GymFinderPage').then((m) => ({ default: m.GymFinderPage }));
+const gymDetail = () =>
+  import('@/pages/gym-detail/GymDetailPage').then((m) => ({ default: m.GymDetailPage }));
+const records = () =>
+  import('@/pages/records/RecordsPage').then((m) => ({ default: m.RecordsPage }));
+const community = () =>
+  import('@/pages/community/CommunityPage').then((m) => ({ default: m.CommunityPage }));
+const postDetail = () =>
+  import('@/pages/community/PostDetailPage').then((m) => ({ default: m.PostDetailPage }));
+const machineRequests = () =>
+  import('@/pages/machine-request-board/MachineRequestBoardPage').then((m) => ({
+    default: m.MachineRequestBoardPage,
+  }));
+const freeBoard = () =>
+  import('@/pages/free-board/FreeBoardPage').then((m) => ({ default: m.FreeBoardPage }));
+const login = () =>
+  import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
+const register = () =>
+  import('@/pages/auth/register/RegisterPage').then((m) => ({ default: m.RegisterPage }));
+const growth = () =>
+  import('@/pages/growth-analysis/GrowthAnalysisPage').then((m) => ({
+    default: m.GrowthAnalysisPage,
+  }));
+const myPage = () => import('@/pages/my-page/MyPage').then((m) => ({ default: m.MyPage }));
+const gymMemberManage = () =>
+  import('@/pages/gym-member-manage/GymMemberManagePage').then((m) => ({
+    default: m.GymMemberManagePage,
+  }));
+const settings = () =>
+  import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
+const ownerDash = () =>
+  import('@/pages/gym-owner/dashboard/OwnerDashboardPage').then((m) => ({
+    default: m.OwnerDashboardPage,
+  }));
+const ownerApply = () =>
+  import('@/pages/gym-owner/apply/OwnerApplyPage').then((m) => ({ default: m.OwnerApplyPage }));
+const adminDash = () =>
+  import('@/pages/admin/dashboard/AdminDashboardPage').then((m) => ({
+    default: m.AdminDashboardPage,
+  }));
+const adminUsers = () =>
+  import('@/pages/admin/users/AdminUsersPage').then((m) => ({ default: m.AdminUsersPage }));
+const adminGyms = () =>
+  import('@/pages/admin/gyms/AdminGymsPage').then((m) => ({ default: m.AdminGymsPage }));
+const adminOwnerApps = () =>
+  import('@/pages/admin/owner-applications/AdminOwnerApplicationsPage').then((m) => ({
+    default: m.AdminOwnerApplicationsPage,
+  }));
+const adminMachines = () =>
+  import('@/pages/admin/machines/AdminMachinesPage').then((m) => ({
+    default: m.AdminMachinesPage,
+  }));
+const adminModeration = () =>
+  import('@/pages/admin/moderation/AdminModerationPage').then((m) => ({
+    default: m.AdminModerationPage,
+  }));
+const adminMotivation = () =>
+  import('@/pages/admin/motivation/AdminMotivationPage').then((m) => ({
+    default: m.AdminMotivationPage,
+  }));
+const notifications = () =>
+  import('@/pages/notifications/NotificationsPage').then((m) => ({
+    default: m.NotificationsPage,
+  }));
+const notFound = () =>
+  import('@/pages/not-found/NotFoundPage').then((m) => ({ default: m.NotFoundPage }));
+const qrRedirect = () =>
+  import('@/pages/qr-redirect/QrRedirectPage').then((m) => ({ default: m.QrRedirectPage }));
+const qrScan = () =>
+  import('@/pages/qr-scan/QrScanPage').then((m) => ({ default: m.QrScanPage }));
 
 export const router = createBrowserRouter(
   [
@@ -60,18 +117,18 @@ export const router = createBrowserRouter(
       element: <MainLayout />,
       children: [
         { path: ROUTES.HOME, element: <HomePage /> },
-        { path: ROUTES.MACHINES, element: <MachineSearchPage /> },
-        { path: ROUTES.BRANDS, element: <BrandListPage /> },
-        { path: ROUTES.BRAND_DETAIL, element: <BrandDetailPage /> },
-        { path: ROUTES.MACHINE_DETAIL, element: <MachineDetailPage /> },
-        { path: ROUTES.SCAN, element: <QrScanPageLazy /> },
-        { path: ROUTES.QR, element: <QrRedirectPage /> },
-        { path: ROUTES.GYMS, element: <GymFinderPage /> },
-        { path: ROUTES.GYM_DETAIL, element: <GymDetailPage /> },
-        { path: ROUTES.COMMUNITY, element: <CommunityPage /> },
-        { path: ROUTES.MACHINE_REQUESTS, element: <MachineRequestBoardPage /> },
-        { path: ROUTES.FREE_BOARD, element: <FreeBoardPage /> },
-        { path: ROUTES.POST_DETAIL, element: <PostDetailPage /> },
+        { path: ROUTES.MACHINES, element: lazyRoute(machineSearch) },
+        { path: ROUTES.BRANDS, element: lazyRoute(brandList) },
+        { path: ROUTES.BRAND_DETAIL, element: lazyRoute(brandDetail) },
+        { path: ROUTES.MACHINE_DETAIL, element: lazyRoute(machineDetail) },
+        { path: ROUTES.SCAN, element: lazyRoute(qrScan) },
+        { path: ROUTES.QR, element: lazyRoute(qrRedirect) },
+        { path: ROUTES.GYMS, element: lazyRoute(gymFinder) },
+        { path: ROUTES.GYM_DETAIL, element: lazyRoute(gymDetail) },
+        { path: ROUTES.COMMUNITY, element: lazyRoute(community) },
+        { path: ROUTES.MACHINE_REQUESTS, element: lazyRoute(machineRequests) },
+        { path: ROUTES.FREE_BOARD, element: lazyRoute(freeBoard) },
+        { path: ROUTES.POST_DETAIL, element: lazyRoute(postDetail) },
         {
           path: ROUTES.HISTORY,
           element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
@@ -83,18 +140,18 @@ export const router = createBrowserRouter(
         {
           element: <AuthGuard />,
           children: [
-            { path: ROUTES.RECORDS, element: <RecordsPage /> },
-            { path: ROUTES.RECOMMEND, element: <RecommendationFormPage /> },
-            { path: ROUTES.RECOMMEND_RESULT, element: <RecommendationResultPage /> },
-            { path: ROUTES.MY_PAGE, element: <MyPage /> },
-            { path: ROUTES.MY_GYMS, element: <GymMemberManagePage /> },
-            { path: ROUTES.OWNER_APPLY, element: <OwnerApplyPage /> },
-            { path: ROUTES.GROWTH_ANALYSIS, element: <GrowthAnalysisPage /> },
-            { path: ROUTES.SETTINGS, element: <SettingsPage /> },
-            { path: ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
+            { path: ROUTES.RECORDS, element: lazyRoute(records) },
+            { path: ROUTES.RECOMMEND, element: lazyRoute(recommendForm) },
+            { path: ROUTES.RECOMMEND_RESULT, element: lazyRoute(recommendResult) },
+            { path: ROUTES.MY_PAGE, element: lazyRoute(myPage) },
+            { path: ROUTES.MY_GYMS, element: lazyRoute(gymMemberManage) },
+            { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
+            { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
+            { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
+            { path: ROUTES.NOTIFICATIONS, element: lazyRoute(notifications) },
           ],
         },
-        { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
+        { path: ROUTES.NOT_FOUND, element: lazyRoute(notFound) },
       ],
     },
     {
@@ -104,8 +161,8 @@ export const router = createBrowserRouter(
         </GuestGuard>
       ),
       children: [
-        { path: ROUTES.LOGIN, element: <LoginPage /> },
-        { path: ROUTES.REGISTER, element: <RegisterPage /> },
+        { path: ROUTES.LOGIN, element: lazyRoute(login) },
+        { path: ROUTES.REGISTER, element: lazyRoute(register) },
       ],
     },
     {
@@ -114,9 +171,7 @@ export const router = createBrowserRouter(
           <DashboardLayout />
         </AuthGuard>
       ),
-      children: [
-        { path: ROUTES.OWNER, element: <OwnerDashboardPage /> },
-      ],
+      children: [{ path: ROUTES.OWNER, element: lazyRoute(ownerDash) }],
     },
     {
       element: (
@@ -125,13 +180,13 @@ export const router = createBrowserRouter(
         </AuthGuard>
       ),
       children: [
-        { path: ROUTES.ADMIN, element: <AdminDashboardPage /> },
-        { path: ROUTES.ADMIN_USERS, element: <AdminUsersPage /> },
-        { path: ROUTES.ADMIN_GYMS, element: <AdminGymsPage /> },
-        { path: ROUTES.ADMIN_OWNER_APPLICATIONS, element: <AdminOwnerApplicationsPage /> },
-        { path: ROUTES.ADMIN_MACHINES, element: <AdminMachinesPage /> },
-        { path: ROUTES.ADMIN_MOTIVATION, element: <AdminMotivationPage /> },
-        { path: ROUTES.ADMIN_MODERATION, element: <AdminModerationPage /> },
+        { path: ROUTES.ADMIN, element: lazyRoute(adminDash) },
+        { path: ROUTES.ADMIN_USERS, element: lazyRoute(adminUsers) },
+        { path: ROUTES.ADMIN_GYMS, element: lazyRoute(adminGyms) },
+        { path: ROUTES.ADMIN_OWNER_APPLICATIONS, element: lazyRoute(adminOwnerApps) },
+        { path: ROUTES.ADMIN_MACHINES, element: lazyRoute(adminMachines) },
+        { path: ROUTES.ADMIN_MOTIVATION, element: lazyRoute(adminMotivation) },
+        { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

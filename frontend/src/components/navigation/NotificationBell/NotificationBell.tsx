@@ -21,7 +21,8 @@ export function NotificationBell() {
       return res.data.data.count;
     },
     enabled: authHydrated && isAuthenticated,
-    refetchInterval: 60_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 120_000 : false),
+    staleTime: 60_000,
   });
 
   if (!authHydrated) {

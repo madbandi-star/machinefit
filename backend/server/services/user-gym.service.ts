@@ -11,8 +11,10 @@ export const userGymService = {
 
   async ensureReady(userId: string, preferredName?: string) {
     const gym = await userGymRepository.ensureDefaultGym(userId, preferredName);
-    const activeGymId = await userGymRepository.getActiveGymId(userId);
-    const items = await userGymRepository.listByUser(userId);
+    const [activeGymId, items] = await Promise.all([
+      userGymRepository.getActiveGymId(userId),
+      userGymRepository.listByUser(userId),
+    ]);
     return {
       items,
       activeGymId: activeGymId ?? gym.id,

@@ -4,3 +4,4 @@ import * as healthController from '../controllers/health.controller.js';
 export const healthRouter = Router();
 
 healthRouter.get('/health', healthController.healthCheck);
+healthRouter.get('/warmup', healthController.warmup);

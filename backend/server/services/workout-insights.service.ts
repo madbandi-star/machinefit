@@ -234,6 +234,7 @@ export const workoutInsightsService = {
       memberId: query.memberId,
       from: from ?? undefined,
       to,
+      limit: 200,
     });
 
     const dailyMetrics = computeDailyInsightMetrics(logs);
@@ -254,17 +255,29 @@ export const workoutInsightsService = {
       bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
       const benchmarkDailyVolume = Math.round(bodyReferenceWeightKg * 3 * 2);
 
-      const profileStats = await workoutLogRepository.getDailyCohortStats({
-        from: from ?? '1970-01-01',
-        to,
-        gender: user.gender,
-        heightMinCm,
-        heightMaxCm,
-        weightMinKg,
-        weightMaxKg,
-        experienceLevel: user.experienceLevel ?? undefined,
-        excludeUserId: userId,
-      });
+      const [profileStats, peerStats] = await Promise.all([
+        workoutLogRepository.getDailyCohortStats({
+          from: from ?? '1970-01-01',
+          to,
+          gender: user.gender,
+          heightMinCm,
+          heightMaxCm,
+          weightMinKg,
+          weightMaxKg,
+          experienceLevel: user.experienceLevel ?? undefined,
+          excludeUserId: userId,
+        }),
+        workoutLogRepository.getDailyCohortStats({
+          from: from ?? '1970-01-01',
+          to,
+          gender: user.gender,
+          heightMinCm,
+          heightMaxCm,
+          weightMinKg,
+          weightMaxKg,
+          excludeUserId: userId,
+        }),
+      ]);
 
       if (profileStats.sampleSize >= MIN_COHORT_SAMPLE) {
         profileAverage = {
@@ -283,17 +296,6 @@ export const workoutInsightsService = {
           sampleSize: 0,
         };
       }
-
-      const peerStats = await workoutLogRepository.getDailyCohortStats({
-        from: from ?? '1970-01-01',
-        to,
-        gender: user.gender,
-        heightMinCm,
-        heightMaxCm,
-        weightMinKg,
-        weightMaxKg,
-        excludeUserId: userId,
-      });
 
       const peerAvgGrowthPct =
         peerStats.sampleSize >= MIN_COHORT_SAMPLE
@@ -375,12 +377,12 @@ export const workoutInsightsService = {
     if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
 
     const machineCode = query.machineCode!;
-    const machineId = await machineRepository.findIdByCode(machineCode);
-    if (!machineId) {
+    const machine = await machineRepository.findByCode(machineCode);
+    if (!machine) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${machineCode}`);
     }
+    const machineId = machine.id;
 
-    const machine = await machineRepository.findByCode(machineCode);
     const period = query.period ?? '30d';
     const { from, to } = getPeriodRange(period);
 
@@ -397,6 +399,7 @@ export const workoutInsightsService = {
       machineId,
       from: from ?? undefined,
       to,
+      limit: 200,
     });
 
     const userMetrics = computeUserMetrics(logs);
@@ -417,26 +420,40 @@ export const workoutInsightsService = {
       } = getBoxingWeightClassRange(user.gender, user.weightKg);
       bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
 
-      referenceWeightKg = await workoutLogRepository.getReferenceWeightKg(
-        machineId,
-        user.gender,
-        user.experienceLevel ?? 'intermediate',
-        user.heightCm
-      );
-      const benchmarkWeightKg = referenceWeightKg ?? bodyReferenceWeightKg;
+      const [refWeight, profileStats, peerStats] = await Promise.all([
+        workoutLogRepository.getReferenceWeightKg(
+          machineId,
+          user.gender,
+          user.experienceLevel ?? 'intermediate',
+          user.heightCm
+        ),
+        workoutLogRepository.getCohortStats({
+          machineId,
+          from: from ?? '1970-01-01',
+          to,
+          gender: user.gender,
+          heightMinCm,
+          heightMaxCm,
+          weightMinKg,
+          weightMaxKg,
+          experienceLevel: user.experienceLevel ?? undefined,
+          excludeUserId: userId,
+        }),
+        workoutLogRepository.getCohortStats({
+          machineId,
+          from: from ?? '1970-01-01',
+          to,
+          gender: user.gender,
+          heightMinCm,
+          heightMaxCm,
+          weightMinKg,
+          weightMaxKg,
+          excludeUserId: userId,
+        }),
+      ]);
 
-      const profileStats = await workoutLogRepository.getCohortStats({
-        machineId,
-        from: from ?? '1970-01-01',
-        to,
-        gender: user.gender,
-        heightMinCm,
-        heightMaxCm,
-        weightMinKg,
-        weightMaxKg,
-        experienceLevel: user.experienceLevel ?? undefined,
-        excludeUserId: userId,
-      });
+      referenceWeightKg = refWeight;
+      const benchmarkWeightKg = referenceWeightKg ?? bodyReferenceWeightKg;
 
       if (profileStats.sampleSize >= MIN_COHORT_SAMPLE) {
         profileAverage = {
@@ -455,18 +472,6 @@ export const workoutInsightsService = {
           sampleSize: 0,
         };
       }
-
-      const peerStats = await workoutLogRepository.getCohortStats({
-        machineId,
-        from: from ?? '1970-01-01',
-        to,
-        gender: user.gender,
-        heightMinCm,
-        heightMaxCm,
-        weightMinKg,
-        weightMaxKg,
-        excludeUserId: userId,
-      });
 
       const peerAvgGrowthPct =
         peerStats.sampleSize >= MIN_COHORT_SAMPLE

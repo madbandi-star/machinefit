@@ -198,12 +198,72 @@ export async function computeRecommendationWeight(options: {
     });
   }
 
-  const machineReference = await workoutLogRepository.getReferenceWeightKg(
+  const machineReferencePromise = workoutLogRepository.getReferenceWeightKg(
     machineId,
     input.gender,
     input.experienceLevel,
     input.heightCm
   );
+
+  const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
+    input.machineCode,
+    input.targetMuscleGroup
+  );
+
+  const logsPromise =
+    userId != null
+      ? (async () => {
+          const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+          const gymId = await userGymRepository.getActiveGymId(userId);
+          if (!gymId) return [] as WorkoutLog[];
+          return workoutLogRepository.listByUser(userId, {
+            gymId,
+            machineId,
+            limit: 40,
+            ...(isFreeWeightMachineCode(input.machineCode)
+              ? { targetMuscleGroup: targetMuscleKey }
+              : {}),
+          });
+        })()
+      : Promise.resolve([] as WorkoutLog[]);
+
+  const { heightMinCm, heightMaxCm } = getPeerHeightRange(input.heightCm);
+  const { weightMinKg, weightMaxKg } = getBoxingWeightClassRange(
+    input.gender,
+    input.weightKg
+  );
+
+  // Bound cohort window — full-history scans are too expensive for every recommend.
+  const cohortFrom = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 90);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  })();
+
+  const cohortStatsPromise = workoutLogRepository.getCohortStats({
+    machineId,
+    from: cohortFrom,
+    to: todayDateKey(),
+    gender: input.gender,
+    heightMinCm,
+    heightMaxCm,
+    weightMinKg,
+    weightMaxKg,
+    experienceLevel: input.experienceLevel,
+    excludeUserId: userId,
+    ...(isFreeWeightMachineCode(input.machineCode)
+      ? { targetMuscleGroup: targetMuscleKey }
+      : {}),
+  });
+
+  const [machineReference, logs, cohortStats] = await Promise.all([
+    machineReferencePromise,
+    logsPromise,
+    cohortStatsPromise,
+  ]);
 
   if (machineReference != null && machineReference > 0) {
     entries.push({
@@ -219,26 +279,6 @@ export async function computeRecommendationWeight(options: {
       usedInFinal: false,
     });
   }
-
-  const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
-    input.machineCode,
-    input.targetMuscleGroup
-  );
-  const logs =
-    userId != null
-      ? await (async () => {
-          const { userGymRepository } = await import('../repositories/user-gym.repository.js');
-          const gymId = await userGymRepository.getActiveGymId(userId);
-          if (!gymId) return [];
-          return workoutLogRepository.listByUser(userId, {
-            gymId,
-            machineId,
-            ...(isFreeWeightMachineCode(input.machineCode)
-              ? { targetMuscleGroup: targetMuscleKey }
-              : {}),
-          });
-        })()
-      : [];
 
   const userMetrics = computeUserMetrics(logs);
 
@@ -283,28 +323,6 @@ export async function computeRecommendationWeight(options: {
       usedInFinal: false,
     });
   }
-
-  const { heightMinCm, heightMaxCm } = getPeerHeightRange(input.heightCm);
-  const { weightMinKg, weightMaxKg } = getBoxingWeightClassRange(
-    input.gender,
-    input.weightKg
-  );
-
-  const cohortStats = await workoutLogRepository.getCohortStats({
-    machineId,
-    from: '1970-01-01',
-    to: todayDateKey(),
-    gender: input.gender,
-    heightMinCm,
-    heightMaxCm,
-    weightMinKg,
-    weightMaxKg,
-    experienceLevel: input.experienceLevel,
-    excludeUserId: userId,
-    ...(isFreeWeightMachineCode(input.machineCode)
-      ? { targetMuscleGroup: targetMuscleKey }
-      : {}),
-  });
 
   if (cohortStats.sampleSize >= MIN_COHORT_SAMPLE && cohortStats.avgMaxWeightKg > 0) {
     entries.push({

@@ -81,10 +81,12 @@ export const recommendationService = {
     const machine = await machineService.getByCode(input.machineCode);
     const machineId = machine.id;
 
-    const rules = await recommendationRepository.findSettingsForMachine(
-      machineId,
-      input.machineCode
-    );
+    const [rules, savedPreferences] = await Promise.all([
+      recommendationRepository.findSettingsForMachine(machineId, input.machineCode),
+      userId != null
+        ? preferenceRepository.findByUserMachine(userId, machineId)
+        : Promise.resolve(null),
+    ]);
 
     const match = rules.length > 0 ? findBestMatch(rules, input) : undefined;
     const { recommendedWeightKg, weightBasis } = await computeRecommendationWeight({
@@ -114,11 +116,6 @@ export const recommendationService = {
       afterPersonalization,
       input.weightDifficulty
     );
-
-    const savedPreferences =
-      userId != null
-        ? await preferenceRepository.findByUserMachine(userId, machineId)
-        : null;
 
     const recommendedReps = recommendRepsForGoal(
       input.workoutGoal,
@@ -162,24 +159,25 @@ export const recommendationService = {
     tipsByLocale[locale] = tips;
     const warningsByLocale = match?.warnings ?? (warnings.length ? { [locale]: warnings } : null);
 
-    const id = await recommendationRepository.save(
-      input,
-      machineId,
-      null,
-      settings,
-      settings.recommendedWeightKg,
-      weightBasis,
-      userId,
-      undefined,
-      {
-        min: settings.recommendedRepsMin ?? recommendedReps.min,
-        max: settings.recommendedRepsMax ?? recommendedReps.max,
-      },
-      tipsByLocale,
-      warningsByLocale
-    );
-
-    const youtubeVideos = await recommendationRepository.findYoutubeVideos(machineId);
+    const [id, youtubeVideos] = await Promise.all([
+      recommendationRepository.save(
+        input,
+        machineId,
+        null,
+        settings,
+        settings.recommendedWeightKg,
+        weightBasis,
+        userId,
+        undefined,
+        {
+          min: settings.recommendedRepsMin ?? recommendedReps.min,
+          max: settings.recommendedRepsMax ?? recommendedReps.max,
+        },
+        tipsByLocale,
+        warningsByLocale
+      ),
+      recommendationRepository.findYoutubeVideos(machineId),
+    ]);
 
     if (userId) {
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');

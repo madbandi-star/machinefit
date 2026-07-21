@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi, machineApi } from '@/api';
 import { filterMachinesByEquipmentScope, type EquipmentScope } from '@/utils/machineEquipmentScope';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 function readEquipmentScope(value: string | null): EquipmentScope {
   return value === 'all' ? 'all' : 'machines_only';
@@ -22,6 +23,7 @@ export function MachineSearchPage() {
   const { t } = useTranslation('machines');
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
+  const debouncedQuery = useDebouncedValue(query, 250);
   const [muscleGroup, setMuscleGroup] = useState<string | null>(
     () => searchParams.get('muscle')
   );
@@ -37,8 +39,19 @@ export function MachineSearchPage() {
     setEquipmentScope(readEquipmentScope(searchParams.get('scope')));
   }, [searchParams]);
 
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (debouncedQuery.trim()) next.set('q', debouncedQuery.trim());
+        else next.delete('q');
+        return next;
+      },
+      { replace: true }
+    );
+  }, [debouncedQuery, setSearchParams]);
+
   const writeSearchParams = (patch: {
-    q?: string;
     muscle?: string | null;
     brand?: string | null;
     scope?: EquipmentScope;
@@ -46,13 +59,9 @@ export function MachineSearchPage() {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        const q = patch.q !== undefined ? patch.q : query;
         const muscle = patch.muscle !== undefined ? patch.muscle : muscleGroup;
         const brand = patch.brand !== undefined ? patch.brand : brandCode;
         const scope = patch.scope !== undefined ? patch.scope : equipmentScope;
-
-        if (q.trim()) next.set('q', q.trim());
-        else next.delete('q');
 
         if (muscle) next.set('muscle', muscle);
         else next.delete('muscle');
@@ -71,7 +80,6 @@ export function MachineSearchPage() {
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
-    writeSearchParams({ q: value });
   };
 
   const handleMuscleChange = (value: string | null) => {
@@ -95,21 +103,24 @@ export function MachineSearchPage() {
       const res = await brandApi.list();
       return res.data.data;
     },
+    staleTime: 10 * 60_000,
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, query, muscleGroup, brandCode, equipmentScope],
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode, equipmentScope],
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = { limit: 100 };
       if (muscleGroup) params.muscleGroup = muscleGroup;
       if (brandCode) params.brandCode = brandCode;
-      if (query.trim()) params.q = query.trim();
+      if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
       return filterMachinesByEquipmentScope(res.data.data.items, equipmentScope);
     },
+    staleTime: 60_000,
+    placeholderData: (prev) => prev,
   });
 
-  const hasFilters = !!query.trim() || !!muscleGroup || !!brandCode;
+  const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
 
   return (
     <div className="machine-search">
@@ -123,12 +134,12 @@ export function MachineSearchPage() {
           equipmentScope={equipmentScope}
           onEquipmentScopeChange={handleScopeChange}
         />
-        {isLoading ? (
+        {isLoading && !data ? (
           <Skeleton count={5} height={72} />
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />
         ) : (
-          <div className="machine-list">
+          <div className={`machine-list${isFetching ? ' machine-list--fetching' : ''}`}>
             {data.map((machine) => (
               <MachineListItem key={machine.id} machine={machine} selectedMuscle={muscleGroup} />
             ))}

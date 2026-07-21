@@ -31,7 +31,9 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
               className="machine-hero__image"
               src={imageUrl}
               alt={localizedName}
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
             />
           ) : showDefaultMuscle && machine.muscleGroup ? (
             <div className="machine-hero__muscle-icon" aria-hidden>
@@ -42,7 +44,8 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
               className="machine-hero__image"
               src={machinePlaceholderUrl()}
               alt=""
-              loading="lazy"
+              loading="eager"
+              decoding="async"
             />
           )}
         </div>
