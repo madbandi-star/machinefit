@@ -79,7 +79,7 @@ export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
 
   if (!open) return null;
 
-  const isLoading = logsLoading || historyLoading;
+  const isLoading = logsLoading || historyLoading || !memberScopeReady;
   const hasActivity = summary.recommendationCount > 0 || summary.loggedCount > 0;
 
   return (

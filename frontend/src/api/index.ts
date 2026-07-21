@@ -179,6 +179,7 @@ export interface WorkoutReportRequest {
   period: WorkoutReportPeriod;
   previewOnly?: boolean;
   gymId?: string;
+  memberId?: string;
 }
 
 export interface WorkoutReportResult {
@@ -269,7 +270,10 @@ export const historyApi = {
       to?: string;
     }
   ) => apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { gymId, ...params } }),
-  clear: (gymId: string) => apiClient.delete('/history', { params: { gymId } }),
+  clear: (gymId: string, memberId?: string) =>
+    apiClient.delete('/history', {
+      params: { gymId, ...(memberId ? { memberId } : {}) },
+    }),
   remove: (id: string) => apiClient.delete(`/history/${id}`),
 };
 

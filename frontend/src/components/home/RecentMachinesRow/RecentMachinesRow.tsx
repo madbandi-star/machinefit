@@ -61,7 +61,7 @@ export function RecentMachinesRow() {
           </Link>
         )}
       </div>
-      {isLoading ? (
+      {isLoading || !memberScopeReady ? (
         <Skeleton count={1} height={76} />
       ) : !unique.length ? (
         <HomeSectionEmptyPrompt

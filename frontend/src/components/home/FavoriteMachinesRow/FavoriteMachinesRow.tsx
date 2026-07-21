@@ -37,7 +37,7 @@ export function FavoriteMachinesRow() {
           </Link>
         )}
       </div>
-      {isLoading ? (
+      {isLoading || !memberScopeReady ? (
         <Skeleton count={1} height={76} />
       ) : !data?.length ? (
         <HomeSectionEmptyPrompt

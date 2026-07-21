@@ -334,7 +334,7 @@ export function GrowthAnalysisPage() {
     </div>
   );
 
-  if (!activeGymId || isLoading) {
+  if (!activeGymId || isLoading || !memberScopeReady) {
     return (
       <div className="growth-analysis-page">
         <PageShell title={t('growthAnalysis.title')} action={gymMemberAction} />

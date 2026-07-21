@@ -155,7 +155,7 @@ export function HistoryListPanel() {
     return collectMuscleGroupsInOrder(dayCards);
   }, [filteredAllCards, selectedDate]);
 
-  const isLoading = !activeGymId || isAllHistoryLoading;
+  const isLoading = !activeGymId || !memberScopeReady || isAllHistoryLoading;
 
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;

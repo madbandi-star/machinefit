@@ -937,6 +937,14 @@
   margin-bottom: var(--space-md);
 }
 
+.workout-report-section__scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
 .workout-report-section__actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -114,6 +114,6 @@ export async function fetchWorkoutLogs(options: FetchWorkoutLogsOptions): Promis
 }
 
 /** @deprecated Prefer fetchWorkoutLogs with explicit bounds and limit. */
-export function fetchAllWorkoutLogs(gymId: string): Promise<WorkoutLog[]> {
-  return fetchWorkoutLogs({ gymId, limit: 200 });
+export function fetchAllWorkoutLogs(gymId: string, memberId?: string): Promise<WorkoutLog[]> {
+  return fetchWorkoutLogs({ gymId, memberId, limit: 200 });
 }

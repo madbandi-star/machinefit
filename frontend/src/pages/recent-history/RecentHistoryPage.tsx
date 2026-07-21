@@ -33,7 +33,7 @@ export function RecentHistoryPage() {
   });
 
   const clearMutation = useMutation({
-    mutationFn: () => historyApi.clear(activeGymId!),
+    mutationFn: () => historyApi.clear(activeGymId!, activeMemberId ?? undefined),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });

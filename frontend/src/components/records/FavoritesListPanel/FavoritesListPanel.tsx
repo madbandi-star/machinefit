@@ -78,7 +78,7 @@ export function FavoritesListPanel() {
     },
   });
 
-  if (!activeGymId || isLoading) return <Skeleton count={3} height={56} />;
+  if (!activeGymId || isLoading || !memberScopeReady) return <Skeleton count={3} height={56} />;
   if (isError) return <QueryErrorMessage />;
   if (!data?.length) {
     return (

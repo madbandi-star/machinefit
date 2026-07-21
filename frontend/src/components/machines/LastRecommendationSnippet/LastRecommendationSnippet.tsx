@@ -82,6 +82,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
     ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${data.recommendationId}`
     : null;
   const showSettingsCompare = shouldShowHistorySettingsCompare(fitRating);
+  const showLoading = isLoading || !memberScopeReady;
 
   return (
     <section className="saved-settings-card" aria-label={t('machines:detail.lastRecommend')}>
@@ -135,7 +136,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
                   customSettings={showSettingsCompare ? machinePreferences?.customSettings : undefined}
                 />
               </Link>
-            ) : isLoading ? (
+            ) : showLoading ? (
               <LastRecommendationSettingsSkeleton />
             ) : (
               <>
