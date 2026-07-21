@@ -1,6 +1,7 @@
 import { DEMO_PASSWORD } from '@machinefit/shared';
 
-const DEMO_REGISTER_SEQ_KEY = 'machinefit:demo-register-seq';
+/** Local counter for sequential demo ids: demo_test1, demo_test2, ... */
+const DEMO_REGISTER_SEQ_KEY = 'machinefit:demo-register-seq-v2';
 
 export const DEMO_REGISTER_PASSWORD = DEMO_PASSWORD;
 export const DEMO_HOME_GYM_NAME = '머신핏GYM';
@@ -34,12 +35,17 @@ function writeDemoSeq(value: number): void {
   }
 }
 
+function formatDemoId(seq: number): string {
+  return `demo_test${seq}`;
+}
+
 export function getDemoRegisterSlot(): { displayName: string; emailLocal: string; seq: number } {
   const seq = readDemoSeq() + 1;
+  const demoId = formatDemoId(seq);
   return {
     seq,
-    displayName: `demo_test_#${seq}`,
-    emailLocal: `demo_test_${seq}`,
+    displayName: demoId,
+    emailLocal: demoId,
   };
 }
 
