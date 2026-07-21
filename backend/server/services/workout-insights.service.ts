@@ -13,12 +13,14 @@ import {
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
+  isAllGymsId,
   nextRecommendVolumeKg,
   nextRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
+import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 const MIN_COHORT_SAMPLE = 2;
@@ -202,8 +204,9 @@ function hasBodyProfile(
 
 export const workoutInsightsService = {
   async getInsights(userId: string, query: WorkoutInsightsQuery): Promise<WorkoutInsights> {
-    const { userGymService } = await import('./user-gym.service.js');
-    await userGymService.assertOwned(userId, query.gymId);
+    if (!isAllGymsId(query.gymId)) {
+      await gymScopeService.assertOwned(userId, query.gymId);
+    }
 
     if (query.viewMode === 'daily') {
       return this.getDailyInsights(userId, query);
@@ -219,8 +222,16 @@ export const workoutInsightsService = {
     const period = query.period ?? '30d';
     const { from, to } = getPeriodRange(period);
 
+    let gymIds: string[] | null | undefined;
+    if (isAllGymsId(query.gymId)) {
+      const resolved = await gymScopeService.resolveGymFilter(userId, query.gymId);
+      gymIds = resolved.gymIds;
+    }
+
     const logs = await workoutLogRepository.listByUser(userId, {
       gymId: query.gymId,
+      gymIds,
+      memberId: query.memberId,
       from: from ?? undefined,
       to,
     });
@@ -373,8 +384,16 @@ export const workoutInsightsService = {
     const period = query.period ?? '30d';
     const { from, to } = getPeriodRange(period);
 
+    let gymIds: string[] | null | undefined;
+    if (isAllGymsId(query.gymId)) {
+      const resolved = await gymScopeService.resolveGymFilter(userId, query.gymId);
+      gymIds = resolved.gymIds;
+    }
+
     const logs = await workoutLogRepository.listByUser(userId, {
       gymId: query.gymId,
+      gymIds,
+      memberId: query.memberId,
       machineId,
       from: from ?? undefined,
       to,

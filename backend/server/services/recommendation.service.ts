@@ -187,7 +187,11 @@ export const recommendationService = {
         (input as { gymId?: string }).gymId ??
         (await userGymRepository.getActiveGymId(userId));
       if (gymId) {
-        await historyRepository.record(userId, gymId, machineId, id);
+        const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
+        const selfMember = await gymMemberRepository.findSelfMember(gymId, userId);
+        if (selfMember) {
+          await historyRepository.record(userId, gymId, selfMember.id, machineId, id);
+        }
       }
     }
 
