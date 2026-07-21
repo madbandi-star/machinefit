@@ -15,8 +15,8 @@
     "shoulders": "어깨",
     "biceps": "이두",
     "triceps": "삼두",
-    "arms": "Arms",
-    "core": "Core",
+    "arms": "팔",
+    "core": "코어",
     "full_body": "전신"
   },
   "machineTypes": {

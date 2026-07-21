@@ -143,7 +143,7 @@ export const machineRepository = {
       params.push(filters.brandCode);
     }
     if (filters.muscleGroup) {
-      // Free-weight brand: every FW_* can target any muscle (biceps/triceps included).
+      // Free-weight brand: every FW_* can target any muscle (biceps/triceps/arms/core included).
       conditions.push(
         `(m.muscle_group = $${idx} OR b.code = $${idx + 1} OR m.muscle_group = 'full_body')`
       );
