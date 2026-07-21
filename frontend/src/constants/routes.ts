@@ -24,6 +24,7 @@ export const ROUTES = {
   LIFTER_DNA: '/my-page/lifter-dna',
   LIVE_DASHBOARD: '/my-page/live',
   ACHIEVEMENTS: '/my-page/achievements',
+  GROWTH_TIMELINE: '/my-page/growth-timeline',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
   OWNER: '/owner',

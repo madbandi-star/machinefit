@@ -16,3 +16,9 @@ export {
   ACHIEVEMENT_BY_ID,
   getAchievementCatalogCount,
 } from '../data/achievement-catalog.js';
+export {
+  buildGrowthTimelineSnapshot,
+  emptyGrowthTimelineSnapshot,
+  type GrowthTimelineLogInput,
+  type GrowthTimelinePeerAverages,
+} from './growth-timeline-analysis.js';

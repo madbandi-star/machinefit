@@ -84,6 +84,10 @@ const achievements = () =>
   import('@/pages/achievements/AchievementsPage').then((m) => ({
     default: m.AchievementsPage,
   }));
+const growthTimeline = () =>
+  import('@/pages/growth-timeline/GrowthTimelinePage').then((m) => ({
+    default: m.GrowthTimelinePage,
+  }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
 const ownerDash = () =>
@@ -166,6 +170,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.LIFTER_DNA, element: lazyRoute(lifterDna) },
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
+            { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },

@@ -5,6 +5,7 @@ import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { achievementService } from './achievement.service.js';
+import { growthTimelineService } from './growth-timeline.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -127,6 +128,12 @@ export const workoutLogService = {
         // Achievement evaluation must not fail the workout save.
       }
 
+      try {
+        await growthTimelineService.refreshUser(userId);
+      } catch {
+        // Growth timeline refresh must not fail the workout save.
+      }
+
       return saved;
     } catch (error) {
       const pgCode =
@@ -203,6 +210,12 @@ export const workoutLogService = {
         await achievementService.refreshUser(userId);
       } catch {
         /* ignore achievement failure */
+      }
+
+      try {
+        await growthTimelineService.refreshUser(userId);
+      } catch {
+        /* ignore growth timeline failure */
       }
     }
   },

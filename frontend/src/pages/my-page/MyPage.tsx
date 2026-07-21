@@ -80,6 +80,7 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
           <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
+          <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
           <ListNavLink to={ROUTES.MY_GYMS} label={t('myPage.gymMemberManage')} />

@@ -27,6 +27,7 @@ import type {
   LifterDnaSnapshot,
   AchievementSnapshot,
   AchievementRankingResponse,
+  GrowthTimelineSnapshot,
   LiveDashboardSnapshot,
   LiveRankingResponse,
   LiveRankingBoard,
@@ -410,6 +411,11 @@ export const achievementsApi = {
     apiClient.get<ApiResponse<AchievementRankingResponse>>('/users/me/achievements/rankings', {
       params,
     }),
+};
+
+export const growthTimelineApi = {
+  snapshot: () =>
+    apiClient.get<ApiResponse<GrowthTimelineSnapshot>>('/users/me/growth-timeline'),
 };
 
 export const liveDashboardApi = {

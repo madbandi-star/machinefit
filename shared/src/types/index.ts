@@ -16,3 +16,4 @@ export * from './lifted-weight.types.js';
 export * from './lifter-dna.types.js';
 export * from './live-dashboard.types.js';
 export * from './achievement.types.js';
+export * from './growth-timeline.types.js';
