@@ -141,6 +141,8 @@ const TARGET_MUSCLE_WEIGHT_BIAS: Record<TargetMuscleGroup, number> = {
   shoulders: 0.95,
   biceps: 0.88,
   triceps: 0.9,
+  arms: 0.9,
+  core: 0.85,
 };
 
 const TARGET_MUSCLE_TIPS_KO: Record<TargetMuscleGroup, string> = {
@@ -150,6 +152,8 @@ const TARGET_MUSCLE_TIPS_KO: Record<TargetMuscleGroup, string> = {
   shoulders: '오늘은 어깨 중심 — 과도한 승모 개입을 줄이세요.',
   biceps: '오늘은 이두 중심 — 팔꿈치 고정 후 수축 구간을 천천히.',
   triceps: '오늘은 삼두 중심 — 팔꿈치를 몸 가까이 두고 끝까지 펴세요.',
+  arms: '오늘은 팔 중심 — 이두·삼두 균형과 팔꿈치 고정을 유지하세요.',
+  core: '오늘은 코어 중심 — 골반 중립과 복압을 유지하세요.',
 };
 
 const TARGET_MUSCLE_TIPS_EN: Record<TargetMuscleGroup, string> = {
@@ -159,6 +163,8 @@ const TARGET_MUSCLE_TIPS_EN: Record<TargetMuscleGroup, string> = {
   shoulders: 'Shoulder focus today — limit trap takeover on pressing.',
   biceps: 'Biceps focus today — keep elbows fixed and control the squeeze.',
   triceps: 'Triceps focus today — tuck elbows and fully extend at the top.',
+  arms: 'Arms focus today — balance biceps/triceps and keep elbows steady.',
+  core: 'Core focus today — keep a neutral pelvis and brace the midsection.',
 };
 
 function formatRepTip(min: number, max: number, localeKo: boolean): string {

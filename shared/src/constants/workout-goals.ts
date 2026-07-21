@@ -16,6 +16,8 @@ export const TARGET_MUSCLE_GROUPS = [
   'shoulders',
   'biceps',
   'triceps',
+  'arms',
+  'core',
 ] as const;
 
 export type TargetMuscleGroup = (typeof TARGET_MUSCLE_GROUPS)[number];

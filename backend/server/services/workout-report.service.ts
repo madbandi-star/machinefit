@@ -46,6 +46,8 @@ const TARGET_MUSCLE_LABELS: Record<string, string> = {
   shoulders: '어깨',
   biceps: '이두',
   triceps: '삼두',
+  arms: 'Arms',
+  core: 'Core',
 };
 
 function formatLogMachineLabel(

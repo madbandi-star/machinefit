@@ -6,6 +6,8 @@ import '@/styles/muscle-group-icon.css';
 const FALLBACK_LABELS: Partial<Record<MuscleGroup, string>> = {
   biceps: 'Bi',
   triceps: 'Tr',
+  arms: 'AR',
+  core: 'CO',
 };
 
 interface MuscleGroupIconProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
