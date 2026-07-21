@@ -37,7 +37,7 @@
     "requestApprove": "승인",
     "requestDeny": "거절",
     "requestFrom": "{{gymName}} 헬스장에서 프로필 연동을 요청했습니다.",
-    "unknownGym": "알 수 없는",
+    "requestFromUnnamed": "헬스장에서 프로필 연동을 요청했습니다.",
     "requestApproved": "프로필 연동을 승인했습니다.",
     "requestDenied": "프로필 연동을 거절했습니다."
   },
