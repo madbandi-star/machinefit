@@ -235,6 +235,9 @@
   },
   "myPage": {
     "role": "역할",
+    "memberId": "멤버아이디",
+    "email": "이메일",
+    "memberLevel": "멤버레벨",
     "quickLinks": "바로가기",
     "explore": "더보기",
     "adminDashboard": "관리자 대시보드",

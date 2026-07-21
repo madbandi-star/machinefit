@@ -53,25 +53,20 @@ export function MyPage() {
         action={<PwaInstallButton />}
       >
         <div className="card profile-card">
-          <p className="profile-card__identity">
-            <strong className="profile-card__name">{user?.displayName}</strong>
-            {user?.email ? (
-              <>
-                <span className="profile-card__sep" aria-hidden>
-                  ·
-                </span>
-                <span className="profile-card__email">{user.email}</span>
-              </>
-            ) : null}
-            {user?.roleCode ? (
-              <>
-                <span className="profile-card__sep" aria-hidden>
-                  ·
-                </span>
-                <span className="profile-card__role">{user.roleCode}</span>
-              </>
-            ) : null}
-          </p>
+          <dl className="profile-card__fields">
+            <div className="profile-card__row">
+              <dt>{t('myPage.memberId')}</dt>
+              <dd>{user?.displayName || '—'}</dd>
+            </div>
+            <div className="profile-card__row">
+              <dt>{t('myPage.email')}</dt>
+              <dd>{user?.email || '—'}</dd>
+            </div>
+            <div className="profile-card__row">
+              <dt>{t('myPage.memberLevel')}</dt>
+              <dd>{user?.roleCode || '—'}</dd>
+            </div>
+          </dl>
         </div>
 
       <section className="my-page-section">

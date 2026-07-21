@@ -235,6 +235,9 @@
   },
   "myPage": {
     "role": "Role",
+    "memberId": "Member ID",
+    "email": "Email",
+    "memberLevel": "Member level",
     "quickLinks": "Quick links",
     "explore": "Explore",
     "adminDashboard": "Admin Dashboard",
