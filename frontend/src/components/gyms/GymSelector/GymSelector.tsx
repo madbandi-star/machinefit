@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown } from 'lucide-react';
-import { ALL_GYMS_ID, isAllGymsId } from '@machinefit/shared';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useAuthStore } from '@/store/auth.store';
 import './GymSelector.css';
@@ -14,8 +13,6 @@ export function GymSelector() {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
-
-  const isAllGyms = isAllGymsId(activeGymId);
 
   useEffect(() => {
     if (!open) return;
@@ -37,9 +34,7 @@ export function GymSelector() {
 
   if (!isAuthenticated) return null;
 
-  const label = isAllGyms
-    ? t('gyms:selector.allGyms')
-    : (activeGym?.name ?? t('gyms:selector.currentGym'));
+  const label = activeGym?.name ?? t('gyms:selector.currentGym');
 
   const handleSelect = async (gymId: string) => {
     if (gymId === activeGymId) {
@@ -74,18 +69,6 @@ export function GymSelector() {
       {open && (
         <div className="gym-selector__menu" id={menuId} role="listbox">
           <ul className="gym-selector__list">
-            <li>
-              <button
-                type="button"
-                role="option"
-                aria-selected={isAllGyms}
-                className={`gym-selector__option${isAllGyms ? ' gym-selector__option--active' : ''}`}
-                onClick={() => void handleSelect(ALL_GYMS_ID)}
-              >
-                <span className="gym-selector__option-name">{t('gyms:selector.allGyms')}</span>
-                <span className="gym-selector__option-meta">{t('gyms:selector.allGymsDesc')}</span>
-              </button>
-            </li>
             {gyms.map((gym) => (
               <li key={gym.id}>
                 <button
