@@ -28,6 +28,13 @@ import type {
   AchievementSnapshot,
   AchievementRankingResponse,
   GrowthTimelineSnapshot,
+  LocationCountry,
+  LocationState,
+  LocationCity,
+  LocationDistrict,
+  UserLocation,
+  ReverseGeocodeResult,
+  UserLocationUpsertInput,
   LiveDashboardSnapshot,
   LiveRankingResponse,
   LiveRankingBoard,
@@ -416,6 +423,26 @@ export const achievementsApi = {
 export const growthTimelineApi = {
   snapshot: () =>
     apiClient.get<ApiResponse<GrowthTimelineSnapshot>>('/users/me/growth-timeline'),
+};
+
+export const locationApi = {
+  countries: () => apiClient.get<ApiResponse<LocationCountry[]>>('/locations/countries'),
+  states: (countryCode: string) =>
+    apiClient.get<ApiResponse<LocationState[]>>(`/locations/countries/${countryCode}/states`),
+  cities: (stateId: string) =>
+    apiClient.get<ApiResponse<LocationCity[]>>(`/locations/states/${stateId}/cities`),
+  districts: (cityId: string) =>
+    apiClient.get<ApiResponse<LocationDistrict[]>>(`/locations/cities/${cityId}/districts`),
+  reverseGeocode: (body: { latitude: number; longitude: number }) =>
+    apiClient.post<ApiResponse<ReverseGeocodeResult | null>>('/locations/reverse-geocode', body),
+  getMine: () => apiClient.get<ApiResponse<UserLocation>>('/locations/me'),
+  upsertMine: (body: UserLocationUpsertInput) =>
+    apiClient.put<ApiResponse<UserLocation>>('/locations/me', body),
+  clearMine: () => apiClient.delete<ApiResponse<UserLocation>>('/locations/me'),
+  adminUpsertCountry: (body: unknown) =>
+    apiClient.post('/locations/admin/countries', body),
+  adminUpsertState: (body: unknown) => apiClient.post('/locations/admin/states', body),
+  adminUpsertCity: (body: unknown) => apiClient.post('/locations/admin/cities', body),
 };
 
 export const liveDashboardApi = {

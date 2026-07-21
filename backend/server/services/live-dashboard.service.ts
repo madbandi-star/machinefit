@@ -22,8 +22,13 @@ import {
   liveSnapshotCache,
   type LiveScopeFilter,
 } from '../repositories/live-dashboard.repository.js';
+import { locationRepository } from '../repositories/location.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
+
+function locName(name: { ko?: string; en?: string }, locale: string): string {
+  return locale.startsWith('ko') ? name.ko || name.en || '' : name.en || name.ko || '';
+}
 
 function heatScore(volumeKg: number, activeNow: number): number {
   const raw = volumeKg / 500 + activeNow * 8;
@@ -296,52 +301,89 @@ export const liveDashboardService = {
       userName = user?.displayName;
     }
     if (options.scope.countryCode) {
-      flag = LIVE_COUNTRIES.find((c) => c.code === options.scope.countryCode)?.flag;
+      const countries = await locationRepository.listCountries();
+      flag =
+        countries.find((c) => c.code === options.scope.countryCode)?.flagEmoji ??
+        LIVE_COUNTRIES.find((c) => c.code === options.scope.countryCode)?.flag;
     }
 
     const level = options.level;
     let children: LiveChildNode[] = [];
     if (level === 'world') {
       const rows = await liveDashboardRepository.listChildren('country', {}, locale);
-      children = LIVE_COUNTRIES.map((c) => {
-        const hit = rows.find((r) => r.code === c.code);
-        return {
-          level: 'country' as const,
-          code: c.code,
-          label: locale.startsWith('ko') ? c.name.ko : c.name.en,
-          flag: c.flag,
-          activeNow: hit?.activeNow ?? 0,
-          volumeTodayKg: hit?.volumeTodayKg ?? 0,
-          heat: heatScore(hit?.volumeTodayKg ?? 0, hit?.activeNow ?? 0),
-        };
-      }).sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
+      const countries = await locationRepository.listCountries();
+      const countryList = countries.length
+        ? countries
+        : LIVE_COUNTRIES.map((c) => ({
+            code: c.code,
+            name: c.name,
+            flagEmoji: c.flag,
+          }));
+      children = countryList
+        .map((c) => {
+          const hit = rows.find((r) => r.code === c.code);
+          return {
+            level: 'country' as const,
+            code: c.code,
+            label: locName(c.name, locale),
+            flag: c.flagEmoji,
+            activeNow: hit?.activeNow ?? 0,
+            volumeTodayKg: hit?.volumeTodayKg ?? 0,
+            heat: heatScore(hit?.volumeTodayKg ?? 0, hit?.activeNow ?? 0),
+          };
+        })
+        .sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
     } else if (level === 'country') {
       const rows = await liveDashboardRepository.listChildren('metro', filter, locale);
-      children = LIVE_KR_METROS.map((m) => {
-        const hit = rows.find((r) => r.code === m.code);
-        return {
-          level: 'metro' as const,
-          code: m.code,
-          label: locale.startsWith('ko') ? m.name.ko : m.name.en,
-          activeNow: hit?.activeNow ?? 0,
-          volumeTodayKg: hit?.volumeTodayKg ?? 0,
-          heat: heatScore(hit?.volumeTodayKg ?? 0, hit?.activeNow ?? 0),
-        };
-      }).sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
+      const countryCode = options.scope.countryCode ?? 'KR';
+      const states = await locationRepository.listStates(countryCode);
+      const metros = states.length
+        ? states.map((s) => ({ code: s.code, name: s.name }))
+        : countryCode === 'KR'
+          ? LIVE_KR_METROS.map((m) => ({ code: m.code, name: m.name }))
+          : [];
+      children = metros
+        .map((m) => {
+          const hit = rows.find((r) => r.code === m.code);
+          return {
+            level: 'metro' as const,
+            code: m.code,
+            label: locName(m.name, locale),
+            activeNow: hit?.activeNow ?? 0,
+            volumeTodayKg: hit?.volumeTodayKg ?? 0,
+            heat: heatScore(hit?.volumeTodayKg ?? 0, hit?.activeNow ?? 0),
+          };
+        })
+        .sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
     } else if (level === 'metro') {
-      const districts = LIVE_KR_DISTRICTS[options.scope.metroCode ?? ''] ?? [];
       const rows = await liveDashboardRepository.listChildren('district', filter, locale);
-      children = districts.map((d) => {
-        const hit = rows.find((r) => r.code === d.code);
-        return {
-          level: 'district' as const,
+      const countryCode = options.scope.countryCode ?? 'KR';
+      const metroCode = options.scope.metroCode ?? '';
+      const states = await locationRepository.listStates(countryCode);
+      const state = states.find((s) => s.code === metroCode);
+      let districts: { code: string; name: { ko?: string; en?: string } }[] = [];
+      if (state) {
+        const cities = await locationRepository.listCities(state.id);
+        districts = cities.map((c) => ({ code: c.code, name: c.name }));
+      } else {
+        districts = (LIVE_KR_DISTRICTS[metroCode] ?? []).map((d) => ({
           code: d.code,
-          label: locale.startsWith('ko') ? d.name.ko : d.name.en,
-          activeNow: hit?.activeNow ?? 0,
-          volumeTodayKg: hit?.volumeTodayKg ?? 0,
-          heat: heatScore(hit?.volumeTodayKg ?? 0, hit?.activeNow ?? 0),
-        };
-      }).sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
+          name: d.name,
+        }));
+      }
+      children = districts
+        .map((d) => {
+          const hit = rows.find((r) => r.code === d.code);
+          return {
+            level: 'district' as const,
+            code: d.code,
+            label: locName(d.name, locale),
+            activeNow: hit?.activeNow ?? 0,
+            volumeTodayKg: hit?.volumeTodayKg ?? 0,
+            heat: heatScore(hit?.volumeTodayKg ?? 0, hit?.activeNow ?? 0),
+          };
+        })
+        .sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
     } else if (level === 'district') {
       const rows = await liveDashboardRepository.listChildren('gym', filter, locale);
       children = rows.map((r) => ({
@@ -587,59 +629,115 @@ export const liveDashboardService = {
     if (!q.trim()) return [];
     const needle = q.trim().toLowerCase();
     const hits: LiveSearchHit[] = [];
+    const worldCrumb = {
+      level: 'world' as const,
+      code: 'world',
+      label: liveGeoLabel('world', 'world', locale),
+    };
 
-    for (const country of LIVE_COUNTRIES) {
-      const label = locale.startsWith('ko') ? country.name.ko : country.name.en;
+    const countries = await locationRepository.listCountries();
+    const countryList = countries.length
+      ? countries
+      : LIVE_COUNTRIES.map((c) => ({
+          code: c.code,
+          name: c.name,
+          flagEmoji: c.flag,
+        }));
+
+    for (const country of countryList) {
+      const label = locName(country.name, locale);
       if (
         label.toLowerCase().includes(needle) ||
-        country.code.toLowerCase().includes(needle) ||
-        country.name.ko.includes(q.trim())
+        country.code.toLowerCase().includes(needle)
       ) {
         hits.push({
           level: 'country',
           code: country.code,
-          label: `${country.flag} ${label}`,
-          path: [
-            { level: 'world', code: 'world', label: liveGeoLabel('world', 'world', locale) },
-            { level: 'country', code: country.code, label },
-          ],
+          label: `${country.flagEmoji ? `${country.flagEmoji} ` : ''}${label}`,
+          path: [worldCrumb, { level: 'country', code: country.code, label }],
         });
       }
     }
-    for (const metro of LIVE_KR_METROS) {
-      const label = locale.startsWith('ko') ? metro.name.ko : metro.name.en;
-      if (label.toLowerCase().includes(needle) || metro.code.includes(needle)) {
-        hits.push({
-          level: 'metro',
-          code: metro.code,
-          label,
-          path: [
-            { level: 'world', code: 'world', label: liveGeoLabel('world', 'world', locale) },
-            { level: 'country', code: 'KR', label: liveGeoLabel('country', 'KR', locale) },
-            { level: 'metro', code: metro.code, label },
-          ],
-        });
-      }
-    }
-    for (const [metroCode, districts] of Object.entries(LIVE_KR_DISTRICTS)) {
-      for (const district of districts) {
-        const label = locale.startsWith('ko') ? district.name.ko : district.name.en;
-        if (label.toLowerCase().includes(needle) || district.code.includes(needle)) {
+
+    // Search seeded states/cities for major countries (global hierarchy).
+    for (const country of countryList.slice(0, 12)) {
+      const states = await locationRepository.listStates(country.code);
+      const countryLabel = locName(country.name, locale);
+      for (const state of states) {
+        const label = locName(state.name, locale);
+        if (label.toLowerCase().includes(needle) || state.code.includes(needle)) {
           hits.push({
-            level: 'district',
-            code: district.code,
+            level: 'metro',
+            code: state.code,
             label,
             path: [
-              { level: 'world', code: 'world', label: liveGeoLabel('world', 'world', locale) },
-              { level: 'country', code: 'KR', label: liveGeoLabel('country', 'KR', locale) },
-              {
-                level: 'metro',
-                code: metroCode,
-                label: liveGeoLabel('metro', metroCode, locale),
-              },
-              { level: 'district', code: district.code, label },
+              worldCrumb,
+              { level: 'country', code: country.code, label: countryLabel },
+              { level: 'metro', code: state.code, label },
             ],
           });
+        }
+        if (hits.length > 40) break;
+        const cities = await locationRepository.listCities(state.id);
+        for (const city of cities) {
+          const cityLabel = locName(city.name, locale);
+          if (cityLabel.toLowerCase().includes(needle) || city.code.includes(needle)) {
+            hits.push({
+              level: 'district',
+              code: city.code,
+              label: cityLabel,
+              path: [
+                worldCrumb,
+                { level: 'country', code: country.code, label: countryLabel },
+                { level: 'metro', code: state.code, label },
+                { level: 'district', code: city.code, label: cityLabel },
+              ],
+            });
+          }
+          if (hits.length > 40) break;
+        }
+        if (hits.length > 40) break;
+      }
+      if (hits.length > 40) break;
+    }
+
+    // Fallback static KR labels when DB hierarchy is empty.
+    if (hits.length < 5) {
+      for (const metro of LIVE_KR_METROS) {
+        const label = locale.startsWith('ko') ? metro.name.ko : metro.name.en;
+        if (label.toLowerCase().includes(needle) || metro.code.includes(needle)) {
+          hits.push({
+            level: 'metro',
+            code: metro.code,
+            label,
+            path: [
+              worldCrumb,
+              { level: 'country', code: 'KR', label: liveGeoLabel('country', 'KR', locale) },
+              { level: 'metro', code: metro.code, label },
+            ],
+          });
+        }
+      }
+      for (const [metroCode, districts] of Object.entries(LIVE_KR_DISTRICTS)) {
+        for (const district of districts) {
+          const label = locale.startsWith('ko') ? district.name.ko : district.name.en;
+          if (label.toLowerCase().includes(needle) || district.code.includes(needle)) {
+            hits.push({
+              level: 'district',
+              code: district.code,
+              label,
+              path: [
+                worldCrumb,
+                { level: 'country', code: 'KR', label: liveGeoLabel('country', 'KR', locale) },
+                {
+                  level: 'metro',
+                  code: metroCode,
+                  label: liveGeoLabel('metro', metroCode, locale),
+                },
+                { level: 'district', code: district.code, label },
+              ],
+            });
+          }
         }
       }
     }

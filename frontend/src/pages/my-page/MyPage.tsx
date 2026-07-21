@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon } from '@/components/icons/Icon';
@@ -8,6 +9,8 @@ import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallBu
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
+import { locationApi } from '@/api';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
 import { ROUTES } from '@/constants/routes';
@@ -40,6 +43,13 @@ export function MyPage() {
   const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
   const isAdmin = user?.roleCode === 'admin';
 
+  const locationQuery = useQuery({
+    queryKey: QUERY_KEYS.userLocation,
+    queryFn: async () => (await locationApi.getMine()).data.data,
+    enabled: Boolean(user),
+    staleTime: 60_000,
+  });
+
   const handleLogout = () => {
     clearCredentials();
     clearAuth();
@@ -66,8 +76,35 @@ export function MyPage() {
               <dt>{t('myPage.memberLevel')}</dt>
               <dd>{user?.roleCode || '—'}</dd>
             </div>
+            <div className="profile-card__row">
+              <dt>{t('myPage.location')}</dt>
+              <dd>
+                {locationQuery.data?.isSet
+                  ? locationQuery.data.label?.path || t('location.unset')
+                  : t('location.unset')}
+              </dd>
+            </div>
           </dl>
         </div>
+
+      {user && locationQuery.isFetched && !locationQuery.data?.isSet ? (
+        <section className="my-page-section">
+          <div className="card" style={{ padding: '1rem' }}>
+            <h3 className="my-page-section__title" style={{ marginTop: 0 }}>
+              {t('location.myPageNudgeTitle')}
+            </h3>
+            <p style={{ margin: '0.35rem 0 0.85rem', color: 'var(--color-text-muted)' }}>
+              {t('location.myPageNudgeDesc')}
+            </p>
+            <Link
+              to={`${ROUTES.SETTINGS}#location-settings`}
+              className="btn btn--primary btn--block"
+            >
+              {t('myPage.locationNudgeCta')}
+            </Link>
+          </div>
+        </section>
+      ) : null}
 
       <section className="my-page-section">
         <WorkoutReportSection />
@@ -91,6 +128,10 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
+          <ListNavLink
+            to={`${ROUTES.SETTINGS}#location-settings`}
+            label={t('myPage.location')}
+          />
           <ListNavLink to={ROUTES.NOTIFICATIONS} label={t('nav.notifications')} />
         </nav>
       </section>

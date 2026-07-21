@@ -74,5 +74,23 @@
     "forceDelete": "Force delete",
     "restored": "Restored.",
     "forceDeleted": "Permanently deleted."
+  },
+  "locations": {
+    "nav": "Locations",
+    "title": "Global Location admin",
+    "subtitle": "Add or edit countries, states, and cities. New rows appear in pickers without code changes.",
+    "addCountry": "Upsert country",
+    "addState": "Upsert state / province",
+    "addCity": "Upsert city",
+    "code": "Code",
+    "nameKo": "Name (Korean)",
+    "nameEn": "Name (English)",
+    "flag": "Flag emoji",
+    "timezone": "Default timezone",
+    "countryCode": "Country code",
+    "stateId": "State ID",
+    "saved": "Location data saved.",
+    "selectCountryFirst": "Select a country first.",
+    "selectStateFirst": "Select a state first."
   }
 }

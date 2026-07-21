@@ -55,6 +55,21 @@
   flex-wrap: wrap;
 }
 
+.gym-filters__region {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
+.gym-filters__region-title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--color-text-muted);
+}
+
 .gym-detail__photo {
   width: 100%;
   border-radius: var(--radius-md);

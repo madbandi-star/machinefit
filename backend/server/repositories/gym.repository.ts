@@ -132,6 +132,25 @@ export const gymRepository = {
       conditions.push(`g.country_id = $${idx++}`);
       params.push(query.countryId);
     }
+    if (query.countryCode) {
+      conditions.push(`EXISTS (
+        SELECT 1 FROM countries c_filter
+        WHERE c_filter.id = g.country_id AND UPPER(c_filter.code) = $${idx++}
+      )`);
+      params.push(query.countryCode.toUpperCase());
+    }
+    if (query.stateId) {
+      conditions.push(`g.state_id = $${idx++}`);
+      params.push(query.stateId);
+    }
+    if (query.cityId) {
+      conditions.push(`g.city_id = $${idx++}`);
+      params.push(query.cityId);
+    }
+    if (query.districtId) {
+      conditions.push(`g.district_id = $${idx++}`);
+      params.push(query.districtId);
+    }
     if (query.city) {
       conditions.push(`g.city ILIKE $${idx++}`);
       params.push(`%${query.city}%`);

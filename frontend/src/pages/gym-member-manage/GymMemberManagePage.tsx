@@ -5,8 +5,15 @@ import { PLAN_LIMITS, type UserGym, type GymMember } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import {
+  emptyLocationValue,
+  LocationPicker,
+  locationValueFromRef,
+  type LocationPickerValue,
+} from '@/components/location/LocationPicker';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/gym-manage.css';
@@ -18,6 +25,9 @@ interface GymFormState {
   name: string;
   address: string;
   brandName: string;
+  phone: string;
+  websiteUrl: string;
+  location: LocationPickerValue;
 }
 
 interface MemberFormState {
@@ -30,7 +40,14 @@ interface MemberFormState {
   memo: string;
 }
 
-const emptyGymForm = (): GymFormState => ({ name: '', address: '', brandName: '' });
+const emptyGymForm = (): GymFormState => ({
+  name: '',
+  address: '',
+  brandName: '',
+  phone: '',
+  websiteUrl: '',
+  location: emptyLocationValue(),
+});
 const emptyMemberForm = (): MemberFormState => ({
   name: '',
   email: '',
@@ -58,11 +75,19 @@ function gymToForm(gym: UserGym): GymFormState {
     name: gym.name,
     address: gym.address ?? '',
     brandName: gym.brandName ?? '',
+    phone: gym.phone ?? '',
+    websiteUrl: gym.websiteUrl ?? '',
+    location: locationValueFromRef(gym.location),
   };
+}
+
+function hasRequiredGymLocation(loc: LocationPickerValue): boolean {
+  return Boolean(loc.countryCode && loc.stateId && loc.cityId);
 }
 
 export function GymMemberManagePage() {
   const { t } = useTranslation(['gyms', 'common']);
+  const showToast = useUIStore((s) => s.showToast);
   const {
     gyms,
     activeGymId,
@@ -132,20 +157,40 @@ export function GymMemberManagePage() {
     event.preventDefault();
     const name = gymForm.name.trim();
     if (!name || gymSubmitting) return;
+    if (!hasRequiredGymLocation(gymForm.location)) {
+      showToast(t('gyms:manage.locationRequired'), 'error');
+      return;
+    }
     setGymSubmitting(true);
     try {
+      const locationPayload = {
+        countryCode: gymForm.location.countryCode,
+        stateId: gymForm.location.stateId,
+        cityId: gymForm.location.cityId,
+        districtId: gymForm.location.districtId,
+        postalCode: gymForm.location.postalCode || null,
+        latitude: gymForm.location.latitude,
+        longitude: gymForm.location.longitude,
+      };
       if (gymFormMode === 'create') {
         await createGym({
           name,
           address: gymForm.address.trim() || undefined,
           brandName: gymForm.brandName.trim() || undefined,
+          phone: gymForm.phone.trim() || undefined,
+          websiteUrl: gymForm.websiteUrl.trim() || undefined,
           setActive: true,
+          requireLocation: true,
+          ...locationPayload,
         });
       } else if (gymFormMode === 'edit' && editingGymId) {
         await updateGym(editingGymId, {
           name,
           address: gymForm.address.trim() || null,
           brandName: gymForm.brandName.trim() || null,
+          phone: gymForm.phone.trim() || null,
+          websiteUrl: gymForm.websiteUrl.trim() || null,
+          ...locationPayload,
         });
       }
       closeGymForm();
@@ -236,14 +281,6 @@ export function GymMemberManagePage() {
                 />
               </label>
               <label className="gym-manage-field">
-                <span>{t('gyms:selector.address')}</span>
-                <input
-                  value={gymForm.address}
-                  onChange={(e) => setGymForm((prev) => ({ ...prev, address: e.target.value }))}
-                  maxLength={500}
-                />
-              </label>
-              <label className="gym-manage-field">
                 <span>{t('gyms:selector.brand')}</span>
                 <input
                   value={gymForm.brandName}
@@ -251,11 +288,52 @@ export function GymMemberManagePage() {
                   maxLength={100}
                 />
               </label>
+              <div className="gym-manage-field">
+                <span>{t('gyms:manage.locationHeading')}</span>
+                <LocationPicker
+                  value={gymForm.location}
+                  onChange={(location) => setGymForm((prev) => ({ ...prev, location }))}
+                  showDistrict
+                  showPostal
+                  showGps
+                  required
+                />
+              </div>
+              <label className="gym-manage-field">
+                <span>{t('gyms:locationOptionalDetail')}</span>
+                <input
+                  value={gymForm.address}
+                  onChange={(e) => setGymForm((prev) => ({ ...prev, address: e.target.value }))}
+                  maxLength={500}
+                  placeholder={t('gyms:selector.address')}
+                />
+              </label>
+              <label className="gym-manage-field">
+                <span>{t('gyms:phone')}</span>
+                <input
+                  value={gymForm.phone}
+                  onChange={(e) => setGymForm((prev) => ({ ...prev, phone: e.target.value }))}
+                  maxLength={30}
+                />
+              </label>
+              <label className="gym-manage-field">
+                <span>{t('gyms:website')}</span>
+                <input
+                  value={gymForm.websiteUrl}
+                  onChange={(e) => setGymForm((prev) => ({ ...prev, websiteUrl: e.target.value }))}
+                  maxLength={500}
+                  placeholder="https://"
+                />
+              </label>
               <div className="gym-manage-form__actions">
                 <button
                   type="submit"
                   className="btn btn--primary"
-                  disabled={!gymForm.name.trim() || gymSubmitting}
+                  disabled={
+                    !gymForm.name.trim() ||
+                    gymSubmitting ||
+                    !hasRequiredGymLocation(gymForm.location)
+                  }
                 >
                   {t('gyms:selector.save')}
                 </button>
@@ -289,6 +367,9 @@ export function GymMemberManagePage() {
                       {gym.brandName ? (
                         <span className="gym-manage-item__meta">{gym.brandName}</span>
                       ) : null}
+                      <span className="gym-manage-item__meta">
+                        {gym.location?.label?.path || t('gyms:noLocationLabel')}
+                      </span>
                       {gym.address ? (
                         <span className="gym-manage-item__meta">{gym.address}</span>
                       ) : null}

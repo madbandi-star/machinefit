@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, WorkoutGoal } from '@machinefit/shared';
 import {
   REST_DURATION,
@@ -18,10 +18,16 @@ import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/Pro
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
+import {
+  emptyLocationValue,
+  LocationPicker,
+  type LocationPickerValue,
+} from '@/components/location/LocationPicker/LocationPicker';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
-import { userApi } from '@/api';
+import { locationApi, userApi } from '@/api';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
@@ -46,6 +52,7 @@ export function SettingsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const returnTo = (location.state as SettingsLocationState | null)?.returnTo;
+  const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
   const showToast = useUIStore((s) => s.showToast);
@@ -86,6 +93,65 @@ export function SettingsPage() {
   });
   const [draftUnitHeight, setDraftUnitHeight] = useState(unitHeight);
   const [draftUnitWeight, setDraftUnitWeight] = useState(unitWeight);
+  const [locationDraft, setLocationDraft] = useState<LocationPickerValue>(emptyLocationValue());
+
+  const locationQuery = useQuery({
+    queryKey: QUERY_KEYS.userLocation,
+    queryFn: async () => (await locationApi.getMine()).data.data,
+    enabled: Boolean(user),
+  });
+
+  useEffect(() => {
+    const loc = locationQuery.data;
+    if (!loc) return;
+    setLocationDraft({
+      countryCode: loc.countryCode,
+      stateId: loc.stateId,
+      cityId: loc.cityId,
+      districtId: loc.districtId,
+      postalCode: loc.postalCode ?? '',
+      latitude: loc.latitude ?? null,
+      longitude: loc.longitude ?? null,
+      visibility: loc.visibility,
+    });
+  }, [locationQuery.data]);
+
+  useEffect(() => {
+    if (location.hash !== '#location-settings') return;
+    const el = document.getElementById('location-settings');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location.hash, locationQuery.isFetched]);
+
+  const locationSaveMutation = useMutation({
+    mutationFn: () =>
+      locationApi.upsertMine({
+        countryCode: locationDraft.countryCode,
+        stateId: locationDraft.stateId,
+        cityId: locationDraft.cityId,
+        districtId: locationDraft.districtId,
+        postalCode: locationDraft.postalCode || null,
+        latitude: locationDraft.latitude,
+        longitude: locationDraft.longitude,
+        visibility: locationDraft.visibility ?? 'city',
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
+      showToast(t('location.saved'), 'success');
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
+
+  const locationClearMutation = useMutation({
+    mutationFn: () => locationApi.clearMine(),
+    onSuccess: async () => {
+      setLocationDraft(emptyLocationValue());
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
+      showToast(t('location.cleared'), 'success');
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
 
   useEffect(() => {
     if (user?.heightCm != null) setHeightCm(user.heightCm);
@@ -193,6 +259,43 @@ export function SettingsPage() {
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
+        </section>
+
+        <section className="form-section" id="location-settings">
+          <h3 className="form-section__title">{t('location.title')}</h3>
+          <p className="form-section__desc">{t('location.desc')}</p>
+          {!locationDraft.countryCode && (
+            <p className="form-section__desc">{t('location.nudge')}</p>
+          )}
+          <LocationPicker
+            value={locationDraft}
+            onChange={setLocationDraft}
+            showDistrict
+            showPostal
+            showVisibility
+            showGps
+            required={false}
+          />
+          <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
+            <button
+              type="button"
+              className="btn btn--primary btn--block"
+              onClick={() => locationSaveMutation.mutate()}
+              disabled={locationSaveMutation.isPending || !locationDraft.countryCode}
+            >
+              {locationSaveMutation.isPending
+                ? t('actions.save')
+                : t('location.save')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary btn--block"
+              onClick={() => locationClearMutation.mutate()}
+              disabled={locationClearMutation.isPending || !locationQuery.data?.isSet}
+            >
+              {t('location.clear')}
+            </button>
+          </div>
         </section>
 
         <section className="form-section">

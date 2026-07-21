@@ -61,7 +61,9 @@
     "removeGymTitle": "헬스장 삭제",
     "removeGymMessage": "{{name}} 헬스장을 삭제할까요? 해당 헬스장의 기록은 더 이상 조회할 수 없을 수 있습니다.",
     "removeMemberTitle": "회원 삭제",
-    "removeMemberMessage": "{{name}} 회원을 삭제할까요?"
+    "removeMemberMessage": "{{name}} 회원을 삭제할까요?",
+    "locationHeading": "위치 (필수)",
+    "locationRequired": "국가·시/도·도시는 필수입니다."
   },
   "premium": {
     "badge": "Premium",
@@ -138,5 +140,14 @@
     "paymentRequired": "결제 완료 후 신청할 수 있습니다.",
     "alreadyOwner": "이미 사장 권한이 있는 계정입니다.",
     "goDashboard": "사장 대시보드로 이동"
-  }
+  },
+  "locationRequired": "국가·시/도·도시는 필수입니다.",
+  "locationHeading": "위치 (필수)",
+  "locationOptionalDetail": "상세주소·연락처 (선택)",
+  "phone": "연락처 (선택)",
+  "website": "홈페이지 (선택)",
+  "filterCountry": "국가",
+  "filterState": "시/도",
+  "filterRegion": "지역으로 검색",
+  "noLocationLabel": "위치 미설정"
 }

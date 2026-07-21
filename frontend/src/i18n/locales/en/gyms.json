@@ -61,7 +61,9 @@
     "removeGymTitle": "Remove gym",
     "removeGymMessage": "Remove {{name}}? Records for this gym may no longer be available.",
     "removeMemberTitle": "Remove member",
-    "removeMemberMessage": "Remove member {{name}}?"
+    "removeMemberMessage": "Remove member {{name}}?",
+    "locationHeading": "Location (required)",
+    "locationRequired": "Country, state/province, and city are required."
   },
   "premium": {
     "badge": "Premium",
@@ -138,5 +140,14 @@
     "paymentRequired": "Complete payment before applying.",
     "alreadyOwner": "This account already has owner privileges.",
     "goDashboard": "Go to owner dashboard"
-  }
+  },
+  "locationRequired": "Country, state/province, and city are required.",
+  "locationHeading": "Location (required)",
+  "locationOptionalDetail": "Address & contact (optional)",
+  "phone": "Phone (optional)",
+  "website": "Website (optional)",
+  "filterCountry": "Country",
+  "filterState": "State / Province",
+  "filterRegion": "Search by region",
+  "noLocationLabel": "Location not set"
 }

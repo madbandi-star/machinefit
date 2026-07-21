@@ -15,6 +15,10 @@ export interface LiveScopeFilter {
 function geoWhere(filter: LiveScopeFilter, alias = 'ug'): { sql: string; params: unknown[] } {
   const params: unknown[] = [];
   const parts: string[] = [];
+  // Regional scopes only include gyms with a real (non-dummy) location.
+  if (filter.countryCode || filter.metroCode || filter.districtCode) {
+    parts.push(`${alias}.location_set = TRUE`);
+  }
   if (filter.countryCode) {
     params.push(filter.countryCode);
     parts.push(`${alias}.country_code = $${params.length}`);
@@ -87,6 +91,9 @@ export const liveDashboardRepository = {
       params.push(value);
       clauses.push(sql.replace('?', `$${params.length}`));
     };
+    if (filter.countryCode || filter.metroCode || filter.districtCode) {
+      clauses.push('ug.location_set = TRUE');
+    }
     if (filter.countryCode) add('ug.country_code = ?', filter.countryCode);
     if (filter.metroCode) add('ug.metro_code = ?', filter.metroCode);
     if (filter.districtCode) add('ug.district_code = ?', filter.districtCode);

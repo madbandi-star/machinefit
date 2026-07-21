@@ -146,19 +146,18 @@ export function useActiveGym() {
   );
 
   const createGym = useCallback(
-    async (input: {
-      name: string;
-      address?: string;
-      brandName?: string;
-      setActive?: boolean;
-      setDefault?: boolean;
-    }) => {
+    async (
+      input: Omit<CreateUserGymInput, 'setActive' | 'setDefault' | 'requireLocation'> & {
+        setActive?: boolean;
+        setDefault?: boolean;
+        requireLocation?: boolean;
+      }
+    ) => {
       const gym = await createMutation.mutateAsync({
-        name: input.name,
-        address: input.address || undefined,
-        brandName: input.brandName || undefined,
+        ...input,
         setActive: input.setActive ?? true,
         setDefault: input.setDefault ?? false,
+        requireLocation: input.requireLocation ?? true,
       });
       return gym.data.data as UserGym;
     },

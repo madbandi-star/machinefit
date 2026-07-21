@@ -1,0 +1,353 @@
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import type { LocationRef, LocationVisibility } from '@machinefit/shared';
+import { locationApi } from '@/api';
+import { QUERY_KEYS } from '@/constants/query-keys';
+import './LocationPicker.css';
+
+export interface LocationPickerValue {
+  countryCode: string | null;
+  stateId: string | null;
+  cityId: string | null;
+  districtId: string | null;
+  postalCode: string;
+  latitude: number | null;
+  longitude: number | null;
+  visibility?: LocationVisibility;
+}
+
+interface LocationPickerProps {
+  value: LocationPickerValue;
+  onChange: (value: LocationPickerValue) => void;
+  showDistrict?: boolean;
+  showPostal?: boolean;
+  showVisibility?: boolean;
+  showGps?: boolean;
+  required?: boolean;
+  disabled?: boolean;
+}
+
+function nameOf(name: { ko?: string; en?: string }, locale: string): string {
+  return locale.startsWith('ko') ? name.ko || name.en || '' : name.en || name.ko || '';
+}
+
+export function emptyLocationValue(): LocationPickerValue {
+  return {
+    countryCode: null,
+    stateId: null,
+    cityId: null,
+    districtId: null,
+    postalCode: '',
+    latitude: null,
+    longitude: null,
+    visibility: 'city',
+  };
+}
+
+export function locationValueFromRef(ref?: LocationRef | null): LocationPickerValue {
+  if (!ref?.countryCode) return emptyLocationValue();
+  return {
+    countryCode: ref.countryCode,
+    stateId: ref.stateId,
+    cityId: ref.cityId,
+    districtId: ref.districtId,
+    postalCode: ref.postalCode ?? '',
+    latitude: ref.latitude ?? null,
+    longitude: ref.longitude ?? null,
+    visibility: 'city',
+  };
+}
+
+export function LocationPicker({
+  value,
+  onChange,
+  showDistrict = true,
+  showPostal = true,
+  showVisibility = false,
+  showGps = true,
+  required = false,
+  disabled = false,
+}: LocationPickerProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
+  const [query, setQuery] = useState('');
+  const [gpsBusy, setGpsBusy] = useState(false);
+  const [gpsError, setGpsError] = useState('');
+
+  const countriesQuery = useQuery({
+    queryKey: QUERY_KEYS.locationCountries,
+    queryFn: async () => (await locationApi.countries()).data.data,
+    staleTime: 300_000,
+  });
+
+  const statesQuery = useQuery({
+    queryKey: QUERY_KEYS.locationStates(value.countryCode ?? ''),
+    queryFn: async () => (await locationApi.states(value.countryCode!)).data.data,
+    enabled: Boolean(value.countryCode),
+    staleTime: 300_000,
+  });
+
+  const citiesQuery = useQuery({
+    queryKey: QUERY_KEYS.locationCities(value.stateId ?? ''),
+    queryFn: async () => (await locationApi.cities(value.stateId!)).data.data,
+    enabled: Boolean(value.stateId),
+    staleTime: 300_000,
+  });
+
+  const districtsQuery = useQuery({
+    queryKey: QUERY_KEYS.locationDistricts(value.cityId ?? ''),
+    queryFn: async () => (await locationApi.districts(value.cityId!)).data.data,
+    enabled: Boolean(showDistrict && value.cityId),
+    staleTime: 300_000,
+  });
+
+  const filteredCountries = useMemo(() => {
+    const list = countriesQuery.data ?? [];
+    const q = query.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((c) => {
+      const n = nameOf(c.name, locale).toLowerCase();
+      return n.includes(q) || c.code.toLowerCase().includes(q);
+    });
+  }, [countriesQuery.data, locale, query]);
+
+  useEffect(() => {
+    if (!value.countryCode) return;
+    // Reset dependent fields when parent changes externally without children.
+  }, [value.countryCode]);
+
+  const pathLabel = useMemo(() => {
+    const country = countriesQuery.data?.find((c) => c.code === value.countryCode);
+    const state = statesQuery.data?.find((s) => s.id === value.stateId);
+    const city = citiesQuery.data?.find((c) => c.id === value.cityId);
+    const district = districtsQuery.data?.find((d) => d.id === value.districtId);
+    const parts = [
+      country ? `${country.flagEmoji ?? ''} ${nameOf(country.name, locale)}`.trim() : null,
+      state ? nameOf(state.name, locale) : null,
+      city ? nameOf(city.name, locale) : null,
+      district ? nameOf(district.name, locale) : null,
+    ].filter(Boolean);
+    return parts.join(' > ');
+  }, [
+    countriesQuery.data,
+    statesQuery.data,
+    citiesQuery.data,
+    districtsQuery.data,
+    value,
+    locale,
+  ]);
+
+  const handleGps = () => {
+    setGpsError('');
+    if (!navigator.geolocation) {
+      setGpsError(t('location.gpsUnsupported'));
+      return;
+    }
+    setGpsBusy(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await locationApi.reverseGeocode({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          });
+          const hit = res.data.data;
+          if (!hit?.countryCode) {
+            setGpsError(t('location.gpsNoMatch'));
+            return;
+          }
+          onChange({
+            ...value,
+            countryCode: hit.countryCode,
+            stateId: hit.stateId,
+            cityId: hit.cityId,
+            districtId: hit.districtId,
+            latitude: hit.latitude ?? pos.coords.latitude,
+            longitude: hit.longitude ?? pos.coords.longitude,
+          });
+        } catch {
+          setGpsError(t('location.gpsFailed'));
+        } finally {
+          setGpsBusy(false);
+        }
+      },
+      () => {
+        setGpsBusy(false);
+        setGpsError(t('location.gpsDenied'));
+      },
+      { enableHighAccuracy: false, timeout: 12000 }
+    );
+  };
+
+  return (
+    <div className={`location-picker${disabled ? ' is-disabled' : ''}`}>
+      {pathLabel && <p className="location-picker__path">{pathLabel}</p>}
+
+      <label className="location-picker__field">
+        <span>
+          {t('location.country')}
+          {required ? ' *' : ''}
+        </span>
+        <input
+          className="input"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('location.searchCountry')}
+          disabled={disabled}
+        />
+        <select
+          className="input"
+          value={value.countryCode ?? ''}
+          disabled={disabled}
+          onChange={(e) => {
+            const code = e.target.value || null;
+            onChange({
+              ...value,
+              countryCode: code,
+              stateId: null,
+              cityId: null,
+              districtId: null,
+            });
+          }}
+        >
+          <option value="">{t('location.selectCountry')}</option>
+          {filteredCountries.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.flagEmoji ? `${c.flagEmoji} ` : ''}
+              {nameOf(c.name, locale)} ({c.code})
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="location-picker__field">
+        <span>
+          {t('location.state')}
+          {required ? ' *' : ''}
+        </span>
+        <select
+          className="input"
+          value={value.stateId ?? ''}
+          disabled={disabled || !value.countryCode}
+          onChange={(e) => {
+            onChange({
+              ...value,
+              stateId: e.target.value || null,
+              cityId: null,
+              districtId: null,
+            });
+          }}
+        >
+          <option value="">{t('location.selectState')}</option>
+          {(statesQuery.data ?? []).map((s) => (
+            <option key={s.id} value={s.id}>
+              {nameOf(s.name, locale)}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="location-picker__field">
+        <span>
+          {t('location.city')}
+          {required ? ' *' : ''}
+        </span>
+        <select
+          className="input"
+          value={value.cityId ?? ''}
+          disabled={disabled || !value.stateId}
+          onChange={(e) => {
+            onChange({
+              ...value,
+              cityId: e.target.value || null,
+              districtId: null,
+            });
+          }}
+        >
+          <option value="">{t('location.selectCity')}</option>
+          {(citiesQuery.data ?? []).map((c) => (
+            <option key={c.id} value={c.id}>
+              {nameOf(c.name, locale)}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      {showDistrict && (
+        <label className="location-picker__field">
+          <span>{t('location.district')}</span>
+          <select
+            className="input"
+            value={value.districtId ?? ''}
+            disabled={disabled || !value.cityId}
+            onChange={(e) =>
+              onChange({
+                ...value,
+                districtId: e.target.value || null,
+              })
+            }
+          >
+            <option value="">{t('location.selectDistrict')}</option>
+            {(districtsQuery.data ?? []).map((d) => (
+              <option key={d.id} value={d.id}>
+                {nameOf(d.name, locale)}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      {showPostal && (
+        <label className="location-picker__field">
+          <span>{t('location.postal')}</span>
+          <input
+            className="input"
+            value={value.postalCode}
+            disabled={disabled}
+            onChange={(e) => onChange({ ...value, postalCode: e.target.value })}
+            placeholder={t('location.postalPlaceholder')}
+          />
+        </label>
+      )}
+
+      {showVisibility && (
+        <label className="location-picker__field">
+          <span>{t('location.visibility')}</span>
+          <select
+            className="input"
+            value={value.visibility ?? 'city'}
+            disabled={disabled}
+            onChange={(e) =>
+              onChange({
+                ...value,
+                visibility: e.target.value as LocationVisibility,
+              })
+            }
+          >
+            <option value="hidden">{t('location.visibilityHidden')}</option>
+            <option value="country">{t('location.visibilityCountry')}</option>
+            <option value="city">{t('location.visibilityCity')}</option>
+            <option value="gym">{t('location.visibilityGym')}</option>
+          </select>
+        </label>
+      )}
+
+      {showGps && (
+        <div className="location-picker__gps">
+          <button
+            type="button"
+            className="btn btn--secondary btn--block"
+            disabled={disabled || gpsBusy}
+            onClick={handleGps}
+          >
+            {gpsBusy ? t('location.gpsLoading') : t('location.useCurrent')}
+          </button>
+          {gpsError && <p className="location-picker__error">{gpsError}</p>}
+          <p className="location-picker__hint">{t('location.gpsHint')}</p>
+        </div>
+      )}
+    </div>
+  );
+}

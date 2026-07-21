@@ -6,6 +6,11 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { GymCard } from '@/components/cards/GymCard/GymCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import {
+  emptyLocationValue,
+  LocationPicker,
+  type LocationPickerValue,
+} from '@/components/location/LocationPicker';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi, machineApi } from '@/api';
 import { SearchableSelect } from '@/components/form/SearchableSelect/SearchableSelect';
@@ -20,8 +25,14 @@ export function GymFinderPage() {
   const showToast = useUIStore((s) => s.showToast);
 
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
-  const [city, setCity] = useState(searchParams.get('city') ?? '');
   const [machineCode, setMachineCode] = useState(searchParams.get('machineCode') ?? '');
+  const [region, setRegion] = useState<LocationPickerValue>(() => ({
+    ...emptyLocationValue(),
+    countryCode: searchParams.get('countryCode'),
+    stateId: searchParams.get('stateId'),
+    cityId: searchParams.get('cityId'),
+    districtId: searchParams.get('districtId'),
+  }));
   const [nearbyCoords, setNearbyCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
 
@@ -34,7 +45,16 @@ export function GymFinderPage() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.gyms, query, city, machineCode, nearbyCoords],
+    queryKey: [
+      ...QUERY_KEYS.gyms,
+      query,
+      machineCode,
+      region.countryCode,
+      region.stateId,
+      region.cityId,
+      region.districtId,
+      nearbyCoords,
+    ],
     queryFn: async () => {
       if (nearbyCoords) {
         const res = await gymApi.nearby(nearbyCoords.lat, nearbyCoords.lng, {
@@ -45,8 +65,11 @@ export function GymFinderPage() {
       }
       const params: Record<string, string | number> = { limit: 20 };
       if (query) params.q = query;
-      if (city) params.city = city;
       if (machineCode) params.machineCode = machineCode;
+      if (region.countryCode) params.countryCode = region.countryCode;
+      if (region.stateId) params.stateId = region.stateId;
+      if (region.cityId) params.cityId = region.cityId;
+      if (region.districtId) params.districtId = region.districtId;
       const res = await gymApi.list(params);
       return res.data.data;
     },
@@ -83,8 +106,11 @@ export function GymFinderPage() {
     setNearbyCoords(null);
     const params = new URLSearchParams();
     if (query) params.set('q', query);
-    if (city) params.set('city', city);
     if (machineCode) params.set('machineCode', machineCode);
+    if (region.countryCode) params.set('countryCode', region.countryCode);
+    if (region.stateId) params.set('stateId', region.stateId);
+    if (region.cityId) params.set('cityId', region.cityId);
+    if (region.districtId) params.set('districtId', region.districtId);
     setSearchParams(params);
   };
 
@@ -97,14 +123,19 @@ export function GymFinderPage() {
           onSubmit={handleSearch}
           placeholder={t('searchPlaceholder')}
         />
-        <div className="gym-filters__row">
-          <input
-            className="input"
-            style={{ flex: 1, minWidth: 120 }}
-            placeholder={t('filterCity')}
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+        <div className="gym-filters__region">
+          <p className="gym-filters__region-title">{t('filterRegion')}</p>
+          <LocationPicker
+            value={region}
+            onChange={setRegion}
+            showDistrict
+            showPostal={false}
+            showVisibility={false}
+            showGps={false}
+            required={false}
           />
+        </div>
+        <div className="gym-filters__row">
           <SearchableSelect
             value={machineCode}
             options={machineSelectOptions}
@@ -123,7 +154,7 @@ export function GymFinderPage() {
             onClick={handleNearMe}
             disabled={locating}
           >
-            📍 {locating ? t('locating') : t('nearMe')}
+            {locating ? t('locating') : t('nearMe')}
           </button>
           {nearbyCoords && (
             <button
