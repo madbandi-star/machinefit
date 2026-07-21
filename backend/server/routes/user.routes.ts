@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as userController from '../controllers/user.controller.js';
 import * as userGymController from '../controllers/user-gym.controller.js';
 import * as gymMemberController from '../controllers/gym-member.controller.js';
+import * as liftedVolumeController from '../controllers/lifted-volume.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 export const userRouter = Router();
@@ -23,3 +24,6 @@ userRouter.delete('/me/gyms/:gymId/members/:memberId', authMiddleware, gymMember
 
 userRouter.get('/me/member-profile-requests', authMiddleware, gymMemberController.listPendingProfileRequests);
 userRouter.post('/me/member-profile-requests/:id/respond', authMiddleware, gymMemberController.respondToProfileRequest);
+
+userRouter.get('/me/lifted-weight', authMiddleware, liftedVolumeController.getLiftedSnapshot);
+userRouter.get('/me/lifted-weight/rankings', authMiddleware, liftedVolumeController.getLiftedRankings);

@@ -20,6 +20,10 @@ import type {
   UpdateUserGymInput,
   GymMember,
   GymMemberProfileRequest,
+  LiftedWeightSnapshot,
+  LiftedRankingResponse,
+  LiftedScopeMode,
+  LiftedRankingBoard,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -372,6 +376,15 @@ export const memberProfileRequestApi = {
       `/users/me/member-profile-requests/${id}/respond`,
       { status }
     ),
+};
+
+export const liftedWeightApi = {
+  snapshot: (params: { mode: LiftedScopeMode; gymId?: string }) =>
+    apiClient.get<ApiResponse<LiftedWeightSnapshot>>('/users/me/lifted-weight', { params }),
+  rankings: (params: { board: LiftedRankingBoard; gymId?: string; limit?: number }) =>
+    apiClient.get<ApiResponse<LiftedRankingResponse>>('/users/me/lifted-weight/rankings', {
+      params,
+    }),
 };
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
