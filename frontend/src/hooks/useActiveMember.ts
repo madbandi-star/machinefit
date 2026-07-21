@@ -149,6 +149,8 @@ export function useActiveMember() {
     activeMemberId: activeMember?.id ?? resolvedMemberId,
     isLoading,
     isRealGym,
+    /** Ready to fetch member-scoped favorites / records data. */
+    memberScopeReady: !isRealGym || Boolean(resolvedMemberId),
     selectMember,
     createMember,
     updateMember,

@@ -8,20 +8,23 @@ import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/home.css';
 
 export function FavoriteMachinesRow() {
   const { t } = useTranslation();
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.favorites(activeGymId ?? ''),
+    queryKey: QUERY_KEYS.favorites(activeGymId ?? '', memberKey),
     queryFn: async () => {
-      const res = await favoriteApi.list(activeGymId!);
+      const res = await favoriteApi.list(activeGymId!, activeMemberId ?? undefined);
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   return (
@@ -34,7 +37,7 @@ export function FavoriteMachinesRow() {
           </Link>
         )}
       </div>
-      {isLoading ? (
+      {isLoading || !memberScopeReady ? (
         <Skeleton count={1} height={76} />
       ) : !data?.length ? (
         <HomeSectionEmptyPrompt

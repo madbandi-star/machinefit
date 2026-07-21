@@ -28,7 +28,7 @@ const NAV_ITEMS: {
   { to: ROUTES.MY_PAGE, icon: 'user', labelKey: 'nav.myPage', requireAuth: true },
 ];
 
-function prefetchForRoute(to: string, gymId: string | null, isAuthenticated: boolean) {
+function prefetchForRoute(to: string, gymId: string | null, memberId: string | null, isAuthenticated: boolean) {
   if (to === ROUTES.MACHINES) {
     void queryClient.prefetchQuery({
       queryKey: QUERY_KEYS.brands,
@@ -54,8 +54,8 @@ function prefetchForRoute(to: string, gymId: string | null, isAuthenticated: boo
       staleTime: 60_000,
     });
     void queryClient.prefetchQuery({
-      queryKey: QUERY_KEYS.favorites(gymId),
-      queryFn: async () => (await favoriteApi.list(gymId)).data.data,
+      queryKey: QUERY_KEYS.favorites(gymId, memberId ?? ''),
+      queryFn: async () => (await favoriteApi.list(gymId, memberId ?? undefined)).data.data,
       staleTime: 60_000,
     });
   }
@@ -67,13 +67,14 @@ export function BottomNavigation() {
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const gymId = useGymStore((s) => s.activeGymId);
+  const memberId = useGymStore((s) => s.activeMemberId);
 
   const handleNavClick = (
     event: MouseEvent<HTMLAnchorElement>,
     requireAuth: boolean,
     to: string
   ) => {
-    prefetchForRoute(to, gymId, isAuthenticated);
+    prefetchForRoute(to, gymId, memberId, isAuthenticated);
     if (requireAuth && !isAuthenticated) {
       event.preventDefault();
       navigate(ROUTES.LOGIN, { state: { from: location } });
@@ -87,8 +88,8 @@ export function BottomNavigation() {
           key={to}
           to={to}
           onClick={(e) => handleNavClick(e, requireAuth, to)}
-          onMouseEnter={() => prefetchForRoute(to, gymId, isAuthenticated)}
-          onTouchStart={() => prefetchForRoute(to, gymId, isAuthenticated)}
+          onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
+          onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
           className={({ isActive }) =>
             ['bottom-nav__item', isActive ? 'bottom-nav__item--active' : '']
               .filter(Boolean)

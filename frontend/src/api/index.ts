@@ -251,19 +251,22 @@ export const userGymApi = {
 };
 
 export const favoriteApi = {
-  list: (gymId: string) =>
-    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', { params: { gymId } }),
-  add: (gymId: string, machineCode: string, recommendationId?: string) =>
+  list: (gymId: string, memberId?: string) =>
+    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', {
+      params: { gymId, ...(memberId ? { memberId } : {}) },
+    }),
+  add: (gymId: string, memberId: string, machineCode: string, recommendationId?: string) =>
     apiClient.post<ApiResponse<FavoriteItem>>('/favorites', {
       gymId,
+      memberId,
       machineCode,
       recommendationId,
     }),
   remove: (id: string) => apiClient.delete(`/favorites/${id}`),
-  check: (gymId: string, machineCode: string) =>
+  check: (gymId: string, machineCode: string, memberId?: string) =>
     apiClient.get<ApiResponse<{ favorited: boolean; favoriteId?: string }>>(
       `/favorites/check/${machineCode}`,
-      { params: { gymId } }
+      { params: { gymId, ...(memberId ? { memberId } : {}) } }
     ),
 };
 

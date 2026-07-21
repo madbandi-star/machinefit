@@ -8,9 +8,9 @@ export const QUERY_KEYS = {
   gymInventory: (id: string, params?: { brandCode?: string; q?: string }) =>
     ['gyms', id, 'inventory', params ?? {}] as const,
   recommendations: ['recommendations'] as const,
-  favorites: (gymId: string) => ['favorites', gymId] as const,
-  favoriteCheck: (gymId: string, machineCode: string) =>
-    ['favorites', gymId, 'check', machineCode] as const,
+  favorites: (gymId: string, memberId = '') => ['favorites', gymId, memberId] as const,
+  favoriteCheck: (gymId: string, machineCode: string, memberId = '') =>
+    ['favorites', gymId, memberId, 'check', machineCode] as const,
   history: ['history'] as const,
   historyList: (gymId: string, params?: { limit?: number; from?: string; to?: string }) =>
     ['history', gymId, 'list', params ?? {}] as const,
