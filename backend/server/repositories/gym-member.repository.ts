@@ -69,7 +69,7 @@ export const gymMemberRepository = {
     if (!pool) return [];
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT * FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 ORDER BY is_self DESC, created_at ASC`,
+      `SELECT * FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 ORDER BY created_at ASC`,
       [gymId, ownerUserId]
     );
     return result.rows.map(mapMember);

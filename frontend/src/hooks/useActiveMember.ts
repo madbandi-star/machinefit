@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isAllGymsId } from '@machinefit/shared';
@@ -34,7 +34,7 @@ export function useActiveMember() {
   const isRealGym = Boolean(activeGymId) && !isAllGymsId(activeGymId);
   const membersKey = QUERY_KEYS.userGymMembers(activeGymId ?? '');
 
-  const { data: members = [], isLoading } = useQuery({
+  const { data: membersRaw = [], isLoading } = useQuery({
     queryKey: membersKey,
     queryFn: async () => {
       const res = await gymMemberApi.list(activeGymId!);
@@ -44,9 +44,29 @@ export function useActiveMember() {
     staleTime: 30_000,
   });
 
-  const selfMember = members.find((m) => m.isSelf);
-  const resolvedMemberId = activeMemberId ?? selfMember?.id ?? null;
-  const activeMember = members.find((m) => m.id === resolvedMemberId) ?? null;
+  // Registration order: earliest created first
+  const members = useMemo(
+    () =>
+      [...membersRaw].sort((left, right) =>
+        left.createdAt.localeCompare(right.createdAt)
+      ),
+    [membersRaw]
+  );
+
+  const defaultMember = members[0] ?? null;
+  const storedMemberValid =
+    Boolean(activeMemberId) && members.some((member) => member.id === activeMemberId);
+  const resolvedMemberId = storedMemberValid
+    ? activeMemberId
+    : (defaultMember?.id ?? null);
+  const activeMember = members.find((member) => member.id === resolvedMemberId) ?? null;
+
+  // Persist default (first registered) when none selected or selection is invalid for this gym
+  useEffect(() => {
+    if (!isRealGym || !resolvedMemberId) return;
+    if (activeMemberId === resolvedMemberId) return;
+    setActiveMemberId(resolvedMemberId);
+  }, [activeMemberId, isRealGym, resolvedMemberId, setActiveMemberId]);
 
   const createMutation = useMutation({
     mutationFn: (input: CreateGymMemberInput) => gymMemberApi.create(activeGymId!, input),

@@ -46,9 +46,11 @@ export function MemberSelector() {
 
   if (!isAuthenticated || !isRealGym) return null;
 
-  const label = activeMember
-    ? `${activeMember.name}${activeMember.isSelf ? ` (${t('gyms:members.self')})` : ''}`
-    : t('gyms:members.selectMember');
+  const label = isLoading
+    ? '…'
+    : activeMember?.name?.trim()
+      ? `${activeMember.name}${activeMember.isSelf ? ` (${t('gyms:members.self')})` : ''}`
+      : t('gyms:members.selectMember');
 
   const handleSelect = (memberId: string) => {
     selectMember(memberId);
