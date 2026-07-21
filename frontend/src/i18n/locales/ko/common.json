@@ -600,6 +600,7 @@
   },
   "workoutReport": {
     "title": "운동 리포트 이메일",
+    "allGymsNote": "(전체 리포트)",
     "desc": "선택한 기간의 운동 기록 요약을 이메일로 받습니다.",
     "periodLabel": "리포트 기간",
     "periods": {

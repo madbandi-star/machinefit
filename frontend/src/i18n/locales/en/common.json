@@ -600,6 +600,7 @@
   },
   "workoutReport": {
     "title": "Workout report email",
+    "allGymsNote": "(All gyms report)",
     "desc": "Receive a summary of your workout logs for the selected period.",
     "periodLabel": "Report period",
     "periods": {

@@ -10,6 +10,7 @@ import {
   useDailyBriefing,
 } from '@/components/home/DailyBriefingModal/DailyBriefingModal';
 import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
+import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
@@ -29,6 +30,7 @@ export function HomePage() {
       {isAuthenticated && (
         <div className="home-gym-selector">
           <GymSelector />
+          <MemberSelector />
         </div>
       )}
 

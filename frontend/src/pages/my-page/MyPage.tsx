@@ -7,6 +7,7 @@ import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
+import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
 import { ROUTES } from '@/constants/routes';
@@ -76,6 +77,8 @@ export function MyPage() {
       <section className="my-page-section">
         <WorkoutReportSection />
       </section>
+
+      <MemberProfileRequests />
 
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>

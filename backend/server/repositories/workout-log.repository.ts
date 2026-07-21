@@ -5,6 +5,7 @@ import { pickLocalized } from '../utils/localize.util.js';
 interface WorkoutLogRow {
   id: string;
   gym_id: string;
+  member_id: string;
   machine_code: string;
   machine_name: Record<string, string>;
   brand_name: Record<string, string> | null;
@@ -37,6 +38,7 @@ function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
   return {
     id: row.id,
     gymId: row.gym_id,
+    memberId: row.member_id,
     machineCode: row.machine_code,
     machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
     brandName: row.brand_name
@@ -59,7 +61,7 @@ function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
   };
 }
 
-const SELECT_FIELDS = `wl.id, wl.gym_id, wl.recommendation_id, wl.log_date, wl.target_muscle_group, wl.set_count, wl.set_weights_kg,
+const SELECT_FIELDS = `wl.id, wl.gym_id, wl.member_id, wl.recommendation_id, wl.log_date, wl.target_muscle_group, wl.set_count, wl.set_weights_kg,
               wl.set_completed, wl.diary, wl.created_at, wl.updated_at,
               m.code AS machine_code, m.name AS machine_name, b.name AS brand_name`;
 
@@ -72,18 +74,26 @@ export const workoutLogRepository = {
     gymId: string,
     machineId: string,
     logDate: string,
-    targetMuscleGroup = ''
+    targetMuscleGroup = '',
+    memberId?: string
   ): Promise<WorkoutLog | null> {
     const pool = getPool();
     if (!pool) return null;
+
+    const params: unknown[] = [userId, gymId, machineId, logDate, targetMuscleGroup];
+    let memberFilter = '';
+    if (memberId) {
+      params.push(memberId);
+      memberFilter = ` AND wl.member_id = $${params.length}`;
+    }
 
     const result = await pool.query<WorkoutLogRow>(
       `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
        ${MACHINE_JOINS}
        WHERE wl.user_id = $1 AND wl.gym_id = $2 AND wl.machine_id = $3 AND wl.log_date = $4::date
-         AND wl.target_muscle_group = $5`,
-      [userId, gymId, machineId, logDate, targetMuscleGroup]
+         AND wl.target_muscle_group = $5${memberFilter}`,
+      params
     );
 
     const row = result.rows[0];
@@ -94,6 +104,8 @@ export const workoutLogRepository = {
     userId: string,
     options: {
       gymId: string;
+      gymIds?: string[] | null;
+      memberId?: string;
       machineId?: string;
       logDate?: string;
       from?: string;
@@ -106,8 +118,28 @@ export const workoutLogRepository = {
     const pool = getPool();
     if (!pool) return [];
 
-    const params: unknown[] = [userId, options.gymId];
-    let filters = ' AND wl.gym_id = $2';
+    const params: unknown[] = [userId];
+    let gymFilter: string;
+
+    // Support 'all' via pre-resolved gymIds array
+    if (options.gymIds !== undefined) {
+      if (options.gymIds === null || options.gymIds.length === 0) {
+        // No gyms owned — return empty
+        return [];
+      }
+      params.push(options.gymIds);
+      gymFilter = ` AND wl.gym_id = ANY($${params.length}::uuid[])`;
+    } else {
+      params.push(options.gymId);
+      gymFilter = ` AND wl.gym_id = $${params.length}`;
+    }
+
+    let filters = gymFilter;
+
+    if (options.memberId) {
+      params.push(options.memberId);
+      filters += ` AND wl.member_id = $${params.length}`;
+    }
 
     if (options.machineId) {
       params.push(options.machineId);
@@ -154,6 +186,7 @@ export const workoutLogRepository = {
   async upsert(
     userId: string,
     gymId: string,
+    memberId: string,
     machineId: string,
     data: {
       recommendationId?: string;
@@ -175,11 +208,11 @@ export const workoutLogRepository = {
 
     const result = await pool.query<WorkoutLogRow>(
       `INSERT INTO workout_logs (
-         user_id, gym_id, machine_id, recommendation_id, log_date, target_muscle_group,
+         user_id, gym_id, member_id, machine_id, recommendation_id, log_date, target_muscle_group,
          set_count, set_weights_kg, set_completed, diary
        )
-       VALUES ($1, $2, $3, $4, $5::date, $6, $7, $8::jsonb, $9::jsonb, $10)
-       ON CONFLICT (user_id, gym_id, machine_id, log_date, target_muscle_group)
+       VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9::jsonb, $10::jsonb, $11)
+       ON CONFLICT (user_id, gym_id, member_id, machine_id, log_date, target_muscle_group)
        DO UPDATE SET
          set_count = EXCLUDED.set_count,
          set_weights_kg = EXCLUDED.set_weights_kg,
@@ -187,13 +220,14 @@ export const workoutLogRepository = {
          diary = EXCLUDED.diary,
          recommendation_id = COALESCE(EXCLUDED.recommendation_id, workout_logs.recommendation_id),
          updated_at = NOW()
-       RETURNING id, gym_id, recommendation_id, log_date, target_muscle_group, set_count, set_weights_kg, set_completed, diary,
+       RETURNING id, gym_id, member_id, recommendation_id, log_date, target_muscle_group, set_count, set_weights_kg, set_completed, diary,
                  created_at, updated_at,
-                 (SELECT code FROM machines WHERE id = $3) AS machine_code,
-                 (SELECT name FROM machines WHERE id = $3) AS machine_name`,
+                 (SELECT code FROM machines WHERE id = $4) AS machine_code,
+                 (SELECT name FROM machines WHERE id = $4) AS machine_name`,
       [
         userId,
         gymId,
+        memberId,
         machineId,
         data.recommendationId ?? null,
         data.logDate,
@@ -213,6 +247,7 @@ export const workoutLogRepository = {
   async deleteByUserMachineDate(
     userId: string,
     gymId: string,
+    memberId: string,
     machineId: string,
     logDate: string,
     targetMuscleGroup = ''
@@ -222,9 +257,9 @@ export const workoutLogRepository = {
 
     const result = await pool.query(
       `DELETE FROM workout_logs
-       WHERE user_id = $1 AND gym_id = $2 AND machine_id = $3 AND log_date = $4::date
-         AND target_muscle_group = $5`,
-      [userId, gymId, machineId, logDate, targetMuscleGroup]
+       WHERE user_id = $1 AND gym_id = $2 AND member_id = $3 AND machine_id = $4 AND log_date = $5::date
+         AND target_muscle_group = $6`,
+      [userId, gymId, memberId, machineId, logDate, targetMuscleGroup]
     );
 
     return (result.rowCount ?? 0) > 0;

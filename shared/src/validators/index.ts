@@ -10,3 +10,5 @@ export * from './workout.schema.js';
 export * from './machine-preference.schema.js';
 export * from './motivation-media.schema.js';
 export * from './user-gym.schema.js';
+export * from './gym-member.schema.js';
+export * from './gym-scope.schema.js';

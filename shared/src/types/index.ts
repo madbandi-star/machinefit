@@ -11,3 +11,4 @@ export * from './workout-insights.types.js';
 export * from './machine-preferences.types.js';
 export * from './motivation-media.types.js';
 export * from './user-gym.types.js';
+export * from './gym-member.types.js';

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown } from 'lucide-react';
+import { ALL_GYMS_ID, isAllGymsId, PLAN_LIMITS } from '@machinefit/shared';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useAuthStore } from '@/store/auth.store';
 import './GymSelector.css';
@@ -17,6 +18,11 @@ export function GymSelector() {
   const [submitting, setSubmitting] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
+
+  const isAllGyms = isAllGymsId(activeGymId);
+  const freePlanMaxGyms = PLAN_LIMITS.free.maxGyms;
+  const premiumPlanMaxGyms = PLAN_LIMITS.premium.maxGyms;
+  const atFreeLimit = gyms.length >= freePlanMaxGyms;
 
   useEffect(() => {
     if (!open) return;
@@ -42,7 +48,9 @@ export function GymSelector() {
 
   if (!isAuthenticated) return null;
 
-  const label = activeGym?.name ?? t('selector.currentGym');
+  const label = isAllGyms
+    ? t('gyms:selector.allGyms')
+    : (activeGym?.name ?? t('gyms:selector.currentGym'));
 
   const handleSelect = async (gymId: string) => {
     if (gymId === activeGymId) {
@@ -84,7 +92,7 @@ export function GymSelector() {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={menuId}
-        aria-label={t('selector.currentGym')}
+        aria-label={t('gyms:selector.currentGym')}
         disabled={isLoading}
         onClick={() => setOpen((prev) => !prev)}
       >
@@ -100,6 +108,19 @@ export function GymSelector() {
       {open && (
         <div className="gym-selector__menu" id={menuId} role="listbox">
           <ul className="gym-selector__list">
+            {/* All Gyms sentinel */}
+            <li>
+              <button
+                type="button"
+                role="option"
+                aria-selected={isAllGyms}
+                className={`gym-selector__option${isAllGyms ? ' gym-selector__option--active' : ''}`}
+                onClick={() => void handleSelect(ALL_GYMS_ID)}
+              >
+                <span className="gym-selector__option-name">{t('gyms:selector.allGyms')}</span>
+                <span className="gym-selector__option-meta">{t('gyms:selector.allGymsDesc')}</span>
+              </button>
+            </li>
             {gyms.map((gym) => (
               <li key={gym.id}>
                 <button
@@ -119,17 +140,29 @@ export function GymSelector() {
           </ul>
 
           {!showForm ? (
-            <button
-              type="button"
-              className="gym-selector__add"
-              onClick={() => setShowForm(true)}
-            >
-              {t('selector.addGym')}
-            </button>
+            <div>
+              {atFreeLimit && (
+                <p className="gym-selector__limit-hint">
+                  {t('gyms:selector.planLimit', { max: freePlanMaxGyms })}
+                </p>
+              )}
+              <button
+                type="button"
+                className="gym-selector__add"
+                onClick={() => setShowForm(true)}
+              >
+                {t('gyms:selector.addGym')}
+              </button>
+              {atFreeLimit && (
+                <p className="gym-selector__upgrade-hint">
+                  {t('gyms:selector.upgradeForMore', { max: premiumPlanMaxGyms })}
+                </p>
+              )}
+            </div>
           ) : (
             <form className="gym-selector__form" onSubmit={(e) => void handleCreate(e)}>
               <label className="gym-selector__field">
-                <span>{t('selector.gymName')}</span>
+                <span>{t('gyms:selector.gymName')}</span>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -139,7 +172,7 @@ export function GymSelector() {
                 />
               </label>
               <label className="gym-selector__field">
-                <span>{t('selector.address')}</span>
+                <span>{t('gyms:selector.address')}</span>
                 <input
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -147,7 +180,7 @@ export function GymSelector() {
                 />
               </label>
               <label className="gym-selector__field">
-                <span>{t('selector.brand')}</span>
+                <span>{t('gyms:selector.brand')}</span>
                 <input
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
@@ -159,7 +192,7 @@ export function GymSelector() {
                 className="btn btn--primary gym-selector__save"
                 disabled={!name.trim() || submitting}
               >
-                {t('selector.save')}
+                {t('gyms:selector.save')}
               </button>
             </form>
           )}

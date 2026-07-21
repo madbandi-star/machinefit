@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { CreateUserGymInput, UserGym } from '@machinefit/shared';
+import { ALL_GYMS_ID, isAllGymsId, type CreateUserGymInput, type UserGym } from '@machinefit/shared';
 import { userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
+import { usePremiumStore } from '@/store/premium.store';
 
 function invalidateGymScopedQueries(queryClient: ReturnType<typeof useQueryClient>) {
   void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
@@ -15,13 +16,23 @@ function invalidateGymScopedQueries(queryClient: ReturnType<typeof useQueryClien
   void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
 }
 
+function isPlanLimitError(error: unknown): boolean {
+  const err = error as { response?: { status?: number; data?: { code?: string } } };
+  return (
+    err?.response?.status === 402 ||
+    err?.response?.data?.code === 'PLAN_LIMIT'
+  );
+}
+
 export function useActiveGym() {
   const { t } = useTranslation(['gyms', 'common']);
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const openPremiumModal = usePremiumStore((s) => s.openPremiumModal);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const storedGymId = useGymStore((s) => s.activeGymId);
   const setActiveGymId = useGymStore((s) => s.setActiveGymId);
+  const setActiveMemberId = useGymStore((s) => s.setActiveMemberId);
   const syncedSelectRef = useRef<string | null>(null);
 
   const { data, isLoading, refetch } = useQuery({
@@ -37,6 +48,8 @@ export function useActiveGym() {
   const serverActiveGymId = data?.activeGymId ?? null;
 
   const resolvedGymId = useMemo(() => {
+    // 'all' is a valid local sentinel — keep it even after data loads
+    if (storedGymId === ALL_GYMS_ID) return ALL_GYMS_ID;
     if (!data) return storedGymId;
     if (storedGymId && gyms.some((gym) => gym.id === storedGymId)) {
       return storedGymId;
@@ -45,7 +58,10 @@ export function useActiveGym() {
   }, [data, gyms, serverActiveGymId, storedGymId]);
 
   const activeGym = useMemo(
-    () => gyms.find((gym) => gym.id === resolvedGymId) ?? data?.activeGym ?? null,
+    () =>
+      isAllGymsId(resolvedGymId)
+        ? null
+        : (gyms.find((gym) => gym.id === resolvedGymId) ?? data?.activeGym ?? null),
     [data?.activeGym, gyms, resolvedGymId]
   );
 
@@ -60,8 +76,10 @@ export function useActiveGym() {
     }
   }, [isAuthenticated, resolvedGymId, setActiveGymId, storedGymId]);
 
+  // Sync active gym with server — skip for ALL_GYMS_ID sentinel
   useEffect(() => {
     if (!isAuthenticated || !resolvedGymId || !data) return;
+    if (isAllGymsId(resolvedGymId)) return;
     if (resolvedGymId === serverActiveGymId) {
       syncedSelectRef.current = resolvedGymId;
       return;
@@ -77,6 +95,7 @@ export function useActiveGym() {
     mutationFn: (gymId: string) => userGymApi.select(gymId),
     onSuccess: (res, gymId) => {
       setActiveGymId(gymId);
+      setActiveMemberId(null);
       syncedSelectRef.current = gymId;
       queryClient.setQueryData(QUERY_KEYS.userGyms, (prev: typeof data) =>
         prev
@@ -98,19 +117,33 @@ export function useActiveGym() {
     onSuccess: async (res) => {
       const gym = res.data.data;
       setActiveGymId(gym.id);
+      setActiveMemberId(null);
       syncedSelectRef.current = gym.id;
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
       invalidateGymScopedQueries(queryClient);
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => {
+      if (isPlanLimitError(error)) {
+        openPremiumModal();
+      } else {
+        showToast(t('common:errors.submitFailed'), 'error');
+      }
+    },
   });
 
   const selectGym = useCallback(
     async (gymId: string) => {
       if (gymId === resolvedGymId) return;
+      // ALL_GYMS_ID is a local-only sentinel — persist locally, no server call
+      if (isAllGymsId(gymId)) {
+        setActiveGymId(ALL_GYMS_ID);
+        setActiveMemberId(null);
+        invalidateGymScopedQueries(queryClient);
+        return;
+      }
       await selectMutation.mutateAsync(gymId);
     },
-    [resolvedGymId, selectMutation]
+    [resolvedGymId, selectMutation, setActiveGymId, setActiveMemberId, queryClient]
   );
 
   const createGym = useCallback(

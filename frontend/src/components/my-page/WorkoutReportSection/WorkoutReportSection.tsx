@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
+import { isAllGymsId } from '@machinefit/shared';
 import { workoutReportApi, type WorkoutReportPeriod, type WorkoutReportResult } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
@@ -84,6 +85,8 @@ export function WorkoutReportSection() {
     setReportDialogOpen(false);
   }, [period, activeGymId]);
 
+  const reportGymId = activeGymId ?? undefined;
+
   const fetchReport = async (previewOnly: boolean): Promise<ReportCache | null> => {
     if (!previewOnly && reportCache?.period === period) {
       return reportCache;
@@ -92,7 +95,7 @@ export function WorkoutReportSection() {
     const res = await workoutReportApi.send({
       period,
       previewOnly,
-      ...(activeGymId ? { gymId: activeGymId } : {}),
+      ...(reportGymId ? { gymId: reportGymId } : {}),
     });
     const cache = buildReportCache(period, res.data.data);
     if (cache) {
@@ -101,11 +104,13 @@ export function WorkoutReportSection() {
     return cache;
   };
 
+  const isAllGyms = isAllGymsId(activeGymId);
+
   const sendMutation = useMutation({
     mutationFn: async () => {
       const res = await workoutReportApi.send({
         period,
-        ...(activeGymId ? { gymId: activeGymId } : {}),
+        ...(reportGymId ? { gymId: reportGymId } : {}),
       });
       return res.data.data;
     },
@@ -181,7 +186,14 @@ export function WorkoutReportSection() {
   return (
     <>
       <section className="form-section workout-report-section">
-        <h3 className="form-section__title">{t('workoutReport.title')}</h3>
+        <h3 className="form-section__title">
+          {t('workoutReport.title')}
+          {isAllGyms ? (
+            <span className="workout-report-section__all-badge">
+              {' '}{t('workoutReport.allGymsNote')}
+            </span>
+          ) : null}
+        </h3>
         <p className="form-section__desc">{t('workoutReport.desc')}</p>
 
         <div className="workout-report-section__field">

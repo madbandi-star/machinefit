@@ -28,8 +28,10 @@ export interface User {
   unitWeight: UnitWeight;
   timezone?: string;
   avatarUrl?: string;
-  /** Last selected personal gym (multi-gym). */
+  /** Last selected personal gym (multi-gym). May be omitted; 'all' is client-only. */
   activeGymId?: string;
+  /** free | premium — gym/member limits. */
+  subscriptionPlan?: import('../constants/subscription.js').SubscriptionPlan;
   isActive: boolean;
   lastLoginAt?: string;
   createdAt: string;

@@ -1,4 +1,4 @@
-import type { RoleCode, User, Gender } from '@machinefit/shared';
+import type { RoleCode, User, Gender, SubscriptionPlan } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
 interface UserRow {
@@ -24,6 +24,7 @@ interface UserRow {
   unit_weight: 'kg' | 'lb';
   timezone: string | null;
   avatar_url: string | null;
+  subscription_plan: string | null;
   is_active: boolean;
   last_login_at: string | null;
   created_at: string;
@@ -53,6 +54,7 @@ function mapUser(row: UserRow): User {
     unitWeight: row.unit_weight,
     timezone: row.timezone ?? undefined,
     avatarUrl: row.avatar_url ?? undefined,
+    subscriptionPlan: (row.subscription_plan === 'premium' ? 'premium' : 'free') as SubscriptionPlan,
     isActive: row.is_active,
     lastLoginAt: row.last_login_at ?? undefined,
     createdAt: row.created_at,

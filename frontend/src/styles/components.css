@@ -1823,3 +1823,110 @@
   align-items: flex-start;
   gap: 0.75rem;
 }
+
+/* ── PremiumUpgradeModal ─────────────────────────────────────────── */
+.premium-upgrade-modal {
+  max-width: min(28rem, 92vw);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.premium-upgrade-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.premium-upgrade-modal__badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  font-size: var(--font-size-caption);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.premium-upgrade-modal__title {
+  font-size: var(--font-size-h3, 1.125rem);
+  font-weight: 700;
+  margin: 0;
+}
+
+.premium-upgrade-modal__subtitle {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.premium-upgrade-modal__benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.premium-upgrade-modal__benefit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-body-sm);
+}
+
+.premium-upgrade-modal__benefit-icon {
+  color: var(--color-success, #22c55e);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.premium-upgrade-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workout-report-section__all-badge {
+  font-size: var(--font-size-caption);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+/* ── MemberProfileRequests ───────────────────────────────────────── */
+.member-profile-requests__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.member-profile-requests__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.member-profile-requests__message {
+  font-size: var(--font-size-body-sm);
+  margin: 0;
+}
+
+.member-profile-requests__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.member-profile-requests__btn {
+  flex: 1;
+  min-height: 2rem;
+  font-size: var(--font-size-body-sm);
+}

@@ -1,8 +1,8 @@
 import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput, Locale } from '@machinefit/shared';
-import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle } from '@machinefit/shared';
+import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle, isAllGymsId } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
-import { userGymService } from './user-gym.service.js';
+import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -15,7 +15,7 @@ function todayDateKey(): string {
 
 export const workoutLogService = {
   async list(userId: string, query: WorkoutLogListQuery, locale: Locale = 'en') {
-    await userGymService.assertOwned(userId, query.gymId);
+    const { gymIds } = await gymScopeService.resolveGymFilter(userId, query.gymId);
 
     let machineId: string | undefined;
     if (query.machineCode) {
@@ -31,10 +31,29 @@ export const workoutLogService = {
         ? normalizeWorkoutLogTargetMuscle(query.machineCode, query.targetMuscleGroup)
         : undefined;
 
+    if (isAllGymsId(query.gymId)) {
+      return workoutLogRepository.listByUser(
+        userId,
+        {
+          gymId: query.gymId,
+          gymIds,
+          memberId: query.memberId,
+          machineId,
+          logDate: query.logDate,
+          from: query.from,
+          to: query.to,
+          limit: query.limit,
+          targetMuscleGroup,
+        },
+        locale
+      );
+    }
+
     return workoutLogRepository.listByUser(
       userId,
       {
         gymId: query.gymId,
+        memberId: query.memberId,
         machineId,
         logDate: query.logDate,
         from: query.from,
@@ -47,7 +66,11 @@ export const workoutLogService = {
   },
 
   async upsert(userId: string, input: UpsertWorkoutLogInput) {
-    await userGymService.assertOwned(userId, input.gymId);
+    // Writes require a real gymId
+    await gymScopeService.assertOwned(userId, input.gymId);
+
+    // Validate member ownership
+    await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
     const machineId = await machineRepository.findIdByCode(input.machineCode);
     if (!machineId) {
@@ -66,7 +89,7 @@ export const workoutLogService = {
     const logDate = input.logDate ?? todayDateKey();
 
     try {
-      return await workoutLogRepository.upsert(userId, input.gymId, machineId, {
+      return await workoutLogRepository.upsert(userId, input.gymId, input.memberId, machineId, {
         recommendationId: input.recommendationId,
         logDate,
         targetMuscleGroup: targetMuscleKey,
@@ -92,7 +115,9 @@ export const workoutLogService = {
   },
 
   async remove(userId: string, input: DeleteWorkoutLogInput) {
-    await userGymService.assertOwned(userId, input.gymId);
+    // Writes require a real gymId
+    await gymScopeService.assertOwned(userId, input.gymId);
+    await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
     const machineId = await machineRepository.findIdByCode(input.machineCode);
     if (!machineId) {
@@ -111,6 +136,7 @@ export const workoutLogService = {
     const deleted = await workoutLogRepository.deleteByUserMachineDate(
       userId,
       input.gymId,
+      input.memberId,
       machineId,
       input.logDate,
       targetMuscleKey

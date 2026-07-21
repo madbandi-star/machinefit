@@ -18,6 +18,8 @@ import type {
   UpsertWorkoutLogInput,
   CreateUserGymInput,
   UpdateUserGymInput,
+  GymMember,
+  GymMemberProfileRequest,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -265,6 +267,7 @@ export const historyApi = {
 export const workoutLogApi = {
   list: (params: {
     gymId: string;
+    memberId?: string;
     machineCode?: string;
     logDate?: string;
     from?: string;
@@ -276,6 +279,7 @@ export const workoutLogApi = {
     apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),
   remove: (body: {
     gymId: string;
+    memberId: string;
     machineCode: string;
     logDate: string;
     targetMuscleGroup?: string;
@@ -327,6 +331,47 @@ export const qrApi = {
     apiClient.get<ApiResponse<QrResolveResult>>(`/qr/${encodeURIComponent(qrCode)}`),
   scan: (qrCode: string, body?: { sessionId?: string }) =>
     apiClient.post<ApiResponse<QrResolveResult>>(`/qr/${encodeURIComponent(qrCode)}/scan`, body ?? {}),
+};
+
+export interface CreateGymMemberInput {
+  name: string;
+  gender?: Gender;
+  heightCm?: number;
+  weightKg?: number;
+  birthDate?: string;
+  memo?: string;
+  email?: string;
+}
+
+export interface UpdateGymMemberInput {
+  name?: string;
+  gender?: Gender;
+  heightCm?: number;
+  weightKg?: number;
+  birthDate?: string;
+  memo?: string;
+  email?: string;
+}
+
+export const gymMemberApi = {
+  list: (gymId: string) =>
+    apiClient.get<ApiResponse<GymMember[]>>(`/users/me/gyms/${gymId}/members`),
+  create: (gymId: string, body: CreateGymMemberInput) =>
+    apiClient.post<ApiResponse<GymMember>>(`/users/me/gyms/${gymId}/members`, body),
+  update: (gymId: string, memberId: string, body: UpdateGymMemberInput) =>
+    apiClient.patch<ApiResponse<GymMember>>(`/users/me/gyms/${gymId}/members/${memberId}`, body),
+  remove: (gymId: string, memberId: string) =>
+    apiClient.delete<ApiResponse<{ message: string }>>(`/users/me/gyms/${gymId}/members/${memberId}`),
+};
+
+export const memberProfileRequestApi = {
+  list: () =>
+    apiClient.get<ApiResponse<GymMemberProfileRequest[]>>('/users/me/member-profile-requests'),
+  respond: (id: string, action: 'approve' | 'deny') =>
+    apiClient.post<ApiResponse<GymMemberProfileRequest>>(
+      `/users/me/member-profile-requests/${id}/respond`,
+      { action }
+    ),
 };
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
