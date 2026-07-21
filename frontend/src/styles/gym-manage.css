@@ -1,0 +1,152 @@
+.gym-manage-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.gym-manage-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.gym-manage-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.gym-manage-section__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.gym-manage-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.gym-manage-empty {
+  margin: 0;
+  padding: 0.85rem 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.gym-manage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gym-manage-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+}
+
+.gym-manage-item--active .gym-manage-item__name {
+  color: var(--color-primary, #1a6b4a);
+}
+
+.gym-manage-item__main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.gym-manage-item__main--static {
+  cursor: default;
+}
+
+.gym-manage-item__name {
+  font-weight: 650;
+  font-size: 0.95rem;
+}
+
+.gym-manage-item__self {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.gym-manage-item__meta {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.gym-manage-item__badge {
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-primary, #1a6b4a);
+}
+
+.gym-manage-item__actions .btn {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+.gym-manage-section__header .btn {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.gym-manage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.75rem 0 0.25rem;
+}
+
+.gym-manage-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.gym-manage-field input,
+.gym-manage-field select,
+.gym-manage-field textarea {
+  min-height: var(--touch-target-min, 44px);
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.12));
+  border-radius: 8px;
+  font: inherit;
+  color: inherit;
+  background: var(--color-surface, #fff);
+}
+
+.gym-manage-field textarea {
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.gym-manage-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}

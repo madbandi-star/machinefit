@@ -2,7 +2,11 @@ import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isAllGymsId } from '@machinefit/shared';
-import { gymMemberApi, type CreateGymMemberInput } from '@/api';
+import {
+  gymMemberApi,
+  type CreateGymMemberInput,
+  type UpdateGymMemberInput,
+} from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
@@ -40,7 +44,6 @@ export function useActiveMember() {
     staleTime: 30_000,
   });
 
-  // Auto-select self member when no member is selected
   const selfMember = members.find((m) => m.isSelf);
   const resolvedMemberId = activeMemberId ?? selfMember?.id ?? null;
   const activeMember = members.find((m) => m.id === resolvedMemberId) ?? null;
@@ -60,6 +63,21 @@ export function useActiveMember() {
         showToast(t('common:errors.submitFailed'), 'error');
       }
     },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({
+      memberId,
+      body,
+    }: {
+      memberId: string;
+      body: UpdateGymMemberInput;
+    }) => gymMemberApi.update(activeGymId!, memberId, body),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: membersKey });
+      showToast(t('gyms:manage.updateMemberSuccess'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
   const removeMutation = useMutation({
@@ -89,6 +107,14 @@ export function useActiveMember() {
     [createMutation, isRealGym]
   );
 
+  const updateMember = useCallback(
+    async (memberId: string, body: UpdateGymMemberInput) => {
+      if (!isRealGym) return;
+      return updateMutation.mutateAsync({ memberId, body });
+    },
+    [isRealGym, updateMutation]
+  );
+
   const removeMember = useCallback(
     async (memberId: string) => {
       if (!isRealGym) return;
@@ -105,6 +131,7 @@ export function useActiveMember() {
     isRealGym,
     selectMember,
     createMember,
+    updateMember,
     removeMember,
   };
 }

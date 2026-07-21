@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ALL_GYMS_ID, isAllGymsId, type CreateUserGymInput, type UserGym } from '@machinefit/shared';
+import { ALL_GYMS_ID, isAllGymsId, type CreateUserGymInput, type UpdateUserGymInput, type UserGym } from '@machinefit/shared';
 import { userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
@@ -121,6 +121,7 @@ export function useActiveGym() {
       syncedSelectRef.current = gym.id;
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
       invalidateGymScopedQueries(queryClient);
+      showToast(t('gyms:manage.createGymSuccess'), 'success');
     },
     onError: (error) => {
       if (isPlanLimitError(error)) {
@@ -166,6 +167,45 @@ export function useActiveGym() {
     [createMutation]
   );
 
+  const updateMutation = useMutation({
+    mutationFn: ({ gymId, body }: { gymId: string; body: UpdateUserGymInput }) =>
+      userGymApi.update(gymId, body),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
+      showToast(t('gyms:manage.updateGymSuccess'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (gymId: string) => userGymApi.remove(gymId),
+    onSuccess: async (_res, gymId) => {
+      if (storedGymId === gymId || resolvedGymId === gymId) {
+        setActiveGymId(null);
+        setActiveMemberId(null);
+        syncedSelectRef.current = null;
+      }
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
+      invalidateGymScopedQueries(queryClient);
+      showToast(t('gyms:manage.removeGymSuccess'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const updateGym = useCallback(
+    async (gymId: string, body: UpdateUserGymInput) => {
+      return updateMutation.mutateAsync({ gymId, body });
+    },
+    [updateMutation]
+  );
+
+  const removeGym = useCallback(
+    async (gymId: string) => {
+      return removeMutation.mutateAsync(gymId);
+    },
+    [removeMutation]
+  );
+
   return {
     gyms,
     activeGym,
@@ -173,6 +213,8 @@ export function useActiveGym() {
     isLoading: isAuthenticated && isLoading,
     selectGym,
     createGym,
+    updateGym,
+    removeGym,
     refetch,
   };
 }

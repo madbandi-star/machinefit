@@ -239,7 +239,8 @@
     "explore": "더보기",
     "adminDashboard": "관리자 대시보드",
     "browseByBrand": "브랜드별 조회",
-    "growthAnalysis": "성장 분석"
+    "growthAnalysis": "성장 분석",
+    "gymMemberManage": "헬스장·회원 관리"
   },
   "growthAnalysis": {
     "title": "성장 분석",
