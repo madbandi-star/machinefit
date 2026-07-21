@@ -4,6 +4,11 @@
   gap: var(--space-md);
 }
 
+.home-gym-selector {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .home-hero {
   padding: var(--space-lg);
   margin-bottom: 0;

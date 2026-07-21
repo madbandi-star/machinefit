@@ -2,6 +2,7 @@ import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput,
 import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
+import { userGymService } from './user-gym.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -14,6 +15,8 @@ function todayDateKey(): string {
 
 export const workoutLogService = {
   async list(userId: string, query: WorkoutLogListQuery, locale: Locale = 'en') {
+    await userGymService.assertOwned(userId, query.gymId);
+
     let machineId: string | undefined;
     if (query.machineCode) {
       const foundId = await machineRepository.findIdByCode(query.machineCode);
@@ -28,17 +31,24 @@ export const workoutLogService = {
         ? normalizeWorkoutLogTargetMuscle(query.machineCode, query.targetMuscleGroup)
         : undefined;
 
-    return workoutLogRepository.listByUser(userId, {
-      machineId,
-      logDate: query.logDate,
-      from: query.from,
-      to: query.to,
-      limit: query.limit,
-      targetMuscleGroup,
-    }, locale);
+    return workoutLogRepository.listByUser(
+      userId,
+      {
+        gymId: query.gymId,
+        machineId,
+        logDate: query.logDate,
+        from: query.from,
+        to: query.to,
+        limit: query.limit,
+        targetMuscleGroup,
+      },
+      locale
+    );
   },
 
   async upsert(userId: string, input: UpsertWorkoutLogInput) {
+    await userGymService.assertOwned(userId, input.gymId);
+
     const machineId = await machineRepository.findIdByCode(input.machineCode);
     if (!machineId) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${input.machineCode}`);
@@ -56,7 +66,7 @@ export const workoutLogService = {
     const logDate = input.logDate ?? todayDateKey();
 
     try {
-      return await workoutLogRepository.upsert(userId, machineId, {
+      return await workoutLogRepository.upsert(userId, input.gymId, machineId, {
         recommendationId: input.recommendationId,
         logDate,
         targetMuscleGroup: targetMuscleKey,
@@ -82,6 +92,8 @@ export const workoutLogService = {
   },
 
   async remove(userId: string, input: DeleteWorkoutLogInput) {
+    await userGymService.assertOwned(userId, input.gymId);
+
     const machineId = await machineRepository.findIdByCode(input.machineCode);
     if (!machineId) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${input.machineCode}`);
@@ -98,6 +110,7 @@ export const workoutLogService = {
 
     const deleted = await workoutLogRepository.deleteByUserMachineDate(
       userId,
+      input.gymId,
       machineId,
       input.logDate,
       targetMuscleKey

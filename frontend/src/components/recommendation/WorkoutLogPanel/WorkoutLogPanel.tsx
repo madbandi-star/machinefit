@@ -21,6 +21,7 @@ import { useUIStore } from '@/store/ui.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
@@ -207,6 +208,7 @@ export function WorkoutLogPanel({
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const { activeGymId } = useActiveGym();
   const voiceCoach = useVoiceCoachSession({
     targetReps: voiceCoachTargetReps,
     oneMoreEnabled: voiceCoachOneMore,
@@ -250,6 +252,7 @@ export function WorkoutLogPanel({
   const activeTargetMuscle = selectedMuscle ?? targetMuscleGroup ?? null;
   const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, activeTargetMuscle);
   const { queryKey: workoutLogQueryKey } = buildWorkoutLogSavedQueryKey(
+    activeGymId ?? '',
     machineCode,
     logDate,
     queryTargetMuscle
@@ -270,7 +273,8 @@ export function WorkoutLogPanel({
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
   const personalTipBytes = getUtf8ByteLength(personalTipMemo);
-  const queryEnabled = isAuthenticated && (!isFreeWeight || !!queryTargetMuscle);
+  const queryEnabled =
+    isAuthenticated && Boolean(activeGymId) && (!isFreeWeight || !!queryTargetMuscle);
 
   const needsFetchedCoaching =
     voiceCoachEnabled &&
@@ -354,6 +358,7 @@ export function WorkoutLogPanel({
     queryKey: workoutLogQueryKey,
     queryFn: async () => {
       const res = await workoutLogApi.list({
+        gymId: activeGymId!,
         machineCode,
         logDate,
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
@@ -392,7 +397,7 @@ export function WorkoutLogPanel({
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 
-  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll;
+  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(activeGymId ?? '');
   const removeLogParams = {
     machineCode,
     logDate,
@@ -439,7 +444,9 @@ export function WorkoutLogPanel({
 
   const saveMutation = useMutation({
     mutationFn: async (variables?: SaveWorkoutLogVariables) => {
+      if (!activeGymId) throw new Error('missing_gym');
       const res = await workoutLogApi.upsert({
+        gymId: activeGymId,
         machineCode,
         logDate,
         setCount,
@@ -497,12 +504,15 @@ export function WorkoutLogPanel({
   });
 
   const removeMutation = useMutation({
-    mutationFn: () =>
-      workoutLogApi.remove({
+    mutationFn: () => {
+      if (!activeGymId) throw new Error('missing_gym');
+      return workoutLogApi.remove({
+        gymId: activeGymId,
         machineCode,
         logDate,
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
-      }),
+      });
+    },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });

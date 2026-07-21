@@ -4,6 +4,7 @@ import { pickLocalized } from '../utils/localize.util.js';
 
 export interface HistoryItem {
   id: string;
+  gymId: string;
   machineId: string;
   machineCode: string;
   machineName: string;
@@ -27,15 +28,17 @@ export interface HistoryItem {
 export const historyRepository = {
   async listByUser(
     userId: string,
-    options: { limit?: number; machineCode?: string; from?: string; to?: string } = {},
+    options: { gymId: string; limit?: number; machineCode?: string; from?: string; to?: string } = {
+      gymId: '',
+    },
     locale: Locale = 'en'
   ): Promise<HistoryItem[]> {
     const pool = getPool();
     if (!pool) return [];
 
     const limit = options.limit ?? 20;
-    const params: unknown[] = [userId];
-    let filters = '';
+    const params: unknown[] = [userId, options.gymId];
+    let filters = ' AND h.gym_id = $2';
 
     if (options.machineCode) {
       params.push(options.machineCode);
@@ -56,6 +59,7 @@ export const historyRepository = {
 
     const result = await pool.query<{
       id: string;
+      gym_id: string;
       machine_id: string;
       machine_code: string;
       muscle_group: string;
@@ -73,7 +77,7 @@ export const historyRepository = {
       target_muscle_group: string | null;
       viewed_at: string;
     }>(
-      `SELECT h.id, h.machine_id, h.recommendation_id, h.viewed_at,
+      `SELECT h.id, h.gym_id, h.machine_id, h.recommendation_id, h.viewed_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               b.name AS brand_name,
               r.seat_position, r.back_pad_position, r.foot_position,
@@ -92,6 +96,7 @@ export const historyRepository = {
 
     return result.rows.map((row) => ({
       id: row.id,
+      gymId: row.gym_id,
       machineId: row.machine_id,
       machineCode: row.machine_code,
       machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
@@ -119,6 +124,7 @@ export const historyRepository = {
 
   async record(
     userId: string,
+    gymId: string,
     machineId: string,
     recommendationId: string
   ): Promise<void> {
@@ -126,18 +132,21 @@ export const historyRepository = {
     if (!pool) return;
 
     await pool.query(
-      `INSERT INTO recent_history (user_id, machine_id, recommendation_id, viewed_at)
-       VALUES ($1, $2, $3, NOW())
-       ON CONFLICT (user_id, recommendation_id)
+      `INSERT INTO recent_history (user_id, gym_id, machine_id, recommendation_id, viewed_at)
+       VALUES ($1, $2, $3, $4, NOW())
+       ON CONFLICT (user_id, gym_id, recommendation_id)
        DO UPDATE SET viewed_at = NOW()`,
-      [userId, machineId, recommendationId]
+      [userId, gymId, machineId, recommendationId]
     );
   },
 
-  async clear(userId: string): Promise<void> {
+  async clear(userId: string, gymId: string): Promise<void> {
     const pool = getPool();
     if (!pool) return;
-    await pool.query('DELETE FROM recent_history WHERE user_id = $1', [userId]);
+    await pool.query('DELETE FROM recent_history WHERE user_id = $1 AND gym_id = $2', [
+      userId,
+      gymId,
+    ]);
   },
 
   async remove(userId: string, historyId: string): Promise<void> {

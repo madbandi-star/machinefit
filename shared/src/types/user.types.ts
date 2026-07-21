@@ -28,6 +28,8 @@ export interface User {
   unitWeight: UnitWeight;
   timezone?: string;
   avatarUrl?: string;
+  /** Last selected personal gym (multi-gym). */
+  activeGymId?: string;
   isActive: boolean;
   lastLoginAt?: string;
   createdAt: string;

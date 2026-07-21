@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { historyApi, workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { useAuthStore } from '@/store/auth.store';
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { isDismissedToday, dismissForToday } from '@/utils/dismissToday';
@@ -21,25 +22,26 @@ interface DailyBriefingModalProps {
 export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
+  const { activeGymId } = useActiveGym();
   const today = getTodayDateKey();
   const { from, to } = getLocalDayRange(today);
 
   const { data: todayLogs = [], isLoading: logsLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.workoutLogs, 'briefing', today],
+    queryKey: [...QUERY_KEYS.workoutLogs, activeGymId, 'briefing', today],
     queryFn: async () => {
-      const res = await workoutLogApi.list({ from: today, to: today });
+      const res = await workoutLogApi.list({ gymId: activeGymId!, from: today, to: today });
       return res.data.data;
     },
-    enabled: open,
+    enabled: open && Boolean(activeGymId),
   });
 
   const { data: todayHistory = [], isLoading: historyLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.history, 'briefing', today],
+    queryKey: [...QUERY_KEYS.history, activeGymId, 'briefing', today],
     queryFn: async () => {
-      const res = await historyApi.list({ from, to, limit: 20 });
+      const res = await historyApi.list(activeGymId!, { from, to, limit: 20 });
       return res.data.data;
     },
-    enabled: open,
+    enabled: open && Boolean(activeGymId),
   });
 
   const summary = useMemo(() => {

@@ -10,6 +10,7 @@ import type {
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { historyApi, recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
+import { useGymStore } from '@/store/gym.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -79,9 +80,11 @@ export function useRecommendMachine(machineCode: string | undefined) {
 
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
       if (isAuthenticated) {
+        const gymId = useGymStore.getState().activeGymId;
+        if (!gymId) throw new Error('missing_gym');
         const today = getTodayDateKey();
         const { from, to } = getLocalDayRange(today);
-        const historyRes = await historyApi.list({ machineCode, limit: 20, from, to });
+        const historyRes = await historyApi.list(gymId, { machineCode, limit: 20, from, to });
         const todayItems = historyRes.data.data;
         const requestedMuscle = options?.targetMuscleGroup;
 

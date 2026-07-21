@@ -11,10 +11,13 @@ import type {
   RecommendationResult,
   RecommendationSettings,
   User,
+  UserGym,
   Gender,
   WorkoutGoal,
   WorkoutLog,
   UpsertWorkoutLogInput,
+  CreateUserGymInput,
+  UpdateUserGymInput,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -173,6 +176,7 @@ export type WorkoutReportPeriod = 'day' | 'week' | 'month' | 'year';
 export interface WorkoutReportRequest {
   period: WorkoutReportPeriod;
   previewOnly?: boolean;
+  gymId?: string;
 }
 
 export interface WorkoutReportResult {
@@ -214,26 +218,53 @@ export interface HistoryItem {
   viewedAt: string;
 }
 
+export interface UserGymsResponse {
+  items: UserGym[];
+  activeGymId: string;
+  activeGym: UserGym;
+}
+
+export const userGymApi = {
+  list: () => apiClient.get<ApiResponse<UserGymsResponse>>('/users/me/gyms'),
+  create: (body: CreateUserGymInput) =>
+    apiClient.post<ApiResponse<UserGym>>('/users/me/gyms', body),
+  update: (gymId: string, body: UpdateUserGymInput) =>
+    apiClient.patch<ApiResponse<UserGym>>(`/users/me/gyms/${gymId}`, body),
+  remove: (gymId: string) =>
+    apiClient.delete<ApiResponse<{ message: string }>>(`/users/me/gyms/${gymId}`),
+  select: (gymId: string) =>
+    apiClient.post<ApiResponse<UserGym>>(`/users/me/gyms/${gymId}/select`),
+};
+
 export const favoriteApi = {
-  list: () => apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites'),
-  add: (machineCode: string, recommendationId?: string) =>
-    apiClient.post<ApiResponse<FavoriteItem>>('/favorites', { machineCode, recommendationId }),
+  list: (gymId: string) =>
+    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', { params: { gymId } }),
+  add: (gymId: string, machineCode: string, recommendationId?: string) =>
+    apiClient.post<ApiResponse<FavoriteItem>>('/favorites', {
+      gymId,
+      machineCode,
+      recommendationId,
+    }),
   remove: (id: string) => apiClient.delete(`/favorites/${id}`),
-  check: (machineCode: string) =>
+  check: (gymId: string, machineCode: string) =>
     apiClient.get<ApiResponse<{ favorited: boolean; favoriteId?: string }>>(
-      `/favorites/check/${machineCode}`
+      `/favorites/check/${machineCode}`,
+      { params: { gymId } }
     ),
 };
 
 export const historyApi = {
-  list: (params?: { machineCode?: string; limit?: number; from?: string; to?: string }) =>
-    apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params }),
-  clear: () => apiClient.delete('/history'),
+  list: (
+    gymId: string,
+    params?: { machineCode?: string; limit?: number; from?: string; to?: string }
+  ) => apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { gymId, ...params } }),
+  clear: (gymId: string) => apiClient.delete('/history', { params: { gymId } }),
   remove: (id: string) => apiClient.delete(`/history/${id}`),
 };
 
 export const workoutLogApi = {
-  list: (params?: {
+  list: (params: {
+    gymId: string;
     machineCode?: string;
     logDate?: string;
     from?: string;
@@ -243,8 +274,12 @@ export const workoutLogApi = {
   }) => apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
   upsert: (body: UpsertWorkoutLogInput) =>
     apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),
-  remove: (body: { machineCode: string; logDate: string; targetMuscleGroup?: string }) =>
-    apiClient.delete<ApiResponse<{ message: string }>>('/workout-logs', { data: body }),
+  remove: (body: {
+    gymId: string;
+    machineCode: string;
+    logDate: string;
+    targetMuscleGroup?: string;
+  }) => apiClient.delete<ApiResponse<{ message: string }>>('/workout-logs', { data: body }),
 };
 
 export interface GymDetail extends Gym {

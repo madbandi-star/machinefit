@@ -35,6 +35,7 @@ function buildAuthResponse(user: User) {
       workoutGoal: user.workoutGoal,
       homeGymId: user.homeGymId,
       homeGymName: user.homeGymName,
+      activeGymId: user.activeGymId,
       experienceLevel: user.experienceLevel,
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
@@ -124,6 +125,13 @@ export const authService = {
       }
       throw error;
     }
+
+    const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+    const defaultGym = await userGymRepository.ensureDefaultGym(
+      user.id,
+      user.homeGymName ?? undefined
+    );
+    user = { ...user, activeGymId: defaultGym.id };
 
     return buildAuthResponse(user);
   },

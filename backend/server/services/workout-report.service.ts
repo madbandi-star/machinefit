@@ -76,6 +76,7 @@ function formatSetWeights(setWeightsKg: number[]): string {
 
 function buildReportText(options: {
   displayName: string;
+  gymName: string;
   period: z.infer<typeof reportPeriodSchema>;
   from: string;
   to: string;
@@ -88,6 +89,7 @@ function buildReportText(options: {
   const lines = [
     'MachineFit 운동 보고서',
     '',
+    `헬스장: ${options.gymName}`,
     `${options.displayName}님`,
     `기간: ${periodLabel} (${options.from} ~ ${options.to})`,
     '',
@@ -117,6 +119,7 @@ function buildReportText(options: {
 
 function buildReportHtml(options: {
   displayName: string;
+  gymName: string;
   period: z.infer<typeof reportPeriodSchema>;
   from: string;
   to: string;
@@ -136,6 +139,7 @@ function buildReportHtml(options: {
 
   return `<!DOCTYPE html><html><body>
     <h1>MachineFit 운동 보고서</h1>
+    <p><strong>${options.gymName}</strong></p>
     <p>${options.displayName}님 · ${periodLabel} (${options.from} ~ ${options.to})</p>
     <ul>
       <li>기록 수: ${options.logs.length}건</li>
@@ -153,17 +157,24 @@ export const workoutReportService = {
   async send(
     userId: string,
     period: z.infer<typeof reportPeriodSchema>,
-    options?: { previewOnly?: boolean }
+    options?: { previewOnly?: boolean; gymId?: string }
   ) {
     reportPeriodSchema.parse(period);
 
     const user = await userRepository.findById(userId);
     if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
 
+    const { userGymService } = await import('./user-gym.service.js');
+    const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+    const gymId = options?.gymId ?? (await userGymRepository.getActiveGymId(userId));
+    if (!gymId) throw new AppError(400, 'NO_GYM', 'No active gym selected');
+    const gym = await userGymService.assertOwned(userId, gymId);
+
     const { from, to } = getPeriodRange(period);
-    const logs = await workoutLogRepository.listByUser(userId, { from, to });
+    const logs = await workoutLogRepository.listByUser(userId, { gymId, from, to });
     const html = buildReportHtml({
       displayName: user.displayName,
+      gymName: gym.name,
       period,
       from,
       to,
@@ -171,13 +182,18 @@ export const workoutReportService = {
     });
     const text = buildReportText({
       displayName: user.displayName,
+      gymName: gym.name,
       period,
       from,
       to,
       logs,
     });
 
-    const subject = `[MachineFit] ${PERIOD_LABELS[period]} 운동 보고서 (${from}~${to})`;
+    const yearMonth = `${from.slice(0, 4)}년 ${Number(from.slice(5, 7))}월`;
+    const subject =
+      period === 'month'
+        ? `[MachineFit] ${gym.name} ${yearMonth} 운동 리포트`
+        : `[MachineFit] ${gym.name} ${PERIOD_LABELS[period]} 운동 리포트 (${from}~${to})`;
     const reportPayload = {
       reportHtml: html,
       reportSubject: subject,

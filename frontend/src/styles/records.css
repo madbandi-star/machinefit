@@ -6,6 +6,11 @@
   gap: var(--space-sm);
 }
 
+.records-page__gym {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .records-page__panel {
   min-height: 0;
 }

@@ -202,6 +202,9 @@ function hasBodyProfile(
 
 export const workoutInsightsService = {
   async getInsights(userId: string, query: WorkoutInsightsQuery): Promise<WorkoutInsights> {
+    const { userGymService } = await import('./user-gym.service.js');
+    await userGymService.assertOwned(userId, query.gymId);
+
     if (query.viewMode === 'daily') {
       return this.getDailyInsights(userId, query);
     }
@@ -217,6 +220,7 @@ export const workoutInsightsService = {
     const { from, to } = getPeriodRange(period);
 
     const logs = await workoutLogRepository.listByUser(userId, {
+      gymId: query.gymId,
       from: from ?? undefined,
       to,
     });
@@ -370,6 +374,7 @@ export const workoutInsightsService = {
     const { from, to } = getPeriodRange(period);
 
     const logs = await workoutLogRepository.listByUser(userId, {
+      gymId: query.gymId,
       machineId,
       from: from ?? undefined,
       to,

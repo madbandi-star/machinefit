@@ -14,6 +14,7 @@ import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import {
   collectMuscleGroupsInOrder,
   formatHistoryDateHeaderWithMuscles,
@@ -61,6 +62,7 @@ interface PendingDelete {
 export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { activeGymId } = useActiveGym();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
@@ -69,20 +71,21 @@ export function HistoryListPanel() {
   const focusId = searchParams.get('focus') ?? '';
   const logStatus = parseHistoryLogStatus(searchParams.get('logStatus'));
 
-  const calendarQueryKey = QUERY_KEYS.historyList({ limit: HISTORY_LIST_LIMIT });
+  const calendarQueryKey = QUERY_KEYS.historyList(activeGymId ?? '', { limit: HISTORY_LIST_LIMIT });
 
   const { data: allHistory, isLoading: isAllHistoryLoading, isError } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
-      const res = await historyApi.list({ limit: HISTORY_LIST_LIMIT });
+      const res = await historyApi.list(activeGymId!, { limit: HISTORY_LIST_LIMIT });
       return res.data.data;
     },
+    enabled: Boolean(activeGymId),
   });
 
   const { data: workoutLogs } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsList({ limit: HISTORY_WORKOUT_LOG_LIMIT }),
-    queryFn: () => fetchWorkoutLogs({ limit: HISTORY_WORKOUT_LOG_LIMIT }),
-    enabled: isAuthenticated,
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', { limit: HISTORY_WORKOUT_LOG_LIMIT }),
+    queryFn: () => fetchWorkoutLogs({ gymId: activeGymId!, limit: HISTORY_WORKOUT_LOG_LIMIT }),
+    enabled: isAuthenticated && Boolean(activeGymId),
   });
 
   const loggedKeys = useMemo(
@@ -137,7 +140,7 @@ export function HistoryListPanel() {
     return collectMuscleGroupsInOrder(dayCards);
   }, [filteredAllCards, selectedDate]);
 
-  const isLoading = isAllHistoryLoading;
+  const isLoading = !activeGymId || isAllHistoryLoading;
 
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;
@@ -210,8 +213,10 @@ export function HistoryListPanel() {
       if (historyId) {
         await historyApi.remove(historyId);
       }
+      if (!activeGymId) return;
       try {
         await workoutLogApi.remove({
+          gymId: activeGymId,
           machineCode,
           logDate,
           ...(targetMuscleGroup ? { targetMuscleGroup } : {}),

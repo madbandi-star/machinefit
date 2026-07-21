@@ -10,6 +10,7 @@ import { historyApi, machinePreferenceApi, recommendationFeedbackApi } from '@/a
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
 import '@/styles/machines.css';
 import '@/styles/recommendation.css';
@@ -38,14 +39,15 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   const { t } = useTranslation(['machines', 'common']);
   const [expanded, setExpanded] = useState(true);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { activeGymId } = useActiveGym();
 
   const { data, isLoading, isFetched } = useQuery({
-    queryKey: QUERY_KEYS.historyForMachine(machineCode),
+    queryKey: QUERY_KEYS.historyForMachine(activeGymId ?? '', machineCode),
     queryFn: async () => {
-      const res = await historyApi.list({ machineCode, limit: 1 });
+      const res = await historyApi.list(activeGymId!, { machineCode, limit: 1 });
       return res.data.data[0] ?? null;
     },
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && Boolean(activeGymId),
   });
 
   const recommendationId = data?.recommendationId;
