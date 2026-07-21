@@ -1,7 +1,8 @@
 import type { Locale } from '@machinefit/shared';
+import { isAllGymsId } from '@machinefit/shared';
 import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
-import { userGymService } from './user-gym.service.js';
+import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 export const historyService = {
@@ -9,6 +10,7 @@ export const historyService = {
     userId: string,
     options: {
       gymId: string;
+      memberId?: string;
       limit?: number;
       machineCode?: string;
       from?: string;
@@ -16,21 +18,31 @@ export const historyService = {
     },
     locale: Locale = 'en'
   ) {
-    await userGymService.assertOwned(userId, options.gymId);
+    if (isAllGymsId(options.gymId)) {
+      const { gymIds } = await gymScopeService.resolveGymFilter(userId, options.gymId);
+      return historyRepository.listByUser(userId, { ...options, gymIds }, locale);
+    }
+    await gymScopeService.assertOwned(userId, options.gymId);
     return historyRepository.listByUser(userId, options, locale);
   },
 
-  async record(userId: string, gymId: string, machineCode: string, recommendationId: string) {
-    await userGymService.assertOwned(userId, gymId);
+  async record(
+    userId: string,
+    gymId: string,
+    memberId: string,
+    machineCode: string,
+    recommendationId: string
+  ) {
+    await gymScopeService.resolveMemberForWrite(userId, gymId, memberId);
     const machineId = await machineRepository.findIdByCode(machineCode);
     if (!machineId) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${machineCode}`);
     }
-    await historyRepository.record(userId, gymId, machineId, recommendationId);
+    await historyRepository.record(userId, gymId, memberId, machineId, recommendationId);
   },
 
   async clear(userId: string, gymId: string) {
-    await userGymService.assertOwned(userId, gymId);
+    await gymScopeService.assertOwned(userId, gymId);
     await historyRepository.clear(userId, gymId);
   },
 

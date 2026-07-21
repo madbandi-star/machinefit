@@ -1,17 +1,17 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { gymScopeIdSchema, gymIdSchema, memberIdSchema } from '@machinefit/shared';
 import { favoriteService } from '../services/favorite.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { resolveRequestLocale } from '../utils/locale.util.js';
 import { getParam } from '../utils/params.util.js';
 
-const gymIdSchema = z.string().uuid();
-
 export async function listFavorites(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const gymId = gymIdSchema.parse(req.query.gymId);
+  const gymId = gymScopeIdSchema.parse(req.query.gymId);
+  const memberId = req.query.memberId ? memberIdSchema.parse(req.query.memberId) : undefined;
   const locale = resolveRequestLocale(req);
-  const items = await favoriteService.list(req.user.userId, gymId, locale);
+  const items = await favoriteService.list(req.user.userId, gymId, locale, { memberId });
   res.json({ success: true, data: items });
 }
 
@@ -19,7 +19,8 @@ export async function addFavorite(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const body = z
     .object({
-      gymId: z.string().uuid(),
+      gymId: gymIdSchema,
+      memberId: memberIdSchema,
       machineCode: z.string().min(1),
       recommendationId: z.string().uuid().optional(),
     })
@@ -28,6 +29,7 @@ export async function addFavorite(req: Request, res: Response): Promise<void> {
   const item = await favoriteService.add(
     req.user.userId,
     body.gymId,
+    body.memberId,
     body.machineCode,
     body.recommendationId,
     locale
@@ -44,10 +46,12 @@ export async function removeFavorite(req: Request, res: Response): Promise<void>
 export async function checkFavorite(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const gymId = gymIdSchema.parse(req.query.gymId);
+  const memberId = req.query.memberId ? memberIdSchema.parse(req.query.memberId) : undefined;
   const result = await favoriteService.check(
     req.user.userId,
     gymId,
-    getParam(req.params.machineCode)
+    getParam(req.params.machineCode),
+    memberId
   );
   res.json({ success: true, data: result });
 }
