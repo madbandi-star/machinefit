@@ -82,6 +82,12 @@ export function MyPage() {
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
           <ListNavLink to={ROUTES.MY_GYMS} label={t('myPage.gymMemberManage')} />
+        </nav>
+      </section>
+
+      <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
           <ListNavLink to={ROUTES.NOTIFICATIONS} label={t('nav.notifications')} />
         </nav>
