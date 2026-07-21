@@ -447,10 +447,10 @@ export const MOCK_GYMS: MockGym[] = [
     machineCount: 4,
     photos: [{ id: 'p1', gymId: 'gym-1', photoUrl: 'https://placehold.co/600x400/111/ffd400?text=FitZone', sortOrder: 0 }],
     machines: [
-      { id: 'gm1', gymId: 'gym-1', machineId: '1', machineCode: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, machineName: 'Iso-Lateral High Row', muscleGroup: 'back', quantity: 2, isAvailable: true, floorZone: 'Upper Body' },
-      { id: 'gm2', gymId: 'gym-1', machineId: '2', machineCode: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, machineName: 'Selectorized Chest Press', muscleGroup: 'chest', quantity: 1, isAvailable: true, floorZone: 'Upper Body' },
-      { id: 'gm3', gymId: 'gym-1', machineId: '3', machineCode: MACHINE_CODES.HS_LEG_EXTENSION, machineName: 'Leg Extension', muscleGroup: 'legs', quantity: 2, isAvailable: true, floorZone: 'Lower Body' },
-      { id: 'gm4', gymId: 'gym-1', machineId: '5', machineCode: MACHINE_CODES.HS_SHOULDER_PRESS, machineName: 'Shoulder Press', muscleGroup: 'shoulders', quantity: 1, isAvailable: true, floorZone: 'Upper Body' },
+      { id: 'gm1', gymId: 'gym-1', machineId: '1', machineCode: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, machineName: 'Iso-Lateral High Row', muscleGroup: 'back', quantity: 2, isAvailable: true, floorZone: 'Upper Body', isVerified: true },
+      { id: 'gm2', gymId: 'gym-1', machineId: '2', machineCode: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, machineName: 'Selectorized Chest Press', muscleGroup: 'chest', quantity: 1, isAvailable: true, floorZone: 'Upper Body', isVerified: true },
+      { id: 'gm3', gymId: 'gym-1', machineId: '3', machineCode: MACHINE_CODES.HS_LEG_EXTENSION, machineName: 'Leg Extension', muscleGroup: 'legs', quantity: 2, isAvailable: true, floorZone: 'Lower Body', isVerified: true },
+      { id: 'gm4', gymId: 'gym-1', machineId: '5', machineCode: MACHINE_CODES.HS_SHOULDER_PRESS, machineName: 'Shoulder Press', muscleGroup: 'shoulders', quantity: 1, isAvailable: true, floorZone: 'Upper Body', isVerified: true },
     ],
   },
   {
@@ -473,9 +473,9 @@ export const MOCK_GYMS: MockGym[] = [
     machineCount: 3,
     photos: [{ id: 'p2', gymId: 'gym-2', photoUrl: 'https://placehold.co/600x400/111/ffd400?text=Iron+Temple', sortOrder: 0 }],
     machines: [
-      { id: 'gm5', gymId: 'gym-2', machineId: '1', machineCode: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, machineName: 'Iso-Lateral High Row', muscleGroup: 'back', quantity: 1, isAvailable: true },
-      { id: 'gm6', gymId: 'gym-2', machineId: '4', machineCode: MACHINE_CODES.HS_LEG_CURL, machineName: 'Leg Curl', muscleGroup: 'legs', quantity: 2, isAvailable: true },
-      { id: 'gm7', gymId: 'gym-2', machineId: '2', machineCode: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, machineName: 'Selectorized Chest Press', muscleGroup: 'chest', quantity: 1, isAvailable: false, notes: 'Under maintenance' },
+      { id: 'gm5', gymId: 'gym-2', machineId: '1', machineCode: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, machineName: 'Iso-Lateral High Row', muscleGroup: 'back', quantity: 1, isAvailable: true, isVerified: true },
+      { id: 'gm6', gymId: 'gym-2', machineId: '4', machineCode: MACHINE_CODES.HS_LEG_CURL, machineName: 'Leg Curl', muscleGroup: 'legs', quantity: 2, isAvailable: true, isVerified: true },
+      { id: 'gm7', gymId: 'gym-2', machineId: '2', machineCode: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, machineName: 'Selectorized Chest Press', muscleGroup: 'chest', quantity: 1, isAvailable: false, notes: 'Under maintenance', isVerified: true },
     ],
   },
   {
@@ -498,8 +498,8 @@ export const MOCK_GYMS: MockGym[] = [
     machineCount: 2,
     photos: [{ id: 'p3', gymId: 'gym-3', photoUrl: 'https://placehold.co/600x400/111/ffd400?text=PowerHouse', sortOrder: 0 }],
     machines: [
-      { id: 'gm8', gymId: 'gym-3', machineId: '3', machineCode: MACHINE_CODES.HS_LEG_EXTENSION, machineName: 'Leg Extension', muscleGroup: 'legs', quantity: 3, isAvailable: true },
-      { id: 'gm9', gymId: 'gym-3', machineId: '5', machineCode: MACHINE_CODES.HS_SHOULDER_PRESS, machineName: 'Shoulder Press', muscleGroup: 'shoulders', quantity: 1, isAvailable: true },
+      { id: 'gm8', gymId: 'gym-3', machineId: '3', machineCode: MACHINE_CODES.HS_LEG_EXTENSION, machineName: 'Leg Extension', muscleGroup: 'legs', quantity: 3, isAvailable: true, isVerified: true },
+      { id: 'gm9', gymId: 'gym-3', machineId: '5', machineCode: MACHINE_CODES.HS_SHOULDER_PRESS, machineName: 'Shoulder Press', muscleGroup: 'shoulders', quantity: 1, isAvailable: true, isVerified: true },
     ],
   },
 ];

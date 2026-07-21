@@ -1,13 +1,13 @@
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BusinessHoursDisplay } from '@/components/display/BusinessHours/BusinessHoursDisplay';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { GymInventoryPanel } from '@/components/gyms/GymInventoryPanel/GymInventoryPanel';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi } from '@/api';
-import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/gym.css';
 
@@ -25,7 +25,12 @@ export function GymDetailPage() {
   });
 
   if (isLoading) return <Skeleton count={4} height={80} />;
-  if (isError) return <PageShell title={t('error', { defaultValue: 'Error' })}><QueryErrorMessage /></PageShell>;
+  if (isError)
+    return (
+      <PageShell title={t('error', { defaultValue: 'Error' })}>
+        <QueryErrorMessage />
+      </PageShell>
+    );
   if (!gym) return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
 
   return (
@@ -56,7 +61,9 @@ export function GymDetailPage() {
             {Object.entries(gym.amenities)
               .filter(([, v]) => v)
               .map(([key]) => (
-                <span key={key} className="amenity-tag">{key}</span>
+                <span key={key} className="amenity-tag">
+                  {key}
+                </span>
               ))}
           </div>
         </section>
@@ -81,45 +88,7 @@ export function GymDetailPage() {
         </section>
       )}
 
-      <section className="gym-detail__section">
-        <h3>{t('machineInventory')} ({gym.machines.length})</h3>
-        {gym.machines.length === 0 ? (
-          <p style={{ color: 'var(--color-text-muted)' }}>No machines listed</p>
-        ) : (
-          gym.machines.map((item) => (
-            <div
-              key={item.id}
-              className={`machine-inventory-item${!item.isAvailable ? ' machine-inventory-item--unavailable' : ''}`}
-            >
-              <div>
-                <strong>{item.machineName ?? ''}</strong>
-                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                  {[item.floorZone, item.quantity > 1 ? `${item.quantity} ${t('units')}` : null]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </p>
-                {!item.isAvailable && item.notes && (
-                  <p style={{ fontSize: '0.75rem', color: 'var(--color-error)' }}>{item.notes}</p>
-                )}
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '0.8rem', color: item.isAvailable ? 'var(--color-success)' : 'var(--color-error)' }}>
-                  {item.isAvailable ? t('available') : t('unavailable')}
-                </span>
-                {item.machineCode && (
-                  <Link
-                    to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
-                    className="btn btn--secondary"
-                    style={{ display: 'block', marginTop: '0.35rem', fontSize: '0.75rem', padding: '0.35rem 0.6rem' }}
-                  >
-                    {t('viewMachine')}
-                  </Link>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </section>
+      <GymInventoryPanel gymId={gym.id} />
     </PageShell>
   );
 }

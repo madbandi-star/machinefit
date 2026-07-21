@@ -30,6 +30,8 @@ export const ROUTES = {
   ADMIN_MACHINES: '/admin/machines',
   ADMIN_MODERATION: '/admin/moderation',
   ADMIN_MOTIVATION: '/admin/motivation',
+  ADMIN_OWNER_APPLICATIONS: '/admin/owner-applications',
+  OWNER_APPLY: '/owner/apply',
   NOTIFICATIONS: '/notifications',
   SCAN: '/scan',
   QR: '/qr/:qrCode',

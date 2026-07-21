@@ -6,8 +6,12 @@ import {
   updateMachineRequestAdminSchema,
   resolveReportSchema,
   toggleActiveSchema,
+  reviewOwnerApplicationSchema,
+  adminGymMachineActionSchema,
 } from '@machinefit/shared';
 import { adminService } from '../services/admin.service.js';
+import { ownerService } from '../services/owner.service.js';
+import { gymInventoryService } from '../services/gym-inventory.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getParam } from '../utils/params.util.js';
 
@@ -95,4 +99,40 @@ export async function resolveReport(req: Request, res: Response): Promise<void> 
   const input = resolveReportSchema.parse(req.body);
   const report = adminService.resolveReport(getParam(req.params.id), input, req.user.userId);
   res.json({ success: true, data: report });
+}
+
+export async function listOwnerApplications(req: Request, res: Response): Promise<void> {
+  const status = req.query.status
+    ? (String(req.query.status) as 'pending' | 'approved' | 'rejected')
+    : undefined;
+  const items = await ownerService.listApplications(status);
+  res.json({ success: true, data: items });
+}
+
+export async function reviewOwnerApplication(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = reviewOwnerApplicationSchema.parse(req.body);
+  const item = await ownerService.reviewApplication(
+    getParam(req.params.id),
+    req.user.userId,
+    input
+  );
+  res.json({ success: true, data: item });
+}
+
+export async function listGymInventory(req: Request, res: Response): Promise<void> {
+  const includeDeleted = String(req.query.includeDeleted ?? 'true') !== 'false';
+  const items = await gymInventoryService.adminList(getParam(req.params.gymId), includeDeleted);
+  res.json({ success: true, data: items });
+}
+
+export async function gymInventoryAction(req: Request, res: Response): Promise<void> {
+  const input = adminGymMachineActionSchema.parse(req.body);
+  const itemId = getParam(req.params.itemId);
+  if (input.action === 'restore') {
+    await gymInventoryService.adminRestore(itemId);
+  } else {
+    await gymInventoryService.adminForceDelete(itemId);
+  }
+  res.json({ success: true, data: { message: input.action === 'restore' ? 'Restored' : 'Deleted' } });
 }

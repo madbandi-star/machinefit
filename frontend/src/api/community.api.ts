@@ -46,8 +46,10 @@ export interface OwnerDashboardStats {
 
 export interface OwnerApplyResult {
   approved: boolean;
+  pending?: boolean;
   message: string;
-  tokens: { accessToken: string; refreshToken: string; expiresIn: string };
+  application?: unknown;
+  tokens?: { accessToken: string; refreshToken: string; expiresIn: string };
   user: { roleCode: string } | null;
 }
 

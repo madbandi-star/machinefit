@@ -11,6 +11,10 @@ import type {
   MotivationMediaAdminState,
   MotivationPlaylist,
   ReplaceMotivationMediaInput,
+  OwnerApplication,
+  GymMachine,
+  ReviewOwnerApplicationInput,
+  AdminGymMachineActionInput,
 } from '@machinefit/shared';
 import type {
   UpdateUserAdminInput,
@@ -111,6 +115,21 @@ export const adminApi = {
     apiClient.put<
       ApiResponse<{ mediaType: ReplaceMotivationMediaInput['mediaType']; items: MotivationMediaAdminState['music'] }>
     >('/admin/motivation-media', input),
+
+  listOwnerApplications: (params?: { status?: string }) =>
+    apiClient.get<ApiResponse<OwnerApplication[]>>('/admin/owner-applications', { params }),
+
+  reviewOwnerApplication: (id: string, input: ReviewOwnerApplicationInput) =>
+    apiClient.patch<ApiResponse<OwnerApplication>>(`/admin/owner-applications/${id}`, input),
+
+  listGymInventory: (gymId: string, params?: { includeDeleted?: boolean }) =>
+    apiClient.get<ApiResponse<GymMachine[]>>(`/admin/gyms/${gymId}/inventory`, { params }),
+
+  gymMachineAction: (itemId: string, input: AdminGymMachineActionInput) =>
+    apiClient.post<ApiResponse<{ message: string }>>(
+      `/admin/gym-machines/${itemId}/actions`,
+      input
+    ),
 };
 
 export const motivationMediaApi = {

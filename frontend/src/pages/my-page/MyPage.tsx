@@ -9,9 +9,7 @@ import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
-// import { ownerApi } from '@/api';
 import { ROUTES } from '@/constants/routes';
-// import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/community.css';
 
@@ -33,39 +31,13 @@ export function MyPage() {
   const { t } = useTranslation();
   const { t: tc } = useTranslation('community');
   const user = useAuthStore((s) => s.user);
-  // const setAuth = useAuthStore((s) => s.setAuth);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
-  // const showToast = useUIStore((s) => s.showToast);
 
-  // const [showApply, setShowApply] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
-  // const [businessName, setBusinessName] = useState('');
-  // const [applying, setApplying] = useState(false);
 
-  // const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
+  const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
   const isAdmin = user?.roleCode === 'admin';
-
-  /*
-  const handleApply = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!businessName.trim() || !user) return;
-    setApplying(true);
-    try {
-      const res = await ownerApi.apply({ businessName });
-      const { tokens } = res.data.data;
-      if (tokens && user) {
-        setAuth({ ...user, roleCode: 'owner' }, tokens);
-      }
-      showToast(tc('ownerApproved'), 'success');
-      setShowApply(false);
-    } catch {
-      showToast(tc('errorGeneric'), 'error');
-    } finally {
-      setApplying(false);
-    }
-  };
-  */
 
   const handleLogout = () => {
     clearCredentials();
@@ -131,38 +103,16 @@ export function MyPage() {
             {t('myPage.adminDashboard')}
           </Link>
         )}
-        {/* TODO(owner): set SHOW_OWNER_MENU true and restore block below
         {isOwner && !isAdmin && (
           <Link to={ROUTES.OWNER} className="btn btn--primary btn--block">
             {tc('ownerDashboard')}
           </Link>
         )}
         {!isOwner && (
-          <>
-            <button type="button" className="btn btn--primary btn--block" onClick={() => setShowApply(!showApply)}>
-              {tc('applyOwner')}
-            </button>
-            {showApply && (
-              <form className="card" onSubmit={handleApply}>
-                <p className="form-section__desc">{tc('applyOwnerDesc')}</p>
-                <div className="form-row">
-                  <label htmlFor="biz-name">{tc('businessName')}</label>
-                  <input
-                    id="biz-name"
-                    className="input"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn--primary btn--block" disabled={applying}>
-                  {applying ? <span className="btn__spinner" aria-hidden /> : tc('submit')}
-                </button>
-              </form>
-            )}
-          </>
+          <Link to={ROUTES.OWNER_APPLY} className="btn btn--primary btn--block">
+            {tc('applyOwner')}
+          </Link>
         )}
-        */}
         <button type="button" className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
           {t('nav.logout')}
         </button>

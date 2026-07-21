@@ -1,5 +1,6 @@
 import type { GymListQuery } from '@machinefit/shared';
 import type { Gym, GymMachine, GymPhoto } from '@machinefit/shared';
+// GymMachine registeredByRole/status used in inventory mapping
 import { getPool } from '../config/database.js';
 import { MOCK_GYMS } from '../data/mock.js';
 
@@ -144,7 +145,8 @@ export const gymRepository = {
       conditions.push(`EXISTS (
         SELECT 1 FROM gym_machines gm
         JOIN machines m ON m.id = gm.machine_id
-        WHERE gm.gym_id = g.id AND m.code = $${idx++} AND gm.is_available = TRUE
+        WHERE gm.gym_id = g.id AND m.code = $${idx++}
+          AND gm.is_available = TRUE AND gm.deleted_at IS NULL
       )`);
       params.push(query.machineCode);
     }
@@ -153,7 +155,7 @@ export const gymRepository = {
         SELECT 1 FROM gym_machines gm
         JOIN machines m ON m.id = gm.machine_id
         JOIN brands b ON b.id = m.brand_id
-        WHERE gm.gym_id = g.id AND b.code = $${idx++}
+        WHERE gm.gym_id = g.id AND b.code = $${idx++} AND gm.deleted_at IS NULL
       )`);
       params.push(query.brandCode);
     }
@@ -189,7 +191,8 @@ export const gymRepository = {
 
     const result = await pool.query<GymRow>(
       `SELECT g.*, c.code AS country_code,
-        (SELECT COUNT(*)::text FROM gym_machines gm WHERE gm.gym_id = g.id) AS machine_count
+        (SELECT COUNT(*)::text FROM gym_machines gm
+          WHERE gm.gym_id = g.id AND gm.deleted_at IS NULL) AS machine_count
         ${distanceSelect}
        FROM gyms g
        LEFT JOIN countries c ON c.id = g.country_id
@@ -213,7 +216,8 @@ export const gymRepository = {
 
     const result = await pool.query<GymRow>(
       `SELECT g.*, c.code AS country_code,
-        (SELECT COUNT(*)::text FROM gym_machines gm WHERE gm.gym_id = g.id) AS machine_count
+        (SELECT COUNT(*)::text FROM gym_machines gm
+          WHERE gm.gym_id = g.id AND gm.deleted_at IS NULL) AS machine_count
        FROM gyms g
        LEFT JOIN countries c ON c.id = g.country_id
        WHERE (g.id::text = $1 OR g.slug = $1)
@@ -268,18 +272,28 @@ export const gymRepository = {
       machine_id: string;
       machine_code: string;
       machine_name: Record<string, string>;
+      brand_code: string | null;
+      brand_name: Record<string, string> | null;
       muscle_group: string;
       quantity: number;
       notes: string | null;
       is_available: boolean;
       instance_label: string | null;
       floor_zone: string | null;
+      registered_by: string | null;
+      registered_by_role: string | null;
+      is_verified: boolean | null;
+      status: string | null;
+      created_at: string;
+      updated_at: string;
     }>(
-      `SELECT gm.*, m.code AS machine_code, m.name AS machine_name, m.muscle_group
+      `SELECT gm.*, m.code AS machine_code, m.name AS machine_name, m.muscle_group,
+              b.code AS brand_code, b.name AS brand_name
        FROM gym_machines gm
        JOIN machines m ON m.id = gm.machine_id
-       WHERE gm.gym_id = $1
-       ORDER BY m.code ASC`,
+       LEFT JOIN brands b ON b.id = m.brand_id
+       WHERE gm.gym_id = $1 AND gm.deleted_at IS NULL
+       ORDER BY COALESCE(gm.is_verified, FALSE) DESC, m.code ASC`,
       [gym.id]
     );
 
@@ -288,13 +302,21 @@ export const gymRepository = {
       gymId: row.gym_id,
       machineId: row.machine_id,
       machineCode: row.machine_code,
-      machineName: row.machine_name?.en ?? row.machine_code,
+      machineName: row.machine_name?.ko ?? row.machine_name?.en ?? row.machine_code,
+      brandCode: row.brand_code ?? undefined,
+      brandName: row.brand_name?.ko ?? row.brand_name?.en ?? undefined,
       muscleGroup: row.muscle_group,
       quantity: row.quantity,
       notes: row.notes ?? undefined,
       isAvailable: row.is_available,
       instanceLabel: row.instance_label ?? undefined,
       floorZone: row.floor_zone ?? undefined,
+      registeredBy: row.registered_by ?? undefined,
+      registeredByRole: (row.registered_by_role as GymMachine['registeredByRole']) ?? undefined,
+      isVerified: Boolean(row.is_verified),
+      status: (row.status as GymMachine['status']) ?? 'active',
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
     }));
   },
 };

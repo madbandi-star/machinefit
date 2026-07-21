@@ -5,6 +5,8 @@ export const QUERY_KEYS = {
   brand: (code: string) => ['brands', code] as const,
   gyms: ['gyms'] as const,
   gym: (id: string) => ['gyms', id] as const,
+  gymInventory: (id: string, params?: { brandCode?: string; q?: string }) =>
+    ['gyms', id, 'inventory', params ?? {}] as const,
   recommendations: ['recommendations'] as const,
   favorites: ['favorites'] as const,
   favoriteCheck: (machineCode: string) => ['favorites', 'check', machineCode] as const,
@@ -50,5 +52,7 @@ export const QUERY_KEYS = {
   adminModeration: ['admin', 'moderation'] as const,
   adminMotivationMedia: ['admin', 'motivation-media'] as const,
   motivationMedia: ['motivation-media'] as const,
+  adminOwnerApplications: ['admin', 'owner-applications'] as const,
+  adminGymInventory: (gymId: string) => ['admin', 'gyms', gymId, 'inventory'] as const,
   user: ['user', 'me'] as const,
 } as const;

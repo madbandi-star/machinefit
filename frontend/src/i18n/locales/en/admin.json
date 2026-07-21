@@ -50,5 +50,29 @@
     "clear": "Clear",
     "save": "Save this list",
     "order": "Order"
+  },
+  "ownerApplications": {
+    "nav": "Owner apps",
+    "title": "Owner verification applications",
+    "filter": "Status filter",
+    "pending": "Pending",
+    "approvedStatus": "Approved",
+    "rejectedStatus": "Rejected",
+    "all": "All",
+    "empty": "No applications.",
+    "evidence": "Evidence",
+    "adminNote": "Admin note",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Application approved.",
+    "rejected": "Application rejected."
+  },
+  "inventory": {
+    "manage": "Manage inventory",
+    "empty": "No inventory rows.",
+    "restore": "Restore",
+    "forceDelete": "Force delete",
+    "restored": "Restored.",
+    "forceDeleted": "Permanently deleted."
   }
 }
