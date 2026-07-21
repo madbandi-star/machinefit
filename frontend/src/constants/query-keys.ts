@@ -69,4 +69,5 @@ export const QUERY_KEYS = {
   memberProfileRequests: ['user', 'member-profile-requests'] as const,
   liftedWeight: ['user', 'lifted-weight'] as const,
   liftedWeightRankings: ['user', 'lifted-weight', 'rankings'] as const,
+  lifterDna: ['user', 'lifter-dna'] as const,
 } as const;

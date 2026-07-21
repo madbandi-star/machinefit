@@ -24,6 +24,7 @@ import type {
   LiftedRankingResponse,
   LiftedScopeMode,
   LiftedRankingBoard,
+  LifterDnaSnapshot,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -385,6 +386,10 @@ export const liftedWeightApi = {
     apiClient.get<ApiResponse<LiftedRankingResponse>>('/users/me/lifted-weight/rankings', {
       params,
     }),
+};
+
+export const lifterDnaApi = {
+  snapshot: () => apiClient.get<ApiResponse<LifterDnaSnapshot>>('/users/me/lifter-dna'),
 };
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';

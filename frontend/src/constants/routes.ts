@@ -21,6 +21,7 @@ export const ROUTES = {
   MY_GYMS: '/my-page/gyms',
   LIFTED_WEIGHT: '/my-page/lifted-weight',
   LIFTED_WEIGHT_RANKINGS: '/my-page/lifted-weight/rankings',
+  LIFTER_DNA: '/my-page/lifter-dna',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
   OWNER: '/owner',
