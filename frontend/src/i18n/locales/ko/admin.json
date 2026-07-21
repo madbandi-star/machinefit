@@ -33,5 +33,22 @@
   "saved": "변경 사항을 저장했어요.",
   "error": "처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
   "enable": "활성화",
-  "disable": "비활성화"
+  "disable": "비활성화",
+  "motivation": {
+    "nav": "동기부여",
+    "title": "동기부여 음악·영상",
+    "subtitle": "음악/영상 각 5건까지 등록하고, 재생 목록에 포함할 항목과 순서를 정하세요.",
+    "musicSection": "동기부여 음악",
+    "videoSection": "동기부여 영상",
+    "musicHint": "직접 재생 가능한 오디오 URL(mp3 등)을 입력하세요. 체크한 항목만 사용자 재생 버튼에 포함됩니다.",
+    "videoHint": "YouTube 링크를 입력하세요. 체크한 항목만 사용자 재생 버튼에 포함됩니다.",
+    "fieldTitle": "제목",
+    "fieldUrl": "URL",
+    "includeInPlaylist": "재생 목록에 포함",
+    "moveUp": "위로",
+    "moveDown": "아래로",
+    "clear": "비우기",
+    "save": "이 목록 저장",
+    "order": "순서"
+  }
 }

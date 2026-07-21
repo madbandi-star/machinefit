@@ -90,3 +90,36 @@
   background: var(--color-surface-alt);
   flex: 0 0 auto;
 }
+
+.admin-motivation__row {
+  align-items: flex-start;
+}
+
+.admin-motivation__order {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 5.5rem;
+}
+
+.admin-motivation__order-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-motivation__fields {
+  flex: 1;
+  min-width: 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-motivation__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}

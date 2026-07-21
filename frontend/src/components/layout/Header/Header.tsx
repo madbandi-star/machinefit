@@ -4,6 +4,7 @@ import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { LanguageSelector } from '@/components/settings/LanguageSelector/LanguageSelector';
+import { MotivationMediaControls } from '@/components/motivation/MotivationMediaControls/MotivationMediaControls';
 import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { NotificationBell } from '@/components/navigation/NotificationBell/NotificationBell';
 import './Header.css';
@@ -21,7 +22,10 @@ export function Header() {
         Machine<span className="header__logo-fit">Fit</span>
       </Link>
       <div className="header__actions">
-        <LanguageSelector />
+        <div className="header__lang-stack">
+          <LanguageSelector />
+          <MotivationMediaControls />
+        </div>
         <NotificationBell />
         <PwaInstallButton variant="header" />
         {isAuthenticated ? (

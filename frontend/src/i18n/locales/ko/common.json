@@ -56,6 +56,16 @@
     "action": "앱 공유하기",
     "copied": "공유 링크를 복사했어요. 친구에게 보내 보세요."
   },
+  "motivation": {
+    "music": "동기부여 음악 재생",
+    "video": "동기부여 영상 재생",
+    "musicEmpty": "재생할 동기부여 음악이 아직 없어요.",
+    "videoEmpty": "재생할 동기부여 영상이 아직 없어요.",
+    "nowPlaying": "재생 중: {{title}}",
+    "playFailed": "재생하지 못했어요. 주소를 확인해 주세요.",
+    "next": "다음",
+    "close": "닫기"
+  },
   "errors": {
     "loadFailed": "불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
     "notFound": "찾을 수 없어요.",

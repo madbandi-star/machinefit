@@ -33,6 +33,7 @@ import { AdminUsersPage } from '@/pages/admin/users/AdminUsersPage';
 import { AdminGymsPage } from '@/pages/admin/gyms/AdminGymsPage';
 import { AdminMachinesPage } from '@/pages/admin/machines/AdminMachinesPage';
 import { AdminModerationPage } from '@/pages/admin/moderation/AdminModerationPage';
+import { AdminMotivationPage } from '@/pages/admin/motivation/AdminMotivationPage';
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage';
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
 import { QrRedirectPage } from '@/pages/qr-redirect/QrRedirectPage';
@@ -123,6 +124,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_USERS, element: <AdminUsersPage /> },
         { path: ROUTES.ADMIN_GYMS, element: <AdminGymsPage /> },
         { path: ROUTES.ADMIN_MACHINES, element: <AdminMachinesPage /> },
+        { path: ROUTES.ADMIN_MOTIVATION, element: <AdminMotivationPage /> },
         { path: ROUTES.ADMIN_MODERATION, element: <AdminModerationPage /> },
       ],
     },

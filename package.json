@@ -19,6 +19,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "db:migrate": "tsx database/scripts/migrate.ts",
+    "db:migrate:one": "tsx database/scripts/apply-one-migration.ts",
     "db:seed": "tsx database/scripts/seed.ts",
     "db:setup": "npm run db:migrate && npm run db:seed",
     "test:smoke:changed": "node scripts/smoke-changed.mjs"

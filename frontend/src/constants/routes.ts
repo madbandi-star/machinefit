@@ -29,6 +29,7 @@ export const ROUTES = {
   ADMIN_GYMS: '/admin/gyms',
   ADMIN_MACHINES: '/admin/machines',
   ADMIN_MODERATION: '/admin/moderation',
+  ADMIN_MOTIVATION: '/admin/motivation',
   NOTIFICATIONS: '/notifications',
   SCAN: '/scan',
   QR: '/qr/:qrCode',

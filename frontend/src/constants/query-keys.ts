@@ -48,5 +48,7 @@ export const QUERY_KEYS = {
   adminGyms: ['admin', 'gyms'] as const,
   adminMachines: ['admin', 'machines'] as const,
   adminModeration: ['admin', 'moderation'] as const,
+  adminMotivationMedia: ['admin', 'motivation-media'] as const,
+  motivationMedia: ['motivation-media'] as const,
   user: ['user', 'me'] as const,
 } as const;
