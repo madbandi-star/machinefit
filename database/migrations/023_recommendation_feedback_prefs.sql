@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS user_machine_preferences (
 CREATE INDEX IF NOT EXISTS idx_user_machine_preferences_user
   ON user_machine_preferences (user_id);
 
+DROP TRIGGER IF EXISTS trg_user_machine_preferences_updated_at ON user_machine_preferences;
 CREATE TRIGGER trg_user_machine_preferences_updated_at
   BEFORE UPDATE ON user_machine_preferences
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

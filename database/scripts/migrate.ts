@@ -10,6 +10,21 @@ const migrationsDir = path.join(__dirname, '../migrations');
 
 const { Pool } = pg;
 
+/** Errors that mean the migration was already applied outside schema_migrations. */
+const DRIFT_CODES = new Set([
+  '42P07', // duplicate_table
+  '42710', // duplicate_object
+  '42701', // duplicate_column
+]);
+
+function isAlreadyAppliedError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { code?: string; message?: string };
+  if (e.code && DRIFT_CODES.has(e.code)) return true;
+  const msg = (e.message ?? '').toLowerCase();
+  return msg.includes('already exists');
+}
+
 async function run() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -47,13 +62,16 @@ async function run() {
     await pool.query('BEGIN');
     try {
       await pool.query(sql);
-      await pool.query(
-        'INSERT INTO schema_migrations (filename) VALUES ($1)',
-        [file]
-      );
+      await pool.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [file]);
       await pool.query('COMMIT');
     } catch (err) {
       await pool.query('ROLLBACK');
+      if (isAlreadyAppliedError(err)) {
+        await pool.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [file]);
+        const code = (err as { code?: string }).code ?? '?';
+        console.log(`  baselined ${file} (already in DB: ${code})`);
+        continue;
+      }
       throw err;
     }
   }
