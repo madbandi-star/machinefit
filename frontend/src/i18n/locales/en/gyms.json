@@ -37,7 +37,7 @@
     "requestApprove": "Approve",
     "requestDeny": "Deny",
     "requestFrom": "{{gymName}} gym requested to link your profile.",
-    "unknownGym": "Unknown",
+    "requestFromUnnamed": "A gym requested to link your profile.",
     "requestApproved": "Profile link approved.",
     "requestDenied": "Profile link denied."
   },
