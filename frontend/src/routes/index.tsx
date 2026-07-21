@@ -76,6 +76,10 @@ const liftedWeightRankings = () =>
   }));
 const lifterDna = () =>
   import('@/pages/lifter-dna/LifterDnaPage').then((m) => ({ default: m.LifterDnaPage }));
+const liveDashboard = () =>
+  import('@/pages/live-dashboard/LiveDashboardPage').then((m) => ({
+    default: m.LiveDashboardPage,
+  }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
 const ownerDash = () =>
@@ -156,6 +160,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.LIFTED_WEIGHT, element: lazyRoute(liftedWeight) },
             { path: ROUTES.LIFTED_WEIGHT_RANKINGS, element: lazyRoute(liftedWeightRankings) },
             { path: ROUTES.LIFTER_DNA, element: lazyRoute(lifterDna) },
+            { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },

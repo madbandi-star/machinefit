@@ -25,6 +25,13 @@ import type {
   LiftedScopeMode,
   LiftedRankingBoard,
   LifterDnaSnapshot,
+  LiveDashboardSnapshot,
+  LiveRankingResponse,
+  LiveRankingBoard,
+  LiveRankingPeriod,
+  LiveDashboardLevel,
+  LiveScopeQuery,
+  LiveSearchHit,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -390,6 +397,20 @@ export const liftedWeightApi = {
 
 export const lifterDnaApi = {
   snapshot: () => apiClient.get<ApiResponse<LifterDnaSnapshot>>('/users/me/lifter-dna'),
+};
+
+export const liveDashboardApi = {
+  snapshot: (params: { level: LiveDashboardLevel } & LiveScopeQuery) =>
+    apiClient.get<ApiResponse<LiveDashboardSnapshot>>('/live/snapshot', { params }),
+  rankings: (
+    params: {
+      board: LiveRankingBoard;
+      period?: LiveRankingPeriod;
+      limit?: number;
+    } & LiveScopeQuery
+  ) => apiClient.get<ApiResponse<LiveRankingResponse>>('/live/rankings', { params }),
+  search: (q: string) =>
+    apiClient.get<ApiResponse<LiveSearchHit[]>>('/live/search', { params: { q } }),
 };
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
