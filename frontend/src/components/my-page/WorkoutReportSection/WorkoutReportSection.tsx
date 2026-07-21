@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { workoutReportApi, type WorkoutReportPeriod, type WorkoutReportResult } from '@/api';
 import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { htmlReportToPlainText } from '@/utils/sendEmailViaFormSubmit';
 import '@/styles/components.css';
@@ -72,6 +73,7 @@ export function WorkoutReportSection() {
   const { t } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
   const userEmail = useAuthStore((s) => s.user?.email);
+  const { activeGymId } = useActiveGym();
   const [period, setPeriod] = useState<WorkoutReportPeriod>('week');
   const [reportCache, setReportCache] = useState<ReportCache | null>(null);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
@@ -80,14 +82,18 @@ export function WorkoutReportSection() {
   useEffect(() => {
     setReportCache(null);
     setReportDialogOpen(false);
-  }, [period]);
+  }, [period, activeGymId]);
 
   const fetchReport = async (previewOnly: boolean): Promise<ReportCache | null> => {
     if (!previewOnly && reportCache?.period === period) {
       return reportCache;
     }
 
-    const res = await workoutReportApi.send({ period, previewOnly });
+    const res = await workoutReportApi.send({
+      period,
+      previewOnly,
+      ...(activeGymId ? { gymId: activeGymId } : {}),
+    });
     const cache = buildReportCache(period, res.data.data);
     if (cache) {
       setReportCache(cache);
@@ -97,7 +103,10 @@ export function WorkoutReportSection() {
 
   const sendMutation = useMutation({
     mutationFn: async () => {
-      const res = await workoutReportApi.send({ period });
+      const res = await workoutReportApi.send({
+        period,
+        ...(activeGymId ? { gymId: activeGymId } : {}),
+      });
       return res.data.data;
     },
     onSuccess: async (data) => {

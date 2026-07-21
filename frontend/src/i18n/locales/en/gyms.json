@@ -1,4 +1,13 @@
 {
+  "selector": {
+    "currentGym": "Current gym",
+    "addGym": "+ Add gym",
+    "gymName": "Gym name",
+    "address": "Address (optional)",
+    "brand": "Brand (optional)",
+    "save": "Save",
+    "switchSuccess": "Switched gym."
+  },
   "title": "Gym Finder",
   "subtitle": "Find gyms with your machines nearby",
   "searchPlaceholder": "Search gyms by name or city",

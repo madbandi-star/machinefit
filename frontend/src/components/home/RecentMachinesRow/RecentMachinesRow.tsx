@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { historyApi, type HistoryItem } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import '@/styles/home.css';
 
 function recentItemKey(item: HistoryItem): string {
@@ -20,13 +21,15 @@ function recentItemKey(item: HistoryItem): string {
 
 export function RecentMachinesRow() {
   const { t } = useTranslation();
+  const { activeGymId } = useActiveGym();
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.historyList({ limit: 8 }),
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', { limit: 8 }),
     queryFn: async () => {
-      const res = await historyApi.list({ limit: 8 });
+      const res = await historyApi.list(activeGymId!, { limit: 8 });
       return res.data.data;
     },
+    enabled: Boolean(activeGymId),
   });
 
   const unique = useMemo(() => {

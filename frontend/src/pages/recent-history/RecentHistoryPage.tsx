@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { historyApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { useUIStore } from '@/store/ui.store';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
@@ -15,24 +16,26 @@ export function RecentHistoryPage() {
   const { t } = useTranslation(['common', 'machines']);
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const { activeGymId } = useActiveGym();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.historyList(),
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? ''),
     queryFn: async () => {
-      const res = await historyApi.list();
+      const res = await historyApi.list(activeGymId!);
       return res.data.data;
     },
+    enabled: Boolean(activeGymId),
   });
 
   const clearMutation = useMutation({
-    mutationFn: () => historyApi.clear(),
+    mutationFn: () => historyApi.clear(activeGymId!),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
   return (
     <PageShell title={t('common:nav.history')} subtitle={t('machines:history.subtitle')}>
-      {isLoading ? (
+      {isLoading || !activeGymId ? (
         <Skeleton count={3} height={80} />
       ) : isError ? (
         <QueryErrorMessage />

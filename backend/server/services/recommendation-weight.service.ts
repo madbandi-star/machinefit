@@ -226,12 +226,18 @@ export async function computeRecommendationWeight(options: {
   );
   const logs =
     userId != null
-      ? await workoutLogRepository.listByUser(userId, {
-          machineId,
-          ...(isFreeWeightMachineCode(input.machineCode)
-            ? { targetMuscleGroup: targetMuscleKey }
-            : {}),
-        })
+      ? await (async () => {
+          const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+          const gymId = await userGymRepository.getActiveGymId(userId);
+          if (!gymId) return [];
+          return workoutLogRepository.listByUser(userId, {
+            gymId,
+            machineId,
+            ...(isFreeWeightMachineCode(input.machineCode)
+              ? { targetMuscleGroup: targetMuscleKey }
+              : {}),
+          });
+        })()
       : [];
 
   const userMetrics = computeUserMetrics(logs);

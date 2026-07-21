@@ -16,6 +16,7 @@ interface UserRow {
   workout_goal: string | null;
   home_gym_id: string | null;
   home_gym_name: string | null;
+  active_gym_id: string | null;
   country_id: string | null;
   language_id: string | null;
   language_code: string | null;
@@ -44,6 +45,7 @@ function mapUser(row: UserRow): User {
     workoutGoal: row.workout_goal as User['workoutGoal'],
     homeGymId: row.home_gym_id ?? undefined,
     homeGymName: row.home_gym_name ?? undefined,
+    activeGymId: row.active_gym_id ?? undefined,
     countryId: row.country_id ?? undefined,
     languageId: row.language_id ?? undefined,
     languageCode: row.language_code ?? undefined,

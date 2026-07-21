@@ -4,6 +4,7 @@ import { pickLocalized } from '../utils/localize.util.js';
 
 export interface FavoriteItem {
   id: string;
+  gymId: string;
   machineId: string;
   machineCode: string;
   machineName: string;
@@ -14,12 +15,13 @@ export interface FavoriteItem {
 }
 
 export const favoriteRepository = {
-  async listByUser(userId: string, locale: Locale = 'en'): Promise<FavoriteItem[]> {
+  async listByUser(userId: string, gymId: string, locale: Locale = 'en'): Promise<FavoriteItem[]> {
     const pool = getPool();
     if (!pool) return [];
 
     const result = await pool.query<{
       id: string;
+      gym_id: string;
       machine_id: string;
       machine_code: string;
       muscle_group: string;
@@ -28,19 +30,20 @@ export const favoriteRepository = {
       recommendation_id: string | null;
       created_at: string;
     }>(
-      `SELECT f.id, f.machine_id, f.recommendation_id, f.created_at,
+      `SELECT f.id, f.gym_id, f.machine_id, f.recommendation_id, f.created_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               b.name AS brand_name
        FROM favorites f
        JOIN machines m ON m.id = f.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
-       WHERE f.user_id = $1
+       WHERE f.user_id = $1 AND f.gym_id = $2
        ORDER BY f.created_at DESC`,
-      [userId]
+      [userId, gymId]
     );
 
     return result.rows.map((row) => ({
       id: row.id,
+      gymId: row.gym_id,
       machineId: row.machine_id,
       machineCode: row.machine_code,
       machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
@@ -55,6 +58,7 @@ export const favoriteRepository = {
 
   async add(
     userId: string,
+    gymId: string,
     machineId: string,
     recommendationId?: string,
     locale: Locale = 'en'
@@ -63,14 +67,14 @@ export const favoriteRepository = {
     if (!pool) throw new Error('Database not configured');
 
     const result = await pool.query<{ id: string }>(
-      `INSERT INTO favorites (user_id, machine_id, recommendation_id)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (user_id, machine_id) DO UPDATE SET recommendation_id = EXCLUDED.recommendation_id
+      `INSERT INTO favorites (user_id, gym_id, machine_id, recommendation_id)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (user_id, gym_id, machine_id) DO UPDATE SET recommendation_id = EXCLUDED.recommendation_id
        RETURNING id`,
-      [userId, machineId, recommendationId ?? null]
+      [userId, gymId, machineId, recommendationId ?? null]
     );
 
-    const items = await this.listByUser(userId, locale);
+    const items = await this.listByUser(userId, gymId, locale);
     const item = items.find((f) => f.id === result.rows[0].id);
     if (!item) throw new Error('Failed to add favorite');
     return item;
@@ -85,13 +89,14 @@ export const favoriteRepository = {
     ]);
   },
 
-  async isFavorited(userId: string, machineCode: string): Promise<boolean> {
-    const id = await this.findIdByUserAndMachineCode(userId, machineCode);
+  async isFavorited(userId: string, gymId: string, machineCode: string): Promise<boolean> {
+    const id = await this.findIdByUserAndMachineCode(userId, gymId, machineCode);
     return id != null;
   },
 
   async findIdByUserAndMachineCode(
     userId: string,
+    gymId: string,
     machineCode: string
   ): Promise<string | null> {
     const pool = getPool();
@@ -101,8 +106,8 @@ export const favoriteRepository = {
       `SELECT f.id
        FROM favorites f
        JOIN machines m ON m.id = f.machine_id
-       WHERE f.user_id = $1 AND m.code = $2`,
-      [userId, machineCode]
+       WHERE f.user_id = $1 AND f.gym_id = $2 AND m.code = $3`,
+      [userId, gymId, machineCode]
     );
     return result.rows[0]?.id ?? null;
   },

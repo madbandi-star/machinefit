@@ -7,18 +7,21 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import '@/styles/home.css';
 
 export function FavoriteMachinesRow() {
   const { t } = useTranslation();
+  const { activeGymId } = useActiveGym();
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.favorites,
+    queryKey: QUERY_KEYS.favorites(activeGymId ?? ''),
     queryFn: async () => {
-      const res = await favoriteApi.list();
+      const res = await favoriteApi.list(activeGymId!);
       return res.data.data;
     },
+    enabled: Boolean(activeGymId),
   });
 
   return (

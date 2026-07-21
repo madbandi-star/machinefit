@@ -182,7 +182,13 @@ export const recommendationService = {
     const youtubeVideos = await recommendationRepository.findYoutubeVideos(machineId);
 
     if (userId) {
-      await historyRepository.record(userId, machineId, id);
+      const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+      const gymId =
+        (input as { gymId?: string }).gymId ??
+        (await userGymRepository.getActiveGymId(userId));
+      if (gymId) {
+        await historyRepository.record(userId, gymId, machineId, id);
+      }
     }
 
     const brandName =

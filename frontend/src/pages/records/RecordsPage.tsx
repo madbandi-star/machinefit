@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { TabBar } from '@/components/navigation/TabBar/TabBar';
 import { HistoryListPanel } from '@/components/records/HistoryListPanel/HistoryListPanel';
 import { FavoritesListPanel } from '@/components/records/FavoritesListPanel/FavoritesListPanel';
+import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
 import '@/styles/records.css';
 
 const TABS = ['history', 'favorites'] as const;
@@ -45,6 +46,9 @@ export function RecordsPage() {
 
   return (
     <div className="records-page">
+      <div className="records-page__gym">
+        <GymSelector />
+      </div>
       <TabBar
         ariaLabel={t('machines:records.tabsLabel')}
         tabs={[

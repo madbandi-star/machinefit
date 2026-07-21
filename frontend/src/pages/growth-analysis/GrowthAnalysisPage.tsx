@@ -11,6 +11,8 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthInsightsPanel/GrowthInsightsPanel';
 import { fetchWorkoutInsights } from '@/api/growth-insights';
 import { useAuthStore } from '@/store/auth.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
 import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeriodFilter/GrowthPeriodFilter';
 import { GrowthMachineSelector } from '@/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -82,6 +84,7 @@ function KpiCard({
 export function GrowthAnalysisPage() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const user = useAuthStore((s) => s.user);
+  const { activeGymId } = useActiveGym();
   const [periodPreset, setPeriodPreset] = useState<GrowthPeriod>('30d');
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
@@ -137,8 +140,9 @@ export function GrowthAnalysisPage() {
   }, [customFrom, customTo, periodFilter, periodPreset]);
 
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsList(logsQueryOptions),
-    queryFn: () => fetchWorkoutLogs(logsQueryOptions),
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', logsQueryOptions),
+    queryFn: () => fetchWorkoutLogs({ gymId: activeGymId!, ...logsQueryOptions }),
+    enabled: Boolean(activeGymId),
   });
 
   const datesWithData = useMemo(() => extractWorkoutLogDateKeys(logs), [logs]);
@@ -234,6 +238,7 @@ export function GrowthAnalysisPage() {
     isLoading: isInsightsLoading,
   } = useQuery({
     queryKey: QUERY_KEYS.workoutInsights(
+      activeGymId ?? '',
       isDailyView ? 'daily' : 'machine',
       selectedMachineOption?.machineCode ?? '',
       selectedMachineOption?.targetMuscleGroup ?? '',
@@ -243,6 +248,7 @@ export function GrowthAnalysisPage() {
     ),
     queryFn: () =>
       fetchWorkoutInsights({
+        gymId: activeGymId!,
         viewMode: isDailyView ? 'daily' : 'machine',
         machineCode: isDailyView ? undefined : selectedMachineOption?.machineCode,
         targetMuscleGroup: isDailyView ? undefined : selectedMachineOption?.targetMuscleGroup,
@@ -254,9 +260,10 @@ export function GrowthAnalysisPage() {
         machineName: selectedMachineName,
       }),
     enabled:
-      periodPreset !== 'custom' || Boolean(customFrom && customTo)
+      Boolean(activeGymId) &&
+      (periodPreset !== 'custom' || Boolean(customFrom && customTo)
         ? isDailyView || Boolean(selectedMachineOption)
-        : false,
+        : false),
   });
 
   const volumeChartPoints = useMemo(() => {
@@ -308,10 +315,10 @@ export function GrowthAnalysisPage() {
   const maxWeightDelta = isDailyView ? dailyKpis.maxWeightDelta : machineKpis.maxWeightDelta;
   const workoutCount = isDailyView ? dailyKpis.totalLogCount : machineKpis.workoutCount;
 
-  if (isLoading) {
+  if (!activeGymId || isLoading) {
     return (
       <div className="growth-analysis-page">
-        <PageShell title={t('growthAnalysis.title')} />
+        <PageShell title={t('growthAnalysis.title')} action={<GymSelector />} />
         <Skeleton count={4} height={80} />
       </div>
     );
@@ -320,7 +327,7 @@ export function GrowthAnalysisPage() {
   if (isError) {
     return (
       <div className="growth-analysis-page">
-        <PageShell title={t('growthAnalysis.title')} />
+        <PageShell title={t('growthAnalysis.title')} action={<GymSelector />} />
         <div className="card growth-analysis-empty">
           <p>{t('errors.loadFailed')}</p>
           <button type="button" className="btn btn--secondary" onClick={() => void refetch()}>
@@ -338,6 +345,7 @@ export function GrowthAnalysisPage() {
         subtitle={
           isDailyView ? t('growthAnalysis.daily.subtitle') : t('growthAnalysis.subtitle')
         }
+        action={<GymSelector />}
       />
 
       <div className="growth-analysis-filters card">

@@ -1,4 +1,13 @@
 {
+  "selector": {
+    "currentGym": "현재 헬스장",
+    "addGym": "+ 헬스장 추가",
+    "gymName": "헬스장 이름",
+    "address": "주소 (선택)",
+    "brand": "브랜드 (선택)",
+    "save": "저장",
+    "switchSuccess": "헬스장을 변경했습니다."
+  },
   "title": "체육관 찾기",
   "subtitle": "원하는 머신이 있는 체육관을 찾아보세요",
   "searchPlaceholder": "체육관 이름 또는 도시로 검색",
