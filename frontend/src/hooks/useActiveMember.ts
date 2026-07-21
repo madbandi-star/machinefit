@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isAllGymsId } from '@machinefit/shared';
@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
+import { invalidateGymScopedQueries } from '@/utils/invalidateGymScopedQueries';
 
 function isPlanLimitError(error: unknown): boolean {
   const err = error as { response?: { status?: number; data?: { code?: string } } };
@@ -40,10 +41,25 @@ export function useActiveMember() {
     staleTime: 30_000,
   });
 
-  // Auto-select self member when no member is selected
   const selfMember = members.find((m) => m.isSelf);
   const resolvedMemberId = activeMemberId ?? selfMember?.id ?? null;
   const activeMember = members.find((m) => m.id === resolvedMemberId) ?? null;
+  const syncedSelfRef = useRef<string | null>(null);
+
+  // Persist auto-resolved self member so query keys and write paths stay stable
+  useEffect(() => {
+    if (!isRealGym || !selfMember) {
+      syncedSelfRef.current = null;
+      return;
+    }
+    if (activeMemberId && members.some((m) => m.id === activeMemberId)) {
+      syncedSelfRef.current = activeMemberId;
+      return;
+    }
+    if (syncedSelfRef.current === selfMember.id && activeMemberId === selfMember.id) return;
+    syncedSelfRef.current = selfMember.id;
+    setActiveMemberId(selfMember.id);
+  }, [activeMemberId, isRealGym, members, selfMember, setActiveMemberId]);
 
   const createMutation = useMutation({
     mutationFn: (input: CreateGymMemberInput) => gymMemberApi.create(activeGymId!, input),
@@ -51,6 +67,7 @@ export function useActiveMember() {
       const member = res.data.data;
       setActiveMemberId(member.id);
       await queryClient.invalidateQueries({ queryKey: membersKey });
+      invalidateGymScopedQueries(queryClient);
       showToast(t('gyms:members.createSuccess'), 'success');
     },
     onError: (error) => {
@@ -69,6 +86,7 @@ export function useActiveMember() {
         setActiveMemberId(null);
       }
       await queryClient.invalidateQueries({ queryKey: membersKey });
+      invalidateGymScopedQueries(queryClient);
       showToast(t('gyms:members.removeSuccess'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
@@ -76,9 +94,11 @@ export function useActiveMember() {
 
   const selectMember = useCallback(
     (memberId: string | null) => {
+      if (memberId === activeMemberId) return;
       setActiveMemberId(memberId);
+      invalidateGymScopedQueries(queryClient);
     },
-    [setActiveMemberId]
+    [activeMemberId, queryClient, setActiveMemberId]
   );
 
   const createMember = useCallback(
@@ -103,6 +123,8 @@ export function useActiveMember() {
     activeMemberId: resolvedMemberId,
     isLoading,
     isRealGym,
+    /** Ready to fetch member-scoped home/records data. */
+    memberScopeReady: !isRealGym || Boolean(resolvedMemberId),
     selectMember,
     createMember,
     removeMember,

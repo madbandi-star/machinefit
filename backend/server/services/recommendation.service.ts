@@ -183,14 +183,19 @@ export const recommendationService = {
 
     if (userId) {
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');
-      const gymId =
-        (input as { gymId?: string }).gymId ??
-        (await userGymRepository.getActiveGymId(userId));
+      const gymId = input.gymId ?? (await userGymRepository.getActiveGymId(userId));
       if (gymId) {
         const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
-        const selfMember = await gymMemberRepository.findSelfMember(gymId, userId);
-        if (selfMember) {
-          await historyRepository.record(userId, gymId, selfMember.id, machineId, id);
+        const { gymScopeService } = await import('./gym-scope.service.js');
+        let memberId = input.memberId;
+        if (memberId) {
+          await gymScopeService.resolveMemberForWrite(userId, gymId, memberId);
+        } else {
+          const selfMember = await gymMemberRepository.findSelfMember(gymId, userId);
+          memberId = selfMember?.id;
+        }
+        if (memberId) {
+          await historyRepository.record(userId, gymId, memberId, machineId, id);
         }
       }
     }

@@ -239,26 +239,35 @@ export const userGymApi = {
 };
 
 export const favoriteApi = {
-  list: (gymId: string) =>
-    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', { params: { gymId } }),
-  add: (gymId: string, machineCode: string, recommendationId?: string) =>
+  list: (gymId: string, memberId?: string) =>
+    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', {
+      params: { gymId, ...(memberId ? { memberId } : {}) },
+    }),
+  add: (gymId: string, memberId: string, machineCode: string, recommendationId?: string) =>
     apiClient.post<ApiResponse<FavoriteItem>>('/favorites', {
       gymId,
+      memberId,
       machineCode,
       recommendationId,
     }),
   remove: (id: string) => apiClient.delete(`/favorites/${id}`),
-  check: (gymId: string, machineCode: string) =>
+  check: (gymId: string, machineCode: string, memberId?: string) =>
     apiClient.get<ApiResponse<{ favorited: boolean; favoriteId?: string }>>(
       `/favorites/check/${machineCode}`,
-      { params: { gymId } }
+      { params: { gymId, ...(memberId ? { memberId } : {}) } }
     ),
 };
 
 export const historyApi = {
   list: (
     gymId: string,
-    params?: { machineCode?: string; limit?: number; from?: string; to?: string }
+    params?: {
+      memberId?: string;
+      machineCode?: string;
+      limit?: number;
+      from?: string;
+      to?: string;
+    }
   ) => apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { gymId, ...params } }),
   clear: (gymId: string) => apiClient.delete('/history', { params: { gymId } }),
   remove: (id: string) => apiClient.delete(`/history/${id}`),

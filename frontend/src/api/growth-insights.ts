@@ -241,6 +241,7 @@ function buildLocalDailyInsights(
 
 export async function fetchWorkoutInsights(options: {
   gymId: string;
+  memberId?: string;
   viewMode: WorkoutInsightViewMode;
   machineCode?: string;
   targetMuscleGroup?: TargetMuscleGroup;
@@ -254,6 +255,7 @@ export async function fetchWorkoutInsights(options: {
   if (options.viewMode === 'machine' && !options.machineCode) return null;
 
   const insightPeriod = mapToInsightPeriod(options.period, options.customFrom, options.customTo);
+  const memberParams = options.memberId ? { memberId: options.memberId } : {};
 
   if (options.viewMode === 'machine' && options.targetMuscleGroup) {
     if (!options.user) return null;
@@ -271,12 +273,18 @@ export async function fetchWorkoutInsights(options: {
     const res = await apiClient.get<ApiResponse<WorkoutInsights>>('/workout-logs/insights', {
       params:
         options.viewMode === 'daily'
-          ? { gymId: options.gymId, viewMode: 'daily', period: insightPeriod }
+          ? {
+              gymId: options.gymId,
+              viewMode: 'daily',
+              period: insightPeriod,
+              ...memberParams,
+            }
           : {
               gymId: options.gymId,
               viewMode: 'machine',
               machineCode: options.machineCode,
               period: insightPeriod,
+              ...memberParams,
             },
     });
     return res.data.data ?? null;

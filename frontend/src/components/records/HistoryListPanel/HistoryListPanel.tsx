@@ -64,7 +64,8 @@ export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
-  const { activeMemberId } = useActiveMember();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
@@ -73,21 +74,33 @@ export function HistoryListPanel() {
   const focusId = searchParams.get('focus') ?? '';
   const logStatus = parseHistoryLogStatus(searchParams.get('logStatus'));
 
-  const calendarQueryKey = QUERY_KEYS.historyList(activeGymId ?? '', { limit: HISTORY_LIST_LIMIT });
+  const calendarQueryKey = QUERY_KEYS.historyList(activeGymId ?? '', memberKey, {
+    limit: HISTORY_LIST_LIMIT,
+  });
 
   const { data: allHistory, isLoading: isAllHistoryLoading, isError } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { limit: HISTORY_LIST_LIMIT });
+      const res = await historyApi.list(activeGymId!, {
+        limit: HISTORY_LIST_LIMIT,
+        ...(activeMemberId ? { memberId: activeMemberId } : {}),
+      });
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   const { data: workoutLogs } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', { limit: HISTORY_WORKOUT_LOG_LIMIT }),
-    queryFn: () => fetchWorkoutLogs({ gymId: activeGymId!, limit: HISTORY_WORKOUT_LOG_LIMIT }),
-    enabled: isAuthenticated && Boolean(activeGymId),
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', memberKey, {
+      limit: HISTORY_WORKOUT_LOG_LIMIT,
+    }),
+    queryFn: () =>
+      fetchWorkoutLogs({
+        gymId: activeGymId!,
+        limit: HISTORY_WORKOUT_LOG_LIMIT,
+        ...(activeMemberId ? { memberId: activeMemberId } : {}),
+      }),
+    enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady,
   });
 
   const loggedKeys = useMemo(

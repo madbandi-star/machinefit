@@ -8,13 +8,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
-
-function invalidateGymScopedQueries(queryClient: ReturnType<typeof useQueryClient>) {
-  void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-  void queryClient.invalidateQueries({ queryKey: ['favorites'] });
-  void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
-  void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
-}
+import { invalidateGymScopedQueries } from '@/utils/invalidateGymScopedQueries';
 
 function isPlanLimitError(error: unknown): boolean {
   const err = error as { response?: { status?: number; data?: { code?: string } } };
