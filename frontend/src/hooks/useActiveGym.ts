@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ALL_GYMS_ID, isAllGymsId, type CreateUserGymInput, type UpdateUserGymInput, type UserGym } from '@machinefit/shared';
+import { isAllGymsId, type CreateUserGymInput, type UpdateUserGymInput, type UserGym } from '@machinefit/shared';
 import { userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
@@ -48,20 +48,18 @@ export function useActiveGym() {
   const serverActiveGymId = data?.activeGymId ?? null;
 
   const resolvedGymId = useMemo(() => {
-    // 'all' is a valid local sentinel — keep it even after data loads
-    if (storedGymId === ALL_GYMS_ID) return ALL_GYMS_ID;
-    if (!data) return storedGymId;
-    if (storedGymId && gyms.some((gym) => gym.id === storedGymId)) {
+    // All-gyms picker removed from UI — never keep ALL_GYMS_ID as the active selection
+    if (!data) {
+      return isAllGymsId(storedGymId) ? null : storedGymId;
+    }
+    if (storedGymId && !isAllGymsId(storedGymId) && gyms.some((gym) => gym.id === storedGymId)) {
       return storedGymId;
     }
-    return serverActiveGymId;
+    return serverActiveGymId ?? gyms[0]?.id ?? null;
   }, [data, gyms, serverActiveGymId, storedGymId]);
 
   const activeGym = useMemo(
-    () =>
-      isAllGymsId(resolvedGymId)
-        ? null
-        : (gyms.find((gym) => gym.id === resolvedGymId) ?? data?.activeGym ?? null),
+    () => gyms.find((gym) => gym.id === resolvedGymId) ?? data?.activeGym ?? null,
     [data?.activeGym, gyms, resolvedGymId]
   );
 
@@ -76,7 +74,7 @@ export function useActiveGym() {
     }
   }, [isAuthenticated, resolvedGymId, setActiveGymId, storedGymId]);
 
-  // Sync active gym with server — skip for ALL_GYMS_ID sentinel
+  // Sync active gym with server
   useEffect(() => {
     if (!isAuthenticated || !resolvedGymId || !data) return;
     if (isAllGymsId(resolvedGymId)) return;
@@ -135,16 +133,11 @@ export function useActiveGym() {
   const selectGym = useCallback(
     async (gymId: string) => {
       if (gymId === resolvedGymId) return;
-      // ALL_GYMS_ID is a local-only sentinel — persist locally, no server call
-      if (isAllGymsId(gymId)) {
-        setActiveGymId(ALL_GYMS_ID);
-        setActiveMemberId(null);
-        invalidateGymScopedQueries(queryClient);
-        return;
-      }
+      // All-gyms UI removed — ignore sentinel if called
+      if (isAllGymsId(gymId)) return;
       await selectMutation.mutateAsync(gymId);
     },
-    [resolvedGymId, selectMutation, setActiveGymId, setActiveMemberId, queryClient]
+    [resolvedGymId, selectMutation]
   );
 
   const createGym = useCallback(

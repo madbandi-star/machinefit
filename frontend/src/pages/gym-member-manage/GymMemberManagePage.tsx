@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PLAN_LIMITS, isAllGymsId, type UserGym, type GymMember } from '@machinefit/shared';
+import { PLAN_LIMITS, type UserGym, type GymMember } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -334,11 +334,7 @@ export function GymMemberManagePage() {
           </div>
 
           {!selectedGym ? (
-            <p className="gym-manage-empty">
-              {isAllGymsId(activeGymId)
-                ? t('gyms:manage.selectGymForMembersAll')
-                : t('gyms:manage.selectGymForMembers')}
-            </p>
+            <p className="gym-manage-empty">{t('gyms:manage.selectGymForMembers')}</p>
           ) : (
             <>
               {atMemberLimit && memberFormMode === 'closed' ? (
