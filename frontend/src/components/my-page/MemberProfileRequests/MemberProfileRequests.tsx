@@ -22,12 +22,12 @@ export function MemberProfileRequests() {
   });
 
   const respondMutation = useMutation({
-    mutationFn: ({ id, action }: { id: string; action: 'approve' | 'deny' }) =>
-      memberProfileRequestApi.respond(id, action),
-    onSuccess: (_res, { action }) => {
+    mutationFn: ({ id, status }: { id: string; status: 'approved' | 'denied' }) =>
+      memberProfileRequestApi.respond(id, status),
+    onSuccess: (_res, { status }) => {
       void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.memberProfileRequests });
       showToast(
-        action === 'approve'
+        status === 'approved'
           ? t('gyms:members.requestApproved')
           : t('gyms:members.requestDenied'),
         'success'
@@ -47,14 +47,16 @@ export function MemberProfileRequests() {
         {pendingRequests.map((req) => (
           <li key={req.id} className="card member-profile-requests__card">
             <p className="member-profile-requests__message">
-              {t('gyms:members.requestFrom', { gymName: req.gymId })}
+              {t('gyms:members.requestFrom', {
+                gymName: req.gymName?.trim() || t('gyms:members.unknownGym'),
+              })}
             </p>
             <div className="member-profile-requests__actions">
               <button
                 type="button"
                 className="btn btn--primary member-profile-requests__btn"
                 disabled={respondMutation.isPending}
-                onClick={() => respondMutation.mutate({ id: req.id, action: 'approve' })}
+                onClick={() => respondMutation.mutate({ id: req.id, status: 'approved' })}
               >
                 {t('gyms:members.requestApprove')}
               </button>
@@ -62,7 +64,7 @@ export function MemberProfileRequests() {
                 type="button"
                 className="btn btn--secondary member-profile-requests__btn"
                 disabled={respondMutation.isPending}
-                onClick={() => respondMutation.mutate({ id: req.id, action: 'deny' })}
+                onClick={() => respondMutation.mutate({ id: req.id, status: 'denied' })}
               >
                 {t('gyms:members.requestDeny')}
               </button>

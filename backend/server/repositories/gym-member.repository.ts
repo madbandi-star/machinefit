@@ -28,6 +28,7 @@ interface GymMemberProfileRequestRow {
   status: string;
   created_at: string;
   responded_at: string | null;
+  gym_name?: string | null;
 }
 
 function mapMember(row: GymMemberRow): GymMember {
@@ -55,6 +56,7 @@ function mapProfileRequest(row: GymMemberProfileRequestRow): GymMemberProfileReq
     id: row.id,
     memberId: row.member_id,
     gymId: row.gym_id,
+    gymName: row.gym_name?.trim() || undefined,
     ownerUserId: row.owner_user_id,
     targetUserId: row.target_user_id,
     status: row.status as GymMemberProfileRequest['status'],
@@ -245,7 +247,11 @@ export const gymMemberRepository = {
     if (!pool) return [];
 
     const result = await pool.query<GymMemberProfileRequestRow>(
-      `SELECT * FROM gym_member_profile_requests WHERE target_user_id = $1 AND status = 'pending' ORDER BY created_at DESC`,
+      `SELECT r.*, ug.name AS gym_name
+       FROM gym_member_profile_requests r
+       LEFT JOIN user_gyms ug ON ug.id = r.gym_id
+       WHERE r.target_user_id = $1 AND r.status = 'pending'
+       ORDER BY r.created_at DESC`,
       [targetUserId]
     );
     return result.rows.map(mapProfileRequest);

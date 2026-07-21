@@ -367,10 +367,10 @@ export const gymMemberApi = {
 export const memberProfileRequestApi = {
   list: () =>
     apiClient.get<ApiResponse<GymMemberProfileRequest[]>>('/users/me/member-profile-requests'),
-  respond: (id: string, action: 'approve' | 'deny') =>
+  respond: (id: string, status: 'approved' | 'denied') =>
     apiClient.post<ApiResponse<GymMemberProfileRequest>>(
       `/users/me/member-profile-requests/${id}/respond`,
-      { action }
+      { status }
     ),
 };
 
