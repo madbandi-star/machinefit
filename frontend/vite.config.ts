@@ -25,6 +25,24 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('@tanstack')) return 'vendor-query';
+          if (id.includes('i18next') || id.includes('react-i18next')) return 'vendor-i18n';
+          if (id.includes('axios')) return 'vendor-axios';
+          if (id.includes('react-router')) return 'vendor-router';
+          if (id.includes('/react/') || id.includes('/react-dom/')) return 'vendor-react';
+          if (id.includes('html5-qrcode')) return 'vendor-qr';
+          if (id.includes('lucide-react')) return 'vendor-icons';
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     spaGitHubPagesFallback(),

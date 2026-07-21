@@ -97,12 +97,6 @@ class SpeechManagerImpl {
 
       this.selectedVoice = pickBestVoice(voices);
       this.initialized = true;
-
-      console.log('Selected Voice :', this.selectedVoice?.name ?? '(none)');
-      console.log(
-        'Available Korean voices :',
-        voices.filter(isKoreanVoice).map((v) => v.name)
-      );
     })();
 
     await this.initPromise;

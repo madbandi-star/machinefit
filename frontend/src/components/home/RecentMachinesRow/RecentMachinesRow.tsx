@@ -24,12 +24,14 @@ export function RecentMachinesRow() {
   const { activeGymId } = useActiveGym();
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', { limit: 8 }),
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', { limit: 100 }),
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { limit: 8 });
+      const res = await historyApi.list(activeGymId!, { limit: 100 });
       return res.data.data;
     },
     enabled: Boolean(activeGymId),
+    staleTime: 60_000,
+    select: (items) => items.slice(0, 8),
   });
 
   const unique = useMemo(() => {
