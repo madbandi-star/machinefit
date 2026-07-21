@@ -108,6 +108,10 @@ export function useFavoriteToggle({
   });
 
   const toggleFavorite = () => {
+    if (!activeGymId || !activeMemberId || !isRealGym) {
+      showToast(t('common:errors.submitFailed'), 'error');
+      return;
+    }
     const shouldFavorite = !isFavorited;
     setIsFavorited(shouldFavorite);
     if (!shouldFavorite) {
@@ -123,5 +127,7 @@ export function useFavoriteToggle({
     isFavorited,
     toggleFavorite,
     isPending: toggleFavoriteMutation.isPending,
+    /** False until gym + member context is ready for favorite writes. */
+    canFavorite: isAuthenticated && isRealGym && Boolean(activeGymId) && Boolean(activeMemberId),
   };
 }

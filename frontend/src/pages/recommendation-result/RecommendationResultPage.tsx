@@ -111,7 +111,7 @@ export function RecommendationResultPage() {
     setWorkoutLogSavedOverride(null);
   }, [result?.id, resultLogDate, resultTargetMuscle]);
 
-  const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
+  const { isFavorited, toggleFavorite, isPending: isFavoritePending, canFavorite } = useFavoriteToggle({
     machineCode: result?.machineCode ?? '',
     recommendationId: result?.id,
     isAuthenticated: isAuthenticated && !!result,
@@ -174,7 +174,7 @@ export function RecommendationResultPage() {
           }
           aria-pressed={isFavorited}
           onClick={handleToggleFavorite}
-          disabled={isFavoritePending}
+          disabled={isFavoritePending || (isAuthenticated && !canFavorite)}
         >
           <Heart
             key={isFavorited ? 'favorited' : 'unfavorited'}

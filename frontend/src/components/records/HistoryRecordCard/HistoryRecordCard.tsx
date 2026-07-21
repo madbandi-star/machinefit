@@ -114,7 +114,7 @@ export function HistoryRecordCard({
   useEffect(() => {
     if (isFocused) setExpanded(true);
   }, [isFocused]);
-  const { isFavorited, toggleFavorite, isPending: isFavoritePending } = useFavoriteToggle({
+  const { isFavorited, toggleFavorite, isPending: isFavoritePending, canFavorite } = useFavoriteToggle({
     machineCode: card.machineCode,
     recommendationId: card.recommendationId,
     isAuthenticated,
@@ -236,7 +236,7 @@ export function HistoryRecordCard({
                   }
                   aria-pressed={isFavorited}
                   onClick={handleFavoriteClick}
-                  disabled={isFavoritePending}
+                  disabled={isFavoritePending || !canFavorite}
                 >
                   <Heart
                     key={isFavorited ? 'favorited' : 'unfavorited'}
