@@ -5,7 +5,7 @@ export function isFreeWeightMachineCode(machineCode: string): boolean {
 }
 
 /**
- * Free-weight equipment can train any target muscle (incl. biceps/triceps).
+ * Free-weight equipment can train any target muscle (incl. biceps/triceps/arms/core).
  * Catalog `muscle_group` is only a default label — search/filter must not hide FW_* machines.
  */
 export function machineMatchesMuscleGroupFilter(
