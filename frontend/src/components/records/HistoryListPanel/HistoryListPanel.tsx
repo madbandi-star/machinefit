@@ -19,6 +19,7 @@ import { useActiveMember } from '@/hooks/useActiveMember';
 import {
   collectMuscleGroupsInOrder,
   formatHistoryDateHeaderWithMuscles,
+  getTodayDateKey,
 } from '@/utils/historyDate';
 import {
   buildLoggedWorkoutKeys,
@@ -122,6 +123,49 @@ export function HistoryListPanel() {
     () => (displayCards.length ? groupRecordCardsByDate(displayCards) : []),
     [displayCards]
   );
+
+  const defaultExpandedDateKey = useMemo(() => {
+    if (!groupedCards.length) return null;
+    const today = getTodayDateKey();
+    if (groupedCards.some((group) => group.dateKey === today)) return today;
+    return groupedCards[0]!.dateKey;
+  }, [groupedCards]);
+
+  const groupedDateSignature = useMemo(
+    () => groupedCards.map((group) => group.dateKey).join('|'),
+    [groupedCards]
+  );
+
+  const [expandedDates, setExpandedDates] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    if (!defaultExpandedDateKey) {
+      setExpandedDates(new Set());
+      return;
+    }
+    setExpandedDates(new Set([defaultExpandedDateKey]));
+  }, [defaultExpandedDateKey, groupedDateSignature, selectedDate, logStatus]);
+
+  useEffect(() => {
+    if (!focusId || displayCards.length === 0) return;
+    const focusedCard = findHistoryCardByFocusId(displayCards, focusId);
+    if (!focusedCard) return;
+    setExpandedDates((prev) => {
+      if (prev.has(focusedCard.logDate)) return prev;
+      const next = new Set(prev);
+      next.add(focusedCard.logDate);
+      return next;
+    });
+  }, [focusId, displayCards]);
+
+  const toggleDateGroup = (dateKey: string) => {
+    setExpandedDates((prev) => {
+      const next = new Set(prev);
+      if (next.has(dateKey)) next.delete(dateKey);
+      else next.add(dateKey);
+      return next;
+    });
+  };
 
   const { data: comparisonData } = useHistorySettingsComparisonData(
     allRecordCards,
@@ -382,19 +426,45 @@ export function HistoryListPanel() {
         <>
           {displayCards.length > 0 ? <HistorySummaryStats stats={summaryStats} /> : null}
 
-          {groupedCards.map((group) => (
-            <section key={group.dateKey} className="records-list__date-group">
+          {groupedCards.map((group) => {
+            const isExpanded = expandedDates.has(group.dateKey);
+            return (
+            <section
+              key={group.dateKey}
+              className={`records-list__date-group${
+                isExpanded ? ' records-list__date-group--expanded' : ' records-list__date-group--collapsed'
+              }`}
+            >
               <h2 className="records-list__date-heading">
-                <Icon name="calendar" size={16} className="records-list__date-icon" />
-                {formatHistoryDateHeaderWithMuscles(
-                  group.dateKey,
-                  i18n.language,
-                  collectMuscleGroupsInOrder(group.items),
-                  translateMuscleGroup
-                )}
+                <button
+                  type="button"
+                  className="records-list__date-toggle"
+                  aria-expanded={isExpanded}
+                  onClick={() => toggleDateGroup(group.dateKey)}
+                >
+                  <span className="records-list__date-toggle-main">
+                    <Icon name="calendar" size={16} className="records-list__date-icon" />
+                    <span className="records-list__date-toggle-label">
+                      {formatHistoryDateHeaderWithMuscles(
+                        group.dateKey,
+                        i18n.language,
+                        collectMuscleGroupsInOrder(group.items),
+                        translateMuscleGroup
+                      )}
+                    </span>
+                  </span>
+                  <Icon
+                    name="chevronDown"
+                    size={18}
+                    className={`records-list__date-chevron${
+                      isExpanded ? ' records-list__date-chevron--open' : ''
+                    }`}
+                  />
+                </button>
               </h2>
 
-              {group.items.map((card) => {
+              {isExpanded
+                ? group.items.map((card) => {
                 const resultUrl = card.recommendationId
                   ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
                   : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}${
@@ -441,9 +511,11 @@ export function HistoryListPanel() {
                     deleteDisabled={deleteMutation.isPending}
                   />
                 );
-              })}
+              })
+                : null}
             </section>
-          ))}
+            );
+          })}
         </>
       )}
 
