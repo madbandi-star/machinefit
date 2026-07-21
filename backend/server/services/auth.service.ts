@@ -37,6 +37,7 @@ function buildAuthResponse(user: User) {
       homeGymName: user.homeGymName,
       activeGymId: user.activeGymId,
       experienceLevel: user.experienceLevel,
+      subscriptionPlan: user.subscriptionPlan ?? 'free',
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
       updatedAt: user.updatedAt ?? new Date().toISOString(),

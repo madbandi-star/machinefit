@@ -1,6 +1,8 @@
 import type { CreateUserGymInput, UpdateUserGymInput } from '@machinefit/shared';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { subscriptionService } from './subscription.service.js';
+import { gymMemberService } from './gym-member.service.js';
 
 export const userGymService = {
   list(userId: string) {
@@ -19,7 +21,10 @@ export const userGymService = {
   },
 
   async create(userId: string, input: CreateUserGymInput) {
-    return userGymRepository.create(userId, input);
+    await subscriptionService.assertCanAddGym(userId);
+    const gym = await userGymRepository.create(userId, input);
+    await gymMemberService.ensureSelfMember(gym.id, userId);
+    return gym;
   },
 
   async update(userId: string, gymId: string, input: UpdateUserGymInput) {
