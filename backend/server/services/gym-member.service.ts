@@ -12,6 +12,8 @@ import { getPool } from '../config/database.js';
 export const gymMemberService = {
   async list(userId: string, gymId: string) {
     await gymScopeService.assertOwned(userId, gymId);
+    // Always ensure the account-owner member exists so the picker never has an empty default.
+    await gymMemberRepository.ensureSelfMember(gymId, userId);
     return gymMemberRepository.listByGym(userId, gymId);
   },
 

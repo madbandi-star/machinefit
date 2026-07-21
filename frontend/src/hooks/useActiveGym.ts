@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
+import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
 
 function invalidateGymScopedQueries(queryClient: ReturnType<typeof useQueryClient>) {
   void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
@@ -91,9 +92,8 @@ export function useActiveGym() {
 
   const selectMutation = useMutation({
     mutationFn: (gymId: string) => userGymApi.select(gymId),
-    onSuccess: (res, gymId) => {
+    onSuccess: async (res, gymId) => {
       setActiveGymId(gymId);
-      setActiveMemberId(null);
       syncedSelectRef.current = gymId;
       queryClient.setQueryData(QUERY_KEYS.userGyms, (prev: typeof data) =>
         prev
@@ -104,6 +104,9 @@ export function useActiveGym() {
             }
           : prev
       );
+      const defaultMemberId = await fetchDefaultMemberId(gymId);
+      setActiveMemberId(defaultMemberId);
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gymId) });
       invalidateGymScopedQueries(queryClient);
       showToast(t('gyms:selector.switchSuccess'), 'success');
     },
@@ -115,9 +118,11 @@ export function useActiveGym() {
     onSuccess: async (res) => {
       const gym = res.data.data;
       setActiveGymId(gym.id);
-      setActiveMemberId(null);
       syncedSelectRef.current = gym.id;
+      const defaultMemberId = await fetchDefaultMemberId(gym.id);
+      setActiveMemberId(defaultMemberId);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gym.id) });
       invalidateGymScopedQueries(queryClient);
       showToast(t('gyms:manage.createGymSuccess'), 'success');
     },

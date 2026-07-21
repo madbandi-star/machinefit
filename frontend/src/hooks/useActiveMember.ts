@@ -12,6 +12,8 @@ import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { sortMembersByRegistrationOrder } from '@/utils/gymMemberDefault';
 
 function isPlanLimitError(error: unknown): boolean {
   const err = error as { response?: { status?: number; data?: { code?: string } } };
@@ -27,29 +29,26 @@ export function useActiveMember() {
   const showToast = useUIStore((s) => s.showToast);
   const openPremiumModal = usePremiumStore((s) => s.openPremiumModal);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const activeGymId = useGymStore((s) => s.activeGymId);
+  // Match gym picker resolution (not raw persisted store alone).
+  const { activeGymId } = useActiveGym();
   const activeMemberId = useGymStore((s) => s.activeMemberId);
   const setActiveMemberId = useGymStore((s) => s.setActiveMemberId);
 
   const isRealGym = Boolean(activeGymId) && !isAllGymsId(activeGymId);
   const membersKey = QUERY_KEYS.userGymMembers(activeGymId ?? '');
 
-  const { data: membersRaw = [], isLoading } = useQuery({
+  const { data: membersRaw = [], isLoading, isFetched } = useQuery({
     queryKey: membersKey,
     queryFn: async () => {
       const res = await gymMemberApi.list(activeGymId!);
-      return res.data.data;
+      return res.data.data ?? [];
     },
     enabled: isAuthenticated && isRealGym,
     staleTime: 30_000,
   });
 
-  // Registration order: earliest created first
   const members = useMemo(
-    () =>
-      [...membersRaw].sort((left, right) =>
-        left.createdAt.localeCompare(right.createdAt)
-      ),
+    () => sortMembersByRegistrationOrder(membersRaw),
     [membersRaw]
   );
 
@@ -59,14 +58,15 @@ export function useActiveMember() {
   const resolvedMemberId = storedMemberValid
     ? activeMemberId
     : (defaultMember?.id ?? null);
-  const activeMember = members.find((member) => member.id === resolvedMemberId) ?? null;
+  const activeMember =
+    members.find((member) => member.id === resolvedMemberId) ?? defaultMember ?? null;
 
-  // Persist default (first registered) when none selected or selection is invalid for this gym
   useEffect(() => {
-    if (!isRealGym || !resolvedMemberId) return;
+    if (!isRealGym || !isFetched) return;
+    if (!resolvedMemberId) return;
     if (activeMemberId === resolvedMemberId) return;
     setActiveMemberId(resolvedMemberId);
-  }, [activeMemberId, isRealGym, resolvedMemberId, setActiveMemberId]);
+  }, [activeMemberId, isFetched, isRealGym, resolvedMemberId, setActiveMemberId]);
 
   const createMutation = useMutation({
     mutationFn: (input: CreateGymMemberInput) => gymMemberApi.create(activeGymId!, input),
@@ -146,7 +146,7 @@ export function useActiveMember() {
   return {
     members,
     activeMember,
-    activeMemberId: resolvedMemberId,
+    activeMemberId: activeMember?.id ?? resolvedMemberId,
     isLoading,
     isRealGym,
     selectMember,
