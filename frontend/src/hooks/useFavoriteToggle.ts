@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useUIStore } from '@/store/ui.store';
 
 interface UseFavoriteToggleOptions {
@@ -21,7 +22,9 @@ export function useFavoriteToggle({
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { activeGymId } = useActiveGym();
-  const favoriteKey = QUERY_KEYS.favoriteCheck(activeGymId ?? '', machineCode);
+  const { activeMemberId, memberScopeReady, isRealGym } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
+  const favoriteKey = QUERY_KEYS.favoriteCheck(activeGymId ?? '', machineCode, memberKey);
   const [isFavorited, setIsFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | undefined>();
   const hydratedMachineRef = useRef('');
@@ -29,10 +32,16 @@ export function useFavoriteToggle({
   const { data: favoriteCheck } = useQuery({
     queryKey: favoriteKey,
     queryFn: async () => {
-      const res = await favoriteApi.check(activeGymId!, machineCode);
+      const res = await favoriteApi.check(activeGymId!, machineCode, activeMemberId!);
       return res.data.data;
     },
-    enabled: isAuthenticated && Boolean(machineCode) && Boolean(activeGymId),
+    enabled:
+      isAuthenticated &&
+      Boolean(machineCode) &&
+      Boolean(activeGymId) &&
+      memberScopeReady &&
+      Boolean(activeMemberId) &&
+      isRealGym,
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -58,14 +67,14 @@ export function useFavoriteToggle({
       shouldFavorite: boolean;
       favoriteId?: string;
     }) => {
-      if (!activeGymId) throw new Error('missing_gym');
+      if (!activeGymId || !activeMemberId) throw new Error('missing_gym_or_member');
       if (!shouldFavorite) {
         if (!id) throw new Error('missing_favorite_id');
         await favoriteApi.remove(id);
         return { favorited: false as const, favoriteId: undefined };
       }
 
-      const res = await favoriteApi.add(activeGymId, machineCode, recommendationId);
+      const res = await favoriteApi.add(activeGymId, activeMemberId, machineCode, recommendationId);
       return {
         favorited: true as const,
         favoriteId: res.data.data.id,
@@ -76,7 +85,9 @@ export function useFavoriteToggle({
       setIsFavorited(data.favorited);
       setFavoriteId(data.favoriteId);
       if (activeGymId) {
-        void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.favorites(activeGymId) });
+        void queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.favorites(activeGymId, memberKey),
+        });
       }
       showToast(
         data.favorited

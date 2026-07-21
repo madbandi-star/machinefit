@@ -10,6 +10,7 @@ import { historyApi, type HistoryItem } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import '@/styles/home.css';
 
 function recentItemKey(item: HistoryItem): string {
@@ -22,14 +23,19 @@ function recentItemKey(item: HistoryItem): string {
 export function RecentMachinesRow() {
   const { t } = useTranslation();
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', { limit: 8 }),
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', memberKey, { limit: 8 }),
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { limit: 8 });
+      const res = await historyApi.list(activeGymId!, {
+        limit: 8,
+        ...(activeMemberId ? { memberId: activeMemberId } : {}),
+      });
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   const unique = useMemo(() => {
@@ -55,7 +61,7 @@ export function RecentMachinesRow() {
           </Link>
         )}
       </div>
-      {isLoading ? (
+      {isLoading || !memberScopeReady ? (
         <Skeleton count={1} height={76} />
       ) : !unique.length ? (
         <HomeSectionEmptyPrompt

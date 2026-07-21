@@ -5,6 +5,7 @@ import { normalizeDateKey } from '@/utils/historyDate';
 
 interface FetchWorkoutLogsOptions {
   gymId: string;
+  memberId?: string;
   from?: string;
   to?: string;
   limit?: number;
@@ -53,7 +54,13 @@ async function listWorkoutLogsForMachine(
   options?: Omit<FetchWorkoutLogsOptions, 'gymId'>
 ): Promise<WorkoutLog[]> {
   const res = await apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', {
-    params: { gymId, machineCode, from: options?.from, to: options?.to },
+    params: {
+      gymId,
+      machineCode,
+      memberId: options?.memberId,
+      from: options?.from,
+      to: options?.to,
+    },
   });
   return res.data.data ?? [];
 }
@@ -61,10 +68,15 @@ async function listWorkoutLogsForMachine(
 async function listWorkoutLogsViaKnownMachines(
   options: FetchWorkoutLogsOptions
 ): Promise<WorkoutLog[]> {
-  const { gymId, ...rest } = options;
+  const { gymId, memberId, ...rest } = options;
+  const memberParams = memberId ? { memberId } : {};
   const [historyRes, favoritesRes] = await Promise.all([
-    apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { gymId, limit: 100 } }),
-    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', { params: { gymId } }),
+    apiClient.get<ApiResponse<HistoryItem[]>>('/history', {
+      params: { gymId, limit: 100, ...memberParams },
+    }),
+    apiClient.get<ApiResponse<FavoriteItem[]>>('/favorites', {
+      params: { gymId, ...memberParams },
+    }),
   ]);
 
   const machineCodes = new Set<string>();
@@ -80,7 +92,7 @@ async function listWorkoutLogsViaKnownMachines(
   const batches = await Promise.all(
     [...machineCodes].map(async (machineCode) => {
       try {
-        return await listWorkoutLogsForMachine(gymId, machineCode, rest);
+        return await listWorkoutLogsForMachine(gymId, machineCode, { memberId, ...rest });
       } catch {
         return [];
       }
@@ -102,6 +114,6 @@ export async function fetchWorkoutLogs(options: FetchWorkoutLogsOptions): Promis
 }
 
 /** @deprecated Prefer fetchWorkoutLogs with explicit bounds and limit. */
-export function fetchAllWorkoutLogs(gymId: string): Promise<WorkoutLog[]> {
-  return fetchWorkoutLogs({ gymId, limit: 200 });
+export function fetchAllWorkoutLogs(gymId: string, memberId?: string): Promise<WorkoutLog[]> {
+  return fetchWorkoutLogs({ gymId, memberId, limit: 200 });
 }

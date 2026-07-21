@@ -6,6 +6,7 @@ import { RecommendationSettingsPanel } from '@/components/recommendation/Recomme
 import { historyApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useUIStore } from '@/store/ui.store';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
@@ -17,25 +18,29 @@ export function RecentHistoryPage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.historyList(activeGymId ?? ''),
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', memberKey),
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!);
+      const res = await historyApi.list(activeGymId!, {
+        ...(activeMemberId ? { memberId: activeMemberId } : {}),
+      });
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   const clearMutation = useMutation({
-    mutationFn: () => historyApi.clear(activeGymId!),
+    mutationFn: () => historyApi.clear(activeGymId!, activeMemberId ?? undefined),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
   return (
     <PageShell title={t('common:nav.history')} subtitle={t('machines:history.subtitle')}>
-      {isLoading || !activeGymId ? (
+      {isLoading || !activeGymId || !memberScopeReady ? (
         <Skeleton count={3} height={80} />
       ) : isError ? (
         <QueryErrorMessage />

@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useUIStore } from '@/store/ui.store';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
@@ -15,15 +16,17 @@ export function FavoritesPage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { activeGymId } = useActiveGym();
-  const favoritesKey = QUERY_KEYS.favorites(activeGymId ?? '');
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
+  const favoritesKey = QUERY_KEYS.favorites(activeGymId ?? '', memberKey);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: favoritesKey,
     queryFn: async () => {
-      const res = await favoriteApi.list(activeGymId!);
+      const res = await favoriteApi.list(activeGymId!, activeMemberId ?? undefined);
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   const removeMutation = useMutation({
@@ -34,7 +37,7 @@ export function FavoritesPage() {
 
   return (
     <PageShell title={t('nav.favorites')} subtitle="Your saved machines and recommendations">
-      {isLoading || !activeGymId ? (
+      {isLoading || !activeGymId || !memberScopeReady ? (
         <Skeleton count={3} height={80} />
       ) : isError ? (
         <QueryErrorMessage />

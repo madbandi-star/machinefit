@@ -7,7 +7,7 @@ import type {
   RecommendationInput,
   TargetMuscleGroup,
 } from '@machinefit/shared';
-import { isFreeWeightMachineCode } from '@machinefit/shared';
+import { isFreeWeightMachineCode, isAllGymsId } from '@machinefit/shared';
 import { historyApi, recommendationApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
@@ -82,9 +82,16 @@ export function useRecommendMachine(machineCode: string | undefined) {
       if (isAuthenticated) {
         const gymId = useGymStore.getState().activeGymId;
         if (!gymId) throw new Error('missing_gym');
+        const memberId = useGymStore.getState().activeMemberId ?? undefined;
         const today = getTodayDateKey();
         const { from, to } = getLocalDayRange(today);
-        const historyRes = await historyApi.list(gymId, { machineCode, limit: 20, from, to });
+        const historyRes = await historyApi.list(gymId, {
+          machineCode,
+          limit: 20,
+          from,
+          to,
+          ...(memberId ? { memberId } : {}),
+        });
         const todayItems = historyRes.data.data;
         const requestedMuscle = options?.targetMuscleGroup;
 
@@ -102,7 +109,17 @@ export function useRecommendMachine(machineCode: string | undefined) {
         }
       }
 
-      const res = await recommendationApi.create(input);
+      const gymId = useGymStore.getState().activeGymId;
+      const memberId = useGymStore.getState().activeMemberId;
+      const scopedInput =
+        gymId && !isAllGymsId(gymId)
+          ? {
+              ...input,
+              gymId,
+              ...(memberId ? { memberId } : {}),
+            }
+          : input;
+      const res = await recommendationApi.create(scopedInput);
       return res.data.data;
     },
     onSuccess: async (result) => {

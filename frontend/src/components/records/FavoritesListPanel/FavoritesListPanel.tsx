@@ -10,6 +10,7 @@ import { favoriteApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useUIStore } from '@/store/ui.store';
 import { shouldShowDefaultMachineMuscle, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import '@/styles/records.css';
@@ -19,15 +20,17 @@ export function FavoritesListPanel() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { activeGymId } = useActiveGym();
-  const favoritesKey = QUERY_KEYS.favorites(activeGymId ?? '');
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
+  const favoritesKey = QUERY_KEYS.favorites(activeGymId ?? '', memberKey);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: favoritesKey,
     queryFn: async () => {
-      const res = await favoriteApi.list(activeGymId!);
+      const res = await favoriteApi.list(activeGymId!, activeMemberId ?? undefined);
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   const removeMutation = useMutation({
@@ -44,7 +47,11 @@ export function FavoritesListPanel() {
         );
       }
 
-      const favoriteCheckKey = QUERY_KEYS.favoriteCheck(activeGymId ?? '', item.machineCode);
+      const favoriteCheckKey = QUERY_KEYS.favoriteCheck(
+        activeGymId ?? '',
+        item.machineCode,
+        memberKey
+      );
       await queryClient.cancelQueries({ queryKey: favoriteCheckKey });
       const previousCheck = queryClient.getQueryData<{ favorited: boolean; favoriteId?: string }>(
         favoriteCheckKey
@@ -55,7 +62,8 @@ export function FavoritesListPanel() {
     },
     onSuccess: async (_data, item, context) => {
       const favoriteCheckKey =
-        context?.favoriteCheckKey ?? QUERY_KEYS.favoriteCheck(activeGymId ?? '', item.machineCode);
+        context?.favoriteCheckKey ??
+        QUERY_KEYS.favoriteCheck(activeGymId ?? '', item.machineCode, memberKey);
       queryClient.setQueryData(favoriteCheckKey, { favorited: false, favoriteId: undefined });
       showToast(t('machines:recommendation.removedFavorite'), 'success');
     },
@@ -70,7 +78,7 @@ export function FavoritesListPanel() {
     },
   });
 
-  if (!activeGymId || isLoading) return <Skeleton count={3} height={56} />;
+  if (!activeGymId || isLoading || !memberScopeReady) return <Skeleton count={3} height={56} />;
   if (isError) return <QueryErrorMessage />;
   if (!data?.length) {
     return (

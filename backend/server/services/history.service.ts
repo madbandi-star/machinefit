@@ -41,9 +41,9 @@ export const historyService = {
     await historyRepository.record(userId, gymId, memberId, machineId, recommendationId);
   },
 
-  async clear(userId: string, gymId: string) {
+  async clear(userId: string, gymId: string, memberId?: string) {
     await gymScopeService.assertOwned(userId, gymId);
-    await historyRepository.clear(userId, gymId);
+    await historyRepository.clear(userId, gymId, memberId);
   },
 
   async remove(userId: string, historyId: string) {

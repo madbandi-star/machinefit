@@ -6,6 +6,9 @@ import { workoutReportApi, type WorkoutReportPeriod, type WorkoutReportResult } 
 import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
+import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
+import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { htmlReportToPlainText } from '@/utils/sendEmailViaFormSubmit';
 import '@/styles/components.css';
@@ -75,6 +78,7 @@ export function WorkoutReportSection() {
   const showToast = useUIStore((s) => s.showToast);
   const userEmail = useAuthStore((s) => s.user?.email);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady, isRealGym } = useActiveMember();
   const [period, setPeriod] = useState<WorkoutReportPeriod>('week');
   const [reportCache, setReportCache] = useState<ReportCache | null>(null);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
@@ -83,11 +87,15 @@ export function WorkoutReportSection() {
   useEffect(() => {
     setReportCache(null);
     setReportDialogOpen(false);
-  }, [period, activeGymId]);
+  }, [period, activeGymId, activeMemberId]);
 
   const reportGymId = activeGymId ?? undefined;
+  const reportMemberId = isRealGym ? activeMemberId ?? undefined : undefined;
+  const canRequestReport =
+    Boolean(reportGymId) && (!isRealGym || (memberScopeReady && Boolean(reportMemberId)));
 
   const fetchReport = async (previewOnly: boolean): Promise<ReportCache | null> => {
+    if (!canRequestReport) return null;
     if (!previewOnly && reportCache?.period === period) {
       return reportCache;
     }
@@ -95,7 +103,8 @@ export function WorkoutReportSection() {
     const res = await workoutReportApi.send({
       period,
       previewOnly,
-      ...(reportGymId ? { gymId: reportGymId } : {}),
+      gymId: reportGymId,
+      ...(reportMemberId ? { memberId: reportMemberId } : {}),
     });
     const cache = buildReportCache(period, res.data.data);
     if (cache) {
@@ -108,9 +117,11 @@ export function WorkoutReportSection() {
 
   const sendMutation = useMutation({
     mutationFn: async () => {
+      if (!canRequestReport) throw new Error('missing_gym_or_member');
       const res = await workoutReportApi.send({
         period,
-        ...(reportGymId ? { gymId: reportGymId } : {}),
+        gymId: reportGymId,
+        ...(reportMemberId ? { memberId: reportMemberId } : {}),
       });
       return res.data.data;
     },
@@ -182,6 +193,7 @@ export function WorkoutReportSection() {
   };
 
   const actionBusy = loadingAction !== null;
+  const actionsDisabled = !canRequestReport || actionBusy || sendMutation.isPending;
 
   return (
     <>
@@ -195,6 +207,11 @@ export function WorkoutReportSection() {
           ) : null}
         </h3>
         <p className="form-section__desc">{t('workoutReport.desc')}</p>
+
+        <div className="workout-report-section__scope">
+          <GymSelector />
+          <MemberSelector />
+        </div>
 
         <div className="workout-report-section__field">
           <span className="form-row__label">{t('workoutReport.periodLabel')}</span>
@@ -213,7 +230,7 @@ export function WorkoutReportSection() {
           type="button"
           className="btn btn--primary btn--block"
           onClick={() => sendMutation.mutate()}
-          disabled={sendMutation.isPending || !userEmail}
+          disabled={sendMutation.isPending || !userEmail || !canRequestReport}
         >
           {sendMutation.isPending ? t('workoutReport.sending') : t('workoutReport.send')}
         </button>
@@ -227,7 +244,7 @@ export function WorkoutReportSection() {
             type="button"
             className="btn btn--secondary workout-report-section__action-btn"
             onClick={() => void handleMailApp()}
-            disabled={!userEmail || actionBusy || sendMutation.isPending}
+            disabled={!userEmail || actionsDisabled}
           >
             {loadingAction === 'mail' ? '…' : t('workoutReport.openMailApp')}
           </button>
@@ -235,7 +252,7 @@ export function WorkoutReportSection() {
             type="button"
             className="btn btn--secondary workout-report-section__action-btn"
             onClick={() => void handleViewReport()}
-            disabled={actionBusy || sendMutation.isPending}
+            disabled={actionsDisabled}
           >
             {loadingAction === 'view' ? '…' : t('workoutReport.viewReport')}
           </button>
@@ -243,7 +260,7 @@ export function WorkoutReportSection() {
             type="button"
             className="btn btn--secondary workout-report-section__action-btn"
             onClick={() => void handleCopyReport()}
-            disabled={actionBusy || sendMutation.isPending}
+            disabled={actionsDisabled}
           >
             {loadingAction === 'copy' ? '…' : t('workoutReport.copyReport')}
           </button>

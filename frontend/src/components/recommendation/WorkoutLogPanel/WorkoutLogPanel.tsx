@@ -257,6 +257,7 @@ export function WorkoutLogPanel({
   const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, activeTargetMuscle);
   const { queryKey: workoutLogQueryKey } = buildWorkoutLogSavedQueryKey(
     activeGymId ?? '',
+    activeMemberId ?? '',
     machineCode,
     logDate,
     queryTargetMuscle
@@ -402,7 +403,7 @@ export function WorkoutLogPanel({
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 
-  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(activeGymId ?? '');
+  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(activeGymId ?? '', activeMemberId ?? '');
   const removeLogParams = {
     machineCode,
     logDate,

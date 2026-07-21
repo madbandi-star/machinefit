@@ -57,7 +57,8 @@ export async function recordHistory(req: Request, res: Response): Promise<void> 
 export async function clearHistory(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const gymId = gymIdSchema.parse(req.query.gymId);
-  await historyService.clear(req.user.userId, gymId);
+  const memberId = req.query.memberId ? memberIdSchema.parse(req.query.memberId) : undefined;
+  await historyService.clear(req.user.userId, gymId, memberId);
   res.json({ success: true, data: { message: 'Cleared' } });
 }
 

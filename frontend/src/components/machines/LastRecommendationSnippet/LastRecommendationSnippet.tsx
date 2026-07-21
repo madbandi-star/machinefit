@@ -11,6 +11,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
 import '@/styles/machines.css';
 import '@/styles/recommendation.css';
@@ -40,14 +41,20 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   const [expanded, setExpanded] = useState(true);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
 
   const { data, isLoading, isFetched } = useQuery({
-    queryKey: QUERY_KEYS.historyForMachine(activeGymId ?? '', machineCode),
+    queryKey: QUERY_KEYS.historyForMachine(activeGymId ?? '', memberKey, machineCode),
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { machineCode, limit: 1 });
+      const res = await historyApi.list(activeGymId!, {
+        machineCode,
+        limit: 1,
+        ...(activeMemberId ? { memberId: activeMemberId } : {}),
+      });
       return res.data.data[0] ?? null;
     },
-    enabled: isAuthenticated && Boolean(activeGymId),
+    enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady,
   });
 
   const recommendationId = data?.recommendationId;
@@ -75,6 +82,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
     ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${data.recommendationId}`
     : null;
   const showSettingsCompare = shouldShowHistorySettingsCompare(fitRating);
+  const showLoading = isLoading || !memberScopeReady;
 
   return (
     <section className="saved-settings-card" aria-label={t('machines:detail.lastRecommend')}>
@@ -128,7 +136,7 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
                   customSettings={showSettingsCompare ? machinePreferences?.customSettings : undefined}
                 />
               </Link>
-            ) : isLoading ? (
+            ) : showLoading ? (
               <LastRecommendationSettingsSkeleton />
             ) : (
               <>
