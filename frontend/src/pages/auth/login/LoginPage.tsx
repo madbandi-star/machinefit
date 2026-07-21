@@ -10,7 +10,7 @@ import { useCredentialsStore } from '@/store/credentials.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { syncUserSettings } from '@/utils/syncUserSettings';
-import { DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
+import { DEMO_LOGIN_EMAIL, DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
 import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
@@ -29,7 +29,7 @@ export function LoginPage() {
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
   const credentialsHydrated = usePersistHydration(useCredentialsStore.persist);
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(DEMO_LOGIN_EMAIL);
   const password = DEMO_REGISTER_PASSWORD;
   const [rememberMe, setRememberMe] = useState(false);
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);

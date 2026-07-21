@@ -5,6 +5,9 @@ const DEMO_REGISTER_SEQ_KEY = 'machinefit:demo-register-seq-v2';
 
 export const DEMO_REGISTER_PASSWORD = DEMO_PASSWORD;
 export const DEMO_HOME_GYM_NAME = '머신핏GYM';
+/** Default login email local-part (full email uses gmail.com). */
+export const DEMO_LOGIN_ID = 'demo_test';
+export const DEMO_LOGIN_EMAIL = `${DEMO_LOGIN_ID}@gmail.com`;
 
 export const POPULAR_EMAIL_DOMAINS = [
   'gmail.com',
