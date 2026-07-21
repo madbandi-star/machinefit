@@ -25,6 +25,8 @@ import type {
   LiftedScopeMode,
   LiftedRankingBoard,
   LifterDnaSnapshot,
+  AchievementSnapshot,
+  AchievementRankingResponse,
   LiveDashboardSnapshot,
   LiveRankingResponse,
   LiveRankingBoard,
@@ -400,6 +402,14 @@ export const liftedWeightApi = {
 
 export const lifterDnaApi = {
   snapshot: () => apiClient.get<ApiResponse<LifterDnaSnapshot>>('/users/me/lifter-dna'),
+};
+
+export const achievementsApi = {
+  snapshot: () => apiClient.get<ApiResponse<AchievementSnapshot>>('/users/me/achievements'),
+  rankings: (params?: { limit?: number }) =>
+    apiClient.get<ApiResponse<AchievementRankingResponse>>('/users/me/achievements/rankings', {
+      params,
+    }),
 };
 
 export const liveDashboardApi = {

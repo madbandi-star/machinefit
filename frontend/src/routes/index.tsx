@@ -80,6 +80,10 @@ const liveDashboard = () =>
   import('@/pages/live-dashboard/LiveDashboardPage').then((m) => ({
     default: m.LiveDashboardPage,
   }));
+const achievements = () =>
+  import('@/pages/achievements/AchievementsPage').then((m) => ({
+    default: m.AchievementsPage,
+  }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
 const ownerDash = () =>
@@ -161,6 +165,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.LIFTED_WEIGHT_RANKINGS, element: lazyRoute(liftedWeightRankings) },
             { path: ROUTES.LIFTER_DNA, element: lazyRoute(lifterDna) },
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
+            { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },

@@ -4,6 +4,7 @@ import { workoutLogRepository } from '../repositories/workout-log.repository.js'
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
+import { achievementService } from './achievement.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -120,6 +121,12 @@ export const workoutLogService = {
         // Aggregate update must not fail the workout save.
       }
 
+      try {
+        await achievementService.refreshUser(userId);
+      } catch {
+        // Achievement evaluation must not fail the workout save.
+      }
+
       return saved;
     } catch (error) {
       const pgCode =
@@ -190,6 +197,12 @@ export const workoutLogService = {
         });
       } catch {
         /* ignore aggregate failure */
+      }
+
+      try {
+        await achievementService.refreshUser(userId);
+      } catch {
+        /* ignore achievement failure */
       }
     }
   },

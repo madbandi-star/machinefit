@@ -23,6 +23,7 @@ export const ROUTES = {
   LIFTED_WEIGHT_RANKINGS: '/my-page/lifted-weight/rankings',
   LIFTER_DNA: '/my-page/lifter-dna',
   LIVE_DASHBOARD: '/my-page/live',
+  ACHIEVEMENTS: '/my-page/achievements',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
   OWNER: '/owner',

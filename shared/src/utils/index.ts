@@ -10,3 +10,9 @@ export * from './free-weight.js';
 export * from './lifted-volume.js';
 export * from './lifted-weight-showcase.js';
 export * from './lifter-dna-analysis.js';
+export * from './achievement-engine.js';
+export {
+  ACHIEVEMENT_CATALOG,
+  ACHIEVEMENT_BY_ID,
+  getAchievementCatalogCount,
+} from '../data/achievement-catalog.js';

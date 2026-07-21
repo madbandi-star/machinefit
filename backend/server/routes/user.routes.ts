@@ -4,6 +4,7 @@ import * as userGymController from '../controllers/user-gym.controller.js';
 import * as gymMemberController from '../controllers/gym-member.controller.js';
 import * as liftedVolumeController from '../controllers/lifted-volume.controller.js';
 import * as lifterDnaController from '../controllers/lifter-dna.controller.js';
+import * as achievementController from '../controllers/achievement.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 export const userRouter = Router();
@@ -29,3 +30,5 @@ userRouter.post('/me/member-profile-requests/:id/respond', authMiddleware, gymMe
 userRouter.get('/me/lifted-weight', authMiddleware, liftedVolumeController.getLiftedSnapshot);
 userRouter.get('/me/lifted-weight/rankings', authMiddleware, liftedVolumeController.getLiftedRankings);
 userRouter.get('/me/lifter-dna', authMiddleware, lifterDnaController.getLifterDnaSnapshot);
+userRouter.get('/me/achievements', authMiddleware, achievementController.getAchievementSnapshot);
+userRouter.get('/me/achievements/rankings', authMiddleware, achievementController.getAchievementRankings);

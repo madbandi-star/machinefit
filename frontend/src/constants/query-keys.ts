@@ -70,6 +70,8 @@ export const QUERY_KEYS = {
   liftedWeight: ['user', 'lifted-weight'] as const,
   liftedWeightRankings: ['user', 'lifted-weight', 'rankings'] as const,
   lifterDna: ['user', 'lifter-dna'] as const,
+  achievements: ['user', 'achievements'] as const,
+  achievementRankings: ['user', 'achievements', 'rankings'] as const,
   liveDashboard: ['live', 'dashboard'] as const,
   liveRankings: ['live', 'rankings'] as const,
   liveSearch: ['live', 'search'] as const,
