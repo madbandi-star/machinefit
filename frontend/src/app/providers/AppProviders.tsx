@@ -3,6 +3,7 @@ import { QueryProvider } from './QueryProvider';
 import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { Toast } from '@/components/feedback/Toast/Toast';
+import { PremiumUpgradeModalGlobal } from '@/components/premium/PremiumUpgradeModal/PremiumUpgradeModal';
 import { API_BASE_URL } from '@/services/http/axios-client';
 import { speechManager } from '@/utils/speechManager';
 import '@/i18n';
@@ -28,6 +29,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
           <SpeechManagerBootstrap />
           {children}
           <Toast />
+          <PremiumUpgradeModalGlobal />
         </ThemeProvider>
       </I18nProvider>
     </QueryProvider>

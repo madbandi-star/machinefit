@@ -8,7 +8,9 @@
 
 .records-page__gym {
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .records-page__panel {

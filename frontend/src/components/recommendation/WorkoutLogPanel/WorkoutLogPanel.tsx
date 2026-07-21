@@ -22,6 +22,8 @@ import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/ut
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
+import { isAllGymsId } from '@machinefit/shared';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
@@ -209,6 +211,8 @@ export function WorkoutLogPanel({
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId } = useActiveMember();
+  const isAllGyms = isAllGymsId(activeGymId);
   const voiceCoach = useVoiceCoachSession({
     targetReps: voiceCoachTargetReps,
     oneMoreEnabled: voiceCoachOneMore,
@@ -273,8 +277,8 @@ export function WorkoutLogPanel({
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
   const personalTipBytes = getUtf8ByteLength(personalTipMemo);
-  const queryEnabled =
-    isAuthenticated && Boolean(activeGymId) && (!isFreeWeight || !!queryTargetMuscle);
+  const canLog = isAuthenticated && Boolean(activeGymId) && !isAllGyms && Boolean(activeMemberId);
+  const queryEnabled = canLog && (!isFreeWeight || !!queryTargetMuscle);
 
   const needsFetchedCoaching =
     voiceCoachEnabled &&
@@ -359,6 +363,7 @@ export function WorkoutLogPanel({
     queryFn: async () => {
       const res = await workoutLogApi.list({
         gymId: activeGymId!,
+        memberId: activeMemberId ?? undefined,
         machineCode,
         logDate,
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
@@ -444,9 +449,10 @@ export function WorkoutLogPanel({
 
   const saveMutation = useMutation({
     mutationFn: async (variables?: SaveWorkoutLogVariables) => {
-      if (!activeGymId) throw new Error('missing_gym');
+      if (!activeGymId || !activeMemberId) throw new Error('missing_gym_or_member');
       const res = await workoutLogApi.upsert({
         gymId: activeGymId,
+        memberId: activeMemberId,
         machineCode,
         logDate,
         setCount,
@@ -505,9 +511,10 @@ export function WorkoutLogPanel({
 
   const removeMutation = useMutation({
     mutationFn: () => {
-      if (!activeGymId) throw new Error('missing_gym');
+      if (!activeGymId || !activeMemberId) throw new Error('missing_gym_or_member');
       return workoutLogApi.remove({
         gymId: activeGymId,
+        memberId: activeMemberId,
         machineCode,
         logDate,
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
@@ -780,6 +787,19 @@ export function WorkoutLogPanel({
             {t('machines:recommendLogin')}
           </Link>
         ) : null}
+      </section>
+    );
+  }
+
+  if (isAllGyms) {
+    return (
+      <section
+        className={`recommendation-workout-log${compact ? ' recommendation-workout-log--compact' : ''}`}
+        aria-label={t('machines:workoutLog.title')}
+      >
+        <p className="recommendation-workout-log__login-hint">
+          {t('machines:workoutLog.selectGymToLog')}
+        </p>
       </section>
     );
   }

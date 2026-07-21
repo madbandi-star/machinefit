@@ -76,6 +76,7 @@
     "updated": "Your workout log changes are saved.",
     "canceled": "Today's workout log was cleared.",
     "loginRequired": "Sign in to save your sets and weights.",
+    "selectGymToLog": "Select a specific gym to save your workout log.",
     "increaseSets": "Increase sets",
     "decreaseSets": "Decrease sets",
     "diaryTitle": "Workout diary",

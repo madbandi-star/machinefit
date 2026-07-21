@@ -15,6 +15,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import {
   collectMuscleGroupsInOrder,
   formatHistoryDateHeaderWithMuscles,
@@ -63,6 +64,7 @@ export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId } = useActiveMember();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
@@ -213,10 +215,11 @@ export function HistoryListPanel() {
       if (historyId) {
         await historyApi.remove(historyId);
       }
-      if (!activeGymId) return;
+      if (!activeGymId || !activeMemberId) return;
       try {
         await workoutLogApi.remove({
           gymId: activeGymId,
+          memberId: activeMemberId,
           machineCode,
           logDate,
           ...(targetMuscleGroup ? { targetMuscleGroup } : {}),

@@ -5,6 +5,7 @@ import { TabBar } from '@/components/navigation/TabBar/TabBar';
 import { HistoryListPanel } from '@/components/records/HistoryListPanel/HistoryListPanel';
 import { FavoritesListPanel } from '@/components/records/FavoritesListPanel/FavoritesListPanel';
 import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
+import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
 import '@/styles/records.css';
 
 const TABS = ['history', 'favorites'] as const;
@@ -48,6 +49,7 @@ export function RecordsPage() {
     <div className="records-page">
       <div className="records-page__gym">
         <GymSelector />
+        <MemberSelector />
       </div>
       <TabBar
         ariaLabel={t('machines:records.tabsLabel')}

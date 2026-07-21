@@ -13,6 +13,7 @@ import { fetchWorkoutInsights } from '@/api/growth-insights';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
+import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
 import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeriodFilter/GrowthPeriodFilter';
 import { GrowthMachineSelector } from '@/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -315,10 +316,17 @@ export function GrowthAnalysisPage() {
   const maxWeightDelta = isDailyView ? dailyKpis.maxWeightDelta : machineKpis.maxWeightDelta;
   const workoutCount = isDailyView ? dailyKpis.totalLogCount : machineKpis.workoutCount;
 
+  const gymMemberAction = (
+    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+      <GymSelector />
+      <MemberSelector />
+    </div>
+  );
+
   if (!activeGymId || isLoading) {
     return (
       <div className="growth-analysis-page">
-        <PageShell title={t('growthAnalysis.title')} action={<GymSelector />} />
+        <PageShell title={t('growthAnalysis.title')} action={gymMemberAction} />
         <Skeleton count={4} height={80} />
       </div>
     );
@@ -327,7 +335,7 @@ export function GrowthAnalysisPage() {
   if (isError) {
     return (
       <div className="growth-analysis-page">
-        <PageShell title={t('growthAnalysis.title')} action={<GymSelector />} />
+        <PageShell title={t('growthAnalysis.title')} action={gymMemberAction} />
         <div className="card growth-analysis-empty">
           <p>{t('errors.loadFailed')}</p>
           <button type="button" className="btn btn--secondary" onClick={() => void refetch()}>
@@ -345,7 +353,7 @@ export function GrowthAnalysisPage() {
         subtitle={
           isDailyView ? t('growthAnalysis.daily.subtitle') : t('growthAnalysis.subtitle')
         }
-        action={<GymSelector />}
+        action={gymMemberAction}
       />
 
       <div className="growth-analysis-filters card">
