@@ -12,12 +12,7 @@ import { MachineEmptyState } from '@/components/machines/MachineEmptyState/Machi
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi, machineApi } from '@/api';
-import { filterMachinesByEquipmentScope, type EquipmentScope } from '@/utils/machineEquipmentScope';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-
-function readEquipmentScope(value: string | null): EquipmentScope {
-  return value === 'all' ? 'all' : 'machines_only';
-}
 
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
@@ -28,15 +23,11 @@ export function MachineSearchPage() {
     () => searchParams.get('muscle')
   );
   const [brandCode, setBrandCode] = useState<string | null>(() => searchParams.get('brand'));
-  const [equipmentScope, setEquipmentScope] = useState<EquipmentScope>(() =>
-    readEquipmentScope(searchParams.get('scope'))
-  );
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
     setMuscleGroup(searchParams.get('muscle'));
     setBrandCode(searchParams.get('brand'));
-    setEquipmentScope(readEquipmentScope(searchParams.get('scope')));
   }, [searchParams]);
 
   useEffect(() => {
@@ -45,23 +36,20 @@ export function MachineSearchPage() {
         const next = new URLSearchParams(prev);
         if (debouncedQuery.trim()) next.set('q', debouncedQuery.trim());
         else next.delete('q');
+        // Equipment scope is always "all" — drop legacy machines_only param
+        next.delete('scope');
         return next;
       },
       { replace: true }
     );
   }, [debouncedQuery, setSearchParams]);
 
-  const writeSearchParams = (patch: {
-    muscle?: string | null;
-    brand?: string | null;
-    scope?: EquipmentScope;
-  }) => {
+  const writeSearchParams = (patch: { muscle?: string | null; brand?: string | null }) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
         const muscle = patch.muscle !== undefined ? patch.muscle : muscleGroup;
         const brand = patch.brand !== undefined ? patch.brand : brandCode;
-        const scope = patch.scope !== undefined ? patch.scope : equipmentScope;
 
         if (muscle) next.set('muscle', muscle);
         else next.delete('muscle');
@@ -69,9 +57,7 @@ export function MachineSearchPage() {
         if (brand) next.set('brand', brand);
         else next.delete('brand');
 
-        if (scope && scope !== 'machines_only') next.set('scope', scope);
-        else next.delete('scope');
-
+        next.delete('scope');
         return next;
       },
       { replace: true }
@@ -92,11 +78,6 @@ export function MachineSearchPage() {
     writeSearchParams({ brand: value });
   };
 
-  const handleScopeChange = (value: EquipmentScope) => {
-    setEquipmentScope(value);
-    writeSearchParams({ scope: value });
-  };
-
   const { data: brands = [] } = useQuery({
     queryKey: QUERY_KEYS.brands,
     queryFn: async () => {
@@ -107,14 +88,14 @@ export function MachineSearchPage() {
   });
 
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode, equipmentScope],
+    queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = { limit: 100 };
       if (muscleGroup) params.muscleGroup = muscleGroup;
       if (brandCode) params.brandCode = brandCode;
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
-      return filterMachinesByEquipmentScope(res.data.data.items, equipmentScope);
+      return res.data.data.items;
     },
     staleTime: 60_000,
     placeholderData: (prev) => prev,
@@ -127,13 +108,7 @@ export function MachineSearchPage() {
       <PageShell title={t('searchTitle')}>
         <SearchBar value={query} onChange={handleQueryChange} placeholder={t('searchPlaceholder')} />
         <FilterChips value={muscleGroup} onChange={handleMuscleChange} />
-        <BrandFilterChips
-          brands={brands}
-          value={brandCode}
-          onChange={handleBrandChange}
-          equipmentScope={equipmentScope}
-          onEquipmentScopeChange={handleScopeChange}
-        />
+        <BrandFilterChips brands={brands} value={brandCode} onChange={handleBrandChange} />
         {isLoading && !data ? (
           <Skeleton count={5} height={72} />
         ) : !data?.length ? (
