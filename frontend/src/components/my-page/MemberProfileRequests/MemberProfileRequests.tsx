@@ -48,7 +48,7 @@ export function MemberProfileRequests() {
           <li key={req.id} className="card member-profile-requests__card">
             <p className="member-profile-requests__message">
               {t('gyms:members.requestFrom', {
-                gymName: req.gymName?.trim() || req.gymId,
+                gymName: req.gymName?.trim() || t('gyms:members.unknownGym'),
               })}
             </p>
             <div className="member-profile-requests__actions">
