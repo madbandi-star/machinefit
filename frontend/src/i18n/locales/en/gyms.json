@@ -40,6 +40,28 @@
     "requestApproved": "Profile link approved.",
     "requestDenied": "Profile link denied."
   },
+  "manage": {
+    "title": "Gyms & members",
+    "subtitle": "Add, edit, and remove your gyms and members.",
+    "gymsHeading": "My gyms",
+    "membersHeading": "{{gymName}} members",
+    "addGym": "Add gym",
+    "addMember": "Add member",
+    "edit": "Edit",
+    "selected": "Selected",
+    "noGyms": "No gyms yet. Add a gym to get started.",
+    "noMembers": "No members yet.",
+    "selectGymForMembers": "Select a gym above to manage members.",
+    "selectGymForMembersAll": "Select a specific gym to manage members.",
+    "updateGymSuccess": "Gym updated.",
+    "createGymSuccess": "Gym added.",
+    "removeGymSuccess": "Gym removed.",
+    "updateMemberSuccess": "Member updated.",
+    "removeGymTitle": "Remove gym",
+    "removeGymMessage": "Remove {{name}}? Records for this gym may no longer be available.",
+    "removeMemberTitle": "Remove member",
+    "removeMemberMessage": "Remove member {{name}}?"
+  },
   "premium": {
     "badge": "Premium",
     "title": "Available with Premium",

@@ -26,6 +26,7 @@ import { LoginPage } from '@/pages/auth/login/LoginPage';
 import { RegisterPage } from '@/pages/auth/register/RegisterPage';
 import { GrowthAnalysisPage } from '@/pages/growth-analysis/GrowthAnalysisPage';
 import { MyPage } from '@/pages/my-page/MyPage';
+import { GymMemberManagePage } from '@/pages/gym-member-manage/GymMemberManagePage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { OwnerDashboardPage } from '@/pages/gym-owner/dashboard/OwnerDashboardPage';
 import { OwnerApplyPage } from '@/pages/gym-owner/apply/OwnerApplyPage';
@@ -86,6 +87,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.RECOMMEND, element: <RecommendationFormPage /> },
             { path: ROUTES.RECOMMEND_RESULT, element: <RecommendationResultPage /> },
             { path: ROUTES.MY_PAGE, element: <MyPage /> },
+            { path: ROUTES.MY_GYMS, element: <GymMemberManagePage /> },
             { path: ROUTES.OWNER_APPLY, element: <OwnerApplyPage /> },
             { path: ROUTES.GROWTH_ANALYSIS, element: <GrowthAnalysisPage /> },
             { path: ROUTES.SETTINGS, element: <SettingsPage /> },

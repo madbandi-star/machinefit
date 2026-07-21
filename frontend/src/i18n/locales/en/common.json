@@ -239,7 +239,8 @@
     "explore": "Explore",
     "adminDashboard": "Admin Dashboard",
     "browseByBrand": "Browse by Brand",
-    "growthAnalysis": "Growth Analysis"
+    "growthAnalysis": "Growth Analysis",
+    "gymMemberManage": "Gyms & members"
   },
   "growthAnalysis": {
     "title": "Growth Analysis",
