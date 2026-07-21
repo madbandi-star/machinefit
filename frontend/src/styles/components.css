@@ -750,48 +750,38 @@
   margin-bottom: var(--space-md);
 }
 
-.profile-card__identity {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.35rem;
-  min-width: 0;
+.profile-card__fields {
   margin: 0;
-  overflow: hidden;
+  display: grid;
+  gap: 0.45rem;
 }
 
-.profile-card__name {
-  flex-shrink: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  margin: 0;
-}
-
-.profile-card__sep {
-  flex-shrink: 0;
-  color: var(--color-text-muted);
-  opacity: 0.55;
-  font-size: 0.875rem;
-  line-height: 1;
-}
-
-.profile-card__email {
-  flex: 1;
+.profile-card__row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.5rem;
+  align-items: baseline;
   min-width: 0;
+}
+
+.profile-card__row dt {
+  margin: 0;
   font-size: var(--font-size-body-sm);
   font-weight: 500;
   color: var(--color-text-muted);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.profile-card__role {
-  flex-shrink: 0;
+.profile-card__row dt::after {
+  content: ' :';
+}
+
+.profile-card__row dd {
+  margin: 0;
   font-size: var(--font-size-body-sm);
   font-weight: 600;
-  color: var(--color-text-muted);
-  text-transform: lowercase;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
 }
 
 .my-page .page-shell__header--no-subtitle {
