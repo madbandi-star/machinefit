@@ -49,8 +49,17 @@ export function MemberSelector() {
   const label = isLoading
     ? '…'
     : activeMember?.name?.trim()
-      ? `${activeMember.name}${activeMember.isSelf ? ` (${t('gyms:members.self')})` : ''}`
-      : t('gyms:members.selectMember');
+      ? `${activeMember.name.trim()}${activeMember.isSelf ? ` (${t('gyms:members.self')})` : ''}`
+      : members[0]?.name?.trim()
+        ? `${members[0].name.trim()}${members[0].isSelf ? ` (${t('gyms:members.self')})` : ''}`
+        : t('gyms:members.selectMember');
+
+  // If list has members but store id is missing, set default immediately on open/render
+  useEffect(() => {
+    if (isLoading || !members[0]) return;
+    if (activeMemberId) return;
+    selectMember(members[0].id);
+  }, [activeMemberId, isLoading, members, selectMember]);
 
   const handleSelect = (memberId: string) => {
     selectMember(memberId);

@@ -47,6 +47,7 @@ export const userGymService = {
   async select(userId: string, gymId: string) {
     const gym = await userGymRepository.setActive(userId, gymId);
     if (!gym) throw new AppError(404, 'NOT_FOUND', 'Gym not found');
+    await gymMemberService.ensureSelfMember(gymId, userId);
     return gym;
   },
 
