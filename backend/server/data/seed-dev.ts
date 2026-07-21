@@ -1,3 +1,4 @@
+import { DEMO_PASSWORD } from '@machinefit/shared';
 import { devUsers } from './dev-users.js';
 import { hashPassword } from '../utils/hash.util.js';
 
@@ -8,7 +9,7 @@ export async function seedDevUsers(): Promise<void> {
   seeded = true;
 
   if (!devUsers.has('admin@machinefit.com')) {
-    const adminHash = await hashPassword('admin123');
+    const adminHash = await hashPassword(DEMO_PASSWORD);
     devUsers.set('admin@machinefit.com', {
       id: 'admin-dev-1',
       email: 'admin@machinefit.com',
@@ -21,7 +22,7 @@ export async function seedDevUsers(): Promise<void> {
   }
 
   if (!devUsers.has('demo@machinefit.com')) {
-    const memberHash = await hashPassword('demo123');
+    const memberHash = await hashPassword(DEMO_PASSWORD);
     devUsers.set('demo@machinefit.com', {
       id: 'demo-dev-1',
       email: 'demo@machinefit.com',

@@ -55,7 +55,7 @@ export function RegisterPage() {
   const [emailLocal, setEmailLocal] = useState(demoSlot.emailLocal);
   const [emailDomainPreset, setEmailDomainPreset] = useState<EmailDomainPreset>('gmail.com');
   const [emailCustomDomain, setEmailCustomDomain] = useState('');
-  const [password, setPassword] = useState(DEMO_REGISTER_PASSWORD);
+  const password = DEMO_REGISTER_PASSWORD;
   const [displayName, setDisplayName] = useState(demoSlot.displayName);
   const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
@@ -171,12 +171,13 @@ export function RegisterPage() {
         />
         <input
           className={`input${hasError('password') ? ' input--invalid' : ''}`}
-          type="password"
-          placeholder={t('auth.passwordMinPlaceholder')}
+          type="text"
+          placeholder={t('auth.passwordDemoFixedPlaceholder')}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          minLength={8}
-          autoComplete="new-password"
+          readOnly
+          aria-readonly="true"
+          autoComplete="off"
+          title={t('auth.passwordDemoFixedHint')}
         />
 
         <section className="form-section">

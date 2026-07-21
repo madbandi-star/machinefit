@@ -93,6 +93,8 @@
     "emailCustomDomainPlaceholder": "example.com",
     "passwordPlaceholder": "비밀번호",
     "passwordMinPlaceholder": "비밀번호 (8자 이상)",
+    "passwordDemoFixedPlaceholder": "비밀번호: demo1234 (고정)",
+    "passwordDemoFixedHint": "데모 환경에서는 비밀번호가 demo1234로 고정됩니다.",
     "displayNamePlaceholder": "표시 이름",
     "unitSettings": "단위 설정",
     "unitSettingsDesc": "앱에서 사용할 기본 단위를 선택하세요.",

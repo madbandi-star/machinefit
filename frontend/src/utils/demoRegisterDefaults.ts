@@ -1,6 +1,8 @@
+import { DEMO_PASSWORD } from '@machinefit/shared';
+
 const DEMO_REGISTER_SEQ_KEY = 'machinefit:demo-register-seq';
 
-export const DEMO_REGISTER_PASSWORD = 'demo1234';
+export const DEMO_REGISTER_PASSWORD = DEMO_PASSWORD;
 export const DEMO_HOME_GYM_NAME = '머신핏GYM';
 
 export const POPULAR_EMAIL_DOMAINS = [

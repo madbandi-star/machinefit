@@ -1,4 +1,5 @@
 import type { RegisterInput, LoginInput, User, RoleCode } from '@machinefit/shared';
+import { DEMO_PASSWORD } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -55,7 +56,8 @@ export const authService = {
         throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
       }
       const id = crypto.randomUUID();
-      const passwordHash = await hashPassword(input.password);
+      // Demo mode: always store the fixed demo password regardless of client input.
+      const passwordHash = await hashPassword(DEMO_PASSWORD);
       devUsers.set(input.email, {
         id,
         email: input.email,
@@ -97,7 +99,8 @@ export const authService = {
       throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
     }
 
-    const passwordHash = await hashPassword(input.password);
+    // Demo mode: always store the fixed demo password regardless of client input.
+    const passwordHash = await hashPassword(DEMO_PASSWORD);
     let user;
     try {
       user = await userRepository.create({

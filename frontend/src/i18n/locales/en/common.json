@@ -93,6 +93,8 @@
     "emailCustomDomainPlaceholder": "example.com",
     "passwordPlaceholder": "Password",
     "passwordMinPlaceholder": "Password (min 8 chars)",
+    "passwordDemoFixedPlaceholder": "Password: demo1234 (fixed)",
+    "passwordDemoFixedHint": "In demo mode the password is always demo1234.",
     "displayNamePlaceholder": "Display Name",
     "unitSettings": "Unit preferences",
     "unitSettingsDesc": "Choose your default units for the app.",
