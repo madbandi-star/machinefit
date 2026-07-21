@@ -3,6 +3,7 @@ import type { TargetMuscleGroup } from '../constants/workout-goals.js';
 export interface WorkoutLog {
   id: string;
   gymId: string;
+  memberId: string;
   machineCode: string;
   machineName?: string;
   /** Localized brand label for disambiguating same-named machines (e.g. Cybex vs HS Leg Curl). */

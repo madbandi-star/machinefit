@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { gymScopeIdSchema, memberIdSchema } from './gym-scope.schema.js';
 
 export const machineListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -12,7 +13,8 @@ export const machineListQuerySchema = z.object({
 export type MachineListQuery = z.infer<typeof machineListQuerySchema>;
 
 export const historyListQuerySchema = z.object({
-  gymId: z.string().uuid(),
+  gymId: gymScopeIdSchema,
+  memberId: memberIdSchema.optional(),
   machineCode: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   from: z.string().datetime({ offset: true }).optional(),

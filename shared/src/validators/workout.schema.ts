@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TARGET_MUSCLE_GROUPS } from '../constants/workout-goals.js';
 import { getUtf8ByteLength, WORKOUT_DIARY_MAX_BYTES } from '../utils/utf8-bytes.js';
+import { gymIdSchema, gymScopeIdSchema, memberIdSchema } from './gym-scope.schema.js';
 
 const dateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -16,7 +17,8 @@ const diarySchema = z
   });
 
 export const workoutLogListQuerySchema = z.object({
-  gymId: z.string().uuid(),
+  gymId: gymScopeIdSchema,
+  memberId: memberIdSchema.optional(),
   machineCode: z.string().min(1).optional(),
   logDate: dateKeySchema.optional(),
   from: dateKeySchema.optional(),
@@ -29,7 +31,8 @@ export type WorkoutLogListQuery = z.infer<typeof workoutLogListQuerySchema>;
 
 export const upsertWorkoutLogSchema = z
   .object({
-    gymId: z.string().uuid(),
+    gymId: gymIdSchema,
+    memberId: memberIdSchema,
     machineCode: z.string().min(1),
     recommendationId: z.string().uuid().optional(),
     logDate: dateKeySchema.optional(),
@@ -55,7 +58,8 @@ export const upsertWorkoutLogSchema = z
 export type UpsertWorkoutLogInput = z.infer<typeof upsertWorkoutLogSchema>;
 
 export const deleteWorkoutLogSchema = z.object({
-  gymId: z.string().uuid(),
+  gymId: gymIdSchema,
+  memberId: memberIdSchema,
   machineCode: z.string().min(1),
   logDate: dateKeySchema,
   targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
@@ -67,7 +71,8 @@ export const workoutInsightPeriodSchema = z.enum(['30d', '3m', 'all']);
 
 export const workoutInsightsQuerySchema = z
   .object({
-    gymId: z.string().uuid(),
+    gymId: gymScopeIdSchema,
+    memberId: memberIdSchema.optional(),
     viewMode: z.enum(['machine', 'daily']).default('machine'),
     machineCode: z.string().min(1).optional(),
     period: workoutInsightPeriodSchema.optional().default('30d'),

@@ -8,3 +8,4 @@ export * from './boxing-weight-classes.js';
 export * from './workout-goals.js';
 export * from './recommendation-settings.js';
 export * from './weight-difficulty.js';
+export * from './subscription.js';
