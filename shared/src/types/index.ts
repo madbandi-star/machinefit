@@ -13,3 +13,4 @@ export * from './motivation-media.types.js';
 export * from './user-gym.types.js';
 export * from './gym-member.types.js';
 export * from './lifted-weight.types.js';
+export * from './live-dashboard.types.js';

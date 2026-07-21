@@ -17,6 +17,7 @@ import { adminRouter } from './admin.routes.js';
 import { qrRouter } from './qr.routes.js';
 import { workoutLogRouter } from './workout-log.routes.js';
 import { motivationMediaRouter } from './motivation-media.routes.js';
+import { liveDashboardRouter } from './live-dashboard.routes.js';
 
 export const apiRouter = Router();
 
@@ -38,3 +39,4 @@ apiRouter.use('/admin', adminRouter);
 apiRouter.use('/qr', qrRouter);
 apiRouter.use('/workout-logs', workoutLogRouter);
 apiRouter.use('/motivation-media', motivationMediaRouter);
+apiRouter.use('/live', liveDashboardRouter);

@@ -74,6 +74,10 @@ const liftedWeightRankings = () =>
   import('@/pages/lifted-weight/LiftedWeightRankingsPage').then((m) => ({
     default: m.LiftedWeightRankingsPage,
   }));
+const liveDashboard = () =>
+  import('@/pages/live-dashboard/LiveDashboardPage').then((m) => ({
+    default: m.LiveDashboardPage,
+  }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
 const ownerDash = () =>
@@ -153,6 +157,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.MY_GYMS, element: lazyRoute(gymMemberManage) },
             { path: ROUTES.LIFTED_WEIGHT, element: lazyRoute(liftedWeight) },
             { path: ROUTES.LIFTED_WEIGHT_RANKINGS, element: lazyRoute(liftedWeightRankings) },
+            { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },

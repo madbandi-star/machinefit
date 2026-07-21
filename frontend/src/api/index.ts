@@ -24,6 +24,13 @@ import type {
   LiftedRankingResponse,
   LiftedScopeMode,
   LiftedRankingBoard,
+  LiveDashboardSnapshot,
+  LiveRankingResponse,
+  LiveRankingBoard,
+  LiveRankingPeriod,
+  LiveDashboardLevel,
+  LiveScopeQuery,
+  LiveSearchHit,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -385,6 +392,20 @@ export const liftedWeightApi = {
     apiClient.get<ApiResponse<LiftedRankingResponse>>('/users/me/lifted-weight/rankings', {
       params,
     }),
+};
+
+export const liveDashboardApi = {
+  snapshot: (params: { level: LiveDashboardLevel } & LiveScopeQuery) =>
+    apiClient.get<ApiResponse<LiveDashboardSnapshot>>('/live/snapshot', { params }),
+  rankings: (
+    params: {
+      board: LiveRankingBoard;
+      period?: LiveRankingPeriod;
+      limit?: number;
+    } & LiveScopeQuery
+  ) => apiClient.get<ApiResponse<LiveRankingResponse>>('/live/rankings', { params }),
+  search: (q: string) =>
+    apiClient.get<ApiResponse<LiveSearchHit[]>>('/live/search', { params: { q } }),
 };
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
