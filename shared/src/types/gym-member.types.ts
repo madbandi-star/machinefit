@@ -24,6 +24,8 @@ export interface GymMemberProfileRequest {
   id: string;
   memberId: string;
   gymId: string;
+  /** Personal gym display name when available. */
+  gymName?: string;
   ownerUserId: string;
   targetUserId: string;
   status: 'pending' | 'approved' | 'denied';
