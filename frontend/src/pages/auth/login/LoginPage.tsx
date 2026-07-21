@@ -10,6 +10,7 @@ import { useCredentialsStore } from '@/store/credentials.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import { DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
 import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
@@ -23,14 +24,13 @@ export function LoginPage() {
   const showToast = useUIStore((s) => s.showToast);
 
   const savedEmail = useCredentialsStore((s) => s.email);
-  const savedPassword = useCredentialsStore((s) => s.password);
   const rememberLogin = useCredentialsStore((s) => s.rememberLogin);
   const saveCredentials = useCredentialsStore((s) => s.saveCredentials);
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
   const credentialsHydrated = usePersistHydration(useCredentialsStore.persist);
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const password = DEMO_REGISTER_PASSWORD;
   const [rememberMe, setRememberMe] = useState(false);
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
   const autoLoginAttempted = useRef(false);
@@ -73,15 +73,12 @@ export function LoginPage() {
       setEmail(savedEmail);
       setRememberMe(rememberLogin);
     }
-    if (savedPassword && rememberLogin) {
-      setPassword(savedPassword);
-    }
 
-    if (rememberLogin && savedEmail && savedPassword) {
+    if (rememberLogin && savedEmail) {
       autoLoginAttempted.current = true;
       setAutoLoggingIn(true);
       authApi
-        .login(savedEmail, savedPassword)
+        .login(savedEmail, DEMO_REGISTER_PASSWORD)
         .then((res) => {
           const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
           setAuth(user, tokens);
@@ -98,7 +95,6 @@ export function LoginPage() {
     credentialsHydrated,
     rememberLogin,
     savedEmail,
-    savedPassword,
     from,
     navigate,
     setAuth,
@@ -164,12 +160,13 @@ export function LoginPage() {
         />
         <input
           className="input"
-          type="password"
-          placeholder={t('auth.passwordPlaceholder')}
+          type="text"
+          placeholder={t('auth.passwordDemoFixedPlaceholder')}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-          required
+          readOnly
+          aria-readonly="true"
+          autoComplete="off"
+          title={t('auth.passwordDemoFixedHint')}
         />
         <label className="checkbox-label">
           <input
