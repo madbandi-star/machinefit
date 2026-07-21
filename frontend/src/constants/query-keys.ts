@@ -67,4 +67,6 @@ export const QUERY_KEYS = {
   userGyms: ['user', 'gyms'] as const,
   userGymMembers: (gymId: string) => ['user', 'gyms', gymId, 'members'] as const,
   memberProfileRequests: ['user', 'member-profile-requests'] as const,
+  liftedWeight: ['user', 'lifted-weight'] as const,
+  liftedWeightRankings: ['user', 'lifted-weight', 'rankings'] as const,
 } as const;

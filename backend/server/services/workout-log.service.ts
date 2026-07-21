@@ -3,6 +3,7 @@ import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle, isAllGymsId }
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
+import { liftedVolumeService } from './lifted-volume.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -66,10 +67,7 @@ export const workoutLogService = {
   },
 
   async upsert(userId: string, input: UpsertWorkoutLogInput) {
-    // Writes require a real gymId
     await gymScopeService.assertOwned(userId, input.gymId);
-
-    // Validate member ownership
     await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
     const machineId = await machineRepository.findIdByCode(input.machineCode);
@@ -88,8 +86,17 @@ export const workoutLogService = {
 
     const logDate = input.logDate ?? todayDateKey();
 
+    const previous = await workoutLogRepository.findByUserMachineDate(
+      userId,
+      input.gymId,
+      machineId,
+      logDate,
+      targetMuscleKey,
+      input.memberId
+    );
+
     try {
-      return await workoutLogRepository.upsert(userId, input.gymId, input.memberId, machineId, {
+      const saved = await workoutLogRepository.upsert(userId, input.gymId, input.memberId, machineId, {
         recommendationId: input.recommendationId,
         logDate,
         targetMuscleGroup: targetMuscleKey,
@@ -98,6 +105,22 @@ export const workoutLogService = {
         setCompleted: input.setCompleted,
         diary: input.diary,
       });
+
+      try {
+        await liftedVolumeService.applyLogDelta({
+          userId,
+          gymId: input.gymId,
+          logDate,
+          previousWeights: previous?.setWeightsKg ?? [],
+          previousCompleted: previous?.setCompleted,
+          nextWeights: input.setWeightsKg,
+          nextCompleted: input.setCompleted,
+        });
+      } catch {
+        // Aggregate update must not fail the workout save.
+      }
+
+      return saved;
     } catch (error) {
       const pgCode =
         error && typeof error === 'object' && 'code' in error
@@ -115,7 +138,6 @@ export const workoutLogService = {
   },
 
   async remove(userId: string, input: DeleteWorkoutLogInput) {
-    // Writes require a real gymId
     await gymScopeService.assertOwned(userId, input.gymId);
     await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
@@ -133,6 +155,15 @@ export const workoutLogService = {
       throw new AppError(400, 'VALIDATION_ERROR', 'targetMuscleGroup is required for free-weight logs');
     }
 
+    const previous = await workoutLogRepository.findByUserMachineDate(
+      userId,
+      input.gymId,
+      machineId,
+      input.logDate,
+      targetMuscleKey,
+      input.memberId
+    );
+
     const deleted = await workoutLogRepository.deleteByUserMachineDate(
       userId,
       input.gymId,
@@ -144,6 +175,22 @@ export const workoutLogService = {
 
     if (!deleted) {
       throw new AppError(404, 'NOT_FOUND', 'Workout log not found');
+    }
+
+    if (previous) {
+      try {
+        await liftedVolumeService.applyLogDelta({
+          userId,
+          gymId: input.gymId,
+          logDate: input.logDate,
+          previousWeights: previous.setWeightsKg,
+          previousCompleted: previous.setCompleted,
+          nextWeights: [],
+          nextCompleted: [],
+        });
+      } catch {
+        /* ignore aggregate failure */
+      }
     }
   },
 };

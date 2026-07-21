@@ -7,3 +7,5 @@ export * from './daily-insights.js';
 export * from './rest-timer.js';
 export * from './recommendation-personalization.js';
 export * from './free-weight.js';
+export * from './lifted-volume.js';
+export * from './lifted-weight-showcase.js';

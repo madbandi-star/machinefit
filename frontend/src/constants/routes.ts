@@ -19,6 +19,8 @@ export const ROUTES = {
   REGISTER: '/register',
   MY_PAGE: '/my-page',
   MY_GYMS: '/my-page/gyms',
+  LIFTED_WEIGHT: '/my-page/lifted-weight',
+  LIFTED_WEIGHT_RANKINGS: '/my-page/lifted-weight/rankings',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
   OWNER: '/owner',
