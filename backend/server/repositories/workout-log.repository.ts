@@ -396,16 +396,16 @@ export const workoutLogRepository = {
          SELECT
            wl.user_id,
            wl.log_date,
-           (
-             SELECT COALESCE(SUM((elem)::numeric), 0)
-             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
-           ) AS session_volume,
-           (
-             SELECT COALESCE(MAX((elem)::numeric), 0)
-             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
-           ) AS max_weight
+           COALESCE(w.session_volume, 0) AS session_volume,
+           COALESCE(w.max_weight, 0) AS max_weight
          FROM workout_logs wl
          INNER JOIN users u ON u.id = wl.user_id
+         LEFT JOIN LATERAL (
+           SELECT
+             SUM((elem)::numeric) AS session_volume,
+             MAX((elem)::numeric) AS max_weight
+           FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+         ) w ON TRUE
          WHERE wl.machine_id = $1
            AND wl.log_date >= $2::date
            AND wl.log_date <= $3::date
@@ -541,12 +541,13 @@ export const workoutLogRepository = {
       `WITH user_pr AS (
          SELECT
            wl.user_id,
-           MAX((
-             SELECT COALESCE(MAX((elem)::numeric), 0)
-             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
-           )) AS pr
+           MAX(COALESCE(w.max_weight, 0)) AS pr
          FROM workout_logs wl
          INNER JOIN users u ON u.id = wl.user_id
+         LEFT JOIN LATERAL (
+           SELECT MAX((elem)::numeric) AS max_weight
+           FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+         ) w ON TRUE
          WHERE wl.machine_id = $1
            AND wl.log_date >= $2::date
            AND wl.log_date <= $3::date
@@ -652,16 +653,16 @@ export const workoutLogRepository = {
          SELECT
            wl.user_id,
            wl.log_date,
-           (
-             SELECT COALESCE(SUM((elem)::numeric), 0)
-             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
-           ) AS session_volume,
-           (
-             SELECT COALESCE(MAX((elem)::numeric), 0)
-             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
-           ) AS max_weight
+           COALESCE(w.session_volume, 0) AS session_volume,
+           COALESCE(w.max_weight, 0) AS max_weight
          FROM workout_logs wl
          INNER JOIN users u ON u.id = wl.user_id
+         LEFT JOIN LATERAL (
+           SELECT
+             SUM((elem)::numeric) AS session_volume,
+             MAX((elem)::numeric) AS max_weight
+           FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+         ) w ON TRUE
          WHERE wl.log_date >= $1::date
            AND wl.log_date <= $2::date
            ${userFilters}

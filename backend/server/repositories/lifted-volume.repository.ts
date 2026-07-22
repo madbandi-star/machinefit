@@ -96,13 +96,12 @@ export const liftedVolumeRepository = {
   async awardBadges(userId: string, badgeIds: string[]): Promise<void> {
     const pool = getPool();
     if (!pool || badgeIds.length === 0) return;
-    for (const badgeId of badgeIds) {
-      await pool.query(
-        `INSERT INTO user_lifted_badges (user_id, badge_id)
-         VALUES ($1, $2)
-         ON CONFLICT DO NOTHING`,
-        [userId, badgeId]
-      );
-    }
+    await pool.query(
+      `INSERT INTO user_lifted_badges (user_id, badge_id)
+       SELECT $1, x.badge_id
+       FROM UNNEST($2::text[]) AS x(badge_id)
+       ON CONFLICT DO NOTHING`,
+      [userId, badgeIds]
+    );
   },
 };

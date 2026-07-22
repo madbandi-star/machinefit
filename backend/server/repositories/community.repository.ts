@@ -33,13 +33,14 @@ export const communityRepository = {
     }
     const where = `WHERE ${conditions.join(' AND ')}`;
 
-    const count = await pool.query<{ count: string }>(
+    const countPromise = pool.query<{ count: string }>(
       `SELECT COUNT(*)::text AS count FROM posts p ${where}`,
       params
     );
-    const total = parseInt(count.rows[0]?.count ?? '0', 10);
 
-    const result = await pool.query<{
+    const limitIdx = params.length + 1;
+    const offsetIdx = params.length + 2;
+    const resultPromise = pool.query<{
       id: string;
       user_id: string;
       board_type: string;
@@ -55,16 +56,30 @@ export const communityRepository = {
       created_at: string;
       updated_at: string;
     }>(
-      `SELECT p.*, u.display_name,
-        (SELECT COUNT(*)::text FROM likes l WHERE l.post_id = p.id) AS like_count,
-        (SELECT COUNT(*)::text FROM comments c WHERE c.post_id = p.id AND c.is_hidden = FALSE) AS comment_count
+      `SELECT p.id, p.user_id, p.board_type, p.title, p.content, p.language_code,
+              p.is_pinned, p.is_hidden, p.view_count, p.created_at, p.updated_at,
+              u.display_name,
+              COALESCE(lc.cnt, 0)::text AS like_count,
+              COALESCE(cc.cnt, 0)::text AS comment_count
        FROM posts p
        JOIN users u ON u.id = p.user_id
+       LEFT JOIN (
+         SELECT post_id, COUNT(*)::bigint AS cnt FROM likes GROUP BY post_id
+       ) lc ON lc.post_id = p.id
+       LEFT JOIN (
+         SELECT post_id, COUNT(*)::bigint AS cnt
+         FROM comments
+         WHERE is_hidden = FALSE
+         GROUP BY post_id
+       ) cc ON cc.post_id = p.id
        ${where}
        ORDER BY p.is_pinned DESC, p.created_at DESC
-       LIMIT $${idx++} OFFSET $${idx}`,
+       LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
       [...params, limit, (page - 1) * limit]
     );
+
+    const [count, result] = await Promise.all([countPromise, resultPromise]);
+    const total = parseInt(count.rows[0]?.count ?? '0', 10);
 
     const items: Post[] = result.rows.map((r) => ({
       id: r.id,

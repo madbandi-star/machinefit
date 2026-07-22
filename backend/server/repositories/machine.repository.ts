@@ -299,7 +299,8 @@ export const brandRepository = {
     if (!pool) return MOCK_BRANDS;
 
     const result = await pool.query<BrandRow>(
-      `SELECT * FROM brands WHERE is_active = true
+      `SELECT id, code, name, description, logo_url, website_url, country_id, is_active
+       FROM brands WHERE is_active = true
        ORDER BY CASE code
          WHEN 'BODYWEIGHT' THEN 1
          WHEN 'FREE_WEIGHT' THEN 2
@@ -318,7 +319,8 @@ export const brandRepository = {
     if (!pool) return MOCK_BRANDS.find((b) => b.code === code) ?? null;
 
     const result = await pool.query<BrandRow>(
-      'SELECT * FROM brands WHERE code = $1 AND is_active = true',
+      `SELECT id, code, name, description, logo_url, website_url, country_id, is_active
+       FROM brands WHERE code = $1 AND is_active = true`,
       [code]
     );
     return result.rows[0] ? mapBrand(result.rows[0]) : null;

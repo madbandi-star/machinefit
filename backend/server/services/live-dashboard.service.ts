@@ -661,8 +661,28 @@ export const liveDashboardService = {
     }
 
     // Search seeded states/cities for major countries (global hierarchy).
-    for (const country of countryList.slice(0, 12)) {
-      const states = await locationRepository.listStates(country.code);
+    // Batch-load hierarchy (same ORDER BY as listStates/listCities) to avoid N+1.
+    const scopedCountries = countryList.slice(0, 12);
+    const allStates = await locationRepository.listStatesForCountries(
+      scopedCountries.map((c) => c.code)
+    );
+    const allCities = await locationRepository.listCitiesForStateIds(allStates.map((s) => s.id));
+    const statesByCountry = new Map<string, typeof allStates>();
+    for (const state of allStates) {
+      const key = state.countryCode.toUpperCase();
+      const bucket = statesByCountry.get(key) ?? [];
+      bucket.push(state);
+      statesByCountry.set(key, bucket);
+    }
+    const citiesByState = new Map<string, typeof allCities>();
+    for (const city of allCities) {
+      const bucket = citiesByState.get(city.stateId) ?? [];
+      bucket.push(city);
+      citiesByState.set(city.stateId, bucket);
+    }
+
+    for (const country of scopedCountries) {
+      const states = statesByCountry.get(country.code.toUpperCase()) ?? [];
       const countryLabel = locName(country.name, locale);
       for (const state of states) {
         const label = locName(state.name, locale);
@@ -679,7 +699,7 @@ export const liveDashboardService = {
           });
         }
         if (hits.length > 40) break;
-        const cities = await locationRepository.listCities(state.id);
+        const cities = citiesByState.get(state.id) ?? [];
         for (const city of cities) {
           const cityLabel = locName(city.name, locale);
           if (cityLabel.toLowerCase().includes(needle) || city.code.includes(needle)) {

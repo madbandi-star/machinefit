@@ -165,17 +165,17 @@ export const lifterDnaRepository = {
          SELECT wl.user_id,
                 wl.log_date,
                 wl.set_count,
-                (
-                  SELECT COALESCE(SUM(value::numeric),0)
-                  FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-                ) AS volume,
-                (
-                  SELECT COALESCE(MAX(value::numeric),0)
-                  FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-                ) AS max_w,
+                COALESCE(w.volume, 0) AS volume,
+                COALESCE(w.max_w, 0) AS max_w,
                 COALESCE(NULLIF(wl.target_muscle_group,''), m.muscle_group) AS muscle
          FROM workout_logs wl
          JOIN machines m ON m.id = wl.machine_id
+         LEFT JOIN LATERAL (
+           SELECT
+             SUM(value::numeric) AS volume,
+             MAX(value::numeric) AS max_w
+           FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
+         ) w ON TRUE
          WHERE wl.log_date >= CURRENT_DATE - INTERVAL '90 days'
            ${gymFilter}
        ),

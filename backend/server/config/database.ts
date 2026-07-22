@@ -19,10 +19,13 @@ export function getPool(): pg.Pool | null {
     pool = new Pool({
       connectionString: env.DATABASE_URL,
       ssl: useSsl(env.DATABASE_URL) ? { rejectUnauthorized: false } : undefined,
-      max: 10,
+      max: 20,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 5_000,
       allowExitOnIdle: false,
+    });
+    pool.on('connect', (client) => {
+      void client.query('SET statement_timeout = 30000');
     });
   }
   return pool;

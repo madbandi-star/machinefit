@@ -100,7 +100,9 @@ export const recommendationRepository = {
       sort_order: number;
       is_official: boolean;
     }>(
-      'SELECT * FROM youtube_videos WHERE machine_id = $1 ORDER BY sort_order ASC',
+      `SELECT id, machine_id, youtube_id, title, channel_name, thumbnail_url,
+              language_code, sort_order, is_official
+       FROM youtube_videos WHERE machine_id = $1 ORDER BY sort_order ASC`,
       [machineId]
     );
 

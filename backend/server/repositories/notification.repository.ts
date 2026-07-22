@@ -22,17 +22,18 @@ export const notificationRepository = {
       };
     }
 
-    const count = await pool.query<{ count: string }>(
+    const countPromise = pool.query<{ count: string }>(
       'SELECT COUNT(*)::text AS count FROM notifications WHERE user_id = $1',
       [userId]
     );
-    const total = parseInt(count.rows[0]?.count ?? '0', 10);
-
-    const result = await pool.query(
-      `SELECT * FROM notifications WHERE user_id = $1
+    const resultPromise = pool.query(
+      `SELECT id, user_id, type, title, body, payload, is_read, created_at, updated_at
+       FROM notifications WHERE user_id = $1
        ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
       [userId, limit, (page - 1) * limit]
     );
+    const [count, result] = await Promise.all([countPromise, resultPromise]);
+    const total = parseInt(count.rows[0]?.count ?? '0', 10);
 
     const items: Notification[] = result.rows.map((r) => ({
       id: r.id,
