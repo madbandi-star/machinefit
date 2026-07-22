@@ -73,7 +73,6 @@ export function LocationPicker({
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
   const isKr = value.countryCode === 'KR' || locale.startsWith('ko');
-  const [districtQuery, setDistrictQuery] = useState('');
   const [gpsBusy, setGpsBusy] = useState(false);
   const [gpsError, setGpsError] = useState('');
 
@@ -109,13 +108,6 @@ export function LocationPicker({
   });
 
   const countries = countriesQuery.data ?? [];
-
-  const filteredDistricts = useMemo(() => {
-    const list = districtsQuery.data ?? [];
-    const q = districtQuery.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((d) => nameOf(d.name, locale).toLowerCase().includes(q));
-  }, [districtsQuery.data, districtQuery, locale]);
 
   const pathLabel = useMemo(() => {
     const country = countriesQuery.data?.find((c) => c.code === value.countryCode);
@@ -201,7 +193,6 @@ export function LocationPicker({
           disabled={disabled}
           onChange={(e) => {
             const code = e.target.value || null;
-            setDistrictQuery('');
             onChange({
               ...value,
               countryCode: code,
@@ -232,7 +223,6 @@ export function LocationPicker({
           value={value.stateId ?? ''}
           disabled={disabled || !value.countryCode}
           onChange={(e) => {
-            setDistrictQuery('');
             onChange({
               ...value,
               stateId: e.target.value || null,
@@ -261,7 +251,6 @@ export function LocationPicker({
           value={value.cityId ?? ''}
           disabled={disabled || !value.stateId}
           onChange={(e) => {
-            setDistrictQuery('');
             onChange({
               ...value,
               cityId: e.target.value || null,
@@ -283,39 +272,29 @@ export function LocationPicker({
         <div className="location-picker__field">
           <span>{labelDistrict}</span>
           {hasDistrictCatalog ? (
-            <>
-              <input
-                className="input"
-                type="search"
-                value={districtQuery}
-                disabled={disabled || !value.cityId}
-                onChange={(e) => setDistrictQuery(e.target.value)}
-                placeholder={t('location.searchDistrict')}
-              />
-              <select
-                className="input"
-                value={value.districtId ?? ''}
-                disabled={disabled || !value.cityId}
-                onChange={(e) => {
-                  const id = e.target.value || null;
-                  const hit = districts.find((d) => d.id === id);
-                  onChange({
-                    ...value,
-                    districtId: id,
-                    districtName: hit ? nameOf(hit.name, locale) : '',
-                  });
-                }}
-              >
-                <option value="">
-                  {isKr ? t('location.selectDistrictKr') : t('location.selectDistrict')}
+            <select
+              className="input"
+              value={value.districtId ?? ''}
+              disabled={disabled || !value.cityId}
+              onChange={(e) => {
+                const id = e.target.value || null;
+                const hit = districts.find((d) => d.id === id);
+                onChange({
+                  ...value,
+                  districtId: id,
+                  districtName: hit ? nameOf(hit.name, locale) : '',
+                });
+              }}
+            >
+              <option value="">
+                {isKr ? t('location.selectDistrictKr') : t('location.selectDistrict')}
+              </option>
+              {districts.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {nameOf(d.name, locale)}
                 </option>
-                {filteredDistricts.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {nameOf(d.name, locale)}
-                  </option>
-                ))}
-              </select>
-            </>
+              ))}
+            </select>
           ) : (
             <input
               className="input"
