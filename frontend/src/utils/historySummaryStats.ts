@@ -2,7 +2,7 @@ import type { RecommendationSettings, WorkoutLog } from '@machinefit/shared';
 import {
   computePerformedTotalWeightKg,
   getEffectiveWeight,
-  resolveSessionWorkingWeightKg,
+  resolveSessionAverageWeightKg,
 } from '@machinefit/shared';
 import { buildLoggedWorkoutKey } from '@/utils/historyLogStatus';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
@@ -52,9 +52,8 @@ function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | nul
 /**
  * History summary totals.
  *
- * - 총 중량: max(-무게kg+ stepper weights) per log
+ * - 총 중량: Σ floor(로그 세트무게 합 / 세트수)  (로그별 평균의 합, 소수 절사)
  * - 총 볼륨: Σ(stepper weight × reps)
- * Seed weight (adjusted/recommended by fit rating) only fills steppers; totals use stepper values.
  */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],
@@ -81,13 +80,13 @@ export function computeHistorySummaryStats(
     };
 
     totalSets += log.setCount;
-    totalWeightKg += resolveSessionWorkingWeightKg(load);
+    totalWeightKg += resolveSessionAverageWeightKg(load);
     totalVolumeKg += computePerformedTotalWeightKg(load);
   }
 
   return {
     totalSets,
-    totalWeightKg: Math.round(totalWeightKg * 100) / 100,
+    totalWeightKg: Math.floor(totalWeightKg),
     totalVolumeKg: Math.round(totalVolumeKg * 100) / 100,
     workoutMinutes:
       totalSets > 0 ? Math.max(1, Math.round(totalSets * ESTIMATED_MINUTES_PER_SET)) : 0,

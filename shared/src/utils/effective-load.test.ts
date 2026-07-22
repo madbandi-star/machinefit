@@ -9,6 +9,7 @@ import {
   computeTotalWeightKg,
   getEffectiveReps,
   getEffectiveWeight,
+  resolveSessionAverageWeightKg,
   resolveSessionWorkingWeightKg,
   resolveSuggestedWeightKg,
   resolveWorkoutLogSeedWeightKg,
@@ -121,6 +122,39 @@ describe('computePerformedTotalWeightKg from steppers', () => {
   });
 });
 
+describe('resolveSessionAverageWeightKg', () => {
+  it('uses floor(sum / setCount) per log', () => {
+    assert.equal(
+      resolveSessionAverageWeightKg({
+        setWeightsKg: [40, 45, 50],
+        sets: 3,
+      }),
+      45
+    );
+  });
+
+  it('truncates decimals', () => {
+    assert.equal(
+      resolveSessionAverageWeightKg({
+        setWeightsKg: [20, 25, 25],
+        sets: 3,
+      }),
+      23
+    );
+  });
+
+  it('only averages completed sets when any are marked complete', () => {
+    assert.equal(
+      resolveSessionAverageWeightKg({
+        setWeightsKg: [40, 50, 60],
+        setCompleted: [true, true, false],
+        sets: 3,
+      }),
+      45
+    );
+  });
+});
+
 describe('resolveSessionWorkingWeightKg from steppers', () => {
   it('uses max set weight over adjusted preference', () => {
     assert.equal(
@@ -132,33 +166,23 @@ describe('resolveSessionWorkingWeightKg from steppers', () => {
       40
     );
   });
-
-  it('falls back to adjusted then recommended when no setWeights', () => {
-    assert.equal(
-      resolveSessionWorkingWeightKg({
-        adjustedWeight: 35,
-        recommendedWeight: 50,
-      }),
-      35
-    );
-  });
-});
-
-describe('resolveSuggestedWeightKg', () => {
-  it('seeds from adjusted when present', () => {
-    assert.equal(resolveSuggestedWeightKg(35, 50), 35);
-  });
 });
 
 describe('history summary weight vs volume', () => {
-  it('working weight and volume differ when steppers + reps exist', () => {
+  it('average working weight and volume differ when steppers + reps exist', () => {
     const load = {
       setWeightsKg: [35, 35, 35, 35, 35, 35, 35, 35, 35, 35],
       adjustedReps: 10,
       sets: 10,
     };
-    assert.equal(resolveSessionWorkingWeightKg(load), 35);
+    assert.equal(resolveSessionAverageWeightKg(load), 35);
     assert.equal(computePerformedTotalWeightKg(load), 3500);
-    assert.notEqual(resolveSessionWorkingWeightKg(load), computePerformedTotalWeightKg(load));
+    assert.notEqual(resolveSessionAverageWeightKg(load), computePerformedTotalWeightKg(load));
+  });
+
+  it('sums per-log averages across logs', () => {
+    const a = resolveSessionAverageWeightKg({ setWeightsKg: [40, 45, 50], sets: 3 });
+    const b = resolveSessionAverageWeightKg({ setWeightsKg: [20, 25, 25], sets: 3 });
+    assert.equal(a + b, 45 + 23);
   });
 });

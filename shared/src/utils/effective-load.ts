@@ -5,8 +5,9 @@
  * - 추천값 잘맞음 / 미선택 → 추천중량
  * - 셋팅값 조정 필요 / 그 외 → 조정중량(있으면) else 추천중량
  *
- * Totals (총 중량 / 총 볼륨) are computed from the -무게kg+ stepper values
- * (`setWeightsKg`), not by overriding them with preference fields.
+ * Totals from -무게kg+ stepper values (`setWeightsKg`):
+ * - 총 중량: Σ floor(로그 세트무게 합 / 세트수)
+ * - 총 볼륨: Σ(세트무게 × 횟수)
  */
 
 function toPositiveNumber(value: unknown): number | null {
@@ -142,7 +143,32 @@ export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number
 
 /**
  * Working weight for a session (총 중량 카드용) from stepper weights.
- * max(setWeights) first; else seed (adjusted → recommended). No × reps/sets.
+ * Per-log average: floor(Σ setWeights / setCount). Completed-set filter honored.
+ * Fallback when no set weights: seed weight (adjusted → recommended).
+ */
+export function resolveSessionAverageWeightKg(input: EffectiveLoadInput): number {
+  const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
+  if (weights.length > 0) {
+    const useCompleted = shouldUseCompletedFilter(weights, input.setCompleted);
+    let sum = 0;
+    let count = 0;
+    for (let i = 0; i < weights.length; i += 1) {
+      if (useCompleted && input.setCompleted![i] !== true) continue;
+      const w = weights[i];
+      if (typeof w !== 'number' || !Number.isFinite(w) || w <= 0) continue;
+      sum += w;
+      count += 1;
+    }
+    if (count > 0) return Math.floor(sum / count);
+  }
+
+  const seed = getEffectiveWeight(input.adjustedWeight, input.recommendedWeight);
+  return seed > 0 ? Math.floor(seed) : 0;
+}
+
+/**
+ * @deprecated Prefer `resolveSessionAverageWeightKg` for 총 중량.
+ * Kept for callers that still need max-set working weight.
  */
 export function resolveSessionWorkingWeightKg(input: EffectiveLoadInput): number {
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
