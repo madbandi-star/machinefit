@@ -19,12 +19,6 @@ const NAV_ITEMS: {
   { to: ROUTES.HOME, icon: 'home', labelKey: 'nav.home', requireAuth: false },
   { to: ROUTES.MACHINES, icon: 'search', labelKey: 'nav.search', requireAuth: false },
   { to: ROUTES.RECORDS, icon: 'records', labelKey: 'nav.records', requireAuth: true },
-  {
-    to: ROUTES.GROWTH_ANALYSIS,
-    icon: 'growthAnalysis',
-    labelKey: 'nav.growthAnalysis',
-    requireAuth: true,
-  },
   { to: ROUTES.MY_PAGE, icon: 'user', labelKey: 'nav.myPage', requireAuth: true },
 ];
 

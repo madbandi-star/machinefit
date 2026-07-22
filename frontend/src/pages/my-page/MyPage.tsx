@@ -158,6 +158,7 @@ export function MyPage() {
           <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
           <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
           <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
+          <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
         </nav>
