@@ -65,7 +65,7 @@ export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
-  const { activeMemberId } = useActiveMember();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
@@ -73,22 +73,35 @@ export function HistoryListPanel() {
   const selectedDate = searchParams.get('date') ?? '';
   const focusId = searchParams.get('focus') ?? '';
   const logStatus = parseHistoryLogStatus(searchParams.get('logStatus'));
+  const memberKey = activeMemberId ?? '';
 
-  const calendarQueryKey = QUERY_KEYS.historyList(activeGymId ?? '', { limit: HISTORY_LIST_LIMIT });
+  const calendarQueryKey = QUERY_KEYS.historyList(activeGymId ?? '', memberKey, {
+    limit: HISTORY_LIST_LIMIT,
+  });
 
   const { data: allHistory, isLoading: isAllHistoryLoading, isError } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { limit: HISTORY_LIST_LIMIT });
+      const res = await historyApi.list(activeGymId!, {
+        limit: HISTORY_LIST_LIMIT,
+        memberId: activeMemberId ?? undefined,
+      });
       return res.data.data;
     },
-    enabled: Boolean(activeGymId),
+    enabled: Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
   });
 
   const { data: workoutLogs } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', { limit: HISTORY_WORKOUT_LOG_LIMIT }),
-    queryFn: () => fetchWorkoutLogs({ gymId: activeGymId!, limit: HISTORY_WORKOUT_LOG_LIMIT }),
-    enabled: isAuthenticated && Boolean(activeGymId),
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', memberKey, {
+      limit: HISTORY_WORKOUT_LOG_LIMIT,
+    }),
+    queryFn: () =>
+      fetchWorkoutLogs({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        limit: HISTORY_WORKOUT_LOG_LIMIT,
+      }),
+    enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
   });
 
   const loggedKeys = useMemo(
@@ -186,7 +199,7 @@ export function HistoryListPanel() {
     return collectMuscleGroupsInOrder(dayCards);
   }, [filteredAllCards, selectedDate]);
 
-  const isLoading = !activeGymId || isAllHistoryLoading;
+  const isLoading = !activeGymId || !memberScopeReady || isAllHistoryLoading;
 
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;

@@ -15,6 +15,18 @@ import { usePremiumStore } from '@/store/premium.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { sortMembersByRegistrationOrder } from '@/utils/gymMemberDefault';
 
+function invalidateMemberScopedQueries(queryClient: ReturnType<typeof useQueryClient>) {
+  void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+  void queryClient.invalidateQueries({ queryKey: ['favorites'] });
+  void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
+  void queryClient.invalidateQueries({ queryKey: ['user', 'growth-timeline'] });
+  void queryClient.invalidateQueries({ queryKey: ['user', 'lifter-dna'] });
+  void queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
+  void queryClient.invalidateQueries({ queryKey: ['user', 'lifted-weight'] });
+  void queryClient.invalidateQueries({ queryKey: ['machine-preferences'] });
+  void queryClient.invalidateQueries({ queryKey: ['recommendation-feedback'] });
+}
+
 function isPlanLimitError(error: unknown): boolean {
   const err = error as { response?: { status?: number; data?: { code?: string } } };
   return (
@@ -73,6 +85,7 @@ export function useActiveMember() {
     onSuccess: async (res) => {
       const member = res.data.data;
       setActiveMemberId(member.id);
+      invalidateMemberScopedQueries(queryClient);
       await queryClient.invalidateQueries({ queryKey: membersKey });
       showToast(t('gyms:members.createSuccess'), 'success');
     },
@@ -115,8 +128,9 @@ export function useActiveMember() {
   const selectMember = useCallback(
     (memberId: string | null) => {
       setActiveMemberId(memberId);
+      invalidateMemberScopedQueries(queryClient);
     },
-    [setActiveMemberId]
+    [queryClient, setActiveMemberId]
   );
 
   const createMember = useCallback(

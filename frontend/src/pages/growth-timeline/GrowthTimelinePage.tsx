@@ -12,6 +12,8 @@ import { growthTimelineApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildGrowthTimelineShareCard } from '@/utils/growthTimelineShareCard';
 import './GrowthTimelinePage.css';
 
@@ -44,16 +46,24 @@ export function GrowthTimelinePage() {
   const locale = i18n.language;
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
   const [period, setPeriod] = useState<GrowthTimelinePeriod>('month');
   const [metric, setMetric] = useState<GrowthChartMetric>('volume');
   const [wrappedIdx, setWrappedIdx] = useState(0);
 
+  const scopeParams =
+    isRealGym && activeGymId && activeMemberId
+      ? { gymId: activeGymId, memberId: activeMemberId }
+      : undefined;
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.growthTimeline,
+    queryKey: QUERY_KEYS.growthTimeline(activeGymId, activeMemberId),
     queryFn: async () => {
-      const res = await growthTimelineApi.snapshot();
+      const res = await growthTimelineApi.snapshot(scopeParams);
       return res.data.data;
     },
+    enabled: memberScopeReady,
     staleTime: 60_000,
   });
 

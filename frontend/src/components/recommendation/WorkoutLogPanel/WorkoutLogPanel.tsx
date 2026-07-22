@@ -257,6 +257,7 @@ export function WorkoutLogPanel({
   const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(machineCode, activeTargetMuscle);
   const { queryKey: workoutLogQueryKey } = buildWorkoutLogSavedQueryKey(
     activeGymId ?? '',
+    activeMemberId ?? '',
     machineCode,
     logDate,
     queryTargetMuscle
@@ -349,9 +350,13 @@ export function WorkoutLogPanel({
 
 
   const { data: machinePreferences, isFetched: isPreferencesFetched } = useQuery({
-    queryKey: ['machine-preferences', machineCode],
-    queryFn: () => machinePreferenceApi.get(machineCode),
-    enabled: isAuthenticated && showPersonalTip,
+    queryKey: ['machine-preferences', machineCode, activeGymId, activeMemberId],
+    queryFn: () =>
+      machinePreferenceApi.get(machineCode, {
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+      }),
+    enabled: isAuthenticated && showPersonalTip && Boolean(activeGymId) && Boolean(activeMemberId),
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -402,7 +407,10 @@ export function WorkoutLogPanel({
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
   };
 
-  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(activeGymId ?? '');
+  const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(
+    activeGymId ?? '',
+    activeMemberId ?? ''
+  );
   const removeLogParams = {
     machineCode,
     logDate,
@@ -475,9 +483,14 @@ export function WorkoutLogPanel({
           const savedPrefs = await machinePreferenceApi.upsert({
             machineCode,
             personalTipMemo: personalTipMemo.trim(),
+            ...(activeGymId && activeMemberId
+              ? { gymId: activeGymId, memberId: activeMemberId }
+              : {}),
           });
           setPersonalTipMemo(savedPrefs.personalTipMemo ?? personalTipMemo.trim());
-          void queryClient.invalidateQueries({ queryKey: ['machine-preferences', machineCode] });
+          void queryClient.invalidateQueries({
+            queryKey: ['machine-preferences', machineCode, activeGymId, activeMemberId],
+          });
         } catch {
           personalTipSaved = false;
           showToast(t('machines:history.personalTipSaveFailed'), 'error');

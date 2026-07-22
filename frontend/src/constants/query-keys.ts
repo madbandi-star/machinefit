@@ -12,18 +12,24 @@ export const QUERY_KEYS = {
   favoriteCheck: (gymId: string, machineCode: string, memberId = '') =>
     ['favorites', gymId, memberId, 'check', machineCode] as const,
   history: ['history'] as const,
-  historyList: (gymId: string, params?: { limit?: number; from?: string; to?: string }) =>
-    ['history', gymId, 'list', params ?? {}] as const,
-  historyForMachine: (gymId: string, machineCode: string) =>
-    ['history', gymId, 'machine', machineCode] as const,
+  historyList: (
+    gymId: string,
+    memberId: string,
+    params?: { limit?: number; from?: string; to?: string }
+  ) => ['history', gymId, memberId, 'list', params ?? {}] as const,
+  historyForMachine: (gymId: string, memberId: string, machineCode: string) =>
+    ['history', gymId, memberId, 'machine', machineCode] as const,
   workoutLogs: ['workout-logs'] as const,
-  workoutLogsAll: (gymId: string) => ['workout-logs', gymId, 'all'] as const,
+  workoutLogsAll: (gymId: string, memberId: string) =>
+    ['workout-logs', gymId, memberId, 'all'] as const,
   workoutLogsList: (
     gymId: string,
+    memberId: string,
     params?: { from?: string; to?: string; limit?: number }
-  ) => ['workout-logs', gymId, 'list', params ?? {}] as const,
+  ) => ['workout-logs', gymId, memberId, 'list', params ?? {}] as const,
   workoutInsights: (
     gymId: string,
+    memberId: string,
     viewMode: string,
     machineCode: string,
     targetMuscleGroup: string,
@@ -34,6 +40,7 @@ export const QUERY_KEYS = {
     [
       'workout-logs',
       gymId,
+      memberId,
       'insights',
       viewMode,
       machineCode,
@@ -44,10 +51,12 @@ export const QUERY_KEYS = {
     ] as const,
   workoutLogToday: (
     gymId: string,
+    memberId: string,
     machineCode: string,
     logDate: string,
     targetMuscleGroup?: string
-  ) => ['workout-logs', gymId, machineCode, logDate, targetMuscleGroup ?? ''] as const,
+  ) =>
+    ['workout-logs', gymId, memberId, machineCode, logDate, targetMuscleGroup ?? ''] as const,
   posts: ['posts'] as const,
   machineRequests: ['machine-requests'] as const,
   ownerDashboard: ['owner', 'dashboard'] as const,
@@ -70,10 +79,13 @@ export const QUERY_KEYS = {
   memberProfileRequests: ['user', 'member-profile-requests'] as const,
   liftedWeight: ['user', 'lifted-weight'] as const,
   liftedWeightRankings: ['user', 'lifted-weight', 'rankings'] as const,
-  lifterDna: ['user', 'lifter-dna'] as const,
-  achievements: ['user', 'achievements'] as const,
+  lifterDna: (gymId?: string | null, memberId?: string | null) =>
+    ['user', 'lifter-dna', gymId ?? 'all', memberId ?? 'all'] as const,
+  achievements: (gymId?: string | null, memberId?: string | null) =>
+    ['user', 'achievements', gymId ?? 'all', memberId ?? 'all'] as const,
   achievementRankings: ['user', 'achievements', 'rankings'] as const,
-  growthTimeline: ['user', 'growth-timeline'] as const,
+  growthTimeline: (gymId?: string | null, memberId?: string | null) =>
+    ['user', 'growth-timeline', gymId ?? 'all', memberId ?? 'all'] as const,
   locationCountries: ['locations', 'countries'] as const,
   locationStates: (countryCode: string) => ['locations', 'states', countryCode] as const,
   locationCities: (stateId: string) => ['locations', 'cities', stateId] as const,

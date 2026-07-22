@@ -166,13 +166,13 @@ export const historyRepository = {
     );
   },
 
-  async clear(userId: string, gymId: string): Promise<void> {
+  async clear(userId: string, gymId: string, memberId: string): Promise<void> {
     const pool = getPool();
     if (!pool) return;
-    await pool.query('DELETE FROM recent_history WHERE user_id = $1 AND gym_id = $2', [
-      userId,
-      gymId,
-    ]);
+    await pool.query(
+      'DELETE FROM recent_history WHERE user_id = $1 AND gym_id = $2 AND member_id = $3',
+      [userId, gymId, memberId]
+    );
   },
 
   async remove(userId: string, historyId: string): Promise<void> {

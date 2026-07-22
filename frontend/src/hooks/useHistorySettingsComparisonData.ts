@@ -7,6 +7,8 @@ import {
   type FitRating,
   type MachinePreferencesResponse,
 } from '@/api';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
 
 export interface HistorySettingsComparisonData {
@@ -19,6 +21,13 @@ export function useHistorySettingsComparisonData(
   cards: HistoryRecordCard[],
   enabled: boolean
 ) {
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId, isRealGym } = useActiveMember();
+  const preferenceScope =
+    isRealGym && activeGymId && activeMemberId
+      ? { gymId: activeGymId, memberId: activeMemberId }
+      : undefined;
+
   const machineCodes = useMemo(
     () => [...new Set(cards.map((card) => card.machineCode))],
     [cards]
@@ -37,7 +46,13 @@ export function useHistorySettingsComparisonData(
   );
 
   return useQuery({
-    queryKey: ['history-settings-comparison', machineCodes, recommendationIds],
+    queryKey: [
+      'history-settings-comparison',
+      machineCodes,
+      recommendationIds,
+      preferenceScope?.gymId,
+      preferenceScope?.memberId,
+    ],
     queryFn: async (): Promise<HistorySettingsComparisonData> => {
       const emptyPreferencesByMachine = Object.fromEntries(
         machineCodes.map((machineCode) => [machineCode, null])
@@ -49,7 +64,9 @@ export function useHistorySettingsComparisonData(
       const [preferencesByMachineResponse, feedbackByRecommendationResponse] =
         await Promise.all([
           machineCodes.length > 0
-            ? machinePreferenceApi.getBatch(machineCodes).catch(() => emptyPreferencesByMachine)
+            ? machinePreferenceApi
+                .getBatch(machineCodes, preferenceScope)
+                .catch(() => emptyPreferencesByMachine)
             : Promise.resolve(emptyPreferencesByMachine),
           recommendationIds.length > 0
             ? recommendationFeedbackApi

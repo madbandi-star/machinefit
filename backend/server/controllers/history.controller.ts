@@ -11,7 +11,7 @@ export async function listHistory(req: Request, res: Response): Promise<void> {
   const query = z
     .object({
       gymId: gymScopeIdSchema,
-      memberId: memberIdSchema.optional(),
+      memberId: memberIdSchema,
       machineCode: z.string().optional(),
       limit: z.coerce.number().int().min(1).max(100).default(20),
       from: z.string().datetime({ offset: true }).optional(),
@@ -56,8 +56,13 @@ export async function recordHistory(req: Request, res: Response): Promise<void> 
 
 export async function clearHistory(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const gymId = gymIdSchema.parse(req.query.gymId);
-  await historyService.clear(req.user.userId, gymId);
+  const query = z
+    .object({
+      gymId: gymIdSchema,
+      memberId: memberIdSchema,
+    })
+    .parse(req.query);
+  await historyService.clear(req.user.userId, query.gymId, query.memberId);
   res.json({ success: true, data: { message: 'Cleared' } });
 }
 

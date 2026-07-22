@@ -5,6 +5,7 @@ import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog
 import { historyApi, workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { computeVolume } from '@/utils/workoutAnalytics';
 import { isDismissedToday, dismissForToday } from '@/utils/dismissToday';
@@ -23,25 +24,37 @@ export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
   const today = getTodayDateKey();
   const { from, to } = getLocalDayRange(today);
 
   const { data: todayLogs = [], isLoading: logsLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.workoutLogs, activeGymId, 'briefing', today],
+    queryKey: [...QUERY_KEYS.workoutLogs, activeGymId, memberKey, 'briefing', today],
     queryFn: async () => {
-      const res = await workoutLogApi.list({ gymId: activeGymId!, from: today, to: today });
+      const res = await workoutLogApi.list({
+        gymId: activeGymId!,
+        memberId: activeMemberId ?? undefined,
+        from: today,
+        to: today,
+      });
       return res.data.data;
     },
-    enabled: open && Boolean(activeGymId),
+    enabled: open && Boolean(activeGymId) && memberScopeReady,
   });
 
   const { data: todayHistory = [], isLoading: historyLoading } = useQuery({
-    queryKey: [...QUERY_KEYS.history, activeGymId, 'briefing', today],
+    queryKey: [...QUERY_KEYS.history, activeGymId, memberKey, 'briefing', today],
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { from, to, limit: 20 });
+      const res = await historyApi.list(activeGymId!, {
+        from,
+        to,
+        limit: 20,
+        memberId: activeMemberId ?? undefined,
+      });
       return res.data.data;
     },
-    enabled: open && Boolean(activeGymId),
+    enabled: open && Boolean(activeGymId) && memberScopeReady,
   });
 
   const summary = useMemo(() => {
@@ -66,7 +79,7 @@ export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
 
   if (!open) return null;
 
-  const isLoading = logsLoading || historyLoading;
+  const isLoading = logsLoading || historyLoading || !memberScopeReady;
   const hasActivity = summary.recommendationCount > 0 || summary.loggedCount > 0;
 
   return (

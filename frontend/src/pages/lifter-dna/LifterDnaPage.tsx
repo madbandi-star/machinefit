@@ -8,6 +8,8 @@ import { lifterDnaApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildLifterDnaShareCard } from '@/utils/lifterDnaShareCard';
 import './LifterDnaPage.css';
 
@@ -52,14 +54,22 @@ export function LifterDnaPage() {
   const locale = i18n.language;
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
   const [phase, setPhase] = useState<'boot' | 'ready'>('boot');
 
+  const scopeParams =
+    isRealGym && activeGymId && activeMemberId
+      ? { gymId: activeGymId, memberId: activeMemberId }
+      : undefined;
+
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
-    queryKey: QUERY_KEYS.lifterDna,
+    queryKey: QUERY_KEYS.lifterDna(activeGymId, activeMemberId),
     queryFn: async () => {
-      const res = await lifterDnaApi.snapshot();
+      const res = await lifterDnaApi.snapshot(scopeParams);
       return res.data.data;
     },
+    enabled: memberScopeReady,
     staleTime: 60_000,
   });
 

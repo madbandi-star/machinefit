@@ -137,8 +137,8 @@ export const recommendationRepository = {
         seat_position, back_pad_position, foot_position, handle_position,
         rom_setting, recommended_weight_kg, recommended_reps_min, recommended_reps_max,
         tips, warnings, weight_basis, session_id,
-        target_muscle_group
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
+        target_muscle_group, gym_id, member_id
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,
       [
         id,
         userId ?? null,
@@ -161,6 +161,8 @@ export const recommendationRepository = {
         weightBasis ? JSON.stringify(weightBasis) : null,
         sessionId ?? null,
         input.targetMuscleGroup ?? null,
+        input.gymId ?? null,
+        input.memberId ?? null,
       ]
     );
 

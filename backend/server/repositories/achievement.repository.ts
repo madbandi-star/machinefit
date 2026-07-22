@@ -330,9 +330,22 @@ export const achievementRepository = {
    * Rebuild achievement counters from workout_logs in one pass.
    * Uses Asia/Seoul for time-of-day buckets.
    */
-  async computeStatsFromLogs(userId: string): Promise<AchievementUserStats> {
+  async computeStatsFromLogs(
+    userId: string,
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<AchievementUserStats> {
     const pool = getPool();
     if (!pool) return emptyAchievementStats();
+
+    const scoped = Boolean(options?.gymId && options?.memberId);
+    const scopeParams: unknown[] = scoped ? [options!.gymId, options!.memberId] : [];
+    const scopeFilter = scoped
+      ? ` AND wl.gym_id = $2 AND wl.member_id = $3`
+      : '';
+    // For queries that use $1 = userId only: gym=$2 member=$3
+    const scopeFilterBare = scoped
+      ? ` AND gym_id = $2 AND member_id = $3`
+      : '';
 
     const volumeResult = await pool.query<{ total_kg: string }>(
       `SELECT COALESCE(total_kg, 0)::text AS total_kg
@@ -342,6 +355,7 @@ export const achievementRepository = {
     );
     const totalVolumeKg = parseFloat(volumeResult.rows[0]?.total_kg ?? '0') || 0;
 
+    const aggParams: unknown[] = [userId, ...scopeParams];
     const agg = await pool.query<{
       workout_count: string;
       session_days: string;
@@ -384,7 +398,7 @@ export const achievementRepository = {
          FROM workout_logs wl
          JOIN machines m ON m.id = wl.machine_id
          LEFT JOIN brands b ON b.id = m.brand_id
-         WHERE wl.user_id = $1
+         WHERE wl.user_id = $1${scopeFilter}
        )
        SELECT
          COUNT(*)::text AS workout_count,
@@ -423,7 +437,7 @@ export const achievementRepository = {
          COUNT(*) FILTER (WHERE machine_code ILIKE '%bench%')::text AS bench_workouts,
          COUNT(*) FILTER (WHERE machine_code ILIKE '%squat%')::text AS squat_workouts
        FROM logs`,
-      [userId]
+      aggParams
     );
 
     const row = agg.rows[0];
@@ -432,14 +446,14 @@ export const achievementRepository = {
     const datesResult = await pool.query<{ log_date: string }>(
       `SELECT DISTINCT log_date::text AS log_date
        FROM workout_logs
-       WHERE user_id = $1
+       WHERE user_id = $1${scopeFilterBare}
        ORDER BY log_date ASC`,
-      [userId]
+      [userId, ...scopeParams]
     );
     const dates = datesResult.rows.map((r) => r.log_date);
     const { currentStreak, longestStreak } = computeStreaks(dates);
 
-    const prCount = await computePrCount(pool, userId);
+    const prCount = await computePrCount(pool, userId, options);
 
     const chest = n(row?.chest_workouts);
     const back = n(row?.back_workouts);
@@ -541,8 +555,17 @@ function computeStreaks(datesAsc: string[]): { currentStreak: number; longestStr
 
 async function computePrCount(
   pool: NonNullable<ReturnType<typeof getPool>>,
-  userId: string
+  userId: string,
+  options?: { gymId?: string; memberId?: string }
 ): Promise<number> {
+  const scoped = Boolean(options?.gymId && options?.memberId);
+  const params: unknown[] = [userId];
+  let filters = '';
+  if (scoped) {
+    params.push(options!.gymId, options!.memberId);
+    filters = ' AND gym_id = $2 AND member_id = $3';
+  }
+
   const result = await pool.query<{
     machine_id: string;
     log_date: string;
@@ -554,9 +577,9 @@ async function computePrCount(
               FROM jsonb_array_elements_text(set_weights_kg) AS t(value)
             ), 0)::text AS max_w
      FROM workout_logs
-     WHERE user_id = $1
+     WHERE user_id = $1${filters}
      ORDER BY machine_id, log_date ASC, created_at ASC`,
-    [userId]
+    params
   );
 
   let prs = 0;

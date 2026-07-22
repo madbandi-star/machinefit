@@ -113,6 +113,8 @@ export type SettingsActiveSource = 'recommended' | 'adjusted';
 export interface RecommendationFeedbackInput {
   recommendationId: string;
   fitRating: FitRating;
+  gymId?: string;
+  memberId?: string;
 }
 
 export interface MachinePreferenceInput {
@@ -121,6 +123,8 @@ export interface MachinePreferenceInput {
   personalTipMemo?: string;
   activeSource?: SettingsActiveSource;
   clearAdjusted?: boolean;
+  gymId?: string;
+  memberId?: string;
 }
 
 export interface MachinePreferencesResponse {
@@ -165,6 +169,8 @@ export const machinePreferenceApi = {
       personalTipMemo?: string;
       activeSource?: SettingsActiveSource;
       clearAdjusted?: boolean;
+      gymId?: string;
+      memberId?: string;
     } = {};
     if (input.customSettings !== undefined) {
       body.customSettings = input.customSettings;
@@ -178,26 +184,42 @@ export const machinePreferenceApi = {
     if (input.clearAdjusted !== undefined) {
       body.clearAdjusted = input.clearAdjusted;
     }
+    if (input.gymId) body.gymId = input.gymId;
+    if (input.memberId) body.memberId = input.memberId;
     const res = await apiClient.put<
       ApiResponse<MachinePreferencesResponse & { machineCode: string }>
     >(`/machines/${encodeURIComponent(input.machineCode)}/preferences`, body);
     return res.data.data;
   },
-  async get(machineCode: string): Promise<MachinePreferencesResponse> {
+  async get(
+    machineCode: string,
+    scope?: { gymId?: string; memberId?: string }
+  ): Promise<MachinePreferencesResponse> {
     const res = await apiClient.get<ApiResponse<MachinePreferencesResponse>>(
-      `/machines/${encodeURIComponent(machineCode)}/preferences`
+      `/machines/${encodeURIComponent(machineCode)}/preferences`,
+      {
+        params: {
+          ...(scope?.gymId ? { gymId: scope.gymId } : {}),
+          ...(scope?.memberId ? { memberId: scope.memberId } : {}),
+        },
+      }
     );
     return res.data.data;
   },
   async getBatch(
-    machineCodes: string[]
+    machineCodes: string[],
+    scope?: { gymId?: string; memberId?: string }
   ): Promise<Record<string, MachinePreferencesResponse | null>> {
     if (machineCodes.length === 0) return {};
 
     const res = await apiClient.get<
       ApiResponse<Record<string, MachinePreferencesResponse | null>>
     >('/machines/preferences', {
-      params: { codes: machineCodes.join(',') },
+      params: {
+        codes: machineCodes.join(','),
+        ...(scope?.gymId ? { gymId: scope.gymId } : {}),
+        ...(scope?.memberId ? { memberId: scope.memberId } : {}),
+      },
     });
     return res.data.data;
   },
@@ -209,6 +231,7 @@ export interface WorkoutReportRequest {
   period: WorkoutReportPeriod;
   previewOnly?: boolean;
   gymId?: string;
+  memberId?: string;
 }
 
 export interface WorkoutReportResult {
@@ -299,7 +322,10 @@ export const historyApi = {
       memberId?: string;
     }
   ) => apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { gymId, ...params } }),
-  clear: (gymId: string) => apiClient.delete('/history', { params: { gymId } }),
+  clear: (gymId: string, memberId?: string) =>
+    apiClient.delete('/history', {
+      params: { gymId, ...(memberId ? { memberId } : {}) },
+    }),
   remove: (id: string) => apiClient.delete(`/history/${id}`),
 };
 
@@ -423,11 +449,13 @@ export const liftedWeightApi = {
 };
 
 export const lifterDnaApi = {
-  snapshot: () => apiClient.get<ApiResponse<LifterDnaSnapshot>>('/users/me/lifter-dna'),
+  snapshot: (params?: { gymId?: string; memberId?: string }) =>
+    apiClient.get<ApiResponse<LifterDnaSnapshot>>('/users/me/lifter-dna', { params }),
 };
 
 export const achievementsApi = {
-  snapshot: () => apiClient.get<ApiResponse<AchievementSnapshot>>('/users/me/achievements'),
+  snapshot: (params?: { gymId?: string; memberId?: string }) =>
+    apiClient.get<ApiResponse<AchievementSnapshot>>('/users/me/achievements', { params }),
   rankings: (params?: { limit?: number }) =>
     apiClient.get<ApiResponse<AchievementRankingResponse>>('/users/me/achievements/rankings', {
       params,
@@ -435,8 +463,8 @@ export const achievementsApi = {
 };
 
 export const growthTimelineApi = {
-  snapshot: () =>
-    apiClient.get<ApiResponse<GrowthTimelineSnapshot>>('/users/me/growth-timeline'),
+  snapshot: (params?: { gymId?: string; memberId?: string }) =>
+    apiClient.get<ApiResponse<GrowthTimelineSnapshot>>('/users/me/growth-timeline', { params }),
 };
 
 export const locationApi = {

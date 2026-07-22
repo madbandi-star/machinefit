@@ -49,9 +49,23 @@ function pickName(
 }
 
 export const growthTimelineRepository = {
-  async loadLogs(userId: string, locale = 'ko'): Promise<GrowthTimelineLogInput[]> {
+  async loadLogs(
+    userId: string,
+    locale = 'ko',
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<GrowthTimelineLogInput[]> {
     const pool = getPool();
     if (!pool) return [];
+
+    const params: unknown[] = [userId];
+    let filters = '';
+    if (options?.gymId && options?.memberId) {
+      params.push(options.gymId, options.memberId);
+      filters = ` AND wl.gym_id = $2 AND wl.member_id = $3`;
+    }
+    params.push(LOG_LIMIT);
+    const limitIdx = params.length;
+
     const result = await pool.query<LogRow>(
       `SELECT wl.id::text,
               wl.log_date::text,
@@ -70,10 +84,10 @@ export const growthTimelineRepository = {
        JOIN machines m ON m.id = wl.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
        LEFT JOIN user_gyms ug ON ug.id = wl.gym_id
-       WHERE wl.user_id = $1
+       WHERE wl.user_id = $1${filters}
        ORDER BY wl.log_date ASC, wl.created_at ASC
-       LIMIT $2`,
-      [userId, LOG_LIMIT]
+       LIMIT $${limitIdx}`,
+      params
     );
 
     return result.rows.map((row) => ({
@@ -169,12 +183,21 @@ export const growthTimelineRepository = {
     );
   },
 
-  async countLogs(userId: string): Promise<number> {
+  async countLogs(
+    userId: string,
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<number> {
     const pool = getPool();
     if (!pool) return 0;
+    const params: unknown[] = [userId];
+    let filters = '';
+    if (options?.gymId && options?.memberId) {
+      params.push(options.gymId, options.memberId);
+      filters = ' AND gym_id = $2 AND member_id = $3';
+    }
     const result = await pool.query<{ c: string }>(
-      `SELECT COUNT(*)::text AS c FROM workout_logs WHERE user_id = $1`,
-      [userId]
+      `SELECT COUNT(*)::text AS c FROM workout_logs WHERE user_id = $1${filters}`,
+      params
     );
     return parseInt(result.rows[0]?.c ?? '0', 10) || 0;
   },

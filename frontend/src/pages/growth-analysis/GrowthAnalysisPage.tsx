@@ -12,6 +12,7 @@ import { GrowthInsightsPanel } from '@/components/progressive-overload/GrowthIns
 import { fetchWorkoutInsights } from '@/api/growth-insights';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { GrowthPeriodFilter } from '@/components/progressive-overload/GrowthPeriodFilter/GrowthPeriodFilter';
 import { GrowthMachineSelector } from '@/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -84,6 +85,8 @@ export function GrowthAnalysisPage() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const user = useAuthStore((s) => s.user);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
   const [periodPreset, setPeriodPreset] = useState<GrowthPeriod>('30d');
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
@@ -139,9 +142,14 @@ export function GrowthAnalysisPage() {
   }, [customFrom, customTo, periodFilter, periodPreset]);
 
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
-    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', logsQueryOptions),
-    queryFn: () => fetchWorkoutLogs({ gymId: activeGymId!, ...logsQueryOptions }),
-    enabled: Boolean(activeGymId),
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', memberKey, logsQueryOptions),
+    queryFn: () =>
+      fetchWorkoutLogs({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        ...logsQueryOptions,
+      }),
+    enabled: Boolean(activeGymId) && memberScopeReady,
   });
 
   const datesWithData = useMemo(() => extractWorkoutLogDateKeys(logs), [logs]);
@@ -238,6 +246,7 @@ export function GrowthAnalysisPage() {
   } = useQuery({
     queryKey: QUERY_KEYS.workoutInsights(
       activeGymId ?? '',
+      memberKey,
       isDailyView ? 'daily' : 'machine',
       selectedMachineOption?.machineCode ?? '',
       selectedMachineOption?.targetMuscleGroup ?? '',
@@ -248,6 +257,7 @@ export function GrowthAnalysisPage() {
     queryFn: () =>
       fetchWorkoutInsights({
         gymId: activeGymId!,
+        memberId: activeMemberId!,
         viewMode: isDailyView ? 'daily' : 'machine',
         machineCode: isDailyView ? undefined : selectedMachineOption?.machineCode,
         targetMuscleGroup: isDailyView ? undefined : selectedMachineOption?.targetMuscleGroup,
@@ -260,6 +270,7 @@ export function GrowthAnalysisPage() {
       }),
     enabled:
       Boolean(activeGymId) &&
+      memberScopeReady &&
       (periodPreset !== 'custom' || Boolean(customFrom && customTo)
         ? isDailyView || Boolean(selectedMachineOption)
         : false),
@@ -314,7 +325,7 @@ export function GrowthAnalysisPage() {
   const maxWeightDelta = isDailyView ? dailyKpis.maxWeightDelta : machineKpis.maxWeightDelta;
   const workoutCount = isDailyView ? dailyKpis.totalLogCount : machineKpis.workoutCount;
 
-  if (!activeGymId || isLoading) {
+  if (!activeGymId || !memberScopeReady || isLoading) {
     return (
       <div className="growth-analysis-page">
         <PageShell title={t('growthAnalysis.title')} />

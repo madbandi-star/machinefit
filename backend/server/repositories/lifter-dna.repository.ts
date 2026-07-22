@@ -92,9 +92,23 @@ function emptyPeers(): PeerBaseline {
 }
 
 export const lifterDnaRepository = {
-  async loadUserLogs(userId: string, locale = 'ko'): Promise<LogRow[]> {
+  async loadUserLogs(
+    userId: string,
+    locale = 'ko',
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<LogRow[]> {
     const pool = getPool();
     if (!pool) return [];
+
+    const params: unknown[] = [userId];
+    let filters = '';
+    if (options?.gymId && options?.memberId) {
+      params.push(options.gymId, options.memberId);
+      filters = ` AND wl.gym_id = $2 AND wl.member_id = $3`;
+    }
+    params.push(LOG_LIMIT);
+    const limitIdx = params.length;
+
     const result = await pool.query<LogRow>(
       `SELECT wl.id::text,
               wl.log_date::text,
@@ -111,10 +125,10 @@ export const lifterDnaRepository = {
        FROM workout_logs wl
        JOIN machines m ON m.id = wl.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
-       WHERE wl.user_id = $1
+       WHERE wl.user_id = $1${filters}
        ORDER BY wl.log_date DESC, wl.updated_at DESC
-       LIMIT $2`,
-      [userId, LOG_LIMIT]
+       LIMIT $${limitIdx}`,
+      params
     );
     void locale;
     return result.rows;

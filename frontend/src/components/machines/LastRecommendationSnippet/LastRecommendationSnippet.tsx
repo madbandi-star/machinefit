@@ -11,6 +11,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { shouldShowHistorySettingsCompare } from '@/utils/recommendationSettingsCompare';
 import '@/styles/machines.css';
 import '@/styles/recommendation.css';
@@ -40,14 +41,20 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   const [expanded, setExpanded] = useState(true);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const memberKey = activeMemberId ?? '';
 
   const { data, isLoading, isFetched } = useQuery({
-    queryKey: QUERY_KEYS.historyForMachine(activeGymId ?? '', machineCode),
+    queryKey: QUERY_KEYS.historyForMachine(activeGymId ?? '', memberKey, machineCode),
     queryFn: async () => {
-      const res = await historyApi.list(activeGymId!, { machineCode, limit: 1 });
+      const res = await historyApi.list(activeGymId!, {
+        machineCode,
+        limit: 1,
+        memberId: activeMemberId ?? undefined,
+      });
       return res.data.data[0] ?? null;
     },
-    enabled: isAuthenticated && Boolean(activeGymId),
+    enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady,
   });
 
   const recommendationId = data?.recommendationId;
@@ -63,9 +70,13 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   });
 
   const { data: machinePreferences } = useQuery({
-    queryKey: ['machine-preferences', machineCode],
-    queryFn: async () => machinePreferenceApi.get(machineCode),
-    enabled: isAuthenticated && Boolean(data),
+    queryKey: ['machine-preferences', machineCode, activeGymId, activeMemberId],
+    queryFn: async () =>
+      machinePreferenceApi.get(machineCode, {
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+      }),
+    enabled: isAuthenticated && Boolean(data) && Boolean(activeGymId) && Boolean(activeMemberId),
     staleTime: 60_000,
   });
 

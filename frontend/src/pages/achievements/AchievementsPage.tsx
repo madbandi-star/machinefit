@@ -14,6 +14,8 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildAchievementShareCard } from '@/utils/achievementShareCard';
 import './AchievementsPage.css';
 
@@ -55,18 +57,26 @@ export function AchievementsPage() {
   const locale = i18n.language;
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
   const [tab, setTab] = useState<ViewTab>('overview');
   const [category, setCategory] = useState<AchievementCategory | 'all'>('all');
   const [unlockQueue, setUnlockQueue] = useState<AchievementProgressItem[]>([]);
   const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
 
+  const scopeParams =
+    isRealGym && activeGymId && activeMemberId
+      ? { gymId: activeGymId, memberId: activeMemberId }
+      : undefined;
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.achievements,
+    queryKey: QUERY_KEYS.achievements(activeGymId, activeMemberId),
     queryFn: async () => {
-      const res = await achievementsApi.snapshot();
+      const res = await achievementsApi.snapshot(scopeParams);
       return res.data.data;
     },
+    enabled: memberScopeReady,
     staleTime: 15_000,
   });
 

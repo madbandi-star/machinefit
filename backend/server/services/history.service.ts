@@ -10,7 +10,7 @@ export const historyService = {
     userId: string,
     options: {
       gymId: string;
-      memberId?: string;
+      memberId: string;
       limit?: number;
       machineCode?: string;
       from?: string;
@@ -19,10 +19,11 @@ export const historyService = {
     locale: Locale = 'en'
   ) {
     if (isAllGymsId(options.gymId)) {
+      await gymScopeService.assertMemberOwned(userId, options.memberId);
       const { gymIds } = await gymScopeService.resolveGymFilter(userId, options.gymId);
       return historyRepository.listByUser(userId, { ...options, gymIds }, locale);
     }
-    await gymScopeService.assertOwned(userId, options.gymId);
+    await gymScopeService.resolveMemberForWrite(userId, options.gymId, options.memberId);
     return historyRepository.listByUser(userId, options, locale);
   },
 
@@ -41,9 +42,9 @@ export const historyService = {
     await historyRepository.record(userId, gymId, memberId, machineId, recommendationId);
   },
 
-  async clear(userId: string, gymId: string) {
-    await gymScopeService.assertOwned(userId, gymId);
-    await historyRepository.clear(userId, gymId);
+  async clear(userId: string, gymId: string, memberId: string) {
+    await gymScopeService.resolveMemberForWrite(userId, gymId, memberId);
+    await historyRepository.clear(userId, gymId, memberId);
   },
 
   async remove(userId: string, historyId: string) {

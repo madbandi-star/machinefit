@@ -43,8 +43,14 @@ function prefetchForRoute(to: string, gymId: string | null, memberId: string | n
 
   if (to === ROUTES.RECORDS || to === ROUTES.HOME) {
     void queryClient.prefetchQuery({
-      queryKey: QUERY_KEYS.historyList(gymId, { limit: 100 }),
-      queryFn: async () => (await historyApi.list(gymId, { limit: 100 })).data.data,
+      queryKey: QUERY_KEYS.historyList(gymId, memberId ?? '', { limit: 100 }),
+      queryFn: async () =>
+        (
+          await historyApi.list(gymId, {
+            limit: 100,
+            memberId: memberId ?? undefined,
+          })
+        ).data.data,
       staleTime: 60_000,
     });
     void queryClient.prefetchQuery({

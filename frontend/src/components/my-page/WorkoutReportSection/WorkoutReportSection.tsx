@@ -5,6 +5,7 @@ import { workoutReportApi, type WorkoutReportPeriod, type WorkoutReportResult } 
 import { useUIStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { htmlReportToPlainText } from '@/utils/sendEmailViaFormSubmit';
 import '@/styles/components.css';
@@ -74,6 +75,7 @@ export function WorkoutReportSection() {
   const showToast = useUIStore((s) => s.showToast);
   const userEmail = useAuthStore((s) => s.user?.email);
   const { activeGymId } = useActiveGym();
+  const { activeMemberId, isRealGym } = useActiveMember();
   const [period, setPeriod] = useState<WorkoutReportPeriod>('week');
   const [reportCache, setReportCache] = useState<ReportCache | null>(null);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
@@ -82,9 +84,10 @@ export function WorkoutReportSection() {
   useEffect(() => {
     setReportCache(null);
     setReportDialogOpen(false);
-  }, [period, activeGymId]);
+  }, [period, activeGymId, activeMemberId]);
 
   const reportGymId = activeGymId ?? undefined;
+  const reportMemberId = isRealGym ? (activeMemberId ?? undefined) : undefined;
 
   const fetchReport = async (previewOnly: boolean): Promise<ReportCache | null> => {
     if (!previewOnly && reportCache?.period === period) {
@@ -95,6 +98,7 @@ export function WorkoutReportSection() {
       period,
       previewOnly,
       ...(reportGymId ? { gymId: reportGymId } : {}),
+      ...(reportMemberId ? { memberId: reportMemberId } : {}),
     });
     const cache = buildReportCache(period, res.data.data);
     if (cache) {
@@ -108,6 +112,7 @@ export function WorkoutReportSection() {
       const res = await workoutReportApi.send({
         period,
         ...(reportGymId ? { gymId: reportGymId } : {}),
+        ...(reportMemberId ? { memberId: reportMemberId } : {}),
       });
       return res.data.data;
     },

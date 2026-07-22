@@ -9,6 +9,8 @@ import {
   type FitRating,
 } from '@/api';
 import { useUIStore } from '@/store/ui.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 
 interface UseMachineFitFeedbackOptions {
   recommendationId: string;
@@ -53,10 +55,17 @@ export function useMachineFitFeedback({
   const { t } = useTranslation(['machines', 'common']);
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId, isRealGym } = useActiveMember();
   const [customSettings, setCustomSettings] = useState<Partial<RecommendationSettings>>({});
 
+  const preferenceScope =
+    isRealGym && activeGymId && activeMemberId
+      ? { gymId: activeGymId, memberId: activeMemberId }
+      : undefined;
+
   const feedbackQueryKey = ['recommendation-feedback', recommendationId];
-  const prefsQueryKey = ['machine-preferences', machineCode];
+  const prefsQueryKey = ['machine-preferences', machineCode, preferenceScope?.gymId, preferenceScope?.memberId];
 
   const { data: savedRating } = useQuery({
     queryKey: feedbackQueryKey,
@@ -66,7 +75,7 @@ export function useMachineFitFeedback({
 
   const { data: machinePreferences } = useQuery({
     queryKey: prefsQueryKey,
-    queryFn: () => machinePreferenceApi.get(machineCode),
+    queryFn: () => machinePreferenceApi.get(machineCode, preferenceScope),
     enabled,
   });
 
@@ -103,7 +112,11 @@ export function useMachineFitFeedback({
 
   const feedbackMutation = useMutation({
     mutationFn: (fitRating: FitRating) =>
-      recommendationFeedbackApi.submit({ recommendationId, fitRating }),
+      recommendationFeedbackApi.submit({
+        recommendationId,
+        fitRating,
+        ...preferenceScope,
+      }),
     onSuccess: async (_data, fitRating) => {
       queryClient.setQueryData(feedbackQueryKey, fitRating);
       await invalidateRelated();
@@ -125,6 +138,7 @@ export function useMachineFitFeedback({
     }) =>
       machinePreferenceApi.upsert({
         machineCode,
+        ...preferenceScope,
         ...input,
       }),
     onSuccess: async (_data, variables) => {

@@ -28,10 +28,11 @@ export async function sendWorkoutReport(req: Request, res: Response): Promise<vo
   const period = (req.body as { period?: string }).period ?? 'week';
   const previewOnly = (req.body as { previewOnly?: boolean }).previewOnly ?? false;
   const gymId = (req.body as { gymId?: string }).gymId;
+  const memberId = (req.body as { memberId?: string }).memberId;
   const result = await workoutReportService.send(
     req.user.userId,
     period as 'day' | 'week' | 'month' | 'year',
-    { previewOnly, gymId }
+    { previewOnly, gymId, memberId }
   );
   res.json({ success: true, data: result });
 }

@@ -84,12 +84,20 @@ export const recommendationService = {
     const [rules, savedPreferences] = await Promise.all([
       recommendationRepository.findSettingsForMachine(machineId, input.machineCode),
       userId != null
-        ? preferenceRepository.findByUserMachine(userId, machineId).catch((err) => {
-            // Prefer cold recommendations over failing the whole request
-            // (e.g. pending migrations for preference columns).
-            console.error('preference lookup failed during recommend', err);
-            return null;
-          })
+        ? preferenceRepository
+            .findByUserMachine(
+              userId,
+              machineId,
+              input.gymId && input.memberId
+                ? { gymId: input.gymId, memberId: input.memberId }
+                : undefined
+            )
+            .catch((err) => {
+              // Prefer cold recommendations over failing the whole request
+              // (e.g. pending migrations for preference columns).
+              console.error('preference lookup failed during recommend', err);
+              return null;
+            })
         : Promise.resolve(null),
     ]);
 

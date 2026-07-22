@@ -241,6 +241,7 @@ function buildLocalDailyInsights(
 
 export async function fetchWorkoutInsights(options: {
   gymId: string;
+  memberId: string;
   viewMode: WorkoutInsightViewMode;
   machineCode?: string;
   targetMuscleGroup?: TargetMuscleGroup;
@@ -271,9 +272,15 @@ export async function fetchWorkoutInsights(options: {
     const res = await apiClient.get<ApiResponse<WorkoutInsights>>('/workout-logs/insights', {
       params:
         options.viewMode === 'daily'
-          ? { gymId: options.gymId, viewMode: 'daily', period: insightPeriod }
+          ? {
+              gymId: options.gymId,
+              memberId: options.memberId,
+              viewMode: 'daily',
+              period: insightPeriod,
+            }
           : {
               gymId: options.gymId,
+              memberId: options.memberId,
               viewMode: 'machine',
               machineCode: options.machineCode,
               period: insightPeriod,

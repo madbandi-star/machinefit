@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TARGET_MUSCLE_GROUPS } from '../constants/workout-goals.js';
 import { getUtf8ByteLength, WORKOUT_DIARY_MAX_BYTES } from '../utils/utf8-bytes.js';
+import { ALL_GYMS_ID } from '../constants/subscription.js';
 import { gymIdSchema, gymScopeIdSchema, memberIdSchema } from './gym-scope.schema.js';
 
 const dateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -16,16 +17,26 @@ const diarySchema = z
     message: `diary must be at most ${WORKOUT_DIARY_MAX_BYTES} bytes`,
   });
 
-export const workoutLogListQuerySchema = z.object({
-  gymId: gymScopeIdSchema,
-  memberId: memberIdSchema.optional(),
-  machineCode: z.string().min(1).optional(),
-  logDate: dateKeySchema.optional(),
-  from: dateKeySchema.optional(),
-  to: dateKeySchema.optional(),
-  limit: z.coerce.number().int().min(1).max(500).optional(),
-  targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
-});
+export const workoutLogListQuerySchema = z
+  .object({
+    gymId: gymScopeIdSchema,
+    memberId: memberIdSchema.optional(),
+    machineCode: z.string().min(1).optional(),
+    logDate: dateKeySchema.optional(),
+    from: dateKeySchema.optional(),
+    to: dateKeySchema.optional(),
+    limit: z.coerce.number().int().min(1).max(500).optional(),
+    targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.gymId !== ALL_GYMS_ID && !value.memberId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'memberId is required when gymId is not all',
+        path: ['memberId'],
+      });
+    }
+  });
 
 export type WorkoutLogListQuery = z.infer<typeof workoutLogListQuerySchema>;
 
@@ -76,6 +87,15 @@ export const workoutInsightsQuerySchema = z
     viewMode: z.enum(['machine', 'daily']).default('machine'),
     machineCode: z.string().min(1).optional(),
     period: workoutInsightPeriodSchema.optional().default('30d'),
+  })
+  .superRefine((value, ctx) => {
+    if (value.gymId !== ALL_GYMS_ID && !value.memberId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'memberId is required when gymId is not all',
+        path: ['memberId'],
+      });
+    }
   })
   .refine((value) => value.viewMode !== 'machine' || Boolean(value.machineCode), {
     message: 'machineCode is required for machine insights',

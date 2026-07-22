@@ -17,11 +17,14 @@ import { userRepository } from '../repositories/user.repository.js';
 
 export const achievementService = {
   /** Refresh stats + award newly unlocked achievements for a user. */
-  async refreshUser(userId: string): Promise<{ newlyUnlockedIds: string[] }> {
+  async refreshUser(
+    userId: string,
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<{ newlyUnlockedIds: string[] }> {
     const pool = getPool();
     if (!pool) return { newlyUnlockedIds: [] };
 
-    const stats = await achievementRepository.computeStatsFromLogs(userId);
+    const stats = await achievementRepository.computeStatsFromLogs(userId, options);
     const earned = await achievementRepository.listEarned(userId);
     const unlockedIds = new Set(evaluateUnlockIds(ACHIEVEMENT_CATALOG, stats));
 
@@ -62,11 +65,14 @@ export const achievementService = {
     return { newlyUnlockedIds };
   },
 
-  async getSnapshot(userId: string): Promise<AchievementSnapshot> {
+  async getSnapshot(
+    userId: string,
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<AchievementSnapshot> {
     const pool = getPool();
     if (!pool) return emptySnapshot();
 
-    const refreshResult = await this.refreshUser(userId);
+    const refreshResult = await this.refreshUser(userId, options);
     const statsBundle = await achievementRepository.getStats(userId);
     const earned = await achievementRepository.listEarned(userId);
     const unlockCounts = await achievementRepository.getUnlockCounts();
