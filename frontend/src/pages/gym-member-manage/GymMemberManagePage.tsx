@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PLAN_LIMITS, type UserGym, type GymMember } from '@machinefit/shared';
+import { getEffectivePlanLimits, type UserGym, type GymMember } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -13,6 +13,7 @@ import {
 } from '@/components/location/LocationPicker';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
@@ -88,6 +89,7 @@ function hasRequiredGymLocation(loc: LocationPickerValue): boolean {
 export function GymMemberManagePage() {
   const { t } = useTranslation(['gyms', 'common']);
   const showToast = useUIStore((s) => s.showToast);
+  const user = useAuthStore((s) => s.user);
   const {
     gyms,
     activeGymId,
@@ -123,10 +125,11 @@ export function GymMemberManagePage() {
       ? (gyms.find((gym) => gym.id === activeGymId) ?? null)
       : null;
 
-  const freePlanMaxGyms = PLAN_LIMITS.free.maxGyms;
-  const freePlanMaxMembers = PLAN_LIMITS.free.maxMembersPerGym;
-  const atGymLimit = gyms.length >= freePlanMaxGyms;
-  const atMemberLimit = members.length >= freePlanMaxMembers;
+  const planLimits = getEffectivePlanLimits(user?.subscriptionPlan, user?.roleCode);
+  const planMaxGyms = planLimits.maxGyms;
+  const planMaxMembers = planLimits.maxMembersPerGym;
+  const atGymLimit = gyms.length >= planMaxGyms;
+  const atMemberLimit = members.length >= planMaxMembers;
 
   useEffect(() => {
     setMemberFormMode('closed');
@@ -266,7 +269,7 @@ export function GymMemberManagePage() {
           </div>
 
           {atGymLimit && gymFormMode === 'closed' ? (
-            <p className="gym-manage-hint">{t('gyms:selector.planLimit', { max: freePlanMaxGyms })}</p>
+            <p className="gym-manage-hint">{t('gyms:selector.planLimit', { max: planMaxGyms })}</p>
           ) : null}
 
           {gymFormMode !== 'closed' ? (
@@ -421,7 +424,7 @@ export function GymMemberManagePage() {
             <>
               {atMemberLimit && memberFormMode === 'closed' ? (
                 <p className="gym-manage-hint">
-                  {t('gyms:members.planLimit', { max: freePlanMaxMembers })}
+                  {t('gyms:members.planLimit', { max: planMaxMembers })}
                 </p>
               ) : null}
 

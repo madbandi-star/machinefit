@@ -1,27 +1,56 @@
-import { getPlanLimits, DEFAULT_SUBSCRIPTION_PLAN } from '@machinefit/shared';
+import {
+  DEFAULT_SUBSCRIPTION_PLAN,
+  getEffectivePlanLimits,
+  getEffectiveSubscriptionPlan,
+  isSubscriptionPlan,
+} from '@machinefit/shared';
 import type { SubscriptionPlan } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
+type UserPlanRow = {
+  subscription_plan: string | null;
+  role_code: string | null;
+};
+
+async function getUserPlanContext(userId: string): Promise<{
+  effectivePlan: SubscriptionPlan;
+  roleCode: string | null;
+}> {
+  const pool = getPool();
+  if (!pool) {
+    return { effectivePlan: DEFAULT_SUBSCRIPTION_PLAN, roleCode: null };
+  }
+
+  const result = await pool.query<UserPlanRow>(
+    `SELECT u.subscription_plan, r.code AS role_code
+     FROM users u
+     JOIN roles r ON r.id = u.role_id
+     WHERE u.id = $1`,
+    [userId]
+  );
+  const storedPlan = isSubscriptionPlan(result.rows[0]?.subscription_plan)
+    ? result.rows[0].subscription_plan
+    : DEFAULT_SUBSCRIPTION_PLAN;
+  const roleCode = result.rows[0]?.role_code ?? null;
+  return {
+    effectivePlan: getEffectiveSubscriptionPlan(storedPlan, roleCode),
+    roleCode,
+  };
+}
+
 export const subscriptionService = {
   async getPlan(userId: string): Promise<SubscriptionPlan> {
-    const pool = getPool();
-    if (!pool) return DEFAULT_SUBSCRIPTION_PLAN;
-
-    const result = await pool.query<{ subscription_plan: string }>(
-      `SELECT subscription_plan FROM users WHERE id = $1`,
-      [userId]
-    );
-    const plan = result.rows[0]?.subscription_plan;
-    return plan === 'premium' ? 'premium' : 'free';
+    const { effectivePlan } = await getUserPlanContext(userId);
+    return effectivePlan;
   },
 
   async assertCanAddGym(userId: string): Promise<void> {
     const pool = getPool();
     if (!pool) return;
 
-    const plan = await this.getPlan(userId);
-    const limits = getPlanLimits(plan);
+    const { effectivePlan, roleCode } = await getUserPlanContext(userId);
+    const limits = getEffectivePlanLimits(effectivePlan, roleCode);
 
     const result = await pool.query<{ count: string }>(
       `SELECT COUNT(*) AS count FROM user_gyms WHERE user_id = $1`,
@@ -41,8 +70,8 @@ export const subscriptionService = {
     const pool = getPool();
     if (!pool) return;
 
-    const plan = await this.getPlan(userId);
-    const limits = getPlanLimits(plan);
+    const { effectivePlan, roleCode } = await getUserPlanContext(userId);
+    const limits = getEffectivePlanLimits(effectivePlan, roleCode);
 
     const result = await pool.query<{ count: string }>(
       `SELECT COUNT(*) AS count FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2`,
