@@ -1,5 +1,8 @@
-import type { WorkoutLog } from '@machinefit/shared';
-import { computeMaxWeight, computeVolume } from '@/utils/workoutAnalytics';
+import type { RecommendationSettings, WorkoutLog } from '@machinefit/shared';
+import {
+  computePerformedTotalWeightKg,
+  getEffectiveWeight,
+} from '@machinefit/shared';
 import { buildLoggedWorkoutKey } from '@/utils/historyLogStatus';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
 
@@ -11,6 +14,11 @@ export interface HistorySummaryStats {
   totalWeightKg: number;
   totalVolumeKg: number;
   workoutMinutes: number;
+}
+
+export interface HistorySummaryLoadContext {
+  /** Per-machine adjusted settings (조정중량 / 조정횟수). */
+  preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
 }
 
 export function findWorkoutLogForCard(
@@ -29,9 +37,26 @@ export function findWorkoutLogForCard(
   );
 }
 
+function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | null): number | null {
+  if (!settings) return null;
+  if (settings.recommendedRepsMin != null && settings.recommendedRepsMin > 0) {
+    return settings.recommendedRepsMin;
+  }
+  if (settings.recommendedRepsMax != null && settings.recommendedRepsMax > 0) {
+    return settings.recommendedRepsMax;
+  }
+  return null;
+}
+
+/**
+ * History summary totals.
+ * 총 중량 / 총 볼륨 both use: effectiveWeight × effectiveReps × sets
+ * (adjusted values win over recommended; setWeightsKg used as performed weights when present).
+ */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],
-  logs: WorkoutLog[]
+  logs: WorkoutLog[],
+  context: HistorySummaryLoadContext = {}
 ): HistorySummaryStats {
   let totalSets = 0;
   let totalWeightKg = 0;
@@ -40,16 +65,40 @@ export function computeHistorySummaryStats(
   for (const card of cards) {
     const log = findWorkoutLogForCard(card, logs);
     if (!log) continue;
+
+    const adjusted = context.preferencesByMachine?.[card.machineCode];
+    const sessionTotal = computePerformedTotalWeightKg({
+      adjustedWeight: adjusted?.recommendedWeightKg,
+      recommendedWeight: card.settings.recommendedWeightKg,
+      adjustedReps: resolveRecommendedReps(adjusted),
+      recommendedReps: resolveRecommendedReps(card.settings),
+      sets: log.setCount,
+      setWeightsKg: log.setWeightsKg,
+      setCompleted: log.setCompleted,
+    });
+
     totalSets += log.setCount;
-    totalWeightKg += computeMaxWeight(log.setWeightsKg);
-    totalVolumeKg += computeVolume(log.setWeightsKg);
+    totalWeightKg += sessionTotal;
+    totalVolumeKg += sessionTotal;
   }
 
   return {
     totalSets,
-    totalWeightKg,
-    totalVolumeKg,
+    totalWeightKg: Math.round(totalWeightKg * 100) / 100,
+    totalVolumeKg: Math.round(totalVolumeKg * 100) / 100,
     workoutMinutes:
       totalSets > 0 ? Math.max(1, Math.round(totalSets * ESTIMATED_MINUTES_PER_SET)) : 0,
   };
+}
+
+/** Effective suggested seed weight for a history card (adjusted wins). */
+export function getHistoryCardSuggestedWeightKg(
+  card: HistoryRecordCard,
+  adjustedSettings?: Partial<RecommendationSettings> | null
+): number | undefined {
+  const value = getEffectiveWeight(
+    adjustedSettings?.recommendedWeightKg,
+    card.settings.recommendedWeightKg
+  );
+  return value > 0 ? value : undefined;
 }

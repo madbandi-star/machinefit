@@ -6,6 +6,7 @@ import {
 import { growthTimelineRepository } from '../repositories/growth-timeline.repository.js';
 import { getPool } from '../config/database.js';
 import { TtlCache } from '../utils/ttl-cache.js';
+import { resolveWorkoutLoadContexts } from './workout-load.service.js';
 
 const memoryCache = new TtlCache<GrowthTimelineSnapshot>(60_000);
 
@@ -16,6 +17,42 @@ function scopeCacheKey(userId: string, options?: GrowthTimelineScope): string {
     return `${userId}:${options.gymId}:${options.memberId}`;
   }
   return userId;
+}
+
+async function enrichLogsWithLoad(
+  userId: string,
+  logs: Awaited<ReturnType<typeof growthTimelineRepository.loadLogs>>,
+  options?: GrowthTimelineScope
+) {
+  if (logs.length === 0) return logs;
+
+  const asWorkoutLogs = logs.map((log) => ({
+    id: log.id,
+    gymId: log.gymId ?? '',
+    memberId: options?.memberId ?? '',
+    machineCode: log.machineCode,
+    logDate: log.logDate,
+    setCount: log.setCount,
+    setWeightsKg: log.setWeightsKg,
+    createdAt: log.createdAt,
+    updatedAt: log.createdAt,
+  }));
+
+  const loadById = await resolveWorkoutLoadContexts(userId, asWorkoutLogs, {
+    gymId: options?.gymId,
+    memberId: options?.memberId,
+  });
+
+  return logs.map((log) => {
+    const load = loadById.get(log.id);
+    return {
+      ...log,
+      adjustedWeightKg: load?.adjustedWeight,
+      recommendedWeightKg: load?.recommendedWeight,
+      adjustedReps: load?.adjustedReps,
+      recommendedReps: load?.recommendedReps,
+    };
+  });
 }
 
 export const growthTimelineService = {
@@ -32,10 +69,11 @@ export const growthTimelineService = {
         ? { gymId: options.gymId, memberId: options.memberId }
         : undefined;
 
-    const [logs, peers] = await Promise.all([
+    const [rawLogs, peers] = await Promise.all([
       growthTimelineRepository.loadLogs(userId, locale, logScope),
       growthTimelineRepository.peerAverages(),
     ]);
+    const logs = await enrichLogsWithLoad(userId, rawLogs, options);
 
     const snapshot =
       logs.length === 0

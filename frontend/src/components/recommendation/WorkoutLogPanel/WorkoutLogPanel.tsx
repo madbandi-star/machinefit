@@ -2,7 +2,19 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getUtf8ByteLength, clampRestDurationSeconds, truncateUtf8, WORKOUT_DIARY_MAX_BYTES, MACHINE_PERSONAL_TIP_MAX_BYTES, isFreeWeightMachineCode, formatWeight, type TargetMuscleGroup, type WorkoutLog } from '@machinefit/shared';
+import {
+  getUtf8ByteLength,
+  clampRestDurationSeconds,
+  truncateUtf8,
+  WORKOUT_DIARY_MAX_BYTES,
+  MACHINE_PERSONAL_TIP_MAX_BYTES,
+  isFreeWeightMachineCode,
+  formatWeight,
+  isAllGymsId,
+  computePerformedTotalWeightKg,
+  type TargetMuscleGroup,
+  type WorkoutLog,
+} from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
@@ -19,11 +31,9 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
-import { computeVolume } from '@/utils/workoutAnalytics';
 import { useSettingsStore } from '@/store/settings.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
-import { isAllGymsId } from '@machinefit/shared';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
@@ -384,7 +394,16 @@ export function WorkoutLogPanel({
 
   const existingLog = existingLogs?.[0];
   const isLogSaved = Boolean(existingLog);
-  const totalWeightKg = useMemo(() => computeVolume(weights), [weights]);
+  const totalWeightKg = useMemo(
+    () =>
+      computePerformedTotalWeightKg({
+        setWeightsKg: weights,
+        setCompleted,
+        sets: setCount,
+        recommendedReps: voiceCoachTargetReps,
+      }),
+    [weights, setCompleted, setCount, voiceCoachTargetReps]
+  );
   const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}`;
 
   const isPersonalTipDirty =

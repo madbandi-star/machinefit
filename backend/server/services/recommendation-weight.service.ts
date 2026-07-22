@@ -6,6 +6,7 @@ import type {
 } from '@machinefit/shared';
 import {
   EXPERIENCE_WEIGHT_MULTIPLIERS,
+  computePerformedTotalWeightKg,
   getBoxingWeightClassRange,
   getPeerHeightRange,
   isFreeWeightMachineCode,
@@ -14,6 +15,10 @@ import {
   roundRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
+import {
+  resolveWorkoutLoadContexts,
+  type WorkoutLoadContext,
+} from './workout-load.service.js';
 
 const MIN_COHORT_SAMPLE = 2;
 
@@ -29,10 +34,6 @@ function roundKg(value: number): number {
   return Math.round(value);
 }
 
-function sumWeights(weights: number[]): number {
-  return weights.reduce((total, weight) => total + weight, 0);
-}
-
 function maxWeight(weights: number[]): number {
   return weights.length === 0 ? 0 : Math.max(...weights);
 }
@@ -46,7 +47,22 @@ function getCompletedWeights(log: WorkoutLog): number[] {
   return setWeightsKg.filter((_, index) => setCompleted[index] === true);
 }
 
-function computeUserMetrics(logs: WorkoutLog[]) {
+function sessionVolume(log: WorkoutLog, load?: WorkoutLoadContext | null): number {
+  return computePerformedTotalWeightKg({
+    setWeightsKg: log.setWeightsKg,
+    setCompleted: log.setCompleted,
+    sets: log.setCount,
+    adjustedWeight: load?.adjustedWeight,
+    recommendedWeight: load?.recommendedWeight,
+    adjustedReps: load?.adjustedReps,
+    recommendedReps: load?.recommendedReps,
+  });
+}
+
+function computeUserMetrics(
+  logs: WorkoutLog[],
+  loadByLogId?: Map<string, WorkoutLoadContext>
+) {
   const logsWithWeights = logs
     .map((log) => ({ log, weights: getCompletedWeights(log) }))
     .filter(({ weights }) => weights.length > 0);
@@ -62,7 +78,9 @@ function computeUserMetrics(logs: WorkoutLog[]) {
     };
   }
 
-  const volumes = logsWithWeights.map(({ weights }) => sumWeights(weights));
+  const volumes = logsWithWeights.map(({ log }) =>
+    sessionVolume(log, loadByLogId?.get(log.id))
+  );
   const firstVolume = volumes[0];
   const lastVolume = volumes[volumes.length - 1];
   const volumeGrowthPct =
@@ -283,7 +301,11 @@ export async function computeRecommendationWeight(options: {
     });
   }
 
-  const userMetrics = computeUserMetrics(logs);
+  const loadByLogId =
+    userId && logs.length > 0
+      ? await resolveWorkoutLoadContexts(userId, logs, { gymId, memberId })
+      : undefined;
+  const userMetrics = computeUserMetrics(logs, loadByLogId);
 
   if (userMetrics.maxWeightKg != null && userMetrics.maxWeightKg > 0) {
     entries.push({

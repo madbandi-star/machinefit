@@ -1,4 +1,4 @@
-import { computeLogVolumeKg } from './lifted-volume.js';
+import { computePerformedTotalWeightKg } from './effective-load.js';
 import type {
   GrowthBeforeNowItem,
   GrowthChartMetric,
@@ -33,6 +33,12 @@ export interface GrowthTimelineLogInput {
   muscleGroup: string | null;
   gymId: string | null;
   gymName: string | null;
+  /** Optional adjusted/recommended load for total-weight rule. */
+  adjustedWeightKg?: number | null;
+  recommendedWeightKg?: number | null;
+  adjustedReps?: number | null;
+  recommendedReps?: number | null;
+  setCompleted?: boolean[] | null;
 }
 
 export interface GrowthTimelinePeerAverages {
@@ -46,6 +52,18 @@ const LOWER = new Set(['legs', 'quads', 'hamstrings', 'glutes', 'calves']);
 
 function text(ko: string, en: string): LocalizedText {
   return { ko, en };
+}
+
+function logTotalWeightKg(log: GrowthTimelineLogInput): number {
+  return computePerformedTotalWeightKg({
+    setWeightsKg: log.setWeightsKg,
+    setCompleted: log.setCompleted,
+    sets: log.setCount,
+    adjustedWeight: log.adjustedWeightKg,
+    recommendedWeight: log.recommendedWeightKg,
+    adjustedReps: log.adjustedReps,
+    recommendedReps: log.recommendedReps,
+  });
 }
 
 function dayMs(date: string): number {
@@ -133,7 +151,7 @@ function buildDayAggs(logsAsc: GrowthTimelineLogInput[]): {
   const brandFirst = new Map<string, { date: string; name: string }>();
 
   for (const log of logsAsc) {
-    const vol = computeLogVolumeKg(log.setWeightsKg);
+    const vol = logTotalWeightKg(log);
     const maxKg = maxWeight(log.setWeightsKg);
     let day = byDay.get(log.logDate);
     if (!day) {
@@ -293,7 +311,7 @@ function buildTimeline(
   const machineRunning = new Map<string, number>();
   for (const log of logsAsc) {
     workoutCount += 1;
-    runningVolume += computeLogVolumeKg(log.setWeightsKg);
+    runningVolume += logTotalWeightKg(log);
     const maxKg = maxWeight(log.setWeightsKg);
     const prev = machineRunning.get(log.machineCode) ?? 0;
     if (maxKg > prev) {

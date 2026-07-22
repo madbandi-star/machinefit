@@ -1,5 +1,8 @@
 import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
-import { isFreeWeightMachineCode } from '@machinefit/shared';
+import {
+  computePerformedTotalWeightKg,
+  isFreeWeightMachineCode,
+} from '@machinefit/shared';
 import { normalizeDateKey } from '@/utils/historyDate';
 
 export type GrowthPeriod = '30d' | '3m' | 'all' | 'custom';
@@ -182,8 +185,26 @@ export function filterLogsByPeriod(logs: WorkoutLog[], period: GrowthPeriod): Wo
   return filterLogsByGrowthPeriod(logs, { preset: period });
 }
 
-export function computeVolume(weights: number[]): number {
-  return weights.reduce((sum, weight) => sum + weight, 0);
+export function computeVolume(
+  weights: number[],
+  options?: {
+    setCompleted?: boolean[] | null;
+    adjustedReps?: number | null;
+    recommendedReps?: number | null;
+    adjustedWeight?: number | null;
+    recommendedWeight?: number | null;
+    sets?: number | null;
+  }
+): number {
+  return computePerformedTotalWeightKg({
+    setWeightsKg: weights,
+    setCompleted: options?.setCompleted,
+    adjustedReps: options?.adjustedReps,
+    recommendedReps: options?.recommendedReps,
+    adjustedWeight: options?.adjustedWeight,
+    recommendedWeight: options?.recommendedWeight,
+    sets: options?.sets ?? weights.length,
+  });
 }
 
 export function computeMaxWeight(weights: number[]): number {
@@ -191,10 +212,26 @@ export function computeMaxWeight(weights: number[]): number {
   return Math.max(...weights);
 }
 
-export function toSessionPoint(log: WorkoutLog): SessionPoint {
+export function toSessionPoint(
+  log: WorkoutLog,
+  load?: {
+    adjustedWeight?: number | null;
+    recommendedWeight?: number | null;
+    adjustedReps?: number | null;
+    recommendedReps?: number | null;
+  }
+): SessionPoint {
   return {
     logDate: log.logDate,
-    totalVolume: computeVolume(log.setWeightsKg),
+    totalVolume: computePerformedTotalWeightKg({
+      setWeightsKg: log.setWeightsKg,
+      setCompleted: log.setCompleted,
+      sets: log.setCount,
+      adjustedWeight: load?.adjustedWeight,
+      recommendedWeight: load?.recommendedWeight,
+      adjustedReps: load?.adjustedReps,
+      recommendedReps: load?.recommendedReps,
+    }),
     maxWeight: computeMaxWeight(log.setWeightsKg),
     setCount: log.setCount,
   };
@@ -240,7 +277,7 @@ export function getSessionsForMachine(
       return true;
     })
     .sort((a, b) => a.logDate.localeCompare(b.logDate))
-    .map(toSessionPoint);
+    .map((log) => toSessionPoint(log));
 }
 
 export function getSessionsForMachineOption(
@@ -268,7 +305,10 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
         machineName: entry.machineName ?? '',
         brandName: entry.brandName,
         targetMuscleGroup: entry.targetMuscleGroup,
-        volume: computeVolume(entry.setWeightsKg),
+        volume: computeVolume(entry.setWeightsKg, {
+          setCompleted: entry.setCompleted,
+          sets: entry.setCount,
+        }),
       }));
 
       const totalVolume = machines.reduce((sum, machine) => sum + machine.volume, 0);

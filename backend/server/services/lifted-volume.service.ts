@@ -3,7 +3,7 @@ import {
   buildBadgeProgress,
   buildHeadline,
   buildHeadlineSuffix,
-  computeLogVolumeKg,
+  computePerformedTotalWeightKg,
   pickFunLine,
   selectTopComparisons,
   type LiftedRankingBoard,
@@ -17,6 +17,7 @@ import { userGymRepository } from '../repositories/user-gym.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getPool } from '../config/database.js';
+import type { WorkoutLoadContext } from './workout-load.service.js';
 
 function monthKey(logDate: string): string {
   return logDate.slice(0, 7);
@@ -24,6 +25,23 @@ function monthKey(logDate: string): string {
 
 function yearKey(logDate: string): string {
   return logDate.slice(0, 4);
+}
+
+function volumeFromWeights(
+  weights: number[],
+  completed?: boolean[] | null,
+  load?: WorkoutLoadContext | null,
+  sets?: number | null
+): number {
+  return computePerformedTotalWeightKg({
+    setWeightsKg: weights,
+    setCompleted: completed,
+    sets: sets ?? weights.length,
+    adjustedWeight: load?.adjustedWeight,
+    recommendedWeight: load?.recommendedWeight,
+    adjustedReps: load?.adjustedReps,
+    recommendedReps: load?.recommendedReps,
+  });
 }
 
 async function listScopedUserTotals(
@@ -58,9 +76,23 @@ export const liftedVolumeService = {
     previousCompleted?: boolean[] | null;
     nextWeights: number[];
     nextCompleted?: boolean[] | null;
+    previousSets?: number | null;
+    nextSets?: number | null;
+    previousLoad?: WorkoutLoadContext | null;
+    nextLoad?: WorkoutLoadContext | null;
   }): Promise<void> {
-    const prev = computeLogVolumeKg(options.previousWeights, options.previousCompleted);
-    const next = computeLogVolumeKg(options.nextWeights, options.nextCompleted);
+    const prev = volumeFromWeights(
+      options.previousWeights,
+      options.previousCompleted,
+      options.previousLoad,
+      options.previousSets
+    );
+    const next = volumeFromWeights(
+      options.nextWeights,
+      options.nextCompleted,
+      options.nextLoad,
+      options.nextSets
+    );
     const delta = Math.round((next - prev) * 100) / 100;
     if (delta === 0) return;
 

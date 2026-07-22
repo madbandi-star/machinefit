@@ -28,6 +28,8 @@ export function ActiveSettingsSourceBanner({
   const hasAdjusted = hasMeaningfulCustomSettings(adjustedSettings);
   const aiWeight = aiSettings?.recommendedWeightKg;
   const adjustedWeight = adjustedSettings?.recommendedWeightKg;
+  // Banner shows the source currently applied for recommendations (activeSource),
+  // not the stats-calculation rule (adjusted-first).
   const activeWeight =
     activeSource === 'adjusted' && adjustedWeight != null ? adjustedWeight : aiWeight;
 

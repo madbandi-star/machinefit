@@ -186,8 +186,11 @@ export function HistoryListPanel() {
   );
 
   const summaryStats = useMemo(
-    () => computeHistorySummaryStats(displayCards, workoutLogs ?? []),
-    [displayCards, workoutLogs]
+    () =>
+      computeHistorySummaryStats(displayCards, workoutLogs ?? [], {
+        preferencesByMachine: comparisonData?.preferencesByMachine,
+      }),
+    [displayCards, workoutLogs, comparisonData?.preferencesByMachine]
   );
 
   const translateMuscleGroup = (group: string) =>

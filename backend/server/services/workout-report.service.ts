@@ -4,6 +4,11 @@ import { userRepository } from '../repositories/user.repository.js';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { emailService } from './email.service.js';
+import {
+  computeLogTotalWeightKg,
+  resolveWorkoutLoadContexts,
+  type WorkoutLoadContext,
+} from './workout-load.service.js';
 
 const reportPeriodSchema = z.enum(['day', 'week', 'month', 'year']);
 
@@ -67,8 +72,11 @@ function formatLogMachineLabel(
   return `${brandPrefix}${log.machineName ?? log.machineCode}`;
 }
 
-function getLogVolumeKg(log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number]): number {
-  return log.setWeightsKg.reduce((sum, weight) => sum + weight, 0);
+function getLogVolumeKg(
+  log: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>[number],
+  load?: WorkoutLoadContext | null
+): number {
+  return computeLogTotalWeightKg(log, load);
 }
 
 function formatSetWeights(setWeightsKg: number[]): string {
@@ -83,9 +91,13 @@ function buildReportText(options: {
   from: string;
   to: string;
   logs: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>;
+  loadByLogId?: Map<string, WorkoutLoadContext>;
 }): string {
   const totalSets = options.logs.reduce((sum, log) => sum + log.setCount, 0);
-  const totalVolume = options.logs.reduce((sum, log) => sum + getLogVolumeKg(log), 0);
+  const totalVolume = options.logs.reduce(
+    (sum, log) => sum + getLogVolumeKg(log, options.loadByLogId?.get(log.id)),
+    0
+  );
   const periodLabel = PERIOD_LABELS[options.period];
 
   const lines = [
@@ -110,7 +122,7 @@ function buildReportText(options: {
   lines.push('[상세 기록]');
   for (const log of options.logs) {
     const machineLabel = formatLogMachineLabel(log);
-    const volume = getLogVolumeKg(log);
+    const volume = getLogVolumeKg(log, options.loadByLogId?.get(log.id));
     lines.push(
       `· ${log.logDate} | ${machineLabel} | ${log.setCount}세트 | ${formatSetWeights(log.setWeightsKg)} (합 ${volume.toFixed(1)}kg)`
     );
@@ -126,14 +138,18 @@ function buildReportHtml(options: {
   from: string;
   to: string;
   logs: Awaited<ReturnType<typeof workoutLogRepository.listByUser>>;
+  loadByLogId?: Map<string, WorkoutLoadContext>;
 }): string {
   const totalSets = options.logs.reduce((sum, log) => sum + log.setCount, 0);
-  const totalVolume = options.logs.reduce((sum, log) => sum + getLogVolumeKg(log), 0);
+  const totalVolume = options.logs.reduce(
+    (sum, log) => sum + getLogVolumeKg(log, options.loadByLogId?.get(log.id)),
+    0
+  );
   const periodLabel = PERIOD_LABELS[options.period];
 
   const rows = options.logs
     .map((log) => {
-      const volume = getLogVolumeKg(log);
+      const volume = getLogVolumeKg(log, options.loadByLogId?.get(log.id));
       const machineLabel = formatLogMachineLabel(log);
       return `<tr><td>${log.logDate}</td><td>${machineLabel}</td><td>${log.setCount}</td><td>${formatSetWeights(log.setWeightsKg)}</td><td>${volume.toFixed(1)}kg</td></tr>`;
     })
@@ -192,6 +208,10 @@ export const workoutReportService = {
       from,
       to,
     });
+    const loadByLogId = await resolveWorkoutLoadContexts(userId, logs, {
+      gymId: isAllGymsId(gymScopeId) ? undefined : gymScopeId,
+      memberId: options?.memberId,
+    });
     const html = buildReportHtml({
       displayName: user.displayName,
       gymName,
@@ -199,6 +219,7 @@ export const workoutReportService = {
       from,
       to,
       logs,
+      loadByLogId,
     });
     const text = buildReportText({
       displayName: user.displayName,
@@ -207,6 +228,7 @@ export const workoutReportService = {
       from,
       to,
       logs,
+      loadByLogId,
     });
 
     const yearMonth = `${from.slice(0, 4)}년 ${Number(from.slice(5, 7))}월`;

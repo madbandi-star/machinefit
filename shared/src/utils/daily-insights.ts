@@ -1,4 +1,5 @@
 import type { WorkoutLog } from '../types/workout.types.js';
+import { computePerformedTotalWeightKg } from './effective-load.js';
 
 export interface DailyInsightMetrics {
   volumeGrowthPct: number | null;
@@ -8,8 +9,11 @@ export interface DailyInsightMetrics {
   lastDailyVolumeKg: number;
 }
 
-function sumWeights(weights: number[]): number {
-  return weights.reduce((total, weight) => total + weight, 0);
+export interface DailyInsightLoadContext {
+  adjustedWeight?: number | null;
+  recommendedWeight?: number | null;
+  adjustedReps?: number | null;
+  recommendedReps?: number | null;
 }
 
 function maxWeight(weights: number[]): number {
@@ -20,7 +24,26 @@ function normalizeLogDate(logDate: string): string {
   return logDate.slice(0, 10);
 }
 
-export function computeDailyInsightMetrics(logs: WorkoutLog[]): DailyInsightMetrics {
+function logVolume(
+  log: WorkoutLog,
+  loadByLogId?: Map<string, DailyInsightLoadContext>
+): number {
+  const load = loadByLogId?.get(log.id);
+  return computePerformedTotalWeightKg({
+    setWeightsKg: log.setWeightsKg,
+    setCompleted: log.setCompleted,
+    sets: log.setCount,
+    adjustedWeight: load?.adjustedWeight,
+    recommendedWeight: load?.recommendedWeight,
+    adjustedReps: load?.adjustedReps,
+    recommendedReps: load?.recommendedReps,
+  });
+}
+
+export function computeDailyInsightMetrics(
+  logs: WorkoutLog[],
+  loadByLogId?: Map<string, DailyInsightLoadContext>
+): DailyInsightMetrics {
   if (logs.length === 0) {
     return {
       volumeGrowthPct: null,
@@ -36,7 +59,7 @@ export function computeDailyInsightMetrics(logs: WorkoutLog[]): DailyInsightMetr
   for (const log of logs) {
     const logDate = normalizeLogDate(log.logDate);
     const day = byDate.get(logDate) ?? { totalVolume: 0, peakSetWeight: 0 };
-    day.totalVolume += sumWeights(log.setWeightsKg);
+    day.totalVolume += logVolume(log, loadByLogId);
     day.peakSetWeight = Math.max(day.peakSetWeight, maxWeight(log.setWeightsKg));
     byDate.set(logDate, day);
   }

@@ -25,7 +25,7 @@ import { useUserUnits } from '@/hooks/useUserUnits';
 import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
-import { isFreeWeightMachineCode } from '@machinefit/shared';
+import { isFreeWeightMachineCode, resolveSuggestedWeightKg } from '@machinefit/shared';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -303,12 +303,10 @@ export function RecommendationResultPage() {
             machineCode={result.machineCode}
             machineName={result.machineName}
             recommendationId={result.id}
-            suggestedWeightKg={
-              fitFeedback.activeSource === 'adjusted' &&
-              fitFeedback.customSettings.recommendedWeightKg != null
-                ? fitFeedback.customSettings.recommendedWeightKg
-                : (result.aiRecommendedSettings ?? result.settings).recommendedWeightKg
-            }
+            suggestedWeightKg={resolveSuggestedWeightKg(
+              fitFeedback.customSettings.recommendedWeightKg,
+              (result.aiRecommendedSettings ?? result.settings).recommendedWeightKg
+            )}
             isAuthenticated={isAuthenticated}
             variant="history"
             logDate={resultLogDate}

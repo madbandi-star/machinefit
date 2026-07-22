@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { computePerformedTotalWeightKg } from '@machinefit/shared';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
-import { historyApi, workoutLogApi } from '@/api';
+import { historyApi, machinePreferenceApi, workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
-import { computeVolume } from '@/utils/workoutAnalytics';
 import { isDismissedToday, dismissForToday } from '@/utils/dismissToday';
 import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 import '@/styles/home.css';
@@ -20,11 +20,17 @@ interface DailyBriefingModalProps {
   onClose: () => void;
 }
 
+function resolveReps(min?: number, max?: number): number | null {
+  if (min != null && min > 0) return min;
+  if (max != null && max > 0) return max;
+  return null;
+}
+
 export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const { activeGymId } = useActiveGym();
-  const { activeMemberId, memberScopeReady } = useActiveMember();
+  const { activeMemberId, memberScopeReady, isRealGym } = useActiveMember();
   const memberKey = activeMemberId ?? '';
   const today = getTodayDateKey();
   const { from, to } = getLocalDayRange(today);
@@ -57,15 +63,66 @@ export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
     enabled: open && Boolean(activeGymId) && memberScopeReady,
   });
 
+  const machineCodes = useMemo(
+    () => [...new Set(todayLogs.map((log) => log.machineCode))],
+    [todayLogs]
+  );
+
+  const preferenceScope =
+    isRealGym && activeGymId && activeMemberId
+      ? { gymId: activeGymId, memberId: activeMemberId }
+      : undefined;
+
+  const { data: preferencesByMachine } = useQuery({
+    queryKey: ['briefing-preferences', activeGymId, memberKey, machineCodes],
+    queryFn: () => machinePreferenceApi.getBatch(machineCodes, preferenceScope),
+    enabled: open && machineCodes.length > 0 && Boolean(preferenceScope),
+    staleTime: 60_000,
+  });
+
   const summary = useMemo(() => {
     const machines = new Set([
       ...todayLogs.map((log) => log.machineCode),
       ...todayHistory.map((item) => item.machineCode),
     ]);
-    const totalVolume = todayLogs.reduce((sum, log) => sum + computeVolume(log.setWeightsKg), 0);
+
+    const historyByMachine = new Map(
+      todayHistory.map((item) => [item.machineCode, item] as const)
+    );
+
+    const totalVolume = todayLogs.reduce((sum, log) => {
+      const history = historyByMachine.get(log.machineCode);
+      const adjusted = preferencesByMachine?.[log.machineCode]?.customSettings;
+      return (
+        sum +
+        computePerformedTotalWeightKg({
+          setWeightsKg: log.setWeightsKg,
+          setCompleted: log.setCompleted,
+          sets: log.setCount,
+          adjustedWeight: adjusted?.recommendedWeightKg,
+          recommendedWeight: history?.settings.recommendedWeightKg,
+          adjustedReps: resolveReps(adjusted?.recommendedRepsMin, adjusted?.recommendedRepsMax),
+          recommendedReps: resolveReps(
+            history?.settings.recommendedRepsMin,
+            history?.settings.recommendedRepsMax
+          ),
+        })
+      );
+    }, 0);
+
     const maxWeight = todayLogs.reduce((max, log) => {
-      const logMax = log.setWeightsKg.reduce((inner, weight) => Math.max(inner, weight), 0);
-      return Math.max(max, logMax);
+      const history = historyByMachine.get(log.machineCode);
+      const adjusted = preferencesByMachine?.[log.machineCode]?.customSettings;
+      const effective =
+        (adjusted?.recommendedWeightKg != null && adjusted.recommendedWeightKg > 0
+          ? adjusted.recommendedWeightKg
+          : null) ??
+        (history?.settings.recommendedWeightKg != null &&
+        history.settings.recommendedWeightKg > 0
+          ? history.settings.recommendedWeightKg
+          : null) ??
+        log.setWeightsKg.reduce((inner, weight) => Math.max(inner, weight), 0);
+      return Math.max(max, effective);
     }, 0);
 
     return {
@@ -75,7 +132,7 @@ export function DailyBriefingModal({ open, onClose }: DailyBriefingModalProps) {
       totalVolume,
       maxWeight,
     };
-  }, [todayHistory, todayLogs]);
+  }, [todayHistory, todayLogs, preferencesByMachine]);
 
   if (!open) return null;
 

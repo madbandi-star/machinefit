@@ -1,26 +1,29 @@
+import { computePerformedTotalWeightKg } from './effective-load.js';
+
 /**
- * Total volume for a workout log.
- * MachineFit stores per-set working weights; volume = Σ(setWeightsKg).
- * When setCompleted is present, only completed sets count.
+ * Total weight/volume for a workout log.
+ *
+ * MachineFit product rule:
+ *   total = effectiveWeight × effectiveReps × sets
+ * When per-set weights exist, each set weight is the performed weight and is
+ * multiplied by effective reps (if provided). Completed-set filtering is honored.
+ *
+ * @deprecated Prefer `computePerformedTotalWeightKg` when adjusted/recommended
+ * settings are available. This wrapper remains for call sites that only have
+ * setWeightsKg (+ optional reps).
  */
 export function computeLogVolumeKg(
   setWeightsKg: number[],
-  setCompleted?: boolean[] | null
+  setCompleted?: boolean[] | null,
+  repsPerSet?: number | null
 ): number {
-  if (!setWeightsKg?.length) return 0;
-
-  const useCompleted =
-    Array.isArray(setCompleted) &&
-    setCompleted.length === setWeightsKg.length &&
-    setCompleted.some((v) => v === true);
-
-  let total = 0;
-  for (let i = 0; i < setWeightsKg.length; i += 1) {
-    if (useCompleted && setCompleted![i] !== true) continue;
-    const w = setWeightsKg[i];
-    if (typeof w === 'number' && Number.isFinite(w) && w > 0) total += w;
-  }
-  return Math.round(total * 100) / 100;
+  return computePerformedTotalWeightKg({
+    setWeightsKg,
+    setCompleted,
+    adjustedReps: repsPerSet,
+    recommendedReps: repsPerSet,
+    sets: setWeightsKg?.length ?? 0,
+  });
 }
 
 export function formatVolumeKg(kg: number, locale = 'ko'): string {

@@ -6,6 +6,7 @@ import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { achievementService } from './achievement.service.js';
 import { growthTimelineService } from './growth-timeline.service.js';
+import { resolveWorkoutLoadContexts } from './workout-load.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -109,14 +110,39 @@ export const workoutLogService = {
       });
 
       try {
+        const loadLogs = [
+          ...(previous ? [previous] : []),
+          {
+            id: saved.id,
+            gymId: saved.gymId,
+            memberId: saved.memberId,
+            machineCode: saved.machineCode,
+            recommendationId: saved.recommendationId ?? input.recommendationId,
+            logDate: saved.logDate,
+            setCount: saved.setCount,
+            setWeightsKg: saved.setWeightsKg,
+            setCompleted: saved.setCompleted,
+            createdAt: saved.createdAt,
+            updatedAt: saved.updatedAt,
+          },
+        ];
+        const loadById = await resolveWorkoutLoadContexts(userId, loadLogs, {
+          gymId: input.gymId,
+          memberId: input.memberId,
+        });
+
         await liftedVolumeService.applyLogDelta({
           userId,
           gymId: input.gymId,
           logDate,
           previousWeights: previous?.setWeightsKg ?? [],
           previousCompleted: previous?.setCompleted,
+          previousSets: previous?.setCount,
+          previousLoad: previous ? loadById.get(previous.id) : null,
           nextWeights: input.setWeightsKg,
           nextCompleted: input.setCompleted,
+          nextSets: input.setCount,
+          nextLoad: loadById.get(saved.id),
         });
       } catch {
         // Aggregate update must not fail the workout save.
@@ -193,14 +219,22 @@ export const workoutLogService = {
 
     if (previous) {
       try {
+        const loadById = await resolveWorkoutLoadContexts(userId, [previous], {
+          gymId: input.gymId,
+          memberId: input.memberId,
+        });
         await liftedVolumeService.applyLogDelta({
           userId,
           gymId: input.gymId,
           logDate: input.logDate,
           previousWeights: previous.setWeightsKg,
           previousCompleted: previous.setCompleted,
+          previousSets: previous.setCount,
+          previousLoad: loadById.get(previous.id),
           nextWeights: [],
           nextCompleted: [],
+          nextSets: 0,
+          nextLoad: null,
         });
       } catch {
         /* ignore aggregate failure */

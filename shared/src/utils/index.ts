@@ -9,6 +9,7 @@ export * from './rest-timer.js';
 export * from './recommendation-personalization.js';
 export * from './free-weight.js';
 export * from './lifted-volume.js';
+export * from './effective-load.js';
 export * from './lifted-weight-showcase.js';
 export * from './lifter-dna-analysis.js';
 export * from './achievement-engine.js';

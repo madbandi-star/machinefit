@@ -9,6 +9,7 @@ import type {
 } from '@machinefit/shared';
 import {
   computeDailyInsightMetrics,
+  computePerformedTotalWeightKg,
   genderWeightFactor,
   getPeerHeightRange,
   getBoxingWeightClassRange,
@@ -21,6 +22,7 @@ import { workoutLogRepository } from '../repositories/workout-log.repository.js'
 import { machineRepository } from '../repositories/machine.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
+import { resolveWorkoutLoadContexts, type WorkoutLoadContext } from './workout-load.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 const MIN_COHORT_SAMPLE = 2;
@@ -50,10 +52,6 @@ function getPeriodRange(period: WorkoutInsightPeriod): { from: string | null; to
   return { from: `${y}-${m}-${d}`, to };
 }
 
-function sumWeights(weights: number[]): number {
-  return weights.reduce((total, weight) => total + weight, 0);
-}
-
 function maxWeight(weights: number[]): number {
   return weights.length === 0 ? 0 : Math.max(...weights);
 }
@@ -67,7 +65,22 @@ function getCompletedWeights(log: WorkoutLog): number[] {
   return setWeightsKg.filter((_, index) => setCompleted[index] === true);
 }
 
-function computeUserMetrics(logs: WorkoutLog[]) {
+function sessionVolume(log: WorkoutLog, load?: WorkoutLoadContext | null): number {
+  return computePerformedTotalWeightKg({
+    setWeightsKg: log.setWeightsKg,
+    setCompleted: log.setCompleted,
+    sets: log.setCount,
+    adjustedWeight: load?.adjustedWeight,
+    recommendedWeight: load?.recommendedWeight,
+    adjustedReps: load?.adjustedReps,
+    recommendedReps: load?.recommendedReps,
+  });
+}
+
+function computeUserMetrics(
+  logs: WorkoutLog[],
+  loadByLogId?: Map<string, WorkoutLoadContext>
+) {
   const logsWithWeights = logs
     .map((log) => ({ log, weights: getCompletedWeights(log) }))
     .filter(({ weights }) => weights.length > 0);
@@ -85,7 +98,9 @@ function computeUserMetrics(logs: WorkoutLog[]) {
     };
   }
 
-  const volumes = logsWithWeights.map(({ weights }) => sumWeights(weights));
+  const volumes = logsWithWeights.map(({ log }) =>
+    sessionVolume(log, loadByLogId?.get(log.id))
+  );
   const firstVolume = volumes[0];
   const lastVolume = volumes[volumes.length - 1];
   const volumeGrowthPct =
@@ -107,7 +122,9 @@ function computeUserMetrics(logs: WorkoutLog[]) {
     lastSetCount: lastEntry.log.setCount,
     lastMaxWeightKg: maxWeight(lastEntry.weights),
     previousMaxWeightKg: previousEntry ? maxWeight(previousEntry.weights) : null,
-    previousTotalVolumeKg: previousEntry ? sumWeights(previousEntry.weights) : null,
+    previousTotalVolumeKg: previousEntry
+      ? sessionVolume(previousEntry.log, loadByLogId?.get(previousEntry.log.id))
+      : null,
   };
 }
 
@@ -237,7 +254,11 @@ export const workoutInsightsService = {
       limit: 200,
     });
 
-    const dailyMetrics = computeDailyInsightMetrics(logs);
+    const loadByLogId = await resolveWorkoutLoadContexts(userId, logs, {
+      gymId: isAllGymsId(query.gymId) ? undefined : query.gymId,
+      memberId: query.memberId,
+    });
+    const dailyMetrics = computeDailyInsightMetrics(logs, loadByLogId);
     const profileReady = hasBodyProfile(user);
 
     let profileAverage: WorkoutInsights['profileAverage'] = null;
@@ -402,7 +423,11 @@ export const workoutInsightsService = {
       limit: 200,
     });
 
-    const userMetrics = computeUserMetrics(logs);
+    const loadByLogId = await resolveWorkoutLoadContexts(userId, logs, {
+      gymId: isAllGymsId(query.gymId) ? undefined : query.gymId,
+      memberId: query.memberId,
+    });
+    const userMetrics = computeUserMetrics(logs, loadByLogId);
     const profileReady = hasBodyProfile(user);
 
     let profileAverage: WorkoutInsights['profileAverage'] = null;
