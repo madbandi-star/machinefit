@@ -28,6 +28,13 @@ export function AdminLocationsPage() {
   const [cityNameKo, setCityNameKo] = useState('');
   const [cityNameEn, setCityNameEn] = useState('');
 
+  const [selectedCityId, setSelectedCityId] = useState('');
+  const [districtCode, setDistrictCode] = useState('');
+  const [districtNameKo, setDistrictNameKo] = useState('');
+  const [districtNameEn, setDistrictNameEn] = useState('');
+  const [districtLat, setDistrictLat] = useState('');
+  const [districtLng, setDistrictLng] = useState('');
+
   const countriesQuery = useQuery({
     queryKey: QUERY_KEYS.locationCountries,
     queryFn: async () => (await locationApi.countries()).data.data,
@@ -43,6 +50,12 @@ export function AdminLocationsPage() {
     queryKey: QUERY_KEYS.locationCities(selectedStateId),
     queryFn: async () => (await locationApi.cities(selectedStateId)).data.data,
     enabled: Boolean(selectedStateId),
+  });
+
+  const districtsQuery = useQuery({
+    queryKey: QUERY_KEYS.locationDistricts(selectedCityId),
+    queryFn: async () => (await locationApi.districts(selectedCityId)).data.data,
+    enabled: Boolean(selectedCityId),
   });
 
   const invalidate = async () => {
@@ -96,6 +109,31 @@ export function AdminLocationsPage() {
       setCityCode('');
       setCityNameKo('');
       setCityNameEn('');
+      await invalidate();
+    },
+    onError: () => showToast(t('error'), 'error'),
+  });
+
+  const districtMutation = useMutation({
+    mutationFn: () => {
+      const lat = districtLat.trim() ? Number(districtLat) : null;
+      const lng = districtLng.trim() ? Number(districtLng) : null;
+      return locationApi.adminUpsertDistrict({
+        cityId: selectedCityId,
+        code: districtCode.trim(),
+        name: { ko: districtNameKo || districtCode, en: districtNameEn || districtCode },
+        latitude: Number.isFinite(lat) ? lat : null,
+        longitude: Number.isFinite(lng) ? lng : null,
+        isActive: true,
+      });
+    },
+    onSuccess: async () => {
+      showToast(t('locations.saved'), 'success');
+      setDistrictCode('');
+      setDistrictNameKo('');
+      setDistrictNameEn('');
+      setDistrictLat('');
+      setDistrictLng('');
       await invalidate();
     },
     onError: () => showToast(t('error'), 'error'),
@@ -168,6 +206,7 @@ export function AdminLocationsPage() {
             onChange={(e) => {
               setCountryCode(e.target.value);
               setSelectedStateId('');
+              setSelectedCityId('');
             }}
           >
             {(countriesQuery.data ?? []).map((c) => (
@@ -213,13 +252,16 @@ export function AdminLocationsPage() {
         </ul>
       </section>
 
-      <section className="admin-table">
+      <section className="admin-table" style={{ marginBottom: '1.5rem' }}>
         <h3>{t('locations.addCity')}</h3>
         <div className="card admin-table__row" style={{ display: 'grid', gap: '0.5rem' }}>
           <select
             className="input"
             value={selectedStateId}
-            onChange={(e) => setSelectedStateId(e.target.value)}
+            onChange={(e) => {
+              setSelectedStateId(e.target.value);
+              setSelectedCityId('');
+            }}
           >
             <option value="">{t('locations.selectStateFirst')}</option>
             {(statesQuery.data ?? []).map((s) => (
@@ -261,6 +303,95 @@ export function AdminLocationsPage() {
               {nameOf(c.name)} ({c.code})
             </li>
           ))}
+        </ul>
+      </section>
+
+      <section className="admin-table">
+        <h3>{t('locations.addDistrict')}</h3>
+        <p className="admin-table__meta" style={{ marginBottom: '0.75rem' }}>
+          {t('locations.addDistrictHint')}
+        </p>
+        <div className="card admin-table__row" style={{ display: 'grid', gap: '0.5rem' }}>
+          <select
+            className="input"
+            value={selectedStateId}
+            onChange={(e) => {
+              setSelectedStateId(e.target.value);
+              setSelectedCityId('');
+            }}
+          >
+            <option value="">{t('locations.selectStateFirst')}</option>
+            {(statesQuery.data ?? []).map((s) => (
+              <option key={s.id} value={s.id}>
+                {nameOf(s.name)}
+              </option>
+            ))}
+          </select>
+          <select
+            className="input"
+            value={selectedCityId}
+            onChange={(e) => setSelectedCityId(e.target.value)}
+            disabled={!selectedStateId}
+          >
+            <option value="">{t('locations.selectCityFirst')}</option>
+            {(citiesQuery.data ?? []).map((c) => (
+              <option key={c.id} value={c.id}>
+                {nameOf(c.name)}
+              </option>
+            ))}
+          </select>
+          <input
+            className="input"
+            placeholder={t('locations.code')}
+            value={districtCode}
+            onChange={(e) => setDistrictCode(e.target.value)}
+          />
+          <input
+            className="input"
+            placeholder={t('locations.nameKo')}
+            value={districtNameKo}
+            onChange={(e) => setDistrictNameKo(e.target.value)}
+          />
+          <input
+            className="input"
+            placeholder={t('locations.nameEn')}
+            value={districtNameEn}
+            onChange={(e) => setDistrictNameEn(e.target.value)}
+          />
+          <input
+            className="input"
+            placeholder={t('locations.latitude')}
+            value={districtLat}
+            onChange={(e) => setDistrictLat(e.target.value)}
+            inputMode="decimal"
+          />
+          <input
+            className="input"
+            placeholder={t('locations.longitude')}
+            value={districtLng}
+            onChange={(e) => setDistrictLng(e.target.value)}
+            inputMode="decimal"
+          />
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={() => districtMutation.mutate()}
+            disabled={
+              districtMutation.isPending || !selectedCityId || !districtCode.trim()
+            }
+          >
+            {t('locations.addDistrict')}
+          </button>
+        </div>
+        <ul style={{ marginTop: '0.75rem' }}>
+          {(districtsQuery.data ?? []).map((d) => (
+            <li key={d.id}>
+              {nameOf(d.name)} ({d.code})
+            </li>
+          ))}
+          {selectedCityId && (districtsQuery.data?.length ?? 0) === 0 ? (
+            <li style={{ color: 'var(--color-text-muted)' }}>{t('locations.noDistricts')}</li>
+          ) : null}
         </ul>
       </section>
     </PageShell>

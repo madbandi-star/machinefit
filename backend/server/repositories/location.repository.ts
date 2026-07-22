@@ -613,4 +613,55 @@ export const locationRepository = {
       sortOrder: r.sort_order,
     };
   },
+
+  async adminUpsertDistrict(input: {
+    cityId: string;
+    code: string;
+    name: { ko: string; en: string };
+    latitude?: number | null;
+    longitude?: number | null;
+    sortOrder?: number;
+    isActive?: boolean;
+  }): Promise<LocationDistrict> {
+    const pool = getPool();
+    if (!pool) throw new Error('DATABASE_REQUIRED');
+    const result = await pool.query<{
+      id: string;
+      city_id: string;
+      code: string;
+      name: NameJson;
+      latitude: string | null;
+      longitude: string | null;
+      sort_order: number;
+    }>(
+      `INSERT INTO location_districts (city_id, code, name, latitude, longitude, sort_order, is_active)
+       VALUES ($1,$2,$3::jsonb,$4,$5,$6,$7)
+       ON CONFLICT (city_id, code) DO UPDATE SET
+         name = EXCLUDED.name,
+         latitude = EXCLUDED.latitude,
+         longitude = EXCLUDED.longitude,
+         sort_order = EXCLUDED.sort_order,
+         is_active = EXCLUDED.is_active
+       RETURNING id, city_id, code, name, latitude::text, longitude::text, sort_order`,
+      [
+        input.cityId,
+        input.code,
+        JSON.stringify(input.name),
+        input.latitude ?? null,
+        input.longitude ?? null,
+        input.sortOrder ?? 1000,
+        input.isActive ?? true,
+      ]
+    );
+    const r = result.rows[0]!;
+    return {
+      id: r.id,
+      cityId: r.city_id,
+      code: r.code,
+      name: r.name,
+      latitude: r.latitude ? parseFloat(r.latitude) : null,
+      longitude: r.longitude ? parseFloat(r.longitude) : null,
+      sortOrder: r.sort_order,
+    };
+  },
 };

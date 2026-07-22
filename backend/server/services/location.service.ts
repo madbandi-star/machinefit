@@ -66,4 +66,5 @@ export const locationService = {
   adminUpsertCountry: locationRepository.adminUpsertCountry.bind(locationRepository),
   adminUpsertState: locationRepository.adminUpsertState.bind(locationRepository),
   adminUpsertCity: locationRepository.adminUpsertCity.bind(locationRepository),
+  adminUpsertDistrict: locationRepository.adminUpsertDistrict.bind(locationRepository),
 };

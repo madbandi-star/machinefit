@@ -78,10 +78,10 @@
   "locations": {
     "nav": "Locations",
     "title": "Global Location admin",
-    "subtitle": "Add or edit countries, states, and cities. New rows appear in pickers without code changes.",
+    "subtitle": "Add or edit countries, states, cities, and neighborhoods. New rows appear in pickers without code changes.",
     "addCountry": "Upsert country",
     "addState": "Upsert state / province",
-    "addCity": "Upsert city",
+    "addCity": "Upsert city / district",
     "code": "Code",
     "nameKo": "Name (Korean)",
     "nameEn": "Name (English)",
@@ -91,6 +91,12 @@
     "stateId": "State ID",
     "saved": "Location data saved.",
     "selectCountryFirst": "Select a country first.",
-    "selectStateFirst": "Select a state first."
+    "selectStateFirst": "Select a state first.",
+    "addDistrict": "Upsert neighborhood (dong)",
+    "addDistrictHint": "Select a city first, then enter neighborhood code and name. Same code updates the name.",
+    "selectCityFirst": "Select a city first.",
+    "noDistricts": "No neighborhoods registered yet.",
+    "latitude": "Latitude (optional)",
+    "longitude": "Longitude (optional)"
   }
 }

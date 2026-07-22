@@ -51,5 +51,15 @@ export const adminLocationCitySchema = z.object({
   isActive: z.boolean().optional().default(true),
 });
 
+export const adminLocationDistrictSchema = z.object({
+  cityId: z.string().uuid(),
+  code: z.string().min(1).max(40),
+  name: z.object({ ko: z.string().min(1), en: z.string().min(1) }),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
+  sortOrder: z.number().int().optional(),
+  isActive: z.boolean().optional().default(true),
+});
+
 export type LocationInput = z.infer<typeof locationInputSchema>;
 export type UserLocationUpsertInput = z.infer<typeof userLocationUpsertSchema>;

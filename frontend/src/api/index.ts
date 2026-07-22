@@ -443,6 +443,7 @@ export const locationApi = {
     apiClient.post('/locations/admin/countries', body),
   adminUpsertState: (body: unknown) => apiClient.post('/locations/admin/states', body),
   adminUpsertCity: (body: unknown) => apiClient.post('/locations/admin/cities', body),
+  adminUpsertDistrict: (body: unknown) => apiClient.post('/locations/admin/districts', body),
 };
 
 export const liveDashboardApi = {

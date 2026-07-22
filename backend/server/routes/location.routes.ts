@@ -32,3 +32,9 @@ locationRouter.post(
   requireRole('admin'),
   locationController.adminUpsertCity
 );
+locationRouter.post(
+  '/admin/districts',
+  authMiddleware,
+  requireRole('admin'),
+  locationController.adminUpsertDistrict
+);

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import {
   adminLocationCitySchema,
   adminLocationCountrySchema,
+  adminLocationDistrictSchema,
   adminLocationStateSchema,
   reverseGeocodeSchema,
   userLocationUpsertSchema,
@@ -79,5 +80,11 @@ export async function adminUpsertState(req: Request, res: Response): Promise<voi
 export async function adminUpsertCity(req: Request, res: Response): Promise<void> {
   const input = adminLocationCitySchema.parse(req.body);
   const data = await locationService.adminUpsertCity(input);
+  res.json({ success: true, data });
+}
+
+export async function adminUpsertDistrict(req: Request, res: Response): Promise<void> {
+  const input = adminLocationDistrictSchema.parse(req.body);
+  const data = await locationService.adminUpsertDistrict(input);
   res.json({ success: true, data });
 }
