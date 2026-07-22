@@ -71,7 +71,9 @@ export const gymMemberRepository = {
     if (!pool) return [];
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT * FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 ORDER BY created_at ASC`,
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
+              email, linked_user_id, profile_access, is_self, created_at, updated_at
+       FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 ORDER BY created_at ASC`,
       [gymId, ownerUserId]
     );
     return result.rows.map(mapMember);
@@ -82,7 +84,9 @@ export const gymMemberRepository = {
     if (!pool) return null;
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT * FROM gym_members WHERE id = $1`,
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
+              email, linked_user_id, profile_access, is_self, created_at, updated_at
+       FROM gym_members WHERE id = $1`,
       [id]
     );
     return result.rows[0] ? mapMember(result.rows[0]) : null;
@@ -93,7 +97,9 @@ export const gymMemberRepository = {
     if (!pool) return null;
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT * FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 AND is_self = TRUE`,
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
+              email, linked_user_id, profile_access, is_self, created_at, updated_at
+       FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 AND is_self = TRUE`,
       [gymId, ownerUserId]
     );
     return result.rows[0] ? mapMember(result.rows[0]) : null;
@@ -262,7 +268,8 @@ export const gymMemberRepository = {
     if (!pool) return null;
 
     const result = await pool.query<GymMemberProfileRequestRow>(
-      `SELECT * FROM gym_member_profile_requests WHERE id = $1`,
+      `SELECT id, member_id, gym_id, owner_user_id, target_user_id, status, created_at, responded_at
+       FROM gym_member_profile_requests WHERE id = $1`,
       [id]
     );
     return result.rows[0] ? mapProfileRequest(result.rows[0]) : null;
@@ -287,7 +294,9 @@ export const gymMemberRepository = {
     if (!pool) return null;
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT * FROM gym_members WHERE gym_id = $1 AND linked_user_id = $2`,
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
+              email, linked_user_id, profile_access, is_self, created_at, updated_at
+       FROM gym_members WHERE gym_id = $1 AND linked_user_id = $2`,
       [gymId, linkedUserId]
     );
     return result.rows[0] ? mapMember(result.rows[0]) : null;

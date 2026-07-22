@@ -122,14 +122,16 @@ export const liveDashboardRepository = {
          ) AS active_now,
          COUNT(DISTINCT wl.user_id)::text AS completed_users,
          COALESCE(SUM(wl.set_count), 0)::text AS total_sets,
-         COALESCE(SUM((
-           SELECT SUM(value::numeric) FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-         )), 0)::text AS total_volume,
+         COALESCE(SUM(vol.kg), 0)::text AS total_volume,
          COUNT(DISTINCT wl.machine_id)::text AS machine_count,
          COUNT(DISTINCT wl.gym_id)::text AS gym_count,
          COUNT(DISTINCT ug.country_code)::text AS country_count
        FROM workout_logs wl
        JOIN user_gyms ug ON ug.id = wl.gym_id
+       LEFT JOIN LATERAL (
+         SELECT SUM(value::numeric) AS kg
+         FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
+       ) vol ON TRUE
        WHERE wl.log_date = CURRENT_DATE
          ${whereExtra}`,
       params
@@ -191,24 +193,26 @@ export const liveDashboardRepository = {
       volume_kg: string;
       sets: string;
     }>(
-      `SELECT
-         ${groupExpr} AS code,
-         ${labelExpr} AS label,
-         COUNT(DISTINCT CASE WHEN wl.updated_at >= NOW() - interval '${ACTIVE_MINUTES} minutes' THEN wl.user_id END)::text AS active_now,
-         COALESCE(SUM((
-           SELECT SUM(value::numeric) FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-         )), 0)::text AS volume_kg,
-         COALESCE(SUM(wl.set_count), 0)::text AS sets
-       FROM workout_logs wl
-       JOIN user_gyms ug ON ug.id = wl.gym_id
-       ${joinUser}
-       WHERE 1=1
-         ${dateSql}
-         ${sql}
-       GROUP BY ${groupExpr}${groupBy === 'gym' || groupBy === 'user' ? `, ${labelExpr}` : ''}
-       ORDER BY SUM((
-         SELECT SUM(value::numeric) FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-       )) DESC NULLS LAST
+      `SELECT code, label, active_now, volume_kg, sets FROM (
+         SELECT
+           ${groupExpr} AS code,
+           ${labelExpr} AS label,
+           COUNT(DISTINCT CASE WHEN wl.updated_at >= NOW() - interval '${ACTIVE_MINUTES} minutes' THEN wl.user_id END)::text AS active_now,
+           COALESCE(SUM(vol.kg), 0)::text AS volume_kg,
+           COALESCE(SUM(wl.set_count), 0)::text AS sets
+         FROM workout_logs wl
+         JOIN user_gyms ug ON ug.id = wl.gym_id
+         ${joinUser}
+         LEFT JOIN LATERAL (
+           SELECT SUM(value::numeric) AS kg
+           FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
+         ) vol ON TRUE
+         WHERE 1=1
+           ${dateSql}
+           ${sql}
+         GROUP BY ${groupExpr}${groupBy === 'gym' || groupBy === 'user' ? `, ${labelExpr}` : ''}
+       ) ranked
+       ORDER BY volume_kg::numeric DESC NULLS LAST
        LIMIT 50`,
       params
     );
@@ -340,11 +344,13 @@ export const liveDashboardRepository = {
       `SELECT EXTRACT(HOUR FROM wl.updated_at AT TIME ZONE 'Asia/Seoul')::int AS hour,
               COUNT(DISTINCT wl.user_id)::text AS active_users,
               COALESCE(SUM(wl.set_count),0)::text AS sets,
-              COALESCE(SUM((
-                SELECT SUM(value::numeric) FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-              )),0)::text AS volume_kg
+              COALESCE(SUM(vol.kg),0)::text AS volume_kg
        FROM workout_logs wl
        JOIN user_gyms ug ON ug.id = wl.gym_id
+       LEFT JOIN LATERAL (
+         SELECT SUM(value::numeric) AS kg
+         FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
+       ) vol ON TRUE
        WHERE wl.updated_at::date = (NOW() AT TIME ZONE 'Asia/Seoul')::date
          ${sql}
        GROUP BY 1
@@ -375,14 +381,16 @@ export const liveDashboardRepository = {
               COALESCE(u.display_name, '회원') AS display_name,
               ug.name AS gym_name,
               m.name AS machine_name,
-              COALESCE((
-                SELECT SUM(value::numeric) FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-              ),0)::text AS volume,
+              COALESCE(vol.kg,0)::text AS volume,
               wl.updated_at::text
        FROM workout_logs wl
        JOIN user_gyms ug ON ug.id = wl.gym_id
        JOIN users u ON u.id = wl.user_id
        JOIN machines m ON m.id = wl.machine_id
+       LEFT JOIN LATERAL (
+         SELECT SUM(value::numeric) AS kg
+         FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
+       ) vol ON TRUE
        WHERE wl.updated_at >= NOW() - interval '24 hours'
          ${sql}
        ORDER BY wl.updated_at DESC
@@ -400,28 +408,30 @@ export const liveDashboardRepository = {
     const pool = getPool();
     if (!pool || !q.trim()) return { gyms: [], users: [], machines: [] };
     const like = `%${q.trim()}%`;
-    const gyms = await pool.query<{
-      id: string;
-      name: string;
-      country_code: string;
-      metro_code: string;
-      district_code: string;
-    }>(
-      `SELECT id::text, name, country_code, metro_code, district_code
-       FROM user_gyms
-       WHERE name ILIKE $1
-       ORDER BY name ASC
-       LIMIT 10`,
-      [like]
-    );
-    const users = await pool.query<{ id: string; display_name: string }>(
-      `SELECT id::text, display_name FROM users WHERE display_name ILIKE $1 LIMIT 10`,
-      [like]
-    );
-    const machines = await pool.query<{ code: string; name: Record<string, string> }>(
-      `SELECT code, name FROM machines WHERE name::text ILIKE $1 AND is_active LIMIT 10`,
-      [like]
-    );
+    const [gyms, users, machines] = await Promise.all([
+      pool.query<{
+        id: string;
+        name: string;
+        country_code: string;
+        metro_code: string;
+        district_code: string;
+      }>(
+        `SELECT id::text, name, country_code, metro_code, district_code
+         FROM user_gyms
+         WHERE name ILIKE $1
+         ORDER BY name ASC
+         LIMIT 10`,
+        [like]
+      ),
+      pool.query<{ id: string; display_name: string }>(
+        `SELECT id::text, display_name FROM users WHERE display_name ILIKE $1 LIMIT 10`,
+        [like]
+      ),
+      pool.query<{ code: string; name: Record<string, string> }>(
+        `SELECT code, name FROM machines WHERE name::text ILIKE $1 AND is_active LIMIT 10`,
+        [like]
+      ),
+    ]);
     void locale;
     return { gyms: gyms.rows, users: users.rows, machines: machines.rows };
   },

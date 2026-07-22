@@ -90,6 +90,69 @@ export const locationRepository = {
     }));
   },
 
+  async listStatesForCountries(countryCodes: string[]): Promise<LocationState[]> {
+    const pool = getPool();
+    if (!pool || countryCodes.length === 0) return [];
+    const codes = countryCodes.map((c) => c.toUpperCase());
+    const result = await pool.query<{
+      id: string;
+      country_code: string;
+      code: string;
+      name: NameJson;
+      latitude: string | null;
+      longitude: string | null;
+      sort_order: number;
+    }>(
+      `SELECT id, country_code, code, name, latitude::text, longitude::text, sort_order
+       FROM location_states
+       WHERE country_code = ANY($1::text[]) AND is_active = TRUE
+       ORDER BY country_code ASC, sort_order ASC, code ASC`,
+      [codes]
+    );
+    return result.rows.map((r) => ({
+      id: r.id,
+      countryCode: r.country_code,
+      code: r.code,
+      name: r.name,
+      latitude: r.latitude ? parseFloat(r.latitude) : null,
+      longitude: r.longitude ? parseFloat(r.longitude) : null,
+      sortOrder: r.sort_order,
+    }));
+  },
+
+  async listCitiesForStateIds(stateIds: string[]): Promise<LocationCity[]> {
+    const pool = getPool();
+    if (!pool || stateIds.length === 0) return [];
+    const result = await pool.query<{
+      id: string;
+      state_id: string;
+      code: string;
+      name: NameJson;
+      latitude: string | null;
+      longitude: string | null;
+      sort_order: number;
+      country_code: string;
+    }>(
+      `SELECT c.id, c.state_id, c.code, c.name, c.latitude::text, c.longitude::text, c.sort_order,
+              s.country_code
+       FROM location_cities c
+       JOIN location_states s ON s.id = c.state_id
+       WHERE c.state_id = ANY($1::uuid[]) AND c.is_active = TRUE
+       ORDER BY c.state_id ASC, c.sort_order ASC, c.code ASC`,
+      [stateIds]
+    );
+    return result.rows.map((r) => ({
+      id: r.id,
+      stateId: r.state_id,
+      countryCode: r.country_code,
+      code: r.code,
+      name: r.name,
+      latitude: r.latitude ? parseFloat(r.latitude) : null,
+      longitude: r.longitude ? parseFloat(r.longitude) : null,
+      sortOrder: r.sort_order,
+    }));
+  },
+
   async listCities(stateId: string): Promise<LocationCity[]> {
     const pool = getPool();
     if (!pool) return [];

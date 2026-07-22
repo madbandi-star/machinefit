@@ -199,27 +199,39 @@ export const gymRepository = {
     }
 
     const where = `WHERE ${conditions.join(' AND ')}`;
-    const countResult = await pool.query<{ count: string }>(
+    const countPromise = pool.query<{ count: string }>(
       `SELECT COUNT(*)::text AS count FROM gyms g ${where}`,
       params
     );
-    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
     const orderBy =
       query.lat != null ? 'ORDER BY distance_km ASC' : 'ORDER BY g.name ASC';
 
-    const result = await pool.query<GymRow>(
-      `SELECT g.*, c.code AS country_code,
-        (SELECT COUNT(*)::text FROM gym_machines gm
-          WHERE gm.gym_id = g.id AND gm.deleted_at IS NULL) AS machine_count
-        ${distanceSelect}
+    const limitIdx = params.length + 1;
+    const offsetIdx = params.length + 2;
+    const resultPromise = pool.query<GymRow>(
+      `SELECT g.id, g.owner_id, g.slug, g.name, g.description, g.address, g.city, g.country_id,
+              g.latitude, g.longitude, g.phone, g.website_url, g.business_hours, g.amenities,
+              g.is_verified, g.is_active, g.registration_status,
+              c.code AS country_code,
+              COALESCE(mc.machine_count, '0') AS machine_count
+              ${distanceSelect}
        FROM gyms g
        LEFT JOIN countries c ON c.id = g.country_id
+       LEFT JOIN (
+         SELECT gym_id, COUNT(*)::text AS machine_count
+         FROM gym_machines
+         WHERE deleted_at IS NULL
+         GROUP BY gym_id
+       ) mc ON mc.gym_id = g.id
        ${where}
        ${orderBy}
-       LIMIT $${idx++} OFFSET $${idx}`,
+       LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
       [...params, query.limit, (query.page - 1) * query.limit]
     );
+
+    const [countResult, result] = await Promise.all([countPromise, resultPromise]);
+    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
     return { items: result.rows.map(mapGym), total };
   },
@@ -234,11 +246,19 @@ export const gymRepository = {
     }
 
     const result = await pool.query<GymRow>(
-      `SELECT g.*, c.code AS country_code,
-        (SELECT COUNT(*)::text FROM gym_machines gm
-          WHERE gm.gym_id = g.id AND gm.deleted_at IS NULL) AS machine_count
+      `SELECT g.id, g.owner_id, g.slug, g.name, g.description, g.address, g.city, g.country_id,
+              g.latitude, g.longitude, g.phone, g.website_url, g.business_hours, g.amenities,
+              g.is_verified, g.is_active, g.registration_status,
+              c.code AS country_code,
+              COALESCE(mc.machine_count, '0') AS machine_count
        FROM gyms g
        LEFT JOIN countries c ON c.id = g.country_id
+       LEFT JOIN (
+         SELECT gym_id, COUNT(*)::text AS machine_count
+         FROM gym_machines
+         WHERE deleted_at IS NULL
+         GROUP BY gym_id
+       ) mc ON mc.gym_id = g.id
        WHERE (g.id::text = $1 OR g.slug = $1)
          AND g.is_active = TRUE
          AND (g.registration_status IS NULL OR g.registration_status = 'approved')`,
@@ -263,7 +283,7 @@ export const gymRepository = {
       photo_url: string;
       sort_order: number;
     }>(
-      'SELECT * FROM gym_photos WHERE gym_id = $1 ORDER BY sort_order ASC',
+      'SELECT id, gym_id, photo_url, sort_order FROM gym_photos WHERE gym_id = $1 ORDER BY sort_order ASC',
       [gym.id]
     );
 

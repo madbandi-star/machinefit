@@ -127,17 +127,19 @@ export const growthTimelineRepository = {
       avg_volume: string;
     }>(
       `WITH user_days AS (
-         SELECT user_id,
-                COUNT(DISTINCT log_date)::numeric AS session_days,
-                COALESCE(SUM(
-                  (SELECT SUM(value::numeric) FROM jsonb_array_elements_text(set_weights_kg) t(value))
-                ), 0) AS volume_kg,
+         SELECT wl.user_id,
+                COUNT(DISTINCT wl.log_date)::numeric AS session_days,
+                COALESCE(SUM(vol.kg), 0) AS volume_kg,
                 GREATEST(
                   1,
-                  (MAX(log_date) - MIN(log_date)) + 1
+                  (MAX(wl.log_date) - MIN(wl.log_date)) + 1
                 )::numeric AS span_days
-         FROM workout_logs
-         GROUP BY user_id
+         FROM workout_logs wl
+         LEFT JOIN LATERAL (
+           SELECT SUM(value::numeric) AS kg
+           FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
+         ) vol ON TRUE
+         GROUP BY wl.user_id
        )
        SELECT
          COALESCE(AVG(session_days / (span_days / 7.0)), 2.4)::text AS avg_sessions,
