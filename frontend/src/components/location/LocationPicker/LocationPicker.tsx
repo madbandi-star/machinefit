@@ -108,15 +108,7 @@ export function LocationPicker({
     staleTime: 300_000,
   });
 
-  const filteredCountries = useMemo(() => {
-    const list = countriesQuery.data ?? [];
-    const q = countryQuery.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((c) => {
-      const n = nameOf(c.name, locale).toLowerCase();
-      return n.includes(q) || c.code.toLowerCase().includes(q);
-    });
-  }, [countriesQuery.data, locale, countryQuery]);
+  const countries = countriesQuery.data ?? [];
 
   const filteredDistricts = useMemo(() => {
     const list = districtsQuery.data ?? [];
@@ -203,14 +195,6 @@ export function LocationPicker({
           {t('location.country')}
           {required ? ' *' : ''}
         </span>
-        <input
-          className="input"
-          type="search"
-          value={countryQuery}
-          onChange={(e) => setCountryQuery(e.target.value)}
-          placeholder={t('location.searchCountry')}
-          disabled={disabled}
-        />
         <select
           className="input"
           value={value.countryCode ?? ''}
@@ -229,7 +213,7 @@ export function LocationPicker({
           }}
         >
           <option value="">{t('location.selectCountry')}</option>
-          {filteredCountries.map((c) => (
+          {countries.map((c) => (
             <option key={c.code} value={c.code}>
               {c.flagEmoji ? `${c.flagEmoji} ` : ''}
               {nameOf(c.name, locale)} ({c.code})
