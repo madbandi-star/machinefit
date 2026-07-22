@@ -3,14 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Film, Music2, Pause, Play, X } from 'lucide-react';
 import type { MotivationMediaItem } from '@machinefit/shared';
-import { motivationMediaApi } from '@/api';
+import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import './MotivationMediaControls.css';
 
 export function MotivationMediaControls() {
   const { t } = useTranslation('common');
   const showToast = useUIStore((s) => s.showToast);
+  const isAuthed = useAuthStore((s) => Boolean(s.tokens?.accessToken && s.user));
 
   const { data } = useQuery({
     queryKey: QUERY_KEYS.motivationMedia,
@@ -21,8 +23,35 @@ export function MotivationMediaControls() {
     staleTime: 60_000,
   });
 
-  const music = data?.music ?? [];
+  const { data: myTracks } = useQuery({
+    queryKey: QUERY_KEYS.userMotivationTracks,
+    queryFn: async () => (await userMotivationTrackApi.list()).data.data,
+    enabled: isAuthed,
+    staleTime: 30_000,
+  });
+
+  const catalogMusic = data?.music ?? [];
   const videos = data?.video ?? [];
+
+  const music = useMemo(() => {
+    const tracks = myTracks?.items ?? [];
+    if (!tracks.length) return catalogMusic;
+
+    const defaults = tracks.filter((track) => track.isDefault);
+    const selected = defaults.length ? defaults : tracks;
+    return selected.map(
+      (track): MotivationMediaItem => ({
+        id: track.id,
+        mediaType: 'music',
+        title: track.title,
+        mediaUrl: track.mediaUrl,
+        youtubeId: null,
+        sortOrder: 0,
+        isSelected: true,
+        isActive: true,
+      })
+    );
+  }, [myTracks?.items, catalogMusic]);
 
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);

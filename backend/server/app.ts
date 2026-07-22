@@ -7,6 +7,7 @@ import { apiRouter } from './routes/index.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { rateLimitMiddleware } from './middlewares/rate-limit.middleware.js';
 import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.js';
+import { storageService } from './services/storage.service.js';
 
 export function createApp() {
   const app = express();
@@ -15,7 +16,11 @@ export function createApp() {
   app.set('trust proxy', 1);
   app.set('etag', 'weak');
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
+  );
   app.use(compression());
   app.use(
     cors({
@@ -26,6 +31,18 @@ export function createApp() {
   app.use(express.json({ limit: '1mb' }));
   app.use(rateLimitMiddleware);
   app.use(env.API_BASE_PATH, cacheHeadersMiddleware);
+
+  // Local-dev fallback for motivation audio when Supabase Storage is not configured.
+  app.use(
+    `${env.API_BASE_PATH}/media/motivation-audio`,
+    express.static(storageService.localUploadRoot, {
+      fallthrough: false,
+      maxAge: '7d',
+      setHeaders(res) {
+        res.setHeader('Accept-Ranges', 'bytes');
+      },
+    })
+  );
 
   app.use(env.API_BASE_PATH, apiRouter);
 

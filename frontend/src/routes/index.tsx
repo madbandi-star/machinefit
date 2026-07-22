@@ -90,6 +90,10 @@ const growthTimeline = () =>
   }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
+const motivationMusic = () =>
+  import('@/pages/motivation-music/MotivationMusicPage').then((m) => ({
+    default: m.MotivationMusicPage,
+  }));
 const ownerDash = () =>
   import('@/pages/gym-owner/dashboard/OwnerDashboardPage').then((m) => ({
     default: m.OwnerDashboardPage,
@@ -178,6 +182,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
+            { path: ROUTES.MOTIVATION_MUSIC, element: lazyRoute(motivationMusic) },
             { path: ROUTES.NOTIFICATIONS, element: lazyRoute(notifications) },
           ],
         },

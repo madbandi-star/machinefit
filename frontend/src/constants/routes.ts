@@ -27,6 +27,7 @@ export const ROUTES = {
   GROWTH_TIMELINE: '/my-page/growth-timeline',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
+  MOTIVATION_MUSIC: '/settings/motivation-music',
   OWNER: '/owner',
   OWNER_GYMS: '/owner/gyms',
   OWNER_GYM: '/owner/gyms/:gymId',

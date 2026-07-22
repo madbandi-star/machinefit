@@ -116,6 +116,27 @@ export const adminApi = {
       ApiResponse<{ mediaType: ReplaceMotivationMediaInput['mediaType']; items: MotivationMediaAdminState['music'] }>
     >('/admin/motivation-media', input),
 
+  uploadMotivationAudio: (file: File, onProgress?: (percent: number) => void) => {
+    const form = new FormData();
+    form.append('file', file);
+    return apiClient.post<
+      ApiResponse<{
+        mediaUrl: string;
+        storagePath: string;
+        originalFilename: string;
+        mimeType: string | null;
+        fileSizeBytes: number;
+      }>
+    >('/admin/motivation-media/upload', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
+      onUploadProgress: (event) => {
+        if (!onProgress || !event.total) return;
+        onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
+  },
+
   listOwnerApplications: (params?: { status?: string }) =>
     apiClient.get<ApiResponse<OwnerApplication[]>>('/admin/owner-applications', { params }),
 

@@ -10,6 +10,7 @@ export * from './workout.types.js';
 export * from './workout-insights.types.js';
 export * from './machine-preferences.types.js';
 export * from './motivation-media.types.js';
+export * from './user-motivation-track.types.js';
 export * from './user-gym.types.js';
 export * from './gym-member.types.js';
 export * from './lifted-weight.types.js';

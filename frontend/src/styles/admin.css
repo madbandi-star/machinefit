@@ -428,3 +428,9 @@
   font-size: 0.85rem;
   color: var(--color-text);
 }
+
+.admin-motivation__upload {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

@@ -66,6 +66,58 @@
     "next": "Next",
     "close": "Close"
   },
+  "motivationMusic": {
+    "title": "Motivation music",
+    "subtitle": "Add a direct URL or upload a file to build your own motivation playlist.",
+    "urlSection": "MP3 URL",
+    "urlHint": "Paste a direct audio URL that can play in the browser.",
+    "uploadSection": "File upload",
+    "uploadHint": "Pick a track from your phone or computer. On desktop you can also drag and drop.",
+    "or": "or",
+    "pickFile": "Choose a file",
+    "formats": "MP3 / M4A / AAC / WAV / OGG · up to {{maxMb}}MB",
+    "libraryTitle": "My music",
+    "libraryDesc": "{{count}} saved track(s)",
+    "empty": "No tracks yet.",
+    "defaultBadge": "Default",
+    "confirmDelete": "Delete this track?",
+    "uploading": "Uploading {{percent}}% · {{remaining}}",
+    "remainingSeconds": "about {{count}}s left",
+    "remainingUnknown": "estimating time left",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Warm-up beat",
+      "url": "Audio URL",
+      "setDefault": "Set as default music"
+    },
+    "actions": {
+      "addUrl": "Add from URL",
+      "chooseFile": "Choose file",
+      "play": "Play",
+      "pause": "Pause",
+      "rename": "Rename",
+      "setDefault": "Set default",
+      "delete": "Delete"
+    },
+    "source": {
+      "upload": "Upload",
+      "url": "URL"
+    },
+    "toasts": {
+      "uploadDone": "Upload complete",
+      "urlAdded": "URL track added.",
+      "saved": "Saved.",
+      "deleted": "Deleted."
+    },
+    "errors": {
+      "unsupportedType": "Unsupported file type. Use MP3, M4A, AAC, WAV, or OGG.",
+      "tooLarge": "That file is too large. Please keep it under 20MB.",
+      "trackLimit": "You've reached the maximum number of saved tracks.",
+      "uploadFailed": "Upload failed. Please try again in a moment.",
+      "network": "Network error. Please check your connection.",
+      "generic": "We couldn't finish that. Please try again in a moment."
+    }
+  },
   "errors": {
     "loadFailed": "We couldn't load that. Please try again in a moment.",
     "notFound": "We couldn't find that.",
@@ -259,7 +311,8 @@
     "homeGymUnset": "Gym not set",
     "copyEmail": "Copy",
     "emailCopied": "Email copied.",
-    "emailCopyFailed": "Couldn't copy email."
+    "emailCopyFailed": "Couldn't copy email.",
+    "motivationMusic": "Motivation music"
   },
   "growthTimeline": {
     "title": "AI Growth Timeline",

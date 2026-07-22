@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/admin.controller.js';
 import * as motivationMediaController from '../controllers/motivation-media.controller.js';
+import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
 import { authMiddleware, requireRole } from '../middlewares/auth.middleware.js';
+import { motivationAudioUpload } from '../middlewares/upload.middleware.js';
 
 export const adminRouter = Router();
 
@@ -10,6 +12,11 @@ adminRouter.use(authMiddleware, requireRole('admin'));
 adminRouter.get('/dashboard', adminController.dashboard);
 adminRouter.get('/motivation-media', motivationMediaController.listAdmin);
 adminRouter.put('/motivation-media', motivationMediaController.replace);
+adminRouter.post(
+  '/motivation-media/upload',
+  motivationAudioUpload,
+  adminMotivationUploadController.uploadMotivationAudio
+);
 adminRouter.get('/users', adminController.listUsers);
 adminRouter.patch('/users/:id', adminController.updateUser);
 adminRouter.get('/gyms', adminController.listGyms);

@@ -1,0 +1,194 @@
+.motivation-music-panel {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+
+.motivation-music-panel__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.motivation-music-panel__desc {
+  margin: 0.3rem 0 0.85rem;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.motivation-music-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.motivation-music-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+}
+
+.motivation-music-or {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.25rem 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.motivation-music-or::before,
+.motivation-music-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.motivation-music-drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.35rem 1rem;
+  border: 1.5px dashed color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-bg));
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.motivation-music-drop.is-dragover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-bg));
+}
+
+.motivation-music-drop.is-busy {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.motivation-music-drop__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.motivation-music-drop__icon {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.motivation-music-drop__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.motivation-music-drop__meta {
+  margin: 0 0 0.35rem;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.motivation-music-progress {
+  margin-top: 0.85rem;
+}
+
+.motivation-music-progress__bar {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  overflow: hidden;
+}
+
+.motivation-music-progress__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary);
+  transition: width 0.15s ease;
+}
+
+.motivation-music-progress__meta {
+  margin: 0.4rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.motivation-music-empty {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.motivation-music-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.motivation-music-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-bg) 45%, var(--color-surface));
+}
+
+.motivation-music-item__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.motivation-music-item__meta {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.motivation-music-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.motivation-music-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+@media (min-width: 720px) {
+  .motivation-music-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .motivation-music-item__main {
+    min-width: 0;
+    flex: 1;
+  }
+}

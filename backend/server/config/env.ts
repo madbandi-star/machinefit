@@ -13,6 +13,11 @@ const envSchema = z.object({
   SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  /** Public API base used to build local-upload media URLs (e.g. https://host/api/v1). */
+  PUBLIC_API_BASE_URL: z.string().optional(),
+  MOTIVATION_AUDIO_MAX_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
+  MOTIVATION_AUDIO_MAX_TRACKS: z.coerce.number().int().positive().default(20),
+  MOTIVATION_AUDIO_BUCKET: z.string().default('motivation-audio'),
 });
 
 export const env = envSchema.parse(process.env);

@@ -6,13 +6,26 @@ import * as liftedVolumeController from '../controllers/lifted-volume.controller
 import * as lifterDnaController from '../controllers/lifter-dna.controller.js';
 import * as achievementController from '../controllers/achievement.controller.js';
 import * as growthTimelineController from '../controllers/growth-timeline.controller.js';
+import * as userMotivationTrackController from '../controllers/user-motivation-track.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { motivationAudioUpload } from '../middlewares/upload.middleware.js';
 
 export const userRouter = Router();
 
 userRouter.get('/me', authMiddleware, userController.getMe);
 userRouter.patch('/me', authMiddleware, userController.updateMe);
 userRouter.post('/me/workout-reports', authMiddleware, userController.sendWorkoutReport);
+
+userRouter.get('/me/motivation-tracks', authMiddleware, userMotivationTrackController.listTracks);
+userRouter.post('/me/motivation-tracks/url', authMiddleware, userMotivationTrackController.createFromUrl);
+userRouter.post(
+  '/me/motivation-tracks/upload',
+  authMiddleware,
+  motivationAudioUpload,
+  userMotivationTrackController.createFromUpload
+);
+userRouter.patch('/me/motivation-tracks/:id', authMiddleware, userMotivationTrackController.updateTrack);
+userRouter.delete('/me/motivation-tracks/:id', authMiddleware, userMotivationTrackController.deleteTrack);
 
 userRouter.get('/me/gyms', authMiddleware, userGymController.listMyGyms);
 userRouter.post('/me/gyms', authMiddleware, userGymController.createMyGym);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { MotivationMediaItem, MotivationMediaType } from '@machinefit/shared';
@@ -7,6 +7,11 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
+import {
+  MOTIVATION_AUDIO_ACCEPT,
+  getApiErrorCode,
+  isAllowedMotivationAudioFile,
+} from '@/utils/motivationAudio';
 import '@/styles/admin.css';
 
 interface SlotDraft {
@@ -146,6 +151,8 @@ export function AdminMotivationPage() {
         labels={{
           title: t('motivation.fieldTitle'),
           url: t('motivation.fieldUrl'),
+          upload: t('motivation.uploadFile'),
+          uploading: t('motivation.uploading'),
           selected: t('motivation.includeInPlaylist'),
           up: t('motivation.moveUp'),
           down: t('motivation.moveDown'),
@@ -168,6 +175,8 @@ export function AdminMotivationPage() {
         labels={{
           title: t('motivation.fieldTitle'),
           url: t('motivation.fieldUrl'),
+          upload: t('motivation.uploadFile'),
+          uploading: t('motivation.uploading'),
           selected: t('motivation.includeInPlaylist'),
           up: t('motivation.moveUp'),
           down: t('motivation.moveDown'),
@@ -177,6 +186,75 @@ export function AdminMotivationPage() {
         }}
       />
     </PageShell>
+  );
+}
+
+function MusicUploadField({
+  uploadLabel,
+  uploadingLabel,
+  onUploaded,
+}: {
+  uploadLabel: string;
+  uploadingLabel: string;
+  onUploaded: (mediaUrl: string, suggestedTitle: string) => void;
+}) {
+  const { t } = useTranslation('admin');
+  const showToast = useUIStore((s) => s.showToast);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [percent, setPercent] = useState<number | null>(null);
+
+  const uploadMutation = useMutation({
+    mutationFn: (file: File) => adminApi.uploadMotivationAudio(file, setPercent),
+    onSuccess: (res, file) => {
+      setPercent(null);
+      const suggested = file.name.replace(/\.[^.]+$/, '').trim() || file.name;
+      onUploaded(res.data.data.mediaUrl, suggested);
+      showToast(t('motivation.uploadDone'), 'success');
+    },
+    onError: (error) => {
+      setPercent(null);
+      const code = getApiErrorCode(error);
+      if (code === 'UNSUPPORTED_FILE_TYPE') {
+        showToast(t('motivation.uploadUnsupported'), 'error');
+        return;
+      }
+      if (code === 'FILE_TOO_LARGE') {
+        showToast(t('motivation.uploadTooLarge'), 'error');
+        return;
+      }
+      showToast(t('error'), 'error');
+    },
+  });
+
+  return (
+    <div className="admin-motivation__upload">
+      <input
+        ref={inputRef}
+        type="file"
+        accept={MOTIVATION_AUDIO_ACCEPT}
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          if (!file) return;
+          if (!isAllowedMotivationAudioFile(file)) {
+            showToast(t('motivation.uploadUnsupported'), 'error');
+            return;
+          }
+          uploadMutation.mutate(file);
+        }}
+      />
+      <button
+        type="button"
+        className="btn btn--secondary"
+        disabled={uploadMutation.isPending}
+        onClick={() => inputRef.current?.click()}
+      >
+        {uploadMutation.isPending && percent != null
+          ? `${uploadingLabel} ${percent}%`
+          : uploadLabel}
+      </button>
+    </div>
   );
 }
 
@@ -204,6 +282,8 @@ function MediaSection({
   labels: {
     title: string;
     url: string;
+    upload: string;
+    uploading: string;
     selected: string;
     up: string;
     down: string;
@@ -266,6 +346,18 @@ function MediaSection({
                   placeholder={mediaType === 'video' ? 'https://youtu.be/…' : 'https://…/track.mp3'}
                 />
               </label>
+              {mediaType === 'music' ? (
+                <MusicUploadField
+                  uploadLabel={labels.upload}
+                  uploadingLabel={labels.uploading}
+                  onUploaded={(mediaUrl, suggestedTitle) => {
+                    onChange(mediaType, index, {
+                      mediaUrl,
+                      title: slot.title.trim() || suggestedTitle,
+                    });
+                  }}
+                />
+              ) : null}
               <label className="admin-motivation__check">
                 <input
                   type="checkbox"

@@ -21,3 +21,7 @@ npm-debug.log*
 shared/dist
 backend/dist
 frontend/dist
+
+# Local upload fallback (dev)
+backend/uploads
+uploads

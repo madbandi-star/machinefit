@@ -66,6 +66,58 @@
     "next": "다음",
     "close": "닫기"
   },
+  "motivationMusic": {
+    "title": "동기부여 음악",
+    "subtitle": "URL을 넣거나 파일을 올려 나만의 동기부여 음악을 관리하세요.",
+    "urlSection": "MP3 URL 입력",
+    "urlHint": "직접 재생 가능한 오디오 URL을 입력할 수 있어요.",
+    "uploadSection": "파일 업로드",
+    "uploadHint": "휴대폰이나 PC에 있는 음악 파일을 선택하세요. PC에서는 끌어다 놓을 수도 있어요.",
+    "or": "또는",
+    "pickFile": "파일 선택",
+    "formats": "MP3 / M4A / AAC / WAV / OGG · 최대 {{maxMb}}MB",
+    "libraryTitle": "내 음악 목록",
+    "libraryDesc": "저장된 음악 {{count}}개",
+    "empty": "아직 등록된 음악이 없어요.",
+    "defaultBadge": "기본",
+    "confirmDelete": "이 음악을 삭제할까요?",
+    "uploading": "업로드 중 {{percent}}% · {{remaining}}",
+    "remainingSeconds": "약 {{count}}초 남음",
+    "remainingUnknown": "남은 시간 계산 중",
+    "fields": {
+      "title": "제목",
+      "titlePlaceholder": "예: 워밍업 비트",
+      "url": "오디오 URL",
+      "setDefault": "기본 음악으로 설정"
+    },
+    "actions": {
+      "addUrl": "URL로 추가",
+      "chooseFile": "파일 선택",
+      "play": "재생",
+      "pause": "일시정지",
+      "rename": "이름 변경",
+      "setDefault": "기본 설정",
+      "delete": "삭제"
+    },
+    "source": {
+      "upload": "업로드",
+      "url": "URL"
+    },
+    "toasts": {
+      "uploadDone": "업로드 완료",
+      "urlAdded": "URL 음악을 추가했어요.",
+      "saved": "저장했어요.",
+      "deleted": "삭제했어요."
+    },
+    "errors": {
+      "unsupportedType": "지원하지 않는 파일 형식이에요. MP3, M4A, AAC, WAV, OGG만 올릴 수 있어요.",
+      "tooLarge": "파일이 너무 커요. 20MB 이하로 올려 주세요.",
+      "trackLimit": "저장 가능한 음악 개수를 초과했어요.",
+      "uploadFailed": "업로드에 실패했어요. 잠시 후 다시 시도해 주세요.",
+      "network": "네트워크 오류가 났어요. 연결을 확인해 주세요.",
+      "generic": "처리하지 못했어요. 잠시 후 다시 시도해 주세요."
+    }
+  },
   "errors": {
     "loadFailed": "불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
     "notFound": "찾을 수 없어요.",
@@ -259,7 +311,8 @@
     "homeGymUnset": "헬스장 미설정",
     "copyEmail": "복사",
     "emailCopied": "이메일을 복사했어요.",
-    "emailCopyFailed": "이메일 복사에 실패했어요."
+    "emailCopyFailed": "이메일 복사에 실패했어요.",
+    "motivationMusic": "동기부여 음악"
   },
   "growthTimeline": {
     "title": "AI 성장 타임랩스",

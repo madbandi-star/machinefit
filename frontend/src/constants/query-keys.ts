@@ -61,6 +61,7 @@ export const QUERY_KEYS = {
   adminModeration: ['admin', 'moderation'] as const,
   adminMotivationMedia: ['admin', 'motivation-media'] as const,
   motivationMedia: ['motivation-media'] as const,
+  userMotivationTracks: ['user', 'motivation-tracks'] as const,
   adminOwnerApplications: ['admin', 'owner-applications'] as const,
   adminGymInventory: (gymId: string) => ['admin', 'gyms', gymId, 'inventory'] as const,
   user: ['user', 'me'] as const,
