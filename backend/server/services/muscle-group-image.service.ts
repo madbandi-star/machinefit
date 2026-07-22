@@ -68,8 +68,8 @@ export const muscleGroupImageService = {
     const processed = await processMuscleGroupImage(params.file.buffer);
 
     // Always persist bytes in Postgres so Render works without Storage keys.
-    const apiMainUrl = muscleGroupMediaUrl(params.muscleGroup, 'main', nextVersion);
-    const apiThumbUrl = muscleGroupMediaUrl(params.muscleGroup, 'thumb', nextVersion);
+    const apiMainUrl = muscleGroupMediaUrl(params.muscleGroup, 'main');
+    const apiThumbUrl = muscleGroupMediaUrl(params.muscleGroup, 'thumb');
 
     // Optional CDN dual-write when service role is configured.
     const mainStored = await trySupabaseStore({
