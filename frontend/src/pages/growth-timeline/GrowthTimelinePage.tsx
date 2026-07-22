@@ -133,7 +133,7 @@ export function GrowthTimelinePage() {
                     <div className="gt-timeline__dot" aria-hidden>
                       {event.emoji}
                     </div>
-                    <div>
+                    <div className="gt-timeline__body">
                       <p className="gt-timeline__date">{event.date}</p>
                       <p className="gt-timeline__title">{loc(event.title, locale)}</p>
                       <p className="gt-timeline__desc">{loc(event.description, locale)}</p>
@@ -187,7 +187,7 @@ export function GrowthTimelinePage() {
                   </button>
                 ))}
               </div>
-              <div className="gt-chart-toolbar">
+              <div className="gt-chart-toolbar gt-chart-toolbar--scroll" role="list">
                 {CHART_METRICS.map((m) => (
                   <button
                     key={m}
@@ -200,14 +200,17 @@ export function GrowthTimelinePage() {
                 ))}
               </div>
               {chartSeries && chartSeries.points.length > 0 ? (
-                <LineChart
-                  points={chartSeries.points}
-                  unit={chartSeries.unit}
-                  showTrend
-                  accentColor="#0f766e"
-                  ariaLabel={t(`growthTimeline.metric.${metric}`)}
-                  size="large"
-                />
+                <div className="gt-chart-wrap">
+                  <LineChart
+                    points={chartSeries.points}
+                    unit={chartSeries.unit}
+                    showTrend
+                    accentColor="#0f766e"
+                    ariaLabel={t(`growthTimeline.metric.${metric}`)}
+                    size="default"
+                    showValueList={false}
+                  />
+                </div>
               ) : (
                 <p className="gt-section__desc">{t('growthTimeline.emptyChart')}</p>
               )}
