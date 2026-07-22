@@ -10,10 +10,6 @@ export function publicApiBase(): string {
   return `http://localhost:${env.PORT}${env.API_BASE_PATH}`;
 }
 
-export function muscleGroupMediaUrl(
-  muscleGroup: string,
-  kind: 'main' | 'thumb',
-  version: number
-): string {
-  return `${publicApiBase()}/media/muscle-group-images/${encodeURIComponent(muscleGroup)}/${kind}?v=${version}`;
+export function muscleGroupMediaUrl(muscleGroup: string, kind: 'main' | 'thumb'): string {
+  return `${publicApiBase()}/media/muscle-group-images/${encodeURIComponent(muscleGroup)}/${kind}`;
 }
