@@ -286,22 +286,24 @@ export const liveDashboardService = {
     let userName: string | undefined;
     let flag: string | undefined;
 
-    if (options.scope.gymId && options.viewerUserId) {
-      const gym = await userGymRepository.findByIdForUser(
-        options.viewerUserId,
-        options.scope.gymId
-      );
-      gymName = gym?.name;
-    }
-    if (options.scope.gymId && !gymName) {
-      gymName = (await liveDashboardRepository.findGymName(options.scope.gymId)) ?? undefined;
-    }
-    if (options.scope.userId) {
-      const user = await userRepository.findById(options.scope.userId);
-      userName = user?.displayName;
-    }
+    const [ownedGym, publicGymName, scopedUser, countries] = await Promise.all([
+      options.scope.gymId && options.viewerUserId
+        ? userGymRepository.findByIdForUser(options.viewerUserId, options.scope.gymId)
+        : Promise.resolve(null),
+      options.scope.gymId
+        ? liveDashboardRepository.findGymName(options.scope.gymId)
+        : Promise.resolve(null),
+      options.scope.userId
+        ? userRepository.findById(options.scope.userId)
+        : Promise.resolve(null),
+      options.scope.countryCode || options.level === 'world'
+        ? locationRepository.listCountries()
+        : Promise.resolve([] as Awaited<ReturnType<typeof locationRepository.listCountries>>),
+    ]);
+
+    gymName = ownedGym?.name ?? publicGymName ?? undefined;
+    userName = scopedUser?.displayName;
     if (options.scope.countryCode) {
-      const countries = await locationRepository.listCountries();
       flag =
         countries.find((c) => c.code === options.scope.countryCode)?.flagEmoji ??
         LIVE_COUNTRIES.find((c) => c.code === options.scope.countryCode)?.flag;
@@ -311,7 +313,6 @@ export const liveDashboardService = {
     let children: LiveChildNode[] = [];
     if (level === 'world') {
       const rows = await liveDashboardRepository.listChildren('country', {}, locale);
-      const countries = await locationRepository.listCountries();
       const countryList = countries.length
         ? countries
         : LIVE_COUNTRIES.map((c) => ({

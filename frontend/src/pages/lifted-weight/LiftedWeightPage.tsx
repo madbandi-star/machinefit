@@ -56,7 +56,7 @@ export function LiftedWeightPage() {
       return res.data.data;
     },
     enabled: mode !== 'gym' || Boolean(queryGymId),
-    staleTime: 30_000,
+    staleTime: 90_000,
   });
 
   const counted = useCountUp(data?.totalKg ?? 0);

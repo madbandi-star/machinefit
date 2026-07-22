@@ -253,28 +253,28 @@ export const achievementRepository = {
   ): Promise<string[]> {
     const pool = getPool();
     if (!pool || awards.length === 0) return [];
-    const inserted: string[] = [];
-    for (const award of awards) {
-      const result = await pool.query<{ achievement_id: string }>(
-        `INSERT INTO user_achievements (user_id, achievement_id, xp_awarded)
-         VALUES ($1, $2, $3)
-         ON CONFLICT (user_id, achievement_id) DO NOTHING
-         RETURNING achievement_id`,
-        [userId, award.achievementId, award.xp]
-      );
-      if (result.rows[0]) inserted.push(result.rows[0].achievement_id);
-    }
+
+    const achievementIds = awards.map((a) => a.achievementId);
+    const xpValues = awards.map((a) => a.xp);
+    const result = await pool.query<{ achievement_id: string }>(
+      `INSERT INTO user_achievements (user_id, achievement_id, xp_awarded)
+       SELECT $1, x.achievement_id, x.xp
+       FROM UNNEST($2::text[], $3::int[]) AS x(achievement_id, xp)
+       ON CONFLICT (user_id, achievement_id) DO NOTHING
+       RETURNING achievement_id`,
+      [userId, achievementIds, xpValues]
+    );
+    const inserted = result.rows.map((r) => r.achievement_id);
     if (inserted.length) {
-      for (const id of inserted) {
-        await pool.query(
-          `INSERT INTO achievement_unlock_counts (achievement_id, unlock_count, updated_at)
-           VALUES ($1, 1, NOW())
-           ON CONFLICT (achievement_id) DO UPDATE SET
-             unlock_count = achievement_unlock_counts.unlock_count + 1,
-             updated_at = NOW()`,
-          [id]
-        );
-      }
+      await pool.query(
+        `INSERT INTO achievement_unlock_counts (achievement_id, unlock_count, updated_at)
+         SELECT x.achievement_id, 1, NOW()
+         FROM UNNEST($1::text[]) AS x(achievement_id)
+         ON CONFLICT (achievement_id) DO UPDATE SET
+           unlock_count = achievement_unlock_counts.unlock_count + 1,
+           updated_at = NOW()`,
+        [inserted]
+      );
     }
     return inserted;
   },
@@ -383,113 +383,112 @@ export const achievementRepository = {
       ? ` AND gym_id = $2 AND member_id = $3`
       : '';
 
-    const volumeResult = await pool.query<{ total_kg: string }>(
-      `SELECT COALESCE(total_kg, 0)::text AS total_kg
-       FROM lifted_volume_totals
-       WHERE scope = 'user' AND scope_id = $1`,
-      [userId]
-    );
-    const totalVolumeKg = parseFloat(volumeResult.rows[0]?.total_kg ?? '0') || 0;
-
     const aggParams: unknown[] = [userId, ...scopeParams];
-    const agg = await pool.query<{
-      workout_count: string;
-      session_days: string;
-      unique_machines: string;
-      unique_brands: string;
-      unique_gyms: string;
-      dawn_workouts: string;
-      morning_workouts: string;
-      afternoon_workouts: string;
-      evening_workouts: string;
-      night_workouts: string;
-      chest_workouts: string;
-      back_workouts: string;
-      legs_workouts: string;
-      shoulders_workouts: string;
-      arms_workouts: string;
-      core_workouts: string;
-      holiday_workouts: string;
-      new_year_workouts: string;
-      christmas_workouts: string;
-      halloween_workouts: string;
-      summer_2026_workouts: string;
-      winter_2026_workouts: string;
-      leg_day_workouts: string;
-      bench_workouts: string;
-      squat_workouts: string;
-    }>(
-      `WITH logs AS (
+    const [volumeResult, agg, datesResult, prCount] = await Promise.all([
+      pool.query<{ total_kg: string }>(
+        `SELECT COALESCE(total_kg, 0)::text AS total_kg
+         FROM lifted_volume_totals
+         WHERE scope = 'user' AND scope_id = $1`,
+        [userId]
+      ),
+      pool.query<{
+        workout_count: string;
+        session_days: string;
+        unique_machines: string;
+        unique_brands: string;
+        unique_gyms: string;
+        dawn_workouts: string;
+        morning_workouts: string;
+        afternoon_workouts: string;
+        evening_workouts: string;
+        night_workouts: string;
+        chest_workouts: string;
+        back_workouts: string;
+        legs_workouts: string;
+        shoulders_workouts: string;
+        arms_workouts: string;
+        core_workouts: string;
+        holiday_workouts: string;
+        new_year_workouts: string;
+        christmas_workouts: string;
+        halloween_workouts: string;
+        summer_2026_workouts: string;
+        winter_2026_workouts: string;
+        leg_day_workouts: string;
+        bench_workouts: string;
+        squat_workouts: string;
+      }>(
+        `WITH logs AS (
+           SELECT
+             wl.log_date,
+             wl.machine_id,
+             wl.gym_id,
+             wl.target_muscle_group,
+             wl.set_weights_kg,
+             wl.created_at,
+             wl.updated_at,
+             m.code AS machine_code,
+             b.code AS brand_code,
+             EXTRACT(HOUR FROM COALESCE(wl.updated_at, wl.created_at) AT TIME ZONE 'Asia/Seoul')::int AS hour_kst
+           FROM workout_logs wl
+           JOIN machines m ON m.id = wl.machine_id
+           LEFT JOIN brands b ON b.id = m.brand_id
+           WHERE wl.user_id = $1${scopeFilter}
+         )
          SELECT
-           wl.log_date,
-           wl.machine_id,
-           wl.gym_id,
-           wl.target_muscle_group,
-           wl.set_weights_kg,
-           wl.created_at,
-           wl.updated_at,
-           m.code AS machine_code,
-           b.code AS brand_code,
-           EXTRACT(HOUR FROM COALESCE(wl.updated_at, wl.created_at) AT TIME ZONE 'Asia/Seoul')::int AS hour_kst
-         FROM workout_logs wl
-         JOIN machines m ON m.id = wl.machine_id
-         LEFT JOIN brands b ON b.id = m.brand_id
-         WHERE wl.user_id = $1${scopeFilter}
-       )
-       SELECT
-         COUNT(*)::text AS workout_count,
-         COUNT(DISTINCT log_date)::text AS session_days,
-         COUNT(DISTINCT machine_id)::text AS unique_machines,
-         COUNT(DISTINCT brand_code)::text AS unique_brands,
-         COUNT(DISTINCT gym_id)::text AS unique_gyms,
-         COUNT(*) FILTER (WHERE hour_kst >= 5 AND hour_kst < 7)::text AS dawn_workouts,
-         COUNT(*) FILTER (WHERE hour_kst >= 7 AND hour_kst < 11)::text AS morning_workouts,
-         COUNT(*) FILTER (WHERE hour_kst >= 11 AND hour_kst < 17)::text AS afternoon_workouts,
-         COUNT(*) FILTER (WHERE hour_kst >= 17 AND hour_kst < 21)::text AS evening_workouts,
-         COUNT(*) FILTER (WHERE hour_kst >= 21 OR hour_kst < 5)::text AS night_workouts,
-         COUNT(*) FILTER (WHERE target_muscle_group = 'chest' OR machine_code ILIKE '%chest%' OR machine_code ILIKE '%bench%')::text AS chest_workouts,
-         COUNT(*) FILTER (WHERE target_muscle_group = 'back' OR machine_code ILIKE '%lat%' OR machine_code ILIKE '%row%' OR machine_code ILIKE '%pulldown%')::text AS back_workouts,
-         COUNT(*) FILTER (WHERE target_muscle_group IN ('legs','quads','hamstrings','glutes','calves') OR machine_code ILIKE '%leg%' OR machine_code ILIKE '%squat%' OR machine_code ILIKE '%press%')::text AS legs_workouts,
-         COUNT(*) FILTER (WHERE target_muscle_group = 'shoulders' OR machine_code ILIKE '%shoulder%' OR machine_code ILIKE '%delt%')::text AS shoulders_workouts,
-         COUNT(*) FILTER (WHERE target_muscle_group IN ('arms','biceps','triceps') OR machine_code ILIKE '%bicep%' OR machine_code ILIKE '%tricep%' OR machine_code ILIKE '%curl%')::text AS arms_workouts,
-         COUNT(*) FILTER (WHERE target_muscle_group IN ('core','abs') OR machine_code ILIKE '%ab%' OR machine_code ILIKE '%core%')::text AS core_workouts,
-         COUNT(*) FILTER (
-           WHERE (EXTRACT(MONTH FROM log_date), EXTRACT(DAY FROM log_date)) IN ((1,1),(3,1),(5,5),(8,15),(10,3),(10,9),(12,25),(12,31))
-         )::text AS holiday_workouts,
-         COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM log_date) = 1 AND EXTRACT(DAY FROM log_date) = 1)::text AS new_year_workouts,
-         COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM log_date) = 12 AND EXTRACT(DAY FROM log_date) = 25)::text AS christmas_workouts,
-         COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM log_date) = 10 AND EXTRACT(DAY FROM log_date) = 31)::text AS halloween_workouts,
-         COUNT(*) FILTER (
-           WHERE log_date >= DATE '2026-06-01' AND log_date < DATE '2026-09-01'
-         )::text AS summer_2026_workouts,
-         COUNT(*) FILTER (
-           WHERE (log_date >= DATE '2025-12-01' AND log_date < DATE '2026-03-01')
-              OR (log_date >= DATE '2026-12-01' AND log_date < DATE '2027-03-01')
-         )::text AS winter_2026_workouts,
-         COUNT(*) FILTER (
-           WHERE target_muscle_group IN ('legs','quads','hamstrings','glutes','calves')
-              OR machine_code ILIKE '%leg%' OR machine_code ILIKE '%squat%'
-         )::text AS leg_day_workouts,
-         COUNT(*) FILTER (WHERE machine_code ILIKE '%bench%')::text AS bench_workouts,
-         COUNT(*) FILTER (WHERE machine_code ILIKE '%squat%')::text AS squat_workouts
-       FROM logs`,
-      aggParams
-    );
+           COUNT(*)::text AS workout_count,
+           COUNT(DISTINCT log_date)::text AS session_days,
+           COUNT(DISTINCT machine_id)::text AS unique_machines,
+           COUNT(DISTINCT brand_code)::text AS unique_brands,
+           COUNT(DISTINCT gym_id)::text AS unique_gyms,
+           COUNT(*) FILTER (WHERE hour_kst >= 5 AND hour_kst < 7)::text AS dawn_workouts,
+           COUNT(*) FILTER (WHERE hour_kst >= 7 AND hour_kst < 11)::text AS morning_workouts,
+           COUNT(*) FILTER (WHERE hour_kst >= 11 AND hour_kst < 17)::text AS afternoon_workouts,
+           COUNT(*) FILTER (WHERE hour_kst >= 17 AND hour_kst < 21)::text AS evening_workouts,
+           COUNT(*) FILTER (WHERE hour_kst >= 21 OR hour_kst < 5)::text AS night_workouts,
+           COUNT(*) FILTER (WHERE target_muscle_group = 'chest' OR machine_code ILIKE '%chest%' OR machine_code ILIKE '%bench%')::text AS chest_workouts,
+           COUNT(*) FILTER (WHERE target_muscle_group = 'back' OR machine_code ILIKE '%lat%' OR machine_code ILIKE '%row%' OR machine_code ILIKE '%pulldown%')::text AS back_workouts,
+           COUNT(*) FILTER (WHERE target_muscle_group IN ('legs','quads','hamstrings','glutes','calves') OR machine_code ILIKE '%leg%' OR machine_code ILIKE '%squat%' OR machine_code ILIKE '%press%')::text AS legs_workouts,
+           COUNT(*) FILTER (WHERE target_muscle_group = 'shoulders' OR machine_code ILIKE '%shoulder%' OR machine_code ILIKE '%delt%')::text AS shoulders_workouts,
+           COUNT(*) FILTER (WHERE target_muscle_group IN ('arms','biceps','triceps') OR machine_code ILIKE '%bicep%' OR machine_code ILIKE '%tricep%' OR machine_code ILIKE '%curl%')::text AS arms_workouts,
+           COUNT(*) FILTER (WHERE target_muscle_group IN ('core','abs') OR machine_code ILIKE '%ab%' OR machine_code ILIKE '%core%')::text AS core_workouts,
+           COUNT(*) FILTER (
+             WHERE (EXTRACT(MONTH FROM log_date), EXTRACT(DAY FROM log_date)) IN ((1,1),(3,1),(5,5),(8,15),(10,3),(10,9),(12,25),(12,31))
+           )::text AS holiday_workouts,
+           COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM log_date) = 1 AND EXTRACT(DAY FROM log_date) = 1)::text AS new_year_workouts,
+           COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM log_date) = 12 AND EXTRACT(DAY FROM log_date) = 25)::text AS christmas_workouts,
+           COUNT(*) FILTER (WHERE EXTRACT(MONTH FROM log_date) = 10 AND EXTRACT(DAY FROM log_date) = 31)::text AS halloween_workouts,
+           COUNT(*) FILTER (
+             WHERE log_date >= DATE '2026-06-01' AND log_date < DATE '2026-09-01'
+           )::text AS summer_2026_workouts,
+           COUNT(*) FILTER (
+             WHERE (log_date >= DATE '2025-12-01' AND log_date < DATE '2026-03-01')
+                OR (log_date >= DATE '2026-12-01' AND log_date < DATE '2027-03-01')
+           )::text AS winter_2026_workouts,
+           COUNT(*) FILTER (
+             WHERE target_muscle_group IN ('legs','quads','hamstrings','glutes','calves')
+                OR machine_code ILIKE '%leg%' OR machine_code ILIKE '%squat%'
+           )::text AS leg_day_workouts,
+           COUNT(*) FILTER (WHERE machine_code ILIKE '%bench%')::text AS bench_workouts,
+           COUNT(*) FILTER (WHERE machine_code ILIKE '%squat%')::text AS squat_workouts
+         FROM logs`,
+        aggParams
+      ),
+      pool.query<{ log_date: string }>(
+        `SELECT DISTINCT log_date::text AS log_date
+         FROM workout_logs
+         WHERE user_id = $1${scopeFilterBare}
+         ORDER BY log_date ASC`,
+        [userId, ...scopeParams]
+      ),
+      computePrCount(pool, userId, options),
+    ]);
 
+    const totalVolumeKg = parseFloat(volumeResult.rows[0]?.total_kg ?? '0') || 0;
     const row = agg.rows[0];
     const n = (v: string | undefined) => parseInt(v ?? '0', 10) || 0;
-
-    const datesResult = await pool.query<{ log_date: string }>(
-      `SELECT DISTINCT log_date::text AS log_date
-       FROM workout_logs
-       WHERE user_id = $1${scopeFilterBare}
-       ORDER BY log_date ASC`,
-      [userId, ...scopeParams]
-    );
     const dates = datesResult.rows.map((r) => r.log_date);
     const { currentStreak, longestStreak } = computeStreaks(dates);
-
-    const prCount = await computePrCount(pool, userId, options);
 
     const chest = n(row?.chest_workouts);
     const back = n(row?.back_workouts);

@@ -23,27 +23,22 @@ export const liftedVolumeRepository = {
     const pool = getPool();
     if (!pool || deltas.length === 0) return;
 
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      for (const row of deltas) {
-        if (!Number.isFinite(row.deltaKg) || row.deltaKg === 0) continue;
-        await client.query(
-          `INSERT INTO lifted_volume_totals (scope, scope_id, total_kg, updated_at)
-           VALUES ($1, $2, GREATEST(0, $3), NOW())
-           ON CONFLICT (scope, scope_id) DO UPDATE
-             SET total_kg = GREATEST(0, lifted_volume_totals.total_kg + EXCLUDED.total_kg),
-                 updated_at = NOW()`,
-          [row.scope, row.scopeId, row.deltaKg]
-        );
-      }
-      await client.query('COMMIT');
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    const rows = deltas.filter((row) => Number.isFinite(row.deltaKg) && row.deltaKg !== 0);
+    if (rows.length === 0) return;
+
+    const scopes = rows.map((r) => r.scope);
+    const scopeIds = rows.map((r) => r.scopeId);
+    const deltaKgs = rows.map((r) => r.deltaKg);
+
+    await pool.query(
+      `INSERT INTO lifted_volume_totals (scope, scope_id, total_kg, updated_at)
+       SELECT x.scope, x.scope_id, GREATEST(0, x.delta_kg), NOW()
+       FROM UNNEST($1::text[], $2::text[], $3::numeric[]) AS x(scope, scope_id, delta_kg)
+       ON CONFLICT (scope, scope_id) DO UPDATE
+         SET total_kg = GREATEST(0, lifted_volume_totals.total_kg + EXCLUDED.total_kg),
+             updated_at = NOW()`,
+      [scopes, scopeIds, deltaKgs]
+    );
   },
 
   async listTopUsers(options: {

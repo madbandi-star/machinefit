@@ -352,6 +352,8 @@
   color: #e5e7eb;
   font-size: 0.86rem;
   line-height: 1.35;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
 }
 
 .live-feed__empty {

@@ -64,8 +64,8 @@ export function LiveDashboardPage() {
       const res = await liveDashboardApi.snapshot({ level, ...scope });
       return res.data.data;
     },
-    refetchInterval: 15_000,
-    staleTime: 10_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 45_000 : false),
+    staleTime: 30_000,
   });
 
   const rankingsQuery = useQuery({
@@ -81,7 +81,8 @@ export function LiveDashboardPage() {
       });
       return res.data.data;
     },
-    refetchInterval: 30_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
+    staleTime: 45_000,
   });
 
   const searchQuery = useQuery({

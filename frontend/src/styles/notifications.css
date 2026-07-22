@@ -12,6 +12,8 @@
   border: 1px solid var(--color-border);
   transition: border-color 0.15s, opacity 0.15s;
   box-shadow: var(--shadow-sm);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 88px;
 }
 
 .notification-item--read {

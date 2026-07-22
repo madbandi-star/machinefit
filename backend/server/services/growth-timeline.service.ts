@@ -74,9 +74,10 @@ export const growthTimelineService = {
         ? { gymId: options.gymId, memberId: options.memberId }
         : undefined;
 
-    const [rawLogs, peers] = await Promise.all([
+    const [rawLogs, peers, logsRevision] = await Promise.all([
       growthTimelineRepository.loadLogs(userId, locale, logScope),
       growthTimelineRepository.peerAverages(),
+      growthTimelineRepository.getLogsRevision(userId, logScope),
     ]);
     const logs = await enrichLogsWithLoad(userId, rawLogs, options);
 
@@ -87,7 +88,12 @@ export const growthTimelineService = {
 
     // Persistent cache is user-keyed; only write when unscoped.
     if (!logScope) {
-      await growthTimelineRepository.upsertCache(userId, snapshot, logs.length);
+      await growthTimelineRepository.upsertCache(
+        userId,
+        snapshot,
+        logs.length,
+        logsRevision
+      );
     }
     memoryCache.set(scopeCacheKey(userId, options), snapshot);
     return snapshot;
@@ -114,9 +120,11 @@ export const growthTimelineService = {
       return this.refreshUser(userId, locale, options);
     }
 
-    const logCount = await growthTimelineRepository.countLogs(userId);
-    const cached = await growthTimelineRepository.getCached(userId);
-    if (cached && cached.logCount === logCount) {
+    const [logsRevision, cached] = await Promise.all([
+      growthTimelineRepository.getLogsRevision(userId),
+      growthTimelineRepository.getCached(userId),
+    ]);
+    if (cached && cached.logsRevision === logsRevision) {
       memoryCache.set(cacheKey, cached.snapshot);
       return cached.snapshot;
     }
