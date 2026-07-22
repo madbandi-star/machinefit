@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { publicApiBase } from '../utils/public-api-base.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audio');
@@ -23,16 +24,6 @@ function getSupabase(): SupabaseClient | null {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   return supabase;
-}
-
-function publicApiBase(): string {
-  if (env.PUBLIC_API_BASE_URL?.trim()) {
-    return env.PUBLIC_API_BASE_URL.replace(/\/+$/, '');
-  }
-  if (env.NODE_ENV === 'production') {
-    return 'https://machinefit-api.onrender.com/api/v1';
-  }
-  return `http://localhost:${env.PORT}${env.API_BASE_PATH}`;
 }
 
 async function ensureAudioBucket(): Promise<void> {

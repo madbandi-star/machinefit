@@ -18,6 +18,12 @@ type MuscleGroupImageRow = {
   updated_at: Date | string;
 };
 
+const META_COLUMNS = `
+  muscle_group, image_url, thumbnail_url, storage_path, thumbnail_storage_path,
+  original_filename, mime_type, file_size_bytes, width, height, version,
+  created_at, updated_at
+`;
+
 function withCacheBust(url: string | null, version: number): string | null {
   if (!url) return null;
   const separator = url.includes('?') ? '&' : '?';
@@ -83,7 +89,7 @@ export const muscleGroupImageRepository = {
     }
 
     const result = await pool.query<MuscleGroupImageRow>(
-      `SELECT * FROM muscle_group_images ORDER BY muscle_group ASC`
+      `SELECT ${META_COLUMNS} FROM muscle_group_images ORDER BY muscle_group ASC`
     );
     const byGroup = new Map(result.rows.map((row) => [row.muscle_group, mapRow(row)]));
     return TARGET_MUSCLE_GROUPS.map((group) => byGroup.get(group) ?? emptyAsset(group));
@@ -93,11 +99,38 @@ export const muscleGroupImageRepository = {
     const pool = getPool();
     if (!pool) return null;
     const result = await pool.query<MuscleGroupImageRow>(
-      `SELECT * FROM muscle_group_images WHERE muscle_group = $1 LIMIT 1`,
+      `SELECT ${META_COLUMNS} FROM muscle_group_images WHERE muscle_group = $1 LIMIT 1`,
       [muscleGroup]
     );
     const row = result.rows[0];
     return row ? mapRecord(row) : null;
+  },
+
+  async getBlob(
+    muscleGroup: MuscleGroupImageKey,
+    kind: 'main' | 'thumb'
+  ): Promise<{ data: Buffer; mimeType: string; version: number } | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const column = kind === 'thumb' ? 'thumbnail_data' : 'image_data';
+    const result = await pool.query<{
+      blob: Buffer | null;
+      mime_type: string | null;
+      version: number;
+    }>(
+      `SELECT ${column} AS blob, mime_type, version
+       FROM muscle_group_images
+       WHERE muscle_group = $1
+       LIMIT 1`,
+      [muscleGroup]
+    );
+    const row = result.rows[0];
+    if (!row?.blob) return null;
+    return {
+      data: Buffer.isBuffer(row.blob) ? row.blob : Buffer.from(row.blob),
+      mimeType: row.mime_type || 'image/webp',
+      version: Number(row.version ?? 1),
+    };
   },
 
   async upsert(input: {
@@ -112,6 +145,8 @@ export const muscleGroupImageRepository = {
     width: number | null;
     height: number | null;
     version: number;
+    imageData: Buffer;
+    thumbnailData: Buffer;
   }): Promise<MuscleGroupImageAsset> {
     const pool = getPool();
     if (!pool) {
@@ -134,10 +169,12 @@ export const muscleGroupImageRepository = {
       `INSERT INTO muscle_group_images (
          muscle_group, image_url, thumbnail_url, storage_path, thumbnail_storage_path,
          original_filename, mime_type, file_size_bytes, width, height, version,
+         image_data, thumbnail_data,
          created_at, updated_at
        ) VALUES (
          $1, $2, $3, $4, $5,
          $6, $7, $8, $9, $10, $11,
+         $12, $13,
          NOW(), NOW()
        )
        ON CONFLICT (muscle_group) DO UPDATE SET
@@ -151,8 +188,10 @@ export const muscleGroupImageRepository = {
          width = EXCLUDED.width,
          height = EXCLUDED.height,
          version = EXCLUDED.version,
+         image_data = EXCLUDED.image_data,
+         thumbnail_data = EXCLUDED.thumbnail_data,
          updated_at = NOW()
-       RETURNING *`,
+       RETURNING ${META_COLUMNS}`,
       [
         input.muscleGroup,
         input.imageUrl,
@@ -165,6 +204,8 @@ export const muscleGroupImageRepository = {
         input.width,
         input.height,
         input.version,
+        input.imageData,
+        input.thumbnailData,
       ]
     );
     return mapRow(result.rows[0]);

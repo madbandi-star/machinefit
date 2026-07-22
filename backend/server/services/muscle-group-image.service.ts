@@ -7,10 +7,34 @@ import {
   muscleGroupImageLimits,
 } from '../config/muscle-group-image.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { muscleGroupMediaUrl } from '../utils/public-api-base.js';
+import { env } from '../config/env.js';
+
+async function trySupabaseStore(params: {
+  muscleGroup: string;
+  kind: 'main' | 'thumb';
+  extension: string;
+  mimeType: string;
+  buffer: Buffer;
+  version: number;
+}): Promise<{ storagePath: string; publicUrl: string } | null> {
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  try {
+    const stored = await storageService.saveMuscleGroupImage(params);
+    return { storagePath: stored.storagePath, publicUrl: stored.publicUrl };
+  } catch {
+    // Keep DB-backed media working even if Storage is misconfigured.
+    return null;
+  }
+}
 
 export const muscleGroupImageService = {
   async list(): Promise<MuscleGroupImageAsset[]> {
     return muscleGroupImageRepository.list();
+  },
+
+  async getBlob(muscleGroup: MuscleGroupImageKey, kind: 'main' | 'thumb') {
+    return muscleGroupImageRepository.getBlob(muscleGroup, kind);
   },
 
   async upload(params: {
@@ -43,7 +67,12 @@ export const muscleGroupImageService = {
     const nextVersion = (existing?.version ?? 0) + 1;
     const processed = await processMuscleGroupImage(params.file.buffer);
 
-    const mainStored = await storageService.saveMuscleGroupImage({
+    // Always persist bytes in Postgres so Render works without Storage keys.
+    const apiMainUrl = muscleGroupMediaUrl(params.muscleGroup, 'main', nextVersion);
+    const apiThumbUrl = muscleGroupMediaUrl(params.muscleGroup, 'thumb', nextVersion);
+
+    // Optional CDN dual-write when service role is configured.
+    const mainStored = await trySupabaseStore({
       muscleGroup: params.muscleGroup,
       kind: 'main',
       extension: processed.main.extension,
@@ -51,7 +80,7 @@ export const muscleGroupImageService = {
       buffer: processed.main.buffer,
       version: nextVersion,
     });
-    const thumbStored = await storageService.saveMuscleGroupImage({
+    const thumbStored = await trySupabaseStore({
       muscleGroup: params.muscleGroup,
       kind: 'thumb',
       extension: processed.thumbnail.extension,
@@ -62,20 +91,24 @@ export const muscleGroupImageService = {
 
     const saved = await muscleGroupImageRepository.upsert({
       muscleGroup: params.muscleGroup,
-      imageUrl: mainStored.publicUrl,
-      thumbnailUrl: thumbStored.publicUrl,
-      storagePath: mainStored.storagePath,
-      thumbnailStoragePath: thumbStored.storagePath,
+      imageUrl: mainStored?.publicUrl ?? apiMainUrl,
+      thumbnailUrl: thumbStored?.publicUrl ?? apiThumbUrl,
+      storagePath: mainStored?.storagePath ?? `db:${params.muscleGroup}/main`,
+      thumbnailStoragePath: thumbStored?.storagePath ?? `db:${params.muscleGroup}/thumb`,
       originalFilename: originalName,
       mimeType: processed.main.mimeType,
       fileSizeBytes: processed.main.fileSizeBytes,
       width: processed.main.width,
       height: processed.main.height,
       version: nextVersion,
+      imageData: processed.main.buffer,
+      thumbnailData: processed.thumbnail.buffer,
     });
 
-    if (existing) {
+    if (existing?.storagePath && !existing.storagePath.startsWith('db:')) {
       await storageService.deleteMuscleGroupImage(existing.storagePath);
+    }
+    if (existing?.thumbnailStoragePath && !existing.thumbnailStoragePath.startsWith('db:')) {
       await storageService.deleteMuscleGroupImage(existing.thumbnailStoragePath);
     }
 
@@ -85,8 +118,12 @@ export const muscleGroupImageService = {
   async remove(muscleGroup: MuscleGroupImageKey): Promise<MuscleGroupImageAsset> {
     const removed = await muscleGroupImageRepository.remove(muscleGroup);
     if (removed) {
-      await storageService.deleteMuscleGroupImage(removed.storagePath);
-      await storageService.deleteMuscleGroupImage(removed.thumbnailStoragePath);
+      if (removed.storagePath && !removed.storagePath.startsWith('db:')) {
+        await storageService.deleteMuscleGroupImage(removed.storagePath);
+      }
+      if (removed.thumbnailStoragePath && !removed.thumbnailStoragePath.startsWith('db:')) {
+        await storageService.deleteMuscleGroupImage(removed.thumbnailStoragePath);
+      }
     }
     return {
       muscleGroup,
