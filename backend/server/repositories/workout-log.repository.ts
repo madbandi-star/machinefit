@@ -591,6 +591,12 @@ export const workoutLogRepository = {
     avgVolumeGrowthPct: number;
     avgWorkoutCount: number;
   }> {
+    const cacheKey = `daily:${JSON.stringify(options)}`;
+    const cached = cohortStatsCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.value;
+    }
+
     const pool = getPool();
     if (!pool) {
       return {
@@ -706,12 +712,18 @@ export const workoutLogRepository = {
     );
 
     const row = result.rows[0];
-    return {
+    const value = {
       sampleSize: row ? parseInt(row.sample_size, 10) : 0,
       avgMaxWeightKg: row?.avg_pr ? parseFloat(row.avg_pr) : 0,
       avgSessionVolumeKg: row?.avg_session_volume ? parseFloat(row.avg_session_volume) : 0,
       avgVolumeGrowthPct: row?.avg_volume_growth_pct ? parseFloat(row.avg_volume_growth_pct) : 0,
       avgWorkoutCount: row?.avg_workout_count ? parseFloat(row.avg_workout_count) : 0,
     };
+    cohortStatsCache.set(cacheKey, { expiresAt: Date.now() + COHORT_STATS_TTL_MS, value });
+    if (cohortStatsCache.size > 200) {
+      const oldest = cohortStatsCache.keys().next().value;
+      if (oldest) cohortStatsCache.delete(oldest);
+    }
+    return value;
   },
 };

@@ -77,7 +77,7 @@ export function AchievementsPage() {
       return res.data.data;
     },
     enabled: memberScopeReady,
-    staleTime: 15_000,
+    staleTime: 90_000,
   });
 
   const rankingsQuery = useQuery({
@@ -87,7 +87,7 @@ export function AchievementsPage() {
       return res.data.data;
     },
     enabled: tab === 'rankings',
-    staleTime: 30_000,
+    staleTime: 180_000,
   });
 
   useEffect(() => {

@@ -427,4 +427,4 @@ export const liveDashboardRepository = {
   },
 };
 
-export const liveSnapshotCache = new TtlCache<unknown>(12_000);
+export const liveSnapshotCache = new TtlCache<unknown>(25_000);

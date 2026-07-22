@@ -3,6 +3,9 @@ import { BRAND_CODES, machineMatchesMuscleGroupFilter } from '@machinefit/shared
 import { getPool } from '../config/database.js';
 import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
 
+const MACHINE_ID_TTL_MS = 30 * 60_000;
+const machineIdByCodeCache = new Map<string, { expiresAt: number; id: string | null }>();
+
 interface MachineRow {
   id: string;
   brand_id: string;
@@ -264,14 +267,29 @@ export const machineRepository = {
   },
 
   async findIdByCode(code: string): Promise<string | null> {
+    const cached = machineIdByCodeCache.get(code);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.id;
+    }
+
     const pool = getPool();
-    if (!pool) return MOCK_MACHINES.find((m) => m.code === code)?.id ?? null;
+    if (!pool) {
+      const id = MOCK_MACHINES.find((m) => m.code === code)?.id ?? null;
+      machineIdByCodeCache.set(code, { expiresAt: Date.now() + MACHINE_ID_TTL_MS, id });
+      return id;
+    }
 
     const result = await pool.query<{ id: string }>(
       'SELECT id FROM machines WHERE code = $1',
       [code]
     );
-    return result.rows[0]?.id ?? null;
+    const id = result.rows[0]?.id ?? null;
+    machineIdByCodeCache.set(code, { expiresAt: Date.now() + MACHINE_ID_TTL_MS, id });
+    if (machineIdByCodeCache.size > 500) {
+      const oldest = machineIdByCodeCache.keys().next().value;
+      if (oldest) machineIdByCodeCache.delete(oldest);
+    }
+    return id;
   },
 };
 

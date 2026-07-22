@@ -155,15 +155,21 @@ export const growthTimelineRepository = {
 
   async getCached(
     userId: string
-  ): Promise<{ snapshot: GrowthTimelineSnapshot; logCount: number; updatedAt: Date } | null> {
+  ): Promise<{
+    snapshot: GrowthTimelineSnapshot;
+    logCount: number;
+    logsRevision: string;
+    updatedAt: Date;
+  } | null> {
     const pool = getPool();
     if (!pool) return null;
     const result = await pool.query<{
       snapshot_json: GrowthTimelineSnapshot;
       log_count: number;
+      logs_revision: string | null;
       updated_at: Date;
     }>(
-      `SELECT snapshot_json, log_count, updated_at
+      `SELECT snapshot_json, log_count, logs_revision, updated_at
        FROM user_growth_timeline WHERE user_id = $1`,
       [userId]
     );
@@ -172,6 +178,7 @@ export const growthTimelineRepository = {
     return {
       snapshot: row.snapshot_json,
       logCount: row.log_count,
+      logsRevision: row.logs_revision ?? '',
       updatedAt: row.updated_at,
     };
   },
@@ -179,19 +186,43 @@ export const growthTimelineRepository = {
   async upsertCache(
     userId: string,
     snapshot: GrowthTimelineSnapshot,
-    logCount: number
+    logCount: number,
+    logsRevision: string
   ): Promise<void> {
     const pool = getPool();
     if (!pool) return;
     await pool.query(
-      `INSERT INTO user_growth_timeline (user_id, snapshot_json, log_count, updated_at)
-       VALUES ($1, $2::jsonb, $3, NOW())
+      `INSERT INTO user_growth_timeline (user_id, snapshot_json, log_count, logs_revision, updated_at)
+       VALUES ($1, $2::jsonb, $3, $4, NOW())
        ON CONFLICT (user_id) DO UPDATE SET
          snapshot_json = EXCLUDED.snapshot_json,
          log_count = EXCLUDED.log_count,
+         logs_revision = EXCLUDED.logs_revision,
          updated_at = NOW()`,
-      [userId, JSON.stringify(snapshot), logCount]
+      [userId, JSON.stringify(snapshot), logCount, logsRevision]
     );
+  },
+
+  /** Cheap fingerprint so edits with the same log count still invalidate cache. */
+  async getLogsRevision(
+    userId: string,
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<string> {
+    const pool = getPool();
+    if (!pool) return '0:';
+    const params: unknown[] = [userId];
+    let filters = '';
+    if (options?.gymId && options?.memberId) {
+      params.push(options.gymId, options.memberId);
+      filters = ' AND gym_id = $2 AND member_id = $3';
+    }
+    const result = await pool.query<{ c: string; m: string | null }>(
+      `SELECT COUNT(*)::text AS c, MAX(updated_at)::text AS m
+       FROM workout_logs
+       WHERE user_id = $1${filters}`,
+      params
+    );
+    return `${result.rows[0]?.c ?? '0'}:${result.rows[0]?.m ?? ''}`;
   },
 
   async countLogs(

@@ -195,6 +195,8 @@
   gap: 0.8rem;
   align-items: start;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
 }
 
 .achievement-card--unlocked {

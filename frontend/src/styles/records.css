@@ -420,6 +420,8 @@
   background: var(--glass-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 220px;
 }
 
 .history-record-card--logged {

@@ -18,6 +18,18 @@ import { userRepository } from '../repositories/user.repository.js';
 /** In-process revision fingerprints — skip full recompute when logs are unchanged. */
 const logsRevisionCache = new Map<string, string>();
 
+/** Assembled snapshots keyed by revision — skip rebuild tax on repeated reads. */
+const snapshotCache = new Map<string, { revision: string; snapshot: AchievementSnapshot }>();
+
+const META_TTL_MS = 10 * 60_000;
+let unlockMetaCache:
+  | {
+      expiresAt: number;
+      unlockCounts: Map<string, number>;
+      activeUsers: number;
+    }
+  | null = null;
+
 function revisionKey(userId: string, options?: { gymId?: string; memberId?: string }): string {
   if (options?.gymId && options?.memberId) {
     return `${userId}:${options.gymId}:${options.memberId}`;
@@ -25,17 +37,76 @@ function revisionKey(userId: string, options?: { gymId?: string; memberId?: stri
   return userId;
 }
 
+async function loadUnlockMeta(): Promise<{
+  unlockCounts: Map<string, number>;
+  activeUsers: number;
+}> {
+  if (unlockMetaCache && unlockMetaCache.expiresAt > Date.now()) {
+    return {
+      unlockCounts: unlockMetaCache.unlockCounts,
+      activeUsers: unlockMetaCache.activeUsers,
+    };
+  }
+  const [unlockCounts, activeUsers] = await Promise.all([
+    achievementRepository.getUnlockCounts(),
+    achievementRepository.countActiveUsers(),
+  ]);
+  unlockMetaCache = {
+    expiresAt: Date.now() + META_TTL_MS,
+    unlockCounts,
+    activeUsers,
+  };
+  return { unlockCounts, activeUsers };
+}
+
+function assembleSnapshot(
+  statsBundle: Awaited<ReturnType<typeof achievementRepository.getStats>>,
+  earned: Map<string, { earnedAt: string; xpAwarded: number }>,
+  unlockCounts: Map<string, number>,
+  activeUsers: number,
+  newlyUnlockedIds: string[]
+): AchievementSnapshot {
+  const { totalXp, level: _level, activeTitle, ...stats } = statsBundle;
+  void _level;
+
+  const items: AchievementProgressItem[] = ACHIEVEMENT_CATALOG.map((def) => {
+    const earnedMeta = earned.get(def.id);
+    const unlockCount = unlockCounts.get(def.id) ?? 0;
+    const unlockRatePct = Math.round((unlockCount / activeUsers) * 1000) / 10;
+    return buildProgressItem(
+      def,
+      stats,
+      Boolean(earnedMeta),
+      earnedMeta?.earnedAt,
+      unlockRatePct
+    );
+  });
+
+  const newlyUnlocked = items.filter((i) => newlyUnlockedIds.includes(i.def.id));
+
+  return {
+    summary: buildAchievementSummary(items, totalXp),
+    stats,
+    items,
+    activeTitle: activeTitle ?? pickActiveTitle(items),
+    newlyUnlocked,
+    categories: ACHIEVEMENT_CATEGORIES,
+  };
+}
+
 export const achievementService = {
   /** Refresh stats + award newly unlocked achievements for a user. */
   async refreshUser(
     userId: string,
-    options?: { gymId?: string; memberId?: string }
+    options?: { gymId?: string; memberId?: string },
+    knownRevision?: string
   ): Promise<{ newlyUnlockedIds: string[] }> {
     const pool = getPool();
     if (!pool) return { newlyUnlockedIds: [] };
 
     const key = revisionKey(userId, options);
-    const revision = await achievementRepository.getLogsRevision(userId, options);
+    const revision =
+      knownRevision ?? (await achievementRepository.getLogsRevision(userId, options));
     if (logsRevisionCache.get(key) === revision) {
       return { newlyUnlockedIds: [] };
     }
@@ -49,17 +120,21 @@ export const achievementService = {
     ).map((def) => ({ achievementId: def.id, xp: def.xp }));
 
     const newlyUnlockedIds = await achievementRepository.awardMany(userId, toAward);
+    if (newlyUnlockedIds.length) {
+      unlockMetaCache = null;
+    }
 
-    const earnedAfter = await achievementRepository.listEarned(userId);
+    const [earnedAfter, meta] = await Promise.all([
+      achievementRepository.listEarned(userId),
+      loadUnlockMeta(),
+    ]);
     let totalXp = 0;
     for (const e of earnedAfter.values()) totalXp += e.xpAwarded;
 
-    const unlockCounts = await achievementRepository.getUnlockCounts();
-    const activeUsers = await achievementRepository.countActiveUsers();
     const items = ACHIEVEMENT_CATALOG.map((def) => {
       const earnedMeta = earnedAfter.get(def.id);
-      const unlockCount = unlockCounts.get(def.id) ?? 0;
-      const unlockRatePct = Math.round((unlockCount / activeUsers) * 1000) / 10;
+      const unlockCount = meta.unlockCounts.get(def.id) ?? 0;
+      const unlockRatePct = Math.round((unlockCount / meta.activeUsers) * 1000) / 10;
       return buildProgressItem(
         def,
         stats,
@@ -79,6 +154,7 @@ export const achievementService = {
     });
 
     logsRevisionCache.set(key, revision);
+    snapshotCache.delete(key);
     return { newlyUnlockedIds };
   },
 
@@ -89,39 +165,34 @@ export const achievementService = {
     const pool = getPool();
     if (!pool) return emptySnapshot();
 
+    const key = revisionKey(userId, options);
+    const revision = await achievementRepository.getLogsRevision(userId, options);
+    const hot = snapshotCache.get(key);
+    if (hot && hot.revision === revision) {
+      return hot.snapshot;
+    }
+
     // Refresh is a no-op when the logs revision matches the last compute.
-    const refreshResult = await this.refreshUser(userId, options);
-    const statsBundle = await achievementRepository.getStats(userId);
-    const earned = await achievementRepository.listEarned(userId);
-    const unlockCounts = await achievementRepository.getUnlockCounts();
-    const activeUsers = await achievementRepository.countActiveUsers();
+    const refreshResult = await this.refreshUser(userId, options, revision);
+    const [statsBundle, earned, meta] = await Promise.all([
+      achievementRepository.getStats(userId),
+      achievementRepository.listEarned(userId),
+      loadUnlockMeta(),
+    ]);
 
-    const { totalXp, level: _level, activeTitle, ...stats } = statsBundle;
-    void _level;
+    const snapshot = assembleSnapshot(
+      statsBundle,
+      earned,
+      meta.unlockCounts,
+      meta.activeUsers,
+      refreshResult.newlyUnlockedIds
+    );
 
-    const items: AchievementProgressItem[] = ACHIEVEMENT_CATALOG.map((def) => {
-      const earnedMeta = earned.get(def.id);
-      const unlockCount = unlockCounts.get(def.id) ?? 0;
-      const unlockRatePct = Math.round((unlockCount / activeUsers) * 1000) / 10;
-      return buildProgressItem(
-        def,
-        stats,
-        Boolean(earnedMeta),
-        earnedMeta?.earnedAt,
-        unlockRatePct
-      );
+    snapshotCache.set(key, {
+      revision,
+      snapshot: { ...snapshot, newlyUnlocked: [] },
     });
-
-    const newlyUnlocked = items.filter((i) => refreshResult.newlyUnlockedIds.includes(i.def.id));
-
-    return {
-      summary: buildAchievementSummary(items, totalXp),
-      stats,
-      items,
-      activeTitle: activeTitle ?? pickActiveTitle(items),
-      newlyUnlocked,
-      categories: ACHIEVEMENT_CATEGORIES,
-    };
+    return snapshot;
   },
 
   async getRankings(userId: string, limit = 50): Promise<AchievementRankingResponse> {
@@ -144,9 +215,11 @@ export const achievementService = {
 
     let me = entries.find((e) => e.userId === userId) ?? null;
     if (!me) {
-      const mine = await achievementRepository.getStats(userId);
-      const earned = await achievementRepository.listEarned(userId);
-      const user = await userRepository.findById(userId);
+      const [mine, earned, user] = await Promise.all([
+        achievementRepository.getStats(userId),
+        achievementRepository.listEarned(userId),
+        userRepository.findById(userId),
+      ]);
       const rank = await achievementRepository.rankByXp(mine.totalXp);
       me = {
         rank,

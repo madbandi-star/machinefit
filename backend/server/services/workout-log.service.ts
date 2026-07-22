@@ -70,7 +70,6 @@ export const workoutLogService = {
   },
 
   async upsert(userId: string, input: UpsertWorkoutLogInput) {
-    await gymScopeService.assertOwned(userId, input.gymId);
     await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
     const machineId = await machineRepository.findIdByCode(input.machineCode);
@@ -174,7 +173,6 @@ export const workoutLogService = {
   },
 
   async remove(userId: string, input: DeleteWorkoutLogInput) {
-    await gymScopeService.assertOwned(userId, input.gymId);
     await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
     const machineId = await machineRepository.findIdByCode(input.machineCode);

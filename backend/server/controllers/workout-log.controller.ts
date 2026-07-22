@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
-import { upsertWorkoutLogSchema, workoutLogListQuerySchema, workoutInsightsQuerySchema, deleteWorkoutLogSchema } from '@machinefit/shared';
+import { workoutLogListQuerySchema, workoutInsightsQuerySchema } from '@machinefit/shared';
+import type { DeleteWorkoutLogInput, UpsertWorkoutLogInput } from '@machinefit/shared';
 import { workoutLogService } from '../services/workout-log.service.js';
 import { workoutInsightsService } from '../services/workout-insights.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -22,14 +23,16 @@ export async function listWorkoutLogs(req: Request, res: Response): Promise<void
 
 export async function upsertWorkoutLog(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const body = upsertWorkoutLogSchema.parse(req.body);
+  // Body already validated by validateBody(upsertWorkoutLogSchema) middleware.
+  const body = req.body as UpsertWorkoutLogInput;
   const item = await workoutLogService.upsert(req.user.userId, body);
   res.json({ success: true, data: item });
 }
 
 export async function deleteWorkoutLog(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const body = deleteWorkoutLogSchema.parse(req.body);
+  // Body already validated by validateBody(deleteWorkoutLogSchema) middleware.
+  const body = req.body as DeleteWorkoutLogInput;
   await workoutLogService.remove(req.user.userId, body);
   res.json({ success: true, data: { message: 'Deleted' } });
 }

@@ -2,6 +2,8 @@ import { getPool } from '../config/database.js';
 import type { LifterDnaRawStats, PeerBaseline } from '@machinefit/shared';
 
 const LOG_LIMIT = 500;
+const PEER_BASELINE_TTL_MS = 15 * 60_000;
+const peerBaselineCache = new Map<string, { expiresAt: number; value: PeerBaseline }>();
 
 const UPPER = new Set([
   'chest',
@@ -135,6 +137,12 @@ export const lifterDnaRepository = {
   },
 
   async peerBaseline(scope: 'global' | 'gym', gymId?: string): Promise<PeerBaseline> {
+    const cacheKey = scope === 'gym' && gymId ? `gym:${gymId}` : 'global';
+    const cached = peerBaselineCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.value;
+    }
+
     const pool = getPool();
     if (!pool) return emptyPeers();
 
@@ -198,7 +206,7 @@ export const lifterDnaRepository = {
     const lowerRatio = parseFloat(row?.lower_ratio ?? '0.35') || 0.35;
     const days = parseFloat(row?.session_days ?? '0') || 0;
 
-    return {
+    const value: PeerBaseline = {
       intensity: Math.min(100, avgMax * 0.35 + avgSets * 2),
       consistency: Math.min(100, days * 4),
       volume: Math.max(100, avgVolume),
@@ -206,6 +214,12 @@ export const lifterDnaRepository = {
       prRate: 0.12,
       avgSessionMinutes: Math.max(30, Math.round(avgSets * 2.6)),
     };
+    peerBaselineCache.set(cacheKey, { expiresAt: Date.now() + PEER_BASELINE_TTL_MS, value });
+    if (peerBaselineCache.size > 50) {
+      const oldest = peerBaselineCache.keys().next().value;
+      if (oldest) peerBaselineCache.delete(oldest);
+    }
+    return value;
   },
 
   computeStats(rows: LogRow[], locale: string, peers?: LifterDnaRawStats['peers']): LifterDnaRawStats {

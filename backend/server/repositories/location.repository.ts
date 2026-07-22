@@ -12,6 +12,9 @@ import { getPool } from '../config/database.js';
 
 type NameJson = Record<string, string>;
 
+const COUNTRIES_TTL_MS = 30 * 60_000;
+let countriesCache: { expiresAt: number; value: LocationCountry[] } | null = null;
+
 function pickName(name: NameJson | string, locale: string): string {
   if (typeof name === 'string') return name;
   if (locale.startsWith('ko')) return name.ko || name.en || Object.values(name)[0] || '';
@@ -36,6 +39,9 @@ function mapCountry(row: {
 
 export const locationRepository = {
   async listCountries(): Promise<LocationCountry[]> {
+    if (countriesCache && countriesCache.expiresAt > Date.now()) {
+      return countriesCache.value;
+    }
     const pool = getPool();
     if (!pool) return [];
     const result = await pool.query<{
@@ -50,7 +56,9 @@ export const locationRepository = {
        WHERE is_active = TRUE
        ORDER BY sort_order ASC, code ASC`
     );
-    return result.rows.map(mapCountry);
+    const value = result.rows.map(mapCountry);
+    countriesCache = { expiresAt: Date.now() + COUNTRIES_TTL_MS, value };
+    return value;
   },
 
   async listStates(countryCode: string): Promise<LocationState[]> {
