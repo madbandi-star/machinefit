@@ -2,8 +2,12 @@ import { Router } from 'express';
 import * as adminController from '../controllers/admin.controller.js';
 import * as motivationMediaController from '../controllers/motivation-media.controller.js';
 import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
+import * as muscleGroupImageController from '../controllers/muscle-group-image.controller.js';
 import { authMiddleware, requireRole } from '../middlewares/auth.middleware.js';
-import { motivationAudioUpload } from '../middlewares/upload.middleware.js';
+import {
+  motivationAudioUpload,
+  muscleGroupImageUpload,
+} from '../middlewares/upload.middleware.js';
 
 export const adminRouter = Router();
 
@@ -16,6 +20,16 @@ adminRouter.post(
   '/motivation-media/upload',
   motivationAudioUpload,
   adminMotivationUploadController.uploadMotivationAudio
+);
+adminRouter.get('/muscle-group-images', muscleGroupImageController.listMuscleGroupImages);
+adminRouter.post(
+  '/muscle-group-images/:muscleGroup/upload',
+  muscleGroupImageUpload,
+  muscleGroupImageController.uploadMuscleGroupImage
+);
+adminRouter.delete(
+  '/muscle-group-images/:muscleGroup',
+  muscleGroupImageController.deleteMuscleGroupImage
 );
 adminRouter.get('/users', adminController.listUsers);
 adminRouter.patch('/users/:id', adminController.updateUser);

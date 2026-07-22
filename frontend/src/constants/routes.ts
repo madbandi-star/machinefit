@@ -38,6 +38,7 @@ export const ROUTES = {
   ADMIN_MACHINES: '/admin/machines',
   ADMIN_MODERATION: '/admin/moderation',
   ADMIN_MOTIVATION: '/admin/motivation',
+  ADMIN_MUSCLE_IMAGES: '/admin/muscle-group-images',
   ADMIN_OWNER_APPLICATIONS: '/admin/owner-applications',
   ADMIN_LOCATIONS: '/admin/locations',
   OWNER_APPLY: '/owner/apply',

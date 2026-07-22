@@ -4,12 +4,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { publicApiBase } from '../utils/public-api-base.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audio');
+const LOCAL_MUSCLE_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/muscle-group-images');
 
 let supabase: SupabaseClient | null | undefined;
-let bucketReady: Promise<void> | null = null;
+let audioBucketReady: Promise<void> | null = null;
+let muscleBucketReady: Promise<void> | null = null;
 
 function getSupabase(): SupabaseClient | null {
   if (supabase !== undefined) return supabase;
@@ -23,21 +26,11 @@ function getSupabase(): SupabaseClient | null {
   return supabase;
 }
 
-function publicApiBase(): string {
-  if (env.PUBLIC_API_BASE_URL?.trim()) {
-    return env.PUBLIC_API_BASE_URL.replace(/\/+$/, '');
-  }
-  if (env.NODE_ENV === 'production') {
-    return 'https://machinefit-api.onrender.com/api/v1';
-  }
-  return `http://localhost:${env.PORT}${env.API_BASE_PATH}`;
-}
-
-async function ensureBucket(): Promise<void> {
+async function ensureAudioBucket(): Promise<void> {
   const client = getSupabase();
   if (!client) return;
-  if (!bucketReady) {
-    bucketReady = (async () => {
+  if (!audioBucketReady) {
+    audioBucketReady = (async () => {
       const bucket = env.MOTIVATION_AUDIO_BUCKET;
       const { data, error } = await client.storage.listBuckets();
       if (error) {
@@ -70,11 +63,45 @@ async function ensureBucket(): Promise<void> {
         }
       }
     })().catch((err) => {
-      bucketReady = null;
+      audioBucketReady = null;
       throw err;
     });
   }
-  await bucketReady;
+  await audioBucketReady;
+}
+
+async function ensureMuscleBucket(): Promise<void> {
+  const client = getSupabase();
+  if (!client) return;
+  if (!muscleBucketReady) {
+    muscleBucketReady = (async () => {
+      const bucket = env.MUSCLE_GROUP_IMAGE_BUCKET;
+      const { data, error } = await client.storage.listBuckets();
+      if (error) {
+        throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+      }
+      const exists = data?.some((item) => item.name === bucket);
+      if (!exists) {
+        const created = await client.storage.createBucket(bucket, {
+          public: true,
+          fileSizeLimit: env.MUSCLE_GROUP_IMAGE_MAX_BYTES,
+          allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+        });
+        if (created.error && !/already exists/i.test(created.error.message)) {
+          throw new AppError(
+            500,
+            'STORAGE_ERROR',
+            'Could not create muscle-group image storage bucket',
+            created.error.message
+          );
+        }
+      }
+    })().catch((err) => {
+      muscleBucketReady = null;
+      throw err;
+    });
+  }
+  await muscleBucketReady;
 }
 
 export type StoredAudioObject = {
@@ -83,8 +110,15 @@ export type StoredAudioObject = {
   provider: 'supabase' | 'local';
 };
 
+export type StoredImageObject = {
+  storagePath: string;
+  publicUrl: string;
+  provider: 'supabase' | 'local';
+};
+
 export const storageService = {
   localUploadRoot: LOCAL_UPLOAD_ROOT,
+  localMuscleUploadRoot: LOCAL_MUSCLE_UPLOAD_ROOT,
 
   async saveMotivationAudio(params: {
     userId: string;
@@ -97,7 +131,7 @@ export const storageService = {
     const client = getSupabase();
 
     if (client) {
-      await ensureBucket();
+      await ensureAudioBucket();
       const { error } = await client.storage
         .from(env.MOTIVATION_AUDIO_BUCKET)
         .upload(storagePath, params.buffer, {
@@ -134,6 +168,64 @@ export const storageService = {
     }
     try {
       await unlink(path.join(LOCAL_UPLOAD_ROOT, storagePath));
+    } catch {
+      // ignore missing local files
+    }
+  },
+
+  async saveMuscleGroupImage(params: {
+    muscleGroup: string;
+    kind: 'main' | 'thumb';
+    extension: string;
+    mimeType: string;
+    buffer: Buffer;
+    version: number;
+  }): Promise<StoredImageObject> {
+    const storagePath = `${params.muscleGroup}/${params.kind}-v${params.version}.${params.extension}`;
+    const client = getSupabase();
+
+    if (client) {
+      await ensureMuscleBucket();
+      const { error } = await client.storage
+        .from(env.MUSCLE_GROUP_IMAGE_BUCKET)
+        .upload(storagePath, params.buffer, {
+          contentType: params.mimeType || 'image/webp',
+          upsert: true,
+          cacheControl: '31536000',
+        });
+      if (error) {
+        throw new AppError(500, 'UPLOAD_FAILED', 'Could not save the image file', error.message);
+      }
+      const { data } = client.storage.from(env.MUSCLE_GROUP_IMAGE_BUCKET).getPublicUrl(storagePath);
+      return {
+        storagePath,
+        publicUrl: data.publicUrl,
+        provider: 'supabase',
+      };
+    }
+
+    const absolute = path.join(LOCAL_MUSCLE_UPLOAD_ROOT, storagePath);
+    await mkdir(path.dirname(absolute), { recursive: true });
+    await writeFile(absolute, params.buffer);
+    return {
+      storagePath,
+      publicUrl: `${publicApiBase()}/media/muscle-group-images/${storagePath
+        .split('/')
+        .map(encodeURIComponent)
+        .join('/')}`,
+      provider: 'local',
+    };
+  },
+
+  async deleteMuscleGroupImage(storagePath: string | null | undefined): Promise<void> {
+    if (!storagePath) return;
+    const client = getSupabase();
+    if (client) {
+      await client.storage.from(env.MUSCLE_GROUP_IMAGE_BUCKET).remove([storagePath]);
+      return;
+    }
+    try {
+      await unlink(path.join(LOCAL_MUSCLE_UPLOAD_ROOT, storagePath));
     } catch {
       // ignore missing local files
     }

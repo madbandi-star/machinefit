@@ -8,6 +8,7 @@ import { errorMiddleware } from './middlewares/error.middleware.js';
 import { rateLimitMiddleware } from './middlewares/rate-limit.middleware.js';
 import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.js';
 import { storageService } from './services/storage.service.js';
+import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
 
 export function createApp() {
   const app = express();
@@ -41,6 +42,23 @@ export function createApp() {
       setHeaders(res) {
         res.setHeader('Accept-Ranges', 'bytes');
       },
+    })
+  );
+
+  // Durable muscle-group images from Postgres (works without Supabase Storage keys).
+  app.get(
+    `${env.API_BASE_PATH}/media/muscle-group-images/:muscleGroup/:kind`,
+    (req, res, next) => {
+      void serveMuscleGroupImage(req, res, next);
+    }
+  );
+
+  // Optional local-disk fallback for older uploads.
+  app.use(
+    `${env.API_BASE_PATH}/media/muscle-group-images`,
+    express.static(storageService.localMuscleUploadRoot, {
+      fallthrough: false,
+      maxAge: '7d',
     })
   );
 

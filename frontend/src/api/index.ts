@@ -504,7 +504,7 @@ export const liveDashboardApi = {
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
 export type { OwnerDashboardStats, OwnerApplyResult } from './community.api';
-export { adminApi, notificationApi, motivationMediaApi } from './admin.api';
+export { adminApi, notificationApi, motivationMediaApi, muscleGroupImageApi } from './admin.api';
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
 export { userMotivationTrackApi } from './user-motivation-track.api';
 export type {

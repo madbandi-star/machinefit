@@ -1,6 +1,9 @@
 import type { ImgHTMLAttributes } from 'react';
 import type { MuscleGroup } from '@/constants/muscle-groups';
-import { getMuscleGroupImage } from '@/constants/muscle-group-images';
+import {
+  resolveMuscleGroupDisplayUrl,
+  useMuscleGroupImageMap,
+} from '@/hooks/useMuscleGroupImages';
 import '@/styles/muscle-group-icon.css';
 
 const FALLBACK_LABELS: Partial<Record<MuscleGroup, string>> = {
@@ -22,7 +25,9 @@ export function MuscleGroupIcon({
   style,
   ...props
 }: MuscleGroupIconProps) {
-  const src = getMuscleGroupImage(group);
+  const remoteMap = useMuscleGroupImageMap();
+  const preferThumb = size <= 64;
+  const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb);
 
   if (!src) {
     const label = FALLBACK_LABELS[group as MuscleGroup] ?? String(group).slice(0, 2).toUpperCase();
@@ -44,6 +49,8 @@ export function MuscleGroupIcon({
       aria-hidden
       width={size}
       height={size}
+      loading="lazy"
+      decoding="async"
       className={`muscle-group-icon${className ? ` ${className}` : ''}`}
       style={{ width: size, height: size, ...style }}
       {...props}

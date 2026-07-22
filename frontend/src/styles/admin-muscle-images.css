@@ -1,0 +1,191 @@
+.admin-muscle-hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.admin-muscle-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .admin-muscle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .admin-muscle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+.admin-muscle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--color-surface);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.admin-muscle-card.is-dragover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.admin-muscle-card__header {
+  min-width: 0;
+}
+
+.admin-muscle-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.admin-muscle-card__code {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--color-text-muted);
+}
+
+.admin-muscle-card__preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 280px;
+  padding: 0;
+  border: 1px dashed color-mix(in srgb, var(--color-border) 80%, var(--color-primary));
+  border-radius: var(--radius-md, 10px);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 6%, transparent), transparent),
+    var(--color-surface-alt, var(--color-bg));
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.admin-muscle-card__preview:disabled {
+  cursor: default;
+}
+
+.admin-muscle-card__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-muscle-card__placeholder {
+  padding: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.admin-muscle-card__drop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  color: #fff;
+  font-weight: 700;
+}
+
+.admin-muscle-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.admin-muscle-card__actions .btn--danger {
+  grid-column: 1 / -1;
+}
+
+.admin-muscle-card__actions .btn {
+  min-height: 44px;
+  width: 100%;
+}
+
+.admin-muscle-meta {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.admin-muscle-meta > div {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.admin-muscle-meta dt {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-weight: 650;
+}
+
+.admin-muscle-meta dd {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.admin-muscle-progress {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.admin-muscle-progress__bar {
+  height: 0.35rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  transition: width 120ms ease;
+}
+
+.admin-muscle-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  border: none;
+  background: rgba(0, 0, 0, 0.78);
+  cursor: zoom-out;
+}
+
+.admin-muscle-lightbox__img {
+  max-width: min(92vw, 720px);
+  max-height: 86dvh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 420px) {
+  .admin-muscle-card__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-muscle-meta > div {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+}

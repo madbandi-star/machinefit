@@ -68,6 +68,11 @@ export function AdminDashboardPage() {
     { to: ROUTES.ADMIN_MACHINES, title: t('machines'), desc: t('menu.machinesDesc') },
     { to: ROUTES.ADMIN_LOCATIONS, title: t('locations.nav'), desc: t('menu.locationsDesc') },
     { to: ROUTES.ADMIN_MOTIVATION, title: t('motivation.nav'), desc: t('menu.motivationDesc') },
+    {
+      to: ROUTES.ADMIN_MUSCLE_IMAGES,
+      title: t('muscleImages.nav'),
+      desc: t('menu.muscleImagesDesc'),
+    },
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
   ];
 

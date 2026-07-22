@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+function deriveSupabaseUrl(databaseUrl: string | undefined): string | undefined {
+  if (!databaseUrl) return undefined;
+  const pooler = databaseUrl.match(/postgres\.([a-z0-9]{10,})\b/i);
+  if (pooler?.[1]) return `https://${pooler[1]}.supabase.co`;
+  const direct = databaseUrl.match(/@db\.([a-z0-9]+)\.supabase\.co\b/i);
+  if (direct?.[1]) return `https://${direct[1]}.supabase.co`;
+  return undefined;
+}
+
+const derivedSupabaseUrl = process.env.SUPABASE_URL || deriveSupabaseUrl(process.env.DATABASE_URL);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(3001),
@@ -18,8 +29,13 @@ const envSchema = z.object({
   MOTIVATION_AUDIO_MAX_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
   MOTIVATION_AUDIO_MAX_TRACKS: z.coerce.number().int().positive().default(20),
   MOTIVATION_AUDIO_BUCKET: z.string().default('motivation-audio'),
+  MUSCLE_GROUP_IMAGE_MAX_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
+  MUSCLE_GROUP_IMAGE_BUCKET: z.string().default('muscle-group-images'),
 });
 
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse({
+  ...process.env,
+  SUPABASE_URL: derivedSupabaseUrl,
+});
 
 export type Env = z.infer<typeof envSchema>;
