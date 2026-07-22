@@ -203,12 +203,11 @@ function buildOneLiner(
   const openers = LIFTER_DNA_PHRASE_PARTS.openers[lang];
   const middles = LIFTER_DNA_PHRASE_PARTS.middles[lang];
   const closers = LIFTER_DNA_PHRASE_PARTS.closers[lang];
-  const opener = openers[seed % openers.length]!;
-  const middle = middles[(seed >> 3) % middles.length]!;
-  const closer = closers[(seed >> 5) % closers.length]!;
-  if (lang === 'ko') {
-    return `${opener} ${middle} ${character.name} ${closer}`;
-  }
+  // Use >>> (unsigned) — signed >> turns large seeds negative, so `% length` can
+  // yield a negative index and phrase parts become the string "undefined".
+  const opener = openers[seed % openers.length] ?? openers[0]!;
+  const middle = middles[(seed >>> 3) % middles.length] ?? middles[0]!;
+  const closer = closers[(seed >>> 5) % closers.length] ?? closers[0]!;
   return `${opener} ${middle} ${character.name} ${closer}`;
 }
 
