@@ -73,7 +73,6 @@ export function LocationPicker({
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
   const isKr = value.countryCode === 'KR' || locale.startsWith('ko');
-  const [countryQuery, setCountryQuery] = useState('');
   const [districtQuery, setDistrictQuery] = useState('');
   const [gpsBusy, setGpsBusy] = useState(false);
   const [gpsError, setGpsError] = useState('');
