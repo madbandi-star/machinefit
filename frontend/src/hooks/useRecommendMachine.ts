@@ -270,6 +270,10 @@ export function useRecommendMachine(machineCode: string | undefined) {
         navigate(ROUTES.MY_GYMS);
         return;
       }
+      if (apiCode === 'INTERNAL_ERROR') {
+        showToast(t('common:errors.serverError'), 'error');
+        return;
+      }
 
       if (error instanceof Error && error.message === 'missing_gender') {
         showToast(t('common:auth.genderRequiredForRecommend'), 'error');
