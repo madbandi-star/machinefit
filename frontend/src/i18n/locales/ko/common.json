@@ -359,7 +359,13 @@
       "event": "이벤트",
       "hidden": "숨겨진 업적",
       "season": "시즌 업적"
-    }
+    },
+    "unlockBatchProgress": "{{current}} / {{total}}",
+    "unlockBatchHint": "이번에 {{count}}개 업적을 달성했어요",
+    "unlockRemaining": "남은 {{count}}개",
+    "continueWithProgress": "다음 ({{current}}/{{total}})",
+    "done": "확인",
+    "dismissAll": "모두 닫기"
   },
   "liveDashboard": {
     "title": "MachineFit LIVE",

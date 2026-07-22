@@ -359,7 +359,13 @@
       "event": "Events",
       "hidden": "Hidden",
       "season": "Seasonal"
-    }
+    },
+    "unlockBatchProgress": "{{current}} / {{total}}",
+    "unlockBatchHint": "You unlocked {{count}} achievements this time",
+    "unlockRemaining": "{{count}} left",
+    "continueWithProgress": "Next ({{current}}/{{total}})",
+    "done": "Done",
+    "dismissAll": "Close all"
   },
   "liveDashboard": {
     "title": "MachineFit LIVE",

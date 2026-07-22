@@ -58,6 +58,7 @@ export function AchievementsPage() {
   const [tab, setTab] = useState<ViewTab>('overview');
   const [category, setCategory] = useState<AchievementCategory | 'all'>('all');
   const [unlockQueue, setUnlockQueue] = useState<AchievementProgressItem[]>([]);
+  const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
 
   const { data, isLoading, isError } = useQuery({
@@ -85,6 +86,7 @@ export function AchievementsPage() {
     if (key === seenUnlockKey) return;
     setSeenUnlockKey(key);
     setUnlockQueue(data.newlyUnlocked);
+    setUnlockBatchTotal(data.newlyUnlocked.length);
     try {
       navigator.vibrate?.(40);
     } catch {
@@ -93,6 +95,23 @@ export function AchievementsPage() {
   }, [data, seenUnlockKey]);
 
   const currentUnlock = unlockQueue[0] ?? null;
+  const unlockIndex =
+    unlockBatchTotal > 0 ? unlockBatchTotal - unlockQueue.length + 1 : 1;
+  const unlockRemaining = Math.max(0, unlockQueue.length - 1);
+  const isLastUnlock = unlockQueue.length <= 1;
+
+  const dismissUnlockQueue = () => {
+    setUnlockQueue([]);
+    setUnlockBatchTotal(0);
+  };
+
+  const advanceUnlockQueue = () => {
+    if (unlockQueue.length <= 1) {
+      dismissUnlockQueue();
+      return;
+    }
+    setUnlockQueue((q) => q.slice(1));
+  };
 
   const filtered = useMemo(() => {
     if (!data) return [];
@@ -322,8 +341,29 @@ export function AchievementsPage() {
         )}
 
         {currentUnlock && (
-          <div className="achievement-unlock" role="dialog" aria-modal="true">
+          <div
+            className="achievement-unlock"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('achievements.unlocked')}
+          >
             <div className="achievement-unlock__card">
+              <button
+                type="button"
+                className="achievement-unlock__close"
+                onClick={dismissUnlockQueue}
+                aria-label={t('achievements.dismissAll')}
+              >
+                ×
+              </button>
+              {unlockBatchTotal > 1 ? (
+                <p className="achievement-unlock__progress">
+                  {t('achievements.unlockBatchProgress', {
+                    current: unlockIndex,
+                    total: unlockBatchTotal,
+                  })}
+                </p>
+              ) : null}
               <div className="achievement-unlock__emoji">{currentUnlock.def.emoji}</div>
               <p className="achievement-unlock__eyebrow">{t('achievements.unlocked')}</p>
               <h3 className="achievement-unlock__name">{loc(currentUnlock.def.name, locale)}</h3>
@@ -333,6 +373,14 @@ export function AchievementsPage() {
                 +{formatInt(currentUnlock.def.xp, locale)} XP ·{' '}
                 {t(`achievements.rarity.${currentUnlock.rarity as AchievementRarity}`)}
               </p>
+              {unlockBatchTotal > 1 ? (
+                <p className="achievement-unlock__batch-hint">
+                  {t('achievements.unlockBatchHint', { count: unlockBatchTotal })}
+                  {unlockRemaining > 0
+                    ? ` · ${t('achievements.unlockRemaining', { count: unlockRemaining })}`
+                    : ''}
+                </p>
+              ) : null}
               <div className="achievement-unlock__actions">
                 <button
                   type="button"
@@ -344,10 +392,24 @@ export function AchievementsPage() {
                 <button
                   type="button"
                   className="btn btn--block"
-                  onClick={() => setUnlockQueue((q) => q.slice(1))}
+                  onClick={advanceUnlockQueue}
                 >
-                  {t('achievements.continue')}
+                  {isLastUnlock
+                    ? t('achievements.done')
+                    : t('achievements.continueWithProgress', {
+                        current: unlockIndex,
+                        total: unlockBatchTotal,
+                      })}
                 </button>
+                {unlockBatchTotal > 1 ? (
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--block achievement-unlock__dismiss"
+                    onClick={dismissUnlockQueue}
+                  >
+                    {t('achievements.dismissAll')}
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>
