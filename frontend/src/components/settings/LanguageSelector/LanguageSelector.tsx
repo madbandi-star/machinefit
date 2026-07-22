@@ -8,7 +8,7 @@ import {
 import type { Locale } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
 import { useSettingsStore } from '@/store/settings.store';
-import i18n from '@/i18n';
+import i18n, { ensureLocaleResources } from '@/i18n';
 import '@/styles/components.css';
 
 interface LanguageSelectorProps {
@@ -26,7 +26,10 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
 
   const handleSelect = (newLocale: Locale) => {
     setLocale(newLocale);
-    void i18n.changeLanguage(newLocale);
+    void (async () => {
+      await ensureLocaleResources(newLocale);
+      await i18n.changeLanguage(newLocale);
+    })();
     setOpen(false);
   };
 

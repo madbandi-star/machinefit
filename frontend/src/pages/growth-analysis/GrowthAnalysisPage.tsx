@@ -45,8 +45,23 @@ import { formatHistoryDateHeader } from '@/utils/historyDate';
 import '@/styles/growth-analysis.css';
 
 const VIEW_MODES: GrowthViewMode[] = ['daily', 'machine'];
-const GROWTH_LOG_LIMIT = 500;
+const GROWTH_LOG_LIMIT_ALL = 500;
 const DEFAULT_GROWTH_LOOKBACK_DAYS = 365;
+
+/** Bound payload size for short windows; keep full cap for "all". */
+function growthLogLimitForPeriod(period: GrowthPeriod): number {
+  switch (period) {
+    case '30d':
+      return 120;
+    case '3m':
+      return 200;
+    case 'custom':
+      return 250;
+    case 'all':
+    default:
+      return GROWTH_LOG_LIMIT_ALL;
+  }
+}
 
 function getDateKeyDaysAgo(days: number): string {
   const date = new Date();
@@ -121,15 +136,17 @@ export function GrowthAnalysisPage() {
   );
 
   const logsQueryOptions = useMemo(() => {
+    const limit = growthLogLimitForPeriod(periodPreset);
+
     if (periodPreset === 'all') {
-      return { limit: GROWTH_LOG_LIMIT };
+      return { limit };
     }
 
     if (periodPreset === 'custom' && !(customFrom && customTo)) {
       return {
         from: getDateKeyDaysAgo(DEFAULT_GROWTH_LOOKBACK_DAYS),
         to: getDateKeyDaysAgo(0),
-        limit: GROWTH_LOG_LIMIT,
+        limit,
       };
     }
 
@@ -137,7 +154,7 @@ export function GrowthAnalysisPage() {
     return {
       from: from ?? undefined,
       to,
-      limit: GROWTH_LOG_LIMIT,
+      limit,
     };
   }, [customFrom, customTo, periodFilter, periodPreset]);
 

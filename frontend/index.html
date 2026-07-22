@@ -41,15 +41,17 @@
           }
         } catch (e) {}
         try {
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function (regs) {
-              regs.forEach(function (reg) { reg.unregister(); });
-            });
-          }
-          if (window.caches) {
-            caches.keys().then(function (keys) {
-              keys.forEach(function (key) { caches.delete(key); });
-            });
+          if (!localStorage.getItem('mf-pwa-bust-v24')) {
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function (regs) {
+                regs.forEach(function (reg) { reg.unregister(); });
+              });
+            }
+            if (window.caches) {
+              caches.keys().then(function (keys) {
+                keys.forEach(function (key) { caches.delete(key); });
+              });
+            }
           }
         } catch (e) {}
       })();

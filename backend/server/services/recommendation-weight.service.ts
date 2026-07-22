@@ -264,7 +264,7 @@ export async function computeRecommendationWeight(options: {
     return `${y}-${m}-${day}`;
   })();
 
-  const cohortStatsPromise = workoutLogRepository.getCohortStats({
+  const cohortStatsPromise = workoutLogRepository.getCohortAvgMaxStats({
     machineId,
     from: cohortFrom,
     to: todayDateKey(),

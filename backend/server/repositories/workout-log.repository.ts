@@ -463,6 +463,117 @@ export const workoutLogRepository = {
     return value;
   },
 
+
+  /**
+   * Recommend-weight path only needs sampleSize + avgMaxWeightKg.
+   * Skip growth/volume window aggregations used by insights.
+   */
+  async getCohortAvgMaxStats(options: {
+    machineId: string;
+    from: string;
+    to: string;
+    gender?: string;
+    heightMinCm?: number;
+    heightMaxCm?: number;
+    weightMinKg?: number;
+    weightMaxKg?: number;
+    experienceLevel?: string;
+    excludeUserId?: string;
+    targetMuscleGroup?: string;
+  }): Promise<{
+    sampleSize: number;
+    avgMaxWeightKg: number;
+    avgSessionVolumeKg: number;
+    avgVolumeGrowthPct: number;
+    avgWorkoutCount: number;
+  }> {
+    const cacheKey = `avgMax:${JSON.stringify(options)}`;
+    const cached = cohortStatsCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.value;
+    }
+
+    const pool = getPool();
+    if (!pool) {
+      return {
+        sampleSize: 0,
+        avgMaxWeightKg: 0,
+        avgSessionVolumeKg: 0,
+        avgVolumeGrowthPct: 0,
+        avgWorkoutCount: 0,
+      };
+    }
+
+    const params: unknown[] = [options.machineId, options.from, options.to];
+    let userFilters = 'AND u.is_active = true';
+
+    if (options.gender) {
+      params.push(options.gender);
+      userFilters += ` AND u.gender = $${params.length}`;
+    }
+    if (options.heightMinCm != null && options.heightMaxCm != null) {
+      params.push(options.heightMinCm, options.heightMaxCm);
+      userFilters += ` AND u.height_cm BETWEEN $${params.length - 1} AND $${params.length}`;
+    }
+    if (options.weightMaxKg != null) {
+      if (options.weightMinKg === 0) {
+        params.push(options.weightMaxKg);
+        userFilters += ` AND u.weight_kg <= $${params.length}`;
+      } else if (options.weightMinKg != null) {
+        params.push(options.weightMinKg, options.weightMaxKg);
+        userFilters += ` AND u.weight_kg > $${params.length - 1} AND u.weight_kg <= $${params.length}`;
+      }
+    }
+    if (options.experienceLevel) {
+      params.push(options.experienceLevel);
+      userFilters += ` AND u.experience_level = $${params.length}`;
+    }
+    if (options.excludeUserId) {
+      params.push(options.excludeUserId);
+      userFilters += ` AND wl.user_id <> $${params.length}`;
+    }
+    if (options.targetMuscleGroup !== undefined) {
+      params.push(options.targetMuscleGroup);
+      userFilters += ` AND wl.target_muscle_group = $${params.length}`;
+    }
+
+    const result = await pool.query<{ sample_size: string; avg_pr: string | null }>(
+      `WITH user_pr AS (
+         SELECT
+           wl.user_id,
+           MAX((
+             SELECT COALESCE(MAX((elem)::numeric), 0)
+             FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+           )) AS pr
+         FROM workout_logs wl
+         INNER JOIN users u ON u.id = wl.user_id
+         WHERE wl.machine_id = $1
+           AND wl.log_date >= $2::date
+           AND wl.log_date <= $3::date
+           ${userFilters}
+         GROUP BY wl.user_id
+       )
+       SELECT COUNT(*)::text AS sample_size, AVG(pr)::text AS avg_pr
+       FROM user_pr`,
+      params
+    );
+
+    const row = result.rows[0];
+    const value = {
+      sampleSize: row ? parseInt(row.sample_size, 10) : 0,
+      avgMaxWeightKg: row?.avg_pr ? parseFloat(row.avg_pr) : 0,
+      avgSessionVolumeKg: 0,
+      avgVolumeGrowthPct: 0,
+      avgWorkoutCount: 0,
+    };
+    cohortStatsCache.set(cacheKey, { expiresAt: Date.now() + COHORT_STATS_TTL_MS, value });
+    if (cohortStatsCache.size > 200) {
+      const oldest = cohortStatsCache.keys().next().value;
+      if (oldest) cohortStatsCache.delete(oldest);
+    }
+    return value;
+  },
+
   async getDailyCohortStats(options: {
     from: string;
     to: string;

@@ -148,17 +148,13 @@ export const workoutLogService = {
         // Aggregate update must not fail the workout save.
       }
 
-      try {
-        await achievementService.refreshUser(userId);
-      } catch {
-        // Achievement evaluation must not fail the workout save.
-      }
-
-      try {
-        await growthTimelineService.refreshUser(userId);
-      } catch {
-        // Growth timeline refresh must not fail the workout save.
-      }
+      // Achievements + growth timeline are not part of the upsert response.
+      // Refresh in the background so save latency stays low.
+      growthTimelineService.invalidateUser(userId);
+      void Promise.allSettled([
+        achievementService.refreshUser(userId),
+        growthTimelineService.refreshUser(userId),
+      ]);
 
       return saved;
     } catch (error) {
@@ -240,17 +236,11 @@ export const workoutLogService = {
         /* ignore aggregate failure */
       }
 
-      try {
-        await achievementService.refreshUser(userId);
-      } catch {
-        /* ignore achievement failure */
-      }
-
-      try {
-        await growthTimelineService.refreshUser(userId);
-      } catch {
-        /* ignore growth timeline failure */
-      }
+      growthTimelineService.invalidateUser(userId);
+      void Promise.allSettled([
+        achievementService.refreshUser(userId),
+        growthTimelineService.refreshUser(userId),
+      ]);
     }
   },
 };

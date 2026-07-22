@@ -24,6 +24,19 @@ export class TtlCache<T> {
     this.store.set(key, { value, expiresAt: Date.now() + ttlMs });
   }
 
+  delete(key: string): void {
+    this.store.delete(key);
+  }
+
+  /** Remove all keys that equal prefix or start with `${prefix}:`. */
+  deleteByPrefix(prefix: string): void {
+    for (const key of this.store.keys()) {
+      if (key === prefix || key.startsWith(`${prefix}:`)) {
+        this.store.delete(key);
+      }
+    }
+  }
+
   getOrSet(key: string, factory: () => Promise<T>, ttlMs = this.defaultTtlMs): Promise<T> {
     const hit = this.get(key);
     if (hit !== undefined) return Promise.resolve(hit);

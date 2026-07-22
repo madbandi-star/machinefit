@@ -56,6 +56,11 @@ async function enrichLogsWithLoad(
 }
 
 export const growthTimelineService = {
+  /** Drop hot memory entries so the next read rebuilds after a log write. */
+  invalidateUser(userId: string): void {
+    memoryCache.deleteByPrefix(userId);
+  },
+
   async refreshUser(
     userId: string,
     locale = 'ko',

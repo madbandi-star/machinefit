@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
-import i18n from '@/i18n';
+import i18n, { ensureLocaleResources } from '@/i18n';
 import { useSettingsStore } from '@/store/settings.store';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 
@@ -10,9 +10,12 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (i18n.language !== locale) {
-      void i18n.changeLanguage(locale);
-    }
+    void (async () => {
+      await ensureLocaleResources(locale);
+      if (i18n.language !== locale) {
+        await i18n.changeLanguage(locale);
+      }
+    })();
   }, [hydrated, locale]);
 
   return <>{children}</>;

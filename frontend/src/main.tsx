@@ -7,7 +7,8 @@ import '@/styles/android-ui.css';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
 
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v23';
+/** Bump once when a final PWA cache purge is required; thereafter one-shot only. */
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v24';
 
 async function clearServiceWorkerAndCaches(): Promise<void> {
   try {
@@ -25,11 +26,10 @@ async function clearServiceWorkerAndCaches(): Promise<void> {
 }
 
 async function boot() {
-  // Temporarily disable PWA caching so Android Chrome always gets fresh CSS/JS.
-  await clearServiceWorkerAndCaches();
-
+  // One-shot migration: clear legacy SW/caches once, then never block boot again.
   try {
     if (!localStorage.getItem(PWA_CACHE_BUST_KEY)) {
+      await clearServiceWorkerAndCaches();
       localStorage.setItem(PWA_CACHE_BUST_KEY, '1');
       window.location.reload();
       return;
