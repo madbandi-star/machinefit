@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { LanguageSelector } from '@/components/settings/LanguageSelector/LanguageSelector';
@@ -17,9 +16,14 @@ export function Header() {
     <header className="header">
       <div className="header__brand">
         <Link to={ROUTES.HOME} className="header__logo">
-          <span className="header__logo-icon" aria-hidden>
-            <Icon name="dumbbell" size={18} />
-          </span>
+          <img
+            className="header__logo-mark"
+            src={`${import.meta.env.BASE_URL}assets/brand/machinefit-mark.svg`}
+            alt=""
+            width={34}
+            height={34}
+            decoding="async"
+          />
           Machine<span className="header__logo-fit">Fit</span>
         </Link>
         <LanguageSelector variant="compact" />

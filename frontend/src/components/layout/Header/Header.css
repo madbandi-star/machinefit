@@ -41,6 +41,16 @@
   min-width: 0;
 }
 
+.header__logo-mark {
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  display: block;
+  object-fit: cover;
+  box-shadow: var(--glow-primary-soft);
+}
+
 .header__logo-icon {
   display: inline-flex;
   align-items: center;
