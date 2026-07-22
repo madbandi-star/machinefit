@@ -14,7 +14,7 @@ export const locationInputSchema = z.object({
 });
 
 export const userLocationUpsertSchema = locationInputSchema.extend({
-  visibility: locationVisibilitySchema.optional().default('city'),
+  visibility: locationVisibilitySchema.optional().default('gym'),
 });
 
 export const reverseGeocodeSchema = z.object({

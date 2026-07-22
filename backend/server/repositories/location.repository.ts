@@ -314,7 +314,7 @@ export const locationRepository = {
       postalCode: null,
       latitude: null,
       longitude: null,
-      visibility: 'city',
+      visibility: 'gym',
       isSet: false,
     };
     if (!pool) return empty;
@@ -416,7 +416,7 @@ export const locationRepository = {
         input.postalCode?.trim() || null,
         input.latitude ?? null,
         input.longitude ?? null,
-        input.visibility ?? 'city',
+        input.visibility ?? 'gym',
       ]
     );
     return this.getUserLocation(userId, locale);

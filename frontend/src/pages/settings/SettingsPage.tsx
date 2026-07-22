@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ExperienceLevel, Gender, WorkoutGoal } from '@machinefit/shared';
+import type { ExperienceLevel, Gender, LocationVisibility, WorkoutGoal } from '@machinefit/shared';
 import {
   REST_DURATION,
   restDurationFromParts,
@@ -113,7 +113,7 @@ export function SettingsPage() {
       postalCode: loc.postalCode ?? '',
       latitude: loc.latitude ?? null,
       longitude: loc.longitude ?? null,
-      visibility: loc.visibility,
+      visibility: loc.visibility ?? 'gym',
     });
   }, [locationQuery.data]);
 
@@ -137,7 +137,7 @@ export function SettingsPage() {
           postalCode: locationDraft.postalCode || null,
           latitude: locationDraft.latitude,
           longitude: locationDraft.longitude,
-          visibility: locationDraft.visibility ?? 'city',
+          visibility: locationDraft.visibility ?? 'gym',
         });
       } else {
         await locationApi.clearMine();
@@ -287,13 +287,30 @@ export function SettingsPage() {
             value={locationDraft}
             onChange={setLocationDraft}
             showDistrict
-            showVisibility
             showGps
             required={false}
           />
           <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
             <HomeGymField value={homeGym} onChange={setHomeGym} />
           </div>
+          <label className="location-picker__field" style={{ marginTop: 'var(--space-md)' }}>
+            <span>{t('location.visibility')}</span>
+            <select
+              className="input"
+              value={locationDraft.visibility ?? 'gym'}
+              onChange={(e) =>
+                setLocationDraft({
+                  ...locationDraft,
+                  visibility: e.target.value as LocationVisibility,
+                })
+              }
+            >
+              <option value="hidden">{t('location.visibilityHidden')}</option>
+              <option value="country">{t('location.visibilityCountry')}</option>
+              <option value="city">{t('location.visibilityCity')}</option>
+              <option value="gym">{t('location.visibilityGym')}</option>
+            </select>
+          </label>
           <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
             <button
               type="button"

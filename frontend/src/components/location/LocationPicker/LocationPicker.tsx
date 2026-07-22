@@ -42,7 +42,7 @@ export function emptyLocationValue(): LocationPickerValue {
     postalCode: '',
     latitude: null,
     longitude: null,
-    visibility: 'city',
+    visibility: 'gym',
   };
 }
 
@@ -57,7 +57,7 @@ export function locationValueFromRef(ref?: LocationRef | null): LocationPickerVa
     postalCode: ref.postalCode ?? '',
     latitude: ref.latitude ?? null,
     longitude: ref.longitude ?? null,
-    visibility: 'city',
+    visibility: (ref as { visibility?: LocationVisibility }).visibility ?? 'gym',
   };
 }
 
@@ -359,7 +359,7 @@ export function LocationPicker({
           <span>{t('location.visibility')}</span>
           <select
             className="input"
-            value={value.visibility ?? 'city'}
+            value={value.visibility ?? 'gym'}
             disabled={disabled}
             onChange={(e) =>
               onChange({
