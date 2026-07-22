@@ -4,38 +4,74 @@
   gap: var(--space-md);
 }
 
-.gym-manage-section {
+.gym-manage-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-md);
 }
 
-.gym-manage-section__header {
+.gym-manage-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.gym-manage-panel__heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.gym-manage-panel .form-section__title {
+  margin-bottom: 0.15rem;
+}
+
+.gym-manage-panel__desc {
+  margin-bottom: 0;
+}
+
+.gym-manage-panel__tools {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
+  flex-shrink: 0;
 }
 
-.gym-manage-section__title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
+.gym-manage-panel__tools .btn {
+  min-height: 2.4rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.gym-manage-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .gym-manage-hint {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-caption);
   color: var(--color-text-muted);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
-.gym-manage-empty {
-  margin: 0;
-  padding: 0.85rem 0;
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
+.gym-manage-hint--warn {
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 35%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: var(--color-text);
 }
 
 .gym-manage-list {
@@ -44,26 +80,33 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.65rem;
 }
 
-.gym-manage-item {
+.gym-manage-row {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+  gap: 0.45rem;
+  padding: 0.75rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  transition:
+    border-color var(--motion-fast, 150ms) ease,
+    background var(--motion-fast, 150ms) ease,
+    box-shadow var(--motion-fast, 150ms) ease;
 }
 
-.gym-manage-item--active .gym-manage-item__name {
-  color: var(--color-primary, #1a6b4a);
+.gym-manage-row--active {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-alt));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
 
-.gym-manage-item__main {
+.gym-manage-row__select {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   padding: 0;
   border: none;
@@ -71,82 +114,189 @@
   text-align: left;
   cursor: pointer;
   color: inherit;
+  min-height: var(--touch-target-min, 48px);
 }
 
-.gym-manage-item__main--static {
+.gym-manage-row__select--static {
   cursor: default;
+  min-height: auto;
 }
 
-.gym-manage-item__name {
-  font-weight: 650;
+.gym-manage-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 16%, var(--color-surface));
+  color: var(--color-primary);
   font-size: 0.95rem;
+  font-weight: 700;
 }
 
-.gym-manage-item__self {
+.gym-manage-row--active .gym-manage-avatar {
+  background: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface));
+}
+
+.gym-manage-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.gym-manage-row__name {
+  font-weight: 650;
+  font-size: var(--font-size-body-sm);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gym-manage-row__self {
   font-weight: 500;
   color: var(--color-text-muted);
 }
 
-.gym-manage-item__meta {
-  font-size: 0.78rem;
+.gym-manage-row__meta {
+  font-size: var(--font-size-caption);
   color: var(--color-text-muted);
-}
-
-.gym-manage-item__badge {
-  margin-top: 0.2rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-primary, #1a6b4a);
-}
-
-.gym-manage-item__actions .btn {
-  min-height: 2.25rem;
-  padding: 0.35rem 0.65rem;
-  font-size: 0.8rem;
-}
-
-.gym-manage-section__header .btn {
-  min-height: 2.25rem;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.8rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.gym-manage-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  padding: 0.75rem 0 0.25rem;
-}
-
-.gym-manage-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.8rem;
+.gym-manage-row__hint {
+  flex-shrink: 0;
+  font-size: 0.72rem;
   color: var(--color-text-muted);
+  opacity: 0.85;
 }
 
-.gym-manage-field input,
-.gym-manage-field select,
-.gym-manage-field textarea {
-  min-height: var(--touch-target-min, 44px);
-  padding: 0.5rem 0.65rem;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.12));
-  border-radius: 8px;
+.gym-manage-pill {
+  flex-shrink: 0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.gym-manage-row__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  padding-top: 0.15rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
+.gym-manage-link-btn {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.7rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
   font: inherit;
-  color: inherit;
-  background: var(--color-surface, #fff);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.gym-manage-field textarea {
-  min-height: 4.5rem;
-  resize: vertical;
+.gym-manage-link-btn:hover,
+.gym-manage-link-btn:focus-visible {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+  outline: none;
 }
 
-.gym-manage-form__actions {
+.gym-manage-link-btn--danger:hover,
+.gym-manage-link-btn--danger:focus-visible {
+  color: var(--color-error);
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+}
+
+.gym-manage-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--glass-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+}
+
+.gym-manage-editor__title {
+  margin: 0;
+  font-size: var(--font-size-body-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.gym-manage-editor__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.25rem;
+  gap: 0.5rem;
+  padding-top: 0.15rem;
+}
+
+.gym-manage-editor__actions .btn {
+  min-height: 2.6rem;
+  flex: 1 1 8rem;
+}
+
+.gym-manage-toggle {
+  align-self: flex-start;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.15rem;
+  border: none;
+  background: transparent;
+  color: var(--color-link, var(--color-primary));
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.gym-manage-extras {
+  padding-top: 0.15rem;
+}
+
+.gym-manage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.gym-manage-textarea {
+  min-height: 5rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+@media (max-width: 360px) {
+  .gym-manage-panel__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gym-manage-panel__tools {
+    justify-content: space-between;
+  }
+
+  .gym-manage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-manage-row__hint {
+    display: none;
+  }
 }
