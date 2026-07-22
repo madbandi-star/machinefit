@@ -13,6 +13,7 @@ import { locationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
+import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/community.css';
@@ -37,6 +38,7 @@ export function MyPage() {
   const user = useAuthStore((s) => s.user);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
+  const showToast = useUIStore((s) => s.showToast);
 
   const [showLogout, setShowLogout] = useState(false);
 
@@ -56,13 +58,24 @@ export function MyPage() {
     setShowLogout(false);
   };
 
+  const handleCopyEmail = async () => {
+    const email = user?.email?.trim();
+    if (!email) return;
+    try {
+      await navigator.clipboard.writeText(email);
+      showToast(t('myPage.emailCopied'), 'success');
+    } catch {
+      showToast(t('myPage.emailCopyFailed'), 'error');
+    }
+  };
+
   return (
     <div className="my-page">
       <PageShell
         title={t('nav.myPage')}
         action={<PwaInstallButton />}
       >
-        <div className="card profile-card">
+        <div className="card profile-card profile-card--compact">
           <dl className="profile-card__fields">
             <div className="profile-card__row">
               <dt>{t('myPage.memberId')}</dt>
@@ -70,7 +83,30 @@ export function MyPage() {
             </div>
             <div className="profile-card__row">
               <dt>{t('myPage.email')}</dt>
-              <dd>{user?.email || '—'}</dd>
+              <dd className="profile-card__email">
+                {user?.email ? (
+                  <>
+                    <button
+                      type="button"
+                      className="profile-card__email-value"
+                      onClick={() => void handleCopyEmail()}
+                      title={t('myPage.copyEmail')}
+                    >
+                      {user.email}
+                    </button>
+                    <button
+                      type="button"
+                      className="profile-card__email-copy"
+                      onClick={() => void handleCopyEmail()}
+                      aria-label={t('myPage.copyEmail')}
+                    >
+                      {t('myPage.copyEmail')}
+                    </button>
+                  </>
+                ) : (
+                  '—'
+                )}
+              </dd>
             </div>
             <div className="profile-card__row">
               <dt>{t('myPage.memberLevel')}</dt>

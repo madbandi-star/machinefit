@@ -253,10 +253,13 @@
     "growthTimeline": "나의 성장 하이라이트 릴",
     "lifterDna": "나의 리프터 DNA 분석",
     "liftedWeight": "내가 들어올린 무게는?",
-    "location": "지역 (Location)",
+    "location": "지역",
     "locationNudgeCta": "설정에서 지역 등록",
     "homeGym": "헬스장",
-    "homeGymUnset": "헬스장 미설정"
+    "homeGymUnset": "헬스장 미설정",
+    "copyEmail": "복사",
+    "emailCopied": "이메일을 복사했어요.",
+    "emailCopyFailed": "이메일 복사에 실패했어요."
   },
   "growthTimeline": {
     "title": "AI 성장 타임랩스",

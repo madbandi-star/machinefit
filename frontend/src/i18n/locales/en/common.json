@@ -256,7 +256,10 @@
     "location": "Location",
     "locationNudgeCta": "Set location in Settings",
     "homeGym": "Gym",
-    "homeGymUnset": "Gym not set"
+    "homeGymUnset": "Gym not set",
+    "copyEmail": "Copy",
+    "emailCopied": "Email copied.",
+    "emailCopyFailed": "Couldn't copy email."
   },
   "growthTimeline": {
     "title": "AI Growth Timeline",
