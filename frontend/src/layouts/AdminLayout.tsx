@@ -21,13 +21,14 @@ export function AdminLayout() {
     <div className="admin-shell">
       <div className="admin-shell__chrome">
         <header className="admin-shell__top">
+          <Link to={ROUTES.MY_PAGE} className="admin-shell__back">
+            <span aria-hidden="true">←</span>
+            {t('backToMyPage')}
+          </Link>
           <div className="admin-shell__brand">
             <strong>{t('shellTitle')}</strong>
             <span className="admin-shell__brand-sub">{t('shellSubtitle')}</span>
           </div>
-          <Link to={ROUTES.MY_PAGE} className="admin-shell__exit">
-            {t('backToApp')}
-          </Link>
         </header>
 
         <nav className="admin-shell__nav" aria-label={t('shellTitle')}>
