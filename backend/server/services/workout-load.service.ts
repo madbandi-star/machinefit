@@ -48,40 +48,46 @@ export async function resolveWorkoutLoadContexts(
   ];
 
   const preferencesByMachine: Record<string, Partial<RecommendationSettings>> = {};
-  if (options?.gymId && options?.memberId && machineCodes.length > 0) {
-    try {
-      const batch = await preferenceRepository.findByUserMachineCodes(
-        userId,
-        machineCodes,
-        { gymId: options.gymId, memberId: options.memberId }
-      );
-      for (const code of machineCodes) {
-        preferencesByMachine[code] = batch[code]?.customSettings ?? {};
-      }
-    } catch {
-      // Soft-fail: fall back to recommended-only.
-    }
-  }
-
   const recommendationById = new Map<
     string,
     { recommendedWeightKg?: number; recommendedRepsMin?: number; recommendedRepsMax?: number }
   >();
 
-  const pool = getPool();
-  if (pool && recommendationIds.length > 0) {
-    const recResult = await pool.query<{
-      id: string;
-      recommended_weight_kg: string | null;
-      recommended_reps_min: number | null;
-      recommended_reps_max: number | null;
-    }>(
-      `SELECT id, recommended_weight_kg, recommended_reps_min, recommended_reps_max
-       FROM machine_recommendations
-       WHERE id = ANY($1::uuid[])`,
-      [recommendationIds]
-    );
+  const prefsPromise =
+    options?.gymId && options?.memberId && machineCodes.length > 0
+      ? preferenceRepository
+          .findByUserMachineCodes(userId, machineCodes, {
+            gymId: options.gymId,
+            memberId: options.memberId,
+          })
+          .catch(() => null)
+      : Promise.resolve(null);
 
+  const pool = getPool();
+  const recsPromise =
+    pool && recommendationIds.length > 0
+      ? pool.query<{
+          id: string;
+          recommended_weight_kg: string | null;
+          recommended_reps_min: number | null;
+          recommended_reps_max: number | null;
+        }>(
+          `SELECT id, recommended_weight_kg, recommended_reps_min, recommended_reps_max
+           FROM machine_recommendations
+           WHERE id = ANY($1::uuid[])`,
+          [recommendationIds]
+        )
+      : Promise.resolve(null);
+
+  const [batch, recResult] = await Promise.all([prefsPromise, recsPromise]);
+
+  if (batch) {
+    for (const code of machineCodes) {
+      preferencesByMachine[code] = batch[code]?.customSettings ?? {};
+    }
+  }
+
+  if (recResult) {
     for (const row of recResult.rows) {
       recommendationById.set(row.id, {
         recommendedWeightKg: row.recommended_weight_kg

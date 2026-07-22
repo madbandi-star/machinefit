@@ -101,10 +101,47 @@ export const favoriteRepository = {
       [userId, gymId, memberId, machineId, recommendationId ?? null]
     );
 
-    const items = await this.listByUser(userId, gymId, locale);
-    const item = items.find((f) => f.id === result.rows[0].id);
-    if (!item) throw new Error('Failed to add favorite');
-    return item;
+    const favoriteId = result.rows[0]?.id;
+    if (!favoriteId) throw new Error('Failed to add favorite');
+
+    const itemResult = await pool.query<{
+      id: string;
+      gym_id: string;
+      member_id: string;
+      machine_id: string;
+      machine_code: string;
+      muscle_group: string;
+      machine_name: Record<string, string>;
+      brand_name: Record<string, string> | null;
+      recommendation_id: string | null;
+      created_at: string;
+    }>(
+      `SELECT f.id, f.gym_id, f.member_id, f.machine_id, f.recommendation_id, f.created_at,
+              m.code AS machine_code, m.muscle_group, m.name AS machine_name,
+              b.name AS brand_name
+       FROM favorites f
+       JOIN machines m ON m.id = f.machine_id
+       LEFT JOIN brands b ON b.id = m.brand_id
+       WHERE f.id = $1 AND f.user_id = $2`,
+      [favoriteId, userId]
+    );
+
+    const row = itemResult.rows[0];
+    if (!row) throw new Error('Failed to add favorite');
+    return {
+      id: row.id,
+      gymId: row.gym_id,
+      memberId: row.member_id,
+      machineId: row.machine_id,
+      machineCode: row.machine_code,
+      machineName: pickLocalized(row.machine_name, locale) ?? row.machine_code,
+      brandName: row.brand_name
+        ? pickLocalized(row.brand_name, locale) ?? undefined
+        : undefined,
+      muscleGroup: row.muscle_group,
+      recommendationId: row.recommendation_id ?? undefined,
+      createdAt: row.created_at,
+    };
   },
 
   async remove(userId: string, favoriteId: string): Promise<void> {

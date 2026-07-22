@@ -28,11 +28,11 @@ function invalidateMemberScopedQueries(queryClient: ReturnType<typeof useQueryCl
 }
 
 function isPlanLimitError(error: unknown): boolean {
-  const err = error as { response?: { status?: number; data?: { code?: string } } };
-  return (
-    err?.response?.status === 402 ||
-    err?.response?.data?.code === 'PLAN_LIMIT'
-  );
+  const err = error as {
+    response?: { status?: number; data?: { code?: string; error?: { code?: string } } };
+  };
+  const code = err?.response?.data?.error?.code ?? err?.response?.data?.code;
+  return err?.response?.status === 402 || code === 'PLAN_LIMIT';
 }
 
 export function useActiveMember() {
@@ -56,7 +56,7 @@ export function useActiveMember() {
       return res.data.data ?? [];
     },
     enabled: isAuthenticated && isRealGym,
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const members = useMemo(
@@ -157,14 +157,20 @@ export function useActiveMember() {
     [isRealGym, removeMutation]
   );
 
+  // Ready when resolved, or optimistically while members load if store already has a member.
+  const memberScopeReady =
+    !isRealGym ||
+    Boolean(resolvedMemberId) ||
+    (!isFetched && Boolean(activeMemberId) && isRealGym);
+
   return {
     members,
     activeMember,
-    activeMemberId: activeMember?.id ?? resolvedMemberId,
+    activeMemberId: activeMember?.id ?? resolvedMemberId ?? activeMemberId,
     isLoading,
     isRealGym,
     /** Ready to fetch member-scoped favorites / records data. */
-    memberScopeReady: !isRealGym || Boolean(resolvedMemberId),
+    memberScopeReady,
     selectMember,
     createMember,
     updateMember,

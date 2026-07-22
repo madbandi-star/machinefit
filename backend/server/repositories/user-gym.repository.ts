@@ -25,22 +25,36 @@ interface UserGymRow {
   location_set: boolean;
   created_at: string;
   updated_at: string;
+  country_name?: Record<string, string> | null;
+  flag_emoji?: string | null;
+  state_name?: Record<string, string> | null;
+  city_name?: Record<string, string> | null;
+  joined_district_name?: Record<string, string> | null;
 }
 
-async function mapRow(row: UserGymRow, locale = 'ko'): Promise<UserGym> {
+function pickLocalizedName(
+  name: Record<string, string> | string | null | undefined,
+  locale: string
+): string | undefined {
+  if (!name) return undefined;
+  if (typeof name === 'string') return name;
+  if (locale.startsWith('ko')) return name.ko || name.en || Object.values(name)[0] || undefined;
+  return name.en || name.ko || Object.values(name)[0] || undefined;
+}
+
+function mapRow(row: UserGymRow, locale = 'ko'): UserGym {
   const locationSet = Boolean(row.location_set && row.country_code && row.state_id && row.city_id);
   let location: LocationRef | undefined;
   if (locationSet) {
-    const label = await locationRepository.resolveLabel(
-      {
-        countryCode: row.country_code,
-        stateId: row.state_id,
-        cityId: row.city_id,
-        districtId: row.district_id,
-        districtName: row.district_name,
-      },
-      locale
-    );
+    const countryName = pickLocalizedName(row.country_name, locale);
+    const stateName = pickLocalizedName(row.state_name, locale);
+    const cityName = pickLocalizedName(row.city_name, locale);
+    const districtName =
+      pickLocalizedName(row.joined_district_name, locale) ||
+      row.district_name?.trim() ||
+      undefined;
+    const parts = [countryName, stateName, cityName, districtName].filter(Boolean);
+    const flagEmoji = row.flag_emoji ?? undefined;
     location = {
       countryCode: row.country_code,
       stateId: row.state_id,
@@ -52,7 +66,16 @@ async function mapRow(row: UserGymRow, locale = 'ko'): Promise<UserGym> {
       postalCode: row.postal_code,
       latitude: row.latitude ? parseFloat(row.latitude) : null,
       longitude: row.longitude ? parseFloat(row.longitude) : null,
-      label,
+      label: countryName
+        ? {
+            country: countryName,
+            state: stateName,
+            city: cityName,
+            district: districtName,
+            flagEmoji,
+            path: `${flagEmoji ? `${flagEmoji} ` : ''}${parts.join(' > ')}`,
+          }
+        : undefined,
     };
   }
 
@@ -71,6 +94,20 @@ async function mapRow(row: UserGymRow, locale = 'ko'): Promise<UserGym> {
     updatedAt: row.updated_at,
   };
 }
+
+const USER_GYM_SELECT = `
+  SELECT ug.*,
+         c.name AS country_name,
+         c.flag_emoji AS flag_emoji,
+         s.name AS state_name,
+         ci.name AS city_name,
+         d.name AS joined_district_name
+  FROM user_gyms ug
+  LEFT JOIN countries c ON c.code = ug.country_code
+  LEFT JOIN location_states s ON s.id = ug.state_id
+  LEFT JOIN location_cities ci ON ci.id = ug.city_id
+  LEFT JOIN location_districts d ON d.id = ug.district_id
+`;
 
 /** In-memory fallback when DATABASE_URL is unset. */
 const mockGyms = new Map<string, UserGym[]>();
@@ -108,10 +145,12 @@ export const userGymRepository = {
     }
 
     const result = await pool.query<UserGymRow>(
-      `SELECT * FROM user_gyms WHERE user_id = $1 ORDER BY is_default DESC, created_at ASC`,
+      `${USER_GYM_SELECT}
+       WHERE ug.user_id = $1
+       ORDER BY ug.is_default DESC, ug.created_at ASC`,
       [userId]
     );
-    return Promise.all(result.rows.map((row) => mapRow(row, locale)));
+    return result.rows.map((row) => mapRow(row, locale));
   },
 
   async findByIdForUser(userId: string, gymId: string, locale = 'ko'): Promise<UserGym | null> {
@@ -121,7 +160,8 @@ export const userGymRepository = {
     }
 
     const result = await pool.query<UserGymRow>(
-      `SELECT * FROM user_gyms WHERE id = $1 AND user_id = $2`,
+      `${USER_GYM_SELECT}
+       WHERE ug.id = $1 AND ug.user_id = $2`,
       [gymId, userId]
     );
     return result.rows[0] ? mapRow(result.rows[0], locale) : null;
@@ -228,12 +268,12 @@ export const userGymRepository = {
           live.locationSet,
         ]
       );
-      const gym = await mapRow(result.rows[0]!);
+      const createdId = result.rows[0]!.id;
       if (input.setActive !== false) {
-        await client.query(`UPDATE users SET active_gym_id = $1 WHERE id = $2`, [gym.id, userId]);
+        await client.query(`UPDATE users SET active_gym_id = $1 WHERE id = $2`, [createdId, userId]);
       }
       await client.query('COMMIT');
-      return gym;
+      return (await this.findByIdForUser(userId, createdId)) ?? mapRow(result.rows[0]!);
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -366,7 +406,7 @@ export const userGymRepository = {
         ]
       );
       await client.query('COMMIT');
-      return result.rows[0] ? mapRow(result.rows[0]) : null;
+      return result.rows[0] ? await this.findByIdForUser(userId, gymId) : null;
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;

@@ -204,12 +204,14 @@ export const recommendationService = {
 
     if (userId) {
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+      const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
       const gymId = input.gymId ?? (await userGymRepository.getActiveGymId(userId));
       if (gymId) {
-        const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
         const memberId =
           input.memberId ?? (await gymMemberRepository.findSelfMember(gymId, userId))?.id;
         if (memberId) {
+          // Fire-and-forget history write must still be awaited for consistency,
+          // but gym/member resolution above avoids extra work when already scoped.
           await historyRepository.record(userId, gymId, memberId, machineId, id);
         }
       }

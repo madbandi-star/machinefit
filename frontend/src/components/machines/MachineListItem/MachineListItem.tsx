@@ -6,6 +6,9 @@ import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroup
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
+import { QUERY_KEYS } from '@/constants/query-keys';
+import { queryClient } from '@/app/providers/QueryProvider';
+import { machineApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
@@ -14,6 +17,14 @@ import '@/styles/machines.css';
 interface MachineListItemProps {
   machine: Machine;
   selectedMuscle?: string | null;
+}
+
+function prefetchMachineDetail(machineCode: string) {
+  void queryClient.prefetchQuery({
+    queryKey: QUERY_KEYS.machine(machineCode),
+    queryFn: async () => (await machineApi.getByCode(machineCode)).data.data,
+    staleTime: 5 * 60_000,
+  });
 }
 
 export function MachineListItem({ machine, selectedMuscle }: MachineListItemProps) {
@@ -45,10 +56,12 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
     <Link
       to={detailTo}
       className="machine-list-item"
+      onMouseEnter={() => prefetchMachineDetail(machine.code)}
+      onTouchStart={() => prefetchMachineDetail(machine.code)}
     >
       <div className="machine-list-item__thumb">
         {imageUrl ? (
-          <img src={imageUrl} alt="" loading="lazy" />
+          <img src={imageUrl} alt="" loading="lazy" width={72} height={72} />
         ) : displayMuscle ? (
           <div className="machine-list-item__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={52} />
@@ -59,6 +72,8 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
             src={machinePlaceholderUrl()}
             alt=""
             loading="lazy"
+            width={72}
+            height={72}
           />
         )}
       </div>

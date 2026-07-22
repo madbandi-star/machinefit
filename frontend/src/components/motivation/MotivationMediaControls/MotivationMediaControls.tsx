@@ -18,6 +18,11 @@ export function MotivationMediaControls({
   const showToast = useUIStore((s) => s.showToast);
   const isAuthed = useAuthStore((s) => Boolean(s.tokens?.accessToken && s.user));
   const bundled = variant === 'bundle';
+  const [mediaRequested, setMediaRequested] = useState(false);
+
+  const requestMedia = () => {
+    if (!mediaRequested) setMediaRequested(true);
+  };
 
   const { data } = useQuery({
     queryKey: QUERY_KEYS.motivationMedia,
@@ -25,14 +30,15 @@ export function MotivationMediaControls({
       const res = await motivationMediaApi.playlist();
       return res.data.data;
     },
-    staleTime: 60_000,
+    enabled: mediaRequested,
+    staleTime: 10 * 60_000,
   });
 
   const { data: myTracks } = useQuery({
     queryKey: QUERY_KEYS.userMotivationTracks,
     queryFn: async () => (await userMotivationTrackApi.list()).data.data,
-    enabled: isAuthed,
-    staleTime: 30_000,
+    enabled: isAuthed && mediaRequested,
+    staleTime: 5 * 60_000,
   });
 
   const catalogMusic = data?.music ?? [];
@@ -137,8 +143,55 @@ export function MotivationMediaControls({
     }
   };
 
+  const [pendingMusicAction, setPendingMusicAction] = useState<'play' | 'playAll' | 'panel' | null>(
+    null
+  );
+  const [pendingVideoOpen, setPendingVideoOpen] = useState(false);
+  const mediaReady = mediaRequested && data !== undefined;
+  const musicEmpty = mediaReady && music.length === 0;
+  const videoEmpty = mediaReady && videos.length === 0;
+
+  useEffect(() => {
+    if (!pendingMusicAction || !mediaReady) return;
+    if (musicEmpty) {
+      showToast(t('motivation.musicEmpty'), 'info');
+      setPendingMusicAction(null);
+      return;
+    }
+    if (pendingMusicAction === 'panel') {
+      setMusicPanelOpen(true);
+    } else if (pendingMusicAction === 'playAll') {
+      setPlayAll(true);
+      setMusicIndex(0);
+      setMusicPlaying(true);
+    } else {
+      setPlayAll(false);
+      setMusicPlaying(true);
+    }
+    setPendingMusicAction(null);
+  }, [pendingMusicAction, mediaReady, musicEmpty, showToast, t]);
+
+  useEffect(() => {
+    if (!pendingVideoOpen || !mediaReady) return;
+    if (videoEmpty) {
+      showToast(t('motivation.videoEmpty'), 'info');
+      setPendingVideoOpen(false);
+      return;
+    }
+    stopMusic();
+    setMusicPanelOpen(false);
+    setVideoIndex(0);
+    setVideoOpen(true);
+    setPendingVideoOpen(false);
+  }, [pendingVideoOpen, mediaReady, videoEmpty, showToast, t]);
+
   const playSelected = () => {
-    if (!music.length) {
+    requestMedia();
+    if (!mediaReady) {
+      setPendingMusicAction('play');
+      return;
+    }
+    if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
       return;
     }
@@ -147,7 +200,12 @@ export function MotivationMediaControls({
   };
 
   const playAllTracks = () => {
-    if (!music.length) {
+    requestMedia();
+    if (!mediaReady) {
+      setPendingMusicAction('playAll');
+      return;
+    }
+    if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
       return;
     }
@@ -157,11 +215,20 @@ export function MotivationMediaControls({
   };
 
   const openMusicPanel = () => {
-    if (!music.length) {
+    requestMedia();
+    if (musicPanelOpen) {
+      setMusicPanelOpen(false);
+      return;
+    }
+    if (!mediaReady) {
+      setPendingMusicAction('panel');
+      return;
+    }
+    if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
       return;
     }
-    setMusicPanelOpen((prev) => !prev);
+    setMusicPanelOpen(true);
   };
 
   const selectTrack = (index: number) => {
@@ -188,12 +255,17 @@ export function MotivationMediaControls({
   };
 
   const toggleVideo = () => {
-    if (!videos.length) {
-      showToast(t('motivation.videoEmpty'), 'info');
-      return;
-    }
     if (videoOpen) {
       setVideoOpen(false);
+      return;
+    }
+    requestMedia();
+    if (!mediaReady) {
+      setPendingVideoOpen(true);
+      return;
+    }
+    if (videoEmpty) {
+      showToast(t('motivation.videoEmpty'), 'info');
       return;
     }
     stopMusic();
@@ -219,6 +291,8 @@ export function MotivationMediaControls({
     <div
       ref={panelRef}
       className={`motivation-controls${bundled ? ' motivation-controls--bundle' : ''}`}
+      onPointerEnter={requestMedia}
+      onFocusCapture={requestMedia}
     >
       <audio ref={audioRef} preload="none" onEnded={onMusicEnded} />
 
@@ -230,7 +304,7 @@ export function MotivationMediaControls({
         aria-expanded={musicPanelOpen}
         aria-haspopup="dialog"
         onClick={openMusicPanel}
-        disabled={!music.length}
+        disabled={musicEmpty}
       >
         <Music2 size={bundled ? 14 : 12} aria-hidden />
         {bundled ? null : musicPlaying ? <Pause size={11} aria-hidden /> : <Play size={11} aria-hidden />}
@@ -242,7 +316,7 @@ export function MotivationMediaControls({
         aria-label={t('motivation.video')}
         title={t('motivation.video')}
         onClick={toggleVideo}
-        disabled={!videos.length}
+        disabled={videoEmpty}
       >
         {bundled ? (
           <Film size={14} aria-hidden />

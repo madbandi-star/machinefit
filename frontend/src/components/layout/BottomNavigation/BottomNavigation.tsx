@@ -29,19 +29,39 @@ function prefetchForRoute(to: string, gymId: string | null, memberId: string | n
       queryFn: async () => (await brandApi.list()).data.data,
       staleTime: 10 * 60_000,
     });
+    // Must match MachineSearchPage unfiltered key: [...QUERY_KEYS.machines, '', null, null]
     void queryClient.prefetchQuery({
-      queryKey: [...QUERY_KEYS.machines, '', null, null, 'machines_only'],
+      queryKey: [...QUERY_KEYS.machines, '', null, null],
       queryFn: async () => {
         const res = await machineApi.list({ limit: 100 });
         return res.data.data.items;
       },
-      staleTime: 60_000,
+      staleTime: 5 * 60_000,
     });
   }
 
   if (!isAuthenticated || !gymId) return;
 
-  if (to === ROUTES.RECORDS || to === ROUTES.HOME) {
+  if (to === ROUTES.HOME) {
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.historyList(gymId, memberId ?? '', { limit: 40 }),
+      queryFn: async () =>
+        (
+          await historyApi.list(gymId, {
+            limit: 40,
+            memberId: memberId ?? undefined,
+          })
+        ).data.data,
+      staleTime: 60_000,
+    });
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.favorites(gymId, memberId ?? ''),
+      queryFn: async () => (await favoriteApi.list(gymId, memberId ?? undefined)).data.data,
+      staleTime: 60_000,
+    });
+  }
+
+  if (to === ROUTES.RECORDS) {
     void queryClient.prefetchQuery({
       queryKey: QUERY_KEYS.historyList(gymId, memberId ?? '', { limit: 100 }),
       queryFn: async () =>

@@ -27,10 +27,10 @@ export function RecentMachinesRow() {
   const memberKey = activeMemberId ?? '';
 
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', memberKey, { limit: 100 }),
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', memberKey, { limit: 40 }),
     queryFn: async () => {
       const res = await historyApi.list(activeGymId!, {
-        limit: 100,
+        limit: 40,
         memberId: activeMemberId ?? undefined,
       });
       return res.data.data;

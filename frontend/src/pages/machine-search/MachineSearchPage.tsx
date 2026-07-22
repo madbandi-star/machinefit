@@ -97,7 +97,7 @@ export function MachineSearchPage() {
       const res = await machineApi.list(params);
       return res.data.data.items;
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
     placeholderData: (prev) => prev,
   });
 

@@ -25,6 +25,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  esbuild: {
+    // Strip noisy logs from production bundles without changing app behavior.
+    pure: ['console.log', 'console.debug', 'console.info'],
+  },
   build: {
     target: 'es2020',
     cssCodeSplit: true,

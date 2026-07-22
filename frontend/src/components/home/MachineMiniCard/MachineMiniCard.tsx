@@ -47,7 +47,7 @@ export function MachineMiniCard({
     <Link to={to} className="machine-mini-card">
       <div className="machine-mini-card__thumb">
         {imageUrl ? (
-          <img src={imageUrl} alt="" loading="lazy" />
+          <img src={imageUrl} alt="" loading="lazy" width={120} height={96} />
         ) : displayMuscle ? (
           <div className="machine-mini-card__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={44} />

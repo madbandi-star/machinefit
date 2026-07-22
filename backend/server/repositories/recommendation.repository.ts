@@ -74,7 +74,12 @@ export const recommendationRepository = {
     if (!pool) return MOCK_SETTINGS[machineCode] ?? [];
 
     const result = await pool.query<SettingRow>(
-      'SELECT * FROM machine_settings WHERE machine_id = $1 ORDER BY height_min_cm ASC',
+      `SELECT id, machine_id, gender, experience_level, height_min_cm, height_max_cm,
+              seat_position, back_pad_position, foot_position, handle_position,
+              rom_setting, weight_kg, tips, warnings
+       FROM machine_settings
+       WHERE machine_id = $1
+       ORDER BY height_min_cm ASC`,
       [machineId]
     );
     return result.rows.map(mapSettingRow);
