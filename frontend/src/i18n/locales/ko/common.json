@@ -64,7 +64,12 @@
     "nowPlaying": "재생 중: {{title}}",
     "playFailed": "재생하지 못했어요. 주소를 확인해 주세요.",
     "next": "다음",
-    "close": "닫기"
+    "close": "닫기",
+    "musicPanelTitle": "음악 선택",
+    "playAll": "전체재생",
+    "playAllMode": "전체재생",
+    "play": "재생",
+    "stop": "끄기"
   },
   "motivationMusic": {
     "title": "동기부여 음악",

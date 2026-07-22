@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Film, Music2, Pause, Play, X } from 'lucide-react';
+import { Film, ListMusic, Music2, Pause, Play, Square, X } from 'lucide-react';
 import type { MotivationMediaItem } from '@machinefit/shared';
 import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -42,9 +42,13 @@ export function MotivationMediaControls({
     const tracks = myTracks?.items ?? [];
     if (!tracks.length) return catalogMusic;
 
-    const defaults = tracks.filter((track) => track.isDefault);
-    const selected = defaults.length ? defaults : tracks;
-    return selected.map(
+    // Prefer default first, then the rest of the user's library.
+    const ordered = [
+      ...tracks.filter((track) => track.isDefault),
+      ...tracks.filter((track) => !track.isDefault),
+    ];
+
+    return ordered.map(
       (track): MotivationMediaItem => ({
         id: track.id,
         mediaType: 'music',
@@ -58,9 +62,12 @@ export function MotivationMediaControls({
     );
   }, [myTracks?.items, catalogMusic]);
 
+  const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
+  const [playAll, setPlayAll] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
 
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoIndex, setVideoIndex] = useState(0);
@@ -101,29 +108,79 @@ export function MotivationMediaControls({
     };
   }, []);
 
+  useEffect(() => {
+    if (!musicPanelOpen) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!panelRef.current?.contains(event.target as Node)) {
+        setMusicPanelOpen(false);
+      }
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMusicPanelOpen(false);
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [musicPanelOpen]);
+
   const stopMusic = () => {
     setMusicPlaying(false);
+    setPlayAll(false);
     audioRef.current?.pause();
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+    }
   };
 
-  const toggleMusic = () => {
+  const playSelected = () => {
     if (!music.length) {
       showToast(t('motivation.musicEmpty'), 'info');
       return;
     }
-    if (musicPlaying) {
-      stopMusic();
+    setPlayAll(false);
+    setMusicPlaying(true);
+  };
+
+  const playAllTracks = () => {
+    if (!music.length) {
+      showToast(t('motivation.musicEmpty'), 'info');
       return;
     }
+    setPlayAll(true);
     setMusicIndex(0);
     setMusicPlaying(true);
   };
 
+  const openMusicPanel = () => {
+    if (!music.length) {
+      showToast(t('motivation.musicEmpty'), 'info');
+      return;
+    }
+    setMusicPanelOpen((prev) => !prev);
+  };
+
+  const selectTrack = (index: number) => {
+    setMusicIndex(index);
+    setPlayAll(false);
+    setMusicPlaying(true);
+  };
+
   const onMusicEnded = () => {
+    if (!playAll) {
+      setMusicPlaying(false);
+      return;
+    }
+
     setMusicIndex((prev) => {
       const next = prev + 1;
       if (next >= music.length) {
         setMusicPlaying(false);
+        setPlayAll(false);
         return 0;
       }
       return next;
@@ -140,6 +197,7 @@ export function MotivationMediaControls({
       return;
     }
     stopMusic();
+    setMusicPanelOpen(false);
     setVideoIndex(0);
     setVideoOpen(true);
   };
@@ -158,15 +216,20 @@ export function MotivationMediaControls({
   };
 
   return (
-    <div className={`motivation-controls${bundled ? ' motivation-controls--bundle' : ''}`}>
+    <div
+      ref={panelRef}
+      className={`motivation-controls${bundled ? ' motivation-controls--bundle' : ''}`}
+    >
       <audio ref={audioRef} preload="none" onEnded={onMusicEnded} />
 
       <button
         type="button"
-        className={`motivation-controls__btn${musicPlaying ? ' motivation-controls__btn--active' : ''}`}
+        className={`motivation-controls__btn${musicPlaying || musicPanelOpen ? ' motivation-controls__btn--active' : ''}`}
         aria-label={musicLabel}
         title={musicLabel}
-        onClick={toggleMusic}
+        aria-expanded={musicPanelOpen}
+        aria-haspopup="dialog"
+        onClick={openMusicPanel}
         disabled={!music.length}
       >
         <Music2 size={bundled ? 14 : 12} aria-hidden />
@@ -190,6 +253,82 @@ export function MotivationMediaControls({
           </>
         )}
       </button>
+
+      {musicPanelOpen ? (
+        <div className="motivation-music-panel" role="dialog" aria-label={t('motivation.musicPanelTitle')}>
+          <div className="motivation-music-panel__header">
+            <p className="motivation-music-panel__title">
+              <ListMusic size={14} aria-hidden />
+              {t('motivation.musicPanelTitle')}
+            </p>
+            <button
+              type="button"
+              className="motivation-music-panel__icon-btn"
+              aria-label={t('motivation.close')}
+              onClick={() => setMusicPanelOpen(false)}
+            >
+              <X size={15} />
+            </button>
+          </div>
+
+          {currentMusic && musicPlaying ? (
+            <p className="motivation-music-panel__now">
+              {t('motivation.nowPlaying', { title: currentMusic.title })}
+              {playAll ? ` · ${t('motivation.playAllMode')}` : ''}
+            </p>
+          ) : null}
+
+          <div className="motivation-music-panel__controls">
+            <button
+              type="button"
+              className="btn btn--secondary motivation-music-panel__ctrl"
+              onClick={playAllTracks}
+              disabled={!music.length}
+            >
+              <ListMusic size={14} aria-hidden />
+              {t('motivation.playAll')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary motivation-music-panel__ctrl"
+              onClick={playSelected}
+              disabled={!music.length}
+            >
+              <Play size={14} aria-hidden />
+              {t('motivation.play')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost motivation-music-panel__ctrl"
+              onClick={stopMusic}
+              disabled={!musicPlaying}
+            >
+              <Square size={13} aria-hidden />
+              {t('motivation.stop')}
+            </button>
+          </div>
+
+          <ul className="motivation-music-panel__list">
+            {music.map((track, index) => {
+              const selected = index === musicIndex;
+              const playingThis = selected && musicPlaying;
+              return (
+                <li key={track.id}>
+                  <button
+                    type="button"
+                    className={`motivation-music-panel__track${selected ? ' is-selected' : ''}${playingThis ? ' is-playing' : ''}`}
+                    onClick={() => selectTrack(index)}
+                  >
+                    <span className="motivation-music-panel__track-index">{index + 1}</span>
+                    <span className="motivation-music-panel__track-title">{track.title}</span>
+                    {playingThis ? <Pause size={14} aria-hidden /> : <Play size={14} aria-hidden />}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
 
       {videoOpen && currentVideo ? (
         <VideoOverlay

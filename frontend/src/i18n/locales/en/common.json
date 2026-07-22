@@ -64,7 +64,12 @@
     "nowPlaying": "Playing: {{title}}",
     "playFailed": "Couldn't play that. Please check the URL.",
     "next": "Next",
-    "close": "Close"
+    "close": "Close",
+    "musicPanelTitle": "Choose music",
+    "playAll": "Play all",
+    "playAllMode": "playlist",
+    "play": "Play",
+    "stop": "Stop"
   },
   "motivationMusic": {
     "title": "Motivation music",
