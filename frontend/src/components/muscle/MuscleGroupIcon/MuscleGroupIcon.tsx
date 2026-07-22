@@ -6,13 +6,6 @@ import {
 } from '@/hooks/useMuscleGroupImages';
 import '@/styles/muscle-group-icon.css';
 
-const FALLBACK_LABELS: Partial<Record<MuscleGroup, string>> = {
-  biceps: 'Bi',
-  triceps: 'Tr',
-  arms: 'AR',
-  core: 'CO',
-};
-
 interface MuscleGroupIconProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   group: MuscleGroup | string;
   size?: number;
@@ -30,7 +23,7 @@ export function MuscleGroupIcon({
   const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb);
 
   if (!src) {
-    const label = FALLBACK_LABELS[group as MuscleGroup] ?? String(group).slice(0, 2).toUpperCase();
+    const label = String(group).slice(0, 2).toUpperCase();
     return (
       <span
         aria-hidden
