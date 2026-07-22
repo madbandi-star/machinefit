@@ -2,7 +2,11 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
-import type { RecommendationSettings, TargetMuscleGroup } from '@machinefit/shared';
+import type {
+  RecommendationSettings,
+  SettingsActiveSource,
+  TargetMuscleGroup,
+} from '@machinefit/shared';
 import type { FitRating } from '@/api';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
@@ -29,6 +33,7 @@ interface HistoryRecordCardProps {
   /** Batch-loaded fit rating (keeps 셋팅값 조정 필요 pressed before per-card fetch). */
   initialFitRating?: FitRating | null;
   initialCustomSettings?: Partial<RecommendationSettings>;
+  initialActiveSource?: SettingsActiveSource;
   isAuthenticated: boolean;
   lockTargetMuscle: boolean;
   isFocused?: boolean;
@@ -54,6 +59,7 @@ export function HistoryRecordCard({
   muscleGroup,
   initialFitRating = null,
   initialCustomSettings,
+  initialActiveSource,
   isAuthenticated,
   lockTargetMuscle,
   isFocused = false,
@@ -82,10 +88,11 @@ export function HistoryRecordCard({
     recommendationId: card.recommendationId ?? '',
     machineCode: card.machineCode,
     recommendedSettings: card.settings,
+    initialActiveSource: initialActiveSource,
     enabled: canUseFitFeedback && expanded,
   });
   const savedRating = fitFeedback.savedRating ?? initialFitRating;
-  const showAdjustment = savedRating === 'bad';
+  const showAdjustment = fitFeedback.showAdjustment || savedRating === 'bad';
   /** Prefer editing after tapping 셋팅값 조정 필요; after 선호값 저장 show read-only compare. */
   const [isEditingAdjustments, setIsEditingAdjustments] = useState(false);
   const [prefsSavedLocally, setPrefsSavedLocally] = useState(false);

@@ -13,6 +13,7 @@ import {
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
+import { ActiveSettingsSourceBanner } from '@/components/recommendation/ActiveSettingsSourceBanner/ActiveSettingsSourceBanner';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { recommendationApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
@@ -20,6 +21,7 @@ import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
+import { useUserUnits } from '@/hooks/useUserUnits';
 import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
@@ -120,9 +122,11 @@ export function RecommendationResultPage() {
   const fitFeedback = useMachineFitFeedback({
     recommendationId: result?.id ?? '',
     machineCode: result?.machineCode ?? '',
-    recommendedSettings: result?.settings,
+    recommendedSettings: result?.aiRecommendedSettings ?? result?.settings,
+    initialActiveSource: result?.activeSource,
     enabled: isAuthenticated && !!result?.id,
   });
+  const { formatWeight } = useUserUnits();
 
   const handleToggleFavorite = (event: MouseEvent<HTMLButtonElement>) => {
     event.currentTarget.blur();
@@ -253,8 +257,28 @@ export function RecommendationResultPage() {
           {bodyExpanded ? (
             <>
               <div className="history-record-card__section">
+                {isAuthenticated ? (
+                  <ActiveSettingsSourceBanner
+                    activeSource={fitFeedback.activeSource}
+                    aiSettings={result.aiRecommendedSettings ?? result.settings}
+                    adjustedSettings={
+                      fitFeedback.hasSavedPreferences
+                        ? fitFeedback.customSettings
+                        : result.adjustedSettings
+                    }
+                    formatWeight={formatWeight}
+                    onUseRecommended={fitFeedback.useRecommended}
+                    onUseAdjusted={fitFeedback.useAdjusted}
+                    onClearAdjusted={
+                      fitFeedback.hasSavedPreferences ? fitFeedback.clearAdjusted : undefined
+                    }
+                    isPending={
+                      fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
+                    }
+                  />
+                ) : null}
                 <RecommendationSettingsPanel
-                  settings={result.settings}
+                  settings={result.aiRecommendedSettings ?? result.settings}
                   weightBasis={result.weightBasis}
                   variant="history"
                   showAdjustment={fitFeedback.showAdjustment}
@@ -279,7 +303,12 @@ export function RecommendationResultPage() {
             machineCode={result.machineCode}
             machineName={result.machineName}
             recommendationId={result.id}
-            suggestedWeightKg={result.settings.recommendedWeightKg}
+            suggestedWeightKg={
+              fitFeedback.activeSource === 'adjusted' &&
+              fitFeedback.customSettings.recommendedWeightKg != null
+                ? fitFeedback.customSettings.recommendedWeightKg
+                : (result.aiRecommendedSettings ?? result.settings).recommendedWeightKg
+            }
             isAuthenticated={isAuthenticated}
             variant="history"
             logDate={resultLogDate}

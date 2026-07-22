@@ -308,6 +308,39 @@ export function mergeSettingsWithPreferences(
   };
 }
 
+/**
+ * Apply user adjustments only when activeSource is `adjusted` and values exist.
+ * AI base settings are always preserved separately by the caller.
+ */
+export function resolveActiveRecommendationSettings(
+  aiSettings: RecommendationSettings,
+  options?: {
+    customSettings?: Partial<RecommendationSettings> | null;
+    activeSource?: 'recommended' | 'adjusted' | null;
+  }
+): {
+  settings: RecommendationSettings;
+  activeSource: 'recommended' | 'adjusted';
+} {
+  const customSettings = options?.customSettings ?? null;
+  const wantsAdjusted = options?.activeSource === 'adjusted';
+  const hasCustom =
+    !!customSettings &&
+    Object.values(customSettings).some((value) => value != null && value !== '');
+
+  if (wantsAdjusted && hasCustom) {
+    return {
+      settings: mergeSettingsWithPreferences(aiSettings, customSettings),
+      activeSource: 'adjusted',
+    };
+  }
+
+  return {
+    settings: { ...aiSettings },
+    activeSource: 'recommended',
+  };
+}
+
 export function buildPersonalizedTips(
   baseTips: string[],
   locale: string,

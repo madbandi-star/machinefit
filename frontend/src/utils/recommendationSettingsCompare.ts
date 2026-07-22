@@ -1,4 +1,4 @@
-import type { RecommendationSettings } from '@machinefit/shared';
+import type { RecommendationSettings, SettingsActiveSource } from '@machinefit/shared';
 import { roundRecommendWeightKg } from '@machinefit/shared';
 import type { FitRating } from '@/api';
 
@@ -45,7 +45,8 @@ export function hasAdjustedSettings(
 }
 
 export function shouldShowHistorySettingsCompare(
-  fitRating: FitRating | null | undefined
+  fitRating: FitRating | null | undefined,
+  activeSource?: SettingsActiveSource | null
 ): boolean {
-  return fitRating === 'bad';
+  return activeSource === 'adjusted' || fitRating === 'bad';
 }

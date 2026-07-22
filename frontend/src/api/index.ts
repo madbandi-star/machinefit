@@ -108,6 +108,7 @@ export const userApi = {
 };
 
 export type FitRating = 'good' | 'bad';
+export type SettingsActiveSource = 'recommended' | 'adjusted';
 
 export interface RecommendationFeedbackInput {
   recommendationId: string;
@@ -118,6 +119,14 @@ export interface MachinePreferenceInput {
   machineCode: string;
   customSettings?: Partial<RecommendationSettings>;
   personalTipMemo?: string;
+  activeSource?: SettingsActiveSource;
+  clearAdjusted?: boolean;
+}
+
+export interface MachinePreferencesResponse {
+  customSettings: Partial<RecommendationSettings>;
+  personalTipMemo: string;
+  activeSource: SettingsActiveSource;
 }
 
 export const recommendationFeedbackApi = {
@@ -148,14 +157,14 @@ export const recommendationFeedbackApi = {
 };
 
 export const machinePreferenceApi = {
-  async upsert(input: MachinePreferenceInput): Promise<{
-    machineCode: string;
-    customSettings: Partial<RecommendationSettings>;
-    personalTipMemo: string;
-  }> {
+  async upsert(input: MachinePreferenceInput): Promise<
+    MachinePreferencesResponse & { machineCode: string }
+  > {
     const body: {
       customSettings?: Partial<RecommendationSettings>;
       personalTipMemo?: string;
+      activeSource?: SettingsActiveSource;
+      clearAdjusted?: boolean;
     } = {};
     if (input.customSettings !== undefined) {
       body.customSettings = input.customSettings;
@@ -163,31 +172,30 @@ export const machinePreferenceApi = {
     if (input.personalTipMemo !== undefined) {
       body.personalTipMemo = input.personalTipMemo;
     }
+    if (input.activeSource !== undefined) {
+      body.activeSource = input.activeSource;
+    }
+    if (input.clearAdjusted !== undefined) {
+      body.clearAdjusted = input.clearAdjusted;
+    }
     const res = await apiClient.put<
-      ApiResponse<{
-        machineCode: string;
-        customSettings: Partial<RecommendationSettings>;
-        personalTipMemo: string;
-      }>
+      ApiResponse<MachinePreferencesResponse & { machineCode: string }>
     >(`/machines/${encodeURIComponent(input.machineCode)}/preferences`, body);
     return res.data.data;
   },
-  async get(machineCode: string): Promise<{
-    customSettings: Partial<RecommendationSettings>;
-    personalTipMemo: string;
-  }> {
-    const res = await apiClient.get<
-      ApiResponse<{ customSettings: Partial<RecommendationSettings>; personalTipMemo: string }>
-    >(`/machines/${encodeURIComponent(machineCode)}/preferences`);
+  async get(machineCode: string): Promise<MachinePreferencesResponse> {
+    const res = await apiClient.get<ApiResponse<MachinePreferencesResponse>>(
+      `/machines/${encodeURIComponent(machineCode)}/preferences`
+    );
     return res.data.data;
   },
   async getBatch(
     machineCodes: string[]
-  ): Promise<Record<string, Partial<RecommendationSettings> | null>> {
+  ): Promise<Record<string, MachinePreferencesResponse | null>> {
     if (machineCodes.length === 0) return {};
 
     const res = await apiClient.get<
-      ApiResponse<Record<string, Partial<RecommendationSettings> | null>>
+      ApiResponse<Record<string, MachinePreferencesResponse | null>>
     >('/machines/preferences', {
       params: { codes: machineCodes.join(',') },
     });

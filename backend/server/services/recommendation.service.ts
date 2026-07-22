@@ -5,7 +5,7 @@ import {
   buildPersonalizedTips,
   DEFAULT_ROM_SETTING,
   isFreeWeightMachineCode,
-  mergeSettingsWithPreferences,
+  resolveActiveRecommendationSettings,
   recommendRepsForGoal,
 } from '@machinefit/shared';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
@@ -122,7 +122,7 @@ export const recommendationService = {
       input.experienceLevel
     );
 
-    const baseSettings = {
+    const aiSettings = {
       seatPosition: match?.seatPosition,
       backPadPosition: match?.backPadPosition,
       footPosition: match?.footPosition,
@@ -133,7 +133,13 @@ export const recommendationService = {
       recommendedRepsMax: recommendedReps.max,
     };
 
-    const settings = mergeSettingsWithPreferences(baseSettings, savedPreferences?.customSettings ?? null);
+    const { settings: activeSettings, activeSource } = resolveActiveRecommendationSettings(
+      aiSettings,
+      {
+        customSettings: savedPreferences?.customSettings ?? null,
+        activeSource: savedPreferences?.activeSource ?? 'recommended',
+      }
+    );
 
     const baseTips = match
       ? pickLocalizedArray(match.tips, locale)
@@ -145,12 +151,13 @@ export const recommendationService = {
           (value) => value != null && value !== ''
         )
     );
+    const usingAdjusted = activeSource === 'adjusted';
 
     const tips = buildPersonalizedTips(baseTips, locale, {
       workoutGoal: input.workoutGoal,
       experienceLevel: input.experienceLevel,
       targetMuscleGroup: input.targetMuscleGroup,
-      hasCustomPreferences: hasCustomSettings,
+      hasCustomPreferences: usingAdjusted || hasCustomSettings,
     });
 
     const warnings = match ? pickLocalizedArray(match.warnings, locale) : [];
@@ -164,14 +171,15 @@ export const recommendationService = {
         input,
         machineId,
         null,
-        settings,
-        settings.recommendedWeightKg,
+        // Persist AI snapshot so history can compare recommended vs adjusted.
+        aiSettings,
+        aiSettings.recommendedWeightKg,
         weightBasis,
         userId,
         undefined,
         {
-          min: settings.recommendedRepsMin ?? recommendedReps.min,
-          max: settings.recommendedRepsMax ?? recommendedReps.max,
+          min: aiSettings.recommendedRepsMin ?? recommendedReps.min,
+          max: aiSettings.recommendedRepsMax ?? recommendedReps.max,
         },
         tipsByLocale,
         warningsByLocale
@@ -202,7 +210,10 @@ export const recommendationService = {
       machineCode: machine.code,
       machineName: machine.name[locale as keyof typeof machine.name] ?? machine.name.en,
       ...(brandName ? { brandName } : {}),
-      settings,
+      settings: activeSettings,
+      aiRecommendedSettings: aiSettings,
+      adjustedSettings: savedPreferences?.customSettings ?? {},
+      activeSource,
       tips,
       warnings,
       youtubeVideos,

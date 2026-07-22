@@ -74,7 +74,10 @@ export function LastRecommendationSnippet({ machineCode }: LastRecommendationSni
   const resultUrl = data
     ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${data.recommendationId}`
     : null;
-  const showSettingsCompare = shouldShowHistorySettingsCompare(fitRating);
+  const showSettingsCompare = shouldShowHistorySettingsCompare(
+    fitRating,
+    machinePreferences?.activeSource
+  );
 
   return (
     <section className="saved-settings-card" aria-label={t('machines:detail.lastRecommend')}>

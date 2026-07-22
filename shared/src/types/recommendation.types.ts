@@ -2,6 +2,7 @@ import type { ExperienceLevel, Gender, UnitHeight, UnitWeight } from './api.type
 import type { TargetMuscleGroup, WorkoutGoal } from '../constants/workout-goals.js';
 import type { YoutubeVideo } from './machine.types.js';
 import type { WeightRecommendationBasis } from './weight-basis.types.js';
+import type { SettingsActiveSource } from './machine-preferences.types.js';
 
 export interface RecommendationInput {
   machineCode: string;
@@ -36,7 +37,14 @@ export interface RecommendationResult {
   machineName?: string;
   /** Localized brand label for disambiguating same-named machines. */
   brandName?: string;
+  /** Currently applied settings (adjusted wins when active). */
   settings: RecommendationSettings;
+  /** Fresh AI recommendation before preference override. */
+  aiRecommendedSettings?: RecommendationSettings;
+  /** Saved user adjustments for this machine (may be inactive). */
+  adjustedSettings?: Partial<RecommendationSettings>;
+  /** Which source `settings` came from. */
+  activeSource?: SettingsActiveSource;
   tips: string[];
   warnings: string[];
   youtubeVideos: YoutubeVideo[];

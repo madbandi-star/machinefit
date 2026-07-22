@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { RecommendationSettings } from '@machinefit/shared';
-import { roundRecommendWeightKg } from '@machinefit/shared';
-import { machinePreferenceApi, recommendationFeedbackApi, type FitRating } from '@/api';
+import type { RecommendationSettings, SettingsActiveSource } from '@machinefit/shared';
+import { hasMeaningfulCustomSettings, roundRecommendWeightKg } from '@machinefit/shared';
+import {
+  machinePreferenceApi,
+  recommendationFeedbackApi,
+  type FitRating,
+} from '@/api';
 import { useUIStore } from '@/store/ui.store';
 
 interface UseMachineFitFeedbackOptions {
   recommendationId: string;
   machineCode: string;
   recommendedSettings?: RecommendationSettings;
+  /** Initial active source from the recommendation response when available. */
+  initialActiveSource?: SettingsActiveSource;
   enabled?: boolean;
 }
 
@@ -41,6 +47,7 @@ export function useMachineFitFeedback({
   recommendationId,
   machineCode,
   recommendedSettings,
+  initialActiveSource,
   enabled = true,
 }: UseMachineFitFeedbackOptions) {
   const { t } = useTranslation(['machines', 'common']);
@@ -49,6 +56,7 @@ export function useMachineFitFeedback({
   const [customSettings, setCustomSettings] = useState<Partial<RecommendationSettings>>({});
 
   const feedbackQueryKey = ['recommendation-feedback', recommendationId];
+  const prefsQueryKey = ['machine-preferences', machineCode];
 
   const { data: savedRating } = useQuery({
     queryKey: feedbackQueryKey,
@@ -57,39 +65,48 @@ export function useMachineFitFeedback({
   });
 
   const { data: machinePreferences } = useQuery({
-    queryKey: ['machine-preferences', machineCode],
+    queryKey: prefsQueryKey,
     queryFn: () => machinePreferenceApi.get(machineCode),
     enabled,
   });
+
   const savedPreferences = machinePreferences?.customSettings;
+  const activeSource: SettingsActiveSource =
+    machinePreferences?.activeSource ??
+    initialActiveSource ??
+    (savedRating === 'bad' ? 'adjusted' : 'recommended');
 
   useEffect(() => {
-    if (savedPreferences) {
+    if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
       setCustomSettings(savedPreferences);
       return;
     }
-
     setCustomSettings({});
   }, [savedPreferences]);
 
   useEffect(() => {
-    if (savedRating !== 'bad' || !recommendedSettings) return;
+    if (activeSource !== 'adjusted' || !recommendedSettings) return;
 
     setCustomSettings((prev) => {
-      if (savedPreferences && Object.keys(savedPreferences).length > 0) {
+      if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
         return savedPreferences;
       }
       if (Object.keys(prev).length > 0) return prev;
       return seedCustomSettingsFromRecommendation(recommendedSettings);
     });
-  }, [savedRating, recommendedSettings, savedPreferences]);
+  }, [activeSource, recommendedSettings, savedPreferences]);
+
+  const invalidateRelated = async () => {
+    await queryClient.invalidateQueries({ queryKey: prefsQueryKey });
+    await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
+  };
 
   const feedbackMutation = useMutation({
     mutationFn: (fitRating: FitRating) =>
       recommendationFeedbackApi.submit({ recommendationId, fitRating }),
     onSuccess: async (_data, fitRating) => {
       queryClient.setQueryData(feedbackQueryKey, fitRating);
-      await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
+      await invalidateRelated();
       showToast(
         fitRating === 'bad'
           ? t('machines:feedback.savedBad')
@@ -101,14 +118,29 @@ export function useMachineFitFeedback({
   });
 
   const preferenceMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (input: {
+      customSettings?: Partial<RecommendationSettings>;
+      activeSource?: SettingsActiveSource;
+      clearAdjusted?: boolean;
+    }) =>
       machinePreferenceApi.upsert({
         machineCode,
-        customSettings,
+        ...input,
       }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['machine-preferences', machineCode] });
-      await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
+    onSuccess: async (_data, variables) => {
+      await invalidateRelated();
+      if (variables.clearAdjusted) {
+        showToast(t('machines:feedback.adjustedCleared'), 'success');
+        return;
+      }
+      if (variables.activeSource === 'recommended') {
+        showToast(t('machines:feedback.usingRecommended'), 'success');
+        return;
+      }
+      if (variables.activeSource === 'adjusted') {
+        showToast(t('machines:feedback.usingAdjusted'), 'success');
+        return;
+      }
       showToast(t('machines:feedback.preferencesSaved'), 'success');
     },
     onError: () => showToast(t('machines:feedback.preferencesSaveFailed'), 'error'),
@@ -117,14 +149,13 @@ export function useMachineFitFeedback({
   const handleRating = (fitRating: FitRating) => {
     if (fitRating === 'bad' && recommendedSettings) {
       setCustomSettings((prev) => {
-        if (savedPreferences && Object.keys(savedPreferences).length > 0) {
+        if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
           return savedPreferences;
         }
         if (Object.keys(prev).length > 0) return prev;
         return seedCustomSettingsFromRecommendation(recommendedSettings);
       });
     }
-
     feedbackMutation.mutate(fitRating);
   };
 
@@ -148,24 +179,57 @@ export function useMachineFitFeedback({
     }));
   };
 
-  const showAdjustment = savedRating === 'bad';
-  const hasSavedPreferences = Boolean(
-    savedPreferences && Object.keys(savedPreferences).length > 0
-  );
+  const hasSavedPreferences = hasMeaningfulCustomSettings(savedPreferences);
+  const showAdjustment = activeSource === 'adjusted' || savedRating === 'bad';
 
   return {
     savedRating,
     customSettings,
+    activeSource,
     showAdjustment,
     hasSavedPreferences,
     handleRating,
     handleCustomChange,
     savePreferences: (onDone?: () => void) =>
-      preferenceMutation.mutate(undefined, {
-        onSuccess: () => {
-          onDone?.();
-        },
-      }),
+      preferenceMutation.mutate(
+        { customSettings, activeSource: 'adjusted' },
+        {
+          onSuccess: () => {
+            queryClient.setQueryData(feedbackQueryKey, 'bad');
+            onDone?.();
+          },
+        }
+      ),
+    useRecommended: () => {
+      feedbackMutation.mutate('good');
+    },
+    useAdjusted: () => {
+      if (!hasSavedPreferences && recommendedSettings) {
+        const seeded = seedCustomSettingsFromRecommendation(recommendedSettings);
+        setCustomSettings(seeded);
+        preferenceMutation.mutate(
+          { customSettings: seeded, activeSource: 'adjusted' },
+          {
+            onSuccess: () => {
+              queryClient.setQueryData(feedbackQueryKey, 'bad');
+            },
+          }
+        );
+        return;
+      }
+      feedbackMutation.mutate('bad');
+    },
+    clearAdjusted: () => {
+      setCustomSettings({});
+      preferenceMutation.mutate(
+        { clearAdjusted: true },
+        {
+          onSuccess: () => {
+            queryClient.setQueryData(feedbackQueryKey, 'good');
+          },
+        }
+      );
+    },
     isFeedbackPending: feedbackMutation.isPending,
     isPreferencesPending: preferenceMutation.isPending,
   };

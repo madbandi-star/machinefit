@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import type { RecommendationSettings } from '@machinefit/shared';
 import { machinePreferenceBodySchema } from '@machinefit/shared';
 import { feedbackRepository } from '../repositories/feedback.repository.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
@@ -32,6 +33,15 @@ export async function submitFeedback(req: Request, res: Response): Promise<void>
   }
 
   await feedbackRepository.upsert(userId, input.recommendationId, machineId, input.fitRating);
+
+  // Sync machine-level active source with fit feedback.
+  // good → AI recommended; bad → user adjusted (prefs kept if already saved).
+  await preferenceRepository.setActiveSource(
+    userId,
+    machineId,
+    input.fitRating === 'bad' ? 'adjusted' : 'recommended'
+  );
+
   res.json({ success: true, data: { fitRating: input.fitRating } });
 }
 
@@ -62,13 +72,19 @@ export async function upsertPreference(req: Request, res: Response): Promise<voi
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
   }
 
-  const saved = await preferenceRepository.upsert(userId, machineId, body);
+  const saved = await preferenceRepository.upsert(userId, machineId, {
+    customSettings: body.customSettings as Partial<RecommendationSettings> | undefined,
+    personalTipMemo: body.personalTipMemo,
+    activeSource: body.activeSource,
+    clearAdjusted: body.clearAdjusted,
+  });
   res.json({
     success: true,
     data: {
       machineCode,
       customSettings: saved.customSettings,
       personalTipMemo: saved.personalTipMemo,
+      activeSource: saved.activeSource,
     },
   });
 }
@@ -88,6 +104,7 @@ export async function getPreference(req: Request, res: Response): Promise<void> 
     data: {
       customSettings: prefs?.customSettings ?? {},
       personalTipMemo: prefs?.personalTipMemo ?? '',
+      activeSource: prefs?.activeSource ?? 'recommended',
     },
   });
 }
@@ -95,7 +112,7 @@ export async function getPreference(req: Request, res: Response): Promise<void> 
 export async function getPreferenceBatch(req: Request, res: Response): Promise<void> {
   const userId = req.user!.userId;
   const machineCodes = parseCsvQueryParam(req.query.codes);
-  const preferencesByMachine = await preferenceRepository.findCustomSettingsByUserMachineCodes(
+  const preferencesByMachine = await preferenceRepository.findByUserMachineCodes(
     userId,
     machineCodes
   );

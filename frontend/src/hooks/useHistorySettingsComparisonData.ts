@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { RecommendationSettings } from '@machinefit/shared';
+import type { MachineUserPreferences, RecommendationSettings } from '@machinefit/shared';
 import {
   machinePreferenceApi,
   recommendationFeedbackApi,
   type FitRating,
+  type MachinePreferencesResponse,
 } from '@/api';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
 
 export interface HistorySettingsComparisonData {
   preferencesByMachine: Record<string, Partial<RecommendationSettings>>;
+  activeSourceByMachine: Record<string, MachineUserPreferences['activeSource']>;
   feedbackByRecommendation: Record<string, FitRating | null>;
 }
 
@@ -39,30 +41,34 @@ export function useHistorySettingsComparisonData(
     queryFn: async (): Promise<HistorySettingsComparisonData> => {
       const emptyPreferencesByMachine = Object.fromEntries(
         machineCodes.map((machineCode) => [machineCode, null])
-      ) as Record<string, Partial<RecommendationSettings> | null>;
+      ) as Record<string, MachinePreferencesResponse | null>;
       const emptyFeedbackByRecommendation = Object.fromEntries(
         recommendationIds.map((recommendationId) => [recommendationId, null])
       ) as Record<string, FitRating | null>;
 
-      const [preferencesByMachineResponse, feedbackByRecommendationResponse]: [
-        Record<string, Partial<RecommendationSettings> | null>,
-        Record<string, FitRating | null>,
-      ] = await Promise.all([
-        machineCodes.length > 0
-          ? machinePreferenceApi.getBatch(machineCodes).catch(() => emptyPreferencesByMachine)
-          : Promise.resolve(emptyPreferencesByMachine),
-        recommendationIds.length > 0
-          ? recommendationFeedbackApi
-              .getBatch(recommendationIds)
-              .catch(() => emptyFeedbackByRecommendation)
-          : Promise.resolve(emptyFeedbackByRecommendation),
-      ]);
+      const [preferencesByMachineResponse, feedbackByRecommendationResponse] =
+        await Promise.all([
+          machineCodes.length > 0
+            ? machinePreferenceApi.getBatch(machineCodes).catch(() => emptyPreferencesByMachine)
+            : Promise.resolve(emptyPreferencesByMachine),
+          recommendationIds.length > 0
+            ? recommendationFeedbackApi
+                .getBatch(recommendationIds)
+                .catch(() => emptyFeedbackByRecommendation)
+            : Promise.resolve(emptyFeedbackByRecommendation),
+        ]);
 
       return {
         preferencesByMachine: Object.fromEntries(
           machineCodes.map((machineCode) => [
             machineCode,
-            preferencesByMachineResponse[machineCode] ?? {},
+            preferencesByMachineResponse[machineCode]?.customSettings ?? {},
+          ])
+        ),
+        activeSourceByMachine: Object.fromEntries(
+          machineCodes.map((machineCode) => [
+            machineCode,
+            preferencesByMachineResponse[machineCode]?.activeSource ?? 'recommended',
           ])
         ),
         feedbackByRecommendation: Object.fromEntries(

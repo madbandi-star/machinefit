@@ -489,6 +489,7 @@ export function HistoryListPanel() {
                   card.targetMuscleGroup
                 );
                 const customSettings = comparisonData?.preferencesByMachine[card.machineCode];
+                const activeSource = comparisonData?.activeSourceByMachine[card.machineCode];
                 const fitRating = card.recommendationId
                   ? comparisonData?.feedbackByRecommendation[card.recommendationId]
                   : null;
@@ -502,6 +503,7 @@ export function HistoryListPanel() {
                     muscleGroup={muscleGroup}
                     initialFitRating={fitRating}
                     initialCustomSettings={customSettings}
+                    initialActiveSource={activeSource}
                     isAuthenticated={isAuthenticated}
                     lockTargetMuscle={Boolean(
                       card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)
