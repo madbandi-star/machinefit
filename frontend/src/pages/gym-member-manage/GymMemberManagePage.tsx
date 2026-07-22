@@ -88,34 +88,40 @@ function hasRequiredGymLocation(loc: LocationPickerValue): boolean {
   return Boolean(loc.countryCode && loc.stateId && loc.cityId);
 }
 
-function gymHasExtras(form: GymFormState): boolean {
-  return Boolean(
-    form.brandName.trim() ||
-      form.address.trim() ||
-      form.phone.trim() ||
-      form.websiteUrl.trim()
-  );
-}
-
-function memberHasExtras(form: MemberFormState): boolean {
-  return Boolean(
-    form.email.trim() ||
-      form.gender ||
-      form.heightCm ||
-      form.weightKg ||
-      form.birthDate ||
-      form.memo.trim()
-  );
-}
-
 function memberInitial(name: string): string {
   const trimmed = name.trim();
   if (!trimmed) return '?';
   return trimmed.slice(0, 1).toUpperCase();
 }
 
+function formatMemberDate(value: string | undefined, locale: string): string {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString(locale.startsWith('en') ? 'en-US' : 'ko-KR');
+}
+
+function IconEdit() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M19 6l-1 14H6L5 6" />
+    </svg>
+  );
+}
+
 export function GymMemberManagePage() {
-  const { t } = useTranslation(['gyms', 'common']);
+  const { t, i18n } = useTranslation(['gyms', 'common']);
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
   const {
@@ -139,14 +145,12 @@ export function GymMemberManagePage() {
   const [gymFormMode, setGymFormMode] = useState<GymFormMode>('closed');
   const [editingGymId, setEditingGymId] = useState<string | null>(null);
   const [gymForm, setGymForm] = useState<GymFormState>(emptyGymForm);
-  const [gymExtrasOpen, setGymExtrasOpen] = useState(false);
   const [gymSubmitting, setGymSubmitting] = useState(false);
   const [pendingDeleteGym, setPendingDeleteGym] = useState<UserGym | null>(null);
 
   const [memberFormMode, setMemberFormMode] = useState<MemberFormMode>('closed');
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [memberForm, setMemberForm] = useState<MemberFormState>(emptyMemberForm);
-  const [memberExtrasOpen, setMemberExtrasOpen] = useState(false);
   const [memberSubmitting, setMemberSubmitting] = useState(false);
   const [pendingDeleteMember, setPendingDeleteMember] = useState<GymMember | null>(null);
 
@@ -165,7 +169,6 @@ export function GymMemberManagePage() {
     setMemberFormMode('closed');
     setEditingMemberId(null);
     setMemberForm(emptyMemberForm);
-    setMemberExtrasOpen(false);
     setPendingDeleteMember(null);
   }, [activeGymId]);
 
@@ -173,22 +176,18 @@ export function GymMemberManagePage() {
     setGymFormMode('create');
     setEditingGymId(null);
     setGymForm(emptyGymForm);
-    setGymExtrasOpen(false);
   };
 
   const openEditGym = (gym: UserGym) => {
-    const next = gymToForm(gym);
     setGymFormMode('edit');
     setEditingGymId(gym.id);
-    setGymForm(next);
-    setGymExtrasOpen(gymHasExtras(next));
+    setGymForm(gymToForm(gym));
   };
 
   const closeGymForm = () => {
     setGymFormMode('closed');
     setEditingGymId(null);
     setGymForm(emptyGymForm);
-    setGymExtrasOpen(false);
   };
 
   const handleGymSubmit = async (event: FormEvent) => {
@@ -242,22 +241,18 @@ export function GymMemberManagePage() {
     setMemberFormMode('create');
     setEditingMemberId(null);
     setMemberForm(emptyMemberForm);
-    setMemberExtrasOpen(false);
   };
 
   const openEditMember = (member: GymMember) => {
-    const next = memberToForm(member);
     setMemberFormMode('edit');
     setEditingMemberId(member.id);
-    setMemberForm(next);
-    setMemberExtrasOpen(memberHasExtras(next));
+    setMemberForm(memberToForm(member));
   };
 
   const closeMemberForm = () => {
     setMemberFormMode('closed');
     setEditingMemberId(null);
     setMemberForm(emptyMemberForm);
-    setMemberExtrasOpen(false);
   };
 
   const handleMemberSubmit = async (event: FormEvent) => {
@@ -340,21 +335,29 @@ export function GymMemberManagePage() {
                     : t('gyms:manage.editGymTitle')}
                 </div>
 
-                <label className="form-field">
-                  <span className="form-field__label">{t('gyms:selector.gymName')}</span>
-                  <input
-                    className="input"
-                    value={gymForm.name}
-                    onChange={(e) => setGymForm((prev) => ({ ...prev, name: e.target.value }))}
-                    required
-                    maxLength={200}
-                    autoFocus
-                    placeholder={t('gyms:manage.gymNamePlaceholder')}
-                  />
-                </label>
+                <div className="gym-manage-section">
+                  <h3 className="gym-manage-section__header">{t('gyms:manage.sectionBasic')}</h3>
+                  <label className="form-field">
+                    <span className="form-field__label">
+                      {t('gyms:selector.gymName')}
+                      <span className="gym-manage-required" aria-hidden>
+                        *
+                      </span>
+                    </span>
+                    <input
+                      className="input"
+                      value={gymForm.name}
+                      onChange={(e) => setGymForm((prev) => ({ ...prev, name: e.target.value }))}
+                      required
+                      maxLength={200}
+                      autoFocus
+                      placeholder={t('gyms:manage.gymNamePlaceholder')}
+                    />
+                  </label>
+                </div>
 
-                <div className="form-field">
-                  <span className="form-field__label">{t('gyms:manage.locationHeading')}</span>
+                <div className="gym-manage-section">
+                  <h3 className="gym-manage-section__header">{t('gyms:manage.locationHeading')}</h3>
                   <p className="gym-manage-hint">{t('gyms:manage.locationThenGymHint')}</p>
                   <LocationPicker
                     value={gymForm.location}
@@ -365,18 +368,8 @@ export function GymMemberManagePage() {
                   />
                 </div>
 
-                <button
-                  type="button"
-                  className="gym-manage-toggle"
-                  aria-expanded={gymExtrasOpen}
-                  onClick={() => setGymExtrasOpen((open) => !open)}
-                >
-                  {gymExtrasOpen
-                    ? t('gyms:manage.hideOptional')
-                    : t('gyms:manage.showOptional')}
-                </button>
-
-                {gymExtrasOpen ? (
+                <div className="gym-manage-section">
+                  <h3 className="gym-manage-section__header">{t('gyms:manage.sectionOptional')}</h3>
                   <div className="gym-manage-extras form-stack">
                     <label className="form-field">
                       <span className="form-field__label">{t('gyms:selector.brand')}</span>
@@ -429,9 +422,12 @@ export function GymMemberManagePage() {
                       </label>
                     </div>
                   </div>
-                ) : null}
+                </div>
 
                 <div className="gym-manage-editor__actions">
+                  <button type="button" className="btn btn--secondary" onClick={closeGymForm}>
+                    {t('gyms:members.cancel')}
+                  </button>
                   <button
                     type="submit"
                     className="btn btn--primary"
@@ -442,9 +438,6 @@ export function GymMemberManagePage() {
                     }
                   >
                     {t('gyms:selector.save')}
-                  </button>
-                  <button type="button" className="btn btn--secondary" onClick={closeGymForm}>
-                    {t('gyms:members.cancel')}
                   </button>
                 </div>
               </form>
@@ -483,33 +476,40 @@ export function GymMemberManagePage() {
                           {memberInitial(gym.name)}
                         </span>
                         <span className="gym-manage-row__body">
-                          <span className="gym-manage-row__name">{gym.name}</span>
+                          <span className="gym-manage-row__title-row">
+                            <span className="gym-manage-row__name">{gym.name}</span>
+                            {isSelected ? (
+                              <span className="gym-manage-badge gym-manage-badge--selected">
+                                {t('gyms:manage.selected')}
+                              </span>
+                            ) : null}
+                          </span>
                           <span className="gym-manage-row__meta">
                             {gym.brandName
                               ? `${gym.brandName} · `
                               : ''}
                             {gym.location?.label?.path || t('gyms:noLocationLabel')}
                           </span>
+                          {!isSelected ? (
+                            <span className="gym-manage-row__hint">{t('gyms:manage.tapToSelect')}</span>
+                          ) : null}
                         </span>
-                        {isSelected ? (
-                          <span className="gym-manage-pill">{t('gyms:manage.selected')}</span>
-                        ) : (
-                          <span className="gym-manage-row__hint">{t('gyms:manage.tapToSelect')}</span>
-                        )}
                       </button>
                       <div className="gym-manage-row__actions">
                         <button
                           type="button"
-                          className="gym-manage-link-btn"
+                          className="gym-manage-action-btn"
                           onClick={() => openEditGym(gym)}
                         >
+                          <IconEdit />
                           {t('gyms:manage.edit')}
                         </button>
                         <button
                           type="button"
-                          className="gym-manage-link-btn gym-manage-link-btn--danger"
+                          className="gym-manage-action-btn gym-manage-action-btn--danger"
                           onClick={() => setPendingDeleteGym(gym)}
                         >
+                          <IconTrash />
                           {t('gyms:members.remove')}
                         </button>
                       </div>
@@ -580,145 +580,144 @@ export function GymMemberManagePage() {
                         : t('gyms:manage.editMemberTitle')}
                     </div>
 
-                    <label className="form-field">
-                      <span className="form-field__label">{t('gyms:members.name')}</span>
-                      <input
-                        className="input"
-                        value={memberForm.name}
-                        onChange={(e) =>
-                          setMemberForm((prev) => ({ ...prev, name: e.target.value }))
-                        }
-                        required
-                        maxLength={100}
-                        autoFocus
-                        placeholder={t('gyms:manage.memberNamePlaceholder')}
-                      />
-                    </label>
-
-                    <button
-                      type="button"
-                      className="gym-manage-toggle"
-                      aria-expanded={memberExtrasOpen}
-                      onClick={() => setMemberExtrasOpen((open) => !open)}
-                    >
-                      {memberExtrasOpen
-                        ? t('gyms:manage.hideOptional')
-                        : t('gyms:manage.showOptional')}
-                    </button>
-
-                    {memberExtrasOpen ? (
-                      <div className="gym-manage-extras form-stack">
-                        <label className="form-field">
-                          <span className="form-field__label">{t('gyms:members.email')}</span>
-                          <input
-                            className="input"
-                            type="email"
-                            value={memberForm.email}
-                            onChange={(e) =>
-                              setMemberForm((prev) => ({ ...prev, email: e.target.value }))
-                            }
-                            maxLength={200}
-                            placeholder="name@email.com"
-                          />
-                          {memberForm.email.trim() ? (
-                            <span className="gym-manage-hint">{t('gyms:members.emailHint')}</span>
-                          ) : null}
-                        </label>
-
-                        <GenderPicker
-                          value={memberForm.gender}
-                          onChange={(gender) =>
-                            setMemberForm((prev) => ({ ...prev, gender }))
+                    <div className="gym-manage-section">
+                      <h3 className="gym-manage-section__header">{t('gyms:manage.sectionBasic')}</h3>
+                      <label className="form-field">
+                        <span className="form-field__label">
+                          {t('gyms:members.name')}
+                          <span className="gym-manage-required" aria-hidden>
+                            *
+                          </span>
+                        </span>
+                        <input
+                          className="input"
+                          value={memberForm.name}
+                          onChange={(e) =>
+                            setMemberForm((prev) => ({ ...prev, name: e.target.value }))
                           }
-                          compact
+                          required
+                          maxLength={100}
+                          autoFocus
+                          placeholder={t('gyms:manage.memberNamePlaceholder')}
                         />
+                      </label>
 
-                        <div className="gym-manage-grid">
-                          <label className="form-field">
-                            <span className="form-field__label">{t('gyms:members.height')}</span>
-                            <input
-                              className="input"
-                              type="number"
-                              value={memberForm.heightCm}
-                              onChange={(e) =>
-                                setMemberForm((prev) => ({
-                                  ...prev,
-                                  heightCm: e.target.value,
-                                }))
-                              }
-                              min={50}
-                              max={300}
-                              step={0.1}
-                              inputMode="decimal"
-                              placeholder="170"
-                            />
-                          </label>
-                          <label className="form-field">
-                            <span className="form-field__label">{t('gyms:members.weight')}</span>
-                            <input
-                              className="input"
-                              type="number"
-                              value={memberForm.weightKg}
-                              onChange={(e) =>
-                                setMemberForm((prev) => ({
-                                  ...prev,
-                                  weightKg: e.target.value,
-                                }))
-                              }
-                              min={20}
-                              max={500}
-                              step={0.1}
-                              inputMode="decimal"
-                              placeholder="70"
-                            />
-                          </label>
-                        </div>
+                      <label className="form-field">
+                        <span className="form-field__label">{t('gyms:members.email')}</span>
+                        <input
+                          className="input"
+                          type="email"
+                          value={memberForm.email}
+                          onChange={(e) =>
+                            setMemberForm((prev) => ({ ...prev, email: e.target.value }))
+                          }
+                          maxLength={200}
+                          placeholder="name@email.com"
+                        />
+                        {memberForm.email.trim() ? (
+                          <span className="gym-manage-hint">{t('gyms:members.emailHint')}</span>
+                        ) : null}
+                      </label>
 
+                      <GenderPicker
+                        value={memberForm.gender}
+                        onChange={(gender) =>
+                          setMemberForm((prev) => ({ ...prev, gender }))
+                        }
+                        compact
+                      />
+                    </div>
+
+                    <div className="gym-manage-section">
+                      <h3 className="gym-manage-section__header">{t('gyms:manage.sectionBody')}</h3>
+                      <div className="gym-manage-grid">
                         <label className="form-field">
-                          <span className="form-field__label">{t('gyms:members.birthDate')}</span>
+                          <span className="form-field__label">{t('gyms:members.height')}</span>
                           <input
                             className="input"
-                            type="date"
-                            value={memberForm.birthDate}
+                            type="number"
+                            value={memberForm.heightCm}
                             onChange={(e) =>
                               setMemberForm((prev) => ({
                                 ...prev,
-                                birthDate: e.target.value,
+                                heightCm: e.target.value,
                               }))
                             }
+                            min={50}
+                            max={300}
+                            step={0.1}
+                            inputMode="decimal"
+                            placeholder="170"
                           />
                         </label>
-
                         <label className="form-field">
-                          <span className="form-field__label">{t('gyms:members.memo')}</span>
-                          <textarea
-                            className="input gym-manage-textarea"
-                            value={memberForm.memo}
+                          <span className="form-field__label">{t('gyms:members.weight')}</span>
+                          <input
+                            className="input"
+                            type="number"
+                            value={memberForm.weightKg}
                             onChange={(e) =>
-                              setMemberForm((prev) => ({ ...prev, memo: e.target.value }))
+                              setMemberForm((prev) => ({
+                                ...prev,
+                                weightKg: e.target.value,
+                              }))
                             }
-                            rows={3}
-                            maxLength={500}
-                            placeholder={t('gyms:manage.memoPlaceholder')}
+                            min={20}
+                            max={500}
+                            step={0.1}
+                            inputMode="decimal"
+                            placeholder="70"
                           />
                         </label>
                       </div>
-                    ) : null}
+
+                      <label className="form-field">
+                        <span className="form-field__label">{t('gyms:members.birthDate')}</span>
+                        <input
+                          className="input"
+                          type="date"
+                          value={memberForm.birthDate}
+                          onChange={(e) =>
+                            setMemberForm((prev) => ({
+                              ...prev,
+                              birthDate: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+                    </div>
+
+                    <div className="gym-manage-section">
+                      <h3 className="gym-manage-section__header">{t('gyms:manage.sectionMemo')}</h3>
+                      <label className="form-field">
+                        <span className="form-field__label">{t('gyms:members.memo')}</span>
+                        <textarea
+                          className="input gym-manage-textarea"
+                          value={memberForm.memo}
+                          onChange={(e) =>
+                            setMemberForm((prev) => ({ ...prev, memo: e.target.value }))
+                          }
+                          rows={3}
+                          maxLength={500}
+                          placeholder={t('gyms:manage.memoPlaceholder')}
+                        />
+                      </label>
+                    </div>
 
                     <div className="gym-manage-editor__actions">
-                      <button
-                        type="submit"
-                        className="btn btn--primary"
-                        disabled={!memberForm.name.trim() || memberSubmitting}
-                      >
-                        {t('gyms:members.save')}
-                      </button>
                       <button
                         type="button"
                         className="btn btn--secondary"
                         onClick={closeMemberForm}
                       >
                         {t('gyms:members.cancel')}
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn btn--primary"
+                        disabled={!memberForm.name.trim() || memberSubmitting}
+                      >
+                        {t('gyms:members.save')}
                       </button>
                     </div>
                   </form>
@@ -751,43 +750,51 @@ export function GymMemberManagePage() {
                             {memberInitial(member.name)}
                           </span>
                           <span className="gym-manage-row__body">
-                            <span className="gym-manage-row__name">
-                              {member.name}
+                            <span className="gym-manage-row__title-row">
+                              <span className="gym-manage-row__name">{member.name}</span>
                               {member.isSelf ? (
-                                <span className="gym-manage-row__self">
-                                  {' '}
-                                  · {t('gyms:members.self')}
+                                <span className="gym-manage-badge gym-manage-badge--self">
+                                  {t('gyms:members.self')}
+                                </span>
+                              ) : null}
+                              {member.profileAccess === 'pending' ? (
+                                <span className="gym-manage-badge gym-manage-badge--pending">
+                                  {t('gyms:members.pending')}
+                                </span>
+                              ) : null}
+                              {member.profileAccess === 'approved' ? (
+                                <span className="gym-manage-badge gym-manage-badge--approved">
+                                  {t('gyms:members.approved')}
                                 </span>
                               ) : null}
                             </span>
-                            <span className="gym-manage-row__meta">
-                              {[
-                                member.profileAccess === 'pending'
-                                  ? t('gyms:members.pending')
-                                  : member.profileAccess === 'approved'
-                                    ? t('gyms:members.approved')
-                                    : null,
-                                member.email || null,
-                              ]
-                                .filter(Boolean)
-                                .join(' · ') || t('gyms:manage.memberNoExtra')}
+                            <span className="gym-manage-row__meta-stack">
+                              <span className="gym-manage-row__meta">
+                                {member.email || t('gyms:manage.memberNoExtra')}
+                              </span>
+                              <span className="gym-manage-row__meta">
+                                {t('gyms:manage.joinedAt')}:{' '}
+                                {formatMemberDate(member.createdAt, i18n.language)}
+                              </span>
                             </span>
                           </span>
                         </div>
                         <div className="gym-manage-row__actions">
                           <button
                             type="button"
-                            className="gym-manage-link-btn"
+                            className="gym-manage-action-btn"
                             onClick={() => openEditMember(member)}
                           >
+                            <IconEdit />
                             {t('gyms:manage.edit')}
                           </button>
                           {!member.isSelf ? (
                             <button
                               type="button"
-                              className="gym-manage-link-btn gym-manage-link-btn--danger"
+                              className="gym-manage-action-btn gym-manage-action-btn--danger"
                               onClick={() => setPendingDeleteMember(member)}
                             >
+                              <IconTrash />
                               {t('gyms:members.remove')}
                             </button>
                           ) : null}
@@ -804,7 +811,7 @@ export function GymMemberManagePage() {
 
       <ConfirmDialog
         open={Boolean(pendingDeleteGym)}
-        title={t('gyms:manage.removeGymTitle')}
+        title={t('gyms:manage.removeConfirmTitle')}
         message={t('gyms:manage.removeGymMessage', { name: pendingDeleteGym?.name ?? '' })}
         confirmLabel={t('gyms:members.remove')}
         confirmVariant="danger"
@@ -818,7 +825,7 @@ export function GymMemberManagePage() {
 
       <ConfirmDialog
         open={Boolean(pendingDeleteMember)}
-        title={t('gyms:manage.removeMemberTitle')}
+        title={t('gyms:manage.removeConfirmTitle')}
         message={t('gyms:manage.removeMemberMessage', {
           name: pendingDeleteMember?.name ?? '',
         })}
