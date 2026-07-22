@@ -7,7 +7,7 @@ import type {
   SettingsActiveSource,
   TargetMuscleGroup,
 } from '@machinefit/shared';
-import { resolveSuggestedWeightKg } from '@machinefit/shared';
+import { resolveWorkoutLogSeedWeightKg } from '@machinefit/shared';
 import type { FitRating } from '@/api';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
@@ -350,10 +350,11 @@ export function HistoryRecordCard({
         machineCode={card.machineCode}
         machineName={card.machineName}
         recommendationId={card.recommendationId}
-        suggestedWeightKg={resolveSuggestedWeightKg(
-          customSettings.recommendedWeightKg,
-          card.settings.recommendedWeightKg
-        )}
+        suggestedWeightKg={resolveWorkoutLogSeedWeightKg({
+          fitRating: savedRating,
+          adjustedWeight: customSettings.recommendedWeightKg,
+          recommendedWeight: card.settings.recommendedWeightKg,
+        })}
         isAuthenticated={isAuthenticated}
         variant="history"
         logDate={logDate}

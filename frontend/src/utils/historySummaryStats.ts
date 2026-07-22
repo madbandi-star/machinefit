@@ -50,10 +50,11 @@ function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | nul
 }
 
 /**
- * History summary totals (adjusted values always win over recommended).
+ * History summary totals.
  *
- * - 총 중량: Σ session working weight (adjusted → max set weight → recommended)
- * - 총 볼륨: Σ (working weight × reps × sets)
+ * - 총 중량: max(-무게kg+ stepper weights) per log
+ * - 총 볼륨: Σ(stepper weight × reps)
+ * Seed weight (adjusted/recommended by fit rating) only fills steppers; totals use stepper values.
  */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],

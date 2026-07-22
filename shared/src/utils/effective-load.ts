@@ -1,11 +1,12 @@
 /**
  * Effective working load helpers.
  *
- * Product rule: user-adjusted values always win over AI recommendations
- * (and over previously saved setWeightsKg, which may have been seeded from AI).
+ * Product rule for seeding workout-log weight steppers:
+ * - 추천값 잘맞음 / 미선택 → 추천중량
+ * - 셋팅값 조정 필요 / 그 외 → 조정중량(있으면) else 추천중량
  *
- * - Working weight (총 중량): adjusted → max(setWeights) → recommended
- * - Volume (총 볼륨): workingWeight × effectiveReps × sets
+ * Totals (총 중량 / 총 볼륨) are computed from the -무게kg+ stepper values
+ * (`setWeightsKg`), not by overriding them with preference fields.
  */
 
 function toPositiveNumber(value: unknown): number | null {
@@ -51,13 +52,33 @@ export interface EffectiveLoadInput {
   recommendedReps?: number | null;
   /** Number of sets performed. */
   sets?: number | null;
-  /**
-   * Optional per-set working weights from a workout log.
-   * Used only when adjustedWeight is absent — logged weights are the actual
-   * performed load. When adjustedWeight > 0, adjusted always wins.
-   */
+  /** Per-set working weights from -무게kg+ steppers / workout log. */
   setWeightsKg?: number[] | null;
   setCompleted?: boolean[] | null;
+}
+
+export type FitRatingLike = 'good' | 'bad' | null | undefined;
+
+/**
+ * Weight to put into workout-log steppers (-무게kg+).
+ *
+ * - 추천값 잘맞음 (`good`) or 미선택 (`null`) → 추천중량
+ * - 셋팅값 조정 필요 (`bad`) or other → 조정중량 if present, else 추천중량
+ */
+export function resolveWorkoutLogSeedWeightKg(options: {
+  fitRating?: FitRatingLike;
+  adjustedWeight?: number | null;
+  recommendedWeight?: number | null;
+}): number | undefined {
+  const recommended = toPositiveNumber(options.recommendedWeight) ?? undefined;
+  const adjusted = toPositiveNumber(options.adjustedWeight) ?? undefined;
+
+  if (options.fitRating === 'good' || options.fitRating == null) {
+    return recommended;
+  }
+
+  // bad / other: prefer adjusted when available
+  return adjusted ?? recommended;
 }
 
 function shouldUseCompletedFilter(
@@ -82,37 +103,19 @@ function resolveSetCount(input: EffectiveLoadInput): number {
 }
 
 /**
- * Session / log **volume** (총 볼륨):
- * - weight = adjusted > 0 ? adjusted : (setWeights if present, else recommended)
- * - reps = adjusted > 0 ? adjusted : recommended
- * - total = weight × reps × sets
- *
- * Distinct from working weight (`resolveSessionWorkingWeightKg` / 총 중량).
- * Adjusted weight ALWAYS overrides both recommended and saved setWeightsKg.
+ * Session / log **volume** (총 볼륨) from stepper weights:
+ * Σ(setWeight_i × effectiveReps), or effectiveWeight × reps × sets when no steppers yet.
  */
 export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number {
-  const adjustedWeight = toPositiveNumber(input.adjustedWeight);
   const reps = getEffectiveReps(input.adjustedReps, input.recommendedReps);
   const sets = resolveSetCount(input);
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
 
-  // 1) Adjusted weight always wins — ignore stale setWeights seeded from AI.
-  if (adjustedWeight != null) {
-    if (reps > 0 && sets > 0) {
-      return computeTotalWeightKg(adjustedWeight, reps, sets);
-    }
-    // Reps unavailable (legacy): still apply adjusted weight × sets so UI updates.
-    if (sets > 0) {
-      return Math.round(adjustedWeight * sets * 100) / 100;
-    }
-    return 0;
-  }
-
-  // 2) No adjusted weight — use logged per-set weights when present.
   const positiveWeights = weights.filter(
     (w) => typeof w === 'number' && Number.isFinite(w) && w > 0
   );
 
+  // Primary: -무게kg+ stepper / logged set weights
   if (positiveWeights.length > 0) {
     const useCompleted = shouldUseCompletedFilter(weights, input.setCompleted);
     let total = 0;
@@ -125,23 +128,23 @@ export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number
     return Math.round(total * 100) / 100;
   }
 
-  // 3) Fall back to recommended settings × reps × sets.
-  const recommendedWeight = toPositiveNumber(input.recommendedWeight);
-  if (recommendedWeight != null && reps > 0 && sets > 0) {
-    return computeTotalWeightKg(recommendedWeight, reps, sets);
+  // Fallback before steppers are filled: seed weight × reps × sets
+  const seedWeight = getEffectiveWeight(input.adjustedWeight, input.recommendedWeight);
+  if (seedWeight > 0 && reps > 0 && sets > 0) {
+    return computeTotalWeightKg(seedWeight, reps, sets);
+  }
+  if (seedWeight > 0 && sets > 0) {
+    return Math.round(seedWeight * sets * 100) / 100;
   }
 
   return 0;
 }
 
 /**
- * Working weight for a session (총 중량 카드용).
- * adjusted > setWeights max > recommended. Does NOT multiply by reps/sets.
+ * Working weight for a session (총 중량 카드용) from stepper weights.
+ * max(setWeights) first; else seed (adjusted → recommended). No × reps/sets.
  */
 export function resolveSessionWorkingWeightKg(input: EffectiveLoadInput): number {
-  const adjustedWeight = toPositiveNumber(input.adjustedWeight);
-  if (adjustedWeight != null) return adjustedWeight;
-
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
   if (weights.length > 0) {
     const useCompleted = shouldUseCompletedFilter(weights, input.setCompleted);
@@ -154,12 +157,12 @@ export function resolveSessionWorkingWeightKg(input: EffectiveLoadInput): number
     if (max > 0) return max;
   }
 
-  return toPositiveNumber(input.recommendedWeight) ?? 0;
+  return getEffectiveWeight(input.adjustedWeight, input.recommendedWeight);
 }
 
 /**
- * Resolve effective weight for seeding workout logs / UI defaults.
- * Same rule as getEffectiveWeight; exposed for call-site clarity.
+ * @deprecated Prefer `resolveWorkoutLogSeedWeightKg` with fitRating.
+ * Kept for call sites that only have adjusted/recommended.
  */
 export function resolveSuggestedWeightKg(
   adjustedWeight?: number | null,
