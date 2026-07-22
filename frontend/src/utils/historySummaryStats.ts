@@ -2,6 +2,7 @@ import type { RecommendationSettings, WorkoutLog } from '@machinefit/shared';
 import {
   computePerformedTotalWeightKg,
   getEffectiveWeight,
+  resolveSessionWorkingWeightKg,
 } from '@machinefit/shared';
 import { buildLoggedWorkoutKey } from '@/utils/historyLogStatus';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
@@ -49,9 +50,10 @@ function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | nul
 }
 
 /**
- * History summary totals.
- * 총 중량 / 총 볼륨 = effectiveWeight × effectiveReps × sets
- * (adjusted values always win over recommended and over saved setWeightsKg).
+ * History summary totals (adjusted values always win over recommended).
+ *
+ * - 총 중량: Σ session working weight (adjusted → max set weight → recommended)
+ * - 총 볼륨: Σ (working weight × reps × sets)
  */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],
@@ -67,7 +69,7 @@ export function computeHistorySummaryStats(
     if (!log) continue;
 
     const adjusted = context.preferencesByMachine?.[card.machineCode];
-    const sessionTotal = computePerformedTotalWeightKg({
+    const load = {
       adjustedWeight: adjusted?.recommendedWeightKg,
       recommendedWeight: card.settings.recommendedWeightKg,
       adjustedReps: resolveRecommendedReps(adjusted),
@@ -75,11 +77,11 @@ export function computeHistorySummaryStats(
       sets: log.setCount,
       setWeightsKg: log.setWeightsKg,
       setCompleted: log.setCompleted,
-    });
+    };
 
     totalSets += log.setCount;
-    totalWeightKg += sessionTotal;
-    totalVolumeKg += sessionTotal;
+    totalWeightKg += resolveSessionWorkingWeightKg(load);
+    totalVolumeKg += computePerformedTotalWeightKg(load);
   }
 
   return {

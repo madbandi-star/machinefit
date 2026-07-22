@@ -3,7 +3,9 @@
  *
  * Product rule: user-adjusted values always win over AI recommendations
  * (and over previously saved setWeightsKg, which may have been seeded from AI).
- * Total weight = effectiveWeight × effectiveReps × sets.
+ *
+ * - Working weight (총 중량): adjusted → max(setWeights) → recommended
+ * - Volume (총 볼륨): workingWeight × effectiveReps × sets
  */
 
 function toPositiveNumber(value: unknown): number | null {
@@ -80,13 +82,13 @@ function resolveSetCount(input: EffectiveLoadInput): number {
 }
 
 /**
- * Session / log total weight using the product rule:
+ * Session / log **volume** (총 볼륨):
  * - weight = adjusted > 0 ? adjusted : (setWeights if present, else recommended)
  * - reps = adjusted > 0 ? adjusted : recommended
  * - total = weight × reps × sets
  *
- * Adjusted weight ALWAYS overrides both recommended and saved setWeightsKg,
- * so applying 조정값 immediately changes 총 중량 / 총 볼륨.
+ * Distinct from working weight (`resolveSessionWorkingWeightKg` / 총 중량).
+ * Adjusted weight ALWAYS overrides both recommended and saved setWeightsKg.
  */
 export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number {
   const adjustedWeight = toPositiveNumber(input.adjustedWeight);
@@ -130,6 +132,29 @@ export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number
   }
 
   return 0;
+}
+
+/**
+ * Working weight for a session (총 중량 카드용).
+ * adjusted > setWeights max > recommended. Does NOT multiply by reps/sets.
+ */
+export function resolveSessionWorkingWeightKg(input: EffectiveLoadInput): number {
+  const adjustedWeight = toPositiveNumber(input.adjustedWeight);
+  if (adjustedWeight != null) return adjustedWeight;
+
+  const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
+  if (weights.length > 0) {
+    const useCompleted = shouldUseCompletedFilter(weights, input.setCompleted);
+    let max = 0;
+    for (let i = 0; i < weights.length; i += 1) {
+      if (useCompleted && input.setCompleted![i] !== true) continue;
+      const w = weights[i];
+      if (typeof w === 'number' && Number.isFinite(w) && w > max) max = w;
+    }
+    if (max > 0) return max;
+  }
+
+  return toPositiveNumber(input.recommendedWeight) ?? 0;
 }
 
 /**

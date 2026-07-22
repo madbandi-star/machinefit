@@ -9,6 +9,7 @@ import {
   computeTotalWeightKg,
   getEffectiveReps,
   getEffectiveWeight,
+  resolveSessionWorkingWeightKg,
   resolveSuggestedWeightKg,
 } from './effective-load.js';
 
@@ -168,5 +169,54 @@ describe('resolveSuggestedWeightKg', () => {
 
   it('returns undefined when neither is usable', () => {
     assert.equal(resolveSuggestedWeightKg(null, null), undefined);
+  });
+});
+
+describe('resolveSessionWorkingWeightKg', () => {
+  it('prefers adjusted over setWeights and recommended', () => {
+    assert.equal(
+      resolveSessionWorkingWeightKg({
+        adjustedWeight: 35,
+        recommendedWeight: 50,
+        setWeightsKg: [50, 50, 50],
+      }),
+      35
+    );
+  });
+
+  it('uses max set weight when adjusted absent', () => {
+    assert.equal(
+      resolveSessionWorkingWeightKg({
+        recommendedWeight: 50,
+        setWeightsKg: [30, 40, 35],
+      }),
+      40
+    );
+  });
+
+  it('falls back to recommended when no adjusted or setWeights', () => {
+    assert.equal(
+      resolveSessionWorkingWeightKg({
+        recommendedWeight: 45,
+        sets: 3,
+      }),
+      45
+    );
+  });
+});
+
+describe('history summary weight vs volume', () => {
+  it('working weight and volume differ (weight vs weight×reps×sets)', () => {
+    const load = {
+      adjustedWeight: 35,
+      recommendedWeight: 50,
+      adjustedReps: 10,
+      recommendedReps: 12,
+      sets: 10,
+      setWeightsKg: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+    };
+    assert.equal(resolveSessionWorkingWeightKg(load), 35);
+    assert.equal(computePerformedTotalWeightKg(load), 3500);
+    assert.notEqual(resolveSessionWorkingWeightKg(load), computePerformedTotalWeightKg(load));
   });
 });
