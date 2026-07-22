@@ -44,6 +44,15 @@ export function createApp() {
     })
   );
 
+  // Local-dev fallback for muscle-group images when Supabase Storage is not configured.
+  app.use(
+    `${env.API_BASE_PATH}/media/muscle-group-images`,
+    express.static(storageService.localMuscleUploadRoot, {
+      fallthrough: false,
+      maxAge: '7d',
+    })
+  );
+
   app.use(env.API_BASE_PATH, apiRouter);
 
   app.use(errorMiddleware);

@@ -19,3 +19,4 @@ export * from './live-dashboard.types.js';
 export * from './achievement.types.js';
 export * from './growth-timeline.types.js';
 export * from './location.types.js';
+export * from './muscle-group-image.types.js';

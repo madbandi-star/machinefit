@@ -69,6 +69,8 @@ export const QUERY_KEYS = {
   adminMachines: ['admin', 'machines'] as const,
   adminModeration: ['admin', 'moderation'] as const,
   adminMotivationMedia: ['admin', 'motivation-media'] as const,
+  adminMuscleGroupImages: ['admin', 'muscle-group-images'] as const,
+  muscleGroupImages: ['muscle-group-images'] as const,
   motivationMedia: ['motivation-media'] as const,
   userMotivationTracks: ['user', 'motivation-tracks'] as const,
   adminOwnerApplications: ['admin', 'owner-applications'] as const,

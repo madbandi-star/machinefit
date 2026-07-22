@@ -18,6 +18,8 @@ const envSchema = z.object({
   MOTIVATION_AUDIO_MAX_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
   MOTIVATION_AUDIO_MAX_TRACKS: z.coerce.number().int().positive().default(20),
   MOTIVATION_AUDIO_BUCKET: z.string().default('motivation-audio'),
+  MUSCLE_GROUP_IMAGE_MAX_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
+  MUSCLE_GROUP_IMAGE_BUCKET: z.string().default('muscle-group-images'),
 });
 
 export const env = envSchema.parse(process.env);

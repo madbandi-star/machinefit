@@ -15,6 +15,9 @@ import type {
   GymMachine,
   ReviewOwnerApplicationInput,
   AdminGymMachineActionInput,
+  MuscleGroupImageAsset,
+  MuscleGroupImagesState,
+  MuscleGroupImageKey,
 } from '@machinefit/shared';
 import type {
   UpdateUserAdminInput,
@@ -151,9 +154,43 @@ export const adminApi = {
       `/admin/gym-machines/${itemId}/actions`,
       input
     ),
+
+  listMuscleGroupImages: () =>
+    apiClient.get<ApiResponse<MuscleGroupImagesState>>('/admin/muscle-group-images'),
+
+  uploadMuscleGroupImage: (
+    muscleGroup: MuscleGroupImageKey,
+    file: File,
+    onProgress?: (percent: number) => void
+  ) => {
+    const form = new FormData();
+    form.append('file', file);
+    return apiClient.post<ApiResponse<MuscleGroupImageAsset>>(
+      `/admin/muscle-group-images/${encodeURIComponent(muscleGroup)}/upload`,
+      form,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 120_000,
+        onUploadProgress: (event) => {
+          if (!onProgress || !event.total) return;
+          onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+        },
+      }
+    );
+  },
+
+  deleteMuscleGroupImage: (muscleGroup: MuscleGroupImageKey) =>
+    apiClient.delete<ApiResponse<MuscleGroupImageAsset>>(
+      `/admin/muscle-group-images/${encodeURIComponent(muscleGroup)}`
+    ),
 };
 
 export const motivationMediaApi = {
   playlist: () =>
     apiClient.get<ApiResponse<MotivationPlaylist>>('/motivation-media'),
+};
+
+export const muscleGroupImageApi = {
+  list: () =>
+    apiClient.get<ApiResponse<MuscleGroupImagesState>>('/muscle-group-images'),
 };
