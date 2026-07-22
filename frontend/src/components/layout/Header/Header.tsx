@@ -15,17 +15,18 @@ export function Header() {
 
   return (
     <header className="header">
-      <Link to={ROUTES.HOME} className="header__logo">
-        <span className="header__logo-icon" aria-hidden>
-          <Icon name="dumbbell" size={18} />
-        </span>
-        Machine<span className="header__logo-fit">Fit</span>
-      </Link>
+      <div className="header__brand">
+        <Link to={ROUTES.HOME} className="header__logo">
+          <span className="header__logo-icon" aria-hidden>
+            <Icon name="dumbbell" size={18} />
+          </span>
+          Machine<span className="header__logo-fit">Fit</span>
+        </Link>
+        <LanguageSelector variant="compact" />
+      </div>
+
       <div className="header__actions">
-        <div className="header__lang-stack">
-          <LanguageSelector />
-          <MotivationMediaControls />
-        </div>
+        <MotivationMediaControls variant="bundle" />
         <NotificationBell />
         <PwaInstallButton variant="header" />
         {isAuthenticated ? (

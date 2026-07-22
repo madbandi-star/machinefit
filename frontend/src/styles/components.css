@@ -1251,6 +1251,32 @@
   flex-shrink: 0;
 }
 
+.language-picker--compact .language-picker__trigger {
+  height: 1.5rem;
+  padding: 0 0.2rem 0 0.3rem;
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  gap: 0.1rem;
+}
+
+.language-picker--compact .language-picker__trigger:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: transparent;
+  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+}
+
+.language-picker--compact .language-picker__code {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.language-picker--compact .language-picker__menu {
+  left: 0;
+  right: auto;
+}
+
 .language-picker__trigger {
   display: inline-flex;
   align-items: center;

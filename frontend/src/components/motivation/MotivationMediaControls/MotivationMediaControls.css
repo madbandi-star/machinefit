@@ -4,6 +4,14 @@
   gap: 0.25rem;
 }
 
+.motivation-controls--bundle {
+  gap: 0;
+  padding: 0.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
 .motivation-controls__btn {
   display: inline-flex;
   align-items: center;
@@ -20,10 +28,26 @@
   line-height: 1;
 }
 
+.motivation-controls--bundle .motivation-controls__btn {
+  height: 1.75rem;
+  width: 1.75rem;
+  min-width: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+}
+
 .motivation-controls__btn:hover:not(:disabled) {
   color: var(--color-link);
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
   background: color-mix(in srgb, var(--color-primary) 8%, var(--glass-bg));
+}
+
+.motivation-controls--bundle .motivation-controls__btn:hover:not(:disabled) {
+  border-color: transparent;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .motivation-controls__btn:focus-visible {
@@ -40,6 +64,11 @@
   color: var(--color-primary);
   border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
   background: color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg));
+}
+
+.motivation-controls--bundle .motivation-controls__btn--active {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
 .motivation-video {

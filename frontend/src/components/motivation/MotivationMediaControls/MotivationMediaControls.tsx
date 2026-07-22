@@ -9,10 +9,15 @@ import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import './MotivationMediaControls.css';
 
-export function MotivationMediaControls() {
+export function MotivationMediaControls({
+  variant = 'default',
+}: {
+  variant?: 'default' | 'bundle';
+}) {
   const { t } = useTranslation('common');
   const showToast = useUIStore((s) => s.showToast);
   const isAuthed = useAuthStore((s) => Boolean(s.tokens?.accessToken && s.user));
+  const bundled = variant === 'bundle';
 
   const { data } = useQuery({
     queryKey: QUERY_KEYS.motivationMedia,
@@ -153,7 +158,7 @@ export function MotivationMediaControls() {
   };
 
   return (
-    <div className="motivation-controls">
+    <div className={`motivation-controls${bundled ? ' motivation-controls--bundle' : ''}`}>
       <audio ref={audioRef} preload="none" onEnded={onMusicEnded} />
 
       <button
@@ -164,8 +169,8 @@ export function MotivationMediaControls() {
         onClick={toggleMusic}
         disabled={!music.length}
       >
-        <Music2 size={12} aria-hidden />
-        {musicPlaying ? <Pause size={11} aria-hidden /> : <Play size={11} aria-hidden />}
+        <Music2 size={bundled ? 14 : 12} aria-hidden />
+        {bundled ? null : musicPlaying ? <Pause size={11} aria-hidden /> : <Play size={11} aria-hidden />}
       </button>
 
       <button
@@ -176,8 +181,14 @@ export function MotivationMediaControls() {
         onClick={toggleVideo}
         disabled={!videos.length}
       >
-        <Film size={12} aria-hidden />
-        {videoOpen ? <Pause size={11} aria-hidden /> : <Play size={11} aria-hidden />}
+        {bundled ? (
+          <Film size={14} aria-hidden />
+        ) : (
+          <>
+            <Film size={12} aria-hidden />
+            {videoOpen ? <Pause size={11} aria-hidden /> : <Play size={11} aria-hidden />}
+          </>
+        )}
       </button>
 
       {videoOpen && currentVideo ? (

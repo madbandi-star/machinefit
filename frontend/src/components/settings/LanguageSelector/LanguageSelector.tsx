@@ -11,13 +11,18 @@ import { useSettingsStore } from '@/store/settings.store';
 import i18n from '@/i18n';
 import '@/styles/components.css';
 
-export function LanguageSelector() {
+interface LanguageSelectorProps {
+  variant?: 'default' | 'compact';
+}
+
+export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps) {
   const { t } = useTranslation('common');
   const locale = useSettingsStore((s) => s.locale);
   const setLocale = useSettingsStore((s) => s.setLocale);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
+  const compact = variant === 'compact';
 
   const handleSelect = (newLocale: Locale) => {
     setLocale(newLocale);
@@ -49,7 +54,10 @@ export function LanguageSelector() {
   }, [open]);
 
   return (
-    <div ref={rootRef} className="language-picker">
+    <div
+      ref={rootRef}
+      className={`language-picker${compact ? ' language-picker--compact' : ''}`}
+    >
       <button
         type="button"
         className="language-picker__trigger"
@@ -59,13 +67,15 @@ export function LanguageSelector() {
         aria-label={`${t('settings.language')}: ${LOCALE_LABELS[locale]}`}
         onClick={() => setOpen((prev) => !prev)}
       >
-        <span className="language-picker__flag" aria-hidden>
-          {LOCALE_FLAGS[locale]}
-        </span>
+        {!compact ? (
+          <span className="language-picker__flag" aria-hidden>
+            {LOCALE_FLAGS[locale]}
+          </span>
+        ) : null}
         <span className="language-picker__code" aria-hidden>
           {locale.toUpperCase()}
         </span>
-        <Icon name="chevronDown" size={11} className="language-picker__chevron" />
+        <Icon name="chevronDown" size={compact ? 10 : 11} className="language-picker__chevron" />
       </button>
 
       {open ? (
