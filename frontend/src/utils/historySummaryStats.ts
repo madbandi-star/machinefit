@@ -50,8 +50,8 @@ function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | nul
 
 /**
  * History summary totals.
- * 총 중량 / 총 볼륨 both use: effectiveWeight × effectiveReps × sets
- * (adjusted values win over recommended; setWeightsKg used as performed weights when present).
+ * 총 중량 / 총 볼륨 = effectiveWeight × effectiveReps × sets
+ * (adjusted values always win over recommended and over saved setWeightsKg).
  */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],

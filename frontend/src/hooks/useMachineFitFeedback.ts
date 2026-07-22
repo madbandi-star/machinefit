@@ -143,6 +143,36 @@ export function useMachineFitFeedback({
       }),
     onSuccess: async (_data, variables) => {
       await invalidateRelated();
+      // Keep history summary prefs in sync immediately after 조정값 저장.
+      queryClient.setQueriesData(
+        { queryKey: ['history-settings-comparison'] },
+        (prev: unknown) => {
+          if (!prev || typeof prev !== 'object') return prev;
+          const data = prev as {
+            preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+            activeSourceByMachine?: Record<string, SettingsActiveSource>;
+            feedbackByRecommendation?: Record<string, FitRating | null>;
+          };
+          if (!data.preferencesByMachine) return prev;
+          const nextPrefs = { ...data.preferencesByMachine };
+          if (variables.clearAdjusted) {
+            nextPrefs[machineCode] = {};
+          } else if (variables.customSettings) {
+            nextPrefs[machineCode] = variables.customSettings;
+          }
+          const nextActive = { ...(data.activeSourceByMachine ?? {}) };
+          if (variables.clearAdjusted) {
+            nextActive[machineCode] = 'recommended';
+          } else if (variables.activeSource) {
+            nextActive[machineCode] = variables.activeSource;
+          }
+          return {
+            ...data,
+            preferencesByMachine: nextPrefs,
+            activeSourceByMachine: nextActive,
+          };
+        }
+      );
       if (variables.clearAdjusted) {
         showToast(t('machines:feedback.adjustedCleared'), 'success');
         return;

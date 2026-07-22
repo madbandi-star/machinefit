@@ -79,11 +79,11 @@ describe('computePerformedTotalWeightKg', () => {
     );
   });
 
-  it('multiplies each set weight by effective reps', () => {
+  it('adjusted weight overrides stale setWeightsKg seeded from AI', () => {
     assert.equal(
       computePerformedTotalWeightKg({
-        setWeightsKg: [35, 35, 35, 35, 35, 35, 35, 35, 35, 35],
-        adjustedWeight: 50,
+        setWeightsKg: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+        adjustedWeight: 35,
         recommendedWeight: 50,
         adjustedReps: 10,
         recommendedReps: 12,
@@ -93,7 +93,24 @@ describe('computePerformedTotalWeightKg', () => {
     );
   });
 
-  it('prefers adjusted reps over recommended when multiplying set weights', () => {
+  it('changing adjusted weight changes total even when setWeights stay the same', () => {
+    const base = {
+      setWeightsKg: [50, 50, 50],
+      recommendedWeight: 50,
+      recommendedReps: 10,
+      sets: 3,
+    };
+    assert.equal(
+      computePerformedTotalWeightKg({ ...base, adjustedWeight: 40, adjustedReps: 10 }),
+      1200
+    );
+    assert.equal(
+      computePerformedTotalWeightKg({ ...base, adjustedWeight: 60, adjustedReps: 10 }),
+      1800
+    );
+  });
+
+  it('without adjusted weight, uses setWeights × adjusted reps', () => {
     assert.equal(
       computePerformedTotalWeightKg({
         setWeightsKg: [20, 20, 20],
@@ -114,7 +131,20 @@ describe('computePerformedTotalWeightKg', () => {
     );
   });
 
-  it('only counts completed sets when any set is marked complete', () => {
+  it('adjusted weight with completed-set filter uses completed set count', () => {
+    assert.equal(
+      computePerformedTotalWeightKg({
+        setWeightsKg: [40, 40, 40],
+        setCompleted: [true, true, false],
+        adjustedWeight: 40,
+        adjustedReps: 10,
+        sets: 3,
+      }),
+      800
+    );
+  });
+
+  it('without adjusted weight, only counts completed sets', () => {
     assert.equal(
       computePerformedTotalWeightKg({
         setWeightsKg: [40, 40, 40],

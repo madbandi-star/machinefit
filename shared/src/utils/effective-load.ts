@@ -1,7 +1,8 @@
 /**
  * Effective working load helpers.
  *
- * Product rule: user-adjusted values always win over AI recommendations.
+ * Product rule: user-adjusted values always win over AI recommendations
+ * (and over previously saved setWeightsKg, which may have been seeded from AI).
  * Total weight = effectiveWeight × effectiveReps × sets.
  */
 
@@ -50,8 +51,8 @@ export interface EffectiveLoadInput {
   sets?: number | null;
   /**
    * Optional per-set working weights from a workout log.
-   * When present with positive values, each set weight is treated as the actual
-   * performed weight for that set (already “adjusted”), then multiplied by effective reps.
+   * Used only when adjustedWeight is absent — logged weights are the actual
+   * performed load. When adjustedWeight > 0, adjusted always wins.
    */
   setWeightsKg?: number[] | null;
   setCompleted?: boolean[] | null;
@@ -68,19 +69,44 @@ function shouldUseCompletedFilter(
   );
 }
 
+function resolveSetCount(input: EffectiveLoadInput): number {
+  const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
+  if (weights.length > 0 && shouldUseCompletedFilter(weights, input.setCompleted)) {
+    return weights.filter((_, i) => input.setCompleted![i] === true).length;
+  }
+  const fromInput = toPositiveNumber(input.sets);
+  if (fromInput != null) return fromInput;
+  return weights.filter((w) => typeof w === 'number' && Number.isFinite(w) && w > 0).length;
+}
+
 /**
  * Session / log total weight using the product rule:
- * - weight = adjusted > 0 ? adjusted : recommended
+ * - weight = adjusted > 0 ? adjusted : (setWeights if present, else recommended)
  * - reps = adjusted > 0 ? adjusted : recommended
  * - total = weight × reps × sets
  *
- * When `setWeightsKg` is provided, total = Σ(setWeight_i × effectiveReps) for
- * completed (or all) sets — equivalent to weight×reps×sets when weights are uniform.
- * If reps are missing (legacy rows), falls back to Σ(setWeight_i) for compatibility.
+ * Adjusted weight ALWAYS overrides both recommended and saved setWeightsKg,
+ * so applying 조정값 immediately changes 총 중량 / 총 볼륨.
  */
 export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number {
+  const adjustedWeight = toPositiveNumber(input.adjustedWeight);
   const reps = getEffectiveReps(input.adjustedReps, input.recommendedReps);
+  const sets = resolveSetCount(input);
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
+
+  // 1) Adjusted weight always wins — ignore stale setWeights seeded from AI.
+  if (adjustedWeight != null) {
+    if (reps > 0 && sets > 0) {
+      return computeTotalWeightKg(adjustedWeight, reps, sets);
+    }
+    // Reps unavailable (legacy): still apply adjusted weight × sets so UI updates.
+    if (sets > 0) {
+      return Math.round(adjustedWeight * sets * 100) / 100;
+    }
+    return 0;
+  }
+
+  // 2) No adjusted weight — use logged per-set weights when present.
   const positiveWeights = weights.filter(
     (w) => typeof w === 'number' && Number.isFinite(w) && w > 0
   );
@@ -97,9 +123,13 @@ export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number
     return Math.round(total * 100) / 100;
   }
 
-  const weight = getEffectiveWeight(input.adjustedWeight, input.recommendedWeight);
-  const sets = toPositiveNumber(input.sets) ?? 0;
-  return computeTotalWeightKg(weight, reps, sets);
+  // 3) Fall back to recommended settings × reps × sets.
+  const recommendedWeight = toPositiveNumber(input.recommendedWeight);
+  if (recommendedWeight != null && reps > 0 && sets > 0) {
+    return computeTotalWeightKg(recommendedWeight, reps, sets);
+  }
+
+  return 0;
 }
 
 /**
