@@ -17,6 +17,10 @@ export interface RecommendationInput {
   workoutGoal?: WorkoutGoal;
   /** 0.1–10.0 user scale on recommended weight (default 1). */
   weightDifficulty?: number;
+  /** Active personal gym — scopes history / progressive weight. */
+  gymId?: string;
+  /** Active gym member — body stats & logs must belong to this member. */
+  memberId?: string;
 }
 
 export interface RecommendationSettings {

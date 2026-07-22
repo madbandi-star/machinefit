@@ -291,7 +291,13 @@ export const favoriteApi = {
 export const historyApi = {
   list: (
     gymId: string,
-    params?: { machineCode?: string; limit?: number; from?: string; to?: string }
+    params?: {
+      machineCode?: string;
+      limit?: number;
+      from?: string;
+      to?: string;
+      memberId?: string;
+    }
   ) => apiClient.get<ApiResponse<HistoryItem[]>>('/history', { params: { gymId, ...params } }),
   clear: (gymId: string) => apiClient.delete('/history', { params: { gymId } }),
   remove: (id: string) => apiClient.delete(`/history/${id}`),

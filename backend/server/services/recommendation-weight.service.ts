@@ -135,8 +135,10 @@ export async function computeRecommendationWeight(options: {
   userId?: string;
   machineId: string;
   matchedSettingWeightKg?: number;
+  gymId?: string;
+  memberId?: string;
 }): Promise<{ recommendedWeightKg?: number; weightBasis: WeightRecommendationBasis }> {
-  const { input, userId, machineId, matchedSettingWeightKg } = options;
+  const { input, userId, machineId, matchedSettingWeightKg, gymId, memberId } = options;
   const entries: WeightBasisEntry[] = [];
   const experienceMultiplier = EXPERIENCE_WEIGHT_MULTIPLIERS[input.experienceLevel];
 
@@ -214,12 +216,13 @@ export async function computeRecommendationWeight(options: {
     userId != null
       ? (async () => {
           const { userGymRepository } = await import('../repositories/user-gym.repository.js');
-          const gymId = await userGymRepository.getActiveGymId(userId);
-          if (!gymId) return [] as WorkoutLog[];
+          const resolvedGymId = gymId ?? (await userGymRepository.getActiveGymId(userId));
+          if (!resolvedGymId) return [] as WorkoutLog[];
           return workoutLogRepository.listByUser(userId, {
-            gymId,
+            gymId: resolvedGymId,
             machineId,
             limit: 40,
+            ...(memberId ? { memberId } : {}),
             ...(isFreeWeightMachineCode(input.machineCode)
               ? { targetMuscleGroup: targetMuscleKey }
               : {}),

@@ -94,6 +94,8 @@ export const recommendationService = {
       userId,
       machineId,
       matchedSettingWeightKg: match?.weightKg,
+      gymId: input.gymId,
+      memberId: input.memberId,
     });
 
     // Progressive / growth targets already come from the user's real logs for that
@@ -189,14 +191,13 @@ export const recommendationService = {
 
     if (userId) {
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');
-      const gymId =
-        (input as { gymId?: string }).gymId ??
-        (await userGymRepository.getActiveGymId(userId));
+      const gymId = input.gymId ?? (await userGymRepository.getActiveGymId(userId));
       if (gymId) {
         const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
-        const selfMember = await gymMemberRepository.findSelfMember(gymId, userId);
-        if (selfMember) {
-          await historyRepository.record(userId, gymId, selfMember.id, machineId, id);
+        const memberId =
+          input.memberId ?? (await gymMemberRepository.findSelfMember(gymId, userId))?.id;
+        if (memberId) {
+          await historyRepository.record(userId, gymId, memberId, machineId, id);
         }
       }
     }

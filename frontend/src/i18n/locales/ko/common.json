@@ -195,6 +195,9 @@
     "profileSaved": "프로필을 저장했어요.",
     "profileRequiredForRecommend": "맞춤 추천을 위해 키·몸무게가 필요해요. 설정에서 입력해 주세요.",
     "genderRequiredForRecommend": "맞춤 추천을 위해 성별이 필요해요. 설정에서 선택해 주세요.",
+    "memberProfileRequiredForRecommend": "선택한 회원의 성별·키·몸무게가 필요해요. 헬스장·회원 관리에서 입력해 주세요.",
+    "memberGenderRequiredForRecommend": "선택한 회원의 성별이 필요해요. 헬스장·회원 관리에서 입력해 주세요.",
+    "memberRequiredForRecommend": "추천을 받으려면 회원을 먼저 선택하세요.",
     "gender": "성별",
     "genders": {
       "male": "남",

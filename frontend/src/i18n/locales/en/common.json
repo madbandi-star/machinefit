@@ -195,6 +195,9 @@
     "profileSaved": "Your profile is saved.",
     "profileRequiredForRecommend": "We need your height and weight for recommendations. Add them in Settings.",
     "genderRequiredForRecommend": "We need your gender for recommendations. Choose it in Settings.",
+    "memberProfileRequiredForRecommend": "The selected member needs gender, height, and weight. Add them in Gyms & members.",
+    "memberGenderRequiredForRecommend": "The selected member needs a gender. Add it in Gyms & members.",
+    "memberRequiredForRecommend": "Select a member before requesting a recommendation.",
     "gender": "Gender",
     "genders": {
       "male": "Male",
