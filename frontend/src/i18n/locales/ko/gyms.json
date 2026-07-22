@@ -80,7 +80,7 @@
     "removeMemberMessage": "{{name}} 회원을 삭제할까요?",
     "locationHeading": "위치 (필수)",
     "locationRequired": "국가·시/도·도시는 필수입니다.",
-    "locationThenGymHint": "지역을 고른 뒤 저장하세요. 동·우편번호는 선택입니다."
+    "locationThenGymHint": "지역을 고른 뒤 저장하세요. 동은 선택입니다."
   },
   "premium": {
     "badge": "Premium",

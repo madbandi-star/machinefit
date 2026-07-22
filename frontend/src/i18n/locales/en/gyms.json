@@ -80,7 +80,7 @@
     "removeMemberMessage": "Remove member {{name}}?",
     "locationHeading": "Location (required)",
     "locationRequired": "Country, state/province, and city are required.",
-    "locationThenGymHint": "Choose a region, then save. Neighborhood and postal code are optional."
+    "locationThenGymHint": "Choose a region, then save. Neighborhood is optional."
   },
   "premium": {
     "badge": "Premium",

@@ -129,7 +129,6 @@ export function GymFinderPage() {
             value={region}
             onChange={setRegion}
             showDistrict
-            showPostal={false}
             showVisibility={false}
             showGps={false}
             required={false}

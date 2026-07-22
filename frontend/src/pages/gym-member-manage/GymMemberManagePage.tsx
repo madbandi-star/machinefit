@@ -360,7 +360,6 @@ export function GymMemberManagePage() {
                     value={gymForm.location}
                     onChange={(location) => setGymForm((prev) => ({ ...prev, location }))}
                     showDistrict
-                    showPostal
                     showGps
                     required
                   />

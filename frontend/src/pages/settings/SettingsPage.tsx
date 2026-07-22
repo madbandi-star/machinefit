@@ -287,7 +287,6 @@ export function SettingsPage() {
             value={locationDraft}
             onChange={setLocationDraft}
             showDistrict
-            showPostal
             showVisibility
             showGps
             required={false}

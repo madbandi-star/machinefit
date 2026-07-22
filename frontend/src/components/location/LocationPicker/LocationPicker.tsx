@@ -22,7 +22,6 @@ interface LocationPickerProps {
   value: LocationPickerValue;
   onChange: (value: LocationPickerValue) => void;
   showDistrict?: boolean;
-  showPostal?: boolean;
   showVisibility?: boolean;
   showGps?: boolean;
   required?: boolean;
@@ -66,7 +65,6 @@ export function LocationPicker({
   value,
   onChange,
   showDistrict = true,
-  showPostal = true,
   showVisibility = false,
   showGps = true,
   required = false,
@@ -354,19 +352,6 @@ export function LocationPicker({
             <p className="location-picker__hint">{t('location.districtNameHint')}</p>
           ) : null}
         </div>
-      )}
-
-      {showPostal && (
-        <label className="location-picker__field">
-          <span>{t('location.postal')}</span>
-          <input
-            className="input"
-            value={value.postalCode}
-            disabled={disabled}
-            onChange={(e) => onChange({ ...value, postalCode: e.target.value })}
-            placeholder={t('location.postalPlaceholder')}
-          />
-        </label>
       )}
 
       {showVisibility && (
