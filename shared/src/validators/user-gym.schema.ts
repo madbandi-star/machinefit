@@ -13,18 +13,45 @@ export function assertGymLocationRequired(input: {
   return null;
 }
 
+/** Allow host-only URLs like "naver.com" by prefixing https://. */
+function normalizeWebsiteUrl(value: unknown): unknown {
+  if (value == null) return value;
+  if (typeof value !== 'string') return value;
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(trimmed)) return `https://${trimmed}`;
+  return trimmed;
+}
+
+const websiteUrlSchema = z.preprocess(
+  normalizeWebsiteUrl,
+  z
+    .string()
+    .max(500)
+    .optional()
+    .or(z.literal(''))
+    .refine((v) => !v || /^https?:\/\//i.test(v), 'Invalid URL')
+);
+
+const websiteUrlUpdateSchema = z.preprocess(
+  normalizeWebsiteUrl,
+  z
+    .string()
+    .max(500)
+    .optional()
+    .nullable()
+    .or(z.literal(''))
+    .refine((v) => v == null || v === '' || /^https?:\/\//i.test(v), 'Invalid URL')
+);
+
 export const createUserGymSchema = z
   .object({
     name: z.string().min(1).max(200),
     address: z.string().max(500).optional().or(z.literal('')),
     brandName: z.string().max(100).optional().or(z.literal('')),
     phone: z.string().max(30).optional().or(z.literal('')),
-    websiteUrl: z
-      .string()
-      .max(500)
-      .optional()
-      .or(z.literal(''))
-      .refine((v) => !v || /^https?:\/\//i.test(v), 'Invalid URL'),
+    websiteUrl: websiteUrlSchema,
     setActive: z.boolean().optional().default(true),
     setDefault: z.boolean().optional().default(false),
     requireLocation: z.boolean().optional().default(true),
@@ -48,13 +75,7 @@ export const updateUserGymSchema = z
     address: z.string().max(500).optional().nullable().or(z.literal('')),
     brandName: z.string().max(100).optional().nullable().or(z.literal('')),
     phone: z.string().max(30).optional().nullable().or(z.literal('')),
-    websiteUrl: z
-      .string()
-      .max(500)
-      .optional()
-      .nullable()
-      .or(z.literal(''))
-      .refine((v) => v == null || v === '' || /^https?:\/\//i.test(v), 'Invalid URL'),
+    websiteUrl: websiteUrlUpdateSchema,
     isDefault: z.boolean().optional(),
   })
   .and(locationInputSchema.partial());
