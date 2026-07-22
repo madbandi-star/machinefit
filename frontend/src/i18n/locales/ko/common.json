@@ -254,7 +254,9 @@
     "lifterDna": "AI Lifter DNA",
     "liftedWeight": "누적 들어올린 무게",
     "location": "지역 (Location)",
-    "locationNudgeCta": "설정에서 지역 등록"
+    "locationNudgeCta": "설정에서 지역 등록",
+    "homeGym": "헬스장",
+    "homeGymUnset": "헬스장 미설정"
   },
   "growthTimeline": {
     "title": "AI 성장 타임랩스",

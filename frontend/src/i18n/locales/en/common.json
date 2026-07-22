@@ -254,7 +254,9 @@
     "lifterDna": "AI Lifter DNA",
     "liftedWeight": "Total weight lifted",
     "location": "Location",
-    "locationNudgeCta": "Set location in Settings"
+    "locationNudgeCta": "Set location in Settings",
+    "homeGym": "Gym",
+    "homeGymUnset": "Gym not set"
   },
   "growthTimeline": {
     "title": "AI Growth Timeline",

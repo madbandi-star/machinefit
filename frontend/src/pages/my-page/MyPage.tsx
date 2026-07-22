@@ -84,6 +84,10 @@ export function MyPage() {
                   : t('location.unset')}
               </dd>
             </div>
+            <div className="profile-card__row">
+              <dt>{t('myPage.homeGym')}</dt>
+              <dd>{user?.homeGymName?.trim() || t('myPage.homeGymUnset')}</dd>
+            </div>
           </dl>
         </div>
 
