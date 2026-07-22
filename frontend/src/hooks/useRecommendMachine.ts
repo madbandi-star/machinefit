@@ -73,31 +73,87 @@ async function loadMembers(
 }
 
 /**
- * Resolve a real gym + member for recommend, even when Search/detail never
- * mounted useActiveGym/useActiveMember (store may be null or legacy "all").
+ * Resolve a real gym + member when available (even if Search/detail never
+ * mounted useActiveGym/useActiveMember). Returns null when the user has no
+ * gym/member yet — recommend still works from the account body profile.
  */
 async function resolveGymAndMember(
   queryClient: ReturnType<typeof useQueryClient>
-): Promise<{ gymId: string; member: GymMember }> {
-  const store = useGymStore.getState();
-  const gymsData = await loadUserGyms(queryClient);
-  const gyms = gymsData.items ?? [];
-  const gymId = pickResolvedGymId(gyms, store.activeGymId, gymsData.activeGymId);
-  if (!gymId) throw new Error('missing_gym');
+): Promise<{ gymId: string; member: GymMember } | null> {
+  try {
+    const store = useGymStore.getState();
+    const gymsData = await loadUserGyms(queryClient);
+    const gyms = gymsData.items ?? [];
+    const gymId = pickResolvedGymId(gyms, store.activeGymId, gymsData.activeGymId);
+    if (!gymId) return null;
 
-  const members = await loadMembers(queryClient, gymId);
-  if (members.length === 0) throw new Error('missing_member');
+    const members = await loadMembers(queryClient, gymId);
+    if (members.length === 0) return null;
 
-  const storedMemberId = store.activeMemberId;
-  const member =
-    (storedMemberId ? members.find((item) => item.id === storedMemberId) : undefined) ??
-    members.find((item) => item.isSelf) ??
-    members[0]!;
+    const storedMemberId = store.activeMemberId;
+    const member =
+      (storedMemberId ? members.find((item) => item.id === storedMemberId) : undefined) ??
+      members.find((item) => item.isSelf) ??
+      members[0]!;
 
-  if (store.activeGymId !== gymId) store.setActiveGymId(gymId);
-  if (store.activeMemberId !== member.id) store.setActiveMemberId(member.id);
+    if (store.activeGymId !== gymId) store.setActiveGymId(gymId);
+    if (store.activeMemberId !== member.id) store.setActiveMemberId(member.id);
 
-  return { gymId, member };
+    return { gymId, member };
+  } catch {
+    return null;
+  }
+}
+
+function requireOwnerProfileInput(
+  machineCode: string,
+  targetMuscleGroup?: TargetMuscleGroup
+): RecommendationInput {
+  const input = buildOwnerProfileInput(machineCode, targetMuscleGroup);
+  if (input) return input;
+  const user = useAuthStore.getState().user;
+  if (!user?.gender) throw new Error('missing_gender');
+  throw new Error('missing_profile');
+}
+
+async function assertNoDuplicateToday(params: {
+  gymId: string;
+  memberId: string;
+  machineCode: string;
+  targetMuscleGroup?: TargetMuscleGroup;
+}): Promise<void> {
+  try {
+    const today = getTodayDateKey();
+    const { from, to } = getLocalDayRange(today);
+    const historyRes = await historyApi.list(params.gymId, {
+      machineCode: params.machineCode,
+      limit: 20,
+      from,
+      to,
+      memberId: params.memberId,
+    });
+    const todayItems = historyRes.data.data;
+    const requestedMuscle = params.targetMuscleGroup;
+
+    if (isFreeWeightMachineCode(params.machineCode)) {
+      if (requestedMuscle) {
+        const sameMuscleToday = todayItems.find(
+          (item) => item.targetMuscleGroup === requestedMuscle
+        );
+        if (sameMuscleToday) {
+          throw new DuplicateRecommendationError(sameMuscleToday);
+        }
+      }
+      return;
+    }
+
+    if (todayItems.length > 0) {
+      throw new DuplicateRecommendationError(todayItems[0]);
+    }
+  } catch (error) {
+    if (error instanceof DuplicateRecommendationError) throw error;
+    // History lookup is best-effort — never block recommend for gym/network issues.
+  }
 }
 
 function buildOwnerProfileInput(
@@ -178,60 +234,43 @@ export function useRecommendMachine(machineCode: string | undefined) {
       let input: RecommendationInput | null = null;
 
       if (isAuthenticated) {
-        const { gymId, member } = await resolveGymAndMember(queryClient);
+        const scope = await resolveGymAndMember(queryClient);
 
-        if (member.isSelf) {
-          input = buildOwnerProfileInput(machineCode, options?.targetMuscleGroup);
-          if (!input) {
-            const user = useAuthStore.getState().user;
-            if (!user?.gender) throw new Error('missing_gender');
-            throw new Error('missing_profile');
-          }
-          input = { ...input, gymId, memberId: member.id };
+        if (!scope) {
+          // No gym registered yet — recommend from account profile (backend legacy path).
+          input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup);
+        } else if (scope.member.isSelf) {
+          input = {
+            ...requireOwnerProfileInput(machineCode, options?.targetMuscleGroup),
+            gymId: scope.gymId,
+            memberId: scope.member.id,
+          };
+          await assertNoDuplicateToday({
+            gymId: scope.gymId,
+            memberId: scope.member.id,
+            machineCode,
+            targetMuscleGroup: options?.targetMuscleGroup,
+          });
         } else {
           input = buildMemberProfileInput(
             machineCode,
-            member,
-            gymId,
+            scope.member,
+            scope.gymId,
             options?.targetMuscleGroup
           );
           if (!input) {
-            if (!member.gender) throw new Error('missing_member_gender');
+            if (!scope.member.gender) throw new Error('missing_member_gender');
             throw new Error('missing_member_profile');
           }
-        }
-
-        const today = getTodayDateKey();
-        const { from, to } = getLocalDayRange(today);
-        const historyRes = await historyApi.list(gymId, {
-          machineCode,
-          limit: 20,
-          from,
-          to,
-          memberId: member.id,
-        });
-        const todayItems = historyRes.data.data;
-        const requestedMuscle = options?.targetMuscleGroup;
-
-        if (isFreeWeightMachineCode(machineCode)) {
-          if (requestedMuscle) {
-            const sameMuscleToday = todayItems.find(
-              (item) => item.targetMuscleGroup === requestedMuscle
-            );
-            if (sameMuscleToday) {
-              throw new DuplicateRecommendationError(sameMuscleToday);
-            }
-          }
-        } else if (todayItems.length > 0) {
-          throw new DuplicateRecommendationError(todayItems[0]);
+          await assertNoDuplicateToday({
+            gymId: scope.gymId,
+            memberId: scope.member.id,
+            machineCode,
+            targetMuscleGroup: options?.targetMuscleGroup,
+          });
         }
       } else {
-        input = buildOwnerProfileInput(machineCode, options?.targetMuscleGroup);
-        if (!input) {
-          const user = useAuthStore.getState().user;
-          if (!user?.gender) throw new Error('missing_gender');
-          throw new Error('missing_profile');
-        }
+        input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup);
       }
 
       const res = await recommendationApi.create(input);
@@ -262,11 +301,6 @@ export function useRecommendMachine(machineCode: string | undefined) {
       const apiCode = getApiErrorCode(error);
       if (apiCode === 'MEMBER_PROFILE_INCOMPLETE') {
         showToast(t('common:auth.memberProfileRequiredForRecommend'), 'error');
-        navigate(ROUTES.MY_GYMS);
-        return;
-      }
-      if (apiCode === 'FORBIDDEN' || apiCode === 'VALIDATION_ERROR') {
-        showToast(t('common:auth.gymRequiredForRecommend'), 'error');
         navigate(ROUTES.MY_GYMS);
         return;
       }
@@ -310,14 +344,8 @@ export function useRecommendMachine(machineCode: string | undefined) {
         navigate(ROUTES.MY_GYMS);
         return;
       }
-      if (error instanceof Error && error.message === 'missing_gym') {
-        showToast(t('common:auth.gymRequiredForRecommend'), 'error');
-        navigate(ROUTES.MY_GYMS);
-        return;
-      }
-      if (error instanceof Error && error.message === 'missing_member') {
-        showToast(t('common:auth.memberRequiredForRecommend'), 'error');
-        navigate(ROUTES.MY_GYMS);
+      if (apiCode === 'VALIDATION_ERROR') {
+        showToast(t('common:errors.validationError'), 'error');
         return;
       }
       showToast(t('common:errors.submitFailed'), 'error');
