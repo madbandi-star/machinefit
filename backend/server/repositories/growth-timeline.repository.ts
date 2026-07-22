@@ -6,6 +6,10 @@ import type {
 import { getPool } from '../config/database.js';
 
 const LOG_LIMIT = 1500;
+const PEER_AVERAGES_TTL_MS = 10 * 60_000;
+let peerAveragesCache:
+  | { expiresAt: number; value: GrowthTimelinePeerAverages }
+  | null = null;
 
 type LogRow = {
   id: string;
@@ -109,10 +113,15 @@ export const growthTimelineRepository = {
   },
 
   async peerAverages(): Promise<GrowthTimelinePeerAverages> {
+    if (peerAveragesCache && peerAveragesCache.expiresAt > Date.now()) {
+      return peerAveragesCache.value;
+    }
+
     const pool = getPool();
     if (!pool) {
       return { sessionsPerWeek: 2.4, volumeKg: 12_000, consistencyScore: 55 };
     }
+    // Cached globally — full aggregate is expensive and peers change slowly.
     const result = await pool.query<{
       avg_sessions: string;
       avg_volume: string;
@@ -135,11 +144,13 @@ export const growthTimelineRepository = {
          COALESCE(AVG(volume_kg / GREATEST(1, span_days / 30.0)), 12000)::text AS avg_volume
        FROM user_days`
     );
-    return {
+    const value = {
       sessionsPerWeek: parseFloat(result.rows[0]?.avg_sessions ?? '2.4') || 2.4,
       volumeKg: parseFloat(result.rows[0]?.avg_volume ?? '12000') || 12_000,
       consistencyScore: 55,
     };
+    peerAveragesCache = { expiresAt: Date.now() + PEER_AVERAGES_TTL_MS, value };
+    return value;
   },
 
   async getCached(

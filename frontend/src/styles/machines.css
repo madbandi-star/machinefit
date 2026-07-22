@@ -244,6 +244,8 @@
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 72px;
 }
 
 .machine-list-item:active {

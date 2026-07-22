@@ -92,6 +92,28 @@ function mapStats(row: StatsRow | undefined): AchievementUserStats & {
 }
 
 export const achievementRepository = {
+  /** Cheap fingerprint to skip full achievement recompute when logs are unchanged. */
+  async getLogsRevision(
+    userId: string,
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<string> {
+    const pool = getPool();
+    if (!pool) return '0:';
+    const params: unknown[] = [userId];
+    let filters = '';
+    if (options?.gymId && options?.memberId) {
+      params.push(options.gymId, options.memberId);
+      filters = ' AND gym_id = $2 AND member_id = $3';
+    }
+    const result = await pool.query<{ c: string; m: string | null }>(
+      `SELECT COUNT(*)::text AS c, MAX(updated_at)::text AS m
+       FROM workout_logs
+       WHERE user_id = $1${filters}`,
+      params
+    );
+    return `${result.rows[0]?.c ?? '0'}:${result.rows[0]?.m ?? ''}`;
+  },
+
   async getStats(userId: string) {
     const pool = getPool();
     if (!pool) return mapStats(undefined);
@@ -324,6 +346,20 @@ export const achievementRepository = {
           ? { ko: r.active_title_ko ?? '', en: r.active_title_en ?? '' }
           : null,
     }));
+  },
+
+  /** 1-based rank by XP among active users (avoids loading the full leaderboard). */
+  async rankByXp(totalXp: number): Promise<number> {
+    const pool = getPool();
+    if (!pool) return 1;
+    const result = await pool.query<{ rank: string }>(
+      `SELECT (COUNT(*)::int + 1)::text AS rank
+       FROM user_achievement_stats s
+       JOIN users u ON u.id = s.user_id
+       WHERE u.is_active = TRUE AND s.total_xp > $1`,
+      [totalXp]
+    );
+    return parseInt(result.rows[0]?.rank ?? '1', 10) || 1;
   },
 
   /**

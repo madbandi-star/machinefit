@@ -276,18 +276,7 @@ export const workoutInsightsService = {
       bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
       const benchmarkDailyVolume = Math.round(bodyReferenceWeightKg * 3 * 2);
 
-      const [profileStats, peerStats] = await Promise.all([
-        workoutLogRepository.getDailyCohortStats({
-          from: from ?? '1970-01-01',
-          to,
-          gender: user.gender,
-          heightMinCm,
-          heightMaxCm,
-          weightMinKg,
-          weightMaxKg,
-          experienceLevel: user.experienceLevel ?? undefined,
-          excludeUserId: userId,
-        }),
+      const [peerStats, profileStats] = await Promise.all([
         workoutLogRepository.getDailyCohortStats({
           from: from ?? '1970-01-01',
           to,
@@ -298,15 +287,29 @@ export const workoutInsightsService = {
           weightMaxKg,
           excludeUserId: userId,
         }),
+        user.experienceLevel
+          ? workoutLogRepository.getDailyCohortStats({
+              from: from ?? '1970-01-01',
+              to,
+              gender: user.gender,
+              heightMinCm,
+              heightMaxCm,
+              weightMinKg,
+              weightMaxKg,
+              experienceLevel: user.experienceLevel,
+              excludeUserId: userId,
+            })
+          : Promise.resolve(null),
       ]);
+      const resolvedProfileStats = profileStats ?? peerStats;
 
-      if (profileStats.sampleSize >= MIN_COHORT_SAMPLE) {
+      if (resolvedProfileStats.sampleSize >= MIN_COHORT_SAMPLE) {
         profileAverage = {
-          avgMaxWeightKg: Math.round(profileStats.avgMaxWeightKg * 10) / 10,
-          avgSessionVolumeKg: Math.round(profileStats.avgSessionVolumeKg),
-          avgVolumeGrowthPct: Math.round(profileStats.avgVolumeGrowthPct * 10) / 10,
-          avgWorkoutCount: Math.round(profileStats.avgWorkoutCount * 10) / 10,
-          sampleSize: profileStats.sampleSize,
+          avgMaxWeightKg: Math.round(resolvedProfileStats.avgMaxWeightKg * 10) / 10,
+          avgSessionVolumeKg: Math.round(resolvedProfileStats.avgSessionVolumeKg),
+          avgVolumeGrowthPct: Math.round(resolvedProfileStats.avgVolumeGrowthPct * 10) / 10,
+          avgWorkoutCount: Math.round(resolvedProfileStats.avgWorkoutCount * 10) / 10,
+          sampleSize: resolvedProfileStats.sampleSize,
         };
       } else {
         profileAverage = {
@@ -445,7 +448,7 @@ export const workoutInsightsService = {
       } = getBoxingWeightClassRange(user.gender, user.weightKg);
       bodyReferenceWeightKg = computeBodyBasedReferenceWeight(user);
 
-      const [refWeight, profileStats, peerStats] = await Promise.all([
+      const [refWeight, peerStats, profileStats] = await Promise.all([
         workoutLogRepository.getReferenceWeightKg(
           machineId,
           user.gender,
@@ -461,32 +464,35 @@ export const workoutInsightsService = {
           heightMaxCm,
           weightMinKg,
           weightMaxKg,
-          experienceLevel: user.experienceLevel ?? undefined,
           excludeUserId: userId,
         }),
-        workoutLogRepository.getCohortStats({
-          machineId,
-          from: from ?? '1970-01-01',
-          to,
-          gender: user.gender,
-          heightMinCm,
-          heightMaxCm,
-          weightMinKg,
-          weightMaxKg,
-          excludeUserId: userId,
-        }),
+        user.experienceLevel
+          ? workoutLogRepository.getCohortStats({
+              machineId,
+              from: from ?? '1970-01-01',
+              to,
+              gender: user.gender,
+              heightMinCm,
+              heightMaxCm,
+              weightMinKg,
+              weightMaxKg,
+              experienceLevel: user.experienceLevel,
+              excludeUserId: userId,
+            })
+          : Promise.resolve(null),
       ]);
 
       referenceWeightKg = refWeight;
       const benchmarkWeightKg = referenceWeightKg ?? bodyReferenceWeightKg;
+      const resolvedProfileStats = profileStats ?? peerStats;
 
-      if (profileStats.sampleSize >= MIN_COHORT_SAMPLE) {
+      if (resolvedProfileStats.sampleSize >= MIN_COHORT_SAMPLE) {
         profileAverage = {
-          avgMaxWeightKg: Math.round(profileStats.avgMaxWeightKg * 10) / 10,
-          avgSessionVolumeKg: Math.round(profileStats.avgSessionVolumeKg),
-          avgVolumeGrowthPct: Math.round(profileStats.avgVolumeGrowthPct * 10) / 10,
-          avgWorkoutCount: Math.round(profileStats.avgWorkoutCount * 10) / 10,
-          sampleSize: profileStats.sampleSize,
+          avgMaxWeightKg: Math.round(resolvedProfileStats.avgMaxWeightKg * 10) / 10,
+          avgSessionVolumeKg: Math.round(resolvedProfileStats.avgSessionVolumeKg),
+          avgVolumeGrowthPct: Math.round(resolvedProfileStats.avgVolumeGrowthPct * 10) / 10,
+          avgWorkoutCount: Math.round(resolvedProfileStats.avgWorkoutCount * 10) / 10,
+          sampleSize: resolvedProfileStats.sampleSize,
         };
       } else if (benchmarkWeightKg) {
         profileAverage = {

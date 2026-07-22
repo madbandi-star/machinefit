@@ -15,6 +15,16 @@ import { achievementRepository } from '../repositories/achievement.repository.js
 import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
 
+/** In-process revision fingerprints — skip full recompute when logs are unchanged. */
+const logsRevisionCache = new Map<string, string>();
+
+function revisionKey(userId: string, options?: { gymId?: string; memberId?: string }): string {
+  if (options?.gymId && options?.memberId) {
+    return `${userId}:${options.gymId}:${options.memberId}`;
+  }
+  return userId;
+}
+
 export const achievementService = {
   /** Refresh stats + award newly unlocked achievements for a user. */
   async refreshUser(
@@ -23,6 +33,12 @@ export const achievementService = {
   ): Promise<{ newlyUnlockedIds: string[] }> {
     const pool = getPool();
     if (!pool) return { newlyUnlockedIds: [] };
+
+    const key = revisionKey(userId, options);
+    const revision = await achievementRepository.getLogsRevision(userId, options);
+    if (logsRevisionCache.get(key) === revision) {
+      return { newlyUnlockedIds: [] };
+    }
 
     const stats = await achievementRepository.computeStatsFromLogs(userId, options);
     const earned = await achievementRepository.listEarned(userId);
@@ -62,6 +78,7 @@ export const achievementService = {
       activeTitle,
     });
 
+    logsRevisionCache.set(key, revision);
     return { newlyUnlockedIds };
   },
 
@@ -72,6 +89,7 @@ export const achievementService = {
     const pool = getPool();
     if (!pool) return emptySnapshot();
 
+    // Refresh is a no-op when the logs revision matches the last compute.
     const refreshResult = await this.refreshUser(userId, options);
     const statsBundle = await achievementRepository.getStats(userId);
     const earned = await achievementRepository.listEarned(userId);
@@ -129,10 +147,9 @@ export const achievementService = {
       const mine = await achievementRepository.getStats(userId);
       const earned = await achievementRepository.listEarned(userId);
       const user = await userRepository.findById(userId);
-      const all = await achievementRepository.listTopByXp(10_000);
-      const idx = all.findIndex((r) => r.userId === userId);
+      const rank = await achievementRepository.rankByXp(mine.totalXp);
       me = {
-        rank: idx >= 0 ? idx + 1 : all.length + 1,
+        rank,
         userId,
         displayName: user?.displayName ?? 'Me',
         totalXp: mine.totalXp,
