@@ -467,8 +467,10 @@ export function WorkoutLogPanel({
       setDiary,
     });
     setBaseline(cloneWorkoutFormSnapshot(snapshot));
-    // Allow seed sync to re-run for this hydrate (fit rating / adjusted weight).
-    lastAppliedSeedKeyRef.current = '';
+    // Saved logs keep their own weights; only new logs may accept a later seed.
+    lastAppliedSeedKeyRef.current = existingLog
+      ? `${hydrateKey}|saved`
+      : '';
   }, [
     isAuthenticated,
     queryEnabled,
@@ -478,11 +480,12 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
   ]);
 
-  // Keep -무게kg+ steppers in sync with fit-feedback seed weight
-  // (추천값 잘맞음/미선택 → 추천중량, 조정필요 → 조정중량).
+  // New (unsaved) logs only: fill -무게kg+ from fit-feedback seed weight.
+  // Saved logs always show persisted setCount / setWeightsKg from workout_logs.
   useEffect(() => {
     if (!isAuthenticated) return;
     if (queryEnabled && !isFetched) return;
+    if (existingLog) return;
     if (lastHydrateKeyRef.current !== hydrateKey) return;
     if (suggestedWeightKg == null || !(suggestedWeightKg > 0)) return;
 
@@ -509,56 +512,6 @@ export function WorkoutLogPanel({
       }
       return { ...prev, weights: nextWeights };
     });
-
-    // Persist into saved log so 총 중량 / 총 볼륨 (from setWeightsKg) stay in sync.
-    if (!existingLog || !activeGymId || !activeMemberId || isAllGyms) return;
-
-    const nextWeights = Array.from(
-      { length: existingLog.setCount || setCount },
-      () => suggestedWeightKg
-    );
-    if (
-      existingLog.setWeightsKg.length === nextWeights.length &&
-      existingLog.setWeightsKg.every((weight, index) => weight === nextWeights[index])
-    ) {
-      return;
-    }
-
-    let cancelled = false;
-    void workoutLogApi
-      .upsert({
-        gymId: activeGymId,
-        memberId: activeMemberId,
-        machineCode,
-        logDate,
-        setCount: existingLog.setCount || setCount,
-        setWeightsKg: nextWeights,
-        setCompleted: existingLog.setCompleted,
-        diary: existingLog.diary,
-        ...(recommendationId ? { recommendationId } : {}),
-        ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
-      })
-      .then((res) => {
-        if (cancelled) return;
-        const saved = res.data.data;
-        queryClient.setQueryData(workoutLogQueryKey, [saved]);
-        queryClient.setQueryData(
-          workoutLogsAllKey,
-          upsertWorkoutLogInCache(
-            queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
-            saved,
-            removeLogParams
-          )
-        );
-        invalidateLogSideEffects();
-      })
-      .catch(() => {
-        /* seed sync must not block editing */
-      });
-
-    return () => {
-      cancelled = true;
-    };
   }, [
     isAuthenticated,
     queryEnabled,
@@ -566,17 +519,6 @@ export function WorkoutLogPanel({
     hydrateKey,
     suggestedWeightKg,
     existingLog,
-    activeGymId,
-    activeMemberId,
-    isAllGyms,
-    machineCode,
-    logDate,
-    setCount,
-    recommendationId,
-    queryTargetMuscle,
-    queryClient,
-    workoutLogsAllKey,
-    workoutLogQueryKey,
   ]);
 
   const saveMutation = useMutation({
