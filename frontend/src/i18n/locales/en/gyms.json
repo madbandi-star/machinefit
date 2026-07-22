@@ -80,7 +80,12 @@
     "removeMemberMessage": "Remove member {{name}}?",
     "locationHeading": "Location (required)",
     "locationRequired": "Country, state/province, and city are required.",
-    "locationThenGymHint": "Choose a region, then save. Neighborhood and postal code are optional."
+    "locationThenGymHint": "Choose a region, then save. Neighborhood and postal code are optional.",
+    "heightRange": "Height must be between 100 and 250 cm.",
+    "weightRange": "Weight must be between 30 and 300 kg.",
+    "invalidWebsite": "Website must start with https:// (e.g. https://example.com).",
+    "invalidEmail": "Please check the email format.",
+    "invalidBirthDate": "Please check the birth date format."
   },
   "premium": {
     "badge": "Premium",

@@ -79,15 +79,25 @@ export const gymMemberService = {
   async update(userId: string, gymId: string, memberId: string, input: UpdateGymMemberInput) {
     await gymScopeService.resolveMemberForWrite(userId, gymId, memberId);
 
-    const updated = await gymMemberRepository.update(memberId, {
-      name: input.name,
-      gender: input.gender,
-      heightCm: input.heightCm,
-      weightKg: input.weightKg,
-      birthDate: input.birthDate !== undefined ? (input.birthDate || null) : undefined,
-      memo: input.memo !== undefined ? (input.memo || null) : undefined,
-      email: input.email !== undefined ? (input.email || null) : undefined,
-    });
+    // Only include keys present in the validated body so omitted optionals are not cleared.
+    const patch: {
+      name?: string;
+      gender?: string | null;
+      heightCm?: number | null;
+      weightKg?: number | null;
+      birthDate?: string | null;
+      memo?: string | null;
+      email?: string | null;
+    } = {};
+    if (input.name !== undefined) patch.name = input.name;
+    if (input.gender !== undefined) patch.gender = input.gender;
+    if (input.heightCm !== undefined) patch.heightCm = input.heightCm;
+    if (input.weightKg !== undefined) patch.weightKg = input.weightKg;
+    if (input.birthDate !== undefined) patch.birthDate = input.birthDate || null;
+    if (input.memo !== undefined) patch.memo = input.memo || null;
+    if (input.email !== undefined) patch.email = input.email || null;
+
+    const updated = await gymMemberRepository.update(memberId, patch);
 
     if (!updated) throw new AppError(404, 'NOT_FOUND', 'Member not found');
     return updated;

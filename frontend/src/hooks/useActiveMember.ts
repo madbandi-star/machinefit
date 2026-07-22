@@ -14,6 +14,7 @@ import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { sortMembersByRegistrationOrder } from '@/utils/gymMemberDefault';
+import { resolveGymManageErrorMessage } from '@/utils/getApiErrorMessage';
 
 function invalidateMemberScopedQueries(queryClient: ReturnType<typeof useQueryClient>) {
   void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
@@ -28,11 +29,11 @@ function invalidateMemberScopedQueries(queryClient: ReturnType<typeof useQueryCl
 }
 
 function isPlanLimitError(error: unknown): boolean {
-  const err = error as { response?: { status?: number; data?: { code?: string } } };
-  return (
-    err?.response?.status === 402 ||
-    err?.response?.data?.code === 'PLAN_LIMIT'
-  );
+  const err = error as {
+    response?: { status?: number; data?: { code?: string; error?: { code?: string } } };
+  };
+  const code = err?.response?.data?.error?.code ?? err?.response?.data?.code;
+  return err?.response?.status === 402 || code === 'PLAN_LIMIT';
 }
 
 export function useActiveMember() {
@@ -93,7 +94,7 @@ export function useActiveMember() {
       if (isPlanLimitError(error)) {
         openPremiumModal();
       } else {
-        showToast(t('common:errors.submitFailed'), 'error');
+        showToast(resolveGymManageErrorMessage(error, t), 'error');
       }
     },
   });
@@ -110,7 +111,7 @@ export function useActiveMember() {
       await queryClient.invalidateQueries({ queryKey: membersKey });
       showToast(t('gyms:manage.updateMemberSuccess'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),
   });
 
   const removeMutation = useMutation({
@@ -122,7 +123,7 @@ export function useActiveMember() {
       await queryClient.invalidateQueries({ queryKey: membersKey });
       showToast(t('gyms:members.removeSuccess'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),
   });
 
   const selectMember = useCallback(
