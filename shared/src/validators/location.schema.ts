@@ -7,6 +7,7 @@ export const locationInputSchema = z.object({
   stateId: z.string().uuid().optional().nullable(),
   cityId: z.string().uuid().optional().nullable(),
   districtId: z.string().uuid().optional().nullable(),
+  districtName: z.string().max(120).optional().nullable().or(z.literal('')),
   postalCode: z.string().max(32).optional().nullable().or(z.literal('')),
   latitude: z.number().min(-90).max(90).optional().nullable(),
   longitude: z.number().min(-180).max(180).optional().nullable(),

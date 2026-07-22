@@ -109,6 +109,7 @@ export function SettingsPage() {
       stateId: loc.stateId,
       cityId: loc.cityId,
       districtId: loc.districtId,
+      districtName: loc.districtName ?? '',
       postalCode: loc.postalCode ?? '',
       latitude: loc.latitude ?? null,
       longitude: loc.longitude ?? null,
@@ -124,29 +125,47 @@ export function SettingsPage() {
     }
   }, [location.hash, locationQuery.isFetched]);
 
-  const locationSaveMutation = useMutation({
-    mutationFn: () =>
-      locationApi.upsertMine({
-        countryCode: locationDraft.countryCode,
-        stateId: locationDraft.stateId,
-        cityId: locationDraft.cityId,
-        districtId: locationDraft.districtId,
-        postalCode: locationDraft.postalCode || null,
-        latitude: locationDraft.latitude,
-        longitude: locationDraft.longitude,
-        visibility: locationDraft.visibility ?? 'city',
-      }),
-    onSuccess: async () => {
+  const locationGymSaveMutation = useMutation({
+    mutationFn: async () => {
+      if (locationDraft.countryCode) {
+        await locationApi.upsertMine({
+          countryCode: locationDraft.countryCode,
+          stateId: locationDraft.stateId,
+          cityId: locationDraft.cityId,
+          districtId: locationDraft.districtId,
+          districtName: locationDraft.districtName || null,
+          postalCode: locationDraft.postalCode || null,
+          latitude: locationDraft.latitude,
+          longitude: locationDraft.longitude,
+          visibility: locationDraft.visibility ?? 'city',
+        });
+      } else {
+        await locationApi.clearMine();
+      }
+      return userApi.updateMe({
+        homeGymId: homeGym.homeGymId ?? null,
+        homeGymName: homeGym.homeGymName?.trim() || null,
+      });
+    },
+    onSuccess: async (res) => {
+      const updatedUser = res.data.data as User;
+      updateUser(updatedUser);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
-      showToast(t('location.saved'), 'success');
+      showToast(t('location.locationGymSaved'), 'success');
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
 
   const locationClearMutation = useMutation({
-    mutationFn: () => locationApi.clearMine(),
-    onSuccess: async () => {
+    mutationFn: async () => {
+      await locationApi.clearMine();
+      return userApi.updateMe({ homeGymId: null, homeGymName: null });
+    },
+    onSuccess: async (res) => {
       setLocationDraft(emptyLocationValue());
+      setHomeGym({});
+      const updatedUser = res.data.data as User;
+      updateUser(updatedUser);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
       showToast(t('location.cleared'), 'success');
     },
@@ -191,8 +210,6 @@ export function SettingsPage() {
         unitWeight: draftUnitWeight,
         experienceLevel,
         workoutGoal,
-        homeGymId: homeGym.homeGymId ?? null,
-        homeGymName: homeGym.homeGymName?.trim() || null,
       }),
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
@@ -245,10 +262,9 @@ export function SettingsPage() {
 
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
-          <p className="form-section__desc">{t('auth.profileExtrasDesc')}</p>
+          <p className="form-section__desc">{t('auth.profileExtrasGoalOnly')}</p>
           <div className="form-stack">
             <WorkoutGoalSelector value={workoutGoal} onChange={setWorkoutGoal} />
-            <HomeGymField value={homeGym} onChange={setHomeGym} />
           </div>
           <button
             type="button"
@@ -262,8 +278,8 @@ export function SettingsPage() {
         </section>
 
         <section className="form-section" id="location-settings">
-          <h3 className="form-section__title">{t('location.title')}</h3>
-          <p className="form-section__desc">{t('location.desc')}</p>
+          <h3 className="form-section__title">{t('location.locationGymTitle')}</h3>
+          <p className="form-section__desc">{t('location.locationGymDesc')}</p>
           {!locationDraft.countryCode && (
             <p className="form-section__desc">{t('location.nudge')}</p>
           )}
@@ -277,21 +293,30 @@ export function SettingsPage() {
             required={false}
           />
           <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
+            <HomeGymField value={homeGym} onChange={setHomeGym} />
+          </div>
+          <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
             <button
               type="button"
               className="btn btn--primary btn--block"
-              onClick={() => locationSaveMutation.mutate()}
-              disabled={locationSaveMutation.isPending || !locationDraft.countryCode}
+              onClick={() => locationGymSaveMutation.mutate()}
+              disabled={
+                locationGymSaveMutation.isPending ||
+                (!locationDraft.countryCode && !homeGym.homeGymId && !homeGym.homeGymName)
+              }
             >
-              {locationSaveMutation.isPending
+              {locationGymSaveMutation.isPending
                 ? t('actions.save')
-                : t('location.save')}
+                : t('location.locationGymSave')}
             </button>
             <button
               type="button"
               className="btn btn--secondary btn--block"
               onClick={() => locationClearMutation.mutate()}
-              disabled={locationClearMutation.isPending || !locationQuery.data?.isSet}
+              disabled={
+                locationClearMutation.isPending ||
+                (!locationQuery.data?.isSet && !homeGym.homeGymId && !homeGym.homeGymName)
+              }
             >
               {t('location.clear')}
             </button>

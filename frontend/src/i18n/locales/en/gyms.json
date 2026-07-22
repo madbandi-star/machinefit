@@ -63,7 +63,8 @@
     "removeMemberTitle": "Remove member",
     "removeMemberMessage": "Remove member {{name}}?",
     "locationHeading": "Location (required)",
-    "locationRequired": "Country, state/province, and city are required."
+    "locationRequired": "Country, state/province, and city are required.",
+    "locationThenGymHint": "Select region (down to neighborhood), then enter gym details and save."
   },
   "premium": {
     "badge": "Premium",

@@ -47,6 +47,8 @@ export interface LocationRef {
   stateId: string | null;
   cityId: string | null;
   districtId: string | null;
+  /** Free-text dong/neighborhood when not in catalog (or override). */
+  districtName?: string | null;
   stateCode?: string | null;
   cityCode?: string | null;
   districtCode?: string | null;

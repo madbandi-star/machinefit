@@ -63,7 +63,8 @@
     "removeMemberTitle": "회원 삭제",
     "removeMemberMessage": "{{name}} 회원을 삭제할까요?",
     "locationHeading": "위치 (필수)",
-    "locationRequired": "국가·시/도·도시는 필수입니다."
+    "locationRequired": "국가·시/도·도시는 필수입니다.",
+    "locationThenGymHint": "지역(동 단위까지)을 선택한 뒤 헬스장 정보를 입력하고 저장하세요."
   },
   "premium": {
     "badge": "Premium",

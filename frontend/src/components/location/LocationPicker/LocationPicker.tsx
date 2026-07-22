@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { LocationRef, LocationVisibility } from '@machinefit/shared';
@@ -11,6 +11,7 @@ export interface LocationPickerValue {
   stateId: string | null;
   cityId: string | null;
   districtId: string | null;
+  districtName: string;
   postalCode: string;
   latitude: number | null;
   longitude: number | null;
@@ -38,6 +39,7 @@ export function emptyLocationValue(): LocationPickerValue {
     stateId: null,
     cityId: null,
     districtId: null,
+    districtName: '',
     postalCode: '',
     latitude: null,
     longitude: null,
@@ -52,6 +54,7 @@ export function locationValueFromRef(ref?: LocationRef | null): LocationPickerVa
     stateId: ref.stateId,
     cityId: ref.cityId,
     districtId: ref.districtId,
+    districtName: ref.districtName ?? '',
     postalCode: ref.postalCode ?? '',
     latitude: ref.latitude ?? null,
     longitude: ref.longitude ?? null,
@@ -71,9 +74,15 @@ export function LocationPicker({
 }: LocationPickerProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
-  const [query, setQuery] = useState('');
+  const isKr = value.countryCode === 'KR' || locale.startsWith('ko');
+  const [countryQuery, setCountryQuery] = useState('');
+  const [districtQuery, setDistrictQuery] = useState('');
   const [gpsBusy, setGpsBusy] = useState(false);
   const [gpsError, setGpsError] = useState('');
+
+  const labelState = isKr ? t('location.stateKr') : t('location.state');
+  const labelCity = isKr ? t('location.cityKr') : t('location.city');
+  const labelDistrict = isKr ? t('location.districtKr') : t('location.district');
 
   const countriesQuery = useQuery({
     queryKey: QUERY_KEYS.locationCountries,
@@ -104,29 +113,33 @@ export function LocationPicker({
 
   const filteredCountries = useMemo(() => {
     const list = countriesQuery.data ?? [];
-    const q = query.trim().toLowerCase();
+    const q = countryQuery.trim().toLowerCase();
     if (!q) return list;
     return list.filter((c) => {
       const n = nameOf(c.name, locale).toLowerCase();
       return n.includes(q) || c.code.toLowerCase().includes(q);
     });
-  }, [countriesQuery.data, locale, query]);
+  }, [countriesQuery.data, locale, countryQuery]);
 
-  useEffect(() => {
-    if (!value.countryCode) return;
-    // Reset dependent fields when parent changes externally without children.
-  }, [value.countryCode]);
+  const filteredDistricts = useMemo(() => {
+    const list = districtsQuery.data ?? [];
+    const q = districtQuery.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((d) => nameOf(d.name, locale).toLowerCase().includes(q));
+  }, [districtsQuery.data, districtQuery, locale]);
 
   const pathLabel = useMemo(() => {
     const country = countriesQuery.data?.find((c) => c.code === value.countryCode);
     const state = statesQuery.data?.find((s) => s.id === value.stateId);
     const city = citiesQuery.data?.find((c) => c.id === value.cityId);
     const district = districtsQuery.data?.find((d) => d.id === value.districtId);
+    const districtLabel =
+      (district ? nameOf(district.name, locale) : null) || value.districtName.trim() || null;
     const parts = [
       country ? `${country.flagEmoji ?? ''} ${nameOf(country.name, locale)}`.trim() : null,
       state ? nameOf(state.name, locale) : null,
       city ? nameOf(city.name, locale) : null,
-      district ? nameOf(district.name, locale) : null,
+      districtLabel,
     ].filter(Boolean);
     return parts.join(' > ');
   }, [
@@ -163,6 +176,7 @@ export function LocationPicker({
             stateId: hit.stateId,
             cityId: hit.cityId,
             districtId: hit.districtId,
+            districtName: hit.districtName ?? '',
             latitude: hit.latitude ?? pos.coords.latitude,
             longitude: hit.longitude ?? pos.coords.longitude,
           });
@@ -180,6 +194,9 @@ export function LocationPicker({
     );
   };
 
+  const districts = districtsQuery.data ?? [];
+  const hasDistrictCatalog = districts.length > 0;
+
   return (
     <div className={`location-picker${disabled ? ' is-disabled' : ''}`}>
       {pathLabel && <p className="location-picker__path">{pathLabel}</p>}
@@ -192,8 +209,8 @@ export function LocationPicker({
         <input
           className="input"
           type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={countryQuery}
+          onChange={(e) => setCountryQuery(e.target.value)}
           placeholder={t('location.searchCountry')}
           disabled={disabled}
         />
@@ -203,12 +220,14 @@ export function LocationPicker({
           disabled={disabled}
           onChange={(e) => {
             const code = e.target.value || null;
+            setDistrictQuery('');
             onChange({
               ...value,
               countryCode: code,
               stateId: null,
               cityId: null,
               districtId: null,
+              districtName: '',
             });
           }}
         >
@@ -224,7 +243,7 @@ export function LocationPicker({
 
       <label className="location-picker__field">
         <span>
-          {t('location.state')}
+          {labelState}
           {required ? ' *' : ''}
         </span>
         <select
@@ -232,11 +251,13 @@ export function LocationPicker({
           value={value.stateId ?? ''}
           disabled={disabled || !value.countryCode}
           onChange={(e) => {
+            setDistrictQuery('');
             onChange({
               ...value,
               stateId: e.target.value || null,
               cityId: null,
               districtId: null,
+              districtName: '',
             });
           }}
         >
@@ -251,7 +272,7 @@ export function LocationPicker({
 
       <label className="location-picker__field">
         <span>
-          {t('location.city')}
+          {labelCity}
           {required ? ' *' : ''}
         </span>
         <select
@@ -259,14 +280,16 @@ export function LocationPicker({
           value={value.cityId ?? ''}
           disabled={disabled || !value.stateId}
           onChange={(e) => {
+            setDistrictQuery('');
             onChange({
               ...value,
               cityId: e.target.value || null,
               districtId: null,
+              districtName: '',
             });
           }}
         >
-          <option value="">{t('location.selectCity')}</option>
+          <option value="">{isKr ? t('location.selectCityKr') : t('location.selectCity')}</option>
           {(citiesQuery.data ?? []).map((c) => (
             <option key={c.id} value={c.id}>
               {nameOf(c.name, locale)}
@@ -276,27 +299,61 @@ export function LocationPicker({
       </label>
 
       {showDistrict && (
-        <label className="location-picker__field">
-          <span>{t('location.district')}</span>
-          <select
-            className="input"
-            value={value.districtId ?? ''}
-            disabled={disabled || !value.cityId}
-            onChange={(e) =>
-              onChange({
-                ...value,
-                districtId: e.target.value || null,
-              })
-            }
-          >
-            <option value="">{t('location.selectDistrict')}</option>
-            {(districtsQuery.data ?? []).map((d) => (
-              <option key={d.id} value={d.id}>
-                {nameOf(d.name, locale)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="location-picker__field">
+          <span>{labelDistrict}</span>
+          {hasDistrictCatalog ? (
+            <>
+              <input
+                className="input"
+                type="search"
+                value={districtQuery}
+                disabled={disabled || !value.cityId}
+                onChange={(e) => setDistrictQuery(e.target.value)}
+                placeholder={t('location.searchDistrict')}
+              />
+              <select
+                className="input"
+                value={value.districtId ?? ''}
+                disabled={disabled || !value.cityId}
+                onChange={(e) => {
+                  const id = e.target.value || null;
+                  const hit = districts.find((d) => d.id === id);
+                  onChange({
+                    ...value,
+                    districtId: id,
+                    districtName: hit ? nameOf(hit.name, locale) : '',
+                  });
+                }}
+              >
+                <option value="">
+                  {isKr ? t('location.selectDistrictKr') : t('location.selectDistrict')}
+                </option>
+                {filteredDistricts.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {nameOf(d.name, locale)}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <input
+              className="input"
+              value={value.districtName}
+              disabled={disabled || !value.cityId}
+              onChange={(e) =>
+                onChange({
+                  ...value,
+                  districtId: null,
+                  districtName: e.target.value,
+                })
+              }
+              placeholder={t('location.districtNamePlaceholder')}
+            />
+          )}
+          {!hasDistrictCatalog && value.cityId ? (
+            <p className="location-picker__hint">{t('location.districtNameHint')}</p>
+          ) : null}
+        </div>
       )}
 
       {showPostal && (

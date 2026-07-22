@@ -168,6 +168,7 @@ export function GymMemberManagePage() {
         stateId: gymForm.location.stateId,
         cityId: gymForm.location.cityId,
         districtId: gymForm.location.districtId,
+        districtName: gymForm.location.districtName || null,
         postalCode: gymForm.location.postalCode || null,
         latitude: gymForm.location.latitude,
         longitude: gymForm.location.longitude,
@@ -270,6 +271,18 @@ export function GymMemberManagePage() {
 
           {gymFormMode !== 'closed' ? (
             <form className="gym-manage-form" onSubmit={(e) => void handleGymSubmit(e)}>
+              <div className="gym-manage-field">
+                <span>{t('gyms:manage.locationHeading')}</span>
+                <p className="gym-manage-hint">{t('gyms:manage.locationThenGymHint')}</p>
+                <LocationPicker
+                  value={gymForm.location}
+                  onChange={(location) => setGymForm((prev) => ({ ...prev, location }))}
+                  showDistrict
+                  showPostal
+                  showGps
+                  required
+                />
+              </div>
               <label className="gym-manage-field">
                 <span>{t('gyms:selector.gymName')}</span>
                 <input
@@ -277,7 +290,6 @@ export function GymMemberManagePage() {
                   onChange={(e) => setGymForm((prev) => ({ ...prev, name: e.target.value }))}
                   required
                   maxLength={200}
-                  autoFocus
                 />
               </label>
               <label className="gym-manage-field">
@@ -288,17 +300,6 @@ export function GymMemberManagePage() {
                   maxLength={100}
                 />
               </label>
-              <div className="gym-manage-field">
-                <span>{t('gyms:manage.locationHeading')}</span>
-                <LocationPicker
-                  value={gymForm.location}
-                  onChange={(location) => setGymForm((prev) => ({ ...prev, location }))}
-                  showDistrict
-                  showPostal
-                  showGps
-                  required
-                />
-              </div>
               <label className="gym-manage-field">
                 <span>{t('gyms:locationOptionalDetail')}</span>
                 <input

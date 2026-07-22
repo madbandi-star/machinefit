@@ -16,6 +16,7 @@ interface UserGymRow {
   state_id: string | null;
   city_id: string | null;
   district_id: string | null;
+  district_name: string | null;
   postal_code: string | null;
   latitude: string | null;
   longitude: string | null;
@@ -36,6 +37,7 @@ async function mapRow(row: UserGymRow, locale = 'ko'): Promise<UserGym> {
         stateId: row.state_id,
         cityId: row.city_id,
         districtId: row.district_id,
+        districtName: row.district_name,
       },
       locale
     );
@@ -44,6 +46,7 @@ async function mapRow(row: UserGymRow, locale = 'ko'): Promise<UserGym> {
       stateId: row.state_id,
       cityId: row.city_id,
       districtId: row.district_id,
+      districtName: row.district_name,
       stateCode: row.metro_code,
       cityCode: row.district_code,
       postalCode: row.postal_code,
@@ -169,6 +172,7 @@ export const userGymRepository = {
               stateId: input.stateId ?? null,
               cityId: input.cityId ?? null,
               districtId: input.districtId ?? null,
+              districtName: input.districtName?.trim() || null,
               stateCode: live.metroCode,
               cityCode: live.districtCode,
               postalCode: input.postalCode ?? null,
@@ -194,13 +198,13 @@ export const userGymRepository = {
         `INSERT INTO user_gyms (
            user_id, name, address, brand_name, is_default,
            country_code, metro_code, district_code,
-           state_id, city_id, district_id, postal_code,
+           state_id, city_id, district_id, district_name, postal_code,
            latitude, longitude, phone, website_url, location_set
          ) VALUES (
            $1,$2,$3,$4,$5,
            $6,$7,$8,
-           $9,$10,$11,$12,
-           $13,$14,$15,$16,$17
+           $9,$10,$11,$12,$13,
+           $14,$15,$16,$17,$18
          )
          RETURNING *`,
         [
@@ -215,6 +219,7 @@ export const userGymRepository = {
           input.stateId ?? null,
           input.cityId ?? null,
           input.districtId ?? null,
+          input.districtName?.trim() || null,
           input.postalCode?.trim() || null,
           input.latitude ?? null,
           input.longitude ?? null,
@@ -275,6 +280,10 @@ export const userGymRepository = {
       stateId: input.stateId !== undefined ? input.stateId : current.location?.stateId,
       cityId: input.cityId !== undefined ? input.cityId : current.location?.cityId,
       districtId: input.districtId !== undefined ? input.districtId : current.location?.districtId,
+      districtName:
+        input.districtName !== undefined
+          ? input.districtName
+          : current.location?.districtName,
       postalCode:
         input.postalCode !== undefined ? input.postalCode : current.location?.postalCode,
       latitude: input.latitude !== undefined ? input.latitude : current.location?.latitude,
@@ -301,6 +310,10 @@ export const userGymRepository = {
                 stateId: nextLoc.stateId ?? null,
                 cityId: nextLoc.cityId ?? null,
                 districtId: nextLoc.districtId ?? null,
+                districtName:
+                  typeof nextLoc.districtName === 'string'
+                    ? nextLoc.districtName.trim() || null
+                    : null,
                 stateCode: live.metroCode,
                 cityCode: live.districtCode,
                 postalCode: nextLoc.postalCode ?? null,
@@ -325,10 +338,10 @@ export const userGymRepository = {
         `UPDATE user_gyms
          SET name = $1, address = $2, brand_name = $3, is_default = $4,
              country_code = $5, metro_code = $6, district_code = $7,
-             state_id = $8, city_id = $9, district_id = $10, postal_code = $11,
-             latitude = $12, longitude = $13, phone = $14, website_url = $15,
-             location_set = $16
-         WHERE id = $17 AND user_id = $18
+             state_id = $8, city_id = $9, district_id = $10, district_name = $11,
+             postal_code = $12, latitude = $13, longitude = $14, phone = $15,
+             website_url = $16, location_set = $17
+         WHERE id = $18 AND user_id = $19
          RETURNING *`,
         [
           name,
@@ -341,6 +354,7 @@ export const userGymRepository = {
           nextLoc.stateId ?? null,
           nextLoc.cityId ?? null,
           nextLoc.districtId ?? null,
+          typeof nextLoc.districtName === 'string' ? nextLoc.districtName.trim() || null : null,
           typeof nextLoc.postalCode === 'string' ? nextLoc.postalCode.trim() || null : null,
           nextLoc.latitude ?? null,
           nextLoc.longitude ?? null,

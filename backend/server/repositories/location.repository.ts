@@ -150,6 +150,7 @@ export const locationRepository = {
       stateId?: string | null;
       cityId?: string | null;
       districtId?: string | null;
+      districtName?: string | null;
     },
     locale = 'ko'
   ): Promise<LocationRef['label']> {
@@ -191,6 +192,9 @@ export const locationRepository = {
         [refs.districtId]
       );
       if (di.rows[0]) districtName = pickName(di.rows[0].name, locale);
+    }
+    if (!districtName && refs.districtName?.trim()) {
+      districtName = refs.districtName.trim();
     }
 
     const countryName = pickName(c.name, locale);
@@ -235,6 +239,7 @@ export const locationRepository = {
       stateId: null,
       cityId: null,
       districtId: null,
+      districtName: null,
       postalCode: null,
       latitude: null,
       longitude: null,
@@ -248,6 +253,7 @@ export const locationRepository = {
       state_id: string | null;
       city_id: string | null;
       district_id: string | null;
+      district_name: string | null;
       postal_code: string | null;
       latitude: string | null;
       longitude: string | null;
@@ -265,6 +271,7 @@ export const locationRepository = {
         stateId: row.state_id,
         cityId: row.city_id,
         districtId: row.district_id,
+        districtName: row.district_name,
       },
       locale
     );
@@ -274,6 +281,7 @@ export const locationRepository = {
       stateId: row.state_id,
       cityId: row.city_id,
       districtId: row.district_id,
+      districtName: row.district_name,
       stateCode: codes.stateCode,
       cityCode: codes.cityCode,
       postalCode: row.postal_code,
@@ -293,6 +301,7 @@ export const locationRepository = {
       stateId?: string | null;
       cityId?: string | null;
       districtId?: string | null;
+      districtName?: string | null;
       postalCode?: string | null;
       latitude?: number | null;
       longitude?: number | null;
@@ -308,16 +317,19 @@ export const locationRepository = {
       return this.getUserLocation(userId, locale);
     }
 
+    const districtName = input.districtName?.trim() || null;
+
     await pool.query(
       `INSERT INTO user_locations (
-         user_id, country_code, state_id, city_id, district_id, postal_code,
+         user_id, country_code, state_id, city_id, district_id, district_name, postal_code,
          latitude, longitude, visibility, updated_at
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW())
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW())
        ON CONFLICT (user_id) DO UPDATE SET
          country_code = EXCLUDED.country_code,
          state_id = EXCLUDED.state_id,
          city_id = EXCLUDED.city_id,
          district_id = EXCLUDED.district_id,
+         district_name = EXCLUDED.district_name,
          postal_code = EXCLUDED.postal_code,
          latitude = EXCLUDED.latitude,
          longitude = EXCLUDED.longitude,
@@ -329,6 +341,7 @@ export const locationRepository = {
         input.stateId ?? null,
         input.cityId ?? null,
         input.districtId ?? null,
+        districtName,
         input.postalCode?.trim() || null,
         input.latitude ?? null,
         input.longitude ?? null,
@@ -346,23 +359,79 @@ export const locationRepository = {
     return this.getUserLocation(userId);
   },
 
-  /** Nearest city in catalog (no external geocoder). */
+  /** Nearest district (dong) when available, else nearest city. */
   async reverseGeocode(lat: number, lng: number, locale = 'ko'): Promise<ReverseGeocodeResult | null> {
     const pool = getPool();
     if (!pool) return null;
+
+    const districtHit = await pool.query<{
+      district_id: string;
+      city_id: string;
+      state_id: string;
+      country_code: string;
+      city_code: string;
+      state_code: string;
+      district_code: string;
+      dist: string;
+    }>(
+      `SELECT d.id AS district_id, c.id AS city_id, s.id AS state_id, s.country_code,
+              c.code AS city_code, s.code AS state_code, d.code AS district_code,
+              (
+                6371 * acos(
+                  LEAST(1.0, GREATEST(-1.0,
+                    cos(radians($1)) * cos(radians(d.latitude)) *
+                    cos(radians(d.longitude) - radians($2)) +
+                    sin(radians($1)) * sin(radians(d.latitude))
+                  ))
+                )
+              )::text AS dist
+       FROM location_districts d
+       JOIN location_cities c ON c.id = d.city_id
+       JOIN location_states s ON s.id = c.state_id
+       WHERE d.is_active = TRUE
+         AND d.latitude IS NOT NULL
+         AND d.longitude IS NOT NULL
+       ORDER BY dist ASC
+       LIMIT 1`,
+      [lat, lng]
+    );
+
+    if (districtHit.rows[0] && parseFloat(districtHit.rows[0].dist) <= 8) {
+      const row = districtHit.rows[0];
+      const label = await this.resolveLabel(
+        {
+          countryCode: row.country_code,
+          stateId: row.state_id,
+          cityId: row.city_id,
+          districtId: row.district_id,
+        },
+        locale
+      );
+      return {
+        countryCode: row.country_code,
+        stateId: row.state_id,
+        cityId: row.city_id,
+        districtId: row.district_id,
+        districtCode: row.district_code,
+        stateCode: row.state_code,
+        cityCode: row.city_code,
+        latitude: lat,
+        longitude: lng,
+        label,
+        accuracyMeters: Math.round(parseFloat(row.dist) * 1000),
+      };
+    }
+
     const result = await pool.query<{
       city_id: string;
       state_id: string;
       country_code: string;
       city_code: string;
       state_code: string;
-      latitude: string;
-      longitude: string;
       dist: string;
     }>(
       `SELECT c.id AS city_id, s.id AS state_id, s.country_code,
               c.code AS city_code, s.code AS state_code,
-              c.latitude::text, c.longitude::text,
               (
                 6371 * acos(
                   LEAST(1.0, GREATEST(-1.0,
