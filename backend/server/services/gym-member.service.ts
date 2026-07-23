@@ -126,9 +126,17 @@ export const gymMemberService = {
     const updated = await gymMemberRepository.respondToProfileRequest(requestId, input.status);
     if (!updated) throw new AppError(500, 'INTERNAL_ERROR', 'Failed to update request');
 
-    // On approve: copy profile data from target user onto member
+    // Always flip profile_access even if profile copy fails.
     if (input.status === 'approved') {
       const pool = getPool();
+      let profileUpdate: {
+        name?: string;
+        gender?: string | null;
+        heightCm?: number | null;
+        weightKg?: number | null;
+        profileAccess: 'approved';
+      } = { profileAccess: 'approved' };
+
       if (pool) {
         const userResult = await pool.query<{
           display_name: string;
@@ -138,15 +146,17 @@ export const gymMemberService = {
         }>(`SELECT display_name, gender, height_cm, weight_kg FROM users WHERE id = $1`, [userId]);
         const user = userResult.rows[0];
         if (user) {
-          await gymMemberRepository.update(request.memberId, {
+          profileUpdate = {
             name: user.display_name || undefined,
             gender: user.gender ?? null,
             heightCm: user.height_cm ? parseFloat(user.height_cm) : null,
             weightKg: user.weight_kg ? parseFloat(user.weight_kg) : null,
             profileAccess: 'approved',
-          });
+          };
         }
       }
+
+      await gymMemberRepository.update(request.memberId, profileUpdate);
     } else {
       await gymMemberRepository.update(request.memberId, {
         profileAccess: 'denied',

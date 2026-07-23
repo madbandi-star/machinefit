@@ -47,12 +47,18 @@ export const historyRepository = {
 
     const limit = options.limit ?? 20;
     const params: unknown[] = [userId];
-    let gymFilter: string;
+    let gymFilter = '';
 
     if (options.gymIds !== undefined) {
-      if (options.gymIds === null || options.gymIds.length === 0) return [];
-      params.push(options.gymIds);
-      gymFilter = ` AND h.gym_id = ANY($${params.length}::uuid[])`;
+      if (options.gymIds === null || options.gymIds.length === 0) {
+        const hasLinkedVisibility =
+          (options.linkScope?.peerUserIds?.length ?? 0) > 0 ||
+          (options.linkScope?.linkedMemberIds?.length ?? 0) > 0;
+        if (!hasLinkedVisibility) return [];
+      } else {
+        params.push(options.gymIds);
+        gymFilter = ` AND h.gym_id = ANY($${params.length}::uuid[])`;
+      }
     } else {
       params.push(options.gymId);
       gymFilter = ` AND h.gym_id = $${params.length}`;

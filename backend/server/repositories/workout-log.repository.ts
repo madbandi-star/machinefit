@@ -135,16 +135,20 @@ export const workoutLogRepository = {
     if (!pool) return [];
 
     const params: unknown[] = [userId];
-    let gymFilter: string;
+    let gymFilter = '';
 
     // Support 'all' via pre-resolved gymIds array
     if (options.gymIds !== undefined) {
       if (options.gymIds === null || options.gymIds.length === 0) {
-        // No gyms owned — return empty
-        return [];
+        const hasLinkedVisibility =
+          (options.linkScope?.peerUserIds?.length ?? 0) > 0 ||
+          (options.linkScope?.linkedMemberIds?.length ?? 0) > 0;
+        if (!hasLinkedVisibility) return [];
+        // Keep going: linked peer/member OR branches do not require owned gyms.
+      } else {
+        params.push(options.gymIds);
+        gymFilter = ` AND wl.gym_id = ANY($${params.length}::uuid[])`;
       }
-      params.push(options.gymIds);
-      gymFilter = ` AND wl.gym_id = ANY($${params.length}::uuid[])`;
     } else {
       params.push(options.gymId);
       gymFilter = ` AND wl.gym_id = $${params.length}`;

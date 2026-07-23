@@ -320,8 +320,10 @@ export const gymMemberRepository = {
       `SELECT id, gym_id, linked_user_id, is_self
        FROM gym_members
        WHERE owner_user_id = $1
+         AND is_self = FALSE
          AND profile_access = 'approved'
-         AND linked_user_id IS NOT NULL`,
+         AND linked_user_id IS NOT NULL
+         AND linked_user_id IS DISTINCT FROM owner_user_id`,
       [ownerUserId]
     );
     return result.rows.map((row) => ({
@@ -348,7 +350,10 @@ export const gymMemberRepository = {
     }>(
       `SELECT id, gym_id, owner_user_id
        FROM gym_members
-       WHERE linked_user_id = $1 AND profile_access = 'approved'`,
+       WHERE linked_user_id = $1
+         AND is_self = FALSE
+         AND profile_access = 'approved'
+         AND owner_user_id IS DISTINCT FROM linked_user_id`,
       [linkedUserId]
     );
     return result.rows.map((row) => ({
@@ -359,9 +364,9 @@ export const gymMemberRepository = {
   },
 
   /**
-   * Record visibility for approved profile links:
-   * - Owner viewing linked member → also include that peer's own logs/history
-   * - Linked user viewing their self member → also include logs written on linked profiles
+   * Record visibility for approved profile links.
+   * After A↔B approve, each account should see the other's workout history when
+   * viewing their own (self) member — not only when the owner selects the linked member.
    */
   async resolveLinkedRecordListScope(
     viewerUserId: string,
@@ -370,21 +375,45 @@ export const gymMemberRepository = {
     const peerUserIds = new Set<string>();
     const linkedMemberIds = new Set<string>();
 
+    const addFullLinkGraph = async () => {
+      const [ownedPeers, linkedToMe] = await Promise.all([
+        this.listApprovedLinkedPeersOwnedBy(viewerUserId),
+        this.listApprovedMembersLinkedToUser(viewerUserId),
+      ]);
+      for (const row of ownedPeers) {
+        peerUserIds.add(row.linkedUserId);
+        // Owner's logs written on the linked member profile (any gym).
+        linkedMemberIds.add(row.id);
+      }
+      for (const row of linkedToMe) {
+        linkedMemberIds.add(row.id);
+        // Linked account also sees the owner's own (self) recordings.
+        peerUserIds.add(row.ownerUserId);
+      }
+    };
+
     if (memberId) {
       const member = await this.findById(memberId);
       if (!member || member.ownerUserId !== viewerUserId) {
         return { peerUserIds: [], linkedMemberIds: [] };
       }
 
-      if (member.profileAccess === 'approved' && member.linkedUserId) {
-        peerUserIds.add(member.linkedUserId);
+      // Default login view is self — merge the full approved link graph there.
+      if (member.isSelf) {
+        await addFullLinkGraph();
+        return {
+          peerUserIds: [...peerUserIds],
+          linkedMemberIds: [...linkedMemberIds],
+        };
       }
 
-      // When the linked account views their own (self) profile, surface records
-      // owners wrote on approved profiles linked to them.
-      if (member.isSelf) {
-        const linkedToMe = await this.listApprovedMembersLinkedToUser(viewerUserId);
-        for (const row of linkedToMe) linkedMemberIds.add(row.id);
+      // Owner viewing an approved linked member: include that peer's records.
+      if (
+        member.profileAccess === 'approved' &&
+        member.linkedUserId &&
+        member.linkedUserId !== viewerUserId
+      ) {
+        peerUserIds.add(member.linkedUserId);
       }
 
       return {
@@ -393,13 +422,7 @@ export const gymMemberRepository = {
       };
     }
 
-    const [ownedPeers, linkedToMe] = await Promise.all([
-      this.listApprovedLinkedPeersOwnedBy(viewerUserId),
-      this.listApprovedMembersLinkedToUser(viewerUserId),
-    ]);
-    for (const row of ownedPeers) peerUserIds.add(row.linkedUserId);
-    for (const row of linkedToMe) linkedMemberIds.add(row.id);
-
+    await addFullLinkGraph();
     return {
       peerUserIds: [...peerUserIds],
       linkedMemberIds: [...linkedMemberIds],
