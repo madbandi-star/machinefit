@@ -36,3 +36,14 @@ export async function getAchievementRankings(req: Request, res: Response): Promi
   const data = await achievementService.getRankings(req.user.userId, query.limit);
   res.json({ success: true, data });
 }
+
+const acknowledgeBodySchema = z.object({
+  achievementIds: z.array(z.string().min(1)).optional(),
+});
+
+export async function acknowledgeAchievementUnlocks(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const body = acknowledgeBodySchema.parse(req.body ?? {});
+  await achievementService.acknowledgeUnlocks(req.user.userId, body.achievementIds);
+  res.json({ success: true, data: { message: 'Acknowledged' } });
+}

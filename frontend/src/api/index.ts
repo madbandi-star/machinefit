@@ -457,6 +457,10 @@ export const achievementsApi = {
     apiClient.get<ApiResponse<AchievementRankingResponse>>('/users/me/achievements/rankings', {
       params,
     }),
+  acknowledge: (achievementIds?: string[]) =>
+    apiClient.post<ApiResponse<{ message: string }>>('/users/me/achievements/acknowledge', {
+      ...(achievementIds?.length ? { achievementIds } : {}),
+    }),
 };
 
 export const growthTimelineApi = {

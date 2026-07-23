@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type {
   AchievementCategory,
@@ -17,6 +17,13 @@ import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildAchievementShareCard } from '@/utils/achievementShareCard';
+import {
+  clearAchievementUnlockPopupHideToday,
+  hideAchievementUnlockPopupToday,
+  isAchievementUnlockPopupEnabled,
+  isAchievementUnlockPopupHiddenToday,
+  setAchievementUnlockPopupEnabled,
+} from '@/utils/achievementUnlockPopupPrefs';
 import './AchievementsPage.css';
 
 type ViewTab = 'overview' | 'rankings';
@@ -55,6 +62,7 @@ function formatInt(n: number, locale: string): string {
 export function AchievementsPage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
+  const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
   const { activeGymId } = useActiveGym();
@@ -64,6 +72,8 @@ export function AchievementsPage() {
   const [unlockQueue, setUnlockQueue] = useState<AchievementProgressItem[]>([]);
   const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
+  const [popupEnabled, setPopupEnabled] = useState(() => isAchievementUnlockPopupEnabled());
+  const [hideTodayChecked, setHideTodayChecked] = useState(false);
 
   const scopeParams =
     isRealGym && activeGymId && activeMemberId
@@ -91,10 +101,16 @@ export function AchievementsPage() {
   });
 
   useEffect(() => {
+    if (!popupEnabled || isAchievementUnlockPopupHiddenToday()) {
+      setUnlockQueue([]);
+      setUnlockBatchTotal(0);
+      return;
+    }
     if (!data?.newlyUnlocked?.length) return;
     const key = data.newlyUnlocked.map((i) => i.def.id).join('|');
     if (key === seenUnlockKey) return;
     setSeenUnlockKey(key);
+    setHideTodayChecked(false);
     setUnlockQueue(data.newlyUnlocked);
     setUnlockBatchTotal(data.newlyUnlocked.length);
     try {
@@ -102,7 +118,7 @@ export function AchievementsPage() {
     } catch {
       /* ignore */
     }
-  }, [data, seenUnlockKey]);
+  }, [data, seenUnlockKey, popupEnabled]);
 
   const currentUnlock = unlockQueue[0] ?? null;
   const unlockIndex =
@@ -110,17 +126,43 @@ export function AchievementsPage() {
   const unlockRemaining = Math.max(0, unlockQueue.length - 1);
   const isLastUnlock = unlockQueue.length <= 1;
 
-  const dismissUnlockQueue = () => {
+  const acknowledgePending = async () => {
+    const ids = data?.newlyUnlocked?.map((item) => item.def.id) ?? [];
+    try {
+      await achievementsApi.acknowledge(ids.length ? ids : undefined);
+      await queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
+    } catch {
+      /* best-effort — local prefs still apply */
+    }
+  };
+
+  const dismissUnlockQueue = async () => {
+    if (hideTodayChecked) {
+      hideAchievementUnlockPopupToday();
+      await acknowledgePending();
+    }
     setUnlockQueue([]);
     setUnlockBatchTotal(0);
   };
 
-  const advanceUnlockQueue = () => {
+  const advanceUnlockQueue = async () => {
     if (unlockQueue.length <= 1) {
-      dismissUnlockQueue();
+      await dismissUnlockQueue();
       return;
     }
     setUnlockQueue((q) => q.slice(1));
+  };
+
+  const handlePopupEnabledChange = (checked: boolean) => {
+    setPopupEnabled(checked);
+    setAchievementUnlockPopupEnabled(checked);
+    if (checked) {
+      clearAchievementUnlockPopupHideToday();
+      setSeenUnlockKey('');
+    } else {
+      setUnlockQueue([]);
+      setUnlockBatchTotal(0);
+    }
   };
 
   const filtered = useMemo(() => {
@@ -245,6 +287,26 @@ export function AchievementsPage() {
               </div>
             </section>
 
+            <label className="achievements-popup-pref">
+              <input
+                type="checkbox"
+                className="achievements-popup-pref__input"
+                checked={popupEnabled}
+                onChange={(event) => handlePopupEnabledChange(event.target.checked)}
+              />
+              <span className="achievements-popup-pref__box" aria-hidden />
+              <span className="achievements-popup-pref__copy">
+                <span className="achievements-popup-pref__title">
+                  {popupEnabled
+                    ? t('achievements.popupPrefOn')
+                    : t('achievements.popupPrefOff')}
+                </span>
+                <span className="achievements-popup-pref__hint">
+                  {t('achievements.popupPrefHint')}
+                </span>
+              </span>
+            </label>
+
             <div className="achievements-toolbar">
               <div className="achievements-tabs" role="tablist">
                 <button
@@ -288,7 +350,6 @@ export function AchievementsPage() {
                     </button>
                   ))}
                 </div>
-
                 <div className="achievements-grid">
                   {filtered.map((item) => (
                     <AchievementCard
@@ -296,7 +357,7 @@ export function AchievementsPage() {
                       item={item}
                       locale={locale}
                       t={t}
-                      onShare={() => handleShare(item)}
+                      onShare={() => void handleShare(item)}
                     />
                   ))}
                 </div>
@@ -361,7 +422,7 @@ export function AchievementsPage() {
               <button
                 type="button"
                 className="achievement-unlock__close"
-                onClick={dismissUnlockQueue}
+                onClick={() => void dismissUnlockQueue()}
                 aria-label={t('achievements.dismissAll')}
               >
                 ×
@@ -391,6 +452,18 @@ export function AchievementsPage() {
                     : ''}
                 </p>
               ) : null}
+              <label className="achievement-unlock__snooze">
+                <input
+                  type="checkbox"
+                  className="achievement-unlock__snooze-input"
+                  checked={hideTodayChecked}
+                  onChange={(event) => setHideTodayChecked(event.target.checked)}
+                />
+                <span className="achievement-unlock__snooze-box" aria-hidden />
+                <span className="achievement-unlock__snooze-label">
+                  {t('achievements.hidePopupToday')}
+                </span>
+              </label>
               <div className="achievement-unlock__actions">
                 <button
                   type="button"
@@ -402,7 +475,7 @@ export function AchievementsPage() {
                 <button
                   type="button"
                   className="btn btn--block"
-                  onClick={advanceUnlockQueue}
+                  onClick={() => void advanceUnlockQueue()}
                 >
                   {isLastUnlock
                     ? t('achievements.done')
@@ -415,7 +488,7 @@ export function AchievementsPage() {
                   <button
                     type="button"
                     className="btn btn--secondary btn--block achievement-unlock__dismiss"
-                    onClick={dismissUnlockQueue}
+                    onClick={() => void dismissUnlockQueue()}
                   >
                     {t('achievements.dismissAll')}
                   </button>

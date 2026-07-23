@@ -178,7 +178,8 @@ export const achievementService = {
 
     // Refresh is a no-op when the logs revision matches the last compute.
     // Background workout-save refresh may have already awarded rows with
-    // notified_at NULL — those must still surface here for the unlock popup.
+    // notified_at NULL — keep them pending so each visit can show the popup
+    // until the client acknowledges (e.g. "don't show again today").
     await this.refreshUser(userId, options, revision);
     const [statsBundle, earned, meta, newlyUnlockedIds] = await Promise.all([
       achievementRepository.getStats(userId),
@@ -195,15 +196,23 @@ export const achievementService = {
       newlyUnlockedIds
     );
 
-    if (newlyUnlockedIds.length > 0) {
-      await achievementRepository.markNotified(userId, newlyUnlockedIds);
-    }
-
     snapshotCache.set(key, {
       revision,
       snapshot: { ...snapshot, newlyUnlocked: [] },
     });
     return snapshot;
+  },
+
+  async acknowledgeUnlocks(userId: string, achievementIds?: string[]): Promise<void> {
+    const ids =
+      achievementIds && achievementIds.length > 0
+        ? achievementIds
+        : await achievementRepository.listUnnotified(userId);
+    if (ids.length === 0) return;
+    await achievementRepository.markNotified(userId, ids);
+    for (const key of snapshotCache.keys()) {
+      if (key === userId || key.startsWith(`${userId}:`)) snapshotCache.delete(key);
+    }
   },
 
   async getRankings(userId: string, limit = 50): Promise<AchievementRankingResponse> {

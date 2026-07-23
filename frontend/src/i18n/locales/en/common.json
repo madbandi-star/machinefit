@@ -432,7 +432,11 @@
     "unlockRemaining": "{{count}} left",
     "continueWithProgress": "Next ({{current}}/{{total}})",
     "done": "Done",
-    "dismissAll": "Close all"
+    "dismissAll": "Close all",
+    "hidePopupToday": "Don't show again today",
+    "popupPrefOn": "Show achievement unlock popups",
+    "popupPrefOff": "Hide achievement unlock popups",
+    "popupPrefHint": "When checked, unlock popups appear each visit. Uncheck to turn them off."
   },
   "liveDashboard": {
     "title": "MachineFit LIVE",

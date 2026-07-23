@@ -46,4 +46,9 @@ userRouter.get('/me/lifted-weight/rankings', authMiddleware, liftedVolumeControl
 userRouter.get('/me/lifter-dna', authMiddleware, lifterDnaController.getLifterDnaSnapshot);
 userRouter.get('/me/achievements', authMiddleware, achievementController.getAchievementSnapshot);
 userRouter.get('/me/achievements/rankings', authMiddleware, achievementController.getAchievementRankings);
+userRouter.post(
+  '/me/achievements/acknowledge',
+  authMiddleware,
+  achievementController.acknowledgeAchievementUnlocks
+);
 userRouter.get('/me/growth-timeline', authMiddleware, growthTimelineController.getGrowthTimelineSnapshot);
