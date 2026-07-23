@@ -80,10 +80,22 @@ export function useMachineFitFeedback({
   });
 
   const savedPreferences = machinePreferences?.customSettings;
-  const activeSource: SettingsActiveSource =
-    machinePreferences?.activeSource ??
-    initialActiveSource ??
-    (savedRating === 'bad' ? 'adjusted' : 'recommended');
+  const hasSavedPreferences = hasMeaningfulCustomSettings(savedPreferences);
+
+  // UI source for banner/highlight. Prefer adjusted when the user is in the
+  // "needs adjustment" flow and already has adjustment values — avoids sticking
+  // on AI highlight after 조정값 저장 when prefs.activeSource briefly lags.
+  const activeSource: SettingsActiveSource = (() => {
+    const stored = machinePreferences?.activeSource;
+    if (stored === 'adjusted') return 'adjusted';
+    if (
+      savedRating === 'bad' &&
+      (hasMeaningfulCustomSettings(customSettings) || hasSavedPreferences)
+    ) {
+      return 'adjusted';
+    }
+    return stored ?? initialActiveSource ?? (savedRating === 'bad' ? 'adjusted' : 'recommended');
+  })();
 
   useEffect(() => {
     if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
@@ -155,10 +167,13 @@ export function useMachineFitFeedback({
         ...input,
       }),
     onSuccess: async (data, variables) => {
+      const nextSource: SettingsActiveSource = variables.clearAdjusted
+        ? 'recommended'
+        : (variables.activeSource ?? data.activeSource ?? 'adjusted');
       queryClient.setQueryData(prefsQueryKey, {
-        customSettings: data.customSettings ?? {},
+        customSettings: data.customSettings ?? variables.customSettings ?? {},
         personalTipMemo: data.personalTipMemo ?? '',
-        activeSource: data.activeSource ?? (variables.clearAdjusted ? 'recommended' : 'adjusted'),
+        activeSource: nextSource,
       });
       if (variables.clearAdjusted) {
         setCustomSettings({});
@@ -186,8 +201,8 @@ export function useMachineFitFeedback({
           const nextActive = { ...(row.activeSourceByMachine ?? {}) };
           if (variables.clearAdjusted) {
             nextActive[machineCode] = 'recommended';
-          } else if (variables.activeSource) {
-            nextActive[machineCode] = variables.activeSource;
+          } else {
+            nextActive[machineCode] = nextSource;
           }
           return {
             ...row,
@@ -204,11 +219,11 @@ export function useMachineFitFeedback({
         showToast(t('machines:feedback.preferencesSaved'), 'success');
         return;
       }
-      if (variables.activeSource === 'recommended') {
+      if (nextSource === 'recommended') {
         showToast(t('machines:feedback.usingRecommended'), 'success');
         return;
       }
-      if (variables.activeSource === 'adjusted') {
+      if (nextSource === 'adjusted') {
         showToast(t('machines:feedback.usingAdjusted'), 'success');
         return;
       }
@@ -250,7 +265,6 @@ export function useMachineFitFeedback({
     }));
   };
 
-  const hasSavedPreferences = hasMeaningfulCustomSettings(savedPreferences);
   const showAdjustment = activeSource === 'adjusted' || savedRating === 'bad';
   const displayAdjustedSettings = hasMeaningfulCustomSettings(customSettings)
     ? customSettings
@@ -271,8 +285,13 @@ export function useMachineFitFeedback({
       preferenceMutation.mutate(
         { customSettings, activeSource: 'adjusted' },
         {
-          onSuccess: () => {
+          onSuccess: (data) => {
             queryClient.setQueryData(feedbackQueryKey, 'bad');
+            queryClient.setQueryData(prefsQueryKey, {
+              customSettings: data.customSettings ?? customSettings,
+              personalTipMemo: data.personalTipMemo ?? '',
+              activeSource: 'adjusted' as SettingsActiveSource,
+            });
             onDone?.();
           },
         }
