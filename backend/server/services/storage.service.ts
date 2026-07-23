@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { mkdirSync } from 'node:fs';
 import { mkdir, writeFile, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +11,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audio');
 const LOCAL_MUSCLE_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/muscle-group-images');
 const LOCAL_MACHINE_COVER_ROOT = path.resolve(__dirname, '../../uploads/machine-covers');
+
+try {
+  mkdirSync(LOCAL_MUSCLE_UPLOAD_ROOT, { recursive: true });
+  mkdirSync(LOCAL_MACHINE_COVER_ROOT, { recursive: true });
+} catch {
+  // Best-effort for local/static fallback roots.
+}
 
 let supabase: SupabaseClient | null | undefined;
 let audioBucketReady: Promise<void> | null = null;

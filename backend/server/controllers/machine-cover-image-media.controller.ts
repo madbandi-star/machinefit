@@ -13,7 +13,7 @@ export async function serveMachineCoverImage(req: Request, res: Response, next: 
 
     const blob = await machineCoverImageService.getBlob(machineCode, kind);
     if (!blob) {
-      next();
+      res.status(404).end();
       return;
     }
 

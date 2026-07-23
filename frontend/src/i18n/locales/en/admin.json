@@ -104,6 +104,7 @@
     "customBadge": "Admin cover",
     "catalogBadge": "Catalog default",
     "empty": "No machines match these filters.",
+    "retry": "Retry",
     "prev": "Previous",
     "next": "Next",
     "pageStatus": "{{page}} / {{totalPages}}",

@@ -153,6 +153,17 @@ export function AdminMachineCoversPage() {
     );
   }
 
+  if (listQuery.isError && !listQuery.data) {
+    return (
+      <PageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
+        <p className="admin-muscle-hint">{t('admin:error')}</p>
+        <button type="button" className="btn btn--primary" onClick={() => void listQuery.refetch()}>
+          {t('admin:machineCovers.retry')}
+        </button>
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
       <p className="admin-muscle-hint">{t('admin:machineCovers.recommend')}</p>

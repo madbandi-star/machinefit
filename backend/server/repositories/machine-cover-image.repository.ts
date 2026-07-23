@@ -92,7 +92,7 @@ export const machineCoverImageRepository = {
     if (filters.q?.trim()) {
       params.push(`%${filters.q.trim()}%`);
       where.push(
-        `(m.code ILIKE $${params.length} OR m.name::text ILIKE $${params.length} OR b.code ILIKE $${params.length})`
+        `(m.code ILIKE $${params.length} OR m.name::text ILIKE $${params.length} OR b.code ILIKE $${params.length} OR b.name::text ILIKE $${params.length})`
       );
     }
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';

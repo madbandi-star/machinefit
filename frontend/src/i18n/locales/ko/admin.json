@@ -104,6 +104,7 @@
     "customBadge": "관리자 등록",
     "catalogBadge": "카탈로그 기본",
     "empty": "조건에 맞는 머신이 없습니다.",
+    "retry": "다시 불러오기",
     "prev": "이전",
     "next": "다음",
     "pageStatus": "{{page}} / {{totalPages}}",
