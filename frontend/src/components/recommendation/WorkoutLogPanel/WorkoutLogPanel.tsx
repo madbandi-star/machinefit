@@ -14,6 +14,8 @@ import {
   computePerformedTotalWeightKg,
   type TargetMuscleGroup,
   type WorkoutLog,
+  type RecommendationSettings,
+  type SettingsActiveSource,
 } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
@@ -562,7 +564,15 @@ export function WorkoutLogPanel({
     },
     onSuccess: async (savedLog, variables) => {
       let personalTipSaved = true;
-      if (showPersonalTip && isAuthenticated) {
+      // Never touch machine preferences on silent autosaves (set-complete / adjust-seed).
+      // Upserting tip alone still rewrites custom_settings from a concurrent DB read and
+      // can restore the previous 조정중량 right after 「조정값 저장」.
+      const shouldSavePersonalTip =
+        showPersonalTip &&
+        isAuthenticated &&
+        !variables?.silent &&
+        isPersonalTipDirty;
+      if (shouldSavePersonalTip) {
         try {
           const savedPrefs = await machinePreferenceApi.upsert({
             machineCode,
@@ -572,9 +582,25 @@ export function WorkoutLogPanel({
               : {}),
           });
           setPersonalTipMemo(savedPrefs.personalTipMemo ?? personalTipMemo.trim());
-          void queryClient.invalidateQueries({
-            queryKey: ['machine-preferences', machineCode, activeGymId, activeMemberId],
-          });
+          // Patch tip only — do not invalidate prefs (avoids stale customSettings flash).
+          queryClient.setQueryData(
+            ['machine-preferences', machineCode, activeGymId, activeMemberId],
+            (prev: unknown) => {
+              const current =
+                prev && typeof prev === 'object'
+                  ? (prev as {
+                      customSettings?: Partial<RecommendationSettings>;
+                      personalTipMemo?: string;
+                      activeSource?: SettingsActiveSource;
+                    })
+                  : {};
+              return {
+                customSettings: current.customSettings ?? {},
+                personalTipMemo: savedPrefs.personalTipMemo ?? personalTipMemo.trim(),
+                activeSource: savedPrefs.activeSource ?? current.activeSource ?? 'recommended',
+              };
+            }
+          );
         } catch {
           personalTipSaved = false;
           showToast(t('machines:history.personalTipSaveFailed'), 'error');

@@ -118,12 +118,31 @@ export function useMachineFitFeedback({
 
   // Hydrate from server only when the user is not mid-edit. Skip no-op writes so
   // a prefs refetch cannot flash the previous weight (e.g. 100 → 90 → 100).
+  // Also skip when local ref already holds newer edits than the incoming row
+  // (stale GET after concurrent tip upsert / race).
   useEffect(() => {
     if (settingsDirty) return;
     if (!savedPreferences || !hasMeaningfulCustomSettings(savedPreferences)) return;
-    setCustomSettings((prev) =>
-      areSettingsEqual(prev, savedPreferences) ? prev : savedPreferences
-    );
+    setCustomSettings((prev) => {
+      const local = customSettingsRef.current;
+      if (
+        hasMeaningfulCustomSettings(local) &&
+        !areSettingsEqual(local, savedPreferences) &&
+        areSettingsEqual(prev, local)
+      ) {
+        // Local UI already shows the saved/edited value; ignore stale server row.
+        const localWeight = local.recommendedWeightKg;
+        const serverWeight = savedPreferences.recommendedWeightKg;
+        if (
+          typeof localWeight === 'number' &&
+          typeof serverWeight === 'number' &&
+          localWeight !== serverWeight
+        ) {
+          return prev;
+        }
+      }
+      return areSettingsEqual(prev, savedPreferences) ? prev : savedPreferences;
+    });
   }, [savedPreferences, settingsDirty]);
 
   useEffect(() => {
