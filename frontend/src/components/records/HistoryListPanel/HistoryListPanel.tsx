@@ -44,6 +44,10 @@ import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
 import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
+import {
+  mergeHistoryPreferences,
+  useHistoryLiveAdjustedPrefs,
+} from '@/utils/historyLiveAdjustedPrefs';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
@@ -184,13 +188,22 @@ export function HistoryListPanel() {
     allRecordCards,
     isAuthenticated
   );
+  const liveAdjustedPrefs = useHistoryLiveAdjustedPrefs();
 
   const summaryStats = useMemo(
     () =>
       computeHistorySummaryStats(displayCards, workoutLogs ?? [], {
-        preferencesByMachine: comparisonData?.preferencesByMachine,
+        preferencesByMachine: mergeHistoryPreferences(
+          comparisonData?.preferencesByMachine,
+          liveAdjustedPrefs
+        ),
       }),
-    [displayCards, workoutLogs, comparisonData?.preferencesByMachine]
+    [
+      displayCards,
+      workoutLogs,
+      comparisonData?.preferencesByMachine,
+      liveAdjustedPrefs,
+    ]
   );
 
   const translateMuscleGroup = (group: string) =>

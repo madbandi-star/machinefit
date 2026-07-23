@@ -11,6 +11,7 @@ import {
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { setHistoryLiveAdjustedPrefs } from '@/utils/historyLiveAdjustedPrefs';
 
 interface UseMachineFitFeedbackOptions {
   recommendationId: string;
@@ -117,7 +118,7 @@ export function useMachineFitFeedback({
   })();
 
   // Hydrate from server only when the user is not mid-edit. Skip no-op writes so
-  // a prefs refetch cannot flash the previous weight (e.g. 100 → 90 → 100).
+  // a prefs refetch cannot flash the previous weight/reps (e.g. 100 → 90 → 100).
   // Also skip when local ref already holds newer edits than the incoming row
   // (stale GET after concurrent tip upsert / race).
   useEffect(() => {
@@ -130,16 +131,8 @@ export function useMachineFitFeedback({
         !areSettingsEqual(local, savedPreferences) &&
         areSettingsEqual(prev, local)
       ) {
-        // Local UI already shows the saved/edited value; ignore stale server row.
-        const localWeight = local.recommendedWeightKg;
-        const serverWeight = savedPreferences.recommendedWeightKg;
-        if (
-          typeof localWeight === 'number' &&
-          typeof serverWeight === 'number' &&
-          localWeight !== serverWeight
-        ) {
-          return prev;
-        }
+        // Local UI already shows a newer edit (weight OR reps); ignore stale server row.
+        return prev;
       }
       return areSettingsEqual(prev, savedPreferences) ? prev : savedPreferences;
     });
@@ -151,16 +144,20 @@ export function useMachineFitFeedback({
 
     setCustomSettings((prev) => {
       if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
+        const local = customSettingsRef.current;
+        if (
+          hasMeaningfulCustomSettings(local) &&
+          !areSettingsEqual(local, savedPreferences) &&
+          areSettingsEqual(prev, local)
+        ) {
+          return prev;
+        }
         return areSettingsEqual(prev, savedPreferences) ? prev : savedPreferences;
       }
       if (Object.keys(prev).length > 0) return prev;
       return seedCustomSettingsFromRecommendation(recommendedSettings);
     });
   }, [activeSource, recommendedSettings, savedPreferences, settingsDirty]);
-
-  const invalidateHistoryComparison = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
-  };
 
   const feedbackMutation = useMutation({
     mutationFn: (fitRating: FitRating) =>
@@ -186,9 +183,30 @@ export function useMachineFitFeedback({
           activeSource: nextSource,
         };
       });
-      // Do not invalidate machine-preferences here — a refetch can race with
-      // 「조정값 저장」 and flash the previous weight (70 after editing to 90).
-      await invalidateHistoryComparison();
+      // Do not invalidate machine-preferences / history-settings-comparison here —
+      // a refetch can race with 「조정값 저장」 and restore previous 조정횟수/중량.
+      queryClient.setQueriesData(
+        { queryKey: ['history-settings-comparison'] },
+        (prev: unknown) => {
+          if (!prev || typeof prev !== 'object') return prev;
+          const row = prev as {
+            preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+            activeSourceByMachine?: Record<string, SettingsActiveSource>;
+            feedbackByRecommendation?: Record<string, FitRating | null>;
+          };
+          return {
+            ...row,
+            activeSourceByMachine: {
+              ...(row.activeSourceByMachine ?? {}),
+              [machineCode]: nextSource,
+            },
+            feedbackByRecommendation: {
+              ...(row.feedbackByRecommendation ?? {}),
+              [recommendationId]: fitRating,
+            },
+          };
+        }
+      );
       showToast(
         fitRating === 'bad'
           ? t('machines:feedback.savedBad')
@@ -242,8 +260,9 @@ export function useMachineFitFeedback({
       setCustomSettings(nextCustom);
       customSettingsRef.current = nextCustom;
       // Keep history summary prefs in sync immediately after 조정값 저장.
-      // Do NOT invalidate/refetch here — a stale GET can restore the previous
-      // 조정횟수 (same race we already avoid for machine-preferences).
+      // Dedicated live cache + comparison patch — do NOT invalidate/refetch
+      // (stale GET restores previous 조정횟수).
+      setHistoryLiveAdjustedPrefs(queryClient, machineCode, nextCustom);
       queryClient.setQueriesData(
         { queryKey: ['history-settings-comparison'] },
         (prev: unknown) => {
@@ -294,7 +313,9 @@ export function useMachineFitFeedback({
   };
 
   /** Keep history 「총 볼륨」 in sync with on-screen 조정횟수 (same as weight→setWeights). */
-  const patchHistoryComparisonPrefs = (nextCustom: Partial<RecommendationSettings>) => {
+  const publishLiveAdjustedPrefs = (nextCustom: Partial<RecommendationSettings>) => {
+    // Dedicated live cache — never overwritten by history-settings-comparison refetch.
+    setHistoryLiveAdjustedPrefs(queryClient, machineCode, nextCustom);
     queryClient.setQueriesData(
       { queryKey: ['history-settings-comparison'] },
       (prev: unknown) => {
@@ -334,35 +355,32 @@ export function useMachineFitFeedback({
     if (type === 'number') {
       const parsed = raw === '' ? undefined : Number.parseFloat(raw);
       const value = parsed != null && Number.isFinite(parsed) ? parsed : undefined;
-      setCustomSettings((prev) => {
-        const next: Partial<RecommendationSettings> = {
-          ...prev,
-          [key]: value,
-        };
-        // Single 조정횟수: keep min/max aligned so volume never sticks on the old max.
-        if (key === 'recommendedRepsMin') {
-          next.recommendedRepsMax = value;
-        }
-        if (key === 'recommendedRepsMax') {
-          next.recommendedRepsMin = value;
-        }
-        customSettingsRef.current = next;
-        // Live-patch so 총 볼륨 picks up 조정횟수 like 총 중량 picks up 조정중량.
-        patchHistoryComparisonPrefs(next);
-        return next;
-      });
+      const prev = customSettingsRef.current;
+      const next: Partial<RecommendationSettings> = {
+        ...prev,
+        [key]: value,
+      };
+      // Single 조정횟수: keep min/max aligned so volume never sticks on the old max.
+      if (key === 'recommendedRepsMin') {
+        next.recommendedRepsMax = value;
+      }
+      if (key === 'recommendedRepsMax') {
+        next.recommendedRepsMin = value;
+      }
+      customSettingsRef.current = next;
+      setCustomSettings(next);
+      publishLiveAdjustedPrefs(next);
       return;
     }
 
-    setCustomSettings((prev) => {
-      const next = {
-        ...prev,
-        [key]: raw.trim(),
-      };
-      customSettingsRef.current = next;
-      patchHistoryComparisonPrefs(next);
-      return next;
-    });
+    const prev = customSettingsRef.current;
+    const next = {
+      ...prev,
+      [key]: raw.trim(),
+    };
+    customSettingsRef.current = next;
+    setCustomSettings(next);
+    publishLiveAdjustedPrefs(next);
   };
 
   // Only show 추천/조정 비교 when NOT on "추천값 잘맞음".
