@@ -234,12 +234,18 @@ export async function computeRecommendationWeight(options: {
     userId != null
       ? (async () => {
           const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+          const { gymScopeService } = await import('./gym-scope.service.js');
           const resolvedGymId = gymId ?? (await userGymRepository.getActiveGymId(userId));
           if (!resolvedGymId) return [] as WorkoutLog[];
+          const linkScope = await gymScopeService.resolveLinkedRecordListScope(
+            userId,
+            memberId
+          );
           return workoutLogRepository.listByUser(userId, {
             gymId: resolvedGymId,
             machineId,
             limit: 40,
+            linkScope,
             ...(memberId ? { memberId } : {}),
             ...(isFreeWeightMachineCode(input.machineCode)
               ? { targetMuscleGroup: targetMuscleKey }

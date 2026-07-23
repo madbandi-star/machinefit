@@ -245,6 +245,10 @@ export const workoutInsightsService = {
       gymIds = resolved.gymIds;
     }
 
+    const linkScope = await gymScopeService.resolveLinkedRecordListScope(
+      userId,
+      query.memberId
+    );
     const logs = await workoutLogRepository.listByUser(userId, {
       gymId: query.gymId,
       gymIds,
@@ -252,6 +256,7 @@ export const workoutInsightsService = {
       from: from ?? undefined,
       to,
       limit: 200,
+      linkScope,
     });
 
     const loadByLogId = await resolveWorkoutLoadContexts(userId, logs, {
@@ -416,6 +421,10 @@ export const workoutInsightsService = {
       gymIds = resolved.gymIds;
     }
 
+    const linkScope = await gymScopeService.resolveLinkedRecordListScope(
+      userId,
+      query.memberId
+    );
     const logs = await workoutLogRepository.listByUser(userId, {
       gymId: query.gymId,
       gymIds,
@@ -424,6 +433,7 @@ export const workoutInsightsService = {
       from: from ?? undefined,
       to,
       limit: 200,
+      linkScope,
     });
 
     const loadByLogId = await resolveWorkoutLoadContexts(userId, logs, {

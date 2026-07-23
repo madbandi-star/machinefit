@@ -127,6 +127,7 @@ export const workoutLogRepository = {
       to?: string;
       limit?: number;
       targetMuscleGroup?: string;
+      linkScope?: { peerUserIds: string[]; linkedMemberIds: string[] };
     },
     locale: Locale = 'en'
   ): Promise<WorkoutLog[]> {
@@ -149,42 +150,57 @@ export const workoutLogRepository = {
       gymFilter = ` AND wl.gym_id = $${params.length}`;
     }
 
-    let filters = gymFilter;
-
+    let memberFilter = '';
     if (options.memberId) {
       params.push(options.memberId);
-      filters += ` AND wl.member_id = $${params.length}`;
+      memberFilter = ` AND wl.member_id = $${params.length}`;
     }
+
+    // Own records stay gym/member scoped; linked peers/members are included without
+    // that scope so A↔B approved profile links can see each other's workout logs.
+    const visibilityParts = [`(wl.user_id = $1${gymFilter}${memberFilter})`];
+    const peerUserIds = options.linkScope?.peerUserIds ?? [];
+    const linkedMemberIds = options.linkScope?.linkedMemberIds ?? [];
+    if (peerUserIds.length > 0) {
+      params.push(peerUserIds);
+      visibilityParts.push(`(wl.user_id = ANY($${params.length}::uuid[]))`);
+    }
+    if (linkedMemberIds.length > 0) {
+      params.push(linkedMemberIds);
+      visibilityParts.push(`(wl.member_id = ANY($${params.length}::uuid[]))`);
+    }
+
+    let sharedFilters = '';
 
     if (options.machineId) {
       params.push(options.machineId);
-      filters += ` AND wl.machine_id = $${params.length}`;
+      sharedFilters += ` AND wl.machine_id = $${params.length}`;
     }
 
     if (options.logDate) {
       params.push(options.logDate);
-      filters += ` AND wl.log_date = $${params.length}::date`;
+      sharedFilters += ` AND wl.log_date = $${params.length}::date`;
     }
 
     if (options.from) {
       params.push(options.from);
-      filters += ` AND wl.log_date >= $${params.length}::date`;
+      sharedFilters += ` AND wl.log_date >= $${params.length}::date`;
     }
 
     if (options.to) {
       params.push(options.to);
-      filters += ` AND wl.log_date <= $${params.length}::date`;
+      sharedFilters += ` AND wl.log_date <= $${params.length}::date`;
     }
 
     if (options.targetMuscleGroup !== undefined) {
       params.push(options.targetMuscleGroup);
-      filters += ` AND wl.target_muscle_group = $${params.length}`;
+      sharedFilters += ` AND wl.target_muscle_group = $${params.length}`;
     }
 
     let query = `SELECT ${SELECT_FIELDS}
        FROM workout_logs wl
        ${MACHINE_JOINS}
-       WHERE wl.user_id = $1${filters}`;
+       WHERE (${visibilityParts.join(' OR ')})${sharedFilters}`;
 
     if (options.limit !== undefined) {
       params.push(options.limit);

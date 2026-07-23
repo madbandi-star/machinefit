@@ -3,6 +3,11 @@ import { gymMemberRepository } from '../repositories/gym-member.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { isAllGymsId } from '@machinefit/shared';
 
+export type LinkedRecordListScope = {
+  peerUserIds: string[];
+  linkedMemberIds: string[];
+};
+
 export const gymScopeService = {
   /**
    * Resolves a gymId ('all' or real UUID) into a list of gym IDs the user owns.
@@ -50,5 +55,15 @@ export const gymScopeService = {
     if (!member || member.ownerUserId !== userId || member.gymId !== gymId) {
       throw new AppError(403, 'FORBIDDEN', 'Member does not belong to this gym');
     }
+  },
+
+  /**
+   * After A↔B profile link approval, list queries should include each other's records.
+   */
+  async resolveLinkedRecordListScope(
+    userId: string,
+    memberId?: string
+  ): Promise<LinkedRecordListScope> {
+    return gymMemberRepository.resolveLinkedRecordListScope(userId, memberId);
   },
 };

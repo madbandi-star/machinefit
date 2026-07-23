@@ -18,13 +18,18 @@ export const historyService = {
     },
     locale: Locale = 'en'
   ) {
+    const linkScope = await gymScopeService.resolveLinkedRecordListScope(
+      userId,
+      options.memberId
+    );
+
     if (isAllGymsId(options.gymId)) {
       await gymScopeService.assertMemberOwned(userId, options.memberId);
       const { gymIds } = await gymScopeService.resolveGymFilter(userId, options.gymId);
-      return historyRepository.listByUser(userId, { ...options, gymIds }, locale);
+      return historyRepository.listByUser(userId, { ...options, gymIds, linkScope }, locale);
     }
     await gymScopeService.resolveMemberForWrite(userId, options.gymId, options.memberId);
-    return historyRepository.listByUser(userId, options, locale);
+    return historyRepository.listByUser(userId, { ...options, linkScope }, locale);
   },
 
   async record(

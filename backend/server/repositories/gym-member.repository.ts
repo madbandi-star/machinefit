@@ -301,4 +301,108 @@ export const gymMemberRepository = {
     );
     return result.rows[0] ? mapMember(result.rows[0]) : null;
   },
+
+  /**
+   * Members the viewer owns that are approved-linked to another account.
+   */
+  async listApprovedLinkedPeersOwnedBy(
+    ownerUserId: string
+  ): Promise<Array<{ id: string; gymId: string; linkedUserId: string; isSelf: boolean }>> {
+    const pool = getPool();
+    if (!pool) return [];
+
+    const result = await pool.query<{
+      id: string;
+      gym_id: string;
+      linked_user_id: string;
+      is_self: boolean;
+    }>(
+      `SELECT id, gym_id, linked_user_id, is_self
+       FROM gym_members
+       WHERE owner_user_id = $1
+         AND profile_access = 'approved'
+         AND linked_user_id IS NOT NULL`,
+      [ownerUserId]
+    );
+    return result.rows.map((row) => ({
+      id: row.id,
+      gymId: row.gym_id,
+      linkedUserId: row.linked_user_id,
+      isSelf: row.is_self,
+    }));
+  },
+
+  /**
+   * Member profiles (owned by someone else) where this user is the approved linked account.
+   */
+  async listApprovedMembersLinkedToUser(
+    linkedUserId: string
+  ): Promise<Array<{ id: string; gymId: string; ownerUserId: string }>> {
+    const pool = getPool();
+    if (!pool) return [];
+
+    const result = await pool.query<{
+      id: string;
+      gym_id: string;
+      owner_user_id: string;
+    }>(
+      `SELECT id, gym_id, owner_user_id
+       FROM gym_members
+       WHERE linked_user_id = $1 AND profile_access = 'approved'`,
+      [linkedUserId]
+    );
+    return result.rows.map((row) => ({
+      id: row.id,
+      gymId: row.gym_id,
+      ownerUserId: row.owner_user_id,
+    }));
+  },
+
+  /**
+   * Record visibility for approved profile links:
+   * - Owner viewing linked member → also include that peer's own logs/history
+   * - Linked user viewing their self member → also include logs written on linked profiles
+   */
+  async resolveLinkedRecordListScope(
+    viewerUserId: string,
+    memberId?: string
+  ): Promise<{ peerUserIds: string[]; linkedMemberIds: string[] }> {
+    const peerUserIds = new Set<string>();
+    const linkedMemberIds = new Set<string>();
+
+    if (memberId) {
+      const member = await this.findById(memberId);
+      if (!member || member.ownerUserId !== viewerUserId) {
+        return { peerUserIds: [], linkedMemberIds: [] };
+      }
+
+      if (member.profileAccess === 'approved' && member.linkedUserId) {
+        peerUserIds.add(member.linkedUserId);
+      }
+
+      // When the linked account views their own (self) profile, surface records
+      // owners wrote on approved profiles linked to them.
+      if (member.isSelf) {
+        const linkedToMe = await this.listApprovedMembersLinkedToUser(viewerUserId);
+        for (const row of linkedToMe) linkedMemberIds.add(row.id);
+      }
+
+      return {
+        peerUserIds: [...peerUserIds],
+        linkedMemberIds: [...linkedMemberIds],
+      };
+    }
+
+    const [ownedPeers, linkedToMe] = await Promise.all([
+      this.listApprovedLinkedPeersOwnedBy(viewerUserId),
+      this.listApprovedMembersLinkedToUser(viewerUserId),
+    ]);
+    for (const row of ownedPeers) peerUserIds.add(row.linkedUserId);
+    for (const row of linkedToMe) linkedMemberIds.add(row.id);
+
+    return {
+      peerUserIds: [...peerUserIds],
+      linkedMemberIds: [...linkedMemberIds],
+    };
+  },
 };

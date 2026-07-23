@@ -189,9 +189,9 @@ export const workoutReportService = {
 
     let gymName: string;
     let gymIds: string[] | null | undefined;
+    const { gymScopeService } = await import('./gym-scope.service.js');
 
     if (isAllGymsId(gymScopeId)) {
-      const { gymScopeService } = await import('./gym-scope.service.js');
       const resolved = await gymScopeService.resolveGymFilter(userId, gymScopeId);
       gymIds = resolved.gymIds;
       gymName = '전체 헬스장';
@@ -201,12 +201,17 @@ export const workoutReportService = {
     }
 
     const { from, to } = getPeriodRange(period);
+    const linkScope = await gymScopeService.resolveLinkedRecordListScope(
+      userId,
+      options?.memberId
+    );
     const logs = await workoutLogRepository.listByUser(userId, {
       gymId: gymScopeId,
       gymIds,
       memberId: options?.memberId,
       from,
       to,
+      linkScope,
     });
     const loadByLogId = await resolveWorkoutLoadContexts(userId, logs, {
       gymId: isAllGymsId(gymScopeId) ? undefined : gymScopeId,

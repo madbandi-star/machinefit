@@ -38,6 +38,7 @@ export const historyRepository = {
       machineCode?: string;
       from?: string;
       to?: string;
+      linkScope?: { peerUserIds: string[]; linkedMemberIds: string[] };
     } = { gymId: '' },
     locale: Locale = 'en'
   ): Promise<HistoryItem[]> {
@@ -57,26 +58,39 @@ export const historyRepository = {
       gymFilter = ` AND h.gym_id = $${params.length}`;
     }
 
-    let filters = gymFilter;
-
+    let memberFilter = '';
     if (options.memberId) {
       params.push(options.memberId);
-      filters += ` AND h.member_id = $${params.length}`;
+      memberFilter = ` AND h.member_id = $${params.length}`;
     }
+
+    const visibilityParts = [`(h.user_id = $1${gymFilter}${memberFilter})`];
+    const peerUserIds = options.linkScope?.peerUserIds ?? [];
+    const linkedMemberIds = options.linkScope?.linkedMemberIds ?? [];
+    if (peerUserIds.length > 0) {
+      params.push(peerUserIds);
+      visibilityParts.push(`(h.user_id = ANY($${params.length}::uuid[]))`);
+    }
+    if (linkedMemberIds.length > 0) {
+      params.push(linkedMemberIds);
+      visibilityParts.push(`(h.member_id = ANY($${params.length}::uuid[]))`);
+    }
+
+    let sharedFilters = '';
 
     if (options.machineCode) {
       params.push(options.machineCode);
-      filters += ` AND m.code = $${params.length}`;
+      sharedFilters += ` AND m.code = $${params.length}`;
     }
 
     if (options.from) {
       params.push(options.from);
-      filters += ` AND h.viewed_at >= $${params.length}::timestamptz`;
+      sharedFilters += ` AND h.viewed_at >= $${params.length}::timestamptz`;
     }
 
     if (options.to) {
       params.push(options.to);
-      filters += ` AND h.viewed_at < $${params.length}::timestamptz`;
+      sharedFilters += ` AND h.viewed_at < $${params.length}::timestamptz`;
     }
 
     params.push(limit);
@@ -121,7 +135,7 @@ export const historyRepository = {
        JOIN machines m ON m.id = h.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
        JOIN machine_recommendations r ON r.id = h.recommendation_id
-       WHERE h.user_id = $1${filters}
+       WHERE (${visibilityParts.join(' OR ')})${sharedFilters}
        ORDER BY h.viewed_at DESC
        LIMIT $${params.length}`,
       params

@@ -20,6 +20,10 @@ function todayDateKey(): string {
 export const workoutLogService = {
   async list(userId: string, query: WorkoutLogListQuery, locale: Locale = 'en') {
     const { gymIds } = await gymScopeService.resolveGymFilter(userId, query.gymId);
+    const linkScope = await gymScopeService.resolveLinkedRecordListScope(
+      userId,
+      query.memberId
+    );
 
     let machineId: string | undefined;
     if (query.machineCode) {
@@ -48,6 +52,7 @@ export const workoutLogService = {
           to: query.to,
           limit: query.limit,
           targetMuscleGroup,
+          linkScope,
         },
         locale
       );
@@ -64,6 +69,7 @@ export const workoutLogService = {
         to: query.to,
         limit: query.limit,
         targetMuscleGroup,
+        linkScope,
       },
       locale
     );
