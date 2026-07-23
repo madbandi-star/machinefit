@@ -48,7 +48,10 @@ const MAX_SET_COUNT = 20;
 
 interface SaveWorkoutLogVariables {
   setCompleted?: boolean[];
-  /** Skip success toast (e.g. autosave on set complete). */
+  /** Override steppers when saving immediately after a state update (avoids stale closure). */
+  setWeightsKg?: number[];
+  setCount?: number;
+  /** Skip success toast (e.g. autosave on set complete / seed sync). */
   silent?: boolean;
 }
 
@@ -288,6 +291,17 @@ export function WorkoutLogPanel({
   const lastAppliedSeedKeyRef = useRef('');
   const setCompletedRef = useRef(setCompleted);
   setCompletedRef.current = setCompleted;
+  const weightsRef = useRef(weights);
+  weightsRef.current = weights;
+  const setCountRef = useRef(setCount);
+  setCountRef.current = setCount;
+  const seedPersistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSeedPersistRef = useRef<{
+    weights: number[];
+    completed: boolean[];
+    setCount: number;
+  } | null>(null);
+  const [seedSyncNonce, setSeedSyncNonce] = useState(0);
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
   const personalTipBytes = getUtf8ByteLength(personalTipMemo);
@@ -481,9 +495,7 @@ export function WorkoutLogPanel({
   ]);
 
   // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight.
-  // - 추천값 잘 맞음 → 추천중량 (parent resolves)
-  // - 셋팅값 조정 필요 → 조정중량 (parent resolves from on-screen edits)
-  // Completed sets keep their logged weight; saved vs unsaved does not matter.
+  // Seed persistence runs in a later effect after saveMutation is defined.
   useEffect(() => {
     if (!isAuthenticated) return;
     if (queryEnabled && !isFetched) return;
@@ -494,23 +506,31 @@ export function WorkoutLogPanel({
     if (lastAppliedSeedKeyRef.current === seedKey) return;
     lastAppliedSeedKeyRef.current = seedKey;
 
-    const applySeedToIncomplete = (weights: number[], completed: boolean[]) =>
-      weights.map((weight, index) =>
-        completed[index] === true ? weight : suggestedWeightKg
-      );
+    const completed = setCompletedRef.current;
+    const prevWeights = weightsRef.current;
+    const nextWeights = prevWeights.map((weight, index) =>
+      completed[index] === true ? weight : suggestedWeightKg
+    );
+    if (weightsEqual(prevWeights, nextWeights)) return;
 
-    setWeights((prev) => {
-      const next = applySeedToIncomplete(prev, setCompletedRef.current);
-      if (weightsEqual(prev, next)) return prev;
-      return next;
-    });
+    setWeights(nextWeights);
+    weightsRef.current = nextWeights;
 
     setBaseline((prev) => {
       if (!prev) return prev;
-      const nextWeights = applySeedToIncomplete(prev.weights, setCompletedRef.current);
-      if (weightsEqual(prev.weights, nextWeights)) return prev;
-      return { ...prev, weights: nextWeights };
+      const nextBaselineWeights = prev.weights.map((weight, index) =>
+        completed[index] === true ? weight : suggestedWeightKg
+      );
+      if (weightsEqual(prev.weights, nextBaselineWeights)) return prev;
+      return { ...prev, weights: nextBaselineWeights };
     });
+
+    pendingSeedPersistRef.current = {
+      weights: nextWeights,
+      completed: [...completed],
+      setCount: setCountRef.current,
+    };
+    setSeedSyncNonce((n) => n + 1);
   }, [
     isAuthenticated,
     queryEnabled,
@@ -527,8 +547,8 @@ export function WorkoutLogPanel({
         memberId: activeMemberId,
         machineCode,
         logDate,
-        setCount,
-        setWeightsKg: weights,
+        setCount: variables?.setCount ?? setCount,
+        setWeightsKg: variables?.setWeightsKg ?? weights,
         setCompleted: variables?.setCompleted ?? setCompleted,
         diary: diary.trim() || undefined,
         ...(recommendationId ? { recommendationId } : {}),
@@ -571,6 +591,18 @@ export function WorkoutLogPanel({
           removeLogParams
         )
       );
+      // Keep history list / 「총 중량」 in sync (same prefix as workoutLogsList).
+      queryClient.setQueriesData<WorkoutLog[]>(
+        { queryKey: QUERY_KEYS.workoutLogs },
+        (old) => {
+          if (!Array.isArray(old) || old.length === 0) return old;
+          const sample = old[0];
+          if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
+            return old;
+          }
+          return upsertWorkoutLogInCache(old, savedLog, removeLogParams);
+        }
+      );
       invalidateLogSideEffects();
       if (personalTipSaved && !variables?.silent) {
         showToast(
@@ -585,6 +617,67 @@ export function WorkoutLogPanel({
       showToast(t('common:errors.submitFailed'), 'error');
     },
   });
+
+  // After steppers are seeded from adjusted/recommended weight, update history
+  // 「총 중량」 caches and silently persist when a saved log exists.
+  useEffect(() => {
+    if (seedSyncNonce === 0) return;
+    const pending = pendingSeedPersistRef.current;
+    if (!pending) return;
+    pendingSeedPersistRef.current = null;
+
+    const baseLog =
+      queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey)?.[0] ?? existingLog;
+    if (!baseLog) return;
+
+    const patchedLog: WorkoutLog = {
+      ...baseLog,
+      setWeightsKg: [...pending.weights],
+      setCompleted: [...pending.completed],
+      setCount: pending.setCount,
+    };
+
+    queryClient.setQueryData(workoutLogQueryKey, [patchedLog]);
+    queryClient.setQueriesData<WorkoutLog[]>(
+      { queryKey: QUERY_KEYS.workoutLogs },
+      (old) => {
+        if (!Array.isArray(old) || old.length === 0) return old;
+        const sample = old[0];
+        if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
+          return old;
+        }
+        return upsertWorkoutLogInCache(old, patchedLog, removeLogParams);
+      }
+    );
+
+    if (seedPersistTimerRef.current) {
+      clearTimeout(seedPersistTimerRef.current);
+    }
+    seedPersistTimerRef.current = setTimeout(() => {
+      seedPersistTimerRef.current = null;
+      saveMutation.mutate({
+        setWeightsKg: pending.weights,
+        setCompleted: pending.completed,
+        setCount: pending.setCount,
+        silent: true,
+      });
+    }, 400);
+  }, [
+    seedSyncNonce,
+    existingLog,
+    queryClient,
+    workoutLogQueryKey,
+    removeLogParams,
+    saveMutation,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      if (seedPersistTimerRef.current) {
+        clearTimeout(seedPersistTimerRef.current);
+      }
+    };
+  }, []);
 
   const removeMutation = useMutation({
     mutationFn: () => {
