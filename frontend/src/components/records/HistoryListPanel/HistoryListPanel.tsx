@@ -189,8 +189,14 @@ export function HistoryListPanel() {
     () =>
       computeHistorySummaryStats(displayCards, workoutLogs ?? [], {
         preferencesByMachine: comparisonData?.preferencesByMachine,
+        feedbackByRecommendation: comparisonData?.feedbackByRecommendation,
       }),
-    [displayCards, workoutLogs, comparisonData?.preferencesByMachine]
+    [
+      displayCards,
+      workoutLogs,
+      comparisonData?.preferencesByMachine,
+      comparisonData?.feedbackByRecommendation,
+    ]
   );
 
   const translateMuscleGroup = (group: string) =>

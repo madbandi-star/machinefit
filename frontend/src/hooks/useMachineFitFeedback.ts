@@ -186,6 +186,29 @@ export function useMachineFitFeedback({
           activeSource: nextSource,
         };
       });
+      // Immediate summary update: 총 볼륨 reps follow fit rating like 조정중량 steppers.
+      queryClient.setQueriesData(
+        { queryKey: ['history-settings-comparison'] },
+        (prev: unknown) => {
+          if (!prev || typeof prev !== 'object') return prev;
+          const row = prev as {
+            preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+            activeSourceByMachine?: Record<string, SettingsActiveSource>;
+            feedbackByRecommendation?: Record<string, FitRating | null>;
+          };
+          return {
+            ...row,
+            activeSourceByMachine: {
+              ...(row.activeSourceByMachine ?? {}),
+              [machineCode]: nextSource,
+            },
+            feedbackByRecommendation: {
+              ...(row.feedbackByRecommendation ?? {}),
+              [recommendationId]: fitRating,
+            },
+          };
+        }
+      );
       // Do not invalidate machine-preferences here — a refetch can race with
       // 「조정값 저장」 and flash the previous weight (70 after editing to 90).
       await invalidateHistoryComparison();
@@ -294,6 +317,38 @@ export function useMachineFitFeedback({
     feedbackMutation.mutate(fitRating);
   };
 
+  /** Keep history 「총 볼륨」 in sync with on-screen 조정횟수 (same as weight→setWeights). */
+  const patchHistoryComparisonPrefs = (nextCustom: Partial<RecommendationSettings>) => {
+    queryClient.setQueriesData(
+      { queryKey: ['history-settings-comparison'] },
+      (prev: unknown) => {
+        if (!prev || typeof prev !== 'object') return prev;
+        const row = prev as {
+          preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+          activeSourceByMachine?: Record<string, SettingsActiveSource>;
+          feedbackByRecommendation?: Record<string, FitRating | null>;
+        };
+        if (!row.preferencesByMachine) return prev;
+        return {
+          ...row,
+          preferencesByMachine: {
+            ...row.preferencesByMachine,
+            [machineCode]: nextCustom,
+          },
+          activeSourceByMachine: {
+            ...(row.activeSourceByMachine ?? {}),
+            [machineCode]: 'adjusted',
+          },
+          // Editing 조정값 implies 「셋팅값 조정 필요」 so volume uses 조정횟수.
+          feedbackByRecommendation: {
+            ...(row.feedbackByRecommendation ?? {}),
+            [recommendationId]: 'bad',
+          },
+        };
+      }
+    );
+  };
+
   const handleCustomChange = (
     key: keyof RecommendationSettings,
     raw: string,
@@ -308,6 +363,8 @@ export function useMachineFitFeedback({
           [key]: parsed != null && Number.isFinite(parsed) ? parsed : undefined,
         };
         customSettingsRef.current = next;
+        // Live-patch so 총 볼륨 picks up 조정횟수 like 총 중량 picks up 조정중량.
+        patchHistoryComparisonPrefs(next);
         return next;
       });
       return;
@@ -319,6 +376,7 @@ export function useMachineFitFeedback({
         [key]: raw.trim(),
       };
       customSettingsRef.current = next;
+      patchHistoryComparisonPrefs(next);
       return next;
     });
   };

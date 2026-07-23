@@ -20,6 +20,8 @@ export interface HistorySummaryStats {
 export interface HistorySummaryLoadContext {
   /** Per-machine adjusted settings (조정중량 / 조정횟수). */
   preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+  /** Per-recommendation fit rating — same rule as weight stepper seeding. */
+  feedbackByRecommendation?: Record<string, 'good' | 'bad' | null>;
 }
 
 export function findWorkoutLogForCard(
@@ -54,6 +56,8 @@ function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | nul
  *
  * - 총 중량: Σ floor(로그 세트무게 합 / 세트수)  (로그별 평균의 합, 소수 절사)
  * - 총 볼륨: Σ(stepper weight × reps)
+ *   reps follow the same fit rule as 조정중량 seeding:
+ *   bad → 조정횟수, good/미선택 → 추천횟수
  */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],
@@ -69,11 +73,16 @@ export function computeHistorySummaryStats(
     if (!log) continue;
 
     const adjusted = context.preferencesByMachine?.[card.machineCode];
+    const fitRating = card.recommendationId
+      ? (context.feedbackByRecommendation?.[card.recommendationId] ?? null)
+      : null;
+
     const load = {
       adjustedWeight: adjusted?.recommendedWeightKg,
       recommendedWeight: card.settings.recommendedWeightKg,
       adjustedReps: resolveRecommendedReps(adjusted),
       recommendedReps: resolveRecommendedReps(card.settings),
+      fitRating,
       sets: log.setCount,
       setWeightsKg: log.setWeightsKg,
       setCompleted: log.setCompleted,
