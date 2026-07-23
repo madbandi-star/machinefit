@@ -45,6 +45,13 @@ function seedCustomSettingsFromRecommendation(
   return seeded;
 }
 
+function areSettingsEqual(
+  a?: Partial<RecommendationSettings> | null,
+  b?: Partial<RecommendationSettings> | null
+): boolean {
+  return JSON.stringify(a ?? {}) === JSON.stringify(b ?? {});
+}
+
 export function useMachineFitFeedback({
   recommendationId,
   machineCode,
@@ -109,14 +116,14 @@ export function useMachineFitFeedback({
     return stored ?? initialActiveSource ?? (savedRating === 'bad' ? 'adjusted' : 'recommended');
   })();
 
-  // Hydrate from server only when the user is not mid-edit. Otherwise a prefs
-  // refetch (after save/invalidate) overwrites the next weight the user typed,
-  // and the following save submits the previous value (N-1 bug).
+  // Hydrate from server only when the user is not mid-edit. Skip no-op writes so
+  // a prefs refetch cannot flash the previous weight (e.g. 100 → 90 → 100).
   useEffect(() => {
     if (settingsDirty) return;
-    if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
-      setCustomSettings(savedPreferences);
-    }
+    if (!savedPreferences || !hasMeaningfulCustomSettings(savedPreferences)) return;
+    setCustomSettings((prev) =>
+      areSettingsEqual(prev, savedPreferences) ? prev : savedPreferences
+    );
   }, [savedPreferences, settingsDirty]);
 
   useEffect(() => {
@@ -125,16 +132,20 @@ export function useMachineFitFeedback({
 
     setCustomSettings((prev) => {
       if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
-        return savedPreferences;
+        return areSettingsEqual(prev, savedPreferences) ? prev : savedPreferences;
       }
       if (Object.keys(prev).length > 0) return prev;
       return seedCustomSettingsFromRecommendation(recommendedSettings);
     });
   }, [activeSource, recommendedSettings, savedPreferences, settingsDirty]);
 
+  const invalidateHistoryComparison = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
+  };
+
   const invalidateRelated = async () => {
     await queryClient.invalidateQueries({ queryKey: prefsQueryKey });
-    await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
+    await invalidateHistoryComparison();
   };
 
   const feedbackMutation = useMutation({
@@ -180,6 +191,27 @@ export function useMachineFitFeedback({
         ...preferenceScope,
         ...input,
       }),
+    onMutate: async (variables) => {
+      // Keep UI on the value being saved; block hydrate-from-server flashes.
+      setSettingsDirty(true);
+      if (variables.customSettings) {
+        customSettingsRef.current = variables.customSettings;
+        setCustomSettings(variables.customSettings);
+        await queryClient.cancelQueries({ queryKey: prefsQueryKey });
+        queryClient.setQueryData(prefsQueryKey, (prev: unknown) => {
+          const current = (prev && typeof prev === 'object' ? prev : {}) as {
+            customSettings?: Partial<RecommendationSettings>;
+            personalTipMemo?: string;
+            activeSource?: SettingsActiveSource;
+          };
+          return {
+            customSettings: variables.customSettings,
+            personalTipMemo: current.personalTipMemo ?? '',
+            activeSource: variables.activeSource ?? 'adjusted',
+          };
+        });
+      }
+    },
     onSuccess: async (data, variables) => {
       const nextSource: SettingsActiveSource =
         variables.activeSource ?? data.activeSource ?? 'adjusted';
@@ -190,8 +222,7 @@ export function useMachineFitFeedback({
         activeSource: nextSource,
       });
       setCustomSettings(nextCustom);
-      setSettingsDirty(false);
-      await invalidateRelated();
+      customSettingsRef.current = nextCustom;
       // Keep history summary prefs in sync immediately after 조정값 저장.
       queryClient.setQueriesData(
         { queryKey: ['history-settings-comparison'] },
@@ -204,9 +235,7 @@ export function useMachineFitFeedback({
           };
           if (!row.preferencesByMachine) return prev;
           const nextPrefs = { ...row.preferencesByMachine };
-          if (variables.customSettings) {
-            nextPrefs[machineCode] = variables.customSettings;
-          }
+          nextPrefs[machineCode] = nextCustom;
           const nextActive = { ...(row.activeSourceByMachine ?? {}) };
           nextActive[machineCode] = nextSource;
           return {
@@ -216,6 +245,10 @@ export function useMachineFitFeedback({
           };
         }
       );
+      // Do not refetch prefs here — response + setQueryData already match the UI.
+      // A concurrent/stale GET could briefly write the previous weight (90) back.
+      await invalidateHistoryComparison();
+      setSettingsDirty(false);
       showToast(t('machines:feedback.preferencesSaved'), 'success');
     },
     onError: () => showToast(t('machines:feedback.preferencesSaveFailed'), 'error'),
@@ -271,7 +304,7 @@ export function useMachineFitFeedback({
   const displayAdjustedSettings = showAdjustment
     ? hasMeaningfulCustomSettings(customSettings)
       ? customSettings
-      : hasSavedPreferences
+      : !settingsDirty && hasSavedPreferences
         ? savedPreferences
         : undefined
     : undefined;
@@ -301,7 +334,6 @@ export function useMachineFitFeedback({
               activeSource: 'adjusted' as SettingsActiveSource,
             });
             setCustomSettings(saved);
-            setSettingsDirty(false);
             customSettingsRef.current = saved;
             onDone?.();
           },
