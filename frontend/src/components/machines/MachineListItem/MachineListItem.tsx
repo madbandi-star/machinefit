@@ -17,6 +17,8 @@ import '@/styles/machines.css';
 interface MachineListItemProps {
   machine: Machine;
   selectedMuscle?: string | null;
+  /** When set, select in-place instead of navigating to detail (Easy mode picker). */
+  onSelect?: (machine: Machine) => void;
 }
 
 function prefetchMachineDetail(machineCode: string) {
@@ -27,7 +29,7 @@ function prefetchMachineDetail(machineCode: string) {
   });
 }
 
-export function MachineListItem({ machine, selectedMuscle }: MachineListItemProps) {
+export function MachineListItem({ machine, selectedMuscle, onSelect }: MachineListItemProps) {
   const { t, i18n } = useTranslation('machines');
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
@@ -52,13 +54,8 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       ? `${detailPath}?muscle=${encodeURIComponent(selectedMuscle)}`
       : detailPath;
 
-  return (
-    <Link
-      to={detailTo}
-      className="machine-list-item"
-      onMouseEnter={() => prefetchMachineDetail(machine.code)}
-      onTouchStart={() => prefetchMachineDetail(machine.code)}
-    >
+  const body = (
+    <>
       <div className="machine-list-item__thumb">
         {imageUrl ? (
           <img src={imageUrl} alt="" loading="lazy" width={72} height={72} />
@@ -95,6 +92,31 @@ export function MachineListItem({ machine, selectedMuscle }: MachineListItemProp
       <span className="machine-list-item__chevron" aria-hidden>
         ›
       </span>
+    </>
+  );
+
+  if (onSelect) {
+    return (
+      <button
+        type="button"
+        className="machine-list-item"
+        onClick={() => onSelect(machine)}
+        onMouseEnter={() => prefetchMachineDetail(machine.code)}
+        onTouchStart={() => prefetchMachineDetail(machine.code)}
+      >
+        {body}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      to={detailTo}
+      className="machine-list-item"
+      onMouseEnter={() => prefetchMachineDetail(machine.code)}
+      onTouchStart={() => prefetchMachineDetail(machine.code)}
+    >
+      {body}
     </Link>
   );
 }

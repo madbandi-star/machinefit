@@ -4,8 +4,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   isFreeWeightMachineCode,
-  TARGET_MUSCLE_GROUPS,
-  type Machine,
   type RecommendationResult,
   type RecommendationSettings,
   type TargetMuscleGroup,
@@ -13,13 +11,13 @@ import {
 import {
   favoriteApi,
   historyApi,
-  machineApi,
   machinePreferenceApi,
   recommendationApi,
   recommendationFeedbackApi,
   workoutLogApi,
   type FitRating,
 } from '@/api';
+import { EasyMachinePicker } from '@/components/easy-mode/EasyMachinePicker';
 import { EasyWizardShell } from '@/components/easy-mode/EasyWizardShell';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { useActiveGym } from '@/hooks/useActiveGym';
@@ -32,10 +30,10 @@ import { ROUTES } from '@/constants/routes';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { getTodayDateKey } from '@/utils/historyDate';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
-import { getLocalizedName } from '@/utils/localizedName';
+import { resolveMachineImageUrl, machinePlaceholderUrl } from '@/utils/catalogAssets';
 import '@/styles/easy-mode.css';
 
-type WizardStep = 1 | 2 | 3 | 'done';
+type WizardStep = 1 | 2 | 3 | 'rate' | 'done';
 
 interface SelectedMachine {
   code: string;
@@ -54,7 +52,7 @@ function repsLabel(settings?: RecommendationSettings | null): string {
 }
 
 export function EasyWizardPage() {
-  const { t, i18n } = useTranslation(['common', 'machines']);
+  const { t } = useTranslation(['common', 'machines']);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mode = useEasyModeStore((s) => s.mode);
@@ -65,9 +63,8 @@ export function EasyWizardPage() {
   const { activeMemberId, isRealGym } = useActiveMember();
 
   const [step, setStep] = useState<WizardStep>(1);
-  const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState<Machine[]>([]);
-  const [searching, setSearching] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerInitialCode, setPickerInitialCode] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectedMachine | null>(null);
   const [targetMuscle, setTargetMuscle] = useState<TargetMuscleGroup | null>(null);
   const [recommendation, setRecommendation] = useState<RecommendationResult | null>(null);
@@ -170,14 +167,12 @@ export function EasyWizardPage() {
 
   const saveFeedbackAndPrefs = useMutation({
     mutationFn: async () => {
-      if (!recommendation || !selected) return;
-      if (fitRating) {
-        await recommendationFeedbackApi.submit({
-          recommendationId: recommendation.id,
-          fitRating,
-          ...preferenceScope,
-        });
-      }
+      if (!recommendation || !selected || !fitRating) return;
+      await recommendationFeedbackApi.submit({
+        recommendationId: recommendation.id,
+        fitRating,
+        ...preferenceScope,
+      });
       if (fitRating === 'bad') {
         await machinePreferenceApi.upsert({
           machineCode: selected.code,
@@ -190,6 +185,13 @@ export function EasyWizardPage() {
           ...preferenceScope,
         });
       }
+    },
+    onSuccess: () => {
+      setStep('done');
+      showToast(t('easyMode.fitSaved'), 'success');
+    },
+    onError: (error) => {
+      showToast(getApiErrorMessage(error, t('easyMode.fitSaveFailed')), 'error');
     },
   });
 
@@ -214,7 +216,11 @@ export function EasyWizardPage() {
       setSavedMachineName(selected?.name ?? '');
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
-      setStep('done');
+      const settings = recommendation?.settings;
+      setAdjWeight(settings?.recommendedWeightKg);
+      setAdjReps(settings?.recommendedRepsMin ?? settings?.recommendedRepsMax);
+      setFitRating(null);
+      setStep('rate');
       showToast(t('easyMode.saveSuccess'), 'success');
     },
     onError: (error) => {
@@ -222,23 +228,9 @@ export function EasyWizardPage() {
     },
   });
 
-  const runSearch = async () => {
-    const q = search.trim();
-    if (!q) return;
-    setSearching(true);
-    try {
-      const res = await machineApi.search(q);
-      setSearchResults(res.data.data ?? []);
-    } catch (error) {
-      showToast(getApiErrorMessage(error, t('easyMode.searchFailed')), 'error');
-    } finally {
-      setSearching(false);
-    }
-  };
-
-  const pickMachine = (code: string, name: string, brandName?: string) => {
-    setSelected({ code, name, brandName });
-    if (!isFreeWeightMachineCode(code)) setTargetMuscle(null);
+  const openPicker = (code?: string | null) => {
+    setPickerInitialCode(code ?? null);
+    setPickerOpen(true);
   };
 
   const resizeSets = (next: number) => {
@@ -274,7 +266,36 @@ export function EasyWizardPage() {
     return out;
   }, [historyQuery.data]);
 
+  const resetToMachineStep = () => {
+    setStep(1);
+    setSelected(null);
+    setTargetMuscle(null);
+    setRecommendation(null);
+    setFitRating(null);
+  };
+
   if (mode !== 'easy') return null;
+
+  const picker = (
+    <EasyMachinePicker
+      open={pickerOpen}
+      initialCode={pickerInitialCode}
+      onClose={() => {
+        setPickerOpen(false);
+        setPickerInitialCode(null);
+      }}
+      onConfirm={(pick) => {
+        setSelected({
+          code: pick.code,
+          name: pick.name,
+          brandName: pick.brandName,
+        });
+        setTargetMuscle(pick.targetMuscle);
+        setPickerOpen(false);
+        setPickerInitialCode(null);
+      }}
+    />
+  );
 
   if (step === 'done') {
     return (
@@ -289,14 +310,7 @@ export function EasyWizardPage() {
         <button
           type="button"
           className="easy-btn easy-btn--primary"
-          onClick={() => {
-            setStep(1);
-            setSelected(null);
-            setRecommendation(null);
-            setFitRating(null);
-            setSearch('');
-            setSearchResults([]);
-          }}
+          onClick={resetToMachineStep}
         >
           {t('easyMode.doneAnother')}
         </button>
@@ -315,161 +329,217 @@ export function EasyWizardPage() {
     );
   }
 
+  if (step === 'rate') {
+    return (
+      <div className="easy-shell">
+        <div className="easy-shell__top">
+          <span className="easy-shell__icon-btn" style={{ visibility: 'hidden' }} aria-hidden>
+            ←
+          </span>
+          <h1 className="easy-shell__title">{t('easyMode.rateTitle')}</h1>
+          <button
+            type="button"
+            className="easy-shell__icon-btn"
+            onClick={() => setStep('done')}
+            aria-label={t('easyMode.close')}
+          >
+            ✕
+          </button>
+        </div>
+        <div className="easy-shell__body">
+          <h2 className="easy-heading">{savedMachineName || selected?.name}</h2>
+          <p className="easy-sub">{t('easyMode.fitPromptAfter')}</p>
+          <div className="easy-fit">
+            <button
+              type="button"
+              className={`easy-fit__btn${fitRating === 'good' ? ' easy-fit__btn--on' : ''}`}
+              onClick={() => setFitRating('good')}
+            >
+              {t('easyMode.fitGood')}
+            </button>
+            <button
+              type="button"
+              className={`easy-fit__btn${fitRating === 'bad' ? ' easy-fit__btn--on' : ''}`}
+              onClick={() => setFitRating('bad')}
+            >
+              {t('easyMode.fitBad')}
+            </button>
+          </div>
+          {fitRating === 'bad' ? (
+            <div className="easy-card">
+              <p className="easy-list__label">{t('easyMode.adjustWeight')}</p>
+              <NumericStepper
+                value={adjWeight}
+                onChange={setAdjWeight}
+                min={0}
+                max={999}
+                step={5}
+                unit="kg"
+                ariaLabel={t('easyMode.adjustWeight')}
+              />
+              <p className="easy-list__label">{t('easyMode.adjustReps')}</p>
+              <NumericStepper
+                value={adjReps}
+                onChange={setAdjReps}
+                min={1}
+                max={50}
+                step={1}
+                unit={t('easyMode.repsUnit')}
+                ariaLabel={t('easyMode.adjustReps')}
+              />
+            </div>
+          ) : null}
+        </div>
+        <div className="easy-shell__footer">
+          <button
+            type="button"
+            className="easy-btn easy-btn--primary"
+            disabled={!fitRating || saveFeedbackAndPrefs.isPending}
+            onClick={() => saveFeedbackAndPrefs.mutate()}
+          >
+            {saveFeedbackAndPrefs.isPending ? t('easyMode.working') : t('easyMode.fitSubmit')}
+          </button>
+          <button type="button" className="easy-btn easy-btn--ghost" onClick={() => setStep('done')}>
+            {t('easyMode.fitSkip')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (step === 1) {
     return (
-      <EasyWizardShell
-        step={1}
-        onBack={() => navigate(ROUTES.EASY)}
-        onClose={() => navigate(ROUTES.EASY)}
-        primaryLabel={t('easyMode.nextRecommend')}
-        primaryDisabled={!canGoRecommend}
-        primaryPending={createRecommend.isPending}
-        primaryHint={
-          !activeGymId
-            ? t('easyMode.needGym')
-            : !selected
-              ? t('easyMode.needMachine')
-              : needsMuscle && !targetMuscle
-                ? t('easyMode.needMuscle')
-                : undefined
-        }
-        onPrimary={() => createRecommend.mutate()}
-      >
-        <h2 className="easy-heading">{t('easyMode.s1Title')}</h2>
-        <p className="easy-sub">{t('easyMode.s1Sub')}</p>
-        <p className="easy-home__gym">{activeGym?.name || t('easyMode.gymUnset')}</p>
+      <>
+        {picker}
+        <EasyWizardShell
+          step={1}
+          onBack={() => navigate(ROUTES.EASY)}
+          onClose={() => navigate(ROUTES.EASY)}
+          primaryLabel={t('easyMode.nextRecommend')}
+          primaryDisabled={!canGoRecommend}
+          primaryPending={createRecommend.isPending}
+          primaryHint={
+            !activeGymId
+              ? t('easyMode.needGym')
+              : !selected
+                ? t('easyMode.needMachine')
+                : needsMuscle && !targetMuscle
+                  ? t('easyMode.needMuscle')
+                  : undefined
+          }
+          onPrimary={() => createRecommend.mutate()}
+        >
+          <h2 className="easy-heading">{t('easyMode.s1Title')}</h2>
+          <p className="easy-sub">{t('easyMode.s1Sub')}</p>
+          <p className="easy-home__gym">{activeGym?.name || t('easyMode.gymUnset')}</p>
 
-        {!activeGymId ? (
-          <Link to={ROUTES.HOME} className="easy-btn easy-btn--secondary">
-            {t('easyMode.pickGym')}
-          </Link>
-        ) : (
-          <>
-            <div className="easy-tile-grid">
-              <Link to={ROUTES.SCAN} className="easy-tile">
-                {t('easyMode.entryQr')}
-              </Link>
-              <button
-                type="button"
-                className="easy-tile"
-                onClick={() => document.getElementById('easy-search-input')?.focus()}
-              >
-                {t('easyMode.entrySearch')}
-              </button>
-            </div>
+          {!activeGymId ? (
+            <Link to={ROUTES.HOME} className="easy-btn easy-btn--secondary">
+              {t('easyMode.pickGym')}
+            </Link>
+          ) : (
+            <>
+              <div className="easy-tile-grid">
+                <Link to={ROUTES.SCAN} className="easy-tile">
+                  {t('easyMode.entryQr')}
+                </Link>
+                <button type="button" className="easy-tile" onClick={() => openPicker()}>
+                  {t('easyMode.entrySearch')}
+                </button>
+              </div>
 
-            <div className="easy-search">
-              <input
-                id="easy-search-input"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') void runSearch();
-                }}
-                placeholder={t('easyMode.searchPlaceholder')}
-              />
-              <button
-                type="button"
-                className="easy-btn easy-btn--secondary"
-                style={{ width: 'auto' }}
-                onClick={() => void runSearch()}
-                disabled={searching}
-              >
-                {searching ? t('easyMode.working') : t('easyMode.search')}
-              </button>
-            </div>
-
-            {searchResults.length > 0 ? (
-              <div className="easy-list">
-                <p className="easy-list__label">{t('easyMode.searchResults')}</p>
-                {searchResults.map((m) => {
-                  const name = getLocalizedName(m.name, i18n.language, m.code);
-                  const brand = m.brandName
-                    ? getLocalizedName(m.brandName, i18n.language, '')
-                    : undefined;
-                  return (
-                  <button
-                    key={m.code}
-                    type="button"
-                    className={`easy-machine-btn${
-                      selected?.code === m.code ? ' easy-card--selected' : ''
-                    }`}
-                    onClick={() => pickMachine(m.code, name, brand || undefined)}
-                  >
-                    <span className="easy-machine-btn__name">{name}</span>
-                    {brand ? (
-                      <span className="easy-machine-btn__meta">{brand}</span>
+              {selected ? (
+                <button
+                  type="button"
+                  className="easy-selected-card"
+                  onClick={() => openPicker(selected.code)}
+                >
+                  <img
+                    className="easy-selected-card__thumb"
+                    src={
+                      resolveMachineImageUrl(selected.code) || machinePlaceholderUrl()
+                    }
+                    alt=""
+                    width={64}
+                    height={64}
+                  />
+                  <div className="easy-selected-card__body">
+                    <p className="easy-selected-card__label">{t('easyMode.selected')}</p>
+                    <p className="easy-selected-card__name">{selected.name}</p>
+                    {selected.brandName ? (
+                      <p className="easy-selected-card__meta">{selected.brandName}</p>
                     ) : null}
-                  </button>
-                  );
-                })}
-              </div>
-            ) : null}
+                    {needsMuscle && targetMuscle ? (
+                      <p className="easy-selected-card__meta">
+                        {t(`machines:muscleGroups.${targetMuscle}`, {
+                          defaultValue: targetMuscle,
+                        })}
+                      </p>
+                    ) : null}
+                  </div>
+                  <span className="easy-selected-card__chevron" aria-hidden>
+                    ›
+                  </span>
+                </button>
+              ) : null}
 
-            {recentMachines.length > 0 ? (
-              <div className="easy-list">
-                <p className="easy-list__label">{t('easyMode.recent')}</p>
-                {recentMachines.map((m) => (
-                  <button
-                    key={m.code}
-                    type="button"
-                    className={`easy-machine-btn${
-                      selected?.code === m.code ? ' easy-card--selected' : ''
-                    }`}
-                    onClick={() => pickMachine(m.code, m.name, m.brandName)}
-                  >
-                    <span className="easy-machine-btn__name">{m.name}</span>
-                  </button>
-                ))}
-              </div>
-            ) : null}
-
-            {(favoritesQuery.data?.length ?? 0) > 0 ? (
-              <div className="easy-list">
-                <p className="easy-list__label">{t('easyMode.favorites')}</p>
-                {(favoritesQuery.data ?? []).slice(0, 6).map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    className={`easy-machine-btn${
-                      selected?.code === m.machineCode ? ' easy-card--selected' : ''
-                    }`}
-                    onClick={() => pickMachine(m.machineCode, m.machineName, m.brandName)}
-                  >
-                    <span className="easy-machine-btn__name">{m.machineName}</span>
-                  </button>
-                ))}
-              </div>
-            ) : null}
-
-            {selected ? (
-              <div className="easy-card easy-card--selected" style={{ marginTop: '0.85rem' }}>
-                {t('easyMode.selected')}: <strong>{selected.name}</strong>
-              </div>
-            ) : null}
-
-            {needsMuscle ? (
-              <>
-                <p className="easy-list__label">{t('easyMode.muscleTitle')}</p>
-                <div className="easy-muscle-grid">
-                  {TARGET_MUSCLE_GROUPS.map((group) => (
-                    <button
-                      key={group}
-                      type="button"
-                      className={`easy-fit__btn${
-                        targetMuscle === group ? ' easy-fit__btn--on' : ''
-                      }`}
-                      onClick={() => setTargetMuscle(group)}
-                    >
-                      {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
-                    </button>
-                  ))}
+              {recentMachines.length > 0 ? (
+                <div className="easy-list">
+                  <p className="easy-list__label">{t('easyMode.recent')}</p>
+                  <div className="easy-thumb-row">
+                    {recentMachines.map((m) => (
+                      <button
+                        key={m.code}
+                        type="button"
+                        className={`easy-thumb-chip${
+                          selected?.code === m.code ? ' easy-thumb-chip--on' : ''
+                        }`}
+                        onClick={() => openPicker(m.code)}
+                      >
+                        <img
+                          src={resolveMachineImageUrl(m.code) || machinePlaceholderUrl()}
+                          alt=""
+                          width={48}
+                          height={48}
+                        />
+                        <span>{m.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </>
-            ) : null}
-          </>
-        )}
-      </EasyWizardShell>
+              ) : null}
+
+              {(favoritesQuery.data?.length ?? 0) > 0 ? (
+                <div className="easy-list">
+                  <p className="easy-list__label">{t('easyMode.favorites')}</p>
+                  <div className="easy-thumb-row">
+                    {(favoritesQuery.data ?? []).slice(0, 6).map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        className={`easy-thumb-chip${
+                          selected?.code === m.machineCode ? ' easy-thumb-chip--on' : ''
+                        }`}
+                        onClick={() => openPicker(m.machineCode)}
+                      >
+                        <img
+                          src={
+                            resolveMachineImageUrl(m.machineCode) || machinePlaceholderUrl()
+                          }
+                          alt=""
+                          width={48}
+                          height={48}
+                        />
+                        <span>{m.machineName}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </>
+          )}
+        </EasyWizardShell>
+      </>
     );
   }
 
@@ -482,18 +552,10 @@ export function EasyWizardPage() {
         onBack={() => setStep(1)}
         onClose={() => navigate(ROUTES.EASY)}
         primaryLabel={t('easyMode.nextLog')}
-        primaryPending={saveFeedbackAndPrefs.isPending}
-        secondaryLabel={t('easyMode.backToMachine')}
-        onSecondary={() => setStep(1)}
         onPrimary={() => {
-          void saveFeedbackAndPrefs.mutateAsync().then(() => {
-            const seed =
-              fitRating === 'bad'
-                ? (adjWeight ?? settings.recommendedWeightKg ?? 0)
-                : (settings.recommendedWeightKg ?? 0);
-            setWeights((prev) => prev.map(() => seed));
-            setStep(3);
-          });
+          const seed = settings.recommendedWeightKg ?? 0;
+          setWeights((prev) => prev.map(() => seed));
+          setStep(3);
         }}
       >
         <h2 className="easy-heading">{recommendation.machineName || selected?.name}</h2>
@@ -556,48 +618,7 @@ export function EasyWizardPage() {
           </p>
         </details>
 
-        <p className="easy-list__label">{t('easyMode.fitPrompt')}</p>
-        <div className="easy-fit">
-          <button
-            type="button"
-            className={`easy-fit__btn${fitRating === 'good' ? ' easy-fit__btn--on' : ''}`}
-            onClick={() => setFitRating('good')}
-          >
-            {t('easyMode.fitGood')}
-          </button>
-          <button
-            type="button"
-            className={`easy-fit__btn${fitRating === 'bad' ? ' easy-fit__btn--on' : ''}`}
-            onClick={() => setFitRating('bad')}
-          >
-            {t('easyMode.fitBad')}
-          </button>
-        </div>
-
-        {fitRating === 'bad' ? (
-          <div className="easy-card">
-            <p className="easy-list__label">{t('easyMode.adjustWeight')}</p>
-            <NumericStepper
-              value={adjWeight}
-              onChange={setAdjWeight}
-              min={0}
-              max={999}
-              step={5}
-              unit="kg"
-              ariaLabel={t('easyMode.adjustWeight')}
-            />
-            <p className="easy-list__label">{t('easyMode.adjustReps')}</p>
-            <NumericStepper
-              value={adjReps}
-              onChange={setAdjReps}
-              min={1}
-              max={50}
-              step={1}
-              unit={t('easyMode.repsUnit')}
-              ariaLabel={t('easyMode.adjustReps')}
-            />
-          </div>
-        ) : null}
+        <p className="easy-sub easy-sub--soft">{t('easyMode.fitLaterHint')}</p>
       </EasyWizardShell>
     );
   }
@@ -612,8 +633,6 @@ export function EasyWizardPage() {
       primaryPending={saveLog.isPending}
       primaryDisabled={!activeGymId || !activeMemberId}
       primaryHint={!activeMemberId ? t('easyMode.needMember') : undefined}
-      secondaryLabel={t('easyMode.backToRecommend')}
-      onSecondary={() => setStep(2)}
       onPrimary={() => saveLog.mutate()}
     >
       <h2 className="easy-heading">{selected?.name}</h2>
