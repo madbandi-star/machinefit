@@ -12,6 +12,7 @@ import {
   resolveSessionAverageWeightKg,
   resolveSessionWorkingWeightKg,
   resolveSuggestedWeightKg,
+  resolveWorkoutLogSeedReps,
   resolveWorkoutLogSeedWeightKg,
 } from './effective-load.js';
 
@@ -85,6 +86,41 @@ describe('resolveWorkoutLogSeedWeightKg', () => {
   });
 });
 
+describe('resolveWorkoutLogSeedReps', () => {
+  it('uses 추천횟수 when fit is good', () => {
+    assert.equal(
+      resolveWorkoutLogSeedReps({
+        fitRating: 'good',
+        adjustedReps: 15,
+        recommendedReps: 10,
+      }),
+      10
+    );
+  });
+
+  it('uses 추천횟수 when unselected', () => {
+    assert.equal(
+      resolveWorkoutLogSeedReps({
+        fitRating: null,
+        adjustedReps: 15,
+        recommendedReps: 10,
+      }),
+      10
+    );
+  });
+
+  it('uses 조정횟수 when fit is bad', () => {
+    assert.equal(
+      resolveWorkoutLogSeedReps({
+        fitRating: 'bad',
+        adjustedReps: 15,
+        recommendedReps: 10,
+      }),
+      15
+    );
+  });
+});
+
 describe('computePerformedTotalWeightKg from steppers', () => {
   it('uses setWeights × reps even when adjusted differs', () => {
     assert.equal(
@@ -99,7 +135,33 @@ describe('computePerformedTotalWeightKg from steppers', () => {
     );
   });
 
-  it('uses 조정횟수 over 추천횟수 for volume', () => {
+  it('uses 추천횟수 for volume when fit is good', () => {
+    assert.equal(
+      computePerformedTotalWeightKg({
+        setWeightsKg: [40, 40, 40],
+        fitRating: 'good',
+        adjustedReps: 12,
+        recommendedReps: 10,
+        sets: 3,
+      }),
+      1200
+    );
+  });
+
+  it('uses 조정횟수 for volume when fit is bad', () => {
+    assert.equal(
+      computePerformedTotalWeightKg({
+        setWeightsKg: [40, 40, 40],
+        fitRating: 'bad',
+        adjustedReps: 12,
+        recommendedReps: 10,
+        sets: 3,
+      }),
+      1440
+    );
+  });
+
+  it('uses 조정횟수 over 추천횟수 when fitRating omitted', () => {
     assert.equal(
       computePerformedTotalWeightKg({
         setWeightsKg: [40, 40, 40],

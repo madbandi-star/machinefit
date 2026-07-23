@@ -197,11 +197,13 @@ export function HistoryListPanel() {
           comparisonData?.preferencesByMachine,
           liveAdjustedPrefs
         ),
+        feedbackByRecommendation: comparisonData?.feedbackByRecommendation,
       }),
     [
       displayCards,
       workoutLogs,
       comparisonData?.preferencesByMachine,
+      comparisonData?.feedbackByRecommendation,
       liveAdjustedPrefs,
     ]
   );

@@ -7,7 +7,7 @@ import type {
   SettingsActiveSource,
   TargetMuscleGroup,
 } from '@machinefit/shared';
-import { resolveWorkoutLogSeedWeightKg, getEffectiveReps } from '@machinefit/shared';
+import { resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
 import type { FitRating } from '@/api';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import type { MuscleGroup } from '@/constants/muscle-groups';
@@ -361,13 +361,16 @@ export function HistoryRecordCard({
           // On-screen 추천중량 (AI recommendation shown when “잘 맞음”).
           recommendedWeight: card.settings.recommendedWeightKg,
         })}
-        volumeReps={getEffectiveReps(
-          fitFeedback.displayAdjustedSettings?.recommendedRepsMin ??
+        volumeReps={resolveWorkoutLogSeedReps({
+          fitRating: savedRating,
+          adjustedReps:
+            fitFeedback.displayAdjustedSettings?.recommendedRepsMin ??
             fitFeedback.displayAdjustedSettings?.recommendedRepsMax ??
             customSettings.recommendedRepsMin ??
             customSettings.recommendedRepsMax,
-          card.settings.recommendedRepsMin ?? card.settings.recommendedRepsMax
-        )}
+          recommendedReps:
+            card.settings.recommendedRepsMin ?? card.settings.recommendedRepsMax,
+        })}
         isAuthenticated={isAuthenticated}
         variant="history"
         logDate={logDate}
