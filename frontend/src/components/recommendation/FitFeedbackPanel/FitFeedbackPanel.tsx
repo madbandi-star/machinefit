@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FitRating } from '@/api';
 import { Icon } from '@/components/icons/Icon';
@@ -11,6 +12,19 @@ interface FitFeedbackPanelProps {
 
 export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: FitFeedbackPanelProps) {
   const { t } = useTranslation('machines');
+  const goodRef = useRef<HTMLButtonElement>(null);
+  const badRef = useRef<HTMLButtonElement>(null);
+
+  const selectRating = (fitRating: FitRating) => {
+    if (isPending) return;
+    onRating(fitRating);
+    // Keep focus on the chosen button. Native `disabled` during pending would
+    // move focus to the sibling ("셋팅값 조정필요"), which feels like that
+    // button was activated.
+    requestAnimationFrame(() => {
+      (fitRating === 'good' ? goodRef : badRef).current?.focus({ preventScroll: true });
+    });
+  };
 
   return (
     <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
@@ -20,20 +34,22 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
       </div>
       <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>
         <button
+          ref={goodRef}
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'good' ? ' fit-feedback-panel__btn--active' : ''}`}
-          onClick={() => onRating('good')}
-          disabled={isPending}
+          onClick={() => selectRating('good')}
+          aria-disabled={isPending || undefined}
           aria-pressed={savedRating === 'good'}
         >
           <Icon name="circleCheck" size={20} />
           {t('feedback.good')}
         </button>
         <button
+          ref={badRef}
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}`}
-          onClick={() => onRating('bad')}
-          disabled={isPending}
+          onClick={() => selectRating('bad')}
+          aria-disabled={isPending || undefined}
           aria-pressed={savedRating === 'bad'}
         >
           <Icon name="sliders" size={20} />

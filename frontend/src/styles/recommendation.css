@@ -1673,9 +1673,11 @@
     opacity 140ms ease;
 }
 
-.fit-feedback-panel__btn:disabled {
+.fit-feedback-panel__btn:disabled,
+.fit-feedback-panel__btn[aria-disabled='true'] {
   opacity: 0.65;
   cursor: wait;
+  pointer-events: none;
 }
 
 .fit-feedback-panel__btn svg {

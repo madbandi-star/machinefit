@@ -82,10 +82,11 @@ export function useMachineFitFeedback({
   const savedPreferences = machinePreferences?.customSettings;
   const hasSavedPreferences = hasMeaningfulCustomSettings(savedPreferences);
 
-  // UI source for banner/highlight. Prefer adjusted when the user is in the
-  // "needs adjustment" flow and already has adjustment values — avoids sticking
-  // on AI highlight after 조정값 저장 when prefs.activeSource briefly lags.
+  // UI source for banner/highlight.
+  // Explicit fit rating wins: "추천값 잘맞음" must not keep adjusted UI just because
+  // machine prefs still have activeSource=adjusted (or briefly lag after save).
   const activeSource: SettingsActiveSource = (() => {
+    if (savedRating === 'good') return 'recommended';
     const stored = machinePreferences?.activeSource;
     if (stored === 'adjusted') return 'adjusted';
     if (
