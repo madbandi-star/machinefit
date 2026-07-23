@@ -46,5 +46,9 @@ export const ROUTES = {
   NOTIFICATIONS: '/notifications',
   SCAN: '/scan',
   QR: '/qr/:qrCode',
+  /** Easy-mode UI shell (isolated from normal MainLayout chrome). */
+  EASY: '/easy',
+  EASY_ONBOARDING: '/easy/onboarding',
+  EASY_WIZARD: '/easy/workout',
   NOT_FOUND: '*',
 } as const;

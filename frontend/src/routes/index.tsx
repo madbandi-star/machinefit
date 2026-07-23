@@ -4,6 +4,7 @@ import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
+import { EasyLayout } from '@/layouts/EasyLayout';
 import { AuthGuard } from '@/routes/guards/AuthGuard';
 import { GuestGuard } from '@/routes/guards/GuestGuard';
 import { ROUTES } from '@/constants/routes';
@@ -146,6 +147,14 @@ const qrRedirect = () =>
   import('@/pages/qr-redirect/QrRedirectPage').then((m) => ({ default: m.QrRedirectPage }));
 const qrScan = () =>
   import('@/pages/qr-scan/QrScanPage').then((m) => ({ default: m.QrScanPage }));
+const easyHome = () =>
+  import('@/pages/easy-mode/EasyHomePage').then((m) => ({ default: m.EasyHomePage }));
+const easyOnboarding = () =>
+  import('@/pages/easy-mode/EasyOnboardingPage').then((m) => ({
+    default: m.EasyOnboardingPage,
+  }));
+const easyWizard = () =>
+  import('@/pages/easy-mode/EasyWizardPage').then((m) => ({ default: m.EasyWizardPage }));
 
 export const router = createBrowserRouter(
   [
@@ -195,6 +204,18 @@ export const router = createBrowserRouter(
           ],
         },
         { path: ROUTES.NOT_FOUND, element: lazyRoute(notFound) },
+      ],
+    },
+    {
+      element: (
+        <AuthGuard>
+          <EasyLayout />
+        </AuthGuard>
+      ),
+      children: [
+        { path: ROUTES.EASY, element: lazyRoute(easyHome) },
+        { path: ROUTES.EASY_ONBOARDING, element: lazyRoute(easyOnboarding) },
+        { path: ROUTES.EASY_WIZARD, element: lazyRoute(easyWizard) },
       ],
     },
     {
