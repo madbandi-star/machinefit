@@ -61,8 +61,9 @@ export interface EffectiveLoadInput {
 export type FitRatingLike = 'good' | 'bad' | null | undefined;
 
 /**
- * Weight to put into workout-log steppers (-무게kg+).
+ * Weight to put into workout-log steppers (-무게kg+) for incomplete sets.
  *
+ * Callers should pass live on-screen values (not only last DB row):
  * - 추천값 잘맞음 (`good`) or 미선택 (`null`) → 추천중량
  * - 셋팅값 조정 필요 (`bad`) or other → 조정중량 if present, else 추천중량
  */

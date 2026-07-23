@@ -310,7 +310,11 @@ export function RecommendationResultPage() {
             recommendationId={result.id}
             suggestedWeightKg={resolveWorkoutLogSeedWeightKg({
               fitRating: fitFeedback.savedRating,
-              adjustedWeight: fitFeedback.customSettings.recommendedWeightKg,
+              // Live on-screen 조정중량 (not only last saved prefs row).
+              adjustedWeight:
+                fitFeedback.displayAdjustedSettings?.recommendedWeightKg ??
+                fitFeedback.customSettings.recommendedWeightKg,
+              // On-screen 추천중량 (AI recommendation shown when “잘 맞음”).
               recommendedWeight: (result.aiRecommendedSettings ?? result.settings)
                 .recommendedWeightKg,
             })}

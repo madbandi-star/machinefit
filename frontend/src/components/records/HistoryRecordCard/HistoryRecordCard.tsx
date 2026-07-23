@@ -352,7 +352,11 @@ export function HistoryRecordCard({
         recommendationId={card.recommendationId}
         suggestedWeightKg={resolveWorkoutLogSeedWeightKg({
           fitRating: savedRating,
-          adjustedWeight: customSettings.recommendedWeightKg,
+          // Live on-screen 조정중량 (not only last saved prefs row).
+          adjustedWeight:
+            fitFeedback.displayAdjustedSettings?.recommendedWeightKg ??
+            customSettings.recommendedWeightKg,
+          // On-screen 추천중량 (AI recommendation shown when “잘 맞음”).
           recommendedWeight: card.settings.recommendedWeightKg,
         })}
         isAuthenticated={isAuthenticated}

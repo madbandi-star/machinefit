@@ -286,6 +286,8 @@ export function WorkoutLogPanel({
   const [baseline, setBaseline] = useState<WorkoutFormSnapshot | null>(null);
   const lastHydrateKeyRef = useRef('');
   const lastAppliedSeedKeyRef = useRef('');
+  const setCompletedRef = useRef(setCompleted);
+  setCompletedRef.current = setCompleted;
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
   const personalTipBytes = getUtf8ByteLength(personalTipMemo);
@@ -467,10 +469,8 @@ export function WorkoutLogPanel({
       setDiary,
     });
     setBaseline(cloneWorkoutFormSnapshot(snapshot));
-    // Saved logs keep their own weights; only new logs may accept a later seed.
-    lastAppliedSeedKeyRef.current = existingLog
-      ? `${hydrateKey}|saved`
-      : '';
+    // Allow the seed effect below to re-apply to incomplete sets after hydrate.
+    lastAppliedSeedKeyRef.current = '';
   }, [
     isAuthenticated,
     queryEnabled,
@@ -480,12 +480,13 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
   ]);
 
-  // New (unsaved) logs only: fill -무게kg+ from fit-feedback seed weight.
-  // Saved logs always show persisted setCount / setWeightsKg from workout_logs.
+  // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight.
+  // - 추천값 잘 맞음 → 추천중량 (parent resolves)
+  // - 셋팅값 조정 필요 → 조정중량 (parent resolves from on-screen edits)
+  // Completed sets keep their logged weight; saved vs unsaved does not matter.
   useEffect(() => {
     if (!isAuthenticated) return;
     if (queryEnabled && !isFetched) return;
-    if (existingLog) return;
     if (lastHydrateKeyRef.current !== hydrateKey) return;
     if (suggestedWeightKg == null || !(suggestedWeightKg > 0)) return;
 
@@ -493,23 +494,21 @@ export function WorkoutLogPanel({
     if (lastAppliedSeedKeyRef.current === seedKey) return;
     lastAppliedSeedKeyRef.current = seedKey;
 
+    const applySeedToIncomplete = (weights: number[], completed: boolean[]) =>
+      weights.map((weight, index) =>
+        completed[index] === true ? weight : suggestedWeightKg
+      );
+
     setWeights((prev) => {
-      const next = prev.map(() => suggestedWeightKg);
-      if (prev.length === next.length && prev.every((weight, index) => weight === next[index])) {
-        return prev;
-      }
+      const next = applySeedToIncomplete(prev, setCompletedRef.current);
+      if (weightsEqual(prev, next)) return prev;
       return next;
     });
 
     setBaseline((prev) => {
       if (!prev) return prev;
-      const nextWeights = prev.weights.map(() => suggestedWeightKg);
-      if (
-        prev.weights.length === nextWeights.length &&
-        prev.weights.every((weight, index) => weight === nextWeights[index])
-      ) {
-        return prev;
-      }
+      const nextWeights = applySeedToIncomplete(prev.weights, setCompletedRef.current);
+      if (weightsEqual(prev.weights, nextWeights)) return prev;
       return { ...prev, weights: nextWeights };
     });
   }, [
@@ -518,7 +517,6 @@ export function WorkoutLogPanel({
     isFetched,
     hydrateKey,
     suggestedWeightKg,
-    existingLog,
   ]);
 
   const saveMutation = useMutation({
