@@ -17,7 +17,17 @@ import { userGymRepository } from '../repositories/user-gym.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getPool } from '../config/database.js';
-import type { WorkoutLoadContext } from './workout-load.service.js';
+import {
+  resolveWorkoutLoadContexts,
+  type WorkoutLoadContext,
+} from './workout-load.service.js';
+import {
+  parseCompletedArray,
+  parseWeightArray,
+  performedVolumeFromLog,
+  seoulMonthKey,
+  seoulYearKey,
+} from '../utils/mypage-workout-metrics.js';
 
 function monthKey(logDate: string): string {
   return logDate.slice(0, 7);
@@ -42,6 +52,80 @@ function volumeFromWeights(
     adjustedReps: load?.adjustedReps,
     recommendedReps: load?.recommendedReps,
   });
+}
+
+/**
+ * Recompute a user's total performed volume from workout_logs (My Page
+ * "내가 들어올린 무게는?" source of truth). Ignores AI seed when steppers empty.
+ */
+async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
+  const pool = getPool();
+  if (!pool) return 0;
+
+  const result = await pool.query<{
+    id: string;
+    gym_id: string;
+    member_id: string;
+    machine_code: string;
+    log_date: string;
+    set_count: number;
+    set_weights_kg: number[] | string;
+    set_completed: boolean[] | string | null;
+    created_at: string;
+    updated_at: string;
+  }>(
+    `SELECT wl.id::text,
+            wl.gym_id::text,
+            wl.member_id::text,
+            m.code AS machine_code,
+            wl.log_date::text,
+            wl.set_count,
+            wl.set_weights_kg,
+            wl.set_completed,
+            wl.created_at::text,
+            wl.updated_at::text
+     FROM workout_logs wl
+     JOIN machines m ON m.id = wl.machine_id
+     WHERE wl.user_id = $1`,
+    [userId]
+  );
+
+  if (result.rows.length === 0) {
+    await liftedVolumeRepository.setTotal('user', userId, 0);
+    return 0;
+  }
+
+  const asWorkoutLogs = result.rows.map((row) => ({
+    id: row.id,
+    gymId: row.gym_id,
+    memberId: row.member_id,
+    machineCode: row.machine_code,
+    logDate: row.log_date.slice(0, 10),
+    setCount: row.set_count,
+    setWeightsKg: parseWeightArray(row.set_weights_kg),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
+
+  const loadById = await resolveWorkoutLoadContexts(userId, asWorkoutLogs);
+
+  let total = 0;
+  for (const row of result.rows) {
+    const load = loadById.get(row.id);
+    total += performedVolumeFromLog({
+      setWeightsKg: parseWeightArray(row.set_weights_kg),
+      setCompleted: parseCompletedArray(row.set_completed),
+      setCount: row.set_count,
+      adjustedWeight: load?.adjustedWeight,
+      recommendedWeight: load?.recommendedWeight,
+      adjustedReps: load?.adjustedReps,
+      recommendedReps: load?.recommendedReps,
+    });
+  }
+
+  const rounded = Math.round(total * 100) / 100;
+  await liftedVolumeRepository.setTotal('user', userId, rounded);
+  return rounded;
 }
 
 async function listScopedUserTotals(
@@ -153,13 +237,14 @@ export const liftedVolumeService = {
     } else {
       const user = await userRepository.findById(options.userId);
       labelName = user?.displayName?.trim() || (locale.startsWith('ko') ? '회원' : 'Member');
-      totalKg = await liftedVolumeRepository.getTotal('user', options.userId);
+      // Always reconcile from actual logged set weights (not stale aggregate / AI seed).
+      totalKg = await recomputeUserTotalFromLogs(options.userId);
     }
 
     const userKg =
       options.mode === 'user'
         ? totalKg
-        : await liftedVolumeRepository.getTotal('user', options.userId);
+        : await recomputeUserTotalFromLogs(options.userId);
     const earned = await liftedVolumeRepository.listEarnedBadges(options.userId);
     const badgeProgress = buildBadgeProgress(userKg, earned);
 
@@ -185,6 +270,9 @@ export const liftedVolumeService = {
     let rows: { userId: string; totalKg: number }[] = [];
     let period: LiftedRankingPeriod = 'all';
 
+    // Keep the viewer's own total fresh before ranking.
+    await recomputeUserTotalFromLogs(options.userId);
+
     if (options.board === 'global') {
       rows = await liftedVolumeRepository.listTopUsers({ scope: 'user', limit });
     } else if (options.board === 'gym' || options.board === 'friends') {
@@ -194,11 +282,11 @@ export const liftedVolumeService = {
       rows = await listScopedUserTotals('user_gym', `%|${gymId}`, limit);
     } else if (options.board === 'month') {
       period = 'month';
-      const ym = new Date().toISOString().slice(0, 7);
+      const ym = seoulMonthKey();
       rows = await listScopedUserTotals('user_month', `%|${ym}`, limit);
     } else {
       period = 'year';
-      const year = String(new Date().getFullYear());
+      const year = seoulYearKey();
       rows = await listScopedUserTotals('user_year', `%|${year}`, limit);
     }
 

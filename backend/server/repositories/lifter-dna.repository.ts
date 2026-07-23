@@ -1,5 +1,12 @@
 import { getPool } from '../config/database.js';
 import type { LifterDnaRawStats, PeerBaseline } from '@machinefit/shared';
+import {
+  parseCompletedArray,
+  parseWeightArray,
+  performedVolumeFromLog,
+  seoulHour,
+  SQL_LOG_VOLUME_LATERAL,
+} from '../utils/mypage-workout-metrics.js';
 
 const LOG_LIMIT = 500;
 const PEER_BASELINE_TTL_MS = 15 * 60_000;
@@ -38,6 +45,7 @@ interface LogRow {
   log_date: string;
   set_count: number;
   set_weights_kg: number[] | string;
+  set_completed: boolean[] | string | null;
   created_at: string;
   updated_at: string;
   machine_code: string;
@@ -49,14 +57,7 @@ interface LogRow {
 }
 
 function parseWeights(raw: number[] | string): number[] {
-  if (Array.isArray(raw)) return raw.map(Number).filter((n) => Number.isFinite(n));
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (Array.isArray(parsed)) return parsed.map(Number).filter((n) => Number.isFinite(n));
-  } catch {
-    /* ignore */
-  }
-  return [];
+  return parseWeightArray(raw);
 }
 
 function machineNameOf(row: LogRow, locale: string): string {
@@ -116,6 +117,7 @@ export const lifterDnaRepository = {
               wl.log_date::text,
               wl.set_count,
               wl.set_weights_kg,
+              wl.set_completed,
               wl.created_at::text,
               wl.updated_at::text,
               m.code AS machine_code,
@@ -128,7 +130,7 @@ export const lifterDnaRepository = {
        JOIN machines m ON m.id = wl.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
        WHERE wl.user_id = $1${filters}
-       ORDER BY wl.log_date DESC, wl.updated_at DESC
+       ORDER BY wl.log_date DESC, wl.created_at DESC
        LIMIT $${limitIdx}`,
       params
     );
@@ -165,18 +167,18 @@ export const lifterDnaRepository = {
          SELECT wl.user_id,
                 wl.log_date,
                 wl.set_count,
-                COALESCE(w.volume, 0) AS volume,
-                COALESCE(w.max_w, 0) AS max_w,
+                COALESCE(vol.kg, 0) AS volume,
+                COALESCE(mw.max_w, 0) AS max_w,
                 COALESCE(NULLIF(wl.target_muscle_group,''), m.muscle_group) AS muscle
          FROM workout_logs wl
          JOIN machines m ON m.id = wl.machine_id
+         ${SQL_LOG_VOLUME_LATERAL}
          LEFT JOIN LATERAL (
-           SELECT
-             SUM(value::numeric) AS volume,
-             MAX(value::numeric) AS max_w
-           FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-         ) w ON TRUE
-         WHERE wl.log_date >= CURRENT_DATE - INTERVAL '90 days'
+           SELECT MAX(value::numeric) AS max_w
+           FROM jsonb_array_elements_text(COALESCE(wl.set_weights_kg, '[]'::jsonb)) t(value)
+           WHERE value::numeric > 0
+         ) mw ON TRUE
+         WHERE wl.log_date >= (NOW() AT TIME ZONE 'Asia/Seoul')::date - INTERVAL '90 days'
            ${gymFilter}
        ),
        by_user AS (
@@ -287,12 +289,30 @@ export const lifterDnaRepository = {
     const chronological = [...rows].reverse();
     for (const row of chronological) {
       const weights = parseWeights(row.set_weights_kg);
+      const completed = parseCompletedArray(row.set_completed);
       const setCount = row.set_count || weights.length || 0;
-      const volume = weights.reduce((a, b) => a + b, 0);
-      const maxW = weights.length ? Math.max(...weights) : 0;
-      totalSets += setCount;
+      const volume = performedVolumeFromLog({
+        setWeightsKg: weights,
+        setCompleted: completed,
+        setCount,
+      });
+      const useCompleted =
+        Array.isArray(completed) &&
+        completed.length === weights.length &&
+        completed.some((v) => v === true);
+      const countedWeights = weights.filter(
+        (w, i) =>
+          typeof w === 'number' &&
+          Number.isFinite(w) &&
+          w > 0 &&
+          (!useCompleted || completed![i] === true)
+      );
+      const maxW = countedWeights.length ? Math.max(...countedWeights) : 0;
+      totalSets += useCompleted
+        ? completed!.filter((v) => v === true).length
+        : setCount;
       totalVolume += volume;
-      for (const w of weights) {
+      for (const w of countedWeights) {
         weightSum += w;
         weightN += 1;
         if (w > maxWeight) maxWeight = w;
@@ -300,7 +320,9 @@ export const lifterDnaRepository = {
 
       const day = row.log_date.slice(0, 10);
       const dayAgg = dayMap.get(day) ?? { sets: 0, volume: 0 };
-      dayAgg.sets += setCount;
+      dayAgg.sets += useCompleted
+        ? completed!.filter((v) => v === true).length
+        : setCount;
       dayAgg.volume += volume;
       dayMap.set(day, dayAgg);
 
@@ -318,18 +340,22 @@ export const lifterDnaRepository = {
 
       const muscle = muscleOf(row);
       if (muscle) {
-        muscleCount.set(muscle, (muscleCount.get(muscle) ?? 0) + setCount);
-        if (UPPER.has(muscle)) upper += setCount;
-        if (LOWER.has(muscle)) lower += setCount;
-        if (PUSH.has(muscle)) push += setCount;
-        if (PULL.has(muscle)) pull += setCount;
+        const muscleSets = useCompleted
+          ? completed!.filter((v) => v === true).length
+          : setCount;
+        muscleCount.set(muscle, (muscleCount.get(muscle) ?? 0) + muscleSets);
+        if (UPPER.has(muscle)) upper += muscleSets;
+        if (LOWER.has(muscle)) lower += muscleSets;
+        if (PUSH.has(muscle)) push += muscleSets;
+        if (PULL.has(muscle)) pull += muscleSets;
       }
 
       const d = new Date(`${day}T12:00:00Z`);
       const wd = d.getUTCDay();
       weekdayCount.set(wd, (weekdayCount.get(wd) ?? 0) + 1);
 
-      const hour = new Date(row.updated_at || row.created_at).getHours();
+      // Workout time-of-day from created_at in Asia/Seoul (not edit-time updated_at).
+      const hour = seoulHour(row.created_at || row.updated_at);
       hourCount.set(hour, (hourCount.get(hour) ?? 0) + 1);
 
       const prevMax = machineMax.get(row.machine_code) ?? 0;

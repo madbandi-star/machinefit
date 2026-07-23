@@ -55,6 +55,13 @@ function text(ko: string, en: string): LocalizedText {
 }
 
 function logTotalWeightKg(log: GrowthTimelineLogInput): number {
+  // Only count weights the user actually logged on steppers.
+  // Never invent volume from AI recommended / adjusted seed when steppers are empty.
+  const hasLogged = Array.isArray(log.setWeightsKg)
+    ? log.setWeightsKg.some((w) => typeof w === 'number' && Number.isFinite(w) && w > 0)
+    : false;
+  if (!hasLogged) return 0;
+
   return computePerformedTotalWeightKg({
     setWeightsKg: log.setWeightsKg,
     setCompleted: log.setCompleted,
@@ -91,8 +98,18 @@ function yearKey(date: string): string {
   return date.slice(0, 4);
 }
 
-function maxWeight(weights: number[]): number {
-  return weights.reduce((m, w) => (w > m ? w : m), 0);
+function maxWeight(weights: number[], completed?: boolean[] | null): number {
+  const useCompleted =
+    Array.isArray(completed) &&
+    completed.length === weights.length &&
+    completed.some((v) => v === true);
+  let max = 0;
+  for (let i = 0; i < weights.length; i += 1) {
+    if (useCompleted && completed![i] !== true) continue;
+    const w = weights[i];
+    if (typeof w === 'number' && Number.isFinite(w) && w > max) max = w;
+  }
+  return max;
 }
 
 function pctChange(before: number, now: number): number | null {
@@ -152,7 +169,7 @@ function buildDayAggs(logsAsc: GrowthTimelineLogInput[]): {
 
   for (const log of logsAsc) {
     const vol = logTotalWeightKg(log);
-    const maxKg = maxWeight(log.setWeightsKg);
+    const maxKg = maxWeight(log.setWeightsKg, log.setCompleted);
     let day = byDay.get(log.logDate);
     if (!day) {
       day = {
@@ -312,7 +329,7 @@ function buildTimeline(
   for (const log of logsAsc) {
     workoutCount += 1;
     runningVolume += logTotalWeightKg(log);
-    const maxKg = maxWeight(log.setWeightsKg);
+    const maxKg = maxWeight(log.setWeightsKg, log.setCompleted);
     const prev = machineRunning.get(log.machineCode) ?? 0;
     if (maxKg > prev) {
       machineRunning.set(log.machineCode, maxKg);

@@ -1,8 +1,11 @@
 import type { LiveRankingPeriod } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { TtlCache } from '../utils/ttl-cache.js';
+import { SQL_LOG_VOLUME_LATERAL } from '../utils/mypage-workout-metrics.js';
 
 const ACTIVE_MINUTES = 30;
+/** Calendar date in Asia/Seoul (product timezone for My Page live board). */
+const SEOUL_TODAY = `(NOW() AT TIME ZONE 'Asia/Seoul')::date`;
 
 export interface LiveScopeFilter {
   countryCode?: string;
@@ -41,25 +44,25 @@ function geoWhere(filter: LiveScopeFilter, alias = 'ug'): { sql: string; params:
   };
 }
 
-/** Date filter on workout_logs.log_date (alias wl). Extends existing params. */
+/** Date filter on workout_logs.log_date (alias wl). Uses Asia/Seoul calendar. */
 function periodWhere(
   period: LiveRankingPeriod | 'today',
   params: unknown[],
   alias = 'wl'
 ): string {
   if (period === 'all') return '';
-  if (period === 'today') return ` AND ${alias}.log_date = CURRENT_DATE`;
+  if (period === 'today') return ` AND ${alias}.log_date = ${SEOUL_TODAY}`;
   if (period === 'week') {
-    return ` AND ${alias}.log_date >= (CURRENT_DATE - INTERVAL '6 days')`;
+    return ` AND ${alias}.log_date >= (${SEOUL_TODAY} - INTERVAL '6 days')`;
   }
   if (period === 'month') {
-    return ` AND ${alias}.log_date >= date_trunc('month', CURRENT_DATE)::date`;
+    return ` AND ${alias}.log_date >= date_trunc('month', ${SEOUL_TODAY})::date`;
   }
   if (period === 'year') {
-    return ` AND ${alias}.log_date >= date_trunc('year', CURRENT_DATE)::date`;
+    return ` AND ${alias}.log_date >= date_trunc('year', ${SEOUL_TODAY})::date`;
   }
   void params;
-  return ` AND ${alias}.log_date = CURRENT_DATE`;
+  return ` AND ${alias}.log_date = ${SEOUL_TODAY}`;
 }
 
 export const liveDashboardRepository = {
@@ -117,7 +120,8 @@ export const liveDashboardRepository = {
          (SELECT COUNT(DISTINCT wl2.user_id)::text
           FROM workout_logs wl2
           JOIN user_gyms ug2 ON ug2.id = wl2.gym_id
-          WHERE wl2.updated_at >= NOW() - (${activeParam} || ' minutes')::interval
+          WHERE wl2.log_date = ${SEOUL_TODAY}
+            AND wl2.updated_at >= NOW() - (${activeParam} || ' minutes')::interval
             ${whereExtra.replace(/\bug\./g, 'ug2.').replace(/\bwl\./g, 'wl2.')}
          ) AS active_now,
          COUNT(DISTINCT wl.user_id)::text AS completed_users,
@@ -128,11 +132,8 @@ export const liveDashboardRepository = {
          COUNT(DISTINCT ug.country_code)::text AS country_count
        FROM workout_logs wl
        JOIN user_gyms ug ON ug.id = wl.gym_id
-       LEFT JOIN LATERAL (
-         SELECT SUM(value::numeric) AS kg
-         FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-       ) vol ON TRUE
-       WHERE wl.log_date = CURRENT_DATE
+       ${SQL_LOG_VOLUME_LATERAL}
+       WHERE wl.log_date = ${SEOUL_TODAY}
          ${whereExtra}`,
       params
     );
@@ -197,16 +198,17 @@ export const liveDashboardRepository = {
          SELECT
            ${groupExpr} AS code,
            ${labelExpr} AS label,
-           COUNT(DISTINCT CASE WHEN wl.updated_at >= NOW() - interval '${ACTIVE_MINUTES} minutes' THEN wl.user_id END)::text AS active_now,
+           COUNT(DISTINCT CASE
+             WHEN wl.log_date = ${SEOUL_TODAY}
+              AND wl.updated_at >= NOW() - interval '${ACTIVE_MINUTES} minutes'
+             THEN wl.user_id
+           END)::text AS active_now,
            COALESCE(SUM(vol.kg), 0)::text AS volume_kg,
            COALESCE(SUM(wl.set_count), 0)::text AS sets
          FROM workout_logs wl
          JOIN user_gyms ug ON ug.id = wl.gym_id
          ${joinUser}
-         LEFT JOIN LATERAL (
-           SELECT SUM(value::numeric) AS kg
-           FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-         ) vol ON TRUE
+         ${SQL_LOG_VOLUME_LATERAL}
          WHERE 1=1
            ${dateSql}
            ${sql}
@@ -341,17 +343,16 @@ export const liveDashboardRepository = {
       sets: string;
       volume_kg: string;
     }>(
-      `SELECT EXTRACT(HOUR FROM wl.updated_at AT TIME ZONE 'Asia/Seoul')::int AS hour,
+      // Hour buckets use created_at (workout start), not updated_at (edit time).
+      // Only today's log_date in Seoul — editing an old log must not fill the heatmap.
+      `SELECT EXTRACT(HOUR FROM wl.created_at AT TIME ZONE 'Asia/Seoul')::int AS hour,
               COUNT(DISTINCT wl.user_id)::text AS active_users,
               COALESCE(SUM(wl.set_count),0)::text AS sets,
               COALESCE(SUM(vol.kg),0)::text AS volume_kg
        FROM workout_logs wl
        JOIN user_gyms ug ON ug.id = wl.gym_id
-       LEFT JOIN LATERAL (
-         SELECT SUM(value::numeric) AS kg
-         FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-       ) vol ON TRUE
-       WHERE wl.updated_at::date = (NOW() AT TIME ZONE 'Asia/Seoul')::date
+       ${SQL_LOG_VOLUME_LATERAL}
+       WHERE wl.log_date = ${SEOUL_TODAY}
          ${sql}
        GROUP BY 1
        ORDER BY 1`,
@@ -387,11 +388,9 @@ export const liveDashboardRepository = {
        JOIN user_gyms ug ON ug.id = wl.gym_id
        JOIN users u ON u.id = wl.user_id
        JOIN machines m ON m.id = wl.machine_id
-       LEFT JOIN LATERAL (
-         SELECT SUM(value::numeric) AS kg
-         FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-       ) vol ON TRUE
-       WHERE wl.updated_at >= NOW() - interval '24 hours'
+       ${SQL_LOG_VOLUME_LATERAL}
+       WHERE wl.log_date >= (${SEOUL_TODAY} - INTERVAL '1 day')
+         AND wl.updated_at >= NOW() - interval '24 hours'
          ${sql}
        ORDER BY wl.updated_at DESC
        LIMIT $${params.length + 1}`,

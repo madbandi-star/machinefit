@@ -1,6 +1,10 @@
 import type { AchievementUserStats, LocalizedText } from '@machinefit/shared';
 import { emptyAchievementStats } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import {
+  seoulDateKey,
+  SQL_LOG_VOLUME_LATERAL,
+} from '../utils/mypage-workout-metrics.js';
 
 type StatsRow = {
   total_volume_kg: string;
@@ -384,16 +388,11 @@ export const achievementRepository = {
       : '';
 
     const aggParams: unknown[] = [userId, ...scopeParams];
-    const [volumeResult, agg, datesResult, prCount] = await Promise.all([
-      pool.query<{ total_kg: string }>(
-        `SELECT COALESCE(total_kg, 0)::text AS total_kg
-         FROM lifted_volume_totals
-         WHERE scope = 'user' AND scope_id = $1`,
-        [userId]
-      ),
+    const [agg, datesResult, prCount] = await Promise.all([
       pool.query<{
         workout_count: string;
         session_days: string;
+        total_volume_kg: string;
         unique_machines: string;
         unique_brands: string;
         unique_gyms: string;
@@ -429,15 +428,18 @@ export const achievementRepository = {
              wl.updated_at,
              m.code AS machine_code,
              b.code AS brand_code,
-             EXTRACT(HOUR FROM COALESCE(wl.updated_at, wl.created_at) AT TIME ZONE 'Asia/Seoul')::int AS hour_kst
+             COALESCE(vol.kg, 0) AS volume_kg,
+             EXTRACT(HOUR FROM COALESCE(wl.created_at, wl.updated_at) AT TIME ZONE 'Asia/Seoul')::int AS hour_kst
            FROM workout_logs wl
            JOIN machines m ON m.id = wl.machine_id
            LEFT JOIN brands b ON b.id = m.brand_id
+           ${SQL_LOG_VOLUME_LATERAL}
            WHERE wl.user_id = $1${scopeFilter}
          )
          SELECT
            COUNT(*)::text AS workout_count,
            COUNT(DISTINCT log_date)::text AS session_days,
+           COALESCE(SUM(volume_kg), 0)::text AS total_volume_kg,
            COUNT(DISTINCT machine_id)::text AS unique_machines,
            COUNT(DISTINCT brand_code)::text AS unique_brands,
            COUNT(DISTINCT gym_id)::text AS unique_gyms,
@@ -484,7 +486,7 @@ export const achievementRepository = {
       computePrCount(pool, userId, options),
     ]);
 
-    const totalVolumeKg = parseFloat(volumeResult.rows[0]?.total_kg ?? '0') || 0;
+    const totalVolumeKg = parseFloat(agg.rows[0]?.total_volume_kg ?? '0') || 0;
     const row = agg.rows[0];
     const n = (v: string | undefined) => parseInt(v ?? '0', 10) || 0;
     const dates = datesResult.rows.map((r) => r.log_date);
@@ -566,9 +568,8 @@ function computeStreaks(datesAsc: string[]): { currentStreak: number; longestStr
     }
   }
 
-  const today = new Date();
-  const todayKey = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}-${String(today.getUTCDate()).padStart(2, '0')}`;
-  // Prefer KST "today" approx via local — for streak currency use last date proximity to UTC today ±1
+  const todayKey = seoulDateKey();
+  // Prefer KST "today" so streak doesn't drop overnight for Korea users.
   const last = datesAsc[datesAsc.length - 1]!;
   const lastDate = new Date(`${last}T00:00:00Z`);
   const todayDate = new Date(`${todayKey}T00:00:00Z`);

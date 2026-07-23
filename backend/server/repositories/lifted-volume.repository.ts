@@ -104,4 +104,19 @@ export const liftedVolumeRepository = {
       [userId, badgeIds]
     );
   },
+
+  /** Absolute replace for a scope total (My Page lifted-weight reconcile). */
+  async setTotal(scope: LiftedScope, scopeId: string, totalKg: number): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    const safe = Math.max(0, Math.round(totalKg * 100) / 100);
+    await pool.query(
+      `INSERT INTO lifted_volume_totals (scope, scope_id, total_kg, updated_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (scope, scope_id) DO UPDATE
+         SET total_kg = EXCLUDED.total_kg,
+             updated_at = NOW()`,
+      [scope, scopeId, safe]
+    );
+  },
 };

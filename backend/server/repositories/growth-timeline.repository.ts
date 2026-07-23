@@ -4,6 +4,11 @@ import type {
   GrowthTimelineSnapshot,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import {
+  parseCompletedArray,
+  parseWeightArray,
+  SQL_LOG_VOLUME_LATERAL,
+} from '../utils/mypage-workout-metrics.js';
 
 const LOG_LIMIT = 1500;
 const PEER_AVERAGES_TTL_MS = 10 * 60_000;
@@ -16,6 +21,7 @@ type LogRow = {
   log_date: string;
   set_count: number;
   set_weights_kg: number[] | string;
+  set_completed: boolean[] | string | null;
   created_at: string;
   machine_code: string;
   machine_name: Record<string, string> | string;
@@ -28,14 +34,7 @@ type LogRow = {
 };
 
 function parseWeights(raw: number[] | string): number[] {
-  if (Array.isArray(raw)) return raw.map(Number).filter((n) => Number.isFinite(n));
-  try {
-    const parsed = JSON.parse(String(raw)) as unknown;
-    if (Array.isArray(parsed)) return parsed.map(Number).filter((n) => Number.isFinite(n));
-  } catch {
-    /* ignore */
-  }
-  return [];
+  return parseWeightArray(raw);
 }
 
 function pickName(
@@ -75,6 +74,7 @@ export const growthTimelineRepository = {
               wl.log_date::text,
               wl.set_count,
               wl.set_weights_kg,
+              wl.set_completed,
               wl.created_at::text,
               m.code AS machine_code,
               m.name AS machine_name,
@@ -99,6 +99,7 @@ export const growthTimelineRepository = {
       logDate: row.log_date,
       setCount: row.set_count,
       setWeightsKg: parseWeights(row.set_weights_kg),
+      setCompleted: parseCompletedArray(row.set_completed),
       createdAt: row.created_at,
       machineCode: row.machine_code,
       machineName: pickName(row.machine_name, row.machine_code, locale),
@@ -135,10 +136,7 @@ export const growthTimelineRepository = {
                   (MAX(wl.log_date) - MIN(wl.log_date)) + 1
                 )::numeric AS span_days
          FROM workout_logs wl
-         LEFT JOIN LATERAL (
-           SELECT SUM(value::numeric) AS kg
-           FROM jsonb_array_elements_text(wl.set_weights_kg) t(value)
-         ) vol ON TRUE
+         ${SQL_LOG_VOLUME_LATERAL}
          GROUP BY wl.user_id
        )
        SELECT
