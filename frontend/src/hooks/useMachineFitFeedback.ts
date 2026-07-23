@@ -162,11 +162,6 @@ export function useMachineFitFeedback({
     await queryClient.invalidateQueries({ queryKey: ['history-settings-comparison'] });
   };
 
-  const invalidateRelated = async () => {
-    await queryClient.invalidateQueries({ queryKey: prefsQueryKey });
-    await invalidateHistoryComparison();
-  };
-
   const feedbackMutation = useMutation({
     mutationFn: (fitRating: FitRating) =>
       recommendationFeedbackApi.submit({
@@ -184,12 +179,16 @@ export function useMachineFitFeedback({
           activeSource?: SettingsActiveSource;
         };
         return {
+          // Keep whatever custom settings are already in cache (including just-saved
+          // adjusted weight). Do not blank them on rating-only updates.
           customSettings: current.customSettings ?? {},
           personalTipMemo: current.personalTipMemo ?? '',
           activeSource: nextSource,
         };
       });
-      await invalidateRelated();
+      // Do not invalidate machine-preferences here — a refetch can race with
+      // 「조정값 저장」 and flash the previous weight (70 after editing to 90).
+      await invalidateHistoryComparison();
       showToast(
         fitRating === 'bad'
           ? t('machines:feedback.savedBad')
@@ -275,14 +274,22 @@ export function useMachineFitFeedback({
 
   const handleRating = (fitRating: FitRating) => {
     if (fitRating === 'bad' && recommendedSettings) {
+      // Keep in-progress / already-shown adjusted values.
+      // Re-tapping 「셋팅값 조정 필요」 used to always reload savedPreferences and
+      // wipe a newer local edit (e.g. 70 saved → edit 90 → tap again → back to 70).
       setCustomSettings((prev) => {
+        if (hasMeaningfulCustomSettings(prev)) return prev;
+        const fromRef = customSettingsRef.current;
+        if (hasMeaningfulCustomSettings(fromRef)) return fromRef;
         if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
           return savedPreferences;
         }
-        if (Object.keys(prev).length > 0) return prev;
         return seedCustomSettingsFromRecommendation(recommendedSettings);
       });
-      setSettingsDirty(false);
+      setSettingsDirty((dirty) => {
+        if (dirty && hasMeaningfulCustomSettings(customSettingsRef.current)) return true;
+        return false;
+      });
     }
     feedbackMutation.mutate(fitRating);
   };
