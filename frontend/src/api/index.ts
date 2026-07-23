@@ -122,7 +122,6 @@ export interface MachinePreferenceInput {
   customSettings?: Partial<RecommendationSettings>;
   personalTipMemo?: string;
   activeSource?: SettingsActiveSource;
-  clearAdjusted?: boolean;
   gymId?: string;
   memberId?: string;
 }
@@ -168,7 +167,6 @@ export const machinePreferenceApi = {
       customSettings?: Partial<RecommendationSettings>;
       personalTipMemo?: string;
       activeSource?: SettingsActiveSource;
-      clearAdjusted?: boolean;
       gymId?: string;
       memberId?: string;
     } = {};
@@ -180,9 +178,6 @@ export const machinePreferenceApi = {
     }
     if (input.activeSource !== undefined) {
       body.activeSource = input.activeSource;
-    }
-    if (input.clearAdjusted !== undefined) {
-      body.clearAdjusted = input.clearAdjusted;
     }
     if (input.gymId) body.gymId = input.gymId;
     if (input.memberId) body.memberId = input.memberId;

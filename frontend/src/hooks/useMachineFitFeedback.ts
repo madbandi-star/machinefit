@@ -159,7 +159,6 @@ export function useMachineFitFeedback({
     mutationFn: (input: {
       customSettings?: Partial<RecommendationSettings>;
       activeSource?: SettingsActiveSource;
-      clearAdjusted?: boolean;
     }) =>
       machinePreferenceApi.upsert({
         machineCode,
@@ -167,17 +166,14 @@ export function useMachineFitFeedback({
         ...input,
       }),
     onSuccess: async (data, variables) => {
-      const nextSource: SettingsActiveSource = variables.clearAdjusted
-        ? 'recommended'
-        : (variables.activeSource ?? data.activeSource ?? 'adjusted');
+      const nextSource: SettingsActiveSource =
+        variables.activeSource ?? data.activeSource ?? 'adjusted';
       queryClient.setQueryData(prefsQueryKey, {
         customSettings: data.customSettings ?? variables.customSettings ?? {},
         personalTipMemo: data.personalTipMemo ?? '',
         activeSource: nextSource,
       });
-      if (variables.clearAdjusted) {
-        setCustomSettings({});
-      } else if (variables.customSettings) {
+      if (variables.customSettings) {
         setCustomSettings(variables.customSettings);
       }
       await invalidateRelated();
@@ -193,17 +189,11 @@ export function useMachineFitFeedback({
           };
           if (!row.preferencesByMachine) return prev;
           const nextPrefs = { ...row.preferencesByMachine };
-          if (variables.clearAdjusted) {
-            nextPrefs[machineCode] = {};
-          } else if (variables.customSettings) {
+          if (variables.customSettings) {
             nextPrefs[machineCode] = variables.customSettings;
           }
           const nextActive = { ...(row.activeSourceByMachine ?? {}) };
-          if (variables.clearAdjusted) {
-            nextActive[machineCode] = 'recommended';
-          } else {
-            nextActive[machineCode] = nextSource;
-          }
+          nextActive[machineCode] = nextSource;
           return {
             ...row,
             preferencesByMachine: nextPrefs,
@@ -211,22 +201,6 @@ export function useMachineFitFeedback({
           };
         }
       );
-      if (variables.clearAdjusted) {
-        showToast(t('machines:feedback.adjustedCleared'), 'success');
-        return;
-      }
-      if (variables.customSettings !== undefined) {
-        showToast(t('machines:feedback.preferencesSaved'), 'success');
-        return;
-      }
-      if (nextSource === 'recommended') {
-        showToast(t('machines:feedback.usingRecommended'), 'success');
-        return;
-      }
-      if (nextSource === 'adjusted') {
-        showToast(t('machines:feedback.usingAdjusted'), 'success');
-        return;
-      }
       showToast(t('machines:feedback.preferencesSaved'), 'success');
     },
     onError: () => showToast(t('machines:feedback.preferencesSaveFailed'), 'error'),
@@ -296,36 +270,6 @@ export function useMachineFitFeedback({
           },
         }
       ),
-    useRecommended: () => {
-      feedbackMutation.mutate('good');
-    },
-    useAdjusted: () => {
-      if (!hasSavedPreferences && recommendedSettings) {
-        const seeded = seedCustomSettingsFromRecommendation(recommendedSettings);
-        setCustomSettings(seeded);
-        preferenceMutation.mutate(
-          { customSettings: seeded, activeSource: 'adjusted' },
-          {
-            onSuccess: () => {
-              queryClient.setQueryData(feedbackQueryKey, 'bad');
-            },
-          }
-        );
-        return;
-      }
-      feedbackMutation.mutate('bad');
-    },
-    clearAdjusted: () => {
-      setCustomSettings({});
-      preferenceMutation.mutate(
-        { clearAdjusted: true },
-        {
-          onSuccess: () => {
-            queryClient.setQueryData(feedbackQueryKey, 'good');
-          },
-        }
-      );
-    },
     isFeedbackPending: feedbackMutation.isPending,
     isPreferencesPending: preferenceMutation.isPending,
   };
