@@ -264,6 +264,10 @@ export function RecommendationResultPage() {
                     isPending={
                       fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
                     }
+                    onSavePreferences={
+                      fitFeedback.showAdjustment ? fitFeedback.savePreferences : undefined
+                    }
+                    isPreferencesPending={fitFeedback.isPreferencesPending}
                   />
                 ) : null}
                 {isAuthenticated ? (
@@ -294,10 +298,6 @@ export function RecommendationResultPage() {
                   onCustomChange={
                     fitFeedback.showAdjustment ? fitFeedback.handleCustomChange : undefined
                   }
-                  onSavePreferences={
-                    fitFeedback.showAdjustment ? fitFeedback.savePreferences : undefined
-                  }
-                  isPreferencesPending={fitFeedback.isPreferencesPending}
                 />
               </div>
             </>

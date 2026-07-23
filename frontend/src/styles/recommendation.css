@@ -1636,11 +1636,32 @@
   margin-bottom: 0.55rem;
 }
 
+.fit-feedback-panel__intro-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+}
+
+.fit-feedback-panel__save-btn {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 1.875rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
 .fit-feedback-panel__title {
   margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-text);
+  line-height: 1.3;
 }
 
 .fit-feedback-panel__desc {
