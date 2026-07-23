@@ -267,14 +267,6 @@ export function RecommendationResultPage() {
                         : result.adjustedSettings
                     }
                     formatWeight={formatWeight}
-                    onUseRecommended={fitFeedback.useRecommended}
-                    onUseAdjusted={fitFeedback.useAdjusted}
-                    onClearAdjusted={
-                      fitFeedback.hasSavedPreferences ? fitFeedback.clearAdjusted : undefined
-                    }
-                    isPending={
-                      fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
-                    }
                   />
                 ) : null}
                 <RecommendationSettingsPanel

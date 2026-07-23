@@ -1613,12 +1613,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.active-source-banner__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
 .fit-feedback-panel {
   margin-top: var(--space-md);
   margin-bottom: var(--space-sm);

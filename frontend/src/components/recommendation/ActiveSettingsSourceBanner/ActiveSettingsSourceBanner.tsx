@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, SettingsActiveSource } from '@machinefit/shared';
-import { hasMeaningfulCustomSettings } from '@machinefit/shared';
 import '@/styles/recommendation.css';
 
 interface ActiveSettingsSourceBannerProps {
@@ -8,10 +7,6 @@ interface ActiveSettingsSourceBannerProps {
   aiSettings?: RecommendationSettings | null;
   adjustedSettings?: Partial<RecommendationSettings> | null;
   formatWeight: (kg: number) => string;
-  onUseRecommended?: () => void;
-  onUseAdjusted?: () => void;
-  onClearAdjusted?: () => void;
-  isPending?: boolean;
 }
 
 export function ActiveSettingsSourceBanner({
@@ -19,13 +14,8 @@ export function ActiveSettingsSourceBanner({
   aiSettings,
   adjustedSettings,
   formatWeight,
-  onUseRecommended,
-  onUseAdjusted,
-  onClearAdjusted,
-  isPending = false,
 }: ActiveSettingsSourceBannerProps) {
   const { t } = useTranslation('machines');
-  const hasAdjusted = hasMeaningfulCustomSettings(adjustedSettings);
   const aiWeight = aiSettings?.recommendedWeightKg;
   const adjustedWeight = adjustedSettings?.recommendedWeightKg;
   // Banner shows the source currently applied for recommendations (activeSource),
@@ -68,39 +58,6 @@ export function ActiveSettingsSourceBanner({
               : t('feedback.valueUnavailable')}
           </strong>
         </div>
-      </div>
-
-      <div className="active-source-banner__actions">
-        {activeSource !== 'recommended' && onUseRecommended ? (
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled={isPending}
-            onClick={onUseRecommended}
-          >
-            {t('feedback.useRecommended')}
-          </button>
-        ) : null}
-        {activeSource !== 'adjusted' && onUseAdjusted ? (
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled={isPending}
-            onClick={onUseAdjusted}
-          >
-            {t('feedback.useAdjusted')}
-          </button>
-        ) : null}
-        {hasAdjusted && onClearAdjusted ? (
-          <button
-            type="button"
-            className="btn btn--ghost"
-            disabled={isPending}
-            onClick={onClearAdjusted}
-          >
-            {t('feedback.clearAdjusted')}
-          </button>
-        ) : null}
       </div>
     </section>
   );
