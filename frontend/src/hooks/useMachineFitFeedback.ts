@@ -88,9 +88,9 @@ export function useMachineFitFeedback({
   useEffect(() => {
     if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
       setCustomSettings(savedPreferences);
-      return;
     }
-    setCustomSettings({});
+    // Do not clear local edits when the server still has no prefs (e.g. right after
+    // tapping "needs adjustment" — invalidate would otherwise wipe seeded inputs).
   }, [savedPreferences]);
 
   useEffect(() => {
@@ -141,33 +141,43 @@ export function useMachineFitFeedback({
         ...preferenceScope,
         ...input,
       }),
-    onSuccess: async (_data, variables) => {
+    onSuccess: async (data, variables) => {
+      queryClient.setQueryData(prefsQueryKey, {
+        customSettings: data.customSettings ?? {},
+        personalTipMemo: data.personalTipMemo ?? '',
+        activeSource: data.activeSource ?? (variables.clearAdjusted ? 'recommended' : 'adjusted'),
+      });
+      if (variables.clearAdjusted) {
+        setCustomSettings({});
+      } else if (variables.customSettings) {
+        setCustomSettings(variables.customSettings);
+      }
       await invalidateRelated();
       // Keep history summary prefs in sync immediately after 조정값 저장.
       queryClient.setQueriesData(
         { queryKey: ['history-settings-comparison'] },
         (prev: unknown) => {
           if (!prev || typeof prev !== 'object') return prev;
-          const data = prev as {
+          const row = prev as {
             preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
             activeSourceByMachine?: Record<string, SettingsActiveSource>;
             feedbackByRecommendation?: Record<string, FitRating | null>;
           };
-          if (!data.preferencesByMachine) return prev;
-          const nextPrefs = { ...data.preferencesByMachine };
+          if (!row.preferencesByMachine) return prev;
+          const nextPrefs = { ...row.preferencesByMachine };
           if (variables.clearAdjusted) {
             nextPrefs[machineCode] = {};
           } else if (variables.customSettings) {
             nextPrefs[machineCode] = variables.customSettings;
           }
-          const nextActive = { ...(data.activeSourceByMachine ?? {}) };
+          const nextActive = { ...(row.activeSourceByMachine ?? {}) };
           if (variables.clearAdjusted) {
             nextActive[machineCode] = 'recommended';
           } else if (variables.activeSource) {
             nextActive[machineCode] = variables.activeSource;
           }
           return {
-            ...data,
+            ...row,
             preferencesByMachine: nextPrefs,
             activeSourceByMachine: nextActive,
           };
@@ -225,10 +235,16 @@ export function useMachineFitFeedback({
 
   const hasSavedPreferences = hasMeaningfulCustomSettings(savedPreferences);
   const showAdjustment = activeSource === 'adjusted' || savedRating === 'bad';
+  const displayAdjustedSettings = hasMeaningfulCustomSettings(customSettings)
+    ? customSettings
+    : hasSavedPreferences
+      ? savedPreferences
+      : undefined;
 
   return {
     savedRating,
     customSettings,
+    displayAdjustedSettings,
     activeSource,
     showAdjustment,
     hasSavedPreferences,

@@ -262,9 +262,7 @@ export function RecommendationResultPage() {
                     activeSource={fitFeedback.activeSource}
                     aiSettings={result.aiRecommendedSettings ?? result.settings}
                     adjustedSettings={
-                      fitFeedback.hasSavedPreferences
-                        ? fitFeedback.customSettings
-                        : result.adjustedSettings
+                      fitFeedback.displayAdjustedSettings ?? result.adjustedSettings
                     }
                     formatWeight={formatWeight}
                   />
