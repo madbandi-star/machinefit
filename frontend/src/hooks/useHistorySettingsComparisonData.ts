@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { MachineUserPreferences, RecommendationSettings } from '@machinefit/shared';
+import { hasMeaningfulCustomSettings } from '@machinefit/shared';
 import {
   machinePreferenceApi,
   recommendationFeedbackApi,
@@ -21,6 +22,7 @@ export function useHistorySettingsComparisonData(
   cards: HistoryRecordCard[],
   enabled: boolean
 ) {
+  const queryClient = useQueryClient();
   const { activeGymId } = useActiveGym();
   const { activeMemberId, isRealGym } = useActiveMember();
   const preferenceScope =
@@ -45,14 +47,19 @@ export function useHistorySettingsComparisonData(
     [cards]
   );
 
-  return useQuery({
-    queryKey: [
+  const queryKey = useMemo(
+    () => [
       'history-settings-comparison',
       machineCodes,
       recommendationIds,
       preferenceScope?.gymId,
       preferenceScope?.memberId,
     ],
+    [machineCodes, recommendationIds, preferenceScope?.gymId, preferenceScope?.memberId]
+  );
+
+  return useQuery({
+    queryKey,
     queryFn: async (): Promise<HistorySettingsComparisonData> => {
       const emptyPreferencesByMachine = Object.fromEntries(
         machineCodes.map((machineCode) => [machineCode, null])
@@ -75,7 +82,7 @@ export function useHistorySettingsComparisonData(
             : Promise.resolve(emptyFeedbackByRecommendation),
         ]);
 
-      return {
+      const fromServer: HistorySettingsComparisonData = {
         preferencesByMachine: Object.fromEntries(
           machineCodes.map((machineCode) => [
             machineCode,
@@ -94,6 +101,30 @@ export function useHistorySettingsComparisonData(
             feedbackByRecommendationResponse[recommendationId] ?? null,
           ])
         ),
+      };
+
+      // Keep live 조정횟수/중량 patches over a stale refetch (same race as machine prefs).
+      const cached = queryClient.getQueryData<HistorySettingsComparisonData>(queryKey);
+      if (!cached?.preferencesByMachine) return fromServer;
+
+      const preferencesByMachine = { ...fromServer.preferencesByMachine };
+      const activeSourceByMachine = { ...fromServer.activeSourceByMachine };
+      for (const machineCode of machineCodes) {
+        const local = cached.preferencesByMachine[machineCode];
+        if (!hasMeaningfulCustomSettings(local)) continue;
+        preferencesByMachine[machineCode] = {
+          ...(fromServer.preferencesByMachine[machineCode] ?? {}),
+          ...local,
+        };
+        if (cached.activeSourceByMachine?.[machineCode]) {
+          activeSourceByMachine[machineCode] = cached.activeSourceByMachine[machineCode];
+        }
+      }
+
+      return {
+        ...fromServer,
+        preferencesByMachine,
+        activeSourceByMachine,
       };
     },
     enabled: enabled && (machineCodes.length > 0 || recommendationIds.length > 0),

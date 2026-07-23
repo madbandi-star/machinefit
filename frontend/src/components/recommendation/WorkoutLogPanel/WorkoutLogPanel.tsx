@@ -74,6 +74,11 @@ interface WorkoutLogPanelProps {
   machineName?: string;
   recommendationId?: string;
   suggestedWeightKg?: number;
+  /**
+   * Reps for volume (총 볼륨/총 무게): 조정횟수 → 추천횟수.
+   * When omitted, falls back to voice-coach default target reps.
+   */
+  volumeReps?: number;
   isAuthenticated: boolean;
   variant?: 'default' | 'compact' | 'history';
   logDate?: string;
@@ -189,6 +194,7 @@ export function WorkoutLogPanel({
   machineName: _machineName,
   recommendationId,
   suggestedWeightKg,
+  volumeReps,
   isAuthenticated,
   variant = 'default',
   logDate: logDateProp,
@@ -406,15 +412,18 @@ export function WorkoutLogPanel({
 
   const existingLog = existingLogs?.[0];
   const isLogSaved = Boolean(existingLog);
+  const effectiveVolumeReps =
+    volumeReps != null && volumeReps > 0 ? volumeReps : voiceCoachTargetReps;
   const totalWeightKg = useMemo(
     () =>
       computePerformedTotalWeightKg({
         setWeightsKg: weights,
         setCompleted,
         sets: setCount,
-        recommendedReps: voiceCoachTargetReps,
+        // Prefer live 조정/추천 횟수 from parent; never stick on stale voice-coach default.
+        recommendedReps: effectiveVolumeReps,
       }),
-    [weights, setCompleted, setCount, voiceCoachTargetReps]
+    [weights, setCompleted, setCount, effectiveVolumeReps]
   );
   const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}`;
 

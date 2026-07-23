@@ -242,6 +242,8 @@ export function useMachineFitFeedback({
       setCustomSettings(nextCustom);
       customSettingsRef.current = nextCustom;
       // Keep history summary prefs in sync immediately after 조정값 저장.
+      // Do NOT invalidate/refetch here — a stale GET can restore the previous
+      // 조정횟수 (same race we already avoid for machine-preferences).
       queryClient.setQueriesData(
         { queryKey: ['history-settings-comparison'] },
         (prev: unknown) => {
@@ -263,9 +265,6 @@ export function useMachineFitFeedback({
           };
         }
       );
-      // Do not refetch prefs here — response + setQueryData already match the UI.
-      // A concurrent/stale GET could briefly write the previous weight (90) back.
-      await invalidateHistoryComparison();
       setSettingsDirty(false);
       showToast(t('machines:feedback.preferencesSaved'), 'success');
     },
@@ -299,22 +298,27 @@ export function useMachineFitFeedback({
     queryClient.setQueriesData(
       { queryKey: ['history-settings-comparison'] },
       (prev: unknown) => {
-        if (!prev || typeof prev !== 'object') return prev;
-        const row = prev as {
-          preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
-          activeSourceByMachine?: Record<string, SettingsActiveSource>;
-          feedbackByRecommendation?: Record<string, FitRating | null>;
-        };
-        if (!row.preferencesByMachine) return prev;
+        const row =
+          prev && typeof prev === 'object'
+            ? (prev as {
+                preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+                activeSourceByMachine?: Record<string, SettingsActiveSource>;
+                feedbackByRecommendation?: Record<string, FitRating | null>;
+              })
+            : {
+                preferencesByMachine: {},
+                activeSourceByMachine: {},
+                feedbackByRecommendation: {},
+              };
         return {
           ...row,
           preferencesByMachine: {
-            ...row.preferencesByMachine,
+            ...(row.preferencesByMachine ?? {}),
             [machineCode]: nextCustom,
           },
           activeSourceByMachine: {
             ...(row.activeSourceByMachine ?? {}),
-            [machineCode]: 'adjusted',
+            [machineCode]: 'adjusted' as SettingsActiveSource,
           },
         };
       }
@@ -329,11 +333,19 @@ export function useMachineFitFeedback({
     setSettingsDirty(true);
     if (type === 'number') {
       const parsed = raw === '' ? undefined : Number.parseFloat(raw);
+      const value = parsed != null && Number.isFinite(parsed) ? parsed : undefined;
       setCustomSettings((prev) => {
-        const next = {
+        const next: Partial<RecommendationSettings> = {
           ...prev,
-          [key]: parsed != null && Number.isFinite(parsed) ? parsed : undefined,
+          [key]: value,
         };
+        // Single 조정횟수: keep min/max aligned so volume never sticks on the old max.
+        if (key === 'recommendedRepsMin') {
+          next.recommendedRepsMax = value;
+        }
+        if (key === 'recommendedRepsMax') {
+          next.recommendedRepsMin = value;
+        }
         customSettingsRef.current = next;
         // Live-patch so 총 볼륨 picks up 조정횟수 like 총 중량 picks up 조정중량.
         patchHistoryComparisonPrefs(next);

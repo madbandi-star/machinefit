@@ -25,7 +25,7 @@ import { useUserUnits } from '@/hooks/useUserUnits';
 import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
-import { isFreeWeightMachineCode, resolveWorkoutLogSeedWeightKg } from '@machinefit/shared';
+import { isFreeWeightMachineCode, resolveWorkoutLogSeedWeightKg, getEffectiveReps } from '@machinefit/shared';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -318,6 +318,14 @@ export function RecommendationResultPage() {
               recommendedWeight: (result.aiRecommendedSettings ?? result.settings)
                 .recommendedWeightKg,
             })}
+            volumeReps={getEffectiveReps(
+              fitFeedback.displayAdjustedSettings?.recommendedRepsMin ??
+                fitFeedback.displayAdjustedSettings?.recommendedRepsMax ??
+                fitFeedback.customSettings.recommendedRepsMin ??
+                fitFeedback.customSettings.recommendedRepsMax,
+              (result.aiRecommendedSettings ?? result.settings).recommendedRepsMin ??
+                (result.aiRecommendedSettings ?? result.settings).recommendedRepsMax
+            )}
             isAuthenticated={isAuthenticated}
             variant="history"
             logDate={resultLogDate}
