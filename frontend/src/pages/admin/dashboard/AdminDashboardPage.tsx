@@ -73,6 +73,11 @@ export function AdminDashboardPage() {
       title: t('muscleImages.nav'),
       desc: t('menu.muscleImagesDesc'),
     },
+    {
+      to: ROUTES.ADMIN_MACHINE_COVERS,
+      title: t('machineCovers.nav'),
+      desc: t('menu.machineCoversDesc'),
+    },
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
   ];
 

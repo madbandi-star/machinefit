@@ -15,3 +15,4 @@ export * from './gym-member.schema.js';
 export * from './gym-scope.schema.js';
 export * from './location.schema.js';
 export * from './muscle-group-image.schema.js';
+export * from './machine-cover-image.schema.js';

@@ -256,6 +256,7 @@ export interface FavoriteItem {
   machineName: string;
   brandName?: string;
   muscleGroup?: string;
+  primaryImageUrl?: string;
   recommendationId?: string;
   createdAt: string;
 }
@@ -268,6 +269,7 @@ export interface HistoryItem {
   brandName?: string;
   muscleGroup?: string;
   targetMuscleGroup?: string;
+  primaryImageUrl?: string;
   recommendationId: string;
   settings: RecommendationResult['settings'];
   viewedAt: string;

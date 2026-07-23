@@ -57,6 +57,7 @@ export function FavoriteMachinesRow() {
               muscleGroup={
                 shouldShowDefaultMachineMuscle(item.machineCode) ? item.muscleGroup : undefined
               }
+              imageUrl={item.primaryImageUrl}
               recommendationId={item.recommendationId}
             />
           ))}

@@ -71,6 +71,13 @@ export const QUERY_KEYS = {
   adminMotivationMedia: ['admin', 'motivation-media'] as const,
   adminMuscleGroupImages: ['admin', 'muscle-group-images'] as const,
   muscleGroupImages: ['muscle-group-images'] as const,
+  adminMachineCoverBrands: ['admin', 'machine-covers', 'brands'] as const,
+  adminMachineCovers: (params: {
+    q?: string;
+    brandCode?: string;
+    page?: number;
+    pageSize?: number;
+  }) => ['admin', 'machine-covers', params] as const,
   motivationMedia: ['motivation-media'] as const,
   userMotivationTracks: ['user', 'motivation-tracks'] as const,
   adminOwnerApplications: ['admin', 'owner-applications'] as const,

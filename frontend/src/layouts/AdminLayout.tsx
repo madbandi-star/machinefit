@@ -12,6 +12,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN_LOCATIONS, labelKey: 'locations.nav', end: false },
   { to: ROUTES.ADMIN_MOTIVATION, labelKey: 'motivation.nav', end: false },
   { to: ROUTES.ADMIN_MUSCLE_IMAGES, labelKey: 'muscleImages.nav', end: false },
+  { to: ROUTES.ADMIN_MACHINE_COVERS, labelKey: 'machineCovers.nav', end: false },
   { to: ROUTES.ADMIN_MODERATION, labelKey: 'moderation', end: false },
 ] as const;
 

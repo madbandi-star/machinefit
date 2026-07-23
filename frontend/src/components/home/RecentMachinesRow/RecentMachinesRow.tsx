@@ -82,6 +82,7 @@ export function RecentMachinesRow() {
               brandName={item.brandName}
               muscleGroup={item.muscleGroup}
               targetMuscleGroup={item.targetMuscleGroup}
+              imageUrl={item.primaryImageUrl}
               recommendationId={item.recommendationId}
             />
           ))}

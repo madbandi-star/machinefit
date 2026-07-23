@@ -12,6 +12,7 @@ export interface HistoryItem {
   brandName?: string;
   muscleGroup: string;
   targetMuscleGroup?: string;
+  primaryImageUrl?: string;
   recommendationId: string;
   settings: {
     seatPosition?: number;
@@ -89,6 +90,7 @@ export const historyRepository = {
       muscle_group: string;
       machine_name: Record<string, string>;
       brand_name: Record<string, string> | null;
+      primary_image_url: string | null;
       recommendation_id: string;
       seat_position: number | null;
       back_pad_position: number | null;
@@ -104,6 +106,13 @@ export const historyRepository = {
       `SELECT h.id, h.gym_id, h.member_id, h.machine_id, h.recommendation_id, h.viewed_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               b.name AS brand_name,
+              (
+                SELECT mi.image_url
+                FROM machine_images mi
+                WHERE mi.machine_id = m.id
+                ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                LIMIT 1
+              ) AS primary_image_url,
               r.seat_position, r.back_pad_position, r.foot_position,
               r.handle_position, r.rom_setting, r.recommended_weight_kg,
               r.recommended_reps_min, r.recommended_reps_max,
@@ -130,6 +139,7 @@ export const historyRepository = {
         : undefined,
       muscleGroup: row.muscle_group,
       targetMuscleGroup: row.target_muscle_group ?? undefined,
+      primaryImageUrl: row.primary_image_url ?? undefined,
       recommendationId: row.recommendation_id,
       settings: {
         seatPosition: row.seat_position ?? undefined,

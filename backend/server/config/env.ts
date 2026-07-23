@@ -31,6 +31,7 @@ const envSchema = z.object({
   MOTIVATION_AUDIO_BUCKET: z.string().default('motivation-audio'),
   MUSCLE_GROUP_IMAGE_MAX_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
   MUSCLE_GROUP_IMAGE_BUCKET: z.string().default('muscle-group-images'),
+  MACHINE_COVER_IMAGE_BUCKET: z.string().default('machine-cover-images'),
 });
 
 export const env = envSchema.parse({

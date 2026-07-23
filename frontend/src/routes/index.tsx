@@ -128,6 +128,10 @@ const adminMuscleImages = () =>
   import('@/pages/admin/muscle-group-images/AdminMuscleGroupImagesPage').then((m) => ({
     default: m.AdminMuscleGroupImagesPage,
   }));
+const adminMachineCovers = () =>
+  import('@/pages/admin/machine-covers/AdminMachineCoversPage').then((m) => ({
+    default: m.AdminMachineCoversPage,
+  }));
 const adminLocations = () =>
   import('@/pages/admin/locations/AdminLocationsPage').then((m) => ({
     default: m.AdminLocationsPage,
@@ -227,6 +231,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_LOCATIONS, element: lazyRoute(adminLocations) },
         { path: ROUTES.ADMIN_MOTIVATION, element: lazyRoute(adminMotivation) },
         { path: ROUTES.ADMIN_MUSCLE_IMAGES, element: lazyRoute(adminMuscleImages) },
+        { path: ROUTES.ADMIN_MACHINE_COVERS, element: lazyRoute(adminMachineCovers) },
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
       ],
     },

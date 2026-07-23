@@ -18,6 +18,9 @@ import type {
   MuscleGroupImageAsset,
   MuscleGroupImagesState,
   MuscleGroupImageKey,
+  MachineCoverImageAsset,
+  MachineCoverImagesPage,
+  MachineCoverBrandOption,
 } from '@machinefit/shared';
 import type {
   UpdateUserAdminInput,
@@ -182,6 +185,43 @@ export const adminApi = {
   deleteMuscleGroupImage: (muscleGroup: MuscleGroupImageKey) =>
     apiClient.delete<ApiResponse<MuscleGroupImageAsset>>(
       `/admin/muscle-group-images/${encodeURIComponent(muscleGroup)}`
+    ),
+
+  listMachineCoverBrands: () =>
+    apiClient.get<ApiResponse<{ brands: MachineCoverBrandOption[] }>>('/admin/machine-covers/brands'),
+
+  listMachineCovers: (params?: {
+    q?: string;
+    brandCode?: string;
+    page?: number;
+    pageSize?: number;
+  }) =>
+    apiClient.get<ApiResponse<MachineCoverImagesPage>>('/admin/machine-covers', { params }),
+
+  uploadMachineCover: (
+    machineCode: string,
+    file: File,
+    onProgress?: (percent: number) => void
+  ) => {
+    const form = new FormData();
+    form.append('file', file);
+    return apiClient.post<ApiResponse<MachineCoverImageAsset>>(
+      `/admin/machine-covers/${encodeURIComponent(machineCode)}/upload`,
+      form,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 120_000,
+        onUploadProgress: (event) => {
+          if (!onProgress || !event.total) return;
+          onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+        },
+      }
+    );
+  },
+
+  deleteMachineCover: (machineCode: string) =>
+    apiClient.delete<ApiResponse<{ machineCode: string; deleted: boolean }>>(
+      `/admin/machine-covers/${encodeURIComponent(machineCode)}`
     ),
 };
 

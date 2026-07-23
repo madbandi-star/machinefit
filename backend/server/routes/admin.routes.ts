@@ -3,6 +3,7 @@ import * as adminController from '../controllers/admin.controller.js';
 import * as motivationMediaController from '../controllers/motivation-media.controller.js';
 import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
 import * as muscleGroupImageController from '../controllers/muscle-group-image.controller.js';
+import * as machineCoverImageController from '../controllers/machine-cover-image.controller.js';
 import { authMiddleware, requireRole } from '../middlewares/auth.middleware.js';
 import {
   motivationAudioUpload,
@@ -30,6 +31,17 @@ adminRouter.post(
 adminRouter.delete(
   '/muscle-group-images/:muscleGroup',
   muscleGroupImageController.deleteMuscleGroupImage
+);
+adminRouter.get('/machine-covers/brands', machineCoverImageController.listMachineCoverBrands);
+adminRouter.get('/machine-covers', machineCoverImageController.listMachineCovers);
+adminRouter.post(
+  '/machine-covers/:machineCode/upload',
+  muscleGroupImageUpload,
+  machineCoverImageController.uploadMachineCover
+);
+adminRouter.delete(
+  '/machine-covers/:machineCode',
+  machineCoverImageController.deleteMachineCover
 );
 adminRouter.get('/users', adminController.listUsers);
 adminRouter.patch('/users/:id', adminController.updateUser);

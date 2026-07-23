@@ -9,10 +9,12 @@ import { publicApiBase } from '../utils/public-api-base.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audio');
 const LOCAL_MUSCLE_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/muscle-group-images');
+const LOCAL_MACHINE_COVER_ROOT = path.resolve(__dirname, '../../uploads/machine-covers');
 
 let supabase: SupabaseClient | null | undefined;
 let audioBucketReady: Promise<void> | null = null;
 let muscleBucketReady: Promise<void> | null = null;
+let machineCoverBucketReady: Promise<void> | null = null;
 
 function getSupabase(): SupabaseClient | null {
   if (supabase !== undefined) return supabase;
@@ -226,6 +228,95 @@ export const storageService = {
     }
     try {
       await unlink(path.join(LOCAL_MUSCLE_UPLOAD_ROOT, storagePath));
+    } catch {
+      // ignore missing local files
+    }
+  },
+
+  localMachineCoverRoot: LOCAL_MACHINE_COVER_ROOT,
+
+  async saveMachineCoverImage(params: {
+    machineCode: string;
+    kind: 'main' | 'thumb';
+    extension: string;
+    mimeType: string;
+    buffer: Buffer;
+    version: number;
+  }): Promise<StoredImageObject> {
+    const storagePath = `${params.machineCode}/${params.kind}-v${params.version}.${params.extension}`;
+    const client = getSupabase();
+
+    if (client) {
+      if (!machineCoverBucketReady) {
+        machineCoverBucketReady = (async () => {
+          const bucket = env.MACHINE_COVER_IMAGE_BUCKET;
+          const { data, error } = await client.storage.listBuckets();
+          if (error) {
+            throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+          }
+          const exists = data?.some((item) => item.name === bucket);
+          if (!exists) {
+            const created = await client.storage.createBucket(bucket, {
+              public: true,
+              fileSizeLimit: env.MUSCLE_GROUP_IMAGE_MAX_BYTES,
+              allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+            });
+            if (created.error && !/already exists/i.test(created.error.message)) {
+              throw new AppError(
+                500,
+                'STORAGE_ERROR',
+                'Could not create machine-cover storage bucket',
+                created.error.message
+              );
+            }
+          }
+        })().catch((err) => {
+          machineCoverBucketReady = null;
+          throw err;
+        });
+      }
+      await machineCoverBucketReady;
+
+      const { error } = await client.storage
+        .from(env.MACHINE_COVER_IMAGE_BUCKET)
+        .upload(storagePath, params.buffer, {
+          contentType: params.mimeType || 'image/webp',
+          upsert: true,
+          cacheControl: '31536000',
+        });
+      if (error) {
+        throw new AppError(500, 'UPLOAD_FAILED', 'Could not save the image file', error.message);
+      }
+      const { data } = client.storage.from(env.MACHINE_COVER_IMAGE_BUCKET).getPublicUrl(storagePath);
+      return {
+        storagePath,
+        publicUrl: data.publicUrl,
+        provider: 'supabase',
+      };
+    }
+
+    const absolute = path.join(LOCAL_MACHINE_COVER_ROOT, storagePath);
+    await mkdir(path.dirname(absolute), { recursive: true });
+    await writeFile(absolute, params.buffer);
+    return {
+      storagePath,
+      publicUrl: `${publicApiBase()}/media/machine-covers/${storagePath
+        .split('/')
+        .map(encodeURIComponent)
+        .join('/')}`,
+      provider: 'local',
+    };
+  },
+
+  async deleteMachineCoverImage(storagePath: string | null | undefined): Promise<void> {
+    if (!storagePath) return;
+    const client = getSupabase();
+    if (client) {
+      await client.storage.from(env.MACHINE_COVER_IMAGE_BUCKET).remove([storagePath]);
+      return;
+    }
+    try {
+      await unlink(path.join(LOCAL_MACHINE_COVER_ROOT, storagePath));
     } catch {
       // ignore missing local files
     }

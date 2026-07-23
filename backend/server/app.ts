@@ -9,6 +9,7 @@ import { rateLimitMiddleware } from './middlewares/rate-limit.middleware.js';
 import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.js';
 import { storageService } from './services/storage.service.js';
 import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
+import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
 
 export function createApp() {
   const app = express();
@@ -57,6 +58,22 @@ export function createApp() {
   app.use(
     `${env.API_BASE_PATH}/media/muscle-group-images`,
     express.static(storageService.localMuscleUploadRoot, {
+      fallthrough: false,
+      maxAge: '7d',
+    })
+  );
+
+  // Durable machine cover images from Postgres.
+  app.get(
+    `${env.API_BASE_PATH}/media/machine-covers/:machineCode/:kind`,
+    (req, res, next) => {
+      void serveMachineCoverImage(req, res, next);
+    }
+  );
+
+  app.use(
+    `${env.API_BASE_PATH}/media/machine-covers`,
+    express.static(storageService.localMachineCoverRoot, {
       fallthrough: false,
       maxAge: '7d',
     })

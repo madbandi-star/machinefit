@@ -11,6 +11,7 @@ export interface FavoriteItem {
   machineName: string;
   brandName?: string;
   muscleGroup: string;
+  primaryImageUrl?: string;
   recommendationId?: string;
   createdAt: string;
 }
@@ -52,12 +53,20 @@ export const favoriteRepository = {
       muscle_group: string;
       machine_name: Record<string, string>;
       brand_name: Record<string, string> | null;
+      primary_image_url: string | null;
       recommendation_id: string | null;
       created_at: string;
     }>(
       `SELECT f.id, f.gym_id, f.member_id, f.machine_id, f.recommendation_id, f.created_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
-              b.name AS brand_name
+              b.name AS brand_name,
+              (
+                SELECT mi.image_url
+                FROM machine_images mi
+                WHERE mi.machine_id = m.id
+                ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                LIMIT 1
+              ) AS primary_image_url
        FROM favorites f
        JOIN machines m ON m.id = f.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
@@ -77,6 +86,7 @@ export const favoriteRepository = {
         ? pickLocalized(row.brand_name, locale) ?? undefined
         : undefined,
       muscleGroup: row.muscle_group,
+      primaryImageUrl: row.primary_image_url ?? undefined,
       recommendationId: row.recommendation_id ?? undefined,
       createdAt: row.created_at,
     }));

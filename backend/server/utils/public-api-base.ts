@@ -13,3 +13,7 @@ export function publicApiBase(): string {
 export function muscleGroupMediaUrl(muscleGroup: string, kind: 'main' | 'thumb'): string {
   return `${publicApiBase()}/media/muscle-group-images/${encodeURIComponent(muscleGroup)}/${kind}`;
 }
+
+export function machineCoverMediaUrl(machineCode: string, kind: 'main' | 'thumb'): string {
+  return `${publicApiBase()}/media/machine-covers/${encodeURIComponent(machineCode)}/${kind}`;
+}
