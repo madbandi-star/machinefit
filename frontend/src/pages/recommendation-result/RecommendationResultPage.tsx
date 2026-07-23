@@ -261,7 +261,9 @@ export function RecommendationResultPage() {
                   <FitFeedbackPanel
                     savedRating={fitFeedback.savedRating}
                     onRating={fitFeedback.handleRating}
-                    isPending={fitFeedback.isFeedbackPending}
+                    isPending={
+                      fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
+                    }
                   />
                 ) : null}
                 {isAuthenticated ? (
@@ -269,11 +271,14 @@ export function RecommendationResultPage() {
                     activeSource={fitFeedback.activeSource}
                     aiSettings={result.aiRecommendedSettings ?? result.settings}
                     adjustedSettings={
-                      fitFeedback.displayAdjustedSettings ?? result.adjustedSettings
+                      fitFeedback.showAdjustment
+                        ? (fitFeedback.displayAdjustedSettings ?? result.adjustedSettings)
+                        : null
                     }
                     formatWeight={formatWeight}
+                    showAdjustedCompare={fitFeedback.showAdjustment}
                     pendingAdjustment={
-                      fitFeedback.activeSource === 'adjusted' &&
+                      fitFeedback.showAdjustment &&
                       fitFeedback.customSettings.recommendedWeightKg == null
                     }
                   />
@@ -283,9 +288,15 @@ export function RecommendationResultPage() {
                   weightBasis={result.weightBasis}
                   variant="history"
                   showAdjustment={fitFeedback.showAdjustment}
-                  customSettings={fitFeedback.customSettings}
-                  onCustomChange={fitFeedback.handleCustomChange}
-                  onSavePreferences={fitFeedback.savePreferences}
+                  customSettings={
+                    fitFeedback.showAdjustment ? fitFeedback.customSettings : undefined
+                  }
+                  onCustomChange={
+                    fitFeedback.showAdjustment ? fitFeedback.handleCustomChange : undefined
+                  }
+                  onSavePreferences={
+                    fitFeedback.showAdjustment ? fitFeedback.savePreferences : undefined
+                  }
                   isPreferencesPending={fitFeedback.isPreferencesPending}
                 />
               </div>

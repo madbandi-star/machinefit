@@ -93,7 +93,7 @@ export function HistoryRecordCard({
     enabled: canUseFitFeedback && expanded,
   });
   const savedRating = fitFeedback.savedRating ?? initialFitRating;
-  const showAdjustment = fitFeedback.showAdjustment || savedRating === 'bad';
+  const showAdjustment = fitFeedback.showAdjustment;
   /** Prefer editing after tapping 셋팅값 조정 필요; after 선호값 저장 show read-only compare. */
   const [isEditingAdjustments, setIsEditingAdjustments] = useState(false);
   const [prefsSavedLocally, setPrefsSavedLocally] = useState(false);
@@ -325,7 +325,7 @@ export function HistoryRecordCard({
                 else setIsEditingAdjustments(false);
                 fitFeedback.handleRating(rating);
               }}
-              isPending={fitFeedback.isFeedbackPending}
+              isPending={fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending}
             />
           ) : null}
           <div className="history-record-card__section">

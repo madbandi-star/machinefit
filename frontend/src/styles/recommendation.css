@@ -1586,6 +1586,10 @@
   gap: 0.5rem;
 }
 
+.active-source-banner__compare--single {
+  grid-template-columns: 1fr;
+}
+
 .active-source-banner__col {
   display: flex;
   flex-direction: column;

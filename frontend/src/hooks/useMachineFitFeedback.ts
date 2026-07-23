@@ -240,12 +240,17 @@ export function useMachineFitFeedback({
     }));
   };
 
-  const showAdjustment = activeSource === 'adjusted' || savedRating === 'bad';
-  const displayAdjustedSettings = hasMeaningfulCustomSettings(customSettings)
-    ? customSettings
-    : hasSavedPreferences
-      ? savedPreferences
-      : undefined;
+  // Only show 추천/조정 비교 when NOT on "추천값 잘맞음".
+  // Saved adjusted weights may still exist in prefs, but good rating means AI-only UI.
+  const showAdjustment =
+    savedRating !== 'good' && (savedRating === 'bad' || activeSource === 'adjusted');
+  const displayAdjustedSettings = showAdjustment
+    ? hasMeaningfulCustomSettings(customSettings)
+      ? customSettings
+      : hasSavedPreferences
+        ? savedPreferences
+        : undefined
+    : undefined;
 
   return {
     savedRating,

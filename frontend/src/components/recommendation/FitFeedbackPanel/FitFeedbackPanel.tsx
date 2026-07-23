@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FitRating } from '@/api';
 import { Icon } from '@/components/icons/Icon';
@@ -14,17 +14,25 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
   const { t } = useTranslation('machines');
   const goodRef = useRef<HTMLButtonElement>(null);
   const badRef = useRef<HTMLButtonElement>(null);
+  const wasPendingRef = useRef(false);
 
   const selectRating = (fitRating: FitRating) => {
     if (isPending) return;
     onRating(fitRating);
-    // Keep focus on the chosen button. Native `disabled` during pending would
-    // move focus to the sibling ("셋팅값 조정필요"), which feels like that
-    // button was activated.
-    requestAnimationFrame(() => {
-      (fitRating === 'good' ? goodRef : badRef).current?.focus({ preventScroll: true });
-    });
   };
+
+  // After the request finishes, restore focus to the selected button.
+  // Native `disabled` during pending moves focus away (often to the sibling).
+  useEffect(() => {
+    if (isPending) {
+      wasPendingRef.current = true;
+      return;
+    }
+    if (!wasPendingRef.current) return;
+    wasPendingRef.current = false;
+    const target = savedRating === 'good' ? goodRef.current : savedRating === 'bad' ? badRef.current : null;
+    target?.focus({ preventScroll: true });
+  }, [isPending, savedRating]);
 
   return (
     <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
@@ -38,7 +46,7 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'good' ? ' fit-feedback-panel__btn--active' : ''}`}
           onClick={() => selectRating('good')}
-          aria-disabled={isPending || undefined}
+          disabled={isPending}
           aria-pressed={savedRating === 'good'}
         >
           <Icon name="circleCheck" size={20} />
@@ -49,7 +57,7 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}`}
           onClick={() => selectRating('bad')}
-          aria-disabled={isPending || undefined}
+          disabled={isPending}
           aria-pressed={savedRating === 'bad'}
         >
           <Icon name="sliders" size={20} />

@@ -8,6 +8,8 @@ interface ActiveSettingsSourceBannerProps {
   adjustedSettings?: Partial<RecommendationSettings> | null;
   formatWeight: (kg: number) => string;
   pendingAdjustment?: boolean;
+  /** When false, only the AI recommended value is shown (e.g. 추천값 잘맞음). */
+  showAdjustedCompare?: boolean;
 }
 
 export function ActiveSettingsSourceBanner({
@@ -16,14 +18,16 @@ export function ActiveSettingsSourceBanner({
   adjustedSettings,
   formatWeight,
   pendingAdjustment = false,
+  showAdjustedCompare = true,
 }: ActiveSettingsSourceBannerProps) {
   const { t } = useTranslation('machines');
   const aiWeight = aiSettings?.recommendedWeightKg;
   const adjustedWeight = adjustedSettings?.recommendedWeightKg;
+  const showCompare = showAdjustedCompare && activeSource === 'adjusted';
   // Banner shows the source currently applied for recommendations (activeSource),
   // not the stats-calculation rule (adjusted-first).
   const activeWeight =
-    activeSource === 'adjusted' && adjustedWeight != null ? adjustedWeight : aiWeight;
+    showCompare && adjustedWeight != null ? adjustedWeight : aiWeight;
   const adjustedLabel =
     adjustedWeight != null
       ? formatWeight(adjustedWeight)
@@ -36,7 +40,7 @@ export function ActiveSettingsSourceBanner({
       <p className="active-source-banner__status">
         <span className="active-source-banner__kicker">{t('feedback.currentlyApplied')}</span>
         <strong>
-          {activeSource === 'adjusted'
+          {showCompare
             ? t('feedback.usingAdjustedBadge')
             : t('feedback.usingRecommendedBadge')}
         </strong>
@@ -47,22 +51,29 @@ export function ActiveSettingsSourceBanner({
         ) : null}
       </p>
 
-      <div className="active-source-banner__compare">
-        <div
-          className={`active-source-banner__col${activeSource === 'recommended' ? ' is-active' : ''}`}
-        >
-          <span className="active-source-banner__col-label">{t('feedback.aiRecommended')}</span>
-          <strong>
-            {aiWeight != null ? formatWeight(aiWeight) : t('feedback.valueUnavailable')}
-          </strong>
+      {showCompare ? (
+        <div className="active-source-banner__compare">
+          <div className="active-source-banner__col">
+            <span className="active-source-banner__col-label">{t('feedback.aiRecommended')}</span>
+            <strong>
+              {aiWeight != null ? formatWeight(aiWeight) : t('feedback.valueUnavailable')}
+            </strong>
+          </div>
+          <div className="active-source-banner__col is-active">
+            <span className="active-source-banner__col-label">{t('feedback.userAdjusted')}</span>
+            <strong className={adjustedWeight == null ? 'is-muted' : undefined}>{adjustedLabel}</strong>
+          </div>
         </div>
-        <div
-          className={`active-source-banner__col${activeSource === 'adjusted' ? ' is-active' : ''}`}
-        >
-          <span className="active-source-banner__col-label">{t('feedback.userAdjusted')}</span>
-          <strong className={adjustedWeight == null ? 'is-muted' : undefined}>{adjustedLabel}</strong>
+      ) : (
+        <div className="active-source-banner__compare active-source-banner__compare--single">
+          <div className="active-source-banner__col is-active">
+            <span className="active-source-banner__col-label">{t('feedback.aiRecommended')}</span>
+            <strong>
+              {aiWeight != null ? formatWeight(aiWeight) : t('feedback.valueUnavailable')}
+            </strong>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
