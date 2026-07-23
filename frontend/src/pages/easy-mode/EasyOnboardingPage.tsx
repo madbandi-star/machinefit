@@ -36,42 +36,48 @@ export function EasyOnboardingPage() {
 
   return (
     <div className="easy-onboarding">
-      <p className="easy-home__eyebrow">{t('easyMode.badge')}</p>
-      <h1 className="easy-heading">{t('easyMode.onboardingTitle')}</h1>
-      <p className="easy-sub">{t('easyMode.onboardingLead')}</p>
+      <div className="easy-onboarding__inner">
+        <div className="easy-section-head easy-section-head--center">
+          <p className="easy-home__eyebrow">{t('easyMode.badge')}</p>
+          <h1 className="easy-heading">{t('easyMode.onboardingTitle')}</h1>
+          <p className="easy-sub">{t('easyMode.onboardingLead')}</p>
+        </div>
 
-      <div className="easy-onboarding__steps" aria-hidden>
-        <div className="easy-onboarding__step">
-          <strong>1</strong>
-          <span>{t('easyMode.stepMachine')}</span>
+        <div className="easy-onboarding__steps" aria-hidden>
+          <div className="easy-onboarding__step">
+            <strong>1</strong>
+            <span>{t('easyMode.stepMachine')}</span>
+          </div>
+          <span className="easy-onboarding__arrow">→</span>
+          <div className="easy-onboarding__step">
+            <strong>2</strong>
+            <span>{t('easyMode.stepRecommend')}</span>
+          </div>
+          <span className="easy-onboarding__arrow">→</span>
+          <div className="easy-onboarding__step">
+            <strong>3</strong>
+            <span>{t('easyMode.stepLog')}</span>
+          </div>
         </div>
-        <span className="easy-onboarding__arrow">→</span>
-        <div className="easy-onboarding__step">
-          <strong>2</strong>
-          <span>{t('easyMode.stepRecommend')}</span>
-        </div>
-        <span className="easy-onboarding__arrow">→</span>
-        <div className="easy-onboarding__step">
-          <strong>3</strong>
-          <span>{t('easyMode.stepLog')}</span>
+
+        <ul className="easy-onboarding__bullets">
+          <li>{t('easyMode.onboardingBullet1')}</li>
+          <li>{t('easyMode.onboardingBullet2')}</li>
+          <li>{t('easyMode.onboardingBullet3')}</li>
+        </ul>
+
+        <div className="easy-onboarding__actions">
+          <button type="button" className="easy-btn easy-btn--primary easy-btn--hero" onClick={finish}>
+            {t('easyMode.onboardingCta')}
+          </button>
+          <button type="button" className="easy-btn easy-btn--ghost" onClick={backToNormal}>
+            {t('easyMode.onboardingBackNormal')}
+          </button>
+          <Link to={ROUTES.MY_PAGE} className="easy-btn easy-btn--ghost">
+            {t('easyMode.goMyPage')}
+          </Link>
         </div>
       </div>
-
-      <ul className="easy-onboarding__bullets">
-        <li>{t('easyMode.onboardingBullet1')}</li>
-        <li>{t('easyMode.onboardingBullet2')}</li>
-        <li>{t('easyMode.onboardingBullet3')}</li>
-      </ul>
-
-      <button type="button" className="easy-btn easy-btn--primary easy-btn--hero" onClick={finish}>
-        {t('easyMode.onboardingCta')}
-      </button>
-      <button type="button" className="easy-btn easy-btn--ghost" onClick={backToNormal}>
-        {t('easyMode.onboardingBackNormal')}
-      </button>
-      <Link to={ROUTES.MY_PAGE} className="easy-btn easy-btn--ghost">
-        {t('easyMode.goMyPage')}
-      </Link>
     </div>
   );
 }

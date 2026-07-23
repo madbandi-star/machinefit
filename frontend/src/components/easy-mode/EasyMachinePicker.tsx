@@ -124,7 +124,7 @@ export function EasyMachinePicker({
 
   return (
     <div className="easy-picker" role="dialog" aria-modal="true" aria-label={t('easyMode.pickerTitle')}>
-      <div className="easy-picker__top">
+      <header className="easy-picker__top">
         <button
           type="button"
           className="easy-shell__icon-btn"
@@ -151,7 +151,7 @@ export function EasyMachinePicker({
         >
           ✕
         </button>
-      </div>
+      </header>
 
       <div className="easy-picker__body">
         {detailLoading ? (

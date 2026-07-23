@@ -37,27 +37,39 @@ export function EasyWizardShell({
 
   return (
     <div className="easy-shell">
-      <div className="easy-shell__top">
-        <button type="button" className="easy-shell__icon-btn" onClick={onBack} aria-label={t('easyMode.back')}>
-          ←
-        </button>
-        <h1 className="easy-shell__title">{t('easyMode.wizardTitle')}</h1>
-        <button type="button" className="easy-shell__icon-btn" onClick={onClose} aria-label={t('easyMode.close')}>
-          ✕
-        </button>
-      </div>
+      <header className="easy-shell__chrome">
+        <div className="easy-shell__top">
+          <button
+            type="button"
+            className="easy-shell__icon-btn"
+            onClick={onBack}
+            aria-label={t('easyMode.back')}
+          >
+            ←
+          </button>
+          <h1 className="easy-shell__title">{t('easyMode.wizardTitle')}</h1>
+          <button
+            type="button"
+            className="easy-shell__icon-btn"
+            onClick={onClose}
+            aria-label={t('easyMode.close')}
+          >
+            ✕
+          </button>
+        </div>
 
-      <div className="easy-shell__progress" aria-hidden>
-        {[1, 2, 3].map((n) => (
-          <div
-            key={n}
-            className={`easy-shell__dot${n <= step ? ' easy-shell__dot--on' : ''}`}
-          />
-        ))}
-      </div>
-      <p className="easy-shell__steps-label">
-        {step}/3 · {stepLabels[step - 1]}
-      </p>
+        <div className="easy-shell__progress" aria-hidden>
+          {[1, 2, 3].map((n) => (
+            <div
+              key={n}
+              className={`easy-shell__dot${n <= step ? ' easy-shell__dot--on' : ''}`}
+            />
+          ))}
+        </div>
+        <p className="easy-shell__steps-label">
+          {step}/3 · {stepLabels[step - 1]}
+        </p>
+      </header>
 
       <div className="easy-shell__body">{children}</div>
 

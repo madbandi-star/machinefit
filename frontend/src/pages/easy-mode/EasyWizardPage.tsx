@@ -300,31 +300,32 @@ export function EasyWizardPage() {
   if (step === 'done') {
     return (
       <div className="easy-done">
-        <div className="easy-done__check" aria-hidden>
-          ✓
+        <div className="easy-done__inner">
+          <div className="easy-done__check" aria-hidden>
+            ✓
+          </div>
+          <h1 className="easy-heading">{t('easyMode.doneTitle')}</h1>
+          <p className="easy-sub">
+            {t('easyMode.doneSummary', { name: savedMachineName || '—' })}
+          </p>
+          <div className="easy-done__actions">
+            <button
+              type="button"
+              className="easy-btn easy-btn--primary"
+              onClick={resetToMachineStep}
+            >
+              {t('easyMode.doneAnother')}
+            </button>
+            <button
+              type="button"
+              className="easy-btn easy-btn--secondary"
+              onClick={() => navigate(ROUTES.EASY)}
+            >
+              {t('easyMode.doneHome')}
+            </button>
+          </div>
+          <p className="easy-sub easy-sub--soft">{t('easyMode.doneFoot')}</p>
         </div>
-        <h1 className="easy-heading">{t('easyMode.doneTitle')}</h1>
-        <p className="easy-sub">
-          {t('easyMode.doneSummary', { name: savedMachineName || '—' })}
-        </p>
-        <button
-          type="button"
-          className="easy-btn easy-btn--primary"
-          onClick={resetToMachineStep}
-        >
-          {t('easyMode.doneAnother')}
-        </button>
-        <button
-          type="button"
-          className="easy-btn easy-btn--secondary"
-          style={{ marginTop: '0.5rem' }}
-          onClick={() => navigate(ROUTES.EASY)}
-        >
-          {t('easyMode.doneHome')}
-        </button>
-        <p className="easy-sub" style={{ marginTop: '1rem' }}>
-          {t('easyMode.doneFoot')}
-        </p>
       </div>
     );
   }
@@ -332,23 +333,27 @@ export function EasyWizardPage() {
   if (step === 'rate') {
     return (
       <div className="easy-shell">
-        <div className="easy-shell__top">
-          <span className="easy-shell__icon-btn" style={{ visibility: 'hidden' }} aria-hidden>
-            ←
-          </span>
-          <h1 className="easy-shell__title">{t('easyMode.rateTitle')}</h1>
-          <button
-            type="button"
-            className="easy-shell__icon-btn"
-            onClick={() => setStep('done')}
-            aria-label={t('easyMode.close')}
-          >
-            ✕
-          </button>
-        </div>
+        <header className="easy-shell__chrome">
+          <div className="easy-shell__top">
+            <span className="easy-shell__icon-btn easy-shell__icon-btn--spacer" aria-hidden>
+              ←
+            </span>
+            <h1 className="easy-shell__title">{t('easyMode.rateTitle')}</h1>
+            <button
+              type="button"
+              className="easy-shell__icon-btn"
+              onClick={() => setStep('done')}
+              aria-label={t('easyMode.close')}
+            >
+              ✕
+            </button>
+          </div>
+        </header>
         <div className="easy-shell__body">
-          <h2 className="easy-heading">{savedMachineName || selected?.name}</h2>
-          <p className="easy-sub">{t('easyMode.fitPromptAfter')}</p>
+          <div className="easy-section-head">
+            <h2 className="easy-heading">{savedMachineName || selected?.name}</h2>
+            <p className="easy-sub">{t('easyMode.fitPromptAfter')}</p>
+          </div>
           <div className="easy-fit">
             <button
               type="button"
@@ -366,27 +371,33 @@ export function EasyWizardPage() {
             </button>
           </div>
           {fitRating === 'bad' ? (
-            <div className="easy-card">
-              <p className="easy-list__label">{t('easyMode.adjustWeight')}</p>
-              <NumericStepper
-                value={adjWeight}
-                onChange={setAdjWeight}
-                min={0}
-                max={999}
-                step={5}
-                unit="kg"
-                ariaLabel={t('easyMode.adjustWeight')}
-              />
-              <p className="easy-list__label">{t('easyMode.adjustReps')}</p>
-              <NumericStepper
-                value={adjReps}
-                onChange={setAdjReps}
-                min={1}
-                max={50}
-                step={1}
-                unit={t('easyMode.repsUnit')}
-                ariaLabel={t('easyMode.adjustReps')}
-              />
+            <div className="easy-card easy-card--stack">
+              <div className="easy-field">
+                <p className="easy-list__label">{t('easyMode.adjustWeight')}</p>
+                <NumericStepper
+                  value={adjWeight}
+                  onChange={setAdjWeight}
+                  min={0}
+                  max={999}
+                  step={5}
+                  unit="kg"
+                  size="compact"
+                  ariaLabel={t('easyMode.adjustWeight')}
+                />
+              </div>
+              <div className="easy-field">
+                <p className="easy-list__label">{t('easyMode.adjustReps')}</p>
+                <NumericStepper
+                  value={adjReps}
+                  onChange={setAdjReps}
+                  min={1}
+                  max={50}
+                  step={1}
+                  unit={t('easyMode.repsUnit')}
+                  size="compact"
+                  ariaLabel={t('easyMode.adjustReps')}
+                />
+              </div>
             </div>
           ) : null}
         </div>
@@ -429,9 +440,11 @@ export function EasyWizardPage() {
           }
           onPrimary={() => createRecommend.mutate()}
         >
-          <h2 className="easy-heading">{t('easyMode.s1Title')}</h2>
-          <p className="easy-sub">{t('easyMode.s1Sub')}</p>
-          <p className="easy-home__gym">{activeGym?.name || t('easyMode.gymUnset')}</p>
+          <div className="easy-section-head">
+            <h2 className="easy-heading">{t('easyMode.s1Title')}</h2>
+            <p className="easy-sub">{t('easyMode.s1Sub')}</p>
+            <p className="easy-home__gym">{activeGym?.name || t('easyMode.gymUnset')}</p>
+          </div>
 
           {!activeGymId ? (
             <Link to={ROUTES.HOME} className="easy-btn easy-btn--secondary">
@@ -558,15 +571,17 @@ export function EasyWizardPage() {
           setStep(3);
         }}
       >
-        <h2 className="easy-heading">{recommendation.machineName || selected?.name}</h2>
-        <p className="easy-sub">{t('easyMode.s2Title')}</p>
+        <div className="easy-section-head">
+          <h2 className="easy-heading">{recommendation.machineName || selected?.name}</h2>
+          <p className="easy-sub">{t('easyMode.s2Title')}</p>
+        </div>
 
         <div className="easy-metrics">
           <div className="easy-metric">
             <p className="easy-metric__label">{t('easyMode.weight')}</p>
             <p className="easy-metric__value">
               {settings.recommendedWeightKg != null ? `${settings.recommendedWeightKg}` : '—'}
-              <span style={{ fontSize: '0.95rem', fontWeight: 600 }}> kg</span>
+              <span className="easy-metric__unit">kg</span>
             </p>
           </div>
           <div className="easy-metric">
@@ -575,30 +590,32 @@ export function EasyWizardPage() {
           </div>
         </div>
 
-        {[
-          settings.seatPosition != null && {
-            label: t('easyMode.seat'),
-            value: String(settings.seatPosition),
-          },
-          settings.backPadPosition != null && {
-            label: t('easyMode.backPad'),
-            value: String(settings.backPadPosition),
-          },
-          settings.footPosition != null && {
-            label: t('easyMode.foot'),
-            value: String(settings.footPosition),
-          },
-        ]
-          .filter(Boolean)
-          .slice(0, 3)
-          .map((row) =>
-            row ? (
-              <div key={row.label} className="easy-setting-row">
-                <span>{row.label}</span>
-                <strong>{row.value}</strong>
-              </div>
-            ) : null
-          )}
+        <div className="easy-settings-list">
+          {[
+            settings.seatPosition != null && {
+              label: t('easyMode.seat'),
+              value: String(settings.seatPosition),
+            },
+            settings.backPadPosition != null && {
+              label: t('easyMode.backPad'),
+              value: String(settings.backPadPosition),
+            },
+            settings.footPosition != null && {
+              label: t('easyMode.foot'),
+              value: String(settings.footPosition),
+            },
+          ]
+            .filter(Boolean)
+            .slice(0, 3)
+            .map((row) =>
+              row ? (
+                <div key={row.label} className="easy-setting-row">
+                  <span className="easy-setting-row__label">{row.label}</span>
+                  <strong className="easy-setting-row__value">{row.value}</strong>
+                </div>
+              ) : null
+            )}
+        </div>
 
         <details className="easy-details">
           <summary>{t('easyMode.moreDetails')}</summary>
@@ -635,31 +652,51 @@ export function EasyWizardPage() {
       primaryHint={!activeMemberId ? t('easyMode.needMember') : undefined}
       onPrimary={() => saveLog.mutate()}
     >
-      <h2 className="easy-heading">{selected?.name}</h2>
-      <p className="easy-sub">{t('easyMode.s3Title')}</p>
-      {recommendation ? (
-        <p className="easy-sub">
-          {t('easyMode.repsReadonly', { reps: repsLabel(recommendation.settings) })}
-        </p>
-      ) : null}
+      <div className="easy-section-head">
+        <h2 className="easy-heading">{selected?.name}</h2>
+        <p className="easy-sub">{t('easyMode.s3Title')}</p>
+        {recommendation ? (
+          <p className="easy-sub easy-sub--soft">
+            {t('easyMode.repsReadonly', { reps: repsLabel(recommendation.settings) })}
+          </p>
+        ) : null}
+      </div>
 
-      <div className="easy-setting-row">
-        <span>{t('easyMode.setCount')}</span>
+      <div className="easy-setting-row easy-setting-row--stack">
+        <span className="easy-setting-row__label">{t('easyMode.setCount')}</span>
         <NumericStepper
           value={setCount}
           onChange={(v) => resizeSets(v ?? 1)}
           min={1}
           max={20}
           step={1}
+          size="compact"
           ariaLabel={t('easyMode.setCount')}
         />
       </div>
 
       {weights.slice(0, setCount).map((w, index) => (
         <div key={index} className="easy-set-row">
-          <span className="easy-set-row__label">
-            {t('easyMode.setN', { n: index + 1 })}
-          </span>
+          <div className="easy-set-row__head">
+            <span className="easy-set-row__label">
+              {t('easyMode.setN', { n: index + 1 })}
+            </span>
+            <label className="easy-check">
+              <input
+                type="checkbox"
+                checked={completed[index] ?? false}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setCompleted((prev) => {
+                    const copy = [...prev];
+                    copy[index] = checked;
+                    return copy;
+                  });
+                }}
+              />
+              {t('easyMode.doneSet')}
+            </label>
+          </div>
           <NumericStepper
             value={w}
             onChange={(next) => {
@@ -673,23 +710,9 @@ export function EasyWizardPage() {
             max={999}
             step={5}
             unit="kg"
+            size="compact"
             ariaLabel={t('easyMode.setN', { n: index + 1 })}
           />
-          <label className="easy-check">
-            <input
-              type="checkbox"
-              checked={completed[index] ?? false}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                setCompleted((prev) => {
-                  const copy = [...prev];
-                  copy[index] = checked;
-                  return copy;
-                });
-              }}
-            />
-            {t('easyMode.doneSet')}
-          </label>
         </div>
       ))}
     </EasyWizardShell>

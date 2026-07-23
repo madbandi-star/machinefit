@@ -36,7 +36,7 @@ export function EasyHomePage() {
   return (
     <div className="easy-home">
       <header className="easy-home__header">
-        <div>
+        <div className="easy-home__header-text">
           <p className="easy-home__eyebrow">{t('easyMode.badge')}</p>
           <h1 className="easy-home__title">{t('easyMode.homeTitle')}</h1>
           <p className="easy-home__gym">
@@ -58,13 +58,15 @@ export function EasyHomePage() {
         </button>
       </div>
 
-      <button
-        type="button"
-        className="easy-btn easy-btn--ghost"
-        onClick={() => navigate(ROUTES.MY_PAGE)}
-      >
-        {t('easyMode.switchModeHint')}
-      </button>
+      <div className="easy-home__foot">
+        <button
+          type="button"
+          className="easy-btn easy-btn--ghost"
+          onClick={() => navigate(ROUTES.MY_PAGE)}
+        >
+          {t('easyMode.switchModeHint')}
+        </button>
+      </div>
     </div>
   );
 }
