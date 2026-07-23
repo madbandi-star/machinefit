@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -62,6 +62,7 @@ function formatInt(n: number, locale: string): string {
 export function AchievementsPage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
+  const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
@@ -74,6 +75,11 @@ export function AchievementsPage() {
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
   const [popupEnabled, setPopupEnabled] = useState(() => isAchievementUnlockPopupEnabled());
   const [hideTodayChecked, setHideTodayChecked] = useState(false);
+
+  // Each navigation into this page counts as a new visit for unlock popups.
+  useEffect(() => {
+    setSeenUnlockKey('');
+  }, [location.key]);
 
   const scopeParams =
     isRealGym && activeGymId && activeMemberId
@@ -100,25 +106,34 @@ export function AchievementsPage() {
     staleTime: 180_000,
   });
 
+  const unlockedForPopup = useMemo(
+    () => (data?.items ?? []).filter((item) => item.unlocked),
+    [data?.items]
+  );
+
   useEffect(() => {
     if (!popupEnabled || isAchievementUnlockPopupHiddenToday()) {
       setUnlockQueue([]);
       setUnlockBatchTotal(0);
       return;
     }
-    if (!data?.newlyUnlocked?.length) return;
-    const key = data.newlyUnlocked.map((i) => i.def.id).join('|');
+    // Confirmed + unconfirmed: every unlocked achievement on each page visit.
+    if (!unlockedForPopup.length) return;
+    const key = unlockedForPopup
+      .map((i) => i.def.id)
+      .sort()
+      .join('|');
     if (key === seenUnlockKey) return;
     setSeenUnlockKey(key);
     setHideTodayChecked(false);
-    setUnlockQueue(data.newlyUnlocked);
-    setUnlockBatchTotal(data.newlyUnlocked.length);
+    setUnlockQueue(unlockedForPopup);
+    setUnlockBatchTotal(unlockedForPopup.length);
     try {
       navigator.vibrate?.(40);
     } catch {
       /* ignore */
     }
-  }, [data, seenUnlockKey, popupEnabled]);
+  }, [unlockedForPopup, seenUnlockKey, popupEnabled]);
 
   const currentUnlock = unlockQueue[0] ?? null;
   const unlockIndex =
@@ -126,20 +141,15 @@ export function AchievementsPage() {
   const unlockRemaining = Math.max(0, unlockQueue.length - 1);
   const isLastUnlock = unlockQueue.length <= 1;
 
-  const acknowledgePending = async () => {
-    const ids = data?.newlyUnlocked?.map((item) => item.def.id) ?? [];
-    try {
-      await achievementsApi.acknowledge(ids.length ? ids : undefined);
-      await queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
-    } catch {
-      /* best-effort — local prefs still apply */
-    }
-  };
-
   const dismissUnlockQueue = async () => {
     if (hideTodayChecked) {
       hideAchievementUnlockPopupToday();
-      await acknowledgePending();
+      try {
+        await achievementsApi.acknowledge();
+        await queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
+      } catch {
+        /* best-effort — local prefs still apply */
+      }
     }
     setUnlockQueue([]);
     setUnlockBatchTotal(0);

@@ -436,7 +436,7 @@
     "hidePopupToday": "Don't show again today",
     "popupPrefOn": "Show achievement unlock popups",
     "popupPrefOff": "Hide achievement unlock popups",
-    "popupPrefHint": "When checked, unlock popups appear each visit. Uncheck to turn them off."
+    "popupPrefHint": "When checked, every unlocked achievement (new or already seen) pops up each visit. Uncheck to turn them off."
   },
   "liveDashboard": {
     "title": "MachineFit LIVE",

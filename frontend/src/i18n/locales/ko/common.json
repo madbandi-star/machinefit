@@ -436,7 +436,7 @@
     "hidePopupToday": "오늘 다시 안 보기",
     "popupPrefOn": "업적 획득 팝업 다시 보기",
     "popupPrefOff": "업적 획득 팝업 다시 안 보기",
-    "popupPrefHint": "체크하면 접속할 때마다 새 업적 팝업을 보여요. 해제하면 팝업을 끄세요."
+    "popupPrefHint": "체크하면 확인·미확인 업적 모두 접속할 때마다 팝업으로 보여요. 해제하면 팝업을 끄세요."
   },
   "liveDashboard": {
     "title": "MachineFit LIVE",
