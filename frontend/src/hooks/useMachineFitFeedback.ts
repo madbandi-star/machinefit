@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, SettingsActiveSource } from '@machinefit/shared';
@@ -58,6 +58,10 @@ export function useMachineFitFeedback({
   const { activeGymId } = useActiveGym();
   const { activeMemberId, isRealGym } = useActiveMember();
   const [customSettings, setCustomSettings] = useState<Partial<RecommendationSettings>>({});
+  /** True while the user has local edits not yet confirmed by a successful save. */
+  const [settingsDirty, setSettingsDirty] = useState(false);
+  const customSettingsRef = useRef(customSettings);
+  customSettingsRef.current = customSettings;
 
   const preferenceScope =
     isRealGym && activeGymId && activeMemberId
@@ -66,6 +70,13 @@ export function useMachineFitFeedback({
 
   const feedbackQueryKey = ['recommendation-feedback', recommendationId];
   const prefsQueryKey = ['machine-preferences', machineCode, preferenceScope?.gymId, preferenceScope?.memberId];
+
+  // Reset local edit state when switching machine / recommendation.
+  useEffect(() => {
+    setCustomSettings({});
+    setSettingsDirty(false);
+    customSettingsRef.current = {};
+  }, [machineCode, recommendationId]);
 
   const { data: savedRating } = useQuery({
     queryKey: feedbackQueryKey,
@@ -98,15 +109,18 @@ export function useMachineFitFeedback({
     return stored ?? initialActiveSource ?? (savedRating === 'bad' ? 'adjusted' : 'recommended');
   })();
 
+  // Hydrate from server only when the user is not mid-edit. Otherwise a prefs
+  // refetch (after save/invalidate) overwrites the next weight the user typed,
+  // and the following save submits the previous value (N-1 bug).
   useEffect(() => {
+    if (settingsDirty) return;
     if (savedPreferences && hasMeaningfulCustomSettings(savedPreferences)) {
       setCustomSettings(savedPreferences);
     }
-    // Do not clear local edits when the server still has no prefs (e.g. right after
-    // tapping "needs adjustment" — invalidate would otherwise wipe seeded inputs).
-  }, [savedPreferences]);
+  }, [savedPreferences, settingsDirty]);
 
   useEffect(() => {
+    if (settingsDirty) return;
     if (activeSource !== 'adjusted' || !recommendedSettings) return;
 
     setCustomSettings((prev) => {
@@ -116,7 +130,7 @@ export function useMachineFitFeedback({
       if (Object.keys(prev).length > 0) return prev;
       return seedCustomSettingsFromRecommendation(recommendedSettings);
     });
-  }, [activeSource, recommendedSettings, savedPreferences]);
+  }, [activeSource, recommendedSettings, savedPreferences, settingsDirty]);
 
   const invalidateRelated = async () => {
     await queryClient.invalidateQueries({ queryKey: prefsQueryKey });
@@ -169,14 +183,14 @@ export function useMachineFitFeedback({
     onSuccess: async (data, variables) => {
       const nextSource: SettingsActiveSource =
         variables.activeSource ?? data.activeSource ?? 'adjusted';
+      const nextCustom = data.customSettings ?? variables.customSettings ?? {};
       queryClient.setQueryData(prefsQueryKey, {
-        customSettings: data.customSettings ?? variables.customSettings ?? {},
+        customSettings: nextCustom,
         personalTipMemo: data.personalTipMemo ?? '',
         activeSource: nextSource,
       });
-      if (variables.customSettings) {
-        setCustomSettings(variables.customSettings);
-      }
+      setCustomSettings(nextCustom);
+      setSettingsDirty(false);
       await invalidateRelated();
       // Keep history summary prefs in sync immediately after 조정값 저장.
       queryClient.setQueriesData(
@@ -216,6 +230,7 @@ export function useMachineFitFeedback({
         if (Object.keys(prev).length > 0) return prev;
         return seedCustomSettingsFromRecommendation(recommendedSettings);
       });
+      setSettingsDirty(false);
     }
     feedbackMutation.mutate(fitRating);
   };
@@ -225,19 +240,28 @@ export function useMachineFitFeedback({
     raw: string,
     type: 'number' | 'text' = 'text'
   ) => {
+    setSettingsDirty(true);
     if (type === 'number') {
       const parsed = raw === '' ? undefined : Number.parseFloat(raw);
-      setCustomSettings((prev) => ({
-        ...prev,
-        [key]: parsed != null && Number.isFinite(parsed) ? parsed : undefined,
-      }));
+      setCustomSettings((prev) => {
+        const next = {
+          ...prev,
+          [key]: parsed != null && Number.isFinite(parsed) ? parsed : undefined,
+        };
+        customSettingsRef.current = next;
+        return next;
+      });
       return;
     }
 
-    setCustomSettings((prev) => ({
-      ...prev,
-      [key]: raw.trim(),
-    }));
+    setCustomSettings((prev) => {
+      const next = {
+        ...prev,
+        [key]: raw.trim(),
+      };
+      customSettingsRef.current = next;
+      return next;
+    });
   };
 
   // Only show 추천/조정 비교 when NOT on "추천값 잘맞음".
@@ -261,21 +285,29 @@ export function useMachineFitFeedback({
     hasSavedPreferences,
     handleRating,
     handleCustomChange,
-    savePreferences: (onDone?: () => void) =>
+    savePreferences: (onDone?: () => void) => {
+      // Always read the latest edits — avoids closing over a stale customSettings
+      // from an earlier render (N-1 save bug).
+      const latestCustomSettings = customSettingsRef.current;
       preferenceMutation.mutate(
-        { customSettings, activeSource: 'adjusted' },
+        { customSettings: latestCustomSettings, activeSource: 'adjusted' },
         {
           onSuccess: (data) => {
+            const saved = data.customSettings ?? latestCustomSettings;
             queryClient.setQueryData(feedbackQueryKey, 'bad');
             queryClient.setQueryData(prefsQueryKey, {
-              customSettings: data.customSettings ?? customSettings,
+              customSettings: saved,
               personalTipMemo: data.personalTipMemo ?? '',
               activeSource: 'adjusted' as SettingsActiveSource,
             });
+            setCustomSettings(saved);
+            setSettingsDirty(false);
+            customSettingsRef.current = saved;
             onDone?.();
           },
         }
-      ),
+      );
+    },
     isFeedbackPending: feedbackMutation.isPending,
     isPreferencesPending: preferenceMutation.isPending,
   };
