@@ -47,10 +47,13 @@ export function expandHistoryRecordCards(
 ): HistoryRecordCard[] {
   const cards: HistoryRecordCard[] = [];
   const freeWeightKeys = new Set<string>();
+  const machineKeys = new Set<string>();
 
   for (const item of historyItems) {
     if (isFreeWeightMachineCode(item.machineCode)) continue;
 
+    const logDate = getLocalDateKey(item.viewedAt);
+    machineKeys.add(`${item.machineCode}:${logDate}`);
     cards.push({
       cardId: item.id,
       historyId: item.id,
@@ -61,7 +64,38 @@ export function expandHistoryRecordCards(
       recommendationId: item.recommendationId,
       settings: item.settings,
       viewedAt: item.viewedAt,
-      logDate: getLocalDateKey(item.viewedAt),
+      logDate,
+    });
+  }
+
+  // Linked-member workout logs may exist without a matching recent_history row
+  // on the viewer's account — still show them as record cards.
+  for (const log of workoutLogs) {
+    if (isFreeWeightMachineCode(log.machineCode)) continue;
+
+    const logDate = normalizeDateKey(log.logDate);
+    const key = `${log.machineCode}:${logDate}`;
+    if (machineKeys.has(key)) continue;
+    machineKeys.add(key);
+
+    const history = historyItems.find(
+      (item) =>
+        item.machineCode === log.machineCode &&
+        getLocalDateKey(item.viewedAt) === logDate &&
+        !isFreeWeightMachineCode(item.machineCode)
+    );
+
+    cards.push({
+      cardId: history?.id ?? `log-${log.id}`,
+      historyId: history?.id,
+      machineCode: log.machineCode,
+      machineName: log.machineName ?? history?.machineName ?? log.machineCode,
+      brandName: log.brandName ?? history?.brandName,
+      muscleGroup: history?.muscleGroup,
+      recommendationId: log.recommendationId ?? history?.recommendationId,
+      settings: history?.settings ?? {},
+      viewedAt: log.updatedAt || log.createdAt,
+      logDate,
     });
   }
 
