@@ -317,6 +317,17 @@ export function HistoryRecordCard({
 
       {expanded ? (
         <>
+          {canUseFitFeedback ? (
+            <FitFeedbackPanel
+              savedRating={savedRating}
+              onRating={(rating) => {
+                if (rating === 'bad') setIsEditingAdjustments(true);
+                else setIsEditingAdjustments(false);
+                fitFeedback.handleRating(rating);
+              }}
+              isPending={fitFeedback.isFeedbackPending}
+            />
+          ) : null}
           <div className="history-record-card__section">
             {showAdjustment ? (
               settingsPanel
@@ -330,17 +341,6 @@ export function HistoryRecordCard({
               </Link>
             )}
           </div>
-          {canUseFitFeedback ? (
-            <FitFeedbackPanel
-              savedRating={savedRating}
-              onRating={(rating) => {
-                if (rating === 'bad') setIsEditingAdjustments(true);
-                else setIsEditingAdjustments(false);
-                fitFeedback.handleRating(rating);
-              }}
-              isPending={fitFeedback.isFeedbackPending}
-            />
-          ) : null}
         </>
       ) : null}
 

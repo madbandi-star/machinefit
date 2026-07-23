@@ -1584,7 +1584,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
-  margin-bottom: 0.65rem;
 }
 
 .active-source-banner__col {
@@ -1595,11 +1594,16 @@
   border-radius: 10px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
 }
 
 .active-source-banner__col.is-active {
   border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  transform: translateY(-1px);
 }
 
 .active-source-banner__col-label {
@@ -1613,9 +1617,33 @@
   font-variant-numeric: tabular-nums;
 }
 
+.active-source-banner__col strong.is-muted {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
 .fit-feedback-panel {
-  margin-top: var(--space-md);
-  margin-bottom: var(--space-sm);
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+}
+
+.fit-feedback-panel__intro {
+  margin-bottom: 0.55rem;
+}
+
+.fit-feedback-panel__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.fit-feedback-panel__desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
 }
 
 .fit-feedback-panel__actions {
@@ -1633,12 +1661,21 @@
   border-radius: var(--radius-md);
   background: var(--color-bg-secondary);
   color: var(--color-text);
-  padding: 0.65rem 0.5rem;
+  padding: 0.7rem 0.5rem;
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.25;
   text-align: center;
   cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    opacity 140ms ease;
+}
+
+.fit-feedback-panel__btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
 }
 
 .fit-feedback-panel__btn svg {
@@ -1653,6 +1690,12 @@
 .fit-feedback-panel__btn--active {
   border-color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg));
+}
+
+.fit-feedback-panel__pending {
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
 .fit-feedback-panel__custom {

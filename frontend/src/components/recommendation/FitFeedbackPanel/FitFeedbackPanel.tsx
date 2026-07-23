@@ -13,7 +13,11 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
   const { t } = useTranslation('machines');
 
   return (
-    <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')}>
+    <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
+      <div className="fit-feedback-panel__intro">
+        <h3 className="fit-feedback-panel__title">{t('feedback.title')}</h3>
+        <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p>
+      </div>
       <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>
         <button
           type="button"
@@ -36,6 +40,11 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
           {t('feedback.bad')}
         </button>
       </div>
+      {isPending ? (
+        <p className="fit-feedback-panel__pending" aria-live="polite">
+          {t('feedback.saving')}
+        </p>
+      ) : null}
     </section>
   );
 }

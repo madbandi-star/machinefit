@@ -70,17 +70,25 @@ export const preferenceRepository = {
         : (existing?.personalTipMemo ?? '');
 
     let activeSource: SettingsActiveSource;
+    const explicitActiveSource = fields.activeSource;
     if (fields.clearAdjusted) {
       activeSource = 'recommended';
-    } else if (fields.activeSource) {
-      activeSource = fields.activeSource;
+    } else if (explicitActiveSource) {
+      activeSource = explicitActiveSource;
     } else if (fields.customSettings !== undefined && hasMeaningfulCustomSettings(customSettings)) {
       activeSource = 'adjusted';
     } else {
       activeSource = existing?.activeSource ?? 'recommended';
     }
 
-    if (activeSource === 'adjusted' && !hasMeaningfulCustomSettings(customSettings)) {
+    // Only auto-demote inferred "adjusted" when there is nothing to apply.
+    // Explicit activeSource from fit-feedback (bad → adjusted) must be preserved
+    // so the UI can enter adjustment mode before custom values are saved.
+    if (
+      activeSource === 'adjusted' &&
+      !hasMeaningfulCustomSettings(customSettings) &&
+      !explicitActiveSource
+    ) {
       activeSource = 'recommended';
     }
 

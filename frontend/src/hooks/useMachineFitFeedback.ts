@@ -119,6 +119,19 @@ export function useMachineFitFeedback({
       }),
     onSuccess: async (_data, fitRating) => {
       queryClient.setQueryData(feedbackQueryKey, fitRating);
+      const nextSource: SettingsActiveSource = fitRating === 'bad' ? 'adjusted' : 'recommended';
+      queryClient.setQueryData(prefsQueryKey, (prev: unknown) => {
+        const current = (prev && typeof prev === 'object' ? prev : {}) as {
+          customSettings?: Partial<RecommendationSettings>;
+          personalTipMemo?: string;
+          activeSource?: SettingsActiveSource;
+        };
+        return {
+          customSettings: current.customSettings ?? {},
+          personalTipMemo: current.personalTipMemo ?? '',
+          activeSource: nextSource,
+        };
+      });
       await invalidateRelated();
       showToast(
         fitRating === 'bad'
@@ -185,6 +198,10 @@ export function useMachineFitFeedback({
       );
       if (variables.clearAdjusted) {
         showToast(t('machines:feedback.adjustedCleared'), 'success');
+        return;
+      }
+      if (variables.customSettings !== undefined) {
+        showToast(t('machines:feedback.preferencesSaved'), 'success');
         return;
       }
       if (variables.activeSource === 'recommended') {

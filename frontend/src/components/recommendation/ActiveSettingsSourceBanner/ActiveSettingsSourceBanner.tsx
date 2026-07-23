@@ -7,6 +7,7 @@ interface ActiveSettingsSourceBannerProps {
   aiSettings?: RecommendationSettings | null;
   adjustedSettings?: Partial<RecommendationSettings> | null;
   formatWeight: (kg: number) => string;
+  pendingAdjustment?: boolean;
 }
 
 export function ActiveSettingsSourceBanner({
@@ -14,6 +15,7 @@ export function ActiveSettingsSourceBanner({
   aiSettings,
   adjustedSettings,
   formatWeight,
+  pendingAdjustment = false,
 }: ActiveSettingsSourceBannerProps) {
   const { t } = useTranslation('machines');
   const aiWeight = aiSettings?.recommendedWeightKg;
@@ -22,6 +24,12 @@ export function ActiveSettingsSourceBanner({
   // not the stats-calculation rule (adjusted-first).
   const activeWeight =
     activeSource === 'adjusted' && adjustedWeight != null ? adjustedWeight : aiWeight;
+  const adjustedLabel =
+    adjustedWeight != null
+      ? formatWeight(adjustedWeight)
+      : pendingAdjustment || activeSource === 'adjusted'
+        ? t('feedback.adjustedPending')
+        : t('feedback.valueUnavailable');
 
   return (
     <section className="active-source-banner" aria-label={t('feedback.activeSourceLabel')}>
@@ -52,11 +60,7 @@ export function ActiveSettingsSourceBanner({
           className={`active-source-banner__col${activeSource === 'adjusted' ? ' is-active' : ''}`}
         >
           <span className="active-source-banner__col-label">{t('feedback.userAdjusted')}</span>
-          <strong>
-            {adjustedWeight != null
-              ? formatWeight(adjustedWeight)
-              : t('feedback.valueUnavailable')}
-          </strong>
+          <strong className={adjustedWeight == null ? 'is-muted' : undefined}>{adjustedLabel}</strong>
         </div>
       </div>
     </section>

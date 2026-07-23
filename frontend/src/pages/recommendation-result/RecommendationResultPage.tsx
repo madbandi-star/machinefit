@@ -258,6 +258,13 @@ export function RecommendationResultPage() {
             <>
               <div className="history-record-card__section">
                 {isAuthenticated ? (
+                  <FitFeedbackPanel
+                    savedRating={fitFeedback.savedRating}
+                    onRating={fitFeedback.handleRating}
+                    isPending={fitFeedback.isFeedbackPending}
+                  />
+                ) : null}
+                {isAuthenticated ? (
                   <ActiveSettingsSourceBanner
                     activeSource={fitFeedback.activeSource}
                     aiSettings={result.aiRecommendedSettings ?? result.settings}
@@ -265,6 +272,10 @@ export function RecommendationResultPage() {
                       fitFeedback.displayAdjustedSettings ?? result.adjustedSettings
                     }
                     formatWeight={formatWeight}
+                    pendingAdjustment={
+                      fitFeedback.activeSource === 'adjusted' &&
+                      fitFeedback.customSettings.recommendedWeightKg == null
+                    }
                   />
                 ) : null}
                 <RecommendationSettingsPanel
@@ -278,13 +289,6 @@ export function RecommendationResultPage() {
                   isPreferencesPending={fitFeedback.isPreferencesPending}
                 />
               </div>
-              {isAuthenticated ? (
-                <FitFeedbackPanel
-                  savedRating={fitFeedback.savedRating}
-                  onRating={fitFeedback.handleRating}
-                  isPending={fitFeedback.isFeedbackPending}
-                />
-              ) : null}
             </>
           ) : null}
 

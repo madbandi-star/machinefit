@@ -148,6 +148,8 @@
     "aiRecommended": "AI 추천",
     "userAdjusted": "사용자 조정",
     "valueUnavailable": "—",
+    "adjustedPending": "조정값 입력 필요",
+    "saving": "저장 중…",
     "useRecommended": "AI 추천값 다시 사용",
     "useAdjusted": "사용자 조정값 사용",
     "clearAdjusted": "조정값 삭제",

@@ -148,6 +148,8 @@
     "aiRecommended": "AI recommended",
     "userAdjusted": "Your adjustment",
     "valueUnavailable": "—",
+    "adjustedPending": "Enter your adjustment",
+    "saving": "Saving…",
     "useRecommended": "Use AI recommendation again",
     "useAdjusted": "Use my adjustments",
     "clearAdjusted": "Clear adjustments",
