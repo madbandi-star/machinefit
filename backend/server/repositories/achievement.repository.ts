@@ -251,6 +251,33 @@ export const achievementRepository = {
     return map;
   },
 
+  /** Achievement IDs awarded but not yet shown in the unlock popup. */
+  async listUnnotified(userId: string): Promise<string[]> {
+    const pool = getPool();
+    if (!pool) return [];
+    const result = await pool.query<{ achievement_id: string }>(
+      `SELECT achievement_id
+       FROM user_achievements
+       WHERE user_id = $1 AND notified_at IS NULL
+       ORDER BY earned_at ASC`,
+      [userId]
+    );
+    return result.rows.map((row) => row.achievement_id);
+  },
+
+  async markNotified(userId: string, achievementIds: string[]): Promise<void> {
+    const pool = getPool();
+    if (!pool || achievementIds.length === 0) return;
+    await pool.query(
+      `UPDATE user_achievements
+       SET notified_at = NOW()
+       WHERE user_id = $1
+         AND achievement_id = ANY($2::text[])
+         AND notified_at IS NULL`,
+      [userId, achievementIds]
+    );
+  },
+
   async awardMany(
     userId: string,
     awards: Array<{ achievementId: string; xp: number }>
@@ -260,9 +287,10 @@ export const achievementRepository = {
 
     const achievementIds = awards.map((a) => a.achievementId);
     const xpValues = awards.map((a) => a.xp);
+    // notified_at stays NULL so GET /achievements can surface the unlock popup.
     const result = await pool.query<{ achievement_id: string }>(
-      `INSERT INTO user_achievements (user_id, achievement_id, xp_awarded)
-       SELECT $1, x.achievement_id, x.xp
+      `INSERT INTO user_achievements (user_id, achievement_id, xp_awarded, notified_at)
+       SELECT $1, x.achievement_id, x.xp, NULL
        FROM UNNEST($2::text[], $3::int[]) AS x(achievement_id, xp)
        ON CONFLICT (user_id, achievement_id) DO NOTHING
        RETURNING achievement_id`,

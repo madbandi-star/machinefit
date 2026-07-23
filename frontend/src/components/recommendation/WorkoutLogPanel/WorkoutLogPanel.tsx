@@ -436,6 +436,7 @@ export function WorkoutLogPanel({
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+    void queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
   };
 
   const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(

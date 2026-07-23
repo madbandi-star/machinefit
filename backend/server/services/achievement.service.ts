@@ -166,18 +166,25 @@ export const achievementService = {
     if (!pool) return emptySnapshot();
 
     const key = revisionKey(userId, options);
-    const revision = await achievementRepository.getLogsRevision(userId, options);
+    const [revision, pendingBefore] = await Promise.all([
+      achievementRepository.getLogsRevision(userId, options),
+      achievementRepository.listUnnotified(userId),
+    ]);
     const hot = snapshotCache.get(key);
-    if (hot && hot.revision === revision) {
+    // Hot cache is safe only when there is nothing left to announce.
+    if (hot && hot.revision === revision && pendingBefore.length === 0) {
       return hot.snapshot;
     }
 
     // Refresh is a no-op when the logs revision matches the last compute.
-    const refreshResult = await this.refreshUser(userId, options, revision);
-    const [statsBundle, earned, meta] = await Promise.all([
+    // Background workout-save refresh may have already awarded rows with
+    // notified_at NULL — those must still surface here for the unlock popup.
+    await this.refreshUser(userId, options, revision);
+    const [statsBundle, earned, meta, newlyUnlockedIds] = await Promise.all([
       achievementRepository.getStats(userId),
       achievementRepository.listEarned(userId),
       loadUnlockMeta(),
+      achievementRepository.listUnnotified(userId),
     ]);
 
     const snapshot = assembleSnapshot(
@@ -185,8 +192,12 @@ export const achievementService = {
       earned,
       meta.unlockCounts,
       meta.activeUsers,
-      refreshResult.newlyUnlockedIds
+      newlyUnlockedIds
     );
+
+    if (newlyUnlockedIds.length > 0) {
+      await achievementRepository.markNotified(userId, newlyUnlockedIds);
+    }
 
     snapshotCache.set(key, {
       revision,
