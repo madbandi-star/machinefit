@@ -12,7 +12,6 @@ import {
   resolveSessionAverageWeightKg,
   resolveSessionWorkingWeightKg,
   resolveSuggestedWeightKg,
-  resolveWorkoutLogSeedReps,
   resolveWorkoutLogSeedWeightKg,
 } from './effective-load.js';
 
@@ -86,52 +85,6 @@ describe('resolveWorkoutLogSeedWeightKg', () => {
   });
 });
 
-describe('resolveWorkoutLogSeedReps', () => {
-  it('uses recommended for good rating', () => {
-    assert.equal(
-      resolveWorkoutLogSeedReps({
-        fitRating: 'good',
-        adjustedReps: 15,
-        recommendedReps: 10,
-      }),
-      10
-    );
-  });
-
-  it('uses recommended when unselected (null)', () => {
-    assert.equal(
-      resolveWorkoutLogSeedReps({
-        fitRating: null,
-        adjustedReps: 15,
-        recommendedReps: 10,
-      }),
-      10
-    );
-  });
-
-  it('uses adjusted for bad rating when adjusted exists', () => {
-    assert.equal(
-      resolveWorkoutLogSeedReps({
-        fitRating: 'bad',
-        adjustedReps: 15,
-        recommendedReps: 10,
-      }),
-      15
-    );
-  });
-
-  it('falls back to recommended for bad rating without adjusted', () => {
-    assert.equal(
-      resolveWorkoutLogSeedReps({
-        fitRating: 'bad',
-        adjustedReps: null,
-        recommendedReps: 10,
-      }),
-      10
-    );
-  });
-});
-
 describe('computePerformedTotalWeightKg from steppers', () => {
   it('uses setWeights × reps even when adjusted differs', () => {
     assert.equal(
@@ -146,11 +99,10 @@ describe('computePerformedTotalWeightKg from steppers', () => {
     );
   });
 
-  it('uses 조정횟수 for volume when fit is bad', () => {
+  it('uses 조정횟수 over 추천횟수 for volume', () => {
     assert.equal(
       computePerformedTotalWeightKg({
         setWeightsKg: [40, 40, 40],
-        fitRating: 'bad',
         adjustedReps: 12,
         recommendedReps: 10,
         sets: 3,
@@ -159,12 +111,10 @@ describe('computePerformedTotalWeightKg from steppers', () => {
     );
   });
 
-  it('uses 추천횟수 for volume when fit is good', () => {
+  it('falls back to 추천횟수 when 조정횟수 missing', () => {
     assert.equal(
       computePerformedTotalWeightKg({
         setWeightsKg: [40, 40, 40],
-        fitRating: 'good',
-        adjustedReps: 12,
         recommendedReps: 10,
         sets: 3,
       }),

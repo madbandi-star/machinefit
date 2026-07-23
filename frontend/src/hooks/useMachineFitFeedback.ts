@@ -186,29 +186,6 @@ export function useMachineFitFeedback({
           activeSource: nextSource,
         };
       });
-      // Immediate summary update: 총 볼륨 reps follow fit rating like 조정중량 steppers.
-      queryClient.setQueriesData(
-        { queryKey: ['history-settings-comparison'] },
-        (prev: unknown) => {
-          if (!prev || typeof prev !== 'object') return prev;
-          const row = prev as {
-            preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
-            activeSourceByMachine?: Record<string, SettingsActiveSource>;
-            feedbackByRecommendation?: Record<string, FitRating | null>;
-          };
-          return {
-            ...row,
-            activeSourceByMachine: {
-              ...(row.activeSourceByMachine ?? {}),
-              [machineCode]: nextSource,
-            },
-            feedbackByRecommendation: {
-              ...(row.feedbackByRecommendation ?? {}),
-              [recommendationId]: fitRating,
-            },
-          };
-        }
-      );
       // Do not invalidate machine-preferences here — a refetch can race with
       // 「조정값 저장」 and flash the previous weight (70 after editing to 90).
       await invalidateHistoryComparison();
@@ -338,11 +315,6 @@ export function useMachineFitFeedback({
           activeSourceByMachine: {
             ...(row.activeSourceByMachine ?? {}),
             [machineCode]: 'adjusted',
-          },
-          // Editing 조정값 implies 「셋팅값 조정 필요」 so volume uses 조정횟수.
-          feedbackByRecommendation: {
-            ...(row.feedbackByRecommendation ?? {}),
-            [recommendationId]: 'bad',
           },
         };
       }

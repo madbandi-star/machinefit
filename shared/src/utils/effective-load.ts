@@ -7,8 +7,8 @@
  *
  * Totals from -무게kg+ stepper values (`setWeightsKg`):
  * - 총 중량: Σ floor(로그 세트무게 합 / 세트수)
- * - 총 볼륨: Σ(세트무게 × 횟수) — 횟수는 조정중량과 같은 fit 규칙
- *   (bad → 조정횟수, good/미선택 → 추천횟수)
+ * - 총 볼륨: Σ(세트무게 × 횟수)
+ *   횟수 = 조정횟수(있으면) else 추천횟수 — 총 중량 fallback의 조정중량과 동일
  */
 
 function toPositiveNumber(value: unknown): number | null {
@@ -43,8 +43,6 @@ export function computeTotalWeightKg(weight: number, reps: number, sets: number)
   return Math.round(w * r * s * 100) / 100;
 }
 
-export type FitRatingLike = 'good' | 'bad' | null | undefined;
-
 export interface EffectiveLoadInput {
   /** User-adjusted working weight (preference / 조정중량). */
   adjustedWeight?: number | null;
@@ -54,18 +52,14 @@ export interface EffectiveLoadInput {
   adjustedReps?: number | null;
   /** AI / recommendation reps (추천횟수). */
   recommendedReps?: number | null;
-  /**
-   * Fit feedback for seed parity with weight steppers.
-   * When set, reps follow `resolveWorkoutLogSeedReps` (good → recommended, bad → adjusted).
-   * When omitted, falls back to `getEffectiveReps` (adjusted wins if present).
-   */
-  fitRating?: FitRatingLike;
   /** Number of sets performed. */
   sets?: number | null;
   /** Per-set working weights from -무게kg+ steppers / workout log. */
   setWeightsKg?: number[] | null;
   setCompleted?: boolean[] | null;
 }
+
+export type FitRatingLike = 'good' | 'bad' | null | undefined;
 
 /**
  * Weight to put into workout-log steppers (-무게kg+) for incomplete sets.
@@ -90,27 +84,6 @@ export function resolveWorkoutLogSeedWeightKg(options: {
   return adjusted ?? recommended;
 }
 
-/**
- * Reps for 총 볼륨 — same fit rule as `resolveWorkoutLogSeedWeightKg`.
- *
- * - 추천값 잘맞음 (`good`) or 미선택 (`null`) → 추천횟수
- * - 셋팅값 조정 필요 (`bad`) or other → 조정횟수 if present, else 추천횟수
- */
-export function resolveWorkoutLogSeedReps(options: {
-  fitRating?: FitRatingLike;
-  adjustedReps?: number | null;
-  recommendedReps?: number | null;
-}): number {
-  const recommended = toPositiveNumber(options.recommendedReps) ?? 0;
-  const adjusted = toPositiveNumber(options.adjustedReps) ?? undefined;
-
-  if (options.fitRating === 'good' || options.fitRating == null) {
-    return recommended;
-  }
-
-  return adjusted ?? recommended;
-}
-
 function shouldUseCompletedFilter(
   setWeightsKg: number[],
   setCompleted?: boolean[] | null
@@ -132,25 +105,14 @@ function resolveSetCount(input: EffectiveLoadInput): number {
   return weights.filter((w) => typeof w === 'number' && Number.isFinite(w) && w > 0).length;
 }
 
-function resolveVolumeReps(input: EffectiveLoadInput): number {
-  if (input.fitRating !== undefined) {
-    return resolveWorkoutLogSeedReps({
-      fitRating: input.fitRating,
-      adjustedReps: input.adjustedReps,
-      recommendedReps: input.recommendedReps,
-    });
-  }
-  return getEffectiveReps(input.adjustedReps, input.recommendedReps);
-}
-
 /**
  * Session / log **volume** (총 볼륨) from stepper weights:
  * Σ(setWeight_i × effectiveReps), or effectiveWeight × reps × sets when no steppers yet.
  *
- * Reps follow the same fit rule as 조정중량 seeding when `fitRating` is provided.
+ * Reps = 조정횟수 if present, else 추천횟수 (same precedence as 조정중량 for totals).
  */
 export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number {
-  const reps = resolveVolumeReps(input);
+  const reps = getEffectiveReps(input.adjustedReps, input.recommendedReps);
   const sets = resolveSetCount(input);
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
 
