@@ -44,6 +44,23 @@ export function MemberSelector() {
     if (!isRealGym) setOpen(false);
   }, [isRealGym]);
 
+  // Must run every render (before any early return) to keep hook order stable.
+  // Cold start: isRealGym flips false→true after gym list loads — calling this
+  // hook only then caused React #310 on iPhone Chrome.
+  useEffect(() => {
+    if (!isAuthenticated || !isRealGym) return;
+    if (isLoading || !members[0]) return;
+    if (activeMemberId) return;
+    selectMember(members[0].id);
+  }, [
+    isAuthenticated,
+    isRealGym,
+    activeMemberId,
+    isLoading,
+    members,
+    selectMember,
+  ]);
+
   if (!isAuthenticated || !isRealGym) return null;
 
   const label = isLoading
@@ -53,13 +70,6 @@ export function MemberSelector() {
       : members[0]?.name?.trim()
         ? `${members[0].name.trim()}${members[0].isSelf ? ` (${t('gyms:members.self')})` : ''}`
         : t('gyms:members.selectMember');
-
-  // If list has members but store id is missing, set default immediately on open/render
-  useEffect(() => {
-    if (isLoading || !members[0]) return;
-    if (activeMemberId) return;
-    selectMember(members[0].id);
-  }, [activeMemberId, isLoading, members, selectMember]);
 
   const handleSelect = (memberId: string) => {
     selectMember(memberId);
