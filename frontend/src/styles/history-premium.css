@@ -646,12 +646,7 @@
 
 .history-page-premium .recommendation-workout-log__weight-list--history {
   gap: var(--history-gap-grid);
-}
-
-@media (max-width: 520px) {
-  .history-page-premium .recommendation-workout-log__weight-list--history {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .history-page-premium .recommendation-workout-log__weight-row--history {
