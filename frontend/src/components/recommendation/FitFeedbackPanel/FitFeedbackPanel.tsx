@@ -8,13 +8,23 @@ interface FitFeedbackPanelProps {
   savedRating?: FitRating | null;
   onRating: (fitRating: FitRating) => void;
   isPending?: boolean;
+  /** Shown only when “셋팅값 조정필요” is selected. */
+  onSavePreferences?: () => void;
+  isPreferencesPending?: boolean;
 }
 
-export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: FitFeedbackPanelProps) {
+export function FitFeedbackPanel({
+  savedRating,
+  onRating,
+  isPending = false,
+  onSavePreferences,
+  isPreferencesPending = false,
+}: FitFeedbackPanelProps) {
   const { t } = useTranslation('machines');
   const goodRef = useRef<HTMLButtonElement>(null);
   const badRef = useRef<HTMLButtonElement>(null);
   const wasPendingRef = useRef(false);
+  const showSavePreferences = Boolean(onSavePreferences) && savedRating === 'bad';
 
   const selectRating = (fitRating: FitRating) => {
     if (isPending) return;
@@ -37,7 +47,19 @@ export function FitFeedbackPanel({ savedRating, onRating, isPending = false }: F
   return (
     <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
       <div className="fit-feedback-panel__intro">
-        <h3 className="fit-feedback-panel__title">{t('feedback.title')}</h3>
+        <div className="fit-feedback-panel__intro-heading">
+          <h3 className="fit-feedback-panel__title">{t('feedback.title')}</h3>
+          {showSavePreferences ? (
+            <button
+              type="button"
+              className="btn btn--primary fit-feedback-panel__save-btn"
+              disabled={isPreferencesPending}
+              onClick={onSavePreferences}
+            >
+              {isPreferencesPending ? t('feedback.preferencesSaving') : t('feedback.savePreferences')}
+            </button>
+          ) : null}
+        </div>
         <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p>
       </div>
       <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>

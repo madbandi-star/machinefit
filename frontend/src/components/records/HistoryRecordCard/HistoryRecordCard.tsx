@@ -168,6 +168,8 @@ export function HistoryRecordCard({
     setExpanded((prev) => !prev);
   };
 
+  const canSavePreferences = showAdjustment && !adjustmentReadOnly;
+
   const settingsPanel = (
     <RecommendationSettingsPanel
       settings={card.settings}
@@ -178,16 +180,6 @@ export function HistoryRecordCard({
       onCustomChange={
         showAdjustment && !adjustmentReadOnly ? fitFeedback.handleCustomChange : undefined
       }
-      onSavePreferences={
-        showAdjustment && !adjustmentReadOnly
-          ? () =>
-              fitFeedback.savePreferences(() => {
-                setPrefsSavedLocally(true);
-                setIsEditingAdjustments(false);
-              })
-          : undefined
-      }
-      isPreferencesPending={fitFeedback.isPreferencesPending}
     />
   );
 
@@ -326,6 +318,16 @@ export function HistoryRecordCard({
                 fitFeedback.handleRating(rating);
               }}
               isPending={fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending}
+              onSavePreferences={
+                canSavePreferences
+                  ? () =>
+                      fitFeedback.savePreferences(() => {
+                        setPrefsSavedLocally(true);
+                        setIsEditingAdjustments(false);
+                      })
+                  : undefined
+              }
+              isPreferencesPending={fitFeedback.isPreferencesPending}
             />
           ) : null}
           <div className="history-record-card__section">
