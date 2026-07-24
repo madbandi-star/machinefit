@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
+import { Icon } from '@/components/icons/Icon';
 import { htmlReportToPlainText } from '@/utils/sendEmailViaFormSubmit';
 import '@/styles/components.css';
 
@@ -80,6 +81,7 @@ export function WorkoutReportSection() {
   const [reportCache, setReportCache] = useState<ReportCache | null>(null);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [loadingAction, setLoadingAction] = useState<'mail' | 'view' | 'copy' | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     setReportCache(null);
@@ -188,63 +190,91 @@ export function WorkoutReportSection() {
   return (
     <>
       <section className="form-section workout-report-section">
-        <h3 className="form-section__title">
-          {t('workoutReport.title')}
-        </h3>
-        <p className="form-section__desc">{t('workoutReport.desc')}</p>
-
-        <div className="workout-report-section__field">
-          <span className="form-row__label">{t('workoutReport.periodLabel')}</span>
-          <SegmentedControl
-            value={period}
-            options={PERIODS.map((value) => ({
-              value,
-              label: t(`workoutReport.periods.${value}`),
-            }))}
-            onChange={setPeriod}
-            ariaLabel={t('workoutReport.periodLabel')}
-          />
-        </div>
-
         <button
           type="button"
-          className="btn btn--primary btn--block"
-          onClick={() => sendMutation.mutate()}
-          disabled={sendMutation.isPending || !userEmail}
+          className="workout-report-section__toggle"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls="workout-report-section-body"
         >
-          {sendMutation.isPending ? t('workoutReport.sending') : t('workoutReport.send')}
+          <h3 className="form-section__title workout-report-section__toggle-title">
+            {t('workoutReport.title')}
+          </h3>
+          <Icon
+            name="chevronDown"
+            size={18}
+            className={`workout-report-section__chevron${
+              expanded ? ' workout-report-section__chevron--open' : ''
+            }`}
+            aria-hidden
+          />
+          <span className="visually-hidden">
+            {expanded ? t('collapse') : t('expand')}
+          </span>
         </button>
 
-        {!userEmail ? (
-          <p className="form-section__desc">{t('workoutReport.emailRequired')}</p>
-        ) : null}
+        {expanded ? (
+          <div id="workout-report-section-body" className="workout-report-section__body">
+            <p className="form-section__desc">{t('workoutReport.desc')}</p>
 
-        <div className="workout-report-section__actions" role="group" aria-label={t('workoutReport.actionsLabel')}>
-          <button
-            type="button"
-            className="btn btn--secondary workout-report-section__action-btn"
-            onClick={() => void handleMailApp()}
-            disabled={!userEmail || actionBusy || sendMutation.isPending}
-          >
-            {loadingAction === 'mail' ? '…' : t('workoutReport.openMailApp')}
-          </button>
-          <button
-            type="button"
-            className="btn btn--secondary workout-report-section__action-btn"
-            onClick={() => void handleViewReport()}
-            disabled={actionBusy || sendMutation.isPending}
-          >
-            {loadingAction === 'view' ? '…' : t('workoutReport.viewReport')}
-          </button>
-          <button
-            type="button"
-            className="btn btn--secondary workout-report-section__action-btn"
-            onClick={() => void handleCopyReport()}
-            disabled={actionBusy || sendMutation.isPending}
-          >
-            {loadingAction === 'copy' ? '…' : t('workoutReport.copyReport')}
-          </button>
-        </div>
+            <div className="workout-report-section__field">
+              <span className="form-row__label">{t('workoutReport.periodLabel')}</span>
+              <SegmentedControl
+                value={period}
+                options={PERIODS.map((value) => ({
+                  value,
+                  label: t(`workoutReport.periods.${value}`),
+                }))}
+                onChange={setPeriod}
+                ariaLabel={t('workoutReport.periodLabel')}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="btn btn--primary btn--block"
+              onClick={() => sendMutation.mutate()}
+              disabled={sendMutation.isPending || !userEmail}
+            >
+              {sendMutation.isPending ? t('workoutReport.sending') : t('workoutReport.send')}
+            </button>
+
+            {!userEmail ? (
+              <p className="form-section__desc">{t('workoutReport.emailRequired')}</p>
+            ) : null}
+
+            <div
+              className="workout-report-section__actions"
+              role="group"
+              aria-label={t('workoutReport.actionsLabel')}
+            >
+              <button
+                type="button"
+                className="btn btn--secondary workout-report-section__action-btn"
+                onClick={() => void handleMailApp()}
+                disabled={!userEmail || actionBusy || sendMutation.isPending}
+              >
+                {loadingAction === 'mail' ? '…' : t('workoutReport.openMailApp')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary workout-report-section__action-btn"
+                onClick={() => void handleViewReport()}
+                disabled={actionBusy || sendMutation.isPending}
+              >
+                {loadingAction === 'view' ? '…' : t('workoutReport.viewReport')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary workout-report-section__action-btn"
+                onClick={() => void handleCopyReport()}
+                disabled={actionBusy || sendMutation.isPending}
+              >
+                {loadingAction === 'copy' ? '…' : t('workoutReport.copyReport')}
+              </button>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       <WorkoutReportDialog

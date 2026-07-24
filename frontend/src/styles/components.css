@@ -984,6 +984,42 @@
   margin-bottom: var(--space-md);
 }
 
+.workout-report-section__toggle {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.workout-report-section__toggle-title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.workout-report-section__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform var(--motion-fast);
+}
+
+.workout-report-section__chevron--open {
+  transform: rotate(180deg);
+}
+
+.workout-report-section__body {
+  margin-top: 0.65rem;
+}
+
 .workout-report-section__actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
