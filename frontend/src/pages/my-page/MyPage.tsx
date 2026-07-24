@@ -69,6 +69,7 @@ export function MyPage() {
 
   const homeGymDisplay =
     resolveHomeGymName(meQuery.data ?? user, activeGym, gyms) || t('myPage.homeGymUnset');
+  const showMemberLevel = Boolean(user?.roleCode && user.roleCode !== 'member');
 
   const handleLogout = () => {
     clearCredentials();
