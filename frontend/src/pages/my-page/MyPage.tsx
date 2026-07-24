@@ -92,11 +92,18 @@ export function MyPage() {
       <PageShell>
         <div className="card profile-card profile-card--compact">
           <dl className="profile-card__fields">
-            <div className="profile-card__row">
-              <dt>{t('myPage.memberId')}</dt>
-              <dd>{user?.displayName || '—'}</dd>
+            <div className="profile-card__pair">
+              <div className="profile-card__row">
+                <dt>{t('myPage.memberId')}</dt>
+                <dd>{user?.displayName || '—'}</dd>
+              </div>
+              <div className="profile-card__row">
+                <dt>{t('myPage.memberLevel')}</dt>
+                <dd>{user?.roleCode || '—'}</dd>
+              </div>
             </div>
-            <div className="profile-card__row">
+
+            <div className="profile-card__row profile-card__row--full">
               <dt>{t('myPage.email')}</dt>
               <dd className="profile-card__email">
                 {user?.email ? (
@@ -123,21 +130,20 @@ export function MyPage() {
                 )}
               </dd>
             </div>
-            <div className="profile-card__row">
-              <dt>{t('myPage.memberLevel')}</dt>
-              <dd>{user?.roleCode || '—'}</dd>
-            </div>
-            <div className="profile-card__row">
-              <dt>{t('myPage.location')}</dt>
-              <dd>
-                {locationQuery.data?.isSet
-                  ? locationQuery.data.label?.path || t('location.unset')
-                  : t('location.unset')}
-              </dd>
-            </div>
-            <div className="profile-card__row">
-              <dt>{t('myPage.homeGym')}</dt>
-              <dd>{homeGymDisplay}</dd>
+
+            <div className="profile-card__pair">
+              <div className="profile-card__row">
+                <dt>{t('myPage.location')}</dt>
+                <dd>
+                  {locationQuery.data?.isSet
+                    ? locationQuery.data.label?.path || t('location.unset')
+                    : t('location.unset')}
+                </dd>
+              </div>
+              <div className="profile-card__row">
+                <dt>{t('myPage.homeGym')}</dt>
+                <dd>{homeGymDisplay}</dd>
+              </div>
             </div>
           </dl>
         </div>
