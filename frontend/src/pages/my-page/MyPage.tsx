@@ -71,7 +71,7 @@ export function MyPage() {
 
   return (
     <div className="my-page">
-      <PageShell action={<PwaInstallButton />}>
+      <PageShell>
         <div className="card profile-card profile-card--compact">
           <dl className="profile-card__fields">
             <div className="profile-card__row">
