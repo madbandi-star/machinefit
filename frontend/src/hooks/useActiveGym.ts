@@ -192,6 +192,7 @@ export function useActiveGym() {
       userGymApi.update(gymId, body),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
+      await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:manage.updateGymSuccess'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
