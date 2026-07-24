@@ -298,7 +298,7 @@
   },
   "myPage": {
     "role": "Role",
-    "memberId": "Member ID",
+    "memberId": "ID",
     "email": "Email",
     "memberLevel": "Member level",
     "quickLinks": "MachineFit This & That ⭐",
