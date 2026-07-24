@@ -15,12 +15,6 @@ export function QuickSearchBar() {
         </span>
         <span className="home-quick-actions__label">{t('pages.home.quickSearch')}</span>
       </Link>
-      <Link to={ROUTES.SCAN} className="home-quick-actions__btn home-quick-actions__btn--scan">
-        <span className="home-quick-actions__icon" aria-hidden>
-          <Icon name="qr" size={28} />
-        </span>
-        <span className="home-quick-actions__label">{t('pages.home.quickScan')}</span>
-      </Link>
     </div>
   );
 }
