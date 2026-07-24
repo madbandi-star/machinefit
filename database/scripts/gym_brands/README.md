@@ -5,7 +5,7 @@ Modular collectors for nationwide chain gyms used by register/settings autocompl
 ## Brands
 
 - 스포애니 (official site `branch.php` — includes lat/lng)
-- 짐박스, 고투피트니스, 에이블짐, 더블유짐, 휘트니스M, 스포짐, 팀윤짐, 바디채널, 커브스  
+- 짐박스, 고투피트니스, 에이블짐, 더블유짐, 휘트니스M, 스포짐, 팀윤짐, 바디채널, 커브스, 헬스보이짐  
   (Kakao Map place search — road address + lat/lng)
 
 ## Add a brand

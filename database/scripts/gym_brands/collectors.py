@@ -85,6 +85,11 @@ BRAND_SPECS: list[BrandSpec] = [
         queries=("커브스", "Curves"),
         match=lambda n: bool(re.search(r"커브스|Curves", n, re.I)),
     ),
+    BrandSpec(
+        brand="헬스보이짐",
+        queries=("헬스보이짐", "헬스보이 짐", "헬스보이짐 프리미엄"),
+        match=lambda n: "헬스보이" in n.replace(" ", ""),
+    ),
 ]
 
 
