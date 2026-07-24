@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
-import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
