@@ -60,6 +60,8 @@ export const ROUTES = {
   ADMIN_LOCATIONS: '/admin/locations',
   OWNER_APPLY: '/owner/apply',
   NOTIFICATIONS: '/notifications',
+  PUSH: '/push',
+  ADMIN_PUSH: '/admin/push',
   SCAN: '/scan',
   QR: '/qr/:qrCode',
   /** Easy-mode UI shell (isolated from normal MainLayout chrome). */

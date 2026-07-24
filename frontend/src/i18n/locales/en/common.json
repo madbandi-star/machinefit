@@ -329,6 +329,7 @@
     "emailCopied": "Email copied.",
     "emailCopyFailed": "Couldn't copy email.",
     "motivationMusic": "Motivation music",
+    "pushCompose": "Send push notification",
     "ownerOnly": "Owner only",
     "tradeManageSell": "Manage sell listings",
     "tradeManageBuy": "Manage buy requests",

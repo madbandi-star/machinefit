@@ -196,6 +196,9 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
           <ListNavLink to={ROUTES.MY_GYMS} label={t('myPage.gymMemberManage')} />
+          {hasMinRole(roleCode, Role.MEMBER) ? (
+            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
+          ) : null}
         </nav>
       </section>
 

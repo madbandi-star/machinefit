@@ -200,5 +200,8 @@
   },
   "trades": {
     "nav": "Machine trades"
+  },
+  "push": {
+    "nav": "Push notifications"
   }
 }

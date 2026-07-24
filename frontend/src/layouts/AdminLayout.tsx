@@ -16,6 +16,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN_MODERATION, labelKey: 'moderation', end: false },
   { to: ROUTES.ADMIN_PHOTO_BOARD, labelKey: 'photoBoard.nav', end: false },
   { to: ROUTES.ADMIN_TRADES, labelKey: 'trades.nav', end: false },
+  { to: ROUTES.ADMIN_PUSH, labelKey: 'push.nav', end: false },
 ] as const;
 
 export function AdminLayout() {

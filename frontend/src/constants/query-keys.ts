@@ -114,4 +114,9 @@ export const QUERY_KEYS = {
   adminMachineTradeReports: ['admin', 'machine-trades', 'reports'] as const,
   adminMachineTradeStats: ['admin', 'machine-trades', 'stats'] as const,
   gymDirectory: ['gym-directory'] as const,
+  pushCapabilities: ['push', 'capabilities'] as const,
+  pushCampaigns: (params?: { all?: boolean }) =>
+    ['push', 'campaigns', params ?? {}] as const,
+  pushCampaignLogs: (campaignId: string) =>
+    ['push', 'campaigns', campaignId, 'logs'] as const,
 } as const;

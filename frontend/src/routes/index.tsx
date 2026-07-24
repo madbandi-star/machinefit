@@ -174,6 +174,10 @@ const notifications = () =>
   import('@/pages/notifications/NotificationsPage').then((m) => ({
     default: m.NotificationsPage,
   }));
+const pushCompose = () =>
+  import('@/pages/push/PushComposePage').then((m) => ({
+    default: m.PushComposePage,
+  }));
 const notFound = () =>
   import('@/pages/not-found/NotFoundPage').then((m) => ({ default: m.NotFoundPage }));
 const qrRedirect = () =>
@@ -240,6 +244,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
             { path: ROUTES.MOTIVATION_MUSIC, element: lazyRoute(motivationMusic) },
             { path: ROUTES.NOTIFICATIONS, element: lazyRoute(notifications) },
+            { path: ROUTES.PUSH, element: lazyRoute(pushCompose) },
           ],
         },
         {
@@ -308,6 +313,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
         { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
+        { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },
