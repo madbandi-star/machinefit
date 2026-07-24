@@ -310,7 +310,16 @@ export function SettingsPage() {
             required={false}
           />
           <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
-            <HomeGymField value={homeGym} onChange={setHomeGym} />
+            <HomeGymField
+              value={homeGym}
+              onChange={setHomeGym}
+              locationFilter={{
+                countryCode: locationDraft.countryCode,
+                stateId: locationDraft.stateId,
+                cityId: locationDraft.cityId,
+                districtId: locationDraft.districtId,
+              }}
+            />
           </div>
           <label className="location-picker__field" style={{ marginTop: 'var(--space-md)' }}>
             <span>{t('location.visibility')}</span>

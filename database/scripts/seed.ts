@@ -23,6 +23,7 @@ const SEED_ORDER = [
   'catalog_machine_settings.sql',
   'future_features.sql',
   'gyms.sql',
+  'kr_gym_directory.sql',
 ];
 
 async function run() {

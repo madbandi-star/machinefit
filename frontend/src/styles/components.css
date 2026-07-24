@@ -985,13 +985,27 @@
 }
 
 .home-gym-field__suggestion {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
   width: 100%;
   padding: 0.65rem 0.75rem;
   border: 0;
   background: transparent;
   text-align: left;
   cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.home-gym-field__suggestion-name {
+  font-weight: 600;
+}
+
+.home-gym-field__suggestion-meta {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
 }
 
 .home-gym-field__suggestion:hover {

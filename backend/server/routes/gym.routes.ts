@@ -6,6 +6,7 @@ import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.midd
 export const gymRouter = Router();
 
 gymRouter.get('/', gymController.listGyms);
+gymRouter.get('/directory', gymController.searchGymDirectory);
 gymRouter.get('/nearby', gymController.nearbyGyms);
 gymRouter.get('/:gymId', gymController.getGym);
 gymRouter.get('/:gymId/machines', gymController.getGymMachines);

@@ -22,3 +22,4 @@ export * from './location.types.js';
 export * from './muscle-group-image.types.js';
 export * from './machine-cover-image.types.js';
 export * from './photo-board.types.js';
+export * from './gym-directory.types.js';

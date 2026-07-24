@@ -286,6 +286,12 @@ export function RegisterPage() {
               onChange={setHomeGym}
               invalid={hasError('homeGym')}
               showDesc
+              locationFilter={{
+                countryCode: locationDraft.countryCode,
+                stateId: locationDraft.stateId,
+                cityId: locationDraft.cityId,
+                districtId: locationDraft.districtId,
+              }}
             />
           </div>
         </section>

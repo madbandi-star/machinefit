@@ -5,6 +5,7 @@ import type {
   Machine,
   Brand,
   Gym,
+  GymDirectoryEntry,
   GymMachine,
   GymPhoto,
   RecommendationInput,
@@ -366,6 +367,18 @@ export interface GymInventoryResponse {
 export const gymApi = {
   list: (params?: Record<string, string | number>) =>
     apiClient.get<ApiResponse<PaginatedResponse<Gym>>>('/gyms', { params }),
+  searchDirectory: (params: {
+    q: string;
+    limit?: number;
+    page?: number;
+    stateId?: string;
+    cityId?: string;
+    districtId?: string;
+    countryCode?: string;
+  }) =>
+    apiClient.get<ApiResponse<PaginatedResponse<GymDirectoryEntry>>>('/gyms/directory', {
+      params,
+    }),
   getById: (idOrSlug: string) =>
     apiClient.get<ApiResponse<GymDetail>>(`/gyms/${idOrSlug}`),
   nearby: (lat: number, lng: number, params?: { radius?: number; machineCode?: string }) =>

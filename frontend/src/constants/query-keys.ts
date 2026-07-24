@@ -107,4 +107,5 @@ export const QUERY_KEYS = {
   photoBoard: (params?: Record<string, unknown>) => ['photo-board', params ?? {}] as const,
   photoBoardPost: (postId: string) => ['photo-board', 'post', postId] as const,
   adminPhotoBoard: ['admin', 'photo-board'] as const,
+  gymDirectory: ['gym-directory'] as const,
 } as const;
