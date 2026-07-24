@@ -171,7 +171,7 @@ export const locationRepository = {
        FROM location_cities c
        JOIN location_states s ON s.id = c.state_id
        WHERE c.state_id = $1 AND c.is_active = TRUE
-       ORDER BY c.sort_order ASC, c.code ASC`,
+       ORDER BY c.name->>'ko' ASC NULLS LAST, c.sort_order ASC, c.code ASC`,
       [stateId]
     );
     return result.rows.map((r) => ({
@@ -201,7 +201,7 @@ export const locationRepository = {
       `SELECT id, city_id, code, name, latitude::text, longitude::text, sort_order
        FROM location_districts
        WHERE city_id = $1 AND is_active = TRUE
-       ORDER BY sort_order ASC, code ASC`,
+       ORDER BY name->>'ko' ASC NULLS LAST, sort_order ASC, code ASC`,
       [cityId]
     );
     return result.rows.map((r) => ({
