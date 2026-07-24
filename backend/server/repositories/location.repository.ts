@@ -430,10 +430,26 @@ export const locationRepository = {
     return this.getUserLocation(userId);
   },
 
-  /** Nearest district (dong) when available, else nearest city. */
+  /** Nearest district (dong) when available, else nearest city within radius. */
   async reverseGeocode(lat: number, lng: number, locale = 'ko'): Promise<ReverseGeocodeResult | null> {
     const pool = getPool();
     if (!pool) return null;
+
+    /** Max km for dong match before falling back to city. */
+    const DISTRICT_RADIUS_KM = 8;
+    /** Max km for city match — avoid far-away false positives. */
+    const CITY_RADIUS_KM = 80;
+
+    const haversineKm = (latCol: string, lngCol: string) => `
+              (
+                6371 * acos(
+                  LEAST(1.0, GREATEST(-1.0,
+                    cos(radians($1)) * cos(radians(${latCol})) *
+                    cos(radians(${lngCol}) - radians($2)) +
+                    sin(radians($1)) * sin(radians(${latCol}))
+                  ))
+                )
+              )::float8`;
 
     const districtHit = await pool.query<{
       district_id: string;
@@ -447,15 +463,7 @@ export const locationRepository = {
     }>(
       `SELECT d.id AS district_id, c.id AS city_id, s.id AS state_id, s.country_code,
               c.code AS city_code, s.code AS state_code, d.code AS district_code,
-              (
-                6371 * acos(
-                  LEAST(1.0, GREATEST(-1.0,
-                    cos(radians($1)) * cos(radians(d.latitude)) *
-                    cos(radians(d.longitude) - radians($2)) +
-                    sin(radians($1)) * sin(radians(d.latitude))
-                  ))
-                )
-              )::text AS dist
+              ${haversineKm('d.latitude', 'd.longitude')} AS dist
        FROM location_districts d
        JOIN location_cities c ON c.id = d.city_id
        JOIN location_states s ON s.id = c.state_id
@@ -467,7 +475,7 @@ export const locationRepository = {
       [lat, lng]
     );
 
-    if (districtHit.rows[0] && parseFloat(districtHit.rows[0].dist) <= 8) {
+    if (districtHit.rows[0] && parseFloat(districtHit.rows[0].dist) <= DISTRICT_RADIUS_KM) {
       const row = districtHit.rows[0];
       const label = await this.resolveLabel(
         {
@@ -503,15 +511,7 @@ export const locationRepository = {
     }>(
       `SELECT c.id AS city_id, s.id AS state_id, s.country_code,
               c.code AS city_code, s.code AS state_code,
-              (
-                6371 * acos(
-                  LEAST(1.0, GREATEST(-1.0,
-                    cos(radians($1)) * cos(radians(c.latitude)) *
-                    cos(radians(c.longitude) - radians($2)) +
-                    sin(radians($1)) * sin(radians(c.latitude))
-                  ))
-                )
-              )::text AS dist
+              ${haversineKm('c.latitude', 'c.longitude')} AS dist
        FROM location_cities c
        JOIN location_states s ON s.id = c.state_id
        WHERE c.is_active = TRUE
@@ -522,7 +522,7 @@ export const locationRepository = {
       [lat, lng]
     );
     const row = result.rows[0];
-    if (!row) return null;
+    if (!row || parseFloat(row.dist) > CITY_RADIUS_KM) return null;
     const label = await this.resolveLabel(
       {
         countryCode: row.country_code,
