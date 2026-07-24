@@ -139,19 +139,17 @@ export function MyPage() {
               </dd>
             </div>
 
-            <div className="profile-card__pair">
-              <div className="profile-card__row">
-                <dt>{t('myPage.location')}</dt>
-                <dd>
-                  {locationQuery.data?.isSet
-                    ? locationQuery.data.label?.path || t('location.unset')
-                    : t('location.unset')}
-                </dd>
-              </div>
-              <div className="profile-card__row">
-                <dt>{t('myPage.homeGym')}</dt>
-                <dd>{homeGymDisplay}</dd>
-              </div>
+            <div className="profile-card__row profile-card__row--full">
+              <dt>{t('myPage.location')}</dt>
+              <dd>
+                {locationQuery.data?.isSet
+                  ? locationQuery.data.label?.path || t('location.unset')
+                  : t('location.unset')}
+              </dd>
+            </div>
+            <div className="profile-card__row profile-card__row--full">
+              <dt>{t('myPage.homeGym')}</dt>
+              <dd>{homeGymDisplay}</dd>
             </div>
           </dl>
         </div>
