@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -8,11 +8,13 @@ import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
-import { locationApi } from '@/api';
+import { locationApi, userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
 import { useUIStore } from '@/store/ui.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/community.css';
@@ -35,14 +37,28 @@ export function MyPage() {
   const { t } = useTranslation();
   const { t: tc } = useTranslation('community');
   const user = useAuthStore((s) => s.user);
+  const updateUser = useAuthStore((s) => s.updateUser);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
   const showToast = useUIStore((s) => s.showToast);
+  const { activeGym, gyms } = useActiveGym();
 
   const [showLogout, setShowLogout] = useState(false);
 
   const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
   const isAdmin = user?.roleCode === 'admin';
+
+  const meQuery = useQuery({
+    queryKey: QUERY_KEYS.me,
+    queryFn: async () => (await userApi.getMe()).data.data,
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  });
+
+  useEffect(() => {
+    if (!meQuery.data) return;
+    updateUser(meQuery.data);
+  }, [meQuery.data, updateUser]);
 
   const locationQuery = useQuery({
     queryKey: QUERY_KEYS.userLocation,
@@ -50,6 +66,9 @@ export function MyPage() {
     enabled: Boolean(user),
     staleTime: 60_000,
   });
+
+  const homeGymDisplay =
+    resolveHomeGymName(meQuery.data ?? user, activeGym, gyms) || t('myPage.homeGymUnset');
 
   const handleLogout = () => {
     clearCredentials();
@@ -118,7 +137,7 @@ export function MyPage() {
             </div>
             <div className="profile-card__row">
               <dt>{t('myPage.homeGym')}</dt>
-              <dd>{user?.homeGymName?.trim() || t('myPage.homeGymUnset')}</dd>
+              <dd>{homeGymDisplay}</dd>
             </div>
           </dl>
         </div>

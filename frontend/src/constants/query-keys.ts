@@ -5,6 +5,7 @@ export const QUERY_KEYS = {
   brand: (code: string) => ['brands', code] as const,
   gyms: ['gyms'] as const,
   gym: (id: string) => ['gyms', id] as const,
+  me: ['user', 'me'] as const,
   gymInventory: (id: string, params?: { brandCode?: string; q?: string }) =>
     ['gyms', id, 'inventory', params ?? {}] as const,
   recommendations: ['recommendations'] as const,

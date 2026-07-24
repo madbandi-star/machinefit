@@ -1,5 +1,6 @@
 import type { CreateUserGymInput, UpdateUserGymInput } from '@machinefit/shared';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
+import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { subscriptionService } from './subscription.service.js';
 import { gymMemberService } from './gym-member.service.js';
@@ -10,7 +11,9 @@ export const userGymService = {
   },
 
   async ensureReady(userId: string, preferredName?: string) {
-    const gym = await userGymRepository.ensureDefaultGym(userId, preferredName);
+    const user = preferredName ? null : await userRepository.findById(userId);
+    const seedName = preferredName?.trim() || user?.homeGymName?.trim() || undefined;
+    const gym = await userGymRepository.ensureDefaultGym(userId, seedName);
     const [activeGymId, items] = await Promise.all([
       userGymRepository.getActiveGymId(userId),
       userGymRepository.listByUser(userId),

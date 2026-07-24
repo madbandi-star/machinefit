@@ -31,7 +31,9 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
@@ -56,6 +58,7 @@ export function SettingsPage() {
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
   const showToast = useUIStore((s) => s.showToast);
+  const { activeGym, gyms } = useActiveGym();
   const unitHeight = useSettingsStore((s) => s.unitHeight);
   const unitWeight = useSettingsStore((s) => s.unitWeight);
   const setUnitHeight = useSettingsStore((s) => s.setUnitHeight);
@@ -94,6 +97,18 @@ export function SettingsPage() {
   const [draftUnitHeight, setDraftUnitHeight] = useState(unitHeight);
   const [draftUnitWeight, setDraftUnitWeight] = useState(unitWeight);
   const [locationDraft, setLocationDraft] = useState<LocationPickerValue>(emptyLocationValue());
+
+  const meQuery = useQuery({
+    queryKey: QUERY_KEYS.me,
+    queryFn: async () => (await userApi.getMe()).data.data,
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  });
+
+  useEffect(() => {
+    if (!meQuery.data) return;
+    updateUser(meQuery.data);
+  }, [meQuery.data, updateUser]);
 
   const locationQuery = useQuery({
     queryKey: QUERY_KEYS.userLocation,
@@ -180,9 +195,10 @@ export function SettingsPage() {
     setGender(user?.gender);
     if (user?.experienceLevel) setExperienceLevel(user.experienceLevel);
     setWorkoutGoal(user?.workoutGoal);
+    const resolvedName = resolveHomeGymName(user, activeGym, gyms);
     setHomeGym({
       homeGymId: user?.homeGymId,
-      homeGymName: user?.homeGymName,
+      homeGymName: user?.homeGymName?.trim() || resolvedName || undefined,
     });
     setDraftUnitHeight(unitHeight);
     setDraftUnitWeight(unitWeight);
@@ -195,6 +211,9 @@ export function SettingsPage() {
     user?.workoutGoal,
     user?.homeGymId,
     user?.homeGymName,
+    activeGym?.id,
+    activeGym?.name,
+    gyms,
     unitHeight,
     unitWeight,
   ]);
