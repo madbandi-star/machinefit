@@ -1,0 +1,1001 @@
+[
+  {
+    "brand": "스포애니",
+    "name": "스포애니 서울시청역점",
+    "address": "서울 중구 서소문로 124",
+    "latitude": 37.56310602,
+    "longitude": 126.97522155,
+    "source_ref": "kakao:501887618",
+    "raw_name": "스포애니 서울시청역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 광화문역점",
+    "address": "서울 종로구 새문안로 82",
+    "latitude": 37.56972807,
+    "longitude": 126.97393686,
+    "source_ref": "kakao:1715138814",
+    "raw_name": "스포애니 광화문역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 종각역점",
+    "address": "서울 종로구 종로 68",
+    "latitude": 37.56989216,
+    "longitude": 126.9849473,
+    "source_ref": "kakao:949300077",
+    "raw_name": "스포애니 종각역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 공덕역점",
+    "address": "서울 마포구 마포대로 137",
+    "latitude": 37.54684151,
+    "longitude": 126.95262203,
+    "source_ref": "kakao:860431776",
+    "raw_name": "스포애니 공덕역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 마포염리동점",
+    "address": "서울 마포구 독막로 291",
+    "latitude": 37.54473731,
+    "longitude": 126.94548541,
+    "source_ref": "kakao:1292398019",
+    "raw_name": "스포애니 마포염리동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 동묘앞역점",
+    "address": "서울 종로구 종로 347",
+    "latitude": 37.57406005,
+    "longitude": 127.01596141,
+    "source_ref": "kakao:143032969",
+    "raw_name": "스포애니 동묘앞역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 신설동역점",
+    "address": "서울 동대문구 천호대로 3",
+    "latitude": 37.57538127,
+    "longitude": 127.02435687,
+    "source_ref": "kakao:1911953143",
+    "raw_name": "스포애니 신설동역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 왕십리역점",
+    "address": "서울 성동구 왕십리로 326",
+    "latitude": 37.56275417,
+    "longitude": 127.03389647,
+    "source_ref": "kakao:1510216002",
+    "raw_name": "스포애니 왕십리역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 응암오거리점",
+    "address": "서울 은평구 응암로 193",
+    "latitude": 37.58929101,
+    "longitude": 126.91676635,
+    "source_ref": "kakao:1995495366",
+    "raw_name": "스포애니 응암오거리점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 합정역점",
+    "address": "서울 마포구 독막로 10",
+    "latitude": 37.54848691,
+    "longitude": 126.91449417,
+    "source_ref": "kakao:116284163",
+    "raw_name": "스포애니 합정역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 논현역점",
+    "address": "서울 강남구 학동로4길 15",
+    "latitude": 37.51051488,
+    "longitude": 127.02353612,
+    "source_ref": "kakao:228414523",
+    "raw_name": "스포애니 논현역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 압구정역점",
+    "address": "서울 강남구 논현로 839",
+    "latitude": 37.52366136,
+    "longitude": 127.02794196,
+    "source_ref": "kakao:177398882",
+    "raw_name": "스포애니 압구정역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 응암동점",
+    "address": "서울 은평구 은평로 136",
+    "latitude": 37.60027115,
+    "longitude": 126.92305486,
+    "source_ref": "kakao:567325394",
+    "raw_name": "스포애니 응암동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 성수역점",
+    "address": "서울 성동구 성수이로20길 3",
+    "latitude": 37.5437125,
+    "longitude": 127.0571979,
+    "source_ref": "kakao:996784730",
+    "raw_name": "스포애니 성수역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 응암역점",
+    "address": "서울 은평구 연서로 9",
+    "latitude": 37.60005885,
+    "longitude": 126.91563554,
+    "source_ref": "kakao:306601021",
+    "raw_name": "스포애니 응암역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 불광역점",
+    "address": "서울 은평구 통일로 727-3",
+    "latitude": 37.61023828,
+    "longitude": 126.92942319,
+    "source_ref": "kakao:27145761",
+    "raw_name": "스포애니 불광역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 필라테스 합정역점",
+    "address": "서울 마포구 독막로 10",
+    "latitude": 37.54848691,
+    "longitude": 126.91449417,
+    "source_ref": "kakao:100721274",
+    "raw_name": "스포애니 필라테스 합정역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 삼양사거리점",
+    "address": "서울 강북구 솔샘로 233",
+    "latitude": 37.62024804,
+    "longitude": 127.01879401,
+    "source_ref": "kakao:798157824",
+    "raw_name": "스포애니 삼양사거리점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 답십리점",
+    "address": "서울 동대문구 전농로 38",
+    "latitude": 37.56825385,
+    "longitude": 127.05724043,
+    "source_ref": "kakao:151335164",
+    "raw_name": "스포애니 답십리점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 당산역점",
+    "address": "서울 영등포구 양평로 64",
+    "latitude": 37.5351389,
+    "longitude": 126.8999638,
+    "source_ref": "kakao:575635819",
+    "raw_name": "스포애니 당산역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 구산역점",
+    "address": "서울 은평구 연서로 137",
+    "latitude": 37.61117976,
+    "longitude": 126.91689146,
+    "source_ref": "kakao:211468301",
+    "raw_name": "스포애니 구산역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 스마트 상도숭실대점",
+    "address": "서울 동작구 상도로47길 4",
+    "latitude": 37.4995312,
+    "longitude": 126.95144867,
+    "source_ref": "kakao:1236136378",
+    "raw_name": "스포애니 스마트 상도숭실대점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 연신내역점",
+    "address": "서울 은평구 연서로 216",
+    "latitude": 37.61779975,
+    "longitude": 126.92012016,
+    "source_ref": "kakao:1649817896",
+    "raw_name": "스포애니 연신내역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 영등포구청역점",
+    "address": "서울 영등포구 양산로23길 16",
+    "latitude": 37.52522821,
+    "longitude": 126.89823034,
+    "source_ref": "kakao:1955417197",
+    "raw_name": "스포애니 영등포구청역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 역삼역점",
+    "address": "서울 강남구 테헤란로 146",
+    "latitude": 37.49998997,
+    "longitude": 127.03543776,
+    "source_ref": "kakao:1426076788",
+    "raw_name": "스포애니 역삼역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 교대역점",
+    "address": "서울 서초구 서초중앙로22길 17",
+    "latitude": 37.49331972,
+    "longitude": 127.01464154,
+    "source_ref": "kakao:73345683",
+    "raw_name": "스포애니 교대역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 이수역점",
+    "address": "서울 서초구 동작대로 114",
+    "latitude": 37.48674019,
+    "longitude": 126.98264607,
+    "source_ref": "kakao:26995537",
+    "raw_name": "스포애니 이수역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 선릉역점",
+    "address": "서울 강남구 선릉로 513",
+    "latitude": 37.50527792,
+    "longitude": 127.04829267,
+    "source_ref": "kakao:900423416",
+    "raw_name": "스포애니 선릉역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 강남역1호점",
+    "address": "서울 강남구 강남대로78길 8",
+    "latitude": 37.4946647,
+    "longitude": 127.03008422,
+    "source_ref": "kakao:27280559",
+    "raw_name": "스포애니 강남역1호점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 군자역점",
+    "address": "서울 광진구 능동로 332",
+    "latitude": 37.55911296,
+    "longitude": 127.08084368,
+    "source_ref": "kakao:1186713118",
+    "raw_name": "스포애니 군자역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 수유역점",
+    "address": "서울 강북구 도봉로 358",
+    "latitude": 37.63913822,
+    "longitude": 127.0274685,
+    "source_ref": "kakao:1032215321",
+    "raw_name": "스포애니 수유역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 신길동점",
+    "address": "서울 영등포구 신풍로 93",
+    "latitude": 37.50027221,
+    "longitude": 126.91663456,
+    "source_ref": "kakao:1816305233",
+    "raw_name": "스포애니 신길동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 테헤란로점",
+    "address": "서울 강남구 테헤란로 441",
+    "latitude": 37.50690653,
+    "longitude": 127.05538282,
+    "source_ref": "kakao:1999400649",
+    "raw_name": "스포애니 테헤란로점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 은천점",
+    "address": "서울 관악구 은천로 51",
+    "latitude": 37.48627089,
+    "longitude": 126.94112501,
+    "source_ref": "kakao:27341868",
+    "raw_name": "스포애니 은천점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 남부터미널역점",
+    "address": "서울 서초구 서초중앙로 51",
+    "latitude": 37.48630984,
+    "longitude": 127.01499295,
+    "source_ref": "kakao:1213094683",
+    "raw_name": "스포애니 남부터미널역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 강남역2호점",
+    "address": "서울 서초구 서초대로78길 44",
+    "latitude": 37.49379653,
+    "longitude": 127.02846456,
+    "source_ref": "kakao:27440610",
+    "raw_name": "스포애니 강남역2호점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 보라매점",
+    "address": "서울 관악구 봉천로 227",
+    "latitude": 37.49002928,
+    "longitude": 126.9271076,
+    "source_ref": "kakao:22458305",
+    "raw_name": "스포애니 보라매점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 염창역점",
+    "address": "서울 양천구 목동중앙북로 73",
+    "latitude": 37.54683503,
+    "longitude": 126.87137633,
+    "source_ref": "kakao:800582113",
+    "raw_name": "스포애니 염창역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 뱅뱅사거리점",
+    "address": "서울 서초구 강남대로 279",
+    "latitude": 37.48808691,
+    "longitude": 127.03175957,
+    "source_ref": "kakao:1640591222",
+    "raw_name": "스포애니 뱅뱅사거리점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 서울대입구점",
+    "address": "서울 관악구 남부순환로 1855",
+    "latitude": 37.48021911,
+    "longitude": 126.95634987,
+    "source_ref": "kakao:21087803",
+    "raw_name": "스포애니 서울대입구점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 역삼동점",
+    "address": "서울 강남구 도곡로 205",
+    "latitude": 37.49288811,
+    "longitude": 127.04135974,
+    "source_ref": "kakao:1241342984",
+    "raw_name": "스포애니 역삼동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 한티역점",
+    "address": "서울 강남구 선릉로 324",
+    "latitude": 37.49852868,
+    "longitude": 127.05207335,
+    "source_ref": "kakao:174022425",
+    "raw_name": "스포애니 한티역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 사가정역점",
+    "address": "서울 중랑구 면목로44길 28",
+    "latitude": 37.58087811,
+    "longitude": 127.08982227,
+    "source_ref": "kakao:604175812",
+    "raw_name": "스포애니 사가정역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 사당역점",
+    "address": "서울 관악구 남부순환로 2064",
+    "latitude": 37.47639946,
+    "longitude": 126.97809013,
+    "source_ref": "kakao:1613784904",
+    "raw_name": "스포애니 사당역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 구의역점",
+    "address": "서울 광진구 아차산로 362",
+    "latitude": 37.53637753,
+    "longitude": 127.08290778,
+    "source_ref": "kakao:471117318",
+    "raw_name": "스포애니 구의역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 아차산역점",
+    "address": "서울 광진구 천호대로 653",
+    "latitude": 37.55283477,
+    "longitude": 127.08963016,
+    "source_ref": "kakao:1965653854",
+    "raw_name": "스포애니 아차산역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 봉천동점",
+    "address": "서울 관악구 쑥고개로 103",
+    "latitude": 37.47927056,
+    "longitude": 126.94795584,
+    "source_ref": "kakao:1657761561",
+    "raw_name": "스포애니 봉천동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 장안동사거리점스마트",
+    "address": "서울 동대문구 장한로 158",
+    "latitude": 37.57438143,
+    "longitude": 127.07218891,
+    "source_ref": "kakao:702881165",
+    "raw_name": "스포애니 장안동사거리점스마트"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 쌍문역점",
+    "address": "서울 도봉구 도봉로 468",
+    "latitude": 37.64759935,
+    "longitude": 127.03441317,
+    "source_ref": "kakao:893525244",
+    "raw_name": "스포애니 쌍문역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 대치동점",
+    "address": "서울 강남구 도곡로 510",
+    "latitude": 37.49891225,
+    "longitude": 127.06195412,
+    "source_ref": "kakao:2138191674",
+    "raw_name": "스포애니 대치동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 낙성대점",
+    "address": "서울 관악구 인헌6길 15",
+    "latitude": 37.47390079,
+    "longitude": 126.96594925,
+    "source_ref": "kakao:21930067",
+    "raw_name": "스포애니 낙성대점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 신림동점",
+    "address": "서울 관악구 신원로 26",
+    "latitude": 37.48130384,
+    "longitude": 126.92844342,
+    "source_ref": "kakao:1333814173",
+    "raw_name": "스포애니 신림동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 가양역점",
+    "address": "서울 강서구 양천로 510",
+    "latitude": 37.56013713,
+    "longitude": 126.85633783,
+    "source_ref": "kakao:873417826",
+    "raw_name": "스포애니 가양역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 신천점",
+    "address": "서울 송파구 올림픽로 98",
+    "latitude": 37.51145949,
+    "longitude": 127.08150031,
+    "source_ref": "kakao:26788435",
+    "raw_name": "스포애니 신천점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 공릉동점",
+    "address": "서울 노원구 동일로192길 74",
+    "latitude": 37.62710887,
+    "longitude": 127.07698639,
+    "source_ref": "kakao:428349316",
+    "raw_name": "스포애니 공릉동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 창동점",
+    "address": "서울 도봉구 도봉로 568",
+    "latitude": 37.65549677,
+    "longitude": 127.0392014,
+    "source_ref": "kakao:223305536",
+    "raw_name": "스포애니 창동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 목동역점",
+    "address": "서울 양천구 목동로 189",
+    "latitude": 37.52528588,
+    "longitude": 126.8641924,
+    "source_ref": "kakao:240614431",
+    "raw_name": "스포애니 목동역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 난곡점",
+    "address": "서울 금천구 남부순환로 1428",
+    "latitude": 37.48054559,
+    "longitude": 126.90933922,
+    "source_ref": "kakao:22300166",
+    "raw_name": "스포애니 난곡점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 남구로점",
+    "address": "서울 구로구 도림로 73",
+    "latitude": 37.4898551,
+    "longitude": 126.89151086,
+    "source_ref": "kakao:288259797",
+    "raw_name": "스포애니 남구로점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 서울대벤처타운역점",
+    "address": "서울 관악구 신림로 135",
+    "latitude": 37.47109791,
+    "longitude": 126.93432702,
+    "source_ref": "kakao:1313185875",
+    "raw_name": "스포애니 서울대벤처타운역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 구로디지털점",
+    "address": "서울 구로구 디지털로 273",
+    "latitude": 37.48395314,
+    "longitude": 126.89409841,
+    "source_ref": "kakao:299012637",
+    "raw_name": "스포애니 구로디지털점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 화곡역점",
+    "address": "서울 강서구 화곡로 191",
+    "latitude": 37.54298686,
+    "longitude": 126.84238486,
+    "source_ref": "kakao:1671291788",
+    "raw_name": "스포애니 화곡역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 노원점",
+    "address": "서울 노원구 동일로 1361",
+    "latitude": 37.65006345,
+    "longitude": 127.06128625,
+    "source_ref": "kakao:448766559",
+    "raw_name": "스포애니 노원점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 등촌점",
+    "address": "서울 강서구 공항대로41길 34",
+    "latitude": 37.55928129,
+    "longitude": 126.84571422,
+    "source_ref": "kakao:23754088",
+    "raw_name": "스포애니 등촌점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 스마트 까치산역점",
+    "address": "서울 강서구 강서로18길 14",
+    "latitude": 37.53357876,
+    "longitude": 126.84659085,
+    "source_ref": "kakao:73804549",
+    "raw_name": "스포애니 스마트 까치산역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 신정네거리역점",
+    "address": "서울 양천구 중앙로 262",
+    "latitude": 37.51984714,
+    "longitude": 126.85340274,
+    "source_ref": "kakao:679478724",
+    "raw_name": "스포애니 신정네거리역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 가산동점",
+    "address": "서울 금천구 가산로 106",
+    "latitude": 37.47552906,
+    "longitude": 126.89349077,
+    "source_ref": "kakao:1663486774",
+    "raw_name": "스포애니 가산동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 잠실점",
+    "address": "서울 송파구 삼학사로 99",
+    "latitude": 37.5060787,
+    "longitude": 127.09698899,
+    "source_ref": "kakao:15209409",
+    "raw_name": "스포애니 잠실점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 가산디지털단지역점",
+    "address": "서울 금천구 벚꽃로 286",
+    "latitude": 37.48036862,
+    "longitude": 126.88417228,
+    "source_ref": "kakao:2037939725",
+    "raw_name": "스포애니 가산디지털단지역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 암사점",
+    "address": "서울 강동구 상암로 41",
+    "latitude": 37.5501728,
+    "longitude": 127.12818919,
+    "source_ref": "kakao:21216042",
+    "raw_name": "스포애니 암사점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 천호역점",
+    "address": "서울 강동구 올림픽로 610",
+    "latitude": 37.53579299,
+    "longitude": 127.12297241,
+    "source_ref": "kakao:896390398",
+    "raw_name": "스포애니 천호역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 강동점",
+    "address": "서울 강동구 천호대로 1078",
+    "latitude": 37.53590116,
+    "longitude": 127.1313011,
+    "source_ref": "kakao:12356883",
+    "raw_name": "스포애니 강동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 구리역점",
+    "address": "경기 구리시 건원대로 3",
+    "latitude": 37.60140987,
+    "longitude": 127.14062506,
+    "source_ref": "kakao:909705561",
+    "raw_name": "스포애니 구리역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 둔촌동역점",
+    "address": "서울 강동구 양재대로 1392",
+    "latitude": 37.53025366,
+    "longitude": 127.13765845,
+    "source_ref": "kakao:173974854",
+    "raw_name": "스포애니 둔촌동역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 길동역점",
+    "address": "서울 강동구 양재대로 1495",
+    "latitude": 37.53928937,
+    "longitude": 127.14030917,
+    "source_ref": "kakao:1914101133",
+    "raw_name": "스포애니 길동역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 시흥동점",
+    "address": "서울 금천구 금하로 720",
+    "latitude": 37.45043028,
+    "longitude": 126.90945695,
+    "source_ref": "kakao:18755535",
+    "raw_name": "스포애니 시흥동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 방화사거리점",
+    "address": "서울 강서구 양천로 72",
+    "latitude": 37.57319034,
+    "longitude": 126.81181607,
+    "source_ref": "kakao:1579055983",
+    "raw_name": "스포애니 방화사거리점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 송파동점",
+    "address": "서울 송파구 오금로 204",
+    "latitude": 37.50771556,
+    "longitude": 127.1162545,
+    "source_ref": "kakao:24769609",
+    "raw_name": "스포애니 송파동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 문정법조타운점",
+    "address": "서울 송파구 송파대로 145",
+    "latitude": 37.48339959,
+    "longitude": 127.12298599,
+    "source_ref": "kakao:988020089",
+    "raw_name": "스포애니 문정법조타운점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 우장산역점",
+    "address": "서울 강서구 강서로 267",
+    "latitude": 37.5495932,
+    "longitude": 126.83593416,
+    "source_ref": "kakao:328932094",
+    "raw_name": "스포애니 우장산역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 짐 굽은다리역점",
+    "address": "서울 강동구 상암로 196",
+    "latitude": 37.54618003,
+    "longitude": 127.14419439,
+    "source_ref": "kakao:569947285",
+    "raw_name": "스포애니 짐 굽은다리역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 천호초교점",
+    "address": "서울 강동구 구천면로 304",
+    "latitude": 37.54671376,
+    "longitude": 127.13475674,
+    "source_ref": "kakao:56960635",
+    "raw_name": "스포애니 천호초교점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 문정점",
+    "address": "서울 송파구 동남로4길 10",
+    "latitude": 37.48915786,
+    "longitude": 127.12391471,
+    "source_ref": "kakao:26878444",
+    "raw_name": "스포애니 문정점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 명일역점",
+    "address": "서울 강동구 구천면로 424",
+    "latitude": 37.55031123,
+    "longitude": 127.14556486,
+    "source_ref": "kakao:480703354",
+    "raw_name": "스포애니 명일역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 범계역점",
+    "address": "경기 안양시 동안구 시민대로 167",
+    "latitude": 37.39073835,
+    "longitude": 126.94961274,
+    "source_ref": "kakao:26433944",
+    "raw_name": "스포애니 범계역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 역곡역점",
+    "address": "경기 부천시 소사구 경인로 527",
+    "latitude": 37.485311,
+    "longitude": 126.81334943,
+    "source_ref": "kakao:1681744982",
+    "raw_name": "스포애니 역곡역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 방화역점",
+    "address": "서울 강서구 금낭화로 135",
+    "latitude": 37.57744402,
+    "longitude": 126.81243932,
+    "source_ref": "kakao:329122147",
+    "raw_name": "스포애니 방화역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 상계역점",
+    "address": "서울 노원구 한글비석로 383",
+    "latitude": 37.65905597,
+    "longitude": 127.07271281,
+    "source_ref": "kakao:1638968448",
+    "raw_name": "스포애니 상계역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 신중동점",
+    "address": "경기 부천시 원미구 신흥로 169",
+    "latitude": 37.49872853,
+    "longitude": 126.77684192,
+    "source_ref": "kakao:1312979908",
+    "raw_name": "스포애니 신중동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 박달시장점",
+    "address": "경기 안양시 만안구 양화로 140",
+    "latitude": 37.40517389,
+    "longitude": 126.90929909,
+    "source_ref": "kakao:2036846133",
+    "raw_name": "스포애니 박달시장점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 부천역점",
+    "address": "경기 부천시 원미구 부천로 47",
+    "latitude": 37.48859913,
+    "longitude": 126.78346077,
+    "source_ref": "kakao:1483813015",
+    "raw_name": "스포애니 부천역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 의정부역점",
+    "address": "경기 의정부시 평화로 540",
+    "latitude": 37.74005555,
+    "longitude": 127.04787297,
+    "source_ref": "kakao:1187827181",
+    "raw_name": "스포애니 의정부역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 관양시장점",
+    "address": "경기 안양시 동안구 관평로 319",
+    "latitude": 37.40519471,
+    "longitude": 126.95743141,
+    "source_ref": "kakao:410492497",
+    "raw_name": "스포애니 관양시장점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 하남시청역점",
+    "address": "경기 하남시 신평로 84",
+    "latitude": 37.54070505,
+    "longitude": 127.20695772,
+    "source_ref": "kakao:183801088",
+    "raw_name": "스포애니 하남시청역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 부천심곡점",
+    "address": "경기 부천시 소사구 경인로 175",
+    "latitude": 37.48426231,
+    "longitude": 126.77511661,
+    "source_ref": "kakao:2003920568",
+    "raw_name": "스포애니 부천심곡점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 부천상동점",
+    "address": "경기 부천시 원미구 부일로 293",
+    "latitude": 37.48862026,
+    "longitude": 126.76257062,
+    "source_ref": "kakao:27422364",
+    "raw_name": "스포애니 부천상동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 마두역점",
+    "address": "경기 고양시 일산동구 중앙로 1190",
+    "latitude": 37.65305559,
+    "longitude": 126.7775923,
+    "source_ref": "kakao:448951170",
+    "raw_name": "스포애니 마두역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 서현역점",
+    "address": "경기 성남시 분당구 황새울로 324",
+    "latitude": 37.38496247,
+    "longitude": 127.12149262,
+    "source_ref": "kakao:24941414",
+    "raw_name": "스포애니 서현역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 금정역점",
+    "address": "경기 군포시 군포로 733",
+    "latitude": 37.37067961,
+    "longitude": 126.94334128,
+    "source_ref": "kakao:1541109656",
+    "raw_name": "스포애니 금정역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 부평시장역점",
+    "address": "인천 부평구 부평대로 83",
+    "latitude": 37.49894314,
+    "longitude": 126.72173136,
+    "source_ref": "kakao:1661170381",
+    "raw_name": "스포애니 부평시장역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 필라테스 역곡역점",
+    "address": "경기 부천시 소사구 경인로 527",
+    "latitude": 37.485311,
+    "longitude": 126.81334943,
+    "source_ref": "kakao:1846836151",
+    "raw_name": "스포애니 필라테스 역곡역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 부평역점",
+    "address": "인천 부평구 시장로 7",
+    "latitude": 37.49208976,
+    "longitude": 126.72389169,
+    "source_ref": "kakao:333609281",
+    "raw_name": "스포애니 부평역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 모래내시장역점",
+    "address": "인천 남동구 구월로 274",
+    "latitude": 37.45556326,
+    "longitude": 126.72096538,
+    "source_ref": "kakao:310294394",
+    "raw_name": "스포애니 모래내시장역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 수내점",
+    "address": "경기 성남시 분당구 돌마로 364",
+    "latitude": 37.3699627,
+    "longitude": 127.12364163,
+    "source_ref": "kakao:22483766",
+    "raw_name": "스포애니 수내점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 인천산곡점",
+    "address": "인천 부평구 안남로222번길 27",
+    "latitude": 37.50369179,
+    "longitude": 126.70916474,
+    "source_ref": "kakao:901723541",
+    "raw_name": "스포애니 인천산곡점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 스마트 장안동점",
+    "address": "서울 동대문구 장한로 68",
+    "latitude": 37.56683236,
+    "longitude": 127.06855161,
+    "source_ref": "kakao:737466859",
+    "raw_name": "스포애니 스마트 장안동점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 스마트 삼전역점",
+    "address": "서울 송파구 백제고분로 170",
+    "latitude": 37.50479368,
+    "longitude": 127.08556907,
+    "source_ref": "kakao:858211494",
+    "raw_name": "스포애니 스마트 삼전역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 필라테스 화곡역점",
+    "address": "서울 강서구 강서로 179",
+    "latitude": 37.54236285,
+    "longitude": 126.83932197,
+    "source_ref": "kakao:1902287255",
+    "raw_name": "스포애니 필라테스 화곡역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 미금점",
+    "address": "경기 성남시 분당구 돌마로 75",
+    "latitude": 37.35050458,
+    "longitude": 127.11042709,
+    "source_ref": "kakao:20156779",
+    "raw_name": "스포애니 미금점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 간석오거리역점",
+    "address": "인천 남동구 남동대로916번길 3",
+    "latitude": 37.46430174,
+    "longitude": 126.70848092,
+    "source_ref": "kakao:491846538",
+    "raw_name": "스포애니 간석오거리역점"
+  },
+  {
+    "brand": "스포애니",
+    "name": "스포애니 광주동림점",
+    "address": "전남광주통합특별시 북구 북문대로 242",
+    "latitude": 35.1872772,
+    "longitude": 126.8657374,
+    "source_ref": "kakao:249456448",
+    "raw_name": "스포애니 광주동림점"
+  }
+]

@@ -1,0 +1,173 @@
+[
+  {
+    "brand": "스포짐",
+    "name": "스포짐 종로점",
+    "address": "서울 종로구 청계천로 35",
+    "latitude": 37.56933664,
+    "longitude": 126.9813716,
+    "source_ref": "kakao:696705257",
+    "raw_name": "스포짐 종로점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐휘트니스 종각점",
+    "address": "서울 종로구 삼봉로 95",
+    "latitude": 37.57225786,
+    "longitude": 126.98267606,
+    "source_ref": "kakao:1115226113",
+    "raw_name": "스포짐휘트니스 종각점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 을지로점",
+    "address": "서울 중구 삼일대로 358",
+    "latitude": 37.56648856,
+    "longitude": 126.98810372,
+    "source_ref": "kakao:1885433209",
+    "raw_name": "스포짐 을지로점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐휘트니스 광화문점",
+    "address": "서울 종로구 사직로8길 34",
+    "latitude": 37.57324432,
+    "longitude": 126.97247761,
+    "source_ref": "kakao:9357247",
+    "raw_name": "스포짐휘트니스 광화문점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 용산점",
+    "address": "서울 용산구 백범로 341",
+    "latitude": 37.53796282,
+    "longitude": 126.96796924,
+    "source_ref": "kakao:27102701",
+    "raw_name": "스포짐 용산점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 신당역점",
+    "address": "서울 중구 퇴계로 447",
+    "latitude": 37.56604027,
+    "longitude": 127.02172331,
+    "source_ref": "kakao:1089033622",
+    "raw_name": "스포짐 신당역점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "GDR아카데미 스포짐 신당역점",
+    "address": "서울 중구 퇴계로 447",
+    "latitude": 37.56604027,
+    "longitude": 127.02172331,
+    "source_ref": "kakao:126911744",
+    "raw_name": "GDR아카데미 스포짐 신당역점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 서교점",
+    "address": "서울 마포구 월드컵북로5나길 18",
+    "latitude": 37.55725349,
+    "longitude": 126.91684048,
+    "source_ref": "kakao:609654351",
+    "raw_name": "스포짐 서교점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐코리아",
+    "address": "서울 은평구 서오릉로 196",
+    "latitude": 37.61384494,
+    "longitude": 126.91200012,
+    "source_ref": "kakao:26950594",
+    "raw_name": "스포짐코리아"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐",
+    "address": "서울 양천구 오목로 299",
+    "latitude": 37.5255369,
+    "longitude": 126.87028502,
+    "source_ref": "kakao:1874044882",
+    "raw_name": "스포짐"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 대치점",
+    "address": "서울 강남구 도곡로 408",
+    "latitude": 37.49668828,
+    "longitude": 127.05525315,
+    "source_ref": "kakao:201357210",
+    "raw_name": "스포짐 대치점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 양천향교역점",
+    "address": "서울 강서구 마곡중앙8로7길 57",
+    "latitude": 37.56619133,
+    "longitude": 126.83918478,
+    "source_ref": "kakao:2014452311",
+    "raw_name": "스포짐 양천향교역점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐",
+    "address": "경기 성남시 중원구 산성대로 520",
+    "latitude": 37.45716277,
+    "longitude": 127.16404455,
+    "source_ref": "kakao:1658904604",
+    "raw_name": "스포짐"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐휘트니스 판교점",
+    "address": "경기 성남시 분당구 대왕판교로 670",
+    "latitude": 37.40206453,
+    "longitude": 127.10680159,
+    "source_ref": "kakao:13582179",
+    "raw_name": "스포짐휘트니스 판교점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 가양점",
+    "address": "서울 강서구 양천로 401",
+    "latitude": 37.56570339,
+    "longitude": 126.84763877,
+    "source_ref": "kakao:2039161083",
+    "raw_name": "스포짐 가양점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐휘트니스",
+    "address": "경기 부천시 원미구 조마루로385번길 92",
+    "latitude": 37.50080174,
+    "longitude": 126.79011485,
+    "source_ref": "kakao:1816359913",
+    "raw_name": "스포짐휘트니스"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 판교역점",
+    "address": "경기 성남시 분당구 분당내곡로 117",
+    "latitude": 37.39409917,
+    "longitude": 127.11203025,
+    "source_ref": "kakao:745467409",
+    "raw_name": "스포짐 판교역점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "스포짐 고덕역점",
+    "address": "서울 강동구 동남로73길 26",
+    "latitude": 37.55329893,
+    "longitude": 127.15478271,
+    "source_ref": "kakao:1683590683",
+    "raw_name": "스포짐 고덕역점"
+  },
+  {
+    "brand": "스포짐",
+    "name": "사우스포짐 복싱&피트니스",
+    "address": "경기 화성시 병점구 작현길 25",
+    "latitude": 37.20788865,
+    "longitude": 127.01768302,
+    "source_ref": "kakao:1414103695",
+    "raw_name": "사우스포짐 복싱&피트니스"
+  }
+]

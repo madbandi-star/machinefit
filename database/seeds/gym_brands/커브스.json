@@ -1,0 +1,1415 @@
+[
+  {
+    "brand": "커브스",
+    "name": "커브스 아현클럽",
+    "address": "서울 서대문구 북아현로 2",
+    "latitude": 37.55771801,
+    "longitude": 126.9563794,
+    "source_ref": "kakao:26604539",
+    "raw_name": "커브스 아현클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 홍제클럽",
+    "address": "서울 서대문구 통일로39가길 30",
+    "latitude": 37.58931733,
+    "longitude": 126.94284874,
+    "source_ref": "kakao:18730642",
+    "raw_name": "커브스 홍제클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 금호클럽",
+    "address": "서울 성동구 독서당로 302",
+    "latitude": 37.5477859,
+    "longitude": 127.02255993,
+    "source_ref": "kakao:19910057",
+    "raw_name": "커브스 금호클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 녹번클럽",
+    "address": "서울 은평구 은평로 204",
+    "latitude": 37.60109919,
+    "longitude": 126.93035135,
+    "source_ref": "kakao:1408745246",
+    "raw_name": "커브스 녹번클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 길음클럽",
+    "address": "서울 성북구 길음로 20",
+    "latitude": 37.60473587,
+    "longitude": 127.02301199,
+    "source_ref": "kakao:18932405",
+    "raw_name": "커브스 길음클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 망원클럽",
+    "address": "서울 마포구 월드컵로 94",
+    "latitude": 37.55713006,
+    "longitude": 126.90949437,
+    "source_ref": "kakao:2021250978",
+    "raw_name": "커브스 망원클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 여의도클럽",
+    "address": "서울 영등포구 여의대방로 394",
+    "latitude": 37.51933335,
+    "longitude": 126.93279839,
+    "source_ref": "kakao:1424939236",
+    "raw_name": "커브스 여의도클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 답십리클럽",
+    "address": "서울 동대문구 천호대로 265",
+    "latitude": 37.56830791,
+    "longitude": 127.05136803,
+    "source_ref": "kakao:2025629609",
+    "raw_name": "커브스 답십리클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 월곡클럽",
+    "address": "서울 성북구 오패산로 98",
+    "latitude": 37.61082525,
+    "longitude": 127.03554918,
+    "source_ref": "kakao:26616082",
+    "raw_name": "커브스 월곡클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 상도클럽",
+    "address": "서울 동작구 상도로 352",
+    "latitude": 37.49698002,
+    "longitude": 126.95261283,
+    "source_ref": "kakao:23641528",
+    "raw_name": "커브스 상도클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 전농클럽",
+    "address": "서울 동대문구 사가정로 148",
+    "latitude": 37.57745941,
+    "longitude": 127.05888444,
+    "source_ref": "kakao:19303517",
+    "raw_name": "커브스 전농클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 휘경클럽",
+    "address": "서울 동대문구 망우로 78",
+    "latitude": 37.58975816,
+    "longitude": 127.06201349,
+    "source_ref": "kakao:27116326",
+    "raw_name": "커브스 휘경클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 석관클럽",
+    "address": "서울 성북구 돌곶이로 75",
+    "latitude": 37.61009042,
+    "longitude": 127.05747521,
+    "source_ref": "kakao:850328910",
+    "raw_name": "커브스 석관클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 상암클럽",
+    "address": "서울 마포구 월드컵북로 434",
+    "latitude": 37.58162853,
+    "longitude": 126.88603984,
+    "source_ref": "kakao:27292319",
+    "raw_name": "커브스 상암클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 삼성클럽",
+    "address": "서울 강남구 선릉로126길 14",
+    "latitude": 37.51526842,
+    "longitude": 127.04323166,
+    "source_ref": "kakao:35671227",
+    "raw_name": "커브스 삼성클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 사당클럽",
+    "address": "서울 동작구 동작대로29길 69",
+    "latitude": 37.48845315,
+    "longitude": 126.97806851,
+    "source_ref": "kakao:8561260",
+    "raw_name": "커브스 사당클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 월계클럽",
+    "address": "서울 성북구 월계로40길 7",
+    "latitude": 37.6229192,
+    "longitude": 127.04828371,
+    "source_ref": "kakao:26641935",
+    "raw_name": "커브스 월계클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 수유클럽",
+    "address": "서울 강북구 도봉로 323",
+    "latitude": 37.63706666,
+    "longitude": 127.02428182,
+    "source_ref": "kakao:26888229",
+    "raw_name": "커브스 수유클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 영등포클럽",
+    "address": "서울 영등포구 영신로19길 18",
+    "latitude": 37.51394491,
+    "longitude": 126.90577883,
+    "source_ref": "kakao:1639256225",
+    "raw_name": "커브스 영등포클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 자양클럽",
+    "address": "서울 광진구 뚝섬로 558",
+    "latitude": 37.5342044,
+    "longitude": 127.07177228,
+    "source_ref": "kakao:16648693",
+    "raw_name": "커브스 자양클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 문래클럽",
+    "address": "서울 영등포구 선유로 63",
+    "latitude": 37.51964633,
+    "longitude": 126.88904359,
+    "source_ref": "kakao:26535273",
+    "raw_name": "커브스 문래클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 봉천클럽",
+    "address": "서울 관악구 양녕로 58",
+    "latitude": 37.48730444,
+    "longitude": 126.94703779,
+    "source_ref": "kakao:12657543",
+    "raw_name": "커브스 봉천클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 목동클럽",
+    "address": "서울 양천구 목동서로 133-2",
+    "latitude": 37.53159775,
+    "longitude": 126.87598456,
+    "source_ref": "kakao:8104917",
+    "raw_name": "커브스 목동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 면목클럽",
+    "address": "서울 중랑구 면목로 305",
+    "latitude": 37.57970501,
+    "longitude": 127.08743439,
+    "source_ref": "kakao:26586156",
+    "raw_name": "커브스 면목클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 광장클럽",
+    "address": "서울 광진구 아차산로 483",
+    "latitude": 37.54097874,
+    "longitude": 127.09511965,
+    "source_ref": "kakao:2034236773",
+    "raw_name": "커브스 광장클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 양천구청클럽",
+    "address": "서울 양천구 목동동로10길 19-1",
+    "latitude": 37.51950712,
+    "longitude": 126.87168795,
+    "source_ref": "kakao:1008115663",
+    "raw_name": "커브스 양천구청클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신내클럽",
+    "address": "서울 중랑구 신내로 71",
+    "latitude": 37.60555031,
+    "longitude": 127.09513387,
+    "source_ref": "kakao:14492454",
+    "raw_name": "커브스 신내클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 공릉클럽",
+    "address": "서울 노원구 노원로1길 9",
+    "latitude": 37.62219289,
+    "longitude": 127.08637857,
+    "source_ref": "kakao:21124241",
+    "raw_name": "커브스 공릉클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 잠실클럽",
+    "address": "서울 송파구 올림픽로12길 23",
+    "latitude": 37.50951652,
+    "longitude": 127.08336667,
+    "source_ref": "kakao:1835017895",
+    "raw_name": "커브스 잠실클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 쌍문클럽",
+    "address": "서울 도봉구 도당로 7",
+    "latitude": 37.65878943,
+    "longitude": 127.03484332,
+    "source_ref": "kakao:19402168",
+    "raw_name": "커브스 쌍문클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 창동클럽",
+    "address": "서울 도봉구 노해로63길 84-9",
+    "latitude": 37.65253679,
+    "longitude": 127.04726826,
+    "source_ref": "kakao:17669113",
+    "raw_name": "커브스 창동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 천호클럽",
+    "address": "서울 강동구 천호대로 997",
+    "latitude": 37.53933985,
+    "longitude": 127.1233324,
+    "source_ref": "kakao:27415004",
+    "raw_name": "커브스 천호클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 우장산클럽",
+    "address": "서울 강서구 강서로45길 9",
+    "latitude": 37.5478629,
+    "longitude": 126.83565844,
+    "source_ref": "kakao:17711398",
+    "raw_name": "커브스 우장산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 까치산클럽",
+    "address": "서울 강서구 강서로 36",
+    "latitude": 37.53117864,
+    "longitude": 126.84739564,
+    "source_ref": "kakao:169855956",
+    "raw_name": "커브스 까치산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 원흥클럽",
+    "address": "경기 고양시 덕양구 도래울로 104",
+    "latitude": 37.6344229,
+    "longitude": 126.8719925,
+    "source_ref": "kakao:27292235",
+    "raw_name": "커브스 원흥클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 방학클럽",
+    "address": "서울 도봉구 도당로 148",
+    "latitude": 37.66691468,
+    "longitude": 127.04245126,
+    "source_ref": "kakao:153394148",
+    "raw_name": "커브스 방학클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 문정클럽",
+    "address": "서울 송파구 중대로 24",
+    "latitude": 37.49109276,
+    "longitude": 127.11730522,
+    "source_ref": "kakao:8555699",
+    "raw_name": "커브스 문정클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 수락산클럽",
+    "address": "서울 노원구 동일로242가길 50",
+    "latitude": 37.67815866,
+    "longitude": 127.05600413,
+    "source_ref": "kakao:26167488",
+    "raw_name": "커브스 수락산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 다산클럽",
+    "address": "경기 남양주시 다산중앙로145번길 15",
+    "latitude": 37.62550139,
+    "longitude": 127.15084065,
+    "source_ref": "kakao:613941286",
+    "raw_name": "커브스 다산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 명일클럽",
+    "address": "서울 강동구 양재대로 1612",
+    "latitude": 37.54938336,
+    "longitude": 127.14396292,
+    "source_ref": "kakao:17984383",
+    "raw_name": "커브스 명일클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 비산클럽",
+    "address": "경기 안양시 동안구 관악대로 129",
+    "latitude": 37.39916844,
+    "longitude": 126.93847706,
+    "source_ref": "kakao:27393292",
+    "raw_name": "커브스 비산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 중계은행클럽",
+    "address": "서울 노원구 중계로 225",
+    "latitude": 37.65039429,
+    "longitude": 127.0750115,
+    "source_ref": "kakao:15293970",
+    "raw_name": "커브스 중계은행클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 석촌클럽",
+    "address": "서울 송파구 가락로 54",
+    "latitude": 37.49936803,
+    "longitude": 127.1023113,
+    "source_ref": "kakao:215179564",
+    "raw_name": "커브스 석촌클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 가락클럽",
+    "address": "서울 송파구 동남로 198",
+    "latitude": 37.49501413,
+    "longitude": 127.13085293,
+    "source_ref": "kakao:12802661",
+    "raw_name": "커브스 가락클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 마들클럽",
+    "address": "서울 노원구 동일로 1551",
+    "latitude": 37.6668852,
+    "longitude": 127.05683892,
+    "source_ref": "kakao:15292977",
+    "raw_name": "커브스 마들클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 둔촌클럽",
+    "address": "서울 강동구 양재대로 1335",
+    "latitude": 37.52555807,
+    "longitude": 127.13494493,
+    "source_ref": "kakao:19147920",
+    "raw_name": "커브스 둔촌클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 세곡클럽",
+    "address": "서울 강남구 헌릉로569길 9",
+    "latitude": 37.46684205,
+    "longitude": 127.10076806,
+    "source_ref": "kakao:2071450059",
+    "raw_name": "커브스 세곡클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 수택클럽",
+    "address": "경기 구리시 장자대로 72",
+    "latitude": 37.58724251,
+    "longitude": 127.13849248,
+    "source_ref": "kakao:12433913",
+    "raw_name": "커브스 수택클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 과천중앙클럽",
+    "address": "경기 과천시 중앙로 137",
+    "latitude": 37.42881147,
+    "longitude": 126.99170822,
+    "source_ref": "kakao:1988934052",
+    "raw_name": "커브스 과천중앙클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 평촌클럽",
+    "address": "경기 안양시 동안구 귀인로 214",
+    "latitude": 37.3858777,
+    "longitude": 126.96279126,
+    "source_ref": "kakao:14678910",
+    "raw_name": "커브스 평촌클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 방화클럽",
+    "address": "서울 강서구 금낭화로 135",
+    "latitude": 37.57733409,
+    "longitude": 126.81243054,
+    "source_ref": "kakao:12832451",
+    "raw_name": "커브스 방화클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 별내클럽",
+    "address": "경기 남양주시 별내중앙로 59",
+    "latitude": 37.64766538,
+    "longitude": 127.12309884,
+    "source_ref": "kakao:24545304",
+    "raw_name": "커브스 별내클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 퇴계원클럽",
+    "address": "경기 남양주시 퇴계원읍 퇴계원로 51",
+    "latitude": 37.65150862,
+    "longitude": 127.14186399,
+    "source_ref": "kakao:27292142",
+    "raw_name": "커브스 퇴계원클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 미사강변클럽",
+    "address": "경기 하남시 미사강변중앙로 220",
+    "latitude": 37.56626538,
+    "longitude": 127.18926218,
+    "source_ref": "kakao:285467576",
+    "raw_name": "커브스 미사강변클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 상동클럽",
+    "address": "경기 부천시 원미구 상동로 113",
+    "latitude": 37.50754375,
+    "longitude": 126.7531912,
+    "source_ref": "kakao:10511831",
+    "raw_name": "커브스 상동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 호원클럽",
+    "address": "경기 의정부시 평화로 375",
+    "latitude": 37.72535887,
+    "longitude": 127.04800417,
+    "source_ref": "kakao:18412087",
+    "raw_name": "커브스 호원클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신곡클럽",
+    "address": "경기 의정부시 추동로 15",
+    "latitude": 37.74333058,
+    "longitude": 127.05789577,
+    "source_ref": "kakao:22194391",
+    "raw_name": "커브스 신곡클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 고덕클럽",
+    "address": "서울 강동구 동남로75길 13-15",
+    "latitude": 37.55359973,
+    "longitude": 127.15556874,
+    "source_ref": "kakao:34263528",
+    "raw_name": "커브스 고덕클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 장지클럽",
+    "address": "서울 송파구 충민로 52",
+    "latitude": 37.47771718,
+    "longitude": 127.12274604,
+    "source_ref": "kakao:1228387463",
+    "raw_name": "커브스 장지클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 위례클럽",
+    "address": "경기 성남시 수정구 위례광장로 320",
+    "latitude": 37.47221195,
+    "longitude": 127.14284709,
+    "source_ref": "kakao:1840150994",
+    "raw_name": "커브스 위례클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 고촌클럽",
+    "address": "경기 김포시 고촌읍 태리로 285",
+    "latitude": 37.59321526,
+    "longitude": 126.7638998,
+    "source_ref": "kakao:966364015",
+    "raw_name": "커브스 고촌클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 작전클럽",
+    "address": "인천 계양구 오조산로 7",
+    "latitude": 37.53155687,
+    "longitude": 126.73796531,
+    "source_ref": "kakao:26862174",
+    "raw_name": "커브스 작전클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 호계클럽",
+    "address": "경기 안양시 동안구 포도원로 4",
+    "latitude": 37.36195359,
+    "longitude": 126.96253216,
+    "source_ref": "kakao:85294068",
+    "raw_name": "커브스 호계클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 인덕원클럽",
+    "address": "경기 안양시 동안구 흥안대로456번길 46",
+    "latitude": 37.39377813,
+    "longitude": 126.97830844,
+    "source_ref": "kakao:1739313953",
+    "raw_name": "커브스 인덕원클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신장클럽",
+    "address": "경기 하남시 대청로 29",
+    "latitude": 37.54105363,
+    "longitude": 127.21557629,
+    "source_ref": "kakao:12571803",
+    "raw_name": "커브스 신장클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 사우클럽",
+    "address": "경기 김포시 사우중로 45",
+    "latitude": 37.61922352,
+    "longitude": 126.71845648,
+    "source_ref": "kakao:23689686",
+    "raw_name": "커브스 사우클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 고산클럽",
+    "address": "경기 의정부시 세석로 24",
+    "latitude": 37.7296587,
+    "longitude": 127.10946988,
+    "source_ref": "kakao:53947098",
+    "raw_name": "커브스 고산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 은행클럽",
+    "address": "경기 시흥시 대은로 82",
+    "latitude": 37.44443142,
+    "longitude": 126.79757033,
+    "source_ref": "kakao:27292241",
+    "raw_name": "커브스 은행클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 풍동클럽",
+    "address": "경기 고양시 일산동구 숲속마을1로 76",
+    "latitude": 37.66782006,
+    "longitude": 126.80032011,
+    "source_ref": "kakao:11632739",
+    "raw_name": "커브스 풍동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 민락클럽",
+    "address": "경기 의정부시 용현로 152",
+    "latitude": 37.74057211,
+    "longitude": 127.09269695,
+    "source_ref": "kakao:18395658",
+    "raw_name": "커브스 민락클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 낙양클럽",
+    "address": "경기 의정부시 송양로 29",
+    "latitude": 37.75229662,
+    "longitude": 127.10926834,
+    "source_ref": "kakao:957970100",
+    "raw_name": "커브스 낙양클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 검단아라클럽",
+    "address": "인천 검단구 바리미로5번길 12",
+    "latitude": 37.59423182,
+    "longitude": 126.71540056,
+    "source_ref": "kakao:90048470",
+    "raw_name": "커브스 검단아라클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 주엽클럽",
+    "address": "경기 고양시 일산서구 강성로 121",
+    "latitude": 37.67056935,
+    "longitude": 126.76215989,
+    "source_ref": "kakao:8545380",
+    "raw_name": "커브스 주엽클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 수내클럽",
+    "address": "경기 성남시 분당구 내정로173번길 11",
+    "latitude": 37.37443083,
+    "longitude": 127.11840247,
+    "source_ref": "kakao:26374788",
+    "raw_name": "커브스 수내클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 서현클럽",
+    "address": "경기 성남시 분당구 돌마로 478",
+    "latitude": 37.37677992,
+    "longitude": 127.13352066,
+    "source_ref": "kakao:16863968",
+    "raw_name": "커브스 서현클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 호평클럽",
+    "address": "경기 남양주시 늘을2로14번길 5",
+    "latitude": 37.65411809,
+    "longitude": 127.24458699,
+    "source_ref": "kakao:17159168",
+    "raw_name": "커브스 호평클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 고읍클럽",
+    "address": "경기 양주시 고읍로 96",
+    "latitude": 37.7954249,
+    "longitude": 127.08137527,
+    "source_ref": "kakao:25548751",
+    "raw_name": "커브스 고읍클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 진접클럽",
+    "address": "경기 남양주시 진접읍 해밀예당3로 52",
+    "latitude": 37.71438704,
+    "longitude": 127.19857765,
+    "source_ref": "kakao:26024587",
+    "raw_name": "커브스 진접클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 운정클럽",
+    "address": "경기 파주시 미래로 371",
+    "latitude": 37.7110945,
+    "longitude": 126.74584577,
+    "source_ref": "kakao:23182771",
+    "raw_name": "커브스 운정클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 와동클럽",
+    "address": "경기 파주시 미래로 622",
+    "latitude": 37.73269893,
+    "longitude": 126.75094378,
+    "source_ref": "kakao:26477933",
+    "raw_name": "커브스 와동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 미금클럽",
+    "address": "경기 성남시 분당구 돌마로90번길 4",
+    "latitude": 37.34971045,
+    "longitude": 127.11172386,
+    "source_ref": "kakao:11752141",
+    "raw_name": "커브스 미금클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신봉클럽",
+    "address": "경기 용인시 수지구 신봉1로 175",
+    "latitude": 37.32835323,
+    "longitude": 127.06796088,
+    "source_ref": "kakao:27393352",
+    "raw_name": "커브스 신봉클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 교하클럽",
+    "address": "경기 파주시 청석로 260",
+    "latitude": 37.72503673,
+    "longitude": 126.7176061,
+    "source_ref": "kakao:267523224",
+    "raw_name": "커브스 교하클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 풍덕천클럽",
+    "address": "경기 용인시 수지구 풍덕천로 127",
+    "latitude": 37.32336756,
+    "longitude": 127.0956841,
+    "source_ref": "kakao:16661788",
+    "raw_name": "커브스 풍덕천클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 장기클럽",
+    "address": "경기 김포시 김포한강4로 131",
+    "latitude": 37.64493734,
+    "longitude": 126.66651851,
+    "source_ref": "kakao:19901580",
+    "raw_name": "커브스 장기클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 동춘클럽",
+    "address": "인천 연수구 앵고개로 260",
+    "latitude": 37.40767746,
+    "longitude": 126.67230337,
+    "source_ref": "kakao:13066960",
+    "raw_name": "커브스 동춘클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 옥정클럽",
+    "address": "경기 양주시 옥정로7길 9-5",
+    "latitude": 37.82787285,
+    "longitude": 127.09128737,
+    "source_ref": "kakao:2128872846",
+    "raw_name": "커브스 옥정클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 보정클럽",
+    "address": "경기 용인시 기흥구 죽전로 50",
+    "latitude": 37.32029477,
+    "longitude": 127.1142729,
+    "source_ref": "kakao:18261601",
+    "raw_name": "커브스 보정클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 상현클럽",
+    "address": "경기 용인시 수지구 만현로 110",
+    "latitude": 37.30684633,
+    "longitude": 127.08489305,
+    "source_ref": "kakao:12376288",
+    "raw_name": "커브스 상현클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 광교클럽",
+    "address": "경기 수원시 영통구 도청로17번길 34",
+    "latitude": 37.28523722,
+    "longitude": 127.05320142,
+    "source_ref": "kakao:25887294",
+    "raw_name": "커브스 광교클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 매탄클럽",
+    "address": "경기 수원시 영통구 인계로 220",
+    "latitude": 37.26486401,
+    "longitude": 127.04140156,
+    "source_ref": "kakao:22251830",
+    "raw_name": "커브스 매탄클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 호매실클럽",
+    "address": "경기 수원시 권선구 금곡로 100",
+    "latitude": 37.27379864,
+    "longitude": 126.94132809,
+    "source_ref": "kakao:350297449",
+    "raw_name": "커브스 호매실클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 구갈클럽",
+    "address": "경기 용인시 기흥구 구갈로 70",
+    "latitude": 37.28048838,
+    "longitude": 127.11187856,
+    "source_ref": "kakao:289708697",
+    "raw_name": "커브스 구갈클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 영통클럽",
+    "address": "경기 수원시 영통구 반달로7번길 6",
+    "latitude": 37.25238585,
+    "longitude": 127.07392076,
+    "source_ref": "kakao:16177162",
+    "raw_name": "커브스 영통클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 동백클럽",
+    "address": "경기 용인시 기흥구 동백7로 73",
+    "latitude": 37.28201048,
+    "longitude": 127.15959854,
+    "source_ref": "kakao:12731750",
+    "raw_name": "커브스 동백클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신영통클럽",
+    "address": "경기 수원시 영통구 태장로 77",
+    "latitude": 37.23933016,
+    "longitude": 127.05486188,
+    "source_ref": "kakao:26517595",
+    "raw_name": "커브스 신영통클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 남동탄클럽",
+    "address": "경기 화성시 동탄구 동탄대로 182",
+    "latitude": 37.17073604,
+    "longitude": 127.10726446,
+    "source_ref": "kakao:595312391",
+    "raw_name": "커브스 남동탄클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 청계클럽",
+    "address": "경기 화성시 동탄구 동탄대로시범길 189",
+    "latitude": 37.2013821,
+    "longitude": 127.10888593,
+    "source_ref": "kakao:1420034230",
+    "raw_name": "커브스 청계클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 양평클럽",
+    "address": "경기 양평군 양평읍 남북로 58",
+    "latitude": 37.48779437,
+    "longitude": 127.50194294,
+    "source_ref": "kakao:1554719531",
+    "raw_name": "커브스 양평클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 영종도클럽",
+    "address": "인천 영종구 하늘달빛로 70",
+    "latitude": 37.48569538,
+    "longitude": 126.55959201,
+    "source_ref": "kakao:129908207",
+    "raw_name": "커브스 영종도클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스에스테틱",
+    "address": "인천 미추홀구 매소홀로 262",
+    "latitude": 37.44425964,
+    "longitude": 126.65247421,
+    "source_ref": "kakao:1548264819",
+    "raw_name": "커브스에스테틱"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 화명클럽",
+    "address": "부산 북구 금곡대로303번길 2",
+    "latitude": 35.23564731,
+    "longitude": 129.01348969,
+    "source_ref": "kakao:18469428",
+    "raw_name": "커브스 화명클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 장산클럽",
+    "address": "부산 해운대구 세실로 33",
+    "latitude": 35.16802131,
+    "longitude": 129.17896386,
+    "source_ref": "kakao:12435302",
+    "raw_name": "커브스 장산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 명지국제클럽",
+    "address": "부산 강서구 명지국제8로 243",
+    "latitude": 35.09843777,
+    "longitude": 128.91952171,
+    "source_ref": "kakao:1566258482",
+    "raw_name": "커브스 명지국제클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 반여클럽",
+    "address": "부산 해운대구 선수촌로 64",
+    "latitude": 35.19931805,
+    "longitude": 129.11895307,
+    "source_ref": "kakao:18597258",
+    "raw_name": "커브스 반여클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 성서클럽",
+    "address": "대구 달서구 성서로 414",
+    "latitude": 35.85434839,
+    "longitude": 128.50776199,
+    "source_ref": "kakao:27525712",
+    "raw_name": "커브스 성서클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신매클럽",
+    "address": "대구 수성구 달구벌대로 3224",
+    "latitude": 35.83901326,
+    "longitude": 128.7089162,
+    "source_ref": "kakao:24194808",
+    "raw_name": "커브스 신매클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 학동클럽",
+    "address": "전남광주통합특별시 여수시 무선로 6",
+    "latitude": 34.76150077,
+    "longitude": 127.65617212,
+    "source_ref": "kakao:26816818",
+    "raw_name": "커브스 학동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 양산클럽",
+    "address": "전남광주통합특별시 북구 하서로 428",
+    "latitude": 35.21290466,
+    "longitude": 126.87519098,
+    "source_ref": "kakao:1797226574",
+    "raw_name": "커브스 양산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 목포남악클럽",
+    "address": "전남광주통합특별시 무안군 삼향읍 남악3로82번길 7",
+    "latitude": 34.81305801,
+    "longitude": 126.46137185,
+    "source_ref": "kakao:1700154166",
+    "raw_name": "커브스 목포남악클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 첨단클럽",
+    "address": "전남광주통합특별시 광산구 첨단중앙로 96",
+    "latitude": 35.21361421,
+    "longitude": 126.84354038,
+    "source_ref": "kakao:26948031",
+    "raw_name": "커브스 첨단클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신성클럽",
+    "address": "대전 유성구 신성로62번길 57",
+    "latitude": 36.38693536,
+    "longitude": 127.34968713,
+    "source_ref": "kakao:536160661",
+    "raw_name": "커브스 신성클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 둔산클럽",
+    "address": "대전 서구 둔산북로 175",
+    "latitude": 36.35615549,
+    "longitude": 127.39052221,
+    "source_ref": "kakao:16709022",
+    "raw_name": "커브스 둔산클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 문화클럽",
+    "address": "대전 중구 계백로1716번길 26",
+    "latitude": 36.32050284,
+    "longitude": 127.4102556,
+    "source_ref": "kakao:12274020",
+    "raw_name": "커브스 문화클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 송촌클럽",
+    "address": "대전 대덕구 송촌북로16번길 57",
+    "latitude": 36.36520351,
+    "longitude": 127.43924322,
+    "source_ref": "kakao:11632738",
+    "raw_name": "커브스 송촌클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 관평클럽",
+    "address": "대전 유성구 관평2로 52",
+    "latitude": 36.42218704,
+    "longitude": 127.38824893,
+    "source_ref": "kakao:19013055",
+    "raw_name": "커브스 관평클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 관저클럽",
+    "address": "대전 서구 관저로 142",
+    "latitude": 36.29869598,
+    "longitude": 127.33799953,
+    "source_ref": "kakao:21694511",
+    "raw_name": "커브스 관저클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 전민클럽",
+    "address": "대전 유성구 유성대로 1754",
+    "latitude": 36.39937097,
+    "longitude": 127.40411289,
+    "source_ref": "kakao:12779083",
+    "raw_name": "커브스 전민클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 노은클럽",
+    "address": "대전 유성구 노은로 178",
+    "latitude": 36.3754673,
+    "longitude": 127.31833356,
+    "source_ref": "kakao:12281888",
+    "raw_name": "커브스 노은클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 괴정클럽",
+    "address": "대전 서구 갈마로 257",
+    "latitude": 36.33337729,
+    "longitude": 127.38246937,
+    "source_ref": "kakao:12659778",
+    "raw_name": "커브스 괴정클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 약사클럽",
+    "address": "울산 중구 화합로 408",
+    "latitude": 35.56179748,
+    "longitude": 129.33841992,
+    "source_ref": "kakao:26888365",
+    "raw_name": "커브스 약사클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 옥동클럽",
+    "address": "울산 남구 문수로 414",
+    "latitude": 35.53347302,
+    "longitude": 129.2987287,
+    "source_ref": "kakao:11394977",
+    "raw_name": "커브스 옥동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 종촌클럽",
+    "address": "세종특별자치시 도움1로 106",
+    "latitude": 36.50281607,
+    "longitude": 127.24812269,
+    "source_ref": "kakao:26524092",
+    "raw_name": "커브스 종촌클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 한솔클럽",
+    "address": "세종특별자치시 새롬중앙로 34",
+    "latitude": 36.48491607,
+    "longitude": 127.25257632,
+    "source_ref": "kakao:26782786",
+    "raw_name": "커브스 한솔클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 후평클럽",
+    "address": "강원특별자치도 춘천시 후석로326번길 5",
+    "latitude": 37.88054077,
+    "longitude": 127.75006787,
+    "source_ref": "kakao:27101601",
+    "raw_name": "커브스 후평클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 무실클럽",
+    "address": "강원특별자치도 원주시 시청로 80",
+    "latitude": 37.33674651,
+    "longitude": 127.92743027,
+    "source_ref": "kakao:25563048",
+    "raw_name": "커브스 무실클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 단구클럽",
+    "address": "강원특별자치도 원주시 서원대로 392",
+    "latitude": 37.3310368,
+    "longitude": 127.94846414,
+    "source_ref": "kakao:17687241",
+    "raw_name": "커브스 단구클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 교동클럽",
+    "address": "강원특별자치도 삼척시 중앙시장길 74",
+    "latitude": 37.4434677,
+    "longitude": 129.16587988,
+    "source_ref": "kakao:26579258",
+    "raw_name": "커브스 교동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 석사클럽",
+    "address": "강원특별자치도 춘천시 퇴계농공로 16",
+    "latitude": 37.85176308,
+    "longitude": 127.74441437,
+    "source_ref": "kakao:15056294",
+    "raw_name": "커브스 석사클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 제천용두클럽",
+    "address": "충북 제천시 용두대로 119",
+    "latitude": 37.1411223,
+    "longitude": 128.20111859,
+    "source_ref": "kakao:417045597",
+    "raw_name": "커브스 제천용두클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 복대클럽",
+    "address": "충북 청주시 흥덕구 진재로 91",
+    "latitude": 36.639387,
+    "longitude": 127.42997747,
+    "source_ref": "kakao:17857099",
+    "raw_name": "커브스 복대클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 율량클럽",
+    "address": "충북 청주시 청원구 율봉로 102",
+    "latitude": 36.66682312,
+    "longitude": 127.48056105,
+    "source_ref": "kakao:23577732",
+    "raw_name": "커브스 율량클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 진천클럽",
+    "address": "충북 진천군 진천읍 중앙동로 52-1",
+    "latitude": 36.85460246,
+    "longitude": 127.4447264,
+    "source_ref": "kakao:26849184",
+    "raw_name": "커브스 진천클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 용암클럽",
+    "address": "충북 청주시 상당구 월평로184번길 111",
+    "latitude": 36.608292,
+    "longitude": 127.50393711,
+    "source_ref": "kakao:11236504",
+    "raw_name": "커브스 용암클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 오창클럽",
+    "address": "충북 청주시 청원구 오창읍 오창대로 315",
+    "latitude": 36.71165654,
+    "longitude": 127.42765114,
+    "source_ref": "kakao:25813037",
+    "raw_name": "커브스 오창클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 가경클럽",
+    "address": "충북 청주시 흥덕구 가경로 9-9",
+    "latitude": 36.61620142,
+    "longitude": 127.44335785,
+    "source_ref": "kakao:17428866",
+    "raw_name": "커브스 가경클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 주중클럽",
+    "address": "충북 청주시 청원구 충청대로 169",
+    "latitude": 36.6713389,
+    "longitude": 127.4956684,
+    "source_ref": "kakao:25596125",
+    "raw_name": "커브스 주중클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 봉명클럽",
+    "address": "충북 청주시 흥덕구 백봉로 219",
+    "latitude": 36.64950545,
+    "longitude": 127.45974429,
+    "source_ref": "kakao:25586463",
+    "raw_name": "커브스 봉명클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 동남클럽",
+    "address": "충북 청주시 상당구 중고개로141번길 13-16",
+    "latitude": 36.61590013,
+    "longitude": 127.51638344,
+    "source_ref": "kakao:760303612",
+    "raw_name": "커브스 동남클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 산남클럽",
+    "address": "충북 청주시 서원구 산남로 64",
+    "latitude": 36.61130396,
+    "longitude": 127.4668992,
+    "source_ref": "kakao:19023906",
+    "raw_name": "커브스 산남클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 당진클럽",
+    "address": "충남 당진시 북문로1길 41-16",
+    "latitude": 36.90205047,
+    "longitude": 126.63107915,
+    "source_ref": "kakao:830153653",
+    "raw_name": "커브스 당진클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 쌍용클럽",
+    "address": "충남 천안시 서북구 쌍용1길 29",
+    "latitude": 36.80202792,
+    "longitude": 127.11940912,
+    "source_ref": "kakao:11435641",
+    "raw_name": "커브스 쌍용클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 형곡클럽",
+    "address": "경북 구미시 신시로 59",
+    "latitude": 36.11323327,
+    "longitude": 128.33884304,
+    "source_ref": "kakao:713972564",
+    "raw_name": "커브스 형곡클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 두호클럽",
+    "address": "경북 포항시 북구 새천년대로1076번길 22",
+    "latitude": 36.06415992,
+    "longitude": 129.37394645,
+    "source_ref": "kakao:18240835",
+    "raw_name": "커브스 두호클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 구평클럽",
+    "address": "경북 구미시 인동36길 15",
+    "latitude": 36.0931647,
+    "longitude": 128.43250949,
+    "source_ref": "kakao:14572897",
+    "raw_name": "커브스 구평클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 양덕클럽",
+    "address": "경북 포항시 북구 양덕로50번길 14",
+    "latitude": 36.08290845,
+    "longitude": 129.40349464,
+    "source_ref": "kakao:168910085",
+    "raw_name": "커브스 양덕클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 이동클럽",
+    "address": "경북 포항시 남구 대이로 112",
+    "latitude": 36.0250456,
+    "longitude": 129.34118317,
+    "source_ref": "kakao:22003216",
+    "raw_name": "커브스 이동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 초곡클럽",
+    "address": "경북 포항시 북구 흥해읍 초곡지구로58번길 20",
+    "latitude": 36.09661278,
+    "longitude": 129.33765132,
+    "source_ref": "kakao:443281396",
+    "raw_name": "커브스 초곡클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 삼문클럽",
+    "address": "경남 김해시 능동로149번길 8",
+    "latitude": 35.20286253,
+    "longitude": 128.80751387,
+    "source_ref": "kakao:14597187",
+    "raw_name": "커브스 삼문클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 내외클럽",
+    "address": "경남 김해시 함박로101번길 2",
+    "latitude": 35.23240634,
+    "longitude": 128.86548142,
+    "source_ref": "kakao:1459325551",
+    "raw_name": "커브스 내외클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 관동클럽",
+    "address": "경남 김해시 대청로 125",
+    "latitude": 35.18601826,
+    "longitude": 128.79776161,
+    "source_ref": "kakao:9695941",
+    "raw_name": "커브스 관동클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 반송클럽",
+    "address": "경남 창원시 성산구 원이대로473번길 13",
+    "latitude": 35.23531948,
+    "longitude": 128.66982463,
+    "source_ref": "kakao:17016709",
+    "raw_name": "커브스 반송클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 주약클럽",
+    "address": "경남 진주시 진주대로 847",
+    "latitude": 35.17612756,
+    "longitude": 128.09219925,
+    "source_ref": "kakao:14584111",
+    "raw_name": "커브스 주약클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 신안클럽",
+    "address": "경남 진주시 진양호로 282",
+    "latitude": 35.17849473,
+    "longitude": 128.06442257,
+    "source_ref": "kakao:1272762156",
+    "raw_name": "커브스 신안클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 충무공클럽",
+    "address": "경남 진주시 충의로 22",
+    "latitude": 35.17649583,
+    "longitude": 128.14750749,
+    "source_ref": "kakao:304024769",
+    "raw_name": "커브스 충무공클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 한라클럽",
+    "address": "제주특별자치도 제주시 수덕로 69",
+    "latitude": 33.48447525,
+    "longitude": 126.47058548,
+    "source_ref": "kakao:17348796",
+    "raw_name": "커브스 한라클럽"
+  },
+  {
+    "brand": "커브스",
+    "name": "커브스 시청클럽",
+    "address": "제주특별자치도 제주시 중앙로 206",
+    "latitude": 33.50092016,
+    "longitude": 126.52860235,
+    "source_ref": "kakao:1397349131",
+    "raw_name": "커브스 시청클럽"
+  }
+]

@@ -375,6 +375,9 @@ export const gymApi = {
     cityId?: string;
     districtId?: string;
     countryCode?: string;
+    latitude?: number;
+    longitude?: number;
+    brand?: string;
   }) =>
     apiClient.get<ApiResponse<PaginatedResponse<GymDirectoryEntry>>>('/gyms/directory', {
       params,

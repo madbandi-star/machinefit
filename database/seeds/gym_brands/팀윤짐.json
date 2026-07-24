@@ -1,0 +1,56 @@
+[
+  {
+    "brand": "팀윤짐",
+    "name": "팀윤짐 산본점",
+    "address": "경기 군포시 번영로 505",
+    "latitude": 37.35882312,
+    "longitude": 126.9332217,
+    "source_ref": "kakao:367777401",
+    "raw_name": "팀윤짐 산본점"
+  },
+  {
+    "brand": "팀윤짐",
+    "name": "팀윤짐 PT 분당서현점",
+    "address": "경기 성남시 분당구 황새울로342번길 23",
+    "latitude": 37.38689914,
+    "longitude": 127.1245999,
+    "source_ref": "kakao:26304057",
+    "raw_name": "팀윤짐 PT 분당서현점"
+  },
+  {
+    "brand": "팀윤짐",
+    "name": "팀윤짐 검단8호점",
+    "address": "인천 검단구 이음5로 24",
+    "latitude": 37.59373485,
+    "longitude": 126.71036933,
+    "source_ref": "kakao:181826682",
+    "raw_name": "팀윤짐 검단8호점"
+  },
+  {
+    "brand": "팀윤짐",
+    "name": "팀윤짐PT 서창10호점",
+    "address": "인천 남동구 서창남로 81",
+    "latitude": 37.42627991,
+    "longitude": 126.74804654,
+    "source_ref": "kakao:83586141",
+    "raw_name": "팀윤짐PT 서창10호점"
+  },
+  {
+    "brand": "팀윤짐",
+    "name": "팀윤짐 송도7호점",
+    "address": "인천 연수구 신송로 161",
+    "latitude": 37.39769764,
+    "longitude": 126.64840908,
+    "source_ref": "kakao:668313263",
+    "raw_name": "팀윤짐 송도7호점"
+  },
+  {
+    "brand": "팀윤짐",
+    "name": "팀윤짐 송도9호점",
+    "address": "인천 연수구 센트럴로 415",
+    "latitude": 37.40966815,
+    "longitude": 126.6256812,
+    "source_ref": "kakao:1213777172",
+    "raw_name": "팀윤짐 송도9호점"
+  }
+]

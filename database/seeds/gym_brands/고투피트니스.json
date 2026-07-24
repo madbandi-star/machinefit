@@ -1,0 +1,34 @@
+[
+  {
+    "brand": "고투피트니스",
+    "name": "고투 둔촌점",
+    "address": "서울 강동구 양재대로89길 16",
+    "latitude": 37.52682605,
+    "longitude": 127.13470398,
+    "source_ref": "kakao:1600222121"
+  },
+  {
+    "brand": "고투피트니스",
+    "name": "고투 용인수지점",
+    "address": "경기 용인시 수지구 만현로 120",
+    "latitude": 37.30602735,
+    "longitude": 127.08480076,
+    "source_ref": "kakao:914340688"
+  },
+  {
+    "brand": "고투피트니스",
+    "name": "고투짐",
+    "address": "경북 안동시 한화3길 57",
+    "latitude": 36.57299142,
+    "longitude": 128.71798028,
+    "source_ref": "kakao:143256243"
+  },
+  {
+    "brand": "고투피트니스",
+    "name": "고투더짐",
+    "address": "경기 평택시 비전2로 200",
+    "latitude": 37.00126683,
+    "longitude": 127.11286458,
+    "source_ref": "kakao:1665102183"
+  }
+]

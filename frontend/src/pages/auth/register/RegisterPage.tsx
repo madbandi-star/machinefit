@@ -291,6 +291,8 @@ export function RegisterPage() {
                 stateId: locationDraft.stateId,
                 cityId: locationDraft.cityId,
                 districtId: locationDraft.districtId,
+                latitude: locationDraft.latitude,
+                longitude: locationDraft.longitude,
               }}
             />
           </div>

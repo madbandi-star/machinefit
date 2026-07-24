@@ -1,0 +1,272 @@
+[
+  {
+    "brand": "바디채널",
+    "name": "바디채널 혜화점",
+    "address": "서울 종로구 창경궁로 273",
+    "latitude": 37.58583892,
+    "longitude": 127.00057176,
+    "source_ref": "kakao:1194311716",
+    "raw_name": "바디채널 혜화점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 신촌이대역점",
+    "address": "서울 서대문구 신촌로 155",
+    "latitude": 37.55694388,
+    "longitude": 126.94324695,
+    "source_ref": "kakao:220042167",
+    "raw_name": "바디채널 신촌이대역점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 홍대점",
+    "address": "서울 마포구 월드컵북로 35",
+    "latitude": 37.55752759,
+    "longitude": 126.91841106,
+    "source_ref": "kakao:1044636240",
+    "raw_name": "바디채널 홍대점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 여의도점",
+    "address": "서울 영등포구 여의대방로65길 24",
+    "latitude": 37.52036746,
+    "longitude": 126.92929978,
+    "source_ref": "kakao:1657474735",
+    "raw_name": "바디채널 여의도점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 은평신사점",
+    "address": "서울 은평구 갈현로 14",
+    "latitude": 37.5990568,
+    "longitude": 126.9105409,
+    "source_ref": "kakao:1963385608",
+    "raw_name": "바디채널 은평신사점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 광산사거리점",
+    "address": "서울 강북구 노해로 87",
+    "latitude": 37.64357937,
+    "longitude": 127.02228747,
+    "source_ref": "kakao:957089681",
+    "raw_name": "바디채널 광산사거리점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 목사랑시장점",
+    "address": "서울 양천구 목동중앙본로7길 42",
+    "latitude": 37.53958807,
+    "longitude": 126.8663129,
+    "source_ref": "kakao:1512859472",
+    "raw_name": "바디채널 목사랑시장점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 등촌역점",
+    "address": "서울 강서구 공항대로 525",
+    "latitude": 37.55144815,
+    "longitude": 126.86493371,
+    "source_ref": "kakao:2035301419",
+    "raw_name": "바디채널 등촌역점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 화곡2호점",
+    "address": "서울 강서구 곰달래로 198",
+    "latitude": 37.53117292,
+    "longitude": 126.85501766,
+    "source_ref": "kakao:212705754",
+    "raw_name": "바디채널 화곡2호점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 광명점",
+    "address": "경기 광명시 오리로 992",
+    "latitude": 37.47999998,
+    "longitude": 126.8532398,
+    "source_ref": "kakao:1773889903",
+    "raw_name": "바디채널 광명점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널핏 독산점",
+    "address": "서울 금천구 시흥대로 392",
+    "latitude": 37.46843425,
+    "longitude": 126.8983119,
+    "source_ref": "kakao:902051925",
+    "raw_name": "바디채널핏 독산점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 화곡점",
+    "address": "서울 강서구 까치산로4길 3",
+    "latitude": 37.54248013,
+    "longitude": 126.84414207,
+    "source_ref": "kakao:473271833",
+    "raw_name": "바디채널 화곡점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 부평점",
+    "address": "인천 부평구 경원대로 1422",
+    "latitude": 37.49086634,
+    "longitude": 126.72705439,
+    "source_ref": "kakao:2096621104",
+    "raw_name": "바디채널 부평점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 역곡역북부점",
+    "address": "경기 부천시 원미구 부일로 753",
+    "latitude": 37.4866651,
+    "longitude": 126.81327822,
+    "source_ref": "kakao:1944471123",
+    "raw_name": "바디채널 역곡역북부점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 역곡역남부점",
+    "address": "경기 부천시 소사구 경인로 505",
+    "latitude": 37.48463445,
+    "longitude": 126.81115084,
+    "source_ref": "kakao:2110587349",
+    "raw_name": "바디채널 역곡역남부점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널휘트니스 상동점",
+    "address": "경기 부천시 원미구 상동로 83",
+    "latitude": 37.50483195,
+    "longitude": 126.75243107,
+    "source_ref": "kakao:27257709",
+    "raw_name": "바디채널휘트니스 상동점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 군포역점",
+    "address": "경기 군포시 군포로 545",
+    "latitude": 37.35466615,
+    "longitude": 126.94633199,
+    "source_ref": "kakao:625083837",
+    "raw_name": "바디채널 군포역점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널휘트니스 산본점",
+    "address": "경기 군포시 산본로323번길 15",
+    "latitude": 37.35863155,
+    "longitude": 126.93225113,
+    "source_ref": "kakao:20888203",
+    "raw_name": "바디채널휘트니스 산본점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 연수점",
+    "address": "인천 연수구 벚꽃로 106",
+    "latitude": 37.41764904,
+    "longitude": 126.6772304,
+    "source_ref": "kakao:254606260",
+    "raw_name": "바디채널 연수점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 동춘점",
+    "address": "인천 연수구 먼우금로 88",
+    "latitude": 37.40673868,
+    "longitude": 126.67038733,
+    "source_ref": "kakao:1444824226",
+    "raw_name": "바디채널 동춘점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 사창점",
+    "address": "충북 청주시 서원구 사직대로 115",
+    "latitude": 36.63521281,
+    "longitude": 127.46040402,
+    "source_ref": "kakao:651760178",
+    "raw_name": "바디채널 사창점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 침산점",
+    "address": "대구 북구 침산남로 154",
+    "latitude": 35.88785085,
+    "longitude": 128.59228696,
+    "source_ref": "kakao:2102847675",
+    "raw_name": "바디채널 침산점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 마산삼계점",
+    "address": "경남 창원시 마산회원구 내서읍 삼계로 6",
+    "latitude": 35.23227747,
+    "longitude": 128.5040912,
+    "source_ref": "kakao:752144956",
+    "raw_name": "바디채널 마산삼계점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 창원상남점",
+    "address": "경남 창원시 성산구 마디미서로 34",
+    "latitude": 35.2223659,
+    "longitude": 128.68214955,
+    "source_ref": "kakao:921542863",
+    "raw_name": "바디채널 창원상남점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 남양점",
+    "address": "경남 창원시 성산구 가음로15번길 50",
+    "latitude": 35.21277328,
+    "longitude": 128.70277637,
+    "source_ref": "kakao:878458117",
+    "raw_name": "바디채널 남양점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 부산정관점",
+    "address": "부산 기장군 정관읍 정관중앙로 45",
+    "latitude": 35.3211911,
+    "longitude": 129.17827899,
+    "source_ref": "kakao:183328712",
+    "raw_name": "바디채널 부산정관점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 김해내외동점",
+    "address": "경남 김해시 내외중앙로 27",
+    "latitude": 35.23239809,
+    "longitude": 128.86589971,
+    "source_ref": "kakao:1736163889",
+    "raw_name": "바디채널 김해내외동점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 노형점",
+    "address": "제주특별자치도 제주시 연북로 26",
+    "latitude": 33.48169237,
+    "longitude": 126.48413319,
+    "source_ref": "kakao:583717243",
+    "raw_name": "바디채널 노형점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 남녕점",
+    "address": "제주특별자치도 제주시 도령로 46",
+    "latitude": 33.48828532,
+    "longitude": 126.48382295,
+    "source_ref": "kakao:286165143",
+    "raw_name": "바디채널 남녕점"
+  },
+  {
+    "brand": "바디채널",
+    "name": "바디채널 제주시청점",
+    "address": "제주특별자치도 제주시 서광로 301",
+    "latitude": 33.50084379,
+    "longitude": 126.52843488,
+    "source_ref": "kakao:1355684975",
+    "raw_name": "바디채널 제주시청점"
+  }
+]

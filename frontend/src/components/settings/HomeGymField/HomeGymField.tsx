@@ -17,6 +17,9 @@ export interface HomeGymLocationFilter {
   stateId?: string | null;
   cityId?: string | null;
   districtId?: string | null;
+  /** When set (GPS or reverse-geocode), directory results sort by distance. */
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface HomeGymFieldProps {
@@ -52,13 +55,29 @@ export function HomeGymField({
   const canSearch = open && trimmed.length >= 2 && !value.homeGymId;
 
   const locationParams = useMemo(() => {
-    const params: Record<string, string> = {};
+    const params: Record<string, string | number> = {};
     if (locationFilter?.districtId) params.districtId = locationFilter.districtId;
     if (locationFilter?.cityId) params.cityId = locationFilter.cityId;
     if (locationFilter?.stateId) params.stateId = locationFilter.stateId;
     if (locationFilter?.countryCode) params.countryCode = locationFilter.countryCode;
+    if (
+      typeof locationFilter?.latitude === 'number' &&
+      Number.isFinite(locationFilter.latitude) &&
+      typeof locationFilter?.longitude === 'number' &&
+      Number.isFinite(locationFilter.longitude)
+    ) {
+      params.latitude = locationFilter.latitude;
+      params.longitude = locationFilter.longitude;
+    }
     return params;
-  }, [locationFilter?.cityId, locationFilter?.countryCode, locationFilter?.districtId, locationFilter?.stateId]);
+  }, [
+    locationFilter?.cityId,
+    locationFilter?.countryCode,
+    locationFilter?.districtId,
+    locationFilter?.latitude,
+    locationFilter?.longitude,
+    locationFilter?.stateId,
+  ]);
 
   const directoryQuery = useQuery({
     queryKey: [...QUERY_KEYS.gymDirectory, trimmed, locationParams],
@@ -194,8 +213,19 @@ export function HomeGymField({
                   onClick={() => handleSelectSuggestion(item)}
                 >
                   <span className="home-gym-field__suggestion-name">{item.name}</span>
-                  {item.kind === 'directory' && item.entry.locationLabel ? (
-                    <span className="home-gym-field__suggestion-meta">{item.entry.locationLabel}</span>
+                  {item.kind === 'directory' ? (
+                    <span className="home-gym-field__suggestion-meta">
+                      {[
+                        item.entry.locationLabel,
+                        typeof item.entry.distanceMeters === 'number'
+                          ? item.entry.distanceMeters < 1000
+                            ? `${Math.round(item.entry.distanceMeters)}m`
+                            : `${(item.entry.distanceMeters / 1000).toFixed(1)}km`
+                          : null,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </span>
                   ) : null}
                   {item.kind === 'gym' && item.gym.city ? (
                     <span className="home-gym-field__suggestion-meta">{item.gym.city}</span>
