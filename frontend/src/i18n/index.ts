@@ -10,6 +10,7 @@ import koCommunity from './locales/ko/community.json';
 import koNotifications from './locales/ko/notifications.json';
 import koAdmin from './locales/ko/admin.json';
 import koTrade from './locales/ko/trade.json';
+import koOnlinePt from './locales/ko/online-pt.json';
 
 type NamespaceBundle = Record<string, unknown>;
 
@@ -18,15 +19,17 @@ const loadedLocales = new Set<string>([DEFAULT_LOCALE]);
 async function loadLocaleBundles(locale: Locale): Promise<Record<string, NamespaceBundle>> {
   switch (locale) {
     case 'en': {
-      const [common, machines, gyms, community, notifications, admin, trade] = await Promise.all([
-        import('./locales/en/common.json'),
-        import('./locales/en/machines.json'),
-        import('./locales/en/gyms.json'),
-        import('./locales/en/community.json'),
-        import('./locales/en/notifications.json'),
-        import('./locales/en/admin.json'),
-        import('./locales/en/trade.json'),
-      ]);
+      const [common, machines, gyms, community, notifications, admin, trade, onlinePt] =
+        await Promise.all([
+          import('./locales/en/common.json'),
+          import('./locales/en/machines.json'),
+          import('./locales/en/gyms.json'),
+          import('./locales/en/community.json'),
+          import('./locales/en/notifications.json'),
+          import('./locales/en/admin.json'),
+          import('./locales/en/trade.json'),
+          import('./locales/en/online-pt.json'),
+        ]);
       return {
         common: common.default,
         machines: machines.default,
@@ -35,10 +38,11 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         notifications: notifications.default,
         admin: admin.default,
         trade: trade.default,
+        'online-pt': onlinePt.default,
       };
     }
     case 'ja': {
-      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade] =
+      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade, enOnlinePt] =
         await Promise.all([
           import('./locales/ja/common.json'),
           import('./locales/en/machines.json'),
@@ -47,6 +51,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
           import('./locales/en/notifications.json'),
           import('./locales/en/admin.json'),
           import('./locales/en/trade.json'),
+          import('./locales/en/online-pt.json'),
         ]);
       return {
         common: common.default,
@@ -56,10 +61,11 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         notifications: enNotifications.default,
         admin: enAdmin.default,
         trade: enTrade.default,
+        'online-pt': enOnlinePt.default,
       };
     }
     case 'zh': {
-      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade] =
+      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade, enOnlinePt] =
         await Promise.all([
           import('./locales/zh/common.json'),
           import('./locales/en/machines.json'),
@@ -68,6 +74,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
           import('./locales/en/notifications.json'),
           import('./locales/en/admin.json'),
           import('./locales/en/trade.json'),
+          import('./locales/en/online-pt.json'),
         ]);
       return {
         common: common.default,
@@ -77,6 +84,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         notifications: enNotifications.default,
         admin: enAdmin.default,
         trade: enTrade.default,
+        'online-pt': enOnlinePt.default,
       };
     }
     case 'ko':
@@ -89,6 +97,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         notifications: koNotifications,
         admin: koAdmin,
         trade: koTrade,
+        'online-pt': koOnlinePt,
       };
   }
 }
@@ -118,6 +127,7 @@ void i18n
         notifications: koNotifications,
         admin: koAdmin,
         trade: koTrade,
+        'online-pt': koOnlinePt,
       },
     },
     lng: DEFAULT_LOCALE,

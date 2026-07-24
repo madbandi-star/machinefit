@@ -22,6 +22,7 @@ import { locationRouter } from './location.routes.js';
 import { muscleGroupImageRouter } from './muscle-group-image.routes.js';
 import { photoBoardRouter } from './photo-board.routes.js';
 import { machineTradeRouter } from './machine-trade.routes.js';
+import { onlinePtRouter } from './online-pt.routes.js';
 
 export const apiRouter = Router();
 
@@ -48,3 +49,4 @@ apiRouter.use('/locations', locationRouter);
 apiRouter.use('/muscle-group-images', muscleGroupImageRouter);
 apiRouter.use('/photo-board', photoBoardRouter);
 apiRouter.use('/machine-trades', machineTradeRouter);
+apiRouter.use('/online-pt', onlinePtRouter);

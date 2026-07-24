@@ -85,6 +85,36 @@ const tradeStats = () =>
   import('@/pages/machine-trade/TradeStatsPage').then((m) => ({ default: m.TradeStatsPage }));
 const adminTrades = () =>
   import('@/pages/admin/trades/AdminTradesPage').then((m) => ({ default: m.AdminTradesPage }));
+const adminOnlinePt = () =>
+  import('@/pages/admin/online-pt/AdminOnlinePtPage').then((m) => ({
+    default: m.AdminOnlinePtPage,
+  }));
+const onlinePtTrainers = () =>
+  import('@/pages/online-pt/OnlinePtTrainersPage').then((m) => ({
+    default: m.OnlinePtTrainersPage,
+  }));
+const onlinePtTrainerDetail = () =>
+  import('@/pages/online-pt/OnlinePtTrainerDetailPage').then((m) => ({
+    default: m.OnlinePtTrainerDetailPage,
+  }));
+const onlinePtAsk = () =>
+  import('@/pages/online-pt/OnlinePtAskPage').then((m) => ({ default: m.OnlinePtAskPage }));
+const onlinePtQuestions = () =>
+  import('@/pages/online-pt/OnlinePtQuestionsPage').then((m) => ({
+    default: m.OnlinePtQuestionsPage,
+  }));
+const onlinePtQuestion = () =>
+  import('@/pages/online-pt/OnlinePtQuestionPage').then((m) => ({
+    default: m.OnlinePtQuestionPage,
+  }));
+const onlinePtManage = () =>
+  import('@/pages/online-pt/OnlinePtManagePage').then((m) => ({
+    default: m.OnlinePtManagePage,
+  }));
+const onlinePtWallet = () =>
+  import('@/pages/online-pt/OnlinePtWalletPage').then((m) => ({
+    default: m.OnlinePtWalletPage,
+  }));
 const login = () =>
   import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
 const register = () =>
@@ -213,6 +243,8 @@ export const router = createBrowserRouter(
         { path: ROUTES.TRADE_LIST_SELL, element: lazyRoute(tradeList) },
         { path: ROUTES.TRADE_LIST_BUY, element: lazyRoute(tradeList) },
         { path: ROUTES.TRADE_DETAIL, element: lazyRoute(tradeDetail) },
+        { path: ROUTES.ONLINE_PT, element: lazyRoute(onlinePtTrainers) },
+        { path: ROUTES.ONLINE_PT_TRAINER, element: lazyRoute(onlinePtTrainerDetail) },
         {
           path: ROUTES.HISTORY,
           element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
@@ -240,6 +272,16 @@ export const router = createBrowserRouter(
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
             { path: ROUTES.MOTIVATION_MUSIC, element: lazyRoute(motivationMusic) },
             { path: ROUTES.NOTIFICATIONS, element: lazyRoute(notifications) },
+            { path: ROUTES.ONLINE_PT_ASK, element: lazyRoute(onlinePtAsk) },
+            { path: ROUTES.ONLINE_PT_QUESTIONS, element: lazyRoute(onlinePtQuestions) },
+            { path: ROUTES.ONLINE_PT_QUESTION, element: lazyRoute(onlinePtQuestion) },
+          ],
+        },
+        {
+          element: <AuthGuard minRole={Role.TRAINER} />,
+          children: [
+            { path: ROUTES.ONLINE_PT_MANAGE, element: lazyRoute(onlinePtManage) },
+            { path: ROUTES.ONLINE_PT_WALLET, element: lazyRoute(onlinePtWallet) },
           ],
         },
         {
@@ -308,6 +350,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
         { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
+        { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

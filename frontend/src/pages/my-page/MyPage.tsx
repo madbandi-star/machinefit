@@ -49,6 +49,8 @@ export function MyPage() {
   const roleCode = user?.roleCode;
   const isOwner = hasMinRole(roleCode, Role.OWNER);
   const isAdmin = hasMinRole(roleCode, Role.ADMIN);
+  const isTrainer = hasMinRole(roleCode, Role.TRAINER);
+  const isMember = hasMinRole(roleCode, Role.MEMBER);
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -208,8 +210,22 @@ export function MyPage() {
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
           <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} />
+          {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
+          {isMember ? (
+            <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
+          ) : null}
         </nav>
       </section>
+
+      {isTrainer ? (
+        <section className="my-page-section">
+          <h3 className="my-page-section__title">{t('myPage.onlinePtManage')}</h3>
+          <nav className="list-nav" aria-label={t('myPage.onlinePtManage')}>
+            <ListNavLink to={ROUTES.ONLINE_PT_MANAGE} label={t('myPage.onlinePtManage')} />
+            <ListNavLink to={ROUTES.ONLINE_PT_WALLET} label={t('myPage.onlinePtWallet')} />
+          </nav>
+        </section>
+      ) : null}
 
       {isOwner ? (
         <section className="my-page-section">

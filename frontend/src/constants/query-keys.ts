@@ -114,4 +114,17 @@ export const QUERY_KEYS = {
   adminMachineTradeReports: ['admin', 'machine-trades', 'reports'] as const,
   adminMachineTradeStats: ['admin', 'machine-trades', 'stats'] as const,
   gymDirectory: ['gym-directory'] as const,
+  onlinePtPolicy: ['online-pt', 'policy'] as const,
+  onlinePtTrainers: (params?: Record<string, unknown>) =>
+    ['online-pt', 'trainers', params ?? {}] as const,
+  onlinePtTrainer: (id: string) => ['online-pt', 'trainer', id] as const,
+  onlinePtMyTrainer: ['online-pt', 'me', 'trainer'] as const,
+  onlinePtTickets: ['online-pt', 'me', 'tickets'] as const,
+  onlinePtQuestions: (params?: Record<string, unknown>) =>
+    ['online-pt', 'questions', params ?? {}] as const,
+  onlinePtQuestion: (id: string) => ['online-pt', 'question', id] as const,
+  onlinePtWallet: ['online-pt', 'me', 'wallet'] as const,
+  onlinePtPayouts: ['online-pt', 'me', 'payouts'] as const,
+  onlinePtAdminStats: ['online-pt', 'admin', 'stats'] as const,
+  onlinePtAdminPayouts: ['online-pt', 'admin', 'payouts'] as const,
 } as const;
