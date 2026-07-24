@@ -197,7 +197,12 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
-          <ListNavLink to={ROUTES.MY_GYMS} label={t('myPage.gymMemberManage')} />
+          <ListNavLink
+            to={ROUTES.MY_GYMS}
+            label={t(
+              isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
+            )}
+          />
         </nav>
       </section>
 
