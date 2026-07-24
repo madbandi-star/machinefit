@@ -298,7 +298,7 @@
   },
   "myPage": {
     "role": "역할",
-    "memberId": "멤버아이디",
+    "memberId": "아이디",
     "email": "이메일",
     "memberLevel": "멤버레벨",
     "quickLinks": "머신핏 This & That ⭐",
