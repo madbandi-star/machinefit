@@ -56,6 +56,16 @@ const machineRequests = () =>
   }));
 const freeBoard = () =>
   import('@/pages/free-board/FreeBoardPage').then((m) => ({ default: m.FreeBoardPage }));
+const photoBoard = () =>
+  import('@/pages/photo-board/PhotoBoardPage').then((m) => ({ default: m.PhotoBoardPage }));
+const photoBoardWrite = () =>
+  import('@/pages/photo-board/PhotoPostWritePage').then((m) => ({
+    default: m.PhotoPostWritePage,
+  }));
+const photoBoardDetail = () =>
+  import('@/pages/photo-board/PhotoPostDetailPage').then((m) => ({
+    default: m.PhotoPostDetailPage,
+  }));
 const login = () =>
   import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
 const register = () =>
@@ -121,6 +131,10 @@ const adminModeration = () =>
   import('@/pages/admin/moderation/AdminModerationPage').then((m) => ({
     default: m.AdminModerationPage,
   }));
+const adminPhotoBoard = () =>
+  import('@/pages/admin/photo-board/AdminPhotoBoardPage').then((m) => ({
+    default: m.AdminPhotoBoardPage,
+  }));
 const adminMotivation = () =>
   import('@/pages/admin/motivation/AdminMotivationPage').then((m) => ({
     default: m.AdminMotivationPage,
@@ -173,6 +187,9 @@ export const router = createBrowserRouter(
         { path: ROUTES.COMMUNITY, element: lazyRoute(community) },
         { path: ROUTES.MACHINE_REQUESTS, element: lazyRoute(machineRequests) },
         { path: ROUTES.FREE_BOARD, element: lazyRoute(freeBoard) },
+        { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
+        { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
+        { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
         { path: ROUTES.POST_DETAIL, element: lazyRoute(postDetail) },
         {
           path: ROUTES.HISTORY,
@@ -254,6 +271,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_MUSCLE_IMAGES, element: lazyRoute(adminMuscleImages) },
         { path: ROUTES.ADMIN_MACHINE_COVERS, element: lazyRoute(adminMachineCovers) },
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
+        { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

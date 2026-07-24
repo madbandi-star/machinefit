@@ -184,5 +184,18 @@
     "noDistricts": "No neighborhoods registered yet.",
     "latitude": "Latitude (optional)",
     "longitude": "Longitude (optional)"
+  },
+  "photoBoard": {
+    "nav": "Photo Board",
+    "subtitle": "Moderate photo board reports and blocks.",
+    "reports": "Reports",
+    "blocks": "Blocked users",
+    "noReports": "No reports yet.",
+    "hidePost": "Hide post",
+    "resolve": "Resolve",
+    "dismiss": "Dismiss",
+    "blockUserId": "User ID",
+    "blockReason": "Block reason",
+    "block": "Block"
   }
 }

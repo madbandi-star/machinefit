@@ -184,5 +184,18 @@
     "noDistricts": "등록된 동/읍/면이 없습니다.",
     "latitude": "위도 (선택)",
     "longitude": "경도 (선택)"
+  },
+  "photoBoard": {
+    "nav": "사진게시판",
+    "subtitle": "사진게시판 신고·차단을 관리합니다.",
+    "reports": "신고",
+    "blocks": "차단 사용자",
+    "noReports": "대기 중인 신고가 없습니다.",
+    "hidePost": "게시글 숨김",
+    "resolve": "처리 완료",
+    "dismiss": "기각",
+    "blockUserId": "사용자 ID",
+    "blockReason": "차단 사유",
+    "block": "차단"
   }
 }

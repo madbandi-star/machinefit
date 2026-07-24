@@ -104,4 +104,7 @@ export const QUERY_KEYS = {
   liveDashboard: ['live', 'dashboard'] as const,
   liveRankings: ['live', 'rankings'] as const,
   liveSearch: ['live', 'search'] as const,
+  photoBoard: (params?: Record<string, unknown>) => ['photo-board', params ?? {}] as const,
+  photoBoardPost: (postId: string) => ['photo-board', 'post', postId] as const,
+  adminPhotoBoard: ['admin', 'photo-board'] as const,
 } as const;

@@ -16,3 +16,4 @@ export * from './gym-scope.schema.js';
 export * from './location.schema.js';
 export * from './muscle-group-image.schema.js';
 export * from './machine-cover-image.schema.js';
+export * from './photo-board.schema.js';

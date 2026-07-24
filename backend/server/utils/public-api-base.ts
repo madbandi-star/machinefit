@@ -17,3 +17,7 @@ export function muscleGroupMediaUrl(muscleGroup: string, kind: 'main' | 'thumb')
 export function machineCoverMediaUrl(machineCode: string, kind: 'main' | 'thumb'): string {
   return `${publicApiBase()}/media/machine-covers/${encodeURIComponent(machineCode)}/${kind}`;
 }
+
+export function photoBoardImageUrl(imageId: string, variant: 'main' | 'thumb' = 'thumb'): string {
+  return `${publicApiBase()}/photo-board/images/${encodeURIComponent(imageId)}?variant=${variant}`;
+}

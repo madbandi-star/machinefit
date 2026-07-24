@@ -5,7 +5,11 @@ export type NotificationType =
   | 'owner_application'
   | 'gym_verified'
   | 'announcement'
-  | 'system';
+  | 'system'
+  | 'photo_comment'
+  | 'photo_like'
+  | 'photo_reply'
+  | 'photo_report_result';
 
 export interface Notification {
   id: string;

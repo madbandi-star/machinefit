@@ -20,6 +20,10 @@ export function CommunityPage() {
           <strong>{tc('freeBoard')}</strong>
           <p className="community-link-card__desc">{tc('freeBoardSubtitle')}</p>
         </Link>
+        <Link to={ROUTES.PHOTO_BOARD} className="card card--interactive community-link-card">
+          <strong>{tc('photoBoard')}</strong>
+          <p className="community-link-card__desc">{tc('photoBoardSubtitle')}</p>
+        </Link>
       </div>
     </PageShell>
   );

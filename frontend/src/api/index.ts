@@ -507,6 +507,8 @@ export { communityApi, machineRequestApi, ownerApi } from './community.api';
 export type { OwnerDashboardStats, OwnerApplyResult } from './community.api';
 export { adminApi, notificationApi, motivationMediaApi, muscleGroupImageApi } from './admin.api';
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
+export { photoBoardApi } from './photo-board.api';
+export type { PhotoBoardListParams } from './photo-board.api';
 export { userMotivationTrackApi } from './user-motivation-track.api';
 export type {
   MotivationTrackListResponse,
