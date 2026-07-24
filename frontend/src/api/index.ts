@@ -525,6 +525,8 @@ export { adminApi, notificationApi, motivationMediaApi, muscleGroupImageApi } fr
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
 export { photoBoardApi } from './photo-board.api';
 export type { PhotoBoardListParams } from './photo-board.api';
+export { machineTradeApi } from './machine-trade.api';
+export type { MachineTradeListParams, CreateMachineTradeFormInput } from './machine-trade.api';
 export { userMotivationTrackApi } from './user-motivation-track.api';
 export type {
   MotivationTrackListResponse,

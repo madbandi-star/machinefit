@@ -197,5 +197,8 @@
     "blockUserId": "사용자 ID",
     "blockReason": "차단 사유",
     "block": "차단"
+  },
+  "trades": {
+    "nav": "머신 거래"
   }
 }

@@ -9,6 +9,7 @@ import koGyms from './locales/ko/gyms.json';
 import koCommunity from './locales/ko/community.json';
 import koNotifications from './locales/ko/notifications.json';
 import koAdmin from './locales/ko/admin.json';
+import koTrade from './locales/ko/trade.json';
 
 type NamespaceBundle = Record<string, unknown>;
 
@@ -17,13 +18,14 @@ const loadedLocales = new Set<string>([DEFAULT_LOCALE]);
 async function loadLocaleBundles(locale: Locale): Promise<Record<string, NamespaceBundle>> {
   switch (locale) {
     case 'en': {
-      const [common, machines, gyms, community, notifications, admin] = await Promise.all([
+      const [common, machines, gyms, community, notifications, admin, trade] = await Promise.all([
         import('./locales/en/common.json'),
         import('./locales/en/machines.json'),
         import('./locales/en/gyms.json'),
         import('./locales/en/community.json'),
         import('./locales/en/notifications.json'),
         import('./locales/en/admin.json'),
+        import('./locales/en/trade.json'),
       ]);
       return {
         common: common.default,
@@ -32,17 +34,20 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         community: community.default,
         notifications: notifications.default,
         admin: admin.default,
+        trade: trade.default,
       };
     }
     case 'ja': {
-      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin] = await Promise.all([
-        import('./locales/ja/common.json'),
-        import('./locales/en/machines.json'),
-        import('./locales/en/gyms.json'),
-        import('./locales/en/community.json'),
-        import('./locales/en/notifications.json'),
-        import('./locales/en/admin.json'),
-      ]);
+      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade] =
+        await Promise.all([
+          import('./locales/ja/common.json'),
+          import('./locales/en/machines.json'),
+          import('./locales/en/gyms.json'),
+          import('./locales/en/community.json'),
+          import('./locales/en/notifications.json'),
+          import('./locales/en/admin.json'),
+          import('./locales/en/trade.json'),
+        ]);
       return {
         common: common.default,
         machines: enMachines.default,
@@ -50,17 +55,20 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         community: enCommunity.default,
         notifications: enNotifications.default,
         admin: enAdmin.default,
+        trade: enTrade.default,
       };
     }
     case 'zh': {
-      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin] = await Promise.all([
-        import('./locales/zh/common.json'),
-        import('./locales/en/machines.json'),
-        import('./locales/en/gyms.json'),
-        import('./locales/en/community.json'),
-        import('./locales/en/notifications.json'),
-        import('./locales/en/admin.json'),
-      ]);
+      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade] =
+        await Promise.all([
+          import('./locales/zh/common.json'),
+          import('./locales/en/machines.json'),
+          import('./locales/en/gyms.json'),
+          import('./locales/en/community.json'),
+          import('./locales/en/notifications.json'),
+          import('./locales/en/admin.json'),
+          import('./locales/en/trade.json'),
+        ]);
       return {
         common: common.default,
         machines: enMachines.default,
@@ -68,6 +76,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         community: enCommunity.default,
         notifications: enNotifications.default,
         admin: enAdmin.default,
+        trade: enTrade.default,
       };
     }
     case 'ko':
@@ -79,6 +88,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         community: koCommunity,
         notifications: koNotifications,
         admin: koAdmin,
+        trade: koTrade,
       };
   }
 }
@@ -107,6 +117,7 @@ void i18n
         community: koCommunity,
         notifications: koNotifications,
         admin: koAdmin,
+        trade: koTrade,
       },
     },
     lng: DEFAULT_LOCALE,

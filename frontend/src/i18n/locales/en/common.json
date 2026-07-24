@@ -323,7 +323,14 @@
     "copyEmail": "Copy",
     "emailCopied": "Email copied.",
     "emailCopyFailed": "Couldn't copy email.",
-    "motivationMusic": "Motivation music"
+    "motivationMusic": "Motivation music",
+    "ownerOnly": "Owner only",
+    "tradeManageSell": "Manage sell listings",
+    "tradeManageBuy": "Manage buy requests",
+    "tradeMine": "My listings",
+    "tradeLiked": "Liked listings",
+    "tradeReports": "Reports",
+    "tradeStats": "Trade stats (coming later)"
   },
   "easyMode": {
     "sectionTitle": "App mode",

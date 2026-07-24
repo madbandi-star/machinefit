@@ -323,7 +323,14 @@
     "copyEmail": "복사",
     "emailCopied": "이메일을 복사했어요.",
     "emailCopyFailed": "이메일 복사에 실패했어요.",
-    "motivationMusic": "동기부여 음악"
+    "motivationMusic": "동기부여 음악",
+    "ownerOnly": "사장님 전용",
+    "tradeManageSell": "판매글 관리",
+    "tradeManageBuy": "구매요청 관리",
+    "tradeMine": "내 거래글",
+    "tradeLiked": "관심 거래글",
+    "tradeReports": "신고 관리",
+    "tradeStats": "거래 통계 (향후 확장)"
   },
   "easyMode": {
     "sectionTitle": "앱 모드",

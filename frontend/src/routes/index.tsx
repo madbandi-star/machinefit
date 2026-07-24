@@ -67,6 +67,24 @@ const photoBoardDetail = () =>
   import('@/pages/photo-board/PhotoPostDetailPage').then((m) => ({
     default: m.PhotoPostDetailPage,
   }));
+const tradeList = () =>
+  import('@/pages/machine-trade/TradeListPage').then((m) => ({ default: m.TradeListPage }));
+const tradeDetail = () =>
+  import('@/pages/machine-trade/TradeDetailPage').then((m) => ({ default: m.TradeDetailPage }));
+const tradeWrite = () =>
+  import('@/pages/machine-trade/TradeWritePage').then((m) => ({ default: m.TradeWritePage }));
+const tradeManage = () =>
+  import('@/pages/machine-trade/TradeManagePage').then((m) => ({ default: m.TradeManagePage }));
+const tradeMine = () =>
+  import('@/pages/machine-trade/TradeMinePage').then((m) => ({ default: m.TradeMinePage }));
+const tradeLiked = () =>
+  import('@/pages/machine-trade/TradeLikedPage').then((m) => ({ default: m.TradeLikedPage }));
+const tradeReports = () =>
+  import('@/pages/machine-trade/TradeReportsPage').then((m) => ({ default: m.TradeReportsPage }));
+const tradeStats = () =>
+  import('@/pages/machine-trade/TradeStatsPage').then((m) => ({ default: m.TradeStatsPage }));
+const adminTrades = () =>
+  import('@/pages/admin/trades/AdminTradesPage').then((m) => ({ default: m.AdminTradesPage }));
 const login = () =>
   import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
 const register = () =>
@@ -192,6 +210,9 @@ export const router = createBrowserRouter(
         { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
         { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
         { path: ROUTES.POST_DETAIL, element: lazyRoute(postDetail) },
+        { path: ROUTES.TRADE_LIST_SELL, element: lazyRoute(tradeList) },
+        { path: ROUTES.TRADE_LIST_BUY, element: lazyRoute(tradeList) },
+        { path: ROUTES.TRADE_DETAIL, element: lazyRoute(tradeDetail) },
         {
           path: ROUTES.HISTORY,
           element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
@@ -219,6 +240,19 @@ export const router = createBrowserRouter(
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
             { path: ROUTES.MOTIVATION_MUSIC, element: lazyRoute(motivationMusic) },
             { path: ROUTES.NOTIFICATIONS, element: lazyRoute(notifications) },
+          ],
+        },
+        {
+          element: <AuthGuard minRole={Role.OWNER} />,
+          children: [
+            { path: ROUTES.TRADE_SELL_WRITE, element: lazyRoute(tradeWrite) },
+            { path: ROUTES.TRADE_BUY_WRITE, element: lazyRoute(tradeWrite) },
+            { path: ROUTES.TRADE_MANAGE_SELL, element: lazyRoute(tradeManage) },
+            { path: ROUTES.TRADE_MANAGE_BUY_REQUESTS, element: lazyRoute(tradeManage) },
+            { path: ROUTES.TRADE_MY, element: lazyRoute(tradeMine) },
+            { path: ROUTES.TRADE_LIKED, element: lazyRoute(tradeLiked) },
+            { path: ROUTES.TRADE_REPORTS, element: lazyRoute(tradeReports) },
+            { path: ROUTES.TRADE_STATS, element: lazyRoute(tradeStats) },
           ],
         },
         { path: ROUTES.NOT_FOUND, element: lazyRoute(notFound) },
@@ -273,6 +307,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_MACHINE_COVERS, element: lazyRoute(adminMachineCovers) },
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
         { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
+        { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { TargetMuscleGroup } from '@machinefit/shared';
+import { Role, hasMinRole, type TargetMuscleGroup } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { useRecommendMachine } from '@/hooks/useRecommendMachine';
@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/machines.css';
+import '@/styles/trade.css';
 
 interface RecommendCTAProps {
   machineCode: string;
@@ -18,13 +19,16 @@ interface RecommendCTAProps {
 
 export function RecommendCTA({ machineCode, fixed = false, initialMuscle = null }: RecommendCTAProps) {
   const { t } = useTranslation('machines');
+  const { t: tt } = useTranslation('trade');
   const navigate = useNavigate();
   const location = useLocation();
   const showToast = useUIStore((s) => s.showToast);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
   const { requestRecommendation, isPending } = useRecommendMachine(machineCode);
   const needsMusclePicker = machineCode.startsWith('FW_');
   const [selectedMuscle, setSelectedMuscle] = useState<TargetMuscleGroup | null>(initialMuscle);
+  const canTrade = isAuthenticated && hasMinRole(user?.roleCode, Role.OWNER);
 
   useEffect(() => {
     setSelectedMuscle(initialMuscle);
@@ -66,6 +70,28 @@ export function RecommendCTA({ machineCode, fixed = false, initialMuscle = null 
               </button>
             ))}
           </div>
+        </div>
+      ) : null}
+      {canTrade ? (
+        <div className="trade-cta-row" role="group" aria-label={tt('ownerSection')}>
+          <button
+            type="button"
+            className="btn btn--secondary"
+            onClick={() =>
+              navigate(`${ROUTES.TRADE_SELL_WRITE}?machineCode=${encodeURIComponent(machineCode)}`)
+            }
+          >
+            {tt('sell')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--secondary"
+            onClick={() =>
+              navigate(`${ROUTES.TRADE_BUY_WRITE}?machineCode=${encodeURIComponent(machineCode)}`)
+            }
+          >
+            {tt('buy')}
+          </button>
         </div>
       ) : null}
       <button

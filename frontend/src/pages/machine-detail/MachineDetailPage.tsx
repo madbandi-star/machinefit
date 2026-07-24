@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
@@ -10,6 +10,7 @@ import { LastRecommendationSnippet } from '@/components/machines/LastRecommendat
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { machineApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { normalizeDateKey } from '@/utils/historyDate';
@@ -19,6 +20,7 @@ import '@/styles/components.css';
 import '@/styles/machines.css';
 import '@/styles/records.css';
 import '@/styles/recommendation.css';
+import '@/styles/trade.css';
 
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
@@ -26,6 +28,7 @@ export function MachineDetailPage() {
   const muscleParam = searchParams.get('muscle') as TargetMuscleGroup | null;
   const logDateParam = searchParams.get('logDate');
   const { t, i18n } = useTranslation('machines');
+  const { t: tt } = useTranslation('trade');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data: machine, isLoading, isError, refetch } = useQuery({
@@ -74,6 +77,22 @@ export function MachineDetailPage() {
           lockTargetMuscle={Boolean(isFreeWeight && logTargetMuscle)}
           showSaveButton
         />
+      ) : null}
+      {machineCode ? (
+        <div className="machine-detail-trade-links">
+          <Link
+            to={`${ROUTES.TRADE_LIST_SELL}?machineCode=${encodeURIComponent(machineCode)}`}
+            className="btn btn--secondary"
+          >
+            {tt('viewSellListings')}
+          </Link>
+          <Link
+            to={`${ROUTES.TRADE_LIST_BUY}?machineCode=${encodeURIComponent(machineCode)}`}
+            className="btn btn--secondary"
+          >
+            {tt('viewBuyListings')}
+          </Link>
+        </div>
       ) : null}
       {machineCode ? (
         <RecommendCTA

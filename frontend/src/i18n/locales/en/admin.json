@@ -197,5 +197,8 @@
     "blockUserId": "User ID",
     "blockReason": "Block reason",
     "block": "Block"
+  },
+  "trades": {
+    "nav": "Machine trades"
   }
 }

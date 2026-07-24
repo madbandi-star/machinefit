@@ -107,5 +107,11 @@ export const QUERY_KEYS = {
   photoBoard: (params?: Record<string, unknown>) => ['photo-board', params ?? {}] as const,
   photoBoardPost: (postId: string) => ['photo-board', 'post', postId] as const,
   adminPhotoBoard: ['admin', 'photo-board'] as const,
+  machineTrades: (params?: Record<string, unknown>) => ['machine-trades', params ?? {}] as const,
+  machineTrade: (tradeId: string) => ['machine-trades', 'detail', tradeId] as const,
+  adminMachineTrades: (params?: Record<string, unknown>) =>
+    ['admin', 'machine-trades', params ?? {}] as const,
+  adminMachineTradeReports: ['admin', 'machine-trades', 'reports'] as const,
+  adminMachineTradeStats: ['admin', 'machine-trades', 'stats'] as const,
   gymDirectory: ['gym-directory'] as const,
 } as const;
