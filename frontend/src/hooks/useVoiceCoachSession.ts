@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { VoiceCountMode } from '@/utils/aiCountPace';
+import { hapticCountTick } from '@/utils/haptic';
 import {
   runVoiceCoachSession,
   stopVoiceCoach,
@@ -11,6 +13,7 @@ interface UseVoiceCoachSessionOptions {
   oneMoreEnabled: boolean;
   oneMoreCount: number;
   repGapMs: number;
+  countMode: VoiceCountMode;
   locale: string;
   enabled: boolean;
 }
@@ -19,6 +22,8 @@ export interface VoiceCoachSessionState {
   phase: VoiceCoachPhase;
   currentRep: number;
   countdown: number | null;
+  turbo: boolean;
+  intensity: number;
   isRunning: boolean;
   start: () => void;
   stop: () => void;
@@ -29,12 +34,15 @@ export function useVoiceCoachSession({
   oneMoreEnabled,
   oneMoreCount,
   repGapMs,
+  countMode,
   locale,
   enabled,
 }: UseVoiceCoachSessionOptions): VoiceCoachSessionState {
   const [phase, setPhase] = useState<VoiceCoachPhase>('idle');
   const [currentRep, setCurrentRep] = useState(0);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [turbo, setTurbo] = useState(false);
+  const [intensity, setIntensity] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
   const runIdRef = useRef(0);
 
@@ -45,6 +53,8 @@ export function useVoiceCoachSession({
     setPhase('idle');
     setCurrentRep(0);
     setCountdown(null);
+    setTurbo(false);
+    setIntensity(0);
   }, []);
 
   const start = useCallback(() => {
@@ -61,6 +71,8 @@ export function useVoiceCoachSession({
     setPhase('beep');
     setCurrentRep(0);
     setCountdown(null);
+    setTurbo(false);
+    setIntensity(0);
 
     void (async () => {
       try {
@@ -73,6 +85,7 @@ export function useVoiceCoachSession({
           oneMoreEnabled,
           maxOneMore: oneMoreCount,
           repGapMs,
+          countMode,
           locale,
           signal: controller.signal,
           onPhaseChange: (nextPhase, detail) => {
@@ -81,11 +94,27 @@ export function useVoiceCoachSession({
             if (detail?.rep != null) setCurrentRep(detail.rep);
             if (nextPhase === 'countdown') {
               setCountdown(typeof detail?.countdown === 'number' ? detail.countdown : null);
+              setTurbo(false);
+              setIntensity(0);
             } else if (detail?.countdown != null) {
               setCountdown(detail.countdown);
             }
+            if (nextPhase === 'counting') {
+              const isTurbo = Boolean(detail?.turbo);
+              const nextIntensity = detail?.intensity ?? 0;
+              setTurbo(isTurbo);
+              setIntensity(nextIntensity);
+              if (detail?.rep && detail.rep > 0) {
+                hapticCountTick(isTurbo);
+              }
+            } else if (nextPhase === 'oneMore') {
+              setTurbo(false);
+              setIntensity(1);
+            }
             if (nextPhase === 'done' || nextPhase === 'idle') {
               setCountdown(null);
+              setTurbo(false);
+              setIntensity(0);
             }
           },
         });
@@ -97,9 +126,11 @@ export function useVoiceCoachSession({
         // runVoiceCoachSession already signals idle on abort; on success it ends at done.
         setPhase((prev) => (prev === 'done' ? prev : 'idle'));
         setCountdown(null);
+        setTurbo(false);
+        setIntensity(0);
       }
     })();
-  }, [enabled, locale, oneMoreCount, oneMoreEnabled, repGapMs, targetReps]);
+  }, [countMode, enabled, locale, oneMoreCount, oneMoreEnabled, repGapMs, targetReps]);
 
   useEffect(
     () => () => {
@@ -119,6 +150,8 @@ export function useVoiceCoachSession({
     phase,
     currentRep,
     countdown,
+    turbo,
+    intensity,
     isRunning: phase !== 'idle' && phase !== 'done',
     start,
     stop,

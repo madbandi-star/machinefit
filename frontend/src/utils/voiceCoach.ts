@@ -1,5 +1,11 @@
 /** Voice set coach: beeps → 준비 → 5–1 → 시작 → reps → optional "하나더". All speech via SpeechManager. */
 
+import {
+  buildCountPaceSchedule,
+  clampVoiceCountMode,
+  DEFAULT_VOICE_COUNT_MODE,
+  type VoiceCountMode,
+} from '@/utils/aiCountPace';
 import { speechManager } from '@/utils/speechManager';
 
 export type VoiceCoachPhase =
@@ -11,6 +17,15 @@ export type VoiceCoachPhase =
   | 'oneMore'
   | 'done';
 
+export interface VoiceCoachPhaseDetail {
+  rep?: number;
+  countdown?: number;
+  /** Exercise-count only: inside turbo window. */
+  turbo?: boolean;
+  /** Exercise-count only: 0–1 intensity for UI/haptics. */
+  intensity?: number;
+}
+
 export interface VoiceCoachOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
@@ -18,10 +33,25 @@ export interface VoiceCoachOptions {
   maxOneMore?: number;
   /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
   repGapMs?: number;
+  /**
+   * Exercise-count pacing only (prep/rest unchanged).
+   * Default: AI accel + turbo.
+   */
+  countMode?: VoiceCountMode;
   locale?: string;
-  onPhaseChange?: (phase: VoiceCoachPhase, detail?: { rep?: number; countdown?: number }) => void;
+  onPhaseChange?: (phase: VoiceCoachPhase, detail?: VoiceCoachPhaseDetail) => void;
   signal?: AbortSignal;
 }
+
+export type { VoiceCountMode };
+export {
+  DEFAULT_VOICE_COUNT_MODE,
+  VOICE_COUNT_MODES,
+  clampVoiceCountMode,
+  resolveTurboCount,
+  buildCountPaceSchedule,
+  formatCountDisplay,
+} from '@/utils/aiCountPace';
 
 /** Trainer-like pacing (ms). */
 export const VOICE_COACH_TIMING = {
@@ -309,6 +339,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     oneMoreEnabled,
     maxOneMore = VOICE_COACH_ONE_MORE.defaultCount,
     repGapMs: repGapMsOption,
+    countMode: countModeOption,
     locale = 'ko',
     onPhaseChange,
     signal,
@@ -318,6 +349,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const oneMoreReps = clampVoiceCoachOneMoreCount(maxOneMore);
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
   const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
+  const countMode = clampVoiceCountMode(countModeOption ?? DEFAULT_VOICE_COUNT_MODE);
 
   await speechManager.init();
 
@@ -339,7 +371,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
 
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 
-    // Single queue: 준비 → 5 → 4 → 3 → 2 → 1 (same Voice for every item).
+    // Prep countdown — fixed pacing (never AI-accel / turbo).
     onPhaseChange?.('countdown');
     const countdownItems = [
       readyPhrase(locale),
@@ -366,19 +398,34 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     await speechManager.speak(startPhrase(locale), signal);
     await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
 
+    // Exercise counts only — AI accel / turbo schedule (voice rate/pitch unchanged).
     onPhaseChange?.('counting', { rep: 0 });
+    const pace = buildCountPaceSchedule({
+      totalCounts: reps,
+      baseGapMs: repGapMs,
+      mode: countMode,
+      minGapMs: VOICE_COACH_REP_GAP.minMs,
+    });
     const repWords = Array.from({ length: reps }, (_, i) => formatRepWord(i + 1, locale));
     await speechManager.speakQueue(repWords, {
       signal,
       gapMs: repGapMs,
+      getGapMs: (index) => pace[index]?.gapAfterMs ?? repGapMs,
       onItemStart: (index) => {
-        onPhaseChange?.('counting', { rep: index + 1 });
+        const step = pace[index];
+        onPhaseChange?.('counting', {
+          rep: index + 1,
+          turbo: step?.turbo ?? false,
+          intensity: step?.intensity ?? 0,
+        });
       },
     });
 
     if (oneMoreEnabled) {
-      // Match the same pause used between regular reps before the first "하나더".
-      await sleep(repGapMs, signal);
+      // Pause after final rep before "하나더" (last schedule gap is 0 by design).
+      const bridgeGap =
+        reps >= 2 ? pace[reps - 2]?.gapAfterMs || repGapMs : repGapMs;
+      await sleep(bridgeGap, signal);
       onPhaseChange?.('oneMore', { rep: reps });
       const oneMoreWords = Array.from({ length: oneMoreReps }, () => oneMorePhrase(locale));
       await speechManager.speakQueue(oneMoreWords, {

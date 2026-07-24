@@ -1,6 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
+  VOICE_COUNT_MODES,
+  formatCountDisplay,
+  type VoiceCountMode,
+} from '@/utils/aiCountPace';
+import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
   VOICE_COACH_ONE_MORE,
@@ -21,6 +26,8 @@ interface VoiceCoachPanelProps {
   onTargetRepsChange: (reps: number) => void;
   repGapMs: number;
   onRepGapMsChange: (ms: number) => void;
+  countMode: VoiceCountMode;
+  onCountModeChange: (mode: VoiceCountMode) => void;
   oneMoreEnabled: boolean;
   onOneMoreChange: (enabled: boolean) => void;
   oneMoreCount: number;
@@ -32,6 +39,8 @@ interface VoiceCoachPanelProps {
   phase: VoiceCoachPhase;
   currentRep: number;
   countdown: number | null;
+  turbo: boolean;
+  intensity: number;
   isRunning: boolean;
   onStart: () => void;
   onStop: () => void;
@@ -69,6 +78,8 @@ export function VoiceCoachPanel({
   onTargetRepsChange,
   repGapMs,
   onRepGapMsChange,
+  countMode,
+  onCountModeChange,
   oneMoreEnabled,
   onOneMoreChange,
   oneMoreCount,
@@ -80,6 +91,8 @@ export function VoiceCoachPanel({
   phase,
   currentRep,
   countdown,
+  turbo,
+  intensity,
   isRunning,
   onStart,
   onStop,
@@ -87,12 +100,26 @@ export function VoiceCoachPanel({
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
+  const showCountStage = phase === 'counting' && currentRep > 0;
+  const showCountdownStage = phase === 'countdown' && countdown != null;
+  const scale = showCountStage
+    ? 1 + intensity * (turbo ? 0.42 : 0.22) + (turbo && intensity > 0.92 ? 0.18 : 0)
+    : showCountdownStage
+      ? 1.05
+      : 1;
+  const displayNumber = showCountStage
+    ? formatCountDisplay(currentRep, turbo)
+    : showCountdownStage
+      ? String(countdown)
+      : phase === 'start'
+        ? '!'
+        : '';
 
   return (
     <section
       className={`voice-coach-panel${compact ? ' voice-coach-panel--compact' : ''}${
         isRunning ? ' voice-coach-panel--running' : ''
-      }`}
+      }${turbo ? ' voice-coach-panel--turbo' : ''}`}
       aria-label={t('machines:voiceCoach.title')}
     >
       <div className="voice-coach-panel__header">
@@ -115,6 +142,29 @@ export function VoiceCoachPanel({
       {enabled ? (
         <>
           <div className="voice-coach-panel__controls">
+            <fieldset
+              className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
+              disabled={isRunning}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('machines:voiceCoach.countMode')}
+              </legend>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_COUNT_MODES.map((mode) => (
+                  <label key={mode} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="voice-count-mode"
+                      value={mode}
+                      checked={countMode === mode}
+                      onChange={() => onCountModeChange(mode)}
+                    />
+                    <span>{t(`machines:voiceCoach.countMode_${mode}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
             <div
               className={`body-metrics-inline voice-coach-panel__pickers${
                 isRunning ? ' body-metrics-inline--disabled' : ''
@@ -234,8 +284,33 @@ export function VoiceCoachPanel({
             )}
           </div>
 
+          {displayNumber ? (
+            <div
+              className={`voice-coach-panel__count-stage${
+                turbo ? ' voice-coach-panel__count-stage--turbo' : ''
+              }${
+                showCountStage && intensity > 0.85
+                  ? ' voice-coach-panel__count-stage--climax'
+                  : ''
+              }`}
+              aria-hidden="true"
+            >
+              <span
+                key={`${phase}-${displayNumber}`}
+                className="voice-coach-panel__count-num"
+                style={{
+                  transform: `scale(${scale})`,
+                  ['--count-shake' as string]: `${turbo ? 1.2 + intensity : intensity * 0.6}px`,
+                }}
+              >
+                {displayNumber}
+              </span>
+            </div>
+          ) : null}
+
           <p className="voice-coach-panel__status" role="status" aria-live="polite">
             {statusLabel(t, phase, currentRep, countdown)}
+            {turbo ? ` · ${t('machines:voiceCoach.turboBadge')}` : ''}
           </p>
         </>
       ) : null}

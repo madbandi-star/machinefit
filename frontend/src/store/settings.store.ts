@@ -11,6 +11,11 @@ import {
   clampWeightDifficulty,
 } from '@machinefit/shared';
 import {
+  clampVoiceCountMode,
+  DEFAULT_VOICE_COUNT_MODE,
+  type VoiceCountMode,
+} from '@/utils/aiCountPace';
+import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
   VOICE_COACH_ONE_MORE,
@@ -38,6 +43,7 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachAutoAfterRest: true,
   voiceRestTipsEnabled: true,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
+  voiceCountMode: DEFAULT_VOICE_COUNT_MODE,
   restDurationSeconds: REST_DURATION.defaultSeconds,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
 } as const;
@@ -55,8 +61,10 @@ interface SettingsState {
   voiceCoachAutoAfterRest: boolean;
   /** Speak warnings + tips during rest between sets. */
   voiceRestTipsEnabled: boolean;
-  /** Silence after each spoken rep count (ms). */
+  /** Silence after each spoken rep count (ms) — base tempo for AI pacing. */
   voiceCoachRepGapMs: number;
+  /** Exercise-count pacing: normal | AI accel | AI accel + turbo. */
+  voiceCountMode: VoiceCountMode;
   /** Rest between sets (seconds). Default 90 (1:30). */
   restDurationSeconds: number;
   /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 10 = 1000%) */
@@ -72,6 +80,7 @@ interface SettingsState {
   setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
   setVoiceCoachRepGapMs: (ms: number) => void;
+  setVoiceCountMode: (mode: VoiceCountMode) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setWeightDifficulty: (value: number) => void;
   /** Restore app preferences (units, voice, rest, etc.) to defaults. */
@@ -95,6 +104,7 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
       setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
       setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
+      setVoiceCountMode: (mode) => set({ voiceCountMode: clampVoiceCountMode(mode) }),
       setRestDurationSeconds: (seconds) =>
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
       setWeightDifficulty: (value) =>
@@ -105,6 +115,16 @@ export const useSettingsStore = create<SettingsState>()(
           timezone: getDefaultTimezone(),
         }),
     }),
-    { name: 'machinefit-settings' }
+    {
+      name: 'machinefit-settings',
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<SettingsState>;
+        return {
+          ...current,
+          ...p,
+          voiceCountMode: clampVoiceCountMode(p.voiceCountMode ?? current.voiceCountMode),
+        };
+      },
+    }
   )
 );

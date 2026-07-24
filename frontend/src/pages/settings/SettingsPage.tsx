@@ -36,6 +36,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
+import { VOICE_COUNT_MODES } from '@/utils/aiCountPace';
 import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
@@ -46,6 +47,7 @@ import type { User } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/home.css';
 import '@/styles/phase4.css';
+import '@/styles/recommendation.css';
 
 interface SettingsLocationState {
   returnTo?: string;
@@ -74,6 +76,7 @@ export function SettingsPage() {
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
@@ -82,6 +85,7 @@ export function SettingsPage() {
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
+  const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
   const resetSettings = useSettingsStore((s) => s.resetSettings);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
@@ -507,6 +511,34 @@ export function SettingsPage() {
               />
               <span>{t('settings.voiceRestTips')}</span>
             </label>
+
+            <fieldset
+              className={`voice-coach-panel__mode${
+                !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+              }`}
+              disabled={!voiceCoachEnabled}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('settings.voiceCountMode')}
+              </legend>
+              <p className="form-section__desc" style={{ marginTop: 0 }}>
+                {t('settings.voiceCountModeDesc')}
+              </p>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_COUNT_MODES.map((mode) => (
+                  <label key={mode} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="settings-voice-count-mode"
+                      value={mode}
+                      checked={voiceCountMode === mode}
+                      onChange={() => setVoiceCountMode(mode)}
+                    />
+                    <span>{t(`settings.voiceCountMode_${mode}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
             <div
               className={`body-metrics-inline${

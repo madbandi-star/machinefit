@@ -220,6 +220,7 @@ export function WorkoutLogPanel({
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
@@ -228,6 +229,7 @@ export function WorkoutLogPanel({
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
+  const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
@@ -239,6 +241,7 @@ export function WorkoutLogPanel({
     oneMoreEnabled: voiceCoachOneMore,
     oneMoreCount: voiceCoachOneMoreCount,
     repGapMs: voiceCoachRepGapMs,
+    countMode: voiceCountMode,
     locale,
     enabled: voiceCoachEnabled,
   });
@@ -1253,6 +1256,8 @@ export function WorkoutLogPanel({
       onTargetRepsChange={setVoiceCoachTargetReps}
       repGapMs={voiceCoachRepGapMs}
       onRepGapMsChange={setVoiceCoachRepGapMs}
+      countMode={voiceCountMode}
+      onCountModeChange={setVoiceCountMode}
       oneMoreEnabled={voiceCoachOneMore}
       onOneMoreChange={setVoiceCoachOneMore}
       oneMoreCount={voiceCoachOneMoreCount}
@@ -1264,6 +1269,8 @@ export function WorkoutLogPanel({
       phase={voiceCoach.phase}
       currentRep={voiceCoach.currentRep}
       countdown={voiceCoach.countdown}
+      turbo={voiceCoach.turbo}
+      intensity={voiceCoach.intensity}
       isRunning={voiceCoach.isRunning}
       onStart={startVoiceCoach}
       onStop={voiceCoach.stop}

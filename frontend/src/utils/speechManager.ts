@@ -71,6 +71,11 @@ export interface SpeakQueueOptions {
   signal?: AbortSignal;
   /** Pause between queue items (ms). Default 120. */
   gapMs?: number;
+  /**
+   * Optional per-item gap after index `i` (before i+1).
+   * When set, overrides `gapMs` for that step. Return 0 to skip pause.
+   */
+  getGapMs?: (index: number, total: number) => number;
   onItemStart?: (index: number, text: string) => void;
 }
 
@@ -213,7 +218,7 @@ class SpeechManagerImpl {
 
   /** Speak a queue with the same locked Voice / prosody. */
   async speakQueue(texts: string[], options: SpeakQueueOptions = {}): Promise<void> {
-    const { signal, gapMs = 120, onItemStart } = options;
+    const { signal, gapMs = 120, getGapMs, onItemStart } = options;
     await this.init();
     this.cancel();
     const generation = this.queueGeneration;
@@ -230,7 +235,12 @@ class SpeechManagerImpl {
       onItemStart?.(i, items[i]);
       await this.speakUtterance(items[i], generation, signal);
 
-      if (i < items.length - 1 && gapMs > 0) {
+      if (i < items.length - 1) {
+        const waitMs = Math.max(
+          0,
+          Math.round(getGapMs ? getGapMs(i, items.length) : gapMs)
+        );
+        if (waitMs <= 0) continue;
         await new Promise<void>((resolve, reject) => {
           if (signal?.aborted) {
             reject(new DOMException('Aborted', 'AbortError'));
@@ -239,7 +249,7 @@ class SpeechManagerImpl {
           const timer = window.setTimeout(() => {
             signal?.removeEventListener('abort', onAbort);
             resolve();
-          }, gapMs);
+          }, waitMs);
           const onAbort = () => {
             window.clearTimeout(timer);
             reject(new DOMException('Aborted', 'AbortError'));
