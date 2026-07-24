@@ -2,6 +2,7 @@ import multer from 'multer';
 import type { RequestHandler } from 'express';
 import { motivationAudioLimits } from '../config/motivation-audio.js';
 import { muscleGroupImageLimits } from '../config/muscle-group-image.js';
+import { machineTradeImageLimits } from '../config/machine-trade-image.js';
 import { photoBoardImageLimits } from '../config/photo-board-image.js';
 import { AppError } from './error.middleware.js';
 
@@ -87,4 +88,9 @@ function makeMultiUpload(maxBytes: number, maxCount: number): RequestHandler {
 export const photoBoardImagesUpload: RequestHandler = makeMultiUpload(
   photoBoardImageLimits().maxBytes,
   photoBoardImageLimits().maxCount
+);
+
+export const machineTradeImagesUpload: RequestHandler = makeMultiUpload(
+  machineTradeImageLimits().maxBytes,
+  machineTradeImageLimits().maxCount
 );

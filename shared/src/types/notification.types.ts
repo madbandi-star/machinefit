@@ -9,7 +9,9 @@ export type NotificationType =
   | 'photo_comment'
   | 'photo_like'
   | 'photo_reply'
-  | 'photo_report_result';
+  | 'photo_report_result'
+  | 'trade_like'
+  | 'trade_report_result';
 
 export interface Notification {
   id: string;

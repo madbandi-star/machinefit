@@ -4,6 +4,7 @@ import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { seedDevUsers } from './data/seed-dev.js';
 import { getPool, warmupDatabase } from './config/database.js';
+import { startMachineTradeExpireJob } from './jobs/machine-trade-expire.job.js';
 
 const app = createApp();
 
@@ -23,4 +24,5 @@ const server: Server = app.listen(env.PORT, () => {
   }
 
   void warmupDatabase();
+  startMachineTradeExpireJob();
 });
