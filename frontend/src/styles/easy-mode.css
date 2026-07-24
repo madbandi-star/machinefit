@@ -976,3 +976,35 @@
   width: 100%;
   max-width: 100%;
 }
+
+/* Header mini EASY control */
+.easy-mini-header-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 1.25rem;
+  min-width: 2.15rem;
+  padding: 0 0.35rem;
+  margin: 0;
+  border-radius: 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 50%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary-text);
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.easy-mini-header-btn:active {
+  transform: scale(0.96);
+}
+
+.easy-mini-header-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

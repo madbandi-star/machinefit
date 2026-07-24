@@ -6,6 +6,7 @@ import { LanguageSelector } from '@/components/settings/LanguageSelector/Languag
 import { MotivationMediaControls } from '@/components/motivation/MotivationMediaControls/MotivationMediaControls';
 import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { NotificationBell } from '@/components/navigation/NotificationBell/NotificationBell';
+import { EasyMiniHeaderButton } from '@/components/easy-mode/EasyMiniHeaderButton';
 import './Header.css';
 
 export function Header() {
@@ -27,6 +28,7 @@ export function Header() {
           Machine<span className="header__logo-fit">Fit</span>
         </Link>
         <LanguageSelector variant="compact" />
+        <EasyMiniHeaderButton />
       </div>
 
       <div className="header__actions">

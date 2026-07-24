@@ -10,6 +10,7 @@ export function EasyHomePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const mode = useEasyModeStore((s) => s.mode);
+  const setMode = useEasyModeStore((s) => s.setMode);
   const onboardingSeen = useEasyModeStore((s) => s.onboardingSeen);
   const { activeGym } = useActiveGym();
 
@@ -24,8 +25,8 @@ export function EasyHomePage() {
       <div className="easy-home">
         <h1 className="easy-heading">{t('easyMode.normalRequiredTitle')}</h1>
         <p className="easy-sub">{t('easyMode.normalRequiredDesc')}</p>
-        <Link to={ROUTES.MY_PAGE} className="easy-btn easy-btn--primary">
-          {t('easyMode.goMyPage')}
+        <Link to={ROUTES.HOME} className="easy-btn easy-btn--primary">
+          {t('easyMode.backToNormalCta')}
         </Link>
       </div>
     );
@@ -62,7 +63,10 @@ export function EasyHomePage() {
         <button
           type="button"
           className="easy-btn easy-btn--ghost"
-          onClick={() => navigate(ROUTES.MY_PAGE)}
+          onClick={() => {
+            setMode('normal');
+            navigate(ROUTES.HOME);
+          }}
         >
           {t('easyMode.switchModeHint')}
         </button>
