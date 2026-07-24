@@ -5,6 +5,11 @@ import { useMutation } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, UnitHeight, UnitWeight, WorkoutGoal } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { RegisterEmailField, type EmailDomainPreset } from '@/components/auth/RegisterEmailField/RegisterEmailField';
+import {
+  emptyLocationValue,
+  LocationPicker,
+  type LocationPickerValue,
+} from '@/components/location/LocationPicker/LocationPicker';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
@@ -15,7 +20,7 @@ import {
   UnitPicker,
   WEIGHT_UNIT_OPTIONS,
 } from '@/components/settings/UnitPicker/UnitPicker';
-import { authApi } from '@/api';
+import { authApi, locationApi } from '@/api';
 import { AlertDialog } from '@/components/feedback/AlertDialog/AlertDialog';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -64,6 +69,7 @@ export function RegisterPage() {
   const [age, setAge] = useState<number | undefined>(undefined);
   const [gender, setGender] = useState<Gender>('male');
   const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal>('hypertrophy');
+  const [locationDraft, setLocationDraft] = useState<LocationPickerValue>(emptyLocationValue());
   const [homeGym, setHomeGym] = useState<HomeGymValue>({ homeGymName: DEMO_HOME_GYM_NAME });
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>('beginner');
   const [missingFields, setMissingFields] = useState<RegisterFormField[]>([]);
@@ -95,11 +101,30 @@ export function RegisterPage() {
         homeGymName: homeGym.homeGymName?.trim(),
         experienceLevel: experienceLevel!,
       }),
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       markDemoRegisterSlotUsed();
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
       syncUserSettings(user);
+
+      if (locationDraft.countryCode) {
+        try {
+          await locationApi.upsertMine({
+            countryCode: locationDraft.countryCode,
+            stateId: locationDraft.stateId,
+            cityId: locationDraft.cityId,
+            districtId: locationDraft.districtId,
+            districtName: locationDraft.districtName || null,
+            postalCode: locationDraft.postalCode || null,
+            latitude: locationDraft.latitude,
+            longitude: locationDraft.longitude,
+            visibility: locationDraft.visibility ?? 'gym',
+          });
+        } catch {
+          showToast(t('location.saveFailed'), 'error');
+        }
+      }
+
       showToast(t('auth.accountCreated'), 'success');
       navigate(ROUTES.HOME, { replace: true });
     },
@@ -123,6 +148,7 @@ export function RegisterPage() {
       weightKg,
       age,
       workoutGoal,
+      location: locationDraft,
       homeGym,
       experienceLevel,
     });
@@ -232,6 +258,7 @@ export function RegisterPage() {
 
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
+          <p className="form-section__desc">{t('auth.profileExtrasGoalOnly')}</p>
           <WorkoutGoalSelector
             value={workoutGoal}
             onChange={(value) => {
@@ -239,12 +266,28 @@ export function RegisterPage() {
             }}
             invalid={hasError('workoutGoal')}
           />
-          <HomeGymField
-            value={homeGym}
-            onChange={setHomeGym}
-            invalid={hasError('homeGym')}
-            showDesc={false}
-          />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section__title">{t('location.locationGymTitle')}</h3>
+          <p className="form-section__desc">{t('location.locationGymDesc')}</p>
+          <div className={hasError('location') ? 'input--invalid-wrap' : undefined}>
+            <LocationPicker
+              value={locationDraft}
+              onChange={setLocationDraft}
+              showDistrict
+              showGps
+              required
+            />
+          </div>
+          <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
+            <HomeGymField
+              value={homeGym}
+              onChange={setHomeGym}
+              invalid={hasError('homeGym')}
+              showDesc
+            />
+          </div>
         </section>
 
         <button type="submit" className="btn btn--primary btn--block" disabled={mutation.isPending}>

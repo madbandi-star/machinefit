@@ -1,5 +1,6 @@
 import type { ExperienceLevel, Gender, UnitWeight, WorkoutGoal } from '@machinefit/shared';
 import type { HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
+import type { LocationPickerValue } from '@/components/location/LocationPicker/LocationPicker';
 
 export type RegisterFormField =
   | 'displayName'
@@ -10,6 +11,7 @@ export type RegisterFormField =
   | 'weightKg'
   | 'age'
   | 'workoutGoal'
+  | 'location'
   | 'homeGym'
   | 'experienceLevel';
 
@@ -22,6 +24,7 @@ export interface RegisterFormValues {
   weightKg?: number;
   age?: number;
   workoutGoal?: WorkoutGoal;
+  location?: LocationPickerValue;
   homeGym?: HomeGymValue;
   experienceLevel?: ExperienceLevel;
   unitWeight?: UnitWeight;
@@ -48,6 +51,10 @@ function isWeightValid(weightKg?: number): boolean {
 
 function isAgeValid(age?: number): boolean {
   return age != null && Number.isInteger(age) && age >= MIN_AGE && age <= MAX_AGE;
+}
+
+function isLocationValid(location?: LocationPickerValue): boolean {
+  return Boolean(location?.countryCode);
 }
 
 function isHomeGymValid(homeGym?: HomeGymValue): boolean {
@@ -91,6 +98,10 @@ export function getMissingRegisterFields(values: RegisterFormValues): RegisterFo
 
   if (!values.workoutGoal) {
     missing.push('workoutGoal');
+  }
+
+  if (!isLocationValid(values.location)) {
+    missing.push('location');
   }
 
   if (!isHomeGymValid(values.homeGym)) {

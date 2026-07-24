@@ -190,7 +190,7 @@
     "homeGymPlaceholder": "Search or type gym name",
     "homeGymSearching": "Searching…",
     "homeGymUseTyped": "Use \"{{name}}\" as your gym",
-    "profileExtras": "Gym & goals",
+    "profileExtras": "Workout goal",
     "profileExtrasDesc": "Your workout goal helps personalize recommendations. A gym is optional.",
     "profileSaved": "Your profile is saved.",
     "profileRequiredForRecommend": "We need your height and weight for recommendations. Add them in Settings.",
@@ -216,6 +216,7 @@
       "weightKg": "Weight",
       "age": "Age",
       "workoutGoal": "Workout goal",
+      "location": "Location",
       "homeGym": "Home gym",
       "experienceLevel": "Experience"
     },
@@ -1079,8 +1080,9 @@
     "districtNamePlaceholder": "e.g. Apgujeong-dong",
     "districtNameHint": "Type a neighborhood name if it is not in the list.",
     "locationGymTitle": "Location & gym",
-    "locationGymDesc": "Pick your region, then enter your gym, and save once.",
+    "locationGymDesc": "Pick your region, then enter your gym.",
     "locationGymSave": "Save location & gym",
-    "locationGymSaved": "Location and gym saved."
+    "locationGymSaved": "Location and gym saved.",
+    "saveFailed": "Couldn't save location. You can retry in Settings."
   }
 }

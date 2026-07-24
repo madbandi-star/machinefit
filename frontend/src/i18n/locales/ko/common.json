@@ -190,7 +190,7 @@
     "homeGymPlaceholder": "헬스장 검색 또는 이름 입력",
     "homeGymSearching": "검색 중…",
     "homeGymUseTyped": "\"{{name}}\"(으)로 저장",
-    "profileExtras": "헬스장 · 목표",
+    "profileExtras": "운동 목표",
     "profileExtrasDesc": "운동 목표는 추천을 맞춤화합니다. 헬스장은 선택 사항입니다.",
     "profileSaved": "프로필을 저장했어요.",
     "profileRequiredForRecommend": "맞춤 추천을 위해 키·몸무게가 필요해요. 설정에서 입력해 주세요.",
@@ -216,6 +216,7 @@
       "weightKg": "몸무게",
       "age": "나이",
       "workoutGoal": "운동 목표",
+      "location": "지역",
       "homeGym": "다니는 헬스장",
       "experienceLevel": "운동 경력"
     },
@@ -1079,8 +1080,9 @@
     "districtNamePlaceholder": "예: 압구정동",
     "districtNameHint": "목록에 없는 동/읍/면은 직접 입력할 수 있습니다.",
     "locationGymTitle": "지역 · 헬스장",
-    "locationGymDesc": "지역을 선택한 뒤 다니는 헬스장을 입력하고 한 번에 저장하세요.",
+    "locationGymDesc": "지역을 선택한 뒤 다니는 헬스장을 입력하세요.",
     "locationGymSave": "지역·헬스장 저장",
-    "locationGymSaved": "지역과 헬스장 정보를 저장했습니다."
+    "locationGymSaved": "지역과 헬스장 정보를 저장했습니다.",
+    "saveFailed": "지역 정보를 저장하지 못했어요. 설정에서 다시 시도해 주세요."
   }
 }
