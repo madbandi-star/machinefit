@@ -1,14 +1,34 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { isAllGymsId, type CreateUserGymInput, type UpdateUserGymInput, type UserGym } from '@machinefit/shared';
-import { userGymApi } from '@/api';
+import {
+  isAllGymsId,
+  type CreateUserGymInput,
+  type UpdateUserGymInput,
+  type User,
+  type UserGym,
+} from '@machinefit/shared';
+import { userApi, userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
+
+async function refreshProfileHomeGym(
+  queryClient: ReturnType<typeof useQueryClient>,
+  updateUser: (user: Partial<User>) => void
+) {
+  try {
+    const res = await userApi.getMe();
+    const me = res.data.data;
+    updateUser(me);
+    queryClient.setQueryData(QUERY_KEYS.me, me);
+  } catch {
+    // Non-fatal: active gym UI already updated; profile refresh can retry later.
+  }
+}
 
 function invalidateGymScopedQueries(queryClient: ReturnType<typeof useQueryClient>) {
   void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
@@ -31,6 +51,7 @@ export function useActiveGym() {
   const showToast = useUIStore((s) => s.showToast);
   const openPremiumModal = usePremiumStore((s) => s.openPremiumModal);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const updateUser = useAuthStore((s) => s.updateUser);
   const storedGymId = useGymStore((s) => s.activeGymId);
   const setActiveGymId = useGymStore((s) => s.setActiveGymId);
   const setActiveMemberId = useGymStore((s) => s.setActiveMemberId);
@@ -108,6 +129,7 @@ export function useActiveGym() {
       setActiveMemberId(defaultMemberId);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gymId) });
       invalidateGymScopedQueries(queryClient);
+      await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:selector.switchSuccess'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
@@ -124,6 +146,7 @@ export function useActiveGym() {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gym.id) });
       invalidateGymScopedQueries(queryClient);
+      await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:manage.createGymSuccess'), 'success');
     },
     onError: (error) => {

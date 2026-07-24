@@ -218,8 +218,9 @@ export function SettingsPage() {
     setWorkoutGoal(user?.workoutGoal);
     const resolvedName = resolveHomeGymName(user, activeGym, gyms);
     setHomeGym({
-      homeGymId: user?.homeGymId,
-      homeGymName: user?.homeGymName?.trim() || resolvedName || undefined,
+      // Prefer currently selected gym over stale signup profile name.
+      homeGymId: activeGym ? undefined : user?.homeGymId,
+      homeGymName: resolvedName || undefined,
     });
     setDraftUnitHeight(unitHeight);
     setDraftUnitWeight(unitWeight);

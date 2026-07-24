@@ -69,6 +69,11 @@ export function MyPage() {
 
   const homeGymDisplay =
     resolveHomeGymName(meQuery.data ?? user, activeGym, gyms) || t('myPage.homeGymUnset');
+  const locationDisplay = activeGym?.locationSet
+    ? activeGym.location?.label?.path || t('location.unset')
+    : locationQuery.data?.isSet
+      ? locationQuery.data.label?.path || t('location.unset')
+      : t('location.unset');
   const showMemberLevel = Boolean(user?.roleCode && user.roleCode !== 'member');
 
   const handleLogout = () => {
@@ -141,11 +146,7 @@ export function MyPage() {
 
             <div className="profile-card__row profile-card__row--full">
               <dt>{t('myPage.location')}</dt>
-              <dd>
-                {locationQuery.data?.isSet
-                  ? locationQuery.data.label?.path || t('location.unset')
-                  : t('location.unset')}
-              </dd>
+              <dd>{locationDisplay}</dd>
             </div>
             <div className="profile-card__row profile-card__row--full">
               <dt>{t('myPage.homeGym')}</dt>

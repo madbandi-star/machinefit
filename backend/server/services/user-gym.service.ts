@@ -5,6 +5,17 @@ import { AppError } from '../middlewares/error.middleware.js';
 import { subscriptionService } from './subscription.service.js';
 import { gymMemberService } from './gym-member.service.js';
 
+async function syncProfileHomeGymName(userId: string, gymName: string | undefined | null) {
+  const name = gymName?.trim();
+  if (!name || name === '기본 헬스장') return;
+  const user = await userRepository.findById(userId);
+  if (!user) return;
+  if (user.homeGymName?.trim() === name) return;
+  // Keep profile home gym aligned with the operational active user_gym
+  // so My Page / settings don't keep showing the signup-time name.
+  await userRepository.updateProfile(userId, { homeGymName: name, homeGymId: null });
+}
+
 export const userGymService = {
   list(userId: string) {
     return userGymRepository.listByUser(userId);
@@ -29,12 +40,19 @@ export const userGymService = {
     await subscriptionService.assertCanAddGym(userId);
     const gym = await userGymRepository.create(userId, input);
     await gymMemberService.ensureSelfMember(gym.id, userId);
+    if (input.setActive !== false) {
+      await syncProfileHomeGymName(userId, gym.name);
+    }
     return gym;
   },
 
   async update(userId: string, gymId: string, input: UpdateUserGymInput) {
     const updated = await userGymRepository.update(userId, gymId, input);
     if (!updated) throw new AppError(404, 'NOT_FOUND', 'Gym not found');
+    const activeGymId = await userGymRepository.getActiveGymId(userId);
+    if (activeGymId === gymId && input.name !== undefined) {
+      await syncProfileHomeGymName(userId, updated.name);
+    }
     return updated;
   },
 
@@ -53,6 +71,7 @@ export const userGymService = {
     const gym = await userGymRepository.setActive(userId, gymId);
     if (!gym) throw new AppError(404, 'NOT_FOUND', 'Gym not found');
     await gymMemberService.ensureSelfMember(gymId, userId);
+    await syncProfileHomeGymName(userId, gym.name);
     return gym;
   },
 
