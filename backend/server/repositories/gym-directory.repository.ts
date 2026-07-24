@@ -5,25 +5,39 @@ import { buildPaginationMeta } from '../utils/pagination.util.js';
 const MOCK_DIRECTORY: GymDirectoryEntry[] = [
   {
     id: '00000000-0000-4000-8000-00000000d001',
-    name: '머신핏GYM 강남점',
-    stateName: '서울특별시',
-    cityName: '강남구',
-    districtName: '역삼동',
-    locationLabel: '서울특별시 강남구 역삼동',
-  },
-  {
-    id: '00000000-0000-4000-8000-00000000d002',
-    name: 'FitZone Gangnam',
+    name: '짐박스 강남1호점',
     stateName: '서울특별시',
     cityName: '강남구',
     locationLabel: '서울특별시 강남구',
   },
   {
-    id: '00000000-0000-4000-8000-00000000d003',
-    name: 'Iron Temple Seoul',
+    id: '00000000-0000-4000-8000-00000000d002',
+    name: '짐박스 신림본점',
     stateName: '서울특별시',
-    cityName: '마포구',
-    locationLabel: '서울특별시 마포구',
+    cityName: '관악구',
+    locationLabel: '서울특별시 관악구',
+  },
+  {
+    id: '00000000-0000-4000-8000-00000000d003',
+    name: '헬스보이짐 프리미엄 신촌점',
+    stateName: '서울특별시',
+    cityName: '서대문구',
+    locationLabel: '서울특별시 서대문구',
+  },
+  {
+    id: '00000000-0000-4000-8000-00000000d004',
+    name: '헬스보이짐 문정역점',
+    stateName: '서울특별시',
+    cityName: '송파구',
+    locationLabel: '서울특별시 송파구',
+  },
+  {
+    id: '00000000-0000-4000-8000-00000000d005',
+    name: '머신핏GYM 강남점',
+    stateName: '서울특별시',
+    cityName: '강남구',
+    districtName: '역삼동',
+    locationLabel: '서울특별시 강남구 역삼동',
   },
 ];
 
