@@ -1,4 +1,12 @@
-import type { BoardType, Post, Comment, MachineRequest, RoleCode } from '@machinefit/shared';
+import {
+  hasMinRole,
+  Role,
+  type BoardType,
+  type Post,
+  type Comment,
+  type MachineRequest,
+  type RoleCode,
+} from '@machinefit/shared';
 import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
@@ -192,7 +200,7 @@ export const communityRepository = {
 
   async deletePost(postId: string, userId: string, roleCode: RoleCode): Promise<void> {
     const pool = getPool();
-    const isAdmin = roleCode === 'admin';
+    const isAdmin = hasMinRole(roleCode, Role.ADMIN);
 
     if (!pool) {
       const post = mockPosts.find((p) => p.id === postId);

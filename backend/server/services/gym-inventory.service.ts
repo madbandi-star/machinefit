@@ -1,17 +1,20 @@
-import type {
-  AddGymMachineInput,
-  GymInventoryCapabilities,
-  GymMachine,
-  GymMachineRegistrantRole,
-  RoleCode,
+import {
+  hasExactRole,
+  hasMinRole,
+  Role,
+  type AddGymMachineInput,
+  type GymInventoryCapabilities,
+  type GymMachine,
+  type GymMachineRegistrantRole,
+  type RoleCode,
 } from '@machinefit/shared';
 import { gymInventoryRepository } from '../repositories/gym-inventory.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function registrantRole(roleCode: RoleCode): GymMachineRegistrantRole {
-  if (roleCode === 'admin') return 'admin';
-  if (roleCode === 'owner') return 'owner';
+  if (hasMinRole(roleCode, Role.ADMIN)) return 'admin';
+  if (hasMinRole(roleCode, Role.OWNER)) return 'owner';
   return 'member';
 }
 
@@ -35,7 +38,7 @@ export const gymInventoryService = {
 
     const items = await gymInventoryRepository.listActive(gymId, {
       ...options,
-      isOperator: isOperator || options.viewerRole === 'admin',
+      isOperator: isOperator || hasMinRole(options.viewerRole, Role.ADMIN),
     });
 
     return {
@@ -50,7 +53,7 @@ export const gymInventoryService = {
     roleCode: RoleCode,
     input: AddGymMachineInput
   ): Promise<GymMachine> {
-    if (roleCode === 'guest') {
+    if (hasExactRole(roleCode, Role.GUEST) || !roleCode) {
       throw new AppError(403, 'FORBIDDEN', 'Login required to register gym machines');
     }
 
@@ -68,7 +71,8 @@ export const gymInventoryService = {
     }
 
     const isOperator =
-      roleCode === 'admin' || (await gymInventoryRepository.isGymOperator(userId, gymId));
+      hasMinRole(roleCode, Role.ADMIN) ||
+      (await gymInventoryRepository.isGymOperator(userId, gymId));
     /** Official/verified only when gym operator (or admin) registers for that gym. */
     const isVerified = isOperator;
 
@@ -78,7 +82,10 @@ export const gymInventoryService = {
         machineId,
         input,
         registeredBy: userId,
-        registeredByRole: isOperator && roleCode !== 'admin' ? 'owner' : registrantRole(roleCode),
+        registeredByRole:
+          isOperator && !hasMinRole(roleCode, Role.ADMIN)
+            ? 'owner'
+            : registrantRole(roleCode),
         isVerified,
       });
     } catch (error) {
@@ -105,7 +112,8 @@ export const gymInventoryService = {
     }
 
     const isOperator =
-      roleCode === 'admin' || (await gymInventoryRepository.isGymOperator(userId, gymId));
+      hasMinRole(roleCode, Role.ADMIN) ||
+      (await gymInventoryRepository.isGymOperator(userId, gymId));
 
     if (item.isVerified) {
       if (!isOperator) {

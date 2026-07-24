@@ -1,8 +1,10 @@
-import type {
-  AddGymMachineInput,
-  CreateOwnerGymInput,
-  OwnerApplicationInput,
-  ReviewOwnerApplicationInput,
+import {
+  hasMinRole,
+  Role,
+  type AddGymMachineInput,
+  type CreateOwnerGymInput,
+  type OwnerApplicationInput,
+  type ReviewOwnerApplicationInput,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { ownerApplicationRepository } from '../repositories/owner-application.repository.js';
@@ -45,7 +47,7 @@ export const ownerService = {
     const user = await userRepository.findById(userId);
     if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
 
-    if (user.roleCode === 'owner' || user.roleCode === 'admin') {
+    if (hasMinRole(user.roleCode, Role.OWNER)) {
       throw new AppError(400, 'ALREADY_OWNER', 'This account already has owner privileges');
     }
 

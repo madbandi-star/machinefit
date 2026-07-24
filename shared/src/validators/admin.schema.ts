@@ -1,7 +1,14 @@
 import { z } from 'zod';
+import { isRoleCode } from '../constants/roles.js';
+import type { RoleCode } from '../types/api.types.js';
+
+const roleCodeSchema = z.custom<RoleCode>(
+  (value) => isRoleCode(value),
+  { message: 'Invalid roleCode' }
+);
 
 export const updateUserAdminSchema = z.object({
-  roleCode: z.enum(['member', 'owner', 'admin']).optional(),
+  roleCode: roleCodeSchema.optional(),
   isActive: z.boolean().optional(),
 });
 

@@ -1,12 +1,13 @@
 import { Router } from 'express';
+import { Role } from '@machinefit/shared';
 import * as ownerController from '../controllers/owner.controller.js';
-import { authMiddleware, requireRole } from '../middlewares/auth.middleware.js';
+import { authMiddleware, requireMinRole } from '../middlewares/auth.middleware.js';
 
 export const ownerRouter = Router();
 
 ownerRouter.post('/apply', authMiddleware, ownerController.apply);
 
-ownerRouter.use(authMiddleware, requireRole('owner', 'admin'));
+ownerRouter.use(authMiddleware, requireMinRole(Role.OWNER));
 
 ownerRouter.get('/dashboard', ownerController.dashboard);
 ownerRouter.get('/gyms', ownerController.listGyms);

@@ -1,6 +1,7 @@
 import { Router } from 'express';
+import { Role } from '@machinefit/shared';
 import * as locationController from '../controllers/location.controller.js';
-import { authMiddleware, requireRole } from '../middlewares/auth.middleware.js';
+import { authMiddleware, requireMinRole } from '../middlewares/auth.middleware.js';
 
 export const locationRouter = Router();
 
@@ -17,24 +18,24 @@ locationRouter.delete('/me', authMiddleware, locationController.deleteMyLocation
 locationRouter.post(
   '/admin/countries',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   locationController.adminUpsertCountry
 );
 locationRouter.post(
   '/admin/states',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   locationController.adminUpsertState
 );
 locationRouter.post(
   '/admin/cities',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   locationController.adminUpsertCity
 );
 locationRouter.post(
   '/admin/districts',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   locationController.adminUpsertDistrict
 );

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ownerApi } from '@/api';
 import { ROUTES } from '@/constants/routes';
@@ -23,7 +24,7 @@ export function OwnerApplyPage() {
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const alreadyOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
+  const alreadyOwner = hasMinRole(user?.roleCode, Role.OWNER);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();

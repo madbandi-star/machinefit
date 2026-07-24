@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { communityApi } from '@/api';
@@ -107,7 +108,7 @@ export function PostDetailPage() {
 
   const { post, comments } = data;
   const isAuthor = user?.id === post.userId;
-  const isAdmin = user?.roleCode === 'admin';
+  const isAdmin = hasMinRole(user?.roleCode, Role.ADMIN);
   const canDelete = isAuthor || (isAdmin && post.boardType === 'free');
 
   return (

@@ -1,9 +1,11 @@
-import type {
-  AddGymMachineInput,
-  GymInventoryCapabilities,
-  GymMachine,
-  GymMachineRegistrantRole,
-  RoleCode,
+import {
+  hasMinRole,
+  Role,
+  type AddGymMachineInput,
+  type GymInventoryCapabilities,
+  type GymMachine,
+  type GymMachineRegistrantRole,
+  type RoleCode,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { pickLocalized } from '../utils/localize.util.js';
@@ -143,7 +145,7 @@ export const gymInventoryRepository = {
       params
     );
 
-    const isAdmin = options.viewerRole === 'admin';
+    const isAdmin = hasMinRole(options.viewerRole, Role.ADMIN);
     const isOperator = Boolean(options.isOperator);
 
     return result.rows.map((row) => {
@@ -295,10 +297,10 @@ export const gymInventoryRepository = {
     roleCode: RoleCode | undefined,
     isOperator: boolean
   ): GymInventoryCapabilities {
-    const canAdd = Boolean(roleCode && roleCode !== 'guest');
+    const canAdd = Boolean(roleCode && hasMinRole(roleCode, Role.MEMBER));
     return {
       canAdd,
-      canManageOfficial: Boolean(isOperator || roleCode === 'admin'),
+      canManageOfficial: Boolean(isOperator || hasMinRole(roleCode, Role.ADMIN)),
       isGymOperator: isOperator,
       roleCode,
     };

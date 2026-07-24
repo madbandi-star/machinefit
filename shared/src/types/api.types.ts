@@ -1,4 +1,11 @@
-export type RoleCode = 'guest' | 'member' | 'owner' | 'admin';
+export type RoleCode =
+  | 'guest'
+  | 'member'
+  | 'premium_member'
+  | 'vip_member'
+  | 'trainer'
+  | 'owner'
+  | 'admin';
 
 export type Gender = 'male' | 'female';
 

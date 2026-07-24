@@ -1,6 +1,11 @@
 import { Router } from 'express';
+import { Role } from '@machinefit/shared';
 import * as photoBoardController from '../controllers/photo-board.controller.js';
-import { authMiddleware, optionalAuthMiddleware, requireRole } from '../middlewares/auth.middleware.js';
+import {
+  authMiddleware,
+  optionalAuthMiddleware,
+  requireMinRole,
+} from '../middlewares/auth.middleware.js';
 import { photoBoardImagesUpload } from '../middlewares/upload.middleware.js';
 
 export const photoBoardRouter = Router();
@@ -28,30 +33,30 @@ photoBoardRouter.post('/reports', authMiddleware, photoBoardController.createRep
 photoBoardRouter.get(
   '/admin/reports',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   photoBoardController.listReports
 );
 photoBoardRouter.patch(
   '/admin/reports/:reportId',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   photoBoardController.resolveReport
 );
 photoBoardRouter.delete(
   '/admin/posts/:postId',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   photoBoardController.hidePost
 );
 photoBoardRouter.get(
   '/admin/blocks',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   photoBoardController.listBlocks
 );
 photoBoardRouter.post(
   '/admin/blocks',
   authMiddleware,
-  requireRole('admin'),
+  requireMinRole(Role.ADMIN),
   photoBoardController.blockUser
 );

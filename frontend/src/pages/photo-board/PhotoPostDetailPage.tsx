@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { photoBoardApi } from '@/api/photo-board.api';
@@ -20,7 +21,7 @@ export function PhotoPostDetailPage() {
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const isAdmin = user?.roleCode === 'admin';
+  const isAdmin = hasMinRole(user?.roleCode, Role.ADMIN);
 
   const [index, setIndex] = useState(0);
   const [comment, setComment] = useState('');

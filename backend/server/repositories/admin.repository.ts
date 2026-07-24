@@ -1,19 +1,18 @@
-import type {
-  Post,
-  MachineRequest,
-  Report,
-  Gym,
-  Brand,
-  Machine,
-  RoleCode,
-} from '@machinefit/shared';
-import type {
-  UpdateUserAdminInput,
-  ModeratePostInput,
-  VerifyGymInput,
-  UpdateMachineRequestAdminInput,
-  ResolveReportInput,
-  ToggleActiveInput,
+import {
+  isRoleCode,
+  type Post,
+  type MachineRequest,
+  type Report,
+  type Gym,
+  type Brand,
+  type Machine,
+  type RoleCode,
+  type UpdateUserAdminInput,
+  type ModeratePostInput,
+  type VerifyGymInput,
+  type UpdateMachineRequestAdminInput,
+  type ResolveReportInput,
+  type ToggleActiveInput,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_GYMS, MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
@@ -101,6 +100,9 @@ export const adminRepository = {
     }
 
     if (input.roleCode) {
+      if (!isRoleCode(input.roleCode)) {
+        throw new AppError(400, 'INVALID_ROLE', 'Invalid role');
+      }
       const roleResult = await pool.query<{ id: string }>(
         'SELECT id FROM roles WHERE code = $1',
         [input.roleCode]
@@ -110,6 +112,8 @@ export const adminRepository = {
         roleResult.rows[0].id,
         userId,
       ]);
+      // Force clients to re-auth with a fresh role-bearing access token.
+      await userRepository.deleteRefreshTokens(userId);
     }
     if (input.isActive !== undefined) {
       await pool.query('UPDATE users SET is_active = $1 WHERE id = $2', [

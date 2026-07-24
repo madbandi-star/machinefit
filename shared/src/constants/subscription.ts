@@ -1,3 +1,5 @@
+import { roleGrantsPremiumPlan } from './roles.js';
+
 /** Plan / multi-gym / member limits — change here only. */
 export const SUBSCRIPTION_PLANS = ['free', 'premium'] as const;
 export type SubscriptionPlan = (typeof SUBSCRIPTION_PLANS)[number];
@@ -36,13 +38,14 @@ export function getPlanLimits(plan: SubscriptionPlan = DEFAULT_SUBSCRIPTION_PLAN
 
 /**
  * Effective commercial plan for limit checks.
- * Admin accounts always use the max (premium) tier regardless of subscription_plan.
+ * - Admin / premium_member / vip_member → premium limits (see roleGrantsPremiumPlan)
+ * - Otherwise subscription_plan column (free|premium), unchanged for trainer/owner
  */
 export function getEffectiveSubscriptionPlan(
   plan: SubscriptionPlan | string | null | undefined,
   roleCode?: string | null,
 ): SubscriptionPlan {
-  if (roleCode === 'admin') return MAX_SUBSCRIPTION_PLAN;
+  if (roleGrantsPremiumPlan(roleCode)) return MAX_SUBSCRIPTION_PLAN;
   return isSubscriptionPlan(plan) ? plan : DEFAULT_SUBSCRIPTION_PLAN;
 }
 

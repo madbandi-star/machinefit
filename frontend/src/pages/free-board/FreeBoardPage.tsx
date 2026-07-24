@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { PostCard } from '@/components/cards/PostCard/PostCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -20,7 +21,7 @@ export function FreeBoardPage() {
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
-  const isAdmin = user?.roleCode === 'admin';
+  const isAdmin = hasMinRole(user?.roleCode, Role.ADMIN);
   const showToast = useUIStore((s) => s.showToast);
 
   const [showForm, setShowForm] = useState(false);

@@ -1,4 +1,4 @@
-import { DEMO_PASSWORD } from '@machinefit/shared';
+import { DEMO_PASSWORD, Role } from '@machinefit/shared';
 import { devUsers } from './dev-users.js';
 import { hashPassword } from '../utils/hash.util.js';
 
@@ -15,7 +15,7 @@ export async function seedDevUsers(): Promise<void> {
       email: 'admin@machinefit.com',
       passwordHash: adminHash,
       displayName: 'Admin',
-      roleCode: 'admin',
+      roleCode: Role.ADMIN,
       isActive: true,
       createdAt: new Date().toISOString(),
     });
@@ -28,7 +28,7 @@ export async function seedDevUsers(): Promise<void> {
       email: 'demo@machinefit.com',
       passwordHash: memberHash,
       displayName: 'Demo User',
-      roleCode: 'member',
+      roleCode: Role.MEMBER,
       isActive: true,
       createdAt: new Date().toISOString(),
     });

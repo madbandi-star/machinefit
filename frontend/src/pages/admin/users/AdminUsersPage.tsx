@@ -1,18 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { ASSIGNABLE_ROLE_CODES, type RoleCode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
-import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import '@/styles/admin.css';
-
-const ROLE_OPTIONS = [
-  { value: 'member' as const, label: 'member' },
-  { value: 'owner' as const, label: 'owner' },
-  { value: 'admin' as const, label: 'admin' },
-];
 
 export function AdminUsersPage() {
   const { t } = useTranslation('admin');
@@ -28,8 +22,15 @@ export function AdminUsersPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, roleCode, isActive }: { id: string; roleCode?: 'member' | 'owner' | 'admin'; isActive?: boolean }) =>
-      adminApi.updateUser(id, { roleCode, isActive }),
+    mutationFn: ({
+      id,
+      roleCode,
+      isActive,
+    }: {
+      id: string;
+      roleCode?: RoleCode;
+      isActive?: boolean;
+    }) => adminApi.updateUser(id, { roleCode, isActive }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminUsers });
       showToast(t('saved'), 'success');
@@ -55,19 +56,26 @@ export function AdminUsersPage() {
               <p className="admin-table__meta">{user.email}</p>
             </div>
             <div className="admin-table__actions">
-              <SegmentedControl
-                className="admin-role-segment"
-                size="compact"
-                value={user.roleCode as 'member' | 'owner' | 'admin'}
-                options={ROLE_OPTIONS}
-                onChange={(roleCode) =>
-                  updateMutation.mutate({
-                    id: user.id,
-                    roleCode,
-                  })
-                }
-                ariaLabel={t('users')}
-              />
+              <label className="admin-role-select">
+                <span className="visually-hidden">{t('users')}</span>
+                <select
+                  className="admin-select"
+                  value={user.roleCode}
+                  onChange={(e) =>
+                    updateMutation.mutate({
+                      id: user.id,
+                      roleCode: e.target.value as RoleCode,
+                    })
+                  }
+                  disabled={updateMutation.isPending}
+                >
+                  {ASSIGNABLE_ROLE_CODES.map((code) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <button
                 className="btn btn--secondary"
                 onClick={() =>

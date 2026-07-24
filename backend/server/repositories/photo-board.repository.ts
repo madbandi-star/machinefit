@@ -1,18 +1,20 @@
 import { randomUUID } from 'node:crypto';
-import type {
-  CreatePhotoCommentInput,
-  CreatePhotoPostInput,
-  CreatePhotoReportInput,
-  PhotoBoardListQuery,
-  PhotoBoardSort,
-  PhotoPost,
-  PhotoPostComment,
-  PhotoPostImageMeta,
-  PhotoPostReport,
-  PhotoUserBlock,
-  ReportStatus,
-  RoleCode,
-  UpdatePhotoPostInput,
+import {
+  hasMinRole,
+  Role,
+  type CreatePhotoCommentInput,
+  type CreatePhotoPostInput,
+  type CreatePhotoReportInput,
+  type PhotoBoardListQuery,
+  type PhotoBoardSort,
+  type PhotoPost,
+  type PhotoPostComment,
+  type PhotoPostImageMeta,
+  type PhotoPostReport,
+  type PhotoUserBlock,
+  type ReportStatus,
+  type RoleCode,
+  type UpdatePhotoPostInput,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
@@ -511,7 +513,7 @@ export const photoBoardRepository = {
     if (!pool) {
       const post = mockPhotoPosts.find((p) => p.id === postId);
       if (!post) throw new AppError(404, 'NOT_FOUND', 'Photo post not found');
-      if (post.userId !== userId && role !== 'admin') {
+      if (post.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
         throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this post');
       }
       if (input.title !== undefined) post.title = input.title;
@@ -537,7 +539,7 @@ export const photoBoardRepository = {
       [postId]
     );
     if (!existing.rows[0]) throw new AppError(404, 'NOT_FOUND', 'Photo post not found');
-    if (existing.rows[0].user_id !== userId && role !== 'admin') {
+    if (existing.rows[0].user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
       throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this post');
     }
 
@@ -570,7 +572,7 @@ export const photoBoardRepository = {
       const index = mockPhotoPosts.findIndex((p) => p.id === postId);
       if (index < 0) throw new AppError(404, 'NOT_FOUND', 'Photo post not found');
       const post = mockPhotoPosts[index];
-      if (post.userId !== userId && role !== 'admin') {
+      if (post.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
         throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this post');
       }
       mockPhotoPosts.splice(index, 1);
@@ -582,7 +584,7 @@ export const photoBoardRepository = {
       [postId]
     );
     if (!existing.rows[0]) throw new AppError(404, 'NOT_FOUND', 'Photo post not found');
-    if (existing.rows[0].user_id !== userId && role !== 'admin') {
+    if (existing.rows[0].user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
       throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this post');
     }
     await pool.query(`DELETE FROM photo_posts WHERE id = $1`, [postId]);
@@ -756,7 +758,7 @@ export const photoBoardRepository = {
       const index = mockPhotoComments.findIndex((c) => c.id === commentId);
       if (index < 0) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
       const comment = mockPhotoComments[index];
-      if (comment.userId !== userId && role !== 'admin') {
+      if (comment.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
         throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this comment');
       }
       mockPhotoComments.splice(index, 1);
@@ -771,10 +773,10 @@ export const photoBoardRepository = {
     );
     const row = existing.rows[0];
     if (!row) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
-    if (row.user_id !== userId && role !== 'admin') {
+    if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
       throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this comment');
     }
-    if (role === 'admin') {
+    if (hasMinRole(role, Role.ADMIN)) {
       await pool.query(`UPDATE photo_post_comments SET is_hidden = TRUE WHERE id = $1`, [commentId]);
     } else {
       await pool.query(`DELETE FROM photo_post_comments WHERE id = $1`, [commentId]);

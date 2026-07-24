@@ -1,4 +1,4 @@
-import type { RegisterInput, LoginInput, User, RoleCode } from '@machinefit/shared';
+import { Role, type RegisterInput, type LoginInput, type User, type RoleCode } from '@machinefit/shared';
 import { DEMO_PASSWORD } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
@@ -63,7 +63,7 @@ export const authService = {
         email: input.email,
         passwordHash,
         displayName: input.displayName,
-        roleCode: 'member',
+        roleCode: Role.MEMBER,
         isActive: true,
         createdAt: new Date().toISOString(),
       });
@@ -78,7 +78,7 @@ export const authService = {
         roleId: 'dev-role',
         email: input.email,
         displayName: input.displayName,
-        roleCode: 'member',
+        roleCode: Role.MEMBER,
         gender: input.gender,
         unitHeight: input.unitHeight ?? 'cm',
         unitWeight: input.unitWeight ?? 'kg',
@@ -181,7 +181,7 @@ export const authService = {
     const payload = verifyRefreshToken(refreshToken);
     const pool = getPool();
 
-    let roleCode: RoleCode = 'member';
+    let roleCode: RoleCode = Role.MEMBER;
     let email = '';
 
     if (pool) {

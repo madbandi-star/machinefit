@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { photoBoardApi } from '@/api/photo-board.api';
@@ -58,7 +59,7 @@ export function PhotoPostWritePage() {
   useEffect(() => {
     const post = detailQuery.data?.post;
     if (!post) return;
-    if (user && post.userId !== user.id && user.roleCode !== 'admin') {
+    if (user && post.userId !== user.id && !hasMinRole(user.roleCode, Role.ADMIN)) {
       showToast(t('errorGeneric'), 'error');
       navigate(ROUTES.PHOTO_BOARD);
       return;

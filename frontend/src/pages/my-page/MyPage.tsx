@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Role, hasExactRole, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
@@ -45,8 +46,9 @@ export function MyPage() {
 
   const [showLogout, setShowLogout] = useState(false);
 
-  const isOwner = user?.roleCode === 'owner' || user?.roleCode === 'admin';
-  const isAdmin = user?.roleCode === 'admin';
+  const roleCode = user?.roleCode;
+  const isOwner = hasMinRole(roleCode, Role.OWNER);
+  const isAdmin = hasMinRole(roleCode, Role.ADMIN);
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -74,7 +76,7 @@ export function MyPage() {
     : locationQuery.data?.isSet
       ? locationQuery.data.label?.path || t('location.unset')
       : t('location.unset');
-  const showMemberLevel = Boolean(user?.roleCode && user.roleCode !== 'member');
+  const showMemberLevel = Boolean(roleCode && !hasExactRole(roleCode, Role.MEMBER));
 
   const handleLogout = () => {
     clearCredentials();

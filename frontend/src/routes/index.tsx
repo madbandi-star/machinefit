@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ComponentType } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { Role } from '@machinefit/shared';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
@@ -248,7 +249,7 @@ export const router = createBrowserRouter(
     },
     {
       element: (
-        <AuthGuard minRole="owner">
+        <AuthGuard minRole={Role.OWNER}>
           <DashboardLayout />
         </AuthGuard>
       ),
@@ -256,7 +257,7 @@ export const router = createBrowserRouter(
     },
     {
       element: (
-        <AuthGuard minRole="admin">
+        <AuthGuard minRole={Role.ADMIN}>
           <AdminLayout />
         </AuthGuard>
       ),

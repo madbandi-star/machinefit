@@ -4,7 +4,8 @@ import * as motivationMediaController from '../controllers/motivation-media.cont
 import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
 import * as muscleGroupImageController from '../controllers/muscle-group-image.controller.js';
 import * as machineCoverImageController from '../controllers/machine-cover-image.controller.js';
-import { authMiddleware, requireRole } from '../middlewares/auth.middleware.js';
+import { Role } from '@machinefit/shared';
+import { authMiddleware, requireMinRole } from '../middlewares/auth.middleware.js';
 import {
   motivationAudioUpload,
   muscleGroupImageUpload,
@@ -12,7 +13,7 @@ import {
 
 export const adminRouter = Router();
 
-adminRouter.use(authMiddleware, requireRole('admin'));
+adminRouter.use(authMiddleware, requireMinRole(Role.ADMIN));
 
 adminRouter.get('/dashboard', adminController.dashboard);
 adminRouter.get('/motivation-media', motivationMediaController.listAdmin);
