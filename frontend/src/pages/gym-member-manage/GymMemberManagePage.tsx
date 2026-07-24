@@ -12,6 +12,7 @@ import {
   locationValueFromRef,
   type LocationPickerValue,
 } from '@/components/location/LocationPicker';
+import { HomeGymField } from '@/components/settings/HomeGymField/HomeGymField';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
@@ -340,28 +341,48 @@ export function GymMemberManagePage() {
                     : t('gyms:manage.editGymTitle')}
                 </div>
 
-                <label className="form-field">
-                  <span className="form-field__label">{t('gyms:selector.gymName')}</span>
-                  <input
-                    className="input"
-                    value={gymForm.name}
-                    onChange={(e) => setGymForm((prev) => ({ ...prev, name: e.target.value }))}
-                    required
-                    maxLength={200}
-                    autoFocus
-                    placeholder={t('gyms:manage.gymNamePlaceholder')}
-                  />
-                </label>
-
                 <div className="form-field">
-                  <span className="form-field__label">{t('gyms:manage.locationHeading')}</span>
-                  <p className="gym-manage-hint">{t('gyms:manage.locationThenGymHint')}</p>
                   <LocationPicker
                     value={gymForm.location}
-                    onChange={(location) => setGymForm((prev) => ({ ...prev, location }))}
+                    onChange={(location) => {
+                      setGymForm((prev) => {
+                        const locChanged =
+                          (location.countryCode ?? null) !== (prev.location.countryCode ?? null) ||
+                          (location.stateId ?? null) !== (prev.location.stateId ?? null) ||
+                          (location.cityId ?? null) !== (prev.location.cityId ?? null) ||
+                          (location.districtId ?? null) !== (prev.location.districtId ?? null);
+                        return {
+                          ...prev,
+                          location,
+                          // Match register: changing region clears gym name on create.
+                          name: gymFormMode === 'create' && locChanged ? '' : prev.name,
+                        };
+                      });
+                    }}
                     showDistrict
                     showGps
                     required
+                  />
+                </div>
+
+                <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
+                  <HomeGymField
+                    value={{ homeGymName: gymForm.name || undefined }}
+                    onChange={(next) =>
+                      setGymForm((prev) => ({
+                        ...prev,
+                        name: next.homeGymName?.trim() || '',
+                      }))
+                    }
+                    showDesc
+                    locationFilter={{
+                      countryCode: gymForm.location.countryCode,
+                      stateId: gymForm.location.stateId,
+                      cityId: gymForm.location.cityId,
+                      districtId: gymForm.location.districtId,
+                      latitude: gymForm.location.latitude,
+                      longitude: gymForm.location.longitude,
+                    }}
                   />
                 </div>
 

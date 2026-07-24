@@ -26,14 +26,16 @@ import {
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
-import { locationApi, userApi } from '@/api';
+import { locationApi, userApi, userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
+import { useGymStore } from '@/store/gym.store';
 import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
+import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
 import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
@@ -59,6 +61,8 @@ export function SettingsPage() {
   const updateUser = useAuthStore((s) => s.updateUser);
   const showToast = useUIStore((s) => s.showToast);
   const { activeGym, gyms } = useActiveGym();
+  const setActiveGymId = useGymStore((s) => s.setActiveGymId);
+  const setActiveMemberId = useGymStore((s) => s.setActiveMemberId);
   const unitHeight = useSettingsStore((s) => s.unitHeight);
   const unitWeight = useSettingsStore((s) => s.unitWeight);
   const setUnitHeight = useSettingsStore((s) => s.setUnitHeight);
@@ -157,15 +161,32 @@ export function SettingsPage() {
       } else {
         await locationApi.clearMine();
       }
-      return userApi.updateMe({
+      const res = await userApi.updateMe({
         homeGymId: homeGym.homeGymId ?? null,
         homeGymName: homeGym.homeGymName?.trim() || null,
       });
+
+      // Home header reads active user_gyms.name — keep it in sync with settings home gym.
+      const nextName = homeGym.homeGymName?.trim() || '';
+      if (nextName && activeGym) {
+        const match = gyms.find((g) => g.name.trim() === nextName);
+        if (match && match.id !== activeGym.id) {
+          await userGymApi.select(match.id);
+          setActiveGymId(match.id);
+          const defaultMemberId = await fetchDefaultMemberId(match.id);
+          setActiveMemberId(defaultMemberId);
+        } else if (activeGym.name.trim() !== nextName) {
+          await userGymApi.update(activeGym.id, { name: nextName });
+        }
+      }
+
+      return res;
     },
     onSuccess: async (res) => {
       const updatedUser = res.data.data as User;
       updateUser(updatedUser);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
       showToast(t('location.locationGymSaved'), 'success');
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
