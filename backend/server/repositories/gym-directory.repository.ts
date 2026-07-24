@@ -140,41 +140,47 @@ export const gymDirectoryRepository = {
     );
     const total = parseInt(countRes.rows[0]?.count ?? '0', 10);
 
-    const params: unknown[] = [
-      `%${q}%`,
-      query.districtId ?? null,
-      query.cityId ?? null,
-      query.stateId ?? null,
-    ];
+    // Build a contiguous, typed parameter list so null location IDs never become
+    // "could not determine data type of parameter $N" when unused in ORDER BY.
+    const params: unknown[] = [`%${q}%`];
     let brandClause = '';
     if (brandFilter) {
       params.push(`%${brandFilter}%`);
-      brandClause = `AND (d.brand ILIKE $5 OR d.name ILIKE $5)`;
+      brandClause = `AND (d.brand ILIKE $${params.length} OR d.name ILIKE $${params.length})`;
     }
 
     let distanceSelect = 'NULL::float8 AS distance_meters';
-    let orderBy = `
-         CASE
-           WHEN $2::uuid IS NOT NULL AND d.district_id = $2::uuid THEN 0
-           WHEN $3::uuid IS NOT NULL AND d.city_id = $3::uuid THEN 1
-           WHEN $4::uuid IS NOT NULL AND d.state_id = $4::uuid THEN 2
-           ELSE 3
-         END,
-         CASE WHEN d.name ILIKE replace($1, '%', '') || '%' THEN 0 ELSE 1 END,
-         d.name ASC`;
+    let orderBy = 'd.name ASC';
 
     if (hasCoords) {
       params.push(query.latitude, query.longitude);
-      const latP = brandFilter ? 6 : 5;
-      const lngP = brandFilter ? 7 : 6;
-      distanceSelect = `(6371000 * acos(LEAST(1.0, GREATEST(-1.0,
-          cos(radians($${latP}::float8)) * cos(radians(d.latitude))
-            * cos(radians(d.longitude) - radians($${lngP}::float8))
-          + sin(radians($${latP}::float8)) * sin(radians(d.latitude))
-        )))) AS distance_meters`;
+      const latP = params.length - 1;
+      const lngP = params.length;
+      distanceSelect = `(CASE
+          WHEN d.latitude IS NULL OR d.longitude IS NULL THEN NULL
+          ELSE (6371000 * acos(LEAST(1.0, GREATEST(-1.0,
+            cos(radians($${latP}::float8)) * cos(radians(d.latitude))
+              * cos(radians(d.longitude) - radians($${lngP}::float8))
+            + sin(radians($${latP}::float8)) * sin(radians(d.latitude))
+          ))))
+        END) AS distance_meters`;
       orderBy = `
          CASE WHEN d.latitude IS NULL OR d.longitude IS NULL THEN 1 ELSE 0 END,
          distance_meters ASC NULLS LAST,
+         d.name ASC`;
+    } else {
+      params.push(query.districtId ?? null, query.cityId ?? null, query.stateId ?? null);
+      const districtP = params.length - 2;
+      const cityP = params.length - 1;
+      const stateP = params.length;
+      orderBy = `
+         CASE
+           WHEN $${districtP}::uuid IS NOT NULL AND d.district_id = $${districtP}::uuid THEN 0
+           WHEN $${cityP}::uuid IS NOT NULL AND d.city_id = $${cityP}::uuid THEN 1
+           WHEN $${stateP}::uuid IS NOT NULL AND d.state_id = $${stateP}::uuid THEN 2
+           ELSE 3
+         END,
+         CASE WHEN d.name ILIKE replace($1, '%', '') || '%' THEN 0 ELSE 1 END,
          d.name ASC`;
     }
 
