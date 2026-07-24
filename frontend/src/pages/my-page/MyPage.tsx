@@ -167,10 +167,6 @@ export function MyPage() {
         </section>
       ) : null}
 
-      <section className="my-page-section">
-        <WorkoutReportSection />
-      </section>
-
       <MemberProfileRequests />
 
       <section className="my-page-section">
@@ -182,6 +178,7 @@ export function MyPage() {
           <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
+          <WorkoutReportSection />
         </nav>
       </section>
 

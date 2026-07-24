@@ -1004,6 +1004,33 @@
   font-size: 0.85rem;
 }
 
+.list-nav .workout-report-section {
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  background: transparent;
+}
+
+.list-nav .workout-report-section__toggle {
+  min-height: var(--touch-target-min);
+  padding: 0.85rem var(--space-md);
+}
+
+.list-nav .workout-report-section__toggle:active {
+  background: var(--color-surface-alt);
+}
+
+.list-nav .workout-report-section__toggle-title {
+  font-size: var(--font-size-body-sm);
+  font-weight: 600;
+}
+
+.list-nav .workout-report-section__body {
+  padding: 0 var(--space-md) var(--space-md);
+  margin-top: 0;
+}
+
 .workout-report-section__field {
   display: flex;
   flex-direction: column;
