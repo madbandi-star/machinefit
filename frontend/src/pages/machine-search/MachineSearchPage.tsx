@@ -105,7 +105,7 @@ export function MachineSearchPage() {
 
   return (
     <div className="machine-search">
-      <PageShell title={t('searchTitle')}>
+      <PageShell>
         <SearchBar value={query} onChange={handleQueryChange} placeholder={t('searchPlaceholder')} />
         <FilterChips value={muscleGroup} onChange={handleMuscleChange} />
         <BrandFilterChips brands={brands} value={brandCode} onChange={handleBrandChange} />
