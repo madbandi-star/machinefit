@@ -24,3 +24,4 @@ export * from './machine-cover-image.types.js';
 export * from './photo-board.types.js';
 export * from './gym-directory.types.js';
 export * from './machine-trade.types.js';
+export * from './push-notification.types.js';

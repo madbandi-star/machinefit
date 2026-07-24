@@ -19,3 +19,4 @@ export * from './machine-cover-image.schema.js';
 export * from './photo-board.schema.js';
 export * from './gym-directory.schema.js';
 export * from './machine-trade.schema.js';
+export * from './push-notification.schema.js';

@@ -11,7 +11,14 @@ export type NotificationType =
   | 'photo_reply'
   | 'photo_report_result'
   | 'trade_like'
-  | 'trade_report_result';
+  | 'trade_report_result'
+  /** Role-based human/campaign push kinds (inbox). */
+  | 'push_general'
+  | 'push_notice'
+  | 'push_workout'
+  | 'push_schedule'
+  | 'push_trade'
+  | 'push_event';
 
 export interface Notification {
   id: string;
