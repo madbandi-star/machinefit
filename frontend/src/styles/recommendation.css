@@ -1373,29 +1373,46 @@
 
 .rest-timer-banner {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
   margin-bottom: var(--space-sm);
-  padding: 0.75rem 0.85rem;
+  padding: 1.1rem 1rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
   background: color-mix(in srgb, var(--color-primary) 10%, var(--glass-bg));
 }
 
+.rest-timer-banner__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+}
+
 .rest-timer-banner__label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: var(--color-text-muted);
 }
 
 .rest-timer-banner__time {
-  font-size: 1.25rem;
+  display: block;
+  font-size: clamp(2.75rem, 14vw, 3.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
+  color: var(--color-text);
 }
 
 .rest-timer-banner__dismiss {
-  flex-shrink: 0;
+  width: 100%;
+  min-height: 2.75rem;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .voice-coach-panel {
