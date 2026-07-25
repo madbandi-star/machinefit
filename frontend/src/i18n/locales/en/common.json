@@ -252,7 +252,7 @@
     "voiceCoachPrepCount_5": "5 · 4 · 3 · 2 · 1",
     "voiceCoachPrepCount_10": "10 · 9 · … · 1",
     "voiceCountMode": "Count mode",
-    "voiceCountModeDesc": "Applies to exercise counts only. Prep and rest cues stay the same.",
+    "voiceCountModeDesc": "Applies to number counts and one-more cues. Prep and rest stay the same.",
     "voiceCountMode_normal": "Normal",
     "voiceCountMode_normal_turbo": "Normal + turbo",
     "voiceCountMode_ai_accel": "AI accel",

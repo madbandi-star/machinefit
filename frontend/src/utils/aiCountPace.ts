@@ -1,5 +1,6 @@
 /**
- * AI accelerated count + turbo pacing (exercise count only).
+ * AI accelerated count + turbo pacing for spoken exercise counts
+ * (number reps + optional one-more cues share one schedule).
  * Pure timing helpers — does not touch timers, sets, or rest business logic.
  */
 

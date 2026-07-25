@@ -107,7 +107,8 @@ export function VoiceCoachPanel({
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
-  const showCountStage = phase === 'counting' && currentRep > 0;
+  const showCountStage =
+    (phase === 'counting' || phase === 'oneMore') && currentRep > 0;
   const showCountdownStage = phase === 'countdown' && countdown != null;
   const scale = showCountStage
     ? 1 + intensity * (turbo ? 0.42 : 0.22) + (turbo && intensity > 0.92 ? 0.18 : 0)
@@ -115,7 +116,11 @@ export function VoiceCoachPanel({
       ? 1.05
       : 1;
   const displayNumber = showCountStage
-    ? formatCountDisplay(currentRep, turbo)
+    ? phase === 'oneMore'
+      ? turbo
+        ? `${t('machines:voiceCoach.oneMoreShort')}!`
+        : t('machines:voiceCoach.oneMoreShort')
+      : formatCountDisplay(currentRep, turbo)
     : showCountdownStage
       ? String(countdown)
       : phase === 'start'
