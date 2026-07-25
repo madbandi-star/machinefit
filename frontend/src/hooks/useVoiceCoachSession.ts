@@ -68,9 +68,8 @@ export function useVoiceCoachSession({
   const start = useCallback(() => {
     if (!enabled) return;
 
+    // Soft-stop prior run, but keep media warm for this tap / rest auto-start.
     abortRef.current?.abort();
-    // Soft-stop: cancel prior speech/clips but keep media session warm for this tap
-    // (and for auto-start after rest, which has no fresh user gesture).
     stopVoiceCoach({ keepAudioSession: true });
 
     const controller = new AbortController();
@@ -84,12 +83,17 @@ export function useVoiceCoachSession({
     setTurbo(false);
     setIntensity(0);
 
-    // Kick unlock in the same synchronous turn as the click (mobile autoplay).
+    // Sync unlock in the click turn, then start flow without waiting on clip decode.
+    // First Start on recommendation/history must work before any set-complete.
     const unlockPromise = unlockVoiceCoachAudio();
 
     void (async () => {
       try {
-        await unlockPromise;
+        // Cap wait so a slow network preload cannot stall past the gesture window.
+        await Promise.race([
+          unlockPromise,
+          new Promise<void>((resolve) => window.setTimeout(resolve, 120)),
+        ]);
         if (controller.signal.aborted || runIdRef.current !== runId) return;
 
         await runVoiceCoachFlow({

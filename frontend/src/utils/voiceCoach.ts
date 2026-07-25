@@ -18,6 +18,7 @@ import {
   playVoiceCoachClip,
   preloadVoiceCoachClips,
   repClipKey,
+  primeVoiceCoachAudioSync,
   stopVoiceCoachClips,
   unlockVoiceCoachClips,
 } from '@/utils/voiceCoachClips';
@@ -446,16 +447,19 @@ export async function speakRestTipsAndWarnings(
  * Prefer calling this directly from the Start / set-complete tap handler.
  */
 export function unlockVoiceCoachAudio(): Promise<void> {
-  // Sync TTS unlock in the tap — required for Hold ("버텨") / rest tips.
-  // Silent unlock is safe; what broke clips was speaking real TTS mid-countdown.
+  // Sync work first — must stay inside the user-gesture turn.
+  // Waiting on clip decode here made the first Count Start silent on mobile
+  // (set-complete had already primed audio, so only the first tap failed).
+  primeVoiceCoachAudioSync();
   speechManager.unlock();
   void speechManager.init();
   const clipsUnlock = unlockVoiceCoachClips(DEFAULT_VOICE_COACH_PACK);
   const sessionUnlock = beginVoiceCoachAudioSession();
 
   return (async () => {
-    await Promise.all([clipsUnlock, sessionUnlock]);
-    await ensureVoiceCoachAudioRunning();
+    // Resolve once the audio graph / keep-alive is up — do not await clip preload.
+    await Promise.all([sessionUnlock, ensureVoiceCoachAudioRunning()]);
+    void clipsUnlock;
   })();
 }
 

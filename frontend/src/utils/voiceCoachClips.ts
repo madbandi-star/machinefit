@@ -371,23 +371,44 @@ export async function preloadVoiceCoachClips(options: {
 }
 
 /**
+ * Synchronously create/resume AudioContext and fire a silent tick.
+ * Must run in the same turn as the user tap — awaiting clip fetch first
+ * loses the mobile gesture and makes the first Count Start silent.
+ */
+export function primeVoiceCoachAudioSync(): AudioContext | null {
+  const ctx = getSharedAudioContext();
+  if (!ctx) return null;
+  const state = ctx.state as string;
+  if (state === 'suspended' || state === 'interrupted') {
+    void ctx.resume();
+  }
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    gain.gain.value = 0.0001;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    const now = ctx.currentTime;
+    osc.start(now);
+    osc.stop(now + 0.03);
+  } catch {
+    // ignore
+  }
+  return ctx;
+}
+
+/**
  * Unlock clip playback inside a user-gesture turn.
- * Sync work runs before the first await so mobile autoplay policies stay satisfied.
- * Warms with a silent WAV — never plays a real countdown clip during unlock.
+ * Resolves quickly after audio is primed — clip decode continues in background
+ * so the first Start (before any set-complete) still gets audible beeps/clips.
  */
 export function unlockVoiceCoachClips(
   pack: VoiceCoachPack = DEFAULT_VOICE_COACH_PACK
 ): Promise<void> {
   const normalized = normalizeVoiceCoachPack(pack);
 
-  // 1) Kick AudioContext resume while we still have the tap gesture.
-  const ctx = getSharedAudioContext();
-  if (ctx) {
-    const state = ctx.state as string;
-    if (state === 'suspended' || state === 'interrupted') {
-      void ctx.resume();
-    }
-  }
+  // 1) Sync prime in the tap turn (no await).
+  primeVoiceCoachAudioSync();
 
   return (async () => {
     const running = await ensureVoiceCoachAudioRunning();
@@ -401,7 +422,7 @@ export function unlockVoiceCoachClips(
       audio.volume = 0.001;
       const playResult = audio.play();
       const playGuard = new Promise<void>((resolve) => {
-        window.setTimeout(resolve, 400);
+        window.setTimeout(resolve, 250);
       });
       await Promise.race([playResult?.then(() => undefined), playGuard]);
       audio.pause();
@@ -411,21 +432,9 @@ export function unlockVoiceCoachClips(
       // Some browsers block even gesture play if muted tabs — continue with Web Audio.
     }
 
-    // 3) Silent tick keeps the graph hot, then decode first countdown clips.
+    // 3) Preload clips in the background — do not block Count Start on decode.
     if (running) {
-      try {
-        const osc = running.createOscillator();
-        const gain = running.createGain();
-        gain.gain.value = 0.0001;
-        osc.connect(gain);
-        gain.connect(running.destination);
-        const now = running.currentTime;
-        osc.start(now);
-        osc.stop(now + 0.02);
-      } catch {
-        // ignore
-      }
-      await Promise.all([
+      void Promise.all([
         loadClipBuffer(voiceCoachClipUrl('cd-5', normalized), running),
         loadClipBuffer(voiceCoachClipUrl('cd-4', normalized), running),
         loadClipBuffer(voiceCoachClipUrl('cd-3', normalized), running),

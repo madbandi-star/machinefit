@@ -320,6 +320,8 @@ export function WorkoutLogPanel({
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
     // Count Start must work anytime: before set-complete, mid-rest, during rest tips.
+    // Prime audio in this same tap — do not require 수행기록 완료 first.
+    unlockVoiceCoachAudio();
     manualCountStartRef.current = true;
     voiceCoachRunningRef.current = true;
     restSpeechAbortRef.current?.abort();

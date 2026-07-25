@@ -17,6 +17,7 @@ import {
   runVoiceCoachFlow,
   speakRestTipsAndWarnings,
   stopVoiceCoach,
+  unlockVoiceCoachAudio,
 } from './voiceCoach';
 import { speechManager } from './speechManager';
 
@@ -589,6 +590,35 @@ async function caseDisabledUnlockSilent(): Promise<void> {
   record('unlock/no-audible-cd5', !leakedCd, `played=${playedClips.join(',')}`);
 }
 
+/**
+ * First Count Start on 추천기록 used to await clip fetch/decode inside unlock.
+ * That lost the mobile gesture so the first tap was silent until set-complete
+ * primed audio. Unlock must resolve without waiting on preload.
+ */
+async function caseUnlockDoesNotWaitForClipPreload(): Promise<void> {
+  installMocks();
+  resetCoachState();
+
+  const g = globalThis as typeof globalThis & { fetch: typeof fetch };
+  const realFetch = g.fetch;
+  g.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    await new Promise((r) => setTimeout(r, 800));
+    return realFetch(input, init);
+  }) as typeof fetch;
+
+  const t0 = Date.now();
+  await unlockVoiceCoachAudio();
+  const elapsed = Date.now() - t0;
+
+  // Must not wait on the 800ms clip fetches (allow HTML silent-play race ~250ms).
+  const ok = elapsed < 400;
+  record(
+    'unlock/first-start-no-preload-wait',
+    ok,
+    `elapsed=${elapsed}ms (must be <400; slow fetch=800ms)`
+  );
+}
+
 async function caseTurboMode(): Promise<void> {
   installMocks();
   resetCoachState();
@@ -770,6 +800,7 @@ async function main(): Promise<void> {
   await caseStopClipsDoesNotHang();
   await caseExternalCancelDuringTtsDoesNotAbortSession();
   await caseDisabledUnlockSilent();
+  await caseUnlockDoesNotWaitForClipPreload();
   await caseTurboMode();
   await caseAiAccelMode();
   await caseEnglishLocale();
