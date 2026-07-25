@@ -49,6 +49,8 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachPrepCount: DEFAULT_VOICE_COACH_PREP_COUNT,
   voiceCountMode: DEFAULT_VOICE_COUNT_MODE,
   restDurationSeconds: REST_DURATION.defaultSeconds,
+  /** When false, skip rest timer after the final completed set. */
+  restTimerAfterAllSetsComplete: true,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
 } as const;
 
@@ -73,6 +75,8 @@ interface SettingsState {
   voiceCountMode: VoiceCountMode;
   /** Rest between sets (seconds). Default 90 (1:30). */
   restDurationSeconds: number;
+  /** Show rest timer even when every set is already completed. */
+  restTimerAfterAllSetsComplete: boolean;
   /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 10 = 1000%) */
   weightDifficulty: number;
   setLocale: (locale: Locale) => void;
@@ -89,6 +93,7 @@ interface SettingsState {
   setVoiceCoachPrepCount: (count: VoiceCoachPrepCount) => void;
   setVoiceCountMode: (mode: VoiceCountMode) => void;
   setRestDurationSeconds: (seconds: number) => void;
+  setRestTimerAfterAllSetsComplete: (enabled: boolean) => void;
   setWeightDifficulty: (value: number) => void;
   /** Restore app preferences (units, voice, rest, etc.) to defaults. */
   resetSettings: () => void;
@@ -116,6 +121,8 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCountMode: (mode) => set({ voiceCountMode: clampVoiceCountMode(mode) }),
       setRestDurationSeconds: (seconds) =>
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
+      setRestTimerAfterAllSetsComplete: (restTimerAfterAllSetsComplete) =>
+        set({ restTimerAfterAllSetsComplete }),
       setWeightDifficulty: (value) =>
         set({ weightDifficulty: clampWeightDifficulty(value) }),
       resetSettings: () =>
@@ -135,6 +142,11 @@ export const useSettingsStore = create<SettingsState>()(
           voiceCoachPrepCount: clampVoiceCoachPrepCount(
             p.voiceCoachPrepCount ?? current.voiceCoachPrepCount
           ),
+          restTimerAfterAllSetsComplete:
+            typeof p.restTimerAfterAllSetsComplete === 'boolean'
+              ? p.restTimerAfterAllSetsComplete
+              : (current.restTimerAfterAllSetsComplete ??
+                SETTINGS_DEFAULTS.restTimerAfterAllSetsComplete),
         };
       },
     }

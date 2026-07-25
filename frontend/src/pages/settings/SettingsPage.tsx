@@ -81,6 +81,9 @@ export function SettingsPage() {
   const voiceCoachPrepCount = useSettingsStore((s) => s.voiceCoachPrepCount);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
+  const restTimerAfterAllSetsComplete = useSettingsStore(
+    (s) => s.restTimerAfterAllSetsComplete
+  );
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
@@ -91,6 +94,9 @@ export function SettingsPage() {
   const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
+  const setRestTimerAfterAllSetsComplete = useSettingsStore(
+    (s) => s.setRestTimerAfterAllSetsComplete
+  );
   const resetSettings = useSettingsStore((s) => s.resetSettings);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
 
@@ -474,6 +480,17 @@ export function SettingsPage() {
               </div>
             </div>
           </div>
+          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
+            <input
+              type="checkbox"
+              checked={restTimerAfterAllSetsComplete}
+              onChange={(e) => setRestTimerAfterAllSetsComplete(e.target.checked)}
+            />
+            <span>{t('settings.restTimerAfterAllSetsComplete')}</span>
+          </label>
+          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
+            {t('settings.restTimerAfterAllSetsCompleteDesc')}
+          </p>
         </section>
 
         <section className="form-section">

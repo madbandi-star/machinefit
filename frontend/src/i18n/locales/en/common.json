@@ -264,6 +264,8 @@
     "restDurationSeconds": "sec",
     "restDurationMinutesLabel": "Rest minutes",
     "restDurationSecondsLabel": "Rest seconds",
+    "restTimerAfterAllSetsComplete": "Show rest timer after all sets are done",
+    "restTimerAfterAllSetsCompleteDesc": "When off, finishing the last set will not show the rest timer. Rest still appears after mid-workout sets.",
     "weightDifficulty": "Weight difficulty",
     "weightDifficultyDesc": "Make recommended weights lighter or heavier. Default uses the algorithm as-is.",
     "weightDifficultyLight": "0.1 (light)",
