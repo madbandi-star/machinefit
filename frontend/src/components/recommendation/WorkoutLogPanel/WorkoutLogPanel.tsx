@@ -118,6 +118,17 @@ function buildDefaultCompleted(count: number): boolean[] {
   return Array.from({ length: count }, () => false);
 }
 
+/** Whether to start rest after marking a set complete (honors "after all sets" setting). */
+function shouldShowRestAfterSetComplete(
+  nextCompleted: boolean[],
+  showAfterAllSetsComplete: boolean
+): boolean {
+  if (!showAfterAllSetsComplete && nextCompleted.length > 0 && nextCompleted.every(Boolean)) {
+    return false;
+  }
+  return true;
+}
+
 function resizeCompleted(current: boolean[], nextCount: number): boolean[] {
   if (nextCount <= current.length) {
     return current.slice(0, nextCount);
@@ -222,6 +233,9 @@ export function WorkoutLogPanel({
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
+  const restTimerAfterAllSetsComplete = useSettingsStore(
+    (s) => s.restTimerAfterAllSetsComplete
+  );
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
@@ -900,11 +914,15 @@ export function WorkoutLogPanel({
       next[index] = !wasCompleted;
 
       if (!wasCompleted && next[index]) {
-        unlockVoiceCoachAudio();
-        setRestTimer({
-          setNumber: index + 1,
-          seconds: clampRestDurationSeconds(restDurationSeconds),
-        });
+        if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
+          unlockVoiceCoachAudio();
+          setRestTimer({
+            setNumber: index + 1,
+            seconds: clampRestDurationSeconds(restDurationSeconds),
+          });
+        } else {
+          setRestTimer(null);
+        }
       } else if (wasCompleted) {
         setRestTimer(null);
       }
@@ -926,11 +944,15 @@ export function WorkoutLogPanel({
     setSetCompleted(next);
 
     if (!wasCompleted && next[index]) {
-      unlockVoiceCoachAudio();
-      setRestTimer({
-        setNumber: index + 1,
-        seconds: clampRestDurationSeconds(restDurationSeconds),
-      });
+      if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
+        unlockVoiceCoachAudio();
+        setRestTimer({
+          setNumber: index + 1,
+          seconds: clampRestDurationSeconds(restDurationSeconds),
+        });
+      } else {
+        setRestTimer(null);
+      }
     } else if (wasCompleted) {
       setRestTimer(null);
     }
