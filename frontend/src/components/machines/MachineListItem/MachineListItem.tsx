@@ -11,6 +11,7 @@ import { queryClient } from '@/app/providers/QueryProvider';
 import { machineApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import { SafeImage } from '@/components/media/SafeImage';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
@@ -58,13 +59,20 @@ export function MachineListItem({ machine, selectedMuscle, onSelect }: MachineLi
     <>
       <div className="machine-list-item__thumb">
         {imageUrl ? (
-          <img src={imageUrl} alt="" loading="lazy" width={72} height={72} />
+          <SafeImage
+            src={imageUrl}
+            fallbackSrc={machinePlaceholderUrl()}
+            alt=""
+            loading="lazy"
+            width={72}
+            height={72}
+          />
         ) : displayMuscle ? (
           <div className="machine-list-item__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={52} />
           </div>
         ) : (
-          <img
+          <SafeImage
             className="machine-list-item__placeholder-img"
             src={machinePlaceholderUrl()}
             alt=""

@@ -126,7 +126,10 @@
   "errors": {
     "loadFailed": "We couldn't load that. Please try again in a moment.",
     "notFound": "We couldn't find that.",
-    "submitFailed": "We couldn't complete that. Please try again in a moment."
+    "submitFailed": "We couldn't complete that. Please try again in a moment.",
+    "validationError": "Please check your input.",
+    "serverError": "A server error occurred. Please try again later.",
+    "recommendValidation": "Check the details needed for a recommendation (height, weight, target muscle, etc.)."
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -196,8 +199,12 @@
     "profileExtrasDesc": "Your workout goal helps personalize recommendations. A gym is optional.",
     "profileSaved": "Your profile is saved.",
     "profileRequiredForRecommend": "We need your height and weight for recommendations. Add them in Settings.",
+    "heightRequiredForRecommend": "We need your height for recommendations. Add it in Settings.",
+    "weightRequiredForRecommend": "We need your weight for recommendations. Add it in Settings.",
     "genderRequiredForRecommend": "We need your gender for recommendations. Choose it in Settings.",
     "memberProfileRequiredForRecommend": "The selected member needs gender, height, and weight. Add them in Gyms & members.",
+    "memberHeightRequiredForRecommend": "The selected member needs a height. Add it in Gyms & members.",
+    "memberWeightRequiredForRecommend": "The selected member needs a weight. Add it in Gyms & members.",
     "memberGenderRequiredForRecommend": "The selected member needs a gender. Add it in Gyms & members.",
     "memberRequiredForRecommend": "Select a member before requesting a recommendation.",
     "gymRequiredForRecommend": "A gym is optional for recommendations. Add one only if you want gym-scoped records.",
@@ -1074,6 +1081,9 @@
     "scanSubtitle": "Scan a machine QR code or enter the code manually",
     "scanHint": "QR format: MF-MACHINECODE",
     "cameraUnavailable": "Camera unavailable. Enter the code below.",
+    "cameraDenied": "Camera permission is off. Allow it in browser/device settings and retry, or enter the code below.",
+    "cameraNotFound": "No camera was found. Enter the code below.",
+    "retryCamera": "Retry camera",
     "manualLabel": "QR / machine code",
     "manualPlaceholder": "MF-HS_LEG_EXTENSION",
     "submit": "Find machine",

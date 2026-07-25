@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
 import { getLocalizedName } from '@/utils/localizedName';
+import { useState } from 'react';
 import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/components.css';
 import '@/styles/machines.css';
@@ -13,6 +14,7 @@ interface BrandCardProps {
 
 export function BrandCard({ brand }: BrandCardProps) {
   const { i18n } = useTranslation();
+  const [logoFailed, setLogoFailed] = useState(false);
   const name = getLocalizedName(brand.name, i18n.language, brand.code);
   const description = brand.description
     ? getLocalizedName(brand.description, i18n.language, '')
@@ -25,8 +27,14 @@ export function BrandCard({ brand }: BrandCardProps) {
       className="card card--interactive brand-card"
     >
       <div className="brand-card__media">
-        {logoUrl ? (
-          <img src={logoUrl} alt="" className="brand-card__logo" loading="lazy" />
+        {logoUrl && !logoFailed ? (
+          <img
+            src={logoUrl}
+            alt=""
+            className="brand-card__logo"
+            loading="lazy"
+            onError={() => setLogoFailed(true)}
+          />
         ) : (
           <div className="brand-card__logo-fallback" aria-hidden>
             {name.slice(0, 1)}

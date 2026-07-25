@@ -113,6 +113,11 @@ function requireOwnerProfileInput(
   if (input) return input;
   const user = useAuthStore.getState().user;
   if (!user?.gender) throw new Error('missing_gender');
+  const heightOk = user?.heightCm != null && user.heightCm >= 100 && user.heightCm <= 250;
+  const weightOk = user?.weightKg != null && user.weightKg >= 30 && user.weightKg <= 300;
+  if (!heightOk && !weightOk) throw new Error('missing_profile');
+  if (!heightOk) throw new Error('missing_height');
+  if (!weightOk) throw new Error('missing_weight');
   throw new Error('missing_profile');
 }
 
@@ -260,6 +265,17 @@ export function useRecommendMachine(machineCode: string | undefined) {
           );
           if (!input) {
             if (!scope.member.gender) throw new Error('missing_member_gender');
+            const heightOk =
+              scope.member.heightCm != null &&
+              scope.member.heightCm >= 100 &&
+              scope.member.heightCm <= 250;
+            const weightOk =
+              scope.member.weightKg != null &&
+              scope.member.weightKg >= 30 &&
+              scope.member.weightKg <= 300;
+            if (!heightOk && !weightOk) throw new Error('missing_member_profile');
+            if (!heightOk) throw new Error('missing_member_height');
+            if (!weightOk) throw new Error('missing_member_weight');
             throw new Error('missing_member_profile');
           }
           await assertNoDuplicateToday({
@@ -320,8 +336,19 @@ export function useRecommendMachine(machineCode: string | undefined) {
         });
         return;
       }
-      if (error instanceof Error && error.message === 'missing_profile') {
-        showToast(t('common:auth.profileRequiredForRecommend'), 'error');
+      if (
+        error instanceof Error &&
+        (error.message === 'missing_profile' ||
+          error.message === 'missing_height' ||
+          error.message === 'missing_weight')
+      ) {
+        const key =
+          error.message === 'missing_height'
+            ? 'common:auth.heightRequiredForRecommend'
+            : error.message === 'missing_weight'
+              ? 'common:auth.weightRequiredForRecommend'
+              : 'common:auth.profileRequiredForRecommend';
+        showToast(t(key), 'error');
         navigate(ROUTES.SETTINGS, {
           state: {
             returnTo: machineCode
@@ -333,19 +360,25 @@ export function useRecommendMachine(machineCode: string | undefined) {
       }
       if (
         error instanceof Error &&
-        (error.message === 'missing_member_gender' || error.message === 'missing_member_profile')
+        (error.message === 'missing_member_gender' ||
+          error.message === 'missing_member_profile' ||
+          error.message === 'missing_member_height' ||
+          error.message === 'missing_member_weight')
       ) {
-        showToast(
+        const key =
           error.message === 'missing_member_gender'
-            ? t('common:auth.memberGenderRequiredForRecommend')
-            : t('common:auth.memberProfileRequiredForRecommend'),
-          'error'
-        );
+            ? 'common:auth.memberGenderRequiredForRecommend'
+            : error.message === 'missing_member_height'
+              ? 'common:auth.memberHeightRequiredForRecommend'
+              : error.message === 'missing_member_weight'
+                ? 'common:auth.memberWeightRequiredForRecommend'
+                : 'common:auth.memberProfileRequiredForRecommend';
+        showToast(t(key), 'error');
         navigate(ROUTES.MY_GYMS);
         return;
       }
       if (apiCode === 'VALIDATION_ERROR') {
-        showToast(t('common:errors.validationError'), 'error');
+        showToast(t('common:errors.recommendValidation'), 'error');
         return;
       }
       showToast(t('common:errors.submitFailed'), 'error');

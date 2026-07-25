@@ -109,6 +109,7 @@ export const QUERY_KEYS = {
   adminPhotoBoard: ['admin', 'photo-board'] as const,
   machineTrades: (params?: Record<string, unknown>) => ['machine-trades', params ?? {}] as const,
   machineTrade: (tradeId: string) => ['machine-trades', 'detail', tradeId] as const,
+  machineTradeMyReports: ['machine-trades', 'my-reports'] as const,
   adminMachineTrades: (params?: Record<string, unknown>) =>
     ['admin', 'machine-trades', params ?? {}] as const,
   adminMachineTradeReports: ['admin', 'machine-trades', 'reports'] as const,

@@ -115,7 +115,8 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 
 5. Deploy → copy URL → set GitHub secret `VITE_API_BASE_URL` = `https://YOUR-APP.onrender.com/api/v1`
 
-See `config/env/deployment-secrets.example` and `render.yaml` (reference only).
+See `docs/DEPLOY.md` (full checklist), `config/env/deployment-secrets.example`, and `render.yaml` (reference only).
+After DB changes: `npm run db:migrate` then `npm run db:verify`.
 
 ### Development
 

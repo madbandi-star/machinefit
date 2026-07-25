@@ -25,10 +25,13 @@ jobs:
           DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$DEPLOY_HOOK" ]; then
-            echo "::error::RENDER_DEPLOY_HOOK_URL secret is not set."
-            echo "Render -> machinefit-api -> Settings -> Deploy Hook -> copy URL"
-            echo "GitHub -> Settings -> Secrets -> Actions -> add RENDER_DEPLOY_HOOK_URL"
-            exit 1
+            echo "::warning::RENDER_DEPLOY_HOOK_URL secret is not set."
+            echo "Manual deploy: Render → machinefit-api → Manual Deploy"
+            echo "To enable auto-deploy:"
+            echo "  1) Render → machinefit-api → Settings → Deploy Hook → copy URL"
+            echo "  2) GitHub → Settings → Secrets → Actions → add RENDER_DEPLOY_HOOK_URL"
+            echo "See docs/DEPLOY.md"
+            exit 0
           fi
           curl -fsSL -X POST "$DEPLOY_HOOK"
           echo "Render deploy triggered successfully."

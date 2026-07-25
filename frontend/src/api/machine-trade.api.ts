@@ -70,6 +70,10 @@ export const machineTradeApi = {
   report: (tradeId: string, input: CreateTradeReportInput) =>
     apiClient.post<ApiResponse<MachineTradeReport>>(`/machine-trades/${tradeId}/report`, input),
 
+  /** Reports filed against the current owner's listings (read-only; admins resolve). */
+  myReports: () =>
+    apiClient.get<ApiResponse<MachineTradeReport[]>>('/machine-trades/my-reports'),
+
   getImageUrl: (imageId: string, variant: 'full' | 'thumb' = 'thumb') =>
     `${API_BASE_URL}/machine-trades/images/${encodeURIComponent(imageId)}?variant=${variant}`,
 

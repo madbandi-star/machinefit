@@ -13,6 +13,12 @@ export const machineTradeRouter = Router();
 machineTradeRouter.get('/images/:imageId', machineTradeController.getImage);
 
 machineTradeRouter.get('/', optionalAuthMiddleware, machineTradeController.listTrades);
+machineTradeRouter.get(
+  '/my-reports',
+  authMiddleware,
+  requireMinRole(Role.OWNER),
+  machineTradeController.listMyReports
+);
 machineTradeRouter.get('/admin', authMiddleware, requireMinRole(Role.ADMIN), machineTradeController.listAdminTrades);
 machineTradeRouter.get(
   '/admin/reports',

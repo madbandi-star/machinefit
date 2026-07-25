@@ -49,8 +49,14 @@
   "manageBuyRequests": "Manage buy requests",
   "myTrades": "My listings",
   "likedTrades": "Liked listings",
-  "reports": "Reports",
-  "reportsHint": "Reports are filed from listing details and reviewed by admins. Your listings are shown below.",
+  "reports": "Report status",
+  "reportsHint": "Reports filed against your listings. Admins review them; here you can only track status.",
+  "reportsEmpty": "No reports against your listings yet.",
+  "reportStatuses": {
+    "pending": "Pending",
+    "resolved": "Resolved",
+    "dismissed": "Dismissed"
+  },
   "stats": "Trade stats",
   "statsPlaceholder": "Coming later",
   "statsHint": "Simple counts from your listings. Richer stats will be added later.",

@@ -1032,9 +1032,20 @@ export const machineTradeRepository = {
     }
   },
 
-  async listReports() {
+  async listReports(options: { sellerId?: string } = {}) {
     const pool = getPool();
-    if (!pool) return mockMachineTradeReports;
+    if (!pool) {
+      if (!options.sellerId) return mockMachineTradeReports;
+      const sellerTradeIds = new Set(
+        mockMachineTrades.filter((t) => t.sellerId === options.sellerId).map((t) => t.id)
+      );
+      return mockMachineTradeReports.filter((r) => sellerTradeIds.has(r.tradeId));
+    }
+
+    const params: string[] = [];
+    const sellerFilter = options.sellerId
+      ? (params.push(options.sellerId), 'WHERE t.seller_id = $1')
+      : '';
 
     const result = await pool.query<{
       id: string;
@@ -1065,8 +1076,10 @@ export const machineTradeRepository = {
        JOIN brands b ON b.id = t.brand_id
        JOIN users ru ON ru.id = r.reporter_id
        JOIN users su ON su.id = t.seller_id
+       ${sellerFilter}
        ORDER BY r.created_at DESC
-       LIMIT 200`
+       LIMIT 200`,
+      params
     );
 
     return result.rows.map(

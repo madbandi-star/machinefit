@@ -6,7 +6,8 @@ import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
-import { resolveMachineImageUrl } from '@/utils/catalogAssets';
+import { SafeImage } from '@/components/media/SafeImage';
+import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/home.css';
 
 interface MachineMiniCardProps {
@@ -49,15 +50,20 @@ export function MachineMiniCard({
     <Link to={to} className="machine-mini-card">
       <div className="machine-mini-card__thumb">
         {resolvedImageUrl ? (
-          <img src={resolvedImageUrl} alt="" loading="lazy" width={120} height={96} />
+          <SafeImage
+            src={resolvedImageUrl}
+            fallbackSrc={machinePlaceholderUrl()}
+            alt=""
+            loading="lazy"
+            width={120}
+            height={96}
+          />
         ) : displayMuscle ? (
           <div className="machine-mini-card__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={44} />
           </div>
         ) : (
-          <div className="machine-mini-card__placeholder" aria-hidden>
-            🏋️
-          </div>
+          <div className="machine-mini-card__placeholder" aria-hidden />
         )}
       </div>
       <p className="machine-mini-card__name">

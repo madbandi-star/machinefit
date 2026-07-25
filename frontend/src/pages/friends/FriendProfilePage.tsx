@@ -21,6 +21,7 @@ export function FriendProfilePage() {
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState<ReportReason>('spam');
   const [reportDesc, setReportDesc] = useState('');
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   const profileQuery = useQuery({
     queryKey: QUERY_KEYS.friendProfile(userId),
@@ -132,8 +133,13 @@ export function FriendProfilePage() {
         <header className="friend-profile-hero">
           <div className="friend-profile-top">
             <div className="friend-profile-identity">
-              {p.user.avatarUrl ? (
-                <img className="friend-profile-avatar" src={p.user.avatarUrl} alt="" />
+              {p.user.avatarUrl && !avatarFailed ? (
+                <img
+                  className="friend-profile-avatar"
+                  src={p.user.avatarUrl}
+                  alt=""
+                  onError={() => setAvatarFailed(true)}
+                />
               ) : (
                 <div className="friend-profile-avatar friend-profile-avatar-fallback" aria-hidden>
                   {(p.user.displayName || '?').slice(0, 1).toUpperCase()}

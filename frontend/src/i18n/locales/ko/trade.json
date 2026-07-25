@@ -49,8 +49,14 @@
   "manageBuyRequests": "구매요청 관리",
   "myTrades": "내 거래글",
   "likedTrades": "관심 거래글",
-  "reports": "신고 관리",
-  "reportsHint": "신고는 거래글 상세에서 접수되며, 처리·검토는 관리자가 담당합니다. 아래에서 내 거래글을 확인할 수 있어요.",
+  "reports": "신고 현황",
+  "reportsHint": "내 거래글에 접수된 신고 목록입니다. 처리·검토는 관리자가 담당하며, 여기서는 상태만 확인할 수 있어요.",
+  "reportsEmpty": "내 거래글에 접수된 신고가 없어요.",
+  "reportStatuses": {
+    "pending": "검토 중",
+    "resolved": "처리 완료",
+    "dismissed": "기각"
+  },
   "stats": "거래 통계",
   "statsPlaceholder": "향후 확장",
   "statsHint": "내 거래글 기준으로 간단히 집계한 수치입니다. 상세 통계는 앞으로 확장될 예정이에요.",

@@ -53,7 +53,17 @@ function useDebounced(value: string, ms: number) {
 }
 
 function Avatar({ name, url }: { name: string; url?: string | null }) {
-  if (url) return <img className="friends-avatar" src={url} alt="" />;
+  const [failed, setFailed] = useState(false);
+  if (url && !failed) {
+    return (
+      <img
+        className="friends-avatar"
+        src={url}
+        alt=""
+        onError={() => setFailed(true)}
+      />
+    );
+  }
   return (
     <div className="friends-avatar friends-avatar-fallback" aria-hidden>
       {(name || '?').slice(0, 1).toUpperCase()}

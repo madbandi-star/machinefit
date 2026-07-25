@@ -7,6 +7,8 @@ import { qrApi } from '@/api';
 import { machineDetailPath, parseMachineCodeFromQrPayload } from '@/utils/qr';
 import '@/styles/phase4.css';
 
+type CameraIssue = 'denied' | 'not_found' | 'unavailable' | null;
+
 async function navigateToMachine(
   payload: string,
   navigate: ReturnType<typeof useNavigate>
@@ -21,18 +23,54 @@ async function navigateToMachine(
   navigate(machineDetailPath(res.data.data.machineCode));
 }
 
+function classifyCameraError(error: unknown): CameraIssue {
+  const name =
+    error && typeof error === 'object' && 'name' in error
+      ? String((error as { name?: string }).name)
+      : '';
+  const message =
+    error && typeof error === 'object' && 'message' in error
+      ? String((error as { message?: string }).message)
+      : String(error ?? '');
+  const haystack = `${name} ${message}`.toLowerCase();
+
+  if (
+    name === 'NotAllowedError' ||
+    name === 'PermissionDeniedError' ||
+    haystack.includes('permission') ||
+    haystack.includes('notallowed')
+  ) {
+    return 'denied';
+  }
+  if (
+    name === 'NotFoundError' ||
+    name === 'DevicesNotFoundError' ||
+    haystack.includes('requested device not found') ||
+    haystack.includes('no camera')
+  ) {
+    return 'not_found';
+  }
+  return 'unavailable';
+}
+
 export function QrScanPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [manualCode, setManualCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isResolving, setIsResolving] = useState(false);
-  const [cameraUnavailable, setCameraUnavailable] = useState(false);
+  const [cameraIssue, setCameraIssue] = useState<CameraIssue>(null);
+  const [cameraRetryKey, setCameraRetryKey] = useState(0);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const handledRef = useRef(false);
+  const isResolvingRef = useRef(false);
+
+  useEffect(() => {
+    isResolvingRef.current = isResolving;
+  }, [isResolving]);
 
   const handlePayload = async (payload: string) => {
-    if (handledRef.current || isResolving) return;
+    if (handledRef.current || isResolvingRef.current) return;
     handledRef.current = true;
     setIsResolving(true);
     setError(null);
@@ -53,6 +91,9 @@ export function QrScanPage() {
   };
 
   useEffect(() => {
+    if (cameraIssue) return;
+
+    let cancelled = false;
     const elementId = 'qr-reader';
     const scanner = new Html5Qrcode(elementId);
     scannerRef.current = scanner;
@@ -66,14 +107,26 @@ export function QrScanPage() {
         },
         () => {}
       )
-      .catch(() => setCameraUnavailable(true));
+      .catch((err) => {
+        if (!cancelled) setCameraIssue(classifyCameraError(err));
+      });
 
     return () => {
-      void scanner.stop().then(() => scanner.clear()).catch(() => {});
+      cancelled = true;
+      void scanner
+        .stop()
+        .then(() => scanner.clear())
+        .catch(() => {});
       scannerRef.current = null;
     };
+    // Restart only when user retries camera; handlePayload uses refs for latest state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cameraIssue, cameraRetryKey]);
+
+  const retryCamera = () => {
+    setCameraIssue(null);
+    setCameraRetryKey((key) => key + 1);
+  };
 
   const submitManual = async (event: FormEvent) => {
     event.preventDefault();
@@ -81,12 +134,26 @@ export function QrScanPage() {
     await handlePayload(manualCode);
   };
 
+  const cameraHint =
+    cameraIssue === 'denied'
+      ? t('qr.cameraDenied')
+      : cameraIssue === 'not_found'
+        ? t('qr.cameraNotFound')
+        : cameraIssue === 'unavailable'
+          ? t('qr.cameraUnavailable')
+          : null;
+
   return (
     <PageShell title={t('qr.scanTitle')} subtitle={t('qr.scanSubtitle')}>
-      {!cameraUnavailable ? (
+      {!cameraIssue ? (
         <div id="qr-reader" className="qr-scan-page__reader" />
       ) : (
-        <p className="qr-scan-page__hint">{t('qr.cameraUnavailable')}</p>
+        <div className="qr-scan-page__camera-fallback">
+          <p className="qr-scan-page__hint">{cameraHint}</p>
+          <button type="button" className="btn btn--secondary btn--block" onClick={retryCamera}>
+            {t('qr.retryCamera')}
+          </button>
+        </div>
       )}
       <p className="qr-scan-page__hint">{t('qr.scanHint')}</p>
 

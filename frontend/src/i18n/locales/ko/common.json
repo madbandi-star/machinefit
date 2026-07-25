@@ -126,7 +126,10 @@
   "errors": {
     "loadFailed": "불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
     "notFound": "찾을 수 없어요.",
-    "submitFailed": "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요."
+    "submitFailed": "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    "validationError": "입력값을 확인해 주세요.",
+    "serverError": "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "recommendValidation": "추천에 필요한 정보(키·몸무게·운동 부위 등)를 확인해 주세요."
   },
   "auth": {
     "welcomeBack": "다시 오신 걸 환영해요!",
@@ -196,8 +199,12 @@
     "profileExtrasDesc": "운동 목표는 추천을 맞춤화합니다. 헬스장은 선택 사항입니다.",
     "profileSaved": "프로필을 저장했어요.",
     "profileRequiredForRecommend": "맞춤 추천을 위해 키·몸무게가 필요해요. 설정에서 입력해 주세요.",
+    "heightRequiredForRecommend": "맞춤 추천을 위해 키가 필요해요. 설정에서 입력해 주세요.",
+    "weightRequiredForRecommend": "맞춤 추천을 위해 몸무게가 필요해요. 설정에서 입력해 주세요.",
     "genderRequiredForRecommend": "맞춤 추천을 위해 성별이 필요해요. 설정에서 선택해 주세요.",
     "memberProfileRequiredForRecommend": "선택한 회원의 성별·키·몸무게가 필요해요. 헬스장·회원 관리에서 입력해 주세요.",
+    "memberHeightRequiredForRecommend": "선택한 회원의 키가 필요해요. 헬스장·회원 관리에서 입력해 주세요.",
+    "memberWeightRequiredForRecommend": "선택한 회원의 몸무게가 필요해요. 헬스장·회원 관리에서 입력해 주세요.",
     "memberGenderRequiredForRecommend": "선택한 회원의 성별이 필요해요. 헬스장·회원 관리에서 입력해 주세요.",
     "memberRequiredForRecommend": "추천을 받으려면 회원을 먼저 선택하세요.",
     "gymRequiredForRecommend": "헬스장은 선택 사항입니다. 헬스장별 기록을 남길 때만 등록하면 됩니다.",
@@ -1074,6 +1081,9 @@
     "scanSubtitle": "기구 QR 코드를 스캔하거나 코드를 직접 입력하세요",
     "scanHint": "QR 코드 형식: MF-머신코드",
     "cameraUnavailable": "카메라를 사용할 수 없습니다. 아래에 코드를 입력하세요.",
+    "cameraDenied": "카메라 권한이 꺼져 있어요. 브라우저·기기 설정에서 허용한 뒤 다시 시도하거나, 아래에 코드를 입력하세요.",
+    "cameraNotFound": "사용 가능한 카메라가 없어요. 아래에 코드를 입력하세요.",
+    "retryCamera": "카메라 다시 시도",
     "manualLabel": "QR / 머신 코드",
     "manualPlaceholder": "MF-HS_LEG_EXTENSION",
     "submit": "기구 찾기",

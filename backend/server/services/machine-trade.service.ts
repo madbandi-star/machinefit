@@ -145,6 +145,10 @@ export const machineTradeService = {
     return machineTradeRepository.listReports();
   },
 
+  listMyReports(sellerId: string) {
+    return machineTradeRepository.listReports({ sellerId });
+  },
+
   async resolveReport(reportId: string, adminId: string, input: ResolveTradeReportInput) {
     const report = await machineTradeRepository.resolveReport(reportId, adminId, input.status);
     void notificationService.notify(

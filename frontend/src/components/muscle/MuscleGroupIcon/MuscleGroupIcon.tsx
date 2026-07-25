@@ -1,4 +1,4 @@
-import type { ImgHTMLAttributes } from 'react';
+import { useState, type ImgHTMLAttributes } from 'react';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import {
   resolveMuscleGroupDisplayUrl,
@@ -11,6 +11,29 @@ interface MuscleGroupIconProps extends Omit<ImgHTMLAttributes<HTMLImageElement>,
   size?: number;
 }
 
+function MuscleFallback({
+  group,
+  size,
+  className,
+  style,
+}: {
+  group: string;
+  size: number;
+  className?: string;
+  style?: ImgHTMLAttributes<HTMLImageElement>['style'];
+}) {
+  const label = String(group).slice(0, 2).toUpperCase();
+  return (
+    <span
+      aria-hidden
+      className={`muscle-group-icon muscle-group-icon--fallback${className ? ` ${className}` : ''}`}
+      style={{ width: size, height: size, fontSize: Math.max(10, size * 0.34), ...style }}
+    >
+      {label}
+    </span>
+  );
+}
+
 export function MuscleGroupIcon({
   group,
   size = 32,
@@ -21,17 +44,11 @@ export function MuscleGroupIcon({
   const remoteMap = useMuscleGroupImageMap();
   const preferThumb = size <= 64;
   const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb);
+  const [failed, setFailed] = useState(false);
 
-  if (!src) {
-    const label = String(group).slice(0, 2).toUpperCase();
+  if (!src || failed) {
     return (
-      <span
-        aria-hidden
-        className={`muscle-group-icon muscle-group-icon--fallback${className ? ` ${className}` : ''}`}
-        style={{ width: size, height: size, fontSize: Math.max(10, size * 0.34), ...style }}
-      >
-        {label}
-      </span>
+      <MuscleFallback group={String(group)} size={size} className={className} style={style} />
     );
   }
 
@@ -46,6 +63,7 @@ export function MuscleGroupIcon({
       decoding="async"
       className={`muscle-group-icon${className ? ` ${className}` : ''}`}
       style={{ width: size, height: size, ...style }}
+      onError={() => setFailed(true)}
       {...props}
     />
   );

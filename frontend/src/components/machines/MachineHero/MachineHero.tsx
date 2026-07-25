@@ -6,6 +6,7 @@ import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import { getLocalizedName } from '@/utils/localizedName';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import { SafeImage } from '@/components/media/SafeImage';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
@@ -27,9 +28,10 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
       {!compact && (
         <div className="machine-hero__image-wrap">
           {imageUrl ? (
-            <img
+            <SafeImage
               className="machine-hero__image"
               src={imageUrl}
+              fallbackSrc={machinePlaceholderUrl()}
               alt={localizedName}
               loading="eager"
               fetchPriority="high"
@@ -40,7 +42,7 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
               <MuscleGroupIcon group={machine.muscleGroup as MuscleGroup} size={120} />
             </div>
           ) : (
-            <img
+            <SafeImage
               className="machine-hero__image"
               src={machinePlaceholderUrl()}
               alt=""

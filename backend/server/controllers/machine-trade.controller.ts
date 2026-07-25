@@ -136,6 +136,12 @@ export async function listReports(_req: Request, res: Response): Promise<void> {
   res.json({ success: true, data: reports });
 }
 
+export async function listMyReports(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const reports = await machineTradeService.listMyReports(req.user.userId);
+  res.json({ success: true, data: reports });
+}
+
 export async function resolveReport(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = resolveTradeReportSchema.parse(req.body);
