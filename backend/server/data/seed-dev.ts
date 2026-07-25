@@ -33,4 +33,30 @@ export async function seedDevUsers(): Promise<void> {
       createdAt: new Date().toISOString(),
     });
   }
+
+  if (!devUsers.has('demo_premium@gmail.com')) {
+    const premiumHash = await hashPassword(DEMO_PASSWORD);
+    devUsers.set('demo_premium@gmail.com', {
+      id: 'demo-premium-1',
+      email: 'demo_premium@gmail.com',
+      passwordHash: premiumHash,
+      displayName: 'Demo Premium',
+      roleCode: Role.PREMIUM_MEMBER,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  if (!devUsers.has('demo_vip@gmail.com')) {
+    const vipHash = await hashPassword(DEMO_PASSWORD);
+    devUsers.set('demo_vip@gmail.com', {
+      id: 'demo-vip-1',
+      email: 'demo_vip@gmail.com',
+      passwordHash: vipHash,
+      displayName: 'Demo VIP',
+      roleCode: Role.VIP_MEMBER,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    });
+  }
 }

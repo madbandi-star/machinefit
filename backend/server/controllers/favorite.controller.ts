@@ -39,7 +39,8 @@ export async function addFavorite(req: Request, res: Response): Promise<void> {
 
 export async function removeFavorite(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  await favoriteService.remove(req.user.userId, getParam(req.params.id));
+  const favoriteId = z.string().uuid().parse(getParam(req.params.id));
+  await favoriteService.remove(req.user.userId, favoriteId);
   res.json({ success: true, data: { message: 'Removed' } });
 }
 
