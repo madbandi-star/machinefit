@@ -328,10 +328,12 @@ export function WorkoutLogPanel({
     setRestTimer(null);
     voiceCoachStartRef.current();
   }, []);
+  const voiceCoachStopRef = useRef(voiceCoach.stop);
+  voiceCoachStopRef.current = voiceCoach.stop;
   const stopVoiceCoachSession = useCallback(() => {
     manualCountStartRef.current = false;
-    voiceCoach.stop();
-  }, [voiceCoach]);
+    voiceCoachStopRef.current();
+  }, []);
 
   useEffect(() => {
     // Allow rest auto-start again after a manual/auto count session ends.
