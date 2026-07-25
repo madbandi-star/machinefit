@@ -11,14 +11,17 @@ import {
 } from '@machinefit/shared';
 import { findDevUserById } from '../data/dev-users.js';
 import { AppError } from '../middlewares/error.middleware.js';
-import { pushNotificationRepository } from '../repositories/push-notification.repository.js';
+import {
+  pushNotificationRepository,
+  type CreatePushDeliveryLogInput,
+} from '../repositories/push-notification.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { getPool } from '../config/database.js';
 import {
   getPushComposeMeta,
   pushAudienceService,
 } from './push-audience.service.js';
-import { notificationService } from './notification.service.js';
+import { notificationRepository } from '../repositories/notification.repository.js';
 
 const KIND_TO_NOTIFICATION_TYPE: Record<PushKind, NotificationType> = {
   general: 'push_general',
@@ -131,49 +134,81 @@ export const pushNotificationService = {
     const notifType = KIND_TO_NOTIFICATION_TYPE[input.kind];
     const localized = { ko: input.title, en: input.title };
     const localizedBody = { ko: input.body, en: input.body };
+    const payload = {
+      kind: input.kind,
+      deepLink: input.deepLink ?? null,
+      imageUrl: input.imageUrl ?? null,
+      campaignId: campaign.id,
+      senderId: sender.id,
+    };
 
     let delivered = 0;
     let failed = 0;
-    let skipped = resolveSkipped;
+    const skipped = resolveSkipped;
 
-    for (const recipient of recipients) {
-      let success = true;
-      let errorCode: string | null = null;
-      try {
-        await notificationService.notify(
-          recipient.id,
-          notifType,
-          localized,
-          localizedBody,
-          {
-            kind: input.kind,
-            deepLink: input.deepLink ?? null,
-            imageUrl: input.imageUrl ?? null,
-            campaignId: campaign.id,
-            senderId: sender.id,
-          }
-        );
-        delivered += 1;
-      } catch (err) {
-        success = false;
-        failed += 1;
-        errorCode =
-          err instanceof Error && 'code' in err
-            ? String((err as { code?: string }).code ?? 'DELIVERY_FAILED')
-            : 'DELIVERY_FAILED';
+    // Batch fan-out: N sequential inserts were taking 45–60s for ~120 users and
+    // the browser client aborted at 15s ("send appears broken").
+    try {
+      delivered = await notificationRepository.createMany(
+        recipients.map((recipient) => ({
+          userId: recipient.id,
+          type: notifType,
+          title: localized,
+          body: localizedBody,
+          payload,
+        }))
+      );
+      await pushNotificationRepository.createDeliveryLogs(
+        recipients.map((recipient) => ({
+          campaignId: campaign.id,
+          senderId: sender.id,
+          senderRole: sender.roleCode,
+          recipientId: recipient.id,
+          recipientRole: recipient.roleCode,
+          title: input.title,
+          body: input.body,
+          success: true,
+          errorCode: null,
+        }))
+      );
+    } catch {
+      // Fall back to per-recipient so partial delivery is still possible.
+      delivered = 0;
+      failed = 0;
+      const logs: CreatePushDeliveryLogInput[] = [];
+      for (const recipient of recipients) {
+        let success = true;
+        let errorCode: string | null = null;
+        try {
+          await notificationRepository.create(
+            recipient.id,
+            notifType,
+            localized,
+            localizedBody,
+            payload
+          );
+          delivered += 1;
+        } catch (err) {
+          success = false;
+          failed += 1;
+          errorCode =
+            err instanceof Error && 'code' in err
+              ? String((err as { code?: string }).code ?? 'DELIVERY_FAILED')
+              : 'DELIVERY_FAILED';
+        }
+        logs.push({
+          campaignId: campaign.id,
+          senderId: sender.id,
+          senderRole: sender.roleCode,
+          recipientId: recipient.id,
+          recipientRole: recipient.roleCode,
+          title: input.title,
+          body: input.body,
+          success,
+          errorCode,
+        });
       }
-
-      await pushNotificationRepository.createDeliveryLog({
-        campaignId: campaign.id,
-        senderId: sender.id,
-        senderRole: sender.roleCode,
-        recipientId: recipient.id,
-        recipientRole: recipient.roleCode,
-        title: input.title,
-        body: input.body,
-        success,
-        errorCode,
-      });
+      await pushNotificationRepository.createDeliveryLogs(logs);
     }
 
     const updated =

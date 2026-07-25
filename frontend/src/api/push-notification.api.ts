@@ -13,7 +13,11 @@ export const pushNotificationApi = {
     apiClient.get<ApiResponse<PushComposeCapabilities>>('/push/capabilities'),
 
   send: (input: PushSendInput) =>
-    apiClient.post<ApiResponse<PushSendResult>>('/push/send', input),
+    // Large audiences (all_users / role) can exceed the default 15s axios timeout
+    // even after server batching — keep a generous client budget.
+    apiClient.post<ApiResponse<PushSendResult>>('/push/send', input, {
+      timeout: 120_000,
+    }),
 
   listCampaigns: (params?: { all?: boolean; limit?: number; offset?: number }) =>
     apiClient.get<ApiResponse<PushCampaign[]>>('/push/campaigns', {

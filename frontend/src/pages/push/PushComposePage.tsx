@@ -179,7 +179,15 @@ export function PushComposePage() {
       setTab('history');
     },
     onError: (error) => {
-      showToast(getApiErrorMessage(error, t('error')), 'error');
+      const raw = getApiErrorMessage(error, t('error'));
+      // getApiErrorMessage may return i18n key stubs for network/validation.
+      const message =
+        raw === 'networkError'
+          ? t('networkError')
+          : raw === 'validationError'
+            ? t('validationError')
+            : raw;
+      showToast(message, 'error');
     },
   });
 
@@ -193,7 +201,14 @@ export function PushComposePage() {
       case 'gym':
         if (!gymId) return null;
         return { type: 'gym', gymId, roleCode: roleCode || undefined };
-      case 'location':
+      case 'location': {
+        const hasFilter = Boolean(
+          location.countryCode ||
+            location.stateId ||
+            location.cityId ||
+            location.districtId
+        );
+        if (!hasFilter) return null;
         return {
           type: 'location',
           countryCode: location.countryCode,
@@ -201,6 +216,7 @@ export function PushComposePage() {
           cityId: location.cityId,
           districtId: location.districtId,
         };
+      }
       case 'user_ids':
       case 'owner_pick_trainer':
       case 'owner_pick_member':
@@ -282,6 +298,28 @@ export function PushComposePage() {
       <div className="push-shell">
         <PageShell>
           <Skeleton count={4} />
+        </PageShell>
+      </div>
+    );
+  }
+
+  if (capsQuery.isError) {
+    return (
+      <div className="push-shell">
+        <PageShell>
+          <div className="push-empty">
+            <div className="push-empty-mark" aria-hidden>
+              !
+            </div>
+            <strong>{t('loadError')}</strong>
+            <button
+              type="button"
+              className="push-btn push-btn-primary"
+              onClick={() => void capsQuery.refetch()}
+            >
+              {t('retry')}
+            </button>
+          </div>
         </PageShell>
       </div>
     );
@@ -394,7 +432,8 @@ export function PushComposePage() {
                 <label htmlFor="push-image">{t('imageUrl')}</label>
                 <input
                   id="push-image"
-                  type="url"
+                  type="text"
+                  inputMode="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://"

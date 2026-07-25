@@ -184,44 +184,71 @@ export const pushNotificationRepository = {
   },
 
   async createDeliveryLog(input: CreatePushDeliveryLogInput): Promise<PushDeliveryLog> {
+    const created = await this.createDeliveryLogs([input]);
+    return created[0]!;
+  },
+
+  async createDeliveryLogs(
+    inputs: CreatePushDeliveryLogInput[]
+  ): Promise<PushDeliveryLog[]> {
+    if (inputs.length === 0) return [];
+
     const pool = getPool();
     if (!pool) {
-      const log: PushDeliveryLog = {
-        id: crypto.randomUUID(),
-        campaignId: input.campaignId,
-        senderId: input.senderId,
-        senderRole: input.senderRole,
-        recipientId: input.recipientId,
-        recipientRole: input.recipientRole ?? undefined,
-        title: input.title,
-        body: input.body,
-        success: input.success,
-        errorCode: input.errorCode ?? null,
-        createdAt: new Date().toISOString(),
-      };
-      mockDeliveryLogs.unshift(log);
-      return log;
+      const logs = inputs.map((input) => {
+        const log: PushDeliveryLog = {
+          id: crypto.randomUUID(),
+          campaignId: input.campaignId,
+          senderId: input.senderId,
+          senderRole: input.senderRole,
+          recipientId: input.recipientId,
+          recipientRole: input.recipientRole ?? undefined,
+          title: input.title,
+          body: input.body,
+          success: input.success,
+          errorCode: input.errorCode ?? null,
+          createdAt: new Date().toISOString(),
+        };
+        mockDeliveryLogs.unshift(log);
+        return log;
+      });
+      return logs;
     }
 
-    const result = await pool.query(
-      `INSERT INTO push_delivery_logs (
-         campaign_id, sender_id, sender_role, recipient_id, recipient_role,
-         title, body, success, error_code
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-       RETURNING *`,
-      [
-        input.campaignId,
-        input.senderId,
-        input.senderRole,
-        input.recipientId,
-        input.recipientRole ?? null,
-        input.title,
-        input.body,
-        input.success,
-        input.errorCode ?? null,
-      ]
-    );
-    return mapLog(result.rows[0]);
+    const CHUNK = 200;
+    const all: PushDeliveryLog[] = [];
+    for (let offset = 0; offset < inputs.length; offset += CHUNK) {
+      const chunk = inputs.slice(offset, offset + CHUNK);
+      const values: string[] = [];
+      const params: unknown[] = [];
+      let i = 1;
+      for (const input of chunk) {
+        values.push(
+          `($${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++})`
+        );
+        params.push(
+          input.campaignId,
+          input.senderId,
+          input.senderRole,
+          input.recipientId,
+          input.recipientRole ?? null,
+          input.title,
+          input.body,
+          input.success,
+          input.errorCode ?? null
+        );
+      }
+      const result = await pool.query(
+        `INSERT INTO push_delivery_logs (
+           campaign_id, sender_id, sender_role, recipient_id, recipient_role,
+           title, body, success, error_code
+         ) VALUES ${values.join(',')}
+         RETURNING *`,
+        params
+      );
+      all.push(...result.rows.map(mapLog));
+    }
+    return all;
   },
 
   async listCampaigns(options: {

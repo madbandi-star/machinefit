@@ -129,4 +129,54 @@ export const notificationRepository = {
       updatedAt: r.updated_at,
     };
   },
+
+  /**
+   * Bulk insert for campaign fan-out. One round-trip instead of N sequential inserts
+   * (admin all_users was timing out the 15s browser client).
+   */
+  async createMany(
+    rows: Array<{
+      userId: string;
+      type: NotificationType;
+      title: LocalizedString;
+      body?: LocalizedString;
+      payload?: Record<string, unknown>;
+    }>
+  ): Promise<number> {
+    if (rows.length === 0) return 0;
+
+    const pool = getPool();
+    if (!pool) {
+      for (const row of rows) {
+        createMockNotification(row.userId, row.type, row.title, row.body, row.payload);
+      }
+      return rows.length;
+    }
+
+    const CHUNK = 200;
+    let inserted = 0;
+    for (let offset = 0; offset < rows.length; offset += CHUNK) {
+      const chunk = rows.slice(offset, offset + CHUNK);
+      const values: string[] = [];
+      const params: unknown[] = [];
+      let i = 1;
+      for (const row of chunk) {
+        values.push(`($${i++},$${i++},$${i++}::jsonb,$${i++}::jsonb,$${i++}::jsonb)`);
+        params.push(
+          row.userId,
+          row.type,
+          JSON.stringify(row.title),
+          row.body ? JSON.stringify(row.body) : null,
+          row.payload ? JSON.stringify(row.payload) : null
+        );
+      }
+      const result = await pool.query(
+        `INSERT INTO notifications (user_id, type, title, body, payload)
+         VALUES ${values.join(',')}`,
+        params
+      );
+      inserted += result.rowCount ?? chunk.length;
+    }
+    return inserted;
+  },
 };
