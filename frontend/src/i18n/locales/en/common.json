@@ -537,6 +537,7 @@
     "secretDesc": "A hidden achievement. Discover the condition yourself.",
     "unlockRate": "unlock rate",
     "unlocked": "Achievement unlocked!",
+    "earnedAt": "Unlocked {{datetime}}",
     "share": "Share",
     "shareText": "🏆 Achievement unlocked: {{name}} — MachineFit",
     "shareSaved": "Share image saved.",
