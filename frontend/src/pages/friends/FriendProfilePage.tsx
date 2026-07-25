@@ -106,7 +106,9 @@ export function FriendProfilePage() {
   if (profileQuery.isLoading) {
     return (
       <PageShell>
-        <Skeleton count={5} height={72} />
+        <div className="friend-profile">
+          <Skeleton count={5} height={72} />
+        </div>
       </PageShell>
     );
   }
@@ -115,7 +117,9 @@ export function FriendProfilePage() {
   if (!p) {
     return (
       <PageShell>
-        <EmptyState title={t('empty.profile')} />
+        <div className="friend-profile">
+          <EmptyState title={t('empty.profile')} />
+        </div>
       </PageShell>
     );
   }
@@ -123,175 +127,214 @@ export function FriendProfilePage() {
   const growth = p.growthStats;
 
   return (
-    <div className="friends-page">
+    <div className="friend-profile">
       <PageShell>
-        <div className="friends-profile-hero">
-          {p.user.avatarUrl ? (
-            <img className="friends-profile-hero__avatar" src={p.user.avatarUrl} alt="" />
-          ) : (
-            <div className="friends-profile-hero__avatar" aria-hidden>
-              {(p.user.displayName || '?').slice(0, 1).toUpperCase()}
+        <header className="friend-profile-hero">
+          <div className="friend-profile-top">
+            <div className="friend-profile-identity">
+              {p.user.avatarUrl ? (
+                <img className="friend-profile-avatar" src={p.user.avatarUrl} alt="" />
+              ) : (
+                <div className="friend-profile-avatar friend-profile-avatar-fallback" aria-hidden>
+                  {(p.user.displayName || '?').slice(0, 1).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <h1>
+                  {p.user.displayName}
+                  {p.user.isOnline ? <span className="friends-dot" title="online" /> : null}
+                </h1>
+                <p>{t(`relationship.${p.relationship}`)}</p>
+              </div>
             </div>
-          )}
-          <h2 style={{ margin: 0 }}>
-            {p.user.displayName}
-            {p.user.isOnline ? <span className="friends-dot" style={{ marginLeft: 8 }} /> : null}
-          </h2>
-          <p className="friends-row__sub">{t(`relationship.${p.relationship}`)}</p>
-        </div>
+          </div>
 
-        <div className="friends-row__actions" style={{ justifyContent: 'center' }}>
-          {p.relationship === 'none' ? (
-            <button
-              type="button"
-              className="btn btn--primary"
-              disabled={sendMut.isPending}
-              onClick={() => sendMut.mutate()}
-            >
-              {t('sendRequest')}
-            </button>
-          ) : null}
-          {p.relationship === 'outgoing' && p.pendingRequestId ? (
-            <button
-              type="button"
-              className="btn btn--secondary"
-              disabled={cancelMut.isPending}
-              onClick={() => cancelMut.mutate(p.pendingRequestId!)}
-            >
-              {t('cancelRequest')}
-            </button>
-          ) : null}
-          {p.relationship === 'outgoing' && !p.pendingRequestId ? (
-            <button type="button" className="btn btn--secondary" disabled>
-              {t('requestPending')}
-            </button>
-          ) : null}
-          {p.relationship === 'incoming' && p.pendingRequestId ? (
-            <>
+          <div className="friend-profile-meta">
+            {p.experienceLevel ? <span>{t('profile.level')}: {p.experienceLevel}</span> : null}
+            {p.gymName ? <span>{t('profile.gym')}: {p.gymName}</span> : null}
+            {p.favoriteMuscleGroup ? (
+              <span>{t('profile.muscle')}: {p.favoriteMuscleGroup}</span>
+            ) : null}
+            {p.favoriteMachineCode ? (
+              <span>{t('profile.machine')}: {p.favoriteMachineCode}</span>
+            ) : null}
+          </div>
+
+          <div className="friend-profile-actions">
+            {p.relationship === 'none' ? (
               <button
                 type="button"
-                className="btn btn--primary"
-                disabled={acceptMut.isPending}
-                onClick={() => acceptMut.mutate(p.pendingRequestId!)}
+                className="friends-btn friends-btn-primary"
+                disabled={sendMut.isPending}
+                onClick={() => sendMut.mutate()}
               >
-                {t('accept')}
+                {t('sendRequest')}
               </button>
+            ) : null}
+            {p.relationship === 'outgoing' && p.pendingRequestId ? (
               <button
                 type="button"
-                className="btn btn--secondary"
-                disabled={rejectMut.isPending}
-                onClick={() => rejectMut.mutate(p.pendingRequestId!)}
+                className="friends-btn"
+                disabled={cancelMut.isPending}
+                onClick={() => cancelMut.mutate(p.pendingRequestId!)}
               >
-                {t('reject')}
+                {t('cancelRequest')}
               </button>
-            </>
-          ) : null}
-          {p.relationship === 'friend' ? (
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => {
-                if (window.confirm(t('confirmRemove'))) removeMut.mutate();
-              }}
-            >
-              {t('remove')}
-            </button>
-          ) : null}
-          {p.relationship !== 'self' && p.relationship !== 'blocked' ? (
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => {
-                if (window.confirm(t('confirmBlock'))) blockMut.mutate();
-              }}
-            >
-              {t('block')}
-            </button>
-          ) : null}
-          {p.relationship !== 'self' ? (
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => setReportOpen((v) => !v)}
-            >
-              {t('report')}
-            </button>
-          ) : null}
-        </div>
+            ) : null}
+            {p.relationship === 'outgoing' && !p.pendingRequestId ? (
+              <button type="button" className="friends-btn" disabled>
+                {t('requestPending')}
+              </button>
+            ) : null}
+            {p.relationship === 'incoming' && p.pendingRequestId ? (
+              <>
+                <button
+                  type="button"
+                  className="friends-btn friends-btn-primary"
+                  disabled={acceptMut.isPending}
+                  onClick={() => acceptMut.mutate(p.pendingRequestId!)}
+                >
+                  {t('accept')}
+                </button>
+                <button
+                  type="button"
+                  className="friends-btn"
+                  disabled={rejectMut.isPending}
+                  onClick={() => rejectMut.mutate(p.pendingRequestId!)}
+                >
+                  {t('reject')}
+                </button>
+              </>
+            ) : null}
+            {p.relationship === 'friend' ? (
+              <button
+                type="button"
+                className="friends-btn"
+                onClick={() => {
+                  if (window.confirm(t('confirmRemove'))) removeMut.mutate();
+                }}
+              >
+                {t('remove')}
+              </button>
+            ) : null}
+            {p.relationship !== 'self' && p.relationship !== 'blocked' ? (
+              <button
+                type="button"
+                className="friends-btn friends-btn-danger"
+                onClick={() => {
+                  if (window.confirm(t('confirmBlock'))) blockMut.mutate();
+                }}
+              >
+                {t('block')}
+              </button>
+            ) : null}
+            {p.relationship !== 'self' ? (
+              <button
+                type="button"
+                className="friends-btn friends-btn-ghost"
+                onClick={() => setReportOpen((v) => !v)}
+              >
+                {t('report')}
+              </button>
+            ) : null}
+          </div>
+        </header>
 
         {reportOpen ? (
-          <section className="friends-profile-section">
-            <h3>{t('report')}</h3>
-            <label className="friends-row__sub" htmlFor="reportReason">
-              {t('reportReason')}
-            </label>
-            <select
-              id="reportReason"
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value as ReportReason)}
-            >
-              <option value="spam">{t('reportReasons.spam')}</option>
-              <option value="abuse">{t('reportReasons.abuse')}</option>
-              <option value="fake">{t('reportReasons.fake')}</option>
-              <option value="other">{t('reportReasons.other')}</option>
-            </select>
-            <label className="friends-row__sub" htmlFor="reportDesc">
-              {t('reportDescription')}
-            </label>
-            <textarea
-              id="reportDesc"
-              rows={3}
-              value={reportDesc}
-              onChange={(e) => setReportDesc(e.target.value)}
-              placeholder={t('reportDescriptionPlaceholder')}
-            />
-            <div className="friends-row__actions">
+          <section className="friend-profile-section">
+            <h2>{t('report')}</h2>
+            <div className="friends-privacy-field">
+              <label htmlFor="reportReason">{t('reportReason')}</label>
+              <select
+                id="reportReason"
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value as ReportReason)}
+              >
+                <option value="spam">{t('reportReasons.spam')}</option>
+                <option value="abuse">{t('reportReasons.abuse')}</option>
+                <option value="fake">{t('reportReasons.fake')}</option>
+                <option value="other">{t('reportReasons.other')}</option>
+              </select>
+            </div>
+            <div className="friends-privacy-field">
+              <label htmlFor="reportDesc">{t('reportDescription')}</label>
+              <textarea
+                id="reportDesc"
+                rows={3}
+                value={reportDesc}
+                onChange={(e) => setReportDesc(e.target.value)}
+                placeholder={t('reportDescriptionPlaceholder')}
+              />
+            </div>
+            <div className="friend-profile-actions">
               <button
                 type="button"
-                className="btn btn--primary"
+                className="friends-btn friends-btn-primary"
                 disabled={reportMut.isPending}
                 onClick={() => reportMut.mutate()}
               >
                 {t('reportSubmit')}
               </button>
-              <button type="button" className="btn btn--secondary" onClick={() => setReportOpen(false)}>
+              <button
+                type="button"
+                className="friends-btn friends-btn-ghost"
+                onClick={() => setReportOpen(false)}
+              >
                 {t('reportCancel')}
               </button>
             </div>
           </section>
         ) : null}
 
-        {(p.bio || p.careerText || p.experienceLevel) && (
-          <section className="friends-profile-section">
-            <h3>{t('profile.about')}</h3>
+        {(p.bio || p.careerText) && (
+          <section className="friend-profile-section">
+            <h2>{t('profile.about')}</h2>
             {p.bio ? <p>{p.bio}</p> : null}
-            {p.careerText ? <p className="friends-row__sub">{p.careerText}</p> : null}
-            {p.experienceLevel ? (
-              <p className="friends-row__sub">
-                {t('profile.level')}: {p.experienceLevel}
-              </p>
-            ) : null}
-            {p.favoriteMuscleGroup ? (
-              <p className="friends-row__sub">
-                {t('profile.muscle')}: {p.favoriteMuscleGroup}
-              </p>
-            ) : null}
-            {p.favoriteMachineCode ? (
-              <p className="friends-row__sub">
-                {t('profile.machine')}: {p.favoriteMachineCode}
-              </p>
-            ) : null}
-            {p.gymName ? (
-              <p className="friends-row__sub">
-                {t('profile.gym')}: {p.gymName}
-              </p>
-            ) : null}
+            {p.careerText ? <p className="friend-profile-muted">{p.careerText}</p> : null}
           </section>
         )}
 
+        {growth ? (
+          <section className="friend-profile-section">
+            <h2>{t('profile.growth')}</h2>
+            <div className="friend-profile-stats">
+              {'sessionDays' in growth ? (
+                <div className="friend-stat">
+                  <strong>{String(growth.sessionDays ?? 0)}</strong>
+                  <span>{t('profile.growthSessionDays')}</span>
+                </div>
+              ) : null}
+              {'currentStreak' in growth ? (
+                <div className="friend-stat">
+                  <strong>{String(growth.currentStreak ?? 0)}</strong>
+                  <span>{t('profile.growthStreak')}</span>
+                </div>
+              ) : null}
+              {'workoutCount' in growth ? (
+                <div className="friend-stat">
+                  <strong>{String(growth.workoutCount ?? 0)}</strong>
+                  <span>{t('profile.growthWorkouts')}</span>
+                </div>
+              ) : null}
+              {'totalVolumeKg' in growth ? (
+                <div className="friend-stat">
+                  <strong>{String(growth.totalVolumeKg ?? 0)}</strong>
+                  <span>{t('profile.growthVolume')} kg</span>
+                </div>
+              ) : null}
+              {'level' in growth ? (
+                <div className="friend-stat">
+                  <strong>{String(growth.level ?? 1)}</strong>
+                  <span>{t('profile.growthLevel')}</span>
+                </div>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
         {p.badges?.length ? (
-          <section className="friends-profile-section">
-            <h3>{t('profile.badges')}</h3>
+          <section className="friend-profile-section">
+            <h2>{t('profile.badges')}</h2>
             <div className="friends-chips">
               {p.badges.map((b) => (
                 <span key={b.code} className="friends-chip">
@@ -303,8 +346,8 @@ export function FriendProfilePage() {
         ) : null}
 
         {p.achievements?.length ? (
-          <section className="friends-profile-section">
-            <h3>{t('profile.achievements')}</h3>
+          <section className="friend-profile-section">
+            <h2>{t('profile.achievements')}</h2>
             <div className="friends-chips">
               {p.achievements.map((a) => (
                 <span key={a.code} className="friends-chip">
@@ -316,47 +359,15 @@ export function FriendProfilePage() {
         ) : null}
 
         {p.recentWorkouts?.length ? (
-          <section className="friends-profile-section">
-            <h3>{t('profile.recentWorkouts')}</h3>
-            <ul className="friends-list">
+          <section className="friend-profile-section">
+            <h2>{t('profile.recentWorkouts')}</h2>
+            <ul className="friend-session-list">
               {p.recentWorkouts.map((w, idx) => (
-                <li key={`${w.date}-${idx}`} className="friends-row__sub">
-                  {w.date} {w.machineCode ? `· ${w.machineCode}` : ''}
+                <li key={`${w.date}-${idx}`} className="friend-session-item">
+                  <strong>{w.date}</strong>
+                  {w.machineCode ? <span>{w.machineCode}</span> : null}
                 </li>
               ))}
-            </ul>
-          </section>
-        ) : null}
-
-        {growth ? (
-          <section className="friends-profile-section">
-            <h3>{t('profile.growth')}</h3>
-            <ul className="friends-list">
-              {'sessionDays' in growth ? (
-                <li className="friends-row__sub">
-                  {t('profile.growthSessionDays')}: {String(growth.sessionDays ?? 0)}
-                </li>
-              ) : null}
-              {'currentStreak' in growth ? (
-                <li className="friends-row__sub">
-                  {t('profile.growthStreak')}: {String(growth.currentStreak ?? 0)}
-                </li>
-              ) : null}
-              {'workoutCount' in growth ? (
-                <li className="friends-row__sub">
-                  {t('profile.growthWorkouts')}: {String(growth.workoutCount ?? 0)}
-                </li>
-              ) : null}
-              {'totalVolumeKg' in growth ? (
-                <li className="friends-row__sub">
-                  {t('profile.growthVolume')}: {String(growth.totalVolumeKg ?? 0)} kg
-                </li>
-              ) : null}
-              {'level' in growth ? (
-                <li className="friends-row__sub">
-                  {t('profile.growthLevel')}: {String(growth.level ?? 1)}
-                </li>
-              ) : null}
             </ul>
           </section>
         ) : null}
