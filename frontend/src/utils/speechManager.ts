@@ -86,6 +86,8 @@ class SpeechManagerImpl {
   private initPromise: Promise<void> | null = null;
   private selectedVoice: SpeechSynthesisVoice | null = null;
   private queueGeneration = 0;
+  /** Count of in-flight audible (volume>0) utterances we started. */
+  private audibleInFlight = 0;
 
   /** Load voices once and lock a single Voice for the app lifetime. */
   async init(): Promise<void> {
@@ -120,22 +122,25 @@ class SpeechManagerImpl {
   /** Cancel any in-flight utterance / queue (user Stop / hard reset). */
   cancel(): void {
     this.queueGeneration += 1;
+    this.audibleInFlight = 0;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
   }
 
   /**
-   * Start a new speak generation. Only calls speechSynthesis.cancel() when
-   * something is actually speaking — idle cancel() undoes mobile TTS unlock
-   * on iOS/WebView and makes Hold ("버텨") / rest tips silent.
+   * Start a new speak generation.
+   * Only hard-cancel when an audible phrase is in flight. Canceling the silent
+   * unlock utterance (or canceling while idle) undoes mobile TTS permission and
+   * silences Hold ("버텨") / rest tips on iOS/WebView.
    */
   private beginSpeakGeneration(): number {
     this.queueGeneration += 1;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       const synth = window.speechSynthesis;
-      if (synth.speaking || synth.pending) {
+      if (this.audibleInFlight > 0 && (synth.speaking || synth.pending)) {
         synth.cancel();
+        this.audibleInFlight = 0;
       } else {
         try {
           synth.resume();
@@ -149,7 +154,7 @@ class SpeechManagerImpl {
 
   /**
    * Unlock TTS inside a user-gesture turn (mobile).
-   * Does not cancel afterwards — cancel would undo unlock on some WebViews.
+   * Silent utterance — must not be canceled by the next speak().
    */
   unlock(): void {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -162,6 +167,7 @@ class SpeechManagerImpl {
       const utterance = this.createUtterance('\u200B');
       utterance.volume = 0;
       utterance.rate = 2;
+      // Not tracked as audible — beginSpeakGeneration must not cancel this.
       window.speechSynthesis.speak(utterance);
     } catch {
       // ignore
@@ -214,10 +220,15 @@ class SpeechManagerImpl {
       const maxMs = Math.min(20_000, Math.max(2_000, trimmed.length * 180 + 1_200));
       let timeoutId = 0;
       let settled = false;
+      let countedAudible = false;
 
       const finish = (error?: DOMException) => {
         if (settled) return;
         settled = true;
+        if (countedAudible) {
+          this.audibleInFlight = Math.max(0, this.audibleInFlight - 1);
+          countedAudible = false;
+        }
         if (timeoutId) window.clearTimeout(timeoutId);
         signal?.removeEventListener('abort', onAbort);
         utterance.onend = null;
@@ -228,6 +239,7 @@ class SpeechManagerImpl {
 
       const onAbort = () => {
         window.speechSynthesis.cancel();
+        this.audibleInFlight = 0;
         finish(new DOMException('Aborted', 'AbortError'));
       };
 
@@ -244,6 +256,10 @@ class SpeechManagerImpl {
           !signal?.aborted
         ) {
           settled = true;
+          if (countedAudible) {
+            this.audibleInFlight = Math.max(0, this.audibleInFlight - 1);
+            countedAudible = false;
+          }
           if (timeoutId) window.clearTimeout(timeoutId);
           signal?.removeEventListener('abort', onAbort);
           utterance.onend = null;
@@ -275,6 +291,8 @@ class SpeechManagerImpl {
         return;
       }
 
+      this.audibleInFlight += 1;
+      countedAudible = true;
       window.speechSynthesis.speak(utterance);
     });
   }

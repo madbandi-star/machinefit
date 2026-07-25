@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test:voice-coach": "npx --yes vite-node src/utils/voiceCoach.matrix.test.ts"
+    "test:voice-coach": "npx --yes vite-node src/utils/speechManager.hold.test.ts && npx --yes vite-node src/utils/voiceCoach.matrix.test.ts"
   },
   "dependencies": {
     "@machinefit/shared": "file:../shared",
