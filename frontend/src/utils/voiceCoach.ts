@@ -345,6 +345,59 @@ export function speakVoiceText(
 }
 
 /**
+ * Shared prep: 준비 → N…1 → 시작!
+ * Used by count sessions and hold-only so "버텨!!!만" still gets a ready countdown.
+ */
+async function runPrepCountdownPhase(options: {
+  prepCount: VoiceCoachPrepCount;
+  locale: string;
+  voicePack: VoiceCoachPack;
+  signal?: AbortSignal;
+  stillOwner: () => boolean;
+  onPhaseChange?: (phase: VoiceCoachPhase, detail?: VoiceCoachPhaseDetail) => void;
+}): Promise<void> {
+  const { prepCount, locale, voicePack, signal, stillOwner, onPhaseChange } = options;
+
+  onPhaseChange?.('countdown');
+  await speakCoachCue({
+    clipKey: null,
+    text: readyPhrase(locale),
+    locale,
+    signal,
+    voicePack,
+    kind: 'ready',
+  });
+  await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
+
+  for (let n = prepCount; n >= 1; n -= 1) {
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    if (!stillOwner()) throw new DOMException('Aborted', 'AbortError');
+    onPhaseChange?.('countdown', { countdown: n });
+    await speakCoachCue({
+      clipKey: countdownClipKey(n),
+      text: formatCountdownWord(n, locale),
+      locale,
+      signal,
+      voicePack,
+      kind: 'count',
+    });
+    if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
+  }
+
+  await sleep(VOICE_COACH_TIMING.afterCountdownMs, signal);
+  onPhaseChange?.('start');
+  await speakCoachCue({
+    clipKey: 'start',
+    text: startPhrase(locale),
+    locale,
+    signal,
+    voicePack,
+    kind: 'phrase',
+  });
+  await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
+}
+
+/**
  * Korean set-count path is Web Audio clips only — never interleave speechSynthesis.
  * Mixing TTS + clips on mobile often plays the first clip (cd-5 / 「오」) then dies.
  * Non-Korean still uses TTS.
@@ -541,44 +594,14 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 
     // Prep countdown — fixed pacing (never AI-accel / turbo).
-    // Korean: spoken clips for cd-10…1 (fallback TTS); 준비 stays dual-beep.
-    onPhaseChange?.('countdown');
-    await speakCoachCue({
-      clipKey: null,
-      text: readyPhrase(locale),
+    await runPrepCountdownPhase({
+      prepCount,
       locale,
-      signal,
       voicePack,
-      kind: 'ready',
-    });
-    await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
-
-    for (let n = prepCount; n >= 1; n -= 1) {
-      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-      if (!stillOwner()) throw new DOMException('Aborted', 'AbortError');
-      onPhaseChange?.('countdown', { countdown: n });
-      await speakCoachCue({
-        clipKey: countdownClipKey(n),
-        text: formatCountdownWord(n, locale),
-        locale,
-        signal,
-        voicePack,
-        kind: 'count',
-      });
-      if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
-    }
-
-    await sleep(VOICE_COACH_TIMING.afterCountdownMs, signal);
-    onPhaseChange?.('start');
-    await speakCoachCue({
-      clipKey: 'start',
-      text: startPhrase(locale),
-      locale,
       signal,
-      voicePack,
-      kind: 'phrase',
+      stillOwner,
+      onPhaseChange,
     });
-    await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
 
     // Number counts + optional one-more share one AI accel / turbo schedule
     // (voice rate/pitch unchanged; prep/rest stay fixed).
@@ -699,9 +722,11 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   }
 }
 
-/** Standalone hold: tip beeps → 버텨!!! → countdown → finish (no number counts). */
+/** Standalone hold: tip beeps → prep N…1 → 시작! → 버텨!!! → countdown → finish. */
 export async function runVoiceHoldOnlySession(options: {
   holdDurationSec?: number;
+  prepCount?: VoiceCoachPrepCount;
+  voicePack?: VoiceCoachPack;
   locale?: string;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: VoiceCoachPhaseDetail) => void;
   signal?: AbortSignal;
@@ -711,11 +736,22 @@ export async function runVoiceHoldOnlySession(options: {
   const durationSec = clampVoiceHoldDurationSec(
     options.holdDurationSec ?? VOICE_HOLD_DURATION.defaultSec
   );
+  const prepCount = clampVoiceCoachPrepCount(
+    options.prepCount ?? DEFAULT_VOICE_COACH_PREP_COUNT
+  );
+  const voicePack = normalizeVoiceCoachPack(options.voicePack);
 
   const sessionGen = bumpVoiceCoachSessionGeneration();
   const stillOwner = () => sessionGen === voiceCoachSessionGeneration;
 
   await beginVoiceCoachAudioSession();
+  void preloadVoiceCoachClips({
+    reps: 1,
+    oneMoreEnabled: false,
+    prepCount,
+    pack: voicePack,
+    signal,
+  });
   const audioCtx = await ensureVoiceCoachAudioRunning();
 
   try {
@@ -729,6 +765,15 @@ export async function runVoiceHoldOnlySession(options: {
       await speechManager.speakQueue(['tick', 'tick', 'tick'], { signal, gapMs: 120 });
     }
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
+
+    await runPrepCountdownPhase({
+      prepCount,
+      locale,
+      voicePack,
+      signal,
+      stillOwner,
+      onPhaseChange,
+    });
 
     await runVoiceHoldSegment({
       durationSec,
@@ -785,6 +830,8 @@ export async function runVoiceCoachFlow(options: VoiceCoachFlowOptions): Promise
   if (flowMode === 'hold') {
     await runVoiceHoldOnlySession({
       holdDurationSec,
+      prepCount: options.prepCount,
+      voicePack: options.voicePack,
       locale: options.locale,
       signal: options.signal,
       onPhaseChange: options.onPhaseChange,

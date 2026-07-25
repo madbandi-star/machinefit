@@ -736,64 +736,62 @@ export function SettingsPage() {
               </div>
             </fieldset>
 
-            {voiceCoachFlowMode !== 'hold' ? (
-              <>
-                <fieldset
-                  className={`voice-coach-panel__mode${
-                    !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
-                  }`}
-                  disabled={!voiceCoachEnabled}
-                >
-                  <legend className="voice-coach-panel__mode-legend">
-                    {t('settings.voiceCoachPrepCount')}
-                  </legend>
-                  <p className="form-section__desc" style={{ marginTop: 0 }}>
-                    {t('settings.voiceCoachPrepCountDesc')}
-                  </p>
-                  <div className="voice-coach-panel__mode-options" role="radiogroup">
-                    {VOICE_COACH_PREP_COUNTS.map((count) => (
-                      <label key={count} className="voice-coach-panel__mode-option">
-                        <input
-                          type="radio"
-                          name="settings-voice-prep-count"
-                          value={count}
-                          checked={clampVoiceCoachPrepCount(voiceCoachPrepCount) === count}
-                          onChange={() => setVoiceCoachPrepCount(count)}
-                        />
-                        <span>{t(`settings.voiceCoachPrepCount_${count}`)}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
+            <fieldset
+              className={`voice-coach-panel__mode${
+                !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+              }`}
+              disabled={!voiceCoachEnabled}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('settings.voiceCoachPrepCount')}
+              </legend>
+              <p className="form-section__desc" style={{ marginTop: 0 }}>
+                {t('settings.voiceCoachPrepCountDesc')}
+              </p>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_COACH_PREP_COUNTS.map((count) => (
+                  <label key={count} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="settings-voice-prep-count"
+                      value={count}
+                      checked={clampVoiceCoachPrepCount(voiceCoachPrepCount) === count}
+                      onChange={() => setVoiceCoachPrepCount(count)}
+                    />
+                    <span>{t(`settings.voiceCoachPrepCount_${count}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
-                <fieldset
-                  className={`voice-coach-panel__mode${
-                    !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
-                  }`}
-                  disabled={!voiceCoachEnabled}
-                >
-                  <legend className="voice-coach-panel__mode-legend">
-                    {t('settings.voiceCountMode')}
-                  </legend>
-                  <p className="form-section__desc" style={{ marginTop: 0 }}>
-                    {t('settings.voiceCountModeDesc')}
-                  </p>
-                  <div className="voice-coach-panel__mode-options" role="radiogroup">
-                    {VOICE_COUNT_MODES.map((mode) => (
-                      <label key={mode} className="voice-coach-panel__mode-option">
-                        <input
-                          type="radio"
-                          name="settings-voice-count-mode"
-                          value={mode}
-                          checked={voiceCountMode === mode}
-                          onChange={() => setVoiceCountMode(mode)}
-                        />
-                        <span>{t(`settings.voiceCountMode_${mode}`)}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              </>
+            {voiceCoachFlowMode !== 'hold' ? (
+              <fieldset
+                className={`voice-coach-panel__mode${
+                  !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+                }`}
+                disabled={!voiceCoachEnabled}
+              >
+                <legend className="voice-coach-panel__mode-legend">
+                  {t('settings.voiceCountMode')}
+                </legend>
+                <p className="form-section__desc" style={{ marginTop: 0 }}>
+                  {t('settings.voiceCountModeDesc')}
+                </p>
+                <div className="voice-coach-panel__mode-options" role="radiogroup">
+                  {VOICE_COUNT_MODES.map((mode) => (
+                    <label key={mode} className="voice-coach-panel__mode-option">
+                      <input
+                        type="radio"
+                        name="settings-voice-count-mode"
+                        value={mode}
+                        checked={voiceCountMode === mode}
+                        onChange={() => setVoiceCountMode(mode)}
+                      />
+                      <span>{t(`settings.voiceCountMode_${mode}`)}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
             ) : null}
 
             {voiceCoachFlowMode !== 'hold' ? (
