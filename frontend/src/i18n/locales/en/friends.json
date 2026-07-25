@@ -134,6 +134,7 @@
     "applyBtn": "Apply"
   },
   "profile": {
+    "hiddenName": "Private member",
     "about": "About",
     "level": "Level",
     "muscle": "Favorite muscle",

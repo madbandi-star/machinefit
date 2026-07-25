@@ -567,17 +567,25 @@ export const friendRepository = {
     };
 
     const showOnline = can(privacy.onlineStatusVisibility);
+    const canSeeIdentity = can(privacy.profileVisibility);
     const profile: FriendProfile = {
       user: mapUser({
         ...userRes.rows[0],
-        show_online: showOnline,
+        // Redact name/avatar when profile is private/friends-only to strangers
+        // (was an IDOR: UUID in URL always leaked display_name + avatar_url).
+        display_name: canSeeIdentity ? userRes.rows[0].display_name : '',
+        avatar_url: canSeeIdentity ? userRes.rows[0].avatar_url : null,
+        experience_level: canSeeIdentity ? userRes.rows[0].experience_level : null,
+        last_login_at: canSeeIdentity ? userRes.rows[0].last_login_at : null,
+        show_online: canSeeIdentity && showOnline,
       }),
+      identityHidden: !canSeeIdentity,
       relationship,
       pendingRequestId,
       canMessage: friends,
     };
 
-    if (can(privacy.profileVisibility)) {
+    if (canSeeIdentity) {
       profile.bio = privacy.bio;
       profile.careerText = privacy.careerText;
       profile.experienceLevel = userRes.rows[0].experience_level;

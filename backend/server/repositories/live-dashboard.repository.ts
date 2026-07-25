@@ -373,6 +373,7 @@ export const liveDashboardRepository = {
     const result = await pool.query<{
       id: string;
       display_name: string;
+      gym_id: string;
       gym_name: string;
       machine_name: Record<string, string>;
       volume: string;
@@ -380,6 +381,7 @@ export const liveDashboardRepository = {
     }>(
       `SELECT wl.id::text,
               COALESCE(u.display_name, '회원') AS display_name,
+              ug.id::text AS gym_id,
               ug.name AS gym_name,
               m.name AS machine_name,
               COALESCE(vol.kg,0)::text AS volume,

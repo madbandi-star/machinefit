@@ -318,6 +318,11 @@ export const liveDashboardService = {
       userId: options.scope.userId,
     };
 
+    const ownedGyms = options.viewerUserId
+      ? await userGymRepository.listByUser(options.viewerUserId)
+      : [];
+    const ownedGymIds = new Set(ownedGyms.map((g) => g.id));
+
     const [totals, topMachines, topBrands, topMuscle, hourly, feedRows] = await Promise.all([
       liveDashboardRepository.getTodayTotals(filter),
       liveDashboardRepository.topMachines(filter, 5),
@@ -331,10 +336,7 @@ export const liveDashboardService = {
     let userName: string | undefined;
     let flag: string | undefined;
 
-    const [ownedGym, publicGymName, scopedUser, countries] = await Promise.all([
-      options.scope.gymId && options.viewerUserId
-        ? userGymRepository.findByIdForUser(options.viewerUserId, options.scope.gymId)
-        : Promise.resolve(null),
+    const [publicGymName, scopedUser, countries] = await Promise.all([
       options.scope.gymId
         ? liveDashboardRepository.findGymName(options.scope.gymId)
         : Promise.resolve(null),
@@ -346,6 +348,9 @@ export const liveDashboardService = {
         : Promise.resolve([] as Awaited<ReturnType<typeof locationRepository.listCountries>>),
     ]);
 
+    const ownedGym = options.scope.gymId
+      ? ownedGyms.find((g) => g.id === options.scope.gymId) ?? null
+      : null;
     gymName = ownedGym?.name ?? publicGymName ?? undefined;
     userName = scopedUser?.displayName;
     if (options.scope.countryCode) {
@@ -432,24 +437,35 @@ export const liveDashboardService = {
         .sort((a, b) => b.volumeTodayKg - a.volumeTodayKg);
     } else if (level === 'district') {
       const rows = await liveDashboardRepository.listChildren('gym', filter, locale);
-      children = rows.map((r) => ({
-        level: 'gym' as const,
-        code: r.code,
-        label: r.label,
-        activeNow: r.activeNow,
-        volumeTodayKg: r.volumeTodayKg,
-        heat: heatScore(r.volumeTodayKg, r.activeNow),
-      }));
+      children = rows.map((r, i) => {
+        const owned = ownedGymIds.has(r.code);
+        return {
+          level: 'gym' as const,
+          // Foreign personal gym UUIDs are an IDOR oracle — keep heat, hide id/name.
+          code: owned ? r.code : `anon-gym-${i + 1}`,
+          label: owned
+            ? r.label
+            : locale.startsWith('ko')
+              ? `인근 헬스장 ${i + 1}`
+              : `Nearby gym ${i + 1}`,
+          activeNow: r.activeNow,
+          volumeTodayKg: r.volumeTodayKg,
+          heat: heatScore(r.volumeTodayKg, r.activeNow),
+        };
+      });
     } else if (level === 'gym') {
       const rows = await liveDashboardRepository.listChildren('user', filter, locale);
-      children = rows.map((r) => ({
-        level: 'user' as const,
-        code: r.code,
-        label: maskName(r.label),
-        activeNow: r.activeNow,
-        volumeTodayKg: r.volumeTodayKg,
-        heat: heatScore(r.volumeTodayKg, r.activeNow),
-      }));
+      children = rows.map((r, i) => {
+        const isMe = Boolean(options.viewerUserId && r.code === options.viewerUserId);
+        return {
+          level: 'user' as const,
+          code: isMe ? r.code : `anon-user-${i + 1}`,
+          label: maskName(r.label),
+          activeNow: r.activeNow,
+          volumeTodayKg: r.volumeTodayKg,
+          heat: heatScore(r.volumeTodayKg, r.activeNow),
+        };
+      });
     }
 
     const estMinutes =
@@ -512,12 +528,17 @@ export const liveDashboardService = {
           ? row.machine_name.ko || row.machine_name.en || '머신'
           : '머신';
       const vol = Math.round(parseFloat(row.volume) || 0);
+      const gymLabel = ownedGymIds.has(row.gym_id)
+        ? row.gym_name
+        : locale.startsWith('ko')
+          ? '헬스장'
+          : 'a gym';
       return {
         id: row.id,
         emoji: vol > 500 ? '🏆' : '🏋️',
         text: locale.startsWith('ko')
-          ? `${maskName(row.display_name)}님이 ${row.gym_name}에서 ${machineName} · ${vol.toLocaleString('ko-KR')}KG`
-          : `${maskName(row.display_name)} @ ${row.gym_name} · ${machineName} · ${vol.toLocaleString('en-US')}KG`,
+          ? `${maskName(row.display_name)}님이 ${gymLabel}에서 ${machineName} · ${vol.toLocaleString('ko-KR')}KG`
+          : `${maskName(row.display_name)} @ ${gymLabel} · ${machineName} · ${vol.toLocaleString('en-US')}KG`,
         createdAt: row.updated_at,
       };
     });
@@ -654,20 +675,37 @@ export const liveDashboardService = {
               : 'user';
 
     const rows = await liveDashboardRepository.listChildren(groupBy, filter, locale, period);
+    const ownedGymIds =
+      options.board === 'gym' && options.viewerUserId
+        ? new Set(
+            (await userGymRepository.listByUser(options.viewerUserId)).map((g) => g.id)
+          )
+        : null;
+
     return {
       board: options.board,
       period,
       items: rows.map((row, i) => {
         let label = row.label;
+        let code = row.code;
         if (options.board === 'country') label = liveGeoLabel('country', row.code, locale, row.label);
         if (options.board === 'metro') label = liveGeoLabel('metro', row.code, locale, row.label);
         if (options.board === 'district') {
           label = liveGeoLabel('district', row.code, locale, row.label);
         }
-        if (options.board === 'member') label = maskName(row.label);
+        if (options.board === 'member') {
+          label = maskName(row.label);
+          // Do not enumerate other members' UUIDs via the rankings board.
+          const isMe = Boolean(options.viewerUserId && row.code === options.viewerUserId);
+          code = isMe ? row.code : `anon-member-${i + 1}`;
+        }
+        if (options.board === 'gym' && ownedGymIds && !ownedGymIds.has(row.code)) {
+          code = `anon-gym-${i + 1}`;
+          label = locale.startsWith('ko') ? `인근 헬스장 ${i + 1}` : `Nearby gym ${i + 1}`;
+        }
         return {
           rank: i + 1,
-          code: row.code,
+          code,
           label,
           value: Math.round(row.volumeTodayKg),
           unit: 'KG',

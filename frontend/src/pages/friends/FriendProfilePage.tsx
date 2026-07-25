@@ -126,6 +126,9 @@ export function FriendProfilePage() {
   }
 
   const growth = p.growthStats;
+  const displayName = p.identityHidden
+    ? t('profile.hiddenName')
+    : p.user.displayName || t('profile.hiddenName');
 
   return (
     <div className="friend-profile">
@@ -133,7 +136,7 @@ export function FriendProfilePage() {
         <header className="friend-profile-hero">
           <div className="friend-profile-top">
             <div className="friend-profile-identity">
-              {p.user.avatarUrl && !avatarFailed ? (
+              {!p.identityHidden && p.user.avatarUrl && !avatarFailed ? (
                 <img
                   className="friend-profile-avatar"
                   src={p.user.avatarUrl}
@@ -142,12 +145,12 @@ export function FriendProfilePage() {
                 />
               ) : (
                 <div className="friend-profile-avatar friend-profile-avatar-fallback" aria-hidden>
-                  {(p.user.displayName || '?').slice(0, 1).toUpperCase()}
+                  {displayName.slice(0, 1).toUpperCase()}
                 </div>
               )}
               <div>
                 <h1>
-                  {p.user.displayName}
+                  {displayName}
                   {p.user.isOnline ? <span className="friends-dot" title="online" /> : null}
                 </h1>
                 <p>{t(`relationship.${p.relationship}`)}</p>

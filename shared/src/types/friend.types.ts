@@ -107,6 +107,11 @@ export interface FriendActivityItem {
 
 export interface FriendProfile {
   user: FriendUserSummary;
+  /**
+   * True when viewer cannot see identity under profileVisibility
+   * (name/avatar redacted — prevents UUID→identity IDOR).
+   */
+  identityHidden?: boolean;
   bio?: string;
   careerText?: string;
   experienceLevel?: string | null;

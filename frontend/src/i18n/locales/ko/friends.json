@@ -134,6 +134,7 @@
     "applyBtn": "적용"
   },
   "profile": {
+    "hiddenName": "비공개 회원",
     "about": "소개",
     "level": "운동레벨",
     "muscle": "대표 부위",
