@@ -69,7 +69,9 @@ export function useVoiceCoachSession({
     if (!enabled) return;
 
     abortRef.current?.abort();
-    stopVoiceCoach();
+    // Soft-stop: cancel prior speech/clips but keep media session warm for this tap
+    // (and for auto-start after rest, which has no fresh user gesture).
+    stopVoiceCoach({ keepAudioSession: true });
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -82,10 +84,12 @@ export function useVoiceCoachSession({
     setTurbo(false);
     setIntensity(0);
 
+    // Kick unlock in the same synchronous turn as the click (mobile autoplay).
+    const unlockPromise = unlockVoiceCoachAudio();
+
     void (async () => {
       try {
-        // Await unlock inside the tap turn so mobile keeps Web Audio / HTMLAudio alive.
-        await unlockVoiceCoachAudio();
+        await unlockPromise;
         if (controller.signal.aborted || runIdRef.current !== runId) return;
 
         await runVoiceCoachFlow({

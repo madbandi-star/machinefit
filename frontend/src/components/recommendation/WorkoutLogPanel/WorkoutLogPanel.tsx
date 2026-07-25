@@ -310,9 +310,10 @@ export function WorkoutLogPanel({
     setRestTimer(null);
     // Keep an active set-count session running when rest ends or is skipped.
     if (voiceCoachRunningRef.current) return;
-    stopVoiceCoach();
+    // Soft-stop only — set-complete already unlocked audio in a user gesture;
+    // ending the session here would mute auto-start (no fresh tap).
+    stopVoiceCoach({ keepAudioSession: true });
     if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
-    unlockVoiceCoachAudio();
     voiceCoachStartRef.current();
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
