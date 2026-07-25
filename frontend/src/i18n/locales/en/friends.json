@@ -32,6 +32,18 @@
   "reject": "Decline",
   "cancelRequest": "Cancel",
   "requestPending": "Request pending",
+  "report": "Report",
+  "reportReason": "Reason",
+  "reportDescription": "Details",
+  "reportDescriptionPlaceholder": "Optional details",
+  "reportSubmit": "Submit report",
+  "reportCancel": "Cancel",
+  "reportReasons": {
+    "spam": "Spam",
+    "abuse": "Abuse / harassment",
+    "fake": "Impersonation",
+    "other": "Other"
+  },
   "noMessage": "No message",
   "loadMore": "Load more",
   "confirmRemove": "Remove this friend?",
@@ -61,7 +73,8 @@
     "unblocked": "User unblocked",
     "privacySaved": "Privacy settings saved",
     "inviteApplied": "Invite code applied",
-    "copied": "Invite link copied"
+    "copied": "Invite link copied",
+    "reported": "Report submitted"
   },
   "privacy": {
     "profileVisibility": "Profile",
@@ -118,7 +131,12 @@
     "achievements": "Achievements",
     "recentWorkouts": "Recent workouts",
     "growth": "Growth stats",
-    "growthVisible": "Growth stats are visible"
+    "growthVisible": "Growth stats are visible",
+    "growthSessionDays": "Workout days",
+    "growthStreak": "Current streak",
+    "growthWorkouts": "Workouts",
+    "growthVolume": "Total volume",
+    "growthLevel": "Level"
   },
   "relationship": {
     "self": "You",

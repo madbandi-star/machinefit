@@ -32,6 +32,18 @@
   "reject": "거절",
   "cancelRequest": "요청 취소",
   "requestPending": "요청 대기중",
+  "report": "신고",
+  "reportReason": "신고 사유",
+  "reportDescription": "상세 설명",
+  "reportDescriptionPlaceholder": "내용을 입력해 주세요 (선택)",
+  "reportSubmit": "신고하기",
+  "reportCancel": "취소",
+  "reportReasons": {
+    "spam": "스팸",
+    "abuse": "욕설/괴롭힘",
+    "fake": "사칭/허위",
+    "other": "기타"
+  },
   "noMessage": "메시지 없음",
   "loadMore": "더 보기",
   "confirmRemove": "친구를 삭제할까요?",
@@ -61,7 +73,8 @@
     "unblocked": "차단을 해제했습니다",
     "privacySaved": "공개범위를 저장했습니다",
     "inviteApplied": "초대 코드를 적용했습니다",
-    "copied": "초대 링크를 복사했습니다"
+    "copied": "초대 링크를 복사했습니다",
+    "reported": "신고를 접수했습니다"
   },
   "privacy": {
     "profileVisibility": "프로필",
@@ -118,7 +131,12 @@
     "achievements": "업적",
     "recentWorkouts": "최근 운동기록",
     "growth": "성장 통계",
-    "growthVisible": "성장 통계가 공개되어 있습니다"
+    "growthVisible": "성장 통계가 공개되어 있습니다",
+    "growthSessionDays": "운동일수",
+    "growthStreak": "연속 출석",
+    "growthWorkouts": "운동 횟수",
+    "growthVolume": "총 볼륨",
+    "growthLevel": "레벨"
   },
   "relationship": {
     "self": "나",

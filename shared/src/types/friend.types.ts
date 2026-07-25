@@ -52,6 +52,14 @@ export interface FriendPrivacySettings {
   updatedAt?: string;
 }
 
+export type FriendRelationship =
+  | 'self'
+  | 'friend'
+  | 'none'
+  | 'blocked'
+  | 'incoming'
+  | 'outgoing';
+
 export interface FriendUserSummary {
   id: string;
   displayName: string;
@@ -59,6 +67,9 @@ export interface FriendUserSummary {
   experienceLevel?: string | null;
   isOnline?: boolean;
   lastActiveAt?: string | null;
+  /** Present on search results. */
+  relationship?: Exclude<FriendRelationship, 'self'>;
+  pendingRequestId?: string | null;
 }
 
 export interface FriendListItem extends FriendUserSummary {
@@ -110,7 +121,9 @@ export interface FriendProfile {
     label?: string;
   }>;
   growthStats?: Record<string, number | string | null>;
-  relationship: 'self' | 'friend' | 'none' | 'blocked' | 'incoming' | 'outgoing';
+  relationship: FriendRelationship;
+  /** Set when relationship is incoming or outgoing. */
+  pendingRequestId?: string | null;
   canMessage?: boolean;
 }
 

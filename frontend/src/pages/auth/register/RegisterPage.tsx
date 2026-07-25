@@ -1,5 +1,5 @@
-import { useMemo, useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, UnitHeight, UnitWeight, WorkoutGoal } from '@machinefit/shared';
@@ -21,6 +21,7 @@ import {
   WEIGHT_UNIT_OPTIONS,
 } from '@/components/settings/UnitPicker/UnitPicker';
 import { authApi, locationApi } from '@/api';
+import { friendsApi } from '@/api/friends.api';
 import { AlertDialog } from '@/components/feedback/AlertDialog/AlertDialog';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -42,6 +43,8 @@ import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
 
+const REFERRAL_STORAGE_KEY = 'mf_referral_code';
+
 function formatMissingFieldLabels(
   fields: RegisterFormField[],
   t: (key: string) => string
@@ -52,8 +55,20 @@ function formatMissingFieldLabels(
 export function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const setAuth = useAuthStore((s) => s.setAuth);
   const showToast = useUIStore((s) => s.showToast);
+
+  const referralFromUrl = (searchParams.get('ref') || '').trim();
+  useEffect(() => {
+    if (referralFromUrl) {
+      try {
+        sessionStorage.setItem(REFERRAL_STORAGE_KEY, referralFromUrl);
+      } catch {
+        /* ignore */
+      }
+    }
+  }, [referralFromUrl]);
 
   const demoSlot = useMemo(() => getDemoRegisterSlot(), []);
 
@@ -122,6 +137,27 @@ export function RegisterPage() {
           });
         } catch {
           showToast(t('location.saveFailed'), 'error');
+        }
+      }
+
+      let referralCode = referralFromUrl;
+      if (!referralCode) {
+        try {
+          referralCode = (sessionStorage.getItem(REFERRAL_STORAGE_KEY) || '').trim();
+        } catch {
+          referralCode = '';
+        }
+      }
+      if (referralCode) {
+        try {
+          await friendsApi.applyInvite(referralCode);
+          try {
+            sessionStorage.removeItem(REFERRAL_STORAGE_KEY);
+          } catch {
+            /* ignore */
+          }
+        } catch {
+          /* invite apply is best-effort after signup */
         }
       }
 

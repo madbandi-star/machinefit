@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -10,11 +11,16 @@ import { useUIStore } from '@/store/ui.store';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import '@/styles/friends.css';
 
+type ReportReason = 'spam' | 'abuse' | 'fake' | 'other';
+
 export function FriendProfilePage() {
   const { userId = '' } = useParams();
   const { t } = useTranslation('friends');
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<ReportReason>('spam');
+  const [reportDesc, setReportDesc] = useState('');
 
   const profileQuery = useQuery({
     queryKey: QUERY_KEYS.friendProfile(userId),
@@ -37,6 +43,33 @@ export function FriendProfilePage() {
     onError: (e) => showToast(getApiErrorMessage(e, t('toast.requestSent')), 'error'),
   });
 
+  const acceptMut = useMutation({
+    mutationFn: (requestId: string) => friendsApi.accept(requestId),
+    onSuccess: () => {
+      showToast(t('toast.accepted'), 'success');
+      invalidate();
+    },
+    onError: (e) => showToast(getApiErrorMessage(e, t('toast.accepted')), 'error'),
+  });
+
+  const rejectMut = useMutation({
+    mutationFn: (requestId: string) => friendsApi.reject(requestId),
+    onSuccess: () => {
+      showToast(t('toast.rejected'), 'success');
+      invalidate();
+    },
+    onError: (e) => showToast(getApiErrorMessage(e, t('toast.rejected')), 'error'),
+  });
+
+  const cancelMut = useMutation({
+    mutationFn: (requestId: string) => friendsApi.cancelRequest(requestId),
+    onSuccess: () => {
+      showToast(t('toast.cancelled'), 'success');
+      invalidate();
+    },
+    onError: (e) => showToast(getApiErrorMessage(e, t('toast.cancelled')), 'error'),
+  });
+
   const removeMut = useMutation({
     mutationFn: () => friendsApi.remove(userId),
     onSuccess: () => {
@@ -55,6 +88,21 @@ export function FriendProfilePage() {
     onError: (e) => showToast(getApiErrorMessage(e, t('toast.blocked')), 'error'),
   });
 
+  const reportMut = useMutation({
+    mutationFn: () =>
+      friendsApi.report({
+        reportedUserId: userId,
+        reason: reportReason,
+        description: reportDesc.trim() || null,
+      }),
+    onSuccess: () => {
+      showToast(t('toast.reported'), 'success');
+      setReportOpen(false);
+      setReportDesc('');
+    },
+    onError: (e) => showToast(getApiErrorMessage(e, t('toast.reported')), 'error'),
+  });
+
   if (profileQuery.isLoading) {
     return (
       <PageShell>
@@ -71,6 +119,8 @@ export function FriendProfilePage() {
       </PageShell>
     );
   }
+
+  const growth = p.growthStats;
 
   return (
     <div className="friends-page">
@@ -91,15 +141,50 @@ export function FriendProfilePage() {
         </div>
 
         <div className="friends-row__actions" style={{ justifyContent: 'center' }}>
-          {p.relationship === 'none' || p.relationship === 'outgoing' ? (
+          {p.relationship === 'none' ? (
             <button
               type="button"
               className="btn btn--primary"
-              disabled={p.relationship === 'outgoing' || sendMut.isPending}
+              disabled={sendMut.isPending}
               onClick={() => sendMut.mutate()}
             >
-              {p.relationship === 'outgoing' ? t('requestPending') : t('sendRequest')}
+              {t('sendRequest')}
             </button>
+          ) : null}
+          {p.relationship === 'outgoing' && p.pendingRequestId ? (
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={cancelMut.isPending}
+              onClick={() => cancelMut.mutate(p.pendingRequestId!)}
+            >
+              {t('cancelRequest')}
+            </button>
+          ) : null}
+          {p.relationship === 'outgoing' && !p.pendingRequestId ? (
+            <button type="button" className="btn btn--secondary" disabled>
+              {t('requestPending')}
+            </button>
+          ) : null}
+          {p.relationship === 'incoming' && p.pendingRequestId ? (
+            <>
+              <button
+                type="button"
+                className="btn btn--primary"
+                disabled={acceptMut.isPending}
+                onClick={() => acceptMut.mutate(p.pendingRequestId!)}
+              >
+                {t('accept')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                disabled={rejectMut.isPending}
+                onClick={() => rejectMut.mutate(p.pendingRequestId!)}
+              >
+                {t('reject')}
+              </button>
+            </>
           ) : null}
           {p.relationship === 'friend' ? (
             <button
@@ -123,7 +208,58 @@ export function FriendProfilePage() {
               {t('block')}
             </button>
           ) : null}
+          {p.relationship !== 'self' ? (
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={() => setReportOpen((v) => !v)}
+            >
+              {t('report')}
+            </button>
+          ) : null}
         </div>
+
+        {reportOpen ? (
+          <section className="friends-profile-section">
+            <h3>{t('report')}</h3>
+            <label className="friends-row__sub" htmlFor="reportReason">
+              {t('reportReason')}
+            </label>
+            <select
+              id="reportReason"
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value as ReportReason)}
+            >
+              <option value="spam">{t('reportReasons.spam')}</option>
+              <option value="abuse">{t('reportReasons.abuse')}</option>
+              <option value="fake">{t('reportReasons.fake')}</option>
+              <option value="other">{t('reportReasons.other')}</option>
+            </select>
+            <label className="friends-row__sub" htmlFor="reportDesc">
+              {t('reportDescription')}
+            </label>
+            <textarea
+              id="reportDesc"
+              rows={3}
+              value={reportDesc}
+              onChange={(e) => setReportDesc(e.target.value)}
+              placeholder={t('reportDescriptionPlaceholder')}
+            />
+            <div className="friends-row__actions">
+              <button
+                type="button"
+                className="btn btn--primary"
+                disabled={reportMut.isPending}
+                onClick={() => reportMut.mutate()}
+              >
+                {t('reportSubmit')}
+              </button>
+              <button type="button" className="btn btn--secondary" onClick={() => setReportOpen(false)}>
+                {t('reportCancel')}
+              </button>
+            </div>
+          </section>
+        ) : null}
 
         {(p.bio || p.careerText || p.experienceLevel) && (
           <section className="friends-profile-section">
@@ -192,10 +328,36 @@ export function FriendProfilePage() {
           </section>
         ) : null}
 
-        {p.growthStats ? (
+        {growth ? (
           <section className="friends-profile-section">
             <h3>{t('profile.growth')}</h3>
-            <p className="friends-row__sub">{t('profile.growthVisible')}</p>
+            <ul className="friends-list">
+              {'sessionDays' in growth ? (
+                <li className="friends-row__sub">
+                  {t('profile.growthSessionDays')}: {String(growth.sessionDays ?? 0)}
+                </li>
+              ) : null}
+              {'currentStreak' in growth ? (
+                <li className="friends-row__sub">
+                  {t('profile.growthStreak')}: {String(growth.currentStreak ?? 0)}
+                </li>
+              ) : null}
+              {'workoutCount' in growth ? (
+                <li className="friends-row__sub">
+                  {t('profile.growthWorkouts')}: {String(growth.workoutCount ?? 0)}
+                </li>
+              ) : null}
+              {'totalVolumeKg' in growth ? (
+                <li className="friends-row__sub">
+                  {t('profile.growthVolume')}: {String(growth.totalVolumeKg ?? 0)} kg
+                </li>
+              ) : null}
+              {'level' in growth ? (
+                <li className="friends-row__sub">
+                  {t('profile.growthLevel')}: {String(growth.level ?? 1)}
+                </li>
+              ) : null}
+            </ul>
           </section>
         ) : null}
       </PageShell>

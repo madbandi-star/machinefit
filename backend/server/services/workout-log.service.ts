@@ -161,6 +161,38 @@ export const workoutLogService = {
         growthTimelineService.refreshUser(userId),
       ]);
 
+      // Friend activity feed: publish once when a log first becomes fully completed.
+      const prevAllDone =
+        Boolean(previous) &&
+        (previous!.setCompleted?.length ?? 0) >= previous!.setCount &&
+        (previous!.setCompleted ?? []).slice(0, previous!.setCount).every(Boolean);
+      const nextAllDone =
+        (input.setCompleted?.length ?? 0) >= input.setCount &&
+        (input.setCompleted ?? []).slice(0, input.setCount).every(Boolean);
+      if (nextAllDone && !prevAllDone && input.setCount > 0) {
+        void import('./friend.service.js')
+          .then(async ({ friendService }) => {
+            const privacy = await friendService.getPrivacy(userId);
+            if (privacy.workoutRecordsVisibility === 'private') return;
+            await friendService.publishActivity({
+              actorId: userId,
+              activityType: 'workout_completed',
+              title: 'workout_completed',
+              body: input.machineCode,
+              payload: {
+                logId: saved.id,
+                logDate,
+                machineCode: input.machineCode,
+                setCount: input.setCount,
+              },
+              visibility: privacy.workoutRecordsVisibility,
+            });
+          })
+          .catch(() => {
+            /* feed must not fail workout save */
+          });
+      }
+
       return saved;
     } catch (error) {
       const pgCode =

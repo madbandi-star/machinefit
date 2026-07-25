@@ -212,15 +212,37 @@ export const friendService = {
   },
 
   getInvite(userId: string) {
-    return friendRepository.getOrCreateInvite(userId, `${APP_BASE}/#/register`);
+    // Browser router + basename `/machinefit` → `/machinefit/register?ref=CODE`
+    return friendRepository.getOrCreateInvite(userId, `${APP_BASE}/register`);
   },
 
   async applyInvite(userId: string, code: string) {
-    const ok = await friendRepository.applyReferralCode(userId, code);
-    if (!ok) {
+    const applied = await friendRepository.applyReferralCode(userId, code);
+    if (!applied) {
       throw new AppError(400, 'VALIDATION_ERROR', '유효하지 않거나 이미 사용한 초대 코드입니다');
     }
-    return { success: true as const };
+    // Auto-friend the referrer so the invite funnel completes without a second request step.
+    try {
+      if (!(await friendRepository.areFriends(userId, applied.referrerId))) {
+        if (!(await friendRepository.isBlockedEither(userId, applied.referrerId))) {
+          await friendRepository.createFriendship(userId, applied.referrerId);
+          const newbie = await friendRepository.getUserBrief(userId);
+          void notificationService.notify(
+            applied.referrerId,
+            'friend_accepted',
+            { ko: '초대 친구 연결', en: 'Invite friend connected' },
+            {
+              ko: `${newbie?.displayName || '회원'}님이 초대로 가입해 친구가 되었습니다`,
+              en: `${newbie?.displayName || 'A member'} joined via your invite and is now a friend`,
+            },
+            { userId, code: applied.code }
+          );
+        }
+      }
+    } catch {
+      /* friendship is best-effort after referral is logged */
+    }
+    return { success: true as const, referrerId: applied.referrerId };
   },
 
   async report(

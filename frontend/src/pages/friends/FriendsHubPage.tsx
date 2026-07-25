@@ -443,22 +443,54 @@ export function FriendsHubPage() {
               <EmptyState title={t('empty.noUsers')} />
             ) : (
               <ul className="friends-list">
-                {searchQuery.data.items.map((u) => (
+                {searchQuery.data.items.map((u) => {
+                  const rel = u.relationship ?? 'none';
+                  return (
                   <li key={u.id} className="friends-row">
                     <Avatar name={u.displayName} url={u.avatarUrl} />
                     <div className="friends-row__meta">
                       <div className="friends-row__name">{u.displayName}</div>
-                      <div className="friends-row__sub">{u.experienceLevel || '—'}</div>
+                      <div className="friends-row__sub">
+                        {u.experienceLevel || '—'}
+                        {' · '}
+                        {t(`relationship.${rel}`)}
+                      </div>
                     </div>
                     <div className="friends-row__actions">
-                      <button
-                        type="button"
-                        className="btn btn--primary"
-                        onClick={() => sendMut.mutate(u.id)}
-                        disabled={sendMut.isPending}
-                      >
-                        {t('sendRequest')}
-                      </button>
+                      {rel === 'none' ? (
+                        <button
+                          type="button"
+                          className="btn btn--primary"
+                          onClick={() => sendMut.mutate(u.id)}
+                          disabled={sendMut.isPending}
+                        >
+                          {t('sendRequest')}
+                        </button>
+                      ) : null}
+                      {rel === 'friend' ? (
+                        <span className="friends-chip">{t('relationship.friend')}</span>
+                      ) : null}
+                      {rel === 'outgoing' ? (
+                        <span className="friends-chip">{t('requestPending')}</span>
+                      ) : null}
+                      {rel === 'incoming' && u.pendingRequestId ? (
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn--primary"
+                            onClick={() => acceptMut.mutate(u.pendingRequestId!)}
+                          >
+                            {t('accept')}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn--secondary"
+                            onClick={() => rejectMut.mutate(u.pendingRequestId!)}
+                          >
+                            {t('reject')}
+                          </button>
+                        </>
+                      ) : null}
                       <button
                         type="button"
                         className="btn btn--secondary"
@@ -470,7 +502,8 @@ export function FriendsHubPage() {
                       </button>
                     </div>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             )}
           </>

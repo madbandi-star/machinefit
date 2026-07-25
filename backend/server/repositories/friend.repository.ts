@@ -8,11 +8,13 @@ import type {
   FriendProfile,
   FriendRankingMetric,
   FriendRankingRow,
+  FriendRelationship,
   FriendRequestItem,
   FriendSort,
   FriendUserSummary,
   PrivacyLevel,
 } from '@machinefit/shared';
+import { ACHIEVEMENT_BY_ID } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
 const ONLINE_MS = 5 * 60_000;
@@ -261,7 +263,24 @@ export const friendRepository = {
     const offset = (page - 1) * limit;
     const { rows } = await pool.query(
       `SELECT u.id, u.display_name, u.avatar_url, u.experience_level, u.last_login_at,
-              COALESCE(p.online_status_visibility, 'friends') AS online_vis
+              COALESCE(p.online_status_visibility, 'friends') AS online_vis,
+              EXISTS (
+                SELECT 1 FROM friendships f
+                WHERE (f.user_low_id = $1 AND f.user_high_id = u.id)
+                   OR (f.user_high_id = $1 AND f.user_low_id = u.id)
+              ) AS is_friend,
+              (
+                SELECT fr.id::text FROM friend_requests fr
+                WHERE fr.status = 'REQUESTED'
+                  AND fr.from_user_id = $1 AND fr.to_user_id = u.id
+                LIMIT 1
+              ) AS outgoing_request_id,
+              (
+                SELECT fr.id::text FROM friend_requests fr
+                WHERE fr.status = 'REQUESTED'
+                  AND fr.from_user_id = u.id AND fr.to_user_id = $1
+                LIMIT 1
+              ) AS incoming_request_id
        FROM users u
        JOIN roles r ON r.id = u.role_id
        LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
@@ -279,12 +298,24 @@ export const friendRepository = {
       [viewerId, like, limit, offset]
     );
     return {
-      items: rows.map((r) =>
-        mapUser({
+      items: rows.map((r) => {
+        const base = mapUser({
           ...r,
           show_online: r.online_vis === 'public',
-        })
-      ),
+        });
+        let relationship: Exclude<FriendRelationship, 'self'> = 'none';
+        let pendingRequestId: string | null = null;
+        if (r.is_friend) {
+          relationship = 'friend';
+        } else if (r.incoming_request_id) {
+          relationship = 'incoming';
+          pendingRequestId = String(r.incoming_request_id);
+        } else if (r.outgoing_request_id) {
+          relationship = 'outgoing';
+          pendingRequestId = String(r.outgoing_request_id);
+        }
+        return { ...base, relationship, pendingRequestId };
+      }),
       total: countRes.rows[0]?.c ?? 0,
     };
   },
@@ -506,12 +537,13 @@ export const friendRepository = {
     const blocked = isSelf ? false : await this.isBlockedEither(viewerId, targetId);
 
     let relationship: FriendProfile['relationship'] = 'none';
+    let pendingRequestId: string | null = null;
     if (isSelf) relationship = 'self';
     else if (blocked) relationship = 'blocked';
     else if (friends) relationship = 'friend';
     else {
       const req = await pool.query(
-        `SELECT from_user_id, to_user_id FROM friend_requests
+        `SELECT id, from_user_id, to_user_id FROM friend_requests
          WHERE status = 'REQUESTED'
            AND ((from_user_id = $1 AND to_user_id = $2)
              OR (from_user_id = $2 AND to_user_id = $1))
@@ -521,6 +553,7 @@ export const friendRepository = {
       if (req.rows[0]) {
         relationship =
           req.rows[0].from_user_id === viewerId ? 'outgoing' : 'incoming';
+        pendingRequestId = String(req.rows[0].id);
       }
     }
 
@@ -538,6 +571,7 @@ export const friendRepository = {
         show_online: showOnline,
       }),
       relationship,
+      pendingRequestId,
       canMessage: friends,
     };
 
@@ -582,10 +616,14 @@ export const friendRepository = {
            LIMIT 12`,
           [targetId]
         );
-        const mapped = badges.rows.map((r) => ({
-          code: String(r.achievement_id ?? ''),
-          title: String(r.achievement_id ?? ''),
-        }));
+        const mapped = badges.rows.map((r) => {
+          const id = String(r.achievement_id ?? '');
+          const def = ACHIEVEMENT_BY_ID[id];
+          return {
+            code: id,
+            title: def?.title?.ko || def?.title?.en || id,
+          };
+        });
         if (can(privacy.badgesVisibility)) profile.badges = mapped;
         if (can(privacy.achievementsVisibility)) profile.achievements = mapped;
       } catch {
@@ -594,7 +632,29 @@ export const friendRepository = {
     }
 
     if (can(privacy.growthVisibility)) {
-      profile.growthStats = { note: 'visible' };
+      try {
+        const stats = await pool.query(
+          `SELECT session_days, current_streak, longest_streak, workout_count,
+                  total_volume_kg, unique_machines, level, total_xp
+           FROM user_achievement_stats WHERE user_id = $1`,
+          [targetId]
+        );
+        const s = stats.rows[0];
+        profile.growthStats = s
+          ? {
+              sessionDays: Number(s.session_days) || 0,
+              currentStreak: Number(s.current_streak) || 0,
+              longestStreak: Number(s.longest_streak) || 0,
+              workoutCount: Number(s.workout_count) || 0,
+              totalVolumeKg: Number(s.total_volume_kg) || 0,
+              uniqueMachines: Number(s.unique_machines) || 0,
+              level: Number(s.level) || 1,
+              totalXp: Number(s.total_xp) || 0,
+            }
+          : { sessionDays: 0, currentStreak: 0, workoutCount: 0 };
+      } catch {
+        profile.growthStats = { sessionDays: 0, currentStreak: 0, workoutCount: 0 };
+      }
     }
 
     return profile;
@@ -710,42 +770,65 @@ export const friendRepository = {
     );
     const ids = [viewerId, ...friends.rows.map((r) => String(r.fid))];
 
-    let valueSql = `COUNT(wl.id)::int`;
-    let whereExtra = ``;
-    let joinExtra = ``;
+    /** Visible to viewer when own row or workout records not private. */
+    const visible = `(
+      u.id = $2
+      OR COALESCE(p.workout_records_visibility, 'friends') IN ('public', 'friends')
+    )`;
+
+    let valueSql = `COUNT(wl.id) FILTER (WHERE wl.id IS NOT NULL AND ${visible})::int`;
+    let logDateFilter = '';
+    let useStreakStats = false;
+    let useVolume = false;
+
     if (metric === 'weekly_workouts') {
-      whereExtra = `AND wl.log_date >= (CURRENT_DATE - INTERVAL '7 days')`;
+      logDateFilter = `AND wl.log_date >= (CURRENT_DATE - INTERVAL '7 days')`;
     } else if (metric === 'monthly_workouts') {
-      whereExtra = `AND wl.log_date >= (CURRENT_DATE - INTERVAL '30 days')`;
+      logDateFilter = `AND wl.log_date >= (CURRENT_DATE - INTERVAL '30 days')`;
     } else if (metric === 'total_duration') {
-      // No duration column on workout_logs — use distinct session days as proxy minutes*0 → days count
-      valueSql = `COUNT(DISTINCT wl.log_date)::int`;
+      // No duration column — distinct session days (i18n: workout days)
+      valueSql = `COUNT(DISTINCT wl.log_date) FILTER (
+        WHERE wl.log_date IS NOT NULL AND ${visible}
+      )::int`;
     } else if (metric === 'total_volume') {
-      joinExtra = `
-        LEFT JOIN LATERAL (
-          SELECT COALESCE(SUM(value::numeric), 0) AS kg
-          FROM jsonb_array_elements_text(COALESCE(wl.set_weights_kg, '[]'::jsonb)) AS t(value)
-        ) vol ON TRUE`;
-      valueSql = `COALESCE(SUM(vol.kg), 0)::int`;
+      useVolume = true;
+      valueSql = `COALESCE(SUM(CASE WHEN ${visible} THEN vol.kg ELSE 0 END), 0)::int`;
     } else if (metric === 'machine_variety') {
-      valueSql = `COUNT(DISTINCT wl.machine_id)::int`;
+      valueSql = `COUNT(DISTINCT wl.machine_id) FILTER (
+        WHERE wl.machine_id IS NOT NULL AND ${visible}
+      )::int`;
     } else if (metric === 'streak_days') {
-      valueSql = `COUNT(DISTINCT wl.log_date)::int`;
-      whereExtra = `AND wl.log_date >= (CURRENT_DATE - INTERVAL '90 days')`;
+      useStreakStats = true;
+      valueSql = `CASE WHEN ${visible} THEN COALESCE(s.current_streak, 0) ELSE 0 END`;
     }
 
     try {
-      const { rows } = await pool.query(
-        `SELECT u.id, u.display_name, u.avatar_url, u.experience_level, u.last_login_at,
-                ${valueSql} AS value
-         FROM users u
-         LEFT JOIN workout_logs wl ON wl.user_id = u.id ${whereExtra}
-         ${joinExtra}
-         WHERE u.id = ANY($1::uuid[])
-         GROUP BY u.id
-         ORDER BY value DESC, u.display_name ASC`,
-        [ids]
-      );
+      const sql = useStreakStats
+        ? `SELECT u.id, u.display_name, u.avatar_url, u.experience_level, u.last_login_at,
+                  ${valueSql} AS value
+           FROM users u
+           LEFT JOIN user_achievement_stats s ON s.user_id = u.id
+           LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
+           WHERE u.id = ANY($1::uuid[])
+           ORDER BY value DESC, u.display_name ASC`
+        : `SELECT u.id, u.display_name, u.avatar_url, u.experience_level, u.last_login_at,
+                  ${valueSql} AS value
+           FROM users u
+           LEFT JOIN workout_logs wl ON wl.user_id = u.id ${logDateFilter}
+           LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
+           ${
+             useVolume
+               ? `LEFT JOIN LATERAL (
+                    SELECT COALESCE(SUM(value::numeric), 0) AS kg
+                    FROM jsonb_array_elements_text(COALESCE(wl.set_weights_kg, '[]'::jsonb)) AS t(value)
+                  ) vol ON TRUE`
+               : ''
+           }
+           WHERE u.id = ANY($1::uuid[])
+           GROUP BY u.id, p.workout_records_visibility
+           ORDER BY value DESC, u.display_name ASC`;
+
+      const { rows } = await pool.query(sql, [ids, viewerId]);
       const ranked = rows.map((r, idx) => ({
         user: mapUser({ ...r, show_online: false }),
         value: Number(r.value) || 0,
@@ -970,30 +1053,35 @@ export const friendRepository = {
     return mapUser({ ...rows[0], show_online: false });
   },
 
-  async applyReferralCode(userId: string, code: string): Promise<boolean> {
+  async applyReferralCode(
+    userId: string,
+    code: string
+  ): Promise<{ referrerId: string; code: string } | null> {
     const pool = getPool();
-    if (!pool) return false;
+    if (!pool) return null;
     const { rows } = await pool.query(
       `SELECT user_id, code FROM friend_referral_codes WHERE UPPER(code) = UPPER($1)`,
       [code.trim()]
     );
-    if (!rows[0] || String(rows[0].user_id) === userId) return false;
+    if (!rows[0] || String(rows[0].user_id) === userId) return null;
     const existing = await pool.query(
       `SELECT 1 FROM friend_referral_events
        WHERE referred_id = $1 AND event_type = 'signup_applied' LIMIT 1`,
       [userId]
     );
-    if (existing.rows[0]) return false;
+    if (existing.rows[0]) return null;
+    const referrerId = String(rows[0].user_id);
+    const normalizedCode = String(rows[0].code);
     await pool.query(
       `INSERT INTO friend_referral_events (referrer_id, referred_id, code, event_type)
        VALUES ($1,$2,$3,'signup_applied')`,
-      [rows[0].user_id, userId, rows[0].code]
+      [referrerId, userId, normalizedCode]
     );
     await pool.query(
       `UPDATE friend_referral_codes SET invite_count = invite_count + 1 WHERE user_id = $1`,
-      [rows[0].user_id]
+      [referrerId]
     );
-    return true;
+    return { referrerId, code: normalizedCode };
   },
 
   async adminListSpam(limit = 50) {

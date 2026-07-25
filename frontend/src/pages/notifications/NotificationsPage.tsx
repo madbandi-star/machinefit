@@ -1,12 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { NotificationType } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { notificationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/notifications.css';
 
@@ -15,8 +18,30 @@ function getLocalized(text: { en?: string; ko?: string } | undefined, lang: stri
   return text[lang as keyof typeof text] ?? text.en ?? text.ko ?? '';
 }
 
+function friendNotificationPath(
+  type: NotificationType,
+  payload?: Record<string, unknown>
+): string | null {
+  if (type === 'friend_request') return ROUTES.FRIENDS_INCOMING;
+  if (type === 'friend_accepted' || type === 'friend_removed') {
+    const userId = typeof payload?.userId === 'string' ? payload.userId : null;
+    if (userId) return ROUTES.FRIEND_PROFILE.replace(':userId', userId);
+    return ROUTES.FRIENDS;
+  }
+  if (
+    type === 'friend_activity' ||
+    type === 'friend_pr' ||
+    type === 'friend_workout_done' ||
+    type === 'friend_rank_change'
+  ) {
+    return ROUTES.FRIENDS_FEED;
+  }
+  return null;
+}
+
 export function NotificationsPage() {
   const { t, i18n } = useTranslation('notifications');
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [page, setPage] = useState(1);
@@ -72,7 +97,11 @@ export function NotificationsPage() {
                 key={n.id}
                 type="button"
                 className={`card notification-item ${n.isRead ? 'notification-item--read' : ''}`}
-                onClick={() => !n.isRead && markReadMutation.mutate(n.id)}
+                onClick={() => {
+                  if (!n.isRead) markReadMutation.mutate(n.id);
+                  const path = friendNotificationPath(n.type, n.payload);
+                  if (path) navigate(path);
+                }}
               >
                 <div className="notification-item__header">
                   <strong>{getLocalized(n.title, lang)}</strong>
