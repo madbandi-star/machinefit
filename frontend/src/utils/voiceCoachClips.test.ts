@@ -12,13 +12,14 @@ import {
 assert.equal(DEFAULT_VOICE_COACH_PACK, 'female');
 assert.equal(normalizeVoiceCoachPack('male'), 'male');
 assert.equal(normalizeVoiceCoachPack('nope'), 'female');
-assert.equal(MAX_VOICE_COACH_CLIP_COUNTDOWN, 5);
+assert.equal(MAX_VOICE_COACH_CLIP_COUNTDOWN, 10);
 assert.equal(MAX_VOICE_COACH_CLIP_REP, 30);
 
 assert.equal(countdownClipKey(5), 'cd-5');
 assert.equal(countdownClipKey(1), 'cd-1');
-assert.equal(countdownClipKey(6), null);
-assert.equal(countdownClipKey(10), null);
+assert.equal(countdownClipKey(6), 'cd-6');
+assert.equal(countdownClipKey(10), 'cd-10');
+assert.equal(countdownClipKey(11), null);
 
 assert.equal(repClipKey(1), 'rep-1');
 assert.equal(repClipKey(30), 'rep-30');

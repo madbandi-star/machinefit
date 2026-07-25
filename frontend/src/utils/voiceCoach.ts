@@ -361,25 +361,25 @@ async function speakCoachCue(options: {
     if (ctx) {
       const retried = await playVoiceCoachClip(clipKey, signal, DEFAULT_VOICE_COACH_PACK);
       if (retried) return;
-      // Clip missing/failed — keep Web Audio pipeline alive with a tick (no TTS).
-      await playBeep(ctx, signal, kind === 'count' ? 640 : 820, 0.1);
+    }
+    // Clip missing/failed — speak the number/phrase (never beep for count cues).
+    if (kind === 'count' || kind === 'phrase') {
+      await speechManager.speak(text, signal);
       return;
     }
   }
 
-  // 준비 / prep 10–6 (no cd-N.mp3): beep only so countdown clips stay healthy.
-  const ctx = await ensureVoiceCoachAudioRunning();
-  if (ctx) {
-    if (kind === 'ready') {
+  // "준비" has no clip — short dual beep, then fall through to TTS if needed.
+  if (kind === 'ready') {
+    const ctx = await ensureVoiceCoachAudioRunning();
+    if (ctx) {
       await playBeep(ctx, signal, 660, 0.09);
       await playBeep(ctx, signal, 880, 0.09);
-    } else {
-      await playBeep(ctx, signal, 700, 0.1);
+      return;
     }
-    return;
   }
 
-  // Absolute last resort when Web Audio is unavailable.
+  // Count / phrase without a clip key (or Web Audio down): spoken TTS.
   await speechManager.speak(text, signal);
 }
 
@@ -519,7 +519,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 
     // Prep countdown — fixed pacing (never AI-accel / turbo).
-    // Korean: clips for cd-5…1; 준비 / 10–6 use beeps (no TTS).
+    // Korean: spoken clips for cd-10…1 (fallback TTS); 준비 stays dual-beep.
     onPhaseChange?.('countdown');
     await speakCoachCue({
       clipKey: null,

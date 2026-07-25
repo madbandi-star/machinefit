@@ -10,8 +10,8 @@ export const DEFAULT_VOICE_COACH_PACK: VoiceCoachPack = 'female';
 /** Highest `rep-N.mp3` shipped under public/voice-coach. */
 export const MAX_VOICE_COACH_CLIP_REP = 30;
 
-/** Highest `cd-N.mp3` shipped (prep 10 uses TTS for 10–6). */
-export const MAX_VOICE_COACH_CLIP_COUNTDOWN = 5;
+/** Highest `cd-N.mp3` shipped (prep 10 → 1 all use spoken clips). */
+export const MAX_VOICE_COACH_CLIP_COUNTDOWN = 10;
 
 const SILENT_WAV =
   'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
