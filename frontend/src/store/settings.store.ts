@@ -21,6 +21,13 @@ import {
   VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
+import {
+  clampVoiceHoldDurationSec,
+  clampVoiceHoldFlowMode,
+  DEFAULT_VOICE_HOLD_FLOW_MODE,
+  VOICE_HOLD_DURATION,
+  type VoiceHoldFlowMode,
+} from '@/utils/voiceHold';
 
 const DEFAULT_VOICE_COACH_REPS = 12;
 
@@ -44,6 +51,9 @@ export const SETTINGS_DEFAULTS = {
   voiceRestTipsEnabled: true,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
   voiceCountMode: DEFAULT_VOICE_COUNT_MODE,
+  /** count | count_hold | hold */
+  voiceCoachFlowMode: DEFAULT_VOICE_HOLD_FLOW_MODE,
+  voiceHoldDurationSec: VOICE_HOLD_DURATION.defaultSec,
   restDurationSeconds: REST_DURATION.defaultSeconds,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
 } as const;
@@ -65,6 +75,10 @@ interface SettingsState {
   voiceCoachRepGapMs: number;
   /** Exercise-count pacing: normal | AI accel | AI accel + turbo. */
   voiceCountMode: VoiceCountMode;
+  /** Session flow: count only / count+hold / hold only. */
+  voiceCoachFlowMode: VoiceHoldFlowMode;
+  /** Hold ("버텨!!!") duration in seconds. */
+  voiceHoldDurationSec: number;
   /** Rest between sets (seconds). Default 90 (1:30). */
   restDurationSeconds: number;
   /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 10 = 1000%) */
@@ -81,6 +95,8 @@ interface SettingsState {
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
   setVoiceCoachRepGapMs: (ms: number) => void;
   setVoiceCountMode: (mode: VoiceCountMode) => void;
+  setVoiceCoachFlowMode: (mode: VoiceHoldFlowMode) => void;
+  setVoiceHoldDurationSec: (seconds: number) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setWeightDifficulty: (value: number) => void;
   /** Restore app preferences (units, voice, rest, etc.) to defaults. */
@@ -105,6 +121,10 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
       setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
       setVoiceCountMode: (mode) => set({ voiceCountMode: clampVoiceCountMode(mode) }),
+      setVoiceCoachFlowMode: (mode) =>
+        set({ voiceCoachFlowMode: clampVoiceHoldFlowMode(mode) }),
+      setVoiceHoldDurationSec: (seconds) =>
+        set({ voiceHoldDurationSec: clampVoiceHoldDurationSec(seconds) }),
       setRestDurationSeconds: (seconds) =>
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
       setWeightDifficulty: (value) =>
@@ -123,6 +143,12 @@ export const useSettingsStore = create<SettingsState>()(
           ...current,
           ...p,
           voiceCountMode: clampVoiceCountMode(p.voiceCountMode ?? current.voiceCountMode),
+          voiceCoachFlowMode: clampVoiceHoldFlowMode(
+            p.voiceCoachFlowMode ?? current.voiceCoachFlowMode
+          ),
+          voiceHoldDurationSec: clampVoiceHoldDurationSec(
+            p.voiceHoldDurationSec ?? current.voiceHoldDurationSec
+          ),
         };
       },
     }

@@ -1,4 +1,4 @@
-/** Voice set coach: beeps → 준비 → 5–1 → 시작 → reps → optional "하나더". All speech via SpeechManager. */
+/** Voice set coach: beeps → 준비 → 5–1 → 시작 → reps → optional "하나더" → optional hold. */
 
 import {
   buildCountPaceSchedule,
@@ -7,6 +7,14 @@ import {
   type VoiceCountMode,
 } from '@/utils/aiCountPace';
 import { speechManager } from '@/utils/speechManager';
+import {
+  clampVoiceHoldDurationSec,
+  clampVoiceHoldFlowMode,
+  DEFAULT_VOICE_HOLD_FLOW_MODE,
+  runVoiceHoldSegment,
+  VOICE_HOLD_DURATION,
+  type VoiceHoldFlowMode,
+} from '@/utils/voiceHold';
 
 export type VoiceCoachPhase =
   | 'idle'
@@ -15,6 +23,7 @@ export type VoiceCoachPhase =
   | 'start'
   | 'counting'
   | 'oneMore'
+  | 'hold'
   | 'done';
 
 export interface VoiceCoachPhaseDetail {
@@ -24,6 +33,9 @@ export interface VoiceCoachPhaseDetail {
   turbo?: boolean;
   /** Exercise-count only: 0–1 intensity for UI/haptics. */
   intensity?: number;
+  /** True while speaking the "버텨!!!" cue. */
+  holdCue?: boolean;
+  finishPhrase?: string;
 }
 
 export interface VoiceCoachOptions {
@@ -38,12 +50,24 @@ export interface VoiceCoachOptions {
    * Default: AI accel + turbo.
    */
   countMode?: VoiceCountMode;
+  /**
+   * Optional hold segment after number counts (+ one-more).
+   * Additive — does not alter the count loop itself.
+   */
+  afterCountHold?: { durationSec: number } | null;
   locale?: string;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: VoiceCoachPhaseDetail) => void;
   signal?: AbortSignal;
 }
 
-export type { VoiceCountMode };
+export interface VoiceCoachFlowOptions extends VoiceCoachOptions {
+  /** count | count_hold | hold — default count (legacy behavior). */
+  flowMode?: VoiceHoldFlowMode;
+  holdDurationSec?: number;
+}
+
+export type { VoiceCountMode } from '@/utils/aiCountPace';
+export type { VoiceHoldFlowMode } from '@/utils/voiceHold';
 export {
   DEFAULT_VOICE_COUNT_MODE,
   VOICE_COUNT_MODES,
@@ -52,6 +76,17 @@ export {
   buildCountPaceSchedule,
   formatCountDisplay,
 } from '@/utils/aiCountPace';
+export {
+  DEFAULT_VOICE_HOLD_FLOW_MODE,
+  VOICE_HOLD_FLOW_MODES,
+  VOICE_HOLD_DURATION,
+  VOICE_HOLD_DURATION_PRESETS,
+  clampVoiceHoldFlowMode,
+  clampVoiceHoldDurationSec,
+  isVoiceHoldDurationPreset,
+  runVoiceHoldSegment,
+  holdCuePhrase,
+} from '@/utils/voiceHold';
 
 /** Trainer-like pacing (ms). */
 export const VOICE_COACH_TIMING = {
@@ -437,7 +472,39 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       });
     }
 
-    onPhaseChange?.('done', { rep: oneMoreEnabled ? reps + oneMoreReps : reps });
+    const finalRep = oneMoreEnabled ? reps + oneMoreReps : reps;
+
+    // Additive hold extension — count / one-more logic above is unchanged.
+    if (options.afterCountHold) {
+      await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
+      await runVoiceHoldSegment({
+        durationSec: options.afterCountHold.durationSec,
+        locale,
+        signal,
+        onPhaseChange: (holdPhase, detail) => {
+          if (holdPhase === 'holdCue') {
+            onPhaseChange?.('hold', { holdCue: true, rep: finalRep });
+            return;
+          }
+          if (holdPhase === 'holdCountdown') {
+            onPhaseChange?.('hold', {
+              countdown: detail?.countdown,
+              rep: finalRep,
+            });
+            return;
+          }
+          if (holdPhase === 'holdFinish') {
+            onPhaseChange?.('hold', {
+              countdown: 0,
+              finishPhrase: detail?.finishPhrase,
+              rep: finalRep,
+            });
+          }
+        },
+      });
+    }
+
+    onPhaseChange?.('done', { rep: finalRep });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       stopVoiceCoach();
@@ -446,4 +513,97 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     }
     throw error;
   }
+}
+
+/** Standalone hold: tip beeps → 버텨!!! → countdown → finish (no number counts). */
+export async function runVoiceHoldOnlySession(options: {
+  holdDurationSec?: number;
+  locale?: string;
+  onPhaseChange?: (phase: VoiceCoachPhase, detail?: VoiceCoachPhaseDetail) => void;
+  signal?: AbortSignal;
+}): Promise<void> {
+  const locale = options.locale ?? 'ko';
+  const { signal, onPhaseChange } = options;
+  const durationSec = clampVoiceHoldDurationSec(
+    options.holdDurationSec ?? VOICE_HOLD_DURATION.defaultSec
+  );
+
+  await speechManager.init();
+  const audioCtx = await ensureSharedAudioRunning();
+
+  try {
+    onPhaseChange?.('beep');
+    if (audioCtx) {
+      for (let i = 0; i < 3; i += 1) {
+        await playBeep(audioCtx, signal, 880 + i * 40);
+        if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
+      }
+    } else {
+      await speechManager.speakQueue(
+        isKoreanLocale(locale) ? ['띡', '띡', '띡'] : ['tick', 'tick', 'tick'],
+        { signal, gapMs: 120 }
+      );
+    }
+    await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
+
+    await runVoiceHoldSegment({
+      durationSec,
+      locale,
+      signal,
+      onPhaseChange: (holdPhase, detail) => {
+        if (holdPhase === 'holdCue') {
+          onPhaseChange?.('hold', { holdCue: true });
+          return;
+        }
+        if (holdPhase === 'holdCountdown') {
+          onPhaseChange?.('hold', { countdown: detail?.countdown });
+          return;
+        }
+        if (holdPhase === 'holdFinish') {
+          onPhaseChange?.('hold', {
+            countdown: 0,
+            finishPhrase: detail?.finishPhrase,
+          });
+        }
+      },
+    });
+
+    onPhaseChange?.('done');
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      stopVoiceCoach();
+      onPhaseChange?.('idle');
+      return;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Unified entry: count / count+hold / hold-only.
+ * Prefer this from UI hooks so count logic stays behind a stable API.
+ */
+export async function runVoiceCoachFlow(options: VoiceCoachFlowOptions): Promise<void> {
+  const flowMode = clampVoiceHoldFlowMode(
+    options.flowMode ?? DEFAULT_VOICE_HOLD_FLOW_MODE
+  );
+  const holdDurationSec = clampVoiceHoldDurationSec(
+    options.holdDurationSec ?? VOICE_HOLD_DURATION.defaultSec
+  );
+
+  if (flowMode === 'hold') {
+    await runVoiceHoldOnlySession({
+      holdDurationSec,
+      locale: options.locale,
+      signal: options.signal,
+      onPhaseChange: options.onPhaseChange,
+    });
+    return;
+  }
+
+  await runVoiceCoachSession({
+    ...options,
+    afterCountHold:
+      flowMode === 'count_hold' ? { durationSec: holdDurationSec } : null,
+  });
 }

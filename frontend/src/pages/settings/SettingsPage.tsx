@@ -43,6 +43,13 @@ import {
   VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
+import {
+  clampVoiceHoldDurationSec,
+  isVoiceHoldDurationPreset,
+  VOICE_HOLD_DURATION,
+  VOICE_HOLD_DURATION_PRESETS,
+  VOICE_HOLD_FLOW_MODES,
+} from '@/utils/voiceHold';
 import type { User } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/home.css';
@@ -77,6 +84,8 @@ export function SettingsPage() {
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
+  const voiceCoachFlowMode = useSettingsStore((s) => s.voiceCoachFlowMode);
+  const voiceHoldDurationSec = useSettingsStore((s) => s.voiceHoldDurationSec);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
@@ -86,9 +95,14 @@ export function SettingsPage() {
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
+  const setVoiceCoachFlowMode = useSettingsStore((s) => s.setVoiceCoachFlowMode);
+  const setVoiceHoldDurationSec = useSettingsStore((s) => s.setVoiceHoldDurationSec);
   const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
   const resetSettings = useSettingsStore((s) => s.resetSettings);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [holdDurationCustom, setHoldDurationCustom] = useState(
+    () => !isVoiceHoldDurationPreset(voiceHoldDurationSec)
+  );
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -484,14 +498,53 @@ export function SettingsPage() {
               />
               <span>{t('settings.voiceCoachEnable')}</span>
             </label>
+            <fieldset
+              className={`voice-coach-panel__mode${
+                !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+              }`}
+              disabled={!voiceCoachEnabled}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('settings.voiceCoachFlowMode')}
+              </legend>
+              <p className="form-section__desc" style={{ marginTop: 0 }}>
+                {t('settings.voiceCoachFlowModeDesc')}
+              </p>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_HOLD_FLOW_MODES.map((mode) => (
+                  <label key={mode} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="settings-voice-flow-mode"
+                      value={mode}
+                      checked={voiceCoachFlowMode === mode}
+                      onChange={() => setVoiceCoachFlowMode(mode)}
+                    />
+                    <span>{t(`settings.voiceCoachFlowMode_${mode}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
             <label className="settings-voice-coach__row">
               <input
                 type="checkbox"
                 checked={voiceCoachOneMore}
                 onChange={(e) => setVoiceCoachOneMore(e.target.checked)}
-                disabled={!voiceCoachEnabled}
+                disabled={!voiceCoachEnabled || voiceCoachFlowMode === 'hold'}
               />
               <span>{t('settings.voiceCoachOneMore')}</span>
+            </label>
+            <label className="settings-voice-coach__row">
+              <input
+                type="checkbox"
+                checked={voiceCoachFlowMode === 'count_hold'}
+                onChange={(e) =>
+                  setVoiceCoachFlowMode(e.target.checked ? 'count_hold' : 'count')
+                }
+                disabled={!voiceCoachEnabled || voiceCoachFlowMode === 'hold'}
+              />
+              <span>{t('settings.voiceCoachHoldAfterCount')}</span>
             </label>
             <label className="settings-voice-coach__row">
               <input
@@ -512,6 +565,53 @@ export function SettingsPage() {
               <span>{t('settings.voiceRestTips')}</span>
             </label>
 
+            {(voiceCoachFlowMode === 'count_hold' || voiceCoachFlowMode === 'hold') && (
+              <div className="voice-coach-panel__hold-duration">
+                <label className="body-metrics-inline__label" htmlFor="settings-hold-duration">
+                  {t('settings.voiceHoldDuration')}
+                </label>
+                <select
+                  id="settings-hold-duration"
+                  disabled={!voiceCoachEnabled}
+                  value={
+                    holdDurationCustom || !isVoiceHoldDurationPreset(voiceHoldDurationSec)
+                      ? 'custom'
+                      : String(voiceHoldDurationSec)
+                  }
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === 'custom') {
+                      setHoldDurationCustom(true);
+                      return;
+                    }
+                    setHoldDurationCustom(false);
+                    setVoiceHoldDurationSec(clampVoiceHoldDurationSec(Number(v)));
+                  }}
+                >
+                  {VOICE_HOLD_DURATION_PRESETS.map((sec) => (
+                    <option key={sec} value={sec}>
+                      {t('settings.voiceHoldDurationOption', { sec })}
+                    </option>
+                  ))}
+                  <option value="custom">{t('settings.voiceHoldDurationCustom')}</option>
+                </select>
+                {holdDurationCustom || !isVoiceHoldDurationPreset(voiceHoldDurationSec) ? (
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={VOICE_HOLD_DURATION.minSec}
+                    max={VOICE_HOLD_DURATION.maxSec}
+                    disabled={!voiceCoachEnabled}
+                    value={voiceHoldDurationSec}
+                    onChange={(e) =>
+                      setVoiceHoldDurationSec(clampVoiceHoldDurationSec(Number(e.target.value)))
+                    }
+                  />
+                ) : null}
+              </div>
+            )}
+
+            {voiceCoachFlowMode !== 'hold' ? (
             <fieldset
               className={`voice-coach-panel__mode${
                 !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
@@ -539,7 +639,9 @@ export function SettingsPage() {
                 ))}
               </div>
             </fieldset>
+            ) : null}
 
+            {voiceCoachFlowMode !== 'hold' ? (
             <div
               className={`body-metrics-inline${
                 !voiceCoachEnabled ? ' body-metrics-inline--disabled' : ''
@@ -606,6 +708,7 @@ export function SettingsPage() {
                 </div>
               </div>
             </div>
+            ) : null}
           </div>
         </section>
 

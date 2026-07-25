@@ -221,6 +221,8 @@ export function WorkoutLogPanel({
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
+  const voiceCoachFlowMode = useSettingsStore((s) => s.voiceCoachFlowMode);
+  const voiceHoldDurationSec = useSettingsStore((s) => s.voiceHoldDurationSec);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
@@ -230,6 +232,8 @@ export function WorkoutLogPanel({
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
+  const setVoiceCoachFlowMode = useSettingsStore((s) => s.setVoiceCoachFlowMode);
+  const setVoiceHoldDurationSec = useSettingsStore((s) => s.setVoiceHoldDurationSec);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
@@ -242,6 +246,8 @@ export function WorkoutLogPanel({
     oneMoreCount: voiceCoachOneMoreCount,
     repGapMs: voiceCoachRepGapMs,
     countMode: voiceCountMode,
+    flowMode: voiceCoachFlowMode,
+    holdDurationSec: voiceHoldDurationSec,
     locale,
     enabled: voiceCoachEnabled,
   });
@@ -1258,6 +1264,10 @@ export function WorkoutLogPanel({
       onRepGapMsChange={setVoiceCoachRepGapMs}
       countMode={voiceCountMode}
       onCountModeChange={setVoiceCountMode}
+      flowMode={voiceCoachFlowMode}
+      onFlowModeChange={setVoiceCoachFlowMode}
+      holdDurationSec={voiceHoldDurationSec}
+      onHoldDurationSecChange={setVoiceHoldDurationSec}
       oneMoreEnabled={voiceCoachOneMore}
       onOneMoreChange={setVoiceCoachOneMore}
       oneMoreCount={voiceCoachOneMoreCount}
