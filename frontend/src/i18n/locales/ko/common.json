@@ -537,6 +537,7 @@
     "secretDesc": "숨겨진 업적입니다. 조건을 직접 찾아보세요.",
     "unlockRate": "획득률",
     "unlocked": "새로운 업적 획득!",
+    "earnedAt": "획득일시 {{datetime}}",
     "share": "공유하기",
     "shareText": "🏆 새로운 업적 획득! {{name}} — MachineFit",
     "shareSaved": "공유 이미지를 저장했어요.",

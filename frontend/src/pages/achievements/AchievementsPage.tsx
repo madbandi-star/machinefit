@@ -59,6 +59,20 @@ function formatInt(n: number, locale: string): string {
   return Math.floor(n).toLocaleString(locale.startsWith('ko') ? 'ko-KR' : 'en-US');
 }
 
+/** Achievement unlock timestamp for popup / cards (date + time). */
+function formatEarnedAt(iso: string | undefined, locale: string): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleString(locale.startsWith('ko') ? 'ko-KR' : 'en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export function AchievementsPage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
@@ -136,6 +150,9 @@ export function AchievementsPage() {
   }, [unlockedForPopup, seenUnlockKey, popupEnabled]);
 
   const currentUnlock = unlockQueue[0] ?? null;
+  const currentUnlockEarnedAt = currentUnlock
+    ? formatEarnedAt(currentUnlock.earnedAt, locale)
+    : null;
   const unlockIndex =
     unlockBatchTotal > 0 ? unlockBatchTotal - unlockQueue.length + 1 : 1;
   const unlockRemaining = Math.max(0, unlockQueue.length - 1);
@@ -448,6 +465,11 @@ export function AchievementsPage() {
               <div className="achievement-unlock__emoji">{currentUnlock.def.emoji}</div>
               <p className="achievement-unlock__eyebrow">{t('achievements.unlocked')}</p>
               <h3 className="achievement-unlock__name">{loc(currentUnlock.def.name, locale)}</h3>
+              {currentUnlockEarnedAt ? (
+                <p className="achievement-unlock__earned-at">
+                  {t('achievements.earnedAt', { datetime: currentUnlockEarnedAt })}
+                </p>
+              ) : null}
               <p className="achievement-unlock__desc">
                 {loc(currentUnlock.def.description, locale)}
                 <br />

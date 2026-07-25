@@ -352,6 +352,14 @@
   overflow-wrap: anywhere;
 }
 
+.achievement-unlock__earned-at {
+  margin: 0.4rem 0 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(246, 215, 122, 0.92);
+}
+
 .achievement-unlock__desc {
   margin: 0.55rem 0 0.65rem;
   color: rgba(255, 248, 231, 0.75);
