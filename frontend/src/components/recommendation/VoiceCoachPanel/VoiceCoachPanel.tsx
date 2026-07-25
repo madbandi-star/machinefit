@@ -150,7 +150,9 @@ export function VoiceCoachPanel({
     : showHoldStage
       ? countdown != null && countdown > 0
         ? String(countdown)
-        : t('machines:voiceCoach.holdCueShort')
+        : countdown === 0
+          ? '!'
+          : t('machines:voiceCoach.holdCueShort')
       : showCountdownStage
         ? String(countdown)
         : phase === 'start'
