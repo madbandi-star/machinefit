@@ -8,6 +8,8 @@ interface RestTimerBannerProps {
   onDismiss: () => void;
   /** Fired when rest finishes (timer → 0) or user skips early — next set ready. */
   onReadyForNextSet?: () => void;
+  /** Manual voice-count start during rest (does not require set-complete). */
+  onStartCount?: () => void;
 }
 
 function formatCountdown(totalSeconds: number): string {
@@ -34,6 +36,7 @@ export function RestTimerBanner({
   setNumber,
   onDismiss,
   onReadyForNextSet,
+  onStartCount,
 }: RestTimerBannerProps) {
   const { t } = useTranslation('machines');
   const [remaining, setRemaining] = useState(seconds);
@@ -44,9 +47,11 @@ export function RestTimerBanner({
   useEffect(() => {
     completedRef.current = false;
     setRemaining(seconds);
+    let cancelled = false;
 
     const finish = () => {
-      if (completedRef.current) return;
+      // Unmount / manual count-start clears the banner — never auto-start after that.
+      if (cancelled || completedRef.current) return;
       completedRef.current = true;
       setRemaining(0);
       void notifyRestComplete(
@@ -58,7 +63,9 @@ export function RestTimerBanner({
 
     if (seconds <= 0) {
       finish();
-      return undefined;
+      return () => {
+        cancelled = true;
+      };
     }
 
     const startedAt = Date.now();
@@ -72,7 +79,10 @@ export function RestTimerBanner({
       }
     }, 250);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
   }, [seconds, setNumber, t]);
 
   const handleDismiss = () => {
@@ -91,9 +101,24 @@ export function RestTimerBanner({
         </span>
         <strong className="rest-timer-banner__time">{formatCountdown(remaining)}</strong>
       </div>
-      <button type="button" className="btn btn--secondary rest-timer-banner__dismiss" onClick={handleDismiss}>
-        {remaining <= 0 ? t('restTimer.done') : t('restTimer.skip')}
-      </button>
+      <div className="rest-timer-banner__actions">
+        {onStartCount ? (
+          <button
+            type="button"
+            className="btn btn--primary rest-timer-banner__dismiss"
+            onClick={onStartCount}
+          >
+            {t('voiceCoach.start')}
+          </button>
+        ) : null}
+        <button
+          type="button"
+          className="btn btn--secondary rest-timer-banner__dismiss"
+          onClick={handleDismiss}
+        >
+          {remaining <= 0 ? t('restTimer.done') : t('restTimer.skip')}
+        </button>
+      </div>
     </div>
   );
 }

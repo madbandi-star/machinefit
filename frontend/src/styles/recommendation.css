@@ -1408,6 +1408,13 @@
   color: var(--color-text);
 }
 
+.rest-timer-banner__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .rest-timer-banner__dismiss {
   width: 100%;
   min-height: 2.75rem;

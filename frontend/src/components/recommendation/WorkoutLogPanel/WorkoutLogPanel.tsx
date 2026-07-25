@@ -303,13 +303,15 @@ export function WorkoutLogPanel({
   voiceCoachStartRef.current = voiceCoach.start;
   const voiceCoachRunningRef = useRef(voiceCoach.isRunning);
   voiceCoachRunningRef.current = voiceCoach.isRunning;
+  /** Set synchronously on manual Start so rest-end auto-start cannot kill it. */
+  const manualCountStartRef = useRef(false);
   const restSpeechAbortRef = useRef<AbortController | null>(null);
   const handleRestReadyForNextSet = useCallback(() => {
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
     setRestTimer(null);
-    // Keep an active set-count session running when rest ends or is skipped.
-    if (voiceCoachRunningRef.current) return;
+    // Manual Start during rest (or an already-running count) wins — do not restart/kill.
+    if (manualCountStartRef.current || voiceCoachRunningRef.current) return;
     // Soft-stop only — set-complete already unlocked audio in a user gesture;
     // ending the session here would mute auto-start (no fresh tap).
     stopVoiceCoach({ keepAudioSession: true });
@@ -317,11 +319,26 @@ export function WorkoutLogPanel({
     voiceCoachStartRef.current();
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
+    // Count Start must work anytime: before set-complete, mid-rest, during rest tips.
+    manualCountStartRef.current = true;
+    voiceCoachRunningRef.current = true;
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
+    // Clear rest UI without going through Skip→onReady (that raced and killed count).
     setRestTimer(null);
     voiceCoachStartRef.current();
   }, []);
+  const stopVoiceCoachSession = useCallback(() => {
+    manualCountStartRef.current = false;
+    voiceCoach.stop();
+  }, [voiceCoach]);
+
+  useEffect(() => {
+    // Allow rest auto-start again after a manual/auto count session ends.
+    if (!voiceCoach.isRunning) {
+      manualCountStartRef.current = false;
+    }
+  }, [voiceCoach.isRunning]);
   const setCountInputId = `${idPrefix}-set-count`;
   const weightStepKg = getWeightStepKg(machineCode);
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
@@ -1304,6 +1321,7 @@ export function WorkoutLogPanel({
         setNumber={restTimer.setNumber}
         onDismiss={() => setRestTimer(null)}
         onReadyForNextSet={handleRestReadyForNextSet}
+        onStartCount={voiceCoachEnabled ? startVoiceCoach : undefined}
       />
     ) : null;
 
@@ -1338,7 +1356,7 @@ export function WorkoutLogPanel({
       intensity={voiceCoach.intensity}
       isRunning={voiceCoach.isRunning}
       onStart={startVoiceCoach}
-      onStop={voiceCoach.stop}
+      onStop={stopVoiceCoachSession}
       idPrefix={`${idPrefix}-voice-coach`}
       compact={compact}
     />
