@@ -20,9 +20,9 @@ export type VoiceCoachPhase =
 export interface VoiceCoachPhaseDetail {
   rep?: number;
   countdown?: number;
-  /** Exercise-count only: inside turbo window. */
+  /** Inside turbo window (number counts + one-more). */
   turbo?: boolean;
-  /** Exercise-count only: 0–1 intensity for UI/haptics. */
+  /** 0–1 intensity for UI/haptics (number counts + one-more). */
   intensity?: number;
 }
 
@@ -34,7 +34,7 @@ export interface VoiceCoachOptions {
   /** Silence after each spoken rep (ms). Defaults to VOICE_COACH_TIMING.repGapMs. */
   repGapMs?: number;
   /**
-   * Exercise-count pacing only (prep/rest unchanged).
+   * Count pacing for number reps + optional one-more cues (prep/rest unchanged).
    * Default: AI accel + turbo.
    */
   countMode?: VoiceCountMode;
@@ -398,10 +398,12 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     await speechManager.speak(startPhrase(locale), signal);
     await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
 
-    // Exercise counts only — AI accel / turbo schedule (voice rate/pitch unchanged).
+    // Number counts + optional one-more share one AI accel / turbo schedule
+    // (voice rate/pitch unchanged; prep/rest stay fixed).
     onPhaseChange?.('counting', { rep: 0 });
+    const totalCounts = oneMoreEnabled ? reps + oneMoreReps : reps;
     const pace = buildCountPaceSchedule({
-      totalCounts: reps,
+      totalCounts,
       baseGapMs: repGapMs,
       mode: countMode,
       minGapMs: VOICE_COACH_REP_GAP.minMs,
@@ -410,7 +412,11 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     await speechManager.speakQueue(repWords, {
       signal,
       gapMs: repGapMs,
-      getGapMs: (index) => pace[index]?.gapAfterMs ?? repGapMs,
+      getGapMs: (index) => {
+        // Last number → one-more bridge is applied below from pace[reps - 1].
+        if (index >= reps - 1) return 0;
+        return pace[index]?.gapAfterMs ?? repGapMs;
+      },
       onItemStart: (index) => {
         const step = pace[index];
         onPhaseChange?.('counting', {
@@ -422,17 +428,28 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     });
 
     if (oneMoreEnabled) {
-      // Pause after final rep before "하나더" (last schedule gap is 0 by design).
-      const bridgeGap =
-        reps >= 2 ? pace[reps - 2]?.gapAfterMs || repGapMs : repGapMs;
-      await sleep(bridgeGap, signal);
-      onPhaseChange?.('oneMore', { rep: reps });
+      const bridgeGap = pace[reps - 1]?.gapAfterMs ?? oneMoreGapMs;
+      if (bridgeGap > 0) await sleep(bridgeGap, signal);
+      onPhaseChange?.('oneMore', {
+        rep: reps,
+        turbo: pace[reps]?.turbo ?? false,
+        intensity: pace[reps]?.intensity ?? 0,
+      });
       const oneMoreWords = Array.from({ length: oneMoreReps }, () => oneMorePhrase(locale));
       await speechManager.speakQueue(oneMoreWords, {
         signal,
         gapMs: oneMoreGapMs,
+        getGapMs: (index) => {
+          if (index >= oneMoreReps - 1) return 0;
+          return pace[reps + index]?.gapAfterMs ?? oneMoreGapMs;
+        },
         onItemStart: (index) => {
-          onPhaseChange?.('oneMore', { rep: reps + index + 1 });
+          const step = pace[reps + index];
+          onPhaseChange?.('oneMore', {
+            rep: reps + index + 1,
+            turbo: step?.turbo ?? false,
+            intensity: step?.intensity ?? 0,
+          });
         },
       });
     }

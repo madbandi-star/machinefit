@@ -248,7 +248,7 @@
     "voiceCoachOneMoreCount": "One more count",
     "voiceCoachOneMoreCountUnit": "reps",
     "voiceCountMode": "Count mode",
-    "voiceCountModeDesc": "Applies to exercise counts only. Prep and rest cues stay the same.",
+    "voiceCountModeDesc": "Applies to number counts and one-more cues. Prep and rest stay the same.",
     "voiceCountMode_normal": "Normal",
     "voiceCountMode_ai_accel": "AI accel",
     "voiceCountMode_ai_accel_turbo": "AI accel + turbo",

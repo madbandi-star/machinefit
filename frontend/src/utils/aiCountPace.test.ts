@@ -61,4 +61,29 @@ for (const total of [10, 30, 45, 60, 90, 120]) {
   }
 }
 
+// Number reps + one-more share one schedule so turbo lands on the true finale.
+{
+  const reps = 10;
+  const oneMore = 3;
+  const combined = buildCountPaceSchedule({
+    totalCounts: reps + oneMore,
+    baseGapMs: 2000,
+    mode: 'ai_accel_turbo',
+  });
+  assert.equal(combined.length, reps + oneMore);
+  const turboN = resolveTurboCount(reps + oneMore);
+  assert.equal(combined.filter((s) => s.turbo).length, turboN);
+  // Last one-more steps should be in turbo when turbo window covers the end.
+  assert.ok(combined[combined.length - 1].turbo);
+  assert.ok(combined[reps + oneMore - 2].gapAfterMs < combined[0].gapAfterMs);
+
+  const accelOnly = buildCountPaceSchedule({
+    totalCounts: reps + oneMore,
+    baseGapMs: 2000,
+    mode: 'ai_accel',
+  });
+  assert.ok(accelOnly.every((s) => !s.turbo));
+  assert.ok(accelOnly[0].gapAfterMs >= accelOnly[accelOnly.length - 2].gapAfterMs);
+}
+
 console.log('aiCountPace.test.ts: ok');

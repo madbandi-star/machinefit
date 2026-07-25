@@ -99,17 +99,14 @@ export function useVoiceCoachSession({
             } else if (detail?.countdown != null) {
               setCountdown(detail.countdown);
             }
-            if (nextPhase === 'counting') {
+            if (nextPhase === 'counting' || nextPhase === 'oneMore') {
               const isTurbo = Boolean(detail?.turbo);
-              const nextIntensity = detail?.intensity ?? 0;
+              const nextIntensity = detail?.intensity ?? (nextPhase === 'oneMore' ? 1 : 0);
               setTurbo(isTurbo);
               setIntensity(nextIntensity);
               if (detail?.rep && detail.rep > 0) {
                 hapticCountTick(isTurbo);
               }
-            } else if (nextPhase === 'oneMore') {
-              setTurbo(false);
-              setIntensity(1);
             }
             if (nextPhase === 'done' || nextPhase === 'idle') {
               setCountdown(null);
