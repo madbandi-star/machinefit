@@ -225,7 +225,7 @@ export function BodyMetricsFields({
             <ScrollPicker
               value={age}
               onChange={onAgeChange}
-              min={13}
+              min={14}
               max={100}
               step={1}
               size={pickerSize}

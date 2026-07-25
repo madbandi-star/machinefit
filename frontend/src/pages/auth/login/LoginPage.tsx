@@ -11,10 +11,12 @@ import { useUIStore } from '@/store/ui.store';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { DEMO_LOGIN_EMAIL, DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
+import { isDemoAuthEnabled } from '@/utils/demoAuthMode';
 import { ROUTES } from '@/constants/routes';
 import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/auth.css';
+import '@/styles/legal.css';
 
 export function LoginPage() {
   const { t } = useTranslation();
@@ -22,6 +24,7 @@ export function LoginPage() {
   const location = useLocation();
   const setAuth = useAuthStore((s) => s.setAuth);
   const showToast = useUIStore((s) => s.showToast);
+  const demoAuth = isDemoAuthEnabled();
 
   const savedEmail = useCredentialsStore((s) => s.email);
   const rememberLogin = useCredentialsStore((s) => s.rememberLogin);
@@ -29,8 +32,8 @@ export function LoginPage() {
   const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
   const credentialsHydrated = usePersistHydration(useCredentialsStore.persist);
 
-  const [email, setEmail] = useState(DEMO_LOGIN_EMAIL);
-  const password = DEMO_REGISTER_PASSWORD;
+  const [email, setEmail] = useState(demoAuth ? DEMO_LOGIN_EMAIL : '');
+  const [password, setPassword] = useState(demoAuth ? DEMO_REGISTER_PASSWORD : '');
   const [rememberMe, setRememberMe] = useState(false);
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
   const autoLoginAttempted = useRef(false);
@@ -46,7 +49,7 @@ export function LoginPage() {
     setAuth(user, tokens);
     syncUserSettings(user);
     if (shouldSave) {
-      saveCredentials(email, password);
+      saveCredentials(email);
     } else {
       clearCredentials();
     }
@@ -74,7 +77,8 @@ export function LoginPage() {
       setRememberMe(rememberLogin);
     }
 
-    if (rememberLogin && savedEmail) {
+    // Auto-login only in demo-auth mode (fixed password). Never store passwords.
+    if (demoAuth && rememberLogin && savedEmail) {
       autoLoginAttempted.current = true;
       setAutoLoggingIn(true);
       authApi
@@ -95,6 +99,7 @@ export function LoginPage() {
     credentialsHydrated,
     rememberLogin,
     savedEmail,
+    demoAuth,
     from,
     navigate,
     setAuth,
@@ -148,7 +153,13 @@ export function LoginPage() {
         </div>
       </section>
 
-      <form className="auth-form" onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }}>
+      <form
+        className="auth-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          mutation.mutate();
+        }}
+      >
         <input
           className="input"
           type="email"
@@ -158,16 +169,29 @@ export function LoginPage() {
           autoComplete="email"
           required
         />
-        <input
-          className="input"
-          type="text"
-          placeholder={t('auth.passwordDemoFixedPlaceholder')}
-          value={password}
-          readOnly
-          aria-readonly="true"
-          autoComplete="off"
-          title={t('auth.passwordDemoFixedHint')}
-        />
+        {demoAuth ? (
+          <input
+            className="input"
+            type="text"
+            placeholder={t('auth.passwordDemoFixedPlaceholder')}
+            value={password}
+            readOnly
+            aria-readonly="true"
+            autoComplete="off"
+            title={t('auth.passwordDemoFixedHint')}
+          />
+        ) : (
+          <input
+            className="input"
+            type="password"
+            placeholder={t('auth.passwordPlaceholder')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+            minLength={1}
+          />
+        )}
         <label className="checkbox-label">
           <input
             type="checkbox"
@@ -180,9 +204,12 @@ export function LoginPage() {
           {mutation.isPending ? '...' : t('nav.login')}
         </button>
       </form>
-
       <p className="auth-page__footer">
         <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
+        {' · '}
+        <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
+        {' · '}
+        <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
       </p>
     </PageShell>
   );

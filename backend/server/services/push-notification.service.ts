@@ -99,12 +99,23 @@ export const pushNotificationService = {
       throw new AppError(403, 'FORBIDDEN', 'Cannot compose push notifications');
     }
 
-    const { recipients, skipped: resolveSkipped } =
+    let { recipients, skipped: resolveSkipped } =
       await pushAudienceService.resolveRecipients(
         sender.id,
         sender.roleCode,
         input.audience
       );
+
+    // Marketing-style kinds require marketing_opt_in (compliance P1).
+    const marketingKinds = new Set(['general', 'event']);
+    if (marketingKinds.has(input.kind) && recipients.length > 0) {
+      const allowed = await userRepository.listMarketingOptInUserIds(
+        recipients.map((r) => r.id)
+      );
+      const before = recipients.length;
+      recipients = recipients.filter((r) => allowed.has(r.id));
+      resolveSkipped += before - recipients.length;
+    }
 
     if (recipients.length === 0) {
       throw new AppError(400, 'NO_RECIPIENTS', 'No eligible recipients for this audience');

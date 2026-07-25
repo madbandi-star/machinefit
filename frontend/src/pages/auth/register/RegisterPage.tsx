@@ -35,13 +35,15 @@ import {
   markDemoRegisterSlotUsed,
   normalizeEmailDomain,
 } from '@/utils/demoRegisterDefaults';
+import { isDemoAuthEnabled } from '@/utils/demoAuthMode';
 import {
   getMissingRegisterFields,
   type RegisterFormField,
 } from '@/utils/validateRegisterForm';
 import { ROUTES } from '@/constants/routes';
-import type { User, AuthTokens } from '@machinefit/shared';
+import { LEGAL_DOC_VERSION, type User, type AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
+import '@/styles/legal.css';
 
 const REFERRAL_STORAGE_KEY = 'mf_referral_code';
 
@@ -70,12 +72,16 @@ export function RegisterPage() {
     }
   }, [referralFromUrl]);
 
+  const demoAuth = isDemoAuthEnabled();
   const demoSlot = useMemo(() => getDemoRegisterSlot(), []);
 
   const [emailLocal, setEmailLocal] = useState(demoSlot.emailLocal);
   const [emailDomainPreset, setEmailDomainPreset] = useState<EmailDomainPreset>('gmail.com');
   const [emailCustomDomain, setEmailCustomDomain] = useState('');
-  const password = DEMO_REGISTER_PASSWORD;
+  const [password, setPassword] = useState(demoAuth ? DEMO_REGISTER_PASSWORD : '');
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [displayName, setDisplayName] = useState(demoSlot.displayName);
   const [unitHeight, setUnitHeight] = useState<UnitHeight>('cm');
   const [unitWeight, setUnitWeight] = useState<UnitWeight>('kg');
@@ -115,6 +121,10 @@ export function RegisterPage() {
         homeGymId: homeGym.homeGymId,
         homeGymName: homeGym.homeGymName?.trim(),
         experienceLevel: experienceLevel!,
+        agreeTerms: true,
+        agreePrivacy: true,
+        agreeMarketing,
+        legalVersion: LEGAL_DOC_VERSION,
       }),
     onSuccess: async (res) => {
       markDemoRegisterSlotUsed();
@@ -196,6 +206,11 @@ export function RegisterPage() {
       return;
     }
 
+    if (!agreeTerms || !agreePrivacy) {
+      showToast(t('auth.consentRequired'), 'error');
+      return;
+    }
+
     setMissingFields([]);
     mutation.mutate();
   };
@@ -231,16 +246,29 @@ export function RegisterPage() {
           onCustomDomainChange={setEmailCustomDomain}
           invalid={hasError('email')}
         />
-        <input
-          className={`input${hasError('password') ? ' input--invalid' : ''}`}
-          type="text"
-          placeholder={t('auth.passwordDemoFixedPlaceholder')}
-          value={password}
-          readOnly
-          aria-readonly="true"
-          autoComplete="off"
-          title={t('auth.passwordDemoFixedHint')}
-        />
+        {demoAuth ? (
+          <input
+            className={`input${hasError('password') ? ' input--invalid' : ''}`}
+            type="text"
+            placeholder={t('auth.passwordDemoFixedPlaceholder')}
+            value={password}
+            readOnly
+            aria-readonly="true"
+            autoComplete="off"
+            title={t('auth.passwordDemoFixedHint')}
+          />
+        ) : (
+          <input
+            className={`input${hasError('password') ? ' input--invalid' : ''}`}
+            type="password"
+            placeholder={t('auth.passwordPlaceholder')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+        )}
 
         <section className="form-section">
           <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
@@ -333,6 +361,45 @@ export function RegisterPage() {
             />
           </div>
         </section>
+
+        <div className="consent-stack" role="group" aria-label={t('auth.consentGroup')}>
+          <label>
+            <input
+              type="checkbox"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+              required
+            />
+            <span>
+              <Link to={ROUTES.TERMS} target="_blank" rel="noreferrer">
+                {t('legal.termsTitle')}
+              </Link>
+              {t('auth.agreeTermsSuffix')}
+            </span>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={agreePrivacy}
+              onChange={(e) => setAgreePrivacy(e.target.checked)}
+              required
+            />
+            <span>
+              <Link to={ROUTES.PRIVACY} target="_blank" rel="noreferrer">
+                {t('legal.privacyTitle')}
+              </Link>
+              {t('auth.agreePrivacySuffix')}
+            </span>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={agreeMarketing}
+              onChange={(e) => setAgreeMarketing(e.target.checked)}
+            />
+            <span>{t('auth.agreeMarketing')}</span>
+          </label>
+        </div>
 
         <button type="submit" className="btn btn--primary btn--block" disabled={mutation.isPending}>
           {mutation.isPending ? '...' : t('nav.register')}
