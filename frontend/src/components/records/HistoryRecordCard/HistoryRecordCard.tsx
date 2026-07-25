@@ -368,6 +368,7 @@ export function HistoryRecordCard({
             fitFeedback.displayAdjustedSettings?.recommendedRepsMax ??
             customSettings.recommendedRepsMin ??
             customSettings.recommendedRepsMax,
+          // 잘맞음 → 추천횟수 (card.settings is AI/base recommendation).
           recommendedReps:
             card.settings.recommendedRepsMin ?? card.settings.recommendedRepsMax,
         })}

@@ -327,9 +327,12 @@ export function RecommendationResultPage() {
                 fitFeedback.displayAdjustedSettings?.recommendedRepsMax ??
                 fitFeedback.customSettings.recommendedRepsMin ??
                 fitFeedback.customSettings.recommendedRepsMax,
+              // Prefer AI block, then base settings (AI object may omit reps).
               recommendedReps:
-                (result.aiRecommendedSettings ?? result.settings).recommendedRepsMin ??
-                (result.aiRecommendedSettings ?? result.settings).recommendedRepsMax,
+                result.aiRecommendedSettings?.recommendedRepsMin ??
+                result.aiRecommendedSettings?.recommendedRepsMax ??
+                result.settings.recommendedRepsMin ??
+                result.settings.recommendedRepsMax,
             })}
             isAuthenticated={isAuthenticated}
             variant="history"

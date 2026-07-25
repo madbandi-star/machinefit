@@ -261,8 +261,11 @@ export function WorkoutLogPanel({
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
 
-  // Seed voice-coach target from 추천/조정 횟수 once per machine context.
-  // After the user edits the picker, keep their value (do not re-seed).
+  // Seed voice-coach target from fit-driven 추천/조정 횟수 (`volumeReps`).
+  // - 추천값 잘맞음 / 미선택 → 추천횟수
+  // - 셋팅값 조정 필요 → 조정횟수
+  // After the user edits the picker, keep their value until `volumeReps` changes
+  // (e.g. they tap 잘맞음 → re-seed to 추천횟수 and update settings default).
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
   const [voiceTargetUserOverride, setVoiceTargetUserOverride] = useState<{
     context: string;
@@ -278,6 +281,18 @@ export function WorkoutLogPanel({
     voiceTargetUserOverride?.context === voiceTargetSeedContext
       ? voiceTargetUserOverride.reps
       : seededVoiceTargetReps;
+
+  useEffect(() => {
+    if (volumeReps == null || volumeReps <= 0) return;
+    const next = Math.max(1, Math.min(30, Math.round(volumeReps)));
+    // Fit rating / recommendation seed changed — drop stale manual override.
+    setVoiceTargetUserOverride((prev) =>
+      prev?.context === voiceTargetSeedContext ? null : prev
+    );
+    // Keep settings "기본 목표 횟수" aligned (잘맞음 → 추천횟수).
+    setVoiceCoachTargetReps(next);
+  }, [volumeReps, voiceTargetSeedContext, setVoiceCoachTargetReps]);
+
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
       const next = Math.max(1, Math.min(30, Math.round(reps)));
