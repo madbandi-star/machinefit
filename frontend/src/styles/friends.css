@@ -1,0 +1,229 @@
+.friends-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-bottom: 2rem;
+}
+
+.friends-subnav {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.15rem;
+  scrollbar-width: none;
+}
+
+.friends-subnav::-webkit-scrollbar {
+  display: none;
+}
+
+.friends-subnav__link {
+  flex: 0 0 auto;
+  border: 1px solid var(--color-border, #d0d5dd);
+  background: transparent;
+  color: inherit;
+  border-radius: 0.55rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.friends-subnav__link.is-active {
+  border-color: var(--color-accent, #2563eb);
+  background: color-mix(in srgb, var(--color-accent, #2563eb) 12%, transparent);
+  font-weight: 600;
+}
+
+.friends-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.friends-toolbar__row {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.friends-toolbar input,
+.friends-toolbar select {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.5rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--color-border, #d0d5dd);
+  padding: 0.45rem 0.7rem;
+  background: var(--color-surface, #fff);
+  color: inherit;
+}
+
+.friends-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.friends-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.15rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border, #d0d5dd) 70%, transparent);
+  text-decoration: none;
+  color: inherit;
+}
+
+.friends-row__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--color-accent, #2563eb) 15%, transparent);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.friends-row__meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.friends-row__name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.friends-row__sub {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #667085);
+  margin-top: 0.15rem;
+}
+
+.friends-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+}
+
+.friends-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.friends-row__actions .btn {
+  min-height: 2.1rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.friends-pin {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.friends-load-more {
+  margin-top: 0.5rem;
+}
+
+.friends-privacy-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.friends-privacy-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.friends-feed-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border, #d0d5dd) 70%, transparent);
+}
+
+.friends-feed-item__title {
+  font-weight: 600;
+}
+
+.friends-feed-item__body {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #667085);
+  margin-top: 0.2rem;
+}
+
+.friends-rank-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border, #d0d5dd) 70%, transparent);
+}
+
+.friends-rank-row__n {
+  width: 1.6rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.friends-profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  text-align: center;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.friends-profile-hero__avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--color-accent, #2563eb) 15%, transparent);
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.friends-profile-section {
+  margin-top: 1rem;
+}
+
+.friends-profile-section h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+}
+
+.friends-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.friends-chip {
+  border: 1px solid var(--color-border, #d0d5dd);
+  border-radius: 0.45rem;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.8rem;
+}
+
+.friends-refresh {
+  align-self: flex-end;
+}

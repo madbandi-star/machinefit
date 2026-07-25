@@ -18,6 +18,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN_TRADES, labelKey: 'trades.nav', end: false },
   { to: ROUTES.ADMIN_ONLINE_PT, labelKey: 'onlinePt.nav', end: false },
   { to: ROUTES.ADMIN_PUSH, labelKey: 'push.nav', end: false },
+  { to: ROUTES.ADMIN_FRIENDS, labelKey: 'friends.nav', end: false },
 ] as const;
 
 export function AdminLayout() {

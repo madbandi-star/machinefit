@@ -132,4 +132,20 @@ export const QUERY_KEYS = {
     ['push', 'campaigns', params ?? {}] as const,
   pushCampaignLogs: (campaignId: string) =>
     ['push', 'campaigns', campaignId, 'logs'] as const,
+  friends: ['friends'] as const,
+  friendsList: (params?: Record<string, unknown>) => ['friends', 'list', params ?? {}] as const,
+  friendsSearch: (q: string, page: number) => ['friends', 'search', q, page] as const,
+  friendsIncoming: (page: number) => ['friends', 'incoming', page] as const,
+  friendsOutgoing: (page: number) => ['friends', 'outgoing', page] as const,
+  friendsBlocked: (page: number) => ['friends', 'blocked', page] as const,
+  friendsPrivacy: ['friends', 'privacy'] as const,
+  friendsFeed: (page: number) => ['friends', 'feed', page] as const,
+  friendsRankings: (metric: string, page: number) =>
+    ['friends', 'rankings', metric, page] as const,
+  friendsInvite: ['friends', 'invite'] as const,
+  friendProfile: (userId: string) => ['friends', 'profile', userId] as const,
+  friendsAdminStats: ['friends', 'admin', 'stats'] as const,
+  friendsAdminList: (page: number) => ['friends', 'admin', 'list', page] as const,
+  friendsAdminReports: ['friends', 'admin', 'reports'] as const,
+  friendsAdminSpam: ['friends', 'admin', 'spam'] as const,
 } as const;

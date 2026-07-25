@@ -21,3 +21,4 @@ export * from './gym-directory.schema.js';
 export * from './machine-trade.schema.js';
 export * from './online-pt.schema.js';
 export * from './push-notification.schema.js';
+export * from './friend.schema.js';

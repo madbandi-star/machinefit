@@ -115,6 +115,14 @@ const onlinePtWallet = () =>
   import('@/pages/online-pt/OnlinePtWalletPage').then((m) => ({
     default: m.OnlinePtWalletPage,
   }));
+const friendsHub = () =>
+  import('@/pages/friends/FriendsHubPage').then((m) => ({ default: m.FriendsHubPage }));
+const friendProfile = () =>
+  import('@/pages/friends/FriendProfilePage').then((m) => ({ default: m.FriendProfilePage }));
+const adminFriends = () =>
+  import('@/pages/admin/friends/AdminFriendsPage').then((m) => ({
+    default: m.AdminFriendsPage,
+  }));
 const login = () =>
   import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
 const register = () =>
@@ -280,6 +288,16 @@ export const router = createBrowserRouter(
             { path: ROUTES.ONLINE_PT_QUESTIONS, element: lazyRoute(onlinePtQuestions) },
             { path: ROUTES.ONLINE_PT_QUESTION, element: lazyRoute(onlinePtQuestion) },
             { path: ROUTES.PUSH, element: lazyRoute(pushCompose) },
+            { path: ROUTES.FRIENDS, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_ADD, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_INCOMING, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_OUTGOING, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_BLOCKED, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_PRIVACY, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_FEED, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_RANKINGS, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIENDS_INVITE, element: lazyRoute(friendsHub) },
+            { path: ROUTES.FRIEND_PROFILE, element: lazyRoute(friendProfile) },
           ],
         },
         {
@@ -357,6 +375,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
         { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },
+        { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

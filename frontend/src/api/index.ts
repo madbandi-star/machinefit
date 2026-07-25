@@ -529,6 +529,7 @@ export { machineTradeApi } from './machine-trade.api';
 
 export { onlinePtApi } from './online-pt.api';
 export { pushNotificationApi } from './push-notification.api';
+export { friendsApi } from './friends.api';
 export type { MachineTradeListParams, CreateMachineTradeFormInput } from './machine-trade.api';
 export { userMotivationTrackApi } from './user-motivation-track.api';
 export type {

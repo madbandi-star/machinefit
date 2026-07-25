@@ -27,7 +27,14 @@ export type NotificationType =
   | 'push_workout'
   | 'push_schedule'
   | 'push_trade'
-  | 'push_event';
+  | 'push_event'
+  | 'friend_request'
+  | 'friend_accepted'
+  | 'friend_removed'
+  | 'friend_activity'
+  | 'friend_pr'
+  | 'friend_workout_done'
+  | 'friend_rank_change';
 export interface Notification {
   id: string;
   userId: string;

@@ -26,3 +26,4 @@ export * from './gym-directory.types.js';
 export * from './machine-trade.types.js';
 export * from './online-pt.types.js';
 export * from './push-notification.types.js';
+export * from './friend.types.js';

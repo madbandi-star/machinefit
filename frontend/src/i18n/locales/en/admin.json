@@ -206,5 +206,8 @@
   },
   "push": {
     "nav": "Push notifications"
+  },
+  "friends": {
+    "nav": "Friends"
   }
 }
