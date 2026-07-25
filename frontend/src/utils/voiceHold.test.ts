@@ -4,9 +4,12 @@ import {
   clampVoiceHoldFlowMode,
   DEFAULT_VOICE_HOLD_FLOW_MODE,
   formatHoldCountdownWord,
+  holdCountdownClipKey,
   holdCuePhrase,
   isVoiceHoldDurationPreset,
+  pickHoldFinish,
   pickHoldFinishPhrase,
+  VOICE_HOLD_CLIP_KEYS,
   VOICE_HOLD_DURATION,
   VOICE_HOLD_DURATION_PRESETS,
   VOICE_HOLD_FLOW_MODES,
@@ -25,12 +28,20 @@ assert.ok(!isVoiceHoldDurationPreset(7));
 assert.equal(holdCuePhrase('ko'), '버텨!!!');
 assert.equal(holdCuePhrase('en'), 'Hold!!!');
 assert.equal(formatHoldCountdownWord(15), '15');
+assert.equal(holdCountdownClipKey(5), 'cd-5');
+assert.equal(holdCountdownClipKey(15), 'rep-15');
+assert.equal(holdCountdownClipKey(99), null);
+assert.equal(VOICE_HOLD_CLIP_KEYS.cue, 'hold');
 
 const finishes = new Set<string>();
+const finishKeys = new Set<string>();
 for (let i = 0; i < 20; i += 1) {
   finishes.add(pickHoldFinishPhrase('ko', () => i / 20));
+  const item = pickHoldFinish('ko', () => i / 20);
+  if (item.clipKey) finishKeys.add(item.clipKey);
 }
 assert.ok(finishes.has('완료!'));
 assert.ok(finishes.has('좋습니다!') || finishes.has('수고하셨습니다!'));
+assert.ok(finishKeys.has('finish-done'));
 
 console.log('voiceHold.test.ts: ok');
