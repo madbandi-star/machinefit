@@ -16,6 +16,7 @@ import {
 import {
   runVoiceCoachFlow,
   speakRestTipsAndWarnings,
+  stopVoiceCoach,
 } from './voiceCoach';
 import { speechManager } from './speechManager';
 
@@ -659,9 +660,7 @@ async function caseDoubleStartSecondWins(): Promise<void> {
   installMocks();
   resetCoachState();
   const ac1 = new AbortController();
-  const ac2 = new AbortController();
   const phases1: string[] = [];
-  const phases2: string[] = [];
 
   const run1 = runVoiceCoachFlow({
     targetReps: 3,
@@ -675,16 +674,16 @@ async function caseDoubleStartSecondWins(): Promise<void> {
     onPhaseChange: (p, d) => {
       phases1.push(p === 'countdown' && d?.countdown != null ? `countdown:${d.countdown}` : p);
       if (p === 'countdown' && d?.countdown === 5) {
+        // Mimic Start tapped again: abort + stopVoiceCoach soft path.
         ac1.abort();
-        stopVoiceCoachClips();
-        speechManager.cancel();
+        stopVoiceCoach({ keepAudioSession: true });
       }
     },
   });
 
-  await new Promise((r) => setTimeout(r, 50));
+  await new Promise((r) => setTimeout(r, 80));
 
-  const run2 = collectPhases((onPhaseChange) =>
+  const phases = await collectPhases((onPhaseChange) =>
     runVoiceCoachFlow({
       targetReps: 2,
       oneMoreEnabled: false,
@@ -693,15 +692,70 @@ async function caseDoubleStartSecondWins(): Promise<void> {
       countMode: 'normal',
       repGapMs: 40,
       locale: 'ko',
-      signal: ac2.signal,
       onPhaseChange,
     })
   );
 
   await run1;
-  const phases = await run2;
-  const ok = phases.includes('counting:2') && phases.includes('done') && !phases1.includes('done');
-  record('double-start/second-wins', ok, `first=${phases1.join('>')} secondDone=${phases.includes('done')}`);
+  const ok =
+    phases.includes('countdown:5') &&
+    phases.includes('countdown:1') &&
+    phases.includes('counting:2') &&
+    phases.includes('done');
+  record(
+    'double-start/second-wins',
+    ok,
+    `first=${phases1.join('>')} second=${phases.filter((p) => p.startsWith('countdown') || p.startsWith('counting') || p === 'done').join('>')}`
+  );
+}
+
+async function caseOverlapCleanupDoesNotKillSuccessor(): Promise<void> {
+  installMocks();
+  resetCoachState();
+
+  const ac1 = new AbortController();
+  let hitFive = false;
+  const run1 = runVoiceCoachFlow({
+    targetReps: 5,
+    oneMoreEnabled: false,
+    prepCount: 5,
+    flowMode: 'count',
+    countMode: 'normal',
+    repGapMs: 40,
+    locale: 'ko',
+    signal: ac1.signal,
+    onPhaseChange: (p, d) => {
+      if (p === 'countdown' && d?.countdown === 5 && !hitFive) {
+        hitFive = true;
+        ac1.abort();
+        stopVoiceCoach({ keepAudioSession: true });
+      }
+    },
+  });
+
+  // Successor starts immediately (same as UI Start after soft-stop).
+  await new Promise((r) => setTimeout(r, 30));
+  const phases = await collectPhases((onPhaseChange) =>
+    runVoiceCoachFlow({
+      targetReps: 3,
+      oneMoreEnabled: false,
+      prepCount: 5,
+      flowMode: 'count',
+      countMode: 'normal',
+      repGapMs: 40,
+      locale: 'ko',
+      onPhaseChange,
+    })
+  );
+  await run1;
+
+  const countdown = [5, 4, 3, 2, 1].every((n) => phases.includes(`countdown:${n}`));
+  const reps = [1, 2, 3].every((n) => phases.includes(`counting:${n}`));
+  record(
+    'overlap/old-finally-safe',
+    countdown && reps && phases.includes('done'),
+    phases.join('>')
+  );
 }
 
 async function main(): Promise<void> {
@@ -720,6 +774,7 @@ async function main(): Promise<void> {
   await caseAiAccelMode();
   await caseEnglishLocale();
   await caseDoubleStartSecondWins();
+  await caseOverlapCleanupDoesNotKillSuccessor();
 
   const failed = results.filter((r) => !r.ok);
   console.log('\n--- Summary ---');

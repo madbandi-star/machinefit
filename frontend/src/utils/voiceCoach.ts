@@ -304,7 +304,19 @@ export interface StopVoiceCoachOptions {
   keepAudioSession?: boolean;
 }
 
+/**
+ * Monotonic session id. Abort cleanup from an older run must not stop clips /
+ * end the audio session that a newer Start already owns (fixes "오/5만 외치고 끝").
+ */
+let voiceCoachSessionGeneration = 0;
+
+function bumpVoiceCoachSessionGeneration(): number {
+  voiceCoachSessionGeneration += 1;
+  return voiceCoachSessionGeneration;
+}
+
 export function stopVoiceCoach(options?: StopVoiceCoachOptions): void {
+  bumpVoiceCoachSessionGeneration();
   speechManager.cancel();
   stopVoiceCoachClips();
   if (!options?.keepAudioSession) {
@@ -322,26 +334,51 @@ export function speakVoiceText(
 }
 
 /**
- * Korean count cues: pre-recorded clip first, OS TTS fallback.
- * Non-Korean (or missing clip key) goes straight to TTS.
+ * Korean set-count path is Web Audio clips only — never interleave speechSynthesis.
+ * Mixing TTS + clips on mobile often plays the first clip (cd-5 / 「오」) then dies.
+ * Non-Korean still uses TTS.
  */
 async function speakCoachCue(options: {
   clipKey: string | null;
   text: string;
   locale?: string;
   signal?: AbortSignal;
+  /** ready = 준비 cue without a clip file */
+  kind?: 'ready' | 'count' | 'phrase';
 }): Promise<void> {
-  const { clipKey, text, locale, signal } = options;
-  if (isKoreanLocale(locale) && clipKey) {
+  const { clipKey, text, locale, signal, kind = 'phrase' } = options;
+
+  if (!isKoreanLocale(locale)) {
+    await speechManager.speak(text, signal);
+    return;
+  }
+
+  if (clipKey) {
     const played = await playVoiceCoachClip(clipKey, signal, DEFAULT_VOICE_COACH_PACK);
     if (played) return;
-    // Retry once after re-resuming audio (mobile can suspend mid-session).
     const ctx = await ensureVoiceCoachAudioRunning();
     if (ctx) {
       const retried = await playVoiceCoachClip(clipKey, signal, DEFAULT_VOICE_COACH_PACK);
       if (retried) return;
+      // Clip missing/failed — keep Web Audio pipeline alive with a tick (no TTS).
+      await playBeep(ctx, signal, kind === 'count' ? 640 : 820, 0.1);
+      return;
     }
   }
+
+  // 준비 / prep 10–6 (no cd-N.mp3): beep only so countdown clips stay healthy.
+  const ctx = await ensureVoiceCoachAudioRunning();
+  if (ctx) {
+    if (kind === 'ready') {
+      await playBeep(ctx, signal, 660, 0.09);
+      await playBeep(ctx, signal, 880, 0.09);
+    } else {
+      await playBeep(ctx, signal, 700, 0.1);
+    }
+    return;
+  }
+
+  // Absolute last resort when Web Audio is unavailable.
   await speechManager.speak(text, signal);
 }
 
@@ -409,14 +446,13 @@ export async function speakRestTipsAndWarnings(
  * Prefer calling this directly from the Start / set-complete tap handler.
  */
 export function unlockVoiceCoachAudio(): Promise<void> {
-  // Sync TTS unlock first — awaiting init() before unlock loses the gesture on mobile.
-  speechManager.unlock();
+  // Clip-first unlock only. Do NOT call speechSynthesis here — on iOS/WebKit,
+  // a gesture TTS unlock right before Web Audio often yields one clip then silence.
   const clipsUnlock = unlockVoiceCoachClips(DEFAULT_VOICE_COACH_PACK);
   const sessionUnlock = beginVoiceCoachAudioSession();
-  const initTts = speechManager.init();
 
   return (async () => {
-    await Promise.all([clipsUnlock, sessionUnlock, initTts]);
+    await Promise.all([clipsUnlock, sessionUnlock]);
     await ensureVoiceCoachAudioRunning();
   })();
 }
@@ -448,7 +484,10 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     prepCountOption ?? DEFAULT_VOICE_COACH_PREP_COUNT
   );
 
-  await speechManager.init();
+  // New run owns cleanup; older aborted runs must not tear us down.
+  const sessionGen = bumpVoiceCoachSessionGeneration();
+  const stillOwner = () => sessionGen === voiceCoachSessionGeneration;
+
   await beginVoiceCoachAudioSession();
   void preloadVoiceCoachClips({
     reps,
@@ -467,34 +506,34 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         await playBeep(audioCtx, signal, 880 + i * 40);
         if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
       }
-    } else {
-      await speechManager.speakQueue(
-        isKoreanLocale(locale) ? ['띡', '띡', '띡'] : ['tick', 'tick', 'tick'],
-        { signal, gapMs: 120 }
-      );
+    } else if (!isKoreanLocale(locale)) {
+      await speechManager.speakQueue(['tick', 'tick', 'tick'], { signal, gapMs: 120 });
     }
 
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 
     // Prep countdown — fixed pacing (never AI-accel / turbo).
-    // Clips for cd-5…1; 10–6 (prep 10) and "준비" fall back to TTS.
+    // Korean: clips for cd-5…1; 준비 / 10–6 use beeps (no TTS).
     onPhaseChange?.('countdown');
     await speakCoachCue({
       clipKey: null,
       text: readyPhrase(locale),
       locale,
       signal,
+      kind: 'ready',
     });
     await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
 
     for (let n = prepCount; n >= 1; n -= 1) {
       if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+      if (!stillOwner()) throw new DOMException('Aborted', 'AbortError');
       onPhaseChange?.('countdown', { countdown: n });
       await speakCoachCue({
         clipKey: countdownClipKey(n),
         text: formatCountdownWord(n, locale),
         locale,
         signal,
+        kind: 'count',
       });
       if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
     }
@@ -506,6 +545,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       text: startPhrase(locale),
       locale,
       signal,
+      kind: 'phrase',
     });
     await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
 
@@ -522,6 +562,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
 
     for (let i = 0; i < reps; i += 1) {
       if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+      if (!stillOwner()) throw new DOMException('Aborted', 'AbortError');
       const step = pace[i];
       onPhaseChange?.('counting', {
         rep: i + 1,
@@ -533,6 +574,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         text: formatRepWord(i + 1, locale),
         locale,
         signal,
+        kind: 'count',
       });
       // Last number → one-more bridge is applied below from pace[reps - 1].
       if (i < reps - 1) {
@@ -551,6 +593,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       });
       for (let i = 0; i < oneMoreReps; i += 1) {
         if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+        if (!stillOwner()) throw new DOMException('Aborted', 'AbortError');
         const step = pace[reps + i];
         onPhaseChange?.('oneMore', {
           rep: reps + i + 1,
@@ -562,6 +605,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
           text: oneMorePhrase(locale),
           locale,
           signal,
+          kind: 'phrase',
         });
         if (i < oneMoreReps - 1) {
           const gap = pace[reps + i]?.gapAfterMs ?? oneMoreGapMs;
@@ -573,7 +617,8 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     const finalRep = oneMoreEnabled ? reps + oneMoreReps : reps;
 
     // Additive hold extension — count / one-more logic above is unchanged.
-    if (options.afterCountHold) {
+    // Hold uses TTS; only run if this session still owns the generation.
+    if (options.afterCountHold && stillOwner()) {
       await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
       await runVoiceHoldSegment({
         durationSec: options.afterCountHold.durationSec,
@@ -605,14 +650,19 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     onPhaseChange?.('done', { rep: finalRep });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      speechManager.cancel();
-      stopVoiceCoachClips();
-      onPhaseChange?.('idle');
+      if (stillOwner()) {
+        speechManager.cancel();
+        stopVoiceCoachClips();
+        onPhaseChange?.('idle');
+      }
       return;
     }
     throw error;
   } finally {
-    await endVoiceCoachAudioSession();
+    // Never end the shared audio session if a newer Start already took ownership.
+    if (stillOwner()) {
+      await endVoiceCoachAudioSession();
+    }
   }
 }
 
@@ -629,7 +679,9 @@ export async function runVoiceHoldOnlySession(options: {
     options.holdDurationSec ?? VOICE_HOLD_DURATION.defaultSec
   );
 
-  await speechManager.init();
+  const sessionGen = bumpVoiceCoachSessionGeneration();
+  const stillOwner = () => sessionGen === voiceCoachSessionGeneration;
+
   await beginVoiceCoachAudioSession();
   const audioCtx = await ensureVoiceCoachAudioRunning();
 
@@ -640,11 +692,8 @@ export async function runVoiceHoldOnlySession(options: {
         await playBeep(audioCtx, signal, 880 + i * 40);
         if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
       }
-    } else {
-      await speechManager.speakQueue(
-        isKoreanLocale(locale) ? ['띡', '띡', '띡'] : ['tick', 'tick', 'tick'],
-        { signal, gapMs: 120 }
-      );
+    } else if (!isKoreanLocale(locale)) {
+      await speechManager.speakQueue(['tick', 'tick', 'tick'], { signal, gapMs: 120 });
     }
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 
@@ -673,14 +722,18 @@ export async function runVoiceHoldOnlySession(options: {
     onPhaseChange?.('done');
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      speechManager.cancel();
-      stopVoiceCoachClips();
-      onPhaseChange?.('idle');
+      if (stillOwner()) {
+        speechManager.cancel();
+        stopVoiceCoachClips();
+        onPhaseChange?.('idle');
+      }
       return;
     }
     throw error;
   } finally {
-    await endVoiceCoachAudioSession();
+    if (stillOwner()) {
+      await endVoiceCoachAudioSession();
+    }
   }
 }
 
