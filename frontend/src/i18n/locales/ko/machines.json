@@ -114,6 +114,7 @@
     "prepCount_10": "10 · 9 · … · 1",
     "countMode": "카운트 모드",
     "countMode_normal": "일반",
+    "countMode_normal_turbo": "일반 + 터보",
     "countMode_ai_accel": "AI 가속",
     "countMode_ai_accel_turbo": "AI 가속 + 터보",
     "turboBadge": "터보",
