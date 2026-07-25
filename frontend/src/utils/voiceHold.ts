@@ -106,6 +106,35 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
  * Speak "버텨!!!" then count durationSec → 1 on ~1s ticks, then a random finish phrase.
  * Abort-safe; does not cancel speechManager except via signal → caller stopVoiceCoach.
  */
+async function speakHoldLine(
+  text: string,
+  signal?: AbortSignal,
+  retries = 2
+): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    if (signal?.aborted) {
+      throw new DOMException('Aborted', 'AbortError');
+    }
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.resume();
+        } catch {
+          // ignore
+        }
+      }
+      await speechManager.speak(text, signal);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      await sleep(120 + attempt * 80, signal);
+    }
+  }
+  if (lastError) throw lastError;
+}
+
 export async function runVoiceHoldSegment(
   options: RunVoiceHoldSegmentOptions
 ): Promise<void> {
@@ -114,9 +143,17 @@ export async function runVoiceHoldSegment(
   const { signal, onPhaseChange } = options;
 
   await speechManager.init();
+  // Do not speechSynthesis.cancel() here — that undoes the Start-gesture TTS unlock.
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.resume();
+    } catch {
+      // ignore
+    }
+  }
 
   onPhaseChange?.('holdCue');
-  await speechManager.speak(holdCuePhrase(locale), signal);
+  await speakHoldLine(holdCuePhrase(locale), signal);
   await sleep(VOICE_HOLD_DURATION.afterCueMs, signal);
 
   const tickMs = VOICE_HOLD_DURATION.tickMs;
@@ -128,8 +165,7 @@ export async function runVoiceHoldSegment(
     }
     const n = durationSec - i;
     onPhaseChange?.('holdCountdown', { countdown: n });
-    // speak() cancels prior queue — one number at a time keeps ticks clean
-    await speechManager.speak(formatHoldCountdownWord(n, locale), signal);
+    await speakHoldLine(formatHoldCountdownWord(n, locale), signal);
 
     const target = segmentStart + (i + 1) * tickMs;
     const waitMs = Math.max(0, Math.round(target - performance.now()));
@@ -138,5 +174,5 @@ export async function runVoiceHoldSegment(
 
   const finishPhrase = pickHoldFinishPhrase(locale);
   onPhaseChange?.('holdFinish', { finishPhrase, countdown: 0 });
-  await speechManager.speak(finishPhrase, signal);
+  await speakHoldLine(finishPhrase, signal);
 }

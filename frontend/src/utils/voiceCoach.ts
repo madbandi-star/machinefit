@@ -446,8 +446,10 @@ export async function speakRestTipsAndWarnings(
  * Prefer calling this directly from the Start / set-complete tap handler.
  */
 export function unlockVoiceCoachAudio(): Promise<void> {
-  // Clip-first unlock only. Do NOT call speechSynthesis here — on iOS/WebKit,
-  // a gesture TTS unlock right before Web Audio often yields one clip then silence.
+  // Sync TTS unlock in the tap — required for Hold ("버텨") / rest tips.
+  // Silent unlock is safe; what broke clips was speaking real TTS mid-countdown.
+  speechManager.unlock();
+  void speechManager.init();
   const clipsUnlock = unlockVoiceCoachClips(DEFAULT_VOICE_COACH_PACK);
   const sessionUnlock = beginVoiceCoachAudioSession();
 

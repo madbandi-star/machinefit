@@ -117,12 +117,34 @@ class SpeechManagerImpl {
     return this.selectedVoice?.name ?? null;
   }
 
-  /** Cancel any in-flight utterance / queue. */
+  /** Cancel any in-flight utterance / queue (user Stop / hard reset). */
   cancel(): void {
     this.queueGeneration += 1;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
+  }
+
+  /**
+   * Start a new speak generation. Only calls speechSynthesis.cancel() when
+   * something is actually speaking — idle cancel() undoes mobile TTS unlock
+   * on iOS/WebView and makes Hold ("버텨") / rest tips silent.
+   */
+  private beginSpeakGeneration(): number {
+    this.queueGeneration += 1;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const synth = window.speechSynthesis;
+      if (synth.speaking || synth.pending) {
+        synth.cancel();
+      } else {
+        try {
+          synth.resume();
+        } catch {
+          // ignore
+        }
+      }
+    }
+    return this.queueGeneration;
   }
 
   /**
@@ -132,6 +154,11 @@ class SpeechManagerImpl {
   unlock(): void {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     try {
+      try {
+        window.speechSynthesis.resume();
+      } catch {
+        // ignore
+      }
       const utterance = this.createUtterance('\u200B');
       utterance.volume = 0;
       utterance.rate = 2;
@@ -252,11 +279,10 @@ class SpeechManagerImpl {
     });
   }
 
-  /** Speak one phrase. Cancels any existing queue first. */
+  /** Speak one phrase. Replaces an active utterance only when needed. */
   async speak(text: string, signal?: AbortSignal): Promise<void> {
     await this.init();
-    this.cancel();
-    const generation = this.queueGeneration;
+    const generation = this.beginSpeakGeneration();
     await this.speakUtterance(text, generation, signal);
   }
 
@@ -264,8 +290,7 @@ class SpeechManagerImpl {
   async speakQueue(texts: string[], options: SpeakQueueOptions = {}): Promise<void> {
     const { signal, gapMs = 120, getGapMs, onItemStart } = options;
     await this.init();
-    this.cancel();
-    const generation = this.queueGeneration;
+    const generation = this.beginSpeakGeneration();
 
     const items = texts.map((t) => t.trim()).filter(Boolean);
     for (let i = 0; i < items.length; i += 1) {
