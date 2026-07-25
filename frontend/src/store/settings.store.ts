@@ -19,9 +19,12 @@ import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
+  DEFAULT_VOICE_COACH_PACK,
   DEFAULT_VOICE_COACH_PREP_COUNT,
+  normalizeVoiceCoachPack,
   VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
+  type VoiceCoachPack,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
 import {
@@ -54,6 +57,8 @@ export const SETTINGS_DEFAULTS = {
   voiceRestTipsEnabled: true,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
   voiceCoachPrepCount: DEFAULT_VOICE_COACH_PREP_COUNT,
+  /** Korean clip pack: female | male */
+  voiceCoachPack: DEFAULT_VOICE_COACH_PACK,
   voiceCountMode: DEFAULT_VOICE_COUNT_MODE,
   /** count | count_hold | hold */
   voiceCoachFlowMode: DEFAULT_VOICE_HOLD_FLOW_MODE,
@@ -81,6 +86,8 @@ interface SettingsState {
   voiceCoachRepGapMs: number;
   /** Prep countdown length: 5→1 or 10→1. */
   voiceCoachPrepCount: VoiceCoachPrepCount;
+  /** Pre-recorded Korean voice pack. */
+  voiceCoachPack: VoiceCoachPack;
   /** Exercise-count pacing: normal | AI accel | AI accel + turbo. */
   voiceCountMode: VoiceCountMode;
   /** Session flow: count only / count+hold / hold only. */
@@ -105,6 +112,7 @@ interface SettingsState {
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
   setVoiceCoachRepGapMs: (ms: number) => void;
   setVoiceCoachPrepCount: (count: VoiceCoachPrepCount) => void;
+  setVoiceCoachPack: (pack: VoiceCoachPack) => void;
   setVoiceCountMode: (mode: VoiceCountMode) => void;
   setVoiceCoachFlowMode: (mode: VoiceHoldFlowMode) => void;
   setVoiceHoldDurationSec: (seconds: number) => void;
@@ -134,6 +142,7 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
       setVoiceCoachPrepCount: (count) =>
         set({ voiceCoachPrepCount: clampVoiceCoachPrepCount(count) }),
+      setVoiceCoachPack: (pack) => set({ voiceCoachPack: normalizeVoiceCoachPack(pack) }),
       setVoiceCountMode: (mode) => set({ voiceCountMode: clampVoiceCountMode(mode) }),
       setVoiceCoachFlowMode: (mode) =>
         set({ voiceCoachFlowMode: clampVoiceHoldFlowMode(mode) }),
@@ -161,6 +170,9 @@ export const useSettingsStore = create<SettingsState>()(
           voiceCountMode: clampVoiceCountMode(p.voiceCountMode ?? current.voiceCountMode),
           voiceCoachPrepCount: clampVoiceCoachPrepCount(
             p.voiceCoachPrepCount ?? current.voiceCoachPrepCount
+          ),
+          voiceCoachPack: normalizeVoiceCoachPack(
+            p.voiceCoachPack ?? current.voiceCoachPack ?? DEFAULT_VOICE_COACH_PACK
           ),
           voiceCoachFlowMode: clampVoiceHoldFlowMode(
             p.voiceCoachFlowMode ?? current.voiceCoachFlowMode
