@@ -15,12 +15,14 @@ import {
   countdownClipKey,
   DEFAULT_VOICE_COACH_PACK,
   ensureVoiceCoachAudioRunning,
+  normalizeVoiceCoachPack,
   playVoiceCoachClip,
   preloadVoiceCoachClips,
   repClipKey,
   primeVoiceCoachAudioSync,
   stopVoiceCoachClips,
   unlockVoiceCoachClips,
+  type VoiceCoachPack,
 } from '@/utils/voiceCoachClips';
 import {
   clampVoiceHoldDurationSec,
@@ -79,6 +81,8 @@ export interface VoiceCoachOptions {
   countMode?: VoiceCountMode;
   /** Prep countdown from N to 1 (default 5). */
   prepCount?: VoiceCoachPrepCount;
+  /** Pre-recorded Korean clip pack: female | male. */
+  voicePack?: VoiceCoachPack;
   /**
    * Optional hold segment after number counts (+ one-more).
    * Additive — does not alter the count loop itself.
@@ -97,6 +101,7 @@ export interface VoiceCoachFlowOptions extends VoiceCoachOptions {
 
 export type { VoiceCountMode } from '@/utils/aiCountPace';
 export type { VoiceHoldFlowMode } from '@/utils/voiceHold';
+export type { VoiceCoachPack } from '@/utils/voiceCoachClips';
 export {
   DEFAULT_VOICE_COUNT_MODE,
   VOICE_COUNT_MODES,
@@ -105,6 +110,11 @@ export {
   buildCountPaceSchedule,
   formatCountDisplay,
 } from '@/utils/aiCountPace';
+export {
+  DEFAULT_VOICE_COACH_PACK,
+  VOICE_COACH_PACKS,
+  normalizeVoiceCoachPack,
+} from '@/utils/voiceCoachClips';
 export {
   DEFAULT_VOICE_HOLD_FLOW_MODE,
   VOICE_HOLD_FLOW_MODES,
@@ -344,10 +354,19 @@ async function speakCoachCue(options: {
   text: string;
   locale?: string;
   signal?: AbortSignal;
+  voicePack?: VoiceCoachPack;
   /** ready = 준비 cue without a clip file */
   kind?: 'ready' | 'count' | 'phrase';
 }): Promise<void> {
-  const { clipKey, text, locale, signal, kind = 'phrase' } = options;
+  const {
+    clipKey,
+    text,
+    locale,
+    signal,
+    voicePack = DEFAULT_VOICE_COACH_PACK,
+    kind = 'phrase',
+  } = options;
+  const pack = normalizeVoiceCoachPack(voicePack);
 
   if (!isKoreanLocale(locale)) {
     await speechManager.speak(text, signal);
@@ -355,11 +374,11 @@ async function speakCoachCue(options: {
   }
 
   if (clipKey) {
-    const played = await playVoiceCoachClip(clipKey, signal, DEFAULT_VOICE_COACH_PACK);
+    const played = await playVoiceCoachClip(clipKey, signal, pack);
     if (played) return;
     const ctx = await ensureVoiceCoachAudioRunning();
     if (ctx) {
-      const retried = await playVoiceCoachClip(clipKey, signal, DEFAULT_VOICE_COACH_PACK);
+      const retried = await playVoiceCoachClip(clipKey, signal, pack);
       if (retried) return;
     }
     // Clip missing/failed — speak the number/phrase (never beep for count cues).
@@ -446,14 +465,15 @@ export async function speakRestTipsAndWarnings(
  * Sync unlock work starts before the first await so mobile autoplay stays valid.
  * Prefer calling this directly from the Start / set-complete tap handler.
  */
-export function unlockVoiceCoachAudio(): Promise<void> {
+export function unlockVoiceCoachAudio(voicePack?: VoiceCoachPack): Promise<void> {
   // Sync work first — must stay inside the user-gesture turn.
   // Waiting on clip decode here made the first Count Start silent on mobile
   // (set-complete had already primed audio, so only the first tap failed).
+  const pack = normalizeVoiceCoachPack(voicePack);
   primeVoiceCoachAudioSync();
   speechManager.unlock();
   void speechManager.init();
-  const clipsUnlock = unlockVoiceCoachClips(DEFAULT_VOICE_COACH_PACK);
+  const clipsUnlock = unlockVoiceCoachClips(pack);
   const sessionUnlock = beginVoiceCoachAudioSession();
 
   return (async () => {
@@ -476,6 +496,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     repGapMs: repGapMsOption,
     countMode: countModeOption,
     prepCount: prepCountOption,
+    voicePack: voicePackOption,
     locale = 'ko',
     onPhaseChange,
     signal,
@@ -489,6 +510,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const prepCount = clampVoiceCoachPrepCount(
     prepCountOption ?? DEFAULT_VOICE_COACH_PREP_COUNT
   );
+  const voicePack = normalizeVoiceCoachPack(voicePackOption);
 
   // New run owns cleanup; older aborted runs must not tear us down.
   const sessionGen = bumpVoiceCoachSessionGeneration();
@@ -499,7 +521,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     reps,
     oneMoreEnabled,
     prepCount,
-    pack: DEFAULT_VOICE_COACH_PACK,
+    pack: voicePack,
     signal,
   });
 
@@ -526,6 +548,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       text: readyPhrase(locale),
       locale,
       signal,
+      voicePack,
       kind: 'ready',
     });
     await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
@@ -539,6 +562,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         text: formatCountdownWord(n, locale),
         locale,
         signal,
+        voicePack,
         kind: 'count',
       });
       if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
@@ -551,6 +575,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       text: startPhrase(locale),
       locale,
       signal,
+      voicePack,
       kind: 'phrase',
     });
     await sleep(VOICE_COACH_TIMING.afterStartMs, signal);
@@ -580,6 +605,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         text: formatRepWord(i + 1, locale),
         locale,
         signal,
+        voicePack,
         kind: 'count',
       });
       // Last number → one-more bridge is applied below from pace[reps - 1].
@@ -611,6 +637,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
           text: oneMorePhrase(locale),
           locale,
           signal,
+          voicePack,
           kind: 'phrase',
         });
         if (i < oneMoreReps - 1) {

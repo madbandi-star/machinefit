@@ -232,6 +232,7 @@ export function WorkoutLogPanel({
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const voiceCoachPrepCount = useSettingsStore((s) => s.voiceCoachPrepCount);
+  const voiceCoachPack = useSettingsStore((s) => s.voiceCoachPack);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const voiceCoachFlowMode = useSettingsStore((s) => s.voiceCoachFlowMode);
   const voiceHoldDurationSec = useSettingsStore((s) => s.voiceHoldDurationSec);
@@ -247,6 +248,7 @@ export function WorkoutLogPanel({
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
+  const setVoiceCoachPack = useSettingsStore((s) => s.setVoiceCoachPack);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const setVoiceCoachFlowMode = useSettingsStore((s) => s.setVoiceCoachFlowMode);
   const setVoiceHoldDurationSec = useSettingsStore((s) => s.setVoiceHoldDurationSec);
@@ -308,6 +310,7 @@ export function WorkoutLogPanel({
     oneMoreCount: voiceCoachOneMoreCount,
     repGapMs: voiceCoachRepGapMs,
     prepCount: voiceCoachPrepCount,
+    voicePack: voiceCoachPack,
     countMode: voiceCountMode,
     flowMode: voiceCoachFlowMode,
     holdDurationSec: voiceHoldDurationSec,
@@ -336,7 +339,7 @@ export function WorkoutLogPanel({
   const startVoiceCoach = useCallback(() => {
     // Count Start must work anytime: before set-complete, mid-rest, during rest tips.
     // Prime audio in this same tap — do not require 수행기록 완료 first.
-    unlockVoiceCoachAudio();
+    unlockVoiceCoachAudio(voiceCoachPack);
     manualCountStartRef.current = true;
     voiceCoachRunningRef.current = true;
     restSpeechAbortRef.current?.abort();
@@ -344,7 +347,7 @@ export function WorkoutLogPanel({
     // Clear rest UI without going through Skip→onReady (that raced and killed count).
     setRestTimer(null);
     voiceCoachStartRef.current();
-  }, []);
+  }, [voiceCoachPack]);
   const voiceCoachStopRef = useRef(voiceCoach.stop);
   voiceCoachStopRef.current = voiceCoach.stop;
   const stopVoiceCoachSession = useCallback(() => {
@@ -988,7 +991,7 @@ export function WorkoutLogPanel({
 
       if (!wasCompleted && next[index]) {
         if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
-          unlockVoiceCoachAudio();
+          unlockVoiceCoachAudio(voiceCoachPack);
           setRestTimer({
             setNumber: index + 1,
             seconds: clampRestDurationSeconds(restDurationSeconds),
@@ -1018,7 +1021,7 @@ export function WorkoutLogPanel({
 
     if (!wasCompleted && next[index]) {
       if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
-        unlockVoiceCoachAudio();
+        unlockVoiceCoachAudio(voiceCoachPack);
         setRestTimer({
           setNumber: index + 1,
           seconds: clampRestDurationSeconds(restDurationSeconds),
@@ -1354,6 +1357,8 @@ export function WorkoutLogPanel({
       onRepGapMsChange={setVoiceCoachRepGapMs}
       prepCount={voiceCoachPrepCount}
       onPrepCountChange={setVoiceCoachPrepCount}
+      voicePack={voiceCoachPack}
+      onVoicePackChange={setVoiceCoachPack}
       countMode={voiceCountMode}
       onCountModeChange={setVoiceCountMode}
       flowMode={voiceCoachFlowMode}

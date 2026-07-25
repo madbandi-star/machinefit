@@ -5,6 +5,7 @@ import {
   runVoiceCoachFlow,
   stopVoiceCoach,
   unlockVoiceCoachAudio,
+  type VoiceCoachPack,
   type VoiceCoachPhase,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
@@ -16,6 +17,7 @@ interface UseVoiceCoachSessionOptions {
   oneMoreCount: number;
   repGapMs: number;
   prepCount: VoiceCoachPrepCount;
+  voicePack: VoiceCoachPack;
   countMode: VoiceCountMode;
   flowMode: VoiceHoldFlowMode;
   holdDurationSec: number;
@@ -40,6 +42,7 @@ export function useVoiceCoachSession({
   oneMoreCount,
   repGapMs,
   prepCount,
+  voicePack,
   countMode,
   flowMode,
   holdDurationSec,
@@ -85,7 +88,7 @@ export function useVoiceCoachSession({
 
     // Sync unlock in the click turn, then start flow without waiting on clip decode.
     // First Start on recommendation/history must work before any set-complete.
-    const unlockPromise = unlockVoiceCoachAudio();
+    const unlockPromise = unlockVoiceCoachAudio(voicePack);
 
     void (async () => {
       try {
@@ -102,6 +105,7 @@ export function useVoiceCoachSession({
           maxOneMore: oneMoreCount,
           repGapMs,
           prepCount,
+          voicePack,
           countMode,
           flowMode,
           holdDurationSec,
@@ -170,6 +174,7 @@ export function useVoiceCoachSession({
     prepCount,
     repGapMs,
     targetReps,
+    voicePack,
   ]);
 
   useEffect(

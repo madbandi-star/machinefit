@@ -41,7 +41,9 @@ import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
+  normalizeVoiceCoachPack,
   VOICE_COACH_ONE_MORE,
+  VOICE_COACH_PACKS,
   VOICE_COACH_PREP_COUNTS,
   VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
@@ -89,6 +91,7 @@ export function SettingsPage() {
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const voiceCoachPrepCount = useSettingsStore((s) => s.voiceCoachPrepCount);
+  const voiceCoachPack = useSettingsStore((s) => s.voiceCoachPack);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const voiceCoachFlowMode = useSettingsStore((s) => s.voiceCoachFlowMode);
   const voiceHoldDurationSec = useSettingsStore((s) => s.voiceHoldDurationSec);
@@ -104,6 +107,7 @@ export function SettingsPage() {
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
+  const setVoiceCoachPack = useSettingsStore((s) => s.setVoiceCoachPack);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const setVoiceCoachFlowMode = useSettingsStore((s) => s.setVoiceCoachFlowMode);
   const setVoiceHoldDurationSec = useSettingsStore((s) => s.setVoiceHoldDurationSec);
@@ -703,6 +707,34 @@ export function SettingsPage() {
                 ) : null}
               </div>
             )}
+
+            <fieldset
+              className={`voice-coach-panel__mode${
+                !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+              }`}
+              disabled={!voiceCoachEnabled}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('settings.voiceCoachPack')}
+              </legend>
+              <p className="form-section__desc" style={{ marginTop: 0 }}>
+                {t('settings.voiceCoachPackDesc')}
+              </p>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_COACH_PACKS.map((pack) => (
+                  <label key={pack} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="settings-voice-coach-pack"
+                      value={pack}
+                      checked={normalizeVoiceCoachPack(voiceCoachPack) === pack}
+                      onChange={() => setVoiceCoachPack(pack)}
+                    />
+                    <span>{t(`settings.voiceCoachPack_${pack}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
             {voiceCoachFlowMode !== 'hold' ? (
               <>
