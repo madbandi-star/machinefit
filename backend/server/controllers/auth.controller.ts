@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { registerSchema, loginSchema, marketingPrefSchema } from '@machinefit/shared';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { getRequestIp, getRequestUserAgent } from '../utils/request-meta.util.js';
 
 export async function register(req: Request, res: Response): Promise<void> {
   const input = registerSchema.parse(req.body);
@@ -11,7 +12,10 @@ export async function register(req: Request, res: Response): Promise<void> {
 
 export async function login(req: Request, res: Response): Promise<void> {
   const input = loginSchema.parse(req.body);
-  const result = await authService.login(input);
+  const result = await authService.login(input, {
+    ipAddress: getRequestIp(req),
+    userAgent: getRequestUserAgent(req),
+  });
   res.json({ success: true, data: result });
 }
 

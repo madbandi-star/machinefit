@@ -80,6 +80,7 @@ export function RegisterPage() {
   const [emailCustomDomain, setEmailCustomDomain] = useState('');
   const [password, setPassword] = useState(demoAuth ? DEMO_REGISTER_PASSWORD : '');
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeLocation, setAgreeLocation] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [displayName, setDisplayName] = useState(demoSlot.displayName);
@@ -124,6 +125,7 @@ export function RegisterPage() {
         agreeTerms: true,
         agreePrivacy: true,
         agreeMarketing,
+        agreeLocation,
         legalVersion: LEGAL_DOC_VERSION,
       }),
     onSuccess: async (res) => {
@@ -132,7 +134,7 @@ export function RegisterPage() {
       setAuth(user, tokens);
       syncUserSettings(user);
 
-      if (locationDraft.countryCode) {
+          if (locationDraft.countryCode) {
         try {
           await locationApi.upsertMine({
             countryCode: locationDraft.countryCode,
@@ -141,8 +143,8 @@ export function RegisterPage() {
             districtId: locationDraft.districtId,
             districtName: locationDraft.districtName || null,
             postalCode: locationDraft.postalCode || null,
-            latitude: locationDraft.latitude,
-            longitude: locationDraft.longitude,
+            latitude: agreeLocation ? locationDraft.latitude : null,
+            longitude: agreeLocation ? locationDraft.longitude : null,
             visibility: locationDraft.visibility ?? 'gym',
           });
         } catch {
@@ -398,6 +400,19 @@ export function RegisterPage() {
               onChange={(e) => setAgreeMarketing(e.target.checked)}
             />
             <span>{t('auth.agreeMarketing')}</span>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={agreeLocation}
+              onChange={(e) => setAgreeLocation(e.target.checked)}
+            />
+            <span>
+              <Link to={ROUTES.LEGAL_LOCATION} target="_blank" rel="noreferrer">
+                {t('legal.locationTitle')}
+              </Link>
+              {t('auth.agreeLocationSuffix')}
+            </span>
           </label>
         </div>
 

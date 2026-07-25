@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { LifterDnaCompareItem } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { lifterDnaApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
@@ -123,6 +124,7 @@ export function LifterDnaPage() {
           </button>
         }
       >
+        <LegalDisclaimerBanner variant="ai" compact />
         {isLoading || !data ? (
           <Skeleton count={6} height={80} />
         ) : isError ? (

@@ -24,6 +24,9 @@ interface LocationPickerProps {
   showDistrict?: boolean;
   showVisibility?: boolean;
   showGps?: boolean;
+  /** When false, GPS button asks for consent instead of reading coordinates. */
+  locationOptIn?: boolean;
+  onNeedLocationConsent?: () => void;
   required?: boolean;
   disabled?: boolean;
 }
@@ -67,6 +70,8 @@ export function LocationPicker({
   showDistrict = true,
   showVisibility = false,
   showGps = true,
+  locationOptIn = true,
+  onNeedLocationConsent,
   required = false,
   disabled = false,
 }: LocationPickerProps) {
@@ -134,6 +139,11 @@ export function LocationPicker({
 
   const handleGps = () => {
     setGpsError('');
+    if (!locationOptIn) {
+      setGpsError(t('compliance.rights.locationConsentRequired'));
+      onNeedLocationConsent?.();
+      return;
+    }
     if (!navigator.geolocation) {
       setGpsError(t('location.gpsUnsupported'));
       return;

@@ -234,6 +234,28 @@ const termsPage = () =>
   import('@/pages/legal/TermsPage').then((m) => ({ default: m.TermsPage }));
 const privacyPage = () =>
   import('@/pages/legal/PrivacyPage').then((m) => ({ default: m.PrivacyPage }));
+const locationLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.LocationLegalPage }));
+const commerceLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CommerceLegalPage }));
+const communityLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CommunityLegalPage }));
+const copyrightLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CopyrightLegalPage }));
+const aiLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.AiDisclaimerLegalPage }));
+const privacyRightsPage = () =>
+  import('@/pages/settings/PrivacyRightsPage').then((m) => ({ default: m.PrivacyRightsPage }));
+const supportPage = () =>
+  import('@/pages/support/SupportPage').then((m) => ({ default: m.SupportPage }));
+const supportDetailPage = () =>
+  import('@/pages/support/SupportTicketDetailPage').then((m) => ({
+    default: m.SupportTicketDetailPage,
+  }));
+const adminCompliancePage = () =>
+  import('@/pages/admin/compliance/AdminCompliancePage').then((m) => ({
+    default: m.AdminCompliancePage,
+  }));
 
 export const router = createBrowserRouter(
   [
@@ -243,6 +265,11 @@ export const router = createBrowserRouter(
         { path: ROUTES.HOME, element: <HomePage /> },
         { path: ROUTES.TERMS, element: lazyRoute(termsPage) },
         { path: ROUTES.PRIVACY, element: lazyRoute(privacyPage) },
+        { path: ROUTES.LEGAL_LOCATION, element: lazyRoute(locationLegalPage) },
+        { path: ROUTES.LEGAL_COMMERCE, element: lazyRoute(commerceLegalPage) },
+        { path: ROUTES.LEGAL_COMMUNITY, element: lazyRoute(communityLegalPage) },
+        { path: ROUTES.LEGAL_COPYRIGHT, element: lazyRoute(copyrightLegalPage) },
+        { path: ROUTES.LEGAL_AI, element: lazyRoute(aiLegalPage) },
         { path: ROUTES.MACHINES, element: lazyRoute(machineSearch) },
         { path: ROUTES.BRANDS, element: lazyRoute(brandList) },
         { path: ROUTES.BRAND_DETAIL, element: lazyRoute(brandDetail) },
@@ -288,6 +315,9 @@ export const router = createBrowserRouter(
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
+            { path: ROUTES.PRIVACY_RIGHTS, element: lazyRoute(privacyRightsPage) },
+            { path: ROUTES.SUPPORT, element: lazyRoute(supportPage) },
+            { path: ROUTES.SUPPORT_DETAIL, element: lazyRoute(supportDetailPage) },
             { path: ROUTES.MOTIVATION_MUSIC, element: lazyRoute(motivationMusic) },
             { path: ROUTES.NOTIFICATIONS, element: lazyRoute(notifications) },
             { path: ROUTES.ONLINE_PT_ASK, element: lazyRoute(onlinePtAsk) },
@@ -382,6 +412,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },
         { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
+        { path: ROUTES.ADMIN_COMPLIANCE, element: lazyRoute(adminCompliancePage) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

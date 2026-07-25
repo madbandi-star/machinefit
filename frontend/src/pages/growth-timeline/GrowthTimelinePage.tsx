@@ -7,6 +7,7 @@ import type {
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { LineChart } from '@/components/progressive-overload/LineChart/LineChart';
 import { growthTimelineApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -114,6 +115,7 @@ export function GrowthTimelinePage() {
 
   return (
     <PageShell title={t('growthTimeline.title')}>
+      <LegalDisclaimerBanner variant="ai" compact />
       <div className="gt-page">
         {isLoading && <Skeleton count={6} height={80} />}
         {isError && <p className="form-error-summary">{t('growthTimeline.loadError')}</p>}

@@ -27,6 +27,8 @@ export const registerSchema = z.object({
     .refine((v) => v === true, { message: 'Privacy policy must be accepted' }),
   /** Optional marketing / event notifications. */
   agreeMarketing: z.boolean().optional().default(false),
+  /** Optional location (GPS / region) processing consent. */
+  agreeLocation: z.boolean().optional().default(false),
   legalVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSION),
 });
 

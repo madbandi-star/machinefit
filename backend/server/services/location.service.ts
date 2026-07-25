@@ -36,6 +36,25 @@ export const locationService = {
     input: UserLocationUpsertInput,
     locale = 'ko'
   ): Promise<UserLocation> {
+    const hasCoordinates =
+      input.latitude != null &&
+      input.longitude != null &&
+      Number.isFinite(input.latitude) &&
+      Number.isFinite(input.longitude);
+
+    // Precise GPS storage requires location_opt_in (compliance). Manual region pick without coords is allowed.
+    if (hasCoordinates) {
+      const { userRepository } = await import('../repositories/user.repository.js');
+      const user = await userRepository.findById(userId);
+      if (!user?.locationOptIn) {
+        throw new AppError(
+          403,
+          'LOCATION_CONSENT_REQUIRED',
+          'Location consent is required to store GPS coordinates'
+        );
+      }
+    }
+
     if (input.countryCode) {
       const states = await locationRepository.listStates(input.countryCode);
       if (input.stateId && !states.some((s) => s.id === input.stateId)) {

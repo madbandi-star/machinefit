@@ -1,0 +1,38 @@
+.legal-disclaimer {
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--color-accent, #0d9488);
+  background: linear-gradient(120deg, rgba(13, 148, 136, 0.08), rgba(15, 23, 42, 0.03));
+  color: var(--color-text-muted, #475569);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.legal-disclaimer--compact {
+  margin: 0.5rem 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.legal-disclaimer p {
+  margin: 0 0 0.35rem;
+}
+
+.legal-disclaimer a {
+  color: var(--color-accent, #0d9488);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.sponsored-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  opacity: 0.85;
+}

@@ -10,6 +10,7 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import { useAuthStore } from '@/store/auth.store';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import '@/styles/online-pt.css';
 
 export function OnlinePtTrainerDetailPage() {
@@ -47,6 +48,8 @@ export function OnlinePtTrainerDetailPage() {
 
   return (
     <PageShell title={trainer.displayName} subtitle={t('title')}>
+      <LegalDisclaimerBanner variant="pt" />
+      <LegalDisclaimerBanner variant="commerce" compact />
       <p className="opt-meta">
         {trainer.acceptingQuestions ? t('accepting') : t('offline')} ·{' '}
         {t('price', { price: trainer.ticketPrice.toLocaleString() })} ·{' '}

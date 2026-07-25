@@ -79,6 +79,13 @@ export function AdminDashboardPage() {
       desc: t('menu.machineCoversDesc'),
     },
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
+    {
+      to: ROUTES.ADMIN_COMPLIANCE,
+      title: t('compliance.nav', { defaultValue: 'Compliance' }),
+      desc: t('menu.complianceDesc', {
+        defaultValue: 'Legal docs, consents, support tickets, audit logs',
+      }),
+    },
   ];
 
   return (

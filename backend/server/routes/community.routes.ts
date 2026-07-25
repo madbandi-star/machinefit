@@ -10,3 +10,9 @@ communityRouter.post('/posts', authMiddleware, communityController.createPost);
 communityRouter.delete('/posts/:postId', authMiddleware, communityController.deletePost);
 communityRouter.post('/posts/:postId/comments', authMiddleware, communityController.createComment);
 communityRouter.post('/posts/:postId/like', authMiddleware, communityController.toggleLike);
+communityRouter.post('/posts/:postId/report', authMiddleware, communityController.reportPost);
+communityRouter.post(
+  '/comments/:commentId/report',
+  authMiddleware,
+  communityController.reportComment
+);

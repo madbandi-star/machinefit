@@ -193,13 +193,57 @@ export const adminRepository = {
     return req;
   },
 
-  listReports(): Report[] {
+  async listReports(): Promise<Report[]> {
+    const pool = getPool();
+    if (pool) {
+      const { complianceRepository } = await import('./compliance.repository.js');
+      const rows = await complianceRepository.listCommunityReports();
+      return rows.map((r) => ({
+        id: r.id,
+        reporterId: r.reporterId,
+        postId: r.postId ?? undefined,
+        commentId: r.commentId ?? undefined,
+        reason: r.reason as Report['reason'],
+        description: r.description ?? undefined,
+        status: r.status as Report['status'],
+        createdAt: r.createdAt,
+        updatedAt: r.createdAt,
+      }));
+    }
     return [...mockReports].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   },
 
-  resolveReport(id: string, input: ResolveReportInput, adminId: string): Report {
+  async resolveReport(id: string, input: ResolveReportInput, adminId: string): Promise<Report> {
+    const pool = getPool();
+    if (pool) {
+      const { complianceRepository } = await import('./compliance.repository.js');
+      const hidePost = input.status === 'resolved';
+      const ok = await complianceRepository.resolveCommunityReport(
+        id,
+        input.status,
+        adminId,
+        hidePost
+      );
+      if (!ok) throw new AppError(404, 'NOT_FOUND', 'Report not found');
+      await complianceRepository.writeAuditLog({
+        actorId: adminId,
+        action: 'community.report.resolve',
+        targetType: 'report',
+        targetId: id,
+        meta: { status: input.status, hidePost },
+      });
+      return {
+        id,
+        reporterId: '',
+        reason: 'other',
+        status: input.status,
+        resolvedBy: adminId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+    }
     const report = mockReports.find((r) => r.id === id);
     if (!report) throw new AppError(404, 'NOT_FOUND', 'Report not found');
     report.status = input.status;

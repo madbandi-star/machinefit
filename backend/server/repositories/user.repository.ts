@@ -26,6 +26,8 @@ interface UserRow {
   avatar_url: string | null;
   subscription_plan: string | null;
   marketing_opt_in: boolean | null;
+  location_opt_in: boolean | null;
+  push_service_opt_in: boolean | null;
   is_active: boolean;
   deactivated_at: string | null;
   last_login_at: string | null;
@@ -58,6 +60,8 @@ function mapUser(row: UserRow): User {
     avatarUrl: row.avatar_url ?? undefined,
     subscriptionPlan: (row.subscription_plan === 'premium' ? 'premium' : 'free') as SubscriptionPlan,
     marketingOptIn: Boolean(row.marketing_opt_in),
+    locationOptIn: Boolean(row.location_opt_in),
+    pushServiceOptIn: row.push_service_opt_in !== false,
     isActive: row.is_active,
     deactivatedAt: row.deactivated_at ?? null,
     lastLoginAt: row.last_login_at ?? undefined,
@@ -113,6 +117,7 @@ export const userRepository = {
     homeGymName?: string | null;
     experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
     marketingOptIn?: boolean;
+    locationOptIn?: boolean;
   }): Promise<User> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -136,9 +141,9 @@ export const userRepository = {
       `INSERT INTO users (
          role_id, email, password_hash, display_name, gender, language_id,
          unit_height, unit_weight, height_cm, weight_kg, age, workout_goal,
-         home_gym_id, home_gym_name, experience_level, marketing_opt_in
+         home_gym_id, home_gym_name, experience_level, marketing_opt_in, location_opt_in
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
        RETURNING *`,
       [
         roleId,
@@ -157,6 +162,7 @@ export const userRepository = {
         data.homeGymName ?? null,
         data.experienceLevel ?? 'intermediate',
         Boolean(data.marketingOptIn),
+        Boolean(data.locationOptIn),
       ]
     );
 
@@ -202,10 +208,21 @@ export const userRepository = {
            email = 'deleted+' || id::text || '@invalid.local',
            display_name = '탈퇴회원',
            avatar_url = NULL,
-           marketing_opt_in = FALSE
+           marketing_opt_in = FALSE,
+           location_opt_in = FALSE,
+           push_service_opt_in = FALSE,
+           gender = NULL,
+           height_cm = NULL,
+           weight_kg = NULL,
+           age = NULL,
+           workout_goal = NULL,
+           home_gym_id = NULL,
+           home_gym_name = NULL,
+           timezone = NULL
        WHERE id = $1 AND is_active = TRUE`,
       [userId]
     );
+    await pool.query(`DELETE FROM user_locations WHERE user_id = $1`, [userId]).catch(() => null);
     await this.deleteRefreshTokens(userId);
     return (result.rowCount ?? 0) > 0;
   },

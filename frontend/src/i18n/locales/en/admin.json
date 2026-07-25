@@ -21,7 +21,8 @@
     "motivationDesc": "Set motivation music and video playlists.",
     "muscleImagesDesc": "Upload and replace muscle-group cover images.",
     "machineCoversDesc": "Upload and replace per-machine cover images.",
-    "moderationDesc": "Handle posts, machine requests, and reports."
+    "moderationDesc": "Handle posts, machine requests, and reports.",
+    "complianceDesc": "Manage legal versions, consents, support tickets, audit logs"
   },
   "users": "Users",
   "gyms": "Gyms",
@@ -209,5 +210,8 @@
   },
   "friends": {
     "nav": "Friends"
+  },
+  "compliance": {
+    "nav": "Compliance"
   }
 }

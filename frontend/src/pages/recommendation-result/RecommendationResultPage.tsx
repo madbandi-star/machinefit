@@ -15,6 +15,7 @@ import {
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { ActiveSettingsSourceBanner } from '@/components/recommendation/ActiveSettingsSourceBanner/ActiveSettingsSourceBanner';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { recommendationApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -248,6 +249,7 @@ export function RecommendationResultPage() {
       </header>
 
       <div className="recommendation-result-page__content history-page-premium">
+        <LegalDisclaimerBanner variant="ai" compact />
         <RecommendationWarnings warnings={result.warnings} />
         <article
           className={`history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card${
