@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:voice-coach": "npx --yes vite-node src/utils/voiceCoach.matrix.test.ts"
   },
   "dependencies": {
     "@machinefit/shared": "file:../shared",

@@ -230,9 +230,12 @@ class SpeechManagerImpl {
           }, 180 + attempt * 120);
           return;
         }
-        // canceled by our cancel()/generation bump — treat as abort-ish soft end
+        // Superseded by cancel()/newer speak — finish quietly.
+        // User stop must go through signal.abort → onAbort → AbortError.
+        // Treating "canceled" as AbortError previously killed set-count when
+        // rest-tip teardown raced a freshly started coach session.
         if (errName === 'canceled' || generation !== this.queueGeneration) {
-          finish(new DOMException('Aborted', 'AbortError'));
+          finish();
           return;
         }
         finish();

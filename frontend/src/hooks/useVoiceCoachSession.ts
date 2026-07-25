@@ -139,6 +139,10 @@ export function useVoiceCoachSession({
             }
           },
         });
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          console.error('[voiceCoach] session failed', error);
+        }
       } finally {
         if (runIdRef.current !== runId) return;
         if (abortRef.current === controller) {

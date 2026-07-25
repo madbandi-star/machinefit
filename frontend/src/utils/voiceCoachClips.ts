@@ -3,8 +3,6 @@
  * Used for countdown / start / reps / one-more so count works when OS TTS is silent.
  */
 
-import { speechManager } from '@/utils/speechManager';
-
 export const VOICE_COACH_PACKS = ['female', 'male'] as const;
 export type VoiceCoachPack = (typeof VOICE_COACH_PACKS)[number];
 export const DEFAULT_VOICE_COACH_PACK: VoiceCoachPack = 'female';
@@ -15,6 +13,9 @@ export const MAX_VOICE_COACH_CLIP_REP = 30;
 /** Highest `cd-N.mp3` shipped (prep 10 uses TTS for 10–6). */
 export const MAX_VOICE_COACH_CLIP_COUNTDOWN = 5;
 
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+
 let sharedAudioCtx: AudioContext | null = null;
 let currentSource: AudioBufferSourceNode | null = null;
 let currentHtmlAudio: HTMLAudioElement | null = null;
@@ -22,6 +23,11 @@ let currentHtmlAudio: HTMLAudioElement | null = null;
 let warmedHtmlAudio: HTMLAudioElement | null = null;
 const clipBufferCache = new Map<string, AudioBuffer>();
 const clipBufferInflight = new Map<string, Promise<AudioBuffer | null>>();
+
+/** Settle the in-flight clip promise when stopVoiceCoachClips() interrupts playback. */
+let pendingClipSettle: ((played: boolean) => void) | null = null;
+/** Bumped on stop/supersede so playVoiceCoachClip won't HTML-fallback after interrupt. */
+let clipGeneration = 0;
 
 export function normalizeVoiceCoachPack(value: unknown): VoiceCoachPack {
   return value === 'male' ? 'male' : DEFAULT_VOICE_COACH_PACK;
@@ -81,7 +87,14 @@ export async function ensureVoiceCoachAudioRunning(): Promise<AudioContext | nul
   return ctx.state === 'closed' ? null : ctx;
 }
 
+function settlePendingClip(played: boolean): void {
+  const settle = pendingClipSettle;
+  pendingClipSettle = null;
+  settle?.(played);
+}
+
 export function stopVoiceCoachClips(): void {
+  clipGeneration += 1;
   if (currentHtmlAudio) {
     try {
       currentHtmlAudio.onended = null;
@@ -94,19 +107,22 @@ export function stopVoiceCoachClips(): void {
     }
     currentHtmlAudio = null;
   }
-  if (!currentSource) return;
-  try {
-    currentSource.onended = null;
-    currentSource.stop();
-  } catch {
-    // already stopped
+  if (currentSource) {
+    try {
+      currentSource.onended = null;
+      currentSource.stop();
+    } catch {
+      // already stopped
+    }
+    try {
+      currentSource.disconnect();
+    } catch {
+      // ignore
+    }
+    currentSource = null;
   }
-  try {
-    currentSource.disconnect();
-  } catch {
-    // ignore
-  }
-  currentSource = null;
+  // Critical: never leave playVoiceCoachClip() awaiting onended forever after stop.
+  settlePendingClip(false);
 }
 
 async function loadClipBuffer(url: string, ctx: AudioContext): Promise<AudioBuffer | null> {
@@ -144,6 +160,8 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
       return;
     }
 
+    settlePendingClip(false);
+
     const audio = warmedHtmlAudio ?? new Audio();
     warmedHtmlAudio = audio;
     audio.preload = 'auto';
@@ -151,33 +169,41 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
     audio.src = url;
     currentHtmlAudio = audio;
 
-    const onAbort = () => {
-      stopVoiceCoachClips();
-      cleanup();
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-
-    const cleanup = () => {
+    let settled = false;
+    const finish = (played: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
       signal?.removeEventListener('abort', onAbort);
       audio.onended = null;
       audio.onerror = null;
       if (currentHtmlAudio === audio) currentHtmlAudio = null;
+      resolve(played);
     };
 
-    audio.onended = () => {
-      cleanup();
-      resolve(true);
+    const settleFromStop = (played: boolean) => finish(played);
+    pendingClipSettle = settleFromStop;
+
+    const onAbort = () => {
+      try {
+        audio.onended = null;
+        audio.onerror = null;
+        audio.pause();
+      } catch {
+        // ignore
+      }
+      if (currentHtmlAudio === audio) currentHtmlAudio = null;
+      if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
+      settled = true;
+      signal?.removeEventListener('abort', onAbort);
+      reject(new DOMException('Aborted', 'AbortError'));
     };
-    audio.onerror = () => {
-      cleanup();
-      resolve(false);
-    };
+
+    audio.onended = () => finish(true);
+    audio.onerror = () => finish(false);
 
     signal?.addEventListener('abort', onAbort, { once: true });
-    void audio.play().catch(() => {
-      cleanup();
-      resolve(false);
-    });
+    void audio.play().catch(() => finish(false));
   });
 }
 
@@ -185,6 +211,9 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
  * Play a pre-recorded clip via Web Audio so playback keeps working after the
  * long rep-gap (HTMLAudioElement.play() often fails once the user-gesture window ends).
  * Falls back to HTMLAudio when decode/Web Audio fails.
+ *
+ * Does NOT call speechManager.cancel() — that used to AbortError an in-flight
+ * TTS cue ("준비") / race with rest-tip teardown and kill the whole session.
  */
 export async function playVoiceCoachClip(
   key: string,
@@ -195,56 +224,115 @@ export async function playVoiceCoachClip(
     throw new DOMException('Aborted', 'AbortError');
   }
 
-  stopVoiceCoachClips();
-  // Stop any lingering TTS so clip + OS voice never overlap.
-  speechManager.cancel();
+  // Supersede any prior clip without treating this call as "externally stopped".
+  const priorSettle = pendingClipSettle;
+  pendingClipSettle = null;
+  priorSettle?.(false);
+  if (currentSource || currentHtmlAudio) {
+    // Stop hardware playback only — do not bump generation for our own replace.
+    if (currentHtmlAudio) {
+      try {
+        currentHtmlAudio.onended = null;
+        currentHtmlAudio.onerror = null;
+        currentHtmlAudio.pause();
+        currentHtmlAudio.removeAttribute('src');
+        currentHtmlAudio.load();
+      } catch {
+        // ignore
+      }
+      currentHtmlAudio = null;
+    }
+    if (currentSource) {
+      try {
+        currentSource.onended = null;
+        currentSource.stop();
+      } catch {
+        // ignore
+      }
+      try {
+        currentSource.disconnect();
+      } catch {
+        // ignore
+      }
+      currentSource = null;
+    }
+  }
+
+  const generation = clipGeneration;
   const url = voiceCoachClipUrl(key, pack);
 
   const ctx = await ensureVoiceCoachAudioRunning();
-  if (ctx) {
+  if (ctx && generation === clipGeneration) {
     const buffer = await loadClipBuffer(url, ctx);
-    if (buffer) {
+    if (buffer && generation === clipGeneration) {
       if (signal?.aborted) {
         throw new DOMException('Aborted', 'AbortError');
       }
 
       const played = await new Promise<boolean>((resolve, reject) => {
+        if (generation !== clipGeneration) {
+          resolve(false);
+          return;
+        }
         const source = ctx.createBufferSource();
         source.buffer = buffer;
         source.connect(ctx.destination);
         currentSource = source;
 
+        let settled = false;
+        const finish = (value: boolean) => {
+          if (settled) return;
+          settled = true;
+          if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
+          signal?.removeEventListener('abort', onAbort);
+          source.onended = null;
+          if (currentSource === source) currentSource = null;
+          if (endedWatchdog) window.clearTimeout(endedWatchdog);
+          resolve(value);
+        };
+
+        const settleFromStop = (value: boolean) => finish(value);
+        pendingClipSettle = settleFromStop;
+
         const onAbort = () => {
           try {
+            source.onended = null;
             source.stop();
           } catch {
             // ignore
           }
-          cleanup();
+          if (currentSource === source) currentSource = null;
+          if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
+          settled = true;
+          if (endedWatchdog) window.clearTimeout(endedWatchdog);
+          signal?.removeEventListener('abort', onAbort);
           reject(new DOMException('Aborted', 'AbortError'));
         };
 
-        const cleanup = () => {
-          signal?.removeEventListener('abort', onAbort);
-          source.onended = null;
-          if (currentSource === source) currentSource = null;
-        };
-
-        source.onended = () => {
-          cleanup();
-          resolve(true);
-        };
-
+        source.onended = () => finish(true);
         signal?.addEventListener('abort', onAbort, { once: true });
+
+        // Some WebViews skip onended after audio-focus blips — don't hang the coach.
+        const endedWatchdog = window.setTimeout(
+          () => finish(true),
+          Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400))
+        );
+
         try {
           source.start(0);
         } catch {
-          cleanup();
-          resolve(false);
+          finish(false);
         }
       });
       if (played) return true;
+      // Interrupted by stopVoiceCoachClips — do not restart via HTMLAudio.
+      if (generation !== clipGeneration) return false;
     }
+  }
+
+  if (generation !== clipGeneration || signal?.aborted) {
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    return false;
   }
 
   return playHtmlAudioClip(url, signal);
@@ -285,12 +373,12 @@ export async function preloadVoiceCoachClips(options: {
 /**
  * Unlock clip playback inside a user-gesture turn.
  * Sync work runs before the first await so mobile autoplay policies stay satisfied.
+ * Warms with a silent WAV — never plays a real countdown clip during unlock.
  */
 export function unlockVoiceCoachClips(
   pack: VoiceCoachPack = DEFAULT_VOICE_COACH_PACK
 ): Promise<void> {
   const normalized = normalizeVoiceCoachPack(pack);
-  const warmUrl = voiceCoachClipUrl('cd-5', normalized);
 
   // 1) Kick AudioContext resume while we still have the tap gesture.
   const ctx = getSharedAudioContext();
@@ -304,14 +392,18 @@ export function unlockVoiceCoachClips(
   return (async () => {
     const running = await ensureVoiceCoachAudioRunning();
 
-    // 2) Warm HTMLAudio with a real play()/pause() so later fallback can play.
+    // 2) Warm HTMLAudio with silent play()/pause() (not cd-5 — that leaked "오").
     try {
       const audio = warmedHtmlAudio ?? new Audio();
       warmedHtmlAudio = audio;
       audio.preload = 'auto';
-      audio.src = new URL(warmUrl, window.location.href).href;
+      audio.src = SILENT_WAV;
       audio.volume = 0.001;
-      await audio.play();
+      const playResult = audio.play();
+      const playGuard = new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 400);
+      });
+      await Promise.race([playResult?.then(() => undefined), playGuard]);
       audio.pause();
       audio.currentTime = 0;
       audio.volume = 1;
@@ -334,7 +426,7 @@ export function unlockVoiceCoachClips(
         // ignore
       }
       await Promise.all([
-        loadClipBuffer(warmUrl, running),
+        loadClipBuffer(voiceCoachClipUrl('cd-5', normalized), running),
         loadClipBuffer(voiceCoachClipUrl('cd-4', normalized), running),
         loadClipBuffer(voiceCoachClipUrl('cd-3', normalized), running),
         loadClipBuffer(voiceCoachClipUrl('start', normalized), running),
@@ -342,4 +434,22 @@ export function unlockVoiceCoachClips(
       ]);
     }
   })();
+}
+
+/** Test helper — clears module playback state between cases. */
+export function __resetVoiceCoachClipsForTests(): void {
+  stopVoiceCoachClips();
+  clipBufferCache.clear();
+  clipBufferInflight.clear();
+  warmedHtmlAudio = null;
+  pendingClipSettle = null;
+  clipGeneration = 0;
+  if (sharedAudioCtx) {
+    try {
+      void sharedAudioCtx.close();
+    } catch {
+      // ignore
+    }
+  }
+  sharedAudioCtx = null;
 }

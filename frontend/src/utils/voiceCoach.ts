@@ -394,8 +394,9 @@ export async function speakRestTipsAndWarnings(
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      // Keep audio session warm — rest end often starts set-count next.
-      stopVoiceCoach({ keepAudioSession: true });
+      // Do NOT stopVoiceCoach() here. Rest-end / Start often abort tips and
+      // immediately begin set-count; tearing down would kill the new session
+      // (classic "오만 외치고 끝" / start no-op race).
       return;
     }
     throw error;
