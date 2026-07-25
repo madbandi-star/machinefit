@@ -6,6 +6,12 @@ import {
   DEFAULT_VOICE_COUNT_MODE,
   type VoiceCountMode,
 } from '@/utils/aiCountPace';
+import {
+  IOS_MALE_COUNT_PAUSE_MS,
+  IOS_MALE_COUNT_RATE,
+  shouldUseIosMaleCountTts,
+  toSinoKoreanCount,
+} from '@/utils/iosMaleCountSpeech';
 import { speechManager } from '@/utils/speechManager';
 import {
   beginVoiceCoachAudioSession,
@@ -380,6 +386,7 @@ async function runPrepCountdownPhase(options: {
       signal,
       voicePack,
       kind: 'count',
+      countValue: n,
     });
     if (n > 1) await sleep(VOICE_COACH_TIMING.countdownGapMs, signal);
   }
@@ -398,9 +405,12 @@ async function runPrepCountdownPhase(options: {
 }
 
 /**
- * Korean set-count path is Web Audio clips only — never interleave speechSynthesis.
- * Mixing TTS + clips on mobile often plays the first clip (cd-5 / 「오」) then dies.
- * Non-Korean still uses TTS.
+ * Korean set-count path prefers Web Audio clips — never interleave speechSynthesis
+ * with clips on the same beat (mixing often dies after the first cue on mobile).
+ *
+ * Exception: iOS + male pack number counts use AVSpeechSynthesizer with
+ * Sino-Korean words (오/사/삼/이/일 …) so short vowels are not mumbled.
+ * Female / Android keep the clip path unchanged.
  */
 async function speakCoachCue(options: {
   clipKey: string | null;
@@ -410,6 +420,8 @@ async function speakCoachCue(options: {
   voicePack?: VoiceCoachPack;
   /** ready = 준비 cue without a clip file */
   kind?: 'ready' | 'count' | 'phrase';
+  /** Numeric value for count cues (enables iOS male Sino-Korean TTS). */
+  countValue?: number;
 }): Promise<void> {
   const {
     clipKey,
@@ -418,11 +430,26 @@ async function speakCoachCue(options: {
     signal,
     voicePack = DEFAULT_VOICE_COACH_PACK,
     kind = 'phrase',
+    countValue,
   } = options;
   const pack = normalizeVoiceCoachPack(voicePack);
 
   if (!isKoreanLocale(locale)) {
     await speechManager.speak(text, signal);
+    return;
+  }
+
+  if (
+    kind === 'count' &&
+    typeof countValue === 'number' &&
+    shouldUseIosMaleCountTts(pack, locale)
+  ) {
+    await speechManager.speak(toSinoKoreanCount(countValue), {
+      signal,
+      rate: IOS_MALE_COUNT_RATE,
+      preferMaleVoice: true,
+      trailingPauseMs: IOS_MALE_COUNT_PAUSE_MS,
+    });
     return;
   }
 
@@ -436,7 +463,11 @@ async function speakCoachCue(options: {
     }
     // Clip missing/failed — speak the number/phrase (never beep for count cues).
     if (kind === 'count' || kind === 'phrase') {
-      await speechManager.speak(text, signal);
+      const fallbackText =
+        kind === 'count' && typeof countValue === 'number'
+          ? toSinoKoreanCount(countValue)
+          : text;
+      await speechManager.speak(fallbackText, signal);
       return;
     }
   }
@@ -633,6 +664,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         signal,
         voicePack,
         kind: 'count',
+        countValue: i + 1,
       });
       // Last number → one-more bridge is applied below from pace[reps - 1].
       if (i < reps - 1) {

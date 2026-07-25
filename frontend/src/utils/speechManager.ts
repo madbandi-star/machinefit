@@ -12,12 +12,28 @@ export const SPEECH_DEFAULTS = {
   volume: 1.0,
 } as const;
 
+export interface SpeakOptions {
+  signal?: AbortSignal;
+  /** Override utterance rate (SpeechSynthesis default band ~0.1–10). */
+  rate?: number;
+  /**
+   * Prefer a male Korean system voice for this utterance only
+   * (does not replace the app-wide locked default voice).
+   */
+  preferMaleVoice?: boolean;
+  /** Silence after the utterance ends (ms). Abort-aware. */
+  trailingPauseMs?: number;
+}
+
 function isKoreanVoice(voice: SpeechSynthesisVoice): boolean {
   const lang = voice.lang.toLowerCase();
   return lang === 'ko-kr' || lang.startsWith('ko');
 }
 
-function scoreVoiceQuality(voice: SpeechSynthesisVoice): number {
+function scoreVoiceQuality(
+  voice: SpeechSynthesisVoice,
+  preferGender?: 'male' | 'female'
+): number {
   const name = voice.name;
   const lang = voice.lang.toLowerCase();
   let score = 0;
@@ -36,15 +52,32 @@ function scoreVoiceQuality(voice: SpeechSynthesisVoice): number {
   if (voice.localService) score += 20;
   if (voice.default) score += 10;
 
+  const looksMale = /male|남|jinho|eddy|minsu|injoon|hyunsu|기호|민수/i.test(name);
+  const looksFemale = /female|여|yuna|sunhi|sora|yena|유나|선희/i.test(name);
+  if (preferGender === 'male') {
+    if (looksMale) score += 200;
+    if (looksFemale) score -= 250;
+  } else if (preferGender === 'female') {
+    if (looksFemale) score += 200;
+    if (looksMale) score -= 250;
+  }
+
   return score;
 }
 
 /** Pick the single best Korean voice available on this device. */
-function pickBestVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+function pickBestVoice(
+  voices: SpeechSynthesisVoice[],
+  preferGender?: 'male' | 'female'
+): SpeechSynthesisVoice | null {
   if (voices.length === 0) return null;
   const korean = voices.filter(isKoreanVoice);
   const pool = korean.length > 0 ? korean : voices;
-  return [...pool].sort((a, b) => scoreVoiceQuality(b) - scoreVoiceQuality(a))[0] ?? null;
+  return (
+    [...pool].sort(
+      (a, b) => scoreVoiceQuality(b, preferGender) - scoreVoiceQuality(a, preferGender)
+    )[0] ?? null
+  );
 }
 
 function waitForVoices(timeoutMs = 2500): Promise<SpeechSynthesisVoice[]> {
@@ -174,14 +207,27 @@ class SpeechManagerImpl {
     }
   }
 
-  private createUtterance(text: string): SpeechSynthesisUtterance {
+  private createUtterance(
+    text: string,
+    prosody?: { rate?: number; preferMaleVoice?: boolean }
+  ): SpeechSynthesisUtterance {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = SPEECH_DEFAULTS.lang;
     utterance.pitch = SPEECH_DEFAULTS.pitch;
-    utterance.rate = SPEECH_DEFAULTS.rate;
+    const rate = prosody?.rate;
+    utterance.rate =
+      typeof rate === 'number' && Number.isFinite(rate)
+        ? Math.min(2, Math.max(0.1, rate))
+        : SPEECH_DEFAULTS.rate;
     utterance.volume = SPEECH_DEFAULTS.volume;
-    if (this.selectedVoice) {
-      utterance.voice = this.selectedVoice;
+
+    let voice = this.selectedVoice;
+    if (prosody?.preferMaleVoice && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const male = pickBestVoice(window.speechSynthesis.getVoices() ?? [], 'male');
+      if (male) voice = male;
+    }
+    if (voice) {
+      utterance.voice = voice;
       utterance.lang = SPEECH_DEFAULTS.lang;
     }
     return utterance;
@@ -191,7 +237,8 @@ class SpeechManagerImpl {
     text: string,
     generation: number,
     signal?: AbortSignal,
-    attempt = 0
+    attempt = 0,
+    prosody?: { rate?: number; preferMaleVoice?: boolean }
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       if (signal?.aborted) {
@@ -216,7 +263,7 @@ class SpeechManagerImpl {
         // ignore
       }
 
-      const utterance = this.createUtterance(trimmed);
+      const utterance = this.createUtterance(trimmed, prosody);
       const maxMs = Math.min(20_000, Math.max(2_000, trimmed.length * 180 + 1_200));
       let timeoutId = 0;
       let settled = false;
@@ -266,7 +313,7 @@ class SpeechManagerImpl {
           utterance.onerror = null;
           window.setTimeout(() => {
             nudgeVoiceCoachSpeech();
-            this.speakUtterance(trimmed, generation, signal, attempt + 1).then(
+            this.speakUtterance(trimmed, generation, signal, attempt + 1, prosody).then(
               resolve,
               reject
             );
@@ -297,11 +344,80 @@ class SpeechManagerImpl {
     });
   }
 
+  private async trailingPause(
+    ms: number,
+    generation: number,
+    signal?: AbortSignal
+  ): Promise<void> {
+    const waitMs = Math.max(0, Math.round(ms));
+    if (waitMs <= 0) return;
+    await new Promise<void>((resolve, reject) => {
+      if (signal?.aborted || generation !== this.queueGeneration) {
+        reject(new DOMException('Aborted', 'AbortError'));
+        return;
+      }
+      const timer = window.setTimeout(() => {
+        signal?.removeEventListener('abort', onAbort);
+        resolve();
+      }, waitMs);
+      const onAbort = () => {
+        window.clearTimeout(timer);
+        reject(new DOMException('Aborted', 'AbortError'));
+      };
+      signal?.addEventListener('abort', onAbort, { once: true });
+    });
+  }
+
+  private normalizeSpeakArgs(
+    signalOrOptions?: AbortSignal | SpeakOptions
+  ): SpeakOptions {
+    if (!signalOrOptions) return {};
+    if (typeof AbortSignal !== 'undefined' && signalOrOptions instanceof AbortSignal) {
+      return { signal: signalOrOptions };
+    }
+    return signalOrOptions as SpeakOptions;
+  }
+
   /** Speak one phrase. Replaces an active utterance only when needed. */
-  async speak(text: string, signal?: AbortSignal): Promise<void> {
+  async speak(text: string, signalOrOptions?: AbortSignal | SpeakOptions): Promise<void> {
+    const options = this.normalizeSpeakArgs(signalOrOptions);
     await this.init();
     const generation = this.beginSpeakGeneration();
-    await this.speakUtterance(text, generation, signal);
+    await this.speakUtterance(text, generation, options.signal, 0, {
+      rate: options.rate,
+      preferMaleVoice: options.preferMaleVoice,
+    });
+    if (options.trailingPauseMs && options.trailingPauseMs > 0) {
+      if (generation !== this.queueGeneration) return;
+      await this.trailingPause(options.trailingPauseMs, generation, options.signal);
+    }
+  }
+
+  /**
+   * Speak a sequence as one generation (no cancel between items).
+   * Used for iOS male count clarity tests / multi-digit pacing.
+   */
+  async speakSequentialCounts(
+    texts: string[],
+    options: SpeakOptions & { gapMs?: number } = {}
+  ): Promise<void> {
+    const { signal, gapMs = 100, rate, preferMaleVoice, trailingPauseMs } = options;
+    await this.init();
+    const generation = this.beginSpeakGeneration();
+    const items = texts.map((t) => t.trim()).filter(Boolean);
+    for (let i = 0; i < items.length; i += 1) {
+      if (signal?.aborted || generation !== this.queueGeneration) {
+        throw new DOMException('Aborted', 'AbortError');
+      }
+      await this.speakUtterance(items[i], generation, signal, 0, {
+        rate,
+        preferMaleVoice,
+      });
+      const pause = trailingPauseMs ?? gapMs;
+      if (i < items.length - 1 && pause > 0) {
+        await this.trailingPause(pause, generation, signal);
+      }
+    }
   }
 
   /** Speak a queue with the same locked Voice / prosody. */
