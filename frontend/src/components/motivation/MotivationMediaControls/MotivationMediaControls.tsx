@@ -108,6 +108,38 @@ export function MotivationMediaControls({
     });
   }, [musicPlaying, currentMusic, showToast, t]);
 
+  // Duck music while voice coach / rest TTS is active so counts stay audible.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onVoiceCoachAudio = (event: Event) => {
+      const detail = (event as CustomEvent<{ active?: boolean; duckVolume?: number }>).detail;
+      const active = Boolean(detail?.active);
+      const duckVolume = typeof detail?.duckVolume === 'number' ? detail.duckVolume : 0.18;
+      if (active) {
+        if (audio.dataset.mfVoiceDuck == null) {
+          audio.dataset.mfVoiceDuck = String(audio.volume);
+        }
+        audio.volume = duckVolume;
+      } else if (audio.dataset.mfVoiceDuck != null) {
+        const prev = Number(audio.dataset.mfVoiceDuck);
+        audio.volume = Number.isFinite(prev) ? prev : 1;
+        delete audio.dataset.mfVoiceDuck;
+      }
+    };
+
+    window.addEventListener('machinefit:voice-coach-audio', onVoiceCoachAudio);
+    return () => {
+      window.removeEventListener('machinefit:voice-coach-audio', onVoiceCoachAudio);
+      if (audio.dataset.mfVoiceDuck != null) {
+        const prev = Number(audio.dataset.mfVoiceDuck);
+        audio.volume = Number.isFinite(prev) ? prev : 1;
+        delete audio.dataset.mfVoiceDuck;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     return () => {
       audioRef.current?.pause();

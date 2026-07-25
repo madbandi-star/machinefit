@@ -3,6 +3,8 @@
  * All speechSynthesis usage must go through this module — never call speak() directly.
  */
 
+import { nudgeVoiceCoachSpeech } from '@/utils/voiceCoachAudioSession';
+
 export const SPEECH_DEFAULTS = {
   lang: 'ko-KR',
   pitch: 1.0,
@@ -155,7 +157,8 @@ class SpeechManagerImpl {
   private speakUtterance(
     text: string,
     generation: number,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    attempt = 0
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       if (signal?.aborted) {
@@ -171,6 +174,13 @@ class SpeechManagerImpl {
       if (!trimmed) {
         resolve();
         return;
+      }
+
+      nudgeVoiceCoachSpeech();
+      try {
+        window.speechSynthesis.resume();
+      } catch {
+        // ignore
       }
 
       const utterance = this.createUtterance(trimmed);
@@ -195,7 +205,38 @@ class SpeechManagerImpl {
       };
 
       utterance.onend = () => finish();
-      utterance.onerror = () => finish();
+      utterance.onerror = (event) => {
+        const errName = String(
+          (event as SpeechSynthesisErrorEvent).error || ''
+        ).toLowerCase();
+        // Background / audio-focus interruptions — retry a few times.
+        if (
+          (errName === 'interrupted' || errName === 'audio-busy' || errName === 'network') &&
+          attempt < 4 &&
+          generation === this.queueGeneration &&
+          !signal?.aborted
+        ) {
+          settled = true;
+          if (timeoutId) window.clearTimeout(timeoutId);
+          signal?.removeEventListener('abort', onAbort);
+          utterance.onend = null;
+          utterance.onerror = null;
+          window.setTimeout(() => {
+            nudgeVoiceCoachSpeech();
+            this.speakUtterance(trimmed, generation, signal, attempt + 1).then(
+              resolve,
+              reject
+            );
+          }, 180 + attempt * 120);
+          return;
+        }
+        // canceled by our cancel()/generation bump — treat as abort-ish soft end
+        if (errName === 'canceled' || generation !== this.queueGeneration) {
+          finish(new DOMException('Aborted', 'AbortError'));
+          return;
+        }
+        finish();
+      };
       timeoutId = window.setTimeout(() => finish(), maxMs);
       signal?.addEventListener('abort', onAbort, { once: true });
 
@@ -248,6 +289,7 @@ class SpeechManagerImpl {
           }
           const timer = window.setTimeout(() => {
             signal?.removeEventListener('abort', onAbort);
+            nudgeVoiceCoachSpeech();
             resolve();
           }, waitMs);
           const onAbort = () => {
