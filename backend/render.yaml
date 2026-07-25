@@ -9,6 +9,8 @@ services:
         value: production
       - key: PORT
         value: 3001
+      - key: SKIP_FRONTEND_INSTALL
+        value: '1'
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET

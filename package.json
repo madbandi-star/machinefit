@@ -3,26 +3,29 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "workspaces": [
     "shared",
-    "frontend",
     "backend"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=frontend",
+    "dev": "npm run build --workspace=shared && npm run dev --prefix frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev\"",
-    "build": "npm run build --workspace=shared && npm run build --workspace=frontend && npm run build --workspace=backend",
-    "build:frontend": "npm run build --workspace=frontend",
+    "build": "npm run build --workspace=shared && npm run build --prefix frontend && npm run build --workspace=backend",
+    "build:frontend": "npm run build --prefix frontend",
     "build:backend": "npm run build --workspace=backend",
-    "build:render": "npm ci -w shared -w backend && npm run build --workspace=shared && npm run build --workspace=backend",
-    "lint": "npm run lint --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build:render": "npm ci && npm run build --workspace=shared && npm run build --workspace=backend",
+    "lint": "npm run lint --workspaces --if-present && npm run lint --prefix frontend --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && npm run typecheck --prefix frontend --if-present",
     "db:migrate": "tsx database/scripts/migrate.ts",
     "db:migrate:one": "tsx database/scripts/apply-one-migration.ts",
     "db:seed": "tsx database/scripts/seed.ts",
     "db:setup": "npm run db:migrate && npm run db:seed",
-    "test:smoke:changed": "node scripts/smoke-changed.mjs"
+    "test:smoke:changed": "node scripts/smoke-changed.mjs",
+    "postinstall": "node scripts/ensure-frontend-deps.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
@@ -30,8 +33,5 @@
     "pg": "^8.16.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
-  },
-  "overrides": {
-    "zod": "^3.24.2"
   }
 }

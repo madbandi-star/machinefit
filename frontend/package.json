@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@machinefit/shared": "*",
+    "@machinefit/shared": "file:../shared",
     "@tanstack/react-query": "^5.77.2",
     "axios": "^1.9.0",
     "html5-qrcode": "^2.3.8",

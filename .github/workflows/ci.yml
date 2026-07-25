@@ -22,12 +22,20 @@ jobs:
           node-version: 20
           cache: npm
 
-      - run: npm ci
+      - name: Install shared/backend workspaces
+        run: npm ci
+        env:
+          SKIP_FRONTEND_INSTALL: '1'
 
       - run: npm run build --workspace=shared
 
-      - run: npm run typecheck
+      - name: Install frontend
+        working-directory: frontend
+        run: npm ci
+
+      - run: npm run typecheck --workspace=shared
+      - run: npm run typecheck --workspace=backend
+      - run: npm run typecheck --prefix frontend
 
       - run: npm run build:frontend
-
       - run: npm run build:backend

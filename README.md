@@ -101,16 +101,17 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 | Runtime | Node |
 | Build Command | `npm run build:render` |
 | Start Command | `npm run start --workspace=backend` |
-
-> **Build tip:** `build:render` installs only `shared` + `backend` workspaces (~100MB). Do **not** use a plain `npm ci` at repo root first — that pulls in the frontend (~350MB) and can OOM on Render free tier (`Exited with status 2`).
 | Instance Type | **Free** |
 | Health Check Path | `/api/v1/health` |
+
+> Frontend is **not** an npm workspace anymore, so root `npm ci` stays small enough for Render free tier. Build Command must be exactly `npm run build:render` (no extra `npm ci &&` prefix).
 
 4. **Environment** — paste from `print-deploy-env.ps1`:
 
 - `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`
 - `CORS_ORIGIN` = `https://madbandi-star.github.io`
 - `NODE_ENV` = `production`, `PORT` = `3001`, `API_BASE_PATH` = `/api/v1`
+- `SKIP_FRONTEND_INSTALL` = `1` (optional; Render also sets `RENDER=true`)
 
 5. Deploy → copy URL → set GitHub secret `VITE_API_BASE_URL` = `https://YOUR-APP.onrender.com/api/v1`
 

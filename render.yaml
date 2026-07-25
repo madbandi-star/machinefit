@@ -1,21 +1,29 @@
 # Reference for manual free-tier Web Service setup (Blueprint may require paid/card).
 # Create via Render Dashboard: New → Web Service (not Blueprint).
+#
+# CRITICAL — Build Command must be EXACTLY:
+#   npm run build:render
+# Do not prefix with `npm ci` / `npm install` (that duplicates work; old
+# monorepo installs also OOMed when frontend was a workspace).
 services:
   - type: web
     name: machinefit-api
     plan: free
     runtime: node
-    # Install only shared+backend (skip frontend) to avoid free-tier OOM.
     buildCommand: npm run build:render
     startCommand: npm run start --workspace=backend
     healthCheckPath: /api/v1/health
     envVars:
+      - key: NODE_VERSION
+        value: '20'
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3001
       - key: API_BASE_PATH
         value: /api/v1
+      - key: SKIP_FRONTEND_INSTALL
+        value: '1'
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET

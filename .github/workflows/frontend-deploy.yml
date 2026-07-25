@@ -34,12 +34,22 @@ jobs:
           node-version: 20
           cache: npm
 
-      - run: npm ci
+      - name: Install shared/backend workspaces
+        run: npm ci
+        env:
+          SKIP_FRONTEND_INSTALL: '1'
 
       - run: npm run build --workspace=shared
 
+      - name: Install and build frontend
+        working-directory: frontend
+        run: npm ci
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+
       - name: Build frontend
-        run: npm run build:frontend
+        working-directory: frontend
+        run: npm run build
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
