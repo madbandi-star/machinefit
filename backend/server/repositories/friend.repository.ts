@@ -99,7 +99,6 @@ export const friendRepository = {
     userId: string,
     patch: Partial<FriendPrivacySettings>
   ): Promise<FriendPrivacySettings> {
-    await this.ensurePrivacy(userId);
     const pool = getPool()!;
     const cur = await this.ensurePrivacy(userId);
     const next = { ...cur, ...patch };
