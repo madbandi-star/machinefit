@@ -1,10 +1,10 @@
 /**
- * iOS + male voice-pack count TTS helpers.
+ * Sino-Korean count wording helpers.
  *
- * On iOS, AVSpeechSynthesizer (via speechSynthesis) often mumbles Arabic digits
- * and short vowels in male voices for "5"/"2". For male pack only we skip clips
- * and speak Sino-Korean count words (오/사/삼/이/일 …) as one utterance each.
- * Female pack and Android keep the existing clip path unchanged.
+ * Primary Korean counts always use the selected voice-coach clip pack
+ * (female/male MP3). These helpers are only for TTS *fallback* when a clip
+ * fails — never used to bypass male clips (that made iOS counts sound female
+ * via AVSpeech while Hold clips stayed male).
  */
 
 import type { VoiceCoachPack } from '@/utils/voiceCoachClips';
