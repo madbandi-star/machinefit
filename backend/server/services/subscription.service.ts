@@ -58,10 +58,14 @@ export const subscriptionService = {
     );
     const current = parseInt(result.rows[0]?.count ?? '0', 10);
     if (current >= limits.maxGyms) {
+      const upgradeHint =
+        effectivePlan === 'premium'
+          ? ''
+          : ' Upgrade to premium to add more.';
       throw new AppError(
         402,
         'PLAN_LIMIT',
-        `Gym limit reached for your plan (max ${limits.maxGyms}). Upgrade to premium to add more.`
+        `Gym limit reached for your plan (max ${limits.maxGyms}).${upgradeHint}`
       );
     }
   },
@@ -79,10 +83,14 @@ export const subscriptionService = {
     );
     const current = parseInt(result.rows[0]?.count ?? '0', 10);
     if (current >= limits.maxMembersPerGym) {
+      const upgradeHint =
+        effectivePlan === 'premium'
+          ? ''
+          : ' Upgrade to premium to add more.';
       throw new AppError(
         402,
         'PLAN_LIMIT',
-        `Member limit reached for your plan (max ${limits.maxMembersPerGym} per gym). Upgrade to premium.`
+        `Member limit reached for your plan (max ${limits.maxMembersPerGym} per gym).${upgradeHint}`
       );
     }
   },
