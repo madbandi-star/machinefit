@@ -25,9 +25,15 @@ assert.equal(repClipKey(1), 'rep-1');
 assert.equal(repClipKey(30), 'rep-30');
 assert.equal(repClipKey(31), null);
 
-assert.equal(
-  voiceCoachClipUrl('start', 'female'),
-  '/voice-coach/female/start.mp3'
-);
+{
+  const base = import.meta.env.BASE_URL || '/';
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+  assert.equal(
+    voiceCoachClipUrl('start', 'female'),
+    `${normalizedBase}voice-coach/female/start.mp3`
+  );
+  assert.equal(countdownClipKey(10), 'cd-10');
+  assert.ok(MAX_VOICE_COACH_CLIP_COUNTDOWN >= 10);
+}
 
 console.log('voiceCoachClips.test.ts: ok');
