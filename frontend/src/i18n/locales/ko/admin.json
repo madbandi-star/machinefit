@@ -21,7 +21,11 @@
     "motivationDesc": "동기부여 음악·영상 재생 목록을 설정합니다.",
     "muscleImagesDesc": "근육군 대표 이미지를 업로드·교체합니다.",
     "machineCoversDesc": "머신별 대표 이미지를 업로드·교체합니다.",
-    "moderationDesc": "게시글·기구 요청·신고를 처리합니다."
+    "moderationDesc": "게시글·기구 요청·신고를 처리합니다.",
+    "complianceDesc": "약관 버전·동의 이력·문의·감사 로그를 관리합니다."
+  },
+  "compliance": {
+    "nav": "컴플라이언스"
   },
   "users": "사용자",
   "gyms": "헬스장",

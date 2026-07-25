@@ -58,6 +58,13 @@ export function PostDetailPage() {
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
+  const reportMutation = useMutation({
+    mutationFn: () =>
+      communityApi.reportPost(postId!, { reason: 'abuse', description: 'user report' }),
+    onSuccess: () => showToast(tc('compliance.report.submitted'), 'success'),
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
   const handleLike = () => {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
@@ -122,6 +129,19 @@ export function PostDetailPage() {
           <button className="btn btn--secondary" onClick={handleLike} disabled={likeMutation.isPending}>
             ♥ {t('like')} {post.likeCount != null ? `(${post.likeCount})` : ''}
           </button>
+          {isAuthenticated && !isAuthor && (
+            <button
+              className="btn btn--secondary"
+              onClick={() => {
+                if (window.confirm(tc('compliance.report.confirm'))) {
+                  reportMutation.mutate();
+                }
+              }}
+              disabled={reportMutation.isPending}
+            >
+              {tc('compliance.report.cta')}
+            </button>
+          )}
           {canDelete && (
             <button className="btn btn--secondary" onClick={handleDelete} disabled={deleteMutation.isPending}>
               {t('deletePost')}

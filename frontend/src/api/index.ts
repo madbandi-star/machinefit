@@ -89,6 +89,7 @@ export const authApi = {
     agreeTerms: boolean;
     agreePrivacy: boolean;
     agreeMarketing?: boolean;
+    agreeLocation?: boolean;
     legalVersion?: string;
   }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
@@ -528,6 +529,7 @@ export const liveDashboardApi = {
 
 export { communityApi, machineRequestApi, ownerApi } from './community.api';
 export type { OwnerDashboardStats, OwnerApplyResult } from './community.api';
+export { complianceApi } from './compliance.api';
 export { adminApi, notificationApi, motivationMediaApi, muscleGroupImageApi } from './admin.api';
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
 export { photoBoardApi } from './photo-board.api';

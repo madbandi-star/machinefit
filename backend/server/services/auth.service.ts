@@ -48,6 +48,8 @@ function buildAuthResponse(user: User) {
       experienceLevel: user.experienceLevel,
       subscriptionPlan: user.subscriptionPlan ?? 'free',
       marketingOptIn: user.marketingOptIn ?? false,
+      locationOptIn: user.locationOptIn ?? false,
+      pushServiceOptIn: user.pushServiceOptIn ?? true,
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
       updatedAt: user.updatedAt ?? new Date().toISOString(),
@@ -72,6 +74,7 @@ export const authService = {
     const pool = getPool();
     const passwordHash = await resolveRegisterPasswordHash(input.password);
     const marketingOptIn = Boolean(input.agreeMarketing);
+    const locationOptIn = Boolean(input.agreeLocation);
     const legalVersion = input.legalVersion || LEGAL_DOC_VERSION;
 
     if (!pool) {
@@ -114,6 +117,7 @@ export const authService = {
         homeGymName: input.homeGymName,
         experienceLevel: input.experienceLevel,
         marketingOptIn,
+        locationOptIn,
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -142,11 +146,14 @@ export const authService = {
         homeGymName: input.homeGymName ?? null,
         experienceLevel: input.experienceLevel,
         marketingOptIn,
+        locationOptIn,
       });
       await userRepository.recordConsents(user.id, [
         { type: 'terms', version: legalVersion, agreed: true },
         { type: 'privacy', version: legalVersion, agreed: true },
         { type: 'marketing', version: legalVersion, agreed: marketingOptIn },
+        { type: 'location', version: legalVersion, agreed: locationOptIn },
+        { type: 'push_service', version: legalVersion, agreed: true },
       ]);
     } catch (error) {
       const pgCode =
@@ -169,14 +176,32 @@ export const authService = {
     return buildAuthResponse(user);
   },
 
-  async login(input: LoginInput) {
+  async login(
+    input: LoginInput,
+    meta?: { ipAddress?: string | null; userAgent?: string | null }
+  ) {
     const pool = getPool();
+    const { complianceRepository } = await import('../repositories/compliance.repository.js');
 
     if (!pool) {
       const user = findDevUserByEmail(input.email);
       if (!user || !user.isActive || !(await comparePassword(input.password, user.passwordHash))) {
+        await complianceRepository.recordLoginEvent({
+          email: input.email,
+          success: false,
+          failureReason: 'INVALID_CREDENTIALS',
+          ipAddress: meta?.ipAddress,
+          userAgent: meta?.userAgent,
+        });
         throw new AppError(401, 'INVALID_CREDENTIALS', 'Invalid email or password');
       }
+      await complianceRepository.recordLoginEvent({
+        userId: user.id,
+        email: user.email,
+        success: true,
+        ipAddress: meta?.ipAddress,
+        userAgent: meta?.userAgent,
+      });
       return buildAuthResponse({
         id: user.id,
         roleId: 'dev-role',
@@ -194,14 +219,37 @@ export const authService = {
 
     const user = await userRepository.findByEmail(input.email);
     if (!user || !(await comparePassword(input.password, user.passwordHash))) {
+      await complianceRepository.recordLoginEvent({
+        userId: user?.id,
+        email: input.email,
+        success: false,
+        failureReason: 'INVALID_CREDENTIALS',
+        ipAddress: meta?.ipAddress,
+        userAgent: meta?.userAgent,
+      });
       throw new AppError(401, 'INVALID_CREDENTIALS', 'Invalid email or password');
     }
 
     if (!user.isActive) {
+      await complianceRepository.recordLoginEvent({
+        userId: user.id,
+        email: user.email,
+        success: false,
+        failureReason: 'ACCOUNT_DISABLED',
+        ipAddress: meta?.ipAddress,
+        userAgent: meta?.userAgent,
+      });
       throw new AppError(403, 'ACCOUNT_DISABLED', 'Account is disabled');
     }
 
     await userRepository.updateLastLogin(user.id);
+    await complianceRepository.recordLoginEvent({
+      userId: user.id,
+      email: user.email,
+      success: true,
+      ipAddress: meta?.ipAddress,
+      userAgent: meta?.userAgent,
+    });
 
     const { passwordHash: _, ...safeUser } = user;
     return buildAuthResponse(safeUser);

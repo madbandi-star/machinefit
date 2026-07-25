@@ -90,14 +90,14 @@ export async function updateMachineRequest(req: Request, res: Response): Promise
 }
 
 export async function listReports(_req: Request, res: Response): Promise<void> {
-  const reports = adminService.listReports();
+  const reports = await adminService.listReports();
   res.json({ success: true, data: reports });
 }
 
 export async function resolveReport(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = resolveReportSchema.parse(req.body);
-  const report = adminService.resolveReport(getParam(req.params.id), input, req.user.userId);
+  const report = await adminService.resolveReport(getParam(req.params.id), input, req.user.userId);
   res.json({ success: true, data: report });
 }
 

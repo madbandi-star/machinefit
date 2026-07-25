@@ -28,6 +28,12 @@ export const communityApi = {
 
   toggleLike: (postId: string) =>
     apiClient.post<ApiResponse<{ liked: boolean; likeCount: number }>>(`/community/posts/${postId}/like`),
+
+  reportPost: (postId: string, input: { reason: string; description?: string }) =>
+    apiClient.post<ApiResponse<{ id: string }>>(`/community/posts/${postId}/report`, input),
+
+  reportComment: (commentId: string, input: { reason: string; description?: string }) =>
+    apiClient.post<ApiResponse<{ id: string }>>(`/community/comments/${commentId}/report`, input),
 };
 
 export const machineRequestApi = {

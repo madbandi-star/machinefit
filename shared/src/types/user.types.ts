@@ -34,6 +34,10 @@ export interface User {
   subscriptionPlan?: import('../constants/subscription.js').SubscriptionPlan;
   /** Opt-in for marketing / event push campaigns. */
   marketingOptIn?: boolean;
+  /** Opt-in for storing/using precise GPS location. */
+  locationOptIn?: boolean;
+  /** Opt-in for service (non-marketing) push notifications. */
+  pushServiceOptIn?: boolean;
   isActive: boolean;
   deactivatedAt?: string | null;
   lastLoginAt?: string;

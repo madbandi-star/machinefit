@@ -248,5 +248,6 @@
 | 작성일 | 2026-07-25 |
 | 근거 | 코드베이스 점검 (약관 부재, demo password, push, location, age 13 등) |
 | 관련 보안 수정 | Live Dashboard / 추천 IDOR (`docs` 외 커밋 이력 참고) |
+| 전수 점검 | `docs/LEGAL_RISK_FULL_AUDIT.md` + migration `074` 컴플라이언스 플랫폼 |
 
 체크 완료 시 이 문서의 해당 항목을 `[x]`로 바꾸고, PR에 `compliance: P0-1` 식으로 라벨/제목을 맞추면 추적이 쉽습니다.
