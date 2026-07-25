@@ -1,5 +1,17 @@
 {
   "title": "Friends",
+  "heroLead": "Gather your training circle and follow activity and rankings in one place.",
+  "sectionLead": {
+    "list": "Find friends quickly by pin and recent activity.",
+    "add": "Search by nickname or ID and send a friend request.",
+    "incoming": "Review incoming requests and accept or decline.",
+    "outgoing": "Track sent requests and cancel when needed.",
+    "blocked": "Manage blocked users and unblock anytime.",
+    "privacy": "Control exactly what friends can see about you.",
+    "feed": "Catch workout completions, PRs, and badge moments.",
+    "rankings": "Compare weekly volume, streaks, and more.",
+    "invite": "Share your invite code and train together."
+  },
   "refresh": "Refresh",
   "nav": {
     "list": "Friends",

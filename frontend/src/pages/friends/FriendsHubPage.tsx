@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type TouchEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode, type TouchEvent } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,6 @@ import {
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
-import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { friendsApi } from '@/api/friends.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -54,11 +53,48 @@ function useDebounced(value: string, ms: number) {
 }
 
 function Avatar({ name, url }: { name: string; url?: string | null }) {
-  if (url) return <img className="friends-row__avatar" src={url} alt="" />;
+  if (url) return <img className="friends-avatar" src={url} alt="" />;
   return (
-    <div className="friends-row__avatar" aria-hidden>
+    <div className="friends-avatar friends-avatar-fallback" aria-hidden>
       {(name || '?').slice(0, 1).toUpperCase()}
     </div>
+  );
+}
+
+function FriendsEmpty({ title, hint }: { title: string; hint?: string }) {
+  return (
+    <div className="friends-empty">
+      <div className="friends-empty-mark" aria-hidden>
+        ·
+      </div>
+      <strong>{title}</strong>
+      {hint ? <p>{hint}</p> : null}
+    </div>
+  );
+}
+
+function Panel({
+  title,
+  desc,
+  count,
+  children,
+}: {
+  title: string;
+  desc?: string;
+  count?: number;
+  children: ReactNode;
+}) {
+  return (
+    <section className="friends-panel">
+      <div className="friends-panel-head">
+        <div>
+          <h2>{title}</h2>
+          {desc ? <p className="friends-panel-desc">{desc}</p> : null}
+        </div>
+        {typeof count === 'number' ? <span className="friends-count">{count}</span> : null}
+      </div>
+      {children}
+    </section>
   );
 }
 
@@ -303,38 +339,38 @@ export function FriendsHubPage() {
     if (page * 20 < total) setPage((p) => p + 1);
   };
 
+  const sectionTitle = t(`nav.${section}`);
+  const sectionDesc = t(`sectionLead.${section}`);
+
   return (
-    <div
-      className="friends-page"
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-    >
-      <PageShell title={t('title')}>
-        <nav className="friends-subnav" aria-label={t('title')}>
+    <div className="friends-shell" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <PageShell>
+        <header className="friends-hero">
+          <p className="friends-hero-kicker">MachineFit</p>
+          <h1>{t('title')}</h1>
+          <p className="friends-hero-lead">{t('heroLead')}</p>
+          <div className="friends-hero-actions">
+            <button type="button" className="friends-btn friends-btn-ghost" onClick={refreshCurrent}>
+              {t('refresh')}
+            </button>
+          </div>
+        </header>
+
+        <nav className="friends-tabs" aria-label={t('title')}>
           {nav.map((item) => (
             <NavLink
               key={item.key}
               to={item.to}
               end={item.key === 'list'}
-              className={({ isActive }) =>
-                `friends-subnav__link${isActive ? ' is-active' : ''}`
-              }
+              className={({ isActive }) => `friends-tab${isActive ? ' is-active' : ''}`}
             >
               {t(`nav.${item.key}`)}
             </NavLink>
           ))}
         </nav>
 
-        <button
-          type="button"
-          className="btn btn--secondary btn--sm friends-refresh"
-          onClick={refreshCurrent}
-        >
-          {t('refresh')}
-        </button>
-
         {section === 'list' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc} count={listQuery.data?.total}>
             <div className="friends-toolbar">
               <input
                 value={q}
@@ -357,56 +393,53 @@ export function FriendsHubPage() {
             {listQuery.isLoading ? (
               <Skeleton count={5} height={64} />
             ) : !listQuery.data?.items.length ? (
-              <EmptyState title={t('empty.friends')} hint={t('empty.friendsHint')} />
+              <FriendsEmpty title={t('empty.friends')} hint={t('empty.friendsHint')} />
             ) : (
-              <ul className="friends-list">
+              <ul className="friends-rows">
                 {listQuery.data.items.map((f) => (
-                  <li key={f.friendshipId}>
-                    <div className="friends-row">
-                      <Link
-                        to={ROUTES.FRIEND_PROFILE.replace(':userId', f.id)}
-                        className="friends-row"
-                        style={{ flex: 1, border: 0, padding: 0 }}
-                      >
-                        <Avatar name={f.displayName} url={f.avatarUrl} />
-                        <div className="friends-row__meta">
-                          <div className="friends-row__name">
-                            {f.pinned ? <span className="friends-pin">★</span> : null}
-                            {f.displayName}
-                            {f.isOnline ? <span className="friends-dot" title="online" /> : null}
-                          </div>
-                          <div className="friends-row__sub">
-                            {t('lastActive', { time: formatRelative(f.lastActiveAt) })}
-                          </div>
-                        </div>
-                      </Link>
-                      <div className="friends-row__actions">
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => pinMut.mutate({ id: f.id, pinned: !f.pinned })}
-                        >
-                          {f.pinned ? t('unpin') : t('pin')}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => {
-                            if (window.confirm(t('confirmRemove'))) removeMut.mutate(f.id);
-                          }}
-                        >
-                          {t('remove')}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => {
-                            if (window.confirm(t('confirmBlock'))) blockMut.mutate(f.id);
-                          }}
-                        >
-                          {t('block')}
-                        </button>
+                  <li key={f.friendshipId} className="friends-row">
+                    <Link
+                      to={ROUTES.FRIEND_PROFILE.replace(':userId', f.id)}
+                      className="friends-row-main"
+                    >
+                      <Avatar name={f.displayName} url={f.avatarUrl} />
+                      <div className="friends-row-copy">
+                        <strong className="friends-row-name">
+                          {f.pinned ? <span className="friends-pin">★</span> : null}
+                          {f.displayName}
+                          {f.isOnline ? <span className="friends-dot" title="online" /> : null}
+                        </strong>
+                        <span className="friends-row-meta">
+                          {t('lastActive', { time: formatRelative(f.lastActiveAt) })}
+                        </span>
                       </div>
+                    </Link>
+                    <div className="friends-row-actions">
+                      <button
+                        type="button"
+                        className="friends-btn friends-btn-sm"
+                        onClick={() => pinMut.mutate({ id: f.id, pinned: !f.pinned })}
+                      >
+                        {f.pinned ? t('unpin') : t('pin')}
+                      </button>
+                      <button
+                        type="button"
+                        className="friends-btn friends-btn-sm"
+                        onClick={() => {
+                          if (window.confirm(t('confirmRemove'))) removeMut.mutate(f.id);
+                        }}
+                      >
+                        {t('remove')}
+                      </button>
+                      <button
+                        type="button"
+                        className="friends-btn friends-btn-sm friends-btn-danger"
+                        onClick={() => {
+                          if (window.confirm(t('confirmBlock'))) blockMut.mutate(f.id);
+                        }}
+                      >
+                        {t('block')}
+                      </button>
                     </div>
                   </li>
                 ))}
@@ -415,18 +448,18 @@ export function FriendsHubPage() {
             {listQuery.data && page * 20 < listQuery.data.total ? (
               <button
                 type="button"
-                className="btn btn--secondary btn--block friends-load-more"
+                className="friends-btn friends-btn-block"
                 onClick={() => loadMore(listQuery.data!.total)}
               >
                 {t('loadMore')}
               </button>
             ) : null}
-          </>
+          </Panel>
         )}
 
         {section === 'add' && (
-          <>
-            <div className="friends-toolbar">
+          <Panel title={sectionTitle} desc={sectionDesc}>
+            <div className="friends-toolbar friends-toolbar--single">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
@@ -436,105 +469,107 @@ export function FriendsHubPage() {
               />
             </div>
             {!debouncedQ.trim() ? (
-              <EmptyState title={t('empty.search')} hint={t('empty.searchHint')} />
+              <FriendsEmpty title={t('empty.search')} hint={t('empty.searchHint')} />
             ) : searchQuery.isLoading ? (
               <Skeleton count={4} height={64} />
             ) : !searchQuery.data?.items.length ? (
-              <EmptyState title={t('empty.noUsers')} />
+              <FriendsEmpty title={t('empty.noUsers')} />
             ) : (
-              <ul className="friends-list">
+              <ul className="friends-rows">
                 {searchQuery.data.items.map((u) => {
                   const rel = u.relationship ?? 'none';
                   return (
-                  <li key={u.id} className="friends-row">
-                    <Avatar name={u.displayName} url={u.avatarUrl} />
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">{u.displayName}</div>
-                      <div className="friends-row__sub">
-                        {u.experienceLevel || '—'}
-                        {' · '}
-                        {t(`relationship.${rel}`)}
+                    <li key={u.id} className="friends-row">
+                      <div className="friends-row-main">
+                        <Avatar name={u.displayName} url={u.avatarUrl} />
+                        <div className="friends-row-copy">
+                          <strong>{u.displayName}</strong>
+                          <span>
+                            {u.experienceLevel || '—'}
+                            {' · '}
+                            {t(`relationship.${rel}`)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="friends-row__actions">
-                      {rel === 'none' ? (
+                      <div className="friends-row-actions">
+                        {rel === 'none' ? (
+                          <button
+                            type="button"
+                            className="friends-btn friends-btn-primary friends-btn-sm"
+                            onClick={() => sendMut.mutate(u.id)}
+                            disabled={sendMut.isPending}
+                          >
+                            {t('sendRequest')}
+                          </button>
+                        ) : null}
+                        {rel === 'friend' ? (
+                          <span className="friends-chip">{t('relationship.friend')}</span>
+                        ) : null}
+                        {rel === 'outgoing' ? (
+                          <span className="friends-chip">{t('requestPending')}</span>
+                        ) : null}
+                        {rel === 'incoming' && u.pendingRequestId ? (
+                          <>
+                            <button
+                              type="button"
+                              className="friends-btn friends-btn-primary friends-btn-sm"
+                              onClick={() => acceptMut.mutate(u.pendingRequestId!)}
+                            >
+                              {t('accept')}
+                            </button>
+                            <button
+                              type="button"
+                              className="friends-btn friends-btn-sm"
+                              onClick={() => rejectMut.mutate(u.pendingRequestId!)}
+                            >
+                              {t('reject')}
+                            </button>
+                          </>
+                        ) : null}
                         <button
                           type="button"
-                          className="btn btn--primary"
-                          onClick={() => sendMut.mutate(u.id)}
-                          disabled={sendMut.isPending}
+                          className="friends-btn friends-btn-sm friends-btn-ghost"
+                          onClick={() => navigate(ROUTES.FRIEND_PROFILE.replace(':userId', u.id))}
                         >
-                          {t('sendRequest')}
+                          {t('viewProfile')}
                         </button>
-                      ) : null}
-                      {rel === 'friend' ? (
-                        <span className="friends-chip">{t('relationship.friend')}</span>
-                      ) : null}
-                      {rel === 'outgoing' ? (
-                        <span className="friends-chip">{t('requestPending')}</span>
-                      ) : null}
-                      {rel === 'incoming' && u.pendingRequestId ? (
-                        <>
-                          <button
-                            type="button"
-                            className="btn btn--primary"
-                            onClick={() => acceptMut.mutate(u.pendingRequestId!)}
-                          >
-                            {t('accept')}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn--secondary"
-                            onClick={() => rejectMut.mutate(u.pendingRequestId!)}
-                          >
-                            {t('reject')}
-                          </button>
-                        </>
-                      ) : null}
-                      <button
-                        type="button"
-                        className="btn btn--secondary"
-                        onClick={() =>
-                          navigate(ROUTES.FRIEND_PROFILE.replace(':userId', u.id))
-                        }
-                      >
-                        {t('viewProfile')}
-                      </button>
-                    </div>
-                  </li>
+                      </div>
+                    </li>
                   );
                 })}
               </ul>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'incoming' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc} count={incomingQuery.data?.total}>
             {incomingQuery.isLoading ? (
               <Skeleton count={4} height={72} />
             ) : !incomingQuery.data?.items.length ? (
-              <EmptyState title={t('empty.incoming')} />
+              <FriendsEmpty title={t('empty.incoming')} />
             ) : (
-              <ul className="friends-list">
+              <ul className="friends-rows">
                 {incomingQuery.data.items.map((r) => (
                   <li key={r.id} className="friends-row">
-                    <Avatar name={r.fromUser.displayName} url={r.fromUser.avatarUrl} />
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">{r.fromUser.displayName}</div>
-                      <div className="friends-row__sub">{r.message || t('noMessage')}</div>
+                    <div className="friends-row-main">
+                      <Avatar name={r.fromUser.displayName} url={r.fromUser.avatarUrl} />
+                      <div className="friends-row-copy">
+                        <strong>{r.fromUser.displayName}</strong>
+                        <span>{r.message || t('noMessage')}</span>
+                      </div>
                     </div>
-                    <div className="friends-row__actions">
+                    <div className="friends-row-actions">
                       <button
                         type="button"
-                        className="btn btn--primary"
+                        className="friends-btn friends-btn-primary friends-btn-sm"
                         onClick={() => acceptMut.mutate(r.id)}
                       >
                         {t('accept')}
                       </button>
                       <button
                         type="button"
-                        className="btn btn--secondary"
+                        className="friends-btn friends-btn-sm"
                         onClick={() => rejectMut.mutate(r.id)}
                       >
                         {t('reject')}
@@ -544,28 +579,30 @@ export function FriendsHubPage() {
                 ))}
               </ul>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'outgoing' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc} count={outgoingQuery.data?.total}>
             {outgoingQuery.isLoading ? (
               <Skeleton count={4} height={72} />
             ) : !outgoingQuery.data?.items.length ? (
-              <EmptyState title={t('empty.outgoing')} />
+              <FriendsEmpty title={t('empty.outgoing')} />
             ) : (
-              <ul className="friends-list">
+              <ul className="friends-rows">
                 {outgoingQuery.data.items.map((r) => (
                   <li key={r.id} className="friends-row">
-                    <Avatar name={r.toUser.displayName} url={r.toUser.avatarUrl} />
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">{r.toUser.displayName}</div>
-                      <div className="friends-row__sub">{formatRelative(r.createdAt)}</div>
+                    <div className="friends-row-main">
+                      <Avatar name={r.toUser.displayName} url={r.toUser.avatarUrl} />
+                      <div className="friends-row-copy">
+                        <strong>{r.toUser.displayName}</strong>
+                        <span>{formatRelative(r.createdAt)}</span>
+                      </div>
                     </div>
-                    <div className="friends-row__actions">
+                    <div className="friends-row-actions">
                       <button
                         type="button"
-                        className="btn btn--secondary"
+                        className="friends-btn friends-btn-sm"
                         onClick={() => cancelMut.mutate(r.id)}
                       >
                         {t('cancelRequest')}
@@ -575,28 +612,30 @@ export function FriendsHubPage() {
                 ))}
               </ul>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'blocked' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc} count={blockedQuery.data?.total}>
             {blockedQuery.isLoading ? (
               <Skeleton count={4} height={64} />
             ) : !blockedQuery.data?.items.length ? (
-              <EmptyState title={t('empty.blocked')} />
+              <FriendsEmpty title={t('empty.blocked')} />
             ) : (
-              <ul className="friends-list">
+              <ul className="friends-rows">
                 {blockedQuery.data.items.map((b) => (
                   <li key={b.id} className="friends-row">
-                    <Avatar name={b.user.displayName} url={b.user.avatarUrl} />
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">{b.user.displayName}</div>
-                      <div className="friends-row__sub">{b.reason || '—'}</div>
+                    <div className="friends-row-main">
+                      <Avatar name={b.user.displayName} url={b.user.avatarUrl} />
+                      <div className="friends-row-copy">
+                        <strong>{b.user.displayName}</strong>
+                        <span>{b.reason || '—'}</span>
+                      </div>
                     </div>
-                    <div className="friends-row__actions">
+                    <div className="friends-row-actions">
                       <button
                         type="button"
-                        className="btn btn--primary"
+                        className="friends-btn friends-btn-primary friends-btn-sm"
                         onClick={() => unblockMut.mutate(b.user.id)}
                       >
                         {t('unblock')}
@@ -606,11 +645,11 @@ export function FriendsHubPage() {
                 ))}
               </ul>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'privacy' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc}>
             {privacyQuery.isLoading || !privacyQuery.data ? (
               <Skeleton count={6} height={56} />
             ) : (
@@ -651,11 +690,7 @@ export function FriendsHubPage() {
                 ).map((key) => (
                   <div className="friends-privacy-field" key={key}>
                     <label htmlFor={key}>{t(`privacy.${key}`)}</label>
-                    <select
-                      id={key}
-                      name={key}
-                      defaultValue={privacyQuery.data[key]}
-                    >
+                    <select id={key} name={key} defaultValue={privacyQuery.data[key]}>
                       {PRIVACY_LEVELS.map((lv) => (
                         <option key={lv} value={lv}>
                           {t(`privacyLevel.${lv}`)}
@@ -695,47 +730,50 @@ export function FriendsHubPage() {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn--primary btn--block"
+                  className="friends-btn friends-btn-primary friends-btn-block"
                   disabled={privacyMut.isPending}
                 >
                   {t('savePrivacy')}
                 </button>
               </form>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'feed' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc}>
             {feedQuery.isLoading ? (
               <Skeleton count={5} height={72} />
             ) : !feedQuery.data?.items.length ? (
-              <EmptyState title={t('empty.feed')} hint={t('empty.feedHint')} />
+              <FriendsEmpty title={t('empty.feed')} hint={t('empty.feedHint')} />
             ) : (
-              <div>
+              <div className="friends-feed-list">
                 {feedQuery.data.items.map((item) => (
-                  <article key={item.id} className="friends-feed-item">
-                    <div className="friends-feed-item__title">
-                      {item.actor.displayName} · {t(`activity.${item.activityType}`, {
-                        defaultValue: item.title,
-                      })}
-                    </div>
-                    <div className="friends-feed-item__body">
-                      {item.body || formatRelative(item.createdAt)}
-                    </div>
+                  <article key={item.id} className="friends-feed-card">
+                    <header>
+                      <h3>
+                        {item.actor.displayName} ·{' '}
+                        {t(`activity.${item.activityType}`, {
+                          defaultValue: item.title,
+                        })}
+                      </h3>
+                      <span className="friends-chip">{formatRelative(item.createdAt)}</span>
+                    </header>
+                    <p>{item.body || formatRelative(item.createdAt)}</p>
                   </article>
                 ))}
               </div>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'rankings' && (
-          <>
-            <div className="friends-toolbar">
+          <Panel title={sectionTitle} desc={sectionDesc}>
+            <div className="friends-toolbar friends-toolbar--single">
               <select
                 value={metric}
                 onChange={(e) => setMetric(e.target.value as FriendRankingMetric)}
+                aria-label={t('sortLabel')}
               >
                 {FRIEND_RANKING_METRICS.map((m) => (
                   <option key={m} value={m}>
@@ -747,49 +785,55 @@ export function FriendsHubPage() {
             {rankingsQuery.isLoading ? (
               <Skeleton count={6} height={52} />
             ) : !rankingsQuery.data?.items.length ? (
-              <EmptyState title={t('empty.rankings')} />
+              <FriendsEmpty title={t('empty.rankings')} />
             ) : (
-              <div>
+              <div className="friends-rank-list">
                 {rankingsQuery.data.items.map((row) => (
-                  <div key={row.user.id} className="friends-rank-row">
-                    <div className="friends-rank-row__n">{row.rank}</div>
-                    <Avatar name={row.user.displayName} url={row.user.avatarUrl} />
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">{row.user.displayName}</div>
+                  <div key={row.user.id} className="friends-rank-card">
+                    <div className="friends-rank-n">{row.rank}</div>
+                    <div className="friends-row-main">
+                      <Avatar name={row.user.displayName} url={row.user.avatarUrl} />
+                      <div className="friends-row-copy">
+                        <strong>{row.user.displayName}</strong>
+                      </div>
                     </div>
-                    <strong>{row.value}</strong>
+                    <strong className="friends-rank-value">{row.value}</strong>
                   </div>
                 ))}
               </div>
             )}
-          </>
+          </Panel>
         )}
 
         {section === 'invite' && (
-          <>
+          <Panel title={sectionTitle} desc={sectionDesc}>
             {inviteQuery.isLoading || !inviteQuery.data ? (
               <Skeleton count={3} height={56} />
             ) : (
               <div className="friends-privacy-grid">
-                <div className="friends-privacy-field">
+                <div className="friends-invite-box">
                   <label>{t('invite.code')}</label>
-                  <input readOnly value={inviteQuery.data.code} />
+                  <div className="friends-invite-code">{inviteQuery.data.code}</div>
+                  <p className="friends-row-meta">
+                    {t('invite.count', { count: inviteQuery.data.inviteCount })}
+                  </p>
                 </div>
                 <div className="friends-privacy-field">
                   <label>{t('invite.link')}</label>
                   <input readOnly value={inviteQuery.data.shareUrl} />
                 </div>
-                <p className="friends-row__sub">
-                  {t('invite.count', { count: inviteQuery.data.inviteCount })}
-                </p>
                 <button
                   type="button"
-                  className="btn btn--primary btn--block"
+                  className="friends-btn friends-btn-primary friends-btn-block"
                   onClick={async () => {
                     const text = `${t('invite.shareText')}\n${inviteQuery.data!.shareUrl}`;
                     try {
                       if (navigator.share) {
-                        await navigator.share({ title: 'MachineFit', text, url: inviteQuery.data!.shareUrl });
+                        await navigator.share({
+                          title: 'MachineFit',
+                          text,
+                          url: inviteQuery.data!.shareUrl,
+                        });
                       } else {
                         await navigator.clipboard.writeText(text);
                         showToast(t('toast.copied'), 'success');
@@ -812,7 +856,7 @@ export function FriendsHubPage() {
                     />
                     <button
                       type="button"
-                      className="btn btn--secondary"
+                      className="friends-btn"
                       onClick={() => applyInviteMut.mutate(inviteCode.trim())}
                       disabled={!inviteCode.trim() || applyInviteMut.isPending}
                     >
@@ -822,7 +866,7 @@ export function FriendsHubPage() {
                 </div>
               </div>
             )}
-          </>
+          </Panel>
         )}
       </PageShell>
     </div>
