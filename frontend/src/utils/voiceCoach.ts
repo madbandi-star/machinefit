@@ -570,11 +570,14 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const stillOwner = () => sessionGen === voiceCoachSessionGeneration;
 
   await beginVoiceCoachAudioSession();
+  const afterHoldSec = options.afterCountHold?.durationSec;
   void preloadVoiceCoachClips({
     reps,
     oneMoreEnabled,
     prepCount,
     pack: voicePack,
+    includeHold: Boolean(afterHoldSec),
+    holdDurationSec: afterHoldSec,
     signal,
   });
 
@@ -679,6 +682,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       await runVoiceHoldSegment({
         durationSec: options.afterCountHold.durationSec,
         locale,
+        voicePack,
         signal,
         onPhaseChange: (holdPhase, detail) => {
           if (holdPhase === 'holdCue') {
@@ -750,6 +754,8 @@ export async function runVoiceHoldOnlySession(options: {
     oneMoreEnabled: false,
     prepCount,
     pack: voicePack,
+    includeHold: true,
+    holdDurationSec: durationSec,
     signal,
   });
   const audioCtx = await ensureVoiceCoachAudioRunning();
@@ -778,6 +784,7 @@ export async function runVoiceHoldOnlySession(options: {
     await runVoiceHoldSegment({
       durationSec,
       locale,
+      voicePack,
       signal,
       onPhaseChange: (holdPhase, detail) => {
         if (holdPhase === 'holdCue') {

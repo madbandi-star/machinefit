@@ -427,13 +427,18 @@ async function caseHoldOnly(): Promise<void> {
 
   const hasPrep = [5, 4, 3, 2, 1].every((n) => phases.includes(`countdown:${n}`));
   const hasHold = phases.some((p) => p === 'hold' || p.startsWith('hold:'));
+  const clipKeys = [...new Set(playedClips.map((c) => c.replace(/^(fetch|html):/, '')))];
   const ok =
     hasPrep &&
     phases.includes('start') &&
     hasHold &&
     phases.includes('done') &&
-    spoken.some((s) => s.includes('버텨'));
-  record('hold-only/prep5+3s', ok, `phases=${phases.join('>')} spoken=${spoken.join('|')}`);
+    clipKeys.includes('hold');
+  record(
+    'hold-only/prep5+3s',
+    ok,
+    `phases=${phases.join('>')} clips=${clipKeys.join(',')} spoken=${spoken.join('|')}`
+  );
 }
 
 async function caseCountHold(): Promise<void> {

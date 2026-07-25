@@ -1,25 +1,22 @@
 /**
- * Hold-only must include prep countdown — run with:
- *   npx vite-node src/utils/voiceCoach.holdPrep.smoke.test.ts
+ * Hold cue must use selected voice pack clips (not OS TTS gender).
+ *   npx vite-node src/utils/voiceCoach.holdPack.smoke.test.ts
  */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { __resetVoiceCoachClipsForTests } from './voiceCoachClips';
-import { runVoiceCoachFlow } from './voiceCoach';
+import { runVoiceHoldSegment } from './voiceHold';
 import { speechManager } from './speechManager';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const clipRoot = path.resolve(__dirname, '../../public/voice-coach/female');
+const publicRoot = path.resolve(__dirname, '../../public/voice-coach');
+const playedUrls: string[] = [];
 const spoken: string[] = [];
-const phases: string[] = [];
 
 class MockAudioBuffer {
-  duration: number;
-  constructor(duration = 0.1) {
-    this.duration = duration;
-  }
+  duration = 0.12;
 }
 class MockBufferSource {
   buffer: MockAudioBuffer | null = null;
@@ -65,8 +62,8 @@ class MockAudioContext {
       connect() {},
     };
   }
-  async decodeAudioData(data: ArrayBuffer): Promise<MockAudioBuffer> {
-    return new MockAudioBuffer(Math.max(0.08, data.byteLength / 12_000));
+  async decodeAudioData(): Promise<MockAudioBuffer> {
+    return new MockAudioBuffer();
   }
 }
 class MockHTMLAudioElement {
@@ -170,7 +167,7 @@ g.speechSynthesis = {
       this.speaking = false;
       current = null;
       u.onend?.();
-    }, 10);
+    }, 8);
   },
   getVoices: () => [] as unknown as SpeechSynthesisVoice[],
   addEventListener() {},
@@ -182,31 +179,35 @@ Object.defineProperty(g.navigator, 'mediaSession', {
   configurable: true,
 });
 g.fetch = (async (input: RequestInfo | URL) => {
-  const file = String(input).split('/').pop()!;
-  const buf = readFileSync(path.join(clipRoot, file));
+  const url = String(input);
+  playedUrls.push(url);
+  const file = url.split('/').pop()!;
+  const parts = url.split('/');
+  const packIdx = parts.findIndex((p) => p === 'voice-coach');
+  const pack = packIdx >= 0 ? parts[packIdx + 1] : 'female';
+  const buf = readFileSync(path.join(publicRoot, pack, file));
   return new Response(buf, { status: 200 });
 }) as typeof fetch;
 
 __resetVoiceCoachClipsForTests();
 speechManager.cancel();
+playedUrls.length = 0;
+spoken.length = 0;
 
-await runVoiceCoachFlow({
-  targetReps: 1,
-  oneMoreEnabled: false,
-  prepCount: 5,
-  flowMode: 'hold',
-  holdDurationSec: 2,
+await runVoiceHoldSegment({
+  durationSec: 2,
   locale: 'ko',
-  onPhaseChange: (p, d) => {
-    if (p === 'countdown' && d?.countdown != null) phases.push(`countdown:${d.countdown}`);
-    else if (p === 'hold' && d?.countdown != null) phases.push(`hold:${d.countdown}`);
-    else phases.push(p);
-  },
+  voicePack: 'male',
 });
 
-const need = ['countdown:5', 'countdown:4', 'countdown:3', 'countdown:2', 'countdown:1', 'start', 'hold:2', 'hold:1', 'done'];
-for (const x of need) {
-  assert.ok(phases.includes(x), `missing ${x} in ${phases.join('>')}`);
-}
-console.log('voiceCoach.holdPrep.smoke.test.ts: ok');
-console.log(`  phases=${phases.join('>')}`);
+const maleHold = playedUrls.filter((u) => u.includes('/voice-coach/male/hold.mp3'));
+const femaleHold = playedUrls.filter((u) => u.includes('/voice-coach/female/hold.mp3'));
+assert.ok(maleHold.length >= 1, `expected male hold clip, urls=${playedUrls.join('|')}`);
+assert.equal(femaleHold.length, 0, `female hold leaked: ${femaleHold.join('|')}`);
+assert.ok(
+  !spoken.some((s) => s.includes('버텨')),
+  `hold cue must not fall back to TTS when clip exists; spoken=${spoken.join('|')}`
+);
+
+console.log('voiceCoach.holdPack.smoke.test.ts: ok');
+console.log(`  male hold fetches=${maleHold.length}, spoken=${spoken.join('|') || '(none)'}`);

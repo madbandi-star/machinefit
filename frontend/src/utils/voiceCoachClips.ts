@@ -343,6 +343,9 @@ export async function preloadVoiceCoachClips(options: {
   oneMoreEnabled: boolean;
   prepCount: number;
   pack?: VoiceCoachPack;
+  /** Preload hold cue + finish + countdown ticks for hold segment. */
+  includeHold?: boolean;
+  holdDurationSec?: number;
   signal?: AbortSignal;
 }): Promise<void> {
   const pack = normalizeVoiceCoachPack(options.pack);
@@ -362,8 +365,26 @@ export async function preloadVoiceCoachClips(options: {
     keys.push(`rep-${rep}`);
   }
 
+  if (options.includeHold) {
+    keys.push('hold', 'finish-done', 'finish-great', 'finish-nice');
+    const holdSec = Math.max(1, Math.round(options.holdDurationSec ?? 10));
+    for (let n = 1; n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_COUNTDOWN); n += 1) {
+      keys.push(`cd-${n}`);
+    }
+    if (holdSec > MAX_VOICE_COACH_CLIP_COUNTDOWN) {
+      for (
+        let n = MAX_VOICE_COACH_CLIP_COUNTDOWN + 1;
+        n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_REP);
+        n += 1
+      ) {
+        keys.push(`rep-${n}`);
+      }
+    }
+  }
+
+  const unique = [...new Set(keys)];
   await Promise.all(
-    keys.map(async (key) => {
+    unique.map(async (key) => {
       if (options.signal?.aborted) return;
       await loadClipBuffer(voiceCoachClipUrl(key, pack), ctx);
     })
