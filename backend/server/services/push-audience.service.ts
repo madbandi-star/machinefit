@@ -401,15 +401,27 @@ async function areUsersConnected(
   const pool = getPool();
   if (!pool) return false;
 
+  // Prefer MachineFit friendships; keep gym_members link as a legacy co-member path.
   const result = await pool.query<{ ok: boolean }>(
-    `SELECT EXISTS (
-       SELECT 1 FROM gym_members
-       WHERE profile_access = 'approved'
-         AND is_self = FALSE
-         AND (
-           (owner_user_id = $1 AND linked_user_id = $2)
-           OR (owner_user_id = $2 AND linked_user_id = $1)
-         )
+    `SELECT (
+       EXISTS (
+         SELECT 1
+         FROM friendships f
+         WHERE f.status = 'ACCEPTED'
+           AND (
+             (f.user_low_id = $1 AND f.user_high_id = $2)
+             OR (f.user_low_id = $2 AND f.user_high_id = $1)
+           )
+       )
+       OR EXISTS (
+         SELECT 1 FROM gym_members
+         WHERE profile_access = 'approved'
+           AND is_self = FALSE
+           AND (
+             (owner_user_id = $1 AND linked_user_id = $2)
+             OR (owner_user_id = $2 AND linked_user_id = $1)
+           )
+       )
      ) AS ok`,
     [senderId, recipientId]
   );

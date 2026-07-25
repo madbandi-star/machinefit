@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -128,6 +128,14 @@ export function PushComposePage() {
     () => (caps ? presetsForRole(caps.senderRole, caps.allowedAudienceTypes) : []),
     [caps]
   );
+
+  // Auto-select the first allowed audience so send isn't blocked by an empty preset.
+  useEffect(() => {
+    if (!presets.length) return;
+    if (preset && presets.includes(preset)) return;
+    setPreset(presets[0]!);
+    setSelectedIds([]);
+  }, [presets, preset]);
 
   const suggested = caps?.suggestedRecipients ?? [];
   const suggestedTrainers = suggested.filter((u) => u.roleCode === Role.TRAINER);
@@ -403,8 +411,8 @@ export function PushComposePage() {
                 />
               </div>
 
-              <fieldset className="push-field">
-                <legend>{t('audience')}</legend>
+              <div className="push-field" role="group" aria-label={t('audience')}>
+                <label>{t('audience')}</label>
                 <div className="push-audience">
                   {presets.map((p) => (
                     <label key={p} className="push-audience__option">
@@ -421,7 +429,7 @@ export function PushComposePage() {
                     </label>
                   ))}
                 </div>
-              </fieldset>
+              </div>
 
               {preset === 'role' || preset === 'gym' ? (
                 <div className="push-field">

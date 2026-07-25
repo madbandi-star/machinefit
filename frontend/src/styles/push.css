@@ -186,7 +186,7 @@
   color: var(--push-muted);
 }
 
-.push-field input,
+.push-field input:not([type='radio']):not([type='checkbox']),
 .push-field textarea,
 .push-field select {
   width: 100%;
@@ -210,7 +210,7 @@
   line-height: 1.5;
 }
 
-.push-field input:focus,
+.push-field input:not([type='radio']):not([type='checkbox']):focus,
 .push-field textarea:focus,
 .push-field select:focus {
   border-color: var(--push-accent);
