@@ -7,6 +7,10 @@ import {
   type VoiceCountMode,
 } from '@/utils/aiCountPace';
 import { speechManager } from '@/utils/speechManager';
+import {
+  beginVoiceCoachAudioSession,
+  endVoiceCoachAudioSession,
+} from '@/utils/voiceCoachAudioSession';
 
 export type VoiceCoachPhase =
   | 'idle'
@@ -277,6 +281,7 @@ async function playBeep(
 
 export function stopVoiceCoach(): void {
   speechManager.cancel();
+  void endVoiceCoachAudioSession();
 }
 
 /** Speak a single phrase through SpeechManager (cancels any current queue). */
@@ -352,6 +357,8 @@ export async function unlockVoiceCoachAudio(): Promise<void> {
   await speechManager.init();
   speechManager.unlock();
   await ensureSharedAudioRunning();
+  // Start silent media keep-alive + music ducking in the same gesture turn.
+  await beginVoiceCoachAudioSession();
 }
 
 /**
@@ -381,6 +388,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   );
 
   await speechManager.init();
+  await beginVoiceCoachAudioSession();
 
   const audioCtx = await ensureSharedAudioRunning();
 
@@ -466,10 +474,12 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     onPhaseChange?.('done', { rep: oneMoreEnabled ? reps + oneMoreReps : reps });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      stopVoiceCoach();
+      speechManager.cancel();
       onPhaseChange?.('idle');
       return;
     }
     throw error;
+  } finally {
+    await endVoiceCoachAudioSession();
   }
 }
