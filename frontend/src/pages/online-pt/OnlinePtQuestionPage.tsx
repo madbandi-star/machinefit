@@ -18,6 +18,13 @@ function linesToUrls(text: string): string[] {
     .filter((s) => /^https?:\/\//i.test(s));
 }
 
+function statusChipClass(status: string): string {
+  if (status === 'answered' || status === 'closed') return 'opt-chip opt-chip--ok';
+  if (status === 'auto_refunded') return 'opt-chip opt-chip--danger';
+  if (status === 'answering' || status === 'followup') return 'opt-chip opt-chip--warn';
+  return 'opt-chip opt-chip--muted';
+}
+
 export function OnlinePtQuestionPage() {
   const { questionId = '' } = useParams();
   const { t } = useTranslation('online-pt');
@@ -76,151 +83,178 @@ export function OnlinePtQuestionPage() {
 
   if (isLoading || !q) {
     return (
-      <PageShell title={t('myQuestions')}>
-        <Skeleton count={4} />
-      </PageShell>
+      <div className="opt-shell">
+        <PageShell>
+          <Skeleton count={4} />
+        </PageShell>
+      </div>
     );
   }
 
   const isTrainer = Boolean(user?.id && user.id === q.trainerId);
 
   return (
-    <PageShell title={q.title} subtitle={t(`status.${q.status}`)}>
-      <div className="opt-thread">
-        <p className="opt-meta">
-          {q.trainerName} · {t('deadline', { time: new Date(q.deadlineAt).toLocaleString() })}
-        </p>
-        <article className="opt-bubble">
-          <strong>{q.memberName ?? 'Member'}</strong>
-          <p style={{ whiteSpace: 'pre-wrap' }}>{q.body}</p>
-          {q.photoUrls?.map((u) => (
-            <a key={u} href={u} target="_blank" rel="noreferrer">
-              {u}
-            </a>
-          ))}
-        </article>
+    <div className="opt-shell">
+      <PageShell>
+        <div className="opt-thread">
+          <header className="opt-thread-hero">
+            <p className="opt-hero-kicker">Online PT</p>
+            <h1>{q.title}</h1>
+            <div className="opt-thread-meta">
+              <span className={statusChipClass(q.status)}>{t(`status.${q.status}`)}</span>
+              <span className="opt-chip opt-chip--muted">{q.trainerName}</span>
+              {q.memberName ? (
+                <span className="opt-chip opt-chip--muted">{q.memberName}</span>
+              ) : null}
+            </div>
+            <p className="opt-meta">
+              {t('deadline', { time: new Date(q.deadlineAt).toLocaleString() })}
+            </p>
+          </header>
 
-        {(q.followups ?? []).map((f) => (
-          <article key={f.id} className="opt-bubble">
-            <strong>Follow-up</strong>
-            <p style={{ whiteSpace: 'pre-wrap' }}>{f.body}</p>
-          </article>
-        ))}
-
-        {(q.answers ?? []).map((a) => (
-          <article key={a.id} className="opt-bubble opt-bubble--answer">
-            <strong>{q.trainerName}</strong>
-            <p style={{ whiteSpace: 'pre-wrap' }}>{a.body}</p>
-            {[...a.photoUrls, ...a.videoUrls, ...a.audioUrls].map((u) => (
-              <div key={u}>
-                <a href={u} target="_blank" rel="noreferrer">
-                  {u}
-                </a>
-              </div>
+          <article className="opt-bubble">
+            <strong>{q.memberName ?? 'Member'}</strong>
+            <p>{q.body}</p>
+            {q.photoUrls?.map((u) => (
+              <a key={u} href={u} target="_blank" rel="noreferrer">
+                {u}
+              </a>
             ))}
           </article>
-        ))}
 
-        {q.review ? (
-          <article className="opt-bubble">
-            <strong>
-              ★ {q.review.rating} — {q.review.body}
-            </strong>
-          </article>
-        ) : null}
+          {(q.followups ?? []).map((f) => (
+            <article key={f.id} className="opt-bubble">
+              <strong>{t('followup')}</strong>
+              <p>{f.body}</p>
+            </article>
+          ))}
 
-        {isTrainer && ['received', 'answering', 'followup'].includes(q.status) ? (
-          <form
-            className="opt-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              answerMutation.mutate();
-            }}
-          >
-            <h3>{t('answer')}</h3>
-            <textarea
-              rows={5}
-              value={answerBody}
-              onChange={(e) => setAnswerBody(e.target.value)}
-              required
-              placeholder={t('answerBody')}
-            />
-            <textarea
-              rows={2}
-              value={answerMedia.photo}
-              onChange={(e) => setAnswerMedia((m) => ({ ...m, photo: e.target.value }))}
-              placeholder={t('photos')}
-            />
-            <textarea
-              rows={2}
-              value={answerMedia.video}
-              onChange={(e) => setAnswerMedia((m) => ({ ...m, video: e.target.value }))}
-              placeholder={t('videos')}
-            />
-            <textarea
-              rows={2}
-              value={answerMedia.audio}
-              onChange={(e) => setAnswerMedia((m) => ({ ...m, audio: e.target.value }))}
-              placeholder={t('audio')}
-            />
-            <button type="submit" className="btn btn--primary" disabled={answerMutation.isPending}>
-              {t('submitAnswer')}
-            </button>
-          </form>
-        ) : null}
+          {(q.answers ?? []).map((a) => (
+            <article key={a.id} className="opt-bubble opt-bubble--answer">
+              <strong>{q.trainerName}</strong>
+              <p>{a.body}</p>
+              {[...a.photoUrls, ...a.videoUrls, ...a.audioUrls].map((u) => (
+                <a key={u} href={u} target="_blank" rel="noreferrer">
+                  {u}
+                </a>
+              ))}
+            </article>
+          ))}
 
-        {q.canFollowup ? (
-          <form
-            className="opt-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              followupMutation.mutate();
-            }}
-          >
-            <h3>{t('followup')}</h3>
-            <textarea
-              rows={3}
-              value={followupBody}
-              onChange={(e) => setFollowupBody(e.target.value)}
-              required
-            />
-            <button type="submit" className="btn btn--secondary" disabled={followupMutation.isPending}>
-              {t('submitFollowup')}
-            </button>
-          </form>
-        ) : null}
+          {q.review ? (
+            <article className="opt-bubble">
+              <strong>
+                ★ {q.review.rating}
+              </strong>
+              <p>{q.review.body}</p>
+            </article>
+          ) : null}
 
-        {q.canReview ? (
-          <form
-            className="opt-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              reviewMutation.mutate();
-            }}
-          >
-            <h3>{t('review')}</h3>
-            <label>
-              {t('ratingLabel')}
-              <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-                {[5, 4, 3, 2, 1].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <textarea
-              rows={3}
-              value={reviewBody}
-              onChange={(e) => setReviewBody(e.target.value)}
-              placeholder={t('reviewBody')}
-            />
-            <button type="submit" className="btn btn--primary" disabled={reviewMutation.isPending}>
-              {t('submitReview')}
-            </button>
-          </form>
-        ) : null}
-      </div>
-    </PageShell>
+          {isTrainer && ['received', 'answering', 'followup'].includes(q.status) ? (
+            <form
+              className="opt-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                answerMutation.mutate();
+              }}
+            >
+              <h3>{t('answer')}</h3>
+              <textarea
+                rows={5}
+                value={answerBody}
+                onChange={(e) => setAnswerBody(e.target.value)}
+                required
+                placeholder={t('answerBody')}
+              />
+              <textarea
+                rows={2}
+                value={answerMedia.photo}
+                onChange={(e) => setAnswerMedia((m) => ({ ...m, photo: e.target.value }))}
+                placeholder={t('photos')}
+              />
+              <textarea
+                rows={2}
+                value={answerMedia.video}
+                onChange={(e) => setAnswerMedia((m) => ({ ...m, video: e.target.value }))}
+                placeholder={t('videos')}
+              />
+              <textarea
+                rows={2}
+                value={answerMedia.audio}
+                onChange={(e) => setAnswerMedia((m) => ({ ...m, audio: e.target.value }))}
+                placeholder={t('audio')}
+              />
+              <button
+                type="submit"
+                className="opt-btn opt-btn-primary"
+                disabled={answerMutation.isPending}
+              >
+                {t('submitAnswer')}
+              </button>
+            </form>
+          ) : null}
+
+          {q.canFollowup ? (
+            <form
+              className="opt-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                followupMutation.mutate();
+              }}
+            >
+              <h3>{t('followup')}</h3>
+              <textarea
+                rows={3}
+                value={followupBody}
+                onChange={(e) => setFollowupBody(e.target.value)}
+                required
+              />
+              <button
+                type="submit"
+                className="opt-btn"
+                disabled={followupMutation.isPending}
+              >
+                {t('submitFollowup')}
+              </button>
+            </form>
+          ) : null}
+
+          {q.canReview ? (
+            <form
+              className="opt-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                reviewMutation.mutate();
+              }}
+            >
+              <h3>{t('review')}</h3>
+              <label>
+                {t('ratingLabel')}
+                <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
+                  {[5, 4, 3, 2, 1].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <textarea
+                rows={3}
+                value={reviewBody}
+                onChange={(e) => setReviewBody(e.target.value)}
+                placeholder={t('reviewBody')}
+              />
+              <button
+                type="submit"
+                className="opt-btn opt-btn-primary"
+                disabled={reviewMutation.isPending}
+              >
+                {t('submitReview')}
+              </button>
+            </form>
+          ) : null}
+        </div>
+      </PageShell>
+    </div>
   );
 }
