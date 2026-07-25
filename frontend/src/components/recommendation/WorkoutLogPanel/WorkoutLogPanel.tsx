@@ -236,8 +236,39 @@ export function WorkoutLogPanel({
   const { activeGymId } = useActiveGym();
   const { activeMemberId } = useActiveMember();
   const isAllGyms = isAllGymsId(activeGymId);
+  const isHistory = variant === 'history';
+  const compact = variant === 'compact' || isHistory;
+  const showPersonalTip = showPersonalTipMemo ?? isHistory;
+  const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
+
+  // Seed voice-coach target from 추천/조정 횟수 once per machine context.
+  // After the user edits the picker, keep their value (do not re-seed).
+  const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
+  const [voiceTargetUserOverride, setVoiceTargetUserOverride] = useState<{
+    context: string;
+    reps: number;
+  } | null>(null);
+  const seededVoiceTargetReps = useMemo(() => {
+    if (volumeReps != null && volumeReps > 0) {
+      return Math.max(1, Math.min(30, Math.round(volumeReps)));
+    }
+    return voiceCoachTargetReps;
+  }, [volumeReps, voiceCoachTargetReps]);
+  const effectiveVoiceTargetReps =
+    voiceTargetUserOverride?.context === voiceTargetSeedContext
+      ? voiceTargetUserOverride.reps
+      : seededVoiceTargetReps;
+  const handleVoiceTargetRepsChange = useCallback(
+    (reps: number) => {
+      const next = Math.max(1, Math.min(30, Math.round(reps)));
+      setVoiceTargetUserOverride({ context: voiceTargetSeedContext, reps: next });
+      setVoiceCoachTargetReps(next);
+    },
+    [setVoiceCoachTargetReps, voiceTargetSeedContext]
+  );
+
   const voiceCoach = useVoiceCoachSession({
-    targetReps: voiceCoachTargetReps,
+    targetReps: effectiveVoiceTargetReps,
     oneMoreEnabled: voiceCoachOneMore,
     oneMoreCount: voiceCoachOneMoreCount,
     repGapMs: voiceCoachRepGapMs,
@@ -267,10 +298,6 @@ export function WorkoutLogPanel({
     setRestTimer(null);
     voiceCoachStartRef.current();
   }, []);
-  const isHistory = variant === 'history';
-  const compact = variant === 'compact' || isHistory;
-  const showPersonalTip = showPersonalTipMemo ?? isHistory;
-  const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const setCountInputId = `${idPrefix}-set-count`;
   const weightStepKg = getWeightStepKg(machineCode);
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
@@ -1252,8 +1279,8 @@ export function WorkoutLogPanel({
     <VoiceCoachPanel
       enabled={voiceCoachEnabled}
       onEnabledChange={setVoiceCoachEnabled}
-      targetReps={voiceCoachTargetReps}
-      onTargetRepsChange={setVoiceCoachTargetReps}
+      targetReps={effectiveVoiceTargetReps}
+      onTargetRepsChange={handleVoiceTargetRepsChange}
       repGapMs={voiceCoachRepGapMs}
       onRepGapMsChange={setVoiceCoachRepGapMs}
       countMode={voiceCountMode}
