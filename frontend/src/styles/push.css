@@ -1,0 +1,139 @@
+.push-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.push-tabs__btn {
+  border: 1px solid var(--border, #d0d5dd);
+  background: transparent;
+  color: inherit;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+
+.push-tabs__btn.is-active {
+  border-color: var(--accent, #2563eb);
+  background: color-mix(in srgb, var(--accent, #2563eb) 12%, transparent);
+  font-weight: 600;
+}
+
+.push-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.push-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.push-field input,
+.push-field textarea,
+.push-field select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.push-audience {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.push-audience__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.55rem 0.15rem;
+  cursor: pointer;
+}
+
+.push-audience__option input {
+  margin-top: 0.2rem;
+}
+
+.push-hint {
+  font-size: 0.8125rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.push-meta {
+  font-size: 0.8125rem;
+  opacity: 0.8;
+}
+
+.push-recipient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--border, #d0d5dd);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.push-recipient-list label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.push-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.push-campaign {
+  border: 1px solid var(--border, #d0d5dd);
+  border-radius: 0.65rem;
+  padding: 0.85rem 1rem;
+}
+
+.push-campaign__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.push-campaign__meta {
+  font-size: 0.8125rem;
+  opacity: 0.75;
+}
+
+.push-logs {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.push-log {
+  font-size: 0.8125rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.35rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--border, #d0d5dd) 70%, transparent);
+}
+
+.push-log--ok {
+  color: var(--success, #15803d);
+}
+
+.push-log--fail {
+  color: var(--danger, #b91c1c);
+}

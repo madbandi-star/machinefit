@@ -68,6 +68,8 @@ export const ROUTES = {
   ONLINE_PT_MANAGE: '/online-pt/manage',
   ONLINE_PT_WALLET: '/online-pt/wallet',
   ADMIN_ONLINE_PT: '/admin/online-pt',
+  PUSH: '/push',
+  ADMIN_PUSH: '/admin/push',
   SCAN: '/scan',
   QR: '/qr/:qrCode',
   /** Easy-mode UI shell (isolated from normal MainLayout chrome). */

@@ -203,6 +203,9 @@ export function MyPage() {
               isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
             )}
           />
+          {isMember ? (
+            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
+          ) : null}
         </nav>
       </section>
 

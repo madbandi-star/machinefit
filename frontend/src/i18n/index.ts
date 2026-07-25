@@ -11,6 +11,7 @@ import koNotifications from './locales/ko/notifications.json';
 import koAdmin from './locales/ko/admin.json';
 import koTrade from './locales/ko/trade.json';
 import koOnlinePt from './locales/ko/online-pt.json';
+import koPush from './locales/ko/push.json';
 
 type NamespaceBundle = Record<string, unknown>;
 
@@ -19,7 +20,7 @@ const loadedLocales = new Set<string>([DEFAULT_LOCALE]);
 async function loadLocaleBundles(locale: Locale): Promise<Record<string, NamespaceBundle>> {
   switch (locale) {
     case 'en': {
-      const [common, machines, gyms, community, notifications, admin, trade, onlinePt] =
+      const [common, machines, gyms, community, notifications, admin, trade, onlinePt, push] =
         await Promise.all([
           import('./locales/en/common.json'),
           import('./locales/en/machines.json'),
@@ -29,6 +30,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
           import('./locales/en/admin.json'),
           import('./locales/en/trade.json'),
           import('./locales/en/online-pt.json'),
+          import('./locales/en/push.json'),
         ]);
       return {
         common: common.default,
@@ -39,20 +41,31 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         admin: admin.default,
         trade: trade.default,
         'online-pt': onlinePt.default,
+        push: push.default,
       };
     }
     case 'ja': {
-      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade, enOnlinePt] =
-        await Promise.all([
-          import('./locales/ja/common.json'),
-          import('./locales/en/machines.json'),
-          import('./locales/en/gyms.json'),
-          import('./locales/en/community.json'),
-          import('./locales/en/notifications.json'),
-          import('./locales/en/admin.json'),
-          import('./locales/en/trade.json'),
-          import('./locales/en/online-pt.json'),
-        ]);
+      const [
+        common,
+        enMachines,
+        enGyms,
+        enCommunity,
+        enNotifications,
+        enAdmin,
+        enTrade,
+        enOnlinePt,
+        enPush,
+      ] = await Promise.all([
+        import('./locales/ja/common.json'),
+        import('./locales/en/machines.json'),
+        import('./locales/en/gyms.json'),
+        import('./locales/en/community.json'),
+        import('./locales/en/notifications.json'),
+        import('./locales/en/admin.json'),
+        import('./locales/en/trade.json'),
+        import('./locales/en/online-pt.json'),
+        import('./locales/en/push.json'),
+      ]);
       return {
         common: common.default,
         machines: enMachines.default,
@@ -62,20 +75,31 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         admin: enAdmin.default,
         trade: enTrade.default,
         'online-pt': enOnlinePt.default,
+        push: enPush.default,
       };
     }
     case 'zh': {
-      const [common, enMachines, enGyms, enCommunity, enNotifications, enAdmin, enTrade, enOnlinePt] =
-        await Promise.all([
-          import('./locales/zh/common.json'),
-          import('./locales/en/machines.json'),
-          import('./locales/en/gyms.json'),
-          import('./locales/en/community.json'),
-          import('./locales/en/notifications.json'),
-          import('./locales/en/admin.json'),
-          import('./locales/en/trade.json'),
-          import('./locales/en/online-pt.json'),
-        ]);
+      const [
+        common,
+        enMachines,
+        enGyms,
+        enCommunity,
+        enNotifications,
+        enAdmin,
+        enTrade,
+        enOnlinePt,
+        enPush,
+      ] = await Promise.all([
+        import('./locales/zh/common.json'),
+        import('./locales/en/machines.json'),
+        import('./locales/en/gyms.json'),
+        import('./locales/en/community.json'),
+        import('./locales/en/notifications.json'),
+        import('./locales/en/admin.json'),
+        import('./locales/en/trade.json'),
+        import('./locales/en/online-pt.json'),
+        import('./locales/en/push.json'),
+      ]);
       return {
         common: common.default,
         machines: enMachines.default,
@@ -85,6 +109,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         admin: enAdmin.default,
         trade: enTrade.default,
         'online-pt': enOnlinePt.default,
+        push: enPush.default,
       };
     }
     case 'ko':
@@ -98,6 +123,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         admin: koAdmin,
         trade: koTrade,
         'online-pt': koOnlinePt,
+        push: koPush,
       };
   }
 }
@@ -128,6 +154,7 @@ void i18n
         admin: koAdmin,
         trade: koTrade,
         'online-pt': koOnlinePt,
+        push: koPush,
       },
     },
     lng: DEFAULT_LOCALE,

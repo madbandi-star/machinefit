@@ -127,4 +127,9 @@ export const QUERY_KEYS = {
   onlinePtPayouts: ['online-pt', 'me', 'payouts'] as const,
   onlinePtAdminStats: ['online-pt', 'admin', 'stats'] as const,
   onlinePtAdminPayouts: ['online-pt', 'admin', 'payouts'] as const,
+  pushCapabilities: ['push', 'capabilities'] as const,
+  pushCampaigns: (params?: { all?: boolean }) =>
+    ['push', 'campaigns', params ?? {}] as const,
+  pushCampaignLogs: (campaignId: string) =>
+    ['push', 'campaigns', campaignId, 'logs'] as const,
 } as const;

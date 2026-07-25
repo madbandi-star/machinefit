@@ -20,8 +20,14 @@ export type NotificationType =
   | 'online_pt_new_question'
   | 'online_pt_deadline_soon'
   | 'online_pt_review'
-  | 'online_pt_payout';
-
+  | 'online_pt_payout'
+  /** Role-based human/campaign push kinds (inbox). */
+  | 'push_general'
+  | 'push_notice'
+  | 'push_workout'
+  | 'push_schedule'
+  | 'push_trade'
+  | 'push_event';
 export interface Notification {
   id: string;
   userId: string;

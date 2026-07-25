@@ -23,6 +23,7 @@ import { muscleGroupImageRouter } from './muscle-group-image.routes.js';
 import { photoBoardRouter } from './photo-board.routes.js';
 import { machineTradeRouter } from './machine-trade.routes.js';
 import { onlinePtRouter } from './online-pt.routes.js';
+import { pushNotificationRouter } from './push-notification.routes.js';
 
 export const apiRouter = Router();
 
@@ -50,3 +51,4 @@ apiRouter.use('/muscle-group-images', muscleGroupImageRouter);
 apiRouter.use('/photo-board', photoBoardRouter);
 apiRouter.use('/machine-trades', machineTradeRouter);
 apiRouter.use('/online-pt', onlinePtRouter);
+apiRouter.use('/push', pushNotificationRouter);

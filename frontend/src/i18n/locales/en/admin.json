@@ -203,5 +203,8 @@
   },
   "onlinePt": {
     "nav": "Online PT"
+  },
+  "push": {
+    "nav": "Push notifications"
   }
 }
