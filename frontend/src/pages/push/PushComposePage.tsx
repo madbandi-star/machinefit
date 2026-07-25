@@ -13,7 +13,6 @@ import {
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
-import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import {
   LocationPicker,
   emptyLocationValue,
@@ -272,17 +271,26 @@ export function PushComposePage() {
 
   if (capsQuery.isLoading) {
     return (
-      <PageShell title={t('title')}>
-        <Skeleton count={4} />
-      </PageShell>
+      <div className="push-shell">
+        <PageShell>
+          <Skeleton count={4} />
+        </PageShell>
+      </div>
     );
   }
 
   if (!caps?.canCompose) {
     return (
-      <PageShell title={t('title')}>
-        <EmptyState title={t('cannotCompose')} />
-      </PageShell>
+      <div className="push-shell">
+        <PageShell>
+          <div className="push-empty">
+            <div className="push-empty-mark" aria-hidden>
+              !
+            </div>
+            <strong>{t('cannotCompose')}</strong>
+          </div>
+        </PageShell>
+      </div>
     );
   }
 
@@ -300,288 +308,313 @@ export function PushComposePage() {
     preset === 'trainer_pick';
 
   return (
-    <PageShell title={t('title')} subtitle={t('subtitle')}>
-      <div className="push-tabs" role="tablist">
-        <button
-          type="button"
-          className={`push-tabs__btn${tab === 'compose' ? ' is-active' : ''}`}
-          onClick={() => setTab('compose')}
-        >
-          {t('tabCompose')}
-        </button>
-        <button
-          type="button"
-          className={`push-tabs__btn${tab === 'history' ? ' is-active' : ''}`}
-          onClick={() => setTab('history')}
-        >
-          {t('tabHistory')}
-        </button>
-      </div>
+    <div className="push-shell">
+      <PageShell>
+        <header className="push-hero">
+          <p className="push-hero-kicker">MachineFit</p>
+          <h1>{t('title')}</h1>
+          <p className="push-hero-lead">{t('subtitle')}</p>
+        </header>
 
-      {tab === 'compose' ? (
-        <form className="push-form" onSubmit={onSubmit}>
-          <p className="push-meta">
-            {t('maxRecipients', { count: caps.maxRecipients })} · {t('audienceHelp')}
-          </p>
+        <div className="push-tabs" role="tablist">
+          <button
+            type="button"
+            className={`push-tabs__btn${tab === 'compose' ? ' is-active' : ''}`}
+            onClick={() => setTab('compose')}
+          >
+            {t('tabCompose')}
+          </button>
+          <button
+            type="button"
+            className={`push-tabs__btn${tab === 'history' ? ' is-active' : ''}`}
+            onClick={() => setTab('history')}
+          >
+            {t('tabHistory')}
+          </button>
+        </div>
 
-          <div className="push-field">
-            <label htmlFor="push-kind">{t('kind')}</label>
-            <select
-              id="push-kind"
-              value={kind}
-              onChange={(e) => setKind(e.target.value as PushKind)}
-            >
-              {PUSH_KINDS.map((k) => (
-                <option key={k} value={k}>
-                  {t(`kinds.${k}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="push-field">
-            <label htmlFor="push-title">{t('titleLabel')}</label>
-            <input
-              id="push-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={120}
-              required
-            />
-          </div>
-
-          <div className="push-field">
-            <label htmlFor="push-body">{t('bodyLabel')}</label>
-            <textarea
-              id="push-body"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              rows={5}
-              maxLength={2000}
-              required
-            />
-          </div>
-
-          <div className="push-field">
-            <label htmlFor="push-image">{t('imageUrl')}</label>
-            <input
-              id="push-image"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://"
-            />
-          </div>
-
-          <div className="push-field">
-            <label htmlFor="push-link">{t('deepLink')}</label>
-            <input
-              id="push-link"
-              value={deepLink}
-              onChange={(e) => setDeepLink(e.target.value)}
-              placeholder="/machines/..."
-            />
-          </div>
-
-          <fieldset className="push-field">
-            <legend>{t('audience')}</legend>
-            <div className="push-audience">
-              {presets.map((p) => (
-                <label key={p} className="push-audience__option">
-                  <input
-                    type="radio"
-                    name="push-audience"
-                    checked={preset === p}
-                    onChange={() => {
-                      setPreset(p);
-                      setSelectedIds([]);
-                    }}
-                  />
-                  <span>{t(`presets.${p}`)}</span>
-                </label>
-              ))}
+        {tab === 'compose' ? (
+          <section className="push-panel">
+            <div className="push-panel-head">
+              <div>
+                <h2>{t('tabCompose')}</h2>
+                <p className="push-panel-desc">{t('audienceHelp')}</p>
+              </div>
+              <span className="push-chip">{t('maxRecipients', { count: caps.maxRecipients })}</span>
             </div>
-          </fieldset>
 
-          {preset === 'role' || preset === 'gym' ? (
-            <div className="push-field">
-              <label htmlFor="push-role">{t('roleLabel')}</label>
-              <select
-                id="push-role"
-                value={roleCode}
-                onChange={(e) => setRoleCode(e.target.value as RoleCode)}
-              >
-                {ROLE_CODES.map((code) => (
-                  <option key={code} value={code}>
-                    {t(`roles.${code}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
+            <form className="push-form" onSubmit={onSubmit}>
+              <div className="push-field">
+                <label htmlFor="push-kind">{t('kind')}</label>
+                <select
+                  id="push-kind"
+                  value={kind}
+                  onChange={(e) => setKind(e.target.value as PushKind)}
+                >
+                  {PUSH_KINDS.map((k) => (
+                    <option key={k} value={k}>
+                      {t(`kinds.${k}`)}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {needsGym ? (
-            <div className="push-field">
-              <label htmlFor="push-gym">{t('gymLabel')}</label>
-              <select
-                id="push-gym"
-                value={gymId}
-                onChange={(e) => setGymId(e.target.value)}
-                required={
-                  preset === 'gym' ||
-                  preset === 'owner_premium' ||
-                  preset === 'owner_vip'
-                }
-              >
-                <option value="">{t('allGyms')}</option>
-                {caps.gyms.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
+              <div className="push-field">
+                <label htmlFor="push-title">{t('titleLabel')}</label>
+                <input
+                  id="push-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={120}
+                  required
+                />
+              </div>
 
-          {preset === 'location' ? (
-            <div className="push-field">
-              <label>{t('locationLabel')}</label>
-              <p className="push-hint">{t('locationHint')}</p>
-              <LocationPicker
-                value={location}
-                onChange={setLocation}
-                showDistrict
-                showGps={false}
-                showVisibility={false}
-              />
-            </div>
-          ) : null}
+              <div className="push-field">
+                <label htmlFor="push-body">{t('bodyLabel')}</label>
+                <textarea
+                  id="push-body"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  rows={5}
+                  maxLength={2000}
+                  required
+                />
+              </div>
 
-          {needsPick ? (
-            <div className="push-field">
-              <label>{t('pickRecipients')}</label>
-              <p className="push-hint">{t('userIdsHint')}</p>
-              {pickList.length > 0 ? (
-                <div className="push-recipient-list">
-                  {pickList.map((u) => (
-                    <label key={u.id}>
+              <div className="push-field">
+                <label htmlFor="push-image">{t('imageUrl')}</label>
+                <input
+                  id="push-image"
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://"
+                />
+              </div>
+
+              <div className="push-field">
+                <label htmlFor="push-link">{t('deepLink')}</label>
+                <input
+                  id="push-link"
+                  value={deepLink}
+                  onChange={(e) => setDeepLink(e.target.value)}
+                  placeholder="/machines/..."
+                />
+              </div>
+
+              <fieldset className="push-field">
+                <legend>{t('audience')}</legend>
+                <div className="push-audience">
+                  {presets.map((p) => (
+                    <label key={p} className="push-audience__option">
                       <input
-                        type="checkbox"
-                        checked={selectedIds.includes(u.id)}
-                        onChange={() => toggleRecipient(u.id)}
+                        type="radio"
+                        name="push-audience"
+                        checked={preset === p}
+                        onChange={() => {
+                          setPreset(p);
+                          setSelectedIds([]);
+                        }}
                       />
-                      <span>
-                        {u.displayName}{' '}
-                        <span className="push-meta">({t(`roles.${u.roleCode}`)})</span>
-                      </span>
+                      <span>{t(`presets.${p}`)}</span>
                     </label>
                   ))}
                 </div>
-              ) : null}
-              <p className="push-meta">{t('selectedCount', { count: selectedIds.length })}</p>
-              {hasMinRole(senderRole, Role.ADMIN) ? (
-                <input
-                  value={userIdInput}
-                  onChange={(e) => setUserIdInput(e.target.value)}
-                  placeholder={t('userIdInput')}
-                />
-              ) : null}
-            </div>
-          ) : null}
+              </fieldset>
 
-          {preset === 'member_exact' ? (
-            <div className="push-field">
-              <label htmlFor="push-member-q">{t('memberQuery')}</label>
-              <p className="push-hint">{t('memberQueryHint')}</p>
-              <input
-                id="push-member-q"
-                value={memberQuery}
-                onChange={(e) => setMemberQuery(e.target.value)}
-                required
-              />
-            </div>
-          ) : null}
-
-          <button
-            type="submit"
-            className="btn btn--primary btn--block"
-            disabled={sendMutation.isPending}
-          >
-            {sendMutation.isPending ? t('sending') : t('send')}
-          </button>
-        </form>
-      ) : (
-        <div className="push-history">
-          {hasMinRole(senderRole, Role.ADMIN) ? (
-            <label className="push-audience__option">
-              <input
-                type="checkbox"
-                checked={adminAll}
-                onChange={(e) => setAdminAll(e.target.checked)}
-              />
-              <span>{t('adminAll')}</span>
-            </label>
-          ) : null}
-
-          {campaignsQuery.isLoading ? (
-            <Skeleton count={3} />
-          ) : !campaignsQuery.data?.length ? (
-            <EmptyState title={t('historyEmpty')} />
-          ) : (
-            campaignsQuery.data.map((c) => (
-              <article key={c.id} className="push-campaign">
-                <div className="push-campaign__row">
-                  <strong>{c.title}</strong>
-                  <span className="push-campaign__meta">
-                    {t(`kinds.${c.kind}`)} · {c.successCount}/{c.recipientCount}
-                  </span>
+              {preset === 'role' || preset === 'gym' ? (
+                <div className="push-field">
+                  <label htmlFor="push-role">{t('roleLabel')}</label>
+                  <select
+                    id="push-role"
+                    value={roleCode}
+                    onChange={(e) => setRoleCode(e.target.value as RoleCode)}
+                  >
+                    {ROLE_CODES.map((code) => (
+                      <option key={code} value={code}>
+                        {t(`roles.${code}`)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <p className="push-campaign__meta">
-                  {new Date(c.createdAt).toLocaleString()} · {t(`roles.${c.senderRole}`)} ·{' '}
-                  {c.audienceType}
-                </p>
-                <p style={{ margin: '0.35rem 0 0', whiteSpace: 'pre-wrap' }}>{c.body}</p>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  style={{ marginTop: '0.5rem' }}
-                  onClick={() =>
-                    setOpenLogsId((prev) => (prev === c.id ? null : c.id))
-                  }
-                >
-                  {openLogsId === c.id ? t('hideLogs') : t('viewLogs')}
-                </button>
-                {openLogsId === c.id ? (
-                  <div className="push-logs">
-                    <strong>{t('logsTitle')}</strong>
-                    {logsQuery.isLoading ? (
-                      <Skeleton count={2} />
-                    ) : !logsQuery.data?.length ? (
-                      <p className="push-hint">{t('logsEmpty')}</p>
-                    ) : (
-                      logsQuery.data.map((log) => (
-                        <div
-                          key={log.id}
-                          className={`push-log ${log.success ? 'push-log--ok' : 'push-log--fail'}`}
-                        >
+              ) : null}
+
+              {needsGym ? (
+                <div className="push-field">
+                  <label htmlFor="push-gym">{t('gymLabel')}</label>
+                  <select
+                    id="push-gym"
+                    value={gymId}
+                    onChange={(e) => setGymId(e.target.value)}
+                    required={
+                      preset === 'gym' ||
+                      preset === 'owner_premium' ||
+                      preset === 'owner_vip'
+                    }
+                  >
+                    <option value="">{t('allGyms')}</option>
+                    {caps.gyms.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+
+              {preset === 'location' ? (
+                <div className="push-field">
+                  <label>{t('locationLabel')}</label>
+                  <p className="push-hint">{t('locationHint')}</p>
+                  <LocationPicker
+                    value={location}
+                    onChange={setLocation}
+                    showDistrict
+                    showGps={false}
+                    showVisibility={false}
+                  />
+                </div>
+              ) : null}
+
+              {needsPick ? (
+                <div className="push-field">
+                  <label>{t('pickRecipients')}</label>
+                  <p className="push-hint">{t('userIdsHint')}</p>
+                  {pickList.length > 0 ? (
+                    <div className="push-recipient-list">
+                      {pickList.map((u) => (
+                        <label key={u.id}>
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.includes(u.id)}
+                            onChange={() => toggleRecipient(u.id)}
+                          />
                           <span>
-                            {log.recipientId.slice(0, 8)}…{' '}
-                            {log.recipientRole ? t(`roles.${log.recipientRole}`) : ''}
+                            {u.displayName}{' '}
+                            <span className="push-meta">({t(`roles.${u.roleCode}`)})</span>
                           </span>
-                          <span>
-                            {log.success ? t('logSuccess') : t('logFail')}
-                            {log.errorCode ? ` (${log.errorCode})` : ''}
-                          </span>
-                        </div>
-                      ))
-                    )}
+                        </label>
+                      ))}
+                    </div>
+                  ) : null}
+                  <p className="push-meta">{t('selectedCount', { count: selectedIds.length })}</p>
+                  {hasMinRole(senderRole, Role.ADMIN) ? (
+                    <input
+                      value={userIdInput}
+                      onChange={(e) => setUserIdInput(e.target.value)}
+                      placeholder={t('userIdInput')}
+                    />
+                  ) : null}
+                </div>
+              ) : null}
+
+              {preset === 'member_exact' ? (
+                <div className="push-field">
+                  <label htmlFor="push-member-q">{t('memberQuery')}</label>
+                  <p className="push-hint">{t('memberQueryHint')}</p>
+                  <input
+                    id="push-member-q"
+                    value={memberQuery}
+                    onChange={(e) => setMemberQuery(e.target.value)}
+                    required
+                  />
+                </div>
+              ) : null}
+
+              <button
+                type="submit"
+                className="push-btn push-btn-primary push-btn-block"
+                disabled={sendMutation.isPending}
+              >
+                {sendMutation.isPending ? t('sending') : t('send')}
+              </button>
+            </form>
+          </section>
+        ) : (
+          <section className="push-panel">
+            <div className="push-panel-head">
+              <div>
+                <h2>{t('historyTitle')}</h2>
+                <p className="push-panel-desc">{t('subtitle')}</p>
+              </div>
+            </div>
+
+            <div className="push-history">
+              {hasMinRole(senderRole, Role.ADMIN) ? (
+                <label className="push-audience__option">
+                  <input
+                    type="checkbox"
+                    checked={adminAll}
+                    onChange={(e) => setAdminAll(e.target.checked)}
+                  />
+                  <span>{t('adminAll')}</span>
+                </label>
+              ) : null}
+
+              {campaignsQuery.isLoading ? (
+                <Skeleton count={3} />
+              ) : !campaignsQuery.data?.length ? (
+                <div className="push-empty">
+                  <div className="push-empty-mark" aria-hidden>
+                    ·
                   </div>
-                ) : null}
-              </article>
-            ))
-          )}
-        </div>
-      )}
-    </PageShell>
+                  <strong>{t('historyEmpty')}</strong>
+                </div>
+              ) : (
+                campaignsQuery.data.map((c) => (
+                  <article key={c.id} className="push-campaign">
+                    <div className="push-campaign__row">
+                      <strong>{c.title}</strong>
+                      <span className="push-chip">
+                        {t(`kinds.${c.kind}`)} · {c.successCount}/{c.recipientCount}
+                      </span>
+                    </div>
+                    <p className="push-campaign__meta">
+                      {new Date(c.createdAt).toLocaleString()} · {t(`roles.${c.senderRole}`)} ·{' '}
+                      {c.audienceType}
+                    </p>
+                    <p className="push-campaign__body">{c.body}</p>
+                    <button
+                      type="button"
+                      className="push-btn push-btn-ghost"
+                      onClick={() => setOpenLogsId((prev) => (prev === c.id ? null : c.id))}
+                    >
+                      {openLogsId === c.id ? t('hideLogs') : t('viewLogs')}
+                    </button>
+                    {openLogsId === c.id ? (
+                      <div className="push-logs">
+                        <strong>{t('logsTitle')}</strong>
+                        {logsQuery.isLoading ? (
+                          <Skeleton count={2} />
+                        ) : !logsQuery.data?.length ? (
+                          <p className="push-hint">{t('logsEmpty')}</p>
+                        ) : (
+                          logsQuery.data.map((log) => (
+                            <div
+                              key={log.id}
+                              className={`push-log ${log.success ? 'push-log--ok' : 'push-log--fail'}`}
+                            >
+                              <span>
+                                {log.recipientId.slice(0, 8)}…{' '}
+                                {log.recipientRole ? t(`roles.${log.recipientRole}`) : ''}
+                              </span>
+                              <span>
+                                {log.success ? t('logSuccess') : t('logFail')}
+                                {log.errorCode ? ` (${log.errorCode})` : ''}
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    ) : null}
+                  </article>
+                ))
+              )}
+            </div>
+          </section>
+        )}
+      </PageShell>
+    </div>
   );
 }
