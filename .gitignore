@@ -1,27 +1,25 @@
-node_modules
+
+backend/dist
+backend/uploads
+# Build outputs
 dist
 dist-ssr
-*.local
+.DS_Store
+# Editor
 .env
 .env.*
 !.env.example
-
-# Logs
-logs
+frontend/dist
+frontend/tsconfig.tsbuildinfo
+.idea
+*.local
+# Local upload fallback (dev)
 *.log
+logs
+# Logs
+node_modules
 npm-debug.log*
-
-# Editor
+shared/dist
+uploads
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
-
-# Build outputs
-shared/dist
-backend/dist
-frontend/dist
-
-# Local upload fallback (dev)
-backend/uploads
-uploads
