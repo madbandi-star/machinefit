@@ -25,6 +25,48 @@ import {
 import { locationRepository } from '../repositories/location.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
+import { friendRepository } from '../repositories/friend.repository.js';
+import { AppError } from '../middlewares/error.middleware.js';
+
+/**
+ * IDOR guard: personal gym / user scopes must not be readable by arbitrary callers.
+ * - gymId → only the gym owner
+ * - userId → self, or accepted friend with workoutRecordsVisibility friends|public
+ */
+async function assertLiveObjectScopeAllowed(
+  viewerUserId: string | undefined,
+  scope: LiveScopeQuery
+): Promise<void> {
+  if (!viewerUserId) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+
+  if (scope.gymId) {
+    const owned = await userGymRepository.findByIdForUser(viewerUserId, scope.gymId);
+    if (!owned) {
+      throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this gym live data');
+    }
+  }
+
+  if (scope.userId) {
+    if (scope.userId === viewerUserId) return;
+
+    const blocked = await friendRepository.isBlockedEither(viewerUserId, scope.userId);
+    if (blocked) {
+      throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this user live data');
+    }
+
+    const friends = await friendRepository.areFriends(viewerUserId, scope.userId);
+    if (!friends) {
+      throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this user live data');
+    }
+
+    const privacy = await friendRepository.ensurePrivacy(scope.userId);
+    if (privacy.workoutRecordsVisibility === 'private') {
+      throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this user live data');
+    }
+  }
+}
 
 function locName(name: { ko?: string; en?: string }, locale: string): string {
   return locale.startsWith('ko') ? name.ko || name.en || '' : name.en || name.ko || '';
@@ -95,7 +137,8 @@ function buildBreadcrumbs(
     items.push({ level: 'gym', code: scope.gymId, label: gymName });
   }
   if (scope.userId && userName && level === 'user') {
-    items.push({ level: 'user', code: scope.userId, label: userName });
+    // Always mask — never leak full displayName via breadcrumbs (IDOR side-channel).
+    items.push({ level: 'user', code: scope.userId, label: maskName(userName) });
   }
   return items;
 }
@@ -261,6 +304,8 @@ export const liveDashboardService = {
     viewerUserId?: string;
   }): Promise<LiveDashboardSnapshot> {
     const locale = options.locale ?? 'ko';
+    await assertLiveObjectScopeAllowed(options.viewerUserId, options.scope);
+
     const cacheKey = JSON.stringify({ ...options, locale });
     const cached = liveSnapshotCache.get(cacheKey) as LiveDashboardSnapshot | undefined;
     if (cached) return cached;
@@ -541,6 +586,12 @@ export const liveDashboardService = {
   }): Promise<LiveRankingResponse> {
     const locale = options.locale ?? 'ko';
     const period = options.period;
+    await assertLiveObjectScopeAllowed(options.viewerUserId, {
+      countryCode: options.scope?.countryCode,
+      metroCode: options.scope?.metroCode,
+      districtCode: options.scope?.districtCode,
+      gymId: options.scope?.gymId,
+    });
     const filter: LiveScopeFilter = {
       countryCode: options.scope?.countryCode,
       metroCode: options.scope?.metroCode,
@@ -626,8 +677,15 @@ export const liveDashboardService = {
     };
   },
 
-  async search(q: string, locale = 'ko'): Promise<LiveSearchHit[]> {
+  async search(
+    q: string,
+    locale = 'ko',
+    viewerUserId?: string
+  ): Promise<LiveSearchHit[]> {
     if (!q.trim()) return [];
+    if (!viewerUserId) {
+      throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+    }
     const needle = q.trim().toLowerCase();
     const hits: LiveSearchHit[] = [];
     const worldCrumb = {
@@ -763,7 +821,9 @@ export const liveDashboardService = {
       }
     }
 
-    const raw = await liveDashboardRepository.search(q, locale);
+    // Gym/user hits are scoped to the viewer (own gyms + accepted friends only).
+    // Global user_gyms / users search was an IDOR oracle for personal UUIDs.
+    const raw = await liveDashboardRepository.searchForViewer(q, viewerUserId, locale);
     for (const gym of raw.gyms) {
       hits.push({
         level: 'gym',

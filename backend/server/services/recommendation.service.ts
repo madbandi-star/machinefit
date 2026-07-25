@@ -239,7 +239,7 @@ export const recommendationService = {
     };
   },
 
-  async getById(id: string, locale = 'en') {
-    return recommendationRepository.findById(id, locale);
+  async getById(id: string, locale = 'en', viewerUserId?: string) {
+    return recommendationRepository.findById(id, locale, viewerUserId);
   },
 };

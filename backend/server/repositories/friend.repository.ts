@@ -158,7 +158,9 @@ export const friendRepository = {
     if (!pool) return false;
     const [low, high] = orderedPair(a, b);
     const { rows } = await pool.query(
-      `SELECT 1 FROM friendships WHERE user_low_id = $1 AND user_high_id = $2 LIMIT 1`,
+      `SELECT 1 FROM friendships
+       WHERE user_low_id = $1 AND user_high_id = $2 AND status = 'ACCEPTED'
+       LIMIT 1`,
       [low, high]
     );
     return Boolean(rows[0]);

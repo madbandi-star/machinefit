@@ -399,7 +399,16 @@ export const liveDashboardRepository = {
     return result.rows;
   },
 
-  async search(q: string, locale = 'ko'): Promise<{
+  /**
+   * Viewer-scoped search — never enumerate arbitrary users / personal gyms (IDOR).
+   * Gyms: only the viewer's own user_gyms.
+   * Users: accepted friends (or self) whose display name matches.
+   */
+  async searchForViewer(
+    q: string,
+    viewerUserId: string,
+    locale = 'ko'
+  ): Promise<{
     gyms: { id: string; name: string; country_code: string; metro_code: string; district_code: string }[];
     users: { id: string; display_name: string }[];
     machines: { code: string; name: Record<string, string> }[];
@@ -417,14 +426,29 @@ export const liveDashboardRepository = {
       }>(
         `SELECT id::text, name, country_code, metro_code, district_code
          FROM user_gyms
-         WHERE name ILIKE $1
+         WHERE user_id = $1 AND name ILIKE $2
          ORDER BY name ASC
          LIMIT 10`,
-        [like]
+        [viewerUserId, like]
       ),
       pool.query<{ id: string; display_name: string }>(
-        `SELECT id::text, display_name FROM users WHERE display_name ILIKE $1 LIMIT 10`,
-        [like]
+        `SELECT u.id::text, u.display_name
+         FROM users u
+         WHERE u.display_name ILIKE $2
+           AND (
+             u.id = $1
+             OR EXISTS (
+               SELECT 1 FROM friendships f
+               WHERE f.status = 'ACCEPTED'
+                 AND (
+                   (f.user_low_id = $1 AND f.user_high_id = u.id)
+                   OR (f.user_high_id = $1 AND f.user_low_id = u.id)
+                 )
+             )
+           )
+         ORDER BY u.display_name ASC
+         LIMIT 10`,
+        [viewerUserId, like]
       ),
       pool.query<{ code: string; name: Record<string, string> }>(
         `SELECT code, name FROM machines WHERE name::text ILIKE $1 AND is_active LIMIT 10`,

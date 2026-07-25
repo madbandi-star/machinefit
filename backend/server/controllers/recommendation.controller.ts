@@ -82,6 +82,10 @@ export async function getRecommendation(
   res: Response
 ): Promise<void> {
   const locale = resolveRequestLocale(req);
-  const result = await recommendationService.getById(getParam(req.params.id), locale);
+  const result = await recommendationService.getById(
+    getParam(req.params.id),
+    locale,
+    req.user?.userId
+  );
   res.json({ success: true, data: result });
 }

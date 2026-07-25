@@ -28,6 +28,7 @@ interface SettingRow {
 
 interface RecommendationRow {
   id: string;
+  user_id: string | null;
   machine_id: string;
   machine_code: string;
   machine_name: Record<string, string>;
@@ -176,7 +177,7 @@ export const recommendationRepository = {
     return id;
   },
 
-  async findById(id: string, locale = 'en') {
+  async findById(id: string, locale = 'en', viewerUserId?: string) {
     const pool = getPool();
     if (!pool) throw new AppError(404, 'NOT_FOUND', `Recommendation not found: ${id}`);
 
@@ -194,6 +195,10 @@ export const recommendationRepository = {
     }
 
     const row = result.rows[0];
+    // Bound recommendations are private to the owner (IDOR: unauthenticated UUID fetch).
+    if (row.user_id && row.user_id !== viewerUserId) {
+      throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this recommendation');
+    }
     return {
       id: row.id,
       machineCode: row.machine_code,

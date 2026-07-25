@@ -65,6 +65,6 @@ export async function searchLive(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const q = String(req.query.q ?? '');
   const locale = String(req.headers['accept-language'] ?? 'ko').slice(0, 2);
-  const data = await liveDashboardService.search(q, locale);
+  const data = await liveDashboardService.search(q, locale, req.user.userId);
   res.json({ success: true, data });
 }
