@@ -101,6 +101,8 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 | Runtime | Node |
 | Build Command | `npm run build:render` |
 | Start Command | `npm run start --workspace=backend` |
+
+> **Build tip:** `build:render` installs only `shared` + `backend` workspaces (~100MB). Do **not** use a plain `npm ci` at repo root first — that pulls in the frontend (~350MB) and can OOM on Render free tier (`Exited with status 2`).
 | Instance Type | **Free** |
 | Health Check Path | `/api/v1/health` |
 

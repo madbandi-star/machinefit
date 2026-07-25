@@ -5,8 +5,7 @@ services:
     name: machinefit-api
     plan: free
     runtime: node
-    # build:render re-installs with --include=dev so tsc/@types work even when
-    # Render NODE_ENV=production would otherwise skip devDependencies.
+    # Install only shared+backend (skip frontend) to avoid free-tier OOM.
     buildCommand: npm run build:render
     startCommand: npm run start --workspace=backend
     healthCheckPath: /api/v1/health
