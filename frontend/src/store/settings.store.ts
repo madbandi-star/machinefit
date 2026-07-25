@@ -24,6 +24,13 @@ import {
   VOICE_COACH_REP_GAP,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
+import {
+  clampVoiceHoldDurationSec,
+  clampVoiceHoldFlowMode,
+  DEFAULT_VOICE_HOLD_FLOW_MODE,
+  VOICE_HOLD_DURATION,
+  type VoiceHoldFlowMode,
+} from '@/utils/voiceHold';
 
 const DEFAULT_VOICE_COACH_REPS = 12;
 
@@ -48,6 +55,9 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
   voiceCoachPrepCount: DEFAULT_VOICE_COACH_PREP_COUNT,
   voiceCountMode: DEFAULT_VOICE_COUNT_MODE,
+  /** count | count_hold | hold */
+  voiceCoachFlowMode: DEFAULT_VOICE_HOLD_FLOW_MODE,
+  voiceHoldDurationSec: VOICE_HOLD_DURATION.defaultSec,
   restDurationSeconds: REST_DURATION.defaultSeconds,
   /** When false, skip rest timer after the final completed set. */
   restTimerAfterAllSetsComplete: true,
@@ -73,6 +83,10 @@ interface SettingsState {
   voiceCoachPrepCount: VoiceCoachPrepCount;
   /** Exercise-count pacing: normal | AI accel | AI accel + turbo. */
   voiceCountMode: VoiceCountMode;
+  /** Session flow: count only / count+hold / hold only. */
+  voiceCoachFlowMode: VoiceHoldFlowMode;
+  /** Hold ("버텨!!!") duration in seconds. */
+  voiceHoldDurationSec: number;
   /** Rest between sets (seconds). Default 90 (1:30). */
   restDurationSeconds: number;
   /** Show rest timer even when every set is already completed. */
@@ -92,6 +106,8 @@ interface SettingsState {
   setVoiceCoachRepGapMs: (ms: number) => void;
   setVoiceCoachPrepCount: (count: VoiceCoachPrepCount) => void;
   setVoiceCountMode: (mode: VoiceCountMode) => void;
+  setVoiceCoachFlowMode: (mode: VoiceHoldFlowMode) => void;
+  setVoiceHoldDurationSec: (seconds: number) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setRestTimerAfterAllSetsComplete: (enabled: boolean) => void;
   setWeightDifficulty: (value: number) => void;
@@ -119,6 +135,10 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachPrepCount: (count) =>
         set({ voiceCoachPrepCount: clampVoiceCoachPrepCount(count) }),
       setVoiceCountMode: (mode) => set({ voiceCountMode: clampVoiceCountMode(mode) }),
+      setVoiceCoachFlowMode: (mode) =>
+        set({ voiceCoachFlowMode: clampVoiceHoldFlowMode(mode) }),
+      setVoiceHoldDurationSec: (seconds) =>
+        set({ voiceHoldDurationSec: clampVoiceHoldDurationSec(seconds) }),
       setRestDurationSeconds: (seconds) =>
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
       setRestTimerAfterAllSetsComplete: (restTimerAfterAllSetsComplete) =>
@@ -141,6 +161,12 @@ export const useSettingsStore = create<SettingsState>()(
           voiceCountMode: clampVoiceCountMode(p.voiceCountMode ?? current.voiceCountMode),
           voiceCoachPrepCount: clampVoiceCoachPrepCount(
             p.voiceCoachPrepCount ?? current.voiceCoachPrepCount
+          ),
+          voiceCoachFlowMode: clampVoiceHoldFlowMode(
+            p.voiceCoachFlowMode ?? current.voiceCoachFlowMode
+          ),
+          voiceHoldDurationSec: clampVoiceHoldDurationSec(
+            p.voiceHoldDurationSec ?? current.voiceHoldDurationSec
           ),
           restTimerAfterAllSetsComplete:
             typeof p.restTimerAfterAllSetsComplete === 'boolean'

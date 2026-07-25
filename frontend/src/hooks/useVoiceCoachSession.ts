@@ -2,12 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { VoiceCountMode } from '@/utils/aiCountPace';
 import { hapticCountTick } from '@/utils/haptic';
 import {
-  runVoiceCoachSession,
+  runVoiceCoachFlow,
   stopVoiceCoach,
   unlockVoiceCoachAudio,
   type VoiceCoachPhase,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
+import type { VoiceHoldFlowMode } from '@/utils/voiceHold';
 
 interface UseVoiceCoachSessionOptions {
   targetReps: number;
@@ -16,6 +17,8 @@ interface UseVoiceCoachSessionOptions {
   repGapMs: number;
   prepCount: VoiceCoachPrepCount;
   countMode: VoiceCountMode;
+  flowMode: VoiceHoldFlowMode;
+  holdDurationSec: number;
   locale: string;
   enabled: boolean;
 }
@@ -38,6 +41,8 @@ export function useVoiceCoachSession({
   repGapMs,
   prepCount,
   countMode,
+  flowMode,
+  holdDurationSec,
   locale,
   enabled,
 }: UseVoiceCoachSessionOptions): VoiceCoachSessionState {
@@ -83,13 +88,15 @@ export function useVoiceCoachSession({
         await unlockVoiceCoachAudio();
         if (controller.signal.aborted || runIdRef.current !== runId) return;
 
-        await runVoiceCoachSession({
+        await runVoiceCoachFlow({
           targetReps,
           oneMoreEnabled,
           maxOneMore: oneMoreCount,
           repGapMs,
           prepCount,
           countMode,
+          flowMode,
+          holdDurationSec,
           locale,
           signal: controller.signal,
           onPhaseChange: (nextPhase, detail) => {
@@ -100,6 +107,15 @@ export function useVoiceCoachSession({
               setCountdown(typeof detail?.countdown === 'number' ? detail.countdown : null);
               setTurbo(false);
               setIntensity(0);
+            } else if (nextPhase === 'hold') {
+              setTurbo(false);
+              setIntensity(detail?.holdCue ? 1 : 0.85);
+              setCountdown(
+                typeof detail?.countdown === 'number' ? detail.countdown : detail?.holdCue ? null : null
+              );
+              if (typeof detail?.countdown === 'number' && detail.countdown > 0) {
+                hapticCountTick(true);
+              }
             } else if (detail?.countdown != null) {
               setCountdown(detail.countdown);
             }
@@ -124,7 +140,7 @@ export function useVoiceCoachSession({
         if (abortRef.current === controller) {
           abortRef.current = null;
         }
-        // runVoiceCoachSession already signals idle on abort; on success it ends at done.
+        // Flow already signals idle on abort; on success it ends at done.
         setPhase((prev) => (prev === 'done' ? prev : 'idle'));
         setCountdown(null);
         setTurbo(false);
@@ -134,6 +150,8 @@ export function useVoiceCoachSession({
   }, [
     countMode,
     enabled,
+    flowMode,
+    holdDurationSec,
     locale,
     oneMoreCount,
     oneMoreEnabled,

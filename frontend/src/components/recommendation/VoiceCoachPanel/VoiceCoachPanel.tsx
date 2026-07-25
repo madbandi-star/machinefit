@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
@@ -15,6 +16,14 @@ import {
   type VoiceCoachPhase,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
+import {
+  clampVoiceHoldDurationSec,
+  isVoiceHoldDurationPreset,
+  VOICE_HOLD_DURATION,
+  VOICE_HOLD_DURATION_PRESETS,
+  VOICE_HOLD_FLOW_MODES,
+  type VoiceHoldFlowMode,
+} from '@/utils/voiceHold';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 
@@ -33,6 +42,10 @@ interface VoiceCoachPanelProps {
   onPrepCountChange: (count: VoiceCoachPrepCount) => void;
   countMode: VoiceCountMode;
   onCountModeChange: (mode: VoiceCountMode) => void;
+  flowMode: VoiceHoldFlowMode;
+  onFlowModeChange: (mode: VoiceHoldFlowMode) => void;
+  holdDurationSec: number;
+  onHoldDurationSecChange: (sec: number) => void;
   oneMoreEnabled: boolean;
   onOneMoreChange: (enabled: boolean) => void;
   oneMoreCount: number;
@@ -71,6 +84,10 @@ function statusLabel(
       return t('machines:voiceCoach.statusCounting', { rep: currentRep });
     case 'oneMore':
       return t('machines:voiceCoach.statusOneMore', { rep: currentRep });
+    case 'hold':
+      if (countdown == null) return t('machines:voiceCoach.statusHoldCue');
+      if (countdown <= 0) return t('machines:voiceCoach.statusHoldFinish');
+      return t('machines:voiceCoach.statusHoldCountdown', { count: countdown });
     default:
       return t('machines:voiceCoach.statusIdle');
   }
@@ -87,6 +104,10 @@ export function VoiceCoachPanel({
   onPrepCountChange,
   countMode,
   onCountModeChange,
+  flowMode,
+  onFlowModeChange,
+  holdDurationSec,
+  onHoldDurationSecChange,
   oneMoreEnabled,
   onOneMoreChange,
   oneMoreCount,
@@ -107,31 +128,55 @@ export function VoiceCoachPanel({
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
-  const showCountStage =
-    (phase === 'counting' || phase === 'oneMore') && currentRep > 0;
+  const duration = clampVoiceHoldDurationSec(holdDurationSec);
+  const showCountControls = flowMode !== 'hold';
+  const showHoldDuration = flowMode === 'count_hold' || flowMode === 'hold';
+  const holdAfterCount = flowMode === 'count_hold';
+
+  const [durationCustom, setDurationCustom] = useState(!isVoiceHoldDurationPreset(duration));
+  const [customDraft, setCustomDraft] = useState(String(duration));
+
+  useEffect(() => {
+    if (!durationCustom) {
+      setCustomDraft(String(duration));
+    }
+  }, [duration, durationCustom]);
+
+  const showCountStage = phase === 'counting' && currentRep > 0;
+  const showOneMoreStage = phase === 'oneMore' && currentRep > 0;
+  const showHoldStage = phase === 'hold' && (countdown != null || intensity > 0);
   const showCountdownStage = phase === 'countdown' && countdown != null;
-  const scale = showCountStage
+  const showRepStage = showCountStage || showOneMoreStage;
+  const scale = showRepStage
     ? 1 + intensity * (turbo ? 0.42 : 0.22) + (turbo && intensity > 0.92 ? 0.18 : 0)
-    : showCountdownStage
-      ? 1.05
-      : 1;
+    : showHoldStage
+      ? 1.08 + intensity * 0.12
+      : showCountdownStage
+        ? 1.05
+        : 1;
   const displayNumber = showCountStage
-    ? phase === 'oneMore'
+    ? formatCountDisplay(currentRep, turbo)
+    : showOneMoreStage
       ? turbo
-        ? `${t('machines:voiceCoach.oneMoreShort')}!`
-        : t('machines:voiceCoach.oneMoreShort')
-      : formatCountDisplay(currentRep, turbo)
-    : showCountdownStage
-      ? String(countdown)
-      : phase === 'start'
-        ? '!'
-        : '';
+        ? `${t('machines:voiceCoach.oneMoreShort', { defaultValue: '하나더' })}!`
+        : t('machines:voiceCoach.oneMoreShort', { defaultValue: '하나더' })
+      : showHoldStage
+        ? countdown != null && countdown > 0
+          ? String(countdown)
+          : countdown === 0
+            ? '!'
+            : t('machines:voiceCoach.holdCueShort')
+        : showCountdownStage
+          ? String(countdown)
+          : phase === 'start'
+            ? '!'
+            : '';
 
   return (
     <section
       className={`voice-coach-panel${compact ? ' voice-coach-panel--compact' : ''}${
         isRunning ? ' voice-coach-panel--running' : ''
-      }${turbo ? ' voice-coach-panel--turbo' : ''}`}
+      }${turbo || phase === 'hold' ? ' voice-coach-panel--turbo' : ''}`}
       aria-label={t('machines:voiceCoach.title')}
     >
       <div className="voice-coach-panel__header">
@@ -182,103 +227,194 @@ export function VoiceCoachPanel({
               disabled={isRunning}
             >
               <legend className="voice-coach-panel__mode-legend">
-                {t('machines:voiceCoach.countMode')}
+                {t('machines:voiceCoach.flowMode')}
               </legend>
               <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_COUNT_MODES.map((mode) => (
+                {VOICE_HOLD_FLOW_MODES.map((mode) => (
                   <label key={mode} className="voice-coach-panel__mode-option">
                     <input
                       type="radio"
-                      name="voice-count-mode"
+                      name="voice-flow-mode"
                       value={mode}
-                      checked={countMode === mode}
-                      onChange={() => onCountModeChange(mode)}
+                      checked={flowMode === mode}
+                      onChange={() => onFlowModeChange(mode)}
                     />
-                    <span>{t(`machines:voiceCoach.countMode_${mode}`)}</span>
+                    <span>{t(`machines:voiceCoach.flowMode_${mode}`)}</span>
                   </label>
                 ))}
               </div>
             </fieldset>
 
-            <div
-              className={`body-metrics-inline voice-coach-panel__pickers${
-                isRunning ? ' body-metrics-inline--disabled' : ''
-              }`}
-              role="group"
-              aria-label={t('machines:voiceCoach.title')}
-            >
-              <div className="body-metrics-inline__grid">
-                <div className="body-metrics-inline__cell">
-                  <span className="body-metrics-inline__label">
-                    {t('machines:voiceCoach.targetReps')}
-                    <span className="body-metrics-inline__unit">
-                      {t('machines:voiceCoach.targetRepsUnit')}
-                    </span>
-                  </span>
-                  <ScrollPicker
-                    value={targetReps}
-                    onChange={(next) =>
-                      onTargetRepsChange(Math.max(MIN_REPS, Math.min(MAX_REPS, next)))
-                    }
-                    min={MIN_REPS}
-                    max={MAX_REPS}
-                    step={1}
-                    size={compact ? 'compact' : 'default'}
-                    defaultValue={DEFAULT_REPS}
-                    ariaLabel={t('machines:voiceCoach.targetReps')}
-                    formatValue={(value) => String(value)}
-                  />
-                </div>
-                <div className="body-metrics-inline__cell">
-                  <span className="body-metrics-inline__label">
-                    {t('machines:voiceCoach.countInterval')}
-                    <span className="body-metrics-inline__unit">
-                      {t('machines:voiceCoach.countIntervalUnit')}
-                    </span>
-                  </span>
-                  <ScrollPicker
-                    value={gapSec}
-                    onChange={(sec) => onRepGapMsChange(clampVoiceCoachRepGapMs(sec * 1000))}
-                    min={VOICE_COACH_REP_GAP.minMs / 1000}
-                    max={VOICE_COACH_REP_GAP.maxMs / 1000}
-                    step={VOICE_COACH_REP_GAP.stepMs / 1000}
-                    size={compact ? 'compact' : 'default'}
-                    defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
-                    ariaLabel={t('machines:voiceCoach.countInterval')}
-                    formatValue={(value) => value.toFixed(1)}
-                  />
-                </div>
-                <div className="body-metrics-inline__cell">
-                  <span className="body-metrics-inline__label">
-                    {t('machines:voiceCoach.oneMoreCount')}
-                    <span className="body-metrics-inline__unit">
-                      {t('machines:voiceCoach.oneMoreCountUnit')}
-                    </span>
-                  </span>
-                  <ScrollPicker
-                    value={clampVoiceCoachOneMoreCount(oneMoreCount)}
-                    onChange={onOneMoreCountChange}
-                    min={VOICE_COACH_ONE_MORE.minCount}
-                    max={VOICE_COACH_ONE_MORE.maxCount}
-                    step={VOICE_COACH_ONE_MORE.step}
-                    size={compact ? 'compact' : 'default'}
-                    defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
-                    ariaLabel={t('machines:voiceCoach.oneMoreCount')}
-                    formatValue={(value) => String(value)}
-                  />
-                </div>
-              </div>
-            </div>
+            {showCountControls ? (
+              <>
+                <fieldset
+                  className={`voice-coach-panel__mode${
+                    isRunning ? ' voice-coach-panel__mode--disabled' : ''
+                  }`}
+                  disabled={isRunning}
+                >
+                  <legend className="voice-coach-panel__mode-legend">
+                    {t('machines:voiceCoach.countMode')}
+                  </legend>
+                  <div className="voice-coach-panel__mode-options" role="radiogroup">
+                    {VOICE_COUNT_MODES.map((mode) => (
+                      <label key={mode} className="voice-coach-panel__mode-option">
+                        <input
+                          type="radio"
+                          name="voice-count-mode"
+                          value={mode}
+                          checked={countMode === mode}
+                          onChange={() => onCountModeChange(mode)}
+                        />
+                        <span>{t(`machines:voiceCoach.countMode_${mode}`)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
 
-            <label className="voice-coach-panel__check">
-              <input
-                type="checkbox"
-                checked={oneMoreEnabled}
-                onChange={(e) => onOneMoreChange(e.target.checked)}
-                disabled={isRunning}
-              />
-              <span>{t('machines:voiceCoach.oneMore')}</span>
-            </label>
+                <div
+                  className={`body-metrics-inline voice-coach-panel__pickers${
+                    isRunning ? ' body-metrics-inline--disabled' : ''
+                  }`}
+                  role="group"
+                  aria-label={t('machines:voiceCoach.title')}
+                >
+                  <div className="body-metrics-inline__grid">
+                    <div className="body-metrics-inline__cell">
+                      <span className="body-metrics-inline__label">
+                        {t('machines:voiceCoach.targetReps')}
+                        <span className="body-metrics-inline__unit">
+                          {t('machines:voiceCoach.targetRepsUnit')}
+                        </span>
+                      </span>
+                      <ScrollPicker
+                        value={targetReps}
+                        onChange={(next) =>
+                          onTargetRepsChange(Math.max(MIN_REPS, Math.min(MAX_REPS, next)))
+                        }
+                        min={MIN_REPS}
+                        max={MAX_REPS}
+                        step={1}
+                        size={compact ? 'compact' : 'default'}
+                        defaultValue={DEFAULT_REPS}
+                        ariaLabel={t('machines:voiceCoach.targetReps')}
+                        formatValue={(value) => String(value)}
+                      />
+                    </div>
+                    <div className="body-metrics-inline__cell">
+                      <span className="body-metrics-inline__label">
+                        {t('machines:voiceCoach.countInterval')}
+                        <span className="body-metrics-inline__unit">
+                          {t('machines:voiceCoach.countIntervalUnit')}
+                        </span>
+                      </span>
+                      <ScrollPicker
+                        value={gapSec}
+                        onChange={(sec) => onRepGapMsChange(clampVoiceCoachRepGapMs(sec * 1000))}
+                        min={VOICE_COACH_REP_GAP.minMs / 1000}
+                        max={VOICE_COACH_REP_GAP.maxMs / 1000}
+                        step={VOICE_COACH_REP_GAP.stepMs / 1000}
+                        size={compact ? 'compact' : 'default'}
+                        defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
+                        ariaLabel={t('machines:voiceCoach.countInterval')}
+                        formatValue={(value) => value.toFixed(1)}
+                      />
+                    </div>
+                    <div className="body-metrics-inline__cell">
+                      <span className="body-metrics-inline__label">
+                        {t('machines:voiceCoach.oneMoreCount')}
+                        <span className="body-metrics-inline__unit">
+                          {t('machines:voiceCoach.oneMoreCountUnit')}
+                        </span>
+                      </span>
+                      <ScrollPicker
+                        value={clampVoiceCoachOneMoreCount(oneMoreCount)}
+                        onChange={onOneMoreCountChange}
+                        min={VOICE_COACH_ONE_MORE.minCount}
+                        max={VOICE_COACH_ONE_MORE.maxCount}
+                        step={VOICE_COACH_ONE_MORE.step}
+                        size={compact ? 'compact' : 'default'}
+                        defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
+                        ariaLabel={t('machines:voiceCoach.oneMoreCount')}
+                        formatValue={(value) => String(value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <label className="voice-coach-panel__check">
+                  <input
+                    type="checkbox"
+                    checked={oneMoreEnabled}
+                    onChange={(e) => onOneMoreChange(e.target.checked)}
+                    disabled={isRunning}
+                  />
+                  <span>{t('machines:voiceCoach.oneMore')}</span>
+                </label>
+
+                <label className="voice-coach-panel__check">
+                  <input
+                    type="checkbox"
+                    checked={holdAfterCount}
+                    onChange={(e) =>
+                      onFlowModeChange(e.target.checked ? 'count_hold' : 'count')
+                    }
+                    disabled={isRunning}
+                  />
+                  <span>{t('machines:voiceCoach.holdAfterCount')}</span>
+                </label>
+              </>
+            ) : null}
+
+            {showHoldDuration ? (
+              <div className="voice-coach-panel__hold-duration">
+                <label className="body-metrics-inline__label" htmlFor="voice-hold-duration">
+                  {t('machines:voiceCoach.holdDuration')}
+                  <span className="body-metrics-inline__unit">
+                    {t('machines:voiceCoach.holdDurationUnit')}
+                  </span>
+                </label>
+                <select
+                  id="voice-hold-duration"
+                  value={durationCustom ? 'custom' : String(duration)}
+                  disabled={isRunning}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === 'custom') {
+                      setDurationCustom(true);
+                      setCustomDraft(String(duration));
+                      return;
+                    }
+                    setDurationCustom(false);
+                    onHoldDurationSecChange(clampVoiceHoldDurationSec(Number(v)));
+                  }}
+                >
+                  {VOICE_HOLD_DURATION_PRESETS.map((sec) => (
+                    <option key={sec} value={sec}>
+                      {t('machines:voiceCoach.holdDurationOption', { sec })}
+                    </option>
+                  ))}
+                  <option value="custom">{t('machines:voiceCoach.holdDurationCustom')}</option>
+                </select>
+                {durationCustom ? (
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={VOICE_HOLD_DURATION.minSec}
+                    max={VOICE_HOLD_DURATION.maxSec}
+                    value={customDraft}
+                    disabled={isRunning}
+                    aria-label={t('machines:voiceCoach.holdDurationCustom')}
+                    onChange={(e) => setCustomDraft(e.target.value)}
+                    onBlur={() => {
+                      const next = clampVoiceHoldDurationSec(Number(customDraft));
+                      setCustomDraft(String(next));
+                      onHoldDurationSecChange(next);
+                    }}
+                  />
+                ) : null}
+              </div>
+            ) : null}
 
             <label className="voice-coach-panel__check">
               <input
@@ -322,9 +458,9 @@ export function VoiceCoachPanel({
           {displayNumber ? (
             <div
               className={`voice-coach-panel__count-stage${
-                turbo ? ' voice-coach-panel__count-stage--turbo' : ''
+                turbo || phase === 'hold' ? ' voice-coach-panel__count-stage--turbo' : ''
               }${
-                showCountStage && intensity > 0.85
+                (showCountStage && intensity > 0.85) || phase === 'hold'
                   ? ' voice-coach-panel__count-stage--climax'
                   : ''
               }`}
@@ -335,7 +471,9 @@ export function VoiceCoachPanel({
                 className="voice-coach-panel__count-num"
                 style={{
                   transform: `scale(${scale})`,
-                  ['--count-shake' as string]: `${turbo ? 1.2 + intensity : intensity * 0.6}px`,
+                  ['--count-shake' as string]: `${
+                    turbo || phase === 'hold' ? 1.2 + intensity : intensity * 0.6
+                  }px`,
                 }}
               >
                 {displayNumber}
@@ -346,6 +484,7 @@ export function VoiceCoachPanel({
           <p className="voice-coach-panel__status" role="status" aria-live="polite">
             {statusLabel(t, phase, currentRep, countdown)}
             {turbo ? ` · ${t('machines:voiceCoach.turboBadge')}` : ''}
+            {phase === 'hold' ? ` · ${t('machines:voiceCoach.holdBadge')}` : ''}
           </p>
         </>
       ) : null}

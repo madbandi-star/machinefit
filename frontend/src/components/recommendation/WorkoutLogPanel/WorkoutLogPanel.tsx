@@ -233,6 +233,8 @@ export function WorkoutLogPanel({
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
   const voiceCoachPrepCount = useSettingsStore((s) => s.voiceCoachPrepCount);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
+  const voiceCoachFlowMode = useSettingsStore((s) => s.voiceCoachFlowMode);
+  const voiceHoldDurationSec = useSettingsStore((s) => s.voiceHoldDurationSec);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const restTimerAfterAllSetsComplete = useSettingsStore(
     (s) => s.restTimerAfterAllSetsComplete
@@ -246,6 +248,8 @@ export function WorkoutLogPanel({
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
+  const setVoiceCoachFlowMode = useSettingsStore((s) => s.setVoiceCoachFlowMode);
+  const setVoiceHoldDurationSec = useSettingsStore((s) => s.setVoiceHoldDurationSec);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
@@ -290,6 +294,8 @@ export function WorkoutLogPanel({
     repGapMs: voiceCoachRepGapMs,
     prepCount: voiceCoachPrepCount,
     countMode: voiceCountMode,
+    flowMode: voiceCoachFlowMode,
+    holdDurationSec: voiceHoldDurationSec,
     locale,
     enabled: voiceCoachEnabled,
   });
@@ -1312,6 +1318,10 @@ export function WorkoutLogPanel({
       onPrepCountChange={setVoiceCoachPrepCount}
       countMode={voiceCountMode}
       onCountModeChange={setVoiceCountMode}
+      flowMode={voiceCoachFlowMode}
+      onFlowModeChange={setVoiceCoachFlowMode}
+      holdDurationSec={voiceHoldDurationSec}
+      onHoldDurationSecChange={setVoiceHoldDurationSec}
       oneMoreEnabled={voiceCoachOneMore}
       onOneMoreChange={setVoiceCoachOneMore}
       oneMoreCount={voiceCoachOneMoreCount}

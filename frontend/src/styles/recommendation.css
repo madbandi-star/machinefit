@@ -1546,6 +1546,24 @@
   margin: 0;
 }
 
+.voice-coach-panel__hold-duration {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0.15rem;
+}
+
+.voice-coach-panel__hold-duration select,
+.voice-coach-panel__hold-duration input[type='number'] {
+  width: 100%;
+  min-height: 2.4rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--color-border, #d4d4d4);
+  border-radius: 0.5rem;
+  background: var(--color-surface, #fff);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
 .voice-coach-panel__count-stage {
   display: flex;
   align-items: center;
