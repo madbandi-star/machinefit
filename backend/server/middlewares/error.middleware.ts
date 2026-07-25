@@ -37,7 +37,8 @@ export function errorMiddleware(
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Validation failed',
-        details: err.issues,
+        // Match validateBody middleware: flatten() so clients can read fieldErrors.
+        details: err.flatten(),
       },
     });
     return;

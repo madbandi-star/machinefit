@@ -15,6 +15,7 @@ import { useGymStore } from '@/store/gym.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePremiumStore } from '@/store/premium.store';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
+import { resolveGymManageErrorMessage } from '@/utils/getApiErrorMessage';
 
 async function refreshProfileHomeGym(
   queryClient: ReturnType<typeof useQueryClient>,
@@ -38,11 +39,11 @@ function invalidateGymScopedQueries(queryClient: ReturnType<typeof useQueryClien
 }
 
 function isPlanLimitError(error: unknown): boolean {
-  const err = error as { response?: { status?: number; data?: { code?: string } } };
-  return (
-    err?.response?.status === 402 ||
-    err?.response?.data?.code === 'PLAN_LIMIT'
-  );
+  const err = error as {
+    response?: { status?: number; data?: { code?: string; error?: { code?: string } } };
+  };
+  const code = err?.response?.data?.error?.code ?? err?.response?.data?.code;
+  return err?.response?.status === 402 || code === 'PLAN_LIMIT';
 }
 
 export function useActiveGym() {
@@ -132,7 +133,7 @@ export function useActiveGym() {
       await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:selector.switchSuccess'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),
   });
 
   const createMutation = useMutation({
@@ -153,7 +154,7 @@ export function useActiveGym() {
       if (isPlanLimitError(error)) {
         openPremiumModal();
       } else {
-        showToast(t('common:errors.submitFailed'), 'error');
+        showToast(resolveGymManageErrorMessage(error, t), 'error');
       }
     },
   });
@@ -195,7 +196,7 @@ export function useActiveGym() {
       await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:manage.updateGymSuccess'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),
   });
 
   const removeMutation = useMutation({
@@ -210,7 +211,7 @@ export function useActiveGym() {
       invalidateGymScopedQueries(queryClient);
       showToast(t('gyms:manage.removeGymSuccess'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),
   });
 
   const updateGym = useCallback(

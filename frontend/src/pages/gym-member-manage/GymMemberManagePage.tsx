@@ -69,7 +69,7 @@ function memberToForm(member: GymMember): MemberFormState {
     gender: member.gender ?? undefined,
     heightCm: member.heightCm != null ? String(member.heightCm) : '',
     weightKg: member.weightKg != null ? String(member.weightKg) : '',
-    birthDate: member.birthDate ?? '',
+    birthDate: toDateInputValue(member.birthDate),
     memo: member.memo ?? '',
   };
 }
@@ -113,6 +113,28 @@ function memberInitial(name: string): string {
   const trimmed = name.trim();
   if (!trimmed) return '?';
   return trimmed.slice(0, 1).toUpperCase();
+}
+
+/** Keep date inputs valid (YYYY-MM-DD); strip ISO timestamps from API. */
+function toDateInputValue(value: string | null | undefined): string {
+  if (!value) return '';
+  const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
+  return match?.[1] ?? '';
+}
+
+function normalizeWebsiteUrl(raw: string): string | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(trimmed)) return `https://${trimmed}`;
+  return trimmed;
+}
+
+function parseOptionalNumber(raw: string): number | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  const n = Number(trimmed);
+  return Number.isFinite(n) ? n : Number.NaN;
 }
 
 export function GymMemberManagePage() {
@@ -200,6 +222,11 @@ export function GymMemberManagePage() {
       showToast(t('gyms:manage.locationRequired'), 'error');
       return;
     }
+    const websiteUrl = normalizeWebsiteUrl(gymForm.websiteUrl);
+    if (gymForm.websiteUrl.trim() && websiteUrl && !/^https?:\/\//i.test(websiteUrl)) {
+      showToast(t('gyms:manage.invalidWebsite'), 'error');
+      return;
+    }
     setGymSubmitting(true);
     try {
       const locationPayload = {
@@ -218,7 +245,7 @@ export function GymMemberManagePage() {
           address: gymForm.address.trim() || undefined,
           brandName: gymForm.brandName.trim() || undefined,
           phone: gymForm.phone.trim() || undefined,
-          websiteUrl: gymForm.websiteUrl.trim() || undefined,
+          websiteUrl,
           setActive: true,
           requireLocation: true,
           ...locationPayload,
@@ -229,7 +256,7 @@ export function GymMemberManagePage() {
           address: gymForm.address.trim() || null,
           brandName: gymForm.brandName.trim() || null,
           phone: gymForm.phone.trim() || null,
-          websiteUrl: gymForm.websiteUrl.trim() || null,
+          websiteUrl: websiteUrl ?? null,
           ...locationPayload,
         });
       }
@@ -265,15 +292,33 @@ export function GymMemberManagePage() {
     event.preventDefault();
     const name = memberForm.name.trim();
     if (!name || memberSubmitting || !isRealGym) return;
+
+    const heightCm = parseOptionalNumber(memberForm.heightCm);
+    const weightKg = parseOptionalNumber(memberForm.weightKg);
+    if (Number.isNaN(heightCm) || (heightCm != null && (heightCm < 100 || heightCm > 250))) {
+      showToast(t('gyms:manage.heightRange'), 'error');
+      return;
+    }
+    if (Number.isNaN(weightKg) || (weightKg != null && (weightKg < 30 || weightKg > 300))) {
+      showToast(t('gyms:manage.weightRange'), 'error');
+      return;
+    }
+    const email = memberForm.email.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast(t('gyms:manage.invalidEmail'), 'error');
+      return;
+    }
+    const birthDate = toDateInputValue(memberForm.birthDate) || undefined;
+
     setMemberSubmitting(true);
     try {
       const payload = {
         name,
-        email: memberForm.email.trim() || undefined,
+        email: email || undefined,
         gender: memberForm.gender,
-        heightCm: memberForm.heightCm ? Number(memberForm.heightCm) : undefined,
-        weightKg: memberForm.weightKg ? Number(memberForm.weightKg) : undefined,
-        birthDate: memberForm.birthDate || undefined,
+        heightCm,
+        weightKg,
+        birthDate,
         memo: memberForm.memo.trim() || undefined,
       };
       if (memberFormMode === 'create') {
@@ -667,8 +712,8 @@ export function GymMemberManagePage() {
                                   heightCm: e.target.value,
                                 }))
                               }
-                              min={50}
-                              max={300}
+                              min={100}
+                              max={250}
                               step={0.1}
                               inputMode="decimal"
                               placeholder="170"
@@ -686,8 +731,8 @@ export function GymMemberManagePage() {
                                   weightKg: e.target.value,
                                 }))
                               }
-                              min={20}
-                              max={500}
+                              min={30}
+                              max={300}
                               step={0.1}
                               inputMode="decimal"
                               placeholder="70"

@@ -9,7 +9,8 @@ interface GymMemberRow {
   gender: string | null;
   height_cm: string | null;
   weight_kg: string | null;
-  birth_date: string | null;
+  /** pg may return DATE as string or Date */
+  birth_date: string | Date | null;
   memo: string | null;
   email: string | null;
   linked_user_id: string | null;
@@ -17,6 +18,20 @@ interface GymMemberRow {
   is_self: boolean;
   created_at: string;
   updated_at: string;
+}
+
+/** Normalize pg DATE / ISO timestamps to YYYY-MM-DD for date inputs + Zod. */
+function toDateOnly(value: string | Date | null | undefined): string | undefined {
+  if (value == null || value === '') return undefined;
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime())) return undefined;
+    const y = value.getUTCFullYear();
+    const m = String(value.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(value.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  const match = String(value).match(/^(\d{4}-\d{2}-\d{2})/);
+  return match?.[1];
 }
 
 interface GymMemberProfileRequestRow {
@@ -40,7 +55,7 @@ function mapMember(row: GymMemberRow): GymMember {
     gender: row.gender as GymMember['gender'],
     heightCm: row.height_cm ? parseFloat(row.height_cm) : undefined,
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
-    birthDate: row.birth_date ?? undefined,
+    birthDate: toDateOnly(row.birth_date),
     memo: row.memo ?? undefined,
     email: row.email ?? undefined,
     linkedUserId: row.linked_user_id ?? undefined,
