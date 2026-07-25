@@ -3,7 +3,12 @@
  * Pure timing helpers — does not touch timers, sets, or rest business logic.
  */
 
-export const VOICE_COUNT_MODES = ['normal', 'ai_accel', 'ai_accel_turbo'] as const;
+export const VOICE_COUNT_MODES = [
+  'normal',
+  'normal_turbo',
+  'ai_accel',
+  'ai_accel_turbo',
+] as const;
 export type VoiceCountMode = (typeof VOICE_COUNT_MODES)[number];
 
 export const DEFAULT_VOICE_COUNT_MODE: VoiceCountMode = 'ai_accel_turbo';
@@ -61,6 +66,7 @@ export interface BuildCountPaceOptions {
 /**
  * Build per-count gap schedule.
  * - normal: constant base gap
+ * - normal_turbo: constant base, then turbo window (~38%→~32% of base)
  * - ai_accel: gradual shorten toward ~55% of base by the last count
  * - ai_accel_turbo: same accel, then turbo window shortens further (~38%→~32% of base)
  */
@@ -80,30 +86,37 @@ export function buildCountPaceSchedule(options: BuildCountPaceOptions): CountPac
     }));
   }
 
-  const turboCount = mode === 'ai_accel_turbo' ? resolveTurboCount(total) : 0;
-  const accelLen = Math.max(0, total - turboCount);
+  const useTurbo = mode === 'normal_turbo' || mode === 'ai_accel_turbo';
+  const useAccel = mode === 'ai_accel' || mode === 'ai_accel_turbo';
+  const turboCount = useTurbo ? resolveTurboCount(total) : 0;
+  const preTurboLen = Math.max(0, total - turboCount);
   const accelEndGap = Math.max(minGap, Math.round(base * 0.55));
   const turboStartGap = Math.max(minGap, Math.round(base * 0.38));
   const turboEndGap = Math.max(minGap, Math.round(base * 0.32));
 
   const steps: CountPaceStep[] = [];
   for (let i = 0; i < total; i += 1) {
-    const inTurbo = turboCount > 0 && i >= accelLen;
+    const inTurbo = turboCount > 0 && i >= preTurboLen;
     let gap = base;
 
     if (inTurbo) {
       if (turboCount <= 1) {
         gap = turboEndGap;
       } else {
-        const t = (i - accelLen) / (turboCount - 1);
+        const t = (i - preTurboLen) / (turboCount - 1);
         gap = Math.round(turboStartGap + (turboEndGap - turboStartGap) * smoothstep(t));
       }
-    } else if (accelLen <= 1) {
-      gap = accelEndGap;
+    } else if (useAccel) {
+      if (preTurboLen <= 1) {
+        gap = accelEndGap;
+      } else {
+        const t = i / (preTurboLen - 1);
+        // Ease-in: stays closer to base early, then gently pulls toward accelEnd.
+        gap = Math.round(base + (accelEndGap - base) * smoothstep(t));
+      }
     } else {
-      const t = i / (accelLen - 1);
-      // Ease-in: stays closer to base early, then gently pulls toward accelEnd.
-      gap = Math.round(base + (accelEndGap - base) * smoothstep(t));
+      // normal_turbo: flat base until turbo window
+      gap = base;
     }
 
     gap = Math.max(minGap, Math.min(base, gap));
@@ -116,12 +129,14 @@ export function buildCountPaceSchedule(options: BuildCountPaceOptions): CountPac
   }
 
   // Guarantee monotonic-ish acceleration: each non-turbo gap should not grow.
-  for (let i = 1; i < accelLen; i += 1) {
-    if (steps[i].gapAfterMs > steps[i - 1].gapAfterMs && i < total - 1) {
-      steps[i] = {
-        ...steps[i],
-        gapAfterMs: steps[i - 1].gapAfterMs,
-      };
+  if (useAccel) {
+    for (let i = 1; i < preTurboLen; i += 1) {
+      if (steps[i].gapAfterMs > steps[i - 1].gapAfterMs && i < total - 1) {
+        steps[i] = {
+          ...steps[i],
+          gapAfterMs: steps[i - 1].gapAfterMs,
+        };
+      }
     }
   }
 

@@ -111,6 +111,7 @@
     "countIntervalUnit": "s",
     "countMode": "Count mode",
     "countMode_normal": "Normal",
+    "countMode_normal_turbo": "Normal + turbo",
     "countMode_ai_accel": "AI accel",
     "countMode_ai_accel_turbo": "AI accel + turbo",
     "turboBadge": "Turbo",

@@ -59,6 +59,20 @@ for (const total of [10, 30, 45, 60, 90, 120]) {
     assert.ok(turbo[0].gapAfterMs >= turbo[turbo.length - 2].gapAfterMs);
     assert.ok(turbo[turbo.length - 2].gapAfterMs < turbo[0].gapAfterMs);
   }
+
+  const normalTurbo = buildCountPaceSchedule({
+    totalCounts: total,
+    baseGapMs: 2000,
+    mode: 'normal_turbo',
+  });
+  const normalTurboN = resolveTurboCount(total);
+  const normalTurboSteps = normalTurbo.filter((s) => s.turbo);
+  assert.equal(normalTurboSteps.length, normalTurboN);
+  const preTurbo = normalTurbo.filter((s) => !s.turbo);
+  assert.ok(preTurbo.every((s) => s.gapAfterMs === 2000 || s.gapAfterMs === 0));
+  if (total >= 10 && normalTurboN > 0) {
+    assert.ok(normalTurbo[normalTurbo.length - 2].gapAfterMs < 2000);
+  }
 }
 
 console.log('aiCountPace.test.ts: ok');
