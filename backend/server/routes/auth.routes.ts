@@ -10,3 +10,5 @@ authRouter.post('/register', validateBody(registerSchema), authController.regist
 authRouter.post('/login', validateBody(loginSchema), authController.login);
 authRouter.post('/refresh', authController.refresh);
 authRouter.post('/logout', authMiddleware, authController.logout);
+authRouter.delete('/me', authMiddleware, authController.deactivateAccount);
+authRouter.patch('/me/marketing', authMiddleware, authController.updateMarketingPref);

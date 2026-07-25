@@ -3,6 +3,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_BASE_URL: string;
+  /** When "true", show fixed demo password UX. Defaults off in production builds. */
+  readonly VITE_DEMO_AUTH?: string;
 }
 
 interface ImportMeta {

@@ -230,6 +230,10 @@ const easyOnboarding = () =>
   }));
 const easyWizard = () =>
   import('@/pages/easy-mode/EasyWizardPage').then((m) => ({ default: m.EasyWizardPage }));
+const termsPage = () =>
+  import('@/pages/legal/TermsPage').then((m) => ({ default: m.TermsPage }));
+const privacyPage = () =>
+  import('@/pages/legal/PrivacyPage').then((m) => ({ default: m.PrivacyPage }));
 
 export const router = createBrowserRouter(
   [
@@ -237,6 +241,8 @@ export const router = createBrowserRouter(
       element: <MainLayout />,
       children: [
         { path: ROUTES.HOME, element: <HomePage /> },
+        { path: ROUTES.TERMS, element: lazyRoute(termsPage) },
+        { path: ROUTES.PRIVACY, element: lazyRoute(privacyPage) },
         { path: ROUTES.MACHINES, element: lazyRoute(machineSearch) },
         { path: ROUTES.BRANDS, element: lazyRoute(brandList) },
         { path: ROUTES.BRAND_DETAIL, element: lazyRoute(brandDetail) },

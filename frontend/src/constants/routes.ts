@@ -31,6 +31,8 @@ export const ROUTES = {
   TRADE_STATS: '/my-page/trade/stats',
   LOGIN: '/login',
   REGISTER: '/register',
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
   MY_PAGE: '/my-page',
   MY_GYMS: '/my-page/gyms',
   LIFTED_WEIGHT: '/my-page/lifted-weight',

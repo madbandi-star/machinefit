@@ -26,7 +26,7 @@ import {
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
-import { locationApi, userApi, userGymApi } from '@/api';
+import { authApi, locationApi, userApi, userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
@@ -53,10 +53,12 @@ import {
   VOICE_HOLD_FLOW_MODES,
 } from '@/utils/voiceHold';
 import type { User } from '@machinefit/shared';
+import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/home.css';
 import '@/styles/phase4.css';
 import '@/styles/recommendation.css';
+import '@/styles/legal.css';
 
 interface SettingsLocationState {
   returnTo?: string;
@@ -70,6 +72,7 @@ export function SettingsPage() {
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const showToast = useUIStore((s) => s.showToast);
   const { activeGym, gyms } = useActiveGym();
   const setActiveGymId = useGymStore((s) => s.setActiveGymId);
@@ -110,9 +113,39 @@ export function SettingsPage() {
   );
   const resetSettings = useSettingsStore((s) => s.resetSettings);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(Boolean(user?.marketingOptIn));
   const [holdDurationCustom, setHoldDurationCustom] = useState(
     () => !isVoiceHoldDurationPreset(voiceHoldDurationSec)
   );
+
+  useEffect(() => {
+    if (user?.marketingOptIn != null) {
+      setMarketingOptIn(Boolean(user.marketingOptIn));
+    }
+  }, [user?.marketingOptIn]);
+
+  const marketingMutation = useMutation({
+    mutationFn: (optIn: boolean) => authApi.updateMarketingPref(optIn),
+    onSuccess: (res) => {
+      const next = Boolean(res.data.data?.marketingOptIn);
+      setMarketingOptIn(next);
+      updateUser({ marketingOptIn: next });
+      showToast(t('settings.marketingSaved'), 'success');
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => authApi.deactivateAccount(),
+    onSuccess: () => {
+      clearAuth();
+      queryClient.clear();
+      showToast(t('settings.accountDeleted'), 'success');
+      navigate(ROUTES.HOME, { replace: true });
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
@@ -764,6 +797,29 @@ export function SettingsPage() {
         </section>
 
         <section className="form-section">
+          <h3 className="form-section__title">{t('settings.privacyLegal')}</h3>
+          <p className="form-section__desc">{t('settings.privacyLegalDesc')}</p>
+          <label className="checkbox-label" style={{ marginBottom: '0.75rem' }}>
+            <input
+              type="checkbox"
+              checked={marketingOptIn}
+              disabled={marketingMutation.isPending}
+              onChange={(e) => marketingMutation.mutate(e.target.checked)}
+            />
+            <span>{t('settings.marketingOptIn')}</span>
+          </label>
+          <p className="form-section__desc">
+            <a href={`#${ROUTES.TERMS}`} onClick={(e) => { e.preventDefault(); navigate(ROUTES.TERMS); }}>
+              {t('legal.termsTitle')}
+            </a>
+            {' · '}
+            <a href={`#${ROUTES.PRIVACY}`} onClick={(e) => { e.preventDefault(); navigate(ROUTES.PRIVACY); }}>
+              {t('legal.privacyTitle')}
+            </a>
+          </p>
+        </section>
+
+        <section className="form-section">
           <h3 className="form-section__title">{t('settings.reset')}</h3>
           <p className="form-section__desc">{t('settings.resetDesc')}</p>
           <button
@@ -775,8 +831,34 @@ export function SettingsPage() {
           </button>
         </section>
 
+        <section className="form-section">
+          <h3 className="form-section__title">{t('settings.deleteAccount')}</h3>
+          <p className="form-section__desc">{t('settings.deleteAccountDesc')}</p>
+          <button
+            type="button"
+            className="btn btn--danger btn--block"
+            disabled={deleteAccountMutation.isPending}
+            onClick={() => setDeleteConfirmOpen(true)}
+          >
+            {t('settings.deleteAccount')}
+          </button>
+        </section>
+
         <ProUpgradeCard />
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        title={t('settings.deleteAccountConfirmTitle')}
+        message={t('settings.deleteAccountConfirmMessage')}
+        confirmLabel={t('settings.deleteAccountConfirm')}
+        confirmVariant="danger"
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={() => {
+          setDeleteConfirmOpen(false);
+          deleteAccountMutation.mutate();
+        }}
+      />
 
       <ConfirmDialog
         open={resetConfirmOpen}

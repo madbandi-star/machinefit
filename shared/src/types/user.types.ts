@@ -32,7 +32,10 @@ export interface User {
   activeGymId?: string;
   /** free | premium — gym/member limits. */
   subscriptionPlan?: import('../constants/subscription.js').SubscriptionPlan;
+  /** Opt-in for marketing / event push campaigns. */
+  marketingOptIn?: boolean;
   isActive: boolean;
+  deactivatedAt?: string | null;
   lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;

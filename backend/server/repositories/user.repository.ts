@@ -25,7 +25,9 @@ interface UserRow {
   timezone: string | null;
   avatar_url: string | null;
   subscription_plan: string | null;
+  marketing_opt_in: boolean | null;
   is_active: boolean;
+  deactivated_at: string | null;
   last_login_at: string | null;
   created_at: string;
   updated_at: string;
@@ -55,7 +57,9 @@ function mapUser(row: UserRow): User {
     timezone: row.timezone ?? undefined,
     avatarUrl: row.avatar_url ?? undefined,
     subscriptionPlan: (row.subscription_plan === 'premium' ? 'premium' : 'free') as SubscriptionPlan,
+    marketingOptIn: Boolean(row.marketing_opt_in),
     isActive: row.is_active,
+    deactivatedAt: row.deactivated_at ?? null,
     lastLoginAt: row.last_login_at ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -108,6 +112,7 @@ export const userRepository = {
     homeGymId?: string | null;
     homeGymName?: string | null;
     experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
+    marketingOptIn?: boolean;
   }): Promise<User> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -131,9 +136,9 @@ export const userRepository = {
       `INSERT INTO users (
          role_id, email, password_hash, display_name, gender, language_id,
          unit_height, unit_weight, height_cm, weight_kg, age, workout_goal,
-         home_gym_id, home_gym_name, experience_level
+         home_gym_id, home_gym_name, experience_level, marketing_opt_in
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
        RETURNING *`,
       [
         roleId,
@@ -151,12 +156,71 @@ export const userRepository = {
         data.homeGymId ?? null,
         data.homeGymName ?? null,
         data.experienceLevel ?? 'intermediate',
+        Boolean(data.marketingOptIn),
       ]
     );
 
     const created = await this.findById(result.rows[0].id);
     if (!created) throw new Error('Failed to create user');
     return created;
+  },
+
+  async recordConsents(
+    userId: string,
+    items: Array<{ type: string; version: string; agreed: boolean }>
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool || items.length === 0) return;
+    for (const item of items) {
+      await pool.query(
+        `INSERT INTO user_consents (user_id, consent_type, version, agreed)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (user_id, consent_type, version)
+         DO UPDATE SET agreed = EXCLUDED.agreed, agreed_at = NOW()`,
+        [userId, item.type, item.version, item.agreed]
+      );
+    }
+  },
+
+  async setMarketingOptIn(userId: string, optIn: boolean): Promise<User | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    await pool.query(`UPDATE users SET marketing_opt_in = $2 WHERE id = $1`, [
+      userId,
+      optIn,
+    ]);
+    return this.findById(userId);
+  },
+
+  async deactivateAccount(userId: string): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    const result = await pool.query(
+      `UPDATE users
+       SET is_active = FALSE,
+           deactivated_at = NOW(),
+           email = 'deleted+' || id::text || '@invalid.local',
+           display_name = '탈퇴회원',
+           avatar_url = NULL,
+           marketing_opt_in = FALSE
+       WHERE id = $1 AND is_active = TRUE`,
+      [userId]
+    );
+    await this.deleteRefreshTokens(userId);
+    return (result.rowCount ?? 0) > 0;
+  },
+
+  async listMarketingOptInUserIds(userIds: string[]): Promise<Set<string>> {
+    const pool = getPool();
+    if (!pool || userIds.length === 0) return new Set();
+    const result = await pool.query<{ id: string }>(
+      `SELECT id::text AS id FROM users
+       WHERE id = ANY($1::uuid[])
+         AND is_active = TRUE
+         AND marketing_opt_in = TRUE`,
+      [userIds]
+    );
+    return new Set(result.rows.map((r) => r.id));
   },
 
   async updateProfile(

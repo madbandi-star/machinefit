@@ -1,6 +1,14 @@
-import { Role, type RegisterInput, type LoginInput, type User, type RoleCode } from '@machinefit/shared';
-import { DEMO_PASSWORD } from '@machinefit/shared';
+import {
+  Role,
+  DEMO_PASSWORD,
+  LEGAL_DOC_VERSION,
+  type RegisterInput,
+  type LoginInput,
+  type User,
+  type RoleCode,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import { env } from '../config/env.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { hashPassword, comparePassword } from '../utils/hash.util.js';
@@ -39,6 +47,7 @@ function buildAuthResponse(user: User) {
       activeGymId: user.activeGymId,
       experienceLevel: user.experienceLevel,
       subscriptionPlan: user.subscriptionPlan ?? 'free',
+      marketingOptIn: user.marketingOptIn ?? false,
       isActive: user.isActive ?? true,
       createdAt: user.createdAt ?? new Date().toISOString(),
       updatedAt: user.updatedAt ?? new Date().toISOString(),
@@ -47,17 +56,29 @@ function buildAuthResponse(user: User) {
   };
 }
 
+async function resolveRegisterPasswordHash(plainPassword: string): Promise<string> {
+  if (env.DEMO_AUTH) {
+    return hashPassword(DEMO_PASSWORD);
+  }
+  return hashPassword(plainPassword);
+}
+
 export const authService = {
   async register(input: RegisterInput) {
+    if (!input.agreeTerms || !input.agreePrivacy) {
+      throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
+    }
+
     const pool = getPool();
+    const passwordHash = await resolveRegisterPasswordHash(input.password);
+    const marketingOptIn = Boolean(input.agreeMarketing);
+    const legalVersion = input.legalVersion || LEGAL_DOC_VERSION;
 
     if (!pool) {
       if (devUsers.has(input.email)) {
         throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
       }
       const id = crypto.randomUUID();
-      // Demo mode: always store the fixed demo password regardless of client input.
-      const passwordHash = await hashPassword(DEMO_PASSWORD);
       devUsers.set(input.email, {
         id,
         email: input.email,
@@ -71,7 +92,10 @@ export const authService = {
         id,
         'system',
         { en: 'Welcome to MachineFit!', ko: 'MachineFit에 오신 것을 환영합니다!' },
-        { en: 'Get personalized machine settings for your body.', ko: '체형에 맞는 기구 설정을 받아보세요.' }
+        {
+          en: 'Get personalized machine settings for your body.',
+          ko: '체형에 맞는 기구 설정을 받아보세요.',
+        }
       );
       return buildAuthResponse({
         id,
@@ -89,6 +113,7 @@ export const authService = {
         homeGymId: input.homeGymId,
         homeGymName: input.homeGymName,
         experienceLevel: input.experienceLevel,
+        marketingOptIn,
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -99,8 +124,6 @@ export const authService = {
       throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
     }
 
-    // Demo mode: always store the fixed demo password regardless of client input.
-    const passwordHash = await hashPassword(DEMO_PASSWORD);
     let user;
     try {
       user = await userRepository.create({
@@ -118,7 +141,13 @@ export const authService = {
         homeGymId: input.homeGymId ?? null,
         homeGymName: input.homeGymName ?? null,
         experienceLevel: input.experienceLevel,
+        marketingOptIn,
       });
+      await userRepository.recordConsents(user.id, [
+        { type: 'terms', version: legalVersion, agreed: true },
+        { type: 'privacy', version: legalVersion, agreed: true },
+        { type: 'marketing', version: legalVersion, agreed: marketingOptIn },
+      ]);
     } catch (error) {
       const pgCode =
         error && typeof error === 'object' && 'code' in error
@@ -135,7 +164,7 @@ export const authService = {
       user.id,
       user.homeGymName ?? undefined
     );
-    user = { ...user, activeGymId: defaultGym.id };
+    user = { ...user, activeGymId: defaultGym.id, marketingOptIn };
 
     return buildAuthResponse(user);
   },
@@ -156,6 +185,7 @@ export const authService = {
         roleCode: user.roleCode,
         unitHeight: 'cm',
         unitWeight: 'kg',
+        marketingOptIn: false,
         isActive: user.isActive,
         createdAt: user.createdAt,
         updatedAt: user.createdAt,
@@ -187,6 +217,7 @@ export const authService = {
     if (pool) {
       const user = await userRepository.findById(payload.userId);
       if (!user) throw new AppError(401, 'INVALID_TOKEN', 'User not found');
+      if (!user.isActive) throw new AppError(403, 'ACCOUNT_DISABLED', 'Account is disabled');
       roleCode = user.roleCode;
       email = user.email;
     } else {
@@ -211,5 +242,39 @@ export const authService = {
 
   async logout(userId: string) {
     await userRepository.deleteRefreshTokens(userId);
+  },
+
+  async deactivateAccount(userId: string) {
+    const pool = getPool();
+    if (!pool) {
+      for (const [email, user] of devUsers.entries()) {
+        if (user.id === userId) {
+          user.isActive = false;
+          devUsers.set(email, user);
+          return { message: 'Account deactivated' };
+        }
+      }
+      throw new AppError(404, 'NOT_FOUND', 'User not found');
+    }
+    const ok = await userRepository.deactivateAccount(userId);
+    if (!ok) throw new AppError(404, 'NOT_FOUND', 'User not found or already deactivated');
+    return { message: 'Account deactivated' };
+  },
+
+  async setMarketingOptIn(userId: string, marketingOptIn: boolean) {
+    const pool = getPool();
+    if (!pool) {
+      return { marketingOptIn };
+    }
+    const user = await userRepository.setMarketingOptIn(userId, marketingOptIn);
+    if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
+    await userRepository.recordConsents(userId, [
+      {
+        type: 'marketing',
+        version: LEGAL_DOC_VERSION,
+        agreed: marketingOptIn,
+      },
+    ]);
+    return { marketingOptIn: user.marketingOptIn ?? false };
   },
 };

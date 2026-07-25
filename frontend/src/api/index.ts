@@ -86,9 +86,16 @@ export const authApi = {
     homeGymId?: string;
     homeGymName?: string;
     experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'professional';
+    agreeTerms: boolean;
+    agreePrivacy: boolean;
+    agreeMarketing?: boolean;
+    legalVersion?: string;
   }) => apiClient.post('/auth/register', data),
   refresh: (refreshToken: string) =>
     apiClient.post('/auth/refresh', { refreshToken }),
+  deactivateAccount: () => apiClient.delete('/auth/me'),
+  updateMarketingPref: (marketingOptIn: boolean) =>
+    apiClient.patch('/auth/me/marketing', { marketingOptIn }),
 };
 
 export const userApi = {

@@ -33,7 +33,7 @@ export interface RegisterFormValues {
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_WEIGHT_KG = 30;
 const MAX_WEIGHT_KG = 300;
-const MIN_AGE = 13;
+const MIN_AGE = 14;
 const MAX_AGE = 100;
 
 function isHeightValid(heightCm?: number): boolean {

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { registerSchema, loginSchema } from '@machinefit/shared';
+import { registerSchema, loginSchema, marketingPrefSchema } from '@machinefit/shared';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
@@ -30,4 +30,21 @@ export async function logout(req: Request, res: Response): Promise<void> {
   }
   await authService.logout(req.user.userId);
   res.json({ success: true, data: { message: 'Logged out' } });
+}
+
+export async function deactivateAccount(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const data = await authService.deactivateAccount(req.user.userId);
+  res.json({ success: true, data });
+}
+
+export async function updateMarketingPref(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const input = marketingPrefSchema.parse(req.body);
+  const data = await authService.setMarketingOptIn(req.user.userId, input.marketingOptIn);
+  res.json({ success: true, data });
 }

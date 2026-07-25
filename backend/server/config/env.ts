@@ -32,6 +32,18 @@ const envSchema = z.object({
   MUSCLE_GROUP_IMAGE_MAX_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
   MUSCLE_GROUP_IMAGE_BUCKET: z.string().default('muscle-group-images'),
   MACHINE_COVER_IMAGE_BUCKET: z.string().default('machine-cover-images'),
+  /**
+   * When true, registration forces DEMO_PASSWORD (demo/staging convenience).
+   * Defaults to false in production, true otherwise. Override with DEMO_AUTH=true|false.
+   */
+  DEMO_AUTH: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => {
+      if (v === 'true') return true;
+      if (v === 'false') return false;
+      return process.env.NODE_ENV !== 'production';
+    }),
 });
 
 export const env = envSchema.parse({
