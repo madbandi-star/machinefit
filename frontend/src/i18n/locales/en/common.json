@@ -274,7 +274,7 @@
     "voiceCoachPack_female": "Female",
     "voiceCoachPack_male": "Male",
     "voiceCoachPrepCount": "Prep countdown",
-    "voiceCoachPrepCountDesc": "Choose how long the ready countdown is before start.",
+    "voiceCoachPrepCountDesc": "Choose how long the ready countdown is before start or Hold!!!.",
     "voiceCoachPrepCount_5": "5 · 4 · 3 · 2 · 1",
     "voiceCoachPrepCount_10": "10 · 9 · … · 1",
     "voiceCountMode": "Count mode",

@@ -417,6 +417,7 @@ async function caseHoldOnly(): Promise<void> {
     runVoiceCoachFlow({
       targetReps: 5,
       oneMoreEnabled: false,
+      prepCount: 5,
       flowMode: 'hold',
       holdDurationSec: 3,
       locale: 'ko',
@@ -424,10 +425,15 @@ async function caseHoldOnly(): Promise<void> {
     })
   );
 
+  const hasPrep = [5, 4, 3, 2, 1].every((n) => phases.includes(`countdown:${n}`));
   const hasHold = phases.some((p) => p === 'hold' || p.startsWith('hold:'));
   const ok =
-    hasHold && phases.includes('done') && spoken.some((s) => s.includes('버텨'));
-  record('hold-only/3s', ok, `phases=${phases.join('>')} spoken=${spoken.join('|')}`);
+    hasPrep &&
+    phases.includes('start') &&
+    hasHold &&
+    phases.includes('done') &&
+    spoken.some((s) => s.includes('버텨'));
+  record('hold-only/prep5+3s', ok, `phases=${phases.join('>')} spoken=${spoken.join('|')}`);
 }
 
 async function caseCountHold(): Promise<void> {
