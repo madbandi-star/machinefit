@@ -12,6 +12,7 @@
   "dependencies": {
     "@machinefit/shared": "*",
     "@supabase/supabase-js": "^2.110.8",
+    "@types/node": "^22.15.21",
     "bcryptjs": "^3.0.2",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
@@ -24,6 +25,7 @@
     "nodemailer": "^6.10.1",
     "pg": "^8.16.0",
     "sharp": "^0.35.3",
+    "typescript": "^5.8.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -33,10 +35,8 @@
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^2.2.0",
-    "@types/node": "^22.15.21",
     "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.2",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "tsx": "^4.19.4"
   }
 }

@@ -99,7 +99,7 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 | Name | `machinefit-api` |
 | Root Directory | *(leave empty — repo root, not `frontend`)* |
 | Runtime | Node |
-| Build Command | `npm ci --include=dev && npm run build:render` |
+| Build Command | `npm run build:render` |
 | Start Command | `npm run start --workspace=backend` |
 | Instance Type | **Free** |
 | Health Check Path | `/api/v1/health` |
