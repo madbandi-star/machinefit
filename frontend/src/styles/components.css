@@ -160,6 +160,41 @@
   gap: 0.5rem;
 }
 
+.dialog--danger .dialog__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-error) 14%, transparent);
+  color: var(--color-error);
+}
+
+.dialog--danger .dialog__title {
+  text-align: center;
+}
+
+.dialog--danger .dialog__message {
+  text-align: center;
+}
+
+.dialog--danger .dialog__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.dialog--danger .dialog__actions .btn {
+  min-height: var(--touch-target-min, 44px);
+}
+
+@media (max-width: 360px) {
+  .dialog--danger .dialog__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 .btn--danger {
   background: var(--color-error, #e53935);
   color: #fff;

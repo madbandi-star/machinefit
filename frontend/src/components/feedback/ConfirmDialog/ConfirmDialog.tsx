@@ -37,6 +37,7 @@ export function ConfirmDialog({
   const blockBackdrop =
     preventBackdropClose ?? confirmVariant === 'danger';
   const dialogRef = useModalAccessibility({ open, onClose });
+  const isDanger = confirmVariant === 'danger';
 
   if (!open) return null;
 
@@ -53,6 +54,9 @@ export function ConfirmDialog({
     onClose();
   };
 
+  const resolvedConfirm = confirmLabel ?? t('common:actions.confirm');
+  const resolvedCancel = cancelLabel ?? t('common:actions.cancel');
+
   return (
     <div
       className="dialog-overlay"
@@ -61,16 +65,30 @@ export function ConfirmDialog({
     >
       <div
         ref={dialogRef}
-        className="dialog card"
-        role="dialog"
+        className={`dialog card${isDanger ? ' dialog--danger' : ''}`}
+        role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-message"
         onClick={(e) => e.stopPropagation()}
       >
+        {isDanger ? (
+          <div className="dialog__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 6h18" />
+              <path d="M8 6V4h8v2" />
+              <path d="M19 6l-1 14H6L5 6" />
+              <path d="M10 11v6" />
+              <path d="M14 11v6" />
+            </svg>
+          </div>
+        ) : null}
         <h3 id="confirm-dialog-title" className="dialog__title">
           {title}
         </h3>
-        <p className="dialog__message">{message}</p>
+        <p id="confirm-dialog-message" className="dialog__message">
+          {message}
+        </p>
         {dismissTodayKey ? (
           <label className="checkbox-label dialog__dismiss">
             <input
@@ -82,16 +100,25 @@ export function ConfirmDialog({
           </label>
         ) : null}
         <div className="dialog__actions">
-          <button
-            type="button"
-            className={`btn btn--block ${confirmVariant === 'danger' ? 'btn--danger' : 'btn--primary'}`}
-            onClick={handleConfirm}
-          >
-            {confirmLabel ?? t('common:actions.confirm')}
-          </button>
-          <button type="button" className="btn btn--secondary btn--block" onClick={handleClose}>
-            {cancelLabel ?? t('common:actions.cancel')}
-          </button>
+          {isDanger ? (
+            <>
+              <button type="button" className="btn btn--secondary btn--block" onClick={handleClose}>
+                {resolvedCancel}
+              </button>
+              <button type="button" className="btn btn--danger btn--block" onClick={handleConfirm}>
+                {resolvedConfirm}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="btn btn--block btn--primary" onClick={handleConfirm}>
+                {resolvedConfirm}
+              </button>
+              <button type="button" className="btn btn--secondary btn--block" onClick={handleClose}>
+                {resolvedCancel}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
