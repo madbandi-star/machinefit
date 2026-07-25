@@ -7,12 +7,7 @@
  * OS TTS is fallback only (and for non-Korean).
  */
 
-import {
-  IOS_MALE_COUNT_PAUSE_MS,
-  IOS_MALE_COUNT_RATE,
-  shouldUseIosMaleCountTts,
-  toSinoKoreanCount,
-} from '@/utils/iosMaleCountSpeech';
+import { toSinoKoreanCount } from '@/utils/iosMaleCountSpeech';
 import { speechManager } from '@/utils/speechManager';
 import {
   countdownClipKey,
@@ -185,24 +180,13 @@ async function speakHoldCue(options: {
   locale?: string;
   voicePack: VoiceCoachPack;
   signal?: AbortSignal;
-  /** When set, treat as a number tick (iOS male → Sino-Korean TTS). */
+  /** When set, used for Sino-Korean TTS fallback if the pack clip fails. */
   countValue?: number;
 }): Promise<void> {
   const { clipKey, text, locale, voicePack, signal, countValue } = options;
 
-  if (
-    typeof countValue === 'number' &&
-    shouldUseIosMaleCountTts(voicePack, locale)
-  ) {
-    await speechManager.speak(toSinoKoreanCount(countValue), {
-      signal,
-      rate: IOS_MALE_COUNT_RATE,
-      preferMaleVoice: true,
-      trailingPauseMs: IOS_MALE_COUNT_PAUSE_MS,
-    });
-    return;
-  }
-
+  // Always prefer the selected pack clip (male/female). Skipping clips for iOS
+  // TTS made number ticks sound female while Hold (clip) stayed male.
   if (isKoreanLocale(locale) && clipKey) {
     const played = await playVoiceCoachClip(clipKey, signal, voicePack);
     if (played) return;
@@ -211,6 +195,14 @@ async function speakHoldCue(options: {
     typeof countValue === 'number' && isKoreanLocale(locale)
       ? toSinoKoreanCount(countValue)
       : text;
+  if (normalizeVoiceCoachPack(voicePack) === 'male') {
+    await speechManager.speak(fallback, {
+      signal,
+      preferMaleVoice: true,
+      rate: 0.88,
+    });
+    return;
+  }
   await speakHoldLine(fallback, signal);
 }
 

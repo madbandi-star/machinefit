@@ -6,12 +6,7 @@ import {
   DEFAULT_VOICE_COUNT_MODE,
   type VoiceCountMode,
 } from '@/utils/aiCountPace';
-import {
-  IOS_MALE_COUNT_PAUSE_MS,
-  IOS_MALE_COUNT_RATE,
-  shouldUseIosMaleCountTts,
-  toSinoKoreanCount,
-} from '@/utils/iosMaleCountSpeech';
+import { toSinoKoreanCount } from '@/utils/iosMaleCountSpeech';
 import { speechManager } from '@/utils/speechManager';
 import {
   beginVoiceCoachAudioSession,
@@ -405,12 +400,13 @@ async function runPrepCountdownPhase(options: {
 }
 
 /**
- * Korean set-count path prefers Web Audio clips — never interleave speechSynthesis
- * with clips on the same beat (mixing often dies after the first cue on mobile).
+ * Korean set-count path is Web Audio clips only for the selected pack
+ * (female/male). Never skip male clips for OS TTS — on iOS that falls back to
+ * a female AVSpeech voice and makes "남성" counts sound female while Hold
+ * (clip) still sounds male.
  *
- * Exception: iOS + male pack number counts use AVSpeechSynthesizer with
- * Sino-Korean words (오/사/삼/이/일 …) so short vowels are not mumbled.
- * Female / Android keep the clip path unchanged.
+ * Mixing TTS + clips on the same beat also often dies after the first cue.
+ * Non-Korean still uses TTS. Clip miss → Sino-Korean word TTS fallback.
  */
 async function speakCoachCue(options: {
   clipKey: string | null;
@@ -420,7 +416,7 @@ async function speakCoachCue(options: {
   voicePack?: VoiceCoachPack;
   /** ready = 준비 cue without a clip file */
   kind?: 'ready' | 'count' | 'phrase';
-  /** Numeric value for count cues (enables iOS male Sino-Korean TTS). */
+  /** Numeric value for count cues (Sino-Korean TTS fallback text). */
   countValue?: number;
 }): Promise<void> {
   const {
@@ -439,20 +435,6 @@ async function speakCoachCue(options: {
     return;
   }
 
-  if (
-    kind === 'count' &&
-    typeof countValue === 'number' &&
-    shouldUseIosMaleCountTts(pack, locale)
-  ) {
-    await speechManager.speak(toSinoKoreanCount(countValue), {
-      signal,
-      rate: IOS_MALE_COUNT_RATE,
-      preferMaleVoice: true,
-      trailingPauseMs: IOS_MALE_COUNT_PAUSE_MS,
-    });
-    return;
-  }
-
   if (clipKey) {
     const played = await playVoiceCoachClip(clipKey, signal, pack);
     if (played) return;
@@ -467,7 +449,11 @@ async function speakCoachCue(options: {
         kind === 'count' && typeof countValue === 'number'
           ? toSinoKoreanCount(countValue)
           : text;
-      await speechManager.speak(fallbackText, signal);
+      await speechManager.speak(fallbackText, {
+        signal,
+        preferMaleVoice: pack === 'male',
+        rate: pack === 'male' ? 0.88 : undefined,
+      });
       return;
     }
   }
@@ -483,7 +469,10 @@ async function speakCoachCue(options: {
   }
 
   // Count / phrase without a clip key (or Web Audio down): spoken TTS.
-  await speechManager.speak(text, signal);
+  await speechManager.speak(text, {
+    signal,
+    preferMaleVoice: pack === 'male',
+  });
 }
 
 export interface RestVoiceCoachingOptions {
