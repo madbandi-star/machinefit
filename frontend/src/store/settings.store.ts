@@ -17,9 +17,12 @@ import {
 } from '@/utils/aiCountPace';
 import {
   clampVoiceCoachOneMoreCount,
+  clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
+  DEFAULT_VOICE_COACH_PREP_COUNT,
   VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
+  type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
 
 const DEFAULT_VOICE_COACH_REPS = 12;
@@ -43,6 +46,7 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachAutoAfterRest: true,
   voiceRestTipsEnabled: true,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
+  voiceCoachPrepCount: DEFAULT_VOICE_COACH_PREP_COUNT,
   voiceCountMode: DEFAULT_VOICE_COUNT_MODE,
   restDurationSeconds: REST_DURATION.defaultSeconds,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
@@ -63,6 +67,8 @@ interface SettingsState {
   voiceRestTipsEnabled: boolean;
   /** Silence after each spoken rep count (ms) — base tempo for AI pacing. */
   voiceCoachRepGapMs: number;
+  /** Prep countdown length: 5→1 or 10→1. */
+  voiceCoachPrepCount: VoiceCoachPrepCount;
   /** Exercise-count pacing: normal | AI accel | AI accel + turbo. */
   voiceCountMode: VoiceCountMode;
   /** Rest between sets (seconds). Default 90 (1:30). */
@@ -80,6 +86,7 @@ interface SettingsState {
   setVoiceCoachAutoAfterRest: (enabled: boolean) => void;
   setVoiceRestTipsEnabled: (enabled: boolean) => void;
   setVoiceCoachRepGapMs: (ms: number) => void;
+  setVoiceCoachPrepCount: (count: VoiceCoachPrepCount) => void;
   setVoiceCountMode: (mode: VoiceCountMode) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setWeightDifficulty: (value: number) => void;
@@ -104,6 +111,8 @@ export const useSettingsStore = create<SettingsState>()(
       setVoiceCoachAutoAfterRest: (voiceCoachAutoAfterRest) => set({ voiceCoachAutoAfterRest }),
       setVoiceRestTipsEnabled: (voiceRestTipsEnabled) => set({ voiceRestTipsEnabled }),
       setVoiceCoachRepGapMs: (ms) => set({ voiceCoachRepGapMs: clampVoiceCoachRepGapMs(ms) }),
+      setVoiceCoachPrepCount: (count) =>
+        set({ voiceCoachPrepCount: clampVoiceCoachPrepCount(count) }),
       setVoiceCountMode: (mode) => set({ voiceCountMode: clampVoiceCountMode(mode) }),
       setRestDurationSeconds: (seconds) =>
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
@@ -123,6 +132,9 @@ export const useSettingsStore = create<SettingsState>()(
           ...current,
           ...p,
           voiceCountMode: clampVoiceCountMode(p.voiceCountMode ?? current.voiceCountMode),
+          voiceCoachPrepCount: clampVoiceCoachPrepCount(
+            p.voiceCoachPrepCount ?? current.voiceCoachPrepCount
+          ),
         };
       },
     }

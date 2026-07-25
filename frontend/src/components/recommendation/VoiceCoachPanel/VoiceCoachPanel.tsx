@@ -7,10 +7,13 @@ import {
 } from '@/utils/aiCountPace';
 import {
   clampVoiceCoachOneMoreCount,
+  clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
   VOICE_COACH_ONE_MORE,
+  VOICE_COACH_PREP_COUNTS,
   VOICE_COACH_REP_GAP,
   type VoiceCoachPhase,
+  type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -26,6 +29,8 @@ interface VoiceCoachPanelProps {
   onTargetRepsChange: (reps: number) => void;
   repGapMs: number;
   onRepGapMsChange: (ms: number) => void;
+  prepCount: VoiceCoachPrepCount;
+  onPrepCountChange: (count: VoiceCoachPrepCount) => void;
   countMode: VoiceCountMode;
   onCountModeChange: (mode: VoiceCountMode) => void;
   oneMoreEnabled: boolean;
@@ -78,6 +83,8 @@ export function VoiceCoachPanel({
   onTargetRepsChange,
   repGapMs,
   onRepGapMsChange,
+  prepCount,
+  onPrepCountChange,
   countMode,
   onCountModeChange,
   oneMoreEnabled,
@@ -142,6 +149,29 @@ export function VoiceCoachPanel({
       {enabled ? (
         <>
           <div className="voice-coach-panel__controls">
+            <fieldset
+              className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
+              disabled={isRunning}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('machines:voiceCoach.prepCount')}
+              </legend>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_COACH_PREP_COUNTS.map((count) => (
+                  <label key={count} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="voice-prep-count"
+                      value={count}
+                      checked={clampVoiceCoachPrepCount(prepCount) === count}
+                      onChange={() => onPrepCountChange(count)}
+                    />
+                    <span>{t(`machines:voiceCoach.prepCount_${count}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
             <fieldset
               className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
               disabled={isRunning}

@@ -39,8 +39,10 @@ import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
 import { VOICE_COUNT_MODES } from '@/utils/aiCountPace';
 import {
   clampVoiceCoachOneMoreCount,
+  clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
   VOICE_COACH_ONE_MORE,
+  VOICE_COACH_PREP_COUNTS,
   VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
 import type { User } from '@machinefit/shared';
@@ -76,6 +78,7 @@ export function SettingsPage() {
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const voiceCoachPrepCount = useSettingsStore((s) => s.voiceCoachPrepCount);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
@@ -85,6 +88,7 @@ export function SettingsPage() {
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
+  const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const setRestDurationSeconds = useSettingsStore((s) => s.setRestDurationSeconds);
   const resetSettings = useSettingsStore((s) => s.resetSettings);
@@ -511,6 +515,34 @@ export function SettingsPage() {
               />
               <span>{t('settings.voiceRestTips')}</span>
             </label>
+
+            <fieldset
+              className={`voice-coach-panel__mode${
+                !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+              }`}
+              disabled={!voiceCoachEnabled}
+            >
+              <legend className="voice-coach-panel__mode-legend">
+                {t('settings.voiceCoachPrepCount')}
+              </legend>
+              <p className="form-section__desc" style={{ marginTop: 0 }}>
+                {t('settings.voiceCoachPrepCountDesc')}
+              </p>
+              <div className="voice-coach-panel__mode-options" role="radiogroup">
+                {VOICE_COACH_PREP_COUNTS.map((count) => (
+                  <label key={count} className="voice-coach-panel__mode-option">
+                    <input
+                      type="radio"
+                      name="settings-voice-prep-count"
+                      value={count}
+                      checked={clampVoiceCoachPrepCount(voiceCoachPrepCount) === count}
+                      onChange={() => setVoiceCoachPrepCount(count)}
+                    />
+                    <span>{t(`settings.voiceCoachPrepCount_${count}`)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
             <fieldset
               className={`voice-coach-panel__mode${

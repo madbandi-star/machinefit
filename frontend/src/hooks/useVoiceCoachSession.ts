@@ -6,6 +6,7 @@ import {
   stopVoiceCoach,
   unlockVoiceCoachAudio,
   type VoiceCoachPhase,
+  type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
 
 interface UseVoiceCoachSessionOptions {
@@ -13,6 +14,7 @@ interface UseVoiceCoachSessionOptions {
   oneMoreEnabled: boolean;
   oneMoreCount: number;
   repGapMs: number;
+  prepCount: VoiceCoachPrepCount;
   countMode: VoiceCountMode;
   locale: string;
   enabled: boolean;
@@ -34,6 +36,7 @@ export function useVoiceCoachSession({
   oneMoreEnabled,
   oneMoreCount,
   repGapMs,
+  prepCount,
   countMode,
   locale,
   enabled,
@@ -85,6 +88,7 @@ export function useVoiceCoachSession({
           oneMoreEnabled,
           maxOneMore: oneMoreCount,
           repGapMs,
+          prepCount,
           countMode,
           locale,
           signal: controller.signal,
@@ -130,7 +134,16 @@ export function useVoiceCoachSession({
         setIntensity(0);
       }
     })();
-  }, [countMode, enabled, locale, oneMoreCount, oneMoreEnabled, repGapMs, targetReps]);
+  }, [
+    countMode,
+    enabled,
+    locale,
+    oneMoreCount,
+    oneMoreEnabled,
+    prepCount,
+    repGapMs,
+    targetReps,
+  ]);
 
   useEffect(
     () => () => {

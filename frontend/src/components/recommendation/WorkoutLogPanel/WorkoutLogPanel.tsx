@@ -220,6 +220,7 @@ export function WorkoutLogPanel({
   const voiceCoachAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
   const voiceRestTipsEnabled = useSettingsStore((s) => s.voiceRestTipsEnabled);
   const voiceCoachRepGapMs = useSettingsStore((s) => s.voiceCoachRepGapMs);
+  const voiceCoachPrepCount = useSettingsStore((s) => s.voiceCoachPrepCount);
   const voiceCountMode = useSettingsStore((s) => s.voiceCountMode);
   const restDurationSeconds = useSettingsStore((s) => s.restDurationSeconds);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
@@ -229,6 +230,7 @@ export function WorkoutLogPanel({
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
   const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
+  const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -241,6 +243,7 @@ export function WorkoutLogPanel({
     oneMoreEnabled: voiceCoachOneMore,
     oneMoreCount: voiceCoachOneMoreCount,
     repGapMs: voiceCoachRepGapMs,
+    prepCount: voiceCoachPrepCount,
     countMode: voiceCountMode,
     locale,
     enabled: voiceCoachEnabled,
@@ -1256,6 +1259,8 @@ export function WorkoutLogPanel({
       onTargetRepsChange={setVoiceCoachTargetReps}
       repGapMs={voiceCoachRepGapMs}
       onRepGapMsChange={setVoiceCoachRepGapMs}
+      prepCount={voiceCoachPrepCount}
+      onPrepCountChange={setVoiceCoachPrepCount}
       countMode={voiceCountMode}
       onCountModeChange={setVoiceCountMode}
       oneMoreEnabled={voiceCoachOneMore}

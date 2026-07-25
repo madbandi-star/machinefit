@@ -1,4 +1,4 @@
-/** Voice set coach: beeps → 준비 → 5–1 → 시작 → reps → optional "하나더". All speech via SpeechManager. */
+/** Voice set coach: beeps → 준비 → N–1 → 시작 → reps → optional "하나더". All speech via SpeechManager. */
 
 import {
   buildCountPaceSchedule,
@@ -26,6 +26,18 @@ export interface VoiceCoachPhaseDetail {
   intensity?: number;
 }
 
+/** Prep countdown length before "시작" (5→1 or 10→1). */
+export const VOICE_COACH_PREP_COUNTS = [5, 10] as const;
+export type VoiceCoachPrepCount = (typeof VOICE_COACH_PREP_COUNTS)[number];
+export const DEFAULT_VOICE_COACH_PREP_COUNT: VoiceCoachPrepCount = 5;
+
+export function clampVoiceCoachPrepCount(value: unknown): VoiceCoachPrepCount {
+  const n = typeof value === 'number' ? value : Number(value);
+  return VOICE_COACH_PREP_COUNTS.includes(n as VoiceCoachPrepCount)
+    ? (n as VoiceCoachPrepCount)
+    : DEFAULT_VOICE_COACH_PREP_COUNT;
+}
+
 export interface VoiceCoachOptions {
   targetReps: number;
   oneMoreEnabled: boolean;
@@ -38,6 +50,8 @@ export interface VoiceCoachOptions {
    * Default: AI accel + turbo.
    */
   countMode?: VoiceCountMode;
+  /** Prep countdown from N to 1 (default 5). */
+  prepCount?: VoiceCoachPrepCount;
   locale?: string;
   onPhaseChange?: (phase: VoiceCoachPhase, detail?: VoiceCoachPhaseDetail) => void;
   signal?: AbortSignal;
@@ -160,7 +174,18 @@ export function formatRepWord(n: number, locale?: string): string {
 
 function formatCountdownWord(n: number, locale?: string): string {
   if (isKoreanLocale(locale)) {
-    const map: Record<number, string> = { 5: '오', 4: '사', 3: '삼', 2: '이', 1: '일' };
+    const map: Record<number, string> = {
+      10: '십',
+      9: '구',
+      8: '팔',
+      7: '칠',
+      6: '육',
+      5: '오',
+      4: '사',
+      3: '삼',
+      2: '이',
+      1: '일',
+    };
     return map[n] ?? String(n);
   }
   return String(n);
@@ -331,7 +356,7 @@ export async function unlockVoiceCoachAudio(): Promise<void> {
 
 /**
  * Full set coach sequence (all spoken lines share one SpeechManager Voice):
- * tip tip tip → 준비 → 5 4 3 2 1 → 시작! → 하나 둘 … → (optional) 하나더!
+ * tip tip tip → 준비 → N … 1 → 시작! → 하나 둘 … → (optional) 하나더!
  */
 export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<void> {
   const {
@@ -340,6 +365,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
     maxOneMore = VOICE_COACH_ONE_MORE.defaultCount,
     repGapMs: repGapMsOption,
     countMode: countModeOption,
+    prepCount: prepCountOption,
     locale = 'ko',
     onPhaseChange,
     signal,
@@ -350,6 +376,9 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
   const repGapMs = clampVoiceCoachRepGapMs(repGapMsOption ?? VOICE_COACH_TIMING.repGapMs);
   const oneMoreGapMs = Math.max(repGapMs, VOICE_COACH_TIMING.oneMoreGapMs - 200);
   const countMode = clampVoiceCountMode(countModeOption ?? DEFAULT_VOICE_COUNT_MODE);
+  const prepCount = clampVoiceCoachPrepCount(
+    prepCountOption ?? DEFAULT_VOICE_COACH_PREP_COUNT
+  );
 
   await speechManager.init();
 
@@ -373,13 +402,10 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
 
     // Prep countdown — fixed pacing (never AI-accel / turbo).
     onPhaseChange?.('countdown');
+    const countdownNumbers = Array.from({ length: prepCount }, (_, i) => prepCount - i);
     const countdownItems = [
       readyPhrase(locale),
-      formatCountdownWord(5, locale),
-      formatCountdownWord(4, locale),
-      formatCountdownWord(3, locale),
-      formatCountdownWord(2, locale),
-      formatCountdownWord(1, locale),
+      ...countdownNumbers.map((n) => formatCountdownWord(n, locale)),
     ];
     await speechManager.speakQueue(countdownItems, {
       signal,
@@ -389,7 +415,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
           onPhaseChange?.('countdown');
           return;
         }
-        onPhaseChange?.('countdown', { countdown: 6 - index });
+        onPhaseChange?.('countdown', { countdown: prepCount - index + 1 });
       },
     });
 
