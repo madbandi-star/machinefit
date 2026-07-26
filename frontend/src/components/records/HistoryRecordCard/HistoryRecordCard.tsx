@@ -327,16 +327,6 @@ export function HistoryRecordCard({
                 fitFeedback.handleRating(rating);
               }}
               isPending={fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending}
-              onSavePreferences={
-                canSavePreferences
-                  ? () =>
-                      fitFeedback.savePreferences(() => {
-                        setPrefsSavedLocally(true);
-                        setIsEditingAdjustments(false);
-                      })
-                  : undefined
-              }
-              isPreferencesPending={fitFeedback.isPreferencesPending}
             />
           ) : null}
           <div className="history-record-card__section">

@@ -1,16 +1,16 @@
 {
-  "title": "Records save includes adjustment preferences",
-  "summary": "History card bottom 저장하기 and bookmark save now run 조정값 저장 when adjustment edits are dirty, then upsert workout log. savePreferencesAsync added to fit feedback hook.",
-  "git": { "branch": "main", "commit": "7adbdfd" },
+  "title": "Records card: remove top 조정값 저장, enlarge bottom save",
+  "summary": "History FitFeedbackPanel no longer shows 조정값 저장 (bottom save/bookmark still persist adjustments). History memo save button is full-width with standard touch target height.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/hooks/useMachineFitFeedback.ts",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
+    "frontend/src/styles/recommendation.css"
   ],
-  "testFocus": "Records: edit 조정중량/횟수 → 저장하기 saves prefs + workout log. 조정값 저장 button still works alone. Pref save failure blocks workout save.",
+  "testFocus": "Records expanded: no 조정값 저장 at top after 셋팅값 조정 필요. Bottom 저장하기 still saves dirty adjustments + workout log. Save button full width ~48px tall.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Bottom save only persisted workout log and memos; adjustment prefs required separate 조정값 저장.",
-  "toBe": "Single save persists dirty adjustment prefs then workout log when applicable."
+  "asIs": "Duplicate 조정값 저장 at card top; small pill save at bottom.",
+  "toBe": "Single save path at bottom; larger block save button."
 }

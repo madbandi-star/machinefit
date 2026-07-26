@@ -2237,13 +2237,13 @@
 }
 
 .history-workout-log__memo-save {
-  flex-shrink: 0;
-  min-height: 2rem;
-  padding: 0.4rem 0.85rem;
-  font-size: 0.75rem;
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: 0.85rem 1.35rem;
+  font-size: var(--font-size-body-sm);
   font-weight: 700;
   line-height: 1.2;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
 }
 
 .history-workout-log__pane-label {
@@ -2289,8 +2289,7 @@
 
 .history-workout-log__memo-save-row {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 0.65rem;
+  margin-top: 0.85rem;
 }
 
 .history-record-card .recommendation-workout-log__diary-tags {

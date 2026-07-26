@@ -1285,7 +1285,7 @@ export function WorkoutLogPanel({
     <div className="history-workout-log__memo-save-row">
       <button
         type="button"
-        className="btn btn--secondary history-workout-log__memo-save"
+        className="btn btn--secondary btn--block history-workout-log__memo-save"
         onClick={handleSave}
         disabled={isActionPending || isLoading}
       >

@@ -1,23 +1,20 @@
-# Latest test handoff — records save includes 조정값
+# Latest test handoff — records save UI cleanup
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-Records card **저장하기** (and bookmark save) now also saves **조정값** when:
+1. Remove **조정값 저장** from records card top (`FitFeedbackPanel`)
+2. Enlarge bottom **저장하기** — full width, standard button height
 
-- 셋팅값 조정 UI is editable (`canSavePreferences`)
-- User has unsaved adjustment edits (`settingsDirty`)
-
-Order: 조정값 API → workout log upsert. Standalone **조정값 저장** button unchanged.
+Adjustment prefs still save via bottom **저장하기** / bookmark when edits are dirty.
 
 ## Test focus
 
-1. Adjust weight/reps → 저장하기 → both prefs + log saved; compare panel read-only after
-2. Save with no adjustment edits → workout log only
-3. 조정값 저장 button alone still works
-4. Pref save error → workout log not saved
+1. 셋팅값 조정 필요 → edit weight/reps → no top save button
+2. Bottom 저장하기 → prefs + workout log saved
+3. Save button visually larger, full card width
 
 ## Fast checks
 
