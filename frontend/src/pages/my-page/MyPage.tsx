@@ -185,13 +185,9 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
-          <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
           <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
-          <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
-          <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
-          <WorkoutReportSection />
         </nav>
       </section>
 
@@ -205,9 +201,6 @@ export function MyPage() {
               isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
             )}
           />
-          {isMember ? (
-            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
-          ) : null}
         </nav>
       </section>
 
@@ -230,7 +223,17 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
         <nav className="list-nav" aria-label={t('myPage.lab')}>
-          <ListNavLink to={ROUTES.LAB} label={t('lab.title')} />
+          <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
+          <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
+          <WorkoutReportSection />
+          <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
+          {isMember ? (
+            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
+          ) : null}
+          {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
+          {isMember ? (
+            <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
+          ) : null}
         </nav>
       </section>
 
@@ -243,10 +246,6 @@ export function MyPage() {
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
           <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} />
-          {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
-          {isMember ? (
-            <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
-          ) : null}
         </nav>
       </section>
 

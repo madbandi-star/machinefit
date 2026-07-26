@@ -1,18 +1,21 @@
 {
-  "title": "My Page Lab section — same level as personal settings and friends",
-  "summary": "Moved 실험실 to a proper my-page section with h3 title, placed after 친구 관리 and before 더보기, matching 개인설정/친구 관리 layout.",
-  "git": { "branch": "main", "commit": "fe6458d" },
+  "title": "My Page Lab submenus — move experimental features under 실험실",
+  "summary": "Moved 7 items from 바로가기/개인설정/더보기 into the 실험실 section in user-specified order. Quick links now only achievements, lifter DNA, lifted weight.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx"
   ],
-  "testFocus": "My Page shows 실험실 as a section with title (not orphan link below 더보기). Section order: 개인설정 → 친구 관리 (members) → 실험실 → 더보기. Lab link navigates to /my-page/lab.",
+  "testFocus": "실험실 section lists: live dashboard, growth timeline, workout report email, growth analysis, push (members), online PT (members), PT questions (members). Removed from quickLinks, personalSettings, explore.",
   "fastChecks": [
     "npm run build --prefix frontend"
   ],
   "productionChecks": [
-    "Open /my-page — verify 실험실 section title and placement"
+    "My Page → 실험실: verify all 7 items and order",
+    "My Page → 바로가기: only achievements / lifter DNA / lifted weight",
+    "My Page → 개인설정: no push link",
+    "My Page → 더보기: no online PT links"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "실험실 was a nav-only block below 더보기 without section title.",
-  "toBe": "실험실 is a top-level my-page section with title, between 친구 관리 and 더보기."
+  "asIs": "Lab items scattered across 바로가기, 개인설정, 더보기.",
+  "toBe": "All listed experimental menus grouped under 실험실 in specified order."
 }
