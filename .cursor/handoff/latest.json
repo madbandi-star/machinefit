@@ -1,7 +1,7 @@
 {
   "title": "Revert hold-ko MP3 clips — back to male Korean TTS",
   "summary": "Rolled back hold-ko male MP3 pack (173ddfd). Hold seconds again use male Korean TTS + Sino-Korean (d98f6be behavior).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "10748e2" },
   "changedFiles": [
     "frontend/public/voice-coach/hold-ko/ (removed)",
     "frontend/src/utils/voiceHold.ts",
