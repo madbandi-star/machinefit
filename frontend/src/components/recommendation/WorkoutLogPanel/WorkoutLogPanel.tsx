@@ -19,6 +19,7 @@ import {
 } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
+import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import {
@@ -245,6 +246,7 @@ export function WorkoutLogPanel({
   const restTimerAfterAllSetsComplete = useSettingsStore(
     (s) => s.restTimerAfterAllSetsComplete
   );
+  const workoutFullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
@@ -1346,7 +1348,7 @@ export function WorkoutLogPanel({
   );
 
   const restTimerBanner =
-    restTimer != null ? (
+    restTimer != null && !workoutFullscreenDisplay ? (
       <RestTimerBanner
         seconds={restTimer.seconds}
         setNumber={restTimer.setNumber}
@@ -1355,6 +1357,27 @@ export function WorkoutLogPanel({
         onStartCount={voiceCoachEnabled ? startVoiceCoach : undefined}
       />
     ) : null;
+
+  const showWorkoutDisplayOverlay =
+    workoutFullscreenDisplay && (restTimer != null || voiceCoach.isRunning);
+
+  const workoutDisplayOverlay = showWorkoutDisplayOverlay ? (
+    <WorkoutDisplayOverlay
+      mode={voiceCoach.isRunning ? 'count' : 'rest'}
+      restSeconds={restTimer?.seconds ?? 0}
+      restSetNumber={restTimer?.setNumber ?? 0}
+      onRestDismiss={() => setRestTimer(null)}
+      onRestReadyForNextSet={handleRestReadyForNextSet}
+      onStartCount={startVoiceCoach}
+      showStartCount={voiceCoachEnabled}
+      phase={voiceCoach.phase}
+      currentRep={voiceCoach.currentRep}
+      countdown={voiceCoach.countdown}
+      turbo={voiceCoach.turbo}
+      intensity={voiceCoach.intensity}
+      onStopCount={stopVoiceCoachSession}
+    />
+  ) : null;
 
   const voiceCoachPanel = showVoiceCoach ? (
     <VoiceCoachPanel
@@ -1396,15 +1419,18 @@ export function WorkoutLogPanel({
       showRestOptionSelectors={!isHistory}
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
+      hideLiveDisplay={workoutFullscreenDisplay && voiceCoach.isRunning}
     />
   ) : null;
 
   if (isHistory) {
     return (
-      <section
-        className="recommendation-workout-log recommendation-workout-log--history"
-        aria-label={t('machines:workoutLog.title')}
-      >
+      <>
+        {workoutDisplayOverlay}
+        <section
+          className="recommendation-workout-log recommendation-workout-log--history"
+          aria-label={t('machines:workoutLog.title')}
+        >
         {restTimerBanner}
         {voiceCoachPanel}
         {targetMusclePicker}
@@ -1423,16 +1449,19 @@ export function WorkoutLogPanel({
         {personalTipField}
         {historyMemoSaveButton}
         {showSaveButton ? saveButton : null}
-      </section>
+        </section>
+      </>
     );
   }
 
   if (compact) {
     return (
-      <section
-        className="recommendation-workout-log recommendation-workout-log--compact"
-        aria-label={t('machines:workoutLog.title')}
-      >
+      <>
+        {workoutDisplayOverlay}
+        <section
+          className="recommendation-workout-log recommendation-workout-log--compact"
+          aria-label={t('machines:workoutLog.title')}
+        >
         {restTimerBanner}
         {voiceCoachPanel}
         {targetMusclePicker}
@@ -1446,12 +1475,15 @@ export function WorkoutLogPanel({
         <div className="recommendation-workout-log__weights">{weightList}</div>
         {diaryField}
         {!isHistory ? saveButton : null}
-      </section>
+        </section>
+      </>
     );
   }
 
   return (
-    <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
+    <>
+      {workoutDisplayOverlay}
+      <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
       {restTimerBanner}
       {voiceCoachPanel}
       <div className="recommendation-workout-log__header">
@@ -1483,6 +1515,7 @@ export function WorkoutLogPanel({
       {diaryField}
 
       {saveButton}
-    </section>
+      </section>
+    </>
   );
 }

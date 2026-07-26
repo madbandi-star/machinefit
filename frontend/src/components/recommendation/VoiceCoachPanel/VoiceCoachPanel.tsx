@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
   VOICE_COUNT_MODES,
-  formatCountDisplay,
   type VoiceCountMode,
 } from '@/utils/aiCountPace';
 import {
@@ -27,12 +26,12 @@ import {
   VOICE_HOLD_FLOW_MODES,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
+import {
+  getVoiceCoachDisplayState,
+  voiceCoachStatusLabel,
+} from '@/utils/voiceCoachDisplay';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
-
-const MIN_REPS = 1;
-const MAX_REPS = 30;
-const DEFAULT_REPS = 12;
 
 interface VoiceCoachPanelProps {
   enabled: boolean;
@@ -77,6 +76,8 @@ interface VoiceCoachPanelProps {
   showOneMoreAndHoldSelectors?: boolean;
   /** When false, hide prep count, session mode, and count mode (e.g. records page). */
   showSessionConfigSelectors?: boolean;
+  /** When false, hide live count number (e.g. fullscreen overlay is showing it). */
+  hideLiveDisplay?: boolean;
 }
 
 function pickerGridColumnClass(columnCount: number): string {
@@ -86,32 +87,9 @@ function pickerGridColumnClass(columnCount: number): string {
   return ' body-metrics-inline__grid--4';
 }
 
-function statusLabel(
-  t: (key: string, opts?: Record<string, unknown>) => string,
-  phase: VoiceCoachPhase,
-  currentRep: number,
-  countdown: number | null
-): string {
-  switch (phase) {
-    case 'beep':
-      return t('machines:voiceCoach.statusBeep');
-    case 'countdown':
-      if (countdown == null) return t('machines:voiceCoach.statusReady');
-      return t('machines:voiceCoach.statusCountdown', { count: countdown });
-    case 'start':
-      return t('machines:voiceCoach.statusStart');
-    case 'counting':
-      return t('machines:voiceCoach.statusCounting', { rep: currentRep });
-    case 'oneMore':
-      return t('machines:voiceCoach.statusOneMore', { rep: currentRep });
-    case 'hold':
-      if (countdown == null) return t('machines:voiceCoach.statusHoldCue');
-      if (countdown <= 0) return t('machines:voiceCoach.statusHoldFinish');
-      return t('machines:voiceCoach.statusHoldCountdown', { count: countdown });
-    default:
-      return t('machines:voiceCoach.statusIdle');
-  }
-}
+const MIN_REPS = 1;
+const MAX_REPS = 30;
+const DEFAULT_REPS = 12;
 
 export function VoiceCoachPanel({
   enabled,
@@ -151,6 +129,7 @@ export function VoiceCoachPanel({
   showRestOptionSelectors = true,
   showOneMoreAndHoldSelectors = true,
   showSessionConfigSelectors = true,
+  hideLiveDisplay = false,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
@@ -180,35 +159,15 @@ export function VoiceCoachPanel({
     }
   }, [duration, durationCustom]);
 
-  const showCountStage = phase === 'counting' && currentRep > 0;
-  const showOneMoreStage = phase === 'oneMore' && currentRep > 0;
-  const showHoldStage = phase === 'hold' && (countdown != null || intensity > 0);
-  const showCountdownStage = phase === 'countdown' && countdown != null;
-  const showRepStage = showCountStage || showOneMoreStage;
-  const scale = showRepStage
-    ? 1 + intensity * (turbo ? 0.42 : 0.22) + (turbo && intensity > 0.92 ? 0.18 : 0)
-    : showHoldStage
-      ? 1.08 + intensity * 0.12
-      : showCountdownStage
-        ? 1.05
-        : 1;
-  const displayNumber = showCountStage
-    ? formatCountDisplay(currentRep, turbo)
-    : showOneMoreStage
-      ? turbo
-        ? `${t('machines:voiceCoach.oneMoreShort', { defaultValue: '하나더' })}!`
-        : t('machines:voiceCoach.oneMoreShort', { defaultValue: '하나더' })
-      : showHoldStage
-        ? countdown != null && countdown > 0
-          ? String(countdown)
-          : countdown === 0
-            ? '!'
-            : t('machines:voiceCoach.holdCueShort')
-        : showCountdownStage
-          ? String(countdown)
-          : phase === 'start'
-            ? '!'
-            : '';
+  const display = getVoiceCoachDisplayState(
+    phase,
+    currentRep,
+    countdown,
+    turbo,
+    intensity,
+    t('machines:voiceCoach.oneMoreShort', { defaultValue: '하나더' }),
+    t('machines:voiceCoach.holdCueShort')
+  );
 
   return (
     <section
@@ -566,34 +525,30 @@ export function VoiceCoachPanel({
             )}
           </div>
 
-          {displayNumber ? (
+          {!hideLiveDisplay && display.showLiveDisplay ? (
             <div
               className={`voice-coach-panel__count-stage${
-                turbo || phase === 'hold' ? ' voice-coach-panel__count-stage--turbo' : ''
-              }${
-                (showCountStage && intensity > 0.85) || phase === 'hold'
-                  ? ' voice-coach-panel__count-stage--climax'
-                  : ''
-              }`}
+                display.turboStage ? ' voice-coach-panel__count-stage--turbo' : ''
+              }${display.climaxStage ? ' voice-coach-panel__count-stage--climax' : ''}`}
               aria-hidden="true"
             >
               <span
-                key={`${phase}-${displayNumber}`}
+                key={`${phase}-${display.displayNumber}`}
                 className="voice-coach-panel__count-num"
                 style={{
-                  transform: `scale(${scale})`,
+                  transform: `scale(${display.scale})`,
                   ['--count-shake' as string]: `${
-                    turbo || phase === 'hold' ? 1.2 + intensity : intensity * 0.6
+                    display.turboStage ? 1.2 + intensity : intensity * 0.6
                   }px`,
                 }}
               >
-                {displayNumber}
+                {display.displayNumber}
               </span>
             </div>
           ) : null}
 
           <p className="voice-coach-panel__status" role="status" aria-live="polite">
-            {statusLabel(t, phase, currentRep, countdown)}
+            {voiceCoachStatusLabel(t, phase, currentRep, countdown)}
             {turbo ? ` · ${t('machines:voiceCoach.turboBadge')}` : ''}
             {phase === 'hold' ? ` · ${t('machines:voiceCoach.holdBadge')}` : ''}
           </p>

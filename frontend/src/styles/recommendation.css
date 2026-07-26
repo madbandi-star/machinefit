@@ -1422,6 +1422,118 @@
   font-weight: 600;
 }
 
+.workout-display-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 1rem)
+    calc(env(safe-area-inset-right, 0px) + 1rem)
+    calc(env(safe-area-inset-bottom, 0px) + 1rem)
+    calc(env(safe-area-inset-left, 0px) + 1rem);
+  background: var(--color-bg, #0b0f14);
+  color: var(--color-text);
+}
+
+.workout-display-overlay--turbo {
+  background: color-mix(in srgb, var(--color-bg, #0b0f14) 88%, var(--color-primary, #e11d48) 12%);
+}
+
+.workout-display-overlay__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  align-self: flex-start;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.workout-display-overlay__brand-mark {
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  display: block;
+  object-fit: cover;
+  box-shadow: var(--glow-primary-soft);
+}
+
+.workout-display-overlay__brand-fit {
+  color: var(--color-primary);
+}
+
+.workout-display-overlay__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  min-height: 0;
+  padding: 1rem 0;
+}
+
+.workout-display-overlay__label {
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.workout-display-overlay__time {
+  font-size: clamp(4.5rem, 28vw, 9rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-display-overlay__count {
+  display: inline-block;
+  font-size: clamp(4.5rem, 28vw, 9rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  transform-origin: center;
+  transition: transform 90ms ease-out, color 120ms ease;
+  animation: voice-count-pop 180ms ease-out;
+}
+
+.workout-display-overlay--turbo .workout-display-overlay__count {
+  color: var(--color-primary, #e11d48);
+  animation: voice-count-pop 160ms ease-out, voice-count-shake 280ms ease-in-out;
+}
+
+.workout-display-overlay__count--climax {
+  color: #dc2626;
+  text-shadow: 0 0 24px rgba(220, 38, 38, 0.35);
+}
+
+.workout-display-overlay__status {
+  margin: 0;
+  font-size: clamp(1rem, 3.5vw, 1.35rem);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.workout-display-overlay__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 22rem;
+  margin: 0 auto;
+}
+
+.workout-display-overlay__action {
+  min-height: 3rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
 .voice-coach-panel {
   display: flex;
   flex-direction: column;

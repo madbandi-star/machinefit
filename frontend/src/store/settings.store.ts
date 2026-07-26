@@ -66,6 +66,7 @@ export const SETTINGS_DEFAULTS = {
   restDurationSeconds: REST_DURATION.defaultSeconds,
   /** When false, skip rest timer after the final completed set. */
   restTimerAfterAllSetsComplete: true,
+  workoutFullscreenDisplay: true,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
 } as const;
 
@@ -98,6 +99,8 @@ interface SettingsState {
   restDurationSeconds: number;
   /** Show rest timer even when every set is already completed. */
   restTimerAfterAllSetsComplete: boolean;
+  /** Full-screen rest timer and voice count display during workouts. */
+  workoutFullscreenDisplay: boolean;
   /** 추천 중량 배율 (0.1 = 10%, 1 = 기본, 10 = 1000%) */
   weightDifficulty: number;
   setLocale: (locale: Locale) => void;
@@ -118,6 +121,7 @@ interface SettingsState {
   setVoiceHoldDurationSec: (seconds: number) => void;
   setRestDurationSeconds: (seconds: number) => void;
   setRestTimerAfterAllSetsComplete: (enabled: boolean) => void;
+  setWorkoutFullscreenDisplay: (enabled: boolean) => void;
   setWeightDifficulty: (value: number) => void;
   /** Restore app preferences (units, voice, rest, etc.) to defaults. */
   resetSettings: () => void;
@@ -152,6 +156,8 @@ export const useSettingsStore = create<SettingsState>()(
         set({ restDurationSeconds: clampRestDurationSeconds(seconds) }),
       setRestTimerAfterAllSetsComplete: (restTimerAfterAllSetsComplete) =>
         set({ restTimerAfterAllSetsComplete }),
+      setWorkoutFullscreenDisplay: (workoutFullscreenDisplay) =>
+        set({ workoutFullscreenDisplay }),
       setWeightDifficulty: (value) =>
         set({ weightDifficulty: clampWeightDifficulty(value) }),
       resetSettings: () =>
@@ -185,6 +191,10 @@ export const useSettingsStore = create<SettingsState>()(
               ? p.restTimerAfterAllSetsComplete
               : (current.restTimerAfterAllSetsComplete ??
                 SETTINGS_DEFAULTS.restTimerAfterAllSetsComplete),
+          workoutFullscreenDisplay:
+            typeof p.workoutFullscreenDisplay === 'boolean'
+              ? p.workoutFullscreenDisplay
+              : (current.workoutFullscreenDisplay ?? SETTINGS_DEFAULTS.workoutFullscreenDisplay),
         };
       },
     }

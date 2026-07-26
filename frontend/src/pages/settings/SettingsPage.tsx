@@ -101,6 +101,8 @@ export function SettingsPage() {
   const restTimerAfterAllSetsComplete = useSettingsStore(
     (s) => s.restTimerAfterAllSetsComplete
   );
+  const workoutFullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
+  const setWorkoutFullscreenDisplay = useSettingsStore((s) => s.setWorkoutFullscreenDisplay);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
@@ -578,6 +580,17 @@ export function SettingsPage() {
           </label>
           <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
             {t('settings.restTimerAfterAllSetsCompleteDesc')}
+          </p>
+          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
+            <input
+              type="checkbox"
+              checked={workoutFullscreenDisplay}
+              onChange={(e) => setWorkoutFullscreenDisplay(e.target.checked)}
+            />
+            <span>{t('settings.workoutFullscreenDisplay')}</span>
+          </label>
+          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
+            {t('settings.workoutFullscreenDisplayDesc')}
           </p>
         </SettingsCollapsibleSection>
 

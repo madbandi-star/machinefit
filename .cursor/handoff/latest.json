@@ -1,16 +1,22 @@
 {
-  "title": "Settings page collapsible sections",
-  "summary": "My Page → Settings sections are now collapsible with chevron toggles. Default state is collapsed. #location-settings hash auto-expands and scrolls into view.",
-  "git": { "branch": "main", "commit": "21a3c3a" },
+  "title": "Full-screen workout display overlay",
+  "summary": "Rest timer and voice count now show in a full-screen overlay when enabled. Settings toggle under Rest duration. Top-left shows MachineFit logo and brand name.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
+    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/store/settings.store.ts",
     "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/styles/components.css"
+    "frontend/src/utils/voiceCoachDisplay.ts",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "Settings: all form sections start collapsed; tap header expands/collapses. Navigate to /settings#location-settings → location section expands and scrolls. ProfileSummaryCard and ProUpgradeCard stay always visible.",
+  "testFocus": "Settings > 휴식 시간 > 운동 중 전체 화면 표시 (default ON). Records: complete set → full-screen rest M:SS with logo top-left. Tap 카운트 시작 → full-screen count numbers. Toggle OFF → inline banner/panel only.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Settings sections always fully expanded.",
-  "toBe": "Each settings section collapsible; default collapsed; location hash expands target section."
+  "asIs": "Rest timer and count numbers only inside record card panel.",
+  "toBe": "Optional full-screen overlay for rest + count with brand header; setting toggle."
 }
