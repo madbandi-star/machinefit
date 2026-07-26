@@ -1,7 +1,7 @@
 {
   "title": "Records save switches to adjustment compare view",
   "summary": "Bottom save/bookmark in 셋팅값 조정 필요 editing mode always saves preferences and transitions to read-only 추천 vs 조정 compare (no longer requires settingsDirty).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "72acf04" },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
