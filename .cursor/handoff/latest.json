@@ -1,12 +1,12 @@
 {
-  "title": "My Page — move Lab section below Explore",
-  "summary": "실험실 section now appears after 더보기 on My Page.",
+  "title": "Achievements popup — remove hide-today checkbox",
+  "summary": "Removed 오늘 다시 안 보기 checkbox from achievement unlock popup on AchievementsPage.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": "My Page section order: Insights → 개인설정 → 더보기 → 실험실 → (trainer/owner sections).",
+  "changedFiles": ["frontend/src/pages/achievements/AchievementsPage.tsx"],
+  "testFocus": "Visit /my-page/achievements with unlocked achievements — popup shows without snooze checkbox. Page-level popup pref toggle still works.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["Open /machinefit/my-page — verify 실험실 below 더보기"],
+  "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "실험실 above 더보기.",
-  "toBe": "실험실 below 더보기."
+  "asIs": "Unlock popup had 오늘 다시 안 보기 checkbox.",
+  "toBe": "Checkbox removed; dismiss/continue unchanged."
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type {
   AchievementCategory,
@@ -19,7 +19,6 @@ import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildAchievementShareCard } from '@/utils/achievementShareCard';
 import {
   clearAchievementUnlockPopupHideToday,
-  hideAchievementUnlockPopupToday,
   isAchievementUnlockPopupEnabled,
   isAchievementUnlockPopupHiddenToday,
   setAchievementUnlockPopupEnabled,
@@ -77,7 +76,6 @@ export function AchievementsPage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
   const location = useLocation();
-  const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
   const { activeGymId } = useActiveGym();
@@ -88,7 +86,6 @@ export function AchievementsPage() {
   const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
   const [popupEnabled, setPopupEnabled] = useState(() => isAchievementUnlockPopupEnabled());
-  const [hideTodayChecked, setHideTodayChecked] = useState(false);
 
   // Each navigation into this page counts as a new visit for unlock popups.
   useEffect(() => {
@@ -139,7 +136,6 @@ export function AchievementsPage() {
       .join('|');
     if (key === seenUnlockKey) return;
     setSeenUnlockKey(key);
-    setHideTodayChecked(false);
     setUnlockQueue(unlockedForPopup);
     setUnlockBatchTotal(unlockedForPopup.length);
     try {
@@ -158,23 +154,14 @@ export function AchievementsPage() {
   const unlockRemaining = Math.max(0, unlockQueue.length - 1);
   const isLastUnlock = unlockQueue.length <= 1;
 
-  const dismissUnlockQueue = async () => {
-    if (hideTodayChecked) {
-      hideAchievementUnlockPopupToday();
-      try {
-        await achievementsApi.acknowledge();
-        await queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
-      } catch {
-        /* best-effort — local prefs still apply */
-      }
-    }
+  const dismissUnlockQueue = () => {
     setUnlockQueue([]);
     setUnlockBatchTotal(0);
   };
 
-  const advanceUnlockQueue = async () => {
+  const advanceUnlockQueue = () => {
     if (unlockQueue.length <= 1) {
-      await dismissUnlockQueue();
+      dismissUnlockQueue();
       return;
     }
     setUnlockQueue((q) => q.slice(1));
@@ -484,18 +471,6 @@ export function AchievementsPage() {
                     : ''}
                 </p>
               ) : null}
-              <label className="achievement-unlock__snooze">
-                <input
-                  type="checkbox"
-                  className="achievement-unlock__snooze-input"
-                  checked={hideTodayChecked}
-                  onChange={(event) => setHideTodayChecked(event.target.checked)}
-                />
-                <span className="achievement-unlock__snooze-box" aria-hidden />
-                <span className="achievement-unlock__snooze-label">
-                  {t('achievements.hidePopupToday')}
-                </span>
-              </label>
               <div className="achievement-unlock__actions">
                 <button
                   type="button"
