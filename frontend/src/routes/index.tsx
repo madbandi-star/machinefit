@@ -160,6 +160,7 @@ const growthTimeline = () =>
   import('@/pages/growth-timeline/GrowthTimelinePage').then((m) => ({
     default: m.GrowthTimelinePage,
   }));
+const lab = () => import('@/pages/lab/LabPage').then((m) => ({ default: m.LabPage }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
 const motivationMusic = () =>
@@ -314,6 +315,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
             { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
+            { path: ROUTES.LAB, element: lazyRoute(lab) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },

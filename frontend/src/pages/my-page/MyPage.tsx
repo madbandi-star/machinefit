@@ -243,6 +243,12 @@ export function MyPage() {
         </nav>
       </section>
 
+      <section className="my-page-section">
+        <nav className="list-nav" aria-label={t('myPage.lab')}>
+          <ListNavLink to={ROUTES.LAB} label={t('myPage.lab')} />
+        </nav>
+      </section>
+
       {isTrainer ? (
         <section className="my-page-section">
           <h3 className="my-page-section__title">{t('myPage.onlinePtManage')}</h3>

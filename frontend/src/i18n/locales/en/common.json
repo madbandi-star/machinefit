@@ -459,6 +459,7 @@
     "quickLinks": "MachineFit Insights",
     "personalSettings": "Personal settings",
     "explore": "Explore",
+    "lab": "Lab",
     "adminDashboard": "Admin Dashboard",
     "browseByBrand": "Browse by Brand",
     "growthAnalysis": "Growth Analysis",
@@ -498,6 +499,11 @@
     "tradeLiked": "Liked listings",
     "tradeReports": "Reports",
     "tradeStats": "Trade stats (coming later)"
+  },
+  "lab": {
+    "title": "Lab",
+    "subtitle": "A space for experiments and research features.",
+    "body": "New experiments will show up here soon."
   },
   "easyMode": {
     "sectionTitle": "App mode",

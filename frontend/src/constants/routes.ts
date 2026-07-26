@@ -50,6 +50,8 @@ export const ROUTES = {
   LIVE_DASHBOARD: '/my-page/live',
   ACHIEVEMENTS: '/my-page/achievements',
   GROWTH_TIMELINE: '/my-page/growth-timeline',
+  /** Research / experiment lab (My Page). */
+  LAB: '/my-page/lab',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
   MOTIVATION_MUSIC: '/settings/motivation-music',

@@ -459,6 +459,7 @@
     "quickLinks": "MachineFit Insights",
     "personalSettings": "개인설정",
     "explore": "더보기",
+    "lab": "연구실",
     "adminDashboard": "관리자 대시보드",
     "browseByBrand": "브랜드별 조회",
     "growthAnalysis": "성장 분석",
@@ -498,6 +499,11 @@
     "tradeLiked": "관심 거래글",
     "tradeReports": "신고 관리",
     "tradeStats": "거래 통계 (향후 확장)"
+  },
+  "lab": {
+    "title": "연구실",
+    "subtitle": "실험·연구 기능을 모은 공간이에요.",
+    "body": "곧 새로운 실험이 추가될 예정이에요."
   },
   "easyMode": {
     "sectionTitle": "앱 모드",
