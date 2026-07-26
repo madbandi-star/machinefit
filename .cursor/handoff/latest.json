@@ -1,7 +1,7 @@
 {
   "title": "Records voice coach: settings-only preference controls",
   "summary": "History VoiceCoachPanel hides voice pack, rest options, one-more/hold toggles, prep count, session mode, and count mode. My Page → Settings keeps all voice coach preferences.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "f6be6d4" },
   "changedFiles": [
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
