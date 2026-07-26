@@ -1,7 +1,7 @@
 {
   "title": "Easy mode duplicate recommendation guard",
   "summary": "Block picking or creating a second recommendation for the same machine (or free-weight muscle) today in easy mode, reusing assertNoDuplicateToday shared with normal recommend flow.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "4944930" },
   "changedFiles": [
     "frontend/src/utils/recommendationDuplicate.ts",
     "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
