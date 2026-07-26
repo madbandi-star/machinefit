@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -99,6 +100,7 @@ export function PushComposePage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [userIdInput, setUserIdInput] = useState('');
   const [memberQuery, setMemberQuery] = useState('');
+  const [selectedMemberId, setSelectedMemberId] = useState('');
   const [location, setLocation] = useState<LocationPickerValue>(emptyLocationValue());
   const [adminAll, setAdminAll] = useState(false);
   const [openLogsId, setOpenLogsId] = useState<string | null>(null);
@@ -175,18 +177,35 @@ export function PushComposePage() {
       setSelectedIds([]);
       setUserIdInput('');
       setMemberQuery('');
+      setSelectedMemberId('');
       queryClient.invalidateQueries({ queryKey: ['push', 'campaigns'] });
       setTab('history');
     },
     onError: (error) => {
-      const raw = getApiErrorMessage(error, t('error'));
-      // getApiErrorMessage may return i18n key stubs for network/validation.
-      const message =
-        raw === 'networkError'
-          ? t('networkError')
-          : raw === 'validationError'
-            ? t('validationError')
-            : raw;
+      let message = t('error');
+      if (axios.isAxiosError(error)) {
+        if (!error.response) {
+          message = t('networkError');
+        } else {
+          const code = (error.response.data as { error?: { code?: string } } | undefined)?.error
+            ?.code;
+          if (code === 'NO_RECIPIENTS') message = t('noRecipients');
+          else if (code === 'FORBIDDEN') message = t('forbidden');
+          else if (code === 'NOT_FOUND') message = t('recipientNotFound');
+          else if (code === 'AMBIGUOUS_USER') message = t('ambiguousUser');
+          else if (code === 'INVALID_RECIPIENT') message = t('invalidRecipient');
+          else if (code === 'VALIDATION_ERROR') message = t('validationError');
+          else {
+            const raw = getApiErrorMessage(error, t('error'));
+            message =
+              raw === 'networkError'
+                ? t('networkError')
+                : raw === 'validationError'
+                  ? t('validationError')
+                  : raw;
+          }
+        }
+      }
       showToast(message, 'error');
     },
   });
@@ -265,9 +284,11 @@ export function PushComposePage() {
         };
       case 'trainer_clients':
         return { type: 'trainer_clients' };
-      case 'member_exact':
-        if (!memberQuery.trim()) return null;
-        return { type: 'member_exact', query: memberQuery.trim() };
+      case 'member_exact': {
+        const query = selectedMemberId || memberQuery.trim();
+        if (!query) return null;
+        return { type: 'member_exact', query };
+      }
       default:
         return null;
     }
@@ -560,11 +581,36 @@ export function PushComposePage() {
                 <div className="push-field">
                   <label htmlFor="push-member-q">{t('memberQuery')}</label>
                   <p className="push-hint">{t('memberQueryHint')}</p>
+                  {suggested.length > 0 ? (
+                    <div className="push-recipient-list">
+                      {suggested.map((u) => (
+                        <label key={u.id}>
+                          <input
+                            type="radio"
+                            name="member-friend"
+                            checked={selectedMemberId === u.id}
+                            onChange={() => {
+                              setSelectedMemberId(u.id);
+                              setMemberQuery(u.displayName);
+                            }}
+                          />
+                          <span>
+                            {u.displayName}{' '}
+                            <span className="push-meta">({t(`roles.${u.roleCode}`)})</span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : null}
                   <input
                     id="push-member-q"
                     value={memberQuery}
-                    onChange={(e) => setMemberQuery(e.target.value)}
-                    required
+                    onChange={(e) => {
+                      setMemberQuery(e.target.value);
+                      setSelectedMemberId('');
+                    }}
+                    placeholder={t('memberQueryPlaceholder')}
+                    required={!selectedMemberId}
                   />
                 </div>
               ) : null}

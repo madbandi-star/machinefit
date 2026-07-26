@@ -1,22 +1,24 @@
 {
-  "title": "Community boards — compact mobile list UI",
-  "summary": "Replace bulky post/request cards with dense board-index rows (~34px each) so 8+ titles fit on smartphone; shared BoardIndexPanel/Skeleton; compact page headers.",
-  "git": { "branch": "main", "commit": "0d0c640" },
+  "title": "Push — fix member-to-friend send failures",
+  "summary": "Allow member_exact to any connected friend (any role); lookup by email/login id; exempt friend push from marketing opt-in; show friend picker + clearer errors.",
+  "git": { "branch": "main", "commit": "9215eeb" },
   "changedFiles": [
-    "frontend/src/pages/free-board/FreeBoardPage.tsx",
-    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
-    "frontend/src/components/cards/PostCard/PostCard.tsx",
-    "frontend/src/components/community/BoardIndexPanel.tsx",
-    "frontend/src/components/community/BoardIndexSkeleton.tsx",
-    "frontend/src/components/community/BoardRequestRow.tsx",
-    "frontend/src/styles/community.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json"
+    "backend/server/services/push-audience.service.ts",
+    "backend/server/services/push-notification.service.ts",
+    "frontend/src/pages/push/PushComposePage.tsx",
+    "frontend/src/i18n/locales/ko/push.json",
+    "frontend/src/i18n/locales/en/push.json"
   ],
-  "testFocus": "Free board and machine request board show 8+ title rows on mobile viewport; tap post opens detail; status badges on requests.",
-  "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["Open both boards on 390px width — verify dense list without card padding bloat"],
-  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Large cards with excerpt text; ~3 posts visible per screen.",
-  "toBe": "Forum-style compact rows; 8+ titles visible; cleaner header."
+  "testFocus": "Member sends push to connected friend regardless of recipient role; demo_test17→demo_test99a works from mobile; friend list picker.",
+  "fastChecks": [
+    "cd backend && npx tsx server/services/push-audience.service.test.ts",
+    "npm run build --prefix frontend"
+  ],
+  "productionChecks": [
+    "After Render redeploy: member friend push both directions",
+    "Verify friend radio list on push compose"
+  ],
+  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": true },
+  "asIs": "Member could only push to member-tier friends; lookup display_name only; marketing opt-in blocked general; generic error toast.",
+  "toBe": "Connected friends any role; email/id lookup; friend picker; specific errors."
 }

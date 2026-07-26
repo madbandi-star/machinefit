@@ -394,6 +394,37 @@ async function listTrainerClientIds(trainerUserId: string): Promise<string[]> {
   return result.rows.map((r) => r.linked_user_id);
 }
 
+async function listConnectedFriendUsers(
+  senderId: string,
+  limit = 50
+): Promise<ResolvedAudienceUser[]> {
+  const pool = getPool();
+  if (!pool) return [];
+
+  const result = await pool.query<{
+    id: string;
+    display_name: string;
+    role_code: string;
+  }>(
+    `SELECT u.id, u.display_name, r.code AS role_code
+     FROM friendships f
+     JOIN users u ON u.id = CASE WHEN f.user_low_id = $1 THEN f.user_high_id ELSE f.user_low_id END
+     JOIN roles r ON r.id = u.role_id
+     WHERE f.status = 'ACCEPTED'
+       AND (f.user_low_id = $1 OR f.user_high_id = $1)
+       AND u.is_active = TRUE
+     ORDER BY u.display_name ASC
+     LIMIT $2`,
+    [senderId, limit]
+  );
+
+  return result.rows.map((row) => ({
+    id: row.id,
+    displayName: row.display_name,
+    roleCode: isRoleCode(row.role_code) ? row.role_code : Role.MEMBER,
+  }));
+}
+
 async function areUsersConnected(
   senderId: string,
   recipientId: string
@@ -438,26 +469,23 @@ async function resolveMemberExact(
   const q = query.trim();
   const pool = getPool();
 
-  let candidate: ResolvedAudienceUser | null = null;
+  let candidates: ResolvedAudienceUser[] = [];
 
   if (UUID_RE.test(q)) {
     const users = await findUsersByIds([q]);
-    candidate = users[0] ?? null;
+    candidates = users.length ? [users[0]!] : [];
   } else if (!pool) {
-    const matches = listDevUsers().filter(
-      (u) => u.isActive && u.displayName.toLowerCase() === q.toLowerCase()
-    );
-    if (matches.length > 1) {
-      throw new AppError(400, 'AMBIGUOUS_USER', 'Multiple users match display name');
-    }
-    const m = matches[0];
-    if (m) {
-      candidate = {
-        id: m.id,
-        displayName: m.displayName,
-        roleCode: isRoleCode(m.roleCode) ? m.roleCode : Role.MEMBER,
-      };
-    }
+    candidates = listDevUsers().filter(
+      (u) =>
+        u.isActive &&
+        (u.displayName.toLowerCase() === q.toLowerCase() ||
+          u.email.toLowerCase() === q.toLowerCase() ||
+          u.email.split('@')[0]?.toLowerCase() === q.toLowerCase())
+    ).map((u) => ({
+      id: u.id,
+      displayName: u.displayName,
+      roleCode: isRoleCode(u.roleCode) ? u.roleCode : Role.MEMBER,
+    }));
   } else {
     const result = await pool.query<{
       id: string;
@@ -467,30 +495,47 @@ async function resolveMemberExact(
       `SELECT u.id, u.display_name, r.code AS role_code
        FROM users u
        JOIN roles r ON r.id = u.role_id
-       WHERE u.is_active = TRUE AND LOWER(u.display_name) = LOWER($1)`,
+       WHERE u.is_active = TRUE
+         AND (
+           LOWER(u.display_name) = LOWER($1)
+           OR LOWER(u.email) = LOWER($1)
+           OR LOWER(split_part(u.email, '@', 1)) = LOWER($1)
+         )`,
       [q]
     );
-    if (result.rows.length > 1) {
-      throw new AppError(400, 'AMBIGUOUS_USER', 'Multiple users match display name');
+    candidates = result.rows.map((row) => ({
+      id: row.id,
+      displayName: row.display_name,
+      roleCode: isRoleCode(row.role_code) ? row.role_code : Role.MEMBER,
+    }));
+  }
+
+  if (candidates.length === 0) {
+    throw new AppError(404, 'NOT_FOUND', 'User not found');
+  }
+
+  let candidate: ResolvedAudienceUser | null = null;
+
+  if (candidates.length === 1) {
+    candidate = candidates[0]!;
+  } else {
+    const connected: ResolvedAudienceUser[] = [];
+    for (const c of candidates) {
+      if (await areUsersConnected(senderId, c.id)) {
+        connected.push(c);
+      }
     }
-    const row = result.rows[0];
-    if (row) {
-      candidate = {
-        id: row.id,
-        displayName: row.display_name,
-        roleCode: isRoleCode(row.role_code) ? row.role_code : Role.MEMBER,
-      };
+    if (connected.length === 1) {
+      candidate = connected[0]!;
+    } else if (connected.length > 1) {
+      throw new AppError(400, 'AMBIGUOUS_USER', 'Multiple connected users match this query');
+    } else {
+      throw new AppError(404, 'NOT_FOUND', 'User not found');
     }
   }
 
-  if (!candidate) {
-    throw new AppError(404, 'NOT_FOUND', 'User not found');
-  }
   if (candidate.id === senderId) {
     throw new AppError(400, 'INVALID_RECIPIENT', 'Cannot send to yourself');
-  }
-  if (!isMemberTierRole(candidate.roleCode)) {
-    throw new AppError(403, 'FORBIDDEN', 'Recipient must be a member-tier role');
   }
   const connected = await areUsersConnected(senderId, candidate.id);
   if (!connected) {
@@ -617,8 +662,9 @@ export async function authorizeResolvedRecipients(
         continue;
       }
     }
-    // Member-tier senders may only message member-tier
+    // Member-tier senders may only message member-tier (except friend push via member_exact).
     if (
+      audience.type !== 'member_exact' &&
       isMemberTierRole(senderRole) &&
       !hasMinRole(senderRole, Role.TRAINER) &&
       !isMemberTierRole(r.roleCode)
@@ -692,6 +738,14 @@ export const pushAudienceService = {
           roleCode: u.roleCode,
           label: 'client',
         }));
+    } else if (isMemberTierRole(sender.roleCode)) {
+      const friends = await listConnectedFriendUsers(senderId, 50);
+      suggestedRecipients = friends.map((u) => ({
+        id: u.id,
+        displayName: u.displayName,
+        roleCode: u.roleCode,
+        label: 'friend',
+      }));
     }
 
     return {

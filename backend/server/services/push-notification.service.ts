@@ -107,8 +107,13 @@ export const pushNotificationService = {
       );
 
     // Marketing-style kinds require marketing_opt_in (compliance P1).
+    // Friend-to-friend member_exact is exempt — treated as direct user message.
     const marketingKinds = new Set(['general', 'event']);
-    if (marketingKinds.has(input.kind) && recipients.length > 0) {
+    if (
+      marketingKinds.has(input.kind) &&
+      input.audience.type !== 'member_exact' &&
+      recipients.length > 0
+    ) {
       const allowed = await userRepository.listMarketingOptInUserIds(
         recipients.map((r) => r.id)
       );

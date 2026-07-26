@@ -1,25 +1,28 @@
-# Latest test handoff — Community board compact list UI
+# Latest test handoff — Push friend send fix
 
 **Branch:** `main`
 
 ## Change
 
-기구요청·자유 게시판 목록 UI를 **컴팩트 인덱스 스타일**로 개선.
+회원→친구 푸시 발송 실패 수정 (demo_test17 → demo_test99a 등).
 
-- 카드형(제목+본문 미리보기) → **한 줄 제목 + 날짜/댓글/상태** 행
-- 행 높이 ~34px → 스마트폰에서 **8개 이상** 제목 동시 노출
-- 공통 `BoardIndexPanel`, `BoardIndexSkeleton`, `BoardRequestRow` 추가
-- 페이지 헤더·뒤로가기 버튼도 컴팩트화
+- `member_exact`: 수신자 **member 등급만** 허용 제거 → 연결된 친구면 역할 무관
+- 수신자 조회: 닉네임 + **이메일 + 아이디(@ 앞)** 매칭
+- 친구 푸시(`member_exact`)는 **마케팅 opt-in** 필터 제외
+- 회원 발송 UI: **친구 목록 라디오 선택** + 구체적 오류 메시지
 
 ## Test focus
 
-1. `/community/free`, `/community/machine-requests` — 8개+ 제목 한 화면
-2. 자유 게시판: 행 탭 → 상세 이동, 댓글 수·날짜 표시
-3. 기구요청: 기구명 한 줄, 상태 배지·날짜
-4. 글쓰기/요청하기 폼·관리자 삭제 동작
+1. demo_test17(모바일) → demo_test99a(PC) 친구 푸시 성공
+2. 역방향도 동일
+3. 친구 목록에서 선택 / 아이디 입력 모두 동작
+4. 비친구·미존재 시 명확한 토스트
 
 ## Fast checks
 
 ```bash
+cd backend && npx tsx server/services/push-audience.service.test.ts
 npm run build --prefix frontend
 ```
+
+**Backend Render redeploy 필요** (`backend/` 변경)
