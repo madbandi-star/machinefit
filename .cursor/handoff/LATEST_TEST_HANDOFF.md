@@ -1,21 +1,22 @@
-# Latest test handoff — 셋팅값 저장하기 on bad button
+# Latest test handoff — Settings collapsible sections
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-Records card feedback button:
+My Page → Settings: each form section is collapsible (chevron toggle).
 
-1. **셋팅값 조정 필요** — enter adjustment edit mode (unchanged first tap)
-2. While editing → label **셋팅값 저장하기**
-3. Tap **셋팅값 저장하기** → same as bottom **저장하기** (adjustment prefs + workout log + compare view)
+- **Default:** collapsed
+- **ProfileSummaryCard** / **ProUpgradeCard:** unchanged (always visible)
+- **`#location-settings`:** auto-expands + scrolls (from My Page location link)
 
 ## Test focus
 
-1. Expand card → 셋팅값 조정 필요 → text switches to 셋팅값 저장하기
-2. Tap 셋팅값 저장하기 → full save + read-only compare
-3. Recommendation result page → bad button unchanged
+1. Open Settings → all sections collapsed (title + chevron only)
+2. Tap section header → expands; tap again → collapses
+3. My Page → location link → `/settings#location-settings` expands location section
+4. Save buttons / reset / delete still work when expanded
 
 ## Fast checks
 

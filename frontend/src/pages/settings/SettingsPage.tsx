@@ -15,6 +15,7 @@ import { ExperienceSelector } from '@/components/settings/ExperienceSelector/Exp
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
 import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
 import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
+import { SettingsCollapsibleSection } from '@/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
@@ -217,10 +218,10 @@ export function SettingsPage() {
 
   useEffect(() => {
     if (location.hash !== '#location-settings') return;
-    const el = document.getElementById('location-settings');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    const timer = window.setTimeout(() => {
+      document.getElementById('location-settings')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+    return () => window.clearTimeout(timer);
   }, [location.hash, locationQuery.isFetched]);
 
   const locationGymSaveMutation = useMutation({
@@ -352,9 +353,7 @@ export function SettingsPage() {
     <PageShell title={t('nav.settings')}>
       <ProfileSummaryCard user={user} />
       <div className="settings-stack">
-        <section className="form-section">
-          <h3 className="form-section__title">{t('auth.bodyMetrics')}</h3>
-          <p className="form-section__desc">{t('auth.bodyMetricsDesc')}</p>
+        <SettingsCollapsibleSection title={t('auth.bodyMetrics')} description={t('auth.bodyMetricsDesc')}>
           <div className="form-stack">
             <GenderPicker value={gender} onChange={setGender} />
             <BodyMetricsFields
@@ -379,11 +378,9 @@ export function SettingsPage() {
               }}
             />
           </div>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('auth.profileExtras')}</h3>
-          <p className="form-section__desc">{t('auth.profileExtrasGoalOnly')}</p>
+        <SettingsCollapsibleSection title={t('auth.profileExtras')} description={t('auth.profileExtrasGoalOnly')}>
           <div className="form-stack">
             <WorkoutGoalSelector value={workoutGoal} onChange={setWorkoutGoal} />
           </div>
@@ -396,10 +393,9 @@ export function SettingsPage() {
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section" id="location-settings">
-          <h3 className="form-section__title">{t('location.locationGymTitle')}</h3>
+        <SettingsCollapsibleSection id="location-settings" title={t('location.locationGymTitle')}>
           <p className="form-section__desc">{t('location.locationGymDesc')}</p>
           {!locationDraft.countryCode && (
             <p className="form-section__desc">{t('location.nudge')}</p>
@@ -494,16 +490,16 @@ export function SettingsPage() {
               {t('location.clear')}
             </button>
           </div>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.weightDifficulty')}</h3>
-          <p className="form-section__desc">{t('settings.weightDifficultyDesc')}</p>
+        <SettingsCollapsibleSection
+          title={t('settings.weightDifficulty')}
+          description={t('settings.weightDifficultyDesc')}
+        >
           <WeightDifficultySlider />
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('auth.unitSettings')}</h3>
+        <SettingsCollapsibleSection title={t('auth.unitSettings')}>
           <UnitSelector
             unitHeight={draftUnitHeight}
             unitWeight={draftUnitWeight}
@@ -519,10 +515,11 @@ export function SettingsPage() {
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
-        </section>
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.restDuration')}</h3>
-          <p className="form-section__desc">{t('settings.restDurationDesc')}</p>
+        </SettingsCollapsibleSection>
+        <SettingsCollapsibleSection
+          title={t('settings.restDuration')}
+          description={t('settings.restDurationDesc')}
+        >
           <div
             className="body-metrics-inline"
             role="group"
@@ -582,11 +579,9 @@ export function SettingsPage() {
           <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
             {t('settings.restTimerAfterAllSetsCompleteDesc')}
           </p>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.voiceCoach')}</h3>
-          <p className="form-section__desc">{t('settings.voiceCoachDesc')}</p>
+        <SettingsCollapsibleSection title={t('settings.voiceCoach')} description={t('settings.voiceCoachDesc')}>
           <div className="settings-voice-coach">
             <label className="settings-voice-coach__row">
               <input
@@ -864,11 +859,12 @@ export function SettingsPage() {
             </div>
             ) : null}
           </div>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.privacyLegal')}</h3>
-          <p className="form-section__desc">{t('settings.privacyLegalDesc')}</p>
+        <SettingsCollapsibleSection
+          title={t('settings.privacyLegal')}
+          description={t('settings.privacyLegalDesc')}
+        >
           <label className="checkbox-label" style={{ marginBottom: '0.75rem' }}>
             <input
               type="checkbox"
@@ -916,11 +912,9 @@ export function SettingsPage() {
               {t('support.title')}
             </a>
           </p>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.reset')}</h3>
-          <p className="form-section__desc">{t('settings.resetDesc')}</p>
+        <SettingsCollapsibleSection title={t('settings.reset')} description={t('settings.resetDesc')}>
           <button
             type="button"
             className="btn btn--danger btn--block"
@@ -928,11 +922,12 @@ export function SettingsPage() {
           >
             {t('settings.reset')}
           </button>
-        </section>
+        </SettingsCollapsibleSection>
 
-        <section className="form-section">
-          <h3 className="form-section__title">{t('settings.deleteAccount')}</h3>
-          <p className="form-section__desc">{t('settings.deleteAccountDesc')}</p>
+        <SettingsCollapsibleSection
+          title={t('settings.deleteAccount')}
+          description={t('settings.deleteAccountDesc')}
+        >
           <button
             type="button"
             className="btn btn--danger btn--block"
@@ -941,7 +936,7 @@ export function SettingsPage() {
           >
             {t('settings.deleteAccount')}
           </button>
-        </section>
+        </SettingsCollapsibleSection>
 
         <ProUpgradeCard />
       </div>

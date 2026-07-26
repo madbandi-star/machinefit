@@ -1,17 +1,16 @@
 {
-  "title": "Records bad button becomes 셋팅값 저장하기",
-  "summary": "After 셋팅값 조정 필요 is active in edit mode, the bad feedback button label switches to 셋팅값 저장하기 and triggers the same save as bottom 저장하기 (prefs + workout log).",
-  "git": { "branch": "main", "commit": "986b220" },
+  "title": "Settings page collapsible sections",
+  "summary": "My Page → Settings sections are now collapsible with chevron toggles. Default state is collapsed. #location-settings hash auto-expands and scrolls into view.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/styles/components.css"
   ],
-  "testFocus": "Records: tap 셋팅값 조정 필요 → label becomes 셋팅값 저장하기 → tap runs full save + compare view. Recommendation page unchanged.",
+  "testFocus": "Settings: all form sections start collapsed; tap header expands/collapses. Navigate to /settings#location-settings → location section expands and scrolls. ProfileSummaryCard and ProUpgradeCard stay always visible.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Bad button always showed 셋팅값 조정 필요 and only submitted fit rating.",
-  "toBe": "In edit mode, bad button shows 셋팅값 저장하기 and saves like bottom button."
+  "asIs": "Settings sections always fully expanded.",
+  "toBe": "Each settings section collapsible; default collapsed; location hash expands target section."
 }
