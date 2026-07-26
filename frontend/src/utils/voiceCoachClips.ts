@@ -11,7 +11,7 @@ export const DEFAULT_VOICE_COACH_PACK: VoiceCoachPack = 'female';
  * Bump when shipping replacement clip audio so browsers / CDNs drop stale files
  * (old male pack was Korean and kept playing from disk cache).
  */
-export const VOICE_COACH_CLIP_ASSET_VERSION = 'en-male-3';
+export const VOICE_COACH_CLIP_ASSET_VERSION = 'female-prep-1';
 
 /** Highest `rep-N.mp3` shipped under public/voice-coach. */
 export const MAX_VOICE_COACH_CLIP_REP = 30;
