@@ -1,7 +1,7 @@
 {
   "title": "Easy mode set count fix, lifted weight header, history date filter",
   "summary": "Fix easy mode step-3 set-count stepper overflow; move lifted-weight mode tabs beside title; hide date/muscle label left of 일자조회 when a single day is selected.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ecec15c" },
   "changedFiles": [
     "frontend/src/styles/easy-mode.css",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
