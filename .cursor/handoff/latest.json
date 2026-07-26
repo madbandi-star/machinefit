@@ -1,7 +1,7 @@
 {
   "title": "Editable per-page voice coach pickers",
   "summary": "Records and recommendation result cards: voice coach pickers are scroll-editable again. Count sessions use each panel's local picker values (target reps, interval, one-more, hold duration), not My Page Settings.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "da0895a" },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
