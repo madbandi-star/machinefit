@@ -1,7 +1,7 @@
 {
   "title": "Records voice coach picker grid layout",
   "summary": "History voice coach uses 2-column picker grid when one-more is off; shows target reps, interval, and one-more count in 3 columns when settings have one-more enabled.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "0845ae3" },
   "changedFiles": [
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx"
   ],
