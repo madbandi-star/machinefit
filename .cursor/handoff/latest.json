@@ -1,22 +1,15 @@
 {
-  "title": "Full-screen workout display overlay",
-  "summary": "Rest timer and voice count now show in a full-screen overlay when enabled. Settings toggle under Rest duration. Top-left shows MachineFit logo and brand name.",
-  "git": { "branch": "main", "commit": "12ca984" },
+  "title": "Records personal tip to save button spacing",
+  "summary": "Tightened gap between 나만의 팁 memo and 저장하기 on records cards by grouping them in memo-actions with 0.35rem internal gap.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/store/settings.store.ts",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/utils/voiceCoachDisplay.ts",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/styles/recommendation.css"
   ],
-  "testFocus": "Settings > 휴식 시간 > 운동 중 전체 화면 표시 (default ON). Records: complete set → full-screen rest M:SS with logo top-left. Tap 카운트 시작 → full-screen count numbers. Toggle OFF → inline banner/panel only.",
+  "testFocus": "Records card expanded: personal tip textarea to 저장하기 button spacing should feel tighter (~0.35rem) without affecting diary-to-tip spacing.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Rest timer and count numbers only inside record card panel.",
-  "toBe": "Optional full-screen overlay for rest + count with brand header; setting toggle."
+  "asIs": "~1.5rem combined gap between personal tip and save button.",
+  "toBe": "~0.35rem gap between personal tip and save button."
 }

@@ -2381,6 +2381,20 @@
   gap: 0.4rem;
 }
 
+.history-workout-log__memo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.history-workout-log__memo-actions .history-workout-log__personal-tip {
+  margin-top: 0;
+}
+
+.history-workout-log__memo-actions .history-workout-log__memo-save-row {
+  margin-top: 0;
+}
+
 .history-workout-log__personal-tip-header {
   display: flex;
   align-items: center;

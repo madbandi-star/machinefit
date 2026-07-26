@@ -1446,8 +1446,10 @@ export function WorkoutLogPanel({
           {weightList}
         </div>
         {diaryField}
-        {personalTipField}
-        {historyMemoSaveButton}
+        <div className="history-workout-log__memo-actions">
+          {personalTipField}
+          {historyMemoSaveButton}
+        </div>
         {showSaveButton ? saveButton : null}
         </section>
       </>
