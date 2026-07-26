@@ -369,11 +369,6 @@ export function SettingsPage() {
                 if (value != null) setExperienceLevel(value);
               }}
             />
-          </div>
-        </SettingsCollapsibleSection>
-
-        <SettingsCollapsibleSection title={t('auth.profileExtras')} description={t('auth.profileExtrasGoalOnly')}>
-          <div className="form-stack">
             <WorkoutGoalSelector value={workoutGoal} onChange={setWorkoutGoal} />
           </div>
           <button
@@ -482,106 +477,6 @@ export function SettingsPage() {
               {t('location.clear')}
             </button>
           </div>
-        </SettingsCollapsibleSection>
-
-        <SettingsCollapsibleSection
-          title={t('settings.weightDifficulty')}
-          description={t('settings.weightDifficultyDesc')}
-        >
-          <WeightDifficultySlider />
-        </SettingsCollapsibleSection>
-
-        <SettingsCollapsibleSection title={t('auth.unitSettings')}>
-          <UnitSelector
-            unitHeight={draftUnitHeight}
-            unitWeight={draftUnitWeight}
-            onUnitHeightChange={setDraftUnitHeight}
-            onUnitWeightChange={setDraftUnitWeight}
-          />
-          <button
-            type="button"
-            className="btn btn--primary btn--block"
-            style={{ marginTop: 'var(--space-md)' }}
-            onClick={() => mutation.mutate()}
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
-          </button>
-        </SettingsCollapsibleSection>
-        <SettingsCollapsibleSection
-          title={t('settings.restDuration')}
-          description={t('settings.restDurationDesc')}
-        >
-          <div
-            className="body-metrics-inline"
-            role="group"
-            aria-label={t('settings.restDuration')}
-          >
-            <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
-              <div className="body-metrics-inline__cell">
-                <span className="body-metrics-inline__label">
-                  {t('settings.restDurationMinutesLabel')}
-                  <span className="body-metrics-inline__unit">
-                    {t('settings.restDurationMinutes')}
-                  </span>
-                </span>
-                <ScrollPicker
-                  value={restParts.minutes}
-                  onChange={(next) =>
-                    setRestDurationSeconds(restDurationFromParts(next, restParts.seconds))
-                  }
-                  min={0}
-                  max={REST_DURATION.maxMinutes}
-                  step={REST_DURATION.minuteStep}
-                  defaultValue={Math.floor(REST_DURATION.defaultSeconds / 60)}
-                  ariaLabel={t('settings.restDurationMinutes')}
-                  formatValue={(value) => String(value).padStart(2, '0')}
-                />
-              </div>
-              <div className="body-metrics-inline__cell">
-                <span className="body-metrics-inline__label">
-                  {t('settings.restDurationSecondsLabel')}
-                  <span className="body-metrics-inline__unit">
-                    {t('settings.restDurationSeconds')}
-                  </span>
-                </span>
-                <ScrollPicker
-                  value={restParts.seconds}
-                  onChange={(next) =>
-                    setRestDurationSeconds(restDurationFromParts(restParts.minutes, next))
-                  }
-                  min={0}
-                  max={60 - REST_DURATION.secondStep}
-                  step={REST_DURATION.secondStep}
-                  defaultValue={REST_DURATION.defaultSeconds % 60}
-                  ariaLabel={t('settings.restDurationSeconds')}
-                  formatValue={(value) => String(value).padStart(2, '0')}
-                />
-              </div>
-            </div>
-          </div>
-          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
-            <input
-              type="checkbox"
-              checked={restTimerAfterAllSetsComplete}
-              onChange={(e) => setRestTimerAfterAllSetsComplete(e.target.checked)}
-            />
-            <span>{t('settings.restTimerAfterAllSetsComplete')}</span>
-          </label>
-          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
-            {t('settings.restTimerAfterAllSetsCompleteDesc')}
-          </p>
-          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
-            <input
-              type="checkbox"
-              checked={workoutFullscreenDisplay}
-              onChange={(e) => setWorkoutFullscreenDisplay(e.target.checked)}
-            />
-            <span>{t('settings.workoutFullscreenDisplay')}</span>
-          </label>
-          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
-            {t('settings.workoutFullscreenDisplayDesc')}
-          </p>
         </SettingsCollapsibleSection>
 
         <SettingsCollapsibleSection title={t('settings.voiceCoach')} description={t('settings.voiceCoachDesc')}>
@@ -764,6 +659,107 @@ export function SettingsPage() {
             ) : null}
 
           </div>
+        </SettingsCollapsibleSection>
+
+        <SettingsCollapsibleSection
+          title={t('settings.restDuration')}
+          description={t('settings.restDurationDesc')}
+        >
+          <div
+            className="body-metrics-inline"
+            role="group"
+            aria-label={t('settings.restDuration')}
+          >
+            <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
+              <div className="body-metrics-inline__cell">
+                <span className="body-metrics-inline__label">
+                  {t('settings.restDurationMinutesLabel')}
+                  <span className="body-metrics-inline__unit">
+                    {t('settings.restDurationMinutes')}
+                  </span>
+                </span>
+                <ScrollPicker
+                  value={restParts.minutes}
+                  onChange={(next) =>
+                    setRestDurationSeconds(restDurationFromParts(next, restParts.seconds))
+                  }
+                  min={0}
+                  max={REST_DURATION.maxMinutes}
+                  step={REST_DURATION.minuteStep}
+                  defaultValue={Math.floor(REST_DURATION.defaultSeconds / 60)}
+                  ariaLabel={t('settings.restDurationMinutes')}
+                  formatValue={(value) => String(value).padStart(2, '0')}
+                />
+              </div>
+              <div className="body-metrics-inline__cell">
+                <span className="body-metrics-inline__label">
+                  {t('settings.restDurationSecondsLabel')}
+                  <span className="body-metrics-inline__unit">
+                    {t('settings.restDurationSeconds')}
+                  </span>
+                </span>
+                <ScrollPicker
+                  value={restParts.seconds}
+                  onChange={(next) =>
+                    setRestDurationSeconds(restDurationFromParts(restParts.minutes, next))
+                  }
+                  min={0}
+                  max={60 - REST_DURATION.secondStep}
+                  step={REST_DURATION.secondStep}
+                  defaultValue={REST_DURATION.defaultSeconds % 60}
+                  ariaLabel={t('settings.restDurationSeconds')}
+                  formatValue={(value) => String(value).padStart(2, '0')}
+                />
+              </div>
+            </div>
+          </div>
+          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
+            <input
+              type="checkbox"
+              checked={restTimerAfterAllSetsComplete}
+              onChange={(e) => setRestTimerAfterAllSetsComplete(e.target.checked)}
+            />
+            <span>{t('settings.restTimerAfterAllSetsComplete')}</span>
+          </label>
+          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
+            {t('settings.restTimerAfterAllSetsCompleteDesc')}
+          </p>
+          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
+            <input
+              type="checkbox"
+              checked={workoutFullscreenDisplay}
+              onChange={(e) => setWorkoutFullscreenDisplay(e.target.checked)}
+            />
+            <span>{t('settings.workoutFullscreenDisplay')}</span>
+          </label>
+          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
+            {t('settings.workoutFullscreenDisplayDesc')}
+          </p>
+        </SettingsCollapsibleSection>
+
+        <SettingsCollapsibleSection
+          title={t('settings.weightDifficulty')}
+          description={t('settings.weightDifficultyDesc')}
+        >
+          <WeightDifficultySlider />
+        </SettingsCollapsibleSection>
+
+        <SettingsCollapsibleSection title={t('auth.unitSettings')}>
+          <UnitSelector
+            unitHeight={draftUnitHeight}
+            unitWeight={draftUnitWeight}
+            onUnitHeightChange={setDraftUnitHeight}
+            onUnitWeightChange={setDraftUnitWeight}
+          />
+          <button
+            type="button"
+            className="btn btn--primary btn--block"
+            style={{ marginTop: 'var(--space-md)' }}
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
+          </button>
         </SettingsCollapsibleSection>
 
         <SettingsCollapsibleSection
