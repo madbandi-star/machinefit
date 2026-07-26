@@ -173,9 +173,10 @@ export function formatHoldCountdownWord(
 }
 
 /**
- * Hold number ticks.
+ * Hold number ticks (seconds).
  * - male: English cd-* then rep-*
- * - female: Korean rep-* only — never English prep cd-* (prep countdown alone is English)
+ * - female: no clip — Sino-Korean TTS (십구…일) via formatHoldCountdownWord;
+ *   rep-* clips use native Korean (열·아홉·하나…) for exercise counts only.
  */
 export function holdCountdownClipKey(
   n: number,
@@ -183,7 +184,7 @@ export function holdCountdownClipKey(
 ): string | null {
   const rounded = Math.round(n);
   if (normalizeVoiceCoachPack(voicePack) !== 'male') {
-    return repClipKey(rounded);
+    return null;
   }
   return countdownClipKey(rounded) ?? repClipKey(rounded);
 }

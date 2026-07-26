@@ -28,14 +28,19 @@ assert.ok(!isVoiceHoldDurationPreset(7));
 assert.equal(holdCuePhrase('ko', 'female'), '버텨!!!');
 assert.equal(holdCuePhrase('en', 'female'), '버텨!!!');
 assert.equal(holdCuePhrase('ko', 'male'), 'Hold!');
+assert.equal(formatHoldCountdownWord(19, 'ko', 'female'), '십구');
+assert.equal(formatHoldCountdownWord(12, 'ko', 'female'), '십이');
+assert.equal(formatHoldCountdownWord(11, 'ko', 'female'), '십일');
 assert.equal(formatHoldCountdownWord(15, 'ko', 'female'), '십오');
+assert.equal(formatHoldCountdownWord(9, 'ko', 'female'), '구');
+assert.equal(formatHoldCountdownWord(1, 'ko', 'female'), '일');
 assert.equal(formatHoldCountdownWord(5, 'en', 'female'), '오');
 assert.equal(formatHoldCountdownWord(5, 'ko', 'male'), 'five');
 assert.equal(formatHoldCountdownWord(2, 'ko', 'male'), 'two');
-// Female Hold must use Korean rep-* (never English prep cd-*).
-assert.equal(holdCountdownClipKey(5, 'female'), 'rep-5');
-assert.equal(holdCountdownClipKey(10, 'female'), 'rep-10');
-assert.equal(holdCountdownClipKey(15, 'female'), 'rep-15');
+// Female hold seconds → Sino-Korean TTS (no native-Korean rep-* clips).
+assert.equal(holdCountdownClipKey(5, 'female'), null);
+assert.equal(holdCountdownClipKey(10, 'female'), null);
+assert.equal(holdCountdownClipKey(15, 'female'), null);
 assert.equal(holdCountdownClipKey(5, 'male'), 'cd-5');
 assert.equal(holdCountdownClipKey(15, 'male'), 'rep-15');
 assert.equal(holdCountdownClipKey(99, 'female'), null);

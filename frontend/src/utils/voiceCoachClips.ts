@@ -399,12 +399,7 @@ export async function preloadVoiceCoachClips(options: {
   if (options.includeHold) {
     keys.push('hold', 'finish-done', 'finish-great', 'finish-nice');
     const holdSec = Math.max(1, Math.round(options.holdDurationSec ?? 10));
-    if (pack === 'female') {
-      // Female Hold stays Korean (rep-*); do not preload English prep cd-*.
-      for (let n = 1; n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_REP); n += 1) {
-        keys.push(`rep-${n}`);
-      }
-    } else {
+    if (pack !== 'female') {
       for (let n = 1; n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_COUNTDOWN); n += 1) {
         keys.push(`cd-${n}`);
       }

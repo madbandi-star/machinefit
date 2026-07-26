@@ -1,17 +1,20 @@
 {
-  "title": "Records voice coach uses Settings-only picker defaults",
-  "summary": "Records card voice coach pickers show Settings values read-only. Target reps no longer syncs from volumeReps on history; only Settings > Voice Coach can change the four picker values.",
+  "title": "Female hold countdown uses Sino-Korean seconds",
+  "summary": "Female Korean voice pack hold timer (버텨!!!) now speaks seconds as Sino-Korean TTS (십구…일) instead of native-Korean rep clips (열·아홉·하나). Exercise rep counts unchanged.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx",
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/utils/voiceHold.ts",
+    "frontend/src/utils/voiceCoachClips.ts",
+    "frontend/src/utils/voiceHold.test.ts"
   ],
-  "testFocus": "Change values in Settings > Voice Coach → Records card shows same read-only pickers. Scrolling pickers on record card does nothing. Count session uses settings values. Recommendation page pickers still editable.",
-  "fastChecks": ["npm run build --prefix frontend"],
+  "testFocus": "Settings > Voice Coach > female pack + hold enabled. Start count with hold (e.g. 19s). Hold countdown should say 십구, 십팔…삼, 이, 일 — not 열 아홉, 여덟…둘, 하나. Rep counts during exercise still native Korean.",
+  "fastChecks": [
+    "npx vite-node src/utils/voiceHold.test.ts",
+    "npx vite-node src/utils/speechManager.hold.test.ts",
+    "npm run build --prefix frontend"
+  ],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Records card could edit voice coach pickers and sync target reps from fit volume.",
-  "toBe": "Settings is sole source of truth; records display read-only defaults."
+  "asIs": "Female hold seconds used rep-* clips with native Korean (열 아홉, 여덟…하나).",
+  "toBe": "Female hold seconds use Sino-Korean TTS (십구, 십팔…이, 일) for second-based countdown."
 }
