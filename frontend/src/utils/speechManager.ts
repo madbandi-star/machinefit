@@ -262,7 +262,7 @@ class SpeechManagerImpl {
         : SPEECH_DEFAULTS.rate;
     utterance.volume = SPEECH_DEFAULTS.volume;
 
-    let voice = this.selectedVoice;
+    let voice: SpeechSynthesisVoice | null = null;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       const preferGender = prosody?.preferMaleVoice
         ? 'male'
@@ -275,12 +275,25 @@ class SpeechManagerImpl {
           langPrefix: lang,
         });
         if (picked) voice = picked;
+      } else {
+        voice = this.selectedVoice;
+      }
+    } else {
+      voice = this.selectedVoice;
+    }
+    // Never attach a mismatched voice (e.g. locked Korean Yuna/InJoon on en-US).
+    // That made male-pack English fallbacks sound like Korean counts on some devices.
+    if (voice) {
+      const langRoot = lang.toLowerCase().split('-')[0] ?? '';
+      const voiceRoot = voice.lang.toLowerCase().split('-')[0] ?? '';
+      if (langRoot && voiceRoot && langRoot !== voiceRoot) {
+        voice = null;
       }
     }
     if (voice) {
       utterance.voice = voice;
-      utterance.lang = lang;
     }
+    utterance.lang = lang;
     return utterance;
   }
 

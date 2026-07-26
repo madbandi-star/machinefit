@@ -132,7 +132,8 @@ class MockHTMLAudioElement {
   async play(): Promise<void> {
     this.paused = false;
     if (this.src.includes('voice-coach') && this.src.includes('.mp3')) {
-      const key = this.src.split('/').pop()?.replace('.mp3', '') ?? '?';
+      const file = (this.src.split('/').pop() ?? '').split('?')[0] ?? '';
+      const key = file.replace('.mp3', '') || '?';
       playedClips.push(`html:${key}`);
     }
     setTimeout(() => {
@@ -274,8 +275,9 @@ function installMocks(): void {
 
   g.fetch = (async (input: RequestInfo | URL) => {
     const url = String(input);
-    const file = url.split('/').pop();
-    if (!file?.endsWith('.mp3')) {
+    const fileWithQuery = url.split('/').pop() ?? '';
+    const file = fileWithQuery.split('?')[0] ?? '';
+    if (!file.endsWith('.mp3')) {
       return new Response(null, { status: 404 });
     }
     const abs = path.join(clipRoot, file);

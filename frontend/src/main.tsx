@@ -8,7 +8,7 @@ import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
 
 /** Bump once when a final PWA cache purge is required; thereafter one-shot only. */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v24';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v25';
 
 async function clearServiceWorkerAndCaches(): Promise<void> {
   try {

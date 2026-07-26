@@ -209,15 +209,15 @@ async function speakHoldCue(options: {
 
   const maleEnglish = isMaleEnglishPack(voicePack);
   const speechLocale = resolveVoiceCoachSpeechLocale(voicePack);
+  const fallback =
+    typeof countValue === 'number'
+      ? formatHoldCountdownWord(countValue, locale, voicePack)
+      : text;
   // Clips always match pack language (female KO / male EN).
   if (clipKey) {
     const played = await playVoiceCoachClip(clipKey, signal, voicePack);
     if (played) return;
   }
-  const fallback =
-    typeof countValue === 'number'
-      ? formatHoldCountdownWord(countValue, locale, voicePack)
-      : text;
   await speechManager.speak(fallback, {
     signal,
     lang: voiceCoachSpeechLangTag(speechLocale),

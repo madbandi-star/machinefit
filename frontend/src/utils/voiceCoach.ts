@@ -29,6 +29,7 @@ import {
   primeVoiceCoachAudioSync,
   stopVoiceCoachClips,
   unlockVoiceCoachClips,
+  voiceCoachClipUrl,
   type VoiceCoachPack,
 } from '@/utils/voiceCoachClips';
 import {
@@ -458,6 +459,17 @@ async function speakCoachCue(options: {
   const maleEnglish = isMaleEnglishPack(pack);
 
   if (clipKey) {
+    // Male pack must never play female (Korean) clip URLs — language is pack-locked.
+    const clipUrl = voiceCoachClipUrl(clipKey, pack);
+    if (maleEnglish && !clipUrl.includes('/voice-coach/male/')) {
+      await speechManager.speak(
+        kind === 'count' && typeof countValue === 'number'
+          ? toEnglishRep(countValue)
+          : text || voiceCoachCue('ready', pack),
+        { ...packSpeakOptions(pack, signal), rate: 0.92 }
+      );
+      return;
+    }
     const played = await playVoiceCoachClip(clipKey, signal, pack);
     if (played) return;
     const ctx = await ensureVoiceCoachAudioRunning();

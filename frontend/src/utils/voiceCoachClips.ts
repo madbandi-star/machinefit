@@ -7,6 +7,12 @@ export const VOICE_COACH_PACKS = ['female', 'male'] as const;
 export type VoiceCoachPack = (typeof VOICE_COACH_PACKS)[number];
 export const DEFAULT_VOICE_COACH_PACK: VoiceCoachPack = 'female';
 
+/**
+ * Bump when shipping replacement clip audio so browsers / CDNs drop stale files
+ * (old male pack was Korean and kept playing from disk cache).
+ */
+export const VOICE_COACH_CLIP_ASSET_VERSION = 'en-male-3';
+
 /** Highest `rep-N.mp3` shipped under public/voice-coach. */
 export const MAX_VOICE_COACH_CLIP_REP = 30;
 
@@ -28,6 +34,8 @@ const clipBufferInflight = new Map<string, Promise<AudioBuffer | null>>();
 let pendingClipSettle: ((played: boolean) => void) | null = null;
 /** Bumped on stop/supersede so playVoiceCoachClip won't HTML-fallback after interrupt. */
 let clipGeneration = 0;
+/** Last pack unlocked — used to drop decoded buffers when switching female↔male. */
+let lastUnlockedPack: VoiceCoachPack | null = null;
 
 export function normalizeVoiceCoachPack(value: unknown): VoiceCoachPack {
   return value === 'male' ? 'male' : DEFAULT_VOICE_COACH_PACK;
@@ -44,7 +52,16 @@ export function voiceCoachClipUrl(
   key: string,
   pack: VoiceCoachPack = DEFAULT_VOICE_COACH_PACK
 ): string {
-  return publicAssetUrl(`voice-coach/${normalizeVoiceCoachPack(pack)}/${key}.mp3`);
+  const base = publicAssetUrl(
+    `voice-coach/${normalizeVoiceCoachPack(pack)}/${key}.mp3`
+  );
+  return `${base}?v=${VOICE_COACH_CLIP_ASSET_VERSION}`;
+}
+
+/** Drop decoded / in-flight clip buffers (pack switch or asset version bump). */
+export function clearVoiceCoachClipBufferCache(): void {
+  clipBufferCache.clear();
+  clipBufferInflight.clear();
 }
 
 export function countdownClipKey(n: number): string | null {
@@ -427,6 +444,10 @@ export function unlockVoiceCoachClips(
   pack: VoiceCoachPack = DEFAULT_VOICE_COACH_PACK
 ): Promise<void> {
   const normalized = normalizeVoiceCoachPack(pack);
+  if (lastUnlockedPack != null && lastUnlockedPack !== normalized) {
+    clearVoiceCoachClipBufferCache();
+  }
+  lastUnlockedPack = normalized;
 
   // 1) Sync prime in the tap turn (no await).
   primeVoiceCoachAudioSync();
@@ -469,11 +490,11 @@ export function unlockVoiceCoachClips(
 /** Test helper — clears module playback state between cases. */
 export function __resetVoiceCoachClipsForTests(): void {
   stopVoiceCoachClips();
-  clipBufferCache.clear();
-  clipBufferInflight.clear();
+  clearVoiceCoachClipBufferCache();
   warmedHtmlAudio = null;
   pendingClipSettle = null;
   clipGeneration = 0;
+  lastUnlockedPack = null;
   if (sharedAudioCtx) {
     try {
       void sharedAudioCtx.close();
