@@ -1,12 +1,18 @@
 {
-  "title": "Enlarge fullscreen workout display numbers",
-  "summary": "Increased rest timer and count font size in WorkoutDisplayOverlay from clamp(4.5rem, 28vw, 9rem) to clamp(6.5rem, 42vw, 14rem).",
+  "title": "Settings voice coach picker grid matches records",
+  "summary": "Settings > Voice Coach now uses shared VoiceCoachPickerGrid with records card layout: ScrollPicker row with dynamic 2-4 columns, conditional one-more, inline hold duration.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/styles/recommendation.css"],
-  "testFocus": "Full-screen rest timer and count overlay: numbers should appear significantly larger on mobile.",
+  "changedFiles": [
+    "frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
+  ],
+  "testFocus": "Settings > Voice Coach: picker grid matches records card (목표횟수/카운트간격/원모어/버텨 시간 ScrollPickers, column count changes with toggles). Records cards unchanged.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Fullscreen time/count used clamp(4.5rem, 28vw, 9rem).",
-  "toBe": "clamp(6.5rem, 42vw, 14rem) for better gym visibility."
+  "asIs": "Settings used fixed 3-col grid + dropdown for hold duration.",
+  "toBe": "Same ScrollPicker grid as records cards with dynamic columns."
 }

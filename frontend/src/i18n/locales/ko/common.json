@@ -260,6 +260,7 @@
     "voiceCoachFlowMode_count_hold": "운동 카운트 + 버텨!!!",
     "voiceCoachFlowMode_hold": "버텨!!!만",
     "voiceHoldDuration": "버텨!!! 시간",
+    "voiceHoldDurationUnit": "초",
     "voiceHoldDurationOption": "{{sec}}초",
     "voiceHoldDurationCustom": "직접 입력",
     "voiceCoachAutoAfterRest": "휴식 후 자동 시작",

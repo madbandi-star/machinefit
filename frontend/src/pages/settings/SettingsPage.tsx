@@ -26,6 +26,7 @@ import {
 } from '@/components/location/LocationPicker/LocationPicker';
 import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
+import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { authApi, locationApi, userApi, userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -40,20 +41,12 @@ import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
 import { VOICE_COUNT_MODES } from '@/utils/aiCountPace';
 import {
-  clampVoiceCoachOneMoreCount,
   clampVoiceCoachPrepCount,
-  clampVoiceCoachRepGapMs,
   normalizeVoiceCoachPack,
-  VOICE_COACH_ONE_MORE,
   VOICE_COACH_PACKS,
   VOICE_COACH_PREP_COUNTS,
-  VOICE_COACH_REP_GAP,
 } from '@/utils/voiceCoach';
 import {
-  clampVoiceHoldDurationSec,
-  isVoiceHoldDurationPreset,
-  VOICE_HOLD_DURATION,
-  VOICE_HOLD_DURATION_PRESETS,
   VOICE_HOLD_FLOW_MODES,
 } from '@/utils/voiceHold';
 import type { User } from '@machinefit/shared';
@@ -123,9 +116,6 @@ export function SettingsPage() {
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(Boolean(user?.marketingOptIn));
-  const [holdDurationCustom, setHoldDurationCustom] = useState(
-    () => !isVoiceHoldDurationPreset(voiceHoldDurationSec)
-  );
 
   useEffect(() => {
     if (user?.marketingOptIn != null) {
@@ -671,51 +661,21 @@ export function SettingsPage() {
               <span>{t('settings.voiceRestTips')}</span>
             </label>
 
-            {(voiceCoachFlowMode === 'count_hold' || voiceCoachFlowMode === 'hold') && (
-              <div className="voice-coach-panel__hold-duration">
-                <label className="body-metrics-inline__label" htmlFor="settings-hold-duration">
-                  {t('settings.voiceHoldDuration')}
-                </label>
-                <select
-                  id="settings-hold-duration"
-                  disabled={!voiceCoachEnabled}
-                  value={
-                    holdDurationCustom || !isVoiceHoldDurationPreset(voiceHoldDurationSec)
-                      ? 'custom'
-                      : String(voiceHoldDurationSec)
-                  }
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    if (v === 'custom') {
-                      setHoldDurationCustom(true);
-                      return;
-                    }
-                    setHoldDurationCustom(false);
-                    setVoiceHoldDurationSec(clampVoiceHoldDurationSec(Number(v)));
-                  }}
-                >
-                  {VOICE_HOLD_DURATION_PRESETS.map((sec) => (
-                    <option key={sec} value={sec}>
-                      {t('settings.voiceHoldDurationOption', { sec })}
-                    </option>
-                  ))}
-                  <option value="custom">{t('settings.voiceHoldDurationCustom')}</option>
-                </select>
-                {holdDurationCustom || !isVoiceHoldDurationPreset(voiceHoldDurationSec) ? (
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={VOICE_HOLD_DURATION.minSec}
-                    max={VOICE_HOLD_DURATION.maxSec}
-                    disabled={!voiceCoachEnabled}
-                    value={voiceHoldDurationSec}
-                    onChange={(e) =>
-                      setVoiceHoldDurationSec(clampVoiceHoldDurationSec(Number(e.target.value)))
-                    }
-                  />
-                ) : null}
-              </div>
-            )}
+            <VoiceCoachPickerGrid
+              flowMode={voiceCoachFlowMode}
+              oneMoreEnabled={voiceCoachOneMore}
+              targetReps={voiceCoachTargetReps}
+              onTargetRepsChange={setVoiceCoachTargetReps}
+              repGapMs={voiceCoachRepGapMs}
+              onRepGapMsChange={setVoiceCoachRepGapMs}
+              oneMoreCount={voiceCoachOneMoreCount}
+              onOneMoreCountChange={setVoiceCoachOneMoreCount}
+              holdDurationSec={voiceHoldDurationSec}
+              onHoldDurationSecChange={setVoiceHoldDurationSec}
+              disabled={!voiceCoachEnabled}
+              recordsLayout
+              labels="settings"
+            />
 
             <fieldset
               className={`voice-coach-panel__mode${
@@ -803,74 +763,6 @@ export function SettingsPage() {
               </fieldset>
             ) : null}
 
-            {voiceCoachFlowMode !== 'hold' ? (
-            <div
-              className={`body-metrics-inline${
-                !voiceCoachEnabled ? ' body-metrics-inline--disabled' : ''
-              }`}
-              role="group"
-              aria-label={t('settings.voiceCoach')}
-            >
-              <div className="body-metrics-inline__grid">
-                <div className="body-metrics-inline__cell">
-                  <span className="body-metrics-inline__label">
-                    {t('settings.voiceCoachTargetReps')}
-                    <span className="body-metrics-inline__unit">
-                      {t('settings.voiceCoachTargetRepsUnit')}
-                    </span>
-                  </span>
-                  <ScrollPicker
-                    value={voiceCoachTargetReps}
-                    onChange={setVoiceCoachTargetReps}
-                    min={1}
-                    max={30}
-                    step={1}
-                    defaultValue={12}
-                    ariaLabel={t('settings.voiceCoachTargetReps')}
-                    formatValue={(value) => String(value)}
-                  />
-                </div>
-                <div className="body-metrics-inline__cell">
-                  <span className="body-metrics-inline__label">
-                    {t('settings.voiceCoachCountInterval')}
-                    <span className="body-metrics-inline__unit">
-                      {t('settings.voiceCoachCountIntervalUnit')}
-                    </span>
-                  </span>
-                  <ScrollPicker
-                    value={clampVoiceCoachRepGapMs(voiceCoachRepGapMs) / 1000}
-                    onChange={(sec) =>
-                      setVoiceCoachRepGapMs(clampVoiceCoachRepGapMs(sec * 1000))
-                    }
-                    min={VOICE_COACH_REP_GAP.minMs / 1000}
-                    max={VOICE_COACH_REP_GAP.maxMs / 1000}
-                    step={VOICE_COACH_REP_GAP.stepMs / 1000}
-                    defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
-                    ariaLabel={t('settings.voiceCoachCountInterval')}
-                    formatValue={(value) => value.toFixed(1)}
-                  />
-                </div>
-                <div className="body-metrics-inline__cell">
-                  <span className="body-metrics-inline__label">
-                    {t('settings.voiceCoachOneMoreCount')}
-                    <span className="body-metrics-inline__unit">
-                      {t('settings.voiceCoachOneMoreCountUnit')}
-                    </span>
-                  </span>
-                  <ScrollPicker
-                    value={clampVoiceCoachOneMoreCount(voiceCoachOneMoreCount)}
-                    onChange={setVoiceCoachOneMoreCount}
-                    min={VOICE_COACH_ONE_MORE.minCount}
-                    max={VOICE_COACH_ONE_MORE.maxCount}
-                    step={VOICE_COACH_ONE_MORE.step}
-                    defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
-                    ariaLabel={t('settings.voiceCoachOneMoreCount')}
-                    formatValue={(value) => String(value)}
-                  />
-                </div>
-              </div>
-            </div>
-            ) : null}
           </div>
         </SettingsCollapsibleSection>
 

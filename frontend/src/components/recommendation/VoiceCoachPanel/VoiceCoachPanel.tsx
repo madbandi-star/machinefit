@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
+import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import {
   VOICE_COUNT_MODES,
   type VoiceCountMode,
 } from '@/utils/aiCountPace';
 import {
-  clampVoiceCoachOneMoreCount,
   clampVoiceCoachPrepCount,
-  clampVoiceCoachRepGapMs,
   normalizeVoiceCoachPack,
-  VOICE_COACH_ONE_MORE,
   VOICE_COACH_PACKS,
   VOICE_COACH_PREP_COUNTS,
-  VOICE_COACH_REP_GAP,
   type VoiceCoachPack,
   type VoiceCoachPhase,
   type VoiceCoachPrepCount,
@@ -80,17 +76,6 @@ interface VoiceCoachPanelProps {
   hideLiveDisplay?: boolean;
 }
 
-function pickerGridColumnClass(columnCount: number): string {
-  if (columnCount <= 1) return ' body-metrics-inline__grid--1';
-  if (columnCount === 2) return ' body-metrics-inline__grid--2';
-  if (columnCount === 3) return ' body-metrics-inline__grid--3';
-  return ' body-metrics-inline__grid--4';
-}
-
-const MIN_REPS = 1;
-const MAX_REPS = 30;
-const DEFAULT_REPS = 12;
-
 export function VoiceCoachPanel({
   enabled,
   onEnabledChange,
@@ -132,23 +117,12 @@ export function VoiceCoachPanel({
   hideLiveDisplay = false,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
-  const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
   const duration = clampVoiceHoldDurationSec(holdDurationSec);
   const showCountControls = flowMode !== 'hold';
   const showHoldDuration = flowMode === 'count_hold' || flowMode === 'hold';
   const holdAfterCount = flowMode === 'count_hold';
-  /** Records page: merge hold duration into the picker row. */
   const inlineHoldInPickers = !showOneMoreAndHoldSelectors;
-  const showHoldDurationInGrid = inlineHoldInPickers && showHoldDuration;
   const showHoldDurationSeparate = showHoldDuration && !inlineHoldInPickers;
-  /** Full panel: always show; records: only when one-more is enabled in settings. */
-  const showOneMoreCountPicker = showOneMoreAndHoldSelectors || oneMoreEnabled;
-  const showPickerGrid = showCountControls || showHoldDurationInGrid;
-  const pickerColumnCount = showCountControls
-    ? 2 + (showOneMoreCountPicker ? 1 : 0) + (showHoldDurationInGrid ? 1 : 0)
-    : showHoldDurationInGrid
-      ? 1
-      : 0;
 
   const [durationCustom, setDurationCustom] = useState(!isVoiceHoldDurationPreset(duration));
   const [customDraft, setCustomDraft] = useState(String(duration));
@@ -328,109 +302,22 @@ export function VoiceCoachPanel({
               </>
             ) : null}
 
-            {showPickerGrid ? (
-              <div
-                className={`body-metrics-inline voice-coach-panel__pickers${
-                  isRunning ? ' body-metrics-inline--disabled' : ''
-                }`}
-                role="group"
-                aria-label={t('machines:voiceCoach.title')}
-              >
-                <div
-                  className={`body-metrics-inline__grid${pickerGridColumnClass(pickerColumnCount)}`}
-                >
-                  {showCountControls ? (
-                    <>
-                      <div className="body-metrics-inline__cell">
-                        <span className="body-metrics-inline__label">
-                          {t('machines:voiceCoach.targetReps')}
-                          <span className="body-metrics-inline__unit">
-                            {t('machines:voiceCoach.targetRepsUnit')}
-                          </span>
-                        </span>
-                        <ScrollPicker
-                          value={targetReps}
-                          onChange={(next) =>
-                            onTargetRepsChange(Math.max(MIN_REPS, Math.min(MAX_REPS, next)))
-                          }
-                          min={MIN_REPS}
-                          max={MAX_REPS}
-                          step={1}
-                          size={compact ? 'compact' : 'default'}
-                          defaultValue={DEFAULT_REPS}
-                          ariaLabel={t('machines:voiceCoach.targetReps')}
-                          formatValue={(value) => String(value)}
-                        />
-                      </div>
-                      <div className="body-metrics-inline__cell">
-                        <span className="body-metrics-inline__label">
-                          {t('machines:voiceCoach.countInterval')}
-                          <span className="body-metrics-inline__unit">
-                            {t('machines:voiceCoach.countIntervalUnit')}
-                          </span>
-                        </span>
-                        <ScrollPicker
-                          value={gapSec}
-                          onChange={(sec) => onRepGapMsChange(clampVoiceCoachRepGapMs(sec * 1000))}
-                          min={VOICE_COACH_REP_GAP.minMs / 1000}
-                          max={VOICE_COACH_REP_GAP.maxMs / 1000}
-                          step={VOICE_COACH_REP_GAP.stepMs / 1000}
-                          size={compact ? 'compact' : 'default'}
-                          defaultValue={VOICE_COACH_REP_GAP.defaultMs / 1000}
-                          ariaLabel={t('machines:voiceCoach.countInterval')}
-                          formatValue={(value) => value.toFixed(1)}
-                        />
-                      </div>
-                      {showOneMoreCountPicker ? (
-                        <div className="body-metrics-inline__cell">
-                          <span className="body-metrics-inline__label">
-                            {t('machines:voiceCoach.oneMoreCount')}
-                            <span className="body-metrics-inline__unit">
-                              {t('machines:voiceCoach.oneMoreCountUnit')}
-                            </span>
-                          </span>
-                          <ScrollPicker
-                            value={clampVoiceCoachOneMoreCount(oneMoreCount)}
-                            onChange={onOneMoreCountChange}
-                            min={VOICE_COACH_ONE_MORE.minCount}
-                            max={VOICE_COACH_ONE_MORE.maxCount}
-                            step={VOICE_COACH_ONE_MORE.step}
-                            size={compact ? 'compact' : 'default'}
-                            defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
-                            ariaLabel={t('machines:voiceCoach.oneMoreCount')}
-                            formatValue={(value) => String(value)}
-                          />
-                        </div>
-                      ) : null}
-                    </>
-                  ) : null}
-                  {showHoldDurationInGrid ? (
-                    <div className="body-metrics-inline__cell">
-                      <span className="body-metrics-inline__label">
-                        {t('machines:voiceCoach.holdDuration')}
-                        <span className="body-metrics-inline__unit">
-                          {t('machines:voiceCoach.holdDurationUnit')}
-                        </span>
-                      </span>
-                      <ScrollPicker
-                        value={duration}
-                        onChange={(sec) => {
-                          setDurationCustom(false);
-                          onHoldDurationSecChange(clampVoiceHoldDurationSec(sec));
-                        }}
-                        min={VOICE_HOLD_DURATION.minSec}
-                        max={VOICE_HOLD_DURATION.maxSec}
-                        step={1}
-                        size={compact ? 'compact' : 'default'}
-                        defaultValue={VOICE_HOLD_DURATION.defaultSec}
-                        ariaLabel={t('machines:voiceCoach.holdDuration')}
-                        formatValue={(value) => String(value)}
-                      />
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
+            <VoiceCoachPickerGrid
+              flowMode={flowMode}
+              oneMoreEnabled={oneMoreEnabled}
+              targetReps={targetReps}
+              onTargetRepsChange={onTargetRepsChange}
+              repGapMs={repGapMs}
+              onRepGapMsChange={onRepGapMsChange}
+              oneMoreCount={oneMoreCount}
+              onOneMoreCountChange={onOneMoreCountChange}
+              holdDurationSec={holdDurationSec}
+              onHoldDurationSecChange={onHoldDurationSecChange}
+              disabled={isRunning}
+              recordsLayout={inlineHoldInPickers}
+              labels="machines"
+              compact={compact}
+            />
 
             {showHoldDurationSeparate ? (
               <div className="voice-coach-panel__hold-duration">

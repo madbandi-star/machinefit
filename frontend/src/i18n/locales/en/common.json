@@ -260,6 +260,7 @@
     "voiceCoachFlowMode_count_hold": "Count + Hold!!!",
     "voiceCoachFlowMode_hold": "Hold!!! only",
     "voiceHoldDuration": "Hold!!! duration",
+    "voiceHoldDurationUnit": "sec",
     "voiceHoldDurationOption": "{{sec}}s",
     "voiceHoldDurationCustom": "Custom",
     "voiceCoachAutoAfterRest": "Auto-start after rest",
