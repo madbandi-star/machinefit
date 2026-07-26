@@ -16,6 +16,7 @@
 
 .legal-disclaimer p {
   margin: 0 0 0.35rem;
+  white-space: pre-line;
 }
 
 .legal-disclaimer a {

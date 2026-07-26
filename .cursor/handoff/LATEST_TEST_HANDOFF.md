@@ -1,20 +1,16 @@
-# Latest test handoff — Achievements category filter grid
+# Latest test handoff — Achievements header tabs + AI disclaimer
 
 **Branch:** `main`
 
 ## Change
 
-업적 페이지 카테고리 필터 UI — 가로 스크롤 제거, 한눈에 보는 그리드.
-
-- 전체 · 총볼륨 · … · 시즌업적까지 **4열 그리드**(넓은 화면 6열)
-- 이모지 + 짧은 라벨 컴팩트 칩
-- 패널 카드 스타일
+1. **업적 페이지** — `[업적][랭킹]` 탭을 좌측 상단 **업적** 타이틀 옆으로 이동
+2. **AI 면책 문구** — `compliance.disclaimer.ai` 문구 변경 (2줄)
 
 ## Test focus
 
-1. `/my-page/achievements` → **업적** 탭
-2. 카테고리 패널에 가로 스크롤 없음
-3. 각 카테고리 탭 시 목록 필터 동작
+1. `/my-page/achievements` — `업적 [업적] [랭킹]` 헤더 레이아웃, 탭 전환
+2. 추천 결과 / Lifter DNA 등 — 새 AI 면책 문구 2줄 표시
 
 ## Fast checks
 
@@ -25,6 +21,7 @@ npm run test:smoke:changed
 
 ## as-is → to-be
 
-| As-is | To-be |
-|-------|-------|
-| 긴 가로 스크롤 칩 | 4열 그리드, 전체 카테고리 한눈에 |
+| Area | As-is | To-be |
+|------|-------|-------|
+| Achievements tabs | Hero 아래 별도 행 | 타이틀 옆 |
+| AI disclaimer | 참고용 추정… 의료 조언 아님 | 참고용이며 오차… / 의료적 판단 대체 안 함 |

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import '@/styles/components.css';
 
 interface PageShellProps {
-  title?: string;
+  title?: ReactNode;
   subtitle?: string;
   action?: ReactNode;
   children?: ReactNode;
@@ -18,7 +18,13 @@ export function PageShell({ title, subtitle, action, children }: PageShellProps)
           className={`page-shell__header${subtitle ? '' : ' page-shell__header--no-subtitle'}`}
         >
           <div>
-            {title && <h1 className="page-title">{title}</h1>}
+            {title != null && title !== false && title !== '' ? (
+              typeof title === 'string' ? (
+                <h1 className="page-title">{title}</h1>
+              ) : (
+                title
+              )
+            ) : null}
             {subtitle && <p className="page-subtitle">{subtitle}</p>}
           </div>
           {action}

@@ -227,10 +227,38 @@ export function AchievementsPage() {
     }
   };
 
+  const achievementTabs = (
+    <div className="achievements-tabs" role="tablist" aria-label={t('achievements.title')}>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === 'overview'}
+        className={`achievements-tab${tab === 'overview' ? ' achievements-tab--active' : ''}`}
+        onClick={() => setTab('overview')}
+      >
+        {t('achievements.tabOverview')}
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === 'rankings'}
+        className={`achievements-tab${tab === 'rankings' ? ' achievements-tab--active' : ''}`}
+        onClick={() => setTab('rankings')}
+      >
+        {t('achievements.tabRankings')}
+      </button>
+    </div>
+  );
+
   return (
     <div className="achievements-page">
       <PageShell
-        title={t('achievements.title')}
+        title={
+          <div className="achievements-page__title-row">
+            <h1 className="page-title">{t('achievements.title')}</h1>
+            {achievementTabs}
+          </div>
+        }
         action={
           <label
             className="achievements-popup-switch"
@@ -353,25 +381,6 @@ export function AchievementsPage() {
                 </div>
               ) : null}
             </section>
-
-            <div className="achievements-toolbar">
-              <div className="achievements-tabs" role="tablist">
-                <button
-                  type="button"
-                  className={`achievements-tab${tab === 'overview' ? ' achievements-tab--active' : ''}`}
-                  onClick={() => setTab('overview')}
-                >
-                  {t('achievements.tabOverview')}
-                </button>
-                <button
-                  type="button"
-                  className={`achievements-tab${tab === 'rankings' ? ' achievements-tab--active' : ''}`}
-                  onClick={() => setTab('rankings')}
-                >
-                  {t('achievements.tabRankings')}
-                </button>
-              </div>
-            </div>
 
             {tab === 'overview' && (
               <>

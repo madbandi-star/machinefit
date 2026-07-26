@@ -28,6 +28,19 @@
   display: flex;
   align-items: center;
   min-width: 0;
+  flex: 1 1 auto;
+}
+
+.achievements-page__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.achievements-page__title-row .page-title {
+  flex-shrink: 0;
 }
 
 .achievements-page .page-title {
@@ -231,19 +244,23 @@
 }
 
 .achievements-tabs {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  display: inline-flex;
+  gap: 0.3rem;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 .achievements-tab {
   border: 1px solid var(--ach-line);
-  background: var(--ach-panel);
-  color: var(--ach-ink);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ach-muted);
   border-radius: 999px;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.82rem;
+  padding: 0.32rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .achievements-tab--active {

@@ -1280,7 +1280,7 @@
   },
   "compliance": {
     "disclaimer": {
-      "ai": "AI recommendations are estimates for reference only and may be wrong. Not medical advice.",
+      "ai": "AI recommendations are for reference only and may contain errors.\nThey do not replace medical judgment.",
       "health": "Stop training and seek a professional if you feel pain or unwell.",
       "pt": "Online PT is coaching reference, not medical practice. Injury risk remains with you.",
       "commerce": "Checkout is demo-only (no real charge). Refunds restore ticket credits.",

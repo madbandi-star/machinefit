@@ -1,20 +1,25 @@
 {
-  "title": "Achievements category filter grid",
-  "summary": "Replace horizontal scrolling category chips on achievements page with a 4-column wrap grid so all filters (전체 through 시즌 업적) are visible without sideways scroll.",
-  "git": { "branch": "main", "commit": "7c61cd0" },
+  "title": "Achievements header tabs + AI disclaimer copy",
+  "summary": "Move 업적/랭킹 tabs beside page title in achievements header. Update compliance AI disclaimer wording to two-line reference-only text.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/achievements/AchievementsPage.tsx",
-    "frontend/src/pages/achievements/AchievementsPage.css"
+    "frontend/src/pages/achievements/AchievementsPage.css",
+    "frontend/src/components/layout/PageContainer/PageShell.tsx",
+    "frontend/src/components/compliance/LegalDisclaimerBanner.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "Achievements overview tab: category panel shows all chips in grid; no horizontal scroll; tap each category filters list.",
+  "testFocus": "Achievements: title row shows 업적 [업적][랭킹] tabs; tab switch works. LegalDisclaimerBanner ai variant shows new two-line copy with line break.",
   "fastChecks": [
     "npm run build --prefix frontend",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "Open /my-page/achievements — verify 4-col category grid and filtering"
+    "/my-page/achievements — header tabs beside title",
+    "Recommendation result or Lifter DNA — AI disclaimer text"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Category chips in one long horizontal scroll row.",
-  "toBe": "Compact emoji+label grid panel; all categories visible at once."
+  "asIs": "Achievement tabs below hero; old single-line AI disclaimer.",
+  "toBe": "Tabs in header next to title; updated disclaimer copy with pre-line."
 }
