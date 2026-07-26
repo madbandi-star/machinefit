@@ -1,7 +1,7 @@
 {
   "title": "Records save includes adjustment preferences",
   "summary": "History card bottom 저장하기 and bookmark save now run 조정값 저장 when adjustment edits are dirty, then upsert workout log. savePreferencesAsync added to fit feedback hook.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "7adbdfd" },
   "changedFiles": [
     "frontend/src/hooks/useMachineFitFeedback.ts",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
