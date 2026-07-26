@@ -245,22 +245,10 @@ export function formatRepWord(
 function formatCountdownWord(
   n: number,
   _locale?: string,
-  voicePack?: VoiceCoachPack
+  _voicePack?: VoiceCoachPack
 ): string {
-  if (normalizeVoiceCoachPack(voicePack) === 'male') return toEnglishRep(n);
-  const map: Record<number, string> = {
-    10: '십',
-    9: '구',
-    8: '팔',
-    7: '칠',
-    6: '육',
-    5: '오',
-    4: '사',
-    3: '삼',
-    2: '이',
-    1: '일',
-  };
-  return map[n] ?? toSinoKoreanCount(n);
+  // Prep countdown clips are English for both packs (female Jenny / male Guy).
+  return toEnglishRep(n);
 }
 
 function readyPhrase(_locale?: string, voicePack?: VoiceCoachPack): string {
@@ -480,14 +468,23 @@ async function speakCoachCue(options: {
     // Clip missing/failed — speak the number/phrase (never beep for count cues).
     if (kind === 'count' || kind === 'phrase') {
       let fallbackText = text;
+      const prepCountdown = kind === 'count' && !!clipKey?.startsWith('cd-');
       if (kind === 'count' && typeof countValue === 'number') {
-        fallbackText = maleEnglish
-          ? toEnglishRep(countValue)
-          : toSinoKoreanCount(countValue);
+        // Female prep countdown is English; female exercise reps stay Korean.
+        fallbackText =
+          maleEnglish || prepCountdown
+            ? toEnglishRep(countValue)
+            : toSinoKoreanCount(countValue);
+      }
+      const speakOpts = packSpeakOptions(pack, signal);
+      if (prepCountdown && !maleEnglish) {
+        speakOpts.lang = 'en-US';
+        speakOpts.preferFemaleVoice = true;
+        speakOpts.preferMaleVoice = undefined;
       }
       await speechManager.speak(fallbackText, {
-        ...packSpeakOptions(pack, signal),
-        rate: maleEnglish ? 0.92 : undefined,
+        ...speakOpts,
+        rate: maleEnglish || prepCountdown ? 0.92 : undefined,
       });
       return;
     }
