@@ -1,7 +1,7 @@
 {
   "title": "Records personal tip to save button spacing",
   "summary": "Tightened gap between 나만의 팁 memo and 저장하기 on records cards by grouping them in memo-actions with 0.35rem internal gap.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b5dfdc1" },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
     "frontend/src/styles/recommendation.css"
