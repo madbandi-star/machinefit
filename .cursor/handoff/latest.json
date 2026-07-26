@@ -1,14 +1,22 @@
 {
-  "title": "Settings — reorder voice count and rest duration",
-  "summary": "Move 음성 카운트 above 중량 난이도; move 휴식 시간 directly below 음성 카운트. Order: body → location → voice coach → rest → weight difficulty → units.",
-  "git": { "branch": "main", "commit": "ae32e77" },
+  "title": "Community boards — compact mobile list UI",
+  "summary": "Replace bulky post/request cards with dense board-index rows (~34px each) so 8+ titles fit on smartphone; shared BoardIndexPanel/Skeleton; compact page headers.",
+  "git": { "branch": "main", "commit": "d71c8ea" },
   "changedFiles": [
-    "frontend/src/pages/settings/SettingsPage.tsx"
+    "frontend/src/pages/free-board/FreeBoardPage.tsx",
+    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
+    "frontend/src/components/cards/PostCard/PostCard.tsx",
+    "frontend/src/components/community/BoardIndexPanel.tsx",
+    "frontend/src/components/community/BoardIndexSkeleton.tsx",
+    "frontend/src/components/community/BoardRequestRow.tsx",
+    "frontend/src/styles/community.css",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json"
   ],
-  "testFocus": "Settings section order: voice coach, rest duration, weight difficulty, unit settings; no functional regression.",
+  "testFocus": "Free board and machine request board show 8+ title rows on mobile viewport; tap post opens detail; status badges on requests.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["Open /settings — verify menu order on scroll"],
+  "productionChecks": ["Open both boards on 390px width — verify dense list without card padding bloat"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Order was weight difficulty → units → rest → voice coach.",
-  "toBe": "Voice coach → rest duration → weight difficulty → units."
+  "asIs": "Large cards with excerpt text; ~3 posts visible per screen.",
+  "toBe": "Forum-style compact rows; 8+ titles visible; cleaner header."
 }

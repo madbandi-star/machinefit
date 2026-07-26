@@ -11,11 +11,14 @@ interface PostCardProps {
   isDeleting?: boolean;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, {
-    month: 'short',
+function formatDateShort(iso: string) {
+  const date = new Date(iso);
+  const now = new Date();
+  const sameYear = date.getFullYear() === now.getFullYear();
+  return date.toLocaleDateString(undefined, {
+    month: 'numeric',
     day: 'numeric',
-    year: 'numeric',
+    ...(sameYear ? {} : { year: '2-digit' }),
   });
 }
 
@@ -24,24 +27,25 @@ export function PostCard({ post, showDelete, onDelete, isDeleting }: PostCardPro
   const href = ROUTES.POST_DETAIL.replace(':postId', post.id);
 
   return (
-    <div className={`post-card-wrap${showDelete && onDelete ? ' post-card-wrap--with-delete' : ''}`}>
-      <Link to={href} className="card card--interactive post-card">
-        <h3 className="post-card__title">{post.title}</h3>
-        <p className="post-card__excerpt">
-          {post.content.length > 120 ? `${post.content.slice(0, 120)}…` : post.content}
-        </p>
-        <div className="post-card__meta">
-          <span>{post.authorName ?? 'Anonymous'}</span>
-          <span>{formatDate(post.createdAt)}</span>
-          <span>👁 {post.viewCount}</span>
-          {post.likeCount != null && <span>♥ {post.likeCount}</span>}
-          {post.commentCount != null && <span>💬 {post.commentCount}</span>}
-        </div>
+    <div className={`board-index-row-wrap${showDelete && onDelete ? ' board-index-row-wrap--admin' : ''}`}>
+      <Link to={href} className="board-index-row">
+        {post.isPinned ? (
+          <span className="board-index-row__pin" aria-label={t('pinnedPost')}>
+            📌
+          </span>
+        ) : null}
+        <span className="board-index-row__title">{post.title}</span>
+        <span className="board-index-row__meta">
+          {post.commentCount != null && post.commentCount > 0 ? (
+            <span className="board-index-row__stat">{post.commentCount}</span>
+          ) : null}
+          <time dateTime={post.createdAt}>{formatDateShort(post.createdAt)}</time>
+        </span>
       </Link>
       {showDelete && onDelete ? (
         <button
           type="button"
-          className="post-card__delete"
+          className="board-index-row__delete"
           disabled={isDeleting}
           aria-label={t('deletePost')}
           onClick={(event) => {

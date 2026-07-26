@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { PostCard } from '@/components/cards/PostCard/PostCard';
-import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
+import { BoardIndexSkeleton } from '@/components/community/BoardIndexSkeleton';
 import { communityApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -130,9 +131,9 @@ export function FreeBoardPage() {
         )}
 
         {isLoading ? (
-          <Skeleton count={3} />
+          <BoardIndexSkeleton rows={8} />
         ) : data?.items.length ? (
-          <div className="community-board-page__list">
+          <BoardIndexPanel countLabel={t('postCount', { count: data.items.length })}>
             {data.items.map((post) => (
               <PostCard
                 key={post.id}
@@ -142,7 +143,7 @@ export function FreeBoardPage() {
                 isDeleting={deletingPostId === post.id && deleteMutation.isPending}
               />
             ))}
-          </div>
+          </BoardIndexPanel>
         ) : (
           <p className="community-board-page__empty">{t('noPosts')}</p>
         )}

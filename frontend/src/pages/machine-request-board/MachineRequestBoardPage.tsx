@@ -3,7 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
+import { BoardIndexSkeleton } from '@/components/community/BoardIndexSkeleton';
+import { BoardRequestRow } from '@/components/community/BoardRequestRow';
 import { machineRequestApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -67,87 +69,75 @@ export function MachineRequestBoardPage() {
   };
 
   return (
-    <PageShell
-      title={t('machineRequests')}
-      subtitle={t('machineRequestsSubtitle')}
-      action={
-        <button className="btn btn--primary" onClick={handleNew}>
-          {t('newRequest')}
-        </button>
-      }
-    >
-      {showForm && (
-        <form className="card" style={{ marginBottom: '1rem' }} onSubmit={handleSubmit}>
-          <div className="form-row">
-            <label htmlFor="req-brand">{t('brandName')}</label>
-            <input
-              id="req-brand"
-              value={brandName}
-              onChange={(e) => setBrandName(e.target.value)}
-            />
-          </div>
-          <div className="form-row">
-            <label htmlFor="req-machine">{t('machineName')}</label>
-            <input
-              id="req-machine"
-              value={machineName}
-              onChange={(e) => setMachineName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-row">
-            <label htmlFor="req-desc">{t('description')}</label>
-            <textarea
-              id="req-desc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button type="submit" className="btn btn--primary" disabled={createMutation.isPending}>
-              {t('submit')}
-            </button>
-            <button type="button" className="btn btn--secondary" onClick={() => setShowForm(false)}>
-              {t('cancel')}
+    <div className="community-board-page">
+      <PageShell
+        title={t('machineRequests')}
+        subtitle={t('machineRequestsSubtitle')}
+        action={
+          <div className="page-shell__header-action">
+            <button type="button" className="btn btn--primary" onClick={handleNew}>
+              {t('newRequest')}
             </button>
           </div>
-        </form>
-      )}
-
-      {isLoading ? (
-        <Skeleton count={3} />
-      ) : data?.items.length ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {data.items.map((req) => (
-            <div key={req.id} className="card request-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-                    {req.brandName ? `${req.brandName} — ` : ''}{req.machineName}
-                  </h3>
-                  {req.description && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                      {req.description}
-                    </p>
-                  )}
-                </div>
-                <span className={`request-card__status request-card__status--${req.status}`}>
-                  {req.status}
-                </span>
-              </div>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>
-                {req.authorName} · {new Date(req.createdAt).toLocaleDateString()}
-              </p>
+        }
+      >
+        {showForm && (
+          <form className="card community-board-page__form" onSubmit={handleSubmit}>
+            <div className="form-row">
+              <label htmlFor="req-brand">{t('brandName')}</label>
+              <input
+                id="req-brand"
+                className="input"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+              />
             </div>
-          ))}
-        </div>
-      ) : (
-        <p style={{ color: 'var(--color-text-muted)' }}>{t('noRequests')}</p>
-      )}
+            <div className="form-row">
+              <label htmlFor="req-machine">{t('machineName')}</label>
+              <input
+                id="req-machine"
+                className="input"
+                value={machineName}
+                onChange={(e) => setMachineName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="req-desc">{t('description')}</label>
+              <textarea
+                id="req-desc"
+                className="input"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+            <div className="community-board-page__form-actions">
+              <button type="submit" className="btn btn--primary" disabled={createMutation.isPending}>
+                {t('submit')}
+              </button>
+              <button type="button" className="btn btn--secondary" onClick={() => setShowForm(false)}>
+                {t('cancel')}
+              </button>
+            </div>
+          </form>
+        )}
 
-      <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }}>
-        ← {tCommon('nav.myPage')}
-      </Link>
-    </PageShell>
+        {isLoading ? (
+          <BoardIndexSkeleton rows={8} />
+        ) : data?.items.length ? (
+          <BoardIndexPanel countLabel={t('requestCount', { count: data.items.length })}>
+            {data.items.map((req) => (
+              <BoardRequestRow key={req.id} request={req} />
+            ))}
+          </BoardIndexPanel>
+        ) : (
+          <p className="community-board-page__empty">{t('noRequests')}</p>
+        )}
+
+        <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block community-board-page__back">
+          ← {tCommon('nav.myPage')}
+        </Link>
+      </PageShell>
+    </div>
   );
 }
