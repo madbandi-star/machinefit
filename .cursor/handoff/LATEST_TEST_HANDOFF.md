@@ -1,25 +1,20 @@
-# Latest test handoff — My Page menu deploy batch
+# Latest test handoff — Friends menu simplification
 
 **Branch:** `main`
 
-## Changes in this deploy
+## Change
 
-1. **MachineFit Insights** — 순서·이름: 운동성향 → 누적무게 → 업적
-2. **친구 목록** — 친구 관리 → **개인설정** (회원)
-3. *(already local)* Lab 실험실 서브메뉴 이동, Insights 라벨 (`ad12145`)
+- **개인설정:** 친구 목록 → **친구관리** (`/my-page/friends`)
+- **제거:** 친구 관리 섹션 전체 (받은/보낸 요청, 차단, 공개 설정, 피드, 랭킹, 초대)
 
 ## Test focus
 
-- `/machinefit/my-page` Insights 라벨·순서
-- 개인설정에 친구 목록, 친구 관리에는 없음
-- 실험실 섹션 항목 정상
+1. 개인설정에 **친구관리**만 표시 (회원)
+2. 마이페이지에 친구 관리 섹션 없음
+3. 친구관리 링크 동작
 
 ## Fast checks
 
 ```bash
 npm run build --prefix frontend
 ```
-
-## Deploy
-
-- Frontend: GitHub Pages (push to `main`)

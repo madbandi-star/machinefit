@@ -1,20 +1,19 @@
 {
-  "title": "My Page menu updates — Insights labels, friends list in settings",
-  "summary": "Insights submenu renamed/reordered (운동성향, 누적무게, 업적). 친구 목록 moved from 친구 관리 to 개인설정. Includes prior Lab submenu moves (9e437f4) if not yet on origin.",
+  "title": "My Page — rename friends link, remove friends section",
+  "summary": "개인설정 친구 목록 → 친구관리 (ROUTES.FRIENDS). Removed entire 친구 관리 section and submenus from My Page.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/i18n/locales/ko/common.json"
   ],
-  "testFocus": "My Page: Insights order/labels; 개인설정 has 친구 목록 (members); 친구 관리 without 친구 목록; Lab section items unchanged.",
+  "testFocus": "My Page 개인설정 shows 친구관리 (members only). No separate 친구 관리 section. /my-page/friends still reachable via link.",
   "fastChecks": [
     "npm run build --prefix frontend"
   ],
   "productionChecks": [
-    "Open /machinefit/my-page after Deploy Frontend success"
+    "Open /machinefit/my-page — verify layout"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Insights old labels/order; 친구 목록 under 친구 관리.",
-  "toBe": "Insights: 운동성향 → 누적무게 → 업적; 친구 목록 under 개인설정."
+  "asIs": "친구 목록 in settings; full 친구 관리 section with 7 submenus.",
+  "toBe": "Single 친구관리 in 개인설정; no 친구 관리 section on My Page."
 }
