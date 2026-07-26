@@ -1,35 +1,31 @@
-# Latest test handoff — favorites 500 (Express 5)
+# Latest test handoff — favorites empty page
 
 **Branch:** `main`  
-**Scope:** backend (Render redeploy required)
+**Scope:** frontend
 
-## Root cause
+## Change
 
-Express 5 makes `req.query` **read-only**. `validateQuery` did `req.query = result.data`, which throws:
+When favorites API returns **0 items**, navigate to **`/favorites/empty`**:
 
-`TypeError: Cannot set property query of #<IncomingMessage> which has only a getter`
-
-→ **500** on `GET /favorites` (home 즐겨찾기 row). History worked because it does not use `validateQuery`.
-
-## Fix
-
-- Store parsed query on `res.locals.validatedQuery`
-- Controllers use `getValidatedQuery(res)` (favorites + workout-log list/insights)
+- Title: 즐겨찾기가 0건입니다
+- Description + **기구 검색** button (→ `/machines`)
+- Triggers: home favorites card, records favorites tab, `/favorites` entry
+- If user later has favorites, empty page redirects to records list
 
 ## Test focus
 
-1. **Render backend redeploy** first
-2. Signup or login → home
-3. Network: `GET /api/v1/favorites?gymId=...&memberId=...` → **200** `{"success":true,"data":[]}`
-4. Console: no red 500 spam
+1. Logged-in user with 0 favorites → tap home favorites prompt → empty page + search button
+2. Records → 즐겨찾기 tab → same empty page (not inline empty state)
+3. `/favorites` with items → records favorites list
+4. Search button opens machine search
 
 ## Fast checks
 
 ```bash
-npm run build --workspace=backend
+npm run build --prefix frontend
 ```
 
 ## Deploy
 
-- **Backend: Render Manual Deploy (required)**
-- Frontend: no change in this commit
+- Frontend: GitHub Pages (push to `main`)
+- Backend: not needed

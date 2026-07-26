@@ -9,6 +9,7 @@ export const ROUTES = {
   GYMS: '/gyms',
   GYM_DETAIL: '/gyms/:gymId',
   FAVORITES: '/favorites',
+  FAVORITES_EMPTY: '/favorites/empty',
   HISTORY: '/history',
   RECORDS: '/records',
   COMMUNITY: '/community',

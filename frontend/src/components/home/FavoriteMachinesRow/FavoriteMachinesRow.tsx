@@ -44,7 +44,7 @@ export function FavoriteMachinesRow() {
           icon="heart"
           title={t('pages.home.favoritesEmptyAction')}
           description={t('pages.home.favoritesEmptyHint')}
-          to={ROUTES.MACHINES}
+          to={ROUTES.FAVORITES_EMPTY}
         />
       ) : (
         <div className="home-scroll-row">

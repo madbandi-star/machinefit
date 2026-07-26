@@ -253,6 +253,10 @@
   },
   "favorites": {
     "empty": "No favorites yet.",
+    "emptyPage": {
+      "title": "You have 0 favorites",
+      "description": "No saved machines yet. Search for equipment and tap ♥ on the detail screen to add favorites."
+    },
     "remove": "Remove"
   },
   "settings": {

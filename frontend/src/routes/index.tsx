@@ -47,6 +47,10 @@ const gymDetail = () =>
   import('@/pages/gym-detail/GymDetailPage').then((m) => ({ default: m.GymDetailPage }));
 const records = () =>
   import('@/pages/records/RecordsPage').then((m) => ({ default: m.RecordsPage }));
+const favoritesIndex = () =>
+  import('@/pages/favorites/FavoritesIndexPage').then((m) => ({ default: m.FavoritesIndexPage }));
+const favoritesEmpty = () =>
+  import('@/pages/favorites/FavoritesEmptyPage').then((m) => ({ default: m.FavoritesEmptyPage }));
 const community = () =>
   import('@/pages/community/CommunityPage').then((m) => ({ default: m.CommunityPage }));
 const postDetail = () =>
@@ -295,13 +299,11 @@ export const router = createBrowserRouter(
           element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
         },
         {
-          path: ROUTES.FAVORITES,
-          element: <Navigate to={`${ROUTES.RECORDS}?tab=favorites`} replace />,
-        },
-        {
           element: <AuthGuard />,
           children: [
+            { path: ROUTES.FAVORITES, element: lazyRoute(favoritesIndex) },
             { path: ROUTES.RECORDS, element: lazyRoute(records) },
+            { path: ROUTES.FAVORITES_EMPTY, element: lazyRoute(favoritesEmpty) },
             { path: ROUTES.RECOMMEND, element: lazyRoute(recommendForm) },
             { path: ROUTES.RECOMMEND_RESULT, element: lazyRoute(recommendResult) },
             { path: ROUTES.MY_PAGE, element: lazyRoute(myPage) },

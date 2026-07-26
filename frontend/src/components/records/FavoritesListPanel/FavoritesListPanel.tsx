@@ -1,9 +1,8 @@
-import { Link } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link, Navigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import { MachineNameWithMuscle } from '@/components/muscle/MachineNameWithMuscle/MachineNameWithMuscle';
-import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { favoriteApi } from '@/api';
@@ -11,6 +10,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useUIStore } from '@/store/ui.store';
 import { shouldShowDefaultMachineMuscle, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import '@/styles/records.css';
@@ -24,14 +24,7 @@ export function FavoritesListPanel() {
   const memberKey = activeMemberId ?? '';
   const favoritesKey = QUERY_KEYS.favorites(activeGymId ?? '', memberKey);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: favoritesKey,
-    queryFn: async () => {
-      const res = await favoriteApi.list(activeGymId!, activeMemberId ?? undefined);
-      return res.data.data;
-    },
-    enabled: Boolean(activeGymId) && memberScopeReady,
-  });
+  const { data, isLoading, isError } = useFavoritesList();
 
   const removeMutation = useMutation({
     mutationFn: (item: { id: string; machineCode: string }) => favoriteApi.remove(item.id),
@@ -81,17 +74,7 @@ export function FavoritesListPanel() {
   if (!activeGymId || !memberScopeReady || isLoading) return <Skeleton count={3} height={56} />;
   if (isError) return <QueryErrorMessage />;
   if (!data?.length) {
-    return (
-      <EmptyState
-        icon="heart"
-        title={t('machines:favorites.empty')}
-        action={
-          <Link to={ROUTES.MACHINES} className="btn btn--primary">
-            {t('common:emptyState.browseMachines')}
-          </Link>
-        }
-      />
-    );
+    return <Navigate to={ROUTES.FAVORITES_EMPTY} replace />;
   }
 
   return (
