@@ -228,26 +228,31 @@ export function AchievementsPage() {
   };
 
   return (
-    <PageShell
-      title={t('achievements.title')}
-      action={
-        <label
-          className="achievements-popup-pref achievements-popup-pref--header"
-          title={t('achievements.popupPrefHint')}
-        >
-          <input
-            type="checkbox"
-            className="achievements-popup-pref__input"
-            checked={popupEnabled}
-            onChange={(event) => handlePopupEnabledChange(event.target.checked)}
-            aria-label={t('achievements.popupPrefShort')}
-          />
-          <span className="achievements-popup-pref__box" aria-hidden />
-          <span className="achievements-popup-pref__title">{t('achievements.popupPrefShort')}</span>
-        </label>
-      }
-    >
-      <div className="achievements-page">
+    <div className="achievements-page">
+      <PageShell
+        title={t('achievements.title')}
+        action={
+          <label
+            className="achievements-popup-switch"
+            title={t('achievements.popupPrefHint')}
+          >
+            <span className="achievements-popup-switch__label">
+              {t('achievements.popupPrefShort')}
+            </span>
+            <span className="achievements-popup-switch__control">
+              <input
+                type="checkbox"
+                className="achievements-popup-switch__input"
+                checked={popupEnabled}
+                onChange={(event) => handlePopupEnabledChange(event.target.checked)}
+                aria-label={t('achievements.popupPrefShort')}
+              />
+              <span className="achievements-popup-switch__track" aria-hidden />
+            </span>
+          </label>
+        }
+      >
+        <div className="achievements-page__body">
         {isLoading && <Skeleton count={5} height={72} />}
         {isError && <p className="form-error-summary">{t('achievements.loadError')}</p>}
 
@@ -520,8 +525,9 @@ export function AchievementsPage() {
             </div>
           </div>
         )}
-      </div>
-    </PageShell>
+        </div>
+      </PageShell>
+    </div>
   );
 }
 

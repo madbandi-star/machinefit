@@ -5,17 +5,43 @@
   --ach-gold-soft: rgba(201, 162, 39, 0.14);
   --ach-panel: rgba(255, 255, 255, 0.72);
   --ach-line: rgba(20, 18, 28, 0.08);
-  display: grid;
-  gap: 1.25rem;
-  padding-bottom: 2rem;
+  margin: -1rem -1rem 0;
+  padding: 0 1rem 2.5rem;
+  border-radius: 0;
+  min-height: 100%;
   background:
     radial-gradient(120% 80% at 10% -10%, rgba(201, 162, 39, 0.18), transparent 55%),
     radial-gradient(90% 60% at 100% 0%, rgba(70, 100, 180, 0.12), transparent 50%),
     linear-gradient(180deg, #f7f4ee 0%, #efeae1 100%);
-  margin: -1rem;
-  padding: 1rem 1rem 2.5rem;
-  border-radius: 0;
-  min-height: 100%;
+}
+
+.achievements-page .page-shell__header--no-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0 0.5rem;
+}
+
+.achievements-page .page-shell__header--no-subtitle > div:first-child {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.achievements-page .page-title {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ach-ink);
+}
+
+.achievements-page__body {
+  display: grid;
+  gap: 1.25rem;
 }
 
 .achievements-hero {
@@ -528,43 +554,92 @@
   cursor: pointer;
 }
 
-.achievements-popup-pref--header {
+.achievements-popup-switch {
+  display: inline-flex;
   align-items: center;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  gap: 0.4rem;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.38rem 0.5rem 0.38rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--ach-line);
+  box-shadow: 0 2px 10px rgba(28, 24, 48, 0.07);
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
 }
 
-.achievements-popup-pref--header .achievements-popup-pref__box {
-  margin-top: 0;
-  width: 1rem;
-  height: 1rem;
+.achievements-popup-switch:active {
+  transform: scale(0.98);
 }
 
-.achievements-popup-pref--header .achievements-popup-pref__title {
-  font-size: 0.82rem;
-  font-weight: 600;
-  line-height: 1;
+.achievements-popup-switch__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ach-muted);
   white-space: nowrap;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
-section:has(> .achievements-page) .page-shell__header--no-subtitle {
+.achievements-popup-switch__control {
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  min-height: 2.85rem;
-  padding: 0.4rem 0;
+  width: 2.5rem;
+  height: 1.45rem;
+  flex-shrink: 0;
 }
 
-section:has(> .achievements-page) .page-shell__header--no-subtitle > div:first-child {
-  display: flex;
-  align-items: center;
-  min-height: 2rem;
+.achievements-popup-switch__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
 }
 
-section:has(> .achievements-page) .page-title {
-  margin-bottom: 0;
-  line-height: 1.2;
+.achievements-popup-switch__track {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(20, 18, 28, 0.12);
+  border: 1px solid rgba(20, 18, 28, 0.06);
+  transition: background 0.22s ease, border-color 0.22s ease;
+  position: relative;
+  pointer-events: none;
+}
+
+.achievements-popup-switch__track::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.12rem;
+  width: 1.08rem;
+  height: 1.08rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(20, 18, 28, 0.2);
+  transform: translateY(-50%);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.achievements-popup-switch__input:checked + .achievements-popup-switch__track {
+  background: linear-gradient(90deg, #e8b84a, #c9a227);
+  border-color: rgba(201, 162, 39, 0.45);
+}
+
+.achievements-popup-switch__input:checked + .achievements-popup-switch__track::after {
+  transform: translate(1.05rem, -50%);
+}
+
+.achievements-popup-switch__input:focus-visible + .achievements-popup-switch__track {
+  outline: 2px solid rgba(201, 162, 39, 0.55);
+  outline-offset: 2px;
 }
 
 .achievements-popup-pref__input {
