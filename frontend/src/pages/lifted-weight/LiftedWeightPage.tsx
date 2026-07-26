@@ -118,8 +118,6 @@ export function LiftedWeightPage() {
           </Link>
         }
       >
-        <p className="lifted-weight__subtitle fade-in">{t('liftedWeight.subtitle')}</p>
-
         <div className="lifted-weight__modes fade-in" role="tablist" aria-label={t('liftedWeight.modes')}>
           {modes.map((item) => (
             <button

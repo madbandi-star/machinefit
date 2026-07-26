@@ -773,8 +773,7 @@
     "shareSaved": "공유 이미지를 저장했어요."
   },
   "liftedWeight": {
-    "title": "누적 들어올린 무게",
-    "subtitle": "MachineFit 회원들의 총 볼륨을 비교하고 공유해 보세요.",
+    "title": "누적 무게",
     "modes": "집계 범위",
     "modeUser": "나",
     "modeGym": "헬스장",

@@ -773,8 +773,7 @@
     "shareSaved": "Share image saved."
   },
   "liftedWeight": {
-    "title": "Total weight lifted",
-    "subtitle": "See and share MachineFit members’ cumulative training volume.",
+    "title": "Total weight",
     "modes": "Scope",
     "modeUser": "Me",
     "modeGym": "Gym",
