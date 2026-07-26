@@ -1484,7 +1484,7 @@
 }
 
 .workout-display-overlay__time {
-  font-size: clamp(4.5rem, 28vw, 9rem);
+  font-size: clamp(6.5rem, 42vw, 14rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -1493,7 +1493,7 @@
 
 .workout-display-overlay__count {
   display: inline-block;
-  font-size: clamp(4.5rem, 28vw, 9rem);
+  font-size: clamp(6.5rem, 42vw, 14rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;

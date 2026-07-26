@@ -1,17 +1,16 @@
-# Latest test handoff — Records tip/save spacing
+# Latest test handoff — Fullscreen display font size
 
 **Branch:** `main`  
-**Scope:** frontend
+**Scope:** frontend CSS
 
 ## Change
 
-Records card: reduced gap between **나만의 팁** memo and **저장하기** button.
+Workout full-screen overlay: larger rest time (`M:SS`) and count numbers.
 
 ## Test focus
 
-1. Expand record card → scroll to personal tip + save
-2. Gap between textarea and save button should be noticeably tighter
-3. Diary → personal tip spacing unchanged
+1. Rest timer fullscreen → time text much larger
+2. Count start fullscreen → rep/countdown numbers much larger
 
 ## Fast checks
 
@@ -22,4 +21,3 @@ npm run build --prefix frontend
 ## Deploy
 
 - Frontend: GitHub Pages (push to `main`)
-- Backend: not needed

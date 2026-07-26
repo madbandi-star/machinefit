@@ -1,15 +1,12 @@
 {
-  "title": "Records personal tip to save button spacing",
-  "summary": "Tightened gap between 나만의 팁 memo and 저장하기 on records cards by grouping them in memo-actions with 0.35rem internal gap.",
-  "git": { "branch": "main", "commit": "b5dfdc1" },
-  "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css"
-  ],
-  "testFocus": "Records card expanded: personal tip textarea to 저장하기 button spacing should feel tighter (~0.35rem) without affecting diary-to-tip spacing.",
+  "title": "Enlarge fullscreen workout display numbers",
+  "summary": "Increased rest timer and count font size in WorkoutDisplayOverlay from clamp(4.5rem, 28vw, 9rem) to clamp(6.5rem, 42vw, 14rem).",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/styles/recommendation.css"],
+  "testFocus": "Full-screen rest timer and count overlay: numbers should appear significantly larger on mobile.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "~1.5rem combined gap between personal tip and save button.",
-  "toBe": "~0.35rem gap between personal tip and save button."
+  "asIs": "Fullscreen time/count used clamp(4.5rem, 28vw, 9rem).",
+  "toBe": "clamp(6.5rem, 42vw, 14rem) for better gym visibility."
 }
