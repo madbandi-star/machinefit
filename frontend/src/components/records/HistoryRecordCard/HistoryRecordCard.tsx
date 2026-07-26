@@ -312,6 +312,7 @@ export function HistoryRecordCard({
           {canUseFitFeedback ? (
             <FitFeedbackPanel
               savedRating={savedRating}
+              showIntroText={false}
               onRating={(rating) => {
                 if (rating === 'bad') setIsEditingAdjustments(true);
                 else setIsEditingAdjustments(false);

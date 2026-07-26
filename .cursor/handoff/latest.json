@@ -1,15 +1,15 @@
 {
-  "title": "Records voice coach: settings-only preference controls",
-  "summary": "History VoiceCoachPanel hides voice pack, rest options, one-more/hold toggles, prep count, session mode, and count mode. My Page → Settings keeps all voice coach preferences.",
-  "git": { "branch": "main", "commit": "f6be6d4" },
+  "title": "Hide fit feedback intro on records page",
+  "summary": "Records HistoryRecordCard FitFeedbackPanel no longer shows '세팅이 잘 맞았나요?' title or '피드백은 다음 추천 개선에 활용됩니다.' desc. Rating buttons and save flow unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
+    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
-  "testFocus": "Records expanded voice coach: only enable toggle, target reps/interval pickers, hold duration (if applicable), start/stop remain. Settings page voice coach section unchanged. Recommendation page voice coach still shows all controls.",
+  "testFocus": "Records expanded card: fit feedback shows 잘 맞음/셋팅값 조정필요 only (no title/desc). Recommendation result page still shows intro copy.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Records voice coach duplicated many My Page settings controls.",
-  "toBe": "Records uses saved settings silently; My Page → Settings is the only place to change them."
+  "asIs": "Records fit feedback panel showed title and description above rating buttons.",
+  "toBe": "Records shows rating actions only; intro text remains on recommendation result page."
 }

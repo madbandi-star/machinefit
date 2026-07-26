@@ -11,6 +11,8 @@ interface FitFeedbackPanelProps {
   /** Shown only when “셋팅값 조정필요” is selected. */
   onSavePreferences?: () => void;
   isPreferencesPending?: boolean;
+  /** When false, hide title/desc intro copy (e.g. records page). */
+  showIntroText?: boolean;
 }
 
 export function FitFeedbackPanel({
@@ -19,12 +21,14 @@ export function FitFeedbackPanel({
   isPending = false,
   onSavePreferences,
   isPreferencesPending = false,
+  showIntroText = true,
 }: FitFeedbackPanelProps) {
   const { t } = useTranslation('machines');
   const goodRef = useRef<HTMLButtonElement>(null);
   const badRef = useRef<HTMLButtonElement>(null);
   const wasPendingRef = useRef(false);
   const showSavePreferences = Boolean(onSavePreferences) && savedRating === 'bad';
+  const hasIntro = showIntroText || showSavePreferences;
 
   const selectRating = (fitRating: FitRating) => {
     if (isPending) return;
@@ -46,22 +50,28 @@ export function FitFeedbackPanel({
 
   return (
     <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
-      <div className="fit-feedback-panel__intro">
-        <div className="fit-feedback-panel__intro-heading">
-          <h3 className="fit-feedback-panel__title">{t('feedback.title')}</h3>
-          {showSavePreferences ? (
-            <button
-              type="button"
-              className="btn btn--primary fit-feedback-panel__save-btn"
-              disabled={isPreferencesPending}
-              onClick={onSavePreferences}
-            >
-              {isPreferencesPending ? t('feedback.preferencesSaving') : t('feedback.savePreferences')}
-            </button>
+      {hasIntro ? (
+        <div className="fit-feedback-panel__intro">
+          {showIntroText || showSavePreferences ? (
+            <div className="fit-feedback-panel__intro-heading">
+              {showIntroText ? (
+                <h3 className="fit-feedback-panel__title">{t('feedback.title')}</h3>
+              ) : null}
+              {showSavePreferences ? (
+                <button
+                  type="button"
+                  className="btn btn--primary fit-feedback-panel__save-btn"
+                  disabled={isPreferencesPending}
+                  onClick={onSavePreferences}
+                >
+                  {isPreferencesPending ? t('feedback.preferencesSaving') : t('feedback.savePreferences')}
+                </button>
+              ) : null}
+            </div>
           ) : null}
+          {showIntroText ? <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p> : null}
         </div>
-        <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p>
-      </div>
+      ) : null}
       <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>
         <button
           ref={goodRef}

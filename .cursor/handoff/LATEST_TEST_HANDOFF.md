@@ -1,30 +1,24 @@
-# Latest test handoff — records voice coach settings-only
+# Latest test handoff — records fit feedback intro removed
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-On **records page** (history `WorkoutLogPanel` voice coach), hide:
+On **records page** expanded card, remove fit feedback intro copy:
 
-- 목소리 여성/남성
-- 준비 카운트
-- 세션 구성
-- 카운트 모드
-- 하나더(원모어) 세기 + 원모어 횟수
-- 마지막에 버텨!!! 추가
-- 휴식 후 자동 시작
-- 휴식 중 주의사항·운동팁 듣기
+- ~~세팅이 잘 맞았나요?~~
+- ~~피드백은 다음 추천 개선에 활용됩니다.~~
 
-**My Page → Settings** keeps all of the above. Saved values still apply on records.
+**잘 맞음 / 셋팅값 조정필요** buttons and preference save flow unchanged.
 
-Recommendation/workout page voice coach is unchanged.
+Recommendation result page still shows the intro text.
 
 ## Test focus
 
-1. Records → expand card → voice coach ON → hidden controls above **not visible**; start/stop works with saved settings
-2. My Page → Settings → voice coach → all controls **still visible**
-3. Machine recommendation page → voice coach → full controls **still visible**
+1. Records → expand card with recommendation → no title/desc above feedback buttons
+2. Feedback buttons still work; save preferences when “조정필요” selected
+3. Recommendation result page → intro text still visible
 
 ## Fast checks
 
