@@ -1,7 +1,7 @@
 {
   "title": "Hold seconds use male Korean MP3 clips",
   "summary": "버텨!!! hold second countdown now plays pre-recorded male Korean Sino clips (hold-ko pack from legacy male cd/rep audio), not OS female TTS. TTS fallback uses stricter male ko-KR voice pick.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "173ddfd" },
   "changedFiles": [
     "frontend/public/voice-coach/hold-ko/",
     "frontend/src/utils/voiceHold.ts",
