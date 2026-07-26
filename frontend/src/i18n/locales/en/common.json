@@ -406,7 +406,9 @@
       "s3Title": "3. User uploads",
       "s3Body": "You must have rights to upload. Unauthorized photos may be reported and removed.",
       "s4Title": "4. Infringement reports",
-      "s4Body": "Use Support (copyright) or content report reason copyright."
+      "s4Body": "Use Support (copyright) or content report reason copyright.",
+      "s5Title": "5. Trademarks",
+      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer."
     },
     "aiTitle": "AI & health disclaimer",
     "aiLead": "Reference-only notices for recommendations, insights, and Online PT.",
@@ -1285,6 +1287,7 @@
       "pt": "Online PT is coaching reference, not medical practice. Injury risk remains with you.",
       "commerce": "Checkout is demo-only (no real charge). Refunds restore ticket credits.",
       "sponsored": "This content may include advertising or sponsorship.",
+      "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
       "learnMore": "Learn more"
     },
     "sponsoredBadge": "Ad",

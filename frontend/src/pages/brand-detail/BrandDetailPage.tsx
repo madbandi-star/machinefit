@@ -6,6 +6,7 @@ import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/Query
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
@@ -54,6 +55,7 @@ export function BrandDetailPage() {
 
   return (
     <PageShell title={name} subtitle={t('brandDetail.subtitle', { code: brand.code })}>
+      <LegalDisclaimerBanner variant="trademark" compact />
       <div className="brand-detail__header">
         {logoUrl ? (
           <img src={logoUrl} alt={name} className="brand-detail__logo" loading="lazy" />

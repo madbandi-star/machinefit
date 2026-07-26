@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BrandCard } from '@/components/cards/BrandCard/BrandCard';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi } from '@/api';
 
@@ -19,6 +20,7 @@ export function BrandListPage() {
 
   return (
     <PageShell title={t('nav.brands')}>
+      <LegalDisclaimerBanner variant="trademark" compact />
       {isLoading ? (
         <Skeleton count={6} height={60} />
       ) : (

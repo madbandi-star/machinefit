@@ -16,12 +16,16 @@ export function MainLayout() {
           <Outlet />
         </div>
         <footer className="legal-footer">
-          <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
-          <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
-          <Link to={ROUTES.LEGAL_LOCATION}>{t('legal.locationTitle')}</Link>
-          <Link to={ROUTES.LEGAL_COMMERCE}>{t('legal.commerceTitle')}</Link>
-          <Link to={ROUTES.LEGAL_AI}>{t('legal.aiTitle')}</Link>
-          <Link to={ROUTES.SUPPORT}>{t('support.title')}</Link>
+          <div className="legal-footer__links">
+            <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
+            <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
+            <Link to={ROUTES.LEGAL_LOCATION}>{t('legal.locationTitle')}</Link>
+            <Link to={ROUTES.LEGAL_COMMERCE}>{t('legal.commerceTitle')}</Link>
+            <Link to={ROUTES.LEGAL_AI}>{t('legal.aiTitle')}</Link>
+            <Link to={ROUTES.LEGAL_COPYRIGHT}>{t('legal.copyrightTitle')}</Link>
+            <Link to={ROUTES.SUPPORT}>{t('support.title')}</Link>
+          </div>
+          <p className="legal-footer__trademark">{t('compliance.disclaimer.trademark')}</p>
         </footer>
       </main>
       <BottomNavigation />

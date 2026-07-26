@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/constants/routes';
 import './LegalDisclaimerBanner.css';
 
-type Variant = 'ai' | 'health' | 'pt' | 'commerce' | 'sponsored';
+type Variant = 'ai' | 'health' | 'pt' | 'commerce' | 'sponsored' | 'trademark';
 
 const VARIANT_TO_ROUTE: Record<Variant, string> = {
   ai: ROUTES.LEGAL_AI,
@@ -11,6 +11,7 @@ const VARIANT_TO_ROUTE: Record<Variant, string> = {
   pt: ROUTES.LEGAL_AI,
   commerce: ROUTES.LEGAL_COMMERCE,
   sponsored: ROUTES.LEGAL_COMMUNITY,
+  trademark: ROUTES.LEGAL_COPYRIGHT,
 };
 
 interface LegalDisclaimerBannerProps {
