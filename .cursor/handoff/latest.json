@@ -1,7 +1,7 @@
 {
   "title": "Revert male Korean hold TTS — voice pack hold seconds restored",
   "summary": "Rolled back d98f6be (male Korean TTS for hold seconds). Hold countdown follows voice pack again: female Sino-Korean TTS, male English cd/rep clips.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ac44b6a" },
   "changedFiles": [
     "frontend/src/utils/voiceHold.ts",
     "frontend/src/utils/voiceCoachClips.ts",
