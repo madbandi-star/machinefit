@@ -1,7 +1,7 @@
 {
   "title": "Achievements category filter grid",
   "summary": "Replace horizontal scrolling category chips on achievements page with a 4-column wrap grid so all filters (전체 through 시즌 업적) are visible without sideways scroll.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "7c61cd0" },
   "changedFiles": [
     "frontend/src/pages/achievements/AchievementsPage.tsx",
     "frontend/src/pages/achievements/AchievementsPage.css"
