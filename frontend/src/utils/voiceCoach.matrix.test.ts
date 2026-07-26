@@ -719,7 +719,8 @@ async function caseEnglishLocale(): Promise<void> {
   );
   const maleOk =
     malePhases.includes('done') &&
-    spoken.some((s) => /^Ready$/i.test(s)) &&
+    // Ready cue is dual beep for both packs — must not speak "Ready".
+    !spoken.some((s) => /^Ready$/i.test(s)) &&
     playedClips.some((c) => c.includes('start')) &&
     playedClips.some((c) => c.includes('one-more'));
   record(

@@ -493,15 +493,8 @@ async function speakCoachCue(options: {
     }
   }
 
-  // Ready cue: female Korean → dual beep; male English → spoken "Ready".
+  // Ready cue (both packs): dual beep — same as female prep; no spoken "Ready"/"준비".
   if (kind === 'ready') {
-    if (maleEnglish) {
-      await speechManager.speak(text || voiceCoachCue('ready', pack), {
-        ...packSpeakOptions(pack, signal),
-        rate: 0.92,
-      });
-      return;
-    }
     const ctx = await ensureVoiceCoachAudioRunning();
     if (ctx) {
       await playBeep(ctx, signal, 660, 0.09);
