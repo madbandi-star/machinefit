@@ -1,7 +1,7 @@
 {
   "title": "Hold seconds always male Korean TTS",
   "summary": "버텨!!! hold second countdown (십구…일) always uses male Korean TTS regardless of voice pack. Hold cue and finish phrases still follow selected pack.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "d98f6be" },
   "changedFiles": [
     "frontend/src/utils/voiceHold.ts",
     "frontend/src/utils/voiceCoachClips.ts",
