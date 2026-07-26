@@ -1374,6 +1374,8 @@ export function WorkoutLogPanel({
       compact={compact}
       showVoicePackSelector={!isHistory}
       showRestOptionSelectors={!isHistory}
+      showOneMoreAndHoldSelectors={!isHistory}
+      showSessionConfigSelectors={!isHistory}
     />
   ) : null;
 

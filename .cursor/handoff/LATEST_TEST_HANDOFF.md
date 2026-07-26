@@ -1,25 +1,30 @@
-# Latest test handoff — records voice coach settings UI
+# Latest test handoff — records voice coach settings-only
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-On **records page** (history `WorkoutLogPanel` / expanded card voice coach), hide:
+On **records page** (history `WorkoutLogPanel` voice coach), hide:
 
-- 목소리 여성/남성 (voice pack)
+- 목소리 여성/남성
+- 준비 카운트
+- 세션 구성
+- 카운트 모드
+- 하나더(원모어) 세기 + 원모어 횟수
+- 마지막에 버텨!!! 추가
 - 휴식 후 자동 시작
 - 휴식 중 주의사항·운동팁 듣기
 
-**My Page → Settings** still exposes all three. Saved values continue to apply on records.
+**My Page → Settings** keeps all of the above. Saved values still apply on records.
 
-Recommendation/workout page voice coach panel is unchanged (still shows these controls).
+Recommendation/workout page voice coach is unchanged.
 
 ## Test focus
 
-1. Records → expand a card → voice coach ON → above controls **not visible**
-2. My Page → Settings → voice coach section → all three controls **still visible** and persist
-3. Machine recommendation page → voice coach → controls **still visible** (non-history)
+1. Records → expand card → voice coach ON → hidden controls above **not visible**; start/stop works with saved settings
+2. My Page → Settings → voice coach → all controls **still visible**
+3. Machine recommendation page → voice coach → full controls **still visible**
 
 ## Fast checks
 

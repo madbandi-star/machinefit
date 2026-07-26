@@ -1,15 +1,15 @@
 {
-  "title": "Hide voice preference controls on records page",
-  "summary": "Records history VoiceCoachPanel no longer shows voice pack (female/male), auto-start after rest, or rest-tips checkboxes. Those settings remain on My Page → Settings only.",
-  "git": { "branch": "main", "commit": "b7d8427" },
+  "title": "Records voice coach: settings-only preference controls",
+  "summary": "History VoiceCoachPanel hides voice pack, rest options, one-more/hold toggles, prep count, session mode, and count mode. My Page → Settings keeps all voice coach preferences.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
-  "testFocus": "Records expanded card voice coach: no voice pack radios, no 휴식 후 자동 시작, no 휴식 중 주의사항·운동팁 듣기. My Page settings still has all three. Recommendation/workout page voice coach unchanged.",
+  "testFocus": "Records expanded voice coach: only enable toggle, target reps/interval pickers, hold duration (if applicable), start/stop remain. Settings page voice coach section unchanged. Recommendation page voice coach still shows all controls.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Records page voice coach duplicated My Page voice pack and rest preference controls.",
-  "toBe": "Records page uses saved settings silently; My Page is the only place to change them."
+  "asIs": "Records voice coach duplicated many My Page settings controls.",
+  "toBe": "Records uses saved settings silently; My Page → Settings is the only place to change them."
 }

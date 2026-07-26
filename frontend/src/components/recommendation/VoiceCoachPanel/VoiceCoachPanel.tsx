@@ -73,6 +73,10 @@ interface VoiceCoachPanelProps {
   showVoicePackSelector?: boolean;
   /** When false, hide auto-after-rest and rest-tips checkboxes (e.g. records page). */
   showRestOptionSelectors?: boolean;
+  /** When false, hide one-more / hold-after-count toggles and one-more count (e.g. records page). */
+  showOneMoreAndHoldSelectors?: boolean;
+  /** When false, hide prep count, session mode, and count mode (e.g. records page). */
+  showSessionConfigSelectors?: boolean;
 }
 
 function statusLabel(
@@ -138,6 +142,8 @@ export function VoiceCoachPanel({
   compact = false,
   showVoicePackSelector = true,
   showRestOptionSelectors = true,
+  showOneMoreAndHoldSelectors = true,
+  showSessionConfigSelectors = true,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
@@ -237,78 +243,84 @@ export function VoiceCoachPanel({
               </fieldset>
             ) : null}
 
-            <fieldset
-              className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
-              disabled={isRunning}
-            >
-              <legend className="voice-coach-panel__mode-legend">
-                {t('machines:voiceCoach.prepCount')}
-              </legend>
-              <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_COACH_PREP_COUNTS.map((count) => (
-                  <label key={count} className="voice-coach-panel__mode-option">
-                    <input
-                      type="radio"
-                      name="voice-prep-count"
-                      value={count}
-                      checked={clampVoiceCoachPrepCount(prepCount) === count}
-                      onChange={() => onPrepCountChange(count)}
-                    />
-                    <span>{t(`machines:voiceCoach.prepCount_${count}`)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            {showSessionConfigSelectors ? (
+              <fieldset
+                className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
+                disabled={isRunning}
+              >
+                <legend className="voice-coach-panel__mode-legend">
+                  {t('machines:voiceCoach.prepCount')}
+                </legend>
+                <div className="voice-coach-panel__mode-options" role="radiogroup">
+                  {VOICE_COACH_PREP_COUNTS.map((count) => (
+                    <label key={count} className="voice-coach-panel__mode-option">
+                      <input
+                        type="radio"
+                        name="voice-prep-count"
+                        value={count}
+                        checked={clampVoiceCoachPrepCount(prepCount) === count}
+                        onChange={() => onPrepCountChange(count)}
+                      />
+                      <span>{t(`machines:voiceCoach.prepCount_${count}`)}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ) : null}
 
-            <fieldset
-              className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
-              disabled={isRunning}
-            >
-              <legend className="voice-coach-panel__mode-legend">
-                {t('machines:voiceCoach.flowMode')}
-              </legend>
-              <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_HOLD_FLOW_MODES.map((mode) => (
-                  <label key={mode} className="voice-coach-panel__mode-option">
-                    <input
-                      type="radio"
-                      name="voice-flow-mode"
-                      value={mode}
-                      checked={flowMode === mode}
-                      onChange={() => onFlowModeChange(mode)}
-                    />
-                    <span>{t(`machines:voiceCoach.flowMode_${mode}`)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            {showSessionConfigSelectors ? (
+              <fieldset
+                className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
+                disabled={isRunning}
+              >
+                <legend className="voice-coach-panel__mode-legend">
+                  {t('machines:voiceCoach.flowMode')}
+                </legend>
+                <div className="voice-coach-panel__mode-options" role="radiogroup">
+                  {VOICE_HOLD_FLOW_MODES.map((mode) => (
+                    <label key={mode} className="voice-coach-panel__mode-option">
+                      <input
+                        type="radio"
+                        name="voice-flow-mode"
+                        value={mode}
+                        checked={flowMode === mode}
+                        onChange={() => onFlowModeChange(mode)}
+                      />
+                      <span>{t(`machines:voiceCoach.flowMode_${mode}`)}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ) : null}
 
             {showCountControls ? (
               <>
-                <fieldset
-                  className={`voice-coach-panel__mode${
-                    isRunning ? ' voice-coach-panel__mode--disabled' : ''
-                  }`}
-                  disabled={isRunning}
-                >
-                  <legend className="voice-coach-panel__mode-legend">
-                    {t('machines:voiceCoach.countMode')}
-                  </legend>
-                  <div className="voice-coach-panel__mode-options" role="radiogroup">
-                    {VOICE_COUNT_MODES.map((mode) => (
-                      <label key={mode} className="voice-coach-panel__mode-option">
-                        <input
-                          type="radio"
-                          name="voice-count-mode"
-                          value={mode}
-                          checked={countMode === mode}
-                          onChange={() => onCountModeChange(mode)}
-                        />
-                        <span>{t(`machines:voiceCoach.countMode_${mode}`)}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
+                {showSessionConfigSelectors ? (
+                  <fieldset
+                    className={`voice-coach-panel__mode${
+                      isRunning ? ' voice-coach-panel__mode--disabled' : ''
+                    }`}
+                    disabled={isRunning}
+                  >
+                    <legend className="voice-coach-panel__mode-legend">
+                      {t('machines:voiceCoach.countMode')}
+                    </legend>
+                    <div className="voice-coach-panel__mode-options" role="radiogroup">
+                      {VOICE_COUNT_MODES.map((mode) => (
+                        <label key={mode} className="voice-coach-panel__mode-option">
+                          <input
+                            type="radio"
+                            name="voice-count-mode"
+                            value={mode}
+                            checked={countMode === mode}
+                            onChange={() => onCountModeChange(mode)}
+                          />
+                          <span>{t(`machines:voiceCoach.countMode_${mode}`)}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                ) : null}
 
                 <div
                   className={`body-metrics-inline voice-coach-panel__pickers${
@@ -358,49 +370,55 @@ export function VoiceCoachPanel({
                         formatValue={(value) => value.toFixed(1)}
                       />
                     </div>
-                    <div className="body-metrics-inline__cell">
-                      <span className="body-metrics-inline__label">
-                        {t('machines:voiceCoach.oneMoreCount')}
-                        <span className="body-metrics-inline__unit">
-                          {t('machines:voiceCoach.oneMoreCountUnit')}
+                    {showOneMoreAndHoldSelectors ? (
+                      <div className="body-metrics-inline__cell">
+                        <span className="body-metrics-inline__label">
+                          {t('machines:voiceCoach.oneMoreCount')}
+                          <span className="body-metrics-inline__unit">
+                            {t('machines:voiceCoach.oneMoreCountUnit')}
+                          </span>
                         </span>
-                      </span>
-                      <ScrollPicker
-                        value={clampVoiceCoachOneMoreCount(oneMoreCount)}
-                        onChange={onOneMoreCountChange}
-                        min={VOICE_COACH_ONE_MORE.minCount}
-                        max={VOICE_COACH_ONE_MORE.maxCount}
-                        step={VOICE_COACH_ONE_MORE.step}
-                        size={compact ? 'compact' : 'default'}
-                        defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
-                        ariaLabel={t('machines:voiceCoach.oneMoreCount')}
-                        formatValue={(value) => String(value)}
-                      />
-                    </div>
+                        <ScrollPicker
+                          value={clampVoiceCoachOneMoreCount(oneMoreCount)}
+                          onChange={onOneMoreCountChange}
+                          min={VOICE_COACH_ONE_MORE.minCount}
+                          max={VOICE_COACH_ONE_MORE.maxCount}
+                          step={VOICE_COACH_ONE_MORE.step}
+                          size={compact ? 'compact' : 'default'}
+                          defaultValue={VOICE_COACH_ONE_MORE.defaultCount}
+                          ariaLabel={t('machines:voiceCoach.oneMoreCount')}
+                          formatValue={(value) => String(value)}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
-                <label className="voice-coach-panel__check">
-                  <input
-                    type="checkbox"
-                    checked={oneMoreEnabled}
-                    onChange={(e) => onOneMoreChange(e.target.checked)}
-                    disabled={isRunning}
-                  />
-                  <span>{t('machines:voiceCoach.oneMore')}</span>
-                </label>
+                {showOneMoreAndHoldSelectors ? (
+                  <>
+                    <label className="voice-coach-panel__check">
+                      <input
+                        type="checkbox"
+                        checked={oneMoreEnabled}
+                        onChange={(e) => onOneMoreChange(e.target.checked)}
+                        disabled={isRunning}
+                      />
+                      <span>{t('machines:voiceCoach.oneMore')}</span>
+                    </label>
 
-                <label className="voice-coach-panel__check">
-                  <input
-                    type="checkbox"
-                    checked={holdAfterCount}
-                    onChange={(e) =>
-                      onFlowModeChange(e.target.checked ? 'count_hold' : 'count')
-                    }
-                    disabled={isRunning}
-                  />
-                  <span>{t('machines:voiceCoach.holdAfterCount')}</span>
-                </label>
+                    <label className="voice-coach-panel__check">
+                      <input
+                        type="checkbox"
+                        checked={holdAfterCount}
+                        onChange={(e) =>
+                          onFlowModeChange(e.target.checked ? 'count_hold' : 'count')
+                        }
+                        disabled={isRunning}
+                      />
+                      <span>{t('machines:voiceCoach.holdAfterCount')}</span>
+                    </label>
+                  </>
+                ) : null}
               </>
             ) : null}
 
