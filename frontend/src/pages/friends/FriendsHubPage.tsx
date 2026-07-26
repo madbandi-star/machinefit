@@ -359,11 +359,6 @@ export function FriendsHubPage() {
           <p className="friends-hero-kicker">MachineFit</p>
           <h1>{t('title')}</h1>
           <p className="friends-hero-lead">{t('heroLead')}</p>
-          <div className="friends-hero-actions">
-            <button type="button" className="friends-btn friends-btn-ghost" onClick={refreshCurrent}>
-              {t('refresh')}
-            </button>
-          </div>
         </header>
 
         <nav className="friends-tabs" aria-label={t('title')}>
