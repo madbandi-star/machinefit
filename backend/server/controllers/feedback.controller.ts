@@ -7,6 +7,7 @@ import { preferenceRepository } from '../repositories/preference.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { resolveRequestLocale } from '../utils/locale.util.js';
 
 const feedbackSchema = z.object({
   recommendationId: z.string().uuid(),
@@ -49,8 +50,14 @@ function resolvePreferenceScope(source: { gymId?: string; memberId?: string }) {
 export async function submitFeedback(req: Request, res: Response): Promise<void> {
   const userId = req.user!.userId;
   const input = feedbackSchema.parse(req.body);
+  const locale = resolveRequestLocale(req);
 
-  const recommendation = await recommendationRepository.findById(input.recommendationId);
+  // Pass viewerUserId — findById ownership check (IDOR) rejects when omitted.
+  const recommendation = await recommendationRepository.findById(
+    input.recommendationId,
+    locale,
+    userId
+  );
   const machineId = await machineRepository.findIdByCode(recommendation.machineCode);
   if (!machineId) {
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
