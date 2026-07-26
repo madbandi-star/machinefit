@@ -1,7 +1,23 @@
 {
-  "branch": "cursor/gender-recommend-weight-35b3",
-  "topic": "gender-recommend-weight",
-  "frontendOnly": false,
-  "backendDeployNeeded": true,
-  "typecheck": "passed"
+  "title": "personalTipSaveHint punctuation",
+  "summary": "Korean personal tip save hint copy now ends with double period (..).",
+  "git": {
+    "branch": "main",
+    "commit": "c2625ce"
+  },
+  "changedFiles": [
+    "frontend/src/i18n/locales/ko/machines.json"
+  ],
+  "testFocus": "On history card / workout log panel, verify personalTipSaveHint shows: 아래 「저장하기」로 운동일지와 함께 저장됩니다..",
+  "fastChecks": [
+    "rg \"personalTipSaveHint\" frontend/src/i18n/locales/ko/machines.json",
+    "npm run test:smoke:changed"
+  ],
+  "productionChecks": [],
+  "deploy": {
+    "frontend": "GitHub Pages via push to main",
+    "backendDeployNeeded": false
+  },
+  "asIs": "Hint text ended with single period: 저장됩니다.",
+  "toBe": "Hint text ends with double period: 저장됩니다.."
 }
