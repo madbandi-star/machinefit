@@ -1,20 +1,27 @@
-# Latest test handoff — records voice coach picker grid
+# Latest test handoff — records voice coach 2–4 column pickers + hold
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-Records page voice coach picker row:
+Records page voice coach picker row (dynamic columns from settings):
 
-- **One-more OFF** (My Page → Settings): 2 columns — 목표 횟수 + 카운트 간격 (no empty right gap)
-- **One-more ON**: 3 columns — 목표 횟수 + 카운트 간격 + 원모어 횟수 (matches Settings layout)
+| Settings | Columns |
+|----------|---------|
+| Count only | 목표 횟수 + 카운트 간격 (2) |
+| + one-more | + 원모어 횟수 (3) |
+| + hold after count | + 버텨!!! 시간 (3) |
+| + both | 4 columns |
+| Hold only | 버텨!!! 시간 (1) |
+
+Hold duration moved into picker grid; separate hold block removed on records.
 
 ## Test focus
 
-1. Settings: disable one-more → records expanded voice coach → 2 pickers, balanced width
-2. Settings: enable one-more → records → 3 pickers visible
-3. Recommendation page voice coach → still 3 pickers
+1. Settings combos above → correct column count on records expanded voice coach
+2. Hold picker editable; values persist
+3. Recommendation page → still 3 pickers + separate hold select below
 
 ## Fast checks
 

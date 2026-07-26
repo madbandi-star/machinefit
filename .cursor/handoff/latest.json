@@ -1,14 +1,15 @@
 {
-  "title": "Records voice coach picker grid layout",
-  "summary": "History voice coach uses 2-column picker grid when one-more is off; shows target reps, interval, and one-more count in 3 columns when settings have one-more enabled.",
-  "git": { "branch": "main", "commit": "0845ae3" },
+  "title": "Records voice coach inline hold duration picker grid",
+  "summary": "Records page merges hold duration into voice coach picker row with dynamic 2–4 columns based on settings (one-more, count_hold). Hold-only shows 1 column.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx"
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/styles/components.css"
   ],
-  "testFocus": "Records voice coach: one-more OFF → 2 pickers fill width (no empty third column). One-more ON in settings → 3 pickers like Settings page. Recommendation page unchanged (3 columns).",
+  "testFocus": "Records voice coach: 2/3/4 picker columns per settings; hold sec in same row as reps/interval/one-more; no separate hold block below on records. Recommendation page unchanged.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Records voice coach always used 3-column grid with empty space when one-more count hidden.",
-  "toBe": "2-column grid when one-more disabled; 3-column with one-more count when enabled in settings."
+  "asIs": "Records showed hold duration below pickers; grid left empty columns or fixed 2–3 cols.",
+  "toBe": "Hold duration inline; 2–4 equal columns from My Page settings (one-more + hold toggles)."
 }
