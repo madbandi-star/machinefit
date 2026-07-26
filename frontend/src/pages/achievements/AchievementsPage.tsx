@@ -491,15 +491,6 @@ export function AchievementsPage() {
                         total: unlockBatchTotal,
                       })}
                 </button>
-                {unlockBatchTotal > 1 ? (
-                  <button
-                    type="button"
-                    className="btn btn--secondary btn--block achievement-unlock__dismiss"
-                    onClick={() => void dismissUnlockQueue()}
-                  >
-                    {t('achievements.dismissAll')}
-                  </button>
-                ) : null}
               </div>
             </div>
           </div>

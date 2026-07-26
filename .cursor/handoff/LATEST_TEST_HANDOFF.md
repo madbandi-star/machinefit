@@ -1,16 +1,15 @@
-# Latest test handoff — Remove achievement popup snooze checkbox
+# Latest test handoff — Remove achievement popup Close all button
 
 **Branch:** `main`
 
 ## Change
 
-업적 unlock 팝업에서 **오늘 다시 안 보기** 체크박스 제거.
+업적 unlock 팝업 하단 **모두 닫기** 버튼 제거 (× 닫기는 유지).
 
 ## Test focus
 
-- 업적 페이지 팝업에 snooze 체크박스 없음
-- 공유 / 완료 / 닫기 버튼 정상
-- 페이지 상단 팝업 설정 토글은 유지
+- 여러 업적 팝업 시 모두 닫기 버튼 없음
+- 공유 / 다음·완료 버튼 정상
 
 ## Fast checks
 

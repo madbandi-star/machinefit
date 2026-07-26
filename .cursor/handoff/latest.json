@@ -1,12 +1,12 @@
 {
-  "title": "Achievements popup — remove hide-today checkbox",
-  "summary": "Removed 오늘 다시 안 보기 checkbox from achievement unlock popup on AchievementsPage.",
+  "title": "Achievements popup — remove Close all button",
+  "summary": "Removed 모두 닫기 secondary button from achievement unlock popup (× close remains).",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/pages/achievements/AchievementsPage.tsx"],
-  "testFocus": "Visit /my-page/achievements with unlocked achievements — popup shows without snooze checkbox. Page-level popup pref toggle still works.",
+  "testFocus": "Multi-unlock popup: no 모두 닫기 button; share and continue/done still work; × still closes all.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Unlock popup had 오늘 다시 안 보기 checkbox.",
-  "toBe": "Checkbox removed; dismiss/continue unchanged."
+  "asIs": "Batch unlock popup had 모두 닫기 button.",
+  "toBe": "Button removed."
 }
