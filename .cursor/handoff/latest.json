@@ -1,7 +1,7 @@
 {
   "title": "Achievements header tabs + AI disclaimer copy",
   "summary": "Move 업적/랭킹 tabs beside page title in achievements header. Update compliance AI disclaimer wording to two-line reference-only text.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "3152c39" },
   "changedFiles": [
     "frontend/src/pages/achievements/AchievementsPage.tsx",
     "frontend/src/pages/achievements/AchievementsPage.css",
