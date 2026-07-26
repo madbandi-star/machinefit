@@ -1,7 +1,7 @@
 {
   "title": "Hide fit feedback intro on records page",
   "summary": "Records HistoryRecordCard FitFeedbackPanel no longer shows '세팅이 잘 맞았나요?' title or '피드백은 다음 추천 개선에 활용됩니다.' desc. Rating buttons and save flow unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "1dbdc1c" },
   "changedFiles": [
     "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
