@@ -1,20 +1,23 @@
 {
-  "title": "Hold seconds always male Korean TTS",
-  "summary": "버텨!!! hold second countdown (십구…일) always uses male Korean TTS regardless of voice pack. Hold cue and finish phrases still follow selected pack.",
-  "git": { "branch": "main", "commit": "d98f6be" },
+  "title": "Hold seconds use male Korean MP3 clips",
+  "summary": "버텨!!! hold second countdown now plays pre-recorded male Korean Sino clips (hold-ko pack from legacy male cd/rep audio), not OS female TTS. TTS fallback uses stricter male ko-KR voice pick.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/public/voice-coach/hold-ko/",
     "frontend/src/utils/voiceHold.ts",
     "frontend/src/utils/voiceCoachClips.ts",
-    "frontend/src/utils/voiceHold.test.ts"
+    "frontend/src/utils/speechManager.ts",
+    "frontend/src/utils/voiceHold.test.ts",
+    "frontend/src/utils/voiceCoachClips.test.ts"
   ],
-  "testFocus": "Female pack + hold enabled: rep counts stay female Korean; hold seconds sound male Korean Sino-Korean (십구, 팔, 일). Male pack: hold seconds also Korean male TTS, not English five/four.",
+  "testFocus": "Female pack + hold 10s: seconds must sound MALE Korean (오/십/구 clips), not female TTS. Network tab should fetch /voice-coach/hold-ko/cd-*.mp3 or rep-*.mp3 during hold.",
   "fastChecks": [
     "npx vite-node src/utils/voiceHold.test.ts",
-    "npx vite-node src/utils/speechManager.hold.test.ts",
+    "npx vite-node src/utils/voiceCoachClips.test.ts",
     "npm run build --prefix frontend"
   ],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Hold seconds followed voice pack (female TTS or male English clips).",
-  "toBe": "Hold second ticks always male Korean TTS with Sino-Korean numbers."
+  "asIs": "Hold seconds used OS TTS preferMaleVoice — often female Google 한국어 on device.",
+  "toBe": "Hold seconds play hold-ko male Korean MP3 clips; TTS fallback only if clip fails."
 }

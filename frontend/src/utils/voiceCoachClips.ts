@@ -11,7 +11,11 @@ export const DEFAULT_VOICE_COACH_PACK: VoiceCoachPack = 'female';
  * Bump when shipping replacement clip audio so browsers / CDNs drop stale files
  * (old male pack was Korean and kept playing from disk cache).
  */
-export const VOICE_COACH_CLIP_ASSET_VERSION = 'female-prep-en-1';
+export const VOICE_COACH_CLIP_ASSET_VERSION = 'hold-ko-male-1';
+
+/** Male Korean Sino-Korean clips for hold second ticks (버텨!!! 시간). */
+export const HOLD_COUNTDOWN_CLIP_PACK = 'hold-ko' as const;
+export type VoiceCoachClipPack = VoiceCoachPack | typeof HOLD_COUNTDOWN_CLIP_PACK;
 
 /** Highest `rep-N.mp3` shipped under public/voice-coach. */
 export const MAX_VOICE_COACH_CLIP_REP = 30;
@@ -56,11 +60,13 @@ function publicAssetUrl(path: string): string {
 
 export function voiceCoachClipUrl(
   key: string,
-  pack: VoiceCoachPack = DEFAULT_VOICE_COACH_PACK
+  pack: VoiceCoachClipPack = DEFAULT_VOICE_COACH_PACK
 ): string {
-  const base = publicAssetUrl(
-    `voice-coach/${normalizeVoiceCoachPack(pack)}/${key}.mp3`
-  );
+  const folder =
+    pack === HOLD_COUNTDOWN_CLIP_PACK
+      ? HOLD_COUNTDOWN_CLIP_PACK
+      : normalizeVoiceCoachPack(pack);
+  const base = publicAssetUrl(`voice-coach/${folder}/${key}.mp3`);
   return `${base}?v=${VOICE_COACH_CLIP_ASSET_VERSION}`;
 }
 
@@ -249,7 +255,7 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
 export async function playVoiceCoachClip(
   key: string,
   signal?: AbortSignal,
-  pack: VoiceCoachPack = DEFAULT_VOICE_COACH_PACK
+  pack: VoiceCoachClipPack = DEFAULT_VOICE_COACH_PACK
 ): Promise<boolean> {
   if (signal?.aborted) {
     throw new DOMException('Aborted', 'AbortError');
@@ -398,7 +404,24 @@ export async function preloadVoiceCoachClips(options: {
 
   if (options.includeHold) {
     keys.push('hold', 'finish-done', 'finish-great', 'finish-nice');
-    // Hold seconds: male Korean TTS only — no countdown clip preload.
+    const holdSec = Math.max(1, Math.round(options.holdDurationSec ?? 10));
+    const holdKoKeys: string[] = [];
+    for (let n = 1; n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_COUNTDOWN); n += 1) {
+      holdKoKeys.push(`cd-${n}`);
+    }
+    for (
+      let n = MAX_VOICE_COACH_CLIP_COUNTDOWN + 1;
+      n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_REP);
+      n += 1
+    ) {
+      holdKoKeys.push(`rep-${n}`);
+    }
+    await Promise.all(
+      holdKoKeys.map(async (key) => {
+        if (options.signal?.aborted) return;
+        await loadClipBuffer(voiceCoachClipUrl(key, HOLD_COUNTDOWN_CLIP_PACK), ctx);
+      })
+    );
   }
 
   const unique = [...new Set(keys)];
