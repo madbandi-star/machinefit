@@ -158,11 +158,9 @@ export function useActiveMember() {
     [isRealGym, removeMutation]
   );
 
-  // Ready when resolved, or optimistically while members load if store already has a member.
+  // Ready only after members are fetched and a member is resolved for this gym.
   const memberScopeReady =
-    !isRealGym ||
-    Boolean(resolvedMemberId) ||
-    (!isFetched && Boolean(activeMemberId) && isRealGym);
+    !isRealGym || (isFetched && Boolean(resolvedMemberId));
 
   return {
     members,

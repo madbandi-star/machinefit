@@ -26,6 +26,7 @@ import { AlertDialog } from '@/components/feedback/AlertDialog/AlertDialog';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { resolveRegisterErrorMessage } from '@/utils/getApiErrorMessage';
 import {
   buildDemoEmail,
@@ -133,6 +134,7 @@ export function RegisterPage() {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
       setAuth(user, tokens);
       syncUserSettings(user);
+      syncGymScopeAfterAuth(user);
 
           if (locationDraft.countryCode) {
         try {

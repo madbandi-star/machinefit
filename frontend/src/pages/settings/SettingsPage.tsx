@@ -34,6 +34,7 @@ import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import { clearGymScope } from '@/utils/syncGymScope';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
 import { VOICE_COUNT_MODES } from '@/utils/aiCountPace';
@@ -157,7 +158,7 @@ export function SettingsPage() {
     mutationFn: () => authApi.deactivateAccount(),
     onSuccess: () => {
       clearAuth();
-      queryClient.clear();
+      clearGymScope();
       showToast(t('settings.accountDeleted'), 'success');
       navigate(ROUTES.HOME, { replace: true });
     },

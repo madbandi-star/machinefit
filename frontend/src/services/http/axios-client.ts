@@ -1,6 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import type { AuthTokens } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
+import { clearGymScope } from '@/utils/syncGymScope';
 import { useSettingsStore } from '@/store/settings.store';
 
 function normalizeApiBaseUrl(url: string): string {
@@ -35,6 +36,7 @@ async function refreshAccessToken(): Promise<AuthTokens | null> {
   const { tokens, user, updateTokens, clearAuth } = useAuthStore.getState();
   if (!tokens?.refreshToken || !user) {
     clearAuth();
+    clearGymScope();
     return null;
   }
 
@@ -48,6 +50,7 @@ async function refreshAccessToken(): Promise<AuthTokens | null> {
     return newTokens;
   } catch {
     clearAuth();
+    clearGymScope();
     return null;
   }
 }

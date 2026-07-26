@@ -1,28 +1,33 @@
-# Latest test handoff — personalTipSaveHint punctuation
+# Latest test handoff — post-signup home API errors
 
 **Branch:** `main`  
-**Commit:** `c2625ce`  
-**Scope:** frontend i18n only
+**Scope:** frontend only
 
 ## Change
 
-Update `history.personalTipSaveHint` (KO):
+Fix console/network error spam on first home load after signup/login.
 
-- **as-is:** `아래 「저장하기」로 운동일지와 함께 저장됩니다.`
-- **to-be:** `아래 「저장하기」로 운동일지와 함께 저장됩니다..`
+**Root cause:** Persisted `machinefit-active-gym` (gym + member IDs) from a prior session was used before `/users/me/gyms` confirmed ownership → 403 on members/history/favorites.
+
+**Fix:**
+- `syncGymScopeAfterAuth` on login/register (seed `user.activeGymId`, clear member + query cache)
+- `clearGymScope` on logout / token clear / account delete
+- `useActiveGym`: do not use persisted gym ID until server gym list loads
+- `useActiveMember`: remove optimistic `memberScopeReady` while members are loading
 
 ## Test focus
 
-- History card / workout log panel: personal tip save hint shows the double-period copy.
+1. Browser with old session data → register new account → home loads cleanly (no 403 burst)
+2. Login as different user → same
+3. Recent / favorites sections show empty prompts (not broken UI)
 
 ## Fast checks
 
 ```bash
-rg "personalTipSaveHint" frontend/src/i18n/locales/ko/machines.json
 npm run test:smoke:changed
 ```
 
 ## Deploy
 
-- Frontend: GitHub Pages (push to `main` — triggered)
+- Frontend: GitHub Pages (push to `main`)
 - Backend: not needed

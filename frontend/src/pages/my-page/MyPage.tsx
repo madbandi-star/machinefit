@@ -12,6 +12,7 @@ import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequest
 import { locationApi, userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
+import { clearGymScope } from '@/utils/syncGymScope';
 import { useCredentialsStore } from '@/store/credentials.store';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
@@ -83,6 +84,7 @@ export function MyPage() {
   const handleLogout = () => {
     clearCredentials();
     clearAuth();
+    clearGymScope();
     setShowLogout(false);
   };
 

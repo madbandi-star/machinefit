@@ -10,6 +10,7 @@ import { useCredentialsStore } from '@/store/credentials.store';
 import { useUIStore } from '@/store/ui.store';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { syncUserSettings } from '@/utils/syncUserSettings';
+import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { DEMO_LOGIN_EMAIL, DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
 import { isDemoAuthEnabled } from '@/utils/demoAuthMode';
 import { ROUTES } from '@/constants/routes';
@@ -48,6 +49,7 @@ export function LoginPage() {
   const completeLogin = (user: User, tokens: AuthTokens, shouldSave: boolean) => {
     setAuth(user, tokens);
     syncUserSettings(user);
+    syncGymScopeAfterAuth(user);
     if (shouldSave) {
       saveCredentials(email);
     } else {
@@ -87,6 +89,7 @@ export function LoginPage() {
           const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
           setAuth(user, tokens);
           syncUserSettings(user);
+          syncGymScopeAfterAuth(user);
           showToast(t('auth.welcomeBack'), 'success');
           navigate(from, { replace: true });
         })

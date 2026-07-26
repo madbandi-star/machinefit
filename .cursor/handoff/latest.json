@@ -1,23 +1,31 @@
 {
-  "title": "personalTipSaveHint punctuation",
-  "summary": "Korean personal tip save hint copy now ends with double period (..).",
+  "title": "Fix post-signup home API errors",
+  "summary": "Clear stale gym/member localStorage on login/register/logout and defer scoped API calls until server gym list and members are loaded.",
   "git": {
     "branch": "main",
-    "commit": "c2625ce"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/machines.json"
+    "frontend/src/utils/syncGymScope.ts",
+    "frontend/src/hooks/useActiveGym.ts",
+    "frontend/src/hooks/useActiveMember.ts",
+    "frontend/src/pages/auth/register/RegisterPage.tsx",
+    "frontend/src/pages/auth/login/LoginPage.tsx",
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/services/http/axios-client.ts"
   ],
-  "testFocus": "On history card / workout log panel, verify personalTipSaveHint shows: 아래 「저장하기」로 운동일지와 함께 저장됩니다..",
+  "testFocus": "After signup or login on a browser that had a previous session: home loads without 403 spam on /users/me/gyms/*/members, /history, /favorites. Empty recent/favorites states show normally.",
   "fastChecks": [
-    "rg \"personalTipSaveHint\" frontend/src/i18n/locales/ko/machines.json",
     "npm run test:smoke:changed"
   ],
-  "productionChecks": [],
+  "productionChecks": [
+    "Register new account → open home → DevTools Network: no 403 burst on members/history/favorites"
+  ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Hint text ended with single period: 저장됩니다.",
-  "toBe": "Hint text ends with double period: 저장됩니다.."
+  "asIs": "Signup/login reused persisted gym/member IDs from localStorage before /users/me/gyms resolved, causing forbidden requests and console error spam.",
+  "toBe": "Auth boundaries reset gym scope; home waits for server gym list + member fetch before favorites/history queries."
 }

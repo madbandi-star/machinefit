@@ -71,15 +71,17 @@ export function useActiveGym() {
   const serverActiveGymId = data?.activeGymId ?? null;
 
   const resolvedGymId = useMemo(() => {
-    // All-gyms picker removed from UI — never keep ALL_GYMS_ID as the active selection
+    // Wait for server gym list — never trust persisted gym id alone (403 after signup/login).
     if (!data) {
-      return isAllGymsId(storedGymId) ? null : storedGymId;
+      return null;
     }
     if (storedGymId && !isAllGymsId(storedGymId) && gyms.some((gym) => gym.id === storedGymId)) {
       return storedGymId;
     }
     return serverActiveGymId ?? gyms[0]?.id ?? null;
   }, [data, gyms, serverActiveGymId, storedGymId]);
+
+  const gymScopeReady = !isAuthenticated || data !== undefined;
 
   const activeGym = useMemo(
     () => gyms.find((gym) => gym.id === resolvedGymId) ?? data?.activeGym ?? null,
@@ -232,6 +234,7 @@ export function useActiveGym() {
     gyms,
     activeGym,
     activeGymId: resolvedGymId,
+    gymScopeReady,
     isLoading: isAuthenticated && isLoading,
     selectGym,
     createGym,
