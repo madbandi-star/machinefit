@@ -1,21 +1,25 @@
-# Latest test handoff — Insights submenu order/labels
+# Latest test handoff — My Page menu deploy batch
 
 **Branch:** `main`
 
-## Change
+## Changes in this deploy
 
-**MachineFit Insights** 서브메뉴 순서·이름:
-
-1. 운동성향 (was 나의 리프터 DNA 분석)
-2. 누적무게 (was 내가 들어올린 무게는?)
-3. 업적 (was 트로피 도장깨기)
+1. **MachineFit Insights** — 순서·이름: 운동성향 → 누적무게 → 업적
+2. **친구 목록** — 친구 관리 → **개인설정** (회원)
+3. *(already local)* Lab 실험실 서브메뉴 이동, Insights 라벨 (`ad12145`)
 
 ## Test focus
 
-마이페이지 Insights 섹션 순서·라벨 확인
+- `/machinefit/my-page` Insights 라벨·순서
+- 개인설정에 친구 목록, 친구 관리에는 없음
+- 실험실 섹션 항목 정상
 
 ## Fast checks
 
 ```bash
 npm run build --prefix frontend
 ```
+
+## Deploy
+
+- Frontend: GitHub Pages (push to `main`)

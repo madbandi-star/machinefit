@@ -201,6 +201,9 @@ export function MyPage() {
               isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
             )}
           />
+          {isMember ? (
+            <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsList')} />
+          ) : null}
         </nav>
       </section>
 
@@ -208,7 +211,6 @@ export function MyPage() {
         <section className="my-page-section">
           <h3 className="my-page-section__title">{t('myPage.friendsManage')}</h3>
           <nav className="list-nav" aria-label={t('myPage.friendsManage')}>
-            <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsList')} />
             <ListNavLink to={ROUTES.FRIENDS_INCOMING} label={t('myPage.friendsIncoming')} />
             <ListNavLink to={ROUTES.FRIENDS_OUTGOING} label={t('myPage.friendsOutgoing')} />
             <ListNavLink to={ROUTES.FRIENDS_BLOCKED} label={t('myPage.friendsBlocked')} />

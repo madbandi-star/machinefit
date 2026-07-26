@@ -1,18 +1,20 @@
 {
-  "title": "My Page Insights submenu order and labels",
-  "summary": "MachineFit Insights section: reorder to 운동성향 → 누적무게 → 업적; rename myPage labels in ko/en.",
+  "title": "My Page menu updates — Insights labels, friends list in settings",
+  "summary": "Insights submenu renamed/reordered (운동성향, 누적무게, 업적). 친구 목록 moved from 친구 관리 to 개인설정. Includes prior Lab submenu moves (9e437f4) if not yet on origin.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "My Page → MachineFit Insights: order lifter DNA, lifted weight, achievements with new labels 운동성향, 누적무게, 업적.",
+  "testFocus": "My Page: Insights order/labels; 개인설정 has 친구 목록 (members); 친구 관리 without 친구 목록; Lab section items unchanged.",
   "fastChecks": [
     "npm run build --prefix frontend"
   ],
-  "productionChecks": [],
+  "productionChecks": [
+    "Open /machinefit/my-page after Deploy Frontend success"
+  ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Order: 업적 → DNA → 무게; labels 트로피 도장깨기, 나의 리프터 DNA 분석, 내가 들어올린 무게는?",
-  "toBe": "Order: 운동성향 → 누적무게 → 업적."
+  "asIs": "Insights old labels/order; 친구 목록 under 친구 관리.",
+  "toBe": "Insights: 운동성향 → 누적무게 → 업적; 친구 목록 under 개인설정."
 }
