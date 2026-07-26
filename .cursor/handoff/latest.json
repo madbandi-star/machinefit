@@ -1,7 +1,7 @@
 {
   "title": "Push — fix member-to-friend send failures",
   "summary": "Allow member_exact to any connected friend (any role); lookup by email/login id; exempt friend push from marketing opt-in; show friend picker + clearer errors.",
-  "git": { "branch": "main", "commit": "9215eeb" },
+  "git": { "branch": "main", "commit": "2e9c787" },
   "changedFiles": [
     "backend/server/services/push-audience.service.ts",
     "backend/server/services/push-notification.service.ts",
