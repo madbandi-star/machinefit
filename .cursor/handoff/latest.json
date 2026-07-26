@@ -1,31 +1,12 @@
 {
-  "title": "Favorites empty dedicated page",
-  "summary": "When favorites count is 0, redirect to /favorites/empty with 0-count message and 기구 검색 CTA.",
-  "git": {
-    "branch": "main",
-    "commit": "pending"
-  },
-  "changedFiles": [
-    "frontend/src/constants/routes.ts",
-    "frontend/src/hooks/useFavoritesList.ts",
-    "frontend/src/pages/favorites/FavoritesEmptyPage.tsx",
-    "frontend/src/pages/favorites/FavoritesIndexPage.tsx",
-    "frontend/src/styles/favorites-empty.css",
-    "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
-    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
-    "frontend/src/routes/index.tsx",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
-  ],
-  "testFocus": "0 favorites: home card → /favorites/empty; records favorites tab → empty page; page shows 0-count copy + 기구 검색 button → /machines. With favorites: /favorites → records tab list.",
-  "fastChecks": [
-    "npm run build --prefix frontend"
-  ],
+  "title": "Remove history diary labels on records page",
+  "summary": "Hide 운동일지 메모, 오늘 운동메모, 나만의 팁 headers, byte counter, and save hint on history WorkoutLogPanel.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"],
+  "testFocus": "Records expanded card: diary tags + memo textarea + personal tip textarea only; no listed label/hint strings; 저장하기 button remains.",
+  "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
-  "deploy": {
-    "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": false
-  },
-  "asIs": "Empty favorites showed inline EmptyState on records tab; home linked to machine search.",
-  "toBe": "Dedicated /favorites/empty page with 0-count message and required search button; auto-redirect when list is empty."
+  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
+  "asIs": "History diary section showed five label/hint lines above memo fields.",
+  "toBe": "Memo areas show placeholders only; labels removed from UI."
 }

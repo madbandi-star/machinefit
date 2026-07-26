@@ -399,7 +399,6 @@ export function WorkoutLogPanel({
   setCountRef.current = setCount;
   const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
   const diaryBytes = getUtf8ByteLength(diary);
-  const personalTipBytes = getUtf8ByteLength(personalTipMemo);
   const canLog = isAuthenticated && Boolean(activeGymId) && !isAllGyms && Boolean(activeMemberId);
   const queryEnabled = canLog && (!isFreeWeight || !!queryTargetMuscle);
 
@@ -1189,20 +1188,15 @@ export function WorkoutLogPanel({
 
   const diaryField = isHistory ? (
     <div className="history-workout-log__diary-grid">
-      <div className="history-workout-log__diary-tags-pane">
-        <span className="history-workout-log__pane-label">{t('machines:history.diaryMemoTitle')}</span>
-        {diaryTags}
-      </div>
+      <div className="history-workout-log__diary-tags-pane">{diaryTags}</div>
       <div className="history-workout-log__diary-memo-pane">
-        <label className="history-workout-log__pane-label" htmlFor={`${idPrefix}-diary`}>
-          {t('machines:history.memoLabel')}
-        </label>
         <textarea
           id={`${idPrefix}-diary`}
           className="input history-workout-log__memo-input"
           rows={4}
           value={diary}
           placeholder={t('machines:history.memoPlaceholder')}
+          aria-label={t('machines:history.memoPlaceholder')}
           onChange={(e) => handleDiaryChange(e.target.value)}
           disabled={isActionPending}
         />
@@ -1254,26 +1248,16 @@ export function WorkoutLogPanel({
   const personalTipField =
     isHistory && showPersonalTip && isAuthenticated ? (
       <div className="history-workout-log__personal-tip">
-        <div className="history-workout-log__personal-tip-header">
-          <label className="history-workout-log__pane-label" htmlFor={`${idPrefix}-personal-tip`}>
-            {t('machines:history.personalTipTitle')}
-          </label>
-          <span className="recommendation-workout-log__diary-bytes">
-            {t('machines:history.personalTipBytes', { used: personalTipBytes })}
-          </span>
-        </div>
         <textarea
           id={`${idPrefix}-personal-tip`}
           className="input history-workout-log__memo-input history-workout-log__personal-tip-input"
           rows={3}
           value={personalTipMemo}
           placeholder={t('machines:history.personalTipPlaceholder')}
+          aria-label={t('machines:history.personalTipPlaceholder')}
           onChange={(e) => handlePersonalTipChange(e.target.value)}
           disabled={isActionPending}
         />
-        <p className="history-workout-log__personal-tip-hint">
-          {t('machines:history.personalTipSaveHint')}
-        </p>
       </div>
     ) : null;
 
