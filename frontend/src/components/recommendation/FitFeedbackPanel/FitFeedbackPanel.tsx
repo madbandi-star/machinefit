@@ -32,6 +32,7 @@ export function FitFeedbackPanel({
   };
 
   // After the request finishes, restore focus to the selected button.
+  // Native `disabled` during pending moves focus away (often to the sibling).
   useEffect(() => {
     if (isPending) {
       wasPendingRef.current = true;
@@ -45,54 +46,46 @@ export function FitFeedbackPanel({
 
   return (
     <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
-      <div className="fit-feedback-panel__header">
-        <div className="fit-feedback-panel__intro">
+      <div className="fit-feedback-panel__intro">
+        <div className="fit-feedback-panel__intro-heading">
           <h3 className="fit-feedback-panel__title">{t('feedback.title')}</h3>
-          <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p>
+          {showSavePreferences ? (
+            <button
+              type="button"
+              className="btn btn--primary fit-feedback-panel__save-btn"
+              disabled={isPreferencesPending}
+              onClick={onSavePreferences}
+            >
+              {isPreferencesPending ? t('feedback.preferencesSaving') : t('feedback.savePreferences')}
+            </button>
+          ) : null}
         </div>
-        <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>
-          <button
-            ref={goodRef}
-            type="button"
-            className={`fit-feedback-panel__icon-btn fit-feedback-panel__icon-btn--good${
-              savedRating === 'good' ? ' fit-feedback-panel__icon-btn--active' : ''
-            }`}
-            onClick={() => selectRating('good')}
-            disabled={isPending}
-            aria-pressed={savedRating === 'good'}
-            aria-label={t('feedback.good')}
-            title={t('feedback.good')}
-          >
-            <Icon name="thumbUp" size={22} />
-          </button>
-          <button
-            ref={badRef}
-            type="button"
-            className={`fit-feedback-panel__icon-btn fit-feedback-panel__icon-btn--bad${
-              savedRating === 'bad' ? ' fit-feedback-panel__icon-btn--active' : ''
-            }`}
-            onClick={() => selectRating('bad')}
-            disabled={isPending}
-            aria-pressed={savedRating === 'bad'}
-            aria-label={t('feedback.bad')}
-            title={t('feedback.bad')}
-          >
-            <Icon name="thumbDown" size={22} />
-          </button>
-        </div>
+        <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p>
       </div>
-      {showSavePreferences ? (
-        <div className="fit-feedback-panel__save-row">
-          <button
-            type="button"
-            className="btn btn--primary fit-feedback-panel__save-btn"
-            disabled={isPreferencesPending}
-            onClick={onSavePreferences}
-          >
-            {isPreferencesPending ? t('feedback.preferencesSaving') : t('feedback.savePreferences')}
-          </button>
-        </div>
-      ) : null}
+      <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>
+        <button
+          ref={goodRef}
+          type="button"
+          className={`fit-feedback-panel__btn${savedRating === 'good' ? ' fit-feedback-panel__btn--active' : ''}`}
+          onClick={() => selectRating('good')}
+          disabled={isPending}
+          aria-pressed={savedRating === 'good'}
+        >
+          <Icon name="circleCheck" size={20} />
+          {t('feedback.good')}
+        </button>
+        <button
+          ref={badRef}
+          type="button"
+          className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}`}
+          onClick={() => selectRating('bad')}
+          disabled={isPending}
+          aria-pressed={savedRating === 'bad'}
+        >
+          <Icon name="sliders" size={20} />
+          {t('feedback.bad')}
+        </button>
+      </div>
       {isPending ? (
         <p className="fit-feedback-panel__pending" aria-live="polite">
           {t('feedback.saving')}

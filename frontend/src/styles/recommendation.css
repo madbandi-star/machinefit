@@ -1781,22 +1781,15 @@
   margin-bottom: 0.85rem;
 }
 
-.fit-feedback-panel__header {
+.fit-feedback-panel__intro {
+  margin-bottom: 0.55rem;
+}
+
+.fit-feedback-panel__intro-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1rem;
-}
-
-.fit-feedback-panel__intro {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.fit-feedback-panel__save-row {
-  margin-top: 0.55rem;
-  display: flex;
-  justify-content: flex-end;
+  gap: 0.5rem 0.75rem;
 }
 
 .fit-feedback-panel__save-btn {
@@ -1812,6 +1805,8 @@
 
 .fit-feedback-panel__title {
   margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-text);
@@ -1826,57 +1821,51 @@
 }
 
 .fit-feedback-panel__actions {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
-.fit-feedback-panel__icon-btn {
+.fit-feedback-panel__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
+  gap: 0.35rem;
   border: 1px solid var(--glass-border);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   background: var(--color-bg-secondary);
-  color: var(--color-text-muted);
+  color: var(--color-text);
+  padding: 0.7rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
   cursor: pointer;
   transition:
     border-color 140ms ease,
     background-color 140ms ease,
-    color 140ms ease,
     opacity 140ms ease;
 }
 
-.fit-feedback-panel__icon-btn:disabled,
-.fit-feedback-panel__icon-btn[aria-disabled='true'] {
+.fit-feedback-panel__btn:disabled,
+.fit-feedback-panel__btn[aria-disabled='true'] {
   opacity: 0.65;
   cursor: wait;
   pointer-events: none;
 }
 
-.fit-feedback-panel__icon-btn svg {
+.fit-feedback-panel__btn svg {
   flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
-.fit-feedback-panel__icon-btn--good.fit-feedback-panel__icon-btn--active {
-  border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 16%, var(--color-bg-secondary));
+.fit-feedback-panel__btn--active svg {
   color: var(--color-primary);
 }
 
-.fit-feedback-panel__icon-btn--good.fit-feedback-panel__icon-btn--active svg {
-  fill: color-mix(in srgb, var(--color-primary) 28%, transparent);
-  stroke: var(--color-primary);
-}
-
-.fit-feedback-panel__icon-btn--bad.fit-feedback-panel__icon-btn--active {
-  border-color: color-mix(in srgb, var(--color-text-muted) 55%, var(--glass-border));
-  background: color-mix(in srgb, var(--color-text-muted) 12%, var(--color-bg-secondary));
-  color: var(--color-text);
+.fit-feedback-panel__btn--active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg));
 }
 
 .fit-feedback-panel__pending {
