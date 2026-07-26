@@ -32,9 +32,13 @@ assert.equal(formatHoldCountdownWord(15, 'ko', 'female'), '십오');
 assert.equal(formatHoldCountdownWord(5, 'en', 'female'), '오');
 assert.equal(formatHoldCountdownWord(5, 'ko', 'male'), 'five');
 assert.equal(formatHoldCountdownWord(2, 'ko', 'male'), 'two');
-assert.equal(holdCountdownClipKey(5), 'cd-5');
-assert.equal(holdCountdownClipKey(15), 'rep-15');
-assert.equal(holdCountdownClipKey(99), null);
+// Female Hold must use Korean rep-* (never English prep cd-*).
+assert.equal(holdCountdownClipKey(5, 'female'), 'rep-5');
+assert.equal(holdCountdownClipKey(10, 'female'), 'rep-10');
+assert.equal(holdCountdownClipKey(15, 'female'), 'rep-15');
+assert.equal(holdCountdownClipKey(5, 'male'), 'cd-5');
+assert.equal(holdCountdownClipKey(15, 'male'), 'rep-15');
+assert.equal(holdCountdownClipKey(99, 'female'), null);
 assert.equal(VOICE_HOLD_CLIP_KEYS.cue, 'hold');
 
 const finishes = new Set<string>();

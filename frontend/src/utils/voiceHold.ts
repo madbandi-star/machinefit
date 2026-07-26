@@ -172,9 +172,19 @@ export function formatHoldCountdownWord(
   return toSinoKoreanCount(v);
 }
 
-/** Prefer prep-style cd clips, then rep clips, for hold number ticks. */
-export function holdCountdownClipKey(n: number): string | null {
+/**
+ * Hold number ticks.
+ * - male: English cd-* then rep-*
+ * - female: Korean rep-* only — never English prep cd-* (prep countdown alone is English)
+ */
+export function holdCountdownClipKey(
+  n: number,
+  voicePack?: VoiceCoachPack
+): string | null {
   const rounded = Math.round(n);
+  if (normalizeVoiceCoachPack(voicePack) !== 'male') {
+    return repClipKey(rounded);
+  }
   return countdownClipKey(rounded) ?? repClipKey(rounded);
 }
 
@@ -269,7 +279,7 @@ export async function runVoiceHoldSegment(
     const n = durationSec - i;
     onPhaseChange?.('holdCountdown', { countdown: n });
     await speakHoldCue({
-      clipKey: holdCountdownClipKey(n),
+      clipKey: holdCountdownClipKey(n, voicePack),
       text: formatHoldCountdownWord(n, locale, voicePack),
       locale,
       voicePack,
