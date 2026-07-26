@@ -227,7 +227,25 @@ export function AchievementsPage() {
   };
 
   return (
-    <PageShell title={t('achievements.title')}>
+    <PageShell
+      title={t('achievements.title')}
+      action={
+        <label
+          className="achievements-popup-pref achievements-popup-pref--header"
+          title={t('achievements.popupPrefHint')}
+        >
+          <input
+            type="checkbox"
+            className="achievements-popup-pref__input"
+            checked={popupEnabled}
+            onChange={(event) => handlePopupEnabledChange(event.target.checked)}
+            aria-label={t('achievements.popupPrefShort')}
+          />
+          <span className="achievements-popup-pref__box" aria-hidden />
+          <span className="achievements-popup-pref__title">{t('achievements.popupPrefShort')}</span>
+        </label>
+      }
+    >
       <div className="achievements-page">
         {isLoading && <Skeleton count={5} height={72} />}
         {isError && <p className="form-error-summary">{t('achievements.loadError')}</p>}
@@ -300,26 +318,6 @@ export function AchievementsPage() {
                 </div>
               </div>
             </section>
-
-            <label className="achievements-popup-pref">
-              <input
-                type="checkbox"
-                className="achievements-popup-pref__input"
-                checked={popupEnabled}
-                onChange={(event) => handlePopupEnabledChange(event.target.checked)}
-              />
-              <span className="achievements-popup-pref__box" aria-hidden />
-              <span className="achievements-popup-pref__copy">
-                <span className="achievements-popup-pref__title">
-                  {popupEnabled
-                    ? t('achievements.popupPrefOn')
-                    : t('achievements.popupPrefOff')}
-                </span>
-                <span className="achievements-popup-pref__hint">
-                  {t('achievements.popupPrefHint')}
-                </span>
-              </span>
-            </label>
 
             <div className="achievements-toolbar">
               <div className="achievements-tabs" role="tablist">

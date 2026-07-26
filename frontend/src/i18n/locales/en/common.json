@@ -717,6 +717,7 @@
     "hidePopupToday": "Don't show again today",
     "popupPrefOn": "Show achievement unlock popups",
     "popupPrefOff": "Hide achievement unlock popups",
+    "popupPrefShort": "Popups",
     "popupPrefHint": "When checked, every unlocked achievement (new or already seen) pops up each visit. Uncheck to turn them off."
   },
   "liveDashboard": {
