@@ -1,20 +1,18 @@
 {
-  "title": "Revert male Korean hold TTS — voice pack hold seconds restored",
-  "summary": "Rolled back d98f6be (male Korean TTS for hold seconds). Hold countdown follows voice pack again: female Sino-Korean TTS, male English cd/rep clips.",
-  "git": { "branch": "main", "commit": "ac44b6a" },
+  "title": "My Page Lab section — same level as personal settings and friends",
+  "summary": "Moved 실험실 to a proper my-page section with h3 title, placed after 친구 관리 and before 더보기, matching 개인설정/친구 관리 layout.",
+  "git": { "branch": "main", "commit": "fe6458d" },
   "changedFiles": [
-    "frontend/src/utils/voiceHold.ts",
-    "frontend/src/utils/voiceCoachClips.ts",
-    "frontend/src/utils/voiceHold.test.ts"
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
-  "testFocus": "Female pack hold: Sino-Korean TTS with female voice (not male). Male pack hold: English cd/rep clips. No preferMaleVoice on hold seconds for female pack.",
+  "testFocus": "My Page shows 실험실 as a section with title (not orphan link below 더보기). Section order: 개인설정 → 친구 관리 (members) → 실험실 → 더보기. Lab link navigates to /my-page/lab.",
   "fastChecks": [
-    "npx vite-node src/utils/voiceHold.test.ts",
-    "npx vite-node src/utils/speechManager.hold.test.ts",
     "npm run build --prefix frontend"
   ],
-  "productionChecks": [],
+  "productionChecks": [
+    "Open /my-page — verify 실험실 section title and placement"
+  ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Hold seconds forced male Korean TTS (십구…일) for all packs.",
-  "toBe": "Pre-d98f6be: female hold seconds use pack-appropriate voice; male uses clips."
+  "asIs": "실험실 was a nav-only block below 더보기 without section title.",
+  "toBe": "실험실 is a top-level my-page section with title, between 친구 관리 and 더보기."
 }

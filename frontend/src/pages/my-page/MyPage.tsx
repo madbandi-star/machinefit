@@ -228,6 +228,13 @@ export function MyPage() {
       ) : null}
 
       <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.lab')}>
+          <ListNavLink to={ROUTES.LAB} label={t('lab.title')} />
+        </nav>
+      </section>
+
+      <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
         <nav className="list-nav" aria-label={t('myPage.explore')}>
           {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
@@ -240,12 +247,6 @@ export function MyPage() {
           {isMember ? (
             <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
           ) : null}
-        </nav>
-      </section>
-
-      <section className="my-page-section">
-        <nav className="list-nav" aria-label={t('myPage.lab')}>
-          <ListNavLink to={ROUTES.LAB} label={t('myPage.lab')} />
         </nav>
       </section>
 
