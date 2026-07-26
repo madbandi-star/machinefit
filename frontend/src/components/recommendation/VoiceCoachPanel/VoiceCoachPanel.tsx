@@ -151,6 +151,8 @@ export function VoiceCoachPanel({
   const showCountControls = flowMode !== 'hold';
   const showHoldDuration = flowMode === 'count_hold' || flowMode === 'hold';
   const holdAfterCount = flowMode === 'count_hold';
+  /** Full panel: always show; records: only when one-more is enabled in settings. */
+  const showOneMoreCountPicker = showOneMoreAndHoldSelectors || oneMoreEnabled;
 
   const [durationCustom, setDurationCustom] = useState(!isVoiceHoldDurationPreset(duration));
   const [customDraft, setCustomDraft] = useState(String(duration));
@@ -329,7 +331,11 @@ export function VoiceCoachPanel({
                   role="group"
                   aria-label={t('machines:voiceCoach.title')}
                 >
-                  <div className="body-metrics-inline__grid">
+                  <div
+                    className={`body-metrics-inline__grid${
+                      showOneMoreCountPicker ? '' : ' body-metrics-inline__grid--2'
+                    }`}
+                  >
                     <div className="body-metrics-inline__cell">
                       <span className="body-metrics-inline__label">
                         {t('machines:voiceCoach.targetReps')}
@@ -370,7 +376,7 @@ export function VoiceCoachPanel({
                         formatValue={(value) => value.toFixed(1)}
                       />
                     </div>
-                    {showOneMoreAndHoldSelectors ? (
+                    {showOneMoreCountPicker ? (
                       <div className="body-metrics-inline__cell">
                         <span className="body-metrics-inline__label">
                           {t('machines:voiceCoach.oneMoreCount')}
