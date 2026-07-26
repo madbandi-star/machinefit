@@ -1,19 +1,12 @@
 {
-  "title": "My Page — rename friends link, remove friends section",
-  "summary": "개인설정 친구 목록 → 친구관리 (ROUTES.FRIENDS). Removed entire 친구 관리 section and submenus from My Page.",
+  "title": "My Page — move Lab section below Explore",
+  "summary": "실험실 section now appears after 더보기 on My Page.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json"
-  ],
-  "testFocus": "My Page 개인설정 shows 친구관리 (members only). No separate 친구 관리 section. /my-page/friends still reachable via link.",
-  "fastChecks": [
-    "npm run build --prefix frontend"
-  ],
-  "productionChecks": [
-    "Open /machinefit/my-page — verify layout"
-  ],
+  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
+  "testFocus": "My Page section order: Insights → 개인설정 → 더보기 → 실험실 → (trainer/owner sections).",
+  "fastChecks": ["npm run build --prefix frontend"],
+  "productionChecks": ["Open /machinefit/my-page — verify 실험실 below 더보기"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "친구 목록 in settings; full 친구 관리 section with 7 submenus.",
-  "toBe": "Single 친구관리 in 개인설정; no 친구 관리 section on My Page."
+  "asIs": "실험실 above 더보기.",
+  "toBe": "실험실 below 더보기."
 }

@@ -208,6 +208,18 @@ export function MyPage() {
       </section>
 
       <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.explore')}>
+          {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
+          {SHOW_MACHINE_REQUESTS_LINK && (
+            <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
+          )}
+          <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
+          <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} />
+        </nav>
+      </section>
+
+      <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
         <nav className="list-nav" aria-label={t('myPage.lab')}>
           <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
@@ -221,18 +233,6 @@ export function MyPage() {
           {isMember ? (
             <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
           ) : null}
-        </nav>
-      </section>
-
-      <section className="my-page-section">
-        <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
-        <nav className="list-nav" aria-label={t('myPage.explore')}>
-          {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
-          {SHOW_MACHINE_REQUESTS_LINK && (
-            <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
-          )}
-          <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
-          <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} />
         </nav>
       </section>
 
