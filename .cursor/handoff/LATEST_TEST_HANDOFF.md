@@ -1,27 +1,20 @@
-# Latest test handoff — Easy mode UI + photo board + push compose
+# Latest test handoff — Achievements category filter grid
 
 **Branch:** `main`
 
 ## Change
 
-### Easy mode (primary)
-- **Home:** MachineFit logo only; remove menu/title; switch-to-normal below start CTA
-- **Step 1:** Remove camera/QR; intro card with gym pill; full-width find machine
-- **Step 2:** Settings/tips `<details>` open by default; remove fit-later hint
-- **Step 3:** Card-based set logging with progress bar and done toggles
-- **Rate:** One-tap “잘 맞아요”; card choices; adjust panel for bad fit
-- **Done:** Celebration hero; card actions; remove stats footnote; **오늘 운동 끝내기** → `/records?tab=history&date=today`
+업적 페이지 카테고리 필터 UI — 가로 스크롤 제거, 한눈에 보는 그리드.
 
-### Also in this commit
-- Photo board: unified filter panel, title/author/stats on cards
-- Push compose: 3-step layout with live preview
+- 전체 · 총볼륨 · … · 시즌업적까지 **4열 그리드**(넓은 화면 6열)
+- 이모지 + 짧은 라벨 컴팩트 칩
+- 패널 카드 스타일
 
 ## Test focus
 
-1. `/easy` → start workout → full flow through rate → done
-2. Done → **오늘 운동 끝내기** opens records on today’s history tab
-3. `/photo-board` — filters, card info, write button
-4. Push compose UI (if accessible)
+1. `/my-page/achievements` → **업적** 탭
+2. 카테고리 패널에 가로 스크롤 없음
+3. 각 카테고리 탭 시 목록 필터 동작
 
 ## Fast checks
 
@@ -32,8 +25,6 @@ npm run test:smoke:changed
 
 ## as-is → to-be
 
-| Area | As-is | To-be |
-|------|-------|-------|
-| Easy mode | Cluttered wizard/log/rate/done | Card UI, one-tap rating, records exit |
-| Photo board | Overlay-only thumbnails | Scannable cards with title/stats |
-| Push | Flat form | 3-step compose + preview |
+| As-is | To-be |
+|-------|-------|
+| 긴 가로 스크롤 칩 | 4열 그리드, 전체 카테고리 한눈에 |

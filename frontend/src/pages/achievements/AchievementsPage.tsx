@@ -381,7 +381,10 @@ export function AchievementsPage() {
                     className={`achievements-chip${category === 'all' ? ' achievements-chip--active' : ''}`}
                     onClick={() => setCategory('all')}
                   >
-                    {t('achievements.all')}
+                    <span className="achievements-chip__emoji" aria-hidden>
+                      ✨
+                    </span>
+                    <span className="achievements-chip__label">{t('achievements.all')}</span>
                   </button>
                   {data.categories.map((cat) => (
                     <button
@@ -390,7 +393,12 @@ export function AchievementsPage() {
                       className={`achievements-chip${category === cat ? ' achievements-chip--active' : ''}`}
                       onClick={() => setCategory(cat)}
                     >
-                      {CATEGORY_EMOJI[cat]} {t(`achievements.category.${cat}`)}
+                      <span className="achievements-chip__emoji" aria-hidden>
+                        {CATEGORY_EMOJI[cat]}
+                      </span>
+                      <span className="achievements-chip__label">
+                        {t(`achievements.category.${cat}`)}
+                      </span>
                     </button>
                   ))}
                 </div>

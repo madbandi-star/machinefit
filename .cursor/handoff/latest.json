@@ -1,34 +1,20 @@
 {
-  "title": "Easy mode UI overhaul + photo board + push compose",
-  "summary": "Redesign easy-mode home and 3-step wizard (pick, recommend, log, rate, done). Photo board scannable gallery and push compose 3-step UI also included.",
-  "git": { "branch": "main", "commit": "8d02a9e" },
+  "title": "Achievements category filter grid",
+  "summary": "Replace horizontal scrolling category chips on achievements page with a 4-column wrap grid so all filters (전체 through 시즌 업적) are visible without sideways scroll.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/easy-mode/EasyHomePage.tsx",
-    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-    "frontend/src/styles/easy-mode.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
-    "frontend/src/styles/photo-board.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/pages/push/PushComposePage.tsx",
-    "frontend/src/styles/push.css",
-    "frontend/src/i18n/locales/ko/push.json",
-    "frontend/src/i18n/locales/en/push.json"
+    "frontend/src/pages/achievements/AchievementsPage.tsx",
+    "frontend/src/pages/achievements/AchievementsPage.css"
   ],
-  "testFocus": "Easy mode: home logo-only header; wizard step1 no camera; step2 details open; step3 log cards; rate one-tap good; done → records today tab. Photo board filter panel + card titles. Push compose 3-step preview.",
+  "testFocus": "Achievements overview tab: category panel shows all chips in grid; no horizontal scroll; tap each category filters list.",
   "fastChecks": [
     "npm run build --prefix frontend",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "/easy — home and full 3-step flow through done",
-    "/records?tab=history — finish today lands here",
-    "/photo-board — gallery cards",
-    "/push — compose layout (admin if needed)"
+    "Open /my-page/achievements — verify 4-col category grid and filtering"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Easy mode cluttered headers, ugly log/rate/done screens; photo board image-only cards; push compose flat form.",
-  "toBe": "Polished easy-mode flow with card UI; photo board info cards; push 3-step compose with preview."
+  "asIs": "Category chips in one long horizontal scroll row.",
+  "toBe": "Compact emoji+label grid panel; all categories visible at once."
 }
