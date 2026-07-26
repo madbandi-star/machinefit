@@ -64,7 +64,7 @@ export function LifterDnaPage() {
       ? { gymId: activeGymId, memberId: activeMemberId }
       : undefined;
 
-  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.lifterDna(activeGymId, activeMemberId),
     queryFn: async () => {
       const res = await lifterDnaApi.snapshot(scopeParams);
@@ -116,14 +116,7 @@ export function LifterDnaPage() {
 
   return (
     <div className="dna-page">
-      <PageShell
-        title={t('lifterDna.title')}
-        action={
-          <button type="button" className="btn btn--secondary btn--sm" onClick={() => refetch()}>
-            {isFetching ? t('lifterDna.analyzing') : t('lifterDna.refresh')}
-          </button>
-        }
-      >
+      <PageShell title={t('lifterDna.title')}>
         {isLoading || !data ? (
           <Skeleton count={6} height={80} />
         ) : isError ? (
