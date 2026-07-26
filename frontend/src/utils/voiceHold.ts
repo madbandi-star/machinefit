@@ -7,7 +7,6 @@
  * OS TTS is fallback only (and for non-Korean).
  */
 
-import { toSinoKoreanCount } from '@/utils/iosMaleCountSpeech';
 import { speechManager } from '@/utils/speechManager';
 import {
   countdownClipKey,
@@ -85,8 +84,12 @@ function isKoreanLocale(locale?: string): boolean {
   return (locale ?? 'ko').toLowerCase().startsWith('ko');
 }
 
-/** Strong hold cue — same TTS voice/prosody as the rest of the coach. */
-export function holdCuePhrase(locale?: string): string {
+/** Strong hold cue — male pack is always English "Hold!!!". */
+export function holdCuePhrase(
+  locale?: string,
+  voicePack?: VoiceCoachPack
+): string {
+  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'Hold!!!';
   return isKoreanLocale(locale) ? '버텨!!!' : 'Hold!!!';
 }
 
@@ -97,28 +100,75 @@ const FINISH_KO = [
 ] as const;
 
 const FINISH_EN = [
-  { phrase: 'Done!', clipKey: null },
-  { phrase: 'Great!', clipKey: null },
-  { phrase: 'Nice work!', clipKey: null },
+  { phrase: 'Done!', clipKey: VOICE_HOLD_CLIP_KEYS.finishDone },
+  { phrase: 'Great!', clipKey: VOICE_HOLD_CLIP_KEYS.finishGreat },
+  { phrase: 'Nice work!', clipKey: VOICE_HOLD_CLIP_KEYS.finishNice },
 ] as const;
 
-export function pickHoldFinishPhrase(locale?: string, rand = Math.random): string {
-  return pickHoldFinish(locale, rand).phrase;
+export function pickHoldFinishPhrase(
+  locale?: string,
+  rand = Math.random,
+  voicePack?: VoiceCoachPack
+): string {
+  return pickHoldFinish(locale, rand, voicePack).phrase;
 }
 
 export function pickHoldFinish(
   locale?: string,
-  rand = Math.random
+  rand = Math.random,
+  voicePack?: VoiceCoachPack
 ): { phrase: string; clipKey: string | null } {
-  const pool = isKoreanLocale(locale) ? FINISH_KO : FINISH_EN;
+  const useEnglish =
+    normalizeVoiceCoachPack(voicePack) === 'male' || !isKoreanLocale(locale);
+  const pool = useEnglish ? FINISH_EN : FINISH_KO;
   const idx = Math.min(pool.length - 1, Math.floor(rand() * pool.length));
   return pool[idx];
 }
 
-/** Spoken countdown word for hold timer (digits read naturally by TTS). */
-export function formatHoldCountdownWord(n: number, locale?: string): string {
-  void locale;
-  return String(Math.max(0, Math.round(n)));
+const EN_HOLD_ONES = [
+  '',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+  'eleven',
+  'twelve',
+  'thirteen',
+  'fourteen',
+  'fifteen',
+  'sixteen',
+  'seventeen',
+  'eighteen',
+  'nineteen',
+] as const;
+
+const EN_HOLD_TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty'] as const;
+
+/** Spoken countdown word for hold timer. */
+export function formatHoldCountdownWord(
+  n: number,
+  locale?: string,
+  voicePack?: VoiceCoachPack
+): string {
+  const v = Math.max(0, Math.round(n));
+  if (normalizeVoiceCoachPack(voicePack) === 'male' || !isKoreanLocale(locale)) {
+    if (v < 20) return EN_HOLD_ONES[v] || String(v);
+    if (v < 70) {
+      const tens = Math.floor(v / 10);
+      const ones = v % 10;
+      return ones === 0
+        ? EN_HOLD_TENS[tens]
+        : `${EN_HOLD_TENS[tens]} ${EN_HOLD_ONES[ones]}`;
+    }
+    return String(v);
+  }
+  return String(v);
 }
 
 /** Prefer prep-style cd clips, then rep clips, for hold number ticks. */
@@ -185,21 +235,22 @@ async function speakHoldCue(options: {
 }): Promise<void> {
   const { clipKey, text, locale, voicePack, signal, countValue } = options;
 
-  // Always prefer the selected pack clip (male/female). Skipping clips for iOS
-  // TTS made number ticks sound female while Hold (clip) stayed male.
-  if (isKoreanLocale(locale) && clipKey) {
+  const maleEnglish = normalizeVoiceCoachPack(voicePack) === 'male';
+  // Male pack = English clips; female Korean clips when locale is ko.
+  const useClips = maleEnglish || isKoreanLocale(locale);
+  if (useClips && clipKey) {
     const played = await playVoiceCoachClip(clipKey, signal, voicePack);
     if (played) return;
   }
   const fallback =
-    typeof countValue === 'number' && isKoreanLocale(locale)
-      ? toSinoKoreanCount(countValue)
+    typeof countValue === 'number'
+      ? formatHoldCountdownWord(countValue, locale, voicePack)
       : text;
-  if (normalizeVoiceCoachPack(voicePack) === 'male') {
+  if (maleEnglish) {
     await speechManager.speak(fallback, {
       signal,
       preferMaleVoice: true,
-      rate: 0.88,
+      rate: 0.92,
     });
     return;
   }
@@ -231,7 +282,7 @@ export async function runVoiceHoldSegment(
   onPhaseChange?.('holdCue');
   await speakHoldCue({
     clipKey: VOICE_HOLD_CLIP_KEYS.cue,
-    text: holdCuePhrase(locale),
+    text: holdCuePhrase(locale, voicePack),
     locale,
     voicePack,
     signal,
@@ -249,7 +300,7 @@ export async function runVoiceHoldSegment(
     onPhaseChange?.('holdCountdown', { countdown: n });
     await speakHoldCue({
       clipKey: holdCountdownClipKey(n),
-      text: formatHoldCountdownWord(n, locale),
+      text: formatHoldCountdownWord(n, locale, voicePack),
       locale,
       voicePack,
       signal,
@@ -261,7 +312,7 @@ export async function runVoiceHoldSegment(
     if (waitMs > 0) await sleep(waitMs, signal);
   }
 
-  const finish = pickHoldFinish(locale);
+  const finish = pickHoldFinish(locale, Math.random, voicePack);
   onPhaseChange?.('holdFinish', { finishPhrase: finish.phrase, countdown: 0 });
   await speakHoldCue({
     clipKey: finish.clipKey,
