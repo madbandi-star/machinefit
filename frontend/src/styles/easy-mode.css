@@ -414,6 +414,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+  min-width: 0;
 }
 
 .easy-s3-intro {
@@ -483,23 +484,30 @@
 }
 
 .easy-s3-toolbar__row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 7.75rem);
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .easy-s3-toolbar__label {
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.3;
-  flex-shrink: 0;
+  min-width: 0;
 }
 
 .easy-s3-toolbar__row .numeric-stepper {
-  width: auto;
-  max-width: 9.5rem;
-  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  justify-self: end;
+}
+
+.easy-s3-toolbar__row .numeric-stepper__row {
+  width: 100%;
+  max-width: 100%;
 }
 
 .easy-s3-progress {
@@ -1660,10 +1668,10 @@
 }
 
 /* Keep steppers from fighting row layouts on narrow phones */
-.easy-shell .numeric-stepper,
-.easy-card .numeric-stepper,
-.easy-set-row .numeric-stepper,
-.easy-s3-set .numeric-stepper {
+.easy-shell .easy-card .numeric-stepper,
+.easy-shell .easy-set-row .numeric-stepper,
+.easy-shell .easy-s3-set .numeric-stepper,
+.easy-shell .easy-rate-adjust__field .numeric-stepper {
   width: 100%;
   max-width: 100%;
 }

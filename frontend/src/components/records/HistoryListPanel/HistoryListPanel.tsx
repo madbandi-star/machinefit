@@ -211,12 +211,6 @@ export function HistoryListPanel() {
   const translateMuscleGroup = (group: string) =>
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
 
-  const selectedDayMuscleGroups = useMemo(() => {
-    if (!selectedDate) return [];
-    const dayCards = filteredAllCards.filter((card) => card.logDate === selectedDate);
-    return collectMuscleGroupsInOrder(dayCards);
-  }, [filteredAllCards, selectedDate]);
-
   const isLoading = !activeGymId || !memberScopeReady || isAllHistoryLoading;
 
   useEffect(() => {
@@ -374,16 +368,6 @@ export function HistoryListPanel() {
             {datesWithData.size > 0 ? (
               <details className="records-list__calendar-details">
                 <summary className="records-list__calendar-summary">
-                  {selectedDate ? (
-                    <span className="records-list__date-selected">
-                      {formatHistoryDateHeaderWithMuscles(
-                        selectedDate,
-                        i18n.language,
-                        selectedDayMuscleGroups,
-                        translateMuscleGroup
-                      )}
-                    </span>
-                  ) : null}
                   <span className="records-list__calendar-toggle">
                     <Icon
                       name="calendar"

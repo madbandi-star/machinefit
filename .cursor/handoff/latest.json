@@ -1,25 +1,24 @@
 {
-  "title": "Achievements header tabs + AI disclaimer copy",
-  "summary": "Move 업적/랭킹 tabs beside page title in achievements header. Update compliance AI disclaimer wording to two-line reference-only text.",
-  "git": { "branch": "main", "commit": "3152c39" },
+  "title": "Easy mode set count fix, lifted weight header, history date filter",
+  "summary": "Fix easy mode step-3 set-count stepper overflow; move lifted-weight mode tabs beside title; hide date/muscle label left of 일자조회 when a single day is selected.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/achievements/AchievementsPage.tsx",
-    "frontend/src/pages/achievements/AchievementsPage.css",
-    "frontend/src/components/layout/PageContainer/PageShell.tsx",
-    "frontend/src/components/compliance/LegalDisclaimerBanner.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/styles/easy-mode.css",
+    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
+    "frontend/src/pages/lifted-weight/LiftedWeightPage.css",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
   ],
-  "testFocus": "Achievements: title row shows 업적 [업적][랭킹] tabs; tab switch works. LegalDisclaimerBanner ai variant shows new two-line copy with line break.",
+  "testFocus": "Easy mode step 3 set count fits screen. Lifted weight: title + [나][헬스장][전체] in header. Records history: pick one date — no date/muscle text left of 일자조회.",
   "fastChecks": [
     "npm run build --prefix frontend",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "/my-page/achievements — header tabs beside title",
-    "Recommendation result or Lifter DNA — AI disclaimer text"
+    "/easy/workout step 3 set count row",
+    "/my-page/lifted-weight header tabs",
+    "/records?tab=history with date filter"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Achievement tabs below hero; old single-line AI disclaimer.",
-  "toBe": "Tabs in header next to title; updated disclaimer copy with pre-line."
+  "asIs": "Set count stepper overflows; lifted modes below title; selected date shows long label before 일자조회.",
+  "toBe": "Compact set count; header mode tabs; empty label when day selected."
 }

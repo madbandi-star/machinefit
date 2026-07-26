@@ -108,31 +108,38 @@ export function LiftedWeightPage() {
     badge?.nextBadge &&
     (locale === 'ko' ? badge.nextBadge.name.ko : badge.nextBadge.name.en);
 
+  const modeTabs = (
+    <div className="lifted-weight__modes" role="tablist" aria-label={t('liftedWeight.modes')}>
+      {modes.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          role="tab"
+          aria-selected={mode === item.id}
+          className={`lifted-weight__mode${mode === item.id ? ' is-active' : ''}`}
+          onClick={() => setMode(item.id)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="lifted-weight">
       <PageShell
-        title={t('liftedWeight.title')}
+        title={
+          <div className="lifted-weight__title-row">
+            <h1 className="page-title">{t('liftedWeight.title')}</h1>
+            {modeTabs}
+          </div>
+        }
         action={
           <Link to={ROUTES.LIFTED_WEIGHT_RANKINGS} className="btn btn--secondary btn--sm">
             {t('liftedWeight.rankings')}
           </Link>
         }
       >
-        <div className="lifted-weight__modes fade-in" role="tablist" aria-label={t('liftedWeight.modes')}>
-          {modes.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={mode === item.id}
-              className={`lifted-weight__mode${mode === item.id ? ' is-active' : ''}`}
-              onClick={() => setMode(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
         {mode === 'gym' && gyms.length > 0 && (
           <label className="lifted-weight__gym-select fade-in">
             <span>{t('liftedWeight.selectGym')}</span>
