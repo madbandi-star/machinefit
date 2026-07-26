@@ -9,7 +9,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   __resetVoiceCoachClipsForTests,
+  ensureVoiceCoachAudioRunning,
   playVoiceCoachClip,
+  primeVoiceCoachAudioSync,
   stopVoiceCoachClips,
   unlockVoiceCoachClips,
 } from './voiceCoachClips';
@@ -632,6 +634,76 @@ async function caseUnlockDoesNotWaitForClipPreload(): Promise<void> {
   );
 }
 
+/**
+ * First Count Start used to race unlock at 120ms while AudioContext.resume()
+ * was still pending → beeps/clips played into a suspended graph (silent until
+ * the second tap). Gesture resume must be awaited before the first sound.
+ */
+async function caseFirstStartAwaitsSlowGestureResume(): Promise<void> {
+  installMocks();
+  resetCoachState();
+
+  const g = globalThis as typeof globalThis & {
+    AudioContext: new () => MockAudioContext;
+    webkitAudioContext: new () => MockAudioContext;
+  };
+
+  class SlowResumeContext extends MockAudioContext {
+    state: string = 'suspended';
+    async resume(): Promise<void> {
+      await new Promise((r) => setTimeout(r, 220));
+      this.state = 'running';
+    }
+  }
+
+  g.AudioContext = SlowResumeContext as unknown as new () => MockAudioContext;
+  g.webkitAudioContext = SlowResumeContext as unknown as new () => MockAudioContext;
+  __resetVoiceCoachClipsForTests();
+
+  const t0 = Date.now();
+  primeVoiceCoachAudioSync();
+  const ctx = await ensureVoiceCoachAudioRunning();
+  const elapsed = Date.now() - t0;
+  const resumeOk =
+    ctx != null &&
+    (ctx as unknown as MockAudioContext).state === 'running' &&
+    elapsed >= 200;
+
+  // Full first-start path: unlock + flow must produce countdown clips after slow resume.
+  __resetVoiceCoachClipsForTests();
+  g.AudioContext = SlowResumeContext as unknown as new () => MockAudioContext;
+  g.webkitAudioContext = SlowResumeContext as unknown as new () => MockAudioContext;
+  spoken.length = 0;
+  playedClips.length = 0;
+  const unlockP = unlockVoiceCoachAudio('female');
+  await Promise.race([unlockP, new Promise<void>((r) => setTimeout(r, 500))]);
+  await ensureVoiceCoachAudioRunning();
+  const phases = await collectPhases((onPhaseChange) =>
+    runVoiceCoachFlow({
+      targetReps: 2,
+      oneMoreEnabled: false,
+      prepCount: 5,
+      flowMode: 'count',
+      countMode: 'normal',
+      repGapMs: 40,
+      locale: 'ko',
+      voicePack: 'female',
+      onPhaseChange,
+    })
+  );
+  const flowOk =
+    phases.includes('countdown:5') &&
+    phases.includes('counting:1') &&
+    phases.includes('done') &&
+    playedClips.some((c) => c.includes('cd-5'));
+
+  record(
+    'unlock/first-start-awaits-resume',
+    resumeOk && flowOk,
+    `resumeWait=${elapsed}ms state=${(ctx as unknown as MockAudioContext | null)?.state} flow=${phases.filter((p) => p.startsWith('countdown') || p.startsWith('counting')).join(',')}`
+  );
+}
+
 async function caseTurboMode(): Promise<void> {
   installMocks();
   resetCoachState();
@@ -845,6 +917,7 @@ async function main(): Promise<void> {
   await caseExternalCancelDuringTtsDoesNotAbortSession();
   await caseDisabledUnlockSilent();
   await caseUnlockDoesNotWaitForClipPreload();
+  await caseFirstStartAwaitsSlowGestureResume();
   await caseTurboMode();
   await caseAiAccelMode();
   await caseEnglishLocale();

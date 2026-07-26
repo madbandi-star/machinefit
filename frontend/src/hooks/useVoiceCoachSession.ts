@@ -9,6 +9,7 @@ import {
   type VoiceCoachPhase,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
+import { ensureVoiceCoachAudioRunning } from '@/utils/voiceCoachClips';
 import type { VoiceHoldFlowMode } from '@/utils/voiceHold';
 
 interface UseVoiceCoachSessionOptions {
@@ -86,17 +87,21 @@ export function useVoiceCoachSession({
     setTurbo(false);
     setIntensity(0);
 
-    // Sync unlock in the click turn, then start flow without waiting on clip decode.
+    // Sync unlock in the click turn (prime + gesture resume), then start flow.
     // First Start on recommendation/history must work before any set-complete.
     const unlockPromise = unlockVoiceCoachAudio(voicePack);
 
     void (async () => {
       try {
-        // Cap wait so a slow network preload cannot stall past the gesture window.
+        // Wait for gesture-initiated AudioContext resume / keep-alive — not clips.
+        // 120ms was too short when resume was slow → beeps/clips played suspended
+        // (silent first tap; second tap worked because context was already running).
         await Promise.race([
           unlockPromise,
-          new Promise<void>((resolve) => window.setTimeout(resolve, 120)),
+          new Promise<void>((resolve) => window.setTimeout(resolve, 500)),
         ]);
+        // Belt-and-suspenders: await the gesture resume promise before first sound.
+        await ensureVoiceCoachAudioRunning();
         if (controller.signal.aborted || runIdRef.current !== runId) return;
 
         await runVoiceCoachFlow({

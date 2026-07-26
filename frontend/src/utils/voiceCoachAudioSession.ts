@@ -193,9 +193,11 @@ export async function beginVoiceCoachAudioSession(): Promise<void> {
   duckMotivationMusic(true);
   setMediaSessionPlaying(true);
   startResumeWatchdog();
+  // Keep-alive play must stay in the gesture turn; do not await wake lock —
+  // that delayed unlock past the 120–400ms start race and silenced first Start.
   await startSilentKeepAlive();
-  await acquireWakeLock();
   resumeSpeechSynthesis();
+  void acquireWakeLock();
 }
 
 export async function endVoiceCoachAudioSession(): Promise<void> {

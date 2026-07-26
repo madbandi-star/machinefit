@@ -590,7 +590,8 @@ export function unlockVoiceCoachAudio(voicePack?: VoiceCoachPack): Promise<void>
   const sessionUnlock = beginVoiceCoachAudioSession();
 
   return (async () => {
-    // Resolve once the audio graph / keep-alive is up — do not await clip preload.
+    // Resolve once AudioContext is running + keep-alive started.
+    // Do not await clip preload or wake lock (those made first Start silent).
     await Promise.all([sessionUnlock, ensureVoiceCoachAudioRunning()]);
     void clipsUnlock;
   })();

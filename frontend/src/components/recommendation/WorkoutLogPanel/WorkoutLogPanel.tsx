@@ -338,8 +338,9 @@ export function WorkoutLogPanel({
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
     // Count Start must work anytime: before set-complete, mid-rest, during rest tips.
-    // Prime audio in this same tap — do not require 수행기록 완료 first.
-    unlockVoiceCoachAudio(voiceCoachPack);
+    // Do NOT unlock here then call start() — start() soft-stops (cancel) first, which
+    // killed the gesture TTS/audio unlock and made the first tap silent. Unlock runs
+    // inside useVoiceCoachSession.start() after that soft-stop.
     manualCountStartRef.current = true;
     voiceCoachRunningRef.current = true;
     restSpeechAbortRef.current?.abort();
@@ -347,7 +348,7 @@ export function WorkoutLogPanel({
     // Clear rest UI without going through Skip→onReady (that raced and killed count).
     setRestTimer(null);
     voiceCoachStartRef.current();
-  }, [voiceCoachPack]);
+  }, []);
   const voiceCoachStopRef = useRef(voiceCoach.stop);
   voiceCoachStopRef.current = voiceCoach.stop;
   const stopVoiceCoachSession = useCallback(() => {

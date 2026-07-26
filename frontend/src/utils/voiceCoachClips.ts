@@ -36,6 +36,12 @@ let pendingClipSettle: ((played: boolean) => void) | null = null;
 let clipGeneration = 0;
 /** Last pack unlocked — used to drop decoded buffers when switching female↔male. */
 let lastUnlockedPack: VoiceCoachPack | null = null;
+/**
+ * Resume kicked inside the user-gesture turn (primeVoiceCoachAudioSync).
+ * First Count Start must await this before beeps/clips — a late resume() after
+ * the gesture window ends stays silent on iOS/WebView.
+ */
+let gestureResumePromise: Promise<void> | null = null;
 
 export function normalizeVoiceCoachPack(value: unknown): VoiceCoachPack {
   return value === 'male' ? 'male' : DEFAULT_VOICE_COACH_PACK;
@@ -93,6 +99,14 @@ function getSharedAudioContext(): AudioContext | null {
 export async function ensureVoiceCoachAudioRunning(): Promise<AudioContext | null> {
   const ctx = getSharedAudioContext();
   if (!ctx) return null;
+  // Prefer the gesture-started resume so we don't rely on a post-gesture resume().
+  if (gestureResumePromise) {
+    try {
+      await gestureResumePromise;
+    } catch {
+      // fall through and try again
+    }
+  }
   const state = ctx.state as string;
   if (state === 'suspended' || state === 'interrupted') {
     try {
@@ -418,7 +432,13 @@ export function primeVoiceCoachAudioSync(): AudioContext | null {
   if (!ctx) return null;
   const state = ctx.state as string;
   if (state === 'suspended' || state === 'interrupted') {
-    void ctx.resume();
+    // Keep the gesture-initiated promise so start() can await it before sound.
+    gestureResumePromise = ctx
+      .resume()
+      .then(() => undefined)
+      .catch(() => undefined);
+  } else {
+    gestureResumePromise = Promise.resolve();
   }
   try {
     const osc = ctx.createOscillator();
@@ -495,6 +515,7 @@ export function __resetVoiceCoachClipsForTests(): void {
   pendingClipSettle = null;
   clipGeneration = 0;
   lastUnlockedPack = null;
+  gestureResumePromise = null;
   if (sharedAudioCtx) {
     try {
       void sharedAudioCtx.close();
