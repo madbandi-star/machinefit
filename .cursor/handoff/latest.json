@@ -1,12 +1,16 @@
 {
-  "title": "Achievements popup — remove Close all button",
-  "summary": "Removed 모두 닫기 secondary button from achievement unlock popup (× close remains).",
+  "title": "Lifter DNA page — title and disclaimer placement",
+  "summary": "Page title AI Lifter DNA → 운동성향. AI disclaimer moved from top to above AI 종합 리포트 section.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/pages/achievements/AchievementsPage.tsx"],
-  "testFocus": "Multi-unlock popup: no 모두 닫기 button; share and continue/done still work; × still closes all.",
+  "changedFiles": [
+    "frontend/src/pages/lifter-dna/LifterDnaPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
+  ],
+  "testFocus": "/my-page/lifter-dna: header 운동성향; disclaimer above traits (AI 종합 리포트), not at page top.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Batch unlock popup had 모두 닫기 button.",
-  "toBe": "Button removed."
+  "asIs": "Title AI Lifter DNA; disclaimer at top of page.",
+  "toBe": "Title 운동성향; disclaimer above AI 종합 리포트."
 }

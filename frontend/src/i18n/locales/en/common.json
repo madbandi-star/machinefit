@@ -748,7 +748,7 @@
     "boardMuscle": "Muscle groups"
   },
   "lifterDna": {
-    "title": "AI Lifter DNA",
+    "title": "Workout style",
     "complete": "🤖 MachineFit AI analysis complete",
     "analyzing": "Analyzing…",
     "analyzingHint": "Building your DNA from recent workouts.",

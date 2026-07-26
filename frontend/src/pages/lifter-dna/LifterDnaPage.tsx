@@ -124,7 +124,6 @@ export function LifterDnaPage() {
           </button>
         }
       >
-        <LegalDisclaimerBanner variant="ai" compact />
         {isLoading || !data ? (
           <Skeleton count={6} height={80} />
         ) : isError ? (
@@ -168,6 +167,8 @@ export function LifterDnaPage() {
                 {t('lifterDna.share')}
               </button>
             </header>
+
+            <LegalDisclaimerBanner variant="ai" compact />
 
             <section className="dna-section">
               <h3 className="dna-section__title">{t('lifterDna.traits')}</h3>
