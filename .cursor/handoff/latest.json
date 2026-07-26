@@ -1,7 +1,7 @@
 {
   "title": "Records voice coach inline hold duration picker grid",
   "summary": "Records page merges hold duration into voice coach picker row with dynamic 2–4 columns based on settings (one-more, count_hold). Hold-only shows 1 column.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "db57f1d" },
   "changedFiles": [
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
     "frontend/src/styles/components.css"
