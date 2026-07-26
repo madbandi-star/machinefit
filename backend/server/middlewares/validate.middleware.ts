@@ -1,5 +1,15 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { ZodSchema } from 'zod';
+import { AppError } from './error.middleware.js';
+
+/** Read query validated by {@link validateQuery} (Express 5 keeps req.query read-only). */
+export function getValidatedQuery<T>(res: Response): T {
+  const query = res.locals.validatedQuery;
+  if (query == null) {
+    throw new AppError(500, 'INTERNAL_ERROR', 'Validated query missing');
+  }
+  return query as T;
+}
 
 export function validateBody<T>(schema: ZodSchema<T>) {
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -34,7 +44,8 @@ export function validateQuery<T>(schema: ZodSchema<T>) {
       });
       return;
     }
-    req.query = result.data as Request['query'];
+    // Express 5: req.query is getter-only; do not assign (throws → 500).
+    res.locals.validatedQuery = result.data;
     next();
   };
 }

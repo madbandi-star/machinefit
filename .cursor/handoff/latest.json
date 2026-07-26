@@ -1,31 +1,27 @@
 {
-  "title": "Fix post-signup home API errors",
-  "summary": "Clear stale gym/member localStorage on login/register/logout and defer scoped API calls until server gym list and members are loaded.",
+  "title": "Fix favorites 500 on Express 5",
+  "summary": "validateQuery no longer assigns to read-only req.query (Express 5). Fixes GET /favorites 500 on home after signup.",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/utils/syncGymScope.ts",
-    "frontend/src/hooks/useActiveGym.ts",
-    "frontend/src/hooks/useActiveMember.ts",
-    "frontend/src/pages/auth/register/RegisterPage.tsx",
-    "frontend/src/pages/auth/login/LoginPage.tsx",
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/services/http/axios-client.ts"
+    "backend/server/middlewares/validate.middleware.ts",
+    "backend/server/controllers/favorite.controller.ts",
+    "backend/server/controllers/workout-log.controller.ts"
   ],
-  "testFocus": "After signup or login on a browser that had a previous session: home loads without 403 spam on /users/me/gyms/*/members, /history, /favorites. Empty recent/favorites states show normally.",
+  "testFocus": "After Render redeploy: signup → home → Network shows GET /favorites 200 (empty array), no 500 console spam.",
   "fastChecks": [
-    "npm run test:smoke:changed"
+    "npm run build --workspace=backend"
   ],
   "productionChecks": [
-    "Register new account → open home → DevTools Network: no 403 burst on members/history/favorites"
+    "Register or login → home → DevTools: /api/v1/favorites?gymId=... returns 200"
   ],
   "deploy": {
-    "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": false
+    "frontend": "unchanged",
+    "backendDeployNeeded": true,
+    "backendNote": "Render manual deploy required — frontend Pages alone will not fix this."
   },
-  "asIs": "Signup/login reused persisted gym/member IDs from localStorage before /users/me/gyms resolved, causing forbidden requests and console error spam.",
-  "toBe": "Auth boundaries reset gym scope; home waits for server gym list + member fetch before favorites/history queries."
+  "asIs": "GET /favorites (and workout-log list with validateQuery) throws when middleware assigns req.query on Express 5 → 500.",
+  "toBe": "Validated query stored on res.locals; controllers read via getValidatedQuery → 200 with data."
 }

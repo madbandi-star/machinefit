@@ -1,15 +1,18 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { gymScopeIdSchema, gymIdSchema, memberIdSchema } from '@machinefit/shared';
+import { gymIdSchema, memberIdSchema } from '@machinefit/shared';
 import { favoriteService } from '../services/favorite.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { getValidatedQuery } from '../middlewares/validate.middleware.js';
 import { resolveRequestLocale } from '../utils/locale.util.js';
 import { getParam } from '../utils/params.util.js';
 
+type FavoriteListQuery = { gymId: string; memberId?: string };
+type FavoriteCheckQuery = { gymId: string; memberId?: string };
+
 export async function listFavorites(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const gymId = gymScopeIdSchema.parse(req.query.gymId);
-  const memberId = req.query.memberId ? memberIdSchema.parse(req.query.memberId) : undefined;
+  const { gymId, memberId } = getValidatedQuery<FavoriteListQuery>(res);
   const locale = resolveRequestLocale(req);
   const items = await favoriteService.list(req.user.userId, gymId, locale, { memberId });
   res.json({ success: true, data: items });
@@ -46,8 +49,7 @@ export async function removeFavorite(req: Request, res: Response): Promise<void>
 
 export async function checkFavorite(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const gymId = gymIdSchema.parse(req.query.gymId);
-  const memberId = req.query.memberId ? memberIdSchema.parse(req.query.memberId) : undefined;
+  const { gymId, memberId } = getValidatedQuery<FavoriteCheckQuery>(res);
   const result = await favoriteService.check(
     req.user.userId,
     gymId,
