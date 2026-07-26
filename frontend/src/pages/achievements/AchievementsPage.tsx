@@ -8,6 +8,7 @@ import type {
   AchievementRarity,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { Icon } from '@/components/icons/Icon';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { achievementsApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -86,6 +87,7 @@ export function AchievementsPage() {
   const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
   const [popupEnabled, setPopupEnabled] = useState(() => isAchievementUnlockPopupEnabled());
+  const [heroExpanded, setHeroExpanded] = useState(false);
 
   // Each navigation into this page counts as a new visit for unlock popups.
   useEffect(() => {
@@ -252,71 +254,100 @@ export function AchievementsPage() {
 
         {data && (
           <>
-            <section className="achievements-hero" aria-label={t('achievements.summary')}>
-              <div className="achievements-hero__title-row">
-                <h2 className="achievements-hero__title">{t('achievements.completed')}</h2>
-                <span className="achievements-hero__level">
+            <section
+              className={`achievements-hero${heroExpanded ? ' achievements-hero--expanded' : ' achievements-hero--collapsed'}`}
+              aria-label={t('achievements.summary')}
+            >
+              <button
+                type="button"
+                className="achievements-hero__toggle"
+                onClick={() => setHeroExpanded((v) => !v)}
+                aria-expanded={heroExpanded}
+                aria-controls="achievements-hero-details"
+              >
+                <span className="achievements-hero__summary">
+                  <span className="achievements-hero__summary-label">{t('achievements.completed')}</span>
+                  <span className="achievements-hero__summary-count">
+                    {formatInt(data.summary.completed, locale)}/{formatInt(data.summary.total, locale)}
+                  </span>
+                  {data.activeTitle ? (
+                    <span className="achievements-hero__summary-title">
+                      {loc(data.activeTitle, locale)}
+                    </span>
+                  ) : null}
+                </span>
+                <span className="achievements-hero__summary-level">
                   Lv.{data.summary.level.level}
                 </span>
-              </div>
-              <p className="achievements-hero__sub">
-                {formatInt(data.summary.completed, locale)} / {formatInt(data.summary.total, locale)}
-                {data.activeTitle ? ` · ${loc(data.activeTitle, locale)}` : ''}
-              </p>
-              <div className="achievements-progress" aria-hidden>
-                <div
-                  className="achievements-progress__bar"
-                  style={{ width: `${Math.min(100, data.summary.completionPct)}%` }}
+                <Icon
+                  name="chevronDown"
+                  size={18}
+                  className="achievements-hero__chevron"
+                  aria-hidden
                 />
-              </div>
-              <div className="achievements-stats">
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.completionRate')}</span>
-                  <span className="achievements-stat__value">{data.summary.completionPct}%</span>
+                <span className="visually-hidden">
+                  {heroExpanded ? t('collapse') : t('expand')}
+                </span>
+              </button>
+
+              {heroExpanded ? (
+                <div id="achievements-hero-details" className="achievements-hero__details">
+                  <div className="achievements-progress" aria-hidden>
+                    <div
+                      className="achievements-progress__bar"
+                      style={{ width: `${Math.min(100, data.summary.completionPct)}%` }}
+                    />
+                  </div>
+                  <div className="achievements-stats">
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.completionRate')}</span>
+                      <span className="achievements-stat__value">{data.summary.completionPct}%</span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.xp')}</span>
+                      <span className="achievements-stat__value">
+                        {formatInt(data.summary.totalXp, locale)} XP
+                      </span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.nextLevel')}</span>
+                      <span className="achievements-stat__value">
+                        {formatInt(data.summary.level.xpToNextLevel, locale)} XP
+                      </span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.badges')}</span>
+                      <span className="achievements-stat__value">
+                        {formatInt(data.summary.badgeCount, locale)}
+                      </span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.rare')}</span>
+                      <span className="achievements-stat__value">
+                        {formatInt(data.summary.rareCount, locale)}
+                      </span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.hidden')}</span>
+                      <span className="achievements-stat__value">
+                        {data.summary.hiddenUnlocked > 0
+                          ? `${data.summary.hiddenUnlocked}/${data.summary.hiddenTotal}`
+                          : '???'}
+                      </span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.inProgress')}</span>
+                      <span className="achievements-stat__value">
+                        {formatInt(data.summary.inProgress, locale)}
+                      </span>
+                    </div>
+                    <div className="achievements-stat">
+                      <span className="achievements-stat__label">{t('achievements.levelProgress')}</span>
+                      <span className="achievements-stat__value">{data.summary.level.progressPct}%</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.xp')}</span>
-                  <span className="achievements-stat__value">
-                    {formatInt(data.summary.totalXp, locale)} XP
-                  </span>
-                </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.nextLevel')}</span>
-                  <span className="achievements-stat__value">
-                    {formatInt(data.summary.level.xpToNextLevel, locale)} XP
-                  </span>
-                </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.badges')}</span>
-                  <span className="achievements-stat__value">
-                    {formatInt(data.summary.badgeCount, locale)}
-                  </span>
-                </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.rare')}</span>
-                  <span className="achievements-stat__value">
-                    {formatInt(data.summary.rareCount, locale)}
-                  </span>
-                </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.hidden')}</span>
-                  <span className="achievements-stat__value">
-                    {data.summary.hiddenUnlocked > 0
-                      ? `${data.summary.hiddenUnlocked}/${data.summary.hiddenTotal}`
-                      : '???'}
-                  </span>
-                </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.inProgress')}</span>
-                  <span className="achievements-stat__value">
-                    {formatInt(data.summary.inProgress, locale)}
-                  </span>
-                </div>
-                <div className="achievements-stat">
-                  <span className="achievements-stat__label">{t('achievements.levelProgress')}</span>
-                  <span className="achievements-stat__value">{data.summary.level.progressPct}%</span>
-                </div>
-              </div>
+              ) : null}
             </section>
 
             <div className="achievements-toolbar">
