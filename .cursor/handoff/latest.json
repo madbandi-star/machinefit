@@ -1,14 +1,17 @@
 {
-  "title": "Records save switches to adjustment compare view",
-  "summary": "Bottom save/bookmark in 셋팅값 조정 필요 editing mode always saves preferences and transitions to read-only 추천 vs 조정 compare (no longer requires settingsDirty).",
-  "git": { "branch": "main", "commit": "72acf04" },
+  "title": "Records bad button becomes 셋팅값 저장하기",
+  "summary": "After 셋팅값 조정 필요 is active in edit mode, the bad feedback button label switches to 셋팅값 저장하기 and triggers the same save as bottom 저장하기 (prefs + workout log).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
+    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json"
   ],
-  "testFocus": "Records: 셋팅값 조정 필요 → edit or not → 저장하기 → compare read-only panel. Same via bookmark save.",
+  "testFocus": "Records: tap 셋팅값 조정 필요 → label becomes 셋팅값 저장하기 → tap runs full save + compare view. Recommendation page unchanged.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Bottom save skipped preference finalize unless settingsDirty; stayed in edit mode.",
-  "toBe": "Bottom save always finalizes adjustment editing like former top 조정값 저장."
+  "asIs": "Bad button always showed 셋팅값 조정 필요 and only submitted fit rating.",
+  "toBe": "In edit mode, bad button shows 셋팅값 저장하기 and saves like bottom button."
 }

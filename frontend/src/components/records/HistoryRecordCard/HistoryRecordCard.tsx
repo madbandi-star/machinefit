@@ -135,6 +135,25 @@ export function HistoryRecordCard({
     ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
     : null;
 
+  const canSavePreferences = showAdjustment && !adjustmentReadOnly;
+  const badButtonSaveMode = savedRating === 'bad' && canSavePreferences;
+
+  const handleWorkoutSave = useCallback(() => {
+    if (!logControl || logControl.isActionPending || logControl.isLoading) return;
+    if (!isWorkoutLogSaved) {
+      setWorkoutLogSavedOverride(true);
+    }
+    logControl.save();
+  }, [isWorkoutLogSaved, logControl]);
+
+  const handleCompanionSave = useCallback(async () => {
+    if (!canSavePreferences) return;
+    await fitFeedback.savePreferencesAsync(() => {
+      setPrefsSavedLocally(true);
+      setIsEditingAdjustments(false);
+    });
+  }, [canSavePreferences, fitFeedback.savePreferencesAsync]);
+
   const bookmarkDisabled =
     !isAuthenticated || bookmarkPending || !logControl || logControl.isLoading || logControl.isActionPending;
 
@@ -143,13 +162,12 @@ export function HistoryRecordCard({
     if (!logControl || logControl.isActionPending || logControl.isLoading) return;
 
     if (!isWorkoutLogSaved) {
-      setWorkoutLogSavedOverride(true);
-      logControl.save();
+      handleWorkoutSave();
       return;
     }
 
     if (logControl.isDirty) {
-      logControl.save();
+      handleWorkoutSave();
       return;
     }
 
@@ -167,16 +185,6 @@ export function HistoryRecordCard({
     event.stopPropagation();
     setExpanded((prev) => !prev);
   };
-
-  const canSavePreferences = showAdjustment && !adjustmentReadOnly;
-
-  const handleCompanionSave = useCallback(async () => {
-    if (!canSavePreferences) return;
-    await fitFeedback.savePreferencesAsync(() => {
-      setPrefsSavedLocally(true);
-      setIsEditingAdjustments(false);
-    });
-  }, [canSavePreferences, fitFeedback.savePreferencesAsync]);
 
   const settingsPanel = (
     <RecommendationSettingsPanel
@@ -321,12 +329,18 @@ export function HistoryRecordCard({
             <FitFeedbackPanel
               savedRating={savedRating}
               showIntroText={false}
+              badButtonSaveMode={badButtonSaveMode}
+              onBadSave={handleWorkoutSave}
               onRating={(rating) => {
                 if (rating === 'bad') setIsEditingAdjustments(true);
                 else setIsEditingAdjustments(false);
                 fitFeedback.handleRating(rating);
               }}
-              isPending={fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending}
+              isPending={
+                fitFeedback.isFeedbackPending ||
+                fitFeedback.isPreferencesPending ||
+                Boolean(logControl?.isActionPending)
+              }
             />
           ) : null}
           <div className="history-record-card__section">

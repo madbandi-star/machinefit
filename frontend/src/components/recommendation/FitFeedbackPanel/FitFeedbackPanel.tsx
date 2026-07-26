@@ -13,6 +13,9 @@ interface FitFeedbackPanelProps {
   isPreferencesPending?: boolean;
   /** When false, hide title/desc intro copy (e.g. records page). */
   showIntroText?: boolean;
+  /** Records: bad button shows save label and triggers onBadSave instead of re-rating. */
+  badButtonSaveMode?: boolean;
+  onBadSave?: () => void;
 }
 
 export function FitFeedbackPanel({
@@ -22,6 +25,8 @@ export function FitFeedbackPanel({
   onSavePreferences,
   isPreferencesPending = false,
   showIntroText = true,
+  badButtonSaveMode = false,
+  onBadSave,
 }: FitFeedbackPanelProps) {
   const { t } = useTranslation('machines');
   const goodRef = useRef<HTMLButtonElement>(null);
@@ -29,6 +34,8 @@ export function FitFeedbackPanel({
   const wasPendingRef = useRef(false);
   const showSavePreferences = Boolean(onSavePreferences) && savedRating === 'bad';
   const hasIntro = showIntroText || showSavePreferences;
+
+  const showBadAsSave = badButtonSaveMode && savedRating === 'bad';
 
   const selectRating = (fitRating: FitRating) => {
     if (isPending) return;
@@ -87,13 +94,22 @@ export function FitFeedbackPanel({
         <button
           ref={badRef}
           type="button"
-          className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}`}
-          onClick={() => selectRating('bad')}
-          disabled={isPending}
+          className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}${
+            showBadAsSave ? ' fit-feedback-panel__btn--save' : ''
+          }`}
+          onClick={() => {
+            if (showBadAsSave) {
+              if (isPending) return;
+              onBadSave?.();
+              return;
+            }
+            selectRating('bad');
+          }}
+          disabled={isPending || (showBadAsSave && !onBadSave)}
           aria-pressed={savedRating === 'bad'}
         >
           <Icon name="sliders" size={20} />
-          {t('feedback.bad')}
+          {showBadAsSave ? t('feedback.saveSettings') : t('feedback.bad')}
         </button>
       </div>
       {isPending ? (

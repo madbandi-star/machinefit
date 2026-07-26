@@ -157,6 +157,7 @@
     "actionsLabel": "Recommendation fit feedback",
     "good": "Recommendations fit well",
     "bad": "Settings need adjustment",
+    "saveSettings": "Save settings",
     "savedGood": "Using AI recommended values again.",
     "savedBad": "Using your adjusted values. Tweak settings as needed.",
     "recommendedShort": "Rec.",

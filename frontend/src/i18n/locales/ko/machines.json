@@ -157,6 +157,7 @@
     "actionsLabel": "추천 세팅 피드백",
     "good": "추천값 잘 맞음",
     "bad": "셋팅값 조정 필요",
+    "saveSettings": "셋팅값 저장하기",
     "savedGood": "AI 추천값을 다시 사용합니다.",
     "savedBad": "사용자 조정값을 사용합니다. 원하는 세팅으로 맞춰 주세요.",
     "recommendedShort": "추천",
