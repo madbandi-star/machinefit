@@ -30,6 +30,8 @@ interface VoiceCoachPickerGridProps {
   holdDurationSec: number;
   onHoldDurationSecChange: (sec: number) => void;
   disabled?: boolean;
+  /** Display values only — no scroll interaction (e.g. records card uses Settings defaults). */
+  readOnly?: boolean;
   /** records card layout: inline hold + conditional one-more column */
   recordsLayout?: boolean;
   labels?: VoiceCoachPickerGridLabels;
@@ -86,6 +88,7 @@ export function VoiceCoachPickerGrid({
   holdDurationSec,
   onHoldDurationSecChange,
   disabled = false,
+  readOnly = false,
   recordsLayout = false,
   labels = 'machines',
   compact = false,
@@ -111,11 +114,13 @@ export function VoiceCoachPickerGrid({
     return null;
   }
 
+  const pickerLocked = disabled;
+
   return (
     <div
       className={`body-metrics-inline voice-coach-panel__pickers${
-        disabled ? ' body-metrics-inline--disabled' : ''
-      }${className ? ` ${className}` : ''}`}
+        pickerLocked ? ' body-metrics-inline--disabled' : ''
+      }${readOnly ? ' voice-coach-panel__pickers--readonly' : ''}${className ? ` ${className}` : ''}`}
       role="group"
       aria-label={copy.group}
     >

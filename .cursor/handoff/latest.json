@@ -1,18 +1,17 @@
 {
-  "title": "Settings voice coach picker grid matches records",
-  "summary": "Settings > Voice Coach now uses shared VoiceCoachPickerGrid with records card layout: ScrollPicker row with dynamic 2-4 columns, conditional one-more, inline hold duration.",
+  "title": "Records voice coach uses Settings-only picker defaults",
+  "summary": "Records card voice coach pickers show Settings values read-only. Target reps no longer syncs from volumeReps on history; only Settings > Voice Coach can change the four picker values.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx",
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
-  "testFocus": "Settings > Voice Coach: picker grid matches records card (목표횟수/카운트간격/원모어/버텨 시간 ScrollPickers, column count changes with toggles). Records cards unchanged.",
+  "testFocus": "Change values in Settings > Voice Coach → Records card shows same read-only pickers. Scrolling pickers on record card does nothing. Count session uses settings values. Recommendation page pickers still editable.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Settings used fixed 3-col grid + dropdown for hold duration.",
-  "toBe": "Same ScrollPicker grid as records cards with dynamic columns."
+  "asIs": "Records card could edit voice coach pickers and sync target reps from fit volume.",
+  "toBe": "Settings is sole source of truth; records display read-only defaults."
 }

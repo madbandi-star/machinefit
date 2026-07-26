@@ -74,6 +74,8 @@ interface VoiceCoachPanelProps {
   showSessionConfigSelectors?: boolean;
   /** When false, hide live count number (e.g. fullscreen overlay is showing it). */
   hideLiveDisplay?: boolean;
+  /** When true, picker values are read-only (change only in My Page → Settings). */
+  pickersReadOnly?: boolean;
 }
 
 export function VoiceCoachPanel({
@@ -115,6 +117,7 @@ export function VoiceCoachPanel({
   showOneMoreAndHoldSelectors = true,
   showSessionConfigSelectors = true,
   hideLiveDisplay = false,
+  pickersReadOnly = false,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const duration = clampVoiceHoldDurationSec(holdDurationSec);
@@ -314,6 +317,7 @@ export function VoiceCoachPanel({
               holdDurationSec={holdDurationSec}
               onHoldDurationSecChange={onHoldDurationSecChange}
               disabled={isRunning}
+              readOnly={pickersReadOnly}
               recordsLayout={inlineHoldInPickers}
               labels="machines"
               compact={compact}

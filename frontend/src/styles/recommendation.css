@@ -1601,6 +1601,11 @@
   width: 100%;
 }
 
+.voice-coach-panel__pickers--readonly {
+  pointer-events: none;
+  user-select: none;
+}
+
 .voice-coach-panel__check {
   display: inline-flex;
   align-items: center;

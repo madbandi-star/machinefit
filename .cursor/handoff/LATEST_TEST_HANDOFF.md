@@ -1,20 +1,22 @@
-# Latest test handoff — Settings voice coach picker grid
+# Latest test handoff — Settings-only voice coach pickers
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-Settings > 음성 카운트: 목표횟수 / 카운트간격 / 원모어횟수 / 버텨!!! 시간을 기록 카드와 동일한 ScrollPicker 그리드로 표시.
+Records card 음성 카운트: 목표횟수/카운트간격/원모어/버텨 시간 = **설정 > 음성 카운트** 값 (읽기 전용).
 
-- 동적 2~4열 (세션 구성·하나더·버텨 설정에 따라)
-- 버텨 시간: 드롭다운 → ScrollPicker
+- 변경은 **마이페이지 > 설정 > 음성 카운트**에서만
+- 기록 카드에서 picker 스크롤 불가
+- 카운트 세션도 설정값 사용 (추천 횟수로 덮어쓰지 않음)
 
 ## Test focus
 
-1. Settings > Voice Coach → picker layout matches expanded record card
-2. Toggle 하나더 / 버텨 → columns update
-3. Records page voice coach pickers still work
+1. Settings에서 값 변경 → Records 카드에 동일 표시
+2. Records picker 조작해도 설정/다른 카드에 반영 안 됨
+3. 카운트 시작 → 설정 목표 횟수 기준
+4. 추천 결과 페이지 pickers는 여전히 편집 가능
 
 ## Fast checks
 
