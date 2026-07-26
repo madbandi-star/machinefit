@@ -4,7 +4,7 @@
  * supersets / dropsets / intervals without touching count pacing.
  *
  * Hold cue/finish follow voice pack (female Korean / male English).
- * Hold **second** ticks use male Korean Sino clips (hold-ko pack), TTS fallback.
+ * Hold **second** ticks are always male Korean TTS (Sino-Korean 십구…일).
  */
 
 import { IOS_MALE_COUNT_RATE, toSinoKoreanCount } from '@/utils/iosMaleCountSpeech';
@@ -16,12 +16,9 @@ import {
   voiceCoachSpeechLangTag,
 } from '@/utils/voiceCoachLanguage';
 import {
-  countdownClipKey,
   DEFAULT_VOICE_COACH_PACK,
-  HOLD_COUNTDOWN_CLIP_PACK,
   normalizeVoiceCoachPack,
   playVoiceCoachClip,
-  repClipKey,
   type VoiceCoachPack,
 } from '@/utils/voiceCoachClips';
 
@@ -138,18 +135,12 @@ export function formatHoldCountdownWord(
   return toSinoKoreanCount(Math.max(0, Math.round(n)));
 }
 
-/** Hold seconds → hold-ko male Korean clips (cd-* then rep-*), else TTS. */
+/** Hold seconds always use male Korean TTS — no pack clips. */
 export function holdCountdownClipKey(_n: number, _voicePack?: VoiceCoachPack): string | null {
-  const rounded = Math.round(_n);
-  return countdownClipKey(rounded) ?? repClipKey(rounded);
+  return null;
 }
 
 async function speakHoldCountdownTick(n: number, signal?: AbortSignal): Promise<void> {
-  const clipKey = holdCountdownClipKey(n);
-  if (clipKey) {
-    const played = await playVoiceCoachClip(clipKey, signal, HOLD_COUNTDOWN_CLIP_PACK);
-    if (played) return;
-  }
   await speechManager.speak(formatHoldCountdownWord(n), {
     signal,
     lang: 'ko-KR',
@@ -185,7 +176,7 @@ async function speakHoldCue(options: {
   /** When set, routes to male-Korean hold-second TTS (deprecated path — use speakHoldCountdownTick). */
   countValue?: number;
 }): Promise<void> {
-  const { clipKey, text, voicePack, signal, countValue } = options;
+  const { clipKey, text, locale, voicePack, signal, countValue } = options;
 
   if (typeof countValue === 'number') {
     await speakHoldCountdownTick(countValue, signal);
@@ -249,7 +240,14 @@ export async function runVoiceHoldSegment(
     }
     const n = durationSec - i;
     onPhaseChange?.('holdCountdown', { countdown: n });
-    await speakHoldCountdownTick(n, signal);
+    await speakHoldCue({
+      clipKey: null,
+      text: formatHoldCountdownWord(n, locale, voicePack),
+      locale,
+      voicePack,
+      signal,
+      countValue: n,
+    });
 
     const target = segmentStart + (i + 1) * tickMs;
     const waitMs = Math.max(0, Math.round(target - performance.now()));

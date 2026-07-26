@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import {
   countdownClipKey,
   DEFAULT_VOICE_COACH_PACK,
-  HOLD_COUNTDOWN_CLIP_PACK,
   MAX_VOICE_COACH_CLIP_COUNTDOWN,
   MAX_VOICE_COACH_CLIP_REP,
   normalizeVoiceCoachPack,
@@ -38,8 +37,5 @@ assert.ok(
   maleCd5
 );
 assert.ok(voiceCoachClipUrl('start', 'male').includes('/voice-coach/male/'));
-assert.ok(
-  voiceCoachClipUrl('cd-5', HOLD_COUNTDOWN_CLIP_PACK).includes('/voice-coach/hold-ko/cd-5.mp3')
-);
 
 console.log('voiceCoachClips.test.ts: ok');

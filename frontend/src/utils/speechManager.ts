@@ -34,37 +34,6 @@ function isKoreanVoice(voice: SpeechSynthesisVoice): boolean {
   return lang === 'ko-kr' || lang.startsWith('ko');
 }
 
-/** Known male Korean system / neural voices (InJoon, Jinho, …). */
-function isLikelyKoreanMaleVoice(voice: SpeechSynthesisVoice): boolean {
-  const hay = `${voice.name} ${voice.voiceURI}`.toLowerCase();
-  return /jinho|injoon|minsu|hyunsu|siwoo|wansung|bongjin|gwanwoo|guy|male|남성|남자|기호|민수|인준|시우|완석|standard-b|standard-d|ko-kr-x-frm|_ko_kr_m/.test(
-    hay
-  );
-}
-
-function isLikelyKoreanFemaleVoice(voice: SpeechSynthesisVoice): boolean {
-  const hay = `${voice.name} ${voice.voiceURI}`.toLowerCase();
-  return /yuna|sunhi|sora|yena|heami|nara|female|여성|여자|유나|선희|소라|예나|standard-a|standard-c|ko-kr-x-frc|_ko_kr_f/.test(
-    hay
-  );
-}
-
-/** Prefer a male ko-KR voice; null when none match. */
-export function pickMaleKoreanVoice(
-  voices: SpeechSynthesisVoice[]
-): SpeechSynthesisVoice | null {
-  const korean = voices.filter(isKoreanVoice);
-  const males = korean.filter(isLikelyKoreanMaleVoice);
-  if (males.length === 0) return null;
-  return (
-    [...males].sort(
-      (a, b) =>
-        scoreVoiceQuality(b, { preferGender: 'male', langPrefix: 'ko-KR' }) -
-        scoreVoiceQuality(a, { preferGender: 'male', langPrefix: 'ko-KR' })
-    )[0] ?? null
-  );
-}
-
 function scoreVoiceQuality(
   voice: SpeechSynthesisVoice,
   options?: { preferGender?: 'male' | 'female'; langPrefix?: string }
@@ -96,13 +65,11 @@ function scoreVoiceQuality(
   if (voice.default) score += 10;
 
   const looksMale =
-    /male|남|jinho|injoon|minsu|hyunsu|siwoo|wansung|bongjin|gwanwoo|guy|christopher|daniel|기호|민수|인준|시우|완석|standard-b|standard-d|ko-kr-x-frm|_ko_kr_m/i.test(
+    /male|남|jinho|eddy|minsu|injoon|hyunsu|guy|christopher|daniel|기호|민수/i.test(
       name
     );
   const looksFemale =
-    /female|여|yuna|sunhi|sora|yena|heami|nara|samantha|karen|moira|유나|선희|소라|예나|standard-a|standard-c|ko-kr-x-frc|_ko_kr_f/i.test(
-      name
-    );
+    /female|여|yuna|sunhi|sora|yena|samantha|karen|moira|유나|선희/i.test(name);
   if (preferGender === 'male') {
     if (looksMale) score += 200;
     if (looksFemale) score -= 250;
@@ -297,26 +264,13 @@ class SpeechManagerImpl {
 
     let voice: SpeechSynthesisVoice | null = null;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const allVoices = window.speechSynthesis.getVoices() ?? [];
       const preferGender = prosody?.preferMaleVoice
         ? 'male'
         : prosody?.preferFemaleVoice
           ? 'female'
           : undefined;
-      const langRoot = lang.toLowerCase().split('-')[0] ?? '';
-      if (preferGender === 'male' && langRoot === 'ko') {
-        voice = pickMaleKoreanVoice(allVoices);
-        if (!voice) {
-          const nonFemale = allVoices
-            .filter(isKoreanVoice)
-            .filter((v) => !isLikelyKoreanFemaleVoice(v));
-          voice =
-            nonFemale.length > 0
-              ? pickBestVoice(nonFemale, { preferGender: 'male', langPrefix: lang })
-              : null;
-        }
-      } else if (preferGender || prosody?.lang) {
-        const picked = pickBestVoice(allVoices, {
+      if (preferGender || prosody?.lang) {
+        const picked = pickBestVoice(window.speechSynthesis.getVoices() ?? [], {
           preferGender,
           langPrefix: lang,
         });
