@@ -233,7 +233,7 @@
     "personalTipPlaceholder": "이 기구에 대한 나만의 팁을 기록하세요.",
     "personalTipBytes": "{{used}}/500 byte",
     "personalTipSaveFailed": "운동 기록은 저장됐어요. 나만의 팁만 다시 저장해 주세요.",
-    "personalTipSaveHint": "아래 「저장하기」로 운동일지와 함께 저장됩니다.",
+    "personalTipSaveHint": "아래 「저장하기」로 운동일지와 함께 저장됩니다..",
     "bookmarkSave": "운동 기록 저장",
     "bookmarkUpdate": "기록 변경 저장",
     "bookmarkSaved": "운동 기록 저장됨",
