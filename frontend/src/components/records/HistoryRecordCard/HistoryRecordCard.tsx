@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect, type MouseEvent } from 'react';
+import { useState, useEffect, useCallback, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
 import type {
@@ -169,6 +169,14 @@ export function HistoryRecordCard({
   };
 
   const canSavePreferences = showAdjustment && !adjustmentReadOnly;
+
+  const handleCompanionSave = useCallback(async () => {
+    if (!canSavePreferences || !fitFeedback.settingsDirty) return;
+    await fitFeedback.savePreferencesAsync(() => {
+      setPrefsSavedLocally(true);
+      setIsEditingAdjustments(false);
+    });
+  }, [canSavePreferences, fitFeedback.settingsDirty, fitFeedback.savePreferencesAsync]);
 
   const settingsPanel = (
     <RecommendationSettingsPanel
@@ -382,6 +390,8 @@ export function HistoryRecordCard({
         showVoiceCoach={expanded}
         onControlReady={setLogControl}
         onSavedChange={setWorkoutLogSavedOverride}
+        onCompanionSave={canUseFitFeedback ? handleCompanionSave : undefined}
+        companionSavePending={fitFeedback.isPreferencesPending}
       />
 
       {!expanded ? (

@@ -26,7 +26,7 @@ import {
   speakRestTipsAndWarnings,
   stopVoiceCoach,
 } from '@/utils/voiceCoach';
-import { Check, Pencil } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -95,6 +95,9 @@ interface WorkoutLogPanelProps {
   showVoiceCoach?: boolean;
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
   onSavedChange?: (saved: boolean) => void;
+  /** e.g. history card 조정값 — runs before workout log upsert on save. */
+  onCompanionSave?: () => Promise<void>;
+  companionSavePending?: boolean;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -220,6 +223,8 @@ export function WorkoutLogPanel({
   showVoiceCoach = true,
   onControlReady,
   onSavedChange,
+  onCompanionSave,
+  companionSavePending = false,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -828,7 +833,8 @@ export function WorkoutLogPanel({
     },
   });
 
-  const isActionPending = saveMutation.isPending || removeMutation.isPending;
+  const isActionPending =
+    saveMutation.isPending || removeMutation.isPending || companionSavePending;
 
   const translateMuscleGroup = (group: string) =>
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
@@ -892,13 +898,27 @@ export function WorkoutLogPanel({
     </div>
   ) : null;
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (isFreeWeight && !activeTargetMuscle) {
       showToast(t('machines:targetMuscleRequired'), 'error');
       return;
     }
-    saveMutation.mutate({});
-  }, [activeTargetMuscle, isFreeWeight, saveMutation, showToast, t]);
+    try {
+      if (onCompanionSave) {
+        await onCompanionSave();
+      }
+      await saveMutation.mutateAsync({});
+    } catch {
+      // Toast handled by mutation / companion save.
+    }
+  }, [
+    activeTargetMuscle,
+    isFreeWeight,
+    onCompanionSave,
+    saveMutation,
+    showToast,
+    t,
+  ]);
 
   const handleRemoveLog = useCallback(() => {
     removeMutation.mutate();
@@ -1396,10 +1416,6 @@ export function WorkoutLogPanel({
               </span>
               {setCountControl}
             </div>
-            <span className="history-workout-log__edit-label">
-              <Pencil size={12} strokeWidth={2.25} className="history-workout-log__edit-icon" aria-hidden />
-              {t('machines:history.editSets')}
-            </span>
           </div>
           {weightList}
         </div>

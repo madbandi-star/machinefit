@@ -1,27 +1,23 @@
-# Latest test handoff — records voice coach 2–4 column pickers + hold
+# Latest test handoff — records save includes 조정값
 
 **Branch:** `main`  
 **Scope:** frontend
 
 ## Change
 
-Records page voice coach picker row (dynamic columns from settings):
+Records card **저장하기** (and bookmark save) now also saves **조정값** when:
 
-| Settings | Columns |
-|----------|---------|
-| Count only | 목표 횟수 + 카운트 간격 (2) |
-| + one-more | + 원모어 횟수 (3) |
-| + hold after count | + 버텨!!! 시간 (3) |
-| + both | 4 columns |
-| Hold only | 버텨!!! 시간 (1) |
+- 셋팅값 조정 UI is editable (`canSavePreferences`)
+- User has unsaved adjustment edits (`settingsDirty`)
 
-Hold duration moved into picker grid; separate hold block removed on records.
+Order: 조정값 API → workout log upsert. Standalone **조정값 저장** button unchanged.
 
 ## Test focus
 
-1. Settings combos above → correct column count on records expanded voice coach
-2. Hold picker editable; values persist
-3. Recommendation page → still 3 pickers + separate hold select below
+1. Adjust weight/reps → 저장하기 → both prefs + log saved; compare panel read-only after
+2. Save with no adjustment edits → workout log only
+3. 조정값 저장 button alone still works
+4. Pref save error → workout log not saved
 
 ## Fast checks
 

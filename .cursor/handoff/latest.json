@@ -1,15 +1,16 @@
 {
-  "title": "Records voice coach inline hold duration picker grid",
-  "summary": "Records page merges hold duration into voice coach picker row with dynamic 2–4 columns based on settings (one-more, count_hold). Hold-only shows 1 column.",
-  "git": { "branch": "main", "commit": "db57f1d" },
+  "title": "Records save includes adjustment preferences",
+  "summary": "History card bottom 저장하기 and bookmark save now run 조정값 저장 when adjustment edits are dirty, then upsert workout log. savePreferencesAsync added to fit feedback hook.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/styles/components.css"
+    "frontend/src/hooks/useMachineFitFeedback.ts",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
-  "testFocus": "Records voice coach: 2/3/4 picker columns per settings; hold sec in same row as reps/interval/one-more; no separate hold block below on records. Recommendation page unchanged.",
+  "testFocus": "Records: edit 조정중량/횟수 → 저장하기 saves prefs + workout log. 조정값 저장 button still works alone. Pref save failure blocks workout save.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Records showed hold duration below pickers; grid left empty columns or fixed 2–3 cols.",
-  "toBe": "Hold duration inline; 2–4 equal columns from My Page settings (one-more + hold toggles)."
+  "asIs": "Bottom save only persisted workout log and memos; adjustment prefs required separate 조정값 저장.",
+  "toBe": "Single save persists dirty adjustment prefs then workout log when applicable."
 }

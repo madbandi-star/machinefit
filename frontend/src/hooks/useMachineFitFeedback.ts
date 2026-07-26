@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, SettingsActiveSource } from '@machinefit/shared';
@@ -395,6 +395,38 @@ export function useMachineFitFeedback({
         : undefined
     : undefined;
 
+  const savePreferencesAsync = useCallback(
+    (onDone?: () => void) => {
+      const latestCustomSettings = customSettingsRef.current;
+      if (!hasMeaningfulCustomSettings(latestCustomSettings)) {
+        onDone?.();
+        return Promise.resolve();
+      }
+      return new Promise<void>((resolve, reject) => {
+        preferenceMutation.mutate(
+          { customSettings: latestCustomSettings, activeSource: 'adjusted' },
+          {
+            onSuccess: (data) => {
+              const saved = data.customSettings ?? latestCustomSettings;
+              queryClient.setQueryData(feedbackQueryKey, 'bad');
+              queryClient.setQueryData(prefsQueryKey, {
+                customSettings: saved,
+                personalTipMemo: data.personalTipMemo ?? '',
+                activeSource: 'adjusted' as SettingsActiveSource,
+              });
+              setCustomSettings(saved);
+              customSettingsRef.current = saved;
+              onDone?.();
+              resolve();
+            },
+            onError: () => reject(new Error('preferences_save_failed')),
+          }
+        );
+      });
+    },
+    [feedbackQueryKey, preferenceMutation, prefsQueryKey, queryClient]
+  );
+
   return {
     savedRating,
     customSettings,
@@ -405,27 +437,10 @@ export function useMachineFitFeedback({
     handleRating,
     handleCustomChange,
     savePreferences: (onDone?: () => void) => {
-      // Always read the latest edits — avoids closing over a stale customSettings
-      // from an earlier render (N-1 save bug).
-      const latestCustomSettings = customSettingsRef.current;
-      preferenceMutation.mutate(
-        { customSettings: latestCustomSettings, activeSource: 'adjusted' },
-        {
-          onSuccess: (data) => {
-            const saved = data.customSettings ?? latestCustomSettings;
-            queryClient.setQueryData(feedbackQueryKey, 'bad');
-            queryClient.setQueryData(prefsQueryKey, {
-              customSettings: saved,
-              personalTipMemo: data.personalTipMemo ?? '',
-              activeSource: 'adjusted' as SettingsActiveSource,
-            });
-            setCustomSettings(saved);
-            customSettingsRef.current = saved;
-            onDone?.();
-          },
-        }
-      );
+      void savePreferencesAsync(onDone);
     },
+    savePreferencesAsync,
+    settingsDirty,
     isFeedbackPending: feedbackMutation.isPending,
     isPreferencesPending: preferenceMutation.isPending,
   };
