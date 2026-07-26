@@ -1,20 +1,16 @@
 {
-  "title": "Female hold countdown uses Sino-Korean seconds",
-  "summary": "Female Korean voice pack hold timer (버텨!!!) now speaks seconds as Sino-Korean TTS (십구…일) instead of native-Korean rep clips (열·아홉·하나). Exercise rep counts unchanged.",
-  "git": { "branch": "main", "commit": "ab90e1f" },
+  "title": "Editable per-page voice coach pickers",
+  "summary": "Records and recommendation result cards: voice coach pickers are scroll-editable again. Count sessions use each panel's local picker values (target reps, interval, one-more, hold duration), not My Page Settings.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/voiceHold.ts",
-    "frontend/src/utils/voiceCoachClips.ts",
-    "frontend/src/utils/voiceHold.test.ts"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx"
   ],
-  "testFocus": "Settings > Voice Coach > female pack + hold enabled. Start count with hold (e.g. 19s). Hold countdown should say 십구, 십팔…삼, 이, 일 — not 열 아홉, 여덟…둘, 하나. Rep counts during exercise still native Korean.",
-  "fastChecks": [
-    "npx vite-node src/utils/voiceHold.test.ts",
-    "npx vite-node src/utils/speechManager.hold.test.ts",
-    "npm run build --prefix frontend"
-  ],
+  "testFocus": "Records card + recommendation result: scroll all four pickers. Start count — session uses scrolled values, not Settings. Change Settings separately — does not override in-page picker until card remounts. Two record cards can have different picker values.",
+  "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Female hold seconds used rep-* clips with native Korean (열 아홉, 여덟…하나).",
-  "toBe": "Female hold seconds use Sino-Korean TTS (십구, 십팔…이, 일) for second-based countdown."
+  "asIs": "History/recommendation pickers read-only; count used Settings store values.",
+  "toBe": "Pickers editable per card/page; count uses that panel's local picker state."
 }

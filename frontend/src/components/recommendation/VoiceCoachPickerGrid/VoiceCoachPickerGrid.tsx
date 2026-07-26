@@ -30,7 +30,7 @@ interface VoiceCoachPickerGridProps {
   holdDurationSec: number;
   onHoldDurationSecChange: (sec: number) => void;
   disabled?: boolean;
-  /** Display values only — no scroll interaction (e.g. records card uses Settings defaults). */
+  /** Display values only — no scroll interaction. */
   readOnly?: boolean;
   /** records card layout: inline hold + conditional one-more column */
   recordsLayout?: boolean;

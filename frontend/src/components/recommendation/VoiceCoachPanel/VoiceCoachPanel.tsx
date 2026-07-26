@@ -74,7 +74,7 @@ interface VoiceCoachPanelProps {
   showSessionConfigSelectors?: boolean;
   /** When false, hide live count number (e.g. fullscreen overlay is showing it). */
   hideLiveDisplay?: boolean;
-  /** When true, picker values are read-only (change only in My Page → Settings). */
+  /** When true, picker scroll is disabled (display-only). */
   pickersReadOnly?: boolean;
 }
 

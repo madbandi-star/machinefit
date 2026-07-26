@@ -248,17 +248,13 @@ export function WorkoutLogPanel({
   );
   const workoutFullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
-  const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
-  const setVoiceCoachOneMoreCount = useSettingsStore((s) => s.setVoiceCoachOneMoreCount);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
   const setVoiceRestTipsEnabled = useSettingsStore((s) => s.setVoiceRestTipsEnabled);
-  const setVoiceCoachRepGapMs = useSettingsStore((s) => s.setVoiceCoachRepGapMs);
   const setVoiceCoachPrepCount = useSettingsStore((s) => s.setVoiceCoachPrepCount);
   const setVoiceCoachPack = useSettingsStore((s) => s.setVoiceCoachPack);
   const setVoiceCountMode = useSettingsStore((s) => s.setVoiceCountMode);
   const setVoiceCoachFlowMode = useSettingsStore((s) => s.setVoiceCoachFlowMode);
-  const setVoiceHoldDurationSec = useSettingsStore((s) => s.setVoiceHoldDurationSec);
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
@@ -292,38 +288,36 @@ export function WorkoutLogPanel({
       : seededVoiceTargetReps;
 
   useEffect(() => {
-    if (isHistory) return;
     if (volumeReps == null || volumeReps <= 0) return;
-    const next = Math.max(1, Math.min(30, Math.round(volumeReps)));
     // Fit rating / recommendation seed changed — drop stale manual override.
     setVoiceTargetUserOverride((prev) =>
       prev?.context === voiceTargetSeedContext ? null : prev
     );
-    // Keep settings "기본 목표 횟수" aligned (잘맞음 → 추천횟수).
-    setVoiceCoachTargetReps(next);
-  }, [volumeReps, voiceTargetSeedContext, setVoiceCoachTargetReps, isHistory]);
+  }, [volumeReps, voiceTargetSeedContext]);
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
       const next = Math.max(1, Math.min(30, Math.round(reps)));
       setVoiceTargetUserOverride({ context: voiceTargetSeedContext, reps: next });
-      setVoiceCoachTargetReps(next);
     },
-    [setVoiceCoachTargetReps, voiceTargetSeedContext]
+    [voiceTargetSeedContext]
   );
 
-  const voiceCoachSessionTargetReps = isHistory ? voiceCoachTargetReps : effectiveVoiceTargetReps;
+  /** Per-panel picker values — count sessions use these, not My Page → Settings. */
+  const [localRepGapMs, setLocalRepGapMs] = useState(() => voiceCoachRepGapMs);
+  const [localOneMoreCount, setLocalOneMoreCount] = useState(() => voiceCoachOneMoreCount);
+  const [localHoldDurationSec, setLocalHoldDurationSec] = useState(() => voiceHoldDurationSec);
 
   const voiceCoach = useVoiceCoachSession({
-    targetReps: voiceCoachSessionTargetReps,
+    targetReps: effectiveVoiceTargetReps,
     oneMoreEnabled: voiceCoachOneMore,
-    oneMoreCount: voiceCoachOneMoreCount,
-    repGapMs: voiceCoachRepGapMs,
+    oneMoreCount: localOneMoreCount,
+    repGapMs: localRepGapMs,
     prepCount: voiceCoachPrepCount,
     voicePack: voiceCoachPack,
     countMode: voiceCountMode,
     flowMode: voiceCoachFlowMode,
-    holdDurationSec: voiceHoldDurationSec,
+    holdDurationSec: localHoldDurationSec,
     locale,
     enabled: voiceCoachEnabled,
   });
@@ -1386,10 +1380,10 @@ export function WorkoutLogPanel({
     <VoiceCoachPanel
       enabled={voiceCoachEnabled}
       onEnabledChange={setVoiceCoachEnabled}
-      targetReps={voiceCoachSessionTargetReps}
-      onTargetRepsChange={isHistory ? () => {} : handleVoiceTargetRepsChange}
-      repGapMs={voiceCoachRepGapMs}
-      onRepGapMsChange={isHistory ? () => {} : setVoiceCoachRepGapMs}
+      targetReps={effectiveVoiceTargetReps}
+      onTargetRepsChange={handleVoiceTargetRepsChange}
+      repGapMs={localRepGapMs}
+      onRepGapMsChange={setLocalRepGapMs}
       prepCount={voiceCoachPrepCount}
       onPrepCountChange={setVoiceCoachPrepCount}
       voicePack={voiceCoachPack}
@@ -1398,12 +1392,12 @@ export function WorkoutLogPanel({
       onCountModeChange={setVoiceCountMode}
       flowMode={voiceCoachFlowMode}
       onFlowModeChange={setVoiceCoachFlowMode}
-      holdDurationSec={voiceHoldDurationSec}
-      onHoldDurationSecChange={isHistory ? () => {} : setVoiceHoldDurationSec}
+      holdDurationSec={localHoldDurationSec}
+      onHoldDurationSecChange={setLocalHoldDurationSec}
       oneMoreEnabled={voiceCoachOneMore}
       onOneMoreChange={isHistory ? () => {} : setVoiceCoachOneMore}
-      oneMoreCount={voiceCoachOneMoreCount}
-      onOneMoreCountChange={isHistory ? () => {} : setVoiceCoachOneMoreCount}
+      oneMoreCount={localOneMoreCount}
+      onOneMoreCountChange={setLocalOneMoreCount}
       autoStartAfterRest={voiceCoachAutoAfterRest}
       onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
       restTipsEnabled={voiceRestTipsEnabled}
@@ -1423,7 +1417,6 @@ export function WorkoutLogPanel({
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
       hideLiveDisplay={workoutFullscreenDisplay && voiceCoach.isRunning}
-      pickersReadOnly={isHistory}
     />
   ) : null;
 

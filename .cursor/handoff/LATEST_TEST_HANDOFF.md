@@ -1,28 +1,26 @@
-# Latest test handoff — Female hold Sino-Korean countdown
+# Latest test handoff — Per-page editable voice coach pickers
 
 **Branch:** `main`  
-**Scope:** frontend (voice coach hold)
+**Scope:** frontend
 
 ## Change
 
-여성·한국어 팩 **버텨!!! 시간** 초 카운트를 한자어 숫자로 읽도록 수정.
+기록 카드·추천 결과 페이지 음성 카운트 picker 다시 **터치·스크롤 편집 가능**.
 
-- **Before:** `rep-*` 클립 → 열 아홉, 여덟…둘, 하나
-- **After:** TTS 한자어 → 십구, 십팔…삼, 이, 일
-- 운동 **횟수** 카운트(`rep-*`)는 기존 순우리말 유지
+- 카운트 시작 시 **해당 카드/페이지 picker 값** 사용 (설정값 아님)
+- 목표 횟수 / 카운트 간격 / 원모어 / 버텨 시간 → 패널별 로컬 state
+- 마이페이지 > 설정은 **최초 표시 기본값**만 (picker 변경은 설정에 저장 안 함)
 
 ## Test focus
 
-1. 설정 > 음성 카운트: 여성·한국어 + 버텨 시간 19초(또는 12초 등)
-2. 카운트 시작 → hold 구간에서 **십구, 십팔, 십칠…** 확인
-3. 횟수 구간은 여전히 **하나, 둘, 셋…** (변경 없음)
+1. 기록 카드에서 picker 스크롤 → 카운트 시작 → 변경값 반영
+2. 추천 결과 페이지에서도 동일
+3. 설정에서 다른 값으로 바꿔도 **이미 열린 카드 picker는 유지**
+4. 서로 다른 기록 카드는 picker 값 독립
 
 ## Fast checks
 
 ```bash
-cd frontend
-npx vite-node src/utils/voiceHold.test.ts
-npx vite-node src/utils/speechManager.hold.test.ts
 npm run build --prefix frontend
 ```
 
