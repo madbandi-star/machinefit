@@ -1,7 +1,7 @@
 {
   "title": "Community boards — compact mobile list UI",
   "summary": "Replace bulky post/request cards with dense board-index rows (~34px each) so 8+ titles fit on smartphone; shared BoardIndexPanel/Skeleton; compact page headers.",
-  "git": { "branch": "main", "commit": "d71c8ea" },
+  "git": { "branch": "main", "commit": "0d0c640" },
   "changedFiles": [
     "frontend/src/pages/free-board/FreeBoardPage.tsx",
     "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
