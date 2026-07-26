@@ -31,6 +31,11 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { getTodayDateKey } from '@/utils/historyDate';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import { resolveMachineImageUrl, machinePlaceholderUrl } from '@/utils/catalogAssets';
+import {
+  assertNoDuplicateToday,
+  DuplicateRecommendationError,
+} from '@/utils/recommendationDuplicate';
+import type { EasyMachinePickResult } from '@/components/easy-mode/EasyMachinePicker';
 import '@/styles/easy-mode.css';
 
 type WizardStep = 1 | 2 | 3 | 'rate' | 'done';
@@ -112,6 +117,42 @@ export function EasyWizardPage() {
     if (mode !== 'easy') navigate(ROUTES.MY_PAGE, { replace: true });
   }, [mode, navigate]);
 
+  const showDuplicatePickToast = (machineCode: string) => {
+    showToast(
+      t(
+        isFreeWeightMachineCode(machineCode)
+          ? 'machines:recommendation.duplicate'
+          : 'machines:recommendation.duplicateMachine'
+      ),
+      'info'
+    );
+  };
+
+  const confirmMachinePick = async (pick: EasyMachinePickResult): Promise<boolean> => {
+    if (activeGymId && activeMemberId) {
+      try {
+        await assertNoDuplicateToday({
+          gymId: activeGymId,
+          memberId: activeMemberId,
+          machineCode: pick.code,
+          targetMuscleGroup: pick.targetMuscle ?? undefined,
+        });
+      } catch (error) {
+        if (error instanceof DuplicateRecommendationError) {
+          showDuplicatePickToast(pick.code);
+          return false;
+        }
+      }
+    }
+    setSelected({
+      code: pick.code,
+      name: pick.name,
+      brandName: pick.brandName,
+    });
+    setTargetMuscle(pick.targetMuscle);
+    return true;
+  };
+
   const createRecommend = useMutation({
     mutationFn: async () => {
       if (!selected || !user) throw new Error('missing');
@@ -122,6 +163,14 @@ export function EasyWizardPage() {
         user.experienceLevel == null
       ) {
         throw new Error('profile');
+      }
+      if (activeGymId && activeMemberId) {
+        await assertNoDuplicateToday({
+          gymId: activeGymId,
+          memberId: activeMemberId,
+          machineCode: selected.code,
+          targetMuscleGroup: targetMuscle ?? undefined,
+        });
       }
       const res = await recommendationApi.create({
         machineCode: selected.code,
@@ -151,8 +200,16 @@ export function EasyWizardPage() {
       setCompleted([false, false, false]);
       setFitRating(null);
       setStep(2);
+      void queryClient.invalidateQueries({ queryKey: ['easy-history'] });
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
     },
     onError: (error) => {
+      if (error instanceof DuplicateRecommendationError) {
+        showDuplicatePickToast(error.historyItem.machineCode);
+        setSelected(null);
+        setTargetMuscle(null);
+        return;
+      }
       const msg = getApiErrorMessage(error, t('easyMode.recommendFailed'));
       showToast(
         error instanceof Error && error.message === 'profile'
@@ -289,13 +346,9 @@ export function EasyWizardPage() {
         setPickerOpen(false);
         setPickerInitialCode(null);
       }}
-      onConfirm={(pick) => {
-        setSelected({
-          code: pick.code,
-          name: pick.name,
-          brandName: pick.brandName,
-        });
-        setTargetMuscle(pick.targetMuscle);
+      onConfirm={async (pick) => {
+        const accepted = await confirmMachinePick(pick);
+        if (!accepted) return;
         setPickerOpen(false);
         setPickerInitialCode(null);
       }}

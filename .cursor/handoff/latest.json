@@ -1,24 +1,22 @@
 {
-  "title": "Easy mode set count fix, lifted weight header, history date filter",
-  "summary": "Fix easy mode step-3 set-count stepper overflow; move lifted-weight mode tabs beside title; hide date/muscle label left of 일자조회 when a single day is selected.",
-  "git": { "branch": "main", "commit": "ecec15c" },
+  "title": "Easy mode duplicate recommendation guard",
+  "summary": "Block picking or creating a second recommendation for the same machine (or free-weight muscle) today in easy mode, reusing assertNoDuplicateToday shared with normal recommend flow.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/styles/easy-mode.css",
-    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
-    "frontend/src/pages/lifted-weight/LiftedWeightPage.css",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+    "frontend/src/utils/recommendationDuplicate.ts",
+    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
+    "frontend/src/hooks/useRecommendMachine.ts"
   ],
-  "testFocus": "Easy mode step 3 set count fits screen. Lifted weight: title + [나][헬스장][전체] in header. Records history: pick one date — no date/muscle text left of 일자조회.",
+  "testFocus": "Easy mode step 1: pick a machine already recommended today — toast, picker stays open, no selection. After one full workout, pick same machine again — blocked. Different machine — allowed.",
   "fastChecks": [
     "npm run build --prefix frontend",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "/easy/workout step 3 set count row",
-    "/my-page/lifted-weight header tabs",
-    "/records?tab=history with date filter"
+    "/easy/workout — duplicate machine pick blocked",
+    "Normal recommend flow still blocks duplicates"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Set count stepper overflows; lifted modes below title; selected date shows long label before 일자조회.",
-  "toBe": "Compact set count; header mode tabs; empty label when day selected."
+  "asIs": "Easy mode allowed duplicate recommendations for same machine today.",
+  "toBe": "Picker and recommend step reject duplicates with existing toast copy."
 }

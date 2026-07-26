@@ -1,18 +1,20 @@
-# Latest test handoff — Easy mode / lifted weight / history date UI
+# Latest test handoff — Easy mode duplicate recommendation guard
 
 **Branch:** `main`
 
 ## Change
 
-1. **이지모드 3/3 기록** — 세트 수 스테퍼가 화면 밖으로 나가지 않도록 레이아웃 수정
-2. **누적 무게** — `[나][헬스장][전체]` 탭을 **누적 무게** 타이틀 우측으로 이동
-3. **기록 페이지** — 일자 하루 선택 시 **일자조회** 좌측 날짜·요일·부위 문구 제거
+이지모드에서 **오늘 이미 추천한 기구** 중복 선택·추천 차단 (보통 모드와 동일 로직).
+
+- 기구 피커 확인 시 중복 → 토스트 + 피커 유지 → 다른 기구 선택
+- 「다음: 추천 보기」 전에도 중복 검사
+- `assertNoDuplicateToday` 공통 유틸로 추출
 
 ## Test focus
 
-1. Easy mode → 3단계 → 세트 수 +/- 가 한 화면 안에 표시
-2. `/my-page/lifted-weight` — `누적 무게 [나][헬스장][전체]` 헤더
-3. `/records?tab=history` — 날짜 1일 선택 → 일자조회 왼쪽 텍스트 없음
+1. 이지모드 → 오늘 추천 완료한 기구 다시 선택 → 차단 메시지
+2. 다른 기구 선택 → 정상 진행
+3. 보통 모드 추천 중복 차단 회귀 없음
 
 ## Fast checks
 
@@ -23,8 +25,6 @@ npm run test:smoke:changed
 
 ## as-is → to-be
 
-| Area | As-is | To-be |
-|------|-------|-------|
-| Easy step 3 | Set count overflows right | Fits in toolbar grid |
-| Lifted weight | Mode tabs below header | Tabs beside title |
-| History date filter | `2026년 7월 26일(일) 가슴 등` before 일자조회 | Empty (button only) |
+| As-is | To-be |
+|-------|-------|
+| Easy mode allows same-machine recommend twice today | Blocked at pick + recommend |

@@ -10,7 +10,7 @@ import type {
   UserGym,
 } from '@machinefit/shared';
 import { ageFromBirthDate, isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
-import { gymMemberApi, historyApi, recommendationApi, userGymApi, type UserGymsResponse } from '@/api';
+import { gymMemberApi, recommendationApi, userGymApi, type UserGymsResponse } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -20,8 +20,8 @@ import { ROUTES } from '@/constants/routes';
 import {
   buildRecordsHistoryFocusUrl,
   DuplicateRecommendationError,
+  assertNoDuplicateToday,
 } from '@/utils/recommendationDuplicate';
-import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 import { getApiErrorCode } from '@/utils/motivationAudio';
 import { sortMembersByRegistrationOrder } from '@/utils/gymMemberDefault';
 
@@ -119,46 +119,6 @@ function requireOwnerProfileInput(
   if (!heightOk) throw new Error('missing_height');
   if (!weightOk) throw new Error('missing_weight');
   throw new Error('missing_profile');
-}
-
-async function assertNoDuplicateToday(params: {
-  gymId: string;
-  memberId: string;
-  machineCode: string;
-  targetMuscleGroup?: TargetMuscleGroup;
-}): Promise<void> {
-  try {
-    const today = getTodayDateKey();
-    const { from, to } = getLocalDayRange(today);
-    const historyRes = await historyApi.list(params.gymId, {
-      machineCode: params.machineCode,
-      limit: 20,
-      from,
-      to,
-      memberId: params.memberId,
-    });
-    const todayItems = historyRes.data.data;
-    const requestedMuscle = params.targetMuscleGroup;
-
-    if (isFreeWeightMachineCode(params.machineCode)) {
-      if (requestedMuscle) {
-        const sameMuscleToday = todayItems.find(
-          (item) => item.targetMuscleGroup === requestedMuscle
-        );
-        if (sameMuscleToday) {
-          throw new DuplicateRecommendationError(sameMuscleToday);
-        }
-      }
-      return;
-    }
-
-    if (todayItems.length > 0) {
-      throw new DuplicateRecommendationError(todayItems[0]);
-    }
-  } catch (error) {
-    if (error instanceof DuplicateRecommendationError) throw error;
-    // History lookup is best-effort — never block recommend for gym/network issues.
-  }
 }
 
 function buildOwnerProfileInput(
