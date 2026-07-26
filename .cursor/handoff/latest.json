@@ -1,7 +1,7 @@
 {
   "title": "Settings page collapsible sections",
   "summary": "My Page → Settings sections are now collapsible with chevron toggles. Default state is collapsed. #location-settings hash auto-expands and scrolls into view.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "21a3c3a" },
   "changedFiles": [
     "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
     "frontend/src/pages/settings/SettingsPage.tsx",
