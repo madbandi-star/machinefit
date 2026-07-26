@@ -1,16 +1,19 @@
-# Latest test handoff — Revert hold-ko clips
+# Latest test handoff — Revert male Korean hold TTS
 
 **Branch:** `main`  
-**Scope:** rollback `173ddfd` (hold-ko MP3 pack)
+**Scope:** rollback `d98f6be`
 
 ## Change
 
-**롤백:** `hold-ko` 남성 MP3 클립 팩 제거 → 버텨!!! 초 카운트는 다시 **남성 한국어 TTS** (d98f6be 상태).
+**롤백:** 버텨!!! 초 카운트 **남성 한국어 TTS 강제** 제거 → 팩별 동작 복원.
+
+- **여성·한국어:** 한자어 TTS + 여성 목소리 (rep 클립 없음)
+- **남성·English:** cd/rep 클립
 
 ## Test focus
 
-1. hold 구간에서 `/voice-coach/hold-ko/` 요청 **없음**
-2. hold 초는 TTS 한자어 (십구…일)
+1. 여성 팩 + hold → 초 카운트가 **여성** 한국어 TTS
+2. 남성 팩 + hold → English 클립
 
 ## Fast checks
 

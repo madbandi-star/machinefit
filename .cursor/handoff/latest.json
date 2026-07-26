@@ -1,22 +1,20 @@
 {
-  "title": "Revert hold-ko MP3 clips — back to male Korean TTS",
-  "summary": "Rolled back hold-ko male MP3 pack (173ddfd). Hold seconds again use male Korean TTS + Sino-Korean (d98f6be behavior).",
-  "git": { "branch": "main", "commit": "10748e2" },
+  "title": "Revert male Korean hold TTS — voice pack hold seconds restored",
+  "summary": "Rolled back d98f6be (male Korean TTS for hold seconds). Hold countdown follows voice pack again: female Sino-Korean TTS, male English cd/rep clips.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/public/voice-coach/hold-ko/ (removed)",
     "frontend/src/utils/voiceHold.ts",
     "frontend/src/utils/voiceCoachClips.ts",
-    "frontend/src/utils/speechManager.ts",
-    "frontend/src/utils/voiceHold.test.ts",
-    "frontend/src/utils/voiceCoachClips.test.ts"
+    "frontend/src/utils/voiceHold.test.ts"
   ],
-  "testFocus": "Hold seconds use TTS again (no /voice-coach/hold-ko/ fetches). Female pack reps unchanged.",
+  "testFocus": "Female pack hold: Sino-Korean TTS with female voice (not male). Male pack hold: English cd/rep clips. No preferMaleVoice on hold seconds for female pack.",
   "fastChecks": [
     "npx vite-node src/utils/voiceHold.test.ts",
+    "npx vite-node src/utils/speechManager.hold.test.ts",
     "npm run build --prefix frontend"
   ],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Hold seconds played hold-ko male MP3 clips.",
-  "toBe": "Reverted to pre-hold-ko: male Korean TTS for hold second ticks."
+  "asIs": "Hold seconds forced male Korean TTS (십구…일) for all packs.",
+  "toBe": "Pre-d98f6be: female hold seconds use pack-appropriate voice; male uses clips."
 }

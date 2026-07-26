@@ -35,14 +35,14 @@ assert.equal(formatHoldCountdownWord(15, 'ko', 'female'), '십오');
 assert.equal(formatHoldCountdownWord(9, 'ko', 'female'), '구');
 assert.equal(formatHoldCountdownWord(1, 'ko', 'female'), '일');
 assert.equal(formatHoldCountdownWord(5, 'en', 'female'), '오');
-assert.equal(formatHoldCountdownWord(5, 'ko', 'male'), '오');
-assert.equal(formatHoldCountdownWord(2, 'ko', 'male'), '이');
-// Hold seconds → male Korean TTS (no clips), any pack.
+assert.equal(formatHoldCountdownWord(5, 'ko', 'male'), 'five');
+assert.equal(formatHoldCountdownWord(2, 'ko', 'male'), 'two');
+// Female hold seconds → Sino-Korean TTS (no native-Korean rep-* clips).
 assert.equal(holdCountdownClipKey(5, 'female'), null);
 assert.equal(holdCountdownClipKey(10, 'female'), null);
 assert.equal(holdCountdownClipKey(15, 'female'), null);
-assert.equal(holdCountdownClipKey(5, 'male'), null);
-assert.equal(holdCountdownClipKey(15, 'male'), null);
+assert.equal(holdCountdownClipKey(5, 'male'), 'cd-5');
+assert.equal(holdCountdownClipKey(15, 'male'), 'rep-15');
 assert.equal(holdCountdownClipKey(99, 'female'), null);
 assert.equal(VOICE_HOLD_CLIP_KEYS.cue, 'hold');
 
