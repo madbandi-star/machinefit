@@ -1,12 +1,15 @@
 {
-  "title": "Remove history diary labels on records page",
-  "summary": "Hide 운동일지 메모, 오늘 운동메모, 나만의 팁 headers, byte counter, and save hint on history WorkoutLogPanel.",
+  "title": "Hide voice preference controls on records page",
+  "summary": "Records history VoiceCoachPanel no longer shows voice pack (female/male), auto-start after rest, or rest-tips checkboxes. Those settings remain on My Page → Settings only.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"],
-  "testFocus": "Records expanded card: diary tags + memo textarea + personal tip textarea only; no listed label/hint strings; 저장하기 button remains.",
+  "changedFiles": [
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
+  ],
+  "testFocus": "Records expanded card voice coach: no voice pack radios, no 휴식 후 자동 시작, no 휴식 중 주의사항·운동팁 듣기. My Page settings still has all three. Recommendation/workout page voice coach unchanged.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "History diary section showed five label/hint lines above memo fields.",
-  "toBe": "Memo areas show placeholders only; labels removed from UI."
+  "asIs": "Records page voice coach duplicated My Page voice pack and rest preference controls.",
+  "toBe": "Records page uses saved settings silently; My Page is the only place to change them."
 }

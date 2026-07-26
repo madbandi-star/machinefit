@@ -1372,6 +1372,8 @@ export function WorkoutLogPanel({
       onStop={stopVoiceCoachSession}
       idPrefix={`${idPrefix}-voice-coach`}
       compact={compact}
+      showVoicePackSelector={!isHistory}
+      showRestOptionSelectors={!isHistory}
     />
   ) : null;
 

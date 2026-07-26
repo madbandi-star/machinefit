@@ -69,6 +69,10 @@ interface VoiceCoachPanelProps {
   onStop: () => void;
   idPrefix?: string;
   compact?: boolean;
+  /** When false, hide female/male pack radios (e.g. records page — use My Page settings). */
+  showVoicePackSelector?: boolean;
+  /** When false, hide auto-after-rest and rest-tips checkboxes (e.g. records page). */
+  showRestOptionSelectors?: boolean;
 }
 
 function statusLabel(
@@ -132,6 +136,8 @@ export function VoiceCoachPanel({
   onStart,
   onStop,
   compact = false,
+  showVoicePackSelector = true,
+  showRestOptionSelectors = true,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const gapSec = clampVoiceCoachRepGapMs(repGapMs) / 1000;
@@ -206,28 +212,30 @@ export function VoiceCoachPanel({
       {enabled ? (
         <>
           <div className="voice-coach-panel__controls">
-            <fieldset
-              className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
-              disabled={isRunning}
-            >
-              <legend className="voice-coach-panel__mode-legend">
-                {t('machines:voiceCoach.voicePack')}
-              </legend>
-              <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_COACH_PACKS.map((pack) => (
-                  <label key={pack} className="voice-coach-panel__mode-option">
-                    <input
-                      type="radio"
-                      name="voice-coach-pack"
-                      value={pack}
-                      checked={normalizeVoiceCoachPack(voicePack) === pack}
-                      onChange={() => onVoicePackChange(pack)}
-                    />
-                    <span>{t(`machines:voiceCoach.voicePack_${pack}`)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            {showVoicePackSelector ? (
+              <fieldset
+                className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
+                disabled={isRunning}
+              >
+                <legend className="voice-coach-panel__mode-legend">
+                  {t('machines:voiceCoach.voicePack')}
+                </legend>
+                <div className="voice-coach-panel__mode-options" role="radiogroup">
+                  {VOICE_COACH_PACKS.map((pack) => (
+                    <label key={pack} className="voice-coach-panel__mode-option">
+                      <input
+                        type="radio"
+                        name="voice-coach-pack"
+                        value={pack}
+                        checked={normalizeVoiceCoachPack(voicePack) === pack}
+                        onChange={() => onVoicePackChange(pack)}
+                      />
+                      <span>{t(`machines:voiceCoach.voicePack_${pack}`)}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ) : null}
 
             <fieldset
               className={`voice-coach-panel__mode${isRunning ? ' voice-coach-panel__mode--disabled' : ''}`}
@@ -446,25 +454,29 @@ export function VoiceCoachPanel({
               </div>
             ) : null}
 
-            <label className="voice-coach-panel__check">
-              <input
-                type="checkbox"
-                checked={autoStartAfterRest}
-                onChange={(e) => onAutoStartAfterRestChange(e.target.checked)}
-                disabled={isRunning}
-              />
-              <span>{t('machines:voiceCoach.autoAfterRest')}</span>
-            </label>
+            {showRestOptionSelectors ? (
+              <>
+                <label className="voice-coach-panel__check">
+                  <input
+                    type="checkbox"
+                    checked={autoStartAfterRest}
+                    onChange={(e) => onAutoStartAfterRestChange(e.target.checked)}
+                    disabled={isRunning}
+                  />
+                  <span>{t('machines:voiceCoach.autoAfterRest')}</span>
+                </label>
 
-            <label className="voice-coach-panel__check">
-              <input
-                type="checkbox"
-                checked={restTipsEnabled}
-                onChange={(e) => onRestTipsEnabledChange(e.target.checked)}
-                disabled={isRunning}
-              />
-              <span>{t('machines:voiceCoach.restTips')}</span>
-            </label>
+                <label className="voice-coach-panel__check">
+                  <input
+                    type="checkbox"
+                    checked={restTipsEnabled}
+                    onChange={(e) => onRestTipsEnabledChange(e.target.checked)}
+                    disabled={isRunning}
+                  />
+                  <span>{t('machines:voiceCoach.restTips')}</span>
+                </label>
+              </>
+            ) : null}
           </div>
 
           <div className="voice-coach-panel__actions">
