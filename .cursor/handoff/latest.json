@@ -1,7 +1,7 @@
 {
   "title": "Female hold countdown uses Sino-Korean seconds",
   "summary": "Female Korean voice pack hold timer (버텨!!!) now speaks seconds as Sino-Korean TTS (십구…일) instead of native-Korean rep clips (열·아홉·하나). Exercise rep counts unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ab90e1f" },
   "changedFiles": [
     "frontend/src/utils/voiceHold.ts",
     "frontend/src/utils/voiceCoachClips.ts",
