@@ -783,7 +783,7 @@
     "comparisons": "이 무게는 어느 정도일까요?",
     "aboutCount": "약 {{count}}{{unit}}",
     "noComparisons": "아직 비교할 만큼의 기록이 없어요. 운동을 기록해 보세요!",
-    "badges": "업적 & 다음 목표",
+    "badges": "다음 목표",
     "current": "현재",
     "noBadgeYet": "첫 배지까지 조금 더!",
     "tonsNow": "현재 {{tons}}톤",

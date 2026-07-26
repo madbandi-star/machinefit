@@ -783,7 +783,7 @@
     "comparisons": "How heavy is that?",
     "aboutCount": "About {{count}} {{unit}}",
     "noComparisons": "Not enough volume yet — log a workout!",
-    "badges": "Badges & next goal",
+    "badges": "Next goal",
     "current": "Current",
     "noBadgeYet": "Keep going for your first badge!",
     "tonsNow": "{{tons}} tons so far",
