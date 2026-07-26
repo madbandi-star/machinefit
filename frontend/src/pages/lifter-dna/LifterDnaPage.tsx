@@ -161,6 +161,25 @@ export function LifterDnaPage() {
               </button>
             </header>
 
+            <section className="dna-section">
+              <h3 className="dna-section__title">{t('lifterDna.badges')}</h3>
+              {data.badges.length === 0 ? (
+                <p className="dna-empty">{t('lifterDna.noBadges')}</p>
+              ) : (
+                <div className="dna-badge-grid">
+                  {data.badges.map((badge) => (
+                    <article key={badge.id} className="dna-badge glass">
+                      <p className="dna-badge__emoji" aria-hidden>
+                        {badge.emoji}
+                      </p>
+                      <p className="dna-badge__name">{badge.name}</p>
+                      <p className="dna-badge__desc">{badge.description}</p>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+
             <LegalDisclaimerBanner variant="ai" compact />
 
             <section className="dna-section">
@@ -234,24 +253,6 @@ export function LifterDnaPage() {
               locale={locale}
             />
 
-            <section className="dna-section">
-              <h3 className="dna-section__title">{t('lifterDna.badges')}</h3>
-              {data.badges.length === 0 ? (
-                <p className="dna-empty">{t('lifterDna.noBadges')}</p>
-              ) : (
-                <div className="dna-badge-grid">
-                  {data.badges.map((badge) => (
-                    <article key={badge.id} className="dna-badge glass">
-                      <p className="dna-badge__emoji" aria-hidden>
-                        {badge.emoji}
-                      </p>
-                      <p className="dna-badge__name">{badge.name}</p>
-                      <p className="dna-badge__desc">{badge.description}</p>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </section>
           </>
         )}
       </PageShell>
