@@ -1,7 +1,7 @@
 {
   "title": "Settings — reorder voice count and rest duration",
   "summary": "Move 음성 카운트 above 중량 난이도; move 휴식 시간 directly below 음성 카운트. Order: body → location → voice coach → rest → weight difficulty → units.",
-  "git": { "branch": "main", "commit": "dfad2b9" },
+  "git": { "branch": "main", "commit": "ae32e77" },
   "changedFiles": [
     "frontend/src/pages/settings/SettingsPage.tsx"
   ],
