@@ -27,7 +27,10 @@ assert.ok(isVoiceHoldDurationPreset(5));
 assert.ok(!isVoiceHoldDurationPreset(7));
 assert.equal(holdCuePhrase('ko'), '버텨!!!');
 assert.equal(holdCuePhrase('en'), 'Hold!!!');
-assert.equal(formatHoldCountdownWord(15), '15');
+assert.equal(holdCuePhrase('ko', 'male'), 'Hold!!!');
+assert.equal(formatHoldCountdownWord(15, 'ko'), '15');
+assert.equal(formatHoldCountdownWord(5, 'ko', 'male'), 'five');
+assert.equal(formatHoldCountdownWord(2, 'ko', 'male'), 'two');
 assert.equal(holdCountdownClipKey(5), 'cd-5');
 assert.equal(holdCountdownClipKey(15), 'rep-15');
 assert.equal(holdCountdownClipKey(99), null);
@@ -43,5 +46,9 @@ for (let i = 0; i < 20; i += 1) {
 assert.ok(finishes.has('완료!'));
 assert.ok(finishes.has('좋습니다!') || finishes.has('수고하셨습니다!'));
 assert.ok(finishKeys.has('finish-done'));
+
+const maleFinish = pickHoldFinish('ko', () => 0, 'male');
+assert.equal(maleFinish.phrase, 'Done!');
+assert.equal(maleFinish.clipKey, 'finish-done');
 
 console.log('voiceHold.test.ts: ok');

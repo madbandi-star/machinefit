@@ -229,11 +229,22 @@ export function toEnglishRep(n: number): string {
   return String(n);
 }
 
-export function formatRepWord(n: number, locale?: string): string {
+export function formatRepWord(
+  n: number,
+  locale?: string,
+  voicePack?: VoiceCoachPack
+): string {
+  // Male pack is English drill voice regardless of UI locale.
+  if (normalizeVoiceCoachPack(voicePack) === 'male') return toEnglishRep(n);
   return isKoreanLocale(locale) ? toNativeKoreanRep(n) : toEnglishRep(n);
 }
 
-function formatCountdownWord(n: number, locale?: string): string {
+function formatCountdownWord(
+  n: number,
+  locale?: string,
+  voicePack?: VoiceCoachPack
+): string {
+  if (normalizeVoiceCoachPack(voicePack) === 'male') return toEnglishRep(n);
   if (isKoreanLocale(locale)) {
     const map: Record<number, string> = {
       10: '십',
@@ -249,18 +260,21 @@ function formatCountdownWord(n: number, locale?: string): string {
     };
     return map[n] ?? String(n);
   }
-  return String(n);
+  return toEnglishRep(n);
 }
 
-function readyPhrase(locale?: string): string {
+function readyPhrase(locale?: string, voicePack?: VoiceCoachPack): string {
+  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'Ready';
   return isKoreanLocale(locale) ? '준비' : 'Ready';
 }
 
-function startPhrase(locale?: string): string {
+function startPhrase(locale?: string, voicePack?: VoiceCoachPack): string {
+  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'Start!';
   return isKoreanLocale(locale) ? '시작!' : 'Start!';
 }
 
-function oneMorePhrase(locale?: string): string {
+function oneMorePhrase(locale?: string, voicePack?: VoiceCoachPack): string {
+  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'One more!';
   return isKoreanLocale(locale) ? '하나더!' : 'One more!';
 }
 
@@ -362,7 +376,7 @@ async function runPrepCountdownPhase(options: {
   onPhaseChange?.('countdown');
   await speakCoachCue({
     clipKey: null,
-    text: readyPhrase(locale),
+    text: readyPhrase(locale, voicePack),
     locale,
     signal,
     voicePack,
@@ -376,7 +390,7 @@ async function runPrepCountdownPhase(options: {
     onPhaseChange?.('countdown', { countdown: n });
     await speakCoachCue({
       clipKey: countdownClipKey(n),
-      text: formatCountdownWord(n, locale),
+      text: formatCountdownWord(n, locale, voicePack),
       locale,
       signal,
       voicePack,
@@ -390,7 +404,7 @@ async function runPrepCountdownPhase(options: {
   onPhaseChange?.('start');
   await speakCoachCue({
     clipKey: 'start',
-    text: startPhrase(locale),
+    text: startPhrase(locale, voicePack),
     locale,
     signal,
     voicePack,
@@ -400,13 +414,11 @@ async function runPrepCountdownPhase(options: {
 }
 
 /**
- * Korean set-count path is Web Audio clips only for the selected pack
- * (female/male). Never skip male clips for OS TTS — on iOS that falls back to
- * a female AVSpeech voice and makes "남성" counts sound female while Hold
- * (clip) still sounds male.
+ * Clip packs:
+ * - female: Korean drill clips (UI locale ko)
+ * - male: English drill clips (Hold / one two three …) regardless of UI locale
  *
- * Mixing TTS + clips on the same beat also often dies after the first cue.
- * Non-Korean still uses TTS. Clip miss → Sino-Korean word TTS fallback.
+ * Mixing TTS + clips on the same beat often dies after the first cue on mobile.
  */
 async function speakCoachCue(options: {
   clipKey: string | null;
@@ -416,7 +428,7 @@ async function speakCoachCue(options: {
   voicePack?: VoiceCoachPack;
   /** ready = 준비 cue without a clip file */
   kind?: 'ready' | 'count' | 'phrase';
-  /** Numeric value for count cues (Sino-Korean TTS fallback text). */
+  /** Numeric value for count cues (TTS fallback wording). */
   countValue?: number;
 }): Promise<void> {
   const {
@@ -429,8 +441,11 @@ async function speakCoachCue(options: {
     countValue,
   } = options;
   const pack = normalizeVoiceCoachPack(voicePack);
+  const maleEnglish = pack === 'male';
+  // Female English UI → OS TTS. Male pack always prefers English clip files.
+  const useClipPack = maleEnglish || isKoreanLocale(locale);
 
-  if (!isKoreanLocale(locale)) {
+  if (!useClipPack) {
     await speechManager.speak(text, signal);
     return;
   }
@@ -445,21 +460,31 @@ async function speakCoachCue(options: {
     }
     // Clip missing/failed — speak the number/phrase (never beep for count cues).
     if (kind === 'count' || kind === 'phrase') {
-      const fallbackText =
-        kind === 'count' && typeof countValue === 'number'
-          ? toSinoKoreanCount(countValue)
-          : text;
+      let fallbackText = text;
+      if (kind === 'count' && typeof countValue === 'number') {
+        fallbackText = maleEnglish
+          ? toEnglishRep(countValue)
+          : toSinoKoreanCount(countValue);
+      }
       await speechManager.speak(fallbackText, {
         signal,
-        preferMaleVoice: pack === 'male',
-        rate: pack === 'male' ? 0.88 : undefined,
+        preferMaleVoice: maleEnglish,
+        rate: maleEnglish ? 0.92 : undefined,
       });
       return;
     }
   }
 
-  // "준비" has no clip — short dual beep, then fall through to TTS if needed.
+  // Ready cue: female Korean → dual beep; male English → spoken "Ready".
   if (kind === 'ready') {
+    if (maleEnglish) {
+      await speechManager.speak(text || 'Ready', {
+        signal,
+        preferMaleVoice: true,
+        rate: 0.92,
+      });
+      return;
+    }
     const ctx = await ensureVoiceCoachAudioRunning();
     if (ctx) {
       await playBeep(ctx, signal, 660, 0.09);
@@ -471,7 +496,7 @@ async function speakCoachCue(options: {
   // Count / phrase without a clip key (or Web Audio down): spoken TTS.
   await speechManager.speak(text, {
     signal,
-    preferMaleVoice: pack === 'male',
+    preferMaleVoice: maleEnglish,
   });
 }
 
@@ -648,7 +673,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
       });
       await speakCoachCue({
         clipKey: repClipKey(i + 1),
-        text: formatRepWord(i + 1, locale),
+        text: formatRepWord(i + 1, locale, voicePack),
         locale,
         signal,
         voicePack,
@@ -681,7 +706,7 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         });
         await speakCoachCue({
           clipKey: 'one-more',
-          text: oneMorePhrase(locale),
+          text: oneMorePhrase(locale, voicePack),
           locale,
           signal,
           voicePack,
