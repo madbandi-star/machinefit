@@ -1,21 +1,18 @@
 {
-  "title": "My Page Lab submenus — move experimental features under 실험실",
-  "summary": "Moved 7 items from 바로가기/개인설정/더보기 into the 실험실 section in user-specified order. Quick links now only achievements, lifter DNA, lifted weight.",
+  "title": "My Page Insights submenu order and labels",
+  "summary": "MachineFit Insights section: reorder to 운동성향 → 누적무게 → 업적; rename myPage labels in ko/en.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx"
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "실험실 section lists: live dashboard, growth timeline, workout report email, growth analysis, push (members), online PT (members), PT questions (members). Removed from quickLinks, personalSettings, explore.",
+  "testFocus": "My Page → MachineFit Insights: order lifter DNA, lifted weight, achievements with new labels 운동성향, 누적무게, 업적.",
   "fastChecks": [
     "npm run build --prefix frontend"
   ],
-  "productionChecks": [
-    "My Page → 실험실: verify all 7 items and order",
-    "My Page → 바로가기: only achievements / lifter DNA / lifted weight",
-    "My Page → 개인설정: no push link",
-    "My Page → 더보기: no online PT links"
-  ],
+  "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Lab items scattered across 바로가기, 개인설정, 더보기.",
-  "toBe": "All listed experimental menus grouped under 실험실 in specified order."
+  "asIs": "Order: 업적 → DNA → 무게; labels 트로피 도장깨기, 나의 리프터 DNA 분석, 내가 들어올린 무게는?",
+  "toBe": "Order: 운동성향 → 누적무게 → 업적."
 }

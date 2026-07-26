@@ -185,9 +185,9 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
-          <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
+          <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
         </nav>
       </section>
 
