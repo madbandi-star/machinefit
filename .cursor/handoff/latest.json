@@ -1,31 +1,16 @@
 {
-  "title": "Favorites empty dedicated page",
-  "summary": "When favorites count is 0, redirect to /favorites/empty with 0-count message and 기구 검색 CTA.",
-  "git": {
-    "branch": "main",
-    "commit": "pending"
-  },
+  "title": "Fit feedback thumb icon buttons",
+  "summary": "Records/recommendation fit feedback uses circular thumb up/down icons to the right of the title.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/constants/routes.ts",
-    "frontend/src/hooks/useFavoritesList.ts",
-    "frontend/src/pages/favorites/FavoritesEmptyPage.tsx",
-    "frontend/src/pages/favorites/FavoritesIndexPage.tsx",
-    "frontend/src/styles/favorites-empty.css",
-    "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
-    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
-    "frontend/src/routes/index.tsx",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "frontend/src/components/icons/Icon.tsx",
+    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
-  "testFocus": "0 favorites: home card → /favorites/empty; records favorites tab → empty page; page shows 0-count copy + 기구 검색 button → /machines. With favorites: /favorites → records tab list.",
-  "fastChecks": [
-    "npm run build --prefix frontend"
-  ],
+  "testFocus": "History record card expanded: 세팅이 잘 맞았나요? title left, thumb buttons right; aria-labels keep full Korean labels.",
+  "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
-  "deploy": {
-    "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": false
-  },
-  "asIs": "Empty favorites showed inline EmptyState on records tab; home linked to machine search.",
-  "toBe": "Dedicated /favorites/empty page with 0-count message and required search button; auto-redirect when list is empty."
+  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
+  "asIs": "Full-width text buttons with circleCheck/sliders icons below title.",
+  "toBe": "Circular thumb up/down buttons aligned to the right of title row."
 }
