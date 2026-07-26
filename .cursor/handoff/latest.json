@@ -1,16 +1,14 @@
 {
-  "title": "Records card: remove top 조정값 저장, enlarge bottom save",
-  "summary": "History FitFeedbackPanel no longer shows 조정값 저장 (bottom save/bookmark still persist adjustments). History memo save button is full-width with standard touch target height.",
-  "git": { "branch": "main", "commit": "badce8a" },
+  "title": "Records save switches to adjustment compare view",
+  "summary": "Bottom save/bookmark in 셋팅값 조정 필요 editing mode always saves preferences and transitions to read-only 추천 vs 조정 compare (no longer requires settingsDirty).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
-  "testFocus": "Records expanded: no 조정값 저장 at top after 셋팅값 조정 필요. Bottom 저장하기 still saves dirty adjustments + workout log. Save button full width ~48px tall.",
+  "testFocus": "Records: 셋팅값 조정 필요 → edit or not → 저장하기 → compare read-only panel. Same via bookmark save.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": [],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Duplicate 조정값 저장 at card top; small pill save at bottom.",
-  "toBe": "Single save path at bottom; larger block save button."
+  "asIs": "Bottom save skipped preference finalize unless settingsDirty; stayed in edit mode.",
+  "toBe": "Bottom save always finalizes adjustment editing like former top 조정값 저장."
 }

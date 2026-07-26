@@ -171,12 +171,12 @@ export function HistoryRecordCard({
   const canSavePreferences = showAdjustment && !adjustmentReadOnly;
 
   const handleCompanionSave = useCallback(async () => {
-    if (!canSavePreferences || !fitFeedback.settingsDirty) return;
+    if (!canSavePreferences) return;
     await fitFeedback.savePreferencesAsync(() => {
       setPrefsSavedLocally(true);
       setIsEditingAdjustments(false);
     });
-  }, [canSavePreferences, fitFeedback.settingsDirty, fitFeedback.savePreferencesAsync]);
+  }, [canSavePreferences, fitFeedback.savePreferencesAsync]);
 
   const settingsPanel = (
     <RecommendationSettingsPanel
