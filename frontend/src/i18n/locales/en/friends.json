@@ -24,6 +24,22 @@
     "rankings": "Rankings",
     "invite": "Invite"
   },
+  "navShort": {
+    "list": "List",
+    "add": "Add",
+    "incoming": "Incoming",
+    "outgoing": "Sent",
+    "blocked": "Blocked",
+    "privacy": "Privacy",
+    "feed": "Feed",
+    "rankings": "Ranks",
+    "invite": "Invite"
+  },
+  "navGroup": {
+    "friends": "Friends",
+    "social": "Activity",
+    "settings": "Settings"
+  },
   "searchPlaceholder": "Search friends",
   "searchUsersPlaceholder": "Search by nickname or ID",
   "sortLabel": "Sort",

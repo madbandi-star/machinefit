@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode, type TouchEvent } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type TouchEvent } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,24 @@ type Section =
   | 'feed'
   | 'rankings'
   | 'invite';
+
+const NAV_ROUTES: Record<Section, string> = {
+  list: ROUTES.FRIENDS,
+  add: ROUTES.FRIENDS_ADD,
+  incoming: ROUTES.FRIENDS_INCOMING,
+  outgoing: ROUTES.FRIENDS_OUTGOING,
+  blocked: ROUTES.FRIENDS_BLOCKED,
+  privacy: ROUTES.FRIENDS_PRIVACY,
+  feed: ROUTES.FRIENDS_FEED,
+  rankings: ROUTES.FRIENDS_RANKINGS,
+  invite: ROUTES.FRIENDS_INVITE,
+};
+
+const NAV_GROUPS: { labelKey: string; keys: Section[] }[] = [
+  { labelKey: 'navGroup.friends', keys: ['list', 'add', 'incoming', 'outgoing'] },
+  { labelKey: 'navGroup.social', keys: ['feed', 'rankings', 'invite'] },
+  { labelKey: 'navGroup.settings', keys: ['blocked', 'privacy'] },
+];
 
 function sectionFromPath(pathname: string): Section {
   if (pathname.includes('/friends/incoming')) return 'incoming';
@@ -84,25 +102,22 @@ function FriendsEmpty({ title, hint }: { title: string; hint?: string }) {
 }
 
 function Panel({
-  title,
   desc,
   count,
   children,
 }: {
-  title: string;
   desc?: string;
   count?: number;
   children: ReactNode;
 }) {
   return (
     <section className="friends-panel">
-      <div className="friends-panel-head">
-        <div>
-          <h2>{title}</h2>
-          {desc ? <p className="friends-panel-desc">{desc}</p> : null}
+      {(desc || typeof count === 'number') && (
+        <div className="friends-panel-head">
+          {desc ? <p className="friends-panel-desc">{desc}</p> : <span />}
+          {typeof count === 'number' ? <span className="friends-count">{count}</span> : null}
         </div>
-        {typeof count === 'number' ? <span className="friends-count">{count}</span> : null}
-      </div>
+      )}
       {children}
     </section>
   );
@@ -308,22 +323,6 @@ export function FriendsHubPage() {
     onError,
   });
 
-  const nav = useMemo(
-    () =>
-      [
-        { to: ROUTES.FRIENDS, key: 'list' as const },
-        { to: ROUTES.FRIENDS_ADD, key: 'add' as const },
-        { to: ROUTES.FRIENDS_INCOMING, key: 'incoming' as const },
-        { to: ROUTES.FRIENDS_OUTGOING, key: 'outgoing' as const },
-        { to: ROUTES.FRIENDS_BLOCKED, key: 'blocked' as const },
-        { to: ROUTES.FRIENDS_PRIVACY, key: 'privacy' as const },
-        { to: ROUTES.FRIENDS_FEED, key: 'feed' as const },
-        { to: ROUTES.FRIENDS_RANKINGS, key: 'rankings' as const },
-        { to: ROUTES.FRIENDS_INVITE, key: 'invite' as const },
-      ] as const,
-    []
-  );
-
   const refreshCurrent = () => {
     if (section === 'list') void listQuery.refetch();
     if (section === 'add') void searchQuery.refetch();
@@ -349,33 +348,39 @@ export function FriendsHubPage() {
     if (page * 20 < total) setPage((p) => p + 1);
   };
 
-  const sectionTitle = t(`nav.${section}`);
   const sectionDesc = t(`sectionLead.${section}`);
 
   return (
     <div className="friends-shell" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <PageShell>
-        <header className="friends-hero">
-          <p className="friends-hero-kicker">MachineFit</p>
-          <h1>{t('title')}</h1>
-          <p className="friends-hero-lead">{t('heroLead')}</p>
-        </header>
-
-        <nav className="friends-tabs" aria-label={t('title')}>
-          {nav.map((item) => (
-            <NavLink
-              key={item.key}
-              to={item.to}
-              end={item.key === 'list'}
-              className={({ isActive }) => `friends-tab${isActive ? ' is-active' : ''}`}
-            >
-              {t(`nav.${item.key}`)}
-            </NavLink>
+      <PageShell title={t('title')}>
+        <nav className="friends-nav" aria-label={t('title')}>
+          {NAV_GROUPS.map((group) => (
+            <div key={group.labelKey} className="friends-nav-group">
+              <p className="friends-nav-group__label">{t(group.labelKey)}</p>
+              <div
+                className={`friends-nav-grid friends-nav-grid--${group.keys.length}`}
+                role="list"
+              >
+                {group.keys.map((key) => (
+                  <NavLink
+                    key={key}
+                    to={NAV_ROUTES[key]}
+                    end={key === 'list'}
+                    role="listitem"
+                    className={({ isActive }) =>
+                      `friends-nav-tile${isActive ? ' is-active' : ''}`
+                    }
+                  >
+                    {t(`navShort.${key}`)}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
         {section === 'list' && (
-          <Panel title={sectionTitle} desc={sectionDesc} count={listQuery.data?.total}>
+          <Panel desc={sectionDesc} count={listQuery.data?.total}>
             <div className="friends-toolbar">
               <input
                 value={q}
@@ -463,7 +468,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'add' && (
-          <Panel title={sectionTitle} desc={sectionDesc}>
+          <Panel desc={sectionDesc}>
             <div className="friends-toolbar friends-toolbar--single">
               <input
                 value={q}
@@ -548,7 +553,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'incoming' && (
-          <Panel title={sectionTitle} desc={sectionDesc} count={incomingQuery.data?.total}>
+          <Panel desc={sectionDesc} count={incomingQuery.data?.total}>
             {incomingQuery.isLoading ? (
               <Skeleton count={4} height={72} />
             ) : !incomingQuery.data?.items.length ? (
@@ -588,7 +593,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'outgoing' && (
-          <Panel title={sectionTitle} desc={sectionDesc} count={outgoingQuery.data?.total}>
+          <Panel desc={sectionDesc} count={outgoingQuery.data?.total}>
             {outgoingQuery.isLoading ? (
               <Skeleton count={4} height={72} />
             ) : !outgoingQuery.data?.items.length ? (
@@ -621,7 +626,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'blocked' && (
-          <Panel title={sectionTitle} desc={sectionDesc} count={blockedQuery.data?.total}>
+          <Panel desc={sectionDesc} count={blockedQuery.data?.total}>
             {blockedQuery.isLoading ? (
               <Skeleton count={4} height={64} />
             ) : !blockedQuery.data?.items.length ? (
@@ -654,7 +659,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'privacy' && (
-          <Panel title={sectionTitle} desc={sectionDesc}>
+          <Panel desc={sectionDesc}>
             {privacyQuery.isLoading || !privacyQuery.data ? (
               <Skeleton count={6} height={56} />
             ) : (
@@ -746,7 +751,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'feed' && (
-          <Panel title={sectionTitle} desc={sectionDesc}>
+          <Panel desc={sectionDesc}>
             {feedQuery.isLoading ? (
               <Skeleton count={5} height={72} />
             ) : !feedQuery.data?.items.length ? (
@@ -773,7 +778,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'rankings' && (
-          <Panel title={sectionTitle} desc={sectionDesc}>
+          <Panel desc={sectionDesc}>
             <div className="friends-toolbar friends-toolbar--single">
               <select
                 value={metric}
@@ -811,7 +816,7 @@ export function FriendsHubPage() {
         )}
 
         {section === 'invite' && (
-          <Panel title={sectionTitle} desc={sectionDesc}>
+          <Panel desc={sectionDesc}>
             {inviteQuery.isLoading || !inviteQuery.data ? (
               <Skeleton count={3} height={56} />
             ) : (

@@ -24,6 +24,22 @@
     "rankings": "친구 랭킹",
     "invite": "친구 초대"
   },
+  "navShort": {
+    "list": "목록",
+    "add": "추가",
+    "incoming": "받은 요청",
+    "outgoing": "보낸 요청",
+    "blocked": "차단",
+    "privacy": "공개",
+    "feed": "Feed",
+    "rankings": "랭킹",
+    "invite": "초대"
+  },
+  "navGroup": {
+    "friends": "친구",
+    "social": "활동",
+    "settings": "설정"
+  },
   "searchPlaceholder": "친구 이름 검색",
   "searchUsersPlaceholder": "닉네임 또는 아이디 검색",
   "sortLabel": "정렬",

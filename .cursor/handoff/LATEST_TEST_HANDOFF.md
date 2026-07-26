@@ -1,15 +1,22 @@
-# Latest test handoff — Lifter DNA page title & disclaimer
+# Latest test handoff — Friends hub grid nav
 
 **Branch:** `main`
 
 ## Change
 
-- 페이지 제목: **AI Lifter DNA** → **운동성향**
-- AI 면책 문구: 페이지 상단 → **AI 종합 리포트** 섹션 바로 위
+친구 관리 UI: 가로 스크롤 탭 → **그룹 그리드 메뉴**
+
+- **친구:** 목록 · 추가 · 받은 요청 · 보낸 요청
+- **활동:** Feed · 랭킹 · 초대
+- **설정:** 차단 · 공개
+
+PageShell 제목, 짧은 라벨(`navShort`), 패널 중복 제목 제거.
 
 ## Test focus
 
-`/my-page/lifter-dna` — 제목·면책 위치
+1. 9개 메뉴 한 화면에 (가로 스크롤 없음)
+2. 탭 전환·활성 표시
+3. 각 섹션 콘텐츠 정상
 
 ## Fast checks
 

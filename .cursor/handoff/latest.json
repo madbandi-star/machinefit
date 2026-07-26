@@ -1,16 +1,17 @@
 {
-  "title": "Lifter DNA page — title and disclaimer placement",
-  "summary": "Page title AI Lifter DNA → 운동성향. AI disclaimer moved from top to above AI 종합 리포트 section.",
+  "title": "Friends hub — grid nav UI overhaul",
+  "summary": "Replace horizontal scroll tabs with grouped grid nav (친구/활동/설정); PageShell title; shorter navShort labels; cleaner panels.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/lifter-dna/LifterDnaPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/pages/friends/FriendsHubPage.tsx",
+    "frontend/src/styles/friends.css",
+    "frontend/src/i18n/locales/ko/friends.json",
+    "frontend/src/i18n/locales/en/friends.json"
   ],
-  "testFocus": "/my-page/lifter-dna: header 운동성향; disclaimer above traits (AI 종합 리포트), not at page top.",
+  "testFocus": "/my-page/friends — all 9 menus visible without horizontal scroll; groups 친구·활동·설정; active tile highlight; section content loads.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": [],
+  "productionChecks": ["Open friends hub on mobile width — no tab horizontal scroll"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Title AI Lifter DNA; disclaimer at top of page.",
-  "toBe": "Title 운동성향; disclaimer above AI 종합 리포트."
+  "asIs": "Long horizontal pill tabs; heavy hero block.",
+  "toBe": "3-group grid nav, compact header, no sideways scrolling."
 }
