@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -12,7 +12,6 @@ import { Icon } from '@/components/icons/Icon';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { achievementsApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
@@ -367,9 +366,6 @@ export function AchievementsPage() {
                   {t('achievements.tabRankings')}
                 </button>
               </div>
-              <Link to={ROUTES.MY_PAGE} className="achievements-link">
-                {t('achievements.backToMyPage')}
-              </Link>
             </div>
 
             {tab === 'overview' && (
