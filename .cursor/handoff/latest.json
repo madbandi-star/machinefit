@@ -1,7 +1,7 @@
 {
   "title": "Records card: remove top 조정값 저장, enlarge bottom save",
   "summary": "History FitFeedbackPanel no longer shows 조정값 저장 (bottom save/bookmark still persist adjustments). History memo save button is full-width with standard touch target height.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "badce8a" },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
