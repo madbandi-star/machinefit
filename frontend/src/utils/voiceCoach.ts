@@ -542,8 +542,20 @@ export async function speakRestTipsAndWarnings(
   if (!announceRestStart && warningLines.length === 0 && tipLines.length === 0) return;
 
   const queue: string[] = [];
+  // Male set-complete "Rest" must match Start / One more clip voice (GuyNeural),
+  // not OS TTS. Female rest-start stays spoken TTS.
   if (announceRestStart) {
-    queue.push(voiceCoachCue('restStart', pack));
+    if (pack === 'male') {
+      let played = false;
+      try {
+        played = await playVoiceCoachClip('rest', signal, pack);
+      } catch {
+        played = false;
+      }
+      if (!played) queue.push(voiceCoachCue('restStart', pack));
+    } else {
+      queue.push(voiceCoachCue('restStart', pack));
+    }
   }
   if (warningLines.length > 0) {
     queue.push(voiceCoachCue('cautions', pack));
@@ -553,6 +565,8 @@ export async function speakRestTipsAndWarnings(
     queue.push(voiceCoachCue('workoutTips', pack));
     queue.push(...tipLines);
   }
+
+  if (queue.length === 0) return;
 
   try {
     await speechManager.speakQueue(queue, {
