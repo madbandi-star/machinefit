@@ -398,21 +398,7 @@ export async function preloadVoiceCoachClips(options: {
 
   if (options.includeHold) {
     keys.push('hold', 'finish-done', 'finish-great', 'finish-nice');
-    const holdSec = Math.max(1, Math.round(options.holdDurationSec ?? 10));
-    if (pack !== 'female') {
-      for (let n = 1; n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_COUNTDOWN); n += 1) {
-        keys.push(`cd-${n}`);
-      }
-      if (holdSec > MAX_VOICE_COACH_CLIP_COUNTDOWN) {
-        for (
-          let n = MAX_VOICE_COACH_CLIP_COUNTDOWN + 1;
-          n <= Math.min(holdSec, MAX_VOICE_COACH_CLIP_REP);
-          n += 1
-        ) {
-          keys.push(`rep-${n}`);
-        }
-      }
-    }
+    // Hold seconds: male Korean TTS only — no countdown clip preload.
   }
 
   const unique = [...new Set(keys)];
