@@ -46,6 +46,7 @@ export function MyPage() {
   const { activeGym, gyms } = useActiveGym();
 
   const [showLogout, setShowLogout] = useState(false);
+  const [labExpanded, setLabExpanded] = useState(false);
 
   const roleCode = user?.roleCode;
   const isOwner = hasMinRole(roleCode, Role.OWNER);
@@ -219,21 +220,42 @@ export function MyPage() {
         </nav>
       </section>
 
-      <section className="my-page-section">
-        <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
-        <nav className="list-nav" aria-label={t('myPage.lab')}>
-          <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
-          <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
-          <WorkoutReportSection />
-          <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
-          {isMember ? (
-            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
-          ) : null}
-          {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
-          {isMember ? (
-            <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
-          ) : null}
-        </nav>
+      <section
+        className={`my-page-section my-page-section--collapsible${
+          labExpanded ? ' my-page-section--expanded' : ''
+        }`}
+      >
+        <button
+          type="button"
+          className="my-page-section__toggle"
+          onClick={() => setLabExpanded((value) => !value)}
+          aria-expanded={labExpanded}
+          aria-controls="my-page-lab-body"
+        >
+          <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
+          <Icon
+            name="chevronDown"
+            size={18}
+            className={`my-page-section__chevron${labExpanded ? ' my-page-section__chevron--open' : ''}`}
+            aria-hidden
+          />
+          <span className="visually-hidden">{labExpanded ? t('collapse') : t('expand')}</span>
+        </button>
+        {labExpanded ? (
+          <nav id="my-page-lab-body" className="list-nav" aria-label={t('myPage.lab')}>
+            <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
+            <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
+            <WorkoutReportSection />
+            <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
+            {isMember ? (
+              <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
+            ) : null}
+            {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
+            {isMember ? (
+              <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
+            ) : null}
+          </nav>
+        ) : null}
       </section>
 
       {isTrainer ? (
