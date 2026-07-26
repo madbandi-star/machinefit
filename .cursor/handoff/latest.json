@@ -1,7 +1,7 @@
 {
   "title": "Easy mode UI overhaul + photo board + push compose",
   "summary": "Redesign easy-mode home and 3-step wizard (pick, recommend, log, rate, done). Photo board scannable gallery and push compose 3-step UI also included.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "8d02a9e" },
   "changedFiles": [
     "frontend/src/pages/easy-mode/EasyHomePage.tsx",
     "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
