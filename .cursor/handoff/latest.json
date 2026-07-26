@@ -1,24 +1,34 @@
 {
-  "title": "Push — fix member-to-friend send failures",
-  "summary": "Allow member_exact to any connected friend (any role); lookup by email/login id; exempt friend push from marketing opt-in; show friend picker + clearer errors.",
-  "git": { "branch": "main", "commit": "2e9c787" },
+  "title": "Easy mode UI overhaul + photo board + push compose",
+  "summary": "Redesign easy-mode home and 3-step wizard (pick, recommend, log, rate, done). Photo board scannable gallery and push compose 3-step UI also included.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/services/push-audience.service.ts",
-    "backend/server/services/push-notification.service.ts",
+    "frontend/src/pages/easy-mode/EasyHomePage.tsx",
+    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
+    "frontend/src/styles/easy-mode.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
+    "frontend/src/styles/photo-board.css",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json",
     "frontend/src/pages/push/PushComposePage.tsx",
+    "frontend/src/styles/push.css",
     "frontend/src/i18n/locales/ko/push.json",
     "frontend/src/i18n/locales/en/push.json"
   ],
-  "testFocus": "Member sends push to connected friend regardless of recipient role; demo_test17→demo_test99a works from mobile; friend list picker.",
+  "testFocus": "Easy mode: home logo-only header; wizard step1 no camera; step2 details open; step3 log cards; rate one-tap good; done → records today tab. Photo board filter panel + card titles. Push compose 3-step preview.",
   "fastChecks": [
-    "cd backend && npx tsx server/services/push-audience.service.test.ts",
-    "npm run build --prefix frontend"
+    "npm run build --prefix frontend",
+    "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Render redeploy: member friend push both directions",
-    "Verify friend radio list on push compose"
+    "/easy — home and full 3-step flow through done",
+    "/records?tab=history — finish today lands here",
+    "/photo-board — gallery cards",
+    "/push — compose layout (admin if needed)"
   ],
-  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": true },
-  "asIs": "Member could only push to member-tier friends; lookup display_name only; marketing opt-in blocked general; generic error toast.",
-  "toBe": "Connected friends any role; email/id lookup; friend picker; specific errors."
+  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
+  "asIs": "Easy mode cluttered headers, ugly log/rate/done screens; photo board image-only cards; push compose flat form.",
+  "toBe": "Polished easy-mode flow with card UI; photo board info cards; push 3-step compose with preview."
 }

@@ -54,6 +54,9 @@
   "photoBoard": "사진게시판",
   "photoBoardSubtitle": "운동 사진을 공유하고 영감을 나눠요",
   "photoEmpty": "아직 사진 게시글이 없습니다.",
+  "photoPostCount": "{{count}}개",
+  "photoScopeLabel": "범위",
+  "photoLiked": "좋아요한 글",
   "photoSearchPlaceholder": "제목, 내용, 작성자, 태그 검색",
   "photoSortLabel": "정렬",
   "photoSort": {

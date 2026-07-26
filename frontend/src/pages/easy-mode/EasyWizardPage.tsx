@@ -166,14 +166,15 @@ export function EasyWizardPage() {
   });
 
   const saveFeedbackAndPrefs = useMutation({
-    mutationFn: async () => {
-      if (!recommendation || !selected || !fitRating) return;
+    mutationFn: async (ratingOverride?: FitRating) => {
+      const rating = ratingOverride ?? fitRating;
+      if (!recommendation || !selected || !rating) return;
       await recommendationFeedbackApi.submit({
         recommendationId: recommendation.id,
-        fitRating,
+        fitRating: rating,
         ...preferenceScope,
       });
-      if (fitRating === 'bad') {
+      if (rating === 'bad') {
         await machinePreferenceApi.upsert({
           machineCode: selected.code,
           activeSource: 'adjusted',
@@ -274,6 +275,10 @@ export function EasyWizardPage() {
     setFitRating(null);
   };
 
+  const finishForToday = () => {
+    navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`);
+  };
+
   if (mode !== 'easy') return null;
 
   const picker = (
@@ -298,41 +303,60 @@ export function EasyWizardPage() {
   );
 
   if (step === 'done') {
+    const machineLabel = savedMachineName || selected?.name || '—';
+
     return (
       <div className="easy-done">
         <div className="easy-done__inner">
-          <div className="easy-done__check" aria-hidden>
-            ✓
+          <div className="easy-done__hero">
+            <div className="easy-done__celebrate" aria-hidden>
+              <span className="easy-done__celebrate-ring" />
+              <span className="easy-done__celebrate-mark">✓</span>
+            </div>
+            <h1 className="easy-done__title">{t('easyMode.doneTitle')}</h1>
+            <p className="easy-done__machine">{machineLabel}</p>
+            <p className="easy-done__note">{t('easyMode.doneSavedNote')}</p>
           </div>
-          <h1 className="easy-heading">{t('easyMode.doneTitle')}</h1>
-          <p className="easy-sub">
-            {t('easyMode.doneSummary', { name: savedMachineName || '—' })}
-          </p>
+
           <div className="easy-done__actions">
             <button
               type="button"
-              className="easy-btn easy-btn--primary"
+              className="easy-done__choice easy-done__choice--continue"
               onClick={resetToMachineStep}
             >
-              {t('easyMode.doneAnother')}
+              <span className="easy-done__choice-icon" aria-hidden>
+                +
+              </span>
+              <span className="easy-done__choice-text">
+                <strong>{t('easyMode.doneAnother')}</strong>
+                <span>{t('easyMode.doneAnotherDesc')}</span>
+              </span>
             </button>
             <button
               type="button"
-              className="easy-btn easy-btn--secondary"
-              onClick={() => navigate(ROUTES.EASY)}
+              className="easy-done__choice easy-done__choice--finish"
+              onClick={finishForToday}
             >
-              {t('easyMode.doneHome')}
+              <span className="easy-done__choice-icon" aria-hidden>
+                →
+              </span>
+              <span className="easy-done__choice-text">
+                <strong>{t('easyMode.doneHome')}</strong>
+                <span>{t('easyMode.doneHomeDesc')}</span>
+              </span>
             </button>
           </div>
-          <p className="easy-sub easy-sub--soft">{t('easyMode.doneFoot')}</p>
         </div>
       </div>
     );
   }
 
   if (step === 'rate') {
+    const machineLabel = savedMachineName || selected?.name || '—';
+    const ratingPending = saveFeedbackAndPrefs.isPending;
+
     return (
-      <div className="easy-shell">
+      <div className="easy-shell easy-shell--rate">
         <header className="easy-shell__chrome">
           <div className="easy-shell__top">
             <span className="easy-shell__icon-btn easy-shell__icon-btn--spacer" aria-hidden>
@@ -349,68 +373,107 @@ export function EasyWizardPage() {
             </button>
           </div>
         </header>
-        <div className="easy-shell__body">
-          <div className="easy-section-head">
-            <h2 className="easy-heading">{savedMachineName || selected?.name}</h2>
-            <p className="easy-sub">{t('easyMode.fitPromptAfter')}</p>
+
+        <div className="easy-shell__body easy-rate">
+          <div className="easy-rate-hero">
+            <div className="easy-rate-hero__badge" aria-hidden>
+              ✓
+            </div>
+            <h2 className="easy-rate-hero__title">{machineLabel}</h2>
+            <p className="easy-rate-hero__prompt">{t('easyMode.fitPromptAfter')}</p>
           </div>
-          <div className="easy-fit">
+
+          <div className="easy-rate-choices" role="group" aria-label={t('easyMode.fitPromptAfter')}>
             <button
               type="button"
-              className={`easy-fit__btn${fitRating === 'good' ? ' easy-fit__btn--on' : ''}`}
-              onClick={() => setFitRating('good')}
+              className={`easy-rate-choice easy-rate-choice--good${
+                fitRating === 'good' ? ' easy-rate-choice--selected' : ''
+              }`}
+              disabled={ratingPending}
+              onClick={() => {
+                setFitRating('good');
+                saveFeedbackAndPrefs.mutate('good');
+              }}
             >
-              {t('easyMode.fitGood')}
+              <span className="easy-rate-choice__icon easy-rate-choice__icon--good" aria-hidden>
+                {ratingPending && fitRating === 'good' ? '…' : '👍'}
+              </span>
+              <span className="easy-rate-choice__text">
+                <strong className="easy-rate-choice__label">{t('easyMode.fitGood')}</strong>
+                <span className="easy-rate-choice__desc">{t('easyMode.fitGoodDesc')}</span>
+              </span>
             </button>
+
             <button
               type="button"
-              className={`easy-fit__btn${fitRating === 'bad' ? ' easy-fit__btn--on' : ''}`}
+              className={`easy-rate-choice easy-rate-choice--bad${
+                fitRating === 'bad' ? ' easy-rate-choice--selected' : ''
+              }`}
+              disabled={ratingPending}
               onClick={() => setFitRating('bad')}
             >
-              {t('easyMode.fitBad')}
+              <span className="easy-rate-choice__icon easy-rate-choice__icon--bad" aria-hidden>
+                ↗
+              </span>
+              <span className="easy-rate-choice__text">
+                <strong className="easy-rate-choice__label">{t('easyMode.fitBad')}</strong>
+                <span className="easy-rate-choice__desc">{t('easyMode.fitBadDesc')}</span>
+              </span>
             </button>
           </div>
+
           {fitRating === 'bad' ? (
-            <div className="easy-card easy-card--stack">
-              <div className="easy-field">
-                <p className="easy-list__label">{t('easyMode.adjustWeight')}</p>
-                <NumericStepper
-                  value={adjWeight}
-                  onChange={setAdjWeight}
-                  min={0}
-                  max={999}
-                  step={5}
-                  unit="kg"
-                  size="compact"
-                  ariaLabel={t('easyMode.adjustWeight')}
-                />
-              </div>
-              <div className="easy-field">
-                <p className="easy-list__label">{t('easyMode.adjustReps')}</p>
-                <NumericStepper
-                  value={adjReps}
-                  onChange={setAdjReps}
-                  min={1}
-                  max={50}
-                  step={1}
-                  unit={t('easyMode.repsUnit')}
-                  size="compact"
-                  ariaLabel={t('easyMode.adjustReps')}
-                />
+            <div className="easy-rate-adjust">
+              <p className="easy-rate-adjust__lead">{t('easyMode.fitAdjustLead')}</p>
+              <div className="easy-rate-adjust__fields">
+                <div className="easy-rate-adjust__field">
+                  <p className="easy-rate-adjust__label">{t('easyMode.adjustWeight')}</p>
+                  <NumericStepper
+                    value={adjWeight}
+                    onChange={setAdjWeight}
+                    min={0}
+                    max={999}
+                    step={5}
+                    unit="kg"
+                    size="default"
+                    ariaLabel={t('easyMode.adjustWeight')}
+                  />
+                </div>
+                <div className="easy-rate-adjust__field">
+                  <p className="easy-rate-adjust__label">{t('easyMode.adjustReps')}</p>
+                  <NumericStepper
+                    value={adjReps}
+                    onChange={setAdjReps}
+                    min={1}
+                    max={50}
+                    step={1}
+                    unit={t('easyMode.repsUnit')}
+                    size="default"
+                    ariaLabel={t('easyMode.adjustReps')}
+                  />
+                </div>
               </div>
             </div>
           ) : null}
         </div>
-        <div className="easy-shell__footer">
+
+        <div className="easy-shell__footer easy-rate__footer">
+          {fitRating === 'bad' ? (
+            <button
+              type="button"
+              className="easy-btn easy-btn--primary"
+              disabled={ratingPending}
+              onClick={() => saveFeedbackAndPrefs.mutate('bad')}
+            >
+              {ratingPending ? t('easyMode.working') : t('easyMode.fitSubmit')}
+            </button>
+          ) : null}
           <button
             type="button"
-            className="easy-btn easy-btn--primary"
-            disabled={!fitRating || saveFeedbackAndPrefs.isPending}
-            onClick={() => saveFeedbackAndPrefs.mutate()}
+            className="easy-btn easy-btn--ghost"
+            disabled={ratingPending}
+            onClick={() => setStep('done')}
           >
-            {saveFeedbackAndPrefs.isPending ? t('easyMode.working') : t('easyMode.fitSubmit')}
-          </button>
-          <button type="button" className="easy-btn easy-btn--ghost" onClick={() => setStep('done')}>
             {t('easyMode.fitSkip')}
           </button>
         </div>
@@ -440,117 +503,125 @@ export function EasyWizardPage() {
           }
           onPrimary={() => createRecommend.mutate()}
         >
-          <div className="easy-section-head">
-            <h2 className="easy-heading">{t('easyMode.s1Title')}</h2>
-            <p className="easy-sub">{t('easyMode.s1Sub')}</p>
-            <p className="easy-home__gym">{activeGym?.name || t('easyMode.gymUnset')}</p>
-          </div>
+          <div className="easy-s1">
+            <div className="easy-s1-intro">
+              <p
+                className={`easy-s1-intro__gym${
+                  activeGym?.name?.trim() ? '' : ' easy-s1-intro__gym--unset'
+                }`}
+              >
+                <span className="easy-s1-intro__gym-dot" aria-hidden />
+                {activeGym?.name?.trim() || t('easyMode.gymUnset')}
+              </p>
+              <h2 className="easy-s1-intro__title">{t('easyMode.s1Title')}</h2>
+              <p className="easy-s1-intro__sub">{t('easyMode.s1Sub')}</p>
+            </div>
 
-          {!activeGymId ? (
-            <Link to={ROUTES.HOME} className="easy-btn easy-btn--secondary">
-              {t('easyMode.pickGym')}
-            </Link>
-          ) : (
-            <>
-              <div className="easy-tile-grid">
-                <Link to={ROUTES.SCAN} className="easy-tile">
-                  {t('easyMode.entryQr')}
-                </Link>
-                <button type="button" className="easy-tile" onClick={() => openPicker()}>
-                  {t('easyMode.entrySearch')}
-                </button>
-              </div>
-
-              {selected ? (
+            {!activeGymId ? (
+              <Link to={ROUTES.HOME} className="easy-btn easy-btn--secondary easy-s1-find">
+                {t('easyMode.pickGym')}
+              </Link>
+            ) : (
+              <>
                 <button
                   type="button"
-                  className="easy-selected-card"
-                  onClick={() => openPicker(selected.code)}
+                  className="easy-btn easy-btn--secondary easy-s1-find"
+                  onClick={() => openPicker()}
                 >
-                  <img
-                    className="easy-selected-card__thumb"
-                    src={
-                      resolveMachineImageUrl(selected.code) || machinePlaceholderUrl()
-                    }
-                    alt=""
-                    width={64}
-                    height={64}
-                  />
-                  <div className="easy-selected-card__body">
-                    <p className="easy-selected-card__label">{t('easyMode.selected')}</p>
-                    <p className="easy-selected-card__name">{selected.name}</p>
-                    {selected.brandName ? (
-                      <p className="easy-selected-card__meta">{selected.brandName}</p>
-                    ) : null}
-                    {needsMuscle && targetMuscle ? (
-                      <p className="easy-selected-card__meta">
-                        {t(`machines:muscleGroups.${targetMuscle}`, {
-                          defaultValue: targetMuscle,
-                        })}
-                      </p>
-                    ) : null}
-                  </div>
-                  <span className="easy-selected-card__chevron" aria-hidden>
-                    ›
-                  </span>
+                  {t('easyMode.entrySearch')}
                 </button>
-              ) : null}
 
-              {recentMachines.length > 0 ? (
-                <div className="easy-list">
-                  <p className="easy-list__label">{t('easyMode.recent')}</p>
-                  <div className="easy-thumb-row">
-                    {recentMachines.map((m) => (
-                      <button
-                        key={m.code}
-                        type="button"
-                        className={`easy-thumb-chip${
-                          selected?.code === m.code ? ' easy-thumb-chip--on' : ''
-                        }`}
-                        onClick={() => openPicker(m.code)}
-                      >
-                        <img
-                          src={resolveMachineImageUrl(m.code) || machinePlaceholderUrl()}
-                          alt=""
-                          width={48}
-                          height={48}
-                        />
-                        <span>{m.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
+                {selected ? (
+                  <button
+                    type="button"
+                    className="easy-selected-card"
+                    onClick={() => openPicker(selected.code)}
+                  >
+                    <img
+                      className="easy-selected-card__thumb"
+                      src={
+                        resolveMachineImageUrl(selected.code) || machinePlaceholderUrl()
+                      }
+                      alt=""
+                      width={64}
+                      height={64}
+                    />
+                    <div className="easy-selected-card__body">
+                      <p className="easy-selected-card__label">{t('easyMode.selected')}</p>
+                      <p className="easy-selected-card__name">{selected.name}</p>
+                      {selected.brandName ? (
+                        <p className="easy-selected-card__meta">{selected.brandName}</p>
+                      ) : null}
+                      {needsMuscle && targetMuscle ? (
+                        <p className="easy-selected-card__meta">
+                          {t(`machines:muscleGroups.${targetMuscle}`, {
+                            defaultValue: targetMuscle,
+                          })}
+                        </p>
+                      ) : null}
+                    </div>
+                    <span className="easy-selected-card__chevron" aria-hidden>
+                      ›
+                    </span>
+                  </button>
+                ) : null}
 
-              {(favoritesQuery.data?.length ?? 0) > 0 ? (
-                <div className="easy-list">
-                  <p className="easy-list__label">{t('easyMode.favorites')}</p>
-                  <div className="easy-thumb-row">
-                    {(favoritesQuery.data ?? []).slice(0, 6).map((m) => (
-                      <button
-                        key={m.id}
-                        type="button"
-                        className={`easy-thumb-chip${
-                          selected?.code === m.machineCode ? ' easy-thumb-chip--on' : ''
-                        }`}
-                        onClick={() => openPicker(m.machineCode)}
-                      >
-                        <img
-                          src={
-                            resolveMachineImageUrl(m.machineCode) || machinePlaceholderUrl()
-                          }
-                          alt=""
-                          width={48}
-                          height={48}
-                        />
-                        <span>{m.machineName}</span>
-                      </button>
-                    ))}
+                {recentMachines.length > 0 ? (
+                  <div className="easy-list">
+                    <p className="easy-list__label">{t('easyMode.recent')}</p>
+                    <div className="easy-thumb-row">
+                      {recentMachines.map((m) => (
+                        <button
+                          key={m.code}
+                          type="button"
+                          className={`easy-thumb-chip${
+                            selected?.code === m.code ? ' easy-thumb-chip--on' : ''
+                          }`}
+                          onClick={() => openPicker(m.code)}
+                        >
+                          <img
+                            src={resolveMachineImageUrl(m.code) || machinePlaceholderUrl()}
+                            alt=""
+                            width={48}
+                            height={48}
+                          />
+                          <span>{m.name}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : null}
-            </>
-          )}
+                ) : null}
+
+                {(favoritesQuery.data?.length ?? 0) > 0 ? (
+                  <div className="easy-list">
+                    <p className="easy-list__label">{t('easyMode.favorites')}</p>
+                    <div className="easy-thumb-row">
+                      {(favoritesQuery.data ?? []).slice(0, 6).map((m) => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          className={`easy-thumb-chip${
+                            selected?.code === m.machineCode ? ' easy-thumb-chip--on' : ''
+                          }`}
+                          onClick={() => openPicker(m.machineCode)}
+                        >
+                          <img
+                            src={
+                              resolveMachineImageUrl(m.machineCode) || machinePlaceholderUrl()
+                            }
+                            alt=""
+                            width={48}
+                            height={48}
+                          />
+                          <span>{m.machineName}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            )}
+          </div>
         </EasyWizardShell>
       </>
     );
@@ -617,7 +688,7 @@ export function EasyWizardPage() {
             )}
         </div>
 
-        <details className="easy-details">
+        <details className="easy-details" open>
           <summary>{t('easyMode.moreDetails')}</summary>
           {(recommendation.tips ?? []).slice(0, 3).map((tip) => (
             <p key={tip} className="easy-sub">
@@ -634,13 +705,15 @@ export function EasyWizardPage() {
             {t('easyMode.repsUnit')}
           </p>
         </details>
-
-        <p className="easy-sub easy-sub--soft">{t('easyMode.fitLaterHint')}</p>
       </EasyWizardShell>
     );
   }
 
   // step 3
+  const completedSetCount = completed.slice(0, setCount).filter(Boolean).length;
+  const recommendedWeight = recommendation?.settings.recommendedWeightKg;
+  const recommendedReps = recommendation ? repsLabel(recommendation.settings) : null;
+
   return (
     <EasyWizardShell
       step={3}
@@ -652,69 +725,111 @@ export function EasyWizardPage() {
       primaryHint={!activeMemberId ? t('easyMode.needMember') : undefined}
       onPrimary={() => saveLog.mutate()}
     >
-      <div className="easy-section-head">
-        <h2 className="easy-heading">{selected?.name}</h2>
-        <p className="easy-sub">{t('easyMode.s3Title')}</p>
-        {recommendation ? (
-          <p className="easy-sub easy-sub--soft">
-            {t('easyMode.repsReadonly', { reps: repsLabel(recommendation.settings) })}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="easy-setting-row easy-setting-row--stack">
-        <span className="easy-setting-row__label">{t('easyMode.setCount')}</span>
-        <NumericStepper
-          value={setCount}
-          onChange={(v) => resizeSets(v ?? 1)}
-          min={1}
-          max={20}
-          step={1}
-          size="compact"
-          ariaLabel={t('easyMode.setCount')}
-        />
-      </div>
-
-      {weights.slice(0, setCount).map((w, index) => (
-        <div key={index} className="easy-set-row">
-          <div className="easy-set-row__head">
-            <span className="easy-set-row__label">
-              {t('easyMode.setN', { n: index + 1 })}
-            </span>
-            <label className="easy-check">
-              <input
-                type="checkbox"
-                checked={completed[index] ?? false}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setCompleted((prev) => {
-                    const copy = [...prev];
-                    copy[index] = checked;
-                    return copy;
-                  });
-                }}
-              />
-              {t('easyMode.doneSet')}
-            </label>
-          </div>
-          <NumericStepper
-            value={w}
-            onChange={(next) => {
-              setWeights((prev) => {
-                const copy = [...prev];
-                copy[index] = next ?? 0;
-                return copy;
-              });
-            }}
-            min={0}
-            max={999}
-            step={5}
-            unit="kg"
-            size="compact"
-            ariaLabel={t('easyMode.setN', { n: index + 1 })}
-          />
+      <div className="easy-s3">
+        <div className="easy-s3-intro">
+          <h2 className="easy-s3-intro__title">{selected?.name}</h2>
+          <p className="easy-s3-intro__sub">{t('easyMode.s3Title')}</p>
+          {recommendation ? (
+            <div className="easy-s3-intro__chips" aria-label={t('easyMode.s3Recommended')}>
+              {recommendedWeight != null ? (
+                <span className="easy-s3-chip">
+                  {recommendedWeight}
+                  <span className="easy-s3-chip__unit">kg</span>
+                </span>
+              ) : null}
+              {recommendedReps ? (
+                <span className="easy-s3-chip">
+                  {recommendedReps}
+                  <span className="easy-s3-chip__unit">{t('easyMode.repsUnit')}</span>
+                </span>
+              ) : null}
+            </div>
+          ) : null}
         </div>
-      ))}
+
+        <div className="easy-s3-toolbar">
+          <div className="easy-s3-toolbar__row">
+            <span className="easy-s3-toolbar__label">{t('easyMode.setCount')}</span>
+            <NumericStepper
+              value={setCount}
+              onChange={(v) => resizeSets(v ?? 1)}
+              min={1}
+              max={20}
+              step={1}
+              size="compact"
+              ariaLabel={t('easyMode.setCount')}
+              allowManualInput={false}
+            />
+          </div>
+          <div className="easy-s3-progress">
+            <div
+              className="easy-s3-progress__bar"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={setCount}
+              aria-valuenow={completedSetCount}
+              aria-label={t('easyMode.s3Progress', { done: completedSetCount, total: setCount })}
+            >
+              <span
+                className="easy-s3-progress__fill"
+                style={{ width: `${setCount > 0 ? (completedSetCount / setCount) * 100 : 0}%` }}
+              />
+            </div>
+            <p className="easy-s3-progress__label">
+              {t('easyMode.s3Progress', { done: completedSetCount, total: setCount })}
+            </p>
+          </div>
+        </div>
+
+        <div className="easy-s3-sets">
+          {weights.slice(0, setCount).map((w, index) => {
+            const isDone = completed[index] ?? false;
+            return (
+              <div
+                key={index}
+                className={`easy-s3-set${isDone ? ' easy-s3-set--done' : ''}`}
+              >
+                <div className="easy-s3-set__badge" aria-hidden>
+                  {isDone ? '✓' : index + 1}
+                </div>
+                <div className="easy-s3-set__main">
+                  <p className="easy-s3-set__label">{t('easyMode.setN', { n: index + 1 })}</p>
+                  <NumericStepper
+                    value={w}
+                    onChange={(next) => {
+                      setWeights((prev) => {
+                        const copy = [...prev];
+                        copy[index] = next ?? 0;
+                        return copy;
+                      });
+                    }}
+                    min={0}
+                    max={999}
+                    step={5}
+                    unit="kg"
+                    size="default"
+                    ariaLabel={t('easyMode.setN', { n: index + 1 })}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className={`easy-s3-set__done${isDone ? ' easy-s3-set__done--on' : ''}`}
+                  aria-pressed={isDone}
+                  onClick={() => {
+                    setCompleted((prev) => {
+                      const copy = [...prev];
+                      copy[index] = !isDone;
+                      return copy;
+                    });
+                  }}
+                >
+                  {t('easyMode.doneSet')}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </EasyWizardShell>
   );
 }

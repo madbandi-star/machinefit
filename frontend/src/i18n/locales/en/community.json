@@ -54,6 +54,9 @@
   "photoBoard": "Photo Board",
   "photoBoardSubtitle": "Share workout photos and inspire each other",
   "photoEmpty": "No photo posts yet.",
+  "photoPostCount": "{{count}} posts",
+  "photoScopeLabel": "Scope",
+  "photoLiked": "Liked",
   "photoSearchPlaceholder": "Search title, content, author, tags",
   "photoSortLabel": "Sort",
   "photoSort": {

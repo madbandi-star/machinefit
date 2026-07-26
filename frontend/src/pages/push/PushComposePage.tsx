@@ -83,6 +83,37 @@ function parseUserIds(raw: string): string[] {
     .filter(Boolean);
 }
 
+function PushPreview({
+  kind,
+  title,
+  body,
+  audienceLabel,
+}: {
+  kind: PushKind;
+  title: string;
+  body: string;
+  audienceLabel: string;
+}) {
+  const { t } = useTranslation('push');
+  const previewTitle = title.trim() || t('previewTitlePlaceholder');
+  const previewBody = body.trim() || t('previewBodyPlaceholder');
+
+  return (
+    <div className="push-preview" aria-live="polite">
+      <p className="push-preview__label">{t('previewLabel')}</p>
+      <div className="push-preview__card">
+        <div className="push-preview__app-row">
+          <span className="push-preview__app">MachineFit</span>
+          <span className="push-preview__kind">{t(`kinds.${kind}`)}</span>
+        </div>
+        <p className="push-preview__title">{previewTitle}</p>
+        <p className="push-preview__body">{previewBody}</p>
+        <p className="push-preview__to">{t('previewTo', { target: audienceLabel })}</p>
+      </div>
+    </div>
+  );
+}
+
 export function PushComposePage() {
   const { t } = useTranslation('push');
   const queryClient = useQueryClient();
@@ -131,7 +162,6 @@ export function PushComposePage() {
     [caps]
   );
 
-  // Auto-select the first allowed audience so send isn't blocked by an empty preset.
   useEffect(() => {
     if (!presets.length) return;
     if (preset && presets.includes(preset)) return;
@@ -149,6 +179,24 @@ export function PushComposePage() {
       : preset === 'owner_pick_member' || preset === 'trainer_pick'
         ? suggestedMembers
         : suggested;
+
+  const audienceLabel = useMemo(() => {
+    if (!preset) return t('previewAudienceUnset');
+    if (preset === 'member_exact') {
+      const friend = suggested.find((u) => u.id === selectedMemberId);
+      if (friend) return friend.displayName;
+      if (memberQuery.trim()) return memberQuery.trim();
+    }
+    const isPickPreset =
+      preset === 'user_ids' ||
+      preset === 'owner_pick_trainer' ||
+      preset === 'owner_pick_member' ||
+      preset === 'trainer_pick';
+    if (isPickPreset && selectedIds.length > 0) {
+      return t('selectedCount', { count: selectedIds.length });
+    }
+    return t(`presets.${preset}`);
+  }, [preset, selectedMemberId, memberQuery, suggested, selectedIds.length, t]);
 
   const sendMutation = useMutation({
     mutationFn: (audience: PushAudienceInput) =>
@@ -251,7 +299,6 @@ export function PushComposePage() {
         return { type: 'owner_gym_members', gymId: gymId || undefined };
       case 'owner_premium':
         if (!gymId && (caps?.gyms.length ?? 0) !== 1) {
-          // Prefer explicit gym; if one gym, auto-use it
           if ((caps?.gyms.length ?? 0) === 1) {
             return {
               type: 'gym',
@@ -374,16 +421,25 @@ export function PushComposePage() {
     preset === 'owner_pick_member' ||
     preset === 'trainer_pick';
 
+  const showAudiencePicker = presets.length > 1;
+
   return (
     <div className="push-shell">
       <PageShell>
-        <header className="push-hero">
-          <p className="push-hero-kicker">MachineFit</p>
-          <h1>{t('title')}</h1>
-          <p className="push-hero-lead">{t('subtitle')}</p>
+        <header className="push-top">
+          <div className="push-top__text">
+            <h1>{t('title')}</h1>
+            <p>{t('subtitle')}</p>
+          </div>
+          <div className="push-top__badges">
+            <span className="push-badge">{t(`roles.${senderRole}`)}</span>
+            <span className="push-badge push-badge--accent">
+              {t('maxRecipients', { count: caps.maxRecipients })}
+            </span>
+          </div>
         </header>
 
-        <div className="push-tabs" role="tablist">
+        <div className="push-tabs push-tabs--segment" role="tablist">
           <button
             type="button"
             className={`push-tabs__btn${tab === 'compose' ? ' is-active' : ''}`}
@@ -401,81 +457,32 @@ export function PushComposePage() {
         </div>
 
         {tab === 'compose' ? (
-          <section className="push-panel">
-            <div className="push-panel-head">
-              <div>
-                <h2>{t('tabCompose')}</h2>
-                <p className="push-panel-desc">{t('audienceHelp')}</p>
-              </div>
-              <span className="push-chip">{t('maxRecipients', { count: caps.maxRecipients })}</span>
-            </div>
+          <form className="push-compose" onSubmit={onSubmit}>
+            <PushPreview
+              kind={kind}
+              title={title}
+              body={body}
+              audienceLabel={audienceLabel}
+            />
 
-            <form className="push-form" onSubmit={onSubmit}>
-              <div className="push-field">
-                <label htmlFor="push-kind">{t('kind')}</label>
-                <select
-                  id="push-kind"
-                  value={kind}
-                  onChange={(e) => setKind(e.target.value as PushKind)}
-                >
-                  {PUSH_KINDS.map((k) => (
-                    <option key={k} value={k}>
-                      {t(`kinds.${k}`)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <section className="push-step">
+              <header className="push-step__head">
+                <span className="push-step__num" aria-hidden>
+                  1
+                </span>
+                <div>
+                  <h2>{t('stepAudience')}</h2>
+                  <p>{t('audienceHelp')}</p>
+                </div>
+              </header>
 
-              <div className="push-field">
-                <label htmlFor="push-title">{t('titleLabel')}</label>
-                <input
-                  id="push-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  maxLength={120}
-                  required
-                />
-              </div>
-
-              <div className="push-field">
-                <label htmlFor="push-body">{t('bodyLabel')}</label>
-                <textarea
-                  id="push-body"
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  rows={5}
-                  maxLength={2000}
-                  required
-                />
-              </div>
-
-              <div className="push-field">
-                <label htmlFor="push-image">{t('imageUrl')}</label>
-                <input
-                  id="push-image"
-                  type="text"
-                  inputMode="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://"
-                />
-              </div>
-
-              <div className="push-field">
-                <label htmlFor="push-link">{t('deepLink')}</label>
-                <input
-                  id="push-link"
-                  value={deepLink}
-                  onChange={(e) => setDeepLink(e.target.value)}
-                  placeholder="/machines/..."
-                />
-              </div>
-
-              <div className="push-field" role="group" aria-label={t('audience')}>
-                <label>{t('audience')}</label>
-                <div className="push-audience">
+              {showAudiencePicker ? (
+                <div className="push-chip-grid" role="radiogroup" aria-label={t('audience')}>
                   {presets.map((p) => (
-                    <label key={p} className="push-audience__option">
+                    <label
+                      key={p}
+                      className={`push-chip-option${preset === p ? ' is-selected' : ''}`}
+                    >
                       <input
                         type="radio"
                         name="push-audience"
@@ -483,28 +490,34 @@ export function PushComposePage() {
                         onChange={() => {
                           setPreset(p);
                           setSelectedIds([]);
+                          setSelectedMemberId('');
+                          setMemberQuery('');
                         }}
                       />
                       <span>{t(`presets.${p}`)}</span>
                     </label>
                   ))}
                 </div>
-              </div>
+              ) : preset ? (
+                <p className="push-step__solo">{t(`presets.${preset}`)}</p>
+              ) : null}
 
               {preset === 'role' || preset === 'gym' ? (
-                <div className="push-field">
-                  <label htmlFor="push-role">{t('roleLabel')}</label>
-                  <select
-                    id="push-role"
-                    value={roleCode}
-                    onChange={(e) => setRoleCode(e.target.value as RoleCode)}
-                  >
-                    {ROLE_CODES.map((code) => (
-                      <option key={code} value={code}>
-                        {t(`roles.${code}`)}
-                      </option>
-                    ))}
-                  </select>
+                <div className="push-inline-fields">
+                  <div className="push-field">
+                    <label htmlFor="push-role">{t('roleLabel')}</label>
+                    <select
+                      id="push-role"
+                      value={roleCode}
+                      onChange={(e) => setRoleCode(e.target.value as RoleCode)}
+                    >
+                      {ROLE_CODES.map((code) => (
+                        <option key={code} value={code}>
+                          {t(`roles.${code}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               ) : null}
 
@@ -548,24 +561,28 @@ export function PushComposePage() {
               {needsPick ? (
                 <div className="push-field">
                   <label>{t('pickRecipients')}</label>
-                  <p className="push-hint">{t('userIdsHint')}</p>
                   {pickList.length > 0 ? (
-                    <div className="push-recipient-list">
+                    <div className="push-chip-grid push-chip-grid--people">
                       {pickList.map((u) => (
-                        <label key={u.id}>
+                        <label
+                          key={u.id}
+                          className={`push-chip-option push-chip-option--person${
+                            selectedIds.includes(u.id) ? ' is-selected' : ''
+                          }`}
+                        >
                           <input
                             type="checkbox"
                             checked={selectedIds.includes(u.id)}
                             onChange={() => toggleRecipient(u.id)}
                           />
-                          <span>
-                            {u.displayName}{' '}
-                            <span className="push-meta">({t(`roles.${u.roleCode}`)})</span>
-                          </span>
+                          <span className="push-chip-option__name">{u.displayName}</span>
+                          <span className="push-chip-option__role">{t(`roles.${u.roleCode}`)}</span>
                         </label>
                       ))}
                     </div>
-                  ) : null}
+                  ) : (
+                    <p className="push-hint">{t('userIdsHint')}</p>
+                  )}
                   <p className="push-meta">{t('selectedCount', { count: selectedIds.length })}</p>
                   {hasMinRole(senderRole, Role.ADMIN) ? (
                     <input
@@ -580,11 +597,15 @@ export function PushComposePage() {
               {preset === 'member_exact' ? (
                 <div className="push-field">
                   <label htmlFor="push-member-q">{t('memberQuery')}</label>
-                  <p className="push-hint">{t('memberQueryHint')}</p>
                   {suggested.length > 0 ? (
-                    <div className="push-recipient-list">
+                    <div className="push-chip-grid push-chip-grid--people">
                       {suggested.map((u) => (
-                        <label key={u.id}>
+                        <label
+                          key={u.id}
+                          className={`push-chip-option push-chip-option--person${
+                            selectedMemberId === u.id ? ' is-selected' : ''
+                          }`}
+                        >
                           <input
                             type="radio"
                             name="member-friend"
@@ -594,14 +615,14 @@ export function PushComposePage() {
                               setMemberQuery(u.displayName);
                             }}
                           />
-                          <span>
-                            {u.displayName}{' '}
-                            <span className="push-meta">({t(`roles.${u.roleCode}`)})</span>
-                          </span>
+                          <span className="push-chip-option__name">{u.displayName}</span>
+                          <span className="push-chip-option__role">{t(`roles.${u.roleCode}`)}</span>
                         </label>
                       ))}
                     </div>
-                  ) : null}
+                  ) : (
+                    <p className="push-hint">{t('memberQueryHint')}</p>
+                  )}
                   <input
                     id="push-member-q"
                     value={memberQuery}
@@ -614,7 +635,89 @@ export function PushComposePage() {
                   />
                 </div>
               ) : null}
+            </section>
 
+            <section className="push-step">
+              <header className="push-step__head">
+                <span className="push-step__num" aria-hidden>
+                  2
+                </span>
+                <div>
+                  <h2>{t('stepMessage')}</h2>
+                </div>
+              </header>
+
+              <div className="push-kind-row" role="radiogroup" aria-label={t('kind')}>
+                {PUSH_KINDS.map((k) => (
+                  <label
+                    key={k}
+                    className={`push-kind-pill${kind === k ? ' is-selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="push-kind"
+                      value={k}
+                      checked={kind === k}
+                      onChange={() => setKind(k)}
+                    />
+                    <span>{t(`kinds.${k}`)}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div className="push-field">
+                <label htmlFor="push-title">{t('titleLabel')}</label>
+                <input
+                  id="push-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={120}
+                  placeholder={t('previewTitlePlaceholder')}
+                  required
+                />
+              </div>
+
+              <div className="push-field">
+                <label htmlFor="push-body">{t('bodyLabel')}</label>
+                <textarea
+                  id="push-body"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  rows={3}
+                  maxLength={2000}
+                  placeholder={t('previewBodyPlaceholder')}
+                  required
+                />
+              </div>
+            </section>
+
+            <details className="push-advanced">
+              <summary>{t('advancedOptions')}</summary>
+              <div className="push-advanced__body">
+                <div className="push-field">
+                  <label htmlFor="push-image">{t('imageUrl')}</label>
+                  <input
+                    id="push-image"
+                    type="text"
+                    inputMode="url"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="https://"
+                  />
+                </div>
+                <div className="push-field">
+                  <label htmlFor="push-link">{t('deepLink')}</label>
+                  <input
+                    id="push-link"
+                    value={deepLink}
+                    onChange={(e) => setDeepLink(e.target.value)}
+                    placeholder="/machines/..."
+                  />
+                </div>
+              </div>
+            </details>
+
+            <div className="push-send-bar">
               <button
                 type="submit"
                 className="push-btn push-btn-primary push-btn-block"
@@ -622,62 +725,60 @@ export function PushComposePage() {
               >
                 {sendMutation.isPending ? t('sending') : t('send')}
               </button>
-            </form>
-          </section>
-        ) : (
-          <section className="push-panel">
-            <div className="push-panel-head">
-              <div>
-                <h2>{t('historyTitle')}</h2>
-                <p className="push-panel-desc">{t('subtitle')}</p>
-              </div>
             </div>
+          </form>
+        ) : (
+          <section className="push-history-panel">
+            {hasMinRole(senderRole, Role.ADMIN) ? (
+              <label className="push-admin-toggle">
+                <input
+                  type="checkbox"
+                  checked={adminAll}
+                  onChange={(e) => setAdminAll(e.target.checked)}
+                />
+                <span>{t('adminAll')}</span>
+              </label>
+            ) : null}
 
-            <div className="push-history">
-              {hasMinRole(senderRole, Role.ADMIN) ? (
-                <label className="push-audience__option">
-                  <input
-                    type="checkbox"
-                    checked={adminAll}
-                    onChange={(e) => setAdminAll(e.target.checked)}
-                  />
-                  <span>{t('adminAll')}</span>
-                </label>
-              ) : null}
-
-              {campaignsQuery.isLoading ? (
-                <Skeleton count={3} />
-              ) : !campaignsQuery.data?.length ? (
-                <div className="push-empty">
-                  <div className="push-empty-mark" aria-hidden>
-                    ·
-                  </div>
-                  <strong>{t('historyEmpty')}</strong>
+            {campaignsQuery.isLoading ? (
+              <Skeleton count={3} />
+            ) : !campaignsQuery.data?.length ? (
+              <div className="push-empty">
+                <div className="push-empty-mark" aria-hidden>
+                  ·
                 </div>
-              ) : (
-                campaignsQuery.data.map((c) => (
-                  <article key={c.id} className="push-campaign">
-                    <div className="push-campaign__row">
+                <strong>{t('historyEmpty')}</strong>
+              </div>
+            ) : (
+              <ul className="push-history-list">
+                {campaignsQuery.data.map((c) => (
+                  <li key={c.id} className="push-history-item">
+                    <div className="push-history-item__main">
                       <strong>{c.title}</strong>
-                      <span className="push-chip">
-                        {t(`kinds.${c.kind}`)} · {c.successCount}/{c.recipientCount}
+                      <span className="push-history-item__meta">
+                        {new Date(c.createdAt).toLocaleString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                        {' · '}
+                        {t(`kinds.${c.kind}`)}
                       </span>
                     </div>
-                    <p className="push-campaign__meta">
-                      {new Date(c.createdAt).toLocaleString()} · {t(`roles.${c.senderRole}`)} ·{' '}
-                      {c.audienceType}
-                    </p>
-                    <p className="push-campaign__body">{c.body}</p>
+                    <span className="push-history-item__stat">
+                      {c.successCount}/{c.recipientCount}
+                    </span>
+                    <p className="push-history-item__body">{c.body}</p>
                     <button
                       type="button"
-                      className="push-btn push-btn-ghost"
+                      className="push-btn push-btn-ghost push-btn-sm"
                       onClick={() => setOpenLogsId((prev) => (prev === c.id ? null : c.id))}
                     >
                       {openLogsId === c.id ? t('hideLogs') : t('viewLogs')}
                     </button>
                     {openLogsId === c.id ? (
                       <div className="push-logs">
-                        <strong>{t('logsTitle')}</strong>
                         {logsQuery.isLoading ? (
                           <Skeleton count={2} />
                         ) : !logsQuery.data?.length ? (
@@ -701,10 +802,10 @@ export function PushComposePage() {
                         )}
                       </div>
                     ) : null}
-                  </article>
-                ))
-              )}
-            </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         )}
       </PageShell>

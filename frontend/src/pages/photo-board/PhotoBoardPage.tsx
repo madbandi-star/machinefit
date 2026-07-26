@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { PhotoBoardSort } from '@machinefit/shared';
+import type { PhotoBoardSort, PhotoPost } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
@@ -14,6 +14,52 @@ import '@/styles/components.css';
 import '@/styles/photo-board.css';
 
 const SORTS: PhotoBoardSort[] = ['latest', 'popular', 'views', 'comments'];
+
+type PhotoScope = 'all' | 'mine' | 'liked';
+
+function PhotoCard({ post }: { post: PhotoPost }) {
+  const { t } = useTranslation('community');
+  const imageCount = post.images?.length ?? (post.coverImage ? 1 : 0);
+
+  return (
+    <Link
+      to={ROUTES.PHOTO_BOARD_DETAIL.replace(':postId', post.id)}
+      className="photo-card"
+    >
+      <div className="photo-card__media">
+        {post.coverImage ? (
+          <img
+            className="photo-card__img"
+            src={post.coverImage.thumbUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div className="photo-card__placeholder" aria-hidden />
+        )}
+        {imageCount > 1 ? (
+          <span className="photo-card__count">{imageCount}</span>
+        ) : null}
+        {post.likedByMe ? (
+          <span className="photo-card__liked" aria-label={t('photoLiked')}>
+            ♥
+          </span>
+        ) : null}
+      </div>
+      <div className="photo-card__body">
+        <h3 className="photo-card__title">{post.title}</h3>
+        <div className="photo-card__meta">
+          <span className="photo-card__author">{post.authorName ?? '—'}</span>
+          <span className="photo-card__stats">
+            <span>♥ {post.likeCount}</span>
+            <span>💬 {post.commentCount}</span>
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export function PhotoBoardPage() {
   const { t } = useTranslation('community');
@@ -29,6 +75,7 @@ export function PhotoBoardPage() {
   const authorId = params.get('authorId') || undefined;
   const mine = params.get('mine') === '1';
   const likedByMe = params.get('liked') === '1';
+  const scope: PhotoScope = mine ? 'mine' : likedByMe ? 'liked' : 'all';
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: QUERY_KEYS.photoBoard({ page, sort, q, tag, authorId, mine, likedByMe }),
@@ -55,6 +102,23 @@ export function PhotoBoardPage() {
     setParams(next);
   };
 
+  const setScope = (nextScope: PhotoScope) => {
+    const apply = () => {
+      const next = new URLSearchParams(params);
+      next.delete('mine');
+      next.delete('liked');
+      next.delete('page');
+      if (nextScope === 'mine') next.set('mine', '1');
+      if (nextScope === 'liked') next.set('liked', '1');
+      setParams(next);
+    };
+    if (nextScope === 'all') {
+      apply();
+      return;
+    }
+    requireAuth(apply);
+  };
+
   const requireAuth = (action: () => void) => {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
@@ -66,94 +130,75 @@ export function PhotoBoardPage() {
 
   return (
     <div className="photo-board-page">
-      <PageShell
-        title={t('photoBoard')}
-        subtitle={t('photoBoardSubtitle')}
-        action={
-          <div className="page-shell__header-action" style={{ display: 'flex', gap: '0.4rem' }}>
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={() => requireAuth(() => navigate(ROUTES.PHOTO_BOARD_WRITE))}
-            >
-              {t('newPost')}
-            </button>
+      <PageShell>
+        <header className="photo-top">
+          <div className="photo-top__text">
+            <h1>{t('photoBoard')}</h1>
+            <p>{t('photoBoardSubtitle')}</p>
           </div>
-        }
-      >
-        <div className="photo-board-toolbar">
-          <div className="photo-board-toolbar__row">
+          <button
+            type="button"
+            className="photo-top__write"
+            onClick={() => requireAuth(() => navigate(ROUTES.PHOTO_BOARD_WRITE))}
+          >
+            {t('photoWrite')}
+          </button>
+        </header>
+
+        <div className="photo-controls">
+          <div className="photo-controls__search-row">
             <input
-              className="input photo-board-toolbar__search"
+              className="photo-search"
               value={q}
               onChange={(e) => updateParam('q', e.target.value || undefined)}
               placeholder={t('photoSearchPlaceholder')}
               aria-label={t('photoSearchPlaceholder')}
             />
+            {data ? (
+              <span className="photo-count">{t('photoPostCount', { count: data.meta.total })}</span>
+            ) : null}
           </div>
-          <div className="photo-board-tabs" role="tablist" aria-label={t('photoSortLabel')}>
+
+          <div className="photo-scope" role="tablist" aria-label={t('photoScopeLabel')}>
+            {(
+              [
+                ['all', t('photoAll')],
+                ['mine', t('photoMyPosts')],
+                ['liked', t('photoMyLikes')],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={scope === value}
+                className={`photo-scope__btn${scope === value ? ' is-active' : ''}`}
+                onClick={() => setScope(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="photo-sort" role="tablist" aria-label={t('photoSortLabel')}>
             {SORTS.map((value) => (
               <button
                 key={value}
                 type="button"
                 role="tab"
                 aria-selected={sort === value}
-                className={`photo-board-tabs__btn${sort === value ? ' is-active' : ''}`}
+                className={`photo-sort__btn${sort === value ? ' is-active' : ''}`}
                 onClick={() => updateParam('sort', value)}
               >
                 {t(`photoSort.${value}`)}
               </button>
             ))}
           </div>
-          <div className="photo-board-tabs">
-            <button
-              type="button"
-              className={`photo-board-tabs__btn${!mine && !likedByMe ? ' is-active' : ''}`}
-              onClick={() => {
-                const next = new URLSearchParams(params);
-                next.delete('mine');
-                next.delete('liked');
-                next.delete('page');
-                setParams(next);
-              }}
-            >
-              {t('photoAll')}
-            </button>
-            <button
-              type="button"
-              className={`photo-board-tabs__btn${mine ? ' is-active' : ''}`}
-              onClick={() =>
-                requireAuth(() => {
-                  const next = new URLSearchParams(params);
-                  next.set('mine', '1');
-                  next.delete('liked');
-                  next.delete('page');
-                  setParams(next);
-                })
-              }
-            >
-              {t('photoMyPosts')}
-            </button>
-            <button
-              type="button"
-              className={`photo-board-tabs__btn${likedByMe ? ' is-active' : ''}`}
-              onClick={() =>
-                requireAuth(() => {
-                  const next = new URLSearchParams(params);
-                  next.set('liked', '1');
-                  next.delete('mine');
-                  next.delete('page');
-                  setParams(next);
-                })
-              }
-            >
-              {t('photoMyLikes')}
-            </button>
-          </div>
+
           {tag ? (
-            <div className="photo-board-toolbar__row">
-              <span className="photo-detail__tag">#{tag}</span>
-              <button type="button" className="btn btn--secondary" onClick={() => updateParam('tag')}>
+            <div className="photo-tag-filter">
+              <span className="photo-tag-filter__chip">#{tag}</span>
+              <button type="button" className="photo-tag-filter__clear" onClick={() => updateParam('tag')}>
                 {t('photoClearTag')}
               </button>
             </div>
@@ -161,36 +206,25 @@ export function PhotoBoardPage() {
         </div>
 
         {isLoading ? (
-          <div className="photo-board-skeleton-grid" aria-busy="true">
-            <Skeleton count={6} height={120} />
+          <div className="photo-grid photo-grid--skeleton" aria-busy="true">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="photo-card photo-card--skeleton">
+                <Skeleton height={120} />
+              </div>
+            ))}
           </div>
         ) : !data?.items.length ? (
-          <div className="card photo-board-empty">{t('photoEmpty')}</div>
+          <div className="photo-empty">
+            <span className="photo-empty__icon" aria-hidden>
+              📷
+            </span>
+            <strong>{t('photoEmpty')}</strong>
+          </div>
         ) : (
           <>
-            <div className={`photo-board-grid${isFetching ? ' is-fetching' : ''}`}>
+            <div className={`photo-grid${isFetching ? ' is-fetching' : ''}`}>
               {data.items.map((post) => (
-                <Link
-                  key={post.id}
-                  to={ROUTES.PHOTO_BOARD_DETAIL.replace(':postId', post.id)}
-                  className="photo-board-card"
-                >
-                  {post.coverImage ? (
-                    <img
-                      className="photo-board-card__img"
-                      src={post.coverImage.thumbUrl}
-                      alt={post.title}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className="photo-board-card__img" />
-                  )}
-                  <div className="photo-board-card__meta">
-                    <span>♥ {post.likeCount}</span>
-                    <span>💬 {post.commentCount}</span>
-                  </div>
-                </Link>
+                <PhotoCard key={post.id} post={post} />
               ))}
             </div>
             <Pagination
@@ -201,11 +235,9 @@ export function PhotoBoardPage() {
           </>
         )}
 
-        <div style={{ marginTop: '1rem' }}>
-          <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block">
-            {t('photoBackMyPage')}
-          </Link>
-        </div>
+        <Link to={ROUTES.MY_PAGE} className="photo-back-link">
+          ← {t('photoBackMyPage')}
+        </Link>
       </PageShell>
     </div>
   );
