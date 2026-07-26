@@ -9,6 +9,12 @@ import {
 import { toSinoKoreanCount } from '@/utils/iosMaleCountSpeech';
 import { speechManager } from '@/utils/speechManager';
 import {
+  isMaleEnglishPack,
+  resolveVoiceCoachSpeechLocale,
+  voiceCoachCue,
+  voiceCoachSpeechLangTag,
+} from '@/utils/voiceCoachLanguage';
+import {
   beginVoiceCoachAudioSession,
   endVoiceCoachAudioSession,
 } from '@/utils/voiceCoachAudioSession';
@@ -200,10 +206,6 @@ const EN_ONES = [
 
 const EN_TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'] as const;
 
-function isKoreanLocale(locale?: string): boolean {
-  return (locale ?? 'ko').toLowerCase().startsWith('ko');
-}
-
 /** Native Korean counting used by trainers for reps (하나, 둘, … 열하나). */
 export function toNativeKoreanRep(n: number): string {
   if (n <= 0) return String(n);
@@ -231,51 +233,64 @@ export function toEnglishRep(n: number): string {
 
 export function formatRepWord(
   n: number,
-  locale?: string,
+  _locale?: string,
   voicePack?: VoiceCoachPack
 ): string {
-  // Male pack is English drill voice regardless of UI locale.
+  // Language follows voice pack (female KO / male EN), not UI locale.
   if (normalizeVoiceCoachPack(voicePack) === 'male') return toEnglishRep(n);
-  return isKoreanLocale(locale) ? toNativeKoreanRep(n) : toEnglishRep(n);
+  return toNativeKoreanRep(n);
 }
 
 function formatCountdownWord(
   n: number,
-  locale?: string,
+  _locale?: string,
   voicePack?: VoiceCoachPack
 ): string {
   if (normalizeVoiceCoachPack(voicePack) === 'male') return toEnglishRep(n);
-  if (isKoreanLocale(locale)) {
-    const map: Record<number, string> = {
-      10: '십',
-      9: '구',
-      8: '팔',
-      7: '칠',
-      6: '육',
-      5: '오',
-      4: '사',
-      3: '삼',
-      2: '이',
-      1: '일',
-    };
-    return map[n] ?? String(n);
-  }
-  return toEnglishRep(n);
+  const map: Record<number, string> = {
+    10: '십',
+    9: '구',
+    8: '팔',
+    7: '칠',
+    6: '육',
+    5: '오',
+    4: '사',
+    3: '삼',
+    2: '이',
+    1: '일',
+  };
+  return map[n] ?? toSinoKoreanCount(n);
 }
 
-function readyPhrase(locale?: string, voicePack?: VoiceCoachPack): string {
-  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'Ready';
-  return isKoreanLocale(locale) ? '준비' : 'Ready';
+function readyPhrase(_locale?: string, voicePack?: VoiceCoachPack): string {
+  return voiceCoachCue('ready', voicePack);
 }
 
-function startPhrase(locale?: string, voicePack?: VoiceCoachPack): string {
-  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'Start!';
-  return isKoreanLocale(locale) ? '시작!' : 'Start!';
+function startPhrase(_locale?: string, voicePack?: VoiceCoachPack): string {
+  return voiceCoachCue('start', voicePack);
 }
 
-function oneMorePhrase(locale?: string, voicePack?: VoiceCoachPack): string {
-  if (normalizeVoiceCoachPack(voicePack) === 'male') return 'One more!';
-  return isKoreanLocale(locale) ? '하나더!' : 'One more!';
+function oneMorePhrase(_locale?: string, voicePack?: VoiceCoachPack): string {
+  return voiceCoachCue('oneMore', voicePack);
+}
+
+/** TTS options that follow female=ko / male=en pack policy. */
+function packSpeakOptions(
+  voicePack: VoiceCoachPack,
+  signal?: AbortSignal
+): {
+  signal?: AbortSignal;
+  lang: string;
+  preferMaleVoice?: boolean;
+  preferFemaleVoice?: boolean;
+} {
+  const speechLocale = resolveVoiceCoachSpeechLocale(voicePack);
+  return {
+    signal,
+    lang: voiceCoachSpeechLangTag(speechLocale),
+    preferMaleVoice: speechLocale === 'en' ? true : undefined,
+    preferFemaleVoice: speechLocale === 'ko' ? true : undefined,
+  };
 }
 
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
@@ -415,8 +430,8 @@ async function runPrepCountdownPhase(options: {
 
 /**
  * Clip packs:
- * - female: Korean drill clips (UI locale ko)
- * - male: English drill clips (Hold / one two three …) regardless of UI locale
+ * - female: Korean drill clips / TTS
+ * - male: English drill clips / TTS
  *
  * Mixing TTS + clips on the same beat often dies after the first cue on mobile.
  */
@@ -434,21 +449,13 @@ async function speakCoachCue(options: {
   const {
     clipKey,
     text,
-    locale,
     signal,
     voicePack = DEFAULT_VOICE_COACH_PACK,
     kind = 'phrase',
     countValue,
   } = options;
   const pack = normalizeVoiceCoachPack(voicePack);
-  const maleEnglish = pack === 'male';
-  // Female English UI → OS TTS. Male pack always prefers English clip files.
-  const useClipPack = maleEnglish || isKoreanLocale(locale);
-
-  if (!useClipPack) {
-    await speechManager.speak(text, signal);
-    return;
-  }
+  const maleEnglish = isMaleEnglishPack(pack);
 
   if (clipKey) {
     const played = await playVoiceCoachClip(clipKey, signal, pack);
@@ -467,8 +474,7 @@ async function speakCoachCue(options: {
           : toSinoKoreanCount(countValue);
       }
       await speechManager.speak(fallbackText, {
-        signal,
-        preferMaleVoice: maleEnglish,
+        ...packSpeakOptions(pack, signal),
         rate: maleEnglish ? 0.92 : undefined,
       });
       return;
@@ -478,9 +484,8 @@ async function speakCoachCue(options: {
   // Ready cue: female Korean → dual beep; male English → spoken "Ready".
   if (kind === 'ready') {
     if (maleEnglish) {
-      await speechManager.speak(text || 'Ready', {
-        signal,
-        preferMaleVoice: true,
+      await speechManager.speak(text || voiceCoachCue('ready', pack), {
+        ...packSpeakOptions(pack, signal),
         rate: 0.92,
       });
       return;
@@ -494,17 +499,18 @@ async function speakCoachCue(options: {
   }
 
   // Count / phrase without a clip key (or Web Audio down): spoken TTS.
-  await speechManager.speak(text, {
-    signal,
-    preferMaleVoice: maleEnglish,
-  });
+  await speechManager.speak(text, packSpeakOptions(pack, signal));
 }
 
 export interface RestVoiceCoachingOptions {
   warnings?: string[];
   tips?: string[];
+  /** @deprecated Prefer voicePack — speech language follows female=ko / male=en. */
   locale?: string;
+  voicePack?: VoiceCoachPack;
   signal?: AbortSignal;
+  /** Speak the rest-start cue even when there are no tips/warnings. */
+  announceRestStart?: boolean;
   /** Max warning lines to speak (default 3). */
   maxWarnings?: number;
   /** Max tip lines to speak (default 3). */
@@ -512,7 +518,8 @@ export interface RestVoiceCoachingOptions {
 }
 
 /**
- * During rest: speak cautions first, then workout tips — same SpeechManager Voice/queue.
+ * During rest: rest-start cue, then cautions, then workout tips.
+ * Language follows voice pack (female Korean / male English).
  */
 export async function speakRestTipsAndWarnings(
   options: RestVoiceCoachingOptions
@@ -520,31 +527,34 @@ export async function speakRestTipsAndWarnings(
   const {
     warnings = [],
     tips = [],
-    locale = 'ko',
+    voicePack,
     signal,
+    announceRestStart = true,
     maxWarnings = 3,
     maxTips = 3,
   } = options;
 
+  const pack = normalizeVoiceCoachPack(voicePack);
   const warningLines = warnings.map((w) => w.trim()).filter(Boolean).slice(0, maxWarnings);
   const tipLines = tips.map((t) => t.trim()).filter(Boolean).slice(0, maxTips);
-  if (warningLines.length === 0 && tipLines.length === 0) return;
-
-  const ko = isKoreanLocale(locale);
+  if (!announceRestStart && warningLines.length === 0 && tipLines.length === 0) return;
 
   const queue: string[] = [];
+  if (announceRestStart) {
+    queue.push(voiceCoachCue('restStart', pack));
+  }
   if (warningLines.length > 0) {
-    queue.push(ko ? '주의사항.' : 'Cautions.');
+    queue.push(voiceCoachCue('cautions', pack));
     queue.push(...warningLines);
   }
   if (tipLines.length > 0) {
-    queue.push(ko ? '운동 팁.' : 'Workout tips.');
+    queue.push(voiceCoachCue('workoutTips', pack));
     queue.push(...tipLines);
   }
 
   try {
     await speechManager.speakQueue(queue, {
-      signal,
+      ...packSpeakOptions(pack, signal),
       gapMs: 320,
     });
   } catch (error) {
@@ -635,8 +645,11 @@ export async function runVoiceCoachSession(options: VoiceCoachOptions): Promise<
         await playBeep(audioCtx, signal, 880 + i * 40);
         if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
       }
-    } else if (!isKoreanLocale(locale)) {
-      await speechManager.speakQueue(['tick', 'tick', 'tick'], { signal, gapMs: 120 });
+    } else if (isMaleEnglishPack(voicePack)) {
+      await speechManager.speakQueue(['tick', 'tick', 'tick'], {
+        ...packSpeakOptions(voicePack, signal),
+        gapMs: 120,
+      });
     }
 
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
@@ -813,8 +826,11 @@ export async function runVoiceHoldOnlySession(options: {
         await playBeep(audioCtx, signal, 880 + i * 40);
         if (i < 2) await sleep(VOICE_COACH_TIMING.beepGapMs, signal);
       }
-    } else if (!isKoreanLocale(locale)) {
-      await speechManager.speakQueue(['tick', 'tick', 'tick'], { signal, gapMs: 120 });
+    } else if (isMaleEnglishPack(voicePack)) {
+      await speechManager.speakQueue(['tick', 'tick', 'tick'], {
+        ...packSpeakOptions(voicePack, signal),
+        gapMs: 120,
+      });
     }
     await sleep(VOICE_COACH_TIMING.afterBeepsMs, signal);
 

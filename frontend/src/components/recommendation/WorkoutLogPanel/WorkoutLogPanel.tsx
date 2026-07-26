@@ -437,18 +437,21 @@ export function WorkoutLogPanel({
 
   useEffect(() => {
     if (!restTimer) return;
-    if (!voiceCoachEnabled || !voiceRestTipsEnabled) return;
-    if (!hasRestCoaching) return;
-    // Never restart rest tips over an active set-count session.
+    if (!voiceCoachEnabled) return;
+    // Never restart rest speech over an active set-count session.
     if (voiceCoachRunningRef.current) return;
 
+    const includeTips = voiceRestTipsEnabled && hasRestCoaching;
     const controller = new AbortController();
     restSpeechAbortRef.current = controller;
     void speakRestTipsAndWarnings({
-      warnings: coachingWarningsRef.current,
-      tips: coachingTipsRef.current,
+      warnings: includeTips ? coachingWarningsRef.current : [],
+      tips: includeTips ? coachingTipsRef.current : [],
+      voicePack: voiceCoachPack,
       locale,
       signal: controller.signal,
+      // Always announce rest in pack language (휴식 시작 / Rest).
+      announceRestStart: true,
     });
 
     return () => {
@@ -467,6 +470,7 @@ export function WorkoutLogPanel({
     hasRestCoaching,
     restCoachingFingerprint,
     locale,
+    voiceCoachPack,
   ]);
 
 

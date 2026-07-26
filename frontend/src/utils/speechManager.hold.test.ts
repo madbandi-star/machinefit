@@ -34,9 +34,38 @@ const g = globalThis as typeof globalThis & {
     removeEventListener: () => void;
   };
   SpeechSynthesisUtterance: new (text: string) => UtteranceLike;
+  Audio: new () => {
+    preload: string;
+    volume: number;
+    src: string;
+    onended: (() => void) | null;
+    onerror: (() => void) | null;
+    play: () => Promise<void>;
+    pause: () => void;
+  };
 };
 
 g.window = g;
+// Force TTS fallback path (no real clip decode in this unit test).
+g.Audio = class {
+  preload = 'auto';
+  volume = 1;
+  src = '';
+  onended: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  play() {
+    return Promise.reject(new Error('no audio in hold unit test'));
+  }
+  pause() {}
+} as unknown as new () => {
+  preload: string;
+  volume: number;
+  src: string;
+  onended: (() => void) | null;
+  onerror: (() => void) | null;
+  play: () => Promise<void>;
+  pause: () => void;
+};
 g.SpeechSynthesisUtterance = class {
   text: string;
   volume = 1;
@@ -130,11 +159,11 @@ g.speechSynthesis.pending = false;
 speechManager.unlock();
 const unlockCancels = cancelCalls;
 
-await runVoiceHoldSegment({ durationSec: 2, locale: 'ko' });
+await runVoiceHoldSegment({ durationSec: 2, locale: 'ko', voicePack: 'female' });
 assert.ok(spoken[0]?.includes('버텨'), `hold segment cue missing: ${spoken.join('|')}`);
-assert.ok(spoken.includes('2') && spoken.includes('1'), `hold countdown missing: ${spoken.join('|')}`);
+assert.ok(spoken.includes('이') && spoken.includes('일'), `hold countdown missing: ${spoken.join('|')}`);
 assert.ok(
-  spoken.some((s) => /완료|좋습|수고/.test(s)),
+  spoken.some((s) => /운동 종료|완료|수고/.test(s)),
   `hold finish missing: ${spoken.join('|')}`
 );
 assert.equal(

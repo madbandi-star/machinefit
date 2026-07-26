@@ -14,13 +14,17 @@ export const SPEECH_DEFAULTS = {
 
 export interface SpeakOptions {
   signal?: AbortSignal;
+  /** BCP-47 language for this utterance (e.g. ko-KR, en-US). */
+  lang?: string;
   /** Override utterance rate (SpeechSynthesis default band ~0.1–10). */
   rate?: number;
   /**
-   * Prefer a male Korean system voice for this utterance only
+   * Prefer a male system voice for this utterance only
    * (does not replace the app-wide locked default voice).
    */
   preferMaleVoice?: boolean;
+  /** Prefer a female system voice for this utterance only. */
+  preferFemaleVoice?: boolean;
   /** Silence after the utterance ends (ms). Abort-aware. */
   trailingPauseMs?: number;
 }
@@ -32,15 +36,23 @@ function isKoreanVoice(voice: SpeechSynthesisVoice): boolean {
 
 function scoreVoiceQuality(
   voice: SpeechSynthesisVoice,
-  preferGender?: 'male' | 'female'
+  options?: { preferGender?: 'male' | 'female'; langPrefix?: string }
 ): number {
   const name = voice.name;
   const lang = voice.lang.toLowerCase();
+  const preferGender = options?.preferGender;
+  const langPrefix = options?.langPrefix?.toLowerCase();
   let score = 0;
 
-  if (lang === 'ko-kr') score += 1000;
-  else if (lang.startsWith('ko')) score += 800;
-  else score -= 500;
+  if (langPrefix) {
+    if (lang === langPrefix) score += 1200;
+    else if (lang.startsWith(langPrefix.split('-')[0] ?? langPrefix)) score += 900;
+    else score -= 600;
+  } else {
+    if (lang === 'ko-kr') score += 1000;
+    else if (lang.startsWith('ko')) score += 800;
+    else score -= 500;
+  }
 
   if (/google/i.test(name)) score += 120;
   if (/microsoft/i.test(name)) score += 110;
@@ -52,8 +64,12 @@ function scoreVoiceQuality(
   if (voice.localService) score += 20;
   if (voice.default) score += 10;
 
-  const looksMale = /male|남|jinho|eddy|minsu|injoon|hyunsu|기호|민수/i.test(name);
-  const looksFemale = /female|여|yuna|sunhi|sora|yena|유나|선희/i.test(name);
+  const looksMale =
+    /male|남|jinho|eddy|minsu|injoon|hyunsu|guy|christopher|daniel|기호|민수/i.test(
+      name
+    );
+  const looksFemale =
+    /female|여|yuna|sunhi|sora|yena|samantha|karen|moira|유나|선희/i.test(name);
   if (preferGender === 'male') {
     if (looksMale) score += 200;
     if (looksFemale) score -= 250;
@@ -65,17 +81,32 @@ function scoreVoiceQuality(
   return score;
 }
 
-/** Pick the single best Korean voice available on this device. */
+/** Pick the best matching voice for optional language / gender preferences. */
 function pickBestVoice(
   voices: SpeechSynthesisVoice[],
-  preferGender?: 'male' | 'female'
+  options?: { preferGender?: 'male' | 'female'; langPrefix?: string }
 ): SpeechSynthesisVoice | null {
   if (voices.length === 0) return null;
-  const korean = voices.filter(isKoreanVoice);
-  const pool = korean.length > 0 ? korean : voices;
+  const langPrefix = options?.langPrefix?.toLowerCase();
+  const langRoot = langPrefix?.split('-')[0];
+  let pool = voices;
+  if (langRoot) {
+    const matched = voices.filter((v) => v.lang.toLowerCase().startsWith(langRoot));
+    if (matched.length > 0) pool = matched;
+    else if (!langRoot.startsWith('ko')) {
+      // Keep full pool for English if no en voice is installed.
+      pool = voices;
+    } else {
+      pool = voices.filter(isKoreanVoice);
+      if (pool.length === 0) pool = voices;
+    }
+  } else {
+    const korean = voices.filter(isKoreanVoice);
+    pool = korean.length > 0 ? korean : voices;
+  }
   return (
     [...pool].sort(
-      (a, b) => scoreVoiceQuality(b, preferGender) - scoreVoiceQuality(a, preferGender)
+      (a, b) => scoreVoiceQuality(b, options) - scoreVoiceQuality(a, options)
     )[0] ?? null
   );
 }
@@ -112,6 +143,10 @@ export interface SpeakQueueOptions {
    */
   getGapMs?: (index: number, total: number) => number;
   onItemStart?: (index: number, text: string) => void;
+  lang?: string;
+  preferMaleVoice?: boolean;
+  preferFemaleVoice?: boolean;
+  rate?: number;
 }
 
 class SpeechManagerImpl {
@@ -137,7 +172,7 @@ class SpeechManagerImpl {
         voices = window.speechSynthesis?.getVoices?.() ?? [];
       }
 
-      this.selectedVoice = pickBestVoice(voices);
+      this.selectedVoice = pickBestVoice(voices, { langPrefix: 'ko-KR' });
       this.initialized = true;
     })();
 
@@ -209,10 +244,16 @@ class SpeechManagerImpl {
 
   private createUtterance(
     text: string,
-    prosody?: { rate?: number; preferMaleVoice?: boolean }
+    prosody?: {
+      rate?: number;
+      lang?: string;
+      preferMaleVoice?: boolean;
+      preferFemaleVoice?: boolean;
+    }
   ): SpeechSynthesisUtterance {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = SPEECH_DEFAULTS.lang;
+    const lang = prosody?.lang?.trim() || SPEECH_DEFAULTS.lang;
+    utterance.lang = lang;
     utterance.pitch = SPEECH_DEFAULTS.pitch;
     const rate = prosody?.rate;
     utterance.rate =
@@ -222,13 +263,23 @@ class SpeechManagerImpl {
     utterance.volume = SPEECH_DEFAULTS.volume;
 
     let voice = this.selectedVoice;
-    if (prosody?.preferMaleVoice && typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const male = pickBestVoice(window.speechSynthesis.getVoices() ?? [], 'male');
-      if (male) voice = male;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const preferGender = prosody?.preferMaleVoice
+        ? 'male'
+        : prosody?.preferFemaleVoice
+          ? 'female'
+          : undefined;
+      if (preferGender || prosody?.lang) {
+        const picked = pickBestVoice(window.speechSynthesis.getVoices() ?? [], {
+          preferGender,
+          langPrefix: lang,
+        });
+        if (picked) voice = picked;
+      }
     }
     if (voice) {
       utterance.voice = voice;
-      utterance.lang = SPEECH_DEFAULTS.lang;
+      utterance.lang = lang;
     }
     return utterance;
   }
@@ -238,7 +289,12 @@ class SpeechManagerImpl {
     generation: number,
     signal?: AbortSignal,
     attempt = 0,
-    prosody?: { rate?: number; preferMaleVoice?: boolean }
+    prosody?: {
+      rate?: number;
+      lang?: string;
+      preferMaleVoice?: boolean;
+      preferFemaleVoice?: boolean;
+    }
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       if (signal?.aborted) {
@@ -385,7 +441,9 @@ class SpeechManagerImpl {
     const generation = this.beginSpeakGeneration();
     await this.speakUtterance(text, generation, options.signal, 0, {
       rate: options.rate,
+      lang: options.lang,
       preferMaleVoice: options.preferMaleVoice,
+      preferFemaleVoice: options.preferFemaleVoice,
     });
     if (options.trailingPauseMs && options.trailingPauseMs > 0) {
       if (generation !== this.queueGeneration) return;
@@ -401,7 +459,15 @@ class SpeechManagerImpl {
     texts: string[],
     options: SpeakOptions & { gapMs?: number } = {}
   ): Promise<void> {
-    const { signal, gapMs = 100, rate, preferMaleVoice, trailingPauseMs } = options;
+    const {
+      signal,
+      gapMs = 100,
+      rate,
+      lang,
+      preferMaleVoice,
+      preferFemaleVoice,
+      trailingPauseMs,
+    } = options;
     await this.init();
     const generation = this.beginSpeakGeneration();
     const items = texts.map((t) => t.trim()).filter(Boolean);
@@ -411,7 +477,9 @@ class SpeechManagerImpl {
       }
       await this.speakUtterance(items[i], generation, signal, 0, {
         rate,
+        lang,
         preferMaleVoice,
+        preferFemaleVoice,
       });
       const pause = trailingPauseMs ?? gapMs;
       if (i < items.length - 1 && pause > 0) {
@@ -422,9 +490,19 @@ class SpeechManagerImpl {
 
   /** Speak a queue with the same locked Voice / prosody. */
   async speakQueue(texts: string[], options: SpeakQueueOptions = {}): Promise<void> {
-    const { signal, gapMs = 120, getGapMs, onItemStart } = options;
+    const {
+      signal,
+      gapMs = 120,
+      getGapMs,
+      onItemStart,
+      lang,
+      preferMaleVoice,
+      preferFemaleVoice,
+      rate,
+    } = options;
     await this.init();
     const generation = this.beginSpeakGeneration();
+    const prosody = { lang, preferMaleVoice, preferFemaleVoice, rate };
 
     const items = texts.map((t) => t.trim()).filter(Boolean);
     for (let i = 0; i < items.length; i += 1) {
@@ -436,7 +514,7 @@ class SpeechManagerImpl {
       }
 
       onItemStart?.(i, items[i]);
-      await this.speakUtterance(items[i], generation, signal);
+      await this.speakUtterance(items[i], generation, signal, 0, prosody);
 
       if (i < items.length - 1) {
         const waitMs = Math.max(

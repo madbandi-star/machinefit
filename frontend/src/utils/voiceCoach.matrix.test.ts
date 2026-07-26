@@ -676,7 +676,8 @@ async function caseAiAccelMode(): Promise<void> {
 async function caseEnglishLocale(): Promise<void> {
   installMocks();
   resetCoachState();
-  const phases = await collectPhases((onPhaseChange) =>
+  // UI locale en + female pack → still Korean (pack policy), clips not EN TTS.
+  const femalePhases = await collectPhases((onPhaseChange) =>
     runVoiceCoachFlow({
       targetReps: 2,
       oneMoreEnabled: true,
@@ -686,15 +687,44 @@ async function caseEnglishLocale(): Promise<void> {
       countMode: 'normal',
       repGapMs: 40,
       locale: 'en',
+      voicePack: 'female',
       onPhaseChange,
     })
   );
-  const ok =
-    phases.includes('done') &&
-    spoken.some((s) => /ready/i.test(s)) &&
-    spoken.some((s) => /start/i.test(s)) &&
-    spoken.some((s) => /one more/i.test(s));
-  record('locale/en', ok, `spoken=${spoken.join('|')}`);
+  const femaleOk =
+    femalePhases.includes('done') &&
+    // Female pack must not fall back to English TTS phrases when UI is en.
+    !spoken.some((s) => /^(Ready|Start|One more!?)$/i.test(s)) &&
+    playedClips.some((c) => c.includes('start')) &&
+    playedClips.some((c) => c.includes('one-more'));
+
+  installMocks();
+  resetCoachState();
+  // Male pack → English cues regardless of UI locale ko.
+  const malePhases = await collectPhases((onPhaseChange) =>
+    runVoiceCoachFlow({
+      targetReps: 2,
+      oneMoreEnabled: true,
+      maxOneMore: 1,
+      prepCount: 5,
+      flowMode: 'count',
+      countMode: 'normal',
+      repGapMs: 40,
+      locale: 'ko',
+      voicePack: 'male',
+      onPhaseChange,
+    })
+  );
+  const maleOk =
+    malePhases.includes('done') &&
+    spoken.some((s) => /^Ready$/i.test(s)) &&
+    playedClips.some((c) => c.includes('start')) &&
+    playedClips.some((c) => c.includes('one-more'));
+  record(
+    'pack-language-policy',
+    femaleOk && maleOk,
+    `femaleOk=${femaleOk} maleOk=${maleOk} maleSpoken=${spoken.join('|')} clips=${playedClips.join(',')}`
+  );
 }
 
 async function caseDoubleStartSecondWins(): Promise<void> {
