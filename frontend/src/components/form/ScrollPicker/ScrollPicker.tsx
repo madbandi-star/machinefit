@@ -29,6 +29,28 @@ function findOptionIndex(options: number[], value: number): number {
   return index >= 0 ? index : 0;
 }
 
+function getCenteredOptionIndex(
+  container: HTMLElement,
+  items: readonly (HTMLElement | null)[]
+): number {
+  const centerY = container.getBoundingClientRect().top + container.clientHeight / 2;
+  let bestIndex = 0;
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  items.forEach((item, index) => {
+    if (!item) return;
+    const rect = item.getBoundingClientRect();
+    const itemCenter = rect.top + rect.height / 2;
+    const distance = Math.abs(itemCenter - centerY);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = index;
+    }
+  });
+
+  return bestIndex;
+}
+
 export function ScrollPicker({
   value,
   onChange,
@@ -49,6 +71,8 @@ export function ScrollPicker({
   const syncingRef = useRef(false);
   const userInteractingRef = useRef(false);
   const scrollEndTimerRef = useRef<number | null>(null);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   const options = useMemo(() => buildPickerRange(min, max, step), [min, max, step]);
   const decimalPlaces = getDecimalPlaces(step);
@@ -68,19 +92,19 @@ export function ScrollPicker({
     return unit ? `${formatted} ${unit}` : formatted;
   };
 
-  const scrollSelectedIntoView = (behavior: ScrollBehavior = 'auto') => {
-    const item = itemRefs.current[selectedIndex];
-    if (!item) return;
+  const scrollToSelectedIndex = (behavior: ScrollBehavior = 'auto') => {
+    const container = containerRef.current;
+    if (!container) return;
 
     syncingRef.current = true;
-    item.scrollIntoView({ block: 'center', inline: 'nearest', behavior });
+    container.scrollTo({ top: selectedIndex * itemHeight, behavior });
     window.setTimeout(() => {
       syncingRef.current = false;
     }, behavior === 'smooth' ? 180 : 120);
   };
 
   useLayoutEffect(() => {
-    scrollSelectedIntoView('auto');
+    scrollToSelectedIndex('auto');
   }, [selectedIndex, options.length]);
 
   useEffect(() => {
@@ -88,26 +112,28 @@ export function ScrollPicker({
       return;
     }
 
-    onChange(findClosestPickerValue(options, defaultValue));
-  }, [initializeOnMount, value, defaultValue, options, onChange]);
+    onChangeRef.current(findClosestPickerValue(options, defaultValue));
+  }, [initializeOnMount, value, defaultValue, options]);
+
+  const markUserInteraction = () => {
+    userInteractingRef.current = true;
+  };
 
   const settleSelection = () => {
     const container = containerRef.current;
     if (!container || syncingRef.current || options.length === 0) return;
 
     if (!userInteractingRef.current) {
-      scrollSelectedIntoView('auto');
+      scrollToSelectedIndex('auto');
       return;
     }
 
-    const rawIndex = Math.round(container.scrollTop / itemHeight);
-    const index = Math.max(0, Math.min(options.length - 1, rawIndex));
+    const index = getCenteredOptionIndex(container, itemRefs.current);
     const next = options[index];
-    const item = itemRefs.current[index];
 
-    if (item) {
+    if (index !== selectedIndex) {
       syncingRef.current = true;
-      item.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+      container.scrollTo({ top: index * itemHeight, behavior: 'auto' });
       window.setTimeout(() => {
         syncingRef.current = false;
       }, 120);
@@ -115,13 +141,12 @@ export function ScrollPicker({
 
     userInteractingRef.current = false;
     if (next !== resolvedValue) {
-      onChange(next);
+      onChangeRef.current(next);
     }
   };
 
   const handleScroll = () => {
     if (syncingRef.current) return;
-    userInteractingRef.current = true;
 
     if (scrollEndTimerRef.current != null) {
       window.clearTimeout(scrollEndTimerRef.current);
@@ -154,6 +179,9 @@ export function ScrollPicker({
           role="listbox"
           aria-label={ariaLabel}
           onScroll={handleScroll}
+          onPointerDown={markUserInteraction}
+          onWheel={markUserInteraction}
+          onTouchStart={markUserInteraction}
           style={{
             height: itemHeight * visibleRows,
             paddingTop: padding,
@@ -174,13 +202,9 @@ export function ScrollPicker({
                 className={`scroll-picker__item${isSelected ? ' scroll-picker__item--selected' : ''}`}
                 style={{ height: itemHeight }}
                 onClick={() => {
-                  userInteractingRef.current = true;
-                  itemRefs.current[index]?.scrollIntoView({
-                    block: 'center',
-                    inline: 'nearest',
-                    behavior: 'smooth',
-                  });
-                  onChange(option);
+                  markUserInteraction();
+                  containerRef.current?.scrollTo({ top: index * itemHeight, behavior: 'smooth' });
+                  onChangeRef.current(option);
                   userInteractingRef.current = false;
                 }}
               >

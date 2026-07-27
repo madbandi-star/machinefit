@@ -1,21 +1,15 @@
 {
-  "title": "Recommend result voice count editable + correct seed",
-  "summary": "Voice pickers on recommend/records pages seed from Settings after hydration, remain editable per card. ScrollPicker uses scrollIntoView so values no longer stick at minimums (1, 0.8, 1, 1).",
+  "title": "Fix voice target reps picker seed",
+  "summary": "ScrollPicker no longer treats programmatic scroll as user input, fixing target reps resetting to 1 while other voice pickers show Settings correctly.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/components/form/ScrollPicker/ScrollPicker.tsx"
+    "frontend/src/components/form/ScrollPicker/ScrollPicker.tsx",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
-  "testFocus": "Search → recommend result: voice pickers show Settings values (not 1/0.8/1/1), user can scroll to change. Records card same. Settings page pickers unchanged.",
-  "fastChecks": [
-    "npm run build --prefix frontend",
-    "npm run test:smoke:changed"
-  ],
-  "productionChecks": [
-    "/recommend/:machineCode/result?id=… — voice pickers match settings and are scrollable",
-    "/records — expanded card voice pickers match settings and are scrollable"
-  ],
+  "testFocus": "Recommend result + records: 목표 횟수 matches Settings on load; gap/one-more/hold still correct; all pickers editable.",
+  "fastChecks": ["npm run build --prefix frontend", "npm run test:smoke:changed"],
+  "productionChecks": ["/recommend/.../result — 목표 횟수 equals settings default target reps"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Recommend result voice pickers show minimum values; read-only attempt blocked edits.",
-  "toBe": "Seed from Settings, display correct values, user can edit per session/card."
+  "asIs": "목표 횟수 stuck at 1; other voice pickers OK.",
+  "toBe": "All four voice pickers seed from Settings and stay editable."
 }

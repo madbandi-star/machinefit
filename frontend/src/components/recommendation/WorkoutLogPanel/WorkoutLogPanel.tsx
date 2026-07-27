@@ -47,7 +47,7 @@ interface VoicePickerSnapshot {
 function readVoicePickerSnapshot(): VoicePickerSnapshot {
   const settings = useSettingsStore.getState();
   return {
-    targetReps: settings.voiceCoachTargetReps,
+    targetReps: Math.max(1, Math.min(30, Math.round(settings.voiceCoachTargetReps))),
     repGapMs: settings.voiceCoachRepGapMs,
     oneMoreCount: settings.voiceCoachOneMoreCount,
     holdDurationSec: settings.voiceHoldDurationSec,
