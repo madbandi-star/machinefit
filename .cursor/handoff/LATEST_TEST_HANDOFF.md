@@ -1,31 +1,18 @@
-# Latest test handoff — Achievement emoji center + badge gap
-
-
-
-**Branch:** `main` · **Commit:** `c8139c6`
-
-
-
-## Change
-
-
-
-1. **이모지 중앙 정렬** — `measureText` + `actualBoundingBox`로 시각적 중심 맞춤 (좌우 쏠림 방지)
-
-2. **배지 ↔ 이모지 간격** — 글로우 반경 기준(~84px) → **배지 하단 + 6px** 바로 아래 배치
-
-
-
-## Test
-
-
-
-업적 → 공유하기 → 이모지 중앙·배지 간격 확인
-
-
-
-```bash
-
-npm run build --prefix frontend
-
-```
+# Latest test handoff — Lifted share card text trim
+
+**Branch:** `main` · **Commit:** pending
+
+## Change
+
+누적무게 **공유카드만** 수정 (페이지 본문 UI는 유지):
+
+- ~~`님은 지금까지`~~ → 이름(`labelName`)만 표시
+- ~~`를 들어올렸습니다`~~ → KG 아래 마무리 문구 제거
+
+## Test
+
+누적무게 → 공유 카드 만들기
+
+```bash
+npm run build --prefix frontend
+```

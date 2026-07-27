@@ -74,10 +74,10 @@ export function LiftedWeightPage() {
     if (!data) return;
     try {
       const blob = await buildLiftedShareCard({
-        headline: data.headline,
+        headline: data.labelName,
         labelName: data.labelName,
         totalKg: data.totalKg,
-        closing: t('liftedWeight.closing'),
+        closing: '',
         comparison: data.comparisons[0],
         locale,
         labels: {
@@ -89,7 +89,7 @@ export function LiftedWeightPage() {
         },
       });
       const file = new File([blob], 'machinefit-lifted.png', { type: 'image/png' });
-      const text = `${data.headline}\n${formatVolumeKg(data.totalKg, locale)} KG\n${t('liftedWeight.shareClosing')}`;
+      const text = `${data.labelName}\n${formatVolumeKg(data.totalKg, locale)} KG\n${t('liftedWeight.shareClosing')}`;
 
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], text, title: 'MachineFit' });

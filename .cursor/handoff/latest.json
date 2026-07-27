@@ -1,11 +1,14 @@
 {
-  "title": "Achievement share card — centered emoji + tight badge gap",
-  "summary": "Hero emoji uses measureText/actualBoundingBox for true horizontal center. Placed 6px below badge (was ~84px visual gap).",
-  "git": { "branch": "main", "commit": "c8139c6" },
-  "changedFiles": ["frontend/src/utils/achievementShareCard.ts"],
-  "testFocus": "업적 공유카드 — 이모지 정확히 중앙, '새로운 업적' 배지 바로 아래 붙음.",
+  "title": "Lifted share card — remove headline suffix and closing",
+  "summary": "Share card shows label name only (no '님은 지금까지') and KG hero without '를 들어올렸습니다'. Page UI unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
+    "frontend/src/utils/liftedShareCard.ts"
+  ],
+  "testFocus": "누적무게 공유카드 — 이름+KG만 표시, '님은 지금까지'·'를 들어올렸습니다' 없음.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "이모지 textAlign center로 좌우 쏠림, 배지 아래 ~84px 공백.",
-  "toBe": "이모지 시각적 중앙 정렬, 배지 아래 6px 간격."
+  "asIs": "공유카드에 '홍길동님은 지금까지' + KG + '를 들어올렸습니다.'",
+  "toBe": "공유카드에 '🏋️ 홍길동' + KG만."
 }

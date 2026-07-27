@@ -264,6 +264,10 @@ function splitLeadingEmoji(label: string): { emoji: string; text: string } {
   return { emoji: '', text: trimmed };
 }
 
+function heroBlockHeight(closing: string): number {
+  return closing.trim() ? HERO_ZONE_H : HERO_ZONE_H - HERO_CLOSING_AFTER_NUM;
+}
+
 function measureBadgeBlock(): number {
   return BADGE_PILL_H + 18;
 }
@@ -290,7 +294,7 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
 
   const badgeBlock = measureBadgeBlock();
   const headlineBlock = measureHeadlineRow(ctx, input.headline, input.labelName) + 8;
-  const heroBlock = HERO_ZONE_H;
+  const heroBlock = heroBlockHeight(input.closing);
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
   const footerH = 56;
 
@@ -423,7 +427,7 @@ function drawHeroKg(
   closing: string,
   locale: string
 ): number {
-  const zoneH = HERO_ZONE_H;
+  const zoneH = heroBlockHeight(closing);
   const numText = formatVolumeKg(totalKg, locale);
 
   ctx.font = `900 118px ${FONT}`;
@@ -458,11 +462,14 @@ function drawHeroKg(
   ctx.fillStyle = GREEN;
   ctx.fillText('KG', nx + numW + gap, numBaseline - 8);
 
-  ctx.textAlign = 'center';
-  ctx.font = `400 22px ${FONT}`;
-  ctx.fillStyle = GRAY_DIM;
-  ctx.fillText(closing, cx, numBaseline + HERO_CLOSING_AFTER_NUM);
+  if (closing.trim()) {
+    ctx.textAlign = 'center';
+    ctx.font = `400 22px ${FONT}`;
+    ctx.fillStyle = GRAY_DIM;
+    ctx.fillText(closing, cx, numBaseline + HERO_CLOSING_AFTER_NUM);
+  }
 
+  ctx.textAlign = 'center';
   return zoneH;
 }
 
