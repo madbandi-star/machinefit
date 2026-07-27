@@ -266,34 +266,34 @@ export function WorkoutLogPanel({
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
 
-  // Seed voice-coach target from fit-driven 추천/조정 횟수 (`volumeReps`).
-  // - 추천값 잘맞음 / 미선택 → 추천횟수
-  // - 셋팅값 조정 필요 → 조정횟수
-  // After the user edits the picker, keep their value until `volumeReps` changes
-  // (e.g. they tap 잘맞음 → re-seed to 추천횟수 and update settings default).
+  // Voice-count pickers seed from Settings → 음성 카운트 (not recommendation volumeReps).
+  // Keep user edits local until machine/recommendation context changes.
+  // Use override-or-settings so first mount still picks up persist hydration
+  // (useState(settings) alone freezes SETTINGS_DEFAULTS before rehydrate).
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
   const [voiceTargetUserOverride, setVoiceTargetUserOverride] = useState<{
     context: string;
     reps: number;
   } | null>(null);
-  const seededVoiceTargetReps = useMemo(() => {
-    if (volumeReps != null && volumeReps > 0) {
-      return Math.max(1, Math.min(30, Math.round(volumeReps)));
-    }
-    return voiceCoachTargetReps;
-  }, [volumeReps, voiceCoachTargetReps]);
+  const [repGapOverride, setRepGapOverride] = useState<number | null>(null);
+  const [oneMoreCountOverride, setOneMoreCountOverride] = useState<number | null>(null);
+  const [holdDurationOverride, setHoldDurationOverride] = useState<number | null>(null);
+
   const effectiveVoiceTargetReps =
     voiceTargetUserOverride?.context === voiceTargetSeedContext
       ? voiceTargetUserOverride.reps
-      : seededVoiceTargetReps;
+      : voiceCoachTargetReps;
+  const localRepGapMs = repGapOverride ?? voiceCoachRepGapMs;
+  const localOneMoreCount = oneMoreCountOverride ?? voiceCoachOneMoreCount;
+  const localHoldDurationSec = holdDurationOverride ?? voiceHoldDurationSec;
 
   useEffect(() => {
-    if (volumeReps == null || volumeReps <= 0) return;
-    // Fit rating / recommendation seed changed — drop stale manual override.
-    setVoiceTargetUserOverride((prev) =>
-      prev?.context === voiceTargetSeedContext ? null : prev
-    );
-  }, [volumeReps, voiceTargetSeedContext]);
+    // New machine / recommendation / date — drop local voice-count edits.
+    setVoiceTargetUserOverride(null);
+    setRepGapOverride(null);
+    setOneMoreCountOverride(null);
+    setHoldDurationOverride(null);
+  }, [voiceTargetSeedContext]);
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
@@ -302,11 +302,6 @@ export function WorkoutLogPanel({
     },
     [voiceTargetSeedContext]
   );
-
-  /** Per-panel picker values — count sessions use these, not My Page → Settings. */
-  const [localRepGapMs, setLocalRepGapMs] = useState(() => voiceCoachRepGapMs);
-  const [localOneMoreCount, setLocalOneMoreCount] = useState(() => voiceCoachOneMoreCount);
-  const [localHoldDurationSec, setLocalHoldDurationSec] = useState(() => voiceHoldDurationSec);
 
   const voiceCoach = useVoiceCoachSession({
     targetReps: effectiveVoiceTargetReps,
@@ -1383,7 +1378,7 @@ export function WorkoutLogPanel({
       targetReps={effectiveVoiceTargetReps}
       onTargetRepsChange={handleVoiceTargetRepsChange}
       repGapMs={localRepGapMs}
-      onRepGapMsChange={setLocalRepGapMs}
+      onRepGapMsChange={setRepGapOverride}
       prepCount={voiceCoachPrepCount}
       onPrepCountChange={setVoiceCoachPrepCount}
       voicePack={voiceCoachPack}
@@ -1393,11 +1388,11 @@ export function WorkoutLogPanel({
       flowMode={voiceCoachFlowMode}
       onFlowModeChange={setVoiceCoachFlowMode}
       holdDurationSec={localHoldDurationSec}
-      onHoldDurationSecChange={setLocalHoldDurationSec}
+      onHoldDurationSecChange={setHoldDurationOverride}
       oneMoreEnabled={voiceCoachOneMore}
       onOneMoreChange={isHistory ? () => {} : setVoiceCoachOneMore}
       oneMoreCount={localOneMoreCount}
-      onOneMoreCountChange={setLocalOneMoreCount}
+      onOneMoreCountChange={setOneMoreCountOverride}
       autoStartAfterRest={voiceCoachAutoAfterRest}
       onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
       restTipsEnabled={voiceRestTipsEnabled}
