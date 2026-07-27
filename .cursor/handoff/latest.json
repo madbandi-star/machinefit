@@ -1,12 +1,12 @@
 {
-  "title": "Share card typography, laurel wreath, alignment fixes",
-  "summary": "Redesigned laurel wreath (U-shape with leaf pairs), enlarged typography, reduced side margins, vertically centered content above pinned footer, fixed MachineFit/tagline overlap.",
-  "git": { "branch": "main", "commit": "2ba36dd" },
+  "title": "Share card 4:5 layout — comparison centering & spacing",
+  "summary": "Match lifted weight share card to lifter DNA size (1080×1350). Center comparison box between slogan and footer; tighten gaps above/below comparison section.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유 카드 9:16 — 월계관 모양, 텍스트 정렬, 비교 카드 위치, 푸터 겹침 없음, 글자 크기/가독성.",
+  "testFocus": "누적무게 공유 카드 1080×1350 — 비교 박스 슬로건·푸터 사이 중앙, 여백 축소, 운동성향 카드와 동일 사이즈.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["공유 카드 PNG 생성 후 시각 확인 (1080×1920)"],
+  "productionChecks": ["공유 카드 PNG 시각 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "이상한 월계관, 작은 글자, 넓은 여백, 비교 박스 상단 쏠림, 푸터 텍스트 겹침.",
-  "toBe": "정상 월계관, 큰 가독성 좋은 타이포, 중앙 정렬된 비교 섹션, 분리된 푸터."
+  "asIs": "9:16 카드, 비교 박스 하단 여백 과다, 슬로건·푸터와 간격 넓음.",
+  "toBe": "1080×1350, 비교 박스 중앙 정렬, 간격 축소, DNA 카드와 동일 크기."
 }

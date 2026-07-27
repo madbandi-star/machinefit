@@ -1,7 +1,7 @@
 import type { LiftedComparisonResult } from '@machinefit/shared';
 import { formatVolumeKg } from '@machinefit/shared';
 
-export type ShareCardAspectRatio = '1:1' | '9:16';
+export type ShareCardAspectRatio = '4:5' | '1:1' | '9:16';
 
 export interface LiftedShareCardLabels {
   aboutCount: (count: string, unit: string) => string;
@@ -20,13 +20,16 @@ interface ShareCardInput {
   comparison?: LiftedComparisonResult;
   locale: string;
   labels: LiftedShareCardLabels;
-  /** @default '9:16' */
+  /** @default '4:5' — matches lifter DNA share card (1080×1350) */
   aspectRatio?: ShareCardAspectRatio;
 }
 
 const W = 1080;
-const POSTER_MARGIN = 22;
-const POSTER_PAD = 28;
+const POSTER_MARGIN = 48;
+const POSTER_PAD = 64;
+
+const GAP_SLOGAN_TO_COMP = 16;
+const GAP_COMP_TO_FOOTER = 16;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
@@ -38,11 +41,13 @@ const WHITE = '#f8fafc';
 const GRAY = '#94a3b8';
 const GRAY_DIM = 'rgba(148, 163, 184, 0.82)';
 
-const CARD_RADIUS = 22;
+const CARD_RADIUS = 40;
 const BOX_RADIUS = 18;
 
 function canvasHeight(aspect: ShareCardAspectRatio): number {
-  return aspect === '9:16' ? 1920 : 1080;
+  if (aspect === '9:16') return 1920;
+  if (aspect === '1:1') return 1080;
+  return 1350;
 }
 
 function roundRect(
@@ -241,10 +246,10 @@ function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number,
 }
 
 interface LayoutMetrics {
-  contentH: number;
+  topBlockH: number;
+  comparisonH: number;
   sloganLines: string[];
   tipLines: string[];
-  comparisonH: number;
   footerH: number;
 }
 
@@ -253,28 +258,17 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   ctx.font = `400 32px ${FONT}`;
   const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 64) : [];
 
-  const badgeBlock = 48 + 40;
-  const avatarBlock = 88 + 36;
-  const headlineBlock = 48 + 40;
-  const heroBlock = 228 + 36;
-  const sloganBlock = blockH(sloganLines, 42) + 28 + 40;
-  const comparisonH = input.comparison
-    ? 44 + 36 + 100 + 32 + 48 + 28 + 48 + 28 + blockH(tipLines, 38) + 40
-    : 0;
-  const footerH = 108;
+  const badgeBlock = 44 + 28;
+  const avatarBlock = 76 + 24;
+  const headlineBlock = 44 + 28;
+  const heroBlock = 200 + 24;
+  const sloganBlock = blockH(sloganLines, 42) + 20;
+  const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
+  const footerH = 76;
 
-  const contentH =
-    POSTER_PAD +
-    badgeBlock +
-    avatarBlock +
-    headlineBlock +
-    heroBlock +
-    sloganBlock +
-    (input.comparison ? comparisonH + 40 : 0) +
-    footerH +
-    POSTER_PAD;
+  const topBlockH = POSTER_PAD + badgeBlock + avatarBlock + headlineBlock + heroBlock + sloganBlock;
 
-  return { contentH, sloganLines, tipLines, comparisonH, footerH };
+  return { topBlockH, comparisonH, sloganLines, tipLines, footerH };
 }
 
 function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: number, label: string) {
@@ -335,7 +329,7 @@ function drawHeroKg(
   closing: string,
   locale: string
 ): number {
-  const zoneH = 228;
+  const zoneH = 200;
   const numText = formatVolumeKg(totalKg, locale);
 
   ctx.font = `900 172px ${FONT}`;
@@ -345,7 +339,7 @@ function drawHeroKg(
   const gap = 18;
   const totalW = numW + gap + unitW;
   const nx = cx - totalW / 2;
-  const numBaseline = topY + 148;
+  const numBaseline = topY + 132;
 
   const glow = ctx.createRadialGradient(cx, numBaseline - 40, 0, cx, numBaseline - 40, 240);
   glow.addColorStop(0, 'rgba(74, 222, 128, 0.16)');
@@ -391,11 +385,11 @@ function drawSlogan(ctx: CanvasRenderingContext2D, cx: number, topY: number, lin
   ctx.fillText('”', cx + maxW / 2 - 4, topY + boxH - 8);
 
   drawCenteredLines(ctx, lines, cx, topY + 8, lh, 'rgba(226, 232, 240, 0.9)', `400 32px ${FONT}`);
-  return boxH + 28;
+  return boxH + 12;
 }
 
 function measureComparisonCardH(tipLines: string[]): number {
-  return 44 + 36 + 100 + 32 + 48 + 28 + 48 + 28 + blockH(tipLines, 38) + 40;
+  return 36 + 28 + 92 + 28 + 44 + 24 + 44 + 24 + blockH(tipLines, 36) + 32;
 }
 
 function drawComparisonCard(
@@ -418,15 +412,15 @@ function drawComparisonCard(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  let cy = topY + 44;
+  let cy = topY + 36;
   ctx.font = `500 30px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(sectionTitle, cx, cy);
-  cy += 36;
+  cy += 28;
 
-  const ringR = 50;
+  const ringR = 46;
   const ringCy = cy + ringR;
   ctx.strokeStyle = 'rgba(74, 222, 128, 0.45)';
   ctx.lineWidth = 2.5;
@@ -435,17 +429,17 @@ function drawComparisonCard(
   ctx.stroke();
   ctx.fillStyle = 'rgba(74, 222, 128, 0.08)';
   ctx.fill();
-  drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, 52);
-  cy += ringR * 2 + 32;
+  drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, 50);
+  cy += ringR * 2 + 28;
 
   ctx.font = `700 42px ${FONT}`;
   ctx.fillStyle = WHITE;
   ctx.fillText(comparison.name, cx, cy);
-  cy += 48;
+  cy += 44;
 
   ctx.font = `700 32px ${FONT}`;
   const pw = ctx.measureText(countLabel).width + 52;
-  const pillH = 46;
+  const pillH = 44;
   roundRect(ctx, cx - pw / 2, cy - pillH / 2, pw, pillH, 23);
   ctx.fillStyle = 'rgba(74, 222, 128, 0.14)';
   ctx.fill();
@@ -456,9 +450,9 @@ function drawComparisonCard(
   ctx.textBaseline = 'middle';
   ctx.fillText(countLabel, cx, cy);
   ctx.textBaseline = 'alphabetic';
-  cy += 48;
+  cy += 44;
 
-  drawCenteredLines(ctx, tipLines, cx, cy, 38, GRAY, `400 28px ${FONT}`);
+  drawCenteredLines(ctx, tipLines, cx, cy, 36, GRAY, `400 28px ${FONT}`);
   return h;
 }
 
@@ -523,33 +517,36 @@ function drawPosterContent(
 ) {
   const cx = posterX + posterW / 2;
   const innerW = posterW - POSTER_PAD * 2;
-  const contentH = metrics.contentH - POSTER_PAD * 2;
-  let y = posterY + POSTER_PAD + Math.max(0, (posterH - POSTER_PAD * 2 - contentH) / 2);
+  const footerTop = posterY + posterH - POSTER_PAD - metrics.footerH;
 
-  drawPillBadge(ctx, cx, y + 24, input.labels.badge);
-  y += 48 + 40;
+  let y = posterY + POSTER_PAD;
 
-  drawEmojiCentered(ctx, '🏋️', cx, y + 44, 80);
-  y += 88 + 36;
+  drawPillBadge(ctx, cx, y + 22, input.labels.badge);
+  y += 44 + 28;
 
-  drawHeadlineCentered(ctx, cx, y + 38, input.headline, input.labelName);
-  y += 48 + 40;
+  drawEmojiCentered(ctx, '🏋️', cx, y + 38, 76);
+  y += 76 + 24;
+
+  drawHeadlineCentered(ctx, cx, y + 36, input.headline, input.labelName);
+  y += 44 + 28;
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
-  y += 36;
+  y += 24;
 
   y += drawSlogan(ctx, cx, y, metrics.sloganLines, innerW);
-  y += 40;
 
   if (input.comparison) {
     const countLabel = input.labels.aboutCount(
       formatVolumeKg(input.comparison.count, input.locale),
       input.comparison.unit
     );
-    y += drawComparisonCard(
+    const zoneTop = y + GAP_SLOGAN_TO_COMP;
+    const zoneBottom = footerTop - GAP_COMP_TO_FOOTER;
+    const compY = zoneTop + Math.max(0, (zoneBottom - zoneTop - metrics.comparisonH) / 2);
+    drawComparisonCard(
       ctx,
       cx,
-      y,
+      compY,
       innerW,
       input.comparison,
       countLabel,
@@ -558,13 +555,12 @@ function drawPosterContent(
     );
   }
 
-  const footerTop = posterY + posterH - POSTER_PAD - metrics.footerH;
   drawFooter(ctx, posterX + POSTER_PAD, footerTop, innerW, metrics.footerH, input.labels);
 }
 
-/** Premium poster share card for SNS (9:16 default, optional 1:1). */
+/** Premium poster share card for SNS (4:5 default — same as lifter DNA card). */
 export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
-  const aspect = input.aspectRatio ?? '9:16';
+  const aspect = input.aspectRatio ?? '4:5';
   const height = canvasHeight(aspect);
 
   const measureCanvas = document.createElement('canvas');
