@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card compact centered v2",
   "summary": "Dynamic canvas height (no bottom gap), larger content, emoji width-based centering, comparison card as centered vertical stack.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9e75088" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유 PNG — 아래 여백 없음, 🏋️/볼링공 이모지 정중앙, 비교 카드 아이콘+텍스트 세로 중앙 정렬.",
   "fastChecks": ["npm run build --prefix frontend"],
