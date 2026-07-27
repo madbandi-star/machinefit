@@ -1,6 +1,6 @@
 # Latest test handoff — Share card compact + larger comparison emoji
 
-**Branch:** `main` · **Commit:** pending
+**Branch:** `main` · **Commit:** `9f11fd0`
 
 ## Change
 

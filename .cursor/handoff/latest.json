@@ -1,7 +1,7 @@
 {
   "title": "Share card compact size + larger comparison emoji",
   "summary": "Reduced share card to 900×1125 with tighter layout. Comparison emoji ring enlarged (78px radius, 86px emoji) with adjusted icon-to-label gap.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9f11fd0" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "공유 카드 — 900×1125 크기, 볼링공 등 비교 이모지 크게, 아이콘↔라벨 간격, 전체 컴팩트 레이아웃.",
   "fastChecks": ["npm run build --prefix frontend"],
