@@ -762,6 +762,18 @@
     "complete": "🤖 MachineFit AI analysis complete",
     "analyzing": "Analyzing…",
     "analyzingHint": "Building your DNA from recent workouts.",
+    "predictionAnalyzing": "Predicting…",
+    "predictionAnalyzingHint": "Estimating your style from your profile.",
+    "predictionLead": "Even without workout logs, AI predicts from your signup profile (gender, age, height, weight, goal).",
+    "predictionEmptyTitle": "No workout data yet!",
+    "predictionResultTitle": "Your predicted workout style…",
+    "predictionCta": "Log your first workout to unlock your real style.",
+    "predictionBadge": "Prediction",
+    "tendency": {
+      "power": "Power",
+      "balance": "Balance",
+      "endurance": "Endurance"
+    },
     "refresh": "Re-analyze",
     "confidence": "AI confidence",
     "basis": "Based on",

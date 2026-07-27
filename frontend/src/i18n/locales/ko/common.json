@@ -762,6 +762,18 @@
     "complete": "🤖 MachineFit AI 분석 완료",
     "analyzing": "AI 분석 중…",
     "analyzingHint": "최근 운동 기록을 종합해 DNA를 생성합니다.",
+    "predictionAnalyzing": "AI 예측 중…",
+    "predictionAnalyzingHint": "가입 정보로 예상 운동 성향을 만들고 있어요.",
+    "predictionLead": "운동 기록이 없어도 가입정보(성별, 나이, 키, 몸무게, 목표)를 기반으로 AI가 예측.",
+    "predictionEmptyTitle": "아직 운동 데이터가 없어요!",
+    "predictionResultTitle": "예상되는 당신의 운동 성향은…",
+    "predictionCta": "첫 운동을 기록하면 실제 성향으로 업데이트됩니다.",
+    "predictionBadge": "예측",
+    "tendency": {
+      "power": "파워형",
+      "balance": "밸런스형",
+      "endurance": "지구력형"
+    },
     "refresh": "다시 분석",
     "confidence": "AI 신뢰도",
     "basis": "분석 기준",

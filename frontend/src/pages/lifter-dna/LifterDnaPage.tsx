@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { LifterDnaCompareItem } from '@machinefit/shared';
+import { ageFromBirthDate, type LifterDnaCompareItem } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
@@ -12,6 +12,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildLifterDnaShareCard } from '@/utils/lifterDnaShareCard';
+import { predictLifterTendencyFromProfile } from '@/utils/predictLifterTendency';
 import './LifterDnaPage.css';
 
 function stars(n: number): string {
@@ -56,7 +57,7 @@ export function LifterDnaPage() {
   const showToast = useUIStore((s) => s.showToast);
   const user = useAuthStore((s) => s.user);
   const { activeGymId } = useActiveGym();
-  const { activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
+  const { activeMember, activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
   const [phase, setPhase] = useState<'boot' | 'ready'>('boot');
 
   const scopeParams =
@@ -86,6 +87,20 @@ export function LifterDnaPage() {
     const d = new Date(data.analyzedAt);
     return d.toLocaleDateString(locale.startsWith('ko') ? 'ko-KR' : 'en-US');
   }, [data, locale]);
+
+  const hasWorkoutLogs = (data?.analyzedLogs ?? 0) > 0;
+
+  const predictedTendencies = useMemo(() => {
+    if (!data || hasWorkoutLogs) return [];
+    const useMemberProfile = Boolean(activeMember && !activeMember.isSelf);
+    return predictLifterTendencyFromProfile({
+      gender: useMemberProfile ? activeMember?.gender : user?.gender,
+      age: useMemberProfile ? ageFromBirthDate(activeMember?.birthDate) : user?.age,
+      heightCm: useMemberProfile ? activeMember?.heightCm : user?.heightCm,
+      weightKg: useMemberProfile ? activeMember?.weightKg : user?.weightKg,
+      workoutGoal: user?.workoutGoal,
+    });
+  }, [activeMember, data, hasWorkoutLogs, user]);
 
   const handleShare = async () => {
     if (!data) return;
@@ -124,9 +139,42 @@ export function LifterDnaPage() {
         ) : phase === 'boot' ? (
           <div className="dna-boot glass" aria-live="polite">
             <div className="dna-boot__orb" />
-            <p className="dna-boot__title">{t('lifterDna.analyzing')}</p>
-            <p className="dna-boot__sub">{t('lifterDna.analyzingHint')}</p>
+            <p className="dna-boot__title">
+              {hasWorkoutLogs ? t('lifterDna.analyzing') : t('lifterDna.predictionAnalyzing')}
+            </p>
+            <p className="dna-boot__sub">
+              {hasWorkoutLogs
+                ? t('lifterDna.analyzingHint')
+                : t('lifterDna.predictionAnalyzingHint')}
+            </p>
           </div>
+        ) : !hasWorkoutLogs ? (
+          <section className="dna-prediction glass" aria-live="polite">
+            <span className="dna-prediction__badge">{t('lifterDna.predictionBadge')}</span>
+            <p className="dna-prediction__lead">{t('lifterDna.predictionLead')}</p>
+            <h2 className="dna-prediction__empty">{t('lifterDna.predictionEmptyTitle')}</h2>
+            <p className="dna-prediction__result-title">{t('lifterDna.predictionResultTitle')}</p>
+            <ul className="dna-prediction__list">
+              {predictedTendencies.map((row) => (
+                <li key={row.id} className="dna-prediction__item">
+                  <span className="dna-prediction__emoji" aria-hidden>
+                    {row.emoji}
+                  </span>
+                  <span className="dna-prediction__name">
+                    {t(`lifterDna.tendency.${row.id}`)}
+                  </span>
+                  <strong className="dna-prediction__pct">{row.percent}%</strong>
+                  <span
+                    className="dna-prediction__bar"
+                    style={{ width: `${row.percent}%` }}
+                    aria-hidden
+                  />
+                </li>
+              ))}
+            </ul>
+            <p className="dna-prediction__cta">{t('lifterDna.predictionCta')}</p>
+            <LegalDisclaimerBanner variant="ai" compact />
+          </section>
         ) : (
           <>
             <header className="dna-hero glass">
