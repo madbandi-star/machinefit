@@ -1,15 +1,12 @@
 {
-  "title": "Lifted weight share card alignment polish",
-  "summary": "Fix emoji/text centering in hero and comparison panels, tighten vertical spacing to reduce empty margins, remove 'MachineFit에서 확인하세요!' footer line.",
-  "git": { "branch": "main", "commit": "e1e0529" },
-  "changedFiles": [
-    "frontend/src/utils/liftedShareCard.ts",
-    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
-  ],
-  "testFocus": "누적무게 공유 PNG — 이모지·텍스트 중앙 정렬, 볼링공 카드 아이콘/텍스트 정렬, 하단 여백 축소, 확인 문구 없음.",
+  "title": "Lifted share card compact centered v2",
+  "summary": "Dynamic canvas height (no bottom gap), larger content, emoji width-based centering, comparison card as centered vertical stack.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
+  "testFocus": "누적무게 공유 PNG — 아래 여백 없음, 🏋️/볼링공 이모지 정중앙, 비교 카드 아이콘+텍스트 세로 중앙 정렬.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["누적무게 → 공유 카드 만들기 → PNG 레이아웃 확인"],
+  "productionChecks": ["누적무게 → 공유 카드 — 캡처 후 여백·정렬 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "이모지·텍스트 정렬 어긋남, 히어로/비교 박스 내부 여백 과다, 하단 공백 많음, 확인 문구 표시.",
-  "toBe": "박스 크기=콘텐츠 높이, 세로 중앙 정렬, 확인 문구 삭제."
+  "asIs": "1350px 고정 높이로 하단 공백 많음, 이모지 오른쪽 치우침, 비교 카드 좌측 정렬.",
+  "toBe": "콘텐츠 높이에 맞춘 PNG, 이모지·비교 카드 중앙 집중형."
 }

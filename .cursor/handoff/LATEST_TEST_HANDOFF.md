@@ -1,42 +1,19 @@
-# Latest test handoff — Lifted weight share card polish
-
-
-
-**Branch:** `main` · **Commit:** `e1e0529`
-
-
-
-## Change
-
-
-
-누적무게 공유 카드 **정렬·여백** 수정.
-
-
-
-- 🏋️ / 볼링공 이모지 `textBaseline: middle` 중앙 정렬
-
-- 히어로·비교 박스 높이 = 콘텐츠 기준 (내부 빈 공간 제거)
-
-- 전체 블록 세로 중앙, 하단 여백 축소
-
-- `MachineFit에서 확인하세요!` 삭제
-
-
-
-## Test
-
-
-
-누적무게 → 공유 카드 만들기
-
-
-
-```bash
-
-npm run build --prefix frontend
-
-```
-
-
-
+# Latest test handoff — Lifted share card v2
+
+**Branch:** `main` · **Commit:** pending
+
+## Change
+
+- 캔버스 높이 **콘텐츠 자동** (하단 빈 공간 제거)
+- 폰트·KG **확대**
+- 이모지 **너비 측정** 후 정중앙
+- 볼링공 카드 → **세로 중앙** (아이콘 + 텍스트 가운데)
+
+## Test
+
+누적무게 → 공유 카드 만들기
+
+```bash
+npm run build --prefix frontend
+```
+

@@ -15,15 +15,15 @@ interface ShareCardInput {
   labels: LiftedShareCardLabels;
 }
 
+const CARD_W = 1080;
+const OUTER_PAD = 28;
+
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
 const ACCENT = '#4ade80';
-const ACCENT_SOFT = 'rgba(34, 197, 94, 0.18)';
-const ACCENT_BORDER = 'rgba(34, 197, 94, 0.28)';
-
-const CARD_W = 1080;
-const CARD_H = 1350;
+const ACCENT_SOFT = 'rgba(34, 197, 94, 0.2)';
+const ACCENT_BORDER = 'rgba(34, 197, 94, 0.3)';
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -40,29 +40,6 @@ function roundRect(
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
-}
-
-function measureWrapHeight(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  lineHeight: number
-): number {
-  const chars = [...text];
-  let line = '';
-  let lines = 1;
-
-  for (const ch of chars) {
-    const test = line + ch;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      line = ch;
-      lines += 1;
-    } else {
-      line = test;
-    }
-  }
-
-  return lines * lineHeight;
 }
 
 function getWrapLines(
@@ -88,13 +65,47 @@ function getWrapLines(
   return lines.length ? lines : [''];
 }
 
+function blockHeight(lines: string[], lineHeight: number): number {
+  return lines.length * lineHeight;
+}
+
+/** Emoji glyphs are visually off-center with textAlign:center — measure width instead. */
+function drawEmojiCentered(
+  ctx: CanvasRenderingContext2D,
+  emoji: string,
+  cx: number,
+  cy: number,
+  fontSize: number,
+  glowRadius?: number
+) {
+  if (glowRadius) {
+    const glow = ctx.createRadialGradient(cx, cy, glowRadius * 0.05, cx, cy, glowRadius);
+    glow.addColorStop(0, 'rgba(74, 222, 128, 0.38)');
+    glow.addColorStop(0.55, 'rgba(34, 197, 94, 0.12)');
+    glow.addColorStop(1, 'rgba(15, 23, 42, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.font = `${fontSize}px ${FONT}`;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#ffffff';
+  const w = ctx.measureText(emoji).width;
+  ctx.fillText(emoji, cx - w / 2, cy);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+}
+
 function drawCenteredLines(
   ctx: CanvasRenderingContext2D,
   lines: string[],
   cx: number,
   startY: number,
   lineHeight: number
-) {
+): number {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   let y = startY;
@@ -105,17 +116,49 @@ function drawCenteredLines(
   return y;
 }
 
+function drawTotalWeight(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  baselineY: number,
+  totalKg: number,
+  locale: string
+) {
+  const numText = formatVolumeKg(totalKg, locale);
+  ctx.font = `800 118px ${FONT}`;
+  const numW = ctx.measureText(numText).width;
+  ctx.font = `700 46px ${FONT}`;
+  const unitW = ctx.measureText('KG').width;
+  const gap = 16;
+  const startX = cx - (numW + gap + unitW) / 2;
+
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `800 118px ${FONT}`;
+  ctx.fillStyle = ACCENT;
+  ctx.fillText(numText, startX, baselineY);
+
+  ctx.font = `700 46px ${FONT}`;
+  ctx.fillStyle = '#86efac';
+  ctx.fillText('KG', startX + numW + gap, baselineY - 8);
+
+  ctx.textAlign = 'center';
+}
+
 function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const gradient = ctx.createLinearGradient(0, 0, width * 0.15, height);
+  const gradient = ctx.createLinearGradient(0, 0, width * 0.12, height);
   gradient.addColorStop(0, '#0b1220');
-  gradient.addColorStop(0.5, '#111827');
+  gradient.addColorStop(0.55, '#111827');
   gradient.addColorStop(1, '#0f3d2e');
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = 'rgba(34, 197, 94, 0.12)';
+  ctx.fillStyle = 'rgba(34, 197, 94, 0.1)';
   ctx.beginPath();
-  ctx.arc(width * 0.9, height * 0.12, 260, 0, Math.PI * 2);
+  ctx.arc(width * 0.5, height * 0.08, 320, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.06)';
+  ctx.beginPath();
+  ctx.arc(width * 0.5, height * 0.92, 280, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -126,127 +169,67 @@ function drawHeroPanel(
   w: number,
   h: number
 ) {
-  roundRect(ctx, x, y, w, h, 28);
-  const panelGrad = ctx.createLinearGradient(x, y, x + w * 0.35, y + h);
+  roundRect(ctx, x, y, w, h, 30);
+  const panelGrad = ctx.createLinearGradient(x, y, x + w, y + h);
   panelGrad.addColorStop(0, '#0b1220');
-  panelGrad.addColorStop(0.55, '#111827');
+  panelGrad.addColorStop(0.5, '#111827');
   panelGrad.addColorStop(1, '#0f3d2e');
   ctx.fillStyle = panelGrad;
   ctx.fill();
 
   ctx.save();
-  roundRect(ctx, x, y, w, h, 28);
+  roundRect(ctx, x, y, w, h, 30);
   ctx.clip();
-  ctx.fillStyle = 'rgba(34, 197, 94, 0.18)';
+  ctx.fillStyle = 'rgba(34, 197, 94, 0.16)';
   ctx.beginPath();
-  ctx.arc(x + w * 0.94, y + h * 0.06, w * 0.34, 0, Math.PI * 2);
+  ctx.arc(x + w / 2, y + h * 0.04, w * 0.42, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
   ctx.strokeStyle = ACCENT_BORDER;
   ctx.lineWidth = 2;
-  roundRect(ctx, x, y, w, h, 28);
+  roundRect(ctx, x, y, w, h, 30);
   ctx.stroke();
 }
 
-function drawEmojiGlow(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number) {
-  const glow = ctx.createRadialGradient(cx, cy, radius * 0.05, cx, cy, radius);
-  glow.addColorStop(0, 'rgba(74, 222, 128, 0.35)');
-  glow.addColorStop(0.6, 'rgba(34, 197, 94, 0.1)');
-  glow.addColorStop(1, 'rgba(15, 23, 42, 0)');
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function drawCenteredEmoji(
-  ctx: CanvasRenderingContext2D,
-  emoji: string,
-  cx: number,
-  cy: number,
-  fontSize: number
-) {
-  drawEmojiGlow(ctx, cx, cy, fontSize * 0.72);
-  ctx.font = `${fontSize}px ${FONT}`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(emoji, cx, cy);
-  ctx.textBaseline = 'alphabetic';
-}
-
-function drawTotalWeight(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  baselineY: number,
-  totalKg: number,
-  locale: string
-) {
-  const numText = formatVolumeKg(totalKg, locale);
-  ctx.font = `800 100px ${FONT}`;
-  const numW = ctx.measureText(numText).width;
-  ctx.font = `700 40px ${FONT}`;
-  const unitW = ctx.measureText('KG').width;
-  const gap = 14;
-  const startX = cx - (numW + gap + unitW) / 2;
-
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 100px ${FONT}`;
-  ctx.fillStyle = ACCENT;
-  ctx.fillText(numText, startX, baselineY);
-
-  ctx.font = `700 40px ${FONT}`;
-  ctx.fillStyle = '#86efac';
-  ctx.fillText('KG', startX + numW + gap, baselineY - 6);
-
-  ctx.textAlign = 'center';
-}
-
-interface HeroMetrics {
+interface HeroLayout {
   height: number;
   headlineLines: string[];
   closingLines: string[];
   funLines: string[];
 }
 
-function measureHeroMetrics(
+function measureHeroLayout(
   ctx: CanvasRenderingContext2D,
   headline: string,
   closing: string,
   funLine: string,
-  innerW: number
-): HeroMetrics {
-  const padY = 40;
-  const emojiH = 96;
-  const gapSm = 16;
-  const gapMd = 24;
-  const totalH = 96;
+  textW: number
+): HeroLayout {
+  const padY = 44;
+  const emojiBlock = 112;
+  const gapSm = 18;
+  const gapMd = 28;
+  const totalBlock = 112;
+
+  ctx.font = `38px ${FONT}`;
+  const headlineLines = getWrapLines(ctx, headline, textW);
 
   ctx.font = `34px ${FONT}`;
-  const headlineLines = getWrapLines(ctx, headline, innerW);
-  const headlineBlockH = headlineLines.length * 46;
-
-  ctx.font = `30px ${FONT}`;
-  const closingLines = getWrapLines(ctx, closing, innerW);
-  const closingBlockH = closingLines.length * 40;
-
-  ctx.font = `30px ${FONT}`;
-  const funLines = getWrapLines(ctx, funLine, innerW);
-  const funBlockH = funLines.length * 40;
+  const closingLines = getWrapLines(ctx, closing, textW);
+  const funLines = getWrapLines(ctx, funLine, textW);
 
   const height =
     padY +
-    emojiH +
+    emojiBlock +
     gapMd +
-    headlineBlockH +
+    blockHeight(headlineLines, 50) +
     gapSm +
-    totalH +
+    totalBlock +
     gapSm +
-    closingBlockH +
+    blockHeight(closingLines, 44) +
     gapSm +
-    funBlockH +
+    blockHeight(funLines, 44) +
     padY;
 
   return { height, headlineLines, closingLines, funLines };
@@ -256,197 +239,236 @@ function drawHeroContent(
   ctx: CanvasRenderingContext2D,
   cx: number,
   top: number,
-  metrics: HeroMetrics,
+  layout: HeroLayout,
   totalKg: number,
   locale: string
 ) {
-  const padY = 40;
-  const emojiH = 96;
-  const gapSm = 16;
-  const gapMd = 24;
+  const padY = 44;
+  const emojiBlock = 112;
+  const gapSm = 18;
+  const gapMd = 28;
 
-  const emojiCy = top + padY + emojiH / 2;
-  drawCenteredEmoji(ctx, '🏋️', cx, emojiCy, 92);
+  const emojiCy = top + padY + emojiBlock / 2;
+  drawEmojiCentered(ctx, '🏋️', cx, emojiCy, 108, 82);
 
-  let y = top + padY + emojiH + gapMd + 34;
-
-  ctx.font = `34px ${FONT}`;
+  let y = top + padY + emojiBlock + gapMd + 38;
+  ctx.font = `38px ${FONT}`;
   ctx.fillStyle = '#e5e7eb';
-  y = drawCenteredLines(ctx, metrics.headlineLines, cx, y, 46);
+  y = drawCenteredLines(ctx, layout.headlineLines, cx, y, 50);
 
   y += gapSm;
-  drawTotalWeight(ctx, cx, y + 72, totalKg, locale);
+  drawTotalWeight(ctx, cx, y + 84, totalKg, locale);
 
-  y += 96 + gapSm;
-  ctx.font = `30px ${FONT}`;
+  y += 112 + gapSm;
+  ctx.font = `34px ${FONT}`;
   ctx.fillStyle = '#cbd5e1';
-  y = drawCenteredLines(ctx, metrics.closingLines, cx, y, 40);
+  y = drawCenteredLines(ctx, layout.closingLines, cx, y, 44);
 
   y += gapSm;
-  ctx.font = `30px ${FONT}`;
+  ctx.font = `34px ${FONT}`;
   ctx.fillStyle = '#86efac';
-  drawCenteredLines(ctx, metrics.funLines, cx, y, 40);
+  drawCenteredLines(ctx, layout.funLines, cx, y, 44);
 }
 
-function measureComparisonCard(
+interface ComparisonLayout {
+  height: number;
+  tipLines: string[];
+}
+
+function measureComparisonLayout(
   ctx: CanvasRenderingContext2D,
   w: number,
   comparison: LiftedComparisonResult
-): number {
-  const pad = 28;
-  const iconSize = 92;
-  const gap = 24;
-  const bodyW = w - pad * 2 - iconSize - gap;
+): ComparisonLayout {
+  const padY = 36;
+  const iconSize = 108;
+  const gapSm = 14;
+  const gapMd = 22;
+  const textW = w - 80;
 
-  ctx.font = `bold 34px ${FONT}`;
-  const nameH = measureWrapHeight(ctx, comparison.name, bodyW, 42);
   ctx.font = `28px ${FONT}`;
-  const tipH = measureWrapHeight(ctx, comparison.tip, bodyW, 36);
-  const textH = nameH + 36 + tipH;
-  const rowH = Math.max(iconSize, textH);
-  return rowH + pad * 2;
+  const tipLines = getWrapLines(ctx, comparison.tip, textW);
+
+  const height =
+    padY +
+    iconSize +
+    gapMd +
+    42 +
+    gapSm +
+    38 +
+    gapSm +
+    blockHeight(tipLines, 36) +
+    padY;
+
+  return { height, tipLines };
 }
 
-function drawComparisonCard(
+function drawComparisonCardCentered(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
   comparison: LiftedComparisonResult,
-  countLabel: string
+  countLabel: string,
+  layout: ComparisonLayout
 ): number {
-  const pad = 28;
-  const iconSize = 92;
-  const gap = 24;
-  const bodyX = x + pad + iconSize + gap;
-  const bodyW = w - pad * 2 - iconSize - gap;
+  const cx = x + w / 2;
+  const padY = 36;
+  const iconSize = 108;
+  const gapSm = 14;
+  const gapMd = 22;
+  const cardH = layout.height;
 
-  ctx.font = `bold 34px ${FONT}`;
-  const nameH = measureWrapHeight(ctx, comparison.name, bodyW, 42);
-  ctx.font = `28px ${FONT}`;
-  const tipH = measureWrapHeight(ctx, comparison.tip, bodyW, 36);
-  const textH = nameH + 36 + tipH;
-  const rowH = Math.max(iconSize, textH);
-  const cardH = rowH + pad * 2;
-
-  roundRect(ctx, x, y, w, cardH, 22);
-  ctx.fillStyle = 'rgba(17, 24, 39, 0.94)';
+  roundRect(ctx, x, y, w, cardH, 24);
+  ctx.fillStyle = 'rgba(17, 24, 39, 0.95)';
   ctx.fill();
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  const rowTop = y + pad;
-  const iconX = x + pad;
-  const iconY = rowTop + (rowH - iconSize) / 2;
+  let cursorY = y + padY;
+  const iconX = x + (w - iconSize) / 2;
 
-  roundRect(ctx, iconX, iconY, iconSize, iconSize, 18);
+  roundRect(ctx, iconX, cursorY, iconSize, iconSize, 20);
   ctx.fillStyle = ACCENT_SOFT;
   ctx.fill();
 
-  const iconCx = iconX + iconSize / 2;
-  const iconCy = iconY + iconSize / 2;
-  ctx.font = `52px ${FONT}`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(comparison.emoji, iconCx, iconCy);
-  ctx.textBaseline = 'alphabetic';
+  drawEmojiCentered(ctx, comparison.emoji, cx, cursorY + iconSize / 2, 58);
 
-  const textTop = rowTop + (rowH - textH) / 2;
-  ctx.textAlign = 'left';
-  ctx.font = `bold 34px ${FONT}`;
+  cursorY += iconSize + gapMd;
+  ctx.font = `bold 38px ${FONT}`;
   ctx.fillStyle = '#f9fafb';
-  wrapTextLeft(ctx, comparison.name, bodyX, textTop + 30, bodyW, 42);
+  cursorY = drawCenteredLines(ctx, [comparison.name], cx, cursorY + 32, 42);
 
-  ctx.font = `bold 30px ${FONT}`;
+  cursorY += gapSm;
+  ctx.font = `bold 34px ${FONT}`;
   ctx.fillStyle = ACCENT;
-  ctx.fillText(countLabel, bodyX, textTop + nameH + 34);
+  cursorY = drawCenteredLines(ctx, [countLabel], cx, cursorY + 6, 38);
 
+  cursorY += gapSm;
   ctx.font = `28px ${FONT}`;
   ctx.fillStyle = '#9ca3af';
-  wrapTextLeft(ctx, comparison.tip, bodyX, textTop + nameH + 68, bodyW, 36);
+  drawCenteredLines(ctx, layout.tipLines, cx, cursorY + 28, 36);
 
-  ctx.textAlign = 'center';
   return cardH;
 }
 
-function wrapTextLeft(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number
-) {
-  const lines = getWrapLines(ctx, text, maxWidth);
-  let cursorY = y;
-  for (const line of lines) {
-    ctx.fillText(line, x, cursorY);
-    cursorY += lineHeight;
-  }
+interface ShareLayout {
+  canvasH: number;
+  contentTop: number;
+  innerX: number;
+  innerW: number;
+  heroH: number;
+  heroLayout: HeroLayout;
+  comparisonH: number;
+  comparisonLayout: ComparisonLayout | null;
+  sectionGap: number;
+  footerH: number;
 }
 
-/** Share card — lifted-weight hero + comparison card for social sharing. */
-export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
-  const { headline, totalKg, closing, funLine, comparison, locale, labels } = input;
-  const canvas = document.createElement('canvas');
-  canvas.width = CARD_W;
-  canvas.height = CARD_H;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('Canvas unavailable');
+function computeShareLayout(
+  ctx: CanvasRenderingContext2D,
+  input: ShareCardInput
+): ShareLayout {
+  const innerX = OUTER_PAD + 20;
+  const innerW = CARD_W - innerX * 2;
+  const textW = innerW - 72;
 
-  drawPageBackground(ctx, CARD_W, CARD_H);
-
-  const frameX = 40;
-  const frameY = 40;
-  const frameW = CARD_W - frameX * 2;
-  const frameH = CARD_H - frameY * 2;
-  roundRect(ctx, frameX, frameY, frameW, frameH, 36);
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  const cx = CARD_W / 2;
-  const innerX = frameX + 44;
-  const innerW = frameW - 88;
-  const heroInnerW = innerW - 56;
-
-  const heroMetrics = measureHeroMetrics(ctx, headline, closing, funLine, heroInnerW);
-  const sectionGap = 28;
-  const comparisonH = comparison ? measureComparisonCard(ctx, innerW, comparison) : 0;
-  const footerH = 58;
+  const heroLayout = measureHeroLayout(
+    ctx,
+    input.headline,
+    input.closing,
+    input.funLine,
+    textW
+  );
+  const frameInnerPad = 20;
+  const sectionGap = 24;
+  const footerH = 64;
+  const comparisonLayout = input.comparison
+    ? measureComparisonLayout(ctx, innerW, input.comparison)
+    : null;
+  const comparisonH = comparisonLayout?.height ?? 0;
 
   const contentH =
-    heroMetrics.height +
-    (comparison ? sectionGap + comparisonH : 0) +
+    heroLayout.height +
+    (comparisonLayout ? sectionGap + comparisonH : 0) +
     sectionGap +
     footerH;
 
-  const contentTop = frameY + Math.max(48, (frameH - contentH) / 2);
+  const canvasH = OUTER_PAD * 2 + frameInnerPad * 2 + contentH;
 
-  drawHeroPanel(ctx, innerX, contentTop, innerW, heroMetrics.height);
-  drawHeroContent(ctx, cx, contentTop, heroMetrics, totalKg, locale);
+  return {
+    canvasH,
+    contentTop: OUTER_PAD + frameInnerPad,
+    innerX,
+    innerW,
+    heroH: heroLayout.height,
+    heroLayout,
+    comparisonH,
+    comparisonLayout,
+    sectionGap,
+    footerH,
+  };
+}
 
-  let cursorY = contentTop + heroMetrics.height + sectionGap;
-  if (comparison) {
-    const countLabel = labels.aboutCount(
-      formatVolumeKg(comparison.count, locale),
-      comparison.unit
+/** Share card — compact height, centered hero + comparison stack. */
+export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
+  const measureCanvas = document.createElement('canvas');
+  measureCanvas.width = CARD_W;
+  measureCanvas.height = 1;
+  const measureCtx = measureCanvas.getContext('2d');
+  if (!measureCtx) throw new Error('Canvas unavailable');
+
+  const layout = computeShareLayout(measureCtx, input);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CARD_W;
+  canvas.height = layout.canvasH;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas unavailable');
+
+  const cx = CARD_W / 2;
+  drawPageBackground(ctx, CARD_W, layout.canvasH);
+
+  roundRect(ctx, OUTER_PAD, OUTER_PAD, CARD_W - OUTER_PAD * 2, layout.canvasH - OUTER_PAD * 2, 32);
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.84)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.09)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const { contentTop } = layout;
+  drawHeroPanel(ctx, layout.innerX, contentTop, layout.innerW, layout.heroH);
+  drawHeroContent(ctx, cx, contentTop, layout.heroLayout, input.totalKg, input.locale);
+
+  let cursorY = contentTop + layout.heroH + layout.sectionGap;
+  if (input.comparison && layout.comparisonLayout) {
+    const countLabel = input.labels.aboutCount(
+      formatVolumeKg(input.comparison.count, input.locale),
+      input.comparison.unit
     );
-    cursorY += drawComparisonCard(ctx, innerX, cursorY, innerW, comparison, countLabel);
+    cursorY += drawComparisonCardCentered(
+      ctx,
+      layout.innerX,
+      cursorY,
+      layout.innerW,
+      input.comparison,
+      countLabel,
+      layout.comparisonLayout
+    );
   }
 
-  const footerY = contentTop + contentH - footerH + 36;
+  const footerY = contentTop + layout.heroH +
+    (layout.comparisonLayout ? layout.sectionGap + layout.comparisonH : 0) +
+    layout.sectionGap + 36;
+
   ctx.textAlign = 'center';
-  ctx.font = `bold 28px ${FONT}`;
+  ctx.font = `bold 30px ${FONT}`;
   ctx.fillStyle = '#22c55e';
   ctx.fillText('MachineFit', cx, footerY);
-  ctx.font = `24px ${FONT}`;
-  ctx.fillStyle = 'rgba(134, 239, 172, 0.82)';
-  ctx.fillText('#MacineFit #누적무게', cx, footerY + 34);
+  ctx.font = `26px ${FONT}`;
+  ctx.fillStyle = 'rgba(134, 239, 172, 0.85)';
+  ctx.fillText('#MacineFit #누적무게', cx, footerY + 36);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
