@@ -1,7 +1,7 @@
 {
   "title": "Share card typography, laurel wreath, alignment fixes",
   "summary": "Redesigned laurel wreath (U-shape with leaf pairs), enlarged typography, reduced side margins, vertically centered content above pinned footer, fixed MachineFit/tagline overlap.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "2ba36dd" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유 카드 9:16 — 월계관 모양, 텍스트 정렬, 비교 카드 위치, 푸터 겹침 없음, 글자 크기/가독성.",
   "fastChecks": ["npm run build --prefix frontend"],

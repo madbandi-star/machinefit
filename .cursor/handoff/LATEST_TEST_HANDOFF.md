@@ -1,6 +1,6 @@
 # Latest test handoff — Share card layout & typography fixes
 
-**Branch:** `main` · **Commit:** pending
+**Branch:** `main` · **Commit:** `2ba36dd`
 
 ## Change
 
