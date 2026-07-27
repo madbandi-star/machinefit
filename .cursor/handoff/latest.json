@@ -1,7 +1,7 @@
 {
   "title": "Lifted weight premium share card",
   "summary": "Achievement-style share PNG: mesh background, glass card, gradient KG stat ring, quote box, comparison pill chips, gradient MachineFit footer.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "6964860" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유 카드 — 프리미엄 업적 카드 느낌, 그라데이션 KG, 중앙 비교 섹션, SNS 자랑용 비주얼.",
   "fastChecks": ["npm run build --prefix frontend"],
