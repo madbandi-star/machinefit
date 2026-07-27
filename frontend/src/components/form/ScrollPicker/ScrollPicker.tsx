@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { buildPickerRange, findClosestPickerValue } from '@/utils/pickerRange';
 import { formatNumericValue, getDecimalPlaces } from '@/utils/numericStep';
 import '@/styles/components.css';
@@ -22,6 +22,13 @@ interface ScrollPickerProps {
   size?: 'default' | 'compact';
 }
 
+function findOptionIndex(options: number[], value: number): number {
+  if (options.length === 0) return 0;
+  const closest = findClosestPickerValue(options, value);
+  const index = options.indexOf(closest);
+  return index >= 0 ? index : 0;
+}
+
 export function ScrollPicker({
   value,
   onChange,
@@ -38,6 +45,7 @@ export function ScrollPicker({
   const itemHeight = size === 'compact' ? ITEM_HEIGHT_COMPACT : ITEM_HEIGHT_DEFAULT;
   const visibleRows = size === 'compact' ? VISIBLE_ROWS_COMPACT : VISIBLE_ROWS_DEFAULT;
   const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const syncingRef = useRef(false);
   const userInteractingRef = useRef(false);
   const scrollEndTimerRef = useRef<number | null>(null);
@@ -52,7 +60,7 @@ export function ScrollPicker({
         ? findClosestPickerValue(options, defaultValue)
         : options[Math.floor(options.length / 2)] ?? min;
 
-  const selectedIndex = Math.max(0, options.indexOf(resolvedValue));
+  const selectedIndex = findOptionIndex(options, resolvedValue);
 
   const formatOption = (option: number) => {
     if (formatValue) return formatValue(option);
@@ -60,19 +68,19 @@ export function ScrollPicker({
     return unit ? `${formatted} ${unit}` : formatted;
   };
 
-  const scrollToIndex = (index: number, behavior: ScrollBehavior = 'auto') => {
-    const container = containerRef.current;
-    if (!container) return;
+  const scrollSelectedIntoView = (behavior: ScrollBehavior = 'auto') => {
+    const item = itemRefs.current[selectedIndex];
+    if (!item) return;
 
     syncingRef.current = true;
-    container.scrollTo({ top: index * itemHeight, behavior });
+    item.scrollIntoView({ block: 'center', inline: 'nearest', behavior });
     window.setTimeout(() => {
       syncingRef.current = false;
-    }, behavior === 'smooth' ? 180 : 100);
+    }, behavior === 'smooth' ? 180 : 120);
   };
 
-  useEffect(() => {
-    scrollToIndex(selectedIndex);
+  useLayoutEffect(() => {
+    scrollSelectedIntoView('auto');
   }, [selectedIndex, options.length]);
 
   useEffect(() => {
@@ -87,31 +95,28 @@ export function ScrollPicker({
     const container = containerRef.current;
     if (!container || syncingRef.current || options.length === 0) return;
 
-    const rawIndex = Math.round(container.scrollTop / itemHeight);
-    const index = Math.max(0, Math.min(options.length - 1, rawIndex));
-    const next = options[index];
-
-    if (index !== selectedIndex) {
-      if (userInteractingRef.current) {
-        if (container.scrollTop !== index * itemHeight) {
-          scrollToIndex(index);
-        }
-        onChange(next);
-        userInteractingRef.current = false;
-      } else {
-        scrollToIndex(selectedIndex);
-      }
+    if (!userInteractingRef.current) {
+      scrollSelectedIntoView('auto');
       return;
     }
 
-    if (container.scrollTop !== index * itemHeight) {
-      scrollToIndex(index);
+    const rawIndex = Math.round(container.scrollTop / itemHeight);
+    const index = Math.max(0, Math.min(options.length - 1, rawIndex));
+    const next = options[index];
+    const item = itemRefs.current[index];
+
+    if (item) {
+      syncingRef.current = true;
+      item.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+      window.setTimeout(() => {
+        syncingRef.current = false;
+      }, 120);
     }
 
+    userInteractingRef.current = false;
     if (next !== resolvedValue) {
       onChange(next);
     }
-    userInteractingRef.current = false;
   };
 
   const handleScroll = () => {
@@ -160,6 +165,9 @@ export function ScrollPicker({
             return (
               <button
                 key={option}
+                ref={(element) => {
+                  itemRefs.current[index] = element;
+                }}
                 type="button"
                 role="option"
                 aria-selected={isSelected}
@@ -167,8 +175,13 @@ export function ScrollPicker({
                 style={{ height: itemHeight }}
                 onClick={() => {
                   userInteractingRef.current = true;
-                  scrollToIndex(index, 'smooth');
+                  itemRefs.current[index]?.scrollIntoView({
+                    block: 'center',
+                    inline: 'nearest',
+                    behavior: 'smooth',
+                  });
                   onChange(option);
+                  userInteractingRef.current = false;
                 }}
               >
                 {formatOption(option)}

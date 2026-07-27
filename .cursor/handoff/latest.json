@@ -1,22 +1,21 @@
 {
-  "title": "Recommend result voice count settings display",
-  "summary": "Fix recommendation result page voice count pickers showing wrong values (target 1, gap 0). History/recommend cards now read Settings directly with read-only pickers; ScrollPicker no longer emits spurious onChange on mount.",
-  "git": { "branch": "main", "commit": "ea9e538" },
+  "title": "Recommend result voice count editable + correct seed",
+  "summary": "Voice pickers on recommend/records pages seed from Settings after hydration, remain editable per card. ScrollPicker uses scrollIntoView so values no longer stick at minimums (1, 0.8, 1, 1).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/components/form/ScrollPicker/ScrollPicker.tsx",
-    "frontend/src/store/settings.store.ts"
+    "frontend/src/components/form/ScrollPicker/ScrollPicker.tsx"
   ],
-  "testFocus": "Search → machine → 추천받기 → result page voice count area shows same target reps, count interval, one-more count, hold time as My Page → Settings. Records history card unchanged.",
+  "testFocus": "Search → recommend result: voice pickers show Settings values (not 1/0.8/1/1), user can scroll to change. Records card same. Settings page pickers unchanged.",
   "fastChecks": [
     "npm run build --prefix frontend",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "/recommend/:machineCode/result?id=… — voice coach pickers match settings",
-    "/records — expanded card voice pickers still match settings"
+    "/recommend/:machineCode/result?id=… — voice pickers match settings and are scrollable",
+    "/records — expanded card voice pickers match settings and are scrollable"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Fresh recommend result page showed 목표횟수 1, 카운트간격 0 instead of Settings values.",
-  "toBe": "Recommend result and records cards display Settings voice count values; count sessions use them."
+  "asIs": "Recommend result voice pickers show minimum values; read-only attempt blocked edits.",
+  "toBe": "Seed from Settings, display correct values, user can edit per session/card."
 }

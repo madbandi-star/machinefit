@@ -36,6 +36,23 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { useSettingsStore } from '@/store/settings.store';
+
+interface VoicePickerSnapshot {
+  targetReps: number;
+  repGapMs: number;
+  oneMoreCount: number;
+  holdDurationSec: number;
+}
+
+function readVoicePickerSnapshot(): VoicePickerSnapshot {
+  const settings = useSettingsStore.getState();
+  return {
+    targetReps: settings.voiceCoachTargetReps,
+    repGapMs: settings.voiceCoachRepGapMs,
+    oneMoreCount: settings.voiceCoachOneMoreCount,
+    holdDurationSec: settings.voiceHoldDurationSec,
+  };
+}
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
@@ -267,50 +284,37 @@ export function WorkoutLogPanel({
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
 
-  // Voice-count pickers seed from Settings → 음성 카운트 (not recommendation volumeReps).
-  // Keep user edits local until machine/recommendation context changes.
-  // Use override-or-settings so first mount still picks up persist hydration
-  // (useState(settings) alone freezes SETTINGS_DEFAULTS before rehydrate).
+  // Voice-count pickers seed from Settings after persist hydration; user edits stay local per card.
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
-  const [voiceTargetUserOverride, setVoiceTargetUserOverride] = useState<{
-    context: string;
-    reps: number;
-  } | null>(null);
-  const [repGapOverride, setRepGapOverride] = useState<number | null>(null);
-  const [oneMoreCountOverride, setOneMoreCountOverride] = useState<number | null>(null);
-  const [holdDurationOverride, setHoldDurationOverride] = useState<number | null>(null);
-
-  const effectiveVoiceTargetReps =
-    voiceTargetUserOverride?.context === voiceTargetSeedContext
-      ? voiceTargetUserOverride.reps
-      : voiceCoachTargetReps;
-  const localRepGapMs = repGapOverride ?? voiceCoachRepGapMs;
-  const localOneMoreCount = oneMoreCountOverride ?? voiceCoachOneMoreCount;
-  const localHoldDurationSec = holdDurationOverride ?? voiceHoldDurationSec;
-
-  // Records + recommend result cards: always mirror My Page → Settings (read-only pickers).
-  const voiceSessionTargetReps = isHistory ? voiceCoachTargetReps : effectiveVoiceTargetReps;
-  const voiceSessionRepGapMs = isHistory ? voiceCoachRepGapMs : localRepGapMs;
-  const voiceSessionOneMoreCount = isHistory ? voiceCoachOneMoreCount : localOneMoreCount;
-  const voiceSessionHoldDurationSec = isHistory ? voiceHoldDurationSec : localHoldDurationSec;
   const settingsHydrated = usePersistHydration(useSettingsStore.persist);
-  const noopVoicePickerChange = useCallback(() => {}, []);
+  const [voicePickers, setVoicePickers] = useState<VoicePickerSnapshot | null>(null);
 
   useEffect(() => {
-    // New machine / recommendation / date — drop local voice-count edits.
-    setVoiceTargetUserOverride(null);
-    setRepGapOverride(null);
-    setOneMoreCountOverride(null);
-    setHoldDurationOverride(null);
-  }, [voiceTargetSeedContext]);
+    if (!settingsHydrated) return;
+    setVoicePickers(readVoicePickerSnapshot());
+  }, [voiceTargetSeedContext, settingsHydrated]);
 
-  const handleVoiceTargetRepsChange = useCallback(
-    (reps: number) => {
-      const next = Math.max(1, Math.min(30, Math.round(reps)));
-      setVoiceTargetUserOverride({ context: voiceTargetSeedContext, reps: next });
-    },
-    [voiceTargetSeedContext]
-  );
+  const handleVoiceTargetRepsChange = useCallback((reps: number) => {
+    const next = Math.max(1, Math.min(30, Math.round(reps)));
+    setVoicePickers((prev) => (prev ? { ...prev, targetReps: next } : prev));
+  }, []);
+
+  const handleVoiceRepGapMsChange = useCallback((ms: number) => {
+    setVoicePickers((prev) => (prev ? { ...prev, repGapMs: ms } : prev));
+  }, []);
+
+  const handleVoiceOneMoreCountChange = useCallback((count: number) => {
+    setVoicePickers((prev) => (prev ? { ...prev, oneMoreCount: count } : prev));
+  }, []);
+
+  const handleVoiceHoldDurationChange = useCallback((sec: number) => {
+    setVoicePickers((prev) => (prev ? { ...prev, holdDurationSec: sec } : prev));
+  }, []);
+
+  const voiceSessionTargetReps = voicePickers?.targetReps ?? voiceCoachTargetReps;
+  const voiceSessionRepGapMs = voicePickers?.repGapMs ?? voiceCoachRepGapMs;
+  const voiceSessionOneMoreCount = voicePickers?.oneMoreCount ?? voiceCoachOneMoreCount;
+  const voiceSessionHoldDurationSec = voicePickers?.holdDurationSec ?? voiceHoldDurationSec;
 
   const voiceCoach = useVoiceCoachSession({
     targetReps: voiceSessionTargetReps,
@@ -1380,14 +1384,16 @@ export function WorkoutLogPanel({
     />
   ) : null;
 
-  const voiceCoachPanel = showVoiceCoach && settingsHydrated ? (
+  const voiceCoachPanel =
+    showVoiceCoach && settingsHydrated && voicePickers ? (
     <VoiceCoachPanel
+      key={voiceTargetSeedContext}
       enabled={voiceCoachEnabled}
       onEnabledChange={setVoiceCoachEnabled}
-      targetReps={voiceSessionTargetReps}
-      onTargetRepsChange={isHistory ? noopVoicePickerChange : handleVoiceTargetRepsChange}
-      repGapMs={voiceSessionRepGapMs}
-      onRepGapMsChange={isHistory ? noopVoicePickerChange : setRepGapOverride}
+      targetReps={voicePickers.targetReps}
+      onTargetRepsChange={handleVoiceTargetRepsChange}
+      repGapMs={voicePickers.repGapMs}
+      onRepGapMsChange={handleVoiceRepGapMsChange}
       prepCount={voiceCoachPrepCount}
       onPrepCountChange={setVoiceCoachPrepCount}
       voicePack={voiceCoachPack}
@@ -1396,12 +1402,12 @@ export function WorkoutLogPanel({
       onCountModeChange={setVoiceCountMode}
       flowMode={voiceCoachFlowMode}
       onFlowModeChange={setVoiceCoachFlowMode}
-      holdDurationSec={voiceSessionHoldDurationSec}
-      onHoldDurationSecChange={isHistory ? noopVoicePickerChange : setHoldDurationOverride}
+      holdDurationSec={voicePickers.holdDurationSec}
+      onHoldDurationSecChange={handleVoiceHoldDurationChange}
       oneMoreEnabled={voiceCoachOneMore}
-      onOneMoreChange={isHistory ? noopVoicePickerChange : setVoiceCoachOneMore}
-      oneMoreCount={voiceSessionOneMoreCount}
-      onOneMoreCountChange={isHistory ? noopVoicePickerChange : setOneMoreCountOverride}
+      onOneMoreChange={isHistory ? () => {} : setVoiceCoachOneMore}
+      oneMoreCount={voicePickers.oneMoreCount}
+      onOneMoreCountChange={handleVoiceOneMoreCountChange}
       autoStartAfterRest={voiceCoachAutoAfterRest}
       onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
       restTipsEnabled={voiceRestTipsEnabled}
@@ -1421,7 +1427,6 @@ export function WorkoutLogPanel({
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
       hideLiveDisplay={workoutFullscreenDisplay && voiceCoach.isRunning}
-      pickersReadOnly={isHistory}
     />
   ) : null;
 
