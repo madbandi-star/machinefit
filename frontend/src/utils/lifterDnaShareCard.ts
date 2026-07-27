@@ -23,7 +23,7 @@ const FONT =
 const GREEN = '#4ade80';
 const WHITE = '#f8fafc';
 const GRAY = '#94a3b8';
-const FOOTER_MIN_H = 72;
+const FOOTER_MIN_H = 56;
 
 function starsText(n: number): string {
   const filled = Math.max(0, Math.min(5, n));
@@ -361,9 +361,9 @@ function drawFooter(
   labels: DnaShareCardLabels
 ) {
   const right = left + width;
-  const midY = topY + height / 2;
   const markSize = 28;
-  const logoRowY = midY - 4;
+  // Top-align brand row so quote→footer doesn't look padded.
+  const logoRowY = topY + markSize;
 
   drawMachineFitMark(ctx, left, logoRowY - markSize + 4, markSize);
 
@@ -382,17 +382,19 @@ function drawFooter(
   ctx.fillStyle = GRAY;
   ctx.fillText(labels.tagline, left, logoRowY + 28);
 
+  const tags = labels.hashtags.split(/\s+/).filter(Boolean);
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   ctx.font = `600 22px ${FONT}`;
   ctx.fillStyle = GREEN;
-  const tags = labels.hashtags.split(/\s+/).filter(Boolean);
-  const tagStartY = midY - ((tags.length - 1) * 26) / 2;
+  const tagsBlockH = Math.max(0, (tags.length - 1) * 26);
+  const tagStartY = logoRowY + 10 - tagsBlockH / 2;
   tags.forEach((tag, i) => {
     ctx.fillText(tag, right, tagStartY + i * 26);
   });
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
+  void height;
 }
 
 /** Share card — vertically balanced hero layout for social sharing. */
