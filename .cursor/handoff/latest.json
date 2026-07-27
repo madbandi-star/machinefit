@@ -1,7 +1,7 @@
 {
   "title": "Lifted weight share card redesign",
   "summary": "Share PNG now mirrors the on-page hero (emoji, headline, KG total, closing, fun line) plus a styled comparison card, green glass panels, and balanced vertical layout.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c2257ee" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
