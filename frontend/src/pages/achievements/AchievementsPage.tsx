@@ -195,6 +195,7 @@ export function AchievementsPage() {
 
   const handleShare = async (item: AchievementProgressItem) => {
     try {
+      const earnedAtFormatted = formatEarnedAt(item.earnedAt, locale);
       const blob = await buildAchievementShareCard({
         emoji: item.obscured ? '❓' : item.def.emoji,
         name: item.obscured ? '???' : loc(item.def.name, locale),
@@ -204,7 +205,14 @@ export function AchievementsPage() {
         rarity: t(`achievements.rarity.${item.rarity}`),
         xp: item.def.xp,
         locale,
-        displayName: user?.displayName ?? 'MachineFit',
+        labels: {
+          badge: t('achievements.shareBadge'),
+          earnedAt: earnedAtFormatted
+            ? t('achievements.earnedAt', { datetime: earnedAtFormatted })
+            : '',
+          tagline: t('achievements.shareTagline'),
+          hashtags: t('achievements.shareHashtags'),
+        },
       });
       const file = new File([blob], 'machinefit-achievement.png', { type: 'image/png' });
       const text = t('achievements.shareText', {

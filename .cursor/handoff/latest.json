@@ -1,11 +1,17 @@
 {
-  "title": "Lifted share card — smaller size + comparison padding",
-  "summary": "Card 720×900. Comparison box: extra top pad above section title, extra bottom pad below tip text.",
-  "git": { "branch": "main", "commit": "a6d9fe9" },
-  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "공유 카드 720×900, '이 무게는 어느 정도?' 위 여백, tip 텍스트 아래 여백.",
+  "title": "Achievement share card redesign + lifted hero spacing",
+  "summary": "Achievement card 720×900 DNA/lifted style with earnedAt. Lifted card: hero KG + closing moved up, tighter headline gap.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/utils/achievementShareCard.ts",
+    "frontend/src/pages/achievements/AchievementsPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/utils/liftedShareCard.ts"
+  ],
+  "testFocus": "업적 공유카드(720×900, 획득일시). 누적무게 공유카드 KG/를 들어올렸습니다 위쪽 여백 축소.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "780×975, 비교 섹션 상하 여백 좁음.",
-  "toBe": "720×900, 섹션 타이틀 위·tip 아래 여백 추가."
+  "asIs": "업적 카드 1080×1350 구형, 획득일시 없음. 누적무게 KG 위 여백 과다.",
+  "toBe": "업적 DNA 스타일 720×900 + 획득일시. KG·closing 상향."
 }

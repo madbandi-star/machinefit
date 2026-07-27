@@ -1,17 +1,23 @@
-# Latest test handoff — Share card size + comparison padding
+# Latest test handoff — Achievement card + lifted hero spacing
 
-**Branch:** `main` · **Commit:** `a6d9fe9`
+**Branch:** `main` · **Commit:** pending
 
 ## Change
 
-1. **카드 크기** — 780×975 → **720×900**
-2. **"이 무게는 어느 정도?"** — 위 여백 +8px (`COMP_SECTION_TOP_PAD`)
-3. **tip ("헤비 볼링공 수준이에요.")** — 아래 여백 +10px (`COMP_TIP_BOTTOM_PAD`)
+### 업적 공유카드
+- 720×900 (누적무게와 동일)
+- DNA/누적무게 스타일 배경·패널·푸터
+- **획득일시** 표시 추가
+
+### 누적무게 공유카드
+- **210 KG** 영역 위 여백 축소 (헤드라인↔KG 간격 8px)
+- **"를 들어올렸습니다."** KG 숫자 기준으로 함께 상향
 
 ## Test
-
-누적무게 → 공유 카드 만들기
 
 ```bash
 npm run build --prefix frontend
 ```
+
+- 업적 → 공유하기
+- 누적무게 → 공유 카드 만들기

@@ -38,6 +38,11 @@ const HEADLINE_EMOJI_SIZE = 35;
 const HEADLINE_TEXT_SIZE = 26;
 const HEADLINE_EMOJI_GAP = 10;
 
+/** Hero KG stat — tight vertical layout */
+const HERO_ZONE_H = 114;
+const HERO_NUM_BASELINE_OFFSET = 70;
+const HERO_CLOSING_AFTER_NUM = 28;
+
 /** Comparison emoji ring */
 const COMP_RING_R = 62;
 const COMP_EMOJI_SIZE = 70;
@@ -284,8 +289,8 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 44) : [];
 
   const badgeBlock = measureBadgeBlock();
-  const headlineBlock = measureHeadlineRow(ctx, input.headline, input.labelName) + 16;
-  const heroBlock = 138;
+  const headlineBlock = measureHeadlineRow(ctx, input.headline, input.labelName) + 8;
+  const heroBlock = HERO_ZONE_H;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
   const footerH = 56;
 
@@ -418,7 +423,7 @@ function drawHeroKg(
   closing: string,
   locale: string
 ): number {
-  const zoneH = 138;
+  const zoneH = HERO_ZONE_H;
   const numText = formatVolumeKg(totalKg, locale);
 
   ctx.font = `900 118px ${FONT}`;
@@ -428,15 +433,15 @@ function drawHeroKg(
   const gap = 10;
   const totalW = numW + gap + unitW;
   const nx = cx - totalW / 2;
-  const numBaseline = topY + 92;
+  const numBaseline = topY + HERO_NUM_BASELINE_OFFSET;
 
-  const glow = ctx.createRadialGradient(cx, numBaseline - 28, 0, cx, numBaseline - 28, 160);
+  const glow = ctx.createRadialGradient(cx, numBaseline - 26, 0, cx, numBaseline - 26, 150);
   glow.addColorStop(0, 'rgba(74, 222, 128, 0.16)');
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
-  ctx.fillRect(cx - 175, topY, 350, zoneH);
+  ctx.fillRect(cx - 170, topY, 340, zoneH);
 
-  drawLaurelWreath(ctx, cx, numBaseline - 24, totalW / 2 + 36, 50);
+  drawLaurelWreath(ctx, cx, numBaseline - 22, totalW / 2 + 36, 48);
 
   const grad = ctx.createLinearGradient(nx, topY + 40, nx + numW, numBaseline);
   grad.addColorStop(0, '#bbf7d0');
@@ -456,7 +461,7 @@ function drawHeroKg(
   ctx.textAlign = 'center';
   ctx.font = `400 22px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
-  ctx.fillText(closing, cx, topY + zoneH - 10);
+  ctx.fillText(closing, cx, numBaseline + HERO_CLOSING_AFTER_NUM);
 
   return zoneH;
 }
@@ -610,7 +615,7 @@ function drawPosterContent(
   y += measureBadgeBlock();
 
   const headlineH = drawHeadlineWithEmoji(ctx, cx, y + HEADLINE_TEXT_SIZE, input.headline, input.labelName);
-  y += headlineH + 16;
+  y += headlineH + 8;
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
 
