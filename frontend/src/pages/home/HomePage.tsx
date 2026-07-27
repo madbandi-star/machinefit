@@ -1,6 +1,4 @@
-import { useTranslation } from 'react-i18next';
 import { HomeHero } from '@/components/home/HomeHero/HomeHero';
-import { QuickSearchBar } from '@/components/home/QuickSearchBar/QuickSearchBar';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
@@ -12,7 +10,6 @@ import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
 
 export function HomePage() {
-  const { t } = useTranslation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const showHero = !isAuthenticated || !isProfileReadyForRecommend(user);
@@ -27,10 +24,6 @@ export function HomePage() {
           <MemberSelector />
         </div>
       )}
-
-      <section className="home-search-section" aria-label={t('pages.home.quickActionsLabel')}>
-        <QuickSearchBar />
-      </section>
 
       <InstallPromptBanner />
 
