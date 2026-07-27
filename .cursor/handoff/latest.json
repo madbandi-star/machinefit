@@ -1,14 +1,13 @@
 {
-  "title": "Achievement share card — huge emoji + split earned date",
-  "summary": "Hero emoji 112px with 118px glow. Earned-at meta column shows date and time on separate centered lines with blank line gap.",
-  "git": { "branch": "main", "commit": "ef2a46d" },
+  "title": "Achievement share card — larger emoji + tighter name gap",
+  "summary": "Hero emoji 152px with 160px glow. Name text starts just below emoji glyph (not below full glow), 4px gap.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/achievementShareCard.ts",
-    "frontend/src/pages/achievements/AchievementsPage.tsx"
+    "frontend/src/utils/achievementShareCard.ts"
   ],
-  "testFocus": "업적 공유카드 — 대표 이모지 매우 크게, 획득일시 날짜/시간 2줄 중앙정렬.",
+  "testFocus": "업적 공유카드 — 이모지 더 크게(152px), 이모지와 제목 텍스트 간격 좁힘.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "이모지 64px, 획득일시 한 줄.",
-  "toBe": "이모지 112px, 획득일시 2026년… / (한줄) / 오후… 형식."
+  "asIs": "이모지 112px, 글로우 전체 높이만큼 아래 여백 후 제목.",
+  "toBe": "이모지 152px, 이모지 하단 바로 아래 제목(4px 간격)."
 }

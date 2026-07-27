@@ -32,8 +32,10 @@ const BADGE_EMOJI_SIZE = 42;
 const BADGE_TEXT_SIZE = 35;
 const BADGE_PILL_H = 52;
 
-const HERO_EMOJI_SIZE = 112;
-const EMOJI_GLOW_R = 118;
+const HERO_EMOJI_SIZE = 152;
+const EMOJI_GLOW_R = 160;
+const GAP_EMOJI_NAME = 4;
+const GAP_NAME_DESC = 4;
 
 const META_PANEL_H = 118;
 const FOOTER_H = 56;
@@ -293,8 +295,8 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: AchievementShareInp
   const descPanelH = blockH(descLines, 28) + 24;
 
   const badgeBlock = BADGE_PILL_H + 12;
-  const emojiBlock = EMOJI_GLOW_R * 2 + 8;
-  const gapNameDesc = 8;
+  const emojiBlock = EMOJI_GLOW_R + HERO_EMOJI_SIZE / 2 + GAP_EMOJI_NAME;
+  const gapNameDesc = GAP_NAME_DESC;
   const gapDescMeta = 12;
 
   const contentH =
@@ -492,10 +494,10 @@ function drawPosterContent(
   ctx.fillStyle = WHITE;
   ctx.fillText(input.emoji, cx, emojiCy);
   ctx.textBaseline = 'alphabetic';
-  y += EMOJI_GLOW_R * 2 + 8;
+  y += EMOJI_GLOW_R + HERO_EMOJI_SIZE / 2 + GAP_EMOJI_NAME;
 
   drawCenteredLines(ctx, metrics.nameLines, cx, y, 40, WHITE, `700 36px ${FONT}`);
-  y += metrics.nameBlockH + 8;
+  y += metrics.nameBlockH + GAP_NAME_DESC;
 
   drawDescPanel(ctx, cx, y, innerW, metrics.descPanelH, metrics.descLines);
   y += metrics.descPanelH + 12;
