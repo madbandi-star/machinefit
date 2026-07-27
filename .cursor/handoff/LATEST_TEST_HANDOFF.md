@@ -1,23 +1,19 @@
-# Latest test handoff — Lifter DNA share card layout
+# Latest test handoff — Lifter DNA share card balance
 
-**Branch:** `main`
+**Branch:** `main` · **Commit:** `2737fa5`
 
 ## Change
 
-운동성향 **공유 카드** PNG를 화면 hero 카드와 동일 레이아웃으로 재작성.
+공유 카드 콘텐츠 **세로 중앙 정렬** + 하단 여백 채움.
 
-- 🤖 MachineFit AI 분석 완료
-- 캐릭터 이모지 + shareHeadline + tagline(녹색)
-- 신뢰도 별점
-- AI 신뢰도 / 분석 기준 / 분석일 3열
-- oneLiner 인용문
-- glass 카드 + DNA 페이지 그radient 배경
+- 이모지 글로우
+- 메타 3열 → inset 패널
+- oneLiner → 인용 박스
+- 하단 MachineFit + 해시태그
 
-## Test focus
+## Test
 
-운동성향 → **공유 카드 만들기** → 저장/공유 이미지가 화면 카드와 동일한지
-
-## Fast checks
+운동성향 → 공유 카드 — 위쪽 쏠림 없이 카드 전체 균형 확인
 
 ```bash
 npm run build --prefix frontend
