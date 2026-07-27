@@ -112,14 +112,14 @@ export function LoginPage() {
 
   if (!credentialsHydrated || autoLoggingIn) {
     return (
-      <PageShell title={t('nav.login')}>
+      <PageShell>
         <p className="auth-page__loading">{t('auth.autoLoggingIn')}</p>
       </PageShell>
     );
   }
 
   return (
-    <PageShell title={t('nav.login')}>
+    <PageShell>
       <section className="auth-hero card" aria-label={t('auth.loginHeroLabel')}>
         <div className="auth-hero__head">
           <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
