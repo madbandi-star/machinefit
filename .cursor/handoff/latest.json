@@ -1,7 +1,7 @@
 {
   "title": "Share card quote panel, comparison spacing, gym background",
   "summary": "Slogan uses DNA-style quote panel (34px, tight curly quotes). Comparison card: extra top line, larger emoji, tighter pill spacing. Subtle gym silhouettes on page and card background.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9c0c2d3" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유 카드 — 슬로건 인용 박스, 비교 카드 여백/이모지 크기, 은은한 헬스장 배경.",
   "fastChecks": ["npm run build --prefix frontend"],
