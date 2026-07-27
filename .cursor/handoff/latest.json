@@ -1,17 +1,12 @@
 {
-  "title": "Lifted weight share card poster renewal",
-  "summary": "Full SNS poster redesign: single glass card, 148px hero KG, laurel glow, slogan quotes, comparison inset, 1:1 default + optional 9:16 via aspectRatio.",
-  "git": { "branch": "main", "commit": "639da5f" },
-  "changedFiles": [
-    "frontend/src/utils/liftedShareCard.ts",
-    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
-  ],
-  "testFocus": "누적무게 공유 카드 — 포스터형 1080×1080, KG 최대·여백·은은한 헬스장 BG, 비교 카드, #MachineFit 푸터.",
+  "title": "Share card typography, laurel wreath, alignment fixes",
+  "summary": "Redesigned laurel wreath (U-shape with leaf pairs), enlarged typography, reduced side margins, vertically centered content above pinned footer, fixed MachineFit/tagline overlap.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
+  "testFocus": "누적무게 공유 카드 9:16 — 월계관 모양, 텍스트 정렬, 비교 카드 위치, 푸터 겹침 없음, 글자 크기/가독성.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["공유 카드 PNG 퀄리티·SNS 공유 확인"],
+  "productionChecks": ["공유 카드 PNG 생성 후 시각 확인 (1080×1920)"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "박스 쌓기형 UI.",
-  "toBe": "Apple/Nike급 프리미엄 포스터 공유 카드."
+  "asIs": "이상한 월계관, 작은 글자, 넓은 여백, 비교 박스 상단 쏠림, 푸터 텍스트 겹침.",
+  "toBe": "정상 월계관, 큰 가독성 좋은 타이포, 중앙 정렬된 비교 섹션, 분리된 푸터."
 }
