@@ -75,6 +75,7 @@ export function LiftedWeightPage() {
     try {
       const blob = await buildLiftedShareCard({
         headline: data.headline,
+        labelName: data.labelName,
         totalKg: data.totalKg,
         closing: t('liftedWeight.closing'),
         funLine: data.funLine,
@@ -82,6 +83,11 @@ export function LiftedWeightPage() {
         locale,
         labels: {
           aboutCount: (count, unit) => t('liftedWeight.aboutCount', { count, unit }),
+          badge: t('liftedWeight.shareBadge'),
+          comparisonSection: t('liftedWeight.shareComparisonSection'),
+          tagline: t('liftedWeight.shareTagline'),
+          shareCta: t('liftedWeight.shareCta'),
+          hashtags: t('liftedWeight.shareHashtags'),
         },
       });
       const file = new File([blob], 'machinefit-lifted.png', { type: 'image/png' });

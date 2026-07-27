@@ -1,12 +1,17 @@
 {
-  "title": "Lifted weight premium share card",
-  "summary": "Achievement-style share PNG: mesh background, glass card, gradient KG stat ring, quote box, comparison pill chips, gradient MachineFit footer.",
-  "git": { "branch": "main", "commit": "6964860" },
-  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유 카드 — 프리미엄 업적 카드 느낌, 그라데이션 KG, 중앙 비교 섹션, SNS 자랑용 비주얼.",
+  "title": "Lifted share card match sample design",
+  "summary": "Share PNG rebuilt to match user reference: trophy badge, avatar ring, laurel stat panel, green quotes, comparison circle, split footer with MachineFit mark.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/utils/liftedShareCard.ts",
+    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
+  ],
+  "testFocus": "누적무게 공유 카드 — 첨부 샘플과 동일 레이아웃(🏆배지, 월계관 KG, 인용문, 볼링공 중앙, 푸터 좌우).",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["누적무게 → 공유 카드 만들기 → PNG 퀄리티 확인"],
+  "productionChecks": ["운동성향 → 공유 카드 PNG vs 샘플 비교"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "기능적이지만 밋밋한 2박스 스택.",
-  "toBe": "Strava/Nike급 업적 공유 카드 UI."
+  "asIs": "이전 프리미엄 디자인이 샘플과 불일치.",
+  "toBe": "ChatGPT 샘플 카드 레이아웃/스타일 재현."
 }
