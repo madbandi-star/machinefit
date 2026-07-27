@@ -1,16 +1,15 @@
 {
-  "title": "Voice target reps sync with fit feedback reps",
-  "summary": "Voice coach 목표 횟수 follows 추천횟수 on 잘맞음 and 조정횟수 on adjustment mode; +/- and voice picker stay in sync bidirectionally in adjustment mode.",
+  "title": "Lifter DNA share card matches hero layout",
+  "summary": "Workout tendency share image now mirrors on-screen hero: eyebrow, emoji, headline, tagline, stars, 3-col meta, one-liner quote in glass card.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
+    "frontend/src/utils/lifterDnaShareCard.ts",
+    "frontend/src/pages/lifter-dna/LifterDnaPage.tsx"
   ],
-  "testFocus": "잘맞음 → voice 목표=추천횟수; 조정필요 → voice 목표=조정횟수; +/- 조정횟수 ↔ voice 목표 양방향; gap/one-more/hold still from settings.",
-  "fastChecks": ["npm run build --prefix frontend", "npm run test:smoke:changed"],
-  "productionChecks": ["/recommend/.../result — fit buttons sync voice target reps"],
+  "testFocus": "운동성향 → 공유 카드: image matches hero card layout (not traits list / MachineFit footer).",
+  "fastChecks": ["npm run build --prefix frontend"],
+  "productionChecks": ["/lifter-dna — share card PNG layout"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Voice 목표 횟수 only from settings, disconnected from fit feedback reps.",
-  "toBe": "Linked to 추천/조정 횟수 per fit rating; bidirectional in adjustment mode."
+  "asIs": "Share card showed traits list and different layout from screen.",
+  "toBe": "Share PNG matches dna-hero card design from capture."
 }

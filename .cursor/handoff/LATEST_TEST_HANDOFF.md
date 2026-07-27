@@ -1,29 +1,24 @@
-# Latest test handoff — Voice 목표 횟수 ↔ 추천/조정 연동
+# Latest test handoff — Lifter DNA share card layout
 
 **Branch:** `main`
 
 ## Change
 
-음성카운트 **목표 횟수**를 fit feedback 횟수와 연동.
+운동성향 **공유 카드** PNG를 화면 hero 카드와 동일 레이아웃으로 재작성.
 
-| 동작 | 결과 |
-|------|------|
-| 추천값 잘맞음 | 목표 횟수 = 추천횟수 |
-| 셋팅값 조정필요 | 목표 횟수 = 조정횟수 |
-| 조정횟수 ± | 목표 횟수 같이 변경 |
-| 조정 모드에서 목표 횟수 scroll | 조정횟수 같이 변경 |
-
-카운트 간격·원모어·버텨 시간은 설정값 유지.
+- 🤖 MachineFit AI 분석 완료
+- 캐릭터 이모지 + shareHeadline + tagline(녹색)
+- 신뢰도 별점
+- AI 신뢰도 / 분석 기준 / 분석일 3열
+- oneLiner 인용문
+- glass 카드 + DNA 페이지 그radient 배경
 
 ## Test focus
 
-1. 추천 결과 — 잘맞음 / 조정필요 각각 목표 횟수 확인
-2. 조정 모드 ± ↔ voice picker 양방향
-3. 기록 카드 동일
+운동성향 → **공유 카드 만들기** → 저장/공유 이미지가 화면 카드와 동일한지
 
 ## Fast checks
 
 ```bash
 npm run build --prefix frontend
-npm run test:smoke:changed
 ```

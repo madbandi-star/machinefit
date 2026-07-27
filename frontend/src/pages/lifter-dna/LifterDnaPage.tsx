@@ -107,8 +107,14 @@ export function LifterDnaPage() {
     try {
       const blob = await buildLifterDnaShareCard({
         snapshot: data,
-        locale,
-        displayName: user?.displayName ?? 'MachineFit',
+        labels: {
+          complete: t('lifterDna.complete'),
+          confidence: t('lifterDna.confidence'),
+          basis: t('lifterDna.basis'),
+          basisValue: t('lifterDna.basisValue', { count: data.analyzedLogs }),
+          analyzedAt: t('lifterDna.analyzedAt'),
+        },
+        analyzedDate,
       });
       const file = new File([blob], 'machinefit-lifter-dna.png', { type: 'image/png' });
       const text = `${data.shareHeadline}\nAI ${data.confidence}%\n#MachineFit #LifterDNA`;
