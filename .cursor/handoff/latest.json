@@ -1,7 +1,7 @@
 {
   "title": "Lifter DNA share card vertical alignment",
   "summary": "Meta panel (신뢰도/분석 기준/분석일) text vertically centered in its box; overall share card block shifted down with corrected height math so top/bottom margins feel balanced.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "d270fea" },
   "changedFiles": ["frontend/src/utils/lifterDnaShareCard.ts"],
   "testFocus": "공유 PNG — 메타 3열이 패널 안에서 위쪽에 붙지 않고 세로 중앙; 카드 전체가 위로 쏠리지 않고 상하 여백 균형.",
   "fastChecks": ["npm run build --prefix frontend"],
