@@ -56,6 +56,7 @@ function sessionVolume(log: WorkoutLog, load?: WorkoutLoadContext | null): numbe
     recommendedWeight: load?.recommendedWeight,
     adjustedReps: load?.adjustedReps,
     recommendedReps: load?.recommendedReps,
+    ...(load?.fitRating !== undefined ? { fitRating: load.fitRating } : {}),
   });
 }
 

@@ -2,12 +2,18 @@ import type { RecommendationSettings, WorkoutLog } from '@machinefit/shared';
 import { computePerformedTotalWeightKg } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
+import { feedbackRepository } from '../repositories/feedback.repository.js';
 
 export interface WorkoutLoadContext {
   adjustedWeight?: number | null;
   recommendedWeight?: number | null;
   adjustedReps?: number | null;
   recommendedReps?: number | null;
+  /**
+   * Fit feedback for volume reps (same rule as history 총볼륨).
+   * Present when the log has a recommendationId (null = 미선택).
+   */
+  fitRating?: 'good' | 'bad' | null;
 }
 
 function repsFromSettings(settings?: Partial<RecommendationSettings> | null): number | null {
@@ -26,9 +32,20 @@ function parseJsonSettings(value: unknown): Partial<RecommendationSettings> {
   return value as Partial<RecommendationSettings>;
 }
 
+function scopeKey(gymId: string, memberId: string): string {
+  return `${gymId}|${memberId}`;
+}
+
+function prefLookupKey(gymId: string, memberId: string, machineCode: string): string {
+  return `${scopeKey(gymId, memberId)}|${machineCode}`;
+}
+
 /**
  * Batch-resolve adjusted (preferences) + recommended (recommendation snapshot)
- * load fields for workout logs so total weight uses adjusted-first rules.
+ * + fit rating so performed volume uses weight × reps (총볼륨), matching history.
+ *
+ * When `options.gymId` / `memberId` are omitted, preferences are loaded per
+ * each log's own gym/member scope (needed for full-user recompute).
  */
 export async function resolveWorkoutLoadContexts(
   userId: string,
@@ -47,23 +64,41 @@ export async function resolveWorkoutLoadContexts(
     ),
   ];
 
-  const preferencesByMachine: Record<string, Partial<RecommendationSettings>> = {};
+  const scopes: { gymId: string; memberId: string }[] = [];
+  if (options?.gymId && options?.memberId) {
+    scopes.push({ gymId: options.gymId, memberId: options.memberId });
+  } else {
+    const seen = new Set<string>();
+    for (const log of logs) {
+      if (!log.gymId || !log.memberId) continue;
+      const key = scopeKey(log.gymId, log.memberId);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      scopes.push({ gymId: log.gymId, memberId: log.memberId });
+    }
+  }
+
+  const prefsByLookup = new Map<string, Partial<RecommendationSettings>>();
   const recommendationById = new Map<
     string,
     { recommendedWeightKg?: number; recommendedRepsMin?: number; recommendedRepsMax?: number }
   >();
 
-  const prefsPromise =
-    options?.gymId && options?.memberId && machineCodes.length > 0
-      ? preferenceRepository
-          .findByUserMachineCodes(userId, machineCodes, {
-            gymId: options.gymId,
-            memberId: options.memberId,
-          })
-          .catch(() => null)
-      : Promise.resolve(null);
-
   const pool = getPool();
+  const prefsPromise =
+    machineCodes.length > 0 && scopes.length > 0
+      ? Promise.all(
+          scopes.map((scope) =>
+            preferenceRepository
+              .findByUserMachineCodes(userId, machineCodes, scope)
+              .then((batch) => ({ scope, batch }))
+              .catch(() => ({ scope, batch: null as Awaited<
+                ReturnType<typeof preferenceRepository.findByUserMachineCodes>
+              > | null }))
+          )
+        )
+      : Promise.resolve([]);
+
   const recsPromise =
     pool && recommendationIds.length > 0
       ? pool.query<{
@@ -79,11 +114,29 @@ export async function resolveWorkoutLoadContexts(
         )
       : Promise.resolve(null);
 
-  const [batch, recResult] = await Promise.all([prefsPromise, recsPromise]);
+  const feedbackPromise =
+    recommendationIds.length > 0
+      ? feedbackRepository.findByUserRecommendationIds(userId, recommendationIds).catch(
+          () =>
+            Object.fromEntries(
+              recommendationIds.map((id) => [id, null])
+            ) as Record<string, 'good' | 'bad' | null>
+        )
+      : Promise.resolve({} as Record<string, 'good' | 'bad' | null>);
 
-  if (batch) {
+  const [prefBatches, recResult, feedbackByRecommendation] = await Promise.all([
+    prefsPromise,
+    recsPromise,
+    feedbackPromise,
+  ]);
+
+  for (const { scope, batch } of prefBatches) {
+    if (!batch) continue;
     for (const code of machineCodes) {
-      preferencesByMachine[code] = batch[code]?.customSettings ?? {};
+      prefsByLookup.set(
+        prefLookupKey(scope.gymId, scope.memberId, code),
+        batch[code]?.customSettings ?? {}
+      );
     }
   }
 
@@ -100,16 +153,26 @@ export async function resolveWorkoutLoadContexts(
   }
 
   for (const log of logs) {
-    const adjusted = preferencesByMachine[log.machineCode] ?? {};
+    const gymId = options?.gymId ?? log.gymId;
+    const memberId = options?.memberId ?? log.memberId;
+    const adjusted =
+      gymId && memberId
+        ? (prefsByLookup.get(prefLookupKey(gymId, memberId, log.machineCode)) ?? {})
+        : {};
     const recommended = log.recommendationId
       ? recommendationById.get(log.recommendationId)
       : undefined;
+    const fitRating =
+      log.recommendationId != null
+        ? (feedbackByRecommendation[log.recommendationId] ?? null)
+        : undefined;
 
     result.set(log.id, {
       adjustedWeight: adjusted.recommendedWeightKg,
       recommendedWeight: recommended?.recommendedWeightKg,
       adjustedReps: repsFromSettings(adjusted),
       recommendedReps: repsFromSettings(recommended ?? null),
+      ...(fitRating !== undefined ? { fitRating } : {}),
     });
   }
 
@@ -128,6 +191,7 @@ export function computeLogTotalWeightKg(
     recommendedWeight: load?.recommendedWeight,
     adjustedReps: load?.adjustedReps,
     recommendedReps: load?.recommendedReps,
+    ...(load?.fitRating !== undefined ? { fitRating: load.fitRating } : {}),
   });
 }
 

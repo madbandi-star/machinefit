@@ -77,6 +77,8 @@ export function performedVolumeFromLog(input: {
   recommendedWeight?: number | null;
   adjustedReps?: number | null;
   recommendedReps?: number | null;
+  /** Same fit rule as history 총볼륨 when provided (including null). */
+  fitRating?: 'good' | 'bad' | null;
 }): number {
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
   const hasLogged = weights.some((w) => typeof w === 'number' && Number.isFinite(w) && w > 0);
@@ -90,6 +92,7 @@ export function performedVolumeFromLog(input: {
     recommendedWeight: input.recommendedWeight,
     adjustedReps: input.adjustedReps,
     recommendedReps: input.recommendedReps,
+    ...(input.fitRating !== undefined ? { fitRating: input.fitRating } : {}),
   });
 }
 

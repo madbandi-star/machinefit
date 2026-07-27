@@ -51,12 +51,15 @@ function volumeFromWeights(
     recommendedWeight: load?.recommendedWeight,
     adjustedReps: load?.adjustedReps,
     recommendedReps: load?.recommendedReps,
+    ...(load?.fitRating !== undefined ? { fitRating: load.fitRating } : {}),
   });
 }
 
 /**
  * Recompute a user's total performed volume from workout_logs (My Page
- * "내가 들어올린 무게는?" source of truth). Ignores AI seed when steppers empty.
+ * "내가 들어올린 무게는?" source of truth). Uses 총볼륨 = Σ(세트무게 × 횟수),
+ * same load context as history (recommendation + prefs + fit). Ignores AI seed
+ * when steppers are empty.
  */
 async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
   const pool = getPool();
@@ -66,6 +69,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
     id: string;
     gym_id: string;
     member_id: string;
+    recommendation_id: string | null;
     machine_code: string;
     log_date: string;
     set_count: number;
@@ -77,6 +81,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
     `SELECT wl.id::text,
             wl.gym_id::text,
             wl.member_id::text,
+            wl.recommendation_id::text,
             m.code AS machine_code,
             wl.log_date::text,
             wl.set_count,
@@ -100,6 +105,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
     gymId: row.gym_id,
     memberId: row.member_id,
     machineCode: row.machine_code,
+    recommendationId: row.recommendation_id ?? undefined,
     logDate: row.log_date.slice(0, 10),
     setCount: row.set_count,
     setWeightsKg: parseWeightArray(row.set_weights_kg),
@@ -107,6 +113,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
     updatedAt: row.updated_at,
   }));
 
+  // Resolves recommendation reps + per-gym prefs + fitRating (총볼륨).
   const loadById = await resolveWorkoutLoadContexts(userId, asWorkoutLogs);
 
   let total = 0;
@@ -120,6 +127,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
       recommendedWeight: load?.recommendedWeight,
       adjustedReps: load?.adjustedReps,
       recommendedReps: load?.recommendedReps,
+      fitRating: load?.fitRating,
     });
   }
 
