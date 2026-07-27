@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card — badge emoji + top-right name",
   "summary": "Badge uses 🏋️ instead of 🏆. Removed inline 🏋️ from name row; labelName moved to card top-right. Header spacing tightened.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "486dd68" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/i18n/locales/ko/common.json",
