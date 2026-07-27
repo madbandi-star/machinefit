@@ -1,13 +1,12 @@
-# Latest test handoff — Share card layout reset
+# Latest test handoff — Share card compact + larger comparison emoji
 
 **Branch:** `main` · **Commit:** pending
 
 ## Change
 
-1. **배경** — KG 워터마크·헬스장 실루엣 등 제거 → 페이지/카드 **그radient**만
-2. **"를 들어올렸습니다." ↔ 비교 카드** — 사이 공백 제거 (순차 배치)
-3. **비교 카드 ↔ MachineFit 푸터** — 사이 공백 제거
-4. **상하 여백 동일** — 전체 콘텐츠 블록 카드 내 **수직 중앙**
+1. **카드 크기** — 1080×1350 → **900×1125** (4:5), 여백·폰트·섹션 간격 축소
+2. **비교 이모지** — 링 반경 56→**78**, 이모지 60→**86** (볼링공 등 더 크게)
+3. **아이콘↔라벨 간격** — 36px → **22px** (큰 아이콘에 맞게 조정)
 
 ## Test
 

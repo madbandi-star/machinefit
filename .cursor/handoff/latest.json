@@ -1,11 +1,11 @@
 {
-  "title": "Share card gradient background + tight centered layout",
-  "summary": "Removed premium gym background; simple gradient only. Sequential layout with no gaps between closing/comparison/footer; content vertically centered with equal top/bottom margin.",
+  "title": "Share card compact size + larger comparison emoji",
+  "summary": "Reduced share card to 900×1125 with tighter layout. Comparison emoji ring enlarged (78px radius, 86px emoji) with adjusted icon-to-label gap.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "공유 카드 — 그radient 배경, 들어올렸습니다↔비교↔푸터 간격 없음, 상하 중앙 정렬.",
+  "testFocus": "공유 카드 — 900×1125 크기, 볼링공 등 비교 이모지 크게, 아이콘↔라벨 간격, 전체 컴팩트 레이아웃.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "복잡한 배경, 섹션 간 넓은 여백, 푸터 하단 고정.",
-  "toBe": "단순 그radient, 연속 레이아웃, 상하 동일 여백 중앙 정렬."
+  "asIs": "1080×1350, 비교 이모지 작음(ringR 56), 아이콘-텍스트 간격 36px.",
+  "toBe": "900×1125, 비교 이모지 크게(ringR 78, emoji 86), 간격 22px, 전체 축소."
 }

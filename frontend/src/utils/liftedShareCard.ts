@@ -19,14 +19,19 @@ interface ShareCardInput {
   comparison?: LiftedComparisonResult;
   locale: string;
   labels: LiftedShareCardLabels;
-  /** @default '4:5' — matches lifter DNA share card (1080×1350) */
+  /** @default '4:5' — compact share card (900×1125) */
   aspectRatio?: ShareCardAspectRatio;
 }
 
-const W = 1080;
-const POSTER_MARGIN = 48;
+const W = 900;
+const POSTER_MARGIN = 40;
 
-const CARD_INNER_PAD = 64;
+const CARD_INNER_PAD = 52;
+
+/** Comparison emoji ring — larger icon with tighter label gap */
+const COMP_RING_R = 78;
+const COMP_EMOJI_SIZE = 86;
+const COMP_ICON_LABEL_GAP = 22;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
@@ -41,9 +46,9 @@ const CARD_RADIUS = 40;
 const BOX_RADIUS = 18;
 
 function canvasHeight(aspect: ShareCardAspectRatio): number {
-  if (aspect === '9:16') return 1920;
-  if (aspect === '1:1') return 1080;
-  return 1350;
+  if (aspect === '9:16') return 1600;
+  if (aspect === '1:1') return 900;
+  return 1125;
 }
 
 function roundRect(
@@ -233,14 +238,14 @@ interface LayoutMetrics {
 
 function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, innerW: number): LayoutMetrics {
   ctx.font = `400 32px ${FONT}`;
-  const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 64) : [];
+  const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 52) : [];
 
-  const badgeBlock = 44 + 28;
-  const avatarBlock = 76 + 24;
-  const headlineBlock = 44 + 28;
-  const heroBlock = 200;
+  const badgeBlock = 40 + 24;
+  const avatarBlock = 64 + 20;
+  const headlineBlock = 40 + 24;
+  const heroBlock = 172;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
-  const footerH = 76;
+  const footerH = 68;
 
   const contentH = badgeBlock + avatarBlock + headlineBlock + heroBlock + comparisonH + footerH;
 
@@ -248,11 +253,11 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
 }
 
 function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: number, label: string) {
-  ctx.font = `600 28px ${FONT}`;
+  ctx.font = `600 24px ${FONT}`;
   const tw = ctx.measureText(label).width;
-  const pw = tw + 48;
-  const ph = 46;
-  roundRect(ctx, cx - pw / 2, centerY - ph / 2, pw, ph, 23);
+  const pw = tw + 40;
+  const ph = 40;
+  roundRect(ctx, cx - pw / 2, centerY - ph / 2, pw, ph, 20);
   ctx.fillStyle = 'rgba(74, 222, 128, 0.12)';
   ctx.fill();
   ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
@@ -274,21 +279,21 @@ function drawHeadlineCentered(
 ) {
   if (labelName && headline.startsWith(labelName)) {
     const rest = headline.slice(labelName.length);
-    ctx.font = `700 38px ${FONT}`;
+    ctx.font = `700 32px ${FONT}`;
     const bw = ctx.measureText(labelName).width;
-    ctx.font = `400 38px ${FONT}`;
+    ctx.font = `400 32px ${FONT}`;
     const rw = ctx.measureText(rest).width;
     const sx = cx - (bw + rw) / 2;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = `700 38px ${FONT}`;
+    ctx.font = `700 32px ${FONT}`;
     ctx.fillStyle = WHITE;
     ctx.fillText(labelName, sx, baselineY);
-    ctx.font = `400 38px ${FONT}`;
+    ctx.font = `400 32px ${FONT}`;
     ctx.fillStyle = GRAY_DIM;
     ctx.fillText(rest, sx + bw, baselineY);
   } else {
-    ctx.font = `400 38px ${FONT}`;
+    ctx.font = `400 32px ${FONT}`;
     ctx.fillStyle = GRAY_DIM;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
@@ -305,51 +310,51 @@ function drawHeroKg(
   closing: string,
   locale: string
 ): number {
-  const zoneH = 200;
+  const zoneH = 172;
   const numText = formatVolumeKg(totalKg, locale);
 
-  ctx.font = `900 172px ${FONT}`;
+  ctx.font = `900 148px ${FONT}`;
   const numW = ctx.measureText(numText).width;
-  ctx.font = `800 54px ${FONT}`;
+  ctx.font = `800 46px ${FONT}`;
   const unitW = ctx.measureText('KG').width;
-  const gap = 18;
+  const gap = 14;
   const totalW = numW + gap + unitW;
   const nx = cx - totalW / 2;
-  const numBaseline = topY + 132;
+  const numBaseline = topY + 114;
 
-  const glow = ctx.createRadialGradient(cx, numBaseline - 40, 0, cx, numBaseline - 40, 240);
+  const glow = ctx.createRadialGradient(cx, numBaseline - 34, 0, cx, numBaseline - 34, 200);
   glow.addColorStop(0, 'rgba(74, 222, 128, 0.16)');
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
-  ctx.fillRect(cx - 260, topY, 520, zoneH);
+  ctx.fillRect(cx - 220, topY, 440, zoneH);
 
-  drawLaurelWreath(ctx, cx, numBaseline - 36, totalW / 2 + 56, 72);
+  drawLaurelWreath(ctx, cx, numBaseline - 30, totalW / 2 + 46, 62);
 
   const grad = ctx.createLinearGradient(nx, topY + 40, nx + numW, numBaseline);
   grad.addColorStop(0, '#bbf7d0');
   grad.addColorStop(0.5, GREEN);
   grad.addColorStop(1, GREEN_MID);
 
-  ctx.font = `900 172px ${FONT}`;
+  ctx.font = `900 148px ${FONT}`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = grad;
   ctx.fillText(numText, nx, numBaseline);
 
-  ctx.font = `800 54px ${FONT}`;
+  ctx.font = `800 46px ${FONT}`;
   ctx.fillStyle = GREEN;
-  ctx.fillText('KG', nx + numW + gap, numBaseline - 14);
+  ctx.fillText('KG', nx + numW + gap, numBaseline - 12);
 
   ctx.textAlign = 'center';
-  ctx.font = `400 32px ${FONT}`;
+  ctx.font = `400 28px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
-  ctx.fillText(closing, cx, topY + zoneH - 16);
+  ctx.fillText(closing, cx, topY + zoneH - 14);
 
   return zoneH;
 }
 
 function measureComparisonCardH(tipLines: string[]): number {
-  return 36 + 28 + 112 + 36 + 44 + 20 + blockH(tipLines, 36) + 16;
+  return 32 + 24 + COMP_RING_R * 2 + COMP_ICON_LABEL_GAP + 40 + 18 + blockH(tipLines, 32) + 14;
 }
 
 function drawComparisonCard(
@@ -372,15 +377,15 @@ function drawComparisonCard(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  let cy = topY + 36;
-  ctx.font = `500 30px ${FONT}`;
+  let cy = topY + 32;
+  ctx.font = `500 26px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(sectionTitle, cx, cy);
-  cy += 28;
+  cy += 24;
 
-  const ringR = 56;
+  const ringR = COMP_RING_R;
   const ringCy = cy + ringR;
   ctx.strokeStyle = 'rgba(74, 222, 128, 0.45)';
   ctx.lineWidth = 2.5;
@@ -389,17 +394,17 @@ function drawComparisonCard(
   ctx.stroke();
   ctx.fillStyle = 'rgba(74, 222, 128, 0.08)';
   ctx.fill();
-  drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, 60);
-  cy += ringR * 2 + 36;
+  drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, COMP_EMOJI_SIZE);
+  cy += ringR * 2 + COMP_ICON_LABEL_GAP;
 
-  ctx.font = `700 42px ${FONT}`;
+  ctx.font = `700 36px ${FONT}`;
   ctx.fillStyle = WHITE;
   ctx.fillText(comparison.name, cx, cy);
-  cy += 44;
+  cy += 40;
 
-  ctx.font = `700 32px ${FONT}`;
-  const pw = ctx.measureText(countLabel).width + 52;
-  const pillH = 44;
+  ctx.font = `700 28px ${FONT}`;
+  const pw = ctx.measureText(countLabel).width + 44;
+  const pillH = 40;
   roundRect(ctx, cx - pw / 2, cy - pillH / 2, pw, pillH, 23);
   ctx.fillStyle = 'rgba(74, 222, 128, 0.14)';
   ctx.fill();
@@ -412,7 +417,7 @@ function drawComparisonCard(
   ctx.textBaseline = 'alphabetic';
   cy += pillH / 2 + 12;
 
-  drawCenteredLines(ctx, tipLines, cx, cy, 36, GRAY, `400 28px ${FONT}`);
+  drawCenteredLines(ctx, tipLines, cx, cy, 32, GRAY, `400 24px ${FONT}`);
   return h;
 }
 
@@ -437,33 +442,33 @@ function drawFooter(
     ctx.stroke();
   }
 
-  const markSize = 36;
-  const logoRowY = midY - 8;
-  drawMachineFitMark(ctx, left, logoRowY - markSize + 8, markSize);
+  const markSize = 32;
+  const logoRowY = midY - 6;
+  drawMachineFitMark(ctx, left, logoRowY - markSize + 6, markSize);
 
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 30px ${FONT}`;
+  ctx.font = `800 26px ${FONT}`;
   ctx.fillStyle = WHITE;
-  const brandX = left + markSize + 14;
+  const brandX = left + markSize + 12;
   ctx.fillText('Machine', brandX, logoRowY);
-  ctx.font = `800 30px ${FONT}`;
+  ctx.font = `800 26px ${FONT}`;
   ctx.fillStyle = GREEN;
   const machineW = ctx.measureText('Machine').width;
   ctx.fillText('Fit', brandX + machineW, logoRowY);
 
-  ctx.font = `400 26px ${FONT}`;
+  ctx.font = `400 22px ${FONT}`;
   ctx.fillStyle = GRAY;
-  ctx.fillText(labels.tagline, left, logoRowY + 38);
+  ctx.fillText(labels.tagline, left, logoRowY + 32);
 
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
-  ctx.font = `600 28px ${FONT}`;
+  ctx.font = `600 24px ${FONT}`;
   ctx.fillStyle = GREEN;
   const tags = labels.hashtags.split(/\s+/).filter(Boolean);
-  const tagStartY = midY - ((tags.length - 1) * 34) / 2;
+  const tagStartY = midY - ((tags.length - 1) * 30) / 2;
   tags.forEach((tag, i) => {
-    ctx.fillText(tag, right, tagStartY + i * 34);
+    ctx.fillText(tag, right, tagStartY + i * 30);
   });
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
@@ -484,14 +489,14 @@ function drawPosterContent(
 
   let y = posterY + (posterH - metrics.contentH) / 2;
 
-  drawPillBadge(ctx, cx, y + 22, input.labels.badge);
-  y += 44 + 28;
+  drawPillBadge(ctx, cx, y + 20, input.labels.badge);
+  y += 40 + 24;
 
-  drawEmojiCentered(ctx, '🏋️', cx, y + 38, 76);
-  y += 76 + 24;
+  drawEmojiCentered(ctx, '🏋️', cx, y + 32, 64);
+  y += 64 + 20;
 
-  drawHeadlineCentered(ctx, cx, y + 36, input.headline, input.labelName);
-  y += 44 + 28;
+  drawHeadlineCentered(ctx, cx, y + 30, input.headline, input.labelName);
+  y += 40 + 24;
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
 
@@ -516,7 +521,7 @@ function drawPosterContent(
   drawFooter(ctx, innerLeft, y, innerW, metrics.footerH, input.labels, Boolean(input.comparison));
 }
 
-/** Premium poster share card for SNS (4:5 default — same as lifter DNA card). */
+/** Compact poster share card for SNS (4:5 default — 900×1125). */
 export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
   const aspect = input.aspectRatio ?? '4:5';
   const height = canvasHeight(aspect);
