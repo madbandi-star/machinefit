@@ -1,11 +1,12 @@
 {
-  "title": "Lifter DNA share card vertical balance",
-  "summary": "Share card content vertically centered with meta/quote panels, emoji glow, and footer branding to fill card instead of top-heavy layout.",
+  "title": "Lifter DNA share card quote line wrap",
+  "summary": "Long oneLiner quotes on the share PNG now wrap at ~20 chars with punctuation-aware breaks instead of overflowing a single line.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/lifterDnaShareCard.ts"],
-  "testFocus": "운동성향 share PNG — content centered, no huge empty bottom; meta in panel, quote in box, MachineFit footer.",
+  "testFocus": "운동성향 공유 카드 — 긴 인용문이 2~3줄로 자연스럽게 줄바꿈되고 박스 안에서 세로 중앙 정렬되는지 확인.",
   "fastChecks": ["npm run build --prefix frontend"],
+  "productionChecks": ["운동성향 → 공유 → 긴 oneLiner PNG에서 줄바꿈·따옴표(첫/마지막 줄) 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Share card content clustered at top ~40%, empty bottom.",
-  "toBe": "Balanced vertical layout with styled meta/quote sections."
+  "asIs": "긴 인용문이 한 줄로 길게 그려져 박스 밖으로 넘치거나 읽기 어려움.",
+  "toBe": "문장 길이에 맞게 2~3줄로 줄바꿈, 여는/닫는 따옴표는 첫·마지막 줄에만."
 }

@@ -1,20 +1,20 @@
-# Latest test handoff — Lifter DNA share card balance
-
-**Branch:** `main` · **Commit:** `2737fa5`
-
-## Change
-
-공유 카드 콘텐츠 **세로 중앙 정렬** + 하단 여백 채움.
-
-- 이모지 글로우
-- 메타 3열 → inset 패널
-- oneLiner → 인용 박스
-- 하단 MachineFit + 해시태그
-
-## Test
-
-운동성향 → 공유 카드 — 위쪽 쏠림 없이 카드 전체 균형 확인
-
-```bash
-npm run build --prefix frontend
-```
+# Latest test handoff — Lifter DNA quote line wrap
+
+**Branch:** `main` · **Commit:** pending
+
+## Change
+
+공유 카드 **긴 인용문(oneLiner) 줄바꿈**.
+
+- 약 20자 기준 + 쉼표·마침표 등에서 끊기
+- 여러 줄일 때 여는/닫는 따옴표는 첫·마지막 줄만
+- 박스 안 세로 중앙 정렬 유지
+
+## Test
+
+운동성향 → 공유 카드 — 긴 문장이 2~3줄로 자연스럽게 나뉘는지 확인
+
+```bash
+npm run build --prefix frontend
+```
+

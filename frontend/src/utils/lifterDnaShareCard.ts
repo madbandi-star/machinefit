@@ -168,39 +168,91 @@ function drawMetaPanel(
   }
 }
 
-function getWrapLines(
+const QUOTE_FONT_SIZE = 34;
+const QUOTE_LINE_HEIGHT = 46;
+/** Prefer wrapping before this many chars so long Korean lines break naturally. */
+const QUOTE_TARGET_CHARS_PER_LINE = 20;
+
+function isWrapBreakpoint(ch: string): boolean {
+  return /[\s,.·…!?;:)]/.test(ch);
+}
+
+function getBalancedWrapLines(
   ctx: CanvasRenderingContext2D,
   text: string,
-  maxWidth: number
+  maxWidth: number,
+  maxCharsPerLine = QUOTE_TARGET_CHARS_PER_LINE
 ): string[] {
   const chars = [...text];
   const lines: string[] = [];
   let line = '';
 
+  const pushLine = (value: string) => {
+    const trimmed = value.trimEnd();
+    if (trimmed) lines.push(trimmed);
+  };
+
   for (const ch of chars) {
     const test = line + ch;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      lines.push(line);
-      line = ch;
+    const tooWide = ctx.measureText(test).width > maxWidth;
+    const tooLong = line.length >= maxCharsPerLine;
+
+    if ((tooWide || tooLong) && line.length > 0) {
+      let breakAt = -1;
+      for (let i = line.length - 1; i >= Math.max(0, line.length - 10); i -= 1) {
+        if (isWrapBreakpoint(line[i])) {
+          breakAt = i + 1;
+          break;
+        }
+      }
+
+      if (breakAt > 0) {
+        pushLine(line.slice(0, breakAt));
+        line = line.slice(breakAt).trimStart() + ch;
+      } else {
+        pushLine(line);
+        line = ch;
+      }
     } else {
       line = test;
     }
   }
 
-  if (line) lines.push(line);
+  if (line) pushLine(line);
   return lines.length ? lines : [''];
+}
+
+function formatQuotedLines(lines: string[]): string[] {
+  if (lines.length === 0) return [''];
+  if (lines.length === 1) return [`“${lines[0]}”`];
+
+  return [
+    `“${lines[0]}`,
+    ...lines.slice(1, -1),
+    `${lines[lines.length - 1]}”`,
+  ];
+}
+
+function measureBalancedWrapHeight(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  lineHeight: number,
+  maxCharsPerLine = QUOTE_TARGET_CHARS_PER_LINE
+): number {
+  const innerLines = getBalancedWrapLines(ctx, text, maxWidth, maxCharsPerLine);
+  const quotedLines = formatQuotedLines(innerLines);
+  return quotedLines.length * lineHeight;
 }
 
 function drawCenteredWrapText(
   ctx: CanvasRenderingContext2D,
-  text: string,
+  lines: string[],
   centerX: number,
   boxY: number,
   boxH: number,
-  maxWidth: number,
   lineHeight: number
 ) {
-  const lines = getWrapLines(ctx, text, maxWidth);
   const totalHeight = lines.length * lineHeight;
   let cursorY = boxY + (boxH - totalHeight) / 2 + lineHeight * 0.82;
 
@@ -226,14 +278,15 @@ function drawQuotePanel(
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  const padX = 48;
+  const padX = 56;
   const maxWidth = w - padX * 2;
-  const lineHeight = 46;
-  const quoted = `“${quote.trim()}”`;
+  const inner = quote.trim();
+  const innerLines = getBalancedWrapLines(ctx, inner, maxWidth, QUOTE_TARGET_CHARS_PER_LINE);
+  const lines = formatQuotedLines(innerLines);
 
-  ctx.font = `34px ${FONT}`;
+  ctx.font = `${QUOTE_FONT_SIZE}px ${FONT}`;
   ctx.fillStyle = '#e5e7eb';
-  drawCenteredWrapText(ctx, quoted, x + w / 2, y, h, maxWidth, lineHeight);
+  drawCenteredWrapText(ctx, lines, x + w / 2, y, h, QUOTE_LINE_HEIGHT);
 }
 
 /** Share card — vertically balanced hero layout for social sharing. */
@@ -266,19 +319,26 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
 
   ctx.textAlign = 'center';
 
+  const quotePanelW = cardW - 128;
+  const quoteMaxWidth = quotePanelW - 112;
+
   ctx.font = `bold 30px ${FONT}`;
   const headlineHeight = measureWrapHeight(ctx, snapshot.shareHeadline, contentMax, 62);
   ctx.font = `34px ${FONT}`;
   const taglineHeight = measureWrapHeight(ctx, snapshot.character.tagline, contentMax, 44);
-  ctx.font = `34px ${FONT}`;
-  const quotedOneLiner = `“${snapshot.oneLiner.trim()}”`;
-  const quoteHeight = measureWrapHeight(ctx, quotedOneLiner, contentMax - 96, 46);
+  ctx.font = `${QUOTE_FONT_SIZE}px ${FONT}`;
+  const quoteHeight = measureBalancedWrapHeight(
+    ctx,
+    snapshot.oneLiner.trim(),
+    quoteMaxWidth,
+    QUOTE_LINE_HEIGHT
+  );
 
   const gapSm = 24;
   const gapMd = 40;
   const gapLg = 56;
   const metaPanelH = 148;
-  const quotePanelH = Math.max(140, quoteHeight + 80);
+  const quotePanelH = Math.max(140, quoteHeight + 88);
   const footerH = 36;
 
   const blockHeight =
@@ -337,7 +397,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   );
 
   y += metaPanelH + gapLg;
-  drawQuotePanel(ctx, innerX, y, cardW - 128, quotePanelH, snapshot.oneLiner);
+  drawQuotePanel(ctx, innerX, y, quotePanelW, quotePanelH, snapshot.oneLiner);
 
   y += quotePanelH + gapMd;
   ctx.font = `bold 28px ${FONT}`;
