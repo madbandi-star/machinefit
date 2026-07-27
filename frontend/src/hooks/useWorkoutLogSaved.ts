@@ -13,6 +13,11 @@ interface UseWorkoutLogSavedOptions {
   logDate: string;
   targetMuscleGroup?: TargetMuscleGroup;
   isAuthenticated: boolean;
+  /**
+   * When boolean, skip per-card list GET — parent already knows saved state
+   * from the shared workout-logs list (identical UI).
+   */
+  initialSaved?: boolean | null;
 }
 
 export function buildWorkoutLogSavedQueryKey(
@@ -42,6 +47,7 @@ export function useWorkoutLogSaved({
   logDate,
   targetMuscleGroup,
   isAuthenticated,
+  initialSaved = null,
 }: UseWorkoutLogSavedOptions) {
   const { activeGymId } = useActiveGym();
   const { activeMemberId, memberScopeReady } = useActiveMember();
@@ -54,12 +60,14 @@ export function useWorkoutLogSaved({
     logDate,
     targetMuscleGroup
   );
+  const hasListSeed = initialSaved !== null && initialSaved !== undefined;
   const queryEnabled =
     isAuthenticated &&
     Boolean(activeGymId) &&
     memberScopeReady &&
     Boolean(machineCode && normalizedLogDate) &&
-    (!isFreeWeight || !!queryTargetMuscle);
+    (!isFreeWeight || !!queryTargetMuscle) &&
+    !hasListSeed;
 
   const { data: logs } = useQuery({
     queryKey,
@@ -80,5 +88,6 @@ export function useWorkoutLogSaved({
     refetchOnReconnect: false,
   });
 
+  if (hasListSeed) return Boolean(initialSaved);
   return Boolean(logs?.[0]);
 }

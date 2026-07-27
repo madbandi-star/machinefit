@@ -29,6 +29,21 @@ import {
   seoulYearKey,
 } from '../utils/mypage-workout-metrics.js';
 
+/** Skip full recompute when logs fingerprint unchanged (same totals). */
+const volumeRevisionCache = new Map<string, { revision: string; totalKg: number }>();
+
+async function getUserLogsRevision(userId: string): Promise<string> {
+  const pool = getPool();
+  if (!pool) return '0';
+  const result = await pool.query<{ rev: string }>(
+    `SELECT COUNT(*)::text || '|' || COALESCE(MAX(updated_at)::text, '') AS rev
+     FROM workout_logs
+     WHERE user_id = $1`,
+    [userId]
+  );
+  return result.rows[0]?.rev ?? '0';
+}
+
 function monthKey(logDate: string): string {
   return logDate.slice(0, 7);
 }
@@ -65,6 +80,12 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
   const pool = getPool();
   if (!pool) return 0;
 
+  const revision = await getUserLogsRevision(userId);
+  const cached = volumeRevisionCache.get(userId);
+  if (cached && cached.revision === revision) {
+    return cached.totalKg;
+  }
+
   const result = await pool.query<{
     id: string;
     gym_id: string;
@@ -97,6 +118,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
 
   if (result.rows.length === 0) {
     await liftedVolumeRepository.setTotal('user', userId, 0);
+    volumeRevisionCache.set(userId, { revision, totalKg: 0 });
     return 0;
   }
 
@@ -133,6 +155,7 @@ async function recomputeUserTotalFromLogs(userId: string): Promise<number> {
 
   const rounded = Math.round(total * 100) / 100;
   await liftedVolumeRepository.setTotal('user', userId, rounded);
+  volumeRevisionCache.set(userId, { revision, totalKg: rounded });
   return rounded;
 }
 
@@ -187,6 +210,8 @@ export const liftedVolumeService = {
     );
     const delta = Math.round((next - prev) * 100) / 100;
     if (delta === 0) return;
+
+    volumeRevisionCache.delete(options.userId);
 
     const month = monthKey(options.logDate);
     const year = yearKey(options.logDate);

@@ -11,12 +11,17 @@ interface UseFavoriteToggleOptions {
   machineCode: string;
   recommendationId?: string;
   isAuthenticated: boolean;
+  /** When set (including false), skip per-card check GET — same favorited state from list. */
+  initialFavorited?: boolean | null;
+  initialFavoriteId?: string;
 }
 
 export function useFavoriteToggle({
   machineCode,
   recommendationId,
   isAuthenticated,
+  initialFavorited = null,
+  initialFavoriteId,
 }: UseFavoriteToggleOptions) {
   const { t } = useTranslation(['machines', 'common']);
   const queryClient = useQueryClient();
@@ -25,9 +30,14 @@ export function useFavoriteToggle({
   const { activeMemberId, memberScopeReady, isRealGym } = useActiveMember();
   const memberKey = activeMemberId ?? '';
   const favoriteKey = QUERY_KEYS.favoriteCheck(activeGymId ?? '', machineCode, memberKey);
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [favoriteId, setFavoriteId] = useState<string | undefined>();
-  const hydratedMachineRef = useRef('');
+  const hasListSeed = initialFavorited !== null && initialFavorited !== undefined;
+  const [isFavorited, setIsFavorited] = useState(() =>
+    hasListSeed ? Boolean(initialFavorited) : false
+  );
+  const [favoriteId, setFavoriteId] = useState<string | undefined>(() =>
+    hasListSeed ? initialFavoriteId : undefined
+  );
+  const hydratedMachineRef = useRef(hasListSeed ? machineCode : '');
 
   const { data: favoriteCheck } = useQuery({
     queryKey: favoriteKey,
@@ -41,7 +51,8 @@ export function useFavoriteToggle({
       Boolean(activeGymId) &&
       memberScopeReady &&
       Boolean(activeMemberId) &&
-      isRealGym,
+      isRealGym &&
+      !hasListSeed,
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -50,6 +61,12 @@ export function useFavoriteToggle({
 
   useEffect(() => {
     if (!machineCode) return;
+    if (hasListSeed) {
+      setIsFavorited(Boolean(initialFavorited));
+      setFavoriteId(initialFavoriteId);
+      hydratedMachineRef.current = machineCode;
+      return;
+    }
     if (machineCode !== hydratedMachineRef.current) {
       hydratedMachineRef.current = '';
     }
@@ -57,7 +74,7 @@ export function useFavoriteToggle({
     setIsFavorited(favoriteCheck.favorited);
     setFavoriteId(favoriteCheck.favoriteId);
     hydratedMachineRef.current = machineCode;
-  }, [machineCode, favoriteCheck]);
+  }, [machineCode, favoriteCheck, hasListSeed, initialFavorited, initialFavoriteId]);
 
   const toggleFavoriteMutation = useMutation({
     mutationFn: async ({

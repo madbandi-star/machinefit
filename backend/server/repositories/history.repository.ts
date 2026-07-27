@@ -126,13 +126,7 @@ export const historyRepository = {
       `SELECT h.id, h.gym_id, h.member_id, h.machine_id, h.recommendation_id, h.viewed_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               b.name AS brand_name,
-              (
-                SELECT mi.image_url
-                FROM machine_images mi
-                WHERE mi.machine_id = m.id
-                ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                LIMIT 1
-              ) AS primary_image_url,
+              mi.image_url AS primary_image_url,
               r.seat_position, r.back_pad_position, r.foot_position,
               r.handle_position, r.rom_setting, r.recommended_weight_kg,
               r.recommended_reps_min, r.recommended_reps_max,
@@ -141,6 +135,13 @@ export const historyRepository = {
        JOIN machines m ON m.id = h.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
        JOIN machine_recommendations r ON r.id = h.recommendation_id
+       LEFT JOIN LATERAL (
+         SELECT image_url
+         FROM machine_images
+         WHERE machine_id = m.id
+         ORDER BY is_primary DESC, sort_order ASC
+         LIMIT 1
+       ) mi ON TRUE
        WHERE (${visibilityParts.join(' OR ')})${sharedFilters}
        ORDER BY h.viewed_at DESC
        LIMIT $${params.length}`,

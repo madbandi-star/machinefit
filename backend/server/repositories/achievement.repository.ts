@@ -412,13 +412,9 @@ export const achievementRepository = {
     const scopeFilter = scoped
       ? ` AND wl.gym_id = $2 AND wl.member_id = $3`
       : '';
-    // For queries that use $1 = userId only: gym=$2 member=$3
-    const scopeFilterBare = scoped
-      ? ` AND gym_id = $2 AND member_id = $3`
-      : '';
 
     const aggParams: unknown[] = [userId, ...scopeParams];
-    const [agg, datesResult, prCount, volumeResult] = await Promise.all([
+    const [agg, prCount, volumeResult] = await Promise.all([
       pool.query<{
         workout_count: string;
         session_days: string;
@@ -501,13 +497,6 @@ export const achievementRepository = {
          FROM logs`,
         aggParams
       ),
-      pool.query<{ log_date: string }>(
-        `SELECT DISTINCT log_date::text AS log_date
-         FROM workout_logs
-         WHERE user_id = $1${scopeFilterBare}
-         ORDER BY log_date ASC`,
-        [userId, ...scopeParams]
-      ),
       computePrCount(pool, userId, options),
       pool.query<{
         id: string;
@@ -557,7 +546,10 @@ export const achievementRepository = {
 
     const row = agg.rows[0];
     const n = (v: string | undefined) => parseInt(v ?? '0', 10) || 0;
-    const dates = datesResult.rows.map((r) => r.log_date);
+    // Same distinct ascending dates as the previous dedicated DISTINCT query.
+    const dates = [
+      ...new Set(volumeResult.rows.map((r) => r.log_date.slice(0, 10))),
+    ].sort();
     const { currentStreak, longestStreak } = computeStreaks(dates);
 
     const chest = n(row?.chest_workouts);

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect, useCallback, type MouseEvent } from 'react';
+import { useState, useEffect, useCallback, memo, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
 import type {
@@ -35,6 +35,11 @@ interface HistoryRecordCardProps {
   initialFitRating?: FitRating | null;
   initialCustomSettings?: Partial<RecommendationSettings>;
   initialActiveSource?: SettingsActiveSource;
+  /** From favorites list — skips per-card check GET when boolean. */
+  initialFavorited?: boolean | null;
+  initialFavoriteId?: string;
+  /** From workout-logs list — skips per-card log GET when boolean. */
+  initialWorkoutLogSaved?: boolean | null;
   isAuthenticated: boolean;
   lockTargetMuscle: boolean;
   isFocused?: boolean;
@@ -53,7 +58,7 @@ function getBookmarkAriaLabel(
   return t('machines:history.bookmarkRemove');
 }
 
-export function HistoryRecordCard({
+export const HistoryRecordCard = memo(function HistoryRecordCard({
   card,
   resultUrl,
   displayName,
@@ -61,6 +66,9 @@ export function HistoryRecordCard({
   initialFitRating = null,
   initialCustomSettings,
   initialActiveSource,
+  initialFavorited = null,
+  initialFavoriteId,
+  initialWorkoutLogSaved = null,
   isAuthenticated,
   lockTargetMuscle,
   isFocused = false,
@@ -81,6 +89,7 @@ export function HistoryRecordCard({
     logDate,
     targetMuscleGroup: cardTargetMuscle,
     isAuthenticated,
+    initialSaved: initialWorkoutLogSaved,
   });
   const isWorkoutLogSaved = workoutLogSavedOverride ?? cachedWorkoutLogSaved;
 
@@ -126,6 +135,8 @@ export function HistoryRecordCard({
     machineCode: card.machineCode,
     recommendationId: card.recommendationId,
     isAuthenticated,
+    initialFavorited,
+    initialFavoriteId,
   });
 
   const bookmarkActive = isWorkoutLogSaved;
@@ -423,4 +434,4 @@ export function HistoryRecordCard({
       ) : null}
     </article>
   );
-}
+});

@@ -395,17 +395,42 @@ export const friendRepository = {
     );
     const offset = (page - 1) * limit;
     const { rows } = await pool.query(
-      `SELECT id FROM friend_requests
-       WHERE ${col} = $1 AND status = 'REQUESTED'
-       ORDER BY created_at DESC
+      `SELECT req.*,
+              fu.id AS from_id, fu.display_name AS from_name, fu.avatar_url AS from_avatar,
+              fu.experience_level AS from_level, fu.last_login_at AS from_last,
+              tu.id AS to_id, tu.display_name AS to_name, tu.avatar_url AS to_avatar,
+              tu.experience_level AS to_level, tu.last_login_at AS to_last
+       FROM friend_requests req
+       JOIN users fu ON fu.id = req.from_user_id
+       JOIN users tu ON tu.id = req.to_user_id
+       WHERE req.${col} = $1 AND req.status = 'REQUESTED'
+       ORDER BY req.created_at DESC
        LIMIT $2 OFFSET $3`,
       [userId, limit, offset]
     );
-    const items: FriendRequestItem[] = [];
-    for (const row of rows) {
-      const item = await this.getRequestById(String(row.id));
-      if (item) items.push(item);
-    }
+    const items: FriendRequestItem[] = rows.map((r) => ({
+      id: String(r.id),
+      fromUser: mapUser({
+        id: r.from_id,
+        display_name: r.from_name,
+        avatar_url: r.from_avatar,
+        experience_level: r.from_level,
+        last_login_at: r.from_last,
+        show_online: false,
+      }),
+      toUser: mapUser({
+        id: r.to_id,
+        display_name: r.to_name,
+        avatar_url: r.to_avatar,
+        experience_level: r.to_level,
+        last_login_at: r.to_last,
+        show_online: false,
+      }),
+      status: r.status,
+      message: String(r.message ?? ''),
+      createdAt: iso(r.created_at),
+      respondedAt: r.responded_at ? iso(r.responded_at) : null,
+    }));
     return { items, total: countRes.rows[0]?.c ?? 0 };
   },
 

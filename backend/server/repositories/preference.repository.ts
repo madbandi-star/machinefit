@@ -224,6 +224,65 @@ export const preferenceRepository = {
     return preferencesByMachine;
   },
 
+  /**
+   * Batch prefs across many (gym, member) scopes in one query.
+   * Returns Map keyed by `${gymId}|${memberId}|${machineCode}`.
+   * Same row mapping as findByUserMachineCodes — result-identical per scope.
+   */
+  async findByUserMachineCodesMultiScope(
+    userId: string,
+    machineCodes: string[],
+    scopes: PreferenceScope[]
+  ): Promise<Map<string, MachineUserPreferences | null>> {
+    const out = new Map<string, MachineUserPreferences | null>();
+    if (machineCodes.length === 0 || scopes.length === 0) return out;
+
+    for (const scope of scopes) {
+      for (const code of machineCodes) {
+        out.set(`${scope.gymId}|${scope.memberId}|${code}`, null);
+      }
+    }
+
+    const pool = getPool();
+    if (!pool) return out;
+
+    const gymIds = scopes.map((s) => s.gymId);
+    const memberIds = scopes.map((s) => s.memberId);
+
+    const result = await pool.query<{
+      gym_id: string;
+      member_id: string;
+      machine_code: string;
+      custom_settings: Partial<RecommendationSettings>;
+      personal_tip_memo: string;
+      active_source: SettingsActiveSource;
+    }>(
+      `SELECT ump.gym_id::text AS gym_id,
+              ump.member_id::text AS member_id,
+              m.code AS machine_code,
+              ump.custom_settings,
+              ump.personal_tip_memo,
+              ump.active_source
+       FROM user_machine_preferences ump
+       JOIN machines m ON m.id = ump.machine_id
+       INNER JOIN UNNEST($3::uuid[], $4::uuid[]) AS sc(gym_id, member_id)
+         ON ump.gym_id = sc.gym_id AND ump.member_id = sc.member_id
+       WHERE ump.user_id = $1
+         AND m.code = ANY($2::text[])`,
+      [userId, machineCodes, gymIds, memberIds]
+    );
+
+    for (const row of result.rows) {
+      out.set(`${row.gym_id}|${row.member_id}|${row.machine_code}`, mapRow({
+        custom_settings: row.custom_settings,
+        personal_tip_memo: row.personal_tip_memo,
+        active_source: row.active_source,
+      }));
+    }
+
+    return out;
+  },
+
   /** @deprecated Prefer findByUserMachineCodes — kept for callers expecting settings-only map. */
   async findCustomSettingsByUserMachineCodes(
     userId: string,

@@ -130,9 +130,11 @@ export function useActiveGym() {
       );
       const defaultMemberId = await fetchDefaultMemberId(gymId);
       setActiveMemberId(defaultMemberId);
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gymId) });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gymId) }),
+        refreshProfileHomeGym(queryClient, updateUser),
+      ]);
       invalidateGymScopedQueries(queryClient);
-      await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:selector.switchSuccess'), 'success');
     },
     onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),
@@ -146,10 +148,12 @@ export function useActiveGym() {
       syncedSelectRef.current = gym.id;
       const defaultMemberId = await fetchDefaultMemberId(gym.id);
       setActiveMemberId(defaultMemberId);
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gym.id) });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGymMembers(gym.id) }),
+        refreshProfileHomeGym(queryClient, updateUser),
+      ]);
       invalidateGymScopedQueries(queryClient);
-      await refreshProfileHomeGym(queryClient, updateUser);
       showToast(t('gyms:manage.createGymSuccess'), 'success');
     },
     onError: (error) => {
@@ -194,8 +198,10 @@ export function useActiveGym() {
     mutationFn: ({ gymId, body }: { gymId: string; body: UpdateUserGymInput }) =>
       userGymApi.update(gymId, body),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
-      await refreshProfileHomeGym(queryClient, updateUser);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms }),
+        refreshProfileHomeGym(queryClient, updateUser),
+      ]);
       showToast(t('gyms:manage.updateGymSuccess'), 'success');
     },
     onError: (error) => showToast(resolveGymManageErrorMessage(error, t), 'error'),

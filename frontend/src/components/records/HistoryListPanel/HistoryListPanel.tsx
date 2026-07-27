@@ -1,14 +1,14 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
-import { historyApi } from '@/api';
+import { favoriteApi, historyApi } from '@/api';
 import { fetchWorkoutLogs } from '@/api/workout-log';
 import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -20,8 +20,10 @@ import {
   collectMuscleGroupsInOrder,
   formatHistoryDateHeaderWithMuscles,
   getTodayDateKey,
+  normalizeDateKey,
 } from '@/utils/historyDate';
 import {
+  buildLoggedWorkoutKey,
   buildLoggedWorkoutKeys,
   parseHistoryLogStatus,
   type HistoryLogStatus,
@@ -107,6 +109,25 @@ export function HistoryListPanel() {
       }),
     enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
   });
+
+  const { data: favoritesList } = useQuery({
+    queryKey: QUERY_KEYS.favorites(activeGymId ?? '', memberKey),
+    queryFn: async () => {
+      const res = await favoriteApi.list(activeGymId!, activeMemberId ?? undefined);
+      return res.data.data;
+    },
+    enabled:
+      isAuthenticated && Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
+    staleTime: 60_000,
+  });
+
+  const favoriteByMachine = useMemo(() => {
+    const map = new Map<string, { id: string }>();
+    for (const item of favoritesList ?? []) {
+      map.set(item.machineCode, { id: item.id });
+    }
+    return map;
+  }, [favoritesList]);
 
   const loggedKeys = useMemo(
     () => buildLoggedWorkoutKeys(workoutLogs ?? []),
@@ -299,30 +320,35 @@ export function HistoryListPanel() {
     },
     onSuccess: async () => {
       setPendingDelete(null);
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
-      await queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+        queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] }),
+      ]);
       showToast(t('machines:history.removed'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  const requestDelete = (card: HistoryRecordCardData) => {
-    const payload: PendingDelete = {
-      cardId: card.cardId,
-      historyId: card.historyId,
-      machineCode: card.machineCode,
-      recommendationId: card.recommendationId,
-      logDate: card.logDate,
-      targetMuscleGroup: card.targetMuscleGroup,
-    };
+  const requestDelete = useCallback(
+    (card: HistoryRecordCardData) => {
+      const payload: PendingDelete = {
+        cardId: card.cardId,
+        historyId: card.historyId,
+        machineCode: card.machineCode,
+        recommendationId: card.recommendationId,
+        logDate: card.logDate,
+        targetMuscleGroup: card.targetMuscleGroup,
+      };
 
-    if (isDismissedToday(HISTORY_DELETE_DISMISS_KEY)) {
-      deleteMutation.mutate(payload);
-      return;
-    }
-    setPendingDelete(payload);
-  };
+      if (isDismissedToday(HISTORY_DELETE_DISMISS_KEY)) {
+        deleteMutation.mutate(payload);
+        return;
+      }
+      setPendingDelete(payload);
+    },
+    [deleteMutation]
+  );
 
   const confirmDelete = () => {
     if (pendingDelete) {
@@ -508,6 +534,14 @@ export function HistoryListPanel() {
                 const fitRating = card.recommendationId
                   ? comparisonData?.feedbackByRecommendation[card.recommendationId]
                   : null;
+                const favorite = favoriteByMachine.get(card.machineCode);
+                const workoutLogSaved = loggedKeys.has(
+                  buildLoggedWorkoutKey(
+                    card.machineCode,
+                    normalizeDateKey(card.logDate),
+                    card.targetMuscleGroup
+                  )
+                );
 
                 return (
                   <HistoryRecordCard
@@ -519,6 +553,9 @@ export function HistoryListPanel() {
                     initialFitRating={fitRating}
                     initialCustomSettings={customSettings}
                     initialActiveSource={activeSource}
+                    initialFavorited={favoritesList ? Boolean(favorite) : null}
+                    initialFavoriteId={favorite?.id}
+                    initialWorkoutLogSaved={workoutLogs ? workoutLogSaved : null}
                     isAuthenticated={isAuthenticated}
                     lockTargetMuscle={Boolean(
                       card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +34,18 @@ function useCountUp(target: number, durationMs = 1200): number {
   return value;
 }
 
+/** Isolates ~60fps count-up re-renders from the rest of the page. */
+const LiftedCountUpValue = memo(function LiftedCountUpValue({
+  targetKg,
+  locale,
+}: {
+  targetKg: number;
+  locale: string;
+}) {
+  const counted = useCountUp(targetKg);
+  return <>{formatVolumeKg(counted, locale)}</>;
+});
+
 export function LiftedWeightPage() {
   const { t, i18n } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
@@ -57,7 +69,6 @@ export function LiftedWeightPage() {
     staleTime: 90_000,
   });
 
-  const counted = useCountUp(data?.totalKg ?? 0);
   const locale = i18n.language.startsWith('ko') ? 'ko' : 'en';
 
   const modes = useMemo(
@@ -176,7 +187,7 @@ export function LiftedWeightPage() {
               <p className="lifted-weight__headline fade-in">{data.headline}</p>
               <p className="lifted-weight__total count-up">
                 <span className="lifted-weight__total-num">
-                  {formatVolumeKg(counted, locale)}
+                  <LiftedCountUpValue targetKg={data.totalKg} locale={locale} />
                 </span>
                 <span className="lifted-weight__total-unit">KG</span>
               </p>

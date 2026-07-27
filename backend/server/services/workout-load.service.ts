@@ -88,17 +88,17 @@ export async function resolveWorkoutLoadContexts(
   const pool = getPool();
   const prefsPromise =
     machineCodes.length > 0 && scopes.length > 0
-      ? Promise.all(
-          scopes.map((scope) =>
-            preferenceRepository
-              .findByUserMachineCodes(userId, machineCodes, scope)
-              .then((batch) => ({ scope, batch }))
-              .catch(() => ({ scope, batch: null as Awaited<
-                ReturnType<typeof preferenceRepository.findByUserMachineCodes>
-              > | null }))
-          )
-        )
-      : Promise.resolve([]);
+      ? preferenceRepository
+          .findByUserMachineCodesMultiScope(userId, machineCodes, scopes)
+          .then((batch) => {
+            for (const [key, prefs] of batch) {
+              prefsByLookup.set(key, prefs?.customSettings ?? {});
+            }
+          })
+          .catch(() => {
+            /* leave prefs empty — same as previous per-scope catch */
+          })
+      : Promise.resolve();
 
   const recsPromise =
     pool && recommendationIds.length > 0
@@ -125,21 +125,11 @@ export async function resolveWorkoutLoadContexts(
         )
       : Promise.resolve({} as Record<string, 'good' | 'bad' | null>);
 
-  const [prefBatches, recResult, feedbackByRecommendation] = await Promise.all([
+  const [, recResult, feedbackByRecommendation] = await Promise.all([
     prefsPromise,
     recsPromise,
     feedbackPromise,
   ]);
-
-  for (const { scope, batch } of prefBatches) {
-    if (!batch) continue;
-    for (const code of machineCodes) {
-      prefsByLookup.set(
-        prefLookupKey(scope.gymId, scope.memberId, code),
-        batch[code]?.customSettings ?? {}
-      );
-    }
-  }
 
   if (recResult) {
     for (const row of recResult.rows) {
