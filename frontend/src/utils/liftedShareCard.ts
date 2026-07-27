@@ -19,19 +19,29 @@ interface ShareCardInput {
   comparison?: LiftedComparisonResult;
   locale: string;
   labels: LiftedShareCardLabels;
-  /** @default '4:5' — compact share card (900×1125) */
+  /** @default '4:5' — compact share card (780×975) */
   aspectRatio?: ShareCardAspectRatio;
 }
 
-const W = 900;
-const POSTER_MARGIN = 40;
+const W = 780;
+const POSTER_MARGIN = 32;
 
-const CARD_INNER_PAD = 52;
+const CARD_INNER_PAD = 44;
 
-/** Comparison emoji ring — larger icon with tighter label gap */
-const COMP_RING_R = 78;
-const COMP_EMOJI_SIZE = 86;
-const COMP_ICON_LABEL_GAP = 22;
+/** Top badge — trophy emoji + label, rendered large */
+const BADGE_EMOJI_SIZE = 46;
+const BADGE_TEXT_SIZE = 38;
+const BADGE_PILL_H = 58;
+
+/** Headline row — weightlifter emoji inline left of name text */
+const HEADLINE_EMOJI_SIZE = 38;
+const HEADLINE_TEXT_SIZE = 28;
+const HEADLINE_EMOJI_GAP = 10;
+
+/** Comparison emoji ring */
+const COMP_RING_R = 68;
+const COMP_EMOJI_SIZE = 76;
+const COMP_ICON_LABEL_GAP = 20;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
@@ -42,13 +52,13 @@ const WHITE = '#f8fafc';
 const GRAY = '#94a3b8';
 const GRAY_DIM = 'rgba(148, 163, 184, 0.82)';
 
-const CARD_RADIUS = 40;
-const BOX_RADIUS = 18;
+const CARD_RADIUS = 34;
+const BOX_RADIUS = 16;
 
 function canvasHeight(aspect: ShareCardAspectRatio): number {
-  if (aspect === '9:16') return 1600;
-  if (aspect === '1:1') return 900;
-  return 1125;
+  if (aspect === '9:16') return 1387;
+  if (aspect === '1:1') return 780;
+  return 975;
 }
 
 function roundRect(
@@ -132,25 +142,27 @@ function drawCenteredLines(
 }
 
 function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const bg = ctx.createLinearGradient(0, 0, width, height * 0.85);
-  bg.addColorStop(0, '#060a12');
-  bg.addColorStop(0.45, '#0c1420');
-  bg.addColorStop(1, '#071018');
-  ctx.fillStyle = bg;
+  const gradient = ctx.createLinearGradient(0, 0, width * 0.15, height);
+  gradient.addColorStop(0, '#14081f');
+  gradient.addColorStop(0.45, '#0f172a');
+  gradient.addColorStop(1, '#042f2e');
+  ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  const accent = ctx.createRadialGradient(
-    width * 0.5,
-    height * 0.32,
-    0,
-    width * 0.5,
-    height * 0.32,
-    width * 0.62
-  );
-  accent.addColorStop(0, 'rgba(74, 222, 128, 0.07)');
-  accent.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = accent;
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = 'rgba(167, 139, 250, 0.16)';
+  ctx.beginPath();
+  ctx.arc(width * 0.12, height * 0.18, width * 0.259, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.1)';
+  ctx.beginPath();
+  ctx.arc(width * 0.9, height * 0.72, width * 0.296, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.06)';
+  ctx.beginPath();
+  ctx.arc(width * 0.5, height * 0.92, width * 0.222, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 /** Symmetric laurel wreath (U-shape) flanking the hero stat. */
@@ -236,70 +248,164 @@ interface LayoutMetrics {
   footerH: number;
 }
 
+function splitLeadingEmoji(label: string): { emoji: string; text: string } {
+  const trimmed = label.trim();
+  const m = trimmed.match(
+    /^(\p{RI}\p{RI}|\p{Extended_Pictographic}(?:\p{EMod}|\uFE0F|\u200D\p{Extended_Pictographic})*)\s*(.*)$/u
+  );
+  if (m) return { emoji: m[1], text: m[2] };
+  return { emoji: '', text: trimmed };
+}
+
+function measureBadgeBlock(): number {
+  return BADGE_PILL_H + 18;
+}
+
+function measureHeadlineRow(ctx: CanvasRenderingContext2D, headline: string, labelName: string): number {
+  ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
+  const emojiW = ctx.measureText('🏋️').width + HEADLINE_EMOJI_GAP;
+  if (labelName && headline.startsWith(labelName)) {
+    const rest = headline.slice(labelName.length);
+    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    const bw = ctx.measureText(labelName).width;
+    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    const rw = ctx.measureText(rest).width;
+    if (emojiW + bw + rw > W - CARD_INNER_PAD * 2 - POSTER_MARGIN * 2) {
+      return HEADLINE_TEXT_SIZE * 2 + 12;
+    }
+  }
+  return Math.max(HEADLINE_EMOJI_SIZE, HEADLINE_TEXT_SIZE) + 14;
+}
+
 function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, innerW: number): LayoutMetrics {
-  ctx.font = `400 32px ${FONT}`;
-  const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 52) : [];
+  ctx.font = `400 24px ${FONT}`;
+  const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 44) : [];
 
-  const badgeBlock = 40 + 24;
-  const avatarBlock = 64 + 20;
-  const headlineBlock = 40 + 24;
-  const heroBlock = 172;
+  const badgeBlock = measureBadgeBlock();
+  const headlineBlock = measureHeadlineRow(ctx, input.headline, input.labelName) + 16;
+  const heroBlock = 150;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
-  const footerH = 68;
+  const footerH = 60;
 
-  const contentH = badgeBlock + avatarBlock + headlineBlock + heroBlock + comparisonH + footerH;
+  const contentH = badgeBlock + headlineBlock + heroBlock + comparisonH + footerH;
 
   return { contentH, comparisonH, tipLines, footerH };
 }
 
 function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: number, label: string) {
-  ctx.font = `600 24px ${FONT}`;
-  const tw = ctx.measureText(label).width;
-  const pw = tw + 40;
-  const ph = 40;
-  roundRect(ctx, cx - pw / 2, centerY - ph / 2, pw, ph, 20);
-  ctx.fillStyle = 'rgba(74, 222, 128, 0.12)';
+  const { emoji, text } = splitLeadingEmoji(label);
+  const gap = emoji && text ? 12 : 0;
+
+  ctx.font = `${BADGE_EMOJI_SIZE}px ${FONT}`;
+  const emojiW = emoji ? ctx.measureText(emoji).width : 0;
+  ctx.font = `700 ${BADGE_TEXT_SIZE}px ${FONT}`;
+  const textW = text ? ctx.measureText(text).width : ctx.measureText(label).width;
+
+  const contentW = emoji ? emojiW + gap + textW : textW;
+  const pw = contentW + 52;
+  const ph = BADGE_PILL_H;
+  const left = cx - pw / 2;
+
+  roundRect(ctx, left, centerY - ph / 2, pw, ph, ph / 2);
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.14)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
-  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.45)';
+  ctx.lineWidth = 1.5;
   ctx.stroke();
-  ctx.fillStyle = GREEN;
-  ctx.textAlign = 'center';
+
+  let x = left + (pw - contentW) / 2;
   ctx.textBaseline = 'middle';
-  ctx.fillText(label, cx, centerY);
+
+  if (emoji) {
+    ctx.font = `${BADGE_EMOJI_SIZE}px ${FONT}`;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = WHITE;
+    ctx.fillText(emoji, x, centerY);
+    x += emojiW + gap;
+  }
+
+  ctx.font = `700 ${BADGE_TEXT_SIZE}px ${FONT}`;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = GREEN;
+  ctx.fillText(text || label, x, centerY);
+  ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
 }
 
-function drawHeadlineCentered(
+function drawHeadlineWithEmoji(
   ctx: CanvasRenderingContext2D,
   cx: number,
   baselineY: number,
   headline: string,
   labelName: string
-) {
+): number {
+  const emoji = '🏋️';
+  ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
+  const emojiW = ctx.measureText(emoji).width;
+
+  let textW = 0;
+  let namePart = '';
+  let restPart = '';
   if (labelName && headline.startsWith(labelName)) {
-    const rest = headline.slice(labelName.length);
-    ctx.font = `700 32px ${FONT}`;
-    const bw = ctx.measureText(labelName).width;
-    ctx.font = `400 32px ${FONT}`;
-    const rw = ctx.measureText(rest).width;
-    const sx = cx - (bw + rw) / 2;
+    restPart = headline.slice(labelName.length);
+    namePart = labelName;
+    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    const bw = ctx.measureText(namePart).width;
+    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    const rw = ctx.measureText(restPart).width;
+    textW = bw + rw;
+  } else {
+    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    textW = ctx.measureText(headline).width;
+  }
+
+  const totalW = emojiW + HEADLINE_EMOJI_GAP + textW;
+  const maxW = W - POSTER_MARGIN * 2 - CARD_INNER_PAD * 2;
+  let sx = cx - totalW / 2;
+  let sy = baselineY;
+
+  if (totalW > maxW && labelName && restPart) {
+    sx = cx - totalW / 2;
+    ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = `700 32px ${FONT}`;
     ctx.fillStyle = WHITE;
-    ctx.fillText(labelName, sx, baselineY);
-    ctx.font = `400 32px ${FONT}`;
+    ctx.fillText(emoji, sx, sy);
+    sx += emojiW + HEADLINE_EMOJI_GAP;
+
+    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    ctx.fillStyle = WHITE;
+    ctx.fillText(namePart, sx, sy);
+    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
     ctx.fillStyle = GRAY_DIM;
-    ctx.fillText(rest, sx + bw, baselineY);
-  } else {
-    ctx.font = `400 32px ${FONT}`;
-    ctx.fillStyle = GRAY_DIM;
+    ctx.fillText(restPart, sx, sy + HEADLINE_TEXT_SIZE + 6);
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillText(headline, cx, baselineY);
+    return HEADLINE_TEXT_SIZE * 2 + 12;
   }
+
+  ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = WHITE;
+  ctx.fillText(emoji, sx, sy);
+  sx += emojiW + HEADLINE_EMOJI_GAP;
+
+  if (namePart) {
+    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    ctx.fillStyle = WHITE;
+    ctx.fillText(namePart, sx, sy);
+    const bw = ctx.measureText(namePart).width;
+    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    ctx.fillStyle = GRAY_DIM;
+    ctx.fillText(restPart, sx + bw, sy);
+  } else {
+    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
+    ctx.fillStyle = GRAY_DIM;
+    ctx.fillText(headline, sx, sy);
+  }
+
   ctx.textAlign = 'center';
+  return Math.max(HEADLINE_EMOJI_SIZE, HEADLINE_TEXT_SIZE) + 14;
 }
 
 function drawHeroKg(
@@ -310,51 +416,51 @@ function drawHeroKg(
   closing: string,
   locale: string
 ): number {
-  const zoneH = 172;
+  const zoneH = 150;
   const numText = formatVolumeKg(totalKg, locale);
 
-  ctx.font = `900 148px ${FONT}`;
+  ctx.font = `900 128px ${FONT}`;
   const numW = ctx.measureText(numText).width;
-  ctx.font = `800 46px ${FONT}`;
+  ctx.font = `800 40px ${FONT}`;
   const unitW = ctx.measureText('KG').width;
-  const gap = 14;
+  const gap = 12;
   const totalW = numW + gap + unitW;
   const nx = cx - totalW / 2;
-  const numBaseline = topY + 114;
+  const numBaseline = topY + 100;
 
-  const glow = ctx.createRadialGradient(cx, numBaseline - 34, 0, cx, numBaseline - 34, 200);
+  const glow = ctx.createRadialGradient(cx, numBaseline - 30, 0, cx, numBaseline - 30, 175);
   glow.addColorStop(0, 'rgba(74, 222, 128, 0.16)');
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
-  ctx.fillRect(cx - 220, topY, 440, zoneH);
+  ctx.fillRect(cx - 190, topY, 380, zoneH);
 
-  drawLaurelWreath(ctx, cx, numBaseline - 30, totalW / 2 + 46, 62);
+  drawLaurelWreath(ctx, cx, numBaseline - 26, totalW / 2 + 40, 54);
 
   const grad = ctx.createLinearGradient(nx, topY + 40, nx + numW, numBaseline);
   grad.addColorStop(0, '#bbf7d0');
   grad.addColorStop(0.5, GREEN);
   grad.addColorStop(1, GREEN_MID);
 
-  ctx.font = `900 148px ${FONT}`;
+  ctx.font = `900 128px ${FONT}`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = grad;
   ctx.fillText(numText, nx, numBaseline);
 
-  ctx.font = `800 46px ${FONT}`;
+  ctx.font = `800 40px ${FONT}`;
   ctx.fillStyle = GREEN;
-  ctx.fillText('KG', nx + numW + gap, numBaseline - 12);
+  ctx.fillText('KG', nx + numW + gap, numBaseline - 10);
 
   ctx.textAlign = 'center';
-  ctx.font = `400 28px ${FONT}`;
+  ctx.font = `400 24px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
-  ctx.fillText(closing, cx, topY + zoneH - 14);
+  ctx.fillText(closing, cx, topY + zoneH - 12);
 
   return zoneH;
 }
 
 function measureComparisonCardH(tipLines: string[]): number {
-  return 32 + 24 + COMP_RING_R * 2 + COMP_ICON_LABEL_GAP + 40 + 18 + blockH(tipLines, 32) + 14;
+  return 28 + 22 + COMP_RING_R * 2 + COMP_ICON_LABEL_GAP + 36 + 16 + blockH(tipLines, 28) + 12;
 }
 
 function drawComparisonCard(
@@ -377,13 +483,13 @@ function drawComparisonCard(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  let cy = topY + 32;
-  ctx.font = `500 26px ${FONT}`;
+  let cy = topY + 28;
+  ctx.font = `500 22px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(sectionTitle, cx, cy);
-  cy += 24;
+  cy += 22;
 
   const ringR = COMP_RING_R;
   const ringCy = cy + ringR;
@@ -397,14 +503,14 @@ function drawComparisonCard(
   drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, COMP_EMOJI_SIZE);
   cy += ringR * 2 + COMP_ICON_LABEL_GAP;
 
-  ctx.font = `700 36px ${FONT}`;
+  ctx.font = `700 32px ${FONT}`;
   ctx.fillStyle = WHITE;
   ctx.fillText(comparison.name, cx, cy);
-  cy += 40;
+  cy += 36;
 
-  ctx.font = `700 28px ${FONT}`;
-  const pw = ctx.measureText(countLabel).width + 44;
-  const pillH = 40;
+  ctx.font = `700 24px ${FONT}`;
+  const pw = ctx.measureText(countLabel).width + 40;
+  const pillH = 36;
   roundRect(ctx, cx - pw / 2, cy - pillH / 2, pw, pillH, 23);
   ctx.fillStyle = 'rgba(74, 222, 128, 0.14)';
   ctx.fill();
@@ -417,7 +523,7 @@ function drawComparisonCard(
   ctx.textBaseline = 'alphabetic';
   cy += pillH / 2 + 12;
 
-  drawCenteredLines(ctx, tipLines, cx, cy, 32, GRAY, `400 24px ${FONT}`);
+  drawCenteredLines(ctx, tipLines, cx, cy, 28, GRAY, `400 22px ${FONT}`);
   return h;
 }
 
@@ -442,33 +548,33 @@ function drawFooter(
     ctx.stroke();
   }
 
-  const markSize = 32;
-  const logoRowY = midY - 6;
-  drawMachineFitMark(ctx, left, logoRowY - markSize + 6, markSize);
+  const markSize = 28;
+  const logoRowY = midY - 4;
+  drawMachineFitMark(ctx, left, logoRowY - markSize + 4, markSize);
 
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 26px ${FONT}`;
+  ctx.font = `800 22px ${FONT}`;
   ctx.fillStyle = WHITE;
-  const brandX = left + markSize + 12;
+  const brandX = left + markSize + 10;
   ctx.fillText('Machine', brandX, logoRowY);
-  ctx.font = `800 26px ${FONT}`;
+  ctx.font = `800 22px ${FONT}`;
   ctx.fillStyle = GREEN;
   const machineW = ctx.measureText('Machine').width;
   ctx.fillText('Fit', brandX + machineW, logoRowY);
 
-  ctx.font = `400 22px ${FONT}`;
+  ctx.font = `400 20px ${FONT}`;
   ctx.fillStyle = GRAY;
-  ctx.fillText(labels.tagline, left, logoRowY + 32);
+  ctx.fillText(labels.tagline, left, logoRowY + 28);
 
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
-  ctx.font = `600 24px ${FONT}`;
+  ctx.font = `600 22px ${FONT}`;
   ctx.fillStyle = GREEN;
   const tags = labels.hashtags.split(/\s+/).filter(Boolean);
-  const tagStartY = midY - ((tags.length - 1) * 30) / 2;
+  const tagStartY = midY - ((tags.length - 1) * 26) / 2;
   tags.forEach((tag, i) => {
-    ctx.fillText(tag, right, tagStartY + i * 30);
+    ctx.fillText(tag, right, tagStartY + i * 26);
   });
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
@@ -489,14 +595,11 @@ function drawPosterContent(
 
   let y = posterY + (posterH - metrics.contentH) / 2;
 
-  drawPillBadge(ctx, cx, y + 20, input.labels.badge);
-  y += 40 + 24;
+  drawPillBadge(ctx, cx, y + BADGE_PILL_H / 2, input.labels.badge);
+  y += measureBadgeBlock();
 
-  drawEmojiCentered(ctx, '🏋️', cx, y + 32, 64);
-  y += 64 + 20;
-
-  drawHeadlineCentered(ctx, cx, y + 30, input.headline, input.labelName);
-  y += 40 + 24;
+  const headlineH = drawHeadlineWithEmoji(ctx, cx, y + HEADLINE_TEXT_SIZE, input.headline, input.labelName);
+  y += headlineH + 16;
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
 
@@ -521,7 +624,7 @@ function drawPosterContent(
   drawFooter(ctx, innerLeft, y, innerW, metrics.footerH, input.labels, Boolean(input.comparison));
 }
 
-/** Compact poster share card for SNS (4:5 default — 900×1125). */
+/** Compact poster share card for SNS (4:5 default — 780×975). */
 export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
   const aspect = input.aspectRatio ?? '4:5';
   const height = canvasHeight(aspect);
@@ -547,19 +650,10 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
   drawPageBackground(ctx, W, height);
 
   roundRect(ctx, POSTER_MARGIN, posterY, posterW, posterH, CARD_RADIUS);
-  const cardFill = ctx.createLinearGradient(
-    POSTER_MARGIN,
-    posterY,
-    POSTER_MARGIN + posterW,
-    posterY + posterH
-  );
-  cardFill.addColorStop(0, '#121c2a');
-  cardFill.addColorStop(0.48, '#0f1728');
-  cardFill.addColorStop(1, '#0b121c');
-  ctx.fillStyle = cardFill;
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.74)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(74, 222, 128, 0.18)';
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.lineWidth = 2;
   ctx.stroke();
 
   drawPosterContent(ctx, input, POSTER_MARGIN, posterY, posterW, posterH, metrics);

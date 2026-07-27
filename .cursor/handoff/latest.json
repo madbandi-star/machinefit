@@ -1,11 +1,11 @@
 {
-  "title": "Share card compact size + larger comparison emoji",
-  "summary": "Reduced share card to 900×1125 with tighter layout. Comparison emoji ring enlarged (78px radius, 86px emoji) with adjusted icon-to-label gap.",
-  "git": { "branch": "main", "commit": "9f11fd0" },
+  "title": "Lifted share card — DNA background + compact layout",
+  "summary": "Background matches lifter DNA card (purple/teal gradient + glow orbs, semi-transparent card panel). Also: 780×975 size, large badge, inline headline emoji.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "공유 카드 — 900×1125 크기, 볼링공 등 비교 이모지 크게, 아이콘↔라벨 간격, 전체 컴팩트 레이아웃.",
+  "testFocus": "누적무게 공유 카드 — 운동성향 카드와 동일 배경(그radient+글로우), 카드 패널 스타일, 레이아웃 유지.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "1080×1350, 비교 이모지 작음(ringR 56), 아이콘-텍스트 간격 36px.",
-  "toBe": "900×1125, 비교 이모지 크게(ringR 78, emoji 86), 간격 22px, 전체 축소."
+  "asIs": "단순 다크 그radient 배경, 그린 테두리 카드.",
+  "toBe": "DNA 카드와 동일 배경·패널, 기존 컴팩트 레이아웃."
 }
