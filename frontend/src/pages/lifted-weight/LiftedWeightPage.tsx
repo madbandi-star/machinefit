@@ -82,7 +82,6 @@ export function LiftedWeightPage() {
         locale,
         labels: {
           aboutCount: (count, unit) => t('liftedWeight.aboutCount', { count, unit }),
-          shareClosing: t('liftedWeight.shareClosing'),
         },
       });
       const file = new File([blob], 'machinefit-lifted.png', { type: 'image/png' });

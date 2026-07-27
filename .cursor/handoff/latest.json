@@ -1,15 +1,15 @@
 {
-  "title": "Lifted weight share card redesign",
-  "summary": "Share PNG now mirrors the on-page hero (emoji, headline, KG total, closing, fun line) plus a styled comparison card, green glass panels, and balanced vertical layout.",
-  "git": { "branch": "main", "commit": "c2257ee" },
+  "title": "Lifted weight share card alignment polish",
+  "summary": "Fix emoji/text centering in hero and comparison panels, tighten vertical spacing to reduce empty margins, remove 'MachineFit에서 확인하세요!' footer line.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
   ],
-  "testFocus": "누적무게 → 공유 카드 만들기 — 페이지 히어로와 동일한 내용·스타일(그린 그라데이션, 비교 카드, MachineFit 푸터) 확인.",
+  "testFocus": "누적무게 공유 PNG — 이모지·텍스트 중앙 정렬, 볼링공 카드 아이콘/텍스트 정렬, 하단 여백 축소, 확인 문구 없음.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["누적무게 공유 PNG — 상하 여백 균형, 볼링공 등 비교 카드 레이아웃"],
+  "productionChecks": ["누적무게 → 공유 카드 만들기 → PNG 레이아웃 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "공유 PNG가 단순 텍스트 나열, 위쪽 쏠림, 페이지 카드와 디자인 불일치.",
-  "toBe": "페이지 히어로+비교 카드 내용을 담은 프리미엄 공유 카드."
+  "asIs": "이모지·텍스트 정렬 어긋남, 히어로/비교 박스 내부 여백 과다, 하단 공백 많음, 확인 문구 표시.",
+  "toBe": "박스 크기=콘텐츠 높이, 세로 중앙 정렬, 확인 문구 삭제."
 }
