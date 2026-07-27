@@ -1,7 +1,7 @@
 {
   "title": "Lifter DNA share card quote line wrap",
   "summary": "Long oneLiner quotes on the share PNG now wrap at ~20 chars with punctuation-aware breaks instead of overflowing a single line.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "f1200aa" },
   "changedFiles": ["frontend/src/utils/lifterDnaShareCard.ts"],
   "testFocus": "운동성향 공유 카드 — 긴 인용문이 2~3줄로 자연스럽게 줄바꿈되고 박스 안에서 세로 중앙 정렬되는지 확인.",
   "fastChecks": ["npm run build --prefix frontend"],
