@@ -17,6 +17,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildAchievementShareCard } from '@/utils/achievementShareCard';
+import { buildShareHashtags, toShareHashtag } from '@/utils/shareHashtags';
 import {
   clearAchievementUnlockPopupHideToday,
   isAchievementUnlockPopupEnabled,
@@ -232,7 +233,10 @@ export function AchievementsPage() {
         labels: {
           badge: t('achievements.shareBadge'),
           tagline: t('achievements.shareTagline'),
-          hashtags: t('achievements.shareHashtags'),
+          hashtags: buildShareHashtags(
+            [toShareHashtag(user?.displayName)].filter(Boolean),
+            t('achievements.shareHashtags')
+          ),
           metaRarity: t('achievements.shareMetaRarity'),
           metaXp: t('achievements.shareMetaXp'),
           metaEarnedAt: t('achievements.shareMetaEarnedAt'),

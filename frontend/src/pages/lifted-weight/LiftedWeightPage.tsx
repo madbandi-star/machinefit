@@ -11,7 +11,9 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useUIStore } from '@/store/ui.store';
+import { useAuthStore } from '@/store/auth.store';
 import { buildLiftedShareCard } from '@/utils/liftedShareCard';
+import { buildShareHashtags, toShareHashtag } from '@/utils/shareHashtags';
 import './LiftedWeightPage.css';
 
 function useCountUp(target: number, durationMs = 1200): number {
@@ -49,6 +51,7 @@ const LiftedCountUpValue = memo(function LiftedCountUpValue({
 export function LiftedWeightPage() {
   const { t, i18n } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
+  const user = useAuthStore((s) => s.user);
   const { activeGymId, gyms } = useActiveGym();
   const [mode, setMode] = useState<LiftedScopeMode>('user');
   const [gymId, setGymId] = useState<string | undefined>(activeGymId ?? undefined);
@@ -84,6 +87,11 @@ export function LiftedWeightPage() {
   const handleShare = async () => {
     if (!data) return;
     try {
+      const idTag = toShareHashtag(user?.displayName);
+      const prefixTags =
+        mode === 'gym'
+          ? [toShareHashtag(data.labelName), idTag].filter(Boolean)
+          : [idTag].filter(Boolean);
       const blob = await buildLiftedShareCard({
         headline: data.labelName,
         labelName: data.labelName,
@@ -96,7 +104,7 @@ export function LiftedWeightPage() {
           badge: t('liftedWeight.shareBadge'),
           comparisonSection: t('liftedWeight.shareComparisonSection'),
           tagline: t('liftedWeight.shareTagline'),
-          hashtags: t('liftedWeight.shareHashtags'),
+          hashtags: buildShareHashtags(prefixTags, t('liftedWeight.shareHashtags')),
         },
       });
       const file = new File([blob], 'machinefit-lifted.png', { type: 'image/png' });

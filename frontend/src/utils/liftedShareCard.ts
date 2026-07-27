@@ -1,5 +1,6 @@
 import type { LiftedComparisonResult } from '@machinefit/shared';
 import { formatVolumeKg } from '@machinefit/shared';
+import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export type ShareCardAspectRatio = '4:5' | '1:1' | '9:16';
 
@@ -278,7 +279,7 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   const headerBlock = measureHeaderBlock();
   const heroBlock = heroBlockHeight(input.closing);
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
-  const footerH = FOOTER_H;
+  const footerH = measureShareFooterH(input.labels.hashtags, { minH: FOOTER_H });
 
   const contentH = headerBlock + heroBlock + comparisonH + GAP_BEFORE_FOOTER + footerH;
 

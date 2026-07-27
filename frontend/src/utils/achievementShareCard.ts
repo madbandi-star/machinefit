@@ -1,4 +1,5 @@
 import type { AchievementRarity } from '@machinefit/shared';
+import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export interface AchievementShareCardLabels {
   badge: string;
@@ -332,7 +333,7 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: AchievementShareInp
     gapDescMeta +
     META_PANEL_H +
     12 +
-    FOOTER_H;
+    measureShareFooterH(input.labels.hashtags, { minH: FOOTER_H });
 
   return { contentH, nameLines, descLines, nameBlockH, descPanelH };
 }
@@ -535,7 +536,14 @@ function drawPosterContent(
   );
   y += META_PANEL_H + 12;
 
-  drawFooter(ctx, innerLeft, y, innerW, FOOTER_H, input.labels);
+  drawFooter(
+    ctx,
+    innerLeft,
+    y,
+    innerW,
+    measureShareFooterH(input.labels.hashtags, { minH: FOOTER_H }),
+    input.labels
+  );
 }
 
 /** Compact achievement share card (720×900 — matches lifted weight card). */
