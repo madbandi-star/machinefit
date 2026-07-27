@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card — DNA background + compact layout",
   "summary": "Background matches lifter DNA card (purple/teal gradient + glow orbs, semi-transparent card panel). Also: 780×975 size, large badge, inline headline emoji.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "8ff2997" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유 카드 — 운동성향 카드와 동일 배경(그radient+글로우), 카드 패널 스타일, 레이아웃 유지.",
   "fastChecks": ["npm run build --prefix frontend"],

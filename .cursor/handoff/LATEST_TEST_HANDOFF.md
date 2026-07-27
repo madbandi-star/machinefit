@@ -1,6 +1,6 @@
 # Latest test handoff — Lifted share card DNA background
 
-**Branch:** `main` · **Commit:** pending
+**Branch:** `main` · **Commit:** `8ff2997`
 
 ## Change
 
