@@ -1,16 +1,14 @@
 {
-  "title": "Achievement share card A+B polish",
-  "summary": "Tighter layout with upward bias; rarity-colored emoji glow; DNA-style 3-column meta panel (rarity/XP/earned date).",
-  "git": { "branch": "main", "commit": "a8e5c53" },
+  "title": "Achievement share card — huge emoji + split earned date",
+  "summary": "Hero emoji 112px with 118px glow. Earned-at meta column shows date and time on separate centered lines with blank line gap.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/utils/achievementShareCard.ts",
-    "frontend/src/pages/achievements/AchievementsPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/pages/achievements/AchievementsPage.tsx"
   ],
-  "testFocus": "업적 공유카드 — 간격 타이트, 희귀도별 글로우, 메타 3칸(희귀도/XP/획득일시).",
+  "testFocus": "업적 공유카드 — 대표 이모지 매우 크게, 획득일시 날짜/시간 2줄 중앙정렬.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "넓은 여백, pill+별도 획득일시, 단색 글로우.",
-  "toBe": "타이트 sequential, 메타 패널, 희귀도 accent."
+  "asIs": "이모지 64px, 획득일시 한 줄.",
+  "toBe": "이모지 112px, 획득일시 2026년… / (한줄) / 오후… 형식."
 }

@@ -1,11 +1,11 @@
-# Latest test handoff — Achievement share card A+B
+# Latest test handoff — Achievement emoji + earned date
 
-**Branch:** `main` · **Commit:** `a8e5c53`
+**Branch:** `main` · **Commit:** pending
 
 ## Change
 
-- **A** 간격 타이트: 이모지 축소, 설명 패널 패딩↓, 상향 bias (+28px)
-- **B** 희귀도별 이모지 글로우 색 + **3칸 메타 패널** (희귀도 / XP / 획득일시)
+1. **대표 이모지** — 64→**112px**, 글로우 **118px**
+2. **획득일시** — 메타 패널 3칸: 라벨 아래 **날짜 / (한줄 띄움) / 시간** 중앙 정렬
 
 ## Test
 

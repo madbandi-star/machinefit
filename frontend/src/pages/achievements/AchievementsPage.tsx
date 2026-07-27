@@ -72,6 +72,29 @@ function formatEarnedAt(iso: string | undefined, locale: string): string | null 
   });
 }
 
+/** Achievement unlock date/time split for share card meta panel. */
+function formatShareEarnedAt(
+  iso: string | undefined,
+  locale: string
+): { date: string; time: string } | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const ko = locale.startsWith('ko');
+  return {
+    date: d.toLocaleDateString(ko ? 'ko-KR' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+    time: d.toLocaleTimeString(ko ? 'ko-KR' : 'en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: ko,
+    }),
+  };
+}
+
 export function AchievementsPage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
@@ -195,7 +218,7 @@ export function AchievementsPage() {
 
   const handleShare = async (item: AchievementProgressItem) => {
     try {
-      const earnedAtFormatted = formatEarnedAt(item.earnedAt, locale);
+      const shareEarnedAt = formatShareEarnedAt(item.earnedAt, locale);
       const blob = await buildAchievementShareCard({
         emoji: item.obscured ? '❓' : item.def.emoji,
         name: item.obscured ? '???' : loc(item.def.name, locale),
@@ -213,7 +236,8 @@ export function AchievementsPage() {
           metaRarity: t('achievements.shareMetaRarity'),
           metaXp: t('achievements.shareMetaXp'),
           metaEarnedAt: t('achievements.shareMetaEarnedAt'),
-          earnedAtValue: earnedAtFormatted ?? '—',
+          earnedAtDate: shareEarnedAt?.date ?? '—',
+          earnedAtTime: shareEarnedAt?.time ?? '',
         },
       });
       const file = new File([blob], 'machinefit-achievement.png', { type: 'image/png' });

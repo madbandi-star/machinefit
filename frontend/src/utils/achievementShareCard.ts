@@ -7,7 +7,8 @@ export interface AchievementShareCardLabels {
   metaRarity: string;
   metaXp: string;
   metaEarnedAt: string;
-  earnedAtValue: string;
+  earnedAtDate: string;
+  earnedAtTime: string;
 }
 
 interface AchievementShareInput {
@@ -25,16 +26,16 @@ const W = 720;
 const POSTER_MARGIN = 28;
 const CARD_INNER_PAD = 40;
 const CARD_RADIUS = 32;
-const VERTICAL_BIAS = 28;
+const VERTICAL_BIAS = 12;
 
 const BADGE_EMOJI_SIZE = 42;
 const BADGE_TEXT_SIZE = 35;
 const BADGE_PILL_H = 52;
 
-const HERO_EMOJI_SIZE = 64;
-const EMOJI_GLOW_R = 74;
+const HERO_EMOJI_SIZE = 112;
+const EMOJI_GLOW_R = 118;
 
-const META_PANEL_H = 102;
+const META_PANEL_H = 118;
 const FOOTER_H = 56;
 
 const FONT =
@@ -331,6 +332,15 @@ function drawDescPanel(
   drawCenteredLines(ctx, lines, cx, textTop - 20, 28, '#e5e7eb', `400 21px ${FONT}`);
 }
 
+function measureEarnedColH(hasEarnedAt: boolean): number {
+  const labelLH = 22;
+  const labelValueGap = 8;
+  const valueLH = 22;
+  const blankLine = 10;
+  if (!hasEarnedAt) return labelLH + labelValueGap + valueLH;
+  return labelLH + labelValueGap + valueLH + blankLine + valueLH;
+}
+
 function drawMetaPanel(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -339,7 +349,9 @@ function drawMetaPanel(
   h: number,
   colLabels: [string, string, string],
   colValues: [string, string, string],
-  valueColors: [string, string, string]
+  valueColors: [string, string, string],
+  earnedAtDate: string,
+  earnedAtTime: string
 ) {
   roundRect(ctx, x, y, w, h, 18);
   ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
@@ -352,10 +364,15 @@ function drawMetaPanel(
   const padX = 10;
   const labelLH = 22;
   const valueLH = 28;
+  const earnedValueLH = 22;
   const labelValueGap = 8;
+  const earnedBlankLine = 10;
   const maxColWidth = colW - padX * 2;
 
-  const colHeights = colValues.map((value) => {
+  const colHeights = colValues.map((value, i) => {
+    if (i === 2 && earnedAtDate && earnedAtTime) {
+      return measureEarnedColH(true);
+    }
     ctx.font = `700 20px ${FONT}`;
     const valueLines = countWrapLines(ctx, value, maxColWidth);
     return labelLH + labelValueGap + valueLines * valueLH;
@@ -383,16 +400,24 @@ function drawMetaPanel(
     ctx.textBaseline = 'alphabetic';
     ctx.fillText(colLabels[i], colX, colTop + labelLH * 0.82);
 
-    ctx.font = `700 20px ${FONT}`;
-    ctx.fillStyle = valueColors[i];
-    wrapTextCentered(
-      ctx,
-      colValues[i],
-      colX,
-      colTop + labelLH + labelValueGap + valueLH * 0.78,
-      maxColWidth,
-      valueLH
-    );
+    if (i === 2 && earnedAtDate && earnedAtTime) {
+      const dateY = colTop + labelLH + labelValueGap + earnedValueLH * 0.78;
+      ctx.font = `700 18px ${FONT}`;
+      ctx.fillStyle = valueColors[i];
+      ctx.fillText(earnedAtDate, colX, dateY);
+      ctx.fillText(earnedAtTime, colX, dateY + earnedValueLH + earnedBlankLine);
+    } else {
+      ctx.font = `700 20px ${FONT}`;
+      ctx.fillStyle = valueColors[i];
+      wrapTextCentered(
+        ctx,
+        colValues[i],
+        colX,
+        colTop + labelLH + labelValueGap + valueLH * 0.78,
+        maxColWidth,
+        valueLH
+      );
+    }
   }
 }
 
@@ -482,8 +507,10 @@ function drawPosterContent(
     innerW,
     META_PANEL_H,
     [input.labels.metaRarity, input.labels.metaXp, input.labels.metaEarnedAt],
-    [input.rarity, xpLabel, input.labels.earnedAtValue || '—'],
-    [accent.value, GREEN, WHITE]
+    [input.rarity, xpLabel, ''],
+    [accent.value, GREEN, WHITE],
+    input.labels.earnedAtDate,
+    input.labels.earnedAtTime
   );
   y += META_PANEL_H + 12;
 
