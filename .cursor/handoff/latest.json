@@ -1,7 +1,7 @@
 {
   "title": "Lifted weight share card alignment polish",
   "summary": "Fix emoji/text centering in hero and comparison panels, tighten vertical spacing to reduce empty margins, remove 'MachineFit에서 확인하세요!' footer line.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "e1e0529" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
