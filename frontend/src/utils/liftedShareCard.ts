@@ -19,29 +19,31 @@ interface ShareCardInput {
   comparison?: LiftedComparisonResult;
   locale: string;
   labels: LiftedShareCardLabels;
-  /** @default '4:5' — compact share card (780×975) */
+  /** @default '4:5' — compact share card (720×900) */
   aspectRatio?: ShareCardAspectRatio;
 }
 
-const W = 780;
-const POSTER_MARGIN = 32;
+const W = 720;
+const POSTER_MARGIN = 28;
 
-const CARD_INNER_PAD = 44;
+const CARD_INNER_PAD = 40;
 
 /** Top badge — trophy emoji + label, rendered large */
-const BADGE_EMOJI_SIZE = 46;
-const BADGE_TEXT_SIZE = 38;
-const BADGE_PILL_H = 58;
+const BADGE_EMOJI_SIZE = 42;
+const BADGE_TEXT_SIZE = 35;
+const BADGE_PILL_H = 52;
 
 /** Headline row — weightlifter emoji inline left of name text */
-const HEADLINE_EMOJI_SIZE = 38;
-const HEADLINE_TEXT_SIZE = 28;
+const HEADLINE_EMOJI_SIZE = 35;
+const HEADLINE_TEXT_SIZE = 26;
 const HEADLINE_EMOJI_GAP = 10;
 
 /** Comparison emoji ring */
-const COMP_RING_R = 68;
-const COMP_EMOJI_SIZE = 76;
-const COMP_ICON_LABEL_GAP = 20;
+const COMP_RING_R = 62;
+const COMP_EMOJI_SIZE = 70;
+const COMP_ICON_LABEL_GAP = 18;
+const COMP_SECTION_TOP_PAD = 36;
+const COMP_TIP_BOTTOM_PAD = 22;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
@@ -52,13 +54,13 @@ const WHITE = '#f8fafc';
 const GRAY = '#94a3b8';
 const GRAY_DIM = 'rgba(148, 163, 184, 0.82)';
 
-const CARD_RADIUS = 34;
-const BOX_RADIUS = 16;
+const CARD_RADIUS = 32;
+const BOX_RADIUS = 14;
 
 function canvasHeight(aspect: ShareCardAspectRatio): number {
-  if (aspect === '9:16') return 1387;
-  if (aspect === '1:1') return 780;
-  return 975;
+  if (aspect === '9:16') return 1280;
+  if (aspect === '1:1') return 720;
+  return 900;
 }
 
 function roundRect(
@@ -283,9 +285,9 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
 
   const badgeBlock = measureBadgeBlock();
   const headlineBlock = measureHeadlineRow(ctx, input.headline, input.labelName) + 16;
-  const heroBlock = 150;
+  const heroBlock = 138;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
-  const footerH = 60;
+  const footerH = 56;
 
   const contentH = badgeBlock + headlineBlock + heroBlock + comparisonH + footerH;
 
@@ -416,51 +418,60 @@ function drawHeroKg(
   closing: string,
   locale: string
 ): number {
-  const zoneH = 150;
+  const zoneH = 138;
   const numText = formatVolumeKg(totalKg, locale);
 
-  ctx.font = `900 128px ${FONT}`;
+  ctx.font = `900 118px ${FONT}`;
   const numW = ctx.measureText(numText).width;
-  ctx.font = `800 40px ${FONT}`;
+  ctx.font = `800 36px ${FONT}`;
   const unitW = ctx.measureText('KG').width;
-  const gap = 12;
+  const gap = 10;
   const totalW = numW + gap + unitW;
   const nx = cx - totalW / 2;
-  const numBaseline = topY + 100;
+  const numBaseline = topY + 92;
 
-  const glow = ctx.createRadialGradient(cx, numBaseline - 30, 0, cx, numBaseline - 30, 175);
+  const glow = ctx.createRadialGradient(cx, numBaseline - 28, 0, cx, numBaseline - 28, 160);
   glow.addColorStop(0, 'rgba(74, 222, 128, 0.16)');
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
-  ctx.fillRect(cx - 190, topY, 380, zoneH);
+  ctx.fillRect(cx - 175, topY, 350, zoneH);
 
-  drawLaurelWreath(ctx, cx, numBaseline - 26, totalW / 2 + 40, 54);
+  drawLaurelWreath(ctx, cx, numBaseline - 24, totalW / 2 + 36, 50);
 
   const grad = ctx.createLinearGradient(nx, topY + 40, nx + numW, numBaseline);
   grad.addColorStop(0, '#bbf7d0');
   grad.addColorStop(0.5, GREEN);
   grad.addColorStop(1, GREEN_MID);
 
-  ctx.font = `900 128px ${FONT}`;
+  ctx.font = `900 118px ${FONT}`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = grad;
   ctx.fillText(numText, nx, numBaseline);
 
-  ctx.font = `800 40px ${FONT}`;
+  ctx.font = `800 36px ${FONT}`;
   ctx.fillStyle = GREEN;
-  ctx.fillText('KG', nx + numW + gap, numBaseline - 10);
+  ctx.fillText('KG', nx + numW + gap, numBaseline - 8);
 
   ctx.textAlign = 'center';
-  ctx.font = `400 24px ${FONT}`;
+  ctx.font = `400 22px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
-  ctx.fillText(closing, cx, topY + zoneH - 12);
+  ctx.fillText(closing, cx, topY + zoneH - 10);
 
   return zoneH;
 }
 
 function measureComparisonCardH(tipLines: string[]): number {
-  return 28 + 22 + COMP_RING_R * 2 + COMP_ICON_LABEL_GAP + 36 + 16 + blockH(tipLines, 28) + 12;
+  return (
+    COMP_SECTION_TOP_PAD +
+    22 +
+    COMP_RING_R * 2 +
+    COMP_ICON_LABEL_GAP +
+    34 +
+    16 +
+    blockH(tipLines, 26) +
+    COMP_TIP_BOTTOM_PAD
+  );
 }
 
 function drawComparisonCard(
@@ -483,8 +494,8 @@ function drawComparisonCard(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  let cy = topY + 28;
-  ctx.font = `500 22px ${FONT}`;
+  let cy = topY + COMP_SECTION_TOP_PAD;
+  ctx.font = `500 20px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
@@ -503,14 +514,14 @@ function drawComparisonCard(
   drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, COMP_EMOJI_SIZE);
   cy += ringR * 2 + COMP_ICON_LABEL_GAP;
 
-  ctx.font = `700 32px ${FONT}`;
+  ctx.font = `700 30px ${FONT}`;
   ctx.fillStyle = WHITE;
   ctx.fillText(comparison.name, cx, cy);
-  cy += 36;
+  cy += 32;
 
-  ctx.font = `700 24px ${FONT}`;
-  const pw = ctx.measureText(countLabel).width + 40;
-  const pillH = 36;
+  ctx.font = `700 22px ${FONT}`;
+  const pw = ctx.measureText(countLabel).width + 36;
+  const pillH = 34;
   roundRect(ctx, cx - pw / 2, cy - pillH / 2, pw, pillH, 23);
   ctx.fillStyle = 'rgba(74, 222, 128, 0.14)';
   ctx.fill();
@@ -523,7 +534,7 @@ function drawComparisonCard(
   ctx.textBaseline = 'alphabetic';
   cy += pillH / 2 + 12;
 
-  drawCenteredLines(ctx, tipLines, cx, cy, 28, GRAY, `400 22px ${FONT}`);
+  drawCenteredLines(ctx, tipLines, cx, cy, 26, GRAY, `400 20px ${FONT}`);
   return h;
 }
 
@@ -624,7 +635,7 @@ function drawPosterContent(
   drawFooter(ctx, innerLeft, y, innerW, metrics.footerH, input.labels, Boolean(input.comparison));
 }
 
-/** Compact poster share card for SNS (4:5 default — 780×975). */
+/** Compact poster share card for SNS (4:5 default — 720×900). */
 export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
   const aspect = input.aspectRatio ?? '4:5';
   const height = canvasHeight(aspect);
