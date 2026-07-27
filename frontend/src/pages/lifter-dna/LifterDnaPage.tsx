@@ -12,6 +12,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { buildLifterDnaShareCard } from '@/utils/lifterDnaShareCard';
+import { buildShareHashtags, toShareHashtag } from '@/utils/shareHashtags';
 import { predictLifterTendencyFromProfile } from '@/utils/predictLifterTendency';
 import './LifterDnaPage.css';
 
@@ -113,11 +114,16 @@ export function LifterDnaPage() {
           basis: t('lifterDna.basis'),
           basisValue: t('lifterDna.basisValue', { count: data.analyzedLogs }),
           analyzedAt: t('lifterDna.analyzedAt'),
+          tagline: t('lifterDna.shareTagline'),
+          hashtags: buildShareHashtags(
+            [toShareHashtag(user?.displayName)].filter(Boolean),
+            t('lifterDna.shareHashtags')
+          ),
         },
         analyzedDate,
       });
       const file = new File([blob], 'machinefit-lifter-dna.png', { type: 'image/png' });
-      const text = `${data.shareHeadline}\nAI ${data.confidence}%\n#MacineFit #운동성향`;
+      const text = `${data.shareHeadline}\nAI ${data.confidence}%\n${t('lifterDna.shareHashtags')}`;
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], text, title: 'MachineFit AI Lifter DNA' });
         return;

@@ -1,4 +1,5 @@
 import type { LifterDnaSnapshot } from '@machinefit/shared';
+import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export interface DnaShareCardLabels {
   complete: string;
@@ -6,6 +7,8 @@ export interface DnaShareCardLabels {
   basis: string;
   basisValue: string;
   analyzedAt: string;
+  tagline: string;
+  hashtags: string;
 }
 
 interface DnaShareInput {
@@ -16,6 +19,11 @@ interface DnaShareInput {
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
+
+const GREEN = '#4ade80';
+const WHITE = '#f8fafc';
+const GRAY = '#94a3b8';
+const FOOTER_MIN_H = 72;
 
 function starsText(n: number): string {
   const filled = Math.max(0, Math.min(5, n));
@@ -327,6 +335,66 @@ function drawQuotePanel(
   drawCenteredWrapText(ctx, lines, x + w / 2, y, h, QUOTE_LINE_HEIGHT);
 }
 
+function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.strokeStyle = GREEN;
+  ctx.lineWidth = size * 0.11;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(0, size);
+  ctx.lineTo(size * 0.35, size * 0.15);
+  ctx.lineTo(size * 0.55, size * 0.55);
+  ctx.lineTo(size * 0.85, 0);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Achievement/lifted-style footer: brand left, hashtags right. */
+function drawFooter(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  topY: number,
+  width: number,
+  height: number,
+  labels: DnaShareCardLabels
+) {
+  const right = left + width;
+  const midY = topY + height / 2;
+  const markSize = 28;
+  const logoRowY = midY - 4;
+
+  drawMachineFitMark(ctx, left, logoRowY - markSize + 4, markSize);
+
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `800 22px ${FONT}`;
+  ctx.fillStyle = WHITE;
+  const brandX = left + markSize + 10;
+  ctx.fillText('Machine', brandX, logoRowY);
+  ctx.font = `800 22px ${FONT}`;
+  ctx.fillStyle = GREEN;
+  const machineW = ctx.measureText('Machine').width;
+  ctx.fillText('Fit', brandX + machineW, logoRowY);
+
+  ctx.font = `400 20px ${FONT}`;
+  ctx.fillStyle = GRAY;
+  ctx.fillText(labels.tagline, left, logoRowY + 28);
+
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  ctx.font = `600 22px ${FONT}`;
+  ctx.fillStyle = GREEN;
+  const tags = labels.hashtags.split(/\s+/).filter(Boolean);
+  const tagStartY = midY - ((tags.length - 1) * 26) / 2;
+  tags.forEach((tag, i) => {
+    ctx.fillText(tag, right, tagStartY + i * 26);
+  });
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+}
+
 /** Share card — vertically balanced hero layout for social sharing. */
 export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blob> {
   const { snapshot, labels, analyzedDate } = input;
@@ -354,6 +422,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   const cx = width / 2;
   const contentMax = cardW - 128;
   const innerX = cardX + 64;
+  const footerInnerW = cardW - 128;
 
   ctx.textAlign = 'center';
 
@@ -377,7 +446,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   const gapLg = 56;
   const metaPanelH = 168;
   const quotePanelH = Math.max(140, quoteHeight + 88);
-  const footerH = 72;
+  const footerH = measureShareFooterH(labels.hashtags, { minH: FOOTER_MIN_H });
 
   const blockHeight =
     60 + // eyebrow + gap below
@@ -438,12 +507,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   drawQuotePanel(ctx, innerX, y, quotePanelW, quotePanelH, snapshot.oneLiner);
 
   y += quotePanelH + gapMd;
-  ctx.font = `bold 28px ${FONT}`;
-  ctx.fillStyle = '#4ade80';
-  ctx.fillText('MachineFit', cx, y);
-  ctx.font = `24px ${FONT}`;
-  ctx.fillStyle = 'rgba(134, 239, 172, 0.72)';
-  ctx.fillText('#MacineFit #운동성향', cx, y + 34);
+  drawFooter(ctx, innerX, y, footerInnerW, footerH, labels);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

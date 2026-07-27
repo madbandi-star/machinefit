@@ -797,6 +797,8 @@
     "badges": "획득 배지",
     "noBadges": "아직 배지가 없어요. 운동을 이어가 보세요!",
     "share": "공유 카드 만들기",
+    "shareTagline": "운동 기록이 실력이 된다.",
+    "shareHashtags": "#MachineFit #운동성향",
     "shareSaved": "공유 이미지를 저장했어요."
   },
   "liftedWeight": {

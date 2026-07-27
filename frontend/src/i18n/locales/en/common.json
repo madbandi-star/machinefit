@@ -797,6 +797,8 @@
     "badges": "Badges earned",
     "noBadges": "No badges yet — keep training!",
     "share": "Create share card",
+    "shareTagline": "Your logs become strength.",
+    "shareHashtags": "#MachineFit #WorkoutStyle",
     "shareSaved": "Share image saved."
   },
   "liftedWeight": {
