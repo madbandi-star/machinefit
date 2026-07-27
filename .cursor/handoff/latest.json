@@ -1,7 +1,7 @@
 {
   "title": "Achievement share card — centered emoji + tight badge gap",
   "summary": "Hero emoji uses measureText/actualBoundingBox for true horizontal center. Placed 6px below badge (was ~84px visual gap).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c8139c6" },
   "changedFiles": ["frontend/src/utils/achievementShareCard.ts"],
   "testFocus": "업적 공유카드 — 이모지 정확히 중앙, '새로운 업적' 배지 바로 아래 붙음.",
   "fastChecks": ["npm run build --prefix frontend"],
