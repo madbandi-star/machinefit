@@ -3,6 +3,7 @@ import { computePerformedTotalWeightKg } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
 import { feedbackRepository } from '../repositories/feedback.repository.js';
+import { performedVolumeFromLog } from '../utils/mypage-workout-metrics.js';
 
 export interface WorkoutLoadContext {
   adjustedWeight?: number | null;
@@ -203,6 +204,48 @@ export function sumLogsTotalWeightKg(
     (sum, log) => sum + computeLogTotalWeightKg(log, loadByLogId?.get(log.id)),
     0
   );
+}
+
+/**
+ * Performed 총볼륨 per log (Σ setWeight × reps), using recommendation + prefs + fit.
+ * Returns 0 for logs with no logged stepper weights (does not invent from AI seed).
+ */
+export async function mapPerformedVolumeByLogId(
+  userId: string,
+  logs: WorkoutLog[],
+  options?: { gymId?: string; memberId?: string }
+): Promise<Map<string, number>> {
+  const loadById = await resolveWorkoutLoadContexts(userId, logs, options);
+  const out = new Map<string, number>();
+  for (const log of logs) {
+    const load = loadById.get(log.id);
+    out.set(
+      log.id,
+      performedVolumeFromLog({
+        setWeightsKg: log.setWeightsKg,
+        setCompleted: log.setCompleted,
+        setCount: log.setCount,
+        adjustedWeight: load?.adjustedWeight,
+        recommendedWeight: load?.recommendedWeight,
+        adjustedReps: load?.adjustedReps,
+        recommendedReps: load?.recommendedReps,
+        fitRating: load?.fitRating,
+      })
+    );
+  }
+  return out;
+}
+
+/** Sum of {@link mapPerformedVolumeByLogId} values. */
+export async function sumPerformedVolumeKg(
+  userId: string,
+  logs: WorkoutLog[],
+  options?: { gymId?: string; memberId?: string }
+): Promise<number> {
+  const byId = await mapPerformedVolumeByLogId(userId, logs, options);
+  let total = 0;
+  for (const kg of byId.values()) total += kg;
+  return Math.round(total * 100) / 100;
 }
 
 export { parseJsonSettings, repsFromSettings };

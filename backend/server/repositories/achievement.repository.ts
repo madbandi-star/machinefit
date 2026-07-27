@@ -1,10 +1,12 @@
-import type { AchievementUserStats, LocalizedText } from '@machinefit/shared';
+import type { AchievementUserStats, LocalizedText, WorkoutLog } from '@machinefit/shared';
 import { emptyAchievementStats } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
+  parseCompletedArray,
+  parseWeightArray,
   seoulDateKey,
-  SQL_LOG_VOLUME_LATERAL,
 } from '../utils/mypage-workout-metrics.js';
+import { sumPerformedVolumeKg } from '../services/workout-load.service.js';
 
 type StatsRow = {
   total_volume_kg: string;
@@ -416,11 +418,10 @@ export const achievementRepository = {
       : '';
 
     const aggParams: unknown[] = [userId, ...scopeParams];
-    const [agg, datesResult, prCount] = await Promise.all([
+    const [agg, datesResult, prCount, volumeResult] = await Promise.all([
       pool.query<{
         workout_count: string;
         session_days: string;
-        total_volume_kg: string;
         unique_machines: string;
         unique_brands: string;
         unique_gyms: string;
@@ -451,23 +452,19 @@ export const achievementRepository = {
              wl.machine_id,
              wl.gym_id,
              wl.target_muscle_group,
-             wl.set_weights_kg,
              wl.created_at,
              wl.updated_at,
              m.code AS machine_code,
              b.code AS brand_code,
-             COALESCE(vol.kg, 0) AS volume_kg,
              EXTRACT(HOUR FROM COALESCE(wl.created_at, wl.updated_at) AT TIME ZONE 'Asia/Seoul')::int AS hour_kst
            FROM workout_logs wl
            JOIN machines m ON m.id = wl.machine_id
            LEFT JOIN brands b ON b.id = m.brand_id
-           ${SQL_LOG_VOLUME_LATERAL}
            WHERE wl.user_id = $1${scopeFilter}
          )
          SELECT
            COUNT(*)::text AS workout_count,
            COUNT(DISTINCT log_date)::text AS session_days,
-           COALESCE(SUM(volume_kg), 0)::text AS total_volume_kg,
            COUNT(DISTINCT machine_id)::text AS unique_machines,
            COUNT(DISTINCT brand_code)::text AS unique_brands,
            COUNT(DISTINCT gym_id)::text AS unique_gyms,
@@ -512,9 +509,52 @@ export const achievementRepository = {
         [userId, ...scopeParams]
       ),
       computePrCount(pool, userId, options),
+      pool.query<{
+        id: string;
+        gym_id: string;
+        member_id: string;
+        recommendation_id: string | null;
+        machine_code: string;
+        log_date: string;
+        set_count: number;
+        set_weights_kg: number[] | string;
+        set_completed: boolean[] | string | null;
+        created_at: string;
+        updated_at: string;
+      }>(
+        `SELECT wl.id::text,
+                wl.gym_id::text,
+                wl.member_id::text,
+                wl.recommendation_id::text,
+                m.code AS machine_code,
+                wl.log_date::text,
+                wl.set_count,
+                wl.set_weights_kg,
+                wl.set_completed,
+                wl.created_at::text,
+                wl.updated_at::text
+         FROM workout_logs wl
+         JOIN machines m ON m.id = wl.machine_id
+         WHERE wl.user_id = $1${scopeFilter}`,
+        aggParams
+      ),
     ]);
 
-    const totalVolumeKg = parseFloat(agg.rows[0]?.total_volume_kg ?? '0') || 0;
+    const volumeLogs: WorkoutLog[] = volumeResult.rows.map((row) => ({
+      id: row.id,
+      gymId: row.gym_id,
+      memberId: row.member_id,
+      machineCode: row.machine_code,
+      recommendationId: row.recommendation_id ?? undefined,
+      logDate: row.log_date.slice(0, 10),
+      setCount: row.set_count,
+      setWeightsKg: parseWeightArray(row.set_weights_kg),
+      setCompleted: parseCompletedArray(row.set_completed) ?? undefined,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }));
+    const totalVolumeKg = await sumPerformedVolumeKg(userId, volumeLogs, options);
+
     const row = agg.rows[0];
     const n = (v: string | undefined) => parseInt(v ?? '0', 10) || 0;
     const dates = datesResult.rows.map((r) => r.log_date);

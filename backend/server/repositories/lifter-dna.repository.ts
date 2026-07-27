@@ -1,12 +1,12 @@
 import { getPool } from '../config/database.js';
-import type { LifterDnaRawStats, PeerBaseline } from '@machinefit/shared';
+import type { LifterDnaRawStats, PeerBaseline, WorkoutLog } from '@machinefit/shared';
 import {
   parseCompletedArray,
   parseWeightArray,
-  performedVolumeFromLog,
   seoulHour,
   SQL_LOG_VOLUME_LATERAL,
 } from '../utils/mypage-workout-metrics.js';
+import { mapPerformedVolumeByLogId } from '../services/workout-load.service.js';
 
 const LOG_LIMIT = 500;
 const PEER_BASELINE_TTL_MS = 15 * 60_000;
@@ -42,6 +42,9 @@ function hourLabel(bucket: 'dawn' | 'day' | 'night', hour: number): string {
 
 interface LogRow {
   id: string;
+  gym_id: string;
+  member_id: string;
+  recommendation_id: string | null;
   log_date: string;
   set_count: number;
   set_weights_kg: number[] | string;
@@ -114,6 +117,9 @@ export const lifterDnaRepository = {
 
     const result = await pool.query<LogRow>(
       `SELECT wl.id::text,
+              wl.gym_id::text,
+              wl.member_id::text,
+              wl.recommendation_id::text,
               wl.log_date::text,
               wl.set_count,
               wl.set_weights_kg,
@@ -136,6 +142,28 @@ export const lifterDnaRepository = {
     );
     void locale;
     return result.rows;
+  },
+
+  /** Resolve 총볼륨 (weight × reps) per log — same rules as history / lifted-weight. */
+  async resolveVolumeByLogId(
+    userId: string,
+    rows: LogRow[],
+    options?: { gymId?: string; memberId?: string }
+  ): Promise<Map<string, number>> {
+    const logs: WorkoutLog[] = rows.map((row) => ({
+      id: row.id,
+      gymId: row.gym_id,
+      memberId: row.member_id,
+      machineCode: row.machine_code,
+      recommendationId: row.recommendation_id ?? undefined,
+      logDate: row.log_date.slice(0, 10),
+      setCount: row.set_count,
+      setWeightsKg: parseWeightArray(row.set_weights_kg),
+      setCompleted: parseCompletedArray(row.set_completed) ?? undefined,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }));
+    return mapPerformedVolumeByLogId(userId, logs, options);
   },
 
   async peerBaseline(scope: 'global' | 'gym', gymId?: string): Promise<PeerBaseline> {
@@ -224,7 +252,12 @@ export const lifterDnaRepository = {
     return value;
   },
 
-  computeStats(rows: LogRow[], locale: string, peers?: LifterDnaRawStats['peers']): LifterDnaRawStats {
+  computeStats(
+    rows: LogRow[],
+    locale: string,
+    peers?: LifterDnaRawStats['peers'],
+    volumeByLogId?: Map<string, number>
+  ): LifterDnaRawStats {
     if (!rows.length) {
       return {
         analyzedLogs: 0,
@@ -291,11 +324,10 @@ export const lifterDnaRepository = {
       const weights = parseWeights(row.set_weights_kg);
       const completed = parseCompletedArray(row.set_completed);
       const setCount = row.set_count || weights.length || 0;
-      const volume = performedVolumeFromLog({
-        setWeightsKg: weights,
-        setCompleted: completed,
-        setCount,
-      });
+      const volume =
+        volumeByLogId?.get(row.id) ??
+        // Fallback only if caller skipped enrichment (should not happen in service path).
+        0;
       const useCompleted =
         Array.isArray(completed) &&
         completed.length === weights.length &&

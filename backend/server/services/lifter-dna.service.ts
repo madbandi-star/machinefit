@@ -28,12 +28,14 @@ export const lifterDnaService = {
         ? { gymId: options.gymId, memberId: options.memberId }
         : undefined;
 
-    const [rows, globalPeer, gymPeer] = await Promise.all([
-      lifterDnaRepository.loadUserLogs(userId, locale, logScope),
+    const rows = await lifterDnaRepository.loadUserLogs(userId, locale, logScope);
+
+    const [globalPeer, gymPeer, volumeByLogId] = await Promise.all([
       lifterDnaRepository.peerBaseline('global'),
       activeGymId
         ? lifterDnaRepository.peerBaseline('gym', activeGymId)
         : Promise.resolve(undefined),
+      lifterDnaRepository.resolveVolumeByLogId(userId, rows, logScope),
     ]);
 
     // Friend/national approximations from gym + slightly shifted global
@@ -57,12 +59,17 @@ export const lifterDnaService = {
       consistency: globalPeer.consistency * 1.01,
     };
 
-    const stats = lifterDnaRepository.computeStats(rows, locale, {
-      friend: friendPeer,
-      gym: gymPeer ?? globalPeer,
-      national: nationalPeer,
-      global: globalPeer,
-    });
+    const stats = lifterDnaRepository.computeStats(
+      rows,
+      locale,
+      {
+        friend: friendPeer,
+        gym: gymPeer ?? globalPeer,
+        national: nationalPeer,
+        global: globalPeer,
+      },
+      volumeByLogId
+    );
 
     const snapshot = buildLifterDnaSnapshot(stats, locale, `${userId}:${stats.analyzedLogs}`);
     cache.set(cacheKey, snapshot);

@@ -97,8 +97,13 @@ export function performedVolumeFromLog(input: {
 }
 
 /**
- * SQL lateral join: sum logged set weights, honoring set_completed when any
- * set is marked complete. Alias outer workout_logs as `wl`; result alias `vol.kg`.
+ * SQL lateral join: performed 총볼륨 ≈ Σ(setWeight × reps).
+ * Reps from linked machine_recommendations (min, else max); if missing, ×1
+ * (weight-only fallback). Honors set_completed when any set is marked complete.
+ * Alias outer workout_logs as `wl`; result alias `vol.kg`.
+ *
+ * Prefer JS `mapPerformedVolumeByLogId` for a single user's stats (prefs + fit).
+ * This SQL path is for peer/aggregate queries where per-user prefs are too costly.
  */
 export const SQL_LOG_VOLUME_LATERAL = `
 LEFT JOIN LATERAL (
@@ -114,12 +119,21 @@ LEFT JOIN LATERAL (
   ),
   flags AS (
     SELECT COALESCE(BOOL_OR(done), FALSE) AS any_done FROM completed
+  ),
+  reps AS (
+    SELECT COALESCE(
+      NULLIF(mr.recommended_reps_min, 0),
+      NULLIF(mr.recommended_reps_max, 0),
+      1
+    )::numeric AS r
+    FROM (SELECT 1) AS _
+    LEFT JOIN machine_recommendations mr ON mr.id = wl.recommendation_id
   )
   SELECT COALESCE(SUM(
     CASE
       WHEN w.kg IS NULL OR w.kg <= 0 THEN 0
-      WHEN NOT (SELECT any_done FROM flags) THEN w.kg
-      WHEN COALESCE(c.done, FALSE) THEN w.kg
+      WHEN NOT (SELECT any_done FROM flags) THEN w.kg * (SELECT r FROM reps)
+      WHEN COALESCE(c.done, FALSE) THEN w.kg * (SELECT r FROM reps)
       ELSE 0
     END
   ), 0) AS kg
