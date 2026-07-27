@@ -444,6 +444,8 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   const gapSm = 24;
   const gapMd = 40;
   const gapLg = 56;
+  /** Tight gap between quote panel and brand footer (was gapMd / too airy). */
+  const gapQuoteToFooter = 12;
   const metaPanelH = 168;
   const quotePanelH = Math.max(140, quoteHeight + 88);
   const footerH = measureShareFooterH(labels.hashtags, { minH: FOOTER_MIN_H });
@@ -461,7 +463,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
     metaPanelH +
     gapLg +
     quotePanelH +
-    gapMd +
+    gapQuoteToFooter +
     footerH;
 
   const verticalBias = 36;
@@ -506,7 +508,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   y += metaPanelH + gapLg;
   drawQuotePanel(ctx, innerX, y, quotePanelW, quotePanelH, snapshot.oneLiner);
 
-  y += quotePanelH + gapMd;
+  y += quotePanelH + gapQuoteToFooter;
   drawFooter(ctx, innerX, y, footerInnerW, footerH, labels);
 
   return new Promise((resolve, reject) => {
