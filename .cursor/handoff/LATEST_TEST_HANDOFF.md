@@ -1,23 +1,16 @@
-# Latest test handoff — Achievement card + lifted hero spacing
+# Latest test handoff — Achievement share card A+B
 
-**Branch:** `main` · **Commit:** `f0cbb4c`
+**Branch:** `main` · **Commit:** pending
 
 ## Change
 
-### 업적 공유카드
-- 720×900 (누적무게와 동일)
-- DNA/누적무게 스타일 배경·패널·푸터
-- **획득일시** 표시 추가
-
-### 누적무게 공유카드
-- **210 KG** 영역 위 여백 축소 (헤드라인↔KG 간격 8px)
-- **"를 들어올렸습니다."** KG 숫자 기준으로 함께 상향
+- **A** 간격 타이트: 이모지 축소, 설명 패널 패딩↓, 상향 bias (+28px)
+- **B** 희귀도별 이모지 글로우 색 + **3칸 메타 패널** (희귀도 / XP / 획득일시)
 
 ## Test
+
+업적 → 공유하기
 
 ```bash
 npm run build --prefix frontend
 ```
-
-- 업적 → 공유하기
-- 누적무게 → 공유 카드 만들기

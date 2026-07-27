@@ -203,15 +203,17 @@ export function AchievementsPage() {
           ? t('achievements.secretDesc')
           : loc(item.def.description, locale),
         rarity: t(`achievements.rarity.${item.rarity}`),
+        rarityKey: item.rarity,
         xp: item.def.xp,
         locale,
         labels: {
           badge: t('achievements.shareBadge'),
-          earnedAt: earnedAtFormatted
-            ? t('achievements.earnedAt', { datetime: earnedAtFormatted })
-            : '',
           tagline: t('achievements.shareTagline'),
           hashtags: t('achievements.shareHashtags'),
+          metaRarity: t('achievements.shareMetaRarity'),
+          metaXp: t('achievements.shareMetaXp'),
+          metaEarnedAt: t('achievements.shareMetaEarnedAt'),
+          earnedAtValue: earnedAtFormatted ?? '—',
         },
       });
       const file = new File([blob], 'machinefit-achievement.png', { type: 'image/png' });

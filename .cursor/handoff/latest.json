@@ -1,17 +1,16 @@
 {
-  "title": "Achievement share card redesign + lifted hero spacing",
-  "summary": "Achievement card 720×900 DNA/lifted style with earnedAt. Lifted card: hero KG + closing moved up, tighter headline gap.",
-  "git": { "branch": "main", "commit": "f0cbb4c" },
+  "title": "Achievement share card A+B polish",
+  "summary": "Tighter layout with upward bias; rarity-colored emoji glow; DNA-style 3-column meta panel (rarity/XP/earned date).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/utils/achievementShareCard.ts",
     "frontend/src/pages/achievements/AchievementsPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/utils/liftedShareCard.ts"
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "업적 공유카드(720×900, 획득일시). 누적무게 공유카드 KG/를 들어올렸습니다 위쪽 여백 축소.",
+  "testFocus": "업적 공유카드 — 간격 타이트, 희귀도별 글로우, 메타 3칸(희귀도/XP/획득일시).",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "업적 카드 1080×1350 구형, 획득일시 없음. 누적무게 KG 위 여백 과다.",
-  "toBe": "업적 DNA 스타일 720×900 + 획득일시. KG·closing 상향."
+  "asIs": "넓은 여백, pill+별도 획득일시, 단색 글로우.",
+  "toBe": "타이트 sequential, 메타 패널, 희귀도 accent."
 }

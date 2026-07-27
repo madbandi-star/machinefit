@@ -1,8 +1,13 @@
+import type { AchievementRarity } from '@machinefit/shared';
+
 export interface AchievementShareCardLabels {
   badge: string;
-  earnedAt: string;
   tagline: string;
   hashtags: string;
+  metaRarity: string;
+  metaXp: string;
+  metaEarnedAt: string;
+  earnedAtValue: string;
 }
 
 interface AchievementShareInput {
@@ -10,6 +15,7 @@ interface AchievementShareInput {
   name: string;
   description: string;
   rarity: string;
+  rarityKey: AchievementRarity;
   xp: number;
   locale: string;
   labels: AchievementShareCardLabels;
@@ -19,13 +25,17 @@ const W = 720;
 const POSTER_MARGIN = 28;
 const CARD_INNER_PAD = 40;
 const CARD_RADIUS = 32;
+const VERTICAL_BIAS = 28;
 
 const BADGE_EMOJI_SIZE = 42;
 const BADGE_TEXT_SIZE = 35;
 const BADGE_PILL_H = 52;
 
-const HERO_EMOJI_SIZE = 72;
-const EMOJI_GLOW_R = 88;
+const HERO_EMOJI_SIZE = 64;
+const EMOJI_GLOW_R = 74;
+
+const META_PANEL_H = 102;
+const FOOTER_H = 56;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
@@ -33,7 +43,45 @@ const FONT =
 const GREEN = '#4ade80';
 const WHITE = '#f8fafc';
 const GRAY = '#94a3b8';
-const GRAY_DIM = 'rgba(148, 163, 184, 0.82)';
+
+interface RarityAccent {
+  glowInner: string;
+  glowMid: string;
+  value: string;
+}
+
+const RARITY_ACCENT: Record<AchievementRarity, RarityAccent> = {
+  common: {
+    glowInner: 'rgba(148, 163, 184, 0.22)',
+    glowMid: 'rgba(148, 163, 184, 0.08)',
+    value: '#cbd5e1',
+  },
+  uncommon: {
+    glowInner: 'rgba(74, 222, 128, 0.26)',
+    glowMid: 'rgba(74, 222, 128, 0.1)',
+    value: GREEN,
+  },
+  rare: {
+    glowInner: 'rgba(251, 191, 36, 0.3)',
+    glowMid: 'rgba(251, 191, 36, 0.1)',
+    value: '#fbbf24',
+  },
+  epic: {
+    glowInner: 'rgba(167, 139, 250, 0.32)',
+    glowMid: 'rgba(167, 139, 250, 0.12)',
+    value: '#a78bfa',
+  },
+  legendary: {
+    glowInner: 'rgba(251, 191, 36, 0.34)',
+    glowMid: 'rgba(249, 115, 22, 0.14)',
+    value: '#fb923c',
+  },
+  mythic: {
+    glowInner: 'rgba(244, 114, 182, 0.32)',
+    glowMid: 'rgba(236, 72, 153, 0.12)',
+    value: '#f472b6',
+  },
+};
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -86,6 +134,29 @@ function blockH(lines: string[], lh: number): number {
   return lines.length * lh;
 }
 
+function countWrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): number {
+  return getWrapLines(ctx, text, maxWidth).length;
+}
+
+function wrapTextCentered(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  cx: number,
+  startY: number,
+  maxWidth: number,
+  lineHeight: number
+): number {
+  const lines = getWrapLines(ctx, text, maxWidth);
+  let y = startY;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  for (const ln of lines) {
+    ctx.fillText(ln, cx, y);
+    y += lineHeight;
+  }
+  return y;
+}
+
 function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
   const gradient = ctx.createLinearGradient(0, 0, width * 0.15, height);
   gradient.addColorStop(0, '#14081f');
@@ -110,10 +181,16 @@ function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height
   ctx.fill();
 }
 
-function drawEmojiGlow(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number) {
+function drawEmojiGlow(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  accent: RarityAccent
+) {
   const glow = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius);
-  glow.addColorStop(0, 'rgba(167, 139, 250, 0.28)');
-  glow.addColorStop(0.55, 'rgba(74, 222, 128, 0.12)');
+  glow.addColorStop(0, accent.glowInner);
+  glow.addColorStop(0.55, accent.glowMid);
   glow.addColorStop(1, 'rgba(15, 23, 42, 0)');
   ctx.fillStyle = glow;
   ctx.beginPath();
@@ -206,21 +283,29 @@ interface LayoutMetrics {
 }
 
 function measureLayout(ctx: CanvasRenderingContext2D, input: AchievementShareInput, innerW: number): LayoutMetrics {
-  ctx.font = `700 34px ${FONT}`;
+  ctx.font = `700 36px ${FONT}`;
   const nameLines = getWrapLines(ctx, input.name, innerW - 16);
-  const nameBlockH = blockH(nameLines, 42) + 8;
+  const nameBlockH = blockH(nameLines, 40) + 4;
 
-  ctx.font = `400 22px ${FONT}`;
-  const descLines = getWrapLines(ctx, input.description, innerW - 72);
-  const descPanelH = Math.max(72, blockH(descLines, 30) + 44);
+  ctx.font = `400 21px ${FONT}`;
+  const descLines = getWrapLines(ctx, input.description, innerW - 56);
+  const descPanelH = blockH(descLines, 28) + 24;
 
-  const badgeBlock = BADGE_PILL_H + 18;
-  const emojiBlock = EMOJI_GLOW_R * 2 + 12;
-  const metaBlock = 44 + 14;
-  const earnedBlock = input.labels.earnedAt ? 28 + 12 : 0;
-  const footerH = 56;
+  const badgeBlock = BADGE_PILL_H + 12;
+  const emojiBlock = EMOJI_GLOW_R * 2 + 8;
+  const gapNameDesc = 8;
+  const gapDescMeta = 12;
 
-  const contentH = badgeBlock + emojiBlock + nameBlockH + descPanelH + metaBlock + earnedBlock + footerH;
+  const contentH =
+    badgeBlock +
+    emojiBlock +
+    nameBlockH +
+    gapNameDesc +
+    descPanelH +
+    gapDescMeta +
+    META_PANEL_H +
+    12 +
+    FOOTER_H;
 
   return { contentH, nameLines, descLines, nameBlockH, descPanelH };
 }
@@ -234,51 +319,81 @@ function drawDescPanel(
   lines: string[]
 ) {
   const x = cx - w / 2;
-  roundRect(ctx, x, topY, w, h, 18);
+  roundRect(ctx, x, topY, w, h, 16);
   ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
   ctx.fill();
   ctx.strokeStyle = 'rgba(196, 181, 253, 0.22)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  const textTop = topY + (h - blockH(lines, 30)) / 2 + 22;
-  drawCenteredLines(ctx, lines, cx, textTop - 22, 30, '#e5e7eb', `400 22px ${FONT}`);
+  const textBlockH = blockH(lines, 28);
+  const textTop = topY + (h - textBlockH) / 2 + 20;
+  drawCenteredLines(ctx, lines, cx, textTop - 20, 28, '#e5e7eb', `400 21px ${FONT}`);
 }
 
-function drawMetaPills(
+function drawMetaPanel(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  baselineY: number,
-  rarity: string,
-  xpLabel: string
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  colLabels: [string, string, string],
+  colValues: [string, string, string],
+  valueColors: [string, string, string]
 ) {
-  ctx.font = `700 22px ${FONT}`;
-  const pillH = 36;
-  const gap = 14;
-  const items: Array<{ label: string; color: string; stroke: string }> = [
-    { label: rarity, color: '#fbbf24', stroke: 'rgba(251, 191, 36, 0.35)' },
-    { label: xpLabel, color: GREEN, stroke: 'rgba(74, 222, 128, 0.4)' },
-  ];
-  const widths = items.map((item) => ctx.measureText(item.label).width + 36);
-  const totalW = widths[0] + gap + widths[1];
-  let x = cx - totalW / 2;
+  roundRect(ctx, x, y, w, h, 18);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
 
-  for (let i = 0; i < items.length; i += 1) {
-    const item = items[i];
-    const pw = widths[i];
-    roundRect(ctx, x, baselineY - pillH / 2, pw, pillH, 18);
-    ctx.fillStyle = 'rgba(74, 222, 128, 0.1)';
-    ctx.fill();
-    ctx.strokeStyle = item.stroke;
-    ctx.lineWidth = 1.2;
-    ctx.stroke();
-    ctx.fillStyle = item.color;
+  const colW = w / 3;
+  const padX = 10;
+  const labelLH = 22;
+  const valueLH = 28;
+  const labelValueGap = 8;
+  const maxColWidth = colW - padX * 2;
+
+  const colHeights = colValues.map((value) => {
+    ctx.font = `700 20px ${FONT}`;
+    const valueLines = countWrapLines(ctx, value, maxColWidth);
+    return labelLH + labelValueGap + valueLines * valueLH;
+  });
+  const contentH = Math.max(...colHeights);
+  const contentTop = y + (h - contentH) / 2;
+  const dividerTop = contentTop - 8;
+  const dividerBottom = contentTop + contentH + 8;
+
+  for (let i = 0; i < 3; i += 1) {
+    const colX = x + colW * i + colW / 2;
+    const colTop = contentTop + (contentH - colHeights[i]) / 2;
+
+    if (i > 0) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+      ctx.beginPath();
+      ctx.moveTo(x + colW * i, dividerTop);
+      ctx.lineTo(x + colW * i, dividerBottom);
+      ctx.stroke();
+    }
+
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(item.label, x + pw / 2, baselineY);
-    x += pw + gap;
+    ctx.font = `400 18px ${FONT}`;
+    ctx.fillStyle = '#9ca3af';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(colLabels[i], colX, colTop + labelLH * 0.82);
+
+    ctx.font = `700 20px ${FONT}`;
+    ctx.fillStyle = valueColors[i];
+    wrapTextCentered(
+      ctx,
+      colValues[i],
+      colX,
+      colTop + labelLH + labelValueGap + valueLH * 0.78,
+      maxColWidth,
+      valueLH
+    );
   }
-  ctx.textBaseline = 'alphabetic';
 }
 
 function drawFooter(
@@ -336,43 +451,43 @@ function drawPosterContent(
   const cx = posterX + posterW / 2;
   const innerW = posterW - CARD_INNER_PAD * 2;
   const innerLeft = posterX + CARD_INNER_PAD;
-  const xpLabel = `+${input.xp.toLocaleString(input.locale.startsWith('ko') ? 'ko-KR' : 'en-US')} XP`;
+  const accent = RARITY_ACCENT[input.rarityKey] ?? RARITY_ACCENT.rare;
+  const xpLabel = `+${input.xp.toLocaleString(input.locale.startsWith('ko') ? 'ko-KR' : 'en-US')}`;
 
-  let y = posterY + (posterH - metrics.contentH) / 2;
+  let y = posterY + Math.max(12, (posterH - metrics.contentH) / 2 + VERTICAL_BIAS);
 
   drawPillBadge(ctx, cx, y + BADGE_PILL_H / 2, input.labels.badge);
-  y += BADGE_PILL_H + 18;
+  y += BADGE_PILL_H + 12;
 
   const emojiCy = y + EMOJI_GLOW_R;
-  drawEmojiGlow(ctx, cx, emojiCy, EMOJI_GLOW_R);
+  drawEmojiGlow(ctx, cx, emojiCy, EMOJI_GLOW_R, accent);
   ctx.font = `${HERO_EMOJI_SIZE}px ${FONT}`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = WHITE;
   ctx.fillText(input.emoji, cx, emojiCy);
   ctx.textBaseline = 'alphabetic';
-  y += EMOJI_GLOW_R * 2 + 12;
+  y += EMOJI_GLOW_R * 2 + 8;
 
-  ctx.font = `700 34px ${FONT}`;
-  ctx.fillStyle = WHITE;
-  drawCenteredLines(ctx, metrics.nameLines, cx, y, 42, WHITE, `700 34px ${FONT}`);
-  y += metrics.nameBlockH;
+  drawCenteredLines(ctx, metrics.nameLines, cx, y, 40, WHITE, `700 36px ${FONT}`);
+  y += metrics.nameBlockH + 8;
 
   drawDescPanel(ctx, cx, y, innerW, metrics.descPanelH, metrics.descLines);
-  y += metrics.descPanelH + 14;
+  y += metrics.descPanelH + 12;
 
-  drawMetaPills(ctx, cx, y + 18, input.rarity, xpLabel);
-  y += 44;
+  drawMetaPanel(
+    ctx,
+    innerLeft,
+    y,
+    innerW,
+    META_PANEL_H,
+    [input.labels.metaRarity, input.labels.metaXp, input.labels.metaEarnedAt],
+    [input.rarity, xpLabel, input.labels.earnedAtValue || '—'],
+    [accent.value, GREEN, WHITE]
+  );
+  y += META_PANEL_H + 12;
 
-  if (input.labels.earnedAt) {
-    ctx.font = `400 20px ${FONT}`;
-    ctx.fillStyle = GRAY_DIM;
-    ctx.textAlign = 'center';
-    ctx.fillText(input.labels.earnedAt, cx, y + 20);
-    y += 28 + 12;
-  }
-
-  drawFooter(ctx, innerLeft, y, innerW, 56, input.labels);
+  drawFooter(ctx, innerLeft, y, innerW, FOOTER_H, input.labels);
 }
 
 /** Compact achievement share card (720×900 — matches lifted weight card). */
