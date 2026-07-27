@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card — remove headline suffix and closing",
   "summary": "Share card shows label name only (no '님은 지금까지') and KG hero without '를 들어올렸습니다'. Page UI unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "123f351" },
   "changedFiles": [
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
     "frontend/src/utils/liftedShareCard.ts"
