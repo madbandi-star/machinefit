@@ -1,11 +1,11 @@
 {
-  "title": "Remove extra space above comparison section title",
-  "summary": "Removed 28px blank line above '이 무게는 어느 정도?' in share card comparison box.",
+  "title": "Premium share card background A+B",
+  "summary": "KG watermark, green glow, vignette, film grain, larger gym silhouettes, dumbbell rack in card corner.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "비교 카드 제목 위 불필요한 공백 없음.",
+  "testFocus": "누적무게 공유 카드 배경 — KG 워터마크, 그레인, 비네팅, 덤벨랙, 텍스트 가독성.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "제목 위 한 줄 공백.",
-  "toBe": "제목 바로 아래 패딩만 유지."
+  "asIs": "배경 단조로움.",
+  "toBe": "프리미엄 A+B 배경 (워터마크+글로우+그레인+덤벨랙)."
 }

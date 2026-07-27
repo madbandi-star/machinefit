@@ -309,63 +309,190 @@ function drawMachineFrame(
   ctx.stroke();
 }
 
-function drawSubtleGymBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const bg = ctx.createLinearGradient(0, 0, width, height);
-  bg.addColorStop(0, '#080d14');
-  bg.addColorStop(0.45, NAVY);
-  bg.addColorStop(1, '#0a1210');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, width, height);
+function drawDumbbellRack(
+  ctx: CanvasRenderingContext2D,
+  leftX: number,
+  topY: number,
+  rackH: number
+) {
+  const postW = 62;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
 
-  ctx.save();
-  ctx.globalAlpha = 0.038;
-  ctx.strokeStyle = '#94a3b8';
-  ctx.fillStyle = '#64748b';
-
-  drawBarbellSilhouette(ctx, width * 0.22, height * 0.18, 1.1);
-  drawBarbellSilhouette(ctx, width * 0.84, height * 0.28, 0.85);
-  drawPlateStack(ctx, width * 0.1, height * 0.72, 4, 28);
-  drawPlateStack(ctx, width * 0.92, height * 0.68, 3, 22);
-  drawMachineFrame(ctx, width * 0.06, height * 0.42, 110, 150);
-  drawMachineFrame(ctx, width * 0.8, height * 0.52, 95, 130);
-
-  ctx.globalAlpha = 0.028;
   ctx.beginPath();
-  ctx.moveTo(width * 0.55, height * 0.82);
-  ctx.lineTo(width * 0.72, height * 0.82);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(width * 0.58, height * 0.82, 14, 0, Math.PI * 2);
-  ctx.arc(width * 0.69, height * 0.82, 14, 0, Math.PI * 2);
+  ctx.moveTo(leftX, topY);
+  ctx.lineTo(leftX, topY + rackH);
+  ctx.moveTo(leftX + postW, topY);
+  ctx.lineTo(leftX + postW, topY + rackH);
   ctx.stroke();
 
-  ctx.restore();
+  const tiers = 5;
+  for (let i = 0; i < tiers; i += 1) {
+    const ty = topY + 18 + i * (rackH / tiers);
+    ctx.beginPath();
+    ctx.moveTo(leftX, ty);
+    ctx.lineTo(leftX + postW, ty);
+    ctx.stroke();
 
-  const glow = ctx.createRadialGradient(width * 0.5, height * 0.4, 0, width * 0.5, height * 0.4, width * 0.6);
-  glow.addColorStop(0, 'rgba(74, 222, 128, 0.07)');
-  glow.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, width, height);
+    const dx = leftX + postW / 2;
+    ctx.beginPath();
+    ctx.ellipse(dx - 16, ty, 9, 6, 0, 0, Math.PI * 2);
+    ctx.ellipse(dx + 16, ty, 9, 6, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(dx - 8, ty);
+    ctx.lineTo(dx + 8, ty);
+    ctx.stroke();
+  }
 }
 
-function drawCardGymSilhouettes(
+function drawFilmGrain(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
-  h: number
+  h: number,
+  intensity = 0.035
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  const count = Math.floor((w * h) / 160);
+  for (let i = 0; i < count; i += 1) {
+    const px = x + Math.random() * w;
+    const py = y + Math.random() * h;
+    ctx.fillStyle =
+      Math.random() > 0.5 ? `rgba(255,255,255,${intensity})` : `rgba(0,0,0,${intensity})`;
+    ctx.fillRect(px, py, 1, 1);
+  }
+  ctx.restore();
+}
+
+function drawCornerVignette(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  strength = 0.42
+) {
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, w * 0.22, cx, cy, w * 0.78);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, `rgba(0,0,0,${strength})`);
+  ctx.fillStyle = vig;
+  ctx.fillRect(x, y, w, h);
+}
+
+function drawKgWatermark(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  totalKg: number,
+  locale: string,
+  maxW: number
+) {
+  const text = formatVolumeKg(totalKg, locale);
+  let fontSize = 300;
+  ctx.font = `900 ${fontSize}px ${FONT}`;
+  while (ctx.measureText(text).width > maxW * 0.9 && fontSize > 100) {
+    fontSize -= 14;
+    ctx.font = `900 ${fontSize}px ${FONT}`;
+  }
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.055)';
+  ctx.fillText(text, cx, cy - 8);
+
+  ctx.font = `800 ${Math.round(fontSize * 0.28)}px ${FONT}`;
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.038)';
+  const numW = ctx.measureText(text).width;
+  ctx.fillText('KG', cx + numW / 2 + 36, cy - 8);
+}
+
+function drawSubtleGymBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  const bg = ctx.createLinearGradient(0, 0, width * 0.2, height);
+  bg.addColorStop(0, '#060a10');
+  bg.addColorStop(0.4, NAVY);
+  bg.addColorStop(0.75, '#0b1218');
+  bg.addColorStop(1, '#07100e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.save();
+  ctx.globalAlpha = 0.052;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+
+  drawBarbellSilhouette(ctx, width * 0.18, height * 0.14, 1.35);
+  drawBarbellSilhouette(ctx, width * 0.88, height * 0.22, 1.05);
+  drawPlateStack(ctx, width * 0.08, height * 0.78, 5, 32);
+  drawPlateStack(ctx, width * 0.94, height * 0.74, 4, 26);
+  drawMachineFrame(ctx, width * 0.04, height * 0.38, 130, 170);
+
+  ctx.restore();
+
+  const glow = ctx.createRadialGradient(
+    width * 0.5,
+    height * 0.36,
+    0,
+    width * 0.5,
+    height * 0.36,
+    width * 0.72
+  );
+  glow.addColorStop(0, 'rgba(74, 222, 128, 0.09)');
+  glow.addColorStop(0.55, 'rgba(74, 222, 128, 0.03)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, width, height);
+
+  drawCornerVignette(ctx, 0, 0, width, height, 0.28);
+  drawFilmGrain(ctx, 0, 0, width, height, 0.028);
+}
+
+function drawCardPremiumBackground(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  totalKg: number,
+  locale: string
 ) {
   ctx.save();
   roundRect(ctx, x, y, w, h, CARD_RADIUS);
   ctx.clip();
-  ctx.globalAlpha = 0.032;
-  ctx.strokeStyle = '#94a3b8';
 
-  drawBarbellSilhouette(ctx, x + w * 0.14, y + h * 0.72, 0.75);
-  drawBarbellSilhouette(ctx, x + w * 0.88, y + h * 0.38, 0.65);
-  drawPlateStack(ctx, x + w * 0.08, y + h * 0.55, 3, 20);
-  drawMachineFrame(ctx, x + w * 0.78, y + h * 0.68, 80, 110);
-  drawPlateStack(ctx, x + w * 0.92, y + h * 0.82, 2, 16);
+  const cx = x + w / 2;
+  const cy = y + h * 0.38;
+
+  drawKgWatermark(ctx, cx, cy, totalKg, locale, w - POSTER_PAD * 2);
+
+  const innerGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, w * 0.55);
+  innerGlow.addColorStop(0, 'rgba(74, 222, 128, 0.1)');
+  innerGlow.addColorStop(0.45, 'rgba(74, 222, 128, 0.04)');
+  innerGlow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = innerGlow;
+  ctx.fillRect(x, y, w, h);
+
+  ctx.globalAlpha = 0.048;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 2.5;
+
+  drawBarbellSilhouette(ctx, x + w * 0.12, y + h * 0.78, 0.95);
+  drawBarbellSilhouette(ctx, x + w * 0.9, y + h * 0.32, 0.8);
+  drawPlateStack(ctx, x + w * 0.06, y + h * 0.52, 4, 24);
+  drawPlateStack(ctx, x + w * 0.94, y + h * 0.86, 3, 18);
+
+  ctx.globalAlpha = 0.055;
+  drawDumbbellRack(ctx, x + w * 0.82, y + h * 0.58, h * 0.32);
+
+  ctx.globalAlpha = 1;
+  drawCornerVignette(ctx, x, y, w, h, 0.38);
+  drawFilmGrain(ctx, x, y, w, h, 0.022);
 
   ctx.restore();
 }
@@ -777,7 +904,7 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  drawCardGymSilhouettes(ctx, POSTER_MARGIN, posterY, posterW, posterH);
+  drawCardPremiumBackground(ctx, POSTER_MARGIN, posterY, posterW, posterH, input.totalKg, input.locale);
 
   drawPosterContent(ctx, input, POSTER_MARGIN, posterY, posterW, posterH, metrics);
 
