@@ -112,39 +112,48 @@ export function LoginPage() {
 
   if (!credentialsHydrated || autoLoggingIn) {
     return (
-      <PageShell>
+      <PageShell title={t('nav.login')}>
         <p className="auth-page__loading">{t('auth.autoLoggingIn')}</p>
       </PageShell>
     );
   }
 
   return (
-    <PageShell>
+    <PageShell title={t('nav.login')}>
       <section className="auth-hero card" aria-label={t('auth.loginHeroLabel')}>
         <div className="auth-hero__head">
           <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
           <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
         </div>
-        <ul className="auth-hero__features">
-          <li className="auth-hero__feature auth-hero__feature--primary">
-            <span className="auth-hero__feature-icon" aria-hidden>
-              <Icon name="user" size={16} />
+        <div className="auth-hero__bottom">
+          <ul className="auth-hero__features">
+            <li className="auth-hero__feature auth-hero__feature--primary">
+              <span className="auth-hero__feature-icon" aria-hidden>
+                <Icon name="user" size={16} />
+              </span>
+              <span className="auth-hero__feature-text">{t('auth.loginFeature1')}</span>
+            </li>
+            <li className="auth-hero__feature">
+              <span className="auth-hero__feature-icon" aria-hidden>
+                <Icon name="sliders" size={16} />
+              </span>
+              <span className="auth-hero__feature-text">{t('auth.loginFeature2')}</span>
+            </li>
+            <li className="auth-hero__feature">
+              <span className="auth-hero__feature-icon" aria-hidden>
+                <Icon name="trendingUp" size={16} />
+              </span>
+              <span className="auth-hero__feature-text">{t('auth.loginFeature3')}</span>
+            </li>
+          </ul>
+          <Link to={ROUTES.MACHINES} className="auth-hero__browse-btn">
+            <span className="auth-hero__browse-btn-icon" aria-hidden>
+              <Icon name="search" size={20} />
             </span>
-            <span className="auth-hero__feature-text">{t('auth.loginFeature1')}</span>
-          </li>
-          <li className="auth-hero__feature">
-            <span className="auth-hero__feature-icon" aria-hidden>
-              <Icon name="sliders" size={16} />
-            </span>
-            <span className="auth-hero__feature-text">{t('auth.loginFeature2')}</span>
-          </li>
-          <li className="auth-hero__feature">
-            <span className="auth-hero__feature-icon" aria-hidden>
-              <Icon name="trendingUp" size={16} />
-            </span>
-            <span className="auth-hero__feature-text">{t('auth.loginFeature3')}</span>
-          </li>
-        </ul>
+            <span className="auth-hero__browse-btn-label">{t('auth.loginBrowseMachines')}</span>
+            <Icon name="chevronRight" size={18} className="auth-hero__browse-btn-chevron" />
+          </Link>
+        </div>
       </section>
 
       <form
@@ -198,21 +207,9 @@ export function LoginPage() {
           {mutation.isPending ? '...' : t('nav.login')}
         </button>
       </form>
-
-      <div className="auth-signup-cta">
-        <p className="auth-signup-cta__divider" role="presentation">
-          <span>{t('auth.signupCtaDivider')}</span>
-        </p>
-        <p className="auth-signup-cta__hint">{t('auth.signupCtaHint')}</p>
-        <Link to={ROUTES.REGISTER} className="auth-signup-cta__btn">
-          <span className="auth-signup-cta__btn-label">{t('auth.signupCtaLabel')}</span>
-          <span className="auth-signup-cta__btn-arrow" aria-hidden>
-            →
-          </span>
-        </Link>
-      </div>
-
-      <p className="auth-page__footer auth-page__footer--legal">
+      <p className="auth-page__footer">
+        <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
+        {' · '}
         <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
         {' · '}
         <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
