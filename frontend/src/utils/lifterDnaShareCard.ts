@@ -168,6 +168,49 @@ function drawMetaPanel(
   }
 }
 
+function getWrapLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+): string[] {
+  const chars = [...text];
+  const lines: string[] = [];
+  let line = '';
+
+  for (const ch of chars) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = ch;
+    } else {
+      line = test;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines.length ? lines : [''];
+}
+
+function drawCenteredWrapText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  centerX: number,
+  boxY: number,
+  boxH: number,
+  maxWidth: number,
+  lineHeight: number
+) {
+  const lines = getWrapLines(ctx, text, maxWidth);
+  const totalHeight = lines.length * lineHeight;
+  let cursorY = boxY + (boxH - totalHeight) / 2 + lineHeight * 0.82;
+
+  ctx.textAlign = 'center';
+  for (const line of lines) {
+    ctx.fillText(line, centerX, cursorY);
+    cursorY += lineHeight;
+  }
+}
+
 function drawQuotePanel(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -183,15 +226,14 @@ function drawQuotePanel(
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  ctx.fillStyle = 'rgba(196, 181, 253, 0.85)';
-  ctx.font = `bold 56px ${FONT}`;
-  ctx.textAlign = 'left';
-  ctx.fillText('“', x + 28, y + 58);
+  const padX = 48;
+  const maxWidth = w - padX * 2;
+  const lineHeight = 46;
+  const quoted = `“${quote.trim()}”`;
 
-  ctx.textAlign = 'center';
   ctx.font = `34px ${FONT}`;
   ctx.fillStyle = '#e5e7eb';
-  wrapText(ctx, quote, x + w / 2, y + h / 2 - 12, w - 96, 48);
+  drawCenteredWrapText(ctx, quoted, x + w / 2, y, h, maxWidth, lineHeight);
 }
 
 /** Share card — vertically balanced hero layout for social sharing. */
@@ -229,13 +271,14 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   ctx.font = `34px ${FONT}`;
   const taglineHeight = measureWrapHeight(ctx, snapshot.character.tagline, contentMax, 44);
   ctx.font = `34px ${FONT}`;
-  const quoteHeight = measureWrapHeight(ctx, snapshot.oneLiner, contentMax - 96, 48);
+  const quotedOneLiner = `“${snapshot.oneLiner.trim()}”`;
+  const quoteHeight = measureWrapHeight(ctx, quotedOneLiner, contentMax - 96, 46);
 
   const gapSm = 24;
   const gapMd = 40;
   const gapLg = 56;
   const metaPanelH = 148;
-  const quotePanelH = Math.max(132, quoteHeight + 72);
+  const quotePanelH = Math.max(140, quoteHeight + 80);
   const footerH = 36;
 
   const blockHeight =
@@ -302,7 +345,7 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   ctx.fillText('MachineFit', cx, y);
   ctx.font = `24px ${FONT}`;
   ctx.fillStyle = 'rgba(134, 239, 172, 0.72)';
-  ctx.fillText('#MachineFit #LifterDNA', cx, y + 34);
+  ctx.fillText('#MacineFit #운동성향', cx, y + 34);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

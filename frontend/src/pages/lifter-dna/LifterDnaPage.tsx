@@ -117,7 +117,7 @@ export function LifterDnaPage() {
         analyzedDate,
       });
       const file = new File([blob], 'machinefit-lifter-dna.png', { type: 'image/png' });
-      const text = `${data.shareHeadline}\nAI ${data.confidence}%\n#MachineFit #LifterDNA`;
+      const text = `${data.shareHeadline}\nAI ${data.confidence}%\n#MacineFit #운동성향`;
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], text, title: 'MachineFit AI Lifter DNA' });
         return;
