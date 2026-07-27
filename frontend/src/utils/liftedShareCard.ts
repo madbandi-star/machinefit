@@ -16,14 +16,14 @@ interface ShareCardInput {
 }
 
 const CARD_W = 1080;
-const OUTER_PAD = 28;
+const OUTER_PAD = 24;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
-const ACCENT = '#4ade80';
-const ACCENT_SOFT = 'rgba(34, 197, 94, 0.2)';
-const ACCENT_BORDER = 'rgba(34, 197, 94, 0.3)';
+const GREEN = '#4ade80';
+const GREEN_DARK = '#16a34a';
+const GREEN_LIGHT = '#bbf7d0';
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -69,26 +69,13 @@ function blockHeight(lines: string[], lineHeight: number): number {
   return lines.length * lineHeight;
 }
 
-/** Emoji glyphs are visually off-center with textAlign:center — measure width instead. */
 function drawEmojiCentered(
   ctx: CanvasRenderingContext2D,
   emoji: string,
   cx: number,
   cy: number,
-  fontSize: number,
-  glowRadius?: number
+  fontSize: number
 ) {
-  if (glowRadius) {
-    const glow = ctx.createRadialGradient(cx, cy, glowRadius * 0.05, cx, cy, glowRadius);
-    glow.addColorStop(0, 'rgba(74, 222, 128, 0.38)');
-    glow.addColorStop(0.55, 'rgba(34, 197, 94, 0.12)');
-    glow.addColorStop(1, 'rgba(15, 23, 42, 0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
   ctx.font = `${fontSize}px ${FONT}`;
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'left';
@@ -116,84 +103,205 @@ function drawCenteredLines(
   return y;
 }
 
-function drawTotalWeight(
+function drawGradientTextCentered(
   ctx: CanvasRenderingContext2D,
+  text: string,
   cx: number,
   baselineY: number,
-  totalKg: number,
-  locale: string
+  font: string,
+  colors: [string, string, string]
 ) {
-  const numText = formatVolumeKg(totalKg, locale);
-  ctx.font = `800 118px ${FONT}`;
-  const numW = ctx.measureText(numText).width;
-  ctx.font = `700 46px ${FONT}`;
-  const unitW = ctx.measureText('KG').width;
-  const gap = 16;
-  const startX = cx - (numW + gap + unitW) / 2;
-
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 118px ${FONT}`;
-  ctx.fillStyle = ACCENT;
-  ctx.fillText(numText, startX, baselineY);
-
-  ctx.font = `700 46px ${FONT}`;
-  ctx.fillStyle = '#86efac';
-  ctx.fillText('KG', startX + numW + gap, baselineY - 8);
-
+  ctx.font = font;
   ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  const w = ctx.measureText(text).width;
+  const grad = ctx.createLinearGradient(cx - w / 2, baselineY - 80, cx + w / 2, baselineY + 8);
+  grad.addColorStop(0, colors[0]);
+  grad.addColorStop(0.45, colors[1]);
+  grad.addColorStop(1, colors[2]);
+  ctx.fillStyle = grad;
+  ctx.fillText(text, cx, baselineY);
+}
+
+function drawPill(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  centerY: number,
+  label: string,
+  opts: { bg: string; border: string; color: string; fontSize?: number; padX?: number }
+) {
+  const fontSize = opts.fontSize ?? 24;
+  ctx.font = `bold ${fontSize}px ${FONT}`;
+  const textW = ctx.measureText(label).width;
+  const padX = opts.padX ?? 28;
+  const pillW = textW + padX * 2;
+  const pillH = fontSize + 22;
+  const x = cx - pillW / 2;
+  const y = centerY - pillH / 2;
+
+  roundRect(ctx, x, y, pillW, pillH, pillH / 2);
+  ctx.fillStyle = opts.bg;
+  ctx.fill();
+  ctx.strokeStyle = opts.border;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.fillStyle = opts.color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, cx, centerY + 1);
+  ctx.textBaseline = 'alphabetic';
 }
 
 function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const gradient = ctx.createLinearGradient(0, 0, width * 0.12, height);
-  gradient.addColorStop(0, '#0b1220');
-  gradient.addColorStop(0.55, '#111827');
-  gradient.addColorStop(1, '#0f3d2e');
-  ctx.fillStyle = gradient;
+  const base = ctx.createLinearGradient(0, 0, width, height);
+  base.addColorStop(0, '#030712');
+  base.addColorStop(0.35, '#0a1628');
+  base.addColorStop(0.7, '#071a14');
+  base.addColorStop(1, '#041510');
+  ctx.fillStyle = base;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = 'rgba(34, 197, 94, 0.1)';
-  ctx.beginPath();
-  ctx.arc(width * 0.5, height * 0.08, 320, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = 'rgba(74, 222, 128, 0.06)';
-  ctx.beginPath();
-  ctx.arc(width * 0.5, height * 0.92, 280, 0, Math.PI * 2);
-  ctx.fill();
+  const blobs = [
+    { x: width * 0.15, y: height * 0.08, r: 340, c: 'rgba(34, 197, 94, 0.14)' },
+    { x: width * 0.88, y: height * 0.22, r: 280, c: 'rgba(74, 222, 128, 0.08)' },
+    { x: width * 0.5, y: height * 0.55, r: 420, c: 'rgba(16, 185, 129, 0.06)' },
+    { x: width * 0.2, y: height * 0.88, r: 260, c: 'rgba(34, 197, 94, 0.07)' },
+  ];
+  for (const b of blobs) {
+    const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+    g.addColorStop(0, b.c);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
+  ctx.lineWidth = 1;
+  for (let gy = 48; gy < height; gy += 48) {
+    ctx.beginPath();
+    ctx.moveTo(0, gy);
+    ctx.lineTo(width, gy);
+    ctx.stroke();
+  }
 }
 
-function drawHeroPanel(
+function drawGlassCard(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
-  h: number
+  h: number,
+  radius: number
 ) {
-  roundRect(ctx, x, y, w, h, 30);
-  const panelGrad = ctx.createLinearGradient(x, y, x + w, y + h);
-  panelGrad.addColorStop(0, '#0b1220');
-  panelGrad.addColorStop(0.5, '#111827');
-  panelGrad.addColorStop(1, '#0f3d2e');
-  ctx.fillStyle = panelGrad;
+  roundRect(ctx, x, y, w, h, radius);
+  const fill = ctx.createLinearGradient(x, y, x + w, y + h);
+  fill.addColorStop(0, 'rgba(15, 23, 42, 0.92)');
+  fill.addColorStop(0.5, 'rgba(10, 18, 32, 0.88)');
+  fill.addColorStop(1, 'rgba(8, 20, 18, 0.9)');
+  ctx.fillStyle = fill;
   ctx.fill();
 
-  ctx.save();
-  roundRect(ctx, x, y, w, h, 30);
-  ctx.clip();
-  ctx.fillStyle = 'rgba(34, 197, 94, 0.16)';
-  ctx.beginPath();
-  ctx.arc(x + w / 2, y + h * 0.04, w * 0.42, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.strokeStyle = ACCENT_BORDER;
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.22)';
   ctx.lineWidth = 2;
-  roundRect(ctx, x, y, w, h, 30);
+  roundRect(ctx, x + 1, y + 1, w - 2, h - 2, radius - 1);
   ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, x + 3, y + 3, w - 6, h - 6, radius - 2);
+  ctx.stroke();
+}
+
+function drawStatShowcase(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  y: number,
+  w: number,
+  totalKg: number,
+  closingLines: string[],
+  locale: string
+): number {
+  const panelH = 200;
+  const panelX = cx - w / 2;
+  roundRect(ctx, panelX, y, w, panelH, 28);
+  const inset = ctx.createLinearGradient(panelX, y, panelX, y + panelH);
+  inset.addColorStop(0, 'rgba(34, 197, 94, 0.12)');
+  inset.addColorStop(0.5, 'rgba(15, 23, 42, 0.55)');
+  inset.addColorStop(1, 'rgba(34, 197, 94, 0.06)');
+  ctx.fillStyle = inset;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.28)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  const ringCy = y + panelH / 2 - 8;
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.15)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, ringCy, 118, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(167, 243, 208, 0.35)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, ringCy, 108, -Math.PI * 0.72, Math.PI * 0.15);
+  ctx.stroke();
+
+  const numText = formatVolumeKg(totalKg, locale);
+  ctx.font = `900 112px ${FONT}`;
+  const numW = ctx.measureText(numText).width;
+  drawGradientTextCentered(
+    ctx,
+    numText,
+    cx,
+    ringCy + 28,
+    `900 112px ${FONT}`,
+    [GREEN_LIGHT, GREEN, GREEN_DARK]
+  );
+
+  ctx.font = `800 44px ${FONT}`;
+  ctx.fillStyle = '#86efac';
+  ctx.textAlign = 'left';
+  ctx.fillText('KG', cx + numW / 2 + 14, ringCy + 18);
+  ctx.textAlign = 'center';
+
+  ctx.font = `500 32px ${FONT}`;
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.88)';
+  drawCenteredLines(ctx, closingLines, cx, y + panelH - 28, 40);
+
+  return panelH;
+}
+
+function drawFunQuoteBox(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  y: number,
+  w: number,
+  lines: string[]
+): number {
+  const padY = 22;
+  const lineH = 40;
+  const boxH = padY * 2 + blockHeight(lines, lineH);
+
+  roundRect(ctx, cx - w / 2, y, w, boxH, 20);
+  ctx.fillStyle = 'rgba(34, 197, 94, 0.08)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(134, 239, 172, 0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.font = `italic 500 30px ${FONT}`;
+  ctx.fillStyle = '#86efac';
+  drawCenteredLines(ctx, lines, cx, y + padY + 28, lineH);
+
+  return boxH;
 }
 
 interface HeroLayout {
   height: number;
+  badgeH: number;
   headlineLines: string[];
   closingLines: string[];
   funLines: string[];
@@ -204,70 +312,82 @@ function measureHeroLayout(
   headline: string,
   closing: string,
   funLine: string,
-  textW: number
+  textW: number,
+  statW: number
 ): HeroLayout {
-  const padY = 44;
-  const emojiBlock = 112;
+  const badgeH = 52;
+  const gapMd = 24;
   const gapSm = 18;
-  const gapMd = 28;
-  const totalBlock = 112;
+  const statH = 200;
+  const funW = statW;
 
-  ctx.font = `38px ${FONT}`;
+  ctx.font = `36px ${FONT}`;
   const headlineLines = getWrapLines(ctx, headline, textW);
-
-  ctx.font = `34px ${FONT}`;
-  const closingLines = getWrapLines(ctx, closing, textW);
-  const funLines = getWrapLines(ctx, funLine, textW);
+  ctx.font = `500 32px ${FONT}`;
+  const closingLines = getWrapLines(ctx, closing, statW - 64);
+  ctx.font = `italic 500 30px ${FONT}`;
+  const funLines = getWrapLines(ctx, funLine, funW - 48);
 
   const height =
-    padY +
-    emojiBlock +
+    36 +
+    badgeH +
     gapMd +
-    blockHeight(headlineLines, 50) +
+    88 +
     gapSm +
-    totalBlock +
-    gapSm +
-    blockHeight(closingLines, 44) +
-    gapSm +
-    blockHeight(funLines, 44) +
-    padY;
+    blockHeight(headlineLines, 48) +
+    gapMd +
+    statH +
+    gapMd +
+    44 +
+    blockHeight(funLines, 40) +
+    36;
 
-  return { height, headlineLines, closingLines, funLines };
+  return { height, badgeH, headlineLines, closingLines, funLines };
 }
 
 function drawHeroContent(
   ctx: CanvasRenderingContext2D,
   cx: number,
   top: number,
+  innerW: number,
   layout: HeroLayout,
   totalKg: number,
   locale: string
 ) {
-  const padY = 44;
-  const emojiBlock = 112;
-  const gapSm = 18;
-  const gapMd = 28;
+  const statW = innerW - 48;
+  let y = top + 36;
 
-  const emojiCy = top + padY + emojiBlock / 2;
-  drawEmojiCentered(ctx, '🏋️', cx, emojiCy, 108, 82);
+  const badgeLabel = locale === 'ko' ? '🏋️  누적 무게' : '🏋️  TOTAL LIFTED';
+  drawPill(ctx, cx, y + layout.badgeH / 2, badgeLabel, {
+    bg: 'rgba(34, 197, 94, 0.14)',
+    border: 'rgba(74, 222, 128, 0.35)',
+    color: GREEN_LIGHT,
+    fontSize: 26,
+    padX: 32,
+  });
+  y += layout.badgeH + 24;
 
-  let y = top + padY + emojiBlock + gapMd + 38;
-  ctx.font = `38px ${FONT}`;
-  ctx.fillStyle = '#e5e7eb';
-  y = drawCenteredLines(ctx, layout.headlineLines, cx, y, 50);
+  const emojiCy = y + 44;
+  const halo = ctx.createRadialGradient(cx, emojiCy, 0, cx, emojiCy, 72);
+  halo.addColorStop(0, 'rgba(74, 222, 128, 0.45)');
+  halo.addColorStop(0.55, 'rgba(34, 197, 94, 0.12)');
+  halo.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(cx, emojiCy, 72, 0, Math.PI * 2);
+  ctx.fill();
+  drawEmojiCentered(ctx, '🏋️', cx, emojiCy, 96);
+  y += 88 + 18;
 
-  y += gapSm;
-  drawTotalWeight(ctx, cx, y + 84, totalKg, locale);
+  ctx.font = `36px ${FONT}`;
+  ctx.fillStyle = 'rgba(241, 245, 249, 0.92)';
+  y = drawCenteredLines(ctx, layout.headlineLines, cx, y + 34, 48);
 
-  y += 112 + gapSm;
-  ctx.font = `34px ${FONT}`;
-  ctx.fillStyle = '#cbd5e1';
-  y = drawCenteredLines(ctx, layout.closingLines, cx, y, 44);
+  y += 24;
+  y += drawStatShowcase(ctx, cx, y, statW, totalKg, layout.closingLines, locale);
 
-  y += gapSm;
-  ctx.font = `34px ${FONT}`;
-  ctx.fillStyle = '#86efac';
-  drawCenteredLines(ctx, layout.funLines, cx, y, 44);
+  y += 24;
+  drawFunQuoteBox(ctx, cx, y, statW, layout.funLines);
 }
 
 interface ComparisonLayout {
@@ -280,77 +400,119 @@ function measureComparisonLayout(
   w: number,
   comparison: LiftedComparisonResult
 ): ComparisonLayout {
-  const padY = 36;
-  const iconSize = 108;
-  const gapSm = 14;
-  const gapMd = 22;
-  const textW = w - 80;
+  const padY = 32;
+  const iconSize = 100;
+  const gapMd = 20;
+  const textW = w - 96;
 
   ctx.font = `28px ${FONT}`;
   const tipLines = getWrapLines(ctx, comparison.tip, textW);
 
   const height =
     padY +
+    36 +
+    gapMd +
     iconSize +
     gapMd +
-    42 +
-    gapSm +
-    38 +
-    gapSm +
-    blockHeight(tipLines, 36) +
+    40 +
+    14 +
+    36 +
+    14 +
+    blockHeight(tipLines, 34) +
     padY;
 
   return { height, tipLines };
 }
 
-function drawComparisonCardCentered(
+function drawComparisonPremium(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
   comparison: LiftedComparisonResult,
   countLabel: string,
-  layout: ComparisonLayout
+  layout: ComparisonLayout,
+  locale: string
 ): number {
   const cx = x + w / 2;
-  const padY = 36;
-  const iconSize = 108;
-  const gapSm = 14;
-  const gapMd = 22;
   const cardH = layout.height;
 
-  roundRect(ctx, x, y, w, cardH, 24);
-  ctx.fillStyle = 'rgba(17, 24, 39, 0.95)';
+  roundRect(ctx, x, y, w, cardH, 26);
+  const cardFill = ctx.createLinearGradient(x, y, x, y + cardH);
+  cardFill.addColorStop(0, 'rgba(17, 24, 39, 0.95)');
+  cardFill.addColorStop(1, 'rgba(10, 20, 18, 0.92)');
+  ctx.fillStyle = cardFill;
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.09)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  let cursorY = y + padY;
-  const iconX = x + (w - iconSize) / 2;
+  let cursorY = y + 32;
+  const sectionLabel = locale === 'ko' ? '이 무게는 어느 정도?' : 'HOW HEAVY IS THAT?';
+  drawPill(ctx, cx, cursorY + 18, sectionLabel, {
+    bg: 'rgba(255, 255, 255, 0.06)',
+    border: 'rgba(255, 255, 255, 0.12)',
+    color: 'rgba(203, 213, 225, 0.9)',
+    fontSize: 22,
+    padX: 24,
+  });
+  cursorY += 36 + 20;
 
-  roundRect(ctx, iconX, cursorY, iconSize, iconSize, 20);
-  ctx.fillStyle = ACCENT_SOFT;
+  const iconSize = 100;
+  const iconX = cx - iconSize / 2;
+
+  roundRect(ctx, iconX, cursorY, iconSize, iconSize, 22);
+  const iconBg = ctx.createLinearGradient(iconX, cursorY, iconX, cursorY + iconSize);
+  iconBg.addColorStop(0, 'rgba(74, 222, 128, 0.22)');
+  iconBg.addColorStop(1, 'rgba(34, 197, 94, 0.08)');
+  ctx.fillStyle = iconBg;
   ctx.fill();
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
 
-  drawEmojiCentered(ctx, comparison.emoji, cx, cursorY + iconSize / 2, 58);
+  drawEmojiCentered(ctx, comparison.emoji, cx, cursorY + iconSize / 2, 54);
+  cursorY += iconSize + 20;
 
-  cursorY += iconSize + gapMd;
-  ctx.font = `bold 38px ${FONT}`;
-  ctx.fillStyle = '#f9fafb';
-  cursorY = drawCenteredLines(ctx, [comparison.name], cx, cursorY + 32, 42);
+  ctx.font = `bold 40px ${FONT}`;
+  ctx.fillStyle = '#f8fafc';
+  cursorY = drawCenteredLines(ctx, [comparison.name], cx, cursorY + 32, 44);
 
-  cursorY += gapSm;
-  ctx.font = `bold 34px ${FONT}`;
-  ctx.fillStyle = ACCENT;
-  cursorY = drawCenteredLines(ctx, [countLabel], cx, cursorY + 6, 38);
+  cursorY += 14;
+  drawPill(ctx, cx, cursorY + 18, countLabel, {
+    bg: 'rgba(34, 197, 94, 0.18)',
+    border: 'rgba(74, 222, 128, 0.4)',
+    color: GREEN,
+    fontSize: 30,
+    padX: 36,
+  });
+  cursorY += 36 + 14;
 
-  cursorY += gapSm;
   ctx.font = `28px ${FONT}`;
-  ctx.fillStyle = '#9ca3af';
-  drawCenteredLines(ctx, layout.tipLines, cx, cursorY + 28, 36);
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.95)';
+  drawCenteredLines(ctx, layout.tipLines, cx, cursorY + 26, 34);
 
   return cardH;
+}
+
+function drawFooter(ctx: CanvasRenderingContext2D, cx: number, y: number, w: number) {
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - w / 2, y);
+  ctx.lineTo(cx + w / 2, y);
+  ctx.stroke();
+
+  ctx.textAlign = 'center';
+  drawGradientTextCentered(ctx, 'MachineFit', cx, y + 48, `800 32px ${FONT}`, [
+    GREEN_LIGHT,
+    GREEN,
+    '#22c55e',
+  ]);
+
+  ctx.font = `24px ${FONT}`;
+  ctx.fillStyle = 'rgba(134, 239, 172, 0.75)';
+  ctx.fillText('#MacineFit #누적무게', cx, y + 88);
 }
 
 interface ShareLayout {
@@ -370,20 +532,22 @@ function computeShareLayout(
   ctx: CanvasRenderingContext2D,
   input: ShareCardInput
 ): ShareLayout {
-  const innerX = OUTER_PAD + 20;
+  const innerX = OUTER_PAD + 16;
   const innerW = CARD_W - innerX * 2;
-  const textW = innerW - 72;
+  const textW = innerW - 80;
+  const statW = innerW - 48;
 
   const heroLayout = measureHeroLayout(
     ctx,
     input.headline,
     input.closing,
     input.funLine,
-    textW
+    textW,
+    statW
   );
-  const frameInnerPad = 20;
-  const sectionGap = 24;
-  const footerH = 64;
+  const frameInnerPad = 16;
+  const sectionGap = 20;
+  const footerH = 108;
   const comparisonLayout = input.comparison
     ? measureComparisonLayout(ctx, innerW, input.comparison)
     : null;
@@ -411,7 +575,7 @@ function computeShareLayout(
   };
 }
 
-/** Share card — compact height, centered hero + comparison stack. */
+/** Premium share card — achievement-style layout for social bragging. */
 export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
   const measureCanvas = document.createElement('canvas');
   measureCanvas.width = CARD_W;
@@ -430,16 +594,25 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
   const cx = CARD_W / 2;
   drawPageBackground(ctx, CARD_W, layout.canvasH);
 
-  roundRect(ctx, OUTER_PAD, OUTER_PAD, CARD_W - OUTER_PAD * 2, layout.canvasH - OUTER_PAD * 2, 32);
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.84)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.09)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  drawGlassCard(
+    ctx,
+    OUTER_PAD,
+    OUTER_PAD,
+    CARD_W - OUTER_PAD * 2,
+    layout.canvasH - OUTER_PAD * 2,
+    36
+  );
 
-  const { contentTop } = layout;
-  drawHeroPanel(ctx, layout.innerX, contentTop, layout.innerW, layout.heroH);
-  drawHeroContent(ctx, cx, contentTop, layout.heroLayout, input.totalKg, input.locale);
+  const { contentTop, innerX, innerW } = layout;
+  drawHeroContent(
+    ctx,
+    cx,
+    contentTop,
+    innerW,
+    layout.heroLayout,
+    input.totalKg,
+    input.locale
+  );
 
   let cursorY = contentTop + layout.heroH + layout.sectionGap;
   if (input.comparison && layout.comparisonLayout) {
@@ -447,28 +620,25 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
       formatVolumeKg(input.comparison.count, input.locale),
       input.comparison.unit
     );
-    cursorY += drawComparisonCardCentered(
+    cursorY += drawComparisonPremium(
       ctx,
-      layout.innerX,
+      innerX,
       cursorY,
-      layout.innerW,
+      innerW,
       input.comparison,
       countLabel,
-      layout.comparisonLayout
+      layout.comparisonLayout,
+      input.locale
     );
   }
 
-  const footerY = contentTop + layout.heroH +
+  const footerY =
+    contentTop +
+    layout.heroH +
     (layout.comparisonLayout ? layout.sectionGap + layout.comparisonH : 0) +
-    layout.sectionGap + 36;
+    layout.sectionGap;
 
-  ctx.textAlign = 'center';
-  ctx.font = `bold 30px ${FONT}`;
-  ctx.fillStyle = '#22c55e';
-  ctx.fillText('MachineFit', cx, footerY);
-  ctx.font = `26px ${FONT}`;
-  ctx.fillStyle = 'rgba(134, 239, 172, 0.85)';
-  ctx.fillText('#MacineFit #누적무게', cx, footerY + 36);
+  drawFooter(ctx, cx, footerY, innerW - 80);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

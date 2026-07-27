@@ -1,12 +1,12 @@
 {
-  "title": "Lifted share card compact centered v2",
-  "summary": "Dynamic canvas height (no bottom gap), larger content, emoji width-based centering, comparison card as centered vertical stack.",
-  "git": { "branch": "main", "commit": "9e75088" },
+  "title": "Lifted weight premium share card",
+  "summary": "Achievement-style share PNG: mesh background, glass card, gradient KG stat ring, quote box, comparison pill chips, gradient MachineFit footer.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유 PNG — 아래 여백 없음, 🏋️/볼링공 이모지 정중앙, 비교 카드 아이콘+텍스트 세로 중앙 정렬.",
+  "testFocus": "누적무게 공유 카드 — 프리미엄 업적 카드 느낌, 그라데이션 KG, 중앙 비교 섹션, SNS 자랑용 비주얼.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["누적무게 → 공유 카드 — 캡처 후 여백·정렬 확인"],
+  "productionChecks": ["누적무게 → 공유 카드 만들기 → PNG 퀄리티 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "1350px 고정 높이로 하단 공백 많음, 이모지 오른쪽 치우침, 비교 카드 좌측 정렬.",
-  "toBe": "콘텐츠 높이에 맞춘 PNG, 이모지·비교 카드 중앙 집중형."
+  "asIs": "기능적이지만 밋밋한 2박스 스택.",
+  "toBe": "Strava/Nike급 업적 공유 카드 UI."
 }
