@@ -1,7 +1,7 @@
 {
   "title": "Achievement share card redesign + lifted hero spacing",
   "summary": "Achievement card 720×900 DNA/lifted style with earnedAt. Lifted card: hero KG + closing moved up, tighter headline gap.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "f0cbb4c" },
   "changedFiles": [
     "frontend/src/utils/achievementShareCard.ts",
     "frontend/src/pages/achievements/AchievementsPage.tsx",

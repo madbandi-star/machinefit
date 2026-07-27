@@ -1,6 +1,6 @@
 # Latest test handoff — Achievement card + lifted hero spacing
 
-**Branch:** `main` · **Commit:** pending
+**Branch:** `main` · **Commit:** `f0cbb4c`
 
 ## Change
 
