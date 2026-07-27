@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card — footer top spacing",
   "summary": "Added 20px gap above MachineFit footer (comparison card / KG → footer).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "6188f50" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유카드 — 하단 MachineFit 영역 위 간격.",
   "fastChecks": ["npm run build --prefix frontend"],
