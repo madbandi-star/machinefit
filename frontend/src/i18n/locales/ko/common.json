@@ -244,6 +244,9 @@
     "loginFeature2": "브랜드별 기구 세팅값",
     "loginFeature3": "수행 기록과 성장 분석",
     "loginBrowseMachines": "기구 둘러보기",
+    "signupCtaDivider": "처음이신가요?",
+    "signupCtaHint": "30초면 가입 끝 · 바로 맞춤 세팅 추천",
+    "signupCtaLabel": "무료로 회원가입",
     "profileExtrasGoalOnly": "운동 목표로 추천을 맞춤화합니다. 헬스장은 아래 지역 설정에서 함께 입력하세요.",
     "agreeLocationSuffix": "에 동의합니다 (선택)"
   },
