@@ -1,14 +1,15 @@
 {
-  "title": "Lifter DNA eyebrow text",
-  "summary": "Eyebrow label changed from '🤖 MachineFit AI 분석 완료' to '🤖 AI 분석 완료' on hero and share card.",
-  "git": { "branch": "main", "commit": "4dff783" },
+  "title": "Lifted weight share card redesign",
+  "summary": "Share PNG now mirrors the on-page hero (emoji, headline, KG total, closing, fun line) plus a styled comparison card, green glass panels, and balanced vertical layout.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/utils/liftedShareCard.ts",
+    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
   ],
-  "testFocus": "운동성향 페이지·공유 PNG 상단 eyebrow에 MachineFit 없이 'AI 분석 완료'만 표시.",
+  "testFocus": "누적무게 → 공유 카드 만들기 — 페이지 히어로와 동일한 내용·스타일(그린 그라데이션, 비교 카드, MachineFit 푸터) 확인.",
   "fastChecks": ["npm run build --prefix frontend"],
+  "productionChecks": ["누적무게 공유 PNG — 상하 여백 균형, 볼링공 등 비교 카드 레이아웃"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "🤖 MachineFit AI 분석 완료",
-  "toBe": "🤖 AI 분석 완료"
+  "asIs": "공유 PNG가 단순 텍스트 나열, 위쪽 쏠림, 페이지 카드와 디자인 불일치.",
+  "toBe": "페이지 히어로+비교 카드 내용을 담은 프리미엄 공유 카드."
 }

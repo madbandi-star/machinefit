@@ -10,7 +10,6 @@ import { liftedWeightApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
-import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { buildLiftedShareCard } from '@/utils/liftedShareCard';
 import './LiftedWeightPage.css';
@@ -38,7 +37,6 @@ function useCountUp(target: number, durationMs = 1200): number {
 export function LiftedWeightPage() {
   const { t, i18n } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
-  const user = useAuthStore((s) => s.user);
   const { activeGymId, gyms } = useActiveGym();
   const [mode, setMode] = useState<LiftedScopeMode>('user');
   const [gymId, setGymId] = useState<string | undefined>(activeGymId ?? undefined);
@@ -78,9 +76,14 @@ export function LiftedWeightPage() {
       const blob = await buildLiftedShareCard({
         headline: data.headline,
         totalKg: data.totalKg,
+        closing: t('liftedWeight.closing'),
+        funLine: data.funLine,
         comparison: data.comparisons[0],
         locale,
-        displayName: user?.displayName ?? data.labelName,
+        labels: {
+          aboutCount: (count, unit) => t('liftedWeight.aboutCount', { count, unit }),
+          shareClosing: t('liftedWeight.shareClosing'),
+        },
       });
       const file = new File([blob], 'machinefit-lifted.png', { type: 'image/png' });
       const text = `${data.headline}\n${formatVolumeKg(data.totalKg, locale)} KG\n${t('liftedWeight.shareClosing')}`;
