@@ -1,7 +1,7 @@
 {
   "title": "Achievement share card — larger emoji + tighter name gap",
   "summary": "Hero emoji 152px with 160px glow. Name text starts just below emoji glyph (not below full glow), 4px gap.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "45317c4" },
   "changedFiles": [
     "frontend/src/utils/achievementShareCard.ts"
   ],
