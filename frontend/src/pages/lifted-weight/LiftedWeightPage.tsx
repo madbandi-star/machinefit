@@ -86,7 +86,6 @@ export function LiftedWeightPage() {
           badge: t('liftedWeight.shareBadge'),
           comparisonSection: t('liftedWeight.shareComparisonSection'),
           tagline: t('liftedWeight.shareTagline'),
-          shareCta: t('liftedWeight.shareCta'),
           hashtags: t('liftedWeight.shareHashtags'),
         },
       });

@@ -1,17 +1,17 @@
 {
-  "title": "Lifted share card match sample design",
-  "summary": "Share PNG rebuilt to match user reference: trophy badge, avatar ring, laurel stat panel, green quotes, comparison circle, split footer with MachineFit mark.",
-  "git": { "branch": "main", "commit": "b71e229" },
+  "title": "Lifted weight share card poster renewal",
+  "summary": "Full SNS poster redesign: single glass card, 148px hero KG, laurel glow, slogan quotes, comparison inset, 1:1 default + optional 9:16 via aspectRatio.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "누적무게 공유 카드 — 첨부 샘플과 동일 레이아웃(🏆배지, 월계관 KG, 인용문, 볼링공 중앙, 푸터 좌우).",
+  "testFocus": "누적무게 공유 카드 — 포스터형 1080×1080, KG 최대·여백·은은한 헬스장 BG, 비교 카드, #MachineFit 푸터.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["운동성향 → 공유 카드 PNG vs 샘플 비교"],
+  "productionChecks": ["공유 카드 PNG 퀄리티·SNS 공유 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "이전 프리미엄 디자인이 샘플과 불일치.",
-  "toBe": "ChatGPT 샘플 카드 레이아웃/스타일 재현."
+  "asIs": "박스 쌓기형 UI.",
+  "toBe": "Apple/Nike급 프리미엄 포스터 공유 카드."
 }

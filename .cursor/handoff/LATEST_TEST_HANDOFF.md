@@ -1,46 +1,21 @@
-# Latest test handoff — Share card sample match
-
-
-
-**Branch:** `main` · **Commit:** `b71e229`
-
-
-
-## Change
-
-
-
-첨부 **디자인 샘플** 기준으로 공유 카드 재작성.
-
-
-
-- 🏆 누적 무게 배지 + 글로우 라인
-
-- 원형 아바타 + ✦ 스파클
-
-- 월계관 + 그라데이션 KG 패널
-
-- 초록 따옴표 인용문
-
-- 볼링공 원형 + 중앙 정렬 비교
-
-- 푸터: MachineFit 로고 + CTA + 해시태그
-
-
-
-## Test
-
-
-
-누적무게 → 공유 카드 만들기 → 샘플과 비교
-
-
-
-```bash
-
-npm run build --prefix frontend
-
-```
-
-
-
+# Latest test handoff — Share card poster renewal
+
+**Branch:** `main` · **Commit:** pending
+
+## Change
+
+누적무게 공유 카드 **포스터 전면 리뉴얼** (로직/데이터 무 변경).
+
+- 1080×1080 기본 (`aspectRatio: '9:16'` → 1080×1920)
+- 단일 포스터 카드 + 은은한 헬스장 BG
+- 148px 그라데이션 KG + 월계관 + glow
+- 슬로건 따옴표 / 비교 inset / MachineFit 푸터
+
+## Test
+
+누적무게 → 공유 카드 만들기
+
+```bash
+npm run build --prefix frontend
+```
+
