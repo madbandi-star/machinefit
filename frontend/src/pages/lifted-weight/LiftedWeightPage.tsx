@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { LiftedScopeMode } from '@machinefit/shared';
-import { LIFTED_BADGES, formatVolumeKg, kgToTons } from '@machinefit/shared';
+import { LIFTED_BADGES, formatVolumeKg, kgToTons, pickHeaviestComparison } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { liftedWeightApi } from '@/api';
@@ -89,7 +89,7 @@ export function LiftedWeightPage() {
         labelName: data.labelName,
         totalKg: data.totalKg,
         closing: '',
-        comparison: data.comparisons[0],
+        comparison: pickHeaviestComparison(data.comparisons),
         locale,
         labels: {
           aboutCount: (count, unit) => t('liftedWeight.aboutCount', { count, unit }),

@@ -70,6 +70,22 @@ export function selectTopComparisons(
   }));
 }
 
+/**
+ * Share-card pick: among showcase comparisons, use the heaviest unit mass
+ * (e.g. 경찰차 over 자전거) so the image/count reads as a few heavy objects.
+ */
+export function pickHeaviestComparison(
+  comparisons: LiftedComparisonResult[]
+): LiftedComparisonResult | undefined {
+  if (!comparisons.length) return undefined;
+  let best = comparisons[0]!;
+  for (let i = 1; i < comparisons.length; i += 1) {
+    const row = comparisons[i]!;
+    if (row.weightKg > best.weightKg) best = row;
+  }
+  return best;
+}
+
 export function pickFunLine(locale: string, seedKey = ''): string {
   const lang = locale.startsWith('ko') ? 'ko' : 'en';
   const lines = LIFTED_FUN_LINES[lang];
