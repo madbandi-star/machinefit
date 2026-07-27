@@ -182,9 +182,6 @@ export function LiftedWeightPage() {
                 <button type="button" className="btn btn--primary" onClick={() => void handleShare()}>
                   {t('liftedWeight.share')}
                 </button>
-                <Link to={ROUTES.LIFTED_WEIGHT_RANKINGS} className="btn btn--secondary">
-                  {t('liftedWeight.viewRankings')}
-                </Link>
               </div>
             </section>
 
