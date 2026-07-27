@@ -128,6 +128,28 @@ function drawEmojiGlow(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
   ctx.fill();
 }
 
+function countWrapLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+): number {
+  const chars = [...text];
+  let line = '';
+  let lines = 1;
+
+  for (const ch of chars) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      line = ch;
+      lines += 1;
+    } else {
+      line = test;
+    }
+  }
+
+  return lines;
+}
+
 function drawMetaPanel(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -145,26 +167,42 @@ function drawMetaPanel(
   ctx.stroke();
 
   const colW = w / 3;
-  const topY = y + 52;
+  const padX = 18;
+  const labelLH = 30;
+  const valueLH = 40;
+  const labelValueGap = 14;
+  const maxColWidth = colW - padX * 2;
+
+  const colHeights = values.map((value) => {
+    ctx.font = `bold 32px ${FONT}`;
+    const valueLines = countWrapLines(ctx, value, maxColWidth);
+    return labelLH + labelValueGap + valueLines * valueLH;
+  });
+  const contentH = Math.max(...colHeights);
+  const contentTop = y + (h - contentH) / 2;
+  const dividerTop = contentTop - 10;
+  const dividerBottom = contentTop + contentH + 10;
 
   for (let i = 0; i < 3; i += 1) {
     const colX = x + colW * i + colW / 2;
+    const colTop = contentTop + (contentH - colHeights[i]) / 2;
+
     if (i > 0) {
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
       ctx.beginPath();
-      ctx.moveTo(x + colW * i, y + 28);
-      ctx.lineTo(x + colW * i, y + h - 28);
+      ctx.moveTo(x + colW * i, dividerTop);
+      ctx.lineTo(x + colW * i, dividerBottom);
       ctx.stroke();
     }
 
     ctx.textAlign = 'center';
     ctx.font = `24px ${FONT}`;
     ctx.fillStyle = '#9ca3af';
-    ctx.fillText(labels[i], colX, topY);
+    ctx.fillText(labels[i], colX, colTop + labelLH * 0.82);
 
     ctx.font = `bold 32px ${FONT}`;
     ctx.fillStyle = '#f9fafb';
-    wrapText(ctx, values[i], colX, topY + 44, colW - 36, 40);
+    wrapText(ctx, values[i], colX, colTop + labelLH + labelValueGap + valueLH * 0.82, maxColWidth, valueLH);
   }
 }
 
@@ -337,13 +375,12 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
   const gapSm = 24;
   const gapMd = 40;
   const gapLg = 56;
-  const metaPanelH = 148;
+  const metaPanelH = 168;
   const quotePanelH = Math.max(140, quoteHeight + 88);
-  const footerH = 36;
+  const footerH = 72;
 
   const blockHeight =
-    30 + // eyebrow
-    gapMd +
+    60 + // eyebrow + gap below
     200 + // emoji zone
     gapMd +
     headlineHeight +
@@ -358,7 +395,8 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
     gapMd +
     footerH;
 
-  let y = cardY + Math.max(72, (cardH - blockHeight) / 2);
+  const verticalBias = 36;
+  let y = cardY + Math.max(96, (cardH - blockHeight) / 2 + verticalBias);
 
   ctx.font = `bold 30px ${FONT}`;
   ctx.fillStyle = '#c4b5fd';
