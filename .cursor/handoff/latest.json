@@ -1,7 +1,7 @@
 {
   "title": "Achievement share card — huge emoji + split earned date",
   "summary": "Hero emoji 112px with 118px glow. Earned-at meta column shows date and time on separate centered lines with blank line gap.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ef2a46d" },
   "changedFiles": [
     "frontend/src/utils/achievementShareCard.ts",
     "frontend/src/pages/achievements/AchievementsPage.tsx"
