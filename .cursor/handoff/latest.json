@@ -1,7 +1,7 @@
 {
   "title": "Share card 4:5 layout — comparison centering & spacing",
   "summary": "Match lifted weight share card to lifter DNA size (1080×1350). Center comparison box between slogan and footer; tighten gaps above/below comparison section.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "f507174" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "누적무게 공유 카드 1080×1350 — 비교 박스 슬로건·푸터 사이 중앙, 여백 축소, 운동성향 카드와 동일 사이즈.",
   "fastChecks": ["npm run build --prefix frontend"],
