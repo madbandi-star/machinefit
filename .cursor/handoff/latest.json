@@ -1,15 +1,11 @@
 {
-  "title": "Lifter DNA share card matches hero layout",
-  "summary": "Workout tendency share image now mirrors on-screen hero: eyebrow, emoji, headline, tagline, stars, 3-col meta, one-liner quote in glass card.",
+  "title": "Lifter DNA share card vertical balance",
+  "summary": "Share card content vertically centered with meta/quote panels, emoji glow, and footer branding to fill card instead of top-heavy layout.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/utils/lifterDnaShareCard.ts",
-    "frontend/src/pages/lifter-dna/LifterDnaPage.tsx"
-  ],
-  "testFocus": "운동성향 → 공유 카드: image matches hero card layout (not traits list / MachineFit footer).",
+  "changedFiles": ["frontend/src/utils/lifterDnaShareCard.ts"],
+  "testFocus": "운동성향 share PNG — content centered, no huge empty bottom; meta in panel, quote in box, MachineFit footer.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["/lifter-dna — share card PNG layout"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Share card showed traits list and different layout from screen.",
-  "toBe": "Share PNG matches dna-hero card design from capture."
+  "asIs": "Share card content clustered at top ~40%, empty bottom.",
+  "toBe": "Balanced vertical layout with styled meta/quote sections."
 }

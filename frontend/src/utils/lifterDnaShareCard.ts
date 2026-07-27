@@ -14,6 +14,9 @@ interface DnaShareInput {
   analyzedDate: string;
 }
 
+const FONT =
+  'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
+
 function starsText(n: number): string {
   const filled = Math.max(0, Math.min(5, n));
   return '★'.repeat(filled) + '☆'.repeat(5 - filled);
@@ -36,23 +39,27 @@ function roundRect(
   ctx.closePath();
 }
 
-function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const gradient = ctx.createLinearGradient(0, 0, width * 0.2, height);
-  gradient.addColorStop(0, '#14081f');
-  gradient.addColorStop(0.5, '#0f172a');
-  gradient.addColorStop(1, '#042f2e');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
+function measureWrapHeight(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  lineHeight: number
+): number {
+  const chars = [...text];
+  let line = '';
+  let lines = 1;
 
-  ctx.fillStyle = 'rgba(167, 139, 250, 0.18)';
-  ctx.beginPath();
-  ctx.arc(width * 0.14, height * 0.12, 220, 0, Math.PI * 2);
-  ctx.fill();
+  for (const ch of chars) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      line = ch;
+      lines += 1;
+    } else {
+      line = test;
+    }
+  }
 
-  ctx.fillStyle = 'rgba(74, 222, 128, 0.12)';
-  ctx.beginPath();
-  ctx.arc(width * 0.88, height * 0.22, 260, 0, Math.PI * 2);
-  ctx.fill();
+  return lines * lineHeight;
 }
 
 function wrapText(
@@ -86,25 +93,108 @@ function wrapText(
   return cursorY;
 }
 
-function drawMetaColumn(
-  ctx: CanvasRenderingContext2D,
-  centerX: number,
-  topY: number,
-  maxWidth: number,
-  label: string,
-  value: string
-): number {
-  ctx.textAlign = 'center';
-  ctx.font = '24px system-ui, -apple-system, "Segoe UI", sans-serif';
-  ctx.fillStyle = '#9ca3af';
-  ctx.fillText(label, centerX, topY);
+function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  const gradient = ctx.createLinearGradient(0, 0, width * 0.15, height);
+  gradient.addColorStop(0, '#14081f');
+  gradient.addColorStop(0.45, '#0f172a');
+  gradient.addColorStop(1, '#042f2e');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
 
-  ctx.font = 'bold 30px system-ui, -apple-system, "Segoe UI", sans-serif';
-  ctx.fillStyle = '#f3f4f6';
-  return wrapText(ctx, value, centerX, topY + 42, maxWidth, 38);
+  ctx.fillStyle = 'rgba(167, 139, 250, 0.16)';
+  ctx.beginPath();
+  ctx.arc(width * 0.12, height * 0.18, 280, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.1)';
+  ctx.beginPath();
+  ctx.arc(width * 0.9, height * 0.72, 320, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.06)';
+  ctx.beginPath();
+  ctx.arc(width * 0.5, height * 0.92, 240, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-/** Share card matching on-screen Lifter DNA hero card. */
+function drawEmojiGlow(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number) {
+  const glow = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius);
+  glow.addColorStop(0, 'rgba(167, 139, 250, 0.28)');
+  glow.addColorStop(0.55, 'rgba(74, 222, 128, 0.12)');
+  glow.addColorStop(1, 'rgba(15, 23, 42, 0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawMetaPanel(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  labels: string[],
+  values: string[]
+) {
+  roundRect(ctx, x, y, w, h, 24);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  const colW = w / 3;
+  const topY = y + 52;
+
+  for (let i = 0; i < 3; i += 1) {
+    const colX = x + colW * i + colW / 2;
+    if (i > 0) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+      ctx.beginPath();
+      ctx.moveTo(x + colW * i, y + 28);
+      ctx.lineTo(x + colW * i, y + h - 28);
+      ctx.stroke();
+    }
+
+    ctx.textAlign = 'center';
+    ctx.font = `24px ${FONT}`;
+    ctx.fillStyle = '#9ca3af';
+    ctx.fillText(labels[i], colX, topY);
+
+    ctx.font = `bold 32px ${FONT}`;
+    ctx.fillStyle = '#f9fafb';
+    wrapText(ctx, values[i], colX, topY + 44, colW - 36, 40);
+  }
+}
+
+function drawQuotePanel(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  quote: string
+) {
+  roundRect(ctx, x, y, w, h, 24);
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(196, 181, 253, 0.22)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(196, 181, 253, 0.85)';
+  ctx.font = `bold 56px ${FONT}`;
+  ctx.textAlign = 'left';
+  ctx.fillText('“', x + 28, y + 58);
+
+  ctx.textAlign = 'center';
+  ctx.font = `34px ${FONT}`;
+  ctx.fillStyle = '#e5e7eb';
+  wrapText(ctx, quote, x + w / 2, y + h / 2 - 12, w - 96, 48);
+}
+
+/** Share card — vertically balanced hero layout for social sharing. */
 export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blob> {
   const { snapshot, labels, analyzedDate } = input;
   const width = 1080;
@@ -117,63 +207,102 @@ export async function buildLifterDnaShareCard(input: DnaShareInput): Promise<Blo
 
   drawPageBackground(ctx, width, height);
 
-  const cardX = 56;
-  const cardY = 72;
+  const cardX = 48;
+  const cardY = 48;
   const cardW = width - cardX * 2;
   const cardH = height - cardY * 2;
-  roundRect(ctx, cardX, cardY, cardW, cardH, 36);
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.68)';
+  roundRect(ctx, cardX, cardY, cardW, cardH, 40);
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.74)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.11)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
   ctx.lineWidth = 2;
   ctx.stroke();
 
   const cx = width / 2;
-  const contentMax = cardW - 120;
-  let y = cardY + 88;
+  const contentMax = cardW - 128;
+  const innerX = cardX + 64;
 
   ctx.textAlign = 'center';
-  ctx.font = 'bold 30px system-ui, -apple-system, "Segoe UI", sans-serif';
+
+  ctx.font = `bold 30px ${FONT}`;
+  const headlineHeight = measureWrapHeight(ctx, snapshot.shareHeadline, contentMax, 62);
+  ctx.font = `34px ${FONT}`;
+  const taglineHeight = measureWrapHeight(ctx, snapshot.character.tagline, contentMax, 44);
+  ctx.font = `34px ${FONT}`;
+  const quoteHeight = measureWrapHeight(ctx, snapshot.oneLiner, contentMax - 96, 48);
+
+  const gapSm = 24;
+  const gapMd = 40;
+  const gapLg = 56;
+  const metaPanelH = 148;
+  const quotePanelH = Math.max(132, quoteHeight + 72);
+  const footerH = 36;
+
+  const blockHeight =
+    30 + // eyebrow
+    gapMd +
+    200 + // emoji zone
+    gapMd +
+    headlineHeight +
+    gapSm +
+    taglineHeight +
+    gapMd +
+    48 + // stars
+    gapLg +
+    metaPanelH +
+    gapLg +
+    quotePanelH +
+    gapMd +
+    footerH;
+
+  let y = cardY + Math.max(72, (cardH - blockHeight) / 2);
+
+  ctx.font = `bold 30px ${FONT}`;
   ctx.fillStyle = '#c4b5fd';
   ctx.fillText(labels.complete, cx, y);
 
-  y += 120;
-  ctx.font = '168px system-ui, -apple-system, "Segoe UI", sans-serif';
+  y += gapMd + 20;
+  drawEmojiGlow(ctx, cx, y + 24, 118);
+  ctx.font = `176px ${FONT}`;
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(snapshot.character.emoji, cx, y);
+  ctx.fillText(snapshot.character.emoji, cx, y + 96);
 
-  y += 72;
-  ctx.font = 'bold 52px system-ui, -apple-system, "Segoe UI", sans-serif';
+  y += 200;
+  ctx.font = `bold 52px ${FONT}`;
   ctx.fillStyle = '#f9fafb';
   y = wrapText(ctx, snapshot.shareHeadline, cx, y, contentMax, 62);
 
-  y += 18;
-  ctx.font = '34px system-ui, -apple-system, "Segoe UI", sans-serif';
+  y += gapSm;
+  ctx.font = `34px ${FONT}`;
   ctx.fillStyle = '#86efac';
   y = wrapText(ctx, snapshot.character.tagline, cx, y, contentMax, 44);
 
-  y += 28;
-  ctx.font = '48px system-ui, -apple-system, "Segoe UI", sans-serif';
+  y += gapMd;
+  ctx.font = `48px ${FONT}`;
   ctx.fillStyle = '#fbbf24';
   ctx.fillText(starsText(snapshot.confidenceStars), cx, y);
 
-  y += 88;
-  const colW = contentMax / 3;
-  const metaLabels = [labels.confidence, labels.basis, labels.analyzedAt];
-  const metaValues = [`${snapshot.confidence}%`, labels.basisValue, analyzedDate];
-  let metaBottom = y;
+  y += gapLg;
+  drawMetaPanel(
+    ctx,
+    innerX,
+    y,
+    cardW - 128,
+    metaPanelH,
+    [labels.confidence, labels.basis, labels.analyzedAt],
+    [`${snapshot.confidence}%`, labels.basisValue, analyzedDate]
+  );
 
-  for (let i = 0; i < 3; i += 1) {
-    const colX = cx - contentMax / 2 + colW * i + colW / 2;
-    const bottom = drawMetaColumn(ctx, colX, y, colW - 24, metaLabels[i], metaValues[i]);
-    metaBottom = Math.max(metaBottom, bottom);
-  }
+  y += metaPanelH + gapLg;
+  drawQuotePanel(ctx, innerX, y, cardW - 128, quotePanelH, snapshot.oneLiner);
 
-  y = metaBottom + 56;
-  ctx.font = '34px system-ui, -apple-system, "Segoe UI", sans-serif';
-  ctx.fillStyle = '#e5e7eb';
-  const quote = `“${snapshot.oneLiner}”`;
-  wrapText(ctx, quote, cx, y, contentMax, 48);
+  y += quotePanelH + gapMd;
+  ctx.font = `bold 28px ${FONT}`;
+  ctx.fillStyle = '#4ade80';
+  ctx.fillText('MachineFit', cx, y);
+  ctx.font = `24px ${FONT}`;
+  ctx.fillStyle = 'rgba(134, 239, 172, 0.72)';
+  ctx.fillText('#MachineFit #LifterDNA', cx, y + 34);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
