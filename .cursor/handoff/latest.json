@@ -1,12 +1,11 @@
 {
-  "title": "Share card quote panel, comparison spacing, gym background",
-  "summary": "Slogan uses DNA-style quote panel (34px, tight curly quotes). Comparison card: extra top line, larger emoji, tighter pill spacing. Subtle gym silhouettes on page and card background.",
-  "git": { "branch": "main", "commit": "9c0c2d3" },
+  "title": "Remove extra space above comparison section title",
+  "summary": "Removed 28px blank line above '이 무게는 어느 정도?' in share card comparison box.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유 카드 — 슬로건 인용 박스, 비교 카드 여백/이모지 크기, 은은한 헬스장 배경.",
+  "testFocus": "비교 카드 제목 위 불필요한 공백 없음.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["공유 카드 PNG 시각 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "슬로건 쌍따옴표 간격 넓음, 비교 카드 여백/이모지 작음, 단순 배경.",
-  "toBe": "DNA형 인용 패널, 비교 카드 간격 조정, 헬스장 실루엣 배경."
+  "asIs": "제목 위 한 줄 공백.",
+  "toBe": "제목 바로 아래 패딩만 유지."
 }

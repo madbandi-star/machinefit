@@ -573,7 +573,7 @@ function drawHeroKg(
 }
 
 function measureComparisonCardH(tipLines: string[]): number {
-  return 28 + 36 + 28 + 112 + 36 + 44 + 20 + blockH(tipLines, 36) + 28;
+  return 36 + 28 + 112 + 36 + 44 + 20 + blockH(tipLines, 36) + 28;
 }
 
 function drawComparisonCard(
@@ -596,7 +596,7 @@ function drawComparisonCard(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  let cy = topY + 28 + 36;
+  let cy = topY + 36;
   ctx.font = `500 30px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
   ctx.textAlign = 'center';
