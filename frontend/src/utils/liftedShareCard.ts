@@ -130,12 +130,183 @@ function drawCenteredLines(
   return y - topY;
 }
 
-function splitSlogan(text: string): string[] {
-  const parts = text
-    .split(/(?<=[.!?。:])\s*/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-  return parts.length ? parts : [text];
+const QUOTE_FONT_SIZE = 34;
+const QUOTE_LINE_HEIGHT = 44;
+const QUOTE_TARGET_CHARS = 18;
+
+function isWrapBreakpoint(ch: string): boolean {
+  return /[\s,.·…!?;:)]/.test(ch);
+}
+
+function getBalancedWrapLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  maxCharsPerLine = QUOTE_TARGET_CHARS
+): string[] {
+  const chars = [...text];
+  const lines: string[] = [];
+  let line = '';
+
+  const pushLine = (value: string) => {
+    const trimmed = value.trimEnd();
+    if (trimmed) lines.push(trimmed);
+  };
+
+  for (const ch of chars) {
+    const test = line + ch;
+    const tooWide = ctx.measureText(test).width > maxWidth;
+    const tooLong = line.length >= maxCharsPerLine;
+
+    if ((tooWide || tooLong) && line.length > 0) {
+      let breakAt = -1;
+      for (let i = line.length - 1; i >= Math.max(0, line.length - 10); i -= 1) {
+        if (isWrapBreakpoint(line[i])) {
+          breakAt = i + 1;
+          break;
+        }
+      }
+
+      if (breakAt > 0) {
+        pushLine(line.slice(0, breakAt));
+        line = line.slice(breakAt).trimStart() + ch;
+      } else {
+        pushLine(line);
+        line = ch;
+      }
+    } else {
+      line = test;
+    }
+  }
+
+  if (line) pushLine(line);
+  return lines.length ? lines : [''];
+}
+
+function formatQuotedLines(lines: string[]): string[] {
+  if (lines.length === 0) return [''];
+  if (lines.length === 1) return [`“${lines[0]}”`];
+
+  return [`“${lines[0]}`, ...lines.slice(1, -1), `${lines[lines.length - 1]}”`];
+}
+
+function measureQuotePanelHeight(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  panelW: number
+): number {
+  const padX = 44;
+  const maxWidth = panelW - padX * 2;
+  ctx.font = `400 ${QUOTE_FONT_SIZE}px ${FONT}`;
+  const innerLines = getBalancedWrapLines(ctx, text.trim(), maxWidth);
+  const quotedLines = formatQuotedLines(innerLines);
+  return Math.max(108, quotedLines.length * QUOTE_LINE_HEIGHT + 64);
+}
+
+function drawCenteredWrapText(
+  ctx: CanvasRenderingContext2D,
+  lines: string[],
+  centerX: number,
+  boxY: number,
+  boxH: number,
+  lineHeight: number
+) {
+  const totalHeight = lines.length * lineHeight;
+  let cursorY = boxY + (boxH - totalHeight) / 2 + lineHeight * 0.82;
+
+  ctx.textAlign = 'center';
+  for (const line of lines) {
+    ctx.fillText(line, centerX, cursorY);
+    cursorY += lineHeight;
+  }
+}
+
+function drawSloganQuotePanel(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  topY: number,
+  w: number,
+  quote: string
+): number {
+  const h = measureQuotePanelHeight(ctx, quote, w);
+  const x = cx - w / 2;
+
+  roundRect(ctx, x, topY, w, h, 22);
+  ctx.fillStyle = 'rgba(15, 23, 36, 0.58)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.22)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  const padX = 44;
+  const maxWidth = w - padX * 2;
+  const innerLines = getBalancedWrapLines(ctx, quote.trim(), maxWidth);
+  const lines = formatQuotedLines(innerLines);
+
+  ctx.font = `400 ${QUOTE_FONT_SIZE}px ${FONT}`;
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.92)';
+  drawCenteredWrapText(ctx, lines, cx, topY, h, QUOTE_LINE_HEIGHT);
+
+  return h + 12;
+}
+
+function drawBarbellSilhouette(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  scale: number
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.fillStyle = '#64748b';
+  ctx.beginPath();
+  ctx.moveTo(-90, 0);
+  ctx.lineTo(90, 0);
+  ctx.stroke();
+  for (const sx of [-78, 78]) {
+    ctx.beginPath();
+    ctx.arc(sx, 0, 16, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(sx, 0, 10, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawPlateStack(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  count: number,
+  r: number
+) {
+  for (let i = 0; i < count; i += 1) {
+    ctx.beginPath();
+    ctx.arc(x, y - i * 5, r - i * 1.5, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+function drawMachineFrame(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) {
+  roundRect(ctx, x, y, w, h, 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.2, y + h * 0.35);
+  ctx.lineTo(x + w * 0.8, y + h * 0.35);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(x + w * 0.5, y + h * 0.62, w * 0.12, 0, Math.PI * 2);
+  ctx.stroke();
 }
 
 function drawSubtleGymBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
@@ -147,26 +318,56 @@ function drawSubtleGymBackground(ctx: CanvasRenderingContext2D, width: number, h
   ctx.fillRect(0, 0, width, height);
 
   ctx.save();
-  ctx.globalAlpha = 0.04;
-  ctx.strokeStyle = '#cbd5e1';
-  const bx = width * 0.78;
-  const by = height * 0.12;
-  ctx.lineWidth = 5;
+  ctx.globalAlpha = 0.038;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.fillStyle = '#64748b';
+
+  drawBarbellSilhouette(ctx, width * 0.22, height * 0.18, 1.1);
+  drawBarbellSilhouette(ctx, width * 0.84, height * 0.28, 0.85);
+  drawPlateStack(ctx, width * 0.1, height * 0.72, 4, 28);
+  drawPlateStack(ctx, width * 0.92, height * 0.68, 3, 22);
+  drawMachineFrame(ctx, width * 0.06, height * 0.42, 110, 150);
+  drawMachineFrame(ctx, width * 0.8, height * 0.52, 95, 130);
+
+  ctx.globalAlpha = 0.028;
   ctx.beginPath();
-  ctx.moveTo(bx - 130, by);
-  ctx.lineTo(bx + 130, by);
+  ctx.moveTo(width * 0.55, height * 0.82);
+  ctx.lineTo(width * 0.72, height * 0.82);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(bx - 95, by, 20, 0, Math.PI * 2);
-  ctx.arc(bx + 95, by, 20, 0, Math.PI * 2);
+  ctx.arc(width * 0.58, height * 0.82, 14, 0, Math.PI * 2);
+  ctx.arc(width * 0.69, height * 0.82, 14, 0, Math.PI * 2);
   ctx.stroke();
+
   ctx.restore();
 
   const glow = ctx.createRadialGradient(width * 0.5, height * 0.4, 0, width * 0.5, height * 0.4, width * 0.6);
-  glow.addColorStop(0, 'rgba(74, 222, 128, 0.08)');
+  glow.addColorStop(0, 'rgba(74, 222, 128, 0.07)');
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, width, height);
+}
+
+function drawCardGymSilhouettes(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) {
+  ctx.save();
+  roundRect(ctx, x, y, w, h, CARD_RADIUS);
+  ctx.clip();
+  ctx.globalAlpha = 0.032;
+  ctx.strokeStyle = '#94a3b8';
+
+  drawBarbellSilhouette(ctx, x + w * 0.14, y + h * 0.72, 0.75);
+  drawBarbellSilhouette(ctx, x + w * 0.88, y + h * 0.38, 0.65);
+  drawPlateStack(ctx, x + w * 0.08, y + h * 0.55, 3, 20);
+  drawMachineFrame(ctx, x + w * 0.78, y + h * 0.68, 80, 110);
+  drawPlateStack(ctx, x + w * 0.92, y + h * 0.82, 2, 16);
+
+  ctx.restore();
 }
 
 /** Symmetric laurel wreath (U-shape) flanking the hero stat. */
@@ -248,13 +449,11 @@ function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number,
 interface LayoutMetrics {
   topBlockH: number;
   comparisonH: number;
-  sloganLines: string[];
   tipLines: string[];
   footerH: number;
 }
 
 function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, innerW: number): LayoutMetrics {
-  const sloganLines = splitSlogan(input.funLine);
   ctx.font = `400 32px ${FONT}`;
   const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 64) : [];
 
@@ -262,13 +461,14 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   const avatarBlock = 76 + 24;
   const headlineBlock = 44 + 28;
   const heroBlock = 200 + 24;
-  const sloganBlock = blockH(sloganLines, 42) + 20;
+  const quotePanelW = innerW;
+  const sloganBlock = measureQuotePanelHeight(ctx, input.funLine, quotePanelW) + 12;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
   const footerH = 76;
 
   const topBlockH = POSTER_PAD + badgeBlock + avatarBlock + headlineBlock + heroBlock + sloganBlock;
 
-  return { topBlockH, comparisonH, sloganLines, tipLines, footerH };
+  return { topBlockH, comparisonH, tipLines, footerH };
 }
 
 function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: number, label: string) {
@@ -372,24 +572,8 @@ function drawHeroKg(
   return zoneH;
 }
 
-function drawSlogan(ctx: CanvasRenderingContext2D, cx: number, topY: number, lines: string[], maxW: number): number {
-  const lh = 42;
-  const textH = blockH(lines, lh);
-  const boxH = textH + 24;
-
-  ctx.font = `600 40px ${FONT}`;
-  ctx.fillStyle = 'rgba(74, 222, 128, 0.65)';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillText('“', cx - maxW / 2 + 4, topY + 36);
-  ctx.fillText('”', cx + maxW / 2 - 4, topY + boxH - 8);
-
-  drawCenteredLines(ctx, lines, cx, topY + 8, lh, 'rgba(226, 232, 240, 0.9)', `400 32px ${FONT}`);
-  return boxH + 12;
-}
-
 function measureComparisonCardH(tipLines: string[]): number {
-  return 36 + 28 + 92 + 28 + 44 + 24 + 44 + 24 + blockH(tipLines, 36) + 32;
+  return 28 + 36 + 28 + 112 + 36 + 44 + 20 + blockH(tipLines, 36) + 28;
 }
 
 function drawComparisonCard(
@@ -412,7 +596,7 @@ function drawComparisonCard(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  let cy = topY + 36;
+  let cy = topY + 28 + 36;
   ctx.font = `500 30px ${FONT}`;
   ctx.fillStyle = GRAY_DIM;
   ctx.textAlign = 'center';
@@ -420,7 +604,7 @@ function drawComparisonCard(
   ctx.fillText(sectionTitle, cx, cy);
   cy += 28;
 
-  const ringR = 46;
+  const ringR = 56;
   const ringCy = cy + ringR;
   ctx.strokeStyle = 'rgba(74, 222, 128, 0.45)';
   ctx.lineWidth = 2.5;
@@ -429,8 +613,8 @@ function drawComparisonCard(
   ctx.stroke();
   ctx.fillStyle = 'rgba(74, 222, 128, 0.08)';
   ctx.fill();
-  drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, 50);
-  cy += ringR * 2 + 28;
+  drawEmojiCentered(ctx, comparison.emoji, cx, ringCy, 60);
+  cy += ringR * 2 + 36;
 
   ctx.font = `700 42px ${FONT}`;
   ctx.fillStyle = WHITE;
@@ -450,7 +634,7 @@ function drawComparisonCard(
   ctx.textBaseline = 'middle';
   ctx.fillText(countLabel, cx, cy);
   ctx.textBaseline = 'alphabetic';
-  cy += 44;
+  cy += pillH / 2 + 20;
 
   drawCenteredLines(ctx, tipLines, cx, cy, 36, GRAY, `400 28px ${FONT}`);
   return h;
@@ -533,7 +717,7 @@ function drawPosterContent(
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
   y += 24;
 
-  y += drawSlogan(ctx, cx, y, metrics.sloganLines, innerW);
+  y += drawSloganQuotePanel(ctx, cx, y, innerW, input.funLine);
 
   if (input.comparison) {
     const countLabel = input.labels.aboutCount(
@@ -592,6 +776,8 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
   ctx.strokeStyle = 'rgba(74, 222, 128, 0.2)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
+
+  drawCardGymSilhouettes(ctx, POSTER_MARGIN, posterY, posterW, posterH);
 
   drawPosterContent(ctx, input, POSTER_MARGIN, posterY, posterW, posterH, metrics);
 

@@ -1,12 +1,12 @@
 {
-  "title": "Share card 4:5 layout — comparison centering & spacing",
-  "summary": "Match lifted weight share card to lifter DNA size (1080×1350). Center comparison box between slogan and footer; tighten gaps above/below comparison section.",
-  "git": { "branch": "main", "commit": "f507174" },
+  "title": "Share card quote panel, comparison spacing, gym background",
+  "summary": "Slogan uses DNA-style quote panel (34px, tight curly quotes). Comparison card: extra top line, larger emoji, tighter pill spacing. Subtle gym silhouettes on page and card background.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유 카드 1080×1350 — 비교 박스 슬로건·푸터 사이 중앙, 여백 축소, 운동성향 카드와 동일 사이즈.",
+  "testFocus": "누적무게 공유 카드 — 슬로건 인용 박스, 비교 카드 여백/이모지 크기, 은은한 헬스장 배경.",
   "fastChecks": ["npm run build --prefix frontend"],
   "productionChecks": ["공유 카드 PNG 시각 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "9:16 카드, 비교 박스 하단 여백 과다, 슬로건·푸터와 간격 넓음.",
-  "toBe": "1080×1350, 비교 박스 중앙 정렬, 간격 축소, DNA 카드와 동일 크기."
+  "asIs": "슬로건 쌍따옴표 간격 넓음, 비교 카드 여백/이모지 작음, 단순 배경.",
+  "toBe": "DNA형 인용 패널, 비교 카드 간격 조정, 헬스장 실루엣 배경."
 }

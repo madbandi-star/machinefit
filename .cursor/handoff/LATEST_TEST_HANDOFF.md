@@ -1,25 +1,17 @@
-# Latest test handoff — Share card 4:5 layout fix
+# Latest test handoff — Share card quote & background polish
 
-**Branch:** `main` · **Commit:** `f507174`
+**Branch:** `main` · **Commit:** pending
 
 ## Change
 
-누적무게 공유 카드 레이아웃 조정:
-
-- **사이즈** 1080×1350 (운동성향 DNA 공유카드와 동일, 4:5)
-- **비교 박스** 슬로건 ↔ 푸터 사이 **수직 중앙** 배치
-- 슬로건↔비교, 비교↔푸터 간격 **16px**로 축소
-- 카드 margin/padding DNA 카드와 동일 (margin 48, radius 40, pad 64)
+- **슬로건** (`바벨 소리…`): 운동성향 공유카드와 동일한 **인용 패널** (34px, 텍스트에 밀착된 큰 “ ”)
+- **비교 카드**: 제목 위 한 줄 여백, 볼링공 이모지 **60px** + 링 **56px**, 이름과 간격 확대, “~수준이에요” pill 아래 여백 제거
+- **배경**: 바벨·원판·머신 실루엣 (opacity ~3%, 텍스트보다 안 튀게)
 
 ## Test
 
-누적무게 → **공유 카드 만들기** → 1080×1350 PNG
+누적무게 → **공유 카드 만들기**
 
 ```bash
 npm run build --prefix frontend
 ```
-
-## as-is → to-be
-
-- **as-is:** 9:16, 비교 박스 하단 여백 과다, 슬로건·푸터 간격 넓음
-- **to-be:** 1080×1350, 비교 박스 중앙, 간격 축소
