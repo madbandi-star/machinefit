@@ -22,6 +22,7 @@ import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/Res
 import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
+import { usePersistHydration } from '@/hooks/usePersistHydration';
 import {
   unlockVoiceCoachAudio,
   speakRestTipsAndWarnings,
@@ -287,6 +288,14 @@ export function WorkoutLogPanel({
   const localOneMoreCount = oneMoreCountOverride ?? voiceCoachOneMoreCount;
   const localHoldDurationSec = holdDurationOverride ?? voiceHoldDurationSec;
 
+  // Records + recommend result cards: always mirror My Page → Settings (read-only pickers).
+  const voiceSessionTargetReps = isHistory ? voiceCoachTargetReps : effectiveVoiceTargetReps;
+  const voiceSessionRepGapMs = isHistory ? voiceCoachRepGapMs : localRepGapMs;
+  const voiceSessionOneMoreCount = isHistory ? voiceCoachOneMoreCount : localOneMoreCount;
+  const voiceSessionHoldDurationSec = isHistory ? voiceHoldDurationSec : localHoldDurationSec;
+  const settingsHydrated = usePersistHydration(useSettingsStore.persist);
+  const noopVoicePickerChange = useCallback(() => {}, []);
+
   useEffect(() => {
     // New machine / recommendation / date — drop local voice-count edits.
     setVoiceTargetUserOverride(null);
@@ -304,15 +313,15 @@ export function WorkoutLogPanel({
   );
 
   const voiceCoach = useVoiceCoachSession({
-    targetReps: effectiveVoiceTargetReps,
+    targetReps: voiceSessionTargetReps,
     oneMoreEnabled: voiceCoachOneMore,
-    oneMoreCount: localOneMoreCount,
-    repGapMs: localRepGapMs,
+    oneMoreCount: voiceSessionOneMoreCount,
+    repGapMs: voiceSessionRepGapMs,
     prepCount: voiceCoachPrepCount,
     voicePack: voiceCoachPack,
     countMode: voiceCountMode,
     flowMode: voiceCoachFlowMode,
-    holdDurationSec: localHoldDurationSec,
+    holdDurationSec: voiceSessionHoldDurationSec,
     locale,
     enabled: voiceCoachEnabled,
   });
@@ -1371,14 +1380,14 @@ export function WorkoutLogPanel({
     />
   ) : null;
 
-  const voiceCoachPanel = showVoiceCoach ? (
+  const voiceCoachPanel = showVoiceCoach && settingsHydrated ? (
     <VoiceCoachPanel
       enabled={voiceCoachEnabled}
       onEnabledChange={setVoiceCoachEnabled}
-      targetReps={effectiveVoiceTargetReps}
-      onTargetRepsChange={handleVoiceTargetRepsChange}
-      repGapMs={localRepGapMs}
-      onRepGapMsChange={setRepGapOverride}
+      targetReps={voiceSessionTargetReps}
+      onTargetRepsChange={isHistory ? noopVoicePickerChange : handleVoiceTargetRepsChange}
+      repGapMs={voiceSessionRepGapMs}
+      onRepGapMsChange={isHistory ? noopVoicePickerChange : setRepGapOverride}
       prepCount={voiceCoachPrepCount}
       onPrepCountChange={setVoiceCoachPrepCount}
       voicePack={voiceCoachPack}
@@ -1387,12 +1396,12 @@ export function WorkoutLogPanel({
       onCountModeChange={setVoiceCountMode}
       flowMode={voiceCoachFlowMode}
       onFlowModeChange={setVoiceCoachFlowMode}
-      holdDurationSec={localHoldDurationSec}
-      onHoldDurationSecChange={setHoldDurationOverride}
+      holdDurationSec={voiceSessionHoldDurationSec}
+      onHoldDurationSecChange={isHistory ? noopVoicePickerChange : setHoldDurationOverride}
       oneMoreEnabled={voiceCoachOneMore}
-      onOneMoreChange={isHistory ? () => {} : setVoiceCoachOneMore}
-      oneMoreCount={localOneMoreCount}
-      onOneMoreCountChange={setOneMoreCountOverride}
+      onOneMoreChange={isHistory ? noopVoicePickerChange : setVoiceCoachOneMore}
+      oneMoreCount={voiceSessionOneMoreCount}
+      onOneMoreCountChange={isHistory ? noopVoicePickerChange : setOneMoreCountOverride}
       autoStartAfterRest={voiceCoachAutoAfterRest}
       onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
       restTipsEnabled={voiceRestTipsEnabled}
@@ -1412,6 +1421,7 @@ export function WorkoutLogPanel({
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
       hideLiveDisplay={workoutFullscreenDisplay && voiceCoach.isRunning}
+      pickersReadOnly={isHistory}
     />
   ) : null;
 

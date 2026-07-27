@@ -183,6 +183,16 @@ export const useSettingsStore = create<SettingsState>()(
           voiceCoachFlowMode: clampVoiceHoldFlowMode(
             p.voiceCoachFlowMode ?? current.voiceCoachFlowMode
           ),
+          voiceCoachTargetReps:
+            typeof p.voiceCoachTargetReps === 'number' && Number.isFinite(p.voiceCoachTargetReps)
+              ? Math.max(1, Math.min(30, Math.round(p.voiceCoachTargetReps)))
+              : current.voiceCoachTargetReps,
+          voiceCoachRepGapMs: clampVoiceCoachRepGapMs(
+            p.voiceCoachRepGapMs ?? current.voiceCoachRepGapMs
+          ),
+          voiceCoachOneMoreCount: clampVoiceCoachOneMoreCount(
+            p.voiceCoachOneMoreCount ?? current.voiceCoachOneMoreCount
+          ),
           voiceHoldDurationSec: clampVoiceHoldDurationSec(
             p.voiceHoldDurationSec ?? current.voiceHoldDurationSec
           ),

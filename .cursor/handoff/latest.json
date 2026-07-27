@@ -1,22 +1,22 @@
 {
-  "title": "Easy mode duplicate recommendation guard",
-  "summary": "Block picking or creating a second recommendation for the same machine (or free-weight muscle) today in easy mode, reusing assertNoDuplicateToday shared with normal recommend flow.",
-  "git": { "branch": "main", "commit": "4944930" },
+  "title": "Recommend result voice count settings display",
+  "summary": "Fix recommendation result page voice count pickers showing wrong values (target 1, gap 0). History/recommend cards now read Settings directly with read-only pickers; ScrollPicker no longer emits spurious onChange on mount.",
+  "git": { "branch": "main", "commit": "e594061" },
   "changedFiles": [
-    "frontend/src/utils/recommendationDuplicate.ts",
-    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-    "frontend/src/hooks/useRecommendMachine.ts"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/components/form/ScrollPicker/ScrollPicker.tsx",
+    "frontend/src/store/settings.store.ts"
   ],
-  "testFocus": "Easy mode step 1: pick a machine already recommended today — toast, picker stays open, no selection. After one full workout, pick same machine again — blocked. Different machine — allowed.",
+  "testFocus": "Search → machine → 추천받기 → result page voice count area shows same target reps, count interval, one-more count, hold time as My Page → Settings. Records history card unchanged.",
   "fastChecks": [
     "npm run build --prefix frontend",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "/easy/workout — duplicate machine pick blocked",
-    "Normal recommend flow still blocks duplicates"
+    "/recommend/:machineCode/result?id=… — voice coach pickers match settings",
+    "/records — expanded card voice pickers still match settings"
   ],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "Easy mode allowed duplicate recommendations for same machine today.",
-  "toBe": "Picker and recommend step reject duplicates with existing toast copy."
+  "asIs": "Fresh recommend result page showed 목표횟수 1, 카운트간격 0 instead of Settings values.",
+  "toBe": "Recommend result and records cards display Settings voice count values; count sessions use them."
 }

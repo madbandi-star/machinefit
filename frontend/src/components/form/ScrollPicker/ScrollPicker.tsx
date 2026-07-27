@@ -39,6 +39,7 @@ export function ScrollPicker({
   const visibleRows = size === 'compact' ? VISIBLE_ROWS_COMPACT : VISIBLE_ROWS_DEFAULT;
   const containerRef = useRef<HTMLDivElement>(null);
   const syncingRef = useRef(false);
+  const userInteractingRef = useRef(false);
   const scrollEndTimerRef = useRef<number | null>(null);
 
   const options = useMemo(() => buildPickerRange(min, max, step), [min, max, step]);
@@ -67,7 +68,7 @@ export function ScrollPicker({
     container.scrollTo({ top: index * itemHeight, behavior });
     window.setTimeout(() => {
       syncingRef.current = false;
-    }, behavior === 'smooth' ? 180 : 0);
+    }, behavior === 'smooth' ? 180 : 100);
   };
 
   useEffect(() => {
@@ -90,17 +91,32 @@ export function ScrollPicker({
     const index = Math.max(0, Math.min(options.length - 1, rawIndex));
     const next = options[index];
 
+    if (index !== selectedIndex) {
+      if (userInteractingRef.current) {
+        if (container.scrollTop !== index * itemHeight) {
+          scrollToIndex(index);
+        }
+        onChange(next);
+        userInteractingRef.current = false;
+      } else {
+        scrollToIndex(selectedIndex);
+      }
+      return;
+    }
+
     if (container.scrollTop !== index * itemHeight) {
       scrollToIndex(index);
     }
 
-    if (value !== next) {
+    if (next !== resolvedValue) {
       onChange(next);
     }
+    userInteractingRef.current = false;
   };
 
   const handleScroll = () => {
     if (syncingRef.current) return;
+    userInteractingRef.current = true;
 
     if (scrollEndTimerRef.current != null) {
       window.clearTimeout(scrollEndTimerRef.current);
@@ -150,6 +166,7 @@ export function ScrollPicker({
                 className={`scroll-picker__item${isSelected ? ' scroll-picker__item--selected' : ''}`}
                 style={{ height: itemHeight }}
                 onClick={() => {
+                  userInteractingRef.current = true;
                   scrollToIndex(index, 'smooth');
                   onChange(option);
                 }}
