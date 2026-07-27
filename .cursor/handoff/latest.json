@@ -1,7 +1,7 @@
 {
   "title": "Recommend result voice count settings display",
   "summary": "Fix recommendation result page voice count pickers showing wrong values (target 1, gap 0). History/recommend cards now read Settings directly with read-only pickers; ScrollPicker no longer emits spurious onChange on mount.",
-  "git": { "branch": "main", "commit": "e594061" },
+  "git": { "branch": "main", "commit": "ea9e538" },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
     "frontend/src/components/form/ScrollPicker/ScrollPicker.tsx",
