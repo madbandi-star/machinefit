@@ -1,16 +1,17 @@
-# Latest test handoff — Remove share card slogan
+# Latest test handoff — Share card layout reset
 
 **Branch:** `main` · **Commit:** pending
 
 ## Change
 
-공유 카드에서 **슬로건(funLine) 인용 패널 제거** — "바벨 소리: 철컥. 나의 테마곡." 등 미표시.
-
-누적무게 **페이지**에는 슬로건 그대로 유지.
+1. **배경** — KG 워터마크·헬스장 실루엣 등 제거 → 페이지/카드 **그radient**만
+2. **"를 들어올렸습니다." ↔ 비교 카드** — 사이 공백 제거 (순차 배치)
+3. **비교 카드 ↔ MachineFit 푸터** — 사이 공백 제거
+4. **상하 여백 동일** — 전체 콘텐츠 블록 카드 내 **수직 중앙**
 
 ## Test
 
-누적무게 → 공유 카드 만들기 (슬로건 없음)
+누적무게 → 공유 카드 만들기
 
 ```bash
 npm run build --prefix frontend

@@ -1,14 +1,11 @@
 {
-  "title": "Remove funLine slogan from share card",
-  "summary": "Dropped quote/slogan panel from lifted weight share PNG; page still shows funLine.",
+  "title": "Share card gradient background + tight centered layout",
+  "summary": "Removed premium gym background; simple gradient only. Sequential layout with no gaps between closing/comparison/footer; content vertically centered with equal top/bottom margin.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/utils/liftedShareCard.ts",
-    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
-  ],
-  "testFocus": "공유 카드에 슬로건(바벨 소리…) 없음; 페이지에는 유지.",
+  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
+  "testFocus": "공유 카드 — 그radient 배경, 들어올렸습니다↔비교↔푸터 간격 없음, 상하 중앙 정렬.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "공유 카드에 funLine 인용 패널 표시.",
-  "toBe": "슬로건 섹션 제거, KG→비교 카드 레이아웃."
+  "asIs": "복잡한 배경, 섹션 간 넓은 여백, 푸터 하단 고정.",
+  "toBe": "단순 그radient, 연속 레이아웃, 상하 동일 여백 중앙 정렬."
 }

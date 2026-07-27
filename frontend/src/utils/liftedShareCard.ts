@@ -25,17 +25,14 @@ interface ShareCardInput {
 
 const W = 1080;
 const POSTER_MARGIN = 48;
-const POSTER_PAD = 64;
 
-const GAP_HERO_TO_COMP = 16;
-const GAP_COMP_TO_FOOTER = 16;
+const CARD_INNER_PAD = 64;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
 const GREEN = '#4ade80';
 const GREEN_MID = '#22c55e';
-const NAVY = '#0a1018';
 const WHITE = '#f8fafc';
 const GRAY = '#94a3b8';
 const GRAY_DIM = 'rgba(148, 163, 184, 0.82)';
@@ -129,251 +126,26 @@ function drawCenteredLines(
   return y - topY;
 }
 
-function drawBarbellSilhouette(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  scale: number
-) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(scale, scale);
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = '#94a3b8';
-  ctx.fillStyle = '#64748b';
-  ctx.beginPath();
-  ctx.moveTo(-90, 0);
-  ctx.lineTo(90, 0);
-  ctx.stroke();
-  for (const sx of [-78, 78]) {
-    ctx.beginPath();
-    ctx.arc(sx, 0, 16, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(sx, 0, 10, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-  ctx.restore();
-}
-
-function drawPlateStack(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  count: number,
-  r: number
-) {
-  for (let i = 0; i < count; i += 1) {
-    ctx.beginPath();
-    ctx.arc(x, y - i * 5, r - i * 1.5, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-}
-
-function drawMachineFrame(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number
-) {
-  roundRect(ctx, x, y, w, h, 10);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x + w * 0.2, y + h * 0.35);
-  ctx.lineTo(x + w * 0.8, y + h * 0.35);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(x + w * 0.5, y + h * 0.62, w * 0.12, 0, Math.PI * 2);
-  ctx.stroke();
-}
-
-function drawDumbbellRack(
-  ctx: CanvasRenderingContext2D,
-  leftX: number,
-  topY: number,
-  rackH: number
-) {
-  const postW = 62;
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-
-  ctx.beginPath();
-  ctx.moveTo(leftX, topY);
-  ctx.lineTo(leftX, topY + rackH);
-  ctx.moveTo(leftX + postW, topY);
-  ctx.lineTo(leftX + postW, topY + rackH);
-  ctx.stroke();
-
-  const tiers = 5;
-  for (let i = 0; i < tiers; i += 1) {
-    const ty = topY + 18 + i * (rackH / tiers);
-    ctx.beginPath();
-    ctx.moveTo(leftX, ty);
-    ctx.lineTo(leftX + postW, ty);
-    ctx.stroke();
-
-    const dx = leftX + postW / 2;
-    ctx.beginPath();
-    ctx.ellipse(dx - 16, ty, 9, 6, 0, 0, Math.PI * 2);
-    ctx.ellipse(dx + 16, ty, 9, 6, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(dx - 8, ty);
-    ctx.lineTo(dx + 8, ty);
-    ctx.stroke();
-  }
-}
-
-function drawFilmGrain(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  intensity = 0.035
-) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(x, y, w, h);
-  ctx.clip();
-  const count = Math.floor((w * h) / 160);
-  for (let i = 0; i < count; i += 1) {
-    const px = x + Math.random() * w;
-    const py = y + Math.random() * h;
-    ctx.fillStyle =
-      Math.random() > 0.5 ? `rgba(255,255,255,${intensity})` : `rgba(0,0,0,${intensity})`;
-    ctx.fillRect(px, py, 1, 1);
-  }
-  ctx.restore();
-}
-
-function drawCornerVignette(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  strength = 0.42
-) {
-  const cx = x + w / 2;
-  const cy = y + h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, w * 0.22, cx, cy, w * 0.78);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, `rgba(0,0,0,${strength})`);
-  ctx.fillStyle = vig;
-  ctx.fillRect(x, y, w, h);
-}
-
-function drawKgWatermark(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  totalKg: number,
-  locale: string,
-  maxW: number
-) {
-  const text = formatVolumeKg(totalKg, locale);
-  let fontSize = 300;
-  ctx.font = `900 ${fontSize}px ${FONT}`;
-  while (ctx.measureText(text).width > maxW * 0.9 && fontSize > 100) {
-    fontSize -= 14;
-    ctx.font = `900 ${fontSize}px ${FONT}`;
-  }
-
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(74, 222, 128, 0.055)';
-  ctx.fillText(text, cx, cy - 8);
-
-  ctx.font = `800 ${Math.round(fontSize * 0.28)}px ${FONT}`;
-  ctx.fillStyle = 'rgba(74, 222, 128, 0.038)';
-  const numW = ctx.measureText(text).width;
-  ctx.fillText('KG', cx + numW / 2 + 36, cy - 8);
-}
-
-function drawSubtleGymBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const bg = ctx.createLinearGradient(0, 0, width * 0.2, height);
-  bg.addColorStop(0, '#060a10');
-  bg.addColorStop(0.4, NAVY);
-  bg.addColorStop(0.75, '#0b1218');
-  bg.addColorStop(1, '#07100e');
+function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  const bg = ctx.createLinearGradient(0, 0, width, height * 0.85);
+  bg.addColorStop(0, '#060a12');
+  bg.addColorStop(0.45, '#0c1420');
+  bg.addColorStop(1, '#071018');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.save();
-  ctx.globalAlpha = 0.052;
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 3;
-
-  drawBarbellSilhouette(ctx, width * 0.18, height * 0.14, 1.35);
-  drawBarbellSilhouette(ctx, width * 0.88, height * 0.22, 1.05);
-  drawPlateStack(ctx, width * 0.08, height * 0.78, 5, 32);
-  drawPlateStack(ctx, width * 0.94, height * 0.74, 4, 26);
-  drawMachineFrame(ctx, width * 0.04, height * 0.38, 130, 170);
-
-  ctx.restore();
-
-  const glow = ctx.createRadialGradient(
+  const accent = ctx.createRadialGradient(
     width * 0.5,
-    height * 0.36,
+    height * 0.32,
     0,
     width * 0.5,
-    height * 0.36,
-    width * 0.72
+    height * 0.32,
+    width * 0.62
   );
-  glow.addColorStop(0, 'rgba(74, 222, 128, 0.09)');
-  glow.addColorStop(0.55, 'rgba(74, 222, 128, 0.03)');
-  glow.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = glow;
+  accent.addColorStop(0, 'rgba(74, 222, 128, 0.07)');
+  accent.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = accent;
   ctx.fillRect(0, 0, width, height);
-
-  drawCornerVignette(ctx, 0, 0, width, height, 0.28);
-  drawFilmGrain(ctx, 0, 0, width, height, 0.028);
-}
-
-function drawCardPremiumBackground(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  totalKg: number,
-  locale: string
-) {
-  ctx.save();
-  roundRect(ctx, x, y, w, h, CARD_RADIUS);
-  ctx.clip();
-
-  const cx = x + w / 2;
-  const cy = y + h * 0.38;
-
-  drawKgWatermark(ctx, cx, cy, totalKg, locale, w - POSTER_PAD * 2);
-
-  const innerGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, w * 0.55);
-  innerGlow.addColorStop(0, 'rgba(74, 222, 128, 0.1)');
-  innerGlow.addColorStop(0.45, 'rgba(74, 222, 128, 0.04)');
-  innerGlow.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = innerGlow;
-  ctx.fillRect(x, y, w, h);
-
-  ctx.globalAlpha = 0.048;
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 2.5;
-
-  drawBarbellSilhouette(ctx, x + w * 0.12, y + h * 0.78, 0.95);
-  drawBarbellSilhouette(ctx, x + w * 0.9, y + h * 0.32, 0.8);
-  drawPlateStack(ctx, x + w * 0.06, y + h * 0.52, 4, 24);
-  drawPlateStack(ctx, x + w * 0.94, y + h * 0.86, 3, 18);
-
-  ctx.globalAlpha = 0.055;
-  drawDumbbellRack(ctx, x + w * 0.82, y + h * 0.58, h * 0.32);
-
-  ctx.globalAlpha = 1;
-  drawCornerVignette(ctx, x, y, w, h, 0.38);
-  drawFilmGrain(ctx, x, y, w, h, 0.022);
-
-  ctx.restore();
 }
 
 /** Symmetric laurel wreath (U-shape) flanking the hero stat. */
@@ -453,7 +225,7 @@ function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number,
 }
 
 interface LayoutMetrics {
-  topBlockH: number;
+  contentH: number;
   comparisonH: number;
   tipLines: string[];
   footerH: number;
@@ -466,13 +238,13 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   const badgeBlock = 44 + 28;
   const avatarBlock = 76 + 24;
   const headlineBlock = 44 + 28;
-  const heroBlock = 200 + 24;
+  const heroBlock = 200;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
   const footerH = 76;
 
-  const topBlockH = POSTER_PAD + badgeBlock + avatarBlock + headlineBlock + heroBlock;
+  const contentH = badgeBlock + avatarBlock + headlineBlock + heroBlock + comparisonH + footerH;
 
-  return { topBlockH, comparisonH, tipLines, footerH };
+  return { contentH, comparisonH, tipLines, footerH };
 }
 
 function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: number, label: string) {
@@ -577,7 +349,7 @@ function drawHeroKg(
 }
 
 function measureComparisonCardH(tipLines: string[]): number {
-  return 36 + 28 + 112 + 36 + 44 + 20 + blockH(tipLines, 36) + 28;
+  return 36 + 28 + 112 + 36 + 44 + 20 + blockH(tipLines, 36) + 16;
 }
 
 function drawComparisonCard(
@@ -638,7 +410,7 @@ function drawComparisonCard(
   ctx.textBaseline = 'middle';
   ctx.fillText(countLabel, cx, cy);
   ctx.textBaseline = 'alphabetic';
-  cy += pillH / 2 + 20;
+  cy += pillH / 2 + 12;
 
   drawCenteredLines(ctx, tipLines, cx, cy, 36, GRAY, `400 28px ${FONT}`);
   return h;
@@ -650,17 +422,20 @@ function drawFooter(
   topY: number,
   width: number,
   height: number,
-  labels: LiftedShareCardLabels
+  labels: LiftedShareCardLabels,
+  showDivider: boolean
 ) {
   const right = left + width;
   const midY = topY + height / 2;
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(left, topY);
-  ctx.lineTo(right, topY);
-  ctx.stroke();
+  if (showDivider) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(left, topY);
+    ctx.lineTo(right, topY);
+    ctx.stroke();
+  }
 
   const markSize = 36;
   const logoRowY = midY - 8;
@@ -704,10 +479,10 @@ function drawPosterContent(
   metrics: LayoutMetrics
 ) {
   const cx = posterX + posterW / 2;
-  const innerW = posterW - POSTER_PAD * 2;
-  const footerTop = posterY + posterH - POSTER_PAD - metrics.footerH;
+  const innerW = posterW - CARD_INNER_PAD * 2;
+  const innerLeft = posterX + CARD_INNER_PAD;
 
-  let y = posterY + POSTER_PAD;
+  let y = posterY + (posterH - metrics.contentH) / 2;
 
   drawPillBadge(ctx, cx, y + 22, input.labels.badge);
   y += 44 + 28;
@@ -719,29 +494,26 @@ function drawPosterContent(
   y += 44 + 28;
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
-  y += 24;
 
   if (input.comparison) {
     const countLabel = input.labels.aboutCount(
       formatVolumeKg(input.comparison.count, input.locale),
       input.comparison.unit
     );
-    const zoneTop = y + GAP_HERO_TO_COMP;
-    const zoneBottom = footerTop - GAP_COMP_TO_FOOTER;
-    const compY = zoneTop + Math.max(0, (zoneBottom - zoneTop - metrics.comparisonH) / 2);
     drawComparisonCard(
       ctx,
       cx,
-      compY,
+      y,
       innerW,
       input.comparison,
       countLabel,
       input.labels.comparisonSection,
       metrics.tipLines
     );
+    y += metrics.comparisonH;
   }
 
-  drawFooter(ctx, posterX + POSTER_PAD, footerTop, innerW, metrics.footerH, input.labels);
+  drawFooter(ctx, innerLeft, y, innerW, metrics.footerH, input.labels, Boolean(input.comparison));
 }
 
 /** Premium poster share card for SNS (4:5 default — same as lifter DNA card). */
@@ -756,7 +528,7 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
   if (!mctx) throw new Error('Canvas unavailable');
 
   const posterW = W - POSTER_MARGIN * 2;
-  const innerW = posterW - POSTER_PAD * 2;
+  const innerW = posterW - CARD_INNER_PAD * 2;
   const metrics = measureLayout(mctx, input, innerW);
   const posterH = height - POSTER_MARGIN * 2;
   const posterY = POSTER_MARGIN;
@@ -767,19 +539,23 @@ export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob>
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
 
-  drawSubtleGymBackground(ctx, W, height);
+  drawPageBackground(ctx, W, height);
 
   roundRect(ctx, POSTER_MARGIN, posterY, posterW, posterH, CARD_RADIUS);
-  const cardFill = ctx.createLinearGradient(POSTER_MARGIN, posterY, POSTER_MARGIN, posterY + posterH);
-  cardFill.addColorStop(0, 'rgba(15, 23, 36, 0.9)');
-  cardFill.addColorStop(1, 'rgba(10, 16, 26, 0.94)');
+  const cardFill = ctx.createLinearGradient(
+    POSTER_MARGIN,
+    posterY,
+    POSTER_MARGIN + posterW,
+    posterY + posterH
+  );
+  cardFill.addColorStop(0, '#121c2a');
+  cardFill.addColorStop(0.48, '#0f1728');
+  cardFill.addColorStop(1, '#0b121c');
   ctx.fillStyle = cardFill;
   ctx.fill();
-  ctx.strokeStyle = 'rgba(74, 222, 128, 0.2)';
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.18)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
-
-  drawCardPremiumBackground(ctx, POSTER_MARGIN, posterY, posterW, posterH, input.totalKg, input.locale);
 
   drawPosterContent(ctx, input, POSTER_MARGIN, posterY, posterW, posterH, metrics);
 
