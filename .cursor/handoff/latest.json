@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card match sample design",
   "summary": "Share PNG rebuilt to match user reference: trophy badge, avatar ring, laurel stat panel, green quotes, comparison circle, split footer with MachineFit mark.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b71e229" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
