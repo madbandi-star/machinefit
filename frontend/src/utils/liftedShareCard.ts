@@ -20,7 +20,7 @@ interface ShareCardInput {
   comparison?: LiftedComparisonResult;
   locale: string;
   labels: LiftedShareCardLabels;
-  /** @default '1:1' */
+  /** @default '9:16' */
   aspectRatio?: ShareCardAspectRatio;
 }
 
@@ -519,9 +519,9 @@ function drawPosterContent(
   drawFooter(ctx, cx, y, innerW, input.labels);
 }
 
-/** Premium poster share card for SNS (1:1 or 9:16). */
+/** Premium poster share card for SNS (9:16 default, optional 1:1). */
 export async function buildLiftedShareCard(input: ShareCardInput): Promise<Blob> {
-  const aspect = input.aspectRatio ?? '1:1';
+  const aspect = input.aspectRatio ?? '9:16';
   const height = canvasHeight(aspect);
 
   const measureCanvas = document.createElement('canvas');
