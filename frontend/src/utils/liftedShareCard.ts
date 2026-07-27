@@ -32,10 +32,7 @@ const CARD_INNER_PAD = 40;
 const BADGE_EMOJI_SIZE = 42;
 const BADGE_TEXT_SIZE = 35;
 const BADGE_PILL_H = 52;
-const GAP_AFTER_HEADER = 16;
-
-/** Top-right user / gym label */
-const LABEL_NAME_SIZE = 24;
+const GAP_AFTER_HEADER = 40;
 
 /** Hero KG stat — tight vertical layout */
 const HERO_ZONE_H = 114;
@@ -325,22 +322,6 @@ function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: numbe
   ctx.textBaseline = 'alphabetic';
 }
 
-function drawTopRightLabel(
-  ctx: CanvasRenderingContext2D,
-  rightX: number,
-  topY: number,
-  labelName: string
-) {
-  if (!labelName.trim()) return;
-
-  ctx.font = `700 ${LABEL_NAME_SIZE}px ${FONT}`;
-  ctx.textAlign = 'right';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = WHITE;
-  ctx.fillText(labelName, rightX, topY + LABEL_NAME_SIZE * 0.82);
-  ctx.textAlign = 'center';
-}
-
 function drawHeroKg(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -537,12 +518,10 @@ function drawPosterContent(
   const cx = posterX + posterW / 2;
   const innerW = posterW - CARD_INNER_PAD * 2;
   const innerLeft = posterX + CARD_INNER_PAD;
-  const innerRight = innerLeft + innerW;
 
   let y = posterY + (posterH - metrics.contentH) / 2;
 
   drawPillBadge(ctx, cx, y + BADGE_PILL_H / 2, input.labels.badge);
-  drawTopRightLabel(ctx, innerRight, y, input.labelName);
   y += measureHeaderBlock();
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);

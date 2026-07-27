@@ -1,15 +1,11 @@
 {
-  "title": "Lifted share card — badge emoji + top-right name",
-  "summary": "Badge uses 🏋️ instead of 🏆. Removed inline 🏋️ from name row; labelName moved to card top-right. Header spacing tightened.",
-  "git": { "branch": "main", "commit": "486dd68" },
-  "changedFiles": [
-    "frontend/src/utils/liftedShareCard.ts",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
-  ],
-  "testFocus": "누적무게 공유카드 — 배지 🏋️, 아이디 우측상단, 이름 왼쪽 이모지 없음, 간격 자연스러움.",
+  "title": "Lifted share card — remove name, widen badge-to-KG gap",
+  "summary": "Removed top-right labelName from share card. GAP_AFTER_HEADER 16→40px between badge and KG hero.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
+  "testFocus": "누적무게 공유카드 — 아이디 없음, '누적 무게' 배지와 KG 사이 간격.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "🏆 배지 + 🏋️아이디 중앙 행 + KG.",
-  "toBe": "🏋️ 배지 중앙 + 아이디 우측상단 + KG (헤드라인 행 제거)."
+  "asIs": "우측상단 아이디 + 배지와 KG 16px 간격.",
+  "toBe": "아이디 제거, 배지↔KG 40px 간격."
 }
