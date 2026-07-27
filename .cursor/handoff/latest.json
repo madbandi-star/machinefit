@@ -1,13 +1,11 @@
 {
-  "title": "Achievement share card — larger emoji + tighter name gap",
-  "summary": "Hero emoji 152px with 160px glow. Name text starts just below emoji glyph (not below full glow), 4px gap.",
-  "git": { "branch": "main", "commit": "45317c4" },
-  "changedFiles": [
-    "frontend/src/utils/achievementShareCard.ts"
-  ],
-  "testFocus": "업적 공유카드 — 이모지 더 크게(152px), 이모지와 제목 텍스트 간격 좁힘.",
+  "title": "Achievement share card — centered emoji + tight badge gap",
+  "summary": "Hero emoji uses measureText/actualBoundingBox for true horizontal center. Placed 6px below badge (was ~84px visual gap).",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/achievementShareCard.ts"],
+  "testFocus": "업적 공유카드 — 이모지 정확히 중앙, '새로운 업적' 배지 바로 아래 붙음.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "이모지 112px, 글로우 전체 높이만큼 아래 여백 후 제목.",
-  "toBe": "이모지 152px, 이모지 하단 바로 아래 제목(4px 간격)."
+  "asIs": "이모지 textAlign center로 좌우 쏠림, 배지 아래 ~84px 공백.",
+  "toBe": "이모지 시각적 중앙 정렬, 배지 아래 6px 간격."
 }

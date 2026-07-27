@@ -1,31 +1,16 @@
-# Latest test handoff — Achievement emoji size + spacing
-
-
-
-**Branch:** `main` · **Commit:** `45317c4`
-
-
-
-## Change
-
-
-
-1. **대표 이모지** — 112→**152px**, 글로우 **160px**
-
-2. **간격** — 제목 텍스트를 글로우 하단이 아닌 **이모지 하단 + 4px** 위치에 배치 (이전 대비 ~80px 가까워짐)
-
-
-
-## Test
-
-
-
-업적 → 공유하기 → 이모지 크기·제목 간격 확인
-
-
-
-```bash
-
-npm run build --prefix frontend
-
-```
+# Latest test handoff — Achievement emoji center + badge gap
+
+**Branch:** `main` · **Commit:** pending
+
+## Change
+
+1. **이모지 중앙 정렬** — `measureText` + `actualBoundingBox`로 시각적 중심 맞춤 (좌우 쏠림 방지)
+2. **배지 ↔ 이모지 간격** — 글로우 반경 기준(~84px) → **배지 하단 + 6px** 바로 아래 배치
+
+## Test
+
+업적 → 공유하기 → 이모지 중앙·배지 간격 확인
+
+```bash
+npm run build --prefix frontend
+```

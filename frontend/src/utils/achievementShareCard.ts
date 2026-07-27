@@ -34,6 +34,7 @@ const BADGE_PILL_H = 52;
 
 const HERO_EMOJI_SIZE = 152;
 const EMOJI_GLOW_R = 160;
+const GAP_BADGE_EMOJI = 6;
 const GAP_EMOJI_NAME = 4;
 const GAP_NAME_DESC = 4;
 
@@ -184,6 +185,29 @@ function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height
   ctx.fill();
 }
 
+function drawCenteredEmoji(
+  ctx: CanvasRenderingContext2D,
+  emoji: string,
+  cx: number,
+  cy: number,
+  size: number
+) {
+  ctx.font = `${size}px ${FONT}`;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = WHITE;
+  const m = ctx.measureText(emoji);
+  const left = m.actualBoundingBoxLeft;
+  const right = m.actualBoundingBoxRight;
+  const x =
+    left != null && right != null
+      ? cx - right / 2 + left / 2
+      : cx - m.width / 2;
+  ctx.fillText(emoji, x, cy);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+}
+
 function drawEmojiGlow(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -294,8 +318,8 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: AchievementShareInp
   const descLines = getWrapLines(ctx, input.description, innerW - 56);
   const descPanelH = blockH(descLines, 28) + 24;
 
-  const badgeBlock = BADGE_PILL_H + 12;
-  const emojiBlock = EMOJI_GLOW_R + HERO_EMOJI_SIZE / 2 + GAP_EMOJI_NAME;
+  const badgeBlock = BADGE_PILL_H + GAP_BADGE_EMOJI;
+  const emojiBlock = HERO_EMOJI_SIZE + GAP_EMOJI_NAME;
   const gapNameDesc = GAP_NAME_DESC;
   const gapDescMeta = 12;
 
@@ -484,17 +508,12 @@ function drawPosterContent(
   let y = posterY + Math.max(12, (posterH - metrics.contentH) / 2 + VERTICAL_BIAS);
 
   drawPillBadge(ctx, cx, y + BADGE_PILL_H / 2, input.labels.badge);
-  y += BADGE_PILL_H + 12;
+  y += BADGE_PILL_H + GAP_BADGE_EMOJI;
 
-  const emojiCy = y + EMOJI_GLOW_R;
+  const emojiCy = y + HERO_EMOJI_SIZE / 2;
   drawEmojiGlow(ctx, cx, emojiCy, EMOJI_GLOW_R, accent);
-  ctx.font = `${HERO_EMOJI_SIZE}px ${FONT}`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = WHITE;
-  ctx.fillText(input.emoji, cx, emojiCy);
-  ctx.textBaseline = 'alphabetic';
-  y += EMOJI_GLOW_R + HERO_EMOJI_SIZE / 2 + GAP_EMOJI_NAME;
+  drawCenteredEmoji(ctx, input.emoji, cx, emojiCy, HERO_EMOJI_SIZE);
+  y += HERO_EMOJI_SIZE + GAP_EMOJI_NAME;
 
   drawCenteredLines(ctx, metrics.nameLines, cx, y, 40, WHITE, `700 36px ${FONT}`);
   y += metrics.nameBlockH + GAP_NAME_DESC;
