@@ -1,11 +1,11 @@
 {
-  "title": "Lifted share card — remove name, widen badge-to-KG gap",
-  "summary": "Removed top-right labelName from share card. GAP_AFTER_HEADER 16→40px between badge and KG hero.",
-  "git": { "branch": "main", "commit": "169ea88" },
+  "title": "Lifted share card — footer top spacing",
+  "summary": "Added 20px gap above MachineFit footer (comparison card / KG → footer).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유카드 — 아이디 없음, '누적 무게' 배지와 KG 사이 간격.",
+  "testFocus": "누적무게 공유카드 — 하단 MachineFit 영역 위 간격.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "우측상단 아이디 + 배지와 KG 16px 간격.",
-  "toBe": "아이디 제거, 배지↔KG 40px 간격."
+  "asIs": "비교 카드/KG 바로 아래 MachineFit 푸터.",
+  "toBe": "푸터 상단 +20px 여백."
 }

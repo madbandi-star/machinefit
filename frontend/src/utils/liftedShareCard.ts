@@ -46,6 +46,9 @@ const COMP_ICON_LABEL_GAP = 18;
 const COMP_SECTION_TOP_PAD = 36;
 const COMP_TIP_BOTTOM_PAD = 22;
 
+const FOOTER_H = 56;
+const GAP_BEFORE_FOOTER = 20;
+
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
@@ -275,9 +278,9 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   const headerBlock = measureHeaderBlock();
   const heroBlock = heroBlockHeight(input.closing);
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
-  const footerH = 56;
+  const footerH = FOOTER_H;
 
-  const contentH = headerBlock + heroBlock + comparisonH + footerH;
+  const contentH = headerBlock + heroBlock + comparisonH + GAP_BEFORE_FOOTER + footerH;
 
   return { contentH, comparisonH, tipLines, footerH };
 }
@@ -544,6 +547,7 @@ function drawPosterContent(
     y += metrics.comparisonH;
   }
 
+  y += GAP_BEFORE_FOOTER;
   drawFooter(ctx, innerLeft, y, innerW, metrics.footerH, input.labels, Boolean(input.comparison));
 }
 
