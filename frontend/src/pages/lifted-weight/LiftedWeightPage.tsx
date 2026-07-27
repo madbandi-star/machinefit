@@ -87,11 +87,12 @@ export function LiftedWeightPage() {
   const handleShare = async () => {
     if (!data) return;
     try {
-      const idTag = toShareHashtag(user?.displayName);
       const prefixTags =
-        mode === 'gym'
-          ? [toShareHashtag(data.labelName), idTag].filter(Boolean)
-          : [idTag].filter(Boolean);
+        mode === 'user'
+          ? [toShareHashtag(user?.displayName)].filter(Boolean)
+          : mode === 'gym'
+            ? [toShareHashtag(data.labelName)].filter(Boolean)
+            : [];
       const blob = await buildLiftedShareCard({
         headline: data.labelName,
         labelName: data.labelName,
