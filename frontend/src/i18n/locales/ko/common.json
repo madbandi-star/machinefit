@@ -759,7 +759,7 @@
   },
   "lifterDna": {
     "title": "운동성향",
-    "complete": "🤖 MachineFit AI 분석 완료",
+    "complete": "🤖 AI 분석 완료",
     "analyzing": "AI 분석 중…",
     "analyzingHint": "최근 운동 기록을 종합해 DNA를 생성합니다.",
     "predictionAnalyzing": "AI 예측 중…",

@@ -759,7 +759,7 @@
   },
   "lifterDna": {
     "title": "Workout style",
-    "complete": "🤖 MachineFit AI analysis complete",
+    "complete": "🤖 AI analysis complete",
     "analyzing": "Analyzing…",
     "analyzingHint": "Building your DNA from recent workouts.",
     "predictionAnalyzing": "Predicting…",

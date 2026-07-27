@@ -1,12 +1,14 @@
 {
-  "title": "Lifter DNA share card vertical alignment",
-  "summary": "Meta panel (신뢰도/분석 기준/분석일) text vertically centered in its box; overall share card block shifted down with corrected height math so top/bottom margins feel balanced.",
-  "git": { "branch": "main", "commit": "d270fea" },
-  "changedFiles": ["frontend/src/utils/lifterDnaShareCard.ts"],
-  "testFocus": "공유 PNG — 메타 3열이 패널 안에서 위쪽에 붙지 않고 세로 중앙; 카드 전체가 위로 쏠리지 않고 상하 여백 균형.",
+  "title": "Lifter DNA eyebrow text",
+  "summary": "Eyebrow label changed from '🤖 MachineFit AI 분석 완료' to '🤖 AI 분석 완료' on hero and share card.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
+  ],
+  "testFocus": "운동성향 페이지·공유 PNG 상단 eyebrow에 MachineFit 없이 'AI 분석 완료'만 표시.",
   "fastChecks": ["npm run build --prefix frontend"],
-  "productionChecks": ["운동성향 → 공유 — 메타 패널·하단 MachineFit 여백 확인"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "메타 라벨/값이 패널 상단에 붙고, 카드 콘텐츠가 위로 쏠려 하단 여백이 과하게 넓음.",
-  "toBe": "메타 패널 내부 세로 중앙 정렬, 푸터 높이 반영한 블록 계산으로 전체 균형."
+  "asIs": "🤖 MachineFit AI 분석 완료",
+  "toBe": "🤖 AI 분석 완료"
 }
