@@ -16,7 +16,6 @@ interface ShareCardInput {
   labelName: string;
   totalKg: number;
   closing: string;
-  funLine: string;
   comparison?: LiftedComparisonResult;
   locale: string;
   labels: LiftedShareCardLabels;
@@ -28,7 +27,7 @@ const W = 1080;
 const POSTER_MARGIN = 48;
 const POSTER_PAD = 64;
 
-const GAP_SLOGAN_TO_COMP = 16;
+const GAP_HERO_TO_COMP = 16;
 const GAP_COMP_TO_FOOTER = 16;
 
 const FONT =
@@ -128,126 +127,6 @@ function drawCenteredLines(
     y += lh;
   }
   return y - topY;
-}
-
-const QUOTE_FONT_SIZE = 34;
-const QUOTE_LINE_HEIGHT = 44;
-const QUOTE_TARGET_CHARS = 18;
-
-function isWrapBreakpoint(ch: string): boolean {
-  return /[\s,.·…!?;:)]/.test(ch);
-}
-
-function getBalancedWrapLines(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  maxCharsPerLine = QUOTE_TARGET_CHARS
-): string[] {
-  const chars = [...text];
-  const lines: string[] = [];
-  let line = '';
-
-  const pushLine = (value: string) => {
-    const trimmed = value.trimEnd();
-    if (trimmed) lines.push(trimmed);
-  };
-
-  for (const ch of chars) {
-    const test = line + ch;
-    const tooWide = ctx.measureText(test).width > maxWidth;
-    const tooLong = line.length >= maxCharsPerLine;
-
-    if ((tooWide || tooLong) && line.length > 0) {
-      let breakAt = -1;
-      for (let i = line.length - 1; i >= Math.max(0, line.length - 10); i -= 1) {
-        if (isWrapBreakpoint(line[i])) {
-          breakAt = i + 1;
-          break;
-        }
-      }
-
-      if (breakAt > 0) {
-        pushLine(line.slice(0, breakAt));
-        line = line.slice(breakAt).trimStart() + ch;
-      } else {
-        pushLine(line);
-        line = ch;
-      }
-    } else {
-      line = test;
-    }
-  }
-
-  if (line) pushLine(line);
-  return lines.length ? lines : [''];
-}
-
-function formatQuotedLines(lines: string[]): string[] {
-  if (lines.length === 0) return [''];
-  if (lines.length === 1) return [`“${lines[0]}”`];
-
-  return [`“${lines[0]}`, ...lines.slice(1, -1), `${lines[lines.length - 1]}”`];
-}
-
-function measureQuotePanelHeight(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  panelW: number
-): number {
-  const padX = 44;
-  const maxWidth = panelW - padX * 2;
-  ctx.font = `400 ${QUOTE_FONT_SIZE}px ${FONT}`;
-  const innerLines = getBalancedWrapLines(ctx, text.trim(), maxWidth);
-  const quotedLines = formatQuotedLines(innerLines);
-  return Math.max(108, quotedLines.length * QUOTE_LINE_HEIGHT + 64);
-}
-
-function drawCenteredWrapText(
-  ctx: CanvasRenderingContext2D,
-  lines: string[],
-  centerX: number,
-  boxY: number,
-  boxH: number,
-  lineHeight: number
-) {
-  const totalHeight = lines.length * lineHeight;
-  let cursorY = boxY + (boxH - totalHeight) / 2 + lineHeight * 0.82;
-
-  ctx.textAlign = 'center';
-  for (const line of lines) {
-    ctx.fillText(line, centerX, cursorY);
-    cursorY += lineHeight;
-  }
-}
-
-function drawSloganQuotePanel(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  topY: number,
-  w: number,
-  quote: string
-): number {
-  const h = measureQuotePanelHeight(ctx, quote, w);
-  const x = cx - w / 2;
-
-  roundRect(ctx, x, topY, w, h, 22);
-  ctx.fillStyle = 'rgba(15, 23, 36, 0.58)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(74, 222, 128, 0.22)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  const padX = 44;
-  const maxWidth = w - padX * 2;
-  const innerLines = getBalancedWrapLines(ctx, quote.trim(), maxWidth);
-  const lines = formatQuotedLines(innerLines);
-
-  ctx.font = `400 ${QUOTE_FONT_SIZE}px ${FONT}`;
-  ctx.fillStyle = 'rgba(226, 232, 240, 0.92)';
-  drawCenteredWrapText(ctx, lines, cx, topY, h, QUOTE_LINE_HEIGHT);
-
-  return h + 12;
 }
 
 function drawBarbellSilhouette(
@@ -588,12 +467,10 @@ function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, inn
   const avatarBlock = 76 + 24;
   const headlineBlock = 44 + 28;
   const heroBlock = 200 + 24;
-  const quotePanelW = innerW;
-  const sloganBlock = measureQuotePanelHeight(ctx, input.funLine, quotePanelW) + 12;
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
   const footerH = 76;
 
-  const topBlockH = POSTER_PAD + badgeBlock + avatarBlock + headlineBlock + heroBlock + sloganBlock;
+  const topBlockH = POSTER_PAD + badgeBlock + avatarBlock + headlineBlock + heroBlock;
 
   return { topBlockH, comparisonH, tipLines, footerH };
 }
@@ -844,14 +721,12 @@ function drawPosterContent(
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
   y += 24;
 
-  y += drawSloganQuotePanel(ctx, cx, y, innerW, input.funLine);
-
   if (input.comparison) {
     const countLabel = input.labels.aboutCount(
       formatVolumeKg(input.comparison.count, input.locale),
       input.comparison.unit
     );
-    const zoneTop = y + GAP_SLOGAN_TO_COMP;
+    const zoneTop = y + GAP_HERO_TO_COMP;
     const zoneBottom = footerTop - GAP_COMP_TO_FOOTER;
     const compY = zoneTop + Math.max(0, (zoneBottom - zoneTop - metrics.comparisonH) / 2);
     drawComparisonCard(

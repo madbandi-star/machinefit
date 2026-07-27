@@ -78,7 +78,6 @@ export function LiftedWeightPage() {
         labelName: data.labelName,
         totalKg: data.totalKg,
         closing: t('liftedWeight.closing'),
-        funLine: data.funLine,
         comparison: data.comparisons[0],
         locale,
         labels: {

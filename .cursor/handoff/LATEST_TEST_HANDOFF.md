@@ -1,20 +1,16 @@
-# Latest test handoff — Premium background A+B
+# Latest test handoff — Remove share card slogan
 
 **Branch:** `main` · **Commit:** pending
 
 ## Change
 
-공유 카드 배경 A+B 적용:
+공유 카드에서 **슬로건(funLine) 인용 패널 제거** — "바벨 소리: 철컥. 나의 테마곡." 등 미표시.
 
-- 거대 **KG 워터마크** (누적 무게)
-- 중앙 **그린 글로우** + 코너 **비네팅**
-- **필름 그레인** (은은)
-- 바벨·원판 실루엣 **확대**
-- 우측 하단 **덤벨 랙** 1개
+누적무게 **페이지**에는 슬로건 그대로 유지.
 
 ## Test
 
-누적무게 → 공유 카드 만들기 (배경 풍부 + 텍스트 readable)
+누적무게 → 공유 카드 만들기 (슬로건 없음)
 
 ```bash
 npm run build --prefix frontend

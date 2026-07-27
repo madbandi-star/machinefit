@@ -1,11 +1,14 @@
 {
-  "title": "Premium share card background A+B",
-  "summary": "KG watermark, green glow, vignette, film grain, larger gym silhouettes, dumbbell rack in card corner.",
+  "title": "Remove funLine slogan from share card",
+  "summary": "Dropped quote/slogan panel from lifted weight share PNG; page still shows funLine.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유 카드 배경 — KG 워터마크, 그레인, 비네팅, 덤벨랙, 텍스트 가독성.",
+  "changedFiles": [
+    "frontend/src/utils/liftedShareCard.ts",
+    "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx"
+  ],
+  "testFocus": "공유 카드에 슬로건(바벨 소리…) 없음; 페이지에는 유지.",
   "fastChecks": ["npm run build --prefix frontend"],
   "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "배경 단조로움.",
-  "toBe": "프리미엄 A+B 배경 (워터마크+글로우+그레인+덤벨랙)."
+  "asIs": "공유 카드에 funLine 인용 패널 표시.",
+  "toBe": "슬로건 섹션 제거, KG→비교 카드 레이아웃."
 }
