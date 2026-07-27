@@ -36,23 +36,6 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { useSettingsStore } from '@/store/settings.store';
-
-interface VoicePickerSnapshot {
-  targetReps: number;
-  repGapMs: number;
-  oneMoreCount: number;
-  holdDurationSec: number;
-}
-
-function readVoicePickerSnapshot(): VoicePickerSnapshot {
-  const settings = useSettingsStore.getState();
-  return {
-    targetReps: Math.max(1, Math.min(30, Math.round(settings.voiceCoachTargetReps))),
-    repGapMs: settings.voiceCoachRepGapMs,
-    oneMoreCount: settings.voiceCoachOneMoreCount,
-    holdDurationSec: settings.voiceHoldDurationSec,
-  };
-}
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
@@ -62,6 +45,36 @@ import { getWeightStepKg } from '@/utils/weightStep';
 import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, upsertWorkoutLogInCache } from '@/utils/workoutLogCache';
 import { buildWorkoutLogSavedQueryKey } from '@/hooks/useWorkoutLogSaved';
 import '@/styles/recommendation.css';
+
+const VOICE_TARGET_REPS_MIN = 1;
+const VOICE_TARGET_REPS_MAX = 30;
+
+interface VoicePickerSnapshot {
+  targetReps: number;
+  repGapMs: number;
+  oneMoreCount: number;
+  holdDurationSec: number;
+}
+
+function clampVoiceTargetReps(reps: number): number {
+  return Math.max(
+    VOICE_TARGET_REPS_MIN,
+    Math.min(VOICE_TARGET_REPS_MAX, Math.round(reps))
+  );
+}
+
+function readVoicePickerSnapshot(seedTargetReps?: number): VoicePickerSnapshot {
+  const settings = useSettingsStore.getState();
+  return {
+    targetReps:
+      seedTargetReps != null && seedTargetReps > 0
+        ? clampVoiceTargetReps(seedTargetReps)
+        : clampVoiceTargetReps(settings.voiceCoachTargetReps),
+    repGapMs: settings.voiceCoachRepGapMs,
+    oneMoreCount: settings.voiceCoachOneMoreCount,
+    holdDurationSec: settings.voiceHoldDurationSec,
+  };
+}
 
 const DEFAULT_SET_COUNT = 3;
 const MIN_SET_COUNT = 1;
@@ -94,10 +107,12 @@ interface WorkoutLogPanelProps {
   recommendationId?: string;
   suggestedWeightKg?: number;
   /**
-   * Reps for volume (총 볼륨/총 무게): 조정횟수 → 추천횟수.
-   * When omitted, falls back to voice-coach default target reps.
+   * Live fit-driven reps (추천/조정). When set, voice-coach 목표 횟수 follows this value.
+   * Falls back to settings default when omitted.
    */
   volumeReps?: number;
+  /** Adjustment mode: voice-coach 목표 횟수 edits push 조정횟수. */
+  onVolumeRepsChange?: (reps: number) => void;
   isAuthenticated: boolean;
   variant?: 'default' | 'compact' | 'history';
   logDate?: string;
@@ -228,6 +243,7 @@ export function WorkoutLogPanel({
   recommendationId,
   suggestedWeightKg,
   volumeReps,
+  onVolumeRepsChange,
   isAuthenticated,
   variant = 'default',
   logDate: logDateProp,
@@ -284,20 +300,33 @@ export function WorkoutLogPanel({
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
 
-  // Voice-count pickers seed from Settings after persist hydration; user edits stay local per card.
+  // Voice-count pickers seed gap/one-more/hold from Settings; 목표 횟수 follows fit-driven volumeReps.
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
   const settingsHydrated = usePersistHydration(useSettingsStore.persist);
   const [voicePickers, setVoicePickers] = useState<VoicePickerSnapshot | null>(null);
 
   useEffect(() => {
     if (!settingsHydrated) return;
-    setVoicePickers(readVoicePickerSnapshot());
+    setVoicePickers(readVoicePickerSnapshot(volumeReps));
   }, [voiceTargetSeedContext, settingsHydrated]);
 
-  const handleVoiceTargetRepsChange = useCallback((reps: number) => {
-    const next = Math.max(1, Math.min(30, Math.round(reps)));
-    setVoicePickers((prev) => (prev ? { ...prev, targetReps: next } : prev));
-  }, []);
+  useEffect(() => {
+    if (volumeReps == null || volumeReps <= 0) return;
+    const next = clampVoiceTargetReps(volumeReps);
+    setVoicePickers((prev) => {
+      if (!prev || prev.targetReps === next) return prev;
+      return { ...prev, targetReps: next };
+    });
+  }, [volumeReps]);
+
+  const handleVoiceTargetRepsChange = useCallback(
+    (reps: number) => {
+      const next = clampVoiceTargetReps(reps);
+      setVoicePickers((prev) => (prev ? { ...prev, targetReps: next } : prev));
+      onVolumeRepsChange?.(next);
+    },
+    [onVolumeRepsChange]
+  );
 
   const handleVoiceRepGapMsChange = useCallback((ms: number) => {
     setVoicePickers((prev) => (prev ? { ...prev, repGapMs: ms } : prev));

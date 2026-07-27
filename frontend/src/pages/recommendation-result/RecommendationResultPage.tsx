@@ -344,6 +344,16 @@ export function RecommendationResultPage() {
             warnings={result.warnings}
             onControlReady={setLogControl}
             onSavedChange={setWorkoutLogSavedOverride}
+            onVolumeRepsChange={
+              fitFeedback.showAdjustment
+                ? (reps) =>
+                    fitFeedback.handleCustomChange(
+                      'recommendedRepsMin',
+                      String(reps),
+                      'number'
+                    )
+                : undefined
+            }
           />
 
           {bodyExpanded ? (

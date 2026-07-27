@@ -394,6 +394,16 @@ export function HistoryRecordCard({
         showVoiceCoach={expanded}
         onControlReady={setLogControl}
         onSavedChange={setWorkoutLogSavedOverride}
+        onVolumeRepsChange={
+          showAdjustment && !adjustmentReadOnly
+            ? (reps) =>
+                fitFeedback.handleCustomChange(
+                  'recommendedRepsMin',
+                  String(reps),
+                  'number'
+                )
+            : undefined
+        }
         onCompanionSave={canUseFitFeedback ? handleCompanionSave : undefined}
         companionSavePending={fitFeedback.isPreferencesPending}
       />
