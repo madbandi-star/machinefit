@@ -28,15 +28,14 @@ const POSTER_MARGIN = 28;
 
 const CARD_INNER_PAD = 40;
 
-/** Top badge — trophy emoji + label, rendered large */
+/** Top badge — weightlifter emoji + label */
 const BADGE_EMOJI_SIZE = 42;
 const BADGE_TEXT_SIZE = 35;
 const BADGE_PILL_H = 52;
+const GAP_AFTER_HEADER = 16;
 
-/** Headline row — weightlifter emoji inline left of name text */
-const HEADLINE_EMOJI_SIZE = 35;
-const HEADLINE_TEXT_SIZE = 26;
-const HEADLINE_EMOJI_GAP = 10;
+/** Top-right user / gym label */
+const LABEL_NAME_SIZE = 24;
 
 /** Hero KG stat — tight vertical layout */
 const HERO_ZONE_H = 114;
@@ -268,37 +267,20 @@ function heroBlockHeight(closing: string): number {
   return closing.trim() ? HERO_ZONE_H : HERO_ZONE_H - HERO_CLOSING_AFTER_NUM;
 }
 
-function measureBadgeBlock(): number {
-  return BADGE_PILL_H + 18;
-}
-
-function measureHeadlineRow(ctx: CanvasRenderingContext2D, headline: string, labelName: string): number {
-  ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
-  const emojiW = ctx.measureText('🏋️').width + HEADLINE_EMOJI_GAP;
-  if (labelName && headline.startsWith(labelName)) {
-    const rest = headline.slice(labelName.length);
-    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    const bw = ctx.measureText(labelName).width;
-    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    const rw = ctx.measureText(rest).width;
-    if (emojiW + bw + rw > W - CARD_INNER_PAD * 2 - POSTER_MARGIN * 2) {
-      return HEADLINE_TEXT_SIZE * 2 + 12;
-    }
-  }
-  return Math.max(HEADLINE_EMOJI_SIZE, HEADLINE_TEXT_SIZE) + 14;
+function measureHeaderBlock(): number {
+  return BADGE_PILL_H + GAP_AFTER_HEADER;
 }
 
 function measureLayout(ctx: CanvasRenderingContext2D, input: ShareCardInput, innerW: number): LayoutMetrics {
   ctx.font = `400 24px ${FONT}`;
   const tipLines = input.comparison ? getWrapLines(ctx, input.comparison.tip, innerW - 44) : [];
 
-  const badgeBlock = measureBadgeBlock();
-  const headlineBlock = measureHeadlineRow(ctx, input.headline, input.labelName) + 8;
+  const headerBlock = measureHeaderBlock();
   const heroBlock = heroBlockHeight(input.closing);
   const comparisonH = input.comparison ? measureComparisonCardH(tipLines) : 0;
   const footerH = 56;
 
-  const contentH = badgeBlock + headlineBlock + heroBlock + comparisonH + footerH;
+  const contentH = headerBlock + heroBlock + comparisonH + footerH;
 
   return { contentH, comparisonH, tipLines, footerH };
 }
@@ -343,80 +325,20 @@ function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: numbe
   ctx.textBaseline = 'alphabetic';
 }
 
-function drawHeadlineWithEmoji(
+function drawTopRightLabel(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  baselineY: number,
-  headline: string,
+  rightX: number,
+  topY: number,
   labelName: string
-): number {
-  const emoji = '🏋️';
-  ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
-  const emojiW = ctx.measureText(emoji).width;
+) {
+  if (!labelName.trim()) return;
 
-  let textW = 0;
-  let namePart = '';
-  let restPart = '';
-  if (labelName && headline.startsWith(labelName)) {
-    restPart = headline.slice(labelName.length);
-    namePart = labelName;
-    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    const bw = ctx.measureText(namePart).width;
-    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    const rw = ctx.measureText(restPart).width;
-    textW = bw + rw;
-  } else {
-    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    textW = ctx.measureText(headline).width;
-  }
-
-  const totalW = emojiW + HEADLINE_EMOJI_GAP + textW;
-  const maxW = W - POSTER_MARGIN * 2 - CARD_INNER_PAD * 2;
-  let sx = cx - totalW / 2;
-  let sy = baselineY;
-
-  if (totalW > maxW && labelName && restPart) {
-    sx = cx - totalW / 2;
-    ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = WHITE;
-    ctx.fillText(emoji, sx, sy);
-    sx += emojiW + HEADLINE_EMOJI_GAP;
-
-    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    ctx.fillStyle = WHITE;
-    ctx.fillText(namePart, sx, sy);
-    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    ctx.fillStyle = GRAY_DIM;
-    ctx.fillText(restPart, sx, sy + HEADLINE_TEXT_SIZE + 6);
-    ctx.textAlign = 'center';
-    return HEADLINE_TEXT_SIZE * 2 + 12;
-  }
-
-  ctx.font = `${HEADLINE_EMOJI_SIZE}px ${FONT}`;
-  ctx.textAlign = 'left';
+  ctx.font = `700 ${LABEL_NAME_SIZE}px ${FONT}`;
+  ctx.textAlign = 'right';
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = WHITE;
-  ctx.fillText(emoji, sx, sy);
-  sx += emojiW + HEADLINE_EMOJI_GAP;
-
-  if (namePart) {
-    ctx.font = `700 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    ctx.fillStyle = WHITE;
-    ctx.fillText(namePart, sx, sy);
-    const bw = ctx.measureText(namePart).width;
-    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    ctx.fillStyle = GRAY_DIM;
-    ctx.fillText(restPart, sx + bw, sy);
-  } else {
-    ctx.font = `400 ${HEADLINE_TEXT_SIZE}px ${FONT}`;
-    ctx.fillStyle = GRAY_DIM;
-    ctx.fillText(headline, sx, sy);
-  }
-
+  ctx.fillText(labelName, rightX, topY + LABEL_NAME_SIZE * 0.82);
   ctx.textAlign = 'center';
-  return Math.max(HEADLINE_EMOJI_SIZE, HEADLINE_TEXT_SIZE) + 14;
 }
 
 function drawHeroKg(
@@ -615,14 +537,13 @@ function drawPosterContent(
   const cx = posterX + posterW / 2;
   const innerW = posterW - CARD_INNER_PAD * 2;
   const innerLeft = posterX + CARD_INNER_PAD;
+  const innerRight = innerLeft + innerW;
 
   let y = posterY + (posterH - metrics.contentH) / 2;
 
   drawPillBadge(ctx, cx, y + BADGE_PILL_H / 2, input.labels.badge);
-  y += measureBadgeBlock();
-
-  const headlineH = drawHeadlineWithEmoji(ctx, cx, y + HEADLINE_TEXT_SIZE, input.headline, input.labelName);
-  y += headlineH + 8;
+  drawTopRightLabel(ctx, innerRight, y, input.labelName);
+  y += measureHeaderBlock();
 
   y += drawHeroKg(ctx, cx, y, input.totalKg, input.closing, input.locale);
 
