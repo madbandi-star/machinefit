@@ -1,7 +1,7 @@
 {
   "title": "Lifted weight share card poster renewal",
   "summary": "Full SNS poster redesign: single glass card, 148px hero KG, laurel glow, slogan quotes, comparison inset, 1:1 default + optional 9:16 via aspectRatio.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "639da5f" },
   "changedFiles": [
     "frontend/src/utils/liftedShareCard.ts",
     "frontend/src/pages/lifted-weight/LiftedWeightPage.tsx",
