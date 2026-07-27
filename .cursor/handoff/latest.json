@@ -1,7 +1,7 @@
 {
   "title": "Lifted share card — smaller size + comparison padding",
   "summary": "Card 720×900. Comparison box: extra top pad above section title, extra bottom pad below tip text.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a6d9fe9" },
   "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
   "testFocus": "공유 카드 720×900, '이 무게는 어느 정도?' 위 여백, tip 텍스트 아래 여백.",
   "fastChecks": ["npm run build --prefix frontend"],

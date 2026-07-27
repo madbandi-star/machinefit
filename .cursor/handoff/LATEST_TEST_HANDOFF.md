@@ -1,6 +1,6 @@
 # Latest test handoff — Share card size + comparison padding
 
-**Branch:** `main` · **Commit:** pending
+**Branch:** `main` · **Commit:** `a6d9fe9`
 
 ## Change
 
