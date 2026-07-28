@@ -24,9 +24,14 @@ export const ROUTES = {
   TRADE_LIST_SELL: '/trade/sell',
   TRADE_LIST_BUY: '/trade/buy',
   TRADE_DETAIL: '/trade/:tradeId',
+  TRADE_HUB: '/my-page/trade/hub',
+  /** @deprecated Redirects to TRADE_HUB */
   TRADE_MANAGE_SELL: '/my-page/trade/sell',
+  /** @deprecated Redirects to TRADE_HUB */
   TRADE_MANAGE_BUY_REQUESTS: '/my-page/trade/buy-requests',
+  /** @deprecated Redirects to TRADE_HUB */
   TRADE_MY: '/my-page/trade/mine',
+  /** @deprecated Redirects to TRADE_HUB */
   TRADE_LIKED: '/my-page/trade/liked',
   TRADE_REPORTS: '/my-page/trade/reports',
   TRADE_STATS: '/my-page/trade/stats',

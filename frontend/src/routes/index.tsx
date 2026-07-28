@@ -77,12 +77,8 @@ const tradeDetail = () =>
   import('@/pages/machine-trade/TradeDetailPage').then((m) => ({ default: m.TradeDetailPage }));
 const tradeWrite = () =>
   import('@/pages/machine-trade/TradeWritePage').then((m) => ({ default: m.TradeWritePage }));
-const tradeManage = () =>
-  import('@/pages/machine-trade/TradeManagePage').then((m) => ({ default: m.TradeManagePage }));
-const tradeMine = () =>
-  import('@/pages/machine-trade/TradeMinePage').then((m) => ({ default: m.TradeMinePage }));
-const tradeLiked = () =>
-  import('@/pages/machine-trade/TradeLikedPage').then((m) => ({ default: m.TradeLikedPage }));
+const tradeHub = () =>
+  import('@/pages/machine-trade/TradeHubPage').then((m) => ({ default: m.TradeHubPage }));
 const tradeReports = () =>
   import('@/pages/machine-trade/TradeReportsPage').then((m) => ({ default: m.TradeReportsPage }));
 const tradeStats = () =>
@@ -352,10 +348,23 @@ export const router = createBrowserRouter(
           children: [
             { path: ROUTES.TRADE_SELL_WRITE, element: lazyRoute(tradeWrite) },
             { path: ROUTES.TRADE_BUY_WRITE, element: lazyRoute(tradeWrite) },
-            { path: ROUTES.TRADE_MANAGE_SELL, element: lazyRoute(tradeManage) },
-            { path: ROUTES.TRADE_MANAGE_BUY_REQUESTS, element: lazyRoute(tradeManage) },
-            { path: ROUTES.TRADE_MY, element: lazyRoute(tradeMine) },
-            { path: ROUTES.TRADE_LIKED, element: lazyRoute(tradeLiked) },
+            { path: ROUTES.TRADE_HUB, element: lazyRoute(tradeHub) },
+            {
+              path: ROUTES.TRADE_MANAGE_SELL,
+              element: <Navigate to={`${ROUTES.TRADE_HUB}?tab=sell`} replace />,
+            },
+            {
+              path: ROUTES.TRADE_MANAGE_BUY_REQUESTS,
+              element: <Navigate to={`${ROUTES.TRADE_HUB}?tab=buy`} replace />,
+            },
+            {
+              path: ROUTES.TRADE_MY,
+              element: <Navigate to={`${ROUTES.TRADE_HUB}?tab=mine`} replace />,
+            },
+            {
+              path: ROUTES.TRADE_LIKED,
+              element: <Navigate to={`${ROUTES.TRADE_HUB}?tab=liked`} replace />,
+            },
             { path: ROUTES.TRADE_REPORTS, element: lazyRoute(tradeReports) },
             { path: ROUTES.TRADE_STATS, element: lazyRoute(tradeStats) },
           ],

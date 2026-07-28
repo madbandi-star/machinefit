@@ -494,10 +494,7 @@
     "friendsRankings": "Friends rankings",
     "friendsInvite": "Invite friends",
     "ownerOnly": "Owner only",
-    "tradeManageSell": "Manage sell listings",
-    "tradeManageBuy": "Manage buy requests",
-    "tradeMine": "My listings",
-    "tradeLiked": "Liked listings",
+    "tradeHub": "Buy & sell hub",
     "tradeReports": "Reports",
     "tradeStats": "Trade stats (coming later)"
   },

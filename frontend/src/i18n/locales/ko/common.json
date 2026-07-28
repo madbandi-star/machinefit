@@ -494,10 +494,7 @@
     "friendsRankings": "친구 랭킹",
     "friendsInvite": "친구 초대",
     "ownerOnly": "사장님 전용",
-    "tradeManageSell": "판매글 관리",
-    "tradeManageBuy": "구매요청 관리",
-    "tradeMine": "내 거래글",
-    "tradeLiked": "관심 거래글",
+    "tradeHub": "구매/판매관리",
     "tradeReports": "신고 관리",
     "tradeStats": "거래 통계 (향후 확장)"
   },

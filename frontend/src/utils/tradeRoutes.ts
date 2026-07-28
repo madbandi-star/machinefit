@@ -16,13 +16,6 @@ export function tradeTypeFromWritePath(pathname: string): TradeType {
   return pathname.includes('/buy/') ? 'buy' : 'sell';
 }
 
-/** Owner manage routes → listing trade type. */
-export function tradeTypeFromManagePath(pathname: string): TradeType {
-  if (matchPath({ path: ROUTES.TRADE_MANAGE_BUY_REQUESTS, end: true }, pathname)) return 'buy';
-  if (matchPath({ path: ROUTES.TRADE_MANAGE_SELL, end: true }, pathname)) return 'sell';
-  return pathname.includes('buy-requests') ? 'buy' : 'sell';
-}
-
 export function tradeListRoute(tradeType: TradeType): string {
   return tradeType === 'buy' ? ROUTES.TRADE_LIST_BUY : ROUTES.TRADE_LIST_SELL;
 }

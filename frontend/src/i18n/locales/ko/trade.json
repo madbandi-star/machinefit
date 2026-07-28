@@ -47,6 +47,13 @@
   "createSuccess": "거래글을 등록했어요.",
   "manageSell": "판매글 관리",
   "manageBuyRequests": "구매요청 관리",
+  "hubTitle": "구매/판매관리",
+  "hubTab": {
+    "sell": "판매글",
+    "buy": "구매요청",
+    "mine": "내 거래글",
+    "liked": "관심 거래글"
+  },
   "myTrades": "내 거래글",
   "likedTrades": "관심 거래글",
   "reports": "신고 현황",

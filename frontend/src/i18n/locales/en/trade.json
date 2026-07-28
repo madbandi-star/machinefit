@@ -47,6 +47,13 @@
   "createSuccess": "Listing published.",
   "manageSell": "Manage sell listings",
   "manageBuyRequests": "Manage buy requests",
+  "hubTitle": "Buy & sell hub",
+  "hubTab": {
+    "sell": "Sell listings",
+    "buy": "Buy requests",
+    "mine": "My listings",
+    "liked": "Liked"
+  },
   "myTrades": "My listings",
   "likedTrades": "Liked listings",
   "reports": "Report status",

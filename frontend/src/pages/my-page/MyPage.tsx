@@ -273,10 +273,7 @@ export function MyPage() {
         <section className="my-page-section">
           <h3 className="my-page-section__title">{t('myPage.ownerOnly')}</h3>
           <nav className="list-nav" aria-label={t('myPage.ownerOnly')}>
-            <ListNavLink to={ROUTES.TRADE_MANAGE_SELL} label={t('myPage.tradeManageSell')} />
-            <ListNavLink to={ROUTES.TRADE_MANAGE_BUY_REQUESTS} label={t('myPage.tradeManageBuy')} />
-            <ListNavLink to={ROUTES.TRADE_MY} label={t('myPage.tradeMine')} />
-            <ListNavLink to={ROUTES.TRADE_LIKED} label={t('myPage.tradeLiked')} />
+            <ListNavLink to={ROUTES.TRADE_HUB} label={t('myPage.tradeHub')} />
             <ListNavLink to={ROUTES.TRADE_REPORTS} label={t('myPage.tradeReports')} />
             <ListNavLink to={ROUTES.TRADE_STATS} label={t('myPage.tradeStats')} />
           </nav>
