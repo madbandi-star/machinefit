@@ -736,8 +736,6 @@
   "liveDashboard": {
     "title": "MachineFit LIVE",
     "subtitle": "지금 전 세계에서 일어나는 운동을 실시간으로 확인하세요.",
-    "search": "검색",
-    "searchPlaceholder": "국가 · 지역 · 헬스장 · 회원 검색",
     "updated": "갱신 {{time}}",
     "hotCards": "실시간 하이라이트",
     "heatmap": "운동 히트맵",

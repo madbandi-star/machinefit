@@ -12,7 +12,6 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { liveDashboardApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import './LiveDashboardPage.css';
 
 function useCountUp(target: number, durationMs = 900): number {
@@ -55,8 +54,6 @@ export function LiveDashboardPage() {
   const [scope, setScope] = useState<LiveScopeQuery>({});
   const [board, setBoard] = useState<LiveRankingBoard>('metro');
   const [period, setPeriod] = useState<LiveRankingPeriod>('today');
-  const [search, setSearch] = useState('');
-  const debouncedSearch = useDebouncedValue(search, 250);
 
   const snapshotQuery = useQuery({
     queryKey: [...QUERY_KEYS.liveDashboard, level, scope],
@@ -83,16 +80,6 @@ export function LiveDashboardPage() {
     },
     refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
     staleTime: 45_000,
-  });
-
-  const searchQuery = useQuery({
-    queryKey: [...QUERY_KEYS.liveSearch, debouncedSearch],
-    queryFn: async () => {
-      const res = await liveDashboardApi.search(debouncedSearch);
-      return res.data.data;
-    },
-    enabled: debouncedSearch.trim().length >= 1,
-    staleTime: 20_000,
   });
 
   const data = snapshotQuery.data;
@@ -196,64 +183,6 @@ export function LiveDashboardPage() {
           </div>
           <p className="live-dash__subtitle">{t('liveDashboard.subtitle')}</p>
         </div>
-
-        <label className="live-search">
-          <span className="sr-only">{t('liveDashboard.search')}</span>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t('liveDashboard.searchPlaceholder')}
-          />
-        </label>
-        {debouncedSearch && (searchQuery.data?.length ?? 0) > 0 && (
-          <ul className="live-search__results">
-            {searchQuery.data!.map((hit) => (
-              <li key={`${hit.level}-${hit.code}`}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const path = hit.path;
-                    const countryCode = path.find((p) => p.level === 'country')?.code;
-                    const metroCode = path.find((p) => p.level === 'metro')?.code;
-                    const districtCode = path.find((p) => p.level === 'district')?.code;
-                    if (hit.level === 'country') {
-                      setLevel('country');
-                      setScope({ countryCode: hit.code });
-                      setBoard('metro');
-                    } else if (hit.level === 'metro') {
-                      setLevel('metro');
-                      setScope({ countryCode: countryCode ?? 'KR', metroCode: hit.code });
-                      setBoard('district');
-                    } else if (hit.level === 'district') {
-                      setLevel('district');
-                      setScope({
-                        countryCode: countryCode ?? 'KR',
-                        metroCode,
-                        districtCode: hit.code,
-                      });
-                      setBoard('gym');
-                    } else if (hit.level === 'gym') {
-                      setLevel('gym');
-                      setScope({
-                        countryCode,
-                        metroCode,
-                        districtCode,
-                        gymId: hit.code,
-                      });
-                      setBoard('member');
-                    } else if (hit.level === 'user') {
-                      setLevel('user');
-                      setScope({ userId: hit.code });
-                    }
-                    setSearch('');
-                  }}
-                >
-                  {hit.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
 
         {snapshotQuery.isLoading || !data ? (
           <Skeleton count={6} height={72} />
