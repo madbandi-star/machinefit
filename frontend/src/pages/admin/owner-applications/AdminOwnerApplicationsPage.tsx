@@ -7,6 +7,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { safeHttpUrl } from '@/utils/safeHttpUrl';
 import '@/styles/components.css';
 import '@/styles/gym.css';
 
@@ -85,9 +86,9 @@ export function AdminOwnerApplicationsPage() {
                 {item.userDisplayName} ({item.userEmail}) · payment: {item.paymentStatus}
               </p>
               {item.description ? <p>{item.description}</p> : null}
-              {item.evidenceUrl ? (
+              {safeHttpUrl(item.evidenceUrl) ? (
                 <p>
-                  <a href={item.evidenceUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={safeHttpUrl(item.evidenceUrl)!} target="_blank" rel="noopener noreferrer">
                     {t('admin:ownerApplications.evidence')}
                   </a>
                 </p>

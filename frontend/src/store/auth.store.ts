@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import type { User, AuthTokens } from '@machinefit/shared';
 
 interface AuthState {
@@ -12,23 +12,73 @@ interface AuthState {
   updateUser: (user: Partial<User>) => void;
 }
 
+/**
+ * Prefer sessionStorage so tokens don't survive browser restarts on shared devices.
+ * Migrate once from legacy localStorage key.
+ */
+const authSessionStorage = {
+  getItem: (name: string) => {
+    const fromSession = sessionStorage.getItem(name);
+    if (fromSession != null) return fromSession;
+    try {
+      const legacy = localStorage.getItem(name);
+      if (legacy != null) {
+        sessionStorage.setItem(name, legacy);
+        localStorage.removeItem(name);
+        return legacy;
+      }
+    } catch {
+      /* ignore */
+    }
+    return null;
+  },
+  setItem: (name: string, value: string) => {
+    sessionStorage.setItem(name, value);
+    try {
+      localStorage.removeItem(name);
+    } catch {
+      /* ignore */
+    }
+  },
+  removeItem: (name: string) => {
+    sessionStorage.removeItem(name);
+    try {
+      localStorage.removeItem(name);
+    } catch {
+      /* ignore */
+    }
+  },
+};
+
+function sanitizePersistedUser(user: User | null): User | null {
+  if (!user) return null;
+  const { heightCm: _h, weightKg: _w, age: _a, ...safe } = user;
+  return safe;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
       tokens: null,
       isAuthenticated: false,
-      setAuth: (user, tokens) =>
-        set({ user, tokens, isAuthenticated: true }),
+      setAuth: (user, tokens) => set({ user, tokens, isAuthenticated: true }),
       updateTokens: (tokens) =>
         set((state) => ({ tokens, isAuthenticated: state.user != null })),
-      clearAuth: () =>
-        set({ user: null, tokens: null, isAuthenticated: false }),
+      clearAuth: () => set({ user: null, tokens: null, isAuthenticated: false }),
       updateUser: (partial) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...partial } : null,
         })),
     }),
-    { name: 'machinefit-auth' }
+    {
+      name: 'machinefit-auth',
+      storage: createJSONStorage(() => authSessionStorage),
+      partialize: (state) => ({
+        user: sanitizePersistedUser(state.user),
+        tokens: state.tokens,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    }
   )
 );

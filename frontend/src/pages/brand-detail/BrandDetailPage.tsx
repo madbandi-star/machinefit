@@ -11,6 +11,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
 import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
+import { safeHttpUrl } from '@/utils/safeHttpUrl';
 import '@/styles/machines.css';
 
 export function BrandDetailPage() {
@@ -61,14 +62,14 @@ export function BrandDetailPage() {
           <img src={logoUrl} alt={name} className="brand-detail__logo" loading="lazy" />
         ) : null}
         {description ? <p className="brand-detail__desc">{description}</p> : null}
-        {brand.websiteUrl ? (
+        {safeHttpUrl(brand.websiteUrl) ? (
           <a
             className="brand-detail__website"
-            href={brand.websiteUrl}
+            href={safeHttpUrl(brand.websiteUrl)!}
             target="_blank"
             rel="noreferrer"
           >
-            {brand.websiteUrl.replace(/^https?:\/\//, '')}
+            {brand.websiteUrl!.replace(/^https?:\/\//, '')}
           </a>
         ) : null}
       </div>

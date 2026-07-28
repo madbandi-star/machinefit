@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface CredentialsState {
   email: string;
@@ -11,19 +11,28 @@ interface CredentialsState {
   setRememberLogin: (remember: boolean) => void;
 }
 
+/**
+ * Remember-me stores email only (never password).
+ * Cleared on explicit logout / uncheck; kept in localStorage for login UX.
+ */
 export const useCredentialsStore = create<CredentialsState>()(
   persist(
     (set) => ({
       email: '',
       password: '',
       rememberLogin: false,
-      saveCredentials: (email) => set({ email, password: '', rememberLogin: true }),
+      saveCredentials: (email) => set({ email: email.trim(), password: '', rememberLogin: true }),
       clearCredentials: () => set({ email: '', password: '', rememberLogin: false }),
-      setRememberLogin: (rememberLogin) => set({ rememberLogin }),
+      setRememberLogin: (rememberLogin) =>
+        set(
+          rememberLogin
+            ? { rememberLogin: true }
+            : { rememberLogin: false, email: '', password: '' }
+        ),
     }),
     {
       name: 'machinefit-credentials',
-      // Strip any previously persisted password from older clients.
+      storage: createJSONStorage(() => localStorage),
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<CredentialsState>;
         return {

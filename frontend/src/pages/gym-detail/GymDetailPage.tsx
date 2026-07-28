@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { GymInventoryPanel } from '@/components/gyms/GymInventoryPanel/GymInventoryPanel';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi } from '@/api';
+import { safeHttpUrl } from '@/utils/safeHttpUrl';
 import '@/styles/components.css';
 import '@/styles/gym.css';
 
@@ -78,13 +79,13 @@ export function GymDetailPage() {
         <section className="gym-detail__section">
           <h3>{t('contact')}</h3>
           {gym.phone && <p>📞 {gym.phone}</p>}
-          {gym.websiteUrl && (
+          {safeHttpUrl(gym.websiteUrl) ? (
             <p>
-              <a href={gym.websiteUrl} target="_blank" rel="noopener noreferrer">
+              <a href={safeHttpUrl(gym.websiteUrl)!} target="_blank" rel="noopener noreferrer">
                 {gym.websiteUrl}
               </a>
             </p>
-          )}
+          ) : null}
         </section>
       )}
 
