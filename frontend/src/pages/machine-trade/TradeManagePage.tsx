@@ -1,7 +1,7 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { TRADE_STATUSES, type TradeStatus, type TradeType } from '@machinefit/shared';
+import { TRADE_STATUSES, type TradeStatus } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
@@ -9,6 +9,7 @@ import { TradeCard } from '@/components/trade/TradeCard';
 import { machineTradeApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
+import { tradeTypeFromManagePath } from '@/utils/tradeRoutes';
 import '@/styles/components.css';
 import '@/styles/trade.css';
 
@@ -18,7 +19,7 @@ export function TradeManagePage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [params, setParams] = useSearchParams();
-  const tradeType: TradeType = location.pathname.includes('buy-requests') ? 'buy' : 'sell';
+  const tradeType = tradeTypeFromManagePath(location.pathname);
   const page = Math.max(1, parseInt(params.get('page') || '1', 10) || 1);
   const status = (params.get('status') as TradeStatus | null) || undefined;
 

@@ -74,6 +74,7 @@
   },
   "statuses": {
     "selling": "판매중",
+    "buying": "구매중",
     "reserved": "예약중",
     "sold": "판매완료",
     "purchased": "구매완료",

@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   TRADE_CONDITIONS,
   type TradeCondition,
-  type TradeType,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -16,9 +15,9 @@ import {
 } from '@/components/location/LocationPicker';
 import { machineApi, machineTradeApi, locationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getLocalizedName } from '@/utils/localizedName';
+import { tradeListRoute, tradeTypeFromWritePath } from '@/utils/tradeRoutes';
 import '@/styles/components.css';
 import '@/styles/trade.css';
 
@@ -85,10 +84,11 @@ export function TradeWritePage() {
   const { t, i18n } = useTranslation('trade');
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [params] = useSearchParams();
   const machineCode = params.get('machineCode') || '';
-  const tradeType: TradeType = location.pathname.includes('/buy/') ? 'buy' : 'sell';
+  const tradeType = tradeTypeFromWritePath(location.pathname);
 
   const [price, setPrice] = useState('');
   const [condition, setCondition] = useState<TradeCondition | ''>('grade_a');
@@ -135,9 +135,13 @@ export function TradeWritePage() {
         files: images.map((img) => img.file),
       });
     },
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
+      // Global staleTime is 5m; clear list caches so 구매/판매글 보기에 바로 반영.
+      await queryClient.invalidateQueries({ queryKey: ['machine-trades'] });
       showToast(t('createSuccess'), 'success');
-      navigate(ROUTES.TRADE_DETAIL.replace(':tradeId', res.data.data.id));
+      const listPath = tradeListRoute(res.data.data.tradeType);
+      const q = machineCode ? `?machineCode=${encodeURIComponent(machineCode)}` : '';
+      navigate(`${listPath}${q}`);
     },
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
@@ -174,7 +178,9 @@ export function TradeWritePage() {
   }, [condition, machineQuery.data, price, regionLabel, tradeType]);
 
   const title = tradeType === 'sell' ? t('sellWrite') : t('buyWrite');
-  const listRoute = tradeType === 'sell' ? ROUTES.TRADE_LIST_SELL : ROUTES.TRADE_LIST_BUY;
+  const listRoute = `${tradeListRoute(tradeType)}${
+    machineCode ? `?machineCode=${encodeURIComponent(machineCode)}` : ''
+  }`;
 
   if (!machineCode) {
     return (

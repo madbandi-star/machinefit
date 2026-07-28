@@ -74,6 +74,7 @@
   },
   "statuses": {
     "selling": "Active",
+    "buying": "Wanted",
     "reserved": "Reserved",
     "sold": "Sold",
     "purchased": "Purchased",

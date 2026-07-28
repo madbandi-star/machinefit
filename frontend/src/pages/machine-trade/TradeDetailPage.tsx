@@ -143,6 +143,11 @@ export function TradeDetailPage() {
 
         <div className="trade-detail__meta">
           <div>
+            <span className={`trade-card__type trade-card__type--${data.tradeType}`}>
+              {t(data.tradeType)}
+            </span>
+          </div>
+          <div>
             <strong>{formatTradePrice(data.price, t('currency'))}</strong>
           </div>
           {conditionKey ? <div>{t('condition')}: {t(conditionKey)}</div> : null}
@@ -150,7 +155,7 @@ export function TradeDetailPage() {
             {t('region')}: {data.regionLabel}
           </div>
           <div>
-            {t('status')}: {t(tradeStatusKey(data.status))}
+            {t('status')}: {t(tradeStatusKey(data.status, data.tradeType))}
           </div>
           <div>
             {t('seller')}: {data.sellerName}

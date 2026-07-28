@@ -27,8 +27,16 @@ export function TradeCard({ trade }: TradeCardProps) {
         {cover ? <img src={cover} alt="" loading="lazy" decoding="async" /> : null}
       </div>
       <div className="trade-card__body">
-        <div className="trade-card__brand">
-          {formatTradeLocalized(trade.brandName, i18n.language)}
+        <div className="trade-card__brand-row">
+          <span
+            className={`trade-card__type trade-card__type--${trade.tradeType}`}
+            aria-label={t(trade.tradeType)}
+          >
+            {t(trade.tradeType)}
+          </span>
+          <div className="trade-card__brand">
+            {formatTradeLocalized(trade.brandName, i18n.language)}
+          </div>
         </div>
         <div className="trade-card__name">
           {formatTradeLocalized(trade.machineName, i18n.language, trade.machineCode)}
@@ -46,7 +54,7 @@ export function TradeCard({ trade }: TradeCardProps) {
           <span>
             {t('likes')} {trade.likeCount}
           </span>
-          <span>{t(tradeStatusKey(trade.status))}</span>
+          <span>{t(tradeStatusKey(trade.status, trade.tradeType))}</span>
         </div>
         <div className="trade-card__footer">
           <TradeRemainingBadge daysRemaining={trade.daysRemaining} isExpired={trade.isExpired} />
