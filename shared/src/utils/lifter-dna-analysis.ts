@@ -8,13 +8,10 @@ import {
 import type {
   LifterDnaBadgeAward,
   LifterDnaCharacterResult,
-  LifterDnaCompareItem,
-  LifterDnaForecast,
   LifterDnaHabitItem,
   LifterDnaRecommendation,
   LifterDnaSnapshot,
   LifterDnaTraitId,
-  LifterDnaTraitScore,
 } from '../types/lifter-dna.types.js';
 
 export {
@@ -211,22 +208,6 @@ function buildOneLiner(
   return `${opener} ${middle} ${character.name} ${closer}`;
 }
 
-function buildTraits(
-  traits: Record<LifterDnaTraitId, number>,
-  locale: string
-): LifterDnaTraitScore[] {
-  return LIFTER_DNA_TRAITS.map((def) => {
-    const score = traits[def.id];
-    return {
-      id: def.id,
-      emoji: def.emoji,
-      label: pickLocale(def.label, locale),
-      stars: starsFromScore(score),
-      score: Math.round(score),
-    };
-  });
-}
-
 function buildHabits(stats: LifterDnaRawStats, locale: string): LifterDnaHabitItem[] {
   const ko = locale.startsWith('ko');
   const estMinutes = Math.max(25, Math.round(stats.avgSetsPerDay * 2.6));
@@ -325,96 +306,6 @@ function buildRecommendations(stats: LifterDnaRawStats, locale: string): LifterD
   return picks.map((p) => ({ id: p.id, text: pickLocale(p.text, locale) }));
 }
 
-function buildForecast(stats: LifterDnaRawStats, locale: string): LifterDnaForecast[] {
-  const ko = locale.startsWith('ko');
-  const growthBoost = clamp(50 + stats.growthRate * 120, 20, 98);
-  const volumeStars = starsFromScore(clamp(stats.totalVolumeKg / 800 + growthBoost * 0.4));
-  const maxStars = starsFromScore(clamp(stats.powerScore * 0.7 + growthBoost * 0.3));
-  const sessionsStars = starsFromScore(clamp(stats.consistencyScore * 0.8 + 10));
-  const growthStars = starsFromScore(growthBoost);
-  const projectedVolume = Math.round(stats.totalVolumeKg * (1 + Math.max(0.15, stats.growthRate * 3)));
-  const projectedMax = Math.round(stats.maxWeightKg * (1 + Math.max(0.05, stats.growthRate)));
-  const projectedSessions = Math.round(stats.avgSessionsPerWeek * 12);
-
-  return [
-    {
-      id: 'volume',
-      label: ko ? '예상 총 볼륨' : 'Projected volume',
-      stars: volumeStars,
-      detail: ko
-        ? `약 ${projectedVolume.toLocaleString('ko-KR')}KG`
-        : `~${projectedVolume.toLocaleString('en-US')} KG`,
-    },
-    {
-      id: 'max',
-      label: ko ? '예상 최고중량' : 'Projected max load',
-      stars: maxStars,
-      detail: ko ? `약 ${projectedMax}KG` : `~${projectedMax} KG`,
-    },
-    {
-      id: 'sessions',
-      label: ko ? '예상 운동횟수' : 'Projected sessions',
-      stars: sessionsStars,
-      detail: ko ? `약 ${projectedSessions}회` : `~${projectedSessions} sessions`,
-    },
-    {
-      id: 'growth',
-      label: ko ? '예상 성장률' : 'Projected growth',
-      stars: growthStars,
-      detail: ko
-        ? `+${Math.round(Math.max(5, stats.growthRate * 100))}%`
-        : `+${Math.round(Math.max(5, stats.growthRate * 100))}%`,
-    },
-  ];
-}
-
-function deltaPct(mine: number, peer: number | undefined): number {
-  if (peer == null || peer <= 0) return 0;
-  return Math.round(((mine - peer) / peer) * 100);
-}
-
-function buildCompare(
-  stats: LifterDnaRawStats,
-  peer: Partial<PeerBaseline> | undefined,
-  locale: string
-): LifterDnaCompareItem[] {
-  if (!peer) return [];
-  const ko = locale.startsWith('ko');
-  const estMinutes = Math.max(25, Math.round(stats.avgSetsPerDay * 2.6));
-  return [
-    {
-      id: 'intensity',
-      label: ko ? '강도' : 'Intensity',
-      deltaPct: deltaPct(stats.intensityScore, peer.intensity),
-    },
-    {
-      id: 'consistency',
-      label: ko ? '꾸준함' : 'Consistency',
-      deltaPct: deltaPct(stats.consistencyScore, peer.consistency),
-    },
-    {
-      id: 'volume',
-      label: ko ? '볼륨' : 'Volume',
-      deltaPct: deltaPct(stats.totalVolumeKg / Math.max(1, stats.sessionDays), peer.volume),
-    },
-    {
-      id: 'legs',
-      label: ko ? '하체' : 'Legs',
-      deltaPct: deltaPct(stats.lowerRatio * 100, (peer.lowerRatio ?? 0) * 100 || undefined),
-    },
-    {
-      id: 'pr',
-      label: 'PR',
-      deltaPct: deltaPct(stats.prRate * 100, (peer.prRate ?? 0) * 100 || undefined),
-    },
-    {
-      id: 'time',
-      label: ko ? '운동시간' : 'Session time',
-      deltaPct: deltaPct(estMinutes, peer.avgSessionMinutes),
-    },
-  ].filter((item) => item.deltaPct !== 0);
-}
-
 function awardBadges(stats: LifterDnaRawStats, locale: string): LifterDnaBadgeAward[] {
   const rules: Record<string, boolean> = {
     legsDominant: stats.lowerRatio >= 0.45,
@@ -459,14 +350,15 @@ export function buildLifterDnaSnapshot(
     analyzedLogs: stats.analyzedLogs,
     analyzedAt: new Date().toISOString(),
     oneLiner: buildOneLiner(character, seedKey, locale),
-    traits: buildTraits(traits, locale),
+    // Traits still scored internally for character match; UI sections removed for speed.
+    traits: [],
     habits: buildHabits(stats, locale),
     recommendations: buildRecommendations(stats, locale),
-    forecast: buildForecast(stats, locale),
-    friendCompare: buildCompare(stats, stats.peers?.friend, locale),
-    gymCompare: buildCompare(stats, stats.peers?.gym, locale),
-    nationalCompare: buildCompare(stats, stats.peers?.national, locale),
-    globalCompare: buildCompare(stats, stats.peers?.global, locale),
+    forecast: [],
+    friendCompare: [],
+    gymCompare: [],
+    nationalCompare: [],
+    globalCompare: [],
     badges: awardBadges(stats, locale),
     shareHeadline: ko
       ? `당신은 ${character.emoji} ${character.name} 리프터입니다.`

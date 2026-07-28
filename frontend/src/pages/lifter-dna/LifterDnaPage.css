@@ -149,35 +149,6 @@
   font-size: 1.05rem;
 }
 
-.dna-section__hint {
-  margin: -0.25rem 0 0.65rem;
-  color: #9ca3af;
-  font-size: 0.82rem;
-}
-
-.dna-trait-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
-}
-
-.dna-trait {
-  padding: 0.8rem 0.75rem;
-}
-
-.dna-trait__label {
-  margin: 0;
-  color: #d1d5db;
-  font-size: 0.82rem;
-}
-
-.dna-trait__stars {
-  margin: 0.35rem 0 0;
-  color: #fbbf24;
-  letter-spacing: 0.06em;
-  font-size: 0.95rem;
-}
-
 .dna-habits {
   list-style: none;
   margin: 0;
@@ -220,66 +191,6 @@
   color: #e5e7eb;
   font-size: 0.9rem;
   line-height: 1.4;
-}
-
-.dna-forecast-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
-}
-
-.dna-forecast {
-  padding: 0.8rem;
-}
-
-.dna-forecast__label {
-  margin: 0;
-  color: #9ca3af;
-  font-size: 0.78rem;
-}
-
-.dna-forecast__stars {
-  margin: 0.3rem 0 0;
-  color: #fbbf24;
-  letter-spacing: 0.05em;
-}
-
-.dna-forecast__detail {
-  margin: 0.25rem 0 0;
-  color: #86efac;
-  font-weight: 700;
-  font-size: 0.88rem;
-}
-
-.dna-compare-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-}
-
-.dna-compare {
-  padding: 0.75rem;
-  text-align: center;
-}
-
-.dna-compare__label {
-  margin: 0;
-  color: #9ca3af;
-  font-size: 0.75rem;
-}
-
-.dna-compare__value {
-  margin: 0.25rem 0 0;
-  font-size: 1.15rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-
-.dna-compare__value.is-up {
-  color: #4ade80;
-}
-.dna-compare__value.is-down {
-  color: #fb7185;
 }
 
 .dna-badge-grid {
@@ -433,15 +344,6 @@
   color: #d1d5db;
   font-size: 0.9rem;
   line-height: 1.45;
-}
-
-@media (min-width: 640px) {
-  .dna-trait-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .dna-compare-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
