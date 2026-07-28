@@ -26,6 +26,7 @@ export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15_000,
+  withCredentials: true,
 });
 
 type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
@@ -33,17 +34,20 @@ type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 let refreshPromise: Promise<AuthTokens | null> | null = null;
 
 async function refreshAccessToken(): Promise<AuthTokens | null> {
-  const { tokens, user, updateTokens, clearAuth } = useAuthStore.getState();
-  if (!tokens?.refreshToken || !user) {
+  const { tokens, user, isAuthenticated, updateTokens, clearAuth } = useAuthStore.getState();
+  if (!user || !isAuthenticated) {
     clearAuth();
     clearGymScope();
     return null;
   }
 
   try {
+    // Prefer HttpOnly cookie; optional body for one-time legacy migration.
+    const body = tokens?.refreshToken ? { refreshToken: tokens.refreshToken } : {};
     const res = await axios.post<{ success: boolean; data: { tokens: AuthTokens } }>(
       `${API_BASE_URL}/auth/refresh`,
-      { refreshToken: tokens.refreshToken }
+      body,
+      { withCredentials: true }
     );
     const newTokens = res.data.data.tokens;
     updateTokens(newTokens);
@@ -94,3 +98,9 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+/** Silent boot refresh: cookie (or legacy body token) → memory access token. */
+export async function restoreSessionFromRefresh(): Promise<boolean> {
+  const tokens = await refreshAccessToken();
+  return Boolean(tokens?.accessToken);
+}

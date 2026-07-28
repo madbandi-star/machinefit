@@ -92,8 +92,10 @@ export const authApi = {
     agreeLocation?: boolean;
     legalVersion?: string;
   }) => apiClient.post('/auth/register', data),
-  refresh: (refreshToken: string) =>
-    apiClient.post('/auth/refresh', { refreshToken }),
+  /** Refresh via HttpOnly cookie (optional legacy body for migration). */
+  refresh: (refreshToken?: string) =>
+    apiClient.post('/auth/refresh', refreshToken ? { refreshToken } : {}),
+  logout: () => apiClient.post('/auth/logout'),
   deactivateAccount: () => apiClient.delete('/auth/me'),
   updateMarketingPref: (marketingOptIn: boolean) =>
     apiClient.patch('/auth/me/marketing', { marketingOptIn }),

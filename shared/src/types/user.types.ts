@@ -47,7 +47,11 @@ export interface User {
 
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
+  /**
+   * Present only during legacy migration. Prefer HttpOnly refresh cookie;
+   * modern API responses omit this field.
+   */
+  refreshToken?: string;
   expiresIn: string;
 }
 

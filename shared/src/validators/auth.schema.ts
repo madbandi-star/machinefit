@@ -37,8 +37,9 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+/** Optional body token for one-time migration from JS-held refresh tokens. */
 export const refreshTokenSchema = z.object({
-  refreshToken: z.string().min(1),
+  refreshToken: z.string().min(1).optional(),
 });
 
 export const marketingPrefSchema = z.object({

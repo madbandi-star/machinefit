@@ -55,7 +55,7 @@ export interface OwnerApplyResult {
   pending?: boolean;
   message: string;
   application?: unknown;
-  tokens?: { accessToken: string; refreshToken: string; expiresIn: string };
+  tokens?: { accessToken: string; refreshToken?: string; expiresIn: string };
   user: { roleCode: string } | null;
 }
 

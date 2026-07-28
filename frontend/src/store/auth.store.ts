@@ -4,6 +4,7 @@ import type { User, AuthTokens } from '@machinefit/shared';
 
 interface AuthState {
   user: User | null;
+  /** Access token only — kept in memory, never persisted. Refresh lives in HttpOnly cookie. */
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   setAuth: (user: User, tokens: AuthTokens) => void;
@@ -13,7 +14,7 @@ interface AuthState {
 }
 
 /**
- * Prefer sessionStorage so tokens don't survive browser restarts on shared devices.
+ * Prefer sessionStorage so profile session doesn't survive browser restarts on shared devices.
  * Migrate once from legacy localStorage key.
  */
 const authSessionStorage = {
@@ -56,15 +57,27 @@ function sanitizePersistedUser(user: User | null): User | null {
   return safe;
 }
 
+/** Drop refresh from memory once cookie owns it; never persist any token. */
+function memoryTokens(tokens: AuthTokens): AuthTokens {
+  return {
+    accessToken: tokens.accessToken,
+    expiresIn: tokens.expiresIn,
+  };
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
       tokens: null,
       isAuthenticated: false,
-      setAuth: (user, tokens) => set({ user, tokens, isAuthenticated: true }),
+      setAuth: (user, tokens) =>
+        set({ user, tokens: memoryTokens(tokens), isAuthenticated: true }),
       updateTokens: (tokens) =>
-        set((state) => ({ tokens, isAuthenticated: state.user != null })),
+        set((state) => ({
+          tokens: memoryTokens(tokens),
+          isAuthenticated: state.user != null,
+        })),
       clearAuth: () => set({ user: null, tokens: null, isAuthenticated: false }),
       updateUser: (partial) =>
         set((state) => ({
@@ -73,12 +86,25 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'machinefit-auth',
+      version: 2,
       storage: createJSONStorage(() => authSessionStorage),
       partialize: (state) => ({
         user: sanitizePersistedUser(state.user),
-        tokens: state.tokens,
         isAuthenticated: state.isAuthenticated,
       }),
+      migrate: (persisted) => {
+        const state = (persisted ?? {}) as {
+          user?: User | null;
+          tokens?: AuthTokens | null;
+          isAuthenticated?: boolean;
+        };
+        // Keep legacy refreshToken in memory one boot so SessionRestore can mint a cookie.
+        return {
+          user: state.user ?? null,
+          tokens: state.tokens ?? null,
+          isAuthenticated: Boolean(state.isAuthenticated && state.user),
+        };
+      },
     }
   )
 );
