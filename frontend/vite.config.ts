@@ -18,8 +18,15 @@ function spaGitHubPagesFallback(): Plugin {
   };
 }
 
+/** Ship demo password in the client bundle only when demo-auth is explicitly on. */
+const demoPasswordForClient =
+  process.env.VITE_DEMO_AUTH === 'true' ? 'demo1234' : '';
+
 export default defineConfig({
   base: '/machinefit/',
+  define: {
+    __MF_DEMO_PASSWORD__: JSON.stringify(demoPasswordForClient),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
