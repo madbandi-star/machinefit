@@ -293,6 +293,11 @@ export function MyPage() {
             {tc('applyOwner')}
           </Link>
         )}
+        {!isTrainer && (
+          <Link to={ROUTES.TRAINER_APPLY} className="btn btn--primary btn--block">
+            {tc('applyTrainer')}
+          </Link>
+        )}
         <button type="button" className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
           {t('nav.logout')}
         </button>

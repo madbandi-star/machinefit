@@ -47,6 +47,8 @@
   "selectMachine": "Select machine",
   "applyOwner": "Become a Gym Owner",
   "applyOwnerDesc": "Register your gym and manage machine inventory",
+  "applyTrainer": "Become a Trainer",
+  "applyTrainerDesc": "Start coaching members with Online PT",
   "businessName": "Business name",
   "ownerApproved": "Owner access is ready!",
   "createSuccess": "Saved successfully.",
