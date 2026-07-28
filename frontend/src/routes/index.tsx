@@ -169,6 +169,8 @@ const ownerDash = () =>
   }));
 const ownerApply = () =>
   import('@/pages/gym-owner/apply/OwnerApplyPage').then((m) => ({ default: m.OwnerApplyPage }));
+const trainerApply = () =>
+  import('@/pages/trainer/apply/TrainerApplyPage').then((m) => ({ default: m.TrainerApplyPage }));
 const adminDash = () =>
   import('@/pages/admin/dashboard/AdminDashboardPage').then((m) => ({
     default: m.AdminDashboardPage,
@@ -313,6 +315,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
             { path: ROUTES.LAB, element: lazyRoute(lab) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
+            { path: ROUTES.TRAINER_APPLY, element: lazyRoute(trainerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
             { path: ROUTES.PRIVACY_RIGHTS, element: lazyRoute(privacyRightsPage) },

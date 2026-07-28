@@ -1,0 +1,10 @@
+.trainer-apply__hero {
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(56, 189, 248, 0.2), transparent 48%),
+    radial-gradient(ellipse at 100% 20%, rgba(74, 222, 128, 0.1), transparent 42%),
+    linear-gradient(165deg, #0b1220 0%, #111827 55%, #0a1628 100%);
+}
+
+.trainer-apply .owner-apply__brand {
+  color: #7dd3fc;
+}

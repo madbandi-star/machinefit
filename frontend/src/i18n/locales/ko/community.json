@@ -47,6 +47,8 @@
   "selectMachine": "기구 선택",
   "applyOwner": "헬스장 사장님 되기",
   "applyOwnerDesc": "헬스장을 등록하고 기구를 관리하세요",
+  "applyTrainer": "트레이너 되기",
+  "applyTrainerDesc": "온라인 PT 트레이너로 활동하세요",
   "businessName": "사업자명",
   "ownerApproved": "사장님 권한이 준비됐어요!",
   "createSuccess": "등록했어요.",

@@ -77,6 +77,7 @@ export const ROUTES = {
   ADMIN_OWNER_APPLICATIONS: '/admin/owner-applications',
   ADMIN_LOCATIONS: '/admin/locations',
   OWNER_APPLY: '/owner/apply',
+  TRAINER_APPLY: '/trainer/apply',
   NOTIFICATIONS: '/notifications',
   ONLINE_PT: '/online-pt',
   ONLINE_PT_TRAINER: '/online-pt/trainers/:trainerId',
