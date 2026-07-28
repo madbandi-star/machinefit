@@ -15,8 +15,8 @@
   "menu": {
     "usersDesc": "역할·활성 상태를 변경합니다.",
     "gymsDesc": "헬스장 인증과 기구 재고를 관리합니다.",
-    "ownerDesc": "사장 인증 신청을 승인·반려합니다.",
-    "trainerDesc": "트레이너 인증 신청을 승인·반려합니다.",
+    "ownerDesc": "공식 헬스장 파트너 신청을 검토·승인합니다.",
+    "trainerDesc": "온라인 PT 파트너 신청을 검토·승인합니다.",
     "machinesDesc": "브랜드·기구 카탈로그를 관리합니다.",
     "locationsDesc": "국가·시/도·시·동 지역 데이터를 관리합니다.",
     "motivationDesc": "동기부여 음악·영상 재생 목록을 설정합니다.",
@@ -151,7 +151,7 @@
   },
   "ownerApplications": {
     "nav": "사장 인증",
-    "title": "사장 인증 신청",
+    "title": "공식 헬스장 파트너 검토·승인",
     "filter": "상태 필터",
     "pending": "대기",
     "approvedStatus": "승인",
@@ -167,7 +167,7 @@
   },
   "trainerApplications": {
     "nav": "트레이너 인증",
-    "title": "트레이너 인증 신청",
+    "title": "온라인 PT 파트너 검토·승인",
     "filter": "상태 필터",
     "pending": "대기",
     "approvedStatus": "승인",

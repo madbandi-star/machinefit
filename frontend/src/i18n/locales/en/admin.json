@@ -15,8 +15,8 @@
   "menu": {
     "usersDesc": "Change roles and active status.",
     "gymsDesc": "Verify gyms and manage inventory.",
-    "ownerDesc": "Approve or reject owner applications.",
-    "trainerDesc": "Approve or reject trainer applications.",
+    "ownerDesc": "Review and approve official gym partner applications.",
+    "trainerDesc": "Review and approve Online PT partner applications.",
     "machinesDesc": "Manage brands and the machine catalog.",
     "locationsDesc": "Maintain country, state, city, and neighborhood data.",
     "motivationDesc": "Set motivation music and video playlists.",
@@ -148,7 +148,7 @@
   },
   "ownerApplications": {
     "nav": "Owner apps",
-    "title": "Owner verification applications",
+    "title": "Official gym partner review",
     "filter": "Status filter",
     "pending": "Pending",
     "approvedStatus": "Approved",
@@ -164,7 +164,7 @@
   },
   "trainerApplications": {
     "nav": "Trainer apps",
-    "title": "Trainer verification applications",
+    "title": "Online PT partner review",
     "filter": "Status filter",
     "pending": "Pending",
     "approvedStatus": "Approved",

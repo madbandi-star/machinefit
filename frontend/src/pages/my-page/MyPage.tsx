@@ -289,14 +289,20 @@ export function MyPage() {
           </Link>
         )}
         {!isOwner && (
-          <Link to={ROUTES.OWNER_APPLY} className="btn btn--primary btn--block">
-            {tc('applyOwner')}
-          </Link>
+          <div className="my-page__cta">
+            <Link to={ROUTES.OWNER_APPLY} className="btn btn--primary btn--block">
+              {tc('applyOwner')}
+            </Link>
+            <p className="my-page__cta-desc">{tc('applyOwnerDesc')}</p>
+          </div>
         )}
         {!isTrainer && (
-          <Link to={ROUTES.TRAINER_APPLY} className="btn btn--primary btn--block">
-            {tc('applyTrainer')}
-          </Link>
+          <div className="my-page__cta">
+            <Link to={ROUTES.TRAINER_APPLY} className="btn btn--primary btn--block">
+              {tc('applyTrainer')}
+            </Link>
+            <p className="my-page__cta-desc">{tc('applyTrainerDesc')}</p>
+          </div>
         )}
         <button type="button" className="btn btn--secondary btn--block" onClick={() => setShowLogout(true)}>
           {t('nav.logout')}
