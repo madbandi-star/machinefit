@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { TradeCard } from '@/components/trade/TradeCard';
@@ -76,8 +76,8 @@ export function AdminTradesPage() {
     (tab === 'stats' && statsQuery.isLoading);
 
   return (
-    <PageShell title={t('admin.title')} subtitle={t('admin.subtitle')}>
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+    <AdminPageShell title={t('admin.title')} subtitle={t('admin.subtitle')}>
+      <div className="admin-tabs admin-tabs--wide">
         {(
           [
             ['listings', t('admin.listings')],
@@ -88,7 +88,7 @@ export function AdminTradesPage() {
           <button
             key={key}
             type="button"
-            className={`btn ${tab === key ? 'btn--primary' : 'btn--secondary'}`}
+            className={`admin-tabs__btn${tab === key ? ' is-active' : ''}`}
             onClick={() => setTab(key)}
           >
             {label}
@@ -99,7 +99,7 @@ export function AdminTradesPage() {
       {loading ? <Skeleton count={3} height={72} /> : null}
 
       {tab === 'listings' && !loading ? (
-        <div style={{ display: 'grid', gap: '0.75rem' }}>
+        <div className="admin-stack admin-tab-panel">
           <label className="checkbox-label">
             <input
               type="checkbox"
@@ -115,13 +115,13 @@ export function AdminTradesPage() {
             <span>{t('admin.includeExpired')}</span>
           </label>
           {!listQuery.data?.items.length ? (
-            <div className="card trade-empty">{t('empty')}</div>
+            <div className="admin-empty">{t('empty')}</div>
           ) : (
             <>
               {listQuery.data.items.map((trade) => (
-                <div key={trade.id} style={{ display: 'grid', gap: '0.4rem' }}>
+                <div key={trade.id} className="admin-stack admin-stack--sm">
                   <TradeCard trade={trade} />
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <div className="admin-card__actions">
                     <Link
                       to={ROUTES.TRADE_DETAIL.replace(':tradeId', trade.id)}
                       className="btn btn--secondary"
@@ -154,12 +154,12 @@ export function AdminTradesPage() {
       ) : null}
 
       {tab === 'reports' && !loading ? (
-        <div style={{ display: 'grid', gap: '0.75rem' }}>
+        <div className="admin-card-list admin-tab-panel">
           {(reportsQuery.data ?? []).length === 0 ? (
-            <div className="card trade-empty">{t('admin.noReports')}</div>
+            <div className="admin-empty">{t('admin.noReports')}</div>
           ) : (
             (reportsQuery.data ?? []).map((report) => (
-              <div key={report.id} className="card" style={{ padding: '0.85rem' }}>
+              <div key={report.id} className="card admin-card">
                 <strong>
                   {report.trade
                     ? formatTradeLocalized(
@@ -169,7 +169,7 @@ export function AdminTradesPage() {
                       )
                     : report.tradeId}
                 </strong>
-                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                <div className="admin-card__meta">
                   {t(`reportReasons.${report.reason}`)} · {report.status} ·{' '}
                   {report.reporterName || report.reporterId}
                   {report.trade
@@ -177,7 +177,7 @@ export function AdminTradesPage() {
                     : null}
                 </div>
                 {report.description ? <p>{report.description}</p> : null}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
+                <div className="admin-card__actions">
                   <Link
                     to={ROUTES.TRADE_DETAIL.replace(':tradeId', report.tradeId)}
                     className="btn btn--secondary"
@@ -214,7 +214,7 @@ export function AdminTradesPage() {
       ) : null}
 
       {tab === 'stats' && !loading && statsQuery.data ? (
-        <div className="trade-stats-grid">
+        <div className="trade-stats-grid admin-tab-panel">
           <div className="card trade-stats-card">
             <span className="trade-stats-card__value">{statsQuery.data.totalActive}</span>
             <span className="trade-stats-card__label">{t('admin.totalActive')}</span>
@@ -232,13 +232,11 @@ export function AdminTradesPage() {
             <span className="trade-stats-card__label">{t('admin.totalExpired')}</span>
           </div>
           <div className="card trade-stats-card">
-            <span className="trade-stats-card__value">
-              {statsQuery.data.totalReportsPending}
-            </span>
+            <span className="trade-stats-card__value">{statsQuery.data.totalReportsPending}</span>
             <span className="trade-stats-card__label">{t('admin.totalReportsPending')}</span>
           </div>
         </div>
       ) : null}
-    </PageShell>
+    </AdminPageShell>
   );
 }

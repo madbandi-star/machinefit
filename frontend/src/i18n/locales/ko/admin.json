@@ -22,7 +22,12 @@
     "muscleImagesDesc": "근육군 대표 이미지를 업로드·교체합니다.",
     "machineCoversDesc": "머신별 대표 이미지를 업로드·교체합니다.",
     "moderationDesc": "게시글·기구 요청·신고를 처리합니다.",
-    "complianceDesc": "약관 버전·동의 이력·문의·감사 로그를 관리합니다."
+    "complianceDesc": "약관 버전·동의 이력·문의·감사 로그를 관리합니다.",
+    "photoBoardDesc": "사진게시판 신고·차단을 관리합니다.",
+    "tradesDesc": "거래글·신고·통계를 관리합니다.",
+    "onlinePtDesc": "온라인 PT 트레이너·질문·정산을 관리합니다.",
+    "pushDesc": "푸시 알림을 작성·발송합니다.",
+    "friendsDesc": "친구 관계·신고·스팸을 관리합니다."
   },
   "compliance": {
     "nav": "컴플라이언스"

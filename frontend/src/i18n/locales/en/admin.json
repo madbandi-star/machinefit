@@ -22,7 +22,12 @@
     "muscleImagesDesc": "Upload and replace muscle-group cover images.",
     "machineCoversDesc": "Upload and replace per-machine cover images.",
     "moderationDesc": "Handle posts, machine requests, and reports.",
-    "complianceDesc": "Manage legal versions, consents, support tickets, audit logs"
+    "complianceDesc": "Manage legal versions, consents, support tickets, audit logs",
+    "photoBoardDesc": "Moderate photo board reports and blocks.",
+    "tradesDesc": "Manage listings, reports, and trade stats.",
+    "onlinePtDesc": "Manage online PT trainers, Q&A, and payouts.",
+    "pushDesc": "Compose and send push notifications.",
+    "friendsDesc": "Manage friendships, reports, and spam."
   },
   "users": "Users",
   "gyms": "Gyms",

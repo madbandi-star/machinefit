@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { complianceApi } from '@/api/compliance.api';
 import { useUIStore } from '@/store/ui.store';
@@ -61,16 +61,16 @@ export function AdminCompliancePage() {
 
   if (overviewQuery.isLoading) {
     return (
-      <PageShell title={tc('compliance.admin.title')}>
+      <AdminPageShell title={tc('compliance.admin.title')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   const o = overviewQuery.data;
 
   return (
-    <PageShell title={tc('compliance.admin.title')} subtitle={tc('compliance.admin.subtitle')}>
+    <AdminPageShell title={tc('compliance.admin.title')} subtitle={tc('compliance.admin.subtitle')}>
       <section className="admin-panel">
         <h2 className="admin-panel__title">{tc('compliance.admin.overview')}</h2>
         <div className="admin-stats">
@@ -151,15 +151,17 @@ export function AdminCompliancePage() {
               </div>
             </div>
           ))}
-          {(ticketsQuery.data?.length ?? 0) === 0 && <p>{tc('support.empty')}</p>}
+          {(ticketsQuery.data?.length ?? 0) === 0 ? (
+            <p className="admin-empty">{tc('support.empty')}</p>
+          ) : null}
         </div>
       </section>
 
       <section className="admin-panel">
         <h2 className="admin-panel__title">{tc('compliance.admin.documents')}</h2>
-        <ul>
+        <ul className="admin-list">
           {(docsQuery.data ?? []).map((d) => (
-            <li key={d.id}>
+            <li key={d.id} className="admin-list__item">
               [{d.regionCode}] {d.docType} v{d.version} — {d.title}
             </li>
           ))}
@@ -168,8 +170,9 @@ export function AdminCompliancePage() {
 
       <section className="admin-panel">
         <h2 className="admin-panel__title">{tc('compliance.admin.consents')}</h2>
-        <div className="admin-row__actions">
+        <div className="admin-toolbar">
           <input
+            className="input"
             placeholder="userId UUID"
             value={consentUserId}
             onChange={(e) => setConsentUserId(e.target.value)}
@@ -182,11 +185,11 @@ export function AdminCompliancePage() {
             {tc('compliance.admin.search')}
           </button>
         </div>
-        <ul>
+        <ul className="admin-list">
           {(consentsQuery.data ?? []).slice(0, 40).map((c, idx) => {
             const row = c as Record<string, unknown>;
             return (
-              <li key={String(row.id ?? idx)}>
+              <li key={String(row.id ?? idx)} className="admin-list__item">
                 {String(row.email ?? row.userId ?? '')} · {String(row.consentType)} · v
                 {String(row.version)} · {row.agreed ? 'agreed' : 'revoked'} ·{' '}
                 {String(row.agreedAt)}
@@ -198,15 +201,15 @@ export function AdminCompliancePage() {
 
       <section className="admin-panel">
         <h2 className="admin-panel__title">{tc('compliance.admin.auditLogs')}</h2>
-        <ul>
+        <ul className="admin-list">
           {(auditQuery.data ?? []).map((log) => (
-            <li key={log.id}>
+            <li key={log.id} className="admin-list__item">
               {new Date(log.createdAt).toLocaleString()} · {log.action} · {log.targetType}/
               {log.targetId}
             </li>
           ))}
         </ul>
       </section>
-    </PageShell>
+    </AdminPageShell>
   );
 }

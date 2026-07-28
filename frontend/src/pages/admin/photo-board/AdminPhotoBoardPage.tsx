@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { photoBoardApi } from '@/api/photo-board.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -71,18 +71,18 @@ export function AdminPhotoBoardPage() {
     (tab === 'reports' && reportsQuery.isLoading) || (tab === 'blocks' && blocksQuery.isLoading);
 
   return (
-    <PageShell title={t('photoBoard.nav')} subtitle={t('photoBoard.subtitle')}>
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+    <AdminPageShell title={t('photoBoard.nav')} subtitle={t('photoBoard.subtitle')}>
+      <div className="admin-tabs">
         <button
           type="button"
-          className={`btn ${tab === 'reports' ? 'btn--primary' : 'btn--secondary'}`}
+          className={`admin-tabs__btn${tab === 'reports' ? ' is-active' : ''}`}
           onClick={() => setTab('reports')}
         >
           {t('photoBoard.reports')}
         </button>
         <button
           type="button"
-          className={`btn ${tab === 'blocks' ? 'btn--primary' : 'btn--secondary'}`}
+          className={`admin-tabs__btn${tab === 'blocks' ? ' is-active' : ''}`}
           onClick={() => setTab('blocks')}
         >
           {t('photoBoard.blocks')}
@@ -92,20 +92,18 @@ export function AdminPhotoBoardPage() {
       {loading ? <Skeleton count={3} height={72} /> : null}
 
       {tab === 'reports' && !loading ? (
-        <div style={{ display: 'grid', gap: '0.75rem' }}>
+        <div className="admin-card-list admin-tab-panel">
           {(reportsQuery.data ?? []).length === 0 ? (
-            <div className="card" style={{ padding: '1rem' }}>
-              {t('photoBoard.noReports')}
-            </div>
+            <div className="admin-empty">{t('photoBoard.noReports')}</div>
           ) : (
             (reportsQuery.data ?? []).map((report) => (
-              <div key={report.id} className="card" style={{ padding: '0.85rem' }}>
+              <div key={report.id} className="card admin-card">
                 <strong>{report.postTitle || report.postId || report.commentId}</strong>
-                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                <div className="admin-card__meta">
                   {report.reason} · {report.status} · {report.reporterName || report.reporterId}
                 </div>
                 {report.description ? <p>{report.description}</p> : null}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
+                <div className="admin-card__actions">
                   {report.postId ? (
                     <>
                       <Link
@@ -153,10 +151,9 @@ export function AdminPhotoBoardPage() {
       ) : null}
 
       {tab === 'blocks' && !loading ? (
-        <div style={{ display: 'grid', gap: '0.75rem' }}>
+        <div className="admin-card-list admin-tab-panel">
           <form
-            className="card"
-            style={{ padding: '0.85rem', display: 'grid', gap: '0.5rem' }}
+            className="card admin-form-card admin-form-grid"
             onSubmit={(e) => {
               e.preventDefault();
               if (!blockUserId.trim()) return;
@@ -185,15 +182,13 @@ export function AdminPhotoBoardPage() {
             </button>
           </form>
           {(blocksQuery.data ?? []).map((block) => (
-            <div key={block.id} className="card" style={{ padding: '0.85rem' }}>
+            <div key={block.id} className="card admin-card">
               <strong>{block.userName || block.userId}</strong>
-              <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                {block.reason || '—'}
-              </div>
+              <div className="admin-card__meta">{block.reason || '—'}</div>
             </div>
           ))}
         </div>
       ) : null}
-    </PageShell>
+    </AdminPageShell>
   );
 }

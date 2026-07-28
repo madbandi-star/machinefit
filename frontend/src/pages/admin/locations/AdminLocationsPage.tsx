@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { locationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
@@ -143,10 +143,10 @@ export function AdminLocationsPage() {
     locale.startsWith('ko') ? name.ko || name.en || '' : name.en || name.ko || '';
 
   return (
-    <PageShell title={t('locations.title')} subtitle={t('locations.subtitle')}>
-      <section className="admin-table" style={{ marginBottom: '1.5rem' }}>
-        <h3>{t('locations.addCountry')}</h3>
-        <div className="card admin-table__row" style={{ display: 'grid', gap: '0.5rem' }}>
+    <AdminPageShell title={t('locations.title')} subtitle={t('locations.subtitle')}>
+      <section className="admin-panel admin-section">
+        <h3 className="admin-section__title">{t('locations.addCountry')}</h3>
+        <div className="card admin-form-card admin-form-grid">
           <input
             className="input"
             placeholder={t('locations.code')}
@@ -187,9 +187,9 @@ export function AdminLocationsPage() {
             {t('locations.addCountry')}
           </button>
         </div>
-        <ul style={{ marginTop: '0.75rem' }}>
+        <ul className="admin-list">
           {(countriesQuery.data ?? []).slice(0, 30).map((c) => (
-            <li key={c.code}>
+            <li key={c.code} className="admin-list__item">
               {c.flagEmoji ? `${c.flagEmoji} ` : ''}
               {nameOf(c.name)} ({c.code})
             </li>
@@ -197,9 +197,9 @@ export function AdminLocationsPage() {
         </ul>
       </section>
 
-      <section className="admin-table" style={{ marginBottom: '1.5rem' }}>
-        <h3>{t('locations.addState')}</h3>
-        <div className="card admin-table__row" style={{ display: 'grid', gap: '0.5rem' }}>
+      <section className="admin-panel admin-section">
+        <h3 className="admin-section__title">{t('locations.addState')}</h3>
+        <div className="card admin-form-card admin-form-grid">
           <select
             className="input"
             value={countryCode}
@@ -243,18 +243,18 @@ export function AdminLocationsPage() {
             {t('locations.addState')}
           </button>
         </div>
-        <ul style={{ marginTop: '0.75rem' }}>
+        <ul className="admin-list">
           {(statesQuery.data ?? []).map((s) => (
-            <li key={s.id}>
+            <li key={s.id} className="admin-list__item">
               {nameOf(s.name)} ({s.code}) — {s.id}
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="admin-table" style={{ marginBottom: '1.5rem' }}>
-        <h3>{t('locations.addCity')}</h3>
-        <div className="card admin-table__row" style={{ display: 'grid', gap: '0.5rem' }}>
+      <section className="admin-panel admin-section">
+        <h3 className="admin-section__title">{t('locations.addCity')}</h3>
+        <div className="card admin-form-card admin-form-grid">
           <select
             className="input"
             value={selectedStateId}
@@ -297,21 +297,19 @@ export function AdminLocationsPage() {
             {t('locations.addCity')}
           </button>
         </div>
-        <ul style={{ marginTop: '0.75rem' }}>
+        <ul className="admin-list">
           {(citiesQuery.data ?? []).map((c) => (
-            <li key={c.id}>
+            <li key={c.id} className="admin-list__item">
               {nameOf(c.name)} ({c.code})
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="admin-table">
-        <h3>{t('locations.addDistrict')}</h3>
-        <p className="admin-table__meta" style={{ marginBottom: '0.75rem' }}>
-          {t('locations.addDistrictHint')}
-        </p>
-        <div className="card admin-table__row" style={{ display: 'grid', gap: '0.5rem' }}>
+      <section className="admin-panel admin-section">
+        <h3 className="admin-section__title">{t('locations.addDistrict')}</h3>
+        <p className="admin-table__meta admin-section__hint">{t('locations.addDistrictHint')}</p>
+        <div className="card admin-form-card admin-form-grid">
           <select
             className="input"
             value={selectedStateId}
@@ -383,17 +381,17 @@ export function AdminLocationsPage() {
             {t('locations.addDistrict')}
           </button>
         </div>
-        <ul style={{ marginTop: '0.75rem' }}>
+        <ul className="admin-list">
           {(districtsQuery.data ?? []).map((d) => (
-            <li key={d.id}>
+            <li key={d.id} className="admin-list__item">
               {nameOf(d.name)} ({d.code})
             </li>
           ))}
           {selectedCityId && (districtsQuery.data?.length ?? 0) === 0 ? (
-            <li style={{ color: 'var(--color-text-muted)' }}>{t('locations.noDistricts')}</li>
+            <li className="admin-list__item admin-list__item--muted">{t('locations.noDistricts')}</li>
           ) : null}
         </ul>
       </section>
-    </PageShell>
+    </AdminPageShell>
   );
 }

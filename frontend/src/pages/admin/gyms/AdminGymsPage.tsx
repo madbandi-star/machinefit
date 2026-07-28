@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { GymMachine } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -65,14 +65,14 @@ export function AdminGymsPage() {
 
   if (isLoading) {
     return (
-      <PageShell title={t('admin:gyms')}>
+      <AdminPageShell title={t('admin:gyms')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   return (
-    <PageShell title={t('admin:gyms')}>
+    <AdminPageShell title={t('admin:gyms')}>
       <div className="admin-table">
         {data?.map((gym) => (
           <div key={gym.id} className="card admin-table__row admin-gym-card">
@@ -161,6 +161,6 @@ export function AdminGymsPage() {
           </div>
         ))}
       </div>
-    </PageShell>
+    </AdminPageShell>
   );
 }

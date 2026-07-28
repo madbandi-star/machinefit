@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -80,12 +80,13 @@ export function AdminModerationPage() {
     (tab === 'reports' && reportsLoading);
 
   return (
-    <PageShell title={t('moderation')}>
-      <div className="admin-tabs">
+    <AdminPageShell title={t('moderation')}>
+      <div className="admin-tabs admin-tabs--wide">
         {(['posts', 'requests', 'reports'] as Tab[]).map((key) => (
           <button
             key={key}
-            className={`btn ${tab === key ? 'btn--primary' : 'btn--secondary'}`}
+            type="button"
+            className={`admin-tabs__btn${tab === key ? ' is-active' : ''}`}
             onClick={() => setTab(key)}
           >
             {t(key)}
@@ -96,7 +97,7 @@ export function AdminModerationPage() {
       {isLoading ? (
         <Skeleton count={3} />
       ) : tab === 'posts' ? (
-        <div className="admin-table" style={{ marginTop: '1rem' }}>
+        <div className="admin-table admin-tab-panel">
           {posts?.map((post) => (
             <div key={post.id} className="card admin-table__row">
               <div>
@@ -125,7 +126,7 @@ export function AdminModerationPage() {
           ))}
         </div>
       ) : tab === 'requests' ? (
-        <div className="admin-table" style={{ marginTop: '1rem' }}>
+        <div className="admin-table admin-tab-panel">
           {requests?.map((req) => (
             <div key={req.id} className="card admin-table__row">
               <div>
@@ -154,11 +155,13 @@ export function AdminModerationPage() {
           ))}
         </div>
       ) : (
-        <div className="admin-table" style={{ marginTop: '1rem' }}>
+        <div className="admin-table admin-tab-panel">
           {reports?.map((report) => (
             <div key={report.id} className="card admin-table__row">
               <div>
-                <strong>{t('reason')}: {report.reason}</strong>
+                <strong>
+                  {t('reason')}: {report.reason}
+                </strong>
                 <p className="admin-table__meta">
                   {report.description} · {report.status}
                 </p>
@@ -183,6 +186,6 @@ export function AdminModerationPage() {
           ))}
         </div>
       )}
-    </PageShell>
+    </AdminPageShell>
   );
 }

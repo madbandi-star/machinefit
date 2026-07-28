@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { MotivationMediaItem, MotivationMediaType } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -130,14 +130,14 @@ export function AdminMotivationPage() {
 
   if (isLoading) {
     return (
-      <PageShell title={t('motivation.title')}>
+      <AdminPageShell title={t('motivation.title')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   return (
-    <PageShell title={t('motivation.title')} subtitle={t('motivation.subtitle')}>
+    <AdminPageShell title={t('motivation.title')} subtitle={t('motivation.subtitle')}>
       <MediaSection
         title={t('motivation.musicSection')}
         hint={t('motivation.musicHint')}
@@ -185,7 +185,7 @@ export function AdminMotivationPage() {
           order: t('motivation.order'),
         }}
       />
-    </PageShell>
+    </AdminPageShell>
   );
 }
 
@@ -293,12 +293,10 @@ function MediaSection({
   };
 }) {
   return (
-    <section className="admin-motivation" style={{ marginBottom: '1.75rem' }}>
-      <header style={{ marginBottom: '0.75rem' }}>
-        <h3 style={{ margin: 0 }}>{title}</h3>
-        <p className="admin-table__meta" style={{ marginTop: '0.35rem' }}>
-          {hint}
-        </p>
+    <section className="admin-motivation">
+      <header className="admin-motivation__header">
+        <h3>{title}</h3>
+        <p className="admin-table__meta">{hint}</p>
       </header>
 
       <div className="admin-table">
@@ -381,8 +379,7 @@ function MediaSection({
 
       <button
         type="button"
-        className="btn btn--primary"
-        style={{ marginTop: '0.75rem' }}
+        className="btn btn--primary admin-motivation__save"
         disabled={saving}
         onClick={onSave}
       >

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { friendsApi } from '@/api/friends.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
+import '@/styles/admin.css';
 import '@/styles/friends.css';
 
 type Tab = 'overview' | 'relations' | 'reports' | 'spam';
@@ -73,8 +74,7 @@ export function AdminFriendsPage() {
 
   return (
     <div className="friends-page">
-      <PageShell>
-        <h2 style={{ marginTop: 0 }}>{t('admin.title')}</h2>
+      <AdminPageShell title={t('admin.title')}>
         <nav className="friends-subnav" aria-label={t('admin.title')}>
           {(['overview', 'relations', 'reports', 'spam'] as const).map((key) => (
             <button
@@ -96,23 +96,28 @@ export function AdminFriendsPage() {
             {statsQuery.isLoading || !statsQuery.data ? (
               <Skeleton count={4} height={48} />
             ) : (
-              <ul className="friends-list">
-                <li className="friends-row__sub">
-                  {t('admin.stats.friendships')}: {statsQuery.data.friendshipCount}
-                </li>
-                <li className="friends-row__sub">
-                  {t('admin.stats.pending')}: {statsQuery.data.pendingRequestCount}
-                </li>
-                <li className="friends-row__sub">
-                  {t('admin.stats.blocks')}: {statsQuery.data.blockCount}
-                </li>
-                <li className="friends-row__sub">
-                  {t('admin.stats.reports')}: {statsQuery.data.reportCount}
-                </li>
-                <li className="friends-row__sub">
-                  {t('admin.stats.spam')}: {statsQuery.data.spamRequestSuspects}
-                </li>
-              </ul>
+              <div className="admin-stats">
+                <div className="admin-stat">
+                  <div className="admin-stat__value">{statsQuery.data.friendshipCount}</div>
+                  <div className="admin-stat__label">{t('admin.stats.friendships')}</div>
+                </div>
+                <div className="admin-stat">
+                  <div className="admin-stat__value">{statsQuery.data.pendingRequestCount}</div>
+                  <div className="admin-stat__label">{t('admin.stats.pending')}</div>
+                </div>
+                <div className="admin-stat">
+                  <div className="admin-stat__value">{statsQuery.data.blockCount}</div>
+                  <div className="admin-stat__label">{t('admin.stats.blocks')}</div>
+                </div>
+                <div className="admin-stat">
+                  <div className="admin-stat__value">{statsQuery.data.reportCount}</div>
+                  <div className="admin-stat__label">{t('admin.stats.reports')}</div>
+                </div>
+                <div className="admin-stat">
+                  <div className="admin-stat__value">{statsQuery.data.spamRequestSuspects}</div>
+                  <div className="admin-stat__label">{t('admin.stats.spam')}</div>
+                </div>
+              </div>
             )}
           </>
         )}
@@ -233,7 +238,7 @@ export function AdminFriendsPage() {
             )}
           </>
         )}
-      </PageShell>
+      </AdminPageShell>
     </div>
   );
 }

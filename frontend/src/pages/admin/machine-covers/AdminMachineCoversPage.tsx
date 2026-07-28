@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { MachineCoverImageAsset } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
@@ -147,25 +147,25 @@ export function AdminMachineCoversPage() {
 
   if (listQuery.isLoading && !listQuery.data) {
     return (
-      <PageShell title={t('admin:machineCovers.title')}>
+      <AdminPageShell title={t('admin:machineCovers.title')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   if (listQuery.isError && !listQuery.data) {
     return (
-      <PageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
+      <AdminPageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
         <p className="admin-muscle-hint">{t('admin:error')}</p>
         <button type="button" className="btn btn--primary" onClick={() => void listQuery.refetch()}>
           {t('admin:machineCovers.retry')}
         </button>
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   return (
-    <PageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
+    <AdminPageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
       <p className="admin-muscle-hint">{t('admin:machineCovers.recommend')}</p>
 
       <form
@@ -312,7 +312,7 @@ export function AdminMachineCoversPage() {
           <img src={lightboxUrl} alt="" className="admin-muscle-lightbox__img" />
         </button>
       ) : null}
-    </PageShell>
+    </AdminPageShell>
   );
 }
 

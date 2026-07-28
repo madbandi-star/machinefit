@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -21,9 +21,9 @@ export function AdminDashboardPage() {
 
   if (isLoading) {
     return (
-      <PageShell title={t('title')}>
+      <AdminPageShell title={t('title')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
@@ -79,17 +79,16 @@ export function AdminDashboardPage() {
       desc: t('menu.machineCoversDesc'),
     },
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
-    {
-      to: ROUTES.ADMIN_COMPLIANCE,
-      title: t('compliance.nav', { defaultValue: 'Compliance' }),
-      desc: t('menu.complianceDesc', {
-        defaultValue: 'Legal docs, consents, support tickets, audit logs',
-      }),
-    },
+    { to: ROUTES.ADMIN_COMPLIANCE, title: t('compliance.nav'), desc: t('menu.complianceDesc') },
+    { to: ROUTES.ADMIN_PHOTO_BOARD, title: t('photoBoard.nav'), desc: t('menu.photoBoardDesc') },
+    { to: ROUTES.ADMIN_TRADES, title: t('trades.nav'), desc: t('menu.tradesDesc') },
+    { to: ROUTES.ADMIN_ONLINE_PT, title: t('onlinePt.nav'), desc: t('menu.onlinePtDesc') },
+    { to: ROUTES.ADMIN_PUSH, title: t('push.nav'), desc: t('menu.pushDesc') },
+    { to: ROUTES.ADMIN_FRIENDS, title: t('friends.nav'), desc: t('menu.friendsDesc') },
   ];
 
   return (
-    <PageShell title={t('title')} subtitle={t('subtitle')}>
+    <AdminPageShell title={t('title')} subtitle={t('subtitle')}>
       <section className="admin-panel" aria-label={t('attentionTitle')}>
         <h2 className="admin-panel__title">{t('attentionTitle')}</h2>
         <p className="admin-panel__desc">{t('attentionDesc')}</p>
@@ -138,6 +137,6 @@ export function AdminDashboardPage() {
           ))}
         </div>
       </section>
-    </PageShell>
+    </AdminPageShell>
   );
 }

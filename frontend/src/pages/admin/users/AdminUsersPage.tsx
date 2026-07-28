@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ASSIGNABLE_ROLE_CODES, type RoleCode } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -40,14 +40,14 @@ export function AdminUsersPage() {
 
   if (isLoading) {
     return (
-      <PageShell title={t('users')}>
+      <AdminPageShell title={t('users')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   return (
-    <PageShell title={t('users')}>
+    <AdminPageShell title={t('users')}>
       <div className="admin-table">
         {data?.map((user) => (
           <div key={user.id} className="card admin-table__row">
@@ -88,6 +88,6 @@ export function AdminUsersPage() {
           </div>
         ))}
       </div>
-    </PageShell>
+    </AdminPageShell>
   );
 }

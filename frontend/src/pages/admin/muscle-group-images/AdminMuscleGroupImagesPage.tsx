@@ -6,7 +6,7 @@ import {
   type MuscleGroupImageAsset,
   type MuscleGroupImageKey,
 } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
@@ -147,14 +147,14 @@ export function AdminMuscleGroupImagesPage() {
 
   if (isLoading) {
     return (
-      <PageShell title={t('admin:muscleImages.title')}>
+      <AdminPageShell title={t('admin:muscleImages.title')}>
         <Skeleton count={4} />
-      </PageShell>
+      </AdminPageShell>
     );
   }
 
   return (
-    <PageShell title={t('admin:muscleImages.title')} subtitle={t('admin:muscleImages.subtitle')}>
+    <AdminPageShell title={t('admin:muscleImages.title')} subtitle={t('admin:muscleImages.subtitle')}>
       <p className="admin-muscle-hint">{t('admin:muscleImages.recommend')}</p>
 
       <div className="admin-muscle-grid">
@@ -224,7 +224,7 @@ export function AdminMuscleGroupImagesPage() {
           <img src={lightboxUrl} alt="" className="admin-muscle-lightbox__img" />
         </button>
       ) : null}
-    </PageShell>
+    </AdminPageShell>
   );
 }
 

@@ -8,8 +8,9 @@ import { useUIStore } from '@/store/ui.store';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { safeHttpUrl } from '@/utils/safeHttpUrl';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import '@/styles/admin.css';
 import '@/styles/components.css';
-import '@/styles/gym.css';
 
 export function AdminOwnerApplicationsPage() {
   const { t } = useTranslation(['admin', 'gyms', 'common']);
@@ -48,14 +49,27 @@ export function AdminOwnerApplicationsPage() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  if (isLoading) return <Skeleton count={4} height={88} />;
-  if (isError) return <QueryErrorMessage />;
+  if (isLoading) {
+    return (
+      <AdminPageShell title={t('admin:ownerApplications.title')}>
+        <Skeleton count={4} height={88} />
+      </AdminPageShell>
+    );
+  }
+  if (isError) {
+    return (
+      <AdminPageShell title={t('admin:ownerApplications.title')}>
+        <QueryErrorMessage />
+      </AdminPageShell>
+    );
+  }
 
   return (
-    <div className="admin-owner-apps">
-      <header className="admin-owner-apps__header">
-        <h1>{t('admin:ownerApplications.title')}</h1>
+    <AdminPageShell
+      title={t('admin:ownerApplications.title')}
+      actions={
         <select
+          className="admin-select"
           value={status}
           onChange={(e) => setStatus(e.target.value as typeof status)}
           aria-label={t('admin:ownerApplications.filter')}
@@ -65,8 +79,8 @@ export function AdminOwnerApplicationsPage() {
           <option value="rejected">{t('admin:ownerApplications.rejectedStatus')}</option>
           <option value="">{t('admin:ownerApplications.all')}</option>
         </select>
-      </header>
-
+      }
+    >
       {!data?.length ? (
         <p className="admin-owner-apps__empty">{t('admin:ownerApplications.empty')}</p>
       ) : (
@@ -143,6 +157,6 @@ export function AdminOwnerApplicationsPage() {
           ))}
         </ul>
       )}
-    </div>
+    </AdminPageShell>
   );
 }

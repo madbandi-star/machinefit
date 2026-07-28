@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { OnlinePtDeadlineHours, OnlinePtOverdueAction } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { onlinePtApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -134,13 +134,13 @@ export function AdminOnlinePtPage() {
   const tabs: Tab[] = ['stats', 'policy', 'trainers', 'questions', 'payouts', 'reviews'];
 
   return (
-    <PageShell title={t('admin.title')}>
-      <div className="opt-tabs">
+    <AdminPageShell title={t('admin.title')}>
+      <div className="admin-tabs admin-tabs--wide">
         {tabs.map((key) => (
           <button
             key={key}
             type="button"
-            className={`opt-sort__btn${tab === key ? ' is-active' : ''}`}
+            className={`admin-tabs__btn${tab === key ? ' is-active' : ''}`}
             onClick={() => setTab(key)}
           >
             {t(`admin.${key}`)}
@@ -305,7 +305,7 @@ export function AdminOnlinePtPage() {
                 <p className="opt-meta">
                   {tr.ticketPrice.toLocaleString()}원 · {tr.specialties.join(', ')}
                 </p>
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <div className="admin-card__actions">
                   <button
                     type="button"
                     className="btn btn--secondary"
@@ -377,7 +377,7 @@ export function AdminOnlinePtPage() {
                   </strong>
                   <span>{p.status}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <div className="admin-card__actions">
                   <button
                     type="button"
                     className="btn btn--secondary"
@@ -422,6 +422,6 @@ export function AdminOnlinePtPage() {
           </div>
         )
       ) : null}
-    </PageShell>
+    </AdminPageShell>
   );
 }
