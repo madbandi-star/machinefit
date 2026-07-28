@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { NotificationType } from '@machinefit/shared';
+import { isRoleCode, type NotificationType } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -16,6 +16,39 @@ import '@/styles/notifications.css';
 function getLocalized(text: { en?: string; ko?: string } | undefined, lang: string) {
   if (!text) return '';
   return text[lang as keyof typeof text] ?? text.en ?? text.ko ?? '';
+}
+
+const PUSH_NOTIFICATION_TYPES = new Set<NotificationType>([
+  'push_general',
+  'push_notice',
+  'push_workout',
+  'push_schedule',
+  'push_trade',
+  'push_event',
+]);
+
+function formatPushSenderLabel(
+  payload: Record<string, unknown> | undefined,
+  roleLabel: (role: string) => string
+): string | null {
+  if (!payload) return null;
+
+  const loginId =
+    typeof payload.senderLoginId === 'string'
+      ? payload.senderLoginId
+      : typeof payload.senderId === 'string'
+        ? payload.senderId.slice(0, 8)
+        : null;
+
+  const role =
+    typeof payload.senderRole === 'string' && isRoleCode(payload.senderRole)
+      ? roleLabel(payload.senderRole)
+      : null;
+
+  if (loginId && role) return `${loginId} · ${role}`;
+  if (loginId) return loginId;
+  if (role) return role;
+  return null;
 }
 
 function friendNotificationPath(
@@ -40,7 +73,7 @@ function friendNotificationPath(
 }
 
 export function NotificationsPage() {
-  const { t, i18n } = useTranslation('notifications');
+  const { t, i18n } = useTranslation(['notifications', 'push']);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
@@ -110,9 +143,18 @@ export function NotificationsPage() {
                 {n.body && (
                   <p className="notification-item__body">{getLocalized(n.body, lang)}</p>
                 )}
-                <span className="notification-item__date">
-                  {new Date(n.createdAt).toLocaleString()}
-                </span>
+                <div className="notification-item__footer">
+                  <span className="notification-item__date">
+                    {new Date(n.createdAt).toLocaleString()}
+                  </span>
+                  {PUSH_NOTIFICATION_TYPES.has(n.type) ? (
+                    <span className="notification-item__sender">
+                      {formatPushSenderLabel(n.payload, (role) =>
+                        t(`roles.${role}`, { ns: 'push' })
+                      ) ?? t('pushSenderUnknown', { ns: 'notifications' })}
+                    </span>
+                  ) : null}
+                </div>
               </button>
             ))}
           </div>

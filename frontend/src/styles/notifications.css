@@ -52,3 +52,21 @@
   font-size: 0.75rem;
   color: var(--color-text-muted);
 }
+
+.notification-item__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.notification-item__sender {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: right;
+  flex-shrink: 0;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

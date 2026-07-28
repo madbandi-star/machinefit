@@ -9,5 +9,6 @@
   "gymVerified": "Gym verified",
   "system": "System",
   "announcement": "Announcement",
+  "pushSenderUnknown": "Unknown sender",
   "error": "We couldn't update notifications. Please try again in a moment."
 }

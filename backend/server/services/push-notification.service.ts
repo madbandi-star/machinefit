@@ -22,6 +22,7 @@ import {
   pushAudienceService,
 } from './push-audience.service.js';
 import { notificationRepository } from '../repositories/notification.repository.js';
+import { userLoginIdFromEmail } from '../utils/user-login-id.util.js';
 
 const KIND_TO_NOTIFICATION_TYPE: Record<PushKind, NotificationType> = {
   general: 'push_general',
@@ -32,10 +33,17 @@ const KIND_TO_NOTIFICATION_TYPE: Record<PushKind, NotificationType> = {
   event: 'push_event',
 };
 
-async function loadSenderRole(
+interface PushSenderProfile {
+  id: string;
+  roleCode: RoleCode;
+  displayName: string;
+  loginId: string;
+}
+
+async function loadSender(
   senderId: string,
   fallbackRole?: RoleCode
-): Promise<{ id: string; roleCode: RoleCode }> {
+): Promise<PushSenderProfile> {
   const pool = getPool();
   if (pool) {
     const user = await userRepository.findById(senderId);
@@ -45,6 +53,8 @@ async function loadSenderRole(
     return {
       id: user.id,
       roleCode: isRoleCode(user.roleCode) ? user.roleCode : Role.MEMBER,
+      displayName: user.displayName,
+      loginId: userLoginIdFromEmail(user.email),
     };
   }
 
@@ -54,11 +64,18 @@ async function loadSenderRole(
     return {
       id: dev.id,
       roleCode: isRoleCode(dev.roleCode) ? dev.roleCode : Role.MEMBER,
+      displayName: dev.displayName,
+      loginId: userLoginIdFromEmail(dev.email),
     };
   }
 
   if (fallbackRole && isRoleCode(fallbackRole)) {
-    return { id: senderId, roleCode: fallbackRole };
+    return {
+      id: senderId,
+      roleCode: fallbackRole,
+      displayName: senderId.slice(0, 8),
+      loginId: senderId.slice(0, 8),
+    };
   }
 
   throw new AppError(404, 'NOT_FOUND', 'User not found');
@@ -83,7 +100,7 @@ export const pushNotificationService = {
     senderId: string,
     fallbackRole?: RoleCode
   ): Promise<PushComposeCapabilities> {
-    const sender = await loadSenderRole(senderId, fallbackRole);
+    const sender = await loadSender(senderId, fallbackRole);
     return pushAudienceService.getCapabilities(sender.id, sender.roleCode);
   },
 
@@ -92,7 +109,7 @@ export const pushNotificationService = {
     input: PushSendInput,
     fallbackRole?: RoleCode
   ): Promise<PushSendResult> {
-    const sender = await loadSenderRole(senderId, fallbackRole);
+    const sender = await loadSender(senderId, fallbackRole);
     const meta = getPushComposeMeta(sender.roleCode);
 
     if (!meta.canCompose) {
@@ -156,6 +173,9 @@ export const pushNotificationService = {
       imageUrl: input.imageUrl ?? null,
       campaignId: campaign.id,
       senderId: sender.id,
+      senderRole: sender.roleCode,
+      senderDisplayName: sender.displayName,
+      senderLoginId: sender.loginId,
     };
 
     let delivered = 0;
@@ -251,7 +271,7 @@ export const pushNotificationService = {
     options: { all?: boolean; limit?: number; offset?: number } = {},
     fallbackRole?: RoleCode
   ) {
-    const sender = await loadSenderRole(senderId, fallbackRole);
+    const sender = await loadSender(senderId, fallbackRole);
     const wantAll = Boolean(options.all) && hasMinRole(sender.roleCode, Role.ADMIN);
     return pushNotificationRepository.listCampaigns({
       senderId: sender.id,
@@ -266,7 +286,7 @@ export const pushNotificationService = {
     campaignId: string,
     fallbackRole?: RoleCode
   ) {
-    const sender = await loadSenderRole(senderId, fallbackRole);
+    const sender = await loadSender(senderId, fallbackRole);
     const isAdmin = hasMinRole(sender.roleCode, Role.ADMIN);
     await pushNotificationRepository.requireCampaignAccess(
       campaignId,
