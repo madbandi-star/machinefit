@@ -75,11 +75,6 @@ export function TrainerApplyPage() {
       <PageShell
         title={t('online-pt:trainerApply.title')}
         subtitle={t('online-pt:trainerApply.subtitle')}
-        action={
-          <Link to={ROUTES.MY_PAGE} className="btn btn--secondary">
-            {t('common:actions.back')}
-          </Link>
-        }
       >
         {alreadyTrainer ? (
           <section className="owner-apply__done" aria-live="polite">

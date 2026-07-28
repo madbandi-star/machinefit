@@ -75,11 +75,6 @@ export function OwnerApplyPage() {
       <PageShell
         title={t('gyms:ownerApply.title')}
         subtitle={t('gyms:ownerApply.subtitle')}
-        action={
-          <Link to={ROUTES.MY_PAGE} className="btn btn--secondary">
-            {t('common:actions.back')}
-          </Link>
-        }
       >
         {alreadyOwner ? (
           <section className="owner-apply__done" aria-live="polite">
