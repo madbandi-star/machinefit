@@ -1,5 +1,13 @@
--- Supabase Row Level Security policies (enable when connecting to Supabase)
--- Run AFTER all migrations. Requires: ALTER TABLE ... ENABLE ROW LEVEL SECURITY;
+-- Supabase Row Level Security policies (legacy notes).
+--
+-- IMPORTANT (2026-07): Migration `077_enable_rls_lock_anon.sql` enables RLS on all
+-- public tables with no anon/authenticated policies (deny-by-default for PostgREST).
+-- MachineFit continues to authorize in Express; do NOT add open public policies
+-- unless you intentionally expose a table via the Supabase Data API.
+--
+-- Historical draft policies below remain commented for reference only.
+-- When using Supabase Auth later, replace auth.uid() with your JWT claims.
+-- When using Express-only (current approach), enforce access in repository/service layer.
 
 -- =============================================================================
 -- USERS — users can read/update own profile
