@@ -154,8 +154,11 @@ export function EasyWizardPage() {
   };
 
   const createRecommend = useMutation({
-    mutationFn: async () => {
-      if (!selected || !user) throw new Error('missing');
+    mutationFn: async (pickOverride?: EasyMachinePickResult) => {
+      const machineCode = pickOverride?.code ?? selected?.code;
+      const muscleGroup =
+        pickOverride !== undefined ? pickOverride.targetMuscle : targetMuscle;
+      if (!machineCode || !user) throw new Error('missing');
       if (
         user.gender == null ||
         user.heightCm == null ||
@@ -168,12 +171,12 @@ export function EasyWizardPage() {
         await assertNoDuplicateToday({
           gymId: activeGymId,
           memberId: activeMemberId,
-          machineCode: selected.code,
-          targetMuscleGroup: targetMuscle ?? undefined,
+          machineCode,
+          targetMuscleGroup: muscleGroup ?? undefined,
         });
       }
       const res = await recommendationApi.create({
-        machineCode: selected.code,
+        machineCode,
         gender: user.gender,
         heightCm: user.heightCm,
         weightKg: user.weightKg,
@@ -185,7 +188,7 @@ export function EasyWizardPage() {
         weightDifficulty,
         gymId: activeGymId ?? undefined,
         memberId: activeMemberId ?? undefined,
-        ...(targetMuscle ? { targetMuscleGroup: targetMuscle } : {}),
+        ...(muscleGroup ? { targetMuscleGroup: muscleGroup } : {}),
       });
       return res.data.data;
     },
@@ -351,6 +354,9 @@ export function EasyWizardPage() {
         if (!accepted) return;
         setPickerOpen(false);
         setPickerInitialCode(null);
+        if (step === 1) {
+          createRecommend.mutate(pick);
+        }
       }}
     />
   );
@@ -554,7 +560,7 @@ export function EasyWizardPage() {
                   ? t('easyMode.needMuscle')
                   : undefined
           }
-          onPrimary={() => createRecommend.mutate()}
+          onPrimary={() => createRecommend.mutate(undefined)}
         >
           <div className="easy-s1">
             <div className="easy-s1-intro">
