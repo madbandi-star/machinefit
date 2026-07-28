@@ -46,7 +46,7 @@ export function MyPage() {
   const { activeGym, gyms } = useActiveGym();
 
   const [showLogout, setShowLogout] = useState(false);
-  const [labExpanded, setLabExpanded] = useState(false);
+  const [labExpanded, setLabExpanded] = useState(true);
 
   const roleCode = user?.roleCode;
   const isOwner = hasMinRole(roleCode, Role.OWNER);
