@@ -60,6 +60,7 @@
   "reason": "Reason",
   "saved": "Your changes are saved.",
   "listCount": "{{count}} items",
+  "noUsers": "No users yet.",
   "error": "We couldn't finish that. Please try again in a moment.",
   "enable": "Enable",
   "disable": "Disable",

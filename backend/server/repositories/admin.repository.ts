@@ -31,8 +31,16 @@ export const adminRepository = {
     const pendingReports = mockReports.filter((r) => r.status === 'pending').length;
     const hiddenPosts = mockPosts.filter((p) => p.isHidden).length;
 
+    let userCount = devUserCount + 3;
+    if (pool) {
+      const count = await pool.query<{ count: string }>(
+        'SELECT COUNT(*)::text AS count FROM users'
+      );
+      userCount = parseInt(count.rows[0]?.count ?? '0', 10);
+    }
+
     return {
-      userCount: pool ? 0 : devUserCount + 3,
+      userCount,
       gymCount: MOCK_GYMS.length,
       machineCount: MOCK_MACHINES.length,
       brandCount: MOCK_BRANDS.length,

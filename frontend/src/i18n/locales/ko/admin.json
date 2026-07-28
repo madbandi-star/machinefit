@@ -64,6 +64,7 @@
   "saved": "변경 사항을 저장했어요.",
   "error": "처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
   "listCount": "{{count}}건",
+  "noUsers": "등록된 사용자가 없습니다.",
   "enable": "활성화",
   "disable": "비활성화",
   "muscleImages": {
