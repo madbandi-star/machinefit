@@ -10,6 +10,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { resolvePhotoBoardMediaUrl } from '@/utils/photoBoardMediaUrl';
 import '@/styles/components.css';
 import '@/styles/photo-board.css';
 
@@ -71,7 +72,7 @@ export function PhotoPostWritePage() {
       (post.images ?? []).map((img) => ({
         id: img.id,
         existingId: img.id,
-        previewUrl: img.thumbUrl,
+        previewUrl: resolvePhotoBoardMediaUrl(img.thumbUrl),
       }))
     );
   }, [detailQuery.data, navigate, showToast, t, user]);

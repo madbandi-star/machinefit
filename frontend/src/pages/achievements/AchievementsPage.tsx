@@ -105,7 +105,7 @@ export function AchievementsPage() {
   const { activeGymId } = useActiveGym();
   const { activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
   const [tab, setTab] = useState<ViewTab>('overview');
-  const [category, setCategory] = useState<AchievementCategory | 'all'>('all');
+  const [category, setCategory] = useState<AchievementCategory | 'all'>('consistency');
   const [unlockQueue, setUnlockQueue] = useState<AchievementProgressItem[]>([]);
   const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');

@@ -212,17 +212,19 @@ export function LifterDnaPage() {
 
             <section className="dna-section">
               <h3 className="dna-section__title">{t('lifterDna.habits')}</h3>
-              <ul className="dna-habits">
+              <div className="dna-habits glass">
                 {data.habits.map((habit) => (
-                  <li key={habit.id} className="dna-habits__item glass">
-                    <span aria-hidden>{habit.emoji}</span>
-                    <div>
-                      <p className="dna-habits__label">{habit.label}</p>
-                      <p className="dna-habits__value">{habit.value}</p>
-                    </div>
-                  </li>
+                  <article key={habit.id} className="dna-habits__item">
+                    <span className="dna-habits__emoji" aria-hidden>
+                      {habit.emoji}
+                    </span>
+                    <p className="dna-habits__label">{habit.label}</p>
+                    <p className="dna-habits__value" title={habit.value}>
+                      {habit.value}
+                    </p>
+                  </article>
                 ))}
-              </ul>
+              </div>
             </section>
 
             <section className="dna-section">

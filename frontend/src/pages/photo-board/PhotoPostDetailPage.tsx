@@ -10,6 +10,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { resolvePhotoBoardMediaUrl } from '@/utils/photoBoardMediaUrl';
 import '@/styles/components.css';
 import '@/styles/photo-board.css';
 
@@ -152,7 +153,12 @@ export function PhotoPostDetailPage() {
           >
             {images.map((image) => (
               <div key={image.id} className="photo-detail__slide">
-                <img src={image.mainUrl} alt={post.title} loading="lazy" decoding="async" />
+                <img
+                  src={resolvePhotoBoardMediaUrl(image.mainUrl)}
+                  alt={post.title}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             ))}
           </div>

@@ -5,7 +5,7 @@ export function publicApiBase(): string {
     return env.PUBLIC_API_BASE_URL.replace(/\/+$/, '');
   }
   if (env.NODE_ENV === 'production') {
-    return 'https://machinefit-api.onrender.com/api/v1';
+    return 'https://machinefit.onrender.com/api/v1';
   }
   return `http://localhost:${env.PORT}${env.API_BASE_PATH}`;
 }

@@ -10,6 +10,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { resolvePhotoBoardMediaUrl } from '@/utils/photoBoardMediaUrl';
 import '@/styles/components.css';
 import '@/styles/photo-board.css';
 
@@ -30,7 +31,7 @@ function PhotoCard({ post }: { post: PhotoPost }) {
         {post.coverImage ? (
           <img
             className="photo-card__img"
-            src={post.coverImage.thumbUrl}
+            src={resolvePhotoBoardMediaUrl(post.coverImage.thumbUrl)}
             alt=""
             loading="lazy"
             decoding="async"

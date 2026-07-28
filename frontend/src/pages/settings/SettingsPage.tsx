@@ -14,7 +14,6 @@ import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyM
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
 import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
-import { ProfileSummaryCard } from '@/components/settings/ProfileSummaryCard/ProfileSummaryCard';
 import { SettingsCollapsibleSection } from '@/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
@@ -24,7 +23,6 @@ import {
   LocationPicker,
   type LocationPickerValue,
 } from '@/components/location/LocationPicker/LocationPicker';
-import { ProUpgradeCard } from '@/components/pro/ProUpgradeCard/ProUpgradeCard';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
@@ -343,7 +341,6 @@ export function SettingsPage() {
 
   return (
     <PageShell title={t('nav.settings')}>
-      <ProfileSummaryCard user={user} />
       <div className="settings-stack">
         <SettingsCollapsibleSection title={t('auth.bodyMetrics')} description={t('auth.bodyMetricsDesc')}>
           <div className="form-stack">
@@ -387,27 +384,6 @@ export function SettingsPage() {
           {!locationDraft.countryCode && (
             <p className="form-section__desc">{t('location.nudge')}</p>
           )}
-          <label className="checkbox-label" style={{ marginBottom: '0.75rem' }}>
-            <input
-              type="checkbox"
-              checked={Boolean(user?.locationOptIn)}
-              disabled={locationConsentMutation.isPending}
-              onChange={(e) => locationConsentMutation.mutate(e.target.checked)}
-            />
-            <span>
-              {t('compliance.rights.locationOptIn')} (
-              <a
-                href={`#${ROUTES.LEGAL_LOCATION}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(ROUTES.LEGAL_LOCATION);
-                }}
-              >
-                {t('legal.locationTitle')}
-              </a>
-              )
-            </span>
-          </label>
           <LocationPicker
             value={locationDraft}
             onChange={setLocationDraft}
@@ -416,6 +392,29 @@ export function SettingsPage() {
             locationOptIn={Boolean(user?.locationOptIn)}
             onNeedLocationConsent={() =>
               showToast(t('compliance.rights.locationConsentRequired'), 'error')
+            }
+            beforeGps={
+              <label className="checkbox-label location-picker__consent">
+                <input
+                  type="checkbox"
+                  checked={Boolean(user?.locationOptIn)}
+                  disabled={locationConsentMutation.isPending}
+                  onChange={(e) => locationConsentMutation.mutate(e.target.checked)}
+                />
+                <span>
+                  {t('compliance.rights.locationOptIn')} (
+                  <a
+                    href={`#${ROUTES.LEGAL_LOCATION}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(ROUTES.LEGAL_LOCATION);
+                    }}
+                  >
+                    {t('legal.locationTitle')}
+                  </a>
+                  )
+                </span>
+              </label>
             }
             required={false}
           />
@@ -765,6 +764,7 @@ export function SettingsPage() {
         <SettingsCollapsibleSection
           title={t('settings.privacyLegal')}
           description={t('settings.privacyLegalDesc')}
+          defaultExpanded
         >
           <label className="checkbox-label" style={{ marginBottom: '0.75rem' }}>
             <input
@@ -838,8 +838,6 @@ export function SettingsPage() {
             {t('settings.deleteAccount')}
           </button>
         </SettingsCollapsibleSection>
-
-        <ProUpgradeCard />
       </div>
 
       <ConfirmDialog

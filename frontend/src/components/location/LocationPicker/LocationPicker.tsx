@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { LocationRef, LocationVisibility } from '@machinefit/shared';
@@ -27,6 +27,8 @@ interface LocationPickerProps {
   /** When false, GPS button asks for consent instead of reading coordinates. */
   locationOptIn?: boolean;
   onNeedLocationConsent?: () => void;
+  /** Rendered above the GPS button (e.g. location consent checkbox). */
+  beforeGps?: ReactNode;
   required?: boolean;
   disabled?: boolean;
 }
@@ -72,6 +74,7 @@ export function LocationPicker({
   showGps = true,
   locationOptIn = true,
   onNeedLocationConsent,
+  beforeGps,
   required = false,
   disabled = false,
 }: LocationPickerProps) {
@@ -350,6 +353,7 @@ export function LocationPicker({
 
       {showGps && (
         <div className="location-picker__gps">
+          {beforeGps}
           <button
             type="button"
             className="btn btn--secondary btn--block"

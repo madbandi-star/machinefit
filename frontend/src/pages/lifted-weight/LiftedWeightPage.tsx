@@ -220,19 +220,19 @@ export function LiftedWeightPage() {
                     className="lifted-card slide-in"
                     style={{ animationDelay: `${index * 80}ms` }}
                   >
-                    <div className="lifted-card__icon" aria-hidden>
+                    <span className="lifted-card__emoji" aria-hidden>
                       {card.emoji}
-                    </div>
-                    <div className="lifted-card__body">
-                      <h4 className="lifted-card__name">{card.name}</h4>
-                      <p className="lifted-card__count">
-                        {t('liftedWeight.aboutCount', {
-                          count: formatVolumeKg(card.count, locale),
-                          unit: card.unit,
-                        })}
-                      </p>
-                      <p className="lifted-card__tip">{card.tip}</p>
-                    </div>
+                    </span>
+                    <h4 className="lifted-card__name">{card.name}</h4>
+                    <p className="lifted-card__count">
+                      {t('liftedWeight.aboutCount', {
+                        count: formatVolumeKg(card.count, locale),
+                        unit: card.unit,
+                      })}
+                    </p>
+                    <p className="lifted-card__tip" title={card.tip}>
+                      {card.tip}
+                    </p>
                   </article>
                 ))}
                 {data.comparisons.length === 0 && (
