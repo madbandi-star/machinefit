@@ -207,6 +207,9 @@ export function MyPage() {
           {isMember ? (
             <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsManage')} />
           ) : null}
+          {isMember ? (
+            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
+          ) : null}
         </nav>
       </section>
 
@@ -248,9 +251,6 @@ export function MyPage() {
             <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
             <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
             <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
-            {isMember ? (
-              <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
-            ) : null}
             {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
             {isMember ? (
               <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
