@@ -736,8 +736,6 @@
   "liveDashboard": {
     "title": "MachineFit LIVE",
     "subtitle": "See what’s happening across MachineFit right now.",
-    "search": "Search",
-    "searchPlaceholder": "Search countries, areas, gyms, members",
     "updated": "Updated {{time}}",
     "hotCards": "Live highlights",
     "heatmap": "Activity heat map",
