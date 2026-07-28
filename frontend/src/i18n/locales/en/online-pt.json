@@ -5,6 +5,18 @@
   "manageSubtitle": "Set your ticket price and availability",
   "walletTitle": "Online PT earnings",
   "trainers": "Trainers",
+  "trainersSectionLead": "Pick a trainer, buy tickets, and ask about form, machines, or routines.",
+  "browseTrainers": "Find trainers",
+  "noTrainersHint": "Try again later or switch the sort order.",
+  "filterLabel": "Question status",
+  "filter": {
+    "all": "All",
+    "active": "In progress",
+    "answered": "Answered",
+    "closed": "Closed"
+  },
+  "emptyFilter": "No questions in this filter",
+  "emptyFilterHint": "Try a different filter.",
   "sort": {
     "popular": "Popular",
     "rating": "Rating",

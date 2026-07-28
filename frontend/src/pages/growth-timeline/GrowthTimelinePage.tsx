@@ -114,9 +114,10 @@ export function GrowthTimelinePage() {
   const wrappedSlide = wrappedSlides[wrappedIdx] ?? null;
 
   return (
-    <PageShell title={t('growthTimeline.title')}>
-      <LegalDisclaimerBanner variant="ai" compact />
-      <div className="gt-page">
+    <div className="gt-page">
+      <PageShell title={t('growthTimeline.title')}>
+        <LegalDisclaimerBanner variant="ai" compact />
+        <div className="gt-page__body">
         {isLoading && <Skeleton count={6} height={80} />}
         {isError && <p className="form-error-summary">{t('growthTimeline.loadError')}</p>}
 
@@ -217,7 +218,6 @@ export function GrowthTimelinePage() {
                     points={chartSeries.points}
                     unit={chartSeries.unit}
                     showTrend
-                    accentColor="#0f766e"
                     ariaLabel={t(`growthTimeline.metric.${metric}`)}
                     size="default"
                     showValueList={false}
@@ -422,7 +422,8 @@ export function GrowthTimelinePage() {
             </div>
           </>
         )}
-      </div>
-    </PageShell>
+        </div>
+      </PageShell>
+    </div>
   );
 }
