@@ -338,6 +338,20 @@ export const authService = {
     await userRepository.deleteRefreshTokens(userId);
   },
 
+  /** Revoke a single refresh token when access JWT is already expired. */
+  async logoutByRefreshToken(refreshToken: string) {
+    let payload: { userId: string };
+    try {
+      payload = verifyRefreshToken(refreshToken);
+    } catch {
+      return;
+    }
+    await userRepository.deleteRefreshTokenByHash(
+      payload.userId,
+      hashRefreshToken(refreshToken)
+    );
+  },
+
   async deactivateAccount(userId: string) {
     const pool = getPool();
     if (!pool) {

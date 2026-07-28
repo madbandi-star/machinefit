@@ -2,13 +2,14 @@ import { Router } from 'express';
 import * as authController from '../controllers/auth.controller.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
 import { registerSchema, loginSchema } from '@machinefit/shared';
-import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
 
 export const authRouter = Router();
 
 authRouter.post('/register', validateBody(registerSchema), authController.register);
 authRouter.post('/login', validateBody(loginSchema), authController.login);
 authRouter.post('/refresh', authController.refresh);
-authRouter.post('/logout', authMiddleware, authController.logout);
+/** Optional auth: clear cookie even when access JWT already expired. */
+authRouter.post('/logout', optionalAuthMiddleware, authController.logout);
 authRouter.delete('/me', authMiddleware, authController.deactivateAccount);
 authRouter.patch('/me/marketing', authMiddleware, authController.updateMarketingPref);
