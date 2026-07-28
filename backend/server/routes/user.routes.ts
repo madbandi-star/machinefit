@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as userController from '../controllers/user.controller.js';
+import * as homeBootstrapController from '../controllers/home-bootstrap.controller.js';
 import * as userGymController from '../controllers/user-gym.controller.js';
 import * as gymMemberController from '../controllers/gym-member.controller.js';
 import * as liftedVolumeController from '../controllers/lifted-volume.controller.js';
@@ -13,6 +14,7 @@ import { motivationAudioUpload } from '../middlewares/upload.middleware.js';
 export const userRouter = Router();
 
 userRouter.get('/me', authMiddleware, userController.getMe);
+userRouter.get('/me/home-bootstrap', authMiddleware, homeBootstrapController.getHomeBootstrap);
 userRouter.patch('/me', authMiddleware, userController.updateMe);
 userRouter.post('/me/workout-reports', authMiddleware, userController.sendWorkoutReport);
 

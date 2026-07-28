@@ -85,6 +85,8 @@ export const QUERY_KEYS = {
   adminGymInventory: (gymId: string) => ['admin', 'gyms', gymId, 'inventory'] as const,
   user: ['user', 'me'] as const,
   userGyms: ['user', 'gyms'] as const,
+  homeBootstrap: (gymId?: string | null, memberId?: string | null) =>
+    ['user', 'home-bootstrap', gymId ?? '', memberId ?? ''] as const,
   userGymMembers: (gymId: string) => ['user', 'gyms', gymId, 'members'] as const,
   memberProfileRequests: ['user', 'member-profile-requests'] as const,
   liftedWeight: ['user', 'lifted-weight'] as const,

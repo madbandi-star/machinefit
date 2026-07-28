@@ -8,7 +8,7 @@ import {
   type User,
   type UserGym,
 } from '@machinefit/shared';
-import { userApi, userGymApi } from '@/api';
+import { userApi, userGymApi, type UserGymsResponse } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
@@ -61,10 +61,13 @@ export function useActiveGym() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.userGyms,
     queryFn: async () => {
+      const cached = queryClient.getQueryData<UserGymsResponse>(QUERY_KEYS.userGyms);
+      if (cached) return cached;
       const res = await userGymApi.list();
       return res.data.data;
     },
     enabled: isAuthenticated,
+    staleTime: 60_000,
   });
 
   const gyms = data?.items ?? [];

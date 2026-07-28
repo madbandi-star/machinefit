@@ -103,6 +103,8 @@ export const authApi = {
 
 export const userApi = {
   getMe: () => apiClient.get<ApiResponse<User>>('/users/me'),
+  homeBootstrap: (params?: { gymId?: string; memberId?: string }) =>
+    apiClient.get<ApiResponse<HomeBootstrapResponse>>('/users/me/home-bootstrap', { params }),
   updateMe: (data: {
     displayName?: string;
     gender?: Gender;
@@ -285,6 +287,15 @@ export interface UserGymsResponse {
   items: UserGym[];
   activeGymId: string;
   activeGym: UserGym;
+}
+
+export interface HomeBootstrapResponse {
+  gyms: UserGymsResponse;
+  activeGymId: string;
+  members: GymMember[];
+  activeMemberId: string | null;
+  recentHistory: HistoryItem[];
+  favorites: FavoriteItem[];
 }
 
 export const userGymApi = {

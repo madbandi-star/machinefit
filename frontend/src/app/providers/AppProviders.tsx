@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { QueryProvider } from './QueryProvider';
 import { AuthHydrationProvider } from './AuthHydrationProvider';
+import { HomeBootstrapLoader } from '@/hooks/useHomeBootstrap';
 import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { Toast } from '@/components/feedback/Toast/Toast';
@@ -19,6 +20,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
       <AuthHydrationProvider>
+        <HomeBootstrapLoader />
         <I18nProvider>
           <ThemeProvider>
             {children}
