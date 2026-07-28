@@ -10,13 +10,23 @@ import { resolveWorkoutLoadContexts } from './workout-load.service.js';
 
 const memoryCache = new TtlCache<GrowthTimelineSnapshot>(60_000);
 
+/**
+ * Bump when snapshot volume inputs/formula change so persisted caches rebuild
+ * (e.g. including recommendation reps in 총볼륨).
+ */
+const SNAPSHOT_VERSION = 'v2-volume-reps';
+
 export type GrowthTimelineScope = { gymId?: string; memberId?: string };
 
 function scopeCacheKey(userId: string, options?: GrowthTimelineScope): string {
   if (options?.gymId && options?.memberId) {
-    return `${userId}:${options.gymId}:${options.memberId}`;
+    return `${SNAPSHOT_VERSION}:${userId}:${options.gymId}:${options.memberId}`;
   }
-  return userId;
+  return `${SNAPSHOT_VERSION}:${userId}`;
+}
+
+function revisionKey(logsRevision: string): string {
+  return `${SNAPSHOT_VERSION}:${logsRevision}`;
 }
 
 async function enrichLogsWithLoad(
@@ -28,12 +38,14 @@ async function enrichLogsWithLoad(
 
   const asWorkoutLogs = logs.map((log) => ({
     id: log.id,
-    gymId: log.gymId ?? '',
-    memberId: options?.memberId ?? '',
+    gymId: log.gymId ?? options?.gymId ?? '',
+    memberId: log.memberId ?? options?.memberId ?? '',
     machineCode: log.machineCode,
+    recommendationId: log.recommendationId ?? undefined,
     logDate: log.logDate,
     setCount: log.setCount,
     setWeightsKg: log.setWeightsKg,
+    setCompleted: log.setCompleted ?? undefined,
     createdAt: log.createdAt,
     updatedAt: log.createdAt,
   }));
@@ -51,6 +63,7 @@ async function enrichLogsWithLoad(
       recommendedWeightKg: load?.recommendedWeight,
       adjustedReps: load?.adjustedReps,
       recommendedReps: load?.recommendedReps,
+      ...(load?.fitRating !== undefined ? { fitRating: load.fitRating } : {}),
     };
   });
 }
@@ -58,6 +71,8 @@ async function enrichLogsWithLoad(
 export const growthTimelineService = {
   /** Drop hot memory entries so the next read rebuilds after a log write. */
   invalidateUser(userId: string): void {
+    memoryCache.deleteByPrefix(`${SNAPSHOT_VERSION}:${userId}`);
+    // Also clear any legacy unversioned keys from before the volume-reps fix.
     memoryCache.deleteByPrefix(userId);
   },
 
@@ -92,7 +107,7 @@ export const growthTimelineService = {
         userId,
         snapshot,
         logs.length,
-        logsRevision
+        revisionKey(logsRevision)
       );
     }
     memoryCache.set(scopeCacheKey(userId, options), snapshot);
@@ -124,7 +139,7 @@ export const growthTimelineService = {
       growthTimelineRepository.getLogsRevision(userId),
       growthTimelineRepository.getCached(userId),
     ]);
-    if (cached && cached.logsRevision === logsRevision) {
+    if (cached && cached.logsRevision === revisionKey(logsRevision)) {
       memoryCache.set(cacheKey, cached.snapshot);
       return cached.snapshot;
     }

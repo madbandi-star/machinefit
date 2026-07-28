@@ -33,12 +33,16 @@ export interface GrowthTimelineLogInput {
   muscleGroup: string | null;
   gymId: string | null;
   gymName: string | null;
+  memberId?: string | null;
+  recommendationId?: string | null;
   /** Optional adjusted/recommended load for total-weight rule. */
   adjustedWeightKg?: number | null;
   recommendedWeightKg?: number | null;
   adjustedReps?: number | null;
   recommendedReps?: number | null;
   setCompleted?: boolean[] | null;
+  /** Fit feedback — same volume-reps rule as history 총볼륨. */
+  fitRating?: 'good' | 'bad' | null;
 }
 
 export interface GrowthTimelinePeerAverages {
@@ -70,6 +74,7 @@ function logTotalWeightKg(log: GrowthTimelineLogInput): number {
     recommendedWeight: log.recommendedWeightKg,
     adjustedReps: log.adjustedReps,
     recommendedReps: log.recommendedReps,
+    ...(log.fitRating !== undefined ? { fitRating: log.fitRating } : {}),
   });
 }
 

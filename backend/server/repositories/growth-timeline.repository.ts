@@ -31,6 +31,8 @@ type LogRow = {
   target_muscle_group: string | null;
   gym_id: string | null;
   gym_name: string | null;
+  member_id: string | null;
+  recommendation_id: string | null;
 };
 
 function parseWeights(raw: number[] | string): number[] {
@@ -83,7 +85,9 @@ export const growthTimelineRepository = {
               m.muscle_group,
               NULLIF(wl.target_muscle_group, '') AS target_muscle_group,
               wl.gym_id::text AS gym_id,
-              ug.name AS gym_name
+              ug.name AS gym_name,
+              wl.member_id::text AS member_id,
+              wl.recommendation_id::text AS recommendation_id
        FROM workout_logs wl
        JOIN machines m ON m.id = wl.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
@@ -110,6 +114,8 @@ export const growthTimelineRepository = {
       muscleGroup: row.target_muscle_group || row.muscle_group,
       gymId: row.gym_id,
       gymName: row.gym_name,
+      memberId: row.member_id,
+      recommendationId: row.recommendation_id,
     }));
   },
 
