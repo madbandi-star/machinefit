@@ -9,6 +9,7 @@ import {
   resolveWorkoutLoadContexts,
   type WorkoutLoadContext,
 } from './workout-load.service.js';
+import { escapeHtml } from '../utils/html-escape.util.js';
 
 const reportPeriodSchema = z.enum(['day', 'week', 'month', 'year']);
 
@@ -151,18 +152,18 @@ function buildReportHtml(options: {
     .map((log) => {
       const volume = getLogVolumeKg(log, options.loadByLogId?.get(log.id));
       const machineLabel = formatLogMachineLabel(log);
-      return `<tr><td>${log.logDate}</td><td>${machineLabel}</td><td>${log.setCount}</td><td>${formatSetWeights(log.setWeightsKg)}</td><td>${volume.toFixed(1)}kg</td></tr>`;
+      return `<tr><td>${escapeHtml(log.logDate)}</td><td>${escapeHtml(machineLabel)}</td><td>${escapeHtml(log.setCount)}</td><td>${escapeHtml(formatSetWeights(log.setWeightsKg))}</td><td>${escapeHtml(volume.toFixed(1))}kg</td></tr>`;
     })
     .join('');
 
   return `<!DOCTYPE html><html><body>
     <h1>MachineFit 운동 보고서</h1>
-    <p><strong>${options.gymName}</strong></p>
-    <p>${options.displayName}님 · ${periodLabel} (${options.from} ~ ${options.to})</p>
+    <p><strong>${escapeHtml(options.gymName)}</strong></p>
+    <p>${escapeHtml(options.displayName)}님 · ${escapeHtml(periodLabel)} (${escapeHtml(options.from)} ~ ${escapeHtml(options.to)})</p>
     <ul>
-      <li>기록 수: ${options.logs.length}건</li>
-      <li>총 세트: ${totalSets}회</li>
-      <li>총 수행량: ${totalVolume.toFixed(1)}kg</li>
+      <li>기록 수: ${escapeHtml(options.logs.length)}건</li>
+      <li>총 세트: ${escapeHtml(totalSets)}회</li>
+      <li>총 수행량: ${escapeHtml(totalVolume.toFixed(1))}kg</li>
     </ul>
     <table border="1" cellpadding="6" cellspacing="0">
       <thead><tr><th>날짜</th><th>머신</th><th>세트</th><th>중량</th><th>수행량</th></tr></thead>

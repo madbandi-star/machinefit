@@ -36,11 +36,11 @@ function buildReportCache(period: WorkoutReportPeriod, data: WorkoutReportResult
 
 function WorkoutReportDialog({
   open,
-  html,
+  text,
   onClose,
 }: {
   open: boolean;
-  html: string;
+  text: string;
   onClose: () => void;
 }) {
   const { t } = useTranslation();
@@ -59,10 +59,9 @@ function WorkoutReportDialog({
         <h3 id="workout-report-dialog-title" className="workout-report-dialog__title">
           {t('workoutReport.viewReport')}
         </h3>
-        <div
-          className="workout-report-section__preview workout-report-dialog__preview"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        <pre className="workout-report-section__preview workout-report-dialog__preview workout-report-dialog__preview--text">
+          {text}
+        </pre>
         <button type="button" className="btn btn--secondary btn--block" onClick={onClose}>
           {t('actions.close')}
         </button>
@@ -279,7 +278,7 @@ export function WorkoutReportSection() {
 
       <WorkoutReportDialog
         open={reportDialogOpen}
-        html={reportCache?.period === period ? reportCache.html : ''}
+        text={reportCache?.period === period ? reportCache.text : ''}
         onClose={() => setReportDialogOpen(false)}
       />
     </>

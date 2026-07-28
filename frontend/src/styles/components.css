@@ -1234,6 +1234,13 @@
   margin: 0;
 }
 
+.workout-report-dialog__preview--text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  line-height: 1.45;
+}
+
 .workout-report-section__preview {
   max-height: 240px;
   overflow: auto;
