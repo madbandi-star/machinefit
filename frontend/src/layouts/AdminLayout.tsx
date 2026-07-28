@@ -8,6 +8,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN_USERS, labelKey: 'users', end: false },
   { to: ROUTES.ADMIN_GYMS, labelKey: 'gyms', end: false },
   { to: ROUTES.ADMIN_OWNER_APPLICATIONS, labelKey: 'ownerApplications.nav', end: false },
+  { to: ROUTES.ADMIN_TRAINER_APPLICATIONS, labelKey: 'trainerApplications.nav', end: false },
   { to: ROUTES.ADMIN_MACHINES, labelKey: 'machines', end: false },
   { to: ROUTES.ADMIN_LOCATIONS, labelKey: 'locations.nav', end: false },
   { to: ROUTES.ADMIN_MOTIVATION, labelKey: 'motivation.nav', end: false },

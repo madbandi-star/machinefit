@@ -48,6 +48,12 @@ export function AdminDashboardPage() {
       to: ROUTES.ADMIN_OWNER_APPLICATIONS,
       urgent: false,
     },
+    {
+      label: t('trainerApplications.nav'),
+      value: null as number | null,
+      to: ROUTES.ADMIN_TRAINER_APPLICATIONS,
+      urgent: false,
+    },
   ];
 
   const overviewCards = [
@@ -64,6 +70,11 @@ export function AdminDashboardPage() {
       to: ROUTES.ADMIN_OWNER_APPLICATIONS,
       title: t('ownerApplications.nav'),
       desc: t('menu.ownerDesc'),
+    },
+    {
+      to: ROUTES.ADMIN_TRAINER_APPLICATIONS,
+      title: t('trainerApplications.nav'),
+      desc: t('menu.trainerDesc'),
     },
     { to: ROUTES.ADMIN_MACHINES, title: t('machines'), desc: t('menu.machinesDesc') },
     { to: ROUTES.ADMIN_LOCATIONS, title: t('locations.nav'), desc: t('menu.locationsDesc') },

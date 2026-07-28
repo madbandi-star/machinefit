@@ -75,6 +75,7 @@ export const ROUTES = {
   ADMIN_MUSCLE_IMAGES: '/admin/muscle-group-images',
   ADMIN_MACHINE_COVERS: '/admin/machine-covers',
   ADMIN_OWNER_APPLICATIONS: '/admin/owner-applications',
+  ADMIN_TRAINER_APPLICATIONS: '/admin/trainer-applications',
   ADMIN_LOCATIONS: '/admin/locations',
   OWNER_APPLY: '/owner/apply',
   TRAINER_APPLY: '/trainer/apply',

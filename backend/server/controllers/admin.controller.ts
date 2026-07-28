@@ -7,10 +7,12 @@ import {
   resolveReportSchema,
   toggleActiveSchema,
   reviewOwnerApplicationSchema,
+  reviewTrainerApplicationSchema,
   adminGymMachineActionSchema,
 } from '@machinefit/shared';
 import { adminService } from '../services/admin.service.js';
 import { ownerService } from '../services/owner.service.js';
+import { trainerApplicationService } from '../services/trainer-application.service.js';
 import { gymInventoryService } from '../services/gym-inventory.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getParam } from '../utils/params.util.js';
@@ -113,6 +115,25 @@ export async function reviewOwnerApplication(req: Request, res: Response): Promi
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = reviewOwnerApplicationSchema.parse(req.body);
   const item = await ownerService.reviewApplication(
+    getParam(req.params.id),
+    req.user.userId,
+    input
+  );
+  res.json({ success: true, data: item });
+}
+
+export async function listTrainerApplications(req: Request, res: Response): Promise<void> {
+  const status = req.query.status
+    ? (String(req.query.status) as 'pending' | 'approved' | 'rejected')
+    : undefined;
+  const items = await trainerApplicationService.listApplications(status);
+  res.json({ success: true, data: items });
+}
+
+export async function reviewTrainerApplication(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = reviewTrainerApplicationSchema.parse(req.body);
+  const item = await trainerApplicationService.reviewApplication(
     getParam(req.params.id),
     req.user.userId,
     input
