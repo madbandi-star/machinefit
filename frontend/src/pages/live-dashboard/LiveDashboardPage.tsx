@@ -161,8 +161,8 @@ export function LiveDashboardPage() {
     { id: 'district', label: t('liveDashboard.boardDistrict') },
     { id: 'gym', label: t('liveDashboard.boardGym') },
     { id: 'member', label: t('liveDashboard.boardMember') },
-    { id: 'machine', label: t('liveDashboard.boardMachine') },
     { id: 'brand', label: t('liveDashboard.boardBrand') },
+    { id: 'machine', label: t('liveDashboard.boardMachine') },
     { id: 'muscle', label: t('liveDashboard.boardMuscle') },
   ];
 
