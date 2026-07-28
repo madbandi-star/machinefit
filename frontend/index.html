@@ -41,7 +41,7 @@
           }
         } catch (e) {}
         try {
-          if (!localStorage.getItem('mf-pwa-bust-v24')) {
+          if (!localStorage.getItem('mf-pwa-bust-v28')) {
             if ('serviceWorker' in navigator) {
               navigator.serviceWorker.getRegistrations().then(function (regs) {
                 regs.forEach(function (reg) { reg.unregister(); });

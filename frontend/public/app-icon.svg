@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MachineFit">
   <rect width="64" height="64" rx="12" fill="#1A1A1A"/>
-  <g fill="none" stroke="#B7F000" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M13 50 V17 L32 42 L51 17 V40"/>
-  </g>
-  <circle cx="17.8" cy="15.6" r="3.3" fill="#B7F000"/>
-  <circle cx="46.2" cy="15.6" r="3.3" fill="#B7F000"/>
-  <path d="M13 24.5 V39" stroke="#B7F000" stroke-width="2.1" stroke-linecap="round"/>
-  <rect x="9.4" y="28.2" width="7.2" height="5.6" rx="1.3" fill="#B7F000"/>
-  <circle cx="51" cy="46.5" r="7.2" fill="none" stroke="#B7F000" stroke-width="4.2"/>
-  <circle cx="51" cy="46.5" r="2.3" fill="#B7F000"/>
+  <!-- Same geometry as lifterDnaShareCard drawMachineFitMark (padded) -->
+  <path
+    d="M8 56 L24.8 15.2 L34.4 34.4 L48.8 8"
+    fill="none"
+    stroke="#B7F000"
+    stroke-width="5.3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>
