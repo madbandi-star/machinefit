@@ -10,7 +10,7 @@ import '@/i18n';
 
 export function AppProviders({ children }: { children: ReactNode }) {
   useEffect(() => {
-    // Render free instances still sleep; warm pool + reduce cold-start pain.
+    // Warm Render pool on app boot (Singapore API).
     void fetch(`${API_BASE_URL}/warmup`, { method: 'GET' }).catch(() =>
       fetch(`${API_BASE_URL}/health`, { method: 'GET' }).catch(() => undefined)
     );

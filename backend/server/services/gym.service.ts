@@ -4,7 +4,7 @@ import { buildPaginationMeta } from '../utils/pagination.util.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { TtlCache } from '../utils/ttl-cache.js';
 
-const gymListCache = new TtlCache<Awaited<ReturnType<typeof gymRepository.findMany>>>(60_000);
+const gymListCache = new TtlCache<Awaited<ReturnType<typeof gymRepository.findMany>>>(60_000); // 60s server cache
 
 async function loadGymDetail(idOrSlug: string) {
   const gym = await gymRepository.findByIdOrSlug(idOrSlug);
