@@ -19,7 +19,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3001
+        sync: false
       - key: API_BASE_PATH
         value: /api/v1
       - key: SKIP_FRONTEND_INSTALL

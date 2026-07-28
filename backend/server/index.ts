@@ -13,7 +13,7 @@ if (!getPool()) {
   void seedDevUsers();
 }
 
-const server: Server = app.listen(env.PORT, () => {
+const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   // Keep sockets warm behind Render's reverse proxy.
   server.keepAliveTimeout = 65_000;
   server.headersTimeout = 66_000;

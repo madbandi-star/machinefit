@@ -12,7 +12,7 @@
    Do not prefix with another `npm ci` / `npm install`.
 2. **Start Command**: `npm run start --workspace=backend`
 3. **Node**: `NODE_VERSION=20` (or `.node-version`)
-4. Env: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`, `API_BASE_PATH=/api/v1`, `PORT=3001`
+4. Env: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`, `API_BASE_PATH=/api/v1` (omit `PORT` — use Render's)
 5. Push to `main` (backend/shared/database) or Manual Deploy after Clear build cache if needed.
 
 ### Render Deploy Hook (GitHub Actions)

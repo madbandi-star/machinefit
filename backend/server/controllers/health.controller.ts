@@ -2,9 +2,13 @@ import type { Request, Response } from 'express';
 import { checkDatabaseConnection, warmupDatabase } from '../config/database.js';
 
 export async function healthCheck(_req: Request, res: Response): Promise<void> {
-  const dbConnected = await checkDatabaseConnection();
+  // Respond quickly for Render probes; DB status is best-effort (1.5s cap).
+  const dbConnected = await Promise.race([
+    checkDatabaseConnection(),
+    new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 1500)),
+  ]);
 
-  res.json({
+  res.status(200).json({
     success: true,
     data: {
       status: 'ok',

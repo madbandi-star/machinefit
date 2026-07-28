@@ -110,7 +110,8 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 
 - `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`
 - `CORS_ORIGIN` = `https://madbandi-star.github.io`
-- `NODE_ENV` = `production`, `PORT` = `3001`, `API_BASE_PATH` = `/api/v1`
+- `NODE_ENV` = `production`, `API_BASE_PATH` = `/api/v1`
+- **Do not set `PORT`** — Render injects it (default `10000`); the app binds to `process.env.PORT`
 - `SKIP_FRONTEND_INSTALL` = `1` (optional; Render also sets `RENDER=true`)
 
 5. Deploy → copy URL → set GitHub secret `VITE_API_BASE_URL` = `https://YOUR-APP.onrender.com/api/v1`
