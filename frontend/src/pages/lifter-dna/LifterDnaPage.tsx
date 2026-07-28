@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ageFromBirthDate, type LifterDnaCompareItem } from '@machinefit/shared';
+import { ageFromBirthDate } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
@@ -18,38 +18,6 @@ import './LifterDnaPage.css';
 
 function stars(n: number): string {
   return '★'.repeat(Math.max(0, Math.min(5, n))) + '☆'.repeat(Math.max(0, 5 - n));
-}
-
-function formatDelta(pct: number, locale: string): string {
-  const sign = pct > 0 ? '+' : '';
-  return locale.startsWith('ko') ? `${sign}${pct}%` : `${sign}${pct}%`;
-}
-
-function CompareList({
-  title,
-  items,
-  locale,
-}: {
-  title: string;
-  items: LifterDnaCompareItem[];
-  locale: string;
-}) {
-  if (!items.length) return null;
-  return (
-    <section className="dna-section">
-      <h3 className="dna-section__title">{title}</h3>
-      <div className="dna-compare-grid">
-        {items.map((item) => (
-          <article key={item.id} className="dna-compare glass">
-            <p className="dna-compare__label">{item.label}</p>
-            <p className={`dna-compare__value${item.deltaPct >= 0 ? ' is-up' : ' is-down'}`}>
-              {formatDelta(item.deltaPct, locale)}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 export function LifterDnaPage() {
@@ -243,20 +211,6 @@ export function LifterDnaPage() {
             <LegalDisclaimerBanner variant="ai" compact />
 
             <section className="dna-section">
-              <h3 className="dna-section__title">{t('lifterDna.traits')}</h3>
-              <div className="dna-trait-grid">
-                {data.traits.map((trait) => (
-                  <article key={trait.id} className="dna-trait glass">
-                    <p className="dna-trait__label">
-                      <span aria-hidden>{trait.emoji}</span> {trait.label}
-                    </p>
-                    <p className="dna-trait__stars">{stars(trait.stars)}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <section className="dna-section">
               <h3 className="dna-section__title">{t('lifterDna.habits')}</h3>
               <ul className="dna-habits">
                 {data.habits.map((habit) => (
@@ -281,38 +235,6 @@ export function LifterDnaPage() {
                 ))}
               </ul>
             </section>
-
-            <section className="dna-section">
-              <h3 className="dna-section__title">{t('lifterDna.forecast')}</h3>
-              <p className="dna-section__hint">{t('lifterDna.forecastHint')}</p>
-              <div className="dna-forecast-grid">
-                {data.forecast.map((item) => (
-                  <article key={item.id} className="dna-forecast glass">
-                    <p className="dna-forecast__label">{item.label}</p>
-                    <p className="dna-forecast__stars">{stars(item.stars)}</p>
-                    <p className="dna-forecast__detail">{item.detail}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <CompareList
-              title={t('lifterDna.friendCompare')}
-              items={data.friendCompare}
-              locale={locale}
-            />
-            <CompareList title={t('lifterDna.gymCompare')} items={data.gymCompare} locale={locale} />
-            <CompareList
-              title={t('lifterDna.nationalCompare')}
-              items={data.nationalCompare}
-              locale={locale}
-            />
-            <CompareList
-              title={t('lifterDna.globalCompare')}
-              items={data.globalCompare}
-              locale={locale}
-            />
-
           </>
         )}
       </PageShell>
