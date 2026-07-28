@@ -1,5 +1,6 @@
 {
   "title": "Notifications",
+  "titleWithUnread": "{{count}} unread notifications",
   "empty": "No notifications yet",
   "markAllRead": "Mark all as read",
   "unread": "Unread",

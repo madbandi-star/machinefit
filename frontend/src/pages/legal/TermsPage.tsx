@@ -24,7 +24,6 @@ export function TermsPage() {
         <p>{t('legal.terms.s4Body')}</p>
         <h2>{t('legal.terms.s5Title')}</h2>
         <p>{t('legal.terms.s5Body')}</p>
-        <p className="legal-doc__note">{t('legal.disclaimer')}</p>
         <p className="legal-doc__nav">
           <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
         </p>

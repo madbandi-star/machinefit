@@ -26,7 +26,6 @@ export function PrivacyPage() {
         <p>{t('legal.privacy.s5Body')}</p>
         <h2>{t('legal.privacy.s6Title')}</h2>
         <p>{t('legal.privacy.s6Body')}</p>
-        <p className="legal-doc__note">{t('legal.disclaimer')}</p>
         <p className="legal-doc__nav">
           <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
         </p>

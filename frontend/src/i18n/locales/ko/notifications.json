@@ -1,5 +1,6 @@
 {
   "title": "알림",
+  "titleWithUnread": "읽지 않은 알림 {{count}}개",
   "empty": "알림이 없습니다",
   "markAllRead": "모두 읽음 처리",
   "unread": "읽지 않음",

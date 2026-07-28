@@ -29,15 +29,6 @@
   margin: 0;
 }
 
-.legal-doc__note {
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: 1px dashed var(--color-border, rgba(255, 255, 255, 0.12));
-  font-size: 0.82rem;
-  color: var(--color-text-muted, #9ca3af);
-}
-
 .legal-doc__nav {
   margin-top: 0.5rem;
 }

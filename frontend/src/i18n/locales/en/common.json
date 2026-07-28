@@ -324,7 +324,6 @@
     "termsTitle": "Terms of Service",
     "privacyTitle": "Privacy Policy",
     "version": "Document version {{version}}",
-    "disclaimer": "This document is operational guidance, not legal advice. Have it reviewed before a commercial launch.",
     "termsLead": "Basic terms for using MachineFit.",
     "terms": {
       "s1Title": "1. Nature of the service",

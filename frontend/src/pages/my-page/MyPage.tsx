@@ -190,6 +190,7 @@ export function MyPage() {
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
           <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
           <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
+          <WorkoutReportSection />
         </nav>
       </section>
 
@@ -246,7 +247,6 @@ export function MyPage() {
           <nav id="my-page-lab-body" className="list-nav" aria-label={t('myPage.lab')}>
             <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
             <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
-            <WorkoutReportSection />
             <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
             {isMember ? (
               <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />

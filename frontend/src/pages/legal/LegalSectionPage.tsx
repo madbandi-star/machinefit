@@ -77,7 +77,6 @@ export function LegalSectionPage({ doc }: { doc: DocKey }) {
             <p>{t(`legal.${ns}.${s}Body`)}</p>
           </section>
         ))}
-        <p className="legal-doc__note">{t('legal.disclaimer')}</p>
         {meta.nav && meta.nav.length > 0 && (
           <p className="legal-doc__nav">
             {meta.nav.map((n, i) => (

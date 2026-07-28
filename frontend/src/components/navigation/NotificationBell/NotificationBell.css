@@ -14,7 +14,8 @@
   transition:
     color var(--motion-fast),
     border-color var(--motion-fast),
-    background var(--motion-fast);
+    background var(--motion-fast),
+    box-shadow var(--motion-fast);
 }
 
 .notification-bell--placeholder {
@@ -33,10 +34,27 @@
   outline-offset: 2px;
 }
 
+.notification-bell--unread {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.5);
+  background: color-mix(in srgb, #fbbf24 12%, var(--color-surface));
+  animation: notification-bell-glow 2.2s ease-in-out infinite;
+}
+
+.notification-bell--sparkle {
+  animation: notification-bell-sparkle 0.95s ease-in-out infinite;
+}
+
+.notification-bell__icon {
+  position: relative;
+  z-index: 1;
+}
+
 .notification-bell__badge {
   position: absolute;
   top: -0.2rem;
   right: -0.2rem;
+  z-index: 2;
   min-width: 0.95rem;
   height: 0.95rem;
   padding: 0 0.2rem;
@@ -48,4 +66,70 @@
   background: var(--color-primary);
   border: 1.5px solid var(--glass-bg);
   border-radius: 999px;
+}
+
+.notification-bell--unread .notification-bell__badge,
+.notification-bell--sparkle .notification-bell__badge {
+  animation: notification-bell-badge-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes notification-bell-glow {
+  0%,
+  100% {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.45);
+    box-shadow: 0 0 0 rgba(251, 191, 36, 0);
+  }
+
+  50% {
+    color: #fde68a;
+    border-color: rgba(251, 191, 36, 0.8);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.42);
+  }
+}
+
+@keyframes notification-bell-sparkle {
+  0%,
+  100% {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.65);
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.35);
+  }
+
+  33% {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.7);
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.45);
+  }
+
+  66% {
+    color: #a78bfa;
+    border-color: rgba(167, 139, 250, 0.7);
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.4);
+  }
+}
+
+@keyframes notification-bell-badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification-bell--unread,
+  .notification-bell--sparkle,
+  .notification-bell--unread .notification-bell__badge,
+  .notification-bell--sparkle .notification-bell__badge {
+    animation: none;
+  }
+
+  .notification-bell--unread {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.65);
+  }
 }
