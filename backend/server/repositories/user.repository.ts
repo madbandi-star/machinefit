@@ -336,6 +336,37 @@ export const userRepository = {
     );
   },
 
+  async hasValidRefreshToken(userId: string, tokenHash: string): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return true; // Dev/no-DB mode: JWT signature alone is enough.
+    const result = await pool.query(
+      `SELECT 1 FROM refresh_tokens
+       WHERE user_id = $1 AND token_hash = $2 AND expires_at > NOW()
+       LIMIT 1`,
+      [userId, tokenHash]
+    );
+    return result.rows.length > 0;
+  },
+
+  async countRefreshTokens(userId: string): Promise<number> {
+    const pool = getPool();
+    if (!pool) return 0;
+    const result = await pool.query<{ count: string }>(
+      `SELECT COUNT(*)::text AS count FROM refresh_tokens WHERE user_id = $1`,
+      [userId]
+    );
+    return parseInt(result.rows[0]?.count ?? '0', 10);
+  },
+
+  async deleteRefreshTokenByHash(userId: string, tokenHash: string): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query('DELETE FROM refresh_tokens WHERE user_id = $1 AND token_hash = $2', [
+      userId,
+      tokenHash,
+    ]);
+  },
+
   async deleteRefreshTokens(userId: string): Promise<void> {
     const pool = getPool();
     if (!pool) return;

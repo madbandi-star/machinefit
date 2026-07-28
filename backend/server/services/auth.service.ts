@@ -17,16 +17,46 @@ import { devUsers, findDevUserByEmail, findDevUserById } from '../data/dev-users
 import { notificationService } from './notification.service.js';
 import crypto from 'crypto';
 
-function buildAuthResponse(user: User) {
-  const tokens = {
+function hashRefreshToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+function refreshTokenExpiresAt(): Date {
+  const raw = env.JWT_REFRESH_EXPIRES_IN || '7d';
+  const match = /^(\d+)([dhms])$/i.exec(raw.trim());
+  const amount = match ? Number(match[1]) : 7;
+  const unit = (match?.[2] ?? 'd').toLowerCase();
+  const ms =
+    unit === 'd'
+      ? amount * 86_400_000
+      : unit === 'h'
+        ? amount * 3_600_000
+        : unit === 'm'
+          ? amount * 60_000
+          : amount * 1_000;
+  return new Date(Date.now() + ms);
+}
+
+async function issueAuthTokens(user: Pick<User, 'id' | 'roleCode' | 'email'>) {
+  const refreshToken = signRefreshToken({ userId: user.id });
+  await userRepository.saveRefreshToken(
+    user.id,
+    hashRefreshToken(refreshToken),
+    refreshTokenExpiresAt()
+  );
+  return {
     accessToken: signAccessToken({
       userId: user.id,
       roleCode: user.roleCode,
       email: user.email,
     }),
-    refreshToken: signRefreshToken({ userId: user.id }),
-    expiresIn: '15m',
+    refreshToken,
+    expiresIn: '15m' as const,
   };
+}
+
+async function buildAuthResponse(user: User) {
+  const tokens = await issueAuthTokens(user);
 
   return {
     user: {
@@ -256,8 +286,26 @@ export const authService = {
   },
 
   async refresh(refreshToken: string) {
-    const payload = verifyRefreshToken(refreshToken);
+    let payload: { userId: string };
+    try {
+      payload = verifyRefreshToken(refreshToken);
+    } catch {
+      throw new AppError(401, 'INVALID_TOKEN', 'Invalid refresh token');
+    }
+
+    const tokenHash = hashRefreshToken(refreshToken);
     const pool = getPool();
+
+    if (pool) {
+      const valid = await userRepository.hasValidRefreshToken(payload.userId, tokenHash);
+      if (!valid) {
+        // Migrate legacy JWTs issued before server-side persistence.
+        const storedCount = await userRepository.countRefreshTokens(payload.userId);
+        if (storedCount > 0) {
+          throw new AppError(401, 'INVALID_TOKEN', 'Refresh token revoked or expired');
+        }
+      }
+    }
 
     let roleCode: RoleCode = Role.MEMBER;
     let email = '';
@@ -276,15 +324,13 @@ export const authService = {
       }
     }
 
-    const tokens = {
-      accessToken: signAccessToken({
-        userId: payload.userId,
-        roleCode,
-        email,
-      }),
-      refreshToken: signRefreshToken({ userId: payload.userId }),
-      expiresIn: '15m',
-    };
+    // Rotate: drop the presented token, issue a new pair.
+    await userRepository.deleteRefreshTokenByHash(payload.userId, tokenHash);
+    const tokens = await issueAuthTokens({
+      id: payload.userId,
+      roleCode,
+      email,
+    });
     return { tokens };
   },
 
