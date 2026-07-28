@@ -498,7 +498,7 @@ export function PushComposePage() {
                     </label>
                   ))}
                 </div>
-              ) : preset ? (
+              ) : preset && preset !== 'member_exact' ? (
                 <p className="push-step__solo">{t(`presets.${preset}`)}</p>
               ) : null}
 
