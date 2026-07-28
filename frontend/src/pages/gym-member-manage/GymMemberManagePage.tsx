@@ -152,8 +152,10 @@ export function GymMemberManagePage() {
   } = useActiveGym();
   const {
     members,
+    activeMemberId,
     isLoading: membersLoading,
     isRealGym,
+    selectMember,
     createMember,
     updateMember,
     removeMember,
@@ -810,56 +812,78 @@ export function GymMemberManagePage() {
                   </div>
                 ) : members.length > 0 ? (
                   <ul className="gym-manage-list">
-                    {members.map((member) => (
-                      <li key={member.id} className="gym-manage-row gym-manage-row--static">
-                        <div className="gym-manage-row__select gym-manage-row__select--static">
-                          <span className="gym-manage-avatar" aria-hidden>
-                            {memberInitial(member.name)}
-                          </span>
-                          <span className="gym-manage-row__body">
-                            <span className="gym-manage-row__name">
-                              {member.name}
-                              {member.isSelf ? (
-                                <span className="gym-manage-row__self">
-                                  {' '}
-                                  · {t('gyms:members.self')}
-                                </span>
-                              ) : null}
-                            </span>
-                            <span className="gym-manage-row__meta">
-                              {[
-                                member.profileAccess === 'pending'
-                                  ? t('gyms:members.pending')
-                                  : member.profileAccess === 'approved'
-                                    ? t('gyms:members.approved')
-                                    : null,
-                                member.email || null,
-                              ]
-                                .filter(Boolean)
-                                .join(' · ') || t('gyms:manage.memberNoExtra')}
-                            </span>
-                          </span>
-                        </div>
-                        <div className="gym-manage-row__actions">
+                    {members.map((member) => {
+                      const isSelected = member.id === activeMemberId;
+                      return (
+                        <li
+                          key={member.id}
+                          className={`gym-manage-row${isSelected ? ' gym-manage-row--active' : ''}`}
+                        >
                           <button
                             type="button"
-                            className="gym-manage-link-btn"
-                            onClick={() => openEditMember(member)}
+                            className="gym-manage-row__select"
+                            onClick={() => {
+                              if (member.id === activeMemberId) return;
+                              selectMember(member.id);
+                              showToast(t('gyms:members.switchSuccess'), 'success');
+                            }}
+                            aria-pressed={isSelected}
                           >
-                            {t('gyms:manage.edit')}
+                            <span className="gym-manage-avatar" aria-hidden>
+                              {memberInitial(member.name)}
+                            </span>
+                            <span className="gym-manage-row__body">
+                              <span className="gym-manage-row__name">
+                                {member.name}
+                                {member.isSelf ? (
+                                  <span className="gym-manage-row__self">
+                                    {' '}
+                                    · {t('gyms:members.self')}
+                                  </span>
+                                ) : null}
+                              </span>
+                              <span className="gym-manage-row__meta">
+                                {[
+                                  member.profileAccess === 'pending'
+                                    ? t('gyms:members.pending')
+                                    : member.profileAccess === 'approved'
+                                      ? t('gyms:members.approved')
+                                      : null,
+                                  member.email || null,
+                                ]
+                                  .filter(Boolean)
+                                  .join(' · ') || t('gyms:manage.memberNoExtra')}
+                              </span>
+                            </span>
+                            {isSelected ? (
+                              <span className="gym-manage-pill">{t('gyms:manage.selected')}</span>
+                            ) : (
+                              <span className="gym-manage-row__hint">
+                                {t('gyms:manage.tapToSelect')}
+                              </span>
+                            )}
                           </button>
-                          {!member.isSelf ? (
+                          <div className="gym-manage-row__actions">
                             <button
                               type="button"
-                              className="gym-manage-link-btn gym-manage-link-btn--danger"
-                              onClick={() => setPendingDeleteMember(member)}
+                              className="gym-manage-link-btn"
+                              onClick={() => openEditMember(member)}
                             >
-                              {t('gyms:members.remove')}
+                              {t('gyms:manage.edit')}
                             </button>
-                          ) : null}
-                        </div>
-                      </li>
-                    ))}
+                            {!member.isSelf ? (
+                              <button
+                                type="button"
+                                className="gym-manage-link-btn gym-manage-link-btn--danger"
+                                onClick={() => setPendingDeleteMember(member)}
+                              >
+                                {t('gyms:members.remove')}
+                              </button>
+                            ) : null}
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : null}
               </>
