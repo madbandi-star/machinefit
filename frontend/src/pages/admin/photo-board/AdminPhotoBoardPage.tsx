@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { photoBoardApi } from '@/api/photo-board.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -71,7 +72,7 @@ export function AdminPhotoBoardPage() {
     (tab === 'reports' && reportsQuery.isLoading) || (tab === 'blocks' && blocksQuery.isLoading);
 
   return (
-    <AdminPageShell title={t('photoBoard.nav')} subtitle={t('photoBoard.subtitle')}>
+    <AdminPageShell title={t('photoBoard.nav')} subtitle={t('menu.photoBoardDesc')}>
       <div className="admin-tabs">
         <button
           type="button"
@@ -92,7 +93,13 @@ export function AdminPhotoBoardPage() {
       {loading ? <Skeleton count={3} height={72} /> : null}
 
       {tab === 'reports' && !loading ? (
-        <div className="admin-card-list admin-tab-panel">
+        <AdminPanel
+          title={t('photoBoard.reports')}
+          count={reportsQuery.data?.length ?? 0}
+          countLabel={t('listCount', { count: reportsQuery.data?.length ?? 0 })}
+          className="admin-tab-panel"
+        >
+        <div className="admin-card-list">
           {(reportsQuery.data ?? []).length === 0 ? (
             <div className="admin-empty">{t('photoBoard.noReports')}</div>
           ) : (
@@ -148,10 +155,12 @@ export function AdminPhotoBoardPage() {
             ))
           )}
         </div>
+        </AdminPanel>
       ) : null}
 
       {tab === 'blocks' && !loading ? (
-        <div className="admin-card-list admin-tab-panel">
+        <AdminPanel title={t('photoBoard.blocks')} className="admin-tab-panel">
+        <div className="admin-card-list">
           <form
             className="card admin-form-card admin-form-grid"
             onSubmit={(e) => {
@@ -188,6 +197,7 @@ export function AdminPhotoBoardPage() {
             </div>
           ))}
         </div>
+        </AdminPanel>
       ) : null}
     </AdminPageShell>
   );

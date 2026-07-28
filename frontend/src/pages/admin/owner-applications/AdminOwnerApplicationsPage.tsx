@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { safeHttpUrl } from '@/utils/safeHttpUrl';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import '@/styles/admin.css';
 import '@/styles/components.css';
 
@@ -67,6 +68,7 @@ export function AdminOwnerApplicationsPage() {
   return (
     <AdminPageShell
       title={t('admin:ownerApplications.title')}
+      subtitle={t('admin:menu.ownerDesc')}
       actions={
         <select
           className="admin-select"
@@ -84,7 +86,8 @@ export function AdminOwnerApplicationsPage() {
       {!data?.length ? (
         <p className="admin-owner-apps__empty">{t('admin:ownerApplications.empty')}</p>
       ) : (
-        <ul className="admin-owner-apps__list">
+        <AdminPanel count={data.length} countLabel={t('admin:listCount', { count: data.length })}>
+          <ul className="admin-owner-apps__list">
           {data.map((item: OwnerApplication) => (
             <li key={item.id} className="card admin-owner-apps__item">
               <div className="admin-owner-apps__meta">
@@ -155,7 +158,8 @@ export function AdminOwnerApplicationsPage() {
               ) : null}
             </li>
           ))}
-        </ul>
+          </ul>
+        </AdminPanel>
       )}
     </AdminPageShell>
   );

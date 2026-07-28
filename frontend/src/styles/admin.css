@@ -1094,3 +1094,264 @@
   border: 1px solid var(--color-border);
   background: color-mix(in srgb, var(--color-bg) 40%, var(--color-surface));
 }
+
+/* ── Data panels & list polish (v2) ── */
+
+.admin-data-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.admin-data-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-data-panel__titles {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-data-panel__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-count-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.85rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.45rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.admin-status-pill.is-active {
+  color: var(--color-success, #059669);
+  background: color-mix(in srgb, var(--color-success, #10b981) 14%, transparent);
+}
+
+.admin-status-pill.is-inactive {
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+}
+
+.admin-status-pill.is-verified {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.admin-status-pill.is-pending {
+  color: #b45309;
+  background: color-mix(in srgb, #f59e0b 16%, transparent);
+}
+
+.admin-status-pill.is-danger {
+  color: var(--color-error);
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+
+.admin-table__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.admin-shell__content .admin-table .card.admin-table__row,
+.admin-shell__content .admin-table__row.card {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 38%, var(--color-surface));
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-shell__content .admin-table .card.admin-table__row:hover,
+.admin-shell__content .admin-table__row.card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+}
+
+.admin-table__primary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+
+@media (min-width: 720px) {
+  .admin-table--dense .admin-table__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.admin-shell__content .friends-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.admin-shell__content .friends-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 40%, var(--color-surface));
+}
+
+.admin-shell__content .friends-row__name {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.admin-shell__content .friends-row__sub {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+.admin-shell__content .friends-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.admin-shell__content .admin-muscle-hint {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.admin-shell__content .admin-machine-covers-toolbar {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 45%, var(--color-surface));
+}
+
+.admin-shell__content .admin-motivation {
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.admin-shell__content .opt-form {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.admin-shell__content .opt-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.admin-shell__content .opt-form input:not([type='checkbox']),
+.admin-shell__content .opt-form select {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.admin-shell__content .opt-trainer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.admin-shell__content .opt-trainer {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 40%, var(--color-surface));
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.admin-shell__content .opt-trainer__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-shell__content .admin-tab-panel > h3 {
+  margin: 0 0 0.55rem;
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.admin-shell__content .admin-tab-panel > ul {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-shell__content .admin-tab-panel > ul > li {
+  padding: 0.55rem 0.75rem;
+  border-radius: 9px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+  font-size: 0.84rem;
+}
+
+.admin-shell__content .admin-tab-panel > ul:last-child {
+  margin-bottom: 0;
+}
+
+.admin-shell__content .opt-stats {
+  margin-top: 0;
+}

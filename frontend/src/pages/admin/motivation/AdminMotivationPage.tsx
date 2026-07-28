@@ -130,14 +130,14 @@ export function AdminMotivationPage() {
 
   if (isLoading) {
     return (
-      <AdminPageShell title={t('motivation.title')}>
+      <AdminPageShell title={t('motivation.title')} subtitle={t('menu.motivationDesc')}>
         <Skeleton count={4} />
       </AdminPageShell>
     );
   }
 
   return (
-    <AdminPageShell title={t('motivation.title')} subtitle={t('motivation.subtitle')}>
+    <AdminPageShell title={t('motivation.title')} subtitle={t('menu.motivationDesc')}>
       <MediaSection
         title={t('motivation.musicSection')}
         hint={t('motivation.musicHint')}

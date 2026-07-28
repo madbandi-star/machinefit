@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -50,25 +51,38 @@ export function AdminMachinesPage() {
 
   if (brandsLoading || machinesLoading) {
     return (
-      <AdminPageShell title={t('machines')}>
+      <AdminPageShell title={t('machines')} subtitle={t('menu.machinesDesc')}>
         <Skeleton count={4} />
       </AdminPageShell>
     );
   }
 
+  const brandCount = brands?.length ?? 0;
+  const machineCount = machines?.length ?? 0;
+
   return (
-    <AdminPageShell title={t('machines')}>
-      <section className="admin-section">
-        <h3 className="admin-section__title">Brands</h3>
-        <div className="admin-table">
+    <AdminPageShell title={t('machines')} subtitle={t('menu.machinesDesc')}>
+      <AdminPanel
+        title="Brands"
+        count={brandCount}
+        countLabel={t('listCount', { count: brandCount })}
+      >
+        <div className="admin-table admin-table--dense">
           {brands?.map((brand) => (
             <div key={brand.id} className="card admin-table__row">
               <div className="admin-table__brand">
                 {brand.logoUrl ? (
                   <img src={brand.logoUrl} alt="" className="admin-table__brand-logo" loading="lazy" />
                 ) : null}
-                <div>
-                  <strong>{brand.code}</strong>
+                <div className="admin-table__primary">
+                  <div className="admin-table__title-row">
+                    <strong>{brand.code}</strong>
+                    <span
+                      className={`admin-status-pill${brand.isActive ? ' is-active' : ' is-inactive'}`}
+                    >
+                      {brand.isActive ? t('active') : t('inactive')}
+                    </span>
+                  </div>
                   <p className="admin-table__meta">{brand.name.en}</p>
                 </div>
               </div>
@@ -81,11 +95,14 @@ export function AdminMachinesPage() {
             </div>
           ))}
         </div>
-      </section>
+      </AdminPanel>
 
-      <section className="admin-section">
-        <h3 className="admin-section__title">Machines</h3>
-        <div className="admin-table">
+      <AdminPanel
+        title="Machines"
+        count={machineCount}
+        countLabel={t('listCount', { count: machineCount })}
+      >
+        <div className="admin-table admin-table--dense">
           {machines?.map((machine) => (
             <div key={machine.id} className="card admin-table__row">
               <div className="admin-table__brand">
@@ -97,8 +114,15 @@ export function AdminMachinesPage() {
                     loading="lazy"
                   />
                 ) : null}
-                <div>
-                  <strong>{machine.code}</strong>
+                <div className="admin-table__primary">
+                  <div className="admin-table__title-row">
+                    <strong>{machine.code}</strong>
+                    <span
+                      className={`admin-status-pill${machine.isActive ? ' is-active' : ' is-inactive'}`}
+                    >
+                      {machine.isActive ? t('active') : t('inactive')}
+                    </span>
+                  </div>
                   <p className="admin-table__meta">
                     {machine.name.en} · {machine.muscleGroup}
                   </p>
@@ -115,7 +139,7 @@ export function AdminMachinesPage() {
             </div>
           ))}
         </div>
-      </section>
+      </AdminPanel>
     </AdminPageShell>
   );
 }

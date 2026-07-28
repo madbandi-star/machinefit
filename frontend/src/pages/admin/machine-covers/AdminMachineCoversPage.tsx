@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { MachineCoverImageAsset } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
@@ -208,10 +209,10 @@ export function AdminMachineCoversPage() {
         </button>
       </form>
 
-      <p className="admin-muscle-hint">
-        {t('admin:machineCovers.resultCount', { count: listQuery.data?.total ?? 0 })}
-      </p>
-
+      <AdminPanel
+        count={listQuery.data?.total ?? 0}
+        countLabel={t('admin:machineCovers.resultCount', { count: listQuery.data?.total ?? 0 })}
+      >
       <div className="admin-muscle-grid">
         {(listQuery.data?.items ?? []).map((item) => {
           const previewUrl =
@@ -285,6 +286,7 @@ export function AdminMachineCoversPage() {
           {t('admin:machineCovers.next')}
         </button>
       </div>
+      </AdminPanel>
 
       <ConfirmDialog
         open={Boolean(pendingDelete)}

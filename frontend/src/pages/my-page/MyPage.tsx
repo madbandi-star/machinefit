@@ -252,9 +252,6 @@ export function MyPage() {
             <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
             <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
             {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
-            {isMember ? (
-              <ListNavLink to={ROUTES.ONLINE_PT_QUESTIONS} label={t('myPage.onlinePtQuestions')} />
-            ) : null}
           </nav>
         ) : null}
       </section>
@@ -264,7 +261,6 @@ export function MyPage() {
           <h3 className="my-page-section__title">{t('myPage.onlinePtManage')}</h3>
           <nav className="list-nav" aria-label={t('myPage.onlinePtManage')}>
             <ListNavLink to={ROUTES.ONLINE_PT_MANAGE} label={t('myPage.onlinePtManage')} />
-            <ListNavLink to={ROUTES.ONLINE_PT_WALLET} label={t('myPage.onlinePtWallet')} />
           </nav>
         </section>
       ) : null}

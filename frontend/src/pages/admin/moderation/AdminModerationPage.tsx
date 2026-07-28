@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -80,7 +81,7 @@ export function AdminModerationPage() {
     (tab === 'reports' && reportsLoading);
 
   return (
-    <AdminPageShell title={t('moderation')}>
+    <AdminPageShell title={t('moderation')} subtitle={t('menu.moderationDesc')}>
       <div className="admin-tabs admin-tabs--wide">
         {(['posts', 'requests', 'reports'] as Tab[]).map((key) => (
           <button
@@ -97,7 +98,13 @@ export function AdminModerationPage() {
       {isLoading ? (
         <Skeleton count={3} />
       ) : tab === 'posts' ? (
-        <div className="admin-table admin-tab-panel">
+        <AdminPanel
+          title={t('posts')}
+          count={posts?.length ?? 0}
+          countLabel={t('listCount', { count: posts?.length ?? 0 })}
+          className="admin-tab-panel"
+        >
+          <div className="admin-table admin-table--dense">
           {posts?.map((post) => (
             <div key={post.id} className="card admin-table__row">
               <div>
@@ -124,9 +131,16 @@ export function AdminModerationPage() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        </AdminPanel>
       ) : tab === 'requests' ? (
-        <div className="admin-table admin-tab-panel">
+        <AdminPanel
+          title={t('requests')}
+          count={requests?.length ?? 0}
+          countLabel={t('listCount', { count: requests?.length ?? 0 })}
+          className="admin-tab-panel"
+        >
+          <div className="admin-table admin-table--dense">
           {requests?.map((req) => (
             <div key={req.id} className="card admin-table__row">
               <div>
@@ -153,9 +167,16 @@ export function AdminModerationPage() {
               )}
             </div>
           ))}
-        </div>
+          </div>
+        </AdminPanel>
       ) : (
-        <div className="admin-table admin-tab-panel">
+        <AdminPanel
+          title={t('reports')}
+          count={reports?.length ?? 0}
+          countLabel={t('listCount', { count: reports?.length ?? 0 })}
+          className="admin-tab-panel"
+        >
+          <div className="admin-table admin-table--dense">
           {reports?.map((report) => (
             <div key={report.id} className="card admin-table__row">
               <div>
@@ -184,7 +205,8 @@ export function AdminModerationPage() {
               )}
             </div>
           ))}
-        </div>
+          </div>
+        </AdminPanel>
       )}
     </AdminPageShell>
   );

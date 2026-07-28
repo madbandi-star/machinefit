@@ -16,7 +16,7 @@ import '@/styles/admin.css';
 type Tab = 'stats' | 'policy' | 'trainers' | 'questions' | 'payouts' | 'reviews';
 
 export function AdminOnlinePtPage() {
-  const { t } = useTranslation('online-pt');
+  const { t } = useTranslation(['online-pt', 'admin']);
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>('stats');
@@ -134,7 +134,7 @@ export function AdminOnlinePtPage() {
   const tabs: Tab[] = ['stats', 'policy', 'trainers', 'questions', 'payouts', 'reviews'];
 
   return (
-    <AdminPageShell title={t('admin.title')}>
+    <AdminPageShell title={t('admin.title')} subtitle={t('admin:menu.onlinePtDesc')}>
       <div className="admin-tabs admin-tabs--wide">
         {tabs.map((key) => (
           <button
@@ -152,7 +152,7 @@ export function AdminOnlinePtPage() {
         statsQuery.isLoading || !statsQuery.data ? (
           <Skeleton count={3} />
         ) : (
-          <>
+          <section className="admin-panel admin-tab-panel">
             <div className="opt-stats">
               <div className="opt-stat">
                 <span className="opt-meta">Questions</span>
@@ -196,11 +196,12 @@ export function AdminOnlinePtPage() {
                 </li>
               ))}
             </ul>
-          </>
+          </section>
         )
       ) : null}
 
       {tab === 'policy' ? (
+        <section className="admin-panel admin-tab-panel">
         <form
           className="opt-form"
           onSubmit={(e) => {
@@ -289,12 +290,14 @@ export function AdminOnlinePtPage() {
             {t('admin.savePolicy')}
           </button>
         </form>
+        </section>
       ) : null}
 
       {tab === 'trainers' ? (
         trainersQuery.isLoading ? (
           <Skeleton count={3} />
         ) : (
+          <section className="admin-panel admin-tab-panel">
           <div className="opt-trainer-list">
             {(trainersQuery.data?.items ?? []).map((tr) => (
               <div key={tr.userId} className="opt-trainer">
@@ -337,6 +340,7 @@ export function AdminOnlinePtPage() {
               </div>
             ))}
           </div>
+          </section>
         )
       ) : null}
 
@@ -344,6 +348,7 @@ export function AdminOnlinePtPage() {
         questionsQuery.isLoading ? (
           <Skeleton count={3} />
         ) : (
+          <section className="admin-panel admin-tab-panel">
           <div className="opt-trainer-list">
             {(questionsQuery.data?.items ?? []).map((q) => (
               <Link
@@ -361,6 +366,7 @@ export function AdminOnlinePtPage() {
               </Link>
             ))}
           </div>
+          </section>
         )
       ) : null}
 
@@ -368,6 +374,7 @@ export function AdminOnlinePtPage() {
         payoutsQuery.isLoading ? (
           <Skeleton count={3} />
         ) : (
+          <section className="admin-panel admin-tab-panel">
           <div className="opt-trainer-list">
             {(payoutsQuery.data ?? []).map((p) => (
               <div key={p.id} className="opt-trainer">
@@ -403,6 +410,7 @@ export function AdminOnlinePtPage() {
               </div>
             ))}
           </div>
+          </section>
         )
       ) : null}
 
@@ -410,6 +418,7 @@ export function AdminOnlinePtPage() {
         reviewsQuery.isLoading ? (
           <Skeleton count={3} />
         ) : (
+          <section className="admin-panel admin-tab-panel">
           <div className="opt-trainer-list">
             {(reviewsQuery.data ?? []).map((r) => (
               <div key={r.id} className="opt-trainer">
@@ -420,6 +429,7 @@ export function AdminOnlinePtPage() {
               </div>
             ))}
           </div>
+          </section>
         )
       ) : null}
     </AdminPageShell>

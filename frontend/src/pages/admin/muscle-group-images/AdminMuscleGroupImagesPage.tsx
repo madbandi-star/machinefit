@@ -7,6 +7,7 @@ import {
   type MuscleGroupImageKey,
 } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
@@ -157,6 +158,10 @@ export function AdminMuscleGroupImagesPage() {
     <AdminPageShell title={t('admin:muscleImages.title')} subtitle={t('admin:muscleImages.subtitle')}>
       <p className="admin-muscle-hint">{t('admin:muscleImages.recommend')}</p>
 
+      <AdminPanel
+        count={itemsByGroup.length}
+        countLabel={t('admin:listCount', { count: itemsByGroup.length })}
+      >
       <div className="admin-muscle-grid">
         {itemsByGroup.map((item) => {
           const group = item.muscleGroup;
@@ -197,6 +202,7 @@ export function AdminMuscleGroupImagesPage() {
           );
         })}
       </div>
+      </AdminPanel>
 
       <ConfirmDialog
         open={Boolean(pendingDelete)}

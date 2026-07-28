@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { TradeCard } from '@/components/trade/TradeCard';
@@ -76,7 +77,7 @@ export function AdminTradesPage() {
     (tab === 'stats' && statsQuery.isLoading);
 
   return (
-    <AdminPageShell title={t('admin.title')} subtitle={t('admin.subtitle')}>
+    <AdminPageShell title={t('admin.title')} subtitle={ta('menu.tradesDesc')}>
       <div className="admin-tabs admin-tabs--wide">
         {(
           [
@@ -99,7 +100,8 @@ export function AdminTradesPage() {
       {loading ? <Skeleton count={3} height={72} /> : null}
 
       {tab === 'listings' && !loading ? (
-        <div className="admin-stack admin-tab-panel">
+        <AdminPanel title={t('admin.listings')} className="admin-tab-panel">
+        <div className="admin-stack">
           <label className="checkbox-label">
             <input
               type="checkbox"
@@ -151,10 +153,17 @@ export function AdminTradesPage() {
             </>
           )}
         </div>
+        </AdminPanel>
       ) : null}
 
       {tab === 'reports' && !loading ? (
-        <div className="admin-card-list admin-tab-panel">
+        <AdminPanel
+          title={t('admin.reports')}
+          count={reportsQuery.data?.length ?? 0}
+          countLabel={ta('listCount', { count: reportsQuery.data?.length ?? 0 })}
+          className="admin-tab-panel"
+        >
+        <div className="admin-card-list">
           {(reportsQuery.data ?? []).length === 0 ? (
             <div className="admin-empty">{t('admin.noReports')}</div>
           ) : (
@@ -211,10 +220,12 @@ export function AdminTradesPage() {
             ))
           )}
         </div>
+        </AdminPanel>
       ) : null}
 
       {tab === 'stats' && !loading && statsQuery.data ? (
-        <div className="trade-stats-grid admin-tab-panel">
+        <AdminPanel title={t('admin.stats')} className="admin-tab-panel">
+        <div className="trade-stats-grid">
           <div className="card trade-stats-card">
             <span className="trade-stats-card__value">{statsQuery.data.totalActive}</span>
             <span className="trade-stats-card__label">{t('admin.totalActive')}</span>
@@ -236,6 +247,7 @@ export function AdminTradesPage() {
             <span className="trade-stats-card__label">{t('admin.totalReportsPending')}</span>
           </div>
         </div>
+        </AdminPanel>
       ) : null}
     </AdminPageShell>
   );

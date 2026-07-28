@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { friendsApi } from '@/api/friends.api';
@@ -14,7 +15,7 @@ import '@/styles/friends.css';
 type Tab = 'overview' | 'relations' | 'reports' | 'spam';
 
 export function AdminFriendsPage() {
-  const { t } = useTranslation('friends');
+  const { t } = useTranslation(['friends', 'admin']);
   const [tab, setTab] = useState<Tab>('overview');
   const [page, setPage] = useState(1);
   const showToast = useUIStore((s) => s.showToast);
@@ -74,13 +75,13 @@ export function AdminFriendsPage() {
 
   return (
     <div className="friends-page">
-      <AdminPageShell title={t('admin.title')}>
-        <nav className="friends-subnav" aria-label={t('admin.title')}>
+      <AdminPageShell title={t('admin.title')} subtitle={t('admin:menu.friendsDesc')}>
+        <div className="admin-tabs admin-tabs--wide">
           {(['overview', 'relations', 'reports', 'spam'] as const).map((key) => (
             <button
               key={key}
               type="button"
-              className={`friends-subnav__link${tab === key ? ' is-active' : ''}`}
+              className={`admin-tabs__btn${tab === key ? ' is-active' : ''}`}
               onClick={() => {
                 setTab(key);
                 setPage(1);
@@ -89,14 +90,15 @@ export function AdminFriendsPage() {
               {t(`admin.tab.${key}`)}
             </button>
           ))}
-        </nav>
+        </div>
 
         {tab === 'overview' && (
           <>
             {statsQuery.isLoading || !statsQuery.data ? (
               <Skeleton count={4} height={48} />
             ) : (
-              <div className="admin-stats">
+              <AdminPanel title={t('admin.tab.overview')} className="admin-tab-panel">
+                <div className="admin-stats">
                 <div className="admin-stat">
                   <div className="admin-stat__value">{statsQuery.data.friendshipCount}</div>
                   <div className="admin-stat__label">{t('admin.stats.friendships')}</div>
@@ -117,7 +119,8 @@ export function AdminFriendsPage() {
                   <div className="admin-stat__value">{statsQuery.data.spamRequestSuspects}</div>
                   <div className="admin-stat__label">{t('admin.stats.spam')}</div>
                 </div>
-              </div>
+                </div>
+              </AdminPanel>
             )}
           </>
         )}
@@ -129,27 +132,34 @@ export function AdminFriendsPage() {
             ) : !listQuery.data?.items.length ? (
               <EmptyState title={t('admin.emptyRelations')} />
             ) : (
-              <ul className="friends-list">
-                {listQuery.data.items.map((row) => (
-                  <li key={row.id} className="friends-row">
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">
-                        {row.lowName} ↔ {row.highName}
+              <AdminPanel
+                title={t('admin.tab.relations')}
+                count={listQuery.data.items.length}
+                countLabel={t('admin:listCount', { count: listQuery.data.items.length })}
+                className="admin-tab-panel"
+              >
+                <ul className="friends-list">
+                  {listQuery.data.items.map((row) => (
+                    <li key={row.id} className="friends-row">
+                      <div className="friends-row__meta">
+                        <div className="friends-row__name">
+                          {row.lowName} ↔ {row.highName}
+                        </div>
+                        <div className="friends-row__sub">{row.createdAt}</div>
                       </div>
-                      <div className="friends-row__sub">{row.createdAt}</div>
-                    </div>
-                    <button
-                      type="button"
-                      className="btn btn--secondary"
-                      onClick={() => {
-                        if (window.confirm(t('admin.confirmDelete'))) delMut.mutate(row.id);
-                      }}
-                    >
-                      {t('admin.delete')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        onClick={() => {
+                          if (window.confirm(t('admin.confirmDelete'))) delMut.mutate(row.id);
+                        }}
+                      >
+                        {t('admin.delete')}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </AdminPanel>
             )}
             {listQuery.data && page * 20 < listQuery.data.total ? (
               <button
@@ -170,39 +180,46 @@ export function AdminFriendsPage() {
             ) : !reportsQuery.data?.length ? (
               <EmptyState title={t('admin.emptyReports')} />
             ) : (
-              <ul className="friends-list">
-                {reportsQuery.data.map((r) => (
-                  <li key={r.id} className="friends-row">
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">
-                        {r.reason} · {r.status}
+              <AdminPanel
+                title={t('admin.tab.reports')}
+                count={reportsQuery.data.length}
+                countLabel={t('admin:listCount', { count: reportsQuery.data.length })}
+                className="admin-tab-panel"
+              >
+                <ul className="friends-list">
+                  {reportsQuery.data.map((r) => (
+                    <li key={r.id} className="friends-row">
+                      <div className="friends-row__meta">
+                        <div className="friends-row__name">
+                          {r.reason} · {r.status}
+                        </div>
+                        <div className="friends-row__sub">
+                          {r.reporterId.slice(0, 8)} → {r.reportedUserId.slice(0, 8)}
+                          {r.description ? ` · ${r.description}` : ''}
+                        </div>
                       </div>
-                      <div className="friends-row__sub">
-                        {r.reporterId.slice(0, 8)} → {r.reportedUserId.slice(0, 8)}
-                        {r.description ? ` · ${r.description}` : ''}
-                      </div>
-                    </div>
-                    {r.status === 'pending' ? (
-                      <div className="friends-row__actions">
-                        <button
-                          type="button"
-                          className="btn btn--primary"
-                          onClick={() => resolveMut.mutate({ id: r.id, status: 'resolved' })}
-                        >
-                          {t('admin.resolve')}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => resolveMut.mutate({ id: r.id, status: 'dismissed' })}
-                        >
-                          {t('admin.dismiss')}
-                        </button>
-                      </div>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
+                      {r.status === 'pending' ? (
+                        <div className="friends-row__actions">
+                          <button
+                            type="button"
+                            className="btn btn--primary"
+                            onClick={() => resolveMut.mutate({ id: r.id, status: 'resolved' })}
+                          >
+                            {t('admin.resolve')}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn--secondary"
+                            onClick={() => resolveMut.mutate({ id: r.id, status: 'dismissed' })}
+                          >
+                            {t('admin.dismiss')}
+                          </button>
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </AdminPanel>
             )}
           </>
         )}
@@ -214,27 +231,34 @@ export function AdminFriendsPage() {
             ) : !spamQuery.data?.length ? (
               <EmptyState title={t('admin.emptySpam')} />
             ) : (
-              <ul className="friends-list">
-                {spamQuery.data.map((s) => (
-                  <li key={s.userId} className="friends-row">
-                    <div className="friends-row__meta">
-                      <div className="friends-row__name">{s.displayName}</div>
-                      <div className="friends-row__sub">
-                        {s.email} · {s.requestCount}
+              <AdminPanel
+                title={t('admin.tab.spam')}
+                count={spamQuery.data.length}
+                countLabel={t('admin:listCount', { count: spamQuery.data.length })}
+                className="admin-tab-panel"
+              >
+                <ul className="friends-list">
+                  {spamQuery.data.map((s) => (
+                    <li key={s.userId} className="friends-row">
+                      <div className="friends-row__meta">
+                        <div className="friends-row__name">{s.displayName}</div>
+                        <div className="friends-row__sub">
+                          {s.email} · {s.requestCount}
+                        </div>
                       </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="btn btn--secondary"
-                      onClick={() => {
-                        if (window.confirm(t('admin.confirmBlock'))) blockMut.mutate(s.userId);
-                      }}
-                    >
-                      {t('block')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        onClick={() => {
+                          if (window.confirm(t('admin.confirmBlock'))) blockMut.mutate(s.userId);
+                        }}
+                      >
+                        {t('block')}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </AdminPanel>
             )}
           </>
         )}

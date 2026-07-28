@@ -17,6 +17,10 @@ type TradeHubTab = 'sell' | 'buy' | 'mine' | 'liked';
 
 const TABS: TradeHubTab[] = ['sell', 'buy', 'mine', 'liked'];
 
+const STATUS_FILTERS_AFTER_SELLING: TradeStatus[] = TRADE_STATUSES.filter(
+  (value) => value !== 'selling'
+);
+
 function parseTab(raw: string | null): TradeHubTab {
   if (raw === 'buy' || raw === 'mine' || raw === 'liked') return raw;
   return 'sell';
@@ -72,14 +76,17 @@ export function TradeHubPage() {
     setParams(next);
   }
 
-  function setStatusFilter(nextStatus?: TradeStatus) {
+  function setStatusFilter(nextStatus?: TradeStatus, nextTab?: TradeHubTab) {
     const next = new URLSearchParams(params);
-    next.set('tab', tab);
+    next.set('tab', nextTab ?? tab);
     if (nextStatus) next.set('status', nextStatus);
     else next.delete('status');
     next.delete('page');
     setParams(next);
   }
+
+  const isSellingFilterActive = tab === 'sell' && status === 'selling';
+  const isBuyingFilterActive = tab === 'buy' && status === 'selling';
 
   return (
     <PageShell title={t('hubTitle')}>
@@ -108,7 +115,21 @@ export function TradeHubPage() {
             >
               {t('statsCount.total')}
             </button>
-            {TRADE_STATUSES.map((value) => (
+            <button
+              type="button"
+              className={`trade-tabs__btn${isSellingFilterActive ? ' is-active' : ''}`}
+              onClick={() => setStatusFilter('selling', 'sell')}
+            >
+              {t('statuses.selling')}
+            </button>
+            <button
+              type="button"
+              className={`trade-tabs__btn${isBuyingFilterActive ? ' is-active' : ''}`}
+              onClick={() => setStatusFilter('selling', 'buy')}
+            >
+              {t('statuses.buying')}
+            </button>
+            {STATUS_FILTERS_AFTER_SELLING.map((value) => (
               <button
                 key={value}
                 type="button"
