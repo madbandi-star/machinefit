@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEasyModeStore } from '@/store/easyMode.store';
@@ -16,7 +16,7 @@ export function EasyOnboardingPage() {
 
   useEffect(() => {
     if (mode !== 'easy') {
-      navigate(ROUTES.MY_PAGE, { replace: true });
+      navigate(ROUTES.HOME, { replace: true });
     }
   }, [mode, navigate]);
 
@@ -31,7 +31,7 @@ export function EasyOnboardingPage() {
     markOnboardingSeen();
     setMode('normal');
     showToast(t('easyMode.toastNormal'), 'success');
-    navigate(ROUTES.MY_PAGE, { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   return (
@@ -73,9 +73,6 @@ export function EasyOnboardingPage() {
           <button type="button" className="easy-btn easy-btn--ghost" onClick={backToNormal}>
             {t('easyMode.onboardingBackNormal')}
           </button>
-          <Link to={ROUTES.MY_PAGE} className="easy-btn easy-btn--ghost">
-            {t('easyMode.goMyPage')}
-          </Link>
         </div>
       </div>
     </div>
