@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { ChevronDown, User } from 'lucide-react';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
+import { useGymStore } from '@/store/gym.store';
 import './MemberSelector.css';
 
 /** Top-of-page member picker: view and select only (create/manage is on My Page). */
 export function MemberSelector() {
   const { t } = useTranslation(['gyms', 'common']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const setActiveMemberId = useGymStore((s) => s.setActiveMemberId);
   const {
     members,
     activeMember,
@@ -51,14 +53,14 @@ export function MemberSelector() {
     if (!isAuthenticated || !isRealGym) return;
     if (isLoading || !members[0]) return;
     if (activeMemberId) return;
-    selectMember(members[0].id);
+    setActiveMemberId(members[0].id);
   }, [
     isAuthenticated,
     isRealGym,
     activeMemberId,
     isLoading,
     members,
-    selectMember,
+    setActiveMemberId,
   ]);
 
   if (!isAuthenticated || !isRealGym) return null;

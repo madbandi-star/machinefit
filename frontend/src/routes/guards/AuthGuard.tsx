@@ -28,8 +28,8 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
     queryKey: QUERY_KEYS.me,
     queryFn: async () => (await userApi.getMe()).data.data,
     enabled: hydrated && isAuthenticated,
-    staleTime: 15_000,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
     retry: 1,
   });
 

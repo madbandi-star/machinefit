@@ -9,7 +9,7 @@ function normalizeApiBaseUrl(url: string): string {
   return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
 }
 
-const PRODUCTION_API_DEFAULT = 'https://machinefit-api.onrender.com/api/v1';
+const PRODUCTION_API_DEFAULT = 'https://machinefit.onrender.com/api/v1';
 
 function resolveApiBaseUrl(): string {
   if (import.meta.env.DEV) {
@@ -29,7 +29,17 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
-type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
+type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean; _getRetry?: number };
+
+const MAX_GET_RETRIES = 2;
+
+function isRetryableGet(error: unknown): boolean {
+  if (!axios.isAxiosError(error)) return true;
+  if (!error.config || error.config.method?.toLowerCase() !== 'get') return false;
+  const status = error.response?.status;
+  if (status && [502, 503, 504].includes(status)) return true;
+  return !error.response;
+}
 
 let refreshPromise: Promise<AuthTokens | null> | null = null;
 
@@ -91,6 +101,15 @@ apiClient.interceptors.response.use(
       const newTokens = await refreshPromise;
       if (newTokens?.accessToken) {
         originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+        return apiClient(originalRequest);
+      }
+    }
+
+    if (originalRequest && isRetryableGet(error)) {
+      const attempt = originalRequest._getRetry ?? 0;
+      if (attempt < MAX_GET_RETRIES) {
+        originalRequest._getRetry = attempt + 1;
+        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
         return apiClient(originalRequest);
       }
     }

@@ -2,10 +2,30 @@ import type { GymListQuery } from '@machinefit/shared';
 import { gymRepository } from '../repositories/gym.repository.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { TtlCache } from '../utils/ttl-cache.js';
+
+const gymListCache = new TtlCache<Awaited<ReturnType<typeof gymRepository.findMany>>>(60_000);
+
+async function loadGymDetail(idOrSlug: string) {
+  const gym = await gymRepository.findByIdOrSlug(idOrSlug);
+  if (!gym) {
+    throw new AppError(404, 'NOT_FOUND', `Gym not found: ${idOrSlug}`);
+  }
+  const [photos, machines] = await Promise.all([
+    gymRepository.getPhotos(gym.id),
+    gymRepository.getMachines(gym.id),
+  ]);
+  return { ...gym, photos, machines };
+}
+
+const gymDetailCache = new TtlCache<Awaited<ReturnType<typeof loadGymDetail>>>(60_000);
 
 export const gymService = {
   async list(query: GymListQuery) {
-    const { items, total } = await gymRepository.findMany(query);
+    const key = JSON.stringify(query);
+    const { items, total } = await gymListCache.getOrSet(key, () =>
+      gymRepository.findMany(query)
+    );
     return {
       items,
       meta: buildPaginationMeta(query.page, query.limit, total),
@@ -21,12 +41,7 @@ export const gymService = {
   },
 
   async getDetail(idOrSlug: string) {
-    const gym = await this.getByIdOrSlug(idOrSlug);
-    const [photos, machines] = await Promise.all([
-      gymRepository.getPhotos(gym.id),
-      gymRepository.getMachines(gym.id),
-    ]);
-    return { ...gym, photos, machines };
+    return gymDetailCache.getOrSet(idOrSlug, () => loadGymDetail(idOrSlug));
   },
 
   async getMachines(idOrSlug: string) {

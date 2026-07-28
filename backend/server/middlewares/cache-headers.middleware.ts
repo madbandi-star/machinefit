@@ -4,6 +4,7 @@ import type { Request, Response, NextFunction } from 'express';
 const CATALOG_PATHS = [
   '/machines',
   '/brands',
+  '/gyms',
   '/motivation-media',
 ];
 
@@ -19,7 +20,7 @@ export function cacheHeadersMiddleware(req: Request, res: Response, next: NextFu
   );
 
   if (isCatalog) {
-    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=300');
   } else if (path === '/health' || path === '/warmup') {
     res.setHeader('Cache-Control', 'no-store');
   }
