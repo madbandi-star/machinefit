@@ -12,8 +12,10 @@ import type {
   MotivationPlaylist,
   ReplaceMotivationMediaInput,
   OwnerApplication,
+  TrainerApplication,
   GymMachine,
   ReviewOwnerApplicationInput,
+  ReviewTrainerApplicationInput,
   AdminGymMachineActionInput,
   MuscleGroupImageAsset,
   MuscleGroupImagesState,
@@ -148,6 +150,12 @@ export const adminApi = {
 
   reviewOwnerApplication: (id: string, input: ReviewOwnerApplicationInput) =>
     apiClient.patch<ApiResponse<OwnerApplication>>(`/admin/owner-applications/${id}`, input),
+
+  listTrainerApplications: (params?: { status?: string }) =>
+    apiClient.get<ApiResponse<TrainerApplication[]>>('/admin/trainer-applications', { params }),
+
+  reviewTrainerApplication: (id: string, input: ReviewTrainerApplicationInput) =>
+    apiClient.patch<ApiResponse<TrainerApplication>>(`/admin/trainer-applications/${id}`, input),
 
   listGymInventory: (gymId: string, params?: { includeDeleted?: boolean }) =>
     apiClient.get<ApiResponse<GymMachine[]>>(`/admin/gyms/${gymId}/inventory`, { params }),

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon } from '@/components/icons/Icon';
-import { complianceApi } from '@/api/compliance.api';
+import { trainerApi } from '@/api';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -34,27 +34,37 @@ export function TrainerApplyPage() {
     if (alreadyTrainer || submitting) return;
     setSubmitting(true);
     try {
-      const body = [
-        '[트레이너 되기 신청]',
-        '',
-        `신청자: ${applicantName.trim()}`,
-        `연락처: ${phone.trim()}`,
-        `이메일: ${email.trim()}`,
-        `전문분야: ${specialties.trim() || '(없음)'}`,
-        `경력: ${career.trim() || '(없음)'}`,
-        `자격증: ${certs.trim() || '(없음)'}`,
-        `메시지: ${message.trim() || '(없음)'}`,
-      ].join('\n');
-
-      await complianceApi.createTicket({
-        category: 'other',
-        subject: t('online-pt:trainerApply.ticketSubject'),
-        body,
+      const res = await trainerApi.apply({
+        applicantName: applicantName.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+        specialties: specialties.trim() || undefined,
+        career: career.trim() || undefined,
+        certifications: certs.trim() || undefined,
+        message: message.trim() || undefined,
       });
-      showToast(t('online-pt:trainerApply.submitted'), 'success');
+      const data = res.data.data;
+      showToast(
+        data.pending
+          ? t('online-pt:trainerApply.submittedPending')
+          : t('online-pt:trainerApply.submittedApproved'),
+        'success'
+      );
       navigate(ROUTES.MY_PAGE);
-    } catch {
-      showToast(t('common:errors.submitFailed'), 'error');
+    } catch (error: unknown) {
+      const code =
+        typeof error === 'object' &&
+        error &&
+        'response' in error &&
+        (error as { response?: { data?: { error?: { code?: string } } } }).response?.data?.error
+          ?.code;
+      if (code === 'APPLICATION_PENDING') {
+        showToast(t('online-pt:trainerApply.alreadyPending'), 'info');
+      } else if (code === 'ALREADY_TRAINER') {
+        showToast(t('online-pt:trainerApply.alreadyBody'), 'info');
+      } else {
+        showToast(t('common:errors.submitFailed'), 'error');
+      }
     } finally {
       setSubmitting(false);
     }

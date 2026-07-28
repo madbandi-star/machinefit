@@ -61,5 +61,7 @@ adminRouter.patch('/reports/:id', adminController.resolveReport);
 
 adminRouter.get('/owner-applications', adminController.listOwnerApplications);
 adminRouter.patch('/owner-applications/:id', adminController.reviewOwnerApplication);
+adminRouter.get('/trainer-applications', adminController.listTrainerApplications);
+adminRouter.patch('/trainer-applications/:id', adminController.reviewTrainerApplication);
 adminRouter.get('/gyms/:gymId/inventory', adminController.listGymInventory);
 adminRouter.post('/gym-machines/:itemId/actions', adminController.gymInventoryAction);
