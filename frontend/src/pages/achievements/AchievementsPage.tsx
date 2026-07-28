@@ -346,9 +346,6 @@ export function AchievementsPage() {
                     </span>
                   ) : null}
                 </span>
-                <span className="achievements-hero__summary-level">
-                  Lv.{data.summary.level.level}
-                </span>
                 <Icon
                   name="chevronDown"
                   size={18}
@@ -359,6 +356,48 @@ export function AchievementsPage() {
                   {heroExpanded ? t('collapse') : t('expand')}
                 </span>
               </button>
+
+              <div
+                className="achievements-level-bar"
+                aria-label={t('achievements.levelXpBarLabel')}
+              >
+                <div className="achievements-level-bar__labels">
+                  <span className="achievements-level-bar__current">
+                    Lv.{formatInt(data.summary.level.level, locale)}
+                  </span>
+                  <span className="achievements-level-bar__next">
+                    {data.summary.level.xpToNextLevel > 0
+                      ? `Lv.${formatInt(data.summary.level.level + 1, locale)}`
+                      : t('achievements.levelMax')}
+                  </span>
+                </div>
+                <div
+                  className="achievements-level-bar__track"
+                  role="progressbar"
+                  aria-valuenow={Math.round(data.summary.level.progressPct)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={t('achievements.levelProgress')}
+                >
+                  <div
+                    className="achievements-level-bar__fill"
+                    style={{ width: `${Math.min(100, data.summary.level.progressPct)}%` }}
+                  />
+                </div>
+                <div className="achievements-level-bar__meta">
+                  <span>
+                    {formatInt(data.summary.level.xpIntoLevel, locale)} /{' '}
+                    {formatInt(data.summary.level.xpForNextLevel, locale)} XP
+                  </span>
+                  <span className="achievements-level-bar__remaining">
+                    {data.summary.level.xpToNextLevel > 0
+                      ? t('achievements.levelXpRemaining', {
+                          xp: formatInt(data.summary.level.xpToNextLevel, locale),
+                        })
+                      : t('achievements.levelMax')}
+                  </span>
+                </div>
+              </div>
 
               {heroExpanded ? (
                 <div id="achievements-hero-details" className="achievements-hero__details">
@@ -602,44 +641,42 @@ function AchievementCard({
   const progressLabel = item.obscured
     ? '???'
     : `${formatInt(item.current, locale)} / ${formatInt(item.target, locale)}`;
+  const unlockRateLabel =
+    item.unlockRatePct != null
+      ? `${item.unlockRatePct}% ${t('achievements.unlockRate')}`
+      : null;
 
   return (
     <article
       className={`achievement-card${item.unlocked ? ' achievement-card--unlocked' : ' achievement-card--locked'}`}
+      title={[desc, unlockRateLabel].filter(Boolean).join(' · ')}
     >
-      <div className="achievement-card__emoji" aria-hidden>
-        {item.obscured ? '❓' : item.def.emoji}
-      </div>
-      <div className="achievement-card__body">
-        <div className="achievement-card__top">
-          <h3 className="achievement-card__name">{name}</h3>
-          <span className={`achievement-card__rarity achievement-card__rarity--${item.rarity}`}>
-            {t(`achievements.rarity.${item.rarity}`)}
-          </span>
-        </div>
-        <p className="achievement-card__desc">{desc}</p>
-        <div className="achievement-card__meta">
-          <span>{progressLabel}</span>
-          <span>
-            +{formatInt(item.def.xp, locale)} XP
-            {item.unlockRatePct != null
-              ? ` · ${item.unlockRatePct}% ${t('achievements.unlockRate')}`
-              : ''}
-          </span>
-        </div>
-        <div className="achievement-card__bar" aria-hidden>
-          <span style={{ width: `${item.obscured && !item.unlocked ? 0 : item.progressPct}%` }} />
-        </div>
-        {item.unlocked && (
+      <div className="achievement-card__header">
+        <span className="achievement-card__emoji" aria-hidden>
+          {item.obscured ? '❓' : item.def.emoji}
+        </span>
+        {item.unlocked ? (
           <button
             type="button"
-            className="btn btn--block"
-            style={{ marginTop: '0.65rem' }}
+            className="achievement-card__share"
             onClick={onShare}
+            aria-label={t('achievements.share')}
           >
-            {t('achievements.share')}
+            <Icon name="share" size={14} />
           </button>
-        )}
+        ) : null}
+      </div>
+      <h3 className="achievement-card__name">{name}</h3>
+      <span className={`achievement-card__rarity achievement-card__rarity--${item.rarity}`}>
+        {t(`achievements.rarity.${item.rarity}`)}
+      </span>
+      <p className="achievement-card__desc">{desc}</p>
+      <div className="achievement-card__bar" aria-hidden>
+        <span style={{ width: `${item.obscured && !item.unlocked ? 0 : item.progressPct}%` }} />
+      </div>
+      <div className="achievement-card__meta">
+        <span>{progressLabel}</span>
+        <span>+{formatInt(item.def.xp, locale)} XP</span>
       </div>
     </article>
   );
