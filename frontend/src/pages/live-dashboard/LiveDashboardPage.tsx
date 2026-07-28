@@ -12,6 +12,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { liveDashboardApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { LiveFeedTicker } from './LiveFeedTicker';
 import './LiveDashboardPage.css';
 
 function useCountUp(target: number, durationMs = 900): number {
@@ -184,6 +185,10 @@ export function LiveDashboardPage() {
           <p className="live-dash__subtitle">{t('liveDashboard.subtitle')}</p>
         </div>
 
+        {!snapshotQuery.isLoading && data ? (
+          <LiveFeedTicker items={data.feed} emptyLabel={t('liveDashboard.feedEmpty')} />
+        ) : null}
+
         {snapshotQuery.isLoading || !data ? (
           <Skeleton count={6} height={72} />
         ) : (
@@ -307,22 +312,6 @@ export function LiveDashboardPage() {
                     ✨ {insight.text}
                   </li>
                 ))}
-              </ul>
-            </section>
-
-            <section className="live-section">
-              <h3 className="live-section__title">{t('liveDashboard.feed')}</h3>
-              <ul className="live-feed">
-                {data.feed.length === 0 ? (
-                  <li className="live-feed__empty">{t('liveDashboard.feedEmpty')}</li>
-                ) : (
-                  data.feed.map((item) => (
-                    <li key={item.id} className="live-feed__item glass">
-                      <span aria-hidden>{item.emoji}</span>
-                      <span>{item.text}</span>
-                    </li>
-                  ))
-                )}
               </ul>
             </section>
 
