@@ -130,29 +130,188 @@
   gap: 0.5rem;
 }
 
+/* —— Support / 문의하기 —— */
+.support-page .form-section__title {
+  margin-bottom: 0.15rem;
+}
+
+.support-textarea {
+  min-height: 8rem;
+  resize: vertical;
+  line-height: 1.45;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.support-inline-error {
+  margin: 0;
+  color: var(--color-warning, #f59e0b);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.support-ticket-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.support-ticket-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: var(--touch-target-min, 44px);
+  padding: 0.85rem 0.95rem;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  transition: border-color var(--motion-fast), background var(--motion-fast);
+}
+
+.support-ticket-row:active {
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface-alt));
+}
+
+@media (hover: hover) {
+  .support-ticket-row:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
+  }
+}
+
+.support-ticket-row__main {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.support-ticket-row__subject {
+  font-weight: 700;
+  font-size: var(--font-size-body-sm, 0.95rem);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.support-ticket-row__meta {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.support-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: color-mix(in srgb, var(--color-text-muted) 16%, transparent);
+  color: var(--color-text-muted);
+}
+
+.support-status--open {
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary);
+}
+
+.support-status--progress {
+  background: color-mix(in srgb, #38bdf8 18%, transparent);
+  color: #7dd3fc;
+}
+
+.support-status--resolved {
+  background: color-mix(in srgb, #4ade80 16%, transparent);
+  color: #86efac;
+}
+
+.support-status--closed {
+  background: color-mix(in srgb, var(--color-text-muted) 18%, transparent);
+  color: var(--color-text-muted);
+}
+
+.support-ticket-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+}
+
+.support-ticket-meta__text {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.support-thread-section {
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+}
+
 .support-thread {
   display: grid;
   gap: 0.75rem;
-  margin-bottom: 1rem;
 }
 
 .support-msg {
-  padding: 0.75rem 0.9rem;
-  border-radius: 0.35rem;
-  background: rgba(148, 163, 184, 0.12);
+  padding: 0.85rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--color-surface-alt);
+}
+
+.support-msg--user {
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-alt));
 }
 
 .support-msg--admin {
-  background: rgba(13, 148, 136, 0.12);
+  border-color: color-mix(in srgb, #2dd4bf 30%, var(--glass-border));
+  background: color-mix(in srgb, #2dd4bf 10%, var(--color-surface-alt));
 }
 
-.support-msg header {
+.support-msg__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.45rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted, #9ca3af);
-  margin-bottom: 0.35rem;
+  color: var(--color-text-muted);
 }
 
-.support-msg p {
+.support-msg__author {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.support-msg__body {
   margin: 0;
   white-space: pre-wrap;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.support-closed-note {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .privacy-summary div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
 }
