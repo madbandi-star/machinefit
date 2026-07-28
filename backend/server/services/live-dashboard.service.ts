@@ -2,6 +2,7 @@ import {
   LIVE_COUNTRIES,
   LIVE_KR_DISTRICTS,
   LIVE_KR_METROS,
+  isLiveHeatmapCountry,
   liveGeoLabel,
   type LiveBreadcrumbItem,
   type LiveChildNode,
@@ -363,13 +364,15 @@ export const liveDashboardService = {
     let children: LiveChildNode[] = [];
     if (level === 'world') {
       const rows = await liveDashboardRepository.listChildren('country', {}, locale);
-      const countryList = countries.length
-        ? countries
-        : LIVE_COUNTRIES.map((c) => ({
-            code: c.code,
-            name: c.name,
-            flagEmoji: c.flag,
-          }));
+      // Heatmap: KR / US / JP / CN only (ignore other DB countries).
+      const countryList = LIVE_COUNTRIES.map((c) => {
+        const fromDb = countries.find((row) => row.code.toUpperCase() === c.code);
+        return {
+          code: c.code,
+          name: fromDb?.name ?? c.name,
+          flagEmoji: fromDb?.flagEmoji ?? c.flag,
+        };
+      });
       children = countryList
         .map((c) => {
           const hit = rows.find((r) => r.code === c.code);
@@ -733,15 +736,17 @@ export const liveDashboardService = {
     };
 
     const countries = await locationRepository.listCountries();
-    const countryList = countries.length
-      ? countries
-      : LIVE_COUNTRIES.map((c) => ({
-          code: c.code,
-          name: c.name,
-          flagEmoji: c.flag,
-        }));
+    const countryList = LIVE_COUNTRIES.map((c) => {
+      const fromDb = countries.find((row) => row.code.toUpperCase() === c.code);
+      return {
+        code: c.code,
+        name: fromDb?.name ?? c.name,
+        flagEmoji: fromDb?.flagEmoji ?? c.flag,
+      };
+    });
 
     for (const country of countryList) {
+      if (!isLiveHeatmapCountry(country.code)) continue;
       const label = locName(country.name, locale);
       if (
         label.toLowerCase().includes(needle) ||
@@ -756,9 +761,9 @@ export const liveDashboardService = {
       }
     }
 
-    // Search seeded states/cities for major countries (global hierarchy).
+    // Search seeded states/cities for heatmap countries only (KR/US/JP/CN).
     // Batch-load hierarchy (same ORDER BY as listStates/listCities) to avoid N+1.
-    const scopedCountries = countryList.slice(0, 12);
+    const scopedCountries = countryList;
     const allStates = await locationRepository.listStatesForCountries(
       scopedCountries.map((c) => c.code)
     );

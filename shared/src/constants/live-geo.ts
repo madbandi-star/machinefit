@@ -16,6 +16,14 @@ export const LIVE_COUNTRIES: LiveGeoNode[] = [
   { level: 'country', code: 'CN', name: { ko: '중국', en: 'China' }, flag: '🇨🇳' },
 ];
 
+/** Live world heatmap / country board — keep only these markets. */
+export const LIVE_HEATMAP_COUNTRY_CODES = LIVE_COUNTRIES.map((c) => c.code);
+
+export function isLiveHeatmapCountry(code: string | null | undefined): boolean {
+  if (!code) return false;
+  return LIVE_HEATMAP_COUNTRY_CODES.includes(code.toUpperCase());
+}
+
 export const LIVE_KR_METROS: LiveGeoNode[] = [
   { level: 'metro', code: 'seoul', name: { ko: '서울특별시', en: 'Seoul' } },
   { level: 'metro', code: 'gyeonggi', name: { ko: '경기도', en: 'Gyeonggi' } },
