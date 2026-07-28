@@ -342,8 +342,13 @@ export const communityRepository = {
     const pool = getPool();
     if (!pool) {
       const start = (page - 1) * limit;
+      const items = mockMachineRequests.slice(start, start + limit).map((req) => ({
+        ...req,
+        userId: '',
+        adminNote: undefined,
+      }));
       return {
-        items: mockMachineRequests.slice(start, start + limit),
+        items,
         meta: buildPaginationMeta(page, limit, mockMachineRequests.length),
       };
     }
@@ -360,12 +365,13 @@ export const communityRepository = {
     );
     const items: MachineRequest[] = result.rows.map((r) => ({
       id: r.id,
-      userId: r.user_id,
+      // Public board must not expose internal user ids or admin notes.
+      userId: '',
       brandName: r.brand_name,
       machineName: r.machine_name,
       description: r.description,
       status: r.status,
-      adminNote: r.admin_note,
+      adminNote: undefined,
       linkedMachineId: r.linked_machine_id,
       authorName: r.author_name,
       createdAt: r.created_at,

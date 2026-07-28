@@ -21,6 +21,7 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const location = useLocation();
 
   const meQuery = useQuery({
@@ -29,6 +30,7 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
     enabled: hydrated && isAuthenticated,
     staleTime: 15_000,
     refetchOnWindowFocus: true,
+    retry: 1,
   });
 
   useEffect(() => {
@@ -47,7 +49,25 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
     return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }
 
-  const roleCode = meQuery.data?.roleCode ?? user.roleCode;
+  // Elevated routes must wait for live /me — never trust persisted localStorage role alone.
+  const needsLiveRole = minRole !== Role.MEMBER && minRole !== Role.GUEST;
+  if (needsLiveRole && (meQuery.isLoading || meQuery.isFetching) && !meQuery.data) {
+    return (
+      <div className="auth-guard-loading" aria-busy="true" aria-live="polite">
+        <Skeleton count={2} height={72} />
+      </div>
+    );
+  }
+
+  if (needsLiveRole && meQuery.isError) {
+    clearAuth();
+    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
+  }
+
+  const roleCode = needsLiveRole
+    ? (meQuery.data?.roleCode ?? Role.MEMBER)
+    : (meQuery.data?.roleCode ?? user.roleCode);
+
   if (!hasMinRole(roleCode, minRole)) {
     return <Navigate to={ROUTES.HOME} replace />;
   }
