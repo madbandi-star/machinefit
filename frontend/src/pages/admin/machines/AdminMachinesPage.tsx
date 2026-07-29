@@ -36,6 +36,16 @@ const MUSCLE_OPTIONS = [...TARGET_MUSCLE_GROUPS, 'full_body'] as const;
 
 type SortKey = 'name' | 'createdAt' | 'sortOrder' | 'code';
 type ActiveFilter = 'all' | 'true' | 'false';
+type MachineListParams = {
+  q?: string;
+  brandId?: string;
+  muscleGroup?: string;
+  isActive?: ActiveFilter;
+  sort?: SortKey;
+  order?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+};
 
 type MachineFormState = {
   brandId: string;
@@ -106,6 +116,48 @@ function fromMachine(machine: Machine): MachineFormState {
     sortOrder: String(machine.sortOrder ?? 0),
     isActive: machine.isActive,
   };
+}
+
+function matchesMachineFilters(machine: Machine, params: MachineListParams): boolean {
+  const query = params.q?.trim().toLowerCase();
+  if (query) {
+    const haystack = [
+      machine.code,
+      machine.brandCode,
+      machine.name.ko,
+      machine.name.en,
+      machine.brandName?.ko,
+      machine.brandName?.en,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+    if (!haystack.includes(query)) return false;
+  }
+  if (params.brandId && machine.brandId !== params.brandId) return false;
+  if (params.muscleGroup && machine.muscleGroup !== params.muscleGroup) return false;
+  if (params.isActive === 'true' && !machine.isActive) return false;
+  if (params.isActive === 'false' && machine.isActive) return false;
+  return true;
+}
+
+function compareMachines(a: Machine, b: Machine, params: MachineListParams): number {
+  const sort = params.sort ?? 'sortOrder';
+  const order = params.order === 'desc' ? -1 : 1;
+  if (sort === 'createdAt') {
+    const left = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const right = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return (left - right) * order || a.code.localeCompare(b.code);
+  }
+  if (sort === 'name') {
+    const left = (a.name.en ?? a.name.ko ?? a.code).toLowerCase();
+    const right = (b.name.en ?? b.name.ko ?? b.code).toLowerCase();
+    return left.localeCompare(right) * order || a.code.localeCompare(b.code);
+  }
+  if (sort === 'code') {
+    return a.code.localeCompare(b.code) * order;
+  }
+  return ((a.sortOrder ?? 0) - (b.sortOrder ?? 0)) * order || a.code.localeCompare(b.code);
 }
 
 function CatalogImageField({
@@ -281,6 +333,55 @@ export function AdminMachinesPage() {
     await queryClient.invalidateQueries({ queryKey: ['admin', 'machine-covers'] });
   };
 
+  const syncMachineCaches = useCallback(
+    (machine: Machine, mode: 'upsert' | 'delete') => {
+      const entries = queryClient.getQueriesData({ queryKey: QUERY_KEYS.adminMachines });
+      for (const [queryKey, cached] of entries) {
+        if (!cached || typeof cached !== 'object' || !('items' in cached) || !('meta' in cached)) continue;
+        const data = cached as { items: Machine[]; meta: { total: number; limit: number } };
+        const params = (queryKey[3] ?? {}) as MachineListParams;
+        const filteredWithoutItem = data.items.filter((item) => item.id !== machine.id);
+        const hadItem = filteredWithoutItem.length !== data.items.length;
+
+        if (mode === 'delete') {
+          queryClient.setQueryData(queryKey, {
+            ...data,
+            items: filteredWithoutItem,
+            meta: {
+              ...data.meta,
+              total: Math.max(0, data.meta.total - (hadItem ? 1 : 0)),
+            },
+          });
+          continue;
+        }
+
+        const matches = matchesMachineFilters(machine, params);
+        if (!matches) {
+          queryClient.setQueryData(queryKey, {
+            ...data,
+            items: filteredWithoutItem,
+            meta: {
+              ...data.meta,
+              total: Math.max(0, data.meta.total - (hadItem ? 1 : 0)),
+            },
+          });
+          continue;
+        }
+
+        const nextItems = [...filteredWithoutItem, machine].sort((a, b) => compareMachines(a, b, params));
+        queryClient.setQueryData(queryKey, {
+          ...data,
+          items: nextItems.slice(0, data.meta.limit),
+          meta: {
+            ...data.meta,
+            total: data.meta.total + (hadItem ? 0 : 1),
+          },
+        });
+      }
+    },
+    [queryClient]
+  );
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const input = toUpsertInput(form);
@@ -294,6 +395,13 @@ export function AdminMachinesPage() {
       showToast(t('admin:catalogMachines.saving'), 'info');
     },
     onSuccess: async (machine) => {
+      syncMachineCaches(machine, 'upsert');
+      setDraftQ(machine.code);
+      setQ(machine.code);
+      setPage(1);
+      setBrandId('');
+      setMuscleGroup('');
+      setIsActive('all');
       await invalidate();
       const message = t('admin:catalogMachines.saveSuccess');
       setFormStatus({ type: 'success', message });
@@ -318,7 +426,8 @@ export function AdminMachinesPage() {
     mutationFn: ({ id, next }: { id: string; next: boolean }) =>
       adminApi.setCatalogMachineActive(id, next),
     onMutate: () => showToast(t('admin:processing'), 'info'),
-    onSuccess: async (_data, variables) => {
+    onSuccess: async (response, variables) => {
+      syncMachineCaches(response.data.data, 'upsert');
       await invalidate();
       showToast(
         variables.next
@@ -334,6 +443,15 @@ export function AdminMachinesPage() {
     mutationFn: (id: string) => adminApi.deleteCatalogMachine(id),
     onMutate: () => showToast(t('admin:catalogMachines.deleting'), 'info'),
     onSuccess: async (res) => {
+      if (pendingDelete) {
+        syncMachineCaches(
+          {
+            ...pendingDelete,
+            isActive: res.data.data.deactivated ? false : pendingDelete.isActive,
+          },
+          res.data.data.deactivated ? 'upsert' : 'delete'
+        );
+      }
       await invalidate();
       if (res.data.data.deactivated) {
         showToast(t('admin:catalogMachines.deactivatedInstead'), 'success');

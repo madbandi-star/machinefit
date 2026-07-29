@@ -23,6 +23,14 @@ const ALLOWED_EXT = new Set(['jpg', 'jpeg', 'png', 'webp']);
 
 type SortKey = 'name' | 'createdAt' | 'sortOrder';
 type ActiveFilter = 'all' | 'true' | 'false';
+type BrandListParams = {
+  q?: string;
+  sort?: SortKey;
+  order?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+  isActive?: ActiveFilter;
+};
 
 type BrandFormState = {
   code: string;
@@ -85,6 +93,33 @@ function fromBrand(brand: Brand): BrandFormState {
     sortOrder: String(brand.sortOrder ?? 0),
     isActive: brand.isActive,
   };
+}
+
+function matchesBrandFilters(brand: Brand, params: BrandListParams): boolean {
+  const query = params.q?.trim().toLowerCase();
+  if (query) {
+    const haystack = [brand.code, brand.name.ko, brand.name.en].filter(Boolean).join(' ').toLowerCase();
+    if (!haystack.includes(query)) return false;
+  }
+  if (params.isActive === 'true' && !brand.isActive) return false;
+  if (params.isActive === 'false' && brand.isActive) return false;
+  return true;
+}
+
+function compareBrands(a: Brand, b: Brand, params: BrandListParams): number {
+  const sort = params.sort ?? 'sortOrder';
+  const order = params.order === 'desc' ? -1 : 1;
+  if (sort === 'createdAt') {
+    const left = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const right = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return (left - right) * order || a.code.localeCompare(b.code);
+  }
+  if (sort === 'name') {
+    const left = (a.name.en ?? a.name.ko ?? a.code).toLowerCase();
+    const right = (b.name.en ?? b.name.ko ?? b.code).toLowerCase();
+    return left.localeCompare(right) * order || a.code.localeCompare(b.code);
+  }
+  return ((a.sortOrder ?? 0) - (b.sortOrder ?? 0)) * order || a.code.localeCompare(b.code);
 }
 
 function CatalogImageField({
@@ -235,6 +270,72 @@ export function AdminBrandsPage() {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminBrands });
   };
 
+  const syncBrandCaches = useCallback(
+    (brand: Brand, mode: 'upsert' | 'delete') => {
+      const entries = queryClient.getQueriesData({ queryKey: QUERY_KEYS.adminBrands });
+      for (const [queryKey, cached] of entries) {
+        if (queryKey[3] === 'options' && Array.isArray(cached)) {
+          const options = cached as Brand[];
+          if (mode === 'delete') {
+            queryClient.setQueryData(
+              queryKey,
+              options.filter((item) => item.id !== brand.id)
+            );
+            continue;
+          }
+          const next = options.some((item) => item.id === brand.id)
+            ? options.map((item) => (item.id === brand.id ? brand : item))
+            : [...options, brand];
+          next.sort((a, b) => compareBrands(a, b, { sort: 'name', order: 'asc' }));
+          queryClient.setQueryData(queryKey, next);
+          continue;
+        }
+
+        if (!cached || typeof cached !== 'object' || !('items' in cached) || !('meta' in cached)) continue;
+        const data = cached as { items: Brand[]; meta: { total: number; limit: number } };
+        const params = (queryKey[3] ?? {}) as BrandListParams;
+        const filteredWithoutItem = data.items.filter((item) => item.id !== brand.id);
+        const hadItem = filteredWithoutItem.length !== data.items.length;
+
+        if (mode === 'delete') {
+          queryClient.setQueryData(queryKey, {
+            ...data,
+            items: filteredWithoutItem,
+            meta: {
+              ...data.meta,
+              total: Math.max(0, data.meta.total - (hadItem ? 1 : 0)),
+            },
+          });
+          continue;
+        }
+
+        const matches = matchesBrandFilters(brand, params);
+        if (!matches) {
+          queryClient.setQueryData(queryKey, {
+            ...data,
+            items: filteredWithoutItem,
+            meta: {
+              ...data.meta,
+              total: Math.max(0, data.meta.total - (hadItem ? 1 : 0)),
+            },
+          });
+          continue;
+        }
+
+        const nextItems = [...filteredWithoutItem, brand].sort((a, b) => compareBrands(a, b, params));
+        queryClient.setQueryData(queryKey, {
+          ...data,
+          items: nextItems.slice(0, data.meta.limit),
+          meta: {
+            ...data.meta,
+            total: data.meta.total + (hadItem ? 0 : 1),
+          },
+        });
+      }
+    },
+    [queryClient]
+  );
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const input = toUpsertInput(form);
@@ -248,6 +349,11 @@ export function AdminBrandsPage() {
       showToast(t('brands.saving'), 'info');
     },
     onSuccess: async (brand) => {
+      syncBrandCaches(brand, 'upsert');
+      setDraftQ(brand.code);
+      setQ(brand.code);
+      setPage(1);
+      setIsActive('all');
       await invalidate();
       const message = t('brands.saveSuccess');
       setFormStatus({ type: 'success', message });
@@ -270,7 +376,8 @@ export function AdminBrandsPage() {
     mutationFn: ({ id, next }: { id: string; next: boolean }) =>
       adminApi.setCatalogBrandActive(id, next),
     onMutate: () => showToast(t('processing'), 'info'),
-    onSuccess: async (_data, variables) => {
+    onSuccess: async (response, variables) => {
+      syncBrandCaches(response.data.data, 'upsert');
       await invalidate();
       showToast(
         variables.next ? t('brands.enabledSuccess') : t('brands.disabledSuccess'),
@@ -284,6 +391,7 @@ export function AdminBrandsPage() {
     mutationFn: (id: string) => adminApi.deleteCatalogBrand(id),
     onMutate: () => showToast(t('brands.deleting'), 'info'),
     onSuccess: async () => {
+      if (pendingDelete) syncBrandCaches(pendingDelete, 'delete');
       await invalidate();
       showToast(t('brands.deleteSuccess'), 'success');
       setPendingDelete(null);
