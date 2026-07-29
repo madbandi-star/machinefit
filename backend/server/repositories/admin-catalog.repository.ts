@@ -171,7 +171,7 @@ export const adminCatalogRepository = {
               (SELECT COUNT(*) FROM machines m WHERE m.brand_id = b.id) AS machine_count
        FROM brands b
        LEFT JOIN countries c ON c.id = b.country_id
-       WHERE b.id = $1 OR b.code = $1`,
+       WHERE b.id::text = $1 OR b.code = $1`,
       [id]
     );
     return result.rows[0] ? mapBrand(result.rows[0]) : null;
@@ -400,7 +400,7 @@ export const adminCatalogRepository = {
               ) AS primary_image_url
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
-       WHERE m.id = $1 OR m.code = $1`,
+       WHERE m.id::text = $1 OR m.code = $1`,
       [id]
     );
     return result.rows[0] ? mapMachine(result.rows[0]) : null;

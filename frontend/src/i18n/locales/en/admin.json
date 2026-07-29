@@ -87,6 +87,7 @@
     "uploadTooLarge": "File is too large. Max 10MB.",
     "saveBeforeImages": "Save the brand first to upload images.",
     "requiredCode": "Enter a brand code.",
+    "invalidCode": "Brand code may only use letters, numbers, _ and -.",
     "requiredNameKo": "Enter the Korean brand name.",
     "machinesCount": "{{count}} machines",
     "codeExists": "That brand code is already in use.",

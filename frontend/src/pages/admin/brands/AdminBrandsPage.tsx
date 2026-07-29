@@ -353,6 +353,7 @@ export function AdminBrandsPage() {
       if (code === 'INVALID_COUNTRY') return t('brands.invalidCountry');
       if (code === 'VALIDATION_ERROR') {
         const summary = getApiValidationFieldSummary(error)?.toLowerCase() ?? '';
+        if (summary.includes('code')) return t('brands.invalidCode');
         if (summary.includes('website') || summary.includes('url')) return t('brands.invalidWebsite');
         if (summary.includes('country')) return t('brands.invalidCountry');
         return t('brands.validationError');
@@ -579,6 +580,7 @@ export function AdminBrandsPage() {
 
   const validateBeforeSave = useCallback(() => {
     if (!form.code.trim()) return t('brands.requiredCode');
+    if (!/^[A-Za-z0-9_-]+$/.test(form.code.trim())) return t('brands.invalidCode');
     if (!form.nameKo.trim()) return t('brands.requiredNameKo');
     const website = normalizeWebsiteUrl(form.websiteUrl);
     if (website && !/^https?:\/\/.+/i.test(website)) return t('brands.invalidWebsite');
