@@ -9,6 +9,7 @@ import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
@@ -193,13 +194,22 @@ export function AdminBrandsPage() {
   const [uploadProgress, setUploadProgress] = useState<Partial<Record<'logo' | 'hero', number>>>(
     {}
   );
-  const closeEditor = useCallback(() => setEditor(null), []);
+  const [formStatus, setFormStatus] = useState<{
+    type: 'pending' | 'success' | 'error';
+    message: string;
+  } | null>(null);
+  const closeEditor = useCallback(() => {
+    setFormStatus(null);
+    setEditor(null);
+  }, []);
   const openCreate = useCallback(() => {
     setForm(EMPTY_FORM);
+    setFormStatus(null);
     setEditor('create');
   }, []);
   const openEdit = useCallback((brand: Brand) => {
     setForm(fromBrand(brand));
+    setFormStatus(null);
     setEditor(brand);
   }, []);
   const dialogRef = useModalAccessibility({
@@ -233,38 +243,51 @@ export function AdminBrandsPage() {
       }
       return (await adminApi.createCatalogBrand(input)).data.data;
     },
+    onMutate: () => {
+      setFormStatus({ type: 'pending', message: t('brands.saving') });
+      showToast(t('brands.saving'), 'info');
+    },
     onSuccess: async (brand) => {
       await invalidate();
-      showToast(t('saved'), 'success');
+      const message = t('brands.saveSuccess');
+      setFormStatus({ type: 'success', message });
+      showToast(message, 'success');
       setForm(fromBrand(brand));
       setEditor(brand);
     },
     onError: (error) => {
       const code = getApiErrorCode(error);
-      if (code === 'CODE_EXISTS' || code === 'BRAND_CODE_EXISTS') {
-        showToast(t('brands.codeExists'), 'error');
-        return;
-      }
-      showToast(t('error'), 'error');
+      const message =
+        code === 'CODE_EXISTS' || code === 'BRAND_CODE_EXISTS'
+          ? t('brands.codeExists')
+          : t('error');
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
     },
   });
 
   const activeMutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: boolean }) =>
       adminApi.setCatalogBrandActive(id, next),
-    onSuccess: async () => {
+    onMutate: () => showToast(t('processing'), 'info'),
+    onSuccess: async (_data, variables) => {
       await invalidate();
-      showToast(t('saved'), 'success');
+      showToast(
+        variables.next ? t('brands.enabledSuccess') : t('brands.disabledSuccess'),
+        'success'
+      );
     },
     onError: () => showToast(t('error'), 'error'),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminApi.deleteCatalogBrand(id),
+    onMutate: () => showToast(t('brands.deleting'), 'info'),
     onSuccess: async () => {
       await invalidate();
       showToast(t('brands.deleteSuccess'), 'success');
       setPendingDelete(null);
+      setFormStatus(null);
       setEditor(null);
     },
     onError: (error) => {
@@ -287,17 +310,23 @@ export function AdminBrandsPage() {
         )
       ).data.data;
     },
+    onMutate: () => showToast(t('brands.uploading'), 'info'),
     onSuccess: async (brand) => {
       await invalidate();
       setEditor(brand);
+      setFormStatus({ type: 'success', message: t('brands.uploadSuccess') });
       showToast(t('brands.uploadSuccess'), 'success');
     },
     onError: (error) => {
       const code = getApiErrorCode(error);
-      if (code === 'FILE_TOO_LARGE') showToast(t('brands.uploadTooLarge'), 'error');
-      else if (code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE')
-        showToast(t('brands.uploadUnsupported'), 'error');
-      else showToast(t('error'), 'error');
+      const message =
+        code === 'FILE_TOO_LARGE'
+          ? t('brands.uploadTooLarge')
+          : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
+            ? t('brands.uploadUnsupported')
+            : t('error');
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
     },
     onSettled: () => setUploadProgress((p) => ({ ...p, logo: undefined })),
   });
@@ -311,39 +340,55 @@ export function AdminBrandsPage() {
         )
       ).data.data;
     },
+    onMutate: () => showToast(t('brands.uploading'), 'info'),
     onSuccess: async (brand) => {
       await invalidate();
       setEditor(brand);
+      setFormStatus({ type: 'success', message: t('brands.uploadSuccess') });
       showToast(t('brands.uploadSuccess'), 'success');
     },
     onError: (error) => {
       const code = getApiErrorCode(error);
-      if (code === 'FILE_TOO_LARGE') showToast(t('brands.uploadTooLarge'), 'error');
-      else if (code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE')
-        showToast(t('brands.uploadUnsupported'), 'error');
-      else showToast(t('error'), 'error');
+      const message =
+        code === 'FILE_TOO_LARGE'
+          ? t('brands.uploadTooLarge')
+          : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
+            ? t('brands.uploadUnsupported')
+            : t('error');
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
     },
     onSettled: () => setUploadProgress((p) => ({ ...p, hero: undefined })),
   });
 
   const clearLogoMutation = useMutation({
     mutationFn: (id: string) => adminApi.clearCatalogBrandLogo(id),
+    onMutate: () => showToast(t('processing'), 'info'),
     onSuccess: async (res) => {
       await invalidate();
       setEditor(res.data.data);
+      setFormStatus({ type: 'success', message: t('brands.clearSuccess') });
       showToast(t('brands.clearSuccess'), 'success');
     },
-    onError: () => showToast(t('error'), 'error'),
+    onError: () => {
+      setFormStatus({ type: 'error', message: t('error') });
+      showToast(t('error'), 'error');
+    },
   });
 
   const clearHeroMutation = useMutation({
     mutationFn: (id: string) => adminApi.clearCatalogBrandImage(id),
+    onMutate: () => showToast(t('processing'), 'info'),
     onSuccess: async (res) => {
       await invalidate();
       setEditor(res.data.data);
+      setFormStatus({ type: 'success', message: t('brands.clearSuccess') });
       showToast(t('brands.clearSuccess'), 'success');
     },
-    onError: () => showToast(t('error'), 'error'),
+    onError: () => {
+      setFormStatus({ type: 'error', message: t('error') });
+      showToast(t('error'), 'error');
+    },
   });
 
   const handleImagePick = (kind: 'logo' | 'hero', file: File | undefined, brandId?: string) => {
@@ -362,7 +407,12 @@ export function AdminBrandsPage() {
 
   if (listQuery.isLoading && !listQuery.data) {
     return (
-      <AdminPageShell title={t('brands.title')} subtitle={t('brands.subtitle')}>
+      <AdminPageShell
+        title={t('brands.title')}
+        subtitle={t('brands.subtitle')}
+        backTo={ROUTES.ADMIN}
+        backLabel={t('backToAdmin')}
+      >
         <Skeleton count={4} />
       </AdminPageShell>
     );
@@ -372,9 +422,20 @@ export function AdminBrandsPage() {
   const total = listQuery.data?.meta.total ?? 0;
   const totalPages = listQuery.data?.meta.totalPages ?? 1;
   const editingBrand = editor && editor !== 'create' ? editor : null;
+  const formBusy =
+    saveMutation.isPending ||
+    uploadLogoMutation.isPending ||
+    uploadHeroMutation.isPending ||
+    clearLogoMutation.isPending ||
+    clearHeroMutation.isPending;
 
   return (
-    <AdminPageShell title={t('brands.title')} subtitle={t('brands.subtitle')}>
+    <AdminPageShell
+      title={t('brands.title')}
+      subtitle={t('brands.subtitle')}
+      backTo={ROUTES.ADMIN}
+      backLabel={t('backToAdmin')}
+    >
       <form
         className="admin-toolbar admin-catalog-toolbar"
         onSubmit={(e) => {
@@ -465,21 +526,31 @@ export function AdminBrandsPage() {
                     type="button"
                     className="btn btn--secondary"
                     onClick={() => openEdit(brand)}
+                    disabled={activeMutation.isPending || deleteMutation.isPending}
                   >
                     {t('brands.edit')}
                   </button>
                   <button
                     type="button"
                     className="btn btn--secondary"
+                    disabled={
+                      (activeMutation.isPending && activeMutation.variables?.id === brand.id) ||
+                      deleteMutation.isPending
+                    }
                     onClick={() =>
                       activeMutation.mutate({ id: brand.id, next: !brand.isActive })
                     }
                   >
-                    {brand.isActive ? t('disable') : t('enable')}
+                    {activeMutation.isPending && activeMutation.variables?.id === brand.id
+                      ? t('processing')
+                      : brand.isActive
+                        ? t('disable')
+                        : t('enable')}
                   </button>
                   <button
                     type="button"
                     className="btn btn--secondary"
+                    disabled={activeMutation.isPending || deleteMutation.isPending}
                     onClick={() => setPendingDelete(brand)}
                   >
                     {t('brands.delete')}
@@ -507,11 +578,42 @@ export function AdminBrandsPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <header className="admin-catalog-dialog__header">
-              <h3 id="admin-brand-dialog-title" className="admin-catalog-dialog__title">
-                {editor === 'create' ? t('brands.create') : t('brands.edit')}
-              </h3>
+              <div className="admin-catalog-dialog__top">
+                <div>
+                  <button
+                    type="button"
+                    className="admin-catalog-dialog__back"
+                    onClick={closeEditor}
+                    disabled={formBusy}
+                  >
+                    <span aria-hidden="true">←</span>
+                    {t('brands.backToList')}
+                  </button>
+                  <h3 id="admin-brand-dialog-title" className="admin-catalog-dialog__title">
+                    {editor === 'create' ? t('brands.create') : t('brands.edit')}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn--secondary admin-catalog-dialog__close"
+                  onClick={closeEditor}
+                  disabled={formBusy}
+                  aria-label={t('brands.close')}
+                >
+                  ✕
+                </button>
+              </div>
               <p className="admin-catalog-dialog__hint">{t('brands.formHint')}</p>
             </header>
+
+            {formStatus ? (
+              <p
+                className={`admin-catalog-status admin-catalog-status--${formStatus.type}`}
+                role="status"
+              >
+                {formStatus.message}
+              </p>
+            ) : null}
 
             <div className="admin-catalog-sections">
               <section className="admin-catalog-section">
@@ -658,18 +760,21 @@ export function AdminBrandsPage() {
             </div>
 
             <div className="admin-catalog-dialog__actions">
-              <button type="button" className="btn btn--secondary" onClick={closeEditor}>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={closeEditor}
+                disabled={formBusy}
+              >
                 {t('brands.cancel')}
               </button>
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled={
-                  saveMutation.isPending || !form.code.trim() || !form.nameKo.trim()
-                }
+                disabled={formBusy || !form.code.trim() || !form.nameKo.trim()}
                 onClick={() => saveMutation.mutate()}
               >
-                {t('brands.save')}
+                {saveMutation.isPending ? t('brands.saving') : t('brands.save')}
               </button>
             </div>
           </div>
@@ -685,11 +790,15 @@ export function AdminBrandsPage() {
             : '',
           count: pendingDelete?.machineCount ?? 0,
         })}
-        confirmLabel={t('brands.delete')}
+        confirmLabel={deleteMutation.isPending ? t('brands.deleting') : t('brands.delete')}
         confirmVariant="danger"
-        onClose={() => setPendingDelete(null)}
+        onClose={() => {
+          if (!deleteMutation.isPending) setPendingDelete(null);
+        }}
         onConfirm={() => {
-          if (pendingDelete) deleteMutation.mutate(pendingDelete.id);
+          if (pendingDelete && !deleteMutation.isPending) {
+            deleteMutation.mutate(pendingDelete.id);
+          }
         }}
       />
     </AdminPageShell>

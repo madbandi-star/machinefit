@@ -13,6 +13,7 @@ import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
@@ -211,6 +212,10 @@ export function AdminMachinesPage() {
   const [form, setForm] = useState<MachineFormState>(EMPTY_FORM);
   const [pendingDelete, setPendingDelete] = useState<Machine | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
+  const [formStatus, setFormStatus] = useState<{
+    type: 'pending' | 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   const brandsQuery = useQuery({
     queryKey: [...QUERY_KEYS.adminBrands, 'options'],
@@ -225,16 +230,21 @@ export function AdminMachinesPage() {
     },
   });
 
-  const closeEditor = useCallback(() => setEditor(null), []);
+  const closeEditor = useCallback(() => {
+    setFormStatus(null);
+    setEditor(null);
+  }, []);
   const openCreate = useCallback(() => {
     setForm({
       ...EMPTY_FORM,
       brandId: brandId || brandsQuery.data?.[0]?.id || '',
     });
+    setFormStatus(null);
     setEditor('create');
   }, [brandId, brandsQuery.data]);
   const openEdit = useCallback((machine: Machine) => {
     setForm(fromMachine(machine));
+    setFormStatus(null);
     setEditor(machine);
   }, []);
   const dialogRef = useModalAccessibility({
@@ -279,38 +289,50 @@ export function AdminMachinesPage() {
       }
       return (await adminApi.createCatalogMachine(input)).data.data;
     },
+    onMutate: () => {
+      setFormStatus({ type: 'pending', message: t('admin:catalogMachines.saving') });
+      showToast(t('admin:catalogMachines.saving'), 'info');
+    },
     onSuccess: async (machine) => {
       await invalidate();
-      showToast(t('admin:saved'), 'success');
+      const message = t('admin:catalogMachines.saveSuccess');
+      setFormStatus({ type: 'success', message });
+      showToast(message, 'success');
       setForm(fromMachine(machine));
       setEditor(machine);
     },
     onError: (error) => {
       const code = getApiErrorCode(error);
-      if (code === 'CODE_EXISTS' || code === 'MACHINE_CODE_EXISTS') {
-        showToast(t('admin:catalogMachines.codeExists'), 'error');
-        return;
-      }
-      if (code === 'INVALID_BRAND') {
-        showToast(t('admin:catalogMachines.invalidBrand'), 'error');
-        return;
-      }
-      showToast(t('admin:error'), 'error');
+      const message =
+        code === 'CODE_EXISTS' || code === 'MACHINE_CODE_EXISTS'
+          ? t('admin:catalogMachines.codeExists')
+          : code === 'INVALID_BRAND'
+            ? t('admin:catalogMachines.invalidBrand')
+            : t('admin:error');
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
     },
   });
 
   const activeMutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: boolean }) =>
       adminApi.setCatalogMachineActive(id, next),
-    onSuccess: async () => {
+    onMutate: () => showToast(t('admin:processing'), 'info'),
+    onSuccess: async (_data, variables) => {
       await invalidate();
-      showToast(t('admin:saved'), 'success');
+      showToast(
+        variables.next
+          ? t('admin:catalogMachines.enabledSuccess')
+          : t('admin:catalogMachines.disabledSuccess'),
+        'success'
+      );
     },
     onError: () => showToast(t('admin:error'), 'error'),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminApi.deleteCatalogMachine(id),
+    onMutate: () => showToast(t('admin:catalogMachines.deleting'), 'info'),
     onSuccess: async (res) => {
       await invalidate();
       if (res.data.data.deactivated) {
@@ -319,6 +341,7 @@ export function AdminMachinesPage() {
         showToast(t('admin:catalogMachines.deleteSuccess'), 'success');
       }
       setPendingDelete(null);
+      setFormStatus(null);
       setEditor(null);
     },
     onError: () => {
@@ -334,29 +357,40 @@ export function AdminMachinesPage() {
         await adminApi.uploadCatalogMachineImage(id, file, (percent) => setUploadProgress(percent))
       ).data.data;
     },
+    onMutate: () => showToast(t('admin:catalogMachines.uploading'), 'info'),
     onSuccess: async (machine) => {
       await invalidate();
       setEditor(machine);
+      setFormStatus({ type: 'success', message: t('admin:catalogMachines.uploadSuccess') });
       showToast(t('admin:catalogMachines.uploadSuccess'), 'success');
     },
     onError: (error) => {
       const code = getApiErrorCode(error);
-      if (code === 'FILE_TOO_LARGE') showToast(t('admin:catalogMachines.uploadTooLarge'), 'error');
-      else if (code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE')
-        showToast(t('admin:catalogMachines.uploadUnsupported'), 'error');
-      else showToast(t('admin:error'), 'error');
+      const message =
+        code === 'FILE_TOO_LARGE'
+          ? t('admin:catalogMachines.uploadTooLarge')
+          : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
+            ? t('admin:catalogMachines.uploadUnsupported')
+            : t('admin:error');
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
     },
     onSettled: () => setUploadProgress(undefined),
   });
 
   const clearMutation = useMutation({
     mutationFn: (id: string) => adminApi.clearCatalogMachineImage(id),
+    onMutate: () => showToast(t('admin:processing'), 'info'),
     onSuccess: async (res) => {
       await invalidate();
       setEditor(res.data.data);
+      setFormStatus({ type: 'success', message: t('admin:catalogMachines.clearSuccess') });
       showToast(t('admin:catalogMachines.clearSuccess'), 'success');
     },
-    onError: () => showToast(t('admin:error'), 'error'),
+    onError: () => {
+      setFormStatus({ type: 'error', message: t('admin:error') });
+      showToast(t('admin:error'), 'error');
+    },
   });
 
   const handleImagePick = (file: File | undefined, machineId?: string) => {
@@ -377,6 +411,8 @@ export function AdminMachinesPage() {
       <AdminPageShell
         title={t('admin:catalogMachines.title')}
         subtitle={t('admin:catalogMachines.subtitle')}
+        backTo={ROUTES.ADMIN}
+        backLabel={t('admin:backToAdmin')}
       >
         <Skeleton count={4} />
       </AdminPageShell>
@@ -388,11 +424,15 @@ export function AdminMachinesPage() {
   const totalPages = listQuery.data?.meta.totalPages ?? 1;
   const editingMachine = editor && editor !== 'create' ? editor : null;
   const brands = brandsQuery.data ?? [];
+  const formBusy =
+    saveMutation.isPending || uploadMutation.isPending || clearMutation.isPending;
 
   return (
     <AdminPageShell
       title={t('admin:catalogMachines.title')}
       subtitle={t('admin:catalogMachines.subtitle')}
+      backTo={ROUTES.ADMIN}
+      backLabel={t('admin:backToAdmin')}
     >
       <form
         className="admin-toolbar admin-catalog-toolbar"
@@ -521,21 +561,32 @@ export function AdminMachinesPage() {
                     type="button"
                     className="btn btn--secondary"
                     onClick={() => openEdit(machine)}
+                    disabled={activeMutation.isPending || deleteMutation.isPending}
                   >
                     {t('admin:catalogMachines.edit')}
                   </button>
                   <button
                     type="button"
                     className="btn btn--secondary"
+                    disabled={
+                      (activeMutation.isPending &&
+                        activeMutation.variables?.id === machine.id) ||
+                      deleteMutation.isPending
+                    }
                     onClick={() =>
                       activeMutation.mutate({ id: machine.id, next: !machine.isActive })
                     }
                   >
-                    {machine.isActive ? t('admin:disable') : t('admin:enable')}
+                    {activeMutation.isPending && activeMutation.variables?.id === machine.id
+                      ? t('admin:processing')
+                      : machine.isActive
+                        ? t('admin:disable')
+                        : t('admin:enable')}
                   </button>
                   <button
                     type="button"
                     className="btn btn--secondary"
+                    disabled={activeMutation.isPending || deleteMutation.isPending}
                     onClick={() => setPendingDelete(machine)}
                   >
                     {t('admin:catalogMachines.delete')}
@@ -563,13 +614,44 @@ export function AdminMachinesPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <header className="admin-catalog-dialog__header">
-              <h3 id="admin-machine-dialog-title" className="admin-catalog-dialog__title">
-                {editor === 'create'
-                  ? t('admin:catalogMachines.create')
-                  : t('admin:catalogMachines.edit')}
-              </h3>
+              <div className="admin-catalog-dialog__top">
+                <div>
+                  <button
+                    type="button"
+                    className="admin-catalog-dialog__back"
+                    onClick={closeEditor}
+                    disabled={formBusy}
+                  >
+                    <span aria-hidden="true">←</span>
+                    {t('admin:catalogMachines.backToList')}
+                  </button>
+                  <h3 id="admin-machine-dialog-title" className="admin-catalog-dialog__title">
+                    {editor === 'create'
+                      ? t('admin:catalogMachines.create')
+                      : t('admin:catalogMachines.edit')}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn--secondary admin-catalog-dialog__close"
+                  onClick={closeEditor}
+                  disabled={formBusy}
+                  aria-label={t('admin:catalogMachines.close')}
+                >
+                  ✕
+                </button>
+              </div>
               <p className="admin-catalog-dialog__hint">{t('admin:catalogMachines.formHint')}</p>
             </header>
+
+            {formStatus ? (
+              <p
+                className={`admin-catalog-status admin-catalog-status--${formStatus.type}`}
+                role="status"
+              >
+                {formStatus.message}
+              </p>
+            ) : null}
 
             <div className="admin-catalog-sections">
               <section className="admin-catalog-section">
@@ -739,21 +821,25 @@ export function AdminMachinesPage() {
             </div>
 
             <div className="admin-catalog-dialog__actions">
-              <button type="button" className="btn btn--secondary" onClick={closeEditor}>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={closeEditor}
+                disabled={formBusy}
+              >
                 {t('admin:catalogMachines.cancel')}
               </button>
               <button
                 type="button"
                 className="btn btn--primary"
                 disabled={
-                  saveMutation.isPending ||
-                  !form.brandId ||
-                  !form.code.trim() ||
-                  !form.nameKo.trim()
+                  formBusy || !form.brandId || !form.code.trim() || !form.nameKo.trim()
                 }
                 onClick={() => saveMutation.mutate()}
               >
-                {t('admin:catalogMachines.save')}
+                {saveMutation.isPending
+                  ? t('admin:catalogMachines.saving')
+                  : t('admin:catalogMachines.save')}
               </button>
             </div>
           </div>
@@ -768,11 +854,19 @@ export function AdminMachinesPage() {
             ? getLocalizedName(pendingDelete.name, i18n.language, pendingDelete.code)
             : '',
         })}
-        confirmLabel={t('admin:catalogMachines.delete')}
+        confirmLabel={
+          deleteMutation.isPending
+            ? t('admin:catalogMachines.deleting')
+            : t('admin:catalogMachines.delete')
+        }
         confirmVariant="danger"
-        onClose={() => setPendingDelete(null)}
+        onClose={() => {
+          if (!deleteMutation.isPending) setPendingDelete(null);
+        }}
         onConfirm={() => {
-          if (pendingDelete) deleteMutation.mutate(pendingDelete.id);
+          if (pendingDelete && !deleteMutation.isPending) {
+            deleteMutation.mutate(pendingDelete.id);
+          }
         }}
       />
     </AdminPageShell>
