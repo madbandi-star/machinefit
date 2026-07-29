@@ -11,15 +11,23 @@ interface BrandFilterChipsProps {
   onChange: (brandCode: string | null) => void;
 }
 
-function brandChipLabel(brand: Brand, language: string, bodyweightLabel: string): string {
-  if (brand.code === BRAND_CODES.BODYWEIGHT) return bodyweightLabel;
+function brandChipLabel(
+  brand: Brand,
+  language: string,
+  labels: { bodyweight: string; freeWeight: string }
+): string {
+  if (brand.code === BRAND_CODES.BODYWEIGHT) return labels.bodyweight;
+  if (brand.code === BRAND_CODES.FREE_WEIGHT) return labels.freeWeight;
   return getLocalizedName(brand.name, language, brand.code);
 }
 
 export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsProps) {
   const { t, i18n } = useTranslation('machines');
   const orderedBrands = prepareBrandsForMachineSearch(brands);
-  const bodyweightLabel = t('brandBodyweightShort');
+  const shortLabels = {
+    bodyweight: t('brandBodyweightShort'),
+    freeWeight: t('brandFreeWeightShort'),
+  };
   const sectionTitle = t('brandSectionTitle');
 
   if (orderedBrands.length === 0) return null;
@@ -46,7 +54,7 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
             onClick={() => onChange(brand.code)}
             aria-pressed={value === brand.code}
           >
-            {brandChipLabel(brand, i18n.language, bodyweightLabel)}
+            {brandChipLabel(brand, i18n.language, shortLabels)}
           </button>
         ))}
       </div>

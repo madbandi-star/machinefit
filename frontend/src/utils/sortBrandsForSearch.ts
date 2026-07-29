@@ -20,7 +20,7 @@ const FALLBACK_SEARCH_BRANDS: Brand[] = [
   {
     id: 'brand-free-weight',
     code: BRAND_CODES.FREE_WEIGHT,
-    name: { ko: '프리웨이트', en: 'Free Weight', ja: 'フリーウェイト', zh: '自由重量' },
+    name: { ko: '프리', en: 'Free', ja: 'フリー', zh: '自由重量' },
     isActive: true,
   },
 ];
