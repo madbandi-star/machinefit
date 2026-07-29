@@ -202,6 +202,13 @@
   border-color: transparent;
 }
 
+.filter-chip--muscle:focus,
+.filter-chip--muscle:focus-visible {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .filter-chip--muscle .filter-chip__icon-wrap {
   display: flex;
   width: var(--touch-target-min, 44px);
@@ -232,8 +239,16 @@
 
 .filter-chip--muscle.filter-chip--active {
   background: transparent;
+  border-color: transparent;
   box-shadow: none;
   color: var(--color-primary);
+}
+
+.filter-chip--muscle.filter-chip--active:focus,
+.filter-chip--muscle.filter-chip--active:focus-visible {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .filter-chip--muscle.filter-chip--active .filter-chip__icon-wrap {
