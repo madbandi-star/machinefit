@@ -1,6 +1,6 @@
 {
   "searchTitle": "머신 검색",
-  "searchPlaceholder": "머신 이름 검색",
+  "searchPlaceholder": "머신명 또는 운동명 검색",
   "filterAll": "전체",
   "filterMachinesOnly": "머신",
   "filterEquipmentScope": "장비 범위",

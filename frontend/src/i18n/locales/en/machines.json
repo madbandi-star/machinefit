@@ -1,6 +1,6 @@
 {
   "searchTitle": "Search machines",
-  "searchPlaceholder": "Search by machine name",
+  "searchPlaceholder": "Search machine or exercise name",
   "filterAll": "All",
   "filterMachinesOnly": "Machines",
   "filterEquipmentScope": "Equipment scope",
