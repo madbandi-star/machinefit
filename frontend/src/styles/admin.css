@@ -1355,3 +1355,124 @@
 .admin-shell__content .opt-stats {
   margin-top: 0;
 }
+
+/* ── Catalog brand/machine admin ── */
+
+.admin-catalog-toolbar {
+  margin-bottom: 0.85rem;
+}
+
+.admin-catalog-toolbar .input {
+  min-width: 8.5rem;
+  flex: 1 1 8.5rem;
+}
+
+.admin-catalog-dialog {
+  width: min(640px, calc(100vw - 1.5rem));
+  max-height: min(90vh, 880px);
+  overflow: auto;
+  padding: 1.1rem 1.15rem 1rem;
+}
+
+.admin-catalog-dialog__title {
+  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+}
+
+.admin-catalog-form {
+  grid-template-columns: 1fr 1fr;
+}
+
+.admin-catalog-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.admin-catalog-form label:nth-child(7),
+.admin-catalog-form label:nth-child(8),
+.admin-catalog-check {
+  grid-column: 1 / -1;
+}
+
+.admin-catalog-check {
+  display: flex !important;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.admin-catalog-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.admin-catalog-image__label {
+  font-size: 0.84rem;
+  font-weight: 650;
+  margin-bottom: 0.35rem;
+}
+
+.admin-catalog-image__drop {
+  position: relative;
+  min-height: 140px;
+  border-radius: 12px;
+  border: 1px dashed color-mix(in srgb, var(--color-text-muted) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.admin-catalog-image__drop.is-dragover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+}
+
+.admin-catalog-image__preview {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-catalog-image__placeholder {
+  padding: 0.75rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.admin-catalog-image__progress {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0.35rem 0.5rem;
+  background: color-mix(in srgb, #000 55%, transparent);
+  color: #fff;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.admin-catalog-image__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+}
+
+.admin-catalog-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .admin-catalog-form,
+  .admin-catalog-images {
+    grid-template-columns: 1fr;
+  }
+}

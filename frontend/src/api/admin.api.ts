@@ -31,6 +31,8 @@ import type {
   UpdateMachineRequestAdminInput,
   ResolveReportInput,
   ToggleActiveInput,
+  AdminBrandUpsertInput,
+  AdminMachineUpsertInput,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
 import type { ApiResponse } from '@machinefit/shared';
@@ -97,6 +99,103 @@ export const adminApi = {
 
   updateMachine: (id: string, input: ToggleActiveInput) =>
     apiClient.patch<ApiResponse<Machine>>(`/admin/machines/${id}`, input),
+
+  listCatalogBrands: (params?: {
+    q?: string;
+    sort?: 'name' | 'createdAt' | 'sortOrder';
+    order?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+    isActive?: 'true' | 'false' | 'all';
+  }) =>
+    apiClient.get<ApiResponse<PaginatedResponse<Brand>>>('/admin/catalog/brands', { params }),
+
+  createCatalogBrand: (input: AdminBrandUpsertInput) =>
+    apiClient.post<ApiResponse<Brand>>('/admin/catalog/brands', input),
+
+  updateCatalogBrand: (id: string, input: AdminBrandUpsertInput) =>
+    apiClient.patch<ApiResponse<Brand>>(`/admin/catalog/brands/${id}`, input),
+
+  setCatalogBrandActive: (id: string, isActive: boolean) =>
+    apiClient.patch<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/active`, { isActive }),
+
+  deleteCatalogBrand: (id: string) =>
+    apiClient.delete<ApiResponse<{ deleted: true }>>(`/admin/catalog/brands/${id}`),
+
+  uploadCatalogBrandLogo: (id: string, file: File, onProgress?: (percent: number) => void) => {
+    const form = new FormData();
+    form.append('file', file);
+    return apiClient.post<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/logo`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
+      onUploadProgress: (event) => {
+        if (!onProgress || !event.total) return;
+        onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
+  },
+
+  clearCatalogBrandLogo: (id: string) =>
+    apiClient.delete<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/logo`),
+
+  uploadCatalogBrandImage: (id: string, file: File, onProgress?: (percent: number) => void) => {
+    const form = new FormData();
+    form.append('file', file);
+    return apiClient.post<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/image`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
+      onUploadProgress: (event) => {
+        if (!onProgress || !event.total) return;
+        onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
+  },
+
+  clearCatalogBrandImage: (id: string) =>
+    apiClient.delete<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/image`),
+
+  listCatalogMachines: (params?: {
+    q?: string;
+    brandId?: string;
+    brandCode?: string;
+    muscleGroup?: string;
+    isActive?: 'true' | 'false' | 'all';
+    sort?: 'name' | 'createdAt' | 'sortOrder' | 'code';
+    order?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+  }) =>
+    apiClient.get<ApiResponse<PaginatedResponse<Machine>>>('/admin/catalog/machines', { params }),
+
+  createCatalogMachine: (input: AdminMachineUpsertInput) =>
+    apiClient.post<ApiResponse<Machine>>('/admin/catalog/machines', input),
+
+  updateCatalogMachine: (id: string, input: AdminMachineUpsertInput) =>
+    apiClient.patch<ApiResponse<Machine>>(`/admin/catalog/machines/${id}`, input),
+
+  setCatalogMachineActive: (id: string, isActive: boolean) =>
+    apiClient.patch<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/active`, { isActive }),
+
+  deleteCatalogMachine: (id: string) =>
+    apiClient.delete<ApiResponse<{ deleted: boolean; deactivated: boolean }>>(
+      `/admin/catalog/machines/${id}`
+    ),
+
+  uploadCatalogMachineImage: (id: string, file: File, onProgress?: (percent: number) => void) => {
+    const form = new FormData();
+    form.append('file', file);
+    return apiClient.post<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/image`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
+      onUploadProgress: (event) => {
+        if (!onProgress || !event.total) return;
+        onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
+  },
+
+  clearCatalogMachineImage: (id: string) =>
+    apiClient.delete<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/image`),
 
   listPosts: () =>
     apiClient.get<ApiResponse<Post[]>>('/admin/posts'),

@@ -7,9 +7,18 @@ export interface Brand {
   /** Short brand intro (localized). */
   description?: LocalizedString;
   logoUrl?: string;
+  /** Hero / representative image. */
+  imageUrl?: string;
   websiteUrl?: string;
   countryId?: string;
+  /** ISO country code when joined from countries. */
+  countryCode?: string;
+  sortOrder?: number;
   isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  /** Admin: linked machine count. */
+  machineCount?: number;
 }
 
 export interface Machine {
@@ -19,6 +28,7 @@ export interface Machine {
   name: LocalizedString;
   /** Populated when machines are joined with brands (list/search). */
   brandName?: LocalizedString;
+  brandCode?: string;
   muscleGroup: string;
   machineType: string;
   description?: LocalizedString;
@@ -39,8 +49,11 @@ export interface Machine {
   hasFootPlate: boolean;
   hasHandle: boolean;
   romType?: string;
+  sortOrder?: number;
   isActive: boolean;
   primaryImageUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MachineImage {

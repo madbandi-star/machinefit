@@ -76,6 +76,7 @@ export function AdminDashboardPage() {
       title: t('trainerApplications.nav'),
       desc: t('menu.trainerDesc'),
     },
+    { to: ROUTES.ADMIN_BRANDS, title: t('brands.nav'), desc: t('menu.brandsDesc') },
     { to: ROUTES.ADMIN_MACHINES, title: t('machines'), desc: t('menu.machinesDesc') },
     { to: ROUTES.ADMIN_LOCATIONS, title: t('locations.nav'), desc: t('menu.locationsDesc') },
     { to: ROUTES.ADMIN_MOTIVATION, title: t('motivation.nav'), desc: t('menu.motivationDesc') },
