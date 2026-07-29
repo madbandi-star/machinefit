@@ -190,24 +190,60 @@
   object-fit: cover;
 }
 
-.filter-chip--icon-only {
-  width: var(--touch-target-min, 44px);
-  height: var(--touch-target-min, 44px);
-  min-width: var(--touch-target-min, 44px);
-  min-height: var(--touch-target-min, 44px);
-  padding: 0;
-  gap: 0;
+.filter-chip--muscle {
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 3.25rem;
+  min-height: unset;
+  padding: 0.2rem 0.35rem 0.35rem;
+  border-radius: 1rem;
   justify-content: center;
-  overflow: hidden;
+  background: transparent;
+  border-color: transparent;
 }
 
-.filter-chip--icon-only .filter-chip__icon {
+.filter-chip--muscle .filter-chip__icon-wrap {
+  display: flex;
+  width: var(--touch-target-min, 44px);
+  height: var(--touch-target-min, 44px);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.filter-chip--muscle .filter-chip__icon {
   width: 100% !important;
   height: 100% !important;
   max-width: none;
   max-height: none;
   border-radius: 999px;
   object-fit: cover;
+}
+
+.filter-chip--muscle .filter-chip__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.filter-chip--muscle.filter-chip--active {
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-primary);
+}
+
+.filter-chip--muscle.filter-chip--active .filter-chip__icon-wrap {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--glass-bg));
+  box-shadow: var(--glow-primary-soft);
+}
+
+.filter-chip--muscle.filter-chip--active .filter-chip__label {
+  color: var(--color-primary);
 }
 
 .filter-chip--active {
