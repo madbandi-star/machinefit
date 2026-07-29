@@ -146,11 +146,11 @@ export function MachineSearchPage() {
           {t('recommendedMachinesTitle')}
         </h2>
         {isLoading && !data ? (
-          <Skeleton count={5} height={72} />
+          <Skeleton count={5} height={120} />
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />
         ) : (
-          <div className={`machine-list${isFetching ? ' machine-list--fetching' : ''}`}>
+          <div className={`machine-list machine-list--recommend${isFetching ? ' machine-list--fetching' : ''}`}>
             {data.map((machine) => (
               <MachineListItem key={machine.id} machine={machine} selectedMuscle={muscleGroup} />
             ))}

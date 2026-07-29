@@ -191,6 +191,42 @@
   margin: 0.15rem 0 0.55rem;
 }
 
+/* Search “추천 머신” list only — larger thumbs / taller rows */
+.machine-search .machine-list {
+  gap: 0.7rem;
+}
+
+.machine-search .machine-list-item {
+  gap: 0.95rem;
+  min-height: 112px;
+  padding: 0.7rem 0.85rem;
+  contain-intrinsic-size: auto 120px;
+}
+
+.machine-search .machine-list-item__thumb {
+  width: 104px;
+  height: 104px;
+  border-radius: var(--radius-md, 10px);
+}
+
+.machine-search .machine-list-item__thumb img {
+  object-fit: contain;
+  background: var(--color-bg-secondary);
+}
+
+.machine-search .machine-list-item__name {
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.machine-search .machine-list-item__brand {
+  font-size: 0.85rem;
+}
+
+.machine-search .machine-list-item__chevron {
+  font-size: 1.35rem;
+}
+
 .filter-chips::-webkit-scrollbar {
   display: none;
 }
