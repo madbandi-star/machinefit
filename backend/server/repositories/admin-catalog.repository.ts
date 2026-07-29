@@ -11,6 +11,28 @@ import { getPool } from '../config/database.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
 
+/** Prefer cover URL with version bust so re-uploads are not stuck on immutable browser cache. */
+const PRIMARY_IMAGE_URL_SQL = `COALESCE(
+                (
+                  SELECT CASE
+                    WHEN c.image_url IS NULL THEN NULL
+                    WHEN POSITION('?' IN c.image_url) > 0
+                      THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+                    ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+                  END
+                  FROM machine_cover_images c
+                  WHERE c.machine_id = m.id
+                  LIMIT 1
+                ),
+                (
+                  SELECT mi.image_url
+                  FROM machine_images mi
+                  WHERE mi.machine_id = m.id
+                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                  LIMIT 1
+                )
+              ) AS primary_image_url`;
+
 interface BrandAdminRow {
   id: string;
   code: string;
@@ -349,21 +371,7 @@ export const adminCatalogRepository = {
 
     const result = await pool.query<MachineAdminRow>(
       `SELECT m.*, b.name AS brand_name, b.code AS brand_code,
-              COALESCE(
-                (
-                  SELECT c.image_url
-                  FROM machine_cover_images c
-                  WHERE c.machine_id = m.id
-                  LIMIT 1
-                ),
-                (
-                  SELECT mi.image_url
-                  FROM machine_images mi
-                  WHERE mi.machine_id = m.id
-                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                  LIMIT 1
-                )
-              ) AS primary_image_url
+              ${PRIMARY_IMAGE_URL_SQL}
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
        ${where}
@@ -383,21 +391,7 @@ export const adminCatalogRepository = {
     if (!pool) return null;
     const result = await pool.query<MachineAdminRow>(
       `SELECT m.*, b.name AS brand_name, b.code AS brand_code,
-              COALESCE(
-                (
-                  SELECT c.image_url
-                  FROM machine_cover_images c
-                  WHERE c.machine_id = m.id
-                  LIMIT 1
-                ),
-                (
-                  SELECT mi.image_url
-                  FROM machine_images mi
-                  WHERE mi.machine_id = m.id
-                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                  LIMIT 1
-                )
-              ) AS primary_image_url
+              ${PRIMARY_IMAGE_URL_SQL}
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
        WHERE m.id::text = $1 OR m.code = $1`,

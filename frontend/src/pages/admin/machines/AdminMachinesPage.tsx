@@ -208,7 +208,7 @@ function CatalogImageField({
         }}
       >
         {url ? (
-          <img src={url} alt="" className="admin-catalog-image__preview" />
+          <img key={url} src={url} alt="" className="admin-catalog-image__preview" />
         ) : (
           <span className="admin-catalog-image__placeholder">{dropLabel}</span>
         )}

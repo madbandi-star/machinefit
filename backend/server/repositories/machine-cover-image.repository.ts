@@ -4,6 +4,7 @@ import type {
   MachineCoverImagesPage,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import { withCacheBust } from '../utils/cache-bust-url.js';
 
 type CoverRow = {
   machine_id: string;
@@ -23,12 +24,6 @@ type CoverRow = {
   created_at: Date | string | null;
   updated_at: Date | string | null;
 };
-
-function withCacheBust(url: string | null, version: number): string | null {
-  if (!url) return null;
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}v=${version}`;
-}
 
 function mapAsset(row: CoverRow): MachineCoverImageAsset {
   const version = Number(row.version ?? 0);
@@ -284,7 +279,7 @@ export const machineCoverImageRepository = {
     await pool.query(
       `INSERT INTO machine_images (machine_id, image_url, sort_order, is_primary)
        VALUES ($1, $2, 0, TRUE)`,
-      [input.machineId, input.imageUrl]
+      [input.machineId, withCacheBust(input.imageUrl, input.version)]
     );
 
     const listed = await this.list({ q: input.machineCode, page: 1, pageSize: 1 });
