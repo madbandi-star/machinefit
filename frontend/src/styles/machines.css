@@ -190,6 +190,26 @@
   object-fit: cover;
 }
 
+.filter-chip--icon-only {
+  width: var(--touch-target-min, 44px);
+  height: var(--touch-target-min, 44px);
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.filter-chip--icon-only .filter-chip__icon {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none;
+  max-height: none;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
 .filter-chip--active {
   border-color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 14%, var(--glass-bg));
