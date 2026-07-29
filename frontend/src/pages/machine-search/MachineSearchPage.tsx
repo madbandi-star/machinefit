@@ -142,6 +142,9 @@ export function MachineSearchPage() {
         <SearchBar value={query} onChange={handleQueryChange} placeholder={t('searchPlaceholder')} />
         <FilterChips value={muscleGroup} onChange={handleMuscleChange} />
         <BrandFilterChips brands={brands} value={brandCode} onChange={handleBrandChange} />
+        <h2 className="filter-section__title machine-search__results-title">
+          {t('recommendedMachinesTitle')}
+        </h2>
         {isLoading && !data ? (
           <Skeleton count={5} height={72} />
         ) : !data?.length ? (

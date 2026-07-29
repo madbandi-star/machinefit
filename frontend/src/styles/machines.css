@@ -187,6 +187,10 @@
   margin-bottom: 1rem;
 }
 
+.machine-search__results-title {
+  margin: 0.15rem 0 0.55rem;
+}
+
 .filter-chips::-webkit-scrollbar {
   display: none;
 }
