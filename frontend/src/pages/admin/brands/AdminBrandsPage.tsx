@@ -513,6 +513,22 @@ export function AdminBrandsPage() {
     else uploadHeroMutation.mutate({ id: brandId, file });
   };
 
+  const validateBeforeSave = useCallback(() => {
+    if (!form.code.trim()) return t('brands.requiredCode');
+    if (!form.nameKo.trim()) return t('brands.requiredNameKo');
+    return null;
+  }, [form.code, form.nameKo, t]);
+
+  const handleSave = useCallback(() => {
+    const message = validateBeforeSave();
+    if (message) {
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
+      return;
+    }
+    saveMutation.mutate();
+  }, [saveMutation, setFormStatus, showToast, validateBeforeSave]);
+
   if (listQuery.isLoading && !listQuery.data) {
     return (
       <AdminPageShell
@@ -879,8 +895,8 @@ export function AdminBrandsPage() {
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled={formBusy || !form.code.trim() || !form.nameKo.trim()}
-                onClick={() => saveMutation.mutate()}
+                disabled={formBusy}
+                onClick={handleSave}
               >
                 {saveMutation.isPending ? t('brands.saving') : t('brands.save')}
               </button>

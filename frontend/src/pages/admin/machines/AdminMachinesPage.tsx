@@ -524,6 +524,23 @@ export function AdminMachinesPage() {
     uploadMutation.mutate({ id: machineId, file });
   };
 
+  const validateBeforeSave = useCallback(() => {
+    if (!form.brandId) return t('admin:catalogMachines.requiredBrand');
+    if (!form.code.trim()) return t('admin:catalogMachines.requiredCode');
+    if (!form.nameKo.trim()) return t('admin:catalogMachines.requiredNameKo');
+    return null;
+  }, [form.brandId, form.code, form.nameKo, t]);
+
+  const handleSave = useCallback(() => {
+    const message = validateBeforeSave();
+    if (message) {
+      setFormStatus({ type: 'error', message });
+      showToast(message, 'error');
+      return;
+    }
+    saveMutation.mutate();
+  }, [saveMutation, setFormStatus, showToast, validateBeforeSave]);
+
   if ((listQuery.isLoading || brandsQuery.isLoading) && !listQuery.data) {
     return (
       <AdminPageShell
@@ -950,10 +967,8 @@ export function AdminMachinesPage() {
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled={
-                  formBusy || !form.brandId || !form.code.trim() || !form.nameKo.trim()
-                }
-                onClick={() => saveMutation.mutate()}
+                disabled={formBusy}
+                onClick={handleSave}
               >
                 {saveMutation.isPending
                   ? t('admin:catalogMachines.saving')
