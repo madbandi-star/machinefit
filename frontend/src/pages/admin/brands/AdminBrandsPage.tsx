@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type DragEvent } from 'react';
+import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { AdminBrandUpsertInput, Brand } from '@machinefit/shared';
@@ -165,6 +165,7 @@ function CatalogImageField({
           type="file"
           accept={ACCEPT}
           hidden
+          tabIndex={-1}
           onChange={(e) => {
             handleFiles(e.target.files?.[0]);
             e.target.value = '';
@@ -192,9 +193,19 @@ export function AdminBrandsPage() {
   const [uploadProgress, setUploadProgress] = useState<Partial<Record<'logo' | 'hero', number>>>(
     {}
   );
+  const closeEditor = useCallback(() => setEditor(null), []);
+  const openCreate = useCallback(() => {
+    setForm(EMPTY_FORM);
+    setEditor('create');
+  }, []);
+  const openEdit = useCallback((brand: Brand) => {
+    setForm(fromBrand(brand));
+    setEditor(brand);
+  }, []);
   const dialogRef = useModalAccessibility({
     open: Boolean(editor),
-    onClose: () => setEditor(null),
+    onClose: closeEditor,
+    initialFocusSelector: editor === 'create' ? '#admin-brand-code' : '#admin-brand-name-ko',
   });
 
   const listParams = useMemo(
@@ -209,14 +220,6 @@ export function AdminBrandsPage() {
       return res.data.data;
     },
   });
-
-  useEffect(() => {
-    if (!editor || editor === 'create') {
-      setForm(EMPTY_FORM);
-      return;
-    }
-    setForm(fromBrand(editor));
-  }, [editor]);
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminBrands });
@@ -233,6 +236,7 @@ export function AdminBrandsPage() {
     onSuccess: async (brand) => {
       await invalidate();
       showToast(t('saved'), 'success');
+      setForm(fromBrand(brand));
       setEditor(brand);
     },
     onError: (error) => {
@@ -423,11 +427,7 @@ export function AdminBrandsPage() {
         <button type="submit" className="btn btn--primary">
           {t('brands.search')}
         </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          onClick={() => setEditor('create')}
-        >
+        <button type="button" className="btn btn--secondary" onClick={openCreate}>
           {t('brands.create')}
         </button>
       </form>
@@ -464,7 +464,7 @@ export function AdminBrandsPage() {
                   <button
                     type="button"
                     className="btn btn--secondary"
-                    onClick={() => setEditor(brand)}
+                    onClick={() => openEdit(brand)}
                   >
                     {t('brands.edit')}
                   </button>
@@ -497,135 +497,168 @@ export function AdminBrandsPage() {
       </AdminPanel>
 
       {editor ? (
-        <div className="dialog-overlay" role="presentation" onClick={() => setEditor(null)}>
+        <div className="dialog-overlay" role="presentation" onClick={closeEditor}>
           <div
             ref={dialogRef}
             className="dialog card admin-catalog-dialog"
             role="dialog"
             aria-modal="true"
+            aria-labelledby="admin-brand-dialog-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="admin-catalog-dialog__title">
-              {editor === 'create' ? t('brands.create') : t('brands.edit')}
-            </h3>
-            <div className="admin-form-grid admin-catalog-form">
-              <label>
-                {t('brands.code')}
-                <input
-                  className="input"
-                  value={form.code}
-                  onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-                  disabled={Boolean(editingBrand)}
-                />
-              </label>
-              <label>
-                {t('brands.nameKo')}
-                <input
-                  className="input"
-                  value={form.nameKo}
-                  onChange={(e) => setForm((f) => ({ ...f, nameKo: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('brands.nameEn')}
-                <input
-                  className="input"
-                  value={form.nameEn}
-                  onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('brands.country')}
-                <input
-                  className="input"
-                  value={form.countryCode}
-                  maxLength={2}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, countryCode: e.target.value.toUpperCase() }))
-                  }
-                />
-              </label>
-              <label>
-                {t('brands.website')}
-                <input
-                  className="input"
-                  value={form.websiteUrl}
-                  onChange={(e) => setForm((f) => ({ ...f, websiteUrl: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('brands.displayOrder')}
-                <input
-                  className="input"
-                  type="number"
-                  min={0}
-                  value={form.sortOrder}
-                  onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('brands.descriptionKo')}
-                <textarea
-                  className="input"
-                  rows={3}
-                  value={form.descriptionKo}
-                  onChange={(e) => setForm((f) => ({ ...f, descriptionKo: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('brands.descriptionEn')}
-                <textarea
-                  className="input"
-                  rows={3}
-                  value={form.descriptionEn}
-                  onChange={(e) => setForm((f) => ({ ...f, descriptionEn: e.target.value }))}
-                />
-              </label>
-              <label className="admin-catalog-check">
-                <input
-                  type="checkbox"
-                  checked={form.isActive}
-                  onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
-                />
-                {t('active')}
-              </label>
+            <header className="admin-catalog-dialog__header">
+              <h3 id="admin-brand-dialog-title" className="admin-catalog-dialog__title">
+                {editor === 'create' ? t('brands.create') : t('brands.edit')}
+              </h3>
+              <p className="admin-catalog-dialog__hint">{t('brands.formHint')}</p>
+            </header>
+
+            <div className="admin-catalog-sections">
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">{t('brands.sectionBasic')}</h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('brands.code')}</span>
+                    <input
+                      id="admin-brand-code"
+                      className="input"
+                      value={form.code}
+                      autoComplete="off"
+                      spellCheck={false}
+                      onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
+                      disabled={Boolean(editingBrand)}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('brands.nameKo')}</span>
+                    <input
+                      id="admin-brand-name-ko"
+                      className="input"
+                      value={form.nameKo}
+                      onChange={(e) => setForm((f) => ({ ...f, nameKo: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('brands.nameEn')}</span>
+                    <input
+                      className="input"
+                      value={form.nameEn}
+                      onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
+                    />
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">{t('brands.sectionMeta')}</h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field">
+                    <span>{t('brands.country')}</span>
+                    <input
+                      className="input"
+                      value={form.countryCode}
+                      maxLength={2}
+                      placeholder="KR"
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, countryCode: e.target.value.toUpperCase() }))
+                      }
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('brands.displayOrder')}</span>
+                    <input
+                      className="input"
+                      type="number"
+                      min={0}
+                      value={form.sortOrder}
+                      onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('brands.website')}</span>
+                    <input
+                      className="input"
+                      type="url"
+                      inputMode="url"
+                      placeholder="https://"
+                      value={form.websiteUrl}
+                      onChange={(e) => setForm((f) => ({ ...f, websiteUrl: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-check">
+                    <input
+                      type="checkbox"
+                      checked={form.isActive}
+                      onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
+                    />
+                    <span>{t('active')}</span>
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">{t('brands.sectionDescription')}</h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('brands.descriptionKo')}</span>
+                    <textarea
+                      className="input"
+                      rows={3}
+                      value={form.descriptionKo}
+                      onChange={(e) => setForm((f) => ({ ...f, descriptionKo: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('brands.descriptionEn')}</span>
+                    <textarea
+                      className="input"
+                      rows={3}
+                      value={form.descriptionEn}
+                      onChange={(e) => setForm((f) => ({ ...f, descriptionEn: e.target.value }))}
+                    />
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">{t('brands.sectionImages')}</h4>
+                {editingBrand ? (
+                  <div className="admin-catalog-images">
+                    <CatalogImageField
+                      label={t('brands.logo')}
+                      url={editingBrand.logoUrl}
+                      progress={uploadProgress.logo}
+                      busy={uploadLogoMutation.isPending || clearLogoMutation.isPending}
+                      onUpload={(file) => handleImagePick('logo', file, editingBrand.id)}
+                      onClear={() => clearLogoMutation.mutate(editingBrand.id)}
+                      uploadLabel={t('brands.upload')}
+                      changeLabel={t('brands.change')}
+                      clearLabel={t('brands.clearImage')}
+                      dropLabel={t('brands.dropHere')}
+                      uploadingLabel={t('brands.uploading')}
+                    />
+                    <CatalogImageField
+                      label={t('brands.heroImage')}
+                      url={editingBrand.imageUrl}
+                      progress={uploadProgress.hero}
+                      busy={uploadHeroMutation.isPending || clearHeroMutation.isPending}
+                      onUpload={(file) => handleImagePick('hero', file, editingBrand.id)}
+                      onClear={() => clearHeroMutation.mutate(editingBrand.id)}
+                      uploadLabel={t('brands.upload')}
+                      changeLabel={t('brands.change')}
+                      clearLabel={t('brands.clearImage')}
+                      dropLabel={t('brands.dropHere')}
+                      uploadingLabel={t('brands.uploading')}
+                    />
+                  </div>
+                ) : (
+                  <p className="admin-catalog-section__note">{t('brands.saveBeforeImages')}</p>
+                )}
+              </section>
             </div>
 
-            {editingBrand ? (
-              <div className="admin-catalog-images">
-                <CatalogImageField
-                  label={t('brands.logo')}
-                  url={editingBrand.logoUrl}
-                  progress={uploadProgress.logo}
-                  busy={uploadLogoMutation.isPending || clearLogoMutation.isPending}
-                  onUpload={(file) => handleImagePick('logo', file, editingBrand.id)}
-                  onClear={() => clearLogoMutation.mutate(editingBrand.id)}
-                  uploadLabel={t('brands.upload')}
-                  changeLabel={t('brands.change')}
-                  clearLabel={t('brands.clearImage')}
-                  dropLabel={t('brands.dropHere')}
-                  uploadingLabel={t('brands.uploading')}
-                />
-                <CatalogImageField
-                  label={t('brands.heroImage')}
-                  url={editingBrand.imageUrl}
-                  progress={uploadProgress.hero}
-                  busy={uploadHeroMutation.isPending || clearHeroMutation.isPending}
-                  onUpload={(file) => handleImagePick('hero', file, editingBrand.id)}
-                  onClear={() => clearHeroMutation.mutate(editingBrand.id)}
-                  uploadLabel={t('brands.upload')}
-                  changeLabel={t('brands.change')}
-                  clearLabel={t('brands.clearImage')}
-                  dropLabel={t('brands.dropHere')}
-                  uploadingLabel={t('brands.uploading')}
-                />
-              </div>
-            ) : (
-              <p className="admin-muscle-hint">{t('brands.saveBeforeImages')}</p>
-            )}
-
             <div className="admin-catalog-dialog__actions">
-              <button type="button" className="btn btn--secondary" onClick={() => setEditor(null)}>
+              <button type="button" className="btn btn--secondary" onClick={closeEditor}>
                 {t('brands.cancel')}
               </button>
               <button

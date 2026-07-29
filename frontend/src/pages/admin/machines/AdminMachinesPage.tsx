@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type DragEvent } from 'react';
+import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -182,6 +182,7 @@ function CatalogImageField({
           type="file"
           accept={ACCEPT}
           hidden
+          tabIndex={-1}
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) onUpload(file);
@@ -210,10 +211,6 @@ export function AdminMachinesPage() {
   const [form, setForm] = useState<MachineFormState>(EMPTY_FORM);
   const [pendingDelete, setPendingDelete] = useState<Machine | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
-  const dialogRef = useModalAccessibility({
-    open: Boolean(editor),
-    onClose: () => setEditor(null),
-  });
 
   const brandsQuery = useQuery({
     queryKey: [...QUERY_KEYS.adminBrands, 'options'],
@@ -226,6 +223,25 @@ export function AdminMachinesPage() {
       });
       return res.data.data.items;
     },
+  });
+
+  const closeEditor = useCallback(() => setEditor(null), []);
+  const openCreate = useCallback(() => {
+    setForm({
+      ...EMPTY_FORM,
+      brandId: brandId || brandsQuery.data?.[0]?.id || '',
+    });
+    setEditor('create');
+  }, [brandId, brandsQuery.data]);
+  const openEdit = useCallback((machine: Machine) => {
+    setForm(fromMachine(machine));
+    setEditor(machine);
+  }, []);
+  const dialogRef = useModalAccessibility({
+    open: Boolean(editor),
+    onClose: closeEditor,
+    initialFocusSelector:
+      editor === 'create' ? '#admin-machine-brand' : '#admin-machine-name-ko',
   });
 
   const listParams = useMemo(
@@ -250,17 +266,6 @@ export function AdminMachinesPage() {
     },
   });
 
-  useEffect(() => {
-    if (!editor || editor === 'create') {
-      setForm({
-        ...EMPTY_FORM,
-        brandId: brandId || brandsQuery.data?.[0]?.id || '',
-      });
-      return;
-    }
-    setForm(fromMachine(editor));
-  }, [editor, brandId, brandsQuery.data]);
-
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminMachines });
     await queryClient.invalidateQueries({ queryKey: ['admin', 'machine-covers'] });
@@ -277,6 +282,7 @@ export function AdminMachinesPage() {
     onSuccess: async (machine) => {
       await invalidate();
       showToast(t('admin:saved'), 'success');
+      setForm(fromMachine(machine));
       setEditor(machine);
     },
     onError: (error) => {
@@ -471,7 +477,7 @@ export function AdminMachinesPage() {
         <button type="submit" className="btn btn--primary">
           {t('admin:catalogMachines.search')}
         </button>
-        <button type="button" className="btn btn--secondary" onClick={() => setEditor('create')}>
+        <button type="button" className="btn btn--secondary" onClick={openCreate}>
           {t('admin:catalogMachines.create')}
         </button>
       </form>
@@ -514,7 +520,7 @@ export function AdminMachinesPage() {
                   <button
                     type="button"
                     className="btn btn--secondary"
-                    onClick={() => setEditor(machine)}
+                    onClick={() => openEdit(machine)}
                   >
                     {t('admin:catalogMachines.edit')}
                   </button>
@@ -547,153 +553,193 @@ export function AdminMachinesPage() {
       </AdminPanel>
 
       {editor ? (
-        <div className="dialog-overlay" role="presentation" onClick={() => setEditor(null)}>
+        <div className="dialog-overlay" role="presentation" onClick={closeEditor}>
           <div
             ref={dialogRef}
             className="dialog card admin-catalog-dialog"
             role="dialog"
             aria-modal="true"
+            aria-labelledby="admin-machine-dialog-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="admin-catalog-dialog__title">
-              {editor === 'create'
-                ? t('admin:catalogMachines.create')
-                : t('admin:catalogMachines.edit')}
-            </h3>
-            <div className="admin-form-grid admin-catalog-form">
-              <label>
-                {t('admin:catalogMachines.brand')}
-                <select
-                  className="input"
-                  value={form.brandId}
-                  onChange={(e) => setForm((f) => ({ ...f, brandId: e.target.value }))}
-                >
-                  <option value="">{t('admin:catalogMachines.selectBrand')}</option>
-                  {brands.map((brand) => (
-                    <option key={brand.id} value={brand.id}>
-                      {getLocalizedName(brand.name, i18n.language, brand.code)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                {t('admin:catalogMachines.code')}
-                <input
-                  className="input"
-                  value={form.code}
-                  onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-                  disabled={Boolean(editingMachine)}
-                />
-              </label>
-              <label>
-                {t('admin:catalogMachines.nameKo')}
-                <input
-                  className="input"
-                  value={form.nameKo}
-                  onChange={(e) => setForm((f) => ({ ...f, nameKo: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('admin:catalogMachines.nameEn')}
-                <input
-                  className="input"
-                  value={form.nameEn}
-                  onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('admin:catalogMachines.muscleGroup')}
-                <select
-                  className="input"
-                  value={form.muscleGroup}
-                  onChange={(e) => setForm((f) => ({ ...f, muscleGroup: e.target.value }))}
-                >
-                  {MUSCLE_OPTIONS.map((group) => (
-                    <option key={group} value={group}>
-                      {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                {t('admin:catalogMachines.machineType')}
-                <select
-                  className="input"
-                  value={form.machineType}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      machineType: e.target.value as (typeof MACHINE_TYPES)[number],
-                    }))
-                  }
-                >
-                  {MACHINE_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {t(`admin:catalogMachines.types.${type}`, { defaultValue: type })}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                {t('admin:catalogMachines.displayOrder')}
-                <input
-                  className="input"
-                  type="number"
-                  min={0}
-                  value={form.sortOrder}
-                  onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('admin:catalogMachines.descriptionKo')}
-                <textarea
-                  className="input"
-                  rows={3}
-                  value={form.descriptionKo}
-                  onChange={(e) => setForm((f) => ({ ...f, descriptionKo: e.target.value }))}
-                />
-              </label>
-              <label>
-                {t('admin:catalogMachines.descriptionEn')}
-                <textarea
-                  className="input"
-                  rows={3}
-                  value={form.descriptionEn}
-                  onChange={(e) => setForm((f) => ({ ...f, descriptionEn: e.target.value }))}
-                />
-              </label>
-              <label className="admin-catalog-check">
-                <input
-                  type="checkbox"
-                  checked={form.isActive}
-                  onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
-                />
-                {t('admin:active')}
-              </label>
+            <header className="admin-catalog-dialog__header">
+              <h3 id="admin-machine-dialog-title" className="admin-catalog-dialog__title">
+                {editor === 'create'
+                  ? t('admin:catalogMachines.create')
+                  : t('admin:catalogMachines.edit')}
+              </h3>
+              <p className="admin-catalog-dialog__hint">{t('admin:catalogMachines.formHint')}</p>
+            </header>
+
+            <div className="admin-catalog-sections">
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:catalogMachines.sectionBasic')}
+                </h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:catalogMachines.brand')}</span>
+                    <select
+                      id="admin-machine-brand"
+                      className="input"
+                      value={form.brandId}
+                      onChange={(e) => setForm((f) => ({ ...f, brandId: e.target.value }))}
+                    >
+                      <option value="">{t('admin:catalogMachines.selectBrand')}</option>
+                      {brands.map((brand) => (
+                        <option key={brand.id} value={brand.id}>
+                          {getLocalizedName(brand.name, i18n.language, brand.code)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:catalogMachines.code')}</span>
+                    <input
+                      id="admin-machine-code"
+                      className="input"
+                      value={form.code}
+                      autoComplete="off"
+                      spellCheck={false}
+                      onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
+                      disabled={Boolean(editingMachine)}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:catalogMachines.nameKo')}</span>
+                    <input
+                      id="admin-machine-name-ko"
+                      className="input"
+                      value={form.nameKo}
+                      onChange={(e) => setForm((f) => ({ ...f, nameKo: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:catalogMachines.nameEn')}</span>
+                    <input
+                      className="input"
+                      value={form.nameEn}
+                      onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
+                    />
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:catalogMachines.sectionClassification')}
+                </h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:catalogMachines.muscleGroup')}</span>
+                    <select
+                      className="input"
+                      value={form.muscleGroup}
+                      onChange={(e) => setForm((f) => ({ ...f, muscleGroup: e.target.value }))}
+                    >
+                      {MUSCLE_OPTIONS.map((group) => (
+                        <option key={group} value={group}>
+                          {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:catalogMachines.machineType')}</span>
+                    <select
+                      className="input"
+                      value={form.machineType}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          machineType: e.target.value as (typeof MACHINE_TYPES)[number],
+                        }))
+                      }
+                    >
+                      {MACHINE_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {t(`admin:catalogMachines.types.${type}`, { defaultValue: type })}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:catalogMachines.displayOrder')}</span>
+                    <input
+                      className="input"
+                      type="number"
+                      min={0}
+                      value={form.sortOrder}
+                      onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-check">
+                    <input
+                      type="checkbox"
+                      checked={form.isActive}
+                      onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
+                    />
+                    <span>{t('admin:active')}</span>
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:catalogMachines.sectionDescription')}
+                </h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:catalogMachines.descriptionKo')}</span>
+                    <textarea
+                      className="input"
+                      rows={3}
+                      value={form.descriptionKo}
+                      onChange={(e) => setForm((f) => ({ ...f, descriptionKo: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:catalogMachines.descriptionEn')}</span>
+                    <textarea
+                      className="input"
+                      rows={3}
+                      value={form.descriptionEn}
+                      onChange={(e) => setForm((f) => ({ ...f, descriptionEn: e.target.value }))}
+                    />
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:catalogMachines.sectionImages')}
+                </h4>
+                {editingMachine ? (
+                  <div className="admin-catalog-images admin-catalog-images--single">
+                    <CatalogImageField
+                      label={t('admin:catalogMachines.primaryImage')}
+                      url={editingMachine.primaryImageUrl}
+                      progress={uploadProgress}
+                      busy={uploadMutation.isPending || clearMutation.isPending}
+                      onUpload={(file) => handleImagePick(file, editingMachine.id)}
+                      onClear={() => clearMutation.mutate(editingMachine.id)}
+                      uploadLabel={t('admin:catalogMachines.upload')}
+                      changeLabel={t('admin:catalogMachines.change')}
+                      clearLabel={t('admin:catalogMachines.clearImage')}
+                      dropLabel={t('admin:catalogMachines.dropHere')}
+                      uploadingLabel={t('admin:catalogMachines.uploading')}
+                    />
+                  </div>
+                ) : (
+                  <p className="admin-catalog-section__note">
+                    {t('admin:catalogMachines.saveBeforeImages')}
+                  </p>
+                )}
+              </section>
             </div>
 
-            {editingMachine ? (
-              <div className="admin-catalog-images">
-                <CatalogImageField
-                  label={t('admin:catalogMachines.primaryImage')}
-                  url={editingMachine.primaryImageUrl}
-                  progress={uploadProgress}
-                  busy={uploadMutation.isPending || clearMutation.isPending}
-                  onUpload={(file) => handleImagePick(file, editingMachine.id)}
-                  onClear={() => clearMutation.mutate(editingMachine.id)}
-                  uploadLabel={t('admin:catalogMachines.upload')}
-                  changeLabel={t('admin:catalogMachines.change')}
-                  clearLabel={t('admin:catalogMachines.clearImage')}
-                  dropLabel={t('admin:catalogMachines.dropHere')}
-                  uploadingLabel={t('admin:catalogMachines.uploading')}
-                />
-              </div>
-            ) : (
-              <p className="admin-muscle-hint">{t('admin:catalogMachines.saveBeforeImages')}</p>
-            )}
-
             <div className="admin-catalog-dialog__actions">
-              <button type="button" className="btn btn--secondary" onClick={() => setEditor(null)}>
+              <button type="button" className="btn btn--secondary" onClick={closeEditor}>
                 {t('admin:catalogMachines.cancel')}
               </button>
               <button
