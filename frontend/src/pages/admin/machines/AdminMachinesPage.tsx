@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import {
   TARGET_MUSCLE_GROUPS,
   type AdminMachineUpsertInput,
@@ -17,6 +18,7 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
+import { getApiValidationFieldSummary } from '@/utils/getApiErrorMessage';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/admin.css';
 
@@ -299,12 +301,6 @@ export function AdminMachinesPage() {
     setFormStatus(null);
     setEditor(machine);
   }, []);
-  const dialogRef = useModalAccessibility({
-    open: Boolean(editor),
-    onClose: closeEditor,
-    initialFocusSelector:
-      editor === 'create' ? '#admin-machine-brand' : '#admin-machine-name-ko',
-  });
 
   const listParams = useMemo(
     () => ({
@@ -382,6 +378,24 @@ export function AdminMachinesPage() {
     [queryClient]
   );
 
+  const resolveSaveError = useCallback(
+    (error: unknown) => {
+      if (axios.isAxiosError(error) && !error.response) {
+        return t('admin:catalogMachines.networkError');
+      }
+      const code = getApiErrorCode(error);
+      if (code === 'CODE_EXISTS' || code === 'MACHINE_CODE_EXISTS') {
+        return t('admin:catalogMachines.codeExists');
+      }
+      if (code === 'INVALID_BRAND') return t('admin:catalogMachines.invalidBrand');
+      if (code === 'VALIDATION_ERROR') {
+        return getApiValidationFieldSummary(error) ?? t('admin:catalogMachines.validationError');
+      }
+      return t('admin:error');
+    },
+    [t]
+  );
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const input = toUpsertInput(form);
@@ -396,12 +410,6 @@ export function AdminMachinesPage() {
     },
     onSuccess: async (machine) => {
       syncMachineCaches(machine, 'upsert');
-      setDraftQ(machine.code);
-      setQ(machine.code);
-      setPage(1);
-      setBrandId('');
-      setMuscleGroup('');
-      setIsActive('all');
       await invalidate();
       const message = t('admin:catalogMachines.saveSuccess');
       setFormStatus({ type: 'success', message });
@@ -410,13 +418,7 @@ export function AdminMachinesPage() {
       setEditor(machine);
     },
     onError: (error) => {
-      const code = getApiErrorCode(error);
-      const message =
-        code === 'CODE_EXISTS' || code === 'MACHINE_CODE_EXISTS'
-          ? t('admin:catalogMachines.codeExists')
-          : code === 'INVALID_BRAND'
-            ? t('admin:catalogMachines.invalidBrand')
-            : t('admin:error');
+      const message = resolveSaveError(error);
       setFormStatus({ type: 'error', message });
       showToast(message, 'error');
     },
@@ -425,7 +427,19 @@ export function AdminMachinesPage() {
   const activeMutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: boolean }) =>
       adminApi.setCatalogMachineActive(id, next),
-    onMutate: () => showToast(t('admin:processing'), 'info'),
+    onMutate: async ({ id, next }) => {
+      showToast(t('admin:processing'), 'info');
+      const previous = queryClient.getQueriesData({ queryKey: QUERY_KEYS.adminMachines });
+      for (const [queryKey, cached] of previous) {
+        if (!cached || typeof cached !== 'object' || !('items' in cached)) continue;
+        const data = cached as { items: Machine[]; meta: unknown };
+        queryClient.setQueryData(queryKey, {
+          ...data,
+          items: data.items.map((item) => (item.id === id ? { ...item, isActive: next } : item)),
+        });
+      }
+      return { previous };
+    },
     onSuccess: async (response, variables) => {
       syncMachineCaches(response.data.data, 'upsert');
       await invalidate();
@@ -436,7 +450,14 @@ export function AdminMachinesPage() {
         'success'
       );
     },
-    onError: () => showToast(t('admin:error'), 'error'),
+    onError: (_error, _vars, context) => {
+      if (context?.previous) {
+        for (const [queryKey, data] of context.previous) {
+          queryClient.setQueryData(queryKey, data);
+        }
+      }
+      showToast(t('admin:error'), 'error');
+    },
   });
 
   const deleteMutation = useMutation({
@@ -462,8 +483,12 @@ export function AdminMachinesPage() {
       setFormStatus(null);
       setEditor(null);
     },
-    onError: () => {
-      showToast(t('admin:error'), 'error');
+    onError: (error) => {
+      const message =
+        axios.isAxiosError(error) && !error.response
+          ? t('admin:catalogMachines.networkError')
+          : t('admin:error');
+      showToast(message, 'error');
       setPendingDelete(null);
     },
   });
@@ -477,6 +502,7 @@ export function AdminMachinesPage() {
     },
     onMutate: () => showToast(t('admin:catalogMachines.uploading'), 'info'),
     onSuccess: async (machine) => {
+      syncMachineCaches(machine, 'upsert');
       await invalidate();
       setEditor(machine);
       setFormStatus({ type: 'success', message: t('admin:catalogMachines.uploadSuccess') });
@@ -485,11 +511,13 @@ export function AdminMachinesPage() {
     onError: (error) => {
       const code = getApiErrorCode(error);
       const message =
-        code === 'FILE_TOO_LARGE'
-          ? t('admin:catalogMachines.uploadTooLarge')
-          : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
-            ? t('admin:catalogMachines.uploadUnsupported')
-            : t('admin:error');
+        axios.isAxiosError(error) && !error.response
+          ? t('admin:catalogMachines.networkError')
+          : code === 'FILE_TOO_LARGE'
+            ? t('admin:catalogMachines.uploadTooLarge')
+            : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
+              ? t('admin:catalogMachines.uploadUnsupported')
+              : t('admin:error');
       setFormStatus({ type: 'error', message });
       showToast(message, 'error');
     },
@@ -500,6 +528,7 @@ export function AdminMachinesPage() {
     mutationFn: (id: string) => adminApi.clearCatalogMachineImage(id),
     onMutate: () => showToast(t('admin:processing'), 'info'),
     onSuccess: async (res) => {
+      syncMachineCaches(res.data.data, 'upsert');
       await invalidate();
       setEditor(res.data.data);
       setFormStatus({ type: 'success', message: t('admin:catalogMachines.clearSuccess') });
@@ -509,6 +538,17 @@ export function AdminMachinesPage() {
       setFormStatus({ type: 'error', message: t('admin:error') });
       showToast(t('admin:error'), 'error');
     },
+  });
+
+  const formBusy =
+    saveMutation.isPending || uploadMutation.isPending || clearMutation.isPending;
+
+  const dialogRef = useModalAccessibility({
+    open: Boolean(editor),
+    onClose: closeEditor,
+    closeOnEscape: !formBusy,
+    initialFocusSelector:
+      editor === 'create' ? '#admin-machine-brand' : '#admin-machine-name-ko',
   });
 
   const handleImagePick = (file: File | undefined, machineId?: string) => {
@@ -532,6 +572,7 @@ export function AdminMachinesPage() {
   }, [form.brandId, form.code, form.nameKo, t]);
 
   const handleSave = useCallback(() => {
+    if (saveMutation.isPending) return;
     const message = validateBeforeSave();
     if (message) {
       setFormStatus({ type: 'error', message });
@@ -539,7 +580,7 @@ export function AdminMachinesPage() {
       return;
     }
     saveMutation.mutate();
-  }, [saveMutation, setFormStatus, showToast, validateBeforeSave]);
+  }, [saveMutation, showToast, validateBeforeSave]);
 
   if ((listQuery.isLoading || brandsQuery.isLoading) && !listQuery.data) {
     return (
@@ -559,8 +600,6 @@ export function AdminMachinesPage() {
   const totalPages = listQuery.data?.meta.totalPages ?? 1;
   const editingMachine = editor && editor !== 'create' ? editor : null;
   const brands = brandsQuery.data ?? [];
-  const formBusy =
-    saveMutation.isPending || uploadMutation.isPending || clearMutation.isPending;
 
   return (
     <AdminPageShell
@@ -652,6 +691,14 @@ export function AdminMachinesPage() {
         <button type="submit" className="btn btn--primary">
           {t('admin:catalogMachines.search')}
         </button>
+        <button
+          type="button"
+          className="btn btn--secondary"
+          disabled={listQuery.isFetching}
+          onClick={() => void listQuery.refetch()}
+        >
+          {listQuery.isFetching ? t('admin:processing') : t('admin:catalogMachines.refresh')}
+        </button>
         <button type="button" className="btn btn--secondary" onClick={openCreate}>
           {t('admin:catalogMachines.create')}
         </button>
@@ -739,8 +786,13 @@ export function AdminMachinesPage() {
       </AdminPanel>
 
       {editor ? (
-        <div className="dialog-overlay" role="presentation" onClick={closeEditor}>
-          <div
+        <div
+          className="dialog-overlay"
+          role="presentation"
+          onClick={() => {
+            if (!formBusy) closeEditor();
+          }}
+        >          <div
             ref={dialogRef}
             className="dialog card admin-catalog-dialog"
             role="dialog"
@@ -967,7 +1019,7 @@ export function AdminMachinesPage() {
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled={formBusy}
+                disabled={saveMutation.isPending}
                 onClick={handleSave}
               >
                 {saveMutation.isPending

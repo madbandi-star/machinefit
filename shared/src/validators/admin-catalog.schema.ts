@@ -16,6 +16,22 @@ const localizedOptionalSchema = z
   })
   .optional();
 
+/** Treat blank / bare scheme placeholders as empty; prepend https when host-only. */
+function normalizeOptionalUrl(raw: unknown): string {
+  if (typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  if (/^https?:\/\/$/i.test(trimmed)) return '';
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(trimmed)) return `https://${trimmed}`;
+  return trimmed;
+}
+
+function normalizeOptionalCountry(raw: unknown): string {
+  if (typeof raw !== 'string') return '';
+  return raw.trim().toUpperCase();
+}
+
 export const adminBrandListQuerySchema = z.object({
   q: z.string().max(100).optional(),
   sort: z.enum(['name', 'createdAt', 'sortOrder']).optional().default('sortOrder'),
@@ -37,8 +53,14 @@ export const adminBrandUpsertSchema = z.object({
     .regex(/^[A-Za-z0-9_-]+$/, 'Code must be alphanumeric'),
   name: localizedNameSchema,
   description: localizedOptionalSchema,
-  websiteUrl: z.union([z.literal(''), z.string().url().max(500)]).optional(),
-  countryCode: z.union([z.literal(''), z.string().length(2)]).optional(),
+  websiteUrl: z.preprocess(
+    normalizeOptionalUrl,
+    z.union([z.literal(''), z.string().url().max(500)]).optional()
+  ),
+  countryCode: z.preprocess(
+    normalizeOptionalCountry,
+    z.union([z.literal(''), z.string().length(2)]).optional()
+  ),
   sortOrder: z.number().int().min(0).max(999999).optional().default(0),
   isActive: z.boolean().optional().default(true),
 });
@@ -65,7 +87,7 @@ export const adminMachineUpsertSchema = z.object({
     .string()
     .min(1)
     .max(80)
-    .regex(/^[A-Za-z0-9_]+$/, 'Code must be alphanumeric/underscore'),
+    .regex(/^[A-Za-z0-9_-]+$/, 'Code must be alphanumeric'),
   name: localizedNameSchema,
   muscleGroup: z.string().min(1).max(50),
   machineType: z

@@ -101,7 +101,10 @@ async function resolveCountryId(countryCode?: string): Promise<string | null> {
     'SELECT id FROM countries WHERE UPPER(code) = UPPER($1) LIMIT 1',
     [countryCode]
   );
-  return result.rows[0]?.id ?? null;
+  if (!result.rows[0]) {
+    throw new AppError(400, 'INVALID_COUNTRY', `Unknown country code: ${countryCode}`);
+  }
+  return result.rows[0].id;
 }
 
 export const adminCatalogRepository = {
@@ -272,7 +275,19 @@ export const adminCatalogRepository = {
         'Cannot delete a brand that still has machines. Deactivate it instead.'
       );
     }
-    await pool.query('DELETE FROM brands WHERE id = $1', [existing.id]);
+    try {
+      await pool.query('DELETE FROM brands WHERE id = $1', [existing.id]);
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === '23503') {
+        throw new AppError(
+          409,
+          'BRAND_IN_USE',
+          'Cannot delete this brand because it is referenced elsewhere. Deactivate it instead.'
+        );
+      }
+      throw err;
+    }
     return { deleted: true };
   },
 
@@ -334,12 +349,20 @@ export const adminCatalogRepository = {
 
     const result = await pool.query<MachineAdminRow>(
       `SELECT m.*, b.name AS brand_name, b.code AS brand_code,
-              (
-                SELECT mi.image_url
-                FROM machine_images mi
-                WHERE mi.machine_id = m.id
-                ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                LIMIT 1
+              COALESCE(
+                (
+                  SELECT c.image_url
+                  FROM machine_cover_images c
+                  WHERE c.machine_id = m.id
+                  LIMIT 1
+                ),
+                (
+                  SELECT mi.image_url
+                  FROM machine_images mi
+                  WHERE mi.machine_id = m.id
+                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                  LIMIT 1
+                )
               ) AS primary_image_url
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
@@ -360,12 +383,20 @@ export const adminCatalogRepository = {
     if (!pool) return null;
     const result = await pool.query<MachineAdminRow>(
       `SELECT m.*, b.name AS brand_name, b.code AS brand_code,
-              (
-                SELECT mi.image_url
-                FROM machine_images mi
-                WHERE mi.machine_id = m.id
-                ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                LIMIT 1
+              COALESCE(
+                (
+                  SELECT c.image_url
+                  FROM machine_cover_images c
+                  WHERE c.machine_id = m.id
+                  LIMIT 1
+                ),
+                (
+                  SELECT mi.image_url
+                  FROM machine_images mi
+                  WHERE mi.machine_id = m.id
+                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                  LIMIT 1
+                )
               ) AS primary_image_url
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
@@ -424,6 +455,11 @@ export const adminCatalogRepository = {
     const existing = await this.getMachine(id);
     if (!existing) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
 
+    const brand = await pool.query<{ id: string }>('SELECT id FROM brands WHERE id = $1', [
+      input.brandId,
+    ]);
+    if (!brand.rows[0]) throw new AppError(400, 'INVALID_BRAND', 'Brand not found');
+
     try {
       await pool.query(
         `UPDATE machines SET
@@ -439,7 +475,7 @@ export const adminCatalogRepository = {
            has_back_pad = COALESCE($11, has_back_pad),
            has_foot_plate = COALESCE($12, has_foot_plate),
            has_handle = COALESCE($13, has_handle),
-           rom_type = $14,
+           rom_type = COALESCE($14, rom_type),
            updated_at = NOW()
          WHERE id = $1`,
         [
@@ -456,12 +492,29 @@ export const adminCatalogRepository = {
           input.hasBackPad ?? null,
           input.hasFootPlate ?? null,
           input.hasHandle ?? null,
-          input.romType || null,
+          // undefined → preserve via COALESCE(null, rom_type); '' → clear to null
+          input.romType === undefined ? null : input.romType.trim() || null,
         ]
       );
+
+      const nextCode = input.code.trim().toUpperCase();
+      if (existing.code !== nextCode) {
+        await pool.query(
+          `UPDATE machine_cover_images SET machine_code = $2 WHERE machine_id = $1`,
+          [existing.id, nextCode]
+        ).catch(() => undefined);
+        await pool.query(
+          `UPDATE machine_images
+           SET image_url = REPLACE(image_url, $2, $3)
+           WHERE machine_id = $1
+             AND image_url LIKE '%/media/machine-covers/%'`,
+          [existing.id, `/media/machine-covers/${existing.code}/`, `/media/machine-covers/${nextCode}/`]
+        ).catch(() => undefined);
+      }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === '23505') throw new AppError(409, 'CODE_EXISTS', 'Machine code already exists');
+      if (code === '23503') throw new AppError(400, 'INVALID_BRAND', 'Brand not found');
       throw err;
     }
 

@@ -126,7 +126,8 @@ export const adminApi = {
     const form = new FormData();
     form.append('file', file);
     return apiClient.post<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/logo`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      // Let the browser set multipart boundary; a bare multipart header breaks uploads.
+      headers: { 'Content-Type': undefined },
       timeout: 120_000,
       onUploadProgress: (event) => {
         if (!onProgress || !event.total) return;
@@ -142,7 +143,7 @@ export const adminApi = {
     const form = new FormData();
     form.append('file', file);
     return apiClient.post<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/image`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
       timeout: 120_000,
       onUploadProgress: (event) => {
         if (!onProgress || !event.total) return;
@@ -185,7 +186,7 @@ export const adminApi = {
     const form = new FormData();
     form.append('file', file);
     return apiClient.post<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/image`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
       timeout: 120_000,
       onUploadProgress: (event) => {
         if (!onProgress || !event.total) return;

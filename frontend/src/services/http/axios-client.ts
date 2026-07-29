@@ -75,6 +75,15 @@ apiClient.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${tokens.accessToken}`;
   }
   config.headers['Accept-Language'] = useSettingsStore.getState().locale;
+  // FormData needs the browser-generated multipart boundary — never force JSON/multipart.
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    if (typeof config.headers.set === 'function') {
+      config.headers.set('Content-Type', false as unknown as string);
+    } else {
+      delete (config.headers as Record<string, unknown>)['Content-Type'];
+      delete (config.headers as Record<string, unknown>)['content-type'];
+    }
+  }
   return config;
 });
 

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import type { AdminBrandUpsertInput, Brand } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
@@ -13,6 +14,7 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
+import { getApiValidationFieldSummary } from '@/utils/getApiErrorMessage';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/admin.css';
 
@@ -63,6 +65,16 @@ function isAllowedImage(file: File): boolean {
   return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type.toLowerCase());
 }
 
+/** Blank / bare `https://` → empty; host-only values get https:// */
+function normalizeWebsiteUrl(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  if (/^https?:\/\/$/i.test(trimmed)) return '';
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(trimmed)) return `https://${trimmed}`;
+  return trimmed;
+}
+
 function toUpsertInput(form: BrandFormState): AdminBrandUpsertInput {
   return {
     code: form.code.trim().toUpperCase(),
@@ -74,7 +86,7 @@ function toUpsertInput(form: BrandFormState): AdminBrandUpsertInput {
             en: form.descriptionEn.trim() || undefined,
           }
         : undefined,
-    websiteUrl: form.websiteUrl.trim(),
+    websiteUrl: normalizeWebsiteUrl(form.websiteUrl),
     countryCode: form.countryCode.trim().toUpperCase(),
     sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
     isActive: form.isActive,
@@ -247,11 +259,6 @@ export function AdminBrandsPage() {
     setFormStatus(null);
     setEditor(brand);
   }, []);
-  const dialogRef = useModalAccessibility({
-    open: Boolean(editor),
-    onClose: closeEditor,
-    initialFocusSelector: editor === 'create' ? '#admin-brand-code' : '#admin-brand-name-ko',
-  });
 
   const listParams = useMemo(
     () => ({ q: q || undefined, sort, order, page, limit: PAGE_SIZE, isActive }),
@@ -336,6 +343,25 @@ export function AdminBrandsPage() {
     [queryClient]
   );
 
+  const resolveSaveError = useCallback(
+    (error: unknown) => {
+      if (axios.isAxiosError(error) && !error.response) {
+        return t('brands.networkError');
+      }
+      const code = getApiErrorCode(error);
+      if (code === 'CODE_EXISTS' || code === 'BRAND_CODE_EXISTS') return t('brands.codeExists');
+      if (code === 'INVALID_COUNTRY') return t('brands.invalidCountry');
+      if (code === 'VALIDATION_ERROR') {
+        const summary = getApiValidationFieldSummary(error)?.toLowerCase() ?? '';
+        if (summary.includes('website') || summary.includes('url')) return t('brands.invalidWebsite');
+        if (summary.includes('country')) return t('brands.invalidCountry');
+        return t('brands.validationError');
+      }
+      return t('error');
+    },
+    [t]
+  );
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const input = toUpsertInput(form);
@@ -350,10 +376,6 @@ export function AdminBrandsPage() {
     },
     onSuccess: async (brand) => {
       syncBrandCaches(brand, 'upsert');
-      setDraftQ(brand.code);
-      setQ(brand.code);
-      setPage(1);
-      setIsActive('all');
       await invalidate();
       const message = t('brands.saveSuccess');
       setFormStatus({ type: 'success', message });
@@ -362,11 +384,7 @@ export function AdminBrandsPage() {
       setEditor(brand);
     },
     onError: (error) => {
-      const code = getApiErrorCode(error);
-      const message =
-        code === 'CODE_EXISTS' || code === 'BRAND_CODE_EXISTS'
-          ? t('brands.codeExists')
-          : t('error');
+      const message = resolveSaveError(error);
       setFormStatus({ type: 'error', message });
       showToast(message, 'error');
     },
@@ -375,7 +393,20 @@ export function AdminBrandsPage() {
   const activeMutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: boolean }) =>
       adminApi.setCatalogBrandActive(id, next),
-    onMutate: () => showToast(t('processing'), 'info'),
+    onMutate: async ({ id, next }) => {
+      showToast(t('processing'), 'info');
+      const previous = queryClient.getQueriesData({ queryKey: QUERY_KEYS.adminBrands });
+      const entries = queryClient.getQueriesData({ queryKey: QUERY_KEYS.adminBrands });
+      for (const [queryKey, cached] of entries) {
+        if (!cached || typeof cached !== 'object' || !('items' in cached)) continue;
+        const data = cached as { items: Brand[]; meta: unknown };
+        queryClient.setQueryData(queryKey, {
+          ...data,
+          items: data.items.map((item) => (item.id === id ? { ...item, isActive: next } : item)),
+        });
+      }
+      return { previous };
+    },
     onSuccess: async (response, variables) => {
       syncBrandCaches(response.data.data, 'upsert');
       await invalidate();
@@ -384,7 +415,14 @@ export function AdminBrandsPage() {
         'success'
       );
     },
-    onError: () => showToast(t('error'), 'error'),
+    onError: (_error, _vars, context) => {
+      if (context?.previous) {
+        for (const [queryKey, data] of context.previous) {
+          queryClient.setQueryData(queryKey, data);
+        }
+      }
+      showToast(t('error'), 'error');
+    },
   });
 
   const deleteMutation = useMutation({
@@ -402,6 +440,10 @@ export function AdminBrandsPage() {
       const code = getApiErrorCode(error);
       if (code === 'BRAND_HAS_MACHINES') {
         showToast(t('brands.hasMachines'), 'error');
+      } else if (code === 'BRAND_IN_USE') {
+        showToast(t('brands.inUse'), 'error');
+      } else if (axios.isAxiosError(error) && !error.response) {
+        showToast(t('brands.networkError'), 'error');
       } else {
         showToast(t('error'), 'error');
       }
@@ -420,6 +462,7 @@ export function AdminBrandsPage() {
     },
     onMutate: () => showToast(t('brands.uploading'), 'info'),
     onSuccess: async (brand) => {
+      syncBrandCaches(brand, 'upsert');
       await invalidate();
       setEditor(brand);
       setFormStatus({ type: 'success', message: t('brands.uploadSuccess') });
@@ -428,11 +471,13 @@ export function AdminBrandsPage() {
     onError: (error) => {
       const code = getApiErrorCode(error);
       const message =
-        code === 'FILE_TOO_LARGE'
-          ? t('brands.uploadTooLarge')
-          : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
-            ? t('brands.uploadUnsupported')
-            : t('error');
+        axios.isAxiosError(error) && !error.response
+          ? t('brands.networkError')
+          : code === 'FILE_TOO_LARGE'
+            ? t('brands.uploadTooLarge')
+            : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
+              ? t('brands.uploadUnsupported')
+              : t('error');
       setFormStatus({ type: 'error', message });
       showToast(message, 'error');
     },
@@ -450,6 +495,7 @@ export function AdminBrandsPage() {
     },
     onMutate: () => showToast(t('brands.uploading'), 'info'),
     onSuccess: async (brand) => {
+      syncBrandCaches(brand, 'upsert');
       await invalidate();
       setEditor(brand);
       setFormStatus({ type: 'success', message: t('brands.uploadSuccess') });
@@ -458,11 +504,13 @@ export function AdminBrandsPage() {
     onError: (error) => {
       const code = getApiErrorCode(error);
       const message =
-        code === 'FILE_TOO_LARGE'
-          ? t('brands.uploadTooLarge')
-          : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
-            ? t('brands.uploadUnsupported')
-            : t('error');
+        axios.isAxiosError(error) && !error.response
+          ? t('brands.networkError')
+          : code === 'FILE_TOO_LARGE'
+            ? t('brands.uploadTooLarge')
+            : code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE'
+              ? t('brands.uploadUnsupported')
+              : t('error');
       setFormStatus({ type: 'error', message });
       showToast(message, 'error');
     },
@@ -473,6 +521,7 @@ export function AdminBrandsPage() {
     mutationFn: (id: string) => adminApi.clearCatalogBrandLogo(id),
     onMutate: () => showToast(t('processing'), 'info'),
     onSuccess: async (res) => {
+      syncBrandCaches(res.data.data, 'upsert');
       await invalidate();
       setEditor(res.data.data);
       setFormStatus({ type: 'success', message: t('brands.clearSuccess') });
@@ -488,6 +537,7 @@ export function AdminBrandsPage() {
     mutationFn: (id: string) => adminApi.clearCatalogBrandImage(id),
     onMutate: () => showToast(t('processing'), 'info'),
     onSuccess: async (res) => {
+      syncBrandCaches(res.data.data, 'upsert');
       await invalidate();
       setEditor(res.data.data);
       setFormStatus({ type: 'success', message: t('brands.clearSuccess') });
@@ -497,6 +547,20 @@ export function AdminBrandsPage() {
       setFormStatus({ type: 'error', message: t('error') });
       showToast(t('error'), 'error');
     },
+  });
+
+  const formBusy =
+    saveMutation.isPending ||
+    uploadLogoMutation.isPending ||
+    uploadHeroMutation.isPending ||
+    clearLogoMutation.isPending ||
+    clearHeroMutation.isPending;
+
+  const dialogRef = useModalAccessibility({
+    open: Boolean(editor),
+    onClose: closeEditor,
+    closeOnEscape: !formBusy,
+    initialFocusSelector: editor === 'create' ? '#admin-brand-code' : '#admin-brand-name-ko',
   });
 
   const handleImagePick = (kind: 'logo' | 'hero', file: File | undefined, brandId?: string) => {
@@ -516,10 +580,16 @@ export function AdminBrandsPage() {
   const validateBeforeSave = useCallback(() => {
     if (!form.code.trim()) return t('brands.requiredCode');
     if (!form.nameKo.trim()) return t('brands.requiredNameKo');
+    const website = normalizeWebsiteUrl(form.websiteUrl);
+    if (website && !/^https?:\/\/.+/i.test(website)) return t('brands.invalidWebsite');
+    if (form.countryCode.trim() && form.countryCode.trim().length !== 2) {
+      return t('brands.invalidCountry');
+    }
     return null;
-  }, [form.code, form.nameKo, t]);
+  }, [form.code, form.countryCode, form.nameKo, form.websiteUrl, t]);
 
   const handleSave = useCallback(() => {
+    if (saveMutation.isPending) return;
     const message = validateBeforeSave();
     if (message) {
       setFormStatus({ type: 'error', message });
@@ -527,7 +597,7 @@ export function AdminBrandsPage() {
       return;
     }
     saveMutation.mutate();
-  }, [saveMutation, setFormStatus, showToast, validateBeforeSave]);
+  }, [saveMutation, showToast, validateBeforeSave]);
 
   if (listQuery.isLoading && !listQuery.data) {
     return (
@@ -546,12 +616,6 @@ export function AdminBrandsPage() {
   const total = listQuery.data?.meta.total ?? 0;
   const totalPages = listQuery.data?.meta.totalPages ?? 1;
   const editingBrand = editor && editor !== 'create' ? editor : null;
-  const formBusy =
-    saveMutation.isPending ||
-    uploadLogoMutation.isPending ||
-    uploadHeroMutation.isPending ||
-    clearLogoMutation.isPending ||
-    clearHeroMutation.isPending;
 
   return (
     <AdminPageShell
@@ -611,6 +675,14 @@ export function AdminBrandsPage() {
         </select>
         <button type="submit" className="btn btn--primary">
           {t('brands.search')}
+        </button>
+        <button
+          type="button"
+          className="btn btn--secondary"
+          disabled={listQuery.isFetching}
+          onClick={() => void listQuery.refetch()}
+        >
+          {listQuery.isFetching ? t('processing') : t('brands.refresh')}
         </button>
         <button type="button" className="btn btn--secondary" onClick={openCreate}>
           {t('brands.create')}
@@ -692,8 +764,13 @@ export function AdminBrandsPage() {
       </AdminPanel>
 
       {editor ? (
-        <div className="dialog-overlay" role="presentation" onClick={closeEditor}>
-          <div
+        <div
+          className="dialog-overlay"
+          role="presentation"
+          onClick={() => {
+            if (!formBusy) closeEditor();
+          }}
+        >          <div
             ref={dialogRef}
             className="dialog card admin-catalog-dialog"
             role="dialog"
@@ -804,9 +881,10 @@ export function AdminBrandsPage() {
                     <span>{t('brands.website')}</span>
                     <input
                       className="input"
-                      type="url"
+                      type="text"
                       inputMode="url"
-                      placeholder="https://"
+                      autoComplete="url"
+                      placeholder="https://example.com"
                       value={form.websiteUrl}
                       onChange={(e) => setForm((f) => ({ ...f, websiteUrl: e.target.value }))}
                     />
@@ -895,7 +973,7 @@ export function AdminBrandsPage() {
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled={formBusy}
+                disabled={saveMutation.isPending}
                 onClick={handleSave}
               >
                 {saveMutation.isPending ? t('brands.saving') : t('brands.save')}
