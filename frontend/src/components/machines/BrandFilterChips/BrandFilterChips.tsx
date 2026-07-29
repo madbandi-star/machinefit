@@ -6,8 +6,8 @@ import '@/styles/machines.css';
 
 interface BrandFilterChipsProps {
   brands: Brand[];
-  value: string | null;
-  onChange: (brandCode: string | null) => void;
+  value: string;
+  onChange: (brandCode: string) => void;
 }
 
 export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsProps) {
@@ -18,15 +18,13 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
 
   return (
     <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
-      <span className="filter-chip filter-chip--active filter-chip-scope" aria-hidden>
-        {t('filterAll')}
-      </span>
       {orderedBrands.map((brand) => (
         <button
           key={brand.id}
           type="button"
           className={`filter-chip${value === brand.code ? ' filter-chip--active' : ''}`}
-          onClick={() => onChange(value === brand.code ? null : brand.code)}
+          onClick={() => onChange(brand.code)}
+          aria-pressed={value === brand.code}
         >
           {getLocalizedName(brand.name, i18n.language, brand.code)}
         </button>

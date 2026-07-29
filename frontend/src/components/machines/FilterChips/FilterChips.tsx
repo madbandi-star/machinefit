@@ -4,8 +4,8 @@ import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import '@/styles/machines.css';
 
 interface FilterChipsProps {
-  value: string | null;
-  onChange: (muscleGroup: string | null) => void;
+  value: string;
+  onChange: (muscleGroup: string) => void;
 }
 
 const MUSCLE_ICON_SIZE = 44;
@@ -15,13 +15,6 @@ export function FilterChips({ value, onChange }: FilterChipsProps) {
 
   return (
     <div className="filter-chips" role="group" aria-label={t('filterByMuscle')}>
-      <button
-        type="button"
-        className={`filter-chip${value === null ? ' filter-chip--active' : ''}`}
-        onClick={() => onChange(null)}
-      >
-        {t('filterAll')}
-      </button>
       {MUSCLE_GROUPS.map((group) => {
         const label = t(`muscleGroups.${group}`);
         return (
@@ -29,8 +22,9 @@ export function FilterChips({ value, onChange }: FilterChipsProps) {
             key={group}
             type="button"
             className={`filter-chip filter-chip--icon-only${value === group ? ' filter-chip--active' : ''}`}
-            onClick={() => onChange(value === group ? null : group)}
+            onClick={() => onChange(group)}
             aria-label={label}
+            aria-pressed={value === group}
             title={label}
           >
             <MuscleGroupIcon group={group} size={MUSCLE_ICON_SIZE} className="filter-chip__icon" />

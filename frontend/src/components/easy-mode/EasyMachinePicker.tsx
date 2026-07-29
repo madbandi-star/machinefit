@@ -16,6 +16,10 @@ import { MachineListItem } from '@/components/machines/MachineListItem/MachineLi
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import {
+  DEFAULT_SEARCH_BRAND_CODE,
+  DEFAULT_SEARCH_MUSCLE_GROUP,
+} from '@/constants/machine-search-defaults';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/machines.css';
@@ -44,8 +48,8 @@ export function EasyMachinePicker({
   const { t, i18n } = useTranslation(['common', 'machines']);
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebouncedValue(query, 250);
-  const [muscleGroup, setMuscleGroup] = useState<string | null>(null);
-  const [brandCode, setBrandCode] = useState<string | null>(null);
+  const [muscleGroup, setMuscleGroup] = useState<string>(DEFAULT_SEARCH_MUSCLE_GROUP);
+  const [brandCode, setBrandCode] = useState<string>(DEFAULT_SEARCH_BRAND_CODE);
   const [detail, setDetail] = useState<Machine | null>(null);
   const [targetMuscle, setTargetMuscle] = useState<TargetMuscleGroup | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -53,8 +57,8 @@ export function EasyMachinePicker({
   useEffect(() => {
     if (!open) return;
     setQuery('');
-    setMuscleGroup(null);
-    setBrandCode(null);
+    setMuscleGroup(DEFAULT_SEARCH_MUSCLE_GROUP);
+    setBrandCode(DEFAULT_SEARCH_BRAND_CODE);
     setDetail(null);
     setTargetMuscle(null);
 
@@ -88,9 +92,11 @@ export function EasyMachinePicker({
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [...QUERY_KEYS.machines, 'easy-picker', debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
-      const params: Record<string, string | number> = { limit: 100 };
-      if (muscleGroup) params.muscleGroup = muscleGroup;
-      if (brandCode) params.brandCode = brandCode;
+      const params: Record<string, string | number> = {
+        limit: 100,
+        muscleGroup,
+        brandCode,
+      };
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
       return res.data.data.items;

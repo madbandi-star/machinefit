@@ -10,25 +10,56 @@ import { BrandFilterChips } from '@/components/machines/BrandFilterChips/BrandFi
 import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import {
+  DEFAULT_SEARCH_BRAND_CODE,
+  DEFAULT_SEARCH_MUSCLE_GROUP,
+} from '@/constants/machine-search-defaults';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi, machineApi } from '@/api';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+
+function resolveMuscleParam(raw: string | null): string {
+  return raw?.trim() || DEFAULT_SEARCH_MUSCLE_GROUP;
+}
+
+function resolveBrandParam(raw: string | null): string {
+  return raw?.trim() || DEFAULT_SEARCH_BRAND_CODE;
+}
 
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const debouncedQuery = useDebouncedValue(query, 250);
-  const [muscleGroup, setMuscleGroup] = useState<string | null>(
-    () => searchParams.get('muscle')
-  );
-  const [brandCode, setBrandCode] = useState<string | null>(() => searchParams.get('brand'));
+  const [muscleGroup, setMuscleGroup] = useState(() => resolveMuscleParam(searchParams.get('muscle')));
+  const [brandCode, setBrandCode] = useState(() => resolveBrandParam(searchParams.get('brand')));
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
-    setMuscleGroup(searchParams.get('muscle'));
-    setBrandCode(searchParams.get('brand'));
+    setMuscleGroup(resolveMuscleParam(searchParams.get('muscle')));
+    setBrandCode(resolveBrandParam(searchParams.get('brand')));
   }, [searchParams]);
+
+  // Ensure defaults are reflected in the URL when landing without filters.
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        let changed = false;
+        if (!next.get('muscle')?.trim()) {
+          next.set('muscle', DEFAULT_SEARCH_MUSCLE_GROUP);
+          changed = true;
+        }
+        if (!next.get('brand')?.trim()) {
+          next.set('brand', DEFAULT_SEARCH_BRAND_CODE);
+          changed = true;
+        }
+        next.delete('scope');
+        return changed ? next : prev;
+      },
+      { replace: true }
+    );
+  }, [setSearchParams]);
 
   useEffect(() => {
     setSearchParams(
@@ -36,7 +67,6 @@ export function MachineSearchPage() {
         const next = new URLSearchParams(prev);
         if (debouncedQuery.trim()) next.set('q', debouncedQuery.trim());
         else next.delete('q');
-        // Equipment scope is always "all" — drop legacy machines_only param
         next.delete('scope');
         return next;
       },
@@ -44,19 +74,14 @@ export function MachineSearchPage() {
     );
   }, [debouncedQuery, setSearchParams]);
 
-  const writeSearchParams = (patch: { muscle?: string | null; brand?: string | null }) => {
+  const writeSearchParams = (patch: { muscle?: string; brand?: string }) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        const muscle = patch.muscle !== undefined ? patch.muscle : muscleGroup;
-        const brand = patch.brand !== undefined ? patch.brand : brandCode;
-
-        if (muscle) next.set('muscle', muscle);
-        else next.delete('muscle');
-
-        if (brand) next.set('brand', brand);
-        else next.delete('brand');
-
+        const muscle = patch.muscle ?? muscleGroup;
+        const brand = patch.brand ?? brandCode;
+        next.set('muscle', muscle);
+        next.set('brand', brand);
         next.delete('scope');
         return next;
       },
@@ -68,12 +93,12 @@ export function MachineSearchPage() {
     setQuery(value);
   };
 
-  const handleMuscleChange = (value: string | null) => {
+  const handleMuscleChange = (value: string) => {
     setMuscleGroup(value);
     writeSearchParams({ muscle: value });
   };
 
-  const handleBrandChange = (value: string | null) => {
+  const handleBrandChange = (value: string) => {
     setBrandCode(value);
     writeSearchParams({ brand: value });
   };
@@ -90,9 +115,11 @@ export function MachineSearchPage() {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
-      const params: Record<string, string | number> = { limit: 100 };
-      if (muscleGroup) params.muscleGroup = muscleGroup;
-      if (brandCode) params.brandCode = brandCode;
+      const params: Record<string, string | number> = {
+        limit: 100,
+        muscleGroup,
+        brandCode,
+      };
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
       return res.data.data.items;
