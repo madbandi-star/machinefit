@@ -22,8 +22,10 @@ function resolveMuscleParam(raw: string | null): string {
   return raw?.trim() || DEFAULT_SEARCH_MUSCLE_GROUP;
 }
 
-function resolveBrandParam(raw: string | null): string {
-  return raw?.trim() || DEFAULT_SEARCH_BRAND_CODE;
+function resolveBrandParam(raw: string | null): string | null {
+  const trimmed = raw?.trim();
+  if (!trimmed || trimmed === 'all') return DEFAULT_SEARCH_BRAND_CODE;
+  return trimmed;
 }
 
 export function MachineSearchPage() {
@@ -32,7 +34,9 @@ export function MachineSearchPage() {
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const debouncedQuery = useDebouncedValue(query, 250);
   const [muscleGroup, setMuscleGroup] = useState(() => resolveMuscleParam(searchParams.get('muscle')));
-  const [brandCode, setBrandCode] = useState(() => resolveBrandParam(searchParams.get('brand')));
+  const [brandCode, setBrandCode] = useState<string | null>(() =>
+    resolveBrandParam(searchParams.get('brand'))
+  );
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
@@ -40,7 +44,7 @@ export function MachineSearchPage() {
     setBrandCode(resolveBrandParam(searchParams.get('brand')));
   }, [searchParams]);
 
-  // Ensure defaults are reflected in the URL when landing without filters.
+  // Ensure muscle default is in the URL; brand default is “all” (no brand param).
   useEffect(() => {
     setSearchParams(
       (prev) => {
@@ -50,8 +54,9 @@ export function MachineSearchPage() {
           next.set('muscle', DEFAULT_SEARCH_MUSCLE_GROUP);
           changed = true;
         }
-        if (!next.get('brand')?.trim()) {
-          next.set('brand', DEFAULT_SEARCH_BRAND_CODE);
+        // Drop legacy forced BODYWEIGHT default so “전체” is selected.
+        if (next.get('brand') === 'all') {
+          next.delete('brand');
           changed = true;
         }
         next.delete('scope');
@@ -74,14 +79,15 @@ export function MachineSearchPage() {
     );
   }, [debouncedQuery, setSearchParams]);
 
-  const writeSearchParams = (patch: { muscle?: string; brand?: string }) => {
+  const writeSearchParams = (patch: { muscle?: string; brand?: string | null }) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
         const muscle = patch.muscle ?? muscleGroup;
-        const brand = patch.brand ?? brandCode;
+        const brand = patch.brand !== undefined ? patch.brand : brandCode;
         next.set('muscle', muscle);
-        next.set('brand', brand);
+        if (brand) next.set('brand', brand);
+        else next.delete('brand');
         next.delete('scope');
         return next;
       },
@@ -98,7 +104,7 @@ export function MachineSearchPage() {
     writeSearchParams({ muscle: value });
   };
 
-  const handleBrandChange = (value: string) => {
+  const handleBrandChange = (value: string | null) => {
     setBrandCode(value);
     writeSearchParams({ brand: value });
   };
@@ -118,8 +124,8 @@ export function MachineSearchPage() {
       const params: Record<string, string | number> = {
         limit: 100,
         muscleGroup,
-        brandCode,
       };
+      if (brandCode) params.brandCode = brandCode;
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
       return res.data.data.items;

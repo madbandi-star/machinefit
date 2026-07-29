@@ -14,7 +14,7 @@ const FALLBACK_SEARCH_BRANDS: Brand[] = [
   {
     id: 'brand-bodyweight',
     code: BRAND_CODES.BODYWEIGHT,
-    name: { ko: '맨몸운동', en: 'Bodyweight', ja: '自重トレ', zh: '自重训练' },
+    name: { ko: '맨몸', en: 'Bodyweight', ja: '自重', zh: '自重' },
     isActive: true,
   },
   {
