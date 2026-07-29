@@ -178,8 +178,12 @@
   margin-bottom: 0.65rem;
 }
 
-.filter-chips--brand {
+.filter-section--brand {
   margin-top: 0.35rem;
+}
+
+.filter-chips--brand {
+  margin-top: 0;
   margin-bottom: 1rem;
 }
 
