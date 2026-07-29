@@ -8,15 +8,16 @@ import type {
   PaginatedResponse,
 } from '@machinefit/shared';
 import { adminCatalogRepository } from '../repositories/admin-catalog.repository.js';
+import { brandAssetRepository } from '../repositories/brand-asset.repository.js';
 import {
   adminCoverImageLimits,
   isAllowedAdminCoverImage,
 } from '../config/admin-cover-image.js';
 import { AppError } from '../middlewares/error.middleware.js';
-import { env } from '../config/env.js';
 import { processMuscleGroupImage } from './muscle-group-image-process.service.js';
 import { machineCoverImageService } from './machine-cover-image.service.js';
-import { storageService } from './storage.service.js';
+import { brandAssetMediaUrl } from '../utils/public-api-base.js';
+import { withCacheBust } from '../utils/cache-bust-url.js';
 
 type UploadFile = {
   originalname: string;
@@ -42,43 +43,6 @@ function assertImageFile(file: UploadFile): void {
       `File is too large. Max size is ${Math.round(limits.maxBytes / (1024 * 1024))}MB.`
     );
   }
-}
-
-async function storeBrandAsset(params: {
-  brandCode: string;
-  kind: 'logo' | 'hero';
-  file: UploadFile;
-  version: number;
-}): Promise<string> {
-  assertImageFile(params.file);
-  const processed = await processMuscleGroupImage(params.file.buffer);
-  const folder = `brand-${params.brandCode.toLowerCase()}-${params.kind}`;
-
-  if (env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY) {
-    try {
-      const stored = await storageService.saveMuscleGroupImage({
-        muscleGroup: folder,
-        kind: 'main',
-        extension: processed.main.extension,
-        mimeType: processed.main.mimeType,
-        buffer: processed.main.buffer,
-        version: params.version,
-      });
-      return stored.publicUrl;
-    } catch {
-      // Fall through to local storage.
-    }
-  }
-
-  const stored = await storageService.saveMuscleGroupImage({
-    muscleGroup: folder,
-    kind: 'main',
-    extension: processed.main.extension,
-    mimeType: processed.main.mimeType,
-    buffer: processed.main.buffer,
-    version: params.version,
-  });
-  return stored.publicUrl;
 }
 
 export const adminCatalogService = {
@@ -109,12 +73,19 @@ export const adminCatalogService = {
   async uploadBrandLogo(id: string, file: UploadFile): Promise<Brand> {
     const brand = await adminCatalogRepository.getBrand(id);
     if (!brand) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
-    const version = Date.now();
-    const publicUrl = await storeBrandAsset({
+    assertImageFile(file);
+    const processed = await processMuscleGroupImage(file.buffer);
+    const existing = await brandAssetRepository.getByBrandId(brand.id);
+    const version = (existing?.logoVersion ?? 0) + 1;
+    const apiUrl = brandAssetMediaUrl(brand.code, 'logo');
+    const publicUrl = withCacheBust(apiUrl, version)!;
+    await brandAssetRepository.upsertLogo({
+      brandId: brand.id,
       brandCode: brand.code,
-      kind: 'logo',
-      file,
+      logoUrl: apiUrl,
+      mimeType: processed.main.mimeType,
       version,
+      data: processed.main.buffer,
     });
     return adminCatalogRepository.updateBrandImageFields(brand.id, { logoUrl: publicUrl });
   },
@@ -122,22 +93,35 @@ export const adminCatalogService = {
   async uploadBrandImage(id: string, file: UploadFile): Promise<Brand> {
     const brand = await adminCatalogRepository.getBrand(id);
     if (!brand) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
-    const version = Date.now();
-    const publicUrl = await storeBrandAsset({
+    assertImageFile(file);
+    const processed = await processMuscleGroupImage(file.buffer);
+    const existing = await brandAssetRepository.getByBrandId(brand.id);
+    const version = (existing?.imageVersion ?? 0) + 1;
+    const apiUrl = brandAssetMediaUrl(brand.code, 'hero');
+    const publicUrl = withCacheBust(apiUrl, version)!;
+    await brandAssetRepository.upsertHero({
+      brandId: brand.id,
       brandCode: brand.code,
-      kind: 'hero',
-      file,
+      imageUrl: apiUrl,
+      mimeType: processed.main.mimeType,
       version,
+      data: processed.main.buffer,
     });
     return adminCatalogRepository.updateBrandImageFields(brand.id, { imageUrl: publicUrl });
   },
 
   async clearBrandLogo(id: string): Promise<Brand> {
-    return adminCatalogRepository.updateBrandImageFields(id, { logoUrl: null });
+    const brand = await adminCatalogRepository.getBrand(id);
+    if (!brand) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+    await brandAssetRepository.clearLogo(brand.id);
+    return adminCatalogRepository.updateBrandImageFields(brand.id, { logoUrl: null });
   },
 
   async clearBrandImage(id: string): Promise<Brand> {
-    return adminCatalogRepository.updateBrandImageFields(id, { imageUrl: null });
+    const brand = await adminCatalogRepository.getBrand(id);
+    if (!brand) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+    await brandAssetRepository.clearHero(brand.id);
+    return adminCatalogRepository.updateBrandImageFields(brand.id, { imageUrl: null });
   },
 
   listMachines(query: AdminMachineListQuery): Promise<PaginatedResponse<Machine>> {

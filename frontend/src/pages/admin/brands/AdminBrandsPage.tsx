@@ -16,6 +16,7 @@ import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
 import { getApiValidationFieldSummary } from '@/utils/getApiErrorMessage';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
+import { resolveBrandMediaUrl } from '@/utils/brandMediaUrl';
 import '@/styles/admin.css';
 
 const PAGE_SIZE = 20;
@@ -161,6 +162,7 @@ function CatalogImageField({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const previewUrl = resolveBrandMediaUrl(url);
 
   const handleFiles = (file?: File) => {
     if (!file || busy) return;
@@ -185,8 +187,8 @@ function CatalogImageField({
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
       >
-        {url ? (
-          <img src={url} alt="" className="admin-catalog-image__preview" />
+        {previewUrl ? (
+          <img key={previewUrl} src={previewUrl} alt="" className="admin-catalog-image__preview" />
         ) : (
           <span className="admin-catalog-image__placeholder">{dropLabel}</span>
         )}
@@ -700,7 +702,11 @@ export function AdminBrandsPage() {
               <div key={brand.id} className="card admin-table__row">
                 <div className="admin-table__brand">
                   {brand.logoUrl ? (
-                    <img src={brand.logoUrl} alt="" className="admin-table__brand-logo" />
+                    <img
+                      src={resolveBrandMediaUrl(brand.logoUrl)}
+                      alt=""
+                      className="admin-table__brand-logo"
+                    />
                   ) : null}
                   <div className="admin-table__primary">
                     <div className="admin-table__title-row">

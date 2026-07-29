@@ -10,6 +10,7 @@ import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.j
 import { storageService } from './services/storage.service.js';
 import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
 import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
+import { serveBrandAssetImage } from './controllers/brand-asset-media.controller.js';
 
 export function createApp() {
   const app = express();
@@ -77,6 +78,14 @@ export function createApp() {
       fallthrough: false,
       maxAge: '7d',
     })
+  );
+
+  // Durable brand logo / hero images from Postgres.
+  app.get(
+    `${env.API_BASE_PATH}/media/brand-assets/:brandCode/:kind`,
+    (req, res, next) => {
+      void serveBrandAssetImage(req, res, next);
+    }
   );
 
   app.use(env.API_BASE_PATH, apiRouter);

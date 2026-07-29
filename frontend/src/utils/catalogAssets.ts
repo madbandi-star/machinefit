@@ -1,3 +1,5 @@
+import { resolveBrandMediaUrl } from './brandMediaUrl';
+
 /** Static catalog asset helpers (GitHub Pages `/machinefit/assets/...`). */
 
 const BRAND_SLUGS: Record<string, string> = {
@@ -70,7 +72,7 @@ export function brandAssetSlug(brandCode: string): string | null {
 
 /** Prefer API logoUrl; fall back to packaged brand SVG when missing. */
 export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null): string | undefined {
-  if (logoUrl) return logoUrl;
+  if (logoUrl) return resolveBrandMediaUrl(logoUrl) || logoUrl;
   const slug = brandAssetSlug(brandCode);
   if (!slug) return undefined;
   return `${assetBase()}assets/brands/${slug}.svg`;

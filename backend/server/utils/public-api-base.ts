@@ -18,6 +18,10 @@ export function machineCoverMediaUrl(machineCode: string, kind: 'main' | 'thumb'
   return `${publicApiBase()}/media/machine-covers/${encodeURIComponent(machineCode)}/${kind}`;
 }
 
+export function brandAssetMediaUrl(brandCode: string, kind: 'logo' | 'hero'): string {
+  return `${publicApiBase()}/media/brand-assets/${encodeURIComponent(brandCode)}/${kind}`;
+}
+
 export function photoBoardImageUrl(imageId: string, variant: 'main' | 'thumb' = 'thumb'): string {
   return `${publicApiBase()}/photo-board/images/${encodeURIComponent(imageId)}?variant=${variant}`;
 }
