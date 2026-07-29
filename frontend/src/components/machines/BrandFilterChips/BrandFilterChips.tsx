@@ -20,30 +20,36 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
   const { t, i18n } = useTranslation('machines');
   const orderedBrands = prepareBrandsForMachineSearch(brands);
   const bodyweightLabel = t('brandBodyweightShort');
+  const sectionTitle = t('brandSectionTitle');
 
   if (orderedBrands.length === 0) return null;
 
   return (
-    <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
-      <button
-        type="button"
-        className={`filter-chip${value === null ? ' filter-chip--active' : ''}`}
-        onClick={() => onChange(null)}
-        aria-pressed={value === null}
-      >
-        {t('filterAll')}
-      </button>
-      {orderedBrands.map((brand) => (
+    <section className="filter-section filter-section--brand" aria-labelledby="search-brand-section-title">
+      <h2 id="search-brand-section-title" className="filter-section__title">
+        {sectionTitle}
+      </h2>
+      <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
         <button
-          key={brand.id}
           type="button"
-          className={`filter-chip${value === brand.code ? ' filter-chip--active' : ''}`}
-          onClick={() => onChange(brand.code)}
-          aria-pressed={value === brand.code}
+          className={`filter-chip${value === null ? ' filter-chip--active' : ''}`}
+          onClick={() => onChange(null)}
+          aria-pressed={value === null}
         >
-          {brandChipLabel(brand, i18n.language, bodyweightLabel)}
+          {t('filterAll')}
         </button>
-      ))}
-    </div>
+        {orderedBrands.map((brand) => (
+          <button
+            key={brand.id}
+            type="button"
+            className={`filter-chip${value === brand.code ? ' filter-chip--active' : ''}`}
+            onClick={() => onChange(brand.code)}
+            aria-pressed={value === brand.code}
+          >
+            {brandChipLabel(brand, i18n.language, bodyweightLabel)}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }
