@@ -185,6 +185,26 @@
 .filter-chips--brand {
   margin-top: 0;
   margin-bottom: 1rem;
+  align-items: center;
+}
+
+.filter-chip--brand-logo {
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  padding: 0.35rem 0.55rem;
+  justify-content: center;
+}
+
+.filter-chip__brand-logo {
+  display: block;
+  width: auto;
+  height: 1.55rem;
+  max-width: 4.75rem;
+  object-fit: contain;
+}
+
+.filter-chip--brand-logo.filter-chip--active {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg));
 }
 
 .machine-search__results-title {
