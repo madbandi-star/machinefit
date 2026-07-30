@@ -15,9 +15,10 @@ import {
 } from '../config/admin-cover-image.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { processMuscleGroupImage } from './muscle-group-image-process.service.js';
-import { machineCoverImageService } from './machine-cover-image.service.js';
 import { brandAssetMediaUrl } from '../utils/public-api-base.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
+import { brandService } from './brand.service.js';
+import { machineCoverImageService } from './machine-cover-image.service.js';
 
 type UploadFile = {
   originalname: string;
@@ -87,7 +88,11 @@ export const adminCatalogService = {
       version,
       data: processed.main.buffer,
     });
-    return adminCatalogRepository.updateBrandImageFields(brand.id, { logoUrl: publicUrl });
+    const updated = await adminCatalogRepository.updateBrandImageFields(brand.id, {
+      logoUrl: publicUrl,
+    });
+    brandService.invalidateListCache();
+    return updated;
   },
 
   async uploadBrandImage(id: string, file: UploadFile): Promise<Brand> {
@@ -107,21 +112,29 @@ export const adminCatalogService = {
       version,
       data: processed.main.buffer,
     });
-    return adminCatalogRepository.updateBrandImageFields(brand.id, { imageUrl: publicUrl });
+    const updated = await adminCatalogRepository.updateBrandImageFields(brand.id, {
+      imageUrl: publicUrl,
+    });
+    brandService.invalidateListCache();
+    return updated;
   },
 
   async clearBrandLogo(id: string): Promise<Brand> {
     const brand = await adminCatalogRepository.getBrand(id);
     if (!brand) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
     await brandAssetRepository.clearLogo(brand.id);
-    return adminCatalogRepository.updateBrandImageFields(brand.id, { logoUrl: null });
+    const updated = await adminCatalogRepository.updateBrandImageFields(brand.id, { logoUrl: null });
+    brandService.invalidateListCache();
+    return updated;
   },
 
   async clearBrandImage(id: string): Promise<Brand> {
     const brand = await adminCatalogRepository.getBrand(id);
     if (!brand) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
     await brandAssetRepository.clearHero(brand.id);
-    return adminCatalogRepository.updateBrandImageFields(brand.id, { imageUrl: null });
+    const updated = await adminCatalogRepository.updateBrandImageFields(brand.id, { imageUrl: null });
+    brandService.invalidateListCache();
+    return updated;
   },
 
   listMachines(query: AdminMachineListQuery): Promise<PaginatedResponse<Machine>> {

@@ -47,13 +47,16 @@ function BrandLogoChip({
       onClick={onSelect}
       aria-pressed={active}
       aria-label={label}
+      data-brand-code={brand.code}
     >
       {showLogo ? (
         <img
+          key={`${brand.code}:${logoUrl}`}
           src={logoUrl}
-          alt=""
+          alt={label}
           className="filter-chip__brand-logo"
           loading="lazy"
+          decoding="async"
           onError={() => setLogoFailed(true)}
         />
       ) : (
@@ -90,7 +93,7 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
         </button>
         {orderedBrands.map((brand) => (
           <BrandLogoChip
-            key={brand.id}
+            key={brand.code}
             brand={brand}
             label={brandChipLabel(brand, i18n.language, shortLabels)}
             active={value === brand.code}

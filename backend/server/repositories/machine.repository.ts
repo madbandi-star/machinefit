@@ -2,6 +2,8 @@ import type { Brand, Machine } from '@machinefit/shared';
 import { BRAND_CODES, machineMatchesMuscleGroupFilter } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
+import { brandAssetMediaUrl } from '../utils/public-api-base.js';
+import { withCacheBust } from '../utils/cache-bust-url.js';
 
 const MACHINE_ID_TTL_MS = 30 * 60_000;
 const machineIdByCodeCache = new Map<string, { expiresAt: number; id: string | null }>();
@@ -39,6 +41,31 @@ interface BrandRow {
   website_url: string | null;
   country_id: string | null;
   is_active: boolean;
+  logo_version?: number | null;
+  has_logo_data?: boolean | null;
+}
+
+function mapBrand(row: BrandRow): Brand {
+  let logoUrl = row.logo_url ?? undefined;
+  // Prefer durable media bytes when present so search chips never stick to stale/missing URLs.
+  if (row.has_logo_data) {
+    const version = Number(row.logo_version ?? 0);
+    logoUrl = withCacheBust(brandAssetMediaUrl(row.code, 'logo'), version) ?? undefined;
+  } else if (logoUrl?.includes('/media/brand-assets/')) {
+    // URL points at media route but bytes are gone — let FE fall back to packaged SVG.
+    logoUrl = undefined;
+  }
+
+  return {
+    id: row.id,
+    code: row.code,
+    name: row.name,
+    description: row.description ?? undefined,
+    logoUrl,
+    websiteUrl: row.website_url ?? undefined,
+    countryId: row.country_id ?? undefined,
+    isActive: row.is_active,
+  };
 }
 
 function mapMachine(
@@ -69,19 +96,6 @@ function mapMachine(
     romType: row.rom_type ?? undefined,
     isActive: row.is_active,
     primaryImageUrl: extras?.primaryImageUrl ?? undefined,
-  };
-}
-
-function mapBrand(row: BrandRow): Brand {
-  return {
-    id: row.id,
-    code: row.code,
-    name: row.name,
-    description: row.description ?? undefined,
-    logoUrl: row.logo_url ?? undefined,
-    websiteUrl: row.website_url ?? undefined,
-    countryId: row.country_id ?? undefined,
-    isActive: row.is_active,
   };
 }
 
@@ -299,9 +313,13 @@ export const brandRepository = {
     if (!pool) return MOCK_BRANDS;
 
     const result = await pool.query<BrandRow>(
-      `SELECT id, code, name, description, logo_url, website_url, country_id, is_active
-       FROM brands WHERE is_active = true
-       ORDER BY CASE code
+      `SELECT b.id, b.code, b.name, b.description, b.logo_url, b.website_url, b.country_id, b.is_active,
+              ba.logo_version,
+              (ba.logo_data IS NOT NULL) AS has_logo_data
+       FROM brands b
+       LEFT JOIN brand_assets ba ON ba.brand_id = b.id
+       WHERE b.is_active = true
+       ORDER BY CASE b.code
          WHEN 'BODYWEIGHT' THEN 1
          WHEN 'FREE_WEIGHT' THEN 2
          WHEN 'HAMMER_STRENGTH' THEN 3
@@ -309,7 +327,7 @@ export const brandRepository = {
          WHEN 'CYBEX' THEN 5
          WHEN 'TECHNOGYM' THEN 6
          ELSE 99
-       END, code ASC`
+       END, b.code ASC`
     );
     return result.rows.map(mapBrand);
   },
@@ -319,8 +337,12 @@ export const brandRepository = {
     if (!pool) return MOCK_BRANDS.find((b) => b.code === code) ?? null;
 
     const result = await pool.query<BrandRow>(
-      `SELECT id, code, name, description, logo_url, website_url, country_id, is_active
-       FROM brands WHERE code = $1 AND is_active = true`,
+      `SELECT b.id, b.code, b.name, b.description, b.logo_url, b.website_url, b.country_id, b.is_active,
+              ba.logo_version,
+              (ba.logo_data IS NOT NULL) AS has_logo_data
+       FROM brands b
+       LEFT JOIN brand_assets ba ON ba.brand_id = b.id
+       WHERE b.code = $1 AND b.is_active = true`,
       [code]
     );
     return result.rows[0] ? mapBrand(result.rows[0]) : null;

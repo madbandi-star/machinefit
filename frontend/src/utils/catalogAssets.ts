@@ -70,9 +70,25 @@ export function brandAssetSlug(brandCode: string): string | null {
   return BRAND_SLUGS[brandCode] ?? null;
 }
 
-/** Prefer API logoUrl; fall back to packaged brand SVG when missing. */
+/** Prefer API logoUrl; fall back to packaged brand mark SVG when missing. */
 export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null): string | undefined {
-  if (logoUrl) return resolveBrandMediaUrl(logoUrl) || logoUrl;
+  if (logoUrl) {
+    const resolved = resolveBrandMediaUrl(logoUrl) || logoUrl;
+    // Guard against accidental cross-brand media URLs (e.g. wrong admin mapping).
+    if (resolved.includes('/media/brand-assets/')) {
+      const marker = '/media/brand-assets/';
+      const start = resolved.indexOf(marker) + marker.length;
+      const rest = resolved.slice(start);
+      const codeInUrl = decodeURIComponent(rest.split('/')[0] || '').toUpperCase();
+      if (codeInUrl && codeInUrl !== brandCode.toUpperCase()) {
+        // Fall through to packaged SVG for this brand code.
+      } else {
+        return resolved;
+      }
+    } else {
+      return resolved;
+    }
+  }
   const slug = brandAssetSlug(brandCode);
   if (!slug) return undefined;
   return `${assetBase()}assets/brands/${slug}.svg`;

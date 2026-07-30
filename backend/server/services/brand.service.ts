@@ -8,6 +8,11 @@ const brandByCodeCache = new TtlCache<Brand>(5 * 60_000);
 const brandMachinesCache = new TtlCache<Machine[]>(2 * 60_000);
 
 export const brandService = {
+  invalidateListCache(): void {
+    brandsCache.clear();
+    brandByCodeCache.clear();
+  },
+
   async list() {
     return brandsCache.getOrSet('all', () => brandRepository.findAll());
   },
