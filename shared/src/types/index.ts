@@ -29,3 +29,4 @@ export * from './push-notification.types.js';
 export * from './friend.types.js';
 export * from './compliance.types.js';
 export * from './trainer-application.types.js';
+export * from './inspection.types.js';

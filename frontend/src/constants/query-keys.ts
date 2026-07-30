@@ -152,4 +152,12 @@ export const QUERY_KEYS = {
   friendsAdminList: (page: number) => ['friends', 'admin', 'list', page] as const,
   friendsAdminReports: ['friends', 'admin', 'reports'] as const,
   friendsAdminSpam: ['friends', 'admin', 'spam'] as const,
+  inspectionTemplates: (brandId?: string) =>
+    ['inspection', 'templates', brandId ?? ''] as const,
+  inspectionGymMachines: (gymId: string, opsStatus?: string, q?: string) =>
+    ['inspection', 'gym-machines', gymId, opsStatus ?? '', q ?? ''] as const,
+  inspectionList: (gymId: string, gymMachineId?: string) =>
+    ['inspection', 'list', gymId, gymMachineId ?? ''] as const,
+  inspectionFaults: (gymId: string) => ['inspection', 'faults', gymId] as const,
+  inspectionDashboard: (gymId: string) => ['inspection', 'dashboard', gymId] as const,
 } as const;

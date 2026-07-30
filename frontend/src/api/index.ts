@@ -560,3 +560,4 @@ export type {
   MotivationTrackListResponse,
   MotivationUploadProgress,
 } from './user-motivation-track.api';
+export { inspectionApi } from './inspection.api';

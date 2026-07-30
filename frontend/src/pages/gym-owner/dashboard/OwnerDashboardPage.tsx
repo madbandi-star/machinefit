@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -7,6 +8,7 @@ import { SearchableSelect } from '@/components/form/SearchableSelect/SearchableS
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { ownerApi, machineApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/community.css';
@@ -136,6 +138,13 @@ export function OwnerDashboardPage() {
 
   return (
     <PageShell title={t('ownerDashboard')} subtitle={t('ownerSubtitle')}>
+      <Link
+        to={ROUTES.OWNER_EQUIPMENT}
+        className="btn btn--primary btn--block"
+        style={{ marginBottom: '1rem' }}
+      >
+        기구관리 · 점검일지
+      </Link>
       <div className="owner-stats">
         <div className="card owner-stat">
           <div className="owner-stat__value">{stats?.gymCount ?? 0}</div>

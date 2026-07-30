@@ -27,11 +27,13 @@ import { onlinePtRouter } from './online-pt.routes.js';
 import { pushNotificationRouter } from './push-notification.routes.js';
 import { friendRouter } from './friend.routes.js';
 import { complianceRouter } from './compliance.routes.js';
+import { inspectionRouter } from './inspection.routes.js';
 
 export const apiRouter = Router();
 
 apiRouter.use(healthRouter);
 apiRouter.use(complianceRouter);
+apiRouter.use(inspectionRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/users', userRouter);
 apiRouter.use('/machines', machineRouter);

@@ -167,6 +167,50 @@ const ownerDash = () =>
   import('@/pages/gym-owner/dashboard/OwnerDashboardPage').then((m) => ({
     default: m.OwnerDashboardPage,
   }));
+const equipmentHub = () =>
+  import('@/pages/gym-owner/equipment/EquipmentHubPage').then((m) => ({
+    default: m.EquipmentHubPage,
+  }));
+const equipmentInventory = () =>
+  import('@/pages/gym-owner/equipment/EquipmentInventoryPage').then((m) => ({
+    default: m.EquipmentInventoryPage,
+  }));
+const equipmentInspections = () =>
+  import('@/pages/gym-owner/equipment/EquipmentInspectionsPage').then((m) => ({
+    default: m.EquipmentInspectionsPage,
+  }));
+const equipmentInspectionNew = () =>
+  import('@/pages/gym-owner/equipment/EquipmentInspectionCreatePage').then((m) => ({
+    default: m.EquipmentInspectionCreatePage,
+  }));
+const equipmentFaults = () =>
+  import('@/pages/gym-owner/equipment/EquipmentFaultsPage').then((m) => ({
+    default: m.EquipmentFaultsPage,
+  }));
+const equipmentStats = () =>
+  import('@/pages/gym-owner/equipment/EquipmentStatsPage').then((m) => ({
+    default: m.EquipmentStatsPage,
+  }));
+const equipmentPm = () =>
+  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+    default: m.EquipmentPmPage,
+  }));
+const equipmentRepairs = () =>
+  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+    default: m.EquipmentRepairsPage,
+  }));
+const equipmentParts = () =>
+  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+    default: m.EquipmentPartsPage,
+  }));
+const equipmentSettings = () =>
+  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+    default: m.EquipmentSettingsPage,
+  }));
+const memberMachineReport = () =>
+  import('@/pages/gym-owner/equipment/MemberMachineReportPage').then((m) => ({
+    default: m.MemberMachineReportPage,
+  }));
 const ownerApply = () =>
   import('@/pages/gym-owner/apply/OwnerApplyPage').then((m) => ({ default: m.OwnerApplyPage }));
 const trainerApply = () =>
@@ -323,6 +367,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
             { path: ROUTES.LAB, element: lazyRoute(lab) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
+            { path: ROUTES.MEMBER_MACHINE_REPORT, element: lazyRoute(memberMachineReport) },
             { path: ROUTES.TRAINER_APPLY, element: lazyRoute(trainerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
@@ -412,7 +457,22 @@ export const router = createBrowserRouter(
           <DashboardLayout />
         </AuthGuard>
       ),
-      children: [{ path: ROUTES.OWNER, element: lazyRoute(ownerDash) }],
+      children: [
+        { path: ROUTES.OWNER, element: lazyRoute(ownerDash) },
+        { path: ROUTES.OWNER_EQUIPMENT, element: lazyRoute(equipmentHub) },
+        { path: ROUTES.OWNER_EQUIPMENT_INVENTORY, element: lazyRoute(equipmentInventory) },
+        { path: ROUTES.OWNER_EQUIPMENT_INSPECTIONS, element: lazyRoute(equipmentInspections) },
+        {
+          path: ROUTES.OWNER_EQUIPMENT_INSPECTION_NEW,
+          element: lazyRoute(equipmentInspectionNew),
+        },
+        { path: ROUTES.OWNER_EQUIPMENT_PM, element: lazyRoute(equipmentPm) },
+        { path: ROUTES.OWNER_EQUIPMENT_FAULTS, element: lazyRoute(equipmentFaults) },
+        { path: ROUTES.OWNER_EQUIPMENT_REPAIRS, element: lazyRoute(equipmentRepairs) },
+        { path: ROUTES.OWNER_EQUIPMENT_PARTS, element: lazyRoute(equipmentParts) },
+        { path: ROUTES.OWNER_EQUIPMENT_STATS, element: lazyRoute(equipmentStats) },
+        { path: ROUTES.OWNER_EQUIPMENT_SETTINGS, element: lazyRoute(equipmentSettings) },
+      ],
     },
     {
       element: (
