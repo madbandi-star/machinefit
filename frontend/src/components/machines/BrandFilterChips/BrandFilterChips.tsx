@@ -4,7 +4,7 @@ import type { Brand } from '@machinefit/shared';
 import { BRAND_CODES } from '@machinefit/shared';
 import { getLocalizedName } from '@/utils/localizedName';
 import { prepareBrandsForMachineSearch } from '@/utils/sortBrandsForSearch';
-import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
+import { brandUsesWordmarkChip, resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
 interface BrandFilterChipsProps {
@@ -54,8 +54,34 @@ function BrandLogoChip({
   const [logoFailed, setLogoFailed] = useState(false);
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
   const showLogo = Boolean(logoUrl) && !logoFailed;
+  const wordmark = showLogo && brandUsesWordmarkChip(brand.code);
   const displayName = brandChipDisplayName(brand, label);
   const nameLines = brandChipNameLines(displayName);
+
+  if (wordmark) {
+    return (
+      <button
+        type="button"
+        className={`filter-chip filter-chip--brand filter-chip--brand-wordmark${
+          active ? ' filter-chip--active' : ''
+        }`}
+        onClick={onSelect}
+        aria-pressed={active}
+        aria-label={label}
+        data-brand-code={brand.code}
+      >
+        <img
+          key={`${brand.code}:${logoUrl}`}
+          src={logoUrl}
+          alt=""
+          className="filter-chip__brand-wordmark"
+          loading="lazy"
+          decoding="async"
+          onError={() => setLogoFailed(true)}
+        />
+      </button>
+    );
+  }
 
   return (
     <button

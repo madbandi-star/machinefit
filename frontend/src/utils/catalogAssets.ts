@@ -9,6 +9,11 @@ const BRAND_SLUGS: Record<string, string> = {
   TECHNOGYM: 'technogym',
 };
 
+/** Brands whose chip should show a wide wordmark logo instead of icon+text. */
+const BRAND_WORDMARK_FILES: Record<string, string> = {
+  LIFE_FITNESS: 'life_fitness_wordmark.png',
+};
+
 /** Packaged SVGs under `public/assets/machines/**` — only these local paths are emitted. */
 const KNOWN_MACHINE_ASSETS = new Set<string>([
   'CY_ABDOMINAL',
@@ -70,8 +75,17 @@ export function brandAssetSlug(brandCode: string): string | null {
   return BRAND_SLUGS[brandCode] ?? null;
 }
 
-/** Prefer API logoUrl; fall back to packaged brand mark SVG when missing. */
+/** True when search brand chips should render a full wordmark (no companion text). */
+export function brandUsesWordmarkChip(brandCode: string): boolean {
+  return Boolean(BRAND_WORDMARK_FILES[brandCode]);
+}
+
+/** Prefer packaged wordmark asset for supported brands; else API logo / mark SVG. */
 export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null): string | undefined {
+  const wordmarkFile = BRAND_WORDMARK_FILES[brandCode];
+  if (wordmarkFile) {
+    return `${assetBase()}assets/brands/${wordmarkFile}`;
+  }
   if (logoUrl) {
     const resolved = resolveBrandMediaUrl(logoUrl) || logoUrl;
     // Guard against accidental cross-brand media URLs (e.g. wrong admin mapping).
