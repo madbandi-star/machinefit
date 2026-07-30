@@ -1,6 +1,6 @@
 # Latest test handoff — Fix login blocked by inspection auth
 
-**Branch:** `main` · **Commit:** *(fill after push)*
+**Branch:** `main` · **Commit:** `7e32446`
 
 ## Change
 

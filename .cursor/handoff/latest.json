@@ -1,7 +1,7 @@
 {
   "title": "Fix login blocked by inspection auth middleware",
   "summary": "Inspection router was mounted at API root with router-level authMiddleware, so every unauthenticated request including /auth/login returned 401. Mounted under /inspection and scoped auth to inspection routes only.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "7e32446" },
   "changedFiles": [
     "backend/server/routes/inspection.routes.ts",
     "backend/server/routes/index.ts",
