@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -106,11 +106,12 @@ export function AchievementsPage() {
   const { activeMemberId, isRealGym, memberScopeReady } = useActiveMember();
   const [tab, setTab] = useState<ViewTab>('overview');
   const [category, setCategory] = useState<AchievementCategory | 'all'>('consistency');
-  const [unlockQueue, setUnlockQueue] = useState<AchievementProgressItem[]>([]);
-  const [unlockBatchTotal, setUnlockBatchTotal] = useState(0);
+  const [unlockBatch, setUnlockBatch] = useState<AchievementProgressItem[]>([]);
+  const [unlockIndex, setUnlockIndex] = useState(0);
   const [seenUnlockKey, setSeenUnlockKey] = useState('');
   const [popupEnabled, setPopupEnabled] = useState(() => isAchievementUnlockPopupEnabled());
   const [heroExpanded, setHeroExpanded] = useState(false);
+  const unlockStripRef = useRef<HTMLDivElement | null>(null);
 
   // Each navigation into this page counts as a new visit for unlock popups.
   useEffect(() => {
@@ -149,8 +150,8 @@ export function AchievementsPage() {
 
   useEffect(() => {
     if (!popupEnabled || isAchievementUnlockPopupHiddenToday()) {
-      setUnlockQueue([]);
-      setUnlockBatchTotal(0);
+      setUnlockBatch([]);
+      setUnlockIndex(0);
       return;
     }
     // Confirmed + unconfirmed: every unlocked achievement on each page visit.
@@ -161,8 +162,8 @@ export function AchievementsPage() {
       .join('|');
     if (key === seenUnlockKey) return;
     setSeenUnlockKey(key);
-    setUnlockQueue(unlockedForPopup);
-    setUnlockBatchTotal(unlockedForPopup.length);
+    setUnlockBatch(unlockedForPopup);
+    setUnlockIndex(0);
     try {
       navigator.vibrate?.(40);
     } catch {
@@ -170,26 +171,45 @@ export function AchievementsPage() {
     }
   }, [unlockedForPopup, seenUnlockKey, popupEnabled]);
 
-  const currentUnlock = unlockQueue[0] ?? null;
+  const unlockBatchTotal = unlockBatch.length;
+  const currentUnlock = unlockBatch[unlockIndex] ?? null;
   const currentUnlockEarnedAt = currentUnlock
     ? formatEarnedAt(currentUnlock.earnedAt, locale)
     : null;
-  const unlockIndex =
-    unlockBatchTotal > 0 ? unlockBatchTotal - unlockQueue.length + 1 : 1;
-  const unlockRemaining = Math.max(0, unlockQueue.length - 1);
-  const isLastUnlock = unlockQueue.length <= 1;
+  const unlockDisplayIndex = unlockBatchTotal > 0 ? unlockIndex + 1 : 1;
+  const unlockRemaining = Math.max(0, unlockBatchTotal - unlockDisplayIndex);
+  const isLastUnlock = unlockBatchTotal > 0 && unlockIndex >= unlockBatchTotal - 1;
+
+  useEffect(() => {
+    if (!currentUnlock || unlockBatchTotal <= 1) return;
+    const strip = unlockStripRef.current;
+    if (!strip) return;
+    const active = strip.querySelector<HTMLElement>(
+      `[data-unlock-index="${unlockIndex}"]`
+    );
+    active?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [currentUnlock, unlockIndex, unlockBatchTotal]);
 
   const dismissUnlockQueue = () => {
-    setUnlockQueue([]);
-    setUnlockBatchTotal(0);
+    setUnlockBatch([]);
+    setUnlockIndex(0);
   };
 
   const advanceUnlockQueue = () => {
-    if (unlockQueue.length <= 1) {
+    if (unlockBatchTotal <= 0) {
       dismissUnlockQueue();
       return;
     }
-    setUnlockQueue((q) => q.slice(1));
+    if (unlockIndex >= unlockBatchTotal - 1) {
+      dismissUnlockQueue();
+      return;
+    }
+    setUnlockIndex((i) => i + 1);
+  };
+
+  const goToUnlockIndex = (index: number) => {
+    if (index < 0 || index >= unlockBatchTotal) return;
+    setUnlockIndex(index);
   };
 
   const handlePopupEnabledChange = (checked: boolean) => {
@@ -199,8 +219,8 @@ export function AchievementsPage() {
       clearAchievementUnlockPopupHideToday();
       setSeenUnlockKey('');
     } else {
-      setUnlockQueue([]);
-      setUnlockBatchTotal(0);
+      setUnlockBatch([]);
+      setUnlockIndex(0);
     }
   };
 
@@ -568,7 +588,7 @@ export function AchievementsPage() {
               {unlockBatchTotal > 1 ? (
                 <p className="achievement-unlock__progress">
                   {t('achievements.unlockBatchProgress', {
-                    current: unlockIndex,
+                    current: unlockDisplayIndex,
                     total: unlockBatchTotal,
                   })}
                 </p>
@@ -611,11 +631,47 @@ export function AchievementsPage() {
                   {isLastUnlock
                     ? t('achievements.done')
                     : t('achievements.continueWithProgress', {
-                        current: unlockIndex,
+                        current: unlockDisplayIndex,
                         total: unlockBatchTotal,
                       })}
                 </button>
               </div>
+              {unlockBatchTotal > 1 ? (
+                <div
+                  ref={unlockStripRef}
+                  className="achievement-unlock__strip"
+                  role="tablist"
+                  aria-label={t('achievements.unlockBatchProgress', {
+                    current: unlockDisplayIndex,
+                    total: unlockBatchTotal,
+                  })}
+                >
+                  {unlockBatch.map((item, index) => {
+                    const active = index === unlockIndex;
+                    const name = loc(item.def.name, locale);
+                    return (
+                      <button
+                        key={item.def.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
+                        data-unlock-index={index}
+                        className={`achievement-unlock__strip-item${
+                          active ? ' achievement-unlock__strip-item--active' : ''
+                        }`}
+                        onClick={() => goToUnlockIndex(index)}
+                        title={name}
+                        aria-label={`${index + 1}. ${name}`}
+                      >
+                        <span className="achievement-unlock__strip-emoji" aria-hidden>
+                          {item.def.emoji}
+                        </span>
+                        <span className="achievement-unlock__strip-num">{index + 1}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </div>
         )}
