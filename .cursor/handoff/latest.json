@@ -1,7 +1,7 @@
 {
   "title": "FW detail: hero cover follows target muscle chips",
   "summary": "On free-weight machine detail, selecting a target muscle chip updates ?muscle= and refetches the machine so the hero shows that muscle's cover photo (e.g. barbell + back vs chest).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "84a4464" },
   "changedFiles": [
     "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
     "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
