@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import {
   machineCoverListQuerySchema,
-  machineCoverTargetMuscleQuerySchema,
   machineCoverUploadParamsSchema,
+  parseMachineCoverTargetMuscle,
 } from '@machinefit/shared';
 import { machineCoverImageService } from '../services/machine-cover-image.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -35,7 +35,7 @@ export async function uploadMachineCover(req: Request, res: Response, next: Next
     if (!parsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid machine code');
     }
-    const muscleParsed = machineCoverTargetMuscleQuerySchema.safeParse(req.query);
+    const muscleParsed = parseMachineCoverTargetMuscle(req.query, req.body);
     if (!muscleParsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid target muscle');
     }
@@ -59,7 +59,7 @@ export async function deleteMachineCover(req: Request, res: Response, next: Next
     if (!parsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid machine code');
     }
-    const muscleParsed = machineCoverTargetMuscleQuerySchema.safeParse(req.query);
+    const muscleParsed = parseMachineCoverTargetMuscle(req.query, req.body);
     if (!muscleParsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid target muscle');
     }

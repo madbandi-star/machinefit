@@ -449,12 +449,6 @@ function MachineCoverCard({
   return (
     <article
       className={`admin-muscle-card${dragOver ? ' is-dragover' : ''}${showVariants ? ' admin-machine-cover-card--variants' : ''}`}
-      onDragOver={(e) => {
-        e.preventDefault();
-        onDragState(true);
-      }}
-      onDragLeave={() => onDragState(false)}
-      onDrop={onDrop}
     >
       <header className="admin-muscle-card__header">
         <h2 className="admin-muscle-card__title">
@@ -472,19 +466,29 @@ function MachineCoverCard({
 
       <p className="admin-muscle-hint">{labels.defaultCover}</p>
 
-      <button
-        type="button"
-        className="admin-muscle-card__preview"
-        onClick={() => onPreview(previewUrl)}
-        aria-label={title}
+      <div
+        className="admin-machine-cover-default-drop"
+        onDragOver={(e) => {
+          e.preventDefault();
+          onDragState(true);
+        }}
+        onDragLeave={() => onDragState(false)}
+        onDrop={onDrop}
       >
-        {previewUrl ? (
-          <img src={previewUrl} alt="" loading="lazy" decoding="async" />
-        ) : (
-          <span className="admin-muscle-card__placeholder">{labels.placeholder}</span>
-        )}
-        {dragOver ? <span className="admin-muscle-card__drop">{labels.dropHere}</span> : null}
-      </button>
+        <button
+          type="button"
+          className="admin-muscle-card__preview"
+          onClick={() => onPreview(previewUrl)}
+          aria-label={title}
+        >
+          {previewUrl ? (
+            <img key={previewUrl} src={previewUrl} alt="" loading="lazy" decoding="async" />
+          ) : (
+            <span className="admin-muscle-card__placeholder">{labels.placeholder}</span>
+          )}
+          {dragOver ? <span className="admin-muscle-card__drop">{labels.dropHere}</span> : null}
+        </button>
+      </div>
 
       {progress != null ? (
         <div className="admin-muscle-progress" aria-live="polite">
@@ -563,8 +567,8 @@ function MachineCoverCard({
             {TARGET_MUSCLE_GROUPS.map((muscle) => {
               const variant =
                 item.muscleVariants?.find((v) => v.targetMuscleGroup === muscle) ?? null;
-              const preview =
-                variant?.imageUrl || variant?.thumbnailUrl || machinePlaceholderUrl();
+              const hasVariantImage = Boolean(variant?.hasCustomImage && (variant.imageUrl || variant.thumbnailUrl));
+              const preview = variant?.imageUrl || variant?.thumbnailUrl || null;
               const key = slotKey(item.machineCode, muscle);
               const variantProgress = uploadProgress[key];
               const variantBusy =
@@ -572,19 +576,22 @@ function MachineCoverCard({
                 (pendingDelete?.code === item.machineCode && pendingDelete.muscle === muscle);
               return (
                 <MuscleVariantSlot
-                  key={muscle}
+                  key={`${muscle}-${variant?.version ?? 0}`}
                   muscle={muscle}
                   label={muscleLabel(muscle)}
                   hint={labels.muscleVariantHint(muscle)}
                   previewUrl={preview}
-                  hasCustom={Boolean(variant?.hasCustomImage)}
+                  hasCustom={hasVariantImage}
                   progress={variantProgress}
                   busy={variantBusy}
-                  dragOver={false}
+                  emptyLabel={labels.placeholder}
+                  dropLabel={labels.dropHere}
                   labels={labels}
                   onPickFile={(file) => onPickFile(file, muscle)}
                   onDelete={() => onDelete(muscle)}
-                  onPreview={() => onPreview(preview)}
+                  onPreview={() => {
+                    if (preview) onPreview(preview);
+                  }}
                 />
               );
             })}
@@ -603,6 +610,8 @@ function MuscleVariantSlot({
   hasCustom,
   progress,
   busy,
+  emptyLabel,
+  dropLabel,
   labels,
   onPickFile,
   onDelete,
@@ -611,25 +620,58 @@ function MuscleVariantSlot({
   muscle: TargetMuscleGroup;
   label: string;
   hint: string;
-  previewUrl: string;
+  previewUrl: string | null;
   hasCustom: boolean;
   progress?: number;
   busy: boolean;
-  dragOver: boolean;
+  emptyLabel: string;
+  dropLabel: string;
   labels: MachineCoverCardProps['labels'];
   onPickFile: (file: File | undefined) => void;
   onDelete: () => void;
   onPreview: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  const onDrop = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragOver(false);
+    onPickFile(event.dataTransfer.files?.[0]);
+  };
+
   return (
-    <div className="admin-machine-cover-variant" data-muscle={muscle}>
+    <div
+      className={`admin-machine-cover-variant${dragOver ? ' is-dragover' : ''}`}
+      data-muscle={muscle}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragOver(true);
+      }}
+      onDragLeave={(e) => {
+        e.stopPropagation();
+        setDragOver(false);
+      }}
+      onDrop={onDrop}
+    >
       <div className="admin-machine-cover-variant__head">
         <strong>{label}</strong>
         <span className="admin-muscle-hint">{hint}</span>
       </div>
-      <button type="button" className="admin-machine-cover-variant__preview" onClick={onPreview}>
-        <img src={previewUrl} alt="" loading="lazy" decoding="async" />
+      <button
+        type="button"
+        className="admin-machine-cover-variant__preview"
+        onClick={onPreview}
+        disabled={!previewUrl}
+      >
+        {previewUrl ? (
+          <img key={previewUrl} src={previewUrl} alt="" loading="lazy" decoding="async" />
+        ) : (
+          <span className="admin-muscle-card__placeholder">{emptyLabel}</span>
+        )}
+        {dragOver ? <span className="admin-muscle-card__drop">{dropLabel}</span> : null}
       </button>
       {progress != null ? (
         <div className="admin-muscle-progress" aria-live="polite">

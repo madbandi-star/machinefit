@@ -17,3 +17,22 @@ export const machineCoverUploadParamsSchema = z.object({
 export const machineCoverTargetMuscleQuerySchema = z.object({
   targetMuscle: machineCoverTargetMuscleSchema.optional(),
 });
+
+/** Multipart uploads may send targetMuscle as a form field instead of a query param. */
+export function parseMachineCoverTargetMuscle(
+  query: unknown,
+  body?: unknown
+): { success: true; data: { targetMuscle?: z.infer<typeof machineCoverTargetMuscleSchema> } } | { success: false } {
+  const fromQuery = machineCoverTargetMuscleQuerySchema.safeParse(query);
+  if (!fromQuery.success) return { success: false };
+  if (fromQuery.data.targetMuscle) return fromQuery;
+
+  const raw =
+    body && typeof body === 'object' && body !== null && 'targetMuscle' in body
+      ? (body as { targetMuscle?: unknown }).targetMuscle
+      : undefined;
+  if (raw == null || raw === '') return fromQuery;
+  const fromBody = machineCoverTargetMuscleSchema.safeParse(raw);
+  if (!fromBody.success) return { success: false };
+  return { success: true, data: { targetMuscle: fromBody.data } };
+}

@@ -554,12 +554,17 @@ export const machineCoverImageRepository = {
       );
     }
 
-    const listed = await this.list({ q: input.machineCode, page: 1, pageSize: 1 });
-    const found = listed.items.find((item) => item.machineCode === input.machineCode);
+    // Prefer exact code lookup — fuzzy list(q) can miss or time out after large blob writes.
+    const found = await this.getAssetByCode(input.machineCode);
     if (!found) {
       throw new Error('Failed to load uploaded machine cover');
     }
     return found;
+  },
+
+  async getAssetByCode(machineCode: string): Promise<MachineCoverImageAsset | null> {
+    const listed = await this.list({ q: machineCode, page: 1, pageSize: 20 });
+    return listed.items.find((item) => item.machineCode === machineCode) ?? null;
   },
 
   async remove(

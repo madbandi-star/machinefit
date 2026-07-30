@@ -1,10 +1,13 @@
 import type { Pool } from 'pg';
 
 let cached: boolean | null = null;
+let cachedAt = 0;
+const CACHE_TTL_MS = 60_000;
 
 /** True when migration 083 (`target_muscle_group`) has been applied. */
 export async function supportsMachineCoverMuscleVariants(pool: Pool): Promise<boolean> {
-  if (cached != null) return cached;
+  const now = Date.now();
+  if (cached != null && now - cachedAt < CACHE_TTL_MS) return cached;
   try {
     const result = await pool.query<{ ok: number }>(
       `SELECT 1 AS ok
@@ -18,10 +21,12 @@ export async function supportsMachineCoverMuscleVariants(pool: Pool): Promise<bo
   } catch {
     cached = false;
   }
+  cachedAt = now;
   return cached;
 }
 
 /** Test helper / after migrate in same process. */
 export function resetMachineCoverMuscleVariantCache(): void {
   cached = null;
+  cachedAt = 0;
 }

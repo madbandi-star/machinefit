@@ -314,6 +314,9 @@ export const adminApi = {
   ) => {
     const form = new FormData();
     form.append('file', file);
+    if (targetMuscle) {
+      form.append('targetMuscle', targetMuscle);
+    }
     return apiClient.post<ApiResponse<MachineCoverImageAsset>>(
       `/admin/machine-covers/${encodeURIComponent(machineCode)}/upload`,
       form,

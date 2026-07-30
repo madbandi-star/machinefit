@@ -125,32 +125,45 @@ export const machineCoverImageService = {
     });
 
     const dbKey = targetMuscle ? `${machine.code}/${targetMuscle}` : machine.code;
-    const saved = await machineCoverImageRepository.upsert({
-      machineId: machine.id,
-      machineCode: machine.code,
-      targetMuscleGroup: targetMuscle,
-      imageUrl: mainStored?.publicUrl ?? apiMainUrl,
-      thumbnailUrl: thumbStored?.publicUrl ?? apiThumbUrl,
-      storagePath: mainStored?.storagePath ?? `db:${dbKey}/main`,
-      thumbnailStoragePath: thumbStored?.storagePath ?? `db:${dbKey}/thumb`,
-      originalFilename: originalName,
-      mimeType: processed.main.mimeType,
-      fileSizeBytes: processed.main.fileSizeBytes,
-      width: processed.main.width,
-      height: processed.main.height,
-      version: nextVersion,
-      imageData: processed.main.buffer,
-      thumbnailData: processed.thumbnail.buffer,
-    });
+    try {
+      const saved = await machineCoverImageRepository.upsert({
+        machineId: machine.id,
+        machineCode: machine.code,
+        targetMuscleGroup: targetMuscle,
+        imageUrl: mainStored?.publicUrl ?? apiMainUrl,
+        thumbnailUrl: thumbStored?.publicUrl ?? apiThumbUrl,
+        storagePath: mainStored?.storagePath ?? `db:${dbKey}/main`,
+        thumbnailStoragePath: thumbStored?.storagePath ?? `db:${dbKey}/thumb`,
+        originalFilename: originalName,
+        mimeType: processed.main.mimeType,
+        fileSizeBytes: processed.main.fileSizeBytes,
+        width: processed.main.width,
+        height: processed.main.height,
+        version: nextVersion,
+        imageData: processed.main.buffer,
+        thumbnailData: processed.thumbnail.buffer,
+      });
 
-    if (existing?.storagePath && !existing.storagePath.startsWith('db:')) {
-      await storageService.deleteMachineCoverImage(existing.storagePath);
-    }
-    if (existing?.thumbnailStoragePath && !existing.thumbnailStoragePath.startsWith('db:')) {
-      await storageService.deleteMachineCoverImage(existing.thumbnailStoragePath);
-    }
+      if (existing?.storagePath && !existing.storagePath.startsWith('db:')) {
+        await storageService.deleteMachineCoverImage(existing.storagePath);
+      }
+      if (existing?.thumbnailStoragePath && !existing.thumbnailStoragePath.startsWith('db:')) {
+        await storageService.deleteMachineCoverImage(existing.thumbnailStoragePath);
+      }
 
-    return saved;
+      return saved;
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      const message = error instanceof Error ? error.message : 'Upload failed';
+      if (message.includes('Migration 083')) {
+        throw new AppError(
+          503,
+          'MIGRATION_REQUIRED',
+          'Database migration 083 is required for per-muscle covers'
+        );
+      }
+      throw new AppError(500, 'UPLOAD_FAILED', message);
+    }
   },
 
   async remove(
