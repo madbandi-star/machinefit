@@ -23,6 +23,14 @@ function brandChipLabel(
   return getLocalizedName(brand.name, language, brand.code);
 }
 
+/** Prefer English wordmark for OEM pills (matches common brand-chip UIs). */
+function brandChipDisplayName(brand: Brand, label: string): string {
+  if (brand.code === BRAND_CODES.BODYWEIGHT || brand.code === BRAND_CODES.FREE_WEIGHT) {
+    return label;
+  }
+  return brand.name?.en?.trim() || label;
+}
+
 function BrandLogoChip({
   brand,
   label,
@@ -37,42 +45,33 @@ function BrandLogoChip({
   const [logoFailed, setLogoFailed] = useState(false);
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
   const showLogo = Boolean(logoUrl) && !logoFailed;
-
-  if (!showLogo) {
-    return (
-      <button
-        type="button"
-        className={`filter-chip${active ? ' filter-chip--active' : ''}`}
-        onClick={onSelect}
-        aria-pressed={active}
-        aria-label={label}
-        data-brand-code={brand.code}
-      >
-        {label}
-      </button>
-    );
-  }
+  const displayName = brandChipDisplayName(brand, '', label);
 
   return (
     <button
       type="button"
-      className={`filter-chip filter-chip--brand-logo${active ? ' filter-chip--active' : ''}`}
+      className={`filter-chip filter-chip--brand${showLogo ? ' filter-chip--brand-has-logo' : ''}${
+        active ? ' filter-chip--active' : ''
+      }`}
       onClick={onSelect}
       aria-pressed={active}
       aria-label={label}
       data-brand-code={brand.code}
     >
-      <span className="filter-chip__icon-wrap" aria-hidden>
-        <img
-          key={`${brand.code}:${logoUrl}`}
-          src={logoUrl}
-          alt=""
-          className="filter-chip__icon filter-chip__brand-logo"
-          loading="lazy"
-          decoding="async"
-          onError={() => setLogoFailed(true)}
-        />
-      </span>
+      {showLogo ? (
+        <span className="filter-chip__brand-logo-wrap" aria-hidden>
+          <img
+            key={`${brand.code}:${logoUrl}`}
+            src={logoUrl}
+            alt=""
+            className="filter-chip__brand-logo"
+            loading="lazy"
+            decoding="async"
+            onError={() => setLogoFailed(true)}
+          />
+        </span>
+      ) : null}
+      <span className="filter-chip__label">{displayName}</span>
     </button>
   );
 }
@@ -96,11 +95,11 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
       <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
         <button
           type="button"
-          className={`filter-chip${value === null ? ' filter-chip--active' : ''}`}
+          className={`filter-chip filter-chip--brand${value === null ? ' filter-chip--active' : ''}`}
           onClick={() => onChange(null)}
           aria-pressed={value === null}
         >
-          {t('filterAll')}
+          <span className="filter-chip__label">{t('filterAll')}</span>
         </button>
         {orderedBrands.map((brand) => (
           <BrandLogoChip
