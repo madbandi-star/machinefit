@@ -31,6 +31,15 @@ function brandChipDisplayName(brand: Brand, label: string): string {
   return brand.name?.en?.trim() || label;
 }
 
+/** Split multi-word OEM names (e.g. Hammer Strength) onto two lines. */
+function brandChipNameLines(displayName: string): string[] {
+  const parts = displayName.split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return [displayName];
+  if (parts.length === 2) return parts;
+  const mid = Math.ceil(parts.length / 2);
+  return [parts.slice(0, mid).join(' '), parts.slice(mid).join(' ')];
+}
+
 function BrandLogoChip({
   brand,
   label,
@@ -46,13 +55,14 @@ function BrandLogoChip({
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
   const showLogo = Boolean(logoUrl) && !logoFailed;
   const displayName = brandChipDisplayName(brand, label);
+  const nameLines = brandChipNameLines(displayName);
 
   return (
     <button
       type="button"
       className={`filter-chip filter-chip--brand${showLogo ? ' filter-chip--brand-has-logo' : ''}${
-        active ? ' filter-chip--active' : ''
-      }`}
+        nameLines.length > 1 ? ' filter-chip--brand-multiline' : ''
+      }${active ? ' filter-chip--active' : ''}`}
       onClick={onSelect}
       aria-pressed={active}
       aria-label={label}
@@ -71,7 +81,13 @@ function BrandLogoChip({
           />
         </span>
       ) : null}
-      <span className="filter-chip__label">{displayName}</span>
+      <span className={`filter-chip__label${nameLines.length > 1 ? ' filter-chip__label--stacked' : ''}`}>
+        {nameLines.map((line) => (
+          <span key={line} className="filter-chip__label-line">
+            {line}
+          </span>
+        ))}
+      </span>
     </button>
   );
 }
