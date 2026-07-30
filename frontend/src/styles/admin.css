@@ -1928,7 +1928,7 @@
   }
 }
 
-/* ¦¡¦¡ Admin machine tips / warnings ¦¡¦¡ */
+/* â”€â”€ Admin machine tips / warnings â”€â”€ */
 
 .admin-machine-tips-page {
   display: flex;
@@ -2003,7 +2003,7 @@
 
 .admin-machine-tips-row__meta span + span::before,
 .admin-machine-tips-row__counts span + span::before {
-  content: '¡¤';
+  content: 'Â·';
   margin-right: 0.55rem;
   opacity: 0.55;
 }
@@ -2032,3 +2032,4 @@
     flex-shrink: 0;
   }
 }
+
