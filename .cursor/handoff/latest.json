@@ -1,7 +1,7 @@
 {
   "title": "Search: FW cards show all muscles when All filter",
   "summary": "UI-only: when muscle filter is All (null) and the card is free-weight, list all target muscle labels on the card. Specific muscle filter and non-FW cards unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "94611b7" },
   "changedFiles": [
     "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
     "frontend/src/styles/machines.css"
