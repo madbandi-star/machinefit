@@ -607,120 +607,134 @@ export function AdminMachinesPage() {
       subtitle={t('admin:catalogMachines.subtitle')}
       backTo={ROUTES.ADMIN}
       backLabel={t('admin:backToAdmin')}
+      actions={
+        <button type="button" className="btn btn--primary admin-machines-page__create" onClick={openCreate}>
+          {t('admin:catalogMachines.create')}
+        </button>
+      }
     >
+      <div className="admin-machines-page">
       <form
-        className="admin-toolbar admin-catalog-toolbar"
+        className="admin-machines-toolbar"
         onSubmit={(e) => {
           e.preventDefault();
           setPage(1);
           setQ(draftQ.trim());
         }}
       >
-        <input
-          className="input"
-          value={draftQ}
-          onChange={(e) => setDraftQ(e.target.value)}
-          placeholder={t('admin:catalogMachines.searchPlaceholder')}
-        />
-        <select
-          className="input"
-          value={brandId}
-          onChange={(e) => {
-            setBrandId(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">{t('admin:catalogMachines.allBrands')}</option>
-          {brands.map((brand) => (
-            <option key={brand.id} value={brand.id}>
-              {getLocalizedName(brand.name, i18n.language, brand.code)}
-            </option>
-          ))}
-        </select>
-        <select
-          className="input"
-          value={muscleGroup}
-          onChange={(e) => {
-            setMuscleGroup(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">{t('admin:catalogMachines.allMuscles')}</option>
-          {MUSCLE_OPTIONS.map((group) => (
-            <option key={group} value={group}>
-              {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
-            </option>
-          ))}
-        </select>
-        <select
-          className="input"
-          value={isActive}
-          onChange={(e) => {
-            setIsActive(e.target.value as ActiveFilter);
-            setPage(1);
-          }}
-        >
-          <option value="all">{t('admin:catalogMachines.filterAll')}</option>
-          <option value="true">{t('admin:active')}</option>
-          <option value="false">{t('admin:inactive')}</option>
-        </select>
-        <select
-          className="input"
-          value={sort}
-          onChange={(e) => {
-            setSort(e.target.value as SortKey);
-            setPage(1);
-          }}
-        >
-          <option value="sortOrder">{t('admin:catalogMachines.sortOrder')}</option>
-          <option value="name">{t('admin:catalogMachines.sortName')}</option>
-          <option value="code">{t('admin:catalogMachines.sortCode')}</option>
-          <option value="createdAt">{t('admin:catalogMachines.sortCreated')}</option>
-        </select>
-        <select
-          className="input"
-          value={order}
-          onChange={(e) => {
-            setOrder(e.target.value as 'asc' | 'desc');
-            setPage(1);
-          }}
-        >
-          <option value="asc">{t('admin:catalogMachines.orderAsc')}</option>
-          <option value="desc">{t('admin:catalogMachines.orderDesc')}</option>
-        </select>
-        <button type="submit" className="btn btn--primary">
-          {t('admin:catalogMachines.search')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={listQuery.isFetching}
-          onClick={() => void listQuery.refetch()}
-        >
-          {listQuery.isFetching ? t('admin:processing') : t('admin:catalogMachines.refresh')}
-        </button>
-        <button type="button" className="btn btn--secondary" onClick={openCreate}>
-          {t('admin:catalogMachines.create')}
-        </button>
+        <div className="admin-machines-toolbar__search">
+          <input
+            className="input"
+            value={draftQ}
+            onChange={(e) => setDraftQ(e.target.value)}
+            placeholder={t('admin:catalogMachines.searchPlaceholder')}
+            aria-label={t('admin:catalogMachines.searchPlaceholder')}
+          />
+          <button type="submit" className="btn btn--primary">
+            {t('admin:catalogMachines.search')}
+          </button>
+        </div>
+        <div className="admin-machines-toolbar__filters" role="group" aria-label={t('admin:catalogMachines.title')}>
+          <select
+            className="input"
+            value={brandId}
+            onChange={(e) => {
+              setBrandId(e.target.value);
+              setPage(1);
+            }}
+            aria-label={t('admin:catalogMachines.allBrands')}
+          >
+            <option value="">{t('admin:catalogMachines.allBrands')}</option>
+            {brands.map((brand) => (
+              <option key={brand.id} value={brand.id}>
+                {getLocalizedName(brand.name, i18n.language, brand.code)}
+              </option>
+            ))}
+          </select>
+          <select
+            className="input"
+            value={muscleGroup}
+            onChange={(e) => {
+              setMuscleGroup(e.target.value);
+              setPage(1);
+            }}
+            aria-label={t('admin:catalogMachines.allMuscles')}
+          >
+            <option value="">{t('admin:catalogMachines.allMuscles')}</option>
+            {MUSCLE_OPTIONS.map((group) => (
+              <option key={group} value={group}>
+                {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
+              </option>
+            ))}
+          </select>
+          <select
+            className="input"
+            value={isActive}
+            onChange={(e) => {
+              setIsActive(e.target.value as ActiveFilter);
+              setPage(1);
+            }}
+            aria-label={t('admin:catalogMachines.filterAll')}
+          >
+            <option value="all">{t('admin:catalogMachines.filterAll')}</option>
+            <option value="true">{t('admin:active')}</option>
+            <option value="false">{t('admin:inactive')}</option>
+          </select>
+          <select
+            className="input"
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value as SortKey);
+              setPage(1);
+            }}
+            aria-label={t('admin:catalogMachines.sortOrder')}
+          >
+            <option value="sortOrder">{t('admin:catalogMachines.sortOrder')}</option>
+            <option value="name">{t('admin:catalogMachines.sortName')}</option>
+            <option value="code">{t('admin:catalogMachines.sortCode')}</option>
+            <option value="createdAt">{t('admin:catalogMachines.sortCreated')}</option>
+          </select>
+          <select
+            className="input"
+            value={order}
+            onChange={(e) => {
+              setOrder(e.target.value as 'asc' | 'desc');
+              setPage(1);
+            }}
+            aria-label={t('admin:catalogMachines.orderAsc')}
+          >
+            <option value="asc">{t('admin:catalogMachines.orderAsc')}</option>
+            <option value="desc">{t('admin:catalogMachines.orderDesc')}</option>
+          </select>
+          <button
+            type="button"
+            className="btn btn--secondary admin-machines-toolbar__refresh"
+            disabled={listQuery.isFetching}
+            onClick={() => void listQuery.refetch()}
+          >
+            {listQuery.isFetching ? t('admin:processing') : t('admin:catalogMachines.refresh')}
+          </button>
+        </div>
       </form>
 
       <AdminPanel count={total} countLabel={t('admin:listCount', { count: total })}>
-        <div className="admin-table admin-table--dense">
+        <div className="admin-machines-list">
           {items.length === 0 ? (
             <div className="admin-empty">{t('admin:catalogMachines.empty')}</div>
           ) : (
             items.map((machine) => (
-              <div key={machine.id} className="card admin-table__row">
-                <div className="admin-table__brand">
-                  {machine.primaryImageUrl ? (
-                    <img
-                      src={machine.primaryImageUrl}
-                      alt=""
-                      className="admin-table__brand-logo"
-                    />
-                  ) : null}
-                  <div className="admin-table__primary">
-                    <div className="admin-table__title-row">
+              <article key={machine.id} className="admin-machines-row">
+                <div className="admin-machines-row__main">
+                  <div
+                    className={`admin-machines-row__thumb${machine.primaryImageUrl ? '' : ' is-empty'}`}
+                    aria-hidden
+                  >
+                    {machine.primaryImageUrl ? (
+                      <img src={machine.primaryImageUrl} alt="" loading="lazy" decoding="async" />
+                    ) : null}
+                  </div>
+                  <div className="admin-machines-row__body">
+                    <div className="admin-machines-row__title">
                       <strong>
                         {getLocalizedName(machine.name, i18n.language, machine.code)}
                       </strong>
@@ -730,18 +744,18 @@ export function AdminMachinesPage() {
                         {machine.isActive ? t('admin:active') : t('admin:inactive')}
                       </span>
                     </div>
-                    <p className="admin-table__meta">
-                      {machine.code}
-                      {machine.brandCode ? ` · ${machine.brandCode}` : ''}
-                      {` · ${machine.muscleGroup}`}
-                      {` · #${machine.sortOrder ?? 0}`}
+                    <p className="admin-machines-row__meta">
+                      <span>{machine.code}</span>
+                      {machine.brandCode ? <span>{machine.brandCode}</span> : null}
+                      <span>{machine.muscleGroup}</span>
+                      <span>#{machine.sortOrder ?? 0}</span>
                     </p>
                   </div>
                 </div>
-                <div className="admin-table__actions">
+                <div className="admin-machines-row__actions">
                   <button
                     type="button"
-                    className="btn btn--secondary"
+                    className="btn btn--secondary admin-machines-row__btn"
                     onClick={() => openEdit(machine)}
                     disabled={activeMutation.isPending || deleteMutation.isPending}
                   >
@@ -749,7 +763,7 @@ export function AdminMachinesPage() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn--secondary"
+                    className="btn btn--secondary admin-machines-row__btn"
                     disabled={
                       (activeMutation.isPending &&
                         activeMutation.variables?.id === machine.id) ||
@@ -767,14 +781,14 @@ export function AdminMachinesPage() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn--secondary"
+                    className="btn btn--secondary admin-machines-row__btn admin-machines-row__btn--danger"
                     disabled={activeMutation.isPending || deleteMutation.isPending}
                     onClick={() => setPendingDelete(machine)}
                   >
                     {t('admin:catalogMachines.delete')}
                   </button>
                 </div>
-              </div>
+              </article>
             ))
           )}
         </div>
@@ -784,17 +798,19 @@ export function AdminMachinesPage() {
           onPageChange={setPage}
         />
       </AdminPanel>
+      </div>
 
       {editor ? (
         <div
-          className="dialog-overlay"
+          className="dialog-overlay admin-machines-dialog-overlay"
           role="presentation"
           onClick={() => {
             if (!formBusy) closeEditor();
           }}
-        >          <div
+        >
+          <div
             ref={dialogRef}
-            className="dialog card admin-catalog-dialog"
+            className="dialog card admin-catalog-dialog admin-machines-dialog"
             role="dialog"
             aria-modal="true"
             aria-labelledby="admin-machine-dialog-title"

@@ -1621,3 +1621,282 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Admin machines catalog (list + editor layout only) ── */
+
+.admin-machines-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.admin-machines-page__create {
+  white-space: nowrap;
+  min-height: 2.5rem;
+  padding: 0.55rem 1rem;
+}
+
+.admin-machines-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 42%, var(--color-surface));
+}
+
+.admin-machines-toolbar__search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-machines-toolbar__search .input {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-machines-toolbar__search .btn {
+  min-height: 2.6rem;
+  padding: 0.55rem 1rem;
+  white-space: nowrap;
+}
+
+.admin-machines-toolbar__filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.admin-machines-toolbar__filters .input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.55rem;
+}
+
+.admin-machines-toolbar__refresh {
+  min-height: 2.55rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.admin-machines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.admin-machines-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 38%, var(--color-surface));
+  transition: border-color 0.15s ease;
+}
+
+.admin-machines-row:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+}
+
+.admin-machines-row__main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-machines-row__thumb {
+  flex: 0 0 auto;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary, var(--color-surface-alt, var(--color-bg)));
+}
+
+.admin-machines-row__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.admin-machines-row__thumb.is-empty {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-text-muted) 8%, transparent),
+      transparent 60%
+    ),
+    var(--color-bg-secondary, var(--color-surface-alt, var(--color-bg)));
+}
+
+.admin-machines-row__body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-machines-row__title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.admin-machines-row__title strong {
+  font-size: 0.98rem;
+  font-weight: 750;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.admin-machines-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.55rem;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.admin-machines-row__meta span {
+  position: relative;
+}
+
+.admin-machines-row__meta span + span::before {
+  content: '·';
+  margin-right: 0.55rem;
+  opacity: 0.55;
+}
+
+.admin-machines-row__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.admin-machines-row__btn {
+  width: 100%;
+  min-height: 2.45rem;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.admin-machines-row__btn--danger {
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-border));
+}
+
+.admin-machines-dialog-overlay {
+  align-items: stretch;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.admin-machines-dialog {
+  width: min(760px, 100%);
+  max-height: min(96dvh, 960px);
+  margin: auto;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-machines-dialog .admin-catalog-dialog__actions {
+  flex-wrap: wrap;
+}
+
+.admin-machines-dialog .admin-catalog-dialog__actions .btn {
+  flex: 1 1 8rem;
+  min-height: 2.65rem;
+}
+
+.admin-machines-dialog .admin-catalog-image__actions .btn {
+  min-height: 2.4rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+}
+
+.admin-machines-dialog .admin-catalog-fields {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .admin-machines-dialog .admin-catalog-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 720px) {
+  .admin-machines-toolbar__filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: center;
+  }
+
+  .admin-machines-toolbar__refresh {
+    justify-self: start;
+  }
+
+  .admin-machines-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .admin-machines-row__actions {
+    display: flex;
+    flex-wrap: nowrap;
+    grid-template-columns: none;
+    width: auto;
+  }
+
+  .admin-machines-row__btn {
+    width: auto;
+    min-width: 4.75rem;
+    padding: 0.45rem 0.85rem;
+  }
+
+  .admin-machines-dialog-overlay {
+    align-items: center;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 960px) {
+  .admin-machines-toolbar__filters {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  }
+
+  .admin-machines-row__thumb {
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+}
+
+@media (max-width: 419px) {
+  .admin-machines-row__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-machines-toolbar__search {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-machines-toolbar__search .btn {
+    width: 100%;
+  }
+}
