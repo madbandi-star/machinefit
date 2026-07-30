@@ -1,37 +1,37 @@
-# Latest test handoff — Free-weight covers per muscle
+# Latest test handoff ??Free-weight covers per muscle
 
-**Branch:** `main` · **Commit:** *(after push)*
+**Branch:** `main` · **Commit:** `ee1e7b2`
 
 ## Change
 
-이전에는 **기구 코드당 이미지 1장**만 가능해서 `등-프리-바벨` / `가슴-프리-바벨`을 다르게 보여줄 수 없었음.
+?�전?�는 **기구 코드???��?지 1??*�?가?�해??`???�리-바벨` / `가???�리-바벨`???�르�?보여�????�었??
 
-기존 **관리자 → 머신 대표 이미지**를 확장:
+기존 **관리자 ??머신 ?�???��?지**�??�장:
 
-- 프리웨이트(`FW_*`)에 **부위별(등/가슴/하체/어깨/이두/삼두/팔/코어) 슬롯** 추가
-- 검색 목록·상세는 선택된 부위의 커버를 우선 표시
-- DB migration `083_machine_cover_muscle_variants.sql` 필요
+- ?�리?�이??`FW_*`)??**부?�별(??가???�체/?�깨/?�두/?�두/??코어) ?�롯** 추�?
+- 검??목록·?�세???�택??부?�의 커버�??�선 ?�시
+- DB migration `083_machine_cover_muscle_variants.sql` ?�요
 
 ## Test focus
 
-1. Admin 로그인 → 머신 대표 이미지 → Free Weight → 바벨 카드의 부위별 업로드
-2. 검색: 등 + 프리 → 바벨 썸네일 = 등용 사진; 가슴 + 프리 → 가슴용 사진
-3. 상세 `?muscle=back` 이미지도 부위 반영
+1. Admin 로그????머신 ?�???��?지 ??Free Weight ??바벨 카드??부?�별 ?�로??
+2. 검?? ??+ ?�리 ??바벨 ?�네??= ?�용 ?�진; 가??+ ?�리 ??가?�용 ?�진
+3. ?�세 `?muscle=back` ?��?지??부??반영
 
 ## Fast checks
 
 ```bash
 npm run build --prefix shared
-npm run db:migrate   # production DATABASE_URL — migration 083
+npm run db:migrate   # production DATABASE_URL ??migration 083
 ```
 
 ## Deploy
 
 - Frontend: Pages on `main` push
 - **Backend Render redeploy required**
-- **DB migrate 083 required** (로그인 수정처럼 서버/DB 반영이 핵심)
+- **DB migrate 083 required** (로그???�정처럼 ?�버/DB 반영???�심)
 
-## as-is → to-be
+## as-is ??to-be
 
-- **as-is:** 바벨 이미지 부위별 관리 불가
-- **to-be:** Admin에서 부위별 업로드 후 검색에서 부위별로 다른 바벨 사진 표시
+- **as-is:** 바벨 ?��?지 부?�별 관�?불�?
+- **to-be:** Admin?�서 부?�별 ?�로????검?�에??부?�별�??�른 바벨 ?�진 ?�시

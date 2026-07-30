@@ -1,7 +1,7 @@
 {
   "title": "Free-weight machine covers per muscle",
   "summary": "Admin machine-cover manager now supports per-muscle photos for free-weight (e.g. barbell row vs bench press). Search list/detail resolve FW covers by selected muscle. Previously impossible (1 cover per machine).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ee1e7b2" },
   "changedFiles": [
     "database/migrations/083_machine_cover_muscle_variants.sql",
     "shared/src/types/machine-cover-image.types.ts",
@@ -26,15 +26,15 @@
     "frontend/src/i18n/locales/ko/admin.json",
     "frontend/src/i18n/locales/en/admin.json"
   ],
-  "testFocus": "Admin: FREE_WEIGHT + FW_BARBELL muscle slots upload; Search: 등/가슴 + 프리 + 바벨 show different images.",
+  "testFocus": "Admin: FREE_WEIGHT + FW_BARBELL muscle slots upload; Search: ??가??+ ?�리 + 바벨 show different images.",
   "fastChecks": [
     "npm run build --prefix shared",
     "Apply migration 083 (npm run db:migrate against prod DATABASE_URL)"
   ],
   "productionChecks": [
     "Run db:migrate on production before/with Render redeploy",
-    "Admin → 머신 대표 이미지 → Free Weight → barbell muscle slots",
-    "Search 등+프리 → barbell shows back photo; 가슴+프리 → chest photo"
+    "Admin ??머신 ?�???��?지 ??Free Weight ??barbell muscle slots",
+    "Search ???�리 ??barbell shows back photo; 가???�리 ??chest photo"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
