@@ -1,4 +1,11 @@
-/* ── Admin shell (dedicated layout, not crammed into public header) ── */
+/* ?? Admin shell (dedicated layout, not crammed into public header) ?? */
+
+/* ?? Admin shell escapes the 430px member app frame on desktop ?? */
+@media (min-width: 720px) {
+  body:has(.admin-shell) #root {
+    max-width: min(1120px, 100%);
+  }
+}
 
 .admin-shell {
   min-height: 100dvh;
@@ -148,7 +155,7 @@
   }
 }
 
-/* ── Shared panels ── */
+/* ?? Shared panels ?? */
 
 .admin-panel {
   padding: 1rem;
@@ -171,7 +178,7 @@
   line-height: 1.4;
 }
 
-/* ── Attention / urgent work ── */
+/* ?? Attention / urgent work ?? */
 
 .admin-attention {
   display: flex;
@@ -235,7 +242,7 @@
   color: color-mix(in srgb, var(--color-warning, #d97706) 85%, var(--color-text));
 }
 
-/* ── Overview stats ── */
+/* ?? Overview stats ?? */
 
 .admin-stats {
   display: grid;
@@ -282,7 +289,7 @@
   color: var(--color-text-muted);
 }
 
-/* ── Menu list ── */
+/* ?? Menu list ?? */
 
 .admin-menu {
   display: flex;
@@ -337,7 +344,7 @@
   line-height: 1;
 }
 
-/* ── Existing admin list/table patterns (subpages) ── */
+/* ?? Existing admin list/table patterns (subpages) ?? */
 
 .admin-table {
   display: flex;
@@ -435,7 +442,7 @@
   gap: 0.5rem;
 }
 
-/* ── Page shell (inside admin layout) ── */
+/* ?? Page shell (inside admin layout) ?? */
 
 .admin-page {
   display: flex;
@@ -509,7 +516,7 @@
   margin-top: 0;
 }
 
-/* ── Tabs ── */
+/* ?? Tabs ?? */
 
 .admin-tabs {
   display: flex;
@@ -556,7 +563,7 @@
   margin-top: 0.85rem;
 }
 
-/* ── Sections & forms ── */
+/* ?? Sections & forms ?? */
 
 .admin-section {
   margin-bottom: 1.25rem;
@@ -612,7 +619,7 @@
   gap: 0.4rem;
 }
 
-/* ── Card lists (reports, moderation cards) ── */
+/* ?? Card lists (reports, moderation cards) ?? */
 
 .admin-card-list {
   display: grid;
@@ -649,7 +656,7 @@
   text-align: center;
 }
 
-/* ── Dense rows (compliance tickets, etc.) ── */
+/* ?? Dense rows (compliance tickets, etc.) ?? */
 
 .admin-table-wrap {
   display: flex;
@@ -700,7 +707,7 @@
   align-items: center;
 }
 
-/* ── Simple lists ── */
+/* ?? Simple lists ?? */
 
 .admin-list {
   list-style: none;
@@ -726,7 +733,7 @@
   background: transparent;
 }
 
-/* ── Badges ── */
+/* ?? Badges ?? */
 
 .admin-badge {
   display: inline-flex;
@@ -754,7 +761,7 @@
   background: color-mix(in srgb, var(--color-error) 12%, transparent);
 }
 
-/* ── Motivation blocks ── */
+/* ?? Motivation blocks ?? */
 
 .admin-motivation {
   margin-bottom: 1.75rem;
@@ -778,7 +785,7 @@
   margin-top: 0.75rem;
 }
 
-/* ── Owner applications ── */
+/* ?? Owner applications ?? */
 
 .admin-owner-apps {
   display: flex;
@@ -888,7 +895,7 @@
   margin: 0;
 }
 
-/* ── Dashboard polish ── */
+/* ?? Dashboard polish ?? */
 
 @media (min-width: 720px) {
   .admin-menu {
@@ -910,7 +917,7 @@
   }
 }
 
-/* ── Friends admin (reuse admin tab look) ── */
+/* ?? Friends admin (reuse admin tab look) ?? */
 
 .admin-shell__content .friends-subnav {
   display: flex;
@@ -965,7 +972,7 @@
   background: var(--color-surface);
 }
 
-/* ── Trade stats inside admin ── */
+/* ?? Trade stats inside admin ?? */
 
 .admin-shell__content .trade-stats-grid {
   display: grid;
@@ -1002,7 +1009,7 @@
   font-weight: 600;
 }
 
-/* ── Gym admin cards ── */
+/* ?? Gym admin cards ?? */
 
 .admin-gym-card {
   flex-wrap: wrap;
@@ -1055,7 +1062,7 @@
   gap: 0.4rem;
 }
 
-/* ── Online PT inside admin ── */
+/* ?? Online PT inside admin ?? */
 
 .admin-shell__content .opt-stats {
   display: grid;
@@ -1114,7 +1121,7 @@
   background: color-mix(in srgb, var(--color-bg) 40%, var(--color-surface));
 }
 
-/* ── Data panels & list polish (v2) ── */
+/* ?? Data panels & list polish (v2) ?? */
 
 .admin-data-panel {
   display: flex;
@@ -1375,7 +1382,7 @@
   margin-top: 0;
 }
 
-/* ── Catalog brand/machine admin ── */
+/* ?? Catalog brand/machine admin ?? */
 
 .admin-catalog-toolbar {
   margin-bottom: 0.85rem;
@@ -1629,6 +1636,7 @@
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
+  width: 100%;
 }
 
 .admin-machines-page__create {
@@ -1645,6 +1653,8 @@
   border-radius: 14px;
   border: 1px solid var(--color-border);
   background: color-mix(in srgb, var(--color-bg) 42%, var(--color-surface));
+  container-type: inline-size;
+  container-name: machines-toolbar;
 }
 
 .admin-machines-toolbar__search {
@@ -1680,19 +1690,25 @@
 .admin-machines-toolbar__refresh {
   min-height: 2.55rem;
   padding: 0.5rem 0.85rem;
+  grid-column: 1 / -1;
 }
 
 .admin-machines-list {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  min-width: 0;
+  width: 100%;
+  container-type: inline-size;
+  container-name: machines-list;
 }
 
 .admin-machines-row {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.7rem;
   min-width: 0;
+  width: 100%;
   padding: 0.85rem;
   border-radius: 14px;
   border: 1px solid var(--color-border);
@@ -1705,16 +1721,17 @@
 }
 
 .admin-machines-row__main {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: 3.75rem minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
   min-width: 0;
+  width: 100%;
 }
 
 .admin-machines-row__thumb {
-  flex: 0 0 auto;
-  width: 4.25rem;
-  height: 4.25rem;
+  width: 3.75rem;
+  height: 3.75rem;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--color-border);
@@ -1741,7 +1758,6 @@
 
 .admin-machines-row__body {
   min-width: 0;
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -1749,35 +1765,40 @@
 
 .admin-machines-row__title {
   display: flex;
-  align-items: center;
-  gap: 0.45rem;
+  align-items: flex-start;
+  gap: 0.4rem;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .admin-machines-row__title strong {
-  font-size: 0.98rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.95rem;
   font-weight: 750;
-  line-height: 1.25;
-  word-break: break-word;
+  line-height: 1.3;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .admin-machines-row__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem 0.55rem;
+  gap: 0.25rem 0.5rem;
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--color-text-muted);
-  line-height: 1.35;
+  line-height: 1.4;
+  word-break: break-all;
 }
 
 .admin-machines-row__meta span {
-  position: relative;
+  max-width: 100%;
 }
 
 .admin-machines-row__meta span + span::before {
   content: '·';
-  margin-right: 0.55rem;
+  margin-right: 0.5rem;
   opacity: 0.55;
 }
 
@@ -1785,13 +1806,15 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.4rem;
+  width: 100%;
 }
 
 .admin-machines-row__btn {
   width: 100%;
-  min-height: 2.45rem;
-  padding: 0.45rem 0.5rem;
-  font-size: 0.8rem;
+  min-width: 0;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.35rem;
+  font-size: 0.78rem;
 }
 
 .admin-machines-row__btn--danger {
@@ -1833,41 +1856,60 @@
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 640px) {
-  .admin-machines-dialog .admin-catalog-fields {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (min-width: 720px) {
+/* Content-column width — not browser viewport (member app frame is ~430px). */
+@container machines-toolbar (min-width: 520px) {
   .admin-machines-toolbar__filters {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
-    align-items: center;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .admin-machines-toolbar__refresh {
-    justify-self: start;
+    grid-column: auto;
   }
+}
 
+@container machines-toolbar (min-width: 760px) {
+  .admin-machines-toolbar__filters {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+    align-items: center;
+  }
+}
+
+@container machines-list (min-width: 640px) {
   .admin-machines-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 1rem;
+    gap: 0.85rem 1rem;
     padding: 0.9rem 1rem;
+  }
+
+  .admin-machines-row__main {
+    grid-template-columns: 4.25rem minmax(0, 1fr);
+  }
+
+  .admin-machines-row__thumb {
+    width: 4.25rem;
+    height: 4.25rem;
   }
 
   .admin-machines-row__actions {
     display: flex;
-    flex-wrap: nowrap;
-    grid-template-columns: none;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     width: auto;
+    max-width: 18rem;
   }
 
   .admin-machines-row__btn {
     width: auto;
-    min-width: 4.75rem;
-    padding: 0.45rem 0.85rem;
+    min-width: 4.5rem;
+    padding: 0.45rem 0.75rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .admin-machines-dialog .admin-catalog-fields {
+    grid-template-columns: 1fr 1fr;
   }
 
   .admin-machines-dialog-overlay {
@@ -1876,22 +1918,7 @@
   }
 }
 
-@media (min-width: 960px) {
-  .admin-machines-toolbar__filters {
-    grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
-  }
-
-  .admin-machines-row__thumb {
-    width: 4.75rem;
-    height: 4.75rem;
-  }
-}
-
 @media (max-width: 419px) {
-  .admin-machines-row__actions {
-    grid-template-columns: 1fr;
-  }
-
   .admin-machines-toolbar__search {
     grid-template-columns: 1fr;
   }
