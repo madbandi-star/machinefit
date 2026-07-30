@@ -1,11 +1,26 @@
 {
-  "title": "Lifted share card — footer top spacing",
-  "summary": "Added 20px gap above MachineFit footer (comparison card / KG → footer).",
-  "git": { "branch": "main", "commit": "6188f50" },
-  "changedFiles": ["frontend/src/utils/liftedShareCard.ts"],
-  "testFocus": "누적무게 공유카드 — 하단 MachineFit 영역 위 간격.",
-  "fastChecks": ["npm run build --prefix frontend"],
-  "deploy": { "frontend": "GitHub Pages via push to main", "backendDeployNeeded": false },
-  "asIs": "비교 카드/KG 바로 아래 MachineFit 푸터.",
-  "toBe": "푸터 상단 +20px 여백."
+  "title": "Fix login blocked by inspection auth middleware",
+  "summary": "Inspection router was mounted at API root with router-level authMiddleware, so every unauthenticated request including /auth/login returned 401. Mounted under /inspection and scoped auth to inspection routes only.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "backend/server/routes/inspection.routes.ts",
+    "backend/server/routes/index.ts",
+    "frontend/src/api/inspection.api.ts"
+  ],
+  "testFocus": "Login/register must work without a token; equipment APIs under /inspection still require auth.",
+  "fastChecks": [
+    "curl -s -o NUL -w \"%{http_code}\" -X POST https://machinefit.onrender.com/api/v1/auth/login -H \"Content-Type: application/json\" -d \"{\\\"email\\\":\\\"x@y.com\\\",\\\"password\\\":\\\"bad\\\"}\"  (expect 401 INVALID_CREDENTIALS, not Authentication required)",
+    "npm run test:smoke:changed"
+  ],
+  "productionChecks": [
+    "GitHub Pages login form succeeds with valid credentials",
+    "Owner equipment pages still load after backend+frontend deploy"
+  ],
+  "deploy": {
+    "frontend": "GitHub Pages via push to main",
+    "backendDeployNeeded": true,
+    "note": "Login fix requires Render backend redeploy; frontend path change is for /inspection prefix"
+  },
+  "asIs": "POST /auth/login returns UNAUTHORIZED Authentication required — login impossible.",
+  "toBe": "POST /auth/login reaches auth handler (invalid creds → INVALID_CREDENTIALS); valid login works."
 }

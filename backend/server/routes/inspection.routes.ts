@@ -6,103 +6,57 @@ import { muscleGroupImageUpload } from '../middlewares/upload.middleware.js';
 
 export const inspectionRouter = Router();
 
-inspectionRouter.use(authMiddleware);
+/**
+ * Do NOT use `inspectionRouter.use(authMiddleware)` while this router is mounted at
+ * the API root — Express would run it for every request (including /auth/login)
+ * and block unauthenticated login/register.
+ */
+const member = [authMiddleware, requireMinRole(Role.MEMBER)] as const;
+const owner = [authMiddleware, requireMinRole(Role.OWNER)] as const;
 
-inspectionRouter.get(
-  '/templates',
-  requireMinRole(Role.MEMBER),
-  inspectionController.listTemplates
-);
-inspectionRouter.post(
-  '/templates',
-  requireMinRole(Role.OWNER),
-  inspectionController.createTemplate
-);
-inspectionRouter.patch(
-  '/templates/:id',
-  requireMinRole(Role.OWNER),
-  inspectionController.updateTemplate
-);
+inspectionRouter.get('/templates', ...member, inspectionController.listTemplates);
+inspectionRouter.post('/templates', ...owner, inspectionController.createTemplate);
+inspectionRouter.patch('/templates/:id', ...owner, inspectionController.updateTemplate);
 
-inspectionRouter.get(
-  '/gym-machines',
-  requireMinRole(Role.OWNER),
-  inspectionController.listGymMachines
-);
-inspectionRouter.get(
-  '/gym-machines/by-code',
-  requireMinRole(Role.MEMBER),
-  inspectionController.getGymMachineByCode
-);
+inspectionRouter.get('/gym-machines', ...owner, inspectionController.listGymMachines);
+inspectionRouter.get('/gym-machines/by-code', ...member, inspectionController.getGymMachineByCode);
 inspectionRouter.get(
   '/gym-machines/:id/public',
-  requireMinRole(Role.MEMBER),
+  ...member,
   inspectionController.getGymMachinePublic
 );
-inspectionRouter.get(
-  '/gym-machines/:id/photos',
-  requireMinRole(Role.OWNER),
-  inspectionController.listPhotos
-);
+inspectionRouter.get('/gym-machines/:id/photos', ...owner, inspectionController.listPhotos);
 inspectionRouter.post(
   '/gym-machines/:id/photos',
-  requireMinRole(Role.OWNER),
+  ...owner,
   muscleGroupImageUpload,
   inspectionController.uploadPhoto
 );
-inspectionRouter.get(
-  '/gym-machines/:id',
-  requireMinRole(Role.OWNER),
-  inspectionController.getGymMachine
-);
+inspectionRouter.get('/gym-machines/:id', ...owner, inspectionController.getGymMachine);
 
-inspectionRouter.post(
-  '/inspections',
-  requireMinRole(Role.OWNER),
-  inspectionController.createInspection
-);
-inspectionRouter.get(
-  '/inspections',
-  requireMinRole(Role.OWNER),
-  inspectionController.listInspections
-);
-inspectionRouter.get(
-  '/inspections/:id',
-  requireMinRole(Role.OWNER),
-  inspectionController.getInspection
-);
+inspectionRouter.post('/inspections', ...owner, inspectionController.createInspection);
+inspectionRouter.get('/inspections', ...owner, inspectionController.listInspections);
+inspectionRouter.get('/inspections/:id', ...owner, inspectionController.getInspection);
 
-inspectionRouter.get('/faults', requireMinRole(Role.OWNER), inspectionController.listFaults);
-inspectionRouter.post('/faults', requireMinRole(Role.OWNER), inspectionController.createFault);
-inspectionRouter.patch(
-  '/faults/:id',
-  requireMinRole(Role.OWNER),
-  inspectionController.updateFault
-);
+inspectionRouter.get('/faults', ...owner, inspectionController.listFaults);
+inspectionRouter.post('/faults', ...owner, inspectionController.createFault);
+inspectionRouter.patch('/faults/:id', ...owner, inspectionController.updateFault);
 
-inspectionRouter.get('/pm', requireMinRole(Role.OWNER), inspectionController.listPm);
-inspectionRouter.post('/pm', requireMinRole(Role.OWNER), inspectionController.createPm);
-inspectionRouter.post(
-  '/pm/refresh-due',
-  requireMinRole(Role.OWNER),
-  inspectionController.refreshPmDue
-);
-inspectionRouter.patch('/pm/:id', requireMinRole(Role.OWNER), inspectionController.updatePm);
-inspectionRouter.delete('/pm/:id', requireMinRole(Role.OWNER), inspectionController.deletePm);
+inspectionRouter.get('/pm', ...owner, inspectionController.listPm);
+inspectionRouter.post('/pm', ...owner, inspectionController.createPm);
+inspectionRouter.post('/pm/refresh-due', ...owner, inspectionController.refreshPmDue);
+inspectionRouter.patch('/pm/:id', ...owner, inspectionController.updatePm);
+inspectionRouter.delete('/pm/:id', ...owner, inspectionController.deletePm);
 
-inspectionRouter.get('/repairs', requireMinRole(Role.OWNER), inspectionController.listRepairs);
-inspectionRouter.post('/repairs', requireMinRole(Role.OWNER), inspectionController.createRepair);
+inspectionRouter.get('/repairs', ...owner, inspectionController.listRepairs);
+inspectionRouter.post('/repairs', ...owner, inspectionController.createRepair);
 
-inspectionRouter.get('/parts', requireMinRole(Role.OWNER), inspectionController.listParts);
-inspectionRouter.post('/parts', requireMinRole(Role.OWNER), inspectionController.createPart);
-inspectionRouter.patch('/parts/:id', requireMinRole(Role.OWNER), inspectionController.updatePart);
-inspectionRouter.delete('/parts/:id', requireMinRole(Role.OWNER), inspectionController.deletePart);
+inspectionRouter.get('/parts', ...owner, inspectionController.listParts);
+inspectionRouter.post('/parts', ...owner, inspectionController.createPart);
+inspectionRouter.patch('/parts/:id', ...owner, inspectionController.updatePart);
+inspectionRouter.delete('/parts/:id', ...owner, inspectionController.deletePart);
 
-inspectionRouter.post(
-  '/member-reports',
-  requireMinRole(Role.MEMBER),
-  inspectionController.createMemberReport
-);
+inspectionRouter.post('/member-reports', ...member, inspectionController.createMemberReport);
 
-inspectionRouter.get('/dashboard', requireMinRole(Role.OWNER), inspectionController.dashboard);
-inspectionRouter.get('/statistics', requireMinRole(Role.OWNER), inspectionController.statistics);
+inspectionRouter.get('/dashboard', ...owner, inspectionController.dashboard);
+inspectionRouter.get('/statistics', ...owner, inspectionController.statistics);

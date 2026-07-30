@@ -33,8 +33,9 @@ export const apiRouter = Router();
 
 apiRouter.use(healthRouter);
 apiRouter.use(complianceRouter);
-apiRouter.use(inspectionRouter);
 apiRouter.use('/auth', authRouter);
+/** Prefixed — never mount at API root with router-level auth (blocks /auth/login). */
+apiRouter.use('/inspection', inspectionRouter);
 apiRouter.use('/users', userRouter);
 apiRouter.use('/machines', machineRouter);
 apiRouter.use('/brands', brandRouter);
