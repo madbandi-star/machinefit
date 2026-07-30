@@ -1,6 +1,6 @@
 # Latest test handoff ? machine-cover upload hang fix
 
-**Branch:** `main` · **Commit:** `8a271a5`
+**Branch:** `main` · **Commit:** `997066f`
 
 ## Change
 
