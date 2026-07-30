@@ -6,6 +6,7 @@ export type IconName =
   | 'records'
   | 'growthAnalysis'
   | 'user'
+  | 'bodyweight'
   | 'search'
   | 'qr'
   | 'chevronRight'
@@ -72,6 +73,15 @@ const PATHS: Record<IconName, ReactElement> = {
     <>
       <circle cx="12" cy="8" r="3.5" />
       <path d="M5 19.5c0-3.5 3.1-5.5 7-5.5s7 2 7 5.5" />
+    </>
+  ),
+  /** Standing figure — quieter than `user` profile silhouette; for 맨몸 chips. */
+  bodyweight: (
+    <>
+      <circle cx="12" cy="5.75" r="2.1" />
+      <path d="M12 8.5v5.25" />
+      <path d="M8.25 11.25 12 9.75l3.75 1.5" />
+      <path d="M9.5 20 12 13.75 14.5 20" />
     </>
   ),
   search: (

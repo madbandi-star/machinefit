@@ -2,10 +2,17 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
 import { BRAND_CODES } from '@machinefit/shared';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import { getLocalizedName } from '@/utils/localizedName';
 import { prepareBrandsForMachineSearch } from '@/utils/sortBrandsForSearch';
 import { brandUsesWordmarkChip, resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
+
+function nonMachineBrandGlyph(code: string): IconName | null {
+  if (code === BRAND_CODES.BODYWEIGHT) return 'bodyweight';
+  if (code === BRAND_CODES.FREE_WEIGHT) return 'dumbbell';
+  return null;
+}
 
 interface BrandFilterChipsProps {
   brands: Brand[];
@@ -55,6 +62,7 @@ function BrandLogoChip({
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
   const showLogo = Boolean(logoUrl) && !logoFailed;
   const wordmark = showLogo && brandUsesWordmarkChip(brand.code);
+  const glyph = nonMachineBrandGlyph(brand.code);
   const displayName = brandChipDisplayName(brand, label);
   const nameLines = brandChipNameLines(displayName);
 
@@ -87,14 +95,20 @@ function BrandLogoChip({
     <button
       type="button"
       className={`filter-chip filter-chip--brand${showLogo ? ' filter-chip--brand-has-logo' : ''}${
-        nameLines.length > 1 ? ' filter-chip--brand-multiline' : ''
-      }${active ? ' filter-chip--active' : ''}`}
+        glyph ? ' filter-chip--brand-has-glyph' : ''
+      }${nameLines.length > 1 ? ' filter-chip--brand-multiline' : ''}${
+        active ? ' filter-chip--active' : ''
+      }`}
       onClick={onSelect}
       aria-pressed={active}
       aria-label={label}
       data-brand-code={brand.code}
     >
-      {showLogo ? (
+      {glyph ? (
+        <span className="filter-chip__brand-glyph" aria-hidden>
+          <Icon name={glyph} size={15} strokeWidth={1.9} />
+        </span>
+      ) : showLogo ? (
         <span className="filter-chip__brand-logo-wrap" aria-hidden>
           <img
             key={`${brand.code}:${logoUrl}`}
