@@ -1,39 +1,36 @@
 {
-  "title": "Admin page for machine tips & warnings",
-  "summary": "??? '??ï¿½?' ??? ??. ??? ????/???? ? ??? ???? machines + machine_settings? ??? ?? ??? ??.",
-  "git": { "branch": "main", "commit": "0065a1a" },
+  "title": "Search page: favorites, muscle row, All chip, recent searches",
+  "summary": "?? ?? ??? ????·???(???+???)·??? ??. ??? '??' ? ??(???). ?? ?? ??. ??? ??? ??? ??? ??.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "shared/src/validators/admin-catalog.schema.ts",
-    "backend/server/repositories/admin-catalog.repository.ts",
-    "backend/server/services/admin-catalog.service.ts",
-    "backend/server/controllers/admin-catalog.controller.ts",
-    "backend/server/routes/admin.routes.ts",
-    "backend/server/services/recommendation.service.ts",
-    "frontend/src/pages/admin/machine-tips/AdminMachineTipsPage.tsx",
-    "frontend/src/api/admin.api.ts",
-    "frontend/src/constants/routes.ts",
-    "frontend/src/constants/query-keys.ts",
-    "frontend/src/layouts/AdminLayout.tsx",
-    "frontend/src/pages/admin/dashboard/AdminDashboardPage.tsx",
-    "frontend/src/routes/index.tsx",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/styles/admin.css"
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
+    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
+    "frontend/src/components/machines/RecentMachineSearches/RecentMachineSearches.tsx",
+    "frontend/src/components/navigation/SearchBar/SearchBar.tsx",
+    "frontend/src/components/navigation/SearchBar/SearchBar.css",
+    "frontend/src/components/easy-mode/EasyMachinePicker.tsx",
+    "frontend/src/constants/machine-search-defaults.ts",
+    "frontend/src/utils/recentMachineSearches.ts",
+    "frontend/src/styles/machines.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json"
   ],
-  "testFocus": "Admin ? ??ï¿½?: ??ï¿½??ï¿½??. ?? ? ?? ?? ?? ??? ??/???? ????.",
+  "testFocus": "??: ?? ??, ???? ???/??/????, ?? ??·???·??, ??? ???",
   "fastChecks": [
-    "npm run build --workspace=shared",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "Render backend redeploy required",
-    "Admin nav shows ??ï¿½?",
-    "Edit tips for a machine, save, run recommendation for that machine"
+    "Ctrl+F5 after Pages deploy",
+    "Muscle All selected by default left of ?",
+    "Card shows name / muscle icon+label / brand; heart on right",
+    "Recent searches under search bar",
+    "Search icon visible on mobile"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": true
+    "backendDeployNeeded": false
   },
-  "asIs": "??? ??/?? ???? ??? UI ??(??/SQL?).",
-  "toBe": "Admin?? ??? ????ï¿½??? ?? ??, ??? ??."
+  "asIs": "?? ?? ?, ?? ??, ??? ????/??? ??, ???? ??, ??? ??? ??.",
+  "toBe": "?? ?? + ???? + ?? ??/???? + ??? ??."
 }

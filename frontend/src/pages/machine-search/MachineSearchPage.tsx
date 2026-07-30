@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
 import { BrandFilterChips } from '@/components/machines/BrandFilterChips/BrandFilterChips';
 import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
+import { RecentMachineSearches } from '@/components/machines/RecentMachineSearches/RecentMachineSearches';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
@@ -17,9 +18,18 @@ import {
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi, machineApi } from '@/api';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useFavoritesList } from '@/hooks/useFavoritesList';
+import {
+  clearRecentMachineSearches,
+  getRecentMachineSearches,
+  pushRecentMachineSearch,
+  removeRecentMachineSearch,
+} from '@/utils/recentMachineSearches';
 
-function resolveMuscleParam(raw: string | null): string {
-  return raw?.trim() || DEFAULT_SEARCH_MUSCLE_GROUP;
+function resolveMuscleParam(raw: string | null): string | null {
+  const trimmed = raw?.trim();
+  if (!trimmed || trimmed === 'all') return DEFAULT_SEARCH_MUSCLE_GROUP;
+  return trimmed;
 }
 
 function resolveBrandParam(raw: string | null): string | null {
@@ -33,10 +43,13 @@ export function MachineSearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const debouncedQuery = useDebouncedValue(query, 250);
-  const [muscleGroup, setMuscleGroup] = useState(() => resolveMuscleParam(searchParams.get('muscle')));
+  const [muscleGroup, setMuscleGroup] = useState<string | null>(() =>
+    resolveMuscleParam(searchParams.get('muscle'))
+  );
   const [brandCode, setBrandCode] = useState<string | null>(() =>
     resolveBrandParam(searchParams.get('brand'))
   );
+  const [recentSearches, setRecentSearches] = useState(() => getRecentMachineSearches());
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
@@ -44,17 +57,16 @@ export function MachineSearchPage() {
     setBrandCode(resolveBrandParam(searchParams.get('brand')));
   }, [searchParams]);
 
-  // Ensure muscle default is in the URL; brand default is “all” (no brand param).
+  // Drop legacy forced muscle=back so “전체” is the default.
   useEffect(() => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
         let changed = false;
-        if (!next.get('muscle')?.trim()) {
-          next.set('muscle', DEFAULT_SEARCH_MUSCLE_GROUP);
+        if (next.get('muscle') === 'all') {
+          next.delete('muscle');
           changed = true;
         }
-        // Drop legacy forced BODYWEIGHT default so “전체” is selected.
         if (next.get('brand') === 'all') {
           next.delete('brand');
           changed = true;
@@ -79,13 +91,20 @@ export function MachineSearchPage() {
     );
   }, [debouncedQuery, setSearchParams]);
 
-  const writeSearchParams = (patch: { muscle?: string; brand?: string | null }) => {
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    if (trimmed.length < 2) return;
+    setRecentSearches(pushRecentMachineSearch(trimmed));
+  }, [debouncedQuery]);
+
+  const writeSearchParams = (patch: { muscle?: string | null; brand?: string | null }) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        const muscle = patch.muscle ?? muscleGroup;
+        const muscle = patch.muscle !== undefined ? patch.muscle : muscleGroup;
         const brand = patch.brand !== undefined ? patch.brand : brandCode;
-        next.set('muscle', muscle);
+        if (muscle) next.set('muscle', muscle);
+        else next.delete('muscle');
         if (brand) next.set('brand', brand);
         else next.delete('brand');
         next.delete('scope');
@@ -99,7 +118,7 @@ export function MachineSearchPage() {
     setQuery(value);
   };
 
-  const handleMuscleChange = (value: string) => {
+  const handleMuscleChange = (value: string | null) => {
     setMuscleGroup(value);
     writeSearchParams({ muscle: value });
   };
@@ -107,6 +126,18 @@ export function MachineSearchPage() {
   const handleBrandChange = (value: string | null) => {
     setBrandCode(value);
     writeSearchParams({ brand: value });
+  };
+
+  const handleRecentSelect = (value: string) => {
+    setQuery(value);
+  };
+
+  const handleRecentRemove = (value: string) => {
+    setRecentSearches(removeRecentMachineSearch(value));
+  };
+
+  const handleRecentClearAll = () => {
+    setRecentSearches(clearRecentMachineSearches());
   };
 
   const { data: brands = [] } = useQuery({
@@ -118,13 +149,22 @@ export function MachineSearchPage() {
     staleTime: 10 * 60_000,
   });
 
+  const { data: favorites, isFetched: favoritesFetched } = useFavoritesList();
+  const favoriteByCode = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const item of favorites ?? []) {
+      map.set(item.machineCode, item.id);
+    }
+    return map;
+  }, [favorites]);
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = {
         limit: 100,
-        muscleGroup,
       };
+      if (muscleGroup) params.muscleGroup = muscleGroup;
       if (brandCode) params.brandCode = brandCode;
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
@@ -140,6 +180,12 @@ export function MachineSearchPage() {
     <div className="machine-search">
       <PageShell>
         <SearchBar value={query} onChange={handleQueryChange} placeholder={t('searchPlaceholder')} />
+        <RecentMachineSearches
+          items={recentSearches}
+          onSelect={handleRecentSelect}
+          onRemove={handleRecentRemove}
+          onClearAll={handleRecentClearAll}
+        />
         <FilterChips value={muscleGroup} onChange={handleMuscleChange} />
         <BrandFilterChips brands={brands} value={brandCode} onChange={handleBrandChange} />
         <h2 className="filter-section__title machine-search__results-title">
@@ -150,9 +196,18 @@ export function MachineSearchPage() {
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />
         ) : (
-          <div className={`machine-list machine-list--recommend${isFetching ? ' machine-list--fetching' : ''}`}>
+          <div
+            className={`machine-list machine-list--recommend${isFetching ? ' machine-list--fetching' : ''}`}
+          >
             {data.map((machine) => (
-              <MachineListItem key={machine.id} machine={machine} selectedMuscle={muscleGroup} />
+              <MachineListItem
+                key={machine.id}
+                machine={machine}
+                selectedMuscle={muscleGroup}
+                initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
+                initialFavoriteId={favoriteByCode.get(machine.code)}
+                showFavorite
+              />
             ))}
           </div>
         )}

@@ -48,7 +48,7 @@ export function EasyMachinePicker({
   const { t, i18n } = useTranslation(['common', 'machines']);
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebouncedValue(query, 250);
-  const [muscleGroup, setMuscleGroup] = useState<string>(DEFAULT_SEARCH_MUSCLE_GROUP);
+  const [muscleGroup, setMuscleGroup] = useState<string | null>(DEFAULT_SEARCH_MUSCLE_GROUP);
   const [brandCode, setBrandCode] = useState<string | null>(DEFAULT_SEARCH_BRAND_CODE);
   const [detail, setDetail] = useState<Machine | null>(null);
   const [targetMuscle, setTargetMuscle] = useState<TargetMuscleGroup | null>(null);
@@ -94,8 +94,8 @@ export function EasyMachinePicker({
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = {
         limit: 100,
-        muscleGroup,
       };
+      if (muscleGroup) params.muscleGroup = muscleGroup;
       if (brandCode) params.brandCode = brandCode;
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);

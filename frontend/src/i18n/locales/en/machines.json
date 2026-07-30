@@ -11,6 +11,11 @@
   "muscleSectionTitle": "Muscle groups",
   "brandSectionTitle": "Brands",
   "recommendedMachinesTitle": "Recommended machines",
+  "recentSearches": {
+    "title": "Recent searches",
+    "clearAll": "Clear all",
+    "removeItem": "Remove {{query}}"
+  },
   "notFound": "Machine not found",
   "error": "Error",
   "muscleGroups": {

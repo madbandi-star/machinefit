@@ -11,6 +11,11 @@
   "muscleSectionTitle": "근육군",
   "brandSectionTitle": "브랜드",
   "recommendedMachinesTitle": "추천 머신",
+  "recentSearches": {
+    "title": "최근 검색",
+    "clearAll": "전체삭제",
+    "removeItem": "{{query}} 삭제"
+  },
   "notFound": "머신을 찾을 수 없습니다",
   "error": "오류",
   "muscleGroups": {

@@ -1,7 +1,10 @@
-import { BRAND_CODES, type TargetMuscleGroup } from '@machinefit/shared';
+import { BRAND_CODES } from '@machinefit/shared';
 
-/** Default muscle filter on machine search (등). */
-export const DEFAULT_SEARCH_MUSCLE_GROUP: TargetMuscleGroup = 'back';
+/**
+ * Default muscle filter on machine search: all muscles.
+ * `null` means no muscleGroup query param (전체).
+ */
+export const DEFAULT_SEARCH_MUSCLE_GROUP: string | null = null;
 
 /**
  * Default brand filter on machine search: all brands.

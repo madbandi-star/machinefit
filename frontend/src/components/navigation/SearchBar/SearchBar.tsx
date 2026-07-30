@@ -11,6 +11,7 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarProps) {
   const { t } = useTranslation();
+  const label = placeholder ?? t('actions.search');
 
   return (
     <form
@@ -21,14 +22,17 @@ export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarP
       }}
     >
       <div className="search-bar__field">
-        <Icon name="search" size={18} className="search-bar__leading-icon" aria-hidden />
+        <span className="search-bar__leading" aria-hidden>
+          <Icon name="search" size={18} className="search-bar__leading-icon" />
+        </span>
         <input
           className="input search-bar__input"
           type="search"
+          enterKeyHint="search"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder ?? t('actions.search')}
-          aria-label={placeholder ?? t('actions.search')}
+          placeholder={label}
+          aria-label={label}
         />
       </div>
       {onSubmit ? (
