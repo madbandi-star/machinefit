@@ -65,6 +65,7 @@ export function EquipmentInventoryPage() {
               <span className={`health-band health-band--${m.healthBand}`}>
                 Health {m.healthScore}
               </span>
+              {m.qrCode ? <span>QR {m.qrCode}</span> : <span>QR GM-{m.id}</span>}
             </div>
             <div className="inspection-machine-row__actions">
               <Link
@@ -72,6 +73,9 @@ export function EquipmentInventoryPage() {
                 to={`${ROUTES.OWNER_EQUIPMENT_INSPECTION_NEW}?gymMachineId=${m.id}`}
               >
                 점검 시작
+              </Link>
+              <Link className="btn btn--secondary" to={`/equipment/qr/${m.id}`}>
+                QR 열기
               </Link>
             </div>
           </div>

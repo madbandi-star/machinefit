@@ -215,4 +215,139 @@ export interface InspectionDashboardStats {
   inspectionsThisMonth: number;
   openFaults: number;
   overdueInspections: number;
+  /** Extended aggregates (optional on basic dashboard) */
+  brandFaultRates?: Array<{
+    brandCode?: string;
+    brandName: string;
+    faultCount: number;
+    machineCount: number;
+    faultRate: number;
+  }>;
+  topFaultedMachines?: Array<{
+    gymMachineId: string;
+    machineName: string;
+    machineCode?: string;
+    faultCount: number;
+  }>;
+  topUsedMachines?: Array<{
+    gymMachineId: string;
+    machineName: string;
+    machineCode?: string;
+    usageCount: number;
+    totalVolume: number;
+  }>;
+  monthlyInspectionRates?: Array<{
+    month: string;
+    inspectedMachines: number;
+    totalMachines: number;
+    rate: number;
+  }>;
+  pmCompletionRate?: number;
+  avgRepairCost?: number;
+  partsReplacementHistory?: Array<{
+    id: string;
+    gymMachineId: string;
+    machineName?: string;
+    partName: string;
+    lastReplacedAt?: string | null;
+    nextReplaceDate?: string | null;
+  }>;
+}
+
+export interface MachinePmSchedule {
+  id: string;
+  gymId: string;
+  gymMachineId: string;
+  cycleType: PmCycleType;
+  usageLimitCount?: number | null;
+  usageLimitVolume?: number | null;
+  lastCompletedAt?: string | null;
+  nextDueAt?: string | null;
+  status: 'SCHEDULED' | 'DUE' | 'DONE' | 'SKIPPED';
+  createdAt: string;
+  updatedAt?: string;
+  machineName?: string;
+  machineCode?: string;
+  nickname?: string;
+}
+
+export interface CreateMachinePmScheduleInput {
+  gymMachineId: string;
+  cycleType: PmCycleType;
+  usageLimitCount?: number;
+  usageLimitVolume?: number;
+  nextDueAt?: string;
+}
+
+export interface MachineRepair {
+  id: string;
+  faultId: string;
+  gymId: string;
+  repairCompany?: string | null;
+  engineer?: string | null;
+  laborCost: number;
+  partsCost: number;
+  totalCost: number;
+  repairNote?: string | null;
+  completedAt?: string | null;
+  createdAt: string;
+  machineName?: string;
+  symptom?: string;
+}
+
+export interface CreateMachineRepairInput {
+  faultId: string;
+  repairCompany?: string;
+  engineer?: string;
+  laborCost?: number;
+  partsCost?: number;
+  repairNote?: string;
+  completedAt?: string;
+}
+
+export interface MachinePart {
+  id: string;
+  gymId: string;
+  gymMachineId: string;
+  partName: string;
+  replacementCycleDays?: number | null;
+  replacementCycleUsage?: number | null;
+  lastReplacedAt?: string | null;
+  nextReplaceDate?: string | null;
+  stockQuantity: number;
+  createdAt: string;
+  machineName?: string;
+  machineCode?: string;
+}
+
+export interface CreateMachinePartInput {
+  gymMachineId: string;
+  partName: string;
+  replacementCycleDays?: number;
+  replacementCycleUsage?: number;
+  lastReplacedAt?: string;
+  nextReplaceDate?: string;
+  stockQuantity?: number;
+}
+
+export interface UpdateMachinePartInput {
+  partName?: string;
+  replacementCycleDays?: number | null;
+  replacementCycleUsage?: number | null;
+  lastReplacedAt?: string | null;
+  nextReplaceDate?: string | null;
+  stockQuantity?: number;
+}
+
+export interface GymMachinePhoto {
+  id: string;
+  gymMachineId: string;
+  imageType: GymMachinePhotoType;
+  imageUrl: string;
+  uploadedBy?: string | null;
+  createdAt: string;
+}
+
+export interface InspectionTemplateAdminItem extends InspectionTemplateItem {
+  createdAt?: string;
 }

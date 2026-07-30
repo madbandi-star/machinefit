@@ -17,6 +17,7 @@ type ItemState = {
   name: string;
   result: InspectionItemResult | null;
   note: string;
+  photoUrl: string;
 };
 
 function templateLabel(item: InspectionTemplateItem): string {
@@ -68,6 +69,7 @@ export function EquipmentInspectionCreatePage() {
         name: templateLabel(t),
         result: null,
         note: '',
+        photoUrl: '',
       }));
     });
   }, [templates]);
@@ -90,6 +92,7 @@ export function EquipmentInspectionCreatePage() {
           itemKey: i.itemKey,
           result: i.result!,
           note: i.result === 'FAIL' ? i.note || undefined : undefined,
+          photoUrl: i.result === 'FAIL' && i.photoUrl ? i.photoUrl : undefined,
         })),
       });
     },
@@ -205,8 +208,42 @@ export function EquipmentInspectionCreatePage() {
                   rows={2}
                   value={item.note}
                   onChange={(e) => setItemNote(item.templateItemId, e.target.value)}
-                  placeholder="사진·영상은 추후 업로드 연동"
+                  placeholder="이상 내용을 적어 주세요"
                 />
+                <label htmlFor={`photo-${item.templateItemId}`}>사진 첨부</label>
+                <input
+                  id={`photo-${item.templateItemId}`}
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file || !gymMachineId) return;
+                    try {
+                      const res = await inspectionApi.uploadPhoto(
+                        gymMachineId,
+                        file,
+                        'INSPECTION'
+                      );
+                      setItems((prev) =>
+                        prev.map((i) =>
+                          i.templateItemId === item.templateItemId
+                            ? { ...i, photoUrl: res.data.data.imageUrl }
+                            : i
+                        )
+                      );
+                      showToast('사진이 업로드되었습니다', 'success');
+                    } catch {
+                      showToast('사진 업로드 실패', 'error');
+                    }
+                  }}
+                />
+                {item.photoUrl ? (
+                  <img
+                    src={item.photoUrl}
+                    alt=""
+                    style={{ maxWidth: '100%', borderRadius: '0.5rem', marginTop: '0.35rem' }}
+                  />
+                ) : null}
               </div>
             ) : null}
           </div>

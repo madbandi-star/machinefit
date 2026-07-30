@@ -329,4 +329,53 @@ export const storageService = {
       // ignore missing local files
     }
   },
+
+  /** Gym asset / inspection photos — reuse machine-cover bucket under gym-machines/ prefix. */
+  async saveGymMachinePhoto(params: {
+    gymMachineId: string;
+    photoId: string;
+    extension: string;
+    mimeType: string;
+    buffer: Buffer;
+  }): Promise<StoredImageObject> {
+    const storagePath = `gym-machines/${params.gymMachineId}/${params.photoId}.${params.extension}`;
+    const client = getSupabase();
+    if (client) {
+      const { error } = await client.storage
+        .from(env.MACHINE_COVER_IMAGE_BUCKET)
+        .upload(storagePath, params.buffer, {
+          contentType: params.mimeType || 'image/jpeg',
+          upsert: true,
+          cacheControl: '31536000',
+        });
+      if (error) {
+        // Local fallback when bucket missing
+        const absolute = path.join(LOCAL_MACHINE_COVER_ROOT, storagePath);
+        await mkdir(path.dirname(absolute), { recursive: true });
+        await writeFile(absolute, params.buffer);
+        return {
+          storagePath,
+          publicUrl: `${publicApiBase()}/media/machine-covers/${storagePath
+            .split('/')
+            .map(encodeURIComponent)
+            .join('/')}`,
+          provider: 'local',
+        };
+      }
+      const { data } = client.storage.from(env.MACHINE_COVER_IMAGE_BUCKET).getPublicUrl(storagePath);
+      return { storagePath, publicUrl: data.publicUrl, provider: 'supabase' };
+    }
+
+    const absolute = path.join(LOCAL_MACHINE_COVER_ROOT, storagePath);
+    await mkdir(path.dirname(absolute), { recursive: true });
+    await writeFile(absolute, params.buffer);
+    return {
+      storagePath,
+      publicUrl: `${publicApiBase()}/media/machine-covers/${storagePath
+        .split('/')
+        .map(encodeURIComponent)
+        .join('/')}`,
+      provider: 'local',
+    };
+  },
 };

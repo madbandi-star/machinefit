@@ -192,20 +192,24 @@ const equipmentStats = () =>
     default: m.EquipmentStatsPage,
   }));
 const equipmentPm = () =>
-  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+  import('@/pages/gym-owner/equipment/EquipmentPmPage').then((m) => ({
     default: m.EquipmentPmPage,
   }));
 const equipmentRepairs = () =>
-  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+  import('@/pages/gym-owner/equipment/EquipmentRepairsPage').then((m) => ({
     default: m.EquipmentRepairsPage,
   }));
 const equipmentParts = () =>
-  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+  import('@/pages/gym-owner/equipment/EquipmentPartsPage').then((m) => ({
     default: m.EquipmentPartsPage,
   }));
 const equipmentSettings = () =>
-  import('@/pages/gym-owner/equipment/EquipmentPlaceholders').then((m) => ({
+  import('@/pages/gym-owner/equipment/EquipmentSettingsPage').then((m) => ({
     default: m.EquipmentSettingsPage,
+  }));
+const equipmentQrLanding = () =>
+  import('@/pages/gym-owner/equipment/EquipmentQrLandingPage').then((m) => ({
+    default: m.EquipmentQrLandingPage,
   }));
 const memberMachineReport = () =>
   import('@/pages/gym-owner/equipment/MemberMachineReportPage').then((m) => ({
@@ -331,6 +335,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.MACHINE_DETAIL, element: lazyRoute(machineDetail) },
         { path: ROUTES.SCAN, element: lazyRoute(qrScan) },
         { path: ROUTES.QR, element: lazyRoute(qrRedirect) },
+        { path: ROUTES.EQUIPMENT_QR, element: lazyRoute(equipmentQrLanding) },
         { path: ROUTES.GYMS, element: lazyRoute(gymFinder) },
         { path: ROUTES.GYM_DETAIL, element: lazyRoute(gymDetail) },
         { path: ROUTES.COMMUNITY, element: lazyRoute(community) },

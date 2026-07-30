@@ -4,7 +4,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { qrApi } from '@/api';
-import { machineDetailPath, parseMachineCodeFromQrPayload } from '@/utils/qr';
+import { machineDetailPath, parseGymMachineIdFromQrPayload, parseMachineCodeFromQrPayload, equipmentQrPath } from '@/utils/qr';
 import '@/styles/phase4.css';
 
 type CameraIssue = 'denied' | 'not_found' | 'unavailable' | null;
@@ -13,14 +13,54 @@ async function navigateToMachine(
   payload: string,
   navigate: ReturnType<typeof useNavigate>
 ): Promise<void> {
+  const gymMachineId = parseGymMachineIdFromQrPayload(payload);
+  if (gymMachineId) {
+    navigate(equipmentQrPath(gymMachineId));
+    return;
+  }
+
   const machineCode = parseMachineCodeFromQrPayload(payload);
   if (machineCode) {
+    // Still try API first — gym asset codes may look like catalog codes
+    try {
+      const res = await qrApi.resolve(payload);
+      const data = res.data.data as {
+        machineCode: string;
+        deepLinkPath?: string;
+        gymMachineId?: string;
+        kind?: string;
+      };
+      if (data.kind === 'gym_machine' && data.gymMachineId) {
+        navigate(equipmentQrPath(data.gymMachineId));
+        return;
+      }
+      if (data.deepLinkPath?.startsWith('/equipment/qr/')) {
+        navigate(data.deepLinkPath);
+        return;
+      }
+    } catch {
+      // fall through to catalog
+    }
     navigate(machineDetailPath(machineCode));
     return;
   }
 
   const res = await qrApi.resolve(payload);
-  navigate(machineDetailPath(res.data.data.machineCode));
+  const data = res.data.data as {
+    machineCode: string;
+    deepLinkPath?: string;
+    gymMachineId?: string;
+    kind?: string;
+  };
+  if (data.kind === 'gym_machine' && data.gymMachineId) {
+    navigate(equipmentQrPath(data.gymMachineId));
+    return;
+  }
+  if (data.deepLinkPath?.startsWith('/equipment/qr/')) {
+    navigate(data.deepLinkPath);
+    return;
+  }
+  navigate(machineDetailPath(data.machineCode));
 }
 
 function classifyCameraError(error: unknown): CameraIssue {

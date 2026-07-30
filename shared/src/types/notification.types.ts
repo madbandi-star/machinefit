@@ -34,7 +34,15 @@ export type NotificationType =
   | 'friend_activity'
   | 'friend_pr'
   | 'friend_workout_done'
-  | 'friend_rank_change';
+  | 'friend_rank_change'
+  | 'inspection_due'
+  | 'inspection_overdue'
+  | 'machine_fault'
+  | 'machine_repair_done'
+  | 'pm_due'
+  | 'pm_overdue'
+  | 'part_replace_due'
+  | 'member_machine_report';
 export interface Notification {
   id: string;
   userId: string;

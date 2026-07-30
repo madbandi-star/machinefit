@@ -74,6 +74,7 @@ export const ROUTES = {
   OWNER_EQUIPMENT_PARTS: '/owner/equipment/parts',
   OWNER_EQUIPMENT_STATS: '/owner/equipment/stats',
   OWNER_EQUIPMENT_SETTINGS: '/owner/equipment/settings',
+  EQUIPMENT_QR: '/equipment/qr/:gymMachineId',
   ADMIN: '/admin',
   ADMIN_USERS: '/admin/users',
   ADMIN_GYMS: '/admin/gyms',

@@ -5,6 +5,9 @@ export interface QrResolveResult {
   machineCode: string;
   deepLinkPath: string;
   machineId: string;
+  kind?: 'catalog' | 'gym_machine';
+  gymMachineId?: string;
+  gymId?: string;
 }
 
 export const qrRepository = {

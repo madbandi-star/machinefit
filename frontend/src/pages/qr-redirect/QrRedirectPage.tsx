@@ -5,7 +5,12 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { qrApi } from '@/api';
-import { machineDetailPath, parseMachineCodeFromQrPayload } from '@/utils/qr';
+import {
+  equipmentQrPath,
+  machineDetailPath,
+  parseGymMachineIdFromQrPayload,
+  parseMachineCodeFromQrPayload,
+} from '@/utils/qr';
 import { ROUTES } from '@/constants/routes';
 
 export function QrRedirectPage() {
@@ -21,9 +26,9 @@ export function QrRedirectPage() {
     }
 
     const resolve = async () => {
-      const machineCode = parseMachineCodeFromQrPayload(qrCode);
-      if (machineCode) {
-        navigate(machineDetailPath(machineCode), { replace: true });
+      const gymMachineId = parseGymMachineIdFromQrPayload(qrCode);
+      if (gymMachineId) {
+        navigate(equipmentQrPath(gymMachineId), { replace: true });
         return;
       }
 
@@ -34,8 +39,22 @@ export function QrRedirectPage() {
           // optional logging
         }
         const res = await qrApi.resolve(qrCode);
-        navigate(machineDetailPath(res.data.data.machineCode), { replace: true });
+        const data = res.data.data;
+        if (data.kind === 'gym_machine' && data.gymMachineId) {
+          navigate(equipmentQrPath(data.gymMachineId), { replace: true });
+          return;
+        }
+        if (data.deepLinkPath?.startsWith('/equipment/qr/')) {
+          navigate(data.deepLinkPath, { replace: true });
+          return;
+        }
+        navigate(machineDetailPath(data.machineCode), { replace: true });
       } catch {
+        const machineCode = parseMachineCodeFromQrPayload(qrCode);
+        if (machineCode) {
+          navigate(machineDetailPath(machineCode), { replace: true });
+          return;
+        }
         setFailed(true);
       }
     };
