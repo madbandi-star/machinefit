@@ -41,10 +41,12 @@ export function MachineDetailPage() {
       return res.data.data;
     },
     enabled: !!machineCode,
+    // Keep hero visible while switching FW muscle covers (`?muscle=`).
+    placeholderData: (prev) => prev,
   });
 
-  if (isLoading) return <Skeleton count={3} height={100} />;
-  if (isError) {
+  if (isLoading && !machine) return <Skeleton count={3} height={100} />;
+  if (isError && !machine) {
     return (
       <PageShell title={t('error', { defaultValue: 'Error' })}>
         <QueryErrorMessage onRetry={() => void refetch()} />
@@ -102,6 +104,7 @@ export function MachineDetailPage() {
           machineCode={machineCode}
           fixed={useCompactMachineDetail}
           initialMuscle={muscleParam}
+          syncMuscleToUrl={isFreeWeight}
         />
       ) : null}
     </div>

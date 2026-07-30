@@ -1,36 +1,27 @@
 {
-  "title": "Search page: favorites, muscle row, All chip, recent searches",
-  "summary": "?? ?? ??? ????�???(???+???)�??? ??. ??? '??' ? ??(???). ?? ?? ??. ??? ??? ??? ??? ??.",
-  "git": { "branch": "main", "commit": "53c9702" },
+  "title": "FW detail: hero cover follows target muscle chips",
+  "summary": "On free-weight machine detail, selecting a target muscle chip updates ?muscle= and refetches the machine so the hero shows that muscle's cover photo (e.g. barbell + back vs chest).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
-    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
-    "frontend/src/components/machines/RecentMachineSearches/RecentMachineSearches.tsx",
-    "frontend/src/components/navigation/SearchBar/SearchBar.tsx",
-    "frontend/src/components/navigation/SearchBar/SearchBar.css",
-    "frontend/src/components/easy-mode/EasyMachinePicker.tsx",
-    "frontend/src/constants/machine-search-defaults.ts",
-    "frontend/src/utils/recentMachineSearches.ts",
-    "frontend/src/styles/machines.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
+    "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
+    "frontend/src/components/machines/MachineHero/MachineHero.tsx",
+    "frontend/src/components/media/SafeImage.tsx"
   ],
-  "testFocus": "??: ?? ??, ???? ???/??/????, ?? ??�???�??, ??? ???",
+  "testFocus": "FW machine detail (e.g. FW_BARBELL): tap target muscle chips and confirm hero image switches per muscle cover.",
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Muscle All selected by default left of ?",
-    "Card shows name / muscle icon+label / brand; heart on right",
-    "Recent searches under search bar",
-    "Search icon visible on mobile"
+    "Open free-weight machine (??) without muscle ? default cover",
+    "Select ? / ?? / ?? ? hero image matches that muscle cover",
+    "Deselect muscle chip ? URL muscle cleared, default cover returns"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "?? ?? ?, ?? ??, ??? ????/??? ??, ???? ??, ??? ??? ??.",
-  "toBe": "?? ?? + ???? + ?? ??/???? + ??? ??."
+  "asIs": "FW target muscle chips only affected recommend payload; hero stayed on initial cover.",
+  "toBe": "Chip selection syncs ?muscle=; detail refetch updates hero to per-muscle cover."
 }

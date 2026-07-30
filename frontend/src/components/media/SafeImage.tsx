@@ -1,4 +1,4 @@
-import { useState, type ImgHTMLAttributes } from 'react';
+import { useEffect, useState, type ImgHTMLAttributes } from 'react';
 
 export interface SafeImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   /** Shown when `src` is missing or the image fails to load. */
@@ -11,6 +11,11 @@ export interface SafeImageProps extends ImgHTMLAttributes<HTMLImageElement> {
  */
 export function SafeImage({ src, fallbackSrc, onError, alt = '', ...props }: SafeImageProps) {
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
   const resolved = !src || failed ? fallbackSrc : src;
 
   if (!resolved) return null;

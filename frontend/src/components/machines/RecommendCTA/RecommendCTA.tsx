@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Role, hasMinRole, type TargetMuscleGroup } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
@@ -15,13 +15,21 @@ interface RecommendCTAProps {
   machineCode: string;
   fixed?: boolean;
   initialMuscle?: TargetMuscleGroup | null;
+  /** When true (FW detail), muscle chip selection syncs to `?muscle=` so the hero cover updates. */
+  syncMuscleToUrl?: boolean;
 }
 
-export function RecommendCTA({ machineCode, fixed = false, initialMuscle = null }: RecommendCTAProps) {
+export function RecommendCTA({
+  machineCode,
+  fixed = false,
+  initialMuscle = null,
+  syncMuscleToUrl = false,
+}: RecommendCTAProps) {
   const { t } = useTranslation('machines');
   const { t: tt } = useTranslation('trade');
   const navigate = useNavigate();
   const location = useLocation();
+  const [, setSearchParams] = useSearchParams();
   const showToast = useUIStore((s) => s.showToast);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
@@ -33,6 +41,21 @@ export function RecommendCTA({ machineCode, fixed = false, initialMuscle = null 
   useEffect(() => {
     setSelectedMuscle(initialMuscle);
   }, [initialMuscle, machineCode]);
+
+  const selectMuscle = (group: TargetMuscleGroup) => {
+    const next = selectedMuscle === group ? null : group;
+    setSelectedMuscle(next);
+    if (!syncMuscleToUrl) return;
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        if (next) params.set('muscle', next);
+        else params.delete('muscle');
+        return params;
+      },
+      { replace: true }
+    );
+  };
 
   const handleClick = () => {
     if (!isAuthenticated) {
@@ -61,9 +84,8 @@ export function RecommendCTA({ machineCode, fixed = false, initialMuscle = null 
                 key={group}
                 type="button"
                 className={`filter-chip${selectedMuscle === group ? ' filter-chip--active' : ''}`}
-                onClick={() =>
-                  setSelectedMuscle((prev) => (prev === group ? null : group))
-                }
+                onClick={() => selectMuscle(group)}
+                aria-pressed={selectedMuscle === group}
               >
                 <MuscleGroupIcon group={group} size={22} className="filter-chip__icon" />
                 <span>{t(`muscleGroups.${group}`)}</span>

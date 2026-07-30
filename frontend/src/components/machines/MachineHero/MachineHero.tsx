@@ -36,6 +36,7 @@ export function MachineHero({ machine, compact = false, selectedMuscle = null }:
         <div className="machine-hero__image-wrap">
           {imageUrl ? (
             <SafeImage
+              key={imageUrl}
               className="machine-hero__image"
               src={imageUrl}
               fallbackSrc={machinePlaceholderUrl()}
