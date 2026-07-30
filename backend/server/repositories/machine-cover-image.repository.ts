@@ -8,6 +8,7 @@ import type {
 import { isFreeWeightMachineCode, TARGET_MUSCLE_GROUPS } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
+import { supportsMachineCoverMuscleVariants } from '../utils/machine-cover-schema.util.js';
 
 type CoverRow = {
   machine_id: string;
@@ -181,58 +182,91 @@ export const machineCoverImageRepository = {
     const offset = (filters.page - 1) * filters.pageSize;
     params.push(filters.pageSize, offset);
 
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
     const result = await pool.query<CoverRow>(
-      `SELECT
-         m.id AS machine_id,
-         m.code AS machine_code,
-         m.name AS machine_name,
-         b.code AS brand_code,
-         b.name AS brand_name,
-         m.muscle_group,
-         c.image_url,
-         c.thumbnail_url,
-         c.original_filename,
-         c.mime_type,
-         c.file_size_bytes,
-         c.width,
-         c.height,
-         c.version,
-         c.created_at,
-         c.updated_at,
-         COALESCE(v.variants_json, '[]'::json) AS variants_json
-       FROM machines m
-       JOIN brands b ON b.id = m.brand_id
-       LEFT JOIN machine_cover_images c
-         ON c.machine_id = m.id AND c.target_muscle_group IS NULL
-       LEFT JOIN LATERAL (
-         SELECT json_agg(
-           json_build_object(
-             'target_muscle_group', mv.target_muscle_group,
-             'image_url', mv.image_url,
-             'thumbnail_url', mv.thumbnail_url,
-             'original_filename', mv.original_filename,
-             'mime_type', mv.mime_type,
-             'file_size_bytes', mv.file_size_bytes,
-             'width', mv.width,
-             'height', mv.height,
-             'version', mv.version,
-             'created_at', mv.created_at,
-             'updated_at', mv.updated_at
-           )
-           ORDER BY mv.target_muscle_group
-         ) AS variants_json
-         FROM machine_cover_images mv
-         WHERE mv.machine_id = m.id
-           AND mv.target_muscle_group IS NOT NULL
-       ) v ON TRUE
-       ${whereSql}
-       ORDER BY b.code ASC, m.code ASC
-       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      muscleVariantsReady
+        ? `SELECT
+             m.id AS machine_id,
+             m.code AS machine_code,
+             m.name AS machine_name,
+             b.code AS brand_code,
+             b.name AS brand_name,
+             m.muscle_group,
+             c.image_url,
+             c.thumbnail_url,
+             c.original_filename,
+             c.mime_type,
+             c.file_size_bytes,
+             c.width,
+             c.height,
+             c.version,
+             c.created_at,
+             c.updated_at,
+             COALESCE(v.variants_json, '[]'::json) AS variants_json
+           FROM machines m
+           JOIN brands b ON b.id = m.brand_id
+           LEFT JOIN machine_cover_images c
+             ON c.machine_id = m.id AND c.target_muscle_group IS NULL
+           LEFT JOIN LATERAL (
+             SELECT json_agg(
+               json_build_object(
+                 'target_muscle_group', mv.target_muscle_group,
+                 'image_url', mv.image_url,
+                 'thumbnail_url', mv.thumbnail_url,
+                 'original_filename', mv.original_filename,
+                 'mime_type', mv.mime_type,
+                 'file_size_bytes', mv.file_size_bytes,
+                 'width', mv.width,
+                 'height', mv.height,
+                 'version', mv.version,
+                 'created_at', mv.created_at,
+                 'updated_at', mv.updated_at
+               )
+               ORDER BY mv.target_muscle_group
+             ) AS variants_json
+             FROM machine_cover_images mv
+             WHERE mv.machine_id = m.id
+               AND mv.target_muscle_group IS NOT NULL
+           ) v ON TRUE
+           ${whereSql}
+           ORDER BY b.code ASC, m.code ASC
+           LIMIT $${params.length - 1} OFFSET $${params.length}`
+        : `SELECT
+             m.id AS machine_id,
+             m.code AS machine_code,
+             m.name AS machine_name,
+             b.code AS brand_code,
+             b.name AS brand_name,
+             m.muscle_group,
+             c.image_url,
+             c.thumbnail_url,
+             c.original_filename,
+             c.mime_type,
+             c.file_size_bytes,
+             c.width,
+             c.height,
+             c.version,
+             c.created_at,
+             c.updated_at,
+             '[]'::json AS variants_json
+           FROM machines m
+           JOIN brands b ON b.id = m.brand_id
+           LEFT JOIN machine_cover_images c ON c.machine_id = m.id
+           ${whereSql}
+           ORDER BY b.code ASC, m.code ASC
+           LIMIT $${params.length - 1} OFFSET $${params.length}`,
       params
     );
 
     return {
-      items: result.rows.map(mapAsset),
+      items: result.rows.map((row) => {
+        const asset = mapAsset(row);
+        if (!muscleVariantsReady) {
+          asset.supportsMuscleVariants = false;
+          asset.muscleVariants = undefined;
+        }
+        return asset;
+      }),
       total,
       page: filters.page,
       pageSize: filters.pageSize,
@@ -246,6 +280,9 @@ export const machineCoverImageRepository = {
     const pool = getPool();
     if (!pool) return null;
     const muscle = targetMuscleGroup?.trim() || null;
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
+    if (muscle && !muscleVariantsReady) return null;
+
     const result = await pool.query<{
       machine_id: string;
       machine_code: string;
@@ -254,16 +291,21 @@ export const machineCoverImageRepository = {
       thumbnail_storage_path: string | null;
       version: number;
     }>(
-      muscle
-        ? `SELECT machine_id, machine_code, target_muscle_group, storage_path, thumbnail_storage_path, version
+      muscleVariantsReady
+        ? muscle
+          ? `SELECT machine_id, machine_code, target_muscle_group, storage_path, thumbnail_storage_path, version
+             FROM machine_cover_images
+             WHERE machine_code = $1 AND target_muscle_group = $2
+             LIMIT 1`
+          : `SELECT machine_id, machine_code, target_muscle_group, storage_path, thumbnail_storage_path, version
+             FROM machine_cover_images
+             WHERE machine_code = $1 AND target_muscle_group IS NULL
+             LIMIT 1`
+        : `SELECT machine_id, machine_code, NULL::varchar AS target_muscle_group, storage_path, thumbnail_storage_path, version
            FROM machine_cover_images
-           WHERE machine_code = $1 AND target_muscle_group = $2
-           LIMIT 1`
-        : `SELECT machine_id, machine_code, target_muscle_group, storage_path, thumbnail_storage_path, version
-           FROM machine_cover_images
-           WHERE machine_code = $1 AND target_muscle_group IS NULL
+           WHERE machine_code = $1
            LIMIT 1`,
-      muscle ? [machineCode, muscle] : [machineCode]
+      muscle && muscleVariantsReady ? [machineCode, muscle] : [machineCode]
     );
     const row = result.rows[0];
     if (!row) return null;
@@ -296,21 +338,29 @@ export const machineCoverImageRepository = {
     if (!pool) return null;
     const column = kind === 'thumb' ? 'thumbnail_data' : 'image_data';
     const muscle = targetMuscleGroup?.trim() || null;
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
+    if (muscle && !muscleVariantsReady) return null;
+
     const result = await pool.query<{
       blob: Buffer | null;
       mime_type: string | null;
       version: number;
     }>(
-      muscle
-        ? `SELECT ${column} AS blob, mime_type, version
-           FROM machine_cover_images
-           WHERE machine_code = $1 AND target_muscle_group = $2
-           LIMIT 1`
+      muscleVariantsReady
+        ? muscle
+          ? `SELECT ${column} AS blob, mime_type, version
+             FROM machine_cover_images
+             WHERE machine_code = $1 AND target_muscle_group = $2
+             LIMIT 1`
+          : `SELECT ${column} AS blob, mime_type, version
+             FROM machine_cover_images
+             WHERE machine_code = $1 AND target_muscle_group IS NULL
+             LIMIT 1`
         : `SELECT ${column} AS blob, mime_type, version
            FROM machine_cover_images
-           WHERE machine_code = $1 AND target_muscle_group IS NULL
+           WHERE machine_code = $1
            LIMIT 1`,
-      muscle ? [machineCode, muscle] : [machineCode]
+      muscle && muscleVariantsReady ? [machineCode, muscle] : [machineCode]
     );
     const row = result.rows[0];
     if (!row?.blob) return null;
@@ -344,49 +394,90 @@ export const machineCoverImageRepository = {
     }
 
     const muscle = input.targetMuscleGroup?.trim() || null;
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
+    if (muscle && !muscleVariantsReady) {
+      throw new Error('Migration 083 required for per-muscle machine covers');
+    }
     const existing = await this.getByCode(input.machineCode, muscle);
 
     if (existing) {
-      await pool.query(
-        `UPDATE machine_cover_images SET
-           machine_code = $2,
-           image_url = $3,
-           thumbnail_url = $4,
-           storage_path = $5,
-           thumbnail_storage_path = $6,
-           original_filename = $7,
-           mime_type = $8,
-           file_size_bytes = $9,
-           width = $10,
-           height = $11,
-           version = $12,
-           image_data = $13,
-           thumbnail_data = $14,
-           updated_at = NOW()
-         WHERE machine_id = $1
-           AND (
-             ($15::text IS NULL AND target_muscle_group IS NULL)
-             OR target_muscle_group = $15
-           )`,
-        [
-          input.machineId,
-          input.machineCode,
-          input.imageUrl,
-          input.thumbnailUrl,
-          input.storagePath,
-          input.thumbnailStoragePath,
-          input.originalFilename,
-          input.mimeType,
-          input.fileSizeBytes,
-          input.width,
-          input.height,
-          input.version,
-          input.imageData,
-          input.thumbnailData,
-          muscle,
-        ]
-      );
-    } else {
+      if (muscleVariantsReady) {
+        await pool.query(
+          `UPDATE machine_cover_images SET
+             machine_code = $2,
+             image_url = $3,
+             thumbnail_url = $4,
+             storage_path = $5,
+             thumbnail_storage_path = $6,
+             original_filename = $7,
+             mime_type = $8,
+             file_size_bytes = $9,
+             width = $10,
+             height = $11,
+             version = $12,
+             image_data = $13,
+             thumbnail_data = $14,
+             updated_at = NOW()
+           WHERE machine_id = $1
+             AND (
+               ($15::text IS NULL AND target_muscle_group IS NULL)
+               OR target_muscle_group = $15
+             )`,
+          [
+            input.machineId,
+            input.machineCode,
+            input.imageUrl,
+            input.thumbnailUrl,
+            input.storagePath,
+            input.thumbnailStoragePath,
+            input.originalFilename,
+            input.mimeType,
+            input.fileSizeBytes,
+            input.width,
+            input.height,
+            input.version,
+            input.imageData,
+            input.thumbnailData,
+            muscle,
+          ]
+        );
+      } else {
+        await pool.query(
+          `UPDATE machine_cover_images SET
+             machine_code = $2,
+             image_url = $3,
+             thumbnail_url = $4,
+             storage_path = $5,
+             thumbnail_storage_path = $6,
+             original_filename = $7,
+             mime_type = $8,
+             file_size_bytes = $9,
+             width = $10,
+             height = $11,
+             version = $12,
+             image_data = $13,
+             thumbnail_data = $14,
+             updated_at = NOW()
+           WHERE machine_id = $1`,
+          [
+            input.machineId,
+            input.machineCode,
+            input.imageUrl,
+            input.thumbnailUrl,
+            input.storagePath,
+            input.thumbnailStoragePath,
+            input.originalFilename,
+            input.mimeType,
+            input.fileSizeBytes,
+            input.width,
+            input.height,
+            input.version,
+            input.imageData,
+            input.thumbnailData,
+          ]
+        );
+      }
+    } else if (muscleVariantsReady) {
       await pool.query(
         `INSERT INTO machine_cover_images (
            machine_id, machine_code, target_muscle_group, image_url, thumbnail_url, storage_path, thumbnail_storage_path,
@@ -401,6 +492,34 @@ export const machineCoverImageRepository = {
           input.machineId,
           input.machineCode,
           muscle,
+          input.imageUrl,
+          input.thumbnailUrl,
+          input.storagePath,
+          input.thumbnailStoragePath,
+          input.originalFilename,
+          input.mimeType,
+          input.fileSizeBytes,
+          input.width,
+          input.height,
+          input.version,
+          input.imageData,
+          input.thumbnailData,
+        ]
+      );
+    } else {
+      await pool.query(
+        `INSERT INTO machine_cover_images (
+           machine_id, machine_code, image_url, thumbnail_url, storage_path, thumbnail_storage_path,
+           original_filename, mime_type, file_size_bytes, width, height, version,
+           image_data, thumbnail_data, created_at, updated_at
+         ) VALUES (
+           $1, $2, $3, $4, $5, $6,
+           $7, $8, $9, $10, $11, $12,
+           $13, $14, NOW(), NOW()
+         )`,
+        [
+          input.machineId,
+          input.machineCode,
           input.imageUrl,
           input.thumbnailUrl,
           input.storagePath,
@@ -453,16 +572,37 @@ export const machineCoverImageRepository = {
     if (!existing) return null;
 
     const muscle = targetMuscleGroup?.trim() || null;
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
     if (muscle) {
+      if (!muscleVariantsReady) return null;
       await pool.query(
         `DELETE FROM machine_cover_images WHERE machine_code = $1 AND target_muscle_group = $2`,
         [machineCode, muscle]
       );
-    } else {
+    } else if (muscleVariantsReady) {
       await pool.query(
         `DELETE FROM machine_cover_images WHERE machine_code = $1 AND target_muscle_group IS NULL`,
         [machineCode]
       );
+      await pool.query(
+        `DELETE FROM machine_images
+         WHERE machine_id = $1
+           AND image_url LIKE '%/media/machine-covers/%'`,
+        [existing.machineId]
+      );
+      await pool.query(
+        `UPDATE machine_images mi
+         SET is_primary = TRUE
+         WHERE mi.id = (
+           SELECT id FROM machine_images
+           WHERE machine_id = $1
+           ORDER BY sort_order ASC, created_at ASC
+           LIMIT 1
+         )`,
+        [existing.machineId]
+      );
+    } else {
+      await pool.query(`DELETE FROM machine_cover_images WHERE machine_code = $1`, [machineCode]);
       await pool.query(
         `DELETE FROM machine_images
          WHERE machine_id = $1

@@ -4,6 +4,7 @@ import { getPool } from '../config/database.js';
 import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
 import { brandAssetMediaUrl } from '../utils/public-api-base.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
+import { supportsMachineCoverMuscleVariants } from '../utils/machine-cover-schema.util.js';
 
 const MACHINE_ID_TTL_MS = 30 * 60_000;
 const machineIdByCodeCache = new Map<string, { expiresAt: number; id: string | null }>();
@@ -230,7 +231,10 @@ export const machineRepository = {
     );
 
     const muscleParamIndex = filters.muscleGroup ? params.indexOf(filters.muscleGroup) + 1 : null;
-    const primaryImageSelect = primaryImageSqlForMuscle(muscleParamIndex);
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
+    const primaryImageSelect = muscleVariantsReady
+      ? primaryImageSqlForMuscle(muscleParamIndex)
+      : `img.image_url AS primary_image_url`;
 
     // List projection: skip tip/how_to blobs — detail page fetches full machine.
     const listPromise = pool.query<
@@ -287,9 +291,13 @@ export const machineRepository = {
     }
 
     const muscle = targetMuscleGroup?.trim() || null;
-    const primaryImageSelect = muscle
-      ? primaryImageSqlForMuscle(2)
-      : primaryImageSqlForMuscle(null);
+    const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
+    const primaryImageSelect =
+      muscleVariantsReady
+        ? muscle
+          ? primaryImageSqlForMuscle(2)
+          : primaryImageSqlForMuscle(null)
+        : `img.image_url AS primary_image_url`;
 
     const result = await pool.query<
       MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
