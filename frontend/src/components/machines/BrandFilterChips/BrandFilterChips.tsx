@@ -45,7 +45,7 @@ function BrandLogoChip({
   const [logoFailed, setLogoFailed] = useState(false);
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
   const showLogo = Boolean(logoUrl) && !logoFailed;
-  const displayName = brandChipDisplayName(brand, '', label);
+  const displayName = brandChipDisplayName(brand, label);
 
   return (
     <button
