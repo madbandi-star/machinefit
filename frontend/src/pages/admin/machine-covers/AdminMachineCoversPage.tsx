@@ -130,8 +130,13 @@ export function AdminMachineCoversPage() {
         showToast(t('admin:machineCovers.uploadTooLarge'), 'error');
       } else if (code === 'UNSUPPORTED_FILE_TYPE' || code === 'INVALID_IMAGE') {
         showToast(t('admin:machineCovers.uploadUnsupported'), 'error');
+      } else if (code === 'MIGRATION_REQUIRED') {
+        showToast(t('admin:machineCovers.migrationRequired'), 'error');
       } else {
-        showToast(t('admin:error'), 'error');
+        const detail =
+          (error as { response?: { data?: { error?: { message?: string } } } })?.response?.data
+            ?.error?.message || t('admin:error');
+        showToast(detail, 'error');
       }
     },
     onSettled: (_data, _error, variables) => {

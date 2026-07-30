@@ -314,28 +314,26 @@ export const adminApi = {
   ) => {
     const form = new FormData();
     form.append('file', file);
-    if (targetMuscle) {
-      form.append('targetMuscle', targetMuscle);
-    }
-    return apiClient.post<ApiResponse<MachineCoverImageAsset>>(
-      `/admin/machine-covers/${encodeURIComponent(machineCode)}/upload`,
-      form,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 120_000,
-        params: targetMuscle ? { targetMuscle } : undefined,
-        onUploadProgress: (event) => {
-          if (!onProgress || !event.total) return;
-          onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
-        },
-      }
-    );
+    const path = targetMuscle
+      ? `/admin/machine-covers/${encodeURIComponent(machineCode)}/muscles/${encodeURIComponent(targetMuscle)}/upload`
+      : `/admin/machine-covers/${encodeURIComponent(machineCode)}/upload`;
+    return apiClient.post<ApiResponse<MachineCoverImageAsset>>(path, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
+      onUploadProgress: (event) => {
+        if (!onProgress || !event.total) return;
+        onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
   },
 
   deleteMachineCover: (machineCode: string, targetMuscle?: string) =>
-    apiClient.delete<ApiResponse<{ machineCode: string; targetMuscle: string | null; deleted: boolean }>>(
-      `/admin/machine-covers/${encodeURIComponent(machineCode)}`,
-      { params: targetMuscle ? { targetMuscle } : undefined }
+    apiClient.delete<
+      ApiResponse<{ machineCode: string; targetMuscle: string | null; deleted: boolean }>
+    >(
+      targetMuscle
+        ? `/admin/machine-covers/${encodeURIComponent(machineCode)}/muscles/${encodeURIComponent(targetMuscle)}`
+        : `/admin/machine-covers/${encodeURIComponent(machineCode)}`
     ),
 };
 

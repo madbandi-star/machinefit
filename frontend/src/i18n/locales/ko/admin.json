@@ -271,6 +271,7 @@
     "deleteSuccess": "대표 이미지를 삭제했습니다. 기본 이미지로 표시됩니다.",
     "uploadUnsupported": "JPG, JPEG, PNG, WEBP만 업로드할 수 있어요.",
     "uploadTooLarge": "파일이 너무 커요. 10MB 이하로 올려 주세요.",
+    "migrationRequired": "부위별 이미지용 DB 마이그레이션이 필요합니다. 관리자에게 문의하세요.",
     "deleteTitle": "정말 삭제하시겠습니까?",
     "deleteMessage": "{{name}} 대표 이미지를 삭제합니다. 삭제 후에는 기본 Placeholder가 사용됩니다."
   },

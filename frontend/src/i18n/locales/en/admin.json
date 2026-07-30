@@ -268,6 +268,7 @@
     "deleteSuccess": "Cover image deleted. The default placeholder is used.",
     "uploadUnsupported": "Only JPG, JPEG, PNG, and WEBP are allowed.",
     "uploadTooLarge": "File is too large. Keep it under 10MB.",
+    "migrationRequired": "A DB migration is required for per-muscle covers. Contact an admin.",
     "deleteTitle": "Are you sure you want to delete?",
     "deleteMessage": "Delete the {{name}} cover image? The default placeholder will be used."
   },

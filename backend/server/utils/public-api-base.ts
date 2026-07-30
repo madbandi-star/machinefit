@@ -4,7 +4,9 @@ export function publicApiBase(): string {
   if (env.PUBLIC_API_BASE_URL?.trim()) {
     return env.PUBLIC_API_BASE_URL.replace(/\/+$/, '');
   }
-  if (env.NODE_ENV === 'production') {
+  // Prefer the production API host whenever we are not clearly in local/test,
+  // so cover URLs written from one-off scripts still work on GitHub Pages.
+  if (env.NODE_ENV === 'production' || process.env.RENDER === 'true') {
     return 'https://machinefit.onrender.com/api/v1';
   }
   return `http://localhost:${env.PORT}${env.API_BASE_PATH}`;

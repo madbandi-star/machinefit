@@ -10,6 +10,11 @@ import { getPool } from '../config/database.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
 import { supportsMachineCoverMuscleVariants } from '../utils/machine-cover-schema.util.js';
 
+function normalizeCoverUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.replace(/^https?:\/\/localhost(?::\d+)?\/api\/v1/i, 'https://machinefit.onrender.com/api/v1');
+}
+
 type CoverRow = {
   machine_id: string;
   machine_code: string;
@@ -48,8 +53,8 @@ function mapVariant(row: VariantRow): MachineCoverImageVariant {
   const version = Number(row.version ?? 0);
   return {
     targetMuscleGroup: row.target_muscle_group as TargetMuscleGroup,
-    imageUrl: withCacheBust(row.image_url, version),
-    thumbnailUrl: withCacheBust(row.thumbnail_url, version),
+    imageUrl: withCacheBust(normalizeCoverUrl(row.image_url), version),
+    thumbnailUrl: withCacheBust(normalizeCoverUrl(row.thumbnail_url), version),
     originalFilename: row.original_filename,
     mimeType: row.mime_type,
     fileSizeBytes: row.file_size_bytes != null ? Number(row.file_size_bytes) : null,
@@ -111,8 +116,8 @@ function mapAsset(row: CoverRow): MachineCoverImageAsset {
     brandName: row.brand_name,
     muscleGroup: row.muscle_group,
     targetMuscleGroup: null,
-    imageUrl: withCacheBust(row.image_url, version),
-    thumbnailUrl: withCacheBust(row.thumbnail_url, version),
+    imageUrl: withCacheBust(normalizeCoverUrl(row.image_url), version),
+    thumbnailUrl: withCacheBust(normalizeCoverUrl(row.thumbnail_url), version),
     originalFilename: row.original_filename,
     mimeType: row.mime_type,
     fileSizeBytes: row.file_size_bytes != null ? Number(row.file_size_bytes) : null,

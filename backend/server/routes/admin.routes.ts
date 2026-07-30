@@ -67,6 +67,16 @@ adminRouter.delete(
 );
 adminRouter.get('/machine-covers/brands', machineCoverImageController.listMachineCoverBrands);
 adminRouter.get('/machine-covers', machineCoverImageController.listMachineCovers);
+/** Per-muscle free-weight cover — muscle in path so clients cannot drop the query/body field. */
+adminRouter.post(
+  '/machine-covers/:machineCode/muscles/:targetMuscle/upload',
+  muscleGroupImageUpload,
+  machineCoverImageController.uploadMachineCoverForMuscle
+);
+adminRouter.delete(
+  '/machine-covers/:machineCode/muscles/:targetMuscle',
+  machineCoverImageController.deleteMachineCoverForMuscle
+);
 adminRouter.post(
   '/machine-covers/:machineCode/upload',
   muscleGroupImageUpload,
