@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
-import type { MuscleGroup } from '@/constants/muscle-groups';
+import { MUSCLE_GROUPS, type MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { queryClient } from '@/app/providers/QueryProvider';
@@ -84,6 +84,8 @@ export function MachineListItem({
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
   const showMuscle = shouldShowDefaultMachineMuscle(machine.code);
+  /** Free-weight + muscle "전체": show every target label (display only). */
+  const showAllFreeWeightMuscles = isFreeWeight && !selectedMuscle;
   /** Free-weight list under a muscle chip shows the selected target (e.g. biceps/triceps). */
   const displayMuscle =
     isFreeWeight && selectedMuscle
@@ -138,7 +140,20 @@ export function MachineListItem({
         <p className="machine-list-item__name">
           <span className="machine-list-item__name-text">{localizedName}</span>
         </p>
-        {muscleLabel && displayMuscle ? (
+        {showAllFreeWeightMuscles ? (
+          <div className="machine-list-item__muscle-list" aria-label={t('targetMuscleLabel')}>
+            {MUSCLE_GROUPS.map((group) => (
+              <span key={group} className="machine-list-item__muscle">
+                <MuscleGroupIcon
+                  group={group}
+                  size={16}
+                  className="machine-list-item__muscle-badge"
+                />
+                <span>{t(`muscleGroups.${group}`)}</span>
+              </span>
+            ))}
+          </div>
+        ) : muscleLabel && displayMuscle ? (
           <p className="machine-list-item__muscle">
             <MuscleGroupIcon
               group={displayMuscle as MuscleGroup}

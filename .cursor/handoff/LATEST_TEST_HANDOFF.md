@@ -1,18 +1,16 @@
-# Latest test handoff - FW hero follows target muscle
+# Latest test handoff - FW search card all muscles (All filter)
 
-**Branch:** `main` | **Commit:** `84a4464`
+**Branch:** `main` | **Commit:** pending
 
 ## Change
 
-On free-weight machine detail (`/machines/FW_*`), tapping a target-muscle chip now writes `?muscle=` and refetches the machine so the top hero uses that muscle's cover image (admin per-muscle covers).
-
-Also: `SafeImage` resets error state when `src` changes; detail query keeps previous data while switching muscle (no full-page skeleton flash).
+UI-only on machine list cards: free-weight + muscle filter **All** shows all eight target muscles (back, chest, legs, shoulders, biceps, triceps, arms, core). Other cases unchanged. No API/query/navigation changes.
 
 ## Test focus
 
-- Open free-weight machine detail (e.g. barbell / `FW_*`)
-- Select back / chest / lower body - hero photo should change to that muscle's cover
-- Clear selection - default cover
+- `/machines` muscle = All, free-weight card: all muscle labels
+- Muscle chip selected: single muscle as before
+- Non-FW: as before
 
 ## Fast checks
 
@@ -22,9 +20,9 @@ npm run test:smoke:changed
 
 ## Deploy
 
-- Frontend only (existing `GET /machines/:code?muscle=` + cover variants)
+- Frontend only
 
 ## as-is -> to-be
 
-- **as-is:** Muscle chips did not change the hero photo
-- **to-be:** Muscle chips update URL + hero cover per selected muscle
+- **as-is:** FW under All showed one default muscle
+- **to-be:** FW under All shows all eight muscle labels

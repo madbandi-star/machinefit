@@ -1,27 +1,25 @@
 {
-  "title": "FW detail: hero cover follows target muscle chips",
-  "summary": "On free-weight machine detail, selecting a target muscle chip updates ?muscle= and refetches the machine so the hero shows that muscle's cover photo (e.g. barbell + back vs chest).",
-  "git": { "branch": "main", "commit": "84a4464" },
+  "title": "Search: FW cards show all muscles when All filter",
+  "summary": "UI-only: when muscle filter is All (null) and the card is free-weight, list all target muscle labels on the card. Specific muscle filter and non-FW cards unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
-    "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
-    "frontend/src/components/machines/MachineHero/MachineHero.tsx",
-    "frontend/src/components/media/SafeImage.tsx"
+    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
+    "frontend/src/styles/machines.css"
   ],
-  "testFocus": "FW machine detail (e.g. FW_BARBELL): tap target muscle chips and confirm hero image switches per muscle cover.",
+  "testFocus": "Search /machines: muscle All + FW card shows all 8 muscles; with a muscle chip only that muscle; selectorized unchanged.",
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Open free-weight machine (??) without muscle ? default cover",
-    "Select ? / ?? / ?? ? hero image matches that muscle cover",
-    "Deselect muscle chip ? URL muscle cleared, default cover returns"
+    "Filter ?? + free-weight machine: card shows back/chest/legs/shoulders/biceps/triceps/arms/core",
+    "Filter a specific muscle: FW card still shows that one muscle only",
+    "Non-FW cards unchanged"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "FW target muscle chips only affected recommend payload; hero stayed on initial cover.",
-  "toBe": "Chip selection syncs ?muscle=; detail refetch updates hero to per-muscle cover."
+  "asIs": "FW cards under All still showed a single default muscleGroup label.",
+  "toBe": "FW cards under All show all eight target muscle labels (display only)."
 }

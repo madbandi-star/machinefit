@@ -793,6 +793,20 @@
   line-height: 1.2;
 }
 
+.machine-list-item__muscle-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.28rem 0.55rem;
+  margin: 0 0 0.22rem;
+  max-width: 100%;
+}
+
+.machine-list-item__muscle-list .machine-list-item__muscle {
+  margin: 0;
+  max-width: none;
+}
+
 .machine-list-item__muscle span {
   white-space: nowrap;
   overflow: hidden;
