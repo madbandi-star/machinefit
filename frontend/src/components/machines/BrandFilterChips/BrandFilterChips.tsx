@@ -38,30 +38,41 @@ function BrandLogoChip({
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
   const showLogo = Boolean(logoUrl) && !logoFailed;
 
+  if (!showLogo) {
+    return (
+      <button
+        type="button"
+        className={`filter-chip${active ? ' filter-chip--active' : ''}`}
+        onClick={onSelect}
+        aria-pressed={active}
+        aria-label={label}
+        data-brand-code={brand.code}
+      >
+        {label}
+      </button>
+    );
+  }
+
   return (
     <button
       type="button"
-      className={`filter-chip filter-chip--brand${showLogo ? ' filter-chip--brand-logo' : ''}${
-        active ? ' filter-chip--active' : ''
-      }`}
+      className={`filter-chip filter-chip--brand-logo${active ? ' filter-chip--active' : ''}`}
       onClick={onSelect}
       aria-pressed={active}
       aria-label={label}
       data-brand-code={brand.code}
     >
-      {showLogo ? (
+      <span className="filter-chip__icon-wrap" aria-hidden>
         <img
           key={`${brand.code}:${logoUrl}`}
           src={logoUrl}
-          alt={label}
-          className="filter-chip__brand-logo"
+          alt=""
+          className="filter-chip__icon filter-chip__brand-logo"
           loading="lazy"
           decoding="async"
           onError={() => setLogoFailed(true)}
         />
-      ) : (
-        label
-      )}
+      </span>
     </button>
   );
 }

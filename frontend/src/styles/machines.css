@@ -188,32 +188,71 @@
   align-items: center;
 }
 
+/* Match muscle chips: circular wrap, image fills 100% with cover */
 .filter-chip--brand-logo {
-  box-sizing: border-box;
-  width: 3.5rem;
-  height: 3.5rem;
-  min-width: 3.5rem;
-  min-height: 3.5rem;
-  padding: 0;
+  flex-direction: column;
+  gap: 0;
+  min-width: unset;
+  min-height: unset;
+  width: auto;
+  height: auto;
+  padding: 0.2rem;
+  border-radius: 999px;
   justify-content: center;
-  align-items: stretch;
-  overflow: hidden;
-  border-radius: 0.85rem;
+  align-items: center;
+  background: transparent;
+  border-color: transparent;
+  overflow: visible;
 }
 
-.filter-chip__brand-logo {
-  display: block;
-  width: 100%;
-  height: 100%;
+.filter-chip--brand-logo:focus,
+.filter-chip--brand-logo:focus-visible {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.filter-chip--brand-logo .filter-chip__icon-wrap {
+  display: flex;
+  width: var(--touch-target-min, 44px);
+  height: var(--touch-target-min, 44px);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.filter-chip--brand-logo .filter-chip__icon,
+.filter-chip--brand-logo .filter-chip__brand-logo {
+  width: 100% !important;
+  height: 100% !important;
   max-width: none;
+  max-height: none;
+  border-radius: 999px;
   object-fit: cover;
   object-position: center;
-  border-radius: 0;
+  display: block;
   background: transparent;
 }
 
 .filter-chip--brand-logo.filter-chip--active {
-  background: color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg));
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.filter-chip--brand-logo.filter-chip--active:focus,
+.filter-chip--brand-logo.filter-chip--active:focus-visible {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.filter-chip--brand-logo.filter-chip--active .filter-chip__icon-wrap {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--glass-bg));
+  box-shadow: var(--glow-primary-soft);
 }
 
 .machine-search__results-title {
