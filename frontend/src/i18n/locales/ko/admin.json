@@ -260,6 +260,7 @@
     "placeholder": "기본 이미지 / Placeholder",
     "dropHere": "여기에 놓으세요",
     "uploading": "업로드 중",
+    "preparing": "이미지 최적화 중…",
     "customBadge": "관리자 등록",
     "catalogBadge": "카탈로그 기본",
     "empty": "조건에 맞는 머신이 없습니다.",

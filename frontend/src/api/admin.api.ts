@@ -269,19 +269,20 @@ export const adminApi = {
   listMuscleGroupImages: () =>
     apiClient.get<ApiResponse<MuscleGroupImagesState>>('/admin/muscle-group-images'),
 
-  uploadMuscleGroupImage: (
+  uploadMuscleGroupImage: async (
     muscleGroup: MuscleGroupImageKey,
     file: File,
     onProgress?: (percent: number) => void
   ) => {
+    const { compressImageForUpload } = await import('@/utils/compressImageForUpload');
+    const prepared = await compressImageForUpload(file);
     const form = new FormData();
-    form.append('file', file);
+    form.append('file', prepared);
     return apiClient.post<ApiResponse<MuscleGroupImageAsset>>(
       `/admin/muscle-group-images/${encodeURIComponent(muscleGroup)}/upload`,
       form,
       {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 120_000,
+        timeout: 180_000,
         onUploadProgress: (event) => {
           if (!onProgress || !event.total) return;
           onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
@@ -306,20 +307,22 @@ export const adminApi = {
   }) =>
     apiClient.get<ApiResponse<MachineCoverImagesPage>>('/admin/machine-covers', { params }),
 
-  uploadMachineCover: (
+  uploadMachineCover: async (
     machineCode: string,
     file: File,
     onProgress?: (percent: number) => void,
     targetMuscle?: string
   ) => {
+    const { compressImageForUpload } = await import('@/utils/compressImageForUpload');
+    const prepared = await compressImageForUpload(file);
     const form = new FormData();
-    form.append('file', file);
+    form.append('file', prepared);
     const path = targetMuscle
       ? `/admin/machine-covers/${encodeURIComponent(machineCode)}/muscles/${encodeURIComponent(targetMuscle)}/upload`
       : `/admin/machine-covers/${encodeURIComponent(machineCode)}/upload`;
     return apiClient.post<ApiResponse<MachineCoverImageAsset>>(path, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: 120_000,
+      // Do NOT set Content-Type — browser must add multipart boundary.
+      timeout: 180_000,
       onUploadProgress: (event) => {
         if (!onProgress || !event.total) return;
         onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));

@@ -257,6 +257,7 @@
     "placeholder": "Default / Placeholder",
     "dropHere": "Drop image here",
     "uploading": "Uploading",
+    "preparing": "Optimizing image…",
     "customBadge": "Admin cover",
     "catalogBadge": "Catalog default",
     "empty": "No machines match these filters.",

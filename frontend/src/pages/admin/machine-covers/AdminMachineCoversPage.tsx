@@ -114,7 +114,9 @@ export function AdminMachineCoversPage() {
         code,
         file,
         (percent) => {
-          setUploadProgress((prev) => ({ ...prev, [key]: percent }));
+          // Reserve 0–5% for client compress; map network progress onto 5–100.
+          const mapped = Math.max(5, Math.min(100, Math.round(5 + percent * 0.95)));
+          setUploadProgress((prev) => ({ ...prev, [key]: mapped }));
         },
         muscle
       );

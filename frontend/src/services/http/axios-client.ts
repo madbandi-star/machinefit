@@ -77,11 +77,19 @@ apiClient.interceptors.request.use((config) => {
   config.headers['Accept-Language'] = useSettingsStore.getState().locale;
   // FormData needs the browser-generated multipart boundary — never force JSON/multipart.
   if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
-    if (typeof config.headers.set === 'function') {
-      config.headers.set('Content-Type', false as unknown as string);
+    const headers = config.headers as {
+      set?: (key: string, value: unknown) => void;
+      delete?: (key: string) => void;
+    } & Record<string, unknown>;
+    if (typeof headers.delete === 'function') {
+      headers.delete('Content-Type');
+      headers.delete('content-type');
+    } else if (typeof headers.set === 'function') {
+      // Axios: `false` means "omit this header so the XHR sets multipart boundary".
+      headers.set('Content-Type', false);
     } else {
-      delete (config.headers as Record<string, unknown>)['Content-Type'];
-      delete (config.headers as Record<string, unknown>)['content-type'];
+      delete headers['Content-Type'];
+      delete headers['content-type'];
     }
   }
   return config;
