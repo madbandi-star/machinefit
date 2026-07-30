@@ -1,6 +1,6 @@
-/* ?? Admin shell (dedicated layout, not crammed into public header) ?? */
+/* ── Admin shell (dedicated layout, not crammed into public header) ── */
 
-/* ?? Admin shell escapes the 430px member app frame on desktop ?? */
+/* ── Admin shell escapes the 430px member app frame on desktop ── */
 @media (min-width: 720px) {
   body:has(.admin-shell) #root {
     max-width: min(1120px, 100%);
@@ -155,7 +155,7 @@
   }
 }
 
-/* ?? Shared panels ?? */
+/* ── Shared panels ── */
 
 .admin-panel {
   padding: 1rem;
@@ -178,7 +178,7 @@
   line-height: 1.4;
 }
 
-/* ?? Attention / urgent work ?? */
+/* ── Attention / urgent work ── */
 
 .admin-attention {
   display: flex;
@@ -242,7 +242,7 @@
   color: color-mix(in srgb, var(--color-warning, #d97706) 85%, var(--color-text));
 }
 
-/* ?? Overview stats ?? */
+/* ── Overview stats ── */
 
 .admin-stats {
   display: grid;
@@ -289,7 +289,7 @@
   color: var(--color-text-muted);
 }
 
-/* ?? Menu list ?? */
+/* ── Menu list ── */
 
 .admin-menu {
   display: flex;
@@ -344,7 +344,7 @@
   line-height: 1;
 }
 
-/* ?? Existing admin list/table patterns (subpages) ?? */
+/* ── Existing admin list/table patterns (subpages) ── */
 
 .admin-table {
   display: flex;
@@ -442,7 +442,7 @@
   gap: 0.5rem;
 }
 
-/* ?? Page shell (inside admin layout) ?? */
+/* ── Page shell (inside admin layout) ── */
 
 .admin-page {
   display: flex;
@@ -516,7 +516,7 @@
   margin-top: 0;
 }
 
-/* ?? Tabs ?? */
+/* ── Tabs ── */
 
 .admin-tabs {
   display: flex;
@@ -563,7 +563,7 @@
   margin-top: 0.85rem;
 }
 
-/* ?? Sections & forms ?? */
+/* ── Sections & forms ── */
 
 .admin-section {
   margin-bottom: 1.25rem;
@@ -619,7 +619,7 @@
   gap: 0.4rem;
 }
 
-/* ?? Card lists (reports, moderation cards) ?? */
+/* ── Card lists (reports, moderation cards) ── */
 
 .admin-card-list {
   display: grid;
@@ -656,7 +656,7 @@
   text-align: center;
 }
 
-/* ?? Dense rows (compliance tickets, etc.) ?? */
+/* ── Dense rows (compliance tickets, etc.) ── */
 
 .admin-table-wrap {
   display: flex;
@@ -707,7 +707,7 @@
   align-items: center;
 }
 
-/* ?? Simple lists ?? */
+/* ── Simple lists ── */
 
 .admin-list {
   list-style: none;
@@ -733,7 +733,7 @@
   background: transparent;
 }
 
-/* ?? Badges ?? */
+/* ── Badges ── */
 
 .admin-badge {
   display: inline-flex;
@@ -761,7 +761,7 @@
   background: color-mix(in srgb, var(--color-error) 12%, transparent);
 }
 
-/* ?? Motivation blocks ?? */
+/* ── Motivation blocks ── */
 
 .admin-motivation {
   margin-bottom: 1.75rem;
@@ -785,7 +785,7 @@
   margin-top: 0.75rem;
 }
 
-/* ?? Owner applications ?? */
+/* ── Owner applications ── */
 
 .admin-owner-apps {
   display: flex;
@@ -895,7 +895,7 @@
   margin: 0;
 }
 
-/* ?? Dashboard polish ?? */
+/* ── Dashboard polish ── */
 
 @media (min-width: 720px) {
   .admin-menu {
@@ -917,7 +917,7 @@
   }
 }
 
-/* ?? Friends admin (reuse admin tab look) ?? */
+/* ── Friends admin (reuse admin tab look) ── */
 
 .admin-shell__content .friends-subnav {
   display: flex;
@@ -972,7 +972,7 @@
   background: var(--color-surface);
 }
 
-/* ?? Trade stats inside admin ?? */
+/* ── Trade stats inside admin ── */
 
 .admin-shell__content .trade-stats-grid {
   display: grid;
@@ -1009,7 +1009,7 @@
   font-weight: 600;
 }
 
-/* ?? Gym admin cards ?? */
+/* ── Gym admin cards ── */
 
 .admin-gym-card {
   flex-wrap: wrap;
@@ -1062,7 +1062,7 @@
   gap: 0.4rem;
 }
 
-/* ?? Online PT inside admin ?? */
+/* ── Online PT inside admin ── */
 
 .admin-shell__content .opt-stats {
   display: grid;
@@ -1121,7 +1121,7 @@
   background: color-mix(in srgb, var(--color-bg) 40%, var(--color-surface));
 }
 
-/* ?? Data panels & list polish (v2) ?? */
+/* ── Data panels & list polish (v2) ── */
 
 .admin-data-panel {
   display: flex;
@@ -1382,7 +1382,7 @@
   margin-top: 0;
 }
 
-/* ?? Catalog brand/machine admin ?? */
+/* ── Catalog brand/machine admin ── */
 
 .admin-catalog-toolbar {
   margin-bottom: 0.85rem;
