@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,6 @@ import { buildShareHashtags, toShareHashtag } from '@/utils/shareHashtags';
 import {
   clearAchievementUnlockPopupHideToday,
   isAchievementUnlockPopupEnabled,
-  isAchievementUnlockPopupHiddenToday,
   setAchievementUnlockPopupEnabled,
 } from '@/utils/achievementUnlockPopupPrefs';
 import './AchievementsPage.css';
@@ -108,14 +108,18 @@ export function AchievementsPage() {
   const [category, setCategory] = useState<AchievementCategory | 'all'>('consistency');
   const [unlockBatch, setUnlockBatch] = useState<AchievementProgressItem[]>([]);
   const [unlockIndex, setUnlockIndex] = useState(0);
-  const [seenUnlockKey, setSeenUnlockKey] = useState('');
   const [popupEnabled, setPopupEnabled] = useState(() => isAchievementUnlockPopupEnabled());
   const [heroExpanded, setHeroExpanded] = useState(false);
   const unlockStripRef = useRef<HTMLDivElement | null>(null);
+  const visitIdRef = useRef(0);
+  const openedForVisitRef = useRef(-1);
 
   // Each navigation into this page counts as a new visit for unlock popups.
   useEffect(() => {
-    setSeenUnlockKey('');
+    visitIdRef.current += 1;
+    openedForVisitRef.current = -1;
+    // Legacy "hide today" key had no UI left — clear so it can't block popups forever.
+    clearAchievementUnlockPopupHideToday();
   }, [location.key]);
 
   const scopeParams =
@@ -149,19 +153,14 @@ export function AchievementsPage() {
   );
 
   useEffect(() => {
-    if (!popupEnabled || isAchievementUnlockPopupHiddenToday()) {
+    if (!popupEnabled) {
       setUnlockBatch([]);
       setUnlockIndex(0);
       return;
     }
-    // Confirmed + unconfirmed: every unlocked achievement on each page visit.
     if (!unlockedForPopup.length) return;
-    const key = unlockedForPopup
-      .map((i) => i.def.id)
-      .sort()
-      .join('|');
-    if (key === seenUnlockKey) return;
-    setSeenUnlockKey(key);
+    if (openedForVisitRef.current === visitIdRef.current) return;
+    openedForVisitRef.current = visitIdRef.current;
     setUnlockBatch(unlockedForPopup);
     setUnlockIndex(0);
     try {
@@ -169,7 +168,7 @@ export function AchievementsPage() {
     } catch {
       /* ignore */
     }
-  }, [unlockedForPopup, seenUnlockKey, popupEnabled]);
+  }, [unlockedForPopup, popupEnabled, location.key]);
 
   const unlockBatchTotal = unlockBatch.length;
   const currentUnlock = unlockBatch[unlockIndex] ?? null;
@@ -187,7 +186,13 @@ export function AchievementsPage() {
     const active = strip.querySelector<HTMLElement>(
       `[data-unlock-index="${unlockIndex}"]`
     );
-    active?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (!active) return;
+    // Scroll only the strip — avoid scrollIntoView (can shove fixed overlays off-screen).
+    const stripRect = strip.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    const delta =
+      activeRect.left + activeRect.width / 2 - (stripRect.left + stripRect.width / 2);
+    strip.scrollBy({ left: delta, behavior: 'smooth' });
   }, [currentUnlock, unlockIndex, unlockBatchTotal]);
 
   const dismissUnlockQueue = () => {
@@ -217,7 +222,7 @@ export function AchievementsPage() {
     setAchievementUnlockPopupEnabled(checked);
     if (checked) {
       clearAchievementUnlockPopupHideToday();
-      setSeenUnlockKey('');
+      openedForVisitRef.current = -1;
     } else {
       setUnlockBatch([]);
       setUnlockIndex(0);
@@ -569,114 +574,118 @@ export function AchievementsPage() {
           </>
         )}
 
-        {currentUnlock && (
-          <div
-            className="achievement-unlock"
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('achievements.unlocked')}
-          >
-            <div className="achievement-unlock__card">
-              <button
-                type="button"
-                className="achievement-unlock__close"
-                onClick={() => void dismissUnlockQueue()}
-                aria-label={t('achievements.dismissAll')}
-              >
-                ×
-              </button>
-              {unlockBatchTotal > 1 ? (
-                <p className="achievement-unlock__progress">
-                  {t('achievements.unlockBatchProgress', {
-                    current: unlockDisplayIndex,
-                    total: unlockBatchTotal,
-                  })}
-                </p>
-              ) : null}
-              <div className="achievement-unlock__emoji">{currentUnlock.def.emoji}</div>
-              <p className="achievement-unlock__eyebrow">{t('achievements.unlocked')}</p>
-              <h3 className="achievement-unlock__name">{loc(currentUnlock.def.name, locale)}</h3>
-              {currentUnlockEarnedAt ? (
-                <p className="achievement-unlock__earned-at">
-                  {t('achievements.earnedAt', { datetime: currentUnlockEarnedAt })}
-                </p>
-              ) : null}
-              <p className="achievement-unlock__desc">
-                {loc(currentUnlock.def.description, locale)}
-                <br />
-                +{formatInt(currentUnlock.def.xp, locale)} XP ·{' '}
-                {t(`achievements.rarity.${currentUnlock.rarity as AchievementRarity}`)}
-              </p>
-              {unlockBatchTotal > 1 ? (
-                <p className="achievement-unlock__batch-hint">
-                  {t('achievements.unlockBatchHint', { count: unlockBatchTotal })}
-                  {unlockRemaining > 0
-                    ? ` · ${t('achievements.unlockRemaining', { count: unlockRemaining })}`
-                    : ''}
-                </p>
-              ) : null}
-              <div className="achievement-unlock__actions">
-                <button
-                  type="button"
-                  className="btn btn--primary btn--block"
-                  onClick={() => handleShare(currentUnlock)}
-                >
-                  {t('achievements.share')}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--block"
-                  onClick={() => void advanceUnlockQueue()}
-                >
-                  {isLastUnlock
-                    ? t('achievements.done')
-                    : t('achievements.continueWithProgress', {
-                        current: unlockDisplayIndex,
-                        total: unlockBatchTotal,
-                      })}
-                </button>
-              </div>
-              {unlockBatchTotal > 1 ? (
-                <div
-                  ref={unlockStripRef}
-                  className="achievement-unlock__strip"
-                  role="tablist"
-                  aria-label={t('achievements.unlockBatchProgress', {
-                    current: unlockDisplayIndex,
-                    total: unlockBatchTotal,
-                  })}
-                >
-                  {unlockBatch.map((item, index) => {
-                    const active = index === unlockIndex;
-                    const name = loc(item.def.name, locale);
-                    return (
-                      <button
-                        key={item.def.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={active}
-                        data-unlock-index={index}
-                        className={`achievement-unlock__strip-item${
-                          active ? ' achievement-unlock__strip-item--active' : ''
-                        }`}
-                        onClick={() => goToUnlockIndex(index)}
-                        title={name}
-                        aria-label={`${index + 1}. ${name}`}
-                      >
-                        <span className="achievement-unlock__strip-emoji" aria-hidden>
-                          {item.def.emoji}
-                        </span>
-                        <span className="achievement-unlock__strip-num">{index + 1}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </div>
-          </div>
-        )}
         </div>
       </PageShell>
+
+      {currentUnlock
+        ? createPortal(
+            <div
+              className="achievement-unlock"
+              role="dialog"
+              aria-modal="true"
+              aria-label={t('achievements.unlocked')}
+            >
+              <div className="achievement-unlock__card">
+                <button
+                  type="button"
+                  className="achievement-unlock__close"
+                  onClick={() => void dismissUnlockQueue()}
+                  aria-label={t('achievements.dismissAll')}
+                >
+                  ×
+                </button>
+                {unlockBatchTotal > 1 ? (
+                  <p className="achievement-unlock__progress">
+                    {t('achievements.unlockBatchProgress', {
+                      current: unlockDisplayIndex,
+                      total: unlockBatchTotal,
+                    })}
+                  </p>
+                ) : null}
+                <div className="achievement-unlock__emoji">{currentUnlock.def.emoji}</div>
+                <p className="achievement-unlock__eyebrow">{t('achievements.unlocked')}</p>
+                <h3 className="achievement-unlock__name">{loc(currentUnlock.def.name, locale)}</h3>
+                {currentUnlockEarnedAt ? (
+                  <p className="achievement-unlock__earned-at">
+                    {t('achievements.earnedAt', { datetime: currentUnlockEarnedAt })}
+                  </p>
+                ) : null}
+                <p className="achievement-unlock__desc">
+                  {loc(currentUnlock.def.description, locale)}
+                  <br />
+                  +{formatInt(currentUnlock.def.xp, locale)} XP ·{' '}
+                  {t(`achievements.rarity.${currentUnlock.rarity as AchievementRarity}`)}
+                </p>
+                {unlockBatchTotal > 1 ? (
+                  <p className="achievement-unlock__batch-hint">
+                    {t('achievements.unlockBatchHint', { count: unlockBatchTotal })}
+                    {unlockRemaining > 0
+                      ? ` · ${t('achievements.unlockRemaining', { count: unlockRemaining })}`
+                      : ''}
+                  </p>
+                ) : null}
+                <div className="achievement-unlock__actions">
+                  <button
+                    type="button"
+                    className="btn btn--primary btn--block"
+                    onClick={() => handleShare(currentUnlock)}
+                  >
+                    {t('achievements.share')}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn--block"
+                    onClick={() => void advanceUnlockQueue()}
+                  >
+                    {isLastUnlock
+                      ? t('achievements.done')
+                      : t('achievements.continueWithProgress', {
+                          current: unlockDisplayIndex,
+                          total: unlockBatchTotal,
+                        })}
+                  </button>
+                </div>
+                {unlockBatchTotal > 1 ? (
+                  <div
+                    ref={unlockStripRef}
+                    className="achievement-unlock__strip"
+                    role="tablist"
+                    aria-label={t('achievements.unlockBatchProgress', {
+                      current: unlockDisplayIndex,
+                      total: unlockBatchTotal,
+                    })}
+                  >
+                    {unlockBatch.map((item, index) => {
+                      const active = index === unlockIndex;
+                      const name = loc(item.def.name, locale);
+                      return (
+                        <button
+                          key={item.def.id}
+                          type="button"
+                          role="tab"
+                          aria-selected={active}
+                          data-unlock-index={index}
+                          className={`achievement-unlock__strip-item${
+                            active ? ' achievement-unlock__strip-item--active' : ''
+                          }`}
+                          onClick={() => goToUnlockIndex(index)}
+                          title={name}
+                          aria-label={`${index + 1}. ${name}`}
+                        >
+                          <span className="achievement-unlock__strip-emoji" aria-hidden>
+                            {item.def.emoji}
+                          </span>
+                          <span className="achievement-unlock__strip-num">{index + 1}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </div>
   );
 }
