@@ -234,8 +234,12 @@
   "machineCovers": {
     "nav": "Machine cover images",
     "title": "Machine cover images",
-    "subtitle": "Manage one cover image per registered machine. Uploads apply to search, recommendations, and detail views.",
+    "subtitle": "Manage cover images per machine. Free-weight machines support a different photo per muscle target.",
     "recommend": "Recommended: 1024×1024+ square · JPG/PNG/WEBP · max 10MB",
+    "freeWeightHint": "For free weights (barbell, dumbbell, …) you can upload a different photo per muscle. Example: back → barbell row, chest → bench press.",
+    "defaultCover": "Default cover",
+    "muscleVariants": "Per-muscle covers",
+    "muscleVariantHint": "Shown in search when {{muscle}} is selected.",
     "search": "Search",
     "searchPlaceholder": "Search by name, code, or brand",
     "brandFilter": "Brand",

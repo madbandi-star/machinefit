@@ -309,7 +309,8 @@ export const adminApi = {
   uploadMachineCover: (
     machineCode: string,
     file: File,
-    onProgress?: (percent: number) => void
+    onProgress?: (percent: number) => void,
+    targetMuscle?: string
   ) => {
     const form = new FormData();
     form.append('file', file);
@@ -319,6 +320,7 @@ export const adminApi = {
       {
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 120_000,
+        params: targetMuscle ? { targetMuscle } : undefined,
         onUploadProgress: (event) => {
           if (!onProgress || !event.total) return;
           onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
@@ -327,9 +329,10 @@ export const adminApi = {
     );
   },
 
-  deleteMachineCover: (machineCode: string) =>
-    apiClient.delete<ApiResponse<{ machineCode: string; deleted: boolean }>>(
-      `/admin/machine-covers/${encodeURIComponent(machineCode)}`
+  deleteMachineCover: (machineCode: string, targetMuscle?: string) =>
+    apiClient.delete<ApiResponse<{ machineCode: string; targetMuscle: string | null; deleted: boolean }>>(
+      `/admin/machine-covers/${encodeURIComponent(machineCode)}`,
+      { params: targetMuscle ? { targetMuscle } : undefined }
     ),
 };
 

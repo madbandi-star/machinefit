@@ -1,26 +1,46 @@
 {
-  "title": "Fix login blocked by inspection auth middleware",
-  "summary": "Inspection router was mounted at API root with router-level authMiddleware, so every unauthenticated request including /auth/login returned 401. Mounted under /inspection and scoped auth to inspection routes only.",
-  "git": { "branch": "main", "commit": "7e32446" },
+  "title": "Free-weight machine covers per muscle",
+  "summary": "Admin machine-cover manager now supports per-muscle photos for free-weight (e.g. barbell row vs bench press). Search list/detail resolve FW covers by selected muscle. Previously impossible (1 cover per machine).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/routes/inspection.routes.ts",
-    "backend/server/routes/index.ts",
-    "frontend/src/api/inspection.api.ts"
+    "database/migrations/083_machine_cover_muscle_variants.sql",
+    "shared/src/types/machine-cover-image.types.ts",
+    "shared/src/validators/machine-cover-image.schema.ts",
+    "backend/server/repositories/machine-cover-image.repository.ts",
+    "backend/server/services/machine-cover-image.service.ts",
+    "backend/server/controllers/machine-cover-image.controller.ts",
+    "backend/server/controllers/machine-cover-image-media.controller.ts",
+    "backend/server/repositories/machine.repository.ts",
+    "backend/server/services/machine.service.ts",
+    "backend/server/controllers/machine.controller.ts",
+    "backend/server/repositories/admin-catalog.repository.ts",
+    "backend/server/app.ts",
+    "backend/server/utils/public-api-base.ts",
+    "frontend/src/pages/admin/machine-covers/AdminMachineCoversPage.tsx",
+    "frontend/src/api/admin.api.ts",
+    "frontend/src/api/index.ts",
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
+    "frontend/src/components/machines/MachineHero/MachineHero.tsx",
+    "frontend/src/constants/query-keys.ts",
+    "frontend/src/styles/admin-muscle-images.css",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json"
   ],
-  "testFocus": "Login/register must work without a token; equipment APIs under /inspection still require auth.",
+  "testFocus": "Admin: FREE_WEIGHT + FW_BARBELL muscle slots upload; Search: 등/가슴 + 프리 + 바벨 show different images.",
   "fastChecks": [
-    "curl -s -o NUL -w \"%{http_code}\" -X POST https://machinefit.onrender.com/api/v1/auth/login -H \"Content-Type: application/json\" -d \"{\\\"email\\\":\\\"x@y.com\\\",\\\"password\\\":\\\"bad\\\"}\"  (expect 401 INVALID_CREDENTIALS, not Authentication required)",
-    "npm run test:smoke:changed"
+    "npm run build --prefix shared",
+    "Apply migration 083 (npm run db:migrate against prod DATABASE_URL)"
   ],
   "productionChecks": [
-    "GitHub Pages login form succeeds with valid credentials",
-    "Owner equipment pages still load after backend+frontend deploy"
+    "Run db:migrate on production before/with Render redeploy",
+    "Admin → 머신 대표 이미지 → Free Weight → barbell muscle slots",
+    "Search 등+프리 → barbell shows back photo; 가슴+프리 → chest photo"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": true,
-    "note": "Login fix requires Render backend redeploy; frontend path change is for /inspection prefix"
+    "migrationRequired": "083_machine_cover_muscle_variants.sql"
   },
-  "asIs": "POST /auth/login returns UNAUTHORIZED Authentication required — login impossible.",
-  "toBe": "POST /auth/login reaches auth handler (invalid creds → INVALID_CREDENTIALS); valid login works."
+  "asIs": "Same FW_BARBELL image (or muscle icon) for every muscle chip.",
+  "toBe": "Admin can upload per-muscle FW covers; search/detail show the matching muscle photo."
 }

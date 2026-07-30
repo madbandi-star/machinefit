@@ -21,7 +21,7 @@ const PRIMARY_IMAGE_URL_SQL = `COALESCE(
                     ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
                   END
                   FROM machine_cover_images c
-                  WHERE c.machine_id = m.id
+                  WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
                   LIMIT 1
                 ),
                 (

@@ -48,8 +48,8 @@ import type {
 export const machineApi = {
   list: (params?: Record<string, string | number>) =>
     apiClient.get<ApiResponse<PaginatedResponse<Machine>>>('/machines', { params }),
-  getByCode: (code: string) =>
-    apiClient.get<ApiResponse<Machine>>(`/machines/${code}`),
+  getByCode: (code: string, params?: { muscle?: string }) =>
+    apiClient.get<ApiResponse<Machine>>(`/machines/${code}`, { params }),
   search: (q: string) =>
     apiClient.get<ApiResponse<Machine[]>>('/machines/search', { params: { q } }),
 };

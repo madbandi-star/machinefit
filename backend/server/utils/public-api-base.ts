@@ -14,8 +14,16 @@ export function muscleGroupMediaUrl(muscleGroup: string, kind: 'main' | 'thumb')
   return `${publicApiBase()}/media/muscle-group-images/${encodeURIComponent(muscleGroup)}/${kind}`;
 }
 
-export function machineCoverMediaUrl(machineCode: string, kind: 'main' | 'thumb'): string {
-  return `${publicApiBase()}/media/machine-covers/${encodeURIComponent(machineCode)}/${kind}`;
+export function machineCoverMediaUrl(
+  machineCode: string,
+  kind: 'main' | 'thumb',
+  targetMuscle?: string | null
+): string {
+  const code = encodeURIComponent(machineCode);
+  if (targetMuscle) {
+    return `${publicApiBase()}/media/machine-covers/${code}/${encodeURIComponent(targetMuscle)}/${kind}`;
+  }
+  return `${publicApiBase()}/media/machine-covers/${code}/${kind}`;
 }
 
 export function brandAssetMediaUrl(brandCode: string, kind: 'logo' | 'hero'): string {

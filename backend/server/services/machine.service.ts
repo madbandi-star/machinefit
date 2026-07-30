@@ -49,9 +49,11 @@ export const machineService = {
     return load();
   },
 
-  async getByCode(code: string) {
-    return machineByCodeCache.getOrSet(code, async () => {
-      const machine = await machineRepository.findByCode(code);
+  async getByCode(code: string, targetMuscleGroup?: string | null) {
+    const muscle = targetMuscleGroup?.trim() || null;
+    const cacheKey = muscle ? `${code}::${muscle}` : code;
+    return machineByCodeCache.getOrSet(cacheKey, async () => {
+      const machine = await machineRepository.findByCode(code, muscle);
       if (!machine) {
         throw new AppError(404, 'NOT_FOUND', `Machine not found: ${code}`);
       }

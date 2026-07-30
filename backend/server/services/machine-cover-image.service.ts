@@ -1,4 +1,10 @@
-import type { MachineCoverBrandOption, MachineCoverImageAsset, MachineCoverImagesPage } from '@machinefit/shared';
+import type {
+  MachineCoverBrandOption,
+  MachineCoverImageAsset,
+  MachineCoverImagesPage,
+  TargetMuscleGroup,
+} from '@machinefit/shared';
+import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { machineCoverImageRepository } from '../repositories/machine-cover-image.repository.js';
 import { processMuscleGroupImage } from './muscle-group-image-process.service.js';
 import { storageService } from './storage.service.js';
@@ -17,10 +23,16 @@ async function trySupabaseStore(params: {
   mimeType: string;
   buffer: Buffer;
   version: number;
+  targetMuscle?: string | null;
 }): Promise<{ storagePath: string; publicUrl: string } | null> {
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) return null;
   try {
-    const stored = await storageService.saveMachineCoverImage(params);
+    const stored = await storageService.saveMachineCoverImage({
+      ...params,
+      machineCode: params.targetMuscle
+        ? `${params.machineCode}__${params.targetMuscle}`
+        : params.machineCode,
+    });
     return { storagePath: stored.storagePath, publicUrl: stored.publicUrl };
   } catch {
     return null;
@@ -41,12 +53,13 @@ export const machineCoverImageService = {
     return machineCoverImageRepository.list(filters);
   },
 
-  async getBlob(machineCode: string, kind: 'main' | 'thumb') {
-    return machineCoverImageRepository.getBlob(machineCode, kind);
+  async getBlob(machineCode: string, kind: 'main' | 'thumb', targetMuscle?: string | null) {
+    return machineCoverImageRepository.getBlob(machineCode, kind, targetMuscle);
   },
 
   async upload(params: {
     machineCode: string;
+    targetMuscle?: TargetMuscleGroup | null;
     file: {
       originalname: string;
       mimetype: string;
@@ -76,12 +89,21 @@ export const machineCoverImageService = {
       throw new AppError(404, 'NOT_FOUND', 'Machine not found');
     }
 
-    const existing = await machineCoverImageRepository.getByCode(machine.code);
+    const targetMuscle = params.targetMuscle ?? null;
+    if (targetMuscle && !isFreeWeightMachineCode(machine.code)) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'Per-muscle covers are only supported for free-weight machines'
+      );
+    }
+
+    const existing = await machineCoverImageRepository.getByCode(machine.code, targetMuscle);
     const nextVersion = (existing?.version ?? 0) + 1;
     const processed = await processMuscleGroupImage(params.file.buffer);
 
-    const apiMainUrl = machineCoverMediaUrl(machine.code, 'main');
-    const apiThumbUrl = machineCoverMediaUrl(machine.code, 'thumb');
+    const apiMainUrl = machineCoverMediaUrl(machine.code, 'main', targetMuscle);
+    const apiThumbUrl = machineCoverMediaUrl(machine.code, 'thumb', targetMuscle);
 
     const mainStored = await trySupabaseStore({
       machineCode: machine.code,
@@ -90,6 +112,7 @@ export const machineCoverImageService = {
       mimeType: processed.main.mimeType,
       buffer: processed.main.buffer,
       version: nextVersion,
+      targetMuscle,
     });
     const thumbStored = await trySupabaseStore({
       machineCode: machine.code,
@@ -98,15 +121,18 @@ export const machineCoverImageService = {
       mimeType: processed.thumbnail.mimeType,
       buffer: processed.thumbnail.buffer,
       version: nextVersion,
+      targetMuscle,
     });
 
+    const dbKey = targetMuscle ? `${machine.code}/${targetMuscle}` : machine.code;
     const saved = await machineCoverImageRepository.upsert({
       machineId: machine.id,
       machineCode: machine.code,
+      targetMuscleGroup: targetMuscle,
       imageUrl: mainStored?.publicUrl ?? apiMainUrl,
       thumbnailUrl: thumbStored?.publicUrl ?? apiThumbUrl,
-      storagePath: mainStored?.storagePath ?? `db:${machine.code}/main`,
-      thumbnailStoragePath: thumbStored?.storagePath ?? `db:${machine.code}/thumb`,
+      storagePath: mainStored?.storagePath ?? `db:${dbKey}/main`,
+      thumbnailStoragePath: thumbStored?.storagePath ?? `db:${dbKey}/thumb`,
       originalFilename: originalName,
       mimeType: processed.main.mimeType,
       fileSizeBytes: processed.main.fileSizeBytes,
@@ -127,8 +153,11 @@ export const machineCoverImageService = {
     return saved;
   },
 
-  async remove(machineCode: string): Promise<{ machineCode: string; deleted: boolean }> {
-    const removed = await machineCoverImageRepository.remove(machineCode);
+  async remove(
+    machineCode: string,
+    targetMuscle?: TargetMuscleGroup | null
+  ): Promise<{ machineCode: string; targetMuscle: string | null; deleted: boolean }> {
+    const removed = await machineCoverImageRepository.remove(machineCode, targetMuscle ?? null);
     if (removed) {
       if (removed.storagePath && !removed.storagePath.startsWith('db:')) {
         await storageService.deleteMachineCoverImage(removed.storagePath);
@@ -137,6 +166,10 @@ export const machineCoverImageService = {
         await storageService.deleteMachineCoverImage(removed.thumbnailStoragePath);
       }
     }
-    return { machineCode, deleted: Boolean(removed) };
+    return {
+      machineCode,
+      targetMuscle: targetMuscle ?? null,
+      deleted: Boolean(removed),
+    };
   },
 };

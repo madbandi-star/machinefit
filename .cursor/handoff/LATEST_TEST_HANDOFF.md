@@ -1,38 +1,37 @@
-# Latest test handoff — Fix login blocked by inspection auth
+# Latest test handoff — Free-weight covers per muscle
 
-**Branch:** `main` · **Commit:** `7e32446`
+**Branch:** `main` · **Commit:** *(after push)*
 
 ## Change
 
-점검(inspection) 라우터가 API 루트에 `authMiddleware`와 함께 마운트되어 **로그인/가입까지 401**로 막히던 문제 수정.
+이전에는 **기구 코드당 이미지 1장**만 가능해서 `등-프리-바벨` / `가슴-프리-바벨`을 다르게 보여줄 수 없었음.
 
-- `inspectionRouter` → `/inspection` prefix
-- 라우터 전역 auth 제거, 점검 라우트에만 auth
-- 프론트 `inspectionApi` 경로를 `/inspection/...`로 맞춤
+기존 **관리자 → 머신 대표 이미지**를 확장:
+
+- 프리웨이트(`FW_*`)에 **부위별(등/가슴/하체/어깨/이두/삼두/팔/코어) 슬롯** 추가
+- 검색 목록·상세는 선택된 부위의 커버를 우선 표시
+- DB migration `083_machine_cover_muscle_variants.sql` 필요
 
 ## Test focus
 
-1. 비로그인 `POST /auth/login` → `INVALID_CREDENTIALS` (메시지 **Authentication required** 이면 실패)
-2. 실제 계정으로 GitHub Pages 로그인 성공
-3. 헬스장 장비 점검 메뉴가 `/inspection` API로 동작
+1. Admin 로그인 → 머신 대표 이미지 → Free Weight → 바벨 카드의 부위별 업로드
+2. 검색: 등 + 프리 → 바벨 썸네일 = 등용 사진; 가슴 + 프리 → 가슴용 사진
+3. 상세 `?muscle=back` 이미지도 부위 반영
 
 ## Fast checks
 
 ```bash
-# After Render backend deploy:
-# Wrong password should be INVALID_CREDENTIALS, not "Authentication required"
-```
-
-```bash
-npm run test:smoke:changed
+npm run build --prefix shared
+npm run db:migrate   # production DATABASE_URL — migration 083
 ```
 
 ## Deploy
 
-- Frontend: Pages on push to `main`
-- **Backend Render redeploy required** (login fix is server-side)
+- Frontend: Pages on `main` push
+- **Backend Render redeploy required**
+- **DB migrate 083 required** (로그인 수정처럼 서버/DB 반영이 핵심)
 
 ## as-is → to-be
 
-- **as-is:** 로그인 API가 Authentication required 로 막힘
-- **to-be:** 로그인 핸들러까지 도달, 정상 로그인 가능
+- **as-is:** 바벨 이미지 부위별 관리 불가
+- **to-be:** Admin에서 부위별 업로드 후 검색에서 부위별로 다른 바벨 사진 표시

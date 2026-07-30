@@ -1,7 +1,11 @@
 import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { MachineCoverImageAsset } from '@machinefit/shared';
+import {
+  TARGET_MUSCLE_GROUPS,
+  type MachineCoverImageAsset,
+  type TargetMuscleGroup,
+} from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
@@ -19,6 +23,12 @@ const ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp'
 const MAX_BYTES = 10 * 1024 * 1024;
 const ALLOWED_EXT = new Set(['jpg', 'jpeg', 'png', 'webp']);
 const PAGE_SIZE = 24;
+
+type CoverSlotKey = string; // machineCode or machineCode::muscle
+
+function slotKey(code: string, muscle?: string | null): CoverSlotKey {
+  return muscle ? `${code}::${muscle}` : code;
+}
 
 function isAllowedImage(file: File): boolean {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
@@ -51,7 +61,11 @@ export function AdminMachineCoversPage() {
   const [brandCode, setBrandCode] = useState('');
   const [page, setPage] = useState(1);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
-  const [pendingDelete, setPendingDelete] = useState<MachineCoverImageAsset | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{
+    code: string;
+    name: string;
+    muscle?: TargetMuscleGroup;
+  } | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<string | null>(null);
 
@@ -85,11 +99,25 @@ export function AdminMachineCoversPage() {
   }, [queryClient]);
 
   const uploadMutation = useMutation({
-    mutationFn: async ({ code, file }: { code: string; file: File }) => {
-      setUploadProgress((prev) => ({ ...prev, [code]: 0 }));
-      const res = await adminApi.uploadMachineCover(code, file, (percent) => {
-        setUploadProgress((prev) => ({ ...prev, [code]: percent }));
-      });
+    mutationFn: async ({
+      code,
+      file,
+      muscle,
+    }: {
+      code: string;
+      file: File;
+      muscle?: TargetMuscleGroup;
+    }) => {
+      const key = slotKey(code, muscle);
+      setUploadProgress((prev) => ({ ...prev, [key]: 0 }));
+      const res = await adminApi.uploadMachineCover(
+        code,
+        file,
+        (percent) => {
+          setUploadProgress((prev) => ({ ...prev, [key]: percent }));
+        },
+        muscle
+      );
       return res.data.data;
     },
     onSuccess: async () => {
@@ -107,17 +135,18 @@ export function AdminMachineCoversPage() {
       }
     },
     onSettled: (_data, _error, variables) => {
+      const key = slotKey(variables.code, variables.muscle);
       setUploadProgress((prev) => {
         const next = { ...prev };
-        delete next[variables.code];
+        delete next[key];
         return next;
       });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (code: string) => {
-      const res = await adminApi.deleteMachineCover(code);
+    mutationFn: async ({ code, muscle }: { code: string; muscle?: TargetMuscleGroup }) => {
+      const res = await adminApi.deleteMachineCover(code, muscle);
       return res.data.data;
     },
     onSuccess: async () => {
@@ -128,7 +157,7 @@ export function AdminMachineCoversPage() {
     onSettled: () => setPendingDelete(null),
   });
 
-  const handleFile = (code: string, file: File | undefined) => {
+  const handleFile = (code: string, file: File | undefined, muscle?: TargetMuscleGroup) => {
     if (!file) return;
     if (!isAllowedImage(file)) {
       showToast(t('admin:machineCovers.uploadUnsupported'), 'error');
@@ -138,7 +167,7 @@ export function AdminMachineCoversPage() {
       showToast(t('admin:machineCovers.uploadTooLarge'), 'error');
       return;
     }
-    uploadMutation.mutate({ code, file });
+    uploadMutation.mutate({ code, file, muscle });
   };
 
   const totalPages = useMemo(() => {
@@ -168,6 +197,7 @@ export function AdminMachineCoversPage() {
   return (
     <AdminPageShell title={t('admin:machineCovers.title')} subtitle={t('admin:machineCovers.subtitle')}>
       <p className="admin-muscle-hint">{t('admin:machineCovers.recommend')}</p>
+      <p className="admin-muscle-hint">{t('admin:machineCovers.freeWeightHint')}</p>
 
       <form
         className="admin-machine-covers-toolbar"
@@ -213,79 +243,102 @@ export function AdminMachineCoversPage() {
         count={listQuery.data?.total ?? 0}
         countLabel={t('admin:machineCovers.resultCount', { count: listQuery.data?.total ?? 0 })}
       >
-      <div className="admin-muscle-grid">
-        {(listQuery.data?.items ?? []).map((item) => {
-          const previewUrl =
-            item.imageUrl ||
-            resolveMachineImageUrl(item.machineCode) ||
-            machinePlaceholderUrl();
-          const progress = uploadProgress[item.machineCode];
-          const busy =
-            (uploadMutation.isPending && uploadMutation.variables?.code === item.machineCode) ||
-            (deleteMutation.isPending && deleteMutation.variables === item.machineCode);
-          const title = getLocalizedName(item.machineName, i18n.language, item.machineCode);
-          const brandLabel = getLocalizedName(item.brandName, i18n.language, item.brandCode);
+        <div className="admin-muscle-grid">
+          {(listQuery.data?.items ?? []).map((item) => {
+            const previewUrl =
+              item.imageUrl ||
+              resolveMachineImageUrl(item.machineCode) ||
+              machinePlaceholderUrl();
+            const key = slotKey(item.machineCode);
+            const progress = uploadProgress[key];
+            const busy =
+              (uploadMutation.isPending &&
+                uploadMutation.variables?.code === item.machineCode &&
+                !uploadMutation.variables?.muscle) ||
+              (deleteMutation.isPending &&
+                deleteMutation.variables?.code === item.machineCode &&
+                !deleteMutation.variables?.muscle);
+            const title = getLocalizedName(item.machineName, i18n.language, item.machineCode);
+            const brandLabel = getLocalizedName(item.brandName, i18n.language, item.brandCode);
 
-          return (
-            <MachineCoverCard
-              key={item.machineId}
-              item={item}
-              title={title}
-              brandLabel={brandLabel}
-              previewUrl={previewUrl}
-              progress={progress}
-              busy={busy}
-              dragOver={dragOver === item.machineCode}
-              locale={i18n.language}
-              onPickFile={(file) => handleFile(item.machineCode, file)}
-              onDelete={() => setPendingDelete(item)}
-              onPreview={() => setLightboxUrl(previewUrl)}
-              onDragState={(active) => setDragOver(active ? item.machineCode : null)}
-              labels={{
-                upload: t('admin:machineCovers.upload'),
-                change: t('admin:machineCovers.change'),
-                remove: t('admin:machineCovers.delete'),
-                filename: t('admin:machineCovers.filename'),
-                size: t('admin:machineCovers.fileSize'),
-                uploadedAt: t('admin:machineCovers.uploadedAt'),
-                updatedAt: t('admin:machineCovers.updatedAt'),
-                dimensions: t('admin:machineCovers.dimensions'),
-                placeholder: t('admin:machineCovers.placeholder'),
-                dropHere: t('admin:machineCovers.dropHere'),
-                uploading: t('admin:machineCovers.uploading'),
-                custom: t('admin:machineCovers.customBadge'),
-                catalog: t('admin:machineCovers.catalogBadge'),
-              }}
-            />
-          );
-        })}
-      </div>
+            return (
+              <MachineCoverCard
+                key={item.machineId}
+                item={item}
+                title={title}
+                brandLabel={brandLabel}
+                previewUrl={previewUrl}
+                progress={progress}
+                busy={busy}
+                dragOver={dragOver === key}
+                locale={i18n.language}
+                uploadProgress={uploadProgress}
+                pendingUpload={uploadMutation.isPending ? uploadMutation.variables : undefined}
+                pendingDelete={deleteMutation.isPending ? deleteMutation.variables : undefined}
+                onPickFile={(file, muscle) => handleFile(item.machineCode, file, muscle)}
+                onDelete={(muscle) =>
+                  setPendingDelete({
+                    code: item.machineCode,
+                    name: title,
+                    muscle,
+                  })
+                }
+                onPreview={(url) => setLightboxUrl(url)}
+                onDragState={(active, muscle) =>
+                  setDragOver(active ? slotKey(item.machineCode, muscle) : null)
+                }
+                muscleLabel={(muscle) =>
+                  t(`machines:muscleGroups.${muscle}`, { defaultValue: muscle })
+                }
+                labels={{
+                  upload: t('admin:machineCovers.upload'),
+                  change: t('admin:machineCovers.change'),
+                  remove: t('admin:machineCovers.delete'),
+                  filename: t('admin:machineCovers.filename'),
+                  size: t('admin:machineCovers.fileSize'),
+                  uploadedAt: t('admin:machineCovers.uploadedAt'),
+                  updatedAt: t('admin:machineCovers.updatedAt'),
+                  dimensions: t('admin:machineCovers.dimensions'),
+                  placeholder: t('admin:machineCovers.placeholder'),
+                  dropHere: t('admin:machineCovers.dropHere'),
+                  uploading: t('admin:machineCovers.uploading'),
+                  custom: t('admin:machineCovers.customBadge'),
+                  catalog: t('admin:machineCovers.catalogBadge'),
+                  defaultCover: t('admin:machineCovers.defaultCover'),
+                  muscleVariants: t('admin:machineCovers.muscleVariants'),
+                  muscleVariantHint: (muscle) =>
+                    t('admin:machineCovers.muscleVariantHint', {
+                      muscle: t(`machines:muscleGroups.${muscle}`, { defaultValue: muscle }),
+                    }),
+                }}
+              />
+            );
+          })}
+        </div>
 
-      {(listQuery.data?.items.length ?? 0) === 0 ? (
-        <p className="admin-muscle-hint">{t('admin:machineCovers.empty')}</p>
-      ) : null}
+        {(listQuery.data?.items.length ?? 0) === 0 ? (
+          <p className="admin-muscle-hint">{t('admin:machineCovers.empty')}</p>
+        ) : null}
 
-      <div className="admin-machine-covers-pager">
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={page <= 1 || listQuery.isFetching}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-        >
-          {t('admin:machineCovers.prev')}
-        </button>
-        <span>
-          {t('admin:machineCovers.pageStatus', { page, totalPages })}
-        </span>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={page >= totalPages || listQuery.isFetching}
-          onClick={() => setPage((p) => p + 1)}
-        >
-          {t('admin:machineCovers.next')}
-        </button>
-      </div>
+        <div className="admin-machine-covers-pager">
+          <button
+            type="button"
+            className="btn btn--secondary"
+            disabled={page <= 1 || listQuery.isFetching}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            {t('admin:machineCovers.prev')}
+          </button>
+          <span>{t('admin:machineCovers.pageStatus', { page, totalPages })}</span>
+          <button
+            type="button"
+            className="btn btn--secondary"
+            disabled={page >= totalPages || listQuery.isFetching}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            {t('admin:machineCovers.next')}
+          </button>
+        </div>
       </AdminPanel>
 
       <ConfirmDialog
@@ -293,14 +346,23 @@ export function AdminMachineCoversPage() {
         title={t('admin:machineCovers.deleteTitle')}
         message={t('admin:machineCovers.deleteMessage', {
           name: pendingDelete
-            ? getLocalizedName(pendingDelete.machineName, i18n.language, pendingDelete.machineCode)
+            ? pendingDelete.muscle
+              ? `${pendingDelete.name} · ${t(`machines:muscleGroups.${pendingDelete.muscle}`, {
+                  defaultValue: pendingDelete.muscle,
+                })}`
+              : pendingDelete.name
             : '',
         })}
         confirmLabel={t('admin:machineCovers.delete')}
         confirmVariant="danger"
         onClose={() => setPendingDelete(null)}
         onConfirm={() => {
-          if (pendingDelete) deleteMutation.mutate(pendingDelete.machineCode);
+          if (pendingDelete) {
+            deleteMutation.mutate({
+              code: pendingDelete.code,
+              muscle: pendingDelete.muscle,
+            });
+          }
         }}
       />
 
@@ -327,10 +389,14 @@ interface MachineCoverCardProps {
   busy: boolean;
   dragOver: boolean;
   locale: string;
-  onPickFile: (file: File | undefined) => void;
-  onDelete: () => void;
-  onPreview: () => void;
-  onDragState: (active: boolean) => void;
+  uploadProgress: Record<string, number>;
+  pendingUpload?: { code: string; muscle?: TargetMuscleGroup };
+  pendingDelete?: { code: string; muscle?: TargetMuscleGroup };
+  onPickFile: (file: File | undefined, muscle?: TargetMuscleGroup) => void;
+  onDelete: (muscle?: TargetMuscleGroup) => void;
+  onPreview: (url: string) => void;
+  onDragState: (active: boolean, muscle?: TargetMuscleGroup) => void;
+  muscleLabel: (muscle: TargetMuscleGroup) => string;
   labels: {
     upload: string;
     change: string;
@@ -345,6 +411,9 @@ interface MachineCoverCardProps {
     uploading: string;
     custom: string;
     catalog: string;
+    defaultCover: string;
+    muscleVariants: string;
+    muscleVariantHint: (muscle: TargetMuscleGroup) => string;
   };
 }
 
@@ -357,14 +426,19 @@ function MachineCoverCard({
   busy,
   dragOver,
   locale,
+  uploadProgress,
+  pendingUpload,
+  pendingDelete,
   onPickFile,
   onDelete,
   onPreview,
   onDragState,
+  muscleLabel,
   labels,
 }: MachineCoverCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const hasCustom = item.hasCustomImage;
+  const showVariants = Boolean(item.supportsMuscleVariants);
 
   const onDrop = (event: DragEvent) => {
     event.preventDefault();
@@ -374,7 +448,7 @@ function MachineCoverCard({
 
   return (
     <article
-      className={`admin-muscle-card${dragOver ? ' is-dragover' : ''}`}
+      className={`admin-muscle-card${dragOver ? ' is-dragover' : ''}${showVariants ? ' admin-machine-cover-card--variants' : ''}`}
       onDragOver={(e) => {
         e.preventDefault();
         onDragState(true);
@@ -384,8 +458,7 @@ function MachineCoverCard({
     >
       <header className="admin-muscle-card__header">
         <h2 className="admin-muscle-card__title">
-          {title}{' '}
-          <span className="admin-muscle-card__code">({item.machineCode})</span>
+          {title} <span className="admin-muscle-card__code">({item.machineCode})</span>
         </h2>
         <p className="admin-muscle-hint" style={{ marginTop: '0.25rem' }}>
           {brandLabel} · {item.muscleGroup}{' '}
@@ -397,10 +470,12 @@ function MachineCoverCard({
         </p>
       </header>
 
+      <p className="admin-muscle-hint">{labels.defaultCover}</p>
+
       <button
         type="button"
         className="admin-muscle-card__preview"
-        onClick={onPreview}
+        onClick={() => onPreview(previewUrl)}
         aria-label={title}
       >
         {previewUrl ? (
@@ -452,7 +527,7 @@ function MachineCoverCard({
           type="button"
           className="btn btn--danger"
           disabled={busy || !hasCustom}
-          onClick={onDelete}
+          onClick={() => onDelete()}
         >
           {labels.remove}
         </button>
@@ -480,6 +555,119 @@ function MachineCoverCard({
           <dd>{formatDate(item.updatedAt, locale)}</dd>
         </div>
       </dl>
+
+      {showVariants ? (
+        <div className="admin-machine-cover-variants">
+          <h3 className="admin-machine-cover-variants__title">{labels.muscleVariants}</h3>
+          <div className="admin-machine-cover-variants__grid">
+            {TARGET_MUSCLE_GROUPS.map((muscle) => {
+              const variant =
+                item.muscleVariants?.find((v) => v.targetMuscleGroup === muscle) ?? null;
+              const preview =
+                variant?.imageUrl || variant?.thumbnailUrl || machinePlaceholderUrl();
+              const key = slotKey(item.machineCode, muscle);
+              const variantProgress = uploadProgress[key];
+              const variantBusy =
+                (pendingUpload?.code === item.machineCode && pendingUpload.muscle === muscle) ||
+                (pendingDelete?.code === item.machineCode && pendingDelete.muscle === muscle);
+              return (
+                <MuscleVariantSlot
+                  key={muscle}
+                  muscle={muscle}
+                  label={muscleLabel(muscle)}
+                  hint={labels.muscleVariantHint(muscle)}
+                  previewUrl={preview}
+                  hasCustom={Boolean(variant?.hasCustomImage)}
+                  progress={variantProgress}
+                  busy={variantBusy}
+                  dragOver={false}
+                  labels={labels}
+                  onPickFile={(file) => onPickFile(file, muscle)}
+                  onDelete={() => onDelete(muscle)}
+                  onPreview={() => onPreview(preview)}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
     </article>
+  );
+}
+
+function MuscleVariantSlot({
+  muscle,
+  label,
+  hint,
+  previewUrl,
+  hasCustom,
+  progress,
+  busy,
+  labels,
+  onPickFile,
+  onDelete,
+  onPreview,
+}: {
+  muscle: TargetMuscleGroup;
+  label: string;
+  hint: string;
+  previewUrl: string;
+  hasCustom: boolean;
+  progress?: number;
+  busy: boolean;
+  dragOver: boolean;
+  labels: MachineCoverCardProps['labels'];
+  onPickFile: (file: File | undefined) => void;
+  onDelete: () => void;
+  onPreview: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  return (
+    <div className="admin-machine-cover-variant" data-muscle={muscle}>
+      <div className="admin-machine-cover-variant__head">
+        <strong>{label}</strong>
+        <span className="admin-muscle-hint">{hint}</span>
+      </div>
+      <button type="button" className="admin-machine-cover-variant__preview" onClick={onPreview}>
+        <img src={previewUrl} alt="" loading="lazy" decoding="async" />
+      </button>
+      {progress != null ? (
+        <div className="admin-muscle-progress" aria-live="polite">
+          <div className="admin-muscle-progress__bar" style={{ width: `${progress}%` }} />
+          <span>
+            {labels.uploading} {progress}%
+          </span>
+        </div>
+      ) : null}
+      <div className="admin-machine-cover-variant__actions">
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ACCEPT}
+          hidden
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            onPickFile(file);
+          }}
+        />
+        <button
+          type="button"
+          className="btn btn--primary btn--sm"
+          disabled={busy}
+          onClick={() => inputRef.current?.click()}
+        >
+          {labels.upload}
+        </button>
+        <button
+          type="button"
+          className="btn btn--danger btn--sm"
+          disabled={busy || !hasCustom}
+          onClick={onDelete}
+        >
+          {labels.remove}
+        </button>
+      </div>
+    </div>
   );
 }

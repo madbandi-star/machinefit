@@ -1,6 +1,7 @@
 export const QUERY_KEYS = {
   machines: ['machines'] as const,
-  machine: (code: string) => ['machines', code] as const,
+  machine: (code: string, muscle?: string) =>
+    muscle ? (['machines', code, muscle] as const) : (['machines', code] as const),
   brands: ['brands'] as const,
   brand: (code: string) => ['brands', code] as const,
   gyms: ['gyms'] as const,

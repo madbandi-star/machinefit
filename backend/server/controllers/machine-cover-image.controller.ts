@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import {
   machineCoverListQuerySchema,
+  machineCoverTargetMuscleQuerySchema,
   machineCoverUploadParamsSchema,
 } from '@machinefit/shared';
 import { machineCoverImageService } from '../services/machine-cover-image.service.js';
@@ -34,11 +35,16 @@ export async function uploadMachineCover(req: Request, res: Response, next: Next
     if (!parsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid machine code');
     }
+    const muscleParsed = machineCoverTargetMuscleQuerySchema.safeParse(req.query);
+    if (!muscleParsed.success) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Invalid target muscle');
+    }
     if (!req.file) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Image file is required');
     }
     const item = await machineCoverImageService.upload({
       machineCode: parsed.data.machineCode,
+      targetMuscle: muscleParsed.data.targetMuscle,
       file: req.file,
     });
     res.status(201).json({ success: true, data: item });
@@ -53,7 +59,14 @@ export async function deleteMachineCover(req: Request, res: Response, next: Next
     if (!parsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid machine code');
     }
-    const data = await machineCoverImageService.remove(parsed.data.machineCode);
+    const muscleParsed = machineCoverTargetMuscleQuerySchema.safeParse(req.query);
+    if (!muscleParsed.success) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Invalid target muscle');
+    }
+    const data = await machineCoverImageService.remove(
+      parsed.data.machineCode,
+      muscleParsed.data.targetMuscle
+    );
     res.json({ success: true, data });
   } catch (error) {
     next(error);

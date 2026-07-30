@@ -65,8 +65,16 @@ export function createApp() {
   );
 
   // Durable machine cover images from Postgres.
+  // Default: /media/machine-covers/:machineCode/:kind
+  // Free-weight muscle variant: /media/machine-covers/:machineCode/:targetMuscle/:kind
   app.get(
-    `${env.API_BASE_PATH}/media/machine-covers/:machineCode/:kind`,
+    `${env.API_BASE_PATH}/media/machine-covers/:machineCode/:targetMuscleOrKind/:kind`,
+    (req, res, next) => {
+      void serveMachineCoverImage(req, res, next);
+    }
+  );
+  app.get(
+    `${env.API_BASE_PATH}/media/machine-covers/:machineCode/:targetMuscleOrKind`,
     (req, res, next) => {
       void serveMachineCoverImage(req, res, next);
     }

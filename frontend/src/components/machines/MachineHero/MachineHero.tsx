@@ -13,15 +13,22 @@ import '@/styles/machines.css';
 interface MachineHeroProps {
   machine: Machine;
   compact?: boolean;
+  selectedMuscle?: string | null;
 }
 
-export function MachineHero({ machine, compact = false }: MachineHeroProps) {
+export function MachineHero({ machine, compact = false, selectedMuscle = null }: MachineHeroProps) {
   const { t, i18n } = useTranslation('machines');
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
   const showDefaultMuscle = shouldShowDefaultMachineMuscle(machine.code);
   const typeLabel = t('machineTypes.free_weight');
   const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
+  const displayMuscle =
+    isFreeWeight && selectedMuscle
+      ? selectedMuscle
+      : showDefaultMuscle
+        ? machine.muscleGroup
+        : undefined;
 
   return (
     <div className={`machine-hero${compact ? ' machine-hero--compact' : ''}`}>
@@ -37,9 +44,9 @@ export function MachineHero({ machine, compact = false }: MachineHeroProps) {
               fetchPriority="high"
               decoding="async"
             />
-          ) : showDefaultMuscle && machine.muscleGroup ? (
+          ) : displayMuscle ? (
             <div className="machine-hero__muscle-icon" aria-hidden>
-              <MuscleGroupIcon group={machine.muscleGroup as MuscleGroup} size={120} />
+              <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={120} />
             </div>
           ) : (
             <SafeImage

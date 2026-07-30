@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { TARGET_MUSCLE_GROUPS } from '../constants/workout-goals.js';
+
+export const machineCoverTargetMuscleSchema = z.enum(TARGET_MUSCLE_GROUPS);
 
 export const machineCoverListQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
@@ -9,4 +12,8 @@ export const machineCoverListQuerySchema = z.object({
 
 export const machineCoverUploadParamsSchema = z.object({
   machineCode: z.string().trim().min(1).max(80),
+});
+
+export const machineCoverTargetMuscleQuerySchema = z.object({
+  targetMuscle: machineCoverTargetMuscleSchema.optional(),
 });

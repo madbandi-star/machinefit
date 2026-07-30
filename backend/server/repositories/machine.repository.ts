@@ -118,6 +118,51 @@ const PRIMARY_IMAGE_SQL = `(
                 LIMIT 1
               ) AS primary_image_url`;
 
+/** Prefer free-weight muscle-variant cover, then default cover / machine_images. */
+function primaryImageSqlForMuscle(muscleParamIndex: number | null): string {
+  if (muscleParamIndex == null) {
+    return `COALESCE(
+         (
+           SELECT CASE
+             WHEN c.image_url IS NULL THEN NULL
+             WHEN POSITION('?' IN c.image_url) > 0
+               THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+             ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+           END
+           FROM machine_cover_images c
+           WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
+           LIMIT 1
+         ),
+         img.image_url
+       ) AS primary_image_url`;
+  }
+  return `COALESCE(
+         (
+           SELECT CASE
+             WHEN c.image_url IS NULL THEN NULL
+             WHEN POSITION('?' IN c.image_url) > 0
+               THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+             ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+           END
+           FROM machine_cover_images c
+           WHERE c.machine_id = m.id AND c.target_muscle_group = $${muscleParamIndex}
+           LIMIT 1
+         ),
+         (
+           SELECT CASE
+             WHEN c.image_url IS NULL THEN NULL
+             WHEN POSITION('?' IN c.image_url) > 0
+               THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+             ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+           END
+           FROM machine_cover_images c
+           WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
+           LIMIT 1
+         ),
+         img.image_url
+       ) AS primary_image_url`;
+}
+
 export const machineRepository = {
   async findMany(filters: {
     brandCode?: string;
@@ -184,6 +229,9 @@ export const machineRepository = {
       params
     );
 
+    const muscleParamIndex = filters.muscleGroup ? params.indexOf(filters.muscleGroup) + 1 : null;
+    const primaryImageSelect = primaryImageSqlForMuscle(muscleParamIndex);
+
     // List projection: skip tip/how_to blobs — detail page fetches full machine.
     const listPromise = pool.query<
       MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
@@ -201,7 +249,7 @@ export const machineRepository = {
          NULL::jsonb AS advanced_tips,
          NULL::jsonb AS pro_tips,
          b.name AS brand_name,
-         img.image_url AS primary_image_url
+         ${primaryImageSelect}
        FROM machines m
        LEFT JOIN brands b ON b.id = m.brand_id
        LEFT JOIN LATERAL (
@@ -231,21 +279,34 @@ export const machineRepository = {
     };
   },
 
-  async findByCode(code: string): Promise<Machine | null> {
+  async findByCode(code: string, targetMuscleGroup?: string | null): Promise<Machine | null> {
     const pool = getPool();
     if (!pool) {
       const machine = MOCK_MACHINES.find((m) => m.code === code) ?? null;
       return machine ? attachBrandName(machine) : null;
     }
 
+    const muscle = targetMuscleGroup?.trim() || null;
+    const primaryImageSelect = muscle
+      ? primaryImageSqlForMuscle(2)
+      : primaryImageSqlForMuscle(null);
+
     const result = await pool.query<
       MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }
     >(
-      `SELECT m.*, b.name AS brand_name, ${PRIMARY_IMAGE_SQL}
+      `SELECT m.*, b.name AS brand_name,
+         ${primaryImageSelect}
        FROM machines m
        LEFT JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN LATERAL (
+         SELECT mi.image_url
+         FROM machine_images mi
+         WHERE mi.machine_id = m.id
+         ORDER BY mi.is_primary DESC, mi.sort_order ASC
+         LIMIT 1
+       ) img ON TRUE
        WHERE m.code = $1 AND m.is_active = true`,
-      [code]
+      muscle ? [code, muscle] : [code]
     );
     const row = result.rows[0];
     return row

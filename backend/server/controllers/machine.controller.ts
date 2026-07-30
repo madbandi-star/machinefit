@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { machineService } from '../services/machine.service.js';
-import { machineListQuerySchema } from '@machinefit/shared';
+import { machineCoverTargetMuscleSchema, machineListQuerySchema } from '@machinefit/shared';
 import { getParam } from '../utils/params.util.js';
 
 export async function listMachines(req: Request, res: Response): Promise<void> {
@@ -10,7 +10,12 @@ export async function listMachines(req: Request, res: Response): Promise<void> {
 }
 
 export async function getMachineByCode(req: Request, res: Response): Promise<void> {
-  const machine = await machineService.getByCode(getParam(req.params.machineCode));
+  const muscleRaw = typeof req.query.muscle === 'string' ? req.query.muscle : undefined;
+  const muscleParsed = muscleRaw ? machineCoverTargetMuscleSchema.safeParse(muscleRaw) : null;
+  const machine = await machineService.getByCode(
+    getParam(req.params.machineCode),
+    muscleParsed?.success ? muscleParsed.data : null
+  );
   res.json({ success: true, data: machine });
 }
 

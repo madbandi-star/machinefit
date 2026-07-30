@@ -237,8 +237,12 @@
   "machineCovers": {
     "nav": "머신 대표 이미지",
     "title": "머신 대표 이미지 관리",
-    "subtitle": "등록된 머신별 대표 이미지를 관리합니다. 업로드한 이미지가 검색·추천·상세 화면에 반영됩니다.",
+    "subtitle": "등록된 머신별 대표 이미지를 관리합니다. 프리웨이트는 부위별로 다른 사진을 올릴 수 있습니다.",
     "recommend": "권장: 1024×1024 이상 정사각형 · JPG/PNG/WEBP · 최대 10MB",
+    "freeWeightHint": "프리웨이트(바벨·덤벨 등)는 부위별로 다른 사진을 올릴 수 있습니다. 예: 등→바벨로우, 가슴→벤치프레스.",
+    "defaultCover": "기본 이미지",
+    "muscleVariants": "부위별 이미지",
+    "muscleVariantHint": "{{muscle}} 선택 시 검색 목록에 표시됩니다.",
     "search": "검색",
     "searchPlaceholder": "머신명·코드·브랜드로 검색",
     "brandFilter": "브랜드",

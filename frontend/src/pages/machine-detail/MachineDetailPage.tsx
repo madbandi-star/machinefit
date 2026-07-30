@@ -32,9 +32,12 @@ export function MachineDetailPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data: machine, isLoading, isError, refetch } = useQuery({
-    queryKey: QUERY_KEYS.machine(machineCode!),
+    queryKey: QUERY_KEYS.machine(machineCode!, muscleParam ?? undefined),
     queryFn: async () => {
-      const res = await machineApi.getByCode(machineCode!);
+      const res = await machineApi.getByCode(
+        machineCode!,
+        muscleParam ? { muscle: muscleParam } : undefined
+      );
       return res.data.data;
     },
     enabled: !!machineCode,
@@ -61,7 +64,7 @@ export function MachineDetailPage() {
 
   return (
     <div className={`machine-detail-page${useCompactMachineDetail ? ' machine-detail-page--compact' : ''}`}>
-      <MachineHero machine={machine} compact={useCompactMachineDetail} />
+      <MachineHero machine={machine} compact={useCompactMachineDetail} selectedMuscle={muscleParam} />
       {!isFreeWeight && machineCode && isAuthenticated ? (
         <LastRecommendationSnippet machineCode={machineCode} />
       ) : null}
