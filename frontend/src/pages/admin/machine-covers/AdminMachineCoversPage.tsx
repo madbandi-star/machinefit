@@ -309,6 +309,7 @@ export function AdminMachineCoversPage() {
                   placeholder: t('admin:machineCovers.placeholder'),
                   dropHere: t('admin:machineCovers.dropHere'),
                   uploading: t('admin:machineCovers.uploading'),
+                  preparing: t('admin:machineCovers.preparing'),
                   custom: t('admin:machineCovers.customBadge'),
                   catalog: t('admin:machineCovers.catalogBadge'),
                   defaultCover: t('admin:machineCovers.defaultCover'),
@@ -416,6 +417,7 @@ interface MachineCoverCardProps {
     placeholder: string;
     dropHere: string;
     uploading: string;
+    preparing: string;
     custom: string;
     catalog: string;
     defaultCover: string;
@@ -499,9 +501,9 @@ function MachineCoverCard({
 
       {progress != null ? (
         <div className="admin-muscle-progress" aria-live="polite">
-          <div className="admin-muscle-progress__bar" style={{ width: `${progress}%` }} />
+          <div className="admin-muscle-progress__bar" style={{ width: `${Math.max(progress, 2)}%` }} />
           <span>
-            {labels.uploading} {progress}%
+            {progress <= 0 ? labels.preparing : `${labels.uploading} ${progress}%`}
           </span>
         </div>
       ) : null}
@@ -682,9 +684,9 @@ function MuscleVariantSlot({
       </button>
       {progress != null ? (
         <div className="admin-muscle-progress" aria-live="polite">
-          <div className="admin-muscle-progress__bar" style={{ width: `${progress}%` }} />
+          <div className="admin-muscle-progress__bar" style={{ width: `${Math.max(progress, 2)}%` }} />
           <span>
-            {labels.uploading} {progress}%
+            {progress <= 0 ? labels.preparing : `${labels.uploading} ${progress}%`}
           </span>
         </div>
       ) : null}
