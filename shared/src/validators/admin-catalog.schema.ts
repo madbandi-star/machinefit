@@ -108,7 +108,21 @@ export const adminToggleActiveBodySchema = z.object({
   isActive: z.boolean(),
 });
 
+const localizedLinesSchema = z.object({
+  ko: z.array(z.string().max(500)).max(30).default([]),
+  en: z.array(z.string().max(500)).max(30).default([]),
+  ja: z.array(z.string().max(500)).max(30).optional(),
+  zh: z.array(z.string().max(500)).max(30).optional(),
+});
+
+/** Admin: per-machine 주의사항 / 운동팁 (localized line arrays). */
+export const adminMachineTipsUpdateSchema = z.object({
+  tips: localizedLinesSchema,
+  warnings: localizedLinesSchema,
+});
+
 export type AdminBrandListQuery = z.infer<typeof adminBrandListQuerySchema>;
 export type AdminBrandUpsertInput = z.infer<typeof adminBrandUpsertSchema>;
 export type AdminMachineListQuery = z.infer<typeof adminMachineListQuerySchema>;
 export type AdminMachineUpsertInput = z.infer<typeof adminMachineUpsertSchema>;
+export type AdminMachineTipsUpdateInput = z.infer<typeof adminMachineTipsUpdateSchema>;

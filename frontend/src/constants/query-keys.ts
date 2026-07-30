@@ -70,6 +70,8 @@ export const QUERY_KEYS = {
   adminGyms: ['admin', 'gyms'] as const,
   adminBrands: ['admin', 'catalog', 'brands'] as const,
   adminMachines: ['admin', 'catalog', 'machines'] as const,
+  adminMachineTips: (params?: Record<string, unknown>) =>
+    ['admin', 'catalog', 'machine-tips', params ?? {}] as const,
   adminModeration: ['admin', 'moderation'] as const,
   adminMotivationMedia: ['admin', 'motivation-media'] as const,
   adminMuscleGroupImages: ['admin', 'muscle-group-images'] as const,

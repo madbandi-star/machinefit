@@ -174,6 +174,18 @@ export const adminApi = {
   updateCatalogMachine: (id: string, input: AdminMachineUpsertInput) =>
     apiClient.patch<ApiResponse<Machine>>(`/admin/catalog/machines/${id}`, input),
 
+  getCatalogMachineTips: (id: string) =>
+    apiClient.get<ApiResponse<Machine>>(`/admin/catalog/machines/${encodeURIComponent(id)}/tips`),
+
+  updateCatalogMachineTips: (
+    id: string,
+    input: { tips: Record<string, string[]>; warnings: Record<string, string[]> }
+  ) =>
+    apiClient.put<ApiResponse<Machine>>(
+      `/admin/catalog/machines/${encodeURIComponent(id)}/tips`,
+      input
+    ),
+
   setCatalogMachineActive: (id: string, isActive: boolean) =>
     apiClient.patch<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/active`, { isActive }),
 

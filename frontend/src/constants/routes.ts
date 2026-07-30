@@ -80,6 +80,7 @@ export const ROUTES = {
   ADMIN_GYMS: '/admin/gyms',
   ADMIN_BRANDS: '/admin/brands',
   ADMIN_MACHINES: '/admin/machines',
+  ADMIN_MACHINE_TIPS: '/admin/machine-tips',
   ADMIN_MODERATION: '/admin/moderation',
   ADMIN_PHOTO_BOARD: '/admin/photo-board',
   ADMIN_TRADES: '/admin/trades',

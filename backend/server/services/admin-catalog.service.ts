@@ -2,6 +2,7 @@ import type {
   AdminBrandListQuery,
   AdminBrandUpsertInput,
   AdminMachineListQuery,
+  AdminMachineTipsUpdateInput,
   AdminMachineUpsertInput,
   Brand,
   Machine,
@@ -159,6 +160,10 @@ export const adminCatalogService = {
 
   deleteMachine(id: string): Promise<{ deleted: boolean; deactivated: boolean }> {
     return adminCatalogRepository.deleteMachine(id);
+  },
+
+  updateMachineTips(id: string, input: AdminMachineTipsUpdateInput): Promise<Machine> {
+    return adminCatalogRepository.updateMachineTips(id, input);
   },
 
   async uploadMachineImage(id: string, file: UploadFile): Promise<Machine> {

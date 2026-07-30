@@ -1927,3 +1927,108 @@
     width: 100%;
   }
 }
+
+/* 式式 Admin machine tips / warnings 式式 */
+
+.admin-machine-tips-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.admin-machine-tips-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 42%, var(--color-surface));
+}
+
+.admin-machine-tips-toolbar .input {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-machine-tips-toolbar .btn {
+  min-height: 2.55rem;
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+}
+
+.admin-machine-tips-hint {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.admin-machine-tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.admin-machine-tips-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 38%, var(--color-surface));
+}
+
+.admin-machine-tips-row__body {
+  min-width: 0;
+}
+
+.admin-machine-tips-row__body strong {
+  font-size: 0.95rem;
+  font-weight: 750;
+  word-break: keep-all;
+}
+
+.admin-machine-tips-row__meta,
+.admin-machine-tips-row__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.55rem;
+  margin: 0.3rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.admin-machine-tips-row__meta span + span::before,
+.admin-machine-tips-row__counts span + span::before {
+  content: '﹞';
+  margin-right: 0.55rem;
+  opacity: 0.55;
+}
+
+.admin-machine-tips-row .btn {
+  min-height: 2.4rem;
+  padding: 0.45rem 0.85rem;
+}
+
+.admin-machine-tips-textarea {
+  resize: vertical;
+  min-height: 6rem;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+@media (min-width: 720px) {
+  body:has(.admin-shell) .admin-machine-tips-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  body:has(.admin-shell) .admin-machine-tips-row .btn {
+    flex-shrink: 0;
+  }
+}

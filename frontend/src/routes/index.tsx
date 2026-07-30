@@ -243,6 +243,10 @@ const adminMachines = () =>
   import('@/pages/admin/machines/AdminMachinesPage').then((m) => ({
     default: m.AdminMachinesPage,
   }));
+const adminMachineTips = () =>
+  import('@/pages/admin/machine-tips/AdminMachineTipsPage').then((m) => ({
+    default: m.AdminMachineTipsPage,
+  }));
 const adminModeration = () =>
   import('@/pages/admin/moderation/AdminModerationPage').then((m) => ({
     default: m.AdminModerationPage,
@@ -493,6 +497,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_TRAINER_APPLICATIONS, element: lazyRoute(adminTrainerApps) },
         { path: ROUTES.ADMIN_BRANDS, element: lazyRoute(adminBrands) },
         { path: ROUTES.ADMIN_MACHINES, element: lazyRoute(adminMachines) },
+        { path: ROUTES.ADMIN_MACHINE_TIPS, element: lazyRoute(adminMachineTips) },
         { path: ROUTES.ADMIN_LOCATIONS, element: lazyRoute(adminLocations) },
         { path: ROUTES.ADMIN_MOTIVATION, element: lazyRoute(adminMotivation) },
         { path: ROUTES.ADMIN_MUSCLE_IMAGES, element: lazyRoute(adminMuscleImages) },

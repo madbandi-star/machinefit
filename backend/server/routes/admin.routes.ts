@@ -40,6 +40,8 @@ adminRouter.post('/catalog/machines', adminCatalogController.createMachine);
 adminRouter.patch('/catalog/machines/:id', adminCatalogController.updateMachine);
 adminRouter.patch('/catalog/machines/:id/active', adminCatalogController.setMachineActive);
 adminRouter.delete('/catalog/machines/:id', adminCatalogController.deleteMachine);
+adminRouter.get('/catalog/machines/:id/tips', adminCatalogController.getMachineTips);
+adminRouter.put('/catalog/machines/:id/tips', adminCatalogController.updateMachineTips);
 adminRouter.post(
   '/catalog/machines/:id/image',
   muscleGroupImageUpload,

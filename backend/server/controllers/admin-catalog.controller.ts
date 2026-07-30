@@ -3,6 +3,7 @@ import {
   adminBrandListQuerySchema,
   adminBrandUpsertSchema,
   adminMachineListQuerySchema,
+  adminMachineTipsUpdateSchema,
   adminMachineUpsertSchema,
   adminToggleActiveBodySchema,
 } from '@machinefit/shared';
@@ -150,6 +151,26 @@ export async function setMachineActive(req: Request, res: Response, next: NextFu
 export async function deleteMachine(req: Request, res: Response, next: NextFunction) {
   try {
     const data = await adminCatalogService.deleteMachine(getParam(req.params.id));
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getMachineTips(req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = await adminCatalogService.getMachine(getParam(req.params.id));
+    if (!data) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateMachineTips(req: Request, res: Response, next: NextFunction) {
+  try {
+    const input = adminMachineTipsUpdateSchema.parse(req.body);
+    const data = await adminCatalogService.updateMachineTips(getParam(req.params.id), input);
     res.json({ success: true, data });
   } catch (error) {
     next(error);

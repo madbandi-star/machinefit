@@ -11,6 +11,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN_TRAINER_APPLICATIONS, labelKey: 'trainerApplications.nav', end: false },
   { to: ROUTES.ADMIN_BRANDS, labelKey: 'brands.nav', end: false },
   { to: ROUTES.ADMIN_MACHINES, labelKey: 'machines', end: false },
+  { to: ROUTES.ADMIN_MACHINE_TIPS, labelKey: 'machineTips.nav', end: false },
   { to: ROUTES.ADMIN_LOCATIONS, labelKey: 'locations.nav', end: false },
   { to: ROUTES.ADMIN_MOTIVATION, labelKey: 'motivation.nav', end: false },
   { to: ROUTES.ADMIN_MUSCLE_IMAGES, labelKey: 'muscleImages.nav', end: false },

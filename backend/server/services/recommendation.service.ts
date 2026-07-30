@@ -156,9 +156,14 @@ export const recommendationService = {
       }
     );
 
-    const baseTips = match
-      ? pickLocalizedArray(match.tips, locale)
-      : pickLocalizedArray(DEFAULT_TIPS, locale);
+    const settingsTips = match ? pickLocalizedArray(match.tips, locale) : [];
+    const catalogTips = pickLocalizedArray(machine.tips ?? null, locale);
+    const baseTips =
+      settingsTips.length > 0
+        ? settingsTips
+        : catalogTips.length > 0
+          ? catalogTips
+          : pickLocalizedArray(DEFAULT_TIPS, locale);
 
     const hasCustomSettings = Boolean(
       savedPreferences?.customSettings &&
@@ -175,11 +180,20 @@ export const recommendationService = {
       hasCustomPreferences: usingAdjusted || hasCustomSettings,
     });
 
-    const warnings = match ? pickLocalizedArray(match.warnings, locale) : [];
-    const tipsByLocale = { [locale]: tips, ...(match?.tips ?? {}) };
+    const settingsWarnings = match ? pickLocalizedArray(match.warnings, locale) : [];
+    const catalogWarnings = pickLocalizedArray(machine.warnings ?? null, locale);
+    const warnings = settingsWarnings.length > 0 ? settingsWarnings : catalogWarnings;
+    const tipsByLocale = {
+      [locale]: tips,
+      ...(match?.tips ?? {}),
+      ...(machine.tips ?? {}),
+    };
     // Prefer the response locale's personalized tips; keep other catalog locales as fallback.
     tipsByLocale[locale] = tips;
-    const warningsByLocale = match?.warnings ?? (warnings.length ? { [locale]: warnings } : null);
+    const warningsByLocale =
+      match?.warnings ??
+      machine.warnings ??
+      (warnings.length ? { [locale]: warnings } : null);
 
     const [id, youtubeVideos] = await Promise.all([
       recommendationRepository.save(

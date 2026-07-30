@@ -2,6 +2,7 @@ import type {
   AdminBrandListQuery,
   AdminBrandUpsertInput,
   AdminMachineListQuery,
+  AdminMachineTipsUpdateInput,
   AdminMachineUpsertInput,
   Brand,
   Machine,
@@ -60,6 +61,8 @@ interface MachineAdminRow {
   muscle_group: string;
   machine_type: string;
   description: Record<string, string> | null;
+  tips: Record<string, string[]> | null;
+  warnings: Record<string, string[]> | null;
   has_seat: boolean;
   has_back_pad: boolean;
   has_foot_plate: boolean;
@@ -102,6 +105,8 @@ function mapMachine(row: MachineAdminRow): Machine {
     muscleGroup: row.muscle_group,
     machineType: row.machine_type,
     description: row.description ?? undefined,
+    tips: row.tips ?? undefined,
+    warnings: row.warnings ?? undefined,
     hasSeat: row.has_seat,
     hasBackPad: row.has_back_pad,
     hasFootPlate: row.has_foot_plate,
@@ -550,6 +555,52 @@ export const adminCatalogRepository = {
       }
       throw err;
     }
+  },
+
+  /**
+   * Update catalog tips/warnings and mirror onto all machine_settings rows
+   * so recommendation responses pick up the same content.
+   */
+  async updateMachineTips(id: string, input: AdminMachineTipsUpdateInput): Promise<Machine> {
+    const pool = getPool();
+    if (!pool) throw new AppError(503, 'DB_UNAVAILABLE', 'Database not configured');
+    const existing = await this.getMachine(id);
+    if (!existing) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
+
+    const tips = {
+      ko: (input.tips.ko ?? []).map((s) => s.trim()).filter(Boolean),
+      en: (input.tips.en ?? []).map((s) => s.trim()).filter(Boolean),
+      ...(input.tips.ja ? { ja: input.tips.ja.map((s) => s.trim()).filter(Boolean) } : {}),
+      ...(input.tips.zh ? { zh: input.tips.zh.map((s) => s.trim()).filter(Boolean) } : {}),
+    };
+    const warnings = {
+      ko: (input.warnings.ko ?? []).map((s) => s.trim()).filter(Boolean),
+      en: (input.warnings.en ?? []).map((s) => s.trim()).filter(Boolean),
+      ...(input.warnings.ja
+        ? { ja: input.warnings.ja.map((s) => s.trim()).filter(Boolean) }
+        : {}),
+      ...(input.warnings.zh
+        ? { zh: input.warnings.zh.map((s) => s.trim()).filter(Boolean) }
+        : {}),
+    };
+
+    await pool.query(
+      `UPDATE machines
+       SET tips = $2::jsonb, warnings = $3::jsonb, updated_at = NOW()
+       WHERE id = $1`,
+      [existing.id, JSON.stringify(tips), JSON.stringify(warnings)]
+    );
+
+    await pool.query(
+      `UPDATE machine_settings
+       SET tips = $2::jsonb, warnings = $3::jsonb
+       WHERE machine_id = $1`,
+      [existing.id, JSON.stringify(tips), JSON.stringify(warnings)]
+    );
+
+    const updated = await this.getMachine(existing.id);
+    if (!updated) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
+    return updated;
   },
 
   async updateBrandImageFields(
