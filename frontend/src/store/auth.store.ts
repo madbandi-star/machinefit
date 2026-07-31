@@ -55,9 +55,13 @@ const authSessionStorage = {
   },
 };
 
+/**
+ * Trim high-sensitivity fields from sessionStorage. Keep height/weight so home
+ * profile gates don't flash "incomplete" after refresh before /me returns.
+ */
 function sanitizePersistedUser(user: User | null): User | null {
   if (!user) return null;
-  const { heightCm: _h, weightKg: _w, age: _a, ...safe } = user;
+  const { age: _a, ...safe } = user;
   return safe;
 }
 
@@ -95,7 +99,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'machinefit-auth',
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => authSessionStorage),
       partialize: (state) => ({
         user: sanitizePersistedUser(state.user),
