@@ -8,6 +8,7 @@ import { ROUTES } from '@/constants/routes';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
+import { API_BASE_URL } from '@/services/http/axios-client';
 import '@/styles/home.css';
 
 interface MachineMiniCardProps {
@@ -18,6 +19,12 @@ interface MachineMiniCardProps {
   targetMuscleGroup?: string;
   imageUrl?: string;
   recommendationId?: string;
+}
+
+/** Home recent-row only: history primaryImageUrl is the default cover, not per-muscle. */
+function homeFreeWeightMuscleCoverUrl(machineCode: string, muscle: string): string {
+  const base = API_BASE_URL.replace(/\/+$/, '');
+  return `${base}/media/machine-covers/${encodeURIComponent(machineCode)}/${encodeURIComponent(muscle)}/main`;
 }
 
 export function MachineMiniCard({
@@ -40,7 +47,11 @@ export function MachineMiniCard({
   const muscleLabel = displayMuscle
     ? t(`muscleGroups.${displayMuscle}`, { defaultValue: displayMuscle })
     : undefined;
-  const resolvedImageUrl = resolveMachineImageUrl(machineCode, imageUrl);
+  const coverUrl =
+    isFreeWeightMachineCode(machineCode) && targetMuscleGroup
+      ? homeFreeWeightMuscleCoverUrl(machineCode, targetMuscleGroup)
+      : imageUrl;
+  const resolvedImageUrl = resolveMachineImageUrl(machineCode, coverUrl);
 
   const to = recommendationId
     ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${recommendationId}`
