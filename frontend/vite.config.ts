@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import fs from 'node:fs';
 import path from 'path';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json') as { version?: string };
 
 function spaGitHubPagesFallback(): Plugin {
   return {
@@ -22,10 +26,15 @@ function spaGitHubPagesFallback(): Plugin {
 const demoPasswordForClient =
   process.env.VITE_DEMO_AUTH === 'true' ? 'demo1234' : '';
 
+const appVersion = pkg.version || '0.1.0';
+const buildId = process.env.GITHUB_SHA?.slice(0, 7) || new Date().toISOString();
+
 export default defineConfig({
   base: '/machinefit/',
   define: {
     __MF_DEMO_PASSWORD__: JSON.stringify(demoPasswordForClient),
+    __MF_APP_VERSION__: JSON.stringify(appVersion),
+    __MF_BUILD_ID__: JSON.stringify(buildId),
   },
   resolve: {
     alias: {
@@ -58,14 +67,18 @@ export default defineConfig({
     react(),
     spaGitHubPagesFallback(),
     VitePWA({
-      filename: 'sw-v16.js',
-      selfDestroying: true,
+      // Bump filename when changing SW lifecycle so clients fetch a fresh worker.
+      filename: 'sw-v17.js',
       registerType: 'autoUpdate',
+      // Client registers via virtual:pwa-register (chunkLoadRecovery.initPwaAutoUpdate).
       injectRegister: null,
       workbox: {
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
+        // Hashed assets are content-addressed; navigate fallback keeps SPA deep links working.
+        navigateFallback: '/machinefit/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
         name: 'MachineFit',

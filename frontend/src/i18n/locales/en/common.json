@@ -1,6 +1,12 @@
 {
   "appName": "MachineFit",
   "tagline": "Find your perfect machine settings",
+  "appUpdate": {
+    "title": "🚧 MachineFit is updating",
+    "desc": "We're applying a new version.\nYou'll reconnect automatically in a moment.",
+    "retryNow": "🔄 Try again now",
+    "goHome": "Go to home"
+  },
   "emptyState": {
     "browseMachines": "Browse machines"
   },

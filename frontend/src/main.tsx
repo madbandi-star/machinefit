@@ -6,6 +6,13 @@ import '@/styles/collapsible-card.css';
 import '@/styles/android-ui.css';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { App } from '@/app/App';
+import {
+  clearChunkRetryState,
+  initPwaAutoUpdate,
+  installGlobalChunkErrorHandlers,
+  markAppBootHealthy,
+  pruneStaleChunkRetryState,
+} from '@/utils/chunkLoadRecovery';
 
 /** Bump once when a final PWA cache purge is required; thereafter one-shot only. */
 const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v29';
@@ -26,11 +33,30 @@ async function clearServiceWorkerAndCaches(): Promise<void> {
 }
 
 async function boot() {
+  installGlobalChunkErrorHandlers();
+  initPwaAutoUpdate();
+  pruneStaleChunkRetryState();
+
+  // Strip one-shot recover query so shares/bookmarks stay clean after reload.
+  let justRecovered = false;
+  try {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('mf_recover')) {
+      justRecovered = true;
+      url.searchParams.delete('mf_recover');
+      window.history.replaceState({}, '', url.toString());
+    }
+  } catch {
+    /* ignore */
+  }
+
   // One-shot migration: clear legacy SW/caches once, then never block boot again.
   try {
     if (!localStorage.getItem(PWA_CACHE_BUST_KEY)) {
       await clearServiceWorkerAndCaches();
       localStorage.setItem(PWA_CACHE_BUST_KEY, '1');
+      // Fresh SW registration will happen on next load via initPwaAutoUpdate.
+      clearChunkRetryState();
       window.location.reload();
       return;
     }
@@ -44,6 +70,14 @@ async function boot() {
         <App />
       </AppProviders>
     </StrictMode>
+  );
+
+  // After a recover reload, wait longer before clearing the counter so attempts accumulate.
+  window.setTimeout(
+    () => {
+      markAppBootHealthy();
+    },
+    justRecovered ? 15_000 : 4_000
   );
 }
 
