@@ -124,30 +124,48 @@ const MACHINE_ASSET_EXT: Record<string, string> = {
   HS_V_SQUAT: 'png',
 };
 
-/** Prefer API primaryImageUrl; fall back to packaged machine asset only when the file exists. */
+function brandSlugForMachineCode(machineCode: string): string | null {
+  const prefix = machineCode.split('_')[0];
+  if (prefix === 'HS') return 'hammer_strength';
+  if (prefix === 'LF') return 'life_fitness';
+  if (prefix === 'CY') return 'cybex';
+  if (prefix === 'TG') return 'technogym';
+  return null;
+}
+
+function packagedMachineAssetUrl(machineCode: string): string | undefined {
+  if (!KNOWN_MACHINE_ASSETS.has(machineCode)) return undefined;
+  const brandSlug = brandSlugForMachineCode(machineCode);
+  if (!brandSlug) return undefined;
+  const ext = MACHINE_ASSET_EXT[machineCode] ?? 'svg';
+  return `${assetBase()}assets/machines/${brandSlug}/${machineCode.toLowerCase()}.${ext}`;
+}
+
+function isAdminMachineCoverUrl(url: string): boolean {
+  return /\/media\/machine-covers\//i.test(url);
+}
+
+/**
+ * Prefer API primaryImageUrl, but never keep a stale catalog `.svg` when we ship a
+ * packaged PNG for that machine (Render DB may still point at deleted SVGs).
+ * Admin-uploaded machine covers always win.
+ */
 export function resolveMachineImageUrl(
   machineCode: string,
   primaryImageUrl?: string | null
 ): string | undefined {
+  const packaged = packagedMachineAssetUrl(machineCode);
+
+  if (primaryImageUrl && isAdminMachineCoverUrl(primaryImageUrl)) {
+    return primaryImageUrl;
+  }
+
+  if (MACHINE_ASSET_EXT[machineCode] === 'png' && packaged) {
+    return packaged;
+  }
+
   if (primaryImageUrl) return primaryImageUrl;
-
-  if (!KNOWN_MACHINE_ASSETS.has(machineCode)) return undefined;
-
-  const prefix = machineCode.split('_')[0];
-  const brandSlug =
-    prefix === 'HS'
-      ? 'hammer_strength'
-      : prefix === 'LF'
-        ? 'life_fitness'
-        : prefix === 'CY'
-          ? 'cybex'
-          : prefix === 'TG'
-            ? 'technogym'
-            : null;
-  if (!brandSlug) return undefined;
-
-  const ext = MACHINE_ASSET_EXT[machineCode] ?? 'svg';
-  return `${assetBase()}assets/machines/${brandSlug}/${machineCode.toLowerCase()}.${ext}`;
+  return packaged;
 }
 
 export function machinePlaceholderUrl(): string {
