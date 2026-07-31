@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ComponentType } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { Role } from '@machinefit/shared';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
@@ -11,13 +11,28 @@ import { GuestGuard } from '@/routes/guards/GuestGuard';
 import { ROUTES } from '@/constants/routes';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { HomePage } from '@/pages/home/HomePage';
+import { RouterErrorElement } from '@/routes/RouterErrorElement';
+import { isChunkLoadError, recoverFromChunkError } from '@/utils/chunkLoadRecovery';
 
 function PageFallback() {
   return <Skeleton count={4} height={88} />;
 }
 
+function RootOutlet() {
+  return <Outlet />;
+}
+
 function lazyRoute(loader: () => Promise<{ default: ComponentType }>) {
-  const Comp = lazy(loader);
+  const Comp = lazy(() =>
+    loader().catch((error: unknown) => {
+      if (isChunkLoadError(error)) {
+        void recoverFromChunkError(error, 'lazyImport');
+        // Suspend forever while recovery reloads — avoids flashing technical errors.
+        return new Promise<{ default: ComponentType }>(() => undefined);
+      }
+      throw error;
+    })
+  );
   return (
     <Suspense fallback={<PageFallback />}>
       <Comp />
@@ -323,7 +338,12 @@ const adminCompliancePage = () =>
 export const router = createBrowserRouter(
   [
     {
+      element: <RootOutlet />,
+      errorElement: <RouterErrorElement />,
+      children: [
+        {
       element: <MainLayout />,
+      errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.HOME, element: <HomePage /> },
         { path: ROUTES.TERMS, element: lazyRoute(termsPage) },
@@ -443,6 +463,7 @@ export const router = createBrowserRouter(
           <EasyLayout />
         </AuthGuard>
       ),
+      errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.EASY, element: lazyRoute(easyHome) },
         { path: ROUTES.EASY_ONBOARDING, element: lazyRoute(easyOnboarding) },
@@ -455,6 +476,7 @@ export const router = createBrowserRouter(
           <AuthLayout />
         </GuestGuard>
       ),
+      errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.LOGIN, element: lazyRoute(login) },
         { path: ROUTES.REGISTER, element: lazyRoute(register) },
@@ -466,6 +488,7 @@ export const router = createBrowserRouter(
           <DashboardLayout />
         </AuthGuard>
       ),
+      errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.OWNER, element: lazyRoute(ownerDash) },
         { path: ROUTES.OWNER_EQUIPMENT, element: lazyRoute(equipmentHub) },
@@ -489,6 +512,7 @@ export const router = createBrowserRouter(
           <AdminLayout />
         </AuthGuard>
       ),
+      errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.ADMIN, element: lazyRoute(adminDash) },
         { path: ROUTES.ADMIN_USERS, element: lazyRoute(adminUsers) },
@@ -512,6 +536,8 @@ export const router = createBrowserRouter(
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },
+      ],
+    },
   ],
   { basename: '/machinefit' }
 );
