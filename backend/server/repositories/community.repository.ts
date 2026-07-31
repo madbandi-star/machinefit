@@ -410,6 +410,8 @@ export const communityRepository = {
         adminNote: undefined,
         linkedMachineId: r.linked_machine_id,
         authorName: r.author_name,
+        gymChoiceMode: r.gym_choice_mode ?? 'unknown',
+        gymName: r.gym_name ?? null,
         primaryImageUrl,
         createdAt: r.created_at,
         updatedAt: r.updated_at,
@@ -443,6 +445,8 @@ export const communityRepository = {
           imageUrl: machineRequestImageUrl(id, 'full'),
         };
       });
+      const gymName =
+        input.gymChoiceMode === 'unknown' ? null : (input.gymName?.trim().slice(0, 50) || null);
       const req: MachineRequest = {
         id: requestId,
         userId,
@@ -452,6 +456,8 @@ export const communityRepository = {
         status: 'pending',
         authorName,
         commercialUseConsent: true,
+        gymChoiceMode: input.gymChoiceMode,
+        gymName,
         images: mappedImages,
         primaryImageUrl: mappedImages[0]?.thumbUrl,
         createdAt: now,
@@ -461,14 +467,23 @@ export const communityRepository = {
       return req;
     }
 
+    const gymName =
+      input.gymChoiceMode === 'unknown' ? null : (input.gymName?.trim().slice(0, 50) || null);
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const result = await client.query(
         `INSERT INTO machine_requests
-           (user_id, brand_name, machine_name, description, commercial_use_consent)
-         VALUES ($1,$2,$3,$4,TRUE) RETURNING *`,
-        [userId, input.brandName, input.machineName, input.description]
+           (user_id, brand_name, machine_name, description, commercial_use_consent, gym_choice_mode, gym_name)
+         VALUES ($1,$2,$3,$4,TRUE,$5,$6) RETURNING *`,
+        [
+          userId,
+          input.brandName,
+          input.machineName,
+          input.description,
+          input.gymChoiceMode,
+          gymName,
+        ]
       );
       const r = result.rows[0];
       const mappedImages: MachineRequestImage[] = [];
@@ -502,6 +517,8 @@ export const communityRepository = {
         status: r.status,
         authorName,
         commercialUseConsent: true,
+        gymChoiceMode: r.gym_choice_mode,
+        gymName: r.gym_name,
         images: mappedImages,
         primaryImageUrl: mappedImages[0]?.thumbUrl,
         createdAt: r.created_at,

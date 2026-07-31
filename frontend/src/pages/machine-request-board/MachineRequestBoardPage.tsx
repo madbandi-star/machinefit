@@ -2,24 +2,43 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { MachineRequestGymChoiceMode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
 import { BoardIndexSkeleton } from '@/components/community/BoardIndexSkeleton';
 import { BoardRequestRow } from '@/components/community/BoardRequestRow';
-import { machineRequestApi } from '@/api';
+import { locationApi, machineRequestApi, userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { useActiveGym } from '@/hooks/useActiveGym';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import '@/styles/components.css';
 import '@/styles/community.css';
 
 const MAX_REQUEST_IMAGES = 5;
+const MAX_GYM_NAME = 50;
 
 interface LocalImage {
   id: string;
   file: File;
   previewUrl: string;
+}
+
+function truncateGymLabel(value: string, max = MAX_GYM_NAME): string {
+  const trimmed = value.trim();
+  if (trimmed.length <= max) return trimmed;
+  return trimmed.slice(0, max);
+}
+
+function buildProfileGymLabel(locationPath?: string, gymName?: string): string {
+  const location = locationPath?.trim() || '';
+  const gym = gymName?.trim() || '';
+  if (location && gym) return truncateGymLabel(`${location} · ${gym}`);
+  if (gym) return truncateGymLabel(gym);
+  if (location) return truncateGymLabel(location);
+  return '';
 }
 
 export function MachineRequestBoardPage() {
@@ -28,7 +47,9 @@ export function MachineRequestBoardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
   const showToast = useUIStore((s) => s.showToast);
+  const { activeGym, gyms } = useActiveGym();
 
   const [showForm, setShowForm] = useState(false);
   const [brandName, setBrandName] = useState('');
@@ -36,6 +57,8 @@ export function MachineRequestBoardPage() {
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<LocalImage[]>([]);
   const [commercialUseConsent, setCommercialUseConsent] = useState(false);
+  const [gymChoiceMode, setGymChoiceMode] = useState<MachineRequestGymChoiceMode>('profile');
+  const [customGymName, setCustomGymName] = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: QUERY_KEYS.machineRequests,
@@ -44,6 +67,30 @@ export function MachineRequestBoardPage() {
       return res.data.data;
     },
   });
+
+  const meQuery = useQuery({
+    queryKey: QUERY_KEYS.me,
+    queryFn: async () => (await userApi.getMe()).data.data,
+    enabled: isAuthenticated && showForm,
+    staleTime: 30_000,
+  });
+
+  const locationQuery = useQuery({
+    queryKey: QUERY_KEYS.userLocation,
+    queryFn: async () => (await locationApi.getMine()).data.data,
+    enabled: isAuthenticated && showForm,
+    staleTime: 60_000,
+  });
+
+  const profileGymLabel = useMemo(() => {
+    const locationPath = activeGym?.locationSet
+      ? activeGym.location?.label?.path
+      : locationQuery.data?.isSet
+        ? locationQuery.data.label?.path
+        : undefined;
+    const gymName = resolveHomeGymName(meQuery.data ?? user, activeGym, gyms);
+    return buildProfileGymLabel(locationPath, gymName);
+  }, [activeGym, gyms, locationQuery.data, meQuery.data, user]);
 
   useEffect(() => {
     return () => {
@@ -58,8 +105,22 @@ export function MachineRequestBoardPage() {
     setDescription('');
     setImages([]);
     setCommercialUseConsent(false);
+    setGymChoiceMode('profile');
+    setCustomGymName('');
     setShowForm(false);
   };
+
+  const resolvedGymName = useMemo(() => {
+    if (gymChoiceMode === 'unknown') return '';
+    if (gymChoiceMode === 'custom') return truncateGymLabel(customGymName);
+    return profileGymLabel;
+  }, [customGymName, gymChoiceMode, profileGymLabel]);
+
+  const gymChoiceValid = useMemo(() => {
+    if (gymChoiceMode === 'unknown') return true;
+    if (gymChoiceMode === 'custom') return Boolean(customGymName.trim());
+    return Boolean(profileGymLabel);
+  }, [customGymName, gymChoiceMode, profileGymLabel]);
 
   const canSubmit = useMemo(
     () =>
@@ -68,9 +129,10 @@ export function MachineRequestBoardPage() {
           machineName.trim() &&
           description.trim() &&
           images.length > 0 &&
-          commercialUseConsent
+          commercialUseConsent &&
+          gymChoiceValid
       ),
-    [brandName, machineName, description, images.length, commercialUseConsent]
+    [brandName, machineName, description, images.length, commercialUseConsent, gymChoiceValid]
   );
 
   const createMutation = useMutation({
@@ -80,6 +142,8 @@ export function MachineRequestBoardPage() {
         machineName: machineName.trim(),
         description: description.trim(),
         commercialUseConsent: true,
+        gymChoiceMode,
+        gymName: gymChoiceMode === 'unknown' ? undefined : resolvedGymName,
         files: images.map((img) => img.file),
       }),
     onSuccess: () => {
@@ -129,6 +193,12 @@ export function MachineRequestBoardPage() {
     if (!canSubmit || createMutation.isPending) {
       if (!commercialUseConsent) showToast(t('requestConsentRequired'), 'error');
       else if (!images.length) showToast(t('requestPhotoRequired'), 'error');
+      else if (!gymChoiceValid) {
+        showToast(
+          gymChoiceMode === 'profile' ? t('requestGymProfileEmpty') : t('requestGymRequired'),
+          'error'
+        );
+      }
       return;
     }
     createMutation.mutate();
@@ -183,6 +253,54 @@ export function MachineRequestBoardPage() {
                 rows={4}
               />
             </div>
+
+            <fieldset className="form-row community-board-page__gym-choice">
+              <legend>{t('requestGymLabel')}</legend>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="req-gym-choice"
+                  checked={gymChoiceMode === 'profile'}
+                  onChange={() => setGymChoiceMode('profile')}
+                />
+                <span>
+                  {t('requestGymChoiceProfile')}
+                  {profileGymLabel ? ` — ${profileGymLabel}` : ''}
+                </span>
+              </label>
+              {!profileGymLabel && gymChoiceMode === 'profile' && (
+                <p className="community-board-page__hint">{t('requestGymProfileEmpty')}</p>
+              )}
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="req-gym-choice"
+                  checked={gymChoiceMode === 'custom'}
+                  onChange={() => setGymChoiceMode('custom')}
+                />
+                <span>{t('requestGymChoiceCustom')}</span>
+              </label>
+              {gymChoiceMode === 'custom' && (
+                <input
+                  id="req-gym-custom"
+                  className="input"
+                  value={customGymName}
+                  onChange={(e) => setCustomGymName(e.target.value.slice(0, MAX_GYM_NAME))}
+                  placeholder={t('requestGymCustomPlaceholder')}
+                  maxLength={MAX_GYM_NAME}
+                  required
+                />
+              )}
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="req-gym-choice"
+                  checked={gymChoiceMode === 'unknown'}
+                  onChange={() => setGymChoiceMode('unknown')}
+                />
+                <span>{t('requestGymChoiceUnknown')}</span>
+              </label>
+            </fieldset>
 
             <div className="form-row">
               <label htmlFor="req-photos">{t('requestPhoto')}</label>

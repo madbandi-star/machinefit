@@ -50,6 +50,10 @@ export const machineRequestApi = {
     form.append('machineName', input.machineName);
     form.append('description', input.description);
     form.append('commercialUseConsent', String(input.commercialUseConsent));
+    form.append('gymChoiceMode', input.gymChoiceMode);
+    if (input.gymName != null && input.gymName !== '') {
+      form.append('gymName', input.gymName);
+    }
     for (const file of input.files) {
       form.append('images', file);
     }

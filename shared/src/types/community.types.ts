@@ -49,6 +49,8 @@ export interface MachineRequestImage {
   sortOrder: number;
 }
 
+export type MachineRequestGymChoiceMode = 'profile' | 'custom' | 'unknown';
+
 export interface MachineRequest {
   id: string;
   userId: string;
@@ -60,6 +62,8 @@ export interface MachineRequest {
   linkedMachineId?: string;
   authorName?: string;
   commercialUseConsent?: boolean;
+  gymChoiceMode?: MachineRequestGymChoiceMode;
+  gymName?: string | null;
   images?: MachineRequestImage[];
   primaryImageUrl?: string;
   createdAt: string;

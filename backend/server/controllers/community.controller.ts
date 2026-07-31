@@ -74,6 +74,8 @@ export async function createMachineRequest(req: Request, res: Response): Promise
     machineName: req.body.machineName,
     description: req.body.description,
     commercialUseConsent: req.body.commercialUseConsent,
+    gymChoiceMode: req.body.gymChoiceMode,
+    gymName: req.body.gymName,
   });
   const files = (req.files as Express.Multer.File[] | undefined) ?? [];
   const item = await communityService.createMachineRequest(req.user.userId, input, files);

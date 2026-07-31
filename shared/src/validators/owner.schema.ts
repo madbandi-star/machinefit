@@ -10,12 +10,32 @@ const truthyConsent = z.preprocess((value) => {
   errorMap: () => ({ message: 'Commercial use consent is required' }),
 }));
 
-export const createMachineRequestSchema = z.object({
-  brandName: z.string().trim().min(1).max(100),
-  machineName: z.string().trim().min(1).max(200),
-  description: z.string().trim().min(1).max(2000),
-  commercialUseConsent: truthyConsent,
-});
+export const machineRequestGymChoiceModeSchema = z.enum(['profile', 'custom', 'unknown']);
+
+export const createMachineRequestSchema = z
+  .object({
+    brandName: z.string().trim().min(1).max(100),
+    machineName: z.string().trim().min(1).max(200),
+    description: z.string().trim().min(1).max(2000),
+    commercialUseConsent: truthyConsent,
+    gymChoiceMode: machineRequestGymChoiceModeSchema,
+    /** Snapshot for profile/custom; ignored when mode is unknown. Max 50 chars. */
+    gymName: z.string().trim().max(50).optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.gymChoiceMode === 'unknown') return;
+    const name = value.gymName?.trim() ?? '';
+    if (!name) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['gymName'],
+        message:
+          value.gymChoiceMode === 'profile'
+            ? 'Profile location/gym is required when using settings'
+            : 'Gym name is required',
+      });
+    }
+  });
 
 /** Owner verification application. Payment integration will set paymentStatus=paid. */
 export const ownerApplicationSchema = z.object({

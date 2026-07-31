@@ -47,6 +47,10 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
   const { t } = useTranslation('community');
   const statusLabel = t(`requestStatus_${request.status}`, { defaultValue: request.status });
   const thumbUrl = resolveRequestThumb(request.primaryImageUrl);
+  const gymLabel =
+    request.gymChoiceMode === 'unknown'
+      ? t('requestGymUnknownLabel')
+      : request.gymName?.trim() || undefined;
 
   return (
     <div className="board-index-row-wrap">
@@ -56,7 +60,10 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
             <img src={thumbUrl} alt="" loading="lazy" decoding="async" />
           </span>
         ) : null}
-        <span className="board-index-row__title">{requestTitle(request)}</span>
+        <span className="board-index-row__body">
+          <span className="board-index-row__title">{requestTitle(request)}</span>
+          {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}
+        </span>
         <span className="board-index-row__meta">
           <span className={`board-index-row__status board-index-row__status--${request.status}`}>
             {statusLabel}
