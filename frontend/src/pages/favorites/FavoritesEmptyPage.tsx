@@ -34,7 +34,7 @@ export function FavoritesEmptyPage() {
   }
 
   if (data && data.length > 0) {
-    return <Navigate to={`${ROUTES.RECORDS}?tab=favorites`} replace />;
+    return <Navigate to={ROUTES.FAVORITES} replace />;
   }
 
   return (

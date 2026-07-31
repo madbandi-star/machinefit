@@ -32,7 +32,7 @@ export function FavoriteMachinesRow() {
       <div className="home-section__header">
         <h2 className="home-section__title">{t('pages.home.favorites')}</h2>
         {!!data?.length && (
-          <Link to={`${ROUTES.RECORDS}?tab=favorites`} className="home-section__link">
+          <Link to={ROUTES.FAVORITES} className="home-section__link">
             {t('actions.viewAll')}
           </Link>
         )}
