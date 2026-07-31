@@ -14,7 +14,8 @@ export function adminCoverImageLimits() {
     muscleBucket: env.MUSCLE_GROUP_IMAGE_BUCKET,
     machineBucket: env.MACHINE_COVER_IMAGE_BUCKET,
     allowedExtensions: [...ALLOWED_EXTENSIONS],
-    maxEdge: 1024,
+    /** Match packaged Hammer Strength covers (2048×2048). */
+    maxEdge: 2048,
     thumbEdge: 256,
   };
 }
