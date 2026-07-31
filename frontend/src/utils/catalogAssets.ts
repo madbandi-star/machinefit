@@ -31,6 +31,7 @@ const KNOWN_MACHINE_ASSETS = new Set<string>([
   'HS_BICEPS_CURL',
   'HS_ISO_LATERAL_CHEST_PRESS',
   'HS_ISO_LATERAL_HIGH_ROW',
+  'HS_ISO_LATERAL_INCLINE_CHEST_PRESS',
   'HS_ISO_LATERAL_ROW',
   'HS_LAT_PULLDOWN',
   'HS_LEG_CURL',
@@ -40,6 +41,7 @@ const KNOWN_MACHINE_ASSETS = new Set<string>([
   'HS_SELECTORIZED_CHEST_PRESS',
   'HS_SHOULDER_PRESS',
   'HS_TRICEPS_EXTENSION',
+  'HS_V_SQUAT',
   'LF_ABDOMINAL',
   'LF_BACK_EXTENSION',
   'LF_BICEPS_CURL',
@@ -108,7 +110,21 @@ export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null):
   return `${assetBase()}assets/brands/${slug}.svg`;
 }
 
-/** Prefer API primaryImageUrl; fall back to packaged machine SVG only when the file exists. */
+/** Packaged machine image extension overrides (default `.svg`). */
+const MACHINE_ASSET_EXT: Record<string, string> = {
+  HS_ISO_LATERAL_HIGH_ROW: 'png',
+  HS_ISO_LATERAL_ROW: 'png',
+  HS_LAT_PULLDOWN: 'png',
+  HS_ISO_LATERAL_CHEST_PRESS: 'png',
+  HS_ISO_LATERAL_INCLINE_CHEST_PRESS: 'png',
+  HS_SHOULDER_PRESS: 'png',
+  HS_LEG_PRESS: 'png',
+  HS_LEG_EXTENSION: 'png',
+  HS_LEG_CURL: 'png',
+  HS_V_SQUAT: 'png',
+};
+
+/** Prefer API primaryImageUrl; fall back to packaged machine asset only when the file exists. */
 export function resolveMachineImageUrl(
   machineCode: string,
   primaryImageUrl?: string | null
@@ -130,7 +146,8 @@ export function resolveMachineImageUrl(
             : null;
   if (!brandSlug) return undefined;
 
-  return `${assetBase()}assets/machines/${brandSlug}/${machineCode.toLowerCase()}.svg`;
+  const ext = MACHINE_ASSET_EXT[machineCode] ?? 'svg';
+  return `${assetBase()}assets/machines/${brandSlug}/${machineCode.toLowerCase()}.${ext}`;
 }
 
 export function machinePlaceholderUrl(): string {

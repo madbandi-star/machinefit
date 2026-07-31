@@ -327,6 +327,15 @@ function writeAssets(packs) {
     ensureDir(machineDir);
     for (const m of machines) {
       const file = m.imageFile || `${m.code.toLowerCase()}.svg`;
+      // Do not overwrite photo/catalog raster assets with generated SVG placeholders.
+      if (/\.(png|jpe?g|webp|avif)$/i.test(file)) {
+        const existing = path.join(machineDir, file);
+        if (!fs.existsSync(existing)) {
+          console.warn(`[build-catalog] missing raster asset: ${brand.slug}/${file}`);
+        }
+        machineCount += 1;
+        continue;
+      }
       fs.writeFileSync(path.join(machineDir, file), machineSvg(m, brand));
       machineCount += 1;
     }
