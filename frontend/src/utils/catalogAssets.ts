@@ -111,6 +111,7 @@ export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null):
 }
 
 /** Packaged machine image extension overrides (default `.svg`). */
+/** Redeploy note: HS photo covers resolve via MACHINE_ASSET_EXT → png. */
 const MACHINE_ASSET_EXT: Record<string, string> = {
   HS_ISO_LATERAL_HIGH_ROW: 'png',
   HS_ISO_LATERAL_ROW: 'png',
