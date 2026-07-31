@@ -65,15 +65,15 @@ export function MachineDetailPage() {
   }
 
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
-  const useCompactMachineDetail = !isFreeWeight && isAuthenticated;
   const logDate = logDateParam ? normalizeDateKey(logDateParam) : null;
   const logTargetMuscle = machineCode
     ? getWorkoutLogQueryTargetMuscle(machineCode, muscleParam ?? undefined)
     : undefined;
 
   return (
-    <div className={`machine-detail-page${useCompactMachineDetail ? ' machine-detail-page--compact' : ''}`}>
-      <MachineHero machine={machine} compact={useCompactMachineDetail} selectedMuscle={muscleParam} />
+    <div className="machine-detail-page">
+      {/* Cover image at top for every brand (same layout as free-weight). */}
+      <MachineHero machine={machine} selectedMuscle={muscleParam} />
       {!isFreeWeight && machineCode && isAuthenticated ? (
         <LastRecommendationSnippet machineCode={machineCode} />
       ) : null}
@@ -109,7 +109,6 @@ export function MachineDetailPage() {
       {machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
-          fixed={useCompactMachineDetail}
           initialMuscle={muscleParam}
           syncMuscleToUrl={isFreeWeight}
         />
