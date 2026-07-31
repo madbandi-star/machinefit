@@ -17,13 +17,25 @@ const VARIANT_TO_ROUTE: Record<Variant, string> = {
 interface LegalDisclaimerBannerProps {
   variant: Variant;
   compact?: boolean;
+  /** Sit at end of page content, above MainLayout legal footer (does not invade it). */
+  pageBottom?: boolean;
 }
 
-export function LegalDisclaimerBanner({ variant, compact }: LegalDisclaimerBannerProps) {
+export function LegalDisclaimerBanner({
+  variant,
+  compact,
+  pageBottom,
+}: LegalDisclaimerBannerProps) {
   const { t } = useTranslation();
   return (
     <aside
-      className={`legal-disclaimer${compact ? ' legal-disclaimer--compact' : ''}`}
+      className={[
+        'legal-disclaimer',
+        compact ? 'legal-disclaimer--compact' : '',
+        pageBottom ? 'legal-disclaimer--page-bottom' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       role="note"
     >
       <p>{t(`compliance.disclaimer.${variant}`)}</p>

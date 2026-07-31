@@ -249,7 +249,6 @@ export function RecommendationResultPage() {
       </header>
 
       <div className="recommendation-result-page__content history-page-premium">
-        <LegalDisclaimerBanner variant="ai" compact />
         <RecommendationWarnings warnings={result.warnings} />
         <article
           className={`history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card${
@@ -395,6 +394,7 @@ export function RecommendationResultPage() {
             </button>
           )}
         </article>
+        <LegalDisclaimerBanner variant="ai" compact pageBottom />
       </div>
     </div>
   );

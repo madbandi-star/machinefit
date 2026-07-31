@@ -153,7 +153,6 @@ export function LifterDnaPage() {
               ))}
             </ul>
             <p className="dna-prediction__cta">{t('lifterDna.predictionCta')}</p>
-            <LegalDisclaimerBanner variant="ai" compact />
           </section>
         ) : (
           <>
@@ -208,8 +207,6 @@ export function LifterDnaPage() {
               )}
             </section>
 
-            <LegalDisclaimerBanner variant="ai" compact />
-
             <section className="dna-section">
               <h3 className="dna-section__title">{t('lifterDna.habits')}</h3>
               <div className="dna-habits glass">
@@ -239,6 +236,9 @@ export function LifterDnaPage() {
             </section>
           </>
         )}
+        {!isLoading && data && !isError && phase !== 'boot' ? (
+          <LegalDisclaimerBanner variant="ai" compact pageBottom />
+        ) : null}
       </PageShell>
     </div>
   );

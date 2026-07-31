@@ -14,6 +14,12 @@
   font-size: 0.8rem;
 }
 
+/* End of page content — clear gap above MainLayout .legal-footer */
+.legal-disclaimer--page-bottom {
+  margin-top: 1.75rem;
+  margin-bottom: 0.35rem;
+}
+
 .legal-disclaimer p {
   margin: 0 0 0.35rem;
   white-space: pre-line;
