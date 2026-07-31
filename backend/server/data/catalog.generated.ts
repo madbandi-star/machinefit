@@ -1644,7 +1644,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_high_row.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_high_row.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 하이 로우에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1891,7 +1891,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "zh": "腿部伸展"
     },
     "muscleGroup": "legs",
-    "machineType": "selectorized",
+    "machineType": "plate_loaded",
     "description": {
       "ko": "레그 익스텐션은 대퇴사두근을 중심으로 무릎 주변 안정근까지 함께 쓰는 셀렉터라이즈드 머신입니다. 해머 스트렝스의 가이드 안에서, 무릎을 펴며 발목 패드를 들어 올리는 동작을 일정한 속도로 연습하기 좋습니다.",
       "en": "The Leg Extension is a selectorized machine that targets the quadriceps while also involving the knee stabilizers. Its guided path helps you practice extending the knees to lift the ankle pad with a steady, controlled tempo."
@@ -1900,9 +1900,9 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasBackPad": true,
     "hasFootPlate": true,
     "hasHandle": false,
-    "romType": "fixed",
+    "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_extension.png",
     "howTo": {
       "ko": [
         "레그 익스텐션에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2020,7 +2020,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "zh": "腿弯举"
     },
     "muscleGroup": "legs",
-    "machineType": "selectorized",
+    "machineType": "plate_loaded",
     "description": {
       "ko": "레그 컬은 햄스트링을 중심으로 종아리와 둔근까지 함께 쓰는 셀렉터라이즈드 머신입니다. 해머 스트렝스의 가이드 안에서, 뒤꿈치를 엉덩이 쪽으로 끌어당겨 허벅지 뒤쪽을 수축하는 동작을 일정한 속도로 연습하기 좋습니다.",
       "en": "The Leg Curl is a selectorized machine that targets the hamstrings while also involving the calves and glutes. Its guided path helps you practice curling the heels toward the glutes to contract the hamstrings with a steady, controlled tempo."
@@ -2029,9 +2029,9 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasBackPad": true,
     "hasFootPlate": true,
     "hasHandle": false,
-    "romType": "fixed",
+    "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_curl.png",
     "howTo": {
       "ko": [
         "레그 컬에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2160,7 +2160,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_shoulder_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_shoulder_press.png",
     "howTo": {
       "ko": [
         "숄더 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2289,7 +2289,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_row.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_row.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 로우에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2418,7 +2418,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_chest_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_chest_press.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 체스트 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2528,6 +2528,135 @@ export const CATALOG_MACHINES: Machine[] = [
   {
     "id": "119",
     "brandId": "1",
+    "code": "HS_ISO_LATERAL_INCLINE_CHEST_PRESS",
+    "name": {
+      "ko": "아이소 레터럴 인클라인 체스트 프레스",
+      "en": "Iso-Lateral Incline Chest Press",
+      "ja": "アイソラテラルインクラインチェストプレス",
+      "zh": "等轴上斜胸部推举"
+    },
+    "muscleGroup": "chest",
+    "machineType": "plate_loaded",
+    "description": {
+      "ko": "아이소 레터럴 인클라인 체스트 프레스는 상부 가슴을 중심으로 삼두와 앞어깨까지 함께 쓰는 플레이트 로디드 머신입니다. 해머 스트렝스의 가이드 안에서, 기울어진 궤적으로 손잡이를 밀어 올리는 동작을 일정한 속도로 연습하기 좋습니다.",
+      "en": "The Iso-Lateral Incline Chest Press is a plate-loaded machine that targets the upper chest while also involving the triceps and front delts. Its guided incline path helps you practice pressing the handles upward on a diagonal with a steady, controlled tempo."
+    },
+    "hasSeat": true,
+    "hasBackPad": true,
+    "hasFootPlate": false,
+    "hasHandle": true,
+    "romType": "variable",
+    "isActive": true,
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_incline_chest_press.png",
+    "howTo": {
+      "ko": [
+        "아이소 레터럴 인클라인 체스트 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
+        "손잡이가 가슴 중앙 높이에 오도록 시트 높이를 맞추세요. 그런 다음, 등받이에 몸이 흔들리지 않게 붙이세요.",
+        "첫 반복은 가볍게 시작해서, 해머 스트렝스 특유의 묵직한 궤적에 맞춰, 좌우 힘 차이를 천천히 확인하세요.",
+        "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
+        "동작을 시작할 때는 반동을 만들지 말고, 손잡이를 앞쪽으로 밀어내며 가슴을 모아 주세요.",
+        "가장 힘든 지점에서 1초 정도 멈춰, 가슴에 힘이 들어오는지 확인하세요.",
+        "돌아올 때는 무게에 끌려가지 말고, 팔꿈치를 뒤로 접으며, 가슴이 편하게 늘어나는 지점까지 돌아오세요.",
+        "반복 사이에는, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
+        "세트 중간에도, 팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않는지 계속 점검하세요.",
+        "마지막 반복은 속도를 더 늦춰, 시작 자세와 같은 정렬로 조용히 마무리하세요."
+      ],
+      "en": [
+        "Before using the Iso-Lateral Incline Chest Press, confirm plates are loaded evenly on both sides and check that nothing blocks the moving path.",
+        "Adjust the seat so the handles sit around mid-chest height, then keep your body steady against the back pad.",
+        "Use the first rep as a rehearsal: match the solid Hammer Strength path and notice any left-right strength difference.",
+        "Hold the handles or pads, plant your base, and brace the abdomen lightly.",
+        "Start without swinging, then press the handles forward and bring the chest together.",
+        "Pause for about one second at the hardest point and confirm tension in the chest.",
+        "Do not let the weight pull you back; bend the elbows back until your chest feels a comfortable stretch.",
+        "Between reps, exhale as you press and inhale as you return.",
+        "Keep checking that you avoid letting the elbows drift too far behind the torso throughout the set.",
+        "Finish the last rep slowly and return to the same aligned start position."
+      ]
+    },
+    "warnings": {
+      "ko": [
+        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "아이소 레터럴 인클라인 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
+        "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
+        "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
+        "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
+        "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
+        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+      ],
+      "en": [
+        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "If the Iso-Lateral Incline Chest Press is too heavy, compensation may appear before the chest can work well.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "Swinging through the guided path can shift stress from the target muscles to the joints.",
+        "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
+        "Do not hold your breath for long; exhale as you press and inhale as you return.",
+        "If the stack or plates slam loudly, you are probably losing control of the repetition.",
+        "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
+        "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
+        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+      ]
+    },
+    "tips": {
+      "ko": [
+        "아이소 레터럴 인클라인 체스트 프레스에서는 무게보다 같은 궤적을 반복하는 능력을 먼저 목표로 잡으세요.",
+        "시작 전에 가슴을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
+        "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
+        "삼두와 앞어깨가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
+        "'해머 스트렝스 특유의 묵직한 궤적에 맞춰, 좌우 힘 차이를 천천히 확인하세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
+        "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
+        "세트 사이에는 어깨 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
+        "반복 후반에 속도가 빨라지면 무게를 낮추고, 후반까지 같은 템포를 유지하세요.",
+        "오늘의 목표가 근비대라면, 편한 최대 무게보다 8회에서 12회를 깔끔하게 할 수 있는 무게를 고르세요."
+      ],
+      "en": [
+        "On the Iso-Lateral Incline Chest Press, prioritize repeating the same path before chasing heavier weight.",
+        "Lightly touch or mentally locate the chest before the set to improve your mind-muscle connection.",
+        "Use one to two seconds for the effort phase and two to three seconds for the return.",
+        "If the triceps and front delts fatigue first, soften your grip and restart the motion from the target area.",
+        "Think, \"match the solid Hammer Strength path and notice any left-right strength difference\", and keep both sides moving at the same speed.",
+        "At the end range, avoid hard joint lockout and leave tension in the muscle.",
+        "If a mirror is available, check once per set that shoulders and hips stay level.",
+        "Between sets, move gently around the front of the shoulder to reduce unnecessary tension.",
+        "If late reps speed up, lower the load and keep the tempo consistent to the end.",
+        "For hypertrophy, choose a load you can control cleanly for about eight to twelve reps."
+      ]
+    },
+    "beginnerTips": {
+      "ko": [
+        "처음 쓰는 날에는 아이소 레터럴 인클라인 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
+        "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
+        "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
+        "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
+        "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
+        "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
+        "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
+        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+      ],
+      "en": [
+        "On your first day with the Iso-Lateral Incline Chest Press, learn the adjustment levers and start position before adding weight.",
+        "Practice about five reps with the lightest setting and feel the motion of pressing the handles forward with the chest.",
+        "If the setup feels uncertain, find the handle or pad height first, then choose the load.",
+        "For the first two weeks, two sets of ten controlled reps is enough while you monitor joint response.",
+        "If the front of the shoulder fatigue before the chest, reduce load and shorten the range.",
+        "Focus more on controlling the return than on counting reps; technique improves faster that way.",
+        "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
+        "If staff or a trainer is nearby, ask them to check your back pad setting once.",
+        "After the set, wait until the weight stops moving before releasing the handles slowly.",
+        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+      ]
+    },
+    "recommendedExperience": "intermediate"
+  },
+  {
+    "id": "120",
+    "brandId": "1",
     "code": "HS_LAT_PULLDOWN",
     "name": {
       "ko": "랫 풀다운",
@@ -2547,7 +2676,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_lat_pulldown.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_lat_pulldown.png",
     "howTo": {
       "ko": [
         "랫 풀다운에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2655,7 +2784,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "intermediate"
   },
   {
-    "id": "120",
+    "id": "121",
     "brandId": "1",
     "code": "HS_LEG_PRESS",
     "name": {
@@ -2676,7 +2805,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_press.png",
     "howTo": {
       "ko": [
         "레그 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2784,7 +2913,136 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "intermediate"
   },
   {
-    "id": "121",
+    "id": "122",
+    "brandId": "1",
+    "code": "HS_V_SQUAT",
+    "name": {
+      "ko": "브이 스쿼트",
+      "en": "V-Squat",
+      "ja": "Vスクワット",
+      "zh": "V型深蹲"
+    },
+    "muscleGroup": "legs",
+    "machineType": "plate_loaded",
+    "description": {
+      "ko": "브이 스쿼트는 허벅지와 둔근을 중심으로 햄스트링까지 함께 쓰는 플레이트 로디드 머신입니다. 해머 스트렝스의 가이드 안에서, 어깨 패드를 지고 발판을 밀어 스쿼트 궤적을 일정한 속도로 연습하기 좋습니다.",
+      "en": "The V-Squat is a plate-loaded machine that targets the quads and glutes while also involving the hamstrings. Its guided path helps you practice a controlled squat pattern under the shoulder pads with a steady tempo."
+    },
+    "hasSeat": true,
+    "hasBackPad": true,
+    "hasFootPlate": true,
+    "hasHandle": true,
+    "romType": "variable",
+    "isActive": true,
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_v_squat.png",
+    "howTo": {
+      "ko": [
+        "브이 스쿼트에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
+        "발판 중앙에 발을 골반 너비로 두고, 무릎이 발끝 방향을 보게 맞추세요. 그런 다음, 등받이와 발판에 몸이 흔들리지 않게 붙이세요.",
+        "첫 반복은 가볍게 시작해서, 해머 스트렝스 특유의 묵직한 궤적에 맞춰, 좌우 힘 차이를 천천히 확인하세요.",
+        "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
+        "동작을 시작할 때는 반동을 만들지 말고, 뒤꿈치로 발판을 밀어내며, 무릎과 엉덩이를 함께 펴세요.",
+        "가장 힘든 지점에서 1초 정도 멈춰, 허벅지와 둔근에 힘이 들어오는지 확인하세요.",
+        "돌아올 때는 무게에 끌려가지 말고, 무릎이 가슴 쪽으로 편하게 접히는 범위까지만 천천히 내려오세요.",
+        "반복 사이에는, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
+        "세트 중간에도, 무릎을 잠그거나 골반이 말릴 정도로 깊게 내리고 있지 않은지 계속 점검하세요.",
+        "마지막 반복은 속도를 더 늦춰, 시작 자세와 같은 정렬로 조용히 마무리하세요."
+      ],
+      "en": [
+        "Before using the V-Squat, confirm plates are loaded evenly on both sides and check that nothing blocks the moving path.",
+        "Place your feet hip-width on the center of the footplate with knees tracking over toes, then keep your body steady against the back pad and footplate.",
+        "Use the first rep as a rehearsal: match the solid Hammer Strength path and notice any left-right strength difference.",
+        "Hold the handles or pads, plant your base, and brace the abdomen lightly.",
+        "Start without swinging, then push through the heels and extend the knees and hips together.",
+        "Pause for about one second at the hardest point and confirm tension in the quads and glutes.",
+        "Do not let the weight pull you back; lower only until the knees bend comfortably toward the chest.",
+        "Between reps, exhale as you press and inhale as you lower.",
+        "Keep checking that you avoid locking the knees or lowering until the pelvis tucks under throughout the set.",
+        "Finish the last rep slowly and return to the same aligned start position."
+      ]
+    },
+    "warnings": {
+      "ko": [
+        "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "브이 스쿼트에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
+        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
+        "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
+        "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
+        "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
+        "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
+        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+      ],
+      "en": [
+        "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+        "If the V-Squat is too heavy, compensation may appear before the quads and glutes can work well.",
+        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+        "Swinging through the guided path can shift stress from the target muscles to the joints.",
+        "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
+        "Do not hold your breath for long; exhale as you press and inhale as you lower.",
+        "If the stack or plates slam loudly, you are probably losing control of the repetition.",
+        "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
+        "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
+        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+      ]
+    },
+    "tips": {
+      "ko": [
+        "브이 스쿼트에서는 무게보다 같은 궤적을 반복하는 능력을 먼저 목표로 잡으세요.",
+        "시작 전에 허벅지와 둔근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
+        "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
+        "햄스트링과 종아리가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
+        "'해머 스트렝스 특유의 묵직한 궤적에 맞춰, 좌우 힘 차이를 천천히 확인하세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
+        "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
+        "세트 사이에는 무릎과 허리 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
+        "반복 후반에 속도가 빨라지면 무게를 낮추고, 후반까지 같은 템포를 유지하세요.",
+        "오늘의 목표가 근비대라면, 편한 최대 무게보다 8회에서 12회를 깔끔하게 할 수 있는 무게를 고르세요."
+      ],
+      "en": [
+        "On the V-Squat, prioritize repeating the same path before chasing heavier weight.",
+        "Lightly touch or mentally locate the quads and glutes before the set to improve your mind-muscle connection.",
+        "Use one to two seconds for the effort phase and two to three seconds for the return.",
+        "If the hamstrings and calves fatigue first, soften your grip and restart the motion from the target area.",
+        "Think, \"match the solid Hammer Strength path and notice any left-right strength difference\", and keep both sides moving at the same speed.",
+        "At the end range, avoid hard joint lockout and leave tension in the muscle.",
+        "If a mirror is available, check once per set that shoulders and hips stay level.",
+        "Between sets, move gently around the knees and lower back to reduce unnecessary tension.",
+        "If late reps speed up, lower the load and keep the tempo consistent to the end.",
+        "For hypertrophy, choose a load you can control cleanly for about eight to twelve reps."
+      ]
+    },
+    "beginnerTips": {
+      "ko": [
+        "처음 쓰는 날에는 브이 스쿼트의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
+        "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치로 발판을 밀어 무릎과 엉덩이를 함께 펴는 동작의 감각을 확인하세요.",
+        "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "허벅지와 둔근보다 무릎과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
+        "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
+        "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
+        "헬스장 직원이나 트레이너가 있다면, 등받이와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
+        "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
+        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+      ],
+      "en": [
+        "On your first day with the V-Squat, learn the adjustment levers and start position before adding weight.",
+        "Practice about five reps with the lightest setting and feel the motion of pushing through the footplate to extend the knees and hips together.",
+        "If the setup feels uncertain, find the handle or pad height first, then choose the load.",
+        "For the first two weeks, two sets of ten controlled reps is enough while you monitor joint response.",
+        "If the knees and lower back fatigue before the quads and glutes, reduce load and shorten the range.",
+        "Focus more on controlling the return than on counting reps; technique improves faster that way.",
+        "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
+        "If staff or a trainer is nearby, ask them to check your back pad and footplate setting once.",
+        "After the set, wait until the weight stops moving before releasing the handles slowly.",
+        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+      ]
+    },
+    "recommendedExperience": "intermediate"
+  },
+  {
+    "id": "123",
     "brandId": "1",
     "code": "HS_PEC_FLY",
     "name": {
@@ -2913,7 +3171,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "intermediate"
   },
   {
-    "id": "122",
+    "id": "124",
     "brandId": "1",
     "code": "HS_BICEPS_CURL",
     "name": {
@@ -3042,7 +3300,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "intermediate"
   },
   {
-    "id": "123",
+    "id": "125",
     "brandId": "1",
     "code": "HS_TRICEPS_EXTENSION",
     "name": {
@@ -3171,7 +3429,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "intermediate"
   },
   {
-    "id": "124",
+    "id": "126",
     "brandId": "2",
     "code": "LF_CHEST_PRESS",
     "name": {
@@ -3300,7 +3558,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "125",
+    "id": "127",
     "brandId": "2",
     "code": "LF_SHOULDER_PRESS",
     "name": {
@@ -3429,7 +3687,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "126",
+    "id": "128",
     "brandId": "2",
     "code": "LF_LAT_PULLDOWN",
     "name": {
@@ -3558,7 +3816,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "127",
+    "id": "129",
     "brandId": "2",
     "code": "LF_SEATED_ROW",
     "name": {
@@ -3687,7 +3945,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "128",
+    "id": "130",
     "brandId": "2",
     "code": "LF_LEG_PRESS",
     "name": {
@@ -3816,7 +4074,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "129",
+    "id": "131",
     "brandId": "2",
     "code": "LF_LEG_EXTENSION",
     "name": {
@@ -3945,7 +4203,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "130",
+    "id": "132",
     "brandId": "2",
     "code": "LF_LEG_CURL",
     "name": {
@@ -4074,7 +4332,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "131",
+    "id": "133",
     "brandId": "2",
     "code": "LF_PEC_FLY",
     "name": {
@@ -4203,7 +4461,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "132",
+    "id": "134",
     "brandId": "2",
     "code": "LF_ABDOMINAL",
     "name": {
@@ -4332,7 +4590,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "133",
+    "id": "135",
     "brandId": "2",
     "code": "LF_BACK_EXTENSION",
     "name": {
@@ -4461,7 +4719,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "134",
+    "id": "136",
     "brandId": "2",
     "code": "LF_BICEPS_CURL",
     "name": {
@@ -4590,7 +4848,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "135",
+    "id": "137",
     "brandId": "2",
     "code": "LF_TRICEPS_PRESS",
     "name": {
@@ -4719,7 +4977,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "136",
+    "id": "138",
     "brandId": "6",
     "code": "TG_CHEST_PRESS",
     "name": {
@@ -4848,7 +5106,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "137",
+    "id": "139",
     "brandId": "6",
     "code": "TG_SHOULDER_PRESS",
     "name": {
@@ -4977,7 +5235,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "138",
+    "id": "140",
     "brandId": "6",
     "code": "TG_LAT_MACHINE",
     "name": {
@@ -5106,7 +5364,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "139",
+    "id": "141",
     "brandId": "6",
     "code": "TG_LOW_ROW",
     "name": {
@@ -5235,7 +5493,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "140",
+    "id": "142",
     "brandId": "6",
     "code": "TG_LEG_PRESS",
     "name": {
@@ -5364,7 +5622,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "141",
+    "id": "143",
     "brandId": "6",
     "code": "TG_LEG_EXTENSION",
     "name": {
@@ -5493,7 +5751,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "142",
+    "id": "144",
     "brandId": "6",
     "code": "TG_LEG_CURL",
     "name": {
@@ -5622,7 +5880,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "143",
+    "id": "145",
     "brandId": "6",
     "code": "TG_PEC_FLY",
     "name": {
@@ -5751,7 +6009,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "144",
+    "id": "146",
     "brandId": "6",
     "code": "TG_ABDOMINAL",
     "name": {
@@ -5880,7 +6138,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "145",
+    "id": "147",
     "brandId": "6",
     "code": "TG_LOWER_BACK",
     "name": {
@@ -6009,7 +6267,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "146",
+    "id": "148",
     "brandId": "6",
     "code": "TG_BICEPS_CURL",
     "name": {
@@ -6138,7 +6396,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "recommendedExperience": "beginner"
   },
   {
-    "id": "147",
+    "id": "149",
     "brandId": "6",
     "code": "TG_TRICEPS_EXTENSION",
     "name": {
@@ -7187,7 +7445,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       "seatPosition": 5,
       "backPadPosition": 3,
       "footPosition": 3,
-      "romSetting": "fixed",
+      "romSetting": "variable",
       "weightKg": 45,
       "tips": {
         "ko": [
@@ -7252,7 +7510,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       "seatPosition": 5,
       "backPadPosition": 3,
       "footPosition": 3,
-      "romSetting": "fixed",
+      "romSetting": "variable",
       "weightKg": 45,
       "tips": {
         "ko": [
@@ -7503,6 +7761,71 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       }
     }
   ],
+  "HS_ISO_LATERAL_INCLINE_CHEST_PRESS": [
+    {
+      "gender": "male",
+      "experienceLevel": "intermediate",
+      "heightMinCm": 165,
+      "heightMaxCm": 185,
+      "seatPosition": 5,
+      "backPadPosition": 3,
+      "handlePosition": 2,
+      "romSetting": "variable",
+      "weightKg": 40,
+      "tips": {
+        "ko": [
+          "아이소 레터럴 인클라인 체스트 프레스에서는 무게보다 같은 궤적을 반복하는 능력을 먼저 목표로 잡으세요.",
+          "시작 전에 가슴을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
+          "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
+          "삼두와 앞어깨가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
+          "'해머 스트렝스 특유의 묵직한 궤적에 맞춰, 좌우 힘 차이를 천천히 확인하세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
+          "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
+          "세트 사이에는 어깨 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
+          "반복 후반에 속도가 빨라지면 무게를 낮추고, 후반까지 같은 템포를 유지하세요.",
+          "오늘의 목표가 근비대라면, 편한 최대 무게보다 8회에서 12회를 깔끔하게 할 수 있는 무게를 고르세요."
+        ],
+        "en": [
+          "On the Iso-Lateral Incline Chest Press, prioritize repeating the same path before chasing heavier weight.",
+          "Lightly touch or mentally locate the chest before the set to improve your mind-muscle connection.",
+          "Use one to two seconds for the effort phase and two to three seconds for the return.",
+          "If the triceps and front delts fatigue first, soften your grip and restart the motion from the target area.",
+          "Think, \"match the solid Hammer Strength path and notice any left-right strength difference\", and keep both sides moving at the same speed.",
+          "At the end range, avoid hard joint lockout and leave tension in the muscle.",
+          "If a mirror is available, check once per set that shoulders and hips stay level.",
+          "Between sets, move gently around the front of the shoulder to reduce unnecessary tension.",
+          "If late reps speed up, lower the load and keep the tempo consistent to the end.",
+          "For hypertrophy, choose a load you can control cleanly for about eight to twelve reps."
+        ]
+      },
+      "warnings": {
+        "ko": [
+          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "아이소 레터럴 인클라인 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
+          "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
+          "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
+          "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
+          "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
+          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        ],
+        "en": [
+          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "If the Iso-Lateral Incline Chest Press is too heavy, compensation may appear before the chest can work well.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "Swinging through the guided path can shift stress from the target muscles to the joints.",
+          "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
+          "Do not hold your breath for long; exhale as you press and inhale as you return.",
+          "If the stack or plates slam loudly, you are probably losing control of the repetition.",
+          "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
+          "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
+          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        ]
+      }
+    }
+  ],
   "HS_LAT_PULLDOWN": [
     {
       "gender": "male",
@@ -7621,6 +7944,72 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
         "en": [
           "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
           "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
+          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+          "Swinging through the guided path can shift stress from the target muscles to the joints.",
+          "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
+          "Do not hold your breath for long; exhale as you press and inhale as you lower.",
+          "If the stack or plates slam loudly, you are probably losing control of the repetition.",
+          "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
+          "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
+          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        ]
+      }
+    }
+  ],
+  "HS_V_SQUAT": [
+    {
+      "gender": "male",
+      "experienceLevel": "intermediate",
+      "heightMinCm": 165,
+      "heightMaxCm": 185,
+      "seatPosition": 5,
+      "backPadPosition": 3,
+      "footPosition": 3,
+      "handlePosition": 2,
+      "romSetting": "variable",
+      "weightKg": 45,
+      "tips": {
+        "ko": [
+          "브이 스쿼트에서는 무게보다 같은 궤적을 반복하는 능력을 먼저 목표로 잡으세요.",
+          "시작 전에 허벅지와 둔근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
+          "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
+          "햄스트링과 종아리가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
+          "'해머 스트렝스 특유의 묵직한 궤적에 맞춰, 좌우 힘 차이를 천천히 확인하세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
+          "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
+          "세트 사이에는 무릎과 허리 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
+          "반복 후반에 속도가 빨라지면 무게를 낮추고, 후반까지 같은 템포를 유지하세요.",
+          "오늘의 목표가 근비대라면, 편한 최대 무게보다 8회에서 12회를 깔끔하게 할 수 있는 무게를 고르세요."
+        ],
+        "en": [
+          "On the V-Squat, prioritize repeating the same path before chasing heavier weight.",
+          "Lightly touch or mentally locate the quads and glutes before the set to improve your mind-muscle connection.",
+          "Use one to two seconds for the effort phase and two to three seconds for the return.",
+          "If the hamstrings and calves fatigue first, soften your grip and restart the motion from the target area.",
+          "Think, \"match the solid Hammer Strength path and notice any left-right strength difference\", and keep both sides moving at the same speed.",
+          "At the end range, avoid hard joint lockout and leave tension in the muscle.",
+          "If a mirror is available, check once per set that shoulders and hips stay level.",
+          "Between sets, move gently around the knees and lower back to reduce unnecessary tension.",
+          "If late reps speed up, lower the load and keep the tempo consistent to the end.",
+          "For hypertrophy, choose a load you can control cleanly for about eight to twelve reps."
+        ]
+      },
+      "warnings": {
+        "ko": [
+          "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "브이 스쿼트에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
+          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
+          "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
+          "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
+          "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
+          "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
+          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        ],
+        "en": [
+          "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+          "If the V-Squat is too heavy, compensation may appear before the quads and glutes can work well.",
           "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
