@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { MachineRequest } from '@machinefit/shared';
+import { MACHINE_REQUEST_UNKNOWN_VALUE, type MachineRequest } from '@machinefit/shared';
 import { API_BASE_URL } from '@/services/http/axios-client';
 import '@/styles/community.css';
 
@@ -18,11 +18,16 @@ function formatDateShort(iso: string) {
   });
 }
 
-function requestTitle(request: MachineRequest) {
-  if (request.brandName) {
-    return `${request.brandName} · ${request.machineName}`;
-  }
-  return request.machineName;
+function displayField(value: string | undefined, unknownLabel: string) {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed || trimmed === MACHINE_REQUEST_UNKNOWN_VALUE) return unknownLabel;
+  return trimmed;
+}
+
+function requestTitle(request: MachineRequest, unknownLabel: string) {
+  const brand = displayField(request.brandName, unknownLabel);
+  const machine = displayField(request.machineName, unknownLabel);
+  return `${brand} · ${machine}`;
 }
 
 function resolveRequestThumb(url?: string) {
@@ -45,6 +50,7 @@ function resolveRequestThumb(url?: string) {
 
 export function BoardRequestRow({ request }: BoardRequestRowProps) {
   const { t } = useTranslation('community');
+  const unknownLabel = t('requestFieldUnknownLabel');
   const statusLabel = t(`requestStatus_${request.status}`, { defaultValue: request.status });
   const thumbUrl = resolveRequestThumb(request.primaryImageUrl);
   const gymLabel =
@@ -61,7 +67,7 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
           </span>
         ) : null}
         <span className="board-index-row__body">
-          <span className="board-index-row__title">{requestTitle(request)}</span>
+          <span className="board-index-row__title">{requestTitle(request, unknownLabel)}</span>
           {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}
         </span>
         <span className="board-index-row__meta">

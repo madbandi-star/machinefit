@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { MachineRequestGymChoiceMode } from '@machinefit/shared';
+import {
+  MACHINE_REQUEST_UNKNOWN_VALUE,
+  type MachineRequestGymChoiceMode,
+  type MachineRequestTextChoiceMode,
+} from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
 import { BoardIndexSkeleton } from '@/components/community/BoardIndexSkeleton';
@@ -41,6 +45,14 @@ function buildProfileGymLabel(locationPath?: string, gymName?: string): string {
   return '';
 }
 
+function resolveTextField(
+  mode: MachineRequestTextChoiceMode,
+  value: string
+): string {
+  if (mode === 'unknown') return MACHINE_REQUEST_UNKNOWN_VALUE;
+  return value.trim();
+}
+
 export function MachineRequestBoardPage() {
   const { t } = useTranslation('community');
   const { t: tCommon } = useTranslation();
@@ -52,6 +64,10 @@ export function MachineRequestBoardPage() {
   const { activeGym, gyms } = useActiveGym();
 
   const [showForm, setShowForm] = useState(false);
+  const [brandMode, setBrandMode] = useState<MachineRequestTextChoiceMode>('custom');
+  const [machineMode, setMachineMode] = useState<MachineRequestTextChoiceMode>('custom');
+  const [descriptionMode, setDescriptionMode] =
+    useState<MachineRequestTextChoiceMode>('custom');
   const [brandName, setBrandName] = useState('');
   const [machineName, setMachineName] = useState('');
   const [description, setDescription] = useState('');
@@ -100,6 +116,9 @@ export function MachineRequestBoardPage() {
 
   const resetForm = () => {
     for (const img of images) URL.revokeObjectURL(img.previewUrl);
+    setBrandMode('custom');
+    setMachineMode('custom');
+    setDescriptionMode('custom');
     setBrandName('');
     setMachineName('');
     setDescription('');
@@ -122,25 +141,27 @@ export function MachineRequestBoardPage() {
     return Boolean(profileGymLabel);
   }, [customGymName, gymChoiceMode, profileGymLabel]);
 
+  const textFieldsValid = useMemo(() => {
+    const brandOk = brandMode === 'unknown' || Boolean(brandName.trim());
+    const machineOk = machineMode === 'unknown' || Boolean(machineName.trim());
+    const descriptionOk = descriptionMode === 'unknown' || Boolean(description.trim());
+    return brandOk && machineOk && descriptionOk;
+  }, [brandMode, brandName, machineMode, machineName, descriptionMode, description]);
+
   const canSubmit = useMemo(
     () =>
       Boolean(
-        brandName.trim() &&
-          machineName.trim() &&
-          description.trim() &&
-          images.length > 0 &&
-          commercialUseConsent &&
-          gymChoiceValid
+        textFieldsValid && images.length > 0 && commercialUseConsent && gymChoiceValid
       ),
-    [brandName, machineName, description, images.length, commercialUseConsent, gymChoiceValid]
+    [textFieldsValid, images.length, commercialUseConsent, gymChoiceValid]
   );
 
   const createMutation = useMutation({
     mutationFn: () =>
       machineRequestApi.create({
-        brandName: brandName.trim(),
-        machineName: machineName.trim(),
-        description: description.trim(),
+        brandName: resolveTextField(brandMode, brandName),
+        machineName: resolveTextField(machineMode, machineName),
+        description: resolveTextField(descriptionMode, description),
         commercialUseConsent: true,
         gymChoiceMode,
         gymName: gymChoiceMode === 'unknown' ? undefined : resolvedGymName,
@@ -204,6 +225,61 @@ export function MachineRequestBoardPage() {
     createMutation.mutate();
   };
 
+  const renderTextChoice = (params: {
+    legend: string;
+    name: string;
+    mode: MachineRequestTextChoiceMode;
+    onModeChange: (mode: MachineRequestTextChoiceMode) => void;
+    inputId: string;
+    value: string;
+    onChange: (value: string) => void;
+    maxLength: number;
+    multiline?: boolean;
+  }) => (
+    <fieldset className="form-row community-board-page__gym-choice">
+      <legend>{params.legend}</legend>
+      <label className="checkbox-label">
+        <input
+          type="radio"
+          name={params.name}
+          checked={params.mode === 'custom'}
+          onChange={() => params.onModeChange('custom')}
+        />
+        <span>{t('requestFieldChoiceCustom')}</span>
+      </label>
+      {params.mode === 'custom' &&
+        (params.multiline ? (
+          <textarea
+            id={params.inputId}
+            className="input"
+            value={params.value}
+            onChange={(e) => params.onChange(e.target.value)}
+            required
+            maxLength={params.maxLength}
+            rows={4}
+          />
+        ) : (
+          <input
+            id={params.inputId}
+            className="input"
+            value={params.value}
+            onChange={(e) => params.onChange(e.target.value)}
+            required
+            maxLength={params.maxLength}
+          />
+        ))}
+      <label className="checkbox-label">
+        <input
+          type="radio"
+          name={params.name}
+          checked={params.mode === 'unknown'}
+          onChange={() => params.onModeChange('unknown')}
+        />
+        <span>{t('requestFieldChoiceUnknown')}</span>
+      </label>
+    </fieldset>
+  );
+
   return (
     <div className="community-board-page">
       <PageShell
@@ -219,40 +295,37 @@ export function MachineRequestBoardPage() {
       >
         {showForm && (
           <form className="card community-board-page__form" onSubmit={handleSubmit}>
-            <div className="form-row">
-              <label htmlFor="req-brand">{t('brandName')}</label>
-              <input
-                id="req-brand"
-                className="input"
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
-                required
-                maxLength={100}
-              />
-            </div>
-            <div className="form-row">
-              <label htmlFor="req-machine">{t('machineName')}</label>
-              <input
-                id="req-machine"
-                className="input"
-                value={machineName}
-                onChange={(e) => setMachineName(e.target.value)}
-                required
-                maxLength={200}
-              />
-            </div>
-            <div className="form-row">
-              <label htmlFor="req-desc">{t('description')}</label>
-              <textarea
-                id="req-desc"
-                className="input"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                maxLength={2000}
-                rows={4}
-              />
-            </div>
+            {renderTextChoice({
+              legend: t('brandName'),
+              name: 'req-brand-choice',
+              mode: brandMode,
+              onModeChange: setBrandMode,
+              inputId: 'req-brand',
+              value: brandName,
+              onChange: setBrandName,
+              maxLength: 100,
+            })}
+            {renderTextChoice({
+              legend: t('machineName'),
+              name: 'req-machine-choice',
+              mode: machineMode,
+              onModeChange: setMachineMode,
+              inputId: 'req-machine',
+              value: machineName,
+              onChange: setMachineName,
+              maxLength: 200,
+            })}
+            {renderTextChoice({
+              legend: t('description'),
+              name: 'req-desc-choice',
+              mode: descriptionMode,
+              onModeChange: setDescriptionMode,
+              inputId: 'req-desc',
+              value: description,
+              onChange: setDescription,
+              maxLength: 2000,
+              multiline: true,
+            })}
 
             <fieldset className="form-row community-board-page__gym-choice">
               <legend>{t('requestGymLabel')}</legend>
