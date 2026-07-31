@@ -45,10 +45,12 @@
 }
 
 .machine-hero__image-wrap {
-  aspect-ratio: 16 / 10;
+  width: min(100%, 22rem);
+  margin-inline: auto;
+  aspect-ratio: 1;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--color-bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--color-border);
   margin-bottom: var(--space-md);
 }
@@ -56,8 +58,10 @@
 .machine-hero__image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
+  background: #ffffff;
 }
 
 .machine-hero__placeholder {
@@ -428,13 +432,13 @@
 
 .machine-search .machine-list-item__thumb {
   align-self: stretch;
-  width: 120px;
-  min-height: 120px;
+  width: 132px;
+  min-height: 132px;
   height: auto;
   border-radius: 0;
   border: none;
   border-right: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
+  background: #ffffff;
 }
 
 .machine-search .machine-list-item__thumb img,
@@ -442,9 +446,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
-  background: var(--color-bg-secondary);
+  background: #ffffff;
 }
 
 .machine-search .machine-list-item__muscle-icon {
@@ -725,18 +729,20 @@
 
 .machine-list-item__thumb {
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: var(--color-bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--color-border);
 }
 
 .machine-list-item__thumb img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  background: #ffffff;
 }
 
 .machine-list-item__thumb-placeholder {

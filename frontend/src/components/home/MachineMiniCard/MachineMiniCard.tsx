@@ -55,8 +55,8 @@ export function MachineMiniCard({
             fallbackSrc={machinePlaceholderUrl()}
             alt=""
             loading="lazy"
-            width={120}
-            height={96}
+            width={136}
+            height={136}
           />
         ) : displayMuscle ? (
           <div className="machine-mini-card__muscle-icon" aria-hidden>
