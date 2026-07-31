@@ -252,9 +252,10 @@
   height: auto;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, var(--color-bg-secondary));
+  border: 1px solid var(--glass-border);
   margin-bottom: 0.4rem;
+  isolation: isolate;
 }
 
 .machine-mini-card__thumb img {
@@ -262,7 +263,9 @@
   height: 100%;
   object-fit: contain;
   object-position: center;
-  background: #ffffff;
+  background: transparent;
+  /* Dissolve pure-white studio backdrop into the dark UI plate */
+  mix-blend-mode: multiply;
 }
 
 .machine-mini-card__placeholder {

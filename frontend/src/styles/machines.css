@@ -50,9 +50,10 @@
   aspect-ratio: 1;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, var(--color-bg-secondary));
+  border: 1px solid var(--glass-border);
   margin-bottom: var(--space-md);
+  isolation: isolate;
 }
 
 .machine-hero__image {
@@ -61,7 +62,8 @@
   object-fit: contain;
   object-position: center;
   display: block;
-  background: #ffffff;
+  background: transparent;
+  mix-blend-mode: multiply;
 }
 
 .machine-hero__placeholder {
@@ -437,8 +439,9 @@
   height: auto;
   border-radius: 0;
   border: none;
-  border-right: 1px solid var(--color-border);
-  background: #ffffff;
+  border-right: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, var(--color-bg-secondary));
+  isolation: isolate;
 }
 
 .machine-search .machine-list-item__thumb img,
@@ -448,7 +451,8 @@
   height: 100%;
   object-fit: contain;
   object-position: center;
-  background: #ffffff;
+  background: transparent;
+  mix-blend-mode: multiply;
 }
 
 .machine-search .machine-list-item__muscle-icon {
@@ -733,8 +737,9 @@
   height: 72px;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, var(--color-bg-secondary));
+  border: 1px solid var(--glass-border);
+  isolation: isolate;
 }
 
 .machine-list-item__thumb img {
@@ -742,7 +747,8 @@
   height: 100%;
   object-fit: contain;
   object-position: center;
-  background: #ffffff;
+  background: transparent;
+  mix-blend-mode: multiply;
 }
 
 .machine-list-item__thumb-placeholder {
