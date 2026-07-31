@@ -5,6 +5,7 @@ import {
   type Post,
   type Comment,
   type MachineRequest,
+  type MachineRequestImage,
   type RoleCode,
 } from '@machinefit/shared';
 import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
@@ -14,11 +15,33 @@ import {
   mockComments,
   mockLikes,
   mockMachineRequests,
+  mockMachineRequestImages,
   likeKey,
   filterPosts,
 } from '../data/community.mock.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
+import { machineRequestImageUrl } from '../utils/public-api-base.js';
+
+export type ProcessedMachineRequestImage = {
+  buffer: Buffer;
+  thumb: Buffer;
+  mimeType: string;
+  width: number;
+  height: number;
+  fileSizeBytes: number;
+};
+
+function mapRequestImages(
+  rows: Array<{ id: string; sort_order: number }>
+): MachineRequestImage[] {
+  return rows.map((img) => ({
+    id: img.id,
+    sortOrder: img.sort_order,
+    thumbUrl: machineRequestImageUrl(img.id, 'thumb'),
+    imageUrl: machineRequestImageUrl(img.id, 'full'),
+  }));
+}
 
 export const communityRepository = {
   async listPosts(boardType?: BoardType, page = 1, limit = 20) {
@@ -346,6 +369,7 @@ export const communityRepository = {
         ...req,
         userId: '',
         adminNote: undefined,
+        commercialUseConsent: undefined,
       }));
       return {
         items,
@@ -358,44 +382,78 @@ export const communityRepository = {
     );
     const total = parseInt(count.rows[0]?.count ?? '0', 10);
     const result = await pool.query(
-      `SELECT mr.*, u.display_name AS author_name FROM machine_requests mr
+      `SELECT mr.*, u.display_name AS author_name,
+              (
+                SELECT i.id
+                FROM machine_request_images i
+                WHERE i.request_id = mr.id
+                ORDER BY i.sort_order ASC, i.created_at ASC
+                LIMIT 1
+              ) AS primary_image_id
+       FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        ORDER BY mr.created_at DESC LIMIT $1 OFFSET $2`,
       [limit, (page - 1) * limit]
     );
-    const items: MachineRequest[] = result.rows.map((r) => ({
-      id: r.id,
-      // Public board must not expose internal user ids or admin notes.
-      userId: '',
-      brandName: r.brand_name,
-      machineName: r.machine_name,
-      description: r.description,
-      status: r.status,
-      adminNote: undefined,
-      linkedMachineId: r.linked_machine_id,
-      authorName: r.author_name,
-      createdAt: r.created_at,
-      updatedAt: r.updated_at,
-    }));
+    const items: MachineRequest[] = result.rows.map((r) => {
+      const primaryImageUrl = r.primary_image_id
+        ? machineRequestImageUrl(r.primary_image_id, 'thumb')
+        : undefined;
+      return {
+        id: r.id,
+        // Public board must not expose internal user ids or admin notes.
+        userId: '',
+        brandName: r.brand_name,
+        machineName: r.machine_name,
+        description: r.description,
+        status: r.status,
+        adminNote: undefined,
+        linkedMachineId: r.linked_machine_id,
+        authorName: r.author_name,
+        primaryImageUrl,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+      };
+    });
     return { items, meta: buildPaginationMeta(page, limit, total) };
   },
 
   async createMachineRequest(
     userId: string,
     authorName: string,
-    input: CreateMachineRequestInput
+    input: CreateMachineRequestInput,
+    images: ProcessedMachineRequestImage[]
   ): Promise<MachineRequest> {
     const pool = getPool();
     const now = new Date().toISOString();
     if (!pool) {
+      const requestId = crypto.randomUUID();
+      const mappedImages: MachineRequestImage[] = images.map((img, index) => {
+        const id = crypto.randomUUID();
+        mockMachineRequestImages.set(id, {
+          requestId,
+          mimeType: img.mimeType,
+          imageData: img.buffer,
+          thumbnailData: img.thumb,
+        });
+        return {
+          id,
+          sortOrder: index,
+          thumbUrl: machineRequestImageUrl(id, 'thumb'),
+          imageUrl: machineRequestImageUrl(id, 'full'),
+        };
+      });
       const req: MachineRequest = {
-        id: crypto.randomUUID(),
+        id: requestId,
         userId,
         brandName: input.brandName,
         machineName: input.machineName,
         description: input.description,
         status: 'pending',
         authorName,
+        commercialUseConsent: true,
+        images: mappedImages,
+        primaryImageUrl: mappedImages[0]?.thumbUrl,
         createdAt: now,
         updatedAt: now,
       };
@@ -403,22 +461,85 @@ export const communityRepository = {
       return req;
     }
 
-    const result = await pool.query(
-      `INSERT INTO machine_requests (user_id, brand_name, machine_name, description)
-       VALUES ($1,$2,$3,$4) RETURNING *`,
-      [userId, input.brandName ?? null, input.machineName, input.description ?? null]
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await client.query(
+        `INSERT INTO machine_requests
+           (user_id, brand_name, machine_name, description, commercial_use_consent)
+         VALUES ($1,$2,$3,$4,TRUE) RETURNING *`,
+        [userId, input.brandName, input.machineName, input.description]
+      );
+      const r = result.rows[0];
+      const mappedImages: MachineRequestImage[] = [];
+      for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const inserted = await client.query<{ id: string; sort_order: number }>(
+          `INSERT INTO machine_request_images
+             (request_id, sort_order, mime_type, width, height, file_size_bytes, image_data, thumbnail_data)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+           RETURNING id, sort_order`,
+          [
+            r.id,
+            i,
+            img.mimeType,
+            img.width,
+            img.height,
+            img.fileSizeBytes,
+            img.buffer,
+            img.thumb,
+          ]
+        );
+        mappedImages.push(...mapRequestImages(inserted.rows));
+      }
+      await client.query('COMMIT');
+      return {
+        id: r.id,
+        userId: r.user_id,
+        brandName: r.brand_name,
+        machineName: r.machine_name,
+        description: r.description,
+        status: r.status,
+        authorName,
+        commercialUseConsent: true,
+        images: mappedImages,
+        primaryImageUrl: mappedImages[0]?.thumbUrl,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+      };
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  },
+
+  async getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {
+    const pool = getPool();
+    if (!pool) {
+      const img = mockMachineRequestImages.get(imageId);
+      if (!img) throw new AppError(404, 'NOT_FOUND', 'Image not found');
+      return {
+        mimeType: img.mimeType,
+        data: variant === 'thumb' ? img.thumbnailData : img.imageData,
+      };
+    }
+    const result = await pool.query<{
+      mime_type: string;
+      image_data: Buffer;
+      thumbnail_data: Buffer;
+    }>(
+      `SELECT mime_type, image_data, thumbnail_data
+       FROM machine_request_images
+       WHERE id = $1`,
+      [imageId]
     );
-    const r = result.rows[0];
+    const row = result.rows[0];
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Image not found');
     return {
-      id: r.id,
-      userId: r.user_id,
-      brandName: r.brand_name,
-      machineName: r.machine_name,
-      description: r.description,
-      status: r.status,
-      authorName,
-      createdAt: r.created_at,
-      updatedAt: r.updated_at,
+      mimeType: row.mime_type,
+      data: variant === 'thumb' ? row.thumbnail_data : row.image_data,
     };
   },
 };

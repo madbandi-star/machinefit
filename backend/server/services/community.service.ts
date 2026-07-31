@@ -1,7 +1,15 @@
+import sharp from 'sharp';
 import type { BoardType, RoleCode } from '@machinefit/shared';
 import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
 import { findBlockedContentMatch } from '@machinefit/shared';
-import { communityRepository } from '../repositories/community.repository.js';
+import {
+  isAllowedMachineRequestImage,
+  machineRequestImageLimits,
+} from '../config/machine-request-image.js';
+import {
+  communityRepository,
+  type ProcessedMachineRequestImage,
+} from '../repositories/community.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { complianceRepository } from '../repositories/compliance.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -16,6 +24,52 @@ function assertSafeUgc(...parts: Array<string | undefined>) {
         'Content violates community guidelines'
       );
     }
+  }
+}
+
+async function processMachineRequestPhoto(buffer: Buffer): Promise<ProcessedMachineRequestImage> {
+  const limits = machineRequestImageLimits();
+  try {
+    const image = sharp(buffer, { failOn: 'none' }).rotate();
+    const meta = await image.metadata();
+    if (!meta.width || !meta.height) {
+      throw new AppError(400, 'INVALID_IMAGE', 'Could not read image dimensions');
+    }
+
+    const mainBuffer = await image
+      .clone()
+      .resize({
+        width: limits.maxEdge,
+        height: limits.maxEdge,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 82 })
+      .toBuffer();
+    const mainMeta = await sharp(mainBuffer).metadata();
+
+    const thumbBuffer = await sharp(buffer, { failOn: 'none' })
+      .rotate()
+      .resize({
+        width: limits.thumbEdge,
+        height: limits.thumbEdge,
+        fit: 'cover',
+        position: 'centre',
+      })
+      .webp({ quality: 78 })
+      .toBuffer();
+
+    return {
+      buffer: mainBuffer,
+      thumb: thumbBuffer,
+      mimeType: 'image/webp',
+      width: mainMeta.width ?? limits.maxEdge,
+      height: mainMeta.height ?? limits.maxEdge,
+      fileSizeBytes: mainBuffer.byteLength,
+    };
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError(400, 'INVALID_IMAGE', 'Could not process the image file');
   }
 }
 
@@ -55,9 +109,51 @@ export const communityService = {
     return communityRepository.listMachineRequests(page, limit);
   },
 
-  async createMachineRequest(userId: string, input: CreateMachineRequestInput) {
+  getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {
+    return communityRepository.getMachineRequestImageBinary(imageId, variant);
+  },
+
+  async createMachineRequest(
+    userId: string,
+    input: CreateMachineRequestInput,
+    files: Express.Multer.File[]
+  ) {
+    assertSafeUgc(input.brandName, input.machineName, input.description);
+    if (!input.commercialUseConsent) {
+      throw new AppError(
+        400,
+        'CONSENT_REQUIRED',
+        'Commercial use consent is required to submit a machine request'
+      );
+    }
+
+    const limits = machineRequestImageLimits();
+    const maxCount = Math.min(limits.maxCount, 5);
+    if (!files.length) {
+      throw new AppError(400, 'IMAGES_REQUIRED', 'At least one image is required');
+    }
+    if (files.length > maxCount) {
+      throw new AppError(400, 'TOO_MANY_FILES', `You can upload up to ${maxCount} images.`);
+    }
+
+    const processed = [];
+    for (const file of files) {
+      if (!isAllowedMachineRequestImage(file.mimetype, file.originalname)) {
+        throw new AppError(400, 'UNSUPPORTED_FILE_TYPE', 'Only JPEG, PNG, and WebP are allowed');
+      }
+      if (file.size > limits.maxBytes) {
+        throw new AppError(400, 'FILE_TOO_LARGE', 'Image file is too large');
+      }
+      processed.push(await processMachineRequestPhoto(file.buffer));
+    }
+
     const user = await userRepository.findById(userId);
-    return communityRepository.createMachineRequest(userId, user?.displayName ?? 'User', input);
+    return communityRepository.createMachineRequest(
+      userId,
+      user?.displayName ?? 'User',
+      input,
+      processed
+    );
   },
 
   async reportPost(

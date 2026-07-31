@@ -61,6 +61,16 @@ export const mockComments: Comment[] = [
 
 export const mockLikes = new Set<string>(['user-3:post-1']);
 
+export const mockMachineRequestImages = new Map<
+  string,
+  {
+    requestId: string;
+    mimeType: string;
+    imageData: Buffer;
+    thumbnailData: Buffer;
+  }
+>();
+
 export const mockMachineRequests: MachineRequest[] = [
   {
     id: 'req-1',
@@ -70,6 +80,7 @@ export const mockMachineRequests: MachineRequest[] = [
     description: 'Would love to see settings for the Hammer Strength pullover.',
     status: 'pending',
     authorName: 'FitnessFan',
+    commercialUseConsent: true,
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
   },
@@ -81,6 +92,7 @@ export const mockMachineRequests: MachineRequest[] = [
     description: 'Popular machine at my gym, please add Cybex VR3 series.',
     status: 'pending',
     authorName: 'TallLifter',
+    commercialUseConsent: true,
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     updatedAt: new Date(Date.now() - 86400000).toISOString(),
   },

@@ -1,9 +1,20 @@
 import { z } from 'zod';
 
+const truthyConsent = z.preprocess((value) => {
+  if (value === true || value === 'true' || value === '1' || value === 'on') return true;
+  if (value === false || value === 'false' || value === '0' || value === '' || value == null) {
+    return false;
+  }
+  return value;
+}, z.literal(true, {
+  errorMap: () => ({ message: 'Commercial use consent is required' }),
+}));
+
 export const createMachineRequestSchema = z.object({
-  brandName: z.string().max(100).optional(),
-  machineName: z.string().min(1).max(200),
-  description: z.string().max(2000).optional(),
+  brandName: z.string().trim().min(1).max(100),
+  machineName: z.string().trim().min(1).max(200),
+  description: z.string().trim().min(1).max(2000),
+  commercialUseConsent: truthyConsent,
 });
 
 /** Owner verification application. Payment integration will set paymentStatus=paid. */

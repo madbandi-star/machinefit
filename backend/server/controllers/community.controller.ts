@@ -69,9 +69,26 @@ export async function listMachineRequests(req: Request, res: Response): Promise<
 
 export async function createMachineRequest(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
-  const input = createMachineRequestSchema.parse(req.body);
-  const item = await communityService.createMachineRequest(req.user.userId, input);
+  const input = createMachineRequestSchema.parse({
+    brandName: req.body.brandName,
+    machineName: req.body.machineName,
+    description: req.body.description,
+    commercialUseConsent: req.body.commercialUseConsent,
+  });
+  const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+  const item = await communityService.createMachineRequest(req.user.userId, input, files);
   res.status(201).json({ success: true, data: item });
+}
+
+export async function getMachineRequestImage(req: Request, res: Response): Promise<void> {
+  const variant = req.query.variant === 'full' ? 'full' : 'thumb';
+  const image = await communityService.getMachineRequestImageBinary(
+    getParam(req.params.imageId),
+    variant
+  );
+  res.setHeader('Content-Type', image.mimeType);
+  res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+  res.send(image.data);
 }
 
 export async function reportPost(req: Request, res: Response): Promise<void> {

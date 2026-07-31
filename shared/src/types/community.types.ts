@@ -42,16 +42,26 @@ export interface Report {
   updatedAt: string;
 }
 
+export interface MachineRequestImage {
+  id: string;
+  thumbUrl: string;
+  imageUrl: string;
+  sortOrder: number;
+}
+
 export interface MachineRequest {
   id: string;
   userId: string;
-  brandName?: string;
+  brandName: string;
   machineName: string;
-  description?: string;
+  description: string;
   status: string;
   adminNote?: string;
   linkedMachineId?: string;
   authorName?: string;
+  commercialUseConsent?: boolean;
+  images?: MachineRequestImage[];
+  primaryImageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

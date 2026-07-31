@@ -36,12 +36,28 @@ export const communityApi = {
     apiClient.post<ApiResponse<{ id: string }>>(`/community/comments/${commentId}/report`, input),
 };
 
+export type CreateMachineRequestFormInput = CreateMachineRequestInput & {
+  files: File[];
+};
+
 export const machineRequestApi = {
   list: (params?: { page?: number; limit?: number }) =>
     apiClient.get<ApiResponse<PaginatedResponse<MachineRequest>>>('/machine-requests', { params }),
 
-  create: (input: CreateMachineRequestInput) =>
-    apiClient.post<ApiResponse<MachineRequest>>('/machine-requests', input),
+  create: (input: CreateMachineRequestFormInput) => {
+    const form = new FormData();
+    form.append('brandName', input.brandName);
+    form.append('machineName', input.machineName);
+    form.append('description', input.description);
+    form.append('commercialUseConsent', String(input.commercialUseConsent));
+    for (const file of input.files) {
+      form.append('images', file);
+    }
+    return apiClient.post<ApiResponse<MachineRequest>>('/machine-requests', form, {
+      headers: { 'Content-Type': undefined },
+      timeout: 120_000,
+    });
+  },
 };
 
 export interface OwnerDashboardStats {

@@ -3,6 +3,7 @@ import type { RequestHandler } from 'express';
 import { motivationAudioLimits } from '../config/motivation-audio.js';
 import { muscleGroupImageLimits } from '../config/muscle-group-image.js';
 import { machineTradeImageLimits } from '../config/machine-trade-image.js';
+import { machineRequestImageLimits } from '../config/machine-request-image.js';
 import { photoBoardImageLimits } from '../config/photo-board-image.js';
 import { AppError } from './error.middleware.js';
 
@@ -93,4 +94,9 @@ export const photoBoardImagesUpload: RequestHandler = makeMultiUpload(
 export const machineTradeImagesUpload: RequestHandler = makeMultiUpload(
   machineTradeImageLimits().maxBytes,
   machineTradeImageLimits().maxCount
+);
+
+export const machineRequestImagesUpload: RequestHandler = makeMultiUpload(
+  machineRequestImageLimits().maxBytes,
+  Math.min(machineRequestImageLimits().maxCount, 5)
 );

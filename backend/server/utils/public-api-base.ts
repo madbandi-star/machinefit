@@ -39,3 +39,10 @@ export function photoBoardImageUrl(imageId: string, variant: 'main' | 'thumb' = 
 export function machineTradeImageUrl(imageId: string, variant: 'full' | 'thumb' = 'thumb'): string {
   return `${publicApiBase()}/machine-trades/images/${encodeURIComponent(imageId)}?variant=${variant}`;
 }
+
+export function machineRequestImageUrl(
+  imageId: string,
+  variant: 'full' | 'thumb' = 'thumb'
+): string {
+  return `${publicApiBase()}/machine-requests/images/${encodeURIComponent(imageId)}?variant=${variant}`;
+}
