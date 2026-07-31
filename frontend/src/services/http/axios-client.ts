@@ -44,15 +44,13 @@ function isRetryableGet(error: unknown): boolean {
 let refreshPromise: Promise<AuthTokens | null> | null = null;
 
 async function refreshAccessToken(): Promise<AuthTokens | null> {
-  const { tokens, user, isAuthenticated, updateTokens, clearAuth } = useAuthStore.getState();
+  const { tokens, user, isAuthenticated, updateTokens } = useAuthStore.getState();
   if (!user || !isAuthenticated) {
-    clearAuth();
-    clearGymScope();
     return null;
   }
 
   try {
-    // Prefer HttpOnly cookie; optional body for one-time legacy migration.
+    // Body refresh is the cross-site fallback; HttpOnly cookie still sent when present.
     const body = tokens?.refreshToken ? { refreshToken: tokens.refreshToken } : {};
     const res = await axios.post<{ success: boolean; data: { tokens: AuthTokens } }>(
       `${API_BASE_URL}/auth/refresh`,
@@ -63,10 +61,17 @@ async function refreshAccessToken(): Promise<AuthTokens | null> {
     updateTokens(newTokens);
     return newTokens;
   } catch {
-    clearAuth();
-    clearGymScope();
     return null;
   }
+}
+
+function runSharedRefresh(): Promise<AuthTokens | null> {
+  if (!refreshPromise) {
+    refreshPromise = refreshAccessToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
 }
 
 apiClient.interceptors.request.use((config) => {
@@ -109,17 +114,14 @@ apiClient.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      if (!refreshPromise) {
-        refreshPromise = refreshAccessToken().finally(() => {
-          refreshPromise = null;
-        });
-      }
-
-      const newTokens = await refreshPromise;
+      const newTokens = await runSharedRefresh();
       if (newTokens?.accessToken) {
         originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
         return apiClient(originalRequest);
       }
+
+      useAuthStore.getState().clearAuth();
+      clearGymScope();
     }
 
     if (originalRequest && isRetryableGet(error)) {
@@ -135,8 +137,8 @@ apiClient.interceptors.response.use(
   }
 );
 
-/** Silent boot refresh: cookie (or legacy body token) → memory access token. */
+/** Silent boot refresh: sessionStorage refresh and/or HttpOnly cookie → memory access token. */
 export async function restoreSessionFromRefresh(): Promise<boolean> {
-  const tokens = await refreshAccessToken();
+  const tokens = await runSharedRefresh();
   return Boolean(tokens?.accessToken);
 }

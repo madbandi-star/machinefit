@@ -48,8 +48,9 @@ export interface User {
 export interface AuthTokens {
   accessToken: string;
   /**
-   * Present only during legacy migration. Prefer HttpOnly refresh cookie;
-   * modern API responses omit this field.
+   * Long-lived credential for silent refresh. Also mirrored as an HttpOnly
+   * cookie when the browser allows it; SPA persists this in sessionStorage
+   * as a cross-site fallback (Pages → Render).
    */
   refreshToken?: string;
   expiresIn: string;
