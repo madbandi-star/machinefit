@@ -23,6 +23,11 @@ import type {
   MachineCoverImageAsset,
   MachineCoverImagesPage,
   MachineCoverBrandOption,
+  AdminMachineRequestStats,
+  AdminMachineRequestPopularItem,
+  AdminMachineRequestGroup,
+  AdminMachineRequestGroupDetail,
+  AdminMachineRequestListQuery,
 } from '@machinefit/shared';
 import type {
   UpdateUserAdminInput,
@@ -219,8 +224,31 @@ export const adminApi = {
   listMachineRequests: () =>
     apiClient.get<ApiResponse<MachineRequest[]>>('/admin/machine-requests'),
 
+  listMachineRequestGroups: (params?: Partial<AdminMachineRequestListQuery>) =>
+    apiClient.get<ApiResponse<PaginatedResponse<AdminMachineRequestGroup>>>(
+      '/admin/machine-request-groups',
+      { params }
+    ),
+
+  getMachineRequestGroupStats: () =>
+    apiClient.get<ApiResponse<AdminMachineRequestStats>>('/admin/machine-request-groups/stats'),
+
+  listPopularMachineRequestGroups: () =>
+    apiClient.get<ApiResponse<AdminMachineRequestPopularItem[]>>(
+      '/admin/machine-request-groups/popular'
+    ),
+
+  getMachineRequestGroupDetail: (params: { brandName: string; machineName: string }) =>
+    apiClient.get<ApiResponse<AdminMachineRequestGroupDetail>>(
+      '/admin/machine-request-groups/detail',
+      { params }
+    ),
+
   updateMachineRequest: (id: string, input: UpdateMachineRequestAdminInput) =>
-    apiClient.patch<ApiResponse<MachineRequest>>(`/admin/machine-requests/${id}`, input),
+    apiClient.patch<ApiResponse<{ updatedCount: number }>>(
+      `/admin/machine-requests/${id}`,
+      input
+    ),
 
   listReports: () =>
     apiClient.get<ApiResponse<Report[]>>('/admin/reports'),

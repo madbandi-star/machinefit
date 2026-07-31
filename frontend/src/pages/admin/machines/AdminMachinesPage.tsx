@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -253,10 +254,12 @@ export function AdminMachinesPage() {
   const { t, i18n } = useTranslation(['admin', 'machines']);
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const [searchParams] = useSearchParams();
+  const initialQ = searchParams.get('q')?.trim() ?? '';
 
   const [page, setPage] = useState(1);
-  const [draftQ, setDraftQ] = useState('');
-  const [q, setQ] = useState('');
+  const [draftQ, setDraftQ] = useState(initialQ);
+  const [q, setQ] = useState(initialQ);
   const [brandId, setBrandId] = useState('');
   const [muscleGroup, setMuscleGroup] = useState('');
   const [isActive, setIsActive] = useState<ActiveFilter>('all');
@@ -283,6 +286,13 @@ export function AdminMachinesPage() {
       return res.data.data.items;
     },
   });
+
+  useEffect(() => {
+    const next = searchParams.get('q')?.trim() ?? '';
+    setDraftQ(next);
+    setQ(next);
+    setPage(1);
+  }, [searchParams]);
 
   const closeEditor = useCallback(() => {
     setFormStatus(null);

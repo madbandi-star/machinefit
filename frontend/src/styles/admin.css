@@ -2033,3 +2033,246 @@
   }
 }
 
+
+/* Admin machine request management */
+.admin-req-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.admin-req-stats__card {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: 0.75rem 0.85rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-req-stats__label {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.admin-req-stats__value {
+  font-size: 1.25rem;
+}
+
+.admin-req-popular {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.admin-req-popular__btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.35rem 0.25rem;
+  border-radius: var(--radius-sm);
+}
+
+.admin-req-popular__btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.admin-req-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.admin-req-filters label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.admin-req-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-req-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.admin-req-table th,
+.admin-req-table td {
+  padding: 0.55rem 0.45rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 70%, transparent);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-req-table__row--hot td {
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+}
+
+.admin-req-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.admin-req-badge--pending {
+  color: #1d4ed8;
+  background: color-mix(in srgb, #3b82f6 18%, transparent);
+}
+
+.admin-req-badge--reviewing {
+  color: #a16207;
+  background: color-mix(in srgb, #eab308 22%, transparent);
+}
+
+.admin-req-badge--added {
+  color: #15803d;
+  background: color-mix(in srgb, #22c55e 20%, transparent);
+}
+
+.admin-req-badge--rejected {
+  color: #b91c1c;
+  background: color-mix(in srgb, #ef4444 18%, transparent);
+}
+
+.admin-req-detail {
+  width: min(720px, 100%);
+  max-height: min(90vh, 900px);
+  overflow: auto;
+  padding: 1rem;
+}
+
+.admin-req-detail__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.admin-req-detail__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.65rem;
+  margin: 0 0 1rem;
+}
+
+.admin-req-detail__meta dt {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.admin-req-detail__meta dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+}
+
+.admin-req-detail__section {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.admin-req-detail__section h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.admin-req-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-req-requesters {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-req-requesters li {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-req-requesters p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.admin-req-requesters__img {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.admin-req-reject-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.admin-req-duplicate {
+  border: 1px solid color-mix(in srgb, #ef4444 35%, var(--glass-border));
+  background: color-mix(in srgb, #ef4444 8%, var(--color-surface));
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-req-register__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.65rem;
+}
+
+.admin-req-register__grid label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.admin-req-register__full {
+  grid-column: 1 / -1;
+}
+
+.btn--danger {
+  background: color-mix(in srgb, #ef4444 85%, #000);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn--danger:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+@media (max-width: 720px) {
+  .admin-req-table th:nth-child(1),
+  .admin-req-table td:nth-child(1) {
+    display: none;
+  }
+}

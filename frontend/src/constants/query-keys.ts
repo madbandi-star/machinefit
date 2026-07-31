@@ -73,6 +73,12 @@ export const QUERY_KEYS = {
   adminMachineTips: (params?: Record<string, unknown>) =>
     ['admin', 'catalog', 'machine-tips', params ?? {}] as const,
   adminModeration: ['admin', 'moderation'] as const,
+  adminMachineRequestStats: ['admin', 'machine-request-groups', 'stats'] as const,
+  adminMachineRequestPopular: ['admin', 'machine-request-groups', 'popular'] as const,
+  adminMachineRequestGroups: (params: Record<string, unknown>) =>
+    ['admin', 'machine-request-groups', params] as const,
+  adminMachineRequestGroupDetail: (brandName: string, machineName: string) =>
+    ['admin', 'machine-request-groups', 'detail', brandName, machineName] as const,
   adminMotivationMedia: ['admin', 'motivation-media'] as const,
   adminMuscleGroupImages: ['admin', 'muscle-group-images'] as const,
   muscleGroupImages: ['muscle-group-images'] as const,

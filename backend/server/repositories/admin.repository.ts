@@ -195,8 +195,13 @@ export const adminRepository = {
   updateMachineRequest(id: string, input: UpdateMachineRequestAdminInput): MachineRequest {
     const req = mockMachineRequests.find((r) => r.id === id);
     if (!req) throw new AppError(404, 'NOT_FOUND', 'Request not found');
-    req.status = input.status;
-    if (input.adminNote) req.adminNote = input.adminNote;
+    if (input.status) {
+      req.status = input.status === 'approved' ? 'reviewing' : input.status;
+    }
+    if (input.adminNote !== undefined) req.adminNote = input.adminNote ?? undefined;
+    if (input.linkedMachineId !== undefined) {
+      req.linkedMachineId = input.linkedMachineId ?? undefined;
+    }
     req.updatedAt = new Date().toISOString();
     return req;
   },

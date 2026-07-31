@@ -20,7 +20,8 @@ export type UnitWeight = 'kg' | 'lb';
 
 export type BoardType = 'free' | 'announcement' | 'request';
 
-export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'added';
+/** Machine request lifecycle for admin + public board. */
+export type RequestStatus = 'pending' | 'reviewing' | 'rejected' | 'added' | 'approved';
 
 export type ReportStatus = 'pending' | 'resolved' | 'dismissed';
 

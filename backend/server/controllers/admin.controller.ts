@@ -4,6 +4,8 @@ import {
   moderatePostSchema,
   verifyGymSchema,
   updateMachineRequestAdminSchema,
+  adminMachineRequestListQuerySchema,
+  adminMachineRequestGroupQuerySchema,
   resolveReportSchema,
   toggleActiveSchema,
   reviewOwnerApplicationSchema,
@@ -11,6 +13,7 @@ import {
   adminGymMachineActionSchema,
 } from '@machinefit/shared';
 import { adminService } from '../services/admin.service.js';
+import { machineRequestAdminService } from '../services/machine-request-admin.service.js';
 import { ownerService } from '../services/owner.service.js';
 import { trainerApplicationService } from '../services/trainer-application.service.js';
 import { gymInventoryService } from '../services/gym-inventory.service.js';
@@ -85,10 +88,35 @@ export async function listMachineRequests(_req: Request, res: Response): Promise
   res.json({ success: true, data: items });
 }
 
+export async function listMachineRequestGroups(req: Request, res: Response): Promise<void> {
+  const query = adminMachineRequestListQuerySchema.parse(req.query);
+  const result = await machineRequestAdminService.listGroups(query);
+  res.json({ success: true, data: result });
+}
+
+export async function getMachineRequestGroupStats(_req: Request, res: Response): Promise<void> {
+  const stats = await machineRequestAdminService.stats();
+  res.json({ success: true, data: stats });
+}
+
+export async function listPopularMachineRequestGroups(_req: Request, res: Response): Promise<void> {
+  const items = await machineRequestAdminService.popular();
+  res.json({ success: true, data: items });
+}
+
+export async function getMachineRequestGroupDetail(req: Request, res: Response): Promise<void> {
+  const query = adminMachineRequestGroupQuerySchema.parse(req.query);
+  const detail = await machineRequestAdminService.getGroupDetail(
+    query.brandName,
+    query.machineName
+  );
+  res.json({ success: true, data: detail });
+}
+
 export async function updateMachineRequest(req: Request, res: Response): Promise<void> {
   const input = updateMachineRequestAdminSchema.parse(req.body);
-  const item = await adminService.updateMachineRequest(getParam(req.params.id), input);
-  res.json({ success: true, data: item });
+  const result = await machineRequestAdminService.updateRequest(getParam(req.params.id), input);
+  res.json({ success: true, data: result });
 }
 
 export async function listReports(_req: Request, res: Response): Promise<void> {

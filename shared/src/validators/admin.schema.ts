@@ -21,10 +21,47 @@ export const verifyGymSchema = z.object({
   isVerified: z.boolean(),
 });
 
-export const updateMachineRequestAdminSchema = z.object({
-  status: z.enum(['pending', 'approved', 'rejected', 'added']),
-  adminNote: z.string().max(1000).optional(),
+const machineRequestStatusSchema = z.enum([
+  'pending',
+  'reviewing',
+  'rejected',
+  'added',
+  /** @deprecated Use reviewing — kept for older clients */
+  'approved',
+]);
+
+export const adminMachineRequestListQuerySchema = z.object({
+  brand: z.string().max(100).optional(),
+  machineName: z.string().max(200).optional(),
+  requester: z.string().max(100).optional(),
+  status: z
+    .enum(['pending', 'reviewing', 'rejected', 'added', 'approved', 'all'])
+    .optional()
+    .default('all'),
+  dateFrom: z.string().max(40).optional(),
+  dateTo: z.string().max(40).optional(),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
 });
+
+export const updateMachineRequestAdminSchema = z.object({
+  status: machineRequestStatusSchema.optional(),
+  adminNote: z.string().max(1000).optional().nullable(),
+  rejectReason: z.string().max(1000).optional().nullable(),
+  linkedMachineId: z.string().uuid().optional().nullable(),
+  /** Apply status/note/link to all requests in the same brand+machine group */
+  applyToGroup: z.boolean().optional(),
+  groupBrandName: z.string().max(100).optional(),
+  groupMachineName: z.string().max(200).optional(),
+});
+
+export const adminMachineRequestGroupQuerySchema = z.object({
+  brandName: z.string().min(1).max(100),
+  machineName: z.string().min(1).max(200),
+});
+
+export type AdminMachineRequestListQuery = z.infer<typeof adminMachineRequestListQuerySchema>;
+export type AdminMachineRequestGroupQuery = z.infer<typeof adminMachineRequestGroupQuerySchema>;
 
 export const resolveReportSchema = z.object({
   status: z.enum(['resolved', 'dismissed']),

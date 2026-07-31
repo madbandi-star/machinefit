@@ -55,7 +55,7 @@ export function AdminModerationPage() {
   });
 
   const requestMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: 'approved' | 'rejected' }) =>
+    mutationFn: ({ id, status }: { id: string; status: 'reviewing' | 'rejected' }) =>
       adminApi.updateMachineRequest(id, { status, adminNote: status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminModeration });
@@ -153,7 +153,7 @@ export function AdminModerationPage() {
                 <div className="admin-table__actions">
                   <button
                     className="btn btn--primary"
-                    onClick={() => requestMutation.mutate({ id: req.id, status: 'approved' })}
+                    onClick={() => requestMutation.mutate({ id: req.id, status: 'reviewing' })}
                   >
                     {t('approve')}
                   </button>
