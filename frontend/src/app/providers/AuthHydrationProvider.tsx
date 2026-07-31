@@ -28,13 +28,15 @@ function useRunAuthHydration(): boolean {
         return;
       }
 
-      if (tokens?.accessToken && !tokens.refreshToken) {
+      // Same-tab navigation: access JWT already in memory.
+      if (tokens?.accessToken) {
         if (!cancelled) setSessionReady(true);
         return;
       }
 
+      // F5 / new document: restore via sessionStorage refresh token and/or HttpOnly cookie.
       const ok = await restoreSessionFromRefresh();
-      if (!ok) {
+      if (!ok && !cancelled) {
         clearAuth();
         clearGymScope();
       }

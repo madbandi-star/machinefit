@@ -4,7 +4,11 @@ import type { User, AuthTokens } from '@machinefit/shared';
 
 interface AuthState {
   user: User | null;
-  /** Access token only — kept in memory, never persisted. Refresh lives in HttpOnly cookie. */
+  /**
+   * Access token is memory-only. Refresh token is kept in memory and
+   * partialized to sessionStorage so F5 can restore across Pages→Render
+   * (third-party HttpOnly cookies are often blocked).
+   */
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   setAuth: (user: User, tokens: AuthTokens) => void;
@@ -57,10 +61,11 @@ function sanitizePersistedUser(user: User | null): User | null {
   return safe;
 }
 
-/** Drop refresh from memory once cookie owns it; never persist any token. */
-function memoryTokens(tokens: AuthTokens): AuthTokens {
+/** Persist refresh only — never write the short-lived access JWT to storage. */
+function persistedTokens(tokens: AuthTokens | null): Pick<AuthTokens, 'refreshToken' | 'expiresIn'> | null {
+  if (!tokens?.refreshToken) return null;
   return {
-    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
     expiresIn: tokens.expiresIn,
   };
 }
@@ -71,11 +76,15 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       tokens: null,
       isAuthenticated: false,
-      setAuth: (user, tokens) =>
-        set({ user, tokens: memoryTokens(tokens), isAuthenticated: true }),
+      setAuth: (user, tokens) => set({ user, tokens, isAuthenticated: true }),
       updateTokens: (tokens) =>
         set((state) => ({
-          tokens: memoryTokens(tokens),
+          tokens: {
+            accessToken: tokens.accessToken,
+            expiresIn: tokens.expiresIn,
+            // Keep previous refresh if API omits it (cookie-only responses).
+            refreshToken: tokens.refreshToken ?? state.tokens?.refreshToken,
+          },
           isAuthenticated: state.user != null,
         })),
       clearAuth: () => set({ user: null, tokens: null, isAuthenticated: false }),
@@ -86,11 +95,12 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'machinefit-auth',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => authSessionStorage),
       partialize: (state) => ({
         user: sanitizePersistedUser(state.user),
         isAuthenticated: state.isAuthenticated,
+        tokens: persistedTokens(state.tokens),
       }),
       migrate: (persisted) => {
         const state = (persisted ?? {}) as {
@@ -98,10 +108,9 @@ export const useAuthStore = create<AuthState>()(
           tokens?: AuthTokens | null;
           isAuthenticated?: boolean;
         };
-        // Keep legacy refreshToken in memory one boot so SessionRestore can mint a cookie.
         return {
-          user: state.user ?? null,
-          tokens: state.tokens ?? null,
+          user: state.user ? sanitizePersistedUser(state.user) : null,
+          tokens: persistedTokens(state.tokens ?? null),
           isAuthenticated: Boolean(state.isAuthenticated && state.user),
         };
       },

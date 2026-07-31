@@ -78,14 +78,19 @@ export function clearRefreshCookie(res: Response): void {
   res.append('Set-Cookie', parts.join('; '));
 }
 
-/** Access token for the client; refresh stays in the HttpOnly cookie only. */
+/**
+ * SPA auth payload. Refresh is also set as HttpOnly cookie when the browser
+ * accepts third-party cookies; body refreshToken is the reliable fallback for
+ * GitHub Pages → Render (cross-site) where the cookie is often blocked.
+ */
 export function publicAuthTokens(tokens: {
   accessToken: string;
   refreshToken: string;
   expiresIn: string;
-}): { accessToken: string; expiresIn: string } {
+}): { accessToken: string; refreshToken: string; expiresIn: string } {
   return {
     accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
     expiresIn: tokens.expiresIn,
   };
 }
