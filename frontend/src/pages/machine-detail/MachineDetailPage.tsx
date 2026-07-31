@@ -1,7 +1,12 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { isFreeWeightMachineCode, type TargetMuscleGroup } from '@machinefit/shared';
+import {
+  Role,
+  hasMinRole,
+  isFreeWeightMachineCode,
+  type TargetMuscleGroup,
+} from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -30,6 +35,8 @@ export function MachineDetailPage() {
   const { t, i18n } = useTranslation('machines');
   const { t: tt } = useTranslation('trade');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const canTrade = isAuthenticated && hasMinRole(user?.roleCode, Role.OWNER);
 
   const { data: machine, isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!, muscleParam ?? undefined),
@@ -83,7 +90,7 @@ export function MachineDetailPage() {
           showSaveButton
         />
       ) : null}
-      {machineCode ? (
+      {machineCode && canTrade ? (
         <div className="machine-detail-trade-links">
           <Link
             to={`${ROUTES.TRADE_LIST_SELL}?machineCode=${encodeURIComponent(machineCode)}`}
