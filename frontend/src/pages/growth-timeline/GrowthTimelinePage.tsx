@@ -184,7 +184,7 @@ export function GrowthTimelinePage() {
             </>
           )}
 
-          <LegalDisclaimerBanner variant="ai" compact />
+          <LegalDisclaimerBanner variant="ai" compact pageBottom />
         </div>
       </PageShell>
     </div>
