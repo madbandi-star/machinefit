@@ -5,6 +5,7 @@ import type {
   AdminMachineRequestRequester,
   AdminMachineRequestStats,
   AdminMachineRequestListQuery,
+  MachineRequestImage,
   UpdateMachineRequestAdminInput,
   PaginatedResponse,
 } from '@machinefit/shared';
@@ -65,17 +66,26 @@ function mockGroups(): AdminMachineRequestGroupDetail[] {
       linkedMachineCode: null,
       sampleDescription: sorted[0].description,
       primaryImageUrl: sorted[0].primaryImageUrl ?? null,
-      requesters: sorted.map((r) => ({
-        requestId: r.id,
-        userId: r.userId,
-        authorName: r.authorName ?? 'User',
-        description: r.description,
-        gymChoiceMode: r.gymChoiceMode,
-        gymName: r.gymName,
-        primaryImageUrl: r.primaryImageUrl,
-        createdAt: r.createdAt,
-        status: normalizeStatus(r.status),
-      })),
+      requesters: sorted.map((r) => {
+        const images = (r.images ?? []).map((img, index) => ({
+          id: img.id,
+          sortOrder: img.sortOrder ?? index,
+          thumbUrl: img.thumbUrl || machineRequestImageUrl(img.id, 'thumb'),
+          imageUrl: img.imageUrl || machineRequestImageUrl(img.id, 'full'),
+        }));
+        return {
+          requestId: r.id,
+          userId: r.userId,
+          authorName: r.authorName ?? 'User',
+          description: r.description,
+          gymChoiceMode: r.gymChoiceMode,
+          gymName: r.gymName,
+          primaryImageUrl: r.primaryImageUrl ?? images[0]?.thumbUrl,
+          images,
+          createdAt: r.createdAt,
+          status: normalizeStatus(r.status),
+        };
+      }),
     };
   });
 }
@@ -357,15 +367,9 @@ export const machineRequestAdminRepository = {
       gym_name: string | null;
       created_at: string;
       status: string;
-      primary_image_id: string | null;
     }>(
       `SELECT mr.id, mr.user_id, u.display_name AS author_name, mr.description,
-              mr.gym_choice_mode, mr.gym_name, mr.created_at, mr.status,
-              (
-                SELECT i.id FROM machine_request_images i
-                WHERE i.request_id = mr.id
-                ORDER BY i.sort_order ASC LIMIT 1
-              ) AS primary_image_id
+              mr.gym_choice_mode, mr.gym_name, mr.created_at, mr.status
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        WHERE lower(trim(mr.brand_name)) = lower(trim($1))
@@ -374,19 +378,47 @@ export const machineRequestAdminRepository = {
       [brandName, machineName]
     );
 
-    const requesters: AdminMachineRequestRequester[] = rows.rows.map((r) => ({
-      requestId: r.id,
-      userId: r.user_id,
-      authorName: r.author_name,
-      description: r.description,
-      gymChoiceMode: (r.gym_choice_mode as AdminMachineRequestRequester['gymChoiceMode']) ?? undefined,
-      gymName: r.gym_name,
-      primaryImageUrl: r.primary_image_id
-        ? machineRequestImageUrl(r.primary_image_id, 'thumb')
-        : undefined,
-      createdAt: r.created_at,
-      status: normalizeStatus(r.status),
-    }));
+    const requestIds = rows.rows.map((r) => r.id);
+    const imagesByRequest = new Map<string, MachineRequestImage[]>();
+    if (requestIds.length > 0) {
+      const imageRows = await pool.query<{
+        id: string;
+        request_id: string;
+        sort_order: number;
+      }>(
+        `SELECT id, request_id, sort_order
+         FROM machine_request_images
+         WHERE request_id = ANY($1::uuid[])
+         ORDER BY request_id ASC, sort_order ASC, created_at ASC`,
+        [requestIds]
+      );
+      for (const img of imageRows.rows) {
+        const list = imagesByRequest.get(img.request_id) ?? [];
+        list.push({
+          id: img.id,
+          sortOrder: img.sort_order,
+          thumbUrl: machineRequestImageUrl(img.id, 'thumb'),
+          imageUrl: machineRequestImageUrl(img.id, 'full'),
+        });
+        imagesByRequest.set(img.request_id, list);
+      }
+    }
+
+    const requesters: AdminMachineRequestRequester[] = rows.rows.map((r) => {
+      const images = imagesByRequest.get(r.id) ?? [];
+      return {
+        requestId: r.id,
+        userId: r.user_id,
+        authorName: r.author_name,
+        description: r.description,
+        gymChoiceMode: (r.gym_choice_mode as AdminMachineRequestRequester['gymChoiceMode']) ?? undefined,
+        gymName: r.gym_name,
+        primaryImageUrl: images[0]?.thumbUrl,
+        images,
+        createdAt: r.created_at,
+        status: normalizeStatus(r.status),
+      };
+    });
 
     let existingMachineId: string | null = group.linkedMachineId ?? null;
     let existingMachineCode: string | null = group.linkedMachineCode ?? null;

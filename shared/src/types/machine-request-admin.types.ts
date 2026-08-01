@@ -1,5 +1,5 @@
 import type { RequestStatus } from './api.types.js';
-import type { MachineRequestGymChoiceMode } from './community.types.js';
+import type { MachineRequestGymChoiceMode, MachineRequestImage } from './community.types.js';
 
 export type AdminMachineRequestStatus = RequestStatus;
 
@@ -28,6 +28,8 @@ export interface AdminMachineRequestRequester {
   gymChoiceMode?: MachineRequestGymChoiceMode;
   gymName?: string | null;
   primaryImageUrl?: string;
+  /** Full gallery for admin download / register reuse. */
+  images?: MachineRequestImage[];
   createdAt: string;
   status: AdminMachineRequestStatus;
 }
