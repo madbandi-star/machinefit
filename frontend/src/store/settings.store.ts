@@ -54,7 +54,7 @@ export const SETTINGS_DEFAULTS = {
   voiceCoachOneMore: true,
   voiceCoachOneMoreCount: VOICE_COACH_ONE_MORE.defaultCount,
   voiceCoachAutoAfterRest: true,
-  voiceRestTipsEnabled: true,
+  voiceRestTipsEnabled: false,
   voiceCoachRepGapMs: VOICE_COACH_REP_GAP.defaultMs,
   voiceCoachPrepCount: DEFAULT_VOICE_COACH_PREP_COUNT,
   /** Korean clip pack: female | male */
