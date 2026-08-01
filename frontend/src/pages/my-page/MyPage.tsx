@@ -53,7 +53,6 @@ export function MyPage() {
   const isOwner = hasMinRole(roleCode, Role.OWNER);
   const isAdmin = hasMinRole(roleCode, Role.ADMIN);
   const isTrainer = hasMinRole(roleCode, Role.TRAINER);
-  const isMember = hasMinRole(roleCode, Role.MEMBER);
   /** Hidden for plain `member`; visible for premium_member and above. */
   const showAboveMember = hasMinRole(roleCode, Role.PREMIUM_MEMBER);
 
