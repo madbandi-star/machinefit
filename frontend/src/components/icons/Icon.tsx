@@ -34,7 +34,18 @@ export type IconName =
   | 'seatBack'
   | 'cableHandle'
   | 'totalWeightBag'
-  | 'pencil';
+  | 'pencil'
+  | 'mail'
+  | 'dna'
+  | 'trophy'
+  | 'camera'
+  | 'users'
+  | 'monitor'
+  | 'store'
+  | 'flag'
+  | 'message'
+  | 'shield'
+  | 'building';
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;
@@ -254,6 +265,80 @@ const PATHS: Record<IconName, ReactElement> = {
     <>
       <path d="M14 5l5 5-9 9H5v-5l9-9Z" />
       <path d="M13 6l5 5" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3.5" y="6" width="17" height="12" rx="2" />
+      <path d="m4.5 8 7.5 5.5L19.5 8" />
+    </>
+  ),
+  dna: (
+    <>
+      <path d="M8 4c4 3.5 4 12.5 8 16" />
+      <path d="M16 4c-4 3.5-4 12.5-8 16" />
+      <path d="M8.5 9h7M8.5 15h7" />
+    </>
+  ),
+  trophy: (
+    <>
+      <path d="M8 5h8v3a4 4 0 0 1-8 0V5Z" />
+      <path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5" />
+      <path d="M16 6h2.5A2.5 2.5 0 0 1 16 8.5" />
+      <path d="M12 12v3" />
+      <path d="M9 20h6" />
+      <path d="M10 15h4v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2Z" />
+    </>
+  ),
+  camera: (
+    <>
+      <path d="M5 8h3l1.2-2h5.6L16 8h3a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 5 8Z" />
+      <circle cx="12" cy="13.5" r="3" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3.5 19c0-2.9 2.5-4.5 5.5-4.5" />
+      <circle cx="16.5" cy="9" r="2.5" />
+      <path d="M20.5 19c0-2.4-1.8-3.8-4-4.2" />
+    </>
+  ),
+  monitor: (
+    <>
+      <rect x="3.5" y="5" width="17" height="11" rx="1.5" />
+      <path d="M9 20h6" />
+      <path d="M12 16v4" />
+    </>
+  ),
+  store: (
+    <>
+      <path d="M4 9 5.5 5h13L20 9" />
+      <path d="M4 9v10h16V9" />
+      <path d="M9.5 19v-5h5v5" />
+    </>
+  ),
+  flag: (
+    <>
+      <path d="M6 4v16" />
+      <path d="M6 5h10l-1.5 3.5L16 12H6" />
+    </>
+  ),
+  message: (
+    <>
+      <path d="M5 6h14a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 17H9l-4 3v-3H5a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 5 6Z" />
+    </>
+  ),
+  shield: (
+    <>
+      <path d="M12 3.5 19 6.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5L12 3.5Z" />
+    </>
+  ),
+  building: (
+    <>
+      <path d="M5 20V6.5L12 4l7 2.5V20" />
+      <path d="M9 20v-5h6v5" />
+      <path d="M9 9h1.5M13.5 9H15M9 12.5h1.5M13.5 12.5H15" />
     </>
   ),
 };

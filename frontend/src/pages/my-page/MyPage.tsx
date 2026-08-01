@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Role, hasExactRole, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { Icon } from '@/components/icons/Icon';
+import { Icon, type IconName } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
@@ -26,10 +26,11 @@ const SHOW_GYMS_LINK = false;
 
 const SHOW_MACHINE_REQUESTS_LINK = true;
 
-function ListNavLink({ to, label }: { to: string; label: string }) {
+function ListNavLink({ to, label, icon }: { to: string; label: string; icon: IconName }) {
   return (
     <Link to={to} className="list-nav__item">
-      {label}
+      <Icon name={icon} size={20} className="list-nav__icon" />
+      <span className="list-nav__label">{label}</span>
       <Icon name="chevronRight" size={18} className="list-nav__chevron" />
     </Link>
   );
@@ -187,9 +188,9 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
-          <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} />
-          <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} />
-          <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} />
+          <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
+          <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} icon="weightStack" />
+          <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} icon="trophy" />
           <WorkoutReportSection />
         </nav>
       </section>
@@ -197,18 +198,19 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
-          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} />
+          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           <ListNavLink
             to={ROUTES.MY_GYMS}
             label={t(
               isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
             )}
+            icon="building"
           />
           {isMember ? (
-            <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsManage')} />
+            <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsManage')} icon="users" />
           ) : null}
           {isMember ? (
-            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} />
+            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} icon="bell" />
           ) : null}
         </nav>
       </section>
@@ -216,12 +218,18 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
         <nav className="list-nav" aria-label={t('myPage.explore')}>
-          {SHOW_GYMS_LINK && <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} />}
-          {SHOW_MACHINE_REQUESTS_LINK && (
-            <ListNavLink to={ROUTES.MACHINE_REQUESTS} label={tc('machineRequests')} />
+          {SHOW_GYMS_LINK && (
+            <ListNavLink to={ROUTES.GYMS} label={t('nav.gyms')} icon="mapPin" />
           )}
-          <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} />
-          <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} />
+          {SHOW_MACHINE_REQUESTS_LINK && (
+            <ListNavLink
+              to={ROUTES.MACHINE_REQUESTS}
+              label={tc('machineRequests')}
+              icon="dumbbell"
+            />
+          )}
+          <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} icon="message" />
+          <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
         </nav>
       </section>
 
@@ -248,10 +256,16 @@ export function MyPage() {
         </button>
         {labExpanded ? (
           <nav id="my-page-lab-body" className="list-nav" aria-label={t('myPage.lab')}>
-            <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} />
-            <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} />
-            <ListNavLink to={ROUTES.GROWTH_ANALYSIS} label={t('myPage.growthAnalysis')} />
-            {isMember ? <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} /> : null}
+            <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} icon="monitor" />
+            <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} icon="calendar" />
+            <ListNavLink
+              to={ROUTES.GROWTH_ANALYSIS}
+              label={t('myPage.growthAnalysis')}
+              icon="growthAnalysis"
+            />
+            {isMember ? (
+              <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} icon="user" />
+            ) : null}
           </nav>
         ) : null}
       </section>
@@ -260,7 +274,11 @@ export function MyPage() {
         <section className="my-page-section">
           <h3 className="my-page-section__title">{t('myPage.onlinePtManage')}</h3>
           <nav className="list-nav" aria-label={t('myPage.onlinePtManage')}>
-            <ListNavLink to={ROUTES.ONLINE_PT_MANAGE} label={t('myPage.onlinePtManage')} />
+            <ListNavLink
+              to={ROUTES.ONLINE_PT_MANAGE}
+              label={t('myPage.onlinePtManage')}
+              icon="shield"
+            />
           </nav>
         </section>
       ) : null}
@@ -269,9 +287,9 @@ export function MyPage() {
         <section className="my-page-section">
           <h3 className="my-page-section__title">{t('myPage.ownerOnly')}</h3>
           <nav className="list-nav" aria-label={t('myPage.ownerOnly')}>
-            <ListNavLink to={ROUTES.TRADE_HUB} label={t('myPage.tradeHub')} />
-            <ListNavLink to={ROUTES.TRADE_REPORTS} label={t('myPage.tradeReports')} />
-            <ListNavLink to={ROUTES.TRADE_STATS} label={t('myPage.tradeStats')} />
+            <ListNavLink to={ROUTES.TRADE_HUB} label={t('myPage.tradeHub')} icon="store" />
+            <ListNavLink to={ROUTES.TRADE_REPORTS} label={t('myPage.tradeReports')} icon="flag" />
+            <ListNavLink to={ROUTES.TRADE_STATS} label={t('myPage.tradeStats')} icon="trendingUp" />
           </nav>
         </section>
       ) : null}
