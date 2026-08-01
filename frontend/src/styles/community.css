@@ -203,6 +203,11 @@
   flex-direction: column;
 }
 
+.board-index__cols {
+  border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 70%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt) 45%, transparent);
+}
+
 .board-index-row-wrap {
   position: relative;
   border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 55%, transparent);
@@ -221,6 +226,104 @@
   text-decoration: none;
   color: inherit;
   transition: background-color var(--motion-fast);
+}
+
+.board-index-row--cols {
+  min-height: 1.75rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  cursor: default;
+}
+
+.board-index-row--cols:hover,
+.board-index-row--cols:active {
+  background: transparent;
+}
+
+.board-index-row__seq {
+  flex-shrink: 0;
+  width: 2rem;
+  text-align: right;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.board-index-row--cols .board-index-row__seq,
+.board-index-row--cols .board-index-row__title,
+.board-index-row--cols .board-index-row__author,
+.board-index-row--cols .board-index-row__date {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.board-index-row__author {
+  display: inline-block;
+  max-width: 5.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
+.board-index-row__meta--post {
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.board-index-row__stat--like::before {
+  content: '♥';
+}
+
+.board-index-row__stat--header {
+  min-width: 2.4rem;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0;
+}
+
+.board-index-row__stat--header::before {
+  content: none;
+}
+
+@media (max-width: 420px) {
+  .board-index-row--post {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.2rem 0.35rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .board-index-row--post .board-index-row__title {
+    flex: 1 1 calc(100% - 2.5rem);
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .board-index-row--post .board-index-row__meta--post {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    padding-left: 2.35rem;
+  }
+
+  .board-index-row--cols.board-index-row--post .board-index-row__meta--post {
+    padding-left: 0;
+  }
+
+  .board-index-row__author {
+    max-width: 4.5rem;
+  }
 }
 
 .board-index-row-wrap--admin .board-index-row {

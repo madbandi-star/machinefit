@@ -133,16 +133,38 @@ export function FreeBoardPage() {
         {isLoading ? (
           <BoardIndexSkeleton rows={8} />
         ) : data?.items.length ? (
-          <BoardIndexPanel countLabel={t('postCount', { count: data.items.length })}>
-            {data.items.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                showDelete={isAdmin}
-                onDelete={handleDeletePost}
-                isDeleting={deletingPostId === post.id && deleteMutation.isPending}
-              />
-            ))}
+          <BoardIndexPanel
+            countLabel={t('postCount', { count: data.meta?.total ?? data.items.length })}
+            columnHeader={
+              <div className="board-index-row board-index-row--cols board-index-row--post" aria-hidden>
+                <span className="board-index-row__seq">{t('colSeq')}</span>
+                <span className="board-index-row__title">{t('colTitle')}</span>
+                <span className="board-index-row__meta board-index-row__meta--post">
+                  <span className="board-index-row__author">{t('colAuthor')}</span>
+                  <span className="board-index-row__stat board-index-row__stat--like board-index-row__stat--header">
+                    {t('colLikes')}
+                  </span>
+                  <span className="board-index-row__date">{t('colDate')}</span>
+                </span>
+              </div>
+            }
+          >
+            {data.items.map((post, index) => {
+              const total = data.meta?.total ?? data.items.length;
+              const page = data.meta?.page ?? 1;
+              const limit = data.meta?.limit ?? data.items.length;
+              const seq = total - ((page - 1) * limit + index);
+              return (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  seq={seq}
+                  showDelete={isAdmin}
+                  onDelete={handleDeletePost}
+                  isDeleting={deletingPostId === post.id && deleteMutation.isPending}
+                />
+              );
+            })}
           </BoardIndexPanel>
         ) : (
           <p className="community-board-page__empty">{t('noPosts')}</p>
