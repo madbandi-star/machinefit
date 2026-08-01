@@ -81,18 +81,21 @@ function guessMachineType(text: string): string {
   const t = text.toLowerCase();
   if (/cable|케이블/.test(t)) return 'cable';
   if (/smith|스미스/.test(t)) return 'smith';
-  if (/plate|플레이트/.test(t)) return 'plate';
-  if (/free|dumbbell|barbell|프리|덤벨|바벨/.test(t)) return 'free';
+  if (/plate|플레이트/.test(t)) return 'plate_loaded';
+  if (/free|dumbbell|barbell|kettle|프리|덤벨|바벨|케틀/.test(t)) return 'free_weight';
+  if (/bodyweight|자중|친업|딥스/.test(t)) return 'bodyweight';
   return 'selectorized';
 }
 
 function buildRegisterSuggest(
   brandName: string,
   machineName: string,
-  sampleDescription: string | null | undefined
+  sampleDescription: string | null | undefined,
+  options?: { guessText?: string }
 ): AdminMachineRequestRegisterSuggest {
-  const text = `${machineName} ${sampleDescription ?? ''}`;
   const desc = sampleDescription?.trim() ?? '';
+  const guessSource = options?.guessText?.trim() || desc;
+  const text = `${machineName} ${guessSource}`;
   return {
     code: suggestCode(brandName, machineName),
     nameKo: machineName,
@@ -103,6 +106,15 @@ function buildRegisterSuggest(
     descriptionEn: desc,
     matchedBrandId: null,
   };
+}
+
+function pickBestDescription(candidates: Array<string | null | undefined>): string {
+  return (
+    candidates
+      .map((v) => v?.trim() ?? '')
+      .filter(Boolean)
+      .sort((a, b) => b.length - a.length)[0] ?? ''
+  );
 }
 
 function mockGroups(): AdminMachineRequestGroupDetail[] {
@@ -695,6 +707,13 @@ export const machineRequestAdminRepository = {
       }
     }
 
+    const allDescriptions = [
+      group.sampleDescription,
+      ...requesters.map((r) => r.description),
+    ];
+    const guessText = allDescriptions.filter((v): v is string => Boolean(v?.trim())).join(' ');
+    const bestDescription = pickBestDescription(allDescriptions);
+
     return {
       ...group,
       requesters,
@@ -704,7 +723,8 @@ export const machineRequestAdminRepository = {
       registerSuggest: buildRegisterSuggest(
         group.brandName,
         group.machineName,
-        group.sampleDescription
+        bestDescription || group.sampleDescription,
+        { guessText }
       ),
     };
   },
