@@ -48,7 +48,6 @@
   "requestPhotoAttachedCount": "{{count}}/{{max}} attached",
   "requestPhotoAttachSuccess": "Attached {{count}} photo(s).",
   "requestPhotoAttachFailed": "Could not attach photos. Please try again.",
-  "requestPhotoPickCancelled": "Photo selection was cancelled.",
   "requestPhotoTypeError": "Only JPEG, PNG, and WebP are allowed.",
   "requestPhotoSizeError": "Each photo must be 8MB or smaller.",
   "requestPhotoMaxError": "You can attach up to {{max}} photos.",
