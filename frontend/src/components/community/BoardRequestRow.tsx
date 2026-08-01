@@ -46,8 +46,8 @@ export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestR
       ? t('requestGymUnknownLabel')
       : request.gymName?.trim() || undefined;
   const voteCount = request.voteCount ?? 0;
-  const voted = Boolean(request.votedByMe);
-  const isMine = Boolean(request.isMine);
+  const voted = request.votedByMe === true;
+  const isMine = request.isMine === true;
 
   return (
     <div className="board-index-row-wrap">
@@ -97,9 +97,12 @@ export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestR
               type="button"
               className={`board-index-row__want-btn${voted ? ' board-index-row__want-btn--active' : ''}`}
               disabled={isVoting || !onWantThis}
+              aria-disabled={isVoting || !onWantThis}
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
+                // Own posts must never vote — belt-and-suspenders if isMine was stale.
+                if (request.isMine === true) return;
                 onWantThis?.(request.id);
               }}
             >

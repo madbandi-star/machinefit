@@ -381,7 +381,7 @@ export const communityRepository = {
         votedByMe: viewerId
           ? mockMachineRequestVotes.has(machineRequestVoteKey(viewerId, req.id))
           : false,
-        isMine: Boolean(viewerId && req.userId === viewerId),
+        isMine: Boolean(viewerId) && req.userId === viewerId,
       }));
       return {
         items,
@@ -438,8 +438,8 @@ export const communityRepository = {
         gymName: r.gym_name ?? null,
         primaryImageUrl,
         voteCount: Number(r.vote_count ?? 0),
-        votedByMe: Boolean(r.voted_by_me),
-        isMine: Boolean(r.is_mine),
+        votedByMe: r.voted_by_me === true,
+        isMine: r.is_mine === true,
         createdAt: r.created_at,
         updatedAt: r.updated_at,
       };
@@ -452,7 +452,7 @@ export const communityRepository = {
     if (!pool) {
       const req = mockMachineRequests.find((r) => r.id === requestId);
       if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
-      if (req.userId === userId) {
+      if (String(req.userId) === String(userId)) {
         throw new AppError(400, 'OWN_REQUEST', 'Cannot vote on your own request');
       }
       const key = machineRequestVoteKey(userId, requestId);
@@ -472,7 +472,7 @@ export const communityRepository = {
     );
     const row = existing.rows[0];
     if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
-    if (row.user_id === userId) {
+    if (String(row.user_id) === String(userId)) {
       throw new AppError(400, 'OWN_REQUEST', 'Cannot vote on your own request');
     }
 
@@ -553,7 +553,7 @@ export const communityRepository = {
         updatedAt: now,
       };
       mockMachineRequests.unshift(req);
-      return req;
+      return { ...req, userId: '', commercialUseConsent: undefined };
     }
 
     const gymName =
@@ -599,7 +599,8 @@ export const communityRepository = {
       await client.query('COMMIT');
       return {
         id: r.id,
-        userId: r.user_id,
+        // Keep public create response consistent with list/detail (no internal user id).
+        userId: '',
         brandName: r.brand_name,
         machineName: r.machine_name,
         description: r.description,
@@ -650,7 +651,7 @@ export const communityRepository = {
         votedByMe: viewerId
           ? mockMachineRequestVotes.has(machineRequestVoteKey(viewerId, requestId))
           : false,
-        isMine: Boolean(viewerId && req.userId === viewerId),
+        isMine: Boolean(viewerId) && req.userId === viewerId,
       };
     }
 
@@ -696,8 +697,8 @@ export const communityRepository = {
       images,
       primaryImageUrl: images[0]?.thumbUrl,
       voteCount: Number(r.vote_count ?? 0),
-      votedByMe: Boolean(r.voted_by_me),
-      isMine: Boolean(r.is_mine),
+      votedByMe: r.voted_by_me === true,
+      isMine: r.is_mine === true,
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     };
