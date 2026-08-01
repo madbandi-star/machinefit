@@ -92,8 +92,16 @@
       "added": "Registered",
       "rejected": "Rejected"
     },
+    "gym": "Gym",
+    "gymUnknown": "Unknown",
+    "consent": "Commercial use consent",
+    "consentYes": "Agreed",
+    "consentNo": "Not agreed",
+    "social": "Engagement",
+    "openUserPost": "Open user post",
     "stats": {
       "total": "Total",
+      "pending": "Pending",
       "added": "Registered",
       "reviewing": "Reviewing",
       "rejected": "Rejected",

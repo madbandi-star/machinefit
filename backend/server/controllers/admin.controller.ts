@@ -84,7 +84,7 @@ export async function moderatePost(req: Request, res: Response): Promise<void> {
 }
 
 export async function listMachineRequests(_req: Request, res: Response): Promise<void> {
-  const items = adminService.listMachineRequests();
+  const items = await adminService.listMachineRequests();
   res.json({ success: true, data: items });
 }
 

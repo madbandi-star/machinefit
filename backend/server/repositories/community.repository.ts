@@ -56,16 +56,18 @@ function mapPublicMachineRequest(
     : extras?.images?.[0]?.thumbUrl;
   return {
     id: r.id as string,
-    // Public board: hide internal ids from list cards; detail still omits admin notes.
+    // Public board: hide internal user ids; surface status feedback (note/reject reason).
     userId: '',
     brandName: r.brand_name as string,
     machineName: r.machine_name as string,
     description: r.description as string,
     status: r.status as string,
-    adminNote: undefined,
+    adminNote: (r.admin_note as string | null | undefined) ?? null,
+    rejectReason: (r.reject_reason as string | null | undefined) ?? null,
     linkedMachineId: (r.linked_machine_id as string | null | undefined) ?? undefined,
     authorName: (r.author_name as string | null | undefined) ?? undefined,
-    gymChoiceMode: ((r.gym_choice_mode as string | null | undefined) ?? 'unknown') as MachineRequest['gymChoiceMode'],
+    gymChoiceMode: ((r.gym_choice_mode as string | null | undefined) ??
+      'unknown') as MachineRequest['gymChoiceMode'],
     gymName: (r.gym_name as string | null | undefined) ?? null,
     images: extras?.images,
     primaryImageUrl,

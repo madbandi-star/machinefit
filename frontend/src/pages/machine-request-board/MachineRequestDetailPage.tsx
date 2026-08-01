@@ -223,6 +223,16 @@ export function MachineRequestDetailPage() {
           <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
             {t('photoViews')}: {request.viewCount ?? 0} · {t('comments')}: {request.commentCount ?? 0}
           </div>
+          {request.rejectReason ? (
+            <p className="photo-detail__feedback photo-detail__feedback--reject">
+              <strong>{t('requestRejectReason')}</strong>: {request.rejectReason}
+            </p>
+          ) : null}
+          {request.adminNote ? (
+            <p className="photo-detail__feedback">
+              <strong>{t('requestAdminNote')}</strong>: {request.adminNote}
+            </p>
+          ) : null}
           <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
             {displayField(request.description, unknownLabel)}
           </p>

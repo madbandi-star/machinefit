@@ -37,6 +37,9 @@ function requestTitle(request: MachineRequest, unknownLabel: string) {
 function RequestCard({ request }: { request: MachineRequest }) {
   const { t } = useTranslation('community');
   const unknownLabel = t('requestFieldUnknownLabel');
+  const statusKey =
+    request.status === 'approved' ? 'reviewing' : request.status || 'pending';
+  const statusLabel = t(`requestStatus_${statusKey}`, { defaultValue: statusKey });
   const imageCount = request.imageCount ?? request.images?.length ?? (request.primaryImageUrl ? 1 : 0);
   const thumb = resolveMachineRequestMediaUrl(request.primaryImageUrl);
 
@@ -57,6 +60,7 @@ function RequestCard({ request }: { request: MachineRequest }) {
         ) : (
           <div className="photo-card__placeholder" aria-hidden />
         )}
+        <span className={`photo-card__status photo-card__status--${statusKey}`}>{statusLabel}</span>
         {imageCount > 1 ? <span className="photo-card__count">{imageCount}</span> : null}
         {request.likedByMe ? (
           <span className="photo-card__liked" aria-label={t('photoLiked')}>

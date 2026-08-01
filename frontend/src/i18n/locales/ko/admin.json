@@ -95,8 +95,16 @@
       "added": "등록완료",
       "rejected": "반려"
     },
+    "gym": "헬스장",
+    "gymUnknown": "모름",
+    "consent": "상업적 사용 동의",
+    "consentYes": "동의함",
+    "consentNo": "미동의",
+    "social": "반응",
+    "openUserPost": "사용자 게시글 보기",
     "stats": {
       "total": "전체 요청",
+      "pending": "대기",
       "added": "등록 완료",
       "reviewing": "검토중",
       "rejected": "반려",

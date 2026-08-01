@@ -51,6 +51,8 @@
   "requestFieldChoiceCustom": "Enter manually",
   "requestFieldChoiceUnknown": "Unknown",
   "requestFieldUnknownLabel": "Unknown",
+  "requestRejectReason": "Rejection reason",
+  "requestAdminNote": "Admin note",
   "status": "Status",
   "ownerDashboard": "Gym Owner Dashboard",
   "ownerSubtitle": "Official inventory and operating info set the standard for visits.",

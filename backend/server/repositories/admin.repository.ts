@@ -186,10 +186,59 @@ export const adminRepository = {
     return post;
   },
 
-  listMachineRequests(): MachineRequest[] {
-    return [...mockMachineRequests].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  async listMachineRequests(): Promise<MachineRequest[]> {
+    const pool = getPool();
+    if (!pool) {
+      return [...mockMachineRequests].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+    const result = await pool.query<{
+      id: string;
+      user_id: string;
+      brand_name: string;
+      machine_name: string;
+      description: string;
+      status: string;
+      admin_note: string | null;
+      reject_reason: string | null;
+      linked_machine_id: string | null;
+      gym_choice_mode: string | null;
+      gym_name: string | null;
+      commercial_use_consent: boolean | null;
+      like_count: number | null;
+      comment_count: number | null;
+      view_count: number | null;
+      display_name: string | null;
+      created_at: string;
+      updated_at: string;
+    }>(
+      `SELECT mr.*, u.display_name
+       FROM machine_requests mr
+       JOIN users u ON u.id = mr.user_id
+       ORDER BY mr.created_at DESC
+       LIMIT 200`
     );
+    return result.rows.map((r) => ({
+      id: r.id,
+      userId: r.user_id,
+      brandName: r.brand_name,
+      machineName: r.machine_name,
+      description: r.description,
+      status: r.status === 'approved' ? 'reviewing' : r.status,
+      adminNote: r.admin_note,
+      rejectReason: r.reject_reason,
+      linkedMachineId: r.linked_machine_id ?? undefined,
+      authorName: r.display_name ?? undefined,
+      commercialUseConsent: Boolean(r.commercial_use_consent),
+      gymChoiceMode: (r.gym_choice_mode as MachineRequest['gymChoiceMode']) ?? 'unknown',
+      gymName: r.gym_name,
+      likeCount: Number(r.like_count ?? 0),
+      commentCount: Number(r.comment_count ?? 0),
+      viewCount: Number(r.view_count ?? 0),
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+    }));
   },
 
   updateMachineRequest(id: string, input: UpdateMachineRequestAdminInput): MachineRequest {

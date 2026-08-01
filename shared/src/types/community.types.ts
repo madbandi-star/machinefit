@@ -70,7 +70,8 @@ export interface MachineRequest {
   machineName: string;
   description: string;
   status: string;
-  adminNote?: string;
+  adminNote?: string | null;
+  rejectReason?: string | null;
   linkedMachineId?: string;
   authorName?: string;
   commercialUseConsent?: boolean;

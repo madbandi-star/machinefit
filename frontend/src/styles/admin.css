@@ -2221,6 +2221,40 @@
   color: var(--color-text-muted);
 }
 
+.admin-req-requesters__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.65rem;
+}
+
+.admin-req-requesters__meta {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.admin-req-requesters__meta div {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.admin-req-requesters__meta dt {
+  color: var(--color-text-muted);
+  min-width: 4.5rem;
+}
+
+.admin-req-requesters__meta dd {
+  margin: 0;
+}
+
+.admin-req-requesters__gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
 .admin-req-requesters__img {
   width: 4.5rem;
   height: 4.5rem;

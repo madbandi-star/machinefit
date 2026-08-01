@@ -72,7 +72,12 @@ function mockGroups(): AdminMachineRequestGroupDetail[] {
         description: r.description,
         gymChoiceMode: r.gymChoiceMode,
         gymName: r.gymName,
+        commercialUseConsent: r.commercialUseConsent,
+        likeCount: r.likeCount ?? 0,
+        commentCount: r.commentCount ?? 0,
+        viewCount: r.viewCount ?? 0,
         primaryImageUrl: r.primaryImageUrl,
+        images: r.images,
         createdAt: r.createdAt,
         status: normalizeStatus(r.status),
       })),
@@ -334,19 +339,68 @@ export const machineRequestAdminRepository = {
       return detail;
     }
 
-    const list = await this.listGroups({
-      brand: brandName,
-      machineName,
-      status: 'all',
-      page: 1,
-      limit: 1,
-    });
-    const group = list.items.find(
-      (g) =>
-        g.brandName.trim().toLowerCase() === brandName.trim().toLowerCase() &&
-        g.machineName.trim().toLowerCase() === machineName.trim().toLowerCase()
+    const groupResult = await pool.query<{
+      brand_name: string;
+      machine_name: string;
+      request_count: string;
+      statuses: string[];
+      first_requested_at: string;
+      last_requested_at: string;
+      admin_note: string | null;
+      reject_reason: string | null;
+      linked_machine_id: string | null;
+      linked_machine_code: string | null;
+      sample_description: string | null;
+      primary_image_id: string | null;
+    }>(
+      `SELECT
+         (array_agg(mr.brand_name ORDER BY mr.created_at DESC))[1] AS brand_name,
+         (array_agg(mr.machine_name ORDER BY mr.created_at DESC))[1] AS machine_name,
+         COUNT(*)::text AS request_count,
+         array_agg(DISTINCT mr.status) AS statuses,
+         MIN(mr.created_at) AS first_requested_at,
+         MAX(mr.created_at) AS last_requested_at,
+         (array_agg(mr.admin_note ORDER BY mr.updated_at DESC NULLS LAST))[1] AS admin_note,
+         (array_agg(mr.reject_reason ORDER BY mr.updated_at DESC NULLS LAST))[1] AS reject_reason,
+         (array_agg(mr.linked_machine_id ORDER BY mr.updated_at DESC NULLS LAST)
+           FILTER (WHERE mr.linked_machine_id IS NOT NULL))[1] AS linked_machine_id,
+         (array_agg(m.code ORDER BY mr.updated_at DESC NULLS LAST)
+           FILTER (WHERE m.code IS NOT NULL))[1] AS linked_machine_code,
+         (array_agg(mr.description ORDER BY mr.created_at DESC))[1] AS sample_description,
+         (
+           SELECT i.id
+           FROM machine_request_images i
+           WHERE i.request_id = (array_agg(mr.id ORDER BY mr.created_at DESC))[1]
+           ORDER BY i.sort_order ASC
+           LIMIT 1
+         ) AS primary_image_id
+       FROM machine_requests mr
+       LEFT JOIN machines m ON m.id = mr.linked_machine_id
+       WHERE lower(trim(mr.brand_name)) = lower(trim($1))
+         AND lower(trim(mr.machine_name)) = lower(trim($2))
+       GROUP BY lower(trim(mr.brand_name)), lower(trim(mr.machine_name))`,
+      [brandName, machineName]
     );
-    if (!group) throw new AppError(404, 'NOT_FOUND', 'Request group not found');
+    const g = groupResult.rows[0];
+    if (!g) throw new AppError(404, 'NOT_FOUND', 'Request group not found');
+
+    const group: AdminMachineRequestGroup = {
+      groupKey: groupKey(g.brand_name, g.machine_name),
+      brandName: g.brand_name,
+      machineName: g.machine_name,
+      requestCount: Number(g.request_count),
+      status: pickGroupStatus(g.statuses ?? []),
+      firstRequestedAt: g.first_requested_at,
+      lastRequestedAt: g.last_requested_at,
+      adminNote: g.admin_note,
+      rejectReason: g.reject_reason,
+      linkedMachineId: g.linked_machine_id,
+      linkedMachineCode: g.linked_machine_code,
+      sampleDescription: g.sample_description,
+      primaryImageUrl: g.primary_image_id
+        ? machineRequestImageUrl(g.primary_image_id, 'thumb')
+        : null,
+    };
 
     const rows = await pool.query<{
       id: string;
@@ -355,17 +409,17 @@ export const machineRequestAdminRepository = {
       description: string;
       gym_choice_mode: string | null;
       gym_name: string | null;
+      commercial_use_consent: boolean | null;
+      like_count: number | null;
+      comment_count: number | null;
+      view_count: number | null;
       created_at: string;
       status: string;
-      primary_image_id: string | null;
     }>(
       `SELECT mr.id, mr.user_id, u.display_name AS author_name, mr.description,
-              mr.gym_choice_mode, mr.gym_name, mr.created_at, mr.status,
-              (
-                SELECT i.id FROM machine_request_images i
-                WHERE i.request_id = mr.id
-                ORDER BY i.sort_order ASC LIMIT 1
-              ) AS primary_image_id
+              mr.gym_choice_mode, mr.gym_name, mr.commercial_use_consent,
+              mr.like_count, mr.comment_count, mr.view_count,
+              mr.created_at, mr.status
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        WHERE lower(trim(mr.brand_name)) = lower(trim($1))
@@ -374,19 +428,49 @@ export const machineRequestAdminRepository = {
       [brandName, machineName]
     );
 
-    const requesters: AdminMachineRequestRequester[] = rows.rows.map((r) => ({
-      requestId: r.id,
-      userId: r.user_id,
-      authorName: r.author_name,
-      description: r.description,
-      gymChoiceMode: (r.gym_choice_mode as AdminMachineRequestRequester['gymChoiceMode']) ?? undefined,
-      gymName: r.gym_name,
-      primaryImageUrl: r.primary_image_id
-        ? machineRequestImageUrl(r.primary_image_id, 'thumb')
-        : undefined,
-      createdAt: r.created_at,
-      status: normalizeStatus(r.status),
-    }));
+    const requestIds = rows.rows.map((r) => r.id);
+    const imageRows =
+      requestIds.length === 0
+        ? { rows: [] as Array<{ id: string; request_id: string; sort_order: number }> }
+        : await pool.query<{ id: string; request_id: string; sort_order: number }>(
+            `SELECT id, request_id, sort_order
+             FROM machine_request_images
+             WHERE request_id = ANY($1::uuid[])
+             ORDER BY request_id, sort_order ASC, created_at ASC`,
+            [requestIds]
+          );
+    const imagesByRequest = new Map<string, AdminMachineRequestRequester['images']>();
+    for (const img of imageRows.rows) {
+      const list = imagesByRequest.get(img.request_id) ?? [];
+      list.push({
+        id: img.id,
+        sortOrder: img.sort_order,
+        thumbUrl: machineRequestImageUrl(img.id, 'thumb'),
+        imageUrl: machineRequestImageUrl(img.id, 'full'),
+      });
+      imagesByRequest.set(img.request_id, list);
+    }
+
+    const requesters: AdminMachineRequestRequester[] = rows.rows.map((r) => {
+      const images = imagesByRequest.get(r.id) ?? [];
+      return {
+        requestId: r.id,
+        userId: r.user_id,
+        authorName: r.author_name,
+        description: r.description,
+        gymChoiceMode:
+          (r.gym_choice_mode as AdminMachineRequestRequester['gymChoiceMode']) ?? undefined,
+        gymName: r.gym_name,
+        commercialUseConsent: Boolean(r.commercial_use_consent),
+        likeCount: Number(r.like_count ?? 0),
+        commentCount: Number(r.comment_count ?? 0),
+        viewCount: Number(r.view_count ?? 0),
+        primaryImageUrl: images[0]?.thumbUrl,
+        images,
+        createdAt: r.created_at,
+        status: normalizeStatus(r.status),
+      };
+    });
 
     let existingMachineId: string | null = group.linkedMachineId ?? null;
     let existingMachineCode: string | null = group.linkedMachineCode ?? null;

@@ -19,6 +19,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getLocalizedName } from '@/utils/localizedName';
+import { resolveMachineRequestMediaUrl } from '@/utils/machineRequestMediaUrl';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/admin.css';
 
@@ -279,8 +280,9 @@ export function AdminMachineRequestsPage() {
         {(
           [
             ['total', statsQuery.data?.total],
-            ['added', statsQuery.data?.added],
+            ['pending', statsQuery.data?.pending],
             ['reviewing', statsQuery.data?.reviewing],
+            ['added', statsQuery.data?.added],
             ['rejected', statsQuery.data?.rejected],
             ['thisMonthRequests', statsQuery.data?.thisMonthRequests],
             ['thisMonthAdded', statsQuery.data?.thisMonthAdded],
@@ -530,16 +532,88 @@ export function AdminMachineRequestsPage() {
                 <section className="admin-req-detail__section">
                   <h3>{t('machineRequests.requesters')}</h3>
                   <ul className="admin-req-requesters">
-                    {detail.requesters.map((r) => (
-                      <li key={r.requestId}>
-                        <strong>{r.authorName}</strong>
-                        <span>{formatDate(r.createdAt)}</span>
-                        <p>{displayText(r.description, unknownLabel)}</p>
-                        {r.primaryImageUrl ? (
-                          <img src={r.primaryImageUrl} alt="" className="admin-req-requesters__img" />
-                        ) : null}
-                      </li>
-                    ))}
+                    {detail.requesters.map((r) => {
+                      const gymLabel =
+                        r.gymChoiceMode === 'unknown'
+                          ? t('machineRequests.gymUnknown')
+                          : r.gymName?.trim() || t('machineRequests.gymUnknown');
+                      const images =
+                        r.images?.length
+                          ? r.images
+                          : r.primaryImageUrl
+                            ? [
+                                {
+                                  id: 'primary',
+                                  sortOrder: 0,
+                                  thumbUrl: r.primaryImageUrl,
+                                  imageUrl: r.primaryImageUrl,
+                                },
+                              ]
+                            : [];
+                      return (
+                        <li key={r.requestId}>
+                          <div className="admin-req-requesters__head">
+                            <strong>{r.authorName}</strong>
+                            <span>{formatDate(r.createdAt)}</span>
+                            <span
+                              className={`admin-req-badge ${statusClass(
+                                r.status === 'approved' ? 'reviewing' : r.status
+                              )}`}
+                            >
+                              {t(
+                                `machineRequests.status.${r.status === 'approved' ? 'reviewing' : r.status}`
+                              )}
+                            </span>
+                          </div>
+                          <p>{displayText(r.description, unknownLabel)}</p>
+                          <dl className="admin-req-requesters__meta">
+                            <div>
+                              <dt>{t('machineRequests.gym')}</dt>
+                              <dd>{gymLabel}</dd>
+                            </div>
+                            <div>
+                              <dt>{t('machineRequests.consent')}</dt>
+                              <dd>
+                                {r.commercialUseConsent
+                                  ? t('machineRequests.consentYes')
+                                  : t('machineRequests.consentNo')}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>{t('machineRequests.social')}</dt>
+                              <dd>
+                                ♥ {r.likeCount ?? 0} · 💬 {r.commentCount ?? 0} · 👁{' '}
+                                {r.viewCount ?? 0}
+                              </dd>
+                            </div>
+                          </dl>
+                          {images.length ? (
+                            <div className="admin-req-requesters__gallery">
+                              {images.map((img) => (
+                                <a
+                                  key={img.id}
+                                  href={resolveMachineRequestMediaUrl(img.imageUrl || img.thumbUrl)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  <img
+                                    src={resolveMachineRequestMediaUrl(img.thumbUrl || img.imageUrl)}
+                                    alt=""
+                                    className="admin-req-requesters__img"
+                                  />
+                                </a>
+                              ))}
+                            </div>
+                          ) : null}
+                          <Link
+                            to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(':requestId', r.requestId)}
+                            className="btn btn--secondary btn--sm"
+                          >
+                            {t('machineRequests.openUserPost')}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </section>
 

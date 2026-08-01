@@ -51,6 +51,8 @@
   "requestFieldChoiceCustom": "직접 입력",
   "requestFieldChoiceUnknown": "모름",
   "requestFieldUnknownLabel": "모름",
+  "requestRejectReason": "반려 사유",
+  "requestAdminNote": "관리자 메모",
   "status": "상태",
   "ownerDashboard": "헬스장 사장님 대시보드",
   "ownerSubtitle": "공식 보유기구와 운영 정보가 회원 방문의 기준이 됩니다.",
