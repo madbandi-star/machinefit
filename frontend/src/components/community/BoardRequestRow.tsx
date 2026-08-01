@@ -33,10 +33,11 @@ function requestTitle(request: MachineRequest, unknownLabel: string) {
 function resolveRequestThumb(url?: string) {
   if (!url) return undefined;
   const apiBase = API_BASE_URL.replace(/\/+$/, '');
+  const marker = '/machine-requests/images/';
+
   if (url.startsWith('http')) {
     try {
       const parsed = new URL(url);
-      const marker = '/machine-requests/images/';
       const idx = parsed.pathname.indexOf(marker);
       if (idx >= 0) return `${apiBase}${parsed.pathname.slice(idx)}${parsed.search}`;
     } catch {
@@ -44,6 +45,9 @@ function resolveRequestThumb(url?: string) {
     }
     return url;
   }
+
+  const idx = url.indexOf(marker);
+  if (idx >= 0) return `${apiBase}${url.slice(idx)}`;
   if (url.startsWith('/')) return `${apiBase}${url}`;
   return url;
 }
@@ -65,7 +69,11 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
           <span className="board-index-row__thumb" aria-hidden>
             <img src={thumbUrl} alt="" loading="lazy" decoding="async" />
           </span>
-        ) : null}
+        ) : (
+          <span className="board-index-row__thumb board-index-row__thumb--empty" aria-hidden>
+            —
+          </span>
+        )}
         <span className="board-index-row__body">
           <span className="board-index-row__title">{requestTitle(request, unknownLabel)}</span>
           {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}
@@ -74,7 +82,9 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
           <span className={`board-index-row__status board-index-row__status--${request.status}`}>
             {statusLabel}
           </span>
-          <time dateTime={request.createdAt}>{formatDateShort(request.createdAt)}</time>
+          <time className="board-index-row__date" dateTime={request.createdAt}>
+            {formatDateShort(request.createdAt)}
+          </time>
         </span>
       </article>
     </div>

@@ -236,7 +236,7 @@ export function MachineRequestBoardPage() {
     maxLength: number;
     multiline?: boolean;
   }) => (
-    <fieldset className="form-row community-board-page__gym-choice">
+    <fieldset className="form-row community-board-page__choice">
       <legend>{params.legend}</legend>
       <label className="checkbox-label">
         <input
