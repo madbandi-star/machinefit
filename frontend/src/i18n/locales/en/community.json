@@ -153,5 +153,11 @@
   "photoReplying": "Replying",
   "replyingTo": "Reply to {{name}}",
   "writeReply": "Write a reply…",
+  "editComment": "Edit",
+  "saveComment": "Save",
+  "deleteComment": "Delete",
+  "confirmDeleteComment": "Delete this comment?",
+  "commentUpdated": "Comment updated.",
+  "commentDeleted": "Comment deleted.",
   "photoLinkCopied": "Link copied."
 }

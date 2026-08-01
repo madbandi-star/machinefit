@@ -4,6 +4,7 @@ import {
   createPostSchema,
   createCommentSchema,
   createMachineRequestSchema,
+  updateCommentSchema,
   updateMachineRequestSchema,
   contentReportSchema,
 } from '@machinefit/shared';
@@ -50,6 +51,27 @@ export async function createComment(req: Request, res: Response): Promise<void> 
     input
   );
   res.status(201).json({ success: true, data: comment });
+}
+
+export async function updateComment(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = updateCommentSchema.parse(req.body);
+  const comment = await communityService.updateComment(
+    getParam(req.params.commentId),
+    req.user.userId,
+    input
+  );
+  res.json({ success: true, data: comment });
+}
+
+export async function deleteComment(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  await communityService.deleteComment(
+    getParam(req.params.commentId),
+    req.user.userId,
+    req.user.roleCode
+  );
+  res.json({ success: true, data: { message: 'Deleted' } });
 }
 
 export async function toggleLike(req: Request, res: Response): Promise<void> {

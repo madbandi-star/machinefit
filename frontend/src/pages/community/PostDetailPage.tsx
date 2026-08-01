@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Role, hasMinRole } from '@machinefit/shared';
+import { Role, hasMinRole, type Comment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { communityApi } from '@/api';
@@ -39,8 +39,13 @@ export function PostDetailPage() {
   const showToast = useUIStore((s) => s.showToast);
   const [comment, setComment] = useState('');
   const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
   const commentFormRef = useRef<HTMLFormElement>(null);
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
+
+  const invalidatePost = () =>
+    queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.posts, postId] });
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [...QUERY_KEYS.posts, postId],
@@ -53,7 +58,7 @@ export function PostDetailPage() {
 
   const likeMutation = useMutation({
     mutationFn: () => communityApi.toggleLike(postId!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.posts, postId] }),
+    onSuccess: () => invalidatePost(),
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
@@ -66,7 +71,32 @@ export function PostDetailPage() {
     onSuccess: () => {
       setComment('');
       setReplyTo(null);
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.posts, postId] });
+      invalidatePost();
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const updateCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
+      communityApi.updateComment(commentId, { content }),
+    onSuccess: () => {
+      setEditingId(null);
+      setEditContent('');
+      invalidatePost();
+      showToast(t('commentUpdated'), 'success');
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: string) => communityApi.deleteComment(commentId),
+    onSuccess: () => {
+      if (editingId) {
+        setEditingId(null);
+        setEditContent('');
+      }
+      invalidatePost();
+      showToast(t('commentDeleted'), 'success');
     },
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
@@ -97,6 +127,8 @@ export function PostDetailPage() {
     return data.comments.find((c) => c.id === replyTo) ?? null;
   }, [data?.comments, replyTo]);
 
+  const isAdmin = hasMinRole(user?.roleCode, Role.ADMIN);
+
   const requireAuth = (action: () => void) => {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
@@ -108,12 +140,28 @@ export function PostDetailPage() {
 
   const startReply = (commentId: string) => {
     requireAuth(() => {
+      setEditingId(null);
       const rootId = resolveReplyRootId(commentId, data?.comments ?? []);
       setReplyTo(rootId);
       window.requestAnimationFrame(() => {
         commentFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         commentInputRef.current?.focus();
       });
+    });
+  };
+
+  const startEdit = (item: Comment) => {
+    requireAuth(() => {
+      setReplyTo(null);
+      setEditingId(item.id);
+      setEditContent(item.content);
+    });
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    requireAuth(() => {
+      if (!window.confirm(t('confirmDeleteComment'))) return;
+      deleteCommentMutation.mutate(commentId);
     });
   };
 
@@ -131,6 +179,91 @@ export function PostDetailPage() {
     if (window.confirm(t('confirmDelete'))) {
       deleteMutation.mutate();
     }
+  };
+
+  const renderComment = (item: Comment, replyClass?: string) => {
+    const canEdit = Boolean(user && user.id === item.userId);
+    const canDelete = Boolean(user && (user.id === item.userId || isAdmin));
+    const isEditing = editingId === item.id;
+
+    return (
+      <div className={`comment-item${replyClass ? ` ${replyClass}` : ''}`}>
+        <div className="comment-item__top">
+          <span className="comment-item__author">{item.authorName}</span>
+          <time className="comment-item__date" dateTime={item.createdAt}>
+            {formatDateTime(item.createdAt)}
+          </time>
+        </div>
+        {isEditing ? (
+          <>
+            <textarea
+              className="input comment-item__edit-input"
+              rows={2}
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              aria-label={t('editComment')}
+            />
+            <div className="comment-item__actions">
+              <button
+                type="button"
+                className="btn btn--primary btn--sm"
+                disabled={updateCommentMutation.isPending || !editContent.trim()}
+                onClick={() =>
+                  updateCommentMutation.mutate({
+                    commentId: item.id,
+                    content: editContent.trim(),
+                  })
+                }
+              >
+                {t('saveComment')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary btn--sm"
+                onClick={() => {
+                  setEditingId(null);
+                  setEditContent('');
+                }}
+              >
+                {t('cancel')}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="comment-item__body">{item.content}</p>
+            <div className="comment-item__actions">
+              <button
+                type="button"
+                className="btn btn--secondary btn--sm comment-item__reply"
+                onClick={() => startReply(item.id)}
+              >
+                {t('photoReply')}
+              </button>
+              {canEdit ? (
+                <button
+                  type="button"
+                  className="btn btn--secondary btn--sm"
+                  onClick={() => startEdit(item)}
+                >
+                  {t('editComment')}
+                </button>
+              ) : null}
+              {canDelete ? (
+                <button
+                  type="button"
+                  className="btn btn--secondary btn--sm"
+                  disabled={deleteCommentMutation.isPending}
+                  onClick={() => handleDeleteComment(item.id)}
+                >
+                  {t('deleteComment')}
+                </button>
+              ) : null}
+            </div>
+          </>
+        )}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -160,7 +293,6 @@ export function PostDetailPage() {
 
   const { post, comments } = data;
   const isAuthor = user?.id === post.userId;
-  const isAdmin = hasMinRole(user?.roleCode, Role.ADMIN);
   const canDelete = isAuthor || (isAdmin && post.boardType === 'free');
 
   return (
@@ -236,41 +368,11 @@ export function PostDetailPage() {
             <ul className="comment-list">
               {commentThreads.map(({ root, replies }) => (
                 <li key={root.id} className="comment-thread">
-                  <div className="comment-item">
-                    <div className="comment-item__top">
-                      <span className="comment-item__author">{root.authorName}</span>
-                      <time className="comment-item__date" dateTime={root.createdAt}>
-                        {formatDateTime(root.createdAt)}
-                      </time>
-                    </div>
-                    <p className="comment-item__body">{root.content}</p>
-                    <button
-                      type="button"
-                      className="btn btn--secondary btn--sm comment-item__reply"
-                      onClick={() => startReply(root.id)}
-                    >
-                      {t('photoReply')}
-                    </button>
-                  </div>
+                  {renderComment(root)}
                   {replies.length ? (
                     <ul className="comment-thread__replies">
                       {replies.map((c) => (
-                        <li key={c.id} className="comment-item comment-item--reply">
-                          <div className="comment-item__top">
-                            <span className="comment-item__author">{c.authorName}</span>
-                            <time className="comment-item__date" dateTime={c.createdAt}>
-                              {formatDateTime(c.createdAt)}
-                            </time>
-                          </div>
-                          <p className="comment-item__body">{c.content}</p>
-                          <button
-                            type="button"
-                            className="btn btn--secondary btn--sm comment-item__reply"
-                            onClick={() => startReply(c.id)}
-                          >
-                            {t('photoReply')}
-                          </button>
-                        </li>
+                        <li key={c.id}>{renderComment(c, 'comment-item--reply')}</li>
                       ))}
                     </ul>
                   ) : null}

@@ -9,6 +9,16 @@ communityRouter.get('/posts/:postId', optionalAuthMiddleware, communityControlle
 communityRouter.post('/posts', authMiddleware, communityController.createPost);
 communityRouter.delete('/posts/:postId', authMiddleware, communityController.deletePost);
 communityRouter.post('/posts/:postId/comments', authMiddleware, communityController.createComment);
+communityRouter.patch(
+  '/comments/:commentId',
+  authMiddleware,
+  communityController.updateComment
+);
+communityRouter.delete(
+  '/comments/:commentId',
+  authMiddleware,
+  communityController.deleteComment
+);
 communityRouter.post('/posts/:postId/like', authMiddleware, communityController.toggleLike);
 communityRouter.post('/posts/:postId/report', authMiddleware, communityController.reportPost);
 communityRouter.post(

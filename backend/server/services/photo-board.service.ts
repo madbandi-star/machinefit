@@ -7,6 +7,7 @@ import type {
   PhotoBoardListQuery,
   ResolvePhotoReportInput,
   RoleCode,
+  UpdatePhotoCommentInput,
   UpdatePhotoPostInput,
 } from '@machinefit/shared';
 import { isAllowedPhotoBoardImage, photoBoardImageLimits } from '../config/photo-board-image.js';
@@ -146,6 +147,10 @@ export const photoBoardService = {
       );
     }
     return result.comment;
+  },
+
+  updateComment(commentId: string, userId: string, input: UpdatePhotoCommentInput) {
+    return photoBoardRepository.updateComment(commentId, userId, input);
   },
 
   deleteComment(commentId: string, userId: string, role: RoleCode) {

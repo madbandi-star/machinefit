@@ -23,6 +23,11 @@ photoBoardRouter.patch('/posts/:postId', authMiddleware, photoBoardController.up
 photoBoardRouter.delete('/posts/:postId', authMiddleware, photoBoardController.deletePost);
 photoBoardRouter.post('/posts/:postId/like', authMiddleware, photoBoardController.toggleLike);
 photoBoardRouter.post('/posts/:postId/comments', authMiddleware, photoBoardController.createComment);
+photoBoardRouter.patch(
+  '/comments/:commentId',
+  authMiddleware,
+  photoBoardController.updateComment
+);
 photoBoardRouter.delete(
   '/comments/:commentId',
   authMiddleware,

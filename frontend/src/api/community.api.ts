@@ -3,6 +3,7 @@ import type {
   CreatePostInput,
   CreateCommentInput,
   CreateMachineRequestInput,
+  UpdateCommentInput,
   UpdateMachineRequestInput,
   OwnerApplicationInput,
   CreateOwnerGymInput,
@@ -26,6 +27,12 @@ export const communityApi = {
 
   createComment: (postId: string, input: CreateCommentInput) =>
     apiClient.post<ApiResponse<Comment>>(`/community/posts/${postId}/comments`, input),
+
+  updateComment: (commentId: string, input: UpdateCommentInput) =>
+    apiClient.patch<ApiResponse<Comment>>(`/community/comments/${commentId}`, input),
+
+  deleteComment: (commentId: string) =>
+    apiClient.delete(`/community/comments/${commentId}`),
 
   toggleLike: (postId: string) =>
     apiClient.post<ApiResponse<{ liked: boolean; likeCount: number }>>(`/community/posts/${postId}/like`),

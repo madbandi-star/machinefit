@@ -4,6 +4,7 @@ import type {
   CreatePostInput,
   CreateCommentInput,
   CreateMachineRequestInput,
+  UpdateCommentInput,
   UpdateMachineRequestInput,
 } from '@machinefit/shared';
 import { findBlockedContentMatch } from '@machinefit/shared';
@@ -104,6 +105,15 @@ export const communityService = {
     assertSafeUgc(input.content);
     const user = await userRepository.findById(userId);
     return communityRepository.createComment(postId, userId, user?.displayName ?? 'User', input);
+  },
+
+  async updateComment(commentId: string, userId: string, input: UpdateCommentInput) {
+    assertSafeUgc(input.content);
+    return communityRepository.updateComment(commentId, userId, input);
+  },
+
+  async deleteComment(commentId: string, userId: string, roleCode: RoleCode) {
+    await communityRepository.deleteComment(commentId, userId, roleCode);
   },
 
   toggleLike(postId: string, userId: string) {

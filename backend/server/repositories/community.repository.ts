@@ -12,6 +12,7 @@ import type {
   CreatePostInput,
   CreateCommentInput,
   CreateMachineRequestInput,
+  UpdateCommentInput,
   UpdateMachineRequestInput,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
@@ -358,6 +359,92 @@ export const communityRepository = {
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     };
+  },
+
+  async updateComment(
+    commentId: string,
+    userId: string,
+    input: UpdateCommentInput
+  ): Promise<Comment> {
+    const pool = getPool();
+    const now = new Date().toISOString();
+    if (!pool) {
+      const comment = mockComments.find((c) => c.id === commentId && !c.isHidden);
+      if (!comment) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+      if (comment.userId !== userId) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this comment');
+      }
+      comment.content = input.content;
+      comment.updatedAt = now;
+      return comment;
+    }
+
+    const existing = await pool.query<{ user_id: string; is_hidden: boolean }>(
+      `SELECT user_id, is_hidden FROM comments WHERE id = $1`,
+      [commentId]
+    );
+    const row = existing.rows[0];
+    if (!row || row.is_hidden) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+    if (row.user_id !== userId) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this comment');
+    }
+
+    const result = await pool.query(
+      `UPDATE comments SET content = $1 WHERE id = $2
+       RETURNING *,
+         (SELECT display_name FROM users WHERE id = comments.user_id) AS author_name`,
+      [input.content, commentId]
+    );
+    const r = result.rows[0];
+    return {
+      id: r.id,
+      postId: r.post_id,
+      userId: r.user_id,
+      parentId: r.parent_id ?? undefined,
+      content: r.content,
+      isHidden: r.is_hidden,
+      authorName: r.author_name,
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+    };
+  },
+
+  async deleteComment(commentId: string, userId: string, role: RoleCode): Promise<void> {
+    const pool = getPool();
+    if (!pool) {
+      const comment = mockComments.find((c) => c.id === commentId && !c.isHidden);
+      if (!comment) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+      if (comment.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author or admin can delete this comment');
+      }
+      for (const c of mockComments) {
+        if (c.id === commentId || c.parentId === commentId) c.isHidden = true;
+      }
+      const post = mockPosts.find((p) => p.id === comment.postId);
+      if (post) {
+        post.commentCount = mockComments.filter(
+          (c) => c.postId === comment.postId && !c.isHidden
+        ).length;
+      }
+      return;
+    }
+
+    const existing = await pool.query<{ user_id: string; post_id: string; is_hidden: boolean }>(
+      `SELECT user_id, post_id, is_hidden FROM comments WHERE id = $1`,
+      [commentId]
+    );
+    const row = existing.rows[0];
+    if (!row || row.is_hidden) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+    if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author or admin can delete this comment');
+    }
+
+    await pool.query(
+      `UPDATE comments
+       SET is_hidden = TRUE
+       WHERE is_hidden = FALSE AND (id = $1 OR parent_id = $1)`,
+      [commentId]
+    );
   },
 
   async toggleLike(postId: string, userId: string): Promise<{ liked: boolean; likeCount: number }> {

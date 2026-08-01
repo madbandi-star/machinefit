@@ -1088,11 +1088,25 @@ section:has(> .post-detail) .btn--sm,
   background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
 }
 
-.comment-item__reply {
+.comment-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.comment-item__reply,
+.comment-item__actions .btn {
   justify-self: start;
   min-height: 1.75rem;
   padding: 0.2rem 0.5rem;
   font-size: 0.7rem;
+}
+
+.comment-item__edit-input {
+  width: 100%;
+  min-height: 3.2rem;
+  resize: vertical;
+  font-size: 0.82rem;
 }
 
 .post-detail__replying {

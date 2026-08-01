@@ -11,6 +11,7 @@ import type {
   PhotoPostReport,
   PhotoUserBlock,
   ResolvePhotoReportInput,
+  UpdatePhotoCommentInput,
   UpdatePhotoPostInput,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
@@ -60,6 +61,12 @@ export const photoBoardApi = {
   createComment: (postId: string, input: CreatePhotoCommentInput) =>
     apiClient.post<ApiResponse<PhotoPostComment>>(
       `/photo-board/posts/${postId}/comments`,
+      input
+    ),
+
+  updateComment: (commentId: string, input: UpdatePhotoCommentInput) =>
+    apiClient.patch<ApiResponse<PhotoPostComment>>(
+      `/photo-board/comments/${commentId}`,
       input
     ),
 
