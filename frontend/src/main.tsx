@@ -15,7 +15,7 @@ import {
 } from '@/utils/chunkLoadRecovery';
 
 /** Bump once when a final PWA cache purge is required; thereafter one-shot only. */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v31';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v32';
 
 async function clearServiceWorkerAndCaches(): Promise<void> {
   try {
