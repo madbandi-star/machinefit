@@ -39,6 +39,7 @@ export function MachineRequestDetailPage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const viewerId = useAuthStore((s) => s.user?.id ?? null);
   const unknownLabel = t('requestFieldUnknownLabel');
 
   const [editing, setEditing] = useState(false);
@@ -48,8 +49,10 @@ export function MachineRequestDetailPage() {
   const [gymChoiceMode, setGymChoiceMode] = useState<MachineRequestGymChoiceMode>('unknown');
   const [gymName, setGymName] = useState('');
 
+  const detailQueryKey = QUERY_KEYS.machineRequestDetail(requestId, viewerId);
+
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: QUERY_KEYS.machineRequestDetail(requestId),
+    queryKey: detailQueryKey,
     queryFn: async () => (await machineRequestApi.get(requestId)).data.data,
     enabled: Boolean(requestId),
   });
@@ -66,8 +69,7 @@ export function MachineRequestDetailPage() {
   const voteMutation = useMutation({
     mutationFn: () => machineRequestApi.toggleVote(requestId),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(requestId) });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
       const { voted, voteCount } = res.data.data;
       showToast(
         voted
@@ -101,8 +103,7 @@ export function MachineRequestDetailPage() {
         gymName: gymChoiceMode === 'unknown' ? null : gymName.trim(),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(requestId) });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
       setEditing(false);
       showToast(t('requestUpdateSuccess'), 'success');
     },
@@ -123,7 +124,7 @@ export function MachineRequestDetailPage() {
   const deleteMutation = useMutation({
     mutationFn: () => machineRequestApi.remove(requestId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
       showToast(t('requestDeleteSuccess'), 'success');
       navigate(ROUTES.MACHINE_REQUESTS);
     },
@@ -183,8 +184,8 @@ export function MachineRequestDetailPage() {
         ]
       : [];
   const statusLabel = t(`requestStatus_${data.status}`, { defaultValue: data.status });
-  const isMine = Boolean(data.isMine);
-  const voted = Boolean(data.votedByMe);
+  const isMine = data.isMine === true;
+  const voted = data.votedByMe === true;
   const voteCount = data.voteCount ?? 0;
   const gymLabel =
     data.gymChoiceMode === 'unknown'

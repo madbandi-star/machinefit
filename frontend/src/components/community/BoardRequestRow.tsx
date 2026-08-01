@@ -46,8 +46,8 @@ export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestR
       ? t('requestGymUnknownLabel')
       : request.gymName?.trim() || undefined;
   const voteCount = request.voteCount ?? 0;
-  const voted = Boolean(request.votedByMe);
-  const isMine = Boolean(request.isMine);
+  const voted = request.votedByMe === true;
+  const isMine = request.isMine === true;
 
   return (
     <div className="board-index-row-wrap">

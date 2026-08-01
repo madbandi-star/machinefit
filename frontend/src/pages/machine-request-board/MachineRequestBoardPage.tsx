@@ -78,6 +78,7 @@ export function MachineRequestBoardPage() {
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
+  const viewerId = user?.id ?? null;
   const showToast = useUIStore((s) => s.showToast);
   const { activeGym, gyms } = useActiveGym();
 
@@ -95,8 +96,10 @@ export function MachineRequestBoardPage() {
   const [customGymName, setCustomGymName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const listQueryKey = QUERY_KEYS.machineRequests(viewerId);
+
   const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.machineRequests,
+    queryKey: listQueryKey,
     queryFn: async () => {
       const res = await machineRequestApi.list({ limit: 30 });
       return res.data.data;
@@ -187,7 +190,7 @@ export function MachineRequestBoardPage() {
         files: images.map((img) => img.file),
       }),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
       const createdId = res.data.data.id;
       resetForm();
       showToast(t('requestSubmitSuccess'), 'success');
@@ -226,25 +229,21 @@ export function MachineRequestBoardPage() {
   const voteMutation = useMutation({
     mutationFn: (requestId: string) => machineRequestApi.toggleVote(requestId),
     onMutate: async (requestId) => {
-      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.machineRequests });
-      const previous = queryClient.getQueryData<PaginatedResponse<MachineRequest>>(
-        QUERY_KEYS.machineRequests
-      );
-      queryClient.setQueryData<PaginatedResponse<MachineRequest>>(
-        QUERY_KEYS.machineRequests,
-        (current) => {
-          if (!current) return current;
-          return {
-            ...current,
-            items: current.items.map((item) => {
-              if (item.id !== requestId) return item;
-              const voted = !item.votedByMe;
-              const voteCount = Math.max(0, (item.voteCount ?? 0) + (voted ? 1 : -1));
-              return { ...item, votedByMe: voted, voteCount };
-            }),
-          };
-        }
-      );
+      await queryClient.cancelQueries({ queryKey: listQueryKey });
+      const previous =
+        queryClient.getQueryData<PaginatedResponse<MachineRequest>>(listQueryKey);
+      queryClient.setQueryData<PaginatedResponse<MachineRequest>>(listQueryKey, (current) => {
+        if (!current) return current;
+        return {
+          ...current,
+          items: current.items.map((item) => {
+            if (item.id !== requestId) return item;
+            const voted = !item.votedByMe;
+            const voteCount = Math.max(0, (item.voteCount ?? 0) + (voted ? 1 : -1));
+            return { ...item, votedByMe: voted, voteCount };
+          }),
+        };
+      });
       return { previous };
     },
     onSuccess: (res) => {
@@ -258,7 +257,7 @@ export function MachineRequestBoardPage() {
     },
     onError: (error, _requestId, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(QUERY_KEYS.machineRequests, context.previous);
+        queryClient.setQueryData(listQueryKey, context.previous);
       }
       const code = getApiErrorCode(error);
       if (code === 'OWN_REQUEST') {
@@ -273,7 +272,7 @@ export function MachineRequestBoardPage() {
       showToast(t('requestWantThisError'), 'error');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
     },
   });
 
