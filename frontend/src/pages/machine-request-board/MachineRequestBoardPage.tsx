@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import {
   MACHINE_REQUEST_UNKNOWN_VALUE,
   type MachineRequestGymChoiceMode,
@@ -22,7 +23,22 @@ import '@/styles/components.css';
 import '@/styles/community.css';
 
 const MAX_REQUEST_IMAGES = 5;
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const MAX_GYM_NAME = 50;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
+
+function isAllowedRequestImage(file: File): boolean {
+  const mime = (file.type || '').toLowerCase();
+  if (ALLOWED_IMAGE_TYPES.has(mime)) return true;
+  // Some mobile browsers omit MIME; fall back to extension (matches backend).
+  return /\.(jpe?g|png|webp)$/i.test(file.name);
+}
+
+function getApiErrorCode(error: unknown): string | undefined {
+  if (!axios.isAxiosError(error)) return undefined;
+  const payload = error.response?.data as { error?: { code?: string } } | undefined;
+  return payload?.error?.code;
+}
 
 interface LocalImage {
   id: string;
@@ -75,6 +91,7 @@ export function MachineRequestBoardPage() {
   const [commercialUseConsent, setCommercialUseConsent] = useState(false);
   const [gymChoiceMode, setGymChoiceMode] = useState<MachineRequestGymChoiceMode>('profile');
   const [customGymName, setCustomGymName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: QUERY_KEYS.machineRequests,
@@ -170,9 +187,36 @@ export function MachineRequestBoardPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
       resetForm();
-      showToast(t('createSuccess'), 'success');
+      showToast(t('requestSubmitSuccess'), 'success');
     },
-    onError: () => showToast(t('errorGeneric'), 'error'),
+    onError: (error) => {
+      if (axios.isAxiosError(error) && !error.response) {
+        showToast(t('requestSubmitNetworkError'), 'error');
+        return;
+      }
+      const code = getApiErrorCode(error);
+      if (code === 'UNSUPPORTED_FILE_TYPE') {
+        showToast(t('requestPhotoTypeError'), 'error');
+        return;
+      }
+      if (code === 'FILE_TOO_LARGE') {
+        showToast(t('requestPhotoSizeError'), 'error');
+        return;
+      }
+      if (code === 'TOO_MANY_FILES') {
+        showToast(t('requestPhotoMaxError', { max: MAX_REQUEST_IMAGES }), 'error');
+        return;
+      }
+      if (code === 'IMAGES_REQUIRED') {
+        showToast(t('requestPhotoRequired'), 'error');
+        return;
+      }
+      if (code === 'CONSENT_REQUIRED') {
+        showToast(t('requestConsentRequired'), 'error');
+        return;
+      }
+      showToast(t('requestSubmitError'), 'error');
+    },
   });
 
   const handleNew = () => {
@@ -186,19 +230,48 @@ export function MachineRequestBoardPage() {
 
   const onPickFiles = (fileList: FileList | null) => {
     if (!fileList?.length) return;
-    setImages((prev) => {
-      const next = [...prev];
-      for (const file of Array.from(fileList)) {
-        if (next.length >= MAX_REQUEST_IMAGES) break;
-        if (!file.type.startsWith('image/')) continue;
-        next.push({
-          id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
-          file,
-          previewUrl: URL.createObjectURL(file),
-        });
+
+    const selected = Array.from(fileList);
+    const remainingSlots = MAX_REQUEST_IMAGES - images.length;
+    let skippedType = 0;
+    let skippedSize = 0;
+    let skippedMax = 0;
+    const accepted: LocalImage[] = [];
+
+    for (const file of selected) {
+      if (accepted.length >= remainingSlots) {
+        skippedMax += 1;
+        continue;
       }
-      return next;
-    });
+      if (!isAllowedRequestImage(file)) {
+        skippedType += 1;
+        continue;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        skippedSize += 1;
+        continue;
+      }
+      accepted.push({
+        id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
+        file,
+        previewUrl: URL.createObjectURL(file),
+      });
+    }
+
+    if (accepted.length > 0) {
+      setImages((prev) => [...prev, ...accepted].slice(0, MAX_REQUEST_IMAGES));
+      showToast(t('requestPhotoAttachSuccess', { count: accepted.length }), 'success');
+    }
+
+    if (skippedType > 0) {
+      showToast(t('requestPhotoTypeError'), 'error');
+    } else if (skippedSize > 0) {
+      showToast(t('requestPhotoSizeError'), 'error');
+    } else if (skippedMax > 0) {
+      showToast(t('requestPhotoMaxError', { max: MAX_REQUEST_IMAGES }), 'error');
+    } else if (accepted.length === 0) {
+      showToast(t('requestPhotoAttachFailed'), 'error');
+    }
   };
 
   const removeImage = (id: string) => {
@@ -375,19 +448,45 @@ export function MachineRequestBoardPage() {
               </label>
             </fieldset>
 
-            <div className="form-row">
-              <label htmlFor="req-photos">{t('requestPhoto')}</label>
+            <div className="form-row community-board-page__photo-field">
+              <span className="community-board-page__photo-label" id="req-photos-label">
+                {t('requestPhoto')}
+              </span>
               <input
+                ref={fileInputRef}
                 id="req-photos"
+                className="community-board-page__file-input"
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
                 multiple
+                aria-labelledby="req-photos-label"
                 onChange={(e) => {
                   onPickFiles(e.target.files);
                   e.target.value = '';
                 }}
               />
+              <button
+                type="button"
+                className="btn btn--secondary community-board-page__photo-pick"
+                disabled={images.length >= MAX_REQUEST_IMAGES || createMutation.isPending}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {t('requestPhotoPick')}
+              </button>
               <p className="community-board-page__hint">{t('requestPhotoHint')}</p>
+              <p
+                className={`community-board-page__photo-status${
+                  images.length > 0 ? ' community-board-page__photo-status--ok' : ''
+                }`}
+                aria-live="polite"
+              >
+                {images.length > 0
+                  ? t('requestPhotoAttachedCount', {
+                      count: images.length,
+                      max: MAX_REQUEST_IMAGES,
+                    })
+                  : t('requestPhotoNone')}
+              </p>
               {images.length > 0 && (
                 <div className="community-board-page__previews" aria-label={t('requestPhoto')}>
                   {images.map((img) => (
