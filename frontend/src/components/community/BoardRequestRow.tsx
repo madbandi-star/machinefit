@@ -97,9 +97,12 @@ export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestR
               type="button"
               className={`board-index-row__want-btn${voted ? ' board-index-row__want-btn--active' : ''}`}
               disabled={isVoting || !onWantThis}
+              aria-disabled={isVoting || !onWantThis}
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
+                // Own posts must never vote — belt-and-suspenders if isMine was stale.
+                if (request.isMine === true) return;
                 onWantThis?.(request.id);
               }}
             >

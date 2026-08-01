@@ -18,6 +18,7 @@ import { locationApi, machineRequestApi, userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
@@ -76,6 +77,7 @@ export function MachineRequestBoardPage() {
   const { t: tCommon } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const authReady = useAuthHydration();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const viewerId = user?.id ?? null;
@@ -104,7 +106,10 @@ export function MachineRequestBoardPage() {
       const res = await machineRequestApi.list({ limit: 30 });
       return res.data.data;
     },
+    // Wait for access-token restore so isMine is computed for the real viewer.
+    enabled: authReady,
   });
+  const listLoading = !authReady || isLoading;
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -232,12 +237,18 @@ export function MachineRequestBoardPage() {
       await queryClient.cancelQueries({ queryKey: listQueryKey });
       const previous =
         queryClient.getQueryData<PaginatedResponse<MachineRequest>>(listQueryKey);
+      const target = previous?.items.find((item) => item.id === requestId);
+      if (target?.isMine === true) {
+        // Abort mutation (skips mutationFn) — own requests cannot be voted.
+        throw new Error('OWN_REQUEST');
+      }
       queryClient.setQueryData<PaginatedResponse<MachineRequest>>(listQueryKey, (current) => {
         if (!current) return current;
         return {
           ...current,
           items: current.items.map((item) => {
             if (item.id !== requestId) return item;
+            if (item.isMine === true) return item;
             const voted = !item.votedByMe;
             const voteCount = Math.max(0, (item.voteCount ?? 0) + (voted ? 1 : -1));
             return { ...item, votedByMe: voted, voteCount };
@@ -260,7 +271,7 @@ export function MachineRequestBoardPage() {
         queryClient.setQueryData(listQueryKey, context.previous);
       }
       const code = getApiErrorCode(error);
-      if (code === 'OWN_REQUEST') {
+      if (code === 'OWN_REQUEST' || (error instanceof Error && error.message === 'OWN_REQUEST')) {
         showToast(t('requestWantThisOwnError'), 'error');
         return;
       }
@@ -289,6 +300,11 @@ export function MachineRequestBoardPage() {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
       navigate(ROUTES.LOGIN);
+      return;
+    }
+    const target = data?.items.find((item) => item.id === requestId);
+    if (target?.isMine === true) {
+      showToast(t('requestWantThisOwnError'), 'error');
       return;
     }
     voteMutation.mutate(requestId);
@@ -603,7 +619,7 @@ export function MachineRequestBoardPage() {
           {t('requestBoardPublicHint')}
         </p>
 
-        {isLoading ? (
+        {listLoading ? (
           <BoardIndexSkeleton rows={8} />
         ) : data?.items.length ? (
           <BoardIndexPanel

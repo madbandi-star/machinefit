@@ -452,7 +452,7 @@ export const communityRepository = {
     if (!pool) {
       const req = mockMachineRequests.find((r) => r.id === requestId);
       if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
-      if (req.userId === userId) {
+      if (String(req.userId) === String(userId)) {
         throw new AppError(400, 'OWN_REQUEST', 'Cannot vote on your own request');
       }
       const key = machineRequestVoteKey(userId, requestId);
@@ -472,7 +472,7 @@ export const communityRepository = {
     );
     const row = existing.rows[0];
     if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
-    if (row.user_id === userId) {
+    if (String(row.user_id) === String(userId)) {
       throw new AppError(400, 'OWN_REQUEST', 'Cannot vote on your own request');
     }
 

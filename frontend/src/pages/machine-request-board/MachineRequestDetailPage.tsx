@@ -14,6 +14,7 @@ import { Icon } from '@/components/icons/Icon';
 import { machineRequestApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { resolveMachineRequestMediaUrl } from '@/utils/machineRequestMediaUrl';
@@ -38,6 +39,7 @@ export function MachineRequestDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const authReady = useAuthHydration();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const viewerId = useAuthStore((s) => s.user?.id ?? null);
   const unknownLabel = t('requestFieldUnknownLabel');
@@ -54,8 +56,9 @@ export function MachineRequestDetailPage() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: detailQueryKey,
     queryFn: async () => (await machineRequestApi.get(requestId)).data.data,
-    enabled: Boolean(requestId),
+    enabled: Boolean(requestId) && authReady,
   });
+  const detailLoading = !authReady || isLoading;
 
   useEffect(() => {
     if (!data) return;
@@ -67,7 +70,12 @@ export function MachineRequestDetailPage() {
   }, [data]);
 
   const voteMutation = useMutation({
-    mutationFn: () => machineRequestApi.toggleVote(requestId),
+    mutationFn: () => {
+      if (data?.isMine === true) {
+        return Promise.reject(new Error('OWN_REQUEST'));
+      }
+      return machineRequestApi.toggleVote(requestId);
+    },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
       const { voted, voteCount } = res.data.data;
@@ -80,7 +88,7 @@ export function MachineRequestDetailPage() {
     },
     onError: (error) => {
       const code = getApiErrorCode(error);
-      if (code === 'OWN_REQUEST') {
+      if (code === 'OWN_REQUEST' || (error instanceof Error && error.message === 'OWN_REQUEST')) {
         showToast(t('requestWantThisOwnError'), 'error');
         return;
       }
@@ -144,6 +152,10 @@ export function MachineRequestDetailPage() {
       navigate(ROUTES.LOGIN);
       return;
     }
+    if (data?.isMine === true) {
+      showToast(t('requestWantThisOwnError'), 'error');
+      return;
+    }
     voteMutation.mutate();
   };
 
@@ -152,7 +164,7 @@ export function MachineRequestDetailPage() {
     deleteMutation.mutate();
   };
 
-  if (isLoading) {
+  if (detailLoading) {
     return (
       <PageShell title={t('machineRequests')}>
         <Skeleton count={4} />
