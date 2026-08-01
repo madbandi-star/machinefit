@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Post } from '@machinefit/shared';
+import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/community.css';
 
@@ -33,6 +34,7 @@ export function PostCard({ post, seq, showDelete, onDelete, isDeleting }: PostCa
   const { t } = useTranslation('community');
   const href = ROUTES.POST_DETAIL.replace(':postId', post.id);
   const likes = post.likeCount ?? 0;
+  const comments = post.commentCount ?? 0;
 
   return (
     <div className={`board-index-row-wrap${showDelete && onDelete ? ' board-index-row-wrap--admin' : ''}`}>
@@ -52,11 +54,15 @@ export function PostCard({ post, seq, showDelete, onDelete, isDeleting }: PostCa
           <span className="board-index-row__author" title={authorLabel(post)}>
             {authorLabel(post)}
           </span>
-          <span
-            className="board-index-row__stat board-index-row__stat--like"
-            aria-label={t('likeCount', { count: likes })}
-          >
-            {likes}
+          <span className="board-index-row__counts" aria-label={`${t('likeCount', { count: likes })}, ${t('commentCount', { count: comments })}`}>
+            <span className="board-index-row__stat board-index-row__stat--like" title={t('colLikes')}>
+              <Icon name="heart" size={12} className="board-index-row__stat-icon" aria-hidden />
+              <span className="board-index-row__stat-num">{likes}</span>
+            </span>
+            <span className="board-index-row__stat board-index-row__stat--comment" title={t('colComments')}>
+              <Icon name="message" size={12} className="board-index-row__stat-icon" aria-hidden />
+              <span className="board-index-row__stat-num">{comments}</span>
+            </span>
           </span>
           <time className="board-index-row__date" dateTime={post.createdAt}>
             {formatDate(post.createdAt)}

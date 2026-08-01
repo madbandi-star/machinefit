@@ -141,8 +141,13 @@ export function FreeBoardPage() {
                 <span className="board-index-row__title">{t('colTitle')}</span>
                 <span className="board-index-row__meta board-index-row__meta--post">
                   <span className="board-index-row__author">{t('colAuthor')}</span>
-                  <span className="board-index-row__stat board-index-row__stat--like board-index-row__stat--header">
-                    {t('colLikes')}
+                  <span className="board-index-row__counts board-index-row__counts--header">
+                    <span className="board-index-row__stat board-index-row__stat--like board-index-row__stat--header">
+                      {t('colLikes')}
+                    </span>
+                    <span className="board-index-row__stat board-index-row__stat--comment board-index-row__stat--header">
+                      {t('colComments')}
+                    </span>
                   </span>
                   <span className="board-index-row__date">{t('colDate')}</span>
                 </span>
