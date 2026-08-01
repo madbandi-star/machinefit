@@ -83,6 +83,7 @@ export const mockMachineRequests: MachineRequest[] = [
     commercialUseConsent: true,
     gymChoiceMode: 'custom',
     gymName: 'Downtown Fitness',
+    voteCount: 2,
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
   },
@@ -97,10 +98,18 @@ export const mockMachineRequests: MachineRequest[] = [
     commercialUseConsent: true,
     gymChoiceMode: 'unknown',
     gymName: null,
+    voteCount: 0,
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     updatedAt: new Date(Date.now() - 86400000).toISOString(),
   },
 ];
+
+/** Mock set keys: `vote:${userId}:${requestId}` */
+export const mockMachineRequestVotes = new Set<string>(['vote:user-2:req-1', 'vote:user-3:req-1']);
+
+export function machineRequestVoteKey(userId: string, requestId: string) {
+  return `vote:${userId}:${requestId}`;
+}
 
 export const devOwnerUserIds = new Set<string>();
 

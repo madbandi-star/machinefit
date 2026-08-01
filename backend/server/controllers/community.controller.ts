@@ -63,7 +63,16 @@ export async function toggleLike(req: Request, res: Response): Promise<void> {
 export async function listMachineRequests(req: Request, res: Response): Promise<void> {
   const page = parseInt(String(req.query.page ?? '1'), 10);
   const limit = parseInt(String(req.query.limit ?? '20'), 10);
-  const result = await communityService.listMachineRequests(page, limit);
+  const result = await communityService.listMachineRequests(page, limit, req.user?.userId);
+  res.json({ success: true, data: result });
+}
+
+export async function toggleMachineRequestVote(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const result = await communityService.toggleMachineRequestVote(
+    getParam(req.params.requestId),
+    req.user.userId
+  );
   res.json({ success: true, data: result });
 }
 

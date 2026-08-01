@@ -105,8 +105,12 @@ export const communityService = {
     return communityRepository.toggleLike(postId, userId);
   },
 
-  listMachineRequests(page = 1, limit = 20) {
-    return communityRepository.listMachineRequests(page, limit);
+  listMachineRequests(page = 1, limit = 20, viewerId?: string) {
+    return communityRepository.listMachineRequests(page, limit, viewerId);
+  },
+
+  toggleMachineRequestVote(requestId: string, userId: string) {
+    return communityRepository.toggleMachineRequestVote(requestId, userId);
   },
 
   getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {

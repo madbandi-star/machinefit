@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { MACHINE_REQUEST_UNKNOWN_VALUE, type MachineRequest } from '@machinefit/shared';
+import { Icon } from '@/components/icons/Icon';
 import { API_BASE_URL } from '@/services/http/axios-client';
 import '@/styles/community.css';
 
 interface BoardRequestRowProps {
   request: MachineRequest;
+  onWantThis?: (requestId: string) => void;
+  isVoting?: boolean;
 }
 
 function formatDateShort(iso: string) {
@@ -52,7 +55,7 @@ function resolveRequestThumb(url?: string) {
   return url;
 }
 
-export function BoardRequestRow({ request }: BoardRequestRowProps) {
+export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestRowProps) {
   const { t } = useTranslation('community');
   const unknownLabel = t('requestFieldUnknownLabel');
   const statusLabel = t(`requestStatus_${request.status}`, { defaultValue: request.status });
@@ -61,10 +64,13 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
     request.gymChoiceMode === 'unknown'
       ? t('requestGymUnknownLabel')
       : request.gymName?.trim() || undefined;
+  const voteCount = request.voteCount ?? 0;
+  const voted = Boolean(request.votedByMe);
+  const isMine = Boolean(request.isMine);
 
   return (
     <div className="board-index-row-wrap">
-      <article className="board-index-row board-index-row--static board-index-row--with-thumb">
+      <article className="board-index-row board-index-row--static board-index-row--with-thumb board-index-row--request">
         {thumbUrl ? (
           <span className="board-index-row__thumb" aria-hidden>
             <img src={thumbUrl} alt="" loading="lazy" decoding="async" />
@@ -76,15 +82,45 @@ export function BoardRequestRow({ request }: BoardRequestRowProps) {
         )}
         <span className="board-index-row__body">
           <span className="board-index-row__title">{requestTitle(request, unknownLabel)}</span>
-          {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}
+          <span className="board-index-row__request-sub">
+            {request.authorName ? (
+              <span className="board-index-row__author">{request.authorName}</span>
+            ) : null}
+            {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}
+          </span>
         </span>
-        <span className="board-index-row__meta">
+        <span className="board-index-row__meta board-index-row__meta--request">
           <span className={`board-index-row__status board-index-row__status--${request.status}`}>
             {statusLabel}
+          </span>
+          <span
+            className={`board-index-row__stat board-index-row__stat--want${
+              voted ? ' board-index-row__stat--want-active' : ''
+            }`}
+            title={t('requestWantThisCount', { count: voteCount })}
+          >
+            <Icon name="users" size={12} className="board-index-row__stat-icon" aria-hidden />
+            <span className="board-index-row__stat-num">{voteCount}</span>
           </span>
           <time className="board-index-row__date" dateTime={request.createdAt}>
             {formatDateShort(request.createdAt)}
           </time>
+          {isMine ? (
+            <span className="board-index-row__mine">{t('requestMine')}</span>
+          ) : (
+            <button
+              type="button"
+              className={`board-index-row__want-btn${voted ? ' board-index-row__want-btn--active' : ''}`}
+              disabled={isVoting || !onWantThis}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onWantThis?.(request.id);
+              }}
+            >
+              {voted ? t('requestWantThisDone') : t('requestWantThis')}
+            </button>
+          )}
         </span>
       </article>
     </div>

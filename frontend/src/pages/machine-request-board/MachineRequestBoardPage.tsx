@@ -5,8 +5,10 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import {
   MACHINE_REQUEST_UNKNOWN_VALUE,
+  type MachineRequest,
   type MachineRequestGymChoiceMode,
   type MachineRequestTextChoiceMode,
+  type PaginatedResponse,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
@@ -219,6 +221,60 @@ export function MachineRequestBoardPage() {
     },
   });
 
+  const voteMutation = useMutation({
+    mutationFn: (requestId: string) => machineRequestApi.toggleVote(requestId),
+    onMutate: async (requestId) => {
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.machineRequests });
+      const previous = queryClient.getQueryData<PaginatedResponse<MachineRequest>>(
+        QUERY_KEYS.machineRequests
+      );
+      queryClient.setQueryData<PaginatedResponse<MachineRequest>>(
+        QUERY_KEYS.machineRequests,
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            items: current.items.map((item) => {
+              if (item.id !== requestId) return item;
+              const voted = !item.votedByMe;
+              const voteCount = Math.max(0, (item.voteCount ?? 0) + (voted ? 1 : -1));
+              return { ...item, votedByMe: voted, voteCount };
+            }),
+          };
+        }
+      );
+      return { previous };
+    },
+    onSuccess: (res) => {
+      const { voted, voteCount } = res.data.data;
+      showToast(
+        voted
+          ? t('requestWantThisSuccess', { count: voteCount })
+          : t('requestWantThisRemoved', { count: voteCount }),
+        'success'
+      );
+    },
+    onError: (error, _requestId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(QUERY_KEYS.machineRequests, context.previous);
+      }
+      const code = getApiErrorCode(error);
+      if (code === 'OWN_REQUEST') {
+        showToast(t('requestWantThisOwnError'), 'error');
+        return;
+      }
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        showToast(t('loginRequired'), 'error');
+        navigate(ROUTES.LOGIN);
+        return;
+      }
+      showToast(t('requestWantThisError'), 'error');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+    },
+  });
+
   const handleNew = () => {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
@@ -226,6 +282,15 @@ export function MachineRequestBoardPage() {
       return;
     }
     setShowForm(true);
+  };
+
+  const handleWantThis = (requestId: string) => {
+    if (!isAuthenticated) {
+      showToast(t('loginRequired'), 'error');
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+    voteMutation.mutate(requestId);
   };
 
   const onPickFiles = (fileList: FileList | null) => {
@@ -533,12 +598,23 @@ export function MachineRequestBoardPage() {
           </form>
         )}
 
+        <p className="community-board-page__hint community-board-page__public-hint">
+          {t('requestBoardPublicHint')}
+        </p>
+
         {isLoading ? (
           <BoardIndexSkeleton rows={8} />
         ) : data?.items.length ? (
-          <BoardIndexPanel countLabel={t('requestCount', { count: data.items.length })}>
+          <BoardIndexPanel
+            countLabel={t('requestCount', { count: data.meta?.total ?? data.items.length })}
+          >
             {data.items.map((req) => (
-              <BoardRequestRow key={req.id} request={req} />
+              <BoardRequestRow
+                key={req.id}
+                request={req}
+                onWantThis={handleWantThis}
+                isVoting={voteMutation.isPending && voteMutation.variables === req.id}
+              />
             ))}
           </BoardIndexPanel>
         ) : (

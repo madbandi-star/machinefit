@@ -16,6 +16,8 @@ import {
   mockLikes,
   mockMachineRequests,
   mockMachineRequestImages,
+  mockMachineRequestVotes,
+  machineRequestVoteKey,
   likeKey,
   filterPosts,
 } from '../data/community.mock.js';
@@ -361,7 +363,7 @@ export const communityRepository = {
     };
   },
 
-  async listMachineRequests(page = 1, limit = 20) {
+  async listMachineRequests(page = 1, limit = 20, viewerId?: string) {
     const pool = getPool();
     if (!pool) {
       const start = (page - 1) * limit;
@@ -370,6 +372,11 @@ export const communityRepository = {
         userId: '',
         adminNote: undefined,
         commercialUseConsent: undefined,
+        voteCount: req.voteCount ?? 0,
+        votedByMe: viewerId
+          ? mockMachineRequestVotes.has(machineRequestVoteKey(viewerId, req.id))
+          : false,
+        isMine: Boolean(viewerId && req.userId === viewerId),
       }));
       return {
         items,
@@ -381,8 +388,19 @@ export const communityRepository = {
       'SELECT COUNT(*)::text AS count FROM machine_requests'
     );
     const total = parseInt(count.rows[0]?.count ?? '0', 10);
+    const viewerSelects = viewerId
+      ? `, EXISTS (
+           SELECT 1 FROM machine_request_votes v
+           WHERE v.request_id = mr.id AND v.user_id = $3
+         ) AS voted_by_me,
+         (mr.user_id = $3) AS is_mine`
+      : ', FALSE AS voted_by_me, FALSE AS is_mine';
+    const params = viewerId
+      ? [limit, (page - 1) * limit, viewerId]
+      : [limit, (page - 1) * limit];
     const result = await pool.query(
       `SELECT mr.*, u.display_name AS author_name,
+              COALESCE(mr.vote_count, 0) AS vote_count,
               (
                 SELECT i.id
                 FROM machine_request_images i
@@ -390,10 +408,11 @@ export const communityRepository = {
                 ORDER BY i.sort_order ASC, i.created_at ASC
                 LIMIT 1
               ) AS primary_image_id
+              ${viewerSelects}
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        ORDER BY mr.created_at DESC LIMIT $1 OFFSET $2`,
-      [limit, (page - 1) * limit]
+      params
     );
     const items: MachineRequest[] = result.rows.map((r) => {
       const primaryImageUrl = r.primary_image_id
@@ -413,11 +432,73 @@ export const communityRepository = {
         gymChoiceMode: r.gym_choice_mode ?? 'unknown',
         gymName: r.gym_name ?? null,
         primaryImageUrl,
+        voteCount: Number(r.vote_count ?? 0),
+        votedByMe: Boolean(r.voted_by_me),
+        isMine: Boolean(r.is_mine),
         createdAt: r.created_at,
         updatedAt: r.updated_at,
       };
     });
     return { items, meta: buildPaginationMeta(page, limit, total) };
+  },
+
+  async toggleMachineRequestVote(requestId: string, userId: string) {
+    const pool = getPool();
+    if (!pool) {
+      const req = mockMachineRequests.find((r) => r.id === requestId);
+      if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      if (req.userId === userId) {
+        throw new AppError(400, 'OWN_REQUEST', 'Cannot vote on your own request');
+      }
+      const key = machineRequestVoteKey(userId, requestId);
+      if (mockMachineRequestVotes.has(key)) {
+        mockMachineRequestVotes.delete(key);
+        req.voteCount = Math.max(0, (req.voteCount ?? 0) - 1);
+        return { voted: false, voteCount: req.voteCount ?? 0 };
+      }
+      mockMachineRequestVotes.add(key);
+      req.voteCount = (req.voteCount ?? 0) + 1;
+      return { voted: true, voteCount: req.voteCount ?? 0 };
+    }
+
+    const existing = await pool.query<{ id: string; user_id: string }>(
+      `SELECT id, user_id FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    const row = existing.rows[0];
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+    if (row.user_id === userId) {
+      throw new AppError(400, 'OWN_REQUEST', 'Cannot vote on your own request');
+    }
+
+    const voted = await pool.query(
+      `SELECT 1 FROM machine_request_votes WHERE user_id = $1 AND request_id = $2`,
+      [userId, requestId]
+    );
+    if (voted.rowCount) {
+      await pool.query(`DELETE FROM machine_request_votes WHERE user_id = $1 AND request_id = $2`, [
+        userId,
+        requestId,
+      ]);
+      await pool.query(
+        `UPDATE machine_requests SET vote_count = GREATEST(COALESCE(vote_count, 0) - 1, 0) WHERE id = $1`,
+        [requestId]
+      );
+    } else {
+      await pool.query(`INSERT INTO machine_request_votes (user_id, request_id) VALUES ($1, $2)`, [
+        userId,
+        requestId,
+      ]);
+      await pool.query(
+        `UPDATE machine_requests SET vote_count = COALESCE(vote_count, 0) + 1 WHERE id = $1`,
+        [requestId]
+      );
+    }
+    const count = await pool.query<{ vote_count: number }>(
+      `SELECT COALESCE(vote_count, 0) AS vote_count FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    return { voted: !voted.rowCount, voteCount: Number(count.rows[0]?.vote_count ?? 0) };
   },
 
   async createMachineRequest(
@@ -460,6 +541,9 @@ export const communityRepository = {
         gymName,
         images: mappedImages,
         primaryImageUrl: mappedImages[0]?.thumbUrl,
+        voteCount: 0,
+        votedByMe: false,
+        isMine: true,
         createdAt: now,
         updatedAt: now,
       };
@@ -521,6 +605,9 @@ export const communityRepository = {
         gymName: r.gym_name,
         images: mappedImages,
         primaryImageUrl: mappedImages[0]?.thumbUrl,
+        voteCount: Number(r.vote_count ?? 0),
+        votedByMe: false,
+        isMine: true,
         createdAt: r.created_at,
         updatedAt: r.updated_at,
       };

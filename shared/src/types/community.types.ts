@@ -66,6 +66,12 @@ export interface MachineRequest {
   gymName?: string | null;
   images?: MachineRequestImage[];
   primaryImageUrl?: string;
+  /** Number of users who also want this request. */
+  voteCount?: number;
+  /** Whether the current viewer has voted "나도 원함". */
+  votedByMe?: boolean;
+  /** Whether the current viewer owns this request. */
+  isMine?: boolean;
   createdAt: string;
   updatedAt: string;
 }

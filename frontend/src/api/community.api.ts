@@ -62,6 +62,11 @@ export const machineRequestApi = {
       timeout: 120_000,
     });
   },
+
+  toggleVote: (requestId: string) =>
+    apiClient.post<ApiResponse<{ voted: boolean; voteCount: number }>>(
+      `/machine-requests/${requestId}/vote`
+    ),
 };
 
 export interface OwnerDashboardStats {
