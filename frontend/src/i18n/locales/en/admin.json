@@ -105,7 +105,19 @@
       "invalid": "Invalid request",
       "notExists": "Machine does not exist",
       "brandCheck": "Brand needs verification"
-    }
+    },
+    "downloadImage": "Download",
+    "downloadImageError": "Couldn't download the image.",
+    "useRequestImage": "Use for registration",
+    "useRequestImageReady": "Loaded into the registration image field.",
+    "registerImage": "Machine cover image",
+    "registerImageHint": "Uploaded with the new machine when you save.",
+    "registerImagePick": "Choose image",
+    "registerImageChange": "Change image",
+    "registerImageClear": "Remove image",
+    "registerImageDrop": "Drop or choose an image",
+    "registerWithImageSuccess": "Machine registered and image uploaded.",
+    "registerImageUploadFailed": "Machine was registered, but image upload failed."
   },
   "brands": {
     "nav": "Brands",

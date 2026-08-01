@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type DragEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import {
   MACHINE_REQUEST_UNKNOWN_VALUE,
   TARGET_MUSCLE_GROUPS,
@@ -9,6 +10,7 @@ import {
   type AdminMachineRequestGroupDetail,
   type AdminMachineUpsertInput,
   type Brand,
+  type MachineRequestImage,
 } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
@@ -24,6 +26,9 @@ import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/admin.css';
 
 const PAGE_SIZE = 20;
+const ACCEPT_IMAGE = 'image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_EXT = new Set(['jpg', 'jpeg', 'png', 'webp']);
 const MACHINE_TYPES = [
   'selectorized',
   'plate_loaded',
@@ -75,6 +80,56 @@ function formatDate(iso: string) {
   });
 }
 
+function isAllowedRegisterImage(file: File): boolean {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  const mime = (file.type || '').toLowerCase();
+  if (mime.startsWith('image/') && ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(mime)) {
+    return true;
+  }
+  return ALLOWED_IMAGE_EXT.has(ext);
+}
+
+function requesterImages(
+  requester: AdminMachineRequestGroupDetail['requesters'][number]
+): MachineRequestImage[] {
+  if (requester.images?.length) return requester.images;
+  if (!requester.primaryImageUrl) return [];
+  return [
+    {
+      id: 'primary',
+      sortOrder: 0,
+      thumbUrl: requester.primaryImageUrl,
+      imageUrl: requester.primaryImageUrl.replace('variant=thumb', 'variant=full'),
+    },
+  ];
+}
+
+async function downloadImageFromUrl(url: string, filename: string): Promise<void> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('DOWNLOAD_FAILED');
+  const blob = await res.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  try {
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    anchor.rel = 'noopener';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+async function fileFromImageUrl(url: string, filename: string): Promise<File> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('DOWNLOAD_FAILED');
+  const blob = await res.blob();
+  const type = blob.type || 'image/jpeg';
+  return new File([blob], filename, { type });
+}
+
 export function AdminMachineRequestsPage() {
   const { t, i18n } = useTranslation('admin');
   const { t: tCommunity } = useTranslation('community');
@@ -95,10 +150,40 @@ export function AdminMachineRequestsPage() {
   const [rejectReason, setRejectReason] = useState('');
   const [showRegister, setShowRegister] = useState(false);
   const [registerForm, setRegisterForm] = useState<RegisterForm | null>(null);
+  const [registerImageFile, setRegisterImageFile] = useState<File | null>(null);
+  const [registerImagePreview, setRegisterImagePreview] = useState<string | null>(null);
+  const [registerImageBusy, setRegisterImageBusy] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
+  const registerImageInputRef = useRef<HTMLInputElement>(null);
   const [duplicateMachine, setDuplicateMachine] = useState<{
     id: string;
     code: string;
   } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (registerImagePreview?.startsWith('blob:')) {
+        URL.revokeObjectURL(registerImagePreview);
+      }
+    };
+  }, [registerImagePreview]);
+
+  const clearRegisterImage = () => {
+    setRegisterImageFile(null);
+    setRegisterImagePreview((prev) => {
+      if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+      return null;
+    });
+    if (registerImageInputRef.current) registerImageInputRef.current.value = '';
+  };
+
+  const setRegisterImage = (file: File) => {
+    setRegisterImageFile(file);
+    setRegisterImagePreview((prev) => {
+      if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  };
 
   const listParams = useMemo(
     () => ({
@@ -190,9 +275,23 @@ export function AdminMachineRequestsPage() {
         isActive: form.isActive,
         sortOrder: 0,
       };
-      return (await adminApi.createCatalogMachine(input)).data.data;
+      const machine = (await adminApi.createCatalogMachine(input)).data.data;
+      let uploadedImage = false;
+      let imageUploadFailed = false;
+      if (registerImageFile) {
+        try {
+          setUploadProgress(0);
+          await adminApi.uploadCatalogMachineImage(machine.id, registerImageFile, (percent) =>
+            setUploadProgress(percent)
+          );
+          uploadedImage = true;
+        } catch {
+          imageUploadFailed = true;
+        }
+      }
+      return { machine, uploadedImage, imageUploadFailed };
     },
-    onSuccess: async (machine) => {
+    onSuccess: async ({ machine, uploadedImage, imageUploadFailed }) => {
       const detail = detailQuery.data;
       if (detail?.requesters[0]) {
         await adminApi.updateMachineRequest(detail.requesters[0].requestId, {
@@ -206,19 +305,64 @@ export function AdminMachineRequestsPage() {
       }
       setShowRegister(false);
       setRegisterForm(null);
+      clearRegisterImage();
       setDuplicateMachine(null);
       invalidateAll();
       void detailQuery.refetch();
-      showToast(t('machineRequests.registerSuccess'), 'success');
+      if (imageUploadFailed) {
+        showToast(t('machineRequests.registerImageUploadFailed'), 'error');
+        return;
+      }
+      showToast(
+        uploadedImage
+          ? t('machineRequests.registerWithImageSuccess')
+          : t('machineRequests.registerSuccess'),
+        'success'
+      );
     },
-    onError: () => showToast(t('error'), 'error'),
+    onError: (error) => {
+      if (axios.isAxiosError(error) && !error.response) {
+        showToast(t('catalogMachines.networkError'), 'error');
+        return;
+      }
+      showToast(t('error'), 'error');
+    },
+    onSettled: () => setUploadProgress(undefined),
   });
+
+  const handleRegisterImagePick = (file: File | undefined) => {
+    if (!file) return;
+    if (!isAllowedRegisterImage(file)) {
+      showToast(t('catalogMachines.uploadUnsupported'), 'error');
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      showToast(t('catalogMachines.uploadTooLarge'), 'error');
+      return;
+    }
+    setRegisterImage(file);
+  };
+
+  const handleDownloadImage = async (image: MachineRequestImage, authorName: string) => {
+    const url = resolveMachineRequestMediaUrl(image.imageUrl || image.thumbUrl);
+    if (!url) {
+      showToast(t('machineRequests.downloadImageError'), 'error');
+      return;
+    }
+    try {
+      const safeAuthor = authorName.replace(/[^\w가-힣-]+/g, '_').slice(0, 40) || 'request';
+      await downloadImageFromUrl(url, `machine-request-${safeAuthor}-${image.id}.jpg`);
+    } catch {
+      showToast(t('machineRequests.downloadImageError'), 'error');
+    }
+  };
 
   const openDetail = (group: AdminMachineRequestGroup) => {
     setSelected({ brandName: group.brandName, machineName: group.machineName });
     setAdminNote(group.adminNote ?? '');
     setRejectReason(group.rejectReason ?? '');
     setShowRegister(false);
+    clearRegisterImage();
     setDuplicateMachine(null);
   };
 
@@ -259,13 +403,41 @@ export function AdminMachineRequestsPage() {
     setShowRegister(true);
   };
 
+  const handleUseRequestImage = async (image: MachineRequestImage) => {
+    const url = resolveMachineRequestMediaUrl(image.imageUrl || image.thumbUrl);
+    if (!url) {
+      showToast(t('machineRequests.downloadImageError'), 'error');
+      return;
+    }
+    setRegisterImageBusy(true);
+    try {
+      const file = await fileFromImageUrl(url, `request-${image.id}.jpg`);
+      if (file.size > MAX_IMAGE_BYTES) {
+        showToast(t('catalogMachines.uploadTooLarge'), 'error');
+        return;
+      }
+      if (!showRegister && detailQuery.data) {
+        openRegister(detailQuery.data);
+      }
+      setRegisterImage(file);
+      showToast(t('machineRequests.useRequestImageReady'), 'success');
+    } catch {
+      showToast(t('machineRequests.downloadImageError'), 'error');
+    } finally {
+      setRegisterImageBusy(false);
+    }
+  };
+
+  const closeDetail = () => {
+    setSelected(null);
+    setShowRegister(false);
+    clearRegisterImage();
+  };
+
   useModalAccessibility({
     open: Boolean(selected),
-    onClose: () => {
-      setSelected(null);
-      setShowRegister(false);
-    },
-                initialFocusSelector: '.admin-req-detail__close',
+    onClose: closeDetail,
+    initialFocusSelector: '.admin-req-detail__close',
   });
 
   const unknownLabel = tCommunity('requestFieldUnknownLabel');
@@ -470,10 +642,7 @@ export function AdminMachineRequestsPage() {
         <div
           className="dialog-overlay admin-req-overlay"
           role="presentation"
-          onClick={() => {
-            setSelected(null);
-            setShowRegister(false);
-          }}
+          onClick={closeDetail}
         >
           <div
             className="admin-req-detail"
@@ -492,10 +661,7 @@ export function AdminMachineRequestsPage() {
                   <button
                     type="button"
                     className="btn btn--secondary btn--sm admin-req-detail__close"
-                    onClick={() => {
-                      setSelected(null);
-                      setShowRegister(false);
-                    }}
+                    onClick={closeDetail}
                   >
                     {t('machineRequests.close')}
                   </button>
@@ -530,10 +696,7 @@ export function AdminMachineRequestsPage() {
                   <button
                     type="button"
                     className="btn btn--secondary btn--sm admin-req-detail__close"
-                    onClick={() => {
-                      setSelected(null);
-                      setShowRegister(false);
-                    }}
+                    onClick={closeDetail}
                   >
                     {t('machineRequests.close')}
                   </button>
@@ -562,13 +725,19 @@ export function AdminMachineRequestsPage() {
                     </div>
                     <ul className="admin-req-requesters">
                       {detail.requesters.map((r) => {
-                        const thumb = resolveMachineRequestMediaUrl(r.primaryImageUrl);
+                        const images = requesterImages(r);
+                        const thumb = resolveMachineRequestMediaUrl(
+                          images[0]?.thumbUrl || r.primaryImageUrl
+                        );
                         return (
                           <li key={r.requestId}>
                             {thumb ? (
                               <img src={thumb} alt="" className="admin-req-requesters__img" />
                             ) : (
-                              <span className="admin-req-requesters__img admin-req-requesters__img--empty" aria-hidden>
+                              <span
+                                className="admin-req-requesters__img admin-req-requesters__img--empty"
+                                aria-hidden
+                              >
                                 —
                               </span>
                             )}
@@ -578,6 +747,41 @@ export function AdminMachineRequestsPage() {
                                 <time dateTime={r.createdAt}>{formatDate(r.createdAt)}</time>
                               </div>
                               <p>{displayText(r.description, unknownLabel)}</p>
+                              {images.length ? (
+                                <div className="admin-req-requesters__gallery">
+                                  {images.map((image) => {
+                                    const preview = resolveMachineRequestMediaUrl(
+                                      image.thumbUrl || image.imageUrl
+                                    );
+                                    return (
+                                      <div key={image.id} className="admin-req-requesters__shot">
+                                        {preview ? (
+                                          <img src={preview} alt="" />
+                                        ) : (
+                                          <span aria-hidden>—</span>
+                                        )}
+                                        <div className="admin-req-requesters__shot-actions">
+                                          <button
+                                            type="button"
+                                            className="btn btn--secondary btn--sm"
+                                            onClick={() => void handleDownloadImage(image, r.authorName)}
+                                          >
+                                            {t('machineRequests.downloadImage')}
+                                          </button>
+                                          <button
+                                            type="button"
+                                            className="btn btn--secondary btn--sm"
+                                            disabled={registerImageBusy || registerMutation.isPending}
+                                            onClick={() => void handleUseRequestImage(image)}
+                                          >
+                                            {t('machineRequests.useRequestImage')}
+                                          </button>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ) : null}
                             </div>
                           </li>
                         );
@@ -745,12 +949,85 @@ export function AdminMachineRequestsPage() {
                           <span>{t('machineRequests.active')}</span>
                         </label>
                       </div>
+
+                      <div className="admin-req-register__image">
+                        <div className="admin-req-register__image-head">
+                          <h4>{t('machineRequests.registerImage')}</h4>
+                          <p>{t('machineRequests.registerImageHint')}</p>
+                        </div>
+                        <div
+                          className={`admin-catalog-image__drop${
+                            registerMutation.isPending ? ' is-busy' : ''
+                          }`}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e: DragEvent) => {
+                            e.preventDefault();
+                            const file = e.dataTransfer.files?.[0];
+                            if (file && !registerMutation.isPending) {
+                              handleRegisterImagePick(file);
+                            }
+                          }}
+                        >
+                          {registerImagePreview ? (
+                            <img
+                              key={registerImagePreview}
+                              src={registerImagePreview}
+                              alt=""
+                              className="admin-catalog-image__preview"
+                            />
+                          ) : (
+                            <span className="admin-catalog-image__placeholder">
+                              {t('machineRequests.registerImageDrop')}
+                            </span>
+                          )}
+                          {typeof uploadProgress === 'number' ? (
+                            <div className="admin-catalog-image__progress">
+                              {t('catalogMachines.uploading')} {uploadProgress}%
+                            </div>
+                          ) : null}
+                        </div>
+                        <div className="admin-catalog-image__actions">
+                          <button
+                            type="button"
+                            className="btn btn--secondary btn--sm"
+                            disabled={registerMutation.isPending || registerImageBusy}
+                            onClick={() => registerImageInputRef.current?.click()}
+                          >
+                            {registerImagePreview
+                              ? t('machineRequests.registerImageChange')
+                              : t('machineRequests.registerImagePick')}
+                          </button>
+                          {registerImagePreview ? (
+                            <button
+                              type="button"
+                              className="btn btn--secondary btn--sm"
+                              disabled={registerMutation.isPending}
+                              onClick={clearRegisterImage}
+                            >
+                              {t('machineRequests.registerImageClear')}
+                            </button>
+                          ) : null}
+                          <input
+                            ref={registerImageInputRef}
+                            type="file"
+                            accept={ACCEPT_IMAGE}
+                            hidden
+                            tabIndex={-1}
+                            onChange={(e) => {
+                              handleRegisterImagePick(e.target.files?.[0]);
+                              e.target.value = '';
+                            }}
+                          />
+                        </div>
+                      </div>
+
                       <div className="admin-req-detail__actions">
                         <button
                           type="button"
                           className="btn btn--primary"
                           disabled={
                             registerMutation.isPending ||
+                            registerImageBusy ||
                             !registerForm.brandId ||
                             !registerForm.code.trim() ||
                             !registerForm.nameKo.trim()
@@ -762,7 +1039,10 @@ export function AdminMachineRequestsPage() {
                         <button
                           type="button"
                           className="btn btn--secondary"
-                          onClick={() => setShowRegister(false)}
+                          onClick={() => {
+                            setShowRegister(false);
+                            clearRegisterImage();
+                          }}
                         >
                           {t('machineRequests.cancel')}
                         </button>
