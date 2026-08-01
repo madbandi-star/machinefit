@@ -53,7 +53,8 @@ export function MyPage() {
   const isOwner = hasMinRole(roleCode, Role.OWNER);
   const isAdmin = hasMinRole(roleCode, Role.ADMIN);
   const isTrainer = hasMinRole(roleCode, Role.TRAINER);
-  const isMember = hasMinRole(roleCode, Role.MEMBER);
+  /** Hidden for plain `member`; visible for premium_member and above. */
+  const showAboveMember = hasMinRole(roleCode, Role.PREMIUM_MEMBER);
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -189,9 +190,21 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
-          <ListNavLink to={ROUTES.LIFTED_WEIGHT} label={t('myPage.liftedWeight')} icon="weightStack" />
-          <ListNavLink to={ROUTES.ACHIEVEMENTS} label={t('myPage.achievements')} icon="trophy" />
-          <WorkoutReportSection />
+          {showAboveMember ? (
+            <>
+              <ListNavLink
+                to={ROUTES.LIFTED_WEIGHT}
+                label={t('myPage.liftedWeight')}
+                icon="weightStack"
+              />
+              <ListNavLink
+                to={ROUTES.ACHIEVEMENTS}
+                label={t('myPage.achievements')}
+                icon="trophy"
+              />
+              <WorkoutReportSection />
+            </>
+          ) : null}
         </nav>
       </section>
 
@@ -199,17 +212,19 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
-          <ListNavLink
-            to={ROUTES.MY_GYMS}
-            label={t(
-              isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
-            )}
-            icon="building"
-          />
-          {isMember ? (
+          {showAboveMember ? (
+            <ListNavLink
+              to={ROUTES.MY_GYMS}
+              label={t(
+                isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
+              )}
+              icon="building"
+            />
+          ) : null}
+          {showAboveMember ? (
             <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsManage')} icon="users" />
           ) : null}
-          {isMember ? (
+          {showAboveMember ? (
             <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} icon="bell" />
           ) : null}
         </nav>
@@ -229,46 +244,56 @@ export function MyPage() {
             />
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} icon="message" />
-          <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+          {showAboveMember ? (
+            <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+          ) : null}
         </nav>
       </section>
 
-      <section
-        className={`my-page-section my-page-section--collapsible${
-          labExpanded ? ' my-page-section--expanded' : ''
-        }`}
-      >
-        <button
-          type="button"
-          className="my-page-section__toggle"
-          onClick={() => setLabExpanded((value) => !value)}
-          aria-expanded={labExpanded}
-          aria-controls="my-page-lab-body"
+      {showAboveMember ? (
+        <section
+          className={`my-page-section my-page-section--collapsible${
+            labExpanded ? ' my-page-section--expanded' : ''
+          }`}
         >
-          <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
-          <Icon
-            name="chevronDown"
-            size={18}
-            className={`my-page-section__chevron${labExpanded ? ' my-page-section__chevron--open' : ''}`}
-            aria-hidden
-          />
-          <span className="visually-hidden">{labExpanded ? t('collapse') : t('expand')}</span>
-        </button>
-        {labExpanded ? (
-          <nav id="my-page-lab-body" className="list-nav" aria-label={t('myPage.lab')}>
-            <ListNavLink to={ROUTES.LIVE_DASHBOARD} label={t('myPage.liveDashboard')} icon="monitor" />
-            <ListNavLink to={ROUTES.GROWTH_TIMELINE} label={t('myPage.growthTimeline')} icon="calendar" />
-            <ListNavLink
-              to={ROUTES.GROWTH_ANALYSIS}
-              label={t('myPage.growthAnalysis')}
-              icon="growthAnalysis"
+          <button
+            type="button"
+            className="my-page-section__toggle"
+            onClick={() => setLabExpanded((value) => !value)}
+            aria-expanded={labExpanded}
+            aria-controls="my-page-lab-body"
+          >
+            <h3 className="my-page-section__title">{t('myPage.lab')}</h3>
+            <Icon
+              name="chevronDown"
+              size={18}
+              className={`my-page-section__chevron${labExpanded ? ' my-page-section__chevron--open' : ''}`}
+              aria-hidden
             />
-            {isMember ? (
+            <span className="visually-hidden">{labExpanded ? t('collapse') : t('expand')}</span>
+          </button>
+          {labExpanded ? (
+            <nav id="my-page-lab-body" className="list-nav" aria-label={t('myPage.lab')}>
+              <ListNavLink
+                to={ROUTES.LIVE_DASHBOARD}
+                label={t('myPage.liveDashboard')}
+                icon="monitor"
+              />
+              <ListNavLink
+                to={ROUTES.GROWTH_TIMELINE}
+                label={t('myPage.growthTimeline')}
+                icon="calendar"
+              />
+              <ListNavLink
+                to={ROUTES.GROWTH_ANALYSIS}
+                label={t('myPage.growthAnalysis')}
+                icon="growthAnalysis"
+              />
               <ListNavLink to={ROUTES.ONLINE_PT} label={t('myPage.onlinePt')} icon="user" />
-            ) : null}
-          </nav>
-        ) : null}
-      </section>
+            </nav>
+          ) : null}
+        </section>
+      ) : null}
 
       {isTrainer ? (
         <section className="my-page-section">
