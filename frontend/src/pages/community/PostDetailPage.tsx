@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { buildCommentThreads, resolveReplyRootId } from '@/utils/commentThreads';
 import '@/styles/components.css';
 import '@/styles/community.css';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -37,6 +38,9 @@ export function PostDetailPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showToast = useUIStore((s) => s.showToast);
   const [comment, setComment] = useState('');
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const commentFormRef = useRef<HTMLFormElement>(null);
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [...QUERY_KEYS.posts, postId],
@@ -54,9 +58,14 @@ export function PostDetailPage() {
   });
 
   const commentMutation = useMutation({
-    mutationFn: () => communityApi.createComment(postId!, { content: comment }),
+    mutationFn: () =>
+      communityApi.createComment(postId!, {
+        content: comment.trim(),
+        parentId: replyTo ?? undefined,
+      }),
     onSuccess: () => {
       setComment('');
+      setReplyTo(null);
       queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.posts, postId] });
     },
     onError: () => showToast(t('errorGeneric'), 'error'),
@@ -78,24 +87,44 @@ export function PostDetailPage() {
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
-  const handleLike = () => {
+  const commentThreads = useMemo(
+    () => buildCommentThreads(data?.comments ?? []),
+    [data?.comments]
+  );
+
+  const replyTarget = useMemo(() => {
+    if (!replyTo || !data?.comments) return null;
+    return data.comments.find((c) => c.id === replyTo) ?? null;
+  }, [data?.comments, replyTo]);
+
+  const requireAuth = (action: () => void) => {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
       navigate(ROUTES.LOGIN);
       return;
     }
-    likeMutation.mutate();
+    action();
+  };
+
+  const startReply = (commentId: string) => {
+    requireAuth(() => {
+      const rootId = resolveReplyRootId(commentId, data?.comments ?? []);
+      setReplyTo(rootId);
+      window.requestAnimationFrame(() => {
+        commentFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        commentInputRef.current?.focus();
+      });
+    });
+  };
+
+  const handleLike = () => {
+    requireAuth(() => likeMutation.mutate());
   };
 
   const handleComment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isAuthenticated) {
-      showToast(t('loginRequired'), 'error');
-      navigate(ROUTES.LOGIN);
-      return;
-    }
     if (!comment.trim()) return;
-    commentMutation.mutate();
+    requireAuth(() => commentMutation.mutate());
   };
 
   const handleDelete = () => {
@@ -203,27 +232,72 @@ export function PostDetailPage() {
             <span className="post-detail__comments-count">{comments.length}</span>
           </div>
 
-          {comments.length ? (
+          {commentThreads.length ? (
             <ul className="comment-list">
-              {comments.map((c) => (
-                <li key={c.id} className="comment-item">
-                  <div className="comment-item__top">
-                    <span className="comment-item__author">{c.authorName}</span>
-                    <time className="comment-item__date" dateTime={c.createdAt}>
-                      {formatDateTime(c.createdAt)}
-                    </time>
+              {commentThreads.map(({ root, replies }) => (
+                <li key={root.id} className="comment-thread">
+                  <div className="comment-item">
+                    <div className="comment-item__top">
+                      <span className="comment-item__author">{root.authorName}</span>
+                      <time className="comment-item__date" dateTime={root.createdAt}>
+                        {formatDateTime(root.createdAt)}
+                      </time>
+                    </div>
+                    <p className="comment-item__body">{root.content}</p>
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm comment-item__reply"
+                      onClick={() => startReply(root.id)}
+                    >
+                      {t('photoReply')}
+                    </button>
                   </div>
-                  <p className="comment-item__body">{c.content}</p>
+                  {replies.length ? (
+                    <ul className="comment-thread__replies">
+                      {replies.map((c) => (
+                        <li key={c.id} className="comment-item comment-item--reply">
+                          <div className="comment-item__top">
+                            <span className="comment-item__author">{c.authorName}</span>
+                            <time className="comment-item__date" dateTime={c.createdAt}>
+                              {formatDateTime(c.createdAt)}
+                            </time>
+                          </div>
+                          <p className="comment-item__body">{c.content}</p>
+                          <button
+                            type="button"
+                            className="btn btn--secondary btn--sm comment-item__reply"
+                            onClick={() => startReply(c.id)}
+                          >
+                            {t('photoReply')}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </li>
               ))}
             </ul>
           ) : null}
 
-          <form onSubmit={handleComment} className="post-detail__comment-form">
-            <label className="post-detail__comment-label" htmlFor="comment">
-              {t('writeComment')}
-            </label>
+          <form ref={commentFormRef} onSubmit={handleComment} className="post-detail__comment-form">
+            {replyTarget ? (
+              <div className="post-detail__replying">
+                <span>{t('replyingTo', { name: replyTarget.authorName || '—' })}</span>
+                <button
+                  type="button"
+                  className="btn btn--secondary btn--sm"
+                  onClick={() => setReplyTo(null)}
+                >
+                  {t('cancel')}
+                </button>
+              </div>
+            ) : (
+              <label className="post-detail__comment-label" htmlFor="comment">
+                {t('writeComment')}
+              </label>
+            )}
             <textarea
+              ref={commentInputRef}
               id="comment"
               className="input post-detail__comment-input"
               rows={2}
@@ -234,9 +308,9 @@ export function PostDetailPage() {
             <button
               type="submit"
               className="btn btn--primary btn--sm post-detail__comment-submit"
-              disabled={commentMutation.isPending}
+              disabled={commentMutation.isPending || !comment.trim()}
             >
-              {t('comment')}
+              {replyTarget ? t('photoReply') : t('comment')}
             </button>
           </form>
         </section>

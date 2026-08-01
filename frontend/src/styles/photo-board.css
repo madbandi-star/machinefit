@@ -618,7 +618,20 @@
 
 .photo-detail__comment-list {
   display: grid;
+  gap: 0.45rem;
+}
+
+.photo-comment-thread {
+  display: grid;
   gap: 0.3rem;
+}
+
+.photo-comment-thread__replies {
+  display: grid;
+  gap: 0.3rem;
+  margin-left: 0.75rem;
+  padding-left: 0.55rem;
+  border-left: 2px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
 }
 
 .photo-comment {
@@ -664,7 +677,8 @@
 }
 
 .photo-comment--reply {
-  margin-left: 0.75rem;
+  margin-left: 0;
+  background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
 }
 
 .photo-write__previews {
