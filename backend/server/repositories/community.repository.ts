@@ -10,7 +10,13 @@ import {
   type MachineRequestListQuery,
   type RoleCode,
 } from '@machinefit/shared';
-import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
+import type {
+  CreatePostInput,
+  CreateCommentInput,
+  CreateMachineRequestInput,
+  UpdateMachineRequestInput,
+  MachineRequestSimilarGroup,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
   mockPosts,
@@ -32,6 +38,8 @@ function machineRequestSortSql(sort: MachineRequestListQuery['sort']): string {
   switch (sort) {
     case 'popular':
       return 'mr.like_count DESC, mr.created_at DESC';
+    case 'votes':
+      return 'COALESCE(mr.vote_count, 0) DESC, mr.created_at DESC';
     case 'views':
       return 'mr.view_count DESC, mr.created_at DESC';
     case 'comments':
@@ -47,6 +55,8 @@ function mapPublicMachineRequest(
   extras?: {
     images?: MachineRequestImage[];
     likedByMe?: boolean;
+    votedByMe?: boolean;
+    isMine?: boolean;
     imageCount?: number;
   }
 ): MachineRequest {
@@ -54,10 +64,11 @@ function mapPublicMachineRequest(
   const primaryImageUrl = primaryImageId
     ? machineRequestImageUrl(primaryImageId, 'thumb')
     : extras?.images?.[0]?.thumbUrl;
+  const ownerId = (r.user_id as string | undefined) ?? '';
   return {
     id: r.id as string,
-    // Public board: hide internal user ids; surface status feedback (note/reject reason).
-    userId: '',
+    // Public board: hide others' user ids; expose own id only via isMine.
+    userId: extras?.isMine ? ownerId : '',
     brandName: r.brand_name as string,
     machineName: r.machine_name as string,
     description: r.description as string,
@@ -65,6 +76,7 @@ function mapPublicMachineRequest(
     adminNote: (r.admin_note as string | null | undefined) ?? null,
     rejectReason: (r.reject_reason as string | null | undefined) ?? null,
     linkedMachineId: (r.linked_machine_id as string | null | undefined) ?? undefined,
+    linkedMachineCode: (r.linked_machine_code as string | null | undefined) ?? null,
     authorName: (r.author_name as string | null | undefined) ?? undefined,
     gymChoiceMode: ((r.gym_choice_mode as string | null | undefined) ??
       'unknown') as MachineRequest['gymChoiceMode'],
@@ -74,7 +86,12 @@ function mapPublicMachineRequest(
     likeCount: Number(r.like_count ?? 0),
     commentCount: Number(r.comment_count ?? 0),
     viewCount: Number(r.view_count ?? 0),
+    voteCount: Number(r.vote_count ?? 0),
     likedByMe: extras?.likedByMe ?? Boolean(r.liked_by_me),
+    votedByMe: extras?.votedByMe ?? Boolean(r.voted_by_me),
+    isMine: extras?.isMine ?? Boolean(r.is_mine),
+    isHidden: Boolean(r.is_hidden),
+    priority: ((r.priority as string | null | undefined) ?? 'normal') as MachineRequest['priority'],
     imageCount: extras?.imageCount ?? Number(r.image_count ?? extras?.images?.length ?? 0),
     createdAt: r.created_at as string,
     updatedAt: r.updated_at as string,
@@ -485,6 +502,12 @@ export const communityRepository = {
       if (!viewerId) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
       conditions.push(`mr.user_id = $${idx++}`);
       params.push(viewerId);
+    } else if (!query.includeClosed) {
+      // Public feed: hide rejected + admin-hidden posts.
+      conditions.push(`COALESCE(mr.is_hidden, FALSE) = FALSE`);
+      conditions.push(`mr.status NOT IN ('rejected')`);
+    } else {
+      conditions.push(`COALESCE(mr.is_hidden, FALSE) = FALSE`);
     }
     if (query.likedByMe) {
       if (!viewerId) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
@@ -516,12 +539,17 @@ export const communityRepository = {
     );
     const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-    const likedSelect = viewerId
+    const viewerSelects = viewerId
       ? `, EXISTS (
            SELECT 1 FROM machine_request_likes l
            WHERE l.request_id = mr.id AND l.user_id = $${idx}
-         ) AS liked_by_me`
-      : ', FALSE AS liked_by_me';
+         ) AS liked_by_me,
+         EXISTS (
+           SELECT 1 FROM machine_request_votes v
+           WHERE v.request_id = mr.id AND v.user_id = $${idx}
+         ) AS voted_by_me,
+         (mr.user_id = $${idx}) AS is_mine`
+      : ', FALSE AS liked_by_me, FALSE AS voted_by_me, FALSE AS is_mine';
     const listParams = viewerId
       ? [...params, viewerId, limit, (page - 1) * limit]
       : [...params, limit, (page - 1) * limit];
@@ -529,7 +557,7 @@ export const communityRepository = {
     const offsetIdx = listParams.length;
 
     const result = await pool.query(
-      `SELECT mr.*, u.display_name AS author_name,
+      `SELECT mr.*, u.display_name AS author_name, m.code AS linked_machine_code,
               (
                 SELECT i.id
                 FROM machine_request_images i
@@ -542,15 +570,23 @@ export const communityRepository = {
                 FROM machine_request_images i
                 WHERE i.request_id = mr.id
               ) AS image_count
-              ${likedSelect}
+              ${viewerSelects}
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
+       LEFT JOIN machines m ON m.id = mr.linked_machine_id
        ${where}
        ORDER BY ${machineRequestSortSql(query.sort)}
        LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
       listParams
     );
-    const items = result.rows.map((r) => mapPublicMachineRequest(r));
+    const items = result.rows.map((r) =>
+      mapPublicMachineRequest(r, {
+        likedByMe: Boolean(r.liked_by_me),
+        votedByMe: Boolean(r.voted_by_me),
+        isMine: Boolean(r.is_mine),
+        imageCount: Number(r.image_count ?? 0),
+      })
+    );
     return { items, meta: buildPaginationMeta(page, limit, total) };
   },
 
@@ -597,19 +633,29 @@ export const communityRepository = {
     }
 
     const requestResult = await pool.query(
-      `SELECT mr.*, u.display_name AS author_name,
+      `SELECT mr.*, u.display_name AS author_name, m.code AS linked_machine_code,
               ${
                 viewerId
                   ? `EXISTS (
                        SELECT 1 FROM machine_request_likes l
                        WHERE l.request_id = mr.id AND l.user_id = $2
-                     ) AS liked_by_me`
-                  : 'FALSE AS liked_by_me'
+                     ) AS liked_by_me,
+                     EXISTS (
+                       SELECT 1 FROM machine_request_votes v
+                       WHERE v.request_id = mr.id AND v.user_id = $2
+                     ) AS voted_by_me,
+                     (mr.user_id = $2) AS is_mine`
+                  : 'FALSE AS liked_by_me, FALSE AS voted_by_me, FALSE AS is_mine'
               }
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
-       WHERE mr.id = $1`,
-      viewerId ? [requestId, viewerId] : [requestId]
+       LEFT JOIN machines m ON m.id = mr.linked_machine_id
+       WHERE mr.id = $1
+         AND (
+           COALESCE(mr.is_hidden, FALSE) = FALSE
+           OR ($2::uuid IS NOT NULL AND mr.user_id = $2)
+         )`,
+      viewerId ? [requestId, viewerId] : [requestId, null]
     );
     const row = requestResult.rows[0];
     if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
@@ -660,6 +706,8 @@ export const communityRepository = {
       request: mapPublicMachineRequest(row, {
         images,
         likedByMe: Boolean(row.liked_by_me),
+        votedByMe: Boolean(row.voted_by_me),
+        isMine: Boolean(row.is_mine),
         imageCount: images.length,
       }),
       comments,
@@ -967,6 +1015,233 @@ export const communityRepository = {
     } finally {
       client.release();
     }
+  },
+
+  async toggleMachineRequestVote(requestId: string, userId: string) {
+    const pool = getPool();
+    if (!pool) {
+      const req = mockMachineRequests.find((r) => r.id === requestId);
+      if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      const key = `vote:${userId}:${requestId}`;
+      const likedKey = machineRequestLikeKey(userId, requestId);
+      // reuse likes set for mock votes with prefix in memory via like set of vote keys
+      if (mockMachineRequestLikes.has(key)) {
+        mockMachineRequestLikes.delete(key);
+        req.voteCount = Math.max(0, (req.voteCount ?? 0) - 1);
+        return { voted: false, voteCount: req.voteCount ?? 0 };
+      }
+      mockMachineRequestLikes.add(key);
+      void likedKey;
+      req.voteCount = (req.voteCount ?? 0) + 1;
+      return { voted: true, voteCount: req.voteCount ?? 0 };
+    }
+
+    const existing = await pool.query(`SELECT id FROM machine_requests WHERE id = $1`, [requestId]);
+    if (!existing.rows[0]) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+
+    const voted = await pool.query(
+      `SELECT 1 FROM machine_request_votes WHERE user_id = $1 AND request_id = $2`,
+      [userId, requestId]
+    );
+    if (voted.rowCount) {
+      await pool.query(`DELETE FROM machine_request_votes WHERE user_id = $1 AND request_id = $2`, [
+        userId,
+        requestId,
+      ]);
+      await pool.query(
+        `UPDATE machine_requests SET vote_count = GREATEST(COALESCE(vote_count, 0) - 1, 0) WHERE id = $1`,
+        [requestId]
+      );
+    } else {
+      await pool.query(`INSERT INTO machine_request_votes (user_id, request_id) VALUES ($1, $2)`, [
+        userId,
+        requestId,
+      ]);
+      await pool.query(
+        `UPDATE machine_requests SET vote_count = COALESCE(vote_count, 0) + 1 WHERE id = $1`,
+        [requestId]
+      );
+    }
+    const count = await pool.query<{ vote_count: number }>(
+      `SELECT COALESCE(vote_count, 0) AS vote_count FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    return { voted: !voted.rowCount, voteCount: count.rows[0]?.vote_count ?? 0 };
+  },
+
+  async updateMachineRequest(
+    requestId: string,
+    userId: string,
+    role: RoleCode,
+    input: UpdateMachineRequestInput
+  ): Promise<MachineRequest> {
+    const pool = getPool();
+    if (!pool) {
+      const req = mockMachineRequests.find((r) => r.id === requestId);
+      if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      if (req.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this request');
+      }
+      if (input.brandName) req.brandName = input.brandName;
+      if (input.machineName) req.machineName = input.machineName;
+      if (input.description) req.description = input.description;
+      if (input.gymChoiceMode) req.gymChoiceMode = input.gymChoiceMode;
+      if (input.gymName !== undefined) req.gymName = input.gymName;
+      req.updatedAt = new Date().toISOString();
+      return { ...req, isMine: true };
+    }
+
+    const existing = await pool.query<{ user_id: string; status: string }>(
+      `SELECT user_id, status FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    const row = existing.rows[0];
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+    if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this request');
+    }
+    if (row.status === 'added' && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(400, 'NOT_EDITABLE', 'Registered requests cannot be edited');
+    }
+
+    const gymName =
+      input.gymChoiceMode === 'unknown'
+        ? null
+        : input.gymName !== undefined
+          ? input.gymName?.trim().slice(0, 50) || null
+          : undefined;
+
+    await pool.query(
+      `UPDATE machine_requests SET
+         brand_name = COALESCE($2, brand_name),
+         machine_name = COALESCE($3, machine_name),
+         description = COALESCE($4, description),
+         gym_choice_mode = COALESCE($5, gym_choice_mode),
+         gym_name = CASE WHEN $6::boolean THEN $7 ELSE gym_name END,
+         updated_at = NOW()
+       WHERE id = $1`,
+      [
+        requestId,
+        input.brandName ?? null,
+        input.machineName ?? null,
+        input.description ?? null,
+        input.gymChoiceMode ?? null,
+        gymName !== undefined,
+        gymName ?? null,
+      ]
+    );
+    const detail = await this.getMachineRequest(requestId, userId);
+    return detail.request;
+  },
+
+  async deleteMachineRequest(requestId: string, userId: string, role: RoleCode): Promise<void> {
+    const pool = getPool();
+    if (!pool) {
+      const index = mockMachineRequests.findIndex((r) => r.id === requestId);
+      if (index < 0) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      const req = mockMachineRequests[index];
+      if (req.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this request');
+      }
+      mockMachineRequests.splice(index, 1);
+      return;
+    }
+
+    const existing = await pool.query<{ user_id: string }>(
+      `SELECT user_id FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    const row = existing.rows[0];
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+    if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this request');
+    }
+    // Soft-hide for moderation consistency; authors get hard delete of their row.
+    if (hasMinRole(role, Role.ADMIN) && row.user_id !== userId) {
+      await pool.query(`UPDATE machine_requests SET is_hidden = TRUE, updated_at = NOW() WHERE id = $1`, [
+        requestId,
+      ]);
+      return;
+    }
+    await pool.query(`DELETE FROM machine_requests WHERE id = $1`, [requestId]);
+  },
+
+  async listSimilarMachineRequestGroups(
+    brandName: string,
+    machineName: string,
+    limit = 5
+  ): Promise<MachineRequestSimilarGroup[]> {
+    const pool = getPool();
+    if (!pool) {
+      const map = new Map<string, MachineRequestSimilarGroup>();
+      for (const req of mockMachineRequests) {
+        const key = `${req.brandName}|${req.machineName}`;
+        const cur = map.get(key);
+        if (!cur) {
+          map.set(key, {
+            brandName: req.brandName,
+            machineName: req.machineName,
+            requestCount: 1,
+            voteCount: req.voteCount ?? 0,
+            sampleRequestId: req.id,
+            primaryImageUrl: req.primaryImageUrl,
+          });
+        } else {
+          cur.requestCount += 1;
+          cur.voteCount += req.voteCount ?? 0;
+        }
+      }
+      return [...map.values()]
+        .filter(
+          (g) =>
+            g.brandName.toLowerCase().includes(brandName.trim().toLowerCase().slice(0, 3)) ||
+            g.machineName.toLowerCase().includes(machineName.trim().toLowerCase().slice(0, 3))
+        )
+        .slice(0, limit);
+    }
+
+    const result = await pool.query<{
+      brand_name: string;
+      machine_name: string;
+      request_count: string;
+      vote_count: string;
+      sample_id: string;
+      primary_image_id: string | null;
+    }>(
+      `SELECT
+         (array_agg(mr.brand_name ORDER BY mr.created_at DESC))[1] AS brand_name,
+         (array_agg(mr.machine_name ORDER BY mr.created_at DESC))[1] AS machine_name,
+         COUNT(*)::text AS request_count,
+         COALESCE(SUM(mr.vote_count), 0)::text AS vote_count,
+         (array_agg(mr.id ORDER BY mr.created_at DESC))[1] AS sample_id,
+         (
+           SELECT i.id FROM machine_request_images i
+           WHERE i.request_id = (array_agg(mr.id ORDER BY mr.created_at DESC))[1]
+           ORDER BY i.sort_order ASC LIMIT 1
+         ) AS primary_image_id
+       FROM machine_requests mr
+       WHERE COALESCE(mr.is_hidden, FALSE) = FALSE
+         AND mr.status NOT IN ('rejected')
+         AND (
+           lower(trim(mr.brand_name)) = lower(trim($1))
+           OR lower(trim(mr.machine_name)) = lower(trim($2))
+           OR lower(trim(mr.machine_name)) LIKE '%' || lower(trim($2)) || '%'
+         )
+       GROUP BY lower(trim(mr.brand_name)), lower(trim(mr.machine_name))
+       ORDER BY COUNT(*) DESC, COALESCE(SUM(mr.vote_count), 0) DESC
+       LIMIT $3`,
+      [brandName, machineName, limit]
+    );
+    return result.rows.map((r) => ({
+      brandName: r.brand_name,
+      machineName: r.machine_name,
+      requestCount: Number(r.request_count),
+      voteCount: Number(r.vote_count),
+      sampleRequestId: r.sample_id,
+      primaryImageUrl: r.primary_image_id
+        ? machineRequestImageUrl(r.primary_image_id, 'thumb')
+        : undefined,
+    }));
   },
 
   async getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {

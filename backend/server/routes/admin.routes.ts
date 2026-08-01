@@ -101,6 +101,7 @@ adminRouter.patch('/posts/:id', adminController.moderatePost);
 adminRouter.get('/machine-requests', adminController.listMachineRequests);
 adminRouter.get('/machine-request-groups/stats', adminController.getMachineRequestGroupStats);
 adminRouter.get('/machine-request-groups/popular', adminController.listPopularMachineRequestGroups);
+adminRouter.post('/machine-request-groups/merge', adminController.mergeMachineRequestGroups);
 adminRouter.get('/machine-request-groups/detail', adminController.getMachineRequestGroupDetail);
 adminRouter.get('/machine-request-groups', adminController.listMachineRequestGroups);
 adminRouter.patch('/machine-requests/:id', adminController.updateMachineRequest);

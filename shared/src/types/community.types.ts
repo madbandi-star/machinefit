@@ -51,6 +51,8 @@ export interface MachineRequestImage {
 
 export type MachineRequestGymChoiceMode = 'profile' | 'custom' | 'unknown';
 
+export type MachineRequestPriority = 'low' | 'normal' | 'high';
+
 export interface MachineRequestComment {
   id: string;
   requestId: string;
@@ -73,6 +75,7 @@ export interface MachineRequest {
   adminNote?: string | null;
   rejectReason?: string | null;
   linkedMachineId?: string;
+  linkedMachineCode?: string | null;
   authorName?: string;
   commercialUseConsent?: boolean;
   gymChoiceMode?: MachineRequestGymChoiceMode;
@@ -82,7 +85,12 @@ export interface MachineRequest {
   likeCount?: number;
   commentCount?: number;
   viewCount?: number;
+  voteCount?: number;
   likedByMe?: boolean;
+  votedByMe?: boolean;
+  isMine?: boolean;
+  isHidden?: boolean;
+  priority?: MachineRequestPriority;
   imageCount?: number;
   createdAt: string;
   updatedAt: string;
@@ -91,4 +99,13 @@ export interface MachineRequest {
 export interface MachineRequestDetail {
   request: MachineRequest;
   comments: MachineRequestComment[];
+}
+
+export interface MachineRequestSimilarGroup {
+  brandName: string;
+  machineName: string;
+  requestCount: number;
+  voteCount: number;
+  sampleRequestId: string;
+  primaryImageUrl?: string;
 }

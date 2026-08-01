@@ -49,6 +49,9 @@ export const updateMachineRequestAdminSchema = z.object({
   adminNote: z.string().max(1000).optional().nullable(),
   rejectReason: z.string().max(1000).optional().nullable(),
   linkedMachineId: z.string().uuid().optional().nullable(),
+  isHidden: z.boolean().optional(),
+  priority: z.enum(['low', 'normal', 'high']).optional(),
+  assigneeUserId: z.string().uuid().optional().nullable(),
   /** Apply status/note/link to all requests in the same brand+machine group */
   applyToGroup: z.boolean().optional(),
   groupBrandName: z.string().max(100).optional(),
@@ -58,6 +61,13 @@ export const updateMachineRequestAdminSchema = z.object({
 export const adminMachineRequestGroupQuerySchema = z.object({
   brandName: z.string().min(1).max(100),
   machineName: z.string().min(1).max(200),
+});
+
+export const mergeMachineRequestGroupsSchema = z.object({
+  fromBrandName: z.string().trim().min(1).max(100),
+  fromMachineName: z.string().trim().min(1).max(200),
+  toBrandName: z.string().trim().min(1).max(100),
+  toMachineName: z.string().trim().min(1).max(200),
 });
 
 export type AdminMachineRequestListQuery = z.infer<typeof adminMachineRequestListQuerySchema>;
@@ -75,5 +85,6 @@ export type UpdateUserAdminInput = z.infer<typeof updateUserAdminSchema>;
 export type ModeratePostInput = z.infer<typeof moderatePostSchema>;
 export type VerifyGymInput = z.infer<typeof verifyGymSchema>;
 export type UpdateMachineRequestAdminInput = z.infer<typeof updateMachineRequestAdminSchema>;
+export type MergeMachineRequestGroupsInput = z.infer<typeof mergeMachineRequestGroupsSchema>;
 export type ResolveReportInput = z.infer<typeof resolveReportSchema>;
 export type ToggleActiveInput = z.infer<typeof toggleActiveSchema>;

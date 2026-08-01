@@ -4,6 +4,7 @@ import {
   moderatePostSchema,
   verifyGymSchema,
   updateMachineRequestAdminSchema,
+  mergeMachineRequestGroupsSchema,
   adminMachineRequestListQuerySchema,
   adminMachineRequestGroupQuerySchema,
   resolveReportSchema,
@@ -111,6 +112,17 @@ export async function getMachineRequestGroupDetail(req: Request, res: Response):
     query.machineName
   );
   res.json({ success: true, data: detail });
+}
+
+export async function mergeMachineRequestGroups(req: Request, res: Response): Promise<void> {
+  const input = mergeMachineRequestGroupsSchema.parse(req.body);
+  const result = await machineRequestAdminService.mergeGroups(
+    input.fromBrandName,
+    input.fromMachineName,
+    input.toBrandName,
+    input.toMachineName
+  );
+  res.json({ success: true, data: result });
 }
 
 export async function updateMachineRequest(req: Request, res: Response): Promise<void> {

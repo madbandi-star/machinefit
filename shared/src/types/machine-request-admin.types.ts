@@ -1,7 +1,16 @@
 import type { RequestStatus } from './api.types.js';
-import type { MachineRequestGymChoiceMode, MachineRequestImage } from './community.types.js';
+import type {
+  MachineRequestGymChoiceMode,
+  MachineRequestImage,
+  MachineRequestPriority,
+} from './community.types.js';
 
 export type AdminMachineRequestStatus = RequestStatus;
+
+export interface AdminMachineRequestGymStat {
+  gymName: string;
+  requestCount: number;
+}
 
 export interface AdminMachineRequestStats {
   total: number;
@@ -11,6 +20,7 @@ export interface AdminMachineRequestStats {
   rejected: number;
   thisMonthRequests: number;
   thisMonthAdded: number;
+  topGyms?: AdminMachineRequestGymStat[];
 }
 
 export interface AdminMachineRequestPopularItem {
@@ -18,6 +28,15 @@ export interface AdminMachineRequestPopularItem {
   brandName: string;
   machineName: string;
   requestCount: number;
+  voteCount?: number;
+}
+
+export interface AdminMachineRequestCommentPreview {
+  id: string;
+  requestId: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
 }
 
 export interface AdminMachineRequestRequester {
@@ -31,8 +50,14 @@ export interface AdminMachineRequestRequester {
   likeCount?: number;
   commentCount?: number;
   viewCount?: number;
+  voteCount?: number;
+  priority?: MachineRequestPriority;
+  assigneeUserId?: string | null;
+  assigneeName?: string | null;
+  isHidden?: boolean;
   primaryImageUrl?: string;
   images?: MachineRequestImage[];
+  recentComments?: AdminMachineRequestCommentPreview[];
   createdAt: string;
   status: AdminMachineRequestStatus;
 }
@@ -52,10 +77,35 @@ export interface AdminMachineRequestGroup {
   linkedMachineCode?: string | null;
   sampleDescription?: string | null;
   primaryImageUrl?: string | null;
+  voteCount?: number;
+  priority?: MachineRequestPriority;
+  assigneeUserId?: string | null;
+  assigneeName?: string | null;
 }
 
 export interface AdminMachineRequestGroupDetail extends AdminMachineRequestGroup {
   requesters: AdminMachineRequestRequester[];
+  recentComments?: AdminMachineRequestCommentPreview[];
   existingMachineId?: string | null;
   existingMachineCode?: string | null;
+  /** Heuristic catalog registration suggestions */
+  registerSuggest?: AdminMachineRequestRegisterSuggest;
+}
+
+export interface AdminMachineRequestRegisterSuggest {
+  code: string;
+  nameKo: string;
+  nameEn: string;
+  muscleGroup: string;
+  machineType: string;
+  descriptionKo: string;
+  descriptionEn: string;
+  matchedBrandId?: string | null;
+}
+
+export interface AdminMachineRequestMergeInput {
+  fromBrandName: string;
+  fromMachineName: string;
+  toBrandName: string;
+  toMachineName: string;
 }
