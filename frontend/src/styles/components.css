@@ -775,8 +775,12 @@
 }
 
 .list-nav__icon {
+  display: block;
   flex-shrink: 0;
-  color: var(--color-text-muted);
+  width: 1.35rem;
+  height: 1.35rem;
+  color: var(--color-text);
+  opacity: 0.85;
 }
 
 .list-nav__label {

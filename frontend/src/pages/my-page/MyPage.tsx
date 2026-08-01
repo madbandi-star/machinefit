@@ -29,9 +29,9 @@ const SHOW_MACHINE_REQUESTS_LINK = true;
 function ListNavLink({ to, label, icon }: { to: string; label: string; icon: IconName }) {
   return (
     <Link to={to} className="list-nav__item">
-      <Icon name={icon} size={20} className="list-nav__icon" />
+      <Icon name={icon} size={22} className="list-nav__icon" aria-hidden />
       <span className="list-nav__label">{label}</span>
-      <Icon name="chevronRight" size={18} className="list-nav__chevron" />
+      <Icon name="chevronRight" size={18} className="list-nav__chevron" aria-hidden />
     </Link>
   );
 }

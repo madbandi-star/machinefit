@@ -197,7 +197,7 @@ export function WorkoutReportSection() {
           aria-controls="workout-report-section-body"
         >
           <span className="workout-report-section__toggle-main">
-            <Icon name="mail" size={20} className="list-nav__icon" />
+            <Icon name="mail" size={22} className="list-nav__icon" aria-hidden />
             <h3 className="form-section__title workout-report-section__toggle-title">
               {t('workoutReport.title')}
             </h3>
