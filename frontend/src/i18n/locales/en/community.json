@@ -88,8 +88,17 @@
     "latest": "Latest",
     "popular": "Popular",
     "views": "Most viewed",
-    "comments": "Most comments"
+    "comments": "Most comments",
+    "votes": "Most wanted"
   },
+  "requestViewMachine": "View registered machine",
+  "requestWantThis": "I want this too",
+  "requestWantThisCount": "{{count}}",
+  "requestEdit": "Edit",
+  "requestDelete": "Delete",
+  "requestDeleteConfirm": "Delete this request?",
+  "requestSimilarTitle": "A request already exists — join with “I want this too”",
+  "requestWantThisInstead": "Go to existing request",
   "photoAll": "All",
   "photoMyPosts": "My posts",
   "photoMyLikes": "Liked",

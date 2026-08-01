@@ -18,7 +18,7 @@ import { resolveMachineRequestMediaUrl } from '@/utils/machineRequestMediaUrl';
 import '@/styles/components.css';
 import '@/styles/photo-board.css';
 
-const SORTS: MachineRequestSort[] = ['latest', 'popular', 'views', 'comments'];
+const SORTS: MachineRequestSort[] = ['latest', 'popular', 'views', 'comments', 'votes'];
 
 type RequestScope = 'all' | 'mine' | 'liked';
 
@@ -75,6 +75,7 @@ function RequestCard({ request }: { request: MachineRequest }) {
           <span className="photo-card__stats">
             <span>♥ {request.likeCount ?? 0}</span>
             <span>💬 {request.commentCount ?? 0}</span>
+            <span>★ {request.voteCount ?? 0}</span>
           </span>
         </div>
       </div>
@@ -96,8 +97,9 @@ export function MachineRequestBoardPage() {
   const likedByMe = params.get('liked') === '1';
   const scope: RequestScope = mine ? 'mine' : likedByMe ? 'liked' : 'all';
 
+  const includeClosed = mine;
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: QUERY_KEYS.machineRequests({ page, sort, q, mine, likedByMe }),
+    queryKey: QUERY_KEYS.machineRequests({ page, sort, q, mine, likedByMe, includeClosed }),
     queryFn: async () => {
       const res = await machineRequestApi.list({
         page,
@@ -106,6 +108,7 @@ export function MachineRequestBoardPage() {
         q: q || undefined,
         mine: mine || undefined,
         likedByMe: likedByMe || undefined,
+        includeClosed: includeClosed || undefined,
       });
       return res.data.data;
     },

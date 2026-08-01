@@ -1,6 +1,11 @@
 import sharp from 'sharp';
 import type { BoardType, MachineRequestListQuery, RoleCode } from '@machinefit/shared';
-import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
+import type {
+  CreatePostInput,
+  CreateCommentInput,
+  CreateMachineRequestInput,
+  UpdateMachineRequestInput,
+} from '@machinefit/shared';
 import { findBlockedContentMatch } from '@machinefit/shared';
 import {
   isAllowedMachineRequestImage,
@@ -177,6 +182,28 @@ export const communityService = {
 
   deleteMachineRequestComment(commentId: string, userId: string, roleCode: RoleCode) {
     return communityRepository.deleteMachineRequestComment(commentId, userId, roleCode);
+  },
+
+  toggleMachineRequestVote(requestId: string, userId: string) {
+    return communityRepository.toggleMachineRequestVote(requestId, userId);
+  },
+
+  updateMachineRequest(
+    requestId: string,
+    userId: string,
+    roleCode: RoleCode,
+    input: UpdateMachineRequestInput
+  ) {
+    assertSafeUgc(input.brandName, input.machineName, input.description);
+    return communityRepository.updateMachineRequest(requestId, userId, roleCode, input);
+  },
+
+  deleteMachineRequest(requestId: string, userId: string, roleCode: RoleCode) {
+    return communityRepository.deleteMachineRequest(requestId, userId, roleCode);
+  },
+
+  listSimilarMachineRequestGroups(brandName: string, machineName: string) {
+    return communityRepository.listSimilarMachineRequestGroups(brandName, machineName, 5);
   },
 
   async createMachineRequest(

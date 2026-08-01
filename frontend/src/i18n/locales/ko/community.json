@@ -88,8 +88,17 @@
     "latest": "최신순",
     "popular": "인기순",
     "views": "조회순",
-    "comments": "댓글순"
+    "comments": "댓글순",
+    "votes": "나도 원함순"
   },
+  "requestViewMachine": "등록된 기구 보기",
+  "requestWantThis": "나도 원함",
+  "requestWantThisCount": "{{count}}명",
+  "requestEdit": "수정",
+  "requestDelete": "삭제",
+  "requestDeleteConfirm": "이 요청을 삭제할까요?",
+  "requestSimilarTitle": "이미 요청이 있습니다 — 나도 원함으로 참여",
+  "requestWantThisInstead": "기존 요청으로 이동",
   "photoAll": "전체",
   "photoMyPosts": "내 게시글",
   "photoMyLikes": "내 좋아요",

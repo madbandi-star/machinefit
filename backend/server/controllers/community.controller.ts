@@ -4,6 +4,7 @@ import {
   createPostSchema,
   createCommentSchema,
   createMachineRequestSchema,
+  updateMachineRequestSchema,
   machineRequestListQuerySchema,
   contentReportSchema,
 } from '@machinefit/shared';
@@ -121,6 +122,47 @@ export async function deleteMachineRequestComment(req: Request, res: Response): 
     req.user.roleCode
   );
   res.json({ success: true, data: { message: 'Deleted' } });
+}
+
+export async function toggleMachineRequestVote(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const result = await communityService.toggleMachineRequestVote(
+    getParam(req.params.requestId),
+    req.user.userId
+  );
+  res.json({ success: true, data: result });
+}
+
+export async function updateMachineRequest(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = updateMachineRequestSchema.parse(req.body);
+  const item = await communityService.updateMachineRequest(
+    getParam(req.params.requestId),
+    req.user.userId,
+    req.user.roleCode,
+    input
+  );
+  res.json({ success: true, data: item });
+}
+
+export async function deleteMachineRequest(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  await communityService.deleteMachineRequest(
+    getParam(req.params.requestId),
+    req.user.userId,
+    req.user.roleCode
+  );
+  res.json({ success: true, data: { message: 'Deleted' } });
+}
+
+export async function listSimilarMachineRequestGroups(req: Request, res: Response): Promise<void> {
+  const brandName = String(req.query.brandName ?? '');
+  const machineName = String(req.query.machineName ?? '');
+  if (!brandName.trim() && !machineName.trim()) {
+    throw new AppError(400, 'VALIDATION_ERROR', 'brandName or machineName required');
+  }
+  const items = await communityService.listSimilarMachineRequestGroups(brandName, machineName);
+  res.json({ success: true, data: items });
 }
 
 export async function getMachineRequestImage(req: Request, res: Response): Promise<void> {

@@ -51,6 +51,25 @@ export function MachineRequestDetailPage() {
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
+  const voteMutation = useMutation({
+    mutationFn: () => machineRequestApi.toggleVote(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(requestId) });
+      queryClient.invalidateQueries({ queryKey: ['machine-requests'] });
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => machineRequestApi.remove(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['machine-requests'] });
+      showToast(t('deleteSuccess'), 'success');
+      navigate(ROUTES.MACHINE_REQUESTS);
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
   const commentMutation = useMutation({
     mutationFn: () =>
       machineRequestApi.createComment(requestId, {
@@ -210,9 +229,38 @@ export function MachineRequestDetailPage() {
           >
             {request.likedByMe ? '♥' : '♡'} {request.likeCount ?? 0}
           </button>
+          <button
+            type="button"
+            className={`btn btn--secondary${request.votedByMe ? ' is-active' : ''}`}
+            onClick={() => requireAuth(() => voteMutation.mutate())}
+            disabled={voteMutation.isPending}
+          >
+            {t('requestWantThis')} · {t('requestWantThisCount', { count: request.voteCount ?? 0 })}
+          </button>
           <button type="button" className="btn btn--secondary" onClick={() => void share()}>
             {t('photoShare')}
           </button>
+          {request.isMine ? (
+            <>
+              <Link
+                to={`${ROUTES.MACHINE_REQUESTS_WRITE}?edit=${request.id}`}
+                className="btn btn--secondary"
+              >
+                {t('requestEdit')}
+              </Link>
+              <button
+                type="button"
+                className="btn btn--danger"
+                disabled={deleteMutation.isPending}
+                onClick={() => {
+                  if (!window.confirm(t('requestDeleteConfirm'))) return;
+                  deleteMutation.mutate();
+                }}
+              >
+                {t('requestDelete')}
+              </button>
+            </>
+          ) : null}
         </div>
 
         <div style={{ display: 'grid', gap: '0.35rem' }}>
@@ -223,6 +271,15 @@ export function MachineRequestDetailPage() {
           <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
             {t('photoViews')}: {request.viewCount ?? 0} · {t('comments')}: {request.commentCount ?? 0}
           </div>
+          {request.status === 'added' && request.linkedMachineCode ? (
+            <Link
+              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', request.linkedMachineCode)}
+              className="btn btn--primary btn--sm"
+              style={{ justifySelf: 'start' }}
+            >
+              {t('requestViewMachine')}
+            </Link>
+          ) : null}
           {request.rejectReason ? (
             <p className="photo-detail__feedback photo-detail__feedback--reject">
               <strong>{t('requestRejectReason')}</strong>: {request.rejectReason}

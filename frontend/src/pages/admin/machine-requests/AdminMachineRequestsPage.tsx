@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import {
   type AdminMachineRequestGroupDetail,
   type AdminMachineUpsertInput,
   type Brand,
+  type MachineRequestPriority,
 } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
@@ -39,6 +40,7 @@ const REJECT_PRESETS = [
   'notExists',
   'brandCheck',
 ] as const;
+const PRIORITIES: MachineRequestPriority[] = ['low', 'normal', 'high'];
 
 type StatusFilter = 'all' | 'pending' | 'reviewing' | 'added' | 'rejected';
 
@@ -99,6 +101,10 @@ export function AdminMachineRequestsPage() {
     id: string;
     code: string;
   } | null>(null);
+  const [groupPriority, setGroupPriority] = useState<MachineRequestPriority>('normal');
+  const [groupAssignee, setGroupAssignee] = useState('');
+  const [mergeToBrand, setMergeToBrand] = useState('');
+  const [mergeToMachine, setMergeToMachine] = useState('');
 
   const listParams = useMemo(
     () => ({
@@ -160,13 +166,36 @@ export function AdminMachineRequestsPage() {
       adminNote?: string | null;
       rejectReason?: string | null;
       linkedMachineId?: string | null;
+      isHidden?: boolean;
+      priority?: MachineRequestPriority;
+      assigneeUserId?: string | null;
       applyToGroup?: boolean;
       groupBrandName?: string;
       groupMachineName?: string;
-    }) => adminApi.updateMachineRequest(input.id, input),
+    }) => {
+      const { id, ...body } = input;
+      return adminApi.updateMachineRequest(id, body);
+    },
     onSuccess: () => {
       invalidateAll();
       void detailQuery.refetch();
+      showToast(t('saved'), 'success');
+    },
+    onError: () => showToast(t('error'), 'error'),
+  });
+
+  const mergeMutation = useMutation({
+    mutationFn: (input: {
+      fromBrandName: string;
+      fromMachineName: string;
+      toBrandName: string;
+      toMachineName: string;
+    }) => adminApi.mergeMachineRequestGroups(input),
+    onSuccess: () => {
+      setSelected(null);
+      setMergeToBrand('');
+      setMergeToMachine('');
+      invalidateAll();
       showToast(t('saved'), 'success');
     },
     onError: () => showToast(t('error'), 'error'),
@@ -218,9 +247,20 @@ export function AdminMachineRequestsPage() {
     setSelected({ brandName: group.brandName, machineName: group.machineName });
     setAdminNote(group.adminNote ?? '');
     setRejectReason(group.rejectReason ?? '');
+    setGroupPriority(group.priority ?? 'normal');
+    setGroupAssignee(group.assigneeUserId ?? '');
+    setMergeToBrand('');
+    setMergeToMachine('');
     setShowRegister(false);
     setDuplicateMachine(null);
   };
+
+  useEffect(() => {
+    const d = detailQuery.data;
+    if (!d) return;
+    setGroupPriority(d.priority ?? 'normal');
+    setGroupAssignee(d.assigneeUserId ?? '');
+  }, [detailQuery.data]);
 
   const openRegister = (detail: AdminMachineRequestGroupDetail) => {
     if (detail.existingMachineId && detail.existingMachineCode) {
@@ -235,28 +275,39 @@ export function AdminMachineRequestsPage() {
     const unknown = tCommunity('requestFieldUnknownLabel');
     const brandLabel = displayText(detail.brandName, unknown);
     const machineLabel = displayText(detail.machineName, unknown);
-    const matchedBrand = brandsQuery.data?.find((b) => {
+    const suggest = detail.registerSuggest;
+    const fuzzyBrand = brandsQuery.data?.find((b) => {
       const ko = b.name?.ko?.toLowerCase() ?? '';
       const en = b.name?.en?.toLowerCase() ?? '';
       const code = b.code?.toLowerCase() ?? '';
       const target = brandLabel.toLowerCase();
       return ko === target || en === target || code === target;
     });
+    const brandId = suggest?.matchedBrandId || fuzzyBrand?.id || '';
+    const suggestedType = suggest?.machineType as (typeof MACHINE_TYPES)[number] | undefined;
+    const machineType = MACHINE_TYPES.includes(suggestedType as (typeof MACHINE_TYPES)[number])
+      ? (suggestedType as (typeof MACHINE_TYPES)[number])
+      : 'selectorized';
+    const muscleGroup = suggest?.muscleGroup || 'chest';
     setRegisterForm({
-      brandId: matchedBrand?.id ?? '',
-      code: '',
-      nameKo: machineLabel === unknown ? '' : machineLabel,
-      nameEn: machineLabel === unknown ? '' : machineLabel,
-      muscleGroup: 'chest',
-      machineType: 'selectorized',
+      brandId,
+      code: suggest?.code ?? '',
+      nameKo: suggest?.nameKo || (machineLabel === unknown ? '' : machineLabel),
+      nameEn: suggest?.nameEn || (machineLabel === unknown ? '' : machineLabel),
+      muscleGroup: MUSCLE_OPTIONS.includes(muscleGroup as (typeof MUSCLE_OPTIONS)[number])
+        ? muscleGroup
+        : 'chest',
+      machineType,
       descriptionKo:
-        displayText(detail.sampleDescription, unknown) === unknown
+        suggest?.descriptionKo ||
+        (displayText(detail.sampleDescription, unknown) === unknown
           ? ''
-          : displayText(detail.sampleDescription, unknown),
-      descriptionEn: '',
+          : displayText(detail.sampleDescription, unknown)),
+      descriptionEn: suggest?.descriptionEn ?? '',
       isActive: true,
     });
     setShowRegister(true);
+    if (suggest) showToast(t('machineRequests.registerSuggestApplied'), 'success');
   };
 
   useModalAccessibility({
@@ -296,6 +347,21 @@ export function AdminMachineRequestsPage() {
           </div>
         ))}
       </div>
+      {statsQuery.data?.topGyms?.length ? (
+        <div className="admin-req-detail__section" style={{ marginTop: 0 }}>
+          <h3>{t('machineRequests.topGyms')}</h3>
+          <ol className="admin-req-popular">
+            {statsQuery.data.topGyms.map((gym) => (
+              <li key={gym.gymName}>
+                <span>
+                  {gym.gymName || t('machineRequests.gymUnknown')} —{' '}
+                  {t('machineRequests.requestCount', { count: gym.requestCount })}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
 
       <AdminPanel title={t('machineRequests.popularTitle')}>
         {popularQuery.isLoading ? (
@@ -583,7 +649,8 @@ export function AdminMachineRequestsPage() {
                               <dt>{t('machineRequests.social')}</dt>
                               <dd>
                                 ♥ {r.likeCount ?? 0} · 💬 {r.commentCount ?? 0} · 👁{' '}
-                                {r.viewCount ?? 0}
+                                {r.viewCount ?? 0} · ★ {r.voteCount ?? 0}{' '}
+                                {t('machineRequests.votes')}
                               </dd>
                             </div>
                           </dl>
@@ -605,16 +672,187 @@ export function AdminMachineRequestsPage() {
                               ))}
                             </div>
                           ) : null}
+                          <div className="admin-req-detail__actions">
+                            <label>
+                              <span>{t('machineRequests.priority')}</span>
+                              <select
+                                className="input"
+                                value={r.priority ?? 'normal'}
+                                disabled={updateMutation.isPending}
+                                onChange={(e) =>
+                                  updateMutation.mutate({
+                                    id: r.requestId,
+                                    priority: e.target.value as MachineRequestPriority,
+                                  })
+                                }
+                              >
+                                {PRIORITIES.map((p) => (
+                                  <option key={p} value={p}>
+                                    {p}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                            <label className="checkbox-label">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(r.isHidden)}
+                                disabled={updateMutation.isPending}
+                                onChange={(e) =>
+                                  updateMutation.mutate({
+                                    id: r.requestId,
+                                    isHidden: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{t('machineRequests.hidePost')}</span>
+                            </label>
+                            <Link
+                              to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
+                                ':requestId',
+                                r.requestId
+                              )}
+                              className="btn btn--secondary btn--sm"
+                            >
+                              {t('machineRequests.openUserPost')}
+                            </Link>
+                            {!r.isHidden ? (
+                              <button
+                                type="button"
+                                className="btn btn--secondary btn--sm"
+                                disabled={updateMutation.isPending}
+                                onClick={() =>
+                                  updateMutation.mutate({
+                                    id: r.requestId,
+                                    isHidden: true,
+                                  })
+                                }
+                              >
+                                {t('machineRequests.hidePost')}
+                              </button>
+                            ) : null}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+
+                {detail.recentComments?.length ? (
+                  <section className="admin-req-detail__section">
+                    <h3>{t('machineRequests.recentComments')}</h3>
+                    <ul className="admin-req-requesters">
+                      {detail.recentComments.map((c) => (
+                        <li key={c.id}>
+                          <div className="admin-req-requesters__head">
+                            <strong>{c.authorName || '—'}</strong>
+                            <span>{formatDate(c.createdAt)}</span>
+                          </div>
+                          <p>{c.content}</p>
                           <Link
-                            to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(':requestId', r.requestId)}
+                            to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
+                              ':requestId',
+                              c.requestId
+                            )}
                             className="btn btn--secondary btn--sm"
                           >
                             {t('machineRequests.openUserPost')}
                           </Link>
                         </li>
-                      );
-                    })}
-                  </ul>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+
+                <section className="admin-req-detail__section">
+                  <h3>
+                    {t('machineRequests.priority')} / {t('machineRequests.assignee')}
+                  </h3>
+                  <div className="admin-req-filters">
+                    <label>
+                      <span>{t('machineRequests.priority')}</span>
+                      <select
+                        className="input"
+                        value={groupPriority}
+                        onChange={(e) =>
+                          setGroupPriority(e.target.value as MachineRequestPriority)
+                        }
+                      >
+                        {PRIORITIES.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span>{t('machineRequests.assignee')}</span>
+                      <input
+                        className="input"
+                        value={groupAssignee}
+                        onChange={(e) => setGroupAssignee(e.target.value)}
+                        placeholder="uuid"
+                      />
+                    </label>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--sm"
+                    disabled={updateMutation.isPending || !detail.requesters[0]}
+                    onClick={() =>
+                      updateMutation.mutate({
+                        id: detail.requesters[0].requestId,
+                        priority: groupPriority,
+                        assigneeUserId: groupAssignee.trim() || null,
+                        applyToGroup: true,
+                        groupBrandName: detail.brandName,
+                        groupMachineName: detail.machineName,
+                      })
+                    }
+                  >
+                    {t('brands.save')}
+                  </button>
+                </section>
+
+                <section className="admin-req-detail__section">
+                  <h3>{t('machineRequests.merge')}</h3>
+                  <div className="admin-req-filters">
+                    <label>
+                      <span>{t('machineRequests.mergeTo')} (brand)</span>
+                      <input
+                        className="input"
+                        value={mergeToBrand}
+                        onChange={(e) => setMergeToBrand(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      <span>{t('machineRequests.mergeTo')} (machine)</span>
+                      <input
+                        className="input"
+                        value={mergeToMachine}
+                        onChange={(e) => setMergeToMachine(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--sm"
+                    disabled={
+                      mergeMutation.isPending ||
+                      !mergeToBrand.trim() ||
+                      !mergeToMachine.trim()
+                    }
+                    onClick={() =>
+                      mergeMutation.mutate({
+                        fromBrandName: detail.brandName,
+                        fromMachineName: detail.machineName,
+                        toBrandName: mergeToBrand.trim(),
+                        toMachineName: mergeToMachine.trim(),
+                      })
+                    }
+                  >
+                    {t('machineRequests.mergeSubmit')}
+                  </button>
                 </section>
 
                 <section className="admin-req-detail__section">

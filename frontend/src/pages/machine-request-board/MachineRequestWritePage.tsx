@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   MACHINE_REQUEST_UNKNOWN_VALUE,
   type MachineRequestGymChoiceMode,
+  type MachineRequestSimilarGroup,
   type MachineRequestTextChoiceMode,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { locationApi, machineRequestApi, userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -48,9 +50,24 @@ function resolveTextField(mode: MachineRequestTextChoiceMode, value: string): st
   return value.trim();
 }
 
+function modeFromStored(value: string | undefined): MachineRequestTextChoiceMode {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed || trimmed === MACHINE_REQUEST_UNKNOWN_VALUE) return 'unknown';
+  return 'custom';
+}
+
+function valueFromStored(value: string | undefined): string {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed || trimmed === MACHINE_REQUEST_UNKNOWN_VALUE) return '';
+  return trimmed;
+}
+
 export function MachineRequestWritePage() {
   const { t } = useTranslation('community');
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const editId = params.get('edit') || '';
+  const isEdit = Boolean(editId);
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
@@ -68,6 +85,9 @@ export function MachineRequestWritePage() {
   const [commercialUseConsent, setCommercialUseConsent] = useState(false);
   const [gymChoiceMode, setGymChoiceMode] = useState<MachineRequestGymChoiceMode>('profile');
   const [customGymName, setCustomGymName] = useState('');
+  const [similarQuery, setSimilarQuery] = useState<{ brandName: string; machineName: string } | null>(
+    null
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -75,6 +95,33 @@ export function MachineRequestWritePage() {
       navigate(ROUTES.LOGIN);
     }
   }, [isAuthenticated, navigate, showToast, t]);
+
+  const editQuery = useQuery({
+    queryKey: QUERY_KEYS.machineRequestDetail(editId),
+    queryFn: async () => (await machineRequestApi.get(editId)).data.data,
+    enabled: isEdit && isAuthenticated,
+  });
+
+  useEffect(() => {
+    const request = editQuery.data?.request;
+    if (!request) return;
+    if (user && request.userId !== user.id && !request.isMine) {
+      showToast(t('errorGeneric'), 'error');
+      navigate(ROUTES.MACHINE_REQUESTS);
+      return;
+    }
+    setBrandMode(modeFromStored(request.brandName));
+    setMachineMode(modeFromStored(request.machineName));
+    setDescriptionMode(modeFromStored(request.description));
+    setBrandName(valueFromStored(request.brandName));
+    setMachineName(valueFromStored(request.machineName));
+    setDescription(valueFromStored(request.description));
+    setGymChoiceMode(request.gymChoiceMode ?? 'profile');
+    setCustomGymName(
+      request.gymChoiceMode === 'custom' ? (request.gymName?.trim() ?? '') : ''
+    );
+    setCommercialUseConsent(Boolean(request.commercialUseConsent));
+  }, [editQuery.data, navigate, showToast, t, user]);
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -106,6 +153,40 @@ export function MachineRequestWritePage() {
     };
   }, [images]);
 
+  useEffect(() => {
+    if (isEdit) {
+      setSimilarQuery(null);
+      return;
+    }
+    const brand =
+      brandMode === 'custom' ? brandName.trim() : '';
+    const machine =
+      machineMode === 'custom' ? machineName.trim() : '';
+    if (!brand && !machine) {
+      setSimilarQuery(null);
+      return;
+    }
+    const handle = window.setTimeout(() => {
+      setSimilarQuery({ brandName: brand, machineName: machine });
+    }, 400);
+    return () => window.clearTimeout(handle);
+  }, [brandMode, brandName, machineMode, machineName, isEdit]);
+
+  const similarQueryResult = useQuery({
+    queryKey: ['machine-requests', 'similar', similarQuery?.brandName, similarQuery?.machineName],
+    queryFn: async () =>
+      (
+        await machineRequestApi.similar({
+          brandName: similarQuery?.brandName || undefined,
+          machineName: similarQuery?.machineName || undefined,
+        })
+      ).data.data,
+    enabled: Boolean(similarQuery && !isEdit),
+    staleTime: 10_000,
+  });
+
+  const similarHit: MachineRequestSimilarGroup | undefined = similarQueryResult.data?.[0];
+
   const resolvedGymName = useMemo(() => {
     if (gymChoiceMode === 'unknown') return '';
     if (gymChoiceMode === 'custom') return truncateGymLabel(customGymName);
@@ -125,11 +206,11 @@ export function MachineRequestWritePage() {
     return brandOk && machineOk && descriptionOk;
   }, [brandMode, brandName, machineMode, machineName, descriptionMode, description]);
 
-  const canSubmit = useMemo(
-    () =>
-      Boolean(textFieldsValid && images.length > 0 && commercialUseConsent && gymChoiceValid),
-    [textFieldsValid, images.length, commercialUseConsent, gymChoiceValid]
-  );
+  const canSubmit = useMemo(() => {
+    if (!textFieldsValid || !gymChoiceValid) return false;
+    if (isEdit) return true;
+    return Boolean(images.length > 0 && commercialUseConsent);
+  }, [textFieldsValid, images.length, commercialUseConsent, gymChoiceValid, isEdit]);
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -150,6 +231,26 @@ export function MachineRequestWritePage() {
     },
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
+
+  const updateMutation = useMutation({
+    mutationFn: () =>
+      machineRequestApi.update(editId, {
+        brandName: resolveTextField(brandMode, brandName),
+        machineName: resolveTextField(machineMode, machineName),
+        description: resolveTextField(descriptionMode, description),
+        gymChoiceMode,
+        gymName: gymChoiceMode === 'unknown' ? null : resolvedGymName,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['machine-requests'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(editId) });
+      showToast(t('createSuccess'), 'success');
+      navigate(ROUTES.MACHINE_REQUESTS_DETAIL.replace(':requestId', editId));
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const saving = createMutation.isPending || updateMutation.isPending;
 
   const onPickFiles = (fileList: FileList | null) => {
     if (!fileList?.length) return;
@@ -178,9 +279,9 @@ export function MachineRequestWritePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit || createMutation.isPending) {
-      if (!commercialUseConsent) showToast(t('requestConsentRequired'), 'error');
-      else if (!images.length) showToast(t('requestPhotoRequired'), 'error');
+    if (!canSubmit || saving) {
+      if (!isEdit && !commercialUseConsent) showToast(t('requestConsentRequired'), 'error');
+      else if (!isEdit && !images.length) showToast(t('requestPhotoRequired'), 'error');
       else if (!gymChoiceValid) {
         showToast(
           gymChoiceMode === 'profile' ? t('requestGymProfileEmpty') : t('requestGymRequired'),
@@ -189,7 +290,8 @@ export function MachineRequestWritePage() {
       }
       return;
     }
-    createMutation.mutate();
+    if (isEdit) updateMutation.mutate();
+    else createMutation.mutate();
   };
 
   const renderTextChoice = (params: {
@@ -247,9 +349,39 @@ export function MachineRequestWritePage() {
     </fieldset>
   );
 
+  if (isEdit && editQuery.isLoading) {
+    return (
+      <PageShell title={t('requestEdit')}>
+        <Skeleton count={4} height={72} />
+      </PageShell>
+    );
+  }
+
   return (
     <div className="photo-board-page community-board-page">
-      <PageShell title={t('newRequest')} subtitle={t('machineRequestsSubtitle')}>
+      <PageShell
+        title={isEdit ? t('requestEdit') : t('newRequest')}
+        subtitle={t('machineRequestsSubtitle')}
+      >
+        {!isEdit && similarHit ? (
+          <div className="photo-detail__feedback" role="status" style={{ marginBottom: '0.75rem' }}>
+            <strong>{t('requestSimilarTitle')}</strong>
+            <div style={{ marginTop: '0.35rem' }}>
+              <Link
+                to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
+                  ':requestId',
+                  similarHit.sampleRequestId
+                )}
+              >
+                {t('requestWantThisInstead')}
+              </Link>
+              {similarHit.voteCount > 0
+                ? ` · ${t('requestWantThisCount', { count: similarHit.voteCount })}`
+                : null}
+            </div>
+          </div>
+        ) : null}
+
         <form className="card community-board-page__form" onSubmit={handleSubmit}>
           {renderTextChoice({
             legend: t('brandName'),
@@ -331,59 +463,72 @@ export function MachineRequestWritePage() {
             </label>
           </fieldset>
 
-          <div className="form-row">
-            <label htmlFor="req-photos">{t('requestPhoto')}</label>
-            <input
-              id="req-photos"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              onChange={(e) => {
-                onPickFiles(e.target.files);
-                e.target.value = '';
-              }}
-            />
-            <p className="community-board-page__hint">{t('requestPhotoHint')}</p>
-            {images.length > 0 && (
-              <div className="community-board-page__previews" aria-label={t('requestPhoto')}>
-                {images.map((img) => (
-                  <div key={img.id} className="community-board-page__preview">
-                    <img src={img.previewUrl} alt="" />
-                    <button
-                      type="button"
-                      className="btn btn--secondary btn--sm"
-                      onClick={() => removeImage(img.id)}
-                    >
-                      {t('requestPhotoRemove')}
-                    </button>
+          {!isEdit ? (
+            <>
+              <div className="form-row">
+                <label htmlFor="req-photos">{t('requestPhoto')}</label>
+                <input
+                  id="req-photos"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  onChange={(e) => {
+                    onPickFiles(e.target.files);
+                    e.target.value = '';
+                  }}
+                />
+                <p className="community-board-page__hint">{t('requestPhotoHint')}</p>
+                {images.length > 0 && (
+                  <div className="community-board-page__previews" aria-label={t('requestPhoto')}>
+                    {images.map((img) => (
+                      <div key={img.id} className="community-board-page__preview">
+                        <img src={img.previewUrl} alt="" />
+                        <button
+                          type="button"
+                          className="btn btn--secondary btn--sm"
+                          onClick={() => removeImage(img.id)}
+                        >
+                          {t('requestPhotoRemove')}
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
-          </div>
 
-          <div className="community-board-page__consent">
-            <p className="community-board-page__consent-text">{t('requestCommercialConsentText')}</p>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={commercialUseConsent}
-                onChange={(e) => setCommercialUseConsent(e.target.checked)}
-                required
-              />
-              <span>{t('requestCommercialConsentLabel')}</span>
-            </label>
-          </div>
+              <div className="community-board-page__consent">
+                <p className="community-board-page__consent-text">
+                  {t('requestCommercialConsentText')}
+                </p>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={commercialUseConsent}
+                    onChange={(e) => setCommercialUseConsent(e.target.checked)}
+                    required
+                  />
+                  <span>{t('requestCommercialConsentLabel')}</span>
+                </label>
+              </div>
+            </>
+          ) : null}
 
           <div className="community-board-page__form-actions">
             <button
               type="submit"
               className="btn btn--primary"
-              disabled={!canSubmit || createMutation.isPending}
+              disabled={!canSubmit || saving}
             >
               {t('submit')}
             </button>
-            <Link to={ROUTES.MACHINE_REQUESTS} className="btn btn--secondary">
+            <Link
+              to={
+                isEdit
+                  ? ROUTES.MACHINE_REQUESTS_DETAIL.replace(':requestId', editId)
+                  : ROUTES.MACHINE_REQUESTS
+              }
+              className="btn btn--secondary"
+            >
               {t('cancel')}
             </Link>
           </div>

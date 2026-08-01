@@ -4,6 +4,7 @@ import type {
   MachineRequest,
   MachineRequestComment,
   MachineRequestDetail,
+  MachineRequestSimilarGroup,
   Gym,
   GymMachine,
   PaginatedResponse,
@@ -12,6 +13,7 @@ import type {
   CreatePostInput,
   CreateCommentInput,
   CreateMachineRequestInput,
+  UpdateMachineRequestInput,
   MachineRequestListQuery,
   OwnerApplicationInput,
   CreateOwnerGymInput,
@@ -57,11 +59,17 @@ export const machineRequestApi = {
         ...params,
         mine: params?.mine ? '1' : undefined,
         likedByMe: params?.likedByMe ? '1' : undefined,
+        includeClosed: params?.includeClosed ? '1' : undefined,
       },
     }),
 
   get: (requestId: string) =>
     apiClient.get<ApiResponse<MachineRequestDetail>>(`/machine-requests/${requestId}`),
+
+  similar: (params: { brandName?: string; machineName?: string }) =>
+    apiClient.get<ApiResponse<MachineRequestSimilarGroup[]>>('/machine-requests/similar', {
+      params,
+    }),
 
   create: (input: CreateMachineRequestFormInput) => {
     const form = new FormData();
@@ -82,9 +90,19 @@ export const machineRequestApi = {
     });
   },
 
+  update: (requestId: string, input: UpdateMachineRequestInput) =>
+    apiClient.patch<ApiResponse<MachineRequest>>(`/machine-requests/${requestId}`, input),
+
+  remove: (requestId: string) => apiClient.delete(`/machine-requests/${requestId}`),
+
   toggleLike: (requestId: string) =>
     apiClient.post<ApiResponse<{ liked: boolean; likeCount: number }>>(
       `/machine-requests/${requestId}/like`
+    ),
+
+  toggleVote: (requestId: string) =>
+    apiClient.post<ApiResponse<{ voted: boolean; voteCount: number }>>(
+      `/machine-requests/${requestId}/vote`
     ),
 
   createComment: (requestId: string, input: CreateCommentInput) =>
