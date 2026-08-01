@@ -60,7 +60,9 @@ export const QUERY_KEYS = {
   ) =>
     ['workout-logs', gymId, memberId, machineCode, logDate, targetMuscleGroup ?? ''] as const,
   posts: ['posts'] as const,
-  machineRequests: ['machine-requests'] as const,
+  machineRequests: (params?: Record<string, unknown>) =>
+    ['machine-requests', params ?? {}] as const,
+  machineRequestDetail: (requestId: string) => ['machine-requests', 'detail', requestId] as const,
   ownerDashboard: ['owner', 'dashboard'] as const,
   ownerGyms: ['owner', 'gyms'] as const,
   notifications: ['notifications'] as const,

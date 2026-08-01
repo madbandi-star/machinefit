@@ -1,8 +1,18 @@
-import type { Post, Comment, MachineRequest, Gym, GymMachine, PaginatedResponse } from '@machinefit/shared';
+import type {
+  Post,
+  Comment,
+  MachineRequest,
+  MachineRequestComment,
+  MachineRequestDetail,
+  Gym,
+  GymMachine,
+  PaginatedResponse,
+} from '@machinefit/shared';
 import type {
   CreatePostInput,
   CreateCommentInput,
   CreateMachineRequestInput,
+  MachineRequestListQuery,
   OwnerApplicationInput,
   CreateOwnerGymInput,
   AddGymMachineInput,
@@ -41,8 +51,17 @@ export type CreateMachineRequestFormInput = CreateMachineRequestInput & {
 };
 
 export const machineRequestApi = {
-  list: (params?: { page?: number; limit?: number }) =>
-    apiClient.get<ApiResponse<PaginatedResponse<MachineRequest>>>('/machine-requests', { params }),
+  list: (params?: Partial<MachineRequestListQuery> & { page?: number; limit?: number }) =>
+    apiClient.get<ApiResponse<PaginatedResponse<MachineRequest>>>('/machine-requests', {
+      params: {
+        ...params,
+        mine: params?.mine ? '1' : undefined,
+        likedByMe: params?.likedByMe ? '1' : undefined,
+      },
+    }),
+
+  get: (requestId: string) =>
+    apiClient.get<ApiResponse<MachineRequestDetail>>(`/machine-requests/${requestId}`),
 
   create: (input: CreateMachineRequestFormInput) => {
     const form = new FormData();
@@ -62,6 +81,20 @@ export const machineRequestApi = {
       timeout: 120_000,
     });
   },
+
+  toggleLike: (requestId: string) =>
+    apiClient.post<ApiResponse<{ liked: boolean; likeCount: number }>>(
+      `/machine-requests/${requestId}/like`
+    ),
+
+  createComment: (requestId: string, input: CreateCommentInput) =>
+    apiClient.post<ApiResponse<MachineRequestComment>>(
+      `/machine-requests/${requestId}/comments`,
+      input
+    ),
+
+  deleteComment: (commentId: string) =>
+    apiClient.delete(`/machine-requests/comments/${commentId}`),
 };
 
 export interface OwnerDashboardStats {

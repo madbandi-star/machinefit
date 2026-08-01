@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import type { BoardType, RoleCode } from '@machinefit/shared';
+import type { BoardType, MachineRequestListQuery, RoleCode } from '@machinefit/shared';
 import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
 import { findBlockedContentMatch } from '@machinefit/shared';
 import {
@@ -13,6 +13,7 @@ import {
 import { userRepository } from '../repositories/user.repository.js';
 import { complianceRepository } from '../repositories/compliance.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { notificationService } from './notification.service.js';
 
 function assertSafeUgc(...parts: Array<string | undefined>) {
   for (const part of parts) {
@@ -105,12 +106,77 @@ export const communityService = {
     return communityRepository.toggleLike(postId, userId);
   },
 
-  listMachineRequests(page = 1, limit = 20) {
-    return communityRepository.listMachineRequests(page, limit);
+  listMachineRequests(query: MachineRequestListQuery, viewerId?: string) {
+    return communityRepository.listMachineRequests(query, viewerId);
+  },
+
+  getMachineRequest(requestId: string, viewerId?: string) {
+    return communityRepository.getMachineRequest(requestId, viewerId, { incrementView: true });
   },
 
   getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {
     return communityRepository.getMachineRequestImageBinary(imageId, variant);
+  },
+
+  async toggleMachineRequestLike(requestId: string, userId: string) {
+    const result = await communityRepository.toggleMachineRequestLike(requestId, userId);
+    if (result.liked && result.authorId && result.authorId !== userId) {
+      void notificationService.notify(
+        result.authorId,
+        'machine_request_like',
+        { ko: '기구요청 좋아요', en: 'Machine request like' },
+        {
+          ko: '회원님이 올린 기구요청에 좋아요가 눌렸습니다.',
+          en: 'Someone liked your machine request.',
+        },
+        { requestId, type: 'machine_request_like' }
+      );
+    }
+    return { liked: result.liked, likeCount: result.likeCount };
+  },
+
+  async createMachineRequestComment(
+    requestId: string,
+    userId: string,
+    input: CreateCommentInput
+  ) {
+    assertSafeUgc(input.content);
+    const user = await userRepository.findById(userId);
+    const result = await communityRepository.createMachineRequestComment(
+      requestId,
+      userId,
+      user?.displayName ?? 'User',
+      input
+    );
+    if (result.authorId && result.authorId !== userId) {
+      const isReply = Boolean(input.parentId);
+      void notificationService.notify(
+        result.authorId,
+        isReply ? 'machine_request_reply' : 'machine_request_comment',
+        {
+          ko: isReply ? '기구요청 답글' : '기구요청 댓글',
+          en: isReply ? 'Machine request reply' : 'Machine request comment',
+        },
+        {
+          ko: isReply
+            ? '회원님의 기구요청에 답글이 달렸습니다.'
+            : '회원님의 기구요청에 댓글이 달렸습니다.',
+          en: isReply
+            ? 'Someone replied on your machine request.'
+            : 'Someone commented on your machine request.',
+        },
+        {
+          requestId,
+          commentId: result.comment.id,
+          type: isReply ? 'machine_request_reply' : 'machine_request_comment',
+        }
+      );
+    }
+    return result.comment;
+  },
+
+  deleteMachineRequestComment(commentId: string, userId: string, roleCode: RoleCode) {
+    return communityRepository.deleteMachineRequestComment(commentId, userId, roleCode);
   },
 
   async createMachineRequest(

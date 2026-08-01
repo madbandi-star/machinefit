@@ -4,6 +4,7 @@ import {
   createPostSchema,
   createCommentSchema,
   createMachineRequestSchema,
+  machineRequestListQuerySchema,
   contentReportSchema,
 } from '@machinefit/shared';
 import { communityService } from '../services/community.service.js';
@@ -61,9 +62,19 @@ export async function toggleLike(req: Request, res: Response): Promise<void> {
 }
 
 export async function listMachineRequests(req: Request, res: Response): Promise<void> {
-  const page = parseInt(String(req.query.page ?? '1'), 10);
-  const limit = parseInt(String(req.query.limit ?? '20'), 10);
-  const result = await communityService.listMachineRequests(page, limit);
+  const query = machineRequestListQuerySchema.parse(req.query);
+  if ((query.mine || query.likedByMe) && !req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const result = await communityService.listMachineRequests(query, req.user?.userId);
+  res.json({ success: true, data: result });
+}
+
+export async function getMachineRequest(req: Request, res: Response): Promise<void> {
+  const result = await communityService.getMachineRequest(
+    getParam(req.params.requestId),
+    req.user?.userId
+  );
   res.json({ success: true, data: result });
 }
 
@@ -80,6 +91,36 @@ export async function createMachineRequest(req: Request, res: Response): Promise
   const files = (req.files as Express.Multer.File[] | undefined) ?? [];
   const item = await communityService.createMachineRequest(req.user.userId, input, files);
   res.status(201).json({ success: true, data: item });
+}
+
+export async function toggleMachineRequestLike(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const result = await communityService.toggleMachineRequestLike(
+    getParam(req.params.requestId),
+    req.user.userId
+  );
+  res.json({ success: true, data: result });
+}
+
+export async function createMachineRequestComment(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = createCommentSchema.parse(req.body);
+  const comment = await communityService.createMachineRequestComment(
+    getParam(req.params.requestId),
+    req.user.userId,
+    input
+  );
+  res.status(201).json({ success: true, data: comment });
+}
+
+export async function deleteMachineRequestComment(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  await communityService.deleteMachineRequestComment(
+    getParam(req.params.commentId),
+    req.user.userId,
+    req.user.roleCode
+  );
+  res.json({ success: true, data: { message: 'Deleted' } });
 }
 
 export async function getMachineRequestImage(req: Request, res: Response): Promise<void> {

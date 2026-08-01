@@ -51,6 +51,18 @@ export interface MachineRequestImage {
 
 export type MachineRequestGymChoiceMode = 'profile' | 'custom' | 'unknown';
 
+export interface MachineRequestComment {
+  id: string;
+  requestId: string;
+  userId: string;
+  parentId?: string;
+  content: string;
+  isHidden: boolean;
+  authorName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface MachineRequest {
   id: string;
   userId: string;
@@ -66,6 +78,16 @@ export interface MachineRequest {
   gymName?: string | null;
   images?: MachineRequestImage[];
   primaryImageUrl?: string;
+  likeCount?: number;
+  commentCount?: number;
+  viewCount?: number;
+  likedByMe?: boolean;
+  imageCount?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface MachineRequestDetail {
+  request: MachineRequest;
+  comments: MachineRequestComment[];
 }
