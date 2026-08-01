@@ -14,6 +14,23 @@ import { resolvePhotoBoardMediaUrl } from '@/utils/photoBoardMediaUrl';
 import '@/styles/components.css';
 import '@/styles/photo-board.css';
 
+function formatDateTime(iso: string) {
+  try {
+    const date = new Date(iso);
+    const now = new Date();
+    const sameYear = date.getFullYear() === now.getFullYear();
+    return date.toLocaleString(undefined, {
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      ...(sameYear ? {} : { year: '2-digit' }),
+    });
+  } catch {
+    return iso;
+  }
+}
+
 export function PhotoPostDetailPage() {
   const { postId = '' } = useParams();
   const { t } = useTranslation('community');
@@ -114,11 +131,7 @@ export function PhotoPostDetailPage() {
 
   const formattedDate = useMemo(() => {
     if (!data?.post.createdAt) return '';
-    try {
-      return new Date(data.post.createdAt).toLocaleString();
-    } catch {
-      return data.post.createdAt;
-    }
+    return formatDateTime(data.post.createdAt);
   }, [data?.post.createdAt]);
 
   if (isLoading || !data) {
@@ -133,7 +146,42 @@ export function PhotoPostDetailPage() {
 
   return (
     <div className="photo-detail">
-      <PageShell title={post.title} subtitle={formattedDate}>
+      <PageShell
+        title={t('photoBoard')}
+        action={
+          <Link to={ROUTES.PHOTO_BOARD} className="btn btn--secondary photo-detail__back-top">
+            {t('photoBackList')}
+          </Link>
+        }
+      >
+        <header className="photo-detail__header">
+          <h2 className="photo-detail__title">{post.title}</h2>
+          <p className="photo-detail__meta">
+            <Link
+              to={`${ROUTES.PHOTO_BOARD}?authorId=${post.userId}`}
+              className="photo-detail__author"
+            >
+              {post.authorName || '—'}
+            </Link>
+            <span className="photo-detail__sep" aria-hidden>
+              ·
+            </span>
+            <time dateTime={post.createdAt}>{formattedDate}</time>
+            <span className="photo-detail__sep" aria-hidden>
+              ·
+            </span>
+            <span>
+              {t('photoViews')} {post.viewCount}
+            </span>
+            <span className="photo-detail__sep" aria-hidden>
+              ·
+            </span>
+            <span>
+              {t('comments')} {post.commentCount}
+            </span>
+          </p>
+        </header>
+
         <div
           className="photo-detail__gallery"
           onTouchStart={(e) => {
@@ -239,19 +287,7 @@ export function PhotoPostDetailPage() {
           ) : null}
         </div>
 
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{post.content}</p>
-
-        <div>
-          <Link
-            to={`${ROUTES.PHOTO_BOARD}?authorId=${post.userId}`}
-            className="btn btn--secondary"
-          >
-            {t('photoAuthor')}: {post.authorName || '—'}
-          </Link>
-          <div style={{ marginTop: '0.35rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-            {t('photoViews')}: {post.viewCount} · {t('comments')}: {post.commentCount}
-          </div>
-        </div>
+        {post.content ? <p className="photo-detail__content">{post.content}</p> : null}
 
         {post.tags.length ? (
           <div className="photo-detail__tags">
@@ -268,10 +304,13 @@ export function PhotoPostDetailPage() {
         ) : null}
 
         <section className="photo-detail__comments" aria-label={t('comments')}>
-          <h3 className="my-page-section__title">{t('comments')}</h3>
+          <div className="photo-detail__comments-head">
+            <h3 className="photo-detail__comments-title">{t('comments')}</h3>
+            <span className="photo-detail__comments-count">{comments.length}</span>
+          </div>
+
           <form
-            className="card"
-            style={{ padding: '0.85rem', display: 'grid', gap: '0.5rem' }}
+            className="photo-detail__comment-form"
             onSubmit={(e) => {
               e.preventDefault();
               if (!comment.trim()) return;
@@ -279,53 +318,55 @@ export function PhotoPostDetailPage() {
             }}
           >
             {replyTo ? (
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                {t('photoReplying')}{' '}
-                <button type="button" className="btn btn--secondary" onClick={() => setReplyTo(null)}>
+              <div className="photo-detail__replying">
+                <span>{t('photoReplying')}</span>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={() => setReplyTo(null)}
+                >
                   {t('cancel')}
                 </button>
               </div>
             ) : null}
             <textarea
-              className="input"
+              className="input photo-detail__comment-input"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder={t('writeComment')}
-              rows={3}
+              rows={2}
             />
             <button
               type="submit"
-              className="btn btn--primary"
+              className="btn btn--primary photo-detail__comment-submit"
               disabled={commentMutation.isPending || !comment.trim()}
             >
               {t('submit')}
             </button>
           </form>
 
-          {comments.map((item) => (
-            <article
-              key={item.id}
-              className={`photo-comment${item.parentId ? ' photo-comment--reply' : ''}`}
-            >
-              <div className="photo-comment__meta">
-                <strong>{item.authorName || '—'}</strong>
-                <span>{new Date(item.createdAt).toLocaleString()}</span>
-              </div>
-              <p style={{ margin: '0 0 0.35rem', whiteSpace: 'pre-wrap' }}>{item.content}</p>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => requireAuth(() => setReplyTo(item.id))}
+          <div className="photo-detail__comment-list">
+            {comments.map((item) => (
+              <article
+                key={item.id}
+                className={`photo-comment${item.parentId ? ' photo-comment--reply' : ''}`}
               >
-                {t('photoReply')}
-              </button>
-            </article>
-          ))}
+                <div className="photo-comment__meta">
+                  <strong>{item.authorName || '—'}</strong>
+                  <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
+                </div>
+                <p className="photo-comment__body">{item.content}</p>
+                <button
+                  type="button"
+                  className="btn btn--secondary photo-comment__reply"
+                  onClick={() => requireAuth(() => setReplyTo(item.id))}
+                >
+                  {t('photoReply')}
+                </button>
+              </article>
+            ))}
+          </div>
         </section>
-
-        <Link to={ROUTES.PHOTO_BOARD} className="btn btn--secondary btn--block">
-          {t('photoBackList')}
-        </Link>
       </PageShell>
     </div>
   );
