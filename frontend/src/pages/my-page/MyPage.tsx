@@ -331,7 +331,7 @@ export function MyPage() {
             {tc('ownerDashboard')}
           </Link>
         )}
-        {!isOwner && (
+        {showAboveMember && !isOwner && (
           <div className="my-page__cta">
             <Link to={ROUTES.OWNER_APPLY} className="btn btn--primary btn--block">
               {tc('applyOwner')}
@@ -339,7 +339,7 @@ export function MyPage() {
             <p className="my-page__cta-desc">{tc('applyOwnerDesc')}</p>
           </div>
         )}
-        {!isTrainer && (
+        {showAboveMember && !isTrainer && (
           <div className="my-page__cta">
             <Link to={ROUTES.TRAINER_APPLY} className="btn btn--primary btn--block">
               {tc('applyTrainer')}
