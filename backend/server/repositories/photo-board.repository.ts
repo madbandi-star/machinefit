@@ -680,12 +680,21 @@ export const photoBoardRepository = {
     if (!pool) {
       const post = mockPhotoPosts.find((p) => p.id === postId && !p.isHidden);
       if (!post) throw new AppError(404, 'NOT_FOUND', 'Photo post not found');
+      let parentId = input.parentId;
+      if (parentId) {
+        const parent = mockPhotoComments.find(
+          (c) => c.id === parentId && c.postId === postId && !c.isHidden
+        );
+        if (!parent) throw new AppError(400, 'INVALID_PARENT', 'Parent comment not found');
+        // Keep replies one level deep under the top-level comment.
+        if (parent.parentId) parentId = parent.parentId;
+      }
       const now = new Date().toISOString();
       const comment: PhotoPostComment = {
         id: randomUUID(),
         postId,
         userId,
-        parentId: input.parentId,
+        parentId,
         content: input.content,
         isHidden: false,
         authorName: 'You',
@@ -703,12 +712,17 @@ export const photoBoardRepository = {
     );
     if (!post.rows[0]) throw new AppError(404, 'NOT_FOUND', 'Photo post not found');
 
-    if (input.parentId) {
-      const parent = await pool.query(
-        `SELECT 1 FROM photo_post_comments WHERE id = $1 AND post_id = $2 AND is_hidden = FALSE`,
-        [input.parentId, postId]
+    let parentId: string | null = input.parentId ?? null;
+    if (parentId) {
+      const parent = await pool.query<{ id: string; parent_id: string | null }>(
+        `SELECT id, parent_id
+         FROM photo_post_comments
+         WHERE id = $1 AND post_id = $2 AND is_hidden = FALSE`,
+        [parentId, postId]
       );
-      if (!parent.rowCount) throw new AppError(400, 'INVALID_PARENT', 'Parent comment not found');
+      if (!parent.rows[0]) throw new AppError(400, 'INVALID_PARENT', 'Parent comment not found');
+      // Collapse nested replies onto the top-level parent.
+      parentId = parent.rows[0].parent_id ?? parent.rows[0].id;
     }
 
     const result = await pool.query<{
@@ -730,7 +744,7 @@ export const photoBoardRepository = {
        SELECT i.*, u.display_name
        FROM inserted i
        JOIN users u ON u.id = i.user_id`,
-      [postId, userId, input.parentId ?? null, input.content]
+      [postId, userId, parentId, input.content]
     );
     await pool.query(`UPDATE photo_posts SET comment_count = comment_count + 1 WHERE id = $1`, [
       postId,

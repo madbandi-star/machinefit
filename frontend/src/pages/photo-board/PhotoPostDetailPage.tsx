@@ -10,6 +10,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { buildCommentThreads, resolveReplyRootId } from '@/utils/commentThreads';
 import { resolvePhotoBoardMediaUrl } from '@/utils/photoBoardMediaUrl';
 import '@/styles/components.css';
 import '@/styles/photo-board.css';
@@ -45,6 +46,8 @@ export function PhotoPostDetailPage() {
   const [comment, setComment] = useState('');
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const touchStartX = useRef<number | null>(null);
+  const commentFormRef = useRef<HTMLFormElement>(null);
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: QUERY_KEYS.photoBoardPost(postId),
@@ -133,6 +136,27 @@ export function PhotoPostDetailPage() {
     if (!data?.post.createdAt) return '';
     return formatDateTime(data.post.createdAt);
   }, [data?.post.createdAt]);
+
+  const commentThreads = useMemo(
+    () => buildCommentThreads(data?.comments ?? []),
+    [data?.comments]
+  );
+
+  const replyTarget = useMemo(() => {
+    if (!replyTo || !data?.comments) return null;
+    return data.comments.find((c) => c.id === replyTo) ?? null;
+  }, [data?.comments, replyTo]);
+
+  const startReply = (commentId: string) => {
+    requireAuth(() => {
+      const rootId = resolveReplyRootId(commentId, data?.comments ?? []);
+      setReplyTo(rootId);
+      window.requestAnimationFrame(() => {
+        commentFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        commentInputRef.current?.focus();
+      });
+    });
+  };
 
   if (isLoading || !data) {
     return (
@@ -309,7 +333,49 @@ export function PhotoPostDetailPage() {
             <span className="photo-detail__comments-count">{comments.length}</span>
           </div>
 
+          <div className="photo-detail__comment-list">
+            {commentThreads.map(({ root, replies }) => (
+              <div key={root.id} className="photo-comment-thread">
+                <article className="photo-comment">
+                  <div className="photo-comment__meta">
+                    <strong>{root.authorName || '—'}</strong>
+                    <time dateTime={root.createdAt}>{formatDateTime(root.createdAt)}</time>
+                  </div>
+                  <p className="photo-comment__body">{root.content}</p>
+                  <button
+                    type="button"
+                    className="btn btn--secondary photo-comment__reply"
+                    onClick={() => startReply(root.id)}
+                  >
+                    {t('photoReply')}
+                  </button>
+                </article>
+                {replies.length ? (
+                  <div className="photo-comment-thread__replies">
+                    {replies.map((item) => (
+                      <article key={item.id} className="photo-comment photo-comment--reply">
+                        <div className="photo-comment__meta">
+                          <strong>{item.authorName || '—'}</strong>
+                          <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
+                        </div>
+                        <p className="photo-comment__body">{item.content}</p>
+                        <button
+                          type="button"
+                          className="btn btn--secondary photo-comment__reply"
+                          onClick={() => startReply(item.id)}
+                        >
+                          {t('photoReply')}
+                        </button>
+                      </article>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+
           <form
+            ref={commentFormRef}
             className="photo-detail__comment-form"
             onSubmit={(e) => {
               e.preventDefault();
@@ -317,9 +383,9 @@ export function PhotoPostDetailPage() {
               requireAuth(() => commentMutation.mutate());
             }}
           >
-            {replyTo ? (
+            {replyTarget ? (
               <div className="photo-detail__replying">
-                <span>{t('photoReplying')}</span>
+                <span>{t('replyingTo', { name: replyTarget.authorName || '—' })}</span>
                 <button
                   type="button"
                   className="btn btn--secondary"
@@ -330,10 +396,11 @@ export function PhotoPostDetailPage() {
               </div>
             ) : null}
             <textarea
+              ref={commentInputRef}
               className="input photo-detail__comment-input"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder={t('writeComment')}
+              placeholder={replyTarget ? t('writeReply') : t('writeComment')}
               rows={2}
             />
             <button
@@ -341,31 +408,9 @@ export function PhotoPostDetailPage() {
               className="btn btn--primary photo-detail__comment-submit"
               disabled={commentMutation.isPending || !comment.trim()}
             >
-              {t('submit')}
+              {replyTarget ? t('photoReply') : t('submit')}
             </button>
           </form>
-
-          <div className="photo-detail__comment-list">
-            {comments.map((item) => (
-              <article
-                key={item.id}
-                className={`photo-comment${item.parentId ? ' photo-comment--reply' : ''}`}
-              >
-                <div className="photo-comment__meta">
-                  <strong>{item.authorName || '—'}</strong>
-                  <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
-                </div>
-                <p className="photo-comment__body">{item.content}</p>
-                <button
-                  type="button"
-                  className="btn btn--secondary photo-comment__reply"
-                  onClick={() => requireAuth(() => setReplyTo(item.id))}
-                >
-                  {t('photoReply')}
-                </button>
-              </article>
-            ))}
-          </div>
         </section>
       </PageShell>
     </div>

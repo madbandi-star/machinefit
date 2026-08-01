@@ -280,7 +280,7 @@ export const communityRepository = {
       id: r.id,
       postId: r.post_id,
       userId: r.user_id,
-      parentId: r.parent_id,
+      parentId: r.parent_id ?? undefined,
       content: r.content,
       isHidden: r.is_hidden,
       authorName: r.author_name,
@@ -298,11 +298,21 @@ export const communityRepository = {
     const pool = getPool();
     const now = new Date().toISOString();
     if (!pool) {
+      const post = mockPosts.find((p) => p.id === postId);
+      if (!post) throw new AppError(404, 'NOT_FOUND', 'Post not found');
+      let parentId = input.parentId;
+      if (parentId) {
+        const parent = mockComments.find(
+          (c) => c.id === parentId && c.postId === postId && !c.isHidden
+        );
+        if (!parent) throw new AppError(400, 'INVALID_PARENT', 'Parent comment not found');
+        if (parent.parentId) parentId = parent.parentId;
+      }
       const comment: Comment = {
         id: crypto.randomUUID(),
         postId,
         userId,
-        parentId: input.parentId,
+        parentId,
         content: input.content,
         isHidden: false,
         authorName,
@@ -310,22 +320,38 @@ export const communityRepository = {
         updatedAt: now,
       };
       mockComments.push(comment);
-      const post = mockPosts.find((p) => p.id === postId);
-      if (post) post.commentCount = (post.commentCount ?? 0) + 1;
+      post.commentCount = (post.commentCount ?? 0) + 1;
       return comment;
+    }
+
+    const post = await pool.query(`SELECT id FROM posts WHERE id = $1 AND is_hidden = FALSE`, [
+      postId,
+    ]);
+    if (!post.rows[0]) throw new AppError(404, 'NOT_FOUND', 'Post not found');
+
+    let parentId: string | null = input.parentId ?? null;
+    if (parentId) {
+      const parent = await pool.query<{ id: string; parent_id: string | null }>(
+        `SELECT id, parent_id
+         FROM comments
+         WHERE id = $1 AND post_id = $2 AND is_hidden = FALSE`,
+        [parentId, postId]
+      );
+      if (!parent.rows[0]) throw new AppError(400, 'INVALID_PARENT', 'Parent comment not found');
+      parentId = parent.rows[0].parent_id ?? parent.rows[0].id;
     }
 
     const result = await pool.query(
       `INSERT INTO comments (post_id, user_id, parent_id, content)
        VALUES ($1,$2,$3,$4) RETURNING *`,
-      [postId, userId, input.parentId ?? null, input.content]
+      [postId, userId, parentId, input.content]
     );
     const r = result.rows[0];
     return {
       id: r.id,
       postId: r.post_id,
       userId: r.user_id,
-      parentId: r.parent_id,
+      parentId: r.parent_id ?? undefined,
       content: r.content,
       isHidden: r.is_hidden,
       authorName,

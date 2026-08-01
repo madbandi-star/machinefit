@@ -151,5 +151,7 @@
   "photoNext": "다음 사진",
   "photoReply": "답글",
   "photoReplying": "답글 작성 중",
+  "replyingTo": "{{name}}님에게 답글",
+  "writeReply": "답글을 입력하세요…",
   "photoLinkCopied": "링크를 복사했어요."
 }

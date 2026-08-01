@@ -151,5 +151,7 @@
   "photoNext": "Next photo",
   "photoReply": "Reply",
   "photoReplying": "Replying",
+  "replyingTo": "Reply to {{name}}",
+  "writeReply": "Write a reply…",
   "photoLinkCopied": "Link copied."
 }
