@@ -14,6 +14,19 @@ import '@/styles/components.css';
 import '@/styles/community.css';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 
+function formatDateTime(iso: string) {
+  const date = new Date(iso);
+  const now = new Date();
+  const sameYear = date.getFullYear() === now.getFullYear();
+  return date.toLocaleString(undefined, {
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    ...(sameYear ? {} : { year: '2-digit' }),
+  });
+}
+
 export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const { t } = useTranslation('community');
@@ -103,10 +116,13 @@ export function PostDetailPage() {
     return (
       <PageShell title={t('freeBoard')}>
         <QueryErrorMessage />
-        <button className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }} onClick={() => refetch()}>
+        <button
+          className="btn btn--secondary btn--sm post-detail__nav-btn"
+          onClick={() => refetch()}
+        >
           {tc('actions.retry')}
         </button>
-        <Link to={ROUTES.FREE_BOARD} className="btn btn--secondary btn--block" style={{ marginTop: '0.5rem' }}>
+        <Link to={ROUTES.FREE_BOARD} className="btn btn--secondary btn--sm post-detail__nav-btn">
           ← {t('freeBoard')}
         </Link>
       </PageShell>
@@ -119,19 +135,46 @@ export function PostDetailPage() {
   const canDelete = isAuthor || (isAdmin && post.boardType === 'free');
 
   return (
-    <PageShell title={post.title}>
-      <div className="card">
-        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-          {post.authorName} · {new Date(post.createdAt).toLocaleString()} · 👁 {post.viewCount}
-        </p>
+    <PageShell
+      title={t('freeBoard')}
+      action={
+        <Link to={ROUTES.FREE_BOARD} className="btn btn--secondary btn--sm post-detail__back-top">
+          ← {t('freeBoard')}
+        </Link>
+      }
+    >
+      <article className="post-detail">
+        <header className="post-detail__header">
+          <h2 className="post-detail__title">{post.title}</h2>
+          <p className="post-detail__meta">
+            <span className="post-detail__author">{post.authorName}</span>
+            <span className="post-detail__sep" aria-hidden>
+              ·
+            </span>
+            <time dateTime={post.createdAt}>{formatDateTime(post.createdAt)}</time>
+            <span className="post-detail__sep" aria-hidden>
+              ·
+            </span>
+            <span className="post-detail__views">👁 {post.viewCount}</span>
+          </p>
+        </header>
+
         <div className="post-detail__content">{post.content}</div>
+
         <div className="post-detail__actions">
-          <button className="btn btn--secondary" onClick={handleLike} disabled={likeMutation.isPending}>
-            ♥ {t('like')} {post.likeCount != null ? `(${post.likeCount})` : ''}
+          <button
+            type="button"
+            className="btn btn--secondary btn--sm"
+            onClick={handleLike}
+            disabled={likeMutation.isPending}
+          >
+            ♥ {t('like')}
+            {post.likeCount != null ? ` ${post.likeCount}` : ''}
           </button>
           {isAuthenticated && !isAuthor && (
             <button
-              className="btn btn--secondary"
+              type="button"
+              className="btn btn--secondary btn--sm"
               onClick={() => {
                 if (window.confirm(tc('compliance.report.confirm'))) {
                   reportMutation.mutate();
@@ -143,42 +186,61 @@ export function PostDetailPage() {
             </button>
           )}
           {canDelete && (
-            <button className="btn btn--secondary" onClick={handleDelete} disabled={deleteMutation.isPending}>
+            <button
+              type="button"
+              className="btn btn--secondary btn--sm"
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+            >
               {t('deletePost')}
             </button>
           )}
         </div>
-      </div>
 
-      <h3 style={{ marginBottom: '0.75rem' }}>{t('comments')} ({comments.length})</h3>
-      <div className="comment-list" style={{ marginBottom: '1rem' }}>
-        {comments.map((c) => (
-          <div key={c.id} className="comment-item">
-            <div className="comment-item__author">{c.authorName}</div>
-            <p>{c.content}</p>
-            <div className="comment-item__date">{new Date(c.createdAt).toLocaleString()}</div>
+        <section className="post-detail__comments" aria-label={t('comments')}>
+          <div className="post-detail__comments-head">
+            <h3 className="post-detail__comments-title">{t('comments')}</h3>
+            <span className="post-detail__comments-count">{comments.length}</span>
           </div>
-        ))}
-      </div>
 
-      <form onSubmit={handleComment} className="card">
-        <div className="form-row">
-          <label htmlFor="comment">{t('writeComment')}</label>
-          <textarea
-            id="comment"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder={t('writeComment')}
-          />
-        </div>
-        <button type="submit" className="btn btn--primary" disabled={commentMutation.isPending}>
-          {t('comment')}
-        </button>
-      </form>
+          {comments.length ? (
+            <ul className="comment-list">
+              {comments.map((c) => (
+                <li key={c.id} className="comment-item">
+                  <div className="comment-item__top">
+                    <span className="comment-item__author">{c.authorName}</span>
+                    <time className="comment-item__date" dateTime={c.createdAt}>
+                      {formatDateTime(c.createdAt)}
+                    </time>
+                  </div>
+                  <p className="comment-item__body">{c.content}</p>
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
-      <Link to={ROUTES.FREE_BOARD} className="btn btn--secondary btn--block" style={{ marginTop: '1rem' }}>
-        ← {t('freeBoard')}
-      </Link>
+          <form onSubmit={handleComment} className="post-detail__comment-form">
+            <label className="post-detail__comment-label" htmlFor="comment">
+              {t('writeComment')}
+            </label>
+            <textarea
+              id="comment"
+              className="input post-detail__comment-input"
+              rows={2}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder={t('writeComment')}
+            />
+            <button
+              type="submit"
+              className="btn btn--primary btn--sm post-detail__comment-submit"
+              disabled={commentMutation.isPending}
+            >
+              {t('comment')}
+            </button>
+          </form>
+        </section>
+      </article>
     </PageShell>
   );
 }
