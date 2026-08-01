@@ -4,6 +4,7 @@ import {
   createPostSchema,
   createCommentSchema,
   createMachineRequestSchema,
+  updateMachineRequestSchema,
   contentReportSchema,
 } from '@machinefit/shared';
 import { communityService } from '../services/community.service.js';
@@ -74,6 +75,36 @@ export async function toggleMachineRequestVote(req: Request, res: Response): Pro
     req.user.userId
   );
   res.json({ success: true, data: result });
+}
+
+export async function getMachineRequest(req: Request, res: Response): Promise<void> {
+  const item = await communityService.getMachineRequest(
+    getParam(req.params.requestId),
+    req.user?.userId
+  );
+  res.json({ success: true, data: item });
+}
+
+export async function updateMachineRequest(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = updateMachineRequestSchema.parse(req.body);
+  const item = await communityService.updateMachineRequest(
+    getParam(req.params.requestId),
+    req.user.userId,
+    req.user.roleCode,
+    input
+  );
+  res.json({ success: true, data: item });
+}
+
+export async function deleteMachineRequest(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  await communityService.deleteMachineRequest(
+    getParam(req.params.requestId),
+    req.user.userId,
+    req.user.roleCode
+  );
+  res.json({ success: true, data: { message: 'Deleted' } });
 }
 
 export async function createMachineRequest(req: Request, res: Response): Promise<void> {

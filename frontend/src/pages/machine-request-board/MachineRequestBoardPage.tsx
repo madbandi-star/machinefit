@@ -186,10 +186,12 @@ export function MachineRequestBoardPage() {
         gymName: gymChoiceMode === 'unknown' ? undefined : resolvedGymName,
         files: images.map((img) => img.file),
       }),
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequests });
+      const createdId = res.data.data.id;
       resetForm();
       showToast(t('requestSubmitSuccess'), 'success');
+      navigate(ROUTES.MACHINE_REQUEST_DETAIL.replace(':requestId', createdId));
     },
     onError: (error) => {
       if (axios.isAxiosError(error) && !error.response) {

@@ -1,6 +1,11 @@
 import sharp from 'sharp';
 import type { BoardType, RoleCode } from '@machinefit/shared';
-import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
+import type {
+  CreatePostInput,
+  CreateCommentInput,
+  CreateMachineRequestInput,
+  UpdateMachineRequestInput,
+} from '@machinefit/shared';
 import { findBlockedContentMatch } from '@machinefit/shared';
 import {
   isAllowedMachineRequestImage,
@@ -111,6 +116,24 @@ export const communityService = {
 
   toggleMachineRequestVote(requestId: string, userId: string) {
     return communityRepository.toggleMachineRequestVote(requestId, userId);
+  },
+
+  getMachineRequest(requestId: string, viewerId?: string) {
+    return communityRepository.getMachineRequest(requestId, viewerId);
+  },
+
+  updateMachineRequest(
+    requestId: string,
+    userId: string,
+    roleCode: RoleCode,
+    input: UpdateMachineRequestInput
+  ) {
+    assertSafeUgc(input.brandName, input.machineName, input.description);
+    return communityRepository.updateMachineRequest(requestId, userId, roleCode, input);
+  },
+
+  deleteMachineRequest(requestId: string, userId: string, roleCode: RoleCode) {
+    return communityRepository.deleteMachineRequest(requestId, userId, roleCode);
   },
 
   getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {

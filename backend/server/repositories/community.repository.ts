@@ -8,7 +8,12 @@ import {
   type MachineRequestImage,
   type RoleCode,
 } from '@machinefit/shared';
-import type { CreatePostInput, CreateCommentInput, CreateMachineRequestInput } from '@machinefit/shared';
+import type {
+  CreatePostInput,
+  CreateCommentInput,
+  CreateMachineRequestInput,
+  UpdateMachineRequestInput,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
   mockPosts,
@@ -617,6 +622,180 @@ export const communityRepository = {
     } finally {
       client.release();
     }
+  },
+
+  async getMachineRequest(requestId: string, viewerId?: string): Promise<MachineRequest> {
+    const pool = getPool();
+    if (!pool) {
+      const req = mockMachineRequests.find((r) => r.id === requestId);
+      if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      const images: MachineRequestImage[] = [];
+      for (const [id, img] of mockMachineRequestImages.entries()) {
+        if (img.requestId !== requestId) continue;
+        images.push({
+          id,
+          sortOrder: images.length,
+          thumbUrl: machineRequestImageUrl(id, 'thumb'),
+          imageUrl: machineRequestImageUrl(id, 'full'),
+        });
+      }
+      return {
+        ...req,
+        userId: '',
+        adminNote: undefined,
+        commercialUseConsent: undefined,
+        images,
+        primaryImageUrl: images[0]?.thumbUrl ?? req.primaryImageUrl,
+        voteCount: req.voteCount ?? 0,
+        votedByMe: viewerId
+          ? mockMachineRequestVotes.has(machineRequestVoteKey(viewerId, requestId))
+          : false,
+        isMine: Boolean(viewerId && req.userId === viewerId),
+      };
+    }
+
+    const viewerSelects = viewerId
+      ? `, EXISTS (
+           SELECT 1 FROM machine_request_votes v
+           WHERE v.request_id = mr.id AND v.user_id = $2
+         ) AS voted_by_me,
+         (mr.user_id = $2) AS is_mine`
+      : ', FALSE AS voted_by_me, FALSE AS is_mine';
+    const result = await pool.query(
+      `SELECT mr.*, u.display_name AS author_name,
+              COALESCE(mr.vote_count, 0) AS vote_count
+              ${viewerSelects}
+       FROM machine_requests mr
+       JOIN users u ON u.id = mr.user_id
+       WHERE mr.id = $1`,
+      viewerId ? [requestId, viewerId] : [requestId]
+    );
+    const r = result.rows[0];
+    if (!r) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+
+    const imageResult = await pool.query<{ id: string; sort_order: number }>(
+      `SELECT id, sort_order
+       FROM machine_request_images
+       WHERE request_id = $1
+       ORDER BY sort_order ASC, created_at ASC`,
+      [requestId]
+    );
+    const images = mapRequestImages(imageResult.rows);
+    return {
+      id: r.id,
+      userId: '',
+      brandName: r.brand_name,
+      machineName: r.machine_name,
+      description: r.description,
+      status: r.status,
+      adminNote: undefined,
+      linkedMachineId: r.linked_machine_id ?? undefined,
+      authorName: r.author_name,
+      gymChoiceMode: r.gym_choice_mode ?? 'unknown',
+      gymName: r.gym_name ?? null,
+      images,
+      primaryImageUrl: images[0]?.thumbUrl,
+      voteCount: Number(r.vote_count ?? 0),
+      votedByMe: Boolean(r.voted_by_me),
+      isMine: Boolean(r.is_mine),
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+    };
+  },
+
+  async updateMachineRequest(
+    requestId: string,
+    userId: string,
+    role: RoleCode,
+    input: UpdateMachineRequestInput
+  ): Promise<MachineRequest> {
+    const pool = getPool();
+    if (!pool) {
+      const req = mockMachineRequests.find((r) => r.id === requestId);
+      if (!req) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      if (req.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this request');
+      }
+      if (req.status === 'added' && !hasMinRole(role, Role.ADMIN)) {
+        throw new AppError(400, 'NOT_EDITABLE', 'Registered requests cannot be edited');
+      }
+      if (input.brandName) req.brandName = input.brandName;
+      if (input.machineName) req.machineName = input.machineName;
+      if (input.description) req.description = input.description;
+      if (input.gymChoiceMode) req.gymChoiceMode = input.gymChoiceMode;
+      if (input.gymName !== undefined) req.gymName = input.gymName;
+      req.updatedAt = new Date().toISOString();
+      return this.getMachineRequest(requestId, userId);
+    }
+
+    const existing = await pool.query<{ user_id: string; status: string }>(
+      `SELECT user_id, status FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    const row = existing.rows[0];
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+    if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this request');
+    }
+    if (row.status === 'added' && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(400, 'NOT_EDITABLE', 'Registered requests cannot be edited');
+    }
+
+    const gymName =
+      input.gymChoiceMode === 'unknown'
+        ? null
+        : input.gymName !== undefined
+          ? input.gymName?.trim().slice(0, 50) || null
+          : undefined;
+
+    await pool.query(
+      `UPDATE machine_requests SET
+         brand_name = COALESCE($2, brand_name),
+         machine_name = COALESCE($3, machine_name),
+         description = COALESCE($4, description),
+         gym_choice_mode = COALESCE($5, gym_choice_mode),
+         gym_name = CASE WHEN $6::boolean THEN $7 ELSE gym_name END,
+         updated_at = NOW()
+       WHERE id = $1`,
+      [
+        requestId,
+        input.brandName ?? null,
+        input.machineName ?? null,
+        input.description ?? null,
+        input.gymChoiceMode ?? null,
+        gymName !== undefined,
+        gymName ?? null,
+      ]
+    );
+    return this.getMachineRequest(requestId, userId);
+  },
+
+  async deleteMachineRequest(requestId: string, userId: string, role: RoleCode): Promise<void> {
+    const pool = getPool();
+    if (!pool) {
+      const index = mockMachineRequests.findIndex((r) => r.id === requestId);
+      if (index < 0) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+      const req = mockMachineRequests[index];
+      if (req.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this request');
+      }
+      mockMachineRequests.splice(index, 1);
+      for (const [id, img] of [...mockMachineRequestImages.entries()]) {
+        if (img.requestId === requestId) mockMachineRequestImages.delete(id);
+      }
+      return;
+    }
+
+    const existing = await pool.query<{ user_id: string }>(
+      `SELECT user_id FROM machine_requests WHERE id = $1`,
+      [requestId]
+    );
+    const row = existing.rows[0];
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Machine request not found');
+    if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this request');
+    }
+    await pool.query(`DELETE FROM machine_requests WHERE id = $1`, [requestId]);
   },
 
   async getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {

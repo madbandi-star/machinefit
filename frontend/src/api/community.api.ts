@@ -3,6 +3,7 @@ import type {
   CreatePostInput,
   CreateCommentInput,
   CreateMachineRequestInput,
+  UpdateMachineRequestInput,
   OwnerApplicationInput,
   CreateOwnerGymInput,
   AddGymMachineInput,
@@ -44,6 +45,9 @@ export const machineRequestApi = {
   list: (params?: { page?: number; limit?: number }) =>
     apiClient.get<ApiResponse<PaginatedResponse<MachineRequest>>>('/machine-requests', { params }),
 
+  get: (requestId: string) =>
+    apiClient.get<ApiResponse<MachineRequest>>(`/machine-requests/${requestId}`),
+
   create: (input: CreateMachineRequestFormInput) => {
     const form = new FormData();
     form.append('brandName', input.brandName);
@@ -62,6 +66,11 @@ export const machineRequestApi = {
       timeout: 120_000,
     });
   },
+
+  update: (requestId: string, input: UpdateMachineRequestInput) =>
+    apiClient.patch<ApiResponse<MachineRequest>>(`/machine-requests/${requestId}`, input),
+
+  remove: (requestId: string) => apiClient.delete(`/machine-requests/${requestId}`),
 
   toggleVote: (requestId: string) =>
     apiClient.post<ApiResponse<{ voted: boolean; voteCount: number }>>(

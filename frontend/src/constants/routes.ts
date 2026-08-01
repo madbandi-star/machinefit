@@ -14,6 +14,7 @@ export const ROUTES = {
   RECORDS: '/records',
   COMMUNITY: '/community',
   MACHINE_REQUESTS: '/community/requests',
+  MACHINE_REQUEST_DETAIL: '/community/requests/:requestId',
   FREE_BOARD: '/community/free',
   PHOTO_BOARD: '/community/photo',
   PHOTO_BOARD_WRITE: '/community/photo/write',
