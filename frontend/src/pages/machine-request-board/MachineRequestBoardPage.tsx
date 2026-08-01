@@ -393,15 +393,26 @@ export function MachineRequestBoardPage() {
   }) => (
     <fieldset className="form-row community-board-page__choice">
       <legend>{params.legend}</legend>
-      <label className="checkbox-label">
-        <input
-          type="radio"
-          name={params.name}
-          checked={params.mode === 'custom'}
-          onChange={() => params.onModeChange('custom')}
-        />
-        <span>{t('requestFieldChoiceCustom')}</span>
-      </label>
+      <div className="community-board-page__choice-radios">
+        <label className="checkbox-label">
+          <input
+            type="radio"
+            name={params.name}
+            checked={params.mode === 'custom'}
+            onChange={() => params.onModeChange('custom')}
+          />
+          <span>{t('requestFieldChoiceCustom')}</span>
+        </label>
+        <label className="checkbox-label">
+          <input
+            type="radio"
+            name={params.name}
+            checked={params.mode === 'unknown'}
+            onChange={() => params.onModeChange('unknown')}
+          />
+          <span>{t('requestFieldChoiceUnknown')}</span>
+        </label>
+      </div>
       {params.mode === 'custom' &&
         (params.multiline ? (
           <textarea
@@ -423,15 +434,6 @@ export function MachineRequestBoardPage() {
             maxLength={params.maxLength}
           />
         ))}
-      <label className="checkbox-label">
-        <input
-          type="radio"
-          name={params.name}
-          checked={params.mode === 'unknown'}
-          onChange={() => params.onModeChange('unknown')}
-        />
-        <span>{t('requestFieldChoiceUnknown')}</span>
-      </label>
     </fieldset>
   );
 
@@ -499,15 +501,26 @@ export function MachineRequestBoardPage() {
               {!profileGymLabel && gymChoiceMode === 'profile' && (
                 <p className="community-board-page__hint">{t('requestGymProfileEmpty')}</p>
               )}
-              <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="req-gym-choice"
-                  checked={gymChoiceMode === 'custom'}
-                  onChange={() => setGymChoiceMode('custom')}
-                />
-                <span>{t('requestGymChoiceCustom')}</span>
-              </label>
+              <div className="community-board-page__choice-radios">
+                <label className="checkbox-label">
+                  <input
+                    type="radio"
+                    name="req-gym-choice"
+                    checked={gymChoiceMode === 'custom'}
+                    onChange={() => setGymChoiceMode('custom')}
+                  />
+                  <span>{t('requestGymChoiceCustom')}</span>
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="radio"
+                    name="req-gym-choice"
+                    checked={gymChoiceMode === 'unknown'}
+                    onChange={() => setGymChoiceMode('unknown')}
+                  />
+                  <span>{t('requestGymChoiceUnknown')}</span>
+                </label>
+              </div>
               {gymChoiceMode === 'custom' && (
                 <input
                   id="req-gym-custom"
@@ -519,15 +532,6 @@ export function MachineRequestBoardPage() {
                   required
                 />
               )}
-              <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="req-gym-choice"
-                  checked={gymChoiceMode === 'unknown'}
-                  onChange={() => setGymChoiceMode('unknown')}
-                />
-                <span>{t('requestGymChoiceUnknown')}</span>
-              </label>
             </fieldset>
 
             <div className="form-row community-board-page__photo-field">

@@ -214,6 +214,19 @@
   padding: 0;
 }
 
+/* Keep "모름" to the right of "직접입력" on one row */
+.community-board-page__choice-radios {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.1rem;
+}
+
+.community-board-page__choice-radios .checkbox-label {
+  width: auto;
+  margin: 0;
+}
+
 /* Higher specificity so free-board flex rows do not override request thumb grid */
 .board-index-row.board-index-row--with-thumb {
   display: grid;
