@@ -669,11 +669,25 @@
   overflow-wrap: anywhere;
 }
 
-.photo-comment__reply {
+.photo-comment__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.photo-comment__reply,
+.photo-comment__actions .btn {
   justify-self: start;
   min-height: 1.75rem;
   padding: 0.2rem 0.5rem;
   font-size: 0.7rem;
+}
+
+.photo-comment__edit-input {
+  width: 100%;
+  min-height: 3.2rem;
+  resize: vertical;
+  font-size: 0.82rem;
 }
 
 .photo-comment--reply {

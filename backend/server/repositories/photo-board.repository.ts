@@ -14,6 +14,7 @@ import {
   type PhotoUserBlock,
   type ReportStatus,
   type RoleCode,
+  type UpdatePhotoCommentInput,
   type UpdatePhotoPostInput,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
@@ -766,18 +767,71 @@ export const photoBoardRepository = {
     };
   },
 
+  async updateComment(
+    commentId: string,
+    userId: string,
+    input: UpdatePhotoCommentInput
+  ): Promise<PhotoPostComment> {
+    const pool = getPool();
+    const now = new Date().toISOString();
+    if (!pool) {
+      const comment = mockPhotoComments.find((c) => c.id === commentId && !c.isHidden);
+      if (!comment) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+      if (comment.userId !== userId) {
+        throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this comment');
+      }
+      comment.content = input.content;
+      comment.updatedAt = now;
+      return comment;
+    }
+
+    const existing = await pool.query<{ user_id: string; is_hidden: boolean }>(
+      `SELECT user_id, is_hidden FROM photo_post_comments WHERE id = $1`,
+      [commentId]
+    );
+    const row = existing.rows[0];
+    if (!row || row.is_hidden) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+    if (row.user_id !== userId) {
+      throw new AppError(403, 'FORBIDDEN', 'Only the author can edit this comment');
+    }
+
+    const result = await pool.query(
+      `UPDATE photo_post_comments SET content = $1 WHERE id = $2
+       RETURNING *,
+         (SELECT display_name FROM users WHERE id = photo_post_comments.user_id) AS display_name`,
+      [input.content, commentId]
+    );
+    const updated = result.rows[0];
+    return {
+      id: updated.id,
+      postId: updated.post_id,
+      userId: updated.user_id,
+      parentId: updated.parent_id ?? undefined,
+      content: updated.content,
+      isHidden: updated.is_hidden,
+      authorName: updated.display_name ?? undefined,
+      createdAt: updated.created_at,
+      updatedAt: updated.updated_at,
+    };
+  },
+
   async deleteComment(commentId: string, userId: string, role: RoleCode) {
     const pool = getPool();
     if (!pool) {
-      const index = mockPhotoComments.findIndex((c) => c.id === commentId);
-      if (index < 0) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
-      const comment = mockPhotoComments[index];
+      const comment = mockPhotoComments.find((c) => c.id === commentId && !c.isHidden);
+      if (!comment) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
       if (comment.userId !== userId && !hasMinRole(role, Role.ADMIN)) {
-        throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this comment');
+        throw new AppError(403, 'FORBIDDEN', 'Only the author or admin can delete this comment');
       }
-      mockPhotoComments.splice(index, 1);
+      let hidden = 0;
+      for (const c of mockPhotoComments) {
+        if (!c.isHidden && (c.id === commentId || c.parentId === commentId)) {
+          c.isHidden = true;
+          hidden += 1;
+        }
+      }
       const post = mockPhotoPosts.find((p) => p.id === comment.postId);
-      if (post) post.commentCount = Math.max(0, post.commentCount - 1);
+      if (post) post.commentCount = Math.max(0, post.commentCount - hidden);
       return;
     }
 
@@ -786,19 +840,25 @@ export const photoBoardRepository = {
       [commentId]
     );
     const row = existing.rows[0];
-    if (!row) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
+    if (!row || row.is_hidden) throw new AppError(404, 'NOT_FOUND', 'Comment not found');
     if (row.user_id !== userId && !hasMinRole(role, Role.ADMIN)) {
-      throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this comment');
+      throw new AppError(403, 'FORBIDDEN', 'Only the author or admin can delete this comment');
     }
-    if (hasMinRole(role, Role.ADMIN)) {
-      await pool.query(`UPDATE photo_post_comments SET is_hidden = TRUE WHERE id = $1`, [commentId]);
-    } else {
-      await pool.query(`DELETE FROM photo_post_comments WHERE id = $1`, [commentId]);
-    }
-    if (!row.is_hidden) {
+
+    const hidden = await pool.query<{ id: string }>(
+      `UPDATE photo_post_comments
+       SET is_hidden = TRUE
+       WHERE is_hidden = FALSE AND (id = $1 OR parent_id = $1)
+       RETURNING id`,
+      [commentId]
+    );
+    const hiddenCount = hidden.rowCount ?? hidden.rows.length;
+    if (hiddenCount > 0) {
       await pool.query(
-        `UPDATE photo_posts SET comment_count = GREATEST(comment_count - 1, 0) WHERE id = $1`,
-        [row.post_id]
+        `UPDATE photo_posts
+         SET comment_count = GREATEST(comment_count - $2, 0)
+         WHERE id = $1`,
+        [row.post_id, hiddenCount]
       );
     }
   },

@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Role, hasMinRole } from '@machinefit/shared';
+import { Role, hasMinRole, type PhotoPostComment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { photoBoardApi } from '@/api/photo-board.api';
@@ -45,6 +45,8 @@ export function PhotoPostDetailPage() {
   const [index, setIndex] = useState(0);
   const [comment, setComment] = useState('');
   const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
   const touchStartX = useRef<number | null>(null);
   const commentFormRef = useRef<HTMLFormElement>(null);
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
@@ -58,12 +60,14 @@ export function PhotoPostDetailPage() {
   const images = data?.post.images ?? [];
   const canEdit = Boolean(user && (user.id === data?.post.userId || isAdmin));
 
+  const invalidatePhotoPost = () => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.photoBoardPost(postId) });
+    queryClient.invalidateQueries({ queryKey: ['photo-board'] });
+  };
+
   const likeMutation = useMutation({
     mutationFn: () => photoBoardApi.toggleLike(postId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.photoBoardPost(postId) });
-      queryClient.invalidateQueries({ queryKey: ['photo-board'] });
-    },
+    onSuccess: () => invalidatePhotoPost(),
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
@@ -76,9 +80,33 @@ export function PhotoPostDetailPage() {
     onSuccess: () => {
       setComment('');
       setReplyTo(null);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.photoBoardPost(postId) });
-      queryClient.invalidateQueries({ queryKey: ['photo-board'] });
+      invalidatePhotoPost();
       showToast(t('createSuccess'), 'success');
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const updateCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
+      photoBoardApi.updateComment(commentId, { content }),
+    onSuccess: () => {
+      setEditingId(null);
+      setEditContent('');
+      invalidatePhotoPost();
+      showToast(t('commentUpdated'), 'success');
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: string) => photoBoardApi.deleteComment(commentId),
+    onSuccess: () => {
+      if (editingId) {
+        setEditingId(null);
+        setEditContent('');
+      }
+      invalidatePhotoPost();
+      showToast(t('commentDeleted'), 'success');
     },
     onError: () => showToast(t('errorGeneric'), 'error'),
   });
@@ -149,6 +177,7 @@ export function PhotoPostDetailPage() {
 
   const startReply = (commentId: string) => {
     requireAuth(() => {
+      setEditingId(null);
       const rootId = resolveReplyRootId(commentId, data?.comments ?? []);
       setReplyTo(rootId);
       window.requestAnimationFrame(() => {
@@ -156,6 +185,107 @@ export function PhotoPostDetailPage() {
         commentInputRef.current?.focus();
       });
     });
+  };
+
+  const startEdit = (item: PhotoPostComment) => {
+    requireAuth(() => {
+      setReplyTo(null);
+      setEditingId(item.id);
+      setEditContent(item.content);
+    });
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    requireAuth(() => {
+      if (!window.confirm(t('confirmDeleteComment'))) return;
+      deleteCommentMutation.mutate(commentId);
+    });
+  };
+
+  const renderComment = (item: PhotoPostComment, reply = false) => {
+    const canEditComment = Boolean(user && user.id === item.userId);
+    const canDeleteComment = Boolean(user && (user.id === item.userId || isAdmin));
+    const isEditing = editingId === item.id;
+
+    return (
+      <article
+        className={`photo-comment${reply ? ' photo-comment--reply' : ''}`}
+        key={item.id}
+      >
+        <div className="photo-comment__meta">
+          <strong>{item.authorName || '—'}</strong>
+          <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
+        </div>
+        {isEditing ? (
+          <>
+            <textarea
+              className="input photo-comment__edit-input"
+              rows={2}
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              aria-label={t('editComment')}
+            />
+            <div className="photo-comment__actions">
+              <button
+                type="button"
+                className="btn btn--primary"
+                disabled={updateCommentMutation.isPending || !editContent.trim()}
+                onClick={() =>
+                  updateCommentMutation.mutate({
+                    commentId: item.id,
+                    content: editContent.trim(),
+                  })
+                }
+              >
+                {t('saveComment')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => {
+                  setEditingId(null);
+                  setEditContent('');
+                }}
+              >
+                {t('cancel')}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="photo-comment__body">{item.content}</p>
+            <div className="photo-comment__actions">
+              <button
+                type="button"
+                className="btn btn--secondary photo-comment__reply"
+                onClick={() => startReply(item.id)}
+              >
+                {t('photoReply')}
+              </button>
+              {canEditComment ? (
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={() => startEdit(item)}
+                >
+                  {t('editComment')}
+                </button>
+              ) : null}
+              {canDeleteComment ? (
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  disabled={deleteCommentMutation.isPending}
+                  onClick={() => handleDeleteComment(item.id)}
+                >
+                  {t('deleteComment')}
+                </button>
+              ) : null}
+            </div>
+          </>
+        )}
+      </article>
+    );
   };
 
   if (isLoading || !data) {
@@ -336,38 +466,10 @@ export function PhotoPostDetailPage() {
           <div className="photo-detail__comment-list">
             {commentThreads.map(({ root, replies }) => (
               <div key={root.id} className="photo-comment-thread">
-                <article className="photo-comment">
-                  <div className="photo-comment__meta">
-                    <strong>{root.authorName || '—'}</strong>
-                    <time dateTime={root.createdAt}>{formatDateTime(root.createdAt)}</time>
-                  </div>
-                  <p className="photo-comment__body">{root.content}</p>
-                  <button
-                    type="button"
-                    className="btn btn--secondary photo-comment__reply"
-                    onClick={() => startReply(root.id)}
-                  >
-                    {t('photoReply')}
-                  </button>
-                </article>
+                {renderComment(root)}
                 {replies.length ? (
                   <div className="photo-comment-thread__replies">
-                    {replies.map((item) => (
-                      <article key={item.id} className="photo-comment photo-comment--reply">
-                        <div className="photo-comment__meta">
-                          <strong>{item.authorName || '—'}</strong>
-                          <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
-                        </div>
-                        <p className="photo-comment__body">{item.content}</p>
-                        <button
-                          type="button"
-                          className="btn btn--secondary photo-comment__reply"
-                          onClick={() => startReply(item.id)}
-                        >
-                          {t('photoReply')}
-                        </button>
-                      </article>
-                    ))}
+                    {replies.map((item) => renderComment(item, true))}
                   </div>
                 ) : null}
               </div>

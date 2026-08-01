@@ -153,5 +153,11 @@
   "photoReplying": "답글 작성 중",
   "replyingTo": "{{name}}님에게 답글",
   "writeReply": "답글을 입력하세요…",
+  "editComment": "수정",
+  "saveComment": "저장",
+  "deleteComment": "삭제",
+  "confirmDeleteComment": "이 댓글을 삭제할까요?",
+  "commentUpdated": "댓글을 수정했어요.",
+  "commentDeleted": "댓글을 삭제했어요.",
   "photoLinkCopied": "링크를 복사했어요."
 }

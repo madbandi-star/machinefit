@@ -38,6 +38,10 @@ export const createPhotoCommentSchema = z.object({
   parentId: z.string().uuid().optional(),
 });
 
+export const updatePhotoCommentSchema = z.object({
+  content: z.string().trim().min(1).max(2000),
+});
+
 export const createPhotoReportSchema = z
   .object({
     postId: z.string().uuid().optional(),
@@ -62,6 +66,7 @@ export type PhotoBoardListQuery = z.infer<typeof photoBoardListQuerySchema>;
 export type CreatePhotoPostInput = z.infer<typeof createPhotoPostSchema>;
 export type UpdatePhotoPostInput = z.infer<typeof updatePhotoPostSchema>;
 export type CreatePhotoCommentInput = z.infer<typeof createPhotoCommentSchema>;
+export type UpdatePhotoCommentInput = z.infer<typeof updatePhotoCommentSchema>;
 export type CreatePhotoReportInput = z.infer<typeof createPhotoReportSchema>;
 export type ResolvePhotoReportInput = z.infer<typeof resolvePhotoReportSchema>;
 export type BlockPhotoUserInput = z.infer<typeof blockPhotoUserSchema>;

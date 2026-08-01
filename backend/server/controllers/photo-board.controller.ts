@@ -6,6 +6,7 @@ import {
   createPhotoReportSchema,
   photoBoardListQuerySchema,
   resolvePhotoReportSchema,
+  updatePhotoCommentSchema,
   updatePhotoPostSchema,
 } from '@machinefit/shared';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -102,6 +103,17 @@ export async function createComment(req: Request, res: Response): Promise<void> 
     input
   );
   res.status(201).json({ success: true, data: comment });
+}
+
+export async function updateComment(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const input = updatePhotoCommentSchema.parse(req.body);
+  const comment = await photoBoardService.updateComment(
+    getParam(req.params.commentId),
+    req.user.userId,
+    input
+  );
+  res.json({ success: true, data: comment });
 }
 
 export async function deleteComment(req: Request, res: Response): Promise<void> {
