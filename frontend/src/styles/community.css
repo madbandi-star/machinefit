@@ -64,25 +64,62 @@
 }
 
 .community-board-page__form .checkbox-label {
-  align-items: flex-start;
-  gap: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
   line-height: 1.35;
 }
 
 .community-board-page__form .checkbox-label input[type='radio'],
 .community-board-page__form .checkbox-label input[type='checkbox'] {
-  flex-shrink: 0;
-  margin-top: 0.15rem;
+  -webkit-appearance: radio;
+  appearance: auto;
+  flex: 0 0 1.15rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  min-width: 1.15rem;
+  min-height: 1.15rem;
+  max-width: 1.15rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  accent-color: var(--color-primary);
+}
+
+.community-board-page__form .checkbox-label input[type='checkbox'] {
+  -webkit-appearance: checkbox;
 }
 
 .community-board-page__form .checkbox-label span {
+  flex: 1 1 auto;
   min-width: 0;
+  white-space: normal;
   overflow-wrap: anywhere;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+}
+
+.community-board-page__form .form-row > .input,
+.community-board-page__form .form-row > textarea.input,
+.community-board-page__form .form-row > input.input {
+  width: 100%;
 }
 
 .community-board-page__form input[type='file'] {
+  display: block;
+  width: 100%;
   max-width: 100%;
+  min-height: 0;
+  padding: 0.35rem 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
   font-size: 0.8125rem;
+  line-height: 1.4;
 }
 
 .community-board-page__form-actions {
@@ -708,7 +745,8 @@
   font-weight: 500;
 }
 
-.form-row input,
+/* Never stretch radios/checkboxes/files like text fields — that collapses labels vertically. */
+.form-row input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
 .form-row textarea,
 .form-row select {
   box-sizing: border-box;
