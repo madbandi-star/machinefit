@@ -117,11 +117,9 @@ export function WorkoutDisplayOverlay({
     };
   }, [mode, restSeconds, restSetNumber, t]);
 
-  const handleRestDismiss = () => {
-    if (restRemaining > 0 && !restCompletedRef.current) {
-      restCompletedRef.current = true;
-      onRestReadyRef.current?.();
-    }
+  /** Exit rest overlay like count [중지] — do not auto-start the next set. */
+  const handleRestStop = () => {
+    restCompletedRef.current = true;
     onRestDismiss();
   };
 
@@ -217,9 +215,11 @@ export function WorkoutDisplayOverlay({
             <button
               type="button"
               className="btn btn--secondary btn--block workout-display-overlay__action"
-              onClick={handleRestDismiss}
+              onClick={handleRestStop}
             >
-              {restRemaining <= 0 ? t('machines:restTimer.done') : t('machines:restTimer.skip')}
+              {restRemaining <= 0
+                ? t('machines:restTimer.done')
+                : t('machines:voiceCoach.stop')}
             </button>
           </>
         ) : (

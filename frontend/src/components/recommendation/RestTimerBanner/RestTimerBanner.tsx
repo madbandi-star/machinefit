@@ -85,11 +85,9 @@ export function RestTimerBanner({
     };
   }, [seconds, setNumber, t]);
 
-  const handleDismiss = () => {
-    if (remaining > 0 && !completedRef.current) {
-      completedRef.current = true;
-      onReadyRef.current?.();
-    }
+  /** Exit rest UI like count [중지] — do not auto-start the next set. */
+  const handleStop = () => {
+    completedRef.current = true;
     onDismiss();
   };
 
@@ -114,9 +112,9 @@ export function RestTimerBanner({
         <button
           type="button"
           className="btn btn--secondary rest-timer-banner__dismiss"
-          onClick={handleDismiss}
+          onClick={handleStop}
         >
-          {remaining <= 0 ? t('restTimer.done') : t('restTimer.skip')}
+          {remaining <= 0 ? t('restTimer.done') : t('voiceCoach.stop')}
         </button>
       </div>
     </div>

@@ -104,7 +104,7 @@
   },
   "restTimer": {
     "label": "{{setNumber}}세트 후 휴식",
-    "skip": "휴식 건너뛰기",
+    "skip": "중지",
     "done": "휴식 완료",
     "notificationTitle": "휴식 완료",
     "notificationBody": "{{setNumber}}세트 휴식이 끝났습니다. 다음 세트 준비!"
