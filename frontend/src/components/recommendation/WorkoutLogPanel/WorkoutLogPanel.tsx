@@ -396,9 +396,19 @@ export function WorkoutLogPanel({
   }, []);
   const voiceCoachStopRef = useRef(voiceCoach.stop);
   voiceCoachStopRef.current = voiceCoach.stop;
+  const voiceCoachPauseRef = useRef(voiceCoach.pause);
+  voiceCoachPauseRef.current = voiceCoach.pause;
+  const voiceCoachResumeRef = useRef(voiceCoach.resume);
+  voiceCoachResumeRef.current = voiceCoach.resume;
   const stopVoiceCoachSession = useCallback(() => {
     manualCountStartRef.current = false;
     voiceCoachStopRef.current();
+  }, []);
+  const pauseVoiceCoachSession = useCallback(() => {
+    voiceCoachPauseRef.current();
+  }, []);
+  const resumeVoiceCoachSession = useCallback(() => {
+    voiceCoachResumeRef.current();
   }, []);
 
   useEffect(() => {
@@ -1413,6 +1423,9 @@ export function WorkoutLogPanel({
       countdown={voiceCoach.countdown}
       turbo={voiceCoach.turbo}
       intensity={voiceCoach.intensity}
+      isCountPaused={voiceCoach.isPaused}
+      onPauseCount={pauseVoiceCoachSession}
+      onResumeCount={resumeVoiceCoachSession}
       onStopCount={stopVoiceCoachSession}
     />
   ) : null;

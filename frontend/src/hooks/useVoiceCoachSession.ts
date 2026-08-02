@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { VoiceCountMode } from '@/utils/aiCountPace';
 import { hapticCountTick } from '@/utils/haptic';
+import { speechManager } from '@/utils/speechManager';
 import {
   runVoiceCoachFlow,
   stopVoiceCoach,
@@ -9,7 +10,11 @@ import {
   type VoiceCoachPhase,
   type VoiceCoachPrepCount,
 } from '@/utils/voiceCoach';
-import { ensureVoiceCoachAudioRunning } from '@/utils/voiceCoachClips';
+import { ensureVoiceCoachAudioRunning, stopVoiceCoachClips } from '@/utils/voiceCoachClips';
+import {
+  setActiveVoiceCoachPause,
+  VoiceCoachPauseController,
+} from '@/utils/voiceCoachPause';
 import type { VoiceHoldFlowMode } from '@/utils/voiceHold';
 
 interface UseVoiceCoachSessionOptions {
@@ -33,8 +38,11 @@ export interface VoiceCoachSessionState {
   turbo: boolean;
   intensity: number;
   isRunning: boolean;
+  isPaused: boolean;
   start: () => void;
   stop: () => void;
+  pause: () => void;
+  resume: () => void;
 }
 
 export function useVoiceCoachSession({
@@ -55,18 +63,48 @@ export function useVoiceCoachSession({
   const [countdown, setCountdown] = useState<number | null>(null);
   const [turbo, setTurbo] = useState(false);
   const [intensity, setIntensity] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const pauseRef = useRef<VoiceCoachPauseController | null>(null);
   const runIdRef = useRef(0);
+
+  const clearPauseController = useCallback(() => {
+    pauseRef.current?.resume();
+    if (pauseRef.current) {
+      setActiveVoiceCoachPause(null);
+    }
+    pauseRef.current = null;
+    setIsPaused(false);
+  }, []);
 
   const stop = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
+    clearPauseController();
     stopVoiceCoach();
     setPhase('idle');
     setCurrentRep(0);
     setCountdown(null);
     setTurbo(false);
     setIntensity(0);
+  }, [clearPauseController]);
+
+  const pause = useCallback(() => {
+    if (!abortRef.current || pauseRef.current?.isPaused) return;
+    const controller = pauseRef.current;
+    if (!controller) return;
+    controller.pause();
+    // Soft silence only — do not bump session generation (that would kill the run).
+    speechManager.cancel();
+    stopVoiceCoachClips();
+    setIsPaused(true);
+  }, []);
+
+  const resume = useCallback(() => {
+    if (!pauseRef.current?.isPaused) return;
+    pauseRef.current.resume();
+    setIsPaused(false);
+    void ensureVoiceCoachAudioRunning();
   }, []);
 
   const start = useCallback(() => {
@@ -74,10 +112,15 @@ export function useVoiceCoachSession({
 
     // Soft-stop prior run, but keep media warm for this tap / rest auto-start.
     abortRef.current?.abort();
+    clearPauseController();
     stopVoiceCoach({ keepAudioSession: true });
 
     const controller = new AbortController();
     abortRef.current = controller;
+    const pauseController = new VoiceCoachPauseController();
+    pauseRef.current = pauseController;
+    setActiveVoiceCoachPause(pauseController);
+    setIsPaused(false);
     const runId = runIdRef.current + 1;
     runIdRef.current = runId;
 
@@ -161,6 +204,9 @@ export function useVoiceCoachSession({
         if (abortRef.current === controller) {
           abortRef.current = null;
         }
+        if (pauseRef.current === pauseController) {
+          clearPauseController();
+        }
         // Flow already signals idle on abort; on success it ends at done.
         setPhase((prev) => (prev === 'done' ? prev : 'idle'));
         setCountdown(null);
@@ -169,6 +215,7 @@ export function useVoiceCoachSession({
       }
     })();
   }, [
+    clearPauseController,
     countMode,
     enabled,
     flowMode,
@@ -185,9 +232,10 @@ export function useVoiceCoachSession({
   useEffect(
     () => () => {
       abortRef.current?.abort();
+      clearPauseController();
       stopVoiceCoach();
     },
-    []
+    [clearPauseController]
   );
 
   useEffect(() => {
@@ -203,7 +251,10 @@ export function useVoiceCoachSession({
     turbo,
     intensity,
     isRunning: phase !== 'idle' && phase !== 'done',
+    isPaused,
     start,
     stop,
+    pause,
+    resume,
   };
 }

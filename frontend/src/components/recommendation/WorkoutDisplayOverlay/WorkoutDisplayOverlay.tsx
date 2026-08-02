@@ -25,6 +25,9 @@ interface WorkoutDisplayOverlayProps {
   countdown: number | null;
   turbo: boolean;
   intensity: number;
+  isCountPaused?: boolean;
+  onPauseCount?: () => void;
+  onResumeCount?: () => void;
   onStopCount: () => void;
 }
 
@@ -60,11 +63,17 @@ export function WorkoutDisplayOverlay({
   countdown,
   turbo,
   intensity,
+  isCountPaused = false,
+  onPauseCount,
+  onResumeCount,
   onStopCount,
 }: WorkoutDisplayOverlayProps) {
   const { t } = useTranslation(['machines', 'common']);
   const [restRemaining, setRestRemaining] = useState(restSeconds);
+  const [restPaused, setRestPaused] = useState(false);
   const restCompletedRef = useRef(false);
+  const restPausedRef = useRef(false);
+  const restRemainingRef = useRef(restSeconds);
   const onRestReadyRef = useRef(onRestReadyForNextSet);
   onRestReadyRef.current = onRestReadyForNextSet;
 
@@ -76,16 +85,35 @@ export function WorkoutDisplayOverlay({
   }, []);
 
   useEffect(() => {
-    if (mode !== 'rest') return;
+    restRemainingRef.current = restRemaining;
+  }, [restRemaining]);
+
+  useEffect(() => {
+    restPausedRef.current = restPaused;
+  }, [restPaused]);
+
+  useEffect(() => {
+    if (mode !== 'rest') {
+      setRestPaused(false);
+      return;
+    }
 
     restCompletedRef.current = false;
     setRestRemaining(restSeconds);
+    restRemainingRef.current = restSeconds;
+    setRestPaused(false);
+    restPausedRef.current = false;
+
     let cancelled = false;
+    let timer: number | null = null;
+    let lastTickAt = Date.now();
 
     const finish = () => {
       if (cancelled || restCompletedRef.current) return;
       restCompletedRef.current = true;
       setRestRemaining(0);
+      restRemainingRef.current = 0;
+      setRestPaused(false);
       void notifyRestComplete(
         t('machines:restTimer.notificationTitle'),
         t('machines:restTimer.notificationBody', { setNumber: restSetNumber })
@@ -100,20 +128,30 @@ export function WorkoutDisplayOverlay({
       };
     }
 
-    const startedAt = Date.now();
-    const timer = window.setInterval(() => {
-      const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
-      const next = Math.max(0, restSeconds - elapsedSec);
-      setRestRemaining(next);
+    timer = window.setInterval(() => {
+      if (cancelled || restCompletedRef.current) return;
+      const now = Date.now();
+      if (restPausedRef.current) {
+        lastTickAt = now;
+        return;
+      }
+      const elapsedMs = now - lastTickAt;
+      lastTickAt = now;
+      if (elapsedMs <= 0) return;
+
+      const next = Math.max(0, restRemainingRef.current - elapsedMs / 1000);
+      restRemainingRef.current = next;
+      setRestRemaining(Math.ceil(next));
       if (next <= 0) {
-        window.clearInterval(timer);
+        if (timer != null) window.clearInterval(timer);
+        timer = null;
         finish();
       }
-    }, 250);
+    }, 100);
 
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      if (timer != null) window.clearInterval(timer);
     };
   }, [mode, restSeconds, restSetNumber, t]);
 
@@ -121,6 +159,11 @@ export function WorkoutDisplayOverlay({
   const handleRestStop = () => {
     restCompletedRef.current = true;
     onRestDismiss();
+  };
+
+  const handleRestPauseToggle = () => {
+    if (restRemaining <= 0 || restCompletedRef.current) return;
+    setRestPaused((prev) => !prev);
   };
 
   const oneMoreShort = t('machines:voiceCoach.oneMoreShort', { defaultValue: '하나더' });
@@ -134,12 +177,13 @@ export function WorkoutDisplayOverlay({
     t('machines:voiceCoach.holdCueShort')
   );
   const status = voiceCoachStatusLabel(t, phase, currentRep, countdown);
+  const showRestPause = mode === 'rest' && restRemaining > 0;
 
   return createPortal(
     <div
       className={`workout-display-overlay workout-display-overlay--${mode}${
         display.turboStage ? ' workout-display-overlay--turbo' : ''
-      }`}
+      }${restPaused || isCountPaused ? ' workout-display-overlay--paused' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label={
@@ -167,6 +211,7 @@ export function WorkoutDisplayOverlay({
           <>
             <span className="workout-display-overlay__label">
               {t('machines:restTimer.label', { setNumber: restSetNumber })}
+              {restPaused ? ` · ${t('machines:restTimer.paused')}` : ''}
             </span>
             <strong className="workout-display-overlay__time" aria-live="polite">
               {formatRestTime(restRemaining)}
@@ -192,9 +237,11 @@ export function WorkoutDisplayOverlay({
               </span>
             ) : null}
             <p className="workout-display-overlay__status" role="status" aria-live="polite">
-              {status}
-              {turbo ? ` · ${t('machines:voiceCoach.turboBadge')}` : ''}
-              {phase === 'hold' ? ` · ${t('machines:voiceCoach.holdBadge')}` : ''}
+              {isCountPaused ? t('machines:voiceCoach.paused') : status}
+              {!isCountPaused && turbo ? ` · ${t('machines:voiceCoach.turboBadge')}` : ''}
+              {!isCountPaused && phase === 'hold'
+                ? ` · ${t('machines:voiceCoach.holdBadge')}`
+                : ''}
             </p>
           </>
         )}
@@ -212,6 +259,17 @@ export function WorkoutDisplayOverlay({
                 {t('machines:voiceCoach.start')}
               </button>
             ) : null}
+            {showRestPause ? (
+              <button
+                type="button"
+                className="btn btn--secondary btn--block workout-display-overlay__action"
+                onClick={handleRestPauseToggle}
+              >
+                {restPaused
+                  ? t('machines:restTimer.resume')
+                  : t('machines:restTimer.pause')}
+              </button>
+            ) : null}
             <button
               type="button"
               className="btn btn--secondary btn--block workout-display-overlay__action"
@@ -223,13 +281,26 @@ export function WorkoutDisplayOverlay({
             </button>
           </>
         ) : (
-          <button
-            type="button"
-            className="btn btn--secondary btn--block workout-display-overlay__action"
-            onClick={onStopCount}
-          >
-            {t('machines:voiceCoach.stop')}
-          </button>
+          <>
+            {onPauseCount && onResumeCount ? (
+              <button
+                type="button"
+                className="btn btn--secondary btn--block workout-display-overlay__action"
+                onClick={isCountPaused ? onResumeCount : onPauseCount}
+              >
+                {isCountPaused
+                  ? t('machines:voiceCoach.resume')
+                  : t('machines:voiceCoach.pause')}
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="btn btn--secondary btn--block workout-display-overlay__action"
+              onClick={onStopCount}
+            >
+              {t('machines:voiceCoach.stop')}
+            </button>
+          </>
         )}
       </div>
     </div>,

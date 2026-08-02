@@ -6,7 +6,7 @@ interface RestTimerBannerProps {
   seconds: number;
   setNumber: number;
   onDismiss: () => void;
-  /** Fired when rest finishes (timer → 0) or user skips early — next set ready. */
+  /** Fired when rest finishes (timer → 0) — next set ready. */
   onReadyForNextSet?: () => void;
   /** Manual voice-count start during rest (does not require set-complete). */
   onStartCount?: () => void;
@@ -40,20 +40,38 @@ export function RestTimerBanner({
 }: RestTimerBannerProps) {
   const { t } = useTranslation('machines');
   const [remaining, setRemaining] = useState(seconds);
+  const [paused, setPaused] = useState(false);
   const completedRef = useRef(false);
+  const pausedRef = useRef(false);
+  const remainingRef = useRef(seconds);
   const onReadyRef = useRef(onReadyForNextSet);
   onReadyRef.current = onReadyForNextSet;
 
   useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
+
+  useEffect(() => {
     completedRef.current = false;
     setRemaining(seconds);
+    remainingRef.current = seconds;
+    setPaused(false);
+    pausedRef.current = false;
+
     let cancelled = false;
+    let timer: number | null = null;
+    let lastTickAt = Date.now();
 
     const finish = () => {
-      // Unmount / manual count-start clears the banner — never auto-start after that.
       if (cancelled || completedRef.current) return;
       completedRef.current = true;
       setRemaining(0);
+      remainingRef.current = 0;
+      setPaused(false);
       void notifyRestComplete(
         t('restTimer.notificationTitle'),
         t('restTimer.notificationBody', { setNumber })
@@ -68,20 +86,30 @@ export function RestTimerBanner({
       };
     }
 
-    const startedAt = Date.now();
-    const timer = window.setInterval(() => {
-      const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
-      const next = Math.max(0, seconds - elapsedSec);
-      setRemaining(next);
+    timer = window.setInterval(() => {
+      if (cancelled || completedRef.current) return;
+      const now = Date.now();
+      if (pausedRef.current) {
+        lastTickAt = now;
+        return;
+      }
+      const elapsedMs = now - lastTickAt;
+      lastTickAt = now;
+      if (elapsedMs <= 0) return;
+
+      const next = Math.max(0, remainingRef.current - elapsedMs / 1000);
+      remainingRef.current = next;
+      setRemaining(Math.ceil(next));
       if (next <= 0) {
-        window.clearInterval(timer);
+        if (timer != null) window.clearInterval(timer);
+        timer = null;
         finish();
       }
-    }, 250);
+    }, 100);
 
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      if (timer != null) window.clearInterval(timer);
     };
   }, [seconds, setNumber, t]);
 
@@ -96,6 +124,7 @@ export function RestTimerBanner({
       <div className="rest-timer-banner__content">
         <span className="rest-timer-banner__label">
           {t('restTimer.label', { setNumber })}
+          {paused ? ` · ${t('restTimer.paused')}` : ''}
         </span>
         <strong className="rest-timer-banner__time">{formatCountdown(remaining)}</strong>
       </div>
@@ -107,6 +136,15 @@ export function RestTimerBanner({
             onClick={onStartCount}
           >
             {t('voiceCoach.start')}
+          </button>
+        ) : null}
+        {remaining > 0 ? (
+          <button
+            type="button"
+            className="btn btn--secondary rest-timer-banner__dismiss"
+            onClick={() => setPaused((value) => !value)}
+          >
+            {paused ? t('restTimer.resume') : t('restTimer.pause')}
           </button>
         ) : null}
         <button

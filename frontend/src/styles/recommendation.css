@@ -1534,6 +1534,16 @@
   font-weight: 600;
 }
 
+.workout-display-overlay--paused .workout-display-overlay__time,
+.workout-display-overlay--paused .workout-display-overlay__count {
+  opacity: 0.72;
+}
+
+.workout-display-overlay--paused .workout-display-overlay__label,
+.workout-display-overlay--paused .workout-display-overlay__status {
+  color: color-mix(in srgb, var(--color-text-muted, #9aa3ad) 70%, var(--color-text, #fff));
+}
+
 .voice-coach-panel {
   display: flex;
   flex-direction: column;
