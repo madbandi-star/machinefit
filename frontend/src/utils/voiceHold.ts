@@ -76,7 +76,8 @@ export function clampVoiceHoldFlowMode(value: unknown): VoiceHoldFlowMode {
 }
 
 export function clampVoiceHoldDurationSec(sec: number): number {
-  if (!Number.isFinite(sec)) return VOICE_HOLD_DURATION.defaultSec;
+  // Non-positive → default (10), not min (1). Avoids "failed load → 1초" bug.
+  if (!Number.isFinite(sec) || sec <= 0) return VOICE_HOLD_DURATION.defaultSec;
   return Math.min(
     VOICE_HOLD_DURATION.maxSec,
     Math.max(VOICE_HOLD_DURATION.minSec, Math.round(sec))

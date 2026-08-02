@@ -19,8 +19,11 @@ import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
+  clampVoiceCoachTargetReps,
   DEFAULT_VOICE_COACH_PACK,
   DEFAULT_VOICE_COACH_PREP_COUNT,
+  DEFAULT_VOICE_COACH_REPS,
+  isVoicePickerAllMins,
   normalizeVoiceCoachPack,
   VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
@@ -34,8 +37,6 @@ import {
   VOICE_HOLD_DURATION,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
-
-const DEFAULT_VOICE_COACH_REPS = 12;
 
 function getDefaultTimezone(): string {
   try {
@@ -137,7 +138,8 @@ export const useSettingsStore = create<SettingsState>()(
       setUnitWeight: (unitWeight) => set({ unitWeight }),
       setTimezone: (timezone) => set({ timezone }),
       setVoiceCoachEnabled: (voiceCoachEnabled) => set({ voiceCoachEnabled }),
-      setVoiceCoachTargetReps: (voiceCoachTargetReps) => set({ voiceCoachTargetReps }),
+      setVoiceCoachTargetReps: (reps) =>
+        set({ voiceCoachTargetReps: clampVoiceCoachTargetReps(reps) }),
       setVoiceCoachOneMore: (voiceCoachOneMore) => set({ voiceCoachOneMore }),
       setVoiceCoachOneMoreCount: (count) =>
         set({ voiceCoachOneMoreCount: clampVoiceCoachOneMoreCount(count) }),
@@ -170,6 +172,13 @@ export const useSettingsStore = create<SettingsState>()(
       name: 'machinefit-settings',
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<SettingsState>;
+        // ScrollPicker mount bug used to persist all four pickers at range mins.
+        const corrupted = isVoicePickerAllMins({
+          targetReps: p.voiceCoachTargetReps,
+          repGapMs: p.voiceCoachRepGapMs,
+          oneMoreCount: p.voiceCoachOneMoreCount,
+          holdDurationSec: p.voiceHoldDurationSec,
+        });
         return {
           ...current,
           ...p,
@@ -183,19 +192,24 @@ export const useSettingsStore = create<SettingsState>()(
           voiceCoachFlowMode: clampVoiceHoldFlowMode(
             p.voiceCoachFlowMode ?? current.voiceCoachFlowMode
           ),
-          voiceCoachTargetReps:
-            typeof p.voiceCoachTargetReps === 'number' && Number.isFinite(p.voiceCoachTargetReps)
-              ? Math.max(1, Math.min(30, Math.round(p.voiceCoachTargetReps)))
-              : current.voiceCoachTargetReps,
-          voiceCoachRepGapMs: clampVoiceCoachRepGapMs(
-            p.voiceCoachRepGapMs ?? current.voiceCoachRepGapMs
-          ),
-          voiceCoachOneMoreCount: clampVoiceCoachOneMoreCount(
-            p.voiceCoachOneMoreCount ?? current.voiceCoachOneMoreCount
-          ),
-          voiceHoldDurationSec: clampVoiceHoldDurationSec(
-            p.voiceHoldDurationSec ?? current.voiceHoldDurationSec
-          ),
+          voiceCoachTargetReps: corrupted
+            ? SETTINGS_DEFAULTS.voiceCoachTargetReps
+            : clampVoiceCoachTargetReps(
+                typeof p.voiceCoachTargetReps === 'number'
+                  ? p.voiceCoachTargetReps
+                  : current.voiceCoachTargetReps
+              ),
+          voiceCoachRepGapMs: corrupted
+            ? SETTINGS_DEFAULTS.voiceCoachRepGapMs
+            : clampVoiceCoachRepGapMs(p.voiceCoachRepGapMs ?? current.voiceCoachRepGapMs),
+          voiceCoachOneMoreCount: corrupted
+            ? SETTINGS_DEFAULTS.voiceCoachOneMoreCount
+            : clampVoiceCoachOneMoreCount(
+                p.voiceCoachOneMoreCount ?? current.voiceCoachOneMoreCount
+              ),
+          voiceHoldDurationSec: corrupted
+            ? SETTINGS_DEFAULTS.voiceHoldDurationSec
+            : clampVoiceHoldDurationSec(p.voiceHoldDurationSec ?? current.voiceHoldDurationSec),
           restTimerAfterAllSetsComplete:
             typeof p.restTimerAfterAllSetsComplete === 'boolean'
               ? p.restTimerAfterAllSetsComplete

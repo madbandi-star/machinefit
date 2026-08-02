@@ -24,10 +24,14 @@ import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/Voi
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import {
+  clampVoiceCoachOneMoreCount,
+  clampVoiceCoachRepGapMs,
+  clampVoiceCoachTargetReps,
   unlockVoiceCoachAudio,
   speakRestTipsAndWarnings,
   stopVoiceCoach,
 } from '@/utils/voiceCoach';
+import { clampVoiceHoldDurationSec } from '@/utils/voiceHold';
 import { Check } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
@@ -46,9 +50,6 @@ import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, upsertWorkou
 import { buildWorkoutLogSavedQueryKey } from '@/hooks/useWorkoutLogSaved';
 import '@/styles/recommendation.css';
 
-const VOICE_TARGET_REPS_MIN = 1;
-const VOICE_TARGET_REPS_MAX = 30;
-
 interface VoicePickerSnapshot {
   targetReps: number;
   repGapMs: number;
@@ -56,23 +57,17 @@ interface VoicePickerSnapshot {
   holdDurationSec: number;
 }
 
-function clampVoiceTargetReps(reps: number): number {
-  return Math.max(
-    VOICE_TARGET_REPS_MIN,
-    Math.min(VOICE_TARGET_REPS_MAX, Math.round(reps))
-  );
-}
-
 function readVoicePickerSnapshot(seedTargetReps?: number): VoicePickerSnapshot {
   const settings = useSettingsStore.getState();
+  const targetReps =
+    seedTargetReps != null && seedTargetReps > 0
+      ? clampVoiceCoachTargetReps(seedTargetReps)
+      : clampVoiceCoachTargetReps(settings.voiceCoachTargetReps);
   return {
-    targetReps:
-      seedTargetReps != null && seedTargetReps > 0
-        ? clampVoiceTargetReps(seedTargetReps)
-        : clampVoiceTargetReps(settings.voiceCoachTargetReps),
-    repGapMs: settings.voiceCoachRepGapMs,
-    oneMoreCount: settings.voiceCoachOneMoreCount,
-    holdDurationSec: settings.voiceHoldDurationSec,
+    targetReps,
+    repGapMs: clampVoiceCoachRepGapMs(settings.voiceCoachRepGapMs),
+    oneMoreCount: clampVoiceCoachOneMoreCount(settings.voiceCoachOneMoreCount),
+    holdDurationSec: clampVoiceHoldDurationSec(settings.voiceHoldDurationSec),
   };
 }
 
@@ -312,7 +307,7 @@ export function WorkoutLogPanel({
 
   useEffect(() => {
     if (volumeReps == null || volumeReps <= 0) return;
-    const next = clampVoiceTargetReps(volumeReps);
+    const next = clampVoiceCoachTargetReps(volumeReps);
     setVoicePickers((prev) => {
       if (!prev || prev.targetReps === next) return prev;
       return { ...prev, targetReps: next };
@@ -321,7 +316,7 @@ export function WorkoutLogPanel({
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
-      const next = clampVoiceTargetReps(reps);
+      const next = clampVoiceCoachTargetReps(reps);
       setVoicePickers((prev) => (prev ? { ...prev, targetReps: next } : prev));
       onVolumeRepsChange?.(next);
     },
@@ -329,15 +324,18 @@ export function WorkoutLogPanel({
   );
 
   const handleVoiceRepGapMsChange = useCallback((ms: number) => {
-    setVoicePickers((prev) => (prev ? { ...prev, repGapMs: ms } : prev));
+    const next = clampVoiceCoachRepGapMs(ms);
+    setVoicePickers((prev) => (prev ? { ...prev, repGapMs: next } : prev));
   }, []);
 
   const handleVoiceOneMoreCountChange = useCallback((count: number) => {
-    setVoicePickers((prev) => (prev ? { ...prev, oneMoreCount: count } : prev));
+    const next = clampVoiceCoachOneMoreCount(count);
+    setVoicePickers((prev) => (prev ? { ...prev, oneMoreCount: next } : prev));
   }, []);
 
   const handleVoiceHoldDurationChange = useCallback((sec: number) => {
-    setVoicePickers((prev) => (prev ? { ...prev, holdDurationSec: sec } : prev));
+    const next = clampVoiceHoldDurationSec(sec);
+    setVoicePickers((prev) => (prev ? { ...prev, holdDurationSec: next } : prev));
   }, []);
 
   const voiceSessionTargetReps = voicePickers?.targetReps ?? voiceCoachTargetReps;

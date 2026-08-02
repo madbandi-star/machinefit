@@ -3,18 +3,16 @@ import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
+  clampVoiceCoachTargetReps,
   VOICE_COACH_ONE_MORE,
   VOICE_COACH_REP_GAP,
+  VOICE_COACH_TARGET_REPS,
 } from '@/utils/voiceCoach';
 import {
   clampVoiceHoldDurationSec,
   VOICE_HOLD_DURATION,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
-
-const MIN_REPS = 1;
-const MAX_REPS = 30;
-const DEFAULT_REPS = 12;
 
 export type VoiceCoachPickerGridLabels = 'settings' | 'machines';
 
@@ -133,15 +131,13 @@ export function VoiceCoachPickerGrid({
                 <span className="body-metrics-inline__unit">{copy.targetRepsUnit}</span>
               </span>
               <ScrollPicker
-                value={targetReps}
-                onChange={(next) =>
-                  onTargetRepsChange(Math.max(MIN_REPS, Math.min(MAX_REPS, next)))
-                }
-                min={MIN_REPS}
-                max={MAX_REPS}
+                value={clampVoiceCoachTargetReps(targetReps)}
+                onChange={(next) => onTargetRepsChange(clampVoiceCoachTargetReps(next))}
+                min={VOICE_COACH_TARGET_REPS.minCount}
+                max={VOICE_COACH_TARGET_REPS.maxCount}
                 step={1}
                 size={compact ? 'compact' : 'default'}
-                defaultValue={DEFAULT_REPS}
+                defaultValue={VOICE_COACH_TARGET_REPS.defaultCount}
                 ariaLabel={copy.targetReps}
                 formatValue={(value) => String(value)}
               />
