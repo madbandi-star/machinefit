@@ -40,6 +40,10 @@ import {
   VOICE_HOLD_DURATION,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
+import {
+  getActiveVoiceCoachPause,
+  sleepWithVoiceCoachPause,
+} from '@/utils/voiceCoachPause';
 
 export type VoiceCoachPhase =
   | 'idle'
@@ -320,21 +324,7 @@ function packSpeakOptions(
 }
 
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new DOMException('Aborted', 'AbortError'));
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      signal?.removeEventListener('abort', onAbort);
-      resolve();
-    }, ms);
-    const onAbort = () => {
-      window.clearTimeout(timer);
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-    signal?.addEventListener('abort', onAbort, { once: true });
-  });
+  return sleepWithVoiceCoachPause(ms, signal);
 }
 
 async function playBeep(
@@ -472,6 +462,8 @@ async function speakCoachCue(options: {
   /** Numeric value for count cues (TTS fallback wording). */
   countValue?: number;
 }): Promise<void> {
+  await getActiveVoiceCoachPause()?.waitWhilePaused(options.signal);
+
   const {
     clipKey,
     text,

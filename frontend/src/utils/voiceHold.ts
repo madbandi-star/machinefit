@@ -23,6 +23,10 @@ import {
   repClipKey,
   type VoiceCoachPack,
 } from '@/utils/voiceCoachClips';
+import {
+  getActiveVoiceCoachPause,
+  sleepWithVoiceCoachPause,
+} from '@/utils/voiceCoachPause';
 
 export const VOICE_HOLD_FLOW_MODES = ['count', 'count_hold', 'hold'] as const;
 export type VoiceHoldFlowMode = (typeof VOICE_HOLD_FLOW_MODES)[number];
@@ -191,21 +195,7 @@ export function holdCountdownClipKey(
 }
 
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new DOMException('Aborted', 'AbortError'));
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      signal?.removeEventListener('abort', onAbort);
-      resolve();
-    }, ms);
-    const onAbort = () => {
-      window.clearTimeout(timer);
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-    signal?.addEventListener('abort', onAbort, { once: true });
-  });
+  return sleepWithVoiceCoachPause(ms, signal);
 }
 
 async function speakHoldCue(options: {
@@ -217,6 +207,8 @@ async function speakHoldCue(options: {
   /** When set, used for Sino-Korean / English TTS fallback if the pack clip fails. */
   countValue?: number;
 }): Promise<void> {
+  await getActiveVoiceCoachPause()?.waitWhilePaused(options.signal);
+
   const { clipKey, text, locale, voicePack, signal, countValue } = options;
 
   const maleEnglish = isMaleEnglishPack(voicePack);

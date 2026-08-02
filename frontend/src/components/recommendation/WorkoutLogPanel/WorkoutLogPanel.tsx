@@ -400,6 +400,12 @@ export function WorkoutLogPanel({
     manualCountStartRef.current = false;
     voiceCoachStopRef.current();
   }, []);
+  const pauseVoiceCoachSession = useCallback(() => {
+    voiceCoach.pause();
+  }, [voiceCoach]);
+  const resumeVoiceCoachSession = useCallback(() => {
+    voiceCoach.resume();
+  }, [voiceCoach]);
 
   useEffect(() => {
     // Allow rest auto-start again after a manual/auto count session ends.
@@ -1413,6 +1419,9 @@ export function WorkoutLogPanel({
       countdown={voiceCoach.countdown}
       turbo={voiceCoach.turbo}
       intensity={voiceCoach.intensity}
+      isCountPaused={voiceCoach.isPaused}
+      onPauseCount={pauseVoiceCoachSession}
+      onResumeCount={resumeVoiceCoachSession}
       onStopCount={stopVoiceCoachSession}
     />
   ) : null;
