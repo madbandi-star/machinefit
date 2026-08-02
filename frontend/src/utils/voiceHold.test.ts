@@ -21,7 +21,7 @@ assert.ok(VOICE_HOLD_DURATION_PRESETS.includes(10));
 assert.equal(clampVoiceHoldFlowMode('hold'), 'hold');
 assert.equal(clampVoiceHoldFlowMode('nope'), 'count');
 assert.equal(clampVoiceHoldDurationSec(10), 10);
-assert.equal(clampVoiceHoldDurationSec(0), VOICE_HOLD_DURATION.minSec);
+assert.equal(clampVoiceHoldDurationSec(0), VOICE_HOLD_DURATION.defaultSec);
 assert.equal(clampVoiceHoldDurationSec(999), VOICE_HOLD_DURATION.maxSec);
 assert.ok(isVoiceHoldDurationPreset(5));
 assert.ok(!isVoiceHoldDurationPreset(7));

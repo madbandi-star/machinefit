@@ -147,6 +147,14 @@ export const VOICE_COACH_TIMING = {
   oneMoreGapMs: 2200,
 } as const;
 
+/** Default target reps for voice count (Settings + records pickers). */
+export const DEFAULT_VOICE_COACH_REPS = 12;
+export const VOICE_COACH_TARGET_REPS = {
+  defaultCount: DEFAULT_VOICE_COACH_REPS,
+  minCount: 1,
+  maxCount: 30,
+} as const;
+
 /** User-configurable gap between spoken counts. */
 export const VOICE_COACH_REP_GAP = {
   defaultMs: VOICE_COACH_TIMING.repGapMs,
@@ -163,19 +171,48 @@ export const VOICE_COACH_ONE_MORE = {
   step: 1,
 } as const;
 
+/**
+ * Normalize target reps from settings / seeds.
+ * Invalid, non-positive, or non-finite → default (not range min).
+ */
+export function clampVoiceCoachTargetReps(reps: number): number {
+  if (!Number.isFinite(reps) || reps <= 0) return VOICE_COACH_TARGET_REPS.defaultCount;
+  return Math.min(
+    VOICE_COACH_TARGET_REPS.maxCount,
+    Math.max(VOICE_COACH_TARGET_REPS.minCount, Math.round(reps))
+  );
+}
+
 export function clampVoiceCoachRepGapMs(ms: number): number {
-  if (!Number.isFinite(ms)) return VOICE_COACH_REP_GAP.defaultMs;
+  // 0 / negative are invalid persisted values — restore default, not min (800ms).
+  if (!Number.isFinite(ms) || ms <= 0) return VOICE_COACH_REP_GAP.defaultMs;
   const stepped = Math.round(ms / VOICE_COACH_REP_GAP.stepMs) * VOICE_COACH_REP_GAP.stepMs;
   return Math.min(VOICE_COACH_REP_GAP.maxMs, Math.max(VOICE_COACH_REP_GAP.minMs, stepped));
 }
 
 export function clampVoiceCoachOneMoreCount(count: number): number {
-  if (!Number.isFinite(count)) return VOICE_COACH_ONE_MORE.defaultCount;
+  // Non-positive → default (3), not min (1).
+  if (!Number.isFinite(count) || count <= 0) return VOICE_COACH_ONE_MORE.defaultCount;
   const stepped =
     Math.round(count / VOICE_COACH_ONE_MORE.step) * VOICE_COACH_ONE_MORE.step;
   return Math.min(
     VOICE_COACH_ONE_MORE.maxCount,
     Math.max(VOICE_COACH_ONE_MORE.minCount, stepped)
+  );
+}
+
+/** True when all pickers sit at range mins — classic ScrollPicker mount corruption. */
+export function isVoicePickerAllMins(snapshot: {
+  targetReps?: number;
+  repGapMs?: number;
+  oneMoreCount?: number;
+  holdDurationSec?: number;
+}): boolean {
+  return (
+    snapshot.targetReps === VOICE_COACH_TARGET_REPS.minCount &&
+    snapshot.repGapMs === VOICE_COACH_REP_GAP.minMs &&
+    snapshot.oneMoreCount === VOICE_COACH_ONE_MORE.minCount &&
+    snapshot.holdDurationSec === VOICE_HOLD_DURATION.minSec
   );
 }
 

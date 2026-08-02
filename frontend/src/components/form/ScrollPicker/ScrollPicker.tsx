@@ -7,6 +7,8 @@ const ITEM_HEIGHT_DEFAULT = 36;
 const ITEM_HEIGHT_COMPACT = 32;
 const VISIBLE_ROWS_DEFAULT = 5;
 const VISIBLE_ROWS_COMPACT = 3;
+/** Ignore settle writes briefly after mount — expand/layout can fake scroll+touch. */
+const MOUNT_GUARD_MS = 320;
 
 interface ScrollPickerProps {
   value: number | undefined;
@@ -36,10 +38,13 @@ function getCenteredOptionIndex(
   const centerY = container.getBoundingClientRect().top + container.clientHeight / 2;
   let bestIndex = 0;
   let bestDistance = Number.POSITIVE_INFINITY;
+  let measured = 0;
 
   items.forEach((item, index) => {
     if (!item) return;
     const rect = item.getBoundingClientRect();
+    if (rect.height <= 0) return;
+    measured += 1;
     const itemCenter = rect.top + rect.height / 2;
     const distance = Math.abs(itemCenter - centerY);
     if (distance < bestDistance) {
@@ -48,7 +53,7 @@ function getCenteredOptionIndex(
     }
   });
 
-  return bestIndex;
+  return measured > 0 ? bestIndex : -1;
 }
 
 export function ScrollPicker({
@@ -71,6 +76,7 @@ export function ScrollPicker({
   const syncingRef = useRef(false);
   const userInteractingRef = useRef(false);
   const scrollEndTimerRef = useRef<number | null>(null);
+  const mountedAtRef = useRef(typeof performance !== 'undefined' ? performance.now() : Date.now());
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
@@ -78,11 +84,11 @@ export function ScrollPicker({
   const decimalPlaces = getDecimalPlaces(step);
 
   const resolvedValue =
-    value != null
-      ? findClosestPickerValue(options, value)
-      : defaultValue != null
+    value != null && Number.isFinite(value)
+      ? findClosestPickerValue(options, value, defaultValue)
+      : defaultValue != null && Number.isFinite(defaultValue)
         ? findClosestPickerValue(options, defaultValue)
-        : options[Math.floor(options.length / 2)] ?? min;
+        : (options[Math.floor(options.length / 2)] ?? min);
 
   const selectedIndex = findOptionIndex(options, resolvedValue);
 
@@ -94,7 +100,7 @@ export function ScrollPicker({
 
   const scrollToSelectedIndex = (behavior: ScrollBehavior = 'auto') => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || container.clientHeight <= 0) return;
 
     syncingRef.current = true;
     container.scrollTo({ top: selectedIndex * itemHeight, behavior });
@@ -105,7 +111,21 @@ export function ScrollPicker({
 
   useLayoutEffect(() => {
     scrollToSelectedIndex('auto');
-  }, [selectedIndex, options.length]);
+  }, [selectedIndex, options.length, itemHeight]);
+
+  // History/settings cards expand with height 0 first — re-sync when layout is ready.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(() => {
+      if (container.clientHeight > 0 && !userInteractingRef.current) {
+        scrollToSelectedIndex('auto');
+      }
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [selectedIndex, options.length, itemHeight]);
 
   useEffect(() => {
     if (!initializeOnMount || value != null || defaultValue == null || options.length === 0) {
@@ -116,6 +136,9 @@ export function ScrollPicker({
   }, [initializeOnMount, value, defaultValue, options]);
 
   const markUserInteraction = () => {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    // Expand/open animations often deliver stray pointer/touch to newly mounted pickers.
+    if (now - mountedAtRef.current < MOUNT_GUARD_MS) return;
     userInteractingRef.current = true;
   };
 
@@ -123,13 +146,25 @@ export function ScrollPicker({
     const container = containerRef.current;
     if (!container || syncingRef.current || options.length === 0) return;
 
+    if (container.clientHeight <= 0) {
+      return;
+    }
+
     if (!userInteractingRef.current) {
       scrollToSelectedIndex('auto');
       return;
     }
 
     const index = getCenteredOptionIndex(container, itemRefs.current);
+    if (index < 0) {
+      userInteractingRef.current = false;
+      scrollToSelectedIndex('auto');
+      return;
+    }
+
     const next = options[index];
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const withinMountGuard = now - mountedAtRef.current < MOUNT_GUARD_MS;
 
     if (index !== selectedIndex) {
       syncingRef.current = true;
@@ -140,6 +175,13 @@ export function ScrollPicker({
     }
 
     userInteractingRef.current = false;
+
+    // During mount guard, never write a different value (especially range min).
+    if (withinMountGuard) {
+      scrollToSelectedIndex('auto');
+      return;
+    }
+
     if (next !== resolvedValue) {
       onChangeRef.current(next);
     }
@@ -202,6 +244,11 @@ export function ScrollPicker({
                 className={`scroll-picker__item${isSelected ? ' scroll-picker__item--selected' : ''}`}
                 style={{ height: itemHeight }}
                 onClick={() => {
+                  const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+                  if (now - mountedAtRef.current < MOUNT_GUARD_MS) {
+                    scrollToSelectedIndex('auto');
+                    return;
+                  }
                   markUserInteraction();
                   containerRef.current?.scrollTo({ top: index * itemHeight, behavior: 'smooth' });
                   onChangeRef.current(option);
