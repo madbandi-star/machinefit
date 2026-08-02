@@ -267,6 +267,8 @@ export interface FavoriteItem {
   primaryImageUrl?: string;
   recommendationId?: string;
   createdAt: string;
+  lastWorkoutLogDate?: string;
+  lastWorkoutAt?: string;
 }
 
 export interface HistoryItem {
@@ -323,6 +325,10 @@ export const favoriteApi = {
       recommendationId,
     }),
   remove: (id: string) => apiClient.delete(`/favorites/${id}`),
+  removeBulk: (ids: string[]) =>
+    apiClient.delete<ApiResponse<{ removed: number }>>('/favorites/bulk', {
+      data: { ids },
+    }),
   check: (gymId: string, machineCode: string, memberId?: string) =>
     apiClient.get<ApiResponse<{ favorited: boolean; favoriteId?: string }>>(
       `/favorites/check/${machineCode}`,

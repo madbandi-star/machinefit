@@ -14,6 +14,10 @@ export interface FavoriteItem {
   primaryImageUrl?: string;
   recommendationId?: string;
   createdAt: string;
+  /** YYYY-MM-DD from latest workout_logs row, if any. */
+  lastWorkoutLogDate?: string;
+  /** Timestamp of that workout (updated_at preferred). */
+  lastWorkoutAt?: string;
 }
 
 export const favoriteRepository = {
@@ -56,6 +60,8 @@ export const favoriteRepository = {
       primary_image_url: string | null;
       recommendation_id: string | null;
       created_at: string;
+      last_workout_log_date: string | null;
+      last_workout_at: string | null;
     }>(
       `SELECT f.id, f.gym_id, f.member_id, f.machine_id, f.recommendation_id, f.created_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
@@ -66,10 +72,22 @@ export const favoriteRepository = {
                 WHERE mi.machine_id = m.id
                 ORDER BY mi.is_primary DESC, mi.sort_order ASC
                 LIMIT 1
-              ) AS primary_image_url
+              ) AS primary_image_url,
+              lw.log_date::text AS last_workout_log_date,
+              lw.updated_at AS last_workout_at
        FROM favorites f
        JOIN machines m ON m.id = f.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN LATERAL (
+         SELECT wl.log_date, wl.updated_at
+         FROM workout_logs wl
+         WHERE wl.user_id = f.user_id
+           AND wl.gym_id = f.gym_id
+           AND wl.member_id = f.member_id
+           AND wl.machine_id = f.machine_id
+         ORDER BY wl.log_date DESC, wl.updated_at DESC
+         LIMIT 1
+       ) lw ON TRUE
        WHERE f.user_id = $1${gymFilter}${memberFilter}
        ORDER BY f.created_at DESC`,
       params
@@ -89,6 +107,8 @@ export const favoriteRepository = {
       primaryImageUrl: row.primary_image_url ?? undefined,
       recommendationId: row.recommendation_id ?? undefined,
       createdAt: row.created_at,
+      lastWorkoutLogDate: row.last_workout_log_date ?? undefined,
+      lastWorkoutAt: row.last_workout_at ?? undefined,
     }));
   },
 
@@ -161,6 +181,18 @@ export const favoriteRepository = {
       favoriteId,
       userId,
     ]);
+  },
+
+  async removeMany(userId: string, favoriteIds: string[]): Promise<number> {
+    const pool = getPool();
+    if (!pool || favoriteIds.length === 0) return 0;
+    const result = await pool.query(
+      `DELETE FROM favorites
+       WHERE user_id = $1 AND id = ANY($2::uuid[])
+       RETURNING id`,
+      [userId, favoriteIds]
+    );
+    return result.rowCount ?? result.rows.length;
   },
 
   async isFavorited(userId: string, gymId: string, machineCode: string, memberId?: string): Promise<boolean> {

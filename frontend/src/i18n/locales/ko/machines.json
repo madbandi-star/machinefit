@@ -268,7 +268,16 @@
       "title": "즐겨찾기가 0건입니다",
       "description": "아직 저장한 기구가 없어요. 기구를 검색한 뒤 상세 화면에서 ♥를 눌러 즐겨찾기에 추가해 보세요."
     },
-    "remove": "삭제"
+    "remove": "삭제",
+    "selectAll": "전체 선택",
+    "deselectAll": "전체 해제",
+    "selectItem": "{{name}} 선택",
+    "bulkDelete": "선택 삭제",
+    "confirmBulkDelete": "선택한 즐겨찾기 {{count}}건을 삭제할까요?",
+    "bulkRemoved": "즐겨찾기 {{count}}건을 삭제했어요.",
+    "favoritedAt": "즐겨찾기",
+    "lastWorkoutDate": "최근 운동",
+    "lastWorkoutTime": "운동 시간"
   },
   "settings": {
     "seat": "시트 위치",
