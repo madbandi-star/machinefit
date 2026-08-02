@@ -104,7 +104,7 @@
   },
   "restTimer": {
     "label": "Rest after set {{setNumber}}",
-    "skip": "Skip rest",
+    "skip": "Stop",
     "done": "Rest complete",
     "notificationTitle": "Rest complete",
     "notificationBody": "Set {{setNumber}} rest is over. Ready for the next set!"

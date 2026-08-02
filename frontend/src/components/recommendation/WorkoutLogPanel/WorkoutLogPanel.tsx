@@ -363,6 +363,12 @@ export function WorkoutLogPanel({
   /** Set synchronously on manual Start so rest-end auto-start cannot kill it. */
   const manualCountStartRef = useRef(false);
   const restSpeechAbortRef = useRef<AbortController | null>(null);
+  const dismissRestTimer = useCallback(() => {
+    restSpeechAbortRef.current?.abort();
+    restSpeechAbortRef.current = null;
+    setRestTimer(null);
+  }, []);
+
   const handleRestReadyForNextSet = useCallback(() => {
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
@@ -1384,7 +1390,7 @@ export function WorkoutLogPanel({
       <RestTimerBanner
         seconds={restTimer.seconds}
         setNumber={restTimer.setNumber}
-        onDismiss={() => setRestTimer(null)}
+        onDismiss={dismissRestTimer}
         onReadyForNextSet={handleRestReadyForNextSet}
         onStartCount={voiceCoachEnabled ? startVoiceCoach : undefined}
       />
@@ -1398,7 +1404,7 @@ export function WorkoutLogPanel({
       mode={voiceCoach.isRunning ? 'count' : 'rest'}
       restSeconds={restTimer?.seconds ?? 0}
       restSetNumber={restTimer?.setNumber ?? 0}
-      onRestDismiss={() => setRestTimer(null)}
+      onRestDismiss={dismissRestTimer}
       onRestReadyForNextSet={handleRestReadyForNextSet}
       onStartCount={startVoiceCoach}
       showStartCount={voiceCoachEnabled}
