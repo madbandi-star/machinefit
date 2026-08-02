@@ -268,7 +268,16 @@
       "title": "You have 0 favorites",
       "description": "No saved machines yet. Search for equipment and tap ♥ on the detail screen to add favorites."
     },
-    "remove": "Remove"
+    "remove": "Remove",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectItem": "Select {{name}}",
+    "bulkDelete": "Delete selected",
+    "confirmBulkDelete": "Delete {{count}} selected favorite(s)?",
+    "bulkRemoved": "Removed {{count}} favorite(s).",
+    "favoritedAt": "Favorited",
+    "lastWorkoutDate": "Last workout",
+    "lastWorkoutTime": "Workout time"
   },
   "settings": {
     "seat": "Seat Position",

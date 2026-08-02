@@ -47,6 +47,17 @@ export async function removeFavorite(req: Request, res: Response): Promise<void>
   res.json({ success: true, data: { message: 'Removed' } });
 }
 
+export async function removeFavoritesBulk(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const body = z
+    .object({
+      ids: z.array(z.string().uuid()).min(1).max(200),
+    })
+    .parse(req.body);
+  const data = await favoriteService.removeMany(req.user.userId, body.ids);
+  res.json({ success: true, data });
+}
+
 export async function checkFavorite(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const { gymId, memberId } = getValidatedQuery<FavoriteCheckQuery>(res);

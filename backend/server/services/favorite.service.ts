@@ -45,6 +45,18 @@ export const favoriteService = {
     await favoriteRepository.remove(userId, favoriteId);
   },
 
+  async removeMany(userId: string, favoriteIds: string[]) {
+    const uniqueIds = [...new Set(favoriteIds)];
+    if (uniqueIds.length === 0) {
+      throw new AppError(400, 'INVALID_INPUT', 'No favorite ids provided');
+    }
+    if (uniqueIds.length > 200) {
+      throw new AppError(400, 'INVALID_INPUT', 'Too many favorite ids');
+    }
+    const removed = await favoriteRepository.removeMany(userId, uniqueIds);
+    return { removed };
+  },
+
   async check(userId: string, gymId: string, machineCode: string, memberId?: string) {
     await gymScopeService.assertOwned(userId, gymId);
     const favoriteId = await favoriteRepository.findIdByUserAndMachineCode(
