@@ -507,10 +507,43 @@
 }
 
 .home-tool-card--rest {
-  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
   background:
-    radial-gradient(circle at 92% 18%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 42%),
+    radial-gradient(circle at 92% 18%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 42%),
     color-mix(in srgb, var(--color-surface) 92%, #000);
+}
+
+.home-tool-card--rest .home-tool-card__title {
+  color: #ffffff;
+}
+
+.home-tool-card--rest .home-tool-card__desc {
+  color: color-mix(in srgb, #ffffff 78%, var(--color-brand-titanium));
+}
+
+.home-tool-card--rest .home-tool-card__icon--rest {
+  color: #b9ffd4;
+  background: color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+.home-tool-card--rest .home-tool-card__hero--rest {
+  color: #7CFFB2;
+  text-shadow: 0 0 18px rgba(0, 230, 118, 0.35);
+}
+
+.home-tool-card--rest .home-tool-card__step-value {
+  color: #ffffff;
+}
+
+.home-tool-card--rest .home-tool-card__step-btn {
+  color: #ffffff;
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-secondary));
+}
+
+.home-tool-card--rest .home-tool-card__cta--rest {
+  color: #ffffff;
+  background: #00c853;
 }
 
 .home-tool-card--count {
