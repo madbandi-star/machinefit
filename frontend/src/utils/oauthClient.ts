@@ -232,8 +232,9 @@ async function requestAppleIdToken(): Promise<{ idToken: string; displayName?: s
   const clientId = import.meta.env.VITE_APPLE_CLIENT_ID?.trim();
   if (!clientId) throw new OAuthClientError('Apple client id missing', 'NOT_CONFIGURED');
 
+  // Must match Apple Services ID Return URLs (include /machinefit/ on Pages).
   const redirectURI =
-    import.meta.env.VITE_APPLE_REDIRECT_URI?.trim() || `${window.location.origin}/`;
+    import.meta.env.VITE_APPLE_REDIRECT_URI?.trim() || getKakaoRedirectUri('/');
 
   await loadScript(
     'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js',
