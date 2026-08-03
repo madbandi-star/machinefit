@@ -1,7 +1,7 @@
 {
   "title": "Remove Easy Mode first-visit onboarding page",
   "summary": "Skip the EASY MODE welcome/onboarding screen. Easy entry always opens the regular Easy home (start workout).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "780c75f" },
   "changedFiles": [
     "frontend/src/pages/easy-mode/EasyHomePage.tsx",
     "frontend/src/components/easy-mode/EasyMiniHeaderButton.tsx",
@@ -9,7 +9,7 @@
     "frontend/src/routes/index.tsx",
     "frontend/src/pages/easy-mode/EasyOnboardingPage.tsx"
   ],
-  "testFocus": "Open Easy from header EASY button as first-time and returning user — should land on Easy home, not onboarding.",
+  "testFocus": "Open Easy from header EASY button as first-time and returning user ??should land on Easy home, not onboarding.",
   "fastChecks": ["npm run test:smoke:changed"],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
@@ -20,6 +20,6 @@
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "First Easy visit showed onboarding (EASY MODE로 시작해요).",
+  "asIs": "First Easy visit showed onboarding (EASY MODE�??�작?�요).",
   "toBe": "Always show regular Easy home; onboarding route redirects."
 }
