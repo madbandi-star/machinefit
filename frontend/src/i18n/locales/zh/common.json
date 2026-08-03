@@ -31,7 +31,7 @@
       "toolsTitle": "休息与计数工具",
       "toolsRestTitle": "休息计时器",
       "toolsRestDesc": "设置组间休息时间并开始。",
-      "toolsRestStart": "开始",
+      "toolsRestStart": "休息",
       "toolsCountTitle": "次数计数",
       "toolsCountDesc": "轻松统计训练次数。",
       "toolsCountUnit": "次",

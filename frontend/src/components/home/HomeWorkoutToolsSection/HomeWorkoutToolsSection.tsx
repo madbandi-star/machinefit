@@ -89,20 +89,29 @@ export function HomeWorkoutToolsSection() {
   });
 
   const restParts = restDurationParts(restSeconds);
-  const showFullscreenCount =
-    fullscreenDisplay && detailsOpen && voiceCoach.isRunning;
+  const showFullscreenCount = fullscreenDisplay && voiceCoach.isRunning;
+
+  const startOrStopCount = () => {
+    if (voiceCoach.isRunning) {
+      voiceCoach.stop();
+      return;
+    }
+    voiceCoach.start();
+  };
 
   const nudgeRest = (deltaSec: number) => {
     setRestSeconds((prev) => clampRestDurationSeconds(prev + deltaSec));
   };
 
   const nudgeCount = (delta: number) => {
-    setCountValue((prev) =>
-      Math.max(
+    setCountValue((prev) => {
+      const next = Math.max(
         VOICE_COACH_TARGET_REPS.minCount,
         Math.min(VOICE_COACH_TARGET_REPS.maxCount, prev + delta)
-      )
-    );
+      );
+      setTargetReps(next);
+      return next;
+    });
   };
 
   const resetCount = () => {
@@ -215,31 +224,47 @@ export function HomeWorkoutToolsSection() {
             <button
               type="button"
               className="home-tool-card__step-btn home-tool-card__step-btn--wide"
-              onClick={() => setCountValue(clampVoiceCoachTargetReps(settingsTargetReps))}
+              onClick={() => {
+                const next = clampVoiceCoachTargetReps(settingsTargetReps);
+                setCountValue(next);
+                setTargetReps(next);
+              }}
             >
               {t('pages.home.toolsReset')}
             </button>
           </div>
 
-          <button
-            type="button"
-            className="home-tool-card__cta home-tool-card__cta--count"
-            onClick={() => {
-              setDetailsOpen((open) => !open);
-              if (!detailsOpen) setTargetReps(countValue);
-            }}
-            aria-expanded={detailsOpen}
-          >
-            {detailsOpen
-              ? t('pages.home.toolsCountCloseDetails')
-              : t('pages.home.toolsCountOpenDetails')}
-            <span
-              className={`home-tool-card__cta-chevron${detailsOpen ? ' is-open' : ''}`}
-              aria-hidden
+          <div className="home-tool-card__cta-row">
+            <button
+              type="button"
+              className="home-tool-card__cta home-tool-card__cta--count home-tool-card__cta--details"
+              onClick={() => {
+                setDetailsOpen((open) => !open);
+                if (!detailsOpen) setTargetReps(countValue);
+              }}
+              aria-expanded={detailsOpen}
             >
-              <Icon name="chevronRight" size={18} />
-            </span>
-          </button>
+              {detailsOpen
+                ? t('pages.home.toolsCountCloseDetails')
+                : t('pages.home.toolsCountOpenDetails')}
+              <span
+                className={`home-tool-card__cta-chevron${detailsOpen ? ' is-open' : ''}`}
+                aria-hidden
+              >
+                <Icon name="chevronRight" size={16} />
+              </span>
+            </button>
+            <button
+              type="button"
+              className="home-tool-card__cta home-tool-card__cta--count home-tool-card__cta--start"
+              onClick={startOrStopCount}
+              disabled={!voiceEnabled && !voiceCoach.isRunning}
+            >
+              {voiceCoach.isRunning
+                ? t('pages.home.toolsCountStop')
+                : t('pages.home.toolsCountStart')}
+            </button>
+          </div>
         </article>
       </div>
 
@@ -310,7 +335,7 @@ export function HomeWorkoutToolsSection() {
               <button
                 type="button"
                 className="home-tool-card__cta home-tool-card__cta--count"
-                onClick={voiceCoach.isRunning ? voiceCoach.stop : voiceCoach.start}
+                onClick={startOrStopCount}
                 disabled={!voiceEnabled && !voiceCoach.isRunning}
               >
                 {voiceCoach.isRunning

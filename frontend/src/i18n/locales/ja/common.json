@@ -31,7 +31,7 @@
       "toolsTitle": "休憩・回数ツール",
       "toolsRestTitle": "休憩タイマー",
       "toolsRestDesc": "セット間の休憩時間を設定して開始します。",
-      "toolsRestStart": "開始する",
+      "toolsRestStart": "休憩する",
       "toolsCountTitle": "回数カウント",
       "toolsCountDesc": "トレーニング回数をかんたんにカウント。",
       "toolsCountUnit": "回",
