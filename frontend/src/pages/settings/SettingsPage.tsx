@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, LocationVisibility, WorkoutGoal } from '@machinefit/shared';
@@ -9,6 +9,7 @@ import {
   restDurationParts,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { BodyMetricsFields } from '@/components/settings/BodyMetricsFields/BodyMetricsFields';
 import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
@@ -760,6 +761,17 @@ export function SettingsPage() {
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
           </button>
         </SettingsCollapsibleSection>
+
+        <section className="my-page-section" style={{ marginTop: 0 }}>
+          <h3 className="my-page-section__title">{t('settings.accountSection')}</h3>
+          <nav className="list-nav" aria-label={t('settings.accountSection')}>
+            <Link to={ROUTES.LINKED_LOGINS} className="list-nav__item">
+              <Icon name="shield" size={22} className="list-nav__icon" aria-hidden />
+              <span className="list-nav__label">{t('settings.linkedLogins')}</span>
+              <Icon name="chevronRight" size={18} className="list-nav__chevron" aria-hidden />
+            </Link>
+          </nav>
+        </section>
 
         <SettingsCollapsibleSection
           title={t('settings.privacyLegal')}

@@ -186,7 +186,9 @@ async function requestKakaoAuthorize(intent: KakaoOAuthIntent): Promise<never> {
   }
 
   const redirectUri =
-    intent === 'connect' ? getKakaoRedirectUri('/my-page') : getKakaoRedirectUri('/');
+    intent === 'connect'
+      ? getKakaoRedirectUri('/settings/linked-logins')
+      : getKakaoRedirectUri('/');
   sessionStorage.setItem(KAKAO_OAUTH_INTENT_KEY, intent);
   sessionStorage.setItem(KAKAO_OAUTH_REDIRECT_KEY, redirectUri);
 

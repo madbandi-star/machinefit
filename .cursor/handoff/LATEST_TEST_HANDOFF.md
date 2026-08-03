@@ -14,8 +14,8 @@ Kakao login now uses `Kakao.Auth.authorize()` (redirect) + backend code-to-token
 2. Same JavaScript key ? Redirect URI:
    - `https://madbandi-star.github.io/machinefit/login`
    - `http://localhost:5173/login`
-   - (account link) `https://madbandi-star.github.io/machinefit/my-page`
-   - `http://localhost:5173/my-page`
+   - (account link) `https://madbandi-star.github.io/machinefit/settings/linked-logins`
+   - `http://localhost:5173/settings/linked-logins`
 
 ## Fast checks
 

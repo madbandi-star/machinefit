@@ -178,6 +178,10 @@ const growthTimeline = () =>
 const lab = () => import('@/pages/lab/LabPage').then((m) => ({ default: m.LabPage }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
+const linkedLogins = () =>
+  import('@/pages/settings/LinkedLoginsPage').then((m) => ({
+    default: m.LinkedLoginsPage,
+  }));
 const motivationMusic = () =>
   import('@/pages/motivation-music/MotivationMusicPage').then((m) => ({
     default: m.MotivationMusicPage,
@@ -405,6 +409,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.TRAINER_APPLY, element: lazyRoute(trainerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
+            { path: ROUTES.LINKED_LOGINS, element: lazyRoute(linkedLogins) },
             { path: ROUTES.PRIVACY_RIGHTS, element: lazyRoute(privacyRightsPage) },
             { path: ROUTES.SUPPORT, element: lazyRoute(supportPage) },
             { path: ROUTES.SUPPORT_DETAIL, element: lazyRoute(supportDetailPage) },

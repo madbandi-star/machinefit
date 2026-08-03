@@ -34,7 +34,12 @@ function getApiErrorCode(error: unknown): string | undefined {
   return payload?.error?.code;
 }
 
-export function LinkedProvidersSection() {
+interface LinkedProvidersSectionProps {
+  /** When false, page shell / parent owns the title. */
+  showHeading?: boolean;
+}
+
+export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSectionProps) {
   const { t } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
@@ -164,10 +169,14 @@ export function LinkedProvidersSection() {
   };
 
   return (
-    <section className="my-page-section">
-      <h3 className="my-page-section__title">{t('myPage.linkedLogins')}</h3>
-      <p className="linked-providers__hint">{t('myPage.linkedLoginsHint')}</p>
-      <ul className="linked-providers" aria-label={t('myPage.linkedLogins')}>
+    <section className={showHeading ? 'my-page-section' : undefined}>
+      {showHeading ? (
+        <>
+          <h3 className="my-page-section__title">{t('settings.linkedLogins')}</h3>
+          <p className="linked-providers__hint">{t('settings.linkedLoginsHint')}</p>
+        </>
+      ) : null}
+      <ul className="linked-providers" aria-label={t('settings.linkedLogins')}>
         {AUTH_PROVIDERS.map((provider) => {
           const item = status?.items.find((row) => row.provider === provider);
           const linked = Boolean(item?.linked);

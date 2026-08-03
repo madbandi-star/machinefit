@@ -60,6 +60,7 @@ export const ROUTES = {
   LAB: '/my-page/lab',
   GROWTH_ANALYSIS: '/growth-analysis',
   SETTINGS: '/settings',
+  LINKED_LOGINS: '/settings/linked-logins',
   MOTIVATION_MUSIC: '/settings/motivation-music',
   OWNER: '/owner',
   OWNER_GYMS: '/owner/gyms',

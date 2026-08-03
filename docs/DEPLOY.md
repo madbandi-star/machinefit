@@ -28,8 +28,8 @@
    - **Redirect URI** (로그인용, 슬래시까지 정확히):
      - `https://madbandi-star.github.io/machinefit/`
      - `http://localhost:5173/`
-     - (계정 연동) `https://madbandi-star.github.io/machinefit/my-page`
-     - `http://localhost:5173/my-page`
+     - (계정 연동) `https://madbandi-star.github.io/machinefit/settings/linked-logins`
+     - `http://localhost:5173/settings/linked-logins`
    - 동의항목: 닉네임 (이메일은 Biz 앱 필요할 수 있음)
 5. Apply DB migration `091_auth_providers.sql` if not already applied.
 
