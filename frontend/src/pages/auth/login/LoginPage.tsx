@@ -16,7 +16,11 @@ import { syncUserSettings } from '@/utils/syncUserSettings';
 import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { DEMO_LOGIN_EMAIL, DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
 import { isDemoAuthEnabled } from '@/utils/demoAuthMode';
-import { OAuthClientError } from '@/utils/oauthClient';
+import {
+  consumeKakaoAuthorizationCode,
+  OAuthClientError,
+  type OAuthCredentialPayload,
+} from '@/utils/oauthClient';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/auth.css';
@@ -48,6 +52,7 @@ export function LoginPage() {
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
   const [oauthPending, setOauthPending] = useState(false);
   const autoLoginAttempted = useRef(false);
+  const kakaoCodeHandled = useRef(false);
 
   const fromLocation = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })
     ?.from;
@@ -81,10 +86,7 @@ export function LoginPage() {
     },
   });
 
-  const handleOAuth = async (
-    provider: AuthProviderCode,
-    credential: { idToken?: string; accessToken?: string; displayName?: string }
-  ) => {
+  const handleOAuth = async (provider: AuthProviderCode, credential: OAuthCredentialPayload) => {
     setOauthPending(true);
     try {
       const res = await authApi.oauthLogin(provider, credential);
@@ -113,6 +115,19 @@ export function LoginPage() {
     }
     showToast(t('auth.socialFailed'), 'error');
   };
+
+  useEffect(() => {
+    if (kakaoCodeHandled.current) return;
+    const pending = consumeKakaoAuthorizationCode();
+    if (!pending || pending.intent !== 'login') return;
+    kakaoCodeHandled.current = true;
+    void handleOAuth('kakao', {
+      authorizationCode: pending.code,
+      redirectUri: pending.redirectUri,
+    });
+    // Intentionally once on mount for Kakao redirect return.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- OAuth callback
+  }, []);
 
   useEffect(() => {
     if (!credentialsHydrated || autoLoginAttempted.current) return;

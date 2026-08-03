@@ -1,17 +1,21 @@
-# Latest test handoff - Kakao OAuth wiring
+# Latest test handoff - Kakao authorize() login fix
 
-**Branch:** `main` | **Commit:** `fc90a5f`
+**Branch:** `main` | **Commit:** pending
 
 ## Change
 
-- Pages workflow: `VITE_KAKAO_JS_KEY`
-- Local `.env` (gitignored): JS + REST keys
-- Docs / render.yaml note `KAKAO_REST_API_KEY` (value not committed)
+Kakao login now uses `Kakao.Auth.authorize()` (redirect) + backend code-to-token exchange. Removed email scope (Biz-only).
 
-## Manual
+## Manual Kakao console (required)
 
-1. Render ? Environment ? `KAKAO_REST_API_KEY` = (REST key you provided) ? redeploy
-2. Kakao Developers: login ON, Web domains, redirect URIs, consent nickname/email
+1. App ? Platform key ? JavaScript key ? JavaScript SDK domain:
+   - `https://madbandi-star.github.io`
+   - `http://localhost:5173`
+2. Same JavaScript key ? Redirect URI:
+   - `https://madbandi-star.github.io/machinefit/login`
+   - `http://localhost:5173/login`
+   - (account link) `https://madbandi-star.github.io/machinefit/my-page`
+   - `http://localhost:5173/my-page`
 
 ## Fast checks
 

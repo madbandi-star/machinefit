@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import type { AuthProviderCode } from '@machinefit/shared';
 import { AUTH_PROVIDERS } from '@machinefit/shared';
 import {
+  beginKakaoAuthorize,
   isOAuthProviderConfigured,
   OAuthClientError,
   requestOAuthCredential,
+  type OAuthCredentialPayload,
 } from '@/utils/oauthClient';
 import '@/styles/auth.css';
 
@@ -22,7 +24,7 @@ interface SocialLoginButtonsProps {
   disabled?: boolean;
   onCredential: (
     provider: AuthProviderCode,
-    credential: { idToken?: string; accessToken?: string; displayName?: string }
+    credential: OAuthCredentialPayload
   ) => Promise<void> | void;
   onClientError?: (error: OAuthClientError) => void;
 }
@@ -41,6 +43,10 @@ export function SocialLoginButtons({
     try {
       if (!isOAuthProviderConfigured(provider)) {
         throw new OAuthClientError('not configured', 'NOT_CONFIGURED');
+      }
+      if (provider === 'kakao') {
+        await beginKakaoAuthorize('login');
+        return;
       }
       const credential = await requestOAuthCredential(provider);
       await onCredential(provider, credential);

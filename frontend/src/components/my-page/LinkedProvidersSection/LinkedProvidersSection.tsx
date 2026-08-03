@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -8,6 +8,8 @@ import { authApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
 import {
+  beginKakaoAuthorize,
+  consumeKakaoAuthorizationCode,
   isOAuthProviderConfigured,
   OAuthClientError,
   requestOAuthCredential,
@@ -37,6 +39,7 @@ export function LinkedProvidersSection() {
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
   const [busyProvider, setBusyProvider] = useState<AuthProviderCode | null>(null);
+  const kakaoConnectHandled = useRef(false);
 
   const providersQuery = useQuery({
     queryKey: QUERY_KEYS.authProviders,
@@ -48,15 +51,52 @@ export function LinkedProvidersSection() {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.authProviders });
   };
 
+  useEffect(() => {
+    if (kakaoConnectHandled.current) return;
+    const pending = consumeKakaoAuthorizationCode();
+    if (!pending || pending.intent !== 'connect') return;
+    kakaoConnectHandled.current = true;
+    setBusyProvider('kakao');
+    void authApi
+      .connectProvider('kakao', {
+        authorizationCode: pending.code,
+        redirectUri: pending.redirectUri,
+      })
+      .then(() => {
+        showToast(t('myPage.providersConnected'), 'success');
+        invalidate();
+      })
+      .catch((error: unknown) => {
+        const code = getApiErrorCode(error);
+        if (code === 'PROVIDER_LINKED_TO_OTHER_ACCOUNT') {
+          showToast(t('myPage.providersLinkedOther'), 'error');
+          return;
+        }
+        if (code === 'PROVIDER_ALREADY_LINKED') {
+          showToast(t('myPage.providersAlreadyLinked'), 'error');
+          return;
+        }
+        showToast(t('myPage.providersConnectFailed'), 'error');
+      })
+      .finally(() => setBusyProvider(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Kakao redirect return once
+  }, []);
+
   const connectMutation = useMutation({
     mutationFn: async (provider: AuthProviderCode) => {
       if (!isOAuthProviderConfigured(provider)) {
         throw new OAuthClientError('not configured', 'NOT_CONFIGURED');
       }
+      if (provider === 'kakao') {
+        await beginKakaoAuthorize('connect');
+        // Redirects away — never resolves.
+        return authApi.getProviders();
+      }
       const credential = await requestOAuthCredential(provider);
       return authApi.connectProvider(provider, credential);
     },
-    onSuccess: () => {
+    onSuccess: (_data, provider) => {
+      if (provider === 'kakao') return;
       showToast(t('myPage.providersConnected'), 'success');
       invalidate();
     },

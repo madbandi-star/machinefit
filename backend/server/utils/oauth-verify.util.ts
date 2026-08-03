@@ -129,9 +129,43 @@ async function verifyKakaoAccessToken(accessToken: string): Promise<VerifiedOAut
   };
 }
 
+/** Exchange JS SDK authorize() code for an access token (REST API key as client_id). */
+async function exchangeKakaoAuthorizationCode(
+  code: string,
+  redirectUri: string
+): Promise<string> {
+  if (!env.KAKAO_REST_API_KEY) {
+    throw new AppError(503, 'OAUTH_NOT_CONFIGURED', 'Kakao login is not configured');
+  }
+  const body = new URLSearchParams({
+    grant_type: 'authorization_code',
+    client_id: env.KAKAO_REST_API_KEY,
+    redirect_uri: redirectUri,
+    code,
+  });
+  const response = await fetch('https://kauth.kakao.com/oauth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+    body,
+  });
+  if (!response.ok) {
+    throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Failed to exchange Kakao authorization code');
+  }
+  const data = (await response.json()) as { access_token?: string };
+  if (!data.access_token) {
+    throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Kakao token response missing access_token');
+  }
+  return data.access_token;
+}
+
 export async function verifyOAuthCredential(
   provider: AuthProviderCode,
-  input: { idToken?: string; accessToken?: string }
+  input: {
+    idToken?: string;
+    accessToken?: string;
+    authorizationCode?: string;
+    redirectUri?: string;
+  }
 ): Promise<VerifiedOAuthIdentity> {
   if (provider === 'google') {
     if (input.idToken) return verifyGoogleIdToken(input.idToken);
@@ -144,8 +178,19 @@ export async function verifyOAuthCredential(
     }
     return verifyAppleIdToken(input.idToken);
   }
-  if (!input.accessToken) {
-    throw new AppError(400, 'OAUTH_TOKEN_REQUIRED', 'Kakao login requires accessToken');
+  let accessToken = input.accessToken;
+  if (!accessToken && input.authorizationCode) {
+    if (!input.redirectUri) {
+      throw new AppError(400, 'OAUTH_TOKEN_REQUIRED', 'Kakao code exchange requires redirectUri');
+    }
+    accessToken = await exchangeKakaoAuthorizationCode(input.authorizationCode, input.redirectUri);
   }
-  return verifyKakaoAccessToken(input.accessToken);
+  if (!accessToken) {
+    throw new AppError(
+      400,
+      'OAUTH_TOKEN_REQUIRED',
+      'Kakao login requires accessToken or authorizationCode'
+    );
+  }
+  return verifyKakaoAccessToken(accessToken);
 }

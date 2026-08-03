@@ -51,16 +51,21 @@ export const authProviderCodeSchema = z.enum(['google', 'kakao', 'apple'] as con
 /**
  * Client sends a provider credential after OAuth:
  * - Google / Apple: idToken (OIDC JWT)
- * - Kakao: accessToken (Kakao user API)
+ * - Kakao: accessToken, or authorizationCode (+ redirectUri) from JS SDK authorize()
  */
 export const oauthCredentialSchema = z
   .object({
     idToken: z.string().min(1).optional(),
     accessToken: z.string().min(1).optional(),
+    authorizationCode: z.string().min(1).optional(),
+    redirectUri: z.string().url().optional(),
     displayName: z.string().min(1).max(100).optional(),
   })
-  .refine((v) => Boolean(v.idToken || v.accessToken), {
-    message: 'idToken or accessToken is required',
+  .refine((v) => Boolean(v.idToken || v.accessToken || v.authorizationCode), {
+    message: 'idToken, accessToken, or authorizationCode is required',
+  })
+  .refine((v) => !v.authorizationCode || Boolean(v.redirectUri), {
+    message: 'redirectUri is required when authorizationCode is provided',
   });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

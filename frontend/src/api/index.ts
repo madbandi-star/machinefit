@@ -97,13 +97,25 @@ export const authApi = {
   /** Social OAuth login — creates or resumes a single users row by provider_user_id. */
   oauthLogin: (
     provider: AuthProviderCode,
-    credential: { idToken?: string; accessToken?: string; displayName?: string }
+    credential: {
+      idToken?: string;
+      accessToken?: string;
+      authorizationCode?: string;
+      redirectUri?: string;
+      displayName?: string;
+    }
   ) => apiClient.post(`/auth/${provider}`, credential),
   getProviders: () =>
     apiClient.get<ApiResponse<AuthProvidersStatus>>('/me/providers'),
   connectProvider: (
     provider: AuthProviderCode,
-    credential: { idToken?: string; accessToken?: string; displayName?: string }
+    credential: {
+      idToken?: string;
+      accessToken?: string;
+      authorizationCode?: string;
+      redirectUri?: string;
+      displayName?: string;
+    }
   ) =>
     apiClient.post<ApiResponse<AuthProvidersStatus>>(
       `/me/providers/${provider}/connect`,

@@ -1,26 +1,29 @@
 {
-  "title": "Wire Kakao JS key into Pages deploy",
-  "summary": "Local env has Kakao JS + REST keys. Pages workflow embeds VITE_KAKAO_JS_KEY. Render must set KAKAO_REST_API_KEY manually (not committed).",
-  "git": { "branch": "main", "commit": "fc90a5f" },
+  "title": "Fix Kakao login via authorize() + code exchange",
+  "summary": "Replace deprecated Kakao.Auth.login with Auth.authorize redirect; backend exchanges authorizationCode for access token. Nickname scope only.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    ".github/workflows/frontend-deploy.yml",
-    "render.yaml",
-    "docs/DEPLOY.md",
-    "config/env/deployment-secrets.example"
+    "frontend/src/utils/oauthClient.ts",
+    "frontend/src/pages/auth/login/LoginPage.tsx",
+    "frontend/src/components/auth/SocialLoginButtons/SocialLoginButtons.tsx",
+    "frontend/src/components/my-page/LinkedProvidersSection/LinkedProvidersSection.tsx",
+    "frontend/src/api/index.ts",
+    "backend/server/utils/oauth-verify.util.ts",
+    "shared/src/validators/auth.schema.ts",
+    "docs/DEPLOY.md"
   ],
-  "testFocus": "Login Kakao button after Pages deploy + Render KAKAO_REST_API_KEY set.",
+  "testFocus": "Kakao login button redirects to Kakao then back to /login and signs in.",
   "fastChecks": ["npm run test:smoke:changed"],
   "productionChecks": [
-    "Ctrl+F5 after Pages deploy",
-    "Render: KAKAO_REST_API_KEY then redeploy",
-    "Kakao Developers: Web domain + login enabled + consent",
-    "Kakao login creates/links account"
+    "Ctrl+F5 after Pages + Render deploy",
+    "Kakao JS SDK domain under platform key JavaScript key",
+    "Redirect URI includes .../machinefit/login and localhost:5173/login",
+    "Kakao button opens Kakao consent then returns logged in"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": true,
-    "note": "Set KAKAO_REST_API_KEY on Render Environment"
+    "backendDeployNeeded": true
   },
-  "asIs": "Kakao button showed not configured.",
-  "toBe": "Frontend Kakao JS wired; Render REST key still required for API verify."
+  "asIs": "Kakao button used removed Auth.login; nothing happened.",
+  "toBe": "authorize redirect + server code exchange works with nickname scope."
 }

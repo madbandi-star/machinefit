@@ -1,5 +1,8 @@
 import type { AuthProviderCode } from '@machinefit/shared';
 
+const KAKAO_OAUTH_INTENT_KEY = 'mf_kakao_oauth_intent';
+const KAKAO_OAUTH_REDIRECT_KEY = 'mf_kakao_oauth_redirect';
+
 function loadScript(src: string, id: string): Promise<void> {
   if (document.getElementById(id)) return Promise.resolve();
   return new Promise((resolve, reject) => {
@@ -39,11 +42,8 @@ declare global {
       isInitialized: () => boolean;
       init: (key: string) => void;
       Auth: {
-        login: (options: {
-          scope?: string;
-          success: (res: { access_token: string }) => void;
-          fail: (err: unknown) => void;
-        }) => void;
+        /** Current JS SDK — redirects to Kakao then back with ?code= */
+        authorize: (options: { redirectUri: string; scope?: string; state?: string }) => void;
       };
     };
     AppleID?: {
@@ -78,18 +78,122 @@ export class OAuthClientError extends Error {
   }
 }
 
+export type OAuthCredentialPayload = {
+  idToken?: string;
+  accessToken?: string;
+  authorizationCode?: string;
+  redirectUri?: string;
+  displayName?: string;
+};
+
 export function isOAuthProviderConfigured(provider: AuthProviderCode): boolean {
   if (provider === 'google') return Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim());
   if (provider === 'kakao') return Boolean(import.meta.env.VITE_KAKAO_JS_KEY?.trim());
   return Boolean(import.meta.env.VITE_APPLE_CLIENT_ID?.trim());
 }
 
+/** Absolute redirect URI for Kakao.Auth.authorize — must match Kakao Developers exactly. */
+export function getKakaoRedirectUri(path: string = '/login'): string {
+  const base = import.meta.env.BASE_URL || '/';
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${window.location.origin}${normalizedBase}${normalizedPath}`;
+}
+
+export type KakaoOAuthIntent = 'login' | 'connect';
+
+export function beginKakaoAuthorize(intent: KakaoOAuthIntent = 'login'): Promise<never> {
+  return requestKakaoAuthorize(intent);
+}
+
+/**
+ * Google / Apple return credentials in-page.
+ * Kakao redirects away via authorize(); callers should not await a token.
+ */
 export async function requestOAuthCredential(
   provider: AuthProviderCode
-): Promise<{ idToken?: string; accessToken?: string; displayName?: string }> {
+): Promise<OAuthCredentialPayload> {
   if (provider === 'google') return requestGoogleAccessToken();
-  if (provider === 'kakao') return requestKakaoAccessToken();
+  if (provider === 'kakao') {
+    await requestKakaoAuthorize('login');
+    throw new OAuthClientError('Kakao redirect started', 'UNKNOWN');
+  }
   return requestAppleIdToken();
+}
+
+/** Read ?code= after Kakao redirect; clears the query from the address bar. */
+export function consumeKakaoAuthorizationCode(): {
+  code: string;
+  redirectUri: string;
+  intent: KakaoOAuthIntent;
+} | null {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const error = params.get('error');
+  const intentRaw = sessionStorage.getItem(KAKAO_OAUTH_INTENT_KEY);
+  const redirectUri = sessionStorage.getItem(KAKAO_OAUTH_REDIRECT_KEY);
+  if (!intentRaw || !redirectUri) return null;
+
+  if (error) {
+    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
+    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+    params.delete('code');
+    params.delete('error');
+    params.delete('error_description');
+    params.delete('state');
+    const next = `${window.location.pathname}${params.toString() ? `?${params}` : ''}${window.location.hash}`;
+    window.history.replaceState({}, '', next);
+    return null;
+  }
+
+  if (!code) return null;
+
+  sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
+  sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+  params.delete('code');
+  params.delete('state');
+  const next = `${window.location.pathname}${params.toString() ? `?${params}` : ''}${window.location.hash}`;
+  window.history.replaceState({}, '', next);
+
+  return {
+    code,
+    redirectUri,
+    intent: intentRaw === 'connect' ? 'connect' : 'login',
+  };
+}
+
+async function ensureKakaoSdk(): Promise<void> {
+  const jsKey = import.meta.env.VITE_KAKAO_JS_KEY?.trim();
+  if (!jsKey) throw new OAuthClientError('Kakao JS key missing', 'NOT_CONFIGURED');
+
+  await loadScript('https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js', 'mf-kakao-sdk');
+  if (!window.Kakao) {
+    throw new OAuthClientError('Kakao SDK unavailable', 'SCRIPT_LOAD_FAILED');
+  }
+  if (!window.Kakao.isInitialized()) {
+    window.Kakao.init(jsKey);
+  }
+}
+
+async function requestKakaoAuthorize(intent: KakaoOAuthIntent): Promise<never> {
+  await ensureKakaoSdk();
+  if (!window.Kakao?.Auth?.authorize) {
+    throw new OAuthClientError('Kakao authorize unavailable', 'SCRIPT_LOAD_FAILED');
+  }
+
+  const redirectUri =
+    intent === 'connect' ? getKakaoRedirectUri('/my-page') : getKakaoRedirectUri('/login');
+  sessionStorage.setItem(KAKAO_OAUTH_INTENT_KEY, intent);
+  sessionStorage.setItem(KAKAO_OAUTH_REDIRECT_KEY, redirectUri);
+
+  // Nickname only — email requires Biz app permission.
+  window.Kakao.Auth.authorize({
+    redirectUri,
+    scope: 'profile_nickname',
+  });
+
+  // Page navigates away; keep the promise pending.
+  return new Promise(() => undefined);
 }
 
 async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
@@ -117,33 +221,6 @@ async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
       },
     });
     client.requestAccessToken({ prompt: '' });
-  });
-}
-
-async function requestKakaoAccessToken(): Promise<{ accessToken: string }> {
-  const jsKey = import.meta.env.VITE_KAKAO_JS_KEY?.trim();
-  if (!jsKey) throw new OAuthClientError('Kakao JS key missing', 'NOT_CONFIGURED');
-
-  await loadScript('https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js', 'mf-kakao-sdk');
-  if (!window.Kakao) {
-    throw new OAuthClientError('Kakao SDK unavailable', 'SCRIPT_LOAD_FAILED');
-  }
-  if (!window.Kakao.isInitialized()) {
-    window.Kakao.init(jsKey);
-  }
-
-  return new Promise((resolve, reject) => {
-    window.Kakao!.Auth.login({
-      scope: 'profile_nickname,account_email',
-      success: (res) => {
-        if (!res.access_token) {
-          reject(new OAuthClientError('Kakao token missing', 'TOKEN_MISSING'));
-          return;
-        }
-        resolve({ accessToken: res.access_token });
-      },
-      fail: () => reject(new OAuthClientError('Kakao login cancelled', 'CANCELLED')),
-    });
   });
 }
 
