@@ -8,10 +8,7 @@ export function LinkedLoginsPage() {
   const { t } = useTranslation();
 
   return (
-    <PageShell
-      title={t('settings.linkedLogins')}
-      subtitle={t('settings.linkedLoginsDesc')}
-    >
+    <PageShell title={t('settings.linkedLogins')} subtitle={t('settings.linkedLoginsDesc')}>
       <LinkedProvidersSection showHeading={false} />
     </PageShell>
   );

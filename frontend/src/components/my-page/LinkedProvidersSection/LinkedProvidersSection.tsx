@@ -144,10 +144,22 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
   });
 
   const status: AuthProvidersStatus | undefined = providersQuery.data;
-  const linkedCount = status?.items.filter((item) => item.linked).length ?? 0;
-  const canUnlinkAny = linkedCount > 1 || Boolean(status?.hasPassword);
+  const linkedItems = status?.items.filter((item) => item.linked) ?? [];
+  const linkedCount = linkedItems.length;
+  const linkedProvider = linkedItems[0]?.provider;
+  /** Unlink only when another sign-in method remains (password or a second provider). */
+  const canUnlink = linkedCount > 1 || Boolean(status?.hasPassword);
 
   const runConnect = async (provider: AuthProviderCode) => {
+    if (linkedProvider && linkedProvider !== provider) {
+      const ok = window.confirm(
+        t('settings.providersReplaceConfirm', {
+          current: PROVIDER_LABEL[linkedProvider],
+          next: PROVIDER_LABEL[provider],
+        })
+      );
+      if (!ok) return;
+    }
     setBusyProvider(provider);
     try {
       await connectMutation.mutateAsync(provider);
@@ -175,12 +187,15 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
           <h3 className="my-page-section__title">{t('settings.linkedLogins')}</h3>
           <p className="linked-providers__hint">{t('settings.linkedLoginsHint')}</p>
         </>
-      ) : null}
+      ) : (
+        <p className="linked-providers__hint">{t('settings.linkedLoginsHint')}</p>
+      )}
       <ul className="linked-providers" aria-label={t('settings.linkedLogins')}>
         {AUTH_PROVIDERS.map((provider) => {
           const item = status?.items.find((row) => row.provider === provider);
           const linked = Boolean(item?.linked);
           const busy = busyProvider === provider;
+          const isReplaceTarget = Boolean(linkedProvider && linkedProvider !== provider);
           return (
             <li key={provider} className="linked-providers__row">
               <div className="linked-providers__identity">
@@ -203,7 +218,8 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
                 <button
                   type="button"
                   className="btn btn--secondary linked-providers__action"
-                  disabled={busy || !canUnlinkAny || providersQuery.isLoading}
+                  disabled={busy || !canUnlink || providersQuery.isLoading}
+                  title={!canUnlink ? t('myPage.providersLastMethod') : undefined}
                   onClick={() => void runDisconnect(provider)}
                 >
                   {busy ? '...' : t('myPage.providersUnlink')}
@@ -215,7 +231,11 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
                   disabled={busy || providersQuery.isLoading}
                   onClick={() => void runConnect(provider)}
                 >
-                  {busy ? '...' : t('myPage.providersLink')}
+                  {busy
+                    ? '...'
+                    : isReplaceTarget
+                      ? t('settings.providersReplace')
+                      : t('myPage.providersLink')}
                 </button>
               )}
             </li>

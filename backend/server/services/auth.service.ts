@@ -540,6 +540,13 @@ export const authService = {
       throw new AppError(409, 'PROVIDER_ALREADY_LINKED', 'This provider is already linked');
     }
 
+    // One social login per account: connecting another provider replaces the current one.
+    const existingLinks = await authProviderRepository.findByUserId(userId);
+    for (const link of existingLinks) {
+      if (link.provider === provider) continue;
+      await authProviderRepository.deleteByUserAndProvider(userId, link.provider);
+    }
+
     try {
       await authProviderRepository.create({
         userId,
