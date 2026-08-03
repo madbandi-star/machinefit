@@ -272,7 +272,7 @@
     "voiceCoachFlowMode_count": "운동 카운트만",
     "voiceCoachFlowMode_count_hold": "운동 카운트 + 버텨!!!",
     "voiceCoachFlowMode_hold": "버텨!!!만",
-    "voiceHoldDuration": "버텨!!! 시간",
+    "voiceHoldDuration": "버텨!!!",
     "voiceHoldDurationUnit": "초",
     "voiceHoldDurationOption": "{{sec}}초",
     "voiceHoldDurationCustom": "직접 입력",
