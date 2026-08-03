@@ -24,6 +24,9 @@ import '@/styles/home.css';
 import '@/styles/recommendation.css';
 import '@/styles/components.css';
 
+/** Home rest-timer +/- step (settings page keeps its own finer step). */
+const HOME_REST_STEP_SEC = 30;
+
 function formatClock(totalSeconds: number): string {
   const clamped = Math.max(0, Math.round(totalSeconds));
   const minutes = Math.floor(clamped / 60);
@@ -145,7 +148,7 @@ export function HomeWorkoutToolsSection() {
             <button
               type="button"
               className="home-tool-card__step-btn"
-              onClick={() => nudgeRest(-REST_DURATION.secondStep)}
+              onClick={() => nudgeRest(-HOME_REST_STEP_SEC)}
               aria-label={t('pages.home.toolsDecrease')}
               disabled={restRunning}
             >
@@ -158,7 +161,7 @@ export function HomeWorkoutToolsSection() {
             <button
               type="button"
               className="home-tool-card__step-btn"
-              onClick={() => nudgeRest(REST_DURATION.secondStep)}
+              onClick={() => nudgeRest(HOME_REST_STEP_SEC)}
               aria-label={t('pages.home.toolsIncrease')}
               disabled={restRunning}
             >
