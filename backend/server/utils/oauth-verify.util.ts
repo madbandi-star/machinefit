@@ -157,9 +157,18 @@ async function exchangeKakaoAuthorizationCode(
     error_description?: string;
   };
   if (!response.ok || !raw.access_token) {
+    const kakaoError = raw.error ?? '';
     const detail = [raw.error, raw.error_description, `redirect_uri=${redirectUri}`]
       .filter(Boolean)
       .join(' | ');
+    // invalid_client = wrong REST key on server, or Client Secret required/mismatched.
+    if (kakaoError === 'invalid_client') {
+      throw new AppError(
+        401,
+        'OAUTH_INVALID_TOKEN',
+        'Kakao client credentials invalid. Check Render KAKAO_REST_API_KEY (REST key, not JS key) and Client Secret.'
+      );
+    }
     throw new AppError(
       401,
       'OAUTH_INVALID_TOKEN',

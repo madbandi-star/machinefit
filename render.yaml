@@ -38,3 +38,5 @@ services:
       # KAKAO_REST_API_KEY=<from Kakao Developers REST API key>
       - key: KAKAO_REST_API_KEY
         sync: false
+      - key: KAKAO_CLIENT_SECRET
+        sync: false
