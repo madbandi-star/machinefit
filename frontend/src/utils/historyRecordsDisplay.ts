@@ -13,6 +13,7 @@ export interface HistoryRecordCard {
   brandName?: string;
   muscleGroup?: string;
   targetMuscleGroup?: TargetMuscleGroup;
+  primaryImageUrl?: string;
   recommendationId?: string;
   settings: HistoryItem['settings'];
   viewedAt: string;
@@ -61,6 +62,7 @@ export function expandHistoryRecordCards(
       machineName: item.machineName,
       brandName: item.brandName,
       muscleGroup: item.muscleGroup,
+      primaryImageUrl: item.primaryImageUrl,
       recommendationId: item.recommendationId,
       settings: item.settings,
       viewedAt: item.viewedAt,
@@ -92,6 +94,7 @@ export function expandHistoryRecordCards(
       machineName: log.machineName ?? history?.machineName ?? log.machineCode,
       brandName: log.brandName ?? history?.brandName,
       muscleGroup: history?.muscleGroup,
+      primaryImageUrl: history?.primaryImageUrl,
       recommendationId: log.recommendationId ?? history?.recommendationId,
       settings: history?.settings ?? {},
       viewedAt: log.updatedAt || log.createdAt,
@@ -122,6 +125,7 @@ export function expandHistoryRecordCards(
       brandName: log.brandName ?? history?.brandName,
       muscleGroup: history?.muscleGroup,
       targetMuscleGroup: log.targetMuscleGroup,
+      primaryImageUrl: history?.primaryImageUrl,
       recommendationId: log.recommendationId ?? history?.recommendationId,
       settings: history?.settings ?? {},
       viewedAt: log.updatedAt || log.createdAt,
@@ -147,6 +151,7 @@ export function expandHistoryRecordCards(
         brandName: item.brandName,
         muscleGroup: item.muscleGroup,
         targetMuscleGroup: item.targetMuscleGroup as TargetMuscleGroup,
+        primaryImageUrl: item.primaryImageUrl,
         recommendationId: item.recommendationId,
         settings: item.settings,
         viewedAt: item.viewedAt,
@@ -165,6 +170,7 @@ export function expandHistoryRecordCards(
       machineCode: item.machineCode,
       machineName: item.machineName,
       brandName: item.brandName,
+      primaryImageUrl: item.primaryImageUrl,
       recommendationId: item.recommendationId,
       settings: item.settings,
       viewedAt: item.viewedAt,

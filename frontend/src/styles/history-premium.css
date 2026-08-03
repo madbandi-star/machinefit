@@ -369,6 +369,13 @@
   border-radius: 14px;
 }
 
+.history-page-premium .history-record-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .history-page-premium .history-record-card__hero-body {
   display: flex;
   flex-direction: column;

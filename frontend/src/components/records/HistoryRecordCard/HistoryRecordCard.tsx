@@ -9,8 +9,7 @@ import type {
 } from '@machinefit/shared';
 import { resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
 import type { FitRating } from '@/api';
-import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
-import type { MuscleGroup } from '@/constants/muscle-groups';
+import { SafeImage } from '@/components/media/SafeImage';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import {
@@ -18,6 +17,7 @@ import {
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
+import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -142,6 +142,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   const bookmarkActive = isWorkoutLogSaved;
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
+  const machineImageUrl = resolveMachineImageUrl(card.machineCode, card.primaryImageUrl);
   const muscleLabel = muscleGroup
     ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
     : null;
@@ -223,11 +224,14 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         <div className="history-record-card__hero">
           <Link to={resultUrl} className="history-record-card__thumb-link" aria-label={displayName}>
             <div className="history-record-card__thumb">
-              {muscleGroup ? (
-                <MuscleGroupIcon group={muscleGroup as MuscleGroup} size={36} />
-              ) : (
-                <div className="history-record-card__thumb-fallback" />
-              )}
+              <SafeImage
+                src={machineImageUrl || machinePlaceholderUrl()}
+                fallbackSrc={machinePlaceholderUrl()}
+                alt=""
+                loading="lazy"
+                width={52}
+                height={52}
+              />
             </div>
           </Link>
           <div className="history-record-card__hero-body">
