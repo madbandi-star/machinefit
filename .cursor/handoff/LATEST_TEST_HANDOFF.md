@@ -1,6 +1,6 @@
 # Latest test handoff - Kakao OAuth wiring
 
-**Branch:** `main` | **Commit:** pending
+**Branch:** `main` | **Commit:** `fc90a5f`
 
 ## Change
 

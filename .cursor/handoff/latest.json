@@ -1,7 +1,7 @@
 {
   "title": "Wire Kakao JS key into Pages deploy",
   "summary": "Local env has Kakao JS + REST keys. Pages workflow embeds VITE_KAKAO_JS_KEY. Render must set KAKAO_REST_API_KEY manually (not committed).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "fc90a5f" },
   "changedFiles": [
     ".github/workflows/frontend-deploy.yml",
     "render.yaml",
