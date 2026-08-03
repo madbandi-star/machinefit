@@ -489,7 +489,7 @@
   align-items: center;
   gap: 0.22rem;
   font-size: 0.75rem;
-  font-weight: 550;
+  font-weight: 500;
   color: var(--history-text-dim);
   flex-shrink: 0;
   white-space: nowrap;
@@ -508,7 +508,7 @@
   align-items: center;
   gap: 0.22rem;
   font-size: 0.75rem;
-  font-weight: 550;
+  font-weight: 500;
   color: var(--history-text-dim);
   flex-shrink: 0;
   white-space: nowrap;
@@ -1115,6 +1115,18 @@
   border-color: var(--history-card-border);
   box-shadow: var(--history-shadow-card);
   color: var(--color-text);
+}
+
+[data-theme='light'] .history-page-premium .history-record-card__thumb {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.85) 0%, transparent 48%),
+    rgba(243, 244, 246, 0.95);
+}
+
+[data-theme='light'] .history-page-premium .history-record-card__collapse,
+[data-theme='light'] .history-page-premium .history-record-card__bookmark,
+[data-theme='light'] .history-page-premium .history-record-card__remove {
+  background: rgba(243, 244, 246, 0.9);
 }
 
 [data-theme='light'] .history-page-premium .history-workout-log__memo-input {
