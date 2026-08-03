@@ -12,12 +12,14 @@ import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector'
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { useKakaoLoginCallback } from '@/hooks/useKakaoLoginCallback';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
 
 export function HomePage() {
   const authReady = useAuthHydration();
+  useKakaoLoginCallback();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);

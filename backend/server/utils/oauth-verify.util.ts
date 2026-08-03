@@ -143,19 +143,30 @@ async function exchangeKakaoAuthorizationCode(
     redirect_uri: redirectUri,
     code,
   });
+  if (env.KAKAO_CLIENT_SECRET?.trim()) {
+    body.set('client_secret', env.KAKAO_CLIENT_SECRET.trim());
+  }
   const response = await fetch('https://kauth.kakao.com/oauth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
     body,
   });
-  if (!response.ok) {
-    throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Failed to exchange Kakao authorization code');
+  const raw = (await response.json().catch(() => ({}))) as {
+    access_token?: string;
+    error?: string;
+    error_description?: string;
+  };
+  if (!response.ok || !raw.access_token) {
+    const detail = [raw.error, raw.error_description, `redirect_uri=${redirectUri}`]
+      .filter(Boolean)
+      .join(' | ');
+    throw new AppError(
+      401,
+      'OAUTH_INVALID_TOKEN',
+      detail || 'Failed to exchange Kakao authorization code'
+    );
   }
-  const data = (await response.json()) as { access_token?: string };
-  if (!data.access_token) {
-    throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Kakao token response missing access_token');
-  }
-  return data.access_token;
+  return raw.access_token;
 }
 
 export async function verifyOAuthCredential(

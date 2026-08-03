@@ -93,10 +93,14 @@ export function isOAuthProviderConfigured(provider: AuthProviderCode): boolean {
 }
 
 /** Absolute redirect URI for Kakao.Auth.authorize — must match Kakao Developers exactly. */
-export function getKakaoRedirectUri(path: string = '/login'): string {
+export function getKakaoRedirectUri(path?: string): string {
   const base = import.meta.env.BASE_URL || '/';
-  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+  if (!path || path === '/') {
+    // App root, e.g. https://madbandi-star.github.io/machinefit/
+    return `${window.location.origin}${normalizedBase}`;
+  }
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
   return `${window.location.origin}${normalizedBase}${normalizedPath}`;
 }
 
@@ -182,7 +186,7 @@ async function requestKakaoAuthorize(intent: KakaoOAuthIntent): Promise<never> {
   }
 
   const redirectUri =
-    intent === 'connect' ? getKakaoRedirectUri('/my-page') : getKakaoRedirectUri('/login');
+    intent === 'connect' ? getKakaoRedirectUri('/my-page') : getKakaoRedirectUri('/');
   sessionStorage.setItem(KAKAO_OAUTH_INTENT_KEY, intent);
   sessionStorage.setItem(KAKAO_OAUTH_REDIRECT_KEY, redirectUri);
 

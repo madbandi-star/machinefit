@@ -47,6 +47,8 @@ const envSchema = z.object({
   /** OAuth / social login (optional — endpoints error when unset). */
   GOOGLE_CLIENT_ID: z.string().optional(),
   KAKAO_REST_API_KEY: z.string().optional(),
+  /** Optional — required only if Kakao console enables Client Secret. */
+  KAKAO_CLIENT_SECRET: z.string().optional(),
   APPLE_CLIENT_ID: z.string().optional(),
 });
 

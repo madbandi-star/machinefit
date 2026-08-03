@@ -32,6 +32,12 @@ function getApiErrorCode(error: unknown): string | undefined {
   return payload?.error?.code;
 }
 
+function getApiErrorMessage(error: unknown): string | undefined {
+  if (!axios.isAxiosError(error)) return undefined;
+  const payload = error.response?.data as { error?: { message?: string } } | undefined;
+  return payload?.error?.message;
+}
+
 export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -94,8 +100,11 @@ export function LoginPage() {
       completeLogin(user, tokens, false);
     } catch (error) {
       const code = getApiErrorCode(error);
+      const message = getApiErrorMessage(error);
       if (code === 'OAUTH_NOT_CONFIGURED') {
         showToast(t('auth.socialNotConfigured'), 'error');
+      } else if (message) {
+        showToast(message, 'error');
       } else {
         showToast(t('auth.socialFailed'), 'error');
       }

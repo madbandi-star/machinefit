@@ -25,7 +25,11 @@
 4. Kakao Developers:
    - 카카오 로그인 ON
    - **앱 → 플랫폼 키 → JavaScript 키 → JavaScript SDK 도메인**: `https://madbandi-star.github.io`, `http://localhost:5173`
-   - **JavaScript 키 Redirect URI**: `https://madbandi-star.github.io/machinefit/login`, `http://localhost:5173/login` (+ my-page URIs if linking from My Page)
+   - **Redirect URI** (로그인용, 슬래시까지 정확히):
+     - `https://madbandi-star.github.io/machinefit/`
+     - `http://localhost:5173/`
+     - (계정 연동) `https://madbandi-star.github.io/machinefit/my-page`
+     - `http://localhost:5173/my-page`
    - 동의항목: 닉네임 (이메일은 Biz 앱 필요할 수 있음)
 5. Apply DB migration `091_auth_providers.sql` if not already applied.
 
