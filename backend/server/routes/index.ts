@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { healthRouter } from './health.routes.js';
 import { authRouter } from './auth.routes.js';
+import { meRouter } from './me.routes.js';
 import { machineRouter } from './machine.routes.js';
 import { brandRouter } from './brand.routes.js';
 import { recommendationRouter } from './recommendation.routes.js';
@@ -34,6 +35,8 @@ export const apiRouter = Router();
 apiRouter.use(healthRouter);
 apiRouter.use(complianceRouter);
 apiRouter.use('/auth', authRouter);
+/** Spec alias: /me/providers (same handlers as /auth/me/providers). */
+apiRouter.use('/me', meRouter);
 /** Prefixed — never mount at API root with router-level auth (blocks /auth/login). */
 apiRouter.use('/inspection', inspectionRouter);
 apiRouter.use('/users', userRouter);

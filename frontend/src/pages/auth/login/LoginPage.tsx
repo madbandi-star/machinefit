@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import type { AuthProviderCode, User, AuthTokens } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons/SocialLoginButtons';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
@@ -13,11 +16,17 @@ import { syncUserSettings } from '@/utils/syncUserSettings';
 import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { DEMO_LOGIN_EMAIL, DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
 import { isDemoAuthEnabled } from '@/utils/demoAuthMode';
+import { OAuthClientError } from '@/utils/oauthClient';
 import { ROUTES } from '@/constants/routes';
-import type { User, AuthTokens } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/auth.css';
 import '@/styles/legal.css';
+
+function getApiErrorCode(error: unknown): string | undefined {
+  if (!axios.isAxiosError(error)) return undefined;
+  const payload = error.response?.data as { error?: { code?: string } } | undefined;
+  return payload?.error?.code;
+}
 
 export function LoginPage() {
   const { t } = useTranslation();
@@ -37,6 +46,7 @@ export function LoginPage() {
   const [password, setPassword] = useState(demoAuth ? DEMO_REGISTER_PASSWORD : '');
   const [rememberMe, setRememberMe] = useState(false);
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
+  const [oauthPending, setOauthPending] = useState(false);
   const autoLoginAttempted = useRef(false);
 
   const fromLocation = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })
@@ -70,6 +80,39 @@ export function LoginPage() {
       showToast(t('auth.invalidCredentials'), 'error');
     },
   });
+
+  const handleOAuth = async (
+    provider: AuthProviderCode,
+    credential: { idToken?: string; accessToken?: string; displayName?: string }
+  ) => {
+    setOauthPending(true);
+    try {
+      const res = await authApi.oauthLogin(provider, credential);
+      const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
+      completeLogin(user, tokens, false);
+    } catch (error) {
+      const code = getApiErrorCode(error);
+      if (code === 'OAUTH_NOT_CONFIGURED') {
+        showToast(t('auth.socialNotConfigured'), 'error');
+      } else {
+        showToast(t('auth.socialFailed'), 'error');
+      }
+    } finally {
+      setOauthPending(false);
+    }
+  };
+
+  const handleOAuthClientError = (error: OAuthClientError) => {
+    if (error.code === 'NOT_CONFIGURED') {
+      showToast(t('auth.socialNotConfigured'), 'error');
+      return;
+    }
+    if (error.code === 'CANCELLED') {
+      showToast(t('auth.socialCancelled'), 'info');
+      return;
+    }
+    showToast(t('auth.socialFailed'), 'error');
+  };
 
   useEffect(() => {
     if (!credentialsHydrated || autoLoginAttempted.current) return;
@@ -203,10 +246,21 @@ export function LoginPage() {
           />
           <span>{t('auth.rememberLogin')}</span>
         </label>
-        <button type="submit" className="btn btn--primary btn--block" disabled={mutation.isPending}>
+        <button
+          type="submit"
+          className="btn btn--primary btn--block"
+          disabled={mutation.isPending || oauthPending}
+        >
           {mutation.isPending ? '...' : t('nav.login')}
         </button>
       </form>
+
+      <SocialLoginButtons
+        disabled={mutation.isPending || oauthPending}
+        onCredential={handleOAuth}
+        onClientError={handleOAuthClientError}
+      />
+
       <p className="auth-page__footer">
         <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
         {' · '}

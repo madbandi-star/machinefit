@@ -44,6 +44,10 @@ const envSchema = z.object({
       if (v === 'false') return false;
       return process.env.NODE_ENV !== 'production';
     }),
+  /** OAuth / social login (optional — endpoints error when unset). */
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  KAKAO_REST_API_KEY: z.string().optional(),
+  APPLE_CLIENT_ID: z.string().optional(),
 });
 
 export const env = envSchema.parse({

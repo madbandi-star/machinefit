@@ -31,3 +31,4 @@ export * from './compliance.types.js';
 export * from './trainer-application.types.js';
 export * from './inspection.types.js';
 export * from './machine-request-admin.types.js';
+export * from './auth-provider.types.js';

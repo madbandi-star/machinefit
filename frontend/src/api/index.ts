@@ -15,6 +15,8 @@ import type {
   UserGym,
   Gender,
   WorkoutGoal,
+  AuthProviderCode,
+  AuthProvidersStatus,
   WorkoutLog,
   UpsertWorkoutLogInput,
   CreateUserGymInput,
@@ -92,6 +94,23 @@ export const authApi = {
     agreeLocation?: boolean;
     legalVersion?: string;
   }) => apiClient.post('/auth/register', data),
+  /** Social OAuth login — creates or resumes a single users row by provider_user_id. */
+  oauthLogin: (
+    provider: AuthProviderCode,
+    credential: { idToken?: string; accessToken?: string; displayName?: string }
+  ) => apiClient.post(`/auth/${provider}`, credential),
+  getProviders: () =>
+    apiClient.get<ApiResponse<AuthProvidersStatus>>('/me/providers'),
+  connectProvider: (
+    provider: AuthProviderCode,
+    credential: { idToken?: string; accessToken?: string; displayName?: string }
+  ) =>
+    apiClient.post<ApiResponse<AuthProvidersStatus>>(
+      `/me/providers/${provider}/connect`,
+      credential
+    ),
+  disconnectProvider: (provider: AuthProviderCode) =>
+    apiClient.delete<ApiResponse<AuthProvidersStatus>>(`/me/providers/${provider}`),
   /** Refresh via HttpOnly cookie (optional legacy body for migration). */
   refresh: (refreshToken?: string) =>
     apiClient.post('/auth/refresh', refreshToken ? { refreshToken } : {}),

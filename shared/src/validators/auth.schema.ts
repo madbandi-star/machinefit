@@ -46,6 +46,24 @@ export const marketingPrefSchema = z.object({
   marketingOptIn: z.boolean(),
 });
 
+export const authProviderCodeSchema = z.enum(['google', 'kakao', 'apple'] as const);
+
+/**
+ * Client sends a provider credential after OAuth:
+ * - Google / Apple: idToken (OIDC JWT)
+ * - Kakao: accessToken (Kakao user API)
+ */
+export const oauthCredentialSchema = z
+  .object({
+    idToken: z.string().min(1).optional(),
+    accessToken: z.string().min(1).optional(),
+    displayName: z.string().min(1).max(100).optional(),
+  })
+  .refine((v) => Boolean(v.idToken || v.accessToken), {
+    message: 'idToken or accessToken is required',
+  });
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type MarketingPrefInput = z.infer<typeof marketingPrefSchema>;
+export type OAuthCredentialInput = z.infer<typeof oauthCredentialSchema>;

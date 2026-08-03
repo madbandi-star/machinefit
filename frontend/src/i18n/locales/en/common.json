@@ -251,7 +251,14 @@
     "loginFeature3": "Workout logs and growth analysis",
     "loginBrowseMachines": "Browse machines",
     "profileExtrasGoalOnly": "Set your workout goal for recommendations. Enter your gym with location below.",
-    "agreeLocationSuffix": " (optional)"
+    "agreeLocationSuffix": " (optional)",
+    "socialOr": "or",
+    "socialLoginGroup": "Social login",
+    "continueWith": "Continue with {{provider}}",
+    "socialConnecting": "Connecting…",
+    "socialNotConfigured": "Social login is not configured yet.",
+    "socialCancelled": "Login was cancelled.",
+    "socialFailed": "Social login failed. Please try again."
   },
   "settings": {
     "language": "Language",
@@ -520,7 +527,21 @@
     "ownerOnly": "Owner only",
     "tradeHub": "Buy & sell hub",
     "tradeReports": "Reports",
-    "tradeStats": "Trade stats (coming later)"
+    "tradeStats": "Trade stats (coming later)",
+    "linkedLogins": "Linked logins",
+    "linkedLoginsHint": "Link Google, Apple, or Kakao to the same MachineFit account. Accounts are never merged by email alone.",
+    "providersLinked": "Connected",
+    "providersNotLinked": "Not connected",
+    "providersLink": "Connect",
+    "providersUnlink": "Disconnect",
+    "providersUnlinkConfirm": "Disconnect {{provider}} login?",
+    "providersConnected": "Login connected.",
+    "providersDisconnected": "Login disconnected.",
+    "providersConnectFailed": "Could not connect this login.",
+    "providersDisconnectFailed": "Could not disconnect this login.",
+    "providersLastMethod": "Keep at least one login method on the account.",
+    "providersLinkedOther": "This login is already linked to another MachineFit account.",
+    "providersAlreadyLinked": "This login is already linked."
   },
   "lab": {
     "title": "Lab",

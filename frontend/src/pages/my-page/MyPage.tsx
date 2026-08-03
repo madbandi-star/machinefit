@@ -9,6 +9,7 @@ import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
+import { LinkedProvidersSection } from '@/components/my-page/LinkedProvidersSection/LinkedProvidersSection';
 import { authApi, locationApi, userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
@@ -207,6 +208,8 @@ export function MyPage() {
           ) : null}
         </nav>
       </section>
+
+      <LinkedProvidersSection />
 
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>

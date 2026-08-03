@@ -1,5 +1,12 @@
 import type { Request, Response } from 'express';
-import { registerSchema, loginSchema, marketingPrefSchema } from '@machinefit/shared';
+import {
+  registerSchema,
+  loginSchema,
+  marketingPrefSchema,
+  oauthCredentialSchema,
+  authProviderCodeSchema,
+  isAuthProviderCode,
+} from '@machinefit/shared';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getRequestIp, getRequestUserAgent } from '../utils/request-meta.util.js';
@@ -37,6 +44,16 @@ export async function login(req: Request, res: Response): Promise<void> {
     ipAddress: getRequestIp(req),
     userAgent: getRequestUserAgent(req),
   });
+  sendAuthResult(res, 200, result);
+}
+
+export async function oauthLogin(req: Request, res: Response): Promise<void> {
+  const providerParam = String(req.params.provider ?? '');
+  if (!isAuthProviderCode(providerParam)) {
+    throw new AppError(400, 'VALIDATION_ERROR', 'Unsupported OAuth provider');
+  }
+  const credential = oauthCredentialSchema.parse(req.body);
+  const result = await authService.loginWithOAuth(providerParam, credential);
   sendAuthResult(res, 200, result);
 }
 
@@ -85,5 +102,32 @@ export async function updateMarketingPref(req: Request, res: Response): Promise<
   }
   const input = marketingPrefSchema.parse(req.body);
   const data = await authService.setMarketingOptIn(req.user.userId, input.marketingOptIn);
+  res.json({ success: true, data });
+}
+
+export async function listProviders(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const data = await authService.listProviders(req.user.userId);
+  res.json({ success: true, data });
+}
+
+export async function connectProvider(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const provider = authProviderCodeSchema.parse(req.params.provider);
+  const credential = oauthCredentialSchema.parse(req.body);
+  const data = await authService.connectProvider(req.user.userId, provider, credential);
+  res.json({ success: true, data });
+}
+
+export async function disconnectProvider(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const provider = authProviderCodeSchema.parse(req.params.provider);
+  const data = await authService.disconnectProvider(req.user.userId, provider);
   res.json({ success: true, data });
 }

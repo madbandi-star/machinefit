@@ -248,7 +248,11 @@ export const authService = {
     }
 
     const user = await userRepository.findByEmail(input.email);
-    if (!user || !(await comparePassword(input.password, user.passwordHash))) {
+    if (
+      !user ||
+      !user.passwordHash ||
+      !(await comparePassword(input.password, user.passwordHash))
+    ) {
       await complianceRepository.recordLoginEvent({
         userId: user?.id,
         email: input.email,
@@ -385,4 +389,185 @@ export const authService = {
     ]);
     return { marketingOptIn: user.marketingOptIn ?? false };
   },
+
+  async loginWithOAuth(
+    provider: import('@machinefit/shared').AuthProviderCode,
+    credential: import('@machinefit/shared').OAuthCredentialInput
+  ) {
+    const { verifyOAuthCredential } = await import('../utils/oauth-verify.util.js');
+    const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+
+    const identity = await verifyOAuthCredential(provider, credential);
+    const existingLink = await authProviderRepository.findByProviderUserId(
+      provider,
+      identity.providerUserId
+    );
+
+    if (existingLink) {
+      const user = await userRepository.findById(existingLink.userId);
+      if (!user || !user.isActive) {
+        throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
+      }
+      await userRepository.updateLastLogin(user.id);
+      return buildAuthResponse(user);
+    }
+
+    // Never auto-merge by email — allocate a dedicated users row.
+    const email = await allocateOAuthUserEmail(provider, identity.providerUserId, identity.providerEmail);
+    const displayName =
+      credential.displayName?.trim() ||
+      identity.displayName?.trim() ||
+      `${provider.charAt(0).toUpperCase()}${provider.slice(1)} User`;
+
+    try {
+      const user = await userRepository.create({
+        email,
+        passwordHash: null,
+        displayName: displayName.slice(0, 100),
+        avatarUrl: identity.avatarUrl,
+        experienceLevel: 'beginner',
+      });
+      await authProviderRepository.create({
+        userId: user.id,
+        provider,
+        providerUserId: identity.providerUserId,
+        providerEmail: identity.providerEmail,
+      });
+      await userRepository.updateLastLogin(user.id);
+      return buildAuthResponse(user);
+    } catch (error: unknown) {
+      const code =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code?: string }).code)
+          : '';
+      if (code === '23505') {
+        // Race: another request linked the same provider_user_id.
+        const raced = await authProviderRepository.findByProviderUserId(
+          provider,
+          identity.providerUserId
+        );
+        if (raced) {
+          const user = await userRepository.findById(raced.userId);
+          if (user?.isActive) return buildAuthResponse(user);
+        }
+        throw new AppError(409, 'PROVIDER_ALREADY_LINKED', 'This login is already linked');
+      }
+      throw error;
+    }
+  },
+
+  async listProviders(userId: string) {
+    const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+    const { AUTH_PROVIDERS } = await import('@machinefit/shared');
+    const linked = await authProviderRepository.findByUserId(userId);
+    const byProvider = new Map(linked.map((row) => [row.provider, row]));
+    const hasPassword = await userRepository.hasPassword(userId);
+    return {
+      hasPassword,
+      items: AUTH_PROVIDERS.map((provider) => {
+        const row = byProvider.get(provider);
+        return {
+          provider,
+          linked: Boolean(row),
+          providerEmail: row?.providerEmail ?? null,
+          linkedAt: row?.createdAt ?? null,
+        };
+      }),
+    };
+  },
+
+  async connectProvider(
+    userId: string,
+    provider: import('@machinefit/shared').AuthProviderCode,
+    credential: import('@machinefit/shared').OAuthCredentialInput
+  ) {
+    const { verifyOAuthCredential } = await import('../utils/oauth-verify.util.js');
+    const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+
+    const user = await userRepository.findById(userId);
+    if (!user || !user.isActive) {
+      throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+    }
+
+    const identity = await verifyOAuthCredential(provider, credential);
+    const existingForProvider = await authProviderRepository.findByProviderUserId(
+      provider,
+      identity.providerUserId
+    );
+    if (existingForProvider && existingForProvider.userId !== userId) {
+      throw new AppError(
+        409,
+        'PROVIDER_LINKED_TO_OTHER_ACCOUNT',
+        'This login is already linked to another MachineFit account'
+      );
+    }
+    if (existingForProvider?.userId === userId) {
+      return this.listProviders(userId);
+    }
+
+    const alreadySameProvider = await authProviderRepository.findByUserAndProvider(userId, provider);
+    if (alreadySameProvider) {
+      throw new AppError(409, 'PROVIDER_ALREADY_LINKED', 'This provider is already linked');
+    }
+
+    try {
+      await authProviderRepository.create({
+        userId,
+        provider,
+        providerUserId: identity.providerUserId,
+        providerEmail: identity.providerEmail,
+      });
+    } catch (error: unknown) {
+      const code =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code?: string }).code)
+          : '';
+      if (code === '23505') {
+        throw new AppError(
+          409,
+          'PROVIDER_LINKED_TO_OTHER_ACCOUNT',
+          'This login is already linked to another MachineFit account'
+        );
+      }
+      throw error;
+    }
+    return this.listProviders(userId);
+  },
+
+  async disconnectProvider(
+    userId: string,
+    provider: import('@machinefit/shared').AuthProviderCode
+  ) {
+    const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+    const linked = await authProviderRepository.findByUserAndProvider(userId, provider);
+    if (!linked) {
+      throw new AppError(404, 'NOT_FOUND', 'Provider is not linked');
+    }
+
+    const providerCount = await authProviderRepository.countByUserId(userId);
+    const hasPassword = await userRepository.hasPassword(userId);
+    if (providerCount <= 1 && !hasPassword) {
+      throw new AppError(
+        400,
+        'LAST_LOGIN_METHOD',
+        'At least one login method must remain on the account'
+      );
+    }
+
+    await authProviderRepository.deleteByUserAndProvider(userId, provider);
+    return this.listProviders(userId);
+  },
 };
+
+/** Prefer provider email when free; otherwise synthetic (never auto-merge accounts). */
+async function allocateOAuthUserEmail(
+  provider: string,
+  providerUserId: string,
+  providerEmail: string | null
+): Promise<string> {
+  const synthetic = `oauth.${provider}.${providerUserId.replace(/[^a-zA-Z0-9_-]/g, '_')}@users.local`;
+  if (!providerEmail) return synthetic;
+  const taken = await userRepository.emailExists(providerEmail);
+  if (taken) return synthetic;
+  return providerEmail;
+}

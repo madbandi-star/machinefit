@@ -251,7 +251,14 @@
     "loginFeature3": "수행 기록과 성장 분석",
     "loginBrowseMachines": "기구 둘러보기",
     "profileExtrasGoalOnly": "운동 목표로 추천을 맞춤화합니다. 헬스장은 아래 지역 설정에서 함께 입력하세요.",
-    "agreeLocationSuffix": "에 동의합니다 (선택)"
+    "agreeLocationSuffix": "에 동의합니다 (선택)",
+    "socialOr": "또는",
+    "socialLoginGroup": "소셜 로그인",
+    "continueWith": "{{provider}}로 계속",
+    "socialConnecting": "연결 중…",
+    "socialNotConfigured": "소셜 로그인이 아직 설정되지 않았어요.",
+    "socialCancelled": "로그인을 취소했어요.",
+    "socialFailed": "소셜 로그인에 실패했어요. 다시 시도해 주세요."
   },
   "settings": {
     "language": "언어",
@@ -520,7 +527,21 @@
     "ownerOnly": "사장님 전용",
     "tradeHub": "구매/판매관리",
     "tradeReports": "신고 관리",
-    "tradeStats": "거래 통계 (향후 확장)"
+    "tradeStats": "거래 통계 (향후 확장)",
+    "linkedLogins": "연결된 로그인",
+    "linkedLoginsHint": "Google · Apple · Kakao를 같은 MachineFit 계정에 연결할 수 있어요. 이메일로 자동 합치지 않습니다.",
+    "providersLinked": "연결됨",
+    "providersNotLinked": "연결 안 됨",
+    "providersLink": "연결하기",
+    "providersUnlink": "연결 해제",
+    "providersUnlinkConfirm": "{{provider}} 로그인을 해제할까요?",
+    "providersConnected": "로그인을 연결했어요.",
+    "providersDisconnected": "로그인 연결을 해제했어요.",
+    "providersConnectFailed": "로그인 연결에 실패했어요.",
+    "providersDisconnectFailed": "연결 해제에 실패했어요.",
+    "providersLastMethod": "최소 하나 이상의 로그인 방법은 남겨야 해요.",
+    "providersLinkedOther": "이미 다른 MachineFit 계정에 연결된 로그인이에요.",
+    "providersAlreadyLinked": "이미 연결된 로그인이에요."
   },
   "lab": {
     "title": "실험실",
