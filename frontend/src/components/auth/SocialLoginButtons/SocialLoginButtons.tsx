@@ -67,7 +67,7 @@ export function SocialLoginButtons({
         <span>{t('auth.socialOr')}</span>
       </div>
       <div className="social-auth__list" role="group" aria-label={t('auth.socialLoginGroup')}>
-        {AUTH_PROVIDERS.map((provider) => {
+        {AUTH_PROVIDERS.filter((provider) => provider !== 'apple').map((provider) => {
           const meta = PROVIDER_META[provider];
           return (
             <button
@@ -79,13 +79,7 @@ export function SocialLoginButtons({
               onClick={() => void handleClick(provider)}
             >
               <span className="social-auth__mark" aria-hidden>
-                {provider === 'apple' ? (
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M16.365 1.43c0 1.14-.42 2.2-1.18 3.03-.8.88-2.12 1.56-3.25 1.47-.13-1.1.42-2.25 1.16-3.07.8-.9 2.2-1.56 3.27-1.43zM20.5 17.2c-.6 1.36-.89 1.96-1.67 3.16-1.08 1.66-2.6 3.73-4.48 3.75-1.66.02-2.09-1.08-4.35-1.07-2.26.01-2.73 1.1-4.39 1.08-1.88-.03-3.32-1.88-4.4-3.53C-.1 17.7-.7 13.4.9 10.6c1.13-2 2.92-3.17 4.6-3.17 1.72 0 2.8 1.12 4.22 1.12 1.38 0 2.22-1.13 4.23-1.13 1.5 0 3.09.82 4.2 2.23-3.7 2.03-3.1 7.32.35 7.55z" />
-                  </svg>
-                ) : (
-                  meta.mark
-                )}
+                {meta.mark}
               </span>
               <span>
                 {busy === provider
