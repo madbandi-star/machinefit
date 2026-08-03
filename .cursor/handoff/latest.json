@@ -1,25 +1,26 @@
 {
-  "title": "Remove Easy Mode first-visit onboarding page",
-  "summary": "Skip the EASY MODE welcome/onboarding screen. Easy entry always opens the regular Easy home (start workout).",
-  "git": { "branch": "main", "commit": "780c75f" },
+  "title": "Wire Kakao JS key into Pages deploy",
+  "summary": "Local env has Kakao JS + REST keys. Pages workflow embeds VITE_KAKAO_JS_KEY. Render must set KAKAO_REST_API_KEY manually (not committed).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/easy-mode/EasyHomePage.tsx",
-    "frontend/src/components/easy-mode/EasyMiniHeaderButton.tsx",
-    "frontend/src/store/easyMode.store.ts",
-    "frontend/src/routes/index.tsx",
-    "frontend/src/pages/easy-mode/EasyOnboardingPage.tsx"
+    ".github/workflows/frontend-deploy.yml",
+    "render.yaml",
+    "docs/DEPLOY.md",
+    "config/env/deployment-secrets.example"
   ],
-  "testFocus": "Open Easy from header EASY button as first-time and returning user ??should land on Easy home, not onboarding.",
+  "testFocus": "Login Kakao button after Pages deploy + Render KAKAO_REST_API_KEY set.",
   "fastChecks": ["npm run test:smoke:changed"],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Clear site data or new account: EASY opens /easy home directly",
-    "/easy/onboarding redirects to /easy"
+    "Render: KAKAO_REST_API_KEY then redeploy",
+    "Kakao Developers: Web domain + login enabled + consent",
+    "Kakao login creates/links account"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": false
+    "backendDeployNeeded": true,
+    "note": "Set KAKAO_REST_API_KEY on Render Environment"
   },
-  "asIs": "First Easy visit showed onboarding (EASY MODEë¡??œìž‘?´ìš”).",
-  "toBe": "Always show regular Easy home; onboarding route redirects."
+  "asIs": "Kakao button showed not configured.",
+  "toBe": "Frontend Kakao JS wired; Render REST key still required for API verify."
 }

@@ -48,6 +48,8 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           # Google OAuth web client id (public; embedded in SPA bundle).
           VITE_GOOGLE_CLIENT_ID: 600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com
+          # Kakao JavaScript key (public; embedded in SPA bundle).
+          VITE_KAKAO_JS_KEY: ec1d5c905cdad5a5e273e3d78423ca35
 
       - name: Build frontend
         working-directory: frontend
@@ -55,6 +57,7 @@ jobs:
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_GOOGLE_CLIENT_ID: 600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com
+          VITE_KAKAO_JS_KEY: ec1d5c905cdad5a5e273e3d78423ca35
 
       - uses: actions/configure-pages@v5
 

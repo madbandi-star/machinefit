@@ -20,9 +20,10 @@
 1. Google Cloud OAuth **Web** client — Authorized JavaScript origins:
    - `http://localhost:5173` (local)
    - `https://madbandi-star.github.io` (Pages)
-2. Frontend Pages build needs `VITE_GOOGLE_CLIENT_ID` (see `frontend-deploy.yml`).
-3. Render env needs matching `GOOGLE_CLIENT_ID` (same value as the web client ID).
-4. Apply DB migration `091_auth_providers.sql` if not already applied.
+2. Frontend Pages build needs `VITE_GOOGLE_CLIENT_ID` / `VITE_KAKAO_JS_KEY` (see `frontend-deploy.yml`).
+3. Render env needs matching `GOOGLE_CLIENT_ID` and `KAKAO_REST_API_KEY`.
+4. Kakao Developers: enable Kakao Login, register Web domains + Redirect URIs, consent for nickname/email.
+5. Apply DB migration `091_auth_providers.sql` if not already applied.
 
 ### Render Deploy Hook (GitHub Actions)
 

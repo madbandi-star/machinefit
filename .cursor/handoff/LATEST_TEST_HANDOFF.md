@@ -1,27 +1,20 @@
-# Latest test handoff - Remove Easy onboarding page
+# Latest test handoff - Kakao OAuth wiring
 
-**Branch:** `main` | **Commit:** `780c75f`
+**Branch:** `main` | **Commit:** pending
 
 ## Change
 
-Removed Easy Mode first-visit onboarding (`EASY MODEë¡??œìž‘?´ìš”`). Header EASY and `/easy` always show the regular Easy home. Old `/easy/onboarding` redirects to `/easy`.
+- Pages workflow: `VITE_KAKAO_JS_KEY`
+- Local `.env` (gitignored): JS + REST keys
+- Docs / render.yaml note `KAKAO_REST_API_KEY` (value not committed)
 
-## Test focus
+## Manual
 
-- First open of Easy ??Easy home (start workout), not welcome page
-- `/easy/onboarding` ??`/easy`
+1. Render ? Environment ? `KAKAO_REST_API_KEY` = (REST key you provided) ? redeploy
+2. Kakao Developers: login ON, Web domains, redirect URIs, consent nickname/email
 
 ## Fast checks
 
 ```bash
 npm run test:smoke:changed
 ```
-
-## Deploy
-
-- Frontend only
-
-## as-is -> to-be
-
-- **as-is:** First visit showed onboarding
-- **to-be:** Always regular Easy home
