@@ -229,8 +229,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                 fallbackSrc={machinePlaceholderUrl()}
                 alt=""
                 loading="lazy"
-                width={52}
-                height={52}
+                width={132}
+                height={132}
               />
             </div>
           </Link>

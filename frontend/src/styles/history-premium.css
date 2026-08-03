@@ -354,8 +354,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
+  width: 132px;
+  height: 132px;
   border-radius: 14px;
   border: 1px solid var(--history-card-border);
   background: rgba(0, 0, 0, 0.28);
@@ -372,8 +372,10 @@
 .history-page-premium .history-record-card__thumb img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
+  background: transparent;
 }
 
 .history-page-premium .history-record-card__hero-body {
