@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { HomeHero } from '@/components/home/HomeHero/HomeHero';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
@@ -46,12 +47,15 @@ export function HomePage() {
   // While /me is in flight with stripped/stale metrics, hide incomplete CTAs.
   const showHero = !isAuthenticated || (!waitingForMe && !profileReady);
   const showProfileBanner = isAuthenticated && !waitingForMe && !profileReady;
+  /** Gym name + member id: hidden for plain `member`; visible for premium_member+. */
+  const showGymMemberSelectors =
+    isAuthenticated && hasMinRole(user?.roleCode, Role.PREMIUM_MEMBER);
 
   return (
     <div className="home-page">
       {showHero && <HomeHero isAuthenticated={isAuthenticated} />}
 
-      {isAuthenticated && (
+      {showGymMemberSelectors && (
         <div className="home-gym-selector">
           <GymSelector />
           <MemberSelector />
