@@ -122,7 +122,7 @@ export function EasyWizardPage() {
       t(
         isFreeWeightMachineCode(machineCode)
           ? 'machines:recommendation.duplicate'
-          : 'machines:recommendation.duplicateMachine'
+          : 'easyMode.duplicateMachine'
       ),
       'info'
     );

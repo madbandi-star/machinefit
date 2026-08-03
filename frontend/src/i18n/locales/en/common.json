@@ -610,6 +610,8 @@
     "pickerDetailTitle": "Use this machine?",
     "pickerConfirm": "Use this machine",
     "pickerReselect": "Pick another machine",
+    "pickerGoRecords": "Go to Records",
+    "duplicateMachine": "You already have a recommendation for this machine today. Please pick again.",
     "nextRecommend": "Next: recommendation",
     "nextLog": "Next: log",
     "backToMachine": "Pick another machine",

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,11 +17,13 @@ import { MachineListItem } from '@/components/machines/MachineListItem/MachineLi
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import {
   DEFAULT_SEARCH_BRAND_CODE,
   DEFAULT_SEARCH_MUSCLE_GROUP,
 } from '@/constants/machine-search-defaults';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { getTodayDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/machines.css';
 
@@ -47,6 +50,7 @@ export function EasyMachinePicker({
   initialCode = null,
 }: EasyMachinePickerProps) {
   const { t, i18n } = useTranslation(['common', 'machines']);
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebouncedValue(query, 250);
   const [muscleGroup, setMuscleGroup] = useState<string | null>(DEFAULT_SEARCH_MUSCLE_GROUP);
@@ -257,13 +261,25 @@ export function EasyMachinePicker({
             {confirmPending ? t('easyMode.working') : t('easyMode.pickerConfirm')}
           </button>
           {showReselect ? (
-            <button
-              type="button"
-              className="easy-btn easy-btn--secondary"
-              onClick={goBackToList}
-            >
-              {t('easyMode.pickerReselect')}
-            </button>
+            <>
+              <button
+                type="button"
+                className="easy-btn easy-btn--secondary"
+                onClick={goBackToList}
+              >
+                {t('easyMode.pickerReselect')}
+              </button>
+              <button
+                type="button"
+                className="easy-btn easy-btn--ghost"
+                onClick={() => {
+                  onClose();
+                  navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`);
+                }}
+              >
+                {t('easyMode.pickerGoRecords')}
+              </button>
+            </>
           ) : null}
         </div>
       ) : null}
