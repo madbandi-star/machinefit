@@ -19,6 +19,7 @@ import {
 } from '@/api';
 import { EasyMachinePicker } from '@/components/easy-mode/EasyMachinePicker';
 import { EasyWizardShell } from '@/components/easy-mode/EasyWizardShell';
+import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
@@ -786,6 +787,8 @@ export function EasyWizardPage() {
       onPrimary={() => saveLog.mutate()}
     >
       <div className="easy-s3">
+        <HomeWorkoutToolsSection />
+
         <div className="easy-s3-intro">
           <h2 className="easy-s3-intro__title">{selected?.name}</h2>
           <p className="easy-s3-intro__sub">{t('easyMode.s3Title')}</p>
