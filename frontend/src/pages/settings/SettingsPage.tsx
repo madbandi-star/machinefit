@@ -343,7 +343,11 @@ export function SettingsPage() {
   return (
     <PageShell title={t('nav.settings')}>
       <div className="settings-stack">
-        <SettingsCollapsibleSection title={t('auth.bodyMetrics')} description={t('auth.bodyMetricsDesc')}>
+        <SettingsCollapsibleSection
+          id="body-metrics"
+          title={t('auth.bodyMetrics')}
+          description={t('auth.bodyMetricsDesc')}
+        >
           <div className="form-stack">
             <GenderPicker value={gender} onChange={setGender} />
             <BodyMetricsFields
