@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Role, hasMinRole } from '@machinefit/shared';
-import { HomeHero } from '@/components/home/HomeHero/HomeHero';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
@@ -45,9 +44,7 @@ export function HomePage() {
     !meQuery.data &&
     (meQuery.isLoading || meQuery.isFetching || !authReady);
 
-  // Guests still see the hero. Logged-in users with a complete profile never do.
   // While /me is in flight with stripped/stale metrics, hide incomplete CTAs.
-  const showHero = !isAuthenticated || (!waitingForMe && !profileReady);
   const showProfileBanner = isAuthenticated && !waitingForMe && !profileReady;
   /** Gym name + member id: hidden for plain `member`; visible for premium_member+. */
   const showGymMemberSelectors =
@@ -55,8 +52,6 @@ export function HomePage() {
 
   return (
     <div className="home-page">
-      {showHero && <HomeHero isAuthenticated={isAuthenticated} />}
-
       {showGymMemberSelectors && (
         <div className="home-gym-selector">
           <GymSelector />
