@@ -441,7 +441,7 @@ export const authService = {
           ? String((error as { code?: string }).code)
           : '';
       if (code === '23505') {
-        // Race: another request linked the same provider_user_id.
+        // Race on provider_user_id, or leftover oauth.* user row without provider link.
         const raced = await authProviderRepository.findByProviderUserId(
           provider,
           identity.providerUserId
@@ -450,6 +450,36 @@ export const authService = {
           const user = await userRepository.findById(raced.userId);
           if (user?.isActive) return buildAuthResponse(user);
         }
+
+        const byEmail = await userRepository.findByEmail(email);
+        if (byEmail?.isActive) {
+          const linkedElsewhere = await authProviderRepository.findByProviderUserId(
+            provider,
+            identity.providerUserId
+          );
+          if (linkedElsewhere && linkedElsewhere.userId !== byEmail.id) {
+            throw new AppError(
+              409,
+              'PROVIDER_LINKED_TO_OTHER_ACCOUNT',
+              'This login is already linked to another MachineFit account'
+            );
+          }
+          const sameProvider = await authProviderRepository.findByUserAndProvider(
+            byEmail.id,
+            provider
+          );
+          if (!sameProvider && !linkedElsewhere) {
+            await authProviderRepository.create({
+              userId: byEmail.id,
+              provider,
+              providerUserId: identity.providerUserId,
+              providerEmail: identity.providerEmail,
+            });
+          }
+          await userRepository.updateLastLogin(byEmail.id);
+          return buildAuthResponse(byEmail);
+        }
+
         throw new AppError(409, 'PROVIDER_ALREADY_LINKED', 'This login is already linked');
       }
       throw error;
