@@ -674,7 +674,11 @@
 
 .home-tool-card__cta--rest {
   background: var(--color-primary);
-  color: var(--color-primary-text, #04140c);
+  color: #fff;
+}
+
+.home-tool-card__cta--rest .home-tool-card__cta-emoji {
+  line-height: 1;
 }
 
 .home-tool-card__cta--count {
@@ -693,21 +697,23 @@
 .home-tool-card__cta-row .home-tool-card__cta {
   width: auto;
   min-height: 2.2rem;
-  padding: 0 0.35rem;
-  font-size: 0.72rem;
-  line-height: 1.2;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+  line-height: 1.15;
   text-align: center;
+  white-space: nowrap;
 }
 
-/* Details ≈ 2/3, start ≈ 1/3 (half of details) of the former full-width CTA */
+/* Details slightly wider; start large enough for one-line “카운트 시작” */
 .home-tool-card__cta--details {
-  flex: 2 1 0;
+  flex: 1.05 1 0;
   min-width: 0;
 }
 
 .home-tool-card__cta--start {
   flex: 1 1 0;
   min-width: 0;
+  padding-inline: 0.3rem;
 }
 
 .home-tool-card__cta-chevron {
@@ -797,8 +803,8 @@
 
   .home-tool-card__cta-row .home-tool-card__cta {
     min-height: 2.5rem;
-    font-size: 0.85rem;
-    padding: 0 0.5rem;
+    font-size: 0.82rem;
+    padding: 0 0.55rem;
   }
 }
 

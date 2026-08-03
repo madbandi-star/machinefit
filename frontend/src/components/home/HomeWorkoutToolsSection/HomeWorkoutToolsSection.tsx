@@ -184,6 +184,9 @@ export function HomeWorkoutToolsSection() {
             onClick={() => setRestRunning(true)}
             disabled={restRunning}
           >
+            <span className="home-tool-card__cta-emoji" aria-hidden>
+              💤
+            </span>
             {t('pages.home.toolsRestStart')}
           </button>
         </article>
