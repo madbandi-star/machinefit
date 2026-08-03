@@ -114,18 +114,6 @@ export function HomeWorkoutToolsSection() {
     });
   };
 
-  const resetCount = () => {
-    const next = clampVoiceCoachTargetReps(settingsTargetReps);
-    setCountValue(next);
-    setTargetReps(next);
-  };
-
-  const syncTargetFromCount = (nextCount: number) => {
-    const next = clampVoiceCoachTargetReps(nextCount);
-    setCountValue(next);
-    setTargetReps(next);
-  };
-
   return (
     <section className="home-section home-workout-tools" aria-label={t('pages.home.toolsTitle')}>
       {restRunning ? (
@@ -301,52 +289,6 @@ export function HomeWorkoutToolsSection() {
           </header>
 
           <div className="home-tool-details__body">
-            <div className="home-tool-details__current">
-              <span className="home-tool-details__label">{t('pages.home.toolsCurrentCount')}</span>
-              <p className="home-tool-card__hero home-tool-card__hero--count">
-                {countValue}
-                <span className="home-tool-card__unit">{t('pages.home.toolsCountUnit')}</span>
-              </p>
-              <div className="home-tool-card__stepper home-tool-card__stepper--count">
-                <button
-                  type="button"
-                  className="home-tool-card__step-btn"
-                  onClick={() => syncTargetFromCount(countValue - 1)}
-                  aria-label={t('pages.home.toolsDecrease')}
-                  disabled={voiceCoach.isRunning}
-                >
-                  −
-                </button>
-                <button
-                  type="button"
-                  className="home-tool-card__step-btn home-tool-card__step-btn--accent"
-                  onClick={() => syncTargetFromCount(countValue + 1)}
-                  aria-label={t('pages.home.toolsIncrease')}
-                  disabled={voiceCoach.isRunning}
-                >
-                  +
-                </button>
-                <button
-                  type="button"
-                  className="home-tool-card__step-btn home-tool-card__step-btn--wide"
-                  onClick={resetCount}
-                  disabled={voiceCoach.isRunning}
-                >
-                  {t('pages.home.toolsReset')}
-                </button>
-              </div>
-              <button
-                type="button"
-                className="home-tool-card__cta home-tool-card__cta--count"
-                onClick={startOrStopCount}
-                disabled={!voiceEnabled && !voiceCoach.isRunning}
-              >
-                {voiceCoach.isRunning
-                  ? t('pages.home.toolsCountStop')
-                  : t('pages.home.toolsCountStart')}
-              </button>
-            </div>
-
             <div className="home-tool-details__voice">
               <div className="home-tool-details__voice-head">
                 <span className="home-tool-details__voice-title">
