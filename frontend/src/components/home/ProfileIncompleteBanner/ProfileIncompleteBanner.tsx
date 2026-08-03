@@ -19,7 +19,7 @@ export function ProfileIncompleteBanner() {
         {t('auth.profileRequiredForRecommend')}
       </div>
       <Link
-        to={ROUTES.SETTINGS}
+        to={`${ROUTES.SETTINGS}#body-metrics`}
         state={{ returnTo: location.pathname }}
         className="btn btn--primary"
         style={{ flexShrink: 0 }}
