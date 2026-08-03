@@ -27,7 +27,25 @@
   "pages": {
     "home": {
       "title": "欢迎使用 MachineFit",
-      "subtitle": "根据您的身体测量数据获取最佳力量训练器械设置"
+      "subtitle": "根据您的身体测量数据获取最佳力量训练器械设置",
+      "toolsTitle": "休息与计数工具",
+      "toolsRestTitle": "休息计时器",
+      "toolsRestDesc": "设置组间休息时间并开始。",
+      "toolsRestStart": "开始",
+      "toolsCountTitle": "次数计数",
+      "toolsCountDesc": "轻松统计训练次数。",
+      "toolsCountUnit": "次",
+      "toolsCountOpenDetails": "打开详细功能",
+      "toolsCountCloseDetails": "关闭详细功能",
+      "toolsCountDetailsTitle": "次数计数 - 详细功能",
+      "toolsCurrentCount": "当前次数",
+      "toolsCountStart": "开始计数",
+      "toolsCountStop": "停止计数",
+      "toolsVoiceCount": "语音计数",
+      "toolsDecrease": "减少",
+      "toolsIncrease": "增加",
+      "toolsReset": "重置",
+      "toolsVoiceHint": "语音示例：一、二、三… 再来一次!, Butter!（间隔 {{gap}}秒 · 再来 {{oneMore}} · 保持 {{hold}}秒）"
     },
     "notFound": {
       "title": "页面未找到",

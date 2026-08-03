@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { HomeHero } from '@/components/home/HomeHero/HomeHero';
+import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
@@ -60,6 +61,7 @@ export function HomePage() {
       <InstallPromptBanner />
 
       {showProfileBanner && <ProfileIncompleteBanner />}
+      {isAuthenticated && <HomeWorkoutToolsSection />}
       {isAuthenticated && <RecentMachinesRow />}
       {isAuthenticated && <FavoriteMachinesRow />}
     </div>

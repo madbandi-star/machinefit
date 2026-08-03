@@ -27,7 +27,25 @@
   "pages": {
     "home": {
       "title": "MachineFitへようこそ",
-      "subtitle": "身体測定に基づいた最適な筋力トレーニングマシン設定を取得"
+      "subtitle": "身体測定に基づいた最適な筋力トレーニングマシン設定を取得",
+      "toolsTitle": "休憩・回数ツール",
+      "toolsRestTitle": "休憩タイマー",
+      "toolsRestDesc": "セット間の休憩時間を設定して開始します。",
+      "toolsRestStart": "開始する",
+      "toolsCountTitle": "回数カウント",
+      "toolsCountDesc": "トレーニング回数をかんたんにカウント。",
+      "toolsCountUnit": "回",
+      "toolsCountOpenDetails": "詳細機能を開く",
+      "toolsCountCloseDetails": "詳細機能を閉じる",
+      "toolsCountDetailsTitle": "回数カウント - 詳細",
+      "toolsCurrentCount": "現在の回数",
+      "toolsCountStart": "カウント開始",
+      "toolsCountStop": "カウント停止",
+      "toolsVoiceCount": "音声カウント",
+      "toolsDecrease": "減らす",
+      "toolsIncrease": "増やす",
+      "toolsReset": "リセット",
+      "toolsVoiceHint": "音声例: いち、に、さん… ワンモア!, バター!（間隔 {{gap}}秒 · ワンモア {{oneMore}} · ホールド {{hold}}秒）"
     },
     "notFound": {
       "title": "ページが見つかりません",

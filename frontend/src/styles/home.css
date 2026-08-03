@@ -479,3 +479,315 @@
   border-radius: var(--radius-sm);
 }
 
+/* Home workout tools (rest + count) — presentational only */
+.home-workout-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-workout-tools__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .home-workout-tools__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.home-tool-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--color-surface) 92%, #000);
+}
+
+.home-tool-card--rest {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background:
+    radial-gradient(circle at 92% 18%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 42%),
+    color-mix(in srgb, var(--color-surface) 92%, #000);
+}
+
+.home-tool-card--count {
+  border-color: color-mix(in srgb, #a78bfa 50%, transparent);
+  background:
+    radial-gradient(circle at 92% 18%, color-mix(in srgb, #a78bfa 20%, transparent), transparent 42%),
+    color-mix(in srgb, var(--color-surface) 92%, #000);
+}
+
+.home-tool-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  position: relative;
+  z-index: 1;
+}
+
+.home-tool-card__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.home-tool-card__icon--rest {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.home-tool-card__icon--count {
+  color: #c4b5fd;
+  background: color-mix(in srgb, #a78bfa 18%, transparent);
+}
+
+.home-tool-card__heading {
+  min-width: 0;
+}
+
+.home-tool-card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.home-tool-card__desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.home-tool-card__hero {
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.home-tool-card__hero--rest {
+  font-size: clamp(2.4rem, 10vw, 3rem);
+  color: var(--color-primary);
+}
+
+.home-tool-card__hero--count {
+  font-size: clamp(2.4rem, 10vw, 3rem);
+  color: #c4b5fd;
+}
+
+.home-tool-card__unit {
+  margin-left: 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  vertical-align: 0.15em;
+}
+
+.home-tool-card__stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.home-tool-card__stepper--count {
+  gap: 0.4rem;
+}
+
+.home-tool-card__step-btn {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-secondary) 85%, #000);
+  color: var(--color-text);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.home-tool-card__step-btn:disabled {
+  opacity: 0.45;
+}
+
+.home-tool-card__step-btn--wide {
+  flex: 1;
+  max-width: 7rem;
+  font-size: 0.9rem;
+}
+
+.home-tool-card__step-value {
+  min-width: 4.5rem;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.home-tool-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 2.85rem;
+  border: none;
+  border-radius: 0.85rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.home-tool-card__cta:disabled {
+  opacity: 0.5;
+}
+
+.home-tool-card__cta--rest {
+  background: var(--color-primary);
+  color: var(--color-primary-text, #04140c);
+}
+
+.home-tool-card__cta--count {
+  background: #7c3aed;
+}
+
+.home-tool-card__cta-chevron {
+  display: inline-flex;
+  transition: transform 0.18s ease;
+}
+
+.home-tool-card__cta-chevron.is-open {
+  transform: rotate(90deg);
+}
+
+.home-tool-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, #a78bfa 45%, transparent);
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in srgb, #a78bfa 14%, transparent), transparent 40%),
+    color-mix(in srgb, var(--color-surface) 94%, #000);
+}
+
+.home-tool-details__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.home-tool-details__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.home-tool-details__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.home-tool-details__voice-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.home-tool-switch {
+  width: 2.4rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-border) 80%, #000);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.home-tool-switch::after {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.18s ease;
+}
+
+.home-tool-switch.is-on {
+  background: var(--color-primary);
+}
+
+.home-tool-switch.is-on::after {
+  transform: translateX(1.05rem);
+}
+
+.home-tool-details__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .home-tool-details__body {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+}
+
+.home-tool-details__current {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-tool-details__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.home-tool-details__voice .voice-coach-panel {
+  margin: 0;
+}
+
+.home-tool-details__hint {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
