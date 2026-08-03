@@ -222,87 +222,88 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     >
       <header className="history-record-card__header">
         <div className="history-record-card__hero">
-          <Link to={resultUrl} className="history-record-card__thumb-link" aria-label={displayName}>
-            <div className="history-record-card__thumb">
-              <SafeImage
-                src={machineImageUrl || machinePlaceholderUrl()}
-                fallbackSrc={machinePlaceholderUrl()}
-                alt=""
-                loading="lazy"
-                width={132}
-                height={132}
-              />
-            </div>
-          </Link>
-          <div className="history-record-card__hero-body">
-            <div className="history-record-card__title-row">
-              <Link to={resultUrl} className="history-record-card__title-link">
-                <h2 className="history-record-card__machine-name">{displayName}</h2>
-              </Link>
-              <div className="history-record-card__header-actions">
-                <button
-                  type="button"
-                  className="history-record-card__collapse"
-                  aria-expanded={expanded}
-                  aria-label={expanded ? t('common:collapse') : t('common:expand')}
-                  onClick={handleCollapseClick}
-                >
-                  <ChevronDown
-                    size={17}
-                    strokeWidth={2.25}
-                    className={`history-record-card__collapse-icon${
-                      expanded ? ' history-record-card__collapse-icon--open' : ''
-                    }`}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className={`history-record-card__bookmark recommendation-result-page__favorite${
-                    isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
-                  }`}
-                  aria-label={
-                    isFavorited
-                      ? t('machines:recommendation.removeFavorite')
-                      : t('machines:recommendation.saveFavorite')
-                  }
-                  aria-pressed={isFavorited}
-                  onClick={handleFavoriteClick}
-                  disabled={isFavoritePending || !canFavorite}
-                >
-                  <Heart
-                    key={isFavorited ? 'favorited' : 'unfavorited'}
-                    size={17}
-                    strokeWidth={2.25}
-                    fill={isFavorited ? 'currentColor' : 'none'}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className={`history-record-card__bookmark${
-                    bookmarkActive ? ' history-record-card__bookmark--active' : ''
-                  }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
-                  aria-label={getBookmarkAriaLabel(logControl, isWorkoutLogSaved, t)}
-                  onClick={handleBookmarkClick}
-                  disabled={bookmarkDisabled}
-                >
-                  <Bookmark
-                    key={bookmarkActive ? 'saved' : 'unsaved'}
-                    size={17}
-                    strokeWidth={2.25}
-                    fill={bookmarkActive ? 'currentColor' : 'none'}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="history-record-card__remove"
-                  aria-label={t('machines:history.remove')}
-                  onClick={onDelete}
-                  disabled={deleteDisabled}
-                >
-                  <X size={17} strokeWidth={2.25} />
-                </button>
+          <div className="history-record-card__hero-top">
+            <Link to={resultUrl} className="history-record-card__thumb-link" aria-label={displayName}>
+              <div className="history-record-card__thumb">
+                <SafeImage
+                  src={machineImageUrl || machinePlaceholderUrl()}
+                  fallbackSrc={machinePlaceholderUrl()}
+                  alt=""
+                  loading="lazy"
+                  width={132}
+                  height={132}
+                />
               </div>
+            </Link>
+            <div className="history-record-card__header-actions">
+              <button
+                type="button"
+                className="history-record-card__collapse"
+                aria-expanded={expanded}
+                aria-label={expanded ? t('common:collapse') : t('common:expand')}
+                onClick={handleCollapseClick}
+              >
+                <ChevronDown
+                  size={17}
+                  strokeWidth={2.25}
+                  className={`history-record-card__collapse-icon${
+                    expanded ? ' history-record-card__collapse-icon--open' : ''
+                  }`}
+                />
+              </button>
+              <button
+                type="button"
+                className={`history-record-card__bookmark recommendation-result-page__favorite${
+                  isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
+                }`}
+                aria-label={
+                  isFavorited
+                    ? t('machines:recommendation.removeFavorite')
+                    : t('machines:recommendation.saveFavorite')
+                }
+                aria-pressed={isFavorited}
+                onClick={handleFavoriteClick}
+                disabled={isFavoritePending || !canFavorite}
+              >
+                <Heart
+                  key={isFavorited ? 'favorited' : 'unfavorited'}
+                  size={17}
+                  strokeWidth={2.25}
+                  fill={isFavorited ? 'currentColor' : 'none'}
+                />
+              </button>
+              <button
+                type="button"
+                className={`history-record-card__bookmark${
+                  bookmarkActive ? ' history-record-card__bookmark--active' : ''
+                }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
+                aria-label={getBookmarkAriaLabel(logControl, isWorkoutLogSaved, t)}
+                onClick={handleBookmarkClick}
+                disabled={bookmarkDisabled}
+              >
+                <Bookmark
+                  key={bookmarkActive ? 'saved' : 'unsaved'}
+                  size={17}
+                  strokeWidth={2.25}
+                  fill={bookmarkActive ? 'currentColor' : 'none'}
+                />
+              </button>
+              <button
+                type="button"
+                className="history-record-card__remove"
+                aria-label={t('machines:history.remove')}
+                onClick={onDelete}
+                disabled={deleteDisabled}
+              >
+                <X size={17} strokeWidth={2.25} />
+              </button>
             </div>
+          </div>
+
+          <div className="history-record-card__hero-body">
+            <Link to={resultUrl} className="history-record-card__title-link">
+              <h2 className="history-record-card__machine-name">{displayName}</h2>
+            </Link>
             <Link to={resultUrl} className="history-record-card__meta-link">
               <div className="history-record-card__meta">
                 {muscleLabel ? (
