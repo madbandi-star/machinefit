@@ -351,12 +351,13 @@ export function EasyWizardPage() {
       }}
       onConfirm={async (pick) => {
         const accepted = await confirmMachinePick(pick);
-        if (!accepted) return;
+        if (!accepted) return false;
         setPickerOpen(false);
         setPickerInitialCode(null);
         if (step === 1) {
           createRecommend.mutate(pick);
         }
+        return true;
       }}
     />
   );

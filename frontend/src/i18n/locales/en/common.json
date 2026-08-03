@@ -609,6 +609,7 @@
     "pickerTitle": "Find machine",
     "pickerDetailTitle": "Use this machine?",
     "pickerConfirm": "Use this machine",
+    "pickerReselect": "Pick another machine",
     "nextRecommend": "Next: recommendation",
     "nextLog": "Next: log",
     "backToMachine": "Pick another machine",

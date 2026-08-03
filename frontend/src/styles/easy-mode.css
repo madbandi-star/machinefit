@@ -1534,6 +1534,9 @@
   padding: 0.75rem 1rem 1.25rem;
   box-sizing: border-box;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
 }
 
 .easy-picker__search .machine-list {

@@ -34,7 +34,8 @@ export interface EasyMachinePickResult {
 interface EasyMachinePickerProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (pick: EasyMachinePickResult) => void;
+  /** Return false to keep the detail view (e.g. duplicate recommendation). */
+  onConfirm: (pick: EasyMachinePickResult) => boolean | Promise<boolean>;
   /** Open directly on detail for a known code (recent/favorites). */
   initialCode?: string | null;
 }
@@ -53,6 +54,9 @@ export function EasyMachinePicker({
   const [detail, setDetail] = useState<Machine | null>(null);
   const [targetMuscle, setTargetMuscle] = useState<TargetMuscleGroup | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [confirmPending, setConfirmPending] = useState(false);
+  /** Shown under confirm after duplicate / rejected confirm. */
+  const [showReselect, setShowReselect] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -61,6 +65,8 @@ export function EasyMachinePicker({
     setBrandCode(DEFAULT_SEARCH_BRAND_CODE);
     setDetail(null);
     setTargetMuscle(null);
+    setShowReselect(false);
+    setConfirmPending(false);
 
     if (!initialCode) return;
     let cancelled = false;
@@ -112,20 +118,34 @@ export function EasyMachinePicker({
   const canConfirm = Boolean(detail) && (!needsMuscle || Boolean(targetMuscle));
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
 
-  const confirm = () => {
-    if (!detail) return;
+  const goBackToList = () => {
+    setDetail(null);
+    setTargetMuscle(null);
+    setShowReselect(false);
+  };
+
+  const confirm = async () => {
+    if (!detail || confirmPending) return;
     if (needsMuscle && !targetMuscle) return;
     const name = getLocalizedName(detail.name, i18n.language, detail.code);
     const brand =
       detail.brandName && !isFreeWeightMachineCode(detail.code)
         ? getLocalizedName(detail.brandName, i18n.language, '')
         : undefined;
-    onConfirm({
-      code: detail.code,
-      name,
-      brandName: brand || undefined,
-      targetMuscle: needsMuscle ? targetMuscle : null,
-    });
+    setConfirmPending(true);
+    try {
+      const accepted = await onConfirm({
+        code: detail.code,
+        name,
+        brandName: brand || undefined,
+        targetMuscle: needsMuscle ? targetMuscle : null,
+      });
+      if (accepted === false) {
+        setShowReselect(true);
+      }
+    } finally {
+      setConfirmPending(false);
+    }
   };
 
   return (
@@ -136,8 +156,7 @@ export function EasyMachinePicker({
           className="easy-shell__icon-btn"
           onClick={() => {
             if (detail) {
-              setDetail(null);
-              setTargetMuscle(null);
+              goBackToList();
               return;
             }
             onClose();
@@ -174,7 +193,10 @@ export function EasyMachinePicker({
                       key={group}
                       type="button"
                       className={`easy-fit__btn${targetMuscle === group ? ' easy-fit__btn--on' : ''}`}
-                      onClick={() => setTargetMuscle(group)}
+                      onClick={() => {
+                        setTargetMuscle(group);
+                        setShowReselect(false);
+                      }}
                     >
                       {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
                     </button>
@@ -229,11 +251,20 @@ export function EasyMachinePicker({
           <button
             type="button"
             className="easy-btn easy-btn--primary"
-            disabled={!canConfirm}
-            onClick={confirm}
+            disabled={!canConfirm || confirmPending}
+            onClick={() => void confirm()}
           >
-            {t('easyMode.pickerConfirm')}
+            {confirmPending ? t('easyMode.working') : t('easyMode.pickerConfirm')}
           </button>
+          {showReselect ? (
+            <button
+              type="button"
+              className="easy-btn easy-btn--secondary"
+              onClick={goBackToList}
+            >
+              {t('easyMode.pickerReselect')}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </div>
