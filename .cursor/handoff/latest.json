@@ -1,25 +1,28 @@
 {
-  "title": "Search: FW cards show all muscles when All filter",
-  "summary": "UI-only: when muscle filter is All (null) and the card is free-weight, list all target muscle labels on the card. Specific muscle filter and non-FW cards unchanged.",
-  "git": { "branch": "main", "commit": "94611b7" },
+  "title": "Wire Google OAuth client id for Pages + docs",
+  "summary": "Frontend deploy workflow embeds VITE_GOOGLE_CLIENT_ID; render.yaml documents GOOGLE_CLIENT_ID; local .env updated (not committed). Migration 091 auth_providers applied on prod DB.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
-    "frontend/src/styles/machines.css"
+    ".github/workflows/frontend-deploy.yml",
+    "render.yaml",
+    "docs/DEPLOY.md",
+    "config/env/deployment-secrets.example"
   ],
-  "testFocus": "Search /machines: muscle All + FW card shows all 8 muscles; with a muscle chip only that muscle; selectorized unchanged.",
+  "testFocus": "Login page Google button; after Render GOOGLE_CLIENT_ID set, complete Google sign-in.",
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Filter ?? + free-weight machine: card shows back/chest/legs/shoulders/biceps/triceps/arms/core",
-    "Filter a specific muscle: FW card still shows that one muscle only",
-    "Non-FW cards unchanged"
+    "Render Environment has GOOGLE_CLIENT_ID then Manual Deploy",
+    "Google Cloud OAuth JS origins include https://madbandi-star.github.io and local Vite origin",
+    "Login with Google creates/links account"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": false
+    "backendDeployNeeded": true,
+    "note": "Set GOOGLE_CLIENT_ID on Render if not already present, then redeploy API"
   },
-  "asIs": "FW cards under All still showed a single default muscleGroup label.",
-  "toBe": "FW cards under All show all eight target muscle labels (display only)."
+  "asIs": "Social Google button showed not-configured; auth_providers missing on DB.",
+  "toBe": "Frontend builds with Google client id; DB ready; Render still needs GOOGLE_CLIENT_ID env for token verify."
 }

@@ -1,16 +1,21 @@
-# Latest test handoff - FW search card all muscles (All filter)
+# Latest test handoff - Google OAuth env wiring
 
-**Branch:** `main` | **Commit:** `94611b7`
+**Branch:** `main` | **Commit:** pending
 
 ## Change
 
-UI-only on machine list cards: free-weight + muscle filter **All** shows all eight target muscles (back, chest, legs, shoulders, biceps, triceps, arms, core). Other cases unchanged. No API/query/navigation changes.
+- Pages workflow builds with `VITE_GOOGLE_CLIENT_ID`
+- `render.yaml` / deploy docs list `GOOGLE_CLIENT_ID`
+- Local `frontend/.env` + `backend/.env` updated (gitignored)
+- Prod DB: applied `091_auth_providers.sql`
 
-## Test focus
+## Still required (manual)
 
-- `/machines` muscle = All, free-weight card: all muscle labels
-- Muscle chip selected: single muscle as before
-- Non-FW: as before
+1. **Render** → machinefit-api → Environment → add  
+   `GOOGLE_CLIENT_ID=600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com`  
+   then Manual Deploy / restart
+2. **Google Cloud** OAuth client → Authorized JavaScript origins:  
+   `https://madbandi-star.github.io` and `http://localhost:5173` (or your Vite port)
 
 ## Fast checks
 
@@ -18,11 +23,7 @@ UI-only on machine list cards: free-weight + muscle filter **All** shows all eig
 npm run test:smoke:changed
 ```
 
-## Deploy
-
-- Frontend only
-
 ## as-is -> to-be
 
-- **as-is:** FW under All showed one default muscle
-- **to-be:** FW under All shows all eight muscle labels
+- **as-is:** Google login not configured / DB table missing
+- **to-be:** Frontend wired; DB ready; Render env must match for API verify

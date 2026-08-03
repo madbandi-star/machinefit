@@ -12,8 +12,17 @@
    Do not prefix with another `npm ci` / `npm install`.
 2. **Start Command**: `npm run start --workspace=backend`
 3. **Node**: `NODE_VERSION=20` (or `.node-version`)
-4. Env: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`, `API_BASE_PATH=/api/v1` (omit `PORT` — use Render's)
+4. Env: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`, `API_BASE_PATH=/api/v1`, optional `GOOGLE_CLIENT_ID` (omit `PORT` — use Render's)
 5. Push to `main` (backend/shared/database) or Manual Deploy after Clear build cache if needed.
+
+### Google / social login
+
+1. Google Cloud OAuth **Web** client — Authorized JavaScript origins:
+   - `http://localhost:5173` (local)
+   - `https://madbandi-star.github.io` (Pages)
+2. Frontend Pages build needs `VITE_GOOGLE_CLIENT_ID` (see `frontend-deploy.yml`).
+3. Render env needs matching `GOOGLE_CLIENT_ID` (same value as the web client ID).
+4. Apply DB migration `091_auth_providers.sql` if not already applied.
 
 ### Render Deploy Hook (GitHub Actions)
 
