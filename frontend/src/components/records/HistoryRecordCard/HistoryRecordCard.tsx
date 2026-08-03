@@ -230,8 +230,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   fallbackSrc={machinePlaceholderUrl()}
                   alt=""
                   loading="lazy"
-                  width={132}
-                  height={132}
+                  width={100}
+                  height={100}
                 />
               </div>
             </Link>
@@ -246,7 +246,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   onClick={handleCollapseClick}
                 >
                   <ChevronDown
-                    size={17}
+                    size={16}
                     strokeWidth={2.25}
                     className={`history-record-card__collapse-icon${
                       expanded ? ' history-record-card__collapse-icon--open' : ''
@@ -269,8 +269,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                 >
                   <Heart
                     key={isFavorited ? 'favorited' : 'unfavorited'}
-                    size={17}
-                    strokeWidth={2.25}
+                    size={18}
+                    strokeWidth={2.2}
                     fill={isFavorited ? 'currentColor' : 'none'}
                   />
                 </button>
@@ -285,8 +285,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                 >
                   <Bookmark
                     key={bookmarkActive ? 'saved' : 'unsaved'}
-                    size={17}
-                    strokeWidth={2.25}
+                    size={18}
+                    strokeWidth={2.2}
                     fill={bookmarkActive ? 'currentColor' : 'none'}
                   />
                 </button>
@@ -297,45 +297,47 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   onClick={onDelete}
                   disabled={deleteDisabled}
                 >
-                  <X size={17} strokeWidth={2.25} />
+                  <X size={16} strokeWidth={2.25} />
                 </button>
               </div>
 
-              <Link to={resultUrl} className="history-record-card__title-link">
-                <h2 className="history-record-card__machine-name">{displayName}</h2>
-              </Link>
+              <div className="history-record-card__hero-copy">
+                <Link to={resultUrl} className="history-record-card__title-link">
+                  <h2 className="history-record-card__machine-name">{displayName}</h2>
+                </Link>
 
-              <Link to={resultUrl} className="history-record-card__meta-link">
-                <div className="history-record-card__meta">
-                  {muscleLabel ? (
-                    <>
-                      <span className="history-record-card__meta-item history-record-card__muscle">
-                        <Target size={12} strokeWidth={2.25} aria-hidden />
-                        {muscleLabel}
-                      </span>
-                      <span className="history-record-card__meta-divider" aria-hidden>
-                        |
-                      </span>
-                    </>
-                  ) : null}
-                  <span className="history-record-card__meta-item history-record-card__time">
-                    <Clock3 size={12} strokeWidth={2.25} aria-hidden />
-                    {formatHistoryTime(card.viewedAt, i18n.language)}
-                  </span>
-                  <span className="history-record-card__meta-divider" aria-hidden>
-                    |
-                  </span>
-                  <span
-                    className={`history-record-card__status${
-                      isWorkoutLogSaved ? ' history-record-card__status--saved' : ''
-                    }`}
-                  >
-                    {isWorkoutLogSaved
-                      ? t('machines:history.workoutSavedBadge')
-                      : t('machines:history.workoutUnsavedBadge')}
-                  </span>
-                </div>
-              </Link>
+                <Link to={resultUrl} className="history-record-card__meta-link">
+                  <div className="history-record-card__meta">
+                    {muscleLabel ? (
+                      <>
+                        <span className="history-record-card__meta-item history-record-card__muscle">
+                          <Target size={11} strokeWidth={2.25} aria-hidden />
+                          {muscleLabel}
+                        </span>
+                        <span className="history-record-card__meta-divider" aria-hidden>
+                          ·
+                        </span>
+                      </>
+                    ) : null}
+                    <span className="history-record-card__meta-item history-record-card__time">
+                      <Clock3 size={11} strokeWidth={2.25} aria-hidden />
+                      {formatHistoryTime(card.viewedAt, i18n.language)}
+                    </span>
+                    <span className="history-record-card__meta-divider" aria-hidden>
+                      ·
+                    </span>
+                    <span
+                      className={`history-record-card__status${
+                        isWorkoutLogSaved ? ' history-record-card__status--saved' : ''
+                      }`}
+                    >
+                      {isWorkoutLogSaved
+                        ? t('machines:history.workoutSavedBadge')
+                        : t('machines:history.workoutUnsavedBadge')}
+                    </span>
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

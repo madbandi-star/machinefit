@@ -280,9 +280,9 @@
 .history-metric-card__accent--orange { background: linear-gradient(90deg, transparent, #ff9800, transparent); }
 
 .history-page-premium .history-record-card--premium {
-  gap: var(--history-gap-grid);
-  padding: var(--history-card-padding);
-  border-radius: var(--history-card-radius);
+  gap: 0.85rem;
+  padding: 0.9rem 0.95rem 0.95rem;
+  border-radius: 18px;
   border: 1px solid var(--history-card-border);
   background: var(--history-card-bg);
   box-shadow: var(--history-shadow-card);
@@ -320,7 +320,8 @@
 .history-page-premium .history-record-card__thumb-link {
   text-decoration: none;
   color: inherit;
-  align-self: center;
+  align-self: stretch;
+  flex-shrink: 0;
 }
 
 .history-page-premium .history-record-card__meta-link {
@@ -330,7 +331,7 @@
 }
 
 .history-page-premium .history-record-card__title-link {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   text-decoration: none;
   color: inherit;
@@ -343,8 +344,8 @@
 .history-page-premium .history-record-card__hero-top {
   display: flex;
   align-items: stretch;
-  justify-content: space-between;
-  gap: 0.65rem;
+  justify-content: flex-start;
+  gap: 0.8rem;
 }
 
 .history-page-premium .history-record-card__hero-aside {
@@ -353,7 +354,18 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.4rem;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  padding-top: 0.05rem;
+}
+
+.history-page-premium .history-record-card__hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  flex: 1 1 auto;
+  justify-content: center;
 }
 
 .history-page-premium .history-record-card__title-row {
@@ -367,11 +379,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 132px;
-  height: 132px;
-  border-radius: 14px;
+  width: 100px;
+  height: 100%;
+  min-height: 100px;
+  max-height: 112px;
+  border-radius: 16px;
   border: 1px solid var(--history-card-border);
-  background: rgba(0, 0, 0, 0.28);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, transparent 42%),
+    rgba(0, 0, 0, 0.22);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -379,7 +395,7 @@
 .history-page-premium .history-record-card__thumb .muscle-group-icon {
   width: 100%;
   height: 100%;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 .history-page-premium .history-record-card__thumb img {
@@ -389,15 +405,18 @@
   object-position: center;
   display: block;
   background: transparent;
+  padding: 0.2rem;
+  box-sizing: border-box;
 }
 
 .history-page-premium .history-record-card__header-actions {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.2rem;
+  gap: 0.3rem;
   flex-shrink: 0;
   width: 100%;
+  margin: 0;
 }
 
 .history-page-premium .history-record-card__hero-aside .history-record-card__title-link {
@@ -409,23 +428,29 @@
 .history-page-premium .history-record-card__hero-aside .history-record-card__meta-link {
   display: block;
   width: 100%;
-  margin-top: auto;
+  margin-top: 0;
 }
 
 .history-page-premium .history-record-card__hero-aside .history-record-card__meta {
   flex-wrap: wrap;
-  row-gap: 0.2rem;
+  row-gap: 0.28rem;
+  column-gap: 0.28rem;
   padding-left: 0;
 }
 
 .history-page-premium .history-record-card__machine-name {
   margin: 0;
-  font-size: clamp(0.95rem, 2.8vw, var(--history-font-xl));
+  font-size: 1.0625rem;
   font-weight: 800;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
+  line-height: 1.28;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
   word-break: keep-all;
   overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .history-equipment-meta {
@@ -454,59 +479,89 @@
 .history-page-premium .history-record-card__meta {
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
-  gap: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.28rem;
   padding-left: 0;
 }
 
 .history-page-premium .history-record-card__meta-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: var(--history-font-sm);
-  font-weight: 500;
+  gap: 0.22rem;
+  font-size: 0.75rem;
+  font-weight: 550;
   color: var(--history-text-dim);
   flex-shrink: 0;
   white-space: nowrap;
 }
 
 .history-page-premium .history-record-card__meta-divider {
-  color: rgba(138, 148, 166, 0.35);
-  font-size: var(--history-font-xs);
+  color: color-mix(in srgb, var(--history-text-dim) 55%, transparent);
+  font-size: 0.7rem;
   line-height: 1;
   flex-shrink: 0;
+  font-weight: 700;
 }
 
 .history-page-premium .history-record-card__time {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: var(--history-font-sm);
-  font-weight: 500;
+  gap: 0.22rem;
+  font-size: 0.75rem;
+  font-weight: 550;
   color: var(--history-text-dim);
   flex-shrink: 0;
   white-space: nowrap;
 }
 
 .history-page-premium .history-record-card__status {
-  font-size: var(--history-font-xs);
+  font-size: 0.6875rem;
+  min-height: 1.35rem;
+  padding: 0.18rem 0.5rem;
   flex-shrink: 0;
 }
 
 .history-page-premium .history-record-card__status--saved::before {
-  font-size: var(--history-font-xs);
+  font-size: 0.6875rem;
 }
 
+.history-page-premium .history-record-card__collapse,
 .history-page-premium .history-record-card__bookmark,
 .history-page-premium .history-record-card__remove {
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  transition: transform 0.16s ease;
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.045);
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.history-page-premium .history-record-card__collapse,
+.history-page-premium .history-record-card__remove {
+  opacity: 0.88;
 }
 
 .history-page-premium .history-record-card__bookmark:active:not(:disabled),
-.history-page-premium .history-record-card__remove:active:not(:disabled) {
+.history-page-premium .history-record-card__remove:active:not(:disabled),
+.history-page-premium .history-record-card__collapse:active:not(:disabled) {
   transform: scale(0.94);
+}
+
+@media (max-width: 380px) {
+  .history-page-premium .history-record-card__thumb {
+    width: 88px;
+    min-height: 88px;
+  }
+
+  .history-page-premium .history-record-card__machine-name {
+    font-size: 1rem;
+  }
+
+  .history-page-premium .history-record-card__collapse,
+  .history-page-premium .history-record-card__bookmark,
+  .history-page-premium .history-record-card__remove {
+    width: 1.95rem;
+    height: 1.95rem;
+  }
 }
 
 .history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
