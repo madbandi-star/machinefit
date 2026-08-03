@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   REST_DURATION,
@@ -7,21 +8,21 @@ import {
 } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
 import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
-import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
+import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
+import { ROUTES } from '@/constants/routes';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { useSettingsStore } from '@/store/settings.store';
 import {
   clampVoiceCoachOneMoreCount,
   clampVoiceCoachRepGapMs,
   clampVoiceCoachTargetReps,
-  VOICE_COACH_ONE_MORE,
-  VOICE_COACH_REP_GAP,
   VOICE_COACH_TARGET_REPS,
 } from '@/utils/voiceCoach';
-import { clampVoiceHoldDurationSec, VOICE_HOLD_DURATION } from '@/utils/voiceHold';
+import { clampVoiceHoldDurationSec } from '@/utils/voiceHold';
 import '@/styles/home.css';
 import '@/styles/recommendation.css';
+import '@/styles/components.css';
 
 function formatClock(totalSeconds: number): string {
   const clamped = Math.max(0, Math.round(totalSeconds));
@@ -47,8 +48,7 @@ export function HomeWorkoutToolsSection() {
   const settingsCountMode = useSettingsStore((s) => s.voiceCountMode);
   const settingsFlowMode = useSettingsStore((s) => s.voiceCoachFlowMode);
   const settingsHoldSec = useSettingsStore((s) => s.voiceHoldDurationSec);
-  const settingsAutoAfterRest = useSettingsStore((s) => s.voiceCoachAutoAfterRest);
-  const settingsRestTips = useSettingsStore((s) => s.voiceRestTipsEnabled);
+  const settingsVoiceEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const settingsLocale = useSettingsStore((s) => s.locale);
   const fullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
 
@@ -62,44 +62,31 @@ export function HomeWorkoutToolsSection() {
   );
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const settingsVoiceEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const [voiceEnabled, setVoiceEnabled] = useState(settingsVoiceEnabled);
   const [targetReps, setTargetReps] = useState(() =>
     clampVoiceCoachTargetReps(settingsTargetReps)
   );
   const [repGapMs, setRepGapMs] = useState(() => clampVoiceCoachRepGapMs(settingsRepGapMs));
-  const [oneMoreEnabled, setOneMoreEnabled] = useState(settingsOneMore);
   const [oneMoreCount, setOneMoreCount] = useState(() =>
     clampVoiceCoachOneMoreCount(settingsOneMoreCount)
   );
-  const [prepCount, setPrepCount] = useState(settingsPrepCount);
-  const [voicePack, setVoicePack] = useState(settingsPack);
-  const [countMode, setCountMode] = useState(settingsCountMode);
-  const [flowMode, setFlowMode] = useState(settingsFlowMode);
   const [holdDurationSec, setHoldDurationSec] = useState(() =>
     clampVoiceHoldDurationSec(settingsHoldSec)
   );
-  const [autoAfterRest, setAutoAfterRest] = useState(settingsAutoAfterRest);
-  const [restTipsEnabled, setRestTipsEnabled] = useState(settingsRestTips);
 
   const voiceCoach = useVoiceCoachSession({
     targetReps,
-    oneMoreEnabled,
+    oneMoreEnabled: settingsOneMore,
     oneMoreCount,
     repGapMs,
-    prepCount,
-    voicePack,
-    countMode,
-    flowMode,
+    prepCount: settingsPrepCount,
+    voicePack: settingsPack,
+    countMode: settingsCountMode,
+    flowMode: settingsFlowMode === 'hold' ? 'hold' : 'count_hold',
     holdDurationSec,
     locale: settingsLocale,
     enabled: voiceEnabled,
   });
-
-  useEffect(() => {
-    if (!detailsOpen) return;
-    setCountValue(targetReps);
-  }, [detailsOpen, targetReps]);
 
   const restParts = restDurationParts(restSeconds);
   const showFullscreenCount =
@@ -116,6 +103,18 @@ export function HomeWorkoutToolsSection() {
         Math.min(VOICE_COACH_TARGET_REPS.maxCount, prev + delta)
       )
     );
+  };
+
+  const resetCount = () => {
+    const next = clampVoiceCoachTargetReps(settingsTargetReps);
+    setCountValue(next);
+    setTargetReps(next);
+  };
+
+  const syncTargetFromCount = (nextCount: number) => {
+    const next = clampVoiceCoachTargetReps(nextCount);
+    setCountValue(next);
+    setTargetReps(next);
   };
 
   return (
@@ -255,10 +254,21 @@ export function HomeWorkoutToolsSection() {
             </div>
             <div className="home-tool-details__voice-flag">
               <span>{t('pages.home.toolsVoiceCount')}</span>
-              <span
+              <button
+                type="button"
                 className={`home-tool-switch${voiceEnabled ? ' is-on' : ''}`}
-                aria-hidden
+                role="switch"
+                aria-checked={voiceEnabled}
+                aria-label={t('pages.home.toolsVoiceCount')}
+                onClick={() => setVoiceEnabled((v) => !v)}
               />
+              <Link
+                to={ROUTES.SETTINGS}
+                className="home-tool-details__gear"
+                aria-label={t('nav.settings')}
+              >
+                <Icon name="sliders" size={18} />
+              </Link>
             </div>
           </header>
 
@@ -273,37 +283,26 @@ export function HomeWorkoutToolsSection() {
                 <button
                   type="button"
                   className="home-tool-card__step-btn"
-                  onClick={() => {
-                    nudgeCount(-1);
-                    setTargetReps((prev) =>
-                      Math.max(VOICE_COACH_TARGET_REPS.minCount, prev - 1)
-                    );
-                  }}
+                  onClick={() => syncTargetFromCount(countValue - 1)}
                   aria-label={t('pages.home.toolsDecrease')}
+                  disabled={voiceCoach.isRunning}
                 >
                   −
                 </button>
                 <button
                   type="button"
-                  className="home-tool-card__step-btn"
-                  onClick={() => {
-                    nudgeCount(1);
-                    setTargetReps((prev) =>
-                      Math.min(VOICE_COACH_TARGET_REPS.maxCount, prev + 1)
-                    );
-                  }}
+                  className="home-tool-card__step-btn home-tool-card__step-btn--accent"
+                  onClick={() => syncTargetFromCount(countValue + 1)}
                   aria-label={t('pages.home.toolsIncrease')}
+                  disabled={voiceCoach.isRunning}
                 >
                   +
                 </button>
                 <button
                   type="button"
                   className="home-tool-card__step-btn home-tool-card__step-btn--wide"
-                  onClick={() => {
-                    const next = clampVoiceCoachTargetReps(settingsTargetReps);
-                    setCountValue(next);
-                    setTargetReps(next);
-                  }}
+                  onClick={resetCount}
+                  disabled={voiceCoach.isRunning}
                 >
                   {t('pages.home.toolsReset')}
                 </button>
@@ -321,9 +320,24 @@ export function HomeWorkoutToolsSection() {
             </div>
 
             <div className="home-tool-details__voice">
-              <VoiceCoachPanel
-                enabled={voiceEnabled}
-                onEnabledChange={setVoiceEnabled}
+              <div className="home-tool-details__voice-head">
+                <span className="home-tool-details__voice-title">
+                  {t('pages.home.toolsVoiceCount')}
+                </span>
+                <label className="home-tool-details__voice-check">
+                  <input
+                    type="checkbox"
+                    checked={voiceEnabled}
+                    onChange={(e) => setVoiceEnabled(e.target.checked)}
+                    disabled={voiceCoach.isRunning}
+                  />
+                  <span>{t('machines:voiceCoach.on')}</span>
+                </label>
+              </div>
+
+              <VoiceCoachPickerGrid
+                flowMode="count_hold"
+                oneMoreEnabled
                 targetReps={targetReps}
                 onTargetRepsChange={(reps) => {
                   const next = clampVoiceCoachTargetReps(reps);
@@ -332,53 +346,28 @@ export function HomeWorkoutToolsSection() {
                 }}
                 repGapMs={repGapMs}
                 onRepGapMsChange={(ms) => setRepGapMs(clampVoiceCoachRepGapMs(ms))}
-                prepCount={prepCount}
-                onPrepCountChange={setPrepCount}
-                voicePack={voicePack}
-                onVoicePackChange={setVoicePack}
-                countMode={countMode}
-                onCountModeChange={setCountMode}
-                flowMode={flowMode}
-                onFlowModeChange={setFlowMode}
-                holdDurationSec={holdDurationSec}
-                onHoldDurationSecChange={(sec) =>
-                  setHoldDurationSec(clampVoiceHoldDurationSec(sec))
-                }
-                oneMoreEnabled={oneMoreEnabled}
-                onOneMoreChange={setOneMoreEnabled}
                 oneMoreCount={oneMoreCount}
                 onOneMoreCountChange={(count) =>
                   setOneMoreCount(clampVoiceCoachOneMoreCount(count))
                 }
-                autoStartAfterRest={autoAfterRest}
-                onAutoStartAfterRestChange={setAutoAfterRest}
-                restTipsEnabled={restTipsEnabled}
-                onRestTipsEnabledChange={setRestTipsEnabled}
-                phase={voiceCoach.phase}
-                currentRep={voiceCoach.currentRep}
-                countdown={voiceCoach.countdown}
-                turbo={voiceCoach.turbo}
-                intensity={voiceCoach.intensity}
-                isRunning={voiceCoach.isRunning}
-                onStart={voiceCoach.start}
-                onStop={voiceCoach.stop}
+                holdDurationSec={holdDurationSec}
+                onHoldDurationSecChange={(sec) =>
+                  setHoldDurationSec(clampVoiceHoldDurationSec(sec))
+                }
+                disabled={!voiceEnabled || voiceCoach.isRunning}
+                recordsLayout
+                labels="settings"
                 compact
-                showRestOptionSelectors={false}
-                idPrefix="home-voice-coach"
               />
+
+              <p className="home-tool-details__hint">
+                <span className="home-tool-details__hint-icon" aria-hidden>
+                  ♪
+                </span>
+                {t('pages.home.toolsVoiceHint')}
+              </p>
             </div>
           </div>
-
-          <p className="home-tool-details__hint">
-            {t('pages.home.toolsVoiceHint', {
-              gap: (repGapMs / 1000).toFixed(1),
-              oneMore: oneMoreCount,
-              hold: holdDurationSec,
-              defaultGap: VOICE_COACH_REP_GAP.defaultMs / 1000,
-              defaultOneMore: VOICE_COACH_ONE_MORE.defaultCount,
-              defaultHold: VOICE_HOLD_DURATION.defaultSec,
-            })}
-          </p>
         </article>
       ) : null}
 

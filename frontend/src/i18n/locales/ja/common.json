@@ -45,7 +45,7 @@
       "toolsDecrease": "減らす",
       "toolsIncrease": "増やす",
       "toolsReset": "リセット",
-      "toolsVoiceHint": "音声例: いち、に、さん… ワンモア!, バター!（間隔 {{gap}}秒 · ワンモア {{oneMore}} · ホールド {{hold}}秒）"
+      "toolsVoiceHint": "音声例: いち、に、さん... ワンモア!, ホールド!"
     },
     "notFound": {
       "title": "ページが見つかりません",

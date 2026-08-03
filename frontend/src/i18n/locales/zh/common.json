@@ -45,7 +45,7 @@
       "toolsDecrease": "减少",
       "toolsIncrease": "增加",
       "toolsReset": "重置",
-      "toolsVoiceHint": "语音示例：一、二、三… 再来一次!, Butter!（间隔 {{gap}}秒 · 再来 {{oneMore}} · 保持 {{hold}}秒）"
+      "toolsVoiceHint": "语音示例：一、二、三... 再来一次!, 坚持!"
     },
     "notFound": {
       "title": "页面未找到",

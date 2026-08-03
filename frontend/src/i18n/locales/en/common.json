@@ -469,7 +469,7 @@
       "toolsDecrease": "Decrease",
       "toolsIncrease": "Increase",
       "toolsReset": "Reset",
-      "toolsVoiceHint": "Voice example: one, two, three… one more!, butter! (gap {{gap}}s · one-more {{oneMore}} · hold {{hold}}s)"
+      "toolsVoiceHint": "Voice example: one, two, three... one more!, hold!"
     },
     "notFound": {
       "title": "Page Not Found",
