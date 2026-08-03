@@ -34,5 +34,7 @@ services:
         value: https://madbandi-star.github.io
       - key: GOOGLE_CLIENT_ID
         value: 600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com
+      # Set in Render Dashboard (do not commit the real secret here):
+      # KAKAO_REST_API_KEY=<from Kakao Developers REST API key>
       - key: KAKAO_REST_API_KEY
         sync: false
