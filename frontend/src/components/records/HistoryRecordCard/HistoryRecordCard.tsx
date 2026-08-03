@@ -301,6 +301,10 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                 </button>
               </div>
 
+              <Link to={resultUrl} className="history-record-card__title-link">
+                <h2 className="history-record-card__machine-name">{displayName}</h2>
+              </Link>
+
               <Link to={resultUrl} className="history-record-card__meta-link">
                 <div className="history-record-card__meta">
                   {muscleLabel ? (
@@ -333,12 +337,6 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                 </div>
               </Link>
             </div>
-          </div>
-
-          <div className="history-record-card__hero-body">
-            <Link to={resultUrl} className="history-record-card__title-link">
-              <h2 className="history-record-card__machine-name">{displayName}</h2>
-            </Link>
           </div>
         </div>
       </header>
