@@ -1,6 +1,6 @@
 # Latest test handoff - Google OAuth env wiring
 
-**Branch:** `main` | **Commit:** pending
+**Branch:** `main` | **Commit:** `c161b1d`
 
 ## Change
 
@@ -11,10 +11,10 @@
 
 ## Still required (manual)
 
-1. **Render** → machinefit-api → Environment → add  
+1. **Render** ??machinefit-api ??Environment ??add  
    `GOOGLE_CLIENT_ID=600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com`  
    then Manual Deploy / restart
-2. **Google Cloud** OAuth client → Authorized JavaScript origins:  
+2. **Google Cloud** OAuth client ??Authorized JavaScript origins:  
    `https://madbandi-star.github.io` and `http://localhost:5173` (or your Vite port)
 
 ## Fast checks

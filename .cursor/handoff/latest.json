@@ -1,7 +1,7 @@
 {
   "title": "Wire Google OAuth client id for Pages + docs",
   "summary": "Frontend deploy workflow embeds VITE_GOOGLE_CLIENT_ID; render.yaml documents GOOGLE_CLIENT_ID; local .env updated (not committed). Migration 091 auth_providers applied on prod DB.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c161b1d" },
   "changedFiles": [
     ".github/workflows/frontend-deploy.yml",
     "render.yaml",
