@@ -483,7 +483,11 @@ export function SettingsPage() {
           </div>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection title={t('settings.voiceCoach')} description={t('settings.voiceCoachDesc')}>
+        <SettingsCollapsibleSection
+          id="voice-coach"
+          title={t('settings.voiceCoach')}
+          description={t('settings.voiceCoachDesc')}
+        >
           <div className="settings-voice-coach">
             <label className="settings-voice-coach__row">
               <input

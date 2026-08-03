@@ -800,19 +800,12 @@
   font-weight: 700;
 }
 
-.home-tool-details__voice-flag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
 .home-tool-details__gear {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
   color: var(--color-text-muted);
   min-width: 2rem;
   min-height: 2rem;
@@ -820,38 +813,6 @@
 
 .home-tool-details__gear:active {
   color: var(--color-text);
-}
-
-.home-tool-switch {
-  width: 2.4rem;
-  height: 1.35rem;
-  border: none;
-  padding: 0;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-border) 80%, #000);
-  position: relative;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.home-tool-switch::after {
-  content: '';
-  position: absolute;
-  top: 0.15rem;
-  left: 0.15rem;
-  width: 1.05rem;
-  height: 1.05rem;
-  border-radius: 50%;
-  background: #fff;
-  transition: transform 0.18s ease;
-}
-
-.home-tool-switch.is-on {
-  background: var(--color-primary);
-}
-
-.home-tool-switch.is-on::after {
-  transform: translateX(1.05rem);
 }
 
 .home-tool-details__body {

@@ -270,24 +270,13 @@ export function HomeWorkoutToolsSection() {
               </span>
               <h3 className="home-tool-details__title">{t('pages.home.toolsCountDetailsTitle')}</h3>
             </div>
-            <div className="home-tool-details__voice-flag">
-              <span>{t('pages.home.toolsVoiceCount')}</span>
-              <button
-                type="button"
-                className={`home-tool-switch${voiceEnabled ? ' is-on' : ''}`}
-                role="switch"
-                aria-checked={voiceEnabled}
-                aria-label={t('pages.home.toolsVoiceCount')}
-                onClick={() => setVoiceEnabled((v) => !v)}
-              />
-              <Link
-                to={ROUTES.SETTINGS}
-                className="home-tool-details__gear"
-                aria-label={t('nav.settings')}
-              >
-                <Icon name="sliders" size={18} />
-              </Link>
-            </div>
+            <Link
+              to={`${ROUTES.SETTINGS}#voice-coach`}
+              className="home-tool-details__gear"
+              aria-label={t('settings.voiceCoach')}
+            >
+              <Icon name="sliders" size={18} />
+            </Link>
           </header>
 
           <div className="home-tool-details__body">
