@@ -1,5 +1,4 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEasyModeStore } from '@/store/easyMode.store';
 import { ROUTES } from '@/constants/routes';
@@ -10,13 +9,6 @@ export function EasyHomePage() {
   const navigate = useNavigate();
   const mode = useEasyModeStore((s) => s.mode);
   const setMode = useEasyModeStore((s) => s.setMode);
-  const onboardingSeen = useEasyModeStore((s) => s.onboardingSeen);
-
-  useEffect(() => {
-    if (mode === 'easy' && !onboardingSeen) {
-      navigate(ROUTES.EASY_ONBOARDING, { replace: true });
-    }
-  }, [mode, onboardingSeen, navigate]);
 
   if (mode !== 'easy') {
     return (
@@ -29,8 +21,6 @@ export function EasyHomePage() {
       </div>
     );
   }
-
-  if (!onboardingSeen) return null;
 
   return (
     <div className="easy-home">

@@ -1,28 +1,25 @@
 {
-  "title": "Wire Google OAuth client id for Pages + docs",
-  "summary": "Frontend deploy workflow embeds VITE_GOOGLE_CLIENT_ID; render.yaml documents GOOGLE_CLIENT_ID; local .env updated (not committed). Migration 091 auth_providers applied on prod DB.",
-  "git": { "branch": "main", "commit": "c161b1d" },
+  "title": "Remove Easy Mode first-visit onboarding page",
+  "summary": "Skip the EASY MODE welcome/onboarding screen. Easy entry always opens the regular Easy home (start workout).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    ".github/workflows/frontend-deploy.yml",
-    "render.yaml",
-    "docs/DEPLOY.md",
-    "config/env/deployment-secrets.example"
+    "frontend/src/pages/easy-mode/EasyHomePage.tsx",
+    "frontend/src/components/easy-mode/EasyMiniHeaderButton.tsx",
+    "frontend/src/store/easyMode.store.ts",
+    "frontend/src/routes/index.tsx",
+    "frontend/src/pages/easy-mode/EasyOnboardingPage.tsx"
   ],
-  "testFocus": "Login page Google button; after Render GOOGLE_CLIENT_ID set, complete Google sign-in.",
-  "fastChecks": [
-    "npm run test:smoke:changed"
-  ],
+  "testFocus": "Open Easy from header EASY button as first-time and returning user — should land on Easy home, not onboarding.",
+  "fastChecks": ["npm run test:smoke:changed"],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Render Environment has GOOGLE_CLIENT_ID then Manual Deploy",
-    "Google Cloud OAuth JS origins include https://madbandi-star.github.io and local Vite origin",
-    "Login with Google creates/links account"
+    "Clear site data or new account: EASY opens /easy home directly",
+    "/easy/onboarding redirects to /easy"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": true,
-    "note": "Set GOOGLE_CLIENT_ID on Render if not already present, then redeploy API"
+    "backendDeployNeeded": false
   },
-  "asIs": "Social Google button showed not-configured; auth_providers missing on DB.",
-  "toBe": "Frontend builds with Google client id; DB ready; Render still needs GOOGLE_CLIENT_ID env for token verify."
+  "asIs": "First Easy visit showed onboarding (EASY MODE로 시작해요).",
+  "toBe": "Always show regular Easy home; onboarding route redirects."
 }

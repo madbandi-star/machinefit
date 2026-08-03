@@ -6,9 +6,7 @@ export type AppUiMode = 'normal' | 'easy';
 
 interface EasyModeState {
   mode: AppUiMode;
-  onboardingSeen: boolean;
   setMode: (mode: AppUiMode) => void;
-  markOnboardingSeen: () => void;
 }
 
 /**
@@ -19,9 +17,7 @@ export const useEasyModeStore = create<EasyModeState>()(
   persist(
     (set) => ({
       mode: 'normal',
-      onboardingSeen: false,
       setMode: (mode) => set({ mode }),
-      markOnboardingSeen: () => set({ onboardingSeen: true }),
     }),
     { name: 'machinefit-easy-mode' }
   )

@@ -310,10 +310,6 @@ const qrScan = () =>
   import('@/pages/qr-scan/QrScanPage').then((m) => ({ default: m.QrScanPage }));
 const easyHome = () =>
   import('@/pages/easy-mode/EasyHomePage').then((m) => ({ default: m.EasyHomePage }));
-const easyOnboarding = () =>
-  import('@/pages/easy-mode/EasyOnboardingPage').then((m) => ({
-    default: m.EasyOnboardingPage,
-  }));
 const easyWizard = () =>
   import('@/pages/easy-mode/EasyWizardPage').then((m) => ({ default: m.EasyWizardPage }));
 const termsPage = () =>
@@ -475,7 +471,7 @@ export const router = createBrowserRouter(
       errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.EASY, element: lazyRoute(easyHome) },
-        { path: ROUTES.EASY_ONBOARDING, element: lazyRoute(easyOnboarding) },
+        { path: ROUTES.EASY_ONBOARDING, element: <Navigate to={ROUTES.EASY} replace /> },
         { path: ROUTES.EASY_WIZARD, element: lazyRoute(easyWizard) },
       ],
     },

@@ -1,21 +1,15 @@
-# Latest test handoff - Google OAuth env wiring
+# Latest test handoff - Remove Easy onboarding page
 
-**Branch:** `main` | **Commit:** `c161b1d`
+**Branch:** `main` | **Commit:** pending
 
 ## Change
 
-- Pages workflow builds with `VITE_GOOGLE_CLIENT_ID`
-- `render.yaml` / deploy docs list `GOOGLE_CLIENT_ID`
-- Local `frontend/.env` + `backend/.env` updated (gitignored)
-- Prod DB: applied `091_auth_providers.sql`
+Removed Easy Mode first-visit onboarding (`EASY MODE로 시작해요`). Header EASY and `/easy` always show the regular Easy home. Old `/easy/onboarding` redirects to `/easy`.
 
-## Still required (manual)
+## Test focus
 
-1. **Render** ??machinefit-api ??Environment ??add  
-   `GOOGLE_CLIENT_ID=600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com`  
-   then Manual Deploy / restart
-2. **Google Cloud** OAuth client ??Authorized JavaScript origins:  
-   `https://madbandi-star.github.io` and `http://localhost:5173` (or your Vite port)
+- First open of Easy → Easy home (start workout), not welcome page
+- `/easy/onboarding` → `/easy`
 
 ## Fast checks
 
@@ -23,7 +17,11 @@
 npm run test:smoke:changed
 ```
 
+## Deploy
+
+- Frontend only
+
 ## as-is -> to-be
 
-- **as-is:** Google login not configured / DB table missing
-- **to-be:** Frontend wired; DB ready; Render env must match for API verify
+- **as-is:** First visit showed onboarding
+- **to-be:** Always regular Easy home
