@@ -18,9 +18,11 @@ export function FavoritesIndexPage() {
 
   if (!activeGymId || !memberScopeReady || isLoading) {
     return (
-      <PageShell title={t('nav.favorites')}>
-        <Skeleton count={2} height={88} />
-      </PageShell>
+      <div className="favorites-index">
+        <PageShell title={t('nav.favorites')}>
+          <Skeleton count={2} height={88} />
+        </PageShell>
+      </div>
     );
   }
 
@@ -33,12 +35,14 @@ export function FavoritesIndexPage() {
   }
 
   return (
-    <PageShell title={t('nav.favorites')}>
-      <div className="records-page">
-        <div className="records-page__panel">
-          <FavoritesListPanel />
+    <div className="favorites-index">
+      <PageShell title={t('nav.favorites')}>
+        <div className="records-page">
+          <div className="records-page__panel">
+            <FavoritesListPanel />
+          </div>
         </div>
-      </div>
-    </PageShell>
+      </PageShell>
+    </div>
   );
 }
