@@ -170,6 +170,18 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'machinefit-settings',
+      /** v1: rest-tips voice default changed to off (was historically on for many installs). */
+      version: 1,
+      migrate: (persistedState, fromVersion) => {
+        const state = (persistedState ?? {}) as Partial<SettingsState>;
+        if (fromVersion < 1) {
+          return {
+            ...state,
+            voiceRestTipsEnabled: SETTINGS_DEFAULTS.voiceRestTipsEnabled,
+          };
+        }
+        return state;
+      },
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<SettingsState>;
         // ScrollPicker mount bug used to persist all four pickers at range mins.
@@ -210,6 +222,10 @@ export const useSettingsStore = create<SettingsState>()(
           voiceHoldDurationSec: corrupted
             ? SETTINGS_DEFAULTS.voiceHoldDurationSec
             : clampVoiceHoldDurationSec(p.voiceHoldDurationSec ?? current.voiceHoldDurationSec),
+          voiceRestTipsEnabled:
+            typeof p.voiceRestTipsEnabled === 'boolean'
+              ? p.voiceRestTipsEnabled
+              : SETTINGS_DEFAULTS.voiceRestTipsEnabled,
           restTimerAfterAllSetsComplete:
             typeof p.restTimerAfterAllSetsComplete === 'boolean'
               ? p.restTimerAfterAllSetsComplete
