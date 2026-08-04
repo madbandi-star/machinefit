@@ -81,16 +81,39 @@
 }
 
 .admin-shell__nav-track {
-  display: flex;
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-content: start;
   gap: 0.35rem;
-  padding: 0.35rem 1rem 0.65rem;
+  padding: 0.35rem 1rem 0.45rem;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-text-muted) 60%, transparent)
+    color-mix(in srgb, var(--color-text) 6%, transparent);
 }
 
 .admin-shell__nav-track::-webkit-scrollbar {
-  display: none;
+  height: 8px;
+}
+
+.admin-shell__nav-track::-webkit-scrollbar-track {
+  margin: 0 1rem;
+  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+  border-radius: 999px;
+}
+
+.admin-shell__nav-track::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+  border-radius: 999px;
+}
+
+.admin-shell__nav-track::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-muted) 80%, transparent);
 }
 
 .admin-shell__nav-link {
@@ -143,7 +166,7 @@
   }
 
   .admin-shell__nav-track {
-    padding: 0.4rem 1.25rem 0.75rem;
+    padding: 0.4rem 1.25rem 0.55rem;
   }
 
   .admin-shell__content {

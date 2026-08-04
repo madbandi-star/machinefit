@@ -1,25 +1,21 @@
 {
-  "title": "Open body-metrics when recommend redirects to Settings",
-  "summary": "Recommend CTA profile-incomplete redirects now go to /settings#body-metrics so the body metrics collapsible opens and scrolls into view.",
-  "git": { "branch": "main", "commit": "b6e2ea24" },
-  "changedFiles": [
-    "frontend/src/hooks/useRecommendMachine.ts",
-    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx"
-  ],
-  "testFocus": "Search/detail ? ???? with missing gender (or height/weight) ? Settings opens with ???? expanded and scrolled into view.",
+  "title": "Admin top nav 2-row + horizontal scrollbar",
+  "summary": "Admin shell nav track uses a 2-row column-flow grid and shows a thin horizontal scrollbar instead of a single hidden-scroll row.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/styles/admin.css"],
+  "testFocus": "Admin layout top menu: two rows of links; horizontal scrollbar visible when overflowing; active link still highlighted.",
   "fastChecks": [
-    "rg -n \"hash: 'body-metrics'|hashTargetsSection|#body-metrics\" frontend/src/hooks/useRecommendMachine.ts frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx frontend/src/pages/settings/SettingsPage.tsx",
+    "rg -n \"grid-template-rows: repeat\\(2\" frontend/src/styles/admin.css",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Unset gender ? ???? ? Settings body-metrics section is expanded"
+    "Open /admin ? nav is 2 lines with visible H-scrollbar"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Redirect to /settings left body-metrics collapsed.",
-  "toBe": "Redirect uses #body-metrics; section expands + smooth scroll."
+  "asIs": "Single-row flex nav with hidden scrollbar.",
+  "toBe": "Two-row grid nav with visible thin horizontal scrollbar."
 }

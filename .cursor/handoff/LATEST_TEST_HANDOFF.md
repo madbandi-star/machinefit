@@ -1,29 +1,28 @@
-# Test handoff: Expand body-metrics on recommend ? Settings redirect
+# Test handoff: Admin top nav 2-row + scrollbar
 
 ## Summary
-When **????** redirects for incomplete profile (gender / height / weight), navigation targets `/settings#body-metrics` so the **????** section opens and scrolls into view.
+Admin shell top menu is now a **2-row** grid that scrolls horizontally, with a **visible** thin scrollbar (was one long row with scrollbar hidden).
 
 ## Git
 - Branch: `main`
-- Commit: b6e2ea24
+- Commit: pending
 
 ## Changed files
-- `frontend/src/hooks/useRecommendMachine.ts`
-- `frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx`
-- `frontend/src/pages/settings/SettingsPage.tsx`
+- `frontend/src/styles/admin.css`
 
 ## Test focus
-1. Leave gender unset (or height/weight incomplete).
-2. Search/machine detail ? **????**.
-3. Lands on Settings with **????** expanded (gender / goal / metrics visible).
+1. Open any admin page (`/admin`).
+2. Top nav shows links in **two rows**.
+3. Horizontal scrollbar is visible when content overflows.
+4. Active menu item still highlights.
 
 ## Fast checks
 ```bash
-rg -n "hash: 'body-metrics'|hashTargetsSection|#body-metrics" frontend/src/hooks/useRecommendMachine.ts frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx frontend/src/pages/settings/SettingsPage.tsx
+rg -n "grid-template-rows: repeat\(2" frontend/src/styles/admin.css
 npm run test:smoke:changed
 ```
 
 ## as-is ? to-be
 | as-is | to-be |
 |-------|--------|
-| `/settings` with sections collapsed | `/settings#body-metrics` expanded + scrolled |
+| 1? + ???? ?? | 2? + ????? ?? |
