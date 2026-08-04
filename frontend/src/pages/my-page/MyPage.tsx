@@ -323,7 +323,7 @@ export function MyPage() {
         {isAdmin && (
           <>
             <Link to={ROUTES.ADMIN_OPS} className="btn btn--primary btn--block">
-              {t('myPage.opsMonitoring', { defaultValue: '운영 모니터링' })}
+              {t('myPage.opsMonitoring')}
             </Link>
             <Link to={ROUTES.ADMIN} className="btn btn--secondary btn--block">
               {t('myPage.adminDashboard')}

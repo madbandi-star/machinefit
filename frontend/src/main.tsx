@@ -17,11 +17,11 @@ import { installOpsTelemetry } from '@/utils/opsTelemetry';
 
 /**
  * Bump once when a final PWA cache purge is required; thereafter one-shot only.
- * v39: stop index.html unregister-every-load race that looped with autoUpdate reload.
+ * v40: surface Ops Monitoring entry after ops dashboard ship (force stale SW refresh).
  */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v39';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v40';
 /** Legacy keys from older bust scripts — mark done so stale HTML never thrash-clears SW. */
-const LEGACY_PWA_BUST_KEYS = ['mf-pwa-bust-v29', 'mf-pwa-bust-v38'] as const;
+const LEGACY_PWA_BUST_KEYS = ['mf-pwa-bust-v29', 'mf-pwa-bust-v38', 'mf-pwa-bust-v39'] as const;
 
 async function clearServiceWorkerAndCaches(): Promise<void> {
   try {
