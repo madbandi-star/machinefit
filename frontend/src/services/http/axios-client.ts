@@ -138,6 +138,27 @@ apiClient.interceptors.response.use(
       }
     }
 
+    const url = String(originalRequest?.url ?? '');
+    if (!url.includes('/ops/ingest')) {
+      const isTimeout = error.code === 'ECONNABORTED' || /timeout/i.test(String(error.message));
+      const isNetwork = !error.response;
+      if (isTimeout || isNetwork || (typeof status === 'number' && status >= 500)) {
+        void import('@/utils/opsTelemetry').then(({ trackOpsError }) => {
+          trackOpsError({
+            title: isTimeout ? 'NetworkTimeout' : isNetwork ? 'NetworkError' : `API_${status}`,
+            message: error.message,
+            severity: status === 500 || isTimeout ? 'critical' : 'high',
+            source: 'api',
+            meta: {
+              url: url.slice(0, 300),
+              method: originalRequest?.method,
+              status,
+            },
+          });
+        });
+      }
+    }
+
     return Promise.reject(error);
   }
 );

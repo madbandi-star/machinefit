@@ -122,6 +122,7 @@ export const ROUTES = {
   FRIEND_PROFILE: '/friends/:userId',
   ADMIN_FRIENDS: '/admin/friends',
   ADMIN_COMPLIANCE: '/admin/compliance',
+  ADMIN_OPS: '/admin/ops',
   SCAN: '/scan',
   QR: '/qr/:qrCode',
   /** Easy-mode UI shell (isolated from normal MainLayout chrome). */

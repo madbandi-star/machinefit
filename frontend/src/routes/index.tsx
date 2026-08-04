@@ -13,6 +13,7 @@ import { ROUTES } from '@/constants/routes';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { HomePage } from '@/pages/home/HomePage';
 import { RouterErrorElement } from '@/routes/RouterErrorElement';
+import { OpsTelemetryBridge } from '@/components/ops/OpsTelemetryBridge';
 import { isChunkLoadError, recoverFromChunkError } from '@/utils/chunkLoadRecovery';
 
 function PageFallback() {
@@ -20,7 +21,12 @@ function PageFallback() {
 }
 
 function RootOutlet() {
-  return <Outlet />;
+  return (
+    <>
+      <OpsTelemetryBridge />
+      <Outlet />
+    </>
+  );
 }
 
 function lazyRoute(loader: () => Promise<{ default: ComponentType }>) {
@@ -349,6 +355,10 @@ const adminCompliancePage = () =>
   import('@/pages/admin/compliance/AdminCompliancePage').then((m) => ({
     default: m.AdminCompliancePage,
   }));
+const adminOpsPage = () =>
+  import('@/pages/admin/ops/AdminOpsPage').then((m) => ({
+    default: m.AdminOpsPage,
+  }));
 
 export const router = createBrowserRouter(
   [
@@ -561,6 +571,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },
         { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
         { path: ROUTES.ADMIN_COMPLIANCE, element: lazyRoute(adminCompliancePage) },
+        { path: ROUTES.ADMIN_OPS, element: lazyRoute(adminOpsPage) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

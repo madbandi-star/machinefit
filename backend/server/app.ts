@@ -7,6 +7,7 @@ import { apiRouter } from './routes/index.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { rateLimitMiddleware } from './middlewares/rate-limit.middleware.js';
 import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.js';
+import { opsMetricsMiddleware } from './middlewares/ops-metrics.middleware.js';
 import { storageService } from './services/storage.service.js';
 import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
 import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
@@ -34,6 +35,7 @@ export function createApp() {
   app.use(express.json({ limit: '1mb' }));
   app.use(rateLimitMiddleware);
   app.use(env.API_BASE_PATH, cacheHeadersMiddleware);
+  app.use(env.API_BASE_PATH, opsMetricsMiddleware);
 
   // Local-dev fallback for motivation audio when Supabase Storage is not configured.
   app.use(

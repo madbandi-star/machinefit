@@ -23,10 +23,14 @@ export function ShareAppButton({ variant = 'block' }: ShareAppButtonProps) {
       text: t('share.text'),
       url,
     };
+    const markShared = () => {
+      void import('@/utils/opsTelemetry').then(({ trackFeature }) => trackFeature('share'));
+    };
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share(payload);
+        markShared();
         return;
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
@@ -35,6 +39,7 @@ export function ShareAppButton({ variant = 'block' }: ShareAppButtonProps) {
 
     try {
       await navigator.clipboard.writeText(`${payload.text}\n${url}`);
+      markShared();
       showToast(t('share.copied'), 'success');
     } catch {
       showToast(t('errors.submitFailed'), 'error');

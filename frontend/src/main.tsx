@@ -13,6 +13,7 @@ import {
   markAppBootHealthy,
   pruneStaleChunkRetryState,
 } from '@/utils/chunkLoadRecovery';
+import { installOpsTelemetry } from '@/utils/opsTelemetry';
 
 /**
  * Bump once when a final PWA cache purge is required; thereafter one-shot only.
@@ -50,6 +51,7 @@ function markPwaBustComplete(): void {
 
 async function boot() {
   installGlobalChunkErrorHandlers();
+  installOpsTelemetry();
   pruneStaleChunkRetryState();
 
   // Strip one-shot recover query so shares/bookmarks stay clean after reload.

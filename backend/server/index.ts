@@ -6,6 +6,7 @@ import { seedDevUsers } from './data/seed-dev.js';
 import { getPool, warmupDatabase } from './config/database.js';
 import { startMachineTradeExpireJob } from './jobs/machine-trade-expire.job.js';
 import { startOnlinePtOverdueJob } from './jobs/online-pt-overdue.job.js';
+import { startOpsSamplingJob } from './jobs/ops-sampling.job.js';
 
 const app = createApp();
 
@@ -27,4 +28,5 @@ const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   void warmupDatabase();
   startMachineTradeExpireJob();
   startOnlinePtOverdueJob();
+  startOpsSamplingJob();
 });

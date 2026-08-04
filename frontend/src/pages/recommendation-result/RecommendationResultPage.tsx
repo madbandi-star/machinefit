@@ -114,6 +114,13 @@ export function RecommendationResultPage() {
     setWorkoutLogSavedOverride(null);
   }, [result?.id, resultLogDate, resultTargetMuscle]);
 
+  useEffect(() => {
+    if (!result?.id) return;
+    void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+      trackFeature('recommend_view', { machineCode: result.machineCode })
+    );
+  }, [result?.id, result?.machineCode]);
+
   const { isFavorited, toggleFavorite, isPending: isFavoritePending, canFavorite } = useFavoriteToggle({
     machineCode: result?.machineCode ?? '',
     recommendationId: result?.id,
