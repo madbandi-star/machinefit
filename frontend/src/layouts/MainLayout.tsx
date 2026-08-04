@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/Header/Header';
@@ -6,6 +7,7 @@ import { ConsentRedirect } from '@/components/auth/ConsentRedirect/ConsentRedire
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
+import { peekPersistedIsAuthenticated } from '@/utils/peekPersistedAuth';
 import '@/styles/layout.css';
 import '@/styles/legal.css';
 import '@/styles/auth.css';
@@ -20,23 +22,23 @@ export function MainLayout() {
   const authReady = useAuthHydration();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const onHome = isHomePath(location.pathname);
+  /** Persist rehydrate is async — peek so logged-in users never flash the marketing shell. */
+  const [assumeAuthed] = useState(
+    () => isAuthenticated || peekPersistedIsAuthenticated()
+  );
+  const treatAsAuthed = isAuthenticated || (!authReady && assumeAuthed);
 
   /**
-   * Guest/home must never flash the app chrome (header/nav) before auth is ready.
-   * That chrome↔landing swap was remounting AuthLanding and looked like a blink loop
-   * after Kakao redirect and logout.
+   * Guests: black landing shell + Outlet (AuthLanding) — no empty boot remount.
+   * Returning users: keep app chrome while session restore runs (HomePage skeleton).
    */
-  const showGuestLandingShell = onHome && (!authReady || !isAuthenticated);
+  const showGuestLandingShell = onHome && !treatAsAuthed;
 
   if (showGuestLandingShell) {
     return (
       <div className="layout layout--auth-landing">
         <ConsentRedirect />
-        {authReady ? (
-          <Outlet />
-        ) : (
-          <section className="auth-landing auth-landing--boot" aria-busy="true" />
-        )}
+        <Outlet />
       </div>
     );
   }

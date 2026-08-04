@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Role, hasMinRole } from '@machinefit/shared';
 import { AuthLandingScreen } from '@/components/auth/AuthLandingScreen/AuthLandingScreen';
@@ -15,6 +15,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
+import { peekPersistedIsAuthenticated } from '@/utils/peekPersistedAuth';
 import '@/styles/home.css';
 
 export function HomePage() {
@@ -22,6 +23,10 @@ export function HomePage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
+  const [assumeAuthed] = useState(
+    () => isAuthenticated || peekPersistedIsAuthenticated()
+  );
+  const treatAsAuthed = isAuthenticated || (!authReady && assumeAuthed);
 
   // Home is outside AuthGuard — sync /me so body metrics aren't stuck missing after F5.
   const meQuery = useQuery({
@@ -50,16 +55,16 @@ export function HomePage() {
   const showGymMemberSelectors =
     isAuthenticated && hasMinRole(user?.roleCode, Role.PREMIUM_MEMBER);
 
-  if (!authReady) {
+  if (!treatAsAuthed) {
+    return <AuthLandingScreen />;
+  }
+
+  if (!authReady || !isAuthenticated) {
     return (
       <div className="home-page" aria-busy="true">
         <Skeleton count={3} height={88} />
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    return <AuthLandingScreen />;
   }
 
   return (

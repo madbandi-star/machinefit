@@ -6,20 +6,28 @@
     <link rel="apple-touch-icon" href="%BASE_URL%icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="MachineFit - AI-powered machine settings tailored to your body" />
-    <meta name="theme-color" content="#111827" />
+    <meta name="theme-color" content="#000000" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>MachineFit</title>
-    <style id="mf-app-frame-v13">
-      /* iPhone 15 Pro Max frame — critical before CSS bundle loads */
+    <style id="mf-app-frame-v14">
+      /* iPhone 15 Pro Max frame + dark paint before CSS bundle (avoids white/navy FOUC) */
       :root {
         --app-frame-width: 430px;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #000;
+        color-scheme: dark;
       }
       #root {
         width: 100%;
         max-width: 430px;
         margin-inline: auto;
+        min-height: 100dvh;
+        background: #000;
       }
       .recommendation-settings-panel--result .recommendation-settings-panel__grid--dense {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
