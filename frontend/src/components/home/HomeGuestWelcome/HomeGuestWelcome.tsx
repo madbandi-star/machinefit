@@ -9,7 +9,7 @@ export function HomeGuestWelcome() {
   const { t } = useTranslation();
 
   return (
-    <section className="home-guest" aria-label={t('home.guestLabel')}>
+    <section className="home-guest" aria-label={t('pages.home.guestLabel')}>
       <div className="home-guest__brand">
         <img
           className="home-guest__mark"
@@ -24,16 +24,16 @@ export function HomeGuestWelcome() {
         </p>
       </div>
 
-      <h1 className="home-guest__title">{t('home.guestTitle')}</h1>
-      <p className="home-guest__desc">{t('home.guestDesc')}</p>
+      <h1 className="home-guest__title">{t('pages.home.guestTitle')}</h1>
+      <p className="home-guest__desc">{t('pages.home.guestDesc')}</p>
 
       <div className="home-guest__actions">
         <Link to={ROUTES.LOGIN} className="btn btn--primary btn--block home-guest__login">
-          {t('home.guestLogin')}
+          {t('pages.home.guestLogin')}
         </Link>
         <Link to={ROUTES.MACHINES} className="home-guest__browse">
           <Icon name="search" size={18} />
-          <span>{t('home.guestBrowse')}</span>
+          <span>{t('pages.home.guestBrowse')}</span>
           <Icon name="chevronRight" size={16} />
         </Link>
       </div>
