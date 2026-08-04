@@ -321,9 +321,14 @@ export function MyPage() {
       <div className="my-page__actions">
         <ShareAppButton />
         {isAdmin && (
-          <Link to={ROUTES.ADMIN} className="btn btn--primary btn--block">
-            {t('myPage.adminDashboard')}
-          </Link>
+          <>
+            <Link to={ROUTES.ADMIN_OPS} className="btn btn--primary btn--block">
+              {t('myPage.opsMonitoring', { defaultValue: '운영 모니터링' })}
+            </Link>
+            <Link to={ROUTES.ADMIN} className="btn btn--secondary btn--block">
+              {t('myPage.adminDashboard')}
+            </Link>
+          </>
         )}
         {isOwner && !isAdmin && (
           <Link to={ROUTES.OWNER} className="btn btn--primary btn--block">
