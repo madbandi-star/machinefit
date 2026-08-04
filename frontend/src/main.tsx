@@ -14,8 +14,13 @@ import {
   pruneStaleChunkRetryState,
 } from '@/utils/chunkLoadRecovery';
 
-/** Bump once when a final PWA cache purge is required; thereafter one-shot only. */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v38';
+/**
+ * Bump once when a final PWA cache purge is required; thereafter one-shot only.
+ * v39: stop index.html unregister-every-load race that looped with autoUpdate reload.
+ */
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v39';
+/** Legacy keys from older bust scripts — mark done so stale HTML never thrash-clears SW. */
+const LEGACY_PWA_BUST_KEYS = ['mf-pwa-bust-v29', 'mf-pwa-bust-v38'] as const;
 
 async function clearServiceWorkerAndCaches(): Promise<void> {
   try {
@@ -32,9 +37,19 @@ async function clearServiceWorkerAndCaches(): Promise<void> {
   }
 }
 
+function markPwaBustComplete(): void {
+  try {
+    localStorage.setItem(PWA_CACHE_BUST_KEY, '1');
+    for (const key of LEGACY_PWA_BUST_KEYS) {
+      localStorage.setItem(key, '1');
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 async function boot() {
   installGlobalChunkErrorHandlers();
-  initPwaAutoUpdate();
   pruneStaleChunkRetryState();
 
   // Strip one-shot recover query so shares/bookmarks stay clean after reload.
@@ -50,19 +65,22 @@ async function boot() {
     /* ignore */
   }
 
-  // One-shot migration: clear legacy SW/caches once, then never block boot again.
+  // One-shot migration: clear legacy SW/caches once, THEN register SW (never before).
   try {
     if (!localStorage.getItem(PWA_CACHE_BUST_KEY)) {
       await clearServiceWorkerAndCaches();
-      localStorage.setItem(PWA_CACHE_BUST_KEY, '1');
-      // Fresh SW registration will happen on next load via initPwaAutoUpdate.
+      markPwaBustComplete();
       clearChunkRetryState();
       window.location.reload();
       return;
     }
+    // Ensure legacy flags exist even when v39 already set (cached old index.html).
+    markPwaBustComplete();
   } catch {
     /* ignore */
   }
+
+  initPwaAutoUpdate();
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>

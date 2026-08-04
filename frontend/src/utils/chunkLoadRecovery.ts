@@ -216,6 +216,25 @@ export function initPwaAutoUpdate(): void {
     .then(({ registerSW }) => {
       const updateSW = registerSW({
         immediate: true,
+        /**
+         * Default autoUpdate calls location.reload() on every SW "activated" update.
+         * Debounce so a bust/unregister race cannot spin forever in Chrome.
+         */
+        onNeedReload() {
+          try {
+            const key = 'mf-sw-need-reload-at';
+            const last = Number(sessionStorage.getItem(key) || 0);
+            const now = Date.now();
+            if (now - last < 15_000) {
+              console.warn('[MachineFit][pwa] skip SW reload (debounce)');
+              return;
+            }
+            sessionStorage.setItem(key, String(now));
+          } catch {
+            /* ignore */
+          }
+          window.location.reload();
+        },
         onRegisteredSW(_swUrl, registration) {
           // Periodic check so long-lived tabs pick up deploys before next chunk miss.
           if (!registration) return;
