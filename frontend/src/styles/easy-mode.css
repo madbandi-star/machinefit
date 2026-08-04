@@ -467,42 +467,49 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
   width: 100%;
-  min-height: 4.25rem;
+  min-height: 3.5rem;
   margin: 0;
-  padding: 1rem 1.25rem;
-  border: 0;
-  border-radius: 1rem;
-  background: #1fad63;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: 0.85rem;
+  /* Match home rest-timer “휴식하기” CTA colors/type. */
+  background: #00c853;
   color: #ffffff;
   font: inherit;
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
+  text-align: center;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-}
-
-.easy-s3-intro__save:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
   box-shadow: none;
 }
 
+.easy-s3-intro__save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .easy-s3-intro__save:not(:disabled):hover {
-  background: #24bd6d;
+  background: #00d85c;
+  color: #ffffff;
 }
 
 .easy-s3-intro__save:not(:disabled):active {
-  background: #1a9655;
+  background: #00b34a;
+  color: #ffffff;
   transform: translateY(1px);
 }
 
 .easy-s3-intro__save-emoji {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   line-height: 1;
+}
+
+.easy-s3-intro__save > span {
+  text-align: center;
 }
 
 .easy-s3-intro__hint {
