@@ -483,7 +483,20 @@
   line-height: 1.2;
   white-space: nowrap;
   border-radius: 0.95rem;
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 28%, transparent);
+  /* Soft CTA: muted green + white — neon green on black was too harsh. */
+  background: #14965a;
+  color: #ffffff;
+  border: 1px solid color-mix(in srgb, #ffffff 12%, #14965a);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+}
+
+.easy-s3-intro__save:not(:disabled):hover {
+  background: #18a866;
+  color: #ffffff;
+}
+
+.easy-s3-intro__save:not(:disabled):active {
+  background: #118552;
 }
 
 .easy-s3-intro__hint {
