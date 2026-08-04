@@ -445,6 +445,11 @@
     "home": {
       "title": "MachineFit",
       "subtitle": "Get machine settings in seconds at the gym",
+      "guestLabel": "Get started with MachineFit",
+      "guestTitle": "Machine settings\nfor your body",
+      "guestDesc": "Sign in to see seat, pin, ROM, and weight references by brand and machine.",
+      "guestLogin": "Sign in to start",
+      "guestBrowse": "Browse machines first",
       "heroEyebrow": "AI Precision Engine",
       "heroTitle": "Machine settings for your body",
       "heroDesc": "Recommendations are reference settings based on your height, weight, and profile — not medical advice. Adjust for comfort and safety.",

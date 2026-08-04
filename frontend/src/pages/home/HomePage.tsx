@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Role, hasMinRole } from '@machinefit/shared';
+import { HomeGuestWelcome } from '@/components/home/HomeGuestWelcome/HomeGuestWelcome';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
@@ -8,6 +9,7 @@ import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/Favor
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
 import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
 import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
+import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
@@ -50,6 +52,23 @@ export function HomePage() {
   const showGymMemberSelectors =
     isAuthenticated && hasMinRole(user?.roleCode, Role.PREMIUM_MEMBER);
 
+  if (!authReady) {
+    return (
+      <div className="home-page" aria-busy="true">
+        <Skeleton count={3} height={88} />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="home-page">
+        <InstallPromptBanner />
+        <HomeGuestWelcome />
+      </div>
+    );
+  }
+
   return (
     <div className="home-page">
       {showGymMemberSelectors && (
@@ -62,9 +81,9 @@ export function HomePage() {
       <InstallPromptBanner />
 
       {showProfileBanner && <ProfileIncompleteBanner />}
-      {isAuthenticated && <HomeWorkoutToolsSection />}
-      {isAuthenticated && <RecentMachinesRow />}
-      {isAuthenticated && <FavoriteMachinesRow />}
+      <HomeWorkoutToolsSection />
+      <RecentMachinesRow />
+      <FavoriteMachinesRow />
     </div>
   );
 }

@@ -445,6 +445,11 @@
     "home": {
       "title": "MachineFit",
       "subtitle": "기구 앞에서 바로 맞춤 세팅 확인",
+      "guestLabel": "MachineFit 시작",
+      "guestTitle": "내 몸에 맞는\n머신 세팅",
+      "guestDesc": "로그인하고 브랜드·기구별 시트·핀·ROM·중량 참고값을 확인하세요.",
+      "guestLogin": "로그인하고 시작하기",
+      "guestBrowse": "기구 먼저 둘러보기",
       "heroEyebrow": "AI Precision Engine",
       "heroTitle": "내 몸에 맞는 머신 세팅값",
       "heroDesc": "키·체중·성별을 바탕으로 헬스장 머신 시트·핀·레버 위치의 참고값을 제안합니다. 의료 조언이 아니며 개인 상태에 따라 다를 수 있습니다.",
