@@ -64,8 +64,10 @@ export async function ingest(req: Request, res: Response, next: NextFunction): P
 
 export async function healthDetailed(_req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    // Always 200 — severity lives in statusColor for the ops UI.
+    // Do not 503 here; this path must never take the API out of rotation.
     const data = await opsService.getHealth();
-    res.status(data.statusColor === 'red' ? 503 : 200).json({ success: true, data });
+    res.status(200).json({ success: true, data });
   } catch (err) {
     next(err);
   }
