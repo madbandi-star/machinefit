@@ -53,6 +53,16 @@ function resourceColor(pct: number | null): OpsStatusColor {
   return 'green';
 }
 
+/**
+ * Host CPU/memory/disk on shared PaaS (Render free) often sits near red.
+ * Keep those as yellow for overall statusColor so liveness/ops "server status"
+ * isn't permanently critical; sampleServerAndAlert still raises real alerts.
+ */
+function hostResourceColor(pct: number | null): OpsStatusColor {
+  const c = resourceColor(pct);
+  return c === 'red' ? 'yellow' : c;
+}
+
 export const opsService = {
   async getHealth(): Promise<OpsHealthSnapshot> {
     const resources = sampleProcessResources();
@@ -92,9 +102,9 @@ export const opsService = {
 
     const colorCandidates: OpsStatusColor[] = [
       statusColorFrom([server, dbStatus, storage, supabase]),
-      resourceColor(resources.cpuPct),
-      resourceColor(resources.memoryPct),
-      resourceColor(resources.diskPct),
+      hostResourceColor(resources.cpuPct),
+      hostResourceColor(resources.memoryPct),
+      hostResourceColor(resources.diskPct),
     ];
     const statusColor: OpsStatusColor = colorCandidates.includes('red')
       ? 'red'
@@ -249,68 +259,76 @@ export const opsService = {
     userId?: string | null;
     ip?: string | null;
   }): Promise<void> {
-    // Dev: sample lightly to avoid noise.
-    if (!isProductionOps() && Math.random() > 0.2) return;
-    await opsRepository.insertApiSample(input);
-    if (input.statusCode >= 500) {
-      await opsRepository.insertAppLog({
-        level: 'error',
-        kind: 'error',
-        message: `API ${input.statusCode} ${input.routeKey}`,
-        userId: input.userId,
-        ip: input.ip,
-        apiRoute: input.routeKey,
-      });
+    try {
+      // Dev: sample lightly to avoid noise.
+      if (!isProductionOps() && Math.random() > 0.2) return;
+      await opsRepository.insertApiSample(input);
+      if (input.statusCode >= 500) {
+        await opsRepository.insertAppLog({
+          level: 'error',
+          kind: 'error',
+          message: `API ${input.statusCode} ${input.routeKey}`,
+          userId: input.userId,
+          ip: input.ip,
+          apiRoute: input.routeKey,
+        });
+      }
+    } catch {
+      /* missing migration / DB blip must never crash the API process */
     }
   },
 
   async sampleServerAndAlert(): Promise<void> {
-    const resources = sampleProcessResources();
-    await opsRepository.insertServerSample({
-      cpuPct: resources.cpuPct,
-      memoryPct: resources.memoryPct,
-      memoryUsedMb: resources.memoryUsedMb,
-      memoryTotalMb: resources.memoryTotalMb,
-      diskPct: resources.diskPct,
-      load1: resources.load1,
-      uptimeSec: getUptimeSec(),
-      restartCount: getRestartCount(),
-      buildVersion: getBuildVersion(),
-    });
+    try {
+      const resources = sampleProcessResources();
+      await opsRepository.insertServerSample({
+        cpuPct: resources.cpuPct,
+        memoryPct: resources.memoryPct,
+        memoryUsedMb: resources.memoryUsedMb,
+        memoryTotalMb: resources.memoryTotalMb,
+        diskPct: resources.diskPct,
+        load1: resources.load1,
+        uptimeSec: getUptimeSec(),
+        restartCount: getRestartCount(),
+        buildVersion: getBuildVersion(),
+      });
 
-    if (resources.memoryPct >= 90) {
-      await raiseAlert({
-        alertKey: 'memory_high',
-        severity: 'critical',
-        title: 'Memory usage ≥ 90%',
-        message: `Memory at ${resources.memoryPct.toFixed(1)}%`,
-      });
-    }
-    if (resources.cpuPct != null && resources.cpuPct >= 90) {
-      await raiseAlert({
-        alertKey: 'cpu_high',
-        severity: 'critical',
-        title: 'CPU usage ≥ 90%',
-        message: `CPU at ${resources.cpuPct.toFixed(1)}%`,
-      });
-    }
-    if (resources.diskPct != null && resources.diskPct >= 90) {
-      await raiseAlert({
-        alertKey: 'disk_high',
-        severity: 'critical',
-        title: 'Disk usage ≥ 90%',
-        message: `Disk at ${resources.diskPct.toFixed(1)}%`,
-      });
-    }
+      if (resources.memoryPct >= 90) {
+        await raiseAlert({
+          alertKey: 'memory_high',
+          severity: 'critical',
+          title: 'Memory usage ≥ 90%',
+          message: `Memory at ${resources.memoryPct.toFixed(1)}%`,
+        });
+      }
+      if (resources.cpuPct != null && resources.cpuPct >= 90) {
+        await raiseAlert({
+          alertKey: 'cpu_high',
+          severity: 'critical',
+          title: 'CPU usage ≥ 90%',
+          message: `CPU at ${resources.cpuPct.toFixed(1)}%`,
+        });
+      }
+      if (resources.diskPct != null && resources.diskPct >= 90) {
+        await raiseAlert({
+          alertKey: 'disk_high',
+          severity: 'critical',
+          title: 'Disk usage ≥ 90%',
+          message: `Disk at ${resources.diskPct.toFixed(1)}%`,
+        });
+      }
 
-    const dbOk = await checkDatabaseConnection();
-    if (env.DATABASE_URL && !dbOk) {
-      await raiseAlert({
-        alertKey: 'db_down',
-        severity: 'critical',
-        title: 'Database connection failed',
-        message: 'Health probe could not reach Postgres',
-      });
+      const dbOk = await checkDatabaseConnection();
+      if (env.DATABASE_URL && !dbOk) {
+        await raiseAlert({
+          alertKey: 'db_down',
+          severity: 'critical',
+          title: 'Database connection failed',
+          message: 'Health probe could not reach Postgres',
+        });
+      }
+    } catch {
+      /* never crash the process from sampling */
     }
   },
 
