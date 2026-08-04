@@ -21,6 +21,7 @@ import {
   OAuthClientError,
   type OAuthCredentialPayload,
 } from '@/utils/oauthClient';
+import { handleOAuthLoginResult } from '@/utils/handleOAuthLoginResult';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/auth.css';
@@ -53,8 +54,9 @@ export function LoginPage() {
   const credentialsHydrated = usePersistHydration(useCredentialsStore.persist);
 
   const [email, setEmail] = useState(demoAuth ? DEMO_LOGIN_EMAIL : '');
-  const [password, setPassword] = useState(demoAuth ? DEMO_REGISTER_PASSWORD : '');
+  const [password] = useState(demoAuth ? DEMO_REGISTER_PASSWORD : '');
   const [rememberMe, setRememberMe] = useState(false);
+  const [showDemoForm, setShowDemoForm] = useState(false);
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
   const [oauthPending, setOauthPending] = useState(false);
   const autoLoginAttempted = useRef(false);
@@ -67,14 +69,22 @@ export function LoginPage() {
       ? `${fromLocation.pathname}${fromLocation.search ?? ''}${fromLocation.hash ?? ''}`
       : ROUTES.HOME;
 
-  const completeLogin = (user: User, tokens: AuthTokens, shouldSave: boolean) => {
-    setAuth(user, tokens);
+  const syncUser = (user: User) => {
     syncUserSettings(user);
     syncGymScopeAfterAuth(user);
+  };
+
+  const completePasswordLogin = (user: User, tokens: AuthTokens, shouldSave: boolean) => {
+    setAuth(user, tokens);
+    syncUser(user);
     if (shouldSave) {
       saveCredentials(email);
     } else {
       clearCredentials();
+    }
+    if (user.needsConsent) {
+      navigate(ROUTES.AUTH_TERMS, { replace: true });
+      return;
     }
     showToast(t('auth.welcomeBack'), 'success');
     navigate(from, { replace: true });
@@ -84,7 +94,7 @@ export function LoginPage() {
     mutationFn: () => authApi.login(email, password),
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
-      completeLogin(user, tokens, rememberMe);
+      completePasswordLogin(user, tokens, rememberMe);
     },
     onError: () => {
       setAutoLoggingIn(false);
@@ -96,8 +106,14 @@ export function LoginPage() {
     setOauthPending(true);
     try {
       const res = await authApi.oauthLogin(provider, credential);
-      const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
-      completeLogin(user, tokens, false);
+      handleOAuthLoginResult({
+        data: res.data.data,
+        setAuth,
+        syncUser,
+        navigate,
+        from,
+        onAuthenticatedToast: () => showToast(t('auth.welcomeBack'), 'success'),
+      });
     } catch (error) {
       const code = getApiErrorCode(error);
       const message = getApiErrorMessage(error);
@@ -154,11 +170,7 @@ export function LoginPage() {
         .login(savedEmail, DEMO_REGISTER_PASSWORD)
         .then((res) => {
           const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
-          setAuth(user, tokens);
-          syncUserSettings(user);
-          syncGymScopeAfterAuth(user);
-          showToast(t('auth.welcomeBack'), 'success');
-          navigate(from, { replace: true });
+          completePasswordLogin(user, tokens, true);
         })
         .catch(() => {
           setAutoLoggingIn(false);
@@ -177,10 +189,12 @@ export function LoginPage() {
     t,
   ]);
 
-  if (!credentialsHydrated || autoLoggingIn) {
+  if (!credentialsHydrated || autoLoggingIn || oauthPending) {
     return (
       <PageShell title={t('nav.login')}>
-        <p className="auth-page__loading">{t('auth.autoLoggingIn')}</p>
+        <p className="auth-page__loading">
+          {oauthPending ? t('auth.socialConnecting') : t('auth.autoLoggingIn')}
+        </p>
       </PageShell>
     );
   }
@@ -223,71 +237,71 @@ export function LoginPage() {
         </div>
       </section>
 
-      <form
-        className="auth-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          mutation.mutate();
-        }}
-      >
-        <input
-          className="input"
-          type="email"
-          placeholder={t('auth.emailPlaceholder')}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-          required
-        />
-        {demoAuth ? (
-          <input
-            className="input"
-            type="text"
-            placeholder={t('auth.passwordDemoFixedPlaceholder')}
-            value={password}
-            readOnly
-            aria-readonly="true"
-            autoComplete="off"
-            title={t('auth.passwordDemoFixedHint')}
-          />
-        ) : (
-          <input
-            className="input"
-            type="password"
-            placeholder={t('auth.passwordPlaceholder')}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-            minLength={1}
-          />
-        )}
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <span>{t('auth.rememberLogin')}</span>
-        </label>
-        <button
-          type="submit"
-          className="btn btn--primary btn--block"
-          disabled={mutation.isPending || oauthPending}
-        >
-          {mutation.isPending ? '...' : t('nav.login')}
-        </button>
-      </form>
-
       <SocialLoginButtons
         disabled={mutation.isPending || oauthPending}
+        showDivider={false}
+        providers={['kakao', 'google']}
         onCredential={handleOAuth}
         onClientError={handleOAuthClientError}
       />
 
+      {demoAuth && (
+        <div className="auth-demo">
+          <button
+            type="button"
+            className="auth-demo__toggle"
+            onClick={() => setShowDemoForm((v) => !v)}
+          >
+            {showDemoForm ? t('auth.hideDemoLogin') : t('auth.showDemoLogin')}
+          </button>
+          {showDemoForm && (
+            <form
+              className="auth-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                mutation.mutate();
+              }}
+            >
+              <input
+                className="input"
+                type="email"
+                placeholder={t('auth.emailPlaceholder')}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+              <input
+                className="input"
+                type="text"
+                placeholder={t('auth.passwordDemoFixedPlaceholder')}
+                value={password}
+                readOnly
+                aria-readonly="true"
+                autoComplete="off"
+                title={t('auth.passwordDemoFixedHint')}
+              />
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <span>{t('auth.rememberLogin')}</span>
+              </label>
+              <button
+                type="submit"
+                className="btn btn--primary btn--block"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? '...' : t('nav.login')}
+              </button>
+            </form>
+          )}
+        </div>
+      )}
+
       <p className="auth-page__footer">
-        <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
-        {' · '}
         <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
         {' · '}
         <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>

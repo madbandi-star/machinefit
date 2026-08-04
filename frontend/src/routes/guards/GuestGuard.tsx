@@ -16,6 +16,9 @@ export function GuestGuard({ children }: GuestGuardProps) {
   if (!hydrated) return null;
 
   if (isAuthenticated && user) {
+    if (user.needsConsent) {
+      return <Navigate to={ROUTES.AUTH_TERMS} replace />;
+    }
     return <Navigate to={ROUTES.HOME} replace />;
   }
 

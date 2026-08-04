@@ -49,6 +49,11 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
     return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }
 
+  const liveNeedsConsent = meQuery.data?.needsConsent ?? user.needsConsent;
+  if (liveNeedsConsent && location.pathname !== ROUTES.AUTH_TERMS) {
+    return <Navigate to={ROUTES.AUTH_TERMS} replace />;
+  }
+
   // Elevated routes must wait for live /me — never trust persisted localStorage role alone.
   const needsLiveRole = minRole !== Role.MEMBER && minRole !== Role.GUEST;
   if (needsLiveRole && (meQuery.isLoading || meQuery.isFetching) && !meQuery.data) {

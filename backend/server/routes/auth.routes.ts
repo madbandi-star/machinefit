@@ -5,6 +5,8 @@ import {
   registerSchema,
   loginSchema,
   oauthCredentialSchema,
+  oauthCompleteSchema,
+  consentAcceptSchema,
 } from '@machinefit/shared';
 import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
 
@@ -37,6 +39,21 @@ authRouter.post(
     req.params.provider = 'apple';
     void authController.oauthLogin(req, res).catch(next);
   }
+);
+
+/** Finish OAuth signup after terms acceptance (pending token). */
+authRouter.post(
+  '/oauth/complete',
+  validateBody(oauthCompleteSchema),
+  authController.completeOAuthSignup
+);
+
+/** Accept/update required consents (version bump) while authenticated. */
+authRouter.post(
+  '/consents',
+  authMiddleware,
+  validateBody(consentAcceptSchema),
+  authController.acceptConsents
 );
 
 authRouter.post('/refresh', authController.refresh);

@@ -20,8 +20,15 @@ const PROVIDER_META: Record<
   kakao: { label: 'Kakao', className: 'social-auth__btn--kakao', mark: 'K' },
 };
 
+/** Default login providers (Apple ready in AUTH_PROVIDERS for later). */
+const DEFAULT_LOGIN_PROVIDERS: AuthProviderCode[] = ['kakao', 'google'];
+
 interface SocialLoginButtonsProps {
   disabled?: boolean;
+  /** When false, hide the "or" divider (social-first login). */
+  showDivider?: boolean;
+  /** Ordered providers to show. Defaults to Kakao → Google. */
+  providers?: AuthProviderCode[];
   onCredential: (
     provider: AuthProviderCode,
     credential: OAuthCredentialPayload
@@ -31,11 +38,17 @@ interface SocialLoginButtonsProps {
 
 export function SocialLoginButtons({
   disabled,
+  showDivider = true,
+  providers = DEFAULT_LOGIN_PROVIDERS,
   onCredential,
   onClientError,
 }: SocialLoginButtonsProps) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState<AuthProviderCode | null>(null);
+
+  const visibleProviders = providers.filter((p) =>
+    (AUTH_PROVIDERS as readonly string[]).includes(p)
+  );
 
   const handleClick = async (provider: AuthProviderCode) => {
     if (disabled || busy) return;
@@ -63,11 +76,13 @@ export function SocialLoginButtons({
 
   return (
     <div className="social-auth">
-      <div className="social-auth__divider" role="presentation">
-        <span>{t('auth.socialOr')}</span>
-      </div>
+      {showDivider && (
+        <div className="social-auth__divider" role="presentation">
+          <span>{t('auth.socialOr')}</span>
+        </div>
+      )}
       <div className="social-auth__list" role="group" aria-label={t('auth.socialLoginGroup')}>
-        {AUTH_PROVIDERS.filter((provider) => provider !== 'apple').map((provider) => {
+        {visibleProviders.map((provider) => {
           const meta = PROVIDER_META[provider];
           return (
             <button

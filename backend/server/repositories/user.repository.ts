@@ -1,4 +1,10 @@
-import type { RoleCode, User, Gender, SubscriptionPlan } from '@machinefit/shared';
+import {
+  LEGAL_DOC_VERSIONS,
+  type RoleCode,
+  type User,
+  type Gender,
+  type SubscriptionPlan,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
 interface UserRow {
@@ -28,6 +34,14 @@ interface UserRow {
   marketing_opt_in: boolean | null;
   location_opt_in: boolean | null;
   push_service_opt_in: boolean | null;
+  terms_version: string | null;
+  privacy_version: string | null;
+  location_version: string | null;
+  marketing_version: string | null;
+  terms_agreed_at: string | null;
+  privacy_agreed_at: string | null;
+  location_agreed_at: string | null;
+  marketing_agreed_at: string | null;
   is_active: boolean;
   deactivated_at: string | null;
   last_login_at: string | null;
@@ -62,6 +76,14 @@ function mapUser(row: UserRow): User {
     marketingOptIn: Boolean(row.marketing_opt_in),
     locationOptIn: Boolean(row.location_opt_in),
     pushServiceOptIn: row.push_service_opt_in !== false,
+    termsVersion: row.terms_version ?? null,
+    privacyVersion: row.privacy_version ?? null,
+    locationVersion: row.location_version ?? null,
+    marketingVersion: row.marketing_version ?? null,
+    termsAgreedAt: row.terms_agreed_at ?? null,
+    privacyAgreedAt: row.privacy_agreed_at ?? null,
+    locationAgreedAt: row.location_agreed_at ?? null,
+    marketingAgreedAt: row.marketing_agreed_at ?? null,
     isActive: row.is_active,
     deactivatedAt: row.deactivated_at ?? null,
     lastLoginAt: row.last_login_at ?? undefined,
@@ -200,6 +222,60 @@ export const userRepository = {
         [userId, item.type, item.version, item.agreed]
       );
     }
+
+    const terms = items.find((i) => i.type === 'terms' && i.agreed);
+    const privacy = items.find((i) => i.type === 'privacy' && i.agreed);
+    const location = items.find((i) => i.type === 'location');
+    const marketing = items.find((i) => i.type === 'marketing');
+
+    await pool.query(
+      `UPDATE users SET
+         terms_version = COALESCE($2, terms_version),
+         terms_agreed_at = CASE WHEN $2::text IS NOT NULL THEN NOW() ELSE terms_agreed_at END,
+         privacy_version = COALESCE($3, privacy_version),
+         privacy_agreed_at = CASE WHEN $3::text IS NOT NULL THEN NOW() ELSE privacy_agreed_at END,
+         location_version = CASE
+           WHEN $4::boolean IS TRUE THEN $5
+           WHEN $4::boolean IS FALSE THEN location_version
+           ELSE location_version
+         END,
+         location_agreed_at = CASE
+           WHEN $4::boolean IS TRUE THEN NOW()
+           WHEN $4::boolean IS FALSE THEN location_agreed_at
+           ELSE location_agreed_at
+         END,
+         location_opt_in = COALESCE($4, location_opt_in),
+         marketing_version = CASE
+           WHEN $6::boolean IS TRUE THEN $7
+           WHEN $6::boolean IS FALSE THEN marketing_version
+           ELSE marketing_version
+         END,
+         marketing_agreed_at = CASE
+           WHEN $6::boolean IS TRUE THEN NOW()
+           WHEN $6::boolean IS FALSE THEN marketing_agreed_at
+           ELSE marketing_agreed_at
+         END,
+         marketing_opt_in = COALESCE($6, marketing_opt_in),
+         updated_at = NOW()
+       WHERE id = $1`,
+      [
+        userId,
+        terms?.version ?? null,
+        privacy?.version ?? null,
+        location ? location.agreed : null,
+        location?.version ?? null,
+        marketing ? marketing.agreed : null,
+        marketing?.version ?? null,
+      ]
+    );
+  },
+
+  /** Required consents (terms + privacy) match current legal versions. */
+  needsRequiredConsent(user: Pick<User, 'termsVersion' | 'privacyVersion'>): boolean {
+    return (
+      user.termsVersion !== LEGAL_DOC_VERSIONS.terms ||
+      user.privacyVersion !== LEGAL_DOC_VERSIONS.privacy
+    );
   },
 
   async setMarketingOptIn(userId: string, optIn: boolean): Promise<User | null> {

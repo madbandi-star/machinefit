@@ -94,7 +94,10 @@ export const authApi = {
     agreeLocation?: boolean;
     legalVersion?: string;
   }) => apiClient.post('/auth/register', data),
-  /** Social OAuth login — creates or resumes a single users row by provider_user_id. */
+  /**
+   * Social OAuth login — existing users authenticate; new identities return
+   * `needs_consent` + pendingToken for the terms agreement step.
+   */
   oauthLogin: (
     provider: AuthProviderCode,
     credential: {
@@ -105,6 +108,27 @@ export const authApi = {
       displayName?: string;
     }
   ) => apiClient.post(`/auth/${provider}`, credential),
+  completeOAuthSignup: (data: {
+    pendingToken: string;
+    agreeTerms: boolean;
+    agreePrivacy: boolean;
+    agreeMarketing?: boolean;
+    agreeLocation?: boolean;
+    termsVersion?: string;
+    privacyVersion?: string;
+    locationVersion?: string;
+    marketingVersion?: string;
+  }) => apiClient.post('/auth/oauth/complete', data),
+  acceptConsents: (data: {
+    agreeTerms: boolean;
+    agreePrivacy: boolean;
+    agreeMarketing?: boolean;
+    agreeLocation?: boolean;
+    termsVersion?: string;
+    privacyVersion?: string;
+    locationVersion?: string;
+    marketingVersion?: string;
+  }) => apiClient.post('/auth/consents', data),
   getProviders: () =>
     apiClient.get<ApiResponse<AuthProvidersStatus>>('/me/providers'),
   connectProvider: (
