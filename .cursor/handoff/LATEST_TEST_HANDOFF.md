@@ -5,7 +5,7 @@ Removed **?? ????** / **??? ????** buttons between Share App and Logout on My Pa
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 797b47aa
 
 ## Changed files
 - `frontend/src/pages/my-page/MyPage.tsx`

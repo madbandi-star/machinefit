@@ -1,7 +1,7 @@
 {
   "title": "Remove duplicate admin buttons above logout",
   "summary": "Removed the standalone Ops Monitoring / Admin Dashboard action buttons between Share App and Logout on My Page; admin tools section remains.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "797b47aa" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
   "testFocus": "Admin My Page: no ops/admin buttons between Share and Logout; ????? section still works.",
   "fastChecks": [
