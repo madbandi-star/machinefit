@@ -706,10 +706,7 @@ export function SettingsPage() {
           </div>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection
-          title={t('settings.restDuration')}
-          description={t('settings.restDurationDesc')}
-        >
+        <SettingsCollapsibleSection title={t('settings.restDuration')}>
           <div
             className="body-metrics-inline"
             role="group"
@@ -766,9 +763,6 @@ export function SettingsPage() {
             />
             <span>{t('settings.restTimerAfterAllSetsComplete')}</span>
           </label>
-          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
-            {t('settings.restTimerAfterAllSetsCompleteDesc')}
-          </p>
           <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
             <input
               type="checkbox"
@@ -777,9 +771,6 @@ export function SettingsPage() {
             />
             <span>{t('settings.workoutFullscreenDisplay')}</span>
           </label>
-          <p className="form-section__desc" style={{ marginTop: '0.35rem' }}>
-            {t('settings.workoutFullscreenDisplayDesc')}
-          </p>
         </SettingsCollapsibleSection>
 
         <SettingsCollapsibleSection
