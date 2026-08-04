@@ -27,7 +27,17 @@ export class ChunkErrorBoundary extends Component<Props, State> {
     return { showUpdate: true, isChunk };
   }
 
-  componentDidCatch(error: Error, _info: ErrorInfo): void {
+  componentDidCatch(error: Error, info: ErrorInfo): void {
+    void import('@/utils/opsTelemetry').then(({ trackOpsError }) => {
+      trackOpsError({
+        title: isChunkLoadError(error) ? 'ChunkLoadError' : 'ReactErrorBoundary',
+        message: error.message,
+        stack: error.stack,
+        severity: 'critical',
+        source: 'react',
+        meta: { componentStack: info.componentStack?.slice(0, 2000) },
+      });
+    });
     if (!isChunkLoadError(error)) return;
     void recoverFromChunkError(error, 'ErrorBoundary').then((result) => {
       if (result === 'show-ui') {

@@ -57,10 +57,22 @@ export function LoginPage() {
     mutationFn: () => authApi.login(email, password),
     onSuccess: (res) => {
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
+      void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+        trackFeature('login_success')
+      );
       completePasswordLogin(user, tokens, rememberMe);
     },
     onError: () => {
       setAutoLoggingIn(false);
+      void import('@/utils/opsTelemetry').then(({ trackFeature, trackOpsError }) => {
+        trackFeature('login_fail');
+        trackOpsError({
+          title: 'LoginError',
+          message: 'Invalid credentials',
+          severity: 'medium',
+          source: 'auth',
+        });
+      });
       showToast(t('auth.invalidCredentials'), 'error');
     },
   });

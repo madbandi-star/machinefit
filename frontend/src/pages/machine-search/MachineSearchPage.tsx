@@ -95,6 +95,9 @@ export function MachineSearchPage() {
     const trimmed = debouncedQuery.trim();
     if (trimmed.length < 2) return;
     setRecentSearches(pushRecentMachineSearch(trimmed));
+    void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+      trackFeature('machine_search')
+    );
   }, [debouncedQuery]);
 
   const writeSearchParams = (patch: { muscle?: string | null; brand?: string | null }) => {

@@ -392,6 +392,9 @@ export function WorkoutLogPanel({
     restSpeechAbortRef.current = null;
     // Clear rest UI without going through Skip→onReady (that raced and killed count).
     setRestTimer(null);
+    void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+      trackFeature('voice_count')
+    );
     voiceCoachStartRef.current();
   }, []);
   const voiceCoachStopRef = useRef(voiceCoach.stop);
@@ -742,6 +745,9 @@ export function WorkoutLogPanel({
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
     },
     onSuccess: async (savedLog, variables) => {
+      void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+        trackFeature(variables?.silent ? 'history_save' : 'workout_save')
+      );
       let personalTipSaved = true;
       // Never touch machine preferences on silent autosaves (set-complete / adjust-seed).
       // Upserting tip alone still rewrites custom_settings from a concurrent DB read and
@@ -1070,6 +1076,9 @@ export function WorkoutLogPanel({
             setNumber: index + 1,
             seconds: clampRestDurationSeconds(restDurationSeconds),
           });
+          void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+            trackFeature('rest_timer')
+          );
         } else {
           setRestTimer(null);
         }
@@ -1100,6 +1109,9 @@ export function WorkoutLogPanel({
           setNumber: index + 1,
           seconds: clampRestDurationSeconds(restDurationSeconds),
         });
+        void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+          trackFeature('rest_timer')
+        );
       } else {
         setRestTimer(null);
       }

@@ -29,10 +29,12 @@ import { pushNotificationRouter } from './push-notification.routes.js';
 import { friendRouter } from './friend.routes.js';
 import { complianceRouter } from './compliance.routes.js';
 import { inspectionRouter } from './inspection.routes.js';
+import { opsRouter } from './ops.routes.js';
 
 export const apiRouter = Router();
 
 apiRouter.use(healthRouter);
+apiRouter.use('/ops', opsRouter);
 apiRouter.use(complianceRouter);
 apiRouter.use('/auth', authRouter);
 /** Spec alias: /me/providers (same handlers as /auth/me/providers). */

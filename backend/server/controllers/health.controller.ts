@@ -1,8 +1,36 @@
 import type { Request, Response } from 'express';
 import { checkDatabaseConnection, warmupDatabase } from '../config/database.js';
+import { opsService } from '../services/ops.service.js';
 
 export async function healthCheck(_req: Request, res: Response): Promise<void> {
-  // Respond quickly for Render probes; DB status is best-effort (1.5s cap).
+  // Detailed ops health for humans + Render probes (still fast via races inside).
+  try {
+    const health = await opsService.getHealth();
+    const ok = health.statusColor !== 'red';
+    res.status(ok ? 200 : 503).json({
+      success: true,
+      data: {
+        status: ok ? 'ok' : 'degraded',
+        timestamp: health.checkedAt,
+        database:
+          health.database === 'ok'
+            ? 'connected'
+            : health.database === 'not_configured'
+              ? 'not_configured'
+              : 'error',
+        server: health.server,
+        storage: health.storage,
+        version: health.version,
+        buildTime: health.buildTime,
+        statusColor: health.statusColor,
+        uptimeSec: health.uptimeSec,
+      },
+    });
+    return;
+  } catch {
+    // Fallback to legacy lightweight probe.
+  }
+
   const dbConnected = await Promise.race([
     checkDatabaseConnection(),
     new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 1500)),

@@ -97,6 +97,7 @@ export function AdminDashboardPage() {
     },
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
     { to: ROUTES.ADMIN_COMPLIANCE, title: t('compliance.nav'), desc: t('menu.complianceDesc') },
+    { to: ROUTES.ADMIN_OPS, title: t('ops.nav'), desc: t('menu.opsDesc') },
     { to: ROUTES.ADMIN_PHOTO_BOARD, title: t('photoBoard.nav'), desc: t('menu.photoBoardDesc') },
     { to: ROUTES.ADMIN_TRADES, title: t('trades.nav'), desc: t('menu.tradesDesc') },
     { to: ROUTES.ADMIN_ONLINE_PT, title: t('onlinePt.nav'), desc: t('menu.onlinePtDesc') },

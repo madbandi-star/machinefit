@@ -101,6 +101,11 @@ export function useFavoriteToggle({
       queryClient.setQueryData(favoriteKey, data);
       setIsFavorited(data.favorited);
       setFavoriteId(data.favoriteId);
+      if (data.favorited) {
+        void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+          trackFeature('favorite_add')
+        );
+      }
       if (activeGymId) {
         void queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.favorites(activeGymId, memberKey),

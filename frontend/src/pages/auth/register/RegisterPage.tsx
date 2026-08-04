@@ -132,6 +132,9 @@ export function RegisterPage() {
     onSuccess: async (res) => {
       markDemoRegisterSlotUsed();
       const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
+      void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+        trackFeature('register_complete')
+      );
       setAuth(user, tokens);
       syncUserSettings(user);
       syncGymScopeAfterAuth(user);
