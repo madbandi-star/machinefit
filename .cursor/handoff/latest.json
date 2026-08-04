@@ -1,20 +1,20 @@
 {
   "title": "Require workout goal on body metrics save",
   "summary": "Settings body-metrics Save without a workout goal shows toast + invalid highlight instead of submitting.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "bace37e2" },
   "changedFiles": [
     "frontend/src/pages/settings/SettingsPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "My Page / Settings → 신체정보: leave workout goal unset → Save → toast '운동 목표를 선택해 주세요.'; select goal then Save succeeds.",
+  "testFocus": "My Page / Settings ???�체?�보: leave workout goal unset ??Save ??toast '?�동 목표�??�택??주세??'; select goal then Save succeeds.",
   "fastChecks": [
     "rg -n \"workoutGoalRequired\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Unset goal → Save shows required toast; does not show profileSaved"
+    "Unset goal ??Save shows required toast; does not show profileSaved"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
