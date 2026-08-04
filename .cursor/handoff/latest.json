@@ -1,25 +1,25 @@
 {
-  "title": "Require workout goal on body metrics save",
-  "summary": "Settings body-metrics Save without a workout goal shows toast + invalid highlight instead of submitting.",
-  "git": { "branch": "main", "commit": "bace37e2" },
+  "title": "Open body-metrics when recommend redirects to Settings",
+  "summary": "Recommend CTA profile-incomplete redirects now go to /settings#body-metrics so the body metrics collapsible opens and scrolls into view.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/hooks/useRecommendMachine.ts",
+    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx"
   ],
-  "testFocus": "My Page / Settings ???†Ï≤¥?ïÎ≥¥: leave workout goal unset ??Save ??toast '?¥Îèô Î™©ÌëúÎ•??†ÌÉù??Ï£ºÏÑ∏??'; select goal then Save succeeds.",
+  "testFocus": "Search/detail ? ???? with missing gender (or height/weight) ? Settings opens with ???? expanded and scrolled into view.",
   "fastChecks": [
-    "rg -n \"workoutGoalRequired\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json",
+    "rg -n \"hash: 'body-metrics'|hashTargetsSection|#body-metrics\" frontend/src/hooks/useRecommendMachine.ts frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx frontend/src/pages/settings/SettingsPage.tsx",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Unset goal ??Save shows required toast; does not show profileSaved"
+    "Unset gender ? ???? ? Settings body-metrics section is expanded"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Save with no workout goal still called updateMe.",
-  "toBe": "Save blocked with toast auth.workoutGoalRequired and invalid field state."
+  "asIs": "Redirect to /settings left body-metrics collapsed.",
+  "toBe": "Redirect uses #body-metrics; section expands + smooth scroll."
 }

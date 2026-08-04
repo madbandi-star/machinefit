@@ -22,14 +22,13 @@ export function SettingsCollapsibleSection({
   const location = useLocation();
   const generatedId = useId();
   const bodyId = id ? `${id}-body` : generatedId;
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const hashTargetsSection = Boolean(id && location.hash === `#${id}`);
+  const [expanded, setExpanded] = useState(defaultExpanded || hashTargetsSection);
 
   useEffect(() => {
-    if (!id) return;
-    if (location.hash === `#${id}`) {
-      setExpanded(true);
-    }
-  }, [id, location.hash]);
+    if (!hashTargetsSection) return;
+    setExpanded(true);
+  }, [hashTargetsSection]);
 
   return (
     <section

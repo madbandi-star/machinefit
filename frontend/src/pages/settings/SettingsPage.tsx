@@ -212,9 +212,11 @@ export function SettingsPage() {
   }, [locationQuery.data]);
 
   useEffect(() => {
-    if (location.hash !== '#location-settings') return;
+    const hash = location.hash;
+    if (hash !== '#location-settings' && hash !== '#body-metrics') return;
+    const id = hash.slice(1);
     const timer = window.setTimeout(() => {
-      document.getElementById('location-settings')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
     return () => window.clearTimeout(timer);
   }, [location.hash, locationQuery.isFetched]);

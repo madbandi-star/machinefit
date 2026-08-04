@@ -1,30 +1,29 @@
-# Test handoff: Require workout goal on body metrics save
+# Test handoff: Expand body-metrics on recommend ? Settings redirect
 
 ## Summary
-Settings **? ì²´?•ë³´** Save without a selected workout goal now shows an error toast and highlights the goal field instead of calling the API.
+When **????** redirects for incomplete profile (gender / height / weight), navigation targets `/settings#body-metrics` so the **????** section opens and scrolls into view.
 
 ## Git
 - Branch: `main`
-- Commit: bace37e2
+- Commit: pending
 
 ## Changed files
+- `frontend/src/hooks/useRecommendMachine.ts`
+- `frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx`
 - `frontend/src/pages/settings/SettingsPage.tsx`
-- `frontend/src/i18n/locales/ko/common.json`
-- `frontend/src/i18n/locales/en/common.json`
 
 ## Test focus
-1. Open Settings ??? ì²´?•ë³´ (body metrics section).
-2. Clear / leave **?´ë™ ëª©í‘œ** unselected.
-3. Tap **?€??* ??toast: `?´ë™ ëª©í‘œë¥?? íƒ??ì£¼ì„¸??` (no success toast).
-4. Select a goal ??**?€??* ??success (`?„ë¡œ?„ì„ ?€?¥í–ˆ?´ìš”.`).
+1. Leave gender unset (or height/weight incomplete).
+2. Search/machine detail ? **????**.
+3. Lands on Settings with **????** expanded (gender / goal / metrics visible).
 
 ## Fast checks
 ```bash
-rg -n "workoutGoalRequired" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json
+rg -n "hash: 'body-metrics'|hashTargetsSection|#body-metrics" frontend/src/hooks/useRecommendMachine.ts frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx frontend/src/pages/settings/SettingsPage.tsx
 npm run test:smoke:changed
 ```
 
-## as-is ??to-be
+## as-is ? to-be
 | as-is | to-be |
 |-------|--------|
-| ë¯¸ì„ ???€??ê°€??| ë¯¸ì„ ?????ˆë‚´ ? ìŠ¤??+ ?€??ì°¨ë‹¨ |
+| `/settings` with sections collapsed | `/settings#body-metrics` expanded + scrolled |

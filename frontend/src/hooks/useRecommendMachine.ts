@@ -287,13 +287,16 @@ export function useRecommendMachine(machineCode: string | undefined) {
 
       if (error instanceof Error && error.message === 'missing_gender') {
         showToast(t('common:auth.genderRequiredForRecommend'), 'error');
-        navigate(ROUTES.SETTINGS, {
-          state: {
-            returnTo: machineCode
-              ? ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)
-              : undefined,
-          },
-        });
+        navigate(
+          { pathname: ROUTES.SETTINGS, hash: 'body-metrics' },
+          {
+            state: {
+              returnTo: machineCode
+                ? ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)
+                : undefined,
+            },
+          }
+        );
         return;
       }
       if (
@@ -309,13 +312,16 @@ export function useRecommendMachine(machineCode: string | undefined) {
               ? 'common:auth.weightRequiredForRecommend'
               : 'common:auth.profileRequiredForRecommend';
         showToast(t(key), 'error');
-        navigate(ROUTES.SETTINGS, {
-          state: {
-            returnTo: machineCode
-              ? ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)
-              : undefined,
-          },
-        });
+        navigate(
+          { pathname: ROUTES.SETTINGS, hash: 'body-metrics' },
+          {
+            state: {
+              returnTo: machineCode
+                ? ROUTES.MACHINE_DETAIL.replace(':machineCode', machineCode)
+                : undefined,
+            },
+          }
+        );
         return;
       }
       if (
