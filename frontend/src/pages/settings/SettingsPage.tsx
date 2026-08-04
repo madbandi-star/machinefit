@@ -563,69 +563,77 @@ export function SettingsPage() {
               labels="settings"
             />
 
-            <fieldset
-              className={`voice-coach-panel__mode${
-                !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
-              }`}
-              disabled={!voiceCoachEnabled}
-            >
-              <legend className="voice-coach-panel__mode-legend">
-                {t('settings.voiceCoachFlowMode')}
-              </legend>
-              <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_HOLD_FLOW_MODES.map((mode) => (
-                  <label key={mode} className="voice-coach-panel__mode-option">
-                    <input
-                      type="radio"
-                      name="settings-voice-flow-mode"
-                      value={mode}
-                      checked={voiceCoachFlowMode === mode}
-                      onChange={() => setVoiceCoachFlowMode(mode)}
-                    />
-                    <span>{t(`settings.voiceCoachFlowMode_${mode}`)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            <div className="settings-voice-coach__session-row">
+              <fieldset
+                className={`voice-coach-panel__mode${
+                  !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
+                }`}
+                disabled={!voiceCoachEnabled}
+              >
+                <legend className="voice-coach-panel__mode-legend">
+                  {t('settings.voiceCoachFlowMode')}
+                </legend>
+                <div className="voice-coach-panel__mode-options" role="radiogroup">
+                  {VOICE_HOLD_FLOW_MODES.map((mode) => (
+                    <label key={mode} className="voice-coach-panel__mode-option">
+                      <input
+                        type="radio"
+                        name="settings-voice-flow-mode"
+                        value={mode}
+                        checked={voiceCoachFlowMode === mode}
+                        onChange={() => setVoiceCoachFlowMode(mode)}
+                      />
+                      <span>{t(`settings.voiceCoachFlowMode_${mode}`)}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
 
-            <label className="settings-voice-coach__row">
-              <input
-                type="checkbox"
-                checked={voiceCoachOneMore}
-                onChange={(e) => setVoiceCoachOneMore(e.target.checked)}
-                disabled={!voiceCoachEnabled || voiceCoachFlowMode === 'hold'}
-              />
-              <span>{t('settings.voiceCoachOneMore')}</span>
-            </label>
-            <label className="settings-voice-coach__row">
-              <input
-                type="checkbox"
-                checked={voiceCoachFlowMode === 'count_hold'}
-                onChange={(e) =>
-                  setVoiceCoachFlowMode(e.target.checked ? 'count_hold' : 'count')
-                }
-                disabled={!voiceCoachEnabled || voiceCoachFlowMode === 'hold'}
-              />
-              <span>{t('settings.voiceCoachHoldAfterCount')}</span>
-            </label>
-            <label className="settings-voice-coach__row">
-              <input
-                type="checkbox"
-                checked={voiceCoachAutoAfterRest}
-                onChange={(e) => setVoiceCoachAutoAfterRest(e.target.checked)}
-                disabled={!voiceCoachEnabled}
-              />
-              <span>{t('settings.voiceCoachAutoAfterRest')}</span>
-            </label>
-            <label className="settings-voice-coach__row">
-              <input
-                type="checkbox"
-                checked={voiceRestTipsEnabled}
-                onChange={(e) => setVoiceRestTipsEnabled(e.target.checked)}
-                disabled={!voiceCoachEnabled}
-              />
-              <span>{t('settings.voiceRestTips')}</span>
-            </label>
+              <div
+                className={`settings-voice-coach__checks${
+                  !voiceCoachEnabled ? ' settings-voice-coach__checks--disabled' : ''
+                }`}
+              >
+                <label className="settings-voice-coach__row">
+                  <input
+                    type="checkbox"
+                    checked={voiceCoachOneMore}
+                    onChange={(e) => setVoiceCoachOneMore(e.target.checked)}
+                    disabled={!voiceCoachEnabled || voiceCoachFlowMode === 'hold'}
+                  />
+                  <span>{t('settings.voiceCoachOneMore')}</span>
+                </label>
+                <label className="settings-voice-coach__row">
+                  <input
+                    type="checkbox"
+                    checked={voiceCoachFlowMode === 'count_hold'}
+                    onChange={(e) =>
+                      setVoiceCoachFlowMode(e.target.checked ? 'count_hold' : 'count')
+                    }
+                    disabled={!voiceCoachEnabled || voiceCoachFlowMode === 'hold'}
+                  />
+                  <span>{t('settings.voiceCoachHoldAfterCount')}</span>
+                </label>
+                <label className="settings-voice-coach__row">
+                  <input
+                    type="checkbox"
+                    checked={voiceCoachAutoAfterRest}
+                    onChange={(e) => setVoiceCoachAutoAfterRest(e.target.checked)}
+                    disabled={!voiceCoachEnabled}
+                  />
+                  <span>{t('settings.voiceCoachAutoAfterRest')}</span>
+                </label>
+                <label className="settings-voice-coach__row">
+                  <input
+                    type="checkbox"
+                    checked={voiceRestTipsEnabled}
+                    onChange={(e) => setVoiceRestTipsEnabled(e.target.checked)}
+                    disabled={!voiceCoachEnabled}
+                  />
+                  <span>{t('settings.voiceRestTips')}</span>
+                </label>
+              </div>
+            </div>
 
             <div
               className={`form-row${
