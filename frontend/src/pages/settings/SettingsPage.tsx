@@ -505,11 +505,7 @@ export function SettingsPage() {
           </div>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection
-          id="voice-coach"
-          title={t('settings.voiceCoach')}
-          description={t('settings.voiceCoachDesc')}
-        >
+        <SettingsCollapsibleSection id="voice-coach" title={t('settings.voiceCoach')}>
           <div className="settings-voice-coach">
             <label className="settings-voice-coach__row">
               <input
@@ -559,9 +555,6 @@ export function SettingsPage() {
               <legend className="voice-coach-panel__mode-legend">
                 {t('settings.voiceCoachFlowMode')}
               </legend>
-              <p className="form-section__desc" style={{ marginTop: 0 }}>
-                {t('settings.voiceCoachFlowModeDesc')}
-              </p>
               <div className="voice-coach-panel__mode-options" role="radiogroup">
                 {VOICE_HOLD_FLOW_MODES.map((mode) => (
                   <label key={mode} className="voice-coach-panel__mode-option">
@@ -642,9 +635,6 @@ export function SettingsPage() {
               <legend className="voice-coach-panel__mode-legend">
                 {t('settings.voiceCoachPack')}
               </legend>
-              <p className="form-section__desc" style={{ marginTop: 0 }}>
-                {t('settings.voiceCoachPackDesc')}
-              </p>
               <div className="voice-coach-panel__mode-options" role="radiogroup">
                 {VOICE_COACH_PACKS.map((pack) => (
                   <label key={pack} className="voice-coach-panel__mode-option">
@@ -670,9 +660,6 @@ export function SettingsPage() {
               <legend className="voice-coach-panel__mode-legend">
                 {t('settings.voiceCoachPrepCount')}
               </legend>
-              <p className="form-section__desc" style={{ marginTop: 0 }}>
-                {t('settings.voiceCoachPrepCountDesc')}
-              </p>
               <div className="voice-coach-panel__mode-options" role="radiogroup">
                 {VOICE_COACH_PREP_COUNTS.map((count) => (
                   <label key={count} className="voice-coach-panel__mode-option">
@@ -699,9 +686,6 @@ export function SettingsPage() {
                 <legend className="voice-coach-panel__mode-legend">
                   {t('settings.voiceCountMode')}
                 </legend>
-                <p className="form-section__desc" style={{ marginTop: 0 }}>
-                  {t('settings.voiceCountModeDesc')}
-                </p>
                 <div className="voice-coach-panel__mode-options" role="radiogroup">
                   {VOICE_COUNT_MODES.map((mode) => (
                     <label key={mode} className="voice-coach-panel__mode-option">
