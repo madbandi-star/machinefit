@@ -528,7 +528,7 @@
       "toolsDecrease": "줄이기",
       "toolsIncrease": "늘리기",
       "toolsReset": "초기화",
-      "toolsVoiceHint": "음성 안내 예시: 하나, 둘, 셋... 원모어!, 버텨!"
+      "toolsVoiceHint": "음성 안내 예시: 하나, 둘, 셋... 하나 더!, 버텨!"
     },
     "notFound": {
       "title": "페이지를 찾을 수 없습니다",
