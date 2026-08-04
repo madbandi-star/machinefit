@@ -502,6 +502,35 @@
   margin: 0;
 }
 
+.settings-voice-coach__volume {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.settings-voice-coach__volume--disabled {
+  opacity: 0.55;
+}
+
+.settings-voice-coach__volume-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.settings-voice-coach__volume-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.settings-voice-coach__volume-input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--color-accent, #2563eb);
+}
+
 .settings-voice-coach__reps {
   display: flex;
   align-items: center;

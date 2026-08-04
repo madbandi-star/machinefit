@@ -37,6 +37,11 @@ import {
   VOICE_HOLD_DURATION,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
+import {
+  clampVoiceCoachVolume,
+  setVoiceCoachVolumeRuntime,
+  VOICE_COACH_VOLUME,
+} from '@/utils/voiceCoachVolume';
 
 function getDefaultTimezone(): string {
   try {
@@ -51,6 +56,8 @@ export const SETTINGS_DEFAULTS = {
   unitHeight: DEFAULT_UNIT_HEIGHT,
   unitWeight: DEFAULT_UNIT_WEIGHT,
   voiceCoachEnabled: true,
+  /** Voice count output level 0–1 (clips, beeps, TTS). */
+  voiceCoachVolume: VOICE_COACH_VOLUME.default,
   voiceCoachTargetReps: DEFAULT_VOICE_COACH_REPS,
   voiceCoachOneMore: true,
   voiceCoachOneMoreCount: VOICE_COACH_ONE_MORE.defaultCount,
@@ -77,6 +84,8 @@ interface SettingsState {
   unitWeight: 'kg' | 'lb';
   timezone: string;
   voiceCoachEnabled: boolean;
+  /** Voice count output level 0–1. */
+  voiceCoachVolume: number;
   voiceCoachTargetReps: number;
   voiceCoachOneMore: boolean;
   /** How many "하나더" cues after target reps. */
@@ -109,6 +118,7 @@ interface SettingsState {
   setUnitWeight: (unit: 'kg' | 'lb') => void;
   setTimezone: (tz: string) => void;
   setVoiceCoachEnabled: (enabled: boolean) => void;
+  setVoiceCoachVolume: (volume: number) => void;
   setVoiceCoachTargetReps: (reps: number) => void;
   setVoiceCoachOneMore: (enabled: boolean) => void;
   setVoiceCoachOneMoreCount: (count: number) => void;
@@ -138,6 +148,11 @@ export const useSettingsStore = create<SettingsState>()(
       setUnitWeight: (unitWeight) => set({ unitWeight }),
       setTimezone: (timezone) => set({ timezone }),
       setVoiceCoachEnabled: (voiceCoachEnabled) => set({ voiceCoachEnabled }),
+      setVoiceCoachVolume: (volume) => {
+        const voiceCoachVolume = clampVoiceCoachVolume(volume);
+        setVoiceCoachVolumeRuntime(voiceCoachVolume);
+        set({ voiceCoachVolume });
+      },
       setVoiceCoachTargetReps: (reps) =>
         set({ voiceCoachTargetReps: clampVoiceCoachTargetReps(reps) }),
       setVoiceCoachOneMore: (voiceCoachOneMore) => set({ voiceCoachOneMore }),
@@ -162,11 +177,13 @@ export const useSettingsStore = create<SettingsState>()(
         set({ workoutFullscreenDisplay }),
       setWeightDifficulty: (value) =>
         set({ weightDifficulty: clampWeightDifficulty(value) }),
-      resetSettings: () =>
+      resetSettings: () => {
+        setVoiceCoachVolumeRuntime(SETTINGS_DEFAULTS.voiceCoachVolume);
         set({
           ...SETTINGS_DEFAULTS,
           timezone: getDefaultTimezone(),
-        }),
+        });
+      },
     }),
     {
       name: 'machinefit-settings',
@@ -204,6 +221,9 @@ export const useSettingsStore = create<SettingsState>()(
           voiceCoachFlowMode: clampVoiceHoldFlowMode(
             p.voiceCoachFlowMode ?? current.voiceCoachFlowMode
           ),
+          voiceCoachVolume: clampVoiceCoachVolume(
+            p.voiceCoachVolume ?? current.voiceCoachVolume ?? SETTINGS_DEFAULTS.voiceCoachVolume
+          ),
           voiceCoachTargetReps: corrupted
             ? SETTINGS_DEFAULTS.voiceCoachTargetReps
             : clampVoiceCoachTargetReps(
@@ -236,6 +256,10 @@ export const useSettingsStore = create<SettingsState>()(
               ? p.workoutFullscreenDisplay
               : (current.workoutFullscreenDisplay ?? SETTINGS_DEFAULTS.workoutFullscreenDisplay),
         };
+      },
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        setVoiceCoachVolumeRuntime(state.voiceCoachVolume);
       },
     }
   )
