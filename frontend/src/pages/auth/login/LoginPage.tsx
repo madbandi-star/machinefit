@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
-import type { AuthProviderCode, User, AuthTokens } from '@machinefit/shared';
-import { Icon } from '@/components/icons/Icon';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons/SocialLoginButtons';
+import type { User, AuthTokens } from '@machinefit/shared';
+import { AuthLandingScreen } from '@/components/auth/AuthLandingScreen/AuthLandingScreen';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useCredentialsStore } from '@/store/credentials.store';
@@ -16,33 +13,12 @@ import { syncUserSettings } from '@/utils/syncUserSettings';
 import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { DEMO_LOGIN_EMAIL, DEMO_REGISTER_PASSWORD } from '@/utils/demoRegisterDefaults';
 import { isDemoAuthEnabled } from '@/utils/demoAuthMode';
-import {
-  consumeKakaoAuthorizationCode,
-  OAuthClientError,
-  type OAuthCredentialPayload,
-} from '@/utils/oauthClient';
-import { handleOAuthLoginResult } from '@/utils/handleOAuthLoginResult';
 import { ROUTES } from '@/constants/routes';
-import '@/styles/components.css';
 import '@/styles/auth.css';
-import '@/styles/legal.css';
-
-function getApiErrorCode(error: unknown): string | undefined {
-  if (!axios.isAxiosError(error)) return undefined;
-  const payload = error.response?.data as { error?: { code?: string } } | undefined;
-  return payload?.error?.code;
-}
-
-function getApiErrorMessage(error: unknown): string | undefined {
-  if (!axios.isAxiosError(error)) return undefined;
-  const payload = error.response?.data as { error?: { message?: string } } | undefined;
-  return payload?.error?.message;
-}
 
 export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
   const setAuth = useAuthStore((s) => s.setAuth);
   const showToast = useUIStore((s) => s.showToast);
   const demoAuth = isDemoAuthEnabled();
@@ -58,25 +34,12 @@ export function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [autoLoggingIn, setAutoLoggingIn] = useState(false);
-  const [oauthPending, setOauthPending] = useState(false);
   const autoLoginAttempted = useRef(false);
-  const kakaoCodeHandled = useRef(false);
-
-  const fromLocation = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })
-    ?.from;
-  const from =
-    fromLocation?.pathname != null
-      ? `${fromLocation.pathname}${fromLocation.search ?? ''}${fromLocation.hash ?? ''}`
-      : ROUTES.HOME;
-
-  const syncUser = (user: User) => {
-    syncUserSettings(user);
-    syncGymScopeAfterAuth(user);
-  };
 
   const completePasswordLogin = (user: User, tokens: AuthTokens, shouldSave: boolean) => {
     setAuth(user, tokens);
-    syncUser(user);
+    syncUserSettings(user);
+    syncGymScopeAfterAuth(user);
     if (shouldSave) {
       saveCredentials(email);
     } else {
@@ -87,7 +50,7 @@ export function LoginPage() {
       return;
     }
     showToast(t('auth.welcomeBack'), 'success');
-    navigate(from, { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   const mutation = useMutation({
@@ -102,58 +65,6 @@ export function LoginPage() {
     },
   });
 
-  const handleOAuth = async (provider: AuthProviderCode, credential: OAuthCredentialPayload) => {
-    setOauthPending(true);
-    try {
-      const res = await authApi.oauthLogin(provider, credential);
-      handleOAuthLoginResult({
-        data: res.data.data,
-        setAuth,
-        syncUser,
-        navigate,
-        from,
-        onAuthenticatedToast: () => showToast(t('auth.welcomeBack'), 'success'),
-      });
-    } catch (error) {
-      const code = getApiErrorCode(error);
-      const message = getApiErrorMessage(error);
-      if (code === 'OAUTH_NOT_CONFIGURED') {
-        showToast(t('auth.socialNotConfigured'), 'error');
-      } else if (message) {
-        showToast(message, 'error');
-      } else {
-        showToast(t('auth.socialFailed'), 'error');
-      }
-    } finally {
-      setOauthPending(false);
-    }
-  };
-
-  const handleOAuthClientError = (error: OAuthClientError) => {
-    if (error.code === 'NOT_CONFIGURED') {
-      showToast(t('auth.socialNotConfigured'), 'error');
-      return;
-    }
-    if (error.code === 'CANCELLED') {
-      showToast(t('auth.socialCancelled'), 'info');
-      return;
-    }
-    showToast(t('auth.socialFailed'), 'error');
-  };
-
-  useEffect(() => {
-    if (kakaoCodeHandled.current) return;
-    const pending = consumeKakaoAuthorizationCode();
-    if (!pending || pending.intent !== 'login') return;
-    kakaoCodeHandled.current = true;
-    void handleOAuth('kakao', {
-      authorizationCode: pending.code,
-      redirectUri: pending.redirectUri,
-    });
-    // Intentionally once on mount for Kakao redirect return.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- OAuth callback
-  }, []);
-
   useEffect(() => {
     if (!credentialsHydrated || autoLoginAttempted.current) return;
 
@@ -162,7 +73,6 @@ export function LoginPage() {
       setRememberMe(rememberLogin);
     }
 
-    // Auto-login only in demo-auth mode (fixed password). Never store passwords.
     if (demoAuth && rememberLogin && savedEmail) {
       autoLoginAttempted.current = true;
       setAutoLoggingIn(true);
@@ -182,130 +92,75 @@ export function LoginPage() {
     rememberLogin,
     savedEmail,
     demoAuth,
-    from,
     navigate,
     setAuth,
     showToast,
     t,
   ]);
 
-  if (!credentialsHydrated || autoLoggingIn || oauthPending) {
+  if (!credentialsHydrated || autoLoggingIn) {
     return (
-      <PageShell title={t('nav.login')}>
-        <p className="auth-page__loading">
-          {oauthPending ? t('auth.socialConnecting') : t('auth.autoLoggingIn')}
-        </p>
-      </PageShell>
+      <section className="auth-landing" aria-busy="true">
+        <p className="auth-landing__loading">{t('auth.autoLoggingIn')}</p>
+      </section>
     );
   }
 
-  return (
-    <PageShell title={t('nav.login')}>
-      <section className="auth-hero card" aria-label={t('auth.loginHeroLabel')}>
-        <div className="auth-hero__head">
-          <h2 className="auth-hero__title">{t('auth.loginHeroTitle')}</h2>
-          <p className="auth-hero__desc">{t('auth.loginHeroDesc')}</p>
-        </div>
-        <div className="auth-hero__bottom">
-          <ul className="auth-hero__features">
-            <li className="auth-hero__feature auth-hero__feature--primary">
-              <span className="auth-hero__feature-icon" aria-hidden>
-                <Icon name="user" size={16} />
-              </span>
-              <span className="auth-hero__feature-text">{t('auth.loginFeature1')}</span>
-            </li>
-            <li className="auth-hero__feature">
-              <span className="auth-hero__feature-icon" aria-hidden>
-                <Icon name="sliders" size={16} />
-              </span>
-              <span className="auth-hero__feature-text">{t('auth.loginFeature2')}</span>
-            </li>
-            <li className="auth-hero__feature">
-              <span className="auth-hero__feature-icon" aria-hidden>
-                <Icon name="trendingUp" size={16} />
-              </span>
-              <span className="auth-hero__feature-text">{t('auth.loginFeature3')}</span>
-            </li>
-          </ul>
-          <Link to={ROUTES.MACHINES} className="auth-hero__browse-btn">
-            <span className="auth-hero__browse-btn-icon" aria-hidden>
-              <Icon name="search" size={20} />
-            </span>
-            <span className="auth-hero__browse-btn-label">{t('auth.loginBrowseMachines')}</span>
-            <Icon name="chevronRight" size={18} className="auth-hero__browse-btn-chevron" />
-          </Link>
-        </div>
-      </section>
-
-      <SocialLoginButtons
-        disabled={mutation.isPending || oauthPending}
-        showDivider={false}
-        providers={['kakao', 'google']}
-        onCredential={handleOAuth}
-        onClientError={handleOAuthClientError}
-      />
-
-      {demoAuth && (
-        <div className="auth-demo">
+  const demoSlot = demoAuth ? (
+    <div className="auth-demo">
+      <button
+        type="button"
+        className="auth-demo__toggle"
+        onClick={() => setShowDemoForm((v) => !v)}
+      >
+        {showDemoForm ? t('auth.hideDemoLogin') : t('auth.showDemoLogin')}
+      </button>
+      {showDemoForm && (
+        <form
+          className="auth-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate();
+          }}
+        >
+          <input
+            className="input"
+            type="email"
+            placeholder={t('auth.emailPlaceholder')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+          <input
+            className="input"
+            type="text"
+            placeholder={t('auth.passwordDemoFixedPlaceholder')}
+            value={password}
+            readOnly
+            aria-readonly="true"
+            autoComplete="off"
+            title={t('auth.passwordDemoFixedHint')}
+          />
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <span>{t('auth.rememberLogin')}</span>
+          </label>
           <button
-            type="button"
-            className="auth-demo__toggle"
-            onClick={() => setShowDemoForm((v) => !v)}
+            type="submit"
+            className="btn btn--primary btn--block"
+            disabled={mutation.isPending}
           >
-            {showDemoForm ? t('auth.hideDemoLogin') : t('auth.showDemoLogin')}
+            {mutation.isPending ? '...' : t('nav.login')}
           </button>
-          {showDemoForm && (
-            <form
-              className="auth-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                mutation.mutate();
-              }}
-            >
-              <input
-                className="input"
-                type="email"
-                placeholder={t('auth.emailPlaceholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-              <input
-                className="input"
-                type="text"
-                placeholder={t('auth.passwordDemoFixedPlaceholder')}
-                value={password}
-                readOnly
-                aria-readonly="true"
-                autoComplete="off"
-                title={t('auth.passwordDemoFixedHint')}
-              />
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <span>{t('auth.rememberLogin')}</span>
-              </label>
-              <button
-                type="submit"
-                className="btn btn--primary btn--block"
-                disabled={mutation.isPending}
-              >
-                {mutation.isPending ? '...' : t('nav.login')}
-              </button>
-            </form>
-          )}
-        </div>
+        </form>
       )}
+    </div>
+  ) : null;
 
-      <p className="auth-page__footer">
-        <Link to={ROUTES.TERMS}>{t('legal.termsTitle')}</Link>
-        {' · '}
-        <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
-      </p>
-    </PageShell>
-  );
+  return <AuthLandingScreen demoSlot={demoSlot} />;
 }
