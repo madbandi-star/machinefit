@@ -711,12 +711,13 @@
 }
 
 .auth-landing .social-auth__btn--kakao {
-  background: var(--auth-accent);
-  color: #111;
+  background: #fee500;
+  border-color: #fee500;
+  color: #191919;
 }
 
 .auth-landing .social-auth__btn--kakao .social-auth__mark {
-  color: #111;
+  color: #191919;
 }
 
 .auth-landing .social-auth__btn--google {
