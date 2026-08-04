@@ -168,6 +168,7 @@ export function SettingsPage() {
     user?.experienceLevel ?? 'intermediate'
   );
   const [workoutGoal, setWorkoutGoal] = useState<WorkoutGoal | undefined>(user?.workoutGoal);
+  const [workoutGoalInvalid, setWorkoutGoalInvalid] = useState(false);
   const [homeGym, setHomeGym] = useState<HomeGymValue>({
     homeGymId: user?.homeGymId,
     homeGymName: user?.homeGymName,
@@ -291,6 +292,7 @@ export function SettingsPage() {
     setGender(user?.gender);
     if (user?.experienceLevel) setExperienceLevel(user.experienceLevel);
     setWorkoutGoal(user?.workoutGoal);
+    setWorkoutGoalInvalid(false);
     const resolvedName = resolveHomeGymName(user, activeGym, gyms);
     setHomeGym({
       // Prefer currently selected gym over stale signup profile name.
@@ -374,13 +376,28 @@ export function SettingsPage() {
                 if (value != null) setExperienceLevel(value);
               }}
             />
-            <WorkoutGoalSelector value={workoutGoal} onChange={setWorkoutGoal} />
+            <WorkoutGoalSelector
+              value={workoutGoal}
+              allowEmpty
+              invalid={workoutGoalInvalid}
+              onChange={(value) => {
+                setWorkoutGoal(value);
+                if (value) setWorkoutGoalInvalid(false);
+              }}
+            />
           </div>
           <button
             type="button"
             className="btn btn--primary btn--block"
             style={{ marginTop: 'var(--space-md)' }}
-            onClick={() => mutation.mutate()}
+            onClick={() => {
+              if (!workoutGoal) {
+                setWorkoutGoalInvalid(true);
+                showToast(t('auth.workoutGoalRequired'), 'error');
+                return;
+              }
+              mutation.mutate();
+            }}
             disabled={mutation.isPending}
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}

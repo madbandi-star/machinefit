@@ -1,24 +1,25 @@
 {
-  "title": "Fix ops Resolve/Ack actorId (userId)",
-  "summary": "Resolve error and ack alert failed because actorId read req.user.id; AuthPayload uses userId, so adminId was always missing (401).",
-  "git": { "branch": "main", "commit": "c8e03323" },
+  "title": "Require workout goal on body metrics save",
+  "summary": "Settings body-metrics Save without a workout goal shows toast + invalid highlight instead of submitting.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/controllers/ops.controller.ts",
-    "backend/server/middlewares/ops-metrics.middleware.ts"
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "Admin Ops → Errors → 해결; Alerts → 확인 if present. Expect success toast, row leaves unresolved list.",
+  "testFocus": "My Page / Settings → 신체정보: leave workout goal unset → Save → toast '운동 목표를 선택해 주세요.'; select goal then Save succeeds.",
   "fastChecks": [
-    "rg -n \"user\\?\\.userId|actorId\" backend/server/controllers/ops.controller.ts backend/server/middlewares/ops-metrics.middleware.ts",
+    "rg -n \"workoutGoalRequired\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Render backend redeploy: Admin Ops Errors → 해결 succeeds",
-    "No toast '처리하지 못했어요...'"
+    "Ctrl+F5 after Pages deploy",
+    "Unset goal → Save shows required toast; does not show profileSaved"
   ],
   "deploy": {
-    "frontend": "GitHub Pages via push to main (FE unchanged; backend fix)",
-    "backendDeployNeeded": true
+    "frontend": "GitHub Pages via push to main",
+    "backendDeployNeeded": false
   },
-  "asIs": "해결 → generic error toast (401 Login required from missing actor id).",
-  "toBe": "해결 marks group resolved and refreshes list."
+  "asIs": "Save with no workout goal still called updateMe.",
+  "toBe": "Save blocked with toast auth.workoutGoalRequired and invalid field state."
 }

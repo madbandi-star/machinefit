@@ -204,6 +204,7 @@
     "ageUnitShort": "세",
     "workoutGoal": "운동 목표",
     "workoutGoalPlaceholder": "선택",
+    "workoutGoalRequired": "운동 목표를 선택해 주세요.",
     "workoutGoals": {
       "hypertrophy": "근비대",
       "strength": "근력",

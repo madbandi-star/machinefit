@@ -204,6 +204,7 @@
     "ageUnitShort": "yrs",
     "workoutGoal": "Workout goal",
     "workoutGoalPlaceholder": "Select",
+    "workoutGoalRequired": "Please select a workout goal.",
     "workoutGoals": {
       "hypertrophy": "Hypertrophy",
       "strength": "Strength",
