@@ -38,9 +38,12 @@ export const ROUTES = {
   TRADE_STATS: '/my-page/trade/stats',
   LOGIN: '/login',
   REGISTER: '/register',
+  /** Staged OAuth signup / legal version reconsent. */
+  AUTH_TERMS: '/auth/terms',
   TERMS: '/terms',
   PRIVACY: '/privacy',
   LEGAL_LOCATION: '/legal/location',
+  LEGAL_MARKETING: '/legal/marketing',
   LEGAL_COMMERCE: '/legal/commerce',
   LEGAL_COMMUNITY: '/legal/community',
   LEGAL_COPYRIGHT: '/legal/copyright',

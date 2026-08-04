@@ -1,5 +1,18 @@
-/** Bump when legal copy changes — stored on user_consents.version */
-export const LEGAL_DOC_VERSION = '2026-07-25';
+/**
+ * Per-document legal versions. Bump a field when that document’s copy changes.
+ * Required reconsent is gated on `terms` + `privacy` matching these values.
+ */
+export const LEGAL_DOC_VERSIONS = {
+  terms: '2026-07-25',
+  privacy: '2026-07-25',
+  location: '2026-07-25',
+  marketing: '2026-07-25',
+} as const;
+
+export type LegalConsentVersionKey = keyof typeof LEGAL_DOC_VERSIONS;
+
+/** @deprecated Prefer LEGAL_DOC_VERSIONS — kept for existing call sites. */
+export const LEGAL_DOC_VERSION = LEGAL_DOC_VERSIONS.terms;
 
 /** Default operating region (Korea-first; expand via legal_documents.region_code). */
 export const DEFAULT_LEGAL_REGION = 'KR';

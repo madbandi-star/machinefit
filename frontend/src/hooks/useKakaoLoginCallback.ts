@@ -2,14 +2,13 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import type { AuthTokens, User } from '@machinefit/shared';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { consumeKakaoAuthorizationCode } from '@/utils/oauthClient';
-import { ROUTES } from '@/constants/routes';
+import { handleOAuthLoginResult } from '@/utils/handleOAuthLoginResult';
 
 function getApiErrorMessage(error: unknown): string | undefined {
   if (!axios.isAxiosError(error)) return undefined;
@@ -43,12 +42,16 @@ export function useKakaoLoginCallback() {
         redirectUri: pending.redirectUri,
       })
       .then((res) => {
-        const { user, tokens } = res.data.data as { user: User; tokens: AuthTokens };
-        setAuth(user, tokens);
-        syncUserSettings(user);
-        syncGymScopeAfterAuth(user);
-        showToast(t('auth.welcomeBack'), 'success');
-        navigate(ROUTES.HOME, { replace: true });
+        handleOAuthLoginResult({
+          data: res.data.data,
+          setAuth,
+          syncUser: (user) => {
+            syncUserSettings(user);
+            syncGymScopeAfterAuth(user);
+          },
+          navigate,
+          onAuthenticatedToast: () => showToast(t('auth.welcomeBack'), 'success'),
+        });
       })
       .catch((error: unknown) => {
         const code = getApiErrorCode(error);

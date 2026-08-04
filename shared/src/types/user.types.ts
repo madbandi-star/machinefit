@@ -38,6 +38,17 @@ export interface User {
   locationOptIn?: boolean;
   /** Opt-in for service (non-marketing) push notifications. */
   pushServiceOptIn?: boolean;
+  /** Accepted legal document versions (null/undefined = never accepted). */
+  termsVersion?: string | null;
+  privacyVersion?: string | null;
+  locationVersion?: string | null;
+  marketingVersion?: string | null;
+  termsAgreedAt?: string | null;
+  privacyAgreedAt?: string | null;
+  locationAgreedAt?: string | null;
+  marketingAgreedAt?: string | null;
+  /** True when required consents (terms/privacy) are missing or outdated. */
+  needsConsent?: boolean;
   isActive: boolean;
   deactivatedAt?: string | null;
   lastLoginAt?: string;
@@ -60,3 +71,41 @@ export interface AuthResponse {
   user: User;
   tokens: AuthTokens;
 }
+
+/** Staged OAuth identity before account creation / required reconsent. */
+export interface OAuthPendingIdentity {
+  provider: import('./auth-provider.types.js').AuthProviderCode;
+  email: string | null;
+  displayName: string | null;
+}
+
+export type OAuthLoginResult =
+  | {
+      status: 'authenticated';
+      user: User;
+      tokens: AuthTokens;
+    }
+  | {
+      status: 'needs_consent';
+      reason: 'signup';
+      pendingToken: string;
+      identity: OAuthPendingIdentity;
+      versions: {
+        terms: string;
+        privacy: string;
+        location: string;
+        marketing: string;
+      };
+    }
+  | {
+      status: 'needs_consent';
+      reason: 'version_update';
+      user: User;
+      tokens: AuthTokens;
+      versions: {
+        terms: string;
+        privacy: string;
+        location: string;
+        marketing: string;
+      };
+    };

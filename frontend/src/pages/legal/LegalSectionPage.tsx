@@ -7,6 +7,7 @@ import '@/styles/legal.css';
 
 type DocKey =
   | 'location'
+  | 'marketing'
   | 'commerce'
   | 'community'
   | 'copyright'
@@ -20,6 +21,15 @@ const DOC_META: Record<
     titleKey: 'legal.locationTitle',
     leadKey: 'legal.locationLead',
     sections: ['s1', 's2', 's3', 's4', 's5'],
+    nav: [
+      { to: ROUTES.PRIVACY, labelKey: 'legal.privacyTitle' },
+      { to: ROUTES.TERMS, labelKey: 'legal.termsTitle' },
+    ],
+  },
+  marketing: {
+    titleKey: 'legal.marketingTitle',
+    leadKey: 'legal.marketingLead',
+    sections: ['s1', 's2', 's3', 's4'],
     nav: [
       { to: ROUTES.PRIVACY, labelKey: 'legal.privacyTitle' },
       { to: ROUTES.TERMS, labelKey: 'legal.termsTitle' },
@@ -53,6 +63,7 @@ const DOC_META: Record<
 
 const NS: Record<DocKey, string> = {
   location: 'locationDoc',
+  marketing: 'marketingDoc',
   commerce: 'commerce',
   community: 'communityDoc',
   copyright: 'copyright',
@@ -94,6 +105,9 @@ export function LegalSectionPage({ doc }: { doc: DocKey }) {
 
 export function LocationLegalPage() {
   return <LegalSectionPage doc="location" />;
+}
+export function MarketingLegalPage() {
+  return <LegalSectionPage doc="marketing" />;
 }
 export function CommerceLegalPage() {
   return <LegalSectionPage doc="commerce" />;

@@ -4,8 +4,11 @@ import {
   loginSchema,
   marketingPrefSchema,
   oauthCredentialSchema,
+  oauthCompleteSchema,
+  consentAcceptSchema,
   authProviderCodeSchema,
   isAuthProviderCode,
+  type OAuthLoginResult,
 } from '@machinefit/shared';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -32,6 +35,54 @@ function sendAuthResult(
   });
 }
 
+function requireRefreshToken(
+  tokens: { accessToken: string; refreshToken?: string; expiresIn: string }
+): { accessToken: string; refreshToken: string; expiresIn: string } {
+  if (!tokens.refreshToken) {
+    throw new AppError(500, 'INTERNAL', 'Refresh token missing');
+  }
+  return {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    expiresIn: tokens.expiresIn,
+  };
+}
+
+function sendOAuthResult(res: Response, result: OAuthLoginResult): void {
+  if (result.status === 'authenticated') {
+    sendAuthResult(res, 200, {
+      user: result.user,
+      tokens: requireRefreshToken(result.tokens),
+    });
+    return;
+  }
+  if (result.reason === 'version_update') {
+    const tokens = requireRefreshToken(result.tokens);
+    setRefreshCookie(res, tokens.refreshToken);
+    res.status(200).json({
+      success: true,
+      data: {
+        status: result.status,
+        reason: result.reason,
+        user: result.user,
+        tokens: publicAuthTokens(tokens),
+        versions: result.versions,
+      },
+    });
+    return;
+  }
+  res.status(200).json({
+    success: true,
+    data: {
+      status: result.status,
+      reason: result.reason,
+      pendingToken: result.pendingToken,
+      identity: result.identity,
+      versions: result.versions,
+    },
+  });
+}
+
 export async function register(req: Request, res: Response): Promise<void> {
   const input = registerSchema.parse(req.body);
   const result = await authService.register(input);
@@ -54,6 +105,21 @@ export async function oauthLogin(req: Request, res: Response): Promise<void> {
   }
   const credential = oauthCredentialSchema.parse(req.body);
   const result = await authService.loginWithOAuth(providerParam, credential);
+  sendOAuthResult(res, result);
+}
+
+export async function completeOAuthSignup(req: Request, res: Response): Promise<void> {
+  const input = oauthCompleteSchema.parse(req.body);
+  const result = await authService.completeOAuthSignup(input);
+  sendAuthResult(res, 201, result);
+}
+
+export async function acceptConsents(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  }
+  const input = consentAcceptSchema.parse(req.body);
+  const result = await authService.acceptConsents(req.user.userId, input);
   sendAuthResult(res, 200, result);
 }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LEGAL_DOC_VERSION } from '../constants/legal.js';
+import { LEGAL_DOC_VERSION, LEGAL_DOC_VERSIONS } from '../constants/legal.js';
 import { experienceLevelSchema, genderSchema, workoutGoalSchema } from './user.schema.js';
 
 export const registerSchema = z.object({
@@ -68,7 +68,42 @@ export const oauthCredentialSchema = z
     message: 'redirectUri is required when authorizationCode is provided',
   });
 
+/** Complete OAuth signup after required terms acceptance. */
+export const oauthCompleteSchema = z.object({
+  pendingToken: z.string().min(1),
+  agreeTerms: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Terms of service must be accepted' }),
+  agreePrivacy: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Privacy policy must be accepted' }),
+  agreeMarketing: z.boolean().optional().default(false),
+  agreeLocation: z.boolean().optional().default(false),
+  termsVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.terms),
+  privacyVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.privacy),
+  locationVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.location),
+  marketingVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.marketing),
+});
+
+/** Accept/update required (+ optional) consents for an authenticated user (version bump). */
+export const consentAcceptSchema = z.object({
+  agreeTerms: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Terms of service must be accepted' }),
+  agreePrivacy: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Privacy policy must be accepted' }),
+  agreeMarketing: z.boolean().optional().default(false),
+  agreeLocation: z.boolean().optional().default(false),
+  termsVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.terms),
+  privacyVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.privacy),
+  locationVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.location),
+  marketingVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.marketing),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type MarketingPrefInput = z.infer<typeof marketingPrefSchema>;
 export type OAuthCredentialInput = z.infer<typeof oauthCredentialSchema>;
+export type OAuthCompleteInput = z.infer<typeof oauthCompleteSchema>;
+export type ConsentAcceptInput = z.infer<typeof consentAcceptSchema>;

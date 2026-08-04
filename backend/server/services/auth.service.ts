@@ -2,17 +2,27 @@ import {
   Role,
   DEMO_PASSWORD,
   LEGAL_DOC_VERSION,
+  LEGAL_DOC_VERSIONS,
   type RegisterInput,
   type LoginInput,
   type User,
   type RoleCode,
+  type OAuthCompleteInput,
+  type ConsentAcceptInput,
+  type OAuthLoginResult,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { env } from '../config/env.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { hashPassword, comparePassword } from '../utils/hash.util.js';
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/jwt.util.js';
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+  signOAuthPendingToken,
+  verifyOAuthPendingToken,
+} from '../utils/jwt.util.js';
 import { devUsers, findDevUserByEmail, findDevUserById } from '../data/dev-users.js';
 import { notificationService } from './notification.service.js';
 import crypto from 'crypto';
@@ -55,37 +65,86 @@ async function issueAuthTokens(user: Pick<User, 'id' | 'roleCode' | 'email'>) {
   };
 }
 
+function withConsentFlags(user: User): User {
+  const needsConsent = userRepository.needsRequiredConsent(user);
+  return {
+    ...user,
+    needsConsent,
+  };
+}
+
 async function buildAuthResponse(user: User) {
   const tokens = await issueAuthTokens(user);
+  const safe = withConsentFlags(user);
 
   return {
     user: {
-      id: user.id,
-      roleId: user.roleId,
-      email: user.email,
-      displayName: user.displayName,
-      roleCode: user.roleCode,
-      gender: user.gender,
-      unitHeight: user.unitHeight ?? ('cm' as const),
-      unitWeight: user.unitWeight ?? ('kg' as const),
-      heightCm: user.heightCm,
-      weightKg: user.weightKg,
-      age: user.age,
-      workoutGoal: user.workoutGoal,
-      homeGymId: user.homeGymId,
-      homeGymName: user.homeGymName,
-      activeGymId: user.activeGymId,
-      experienceLevel: user.experienceLevel,
-      subscriptionPlan: user.subscriptionPlan ?? 'free',
-      marketingOptIn: user.marketingOptIn ?? false,
-      locationOptIn: user.locationOptIn ?? false,
-      pushServiceOptIn: user.pushServiceOptIn ?? true,
-      isActive: user.isActive ?? true,
-      createdAt: user.createdAt ?? new Date().toISOString(),
-      updatedAt: user.updatedAt ?? new Date().toISOString(),
+      id: safe.id,
+      roleId: safe.roleId,
+      email: safe.email,
+      displayName: safe.displayName,
+      roleCode: safe.roleCode,
+      gender: safe.gender,
+      unitHeight: safe.unitHeight ?? ('cm' as const),
+      unitWeight: safe.unitWeight ?? ('kg' as const),
+      heightCm: safe.heightCm,
+      weightKg: safe.weightKg,
+      age: safe.age,
+      workoutGoal: safe.workoutGoal,
+      homeGymId: safe.homeGymId,
+      homeGymName: safe.homeGymName,
+      activeGymId: safe.activeGymId,
+      experienceLevel: safe.experienceLevel,
+      subscriptionPlan: safe.subscriptionPlan ?? 'free',
+      marketingOptIn: safe.marketingOptIn ?? false,
+      locationOptIn: safe.locationOptIn ?? false,
+      pushServiceOptIn: safe.pushServiceOptIn ?? true,
+      termsVersion: safe.termsVersion ?? null,
+      privacyVersion: safe.privacyVersion ?? null,
+      locationVersion: safe.locationVersion ?? null,
+      marketingVersion: safe.marketingVersion ?? null,
+      termsAgreedAt: safe.termsAgreedAt ?? null,
+      privacyAgreedAt: safe.privacyAgreedAt ?? null,
+      locationAgreedAt: safe.locationAgreedAt ?? null,
+      marketingAgreedAt: safe.marketingAgreedAt ?? null,
+      needsConsent: safe.needsConsent ?? false,
+      isActive: safe.isActive ?? true,
+      createdAt: safe.createdAt ?? new Date().toISOString(),
+      updatedAt: safe.updatedAt ?? new Date().toISOString(),
     },
     tokens,
   };
+}
+
+function currentLegalVersions() {
+  return { ...LEGAL_DOC_VERSIONS };
+}
+
+async function applyConsentBundle(
+  userId: string,
+  input: {
+    agreeMarketing?: boolean;
+    agreeLocation?: boolean;
+    termsVersion?: string;
+    privacyVersion?: string;
+    locationVersion?: string;
+    marketingVersion?: string;
+  }
+) {
+  const termsVersion = input.termsVersion || LEGAL_DOC_VERSIONS.terms;
+  const privacyVersion = input.privacyVersion || LEGAL_DOC_VERSIONS.privacy;
+  const locationVersion = input.locationVersion || LEGAL_DOC_VERSIONS.location;
+  const marketingVersion = input.marketingVersion || LEGAL_DOC_VERSIONS.marketing;
+  const marketingOptIn = Boolean(input.agreeMarketing);
+  const locationOptIn = Boolean(input.agreeLocation);
+
+  await userRepository.recordConsents(userId, [
+    { type: 'terms', version: termsVersion, agreed: true },
+    { type: 'privacy', version: privacyVersion, agreed: true },
+    { type: 'marketing', version: marketingVersion, agreed: marketingOptIn },
+    { type: 'location', version: locationVersion, agreed: locationOptIn },
+    { type: 'push_service', version: termsVersion, agreed: true },
+  ]);
 }
 
 async function resolveRegisterPasswordHash(plainPassword: string): Promise<string> {
@@ -393,7 +452,7 @@ export const authService = {
   async loginWithOAuth(
     provider: import('@machinefit/shared').AuthProviderCode,
     credential: import('@machinefit/shared').OAuthCredentialInput
-  ) {
+  ): Promise<OAuthLoginResult> {
     const { verifyOAuthCredential } = await import('../utils/oauth-verify.util.js');
     const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
 
@@ -409,81 +468,156 @@ export const authService = {
         throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
       }
       await userRepository.updateLastLogin(user.id);
-      return buildAuthResponse(user);
+      const auth = await buildAuthResponse(user);
+      if (auth.user.needsConsent) {
+        return {
+          status: 'needs_consent',
+          reason: 'version_update',
+          user: auth.user,
+          tokens: auth.tokens,
+          versions: currentLegalVersions(),
+        };
+      }
+      return { status: 'authenticated', user: auth.user, tokens: auth.tokens };
     }
 
-    // Never auto-merge by email — allocate a dedicated users row.
-    const email = await allocateOAuthUserEmail(provider, identity.providerUserId, identity.providerEmail);
     const displayName =
       credential.displayName?.trim() ||
       identity.displayName?.trim() ||
       `${provider.charAt(0).toUpperCase()}${provider.slice(1)} User`;
 
+    const pendingToken = signOAuthPendingToken({
+      provider,
+      providerUserId: identity.providerUserId,
+      providerEmail: identity.providerEmail,
+      displayName: displayName.slice(0, 100),
+      avatarUrl: identity.avatarUrl,
+    });
+
+    return {
+      status: 'needs_consent',
+      reason: 'signup',
+      pendingToken,
+      identity: {
+        provider,
+        email: identity.providerEmail,
+        displayName: displayName.slice(0, 100),
+      },
+      versions: currentLegalVersions(),
+    };
+  },
+
+  async completeOAuthSignup(input: OAuthCompleteInput) {
+    if (!input.agreeTerms || !input.agreePrivacy) {
+      throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
+    }
+
+    let pending;
     try {
-      const user = await userRepository.create({
+      pending = verifyOAuthPendingToken(input.pendingToken);
+    } catch {
+      throw new AppError(401, 'INVALID_TOKEN', 'Signup session expired. Please sign in again.');
+    }
+
+    const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+    const existingLink = await authProviderRepository.findByProviderUserId(
+      pending.provider,
+      pending.providerUserId
+    );
+    if (existingLink) {
+      const user = await userRepository.findById(existingLink.userId);
+      if (!user || !user.isActive) {
+        throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
+      }
+      await applyConsentBundle(user.id, input);
+      const refreshed = await userRepository.findById(user.id);
+      if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
+      await userRepository.updateLastLogin(refreshed.id);
+      return buildAuthResponse(refreshed);
+    }
+
+    const email = await allocateOAuthUserEmail(
+      pending.provider,
+      pending.providerUserId,
+      pending.providerEmail
+    );
+    const displayName =
+      pending.displayName?.trim() ||
+      `${pending.provider.charAt(0).toUpperCase()}${pending.provider.slice(1)} User`;
+
+    try {
+      let user = await userRepository.create({
         email,
         passwordHash: null,
         displayName: displayName.slice(0, 100),
-        avatarUrl: identity.avatarUrl,
+        avatarUrl: pending.avatarUrl ?? undefined,
         experienceLevel: 'beginner',
+        marketingOptIn: Boolean(input.agreeMarketing),
+        locationOptIn: Boolean(input.agreeLocation),
       });
       await authProviderRepository.create({
         userId: user.id,
-        provider,
-        providerUserId: identity.providerUserId,
-        providerEmail: identity.providerEmail,
+        provider: pending.provider,
+        providerUserId: pending.providerUserId,
+        providerEmail: pending.providerEmail,
       });
+      await applyConsentBundle(user.id, input);
+
+      const { userGymRepository } = await import('../repositories/user-gym.repository.js');
+      const defaultGym = await userGymRepository.ensureDefaultGym(user.id);
+      user = { ...user, activeGymId: defaultGym.id };
+
       await userRepository.updateLastLogin(user.id);
-      return buildAuthResponse(user);
+      const refreshed = await userRepository.findById(user.id);
+      if (!refreshed) throw new AppError(500, 'INTERNAL', 'Failed to load created user');
+
+      void notificationService.notify(
+        refreshed.id,
+        'system',
+        { en: 'Welcome to MachineFit!', ko: 'MachineFit에 오신 것을 환영합니다!' },
+        {
+          en: 'Get personalized machine settings for your body.',
+          ko: '체형에 맞는 기구 설정을 받아보세요.',
+        }
+      );
+
+      return buildAuthResponse(refreshed);
     } catch (error: unknown) {
       const code =
         error && typeof error === 'object' && 'code' in error
           ? String((error as { code?: string }).code)
           : '';
       if (code === '23505') {
-        // Race on provider_user_id, or leftover oauth.* user row without provider link.
         const raced = await authProviderRepository.findByProviderUserId(
-          provider,
-          identity.providerUserId
+          pending.provider,
+          pending.providerUserId
         );
         if (raced) {
           const user = await userRepository.findById(raced.userId);
-          if (user?.isActive) return buildAuthResponse(user);
-        }
-
-        const byEmail = await userRepository.findByEmail(email);
-        if (byEmail?.isActive) {
-          const linkedElsewhere = await authProviderRepository.findByProviderUserId(
-            provider,
-            identity.providerUserId
-          );
-          if (linkedElsewhere && linkedElsewhere.userId !== byEmail.id) {
-            throw new AppError(
-              409,
-              'PROVIDER_LINKED_TO_OTHER_ACCOUNT',
-              'This login is already linked to another MachineFit account'
-            );
+          if (user?.isActive) {
+            await applyConsentBundle(user.id, input);
+            const refreshed = await userRepository.findById(user.id);
+            if (refreshed) return buildAuthResponse(refreshed);
           }
-          const sameProvider = await authProviderRepository.findByUserAndProvider(
-            byEmail.id,
-            provider
-          );
-          if (!sameProvider && !linkedElsewhere) {
-            await authProviderRepository.create({
-              userId: byEmail.id,
-              provider,
-              providerUserId: identity.providerUserId,
-              providerEmail: identity.providerEmail,
-            });
-          }
-          await userRepository.updateLastLogin(byEmail.id);
-          return buildAuthResponse(byEmail);
         }
-
         throw new AppError(409, 'PROVIDER_ALREADY_LINKED', 'This login is already linked');
       }
       throw error;
     }
+  },
+
+  async acceptConsents(userId: string, input: ConsentAcceptInput) {
+    if (!input.agreeTerms || !input.agreePrivacy) {
+      throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
+    }
+    const user = await userRepository.findById(userId);
+    if (!user || !user.isActive) {
+      throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+    }
+    await applyConsentBundle(userId, input);
+    const refreshed = await userRepository.findById(userId);
+    if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
+    return buildAuthResponse(refreshed);
   },
 
   async listProviders(userId: string) {

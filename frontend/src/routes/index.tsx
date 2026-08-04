@@ -8,6 +8,7 @@ import { AdminLayout } from '@/layouts/AdminLayout';
 import { EasyLayout } from '@/layouts/EasyLayout';
 import { AuthGuard } from '@/routes/guards/AuthGuard';
 import { GuestGuard } from '@/routes/guards/GuestGuard';
+import { ConsentFlowGuard } from '@/routes/guards/ConsentFlowGuard';
 import { ROUTES } from '@/constants/routes';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { HomePage } from '@/pages/home/HomePage';
@@ -146,6 +147,10 @@ const login = () =>
   import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
 const register = () =>
   import('@/pages/auth/register/RegisterPage').then((m) => ({ default: m.RegisterPage }));
+const authTerms = () =>
+  import('@/pages/auth/terms/TermsAgreementPage').then((m) => ({
+    default: m.TermsAgreementPage,
+  }));
 const growth = () =>
   import('@/pages/growth-analysis/GrowthAnalysisPage').then((m) => ({
     default: m.GrowthAnalysisPage,
@@ -322,6 +327,8 @@ const privacyPage = () =>
   import('@/pages/legal/PrivacyPage').then((m) => ({ default: m.PrivacyPage }));
 const locationLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.LocationLegalPage }));
+const marketingLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.MarketingLegalPage }));
 const commerceLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CommerceLegalPage }));
 const communityLegalPage = () =>
@@ -357,6 +364,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.TERMS, element: lazyRoute(termsPage) },
         { path: ROUTES.PRIVACY, element: lazyRoute(privacyPage) },
         { path: ROUTES.LEGAL_LOCATION, element: lazyRoute(locationLegalPage) },
+        { path: ROUTES.LEGAL_MARKETING, element: lazyRoute(marketingLegalPage) },
         { path: ROUTES.LEGAL_COMMERCE, element: lazyRoute(commerceLegalPage) },
         { path: ROUTES.LEGAL_COMMUNITY, element: lazyRoute(communityLegalPage) },
         { path: ROUTES.LEGAL_COPYRIGHT, element: lazyRoute(copyrightLegalPage) },
@@ -491,6 +499,15 @@ export const router = createBrowserRouter(
         { path: ROUTES.LOGIN, element: lazyRoute(login) },
         { path: ROUTES.REGISTER, element: lazyRoute(register) },
       ],
+    },
+    {
+      element: (
+        <ConsentFlowGuard>
+          <AuthLayout />
+        </ConsentFlowGuard>
+      ),
+      errorElement: <RouterErrorElement />,
+      children: [{ path: ROUTES.AUTH_TERMS, element: lazyRoute(authTerms) }],
     },
     {
       element: (

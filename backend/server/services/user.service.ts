@@ -23,7 +23,10 @@ export const userService = {
       }
     }
 
-    return user;
+    return {
+      ...user,
+      needsConsent: userRepository.needsRequiredConsent(user),
+    };
   },
 
   async updateMe(userId: string, input: UpdateProfileInput) {
