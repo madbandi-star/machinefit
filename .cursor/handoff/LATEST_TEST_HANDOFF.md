@@ -5,7 +5,7 @@ When **????** redirects for incomplete profile (gender / height / weight), navig
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: b6e2ea24
 
 ## Changed files
 - `frontend/src/hooks/useRecommendMachine.ts`

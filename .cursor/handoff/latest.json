@@ -1,7 +1,7 @@
 {
   "title": "Open body-metrics when recommend redirects to Settings",
   "summary": "Recommend CTA profile-incomplete redirects now go to /settings#body-metrics so the body metrics collapsible opens and scrolls into view.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b6e2ea24" },
   "changedFiles": [
     "frontend/src/hooks/useRecommendMachine.ts",
     "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
