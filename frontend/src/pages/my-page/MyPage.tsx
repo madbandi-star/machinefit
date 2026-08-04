@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -9,14 +9,13 @@ import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
-import { authApi, locationApi, userApi } from '@/api';
+import { locationApi, userApi, authApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
-import { clearGymScope } from '@/utils/syncGymScope';
-import { useCredentialsStore } from '@/store/credentials.store';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
+import { clearLocalSession } from '@/utils/performLogout';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
 import '@/styles/community.css';
@@ -39,10 +38,9 @@ function ListNavLink({ to, label, icon }: { to: string; label: string; icon: Ico
 export function MyPage() {
   const { t } = useTranslation();
   const { t: tc } = useTranslation('community');
+  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
-  const clearAuth = useAuthStore((s) => s.clearAuth);
-  const clearCredentials = useCredentialsStore((s) => s.clearCredentials);
   const showToast = useUIStore((s) => s.showToast);
   const { activeGym, gyms } = useActiveGym();
 
@@ -85,11 +83,12 @@ export function MyPage() {
   const showMemberLevel = Boolean(roleCode && !hasExactRole(roleCode, Role.MEMBER));
 
   const handleLogout = () => {
-    void authApi.logout().catch(() => undefined);
-    clearCredentials();
-    clearAuth();
-    clearGymScope();
     setShowLogout(false);
+    // Clear local session + go home in the same turn so AuthGuard cannot
+    // bounce /my-page → /login → /home (that flash loop felt like flicker).
+    void authApi.logout().catch(() => undefined);
+    clearLocalSession({ clearCredentials: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   const handleCopyEmail = async () => {

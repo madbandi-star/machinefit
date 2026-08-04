@@ -579,22 +579,25 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    color-mix(in srgb, var(--auth-accent) 55%, transparent) 0%,
+    color-mix(in srgb, var(--auth-accent) 45%, transparent) 0%,
     transparent 70%
   );
   filter: blur(6px);
-  animation: auth-landing-glow 2.4s ease-in-out infinite alternate;
+  opacity: 0.75;
+  /* Static glow — infinite pulse looked like screen flicker after remounts. */
 }
 
-@keyframes auth-landing-glow {
-  from {
-    opacity: 0.55;
-    transform: scaleX(0.92);
-  }
-  to {
-    opacity: 0.95;
-    transform: scaleX(1.05);
-  }
+.auth-landing--boot {
+  min-height: 100dvh;
+  animation: none;
+}
+
+.auth-landing--settled {
+  animation: none;
+}
+
+.auth-landing--settled .auth-landing__hero-mark {
+  animation: none;
 }
 
 .auth-landing__hero-mark {

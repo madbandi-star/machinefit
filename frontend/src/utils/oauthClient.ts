@@ -3,6 +3,9 @@ import type { AuthProviderCode } from '@machinefit/shared';
 const KAKAO_OAUTH_INTENT_KEY = 'mf_kakao_oauth_intent';
 const KAKAO_OAUTH_REDIRECT_KEY = 'mf_kakao_oauth_redirect';
 
+/** Prevents double exchange when AuthLanding remounts (layout chrome swap / StrictMode). */
+const consumedKakaoCodes = new Set<string>();
+
 function loadScript(src: string, id: string): Promise<void> {
   if (document.getElementById(id)) return Promise.resolve();
   return new Promise((resolve, reject) => {
@@ -136,34 +139,56 @@ export function consumeKakaoAuthorizationCode(): {
   const error = params.get('error');
   const intentRaw = sessionStorage.getItem(KAKAO_OAUTH_INTENT_KEY);
   const redirectUri = sessionStorage.getItem(KAKAO_OAUTH_REDIRECT_KEY);
-  if (!intentRaw || !redirectUri) return null;
 
-  if (error) {
-    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
-    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+  const stripOauthParams = () => {
     params.delete('code');
     params.delete('error');
     params.delete('error_description');
     params.delete('state');
     const next = `${window.location.pathname}${params.toString() ? `?${params}` : ''}${window.location.hash}`;
     window.history.replaceState({}, '', next);
+  };
+
+  // Always scrub leftover OAuth query params — even without intent — so refresh/back
+  // doesn't keep a sticky ?code= that remounts/handlers keep noticing.
+  if (!intentRaw || !redirectUri) {
+    if (code || error) stripOauthParams();
+    return null;
+  }
+
+  if (error) {
+    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
+    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+    stripOauthParams();
     return null;
   }
 
   if (!code) return null;
 
+  // Same authorization code must only be exchanged once (layout remounts / StrictMode).
+  if (consumedKakaoCodes.has(code)) {
+    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
+    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+    stripOauthParams();
+    return null;
+  }
+  consumedKakaoCodes.add(code);
+
   sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
   sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
-  params.delete('code');
-  params.delete('state');
-  const next = `${window.location.pathname}${params.toString() ? `?${params}` : ''}${window.location.hash}`;
-  window.history.replaceState({}, '', next);
+  stripOauthParams();
 
   return {
     code,
     redirectUri,
     intent: intentRaw === 'connect' ? 'connect' : 'login',
   };
+}
+
+/** Clear Kakao OAuth staging keys (call on logout). */
+export function clearKakaoOAuthStaging(): void {
+  sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
+  sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
 }
 
 async function ensureKakaoSdk(): Promise<void> {

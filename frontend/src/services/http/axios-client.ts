@@ -3,6 +3,8 @@ import type { AuthTokens } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
 import { clearGymScope } from '@/utils/syncGymScope';
 import { useSettingsStore } from '@/store/settings.store';
+import { clearKakaoOAuthStaging } from '@/utils/oauthClient';
+import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
 
 function normalizeApiBaseUrl(url: string): string {
   const trimmed = url.replace(/\/+$/, '');
@@ -122,6 +124,9 @@ apiClient.interceptors.response.use(
 
       useAuthStore.getState().clearAuth();
       clearGymScope();
+      clearKakaoOAuthStaging();
+      clearOAuthPending();
+      clearTermsChecks();
     }
 
     if (originalRequest && isRetryableGet(error)) {

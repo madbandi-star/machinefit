@@ -90,6 +90,7 @@ export function useSocialAuthLogin() {
   };
 
   useEffect(() => {
+    // Scrub orphan Kakao params even when this mount is not the code consumer.
     if (kakaoCodeHandled.current) return;
     const pending = consumeKakaoAuthorizationCode();
     if (!pending || pending.intent !== 'login') return;

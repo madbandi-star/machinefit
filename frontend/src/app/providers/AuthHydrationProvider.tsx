@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { useAuthStore } from '@/store/auth.store';
 import { restoreSessionFromRefresh } from '@/services/http/axios-client';
 import { clearGymScope } from '@/utils/syncGymScope';
+import { clearKakaoOAuthStaging } from '@/utils/oauthClient';
+import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
 
 const AuthHydrationContext = createContext(false);
 
@@ -39,6 +41,9 @@ function useRunAuthHydration(): boolean {
       if (!ok && !cancelled) {
         clearAuth();
         clearGymScope();
+        clearKakaoOAuthStaging();
+        clearOAuthPending();
+        clearTermsChecks();
       }
       if (!cancelled) setSessionReady(true);
     }

@@ -17,15 +17,26 @@ function isHomePath(pathname: string): boolean {
 export function MainLayout() {
   const { t } = useTranslation();
   const location = useLocation();
-  const hydrated = useAuthHydration();
+  const authReady = useAuthHydration();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const guestLanding = hydrated && !isAuthenticated && isHomePath(location.pathname);
+  const onHome = isHomePath(location.pathname);
 
-  if (guestLanding) {
+  /**
+   * Guest/home must never flash the app chrome (header/nav) before auth is ready.
+   * That chrome↔landing swap was remounting AuthLanding and looked like a blink loop
+   * after Kakao redirect and logout.
+   */
+  const showGuestLandingShell = onHome && (!authReady || !isAuthenticated);
+
+  if (showGuestLandingShell) {
     return (
       <div className="layout layout--auth-landing">
         <ConsentRedirect />
-        <Outlet />
+        {authReady ? (
+          <Outlet />
+        ) : (
+          <section className="auth-landing auth-landing--boot" aria-busy="true" />
+        )}
       </div>
     );
   }
