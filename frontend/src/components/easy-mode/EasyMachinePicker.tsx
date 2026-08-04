@@ -92,6 +92,24 @@ export function EasyMachinePicker({
     };
   }, [open, initialCode]);
 
+  const detailCode = detail?.code ?? '';
+  const needsMuscleCover =
+    Boolean(detailCode) && isFreeWeightMachineCode(detailCode) && Boolean(targetMuscle);
+
+  // Mirror MachineDetailPage: refetch cover when freeweight 세부부위 changes.
+  const { data: detailWithMuscle } = useQuery({
+    queryKey: QUERY_KEYS.machine(detailCode, targetMuscle ?? undefined),
+    queryFn: async () => {
+      const res = await machineApi.getByCode(
+        detailCode,
+        targetMuscle ? { muscle: targetMuscle } : undefined
+      );
+      return res.data.data;
+    },
+    enabled: open && needsMuscleCover,
+    placeholderData: (prev) => prev,
+  });
+
   const { data: brands = [] } = useQuery({
     queryKey: QUERY_KEYS.brands,
     queryFn: async () => (await brandApi.list()).data.data,
@@ -119,6 +137,13 @@ export function EasyMachinePicker({
   if (!open) return null;
 
   const needsMuscle = detail ? isFreeWeightMachineCode(detail.code) : false;
+  const heroMachine =
+    needsMuscle &&
+    targetMuscle &&
+    detailWithMuscle &&
+    detailWithMuscle.code === detail?.code
+      ? detailWithMuscle
+      : detail;
   const canConfirm = Boolean(detail) && (!needsMuscle || Boolean(targetMuscle));
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
 
@@ -187,7 +212,7 @@ export function EasyMachinePicker({
           <Skeleton count={3} height={72} />
         ) : detail ? (
           <>
-            <MachineHero machine={detail} />
+            <MachineHero machine={heroMachine!} selectedMuscle={targetMuscle} />
             {needsMuscle ? (
               <>
                 <p className="easy-list__label">{t('easyMode.muscleTitle')}</p>
