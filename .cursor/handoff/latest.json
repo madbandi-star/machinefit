@@ -1,7 +1,7 @@
 {
   "title": "Move My Page admin tools below owner section",
   "summary": "Admin tools (ops monitoring + admin dashboard) on My Page now render after the owner-only section instead of near the top.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "45da6956" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
   "testFocus": "Login as admin ? My Page: ??? ?? then ????? (?? ????, ??? ????).",
   "fastChecks": [
