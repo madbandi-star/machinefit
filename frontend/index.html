@@ -48,20 +48,9 @@
             }
           }
         } catch (e) {}
-        try {
-          if (!localStorage.getItem('mf-pwa-bust-v29')) {
-            if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.getRegistrations().then(function (regs) {
-                regs.forEach(function (reg) { reg.unregister(); });
-              });
-            }
-            if (window.caches) {
-              caches.keys().then(function (keys) {
-                keys.forEach(function (key) { caches.delete(key); });
-              });
-            }
-          }
-        } catch (e) {}
+        /* PWA cache bust lives in main.tsx (one-shot + sets a key).
+           Do NOT unregister SW here — clearing without setting a key races
+           autoUpdate registerSW and causes infinite location.reload() in Chrome. */
       })();
     </script>
   </head>
