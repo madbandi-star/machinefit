@@ -5,7 +5,7 @@ Removed the green **?? ????** primary button above **? ????**. Admin tools keep 
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: a1f06cf4
 
 ## Changed files
 - `frontend/src/pages/my-page/MyPage.tsx`

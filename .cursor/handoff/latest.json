@@ -1,7 +1,7 @@
 {
   "title": "Remove green Ops Monitoring CTA on My Page",
   "summary": "Removed the primary green Ops Monitoring button above Share App in the admin tools section; list nav links remain.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a1f06cf4" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
   "testFocus": "Admin My Page: no green ?? ???? button above ? ????; list links in ????? still work.",
   "fastChecks": [
