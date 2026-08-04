@@ -1,21 +1,21 @@
 {
-  "title": "Move My Page admin tools below owner section",
-  "summary": "Admin tools (ops monitoring + admin dashboard) on My Page now render after the owner-only section instead of near the top.",
-  "git": { "branch": "main", "commit": "45da6956" },
+  "title": "Remove duplicate admin buttons above logout",
+  "summary": "Removed the standalone Ops Monitoring / Admin Dashboard action buttons between Share App and Logout on My Page; admin tools section remains.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": "Login as admin ? My Page: ??? ?? then ????? (?? ????, ??? ????).",
+  "testFocus": "Admin My Page: no ops/admin buttons between Share and Logout; ????? section still works.",
   "fastChecks": [
-    "rg -n \"adminTools|ownerOnly\" frontend/src/pages/my-page/MyPage.tsx",
+    "rg -n \"ADMIN_OPS|adminDashboard|opsMonitoring\" frontend/src/pages/my-page/MyPage.tsx",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Admin My Page: owner section above admin tools"
+    "Share ? (optional owner/trainer CTAs) ? Logout with no admin buttons in between"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Admin tools section near top of My Page.",
-  "toBe": "Admin tools section directly under ??? ??."
+  "asIs": "Duplicate admin buttons between Share and Logout.",
+  "toBe": "Those buttons removed; admin tools section only."
 }
