@@ -1,26 +1,26 @@
-# Test handoff: Remove duplicate admin buttons above logout
+# Test handoff: Remove green Ops Monitoring CTA on My Page
 
 ## Summary
-Removed **?? ????** / **??? ????** buttons between Share App and Logout on My Page. The **?????** section still has the links.
+Removed the green **?? ????** primary button above **? ????**. Admin tools keep list links only.
 
 ## Git
 - Branch: `main`
-- Commit: 797b47aa
+- Commit: pending
 
 ## Changed files
 - `frontend/src/pages/my-page/MyPage.tsx`
 
 ## Test focus
-1. Admin My Page bottom actions: Share ? (no admin buttons) ? Logout.
-2. ????? section still opens ops / dashboard.
+1. Admin My Page: no green Ops button above Share.
+2. ????? list still links to ops / dashboard.
 
 ## Fast checks
 ```bash
-rg -n "ADMIN_OPS|adminDashboard|opsMonitoring" frontend/src/pages/my-page/MyPage.tsx
+rg -n "btn--primary|ADMIN_OPS" frontend/src/pages/my-page/MyPage.tsx
 npm run test:smoke:changed
 ```
 
 ## as-is ? to-be
 | as-is | to-be |
 |-------|--------|
-| Share / Ops / Admin / Logout | Share / Logout (admin only via ?????) |
+| Green Ops CTA above Share | List links only |

@@ -1,21 +1,21 @@
 {
-  "title": "Remove duplicate admin buttons above logout",
-  "summary": "Removed the standalone Ops Monitoring / Admin Dashboard action buttons between Share App and Logout on My Page; admin tools section remains.",
-  "git": { "branch": "main", "commit": "797b47aa" },
+  "title": "Remove green Ops Monitoring CTA on My Page",
+  "summary": "Removed the primary green Ops Monitoring button above Share App in the admin tools section; list nav links remain.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": "Admin My Page: no ops/admin buttons between Share and Logout; ????? section still works.",
+  "testFocus": "Admin My Page: no green ?? ???? button above ? ????; list links in ????? still work.",
   "fastChecks": [
-    "rg -n \"ADMIN_OPS|adminDashboard|opsMonitoring\" frontend/src/pages/my-page/MyPage.tsx",
+    "rg -n \"btn--primary.*opsMonitoring|ADMIN_OPS\" frontend/src/pages/my-page/MyPage.tsx",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Share ? (optional owner/trainer CTAs) ? Logout with no admin buttons in between"
+    "Admin tools list only ? no green CTA above Share"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Duplicate admin buttons between Share and Logout.",
-  "toBe": "Those buttons removed; admin tools section only."
+  "asIs": "Green Ops Monitoring button above Share App.",
+  "toBe": "Only list-nav entries under ?????."
 }

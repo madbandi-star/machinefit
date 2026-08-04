@@ -333,13 +333,6 @@ export function MyPage() {
               icon="shield"
             />
           </nav>
-          <Link
-            to={ROUTES.ADMIN_OPS}
-            className="btn btn--primary btn--block"
-            style={{ marginTop: '0.75rem' }}
-          >
-            {t('myPage.opsMonitoring')}
-          </Link>
         </section>
       ) : null}
 
