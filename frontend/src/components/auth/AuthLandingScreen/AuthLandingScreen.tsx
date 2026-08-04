@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons/SocialLoginButtons';
@@ -8,7 +7,6 @@ import { ROUTES } from '@/constants/routes';
 import '@/styles/auth.css';
 
 const MARK_SRC = `${import.meta.env.BASE_URL}assets/brand/machinefit-mark.svg`;
-const LANDING_SETTLED_KEY = 'mf_auth_landing_settled';
 
 function FeatureTargetIcon() {
   return (
@@ -16,7 +14,12 @@ function FeatureTargetIcon() {
       <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.5" />
       <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.5" />
       <circle cx="12" cy="12" r="1.4" fill="currentColor" />
-      <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path
+        d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -30,7 +33,13 @@ function FeatureShieldIcon() {
         strokeWidth="1.5"
         strokeLinejoin="round"
       />
-      <path d="m9.2 12 1.9 1.9 3.8-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="m9.2 12 1.9 1.9 3.8-4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -42,7 +51,13 @@ function FeatureChartIcon() {
       <path d="M7 16V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       <path d="M12 16V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       <path d="M17 16V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="m14.5 6.5 2.5-1.5 2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="m14.5 6.5 2.5-1.5 2 2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -56,29 +71,9 @@ interface AuthLandingScreenProps {
 export function AuthLandingScreen({ demoSlot }: AuthLandingScreenProps) {
   const { t } = useTranslation();
   const { oauthPending, handleOAuth, handleOAuthClientError } = useSocialAuthLogin();
-  const [settled, setSettled] = useState(() => {
-    try {
-      return sessionStorage.getItem(LANDING_SETTLED_KEY) === '1';
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      sessionStorage.setItem(LANDING_SETTLED_KEY, '1');
-    } catch {
-      /* ignore */
-    }
-    const id = window.setTimeout(() => setSettled(true), 500);
-    return () => window.clearTimeout(id);
-  }, []);
 
   return (
-    <section
-      className={`auth-landing${settled ? ' auth-landing--settled' : ''}`}
-      aria-label={t('auth.landingLabel')}
-    >
+    <section className="auth-landing auth-landing--settled" aria-label={t('auth.landingLabel')}>
       <header className="auth-landing__header">
         <img className="auth-landing__logo" src={MARK_SRC} alt="" width={40} height={40} />
         <p className="auth-landing__brand">

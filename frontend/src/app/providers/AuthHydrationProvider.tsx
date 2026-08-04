@@ -7,18 +7,39 @@ import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
 
 const AuthHydrationContext = createContext(false);
 
+function initialSessionReady(hydrated: boolean): boolean {
+  if (!hydrated) return false;
+  const { isAuthenticated, user, tokens } = useAuthStore.getState();
+  if (!isAuthenticated || !user) return true;
+  // Same-tab navigation: access JWT already in memory.
+  return Boolean(tokens?.accessToken);
+}
+
 function useRunAuthHydration(): boolean {
   const [hydrated, setHydrated] = useState(() => useAuthStore.persist.hasHydrated());
-  const [sessionReady, setSessionReady] = useState(false);
+  const [sessionReady, setSessionReady] = useState(() =>
+    initialSessionReady(useAuthStore.persist.hasHydrated())
+  );
 
   useEffect(() => {
-    const unsub = useAuthStore.persist.onFinishHydration(() => setHydrated(true));
-    setHydrated(useAuthStore.persist.hasHydrated());
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+      // Guests (and in-memory sessions) become ready in the same turn as persist hydrate.
+      if (initialSessionReady(true)) {
+        setSessionReady(true);
+      }
+    });
+    const already = useAuthStore.persist.hasHydrated();
+    setHydrated(already);
+    if (already && initialSessionReady(true)) {
+      setSessionReady(true);
+    }
     return unsub;
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
+    if (sessionReady) return;
 
     let cancelled = false;
 
@@ -52,7 +73,7 @@ function useRunAuthHydration(): boolean {
     return () => {
       cancelled = true;
     };
-  }, [hydrated]);
+  }, [hydrated, sessionReady]);
 
   return hydrated && sessionReady;
 }
