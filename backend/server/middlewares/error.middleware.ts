@@ -63,28 +63,30 @@ export function errorMiddleware(
   console.error(err);
   try {
     // Fire-and-forget ops capture (dynamic import avoids circular init issues).
-    void import('../services/ops.service.js').then(({ opsService }) =>
-      opsService.ingest(
-        [
-          {
-            type: 'error',
-            error: {
-              title: err.name || 'INTERNAL_ERROR',
-              message: err.message,
-              stack: err.stack,
-              severity: 'high',
-              source: 'backend',
-              url: _req.originalUrl,
+    void import('../services/ops.service.js')
+      .then(({ opsService }) =>
+        opsService.ingest(
+          [
+            {
+              type: 'error',
+              error: {
+                title: err.name || 'INTERNAL_ERROR',
+                message: err.message,
+                stack: err.stack,
+                severity: 'high',
+                source: 'backend',
+                url: _req.originalUrl,
+              },
             },
-          },
-        ],
-        {
-          userId: (_req as typeof _req & { user?: { id?: string } }).user?.id ?? null,
-          ip: _req.ip,
-          userAgent: _req.get('user-agent') ?? null,
-        }
+          ],
+          {
+            userId: (_req as typeof _req & { user?: { id?: string } }).user?.id ?? null,
+            ip: _req.ip,
+            userAgent: _req.get('user-agent') ?? null,
+          }
+        )
       )
-    );
+      .catch(() => undefined);
   } catch {
     /* ignore */
   }
