@@ -1,10 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import {
+  Check,
+  ChevronRight,
+  FileText,
+  Lock,
+  Mail,
+  MapPin,
+  ShieldCheck,
+  ShieldUser,
+} from 'lucide-react';
 import { LEGAL_DOC_VERSIONS, type AuthTokens, type User } from '@machinefit/shared';
-import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -25,6 +34,74 @@ function getApiErrorMessage(error: unknown): string | undefined {
   if (!axios.isAxiosError(error)) return undefined;
   const payload = error.response?.data as { error?: { message?: string } } | undefined;
   return payload?.error?.message;
+}
+
+function ConsentCheck({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      className={`terms-agree__check${checked ? ' terms-agree__check--on' : ''}`}
+      role="checkbox"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={() => onChange(!checked)}
+    >
+      {checked ? <Check size={14} strokeWidth={3} aria-hidden /> : null}
+    </button>
+  );
+}
+
+function ConsentRow({
+  icon,
+  required,
+  title,
+  docTo,
+  checked,
+  onChange,
+  checkLabel,
+}: {
+  icon: ReactNode;
+  required: boolean;
+  title: string;
+  docTo: string;
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  checkLabel: string;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div className="terms-agree__item">
+      <span className="terms-agree__item-icon" aria-hidden>
+        {icon}
+      </span>
+      <div className="terms-agree__item-text">
+        <span
+          className={`terms-agree__badge${
+            required ? ' terms-agree__badge--required' : ' terms-agree__badge--optional'
+          }`}
+        >
+          {required ? t('auth.required') : t('auth.optional')}
+        </span>
+        <span className="terms-agree__item-title">{title}</span>
+      </div>
+      <ConsentCheck checked={checked} onChange={onChange} label={checkLabel} />
+      <Link
+        to={docTo}
+        className="terms-agree__doc"
+        aria-label={`${title} ${t('auth.termsViewDoc')}`}
+      >
+        <ChevronRight size={18} strokeWidth={2.25} aria-hidden />
+      </Link>
+    </div>
+  );
 }
 
 export function TermsAgreementPage() {
@@ -78,10 +155,7 @@ export function TermsAgreementPage() {
     updateUser({ ...user, needsConsent: false });
     syncUserSettings(user);
     syncGymScopeAfterAuth(user);
-    showToast(
-      isSignup ? t('auth.accountCreated') : t('auth.consentUpdated'),
-      'success'
-    );
+    showToast(isSignup ? t('auth.accountCreated') : t('auth.consentUpdated'), 'success');
     navigate(ROUTES.HOME, { replace: true });
   };
 
@@ -122,95 +196,94 @@ export function TermsAgreementPage() {
   if (!canStay) return null;
 
   return (
-    <PageShell title={t('auth.termsAgreeTitle')}>
-      <section className="terms-agree" aria-labelledby="terms-agree-title">
-        <h1 id="terms-agree-title" className="terms-agree__title">
-          {t('auth.termsAgreeTitle')}
-        </h1>
-        <p className="terms-agree__desc">
-          {isSignup ? t('auth.termsAgreeDescSignup') : t('auth.termsAgreeDescUpdate')}
-        </p>
+    <section className="terms-agree" aria-labelledby="terms-agree-title">
+      <div className="terms-agree__hero" aria-hidden>
+        <span className="terms-agree__hero-icon">
+          <ShieldCheck size={36} strokeWidth={1.75} />
+        </span>
+      </div>
 
-        <div className="terms-agree__list" role="group" aria-label={t('auth.consentGroup')}>
-          <label className="terms-agree__row terms-agree__row--all">
-            <input
-              type="checkbox"
-              checked={checks.agreeAll}
-              onChange={(e) => setField('agreeAll', e.target.checked)}
-            />
-            <span>{t('auth.agreeAll')}</span>
-          </label>
+      <h1 id="terms-agree-title" className="terms-agree__title">
+        <Trans
+          i18nKey="auth.termsAgreeTitle"
+          components={{
+            highlight: <span className="terms-agree__title-accent" />,
+          }}
+        />
+      </h1>
+      <p className="terms-agree__desc">
+        {isSignup ? t('auth.termsAgreeDescSignup') : t('auth.termsAgreeDescUpdate')}
+      </p>
 
-          <label className="terms-agree__row">
-            <input
-              type="checkbox"
-              checked={checks.agreeTerms}
-              onChange={(e) => setField('agreeTerms', e.target.checked)}
-            />
-            <span className="terms-agree__label">
-              <span className="terms-agree__badge terms-agree__badge--required">
-                {t('auth.required')}
-              </span>
-              <Link to={ROUTES.TERMS} className="terms-agree__link">
-                {t('legal.termsTitle')}
-              </Link>
-            </span>
-          </label>
-
-          <label className="terms-agree__row">
-            <input
-              type="checkbox"
-              checked={checks.agreePrivacy}
-              onChange={(e) => setField('agreePrivacy', e.target.checked)}
-            />
-            <span className="terms-agree__label">
-              <span className="terms-agree__badge terms-agree__badge--required">
-                {t('auth.required')}
-              </span>
-              <Link to={ROUTES.PRIVACY} className="terms-agree__link">
-                {t('legal.privacyTitle')}
-              </Link>
-            </span>
-          </label>
-
-          <label className="terms-agree__row">
-            <input
-              type="checkbox"
-              checked={checks.agreeLocation}
-              onChange={(e) => setField('agreeLocation', e.target.checked)}
-            />
-            <span className="terms-agree__label">
-              <span className="terms-agree__badge">{t('auth.optional')}</span>
-              <Link to={ROUTES.LEGAL_LOCATION} className="terms-agree__link">
-                {t('legal.locationTitle')}
-              </Link>
-            </span>
-          </label>
-
-          <label className="terms-agree__row">
-            <input
-              type="checkbox"
-              checked={checks.agreeMarketing}
-              onChange={(e) => setField('agreeMarketing', e.target.checked)}
-            />
-            <span className="terms-agree__label">
-              <span className="terms-agree__badge">{t('auth.optional')}</span>
-              <Link to={ROUTES.LEGAL_MARKETING} className="terms-agree__link">
-                {t('legal.marketingTitle')}
-              </Link>
-            </span>
-          </label>
+      <div className="terms-agree__card" role="group" aria-label={t('auth.consentGroup')}>
+        <div className="terms-agree__all">
+          <span className="terms-agree__all-mark" aria-hidden>
+            <Check size={16} strokeWidth={3} />
+          </span>
+          <div className="terms-agree__all-text">
+            <strong>{t('auth.agreeAll')}</strong>
+            <span>{t('auth.agreeAllDesc')}</span>
+          </div>
+          <ConsentCheck
+            checked={checks.agreeAll}
+            onChange={(v) => setField('agreeAll', v)}
+            label={t('auth.agreeAll')}
+          />
         </div>
 
-        <button
-          type="button"
-          className="btn btn--primary btn--block terms-agree__submit"
-          disabled={!requiredOk || mutation.isPending}
-          onClick={() => mutation.mutate()}
-        >
-          {mutation.isPending ? '...' : t('auth.termsAgreeContinue')}
-        </button>
-      </section>
-    </PageShell>
+        <div className="terms-agree__divider" aria-hidden />
+
+        <ConsentRow
+          icon={<FileText size={18} strokeWidth={2} />}
+          required
+          title={t('legal.termsTitle')}
+          docTo={ROUTES.TERMS}
+          checked={checks.agreeTerms}
+          onChange={(v) => setField('agreeTerms', v)}
+          checkLabel={`${t('auth.required')} ${t('legal.termsTitle')}`}
+        />
+        <ConsentRow
+          icon={<ShieldUser size={18} strokeWidth={2} />}
+          required
+          title={t('legal.privacyTitle')}
+          docTo={ROUTES.PRIVACY}
+          checked={checks.agreePrivacy}
+          onChange={(v) => setField('agreePrivacy', v)}
+          checkLabel={`${t('auth.required')} ${t('legal.privacyTitle')}`}
+        />
+        <ConsentRow
+          icon={<MapPin size={18} strokeWidth={2} />}
+          required={false}
+          title={t('legal.locationTitle')}
+          docTo={ROUTES.LEGAL_LOCATION}
+          checked={checks.agreeLocation}
+          onChange={(v) => setField('agreeLocation', v)}
+          checkLabel={`${t('auth.optional')} ${t('legal.locationTitle')}`}
+        />
+        <ConsentRow
+          icon={<Mail size={18} strokeWidth={2} />}
+          required={false}
+          title={t('legal.marketingTitle')}
+          docTo={ROUTES.LEGAL_MARKETING}
+          checked={checks.agreeMarketing}
+          onChange={(v) => setField('agreeMarketing', v)}
+          checkLabel={`${t('auth.optional')} ${t('legal.marketingTitle')}`}
+        />
+      </div>
+
+      <p className="terms-agree__secure">
+        <Lock size={14} strokeWidth={2.25} aria-hidden />
+        <span>{t('auth.termsSecureNotice')}</span>
+      </p>
+
+      <button
+        type="button"
+        className="terms-agree__submit"
+        disabled={!requiredOk || mutation.isPending}
+        onClick={() => mutation.mutate()}
+      >
+        {mutation.isPending ? '...' : t('auth.termsAgreeContinue')}
+      </button>
+    </section>
   );
 }
