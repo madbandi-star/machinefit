@@ -788,36 +788,39 @@ export function EasyWizardPage() {
         <HomeWorkoutToolsSection />
 
         <div className="easy-s3-intro">
-          <div className="easy-s3-intro__row">
-            <div className="easy-s3-intro__copy">
-              <h2 className="easy-s3-intro__title">{selected?.name}</h2>
-              <p className="easy-s3-intro__sub">{t('easyMode.s3Title')}</p>
-              {recommendation ? (
-                <div className="easy-s3-intro__chips" aria-label={t('easyMode.s3Recommended')}>
-                  {recommendedWeight != null ? (
-                    <span className="easy-s3-chip">
-                      {recommendedWeight}
-                      <span className="easy-s3-chip__unit">kg</span>
-                    </span>
-                  ) : null}
-                  {recommendedReps ? (
-                    <span className="easy-s3-chip">
-                      {recommendedReps}
-                      <span className="easy-s3-chip__unit">{t('easyMode.repsUnit')}</span>
-                    </span>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-            <button
-              type="button"
-              className="easy-btn easy-btn--primary easy-s3-intro__save"
-              disabled={saveDisabled}
-              onClick={() => saveLog.mutate()}
-            >
-              {saveLog.isPending ? t('easyMode.working') : t('easyMode.saveLog')}
-            </button>
+          <div className="easy-s3-intro__copy">
+            <h2 className="easy-s3-intro__title">{selected?.name}</h2>
+            <p className="easy-s3-intro__sub">{t('easyMode.s3Title')}</p>
+            {recommendation ? (
+              <div className="easy-s3-intro__chips" aria-label={t('easyMode.s3Recommended')}>
+                {recommendedWeight != null ? (
+                  <span className="easy-s3-chip">
+                    {recommendedWeight}
+                    <span className="easy-s3-chip__unit">kg</span>
+                  </span>
+                ) : null}
+                {recommendedReps ? (
+                  <span className="easy-s3-chip">
+                    {recommendedReps}
+                    <span className="easy-s3-chip__unit">{t('easyMode.repsUnit')}</span>
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
           </div>
+          <button
+            type="button"
+            className="easy-s3-intro__save"
+            disabled={saveDisabled}
+            onClick={() => saveLog.mutate()}
+          >
+            <span className="easy-s3-intro__save-emoji" aria-hidden>
+              🏁
+            </span>
+            <span>
+              {saveLog.isPending ? t('easyMode.working') : t('easyMode.saveLog')}
+            </span>
+          </button>
           {saveHint ? <p className="easy-hint easy-s3-intro__hint">{saveHint}</p> : null}
         </div>
 

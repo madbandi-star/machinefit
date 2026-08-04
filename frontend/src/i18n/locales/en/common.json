@@ -692,7 +692,7 @@
     "doneSet": "Done",
     "s3Progress": "{{done}}/{{total}} sets done",
     "s3Recommended": "Suggested",
-    "saveLog": "🏁 Done",
+    "saveLog": "Workout complete",
     "saveSuccess": "Workout saved",
     "saveFailed": "Couldn't save workout",
     "recommendFailed": "Couldn't create recommendation",

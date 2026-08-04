@@ -692,7 +692,7 @@
     "doneSet": "완료",
     "s3Progress": "{{done}}/{{total}} 세트 완료",
     "s3Recommended": "추천",
-    "saveLog": "🏁 운동완료",
+    "saveLog": "운동완료",
     "saveSuccess": "기록을 저장했어요",
     "saveFailed": "기록 저장에 실패했어요",
     "recommendFailed": "추천을 만들지 못했어요",
