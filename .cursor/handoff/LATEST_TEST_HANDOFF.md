@@ -5,7 +5,7 @@ Admin shell top menu is now a **2-row** grid that scrolls horizontally, with a *
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 1d2bf9e5
 
 ## Changed files
 - `frontend/src/styles/admin.css`

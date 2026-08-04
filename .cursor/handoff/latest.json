@@ -1,7 +1,7 @@
 {
   "title": "Admin top nav 2-row + horizontal scrollbar",
   "summary": "Admin shell nav track uses a 2-row column-flow grid and shows a thin horizontal scrollbar instead of a single hidden-scroll row.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "1d2bf9e5" },
   "changedFiles": ["frontend/src/styles/admin.css"],
   "testFocus": "Admin layout top menu: two rows of links; horizontal scrollbar visible when overflowing; active link still highlighted.",
   "fastChecks": [
