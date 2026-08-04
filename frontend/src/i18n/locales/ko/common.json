@@ -289,6 +289,7 @@
     "voiceCoach": "음성 카운트",
     "voiceCoachDesc": "세트 사이 카운트다운과 반복 수 음성 안내. 운동 기록 화면에서도 조절할 수 있습니다.",
     "voiceCoachEnable": "음성 카운트 사용",
+    "voiceCoachVolume": "볼륨",
     "voiceCoachOneMore": "하나더(원모어) 세기",
     "voiceCoachHoldAfterCount": "마지막에 버텨!!! 추가",
     "voiceCoachFlowMode": "세션 구성",

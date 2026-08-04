@@ -38,6 +38,7 @@ import { syncUserSettings } from '@/utils/syncUserSettings';
 import { clearGymScope } from '@/utils/syncGymScope';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
+import { VOICE_COACH_VOLUME } from '@/utils/voiceCoachVolume';
 import { VOICE_COUNT_MODES } from '@/utils/aiCountPace';
 import {
   clampVoiceCoachPrepCount,
@@ -78,6 +79,7 @@ export function SettingsPage() {
   const setUnitHeight = useSettingsStore((s) => s.setUnitHeight);
   const setUnitWeight = useSettingsStore((s) => s.setUnitWeight);
   const voiceCoachEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
+  const voiceCoachVolume = useSettingsStore((s) => s.voiceCoachVolume);
   const voiceCoachTargetReps = useSettingsStore((s) => s.voiceCoachTargetReps);
   const voiceCoachOneMore = useSettingsStore((s) => s.voiceCoachOneMore);
   const voiceCoachOneMoreCount = useSettingsStore((s) => s.voiceCoachOneMoreCount);
@@ -96,6 +98,7 @@ export function SettingsPage() {
   const workoutFullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
   const setWorkoutFullscreenDisplay = useSettingsStore((s) => s.setWorkoutFullscreenDisplay);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
+  const setVoiceCoachVolume = useSettingsStore((s) => s.setVoiceCoachVolume);
   const setVoiceCoachTargetReps = useSettingsStore((s) => s.setVoiceCoachTargetReps);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
   const setVoiceCoachOneMoreCount = useSettingsStore((s) => s.setVoiceCoachOneMoreCount);
@@ -497,6 +500,37 @@ export function SettingsPage() {
               />
               <span>{t('settings.voiceCoachEnable')}</span>
             </label>
+
+            <div
+              className={`settings-voice-coach__volume${
+                !voiceCoachEnabled ? ' settings-voice-coach__volume--disabled' : ''
+              }`}
+            >
+              <div className="settings-voice-coach__volume-header">
+                <span id="settings-voice-coach-volume-label">
+                  {t('settings.voiceCoachVolume')}
+                </span>
+                <span className="settings-voice-coach__volume-value" aria-live="polite">
+                  {Math.round(voiceCoachVolume * 100)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                className="settings-voice-coach__volume-input"
+                min={VOICE_COACH_VOLUME.min}
+                max={VOICE_COACH_VOLUME.max}
+                step={VOICE_COACH_VOLUME.step}
+                value={voiceCoachVolume}
+                disabled={!voiceCoachEnabled}
+                onChange={(e) => setVoiceCoachVolume(parseFloat(e.target.value))}
+                aria-labelledby="settings-voice-coach-volume-label"
+                aria-valuemin={VOICE_COACH_VOLUME.min}
+                aria-valuemax={VOICE_COACH_VOLUME.max}
+                aria-valuenow={voiceCoachVolume}
+                aria-valuetext={`${Math.round(voiceCoachVolume * 100)}%`}
+              />
+            </div>
+
             <fieldset
               className={`voice-coach-panel__mode${
                 !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''

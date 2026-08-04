@@ -40,6 +40,7 @@ import {
   VOICE_HOLD_DURATION,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
+import { getVoiceCoachVolume } from '@/utils/voiceCoachVolume';
 import {
   getActiveVoiceCoachPause,
   sleepWithVoiceCoachPause,
@@ -343,9 +344,11 @@ async function playBeep(
   osc.type = 'sine';
   osc.frequency.value = frequency;
   const now = ctx.currentTime;
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.18, now + 0.015);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+  const peak = 0.18 * getVoiceCoachVolume();
+  const floor = 0.0001;
+  gain.gain.setValueAtTime(floor, now);
+  gain.gain.exponentialRampToValueAtTime(Math.max(floor, peak), now + 0.015);
+  gain.gain.exponentialRampToValueAtTime(floor, now + durationSec);
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start(now);

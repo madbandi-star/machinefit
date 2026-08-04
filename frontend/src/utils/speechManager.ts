@@ -4,6 +4,7 @@
  */
 
 import { nudgeVoiceCoachSpeech } from '@/utils/voiceCoachAudioSession';
+import { getVoiceCoachVolume } from '@/utils/voiceCoachVolume';
 
 export const SPEECH_DEFAULTS = {
   lang: 'ko-KR',
@@ -260,7 +261,7 @@ class SpeechManagerImpl {
       typeof rate === 'number' && Number.isFinite(rate)
         ? Math.min(2, Math.max(0.1, rate))
         : SPEECH_DEFAULTS.rate;
-    utterance.volume = SPEECH_DEFAULTS.volume;
+    utterance.volume = getVoiceCoachVolume();
 
     let voice: SpeechSynthesisVoice | null = null;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
