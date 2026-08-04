@@ -1,14 +1,35 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/Header/Header';
 import { BottomNavigation } from '@/components/layout/BottomNavigation/BottomNavigation';
 import { ConsentRedirect } from '@/components/auth/ConsentRedirect/ConsentRedirect';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/layout.css';
 import '@/styles/legal.css';
+import '@/styles/auth.css';
+
+function isHomePath(pathname: string): boolean {
+  return pathname === ROUTES.HOME || pathname === `${ROUTES.HOME}/`;
+}
 
 export function MainLayout() {
   const { t } = useTranslation();
+  const location = useLocation();
+  const hydrated = useAuthHydration();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const guestLanding = hydrated && !isAuthenticated && isHomePath(location.pathname);
+
+  if (guestLanding) {
+    return (
+      <div className="layout layout--auth-landing">
+        <ConsentRedirect />
+        <Outlet />
+      </div>
+    );
+  }
+
   return (
     <div className="layout">
       <ConsentRedirect />

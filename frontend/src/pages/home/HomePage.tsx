@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Role, hasMinRole } from '@machinefit/shared';
-import { HomeGuestWelcome } from '@/components/home/HomeGuestWelcome/HomeGuestWelcome';
+import { AuthLandingScreen } from '@/components/auth/AuthLandingScreen/AuthLandingScreen';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
@@ -13,14 +13,12 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
-import { useKakaoLoginCallback } from '@/hooks/useKakaoLoginCallback';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import '@/styles/home.css';
 
 export function HomePage() {
   const authReady = useAuthHydration();
-  useKakaoLoginCallback();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
@@ -61,12 +59,7 @@ export function HomePage() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="home-page">
-        <InstallPromptBanner />
-        <HomeGuestWelcome />
-      </div>
-    );
+    return <AuthLandingScreen />;
   }
 
   return (
