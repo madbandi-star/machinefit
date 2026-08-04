@@ -25,6 +25,7 @@ import {
   type LocationPickerValue,
 } from '@/components/location/LocationPicker/LocationPicker';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
+import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { authApi, locationApi, userApi, userGymApi } from '@/api';
@@ -626,81 +627,66 @@ export function SettingsPage() {
               <span>{t('settings.voiceRestTips')}</span>
             </label>
 
-            <fieldset
-              className={`voice-coach-panel__mode${
+            <div
+              className={`form-row${
                 !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
               }`}
-              disabled={!voiceCoachEnabled}
             >
-              <legend className="voice-coach-panel__mode-legend">
-                {t('settings.voiceCoachPack')}
-              </legend>
-              <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_COACH_PACKS.map((pack) => (
-                  <label key={pack} className="voice-coach-panel__mode-option">
-                    <input
-                      type="radio"
-                      name="settings-voice-coach-pack"
-                      value={pack}
-                      checked={normalizeVoiceCoachPack(voiceCoachPack) === pack}
-                      onChange={() => setVoiceCoachPack(pack)}
-                    />
-                    <span>{t(`settings.voiceCoachPack_${pack}`)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+              <span className="form-row__label">{t('settings.voiceCoachPack')}</span>
+              <SegmentedControl
+                value={normalizeVoiceCoachPack(voiceCoachPack)}
+                options={VOICE_COACH_PACKS.map((pack) => ({
+                  value: pack,
+                  label: t(`settings.voiceCoachPack_${pack}`),
+                }))}
+                onChange={(pack) => {
+                  if (!voiceCoachEnabled) return;
+                  setVoiceCoachPack(pack);
+                }}
+                ariaLabel={t('settings.voiceCoachPack')}
+              />
+            </div>
 
-            <fieldset
-              className={`voice-coach-panel__mode${
+            <div
+              className={`form-row${
                 !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
               }`}
-              disabled={!voiceCoachEnabled}
             >
-              <legend className="voice-coach-panel__mode-legend">
-                {t('settings.voiceCoachPrepCount')}
-              </legend>
-              <div className="voice-coach-panel__mode-options" role="radiogroup">
-                {VOICE_COACH_PREP_COUNTS.map((count) => (
-                  <label key={count} className="voice-coach-panel__mode-option">
-                    <input
-                      type="radio"
-                      name="settings-voice-prep-count"
-                      value={count}
-                      checked={clampVoiceCoachPrepCount(voiceCoachPrepCount) === count}
-                      onChange={() => setVoiceCoachPrepCount(count)}
-                    />
-                    <span>{t(`settings.voiceCoachPrepCount_${count}`)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+              <span className="form-row__label">{t('settings.voiceCoachPrepCount')}</span>
+              <SegmentedControl
+                value={String(clampVoiceCoachPrepCount(voiceCoachPrepCount))}
+                options={VOICE_COACH_PREP_COUNTS.map((count) => ({
+                  value: String(count),
+                  label: t(`settings.voiceCoachPrepCount_${count}`),
+                }))}
+                onChange={(raw) => {
+                  if (!voiceCoachEnabled) return;
+                  setVoiceCoachPrepCount(clampVoiceCoachPrepCount(Number(raw)));
+                }}
+                ariaLabel={t('settings.voiceCoachPrepCount')}
+              />
+            </div>
 
             {voiceCoachFlowMode !== 'hold' ? (
-              <fieldset
-                className={`voice-coach-panel__mode${
+              <div
+                className={`form-row${
                   !voiceCoachEnabled ? ' voice-coach-panel__mode--disabled' : ''
                 }`}
-                disabled={!voiceCoachEnabled}
               >
-                <legend className="voice-coach-panel__mode-legend">
-                  {t('settings.voiceCountMode')}
-                </legend>
-                <div className="voice-coach-panel__mode-options" role="radiogroup">
-                  {VOICE_COUNT_MODES.map((mode) => (
-                    <label key={mode} className="voice-coach-panel__mode-option">
-                      <input
-                        type="radio"
-                        name="settings-voice-count-mode"
-                        value={mode}
-                        checked={voiceCountMode === mode}
-                        onChange={() => setVoiceCountMode(mode)}
-                      />
-                      <span>{t(`settings.voiceCountMode_${mode}`)}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+                <span className="form-row__label">{t('settings.voiceCountMode')}</span>
+                <SegmentedControl
+                  value={voiceCountMode}
+                  options={VOICE_COUNT_MODES.map((mode) => ({
+                    value: mode,
+                    label: t(`settings.voiceCountMode_${mode}`),
+                  }))}
+                  onChange={(mode) => {
+                    if (!voiceCoachEnabled) return;
+                    setVoiceCountMode(mode);
+                  }}
+                  ariaLabel={t('settings.voiceCountMode')}
+                />
+              </div>
             ) : null}
 
           </div>
