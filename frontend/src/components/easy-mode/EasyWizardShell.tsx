@@ -6,13 +6,15 @@ interface EasyWizardShellProps {
   onBack: () => void;
   onClose: () => void;
   children: ReactNode;
-  primaryLabel: string;
-  onPrimary: () => void;
+  primaryLabel?: string;
+  onPrimary?: () => void;
   primaryDisabled?: boolean;
   primaryHint?: string;
   secondaryLabel?: string;
   onSecondary?: () => void;
   primaryPending?: boolean;
+  /** Hide sticky footer CTA (e.g. step 3 places save beside machine card). */
+  hideFooter?: boolean;
 }
 
 export function EasyWizardShell({
@@ -27,6 +29,7 @@ export function EasyWizardShell({
   secondaryLabel,
   onSecondary,
   primaryPending,
+  hideFooter = false,
 }: EasyWizardShellProps) {
   const { t } = useTranslation();
   const stepLabels = [
@@ -34,6 +37,8 @@ export function EasyWizardShell({
     t('easyMode.stepRecommend'),
     t('easyMode.stepLog'),
   ];
+  const showFooter =
+    !hideFooter && Boolean(primaryLabel && onPrimary);
 
   return (
     <div className="easy-shell">
@@ -73,22 +78,24 @@ export function EasyWizardShell({
 
       <div className="easy-shell__body">{children}</div>
 
-      <div className="easy-shell__footer">
-        {primaryHint ? <p className="easy-hint">{primaryHint}</p> : null}
-        <button
-          type="button"
-          className="easy-btn easy-btn--primary"
-          onClick={onPrimary}
-          disabled={primaryDisabled || primaryPending}
-        >
-          {primaryPending ? t('easyMode.working') : primaryLabel}
-        </button>
-        {secondaryLabel && onSecondary ? (
-          <button type="button" className="easy-btn easy-btn--ghost" onClick={onSecondary}>
-            {secondaryLabel}
+      {showFooter ? (
+        <div className="easy-shell__footer">
+          {primaryHint ? <p className="easy-hint">{primaryHint}</p> : null}
+          <button
+            type="button"
+            className="easy-btn easy-btn--primary"
+            onClick={onPrimary}
+            disabled={primaryDisabled || primaryPending}
+          >
+            {primaryPending ? t('easyMode.working') : primaryLabel}
           </button>
-        ) : null}
-      </div>
+          {secondaryLabel && onSecondary ? (
+            <button type="button" className="easy-btn easy-btn--ghost" onClick={onSecondary}>
+              {secondaryLabel}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -774,40 +774,51 @@ export function EasyWizardPage() {
   const completedSetCount = completed.slice(0, setCount).filter(Boolean).length;
   const recommendedWeight = recommendation?.settings.recommendedWeightKg;
   const recommendedReps = recommendation ? repsLabel(recommendation.settings) : null;
+  const saveDisabled = !activeGymId || !activeMemberId || saveLog.isPending;
+  const saveHint = !activeMemberId ? t('easyMode.needMember') : undefined;
 
   return (
     <EasyWizardShell
       step={3}
       onBack={() => setStep(2)}
       onClose={() => navigate(ROUTES.EASY)}
-      primaryLabel={t('easyMode.saveLog')}
-      primaryPending={saveLog.isPending}
-      primaryDisabled={!activeGymId || !activeMemberId}
-      primaryHint={!activeMemberId ? t('easyMode.needMember') : undefined}
-      onPrimary={() => saveLog.mutate()}
+      hideFooter
     >
       <div className="easy-s3">
         <HomeWorkoutToolsSection />
 
         <div className="easy-s3-intro">
-          <h2 className="easy-s3-intro__title">{selected?.name}</h2>
-          <p className="easy-s3-intro__sub">{t('easyMode.s3Title')}</p>
-          {recommendation ? (
-            <div className="easy-s3-intro__chips" aria-label={t('easyMode.s3Recommended')}>
-              {recommendedWeight != null ? (
-                <span className="easy-s3-chip">
-                  {recommendedWeight}
-                  <span className="easy-s3-chip__unit">kg</span>
-                </span>
-              ) : null}
-              {recommendedReps ? (
-                <span className="easy-s3-chip">
-                  {recommendedReps}
-                  <span className="easy-s3-chip__unit">{t('easyMode.repsUnit')}</span>
-                </span>
+          <div className="easy-s3-intro__row">
+            <div className="easy-s3-intro__copy">
+              <h2 className="easy-s3-intro__title">{selected?.name}</h2>
+              <p className="easy-s3-intro__sub">{t('easyMode.s3Title')}</p>
+              {recommendation ? (
+                <div className="easy-s3-intro__chips" aria-label={t('easyMode.s3Recommended')}>
+                  {recommendedWeight != null ? (
+                    <span className="easy-s3-chip">
+                      {recommendedWeight}
+                      <span className="easy-s3-chip__unit">kg</span>
+                    </span>
+                  ) : null}
+                  {recommendedReps ? (
+                    <span className="easy-s3-chip">
+                      {recommendedReps}
+                      <span className="easy-s3-chip__unit">{t('easyMode.repsUnit')}</span>
+                    </span>
+                  ) : null}
+                </div>
               ) : null}
             </div>
-          ) : null}
+            <button
+              type="button"
+              className="easy-btn easy-btn--primary easy-s3-intro__save"
+              disabled={saveDisabled}
+              onClick={() => saveLog.mutate()}
+            >
+              {saveLog.isPending ? t('easyMode.working') : t('easyMode.saveLog')}
+            </button>
+          </div>
+          {saveHint ? <p className="easy-hint easy-s3-intro__hint">{saveHint}</p> : null}
         </div>
 
         <div className="easy-s3-toolbar">

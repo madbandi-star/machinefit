@@ -420,7 +420,7 @@
 .easy-s3-intro {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.55rem;
   padding: 1rem;
   border-radius: 1.1rem;
   border: 1px solid var(--glass-border);
@@ -430,12 +430,30 @@
   backdrop-filter: blur(var(--glass-blur));
 }
 
+.easy-s3-intro__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.easy-s3-intro__copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
 .easy-s3-intro__title {
   margin: 0;
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.22;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .easy-s3-intro__sub {
@@ -452,6 +470,20 @@
   margin-top: 0.15rem;
 }
 
+.easy-s3-intro__save {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 5.75rem;
+  max-width: 7.5rem;
+  min-height: 2.85rem;
+  padding-inline: 0.85rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.easy-s3-intro__hint {
+  margin: 0;
+}
 .easy-s3-chip {
   display: inline-flex;
   align-items: baseline;
