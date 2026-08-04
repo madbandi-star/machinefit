@@ -68,6 +68,7 @@ export function handleOAuthLoginResult(opts: HandleOAuthOptions): void {
   }
 
   // version_update — session issued, gate to terms
+  clearOAuthPending();
   opts.setAuth(result.user, result.tokens);
   opts.syncUser(result.user);
   opts.navigate(ROUTES.AUTH_TERMS, { replace: true });
