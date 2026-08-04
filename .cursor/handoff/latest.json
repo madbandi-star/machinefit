@@ -1,21 +1,21 @@
 {
-  "title": "Admin top nav 2-row + horizontal scrollbar",
-  "summary": "Admin shell nav track uses a 2-row column-flow grid and shows a thin horizontal scrollbar instead of a single hidden-scroll row.",
-  "git": { "branch": "main", "commit": "1d2bf9e5" },
-  "changedFiles": ["frontend/src/styles/admin.css"],
-  "testFocus": "Admin layout top menu: two rows of links; horizontal scrollbar visible when overflowing; active link still highlighted.",
+  "title": "Move My Page admin tools below owner section",
+  "summary": "Admin tools (ops monitoring + admin dashboard) on My Page now render after the owner-only section instead of near the top.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
+  "testFocus": "Login as admin ? My Page: ??? ?? then ????? (?? ????, ??? ????).",
   "fastChecks": [
-    "rg -n \"grid-template-rows: repeat\\(2\" frontend/src/styles/admin.css",
+    "rg -n \"adminTools|ownerOnly\" frontend/src/pages/my-page/MyPage.tsx",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Open /admin ? nav is 2 lines with visible H-scrollbar"
+    "Admin My Page: owner section above admin tools"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Single-row flex nav with hidden scrollbar.",
-  "toBe": "Two-row grid nav with visible thin horizontal scrollbar."
+  "asIs": "Admin tools section near top of My Page.",
+  "toBe": "Admin tools section directly under ??? ??."
 }

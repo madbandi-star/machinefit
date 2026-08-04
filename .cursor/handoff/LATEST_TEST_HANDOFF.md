@@ -1,28 +1,27 @@
-# Test handoff: Admin top nav 2-row + scrollbar
+# Test handoff: Move My Page admin tools below owner section
 
 ## Summary
-Admin shell top menu is now a **2-row** grid that scrolls horizontally, with a **visible** thin scrollbar (was one long row with scrollbar hidden).
+On My Page, **?????** (?? ???? / ??? ????) now appears **below ??? ??**.
 
 ## Git
 - Branch: `main`
-- Commit: 1d2bf9e5
+- Commit: pending
 
 ## Changed files
-- `frontend/src/styles/admin.css`
+- `frontend/src/pages/my-page/MyPage.tsx`
 
 ## Test focus
-1. Open any admin page (`/admin`).
-2. Top nav shows links in **two rows**.
-3. Horizontal scrollbar is visible when content overflows.
-4. Active menu item still highlights.
+1. Login as admin.
+2. Open My Page.
+3. Order: ? ? ??? ?? ? ????? ? bottom actions.
 
 ## Fast checks
 ```bash
-rg -n "grid-template-rows: repeat\(2" frontend/src/styles/admin.css
+rg -n "adminTools|ownerOnly" frontend/src/pages/my-page/MyPage.tsx
 npm run test:smoke:changed
 ```
 
 ## as-is ? to-be
 | as-is | to-be |
 |-------|--------|
-| 1? + ???? ?? | 2? + ????? ?? |
+| ????? near top | ????? under ??? ?? |
