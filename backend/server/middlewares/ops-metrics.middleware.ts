@@ -11,7 +11,7 @@ export function opsMetricsMiddleware(req: Request, res: Response, next: NextFunc
       if (path.includes('/ops/ingest') || path.includes('/health') || path.includes('/warmup')) {
         return;
       }
-      const userId = (req as Request & { user?: { id?: string } }).user?.id ?? null;
+      const userId = req.user?.userId ?? null;
       const routeKey = normalizeRouteKey(req.method, path);
       const durationMs = Date.now() - started;
       void opsService

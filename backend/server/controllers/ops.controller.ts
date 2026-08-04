@@ -45,7 +45,7 @@ function rangeParam(raw: unknown): OpsRange {
 }
 
 function actorId(req: Request): string | undefined {
-  return (req as Request & { user?: { id?: string } }).user?.id;
+  return req.user?.userId;
 }
 
 export async function ingest(req: Request, res: Response, next: NextFunction): Promise<void> {
