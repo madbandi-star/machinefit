@@ -1332,6 +1332,8 @@
   background: transparent;
   color: var(--color-text-muted);
   font-size: var(--font-size-body-sm);
+  line-height: 1.25;
+  white-space: pre-line;
   cursor: pointer;
   transition: border-color var(--motion-fast), color var(--motion-fast), background var(--motion-fast);
 }

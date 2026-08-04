@@ -517,22 +517,6 @@ export function SettingsPage() {
               <span>{t('settings.voiceCoachEnable')}</span>
             </label>
 
-            <VoiceCoachPickerGrid
-              flowMode={voiceCoachFlowMode}
-              oneMoreEnabled={voiceCoachOneMore}
-              targetReps={voiceCoachTargetReps}
-              onTargetRepsChange={setVoiceCoachTargetReps}
-              repGapMs={voiceCoachRepGapMs}
-              onRepGapMsChange={setVoiceCoachRepGapMs}
-              oneMoreCount={voiceCoachOneMoreCount}
-              onOneMoreCountChange={setVoiceCoachOneMoreCount}
-              holdDurationSec={voiceHoldDurationSec}
-              onHoldDurationSecChange={setVoiceHoldDurationSec}
-              disabled={!voiceCoachEnabled}
-              recordsLayout
-              labels="settings"
-            />
-
             <div
               className={`settings-voice-coach__volume${
                 !voiceCoachEnabled ? ' settings-voice-coach__volume--disabled' : ''
@@ -562,6 +546,22 @@ export function SettingsPage() {
                 aria-valuetext={`${Math.round(voiceCoachVolume * 100)}%`}
               />
             </div>
+
+            <VoiceCoachPickerGrid
+              flowMode={voiceCoachFlowMode}
+              oneMoreEnabled={voiceCoachOneMore}
+              targetReps={voiceCoachTargetReps}
+              onTargetRepsChange={setVoiceCoachTargetReps}
+              repGapMs={voiceCoachRepGapMs}
+              onRepGapMsChange={setVoiceCoachRepGapMs}
+              oneMoreCount={voiceCoachOneMoreCount}
+              onOneMoreCountChange={setVoiceCoachOneMoreCount}
+              holdDurationSec={voiceHoldDurationSec}
+              onHoldDurationSecChange={setVoiceHoldDurationSec}
+              disabled={!voiceCoachEnabled}
+              recordsLayout
+              labels="settings"
+            />
 
             <fieldset
               className={`voice-coach-panel__mode${
