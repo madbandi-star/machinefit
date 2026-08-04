@@ -1,7 +1,7 @@
 {
   "title": "Fix ops Resolve/Ack actorId (userId)",
   "summary": "Resolve error and ack alert failed because actorId read req.user.id; AuthPayload uses userId, so adminId was always missing (401).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c8e03323" },
   "changedFiles": [
     "backend/server/controllers/ops.controller.ts",
     "backend/server/middlewares/ops-metrics.middleware.ts"

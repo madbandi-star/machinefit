@@ -5,7 +5,7 @@ Ops **해결** / alert **확인** called `actorId` as `req.user.id`, but JWT aut
 
 ## Git
 - Branch: `main`
-- Commit: pending (updated after push)
+- Commit: `c8e03323`
 
 ## Changed files
 - `backend/server/controllers/ops.controller.ts`
