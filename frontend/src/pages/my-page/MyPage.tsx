@@ -164,6 +164,31 @@ export function MyPage() {
           </dl>
         </div>
 
+      {isAdmin ? (
+        <section className="my-page-section">
+          <h3 className="my-page-section__title">{t('myPage.adminTools')}</h3>
+          <nav className="list-nav" aria-label={t('myPage.adminTools')}>
+            <ListNavLink
+              to={ROUTES.ADMIN_OPS}
+              label={t('myPage.opsMonitoring')}
+              icon="monitor"
+            />
+            <ListNavLink
+              to={ROUTES.ADMIN}
+              label={t('myPage.adminDashboard')}
+              icon="shield"
+            />
+          </nav>
+          <Link
+            to={ROUTES.ADMIN_OPS}
+            className="btn btn--primary btn--block"
+            style={{ marginTop: '0.75rem' }}
+          >
+            {t('myPage.opsMonitoring')}
+          </Link>
+        </section>
+      ) : null}
+
       {user && locationQuery.isFetched && !locationQuery.data?.isSet ? (
         <section className="my-page-section">
           <div className="card" style={{ padding: '1rem' }}>
