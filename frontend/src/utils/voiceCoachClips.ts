@@ -3,7 +3,10 @@
  * Used for countdown / start / reps / one-more so count works when OS TTS is silent.
  */
 
-import { getVoiceCoachVolume } from '@/utils/voiceCoachVolume';
+import {
+  getVoiceCoachElementVolume,
+  getVoiceCoachVolume,
+} from '@/utils/voiceCoachVolume';
 
 export const VOICE_COACH_PACKS = ['female', 'male'] as const;
 export type VoiceCoachPack = (typeof VOICE_COACH_PACKS)[number];
@@ -198,7 +201,7 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
     const audio = warmedHtmlAudio ?? new Audio();
     warmedHtmlAudio = audio;
     audio.preload = 'auto';
-    audio.volume = getVoiceCoachVolume();
+    audio.volume = getVoiceCoachElementVolume();
     audio.src = url;
     currentHtmlAudio = audio;
 

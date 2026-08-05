@@ -1,24 +1,25 @@
 {
-  "title": "Shrink fullscreen text cues (???) so they don?t overlap status",
-  "summary": "Non-digit voice cues like ????? use a smaller count--text size and capped scale so they no longer collide with the status line under the count. Digit size unchanged.",
-  "git": { "branch": "main", "commit": "a2e18b60" },
+  "title": "Voice coach volume slider up to 200%",
+  "summary": "Settings voice-count volume max raised from 100% to 200% (default stays 100%). Web Audio GainNode applies boost above 1; HTML/TTS stay capped at 1 by browser APIs.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/utils/voiceCoachVolume.ts",
+    "frontend/src/utils/voiceCoachClips.ts",
+    "frontend/src/utils/speechManager.ts"
   ],
-  "testFocus": "Fullscreen voice coach: numbers stay current size; text cues (??? / hold) are smaller and clear of the muted status line below.",
+  "testFocus": "Settings ? ?? ??? ? volume slider goes 0?200%, default 100%. At 150?200% clips/beeps louder; digits UI unchanged.",
   "fastChecks": [
-    "rg -n \"count--text|isTextCue\" frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx frontend/src/styles/recommendation.css",
+    "rg -n \"max: 2|getVoiceCoachElementVolume\" frontend/src/utils/voiceCoachVolume.ts frontend/src/utils/voiceCoachClips.ts frontend/src/utils/speechManager.ts",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Trigger oneMore cue in fullscreen ? text should not overlap status"
+    "Set volume to 200% and start voice count ? clips louder than 100%"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "????? used the same huge digit font and overlapped the status subtitle.",
-  "toBe": "Text cues use clamp(2rem,12vw,3.25rem) + count--text; digits unchanged."
+  "asIs": "Volume slider max 100%.",
+  "toBe": "Volume slider max 200%, default still 100%."
 }
