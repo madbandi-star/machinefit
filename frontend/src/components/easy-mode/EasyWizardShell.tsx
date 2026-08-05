@@ -10,6 +10,8 @@ interface EasyWizardShellProps {
   onPrimary?: () => void;
   primaryDisabled?: boolean;
   primaryHint?: string;
+  /** Stronger footer hint (e.g. pick machine first). */
+  primaryHintTone?: 'default' | 'callout';
   secondaryLabel?: string;
   onSecondary?: () => void;
   primaryPending?: boolean;
@@ -26,6 +28,7 @@ export function EasyWizardShell({
   onPrimary,
   primaryDisabled,
   primaryHint,
+  primaryHintTone = 'default',
   secondaryLabel,
   onSecondary,
   primaryPending,
@@ -80,7 +83,15 @@ export function EasyWizardShell({
 
       {showFooter ? (
         <div className="easy-shell__footer">
-          {primaryHint ? <p className="easy-hint">{primaryHint}</p> : null}
+          {primaryHint ? (
+            <p
+              className={`easy-hint${
+                primaryHintTone === 'callout' ? ' easy-hint--callout' : ''
+              }`}
+            >
+              {primaryHint}
+            </p>
+          ) : null}
           <button
             type="button"
             className="easy-btn easy-btn--primary"

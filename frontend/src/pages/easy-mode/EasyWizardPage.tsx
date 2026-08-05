@@ -566,6 +566,7 @@ export function EasyWizardPage() {
                   ? t('easyMode.needMuscle')
                   : undefined
           }
+          primaryHintTone={!activeGymId || !selected || (needsMuscle && !targetMuscle) ? 'callout' : 'default'}
           onPrimary={() => createRecommend.mutate(undefined)}
         >
           <div className="easy-s1">
@@ -590,7 +591,11 @@ export function EasyWizardPage() {
               <>
                 <button
                   type="button"
-                  className="easy-btn easy-btn--secondary easy-s1-find"
+                  className={`easy-btn easy-s1-find${
+                    selected
+                      ? ' easy-btn--secondary'
+                      : ' easy-btn--primary easy-s1-find--cta'
+                  }`}
                   onClick={() => openPicker()}
                 >
                   {t('easyMode.entrySearch')}
