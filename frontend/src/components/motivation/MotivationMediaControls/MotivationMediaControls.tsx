@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Film, ListMusic, Music2, Pause, Play, Square, X } from 'lucide-react';
+import { Film, ListMusic, Music2, Pause, Play, SkipForward, Square, X } from 'lucide-react';
 import type { MotivationMediaItem } from '@machinefit/shared';
 import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -652,14 +652,11 @@ export function MotivationMediaControls({
 
       {videoOpen && currentVideo ? (
         <VideoOverlay
-          item={currentVideo}
+          items={videos}
           index={videoIndex}
-          total={videos.length}
           onClose={closeVideo}
           onNext={playNextVideo}
-          nextLabel={t('motivation.next')}
-          closeLabel={t('motivation.close')}
-          titleLabel={t('motivation.video')}
+          onSelect={(i) => setVideoIndex(i)}
         />
       ) : null}
     </div>
@@ -667,26 +664,22 @@ export function MotivationMediaControls({
 }
 
 function VideoOverlay({
-  item,
+  items,
   index,
-  total,
   onClose,
   onNext,
-  nextLabel,
-  closeLabel,
-  titleLabel,
+  onSelect,
 }: {
-  item: MotivationMediaItem;
+  items: MotivationMediaItem[];
   index: number;
-  total: number;
   onClose: () => void;
   onNext: () => void;
-  nextLabel: string;
-  closeLabel: string;
-  titleLabel: string;
+  onSelect: (index: number) => void;
 }) {
-  const embedId = item.youtubeId;
   const { t } = useTranslation('common');
+  const item = items[index];
+  const embedId = item?.youtubeId;
+  const total = items.length;
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -696,27 +689,58 @@ function VideoOverlay({
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  if (!item) return null;
+
   return (
-    <div className="motivation-video" role="dialog" aria-modal="true" aria-label={titleLabel}>
-      <div className="motivation-video__backdrop" onClick={onClose} />
-      <div className="motivation-video__panel">
-        <div className="motivation-video__header">
-          <p className="motivation-video__title">
-            {item.title}
-            <span className="motivation-video__count">
-              {index + 1}/{total}
+    <div
+      className="mf-video-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('motivation.videoPanelTitle')}
+    >
+      <div className="mf-video-overlay__backdrop" onClick={onClose} />
+      <div className="mf-video-overlay__panel">
+        <div className="mf-video-overlay__glow" aria-hidden="true" />
+
+        <div className="mf-video-overlay__top">
+          <div className="mf-video-overlay__brand">
+            <span className="mf-video-overlay__brand-mark" aria-hidden="true">
+              <Film size={14} />
             </span>
-          </p>
+            <div className="mf-video-overlay__brand-copy">
+              <p className="mf-video-overlay__eyebrow">{t('motivation.videoPanelTitle')}</p>
+              <p className="mf-video-overlay__count">
+                {t('motivation.videoCount', { count: total })}
+              </p>
+            </div>
+          </div>
           <button
             type="button"
-            className="motivation-video__icon-btn"
-            aria-label={closeLabel}
+            className="mf-video-overlay__close"
+            aria-label={t('motivation.close')}
             onClick={onClose}
           >
             <X size={16} />
           </button>
         </div>
-        <div className="motivation-video__frame">
+
+        <div className="mf-video-overlay__now">
+          <div className="mf-video-overlay__art is-playing" aria-hidden="true">
+            <Film size={20} />
+            <span className="mf-video-overlay__pulse" />
+          </div>
+          <div className="mf-video-overlay__meta">
+            <p className="mf-video-overlay__status">{t('motivation.watching')}</p>
+            <p className="mf-video-overlay__title" title={item.title}>
+              {item.title}
+            </p>
+            <p className="mf-video-overlay__position">
+              {index + 1} / {total}
+            </p>
+          </div>
+        </div>
+
+        <div className="mf-video-overlay__frame">
           {embedId ? (
             <iframe
               key={embedId}
@@ -726,14 +750,63 @@ function VideoOverlay({
               allowFullScreen
             />
           ) : (
-            <p className="motivation-video__error">{t('motivation.playFailed')}</p>
+            <p className="mf-video-overlay__error">{t('motivation.playFailed')}</p>
           )}
         </div>
-        {total > 1 ? (
-          <div className="motivation-video__actions">
-            <button type="button" className="btn btn--secondary" onClick={onNext}>
-              {nextLabel}
+
+        <div
+          className={`mf-video-overlay__transport${total > 1 ? '' : ' mf-video-overlay__transport--single'}`}
+        >
+          {total > 1 ? (
+            <button
+              type="button"
+              className="mf-video-overlay__btn mf-video-overlay__btn--next"
+              onClick={onNext}
+            >
+              <span className="mf-video-overlay__btn-icon" aria-hidden="true">
+                <SkipForward size={16} strokeWidth={2.4} />
+              </span>
+              <span className="mf-video-overlay__btn-label">{t('motivation.next')}</span>
             </button>
+          ) : null}
+          <button
+            type="button"
+            className="mf-video-overlay__btn mf-video-overlay__btn--close"
+            onClick={onClose}
+          >
+            <span className="mf-video-overlay__btn-icon" aria-hidden="true">
+              <Square size={14} strokeWidth={2.4} fill="currentColor" />
+            </span>
+            <span className="mf-video-overlay__btn-label">{t('motivation.close')}</span>
+          </button>
+        </div>
+
+        {total > 1 ? (
+          <div className="mf-video-overlay__list">
+            <p className="mf-video-overlay__list-label">{t('motivation.playlist')}</p>
+            <ul className="mf-video-overlay__tracks">
+              {items.map((video, i) => {
+                const active = i === index;
+                return (
+                  <li key={video.id}>
+                    <button
+                      type="button"
+                      className={`mf-video-overlay__track${active ? ' is-playing' : ''}`}
+                      onClick={() => onSelect(i)}
+                      aria-current={active ? 'true' : undefined}
+                    >
+                      <span className="mf-video-overlay__track-index" aria-hidden="true">
+                        {active ? <Film size={12} /> : i + 1}
+                      </span>
+                      <span className="mf-video-overlay__track-title">{video.title}</span>
+                      <span className="mf-video-overlay__track-action" aria-hidden="true">
+                        {active ? <Pause size={15} /> : <Play size={15} />}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         ) : null}
       </div>

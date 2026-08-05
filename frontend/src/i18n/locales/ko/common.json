@@ -79,6 +79,7 @@
     "next": "다음",
     "close": "닫기",
     "musicPanelTitle": "동기부여 음악",
+    "videoPanelTitle": "동기부여 영상",
     "playAll": "전체재생",
     "playAllMode": "전체재생",
     "play": "재생",
@@ -87,9 +88,11 @@
     "seek": "재생 위치",
     "timeUnknown": "—",
     "playing": "재생 중",
+    "watching": "시청 중",
     "ready": "준비됨",
     "playlist": "플레이리스트",
     "trackCount": "{{count}}곡",
+    "videoCount": "{{count}}개",
     "manageLibrary": "내 음악 관리"
   },
   "motivationMusic": {

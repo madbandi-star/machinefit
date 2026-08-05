@@ -79,6 +79,7 @@
     "next": "Next",
     "close": "Close",
     "musicPanelTitle": "Motivation music",
+    "videoPanelTitle": "Motivation video",
     "playAll": "Play all",
     "playAllMode": "Playlist",
     "play": "Play",
@@ -87,9 +88,11 @@
     "seek": "Playback position",
     "timeUnknown": "—",
     "playing": "Now playing",
+    "watching": "Now watching",
     "ready": "Ready",
     "playlist": "Playlist",
     "trackCount": "{{count}} tracks",
+    "videoCount": "{{count}} videos",
     "manageLibrary": "Manage my music"
   },
   "motivationMusic": {

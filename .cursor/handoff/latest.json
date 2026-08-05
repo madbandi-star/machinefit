@@ -1,27 +1,33 @@
 {
-  "title": "Require Supabase for motivation audio + recreate bucket",
-  "summary": "Catalog/uploaded tracks 404 because motivation-audio bucket was missing and files were only on Render ephemeral disk. Production now requires SUPABASE_SERVICE_ROLE_KEY, creates the bucket on boot, and rejects placeholder keys.",
-  "git": { "branch": "main", "commit": "28133423" },
+  "title": "Motivation video overlay UI redesign",
+  "summary": "Header video player overlay restyled to match the music mini-player: glass panel, primary green chrome, now-watching meta, transport buttons, and selectable playlist when multiple videos exist.",
+  "git": {
+    "branch": "main",
+    "commit": "pending"
+  },
   "changedFiles": [
-    "backend/server/services/storage.service.ts",
-    "backend/server/index.ts",
-    "backend/server/controllers/motivation-audio-media.controller.ts"
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "After setting Render SUPABASE_SERVICE_ROLE_KEY + redeploy, re-upload 5 admin music tracks and confirm header play works (media URL returns 200).",
+  "testFocus": [
+    "Open header video control; overlay matches music glass/green look",
+    "YouTube embed still autoplays when a video is selected",
+    "Next / Close buttons work; Escape and backdrop close",
+    "With 2+ videos: playlist list switches the active video"
+  ],
   "fastChecks": [
-    "rg -n \"requireMotivationAudioStorage|ensureMotivationAudioReady|AUDIO_NOT_FOUND\" backend/server"
+    "npm run test:smoke:changed",
+    "rg -n \"mf-video-overlay\" frontend/src/components/motivation/MotivationMediaControls"
   ],
   "productionChecks": [
-    "Render env: SUPABASE_URL + real SUPABASE_SERVICE_ROLE_KEY",
-    "Manual Deploy API",
-    "Admin re-upload 5 music files",
-    "curl -I media URL ? 200",
-    "Header music play"
+    "After GitHub Pages deploy: hard-refresh, open video from header, confirm new UI"
   ],
   "deploy": {
-    "frontend": "unchanged behavior until re-upload",
-    "backendDeployNeeded": true
+    "target": "GitHub Pages (frontend)",
+    "backendRedeployRequired": false
   },
-  "asIs": "Bucket missing; uploads died on Render disk wipe ? playFailed/404.",
-  "toBe": "Durable Supabase bucket required in production; re-upload restores play."
+  "asIs": "Plain small modal with generic header, black iframe, and secondary Next button",
+  "toBe": "Glass video panel aligned with music player: brand header, watching status, green transport, optional playlist"
 }
