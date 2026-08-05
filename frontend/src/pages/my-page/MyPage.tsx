@@ -165,7 +165,7 @@ export function MyPage() {
           </dl>
         </div>
 
-        <SubscriptionPlanCard />
+        {isAdmin ? <SubscriptionPlanCard /> : null}
 
       {user && locationQuery.isFetched && !locationQuery.data?.isSet ? (
         <section className="my-page-section">

@@ -1,26 +1,26 @@
-# Test handoff: Remove green Ops Monitoring CTA on My Page
+# Test handoff: Hide My Page subscription for non-admins
 
 ## Summary
-Removed the green **?? ????** primary button above **? ????**. Admin tools keep list links only.
+My Page **구독·플랜** (`SubscriptionPlanCard`) is shown only when `isAdmin` (admin role or higher).
 
 ## Git
 - Branch: `main`
-- Commit: a1f06cf4
+- Commit: pending
 
 ## Changed files
 - `frontend/src/pages/my-page/MyPage.tsx`
 
 ## Test focus
-1. Admin My Page: no green Ops button above Share.
-2. ????? list still links to ops / dashboard.
+1. Login as member/owner/trainer → My Page → no 구독·플랜 section.
+2. Login as admin → My Page → 구독·플랜 still visible.
 
 ## Fast checks
 ```bash
-rg -n "btn--primary|ADMIN_OPS" frontend/src/pages/my-page/MyPage.tsx
+rg -n "SubscriptionPlanCard|isAdmin" frontend/src/pages/my-page/MyPage.tsx
 npm run test:smoke:changed
 ```
 
-## as-is ? to-be
+## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| Green Ops CTA above Share | List links only |
+| All users see 구독·플랜 | Only admin sees 구독·플랜 |

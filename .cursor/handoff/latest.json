@@ -1,21 +1,21 @@
 {
-  "title": "Remove green Ops Monitoring CTA on My Page",
-  "summary": "Removed the primary green Ops Monitoring button above Share App in the admin tools section; list nav links remain.",
-  "git": { "branch": "main", "commit": "a1f06cf4" },
+  "title": "Hide My Page subscription plan for non-admins",
+  "summary": "SubscriptionPlanCard on My Page now renders only when role is admin or higher.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": "Admin My Page: no green ?? ???? button above ? ????; list links in ????? still work.",
+  "testFocus": "Non-admin My Page: no 구독·플랜 section. Admin My Page: section still visible.",
   "fastChecks": [
-    "rg -n \"btn--primary.*opsMonitoring|ADMIN_OPS\" frontend/src/pages/my-page/MyPage.tsx",
+    "rg -n \"SubscriptionPlanCard|isAdmin\" frontend/src/pages/my-page/MyPage.tsx",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Admin tools list only ? no green CTA above Share"
+    "member/owner My Page has no subscription card; admin has it"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Green Ops Monitoring button above Share App.",
-  "toBe": "Only list-nav entries under ?????."
+  "asIs": "Subscription plan card shown to all logged-in users on My Page.",
+  "toBe": "Subscription plan card only for admin (and above)."
 }
