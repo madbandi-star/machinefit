@@ -260,6 +260,9 @@ export function EasyWizardPage() {
   const saveLog = useMutation({
     mutationFn: async () => {
       if (!selected || !activeGymId || !activeMemberId) throw new Error('scope');
+      // 「운동완료」 = session finished: mark all saved sets completed so later
+      // fit feedback (조정이 필요해요 / 다음에 쓸 무게) cannot overwrite
+      // performed kg via incomplete-set seed sync on the Records page.
       const body = {
         gymId: activeGymId,
         memberId: activeMemberId,
@@ -268,7 +271,7 @@ export function EasyWizardPage() {
         logDate: getTodayDateKey(),
         setCount,
         setWeightsKg: weights.slice(0, setCount),
-        setCompleted: completed.slice(0, setCount),
+        setCompleted: Array.from({ length: setCount }, () => true),
         ...(targetMuscle ? { targetMuscleGroup: targetMuscle } : {}),
       };
       const res = await workoutLogApi.upsert(body);
@@ -276,6 +279,7 @@ export function EasyWizardPage() {
     },
     onSuccess: async () => {
       setSavedMachineName(selected?.name ?? '');
+      setCompleted(Array.from({ length: setCount }, () => true));
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
       const settings = recommendation?.settings;

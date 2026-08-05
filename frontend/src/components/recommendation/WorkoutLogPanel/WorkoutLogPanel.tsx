@@ -217,6 +217,15 @@ function buildDefaultSnapshot(suggestedWeightKg?: number): WorkoutFormSnapshot {
   };
 }
 
+/** Incomplete sets follow live fit seed; completed sets keep performed kg. */
+function applySeedToIncompleteWeights(
+  weights: number[],
+  completed: boolean[],
+  seedKg: number
+): number[] {
+  return weights.map((weight, index) => (completed[index] === true ? weight : seedKg));
+}
+
 function applyWorkoutFormSnapshot(
   snapshot: WorkoutFormSnapshot,
   setters: {
@@ -632,9 +641,27 @@ export function WorkoutLogPanel({
     if (lastHydrateKeyRef.current === hydrateKey) return;
 
     lastHydrateKeyRef.current = hydrateKey;
-    const snapshot = existingLog
+    let snapshot = existingLog
       ? buildSnapshotFromLog(existingLog)
       : buildDefaultSnapshot(suggestedWeightKg);
+
+    // Apply fit seed in the same pass as hydrate so completed flags from the
+    // saved log are used — never race with stale setCompletedRef defaults
+    // (that overwrote performed kg after Easy Mode 「조정이 필요해요」).
+    const seedKey =
+      suggestedWeightKg != null && suggestedWeightKg > 0
+        ? `${hydrateKey}|${suggestedWeightKg}`
+        : `${hydrateKey}|none`;
+    if (suggestedWeightKg != null && suggestedWeightKg > 0) {
+      snapshot = {
+        ...snapshot,
+        weights: applySeedToIncompleteWeights(
+          snapshot.weights,
+          snapshot.setCompleted,
+          suggestedWeightKg
+        ),
+      };
+    }
 
     applyWorkoutFormSnapshot(snapshot, {
       setSetCount,
@@ -642,9 +669,12 @@ export function WorkoutLogPanel({
       setSetCompleted,
       setDiary,
     });
+    // Keep refs in sync for the seed effect in this same commit.
+    setCountRef.current = snapshot.setCount;
+    weightsRef.current = snapshot.weights;
+    setCompletedRef.current = snapshot.setCompleted;
     setBaseline(cloneWorkoutFormSnapshot(snapshot));
-    // Allow the seed effect below to re-apply to incomplete sets after hydrate.
-    lastAppliedSeedKeyRef.current = '';
+    lastAppliedSeedKeyRef.current = seedKey;
   }, [
     isAuthenticated,
     queryEnabled,
@@ -654,9 +684,8 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
   ]);
 
-  // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight.
-  // - 추천값 잘 맞음 → 추천중량 (parent resolves)
-  // - 셋팅값 조정 필요 → 조정중량 (parent resolves from on-screen edits)
+  // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight
+  // when the user changes fit rating / adjusted weight after hydrate.
   // Completed sets keep their logged weight.
   // Patch history caches for 「총 중량」 display only — do NOT autosave the workout
   // log (that made the 기록 bookmark look pressed when tapping 조정중량 +/-).
@@ -670,10 +699,18 @@ export function WorkoutLogPanel({
     if (lastAppliedSeedKeyRef.current === seedKey) return;
     lastAppliedSeedKeyRef.current = seedKey;
 
-    const completed = setCompletedRef.current;
+    // Prefer completed flags from the saved log when present so a stale ref
+    // cannot rewrite performed set weights after fit feedback changes.
+    const completedFromLog = existingLog?.setCompleted;
+    const completed = weightsRef.current.map(
+      (_, index) =>
+        setCompletedRef.current[index] === true || completedFromLog?.[index] === true
+    );
     const prevWeights = weightsRef.current;
-    const nextWeights = prevWeights.map((weight, index) =>
-      completed[index] === true ? weight : suggestedWeightKg
+    const nextWeights = applySeedToIncompleteWeights(
+      prevWeights,
+      completed,
+      suggestedWeightKg
     );
     if (weightsEqual(prevWeights, nextWeights)) return;
 
@@ -682,8 +719,10 @@ export function WorkoutLogPanel({
 
     setBaseline((prev) => {
       if (!prev) return prev;
-      const nextBaselineWeights = prev.weights.map((weight, index) =>
-        completed[index] === true ? weight : suggestedWeightKg
+      const nextBaselineWeights = applySeedToIncompleteWeights(
+        prev.weights,
+        completed,
+        suggestedWeightKg
       );
       if (weightsEqual(prev.weights, nextBaselineWeights)) return prev;
       return { ...prev, weights: nextBaselineWeights };
@@ -693,10 +732,17 @@ export function WorkoutLogPanel({
       queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey)?.[0] ?? existingLog;
     if (!baseLog) return;
 
+    // Never replace completed performed kg in the history cache.
+    const baseCompleted = baseLog.setCompleted ?? [];
+    const baseWeights = baseLog.setWeightsKg ?? [];
+    const patchedWeights = nextWeights.map((weight, index) =>
+      baseCompleted[index] === true ? (baseWeights[index] ?? weight) : weight
+    );
+
     const patchedLog: WorkoutLog = {
       ...baseLog,
-      setWeightsKg: [...nextWeights],
-      setCompleted: [...completed],
+      setWeightsKg: [...patchedWeights],
+      setCompleted: baseCompleted.length > 0 ? [...baseCompleted] : [...completed],
       setCount: setCountRef.current,
     };
     queryClient.setQueryData(workoutLogQueryKey, [patchedLog]);
