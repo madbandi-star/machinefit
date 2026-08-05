@@ -40,35 +40,41 @@ export function SubscriptionPlanCard() {
           <p style={{ margin: 0, color: 'var(--color-text-muted)' }}>…</p>
         ) : (
           <dl className="profile-card__fields" style={{ margin: 0 }}>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.subscription.currentPlan')}</dt>
-              <dd>{status?.planLabel ?? status?.planCode ?? 'FREE'}</dd>
+            <div className="profile-card__pair">
+              <div className="profile-card__row">
+                <dt>{t('myPage.subscription.currentPlan')}</dt>
+                <dd>{status?.planLabel ?? status?.planCode ?? 'FREE'}</dd>
+              </div>
+              <div className="profile-card__row">
+                <dt>{t('myPage.subscription.status')}</dt>
+                <dd>{status?.status ?? 'NONE'}</dd>
+              </div>
             </div>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.subscription.status')}</dt>
-              <dd>{status?.status ?? 'NONE'}</dd>
+            <div className="profile-card__pair">
+              <div className="profile-card__row">
+                <dt>{t('myPage.subscription.trial')}</dt>
+                <dd>
+                  {status?.isTrial
+                    ? t('myPage.subscription.trialActive')
+                    : status?.trialConsumed
+                      ? t('myPage.subscription.trialUsed')
+                      : t('myPage.subscription.trialAvailable')}
+                </dd>
+              </div>
+              <div className="profile-card__row">
+                <dt>{t('myPage.subscription.trialEnd')}</dt>
+                <dd>{formatDate(status?.trialEndAt)}</dd>
+              </div>
             </div>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.subscription.trial')}</dt>
-              <dd>
-                {status?.isTrial
-                  ? t('myPage.subscription.trialActive')
-                  : status?.trialConsumed
-                    ? t('myPage.subscription.trialUsed')
-                    : t('myPage.subscription.trialAvailable')}
-              </dd>
-            </div>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.subscription.trialEnd')}</dt>
-              <dd>{formatDate(status?.trialEndAt)}</dd>
-            </div>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.subscription.start')}</dt>
-              <dd>{formatDate(status?.startAt)}</dd>
-            </div>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.subscription.expire')}</dt>
-              <dd>{formatDate(status?.expireAt)}</dd>
+            <div className="profile-card__pair">
+              <div className="profile-card__row">
+                <dt>{t('myPage.subscription.start')}</dt>
+                <dd>{formatDate(status?.startAt)}</dd>
+              </div>
+              <div className="profile-card__row">
+                <dt>{t('myPage.subscription.expire')}</dt>
+                <dd>{formatDate(status?.expireAt)}</dd>
+              </div>
             </div>
           </dl>
         )}

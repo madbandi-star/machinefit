@@ -1,26 +1,26 @@
-# Test handoff: Hide My Page subscription for non-admins
+# Test handoff: Subscription plan card 3-row layout
 
 ## Summary
-My Page **구독·?�랜** (`SubscriptionPlanCard`) is shown only when `isAdmin` (admin role or higher).
+??�?? ?? 6?? `profile-card__pair`? ?? **3? � 2?**?? ??.
 
 ## Git
 - Branch: `main`
-- Commit: 03c28531
+- Commit: pending
 
 ## Changed files
-- `frontend/src/pages/my-page/MyPage.tsx`
+- `frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx`
 
 ## Test focus
-1. Login as member/owner/trainer ??My Page ??no 구독·?�랜 section.
-2. Login as admin ??My Page ??구독·?�랜 still visible.
+1. Admin My Page ? ??�??.
+2. Rows: ?? ??|??, ??|?? ??, ??|??.
 
 ## Fast checks
 ```bash
-rg -n "SubscriptionPlanCard|isAdmin" frontend/src/pages/my-page/MyPage.tsx
+rg -n "profile-card__pair" frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx
 npm run test:smoke:changed
 ```
 
-## as-is ??to-be
+## as-is ? to-be
 | as-is | to-be |
 |-------|--------|
-| All users see 구독·?�랜 | Only admin sees 구독·?�랜 |
+| 6 full-width rows | 3 paired rows |

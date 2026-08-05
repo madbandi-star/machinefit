@@ -1,21 +1,23 @@
 {
-  "title": "Hide My Page subscription plan for non-admins",
-  "summary": "SubscriptionPlanCard on My Page now renders only when role is admin or higher.",
-  "git": { "branch": "main", "commit": "03c28531" },
-  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": "Non-admin My Page: no 구독·?�랜 section. Admin My Page: section still visible.",
+  "title": "Subscription plan card 3-row layout",
+  "summary": "My Page ??�?? fields use profile-card__pair so six fields show as three two-column rows.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx"
+  ],
+  "testFocus": "Admin My Page subscription card: 3 rows (plan|status, trial|trialEnd, start|expire).",
   "fastChecks": [
-    "rg -n \"SubscriptionPlanCard|isAdmin\" frontend/src/pages/my-page/MyPage.tsx",
+    "rg -n \"profile-card__pair\" frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "member/owner My Page has no subscription card; admin has it"
+    "Admin sees 3-row subscription fields"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Subscription plan card shown to all logged-in users on My Page.",
-  "toBe": "Subscription plan card only for admin (and above)."
+  "asIs": "Six full-width rows of subscription fields.",
+  "toBe": "Three rows with two fields each."
 }
