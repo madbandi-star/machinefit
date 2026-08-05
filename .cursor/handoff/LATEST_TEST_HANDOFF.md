@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: b5cfdbc3
 
 ## Changed files
 - `frontend/src/utils/voiceCoachVolume.ts`
