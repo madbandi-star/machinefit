@@ -1,25 +1,25 @@
 {
-  "title": "Voice coach volume slider up to 200%",
-  "summary": "Settings voice-count volume max raised from 100% to 200% (default stays 100%). Web Audio GainNode applies boost above 1; HTML/TTS stay capped at 1 by browser APIs.",
-  "git": { "branch": "main", "commit": "b5cfdbc3" },
+  "title": "Motivational fullscreen count cues",
+  "summary": "Fullscreen voice count shows phase emoji above a larger cue, stronger pop/shake/pulse animations, and hides status when it duplicates the main cue (e.g. 5 / 5?).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/voiceCoachVolume.ts",
-    "frontend/src/utils/voiceCoachClips.ts",
-    "frontend/src/utils/speechManager.ts"
+    "frontend/src/utils/voiceCoachDisplay.ts",
+    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
-  "testFocus": "Settings ? voice count ? volume slider goes 0?200%, default 100%. At 150?200% clips/beeps louder.",
+  "testFocus": "Fullscreen count: emoji+large cue; no duplicate status for digits/oneMore/hold; pause still shows status; turbo motion.",
   "fastChecks": [
-    "rg -n \"max: 2|getVoiceCoachElementVolume\" frontend/src/utils/voiceCoachVolume.ts frontend/src/utils/voiceCoachClips.ts frontend/src/utils/speechManager.ts",
+    "rg -n \"getVoiceCoachCueIcon|isRedundantVoiceCoachStatus|workout-display-overlay__cue\" frontend/src/utils/voiceCoachDisplay.ts frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx frontend/src/styles/recommendation.css",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Set volume to 200% and start voice count ? clips louder than 100%"
+    "Start voice count fullscreen ? cue has emoji, large digits, no '5?' under '5'"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Volume slider max 100%.",
-  "toBe": "Volume slider max 200%, default still 100%."
+  "asIs": "Bare large number/text; status often repeated the same cue.",
+  "toBe": "Emoji + bigger animated cue; redundant status hidden."
 }

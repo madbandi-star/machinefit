@@ -3,7 +3,9 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { VoiceCoachPhase } from '@/utils/voiceCoach';
 import {
+  getVoiceCoachCueIcon,
   getVoiceCoachDisplayState,
+  isRedundantVoiceCoachStatus,
   voiceCoachStatusLabel,
 } from '@/utils/voiceCoachDisplay';
 import '@/styles/recommendation.css';
@@ -181,8 +183,18 @@ export function WorkoutDisplayOverlay({
   const isTextCue =
     Boolean(display.displayNumber) &&
     display.displayNumber !== '!' &&
-    !/^\d+$/.test(display.displayNumber);
-  const countScale = isTextCue ? Math.min(display.scale, 1.06) : display.scale;
+    !/^\d+!?$/.test(display.displayNumber);
+  const countScale = isTextCue ? Math.min(display.scale, 1.08) : display.scale;
+  const cueIcon = getVoiceCoachCueIcon(
+    phase,
+    display.displayNumber,
+    turbo,
+    display.climaxStage
+  );
+  const showStatus =
+    mode === 'count' &&
+    (isCountPaused ||
+      !isRedundantVoiceCoachStatus(display.displayNumber, status, phase));
 
   return createPortal(
     <div
@@ -227,9 +239,11 @@ export function WorkoutDisplayOverlay({
             {display.showLiveDisplay ? (
               <span
                 key={`${phase}-${display.displayNumber}`}
-                className={`workout-display-overlay__count${
-                  display.climaxStage ? ' workout-display-overlay__count--climax' : ''
-                }${isTextCue ? ' workout-display-overlay__count--text' : ''}`}
+                className={`workout-display-overlay__cue${
+                  display.turboStage ? ' workout-display-overlay__cue--turbo' : ''
+                }${display.climaxStage ? ' workout-display-overlay__cue--climax' : ''}${
+                  isTextCue ? ' workout-display-overlay__cue--text' : ''
+                }`}
                 style={{
                   transform: `scale(${countScale})`,
                   ['--count-shake' as string]: `${
@@ -238,16 +252,15 @@ export function WorkoutDisplayOverlay({
                 }}
                 aria-hidden="true"
               >
-                {display.displayNumber}
+                <span className="workout-display-overlay__cue-icon">{cueIcon}</span>
+                <span className="workout-display-overlay__cue-text">{display.displayNumber}</span>
               </span>
             ) : null}
-            <p className="workout-display-overlay__status" role="status" aria-live="polite">
-              {isCountPaused ? t('machines:voiceCoach.paused') : status}
-              {!isCountPaused && turbo ? ` · ${t('machines:voiceCoach.turboBadge')}` : ''}
-              {!isCountPaused && phase === 'hold'
-                ? ` · ${t('machines:voiceCoach.holdBadge')}`
-                : ''}
-            </p>
+            {showStatus ? (
+              <p className="workout-display-overlay__status" role="status" aria-live="polite">
+                {isCountPaused ? t('machines:voiceCoach.paused') : status}
+              </p>
+            ) : null}
           </>
         )}
       </div>

@@ -58,6 +58,79 @@ export function getVoiceCoachDisplayState(
   };
 }
 
+/** Phase-based emoji for fullscreen motivational cues. */
+export function getVoiceCoachCueIcon(
+  phase: VoiceCoachPhase,
+  displayNumber: string,
+  turbo: boolean,
+  climaxStage: boolean
+): string {
+  if (phase === 'oneMore') return '🔥';
+  if (phase === 'start') return '🚀';
+  if (phase === 'countdown' || phase === 'beep') return '🔥';
+  if (phase === 'hold') {
+    if (displayNumber === '!') return '✅';
+    return '⏱️';
+  }
+  if (phase === 'counting') {
+    if (turbo || climaxStage) return '⚡';
+    return '💪';
+  }
+  if (displayNumber === '!') return '🚀';
+  return '💪';
+}
+
+function normalizeCueText(value: string): string {
+  return value
+    .trim()
+    .replace(/!+$/g, '')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+
+function extractLeadingDigits(value: string): string | null {
+  const match = value.trim().match(/^(\d+)/);
+  return match?.[1] ?? null;
+}
+
+/**
+ * True when status repeats the main cue (exact or digit-only variants like "5회" / "Rep 5").
+ * Turbo/hold badges alone are not a reason to keep the status line.
+ */
+export function isRedundantVoiceCoachStatus(
+  mainCue: string,
+  status: string,
+  _phase?: VoiceCoachPhase
+): boolean {
+  const main = mainCue.trim();
+  const statusTrim = status.trim();
+  if (!main || !statusTrim) return false;
+
+  const mainNorm = normalizeCueText(main);
+  const statusNorm = normalizeCueText(statusTrim);
+  if (mainNorm && statusNorm && mainNorm === statusNorm) return true;
+
+  const mainDigits = extractLeadingDigits(main.replace(/!+$/g, ''));
+  if (mainDigits) {
+    // "5", "5!", status "5"
+    if (statusNorm === mainDigits) return true;
+    // KO: "5회"
+    if (statusNorm === `${mainDigits}회`) return true;
+    // EN: "Rep 5"
+    if (statusNorm === `rep ${mainDigits}`) return true;
+  }
+
+  // oneMore / hold: status starts with the cue ("하나더! (5)", "Hold 3" when main is hold digits handled above)
+  if (mainNorm && statusNorm.startsWith(mainNorm)) return true;
+
+  // Hold countdown status "버텨 3" / "Hold 3" when main is "3"
+  if (mainDigits) {
+    if (new RegExp(`^(버텨|hold)\\s*${mainDigits}$`, 'i').test(statusNorm)) return true;
+  }
+
+  return false;
+}
+
 export function voiceCoachStatusLabel(
   t: (key: string, opts?: Record<string, unknown>) => string,
   phase: VoiceCoachPhase,

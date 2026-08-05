@@ -1471,10 +1471,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.85rem;
   text-align: center;
   min-height: 0;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
 }
 
 .workout-display-overlay__label {
@@ -1491,10 +1491,88 @@
   font-variant-numeric: tabular-nums;
 }
 
+.workout-display-overlay__cue {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2em;
+  max-width: 100%;
+  font-size: clamp(5.5rem, 38vw, 12rem);
+  transform-origin: center;
+  transition: transform 90ms ease-out, color 120ms ease;
+  animation: voice-count-pop 220ms cubic-bezier(0.22, 1.2, 0.36, 1);
+  z-index: 0;
+}
+
+.workout-display-overlay__cue::before {
+  content: '';
+  position: absolute;
+  inset: -18% -12%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary, #e11d48) 18%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.workout-display-overlay__cue--turbo::before {
+  opacity: 1;
+  animation: voice-cue-ring-pulse 900ms ease-in-out infinite;
+}
+
+.workout-display-overlay__cue-icon {
+  display: block;
+  font-size: 0.38em;
+  line-height: 1;
+  animation: voice-cue-icon-bounce 420ms cubic-bezier(0.22, 1.35, 0.36, 1);
+  filter: saturate(1.1);
+}
+
+.workout-display-overlay__cue--turbo .workout-display-overlay__cue-icon,
+.workout-display-overlay__cue--climax .workout-display-overlay__cue-icon {
+  animation:
+    voice-cue-icon-bounce 380ms cubic-bezier(0.22, 1.35, 0.36, 1),
+    voice-cue-icon-pulse 700ms ease-in-out infinite;
+}
+
+.workout-display-overlay__cue-text {
+  display: block;
+  font-size: 1em;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  max-width: min(96vw, 28rem);
+  font-variant-numeric: tabular-nums;
+  word-break: keep-all;
+}
+
+.workout-display-overlay__cue--text {
+  font-size: clamp(2.75rem, 16vw, 5rem);
+}
+
+.workout-display-overlay__cue--text .workout-display-overlay__cue-text {
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  padding: 0 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.workout-display-overlay__cue--turbo {
+  color: var(--color-primary, #e11d48);
+  animation: voice-count-pop 200ms cubic-bezier(0.22, 1.2, 0.36, 1), voice-count-shake 280ms ease-in-out;
+}
+
+.workout-display-overlay__cue--climax .workout-display-overlay__cue-text {
+  color: #dc2626;
+  text-shadow: 0 0 24px rgba(220, 38, 38, 0.35);
+}
+
+/* Legacy class kept for paused opacity (count sessions use __cue). */
 .workout-display-overlay__count {
   display: inline-block;
-  /* Keep large for fullscreen, but fit 2–3 digits on phone widths. */
-  font-size: clamp(3.75rem, 26vw, 7.5rem);
+  font-size: clamp(5.5rem, 38vw, 12rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -1502,27 +1580,6 @@
   transform-origin: center;
   transition: transform 90ms ease-out, color 120ms ease;
   animation: voice-count-pop 180ms ease-out;
-}
-
-/* 「하나더」 등 글자 큐 — 숫자보다 작게, 아래 status와 겹치지 않게 */
-.workout-display-overlay__count--text {
-  font-size: clamp(2rem, 12vw, 3.25rem);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  max-width: min(92vw, 22rem);
-  padding: 0 0.35rem;
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-}
-
-.workout-display-overlay--turbo .workout-display-overlay__count {
-  color: var(--color-primary, #e11d48);
-  animation: voice-count-pop 160ms ease-out, voice-count-shake 280ms ease-in-out;
-}
-
-.workout-display-overlay__count--climax {
-  color: #dc2626;
-  text-shadow: 0 0 24px rgba(220, 38, 38, 0.35);
 }
 
 .workout-display-overlay__status {
@@ -1550,7 +1607,8 @@
 }
 
 .workout-display-overlay--paused .workout-display-overlay__time,
-.workout-display-overlay--paused .workout-display-overlay__count {
+.workout-display-overlay--paused .workout-display-overlay__count,
+.workout-display-overlay--paused .workout-display-overlay__cue {
   opacity: 0.72;
 }
 
@@ -1750,15 +1808,16 @@
 
 @keyframes voice-count-pop {
   0% {
-    opacity: 0.55;
-    transform: scale(0.86);
+    opacity: 0.45;
+    transform: scale(0.78);
   }
-  70% {
+  65% {
     opacity: 1;
-    transform: scale(1.06);
+    transform: scale(1.1);
   }
   100% {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -1775,10 +1834,56 @@
   }
 }
 
+@keyframes voice-cue-icon-bounce {
+  0% {
+    opacity: 0.35;
+    transform: translateY(0.35em) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-0.12em) scale(1.18);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes voice-cue-icon-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes voice-cue-ring-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.55;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .voice-coach-panel__count-num {
-    animation: none;
+  .voice-coach-panel__count-num,
+  .workout-display-overlay__cue,
+  .workout-display-overlay__cue-icon,
+  .workout-display-overlay__count {
+    animation: none !important;
     transition: none;
+  }
+
+  .workout-display-overlay__cue::before,
+  .workout-display-overlay__cue--turbo::before {
+    animation: none !important;
+    opacity: 0.25;
   }
 }
 
