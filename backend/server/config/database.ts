@@ -32,8 +32,22 @@ export function getPool(): pg.Pool | null {
       connectionTimeoutMillis: env.DATABASE_POOL_CONNECTION_TIMEOUT_MS,
       allowExitOnIdle: false,
     });
-    pool.on('connect', (client) => {
+      pool.on('connect', (client) => {
       void client.query('SET statement_timeout = 30000');
+    });
+    pool.on('error', (err) => {
+      // Idle client errors — keep process alive; next query will reconnect.
+      try {
+        // Dynamic import-safe: avoid circular deps at module load.
+        void import('../utils/logger.js').then(({ logger }) => {
+          logger.error('pg pool error', {
+            message: err.message,
+            code: (err as { code?: string }).code,
+          });
+        });
+      } catch {
+        /* ignore */
+      }
     });
   }
   return pool;
@@ -155,4 +169,24 @@ export async function warmupDatabase(): Promise<boolean> {
 export async function checkDatabaseConnection(): Promise<boolean> {
   const probe = await probeDatabaseConnection(3_000);
   return probe.ok;
+}
+
+/** Drop the pool so the next getPool() rebuilds connections (DR reconnect). */
+export async function closePool(): Promise<void> {
+  if (!pool) return;
+  const current = pool;
+  pool = null;
+  try {
+    await current.end();
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Sync reset used when a probe fails — next getPool recreates. */
+export function resetPool(): void {
+  if (!pool) return;
+  const current = pool;
+  pool = null;
+  void current.end().catch(() => undefined);
 }

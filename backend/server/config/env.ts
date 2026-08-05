@@ -59,6 +59,14 @@ const envSchema = z.object({
   /** Optional — required only if Kakao console enables Client Secret. */
   KAKAO_CLIENT_SECRET: z.string().optional(),
   APPLE_CLIENT_ID: z.string().optional(),
+  /** Soft Express request deadline (ms). 0 disables. Default 30s. */
+  REQUEST_TIMEOUT_MS: z.coerce.number().int().min(0).default(30_000),
+  /** Grace period for in-flight requests on SIGTERM (ms). */
+  SHUTDOWN_GRACE_MS: z.coerce.number().int().positive().default(15_000),
+  /** Optional Sentry DSN — enables alert channel when set. */
+  SENTRY_DSN: z.string().optional(),
+  /** Optional webhook URL for critical DR alerts (Slack/Discord compatible). */
+  DR_ALERT_WEBHOOK_URL: z.string().optional(),
 });
 
 export const env = envSchema.parse({

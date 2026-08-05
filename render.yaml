@@ -9,12 +9,17 @@
 # 1k concurrent readiness (ops — apply in Render Dashboard, not Blueprint free):
 # - Plan: Standard or Pro (Starter 0.5CPU/512MB is insufficient for 1k)
 # - Instances: 2–4 with autoscale on CPU ≥70%
-# - Health Check Path: /api/v1/health (already set)
+# - Health Check Path: /api/v1/health (liveness — always 200 while process up)
+# - Optional readiness (do NOT use as Render healthCheckPath): /ready or /api/v1/ready
 # - Always On / no idle spin-down on paid plans
 # - Region: closest to Supabase (ap-northeast-2 / Singapore as available)
 # - Env: DATABASE_URL → Supabase Transaction pooler :6543?pgbouncer=true
 #        DATABASE_POOL_MAX=10 (per instance; avoid session pooler)
 #        OPS_API_SAMPLE_RATE=0.05
+#        REQUEST_TIMEOUT_MS=30000
+#        SHUTDOWN_GRACE_MS=15000
+#        DR_ALERT_WEBHOOK_URL= (optional Slack/Discord webhook)
+#        MF_DEPLOY_ENV=PROD|STAGE|DEV
 services:
   - type: web
     name: machinefit-api

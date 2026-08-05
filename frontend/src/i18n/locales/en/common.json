@@ -7,6 +7,13 @@
     "retryNow": "🔄 Try again now",
     "goHome": "Go to home"
   },
+  "serviceUnavailable": {
+    "networkTitle": "Network connection problem",
+    "serverTitle": "Temporary server error",
+    "unavailableTitle": "Service temporarily unavailable",
+    "desc": "Please try again in a moment.",
+    "refresh": "Refresh"
+  },
   "emptyState": {
     "browseMachines": "Browse machines"
   },

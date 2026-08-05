@@ -37,6 +37,23 @@ async function raiseAlert(input: {
       title: input.title,
       message: input.message,
     });
+    // Dual-path DR notifier (webhook / Sentry structure) — never throws.
+    void import('../ops/dr-alerts.js')
+      .then(({ notifyDrAlert }) =>
+        notifyDrAlert({
+          alertKey: input.alertKey,
+          severity:
+            input.severity === 'critical'
+              ? 'critical'
+              : input.severity === 'info'
+                ? 'info'
+                : 'warning',
+          title: input.title,
+          message: input.message,
+          meta: input.meta,
+        })
+      )
+      .catch(() => undefined);
   }
 }
 
@@ -361,12 +378,18 @@ export const opsService = {
 
       const dbOk = await checkDatabaseConnection();
       if (env.DATABASE_URL && !dbOk) {
-        await raiseAlert({
-          alertKey: 'db_down',
-          severity: 'critical',
-          title: 'Database connection failed',
-          message: 'Health probe could not reach Postgres',
-        });
+        // One reconnect attempt before alerting (DR recovery).
+        const { resetPool } = await import('../config/database.js');
+        resetPool();
+        const retried = await checkDatabaseConnection();
+        if (!retried) {
+          await raiseAlert({
+            alertKey: 'db_down',
+            severity: 'critical',
+            title: 'Database connection failed',
+            message: 'Health probe could not reach Postgres',
+          });
+        }
       }
     } catch {
       /* never crash the process from sampling */

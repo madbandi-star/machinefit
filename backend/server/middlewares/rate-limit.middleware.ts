@@ -11,8 +11,16 @@ function shouldSkipRateLimit(req: Request): boolean {
   if (
     path === '/health' ||
     path === '/warmup' ||
+    path === '/ready' ||
+    path === '/live' ||
+    path === '/liveness' ||
+    path === '/meta' ||
     path.endsWith('/health') ||
-    path.endsWith('/warmup')
+    path.endsWith('/warmup') ||
+    path.endsWith('/ready') ||
+    path.endsWith('/live') ||
+    path.endsWith('/liveness') ||
+    path.endsWith('/meta')
   ) {
     return true;
   }

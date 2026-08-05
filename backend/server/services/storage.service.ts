@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { publicApiBase } from '../utils/public-api-base.js';
+import { withRetry } from '../utils/with-retry.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audio');
@@ -42,7 +43,10 @@ async function ensureAudioBucket(): Promise<void> {
   if (!audioBucketReady) {
     audioBucketReady = (async () => {
       const bucket = env.MOTIVATION_AUDIO_BUCKET;
-      const { data, error } = await client.storage.listBuckets();
+      const { data, error } = await withRetry(
+        () => client.storage.listBuckets(),
+        { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+      );
       if (error) {
         throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
       }
@@ -86,7 +90,10 @@ async function ensureMuscleBucket(): Promise<void> {
   if (!muscleBucketReady) {
     muscleBucketReady = (async () => {
       const bucket = env.MUSCLE_GROUP_IMAGE_BUCKET;
-      const { data, error } = await client.storage.listBuckets();
+      const { data, error } = await withRetry(
+        () => client.storage.listBuckets(),
+        { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+      );
       if (error) {
         throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
       }
@@ -258,7 +265,10 @@ export const storageService = {
       if (!machineCoverBucketReady) {
         machineCoverBucketReady = (async () => {
           const bucket = env.MACHINE_COVER_IMAGE_BUCKET;
-          const { data, error } = await client.storage.listBuckets();
+          const { data, error } = await withRetry(
+            () => client.storage.listBuckets(),
+            { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+          );
           if (error) {
             throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
           }
@@ -377,5 +387,30 @@ export const storageService = {
         .join('/')}`,
       provider: 'local',
     };
+  },
+
+  /**
+   * Lightweight storage readiness probe (DR /ready).
+   * Returns true when Supabase Storage responds or local disk is usable.
+   */
+  async probeConnection(timeoutMs = 2_500): Promise<boolean> {
+    const client = getSupabase();
+    if (!client) {
+      try {
+        mkdirSync(LOCAL_UPLOAD_ROOT, { recursive: true });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    try {
+      const result = await Promise.race([
+        client.storage.listBuckets().then((r) => !r.error),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
+      ]);
+      return result;
+    } catch {
+      return false;
+    }
   },
 };

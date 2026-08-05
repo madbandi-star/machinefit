@@ -6,6 +6,7 @@ import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { Toast } from '@/components/feedback/Toast/Toast';
 import { PremiumUpgradeModalGlobal } from '@/components/premium/PremiumUpgradeModal/PremiumUpgradeModal';
+import { ServiceUnavailableScreen } from '@/components/feedback/ServiceUnavailableScreen/ServiceUnavailableScreen';
 import { API_BASE_URL } from '@/services/http/axios-client';
 import '@/i18n';
 
@@ -26,6 +27,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
             {children}
             <Toast />
             <PremiumUpgradeModalGlobal />
+            <ServiceUnavailableScreen />
           </ThemeProvider>
         </I18nProvider>
       </AuthHydrationProvider>

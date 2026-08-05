@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import { logger } from '../utils/logger.js';
 
 export class AppError extends Error {
   constructor(
@@ -29,19 +30,44 @@ function isZodError(err: unknown): err is ZodError {
   );
 }
 
+function responseTimeMs(req: Request): number | undefined {
+  if (typeof req.requestStartedAt !== 'number') return undefined;
+  return Math.max(0, Date.now() - req.requestStartedAt);
+}
+
 export function errorMiddleware(
   err: Error,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void {
+  const requestId = req.requestId;
+  const durationMs = responseTimeMs(req);
+  const userId =
+    (req as typeof req & { user?: { userId?: string; id?: string } }).user?.userId ??
+    (req as typeof req & { user?: { id?: string } }).user?.id ??
+    null;
+
   if (err instanceof AppError) {
+    if (err.statusCode >= 500) {
+      logger.error('AppError', {
+        requestId,
+        method: req.method,
+        url: req.originalUrl,
+        userId,
+        ip: req.ip,
+        code: err.code,
+        message: err.message,
+        durationMs,
+      });
+    }
     res.status(err.statusCode).json({
       success: false,
       error: {
         code: err.code,
         message: err.message,
         details: err.details,
+        ...(requestId ? { requestId } : {}),
       },
     });
     return;
@@ -55,12 +81,23 @@ export function errorMiddleware(
         message: 'Validation failed',
         // Match validateBody middleware: flatten() so clients can read fieldErrors.
         details: err.flatten(),
+        ...(requestId ? { requestId } : {}),
       },
     });
     return;
   }
 
-  console.error(err);
+  logger.error('Unhandled API error', {
+    requestId,
+    method: req.method,
+    url: req.originalUrl,
+    userId,
+    ip: req.ip,
+    message: err.message,
+    stack: err.stack,
+    durationMs,
+  });
+
   try {
     // Fire-and-forget ops capture (dynamic import avoids circular init issues).
     void import('../services/ops.service.js')
@@ -75,14 +112,20 @@ export function errorMiddleware(
                 stack: err.stack,
                 severity: 'high',
                 source: 'backend',
-                url: _req.originalUrl,
+                url: req.originalUrl,
+                fingerprint: requestId ? `req:${requestId}` : undefined,
+              },
+              meta: {
+                requestId,
+                method: req.method,
+                durationMs,
               },
             },
           ],
           {
-            userId: (_req as typeof _req & { user?: { id?: string } }).user?.id ?? null,
-            ip: _req.ip,
-            userAgent: _req.get('user-agent') ?? null,
+            userId,
+            ip: req.ip,
+            userAgent: req.get('user-agent') ?? null,
           }
         )
       )
@@ -95,6 +138,7 @@ export function errorMiddleware(
     error: {
       code: 'INTERNAL_ERROR',
       message: 'An unexpected error occurred',
+      ...(requestId ? { requestId } : {}),
     },
   });
 }

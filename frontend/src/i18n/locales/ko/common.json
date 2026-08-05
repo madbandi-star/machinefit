@@ -7,6 +7,13 @@
     "retryNow": "🔄 지금 다시 시도",
     "goHome": "홈으로 이동"
   },
+  "serviceUnavailable": {
+    "networkTitle": "네트워크 연결에 문제가 있습니다",
+    "serverTitle": "일시적인 서버 오류가 발생했습니다",
+    "unavailableTitle": "서비스를 잠시 사용할 수 없습니다",
+    "desc": "잠시 후 다시 시도해주세요.",
+    "refresh": "새로고침"
+  },
   "emptyState": {
     "browseMachines": "기구 찾아보기"
   },

@@ -4,10 +4,14 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { env } from './config/env.js';
 import { apiRouter } from './routes/index.js';
+import { probeRouter } from './routes/probe.routes.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { rateLimitMiddleware } from './middlewares/rate-limit.middleware.js';
 import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.js';
 import { opsMetricsMiddleware } from './middlewares/ops-metrics.middleware.js';
+import { requestIdMiddleware } from './middlewares/request-id.middleware.js';
+import { requestTimeoutMiddleware } from './middlewares/request-timeout.middleware.js';
+import { drainGuardMiddleware } from './middlewares/drain-guard.middleware.js';
 import { storageService } from './services/storage.service.js';
 import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
 import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
@@ -44,9 +48,16 @@ export function createApp() {
     })
   );
   app.use(express.json({ limit: '1mb' }));
+  // DR: correlate → soft timeout → refuse new work while draining → rate limit.
+  app.use(requestIdMiddleware);
+  app.use(requestTimeoutMiddleware);
+  app.use(drainGuardMiddleware);
   app.use(rateLimitMiddleware);
   app.use(env.API_BASE_PATH, cacheHeadersMiddleware);
   app.use(env.API_BASE_PATH, opsMetricsMiddleware);
+
+  // Root probes: /health /ready /live (outside product /api/v1/live dashboard).
+  app.use(probeRouter);
 
   // Local-dev fallback for motivation audio when Supabase Storage is not configured.
   app.use(

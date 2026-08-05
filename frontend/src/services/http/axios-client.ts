@@ -82,6 +82,14 @@ apiClient.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${tokens.accessToken}`;
   }
   config.headers['Accept-Language'] = useSettingsStore.getState().locale;
+  // Correlate FE → BE logs (server may overwrite with its own id).
+  if (!config.headers['X-Request-ID'] && !config.headers['x-request-id']) {
+    const id =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `mf-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    config.headers['X-Request-ID'] = id;
+  }
   // FormData needs the browser-generated multipart boundary — never force JSON/multipart.
   if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
     const headers = config.headers as {
@@ -103,7 +111,12 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    void import('@/store/apiHealth.store').then(({ useApiHealthStore }) => {
+      useApiHealthStore.getState().recordSuccess();
+    });
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config as RetryConfig | undefined;
     const status = error.response?.status;
@@ -155,6 +168,11 @@ apiClient.interceptors.response.use(
               status,
             },
           });
+        });
+        void import('@/store/apiHealth.store').then(({ useApiHealthStore }) => {
+          const kind =
+            isNetwork || isTimeout ? 'network' : status === 503 ? 'unavailable' : 'server';
+          useApiHealthStore.getState().recordFailure(kind, status ?? null);
         });
       }
     }

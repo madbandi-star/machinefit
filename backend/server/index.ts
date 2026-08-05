@@ -7,6 +7,11 @@ import { getPool, warmupDatabase } from './config/database.js';
 import { startMachineTradeExpireJob } from './jobs/machine-trade-expire.job.js';
 import { startOnlinePtOverdueJob } from './jobs/online-pt-overdue.job.js';
 import { startOpsSamplingJob } from './jobs/ops-sampling.job.js';
+import { registerGracefulShutdown } from './lifecycle/shutdown.js';
+import { registerProcessErrorHandlers } from './lifecycle/process-errors.js';
+import { logger } from './utils/logger.js';
+
+registerProcessErrorHandlers();
 
 const app = createApp();
 
@@ -19,10 +24,11 @@ const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   server.keepAliveTimeout = 65_000;
   server.headersTimeout = 66_000;
 
-  console.log(`MachineFit API running on port ${env.PORT}`);
-  console.log(`Health: http://localhost:${env.PORT}${env.API_BASE_PATH}/health`);
+  logger.info(`MachineFit API running on port ${env.PORT}`);
+  logger.info(`Liveness (Render): ${env.API_BASE_PATH}/health`);
+  logger.info(`DR probes: /health /ready /live`);
   if (!getPool()) {
-    console.log('Dev mode: admin@machinefit.com / admin123');
+    logger.info('Dev mode: admin@machinefit.com / admin123');
   }
 
   void warmupDatabase();
@@ -30,3 +36,5 @@ const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   startOnlinePtOverdueJob();
   startOpsSamplingJob();
 });
+
+registerGracefulShutdown(server);

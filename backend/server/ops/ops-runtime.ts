@@ -35,6 +35,24 @@ export function getBuildVersion(): string {
   );
 }
 
+/** Full or short git commit when available (Render injects RENDER_GIT_COMMIT). */
+export function getGitCommit(): string | null {
+  const full = process.env.RENDER_GIT_COMMIT || process.env.MF_GIT_COMMIT || process.env.GITHUB_SHA;
+  return full ? full.slice(0, 40) : null;
+}
+
+/**
+ * Deploy environment label: DEV | STAGE | PROD.
+ * Uses MF_DEPLOY_ENV when set; otherwise derives from NODE_ENV.
+ */
+export function getDeployEnv(): 'DEV' | 'STAGE' | 'PROD' {
+  const raw = String(process.env.MF_DEPLOY_ENV || '').trim().toUpperCase();
+  if (raw === 'DEV' || raw === 'STAGE' || raw === 'PROD') return raw;
+  if (env.NODE_ENV === 'production') return 'PROD';
+  if (env.NODE_ENV === 'test') return 'STAGE';
+  return 'DEV';
+}
+
 export function getBuildTime(): string {
   return (
     process.env.MF_BUILD_TIME ||

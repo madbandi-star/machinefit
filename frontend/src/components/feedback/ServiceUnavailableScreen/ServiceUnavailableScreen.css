@@ -1,0 +1,59 @@
+.service-unavailable-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 1.25rem 2.5rem;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(57, 255, 20, 0.1), transparent 55%),
+    linear-gradient(180deg, #0b1220 0%, #111827 45%, #0f172a 100%);
+  color: #f3f4f6;
+}
+
+.service-unavailable-screen__card {
+  width: min(100%, 22rem);
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.service-unavailable-screen__title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.service-unavailable-screen__desc {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.service-unavailable-screen__actions {
+  display: grid;
+  gap: 0.65rem;
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+.service-unavailable-screen__btn {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #0b1220;
+  background: #39ff14;
+}
+
+.service-unavailable-screen__btn:hover {
+  filter: brightness(1.05);
+}
