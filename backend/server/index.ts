@@ -40,7 +40,10 @@ const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   startOpsSamplingJob();
 
   void storageService.ensureMotivationAudioReady().then((result) => {
-    if (result.status === 'ok') logger.info('Motivation audio storage bucket ready');
+    // Production logger is WARN+ only — keep these visible on Render.
+    if (result.status === 'ok') {
+      logger.warn('Motivation audio storage bucket ready');
+    }
     if (result.status === 'skipped') {
       logger.warn(
         `Motivation audio storage skipped — ${result.detail ?? 'set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY'}`
