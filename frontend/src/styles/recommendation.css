@@ -1549,14 +1549,20 @@
 }
 
 .workout-display-overlay__cue--text {
-  font-size: clamp(2.75rem, 16vw, 5rem);
+  /* Match digit energy; slightly under pure digit clamp so 2–3 Korean chars fit. */
+  font-size: clamp(4.5rem, 32vw, 10rem);
 }
 
 .workout-display-overlay__cue--text .workout-display-overlay__cue-text {
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  padding: 0 0.35rem;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  padding: 0 0.2rem;
   overflow-wrap: anywhere;
+}
+
+/* Text cues (하나더 / 버텨) share pop + turbo shake/ring with digit cues */
+.workout-display-overlay__cue--text.workout-display-overlay__cue--turbo {
+  animation: voice-count-pop 200ms cubic-bezier(0.22, 1.2, 0.36, 1), voice-count-shake 280ms ease-in-out;
 }
 
 .workout-display-overlay__cue--turbo {

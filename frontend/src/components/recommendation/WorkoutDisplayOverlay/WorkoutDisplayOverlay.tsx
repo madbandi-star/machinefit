@@ -184,7 +184,7 @@ export function WorkoutDisplayOverlay({
     Boolean(display.displayNumber) &&
     display.displayNumber !== '!' &&
     !/^\d+!?$/.test(display.displayNumber);
-  const countScale = isTextCue ? Math.min(display.scale, 1.08) : display.scale;
+  const countScale = display.scale;
   const cueIcon = getVoiceCoachCueIcon(
     phase,
     display.displayNumber,

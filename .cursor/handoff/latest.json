@@ -1,25 +1,23 @@
 {
-  "title": "Motivational fullscreen count cues",
-  "summary": "Fullscreen voice count shows phase emoji above a larger cue, stronger pop/shake/pulse animations, and hides status when it duplicates the main cue (e.g. 5 / 5?).",
-  "git": { "branch": "main", "commit": "f1fe3fb7" },
+  "title": "Larger oneMore/hold text cues with full digit animation",
+  "summary": "Fullscreen text cues (??? / ??) enlarged toward digit scale and use the same intensity scale + pop/shake path as numbers; other overlay cues unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/voiceCoachDisplay.ts",
     "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
     "frontend/src/styles/recommendation.css"
   ],
-  "testFocus": "Fullscreen count: emoji+large cue; no duplicate status for digits/oneMore/hold; pause still shows status; turbo motion.",
+  "testFocus": "Fullscreen: ??? and ?? larger; pop/shake/scale match digits; digit cues and emoji layout unchanged.",
   "fastChecks": [
-    "rg -n \"getVoiceCoachCueIcon|isRedundantVoiceCoachStatus|workout-display-overlay__cue\" frontend/src/utils/voiceCoachDisplay.ts frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx frontend/src/styles/recommendation.css",
-    "npm run test:smoke:changed"
+    "rg -n \"cue--text|countScale|32vw\" frontend/src/styles/recommendation.css frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Start voice count fullscreen ? cue has emoji, large digits, no '5?' under '5'"
+    "Trigger oneMore and hold ? text large with same motion as reps"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Bare large number/text; status often repeated the same cue.",
-  "toBe": "Emoji + bigger animated cue; redundant status hidden."
+  "asIs": "Text cues smaller and scale-capped vs digits.",
+  "toBe": "Text cues ~digit size with full scale/pop/shake."
 }
