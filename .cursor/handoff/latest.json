@@ -1,7 +1,7 @@
 {
   "title": "Fix header music playFailed with user uploads",
   "summary": "Header music no longer treats interrupted play()/src swaps as failures; waits for user track list before play; compares media URLs safely so multi-upload playlists work.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b681d423" },
   "changedFiles": [
     "frontend/src/utils/motivationAudio.ts",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
