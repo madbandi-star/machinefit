@@ -1,7 +1,7 @@
 {
   "title": "Subscription plan card 3-row layout",
-  "summary": "My Page ??·?? fields use profile-card__pair so six fields show as three two-column rows.",
-  "git": { "branch": "main", "commit": "pending" },
+  "summary": "My Page ???? fields use profile-card__pair so six fields show as three two-column rows.",
+  "git": { "branch": "main", "commit": "aa39f57e" },
   "changedFiles": [
     "frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx"
   ],
