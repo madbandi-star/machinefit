@@ -10,6 +10,7 @@ export * from './recommendation-settings.js';
 export * from './weight-difficulty.js';
 export * from './subscription.js';
 export * from './billing.js';
+export * from './motivation-media.js';
 export * from './live-geo.js';
 export * from './demo-auth.js';
 export * from './legal.js';
