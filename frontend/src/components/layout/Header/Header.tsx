@@ -25,7 +25,9 @@ export function Header() {
             height={34}
             decoding="async"
           />
-          Machine<span className="header__logo-fit">Fit</span>
+          <span className="header__logo-text">
+            Machine<span className="header__logo-fit">Fit</span>
+          </span>
         </Link>
         <LanguageSelector variant="compact" />
         <EasyMiniHeaderButton />

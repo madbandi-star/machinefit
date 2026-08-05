@@ -68,6 +68,11 @@
   color: var(--color-primary);
 }
 
+.header__logo-text {
+  display: inline;
+  white-space: nowrap;
+}
+
 .header__actions {
   display: flex;
   align-items: center;
