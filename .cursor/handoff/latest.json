@@ -1,13 +1,13 @@
 {
   "title": "Voice coach volume slider up to 200%",
   "summary": "Settings voice-count volume max raised from 100% to 200% (default stays 100%). Web Audio GainNode applies boost above 1; HTML/TTS stay capped at 1 by browser APIs.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b5cfdbc3" },
   "changedFiles": [
     "frontend/src/utils/voiceCoachVolume.ts",
     "frontend/src/utils/voiceCoachClips.ts",
     "frontend/src/utils/speechManager.ts"
   ],
-  "testFocus": "Settings ? ?? ??? ? volume slider goes 0?200%, default 100%. At 150?200% clips/beeps louder; digits UI unchanged.",
+  "testFocus": "Settings ? voice count ? volume slider goes 0?200%, default 100%. At 150?200% clips/beeps louder.",
   "fastChecks": [
     "rg -n \"max: 2|getVoiceCoachElementVolume\" frontend/src/utils/voiceCoachVolume.ts frontend/src/utils/voiceCoachClips.ts frontend/src/utils/speechManager.ts",
     "npm run test:smoke:changed"
