@@ -1471,7 +1471,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 1rem;
   text-align: center;
   min-height: 0;
   padding: 1rem 0;
@@ -1504,6 +1504,17 @@
   animation: voice-count-pop 180ms ease-out;
 }
 
+/* 「하나더」 등 글자 큐 — 숫자보다 작게, 아래 status와 겹치지 않게 */
+.workout-display-overlay__count--text {
+  font-size: clamp(2rem, 12vw, 3.25rem);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  max-width: min(92vw, 22rem);
+  padding: 0 0.35rem;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
 .workout-display-overlay--turbo .workout-display-overlay__count {
   color: var(--color-primary, #e11d48);
   animation: voice-count-pop 160ms ease-out, voice-count-shake 280ms ease-in-out;
@@ -1516,9 +1527,11 @@
 
 .workout-display-overlay__status {
   margin: 0;
-  font-size: clamp(1rem, 3.5vw, 1.35rem);
+  font-size: clamp(0.9rem, 3.2vw, 1.15rem);
   font-weight: 600;
   color: var(--color-text-muted);
+  max-width: min(92vw, 22rem);
+  line-height: 1.35;
 }
 
 .workout-display-overlay__actions {

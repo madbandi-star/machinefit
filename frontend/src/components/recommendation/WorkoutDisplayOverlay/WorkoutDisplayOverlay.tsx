@@ -178,6 +178,11 @@ export function WorkoutDisplayOverlay({
   );
   const status = voiceCoachStatusLabel(t, phase, currentRep, countdown);
   const showRestPause = mode === 'rest' && restRemaining > 0;
+  const isTextCue =
+    Boolean(display.displayNumber) &&
+    display.displayNumber !== '!' &&
+    !/^\d+$/.test(display.displayNumber);
+  const countScale = isTextCue ? Math.min(display.scale, 1.06) : display.scale;
 
   return createPortal(
     <div
@@ -224,9 +229,9 @@ export function WorkoutDisplayOverlay({
                 key={`${phase}-${display.displayNumber}`}
                 className={`workout-display-overlay__count${
                   display.climaxStage ? ' workout-display-overlay__count--climax' : ''
-                }`}
+                }${isTextCue ? ' workout-display-overlay__count--text' : ''}`}
                 style={{
-                  transform: `scale(${display.scale})`,
+                  transform: `scale(${countScale})`,
                   ['--count-shake' as string]: `${
                     display.turboStage ? 1.2 + intensity : intensity * 0.6
                   }px`,

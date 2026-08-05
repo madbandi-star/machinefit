@@ -1,21 +1,24 @@
 {
-  "title": "Shrink fullscreen voice-count number size",
-  "summary": "WorkoutDisplayOverlay count font reduced from clamp(6.5rem,42vw,14rem) to clamp(3.75rem,26vw,7.5rem) so 2-digit reps fit on phones.",
-  "git": { "branch": "main", "commit": "0b4f1f65" },
-  "changedFiles": ["frontend/src/styles/recommendation.css"],
-  "testFocus": "Fullscreen count display: numbers still large but 10+ readable on phone without overflow.",
+  "title": "Shrink fullscreen text cues (???) so they don?t overlap status",
+  "summary": "Non-digit voice cues like ????? use a smaller count--text size and capped scale so they no longer collide with the status line under the count. Digit size unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
+    "frontend/src/styles/recommendation.css"
+  ],
+  "testFocus": "Fullscreen voice coach: numbers stay current size; text cues (??? / hold) are smaller and clear of the muted status line below.",
   "fastChecks": [
-    "rg -n \"workout-display-overlay__count\" -A6 frontend/src/styles/recommendation.css",
+    "rg -n \"count--text|isTextCue\" frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx frontend/src/styles/recommendation.css",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Voice count fullscreen on phone ? 2-digit reps look balanced"
+    "Trigger oneMore cue in fullscreen ? text should not overlap status"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Count digits too huge (42vw) ? 2 digits cramped on phone.",
-  "toBe": "Moderately large count (26vw, max 7.5rem) fits multi-digit reps."
+  "asIs": "????? used the same huge digit font and overlapped the status subtitle.",
+  "toBe": "Text cues use clamp(2rem,12vw,3.25rem) + count--text; digits unchanged."
 }
