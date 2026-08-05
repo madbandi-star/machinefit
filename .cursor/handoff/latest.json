@@ -1,7 +1,7 @@
 {
   "title": "Redesign header music popover UI",
   "summary": "Header music panel redesigned as a MachineFit glass mini-player: now-playing hero, circular play/pause, seek bar, cleaner playlist, manage-library link. Avoids clash with motivation-music page CSS.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9e8179ec" },
   "changedFiles": [
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
