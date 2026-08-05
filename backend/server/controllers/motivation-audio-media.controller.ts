@@ -40,7 +40,15 @@ export async function serveMotivationAudio(req: Request, res: Response, next: Ne
 
     const file = await storageService.readMotivationAudio(storagePath);
     if (!file) {
-      res.status(404).end();
+      // Help diagnose missing Storage config / wiped ephemeral uploads.
+      res.status(404).json({
+        success: false,
+        error: {
+          code: 'AUDIO_NOT_FOUND',
+          message:
+            'Audio file not found. Re-upload after configuring SUPABASE_SERVICE_ROLE_KEY on the API.',
+        },
+      });
       return;
     }
 

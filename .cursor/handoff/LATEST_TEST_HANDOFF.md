@@ -1,32 +1,27 @@
-# Test handoff: Fix motivation audio playback
+# Test handoff: Motivation audio needs Supabase + re-upload
 
 ## Summary
-??? ??? API ???(`/api/v1/media/motivation-audio/...`)? ??. ?? URL? ?? Supabase ?? ?? ???? ???. ???? `canplay` ? `play()`.
+DB? ?? 5? URL? ??? Supabase `motivation-audio` **?? ??** + ??? Render ???? ?? ??? ? 404. ????? Storage ? ??, ?? ? ?? ??.
 
 ## Git
 - Branch: `main`
-- Commit: a38b5665
+- Commit: pending
 
-## Changed files
-- `backend/server/services/storage.service.ts`
-- `backend/server/services/user-motivation-track.service.ts`
-- `backend/server/controllers/motivation-audio-media.controller.ts`
-- `backend/server/app.ts`
-- `frontend/src/utils/motivationAudio.ts`
-- `frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx`
-- `frontend/src/pages/motivation-music/MotivationMusicPage.tsx`
-
-## Test focus
-1. **Render API ??? ??**
-2. Pages Ctrl+F5 ? ?? ???? ??? ? ??
-3. `???? ????` ???? ?? ??? ?
+## Ops required (user)
+1. Render ? `machinefit-api` ? Environment  
+   - `SUPABASE_URL=https://igthtqiatrglhvysksbj.supabase.co`  
+   - `SUPABASE_SERVICE_ROLE_KEY=` (Supabase Dashboard ? Settings ? API ? **service_role** ???)
+2. Manual Deploy API
+3. ??? ???? ?? **5? ?? ???**
+4. ?? ?? ?? ??
 
 ## Fast checks
 ```bash
-rg -n "readMotivationAudio|motivationAudioPublicUrl|playHtmlAudio|serveMotivationAudio" backend/server frontend/src
+rg -n "requireMotivationAudioStorage|ensureMotivationAudioReady|AUDIO_NOT_FOUND" backend/server
+curl -I "https://machinefit.onrender.com/api/v1/media/motivation-audio/<path>.mp3"
 ```
 
 ## as-is ? to-be
 | as-is | to-be |
 |-------|--------|
-| Supabase public URL 403 / ?? play() | API ??? + canplay ? ?? |
+| ?? ??, ?? ??, ?? 404 | Storage ?? + ???? ? ?? |

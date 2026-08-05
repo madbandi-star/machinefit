@@ -11,6 +11,7 @@ import { registerGracefulShutdown } from './lifecycle/shutdown.js';
 import { registerProcessErrorHandlers } from './lifecycle/process-errors.js';
 import { logger } from './utils/logger.js';
 import { initSentry } from './ops/sentry.js';
+import { storageService } from './services/storage.service.js';
 
 registerProcessErrorHandlers();
 void initSentry();
@@ -37,6 +38,16 @@ const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   startMachineTradeExpireJob();
   startOnlinePtOverdueJob();
   startOpsSamplingJob();
+
+  void storageService.ensureMotivationAudioReady().then((status) => {
+    if (status === 'ok') logger.info('Motivation audio storage bucket ready');
+    if (status === 'skipped') {
+      logger.warn(
+        'Motivation audio storage skipped — set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY for durable uploads'
+      );
+    }
+    if (status === 'error') logger.error('Motivation audio storage bucket setup failed');
+  });
 });
 
 registerGracefulShutdown(server);

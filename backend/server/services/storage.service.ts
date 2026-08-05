@@ -27,14 +27,35 @@ let machineCoverBucketReady: Promise<void> | null = null;
 
 function getSupabase(): SupabaseClient | null {
   if (supabase !== undefined) return supabase;
-  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+  const url = env.SUPABASE_URL?.trim();
+  const key = env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  // Reject dotenv placeholders so we don't pretend Storage is configured.
+  if (
+    !url ||
+    !key ||
+    /^your-|^changeme|^xxx|placeholder/i.test(key) ||
+    /^your-|^changeme/i.test(url)
+  ) {
     supabase = null;
     return null;
   }
-  supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+  supabase = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   return supabase;
+}
+
+function requireMotivationAudioStorage(): SupabaseClient | null {
+  const client = getSupabase();
+  if (client) return client;
+  if (env.NODE_ENV === 'production' || process.env.RENDER === 'true') {
+    throw new AppError(
+      503,
+      'STORAGE_ERROR',
+      'Motivation audio storage is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY on the API host, then re-upload tracks.'
+    );
+  }
+  return null;
 }
 
 async function ensureAudioBucket(): Promise<void> {
@@ -75,6 +96,12 @@ async function ensureAudioBucket(): Promise<void> {
         if (created.error && !/already exists/i.test(created.error.message)) {
           throw new AppError(500, 'STORAGE_ERROR', 'Could not create audio storage bucket', created.error.message);
         }
+      } else {
+        // Older buckets may have been created private — flip to public for browser playback fallbacks.
+        await client.storage.updateBucket(bucket, {
+          public: true,
+          fileSizeLimit: env.MOTIVATION_AUDIO_MAX_BYTES,
+        });
       }
     })().catch((err) => {
       audioBucketReady = null;
@@ -178,7 +205,7 @@ export const storageService = {
     buffer: Buffer;
   }): Promise<StoredAudioObject> {
     const storagePath = `${params.userId}/${params.trackId}.${params.extension}`;
-    const client = getSupabase();
+    const client = requireMotivationAudioStorage();
 
     if (client) {
       await ensureAudioBucket();
@@ -206,6 +233,18 @@ export const storageService = {
       publicUrl: motivationAudioPublicUrl(storagePath),
       provider: 'local',
     };
+  },
+
+  /** Create/publicize the motivation-audio bucket when Storage credentials are present. */
+  async ensureMotivationAudioReady(): Promise<'ok' | 'skipped' | 'error'> {
+    try {
+      const client = getSupabase();
+      if (!client) return 'skipped';
+      await ensureAudioBucket();
+      return 'ok';
+    } catch {
+      return 'error';
+    }
   },
 
   /**
