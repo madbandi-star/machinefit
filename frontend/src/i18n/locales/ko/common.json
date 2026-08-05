@@ -297,6 +297,7 @@
     "voiceCoachOneMore": "하나 더 ! 세기",
     "voiceCoachHoldAfterCount": "마지막에 버텨!!! 추가",
     "voiceCoachFlowMode": "세션 구성",
+    "voiceCoachDetailOptions": "세부옵션",
     "voiceCoachFlowModeDesc": "운동 카운트만, 카운트 후 버텨!!!, 또는 버텨!!!만 선택합니다.",
     "voiceCoachFlowMode_count": "운동 카운트만",
     "voiceCoachFlowMode_count_hold": "운동 카운트 + 버텨!!!",

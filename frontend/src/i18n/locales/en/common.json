@@ -297,6 +297,7 @@
     "voiceCoachOneMore": "Count one more",
     "voiceCoachHoldAfterCount": "Add Hold!!! at the end",
     "voiceCoachFlowMode": "Session mode",
+    "voiceCoachDetailOptions": "Detail options",
     "voiceCoachFlowModeDesc": "Choose count only, count then Hold!!!, or Hold!!! alone.",
     "voiceCoachFlowMode_count": "Exercise count only",
     "voiceCoachFlowMode_count_hold": "Count + Hold!!!",

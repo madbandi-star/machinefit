@@ -497,25 +497,13 @@
   align-items: start;
 }
 
-.settings-voice-coach__checks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  min-width: 0;
-  padding-top: 0.15rem;
-}
-
-.settings-voice-coach__checks--disabled {
-  opacity: 0.55;
-}
-
-.settings-voice-coach__checks .settings-voice-coach__row {
+.settings-voice-coach__session-row .voice-coach-panel__mode-option {
   align-items: flex-start;
-  font-size: 0.84rem;
+  font-weight: 600;
   line-height: 1.3;
 }
 
-.settings-voice-coach__checks .settings-voice-coach__row input {
+.settings-voice-coach__session-row .voice-coach-panel__mode-option input {
   margin-top: 0.15rem;
   flex-shrink: 0;
 }
