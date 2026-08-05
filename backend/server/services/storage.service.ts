@@ -3,6 +3,7 @@ import { mkdirSync } from 'node:fs';
 import { mkdir, writeFile, unlink, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import WebSocket from 'ws';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { publicApiBase } from '../utils/public-api-base.js';
@@ -41,6 +42,11 @@ function getSupabase(): SupabaseClient | null {
   }
   supabase = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
+    // Render/Node <22 has no global WebSocket; supabase-js realtime needs one at init.
+    realtime: {
+      // ws types don't match browser WebSocket DOM types exactly.
+      transport: WebSocket as never,
+    },
   });
   return supabase;
 }
