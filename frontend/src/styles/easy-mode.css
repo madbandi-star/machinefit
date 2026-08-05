@@ -404,9 +404,10 @@
 
 .easy-s1-find::before {
   content: '⌕';
-  font-size: 1.15rem;
+  font-size: 1.55rem;
   line-height: 1;
-  opacity: 0.85;
+  opacity: 0.95;
+  font-weight: 700;
 }
 
 .easy-s1-find--cta {
@@ -422,7 +423,7 @@
 }
 
 .easy-s1-find--cta::before {
-  font-size: 1.35rem;
+  font-size: 1.75rem;
   opacity: 1;
 }
 

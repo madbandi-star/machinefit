@@ -1,24 +1,18 @@
 {
-  "title": "Easy Mode fit-adjust weight syncs to ????",
-  "summary": "Easy Mode ???? ????? now merges/saves prefs and patches machine-preferences + history comparison + live adjusted caches so ???? updates; workout log performed kg path unchanged.",
-  "git": { "branch": "main", "commit": "c7ee83a9" },
-  "changedFiles": [
-    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-    "frontend/src/hooks/useHistorySettingsComparisonData.ts"
-  ],
-  "testFocus": "Easy: complete workout ? ??? ???? ? change next weight ? save ? Records card ???? matches. Performed set kg unchanged.",
+  "title": "Larger Easy Mode find-button search icon",
+  "summary": "Increased ? icon size on Easy Mode step1 ?? ?? button (1.55rem / 1.75rem CTA).",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/styles/easy-mode.css"],
+  "testFocus": "Easy wizard machine pick: search icon on ?? ?? is larger and readable.",
   "fastChecks": [
-    "rg -n \"setHistoryLiveAdjustedPrefs|nextCustom|fromServer\" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/hooks/useHistorySettingsComparisonData.ts",
+    "rg -n \"easy-s1-find::before|1\\.55rem|1\\.75rem\" frontend/src/styles/easy-mode.css",
     "npm run test:smoke:changed"
   ],
-  "productionChecks": [
-    "Ctrl+F5 after Pages deploy",
-    "Easy adjust weight appears as ???? on history; workout log kg still correct"
-  ],
+  "productionChecks": ["Ctrl+F5 after Pages deploy", "Easy step1 find button icon size"],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Easy Mode adjusted weight not shown as ???? (stale history prefs cache).",
-  "toBe": "Saved next weight patches caches and shows as ????; performed kg untouched."
+  "asIs": "Search icon ~1.15?1.35rem, hard to notice.",
+  "toBe": "Search icon ~1.55?1.75rem."
 }
