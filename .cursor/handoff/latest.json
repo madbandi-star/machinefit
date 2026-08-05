@@ -1,18 +1,21 @@
 {
-  "title": "Larger Easy Mode find-button search icon",
-  "summary": "Increased ? icon size on Easy Mode step1 ?? ?? button (1.55rem / 1.75rem CTA).",
-  "git": { "branch": "main", "commit": "afffa9e4" },
-  "changedFiles": ["frontend/src/styles/easy-mode.css"],
-  "testFocus": "Easy wizard machine pick: search icon on ?? ?? is larger and readable.",
+  "title": "Shrink fullscreen voice-count number size",
+  "summary": "WorkoutDisplayOverlay count font reduced from clamp(6.5rem,42vw,14rem) to clamp(3.75rem,26vw,7.5rem) so 2-digit reps fit on phones.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/styles/recommendation.css"],
+  "testFocus": "Fullscreen count display: numbers still large but 10+ readable on phone without overflow.",
   "fastChecks": [
-    "rg -n \"easy-s1-find::before|1\\.55rem|1\\.75rem\" frontend/src/styles/easy-mode.css",
+    "rg -n \"workout-display-overlay__count\" -A6 frontend/src/styles/recommendation.css",
     "npm run test:smoke:changed"
   ],
-  "productionChecks": ["Ctrl+F5 after Pages deploy", "Easy step1 find button icon size"],
+  "productionChecks": [
+    "Ctrl+F5 after Pages deploy",
+    "Voice count fullscreen on phone ? 2-digit reps look balanced"
+  ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Search icon ~1.15?1.35rem, hard to notice.",
-  "toBe": "Search icon ~1.55?1.75rem."
+  "asIs": "Count digits too huge (42vw) ? 2 digits cramped on phone.",
+  "toBe": "Moderately large count (26vw, max 7.5rem) fits multi-digit reps."
 }

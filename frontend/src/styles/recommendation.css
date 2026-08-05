@@ -1493,10 +1493,12 @@
 
 .workout-display-overlay__count {
   display: inline-block;
-  font-size: clamp(6.5rem, 42vw, 14rem);
+  /* Keep large for fullscreen, but fit 2–3 digits on phone widths. */
+  font-size: clamp(3.75rem, 26vw, 7.5rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
+  max-width: 100%;
   transform-origin: center;
   transition: transform 90ms ease-out, color 120ms ease;
   animation: voice-count-pop 180ms ease-out;
