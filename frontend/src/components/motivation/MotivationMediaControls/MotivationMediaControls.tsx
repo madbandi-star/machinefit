@@ -7,7 +7,7 @@ import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
-import { formatDuration } from '@/utils/motivationAudio';
+import { formatDuration, isBenignAudioPlayError, sameMediaUrl } from '@/utils/motivationAudio';
 import './MotivationMediaControls.css';
 
 export function MotivationMediaControls({
@@ -46,6 +46,12 @@ export function MotivationMediaControls({
   const videos = data?.video ?? [];
 
   const music = useMemo(() => {
+    // While the user library is still loading, keep catalog (or empty) so we don't
+    // flash "empty" / play catalog then swap to uploads mid-play.
+    if (isAuthed && mediaRequested && myTracks === undefined) {
+      return catalogMusic;
+    }
+
     const tracks = myTracks?.items ?? [];
     if (!tracks.length) return catalogMusic;
 
@@ -67,7 +73,7 @@ export function MotivationMediaControls({
         isActive: true,
       })
     );
-  }, [myTracks?.items, catalogMusic]);
+  }, [isAuthed, mediaRequested, myTracks, catalogMusic]);
 
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
@@ -82,8 +88,14 @@ export function MotivationMediaControls({
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoIndex, setVideoIndex] = useState(0);
 
-  const currentMusic = music[musicIndex];
+  const safeMusicIndex = music.length > 0 ? Math.min(musicIndex, music.length - 1) : 0;
+  const currentMusic = music[safeMusicIndex];
   const currentVideo = videos[videoIndex];
+  const currentMusicUrl = currentMusic?.mediaUrl ?? '';
+
+  useEffect(() => {
+    if (musicIndex !== safeMusicIndex) setMusicIndex(safeMusicIndex);
+  }, [musicIndex, safeMusicIndex]);
 
   const musicLabel = useMemo(() => {
     if (!music.length) return t('motivation.musicEmpty');
@@ -97,22 +109,37 @@ export function MotivationMediaControls({
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (!musicPlaying || !currentMusic) {
+    if (!musicPlaying || !currentMusicUrl) {
       audio.pause();
       return;
     }
 
-    if (audio.src !== currentMusic.mediaUrl) {
-      audio.src = currentMusic.mediaUrl;
-      setCurrentTime(0);
-      setDuration(0);
-    }
+    let cancelled = false;
 
-    void audio.play().catch(() => {
-      setMusicPlaying(false);
-      showToast(t('motivation.playFailed'), 'error');
-    });
-  }, [musicPlaying, currentMusic, showToast, t]);
+    const start = async () => {
+      try {
+        if (!sameMediaUrl(audio.src, currentMusicUrl)) {
+          audio.src = currentMusicUrl;
+          audio.load();
+          setCurrentTime(0);
+          setDuration(0);
+        } else if (!audio.paused) {
+          // Already playing this track (e.g. query refetch remapped the playlist).
+          return;
+        }
+        await audio.play();
+      } catch (error) {
+        if (cancelled || isBenignAudioPlayError(error)) return;
+        setMusicPlaying(false);
+        showToast(t('motivation.playFailed'), 'error');
+      }
+    };
+
+    void start();
+    return () => {
+      cancelled = true;
+    };
+  }, [musicPlaying, currentMusicUrl, showToast, t]);
 
   // Keep seek bar in sync with the audio element.
   useEffect(() => {
@@ -141,20 +168,20 @@ export function MotivationMediaControls({
       audio.removeEventListener('timeupdate', syncTime);
       audio.removeEventListener('seeked', syncTime);
     };
-  }, [currentMusic?.mediaUrl]);
+  }, [currentMusicUrl]);
 
   // When panel opens on a selected track that isn't playing, load metadata for the seek bar.
   useEffect(() => {
-    if (!musicPanelOpen || !currentMusic) return;
+    if (!musicPanelOpen || !currentMusicUrl || musicPlaying) return;
     const audio = audioRef.current;
     if (!audio) return;
-    if (audio.src !== currentMusic.mediaUrl) {
-      audio.src = currentMusic.mediaUrl;
-      audio.preload = 'metadata';
-      setCurrentTime(0);
-      setDuration(0);
-    }
-  }, [musicPanelOpen, currentMusic]);
+    if (sameMediaUrl(audio.src, currentMusicUrl)) return;
+    audio.src = currentMusicUrl;
+    audio.preload = 'metadata';
+    audio.load();
+    setCurrentTime(0);
+    setDuration(0);
+  }, [musicPanelOpen, currentMusicUrl, musicPlaying]);
 
   // Duck music while voice coach / rest TTS is active so counts stay audible.
   useEffect(() => {
@@ -251,7 +278,9 @@ export function MotivationMediaControls({
     null
   );
   const [pendingVideoOpen, setPendingVideoOpen] = useState(false);
-  const mediaReady = mediaRequested && data !== undefined;
+  const catalogReady = data !== undefined;
+  const userTracksReady = !isAuthed || myTracks !== undefined;
+  const mediaReady = mediaRequested && catalogReady && userTracksReady;
   const musicEmpty = mediaReady && music.length === 0;
   const videoEmpty = mediaReady && videos.length === 0;
 

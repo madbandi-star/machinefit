@@ -1,25 +1,24 @@
 {
-  "title": "Music panel: matching Stop button + seek bar",
-  "summary": "Header music panel Stop button matches Play style/size; added a seekable playback progress bar with current/total time.",
-  "git": { "branch": "main", "commit": "c064752e" },
+  "title": "Fix header music playFailed with user uploads",
+  "summary": "Header music no longer treats interrupted play()/src swaps as failures; waits for user track list before play; compares media URLs safely so multi-upload playlists work.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/src/utils/motivationAudio.ts",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/pages/motivation-music/MotivationMusicPage.tsx"
   ],
-  "testFocus": "Header music button ? panel: Stop looks like Play; drag seek bar to change position; times update while playing.",
+  "testFocus": "Upload 2+ tracks on motivation music page; header music Play / Play all / track switch should play without '??? ??? ???' false errors.",
   "fastChecks": [
-    "rg -n \"motivation-music-panel__seek|onSeekCommit|btn--primary motivation-music-panel__ctrl\" frontend/src/components/motivation/MotivationMediaControls/"
+    "rg -n \"isBenignAudioPlayError|sameMediaUrl|userTracksReady\" frontend/src/utils/motivationAudio.ts frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Open music panel, play a track, scrub the bar, tap Stop"
+    "With 2+ uploaded tracks: play, play all, switch tracks ? no false playFailed toast"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Stop was ghost/smaller; no seek control.",
-  "toBe": "Stop matches Play; seek bar lets user pick playback time."
+  "asIs": "Multi-upload playlist often showed playFailed from AbortError / early play before tracks loaded.",
+  "toBe": "Benign play errors ignored; play waits for user tracks; stable URL matching."
 }

@@ -14,7 +14,9 @@ import {
   formatUploadDate,
   getApiErrorCode,
   isAllowedMotivationAudioFile,
+  isBenignAudioPlayError,
   readAudioDurationSeconds,
+  sameMediaUrl,
 } from '@/utils/motivationAudio';
 import '@/styles/motivation-music.css';
 
@@ -152,13 +154,30 @@ export function MotivationMusicPage() {
       audio.pause();
       return;
     }
-    if (audio.src !== previewTrack.mediaUrl) {
-      audio.src = previewTrack.mediaUrl;
-    }
-    void audio.play().catch(() => {
-      setPreviewPlaying(false);
-      showToast(t('motivation.playFailed'), 'error');
-    });
+
+    let cancelled = false;
+    const url = previewTrack.mediaUrl;
+
+    const start = async () => {
+      try {
+        if (!sameMediaUrl(audio.src, url)) {
+          audio.src = url;
+          audio.load();
+        } else if (!audio.paused) {
+          return;
+        }
+        await audio.play();
+      } catch (error) {
+        if (cancelled || isBenignAudioPlayError(error)) return;
+        setPreviewPlaying(false);
+        showToast(t('motivation.playFailed'), 'error');
+      }
+    };
+
+    void start();
+    return () => {
+      cancelled = true;
+    };
   }, [previewTrack, previewPlaying, showToast, t]);
 
   const togglePreview = (track: UserMotivationTrack) => {

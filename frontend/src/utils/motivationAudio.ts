@@ -20,6 +20,36 @@ export function formatDuration(seconds: number | null | undefined): string {
   return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 
+/** Compare audio element src vs stored media URL (browser always absolutizes `audio.src`). */
+export function sameMediaUrl(a: string | null | undefined, b: string | null | undefined): boolean {
+  const left = (a ?? '').trim();
+  const right = (b ?? '').trim();
+  if (!left || !right) return false;
+  if (left === right) return true;
+  try {
+    const base =
+      typeof window !== 'undefined' && window.location?.href
+        ? window.location.href
+        : 'https://machinefit.local/';
+    return new URL(left, base).href === new URL(right, base).href;
+  } catch {
+    return false;
+  }
+}
+
+/** Interrupted play() / autoplay races — not a real media failure. */
+export function isBenignAudioPlayError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const name = String((error as { name?: string }).name ?? '');
+  if (name === 'AbortError') return true;
+  // Some browsers surface interrupted loads as NotAllowedError briefly during src swaps.
+  if (name === 'NotAllowedError') {
+    const message = String((error as { message?: string }).message ?? '').toLowerCase();
+    if (message.includes('interrupted') || message.includes('aborted')) return true;
+  }
+  return false;
+}
+
 export function formatUploadDate(iso: string, locale: string): string {
   try {
     return new Intl.DateTimeFormat(locale.startsWith('ko') ? 'ko-KR' : 'en-US', {
