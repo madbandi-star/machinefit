@@ -1,7 +1,7 @@
 {
   "title": "Shrink fullscreen voice-count number size",
   "summary": "WorkoutDisplayOverlay count font reduced from clamp(6.5rem,42vw,14rem) to clamp(3.75rem,26vw,7.5rem) so 2-digit reps fit on phones.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "0b4f1f65" },
   "changedFiles": ["frontend/src/styles/recommendation.css"],
   "testFocus": "Fullscreen count display: numbers still large but 10+ readable on phone without overflow.",
   "fastChecks": [
