@@ -1,7 +1,7 @@
 {
   "title": "Larger oneMore/hold text cues with full digit animation",
   "summary": "Fullscreen text cues (??? / ??) enlarged toward digit scale and use the same intensity scale + pop/shake path as numbers; other overlay cues unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "0db6d995" },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
     "frontend/src/styles/recommendation.css"
