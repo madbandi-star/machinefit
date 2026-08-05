@@ -1,7 +1,7 @@
 {
   "title": "Shrink fullscreen text cues (???) so they don?t overlap status",
   "summary": "Non-digit voice cues like ????? use a smaller count--text size and capped scale so they no longer collide with the status line under the count. Digit size unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a2e18b60" },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
     "frontend/src/styles/recommendation.css"

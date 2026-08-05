@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending (set after push)
+- Commit: a2e18b60
 
 ## Changed files
 - `frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx`
