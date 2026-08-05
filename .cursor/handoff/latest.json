@@ -3,7 +3,7 @@
   "summary": "Header video player overlay restyled to match the music mini-player: glass panel, primary green chrome, now-watching meta, transport buttons, and selectable playlist when multiple videos exist.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "c192aafb"
   },
   "changedFiles": [
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
