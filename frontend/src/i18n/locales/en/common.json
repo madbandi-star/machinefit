@@ -82,7 +82,9 @@
     "playAll": "Play all",
     "playAllMode": "playlist",
     "play": "Play",
-    "stop": "Stop"
+    "stop": "Stop",
+    "seek": "Playback position",
+    "timeUnknown": "—"
   },
   "motivationMusic": {
     "title": "Motivation music",

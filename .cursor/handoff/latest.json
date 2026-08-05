@@ -1,23 +1,25 @@
 {
-  "title": "Larger oneMore/hold text cues with full digit animation",
-  "summary": "Fullscreen text cues (??? / ??) enlarged toward digit scale and use the same intensity scale + pop/shake path as numbers; other overlay cues unchanged.",
-  "git": { "branch": "main", "commit": "0db6d995" },
+  "title": "Music panel: matching Stop button + seek bar",
+  "summary": "Header music panel Stop button matches Play style/size; added a seekable playback progress bar with current/total time.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "Fullscreen: ??? and ?? larger; pop/shake/scale match digits; digit cues and emoji layout unchanged.",
+  "testFocus": "Header music button ? panel: Stop looks like Play; drag seek bar to change position; times update while playing.",
   "fastChecks": [
-    "rg -n \"cue--text|countScale|32vw\" frontend/src/styles/recommendation.css frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx"
+    "rg -n \"motivation-music-panel__seek|onSeekCommit|btn--primary motivation-music-panel__ctrl\" frontend/src/components/motivation/MotivationMediaControls/"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Trigger oneMore and hold ? text large with same motion as reps"
+    "Open music panel, play a track, scrub the bar, tap Stop"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Text cues smaller and scale-capped vs digits.",
-  "toBe": "Text cues ~digit size with full scale/pop/shake."
+  "asIs": "Stop was ghost/smaller; no seek control.",
+  "toBe": "Stop matches Play; seek bar lets user pick playback time."
 }

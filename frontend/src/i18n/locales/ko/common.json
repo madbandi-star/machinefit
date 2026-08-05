@@ -82,7 +82,9 @@
     "playAll": "전체재생",
     "playAllMode": "전체재생",
     "play": "재생",
-    "stop": "끄기"
+    "stop": "끄기",
+    "seek": "재생 위치",
+    "timeUnknown": "—"
   },
   "motivationMusic": {
     "title": "동기부여 음악",

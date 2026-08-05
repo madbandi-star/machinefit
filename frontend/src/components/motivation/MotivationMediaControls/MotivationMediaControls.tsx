@@ -7,6 +7,7 @@ import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { formatDuration } from '@/utils/motivationAudio';
 import './MotivationMediaControls.css';
 
 export function MotivationMediaControls({
@@ -72,8 +73,11 @@ export function MotivationMediaControls({
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [playAll, setPlayAll] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const seekingRef = useRef(false);
 
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoIndex, setVideoIndex] = useState(0);
@@ -100,6 +104,8 @@ export function MotivationMediaControls({
 
     if (audio.src !== currentMusic.mediaUrl) {
       audio.src = currentMusic.mediaUrl;
+      setCurrentTime(0);
+      setDuration(0);
     }
 
     void audio.play().catch(() => {
@@ -107,6 +113,48 @@ export function MotivationMediaControls({
       showToast(t('motivation.playFailed'), 'error');
     });
   }, [musicPlaying, currentMusic, showToast, t]);
+
+  // Keep seek bar in sync with the audio element.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const syncDuration = () => {
+      const next = Number.isFinite(audio.duration) ? audio.duration : 0;
+      setDuration(next > 0 ? next : 0);
+    };
+    const syncTime = () => {
+      if (seekingRef.current) return;
+      setCurrentTime(Number.isFinite(audio.currentTime) ? audio.currentTime : 0);
+    };
+
+    audio.addEventListener('loadedmetadata', syncDuration);
+    audio.addEventListener('durationchange', syncDuration);
+    audio.addEventListener('timeupdate', syncTime);
+    audio.addEventListener('seeked', syncTime);
+    syncDuration();
+    syncTime();
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', syncDuration);
+      audio.removeEventListener('durationchange', syncDuration);
+      audio.removeEventListener('timeupdate', syncTime);
+      audio.removeEventListener('seeked', syncTime);
+    };
+  }, [currentMusic?.mediaUrl]);
+
+  // When panel opens on a selected track that isn't playing, load metadata for the seek bar.
+  useEffect(() => {
+    if (!musicPanelOpen || !currentMusic) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.src !== currentMusic.mediaUrl) {
+      audio.src = currentMusic.mediaUrl;
+      audio.preload = 'metadata';
+      setCurrentTime(0);
+      setDuration(0);
+    }
+  }, [musicPanelOpen, currentMusic]);
 
   // Duck music while voice coach / rest TTS is active so counts stay audible.
   useEffect(() => {
@@ -173,6 +221,30 @@ export function MotivationMediaControls({
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
     }
+    setCurrentTime(0);
+  };
+
+  const seekTo = (seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const max = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : duration;
+    const next = Math.min(Math.max(0, seconds), max > 0 ? max : seconds);
+    audio.currentTime = next;
+    setCurrentTime(next);
+  };
+
+  const onSeekInput = (value: string) => {
+    const next = Number(value);
+    if (!Number.isFinite(next)) return;
+    seekingRef.current = true;
+    setCurrentTime(next);
+  };
+
+  const onSeekCommit = (value: string) => {
+    const next = Number(value);
+    seekingRef.current = false;
+    if (!Number.isFinite(next)) return;
+    seekTo(next);
   };
 
   const [pendingMusicAction, setPendingMusicAction] = useState<'play' | 'playAll' | 'panel' | null>(
@@ -384,6 +456,32 @@ export function MotivationMediaControls({
             </p>
           ) : null}
 
+          <div className="motivation-music-panel__progress">
+            <input
+              type="range"
+              className="motivation-music-panel__seek"
+              min={0}
+              max={duration > 0 ? duration : 1}
+              step={0.1}
+              value={duration > 0 ? Math.min(currentTime, duration) : 0}
+              disabled={!currentMusic || duration <= 0}
+              aria-label={t('motivation.seek')}
+              onChange={(e) => onSeekInput(e.target.value)}
+              onPointerUp={(e) => onSeekCommit((e.target as HTMLInputElement).value)}
+              onKeyUp={(e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') {
+                  onSeekCommit((e.target as HTMLInputElement).value);
+                }
+              }}
+            />
+            <div className="motivation-music-panel__times" aria-hidden="true">
+              <span>{formatDuration(currentTime)}</span>
+              <span>
+                {duration > 0 ? formatDuration(duration) : t('motivation.timeUnknown')}
+              </span>
+            </div>
+          </div>
+
           <div className="motivation-music-panel__controls">
             <button
               type="button"
@@ -405,11 +503,11 @@ export function MotivationMediaControls({
             </button>
             <button
               type="button"
-              className="btn btn--ghost motivation-music-panel__ctrl"
+              className="btn btn--primary motivation-music-panel__ctrl"
               onClick={stopMusic}
-              disabled={!musicPlaying}
+              disabled={!musicPlaying && currentTime <= 0}
             >
-              <Square size={13} aria-hidden />
+              <Square size={14} aria-hidden />
               {t('motivation.stop')}
             </button>
           </div>
