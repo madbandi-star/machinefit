@@ -1,25 +1,23 @@
 {
-  "title": "Redesign header music popover UI",
-  "summary": "Header music panel redesigned as a MachineFit glass mini-player: now-playing hero, circular play/pause, seek bar, cleaner playlist, manage-library link. Avoids clash with motivation-music page CSS.",
-  "git": { "branch": "main", "commit": "9e8179ec" },
+  "title": "Music popover: remove manage link, clarify Play/Stop",
+  "summary": "Removed user 'manage music' link from header music panel. Play/Pause is green labeled button; Stop is muted labeled button so roles are obvious at a glance.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
   ],
-  "testFocus": "Header music icon ? popover looks polished; play/pause center button; seek; track list; manage link; stop/play-all chips.",
+  "testFocus": "Header music panel has no manage-library link; Play (green) vs Stop (muted) clearly distinct with labels.",
   "fastChecks": [
-    "rg -n \"mf-music-popover|togglePlayPause|manageLibrary\" frontend/src/components/motivation/MotivationMediaControls/"
+    "rg -n \"manageLibrary|btn--play|btn--stop\" frontend/src/components/motivation/MotivationMediaControls/"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Open music popover on phone width ? layout readable, controls easy to tap"
+    "Open music panel ? no '? ?? ??'; Play/Stop readable"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Plain 3-button panel with heavy track cards.",
-  "toBe": "Glass mini-player with play/pause, EQ, playlist, manage link."
+  "asIs": "Manage-library link shown; Play circular vs Stop chip looked mismatched.",
+  "toBe": "No manage link; labeled green Play and muted Stop side by side."
 }

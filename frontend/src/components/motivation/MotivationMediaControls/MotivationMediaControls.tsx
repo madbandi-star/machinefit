@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Film, ListMusic, Music2, Pause, Play, Square, X } from 'lucide-react';
 import type { MotivationMediaItem } from '@machinefit/shared';
 import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { formatDuration, isBenignAudioPlayError, sameMediaUrl } from '@/utils/motivationAudio';
@@ -574,38 +572,44 @@ export function MotivationMediaControls({
           </div>
 
           <div className="mf-music-popover__transport">
+            <div className="mf-music-popover__main-actions">
+              <button
+                type="button"
+                className={`mf-music-popover__btn mf-music-popover__btn--play${
+                  musicPlaying ? ' is-playing' : ''
+                }`}
+                onClick={togglePlayPause}
+                disabled={!music.length}
+              >
+                <span className="mf-music-popover__btn-icon" aria-hidden="true">
+                  {musicPlaying ? <Pause size={18} /> : <Play size={18} />}
+                </span>
+                <span className="mf-music-popover__btn-label">
+                  {musicPlaying ? t('motivation.pause') : t('motivation.play')}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="mf-music-popover__btn mf-music-popover__btn--stop"
+                onClick={stopMusic}
+                disabled={!musicPlaying && currentTime <= 0}
+              >
+                <span className="mf-music-popover__btn-icon" aria-hidden="true">
+                  <Square size={15} fill="currentColor" />
+                </span>
+                <span className="mf-music-popover__btn-label">{t('motivation.stop')}</span>
+              </button>
+            </div>
+
             <button
               type="button"
-              className={`mf-music-popover__chip${playAll && musicPlaying ? ' is-active' : ''}`}
+              className={`mf-music-popover__play-all${playAll && musicPlaying ? ' is-active' : ''}`}
               onClick={playAllTracks}
               disabled={!music.length}
-              aria-label={t('motivation.playAll')}
-              title={t('motivation.playAll')}
             >
-              <ListMusic size={16} aria-hidden />
+              <ListMusic size={15} aria-hidden />
               <span>{t('motivation.playAll')}</span>
-            </button>
-
-            <button
-              type="button"
-              className="mf-music-popover__play"
-              onClick={togglePlayPause}
-              disabled={!music.length}
-              aria-label={musicPlaying ? t('motivation.pause') : t('motivation.play')}
-            >
-              {musicPlaying ? <Pause size={22} aria-hidden /> : <Play size={22} aria-hidden />}
-            </button>
-
-            <button
-              type="button"
-              className="mf-music-popover__chip"
-              onClick={stopMusic}
-              disabled={!musicPlaying && currentTime <= 0}
-              aria-label={t('motivation.stop')}
-              title={t('motivation.stop')}
-            >
-              <Square size={15} aria-hidden />
-              <span>{t('motivation.stop')}</span>
             </button>
           </div>
 
@@ -645,16 +649,6 @@ export function MotivationMediaControls({
               })}
             </ul>
           </div>
-
-          {isAuthed ? (
-            <Link
-              to={ROUTES.MOTIVATION_MUSIC}
-              className="mf-music-popover__manage"
-              onClick={() => setMusicPanelOpen(false)}
-            >
-              {t('motivation.manageLibrary')}
-            </Link>
-          ) : null}
         </div>
       ) : null}
 
