@@ -1,7 +1,7 @@
 {
   "title": "Fix motivation audio playback via API proxy",
   "summary": "Uploaded tracks now stream through /api/v1/media/motivation-audio (local or Supabase service-role), list URLs rewritten off broken public storage links, and the player waits for canplay before play().",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a38b5665" },
   "changedFiles": [
     "backend/server/services/storage.service.ts",
     "backend/server/services/user-motivation-track.service.ts",
