@@ -1,7 +1,7 @@
 {
   "title": "Music popover: remove manage link, clarify Play/Stop",
   "summary": "Removed user 'manage music' link from header music panel. Play/Pause is green labeled button; Stop is muted labeled button so roles are obvious at a glance.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "6d329cf6" },
   "changedFiles": [
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
