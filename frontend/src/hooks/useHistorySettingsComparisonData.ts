@@ -107,16 +107,25 @@ export function useHistorySettingsComparisonData(
       const cached = queryClient.getQueryData<HistorySettingsComparisonData>(queryKey);
       if (!cached?.preferencesByMachine) return fromServer;
 
+      // Prefer server prefs on overlap. Live unsaved edits live in
+      // history-live-adjusted-prefs (merged at display time), so keeping stale
+      // comparison-cache local over a fresh Easy Mode / API write hid 조정중량.
       const preferencesByMachine = { ...fromServer.preferencesByMachine };
       const activeSourceByMachine = { ...fromServer.activeSourceByMachine };
       for (const machineCode of machineCodes) {
         const local = cached.preferencesByMachine[machineCode];
-        if (!hasMeaningfulCustomSettings(local)) continue;
+        const server = fromServer.preferencesByMachine[machineCode] ?? {};
+        if (!hasMeaningfulCustomSettings(local)) {
+          preferencesByMachine[machineCode] = server;
+          continue;
+        }
         preferencesByMachine[machineCode] = {
-          ...(fromServer.preferencesByMachine[machineCode] ?? {}),
           ...local,
+          ...server,
         };
-        if (cached.activeSourceByMachine?.[machineCode]) {
+        if (fromServer.activeSourceByMachine?.[machineCode]) {
+          activeSourceByMachine[machineCode] = fromServer.activeSourceByMachine[machineCode];
+        } else if (cached.activeSourceByMachine?.[machineCode]) {
           activeSourceByMachine[machineCode] = cached.activeSourceByMachine[machineCode];
         }
       }

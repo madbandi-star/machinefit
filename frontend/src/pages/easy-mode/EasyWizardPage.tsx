@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import {
   isFreeWeightMachineCode,
   type RecommendationResult,
   type RecommendationSettings,
+  type SettingsActiveSource,
   type TargetMuscleGroup,
 } from '@machinefit/shared';
 import {
@@ -28,6 +29,7 @@ import { useEasyModeStore } from '@/store/easyMode.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
+import { setHistoryLiveAdjustedPrefs } from '@/utils/historyLiveAdjustedPrefs';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { getTodayDateKey } from '@/utils/historyDate';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
@@ -77,6 +79,10 @@ export function EasyWizardPage() {
   const [fitRating, setFitRating] = useState<FitRating | null>(null);
   const [adjWeight, setAdjWeight] = useState<number | undefined>();
   const [adjReps, setAdjReps] = useState<number | undefined>();
+  const adjWeightRef = useRef(adjWeight);
+  const adjRepsRef = useRef(adjReps);
+  adjWeightRef.current = adjWeight;
+  adjRepsRef.current = adjReps;
   const [setCount, setSetCount] = useState(3);
   const [weights, setWeights] = useState<number[]>([0, 0, 0]);
   const [completed, setCompleted] = useState<boolean[]>([false, false, false]);
@@ -229,26 +235,126 @@ export function EasyWizardPage() {
   const saveFeedbackAndPrefs = useMutation({
     mutationFn: async (ratingOverride?: FitRating) => {
       const rating = ratingOverride ?? fitRating;
-      if (!recommendation || !selected || !rating) return;
+      if (!recommendation || !selected || !rating) {
+        return null;
+      }
       await recommendationFeedbackApi.submit({
         recommendationId: recommendation.id,
         fitRating: rating,
         ...preferenceScope,
       });
-      if (rating === 'bad') {
-        await machinePreferenceApi.upsert({
-          machineCode: selected.code,
-          activeSource: 'adjusted',
-          customSettings: {
-            recommendedWeightKg: adjWeight,
-            recommendedRepsMin: adjReps,
-            recommendedRepsMax: adjReps,
-          },
-          ...preferenceScope,
-        });
+      if (rating !== 'bad') {
+        return { rating, machineCode: selected.code, recommendationId: recommendation.id, prefs: null };
       }
+
+      // Merge with existing prefs so Easy Mode weight/reps do not wipe seat/ROM etc.
+      let prior: Partial<RecommendationSettings> = {};
+      try {
+        const existing = await machinePreferenceApi.get(selected.code, preferenceScope);
+        prior = existing.customSettings ?? {};
+      } catch {
+        /* cold prefs */
+      }
+
+      const nextWeight = adjWeightRef.current;
+      const nextReps = adjRepsRef.current;
+      const nextCustom: Partial<RecommendationSettings> = {
+        ...prior,
+        ...(nextWeight != null && Number.isFinite(nextWeight)
+          ? { recommendedWeightKg: nextWeight }
+          : {}),
+        ...(nextReps != null && Number.isFinite(nextReps)
+          ? { recommendedRepsMin: nextReps, recommendedRepsMax: nextReps }
+          : {}),
+      };
+
+      const prefs = await machinePreferenceApi.upsert({
+        machineCode: selected.code,
+        activeSource: 'adjusted',
+        customSettings: nextCustom,
+        ...preferenceScope,
+      });
+      return {
+        rating,
+        machineCode: selected.code,
+        recommendationId: recommendation.id,
+        prefs,
+        nextCustom,
+      };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      if (!result) return;
+
+      queryClient.setQueryData(['recommendation-feedback', result.recommendationId], result.rating);
+
+      if (result.rating === 'bad' && result.prefs) {
+        const nextCustom = result.prefs.customSettings ?? result.nextCustom ?? {};
+        const nextSource: SettingsActiveSource = result.prefs.activeSource ?? 'adjusted';
+        queryClient.setQueryData(
+          [
+            'machine-preferences',
+            result.machineCode,
+            preferenceScope?.gymId,
+            preferenceScope?.memberId,
+          ],
+          {
+            customSettings: nextCustom,
+            personalTipMemo: result.prefs.personalTipMemo ?? '',
+            activeSource: nextSource,
+          }
+        );
+        // Same cache patches as normal-mode 「조정값 저장」 so 기록 조정중량 updates.
+        setHistoryLiveAdjustedPrefs(queryClient, result.machineCode, nextCustom);
+        queryClient.setQueriesData(
+          { queryKey: ['history-settings-comparison'] },
+          (prev: unknown) => {
+            if (!prev || typeof prev !== 'object') return prev;
+            const row = prev as {
+              preferencesByMachine?: Record<string, Partial<RecommendationSettings>>;
+              activeSourceByMachine?: Record<string, SettingsActiveSource>;
+              feedbackByRecommendation?: Record<string, FitRating | null>;
+            };
+            return {
+              ...row,
+              preferencesByMachine: {
+                ...(row.preferencesByMachine ?? {}),
+                [result.machineCode]: nextCustom,
+              },
+              activeSourceByMachine: {
+                ...(row.activeSourceByMachine ?? {}),
+                [result.machineCode]: nextSource,
+              },
+              feedbackByRecommendation: {
+                ...(row.feedbackByRecommendation ?? {}),
+                [result.recommendationId]: 'bad' as FitRating,
+              },
+            };
+          }
+        );
+      } else if (result.rating === 'good') {
+        queryClient.setQueriesData(
+          { queryKey: ['history-settings-comparison'] },
+          (prev: unknown) => {
+            if (!prev || typeof prev !== 'object') return prev;
+            const row = prev as {
+              activeSourceByMachine?: Record<string, SettingsActiveSource>;
+              feedbackByRecommendation?: Record<string, FitRating | null>;
+            };
+            return {
+              ...row,
+              activeSourceByMachine: {
+                ...(row.activeSourceByMachine ?? {}),
+                [result.machineCode]: 'recommended' as SettingsActiveSource,
+              },
+              feedbackByRecommendation: {
+                ...(row.feedbackByRecommendation ?? {}),
+                [result.recommendationId]: 'good' as FitRating,
+              },
+            };
+          }
+        );
+      }
+
       setStep('done');
       showToast(t('easyMode.fitSaved'), 'success');
     },

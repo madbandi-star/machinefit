@@ -1,25 +1,24 @@
 {
-  "title": "Easy Mode step1: louder find CTA + pick hint",
-  "summary": "Unselected machine pick: ?? ?? uses primary CTA styling with pulse; footer needMachine hint uses callout chip for visibility.",
-  "git": { "branch": "main", "commit": "5bb90b03" },
+  "title": "Easy Mode fit-adjust weight syncs to ????",
+  "summary": "Easy Mode ???? ????? now merges/saves prefs and patches machine-preferences + history comparison + live adjusted caches so ???? updates; workout log performed kg path unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-    "frontend/src/components/easy-mode/EasyWizardShell.tsx",
-    "frontend/src/styles/easy-mode.css"
+    "frontend/src/hooks/useHistorySettingsComparisonData.ts"
   ],
-  "testFocus": "Easy wizard step1 without machine: primary pulsing ?? ??; footer shows bold callout '??? ?? ???'. After pick, find button returns to secondary.",
+  "testFocus": "Easy: complete workout ? ??? ???? ? change next weight ? save ? Records card ???? matches. Performed set kg unchanged.",
   "fastChecks": [
-    "rg -n \"easy-s1-find--cta|easy-hint--callout|primaryHintTone\" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/components/easy-mode/EasyWizardShell.tsx frontend/src/styles/easy-mode.css",
+    "rg -n \"setHistoryLiveAdjustedPrefs|nextCustom|fromServer\" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/hooks/useHistorySettingsComparisonData.ts",
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "Easy 3-step ? machine pick: CTA and hint clearly stand out"
+    "Easy adjust weight appears as ???? on history; workout log kg still correct"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Plain secondary find button; small red footer hint.",
-  "toBe": "Primary pulsing find CTA; callout hint chip in footer."
+  "asIs": "Easy Mode adjusted weight not shown as ???? (stale history prefs cache).",
+  "toBe": "Saved next weight patches caches and shows as ????; performed kg untouched."
 }
