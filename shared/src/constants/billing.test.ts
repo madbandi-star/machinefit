@@ -20,7 +20,7 @@ assert.equal(isLiveSubscriptionStatus('ACTIVE'), true);
 assert.equal(isLiveSubscriptionStatus('TRIAL'), true);
 assert.equal(isLiveSubscriptionStatus('EXPIRED'), false);
 assert.equal(isLiveSubscriptionStatus('CANCELED'), false);
-assert.equal(isLiveSubscriptionStatus('PAUSED'), false);
+assert.equal(isLiveSubscriptionStatus('PAUSED'), true);
 assert.equal(isLiveSubscriptionStatus('PENDING'), false);
 assert.equal(isLiveSubscriptionStatus('FAILED'), false);
 

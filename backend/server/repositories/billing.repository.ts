@@ -2,6 +2,10 @@ import { getPool } from '../config/database.js';
 import type {
   AdminSubscriptionRow,
   BillingPlan,
+  Coupon,
+  CouponHistoryItem,
+  MembershipSubscriptionStatus,
+  MembershipType,
   PaymentHistoryItem,
   SubscriptionStatus,
   UserSubscription,
@@ -20,6 +24,7 @@ type PlanRow = {
   max_members_per_gym: number;
   display_order: number;
   is_active: boolean;
+  polar_product_id?: string | null;
 };
 
 function mapPlan(row: PlanRow): BillingPlan {
@@ -36,6 +41,7 @@ function mapPlan(row: PlanRow): BillingPlan {
     maxMembersPerGym: Number(row.max_members_per_gym ?? 2),
     displayOrder: Number(row.display_order ?? 100),
     isActive: Boolean(row.is_active),
+    polarProductId: row.polar_product_id ?? null,
   };
 }
 
@@ -54,6 +60,7 @@ function mapSub(row: Record<string, unknown>): UserSubscription {
     providerSubscriptionId: row.provider_subscription_id
       ? String(row.provider_subscription_id)
       : null,
+    providerCustomerId: row.provider_customer_id ? String(row.provider_customer_id) : null,
     createdAt: new Date(String(row.created_at)).toISOString(),
     updatedAt: new Date(String(row.updated_at)).toISOString(),
   };
@@ -72,6 +79,23 @@ function mapPay(row: Record<string, unknown>): PaymentHistoryItem {
     currency: String(row.currency ?? 'KRW'),
     status: String(row.status) as PaymentHistoryItem['status'],
     paidAt: row.paid_at ? new Date(String(row.paid_at)).toISOString() : null,
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    invoiceId: row.invoice_id ? String(row.invoice_id) : null,
+  };
+}
+
+function mapCoupon(row: Record<string, unknown>): Coupon {
+  return {
+    id: String(row.id),
+    code: String(row.code),
+    kind: String(row.kind) as Coupon['kind'],
+    value: Number(row.value ?? 0),
+    maxRedemptions: row.max_redemptions == null ? null : Number(row.max_redemptions),
+    redemptionCount: Number(row.redemption_count ?? 0),
+    startsAt: row.starts_at ? new Date(String(row.starts_at)).toISOString() : null,
+    endsAt: row.ends_at ? new Date(String(row.ends_at)).toISOString() : null,
+    isActive: Boolean(row.is_active),
+    description: row.description ? String(row.description) : null,
     createdAt: new Date(String(row.created_at)).toISOString(),
   };
 }
@@ -154,8 +178,56 @@ export const billingRepository = {
     const pool = getPool();
     if (!pool) return;
     await pool.query(
-      `UPDATE users SET subscription_plan = $2, updated_at = NOW() WHERE id = $1`,
-      [userId, plan]
+      `UPDATE users SET
+         subscription_plan = $2,
+         membership_type = $3,
+         updated_at = NOW()
+       WHERE id = $1`,
+      [userId, plan, plan === 'premium' ? 'PREMIUM' : 'FREE']
+    );
+  },
+
+  async syncMembershipCache(
+    userId: string,
+    input: {
+      membershipType: MembershipType;
+      subscriptionStatus: MembershipSubscriptionStatus;
+      premiumStartedAt?: Date | null;
+      premiumExpireAt?: Date | null;
+      polarCustomerId?: string | null;
+      polarSubscriptionId?: string | null;
+      trialUsed?: boolean;
+    }
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query(
+      `UPDATE users SET
+         membership_type = $2,
+         subscription_status = $3,
+         premium_started_at = COALESCE($4, premium_started_at),
+         premium_expire_at = $5,
+         polar_customer_id = COALESCE($6, polar_customer_id),
+         polar_subscription_id = COALESCE($7, polar_subscription_id),
+         trial_used = COALESCE($8, trial_used),
+         subscription_plan = $9,
+         trial_consumed_at = CASE
+           WHEN $8 = TRUE THEN COALESCE(trial_consumed_at, NOW())
+           ELSE trial_consumed_at
+         END,
+         updated_at = NOW()
+       WHERE id = $1`,
+      [
+        userId,
+        input.membershipType,
+        input.subscriptionStatus,
+        input.premiumStartedAt ?? null,
+        input.premiumExpireAt ?? null,
+        input.polarCustomerId ?? null,
+        input.polarSubscriptionId ?? null,
+        input.trialUsed ?? null,
+        input.membershipType === 'PREMIUM' ? 'premium' : 'free',
+      ]
     );
   },
 
@@ -168,6 +240,7 @@ export const billingRepository = {
     trialEndAt: Date | null;
     paymentProvider: string;
     providerSubscriptionId?: string | null;
+    providerCustomerId?: string | null;
   }): Promise<UserSubscription> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -186,8 +259,8 @@ export const billingRepository = {
     const result = await pool.query(
       `INSERT INTO subscriptions (
          user_id, plan_id, status, start_at, expire_at, trial_end_at,
-         payment_provider, provider_subscription_id
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         payment_provider, provider_subscription_id, provider_customer_id
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING id`,
       [
         input.userId,
@@ -198,6 +271,7 @@ export const billingRepository = {
         input.trialEndAt,
         input.paymentProvider,
         input.providerSubscriptionId ?? null,
+        input.providerCustomerId ?? null,
       ]
     );
     const created = await this.getLatestSubscription(input.userId);
@@ -215,6 +289,9 @@ export const billingRepository = {
       trialEndAt: Date | null;
       startAt: Date | null;
       planId: string;
+      providerSubscriptionId: string | null;
+      providerCustomerId: string | null;
+      clearCancelAt: boolean;
     }>
   ): Promise<void> {
     const pool = getPool();
@@ -223,10 +300,12 @@ export const billingRepository = {
       `UPDATE subscriptions SET
          status = COALESCE($2, status),
          expire_at = COALESCE($3, expire_at),
-         cancel_at = COALESCE($4, cancel_at),
+         cancel_at = CASE WHEN $9 THEN NULL ELSE COALESCE($4, cancel_at) END,
          trial_end_at = COALESCE($5, trial_end_at),
          start_at = COALESCE($6, start_at),
          plan_id = COALESCE($7, plan_id),
+         provider_subscription_id = COALESCE($8, provider_subscription_id),
+         provider_customer_id = COALESCE($10, provider_customer_id),
          updated_at = NOW()
        WHERE id = $1`,
       [
@@ -237,8 +316,38 @@ export const billingRepository = {
         patch.trialEndAt ?? null,
         patch.startAt ?? null,
         patch.planId ?? null,
+        patch.providerSubscriptionId ?? null,
+        Boolean(patch.clearCancelAt),
+        patch.providerCustomerId ?? null,
       ]
     );
+  },
+
+  async findByProviderSubscriptionId(
+    providerSubscriptionId: string
+  ): Promise<UserSubscription | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const result = await pool.query(
+      `SELECT s.*, p.code AS plan_code
+       FROM subscriptions s
+       JOIN plan_master p ON p.id = s.plan_id
+       WHERE s.provider_subscription_id = $1
+       ORDER BY s.updated_at DESC
+       LIMIT 1`,
+      [providerSubscriptionId]
+    );
+    return result.rows[0] ? mapSub(result.rows[0]) : null;
+  },
+
+  async findUserIdByPolarCustomer(polarCustomerId: string): Promise<string | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const result = await pool.query<{ id: string }>(
+      `SELECT id FROM users WHERE polar_customer_id = $1 LIMIT 1`,
+      [polarCustomerId]
+    );
+    return result.rows[0]?.id ?? null;
   },
 
   async listPayments(userId: string, limit = 50): Promise<PaymentHistoryItem[]> {
@@ -266,14 +375,15 @@ export const billingRepository = {
     status: PaymentHistoryItem['status'];
     paidAt?: Date | null;
     meta?: Record<string, unknown>;
+    invoiceId?: string | null;
   }): Promise<PaymentHistoryItem> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
     const result = await pool.query(
       `INSERT INTO payment_history (
          user_id, subscription_id, payment_provider, payment_key, provider_payment_id,
-         order_id, amount_cents, currency, status, paid_at, meta
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb)
+         order_id, amount_cents, currency, status, paid_at, meta, invoice_id
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,$12)
        RETURNING *`,
       [
         input.userId,
@@ -287,9 +397,208 @@ export const billingRepository = {
         input.status,
         input.paidAt ?? null,
         JSON.stringify(input.meta ?? {}),
+        input.invoiceId ?? input.providerPaymentId ?? null,
       ]
     );
     return mapPay(result.rows[0]);
+  },
+
+  async markPaymentRefunded(providerPaymentId: string): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query(
+      `UPDATE payment_history
+       SET status = 'REFUNDED'
+       WHERE provider_payment_id = $1 OR invoice_id = $1 OR order_id = $1`,
+      [providerPaymentId]
+    );
+  },
+
+  async tryClaimWebhookEvent(input: {
+    id: string;
+    provider: string;
+    eventType?: string;
+    payload?: Record<string, unknown>;
+  }): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return true;
+    try {
+      await pool.query(
+        `INSERT INTO webhook_events (id, provider, event_type, payload)
+         VALUES ($1, $2, $3, $4::jsonb)`,
+        [input.id, input.provider, input.eventType ?? null, JSON.stringify(input.payload ?? {})]
+      );
+      return true;
+    } catch {
+      return false; // duplicate primary key → already processed
+    }
+  },
+
+  async insertBillingLog(input: {
+    userId?: string | null;
+    eventType: string;
+    status?: string;
+    payload?: Record<string, unknown>;
+  }): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query(
+      `INSERT INTO billing_logs (user_id, event_type, status, payload)
+       VALUES ($1, $2, $3, $4::jsonb)`,
+      [
+        input.userId ?? null,
+        input.eventType,
+        input.status ?? 'ok',
+        JSON.stringify(input.payload ?? {}),
+      ]
+    );
+  },
+
+  async listExpiredPremiumUsers(limit = 200): Promise<
+    Array<{ userId: string; subscriptionId: string | null }>
+  > {
+    const pool = getPool();
+    if (!pool) return [];
+    const result = await pool.query(
+      `SELECT u.id AS user_id, s.id AS subscription_id
+       FROM users u
+       LEFT JOIN LATERAL (
+         SELECT id FROM subscriptions sx
+         WHERE sx.user_id = u.id
+           AND sx.status IN ('ACTIVE', 'TRIAL', 'PAUSED', 'CANCELED')
+         ORDER BY sx.updated_at DESC
+         LIMIT 1
+       ) s ON TRUE
+       WHERE u.membership_type = 'PREMIUM'
+         AND u.premium_expire_at IS NOT NULL
+         AND u.premium_expire_at < NOW()
+       LIMIT $1`,
+      [limit]
+    );
+    return result.rows.map((r) => ({
+      userId: String(r.user_id),
+      subscriptionId: r.subscription_id ? String(r.subscription_id) : null,
+    }));
+  },
+
+  async listCoupons(): Promise<Coupon[]> {
+    const pool = getPool();
+    if (!pool) return [];
+    const result = await pool.query(`SELECT * FROM coupons ORDER BY created_at DESC`);
+    return result.rows.map(mapCoupon);
+  },
+
+  async getCouponByCode(code: string): Promise<Coupon | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const result = await pool.query(`SELECT * FROM coupons WHERE UPPER(code) = UPPER($1) LIMIT 1`, [
+      code.trim(),
+    ]);
+    return result.rows[0] ? mapCoupon(result.rows[0]) : null;
+  },
+
+  async createCoupon(input: {
+    code: string;
+    kind: Coupon['kind'];
+    value: number;
+    maxRedemptions?: number | null;
+    startsAt?: Date | null;
+    endsAt?: Date | null;
+    description?: string | null;
+    createdBy?: string | null;
+  }): Promise<Coupon> {
+    const pool = getPool();
+    if (!pool) throw new Error('Database not configured');
+    const result = await pool.query(
+      `INSERT INTO coupons (code, kind, value, max_redemptions, starts_at, ends_at, description, created_by)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       RETURNING *`,
+      [
+        input.code.trim().toUpperCase(),
+        input.kind,
+        input.value,
+        input.maxRedemptions ?? null,
+        input.startsAt ?? null,
+        input.endsAt ?? null,
+        input.description ?? null,
+        input.createdBy ?? null,
+      ]
+    );
+    return mapCoupon(result.rows[0]);
+  },
+
+  async deleteCoupon(code: string): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    const result = await pool.query(`DELETE FROM coupons WHERE UPPER(code) = UPPER($1)`, [
+      code.trim(),
+    ]);
+    return (result.rowCount ?? 0) > 0;
+  },
+
+  async recordCouponRedemption(input: {
+    userId: string;
+    couponId: string;
+    couponCode: string;
+    discountAmount: number;
+    freeDays: number;
+  }): Promise<CouponHistoryItem> {
+    const pool = getPool();
+    if (!pool) throw new Error('Database not configured');
+    const result = await pool.query(
+      `INSERT INTO coupon_history (user_id, coupon_id, coupon_code, discount_amount, free_days)
+       VALUES ($1,$2,$3,$4,$5)
+       RETURNING *`,
+      [
+        input.userId,
+        input.couponId,
+        input.couponCode,
+        input.discountAmount,
+        input.freeDays,
+      ]
+    );
+    await pool.query(
+      `UPDATE coupons SET redemption_count = redemption_count + 1, updated_at = NOW() WHERE id = $1`,
+      [input.couponId]
+    );
+    const row = result.rows[0];
+    return {
+      id: String(row.id),
+      userId: String(row.user_id),
+      couponCode: String(row.coupon_code),
+      discountAmount: Number(row.discount_amount ?? 0),
+      freeDays: Number(row.free_days ?? 0),
+      createdAt: new Date(String(row.created_at)).toISOString(),
+    };
+  },
+
+  async hasCouponRedemption(userId: string, code: string): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    const result = await pool.query(
+      `SELECT 1 FROM coupon_history WHERE user_id = $1 AND UPPER(coupon_code) = UPPER($2) LIMIT 1`,
+      [userId, code]
+    );
+    return Boolean(result.rows[0]);
+  },
+
+  async insertReferralReward(input: {
+    referrerId: string;
+    referredUserId: string;
+    rewardDays: number;
+  }): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    try {
+      await pool.query(
+        `INSERT INTO referral_history (referrer_id, referred_user_id, reward_days)
+         VALUES ($1,$2,$3)`,
+        [input.referrerId, input.referredUserId, input.rewardDays]
+      );
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   async getFeatureFlag(key: string): Promise<{
@@ -364,7 +673,8 @@ export const billingRepository = {
     params.push(opts.limit, offset);
     const result = await pool.query(
       `SELECT u.id AS user_id, u.email, u.display_name, u.subscription_plan,
-              u.trial_consumed_at, r.code AS role_code,
+              u.membership_type, u.subscription_status AS membership_status,
+              u.trial_consumed_at, u.trial_used, r.code AS role_code,
               s.status, s.start_at, s.expire_at, s.trial_end_at,
               p.code AS plan_code
        FROM users u
@@ -387,10 +697,12 @@ export const billingRepository = {
       displayName: String(row.display_name),
       roleCode: String(row.role_code),
       entitlementPlan: String(row.subscription_plan ?? 'free'),
+      membershipType: String(row.membership_type ?? 'FREE'),
       planCode: row.plan_code ? String(row.plan_code) : null,
       status: (row.status ? String(row.status) : 'NONE') as AdminSubscriptionRow['status'],
+      subscriptionStatus: String(row.membership_status ?? 'inactive'),
       isTrial: String(row.status) === 'TRIAL',
-      trialConsumed: Boolean(row.trial_consumed_at),
+      trialConsumed: Boolean(row.trial_consumed_at || row.trial_used),
       expireAt: row.expire_at ? new Date(String(row.expire_at)).toISOString() : null,
       startAt: row.start_at ? new Date(String(row.start_at)).toISOString() : null,
     }));

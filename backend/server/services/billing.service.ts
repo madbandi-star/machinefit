@@ -1,15 +1,20 @@
 /**
- * SaaS subscription / billing service (foundation).
- * Does NOT replace gym/member PLAN_LIMIT logic in subscription.service.ts —
- * it syncs users.subscription_plan when a billing subscription is live.
+ * SaaS subscription / Polar billing service.
+ * Syncs users.subscription_plan + membership_* cache for PLAN_LIMIT checks.
  */
 
+import { randomUUID } from 'node:crypto';
 import {
   billingPlanToEntitlement,
   hasPremiumAccess,
   isLiveSubscriptionStatus,
+  toMembershipSubscriptionStatus,
   type BillingPlan,
   type BillingPlanCode,
+  type CheckoutSessionResult,
+  type Coupon,
+  type MembershipSubscriptionStatus,
+  type MembershipType,
   type PaymentProviderId,
   type SubscriptionStatus,
   type SubscriptionStatusView,
@@ -18,10 +23,15 @@ import {
 import { AppError } from '../middlewares/error.middleware.js';
 import { env } from '../config/env.js';
 import { billingRepository } from '../repositories/billing.repository.js';
-import { getPaymentProvider, listPaymentProviderMeta } from '../payments/provider.factory.js';
+import {
+  getPaymentProvider,
+  isPolarConfigured,
+  listPaymentProviderMeta,
+} from '../payments/provider.factory.js';
 import type { WebhookEvent } from '../payments/provider.interface.js';
 
 const PLAN_CODES: readonly string[] = ['FREE', 'PREMIUM', 'VIP'];
+const REFERRAL_REWARD_DAYS = 30;
 
 function requirePlanCode(code: string): BillingPlanCode {
   const upper = code.toUpperCase();
@@ -38,6 +48,68 @@ function planLabel(code: string): string {
   return 'FREE';
 }
 
+function daysRemaining(expireAt: string | null): number | null {
+  if (!expireAt) return null;
+  const ms = new Date(expireAt).getTime() - Date.now();
+  if (ms <= 0) return 0;
+  return Math.ceil(ms / (24 * 60 * 60 * 1000));
+}
+
+function paymentReady(): boolean {
+  return env.PAYMENT_PROVIDER === 'polar' && isPolarConfigured();
+}
+
+async function pushMembershipCache(
+  userId: string,
+  sub: UserSubscription | null,
+  opts?: {
+    membershipType?: MembershipType;
+    subscriptionStatus?: MembershipSubscriptionStatus;
+    forceExpire?: boolean;
+  }
+): Promise<void> {
+  if (!sub || opts?.forceExpire) {
+    await billingRepository.syncMembershipCache(userId, {
+      membershipType: 'FREE',
+      subscriptionStatus: opts?.subscriptionStatus ?? 'expired',
+      premiumExpireAt: new Date(),
+      trialUsed: undefined,
+    });
+    await billingRepository.setEntitlementPlan(userId, 'free');
+    return;
+  }
+
+  const membershipType: MembershipType =
+    opts?.membershipType ??
+    (isLiveSubscriptionStatus(sub.status) ||
+    (sub.expireAt && new Date(sub.expireAt).getTime() > Date.now())
+      ? billingPlanToEntitlement(sub.planCode) === 'premium'
+        ? 'PREMIUM'
+        : 'FREE'
+      : 'FREE');
+
+  const subscriptionStatus =
+    opts?.subscriptionStatus ??
+    toMembershipSubscriptionStatus(sub.status, {
+      cancelAt: sub.cancelAt,
+      expireAt: sub.expireAt,
+    });
+
+  await billingRepository.syncMembershipCache(userId, {
+    membershipType,
+    subscriptionStatus,
+    premiumStartedAt: sub.startAt ? new Date(sub.startAt) : new Date(),
+    premiumExpireAt: sub.expireAt ? new Date(sub.expireAt) : null,
+    polarCustomerId: sub.providerCustomerId ?? null,
+    polarSubscriptionId: sub.providerSubscriptionId ?? null,
+    trialUsed: sub.status === 'TRIAL' ? true : undefined,
+  });
+  await billingRepository.setEntitlementPlan(
+    userId,
+    membershipType === 'PREMIUM' ? 'premium' : 'free'
+  );
+}
+
 function toStatusView(input: {
   planCode: string;
   status: SubscriptionStatus | 'NONE';
@@ -46,8 +118,20 @@ function toStatusView(input: {
   trialEndAt: string | null;
   startAt: string | null;
   expireAt: string | null;
+  cancelAt: string | null;
   entitlementPlan: 'free' | 'premium';
+  provider?: string;
 }): SubscriptionStatusView {
+  const membershipType: MembershipType =
+    input.entitlementPlan === 'premium' ? 'PREMIUM' : 'FREE';
+  const subscriptionStatus = toMembershipSubscriptionStatus(input.status, {
+    cancelAt: input.cancelAt,
+    expireAt: input.expireAt,
+  });
+  const isPremium =
+    membershipType === 'PREMIUM' &&
+    (!input.expireAt || new Date(input.expireAt).getTime() > Date.now());
+  const ready = paymentReady();
   return {
     planCode: input.planCode,
     planLabel: planLabel(input.planCode),
@@ -57,19 +141,32 @@ function toStatusView(input: {
     trialEndAt: input.trialEndAt,
     startAt: input.startAt,
     expireAt: input.expireAt,
+    cancelAt: input.cancelAt,
     entitlementPlan: input.entitlementPlan,
-    paymentReady: false,
-    checkoutLabel: '준비중',
+    membershipType,
+    subscriptionStatus,
+    autoRenew: isPremium && !input.cancelAt && input.status !== 'CANCELED',
+    daysRemaining: daysRemaining(input.expireAt),
+    nextBillingAt: input.cancelAt ? null : input.expireAt,
+    isPremium,
+    paymentReady: ready,
+    checkoutLabel: ready ? 'Premium 시작하기' : '준비중',
+    provider: input.provider ?? env.PAYMENT_PROVIDER,
+    manageUrl: null,
   };
 }
 
 async function expireIfNeeded(sub: UserSubscription): Promise<UserSubscription | null> {
-  if (!isLiveSubscriptionStatus(sub.status)) return sub;
   if (!sub.expireAt) return sub;
   if (new Date(sub.expireAt).getTime() > Date.now()) return sub;
+  if (!isLiveSubscriptionStatus(sub.status) && sub.status !== 'CANCELED') return sub;
 
   await billingRepository.updateSubscription(sub.id, { status: 'EXPIRED' });
-  await billingRepository.setEntitlementPlan(sub.userId, 'free');
+  await pushMembershipCache(sub.userId, sub, {
+    membershipType: 'FREE',
+    subscriptionStatus: 'expired',
+    forceExpire: true,
+  });
   return null;
 }
 
@@ -94,14 +191,17 @@ export async function getSubscriptionStatus(userId: string): Promise<Subscriptio
   ]);
 
   const live = liveRaw ? await expireIfNeeded(liveRaw) : null;
-  const sub = live ?? latest;
-  const entitlementPlan =
-    live && isLiveSubscriptionStatus(live.status)
-      ? billingPlanToEntitlement(live.planCode)
-      : 'free';
+  // Cancelled-but-still-in-period: latest may be CANCELED with future expire
+  let entitled = live;
+  if (!entitled && latest?.expireAt && new Date(latest.expireAt).getTime() > Date.now()) {
+    if (latest.status === 'CANCELED' || latest.cancelAt) {
+      entitled = latest;
+    }
+  }
+  const sub = entitled ?? latest;
 
-  if (live && entitlementPlan === 'premium') {
-    await billingRepository.setEntitlementPlan(userId, 'premium');
+  if (entitled) {
+    await pushMembershipCache(userId, entitled);
   }
 
   if (!sub) {
@@ -113,29 +213,34 @@ export async function getSubscriptionStatus(userId: string): Promise<Subscriptio
       trialEndAt: null,
       startAt: null,
       expireAt: null,
+      cancelAt: null,
       entitlementPlan: 'free',
     });
   }
 
-  const isLive = Boolean(live && live.id === sub.id);
+  const stillPremium =
+    Boolean(entitled) &&
+    billingPlanToEntitlement(sub.planCode) === 'premium' &&
+    (!sub.expireAt || new Date(sub.expireAt).getTime() > Date.now());
+
   return toStatusView({
-    planCode: isLive ? sub.planCode : 'FREE',
+    planCode: stillPremium ? sub.planCode : 'FREE',
     status: sub.status,
-    isTrial: isLive && sub.status === 'TRIAL',
+    isTrial: Boolean(entitled) && sub.status === 'TRIAL',
     trialConsumed: Boolean(trialConsumedAt),
     trialEndAt: sub.trialEndAt,
     startAt: sub.startAt,
     expireAt: sub.expireAt,
-    entitlementPlan: isLive ? billingPlanToEntitlement(sub.planCode) : 'free',
+    cancelAt: sub.cancelAt,
+    entitlementPlan: stillPremium ? 'premium' : 'free',
+    provider: sub.paymentProvider,
   });
 }
 
-/** Keep users.subscription_plan in sync for existing PLAN_LIMIT checks. */
 export async function syncUserEntitlementPlan(userId: string): Promise<void> {
   const liveRaw = await billingRepository.getLiveSubscription(userId);
   const live = liveRaw ? await expireIfNeeded(liveRaw) : null;
-  const planCode = live?.planCode ?? 'FREE';
-  await billingRepository.setEntitlementPlan(userId, billingPlanToEntitlement(planCode));
+  await pushMembershipCache(userId, live);
 }
 
 export async function startTrial(
@@ -179,16 +284,12 @@ export async function startTrial(
         : 7;
 
   const provider = getPaymentProvider();
-  const mock = await provider.createSubscription({
-    userId,
-    planCode,
-    trialDays,
-  });
+  const mock = await provider.createSubscription({ userId, planCode, trialDays });
 
   const now = new Date();
   const trialEnd = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
 
-  await billingRepository.createSubscription({
+  const created = await billingRepository.createSubscription({
     userId,
     planId: plan.id,
     status: 'TRIAL',
@@ -200,11 +301,102 @@ export async function startTrial(
   });
 
   await billingRepository.markTrialConsumed(userId);
-  await billingRepository.setEntitlementPlan(userId, billingPlanToEntitlement(planCode));
+  await pushMembershipCache(userId, created, { subscriptionStatus: 'trial' });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'trial.started',
+    payload: { trialDays, planCode },
+  });
 
   return getSubscriptionStatus(userId);
 }
 
+/** Auto-grant 7-day trial on first registration (flag-gated). */
+export async function maybeStartSignupTrial(userId: string): Promise<void> {
+  const flag = await billingRepository.getFeatureFlag('signup_trial_auto');
+  if (flag && !flag.enabled) return;
+  try {
+    await startTrial(userId, 'PREMIUM', 7);
+  } catch {
+    // Already consumed / active — ignore
+  }
+}
+
+export async function createCheckout(
+  userId: string,
+  input: {
+    planCode?: string;
+    successUrl?: string;
+    cancelUrl?: string;
+    couponCode?: string;
+    email?: string;
+    displayName?: string;
+  }
+): Promise<CheckoutSessionResult> {
+  if (!paymentReady()) {
+    throw new AppError(503, 'CHECKOUT_UNAVAILABLE', 'Polar checkout is not configured');
+  }
+
+  const planCode = requirePlanCode(input.planCode ?? 'PREMIUM');
+  if (planCode === 'FREE') {
+    throw new AppError(400, 'INVALID_PLAN', 'Cannot checkout FREE plan');
+  }
+
+  const status = await getSubscriptionStatus(userId);
+  if (status.isPremium && status.autoRenew) {
+    throw new AppError(409, 'SUBSCRIPTION_ACTIVE', 'Already subscribed to Premium');
+  }
+
+  const plan = await billingRepository.getPlanByCode(planCode);
+  if (!plan?.isActive) throw new AppError(404, 'PLAN_NOT_FOUND', 'Plan not found');
+
+  if (input.couponCode) {
+    // Record intent; Polar-side discounts need matching Polar coupon. free_days applied after pay.
+    const coupon = await billingRepository.getCouponByCode(input.couponCode);
+    if (!coupon?.isActive) {
+      throw new AppError(404, 'COUPON_NOT_FOUND', 'Coupon not found');
+    }
+  }
+
+  const orderId = `mf_${userId.slice(0, 8)}_${Date.now()}_${randomUUID().slice(0, 8)}`;
+  const provider = getPaymentProvider('polar');
+
+  const result = await provider.createCheckout({
+    userId,
+    email: input.email,
+    displayName: input.displayName,
+    planCode,
+    amountCents: plan.priceCents,
+    currency: plan.currency,
+    orderId,
+    successUrl: input.successUrl,
+    cancelUrl: input.cancelUrl,
+    polarProductId: plan.polarProductId,
+    metadata: input.couponCode ? { couponCode: input.couponCode } : undefined,
+  });
+
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'checkout.created',
+    status: result.ready ? 'ok' : 'error',
+    payload: { orderId, ready: result.ready, message: result.message },
+  });
+
+  if (!result.ready || !result.checkoutUrl) {
+    throw new AppError(503, 'CHECKOUT_FAILED', result.message || 'Failed to create checkout');
+  }
+
+  return {
+    checkoutUrl: result.checkoutUrl,
+    orderId: result.orderId,
+    provider: String(result.provider),
+    ready: true,
+  };
+}
+
+/**
+ * Cancel at period end — keep Premium until expire_at.
+ */
 export async function cancelSubscription(userId: string): Promise<SubscriptionStatusView> {
   const liveRaw = await billingRepository.getLiveSubscription(userId);
   const live = liveRaw ? await expireIfNeeded(liveRaw) : null;
@@ -213,17 +405,52 @@ export async function cancelSubscription(userId: string): Promise<SubscriptionSt
   }
 
   const provider = getPaymentProvider(live.paymentProvider);
-  if (live.providerSubscriptionId) {
-    await provider.cancelSubscription(live.providerSubscriptionId);
+  if (live.providerSubscriptionId && live.paymentProvider === 'polar') {
+    await provider.cancelSubscription(live.providerSubscriptionId, { atPeriodEnd: true });
   }
 
   const now = new Date();
   await billingRepository.updateSubscription(live.id, {
-    status: 'CANCELED',
     cancelAt: now,
-    expireAt: now,
+    // Keep ACTIVE until period end so entitlement remains
+    status: 'ACTIVE',
   });
-  await billingRepository.setEntitlementPlan(userId, 'free');
+
+  const updated = await billingRepository.getLatestSubscription(userId);
+  await pushMembershipCache(userId, updated, { subscriptionStatus: 'cancelled' });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'subscription.cancel_at_period_end',
+    payload: { expireAt: live.expireAt },
+  });
+
+  return getSubscriptionStatus(userId);
+}
+
+export async function resumeSubscription(userId: string): Promise<SubscriptionStatusView> {
+  const latest = await billingRepository.getLatestSubscription(userId);
+  if (!latest?.providerSubscriptionId) {
+    throw new AppError(404, 'NO_SUBSCRIPTION', 'No subscription to resume');
+  }
+  if (!latest.cancelAt && latest.status === 'ACTIVE') {
+    return getSubscriptionStatus(userId);
+  }
+
+  const provider = getPaymentProvider(latest.paymentProvider);
+  if (latest.paymentProvider === 'polar') {
+    await provider.resumeSubscription(latest.providerSubscriptionId);
+  }
+
+  await billingRepository.updateSubscription(latest.id, {
+    status: 'ACTIVE',
+    clearCancelAt: true,
+  });
+  const updated = await billingRepository.getLatestSubscription(userId);
+  await pushMembershipCache(userId, updated, { subscriptionStatus: 'active' });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'subscription.resumed',
+  });
   return getSubscriptionStatus(userId);
 }
 
@@ -232,12 +459,87 @@ export async function listPaymentHistory(userId: string, limit = 50) {
 }
 
 export function listPaymentProviders() {
+  const ready = paymentReady();
   return {
     active: env.PAYMENT_PROVIDER as PaymentProviderId,
     providers: listPaymentProviderMeta(),
-    checkoutEnabled: false,
-    note: 'Real payment APIs are not connected. Set PAYMENT_PROVIDER when integrating a PG.',
+    checkoutEnabled: ready,
+    note: ready
+      ? 'Polar checkout enabled'
+      : 'Set PAYMENT_PROVIDER=polar and POLAR_* secrets to enable checkout.',
   };
+}
+
+export async function applyCoupon(userId: string, codeRaw: string) {
+  const coupon = await billingRepository.getCouponByCode(codeRaw);
+  if (!coupon || !coupon.isActive) {
+    throw new AppError(404, 'COUPON_NOT_FOUND', 'Coupon not found');
+  }
+  if (coupon.startsAt && new Date(coupon.startsAt) > new Date()) {
+    throw new AppError(400, 'COUPON_NOT_STARTED', 'Coupon is not active yet');
+  }
+  if (coupon.endsAt && new Date(coupon.endsAt) < new Date()) {
+    throw new AppError(400, 'COUPON_EXPIRED', 'Coupon has expired');
+  }
+  if (
+    coupon.maxRedemptions != null &&
+    coupon.redemptionCount >= coupon.maxRedemptions
+  ) {
+    throw new AppError(409, 'COUPON_EXHAUSTED', 'Coupon redemption limit reached');
+  }
+  if (await billingRepository.hasCouponRedemption(userId, coupon.code)) {
+    throw new AppError(409, 'COUPON_USED', 'Coupon already used');
+  }
+
+  let discountAmount = 0;
+  let freeDays = 0;
+  if (coupon.kind === 'free_days') {
+    freeDays = Math.floor(coupon.value);
+    await adminExtendSubscription(userId, freeDays, 'PREMIUM');
+  } else if (coupon.kind === 'amount_off') {
+    discountAmount = coupon.value;
+  } else if (coupon.kind === 'percent_off') {
+    discountAmount = coupon.value; // percent stored; Polar-side apply separately
+  }
+
+  const history = await billingRepository.recordCouponRedemption({
+    userId,
+    couponId: coupon.id,
+    couponCode: coupon.code,
+    discountAmount,
+    freeDays,
+  });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'coupon.applied',
+    payload: { code: coupon.code, kind: coupon.kind, freeDays, discountAmount },
+  });
+  return { coupon, history, status: await getSubscriptionStatus(userId) };
+}
+
+/** Grant Premium days to both referrer and referred (once per referred user). */
+export async function grantReferralPremiumReward(
+  referrerId: string,
+  referredUserId: string
+): Promise<void> {
+  if (referrerId === referredUserId) return;
+  const flag = await billingRepository.getFeatureFlag('referral_premium_reward');
+  if (flag && !flag.enabled) return;
+
+  const inserted = await billingRepository.insertReferralReward({
+    referrerId,
+    referredUserId,
+    rewardDays: REFERRAL_REWARD_DAYS,
+  });
+  if (!inserted) return;
+
+  await adminExtendSubscription(referrerId, REFERRAL_REWARD_DAYS, 'PREMIUM');
+  await adminExtendSubscription(referredUserId, REFERRAL_REWARD_DAYS, 'PREMIUM');
+  await billingRepository.insertBillingLog({
+    userId: referrerId,
+    eventType: 'referral.reward',
+    payload: { referredUserId, rewardDays: REFERRAL_REWARD_DAYS },
+  });
 }
 
 export async function adminListSubscriptions(filters: {
@@ -267,6 +569,13 @@ export async function adminExtendSubscription(
   let live = liveRaw ? await expireIfNeeded(liveRaw) : null;
 
   if (!live) {
+    const latest = await billingRepository.getLatestSubscription(userId);
+    if (latest?.expireAt && new Date(latest.expireAt).getTime() > Date.now()) {
+      live = latest;
+    }
+  }
+
+  if (!live) {
     const code = requirePlanCode(planCodeRaw ?? 'PREMIUM');
     if (code === 'FREE') {
       throw new AppError(400, 'INVALID_PLAN', 'Cannot extend FREE plan');
@@ -282,7 +591,7 @@ export async function adminExtendSubscription(
       startAt: now,
       expireAt: expire,
       trialEndAt: null,
-      paymentProvider: 'dummy',
+      paymentProvider: env.PAYMENT_PROVIDER,
       providerSubscriptionId: `admin_ext_${userId.slice(0, 8)}_${Date.now()}`,
     });
   } else {
@@ -304,14 +613,22 @@ export async function adminExtendSubscription(
 export async function adminEndSubscription(userId: string): Promise<SubscriptionStatusView> {
   const liveRaw = await billingRepository.getLiveSubscription(userId);
   const live = liveRaw ? await expireIfNeeded(liveRaw) : null;
-  if (live) {
-    await billingRepository.updateSubscription(live.id, {
+  const target = live ?? (await billingRepository.getLatestSubscription(userId));
+  if (target) {
+    await billingRepository.updateSubscription(target.id, {
       status: 'CANCELED',
       cancelAt: new Date(),
       expireAt: new Date(),
     });
   }
-  await billingRepository.setEntitlementPlan(userId, 'free');
+  await pushMembershipCache(userId, null, {
+    subscriptionStatus: 'expired',
+    forceExpire: true,
+  });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'admin.end',
+  });
   return getSubscriptionStatus(userId);
 }
 
@@ -332,7 +649,10 @@ export async function adminSetSubscription(
   }
 
   if (planCode === 'FREE' || status === 'CANCELED' || status === 'EXPIRED') {
-    await billingRepository.setEntitlementPlan(userId, 'free');
+    await pushMembershipCache(userId, null, {
+      subscriptionStatus: status === 'EXPIRED' ? 'expired' : 'inactive',
+      forceExpire: true,
+    });
     if (planCode === 'FREE') {
       return getSubscriptionStatus(userId);
     }
@@ -347,21 +667,97 @@ export async function adminSetSubscription(
     status === 'TRIAL' ? 'TRIAL' : status === 'ACTIVE' ? 'ACTIVE' : status;
 
   if (['ACTIVE', 'TRIAL', 'PAUSED', 'PENDING'].includes(nextStatus)) {
-    await billingRepository.createSubscription({
+    const created = await billingRepository.createSubscription({
       userId,
       planId: plan.id,
       status: nextStatus,
       startAt: now,
       expireAt: expire,
       trialEndAt: nextStatus === 'TRIAL' ? expire : null,
-      paymentProvider: 'dummy',
+      paymentProvider: env.PAYMENT_PROVIDER,
       providerSubscriptionId: `admin_set_${userId.slice(0, 8)}_${Date.now()}`,
     });
-    await billingRepository.setEntitlementPlan(userId, billingPlanToEntitlement(planCode));
+    await pushMembershipCache(userId, created, {
+      subscriptionStatus: nextStatus === 'TRIAL' ? 'trial' : 'active',
+    });
   } else {
-    await billingRepository.setEntitlementPlan(userId, 'free');
+    await pushMembershipCache(userId, null, {
+      subscriptionStatus: 'inactive',
+      forceExpire: true,
+    });
   }
 
+  return getSubscriptionStatus(userId);
+}
+
+export async function adminGrantTrial(userId: string, days = 7, planCode = 'PREMIUM') {
+  // Bypass trial_used for admin grants by extending directly
+  return adminExtendSubscription(userId, days, planCode);
+}
+
+export async function adminCreateCoupon(input: {
+  code: string;
+  kind: Coupon['kind'];
+  value: number;
+  maxRedemptions?: number | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  description?: string | null;
+  createdBy?: string | null;
+}): Promise<Coupon> {
+  return billingRepository.createCoupon({
+    code: input.code,
+    kind: input.kind,
+    value: input.value,
+    maxRedemptions: input.maxRedemptions,
+    startsAt: input.startsAt ? new Date(input.startsAt) : null,
+    endsAt: input.endsAt ? new Date(input.endsAt) : null,
+    description: input.description,
+    createdBy: input.createdBy,
+  });
+}
+
+export async function adminDeleteCoupon(code: string): Promise<void> {
+  const ok = await billingRepository.deleteCoupon(code);
+  if (!ok) throw new AppError(404, 'COUPON_NOT_FOUND', 'Coupon not found');
+}
+
+export async function adminListCoupons(): Promise<Coupon[]> {
+  return billingRepository.listCoupons();
+}
+
+export async function adminRefund(
+  userId: string,
+  input: { paymentId?: string; providerPaymentId?: string; reason?: string }
+): Promise<SubscriptionStatusView> {
+  const providerPaymentId = input.providerPaymentId || input.paymentId;
+  if (!providerPaymentId) {
+    throw new AppError(400, 'VALIDATION_ERROR', 'providerPaymentId required');
+  }
+  const latest = await billingRepository.getLatestSubscription(userId);
+  if (latest?.paymentProvider === 'polar' && latest.providerSubscriptionId) {
+    try {
+      const provider = getPaymentProvider('polar');
+      await provider.refund({
+        providerPaymentId,
+        reason: input.reason,
+      });
+    } catch {
+      // Still revoke locally if Polar refund fails (admin force)
+    }
+  }
+  await billingRepository.markPaymentRefunded(providerPaymentId);
+  await adminEndSubscription(userId);
+  await billingRepository.syncMembershipCache(userId, {
+    membershipType: 'FREE',
+    subscriptionStatus: 'refunded',
+    premiumExpireAt: new Date(),
+  });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'refund.completed',
+    payload: { providerPaymentId, reason: input.reason },
+  });
   return getSubscriptionStatus(userId);
 }
 
@@ -380,43 +776,150 @@ export async function userHasPremiumEntitlement(
     entitlementPlan: status.entitlementPlan,
     subscriptionStatus: status.status,
     planCode: status.planCode,
+    expireAt: status.expireAt,
+    membershipType: status.membershipType,
+  });
+}
+
+async function activatePremiumFromWebhook(
+  userId: string,
+  event: WebhookEvent
+): Promise<void> {
+  const plan = await billingRepository.getPlanByCode('PREMIUM');
+  if (!plan) return;
+
+  const now = new Date();
+  const periodEnd = event.currentPeriodEnd
+    ? new Date(event.currentPeriodEnd)
+    : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  let live = await billingRepository.getLiveSubscription(userId);
+  if (live) {
+    await billingRepository.updateSubscription(live.id, {
+      status: 'ACTIVE',
+      startAt: live.startAt ? new Date(live.startAt) : now,
+      expireAt: periodEnd,
+      providerSubscriptionId: event.providerSubscriptionId ?? undefined,
+      providerCustomerId: event.providerCustomerId ?? undefined,
+      clearCancelAt: !event.cancelAtPeriodEnd,
+      cancelAt: event.cancelAtPeriodEnd ? new Date() : undefined,
+    });
+  } else {
+    live = await billingRepository.createSubscription({
+      userId,
+      planId: plan.id,
+      status: 'ACTIVE',
+      startAt: now,
+      expireAt: periodEnd,
+      trialEndAt: null,
+      paymentProvider: 'polar',
+      providerSubscriptionId: event.providerSubscriptionId ?? `polar_${Date.now()}`,
+      providerCustomerId: event.providerCustomerId ?? null,
+    });
+  }
+
+  const updated = await billingRepository.getLatestSubscription(userId);
+  await pushMembershipCache(userId, updated, {
+    subscriptionStatus: event.cancelAtPeriodEnd ? 'cancelled' : 'active',
   });
 }
 
 /**
  * Process verified webhook events into subscription/payment rows.
- * Dummy / stub providers may send mock payloads during development.
  */
 export async function applyWebhookEvent(event: WebhookEvent): Promise<{ handled: boolean }> {
-  if (event.type === 'payment.succeeded' && event.userId) {
-    const orderId = event.orderId ?? `wh_${event.provider}_${Date.now()}`;
-    try {
-      await billingRepository.insertPayment({
-        userId: event.userId,
-        subscriptionId: null,
-        paymentProvider: String(event.provider),
-        paymentKey: event.providerPaymentId ?? orderId,
-        providerPaymentId: event.providerPaymentId ?? null,
-        orderId,
-        amountCents: event.amountCents ?? 0,
-        currency: event.currency ?? 'KRW',
-        status: 'PAID',
-        paidAt: new Date(),
-        meta: event.raw ?? {},
+  let userId = event.userId;
+  if (!userId && event.providerCustomerId) {
+    userId =
+      (await billingRepository.findUserIdByPolarCustomer(event.providerCustomerId)) ?? undefined;
+  }
+  if (!userId && event.providerSubscriptionId) {
+    const sub = await billingRepository.findByProviderSubscriptionId(
+      event.providerSubscriptionId
+    );
+    userId = sub?.userId;
+  }
+
+  await billingRepository.insertBillingLog({
+    userId: userId ?? null,
+    eventType: event.type,
+    status: 'received',
+    payload: event.raw ?? { type: event.type },
+  });
+
+  if (
+    (event.type === 'payment.succeeded' ||
+      event.type === 'subscription.created' ||
+      event.type === 'subscription.updated' ||
+      event.type === 'subscription.renewed') &&
+    userId
+  ) {
+    if (event.type === 'payment.succeeded' || event.type === 'subscription.renewed') {
+      const orderId =
+        event.orderId ??
+        event.providerPaymentId ??
+        `wh_${event.provider}_${event.eventId ?? Date.now()}`;
+      try {
+        await billingRepository.insertPayment({
+          userId,
+          subscriptionId: null,
+          paymentProvider: String(event.provider),
+          paymentKey: event.providerPaymentId ?? orderId,
+          providerPaymentId: event.providerPaymentId ?? null,
+          orderId,
+          amountCents: event.amountCents ?? 3000,
+          currency: event.currency ?? 'KRW',
+          status: 'PAID',
+          paidAt: new Date(),
+          meta: event.raw ?? {},
+          invoiceId: event.providerPaymentId ?? null,
+        });
+      } catch {
+        // duplicate order_id — idempotent
+      }
+    }
+
+    await activatePremiumFromWebhook(userId, event);
+    return { handled: true };
+  }
+
+  if (event.type === 'subscription.canceled' && userId) {
+    const live = await billingRepository.getLiveSubscription(userId);
+    if (live) {
+      await billingRepository.updateSubscription(live.id, {
+        cancelAt: new Date(),
+        status: 'ACTIVE',
+        expireAt: event.currentPeriodEnd
+          ? new Date(event.currentPeriodEnd)
+          : live.expireAt
+            ? new Date(live.expireAt)
+            : new Date(),
       });
-    } catch {
-      // Duplicate order_id — treat as idempotent success
+      const updated = await billingRepository.getLatestSubscription(userId);
+      await pushMembershipCache(userId, updated, { subscriptionStatus: 'cancelled' });
     }
     return { handled: true };
   }
 
-  if (event.type === 'subscription.canceled' && event.userId) {
-    await adminEndSubscription(event.userId);
+  if ((event.type === 'subscription.revoked' || event.type === 'subscription.expired') && userId) {
+    await adminEndSubscription(userId);
     return { handled: true };
   }
 
-  if (event.type === 'subscription.expired' && event.userId) {
-    await adminEndSubscription(event.userId);
+  if (event.type === 'payment.refunded' && userId) {
+    if (event.providerPaymentId) {
+      await billingRepository.markPaymentRefunded(event.providerPaymentId);
+    }
+    await adminEndSubscription(userId);
+    await billingRepository.syncMembershipCache(userId, {
+      membershipType: 'FREE',
+      subscriptionStatus: 'refunded',
+      premiumExpireAt: new Date(),
+    });
+    return { handled: true };
+  }
+
+  if (event.type === 'payment.failed') {
     return { handled: true };
   }
 
@@ -427,22 +930,69 @@ export async function handleProviderWebhook(
   providerId: string,
   headers: Record<string, string | string[] | undefined>,
   rawBody: string
-): Promise<{ ok: boolean; handled: boolean; events: number }> {
-  // Foundation: parse via Dummy so stub providers never reject mock traffic.
-  // When a real adapter is registered, call getPaymentProvider(providerId) instead.
-  const verifier = getPaymentProvider('dummy');
+): Promise<{ ok: boolean; handled: boolean; events: number; skipped: number }> {
+  const verifier =
+    providerId === 'polar' ? getPaymentProvider('polar') : getPaymentProvider(providerId);
   const verified = await verifier.verifyWebhook(headers, rawBody);
   if (!verified.ok) {
+    await billingRepository.insertBillingLog({
+      eventType: 'webhook.invalid',
+      status: 'error',
+      payload: { providerId, reason: verified.reason },
+    });
     throw new AppError(401, 'WEBHOOK_INVALID', verified.reason ?? 'Webhook verification failed');
   }
 
   let handledCount = 0;
+  let skipped = 0;
   for (const event of verified.events) {
-    const normalized = { ...event, provider: providerId };
+    const eventId =
+      event.eventId ||
+      `${providerId}:${event.type}:${event.providerSubscriptionId ?? event.providerPaymentId ?? randomUUID()}`;
+    const claimed = await billingRepository.tryClaimWebhookEvent({
+      id: eventId,
+      provider: providerId,
+      eventType: event.type,
+      payload: event.raw,
+    });
+    if (!claimed) {
+      skipped += 1;
+      continue;
+    }
+    const normalized = { ...event, provider: providerId, eventId };
     const result = await applyWebhookEvent(normalized);
     if (result.handled) handledCount += 1;
   }
-  return { ok: true, handled: handledCount > 0, events: verified.events.length };
+  return {
+    ok: true,
+    handled: handledCount > 0,
+    events: verified.events.length,
+    skipped,
+  };
+}
+
+/** Daily scheduler: expire past-due Premium memberships. */
+export async function expireOverduePremiums(): Promise<number> {
+  const rows = await billingRepository.listExpiredPremiumUsers(500);
+  let count = 0;
+  for (const row of rows) {
+    if (row.subscriptionId) {
+      await billingRepository.updateSubscription(row.subscriptionId, {
+        status: 'EXPIRED',
+        expireAt: new Date(),
+      });
+    }
+    await pushMembershipCache(row.userId, null, {
+      subscriptionStatus: 'expired',
+      forceExpire: true,
+    });
+    await billingRepository.insertBillingLog({
+      userId: row.userId,
+      eventType: 'subscription.expired.scheduler',
+    });
+    count += 1;
+  }
+  return count;
 }
 
 export const billingService = {
@@ -450,15 +1000,26 @@ export const billingService = {
   getSubscription,
   getSubscriptionStatus,
   startTrial,
+  maybeStartSignupTrial,
+  createCheckout,
   cancelSubscription,
+  resumeSubscription,
   listPaymentHistory,
   listPaymentProviders,
+  applyCoupon,
+  grantReferralPremiumReward,
   adminListSubscriptions,
   adminExtendSubscription,
   adminEndSubscription,
   adminSetSubscription,
+  adminGrantTrial,
+  adminCreateCoupon,
+  adminDeleteCoupon,
+  adminListCoupons,
+  adminRefund,
   isFeatureEnabled,
   userHasPremiumEntitlement,
   syncUserEntitlementPlan,
   handleProviderWebhook,
+  expireOverduePremiums,
 };

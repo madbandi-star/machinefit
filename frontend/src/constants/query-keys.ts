@@ -77,6 +77,7 @@ export const QUERY_KEYS = {
   adminSubscriptions: (params?: Record<string, unknown>) =>
     ['admin', 'subscriptions', params ?? {}] as const,
   subscriptionStatus: ['billing', 'subscription', 'status'] as const,
+  paymentHistory: ['billing', 'payment', 'history'] as const,
   billingPlans: ['billing', 'plans'] as const,
   adminGyms: ['admin', 'gyms'] as const,
   adminBrands: ['admin', 'catalog', 'brands'] as const,

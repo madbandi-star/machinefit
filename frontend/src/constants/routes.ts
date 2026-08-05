@@ -52,6 +52,7 @@ export const ROUTES = {
   SUPPORT: '/support',
   SUPPORT_DETAIL: '/support/:ticketId',
   MY_PAGE: '/my-page',
+  PAYMENT_HISTORY: '/my-page/billing/history',
   MY_GYMS: '/my-page/gyms',
   LIFTED_WEIGHT: '/my-page/lifted-weight',
   LIFTED_WEIGHT_RANKINGS: '/my-page/lifted-weight/rankings',

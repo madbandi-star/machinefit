@@ -1,7 +1,9 @@
 # Payment / Subscription Foundation
 
-선개발 결제·구독 기반 구조입니다. **실제 PG 연동·과금은 하지 않습니다.**  
-`PAYMENT_PROVIDER` 환경변수와 Provider Adapter만 교체하면 실결제에 연결할 수 있도록 설계했습니다.
+선개발 결제·구독 기반 구조입니다.  
+**Polar Premium 실결제 연동:** [`docs/POLAR_PREMIUM.md`](./POLAR_PREMIUM.md) (`PAYMENT_PROVIDER=polar`).
+
+Dummy 모드(`PAYMENT_PROVIDER=dummy`)에서는 실제 과금이 없습니다.
 
 ---
 

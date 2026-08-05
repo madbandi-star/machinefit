@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { billingApi } from '@/api';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import { usePremiumStore } from '@/store/premium.store';
 import { useUIStore } from '@/store/ui.store';
@@ -12,22 +14,32 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
   const { t } = useTranslation(['gyms', 'common']);
   const showToast = useUIStore((s) => s.showToast);
   const dialogRef = useModalAccessibility({ open, onClose });
+  const [busy, setBusy] = useState(false);
 
   if (!open) return null;
 
   const benefits = t('gyms:premium.benefits', { returnObjects: true }) as string[];
 
-  const handleSubscribe = () => {
-    showToast(t('gyms:premium.comingSoon'), 'info');
-    onClose();
+  const handleSubscribe = async () => {
+    setBusy(true);
+    try {
+      const res = await billingApi.createCheckout({ planCode: 'PREMIUM' });
+      const url = res.data.data.checkoutUrl;
+      if (!url) {
+        showToast(t('common:myPage.subscription.checkoutUnavailable'), 'error');
+        return;
+      }
+      window.location.assign(url);
+    } catch {
+      showToast(t('common:myPage.subscription.checkoutUnavailable'), 'info');
+      onClose();
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <div
-      className="dialog-overlay"
-      role="presentation"
-      onClick={onClose}
-    >
+    <div className="dialog-overlay" role="presentation" onClick={onClose}>
       <div
         ref={dialogRef}
         className="dialog card premium-upgrade-modal"
@@ -42,13 +54,18 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
             {t('gyms:premium.title')}
           </h3>
           <p className="premium-upgrade-modal__subtitle">{t('gyms:premium.subtitle')}</p>
+          <p className="premium-upgrade-modal__subtitle">
+            {t('common:myPage.subscription.priceLine')}
+          </p>
         </div>
 
         <ul className="premium-upgrade-modal__benefits">
           {Array.isArray(benefits)
             ? benefits.map((benefit) => (
                 <li key={benefit} className="premium-upgrade-modal__benefit">
-                  <span className="premium-upgrade-modal__benefit-icon" aria-hidden>✓</span>
+                  <span className="premium-upgrade-modal__benefit-icon" aria-hidden>
+                    ✓
+                  </span>
                   {benefit}
                 </li>
               ))
@@ -59,15 +76,12 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
           <button
             type="button"
             className="btn btn--primary btn--block"
-            onClick={handleSubscribe}
+            disabled={busy}
+            onClick={() => void handleSubscribe()}
           >
-            {t('gyms:premium.subscribe')}
+            {t('common:myPage.subscription.startPremium')}
           </button>
-          <button
-            type="button"
-            className="btn btn--secondary btn--block"
-            onClick={onClose}
-          >
+          <button type="button" className="btn btn--secondary btn--block" onClick={onClose}>
             {t('gyms:premium.later')}
           </button>
         </div>

@@ -162,6 +162,10 @@ const growth = () =>
     default: m.GrowthAnalysisPage,
   }));
 const myPage = () => import('@/pages/my-page/MyPage').then((m) => ({ default: m.MyPage }));
+const paymentHistory = () =>
+  import('@/pages/billing/PaymentHistoryPage').then((m) => ({
+    default: m.PaymentHistoryPage,
+  }));
 const gymMemberManage = () =>
   import('@/pages/gym-member-manage/GymMemberManagePage').then((m) => ({
     default: m.GymMemberManagePage,
@@ -418,6 +422,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.RECOMMEND, element: lazyRoute(recommendForm) },
             { path: ROUTES.RECOMMEND_RESULT, element: lazyRoute(recommendResult) },
             { path: ROUTES.MY_PAGE, element: lazyRoute(myPage) },
+            { path: ROUTES.PAYMENT_HISTORY, element: lazyRoute(paymentHistory) },
             { path: ROUTES.MY_GYMS, element: lazyRoute(gymMemberManage) },
             { path: ROUTES.LIFTED_WEIGHT, element: lazyRoute(liftedWeight) },
             { path: ROUTES.LIFTED_WEIGHT_RANKINGS, element: lazyRoute(liftedWeightRankings) },

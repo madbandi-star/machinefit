@@ -35,7 +35,10 @@ export class UnconfiguredPaymentProvider implements PaymentProvider {
     this.notReady();
   }
 
-  async cancelSubscription(_providerSubscriptionId: string): Promise<{ ok: boolean }> {
+  async cancelSubscription(
+    _providerSubscriptionId: string,
+    _opts?: { atPeriodEnd?: boolean }
+  ): Promise<{ ok: boolean }> {
     this.notReady();
   }
 

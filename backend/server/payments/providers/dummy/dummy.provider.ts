@@ -47,7 +47,10 @@ export class DummyPaymentProvider implements PaymentProvider {
     };
   }
 
-  async cancelSubscription(_providerSubscriptionId: string): Promise<{ ok: boolean }> {
+  async cancelSubscription(
+    _providerSubscriptionId: string,
+    _opts?: { atPeriodEnd?: boolean }
+  ): Promise<{ ok: boolean }> {
     return { ok: true };
   }
 
