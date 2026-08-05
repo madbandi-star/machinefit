@@ -15,6 +15,7 @@ import {
   getApiErrorCode,
   isAllowedMotivationAudioFile,
   isBenignAudioPlayError,
+  playHtmlAudio,
   readAudioDurationSeconds,
   sameMediaUrl,
 } from '@/utils/motivationAudio';
@@ -155,20 +156,15 @@ export function MotivationMusicPage() {
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
     const url = previewTrack.mediaUrl;
 
     const start = async () => {
       try {
-        if (!sameMediaUrl(audio.src, url)) {
-          audio.src = url;
-          audio.load();
-        } else if (!audio.paused) {
-          return;
-        }
-        await audio.play();
+        if (sameMediaUrl(audio.src, url) && !audio.paused) return;
+        await playHtmlAudio(audio, url, { signal: controller.signal });
       } catch (error) {
-        if (cancelled || isBenignAudioPlayError(error)) return;
+        if (controller.signal.aborted || isBenignAudioPlayError(error)) return;
         setPreviewPlaying(false);
         showToast(t('motivation.playFailed'), 'error');
       }
@@ -176,7 +172,7 @@ export function MotivationMusicPage() {
 
     void start();
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [previewTrack, previewPlaying, showToast, t]);
 

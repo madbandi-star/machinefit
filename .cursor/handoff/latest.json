@@ -1,23 +1,29 @@
 {
-  "title": "Music popover: remove manage link, clarify Play/Stop",
-  "summary": "Removed user 'manage music' link from header music panel. Play/Pause is green labeled button; Stop is muted labeled button so roles are obvious at a glance.",
-  "git": { "branch": "main", "commit": "6d329cf6" },
+  "title": "Fix motivation audio playback via API proxy",
+  "summary": "Uploaded tracks now stream through /api/v1/media/motivation-audio (local or Supabase service-role), list URLs rewritten off broken public storage links, and the player waits for canplay before play().",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "backend/server/services/storage.service.ts",
+    "backend/server/services/user-motivation-track.service.ts",
+    "backend/server/controllers/motivation-audio-media.controller.ts",
+    "backend/server/app.ts",
+    "frontend/src/utils/motivationAudio.ts",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
+    "frontend/src/pages/motivation-music/MotivationMusicPage.tsx"
   ],
-  "testFocus": "Header music panel has no manage-library link; Play (green) vs Stop (muted) clearly distinct with labels.",
+  "testFocus": "After Render API redeploy + Pages: header music play for uploaded tracks should work without playFailed toast.",
   "fastChecks": [
-    "rg -n \"manageLibrary|btn--play|btn--stop\" frontend/src/components/motivation/MotivationMediaControls/"
+    "rg -n \"readMotivationAudio|motivationAudioPublicUrl|playHtmlAudio|serveMotivationAudio\" backend/server frontend/src"
   ],
   "productionChecks": [
-    "Ctrl+F5 after Pages deploy",
-    "Open music panel ? no '? ?? ??'; Play/Stop readable"
+    "Redeploy Render API",
+    "Ctrl+F5 Pages",
+    "Play an uploaded track from header music panel"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backendDeployNeeded": false
+    "backendDeployNeeded": true
   },
-  "asIs": "Manage-library link shown; Play circular vs Stop chip looked mismatched.",
-  "toBe": "No manage link; labeled green Play and muted Stop side by side."
+  "asIs": "Browser hit Supabase public URLs (often 403) or play() before media ready ? playFailed.",
+  "toBe": "API-proxied audio URLs + canplay-gated play."
 }

@@ -7,7 +7,7 @@ import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
-import { formatDuration, isBenignAudioPlayError, sameMediaUrl } from '@/utils/motivationAudio';
+import { formatDuration, isBenignAudioPlayError, playHtmlAudio, sameMediaUrl } from '@/utils/motivationAudio';
 import './MotivationMediaControls.css';
 
 export function MotivationMediaControls({
@@ -114,22 +114,20 @@ export function MotivationMediaControls({
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
 
     const start = async () => {
       try {
-        if (!sameMediaUrl(audio.src, currentMusicUrl)) {
-          audio.src = currentMusicUrl;
-          audio.load();
-          setCurrentTime(0);
-          setDuration(0);
-        } else if (!audio.paused) {
-          // Already playing this track (e.g. query refetch remapped the playlist).
+        if (sameMediaUrl(audio.src, currentMusicUrl) && !audio.paused) {
           return;
         }
-        await audio.play();
+        if (!sameMediaUrl(audio.src, currentMusicUrl)) {
+          setCurrentTime(0);
+          setDuration(0);
+        }
+        await playHtmlAudio(audio, currentMusicUrl, { signal: controller.signal });
       } catch (error) {
-        if (cancelled || isBenignAudioPlayError(error)) return;
+        if (controller.signal.aborted || isBenignAudioPlayError(error)) return;
         setMusicPlaying(false);
         showToast(t('motivation.playFailed'), 'error');
       }
@@ -137,7 +135,7 @@ export function MotivationMediaControls({
 
     void start();
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [musicPlaying, currentMusicUrl, showToast, t]);
 

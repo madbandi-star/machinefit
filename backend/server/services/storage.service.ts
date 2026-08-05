@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { mkdirSync } from 'node:fs';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
+import { mkdir, writeFile, unlink, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { env } from '../config/env.js';
@@ -133,6 +133,39 @@ export type StoredImageObject = {
   provider: 'supabase' | 'local';
 };
 
+function mimeFromAudioPath(storagePath: string): string {
+  const ext = path.extname(storagePath).toLowerCase();
+  switch (ext) {
+    case '.mp3':
+      return 'audio/mpeg';
+    case '.m4a':
+      return 'audio/mp4';
+    case '.aac':
+      return 'audio/aac';
+    case '.wav':
+      return 'audio/wav';
+    case '.ogg':
+      return 'audio/ogg';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
+/** Always serve uploads through the API so GitHub Pages can play them (CORS + private buckets). */
+export function motivationAudioPublicUrl(storagePath: string): string {
+  const encoded = storagePath
+    .split('/')
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join('/');
+  return `${publicApiBase()}/media/motivation-audio/${encoded}`;
+}
+
+export type MotivationAudioPayload = {
+  buffer: Buffer;
+  mimeType: string;
+};
+
 export const storageService = {
   localUploadRoot: LOCAL_UPLOAD_ROOT,
   localMuscleUploadRoot: LOCAL_MUSCLE_UPLOAD_ROOT,
@@ -158,10 +191,9 @@ export const storageService = {
       if (error) {
         throw new AppError(500, 'UPLOAD_FAILED', 'Could not save the audio file', error.message);
       }
-      const { data } = client.storage.from(env.MOTIVATION_AUDIO_BUCKET).getPublicUrl(storagePath);
       return {
         storagePath,
-        publicUrl: data.publicUrl,
+        publicUrl: motivationAudioPublicUrl(storagePath),
         provider: 'supabase',
       };
     }
@@ -171,8 +203,49 @@ export const storageService = {
     await writeFile(absolute, params.buffer);
     return {
       storagePath,
-      publicUrl: `${publicApiBase()}/media/motivation-audio/${storagePath.split('/').map(encodeURIComponent).join('/')}`,
+      publicUrl: motivationAudioPublicUrl(storagePath),
       provider: 'local',
+    };
+  },
+
+  /**
+   * Resolve uploaded audio for streaming (local disk first, then Supabase with service role).
+   * Prevents browser 403s when the storage bucket is private or lacks public SELECT policies.
+   */
+  async readMotivationAudio(storagePath: string): Promise<MotivationAudioPayload | null> {
+    const normalized = storagePath
+      .split(/[/\\]/)
+      .filter((part) => part && part !== '.' && part !== '..')
+      .join('/');
+    if (!normalized) return null;
+
+    const absolute = path.join(LOCAL_UPLOAD_ROOT, normalized);
+    const resolvedRoot = path.resolve(LOCAL_UPLOAD_ROOT);
+    const resolvedFile = path.resolve(absolute);
+    if (
+      resolvedFile !== resolvedRoot &&
+      !resolvedFile.startsWith(resolvedRoot + path.sep)
+    ) {
+      return null;
+    }
+
+    try {
+      const buffer = await readFile(resolvedFile);
+      return { buffer, mimeType: mimeFromAudioPath(normalized) };
+    } catch {
+      // fall through to Supabase
+    }
+
+    const client = getSupabase();
+    if (!client) return null;
+    const { data, error } = await client.storage
+      .from(env.MOTIVATION_AUDIO_BUCKET)
+      .download(normalized);
+    if (error || !data) return null;
+    const buffer = Buffer.from(await data.arrayBuffer());
+    return {
+      buffer,
+      mimeType: data.type || mimeFromAudioPath(normalized),
     };
   },
 

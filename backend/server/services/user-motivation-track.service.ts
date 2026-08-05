@@ -7,7 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { motivationAudioLimits, extensionFromFilename, isAllowedMotivationAudio } from '../config/motivation-audio.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { userMotivationTrackRepository } from '../repositories/user-motivation-track.repository.js';
-import { storageService } from './storage.service.js';
+import { storageService, motivationAudioPublicUrl } from './storage.service.js';
 
 async function assertUnderTrackLimit(userId: string): Promise<void> {
   const limits = motivationAudioLimits();
@@ -21,10 +21,17 @@ async function assertUnderTrackLimit(userId: string): Promise<void> {
   }
 }
 
+function withPlayableMediaUrl(track: UserMotivationTrack): UserMotivationTrack {
+  if (track.sourceType === 'upload' && track.storagePath) {
+    return { ...track, mediaUrl: motivationAudioPublicUrl(track.storagePath) };
+  }
+  return track;
+}
+
 export const userMotivationTrackService = {
   async list(userId: string): Promise<{ items: UserMotivationTrack[]; limits: ReturnType<typeof motivationAudioLimits> }> {
     const items = await userMotivationTrackRepository.listByUser(userId);
-    return { items, limits: motivationAudioLimits() };
+    return { items: items.map(withPlayableMediaUrl), limits: motivationAudioLimits() };
   },
 
   async createFromUrl(userId: string, input: CreateMotivationTrackFromUrlInput): Promise<UserMotivationTrack> {
@@ -89,19 +96,21 @@ export const userMotivationTrackService = {
     }
 
     try {
-      return await userMotivationTrackRepository.insert({
-        id: trackId,
-        userId,
-        title: title.slice(0, 200),
-        sourceType: 'upload',
-        mediaUrl: stored.publicUrl,
-        storagePath: stored.storagePath,
-        originalFilename: originalName.slice(0, 255),
-        mimeType: file.mimetype || null,
-        fileSizeBytes: file.size,
-        durationSeconds: options.durationSeconds ?? null,
-        isDefault: Boolean(options.setAsDefault),
-      });
+      return withPlayableMediaUrl(
+        await userMotivationTrackRepository.insert({
+          id: trackId,
+          userId,
+          title: title.slice(0, 200),
+          sourceType: 'upload',
+          mediaUrl: stored.publicUrl,
+          storagePath: stored.storagePath,
+          originalFilename: originalName.slice(0, 255),
+          mimeType: file.mimetype || null,
+          fileSizeBytes: file.size,
+          durationSeconds: options.durationSeconds ?? null,
+          isDefault: Boolean(options.setAsDefault),
+        })
+      );
     } catch (error) {
       await storageService.deleteMotivationAudio(stored.storagePath);
       throw error;
@@ -121,7 +130,7 @@ export const userMotivationTrackService = {
     if (!updated) {
       throw new AppError(404, 'NOT_FOUND', 'Track not found');
     }
-    return updated;
+    return withPlayableMediaUrl(updated);
   },
 
   async remove(userId: string, trackId: string): Promise<void> {

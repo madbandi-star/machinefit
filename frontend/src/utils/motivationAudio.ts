@@ -50,6 +50,72 @@ export function isBenignAudioPlayError(error: unknown): boolean {
   return false;
 }
 
+/**
+ * Set src (if needed), wait until the element can play, then start playback.
+ * Avoids false failures from calling play() immediately after load().
+ */
+export async function playHtmlAudio(
+  audio: HTMLAudioElement,
+  url: string,
+  options?: { signal?: AbortSignal }
+): Promise<void> {
+  const signal = options?.signal;
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
+
+  const waitForCanPlay = () =>
+    new Promise<void>((resolve, reject) => {
+      if (audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+        resolve();
+        return;
+      }
+
+      let settled = false;
+      const cleanup = () => {
+        audio.removeEventListener('canplay', onReady);
+        audio.removeEventListener('loadeddata', onReady);
+        audio.removeEventListener('error', onError);
+        signal?.removeEventListener('abort', onAbort);
+        window.clearTimeout(timer);
+      };
+      const finish = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        fn();
+      };
+      const onReady = () => finish(() => resolve());
+      const onError = () =>
+        finish(() => reject(new DOMException('Media failed to load', 'NotSupportedError')));
+      const onAbort = () => finish(() => reject(new DOMException('Aborted', 'AbortError')));
+
+      audio.addEventListener('canplay', onReady, { once: true });
+      audio.addEventListener('loadeddata', onReady, { once: true });
+      audio.addEventListener('error', onError, { once: true });
+      signal?.addEventListener('abort', onAbort, { once: true });
+
+      const timer = window.setTimeout(() => {
+        // Soft timeout: try play anyway — some browsers never fire canplay for short clips.
+        finish(() => resolve());
+      }, 10_000);
+    });
+
+  if (!sameMediaUrl(audio.src, url)) {
+    audio.src = url;
+    audio.load();
+    await waitForCanPlay();
+  } else if (audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) {
+    await waitForCanPlay();
+  }
+
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
+
+  await audio.play();
+}
+
 export function formatUploadDate(iso: string, locale: string): string {
   try {
     return new Intl.DateTimeFormat(locale.startsWith('ko') ? 'ko-KR' : 'en-US', {

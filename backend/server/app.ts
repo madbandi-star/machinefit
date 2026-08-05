@@ -16,6 +16,7 @@ import { storageService } from './services/storage.service.js';
 import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
 import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
 import { serveBrandAssetImage } from './controllers/brand-asset-media.controller.js';
+import { serveMotivationAudio } from './controllers/motivation-audio-media.controller.js';
 
 export function createApp() {
   const app = express();
@@ -59,17 +60,10 @@ export function createApp() {
   // Root probes: /health /ready /live (outside product /api/v1/live dashboard).
   app.use(probeRouter);
 
-  // Local-dev fallback for motivation audio when Supabase Storage is not configured.
-  app.use(
-    `${env.API_BASE_PATH}/media/motivation-audio`,
-    express.static(storageService.localUploadRoot, {
-      fallthrough: false,
-      maxAge: '7d',
-      setHeaders(res) {
-        res.setHeader('Accept-Ranges', 'bytes');
-      },
-    })
-  );
+  // Motivation audio: prefer API proxy (Supabase + local) so SPA hosts can play uploads.
+  app.use(`${env.API_BASE_PATH}/media/motivation-audio`, (req, res, next) => {
+    void serveMotivationAudio(req, res, next);
+  });
 
   // Durable muscle-group images from Postgres (works without Supabase Storage keys).
   app.get(
