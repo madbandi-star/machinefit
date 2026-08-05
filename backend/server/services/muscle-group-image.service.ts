@@ -33,6 +33,10 @@ export const muscleGroupImageService = {
     return muscleGroupImageRepository.list();
   },
 
+  async getBlobMeta(muscleGroup: MuscleGroupImageKey, kind: 'main' | 'thumb') {
+    return muscleGroupImageRepository.getBlobMeta(muscleGroup, kind);
+  },
+
   async getBlob(muscleGroup: MuscleGroupImageKey, kind: 'main' | 'thumb') {
     return muscleGroupImageRepository.getBlob(muscleGroup, kind);
   },

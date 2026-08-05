@@ -85,9 +85,12 @@ export const communityService = {
   },
 
   async getPost(postId: string) {
-    const post = await communityRepository.getPost(postId);
+    // Parallel fetch — comments for missing posts are empty; same 404 when post absent.
+    const [post, comments] = await Promise.all([
+      communityRepository.getPost(postId),
+      communityRepository.listComments(postId),
+    ]);
     if (!post) throw new AppError(404, 'NOT_FOUND', 'Post not found');
-    const comments = await communityRepository.listComments(postId);
     return { post, comments };
   },
 
@@ -144,6 +147,10 @@ export const communityService = {
 
   deleteMachineRequest(requestId: string, userId: string, roleCode: RoleCode) {
     return communityRepository.deleteMachineRequest(requestId, userId, roleCode);
+  },
+
+  getMachineRequestImageMeta(imageId: string, variant: 'full' | 'thumb') {
+    return communityRepository.getMachineRequestImageMeta(imageId, variant);
   },
 
   getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {

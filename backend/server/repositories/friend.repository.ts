@@ -189,34 +189,38 @@ export const friendRepository = {
           ? `f.created_at DESC`
           : `pinned DESC, u.display_name ASC`;
 
-    const countRes = await pool.query(
-      `SELECT COUNT(*)::int AS c
-       FROM friendships f
-       JOIN users u ON u.id = CASE WHEN f.user_low_id = $1 THEN f.user_high_id ELSE f.user_low_id END
-       LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
-       WHERE (f.user_low_id = $1 OR f.user_high_id = $1)
-         AND u.is_active = TRUE
-         ${qFilter}`,
-      params
-    );
-
     const offset = (options.page - 1) * options.limit;
-    params.push(options.limit, offset);
-    const { rows } = await pool.query(
-      `SELECT f.id AS friendship_id, f.created_at AS friended_at,
-              CASE WHEN f.user_low_id = $1 THEN f.pinned_by_low ELSE f.pinned_by_high END AS pinned,
-              u.id, u.display_name, u.avatar_url, u.experience_level, u.last_login_at,
-              COALESCE(p.online_status_visibility, 'friends') AS online_vis
-       FROM friendships f
-       JOIN users u ON u.id = CASE WHEN f.user_low_id = $1 THEN f.user_high_id ELSE f.user_low_id END
-       LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
-       WHERE (f.user_low_id = $1 OR f.user_high_id = $1)
-         AND u.is_active = TRUE
-         ${qFilter}
-       ORDER BY ${order}
-       LIMIT $${i} OFFSET $${i + 1}`,
-      params
-    );
+    const countParams = [...params];
+    const listParams = [...params, options.limit, offset];
+    const [countRes, { rows }] = await Promise.all([
+      pool.query(
+        `SELECT COUNT(*)::int AS c
+         FROM friendships f
+         JOIN users u ON u.id = CASE WHEN f.user_low_id = $1 THEN f.user_high_id ELSE f.user_low_id END
+         LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
+         WHERE (f.user_low_id = $1 OR f.user_high_id = $1)
+           AND f.status = 'ACCEPTED'
+           AND u.is_active = TRUE
+           ${qFilter}`,
+        countParams
+      ),
+      pool.query(
+        `SELECT f.id AS friendship_id, f.created_at AS friended_at,
+                CASE WHEN f.user_low_id = $1 THEN f.pinned_by_low ELSE f.pinned_by_high END AS pinned,
+                u.id, u.display_name, u.avatar_url, u.experience_level, u.last_login_at,
+                COALESCE(p.online_status_visibility, 'friends') AS online_vis
+         FROM friendships f
+         JOIN users u ON u.id = CASE WHEN f.user_low_id = $1 THEN f.user_high_id ELSE f.user_low_id END
+         LEFT JOIN friend_privacy_settings p ON p.user_id = u.id
+         WHERE (f.user_low_id = $1 OR f.user_high_id = $1)
+           AND f.status = 'ACCEPTED'
+           AND u.is_active = TRUE
+           ${qFilter}
+         ORDER BY ${order}
+         LIMIT $${i} OFFSET $${i + 1}`,
+        listParams
+      ),
+    ]);
 
     const items: FriendListItem[] = rows.map((r) => {
       const canSeeOnline =
@@ -268,8 +272,9 @@ export const friendRepository = {
               COALESCE(p.online_status_visibility, 'friends') AS online_vis,
               EXISTS (
                 SELECT 1 FROM friendships f
-                WHERE (f.user_low_id = $1 AND f.user_high_id = u.id)
-                   OR (f.user_high_id = $1 AND f.user_low_id = u.id)
+                WHERE ((f.user_low_id = $1 AND f.user_high_id = u.id)
+                   OR (f.user_high_id = $1 AND f.user_low_id = u.id))
+                  AND f.status = 'ACCEPTED'
               ) AS is_friend,
               (
                 SELECT fr.id::text FROM friend_requests fr
@@ -703,7 +708,7 @@ export const friendRepository = {
     const pool = getPool();
     if (!pool) return { items: [], total: 0 };
     const offset = (page - 1) * limit;
-    const countRes = await pool.query(
+    const countPromise = pool.query(
       `SELECT COUNT(*)::int AS c
        FROM friend_activity_logs a
        WHERE a.visibility IN ('public','friends')
@@ -711,8 +716,9 @@ export const friendRepository = {
            a.actor_id = $1
            OR EXISTS (
              SELECT 1 FROM friendships f
-             WHERE (f.user_low_id = $1 AND f.user_high_id = a.actor_id)
-                OR (f.user_high_id = $1 AND f.user_low_id = a.actor_id)
+             WHERE ((f.user_low_id = $1 AND f.user_high_id = a.actor_id)
+                OR (f.user_high_id = $1 AND f.user_low_id = a.actor_id))
+               AND f.status = 'ACCEPTED'
            )
          )
          AND NOT EXISTS (
@@ -722,7 +728,7 @@ export const friendRepository = {
          )`,
       [viewerId]
     );
-    const { rows } = await pool.query(
+    const listPromise = pool.query(
       `SELECT a.*, u.display_name, u.avatar_url, u.experience_level, u.last_login_at
        FROM friend_activity_logs a
        JOIN users u ON u.id = a.actor_id
@@ -731,8 +737,9 @@ export const friendRepository = {
            a.actor_id = $1
            OR EXISTS (
              SELECT 1 FROM friendships f
-             WHERE (f.user_low_id = $1 AND f.user_high_id = a.actor_id)
-                OR (f.user_high_id = $1 AND f.user_low_id = a.actor_id)
+             WHERE ((f.user_low_id = $1 AND f.user_high_id = a.actor_id)
+                OR (f.user_high_id = $1 AND f.user_low_id = a.actor_id))
+               AND f.status = 'ACCEPTED'
            )
          )
          AND NOT EXISTS (
@@ -744,6 +751,7 @@ export const friendRepository = {
        LIMIT $2 OFFSET $3`,
       [viewerId, limit, offset]
     );
+    const [countRes, { rows }] = await Promise.all([countPromise, listPromise]);
     return {
       items: rows.map((r) => ({
         id: String(r.id),
@@ -800,7 +808,8 @@ export const friendRepository = {
 
     const friends = await pool.query(
       `SELECT CASE WHEN user_low_id = $1 THEN user_high_id ELSE user_low_id END AS fid
-       FROM friendships WHERE user_low_id = $1 OR user_high_id = $1`,
+       FROM friendships
+       WHERE (user_low_id = $1 OR user_high_id = $1) AND status = 'ACCEPTED'`,
       [viewerId]
     );
     const ids = [viewerId, ...friends.rows.map((r) => String(r.fid))];
@@ -1163,8 +1172,9 @@ export const friendRepository = {
              wl.user_id = $1
              OR EXISTS (
                SELECT 1 FROM friendships f
-               WHERE (f.user_low_id = $1 AND f.user_high_id = wl.user_id)
-                  OR (f.user_high_id = $1 AND f.user_low_id = wl.user_id)
+               WHERE ((f.user_low_id = $1 AND f.user_high_id = wl.user_id)
+                  OR (f.user_high_id = $1 AND f.user_low_id = wl.user_id))
+                 AND f.status = 'ACCEPTED'
              )
            )
            AND COALESCE(p.workout_records_visibility, 'friends') IN ('public', 'friends')

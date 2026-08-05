@@ -1,10 +1,20 @@
-# Reference for manual free-tier Web Service setup (Blueprint may require paid/card).
+# Reference for manual Web Service setup (Blueprint may require paid/card).
 # Create via Render Dashboard: New → Web Service (not Blueprint).
 #
 # CRITICAL — Build Command must be EXACTLY:
 #   npm run build:render
 # Do not prefix with `npm ci` / `npm install` (that duplicates work; old
 # monorepo installs also OOMed when frontend was a workspace).
+#
+# 1k concurrent readiness (ops — apply in Render Dashboard, not Blueprint free):
+# - Plan: Standard or Pro (Starter 0.5CPU/512MB is insufficient for 1k)
+# - Instances: 2–4 with autoscale on CPU ≥70%
+# - Health Check Path: /api/v1/health (already set)
+# - Always On / no idle spin-down on paid plans
+# - Region: closest to Supabase (ap-northeast-2 / Singapore as available)
+# - Env: DATABASE_URL → Supabase Transaction pooler :6543?pgbouncer=true
+#        DATABASE_POOL_MAX=10 (per instance; avoid session pooler)
+#        OPS_API_SAMPLE_RATE=0.05
 services:
   - type: web
     name: machinefit-api
@@ -27,7 +37,7 @@ services:
       - key: DATABASE_URL
         sync: false
       # Optional pool / ops tuning for higher concurrency (defaults in code):
-      # DATABASE_POOL_MAX=20
+      # DATABASE_POOL_MAX=10
       # OPS_API_SAMPLE_RATE=0.05
       - key: JWT_SECRET
         sync: false

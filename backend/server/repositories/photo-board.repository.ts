@@ -278,15 +278,6 @@ export const photoBoardRepository = {
     }
 
     const where = `WHERE ${conditions.join(' AND ')}`;
-    const countResult = await pool.query<{ count: string }>(
-      `SELECT COUNT(*)::text AS count
-       FROM photo_posts p
-       JOIN users u ON u.id = p.user_id
-       ${where}`,
-      params
-    );
-    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
-
     const likedSelect = viewerId
       ? `, EXISTS (
            SELECT 1 FROM photo_post_likes l
@@ -297,17 +288,27 @@ export const photoBoardRepository = {
     const limitIdx = listParams.length - 1;
     const offsetIdx = listParams.length;
 
-    const result = await pool.query<PostRow>(
-      `SELECT p.id, p.user_id, p.title, p.content, p.view_count, p.like_count, p.comment_count,
-              p.is_hidden, p.created_at, p.updated_at, u.display_name
-              ${likedSelect}
-       FROM photo_posts p
-       JOIN users u ON u.id = p.user_id
-       ${where}
-       ORDER BY ${sortSql(query.sort)}
-       LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
-      listParams
-    );
+    const [countResult, result] = await Promise.all([
+      pool.query<{ count: string }>(
+        `SELECT COUNT(*)::text AS count
+         FROM photo_posts p
+         JOIN users u ON u.id = p.user_id
+         ${where}`,
+        params
+      ),
+      pool.query<PostRow>(
+        `SELECT p.id, p.user_id, p.title, p.content, p.view_count, p.like_count, p.comment_count,
+                p.is_hidden, p.created_at, p.updated_at, u.display_name
+                ${likedSelect}
+         FROM photo_posts p
+         JOIN users u ON u.id = p.user_id
+         ${where}
+         ORDER BY ${sortSql(query.sort)}
+         LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
+        listParams
+      ),
+    ]);
+    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
     const ids = result.rows.map((r) => r.id);
     const [tagsMap, covers] = await Promise.all([loadTagsForPosts(ids), loadCoverImages(ids)]);
@@ -589,6 +590,42 @@ export const photoBoardRepository = {
       throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this post');
     }
     await pool.query(`DELETE FROM photo_posts WHERE id = $1`, [postId]);
+  },
+
+  async getImageMeta(imageId: string, variant: 'main' | 'thumb') {
+    const pool = getPool();
+    if (!pool) {
+      const img = mockPhotoImages.get(imageId);
+      if (!img) return null;
+      return {
+        mimeType: img.mimeType,
+        etagToken: `${imageId}-${variant}-${img.imageData.length}`,
+      };
+    }
+    const result = await pool.query<{
+      mime_type: string;
+      file_size_bytes: number | null;
+      updated_at: Date | string;
+      is_hidden: boolean;
+      has_blob: boolean;
+    }>(
+      `SELECT i.mime_type, i.file_size_bytes, i.updated_at, p.is_hidden,
+              (${variant === 'thumb' ? 'i.thumbnail_data' : 'i.image_data'} IS NOT NULL) AS has_blob
+       FROM photo_post_images i
+       JOIN photo_posts p ON p.id = i.post_id
+       WHERE i.id = $1`,
+      [imageId]
+    );
+    const row = result.rows[0];
+    if (!row || row.is_hidden || !row.has_blob) return null;
+    const stamp =
+      row.updated_at instanceof Date
+        ? row.updated_at.toISOString()
+        : String(row.updated_at);
+    return {
+      mimeType: row.mime_type,
+      etagToken: `${imageId}-${variant}-${row.file_size_bytes ?? 0}-${stamp}`,
+    };
   },
 
   async getImageBinary(imageId: string, variant: 'main' | 'thumb') {

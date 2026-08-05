@@ -502,10 +502,9 @@ export const communityRepository = {
       };
     }
 
-    const count = await pool.query<{ count: string }>(
+    const countPromise = pool.query<{ count: string }>(
       'SELECT COUNT(*)::text AS count FROM machine_requests'
     );
-    const total = parseInt(count.rows[0]?.count ?? '0', 10);
     const viewerSelects = viewerId
       ? `, EXISTS (
            SELECT 1 FROM machine_request_votes v
@@ -516,7 +515,7 @@ export const communityRepository = {
     const params = viewerId
       ? [limit, (page - 1) * limit, viewerId]
       : [limit, (page - 1) * limit];
-    const result = await pool.query(
+    const resultPromise = pool.query(
       `SELECT mr.*, u.display_name AS author_name,
               COALESCE(mr.vote_count, 0) AS vote_count,
               (
@@ -532,6 +531,8 @@ export const communityRepository = {
        ORDER BY mr.created_at DESC LIMIT $1 OFFSET $2`,
       params
     );
+    const [count, result] = await Promise.all([countPromise, resultPromise]);
+    const total = parseInt(count.rows[0]?.count ?? '0', 10);
     const items: MachineRequest[] = result.rows.map((r) => {
       const primaryImageUrl = r.primary_image_id
         ? machineRequestImageUrl(r.primary_image_id, 'thumb')
@@ -910,6 +911,40 @@ export const communityRepository = {
       throw new AppError(403, 'FORBIDDEN', 'Only the author can delete this request');
     }
     await pool.query(`DELETE FROM machine_requests WHERE id = $1`, [requestId]);
+  },
+
+  async getMachineRequestImageMeta(imageId: string, variant: 'full' | 'thumb') {
+    const pool = getPool();
+    if (!pool) {
+      const img = mockMachineRequestImages.get(imageId);
+      if (!img) return null;
+      return {
+        mimeType: img.mimeType,
+        etagToken: `${imageId}-${variant}-${img.imageData.length}`,
+      };
+    }
+    const result = await pool.query<{
+      mime_type: string;
+      file_size_bytes: number | null;
+      created_at: Date | string;
+      has_blob: boolean;
+    }>(
+      `SELECT mime_type, file_size_bytes, created_at,
+              (${variant === 'thumb' ? 'thumbnail_data' : 'image_data'} IS NOT NULL) AS has_blob
+       FROM machine_request_images
+       WHERE id = $1`,
+      [imageId]
+    );
+    const row = result.rows[0];
+    if (!row?.has_blob) return null;
+    const stamp =
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at);
+    return {
+      mimeType: row.mime_type,
+      etagToken: `${imageId}-${variant}-${row.file_size_bytes ?? 0}-${stamp}`,
+    };
   },
 
   async getMachineRequestImageBinary(imageId: string, variant: 'full' | 'thumb') {

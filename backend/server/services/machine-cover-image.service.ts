@@ -53,6 +53,10 @@ export const machineCoverImageService = {
     return machineCoverImageRepository.list(filters);
   },
 
+  async getBlobMeta(machineCode: string, kind: 'main' | 'thumb', targetMuscle?: string | null) {
+    return machineCoverImageRepository.getBlobMeta(machineCode, kind, targetMuscle);
+  },
+
   async getBlob(machineCode: string, kind: 'main' | 'thumb', targetMuscle?: string | null) {
     return machineCoverImageRepository.getBlob(machineCode, kind, targetMuscle);
   },

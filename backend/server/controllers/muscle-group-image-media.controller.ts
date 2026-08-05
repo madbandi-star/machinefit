@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { muscleGroupImageKeySchema } from '@machinefit/shared';
 import { muscleGroupImageService } from '../services/muscle-group-image.service.js';
-import { sendImmutableMedia } from '../utils/media-response.js';
+import { sendImmutableMedia, trySendNotModified } from '../utils/media-response.js';
 
 export async function serveMuscleGroupImage(req: Request, res: Response, next: NextFunction) {
   try {
@@ -12,6 +12,15 @@ export async function serveMuscleGroupImage(req: Request, res: Response, next: N
       res.status(404).end();
       return;
     }
+
+    // Version-only probe first — skip BYTEA on If-None-Match hit.
+    const meta = await muscleGroupImageService.getBlobMeta(parsedGroup.data, kind);
+    if (!meta) {
+      next();
+      return;
+    }
+    const etag = `"mgi-${parsedGroup.data}-${kind}-${meta.version}"`;
+    if (trySendNotModified(req, res, etag)) return;
 
     const blob = await muscleGroupImageService.getBlob(parsedGroup.data, kind);
     if (!blob) {

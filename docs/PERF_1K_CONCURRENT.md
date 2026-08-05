@@ -1,7 +1,7 @@
-# Performance report — 1,000 concurrent users
+# Performance report — 1,000 concurrent users (Phase 1 + Phase 2)
 
 Date: 2026-08-05  
-Branch: `cursor/perf-1k-concurrent-35b3`  
+Branches: `cursor/perf-1k-concurrent-35b3` (phase 1), `cursor/perf-1k-phase2-35b3` (phase 2)  
 Constraints honored: no feature/UI/business-logic/API response shape changes; schema additive indexes only.
 
 ---
@@ -10,128 +10,182 @@ Constraints honored: no feature/UI/business-logic/API response shape changes; sc
 
 | Rank | Area | Issue | Impact |
 |------|------|--------|--------|
-| 1 | Infra | Render `plan: free`, single Node process | Hard ceiling ~80–150 concurrent |
-| 2 | DB | `pg` pool `max: 20` | Concurrent query queue |
-| 3 | Ops | Unsampled API latency INSERT per response + media | Write amplification |
-| 4 | Rate limit | 200/15min including `/media/*` | False 429 under image load / NAT |
-| 5 | Media | BYTEA via Express; ETag without 304; gzip on webp | CPU + bandwidth |
-| 6 | FE | Ops heartbeat 60s always; friends poll 15–30s in background | Steady QPS |
-| 7 | Cache | `TtlCache.getOrSet` stampede on miss | Burst DB load |
-| 8 | FE assets | Large muscle PNGs in dist (~28MB) | First load weight |
+| 1 | Infra | Render free/Starter single Node | Hard ceiling well below 1k |
+| 2 | DB | Pool + BYTEA media over Express | Concurrent query / bandwidth queue |
+| 3 | Ops | Unsampled API latency INSERT (phase 1 fixed) | Write amplification |
+| 4 | Media | BYTEA before 304 (phase 2: version-first) | CPU + serialize |
+| 5 | Ops dashboard | Sequential fan-out (phase 2: Promise.all) | Admin wall-clock |
+| 6 | FE poll | Ops/friends background (visibility gated) | Steady QPS |
+| 7 | Lists | Sequential COUNT+list (phase 2 parallel) | Latency under load |
 
-Already good: helmet, compression, keep-alive 65s, catalog Cache-Control 120s, route lazy-load, React Query stale 5m / no focus refetch, most workout/history indexes.
+Already good: helmet, compression (skip media), keep-alive 65s, catalog Cache-Control, route lazy-load, React Query stale 5m, production `console.log` strip via Vite `esbuild.pure`.
 
 ---
 
-## 2. Changes in this release
+## 2. Phase 1 changes (shipped)
 
-| File | Change | Why |
+| File | Change |
+|------|--------|
+| `database.ts` / `env.ts` | `DATABASE_POOL_MAX` / idle / connect timeouts |
+| `rate-limit.middleware.ts` | Skip `/media/*`; max 3000/15min |
+| `ops-metrics.middleware.ts` | Skip `/media/*` |
+| `ops.service.ts` | API sample 5%; coalesce session_ping |
+| `app.ts` | Skip compression for media MIME |
+| `media-response.ts` | If-None-Match → 304 (after BYTEA) |
+| `ttl-cache.ts` | Single-flight `getOrSet` |
+| FE ops/friends | Visibility-gated poll |
+| `094_perf_1k_friend_status_indexes.sql` | `(user_low/high_id, status)` |
+| `scripts/load-test-1k.mjs` | Concurrent latency probe |
+
+---
+
+## 3. Phase 2 changes (this release)
+
+| Area | Change | Why |
 |------|--------|-----|
-| `backend/server/config/database.ts` + `env.ts` | `DATABASE_POOL_MAX` / idle / connect timeouts configurable | Tune per instance without code change |
-| `backend/server/middlewares/rate-limit.middleware.ts` | Skip `/media/*`; max **3000**/15min | Unblock real API under concurrency |
-| `backend/server/middlewares/ops-metrics.middleware.ts` | Skip `/media/*` | Cut ops write volume |
-| `backend/server/services/ops.service.ts` | Prod API sample `OPS_API_SAMPLE_RATE` (default 5%); coalesce `session_ping`; sample page access logs 10% | Pool/write relief; same product APIs |
-| `backend/server/app.ts` | Skip compression for `/media/*` and image/audio MIME | CPU savings |
-| `backend/server/utils/media-response.ts` + media controllers | Honor `If-None-Match` → **304** | Bandwidth / serialize savings |
-| `backend/server/utils/ttl-cache.ts` | Single-flight `getOrSet` | Prevent cache-miss stampede |
-| `frontend/src/utils/opsTelemetry.ts` | Heartbeat 90s; skip when tab hidden | Fewer ingest POSTs |
-| `frontend/src/pages/friends/FriendsHubPage.tsx` | Visibility-gated 60s refetch | Same UI; less background QPS |
-| `database/migrations/094_perf_1k_friend_status_indexes.sql` | `(user_low/high_id, status)` indexes | Faster friend graph filters |
-| `scripts/load-test-1k.mjs` | Concurrent latency probe | Measure TPS / p95 / errors |
-| `docs/PERF_1K_CONCURRENT.md` | This report | |
+| Catalog media | `getBlobMeta` + version-first 304 before BYTEA | Skip blob load on revalidate |
+| UGC media | photo/trade/machine-request meta + ETag 304 (same 86400 Cache-Control) | Bandwidth under gallery load |
+| Ops dashboard / report | `Promise.all` fan-out; reuse `seriesActivity` once | Lower wall-clock, same JSON |
+| Community `getPost` | Parallel post + comments | Same 404/payload |
+| Lists | Parallel COUNT+list (photo, trade, machine-requests, friend feed/list) | Latency |
+| Friends queries | `status = 'ACCEPTED'` (matches `areFriends`; enables 094 indexes) | Index Scan; same product data (rows always ACCEPTED) |
+| Cover admin | `getAssetByCode` exact `m.code = $1` | No ILIKE list scan |
+| Admin Ops FE | `refetchInterval` visibility gate | Zero QPS when tab hidden |
+| `095_perf_1k_phase2_indexes.sql` | Trades/photo/posts/friendships/login indexes | Planner Index Scan |
+| `render.yaml` | Document Standard×N + pooler env | Ops checklist |
 
-API JSON response bodies and business rules are unchanged.
+API JSON bodies and business rules unchanged. Media 200 bodies identical; 304 when `If-None-Match` matches.
 
 ---
 
-## 3. Load test
+## 4. Indexes created
 
-Script: `scripts/load-test-1k.mjs`
+### 094
+- `idx_friendships_low_status` `(user_low_id, status)`
+- `idx_friendships_high_status` `(user_high_id, status)`
+
+### 095
+- `idx_machine_trades_active_list`
+- `idx_machine_trades_active_popular`
+- `idx_photo_posts_visible_popular`
+- `idx_posts_board_pin_created`
+- `idx_friendships_pair_accepted`
+- `idx_auth_login_events_created`
+
+---
+
+## 5. Load test
 
 ```bash
-# Local / staging health probe ladder
-for c in 100 300 500 700 1000; do
+for c in 100 300 500 1000; do
   CONCURRENCY=$c DURATION_SEC=20 API_BASE=https://YOUR.onrender.com/api/v1 \
     node scripts/load-test-1k.mjs || true
 done
 ```
 
-**Note:** Running 1000 concurrent against production free tier will fail; use a sized Render instance. Health/warmup alone underestimates real workout/history load — add authenticated paths in staging.
+### Baseline (phase 1, free/Starter-class, `/health`+`/warmup`)
 
-### Baseline measured (pre-deploy, free Render, `/health`+`/warmup` only)
+| Concurrency | TPS | Avg | P95 | Error rate |
+|-------------|-----|-----|-----|------------|
+| 100 | 168 | **512ms** | **1132ms** | 0% |
+| 300 | 108 | **1351ms** | **2666ms** | 0.03% |
+| 500 | 187 | **2161ms** | **4329ms** | 0% |
 
-| Concurrency | TPS | Avg | P95 | P99 | Error rate |
-|-------------|-----|-----|-----|-----|------------|
-| 100 | 168 | **512ms** | **1132ms** | 1739ms | 0% |
-| 300 | 108 | **1351ms** | **2666ms** | 2887ms | 0.03% |
-| 500 | 187 | **2161ms** | **4329ms** | 4600ms | 0% |
+Fails ≤300ms avg / ≤500ms p95 on free single instance even for health.
 
-Already fails the 300ms avg / 500ms p95 targets on the free single instance — even for health probes. Authenticated workout/history traffic would be worse.
+### After phase 2 code (expected)
 
-### After this code (expected)
+| Metric | Same free/Starter | Paid multi-instance (required for SLA) |
+|--------|-------------------|----------------------------------------|
+| Comfortable concurrent open | **200–350** | **1000+** |
+| Active API users | **120–220** | **1000+** |
+| Media revalidate | Mostly **304** (no BYTEA) | Same |
+| Ops dashboard wall-clock | ~parallel RT of slowest query | Same |
+| Error rate | Lower media/ops contention | &lt;1% |
 
-| Metric | Same free host | Paid multi-instance (required for SLA) |
-|--------|----------------|----------------------------------------|
-| Comfortable concurrent open | **150–300** | **1000+** |
-| Active API users | **100–200** | **1000+** |
-| Avg / P95 (catalog, warm) | Improved vs media/ops contention; still host-bound | ≤300ms / ≤500ms |
-| Error rate | Lower false 429 (media excluded) | &lt;1% |
-| Ops DB writes | ~5% API samples; media skipped; coalesced pings | Same |
-| Heartbeat @1000 visible tabs | ~11/s (was ~16.7/s) | Same |
-
-Re-run `scripts/load-test-1k.mjs` after Render redeploy; capture Admin Ops CPU/memory/pool waiting during the ladder.
+Re-run ladder after Render redeploy + `095` migrate; capture Admin Ops CPU/memory/pool waiting.
 
 ---
 
-## 4. Expected max concurrent (this code)
+## 6. Expected max concurrent
 
 | Hosting | Expected stable concurrent |
 |---------|----------------------------|
-| Render free, 1 instance, pool 20 | **~150–300** open / **~100–200** active |
-| Render Standard×2–4 + Supabase transaction pooler + pool 10–20/instance | **1000+** open / **500–1000** active |
-| + Redis rate-limit/cache + Storage CDN for media | Headroom for spikes / 2–3k |
+| Render free/Starter ×1, pool 10–20 | **~150–350** open / **~100–220** active |
+| Render Standard×2–4 + Supabase transaction pooler + pool 10/instance | **1000+** open / **500–1000** active |
+| + Redis + CDN Storage for media | Headroom for spikes / 2–3k |
 
-**Code alone cannot reach a reliable 1000 on free single-instance.** Infra scale is required for the SLA.
-
----
-
-## 5. Additional infrastructure (required for SLA)
-
-1. **Render**: leave free → Standard/Pro, **2–4 instances**, autoscale on CPU  
-2. **Supabase**: Pro + **transaction pooler** (6543); keep per-process `DATABASE_POOL_MAX` modest (10–20)  
-3. **Redis** (optional next): shared rate limit + catalog cache when multi-instance  
-4. **CDN / Storage**: serve machine covers from Supabase public URL / Cloudflare (API JSON only)  
-5. Apply migration: `npm run db:migrate` (`094_perf_1k_friend_status_indexes.sql`)
+**Code alone cannot guarantee 1000 on Starter single-instance.** Infra scale is required for the SLA.
 
 ---
 
-## 6. Security checklist (unchanged / verified)
+## 7. Cloudflare recommended settings
+
+Apply when domain is proxied (orange cloud):
+
+| Setting | Value |
+|---------|-------|
+| Proxy status | DNS only → **Proxied** for API/static hostnames as appropriate |
+| SSL/TLS | Full (strict) |
+| Brotli | On |
+| Auto Minify | JS/CSS/HTML On (static FE) |
+| HTTP/2 + HTTP/3 (QUIC) | On |
+| Early Hints | Optional On |
+| Cache Rules | Cache `/machinefit/assets/*` aggressively; **bypass** `/api/v1/*` JSON |
+| Cache `/api/v1/*/media/*` | Cache with respect to ETag / Cache-Control (or CDN origin for Storage) |
+| Rate Limiting | Protect `/api/v1/auth/*` (e.g. 20/min/IP); leave media to origin skip |
+| WAF | Managed ruleset + OWASP; challenge high threat |
+| DDoS | Free L3/4 + L7 defaults |
+| Compression | Brotli to client; origin already gzip/brotli via Express |
+
+CDN helps static FE + cacheable media GETs; it does **not** replace DB/CPU for authenticated workout writes.
+
+---
+
+## 8. Render recommended settings
+
+| Setting | Value |
+|---------|-------|
+| Plan | Standard or Pro (not free/Starter for 1k) |
+| Instances | 2–4; autoscale CPU ≥70% |
+| Health check | `/api/v1/health` |
+| Region | Near Supabase `ap-northeast-2` |
+| Always On | Paid (no spin-down) |
+| `DATABASE_URL` | Transaction pooler `:6543?pgbouncer=true` |
+| `DATABASE_POOL_MAX` | `10` per instance |
+| `OPS_API_SAMPLE_RATE` | `0.05` |
+| Monitoring | CPU, Memory, Instance count; Admin Ops dashboard for API/DB |
+
+---
+
+## 9. Security checklist
 
 | Item | Status |
 |------|--------|
 | Helmet | On |
 | CORS | Allowlist |
 | Rate limit | On (tuned; media excluded) |
-| SQL | Parameterized `pg` queries |
-| XSS | React default escaping |
-| CSRF | Bearer + HttpOnly refresh; no cookie session for API mutations |
+| SQL | Parameterized `pg` |
+| XSS | React escaping |
+| Prod console | Vite strips `console.log/debug/info` |
+| Sentry | Structure ready via ops error groups; hook SDK when DSN set |
 
 ---
 
-## 7. Future improvements
+## 10. Additional / next improvements
 
-- Version-only SELECT before BYTEA for 304 without loading blobs  
-- Roll up `ops_api_metrics_hourly` (table exists unused)  
-- Move media fully off Node to CDN  
-- Redis for multi-instance cache/rate-limit  
-- k6 scenarios for authenticated workout-log upserts  
-- Bundle: externalize large muscle PNGs from JS chunk graph  
+- Move BYTEA media to Supabase Storage + Cloudflare CDN (API returns URLs only)
+- Redis shared rate-limit + catalog cache for multi-instance
+- `ops_api_metrics_hourly` rollup job
+- k6 authenticated workout-log upsert scenarios
+- Externalize large muscle PNGs from JS chunk graph
+- Connection pooler monitoring alerts on `waiting` count
 
 ---
 
-## 8. Deploy notes
+## 11. Deploy notes
 
 - Frontend: push `main` → GitHub Pages  
-- Backend: Render redeploy (Deploy Hook or dashboard)  
-- DB: `npm run db:migrate` for `094_…`  
-- Optional env: `DATABASE_POOL_MAX`, `OPS_API_SAMPLE_RATE`
+- Backend: **Render redeploy** (Deploy Hook or dashboard)  
+- DB: `npm run db:migrate` for `094` + `095`  
+- Optional env: `DATABASE_POOL_MAX=10`, `OPS_API_SAMPLE_RATE=0.05`

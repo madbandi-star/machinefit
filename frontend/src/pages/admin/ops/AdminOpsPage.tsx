@@ -102,21 +102,21 @@ export function AdminOpsPage() {
   const dashQ = useQuery({
     queryKey: ['admin-ops-dashboard', range],
     queryFn: async () => (await opsApi.dashboard(range)).data.data,
-    refetchInterval: 45_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 45_000 : false),
   });
 
   const errorsQ = useQuery({
     queryKey: ['admin-ops-errors'],
     queryFn: async () => (await opsApi.errors({ unresolvedOnly: true })).data.data,
     enabled: tab === 'errors' || tab === 'overview',
-    refetchInterval: 45_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 45_000 : false),
   });
 
   const apiQ = useQuery({
     queryKey: ['admin-ops-api', apiRange],
     queryFn: async () => (await opsApi.apiStats(apiRange)).data.data,
     enabled: tab === 'api',
-    refetchInterval: 45_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 45_000 : false),
   });
 
   const pagesQ = useQuery({
@@ -154,14 +154,14 @@ export function AdminOpsPage() {
     queryKey: ['admin-ops-alerts'],
     queryFn: async () => (await opsApi.alerts()).data.data,
     enabled: tab === 'alerts' || tab === 'overview',
-    refetchInterval: 30_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 30_000 : false),
   });
 
   const dbQ = useQuery({
     queryKey: ['admin-ops-db'],
     queryFn: async () => (await opsApi.slowQueries()).data.data,
     enabled: tab === 'db' || tab === 'server',
-    refetchInterval: 45_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 45_000 : false),
   });
 
   const securityQ = useQuery({

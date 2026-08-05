@@ -116,6 +116,10 @@ export const machineTradeService = {
     return machineTradeRepository.republish(tradeId, userId, role);
   },
 
+  getImageMeta(imageId: string, variant: 'full' | 'thumb') {
+    return machineTradeRepository.getImageMeta(imageId, variant);
+  },
+
   getImageBinary(imageId: string, variant: 'full' | 'thumb') {
     return machineTradeRepository.getImageBinary(imageId, variant);
   },

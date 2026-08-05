@@ -106,6 +106,10 @@ export const photoBoardService = {
     return photoBoardRepository.deletePost(postId, userId, role);
   },
 
+  getImageMeta(imageId: string, variant: 'main' | 'thumb') {
+    return photoBoardRepository.getImageMeta(imageId, variant);
+  },
+
   getImageBinary(imageId: string, variant: 'main' | 'thumb') {
     return photoBoardRepository.getImageBinary(imageId, variant);
   },

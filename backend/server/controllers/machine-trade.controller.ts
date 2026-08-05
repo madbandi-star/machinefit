@@ -9,6 +9,11 @@ import {
 import { AppError } from '../middlewares/error.middleware.js';
 import { machineTradeService } from '../services/machine-trade.service.js';
 import { getParam } from '../utils/params.util.js';
+import {
+  sendImmutableMedia,
+  trySendNotModified,
+  UGC_MEDIA_CACHE,
+} from '../utils/media-response.js';
 
 function emptyToNull(value: unknown): string | null | undefined {
   if (value === undefined) return undefined;
@@ -108,10 +113,18 @@ export async function republishTrade(req: Request, res: Response): Promise<void>
 
 export async function getImage(req: Request, res: Response): Promise<void> {
   const variant = req.query.variant === 'full' ? 'full' : 'thumb';
-  const image = await machineTradeService.getImageBinary(getParam(req.params.imageId), variant);
-  res.setHeader('Content-Type', image.mimeType);
-  res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
-  res.send(image.data);
+  const imageId = getParam(req.params.imageId);
+  const meta = await machineTradeService.getImageMeta(imageId, variant);
+  if (!meta) throw new AppError(404, 'NOT_FOUND', 'Image not found');
+  const etag = `"mti-${meta.etagToken}"`;
+  if (trySendNotModified(req, res, etag, UGC_MEDIA_CACHE)) return;
+  const image = await machineTradeService.getImageBinary(imageId, variant);
+  sendImmutableMedia(req, res, {
+    etag,
+    mimeType: image.mimeType,
+    data: image.data,
+    cacheControl: UGC_MEDIA_CACHE,
+  });
 }
 
 export async function toggleLike(req: Request, res: Response): Promise<void> {

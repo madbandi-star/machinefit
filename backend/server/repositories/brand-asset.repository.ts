@@ -57,11 +57,43 @@ export const brandAssetRepository = {
   async getByCode(brandCode: string): Promise<BrandAssetMeta | null> {
     const pool = getPool();
     if (!pool) return null;
+    const code = brandCode.trim().toUpperCase();
     const result = await pool.query<BrandAssetRow>(
-      `SELECT ${META_COLUMNS} FROM brand_assets WHERE UPPER(brand_code) = UPPER($1) LIMIT 1`,
-      [brandCode]
+      `SELECT ${META_COLUMNS} FROM brand_assets WHERE brand_code = $1 LIMIT 1`,
+      [code]
     );
     return result.rows[0] ? mapMeta(result.rows[0]) : null;
+  },
+
+  async getBlobMeta(
+    brandCode: string,
+    kind: BrandAssetKind
+  ): Promise<{ mimeType: string; version: number; hasBlob: boolean } | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const code = brandCode.trim().toUpperCase();
+    const dataCol = kind === 'logo' ? 'logo_data' : 'image_data';
+    const mimeCol = kind === 'logo' ? 'logo_mime_type' : 'image_mime_type';
+    const versionCol = kind === 'logo' ? 'logo_version' : 'image_version';
+    const result = await pool.query<{
+      mime_type: string | null;
+      version: number | null;
+      has_blob: boolean;
+    }>(
+      `SELECT ${mimeCol} AS mime_type, ${versionCol} AS version,
+              (${dataCol} IS NOT NULL) AS has_blob
+       FROM brand_assets
+       WHERE brand_code = $1
+       LIMIT 1`,
+      [code]
+    );
+    const row = result.rows[0];
+    if (!row?.has_blob) return null;
+    return {
+      mimeType: row.mime_type || 'image/webp',
+      version: Number(row.version ?? 0),
+      hasBlob: true,
+    };
   },
 
   async getBlob(
@@ -70,6 +102,7 @@ export const brandAssetRepository = {
   ): Promise<{ data: Buffer; mimeType: string; version: number } | null> {
     const pool = getPool();
     if (!pool) return null;
+    const code = brandCode.trim().toUpperCase();
     const dataCol = kind === 'logo' ? 'logo_data' : 'image_data';
     const mimeCol = kind === 'logo' ? 'logo_mime_type' : 'image_mime_type';
     const versionCol = kind === 'logo' ? 'logo_version' : 'image_version';
@@ -80,9 +113,9 @@ export const brandAssetRepository = {
     }>(
       `SELECT ${dataCol} AS blob, ${mimeCol} AS mime_type, ${versionCol} AS version
        FROM brand_assets
-       WHERE UPPER(brand_code) = UPPER($1)
+       WHERE brand_code = $1
        LIMIT 1`,
-      [brandCode]
+      [code]
     );
     const row = result.rows[0];
     if (!row?.blob) return null;

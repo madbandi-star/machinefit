@@ -414,17 +414,6 @@ export const machineTradeRepository = {
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const countResult = await pool.query<{ count: string }>(
-      `SELECT COUNT(*)::text AS count
-       FROM machine_trades t
-       JOIN machines m ON m.id = t.machine_id
-       JOIN brands b ON b.id = t.brand_id
-       JOIN users u ON u.id = t.seller_id
-       ${where}`,
-      params
-    );
-    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
-
     const likedSelect = viewerId
       ? `, EXISTS (
            SELECT 1 FROM machine_trade_likes l
@@ -437,18 +426,30 @@ export const machineTradeRepository = {
     const limitIdx = listParams.length - 1;
     const offsetIdx = listParams.length;
 
-    const result = await pool.query<TradeRow>(
-      `SELECT ${TRADE_SELECT}
-              ${likedSelect}
-       FROM machine_trades t
-       JOIN machines m ON m.id = t.machine_id
-       JOIN brands b ON b.id = t.brand_id
-       JOIN users u ON u.id = t.seller_id
-       ${where}
-       ORDER BY ${sortSql(query.sort)}
-       LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
-      listParams
-    );
+    const [countResult, result] = await Promise.all([
+      pool.query<{ count: string }>(
+        `SELECT COUNT(*)::text AS count
+         FROM machine_trades t
+         JOIN machines m ON m.id = t.machine_id
+         JOIN brands b ON b.id = t.brand_id
+         JOIN users u ON u.id = t.seller_id
+         ${where}`,
+        params
+      ),
+      pool.query<TradeRow>(
+        `SELECT ${TRADE_SELECT}
+                ${likedSelect}
+         FROM machine_trades t
+         JOIN machines m ON m.id = t.machine_id
+         JOIN brands b ON b.id = t.brand_id
+         JOIN users u ON u.id = t.seller_id
+         ${where}
+         ORDER BY ${sortSql(query.sort)}
+         LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
+        listParams
+      ),
+    ]);
+    const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
     const items = result.rows.map((row) => {
       const mapped = mapListItem(row);
@@ -869,6 +870,43 @@ export const machineTradeRepository = {
     } finally {
       client.release();
     }
+  },
+
+  async getImageMeta(imageId: string, variant: 'full' | 'thumb') {
+    const pool = getPool();
+    if (!pool) {
+      const img = mockMachineTradeImages.get(imageId);
+      if (!img) return null;
+      if (mockMachineTradeHidden.has(img.tradeId)) return null;
+      return {
+        mimeType: img.mimeType,
+        etagToken: `${imageId}-${variant}-${img.imageData.length}`,
+      };
+    }
+    const result = await pool.query<{
+      mime_type: string;
+      file_size_bytes: number | null;
+      created_at: Date | string;
+      is_hidden: boolean;
+      has_blob: boolean;
+    }>(
+      `SELECT i.mime_type, i.file_size_bytes, i.created_at, t.is_hidden,
+              (${variant === 'thumb' ? 'i.thumbnail_data' : 'i.image_data'} IS NOT NULL) AS has_blob
+       FROM machine_trade_images i
+       JOIN machine_trades t ON t.id = i.trade_id
+       WHERE i.id = $1`,
+      [imageId]
+    );
+    const row = result.rows[0];
+    if (!row || row.is_hidden || !row.has_blob) return null;
+    const stamp =
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at);
+    return {
+      mimeType: row.mime_type,
+      etagToken: `${imageId}-${variant}-${row.file_size_bytes ?? 0}-${stamp}`,
+    };
   },
 
   async getImageBinary(imageId: string, variant: 'full' | 'thumb') {

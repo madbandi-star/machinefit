@@ -106,6 +106,33 @@ export const muscleGroupImageRepository = {
     return row ? mapRecord(row) : null;
   },
 
+  async getBlobMeta(
+    muscleGroup: MuscleGroupImageKey,
+    kind: 'main' | 'thumb'
+  ): Promise<{ mimeType: string; version: number; hasBlob: boolean } | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const column = kind === 'thumb' ? 'thumbnail_data' : 'image_data';
+    const result = await pool.query<{
+      mime_type: string | null;
+      version: number;
+      has_blob: boolean;
+    }>(
+      `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob
+       FROM muscle_group_images
+       WHERE muscle_group = $1
+       LIMIT 1`,
+      [muscleGroup]
+    );
+    const row = result.rows[0];
+    if (!row?.has_blob) return null;
+    return {
+      mimeType: row.mime_type || 'image/webp',
+      version: Number(row.version ?? 1),
+      hasBlob: true,
+    };
+  },
+
   async getBlob(
     muscleGroup: MuscleGroupImageKey,
     kind: 'main' | 'thumb'

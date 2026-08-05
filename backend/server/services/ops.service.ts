@@ -386,26 +386,69 @@ export const opsService = {
   },
 
   async getDashboard(range: OpsRange = '30d'): Promise<OpsDashboardSnapshot> {
-    const health = await this.getHealth();
-    const members = await opsRepository.memberStats();
-    const logins = await opsRepository.loginStatsToday();
-    const dau = await opsRepository.countActivity(1);
-    const wau = await opsRepository.countActivity(7);
-    const mau = await opsRepository.countActivity(30);
+    const statsRange = range === 'today' || range === '7d' ? range : '30d';
+    const todayStart = new Date(new Date().setHours(0, 0, 0, 0));
+
+    // Parallel fan-out — same KPI/series payloads, lower wall-clock under load.
+    const [
+      health,
+      members,
+      logins,
+      dau,
+      wau,
+      mau,
+      apiAvgMs,
+      errorCountToday,
+      currentOnline,
+      apiStats,
+      pages,
+      features,
+      retentionD1,
+      retentionD7,
+      retentionD30,
+      activitySeries,
+      signupsSeries,
+      apiLatencySeries,
+      errorSeries,
+      cpuSeries,
+      memorySeries,
+      recentErrors,
+      recentAudits,
+      recentSignups,
+      openAlerts,
+      dbSlowQueries,
+    ] = await Promise.all([
+      this.getHealth(),
+      opsRepository.memberStats(),
+      opsRepository.loginStatsToday(),
+      opsRepository.countActivity(1),
+      opsRepository.countActivity(7),
+      opsRepository.countActivity(30),
+      opsRepository.avgApiMsToday(),
+      opsRepository.errorCountSince(todayStart),
+      opsRepository.countActiveSessions(),
+      opsRepository.apiStats(statsRange),
+      opsRepository.pageStats(statsRange),
+      opsRepository.featureStats(statsRange),
+      opsRepository.retentionRate(1),
+      opsRepository.retentionRate(7),
+      opsRepository.retentionRate(30),
+      opsRepository.seriesActivity(30), // shared by visitorsSeries + dauSeries
+      opsRepository.seriesSignups(30),
+      opsRepository.seriesApiLatency(30),
+      opsRepository.seriesErrors(30),
+      opsRepository.seriesServer('cpu_pct', 24),
+      opsRepository.seriesServer('memory_pct', 24),
+      opsRepository.listErrorGroups({ unresolvedOnly: true, limit: 10 }),
+      opsRepository.recentAudits(10),
+      opsRepository.recentSignups(10),
+      opsRepository.openAlerts(10),
+      opsRepository.slowQueries(10),
+    ]);
+
     const todayVisitors = dau;
     const weekVisitors = wau;
     const monthVisitors = mau;
-    const apiAvgMs = await opsRepository.avgApiMsToday();
-    const errorCountToday = await opsRepository.errorCountSince(
-      new Date(new Date().setHours(0, 0, 0, 0))
-    );
-    const currentOnline = await opsRepository.countActiveSessions();
-    const apiStats = await opsRepository.apiStats(range === 'today' || range === '7d' ? range : '30d');
-    const pages = await opsRepository.pageStats(range === 'today' || range === '7d' ? range : '30d');
-    const features = await opsRepository.featureStats(
-      range === 'today' || range === '7d' ? range : '30d'
-    );
-
     const paid = members.paid;
     const total = Math.max(1, members.total);
     const stickiness = mau > 0 ? dau / mau : null;
@@ -432,28 +475,28 @@ export const opsService = {
         wau,
         mau,
         stickiness,
-        retentionD1: await opsRepository.retentionRate(1),
-        retentionD7: await opsRepository.retentionRate(7),
-        retentionD30: await opsRepository.retentionRate(30),
+        retentionD1,
+        retentionD7,
+        retentionD30,
         apiAvgMs,
         errorCountToday,
         serverStatus: health.statusColor,
       },
-      visitorsSeries: await opsRepository.seriesActivity(30),
-      signupsSeries: await opsRepository.seriesSignups(30),
-      dauSeries: await opsRepository.seriesActivity(30),
-      apiLatencySeries: await opsRepository.seriesApiLatency(30),
-      errorSeries: await opsRepository.seriesErrors(30),
-      cpuSeries: await opsRepository.seriesServer('cpu_pct', 24),
-      memorySeries: await opsRepository.seriesServer('memory_pct', 24),
+      visitorsSeries: activitySeries,
+      signupsSeries,
+      dauSeries: activitySeries,
+      apiLatencySeries,
+      errorSeries,
+      cpuSeries,
+      memorySeries,
       topPages: pages.slice(0, 10),
       topFeatures: features.slice(0, 10),
       slowApis: [...apiStats].sort((a, b) => b.avgMs - a.avgMs).slice(0, 20),
-      recentErrors: await opsRepository.listErrorGroups({ unresolvedOnly: true, limit: 10 }),
-      recentAudits: (await opsRepository.recentAudits(10)) as OpsDashboardSnapshot['recentAudits'],
-      recentSignups: (await opsRepository.recentSignups(10)) as OpsDashboardSnapshot['recentSignups'],
-      openAlerts: (await opsRepository.openAlerts(10)) as OpsDashboardSnapshot['openAlerts'],
-      dbSlowQueries: (await opsRepository.slowQueries(10)) as OpsDashboardSnapshot['dbSlowQueries'],
+      recentErrors,
+      recentAudits: recentAudits as OpsDashboardSnapshot['recentAudits'],
+      recentSignups: recentSignups as OpsDashboardSnapshot['recentSignups'],
+      openAlerts: openAlerts as OpsDashboardSnapshot['openAlerts'],
+      dbSlowQueries: dbSlowQueries as OpsDashboardSnapshot['dbSlowQueries'],
     };
   },
 
@@ -473,19 +516,22 @@ export const opsService = {
 
   async buildReport(period: 'daily' | 'weekly' | 'monthly') {
     const days = period === 'daily' ? 1 : period === 'weekly' ? 7 : 30;
-    const members = await opsRepository.memberStats();
-    const features = await opsRepository.featureStats(days <= 1 ? 'today' : days <= 7 ? '7d' : '30d');
-    const pages = await opsRepository.pageStats(days <= 1 ? 'today' : days <= 7 ? '7d' : '30d');
-    const errors = await opsRepository.errorCountSince(
-      new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-    );
-    const apiAvg = await opsRepository.avgApiMsToday();
-    const health = await this.getHealth();
+    const featureRange = days <= 1 ? 'today' : days <= 7 ? '7d' : '30d';
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const [members, features, pages, errors, apiAvg, health, activeMembers] = await Promise.all([
+      opsRepository.memberStats(),
+      opsRepository.featureStats(featureRange),
+      opsRepository.pageStats(featureRange),
+      opsRepository.errorCountSince(since),
+      opsRepository.avgApiMsToday(),
+      this.getHealth(),
+      opsRepository.countActivity(days),
+    ]);
     return {
       period,
       generatedAt: new Date().toISOString(),
       newMembers: days <= 1 ? members.today : days <= 7 ? members.week : members.month,
-      activeMembers: await opsRepository.countActivity(days),
+      activeMembers,
       topFeatures: features.slice(0, 10),
       topPages: pages.slice(0, 10),
       apiAvgMs: apiAvg,
