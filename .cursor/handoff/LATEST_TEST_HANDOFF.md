@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: c064752e
 
 ## Changed files
 - `frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx`

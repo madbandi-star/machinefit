@@ -1,7 +1,7 @@
 {
   "title": "Music panel: matching Stop button + seek bar",
   "summary": "Header music panel Stop button matches Play style/size; added a seekable playback progress bar with current/total time.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c064752e" },
   "changedFiles": [
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
