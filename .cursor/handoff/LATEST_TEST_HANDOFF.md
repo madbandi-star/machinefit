@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: c7ee83a9
 
 ## Changed files
 - `frontend/src/pages/easy-mode/EasyWizardPage.tsx`

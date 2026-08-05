@@ -1,7 +1,7 @@
 {
   "title": "Easy Mode fit-adjust weight syncs to ????",
   "summary": "Easy Mode ???? ????? now merges/saves prefs and patches machine-preferences + history comparison + live adjusted caches so ???? updates; workout log performed kg path unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c7ee83a9" },
   "changedFiles": [
     "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
     "frontend/src/hooks/useHistorySettingsComparisonData.ts"
