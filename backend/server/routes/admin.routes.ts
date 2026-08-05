@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/admin.controller.js';
 import * as adminCatalogController from '../controllers/admin-catalog.controller.js';
+import * as adminBillingController from '../controllers/admin-billing.controller.js';
 import * as motivationMediaController from '../controllers/motivation-media.controller.js';
 import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
 import * as muscleGroupImageController from '../controllers/muscle-group-image.controller.js';
@@ -90,6 +91,15 @@ adminRouter.delete(
 );
 adminRouter.get('/users', adminController.listUsers);
 adminRouter.patch('/users/:id', adminController.updateUser);
+
+adminRouter.get('/subscriptions', adminBillingController.adminListSubscriptions);
+adminRouter.get('/subscriptions/:userId', adminBillingController.adminGetUserSubscription);
+adminRouter.post(
+  '/subscriptions/:userId/extend',
+  adminBillingController.adminExtendSubscription
+);
+adminRouter.post('/subscriptions/:userId/end', adminBillingController.adminEndSubscription);
+adminRouter.post('/subscriptions/:userId/set', adminBillingController.adminSetSubscription);
 adminRouter.get('/gyms', adminController.listGyms);
 adminRouter.patch('/gyms/:id/verify', adminController.verifyGym);
 adminRouter.get('/brands', adminController.listBrands);

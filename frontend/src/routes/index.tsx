@@ -359,6 +359,10 @@ const adminOpsPage = () =>
   import('@/pages/admin/ops/AdminOpsPage').then((m) => ({
     default: m.AdminOpsPage,
   }));
+const adminSubscriptionsPage = () =>
+  import('@/pages/admin/subscriptions/AdminSubscriptionsPage').then((m) => ({
+    default: m.AdminSubscriptionsPage,
+  }));
 
 export const router = createBrowserRouter(
   [
@@ -572,6 +576,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
         { path: ROUTES.ADMIN_COMPLIANCE, element: lazyRoute(adminCompliancePage) },
         { path: ROUTES.ADMIN_OPS, element: lazyRoute(adminOpsPage) },
+        { path: ROUTES.ADMIN_SUBSCRIPTIONS, element: lazyRoute(adminSubscriptionsPage) },
       ],
     },
     { path: '*', element: <Navigate to={ROUTES.NOT_FOUND} replace /> },

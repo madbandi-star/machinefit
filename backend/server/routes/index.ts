@@ -30,12 +30,16 @@ import { friendRouter } from './friend.routes.js';
 import { complianceRouter } from './compliance.routes.js';
 import { inspectionRouter } from './inspection.routes.js';
 import { opsRouter } from './ops.routes.js';
+import { billingRouter } from './billing.routes.js';
+import { webhookRouter } from './webhook.routes.js';
 
 export const apiRouter = Router();
 
 apiRouter.use(healthRouter);
 apiRouter.use('/ops', opsRouter);
 apiRouter.use(complianceRouter);
+apiRouter.use(billingRouter);
+apiRouter.use('/webhook', webhookRouter);
 apiRouter.use('/auth', authRouter);
 /** Spec alias: /me/providers (same handlers as /auth/me/providers). */
 apiRouter.use('/me', meRouter);

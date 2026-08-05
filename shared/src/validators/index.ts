@@ -26,3 +26,4 @@ export * from './push-notification.schema.js';
 export * from './friend.schema.js';
 export * from './compliance.schema.js';
 export * from './inspection.schema.js';
+export * from './billing.schema.js';

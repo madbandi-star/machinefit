@@ -603,7 +603,20 @@
     "providersDisconnectFailed": "Could not disconnect this login.",
     "providersLastMethod": "Keep at least one login method on the account.",
     "providersLinkedOther": "This login is already linked to another MachineFit account.",
-    "providersAlreadyLinked": "This login is already linked."
+    "providersAlreadyLinked": "This login is already linked.",
+    "subscription": {
+      "title": "Subscription & plan",
+      "currentPlan": "Current plan",
+      "status": "Status",
+      "trial": "Trial",
+      "trialActive": "On trial",
+      "trialUsed": "Trial used",
+      "trialAvailable": "Trial available",
+      "trialEnd": "Trial ends",
+      "start": "Subscription start",
+      "expire": "Subscription end",
+      "payComingSoon": "Payment · Coming soon"
+    }
   },
   "lab": {
     "title": "Lab",

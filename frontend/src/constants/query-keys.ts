@@ -74,6 +74,10 @@ export const QUERY_KEYS = {
   notificationCount: ['notifications', 'unread'] as const,
   adminDashboard: ['admin', 'dashboard'] as const,
   adminUsers: ['admin', 'users'] as const,
+  adminSubscriptions: (params?: Record<string, unknown>) =>
+    ['admin', 'subscriptions', params ?? {}] as const,
+  subscriptionStatus: ['billing', 'subscription', 'status'] as const,
+  billingPlans: ['billing', 'plans'] as const,
   adminGyms: ['admin', 'gyms'] as const,
   adminBrands: ['admin', 'catalog', 'brands'] as const,
   adminMachines: ['admin', 'catalog', 'machines'] as const,

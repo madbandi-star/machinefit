@@ -67,6 +67,13 @@ const envSchema = z.object({
   SENTRY_DSN: z.string().optional(),
   /** Optional webhook URL for critical DR alerts (Slack/Discord compatible). */
   DR_ALERT_WEBHOOK_URL: z.string().optional(),
+  /**
+   * Active payment provider id. Default `dummy` (no real charges).
+   * Swap to toss|portone|lemonsqueezy|polar|stripe|google|apple when adapters are live.
+   */
+  PAYMENT_PROVIDER: z
+    .enum(['dummy', 'toss', 'portone', 'lemonsqueezy', 'polar', 'stripe', 'google', 'apple'])
+    .default('dummy'),
 });
 
 export const env = envSchema.parse({

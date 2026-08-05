@@ -603,7 +603,20 @@
     "providersDisconnectFailed": "연결 해제에 실패했어요.",
     "providersLastMethod": "최소 하나 이상의 로그인 방법은 남겨야 해요.",
     "providersLinkedOther": "이미 다른 MachineFit 계정에 연결된 로그인이에요.",
-    "providersAlreadyLinked": "이미 연결된 로그인이에요."
+    "providersAlreadyLinked": "이미 연결된 로그인이에요.",
+    "subscription": {
+      "title": "구독·플랜",
+      "currentPlan": "현재 플랜",
+      "status": "구독 상태",
+      "trial": "체험",
+      "trialActive": "체험 중",
+      "trialUsed": "체험 사용함",
+      "trialAvailable": "체험 가능",
+      "trialEnd": "체험 종료일",
+      "start": "구독 시작일",
+      "expire": "구독 종료일",
+      "payComingSoon": "결제 · 준비중"
+    }
   },
   "lab": {
     "title": "실험실",

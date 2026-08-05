@@ -33,3 +33,4 @@ export * from './inspection.types.js';
 export * from './machine-request-admin.types.js';
 export * from './auth-provider.types.js';
 export * from './ops.types.js';
+export * from './billing.types.js';
