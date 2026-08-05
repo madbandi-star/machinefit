@@ -7,6 +7,8 @@ interface CacheEntry<T> {
 
 export class TtlCache<T> {
   private store = new Map<string, CacheEntry<T>>();
+  /** In-flight factories — collapses stampede on cache miss under concurrency. */
+  private inflight = new Map<string, Promise<T>>();
 
   constructor(private readonly defaultTtlMs: number) {}
 
@@ -26,6 +28,7 @@ export class TtlCache<T> {
 
   delete(key: string): void {
     this.store.delete(key);
+    this.inflight.delete(key);
   }
 
   /** Remove all keys that equal prefix or start with `${prefix}:`. */
@@ -35,18 +38,34 @@ export class TtlCache<T> {
         this.store.delete(key);
       }
     }
+    for (const key of this.inflight.keys()) {
+      if (key === prefix || key.startsWith(`${prefix}:`)) {
+        this.inflight.delete(key);
+      }
+    }
   }
 
   getOrSet(key: string, factory: () => Promise<T>, ttlMs = this.defaultTtlMs): Promise<T> {
     const hit = this.get(key);
     if (hit !== undefined) return Promise.resolve(hit);
-    return factory().then((value) => {
-      this.set(key, value, ttlMs);
-      return value;
-    });
+
+    const pending = this.inflight.get(key);
+    if (pending) return pending;
+
+    const created = factory()
+      .then((value) => {
+        this.set(key, value, ttlMs);
+        return value;
+      })
+      .finally(() => {
+        this.inflight.delete(key);
+      });
+    this.inflight.set(key, created);
+    return created;
   }
 
   clear(): void {
     this.store.clear();
+    this.inflight.clear();
   }
 }

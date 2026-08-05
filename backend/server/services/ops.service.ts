@@ -140,8 +140,39 @@ export const opsService = {
   ): Promise<{ accepted: number }> {
     if (!events?.length) return { accepted: 0 };
     const max = isProductionOps() ? 50 : 10;
+    const slice = events.slice(0, max);
+    const sessionPings = slice.filter((e) => e.type === 'session_ping');
+    const others = slice.filter((e) => e.type !== 'session_ping');
     let accepted = 0;
-    for (const event of events.slice(0, max)) {
+
+    // Coalesce heartbeats: 1 activity touch + unique session upserts (not N×2).
+    try {
+      if (sessionPings.length > 0) {
+        if (ctx.userId) {
+          await opsRepository.touchUserActivity(ctx.userId);
+        }
+        const seen = new Set<string>();
+        for (const event of sessionPings) {
+          if (!event.sessionId || seen.has(event.sessionId)) {
+            accepted += 1;
+            continue;
+          }
+          seen.add(event.sessionId);
+          await opsRepository.upsertActiveSession({
+            sessionId: event.sessionId,
+            userId: ctx.userId,
+            pathKey: event.pathKey,
+            ip: ctx.ip,
+            userAgent: ctx.userAgent,
+          });
+          accepted += 1;
+        }
+      }
+    } catch {
+      /* never fail the batch */
+    }
+
+    for (const event of others) {
       try {
         await this.ingestOne(event, ctx);
         accepted += 1;
@@ -178,14 +209,17 @@ export const opsService = {
         isExit: event.isExit,
         isBounce: event.isBounce,
       });
-      await opsRepository.insertAppLog({
-        level: 'info',
-        kind: 'access',
-        message: `page_view ${event.pathKey}`,
-        userId: ctx.userId,
-        ip: ctx.ip,
-        meta: sanitizeOpsMeta(event.meta),
-      });
+      // Access logs are high-volume; sample in production (errors still full-fidelity).
+      if (!isProductionOps() || Math.random() < 0.1) {
+        await opsRepository.insertAppLog({
+          level: 'info',
+          kind: 'access',
+          message: `page_view ${event.pathKey}`,
+          userId: ctx.userId,
+          ip: ctx.ip,
+          meta: sanitizeOpsMeta(event.meta),
+        });
+      }
       return;
     }
 
@@ -260,10 +294,17 @@ export const opsService = {
     ip?: string | null;
   }): Promise<void> {
     try {
-      // Dev: sample lightly to avoid noise.
-      if (!isProductionOps() && Math.random() > 0.2) return;
+      const isError = input.statusCode >= 500;
+      // Always keep 5xx; sample successes so ops writes do not saturate the pool.
+      if (!isError) {
+        if (isProductionOps()) {
+          if (Math.random() > env.OPS_API_SAMPLE_RATE) return;
+        } else if (Math.random() > 0.2) {
+          return;
+        }
+      }
       await opsRepository.insertApiSample(input);
-      if (input.statusCode >= 500) {
+      if (isError) {
         await opsRepository.insertAppLog({
           level: 'error',
           kind: 'error',

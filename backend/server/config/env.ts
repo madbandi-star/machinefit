@@ -16,6 +16,15 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3001),
   API_BASE_PATH: z.string().default('/api/v1'),
   DATABASE_URL: z.string().optional(),
+  /** pg.Pool max connections for this Node process (default 20). */
+  DATABASE_POOL_MAX: z.coerce.number().int().positive().default(20),
+  DATABASE_POOL_IDLE_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
+  DATABASE_POOL_CONNECTION_TIMEOUT_MS: z.coerce.number().int().positive().default(5_000),
+  /**
+   * Fraction of successful API requests that write ops latency samples in production.
+   * Errors (status ≥ 500) are always recorded. Default 0.05 (5%).
+   */
+  OPS_API_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0.05),
   JWT_SECRET: z.string().default('dev-secret-change-in-production'),
   JWT_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_SECRET: z.string().default('dev-refresh-secret-change-in-production'),

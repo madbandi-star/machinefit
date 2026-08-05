@@ -177,7 +177,7 @@ export function FriendsHubPage() {
         })
       ).data.data,
     enabled: section === 'list',
-    refetchInterval: 30_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
   });
 
   const searchQuery = useQuery({
@@ -191,14 +191,14 @@ export function FriendsHubPage() {
     queryKey: QUERY_KEYS.friendsIncoming(page),
     queryFn: async () => (await friendsApi.incoming({ page: 1, limit: pageLimit })).data.data,
     enabled: section === 'incoming',
-    refetchInterval: 15_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
   });
 
   const outgoingQuery = useQuery({
     queryKey: QUERY_KEYS.friendsOutgoing(page),
     queryFn: async () => (await friendsApi.outgoing({ page: 1, limit: pageLimit })).data.data,
     enabled: section === 'outgoing',
-    refetchInterval: 20_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
   });
 
   const blockedQuery = useQuery({
@@ -217,7 +217,7 @@ export function FriendsHubPage() {
     queryKey: QUERY_KEYS.friendsFeed(page),
     queryFn: async () => (await friendsApi.feed({ page: 1, limit: pageLimit })).data.data,
     enabled: section === 'feed',
-    refetchInterval: 20_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
   });
 
   const rankingsQuery = useQuery({

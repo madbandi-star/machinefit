@@ -8,7 +8,13 @@ export function opsMetricsMiddleware(req: Request, res: Response, next: NextFunc
   res.on('finish', () => {
     try {
       const path = req.originalUrl || req.url || '/';
-      if (path.includes('/ops/ingest') || path.includes('/health') || path.includes('/warmup')) {
+      if (
+        path.includes('/ops/ingest') ||
+        path.includes('/health') ||
+        path.includes('/warmup') ||
+        // Media BYTEA traffic would dominate ops_api_latency_samples under load.
+        path.includes('/media/')
+      ) {
         return;
       }
       const userId = req.user?.userId ?? null;

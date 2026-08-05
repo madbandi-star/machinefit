@@ -25,7 +25,18 @@ export function createApp() {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     })
   );
-  app.use(compression());
+  // Skip compressing already-compressed images/audio — saves CPU under media load.
+  app.use(
+    compression({
+      filter: (req, res) => {
+        const url = req.originalUrl || req.url || '';
+        if (url.includes('/media/')) return false;
+        const type = String(res.getHeader('Content-Type') || '');
+        if (/^image\//i.test(type) || /^audio\//i.test(type)) return false;
+        return compression.filter(req, res);
+      },
+    })
+  );
   app.use(
     cors({
       origin: env.CORS_ORIGIN.split(',').map((o) => o.trim()),

@@ -26,6 +26,9 @@ services:
         value: '1'
       - key: DATABASE_URL
         sync: false
+      # Optional pool / ops tuning for higher concurrency (defaults in code):
+      # DATABASE_POOL_MAX=20
+      # OPS_API_SAMPLE_RATE=0.05
       - key: JWT_SECRET
         sync: false
       - key: JWT_REFRESH_SECRET

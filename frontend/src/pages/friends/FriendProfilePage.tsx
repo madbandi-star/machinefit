@@ -27,7 +27,7 @@ export function FriendProfilePage() {
     queryKey: QUERY_KEYS.friendProfile(userId),
     queryFn: async () => (await friendsApi.profile(userId)).data.data,
     enabled: Boolean(userId),
-    refetchInterval: 30_000,
+    refetchInterval: () => (document.visibilityState === 'visible' ? 60_000 : false),
   });
 
   const invalidate = () => {

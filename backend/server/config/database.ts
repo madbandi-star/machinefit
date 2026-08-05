@@ -13,15 +13,23 @@ function useSsl(connectionString: string): boolean {
   );
 }
 
+function poolMax(): number {
+  // Prefer transaction pooler + moderate per-instance max when scaling horizontally.
+  // Override with DATABASE_POOL_MAX (clamped 2–100).
+  const raw = Number(env.DATABASE_POOL_MAX);
+  if (Number.isFinite(raw) && raw >= 2 && raw <= 100) return Math.floor(raw);
+  return 20;
+}
+
 export function getPool(): pg.Pool | null {
   if (!env.DATABASE_URL) return null;
   if (!pool) {
     pool = new Pool({
       connectionString: env.DATABASE_URL,
       ssl: useSsl(env.DATABASE_URL) ? { rejectUnauthorized: false } : undefined,
-      max: 20,
-      idleTimeoutMillis: 30_000,
-      connectionTimeoutMillis: 5_000,
+      max: poolMax(),
+      idleTimeoutMillis: env.DATABASE_POOL_IDLE_TIMEOUT_MS,
+      connectionTimeoutMillis: env.DATABASE_POOL_CONNECTION_TIMEOUT_MS,
       allowExitOnIdle: false,
     });
     pool.on('connect', (client) => {

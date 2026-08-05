@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { muscleGroupImageKeySchema } from '@machinefit/shared';
 import { muscleGroupImageService } from '../services/muscle-group-image.service.js';
+import { sendImmutableMedia } from '../utils/media-response.js';
 
 export async function serveMuscleGroupImage(req: Request, res: Response, next: NextFunction) {
   try {
@@ -18,10 +19,11 @@ export async function serveMuscleGroupImage(req: Request, res: Response, next: N
       return;
     }
 
-    res.setHeader('Content-Type', blob.mimeType);
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('ETag', `"mgi-${parsedGroup.data}-${kind}-${blob.version}"`);
-    res.status(200).send(blob.data);
+    sendImmutableMedia(req, res, {
+      etag: `"mgi-${parsedGroup.data}-${kind}-${blob.version}"`,
+      mimeType: blob.mimeType,
+      data: blob.data,
+    });
   } catch (error) {
     next(error);
   }

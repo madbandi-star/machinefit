@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { brandAssetRepository, type BrandAssetKind } from '../repositories/brand-asset.repository.js';
+import { sendImmutableMedia } from '../utils/media-response.js';
 
 function parseKind(raw: string): BrandAssetKind | null {
   const kind = String(raw || '')
@@ -25,10 +26,11 @@ export async function serveBrandAssetImage(req: Request, res: Response, next: Ne
       return;
     }
 
-    res.setHeader('Content-Type', blob.mimeType);
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('ETag', `"ba-${brandCode}-${kind}-${blob.version}"`);
-    res.status(200).send(blob.data);
+    sendImmutableMedia(req, res, {
+      etag: `"ba-${brandCode}-${kind}-${blob.version}"`,
+      mimeType: blob.mimeType,
+      data: blob.data,
+    });
   } catch (error) {
     next(error);
   }

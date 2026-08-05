@@ -226,12 +226,13 @@ export function installOpsTelemetry(): void {
     void flushOpsQueue();
   });
 
-  // Heartbeat for "current online"
+  // Heartbeat for "current online" — skip when tab is hidden; keep ≤ online window (120s).
   window.setInterval(() => {
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
     enqueue({
       type: 'session_ping',
       pathKey: typeof location !== 'undefined' ? location.pathname : undefined,
     });
     void flushOpsQueue();
-  }, 60_000);
+  }, 90_000);
 }

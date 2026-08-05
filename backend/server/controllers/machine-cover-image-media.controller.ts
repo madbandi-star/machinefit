@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { TARGET_MUSCLE_GROUPS } from '@machinefit/shared';
 import { machineCoverImageService } from '../services/machine-cover-image.service.js';
+import { sendImmutableMedia } from '../utils/media-response.js';
 
 const MUSCLE_SET = new Set<string>(TARGET_MUSCLE_GROUPS);
 
@@ -47,10 +48,11 @@ export async function serveMachineCoverImage(req: Request, res: Response, next: 
     }
 
     const etagMuscle = targetMuscle ? `-${targetMuscle}` : '';
-    res.setHeader('Content-Type', blob.mimeType);
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('ETag', `"mci-${machineCode}${etagMuscle}-${kind}-${blob.version}"`);
-    res.status(200).send(blob.data);
+    sendImmutableMedia(req, res, {
+      etag: `"mci-${machineCode}${etagMuscle}-${kind}-${blob.version}"`,
+      mimeType: blob.mimeType,
+      data: blob.data,
+    });
   } catch (error) {
     next(error);
   }
