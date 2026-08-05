@@ -1,33 +1,20 @@
-{
-  "title": "Motivation video overlay UI redesign",
-  "summary": "Header video player overlay restyled to match the music mini-player: glass panel, primary green chrome, now-watching meta, transport buttons, and selectable playlist when multiple videos exist.",
-  "git": {
-    "branch": "main",
-    "commit": "c192aafb"
-  },
+﻿{
+  "title": "Video overlay Next left / Close right",
+  "summary": "Transport row keeps Next on the left and Close on the right in one line; mobile no longer stacks.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
   ],
   "testFocus": [
-    "Open header video control; overlay matches music glass/green look",
-    "YouTube embed still autoplays when a video is selected",
-    "Next / Close buttons work; Escape and backdrop close",
-    "With 2+ videos: playlist list switches the active video"
+    "Next left, Close right, single row on desktop and mobile"
   ],
   "fastChecks": [
-    "npm run test:smoke:changed",
-    "rg -n \"mf-video-overlay\" frontend/src/components/motivation/MotivationMediaControls"
+    "rg -n \"grid-template-columns: 1fr 1fr\" frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
   ],
   "productionChecks": [
-    "After GitHub Pages deploy: hard-refresh, open video from header, confirm new UI"
+    "After Pages deploy: open video UI, confirm button row"
   ],
-  "deploy": {
-    "target": "GitHub Pages (frontend)",
-    "backendRedeployRequired": false
-  },
-  "asIs": "Plain small modal with generic header, black iframe, and secondary Next button",
-  "toBe": "Glass video panel aligned with music player: brand header, watching status, green transport, optional playlist"
+  "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
+  "asIs": "Narrow view stacked Next above Close",
+  "toBe": "One row: Next left, Close right"
 }

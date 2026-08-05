@@ -817,7 +817,7 @@
 .mf-video-overlay__transport {
   position: relative;
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0.45rem;
   margin-bottom: 0.85rem;
 }
@@ -998,9 +998,5 @@
     width: min(100%, 100%);
     padding: 0.8rem 0.75rem 0.9rem;
     border-radius: 18px;
-  }
-
-  .mf-video-overlay__transport {
-    grid-template-columns: 1fr;
   }
 }

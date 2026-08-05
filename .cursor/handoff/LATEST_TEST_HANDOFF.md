@@ -1,34 +1,25 @@
-﻿# Test handoff: Motivation video overlay UI
+﻿# Test handoff: Video overlay Next/Close row
 
 ## Summary
-Header **video play** overlay restyled to match the music mini-player (MachineFit glass + primary green). Includes watching meta, Next/Close transport, and a playlist when multiple videos exist.
+Video overlay transport: Next left, Close right on one row (equal columns). Mobile no longer stacks buttons.
 
 ## Git
 - Branch: `main`
-- Commit: `c192aafb`
+- Commit: pending
 
 ## Changed files
-- `frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx`
 - `frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css`
-- `frontend/src/i18n/locales/ko/common.json`
-- `frontend/src/i18n/locales/en/common.json`
 
 ## Test focus
-1. Header video button opens the new glass panel UI
-2. YouTube embed still autoplays
-3. Next / Close / Esc / backdrop dismiss
-4. With 2+ videos, playlist switches the active video
+1. Open video overlay with 2+ videos
+2. Confirm Next is left, Close is right, same row (desktop + narrow width)
 
 ## Fast checks
 ```bash
-npm run test:smoke:changed
-rg -n "mf-video-overlay" frontend/src/components/motivation/MotivationMediaControls
+rg -n "mf-video-overlay__transport" frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css
 ```
-
-## Production checks
-After Pages deploy: Ctrl+F5, open header video UI (no backend redeploy).
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| Small plain modal + generic Next | Glass video player matching music panel tone |
+| Mobile stacked Next above Close | Always one row: Next left, Close right |
