@@ -637,6 +637,15 @@ export function SettingsPage() {
                     />
                     <span>{t('settings.voiceRestTips')}</span>
                   </label>
+                  <label className="voice-coach-panel__mode-option">
+                    <input
+                      type="checkbox"
+                      checked={workoutFullscreenDisplay}
+                      onChange={(e) => setWorkoutFullscreenDisplay(e.target.checked)}
+                      disabled={!voiceCoachEnabled}
+                    />
+                    <span>{t('settings.workoutFullscreenDisplay')}</span>
+                  </label>
                 </div>
               </fieldset>
             </div>
@@ -762,14 +771,6 @@ export function SettingsPage() {
               onChange={(e) => setRestTimerAfterAllSetsComplete(e.target.checked)}
             />
             <span>{t('settings.restTimerAfterAllSetsComplete')}</span>
-          </label>
-          <label className="settings-voice-coach__row" style={{ marginTop: '0.85rem' }}>
-            <input
-              type="checkbox"
-              checked={workoutFullscreenDisplay}
-              onChange={(e) => setWorkoutFullscreenDisplay(e.target.checked)}
-            />
-            <span>{t('settings.workoutFullscreenDisplay')}</span>
           </label>
         </SettingsCollapsibleSection>
 
