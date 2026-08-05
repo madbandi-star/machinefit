@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: afffa9e4
 
 ## Changed files
 - `frontend/src/styles/easy-mode.css`

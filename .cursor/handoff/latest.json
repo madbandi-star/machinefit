@@ -1,7 +1,7 @@
 {
   "title": "Larger Easy Mode find-button search icon",
   "summary": "Increased ? icon size on Easy Mode step1 ?? ?? button (1.55rem / 1.75rem CTA).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "afffa9e4" },
   "changedFiles": ["frontend/src/styles/easy-mode.css"],
   "testFocus": "Easy wizard machine pick: search icon on ?? ?? is larger and readable.",
   "fastChecks": [
