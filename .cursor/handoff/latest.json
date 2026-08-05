@@ -1,7 +1,7 @@
 {
   "title": "Easy Mode step1: louder find CTA + pick hint",
   "summary": "Unselected machine pick: ?? ?? uses primary CTA styling with pulse; footer needMachine hint uses callout chip for visibility.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "5bb90b03" },
   "changedFiles": [
     "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
     "frontend/src/components/easy-mode/EasyWizardShell.tsx",
