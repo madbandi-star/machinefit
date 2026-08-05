@@ -1,7 +1,7 @@
 {
   "title": "Require Supabase for motivation audio + recreate bucket",
   "summary": "Catalog/uploaded tracks 404 because motivation-audio bucket was missing and files were only on Render ephemeral disk. Production now requires SUPABASE_SERVICE_ROLE_KEY, creates the bucket on boot, and rejects placeholder keys.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "28133423" },
   "changedFiles": [
     "backend/server/services/storage.service.ts",
     "backend/server/index.ts",
