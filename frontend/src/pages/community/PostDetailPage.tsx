@@ -44,8 +44,9 @@ export function PostDetailPage() {
   const commentFormRef = useRef<HTMLFormElement>(null);
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
+  /** Invalidate detail + board lists so like/comment counts refresh when navigating back. */
   const invalidatePost = () =>
-    queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.posts, postId] });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.posts });
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [...QUERY_KEYS.posts, postId],
