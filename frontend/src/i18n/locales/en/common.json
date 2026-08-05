@@ -78,13 +78,19 @@
     "playFailed": "Couldn't play that. Please check the URL.",
     "next": "Next",
     "close": "Close",
-    "musicPanelTitle": "Choose music",
+    "musicPanelTitle": "Motivation music",
     "playAll": "Play all",
-    "playAllMode": "playlist",
+    "playAllMode": "Playlist",
     "play": "Play",
+    "pause": "Pause",
     "stop": "Stop",
     "seek": "Playback position",
-    "timeUnknown": "—"
+    "timeUnknown": "—",
+    "playing": "Now playing",
+    "ready": "Ready",
+    "playlist": "Playlist",
+    "trackCount": "{{count}} tracks",
+    "manageLibrary": "Manage my music"
   },
   "motivationMusic": {
     "title": "Motivation music",

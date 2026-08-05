@@ -1,24 +1,25 @@
 {
-  "title": "Fix header music playFailed with user uploads",
-  "summary": "Header music no longer treats interrupted play()/src swaps as failures; waits for user track list before play; compares media URLs safely so multi-upload playlists work.",
-  "git": { "branch": "main", "commit": "b681d423" },
+  "title": "Redesign header music popover UI",
+  "summary": "Header music panel redesigned as a MachineFit glass mini-player: now-playing hero, circular play/pause, seek bar, cleaner playlist, manage-library link. Avoids clash with motivation-music page CSS.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/motivationAudio.ts",
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/pages/motivation-music/MotivationMusicPage.tsx"
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
-  "testFocus": "Upload 2+ tracks on motivation music page; header music Play / Play all / track switch should play without '??? ??? ???' false errors.",
+  "testFocus": "Header music icon ? popover looks polished; play/pause center button; seek; track list; manage link; stop/play-all chips.",
   "fastChecks": [
-    "rg -n \"isBenignAudioPlayError|sameMediaUrl|userTracksReady\" frontend/src/utils/motivationAudio.ts frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx"
+    "rg -n \"mf-music-popover|togglePlayPause|manageLibrary\" frontend/src/components/motivation/MotivationMediaControls/"
   ],
   "productionChecks": [
     "Ctrl+F5 after Pages deploy",
-    "With 2+ uploaded tracks: play, play all, switch tracks ? no false playFailed toast"
+    "Open music popover on phone width ? layout readable, controls easy to tap"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backendDeployNeeded": false
   },
-  "asIs": "Multi-upload playlist often showed playFailed from AbortError / early play before tracks loaded.",
-  "toBe": "Benign play errors ignored; play waits for user tracks; stable URL matching."
+  "asIs": "Plain 3-button panel with heavy track cards.",
+  "toBe": "Glass mini-player with play/pause, EQ, playlist, manage link."
 }

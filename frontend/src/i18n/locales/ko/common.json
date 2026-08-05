@@ -78,13 +78,19 @@
     "playFailed": "재생하지 못했어요. 주소를 확인해 주세요.",
     "next": "다음",
     "close": "닫기",
-    "musicPanelTitle": "음악 선택",
+    "musicPanelTitle": "동기부여 음악",
     "playAll": "전체재생",
     "playAllMode": "전체재생",
     "play": "재생",
+    "pause": "일시정지",
     "stop": "끄기",
     "seek": "재생 위치",
-    "timeUnknown": "—"
+    "timeUnknown": "—",
+    "playing": "재생 중",
+    "ready": "준비됨",
+    "playlist": "플레이리스트",
+    "trackCount": "{{count}}곡",
+    "manageLibrary": "내 음악 관리"
   },
   "motivationMusic": {
     "title": "동기부여 음악",

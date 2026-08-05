@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Film, ListMusic, Music2, Pause, Play, Square, X } from 'lucide-react';
 import type { MotivationMediaItem } from '@machinefit/shared';
 import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { formatDuration, isBenignAudioPlayError, sameMediaUrl } from '@/utils/motivationAudio';
@@ -332,6 +334,19 @@ export function MotivationMediaControls({
     setMusicPlaying(true);
   };
 
+  const pauseMusic = () => {
+    setMusicPlaying(false);
+    audioRef.current?.pause();
+  };
+
+  const togglePlayPause = () => {
+    if (musicPlaying) {
+      pauseMusic();
+      return;
+    }
+    playSelected();
+  };
+
   const playAllTracks = () => {
     requestMedia();
     if (!mediaReady) {
@@ -365,6 +380,10 @@ export function MotivationMediaControls({
   };
 
   const selectTrack = (index: number) => {
+    if (index === safeMusicIndex && musicPlaying) {
+      pauseMusic();
+      return;
+    }
     setMusicIndex(index);
     setPlayAll(false);
     setMusicPlaying(true);
@@ -462,104 +481,180 @@ export function MotivationMediaControls({
       </button>
 
       {musicPanelOpen ? (
-        <div className="motivation-music-panel" role="dialog" aria-label={t('motivation.musicPanelTitle')}>
-          <div className="motivation-music-panel__header">
-            <p className="motivation-music-panel__title">
-              <ListMusic size={14} aria-hidden />
-              {t('motivation.musicPanelTitle')}
-            </p>
+        <div
+          className={`mf-music-popover${musicPlaying ? ' mf-music-popover--playing' : ''}`}
+          role="dialog"
+          aria-label={t('motivation.musicPanelTitle')}
+        >
+          <div className="mf-music-popover__glow" aria-hidden="true" />
+
+          <div className="mf-music-popover__top">
+            <div className="mf-music-popover__brand">
+              <span className="mf-music-popover__brand-mark" aria-hidden="true">
+                <Music2 size={14} />
+              </span>
+              <div className="mf-music-popover__brand-copy">
+                <p className="mf-music-popover__eyebrow">{t('motivation.musicPanelTitle')}</p>
+                <p className="mf-music-popover__count">
+                  {t('motivation.trackCount', { count: music.length })}
+                </p>
+              </div>
+            </div>
             <button
               type="button"
-              className="motivation-music-panel__icon-btn"
+              className="mf-music-popover__close"
               aria-label={t('motivation.close')}
               onClick={() => setMusicPanelOpen(false)}
             >
-              <X size={15} />
+              <X size={16} />
             </button>
           </div>
 
-          {currentMusic && musicPlaying ? (
-            <p className="motivation-music-panel__now">
-              {t('motivation.nowPlaying', { title: currentMusic.title })}
-              {playAll ? ` · ${t('motivation.playAllMode')}` : ''}
-            </p>
-          ) : null}
+          <div className="mf-music-popover__now">
+            <div
+              className={`mf-music-popover__art${musicPlaying ? ' is-playing' : ''}`}
+              aria-hidden="true"
+            >
+              <Music2 size={22} />
+              <span className="mf-music-popover__eq">
+                <i />
+                <i />
+                <i />
+                <i />
+              </span>
+            </div>
+            <div className="mf-music-popover__meta">
+              <p className="mf-music-popover__status">
+                {musicPlaying
+                  ? playAll
+                    ? t('motivation.playAllMode')
+                    : t('motivation.playing')
+                  : t('motivation.ready')}
+              </p>
+              <p className="mf-music-popover__title" title={currentMusic?.title}>
+                {currentMusic?.title ?? t('motivation.musicEmpty')}
+              </p>
+            </div>
+          </div>
 
-          <div className="motivation-music-panel__progress">
+          <div className="mf-music-popover__progress">
             <input
               type="range"
-              className="motivation-music-panel__seek"
+              className="mf-music-popover__seek"
               min={0}
               max={duration > 0 ? duration : 1}
               step={0.1}
               value={duration > 0 ? Math.min(currentTime, duration) : 0}
               disabled={!currentMusic || duration <= 0}
               aria-label={t('motivation.seek')}
+              style={
+                duration > 0
+                  ? {
+                      ['--seek-progress' as string]: `${Math.min(100, (currentTime / duration) * 100)}%`,
+                    }
+                  : undefined
+              }
               onChange={(e) => onSeekInput(e.target.value)}
               onPointerUp={(e) => onSeekCommit((e.target as HTMLInputElement).value)}
               onKeyUp={(e) => {
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') {
+                if (
+                  e.key === 'ArrowLeft' ||
+                  e.key === 'ArrowRight' ||
+                  e.key === 'Home' ||
+                  e.key === 'End'
+                ) {
                   onSeekCommit((e.target as HTMLInputElement).value);
                 }
               }}
             />
-            <div className="motivation-music-panel__times" aria-hidden="true">
+            <div className="mf-music-popover__times" aria-hidden="true">
               <span>{formatDuration(currentTime)}</span>
-              <span>
-                {duration > 0 ? formatDuration(duration) : t('motivation.timeUnknown')}
-              </span>
+              <span>{duration > 0 ? formatDuration(duration) : t('motivation.timeUnknown')}</span>
             </div>
           </div>
 
-          <div className="motivation-music-panel__controls">
+          <div className="mf-music-popover__transport">
             <button
               type="button"
-              className="btn btn--secondary motivation-music-panel__ctrl"
+              className={`mf-music-popover__chip${playAll && musicPlaying ? ' is-active' : ''}`}
               onClick={playAllTracks}
               disabled={!music.length}
+              aria-label={t('motivation.playAll')}
+              title={t('motivation.playAll')}
             >
-              <ListMusic size={14} aria-hidden />
-              {t('motivation.playAll')}
+              <ListMusic size={16} aria-hidden />
+              <span>{t('motivation.playAll')}</span>
             </button>
+
             <button
               type="button"
-              className="btn btn--primary motivation-music-panel__ctrl"
-              onClick={playSelected}
+              className="mf-music-popover__play"
+              onClick={togglePlayPause}
               disabled={!music.length}
+              aria-label={musicPlaying ? t('motivation.pause') : t('motivation.play')}
             >
-              <Play size={14} aria-hidden />
-              {t('motivation.play')}
+              {musicPlaying ? <Pause size={22} aria-hidden /> : <Play size={22} aria-hidden />}
             </button>
+
             <button
               type="button"
-              className="btn btn--primary motivation-music-panel__ctrl"
+              className="mf-music-popover__chip"
               onClick={stopMusic}
               disabled={!musicPlaying && currentTime <= 0}
+              aria-label={t('motivation.stop')}
+              title={t('motivation.stop')}
             >
-              <Square size={14} aria-hidden />
-              {t('motivation.stop')}
+              <Square size={15} aria-hidden />
+              <span>{t('motivation.stop')}</span>
             </button>
           </div>
 
-          <ul className="motivation-music-panel__list">
-            {music.map((track, index) => {
-              const selected = index === musicIndex;
-              const playingThis = selected && musicPlaying;
-              return (
-                <li key={track.id}>
-                  <button
-                    type="button"
-                    className={`motivation-music-panel__track${selected ? ' is-selected' : ''}${playingThis ? ' is-playing' : ''}`}
-                    onClick={() => selectTrack(index)}
-                  >
-                    <span className="motivation-music-panel__track-index">{index + 1}</span>
-                    <span className="motivation-music-panel__track-title">{track.title}</span>
-                    {playingThis ? <Pause size={14} aria-hidden /> : <Play size={14} aria-hidden />}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mf-music-popover__playlist">
+            <p className="mf-music-popover__playlist-label">{t('motivation.playlist')}</p>
+            <ul className="mf-music-popover__list">
+              {music.map((track, index) => {
+                const selected = index === safeMusicIndex;
+                const playingThis = selected && musicPlaying;
+                return (
+                  <li key={track.id}>
+                    <button
+                      type="button"
+                      className={`mf-music-popover__track${selected ? ' is-selected' : ''}${
+                        playingThis ? ' is-playing' : ''
+                      }`}
+                      onClick={() => selectTrack(index)}
+                    >
+                      <span className="mf-music-popover__track-index" aria-hidden="true">
+                        {playingThis ? (
+                          <span className="mf-music-popover__mini-eq">
+                            <i />
+                            <i />
+                            <i />
+                          </span>
+                        ) : (
+                          index + 1
+                        )}
+                      </span>
+                      <span className="mf-music-popover__track-title">{track.title}</span>
+                      <span className="mf-music-popover__track-action" aria-hidden="true">
+                        {playingThis ? <Pause size={15} /> : <Play size={15} />}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {isAuthed ? (
+            <Link
+              to={ROUTES.MOTIVATION_MUSIC}
+              className="mf-music-popover__manage"
+              onClick={() => setMusicPanelOpen(false)}
+            >
+              {t('motivation.manageLibrary')}
+            </Link>
+          ) : null}
         </div>
       ) : null}
 
