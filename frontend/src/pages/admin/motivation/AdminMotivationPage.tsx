@@ -23,6 +23,7 @@ interface SlotDraft {
   id?: string;
   title: string;
   mediaUrl: string;
+  coverImageUrl: string;
   sortOrder: number;
   isSelected: boolean;
 }
@@ -31,6 +32,7 @@ function emptySlots(): SlotDraft[] {
   return Array.from({ length: MOTIVATION_MEDIA_MAX_SLOTS }, (_, index) => ({
     title: '',
     mediaUrl: '',
+    coverImageUrl: '',
     sortOrder: index,
     isSelected: false,
   }));
@@ -44,6 +46,7 @@ function toSlots(items: MotivationMediaItem[]): SlotDraft[] {
       id: item.id,
       title: item.title,
       mediaUrl: item.mediaUrl,
+      coverImageUrl: item.coverImageUrl ?? '',
       sortOrder: index,
       isSelected: item.isSelected,
     };
@@ -90,6 +93,7 @@ export function AdminMotivationPage() {
           id: slot.id,
           title: slot.title,
           mediaUrl: slot.mediaUrl,
+          coverImageUrl: mediaType === 'music' ? slot.coverImageUrl || null : null,
           sortOrder: index,
           isSelected: slot.isSelected,
           isActive: true,
@@ -145,6 +149,7 @@ export function AdminMotivationPage() {
       id: undefined,
       title: '',
       mediaUrl: '',
+      coverImageUrl: '',
       isSelected: false,
     });
   };
@@ -227,6 +232,8 @@ export function AdminMotivationPage() {
               url: t('motivation.fieldUrl'),
               upload: t('motivation.uploadFile'),
               uploading: t('motivation.uploading'),
+              cover: t('motivation.coverUpload'),
+              clearCover: t('motivation.coverClear'),
               selected: t('motivation.includeInPlaylist'),
               selectedShort: t('motivation.playlistShort'),
               up: t('motivation.moveUp'),
@@ -255,6 +262,8 @@ export function AdminMotivationPage() {
               url: t('motivation.fieldUrl'),
               upload: t('motivation.uploadFile'),
               uploading: t('motivation.uploading'),
+              cover: t('motivation.coverUpload'),
+              clearCover: t('motivation.coverClear'),
               selected: t('motivation.includeInPlaylist'),
               selectedShort: t('motivation.playlistShort'),
               up: t('motivation.moveUp'),
@@ -344,6 +353,89 @@ function MusicUploadField({
   );
 }
 
+function CoverUploadField({
+  coverUrl,
+  uploadLabel,
+  clearLabel,
+  onUploaded,
+  onClear,
+}: {
+  coverUrl: string;
+  uploadLabel: string;
+  clearLabel: string;
+  onUploaded: (coverImageUrl: string) => void;
+  onClear: () => void;
+}) {
+  const { t } = useTranslation('admin');
+  const showToast = useUIStore((s) => s.showToast);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const uploadMutation = useMutation({
+    mutationFn: (file: File) => adminApi.uploadMotivationCover(file),
+    onSuccess: (res) => {
+      onUploaded(res.data.data.coverImageUrl);
+      showToast(t('motivation.coverUploadDone'), 'success');
+    },
+    onError: (error) => {
+      const code = getApiErrorCode(error);
+      if (code === 'UNSUPPORTED_FILE_TYPE') {
+        showToast(t('motivation.coverUnsupported'), 'error');
+        return;
+      }
+      if (code === 'FILE_TOO_LARGE' || code === 'INVALID_IMAGE') {
+        showToast(t('motivation.coverTooLarge'), 'error');
+        return;
+      }
+      showToast(t('error'), 'error');
+    },
+  });
+
+  return (
+    <div className="moti-cover">
+      {coverUrl ? (
+        <img src={coverUrl} alt="" className="moti-cover__thumb" />
+      ) : (
+        <span className="moti-cover__placeholder" aria-hidden="true">
+          ▢
+        </span>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          if (!file) return;
+          uploadMutation.mutate(file);
+        }}
+      />
+      <button
+        type="button"
+        className="moti-icon-btn"
+        title={uploadLabel}
+        aria-label={uploadLabel}
+        disabled={uploadMutation.isPending}
+        onClick={() => inputRef.current?.click()}
+      >
+        {uploadMutation.isPending ? '…' : '🖼'}
+      </button>
+      {coverUrl ? (
+        <button
+          type="button"
+          className="moti-icon-btn moti-icon-btn--ghost"
+          title={clearLabel}
+          aria-label={clearLabel}
+          onClick={onClear}
+        >
+          ✕
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 function MediaSection({
   hidden,
   title,
@@ -374,6 +466,8 @@ function MediaSection({
     url: string;
     upload: string;
     uploading: string;
+    cover: string;
+    clearCover: string;
     selected: string;
     selectedShort: string;
     up: string;
@@ -411,8 +505,12 @@ function MediaSection({
       </header>
 
       <div className="moti-list" role="list">
-        <div className="moti-list__head" aria-hidden="true">
+        <div
+          className={`moti-list__head${mediaType === 'music' ? ' moti-list__head--music' : ''}`}
+          aria-hidden="true"
+        >
           <span>{labels.order}</span>
+          {mediaType === 'music' ? <span>{labels.cover}</span> : null}
           <span>{labels.title}</span>
           <span>{labels.url}</span>
           <span>{labels.selectedShort}</span>
@@ -425,7 +523,9 @@ function MediaSection({
             <div
               key={`${mediaType}-${index}`}
               role="listitem"
-              className={`moti-row${occupied ? ' is-filled' : ''}${slot.isSelected ? ' is-on' : ''}`}
+              className={`moti-row${mediaType === 'music' ? ' moti-row--music' : ''}${
+                occupied ? ' is-filled' : ''
+              }${slot.isSelected ? ' is-on' : ''}`}
             >
               <div className="moti-row__order">
                 <span className="moti-row__num">{index + 1}</span>
@@ -452,6 +552,16 @@ function MediaSection({
                   </button>
                 </div>
               </div>
+
+              {mediaType === 'music' ? (
+                <CoverUploadField
+                  coverUrl={slot.coverImageUrl}
+                  uploadLabel={labels.cover}
+                  clearLabel={labels.clearCover}
+                  onUploaded={(coverImageUrl) => onChange(mediaType, index, { coverImageUrl })}
+                  onClear={() => onChange(mediaType, index, { coverImageUrl: '' })}
+                />
+              ) : null}
 
               <label className="moti-row__field">
                 <span className="visually-hidden">{labels.title}</span>
@@ -502,7 +612,7 @@ function MediaSection({
                   className="moti-icon-btn moti-icon-btn--ghost"
                   aria-label={labels.clear}
                   title={labels.clear}
-                  disabled={!occupied}
+                  disabled={!occupied && !slot.coverImageUrl}
                   onClick={() => onClear(mediaType, index)}
                 >
                   ✕

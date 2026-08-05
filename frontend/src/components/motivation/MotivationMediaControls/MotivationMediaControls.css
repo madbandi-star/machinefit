@@ -215,6 +215,30 @@
   opacity: 0;
 }
 
+.mf-music-popover__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mf-music-popover__art.has-cover {
+  background: #111;
+  color: transparent;
+}
+
+.mf-music-popover__art.has-cover.is-playing .mf-music-popover__cover {
+  opacity: 0.35;
+}
+
+.mf-music-popover__track-cover {
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 5px;
+  object-fit: cover;
+  display: block;
+}
+
 .mf-music-popover__eq {
   position: absolute;
   inset: 0;

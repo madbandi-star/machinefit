@@ -127,6 +127,25 @@ export function MotivationMusicPage() {
     onError: (error) => showToast(mapError(error), 'error'),
   });
 
+  const coverMutation = useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) =>
+      userMotivationTrackApi.uploadCover(id, file),
+    onSuccess: async () => {
+      await invalidate();
+      showToast(t('motivationMusic.toasts.coverSaved'), 'success');
+    },
+    onError: (error) => showToast(mapError(error), 'error'),
+  });
+
+  const clearCoverMutation = useMutation({
+    mutationFn: (id: string) => userMotivationTrackApi.clearCover(id),
+    onSuccess: async () => {
+      await invalidate();
+      showToast(t('motivationMusic.toasts.coverCleared'), 'success');
+    },
+    onError: (error) => showToast(mapError(error), 'error'),
+  });
+
   const maxBytes = listQuery.data?.limits.maxBytes ?? 20 * 1024 * 1024;
 
   const handleFiles = (files: FileList | File[] | null) => {
@@ -337,6 +356,25 @@ export function MotivationMusicPage() {
               const isRenaming = renamingId === track.id;
               return (
                 <li key={track.id} className="motivation-music-item">
+                  <label className="motivation-music-item__cover">
+                    {track.coverImageUrl ? (
+                      <img src={track.coverImageUrl} alt="" />
+                    ) : (
+                      <span aria-hidden="true">🖼</span>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      hidden
+                      disabled={coverMutation.isPending}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        e.target.value = '';
+                        if (!file) return;
+                        coverMutation.mutate({ id: track.id, file });
+                      }}
+                    />
+                  </label>
                   <div className="motivation-music-item__main">
                     {isRenaming ? (
                       <input
@@ -367,6 +405,16 @@ export function MotivationMusicPage() {
                   </div>
 
                   <div className="motivation-music-item__actions">
+                    {track.coverImageUrl ? (
+                      <button
+                        type="button"
+                        className="btn btn--ghost"
+                        disabled={clearCoverMutation.isPending}
+                        onClick={() => clearCoverMutation.mutate(track.id)}
+                      >
+                        {t('motivationMusic.actions.clearCover')}
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       className="btn btn--secondary"

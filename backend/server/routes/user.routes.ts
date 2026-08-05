@@ -8,8 +8,12 @@ import * as lifterDnaController from '../controllers/lifter-dna.controller.js';
 import * as achievementController from '../controllers/achievement.controller.js';
 import * as growthTimelineController from '../controllers/growth-timeline.controller.js';
 import * as userMotivationTrackController from '../controllers/user-motivation-track.controller.js';
+import * as motivationCoverUploadController from '../controllers/motivation-cover-upload.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
-import { motivationAudioUpload } from '../middlewares/upload.middleware.js';
+import {
+  motivationAudioUpload,
+  muscleGroupImageUpload,
+} from '../middlewares/upload.middleware.js';
 
 export const userRouter = Router();
 
@@ -27,6 +31,17 @@ userRouter.post(
   userMotivationTrackController.createFromUpload
 );
 userRouter.patch('/me/motivation-tracks/:id', authMiddleware, userMotivationTrackController.updateTrack);
+userRouter.post(
+  '/me/motivation-tracks/:id/cover',
+  authMiddleware,
+  muscleGroupImageUpload,
+  motivationCoverUploadController.uploadUserMotivationTrackCover
+);
+userRouter.delete(
+  '/me/motivation-tracks/:id/cover',
+  authMiddleware,
+  motivationCoverUploadController.clearUserMotivationTrackCover
+);
 userRouter.delete('/me/motivation-tracks/:id', authMiddleware, userMotivationTrackController.deleteTrack);
 
 userRouter.get('/me/gyms', authMiddleware, userGymController.listMyGyms);

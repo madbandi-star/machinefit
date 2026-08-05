@@ -97,7 +97,7 @@
   },
   "motivationMusic": {
     "title": "Motivation music",
-    "subtitle": "Add a direct URL or upload a file to build your own motivation playlist.",
+    "subtitle": "Add tracks by URL or upload, and set a cover image for each song.",
     "urlSection": "MP3 URL",
     "urlHint": "Paste a direct audio URL that can play in the browser.",
     "uploadSection": "File upload",
@@ -126,6 +126,7 @@
       "pause": "Pause",
       "rename": "Rename",
       "setDefault": "Set default",
+      "clearCover": "Clear cover",
       "delete": "Delete"
     },
     "source": {
@@ -136,7 +137,9 @@
       "uploadDone": "Upload complete",
       "urlAdded": "URL track added.",
       "saved": "Saved.",
-      "deleted": "Deleted."
+      "deleted": "Deleted.",
+      "coverSaved": "Cover image saved.",
+      "coverCleared": "Cover image cleared."
     },
     "errors": {
       "unsupportedType": "Unsupported file type. Use MP3, M4A, AAC, WAV, or OGG.",

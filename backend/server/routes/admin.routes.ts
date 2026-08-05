@@ -4,6 +4,7 @@ import * as adminCatalogController from '../controllers/admin-catalog.controller
 import * as adminBillingController from '../controllers/admin-billing.controller.js';
 import * as motivationMediaController from '../controllers/motivation-media.controller.js';
 import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
+import * as motivationCoverUploadController from '../controllers/motivation-cover-upload.controller.js';
 import * as muscleGroupImageController from '../controllers/muscle-group-image.controller.js';
 import * as machineCoverImageController from '../controllers/machine-cover-image.controller.js';
 import { Role } from '@machinefit/shared';
@@ -57,6 +58,11 @@ adminRouter.post(
   '/motivation-media/upload',
   motivationAudioUpload,
   adminMotivationUploadController.uploadMotivationAudio
+);
+adminRouter.post(
+  '/motivation-media/cover-upload',
+  muscleGroupImageUpload,
+  motivationCoverUploadController.uploadAdminMotivationCover
 );
 adminRouter.get('/muscle-group-images', muscleGroupImageController.listMuscleGroupImages);
 adminRouter.post(

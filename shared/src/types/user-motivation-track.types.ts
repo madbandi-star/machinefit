@@ -11,6 +11,7 @@ export interface UserMotivationTrack {
   mimeType?: string | null;
   fileSizeBytes?: number | null;
   durationSeconds?: number | null;
+  coverImageUrl?: string | null;
   isDefault: boolean;
   createdAt: string;
   updatedAt: string;

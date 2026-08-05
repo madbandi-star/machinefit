@@ -73,6 +73,24 @@ export const userMotivationTrackApi = {
   update: (id: string, body: UpdateMotivationTrackInput) =>
     apiClient.patch<ApiResponse<UserMotivationTrack>>(`/users/me/motivation-tracks/${id}`, body),
 
+  uploadCover: async (id: string, file: File) => {
+    const { compressImageForUpload } = await import('@/utils/compressImageForUpload');
+    const prepared = await compressImageForUpload(file);
+    const form = new FormData();
+    form.append('file', prepared);
+    return apiClient.post<ApiResponse<UserMotivationTrack>>(
+      `/users/me/motivation-tracks/${id}/cover`,
+      form,
+      {
+        headers: { 'Content-Type': undefined },
+        timeout: 120_000,
+      }
+    );
+  },
+
+  clearCover: (id: string) =>
+    apiClient.delete<ApiResponse<UserMotivationTrack>>(`/users/me/motivation-tracks/${id}/cover`),
+
   remove: (id: string) =>
     apiClient.delete<ApiResponse<{ message: string }>>(`/users/me/motivation-tracks/${id}`),
 };

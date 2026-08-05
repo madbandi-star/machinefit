@@ -23,6 +23,7 @@ function mapRow(row: Record<string, unknown>): UserMotivationTrack {
     mimeType: (row.mime_type as string | null) ?? null,
     fileSizeBytes: row.file_size_bytes == null ? null : Number(row.file_size_bytes),
     durationSeconds: row.duration_seconds == null ? null : Number(row.duration_seconds),
+    coverImageUrl: (row.cover_image_url as string | null) ?? null,
     isDefault: Boolean(row.is_default),
     createdAt: new Date(String(row.created_at)).toISOString(),
     updatedAt: new Date(String(row.updated_at)).toISOString(),
@@ -147,6 +148,7 @@ export const userMotivationTrackRepository = {
       title?: string;
       isDefault?: boolean;
       durationSeconds?: number | null;
+      coverImageUrl?: string | null;
     }
   ): Promise<UserMotivationTrack | null> {
     const pool = getPool();
@@ -180,6 +182,10 @@ export const userMotivationTrackRepository = {
       if (patch.durationSeconds !== undefined) {
         fields.push(`duration_seconds = $${index++}`);
         values.push(patch.durationSeconds);
+      }
+      if (patch.coverImageUrl !== undefined) {
+        fields.push(`cover_image_url = $${index++}`);
+        values.push(patch.coverImageUrl === '' ? null : patch.coverImageUrl);
       }
 
       if (!fields.length) {

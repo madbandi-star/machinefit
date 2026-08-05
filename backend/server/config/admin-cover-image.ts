@@ -13,6 +13,7 @@ export function adminCoverImageLimits() {
     maxBytes: env.MUSCLE_GROUP_IMAGE_MAX_BYTES,
     muscleBucket: env.MUSCLE_GROUP_IMAGE_BUCKET,
     machineBucket: env.MACHINE_COVER_IMAGE_BUCKET,
+    motivationCoverBucket: env.MOTIVATION_COVER_IMAGE_BUCKET,
     allowedExtensions: [...ALLOWED_EXTENSIONS],
     maxEdge: 1024,
     thumbEdge: 256,

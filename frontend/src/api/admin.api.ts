@@ -285,6 +285,26 @@ export const adminApi = {
     });
   },
 
+  uploadMotivationCover: async (file: File, onProgress?: (percent: number) => void) => {
+    const { compressImageForUpload } = await import('@/utils/compressImageForUpload');
+    const prepared = await compressImageForUpload(file);
+    const form = new FormData();
+    form.append('file', prepared);
+    return apiClient.post<
+      ApiResponse<{
+        coverImageUrl: string;
+        storagePath: string;
+      }>
+    >('/admin/motivation-media/cover-upload', form, {
+      headers: { 'Content-Type': undefined },
+      timeout: 120_000,
+      onUploadProgress: (event) => {
+        if (!onProgress || !event.total) return;
+        onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
+  },
+
   listOwnerApplications: (params?: { status?: string }) =>
     apiClient.get<ApiResponse<OwnerApplication[]>>('/admin/owner-applications', { params }),
 

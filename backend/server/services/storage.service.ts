@@ -11,18 +11,21 @@ import { withRetry } from '../utils/with-retry.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audio');
+const LOCAL_MOTIVATION_COVER_ROOT = path.resolve(__dirname, '../../uploads/motivation-covers');
 const LOCAL_MUSCLE_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/muscle-group-images');
 const LOCAL_MACHINE_COVER_ROOT = path.resolve(__dirname, '../../uploads/machine-covers');
 
 try {
   mkdirSync(LOCAL_MUSCLE_UPLOAD_ROOT, { recursive: true });
   mkdirSync(LOCAL_MACHINE_COVER_ROOT, { recursive: true });
+  mkdirSync(LOCAL_MOTIVATION_COVER_ROOT, { recursive: true });
 } catch {
   // Best-effort for local/static fallback roots.
 }
 
 let supabase: SupabaseClient | null | undefined;
 let audioBucketReady: Promise<void> | null = null;
+let motivationCoverBucketReady: Promise<void> | null = null;
 let muscleBucketReady: Promise<void> | null = null;
 let machineCoverBucketReady: Promise<void> | null = null;
 
@@ -189,13 +192,61 @@ export function motivationAudioPublicUrl(storagePath: string): string {
   return `${publicApiBase()}/media/motivation-audio/${encoded}`;
 }
 
+export function motivationCoverPublicUrl(storagePath: string): string {
+  const encoded = storagePath
+    .split('/')
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join('/');
+  return `${publicApiBase()}/media/motivation-covers/${encoded}`;
+}
+
 export type MotivationAudioPayload = {
   buffer: Buffer;
   mimeType: string;
 };
 
+async function ensureMotivationCoverBucket(): Promise<void> {
+  const client = getSupabase();
+  if (!client) return;
+  if (!motivationCoverBucketReady) {
+    motivationCoverBucketReady = (async () => {
+      const bucket = env.MOTIVATION_COVER_IMAGE_BUCKET;
+      const { data, error } = await withRetry(() => client.storage.listBuckets(), {
+        maxAttempts: 3,
+        baseDelayMs: 200,
+        label: 'listBuckets',
+      });
+      if (error) {
+        throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+      }
+      const exists = data?.some((item) => item.name === bucket);
+      if (!exists) {
+        const created = await client.storage.createBucket(bucket, {
+          public: true,
+          fileSizeLimit: env.MUSCLE_GROUP_IMAGE_MAX_BYTES,
+          allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+        });
+        if (created.error && !/already exists/i.test(created.error.message)) {
+          throw new AppError(
+            500,
+            'STORAGE_ERROR',
+            'Could not create motivation-cover storage bucket',
+            created.error.message
+          );
+        }
+      }
+    })().catch((err) => {
+      motivationCoverBucketReady = null;
+      throw err;
+    });
+  }
+  await motivationCoverBucketReady;
+}
+
 export const storageService = {
   localUploadRoot: LOCAL_UPLOAD_ROOT,
+  localMotivationCoverRoot: LOCAL_MOTIVATION_COVER_ROOT,
   localMuscleUploadRoot: LOCAL_MUSCLE_UPLOAD_ROOT,
 
   async saveMotivationAudio(params: {
@@ -315,6 +366,84 @@ export const storageService = {
     } catch {
       // ignore missing local files
     }
+  },
+
+  async saveMotivationCoverImage(params: {
+    ownerKey: string;
+    assetId: string;
+    extension: string;
+    mimeType: string;
+    buffer: Buffer;
+  }): Promise<StoredImageObject> {
+    const storagePath = `${params.ownerKey}/${params.assetId}.${params.extension}`;
+    const client = getSupabase();
+
+    if (client) {
+      await ensureMotivationCoverBucket();
+      const { error } = await client.storage
+        .from(env.MOTIVATION_COVER_IMAGE_BUCKET)
+        .upload(storagePath, params.buffer, {
+          contentType: params.mimeType || 'image/webp',
+          upsert: true,
+          cacheControl: '31536000',
+        });
+      if (error) {
+        throw new AppError(500, 'UPLOAD_FAILED', 'Could not save the cover image', error.message);
+      }
+      return {
+        storagePath,
+        publicUrl: motivationCoverPublicUrl(storagePath),
+        provider: 'supabase',
+      };
+    }
+
+    const absolute = path.join(LOCAL_MOTIVATION_COVER_ROOT, storagePath);
+    await mkdir(path.dirname(absolute), { recursive: true });
+    await writeFile(absolute, params.buffer);
+    return {
+      storagePath,
+      publicUrl: motivationCoverPublicUrl(storagePath),
+      provider: 'local',
+    };
+  },
+
+  async readMotivationCoverImage(storagePath: string): Promise<{
+    buffer: Buffer;
+    mimeType: string;
+  } | null> {
+    const normalized = storagePath
+      .split(/[/\\]/)
+      .filter((part) => part && part !== '.' && part !== '..')
+      .join('/');
+    if (!normalized) return null;
+
+    const absolute = path.join(LOCAL_MOTIVATION_COVER_ROOT, normalized);
+    const resolvedRoot = path.resolve(LOCAL_MOTIVATION_COVER_ROOT);
+    const resolvedFile = path.resolve(absolute);
+    if (
+      resolvedFile !== resolvedRoot &&
+      !resolvedFile.startsWith(resolvedRoot + path.sep)
+    ) {
+      return null;
+    }
+
+    try {
+      const buffer = await readFile(resolvedFile);
+      return { buffer, mimeType: 'image/webp' };
+    } catch {
+      // fall through
+    }
+
+    const client = getSupabase();
+    if (!client) return null;
+    const { data, error } = await client.storage
+      .from(env.MOTIVATION_COVER_IMAGE_BUCKET)
+      .download(normalized);
+    if (error || !data) return null;
+    return {
+      buffer: Buffer.from(await data.arrayBuffer()),
+      mimeType: data.type || 'image/webp',
+    };
   },
 
   async saveMuscleGroupImage(params: {

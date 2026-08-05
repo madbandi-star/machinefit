@@ -17,6 +17,7 @@ import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.co
 import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
 import { serveBrandAssetImage } from './controllers/brand-asset-media.controller.js';
 import { serveMotivationAudio } from './controllers/motivation-audio-media.controller.js';
+import { serveMotivationCover } from './controllers/motivation-cover-media.controller.js';
 
 export function createApp() {
   const app = express();
@@ -63,6 +64,11 @@ export function createApp() {
   // Motivation audio: prefer API proxy (Supabase + local) so SPA hosts can play uploads.
   app.use(`${env.API_BASE_PATH}/media/motivation-audio`, (req, res, next) => {
     void serveMotivationAudio(req, res, next);
+  });
+
+  // Motivation cover art (API proxy for SPA + private buckets).
+  app.use(`${env.API_BASE_PATH}/media/motivation-covers`, (req, res, next) => {
+    void serveMotivationCover(req, res, next);
   });
 
   // Durable muscle-group images from Postgres (works without Supabase Storage keys).

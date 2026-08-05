@@ -8,6 +8,7 @@ const mediaSlotSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().max(200).default(''),
   mediaUrl: z.string().max(1000).default(''),
+  coverImageUrl: z.string().max(1000).optional().nullable().default(null),
   sortOrder: z.number().int().min(0).max(MOTIVATION_MEDIA_MAX_SORT_ORDER),
   isSelected: z.boolean().default(false),
   isActive: z.boolean().default(true),

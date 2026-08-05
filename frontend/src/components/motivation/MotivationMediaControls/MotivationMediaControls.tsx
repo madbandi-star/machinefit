@@ -68,6 +68,7 @@ export function MotivationMediaControls({
         title: track.title,
         mediaUrl: track.mediaUrl,
         youtubeId: null,
+        coverImageUrl: track.coverImageUrl ?? null,
         sortOrder: 0,
         isSelected: true,
         isActive: true,
@@ -508,10 +509,20 @@ export function MotivationMediaControls({
 
           <div className="mf-music-popover__now">
             <div
-              className={`mf-music-popover__art${musicPlaying ? ' is-playing' : ''}`}
+              className={`mf-music-popover__art${musicPlaying ? ' is-playing' : ''}${
+                currentMusic?.coverImageUrl ? ' has-cover' : ''
+              }`}
               aria-hidden="true"
             >
-              <Music2 size={22} />
+              {currentMusic?.coverImageUrl ? (
+                <img
+                  className="mf-music-popover__cover"
+                  src={currentMusic.coverImageUrl}
+                  alt=""
+                />
+              ) : (
+                <Music2 size={22} />
+              )}
               <span className="mf-music-popover__eq">
                 <i />
                 <i />
@@ -627,7 +638,13 @@ export function MotivationMediaControls({
                       onClick={() => selectTrack(index)}
                     >
                       <span className="mf-music-popover__track-index" aria-hidden="true">
-                        {playingThis ? (
+                        {track.coverImageUrl ? (
+                          <img
+                            className="mf-music-popover__track-cover"
+                            src={track.coverImageUrl}
+                            alt=""
+                          />
+                        ) : playingThis ? (
                           <span className="mf-music-popover__mini-eq">
                             <i />
                             <i />

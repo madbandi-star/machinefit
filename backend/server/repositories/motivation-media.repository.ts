@@ -20,6 +20,7 @@ function mapRow(row: Record<string, unknown>): MotivationMediaItem {
     title: String(row.title ?? ''),
     mediaUrl: String(row.media_url ?? ''),
     youtubeId: (row.youtube_id as string | null) ?? null,
+    coverImageUrl: (row.cover_image_url as string | null) ?? null,
     sortOrder: Number(row.sort_order ?? 0),
     isSelected: Boolean(row.is_selected),
     isActive: Boolean(row.is_active),
@@ -38,6 +39,9 @@ function normalizeSlot(
   if (!title || !mediaUrl) return null;
 
   const youtubeId = mediaType === 'video' ? extractYoutubeId(mediaUrl) : null;
+  const coverRaw = typeof slot.coverImageUrl === 'string' ? slot.coverImageUrl.trim() : '';
+  const coverImageUrl =
+    mediaType === 'music' && coverRaw ? coverRaw : null;
 
   return {
     id: slot.id ?? randomUUID(),
@@ -45,6 +49,7 @@ function normalizeSlot(
     title,
     mediaUrl,
     youtubeId,
+    coverImageUrl,
     sortOrder: slot.sortOrder,
     isSelected: slot.isSelected,
     isActive: slot.isActive ?? true,
@@ -111,14 +116,16 @@ export const motivationMediaRepository = {
       for (const item of normalized) {
         await client.query(
           `INSERT INTO motivation_media (
-             id, media_type, title, media_url, youtube_id, sort_order, is_selected, is_active
-           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+             id, media_type, title, media_url, youtube_id, cover_image_url,
+             sort_order, is_selected, is_active
+           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
           [
             item.id,
             item.mediaType,
             item.title,
             item.mediaUrl,
             item.youtubeId,
+            item.coverImageUrl ?? null,
             item.sortOrder,
             item.isSelected,
             item.isActive,

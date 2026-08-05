@@ -944,6 +944,39 @@
   transition: border-color 0.12s ease, background 0.12s ease;
 }
 
+.moti-row--music {
+  grid-template-columns: 3.1rem auto minmax(0, 1fr) minmax(0, 1.3fr) auto auto;
+}
+
+.moti-cover {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.moti-cover__thumb {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.moti-cover__placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
 .moti-row.is-filled {
   border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
   background: var(--color-surface);
@@ -1069,13 +1102,24 @@
       'order url check';
   }
 
+  .moti-row--music {
+    grid-template-columns: 2.6rem auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'order cover title actions'
+      'order cover url check';
+  }
+
   .moti-row__order {
     grid-area: order;
     align-self: start;
     padding-top: 0.15rem;
   }
 
-  .moti-row__field:first-of-type {
+  .moti-cover {
+    grid-area: cover;
+  }
+
+  .moti-row__field:not(.moti-row__field--url) {
     grid-area: title;
   }
 
@@ -1114,6 +1158,10 @@
   .moti-list__head {
     display: grid;
     grid-template-columns: 3.1rem minmax(0, 1fr) minmax(0, 1.4fr) auto auto;
+  }
+
+  .moti-list__head--music {
+    grid-template-columns: 3.1rem auto minmax(0, 1fr) minmax(0, 1.3fr) auto auto;
   }
 
   .moti-panel__hint {

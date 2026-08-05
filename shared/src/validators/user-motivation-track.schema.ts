@@ -14,10 +14,18 @@ export const updateMotivationTrackSchema = z
     title: z.string().trim().min(1).max(200).optional(),
     isDefault: z.boolean().optional(),
     durationSeconds: z.number().finite().nonnegative().max(86_400).optional().nullable(),
+    coverImageUrl: z.union([z.string().trim().url().max(2000), z.literal('')]).optional().nullable(),
   })
-  .refine((value) => value.title !== undefined || value.isDefault !== undefined || value.durationSeconds !== undefined, {
-    message: 'At least one field is required',
-  });
+  .refine(
+    (value) =>
+      value.title !== undefined ||
+      value.isDefault !== undefined ||
+      value.durationSeconds !== undefined ||
+      value.coverImageUrl !== undefined,
+    {
+      message: 'At least one field is required',
+    }
+  );
 
 export type CreateMotivationTrackFromUrlInput = z.infer<typeof createMotivationTrackFromUrlSchema>;
 export type UpdateMotivationTrackInput = z.infer<typeof updateMotivationTrackSchema>;

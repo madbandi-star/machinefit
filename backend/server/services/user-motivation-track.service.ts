@@ -126,6 +126,12 @@ export const userMotivationTrackService = {
       title: input.title,
       isDefault: input.isDefault,
       durationSeconds: input.durationSeconds,
+      coverImageUrl:
+        input.coverImageUrl === undefined
+          ? undefined
+          : input.coverImageUrl === '' || input.coverImageUrl == null
+            ? null
+            : input.coverImageUrl,
     });
     if (!updated) {
       throw new AppError(404, 'NOT_FOUND', 'Track not found');

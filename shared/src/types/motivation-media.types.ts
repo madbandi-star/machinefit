@@ -6,6 +6,8 @@ export interface MotivationMediaItem {
   title: string;
   mediaUrl: string;
   youtubeId?: string | null;
+  /** Cover art for music tracks (player artwork). */
+  coverImageUrl?: string | null;
   sortOrder: number;
   isSelected: boolean;
   isActive: boolean;

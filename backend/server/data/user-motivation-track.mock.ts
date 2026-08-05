@@ -58,7 +58,9 @@ export function insertMockTrack(
 export function updateMockTrack(
   userId: string,
   trackId: string,
-  patch: Partial<Pick<UserMotivationTrack, 'title' | 'isDefault' | 'durationSeconds'>>
+  patch: Partial<
+    Pick<UserMotivationTrack, 'title' | 'isDefault' | 'durationSeconds' | 'coverImageUrl'>
+  >
 ): UserMotivationTrack | null {
   const current = getMockTrack(userId, trackId);
   if (!current) return null;

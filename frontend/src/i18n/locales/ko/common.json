@@ -97,7 +97,7 @@
   },
   "motivationMusic": {
     "title": "동기부여 음악",
-    "subtitle": "URL을 넣거나 파일을 올려 나만의 동기부여 음악을 관리하세요.",
+    "subtitle": "URL·파일로 음악을 등록하고, 곡마다 커버 사진도 올릴 수 있어요.",
     "urlSection": "MP3 URL 입력",
     "urlHint": "직접 재생 가능한 오디오 URL을 입력할 수 있어요.",
     "uploadSection": "파일 업로드",
@@ -126,6 +126,7 @@
       "pause": "일시정지",
       "rename": "이름 변경",
       "setDefault": "기본 설정",
+      "clearCover": "커버 지우기",
       "delete": "삭제"
     },
     "source": {
@@ -136,7 +137,9 @@
       "uploadDone": "업로드 완료",
       "urlAdded": "URL 음악을 추가했어요.",
       "saved": "저장했어요.",
-      "deleted": "삭제했어요."
+      "deleted": "삭제했어요.",
+      "coverSaved": "커버 사진을 저장했어요.",
+      "coverCleared": "커버 사진을 지웠어요."
     },
     "errors": {
       "unsupportedType": "지원하지 않는 파일 형식이에요. MP3, M4A, AAC, WAV, OGG만 올릴 수 있어요.",
