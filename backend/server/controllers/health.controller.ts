@@ -1,5 +1,9 @@
 import type { Request, Response } from 'express';
-import { checkDatabaseConnection, warmupDatabase } from '../config/database.js';
+import {
+  getDatabaseUrlDiag,
+  probeDatabaseConnection,
+  warmupDatabase,
+} from '../config/database.js';
 import { getBuildTime, getBuildVersion, getUptimeSec } from '../ops/ops-runtime.js';
 
 /**
@@ -26,16 +30,24 @@ export async function healthCheck(_req: Request, res: Response): Promise<void> {
 /** Explicit warm endpoint for Render free-tier wake + pool priming. */
 export async function warmup(_req: Request, res: Response): Promise<void> {
   const ok = await warmupDatabase();
-  // Optionally poke DB connectivity for humans; never fail the HTTP status hard.
-  const dbConnected = await Promise.race([
-    checkDatabaseConnection(),
-    new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 1500)),
-  ]);
+  const probe = await probeDatabaseConnection(5_000);
+  const urlDiag = getDatabaseUrlDiag();
   res.status(200).json({
     success: true,
     data: {
       status: ok ? 'warm' : 'unavailable',
-      database: dbConnected ? 'connected' : 'error',
+      database: probe.ok ? 'connected' : 'error',
+      // Password-safe diagnostics to debug Render DATABASE_URL issues.
+      db: {
+        ok: probe.ok,
+        code: probe.code,
+        hint: probe.hint,
+        host: urlDiag.host,
+        port: urlDiag.port,
+        database: urlDiag.database,
+        userPrefix: urlDiag.userPrefix,
+        hasPgbouncerParam: urlDiag.hasPgbouncerParam,
+      },
       timestamp: new Date().toISOString(),
     },
   });
