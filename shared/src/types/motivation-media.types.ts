@@ -19,7 +19,7 @@ export interface MotivationPlaylist {
   video: MotivationMediaItem[];
 }
 
-/** Admin editor payload: fixed 5 slots per type (empty slots omitted or cleared). */
+/** Admin editor payload: up to 20 slots per type (empty slots omitted or cleared). */
 export interface MotivationMediaAdminState {
   music: MotivationMediaItem[];
   video: MotivationMediaItem[];

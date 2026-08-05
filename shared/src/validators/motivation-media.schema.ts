@@ -1,10 +1,14 @@
 import { z } from 'zod';
+import {
+  MOTIVATION_MEDIA_MAX_SLOTS,
+  MOTIVATION_MEDIA_MAX_SORT_ORDER,
+} from '../constants/motivation-media.js';
 
 const mediaSlotSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().max(200).default(''),
   mediaUrl: z.string().max(1000).default(''),
-  sortOrder: z.number().int().min(0).max(4),
+  sortOrder: z.number().int().min(0).max(MOTIVATION_MEDIA_MAX_SORT_ORDER),
   isSelected: z.boolean().default(false),
   isActive: z.boolean().default(true),
 });
@@ -13,7 +17,7 @@ export const replaceMotivationMediaSchema = z.object({
   mediaType: z.enum(['music', 'video']),
   items: z
     .array(mediaSlotSchema)
-    .max(5)
+    .max(MOTIVATION_MEDIA_MAX_SLOTS)
     .refine(
       (items) => new Set(items.map((i) => i.sortOrder)).size === items.length,
       'sortOrder values must be unique within a media type'

@@ -520,11 +520,11 @@
   "motivation": {
     "nav": "동기부여",
     "title": "동기부여 음악·영상",
-    "subtitle": "음악/영상 각 5건까지 등록하고, 재생 목록에 포함할 항목과 순서를 정하세요.",
-    "musicSection": "동기부여 음악",
-    "videoSection": "동기부여 영상",
-    "musicHint": "직접 재생 가능한 오디오 URL을 입력하거나, 파일을 업로드하세요. 체크한 항목만 사용자 재생 버튼에 포함됩니다.",
-    "videoHint": "YouTube 링크를 입력하세요. 체크한 항목만 사용자 재생 버튼에 포함됩니다.",
+    "subtitle": "음악·YouTube 각 20건까지 등록하고, 재생 목록에 포함할 항목과 순서를 정하세요.",
+    "musicSection": "음악",
+    "videoSection": "YouTube",
+    "musicHint": "오디오 URL 입력 또는 파일 업로드. 체크한 항목만 앱 재생 목록에 포함됩니다.",
+    "videoHint": "YouTube URL 입력. 체크한 항목만 앱 재생 목록에 포함됩니다.",
     "fieldTitle": "제목",
     "fieldUrl": "URL",
     "uploadFile": "파일 업로드",
@@ -533,11 +533,14 @@
     "uploadUnsupported": "지원하지 않는 파일 형식이에요.",
     "uploadTooLarge": "파일이 너무 커요. 20MB 이하로 올려 주세요.",
     "includeInPlaylist": "재생 목록에 포함",
+    "playlistShort": "재생",
+    "playlistCount": "재생 {{count}}",
+    "slotHint": "슬롯 {{max}}개 · 비어 있는 칸은 저장 시 제외됩니다.",
     "moveUp": "위로",
     "moveDown": "아래로",
     "clear": "비우기",
-    "save": "이 목록 저장",
-    "order": "순서"
+    "save": "저장",
+    "order": "#"
   },
   "ownerApplications": {
     "nav": "사장 인증",

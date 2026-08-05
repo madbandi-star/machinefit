@@ -3,6 +3,7 @@ import type {
   MotivationMediaType,
   MotivationMediaSlotInput,
 } from '@machinefit/shared';
+import { MOTIVATION_MEDIA_MAX_SLOTS } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import {
   getMockMotivationMedia,
@@ -95,7 +96,7 @@ export const motivationMediaRepository = {
     const normalized = slots
       .map((slot) => normalizeSlot(mediaType, slot))
       .filter((item): item is MotivationMediaItem => item !== null)
-      .slice(0, 5);
+      .slice(0, MOTIVATION_MEDIA_MAX_SLOTS);
 
     const pool = getPool();
     if (!pool) {

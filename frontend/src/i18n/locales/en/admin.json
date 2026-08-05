@@ -419,11 +419,11 @@
   "motivation": {
     "nav": "Motivation",
     "title": "Motivation music & video",
-    "subtitle": "Register up to 5 music and 5 video items, then choose order and which ones play.",
-    "musicSection": "Motivation music",
-    "videoSection": "Motivation video",
-    "musicHint": "Paste a direct audio URL or upload a file. Only checked items are included in the play button playlist.",
-    "videoHint": "Paste a YouTube URL. Only checked items are included in the play button playlist.",
+    "subtitle": "Add up to 20 music tracks and 20 YouTube URLs, then pick playlist order.",
+    "musicSection": "Music",
+    "videoSection": "YouTube",
+    "musicHint": "Paste an audio URL or upload a file. Checked items go into the app playlist.",
+    "videoHint": "Paste a YouTube URL. Checked items go into the app playlist.",
     "fieldTitle": "Title",
     "fieldUrl": "URL",
     "uploadFile": "Upload file",
@@ -432,11 +432,14 @@
     "uploadUnsupported": "Unsupported file type.",
     "uploadTooLarge": "File is too large. Keep it under 20MB.",
     "includeInPlaylist": "Include in playlist",
+    "playlistShort": "Play",
+    "playlistCount": "{{count}} in playlist",
+    "slotHint": "{{max}} slots · empty rows are skipped on save.",
     "moveUp": "Up",
     "moveDown": "Down",
     "clear": "Clear",
-    "save": "Save this list",
-    "order": "Order"
+    "save": "Save",
+    "order": "#"
   },
   "ownerApplications": {
     "nav": "Owner apps",

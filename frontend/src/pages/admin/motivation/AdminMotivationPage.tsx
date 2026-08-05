@@ -1,7 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { MotivationMediaItem, MotivationMediaType } from '@machinefit/shared';
+import {
+  MOTIVATION_MEDIA_MAX_SLOTS,
+  MOTIVATION_MEDIA_MAX_SORT_ORDER,
+  type MotivationMediaItem,
+  type MotivationMediaType,
+} from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { adminApi } from '@/api';
@@ -23,7 +28,7 @@ interface SlotDraft {
 }
 
 function emptySlots(): SlotDraft[] {
-  return Array.from({ length: 5 }, (_, index) => ({
+  return Array.from({ length: MOTIVATION_MEDIA_MAX_SLOTS }, (_, index) => ({
     title: '',
     mediaUrl: '',
     sortOrder: index,
@@ -34,7 +39,7 @@ function emptySlots(): SlotDraft[] {
 function toSlots(items: MotivationMediaItem[]): SlotDraft[] {
   const slots = emptySlots();
   for (const item of items) {
-    const index = Math.min(Math.max(item.sortOrder, 0), 4);
+    const index = Math.min(Math.max(item.sortOrder, 0), MOTIVATION_MEDIA_MAX_SORT_ORDER);
     slots[index] = {
       id: item.id,
       title: item.title,
@@ -46,13 +51,22 @@ function toSlots(items: MotivationMediaItem[]): SlotDraft[] {
   return slots;
 }
 
+function filledCount(slots: SlotDraft[]): number {
+  return slots.filter((s) => s.title.trim() || s.mediaUrl.trim()).length;
+}
+
+function selectedCount(slots: SlotDraft[]): number {
+  return slots.filter((s) => s.isSelected && (s.title.trim() || s.mediaUrl.trim())).length;
+}
+
 export function AdminMotivationPage() {
   const { t } = useTranslation('admin');
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
 
-  const [musicSlots, setMusicSlots] = useState<SlotDraft[]>(emptySlots);
-  const [videoSlots, setVideoSlots] = useState<SlotDraft[]>(emptySlots);
+  const [musicDraft, setMusicDraft] = useState<SlotDraft[] | null>(null);
+  const [videoDraft, setVideoDraft] = useState<SlotDraft[] | null>(null);
+  const [activeTab, setActiveTab] = useState<MotivationMediaType>('music');
 
   const { data, isLoading } = useQuery({
     queryKey: QUERY_KEYS.adminMotivationMedia,
@@ -62,11 +76,10 @@ export function AdminMotivationPage() {
     },
   });
 
-  useEffect(() => {
-    if (!data) return;
-    setMusicSlots(toSlots(data.music));
-    setVideoSlots(toSlots(data.video));
-  }, [data]);
+  const musicBaseline = useMemo(() => toSlots(data?.music ?? []), [data?.music]);
+  const videoBaseline = useMemo(() => toSlots(data?.video ?? []), [data?.video]);
+  const musicSlots = musicDraft ?? musicBaseline;
+  const videoSlots = videoDraft ?? videoBaseline;
 
   const saveMutation = useMutation({
     mutationFn: async (mediaType: MotivationMediaType) => {
@@ -83,7 +96,9 @@ export function AdminMotivationPage() {
         })),
       });
     },
-    onSuccess: async () => {
+    onSuccess: async (_res, mediaType) => {
+      if (mediaType === 'music') setMusicDraft(null);
+      else setVideoDraft(null);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminMotivationMedia });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.motivationMedia });
       showToast(t('saved'), 'success');
@@ -96,11 +111,13 @@ export function AdminMotivationPage() {
     index: number,
     direction: -1 | 1
   ) => {
-    const setSlots = mediaType === 'music' ? setMusicSlots : setVideoSlots;
-    setSlots((prev) => {
+    const setDraft = mediaType === 'music' ? setMusicDraft : setVideoDraft;
+    const baseline = mediaType === 'music' ? musicBaseline : videoBaseline;
+    setDraft((prev) => {
+      const current = prev ?? baseline;
       const nextIndex = index + direction;
-      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
-      const copy = [...prev];
+      if (nextIndex < 0 || nextIndex >= current.length) return prev;
+      const copy = [...current];
       const tmp = copy[index];
       copy[index] = copy[nextIndex];
       copy[nextIndex] = tmp;
@@ -113,10 +130,14 @@ export function AdminMotivationPage() {
     index: number,
     patch: Partial<SlotDraft>
   ) => {
-    const setSlots = mediaType === 'music' ? setMusicSlots : setVideoSlots;
-    setSlots((prev) =>
-      prev.map((slot, i) => (i === index ? { ...slot, ...patch, sortOrder: i } : slot))
-    );
+    const setDraft = mediaType === 'music' ? setMusicDraft : setVideoDraft;
+    const baseline = mediaType === 'music' ? musicBaseline : videoBaseline;
+    setDraft((prev) => {
+      const current = prev ?? baseline;
+      return current.map((slot, i) =>
+        i === index ? { ...slot, ...patch, sortOrder: i } : slot
+      );
+    });
   };
 
   const clearSlot = (mediaType: MotivationMediaType, index: number) => {
@@ -128,63 +149,124 @@ export function AdminMotivationPage() {
     });
   };
 
+  const musicFilled = useMemo(() => filledCount(musicSlots), [musicSlots]);
+  const videoFilled = useMemo(() => filledCount(videoSlots), [videoSlots]);
+  const musicSelected = useMemo(() => selectedCount(musicSlots), [musicSlots]);
+  const videoSelected = useMemo(() => selectedCount(videoSlots), [videoSlots]);
+
   if (isLoading) {
     return (
-      <AdminPageShell title={t('motivation.title')} subtitle={t('menu.motivationDesc')}>
+      <AdminPageShell title={t('motivation.title')} subtitle={t('motivation.subtitle')}>
         <Skeleton count={4} />
       </AdminPageShell>
     );
   }
 
   return (
-    <AdminPageShell title={t('motivation.title')} subtitle={t('menu.motivationDesc')}>
-      <MediaSection
-        title={t('motivation.musicSection')}
-        hint={t('motivation.musicHint')}
-        slots={musicSlots}
-        mediaType="music"
-        saving={saveMutation.isPending && saveMutation.variables === 'music'}
-        onChange={updateSlot}
-        onMove={moveSlot}
-        onClear={clearSlot}
-        onSave={() => saveMutation.mutate('music')}
-        labels={{
-          title: t('motivation.fieldTitle'),
-          url: t('motivation.fieldUrl'),
-          upload: t('motivation.uploadFile'),
-          uploading: t('motivation.uploading'),
-          selected: t('motivation.includeInPlaylist'),
-          up: t('motivation.moveUp'),
-          down: t('motivation.moveDown'),
-          clear: t('motivation.clear'),
-          save: t('motivation.save'),
-          order: t('motivation.order'),
-        }}
-      />
+    <AdminPageShell title={t('motivation.title')} subtitle={t('motivation.subtitle')}>
+      <div className="moti-board">
+        <div className="moti-board__summary" role="status">
+          <div className="moti-stat">
+            <span className="moti-stat__label">{t('motivation.musicSection')}</span>
+            <strong className="moti-stat__value">
+              {musicFilled}/{MOTIVATION_MEDIA_MAX_SLOTS}
+            </strong>
+            <span className="moti-stat__meta">
+              {t('motivation.playlistCount', { count: musicSelected })}
+            </span>
+          </div>
+          <div className="moti-stat">
+            <span className="moti-stat__label">{t('motivation.videoSection')}</span>
+            <strong className="moti-stat__value">
+              {videoFilled}/{MOTIVATION_MEDIA_MAX_SLOTS}
+            </strong>
+            <span className="moti-stat__meta">
+              {t('motivation.playlistCount', { count: videoSelected })}
+            </span>
+          </div>
+        </div>
 
-      <MediaSection
-        title={t('motivation.videoSection')}
-        hint={t('motivation.videoHint')}
-        slots={videoSlots}
-        mediaType="video"
-        saving={saveMutation.isPending && saveMutation.variables === 'video'}
-        onChange={updateSlot}
-        onMove={moveSlot}
-        onClear={clearSlot}
-        onSave={() => saveMutation.mutate('video')}
-        labels={{
-          title: t('motivation.fieldTitle'),
-          url: t('motivation.fieldUrl'),
-          upload: t('motivation.uploadFile'),
-          uploading: t('motivation.uploading'),
-          selected: t('motivation.includeInPlaylist'),
-          up: t('motivation.moveUp'),
-          down: t('motivation.moveDown'),
-          clear: t('motivation.clear'),
-          save: t('motivation.save'),
-          order: t('motivation.order'),
-        }}
-      />
+        <div className="moti-board__tabs" role="tablist" aria-label={t('motivation.title')}>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'music'}
+            className={`moti-tab${activeTab === 'music' ? ' is-active' : ''}`}
+            onClick={() => setActiveTab('music')}
+          >
+            {t('motivation.musicSection')}
+            <span className="moti-tab__count">{musicFilled}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'video'}
+            className={`moti-tab${activeTab === 'video' ? ' is-active' : ''}`}
+            onClick={() => setActiveTab('video')}
+          >
+            {t('motivation.videoSection')}
+            <span className="moti-tab__count">{videoFilled}</span>
+          </button>
+        </div>
+
+        <div className="moti-board__grid">
+          <MediaSection
+            hidden={activeTab !== 'music'}
+            title={t('motivation.musicSection')}
+            hint={t('motivation.musicHint')}
+            slots={musicSlots}
+            mediaType="music"
+            filled={musicFilled}
+            saving={saveMutation.isPending && saveMutation.variables === 'music'}
+            onChange={updateSlot}
+            onMove={moveSlot}
+            onClear={clearSlot}
+            onSave={() => saveMutation.mutate('music')}
+            labels={{
+              title: t('motivation.fieldTitle'),
+              url: t('motivation.fieldUrl'),
+              upload: t('motivation.uploadFile'),
+              uploading: t('motivation.uploading'),
+              selected: t('motivation.includeInPlaylist'),
+              selectedShort: t('motivation.playlistShort'),
+              up: t('motivation.moveUp'),
+              down: t('motivation.moveDown'),
+              clear: t('motivation.clear'),
+              save: t('motivation.save'),
+              order: t('motivation.order'),
+              slotHint: t('motivation.slotHint', { max: MOTIVATION_MEDIA_MAX_SLOTS }),
+            }}
+          />
+
+          <MediaSection
+            hidden={activeTab !== 'video'}
+            title={t('motivation.videoSection')}
+            hint={t('motivation.videoHint')}
+            slots={videoSlots}
+            mediaType="video"
+            filled={videoFilled}
+            saving={saveMutation.isPending && saveMutation.variables === 'video'}
+            onChange={updateSlot}
+            onMove={moveSlot}
+            onClear={clearSlot}
+            onSave={() => saveMutation.mutate('video')}
+            labels={{
+              title: t('motivation.fieldTitle'),
+              url: t('motivation.fieldUrl'),
+              upload: t('motivation.uploadFile'),
+              uploading: t('motivation.uploading'),
+              selected: t('motivation.includeInPlaylist'),
+              selectedShort: t('motivation.playlistShort'),
+              up: t('motivation.moveUp'),
+              down: t('motivation.moveDown'),
+              clear: t('motivation.clear'),
+              save: t('motivation.save'),
+              order: t('motivation.order'),
+              slotHint: t('motivation.slotHint', { max: MOTIVATION_MEDIA_MAX_SLOTS }),
+            }}
+          />
+        </div>
+      </div>
     </AdminPageShell>
   );
 }
@@ -227,7 +309,7 @@ function MusicUploadField({
   });
 
   return (
-    <div className="admin-motivation__upload">
+    <>
       <input
         ref={inputRef}
         type="file"
@@ -246,23 +328,29 @@ function MusicUploadField({
       />
       <button
         type="button"
-        className="btn btn--secondary"
+        className="moti-icon-btn"
+        title={uploadLabel}
+        aria-label={
+          uploadMutation.isPending && percent != null
+            ? `${uploadingLabel} ${percent}%`
+            : uploadLabel
+        }
         disabled={uploadMutation.isPending}
         onClick={() => inputRef.current?.click()}
       >
-        {uploadMutation.isPending && percent != null
-          ? `${uploadingLabel} ${percent}%`
-          : uploadLabel}
+        {uploadMutation.isPending && percent != null ? `${percent}%` : '↑'}
       </button>
-    </div>
+    </>
   );
 }
 
 function MediaSection({
+  hidden,
   title,
   hint,
   slots,
   mediaType,
+  filled,
   saving,
   onChange,
   onMove,
@@ -270,10 +358,12 @@ function MediaSection({
   onSave,
   labels,
 }: {
+  hidden: boolean;
   title: string;
   hint: string;
   slots: SlotDraft[];
   mediaType: MotivationMediaType;
+  filled: number;
   saving: boolean;
   onChange: (mediaType: MotivationMediaType, index: number, patch: Partial<SlotDraft>) => void;
   onMove: (mediaType: MotivationMediaType, index: number, direction: -1 | 1) => void;
@@ -285,106 +375,145 @@ function MediaSection({
     upload: string;
     uploading: string;
     selected: string;
+    selectedShort: string;
     up: string;
     down: string;
     clear: string;
     save: string;
     order: string;
+    slotHint: string;
   };
 }) {
   return (
-    <section className="admin-motivation">
-      <header className="admin-motivation__header">
-        <h3>{title}</h3>
-        <p className="admin-table__meta">{hint}</p>
+    <section
+      className={`moti-panel${hidden ? ' is-hidden-mobile' : ''}`}
+      aria-hidden={hidden}
+      data-type={mediaType}
+    >
+      <header className="moti-panel__head">
+        <div>
+          <h3 className="moti-panel__title">{title}</h3>
+          <p className="moti-panel__hint">{hint}</p>
+        </div>
+        <div className="moti-panel__meta">
+          <span className="moti-pill">
+            {filled}/{MOTIVATION_MEDIA_MAX_SLOTS}
+          </span>
+          <button
+            type="button"
+            className="btn btn--primary moti-panel__save"
+            disabled={saving}
+            onClick={onSave}
+          >
+            {saving ? '…' : labels.save}
+          </button>
+        </div>
       </header>
 
-      <div className="admin-table">
-        {slots.map((slot, index) => (
-          <div key={`${mediaType}-${index}`} className="card admin-table__row admin-motivation__row">
-            <div className="admin-motivation__order">
-              <strong>
-                {labels.order} {index + 1}
-              </strong>
-              <div className="admin-motivation__order-actions">
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  disabled={index === 0}
-                  onClick={() => onMove(mediaType, index, -1)}
-                >
-                  {labels.up}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  disabled={index === slots.length - 1}
-                  onClick={() => onMove(mediaType, index, 1)}
-                >
-                  {labels.down}
-                </button>
-              </div>
-            </div>
+      <div className="moti-list" role="list">
+        <div className="moti-list__head" aria-hidden="true">
+          <span>{labels.order}</span>
+          <span>{labels.title}</span>
+          <span>{labels.url}</span>
+          <span>{labels.selectedShort}</span>
+          <span />
+        </div>
 
-            <div className="admin-motivation__fields">
-              <label className="form-field">
-                <span>{labels.title}</span>
+        {slots.map((slot, index) => {
+          const occupied = Boolean(slot.title.trim() || slot.mediaUrl.trim());
+          return (
+            <div
+              key={`${mediaType}-${index}`}
+              role="listitem"
+              className={`moti-row${occupied ? ' is-filled' : ''}${slot.isSelected ? ' is-on' : ''}`}
+            >
+              <div className="moti-row__order">
+                <span className="moti-row__num">{index + 1}</span>
+                <div className="moti-row__move">
+                  <button
+                    type="button"
+                    className="moti-icon-btn"
+                    disabled={index === 0}
+                    aria-label={labels.up}
+                    title={labels.up}
+                    onClick={() => onMove(mediaType, index, -1)}
+                  >
+                    ▲
+                  </button>
+                  <button
+                    type="button"
+                    className="moti-icon-btn"
+                    disabled={index === slots.length - 1}
+                    aria-label={labels.down}
+                    title={labels.down}
+                    onClick={() => onMove(mediaType, index, 1)}
+                  >
+                    ▼
+                  </button>
+                </div>
+              </div>
+
+              <label className="moti-row__field">
+                <span className="visually-hidden">{labels.title}</span>
                 <input
-                  className="input"
+                  className="moti-input"
                   value={slot.title}
+                  placeholder={labels.title}
                   onChange={(e) => onChange(mediaType, index, { title: e.target.value })}
                 />
               </label>
-              <label className="form-field">
-                <span>{labels.url}</span>
+
+              <label className="moti-row__field moti-row__field--url">
+                <span className="visually-hidden">{labels.url}</span>
                 <input
-                  className="input"
+                  className="moti-input"
                   value={slot.mediaUrl}
+                  placeholder={
+                    mediaType === 'video' ? 'https://youtu.be/…' : 'https://…/track.mp3'
+                  }
                   onChange={(e) => onChange(mediaType, index, { mediaUrl: e.target.value })}
-                  placeholder={mediaType === 'video' ? 'https://youtu.be/…' : 'https://…/track.mp3'}
                 />
               </label>
-              {mediaType === 'music' ? (
-                <MusicUploadField
-                  uploadLabel={labels.upload}
-                  uploadingLabel={labels.uploading}
-                  onUploaded={(mediaUrl, suggestedTitle) => {
-                    onChange(mediaType, index, {
-                      mediaUrl,
-                      title: slot.title.trim() || suggestedTitle,
-                    });
-                  }}
-                />
-              ) : null}
-              <label className="admin-motivation__check">
+
+              <label className="moti-row__check" title={labels.selected}>
                 <input
                   type="checkbox"
                   checked={slot.isSelected}
                   onChange={(e) => onChange(mediaType, index, { isSelected: e.target.checked })}
                 />
-                <span>{labels.selected}</span>
+                <span>{labels.selectedShort}</span>
               </label>
-            </div>
 
-            <button
-              type="button"
-              className="btn btn--ghost"
-              onClick={() => onClear(mediaType, index)}
-            >
-              {labels.clear}
-            </button>
-          </div>
-        ))}
+              <div className="moti-row__actions">
+                {mediaType === 'music' ? (
+                  <MusicUploadField
+                    uploadLabel={labels.upload}
+                    uploadingLabel={labels.uploading}
+                    onUploaded={(mediaUrl, suggestedTitle) => {
+                      onChange(mediaType, index, {
+                        mediaUrl,
+                        title: slot.title.trim() || suggestedTitle,
+                      });
+                    }}
+                  />
+                ) : null}
+                <button
+                  type="button"
+                  className="moti-icon-btn moti-icon-btn--ghost"
+                  aria-label={labels.clear}
+                  title={labels.clear}
+                  disabled={!occupied}
+                  onClick={() => onClear(mediaType, index)}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <button
-        type="button"
-        className="btn btn--primary admin-motivation__save"
-        disabled={saving}
-        onClick={onSave}
-      >
-        {labels.save}
-      </button>
+      <p className="moti-panel__foot">{labels.slotHint}</p>
     </section>
   );
 }
