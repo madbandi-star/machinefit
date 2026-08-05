@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ageFromBirthDate } from '@machinefit/shared';
+import { SITE_DOMAIN } from '@/config/site';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
@@ -91,7 +92,7 @@ export function LifterDnaPage() {
         analyzedDate,
       });
       const file = new File([blob], 'machinefit-lifter-dna.png', { type: 'image/png' });
-      const text = `${data.shareHeadline}\nAI ${data.confidence}%\n${t('lifterDna.shareHashtags')}`;
+      const text = `${data.shareHeadline}\nAI ${data.confidence}%\n${SITE_DOMAIN}\n${t('lifterDna.shareHashtags')}`;
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], text, title: 'MachineFit AI Lifter DNA' });
         return;

@@ -3,19 +3,18 @@
  * workout / recommend / trade business logic.
  */
 
-import type {
-  CreateFriendRequestInput,
-  FriendRankingMetric,
-  FriendSort,
-  UpdateFriendPrivacyInput,
+import {
+  SITE_APP_URL,
+  type CreateFriendRequestInput,
+  type FriendRankingMetric,
+  type FriendSort,
+  type UpdateFriendPrivacyInput,
 } from '@machinefit/shared';
 import { AppError } from '../middlewares/error.middleware.js';
 import { friendRepository } from '../repositories/friend.repository.js';
 import { notificationService } from './notification.service.js';
 
-const APP_BASE =
-  process.env.FRONTEND_BASE_URL?.replace(/\/$/, '') ||
-  'https://madbandi-star.github.io/machinefit';
+const APP_BASE = process.env.FRONTEND_BASE_URL?.replace(/\/$/, '') || SITE_APP_URL
 
 export const friendService = {
   getPrivacy(userId: string) {

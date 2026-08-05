@@ -144,7 +144,7 @@
     "link": "Invite link",
     "count": "{{count}} invites joined",
     "share": "Share app / link",
-    "shareText": "Join me on MachineFit!",
+    "shareText": "Join me on MachineFit → machine-fit.com",
     "apply": "Enter invite code",
     "applyPlaceholder": "Code",
     "applyBtn": "Apply"

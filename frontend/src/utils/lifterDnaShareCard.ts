@@ -1,4 +1,5 @@
 import type { LifterDnaSnapshot } from '@machinefit/shared';
+import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
 import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export interface DnaShareCardLabels {
@@ -21,9 +22,7 @@ const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
 const GREEN = '#4ade80';
-const WHITE = '#f8fafc';
-const GRAY = '#94a3b8';
-const FOOTER_MIN_H = 56;
+const FOOTER_MIN_H = 64;
 
 function starsText(n: number): string {
   const filled = Math.max(0, Math.min(5, n));
@@ -335,22 +334,6 @@ function drawQuotePanel(
   drawCenteredWrapText(ctx, lines, x + w / 2, y, h, QUOTE_LINE_HEIGHT);
 }
 
-function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.strokeStyle = GREEN;
-  ctx.lineWidth = size * 0.11;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(0, size);
-  ctx.lineTo(size * 0.35, size * 0.15);
-  ctx.lineTo(size * 0.55, size * 0.55);
-  ctx.lineTo(size * 0.85, 0);
-  ctx.stroke();
-  ctx.restore();
-}
-
 /** Achievement/lifted-style footer: brand left, hashtags right. */
 function drawFooter(
   ctx: CanvasRenderingContext2D,
@@ -364,23 +347,8 @@ function drawFooter(
   const markSize = 28;
   // Top-align brand row so quote→footer doesn't look padded.
   const logoRowY = topY + markSize;
-
-  drawMachineFitMark(ctx, left, logoRowY - markSize + 4, markSize);
-
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = WHITE;
-  const brandX = left + markSize + 10;
-  ctx.fillText('Machine', brandX, logoRowY);
-  ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = GREEN;
-  const machineW = ctx.measureText('Machine').width;
-  ctx.fillText('Fit', brandX + machineW, logoRowY);
-
-  ctx.font = `400 20px ${FONT}`;
-  ctx.fillStyle = GRAY;
-  ctx.fillText(labels.tagline, left, logoRowY + 28);
+  drawShareBrandLockup(ctx, left, logoRowY, FONT);
+  void labels.tagline;
 
   const tags = labels.hashtags.split(/\s+/).filter(Boolean);
   ctx.textAlign = 'right';

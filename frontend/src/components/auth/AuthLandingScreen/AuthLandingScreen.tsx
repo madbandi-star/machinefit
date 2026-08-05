@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons/SocialLoginButtons';
 import { useSocialAuthLogin } from '@/hooks/useSocialAuthLogin';
+import { SITE_DOMAIN, SITE_URL } from '@/config/site';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/auth.css';
 
@@ -79,6 +80,9 @@ export function AuthLandingScreen({ demoSlot }: AuthLandingScreenProps) {
         <p className="auth-landing__brand">
           Machine<span className="auth-landing__brand-fit">Fit</span>
         </p>
+        <a className="auth-landing__domain" href={SITE_URL} target="_blank" rel="noreferrer">
+          {SITE_DOMAIN}
+        </a>
         <p className="auth-landing__slogan">{t('auth.landingSlogan')}</p>
       </header>
 

@@ -109,7 +109,8 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 4. **Environment** — paste from `print-deploy-env.ps1`:
 
 - `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`
-- `CORS_ORIGIN` = `https://madbandi-star.github.io`
+- `CORS_ORIGIN` = `https://machine-fit.com,https://madbandi-star.github.io`
+- `FRONTEND_BASE_URL` = `https://machine-fit.com/machinefit`
 - `NODE_ENV` = `production`, `API_BASE_PATH` = `/api/v1`
 - **Do not set `PORT`** — Render injects it (default `10000`); the app binds to `process.env.PORT`
 - `SKIP_FRONTEND_INSTALL` = `1` (optional; Render also sets `RENDER=true`)

@@ -1,4 +1,5 @@
 import type { AchievementRarity } from '@machinefit/shared';
+import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
 import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export interface AchievementShareCardLabels {
@@ -40,14 +41,13 @@ const GAP_EMOJI_NAME = 4;
 const GAP_NAME_DESC = 4;
 
 const META_PANEL_H = 118;
-const FOOTER_H = 56;
+const FOOTER_H = 64;
 
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
 const GREEN = '#4ade80';
 const WHITE = '#f8fafc';
-const GRAY = '#94a3b8';
 
 interface RarityAccent {
   glowInner: string;
@@ -224,22 +224,6 @@ function drawEmojiGlow(
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.fill();
-}
-
-function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.strokeStyle = GREEN;
-  ctx.lineWidth = size * 0.11;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(0, size);
-  ctx.lineTo(size * 0.35, size * 0.15);
-  ctx.lineTo(size * 0.55, size * 0.55);
-  ctx.lineTo(size * 0.85, 0);
-  ctx.stroke();
-  ctx.restore();
 }
 
 function drawPillBadge(ctx: CanvasRenderingContext2D, cx: number, centerY: number, label: string) {
@@ -458,25 +442,9 @@ function drawFooter(
 ) {
   const right = left + width;
   const midY = topY + height / 2;
-  const markSize = 28;
-  const logoRowY = midY - 4;
-
-  drawMachineFitMark(ctx, left, logoRowY - markSize + 4, markSize);
-
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = WHITE;
-  const brandX = left + markSize + 10;
-  ctx.fillText('Machine', brandX, logoRowY);
-  ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = GREEN;
-  const machineW = ctx.measureText('Machine').width;
-  ctx.fillText('Fit', brandX + machineW, logoRowY);
-
-  ctx.font = `400 20px ${FONT}`;
-  ctx.fillStyle = GRAY;
-  ctx.fillText(labels.tagline, left, logoRowY + 28);
+  const logoRowY = midY - 8;
+  drawShareBrandLockup(ctx, left, logoRowY, FONT);
+  void labels.tagline;
 
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';

@@ -4,7 +4,8 @@
 
 1. Push to `main` (paths under `frontend/`, `shared/`, or root lockfiles).
 2. Workflow: `.github/workflows/frontend-deploy.yml`
-3. Confirm Pages URL: `https://madbandi-star.github.io/machinefit`
+3. Marketing / custom domain: `https://machine-fit.com` (Cloudflare → GitHub Pages; `frontend/public/CNAME`)
+4. Legacy Pages URL (fallback): `https://madbandi-star.github.io/machinefit`
 
 ## Backend (Render)
 
@@ -19,16 +20,21 @@
 
 1. Google Cloud OAuth **Web** client — Authorized JavaScript origins:
    - `http://localhost:5173` (local)
-   - `https://madbandi-star.github.io` (Pages)
+   - `https://machine-fit.com`
+   - `https://madbandi-star.github.io` (Pages fallback)
 2. Frontend Pages build needs `VITE_GOOGLE_CLIENT_ID` / `VITE_KAKAO_JS_KEY` (see `frontend-deploy.yml`).
 3. Render env needs matching `GOOGLE_CLIENT_ID` and `KAKAO_REST_API_KEY`.
+   Also set `CORS_ORIGIN=https://machine-fit.com,https://madbandi-star.github.io` and
+   `FRONTEND_BASE_URL=https://machine-fit.com/machinefit`.
 4. Kakao Developers:
    - 카카오 로그인 ON
-   - **앱 → 플랫폼 키 → JavaScript 키 → JavaScript SDK 도메인**: `https://madbandi-star.github.io`, `http://localhost:5173`
+   - **앱 → 플랫폼 키 → JavaScript 키 → JavaScript SDK 도메인**: `https://machine-fit.com`, `https://madbandi-star.github.io`, `http://localhost:5173`
    - **Redirect URI** (로그인용, 슬래시까지 정확히):
+     - `https://machine-fit.com/machinefit/`
      - `https://madbandi-star.github.io/machinefit/`
      - `http://localhost:5173/`
-     - (계정 연동) `https://madbandi-star.github.io/machinefit/settings/linked-logins`
+     - (계정 연동) `https://machine-fit.com/machinefit/settings/linked-logins`
+     - `https://madbandi-star.github.io/machinefit/settings/linked-logins`
      - `http://localhost:5173/settings/linked-logins`
    - 동의항목: 닉네임 (이메일은 Biz 앱 필요할 수 있음)
 5. Apply DB migration `091_auth_providers.sql` if not already applied.

@@ -1,3 +1,5 @@
+import { SITE_DOMAIN } from '@/config/site';
+
 interface GrowthShareInput {
   locale: string;
   displayName: string;
@@ -83,10 +85,13 @@ export async function buildGrowthTimelineShareCard(input: GrowthShareInput): Pro
   ctx.fillText(input.displayName, width / 2, 1080);
   ctx.font = 'bold 40px system-ui, sans-serif';
   ctx.fillStyle = '#e2e8f0';
-  ctx.fillText('MachineFit', width / 2, 1160);
-  ctx.font = '28px system-ui, sans-serif';
+  ctx.fillText('MachineFit', width / 2, 1148);
+  ctx.font = '600 28px system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(94, 234, 212, 0.9)';
+  ctx.fillText(SITE_DOMAIN, width / 2, 1200);
+  ctx.font = '26px system-ui, sans-serif';
   ctx.fillStyle = '#64748b';
-  ctx.fillText('#MachineFit', width / 2, 1220);
+  ctx.fillText('#MachineFit', width / 2, 1256);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

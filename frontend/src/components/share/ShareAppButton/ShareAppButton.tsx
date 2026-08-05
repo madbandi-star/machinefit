@@ -1,15 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
+import { getMarketingShareUrl } from '@/config/site';
 import { useUIStore } from '@/store/ui.store';
 
 interface ShareAppButtonProps {
   variant?: 'header' | 'block';
-}
-
-function getShareUrl(): string {
-  const base = import.meta.env.BASE_URL ?? '/';
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  return `${origin}${base}`.replace(/\/+$/, '/');
 }
 
 export function ShareAppButton({ variant = 'block' }: ShareAppButtonProps) {
@@ -17,7 +12,7 @@ export function ShareAppButton({ variant = 'block' }: ShareAppButtonProps) {
   const showToast = useUIStore((s) => s.showToast);
 
   const handleShare = async () => {
-    const url = getShareUrl();
+    const url = getMarketingShareUrl();
     const payload = {
       title: t('share.title'),
       text: t('share.text'),
