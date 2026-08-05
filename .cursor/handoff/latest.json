@@ -1,9 +1,9 @@
 {
   "title": "Hide My Page subscription plan for non-admins",
   "summary": "SubscriptionPlanCard on My Page now renders only when role is admin or higher.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "03c28531" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": "Non-admin My Page: no 구독·플랜 section. Admin My Page: section still visible.",
+  "testFocus": "Non-admin My Page: no 구독·?�랜 section. Admin My Page: section still visible.",
   "fastChecks": [
     "rg -n \"SubscriptionPlanCard|isAdmin\" frontend/src/pages/my-page/MyPage.tsx",
     "npm run test:smoke:changed"
