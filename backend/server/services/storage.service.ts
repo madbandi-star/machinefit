@@ -69,39 +69,34 @@ async function ensureAudioBucket(): Promise<void> {
         { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
       );
       if (error) {
-        throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+        throw new AppError(
+          500,
+          'STORAGE_ERROR',
+          'Could not list storage buckets (check SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY)',
+          error.message
+        );
       }
       const exists = data?.some((item) => item.name === bucket);
       if (!exists) {
+        // Keep create options minimal — strict MIME allowlists break on some Supabase projects.
         const created = await client.storage.createBucket(bucket, {
           public: true,
           fileSizeLimit: env.MOTIVATION_AUDIO_MAX_BYTES,
-          allowedMimeTypes: [
-            'audio/mpeg',
-            'audio/mp3',
-            'audio/mp4',
-            'audio/x-m4a',
-            'audio/m4a',
-            'audio/aac',
-            'audio/x-aac',
-            'audio/wav',
-            'audio/wave',
-            'audio/x-wav',
-            'audio/ogg',
-            'audio/vorbis',
-            'application/ogg',
-            'application/octet-stream',
-          ],
         });
         if (created.error && !/already exists/i.test(created.error.message)) {
-          throw new AppError(500, 'STORAGE_ERROR', 'Could not create audio storage bucket', created.error.message);
+          throw new AppError(
+            500,
+            'STORAGE_ERROR',
+            `Could not create audio storage bucket "${bucket}"`,
+            created.error.message
+          );
         }
       } else {
-        // Older buckets may have been created private — flip to public for browser playback fallbacks.
-        await client.storage.updateBucket(bucket, {
-          public: true,
-          fileSizeLimit: env.MOTIVATION_AUDIO_MAX_BYTES,
-        });
+        // Best-effort public flag — do not fail boot if update is denied.
+        const updated = await client.storage.updateBucket(bucket, { public: true });
+        if (updated.error && !/not allowed|forbidden|policy/i.test(updated.error.message)) {
+          // Non-fatal for private buckets: API proxy still streams via service role.
+        }
       }
     })().catch((err) => {
       audioBucketReady = null;
@@ -236,14 +231,28 @@ export const storageService = {
   },
 
   /** Create/publicize the motivation-audio bucket when Storage credentials are present. */
-  async ensureMotivationAudioReady(): Promise<'ok' | 'skipped' | 'error'> {
+  async ensureMotivationAudioReady(): Promise<{
+    status: 'ok' | 'skipped' | 'error';
+    detail?: string;
+  }> {
     try {
       const client = getSupabase();
-      if (!client) return 'skipped';
+      if (!client) {
+        return {
+          status: 'skipped',
+          detail: 'SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY missing or placeholder',
+        };
+      }
       await ensureAudioBucket();
-      return 'ok';
-    } catch {
-      return 'error';
+      return { status: 'ok' };
+    } catch (error) {
+      const detail =
+        error instanceof AppError
+          ? `${error.message}${error.details != null ? ` | ${String(error.details)}` : ''}`
+          : error instanceof Error
+            ? error.message
+            : String(error);
+      return { status: 'error', detail };
     }
   },
 
