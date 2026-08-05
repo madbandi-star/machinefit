@@ -185,6 +185,11 @@ export async function logChunkRecoveryEvent(
       tags: { kind: 'chunk_load_recovery', source },
       extra: payload,
     });
+    void import('@/app/sentry').then(({ captureFrontendException }) =>
+      captureFrontendException(error instanceof Error ? error : new Error(payload.message), {
+        ...payload,
+      })
+    );
 
     w.gtag?.('event', 'chunk_load_recovery', {
       event_category: 'pwa',

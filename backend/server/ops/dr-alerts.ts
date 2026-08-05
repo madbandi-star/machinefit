@@ -67,11 +67,16 @@ export async function notifyDrAlert(alert: DrAlertInput): Promise<void> {
     }
   }
 
-  // Sentry-compatible envelope via store API is heavy; use ingest webhook if DSN + webhook.
-  // Structure ready: when @sentry/node is added, init once and captureException here.
+  // Sentry SDK when DSN + package present.
   if (env.SENTRY_DSN && isProductionOps()) {
-    logger.warn('Sentry DSN configured — install @sentry/node to enable SDK capture', {
-      alertKey: alert.alertKey,
-    });
+    void import('./sentry.js')
+      .then(({ captureSentryException }) =>
+        captureSentryException(new Error(`${alert.title}: ${alert.message}`), {
+          alertKey: alert.alertKey,
+          severity: alert.severity,
+          ...alert.meta,
+        })
+      )
+      .catch(() => undefined);
   }
 }

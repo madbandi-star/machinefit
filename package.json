@@ -23,10 +23,14 @@
     "db:migrate": "tsx database/scripts/migrate.ts",
     "db:migrate:one": "tsx database/scripts/apply-one-migration.ts",
     "db:verify": "tsx database/scripts/verify-migrations.ts",
+    "db:verify:files": "tsx database/scripts/verify-migration-files.ts",
     "db:seed": "tsx database/scripts/seed.ts",
     "db:setup": "npm run db:migrate && npm run db:seed",
     "db:migrate:verify": "npm run db:migrate && npm run db:verify",
+    "test": "node scripts/run-unit-tests.mjs",
     "test:smoke:changed": "node scripts/smoke-changed.mjs",
+    "test:smoke:auth": "node scripts/auth-smoke-load.mjs",
+    "test:dr:probes": "node scripts/dr-probe-smoke.mjs",
     "postinstall": "node scripts/ensure-frontend-deps.mjs"
   },
   "devDependencies": {

@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   /** When "true", show fixed demo password UX. Defaults off in production builds. */
   readonly VITE_DEMO_AUTH?: string;
   readonly VITE_APP_VERSION?: string;
+  /** Optional Sentry DSN (browser). When unset, Sentry stays disabled. */
+  readonly VITE_SENTRY_DSN?: string;
   /** Google Identity Services client ID (web). */
   readonly VITE_GOOGLE_CLIENT_ID?: string;
   /** Kakao JavaScript key. */

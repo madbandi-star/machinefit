@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +28,18 @@ jobs:
           SKIP_FRONTEND_INSTALL: '1'
 
       - run: npm run build --workspace=shared
+
+      - name: Unit tests (shared + backend, no DB)
+        run: npm test
+
+      - name: Verify migration file integrity
+        run: npm run db:verify:files
+
+      - name: Verify live schema (optional)
+        if: ${{ secrets.DATABASE_URL != '' }}
+        run: npm run db:verify
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Install frontend
         working-directory: frontend

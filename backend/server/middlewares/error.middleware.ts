@@ -98,6 +98,18 @@ export function errorMiddleware(
     durationMs,
   });
 
+  void import('../ops/sentry.js')
+    .then(({ captureSentryException }) =>
+      captureSentryException(err, {
+        requestId,
+        method: req.method,
+        url: req.originalUrl,
+        userId,
+        durationMs,
+      })
+    )
+    .catch(() => undefined);
+
   try {
     // Fire-and-forget ops capture (dynamic import avoids circular init issues).
     void import('../services/ops.service.js')

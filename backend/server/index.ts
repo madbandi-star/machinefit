@@ -10,8 +10,10 @@ import { startOpsSamplingJob } from './jobs/ops-sampling.job.js';
 import { registerGracefulShutdown } from './lifecycle/shutdown.js';
 import { registerProcessErrorHandlers } from './lifecycle/process-errors.js';
 import { logger } from './utils/logger.js';
+import { initSentry } from './ops/sentry.js';
 
 registerProcessErrorHandlers();
+void initSentry();
 
 const app = createApp();
 
