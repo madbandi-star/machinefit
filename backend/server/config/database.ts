@@ -86,7 +86,17 @@ export type DatabaseProbeResult = {
   code: string | null;
   /** Short safe hint — no connection string / password. */
   hint: string | null;
+  /** Sanitized driver message (password / URL stripped). */
+  detail: string | null;
 };
+
+function sanitizeDbErrorMessage(raw: string): string {
+  return raw
+    .replace(/postgresql:\/\/[^@\s]+@/gi, 'postgresql://***@')
+    .replace(/password\s*=\s*[^;\s]+/gi, 'password=***')
+    .replace(/:[^:@/\s]+@/g, ':***@')
+    .slice(0, 240);
+}
 
 /** Probe DB and return a password-safe error classification. */
 export async function probeDatabaseConnection(
@@ -94,7 +104,12 @@ export async function probeDatabaseConnection(
 ): Promise<DatabaseProbeResult> {
   const db = getPool();
   if (!db) {
-    return { ok: false, code: 'NO_DATABASE_URL', hint: 'DATABASE_URL is missing' };
+    return {
+      ok: false,
+      code: 'NO_DATABASE_URL',
+      hint: 'DATABASE_URL is missing',
+      detail: null,
+    };
   }
   try {
     await Promise.race([
@@ -103,14 +118,17 @@ export async function probeDatabaseConnection(
         setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)
       ),
     ]);
-    return { ok: true, code: null, hint: null };
+    return { ok: true, code: null, hint: null, detail: null };
   } catch (err) {
     const e = err as { code?: string; message?: string };
     const msg = String(e.message ?? err);
+    const detail = sanitizeDbErrorMessage(msg);
     const code = e.code || (msg.includes('DB_TIMEOUT') ? 'DB_TIMEOUT' : 'DB_ERROR');
     let hint = 'Database connection failed';
     if (code === '28P01' || /password authentication failed/i.test(msg)) {
       hint = 'Password authentication failed — reset DB password and paste Transaction URI into Render';
+    } else if (/tenant or user not found/i.test(msg)) {
+      hint = 'Tenant/user not found — use user postgres.PROJECT_REF on pooler Transaction URI';
     } else if (code === 'ENOTFOUND' || /getaddrinfo/i.test(msg)) {
       hint = 'Host not found — check pooler hostname (no spaces)';
     } else if (code === 'ECONNREFUSED') {
@@ -121,8 +139,10 @@ export async function probeDatabaseConnection(
       hint = 'Pooler max clients reached — lower DATABASE_POOL_MAX or use Transaction :6543';
     } else if (/Invalid URL|ERR_INVALID_URL/i.test(msg)) {
       hint = 'DATABASE_URL is not a valid URL (space in port? unescaped password?)';
+    } else if (code === 'XX000') {
+      hint = 'Pooler internal error — see detail; often wrong mode/user or SSL';
     }
-    return { ok: false, code, hint };
+    return { ok: false, code, hint, detail };
   }
 }
 

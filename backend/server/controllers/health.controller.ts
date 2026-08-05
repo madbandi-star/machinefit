@@ -42,6 +42,7 @@ export async function warmup(_req: Request, res: Response): Promise<void> {
         ok: probe.ok,
         code: probe.code,
         hint: probe.hint,
+        detail: probe.detail,
         host: urlDiag.host,
         port: urlDiag.port,
         database: urlDiag.database,
