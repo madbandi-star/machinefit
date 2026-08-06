@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-08-06T00:11:17.594Z",
+  "invalidJson": [],
+  "missing": [],
+  "empty": [
+    {
+      "locale": "en",
+      "ns": "common",
+      "key": "growthAnalysis.daily.kpi.logs"
+    },
+    {
+      "locale": "en",
+      "ns": "common",
+      "key": "growthAnalysis.kpi.times"
+    },
+    {
+      "locale": "ja",
+      "ns": "common",
+      "key": "growthAnalysis.daily.kpi.logs"
+    },
+    {
+      "locale": "ja",
+      "ns": "common",
+      "key": "growthAnalysis.kpi.times"
+    },
+    {
+      "locale": "zh",
+      "ns": "common",
+      "key": "growthAnalysis.daily.kpi.logs"
+    },
+    {
+      "locale": "zh",
+      "ns": "common",
+      "key": "growthAnalysis.kpi.times"
+    }
+  ],
+  "todoTranslate": [],
+  "unusedHint": "Scan for unused keys is approximate — not failing CI",
+  "missingCount": 0
+}

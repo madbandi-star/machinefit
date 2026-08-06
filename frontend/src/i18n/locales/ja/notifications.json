@@ -1,0 +1,14 @@
+{
+  "title": "Notifications",
+  "titleWithUnread": "{{count}} unread notifications",
+  "empty": "No notifications yet",
+  "markAllRead": "Mark all as read",
+  "unread": "Unread",
+  "read": "Read",
+  "machineRequest": "Machine request",
+  "gymVerified": "Gym verified",
+  "system": "System",
+  "announcement": "Announcement",
+  "pushSenderUnknown": "Unknown sender",
+  "error": "We couldn't update notifications. Please try again in a moment."
+}

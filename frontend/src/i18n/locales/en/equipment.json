@@ -1,0 +1,53 @@
+{
+  "navAria": "Equipment",
+  "dashboard": "Dashboard",
+  "equipment": "Equipment",
+  "home": "Home",
+  "links": {
+    "hub": "Equipment",
+    "inventory": "Inventory",
+    "inspections": "Inspections",
+    "pm": "Preventive maintenance",
+    "faults": "Fault reports",
+    "repairs": "Repairs",
+    "parts": "Parts",
+    "stats": "Stats",
+    "settings": "Inspection settings"
+  },
+  "hub": {
+    "title": "Equipment",
+    "subtitle": "Preventive maintenance · inventory ops",
+    "inventory": "Inventory",
+    "inventoryDesc": "Assets, status, Health Score",
+    "inspections": "Inspections",
+    "inspectionsDesc": "Checklist inspections · QR quick UX",
+    "pm": "Preventive maintenance (PM)",
+    "pmDesc": "Interval / usage-based schedule",
+    "faults": "Fault reports (CM)",
+    "faultsDesc": "Tickets · severity · status",
+    "repairs": "Repairs",
+    "repairsDesc": "Cost · history",
+    "parts": "Parts",
+    "partsDesc": "Replacement cycles · stock",
+    "stats": "Stats",
+    "statsDesc": "Inspection rate · top faults · Health",
+    "settings": "Inspection settings",
+    "settingsDesc": "Templates · default intervals",
+    "qr": "QR landing"
+  },
+  "common": {
+    "loading": "Loading…",
+    "empty": "Nothing here yet.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "status": "Status",
+    "date": "Date",
+    "notes": "Notes",
+    "submitFailed": "Couldn't save. Please try again.",
+    "saved": "Saved."
+  }
+}

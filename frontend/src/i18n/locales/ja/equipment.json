@@ -1,0 +1,53 @@
+{
+  "navAria": "機材管理",
+  "dashboard": "ダッシュボード",
+  "equipment": "機材管理",
+  "home": "ホーム",
+  "links": {
+    "hub": "機材管理",
+    "inventory": "保有機材",
+    "inspections": "点検日誌",
+    "pm": "予防保全",
+    "faults": "故障受付",
+    "repairs": "修理管理",
+    "parts": "部品管理",
+    "stats": "統計",
+    "settings": "点検設定"
+  },
+  "hub": {
+    "title": "機材管理",
+    "subtitle": "予防保全 · 保有機材の運用",
+    "inventory": "保有機材",
+    "inventoryDesc": "資産・状態・Health Score",
+    "inspections": "点検日誌",
+    "inspectionsDesc": "チェックリスト点検 · QRクイックUX",
+    "pm": "予防保全(PM)",
+    "pmDesc": "周期・使用量ベースのスケジュール",
+    "faults": "故障受付(CM)",
+    "faultsDesc": "チケット · 重要度 · 進捗",
+    "repairs": "修理管理",
+    "repairsDesc": "修理費 · 履歴",
+    "parts": "部品管理",
+    "partsDesc": "交換周期 · 在庫",
+    "stats": "統計",
+    "statsDesc": "点検率 · 故障TOP · Health",
+    "settings": "点検設定",
+    "settingsDesc": "テンプレート · 周期既定値",
+    "qr": "QRランディング"
+  },
+  "common": {
+    "loading": "読み込み中…",
+    "empty": "項目がありません。",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "create": "登録",
+    "edit": "編集",
+    "delete": "削除",
+    "search": "検索",
+    "status": "状態",
+    "date": "日付",
+    "notes": "メモ",
+    "submitFailed": "保存に失敗しました。",
+    "saved": "保存しました。"
+  }
+}

@@ -39,8 +39,12 @@ type BrandFormState = {
   code: string;
   nameKo: string;
   nameEn: string;
+  nameJa: string;
+  nameZh: string;
   descriptionKo: string;
   descriptionEn: string;
+  descriptionJa: string;
+  descriptionZh: string;
   websiteUrl: string;
   countryCode: string;
   sortOrder: string;
@@ -51,8 +55,12 @@ const EMPTY_FORM: BrandFormState = {
   code: '',
   nameKo: '',
   nameEn: '',
+  nameJa: '',
+  nameZh: '',
   descriptionKo: '',
   descriptionEn: '',
+  descriptionJa: '',
+  descriptionZh: '',
   websiteUrl: '',
   countryCode: '',
   sortOrder: '0',
@@ -79,14 +87,25 @@ function normalizeWebsiteUrl(raw: string): string {
 function toUpsertInput(form: BrandFormState): AdminBrandUpsertInput {
   return {
     code: form.code.trim().toUpperCase(),
-    name: { ko: form.nameKo.trim(), en: form.nameEn.trim() || form.nameKo.trim() },
-    description:
-      form.descriptionKo.trim() || form.descriptionEn.trim()
-        ? {
-            ko: form.descriptionKo.trim() || undefined,
-            en: form.descriptionEn.trim() || undefined,
-          }
-        : undefined,
+    name: {
+      ko: form.nameKo.trim(),
+      en: form.nameEn.trim() || form.nameKo.trim(),
+      ja: form.nameJa.trim() || undefined,
+      zh: form.nameZh.trim() || undefined,
+    },
+    description: (
+      form.descriptionKo.trim() ||
+      form.descriptionEn.trim() ||
+      form.descriptionJa.trim() ||
+      form.descriptionZh.trim()
+    )
+      ? {
+          ko: form.descriptionKo.trim() || undefined,
+          en: form.descriptionEn.trim() || undefined,
+          ja: form.descriptionJa.trim() || undefined,
+          zh: form.descriptionZh.trim() || undefined,
+        }
+      : undefined,
     websiteUrl: normalizeWebsiteUrl(form.websiteUrl),
     countryCode: form.countryCode.trim().toUpperCase(),
     sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
@@ -99,8 +118,12 @@ function fromBrand(brand: Brand): BrandFormState {
     code: brand.code,
     nameKo: brand.name.ko ?? '',
     nameEn: brand.name.en ?? '',
+    nameJa: brand.name.ja ?? '',
+    nameZh: brand.name.zh ?? '',
     descriptionKo: brand.description?.ko ?? '',
     descriptionEn: brand.description?.en ?? '',
+    descriptionJa: brand.description?.ja ?? '',
+    descriptionZh: brand.description?.zh ?? '',
     websiteUrl: brand.websiteUrl ?? '',
     countryCode: brand.countryCode ?? '',
     sortOrder: String(brand.sortOrder ?? 0),
@@ -855,6 +878,22 @@ export function AdminBrandsPage() {
                       className="input"
                       value={form.nameEn}
                       onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('brands.nameJa', { defaultValue: 'Name (JA)' })}</span>
+                    <input
+                      className="input"
+                      value={form.nameJa}
+                      onChange={(e) => setForm((f) => ({ ...f, nameJa: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('brands.nameZh', { defaultValue: 'Name (ZH)' })}</span>
+                    <input
+                      className="input"
+                      value={form.nameZh}
+                      onChange={(e) => setForm((f) => ({ ...f, nameZh: e.target.value }))}
                     />
                   </label>
                 </div>

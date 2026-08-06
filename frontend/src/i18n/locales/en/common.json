@@ -170,7 +170,14 @@
     "submitFailed": "We couldn't complete that. Please try again in a moment.",
     "validationError": "Please check your input.",
     "serverError": "A server error occurred. Please try again later.",
-    "recommendValidation": "Check the details needed for a recommendation (height, weight, target muscle, etc.)."
+    "recommendValidation": "Check the details needed for a recommendation (height, weight, target muscle, etc.).",
+    "networkError": "Network error. Please check your connection.",
+    "unauthorized": "Please sign in to continue.",
+    "forbidden": "You don't have permission for that.",
+    "unknown": "Something went wrong.",
+    "emailExists": "This email is already registered.",
+    "invalidCredentials": "Please check your email or password and try again.",
+    "tokenExpired": "Your session expired. Please sign in again."
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -324,6 +331,7 @@
   },
   "settings": {
     "language": "Language",
+    "languageDesc": "Change the app language instantly. No refresh needed.",
     "voiceCoach": "Voice count",
     "voiceCoachDesc": "Spoken countdown and reps between sets. You can also adjust this on the workout log screen.",
     "voiceCoachEnable": "Enable voice count",

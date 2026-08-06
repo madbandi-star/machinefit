@@ -1,0 +1,53 @@
+{
+  "navAria": "기구관리",
+  "dashboard": "대시보드",
+  "equipment": "기구관리",
+  "home": "홈",
+  "links": {
+    "hub": "기구관리",
+    "inventory": "보유기구",
+    "inspections": "점검일지",
+    "pm": "예방정비",
+    "faults": "고장접수",
+    "repairs": "수리관리",
+    "parts": "부품관리",
+    "stats": "통계",
+    "settings": "점검설정"
+  },
+  "hub": {
+    "title": "기구관리",
+    "subtitle": "Preventive Maintenance · 보유기구 운영",
+    "inventory": "보유기구",
+    "inventoryDesc": "헬스장 자산·상태·Health Score",
+    "inspections": "점검일지",
+    "inspectionsDesc": "체크리스트 점검 · QR 30초 UX",
+    "pm": "예방정비(PM)",
+    "pmDesc": "주기·사용량 기반 스케줄",
+    "faults": "고장접수(CM)",
+    "faultsDesc": "티켓 · 심각도 · 진행상태",
+    "repairs": "수리관리",
+    "repairsDesc": "수리비 · 이력",
+    "parts": "부품관리",
+    "partsDesc": "교체주기 · 재고",
+    "stats": "통계",
+    "statsDesc": "점검률 · 고장 TOP · Health",
+    "settings": "점검설정",
+    "settingsDesc": "템플릿 · 주기 기본값",
+    "qr": "QR 랜딩"
+  },
+  "common": {
+    "loading": "불러오는 중…",
+    "empty": "항목이 없습니다.",
+    "save": "저장",
+    "cancel": "취소",
+    "create": "등록",
+    "edit": "수정",
+    "delete": "삭제",
+    "search": "검색",
+    "status": "상태",
+    "date": "날짜",
+    "notes": "메모",
+    "submitFailed": "저장에 실패했습니다.",
+    "saved": "저장되었습니다."
+  }
+}

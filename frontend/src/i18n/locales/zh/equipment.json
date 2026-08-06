@@ -1,0 +1,53 @@
+{
+  "navAria": "器械管理",
+  "dashboard": "仪表盘",
+  "equipment": "器械管理",
+  "home": "首页",
+  "links": {
+    "hub": "器械管理",
+    "inventory": "在库器械",
+    "inspections": "检查日志",
+    "pm": "预防性维护",
+    "faults": "故障报修",
+    "repairs": "维修管理",
+    "parts": "配件管理",
+    "stats": "统计",
+    "settings": "检查设置"
+  },
+  "hub": {
+    "title": "器械管理",
+    "subtitle": "预防性维护 · 在库器械运营",
+    "inventory": "在库器械",
+    "inventoryDesc": "资产、状态、Health Score",
+    "inspections": "检查日志",
+    "inspectionsDesc": "检查清单 · QR 快捷体验",
+    "pm": "预防性维护 (PM)",
+    "pmDesc": "周期 / 使用量计划",
+    "faults": "故障报修 (CM)",
+    "faultsDesc": "工单 · 严重度 · 状态",
+    "repairs": "维修管理",
+    "repairsDesc": "费用 · 历史",
+    "parts": "配件管理",
+    "partsDesc": "更换周期 · 库存",
+    "stats": "统计",
+    "statsDesc": "检查率 · 故障 TOP · Health",
+    "settings": "检查设置",
+    "settingsDesc": "模板 · 默认周期",
+    "qr": "QR 落地页"
+  },
+  "common": {
+    "loading": "加载中…",
+    "empty": "暂无内容。",
+    "save": "保存",
+    "cancel": "取消",
+    "create": "创建",
+    "edit": "编辑",
+    "delete": "删除",
+    "search": "搜索",
+    "status": "状态",
+    "date": "日期",
+    "notes": "备注",
+    "submitFailed": "保存失败，请重试。",
+    "saved": "已保存。"
+  }
+}

@@ -51,8 +51,24 @@ function getDefaultTimezone(): string {
   }
 }
 
+/** Browser language → app Locale; falls back to Korean. */
+function detectBrowserLocale(): Locale {
+  try {
+    const nav = (navigator.language || navigator.languages?.[0] || '')
+      .split('-')[0]
+      ?.toLowerCase();
+    if (nav === 'en' || nav === 'ja' || nav === 'zh' || nav === 'ko') {
+      return nav;
+    }
+  } catch {
+    /* ignore */
+  }
+  return DEFAULT_LOCALE;
+}
+
 export const SETTINGS_DEFAULTS = {
-  locale: DEFAULT_LOCALE,
+  /** First visit: browser language → ko. Persist overrides after user/settings change. */
+  locale: typeof navigator !== 'undefined' ? detectBrowserLocale() : DEFAULT_LOCALE,
   unitHeight: DEFAULT_UNIT_HEIGHT,
   unitWeight: DEFAULT_UNIT_WEIGHT,
   voiceCoachEnabled: true,

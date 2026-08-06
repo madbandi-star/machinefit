@@ -1,0 +1,115 @@
+{
+  "tagline": "找到最适合你的器械设置",
+  "appUpdate": {
+    "title": "🚧 MachineFit 正在更新",
+    "desc": "正在应用新版本。\n稍后将自动重新连接。",
+    "retryNow": "🔄 立即重试",
+    "goHome": "返回首页"
+  },
+  "serviceUnavailable": {
+    "networkTitle": "网络连接出现问题",
+    "serverTitle": "服务器暂时出错",
+    "unavailableTitle": "服务暂时不可用",
+    "desc": "请稍后再试。",
+    "refresh": "刷新"
+  },
+  "emptyState": {
+    "browseMachines": "浏览器械"
+  },
+  "nav": {
+    "main": "主菜单",
+    "home": "首页",
+    "search": "搜索",
+    "machines": "器械",
+    "brands": "品牌",
+    "gyms": "健身房",
+    "community": "社区",
+    "favorites": "收藏",
+    "history": "最近记录",
+    "records": "记录",
+    "growthAnalysis": "成长分析",
+    "myPage": "我的",
+    "settings": "设置",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出登录",
+    "notifications": "通知"
+  },
+  "actions": {
+    "search": "搜索",
+    "save": "保存",
+    "cancel": "取消",
+    "submit": "提交",
+    "back": "返回",
+    "viewAll": "查看全部",
+    "retry": "重试",
+    "confirm": "确认",
+    "close": "关闭"
+  },
+  "collapse": "收起",
+  "expand": "展开",
+  "expandCardDetails": "展开详情",
+  "collapseCardDetails": "收起详情",
+  "picker": {
+    "searchPlaceholder": "搜索...",
+    "noResults": "没有结果",
+    "selectOption": "请选择",
+    "all": "全部"
+  },
+  "numericStepper": {
+    "decrease": "减少",
+    "increase": "增加",
+    "manualInput": "手动输入"
+  },
+  "dismissToday": "今天不再显示",
+  "share": {
+    "title": "MachineFit",
+    "text": "健身房器械设置应用 MachineFit · machine-fit.com",
+    "action": "分享应用",
+    "copied": "链接已复制，发给朋友吧。"
+  },
+  "errors": {
+    "submitFailed": "保存失败，请重试。",
+    "loadFailed": "加载失败。",
+    "networkError": "网络错误，请检查连接。",
+    "validationError": "请检查输入内容。",
+    "unauthorized": "请先登录。",
+    "forbidden": "没有权限。",
+    "notFound": "未找到。",
+    "serverError": "服务器错误。",
+    "unknown": "发生错误。",
+    "emailExists": "该邮箱已被注册。",
+    "invalidCredentials": "邮箱或密码不正确。",
+    "tokenExpired": "登录已过期，请重新登录。"
+  },
+  "auth": {
+    "loginTitle": "登录",
+    "registerTitle": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "displayName": "昵称",
+    "loginFailed": "登录失败。",
+    "registrationFailed": "注册失败。",
+    "networkError": "网络错误，请检查连接。",
+    "emailExists": "该邮箱已被注册。",
+    "validationError": "请检查输入内容。",
+    "serverError": "服务器错误。"
+  },
+  "myPage": {
+    "subscription": {
+      "title": "Premium",
+      "memberGrade": "会员等级",
+      "gradeFree": "免费会员",
+      "gradePremium": "Premium",
+      "priceLine": "每月 ₩3,000 · 随时可取消",
+      "startPremium": "开通 Premium",
+      "startTrial": "7天免费试用",
+      "activeBadge": "Premium 使用中",
+      "cancel": "取消订阅",
+      "history": "付款记录",
+      "toastSuccess": "Premium 已激活。",
+      "toastPayCancel": "支付已取消。",
+      "toastCancelled": "当前计费周期结束前仍可使用 Premium。"
+    }
+  }
+}

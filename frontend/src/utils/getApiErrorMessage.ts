@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { TFunction } from 'i18next';
+import { resolveApiErrorMessage, translateApiErrorCode } from '@/utils/apiErrorCatalog';
 
 type FlattenDetails = {
   fieldErrors?: Record<string, string[]>;
@@ -16,6 +17,10 @@ interface ApiErrorPayload {
   };
 }
 
+/**
+ * @deprecated Prefer resolveApiErrorMessage(error, t) for translated copy.
+ * Kept for call sites that map returned tokens via t(`auth.${token}`).
+ */
 export function getApiErrorMessage(error: unknown, fallback: string): string {
   if (!axios.isAxiosError(error)) {
     return fallback;
@@ -79,7 +84,7 @@ export function resolveGymManageErrorMessage(error: unknown, t: TFunction): stri
   }
 
   if (!error.response) {
-    return t('common:errors.submitFailed');
+    return t('common:errors.networkError');
   }
 
   const payload = error.response.data as ApiErrorPayload | undefined;
@@ -117,7 +122,10 @@ export function resolveGymManageErrorMessage(error: unknown, t: TFunction): stri
     return getApiValidationFieldSummary(error) ?? t('common:errors.validationError');
   }
 
-  return payload?.error?.message ?? t('common:errors.submitFailed');
+  return (
+    translateApiErrorCode(code, t) ??
+    resolveApiErrorMessage(error, t, 'common:errors.submitFailed')
+  );
 }
 
 export function resolveRegisterErrorMessage(error: unknown, t: TFunction): string {
@@ -144,5 +152,7 @@ export function resolveRegisterErrorMessage(error: unknown, t: TFunction): strin
     return t('auth.serverError');
   }
 
-  return payload?.error?.message ?? t('auth.registrationFailed');
+  return translateApiErrorCode(code, t) ?? t('auth.registrationFailed');
 }
+
+export { resolveApiErrorMessage };
