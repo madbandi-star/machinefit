@@ -102,7 +102,9 @@
     "shuffle": "Shuffle",
     "shuffleMode": "Shuffle",
     "moveUp": "Move up",
-    "moveDown": "Move down"
+    "moveDown": "Move down",
+    "compactMode": "Compact",
+    "expandMode": "Expand"
   },
   "motivationMusic": {
     "title": "Motivation music",
