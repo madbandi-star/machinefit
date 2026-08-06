@@ -1,7 +1,7 @@
 ﻿{
   "title": "Rest persist + compact modes + pin pickers + media mini",
   "summary": "Global rest timer survives navigation; full→compact for rest/count; pin pickers; music/video compact toggles.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "123e39ab" },
   "changedFiles": [
     "frontend/src/store/restTimer.store.ts",
     "frontend/src/components/recommendation/GlobalRestTimerHost/GlobalRestTimerHost.tsx",
@@ -35,3 +35,4 @@
   "asIs": "Rest local to page; no compact toggles; no picker pin; media full-only",
   "toBe": "Persistent rest + compact UI modes + pinned pickers + media mini"
 }
+

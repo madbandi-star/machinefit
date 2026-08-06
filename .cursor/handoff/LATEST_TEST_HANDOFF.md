@@ -8,7 +8,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `123e39ab`
 
 ## Changed files (key)
 - `frontend/src/store/restTimer.store.ts`
@@ -40,3 +40,4 @@ rg -n "useRestTimerStore|GlobalRestTimerHost|mf-music-mini|pinPickers" frontend/
 | No shrink on full rest/count | Minimize to compact |
 | No pin on pickers | Pin checkbox |
 | Music/video full only | Compact mini modes |
+
