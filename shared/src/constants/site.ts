@@ -5,10 +5,10 @@ export const SITE_DOMAIN = 'machine-fit.com';
 export const SITE_URL = `https://${SITE_DOMAIN}`;
 
 /**
- * Published app base path (Vite `base: /` on custom domain).
- * Empty string — app is served at the domain root.
+ * Published app base path while the frontend still uses Vite `base: /machinefit/`.
+ * Invite / share deep links append under this path.
  */
-export const SITE_APP_BASE_PATH = '';
+export const SITE_APP_BASE_PATH = '/machinefit';
 
 /** Full app URL without trailing slash — default for invites & marketing shares. */
-export const SITE_APP_URL = SITE_URL;
+export const SITE_APP_URL = `${SITE_URL}${SITE_APP_BASE_PATH}`;

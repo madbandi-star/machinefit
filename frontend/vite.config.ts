@@ -30,7 +30,7 @@ const appVersion = pkg.version || '0.1.0';
 const buildId = process.env.GITHUB_SHA?.slice(0, 7) || new Date().toISOString();
 
 export default defineConfig({
-  base: '/',
+  base: '/machinefit/',
   define: {
     __MF_DEMO_PASSWORD__: JSON.stringify(demoPasswordForClient),
     __MF_APP_VERSION__: JSON.stringify(appVersion),
@@ -68,7 +68,7 @@ export default defineConfig({
     spaGitHubPagesFallback(),
     VitePWA({
       // Bump filename when changing SW lifecycle so clients fetch a fresh worker.
-      filename: 'sw-v23.js',
+      filename: 'sw-v22.js',
       registerType: 'autoUpdate',
       // Client registers via virtual:pwa-register (chunkLoadRecovery.initPwaAutoUpdate).
       injectRegister: null,
@@ -77,7 +77,7 @@ export default defineConfig({
         clientsClaim: true,
         skipWaiting: true,
         // Hashed assets are content-addressed; navigate fallback keeps SPA deep links working.
-        navigateFallback: '/index.html',
+        navigateFallback: '/machinefit/index.html',
         navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
@@ -87,9 +87,9 @@ export default defineConfig({
         theme_color: '#111827',
         background_color: '#111827',
         display: 'standalone',
-        start_url: '/',
-        scope: '/',
-        id: '/',
+        start_url: '/machinefit/',
+        scope: '/machinefit/',
+        id: '/machinefit/',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

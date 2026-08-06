@@ -16,7 +16,7 @@ export const CATALOG_BRANDS: Brand[] = [
       "ko": "사이벡스는 인체공학적 설계와 명확한 조절 포인트로 알려진 머신 브랜드입니다. 관절 정렬을 세심하게 맞추기 쉬워, 목표 근육을 느끼면서도 불필요한 긴장을 줄이는 데 도움이 됩니다.",
       "en": "Cybex is recognized for ergonomic machine design and clear adjustment points. Its equipment helps lifters align joints carefully, feel the target muscles, and reduce unnecessary strain during guided strength work."
     },
-    "logoUrl": "/assets/brands/cybex.svg",
+    "logoUrl": "/machinefit/assets/brands/cybex.svg",
     "websiteUrl": "https://www.cybexintl.com",
     "isActive": true
   },
@@ -33,7 +33,7 @@ export const CATALOG_BRANDS: Brand[] = [
       "ko": "해머 스트렝스는 플레이트 로디드와 아이소 레터럴 머신으로 잘 알려진 스트렝스 장비 브랜드입니다. 자연스러운 힘의 곡선과 좌우 독립 움직임을 강조해, 초보자부터 상급자까지 안정적으로 강한 수축을 연습할 수 있습니다.",
       "en": "Hammer Strength is known for plate-loaded and iso-lateral strength machines that emphasize natural strength curves. The line supports stable, powerful training for beginners through advanced lifters while making left-right balance easier to notice."
     },
-    "logoUrl": "/assets/brands/hammer_strength.svg",
+    "logoUrl": "/machinefit/assets/brands/hammer_strength.svg",
     "websiteUrl": "https://www.hammerstrength.com",
     "isActive": true
   },
@@ -50,7 +50,7 @@ export const CATALOG_BRANDS: Brand[] = [
       "ko": "라이프 피트니스는 상업용 피트니스 센터에서 널리 쓰이는 글로벌 운동 장비 브랜드입니다. 부드러운 셀렉터라이즈드 저항과 직관적인 조절부가 특징이라, 처음 사용하는 사람도 자세를 차분히 익히기 좋습니다.",
       "en": "Life Fitness is a global fitness equipment brand widely used in commercial gyms. Its selectorized machines are known for smooth resistance, intuitive adjustments, and approachable setup for steady technique practice."
     },
-    "logoUrl": "/assets/brands/life_fitness.svg",
+    "logoUrl": "/machinefit/assets/brands/life_fitness.svg",
     "websiteUrl": "https://www.lifefitness.com",
     "isActive": true
   },
@@ -67,7 +67,7 @@ export const CATALOG_BRANDS: Brand[] = [
       "ko": "테크노짐은 프리미엄 피트니스 시설에서 자주 만나는 이탈리아 기반 운동 장비 브랜드입니다. 세련된 디자인과 안정적인 가이드 동작이 특징이며, 일정한 리듬으로 근육 자극을 관리하기 좋습니다.",
       "en": "Technogym is an Italian fitness equipment brand often found in premium training facilities. Its machines combine refined design with stable guided motion, making it easy to manage rhythm and muscle tension consistently."
     },
-    "logoUrl": "/assets/brands/technogym.svg",
+    "logoUrl": "/machinefit/assets/brands/technogym.svg",
     "websiteUrl": "https://www.technogym.com",
     "isActive": true
   }
@@ -96,7 +96,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_chest_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_chest_press.svg",
     "howTo": {
       "ko": [
         "체스트 프레스에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -225,7 +225,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_shoulder_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_shoulder_press.svg",
     "howTo": {
       "ko": [
         "숄더 프레스에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -354,7 +354,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_lat_pulldown.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_lat_pulldown.svg",
     "howTo": {
       "ko": [
         "랫 풀다운에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -483,7 +483,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_seated_row.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_seated_row.svg",
     "howTo": {
       "ko": [
         "시티드 로우에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -612,7 +612,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_leg_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_leg_press.svg",
     "howTo": {
       "ko": [
         "레그 프레스에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -741,7 +741,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_leg_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_leg_extension.svg",
     "howTo": {
       "ko": [
         "레그 익스텐션에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -870,7 +870,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_leg_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_leg_curl.svg",
     "howTo": {
       "ko": [
         "레그 컬에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -999,7 +999,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_pec_fly.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_pec_fly.svg",
     "howTo": {
       "ko": [
         "펙 플라이에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1128,7 +1128,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_abdominal.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_abdominal.svg",
     "howTo": {
       "ko": [
         "어브도미널에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1257,7 +1257,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_back_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_back_extension.svg",
     "howTo": {
       "ko": [
         "백 익스텐션에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1386,7 +1386,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_biceps_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_biceps_curl.svg",
     "howTo": {
       "ko": [
         "바이셉스 컬에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1515,7 +1515,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/cybex/cy_triceps_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/cybex/cy_triceps_extension.svg",
     "howTo": {
       "ko": [
         "트라이셉스 익스텐션에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1644,7 +1644,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_iso_lateral_high_row.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_high_row.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 하이 로우에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1773,7 +1773,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_selectorized_chest_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_selectorized_chest_press.svg",
     "howTo": {
       "ko": [
         "셀렉터라이즈드 체스트 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -1902,7 +1902,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_leg_extension.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_extension.png",
     "howTo": {
       "ko": [
         "레그 익스텐션에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2031,7 +2031,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_leg_curl.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_curl.png",
     "howTo": {
       "ko": [
         "레그 컬에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2160,7 +2160,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_shoulder_press.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_shoulder_press.png",
     "howTo": {
       "ko": [
         "숄더 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2289,7 +2289,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_iso_lateral_row.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_row.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 로우에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2418,7 +2418,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_iso_lateral_chest_press.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_chest_press.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 체스트 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2547,7 +2547,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_iso_lateral_incline_chest_press.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_iso_lateral_incline_chest_press.png",
     "howTo": {
       "ko": [
         "아이소 레터럴 인클라인 체스트 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2676,7 +2676,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_lat_pulldown.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_lat_pulldown.png",
     "howTo": {
       "ko": [
         "랫 풀다운에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2805,7 +2805,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_leg_press.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_leg_press.png",
     "howTo": {
       "ko": [
         "레그 프레스에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -2934,7 +2934,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_v_squat.png",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_v_squat.png",
     "howTo": {
       "ko": [
         "브이 스쿼트에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3063,7 +3063,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_pec_fly.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_pec_fly.svg",
     "howTo": {
       "ko": [
         "펙 플라이에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3192,7 +3192,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_biceps_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_biceps_curl.svg",
     "howTo": {
       "ko": [
         "바이셉스 컬에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3321,7 +3321,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "variable",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/hammer_strength/hs_triceps_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/hammer_strength/hs_triceps_extension.svg",
     "howTo": {
       "ko": [
         "트라이셉스 익스텐션에 앉기 전에, 플레이트가 양쪽에 같은 무게로 걸렸는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3450,7 +3450,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_chest_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_chest_press.svg",
     "howTo": {
       "ko": [
         "체스트 프레스에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3579,7 +3579,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_shoulder_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_shoulder_press.svg",
     "howTo": {
       "ko": [
         "숄더 프레스에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3708,7 +3708,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_lat_pulldown.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_lat_pulldown.svg",
     "howTo": {
       "ko": [
         "랫 풀다운에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3837,7 +3837,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_seated_row.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_seated_row.svg",
     "howTo": {
       "ko": [
         "시티드 로우에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -3966,7 +3966,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_leg_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_leg_press.svg",
     "howTo": {
       "ko": [
         "레그 프레스에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4095,7 +4095,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_leg_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_leg_extension.svg",
     "howTo": {
       "ko": [
         "레그 익스텐션에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4224,7 +4224,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_leg_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_leg_curl.svg",
     "howTo": {
       "ko": [
         "레그 컬에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4353,7 +4353,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_pec_fly.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_pec_fly.svg",
     "howTo": {
       "ko": [
         "펙 플라이에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4482,7 +4482,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_abdominal.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_abdominal.svg",
     "howTo": {
       "ko": [
         "어브도미널에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4611,7 +4611,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_back_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_back_extension.svg",
     "howTo": {
       "ko": [
         "백 익스텐션에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4740,7 +4740,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_biceps_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_biceps_curl.svg",
     "howTo": {
       "ko": [
         "바이셉스 컬에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4869,7 +4869,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/life_fitness/lf_triceps_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/life_fitness/lf_triceps_press.svg",
     "howTo": {
       "ko": [
         "트라이셉스 프레스에 앉기 전에, 핀 무게가 끝까지 꽂혔는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -4998,7 +4998,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_chest_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_chest_press.svg",
     "howTo": {
       "ko": [
         "체스트 프레스에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5127,7 +5127,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_shoulder_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_shoulder_press.svg",
     "howTo": {
       "ko": [
         "숄더 프레스에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5256,7 +5256,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_lat_machine.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_lat_machine.svg",
     "howTo": {
       "ko": [
         "랫 머신에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5385,7 +5385,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_low_row.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_low_row.svg",
     "howTo": {
       "ko": [
         "로우 로우에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5514,7 +5514,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_leg_press.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_leg_press.svg",
     "howTo": {
       "ko": [
         "레그 프레스에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5643,7 +5643,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_leg_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_leg_extension.svg",
     "howTo": {
       "ko": [
         "레그 익스텐션에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5772,7 +5772,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": false,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_leg_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_leg_curl.svg",
     "howTo": {
       "ko": [
         "레그 컬에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -5901,7 +5901,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_pec_fly.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_pec_fly.svg",
     "howTo": {
       "ko": [
         "펙 플라이에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -6030,7 +6030,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_abdominal.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_abdominal.svg",
     "howTo": {
       "ko": [
         "어브도미널에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -6159,7 +6159,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_lower_back.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_lower_back.svg",
     "howTo": {
       "ko": [
         "로워 백에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -6288,7 +6288,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_biceps_curl.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_biceps_curl.svg",
     "howTo": {
       "ko": [
         "바이셉스 컬에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
@@ -6417,7 +6417,7 @@ export const CATALOG_MACHINES: Machine[] = [
     "hasHandle": true,
     "romType": "fixed",
     "isActive": true,
-    "primaryImageUrl": "/assets/machines/technogym/tg_triceps_extension.svg",
+    "primaryImageUrl": "/machinefit/assets/machines/technogym/tg_triceps_extension.svg",
     "howTo": {
       "ko": [
         "트라이셉스 익스텐션에 앉기 전에, 핀 무게와 시작 위치가 정확히 맞았는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",

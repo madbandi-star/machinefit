@@ -61,7 +61,7 @@ https://<your-api>.onrender.com/api/v1/webhook/polar
 | `POLAR_SERVER` | no | `sandbox` \| `production` (default) |
 | `POLAR_SUCCESS_URL` | no | Checkout success (default my-page) |
 | `POLAR_RETURN_URL` | no | Checkout cancel/back |
-| `FRONTEND_BASE_URL` | yes | e.g. `https://machine-fit.com` |
+| `FRONTEND_BASE_URL` | yes | e.g. `https://machine-fit.com/machinefit` |
 | `CORS_ORIGIN` | yes | include frontend origin |
 
 `render.yaml` 에 키 자리가 정의되어 있습니다. 값은 Dashboard에서 sync=false 로 입력.

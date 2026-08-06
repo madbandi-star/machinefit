@@ -1,28 +1,29 @@
 ﻿{
-  "title": "Fix black screen + unblock Pages deploy",
-  "summary": "Live site 404s /machinefit/assets; root base is ready but deploy-pages was timing out/cancelled. Workflow retries deploy and stops canceling in-flight deploys.",
+  "title": "Roll back root-domain cutover to /machinefit",
+  "summary": "Restored Vite/router/site base to /machinefit as of Cloudflare env advice; kept UTF-8, i18n, and deploy-retry fixes.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    ".github/workflows/frontend-deploy.yml",
-    "frontend/index.html",
-    "frontend/vite.config.ts"
+    "frontend/vite.config.ts",
+    "frontend/src/routes/index.tsx",
+    "shared/src/constants/site.ts",
+    "database/migrations/105_rewrite_catalog_asset_base_path.sql",
+    "docs/DEPLOY.md",
+    "render.yaml"
   ],
   "testFocus": [
-    "frontend-deploy success",
-    "machine-fit.com HTML uses /assets/*.js",
-    "app not black-only"
+    "https://madbandi-star.github.io/machinefit/ loads",
+    "base path /machinefit restored"
   ],
   "fastChecks": [
-    "curl -sL https://machine-fit.com/ | rg -o 'src=\"[^\"]+\\.js\"'",
-    "rg -n \"cancel-in-progress: false|wretry\" .github/workflows/frontend-deploy.yml"
+    "rg -n \"base: '/machinefit/'|SITE_APP_BASE_PATH = '/machinefit'\" frontend/vite.config.ts shared/src/constants/site.ts"
   ],
   "productionChecks": [
-    "Wait for Deploy Frontend success then hard-refresh https://machine-fit.com/"
+    "Pages deploy success; open github.io/machinefit/"
   ],
   "deploy": {
     "target": "GitHub Pages",
-    "backendRedeployRequired": false
+    "backendRedeployRequired": true
   },
-  "asIs": "Black screen; Pages deploy cancelled/timeout",
-  "toBe": "Pages success; /assets scripts load"
+  "asIs": "Broken root custom-domain cutover",
+  "toBe": "App served under /machinefit again"
 }

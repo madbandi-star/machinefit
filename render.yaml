@@ -51,7 +51,7 @@ services:
       - key: CORS_ORIGIN
         value: https://machine-fit.com,https://madbandi-star.github.io
       - key: FRONTEND_BASE_URL
-        value: https://machine-fit.com
+        value: https://machine-fit.com/machinefit
       - key: PAYMENT_PROVIDER
         value: polar
       - key: POLAR_SERVER

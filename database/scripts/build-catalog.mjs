@@ -12,7 +12,7 @@ const root = path.resolve(__dirname, '../..');
 const catalogDir = path.join(root, 'database/catalog');
 const seedsDir = path.join(root, 'database/seeds');
 const publicAssets = path.join(root, 'frontend/public/assets');
-const ASSET_BASE = '/assets';
+const ASSET_BASE = '/machinefit/assets';
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));

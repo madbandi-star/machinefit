@@ -1,27 +1,23 @@
-﻿# Test handoff: Black screen on machine-fit.com
+﻿# Test handoff: Roll back root-domain cutover
 
 ## Summary
-Custom domain HTML still uses `/machinefit/assets/*.js` while files are at `/assets/` → JS 404 → black screen. Root `base: '/'` is on `main`, but Pages **deploy** job kept timing out / getting cancelled. Workflow updated: no cancel-in-progress + retry deploy-pages.
+Reverted `machine-fit.com` root (`base: '/'`) cutover back to `/machinefit/` — state around Cloudflare env-recommendation ask (pre-`da3f5c6e`). Kept UTF-8 WorkoutLogPanel fix, ja/zh i18n keys, and Pages deploy retry workflow.
 
 ## Git
 - Branch: `main`
 - Commit: (after push)
 
 ## Test focus
-1. Actions: Deploy Frontend = **success** (not cancelled)
-2. Live HTML: `src="/assets/….js"` (not `/machinefit/`)
-3. That script URL returns real JS (200), app paints
+1. `https://madbandi-star.github.io/machinefit/` loads
+2. Vite `base: '/machinefit/'`, `SITE_APP_BASE_PATH = '/machinefit'`
+3. Custom domain `machine-fit.com` may still look broken until Cloudflare is set per recommendation (path + Pages)
 
 ## Fast checks
 ```bash
-curl -sL https://machine-fit.com/ | rg -o 'src="[^"]+\.js"'
-rg -n "base: '/'" frontend/vite.config.ts
+rg -n "base: '/machinefit/'|SITE_APP_BASE_PATH = '/machinefit'" frontend/vite.config.ts shared/src/constants/site.ts
 ```
-
-## Interim (if Pages still stuck)
-Cloudflare redirect: `/machinefit/*` → `https://machine-fit.com/$1` (still prefer successful root deploy)
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| Black screen; `/machinefit/assets` 404 | App loads; `/assets/*.js` 200 |
+| Root-domain cutover attempts / black screen | App back on `/machinefit/` (GitHub Pages project URL) |
