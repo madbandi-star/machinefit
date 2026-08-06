@@ -5,7 +5,7 @@ Vite/PWA/router base moved from `/machinefit/` to `/`. Catalog asset URLs and se
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: da3f5c6e
 
 ## Changed (key)
 - `frontend/vite.config.ts`, `frontend/src/routes/index.tsx`
@@ -36,3 +36,4 @@ rg -n "/machinefit/assets" backend/server/data/catalog.generated.ts || true
 | as-is | to-be |
 |-------|--------|
 | `https://machine-fit.com/machinefit/` | `https://machine-fit.com/` |
+

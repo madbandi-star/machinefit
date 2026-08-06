@@ -1,7 +1,7 @@
 ﻿{
   "title": "Serve MachineFit at domain root",
   "summary": "App base path moved from /machinefit/ to / on machine-fit.com; catalog assets and DB migration updated accordingly.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "da3f5c6e" },
   "changedFiles": [
     "frontend/vite.config.ts",
     "frontend/src/routes/index.tsx",
@@ -30,3 +30,4 @@
   "asIs": "App under /machinefit/",
   "toBe": "App at https://machine-fit.com/"
 }
+
