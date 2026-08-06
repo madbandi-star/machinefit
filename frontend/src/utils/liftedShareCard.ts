@@ -1,5 +1,6 @@
 import type { LiftedComparisonResult } from '@machinefit/shared';
 import { formatVolumeKg } from '@machinefit/shared';
+import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
 import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export type ShareCardAspectRatio = '4:5' | '1:1' | '9:16';
@@ -47,7 +48,7 @@ const COMP_ICON_LABEL_GAP = 18;
 const COMP_SECTION_TOP_PAD = 36;
 const COMP_TIP_BOTTOM_PAD = 22;
 
-const FOOTER_H = 56;
+const FOOTER_H = 64;
 const GAP_BEFORE_FOOTER = 20;
 
 const FONT =
@@ -230,22 +231,6 @@ function drawLaurelWreath(
     }
     ctx.restore();
   }
-}
-
-function drawMachineFitMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.strokeStyle = GREEN;
-  ctx.lineWidth = size * 0.11;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(0, size);
-  ctx.lineTo(size * 0.35, size * 0.15);
-  ctx.lineTo(size * 0.55, size * 0.55);
-  ctx.lineTo(size * 0.85, 0);
-  ctx.stroke();
-  ctx.restore();
 }
 
 interface LayoutMetrics {
@@ -478,24 +463,9 @@ function drawFooter(
     ctx.stroke();
   }
 
-  const markSize = 28;
-  const logoRowY = midY - 4;
-  drawMachineFitMark(ctx, left, logoRowY - markSize + 4, markSize);
-
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = WHITE;
-  const brandX = left + markSize + 10;
-  ctx.fillText('Machine', brandX, logoRowY);
-  ctx.font = `800 22px ${FONT}`;
-  ctx.fillStyle = GREEN;
-  const machineW = ctx.measureText('Machine').width;
-  ctx.fillText('Fit', brandX + machineW, logoRowY);
-
-  ctx.font = `400 20px ${FONT}`;
-  ctx.fillStyle = GRAY;
-  ctx.fillText(labels.tagline, left, logoRowY + 28);
+  const logoRowY = midY - 8;
+  drawShareBrandLockup(ctx, left, logoRowY, FONT);
+  void labels.tagline;
 
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';

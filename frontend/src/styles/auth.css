@@ -717,8 +717,23 @@
   color: var(--auth-accent);
 }
 
+.auth-landing__domain {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--auth-accent) 88%, #fff);
+  text-decoration: none;
+}
+
+.auth-landing__domain:hover {
+  color: var(--auth-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 .auth-landing__slogan {
-  margin: 0;
+  margin: 0.35rem 0 0;
   font-size: 0.8125rem;
   color: color-mix(in srgb, #fff 72%, transparent);
   letter-spacing: -0.01em;

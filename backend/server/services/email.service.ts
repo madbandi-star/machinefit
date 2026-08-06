@@ -22,7 +22,7 @@ function getFormSubmitOrigin(): string {
   const corsOrigin = process.env.CORS_ORIGIN?.split(',')[0]?.trim();
   if (corsOrigin) return corsOrigin;
 
-  return 'https://madbandi-star.github.io';
+  return 'https://machine-fit.com';
 }
 
 async function sendViaSmtp(input: SendEmailInput): Promise<boolean> {
