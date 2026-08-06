@@ -37,5 +37,6 @@ assert.ok(
   maleCd5
 );
 assert.ok(voiceCoachClipUrl('start', 'male').includes('/voice-coach/male/'));
+assert.ok(MAX_VOICE_COACH_CLIP_COUNTDOWN >= 10);
 
 console.log('voiceCoachClips.test.ts: ok');
