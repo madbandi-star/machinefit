@@ -1,33 +1,30 @@
 ﻿{
-  "title": "Serve MachineFit at domain root",
-  "summary": "App base path moved from /machinefit/ to / on machine-fit.com; catalog assets and DB migration updated accordingly.",
-  "git": { "branch": "main", "commit": "da3f5c6e" },
+  "title": "Fix black screen: root asset URLs on Pages",
+  "summary": "Live HTML still pointed at /machinefit/assets while files are at /assets; re-deploy root base build so scripts load.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/index.html",
     "frontend/vite.config.ts",
-    "frontend/src/routes/index.tsx",
-    "shared/src/constants/site.ts",
-    "database/migrations/105_rewrite_catalog_asset_base_path.sql",
-    "database/scripts/build-catalog.mjs",
-    "backend/server/data/catalog.generated.ts",
-    "docs/DEPLOY.md",
-    "render.yaml"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    ".cursor/handoff/LATEST_TEST_HANDOFF.md",
+    ".cursor/handoff/latest.json"
   ],
   "testFocus": [
-    "https://machine-fit.com/ loads",
-    "/assets/* image URLs work",
-    "OAuth redirects at root paths"
+    "machine-fit.com index.html uses /assets/*.js",
+    "script URL HTTP 200",
+    "app renders past black root"
   ],
   "fastChecks": [
-    "rg -n \"base: '/'|SITE_APP_BASE_PATH = ''\" frontend/vite.config.ts shared/src/constants/site.ts"
+    "curl -sL https://machine-fit.com/ | rg -o 'src=\"[^\"]+\\.js\"'",
+    "rg -n \"base: '/'\" frontend/vite.config.ts"
   ],
   "productionChecks": [
-    "Pages deploy + db:migrate 105 + Render FRONTEND_BASE_URL"
+    "frontend-deploy.yml success then hard-refresh machine-fit.com"
   ],
   "deploy": {
-    "target": "GitHub Pages + Render env + Supabase migrate",
-    "backendRedeployRequired": true
+    "target": "GitHub Pages",
+    "backendRedeployRequired": false
   },
-  "asIs": "App under /machinefit/",
-  "toBe": "App at https://machine-fit.com/"
+  "asIs": "Black screen; /machinefit/assets 404",
+  "toBe": "App loads from /assets at domain root"
 }
-

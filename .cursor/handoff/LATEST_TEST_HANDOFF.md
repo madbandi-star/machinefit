@@ -1,39 +1,43 @@
-﻿# Test handoff: Serve app at https://machine-fit.com/
+﻿# Test handoff: Black screen on machine-fit.com (asset base)
 
 ## Summary
-Vite/PWA/router base moved from `/machinefit/` to `/`. Catalog asset URLs and seeds use `/assets/...`. Migration `105` rewrites live DB image paths. Canonical app URL is domain root.
+Custom domain served old HTML with `/machinefit/assets/*.js` while files live at `/assets/` → JS 404 → black `#root`. Root `base: '/'` is on `main`; re-trigger Pages deploy so live `index.html` references `/assets/...`.
 
 ## Git
 - Branch: `main`
-- Commit: da3f5c6e
+- Commit: (pending push — check `git rev-parse HEAD`)
 
-## Changed (key)
-- `frontend/vite.config.ts`, `frontend/src/routes/index.tsx`
-- `shared/src/constants/site.ts`
-- `database/scripts/build-catalog.mjs`, `catalog.generated.ts`, seeds
-- `database/migrations/105_rewrite_catalog_asset_base_path.sql`
-- `docs/DEPLOY.md`, `render.yaml`, Polar defaults
+## Changed (this fix wave)
+- `frontend/vite.config.ts` — `base: '/'` (already)
+- `frontend/index.html` — SEO root URLs + deploy marker
+- `WorkoutLogPanel.tsx` UTF-8 repair (unblocks CI build)
+- i18n ja/zh keys for compact/rest/voice
 
 ## Test focus
-1. After Pages deploy: `https://machine-fit.com/` loads (not `/machinefit/`)
-2. Assets: `/assets/brands/...` 200
-3. Deep link + PWA start URL
-4. After `105` migrate: machine images not 404
-
-## Ops required (user)
-1. Render: `FRONTEND_BASE_URL=https://machine-fit.com`
-2. `npm run db:migrate` (105) on production DB
-3. Kakao/Google redirect URIs for `https://machine-fit.com/` and `/settings/linked-logins`
-4. Cloudflare: cache `/assets/*`; optional redirect `/machinefit*` → strip prefix
+1. `https://machine-fit.com/` HTML `script src` starts with `/assets/` (not `/machinefit/`)
+2. That JS URL returns 200 (not HTML 404 page)
+3. App paints (not black-only `#root`)
 
 ## Fast checks
 ```bash
-rg -n "base: '/'|SITE_APP_BASE_PATH|ASSET_BASE" frontend/vite.config.ts shared/src/constants/site.ts database/scripts/build-catalog.mjs
-rg -n "/machinefit/assets" backend/server/data/catalog.generated.ts || true
+curl -sL https://machine-fit.com/ | rg -o 'src="[^"]+\.js"'
+# expect: src="/assets/index-….js"
+curl -sI https://machine-fit.com/assets/index-CNNy_i2F.js | head -1
+# after deploy, use the hash from HTML
+npm run test:smoke:changed
 ```
+
+## Production checks
+- Wait for Deploy Frontend workflow **success**
+- Hard refresh / purge Cloudflare cache if HTML still shows `/machinefit/`
+
+## Ops (still user)
+1. Render `FRONTEND_BASE_URL=https://machine-fit.com`
+2. `npm run db:migrate` (105)
+3. OAuth redirect URIs at domain root
+4. Optional Cloudflare redirect `/machinefit*` → `/`
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| `https://machine-fit.com/machinefit/` | `https://machine-fit.com/` |
-
+| Black screen; `/machinefit/assets/*.js` 404 | App loads; `/assets/*.js` 200 |
