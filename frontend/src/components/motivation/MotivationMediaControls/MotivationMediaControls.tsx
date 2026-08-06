@@ -1,13 +1,36 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Film, ListMusic, Music2, Pause, Play, SkipForward, Square, X } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Film,
+  ListMusic,
+  Music2,
+  Pause,
+  Play,
+  Shuffle,
+  SkipBack,
+  SkipForward,
+  Square,
+  X,
+} from 'lucide-react';
 import type { MotivationMediaItem } from '@machinefit/shared';
 import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { formatDuration, isBenignAudioPlayError, playHtmlAudio, sameMediaUrl } from '@/utils/motivationAudio';
+import {
+  loadPlaylistOrder,
+  loadShuffleEnabled,
+  mergePlaylistOrder,
+  movePlaylistIndex,
+  pickNextIndex,
+  pickPrevIndex,
+  savePlaylistOrder,
+  saveShuffleEnabled,
+} from '@/utils/motivationPlaylistOrder';
 import './MotivationMediaControls.css';
 
 export function MotivationMediaControls({
@@ -44,8 +67,10 @@ export function MotivationMediaControls({
 
   const catalogMusic = data?.music ?? [];
   const videos = data?.video ?? [];
+  const userId = useAuthStore((s) => s.user?.id ?? '');
+  const playlistScope = isAuthed && userId ? userId : 'catalog';
 
-  const music = useMemo(() => {
+  const sourceMusic = useMemo(() => {
     // While the user library is still loading, keep catalog (or empty) so we don't
     // flash "empty" / play catalog then swap to uploads mid-play.
     if (isAuthed && mediaRequested && myTracks === undefined) {
@@ -76,6 +101,44 @@ export function MotivationMediaControls({
     );
   }, [isAuthed, mediaRequested, myTracks, catalogMusic]);
 
+  const [playlistOrder, setPlaylistOrder] = useState<string[]>(() =>
+    loadPlaylistOrder(playlistScope)
+  );
+  const [shuffle, setShuffle] = useState(() => loadShuffleEnabled());
+
+  useEffect(() => {
+    setPlaylistOrder(loadPlaylistOrder(playlistScope));
+  }, [playlistScope]);
+
+  useEffect(() => {
+    const ids = sourceMusic.map((track) => track.id);
+    if (!ids.length) {
+      setPlaylistOrder((prev) => (prev.length ? [] : prev));
+      return;
+    }
+    setPlaylistOrder((prev) => {
+      const saved = prev.length ? prev : loadPlaylistOrder(playlistScope);
+      const next = mergePlaylistOrder(saved, ids);
+      if (next.length === prev.length && next.every((id, i) => id === prev[i])) {
+        return prev;
+      }
+      savePlaylistOrder(playlistScope, next);
+      return next;
+    });
+  }, [sourceMusic, playlistScope]);
+
+  const music = useMemo(() => {
+    if (!sourceMusic.length) return [];
+    const byId = new Map(sourceMusic.map((track) => [track.id, track]));
+    const ordered = playlistOrder
+      .map((id) => byId.get(id))
+      .filter((track): track is MotivationMediaItem => Boolean(track));
+    if (ordered.length === sourceMusic.length) return ordered;
+    // Fallback if order is stale mid-render.
+    const orderedIds = new Set(ordered.map((t) => t.id));
+    return [...ordered, ...sourceMusic.filter((t) => !orderedIds.has(t.id))];
+  }, [sourceMusic, playlistOrder]);
+
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [playAll, setPlayAll] = useState(false);
@@ -85,6 +148,12 @@ export function MotivationMediaControls({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const seekingRef = useRef(false);
+  const musicRef = useRef(music);
+  musicRef.current = music;
+  const musicIndexRef = useRef(musicIndex);
+  musicIndexRef.current = musicIndex;
+  const shuffleRef = useRef(shuffle);
+  shuffleRef.current = shuffle;
 
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoIndex, setVideoIndex] = useState(0);
@@ -93,6 +162,12 @@ export function MotivationMediaControls({
   const currentMusic = music[safeMusicIndex];
   const currentVideo = videos[videoIndex];
   const currentMusicUrl = currentMusic?.mediaUrl ?? '';
+  const hasPrev =
+    music.length > 1 &&
+    (shuffle || safeMusicIndex > 0);
+  const hasNext =
+    music.length > 1 &&
+    (shuffle || safeMusicIndex < music.length - 1);
 
   useEffect(() => {
     if (musicIndex !== safeMusicIndex) setMusicIndex(safeMusicIndex);
@@ -382,23 +457,66 @@ export function MotivationMediaControls({
       return;
     }
     setMusicIndex(index);
-    setPlayAll(false);
     setMusicPlaying(true);
   };
 
-  const onMusicEnded = () => {
-    if (!playAll) {
+  const goToAdjacentTrack = (direction: 'next' | 'prev') => {
+    const list = musicRef.current;
+    const current = Math.min(musicIndexRef.current, Math.max(0, list.length - 1));
+    const nextIndex =
+      direction === 'next'
+        ? pickNextIndex({ length: list.length, current, shuffle: shuffleRef.current })
+        : pickPrevIndex({ length: list.length, current, shuffle: shuffleRef.current });
+    if (nextIndex == null) {
       setMusicPlaying(false);
+      setPlayAll(false);
       return;
     }
+    setMusicIndex(nextIndex);
+    setMusicPlaying(true);
+  };
 
-    setMusicIndex((prev) => {
-      const next = prev + 1;
-      if (next >= music.length) {
-        setMusicPlaying(false);
-        setPlayAll(false);
-        return 0;
-      }
+  const playNextTrack = () => goToAdjacentTrack('next');
+  const playPrevTrack = () => goToAdjacentTrack('prev');
+
+  const onMusicEnded = () => {
+    // Auto-advance when another track follows (sequential or shuffle).
+    const list = musicRef.current;
+    const current = Math.min(musicIndexRef.current, Math.max(0, list.length - 1));
+    const nextIndex = pickNextIndex({
+      length: list.length,
+      current,
+      shuffle: shuffleRef.current,
+    });
+    if (nextIndex == null) {
+      setMusicPlaying(false);
+      setPlayAll(false);
+      return;
+    }
+    setMusicIndex(nextIndex);
+    setMusicPlaying(true);
+  };
+
+  const toggleShuffle = () => {
+    setShuffle((prev) => {
+      const next = !prev;
+      saveShuffleEnabled(next);
+      return next;
+    });
+  };
+
+  const moveTrack = (fromIndex: number, delta: -1 | 1) => {
+    const toIndex = fromIndex + delta;
+    setPlaylistOrder((prev) => {
+      const next = movePlaylistIndex(prev, fromIndex, toIndex);
+      if (next === prev) return prev;
+      savePlaylistOrder(playlistScope, next);
+      setMusicIndex((current) => {
+        if (current === fromIndex) return toIndex;
+        if (delta < 0 && current === toIndex) return fromIndex;
+        if (delta > 0 && current === toIndex) return fromIndex;
+        return current;
+      });
       return next;
     });
   };
@@ -533,9 +651,11 @@ export function MotivationMediaControls({
             <div className="mf-music-popover__meta">
               <p className="mf-music-popover__status">
                 {musicPlaying
-                  ? playAll
-                    ? t('motivation.playAllMode')
-                    : t('motivation.playing')
+                  ? shuffle
+                    ? t('motivation.shuffleMode')
+                    : playAll
+                      ? t('motivation.playAllMode')
+                      : t('motivation.playing')
                   : t('motivation.ready')}
               </p>
               <p className="mf-music-popover__title" title={currentMusic?.title}>
@@ -581,7 +701,17 @@ export function MotivationMediaControls({
           </div>
 
           <div className="mf-music-popover__transport">
-            <div className="mf-music-popover__main-actions">
+            <div className="mf-music-popover__skip-row">
+              <button
+                type="button"
+                className="mf-music-popover__icon-btn"
+                onClick={playPrevTrack}
+                disabled={!hasPrev}
+                aria-label={t('motivation.prev')}
+                title={t('motivation.prev')}
+              >
+                <SkipBack size={16} />
+              </button>
               <button
                 type="button"
                 className={`mf-music-popover__btn mf-music-popover__btn--play${
@@ -597,7 +727,19 @@ export function MotivationMediaControls({
                   {musicPlaying ? t('motivation.pause') : t('motivation.play')}
                 </span>
               </button>
+              <button
+                type="button"
+                className="mf-music-popover__icon-btn"
+                onClick={playNextTrack}
+                disabled={!hasNext}
+                aria-label={t('motivation.nextTrack')}
+                title={t('motivation.nextTrack')}
+              >
+                <SkipForward size={16} />
+              </button>
+            </div>
 
+            <div className="mf-music-popover__main-actions">
               <button
                 type="button"
                 className="mf-music-popover__btn mf-music-popover__btn--stop"
@@ -608,6 +750,20 @@ export function MotivationMediaControls({
                   <Square size={15} fill="currentColor" />
                 </span>
                 <span className="mf-music-popover__btn-label">{t('motivation.stop')}</span>
+              </button>
+              <button
+                type="button"
+                className={`mf-music-popover__btn mf-music-popover__btn--shuffle${
+                  shuffle ? ' is-active' : ''
+                }`}
+                onClick={toggleShuffle}
+                disabled={music.length < 2}
+                aria-pressed={shuffle}
+              >
+                <span className="mf-music-popover__btn-icon" aria-hidden="true">
+                  <Shuffle size={15} />
+                </span>
+                <span className="mf-music-popover__btn-label">{t('motivation.shuffle')}</span>
               </button>
             </div>
 
@@ -629,7 +785,7 @@ export function MotivationMediaControls({
                 const selected = index === safeMusicIndex;
                 const playingThis = selected && musicPlaying;
                 return (
-                  <li key={track.id}>
+                  <li key={track.id} className="mf-music-popover__track-row">
                     <button
                       type="button"
                       className={`mf-music-popover__track${selected ? ' is-selected' : ''}${
@@ -659,6 +815,34 @@ export function MotivationMediaControls({
                         {playingThis ? <Pause size={15} /> : <Play size={15} />}
                       </span>
                     </button>
+                    <div className="mf-music-popover__reorder">
+                      <button
+                        type="button"
+                        className="mf-music-popover__reorder-btn"
+                        disabled={index === 0}
+                        aria-label={t('motivation.moveUp')}
+                        title={t('motivation.moveUp')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          moveTrack(index, -1);
+                        }}
+                      >
+                        <ChevronUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="mf-music-popover__reorder-btn"
+                        disabled={index >= music.length - 1}
+                        aria-label={t('motivation.moveDown')}
+                        title={t('motivation.moveDown')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          moveTrack(index, 1);
+                        }}
+                      >
+                        <ChevronDown size={14} />
+                      </button>
+                    </div>
                   </li>
                 );
               })}

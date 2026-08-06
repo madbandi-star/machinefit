@@ -96,7 +96,13 @@
     "playlist": "플레이리스트",
     "trackCount": "{{count}}곡",
     "videoCount": "{{count}}개",
-    "manageLibrary": "내 음악 관리"
+    "manageLibrary": "내 음악 관리",
+    "prev": "이전 곡",
+    "nextTrack": "다음 곡",
+    "shuffle": "랜덤재생",
+    "shuffleMode": "랜덤재생",
+    "moveUp": "위로 이동",
+    "moveDown": "아래로 이동"
   },
   "motivationMusic": {
     "title": "동기부여 음악",
