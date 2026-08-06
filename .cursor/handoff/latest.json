@@ -1,30 +1,28 @@
 ﻿{
-  "title": "Fix black screen: root asset URLs on Pages",
-  "summary": "Live HTML still pointed at /machinefit/assets while files are at /assets; re-deploy root base build so scripts load.",
-  "git": { "branch": "main", "commit": "e0dae37b" },
+  "title": "Fix black screen + unblock Pages deploy",
+  "summary": "Live site 404s /machinefit/assets; root base is ready but deploy-pages was timing out/cancelled. Workflow retries deploy and stops canceling in-flight deploys.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    ".github/workflows/frontend-deploy.yml",
     "frontend/index.html",
-    "frontend/vite.config.ts",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    ".cursor/handoff/LATEST_TEST_HANDOFF.md",
-    ".cursor/handoff/latest.json"
+    "frontend/vite.config.ts"
   ],
   "testFocus": [
-    "machine-fit.com index.html uses /assets/*.js",
-    "script URL HTTP 200",
-    "app renders past black root"
+    "frontend-deploy success",
+    "machine-fit.com HTML uses /assets/*.js",
+    "app not black-only"
   ],
   "fastChecks": [
     "curl -sL https://machine-fit.com/ | rg -o 'src=\"[^\"]+\\.js\"'",
-    "rg -n \"base: '/'\" frontend/vite.config.ts"
+    "rg -n \"cancel-in-progress: false|wretry\" .github/workflows/frontend-deploy.yml"
   ],
   "productionChecks": [
-    "frontend-deploy.yml success then hard-refresh machine-fit.com"
+    "Wait for Deploy Frontend success then hard-refresh https://machine-fit.com/"
   ],
   "deploy": {
     "target": "GitHub Pages",
     "backendRedeployRequired": false
   },
-  "asIs": "Black screen; /machinefit/assets 404",
-  "toBe": "App loads from /assets at domain root"
+  "asIs": "Black screen; Pages deploy cancelled/timeout",
+  "toBe": "Pages success; /assets scripts load"
 }

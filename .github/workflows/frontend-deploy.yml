@@ -17,9 +17,11 @@ permissions:
   pages: write
   id-token: write
 
+# Do not cancel an in-flight Pages deploy — rapid pushes were aborting
+# deploy-pages mid-poll (build OK, deploy cancelled → live site stuck).
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -70,7 +72,15 @@ jobs:
       name: github-pages
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Action itself caps at 10m; allow a few retries for GitHub Pages backend stalls.
+    timeout-minutes: 35
 
     steps:
-      - uses: actions/deploy-pages@v4
+      # deploy-pages intermittently sticks on deployment_queued / purging_cdn until its
+      # 10m hard timeout — retry instead of leaving machine-fit.com on a stale build.
+      - name: Deploy to GitHub Pages
+        uses: Wandalen/wretry.action@v3.8.0
+        with:
+          action: actions/deploy-pages@v4
+          attempt_limit: 3
+          attempt_delay: 20000
