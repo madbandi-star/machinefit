@@ -35,6 +35,9 @@ import {
 } from '@/utils/motivationPlaylistOrder';
 import './MotivationMediaControls.css';
 
+/** Soft volume while the motivation video overlay is open (keeps BGM under YouTube). */
+const VIDEO_MUSIC_DUCK = 0.28;
+
 export function MotivationMediaControls({
   variant = 'default',
 }: {
@@ -155,6 +158,8 @@ export function MotivationMediaControls({
   musicRef.current = music;
   const musicIndexRef = useRef(musicIndex);
   musicIndexRef.current = musicIndex;
+  const musicPlayingRef = useRef(musicPlaying);
+  musicPlayingRef.current = musicPlaying;
   const shuffleRef = useRef(shuffle);
   shuffleRef.current = shuffle;
 
@@ -293,6 +298,49 @@ export function MotivationMediaControls({
     };
   }, []);
 
+  // Keep motivation music running under the video overlay (do not stop).
+  // Soft-duck so YouTube audio stays clear; resume if the OS steals focus.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (videoOpen) {
+      if (audio.dataset.mfVideoDuck == null) {
+        audio.dataset.mfVideoDuck = String(audio.volume);
+      }
+      if (audio.dataset.mfVoiceDuck == null && audio.volume > VIDEO_MUSIC_DUCK) {
+        audio.volume = VIDEO_MUSIC_DUCK;
+      }
+    } else if (audio.dataset.mfVideoDuck != null) {
+      if (audio.dataset.mfVoiceDuck == null) {
+        const prev = Number(audio.dataset.mfVideoDuck);
+        audio.volume = Number.isFinite(prev) ? prev : 1;
+      }
+      delete audio.dataset.mfVideoDuck;
+    }
+  }, [videoOpen]);
+
+  useEffect(() => {
+    if (!videoOpen || !musicPlaying) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const tryResume = () => {
+      if (!musicPlayingRef.current || !audio.paused) return;
+      void audio.play().catch(() => {
+        // Autoplay / focus policy may reject; leave musicPlaying so UI stays honest.
+      });
+    };
+
+    audio.addEventListener('pause', tryResume);
+    const timer = window.setInterval(tryResume, 1200);
+    tryResume();
+    return () => {
+      audio.removeEventListener('pause', tryResume);
+      window.clearInterval(timer);
+    };
+  }, [videoOpen, musicPlaying]);
+
   useEffect(() => {
     return () => {
       audioRef.current?.pause();
@@ -389,7 +437,6 @@ export function MotivationMediaControls({
       setPendingVideoOpen(false);
       return;
     }
-    stopMusic();
     setMusicPanelOpen(false);
     setVideoIndex(0);
     setVideoOpen(true);
@@ -540,7 +587,7 @@ export function MotivationMediaControls({
       showToast(t('motivation.videoEmpty'), 'info');
       return;
     }
-    stopMusic();
+    // Keep motivation music playing; volume ducks while the overlay is open.
     setMusicPanelOpen(false);
     setVideoIndex(0);
     setVideoOpen(true);
