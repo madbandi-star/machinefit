@@ -5,7 +5,7 @@ Custom domain served old HTML with `/machinefit/assets/*.js` while files live at
 
 ## Git
 - Branch: `main`
-- Commit: (pending push — check `git rev-parse HEAD`)
+- Commit: `e0dae37b`
 
 ## Changed (this fix wave)
 - `frontend/vite.config.ts` — `base: '/'` (already)

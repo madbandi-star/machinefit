@@ -1,7 +1,7 @@
 ﻿{
   "title": "Fix black screen: root asset URLs on Pages",
   "summary": "Live HTML still pointed at /machinefit/assets while files are at /assets; re-deploy root base build so scripts load.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "e0dae37b" },
   "changedFiles": [
     "frontend/index.html",
     "frontend/vite.config.ts",
