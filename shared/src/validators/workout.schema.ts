@@ -93,6 +93,48 @@ export const deleteWorkoutLogsByDateBodySchema = z.object({
 
 export type DeleteWorkoutLogsByDateBody = z.infer<typeof deleteWorkoutLogsByDateBodySchema>;
 
+const workoutRecordOrderItemSchema = z.object({
+  machineCode: z.string().min(1),
+  targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
+  displayOrder: z.number().int().min(0).max(499),
+});
+
+/** List display_order rows for a gym/member (optional single day). */
+export const workoutRecordDisplayOrderQuerySchema = z.object({
+  gymId: gymIdSchema,
+  memberId: memberIdSchema,
+  logDate: dateKeySchema.optional(),
+});
+
+export type WorkoutRecordDisplayOrderQuery = z.infer<
+  typeof workoutRecordDisplayOrderQuerySchema
+>;
+
+/**
+ * Bulk upsert display_order for one calendar day.
+ * Only rows whose order actually changes need to be sent; server updates those in a transaction.
+ */
+export const reorderWorkoutRecordCardsSchema = z
+  .object({
+    gymId: gymIdSchema,
+    memberId: memberIdSchema,
+    logDate: dateKeySchema,
+    items: z.array(workoutRecordOrderItemSchema).min(1).max(100),
+  })
+  .superRefine((value, ctx) => {
+    const orders = value.items.map((item) => item.displayOrder);
+    if (new Set(orders).size !== orders.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'displayOrder values must be unique within the day',
+        path: ['items'],
+      });
+    }
+  });
+
+export type ReorderWorkoutRecordCardsInput = z.infer<typeof reorderWorkoutRecordCardsSchema>;
+
+
 export const workoutInsightPeriodSchema = z.enum(['30d', '3m', 'all']);
 
 export const workoutInsightsQuerySchema = z

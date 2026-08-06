@@ -3,9 +3,11 @@ import {
   deleteWorkoutLogSchema,
   deleteWorkoutLogsByDateBodySchema,
   deleteWorkoutLogsByDateParamsSchema,
+  reorderWorkoutRecordCardsSchema,
   upsertWorkoutLogSchema,
   workoutInsightsQuerySchema,
   workoutLogListQuerySchema,
+  workoutRecordDisplayOrderQuerySchema,
 } from '@machinefit/shared';
 import * as workoutLogController from '../controllers/workout-log.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
@@ -22,6 +24,16 @@ workoutLogRouter.get(
   '/insights',
   validateQuery(workoutInsightsQuerySchema),
   workoutLogController.getWorkoutInsights
+);
+workoutLogRouter.get(
+  '/display-order',
+  validateQuery(workoutRecordDisplayOrderQuerySchema),
+  workoutLogController.listWorkoutRecordDisplayOrders
+);
+workoutLogRouter.put(
+  '/display-order',
+  validateBody(reorderWorkoutRecordCardsSchema),
+  workoutLogController.reorderWorkoutRecordCards
 );
 workoutLogRouter.get(
   '/',

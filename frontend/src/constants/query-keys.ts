@@ -60,6 +60,8 @@ export const QUERY_KEYS = {
     targetMuscleGroup?: string
   ) =>
     ['workout-logs', gymId, memberId, machineCode, logDate, targetMuscleGroup ?? ''] as const,
+  workoutRecordDisplayOrder: (gymId: string, memberId: string, logDate?: string) =>
+    ['workout-logs', gymId, memberId, 'display-order', logDate ?? 'all'] as const,
   posts: ['posts'] as const,
   /** Prefix for invalidating all machine-request list/detail caches. */
   machineRequestsRoot: ['machine-requests'] as const,

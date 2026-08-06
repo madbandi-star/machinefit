@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect, useCallback, memo, type MouseEvent } from 'react';
+import { useState, useEffect, useCallback, useRef, memo, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
+import { ArrowUpDown, Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
+import { WorkoutCardOrderControl } from '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl';
+import type { WorkoutCardOrderMove } from '@/utils/workoutCardOrder';
 import type {
   RecommendationSettings,
   SettingsActiveSource,
@@ -45,6 +47,12 @@ interface HistoryRecordCardProps {
   isFocused?: boolean;
   onDelete: () => void;
   deleteDisabled?: boolean;
+  /** 0-based index within the same calendar day group. */
+  orderIndex?: number;
+  orderTotal?: number;
+  orderDisabled?: boolean;
+  onOrderMove?: (move: WorkoutCardOrderMove) => void;
+  isReordering?: boolean;
 }
 
 function getBookmarkAriaLabel(
@@ -74,7 +82,18 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   isFocused = false,
   onDelete,
   deleteDisabled = false,
+  orderIndex,
+  orderTotal,
+  orderDisabled = false,
+  onOrderMove,
+  isReordering = false,
 }: HistoryRecordCardProps) {
+  const orderMenuRef = useRef<HTMLDetailsElement>(null);
+  const canReorder =
+    typeof orderIndex === 'number' &&
+    typeof orderTotal === 'number' &&
+    orderTotal > 1 &&
+    Boolean(onOrderMove);
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [expanded, setExpanded] = useState(isFocused);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
@@ -218,7 +237,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         isWorkoutLogSaved ? ' history-record-card--logged' : ' history-record-card--unlogged'
       }${isFocused ? ' history-record-card--focused' : ''}${
         expanded ? '' : ' history-record-card--collapsed'
-      }`}
+      }${isReordering ? ' history-record-card--reordering' : ''}`}
     >
       <header className="history-record-card__header">
         <div className="history-record-card__hero">
@@ -238,6 +257,28 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
             <div className="history-record-card__hero-aside">
               <div className="history-record-card__header-actions">
+                {canReorder ? (
+                  <details ref={orderMenuRef} className="history-record-card__order-menu">
+                    <summary
+                      className="history-record-card__order-trigger"
+                      aria-label={t('machines:history.orderMenuAria')}
+                    >
+                      <ArrowUpDown size={16} strokeWidth={2.25} aria-hidden />
+                    </summary>
+                    <div className="history-record-card__order-panel">
+                      <WorkoutCardOrderControl
+                        variant="menu"
+                        index={orderIndex!}
+                        total={orderTotal!}
+                        disabled={orderDisabled}
+                        onMove={(move) => {
+                          if (orderMenuRef.current) orderMenuRef.current.open = false;
+                          onOrderMove?.(move);
+                        }}
+                      />
+                    </div>
+                  </details>
+                ) : null}
                 <button
                   type="button"
                   className="history-record-card__collapse"

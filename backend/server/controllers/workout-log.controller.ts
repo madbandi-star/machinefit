@@ -2,10 +2,12 @@ import type { Request, Response } from 'express';
 import type {
   DeleteWorkoutLogInput,
   DeleteWorkoutLogsByDateBody,
+  ReorderWorkoutRecordCardsInput,
   UpsertWorkoutLogInput,
 } from '@machinefit/shared';
 import { workoutLogService } from '../services/workout-log.service.js';
 import { workoutInsightsService } from '../services/workout-insights.service.js';
+import { workoutRecordOrderService } from '../services/workout-record-order.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getValidatedQuery } from '../middlewares/validate.middleware.js';
 import { resolveRequestLocale } from '../utils/locale.util.js';
@@ -54,4 +56,21 @@ export async function deleteWorkoutLogsByDate(req: Request, res: Response): Prom
     success: true,
     data: { message: 'Deleted', ...data },
   });
+}
+
+export async function listWorkoutRecordDisplayOrders(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const query = getValidatedQuery<Parameters<typeof workoutRecordOrderService.list>[1]>(res);
+  const data = await workoutRecordOrderService.list(req.user.userId, query);
+  res.json({ success: true, data });
+}
+
+export async function reorderWorkoutRecordCards(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const body = req.body as ReorderWorkoutRecordCardsInput;
+  const data = await workoutRecordOrderService.reorder(req.user.userId, body);
+  res.json({ success: true, data });
 }
