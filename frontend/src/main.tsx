@@ -18,9 +18,9 @@ import { initFrontendSentry } from '@/app/sentry';
 
 /**
  * Bump once when a final PWA cache purge is required; thereafter one-shot only.
- * v42: Clear stuck Records-page "updating" loop after display-order deploy.
+ * v43: Records HistoryListPanel hooks-order crash (RouteCrashScreen loop).
  */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v42';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v43';
 /** Legacy keys from older bust scripts — mark done so stale HTML never thrash-clears SW. */
 const LEGACY_PWA_BUST_KEYS = [
   'mf-pwa-bust-v29',
@@ -28,6 +28,7 @@ const LEGACY_PWA_BUST_KEYS = [
   'mf-pwa-bust-v39',
   'mf-pwa-bust-v40',
   'mf-pwa-bust-v41',
+  'mf-pwa-bust-v42',
 ] as const;
 
 async function clearServiceWorkerAndCaches(): Promise<void> {

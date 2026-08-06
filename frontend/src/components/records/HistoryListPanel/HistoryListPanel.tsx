@@ -564,6 +564,12 @@ export function HistoryListPanel() {
     }
   };
 
+  // Must stay above early returns — Rules of Hooks (loading → loaded used to add this memo).
+  const hasCardsOnTargetDate = useMemo(
+    () => allRecordCards.some((card) => card.logDate === targetDeleteDate),
+    [allRecordCards, targetDeleteDate]
+  );
+
   if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
 
@@ -582,11 +588,6 @@ export function HistoryListPanel() {
       />
     );
   }
-
-  const hasCardsOnTargetDate = useMemo(
-    () => allRecordCards.some((card) => card.logDate === targetDeleteDate),
-    [allRecordCards, targetDeleteDate]
-  );
 
   const emptyFilterTitle =
     logStatus === 'saved'
