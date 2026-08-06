@@ -156,7 +156,14 @@
     "submitFailed": "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
     "validationError": "입력값을 확인해 주세요.",
     "serverError": "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-    "recommendValidation": "추천에 필요한 정보(키·몸무게·운동 부위 등)를 확인해 주세요."
+    "recommendValidation": "추천에 필요한 정보(키·몸무게·운동 부위 등)를 확인해 주세요.",
+    "networkError": "네트워크 오류예요. 연결을 확인해 주세요.",
+    "unauthorized": "로그인이 필요해요.",
+    "forbidden": "권한이 없어요.",
+    "unknown": "오류가 발생했어요.",
+    "emailExists": "이미 가입된 이메일이에요.",
+    "invalidCredentials": "이메일 또는 비밀번호를 다시 확인해 주세요.",
+    "tokenExpired": "로그인이 만료됐어요. 다시 로그인해 주세요."
   },
   "auth": {
     "welcomeBack": "다시 오신 걸 환영해요!",
@@ -311,6 +318,7 @@
   },
   "settings": {
     "language": "언어",
+    "languageDesc": "앱 언어를 바로 바꿀 수 있어요. 새로고침은 필요 없어요.",
     "voiceCoach": "음성 카운트",
     "voiceCoachDesc": "세트 사이 카운트다운과 반복 수 음성 안내. 운동 기록 화면에서도 조절할 수 있습니다.",
     "voiceCoachEnable": "음성 카운트 사용",

@@ -17,6 +17,7 @@ import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
 import { HomeGymField, type HomeGymValue } from '@/components/settings/HomeGymField/HomeGymField';
 import { SettingsCollapsibleSection } from '@/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection';
 import { UnitSelector } from '@/components/settings/UnitSelector/UnitSelector';
+import { LanguageSelector } from '@/components/settings/LanguageSelector/LanguageSelector';
 import { WorkoutGoalSelector } from '@/components/settings/WorkoutGoalSelector/WorkoutGoalSelector';
 import { WeightDifficultySlider } from '@/components/settings/WeightDifficultySlider/WeightDifficultySlider';
 import {
@@ -351,6 +352,16 @@ export function SettingsPage() {
   return (
     <PageShell title={t('nav.settings')}>
       <div className="settings-stack">
+        <SettingsCollapsibleSection
+          id="language-settings"
+          title={t('settings.language')}
+          description={t('settings.languageDesc', {
+            defaultValue: 'Change the app language instantly. No refresh needed.',
+          })}
+        >
+          <LanguageSelector variant="default" />
+        </SettingsCollapsibleSection>
+
         <SettingsCollapsibleSection
           id="body-metrics"
           title={t('auth.bodyMetrics')}

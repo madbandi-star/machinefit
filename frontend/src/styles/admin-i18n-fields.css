@@ -1,0 +1,28 @@
+.admin-i18n-fields {
+  margin: 0;
+  padding: 0.75rem 0 0;
+  border: none;
+}
+
+.admin-i18n-fields__legend {
+  padding: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text, #e2e8f0);
+}
+
+.admin-i18n-fields__grid {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.55rem;
+}
+
+.admin-i18n-fields__row {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.admin-i18n-fields__lang {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #94a3b8);
+}

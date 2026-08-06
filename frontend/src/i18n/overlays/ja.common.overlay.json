@@ -1,0 +1,115 @@
+{
+  "tagline": "あなたに合うマシン設定を見つけよう",
+  "appUpdate": {
+    "title": "🚧 MachineFitを更新しています",
+    "desc": "新しいバージョンを適用しています。\nまもなく自動で再接続します。",
+    "retryNow": "🔄 今すぐ再試行",
+    "goHome": "ホームへ"
+  },
+  "serviceUnavailable": {
+    "networkTitle": "ネットワーク接続に問題があります",
+    "serverTitle": "一時的なサーバーエラーが発生しました",
+    "unavailableTitle": "サービスを一時的に利用できません",
+    "desc": "しばらくしてからもう一度お試しください。",
+    "refresh": "再読み込み"
+  },
+  "emptyState": {
+    "browseMachines": "マシンを探す"
+  },
+  "nav": {
+    "main": "メインメニュー",
+    "home": "ホーム",
+    "search": "検索",
+    "machines": "マシン",
+    "brands": "ブランド",
+    "gyms": "ジム",
+    "community": "コミュニティ",
+    "favorites": "お気に入り",
+    "history": "最近の記録",
+    "records": "記録",
+    "growthAnalysis": "成長分析",
+    "myPage": "マイページ",
+    "settings": "設定",
+    "login": "ログイン",
+    "register": "新規登録",
+    "logout": "ログアウト",
+    "notifications": "通知"
+  },
+  "actions": {
+    "search": "検索",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "submit": "送信",
+    "back": "戻る",
+    "viewAll": "すべて見る",
+    "retry": "再試行",
+    "confirm": "確認",
+    "close": "閉じる"
+  },
+  "collapse": "閉じる",
+  "expand": "開く",
+  "expandCardDetails": "詳細を表示",
+  "collapseCardDetails": "詳細を隠す",
+  "picker": {
+    "searchPlaceholder": "検索...",
+    "noResults": "結果がありません",
+    "selectOption": "選択してください",
+    "all": "すべて"
+  },
+  "numericStepper": {
+    "decrease": "減らす",
+    "increase": "増やす",
+    "manualInput": "直接入力"
+  },
+  "dismissToday": "今日は表示しない",
+  "share": {
+    "title": "MachineFit",
+    "text": "ジムマシン設定アプリ MachineFit · machine-fit.com",
+    "action": "アプリを共有",
+    "copied": "リンクをコピーしました。友だちと共有しましょう。"
+  },
+  "errors": {
+    "submitFailed": "保存に失敗しました。もう一度お試しください。",
+    "loadFailed": "読み込みに失敗しました。",
+    "networkError": "ネットワークエラーです。接続を確認してください。",
+    "validationError": "入力内容を確認してください。",
+    "unauthorized": "ログインが必要です。",
+    "forbidden": "権限がありません。",
+    "notFound": "見つかりませんでした。",
+    "serverError": "サーバーエラーが発生しました。",
+    "unknown": "エラーが発生しました。",
+    "emailExists": "このメールアドレスは既に登録されています。",
+    "invalidCredentials": "メールまたはパスワードが正しくありません。",
+    "tokenExpired": "セッションの有効期限が切れました。再度ログインしてください。"
+  },
+  "auth": {
+    "loginTitle": "ログイン",
+    "registerTitle": "新規登録",
+    "email": "メール",
+    "password": "パスワード",
+    "displayName": "表示名",
+    "loginFailed": "ログインに失敗しました。",
+    "registrationFailed": "登録に失敗しました。",
+    "networkError": "ネットワークエラーです。接続を確認してください。",
+    "emailExists": "このメールアドレスは既に登録されています。",
+    "validationError": "入力内容を確認してください。",
+    "serverError": "サーバーエラーが発生しました。"
+  },
+  "myPage": {
+    "subscription": {
+      "title": "Premium",
+      "memberGrade": "会員ランク",
+      "gradeFree": "無料会員",
+      "gradePremium": "Premium",
+      "priceLine": "月額 ₩3,000 · いつでも解約可能",
+      "startPremium": "Premiumを始める",
+      "startTrial": "7日間無料トライアル",
+      "activeBadge": "Premium利用中",
+      "cancel": "解約する",
+      "history": "支払い履歴",
+      "toastSuccess": "Premiumが有効になりました。",
+      "toastPayCancel": "決済がキャンセルされました。",
+      "toastCancelled": "現在の請求期間終了までPremiumを利用できます。"
+    }
+  }
+}
