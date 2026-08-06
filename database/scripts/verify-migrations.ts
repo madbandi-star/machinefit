@@ -13,6 +13,8 @@ const REQUIRED_TABLES = [
   'machine_trades',
   'machine_trade_reports',
   'friendships',
+  'backup_logs',
+  'backup_settings',
 ] as const;
 
 async function main() {

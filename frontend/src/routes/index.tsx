@@ -357,6 +357,10 @@ const aiLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.AiDisclaimerLegalPage }));
 const privacyRightsPage = () =>
   import('@/pages/settings/PrivacyRightsPage').then((m) => ({ default: m.PrivacyRightsPage }));
+const dataManagementPage = () =>
+  import('@/pages/settings/DataManagementPage').then((m) => ({ default: m.DataManagementPage }));
+const adminBackupPage = () =>
+  import('@/pages/admin/backup/AdminBackupPage').then((m) => ({ default: m.AdminBackupPage }));
 const supportPage = () =>
   import('@/pages/support/SupportPage').then((m) => ({ default: m.SupportPage }));
 const supportDetailPage = () =>
@@ -446,6 +450,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
             { path: ROUTES.LINKED_LOGINS, element: lazyRoute(linkedLogins) },
+            { path: ROUTES.DATA_MANAGEMENT, element: lazyRoute(dataManagementPage) },
             { path: ROUTES.PRIVACY_RIGHTS, element: lazyRoute(privacyRightsPage) },
             { path: ROUTES.SUPPORT, element: lazyRoute(supportPage) },
             { path: ROUTES.SUPPORT_DETAIL, element: lazyRoute(supportDetailPage) },
@@ -593,6 +598,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
         { path: ROUTES.ADMIN_COMPLIANCE, element: lazyRoute(adminCompliancePage) },
         { path: ROUTES.ADMIN_OPS, element: lazyRoute(adminOpsPage) },
+        { path: ROUTES.ADMIN_BACKUP, element: lazyRoute(adminBackupPage) },
         { path: ROUTES.ADMIN_SUBSCRIPTIONS, element: lazyRoute(adminSubscriptionsPage) },
       ],
     },

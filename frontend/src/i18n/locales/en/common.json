@@ -297,7 +297,6 @@
     "startWithKakao": "Continue with Kakao",
     "startWithGoogle": "Continue with Google",
     "landingLegal": "By signing in, you agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
-
     "loginFeature1": "Body-based recommendations",
     "loginFeature2": "Brand-specific machine settings",
     "loginFeature3": "Workout logs and growth analysis",
@@ -633,7 +632,8 @@
       "start": "Subscription start",
       "expire": "Subscription end",
       "payComingSoon": "Payment · Coming soon"
-    }
+    },
+    "dataManagement": "Data management"
   },
   "lab": {
     "title": "Lab",
@@ -1534,5 +1534,27 @@
       "copyright": "Copyright",
       "other": "Other"
     }
+  },
+  "dataManagement": {
+    "title": "Data management",
+    "subtitle": "Back up your workout data and restore it whenever you need.",
+    "backupTitle": "Backup",
+    "backupHelp": "Save workout logs, favorites, and rest/voice settings as ZIP or JSON. Passwords, login, and payment data are never included.",
+    "backupAction": "Back up",
+    "backupDone": "Backup completed.",
+    "backupFailed": "Backup failed.",
+    "restoreTitle": "Restore",
+    "restoreHelp": "Choose a previous backup file (ZIP/JSON).",
+    "restoreAction": "Restore",
+    "restoreDone": "Restore completed.",
+    "restoreFailed": "Restore failed.",
+    "format": "Format",
+    "historyTitle": "Recent backup / restore",
+    "historyEmpty": "No history yet.",
+    "download": "Download again",
+    "confirmTitle": "Confirm restore",
+    "confirmQuestion": "Merge into your current workout records?",
+    "modeMerge": "① Keep existing data and merge (recommended)",
+    "modeReplace": "② Delete current data and fully restore from backup"
   }
 }

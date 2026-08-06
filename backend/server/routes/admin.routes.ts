@@ -10,9 +10,16 @@ import * as machineCoverImageController from '../controllers/machine-cover-image
 import { Role } from '@machinefit/shared';
 import { authMiddleware, requireMinRole } from '../middlewares/auth.middleware.js';
 import {
+  backupUpload,
   motivationAudioUpload,
   muscleGroupImageUpload,
 } from '../middlewares/upload.middleware.js';
+import {
+  backupSettingsUpdateSchema,
+  systemRestoreConfirmSchema,
+} from '@machinefit/shared';
+import { validateBody } from '../middlewares/validate.middleware.js';
+import * as backupController from '../controllers/backup.controller.js';
 
 export const adminRouter = Router();
 
@@ -129,3 +136,32 @@ adminRouter.get('/trainer-applications', adminController.listTrainerApplications
 adminRouter.patch('/trainer-applications/:id', adminController.reviewTrainerApplication);
 adminRouter.get('/gyms/:gymId/inventory', adminController.listGymInventory);
 adminRouter.post('/gym-machines/:itemId/actions', adminController.gymInventoryAction);
+
+/** System backup / restore */
+adminRouter.post('/system-backup', (req, res, next) => {
+  void backupController.systemBackup(req, res).catch(next);
+});
+adminRouter.post(
+  '/system-restore',
+  backupUpload,
+  validateBody(systemRestoreConfirmSchema),
+  (req, res, next) => {
+    void backupController.systemRestore(req, res).catch(next);
+  }
+);
+adminRouter.get('/system-backup/history', (req, res, next) => {
+  void backupController.systemBackupHistory(req, res).catch(next);
+});
+adminRouter.get('/system-backup/download/:jobId', (req, res, next) => {
+  void backupController.downloadSystemBackup(req, res).catch(next);
+});
+adminRouter.get('/backup-settings', (req, res, next) => {
+  void backupController.getBackupSettings(req, res).catch(next);
+});
+adminRouter.put(
+  '/backup-settings',
+  validateBody(backupSettingsUpdateSchema),
+  (req, res, next) => {
+    void backupController.updateBackupSettings(req, res).catch(next);
+  }
+);
