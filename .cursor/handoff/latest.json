@@ -1,7 +1,7 @@
 ﻿{
   "title": "Roll back root-domain cutover to /machinefit",
   "summary": "Restored Vite/router/site base to /machinefit as of Cloudflare env advice; kept UTF-8, i18n, and deploy-retry fixes.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ee1621a7" },
   "changedFiles": [
     "frontend/vite.config.ts",
     "frontend/src/routes/index.tsx",

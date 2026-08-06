@@ -5,7 +5,7 @@ Reverted `machine-fit.com` root (`base: '/'`) cutover back to `/machinefit/` —
 
 ## Git
 - Branch: `main`
-- Commit: (after push)
+- Commit: `ee1621a7`
 
 ## Test focus
 1. `https://madbandi-star.github.io/machinefit/` loads
