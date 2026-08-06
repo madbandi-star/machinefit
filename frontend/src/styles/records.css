@@ -796,6 +796,153 @@
   cursor: not-allowed;
 }
 
+.records-list__day-menu-item {
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.records-list__day-menu-templates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.records-list__day-menu-label {
+  margin: 0.35rem 0.65rem 0.15rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.records-list__empty-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.history-calendar__day--selectable:not(:disabled) {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.history-calendar__day--selectable:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--glass-bg));
+}
+
+.history-calendar__day-count {
+  min-width: 0.85rem;
+  padding: 0 0.15rem;
+  border-radius: 999px;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  color: #fff;
+  background: var(--color-primary);
+}
+
+.history-record-card__plan-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.history-record-card__plan-badge--planned {
+  color: #1d4ed8;
+  background: color-mix(in srgb, #3b82f6 18%, transparent);
+}
+
+.history-record-card__plan-badge--in-progress {
+  color: #c2410c;
+  background: color-mix(in srgb, #f97316 20%, transparent);
+}
+
+.history-record-card__plan-badge--completed {
+  color: #15803d;
+  background: color-mix(in srgb, #22c55e 18%, transparent);
+}
+
+.history-record-card__plan-badge--skipped {
+  color: #64748b;
+  background: color-mix(in srgb, #94a3b8 22%, transparent);
+}
+
+.history-record-card__plan-start {
+  margin-top: 0.55rem;
+  width: 100%;
+  min-height: 2.25rem;
+  font-size: 0.8125rem;
+}
+
+.history-record-card__order-panel .workout-card-order__btn {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.7rem;
+  justify-content: flex-start;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--color-text);
+}
+
+.missed-plans-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, #f97316 35%, var(--glass-border));
+  background: color-mix(in srgb, #f97316 10%, var(--glass-bg));
+}
+
+.missed-plans-banner__title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.missed-plans-banner__message {
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.missed-plans-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.machine-detail-plan-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+}
+
+.machine-detail-plan-actions__label {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
 .records-list--history .records-list__date-filter-block {
   flex: 0 0 auto;
   width: auto;

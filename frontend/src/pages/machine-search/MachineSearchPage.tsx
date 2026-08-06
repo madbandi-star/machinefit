@@ -50,6 +50,7 @@ export function MachineSearchPage() {
     resolveBrandParam(searchParams.get('brand'))
   );
   const [recentSearches, setRecentSearches] = useState(() => getRecentMachineSearches());
+  const planDate = searchParams.get('planDate');
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
@@ -57,7 +58,7 @@ export function MachineSearchPage() {
     setBrandCode(resolveBrandParam(searchParams.get('brand')));
   }, [searchParams]);
 
-  // Drop legacy forced muscle=back so “전체” is the default.
+  // Drop legacy forced muscle=back so “전체” is the default. Preserve planDate.
   useEffect(() => {
     setSearchParams(
       (prev) => {
@@ -207,6 +208,7 @@ export function MachineSearchPage() {
                 key={machine.id}
                 machine={machine}
                 selectedMuscle={muscleGroup}
+                planDate={planDate}
                 initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
                 initialFavoriteId={favoriteByCode.get(machine.code)}
                 showFavorite

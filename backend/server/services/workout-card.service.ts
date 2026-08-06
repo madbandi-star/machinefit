@@ -1,0 +1,825 @@
+import type {
+  ApplyWorkoutCardTemplateInput,
+  CopyWorkoutCardInput,
+  CreateWorkoutCardInput,
+  CreateWorkoutCardTemplateInput,
+  Locale,
+  MoveWorkoutCardDateInput,
+  PatchWorkoutCardStatusInput,
+  ResolveMissedWorkoutCardInput,
+  UpdateWorkoutCardInput,
+  WorkoutCard,
+  WorkoutCardCalendarSummaryQuery,
+  WorkoutCardListQuery,
+  WorkoutCardMissedQuery,
+  WorkoutCardStatus,
+  WorkoutCardTemplate,
+  WorkoutCardTemplateItem,
+  WorkoutCardTemplateListQuery,
+  WorkoutPlanStats,
+  WorkoutPlanStatsQuery,
+} from '@machinefit/shared';
+import {
+  isFreeWeightMachineCode,
+  normalizeWorkoutLogTargetMuscle,
+} from '@machinefit/shared';
+import { workoutCardRepository } from '../repositories/workout-card.repository.js';
+import { workoutLogRepository } from '../repositories/workout-log.repository.js';
+import { machineRepository } from '../repositories/machine.repository.js';
+import { gymScopeService } from './gym-scope.service.js';
+import { AppError } from '../middlewares/error.middleware.js';
+
+function todayDateKey(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function shiftDateKey(dateKey: string, deltaDays: number): string {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const dt = new Date(y!, m! - 1, d!);
+  dt.setDate(dt.getDate() + deltaDays);
+  const yy = dt.getFullYear();
+  const mm = String(dt.getMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+function defaultStatusForDate(
+  scheduledDate: string,
+  explicit?: WorkoutCardStatus
+): WorkoutCardStatus {
+  if (explicit) return explicit;
+  const today = todayDateKey();
+  return scheduledDate > today ? 'PLANNED' : 'COMPLETED';
+}
+
+function pgCode(error: unknown): string {
+  if (error && typeof error === 'object' && 'code' in error) {
+    return String((error as { code: unknown }).code);
+  }
+  return '';
+}
+
+function throwDuplicateCard(error: unknown): never {
+  if (pgCode(error) === '23505') {
+    throw new AppError(
+      409,
+      'DUPLICATE_CARD',
+      'A workout card already exists for this machine, date, and target muscle'
+    );
+  }
+  throw error;
+}
+
+function completionRate(counts: Record<WorkoutCardStatus, number>): number {
+  const total =
+    counts.PLANNED + counts.IN_PROGRESS + counts.COMPLETED + counts.SKIPPED;
+  if (total <= 0) return 0;
+  return Math.round((counts.COMPLETED / total) * 1000) / 1000;
+}
+
+function stripMachineId(
+  card: WorkoutCard & { machineId: string }
+): WorkoutCard {
+  const { machineId: _machineId, ...rest } = card;
+  return rest;
+}
+
+async function resolveMachineAndMuscle(
+  machineCode: string,
+  targetMuscleGroup?: CreateWorkoutCardInput['targetMuscleGroup']
+): Promise<{ machineId: string; targetMuscleKey: string }> {
+  const machineId = await machineRepository.findIdByCode(machineCode);
+  if (!machineId) {
+    throw new AppError(404, 'NOT_FOUND', `Machine not found: ${machineCode}`);
+  }
+  const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
+    machineCode,
+    targetMuscleGroup
+  );
+  if (isFreeWeightMachineCode(machineCode) && !targetMuscleKey) {
+    throw new AppError(
+      400,
+      'VALIDATION_ERROR',
+      'targetMuscleGroup is required for free-weight cards'
+    );
+  }
+  return { machineId, targetMuscleKey };
+}
+
+async function upsertLogForCompletedCard(
+  userId: string,
+  card: WorkoutCard & { machineId: string }
+): Promise<string> {
+  const setCompleted =
+    card.setCompleted && card.setCompleted.length === card.setCount
+      ? card.setCompleted
+      : Array.from({ length: card.setCount }, () => true);
+
+  const log = await workoutLogRepository.upsert(
+    userId,
+    card.gymId,
+    card.memberId,
+    card.machineId,
+    {
+      recommendationId: card.recommendationId,
+      logDate: card.scheduledDate,
+      targetMuscleGroup: card.targetMuscleGroup ?? '',
+      setCount: card.setCount,
+      setWeightsKg: card.setWeightsKg,
+      setCompleted,
+      diary: card.diary,
+    }
+  );
+  return log.id;
+}
+
+export const workoutCardService = {
+  async list(
+    userId: string,
+    query: WorkoutCardListQuery,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard[]> {
+    await gymScopeService.resolveMemberForWrite(
+      userId,
+      query.gymId,
+      query.memberId
+    );
+    return workoutCardRepository.listByUser(
+      userId,
+      {
+        gymId: query.gymId,
+        memberId: query.memberId,
+        scheduledDate: query.scheduledDate,
+        from: query.from,
+        to: query.to,
+        status: query.status,
+        limit: query.limit,
+      },
+      locale
+    );
+  },
+
+  async create(
+    userId: string,
+    input: CreateWorkoutCardInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard> {
+    await gymScopeService.resolveMemberForWrite(
+      userId,
+      input.gymId,
+      input.memberId
+    );
+    const { machineId, targetMuscleKey } = await resolveMachineAndMuscle(
+      input.machineCode,
+      input.targetMuscleGroup
+    );
+
+    const status = defaultStatusForDate(input.scheduledDate, input.status);
+    const nowIso = new Date().toISOString();
+    const completedAt = status === 'COMPLETED' ? nowIso : null;
+    const startedAt = status === 'IN_PROGRESS' ? nowIso : null;
+
+    try {
+      const created = await workoutCardRepository.create(
+        userId,
+        {
+          gymId: input.gymId,
+          memberId: input.memberId,
+          machineId,
+          recommendationId: input.recommendationId,
+          targetMuscleGroup: targetMuscleKey,
+          scheduledDate: input.scheduledDate,
+          status,
+          setCount: input.setCount,
+          setWeightsKg: input.setWeightsKg,
+          setReps: input.setReps,
+          setCompleted: input.setCompleted,
+          diary: input.diary,
+          restSeconds: input.restSeconds,
+          displayOrder: input.displayOrder,
+          templateId: input.templateId,
+          startedAt,
+          completedAt,
+        },
+        locale
+      );
+
+      if (status === 'COMPLETED') {
+        try {
+          const logId = await upsertLogForCompletedCard(userId, created);
+          const linked = await workoutCardRepository.updateStatus(
+            userId,
+            created.id,
+            { status: 'COMPLETED', workoutLogId: logId, completedAt },
+            locale
+          );
+          return stripMachineId(linked ?? created);
+        } catch {
+          return stripMachineId(created);
+        }
+      }
+
+      return stripMachineId(created);
+    } catch (error) {
+      throwDuplicateCard(error);
+    }
+  },
+
+  async update(
+    userId: string,
+    id: string,
+    input: UpdateWorkoutCardInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard> {
+    const existing = await workoutCardRepository.findById(userId, id, locale);
+    if (!existing) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+
+    if (existing.status === 'SKIPPED') {
+      throw new AppError(
+        400,
+        'INVALID_STATUS',
+        'Skipped cards can only change status or be deleted'
+      );
+    }
+
+    const setCount = input.setCount ?? existing.setCount;
+    if (input.setWeightsKg && input.setWeightsKg.length !== setCount) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'setWeightsKg length must match setCount'
+      );
+    }
+    if (input.setReps && input.setReps.length !== setCount) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'setReps length must match setCount'
+      );
+    }
+    if (input.setCompleted && input.setCompleted.length !== setCount) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'setCompleted length must match setCount'
+      );
+    }
+
+    const updated = await workoutCardRepository.update(
+      userId,
+      id,
+      {
+        setCount: input.setCount,
+        setWeightsKg: input.setWeightsKg,
+        setReps: input.setReps,
+        setCompleted: input.setCompleted,
+        diary: input.diary,
+        restSeconds: input.restSeconds,
+        displayOrder: input.displayOrder,
+        recommendationId: input.recommendationId,
+      },
+      locale
+    );
+    if (!updated) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+
+    // Keep linked workout log in sync when completed card sets change.
+    if (updated.status === 'COMPLETED') {
+      try {
+        const logId = await upsertLogForCompletedCard(userId, updated);
+        if (logId !== updated.workoutLogId) {
+          const linked = await workoutCardRepository.updateStatus(
+            userId,
+            updated.id,
+            { status: 'COMPLETED', workoutLogId: logId },
+            locale
+          );
+          return stripMachineId(linked ?? updated);
+        }
+      } catch {
+        /* log sync must not fail card update */
+      }
+    }
+
+    return stripMachineId(updated);
+  },
+
+  async patchStatus(
+    userId: string,
+    id: string,
+    input: PatchWorkoutCardStatusInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard> {
+    const existing = await workoutCardRepository.findById(userId, id, locale);
+    if (!existing) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+
+    const next = input.status;
+    const nowIso = new Date().toISOString();
+
+    if (next === 'IN_PROGRESS') {
+      const updated = await workoutCardRepository.updateStatus(
+        userId,
+        id,
+        {
+          status: 'IN_PROGRESS',
+          startedAt: existing.startedAt ?? nowIso,
+          clearCompletedAt: true,
+        },
+        locale
+      );
+      if (!updated) throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+      return stripMachineId(updated);
+    }
+
+    if (next === 'COMPLETED') {
+      let workoutLogId = existing.workoutLogId ?? null;
+      try {
+        workoutLogId = await upsertLogForCompletedCard(userId, {
+          ...existing,
+          status: 'COMPLETED',
+        });
+      } catch (error) {
+        if (pgCode(error) === '23505') {
+          throw new AppError(
+            409,
+            'DUPLICATE_LOG',
+            'A workout log already exists for this machine, date, and target muscle'
+          );
+        }
+        throw error;
+      }
+
+      const updated = await workoutCardRepository.updateStatus(
+        userId,
+        id,
+        {
+          status: 'COMPLETED',
+          completedAt: nowIso,
+          startedAt: existing.startedAt ?? nowIso,
+          workoutLogId,
+        },
+        locale
+      );
+      if (!updated) throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+      return stripMachineId(updated);
+    }
+
+    if (next === 'SKIPPED') {
+      const updated = await workoutCardRepository.updateStatus(
+        userId,
+        id,
+        { status: 'SKIPPED' },
+        locale
+      );
+      if (!updated) throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+      return stripMachineId(updated);
+    }
+
+    // PLANNED
+    const updated = await workoutCardRepository.updateStatus(
+      userId,
+      id,
+      {
+        status: 'PLANNED',
+        clearStartedAt: true,
+        clearCompletedAt: true,
+      },
+      locale
+    );
+    if (!updated) throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    return stripMachineId(updated);
+  },
+
+  async moveDate(
+    userId: string,
+    id: string,
+    input: MoveWorkoutCardDateInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard> {
+    const existing = await workoutCardRepository.findById(userId, id, locale);
+    if (!existing) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+
+    try {
+      const moved = await workoutCardRepository.moveDate(
+        userId,
+        id,
+        input.scheduledDate,
+        locale
+      );
+      if (!moved) {
+        throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+      }
+
+      // Status rules: COMPLETED stays COMPLETED even when moved to future;
+      // PLANNED stays PLANNED. No automatic status flip on move.
+      return stripMachineId(moved);
+    } catch (error) {
+      throwDuplicateCard(error);
+    }
+  },
+
+  async copy(
+    userId: string,
+    id: string,
+    input: CopyWorkoutCardInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard> {
+    const existing = await workoutCardRepository.findById(userId, id, locale);
+    if (!existing) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+
+    const status = defaultStatusForDate(input.scheduledDate, input.status);
+    const nowIso = new Date().toISOString();
+
+    try {
+      const created = await workoutCardRepository.create(
+        userId,
+        {
+          gymId: existing.gymId,
+          memberId: existing.memberId,
+          machineId: existing.machineId,
+          recommendationId: existing.recommendationId,
+          targetMuscleGroup: existing.targetMuscleGroup ?? '',
+          scheduledDate: input.scheduledDate,
+          status,
+          setCount: existing.setCount,
+          setWeightsKg: existing.setWeightsKg,
+          setReps: existing.setReps,
+          setCompleted: existing.setCompleted,
+          diary: existing.diary,
+          restSeconds: existing.restSeconds,
+          displayOrder: existing.displayOrder,
+          sourceCardId: existing.id,
+          startedAt: status === 'IN_PROGRESS' ? nowIso : null,
+          completedAt: status === 'COMPLETED' ? nowIso : null,
+        },
+        locale
+      );
+
+      if (status === 'COMPLETED') {
+        try {
+          const logId = await upsertLogForCompletedCard(userId, created);
+          const linked = await workoutCardRepository.updateStatus(
+            userId,
+            created.id,
+            { status: 'COMPLETED', workoutLogId: logId, completedAt: nowIso },
+            locale
+          );
+          return stripMachineId(linked ?? created);
+        } catch {
+          return stripMachineId(created);
+        }
+      }
+
+      return stripMachineId(created);
+    } catch (error) {
+      throwDuplicateCard(error);
+    }
+  },
+
+  async remove(userId: string, id: string): Promise<void> {
+    const deleted = await workoutCardRepository.delete(userId, id);
+    if (!deleted) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+  },
+
+  async listMissed(
+    userId: string,
+    query: WorkoutCardMissedQuery,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard[]> {
+    await gymScopeService.resolveMemberForWrite(
+      userId,
+      query.gymId,
+      query.memberId
+    );
+    return workoutCardRepository.listMissed(
+      userId,
+      query.gymId,
+      query.memberId,
+      todayDateKey(),
+      locale
+    );
+  },
+
+  async resolveMissed(
+    userId: string,
+    id: string,
+    input: ResolveMissedWorkoutCardInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard | null> {
+    const existing = await workoutCardRepository.findById(userId, id, locale);
+    if (!existing) {
+      throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+    }
+    if (existing.status !== 'PLANNED') {
+      throw new AppError(
+        400,
+        'INVALID_STATUS',
+        'Only PLANNED missed cards can be resolved'
+      );
+    }
+    const today = todayDateKey();
+    if (existing.scheduledDate >= today) {
+      throw new AppError(400, 'NOT_MISSED', 'Card is not in the past');
+    }
+
+    if (input.action === 'delete') {
+      await this.remove(userId, id);
+      return null;
+    }
+
+    if (input.action === 'dismiss') {
+      return this.patchStatus(userId, id, { status: 'SKIPPED' }, locale);
+    }
+
+    if (input.action === 'move_today') {
+      return this.moveDate(userId, id, { scheduledDate: today }, locale);
+    }
+
+    // move_date
+    if (!input.scheduledDate) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'scheduledDate is required for move_date'
+      );
+    }
+    return this.moveDate(
+      userId,
+      id,
+      { scheduledDate: input.scheduledDate },
+      locale
+    );
+  },
+
+  async getStats(
+    userId: string,
+    query: WorkoutPlanStatsQuery
+  ): Promise<WorkoutPlanStats> {
+    await gymScopeService.resolveMemberForWrite(
+      userId,
+      query.gymId,
+      query.memberId
+    );
+
+    const today = todayDateKey();
+    const periodFrom = query.from;
+    const periodTo = query.to;
+
+    const periodCounts = await workoutCardRepository.getStatusCounts(
+      userId,
+      query.gymId,
+      query.memberId,
+      periodFrom,
+      periodTo
+    );
+
+    const weekFrom = shiftDateKey(today, -6);
+    const weekCounts = await workoutCardRepository.getStatusCounts(
+      userId,
+      query.gymId,
+      query.memberId,
+      weekFrom,
+      today
+    );
+
+    const monthFrom = shiftDateKey(today, -29);
+    const monthCounts = await workoutCardRepository.getStatusCounts(
+      userId,
+      query.gymId,
+      query.memberId,
+      monthFrom,
+      today
+    );
+
+    return {
+      plannedCount: periodCounts.PLANNED + periodCounts.IN_PROGRESS,
+      completedCount: periodCounts.COMPLETED,
+      skippedCount: periodCounts.SKIPPED,
+      completionRate: completionRate(periodCounts),
+      weeklyCompletionRate: completionRate(weekCounts),
+      monthlyCompletionRate: completionRate(monthCounts),
+    };
+  },
+
+  async calendarSummary(
+    userId: string,
+    query: WorkoutCardCalendarSummaryQuery
+  ) {
+    await gymScopeService.resolveMemberForWrite(
+      userId,
+      query.gymId,
+      query.memberId
+    );
+    return workoutCardRepository.calendarSummary(
+      userId,
+      query.gymId,
+      query.memberId,
+      query.from,
+      query.to
+    );
+  },
+
+  async createTemplate(
+    userId: string,
+    input: CreateWorkoutCardTemplateInput
+  ): Promise<WorkoutCardTemplate> {
+    if (input.gymId) {
+      await gymScopeService.assertOwned(userId, input.gymId);
+    }
+
+    let items: WorkoutCardTemplateItem[] = input.items ?? [];
+
+    if (input.fromDate && items.length === 0) {
+      if (!input.gymId) {
+        throw new AppError(
+          400,
+          'VALIDATION_ERROR',
+          'gymId is required when creating a template fromDate'
+        );
+      }
+      items = await workoutCardRepository.listTemplateSourceItems(
+        userId,
+        input.gymId,
+        input.fromDate
+      );
+      if (items.length === 0) {
+        throw new AppError(400, 'EMPTY_TEMPLATE', 'No cards found for fromDate');
+      }
+    }
+
+    if (items.length === 0) {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'Template requires items or fromDate with cards'
+      );
+    }
+
+    return workoutCardRepository.createTemplate(userId, {
+      gymId: input.gymId,
+      name: input.name,
+      items,
+    });
+  },
+
+  async listTemplates(
+    userId: string,
+    query: WorkoutCardTemplateListQuery
+  ): Promise<WorkoutCardTemplate[]> {
+    if (query.gymId) {
+      await gymScopeService.assertOwned(userId, query.gymId);
+    }
+    return workoutCardRepository.listTemplates(userId, query.gymId);
+  },
+
+  async applyTemplate(
+    userId: string,
+    input: ApplyWorkoutCardTemplateInput,
+    locale: Locale = 'en'
+  ): Promise<WorkoutCard[]> {
+    await gymScopeService.resolveMemberForWrite(
+      userId,
+      input.gymId,
+      input.memberId
+    );
+
+    const template = await workoutCardRepository.findTemplateById(
+      userId,
+      input.templateId
+    );
+    if (!template) {
+      throw new AppError(404, 'NOT_FOUND', 'Template not found');
+    }
+
+    const status = defaultStatusForDate(input.scheduledDate);
+    const created: WorkoutCard[] = [];
+
+    for (const item of template.items) {
+      const { machineId, targetMuscleKey } = await resolveMachineAndMuscle(
+        item.machineCode,
+        item.targetMuscleGroup
+      );
+      try {
+        const card = await workoutCardRepository.create(
+          userId,
+          {
+            gymId: input.gymId,
+            memberId: input.memberId,
+            machineId,
+            recommendationId: item.recommendationId,
+            targetMuscleGroup: targetMuscleKey,
+            scheduledDate: input.scheduledDate,
+            status,
+            setCount: item.setCount,
+            setWeightsKg: item.setWeightsKg,
+            setReps: item.setReps,
+            diary: item.diary,
+            restSeconds: item.restSeconds,
+            displayOrder: item.displayOrder,
+            templateId: template.id,
+            completedAt: status === 'COMPLETED' ? new Date().toISOString() : null,
+          },
+          locale
+        );
+
+        if (status === 'COMPLETED') {
+          try {
+            const logId = await upsertLogForCompletedCard(userId, card);
+            const linked = await workoutCardRepository.updateStatus(
+              userId,
+              card.id,
+              {
+                status: 'COMPLETED',
+                workoutLogId: logId,
+                completedAt: new Date().toISOString(),
+              },
+              locale
+            );
+            created.push(stripMachineId(linked ?? card));
+          } catch {
+            created.push(stripMachineId(card));
+          }
+        } else {
+          created.push(stripMachineId(card));
+        }
+      } catch (error) {
+        throwDuplicateCard(error);
+      }
+    }
+
+    return created;
+  },
+
+  async deleteTemplate(userId: string, id: string): Promise<void> {
+    const deleted = await workoutCardRepository.deleteTemplate(userId, id);
+    if (!deleted) {
+      throw new AppError(404, 'NOT_FOUND', 'Template not found');
+    }
+  },
+
+  /** Reminder job entry — returns number of notifications created. */
+  async sendDueReminders(): Promise<number> {
+    const today = todayDateKey();
+    const userIds =
+      await workoutCardRepository.listUserIdsWithPlannedOnDate(today);
+    let created = 0;
+
+    for (const userId of userIds) {
+      try {
+        const already =
+          await workoutCardRepository.hasReminderNotificationForDate(
+            userId,
+            today
+          );
+        if (already) continue;
+
+        const count = await workoutCardRepository.countPlannedForUserOnDate(
+          userId,
+          today
+        );
+        if (count <= 0) continue;
+
+        const { notificationRepository } = await import(
+          '../repositories/notification.repository.js'
+        );
+        await notificationRepository.create(
+          userId,
+          'push_schedule',
+          {
+            en: 'Workout plan reminder',
+            ko: '운동 계획 알림',
+          },
+          {
+            en: `You have ${count} planned workout(s) scheduled for today.`,
+            ko: `오늘 예정된 운동이 ${count}개 있습니다.`,
+          },
+          {
+            kind: 'workout_card_reminder',
+            date: today,
+            plannedCount: count,
+          }
+        );
+        created += 1;
+      } catch {
+        /* push/notification unavailable — continue */
+      }
+    }
+
+    return created;
+  },
+};

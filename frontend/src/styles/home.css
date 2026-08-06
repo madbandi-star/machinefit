@@ -4,6 +4,48 @@
   gap: var(--space-md);
 }
 
+.home-planned-workout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.05rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg)) 0%,
+      var(--glass-bg) 70%
+    );
+}
+
+.home-planned-workout__eyebrow {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.home-planned-workout__count {
+  margin: 0.25rem 0 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.home-planned-workout__muscles {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.home-planned-workout__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
 .home-guest {
   position: relative;
   overflow: hidden;

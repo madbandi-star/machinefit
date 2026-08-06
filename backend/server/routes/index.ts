@@ -18,6 +18,7 @@ import { notificationRouter } from './notification.routes.js';
 import { adminRouter } from './admin.routes.js';
 import { qrRouter } from './qr.routes.js';
 import { workoutLogRouter } from './workout-log.routes.js';
+import { workoutCardRouter } from './workout-card.routes.js';
 import { motivationMediaRouter } from './motivation-media.routes.js';
 import { liveDashboardRouter } from './live-dashboard.routes.js';
 import { locationRouter } from './location.routes.js';
@@ -68,6 +69,7 @@ apiRouter.use('/qr', qrRouter);
 apiRouter.use('/workout-logs', workoutLogRouter);
 /** Spec alias: DELETE /workout-records/date/:date (same handlers as /workout-logs). */
 apiRouter.use('/workout-records', workoutLogRouter);
+apiRouter.use('/workout-cards', workoutCardRouter);
 apiRouter.use('/motivation-media', motivationMediaRouter);
 apiRouter.use('/live', liveDashboardRouter);
 apiRouter.use('/locations', locationRouter);

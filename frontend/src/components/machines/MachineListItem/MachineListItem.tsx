@@ -26,6 +26,8 @@ interface MachineListItemProps {
   initialFavorited?: boolean | null;
   initialFavoriteId?: string;
   showFavorite?: boolean;
+  /** Forwarded as ?planDate= for workout plan creation. */
+  planDate?: string | null;
 }
 
 function prefetchMachineDetail(machineCode: string) {
@@ -79,6 +81,7 @@ export function MachineListItem({
   initialFavorited = null,
   initialFavoriteId,
   showFavorite = !onSelect,
+  planDate = null,
 }: MachineListItemProps) {
   const { t, i18n } = useTranslation('machines');
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
@@ -104,10 +107,16 @@ export function MachineListItem({
   const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
-  const detailTo =
-    selectedMuscle && isFreeWeight
-      ? `${detailPath}?muscle=${encodeURIComponent(selectedMuscle)}`
-      : detailPath;
+  const detailParams = new URLSearchParams();
+  if (selectedMuscle && isFreeWeight) {
+    detailParams.set('muscle', selectedMuscle);
+  }
+  if (planDate) {
+    detailParams.set('planDate', planDate);
+    detailParams.set('logDate', planDate);
+  }
+  const detailQuery = detailParams.toString();
+  const detailTo = detailQuery ? `${detailPath}?${detailQuery}` : detailPath;
 
   const main = (
     <>

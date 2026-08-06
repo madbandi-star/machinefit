@@ -62,6 +62,27 @@ export const QUERY_KEYS = {
     ['workout-logs', gymId, memberId, machineCode, logDate, targetMuscleGroup ?? ''] as const,
   workoutRecordDisplayOrder: (gymId: string, memberId: string, logDate?: string) =>
     ['workout-logs', gymId, memberId, 'display-order', logDate ?? 'all'] as const,
+  workoutCards: ['workout-cards'] as const,
+  workoutCardsList: (
+    gymId: string,
+    memberId: string,
+    params?: { from?: string; to?: string; scheduledDate?: string; status?: string | string[] }
+  ) => ['workout-cards', gymId, memberId, 'list', params ?? {}] as const,
+  workoutCardsMissed: (gymId: string, memberId: string) =>
+    ['workout-cards', gymId, memberId, 'missed'] as const,
+  workoutCardsCalendar: (
+    gymId: string,
+    memberId: string,
+    from: string,
+    to: string
+  ) => ['workout-cards', gymId, memberId, 'calendar', from, to] as const,
+  workoutCardTemplates: (gymId?: string) =>
+    ['workout-cards', 'templates', gymId ?? 'all'] as const,
+  workoutPlanStats: (
+    gymId: string,
+    memberId: string,
+    params?: { from?: string; to?: string }
+  ) => ['workout-cards', gymId, memberId, 'stats', params ?? {}] as const,
   posts: ['posts'] as const,
   /** Prefix for invalidating all machine-request list/detail caches. */
   machineRequestsRoot: ['machine-requests'] as const,

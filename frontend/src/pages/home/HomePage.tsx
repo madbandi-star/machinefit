@@ -5,6 +5,7 @@ import { AuthLandingScreen } from '@/components/auth/AuthLandingScreen/AuthLandi
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { HomeNoticeBanner } from '@/components/home/HomeNoticeBanner/HomeNoticeBanner';
+import { HomePlannedWorkoutCard } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
 import { NoticePopup } from '@/components/notices/NoticePopup/NoticePopup';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
@@ -83,6 +84,7 @@ export function HomePage() {
       {showProfileBanner && <ProfileIncompleteBanner />}
       <HomeNoticeBanner />
       <NoticePopup />
+      <HomePlannedWorkoutCard />
       <HomeWorkoutToolsSection />
       <RecentMachinesRow />
       <FavoriteMachinesRow />

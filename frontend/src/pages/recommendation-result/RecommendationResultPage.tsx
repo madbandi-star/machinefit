@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, ChevronDown, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
+import { isAllGymsId, isFreeWeightMachineCode, resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
@@ -16,17 +17,20 @@ import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/F
 import { ActiveSettingsSourceBanner } from '@/components/recommendation/ActiveSettingsSourceBanner/ActiveSettingsSourceBanner';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
-import { recommendationApi } from '@/api';
+import { recommendationApi, workoutCardApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
+import { useUIStore } from '@/store/ui.store';
 import { useUserUnits } from '@/hooks/useUserUnits';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
+import { getLocalDateKey, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
-import { isFreeWeightMachineCode, resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
@@ -76,15 +80,24 @@ export function RecommendationResultPage() {
   const [searchParams] = useSearchParams();
   const recommendationId = searchParams.get('id');
   const logDateParam = searchParams.get('logDate');
+  const planDateParam = searchParams.get('planDate');
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation(['machines', 'common']);
   const stateResult = location.state?.result as RecommendationResult | undefined;
   const locale = useSettingsStore((s) => s.locale);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId } = useActiveMember();
+  const queryClient = useQueryClient();
+  const showToast = useUIStore((s) => s.showToast);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const [bodyExpanded, setBodyExpanded] = useState(true);
+  const [planLinked, setPlanLinked] = useState(false);
+
+  const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
+  const today = getTodayDateKey();
 
   const { data: fetchedResult, isLoading, isError } = useQuery({
     queryKey: ['recommendation', recommendationId, locale],
@@ -97,7 +110,52 @@ export function RecommendationResultPage() {
   });
 
   const result = fetchedResult ?? stateResult;
-  const resultLogDate = normalizeDateKey(logDateParam ?? getLocalDateKey(result?.createdAt ?? ''));
+  const shouldCreatePlanOnSave =
+    Boolean(planDate) &&
+    planDate! >= today &&
+    isAuthenticated &&
+    Boolean(activeGymId) &&
+    Boolean(activeMemberId) &&
+    !isAllGymsId(activeGymId ?? '');
+
+  const createPlanMutation = useMutation({
+    mutationFn: async (item: RecommendationResult) => {
+      const res = await workoutCardApi.create({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        machineCode: item.machineCode,
+        scheduledDate: planDate!,
+        status: 'PLANNED',
+        setCount: 1,
+        setWeightsKg: [item.settings.recommendedWeightKg ?? 0],
+        recommendationId: item.id,
+        ...(item.targetMuscleGroup
+          ? { targetMuscleGroup: item.targetMuscleGroup }
+          : {}),
+      });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      setPlanLinked(true);
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+      showToast(t('machines:history.planCreated'), 'success');
+    },
+  });
+
+  const handleWorkoutSavedChange = (saved: boolean) => {
+    setWorkoutLogSavedOverride(saved);
+    if (
+      saved &&
+      shouldCreatePlanOnSave &&
+      !planLinked &&
+      !createPlanMutation.isPending &&
+      result
+    ) {
+      createPlanMutation.mutate(result);
+    }
+  };
+
+  const resultLogDate = normalizeDateKey(logDateParam ?? planDate ?? getLocalDateKey(result?.createdAt ?? ''));
   const resultTargetMuscle = getWorkoutLogQueryTargetMuscle(
     result?.machineCode ?? '',
     result?.targetMuscleGroup
@@ -349,7 +407,7 @@ export function RecommendationResultPage() {
             tips={result.tips}
             warnings={result.warnings}
             onControlReady={setLogControl}
-            onSavedChange={setWorkoutLogSavedOverride}
+            onSavedChange={handleWorkoutSavedChange}
             onVolumeRepsChange={
               fitFeedback.showAdjustment
                 ? (reps) =>

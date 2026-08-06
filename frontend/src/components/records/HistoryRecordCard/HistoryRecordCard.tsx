@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useCallback, useRef, memo, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpDown, Bookmark, ChevronDown, Clock3, Heart, Target, X } from 'lucide-react';
+import { ArrowUpDown, Bookmark, ChevronDown, Clock3, Heart, MoreHorizontal, Target, X } from 'lucide-react';
 import { WorkoutCardOrderControl } from '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl';
 import type { WorkoutCardOrderMove } from '@/utils/workoutCardOrder';
+import '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl.css';
 import type {
   RecommendationSettings,
   SettingsActiveSource,
@@ -25,6 +26,7 @@ import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/history
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
+import { planStatusBadgeClass } from '@/utils/workoutPlanCards';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 
@@ -53,6 +55,11 @@ interface HistoryRecordCardProps {
   orderDisabled?: boolean;
   onOrderMove?: (move: WorkoutCardOrderMove) => void;
   isReordering?: boolean;
+  onStartPlan?: () => void;
+  startPlanDisabled?: boolean;
+  onCopyPlan?: () => void;
+  onMovePlan?: () => void;
+  planActionsDisabled?: boolean;
 }
 
 function getBookmarkAriaLabel(
@@ -87,8 +94,14 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   orderDisabled = false,
   onOrderMove,
   isReordering = false,
+  onStartPlan,
+  startPlanDisabled = false,
+  onCopyPlan,
+  onMovePlan,
+  planActionsDisabled = false,
 }: HistoryRecordCardProps) {
   const orderMenuRef = useRef<HTMLDetailsElement>(null);
+  const planMenuRef = useRef<HTMLDetailsElement>(null);
   const canReorder =
     typeof orderIndex === 'number' &&
     typeof orderTotal === 'number' &&
@@ -165,6 +178,21 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   const muscleLabel = muscleGroup
     ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
     : null;
+
+  const planStatus = card.planStatus;
+  const planBadgeLabel =
+    planStatus === 'PLANNED'
+      ? t('machines:history.planStatusPlanned')
+      : planStatus === 'IN_PROGRESS'
+        ? t('machines:history.planStatusInProgress')
+        : planStatus === 'COMPLETED'
+          ? t('machines:history.planStatusCompleted')
+          : planStatus === 'SKIPPED'
+            ? t('machines:history.planStatusSkipped')
+            : null;
+  const showPlanStart = planStatus === 'PLANNED' && Boolean(onStartPlan);
+  const showPlanMenu = Boolean(card.workoutCardId) && (Boolean(onCopyPlan) || Boolean(onMovePlan));
+  const isPlanOnly = Boolean(card.isPlanOnly);
 
   const canSavePreferences = showAdjustment && !adjustmentReadOnly;
   const badButtonSaveMode = savedRating === 'bad' && canSavePreferences;
@@ -279,6 +307,52 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                     </div>
                   </details>
                 ) : null}
+                {showPlanMenu ? (
+                  <details ref={planMenuRef} className="history-record-card__order-menu">
+                    <summary
+                      className="history-record-card__order-trigger"
+                      aria-label={t('machines:history.planCardMenuAria')}
+                    >
+                      <MoreHorizontal size={16} strokeWidth={2.25} aria-hidden />
+                    </summary>
+                    <div className="history-record-card__order-panel" role="menu">
+                      <div className="workout-card-order workout-card-order--menu">
+                        {onMovePlan ? (
+                          <button
+                            type="button"
+                            className="workout-card-order__btn"
+                            role="menuitem"
+                            disabled={planActionsDisabled}
+                            onClick={() => {
+                              if (planMenuRef.current) planMenuRef.current.open = false;
+                              onMovePlan();
+                            }}
+                          >
+                            <span className="workout-card-order__btn-label">
+                              {t('machines:history.planMoveDate')}
+                            </span>
+                          </button>
+                        ) : null}
+                        {onCopyPlan ? (
+                          <button
+                            type="button"
+                            className="workout-card-order__btn"
+                            role="menuitem"
+                            disabled={planActionsDisabled}
+                            onClick={() => {
+                              if (planMenuRef.current) planMenuRef.current.open = false;
+                              onCopyPlan();
+                            }}
+                          >
+                            <span className="workout-card-order__btn-label">
+                              {t('machines:history.planCopyDate')}
+                            </span>
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+                  </details>
+                ) : null}
                 <button
                   type="button"
                   className="history-record-card__collapse"
@@ -294,43 +368,47 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                     }`}
                   />
                 </button>
-                <button
-                  type="button"
-                  className={`history-record-card__bookmark recommendation-result-page__favorite${
-                    isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
-                  }`}
-                  aria-label={
-                    isFavorited
-                      ? t('machines:recommendation.removeFavorite')
-                      : t('machines:recommendation.saveFavorite')
-                  }
-                  aria-pressed={isFavorited}
-                  onClick={handleFavoriteClick}
-                  disabled={isFavoritePending || !canFavorite}
-                >
-                  <Heart
-                    key={isFavorited ? 'favorited' : 'unfavorited'}
-                    size={18}
-                    strokeWidth={2.2}
-                    fill={isFavorited ? 'currentColor' : 'none'}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className={`history-record-card__bookmark${
-                    bookmarkActive ? ' history-record-card__bookmark--active' : ''
-                  }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
-                  aria-label={getBookmarkAriaLabel(logControl, isWorkoutLogSaved, t)}
-                  onClick={handleBookmarkClick}
-                  disabled={bookmarkDisabled}
-                >
-                  <Bookmark
-                    key={bookmarkActive ? 'saved' : 'unsaved'}
-                    size={18}
-                    strokeWidth={2.2}
-                    fill={bookmarkActive ? 'currentColor' : 'none'}
-                  />
-                </button>
+                {!isPlanOnly ? (
+                  <button
+                    type="button"
+                    className={`history-record-card__bookmark recommendation-result-page__favorite${
+                      isFavorited ? ' history-record-card__bookmark--active recommendation-result-page__favorite--active' : ''
+                    }`}
+                    aria-label={
+                      isFavorited
+                        ? t('machines:recommendation.removeFavorite')
+                        : t('machines:recommendation.saveFavorite')
+                    }
+                    aria-pressed={isFavorited}
+                    onClick={handleFavoriteClick}
+                    disabled={isFavoritePending || !canFavorite}
+                  >
+                    <Heart
+                      key={isFavorited ? 'favorited' : 'unfavorited'}
+                      size={18}
+                      strokeWidth={2.2}
+                      fill={isFavorited ? 'currentColor' : 'none'}
+                    />
+                  </button>
+                ) : null}
+                {!isPlanOnly || planStatus === 'IN_PROGRESS' ? (
+                  <button
+                    type="button"
+                    className={`history-record-card__bookmark${
+                      bookmarkActive ? ' history-record-card__bookmark--active' : ''
+                    }${bookmarkDirty ? ' history-record-card__bookmark--dirty' : ''}`}
+                    aria-label={getBookmarkAriaLabel(logControl, isWorkoutLogSaved, t)}
+                    onClick={handleBookmarkClick}
+                    disabled={bookmarkDisabled}
+                  >
+                    <Bookmark
+                      key={bookmarkActive ? 'saved' : 'unsaved'}
+                      size={18}
+                      strokeWidth={2.2}
+                      fill={bookmarkActive ? 'currentColor' : 'none'}
+                    />
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   className="history-record-card__remove"
@@ -349,6 +427,18 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
                 <Link to={resultUrl} className="history-record-card__meta-link">
                   <div className="history-record-card__meta">
+                    {planBadgeLabel && planStatus ? (
+                      <>
+                        <span
+                          className={`history-record-card__plan-badge ${planStatusBadgeClass(planStatus)}`}
+                        >
+                          {planBadgeLabel}
+                        </span>
+                        <span className="history-record-card__meta-divider" aria-hidden>
+                          ·
+                        </span>
+                      </>
+                    ) : null}
                     {muscleLabel ? (
                       <>
                         <span className="history-record-card__meta-item history-record-card__muscle">
@@ -360,24 +450,42 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                         </span>
                       </>
                     ) : null}
-                    <span className="history-record-card__meta-item history-record-card__time">
-                      <Clock3 size={11} strokeWidth={2.25} aria-hidden />
-                      {formatHistoryTime(card.viewedAt, i18n.language)}
-                    </span>
-                    <span className="history-record-card__meta-divider" aria-hidden>
-                      ·
-                    </span>
-                    <span
-                      className={`history-record-card__status${
-                        isWorkoutLogSaved ? ' history-record-card__status--saved' : ''
-                      }`}
-                    >
-                      {isWorkoutLogSaved
-                        ? t('machines:history.workoutSavedBadge')
-                        : t('machines:history.workoutUnsavedBadge')}
-                    </span>
+                    {!isPlanOnly ? (
+                      <>
+                        <span className="history-record-card__meta-item history-record-card__time">
+                          <Clock3 size={11} strokeWidth={2.25} aria-hidden />
+                          {formatHistoryTime(card.viewedAt, i18n.language)}
+                        </span>
+                        <span className="history-record-card__meta-divider" aria-hidden>
+                          ·
+                        </span>
+                        <span
+                          className={`history-record-card__status${
+                            isWorkoutLogSaved ? ' history-record-card__status--saved' : ''
+                          }`}
+                        >
+                          {isWorkoutLogSaved
+                            ? t('machines:history.workoutSavedBadge')
+                            : t('machines:history.workoutUnsavedBadge')}
+                        </span>
+                      </>
+                    ) : null}
                   </div>
                 </Link>
+
+                {showPlanStart ? (
+                  <button
+                    type="button"
+                    className="btn btn--primary history-record-card__plan-start"
+                    disabled={startPlanDisabled}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      onStartPlan?.();
+                    }}
+                  >
+                    {t('machines:history.planStartWorkout')}
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>
@@ -421,53 +529,55 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
       ) : null}
 
       {/* Keep mounted while collapsed so header 기록 (bookmark) stays enabled. */}
-      <WorkoutLogPanel
-        key={card.cardId}
-        machineCode={card.machineCode}
-        machineName={card.machineName}
-        recommendationId={card.recommendationId}
-        suggestedWeightKg={resolveWorkoutLogSeedWeightKg({
-          fitRating: savedRating,
-          // Live on-screen 조정중량 (not only last saved prefs row).
-          adjustedWeight:
-            fitFeedback.displayAdjustedSettings?.recommendedWeightKg ??
-            customSettings.recommendedWeightKg,
-          // On-screen 추천중량 (AI recommendation shown when “잘 맞음”).
-          recommendedWeight: card.settings.recommendedWeightKg,
-        })}
-        volumeReps={resolveWorkoutLogSeedReps({
-          fitRating: savedRating,
-          adjustedReps:
-            fitFeedback.displayAdjustedSettings?.recommendedRepsMin ??
-            fitFeedback.displayAdjustedSettings?.recommendedRepsMax ??
-            customSettings.recommendedRepsMin ??
-            customSettings.recommendedRepsMax,
-          // 잘맞음 → 추천횟수 (card.settings is AI/base recommendation).
-          recommendedReps:
-            card.settings.recommendedRepsMin ?? card.settings.recommendedRepsMax,
-        })}
-        isAuthenticated={isAuthenticated}
-        variant="history"
-        logDate={logDate}
-        idPrefix={`history-workout-${card.cardId}`}
-        targetMuscleGroup={cardTargetMuscle}
-        lockTargetMuscle={lockTargetMuscle}
-        showVoiceCoach={expanded}
-        onControlReady={setLogControl}
-        onSavedChange={setWorkoutLogSavedOverride}
-        onVolumeRepsChange={
-          showAdjustment && !adjustmentReadOnly
-            ? (reps) =>
-                fitFeedback.handleCustomChange(
-                  'recommendedRepsMin',
-                  String(reps),
-                  'number'
-                )
-            : undefined
-        }
-        onCompanionSave={canUseFitFeedback ? handleCompanionSave : undefined}
-        companionSavePending={fitFeedback.isPreferencesPending}
-      />
+      {!isPlanOnly || planStatus === 'IN_PROGRESS' || planStatus === 'COMPLETED' ? (
+        <WorkoutLogPanel
+          key={card.cardId}
+          machineCode={card.machineCode}
+          machineName={card.machineName}
+          recommendationId={card.recommendationId}
+          suggestedWeightKg={resolveWorkoutLogSeedWeightKg({
+            fitRating: savedRating,
+            // Live on-screen 조정중량 (not only last saved prefs row).
+            adjustedWeight:
+              fitFeedback.displayAdjustedSettings?.recommendedWeightKg ??
+              customSettings.recommendedWeightKg,
+            // On-screen 추천중량 (AI recommendation shown when “잘 맞음”).
+            recommendedWeight: card.settings.recommendedWeightKg,
+          })}
+          volumeReps={resolveWorkoutLogSeedReps({
+            fitRating: savedRating,
+            adjustedReps:
+              fitFeedback.displayAdjustedSettings?.recommendedRepsMin ??
+              fitFeedback.displayAdjustedSettings?.recommendedRepsMax ??
+              customSettings.recommendedRepsMin ??
+              customSettings.recommendedRepsMax,
+            // 잘맞음 → 추천횟수 (card.settings is AI/base recommendation).
+            recommendedReps:
+              card.settings.recommendedRepsMin ?? card.settings.recommendedRepsMax,
+          })}
+          isAuthenticated={isAuthenticated}
+          variant="history"
+          logDate={logDate}
+          idPrefix={`history-workout-${card.cardId}`}
+          targetMuscleGroup={cardTargetMuscle}
+          lockTargetMuscle={lockTargetMuscle}
+          showVoiceCoach={expanded}
+          onControlReady={setLogControl}
+          onSavedChange={setWorkoutLogSavedOverride}
+          onVolumeRepsChange={
+            showAdjustment && !adjustmentReadOnly
+              ? (reps) =>
+                  fitFeedback.handleCustomChange(
+                    'recommendedRepsMin',
+                    String(reps),
+                    'number'
+                  )
+              : undefined
+          }
+          onCompanionSave={canUseFitFeedback ? handleCompanionSave : undefined}
+          companionSavePending={fitFeedback.isPreferencesPending}
+        />
+      ) : null}
 
       {!expanded ? (
         <button

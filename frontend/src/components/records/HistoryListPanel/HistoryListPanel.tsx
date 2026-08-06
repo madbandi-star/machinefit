@@ -8,9 +8,8 @@ import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
-import { favoriteApi, historyApi } from '@/api';
+import { favoriteApi, historyApi, workoutCardApi, workoutLogApi } from '@/api';
 import { fetchWorkoutLogs } from '@/api/workout-log';
-import { workoutLogApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
@@ -37,9 +36,11 @@ import {
   historyCardMatchesFocus,
   type HistoryRecordCard as HistoryRecordCardData,
 } from '@/utils/historyRecordsDisplay';
+import { mergeWorkoutPlanCards } from '@/utils/workoutPlanCards';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import { HistorySummaryStats } from '@/components/records/HistorySummaryStats/HistorySummaryStats';
 import { HistoryRecordCard } from '@/components/records/HistoryRecordCard/HistoryRecordCard';
+import { MissedWorkoutPlansBanner } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
 import { isDismissedToday } from '@/utils/dismissToday';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
@@ -66,6 +67,9 @@ import '@/styles/records.css';
 const HISTORY_LIST_LIMIT = 100;
 const HISTORY_WORKOUT_LOG_LIMIT = 200;
 const HISTORY_DELETE_DISMISS_KEY = 'history-delete-confirm-dismiss';
+/** Wide window so future plans + older history share one query. */
+const PLAN_RANGE_FROM = '2020-01-01';
+const PLAN_RANGE_TO = '2035-12-31';
 
 interface PendingDelete {
   cardId: string;
@@ -74,6 +78,16 @@ interface PendingDelete {
   recommendationId?: string;
   logDate: string;
   targetMuscleGroup?: string;
+  workoutCardId?: string;
+  isPlanOnly?: boolean;
+}
+
+function promptDateKey(message: string, defaultValue: string): string | null {
+  const raw = window.prompt(message, defaultValue);
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
+  return trimmed;
 }
 
 export function HistoryListPanel() {
@@ -160,6 +174,44 @@ export function HistoryListPanel() {
     staleTime: 30_000,
   });
 
+  const canUseWorkoutPlans =
+    isAuthenticated &&
+    Boolean(activeGymId) &&
+    Boolean(activeMemberId) &&
+    memberScopeReady &&
+    !isAllGymsId(activeGymId ?? '');
+
+  const workoutCardsQueryKey = QUERY_KEYS.workoutCardsList(activeGymId ?? '', memberKey, {
+    from: PLAN_RANGE_FROM,
+    to: PLAN_RANGE_TO,
+  });
+
+  const { data: workoutCards } = useQuery({
+    queryKey: workoutCardsQueryKey,
+    queryFn: async () => {
+      const res = await workoutCardApi.list({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        from: PLAN_RANGE_FROM,
+        to: PLAN_RANGE_TO,
+        limit: 500,
+      });
+      return res.data.data ?? [];
+    },
+    enabled: canUseWorkoutPlans,
+    staleTime: 30_000,
+  });
+
+  const { data: planTemplates = [] } = useQuery({
+    queryKey: QUERY_KEYS.workoutCardTemplates(activeGymId ?? ''),
+    queryFn: async () => {
+      const res = await workoutCardApi.listTemplates({ gymId: activeGymId! });
+      return res.data.data ?? [];
+    },
+    enabled: canUseWorkoutPlans,
+    staleTime: 60_000,
+  });
+
   const favoriteByMachine = useMemo(() => {
     const map = new Map<string, { id: string }>();
     for (const item of favoritesList ?? []) {
@@ -173,9 +225,14 @@ export function HistoryListPanel() {
     [workoutLogs]
   );
 
-  const allRecordCards = useMemo(
+  const historyOnlyCards = useMemo(
     () => expandHistoryRecordCards(allHistory ?? [], workoutLogs ?? []),
     [allHistory, workoutLogs]
+  );
+
+  const allRecordCards = useMemo(
+    () => mergeWorkoutPlanCards(historyOnlyCards, workoutCards ?? []),
+    [historyOnlyCards, workoutCards]
   );
 
   const filteredAllCards = useMemo(
@@ -191,10 +248,21 @@ export function HistoryListPanel() {
     [filteredAllCards, selectedDate]
   );
 
-  const datesWithData = useMemo(
-    () => extractRecordCardDateKeys(filteredAllCards),
-    [filteredAllCards]
-  );
+  const datesWithData = useMemo(() => {
+    const keys = extractRecordCardDateKeys(filteredAllCards);
+    for (const card of workoutCards ?? []) {
+      keys.add(normalizeDateKey(card.scheduledDate));
+    }
+    return keys;
+  }, [filteredAllCards, workoutCards]);
+
+  const dateCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const card of filteredAllCards) {
+      counts.set(card.logDate, (counts.get(card.logDate) ?? 0) + 1);
+    }
+    return counts;
+  }, [filteredAllCards]);
 
   const groupedCards = useMemo(() => {
     if (!displayCards.length) return [];
@@ -365,6 +433,7 @@ export function HistoryListPanel() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
       queryClient.invalidateQueries({ queryKey: displayOrderQueryKey }),
       queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] }),
       queryClient.invalidateQueries({ queryKey: ['user', 'growth-timeline'] }),
@@ -375,13 +444,28 @@ export function HistoryListPanel() {
     ]);
   }, [displayOrderQueryKey, queryClient]);
 
+  const invalidatePlans = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.workoutCardTemplates(activeGymId ?? ''),
+      }),
+    ]);
+  }, [activeGymId, queryClient]);
+
   const deleteMutation = useMutation({
     mutationFn: async ({
       historyId,
       machineCode,
       logDate,
       targetMuscleGroup,
+      workoutCardId,
+      isPlanOnly,
     }: PendingDelete) => {
+      if (workoutCardId && (isPlanOnly || !historyId)) {
+        await workoutCardApi.remove(workoutCardId);
+        if (isPlanOnly) return;
+      }
       if (historyId) {
         await historyApi.remove(historyId);
       }
@@ -397,11 +481,94 @@ export function HistoryListPanel() {
       } catch {
         /* workout log may not exist */
       }
+      if (workoutCardId && historyId) {
+        try {
+          await workoutCardApi.remove(workoutCardId);
+        } catch {
+          /* plan may already be gone */
+        }
+      }
     },
     onSuccess: async () => {
       setPendingDelete(null);
       await invalidateAfterWorkoutDelete();
       showToast(t('machines:history.removed'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const startPlanMutation = useMutation({
+    mutationFn: async (workoutCardId: string) => {
+      const res = await workoutCardApi.patchStatus(workoutCardId, { status: 'IN_PROGRESS' });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      await invalidatePlans();
+      showToast(t('machines:history.planStarted'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const movePlanMutation = useMutation({
+    mutationFn: async ({ id, scheduledDate }: { id: string; scheduledDate: string }) => {
+      const res = await workoutCardApi.moveDate(id, { scheduledDate });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      await invalidatePlans();
+      showToast(t('machines:history.planMoved'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const copyPlanMutation = useMutation({
+    mutationFn: async ({ id, scheduledDate }: { id: string; scheduledDate: string }) => {
+      const res = await workoutCardApi.copy(id, { scheduledDate, status: 'PLANNED' });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      await invalidatePlans();
+      showToast(t('machines:history.planCopied'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const saveTemplateMutation = useMutation({
+    mutationFn: async ({ name, fromDate }: { name: string; fromDate: string }) => {
+      const res = await workoutCardApi.createTemplate({
+        gymId: activeGymId!,
+        name,
+        fromDate,
+      });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      await invalidatePlans();
+      showToast(t('machines:history.planTemplateSaved'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const applyTemplateMutation = useMutation({
+    mutationFn: async ({
+      templateId,
+      scheduledDate,
+    }: {
+      templateId: string;
+      scheduledDate: string;
+    }) => {
+      const res = await workoutCardApi.applyTemplate({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        templateId,
+        scheduledDate,
+      });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      setDayMenuOpen(false);
+      await invalidatePlans();
+      showToast(t('machines:history.planTemplateApplied'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -415,6 +582,12 @@ export function HistoryListPanel() {
         gymId: activeGymId,
         memberId: activeMemberId,
       });
+      const dayPlans = (workoutCards ?? []).filter(
+        (card) =>
+          normalizeDateKey(card.scheduledDate) === logDate &&
+          (card.status === 'PLANNED' || card.status === 'IN_PROGRESS' || card.status === 'SKIPPED')
+      );
+      await Promise.allSettled(dayPlans.map((card) => workoutCardApi.remove(card.id)));
     },
     onSuccess: async () => {
       setPendingDayDelete(false);
@@ -547,6 +720,8 @@ export function HistoryListPanel() {
         recommendationId: card.recommendationId,
         logDate: card.logDate,
         targetMuscleGroup: card.targetMuscleGroup,
+        workoutCardId: card.workoutCardId,
+        isPlanOnly: card.isPlanOnly,
       };
 
       if (isDismissedToday(HISTORY_DELETE_DISMISS_KEY)) {
@@ -556,6 +731,23 @@ export function HistoryListPanel() {
       setPendingDelete(payload);
     },
     [deleteMutation]
+  );
+
+  const promptMoveOrCopy = useCallback(
+    (card: HistoryRecordCardData, mode: 'move' | 'copy') => {
+      if (!card.workoutCardId) return;
+      const nextDate = promptDateKey(
+        t('machines:history.planDatePrompt'),
+        card.logDate || getTodayDateKey()
+      );
+      if (!nextDate) return;
+      if (mode === 'move') {
+        movePlanMutation.mutate({ id: card.workoutCardId, scheduledDate: nextDate });
+      } else {
+        copyPlanMutation.mutate({ id: card.workoutCardId, scheduledDate: nextDate });
+      }
+    },
+    [copyPlanMutation, movePlanMutation, t]
   );
 
   const confirmDelete = () => {
@@ -570,6 +762,8 @@ export function HistoryListPanel() {
     [allRecordCards, targetDeleteDate]
   );
 
+  const planAddUrl = `${ROUTES.MACHINES}?planDate=${encodeURIComponent(targetDeleteDate)}`;
+
   if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
 
@@ -577,36 +771,12 @@ export function HistoryListPanel() {
 
   if (!hasAnyRecords) {
     return (
-      <EmptyState
-        icon="history"
-        title={t('machines:history.empty')}
-        action={
-          <Link to={ROUTES.MACHINES} className="btn btn--primary">
-            {t('common:emptyState.browseMachines')}
-          </Link>
-        }
-      />
-    );
-  }
-
-  const emptyFilterTitle =
-    logStatus === 'saved'
-      ? t('machines:history.emptySaved')
-      : logStatus === 'unsaved'
-        ? t('machines:history.emptyUnsaved')
-        : selectedDate
-          ? t('machines:history.emptyOnDate')
-          : t('machines:history.empty');
-
-  return (
-    <div className="records-list records-list--history history-page-premium">
-      <div className="records-list__toolbar">
-        <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
-
-        <div className="records-list__toolbar-end">
-          <div className="records-list__date-filter-block">
-            <div className="records-list__filters">
-              {datesWithData.size > 0 ? (
+      <div className="records-list records-list--history history-page-premium">
+        {canUseWorkoutPlans ? <MissedWorkoutPlansBanner /> : null}
+        <div className="records-list__toolbar">
+          <div className="records-list__toolbar-end">
+            <div className="records-list__date-filter-block">
+              <div className="records-list__filters">
                 <details className="records-list__calendar-details">
                   <summary className="records-list__calendar-summary">
                     <span className="records-list__calendar-toggle">
@@ -627,23 +797,93 @@ export function HistoryListPanel() {
                   </summary>
                   <HistoryDateCalendar
                     datesWithData={datesWithData}
+                    dateCounts={dateCounts}
                     selectedDate={selectedDate}
                     onSelect={handleDateChange}
                     locale={i18n.language}
+                    allowEmptySelect
                   />
                 </details>
-              ) : (
-                <span className="records-list__calendar-toggle records-list__calendar-toggle--static">
-                  <Icon
-                    name="calendar"
-                    size={14}
-                    className="records-list__calendar-icon"
-                  />
-                  <span className="records-list__date-filter-label">
-                    {t('machines:history.filterByDate')}
+                {selectedDate ? (
+                  <button
+                    type="button"
+                    className="records-list__date-reset"
+                    onClick={() => handleDateChange('')}
+                  >
+                    {t('machines:filterAll')}
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+        <EmptyState
+          icon="history"
+          title={
+            selectedDate
+              ? t('machines:history.emptyOnDate')
+              : t('machines:history.empty')
+          }
+          action={
+            <div className="records-list__empty-actions">
+              <Link to={planAddUrl} className="btn btn--primary">
+                {t('machines:history.planAddForDate')}
+              </Link>
+              <Link to={ROUTES.MACHINES} className="btn btn--secondary">
+                {t('common:emptyState.browseMachines')}
+              </Link>
+            </div>
+          }
+        />
+      </div>
+    );
+  }
+
+  const emptyFilterTitle =
+    logStatus === 'saved'
+      ? t('machines:history.emptySaved')
+      : logStatus === 'unsaved'
+        ? t('machines:history.emptyUnsaved')
+        : selectedDate
+          ? t('machines:history.emptyOnDate')
+          : t('machines:history.empty');
+
+  return (
+    <div className="records-list records-list--history history-page-premium">
+      {canUseWorkoutPlans ? <MissedWorkoutPlansBanner /> : null}
+      <div className="records-list__toolbar">
+        <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
+
+        <div className="records-list__toolbar-end">
+          <div className="records-list__date-filter-block">
+            <div className="records-list__filters">
+              <details className="records-list__calendar-details">
+                <summary className="records-list__calendar-summary">
+                  <span className="records-list__calendar-toggle">
+                    <Icon
+                      name="calendar"
+                      size={14}
+                      className="records-list__calendar-icon"
+                    />
+                    <span className="records-list__date-filter-label">
+                      {t('machines:history.filterByDate')}
+                    </span>
+                    <Icon
+                      name="chevronDown"
+                      size={16}
+                      className="records-list__calendar-chevron"
+                    />
                   </span>
-                </span>
-              )}
+                </summary>
+                <HistoryDateCalendar
+                  datesWithData={datesWithData}
+                  dateCounts={dateCounts}
+                  selectedDate={selectedDate}
+                  onSelect={handleDateChange}
+                  locale={i18n.language}
+                  allowEmptySelect
+                />
+              </details>
               {selectedDate ? (
                 <button
                   type="button"
@@ -656,7 +896,7 @@ export function HistoryListPanel() {
             </div>
           </div>
 
-          {isAuthenticated && hasCardsOnTargetDate ? (
+          {isAuthenticated ? (
             <details
               className="records-list__day-menu"
               open={dayMenuOpen}
@@ -669,20 +909,73 @@ export function HistoryListPanel() {
                 <Icon name="moreHorizontal" size={20} />
               </summary>
               <div className="records-list__day-menu-panel" role="menu">
-                <button
-                  type="button"
-                  className="records-list__day-menu-item records-list__day-menu-item--danger"
+                <Link
+                  to={planAddUrl}
+                  className="records-list__day-menu-item"
                   role="menuitem"
-                  disabled={deleteDayMutation.isPending}
-                  onClick={() => {
-                    setDayMenuOpen(false);
-                    setPendingDayDelete(true);
-                  }}
+                  onClick={() => setDayMenuOpen(false)}
                 >
-                  {usesSelectedDateLabel
-                    ? t('machines:history.deleteDayMenuSelected')
-                    : t('machines:history.deleteDayMenuToday')}
-                </button>
+                  {t('machines:history.planAddForDate')}
+                </Link>
+                {canUseWorkoutPlans && hasCardsOnTargetDate ? (
+                  <button
+                    type="button"
+                    className="records-list__day-menu-item"
+                    role="menuitem"
+                    disabled={saveTemplateMutation.isPending}
+                    onClick={() => {
+                      const name = window.prompt(t('machines:history.planTemplateNamePrompt'));
+                      if (!name?.trim()) return;
+                      setDayMenuOpen(false);
+                      saveTemplateMutation.mutate({
+                        name: name.trim(),
+                        fromDate: targetDeleteDate,
+                      });
+                    }}
+                  >
+                    {t('machines:history.planSaveTemplate')}
+                  </button>
+                ) : null}
+                {canUseWorkoutPlans && planTemplates.length > 0 ? (
+                  <div className="records-list__day-menu-templates" role="group">
+                    <p className="records-list__day-menu-label">
+                      {t('machines:history.planApplyTemplate')}
+                    </p>
+                    {planTemplates.map((template) => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        className="records-list__day-menu-item"
+                        role="menuitem"
+                        disabled={applyTemplateMutation.isPending}
+                        onClick={() => {
+                          applyTemplateMutation.mutate({
+                            templateId: template.id,
+                            scheduledDate: targetDeleteDate,
+                          });
+                        }}
+                      >
+                        {template.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                {hasCardsOnTargetDate ? (
+                  <button
+                    type="button"
+                    className="records-list__day-menu-item records-list__day-menu-item--danger"
+                    role="menuitem"
+                    disabled={deleteDayMutation.isPending}
+                    onClick={() => {
+                      setDayMenuOpen(false);
+                      setPendingDayDelete(true);
+                    }}
+                  >
+                    {usesSelectedDateLabel
+                      ? t('machines:history.deleteDayMenuSelected')
+                      : t('machines:history.deleteDayMenuToday')}
+                  </button>
+                ) : null}
               </div>
             </details>
           ) : null}
@@ -694,20 +987,27 @@ export function HistoryListPanel() {
           icon="history"
           title={emptyFilterTitle}
           action={
-            selectedDate || logStatus !== 'all' ? (
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => {
-                  updateSearchParams((next) => {
-                    next.delete('date');
-                    next.delete('logStatus');
-                  });
-                }}
-              >
-                {t('machines:filterAll')}
-              </button>
-            ) : undefined
+            <div className="records-list__empty-actions">
+              {selectedDate ? (
+                <Link to={planAddUrl} className="btn btn--primary">
+                  {t('machines:history.planAddForDate')}
+                </Link>
+              ) : null}
+              {selectedDate || logStatus !== 'all' ? (
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={() => {
+                    updateSearchParams((next) => {
+                      next.delete('date');
+                      next.delete('logStatus');
+                    });
+                  }}
+                >
+                  {t('machines:filterAll')}
+                </button>
+              ) : undefined}
+            </div>
           }
         />
       ) : (
@@ -829,11 +1129,30 @@ export function HistoryListPanel() {
                     orderTotal={dayOrdered.length}
                     orderDisabled={!canPersistOrder || reorderMutation.isPending}
                     onOrderMove={
-                      canPersistOrder
+                      canPersistOrder && !card.isPlanOnly
                         ? (move) => handleOrderMove(group.dateKey, card, move)
                         : undefined
                     }
                     isReordering={animatingCardId === card.cardId}
+                    onStartPlan={
+                      card.planStatus === 'PLANNED' && card.workoutCardId
+                        ? () => startPlanMutation.mutate(card.workoutCardId!)
+                        : undefined
+                    }
+                    startPlanDisabled={startPlanMutation.isPending}
+                    onCopyPlan={
+                      card.workoutCardId
+                        ? () => promptMoveOrCopy(card, 'copy')
+                        : undefined
+                    }
+                    onMovePlan={
+                      card.workoutCardId
+                        ? () => promptMoveOrCopy(card, 'move')
+                        : undefined
+                    }
+                    planActionsDisabled={
+                      movePlanMutation.isPending || copyPlanMutation.isPending
+                    }
                   />
                 );
               })

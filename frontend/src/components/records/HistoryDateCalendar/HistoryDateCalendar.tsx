@@ -12,16 +12,25 @@ import {
 
 interface HistoryDateCalendarProps {
   datesWithData: Set<string>;
+  /** Optional per-date counts (plans + records). Falls back to a dot when missing. */
+  dateCounts?: Map<string, number>;
   selectedDate: string;
   onSelect: (dateKey: string) => void;
   locale: string;
+  /** When true (default), empty days are selectable (e.g. future plan dates). */
+  allowEmptySelect?: boolean;
+  /** Fires when the visible month changes (for calendar-summary fetches). */
+  onVisibleMonthChange?: (year: number, monthIndex: number) => void;
 }
 
 export function HistoryDateCalendar({
   datesWithData,
+  dateCounts,
   selectedDate,
   onSelect,
   locale,
+  allowEmptySelect = true,
+  onVisibleMonthChange,
 }: HistoryDateCalendarProps) {
   const { t } = useTranslation('machines');
   const todayKey = getLocalDateKey(new Date().toISOString());
@@ -35,6 +44,10 @@ export function HistoryDateCalendar({
     setViewYear(parsed.year);
     setViewMonthIndex(parsed.monthIndex);
   }, [selectedDate]);
+
+  useEffect(() => {
+    onVisibleMonthChange?.(viewYear, viewMonthIndex);
+  }, [viewYear, viewMonthIndex, onVisibleMonthChange]);
 
   const cells = useMemo(
     () => buildMonthGrid(viewYear, viewMonthIndex),
@@ -80,9 +93,11 @@ export function HistoryDateCalendar({
 
       <div className="history-calendar__grid">
         {cells.map((cell) => {
-          const hasData = datesWithData.has(cell.dateKey);
+          const count = dateCounts?.get(cell.dateKey) ?? 0;
+          const hasData = datesWithData.has(cell.dateKey) || count > 0;
           const isSelected = selectedDate === cell.dateKey;
           const isToday = cell.dateKey === todayKey;
+          const canSelect = hasData || allowEmptySelect;
 
           return (
             <button
@@ -92,18 +107,27 @@ export function HistoryDateCalendar({
                 'history-calendar__day',
                 !cell.inCurrentMonth && 'history-calendar__day--outside',
                 hasData ? 'history-calendar__day--has-data' : 'history-calendar__day--empty',
+                allowEmptySelect && !hasData && 'history-calendar__day--selectable',
                 isSelected && 'history-calendar__day--selected',
                 isToday && 'history-calendar__day--today',
               ]
                 .filter(Boolean)
                 .join(' ')}
-              disabled={!hasData}
+              disabled={!canSelect}
               aria-pressed={isSelected}
               aria-label={cell.dateKey}
               onClick={() => onSelect(cell.dateKey)}
             >
               <span className="history-calendar__day-num">{cell.day}</span>
-              {hasData ? <span className="history-calendar__day-dot" aria-hidden /> : null}
+              {hasData ? (
+                count > 1 ? (
+                  <span className="history-calendar__day-count" aria-hidden>
+                    {count > 9 ? '9+' : count}
+                  </span>
+                ) : (
+                  <span className="history-calendar__day-dot" aria-hidden />
+                )
+              ) : null}
             </button>
           );
         })}

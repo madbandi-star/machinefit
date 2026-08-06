@@ -649,4 +649,6 @@ export type {
 } from './user-motivation-track.api';
 export { inspectionApi } from './inspection.api';
 export { billingApi, adminBillingApi } from './billing.api';
+export { workoutCardApi } from './workout-card.api';
+export type { WorkoutCardListParams } from './workout-card.api';
 

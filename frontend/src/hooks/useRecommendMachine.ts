@@ -183,6 +183,7 @@ function buildMemberProfileInput(
 
 export interface RecommendMachineOptions {
   targetMuscleGroup?: TargetMuscleGroup;
+  planDate?: string;
 }
 
 export function useRecommendMachine(machineCode: string | undefined) {
@@ -250,12 +251,17 @@ export function useRecommendMachine(machineCode: string | undefined) {
       }
 
       const res = await recommendationApi.create(input);
-      return res.data.data;
+      return { result: res.data.data, planDate: options.planDate };
     },
-    onSuccess: async (result) => {
+    onSuccess: async ({ result, planDate }) => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+      const params = new URLSearchParams({ id: result.id });
+      if (planDate) {
+        params.set('planDate', planDate);
+        params.set('logDate', planDate);
+      }
       navigate(
-        `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', result.machineCode)}?id=${result.id}`,
+        `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', result.machineCode)}?${params.toString()}`,
         { state: { result }, replace: true }
       );
     },

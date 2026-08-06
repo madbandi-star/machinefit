@@ -17,6 +17,8 @@ interface RecommendCTAProps {
   initialMuscle?: TargetMuscleGroup | null;
   /** When true (FW detail), muscle chip selection syncs to `?muscle=` so the hero cover updates. */
   syncMuscleToUrl?: boolean;
+  /** Forwarded through recommend → result for workout plan creation. */
+  planDate?: string | null;
 }
 
 export function RecommendCTA({
@@ -24,6 +26,7 @@ export function RecommendCTA({
   fixed = false,
   initialMuscle = null,
   syncMuscleToUrl = false,
+  planDate = null,
 }: RecommendCTAProps) {
   const { t } = useTranslation('machines');
   const { t: tt } = useTranslation('trade');
@@ -69,7 +72,9 @@ export function RecommendCTA({
     }
 
     requestRecommendation(
-      needsMusclePicker && selectedMuscle ? { targetMuscleGroup: selectedMuscle } : undefined
+      needsMusclePicker && selectedMuscle
+        ? { targetMuscleGroup: selectedMuscle, planDate: planDate ?? undefined }
+        : { planDate: planDate ?? undefined }
     );
   };
 

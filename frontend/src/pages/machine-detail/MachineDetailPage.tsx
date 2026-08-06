@@ -1,9 +1,10 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   Role,
   hasMinRole,
+  isAllGymsId,
   isFreeWeightMachineCode,
   type TargetMuscleGroup,
 } from '@machinefit/shared';
@@ -16,8 +17,11 @@ import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { machineApi } from '@/api';
+import { machineApi, workoutCardApi } from '@/api';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
+import { useUIStore } from '@/store/ui.store';
 import { normalizeDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
@@ -32,11 +36,16 @@ export function MachineDetailPage() {
   const [searchParams] = useSearchParams();
   const muscleParam = searchParams.get('muscle') as TargetMuscleGroup | null;
   const logDateParam = searchParams.get('logDate');
-  const { t, i18n } = useTranslation('machines');
+  const planDateParam = searchParams.get('planDate');
+  const { t, i18n } = useTranslation(['machines', 'common']);
   const { t: tt } = useTranslation('trade');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const canTrade = isAuthenticated && hasMinRole(user?.roleCode, Role.OWNER);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId } = useActiveMember();
+  const queryClient = useQueryClient();
+  const showToast = useUIStore((s) => s.showToast);
 
   const { data: machine, isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!, muscleParam ?? undefined),
@@ -52,23 +61,60 @@ export function MachineDetailPage() {
     placeholderData: (prev) => prev,
   });
 
+  const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
+
+  const createPlanMutation = useMutation({
+    mutationFn: async () => {
+      if (!activeGymId || !activeMemberId || !machineCode || !planDate) {
+        throw new Error('missing_scope');
+      }
+      if (isAllGymsId(activeGymId)) throw new Error('all_gyms');
+      const res = await workoutCardApi.create({
+        gymId: activeGymId,
+        memberId: activeMemberId,
+        machineCode,
+        scheduledDate: planDate,
+        status: 'PLANNED',
+        setCount: 1,
+        setWeightsKg: [0],
+        ...(muscleParam ? { targetMuscleGroup: muscleParam } : {}),
+      });
+      return res.data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+      showToast(t('machines:history.planCreated'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
   if (isLoading && !machine) return <Skeleton count={3} height={100} />;
   if (isError && !machine) {
     return (
-      <PageShell title={t('error', { defaultValue: 'Error' })}>
+      <PageShell title={t('machines:error', { defaultValue: 'Error' })}>
         <QueryErrorMessage onRetry={() => void refetch()} />
       </PageShell>
     );
   }
   if (!machine) {
-    return <PageShell title={t('notFound', { defaultValue: 'Not Found' })} />;
+    return <PageShell title={t('machines:notFound', { defaultValue: 'Not Found' })} />;
   }
 
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
-  const logDate = logDateParam ? normalizeDateKey(logDateParam) : null;
+  const logDate = logDateParam
+    ? normalizeDateKey(logDateParam)
+    : planDate
+      ? planDate
+      : null;
   const logTargetMuscle = machineCode
     ? getWorkoutLogQueryTargetMuscle(machineCode, muscleParam ?? undefined)
     : undefined;
+  const canCreatePlan =
+    isAuthenticated &&
+    Boolean(planDate) &&
+    Boolean(activeGymId) &&
+    Boolean(activeMemberId) &&
+    !isAllGymsId(activeGymId ?? '');
 
   return (
     <div className="machine-detail-page">
@@ -76,6 +122,21 @@ export function MachineDetailPage() {
       <MachineHero machine={machine} selectedMuscle={muscleParam} />
       {!isFreeWeight && machineCode && isAuthenticated ? (
         <LastRecommendationSnippet machineCode={machineCode} />
+      ) : null}
+      {canCreatePlan ? (
+        <div className="machine-detail-plan-actions">
+          <p className="machine-detail-plan-actions__label">
+            {t('machines:history.planAddMachineHint', { date: planDate })}
+          </p>
+          <button
+            type="button"
+            className="btn btn--primary btn--block"
+            disabled={createPlanMutation.isPending}
+            onClick={() => createPlanMutation.mutate()}
+          >
+            {t('machines:history.planAddMachine')}
+          </button>
+        </div>
       ) : null}
       {logDate && machineCode && isAuthenticated ? (
         <WorkoutLogPanel
@@ -111,6 +172,7 @@ export function MachineDetailPage() {
           machineCode={machineCode}
           initialMuscle={muscleParam}
           syncMuscleToUrl={isFreeWeight}
+          planDate={planDate}
         />
       ) : null}
     </div>

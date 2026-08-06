@@ -1,5 +1,5 @@
 import type { HistoryItem } from '@/api';
-import type { TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
+import type { TargetMuscleGroup, WorkoutCardStatus, WorkoutLog } from '@machinefit/shared';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { buildLoggedWorkoutKey } from '@/utils/historyLogStatus';
@@ -18,6 +18,11 @@ export interface HistoryRecordCard {
   settings: HistoryItem['settings'];
   viewedAt: string;
   logDate: string;
+  /** Linked / source workout plan card status when present. */
+  planStatus?: WorkoutCardStatus;
+  workoutCardId?: string;
+  /** True when this row exists only as a workout_cards plan (no history/log yet). */
+  isPlanOnly?: boolean;
 }
 
 function buildFreeWeightCardKey(
