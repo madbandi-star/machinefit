@@ -110,7 +110,7 @@ If Render **Auto-Deploy** from GitHub is already enabled, turn **Auto-Deploy** o
 
 - `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`
 - `CORS_ORIGIN` = `https://machine-fit.com,https://madbandi-star.github.io`
-- `FRONTEND_BASE_URL` = `https://machine-fit.com/machinefit`
+- `FRONTEND_BASE_URL` = `https://machine-fit.com`
 - `NODE_ENV` = `production`, `API_BASE_PATH` = `/api/v1`
 - **Do not set `PORT`** — Render injects it (default `10000`); the app binds to `process.env.PORT`
 - `SKIP_FRONTEND_INSTALL` = `1` (optional; Render also sets `RENDER=true`)
@@ -158,7 +158,7 @@ Base URL: `http://localhost:3001/api/v1`
 
 ## Deployment
 
-- **Frontend**: GitHub Pages at `/machinefit/` base path (`.github/workflows/frontend-deploy.yml`)
+- **Frontend**: GitHub Pages on custom domain root `https://machine-fit.com/` (`.github/workflows/frontend-deploy.yml`)
 - **Backend**: Render Web Service — manual dashboard deploy, Render GitHub Auto-Deploy, or GitHub Actions deploy hook (`.github/workflows/backend-deploy.yml`)
 
 ## Roadmap

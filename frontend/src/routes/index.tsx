@@ -616,5 +616,5 @@ export const router = createBrowserRouter(
       ],
     },
   ],
-  { basename: '/machinefit' }
+  { basename: '/' }
 );

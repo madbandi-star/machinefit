@@ -27,7 +27,7 @@ export function RouteCrashScreen() {
   }
 
   function goHome() {
-    const base = import.meta.env.BASE_URL || '/machinefit/';
+    const base = import.meta.env.BASE_URL || '/';
     window.location.assign(base.endsWith('/') ? base : `${base}/`);
   }
 

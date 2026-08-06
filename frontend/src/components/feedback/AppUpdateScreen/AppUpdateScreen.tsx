@@ -49,7 +49,7 @@ export function AppUpdateScreen({ autoRetry = true }: AppUpdateScreenProps) {
   }
 
   function goHome() {
-    const base = import.meta.env.BASE_URL || '/machinefit/';
+    const base = import.meta.env.BASE_URL || '/';
     try {
       window.location.assign(base.endsWith('/') ? base : `${base}/`);
     } catch {

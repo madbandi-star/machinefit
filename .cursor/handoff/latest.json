@@ -1,38 +1,32 @@
 ﻿{
-  "title": "Rest persist + compact modes + pin pickers + media mini",
-  "summary": "Global rest timer survives navigation; full→compact for rest/count; pin pickers; music/video compact toggles.",
-  "git": { "branch": "main", "commit": "123e39ab" },
+  "title": "Serve MachineFit at domain root",
+  "summary": "App base path moved from /machinefit/ to / on machine-fit.com; catalog assets and DB migration updated accordingly.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/store/restTimer.store.ts",
-    "frontend/src/components/recommendation/GlobalRestTimerHost/GlobalRestTimerHost.tsx",
-    "frontend/src/components/recommendation/RestTimerBanner/RestTimerBanner.tsx",
-    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection.tsx",
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
-    "frontend/src/layouts/MainLayout.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/vite.config.ts",
+    "frontend/src/routes/index.tsx",
+    "shared/src/constants/site.ts",
+    "database/migrations/105_rewrite_catalog_asset_base_path.sql",
+    "database/scripts/build-catalog.mjs",
+    "backend/server/data/catalog.generated.ts",
+    "docs/DEPLOY.md",
+    "render.yaml"
   ],
   "testFocus": [
-    "Rest continues after navigating away",
-    "Rest/count fullscreen minimize to compact",
-    "Pin pickers checkbox",
-    "Music/video compact toggle keeps playback"
+    "https://machine-fit.com/ loads",
+    "/assets/* image URLs work",
+    "OAuth redirects at root paths"
   ],
   "fastChecks": [
-    "rg -n \"useRestTimerStore|GlobalRestTimerHost|mf-music-mini|pinPickers\" frontend/src"
+    "rg -n \"base: '/'|SITE_APP_BASE_PATH = ''\" frontend/vite.config.ts shared/src/constants/site.ts"
   ],
   "productionChecks": [
-    "After Pages deploy: Ctrl+F5 and exercise rest/count/media flows"
+    "Pages deploy + db:migrate 105 + Render FRONTEND_BASE_URL"
   ],
-  "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Rest local to page; no compact toggles; no picker pin; media full-only",
-  "toBe": "Persistent rest + compact UI modes + pinned pickers + media mini"
+  "deploy": {
+    "target": "GitHub Pages + Render env + Supabase migrate",
+    "backendRedeployRequired": true
+  },
+  "asIs": "App under /machinefit/",
+  "toBe": "App at https://machine-fit.com/"
 }
-

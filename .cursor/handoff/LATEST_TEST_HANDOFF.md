@@ -1,43 +1,38 @@
-﻿# Test handoff: Rest/count compact + persistent rest + media mini
+﻿# Test handoff: Serve app at https://machine-fit.com/
 
 ## Summary
-- Rest timer is global (survives route/API navigation); full→compact button; auto-compact on route change
-- Voice count fullscreen has compact (소형모드) button
-- Voice coach detail pickers: pin checkbox (sticky)
-- Music/video players: minimize to compact / expand back
+Vite/PWA/router base moved from `/machinefit/` to `/`. Catalog asset URLs and seeds use `/assets/...`. Migration `105` rewrites live DB image paths. Canonical app URL is domain root.
 
 ## Git
 - Branch: `main`
-- Commit: `123e39ab`
+- Commit: pending
 
-## Changed files (key)
-- `frontend/src/store/restTimer.store.ts`
-- `frontend/src/components/recommendation/GlobalRestTimerHost/GlobalRestTimerHost.tsx`
-- `frontend/src/components/recommendation/RestTimerBanner/RestTimerBanner.tsx`
-- `frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx`
-- `frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx`
-- `frontend/src/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection.tsx`
-- `frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx`
-- `frontend/src/components/motivation/MotivationMediaControls/*`
-- `frontend/src/layouts/MainLayout.tsx`
+## Changed (key)
+- `frontend/vite.config.ts`, `frontend/src/routes/index.tsx`
+- `shared/src/constants/site.ts`
+- `database/scripts/build-catalog.mjs`, `catalog.generated.ts`, seeds
+- `database/migrations/105_rewrite_catalog_asset_base_path.sql`
+- `docs/DEPLOY.md`, `render.yaml`, Polar defaults
 
 ## Test focus
-1. Start rest → navigate away → timer still runs (banner)
-2. Rest fullscreen → 소형모드 → banner; expand back
-3. Count fullscreen → 소형모드 → panel live count
-4. Voice coach: 세부 피커 고정 checkbox sticks pickers while scrolling
-5. Music/video: minimize ↔ expand without stopping playback
+1. After Pages deploy: `https://machine-fit.com/` loads (not `/machinefit/`)
+2. Assets: `/assets/brands/...` 200
+3. Deep link + PWA start URL
+4. After `105` migrate: machine images not 404
+
+## Ops required (user)
+1. Render: `FRONTEND_BASE_URL=https://machine-fit.com`
+2. `npm run db:migrate` (105) on production DB
+3. Kakao/Google redirect URIs for `https://machine-fit.com/` and `/settings/linked-logins`
+4. Cloudflare: cache `/assets/*`; optional redirect `/machinefit*` → strip prefix
 
 ## Fast checks
 ```bash
-rg -n "useRestTimerStore|GlobalRestTimerHost|mf-music-mini|pinPickers" frontend/src
+rg -n "base: '/'|SITE_APP_BASE_PATH|ASSET_BASE" frontend/vite.config.ts shared/src/constants/site.ts database/scripts/build-catalog.mjs
+rg -n "/machinefit/assets" backend/server/data/catalog.generated.ts || true
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| Rest dies on navigation | Global endsAt store + layout host |
-| No shrink on full rest/count | Minimize to compact |
-| No pin on pickers | Pin checkbox |
-| Music/video full only | Compact mini modes |
-
+| `https://machine-fit.com/machinefit/` | `https://machine-fit.com/` |

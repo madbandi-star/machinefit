@@ -100,7 +100,7 @@ export function getKakaoRedirectUri(path?: string): string {
   const base = import.meta.env.BASE_URL || '/';
   const normalizedBase = base.endsWith('/') ? base : `${base}/`;
   if (!path || path === '/') {
-    // App root, e.g. https://madbandi-star.github.io/machinefit/
+    // App root, e.g. https://machine-fit.com/
     return `${window.location.origin}${normalizedBase}`;
   }
   const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
@@ -259,7 +259,7 @@ async function requestAppleIdToken(): Promise<{ idToken: string; displayName?: s
   const clientId = import.meta.env.VITE_APPLE_CLIENT_ID?.trim();
   if (!clientId) throw new OAuthClientError('Apple client id missing', 'NOT_CONFIGURED');
 
-  // Must match Apple Services ID Return URLs (include /machinefit/ on Pages).
+  // Must match Apple Services ID Return URLs (app root on custom domain).
   const redirectURI =
     import.meta.env.VITE_APPLE_REDIRECT_URI?.trim() || getKakaoRedirectUri('/');
 

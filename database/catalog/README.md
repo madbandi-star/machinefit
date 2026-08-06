@@ -24,11 +24,11 @@ No business-logic changes required — data + image URLs only.
 
 ## Image URL convention
 
-Public base (GitHub Pages): `/machinefit/assets/...`
+Public base (custom domain root): `/assets/...`
 
-- Brand: `/machinefit/assets/brands/{slug}.svg`
-- Machine: `/machinefit/assets/machines/{brand_slug}/{machine_code_lower}.svg`
-- Placeholder: `/machinefit/assets/machines/placeholder.svg`
+- Brand: `/assets/brands/{slug}.svg`
+- Machine: `/assets/machines/{brand_slug}/{machine_code_lower}.svg`
+- Placeholder: `/assets/machines/placeholder.svg`
 
 ## Build
 

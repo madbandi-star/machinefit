@@ -1,6 +1,6 @@
 import { resolveBrandMediaUrl } from './brandMediaUrl';
 
-/** Static catalog asset helpers (GitHub Pages `/machinefit/assets/...`). */
+/** Static catalog asset helpers (`/assets/...` on custom domain root). */
 
 const BRAND_SLUGS: Record<string, string> = {
   HAMMER_STRENGTH: 'hammer_strength',

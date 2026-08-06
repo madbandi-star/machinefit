@@ -131,7 +131,7 @@ Apply when domain is proxied (orange cloud):
 | Auto Minify | JS/CSS/HTML On (static FE) |
 | HTTP/2 + HTTP/3 (QUIC) | On |
 | Early Hints | Optional On |
-| Cache Rules | Cache `/machinefit/assets/*` aggressively; **bypass** `/api/v1/*` JSON |
+| Cache Rules | Cache `/assets/*` aggressively; **bypass** `/api/v1/*` JSON |
 | Cache `/api/v1/*/media/*` | Cache with respect to ETag / Cache-Control (or CDN origin for Storage) |
 | Rate Limiting | Protect `/api/v1/auth/*` (e.g. 20/min/IP); leave media to origin skip |
 | WAF | Managed ruleset + OWASP; challenge high threat |

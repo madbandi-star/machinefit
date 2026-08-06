@@ -211,7 +211,7 @@ export const friendService = {
   },
 
   getInvite(userId: string) {
-    // Browser router + basename `/machinefit` → `/machinefit/register?ref=CODE`
+    // Browser router at domain root → `/register?ref=CODE`
     return friendRepository.getOrCreateInvite(userId, `${APP_BASE}/register`);
   },
 

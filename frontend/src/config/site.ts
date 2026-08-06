@@ -11,7 +11,7 @@ export function getMarketingShareUrl(): string {
   if (override) {
     return override.replace(/\/+$/, '') + '/';
   }
-  const base = String(import.meta.env.BASE_URL ?? '/machinefit/');
+  const base = String(import.meta.env.BASE_URL ?? '/');
   const path = base.startsWith('/') ? base : `/${base}`;
   return `${SITE_URL}${path}`.replace(/\/+$/, '/');
 }

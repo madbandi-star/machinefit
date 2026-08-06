@@ -361,7 +361,7 @@ export function mountUpdateOverlayDom(): void {
     void manualChunkRecover();
   });
   root.querySelector('#mf-update-home')?.addEventListener('click', () => {
-    window.location.assign(import.meta.env.BASE_URL || '/machinefit/');
+    window.location.assign(import.meta.env.BASE_URL || '/');
   });
 
   window.setTimeout(() => {

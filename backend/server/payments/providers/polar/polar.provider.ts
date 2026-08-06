@@ -127,11 +127,11 @@ export class PolarPaymentProvider implements PaymentProvider {
     const successUrl =
       input.successUrl ||
       env.POLAR_SUCCESS_URL ||
-      `${env.FRONTEND_BASE_URL || 'https://machine-fit.com/machinefit'}/my-page?billing=success`;
+      `${env.FRONTEND_BASE_URL || 'https://machine-fit.com'}/my-page?billing=success`;
     const returnUrl =
       input.cancelUrl ||
       env.POLAR_RETURN_URL ||
-      `${env.FRONTEND_BASE_URL || 'https://machine-fit.com/machinefit'}/my-page?billing=cancel`;
+      `${env.FRONTEND_BASE_URL || 'https://machine-fit.com'}/my-page?billing=cancel`;
 
     const payload: PolarJson = {
       products: [productId],
