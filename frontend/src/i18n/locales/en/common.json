@@ -45,7 +45,10 @@
     "viewAll": "View All",
     "retry": "Retry",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "delete": "Delete",
+    "prev": "Previous",
+    "next": "Next"
   },
   "collapse": "Collapse",
   "expand": "Expand",

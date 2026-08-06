@@ -16,3 +16,4 @@ export * from './demo-auth.js';
 export * from './legal.js';
 export * from './achievements.js';
 export * from './machine-request.js';
+export * from './notice.js';

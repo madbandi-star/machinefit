@@ -4,6 +4,8 @@ import { Role, hasMinRole } from '@machinefit/shared';
 import { AuthLandingScreen } from '@/components/auth/AuthLandingScreen/AuthLandingScreen';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
+import { HomeNoticeBanner } from '@/components/home/HomeNoticeBanner/HomeNoticeBanner';
+import { NoticePopup } from '@/components/notices/NoticePopup/NoticePopup';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
@@ -79,6 +81,8 @@ export function HomePage() {
       <InstallPromptBanner />
 
       {showProfileBanner && <ProfileIncompleteBanner />}
+      <HomeNoticeBanner />
+      <NoticePopup />
       <HomeWorkoutToolsSection />
       <RecentMachinesRow />
       <FavoriteMachinesRow />

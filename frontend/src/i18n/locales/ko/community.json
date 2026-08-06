@@ -159,5 +159,36 @@
   "confirmDeleteComment": "이 댓글을 삭제할까요?",
   "commentUpdated": "댓글을 수정했어요.",
   "commentDeleted": "댓글을 삭제했어요.",
-  "photoLinkCopied": "링크를 복사했어요."
+  "photoLinkCopied": "링크를 복사했어요.",
+  "notices": {
+    "title": "공지사항",
+    "subtitle": "MachineFit 운영 공지와 업데이트를 확인하세요",
+    "filters": "공지 유형",
+    "categoryAll": "전체",
+    "categories": {
+      "notice": "공지",
+      "event": "이벤트",
+      "maintenance": "점검",
+      "update": "업데이트",
+      "other": "기타"
+    },
+    "searchIn": "검색 범위",
+    "searchBoth": "제목+본문",
+    "searchTitle": "제목",
+    "searchContent": "본문",
+    "searchPlaceholder": "검색어",
+    "empty": "등록된 공지가 없습니다.",
+    "important": "중요",
+    "pinned": "고정",
+    "views": "조회 {{count}}",
+    "attachments": "첨부파일",
+    "prev": "이전글",
+    "next": "다음글",
+    "backToList": "목록",
+    "homeBannerLabel": "최신 공지",
+    "more": "더보기",
+    "viewDetail": "자세히 보기",
+    "hideToday": "오늘 하루 보지 않기",
+    "close": "닫기"
+  }
 }

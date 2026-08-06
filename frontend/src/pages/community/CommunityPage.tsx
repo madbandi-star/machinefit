@@ -16,6 +16,10 @@ export function CommunityPage() {
           <strong>{tc('machineRequests')}</strong>
           <p className="community-link-card__desc">{tc('machineRequestsSubtitle')}</p>
         </Link>
+        <Link to={ROUTES.NOTICES} className="card card--interactive community-link-card">
+          <strong>{tc('notices.title')}</strong>
+          <p className="community-link-card__desc">{tc('notices.subtitle')}</p>
+        </Link>
         <Link to={ROUTES.FREE_BOARD} className="card card--interactive community-link-card">
           <strong>{tc('freeBoard')}</strong>
           <p className="community-link-card__desc">{tc('freeBoardSubtitle')}</p>

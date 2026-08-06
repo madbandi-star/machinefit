@@ -18,6 +18,7 @@ import { serveMachineCoverImage } from './controllers/machine-cover-image-media.
 import { serveBrandAssetImage } from './controllers/brand-asset-media.controller.js';
 import { serveMotivationAudio } from './controllers/motivation-audio-media.controller.js';
 import { serveMotivationCover } from './controllers/motivation-cover-media.controller.js';
+import { serveNoticeAttachment } from './controllers/notice-media.controller.js';
 
 export function createApp() {
   const app = express();
@@ -119,6 +120,10 @@ export function createApp() {
       void serveBrandAssetImage(req, res, next);
     }
   );
+
+  app.use(`${env.API_BASE_PATH}/media/notice-attachments`, (req, res, next) => {
+    void serveNoticeAttachment(req, res, next);
+  });
 
   app.use(env.API_BASE_PATH, apiRouter);
 
