@@ -148,6 +148,7 @@
   color: var(--color-text-muted);
   margin-bottom: 1rem;
   line-height: 1.5;
+  white-space: pre-line;
 }
 
 .dialog__dismiss {

@@ -1,13 +1,19 @@
 import { Router } from 'express';
 import {
   deleteWorkoutLogSchema,
+  deleteWorkoutLogsByDateBodySchema,
+  deleteWorkoutLogsByDateParamsSchema,
   upsertWorkoutLogSchema,
   workoutInsightsQuerySchema,
   workoutLogListQuerySchema,
 } from '@machinefit/shared';
 import * as workoutLogController from '../controllers/workout-log.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
-import { validateBody, validateQuery } from '../middlewares/validate.middleware.js';
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from '../middlewares/validate.middleware.js';
 
 export const workoutLogRouter = Router();
 
@@ -23,6 +29,12 @@ workoutLogRouter.get(
   workoutLogController.listWorkoutLogs
 );
 workoutLogRouter.put('/', validateBody(upsertWorkoutLogSchema), workoutLogController.upsertWorkoutLog);
+workoutLogRouter.delete(
+  '/date/:date',
+  validateParams(deleteWorkoutLogsByDateParamsSchema),
+  validateBody(deleteWorkoutLogsByDateBodySchema),
+  workoutLogController.deleteWorkoutLogsByDate
+);
 workoutLogRouter.delete(
   '/',
   validateBody(deleteWorkoutLogSchema),

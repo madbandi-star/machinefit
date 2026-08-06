@@ -61,6 +61,8 @@ apiRouter.use('/notifications', notificationRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/qr', qrRouter);
 apiRouter.use('/workout-logs', workoutLogRouter);
+/** Spec alias: DELETE /workout-records/date/:date (same handlers as /workout-logs). */
+apiRouter.use('/workout-records', workoutLogRouter);
 apiRouter.use('/motivation-media', motivationMediaRouter);
 apiRouter.use('/live', liveDashboardRouter);
 apiRouter.use('/locations', locationRouter);

@@ -78,6 +78,21 @@ export const deleteWorkoutLogSchema = z.object({
 
 export type DeleteWorkoutLogInput = z.infer<typeof deleteWorkoutLogSchema>;
 
+/** Path param for DELETE /workout-logs/date/:date (and /workout-records alias). */
+export const deleteWorkoutLogsByDateParamsSchema = z.object({
+  date: dateKeySchema,
+});
+
+export type DeleteWorkoutLogsByDateParams = z.infer<typeof deleteWorkoutLogsByDateParamsSchema>;
+
+/** Body for day-scoped delete — own gym/member only; never all-time or multi-day. */
+export const deleteWorkoutLogsByDateBodySchema = z.object({
+  gymId: gymIdSchema,
+  memberId: memberIdSchema,
+});
+
+export type DeleteWorkoutLogsByDateBody = z.infer<typeof deleteWorkoutLogsByDateBodySchema>;
+
 export const workoutInsightPeriodSchema = z.enum(['30d', '3m', 'all']);
 
 export const workoutInsightsQuerySchema = z
