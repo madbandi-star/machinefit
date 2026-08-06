@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import {
   buildMonthGrid,
   formatMonthLabel,
   getInitialCalendarMonth,
-  getLocalDateKey,
+  getTodayDateKey,
   getWeekdayLabels,
   parseDateKey,
 } from '@/utils/historyDate';
@@ -21,6 +21,8 @@ interface HistoryDateCalendarProps {
   allowEmptySelect?: boolean;
   /** Fires when the visible month changes (for calendar-summary fetches). */
   onVisibleMonthChange?: (year: number, monthIndex: number) => void;
+  /** Called after a day is chosen (e.g. close parent `<details>`). */
+  onAfterSelect?: () => void;
 }
 
 export function HistoryDateCalendar({
@@ -31,12 +33,14 @@ export function HistoryDateCalendar({
   locale,
   allowEmptySelect = true,
   onVisibleMonthChange,
+  onAfterSelect,
 }: HistoryDateCalendarProps) {
   const { t } = useTranslation('machines');
-  const todayKey = getLocalDateKey(new Date().toISOString());
+  const todayKey = getTodayDateKey();
   const initialMonth = getInitialCalendarMonth(selectedDate, datesWithData);
   const [viewYear, setViewYear] = useState(initialMonth.year);
   const [viewMonthIndex, setViewMonthIndex] = useState(initialMonth.monthIndex);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -61,8 +65,34 @@ export function HistoryDateCalendar({
     setViewMonthIndex(date.getMonth());
   };
 
+  const pickDate = (dateKey: string) => {
+    onSelect(dateKey);
+    onAfterSelect?.();
+  };
+
   return (
     <div className="history-calendar" aria-label={t('history.filterByDate')}>
+      {allowEmptySelect ? (
+        <div className="history-calendar__date-field">
+          <label className="history-calendar__date-field-label" htmlFor="history-plan-date-input">
+            {t('history.planPickAnyDate')}
+          </label>
+          <input
+            ref={dateInputRef}
+            id="history-plan-date-input"
+            type="date"
+            className="history-calendar__date-input"
+            value={selectedDate || todayKey}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                pickDate(value);
+              }
+            }}
+          />
+        </div>
+      ) : null}
+
       <div className="history-calendar__header">
         <button
           type="button"
@@ -98,6 +128,7 @@ export function HistoryDateCalendar({
           const isSelected = selectedDate === cell.dateKey;
           const isToday = cell.dateKey === todayKey;
           const canSelect = hasData || allowEmptySelect;
+          const isFutureEmpty = allowEmptySelect && !hasData && cell.dateKey > todayKey;
 
           return (
             <button
@@ -108,6 +139,7 @@ export function HistoryDateCalendar({
                 !cell.inCurrentMonth && 'history-calendar__day--outside',
                 hasData ? 'history-calendar__day--has-data' : 'history-calendar__day--empty',
                 allowEmptySelect && !hasData && 'history-calendar__day--selectable',
+                isFutureEmpty && 'history-calendar__day--future',
                 isSelected && 'history-calendar__day--selected',
                 isToday && 'history-calendar__day--today',
               ]
@@ -116,7 +148,16 @@ export function HistoryDateCalendar({
               disabled={!canSelect}
               aria-pressed={isSelected}
               aria-label={cell.dateKey}
-              onClick={() => onSelect(cell.dateKey)}
+              onPointerDown={(e) => {
+                // Keep parent <details> from swallowing the first tap on mobile.
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!canSelect) return;
+                pickDate(cell.dateKey);
+              }}
             >
               <span className="history-calendar__day-num">{cell.day}</span>
               {hasData ? (
@@ -127,13 +168,19 @@ export function HistoryDateCalendar({
                 ) : (
                   <span className="history-calendar__day-dot" aria-hidden />
                 )
+              ) : isFutureEmpty ? (
+                <span className="history-calendar__day-plus" aria-hidden>
+                  +
+                </span>
               ) : null}
             </button>
           );
         })}
       </div>
 
-      <p className="history-calendar__hint">{t('history.calendarHint')}</p>
+      <p className="history-calendar__hint">
+        {allowEmptySelect ? t('history.calendarHintPlan') : t('history.calendarHint')}
+      </p>
     </div>
   );
 }

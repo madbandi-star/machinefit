@@ -100,6 +100,7 @@ export function HistoryListPanel() {
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [pendingDayDelete, setPendingDayDelete] = useState(false);
   const [dayMenuOpen, setDayMenuOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [orderOverrides, setOrderOverrides] = useState<Record<string, string[]>>({});
   const [animatingCardId, setAnimatingCardId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -777,7 +778,11 @@ export function HistoryListPanel() {
           <div className="records-list__toolbar-end">
             <div className="records-list__date-filter-block">
               <div className="records-list__filters">
-                <details className="records-list__calendar-details">
+                <details
+                  className="records-list__calendar-details"
+                  open={calendarOpen}
+                  onToggle={(e) => setCalendarOpen((e.target as HTMLDetailsElement).open)}
+                >
                   <summary className="records-list__calendar-summary">
                     <span className="records-list__calendar-toggle">
                       <Icon
@@ -786,7 +791,9 @@ export function HistoryListPanel() {
                         className="records-list__calendar-icon"
                       />
                       <span className="records-list__date-filter-label">
-                        {t('machines:history.filterByDate')}
+                        {selectedDate
+                          ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                          : t('machines:history.filterByDate')}
                       </span>
                       <Icon
                         name="chevronDown"
@@ -802,6 +809,7 @@ export function HistoryListPanel() {
                     onSelect={handleDateChange}
                     locale={i18n.language}
                     allowEmptySelect
+                    onAfterSelect={() => setCalendarOpen(false)}
                   />
                 </details>
                 {selectedDate ? (
@@ -857,7 +865,11 @@ export function HistoryListPanel() {
         <div className="records-list__toolbar-end">
           <div className="records-list__date-filter-block">
             <div className="records-list__filters">
-              <details className="records-list__calendar-details">
+              <details
+                className="records-list__calendar-details"
+                open={calendarOpen}
+                onToggle={(e) => setCalendarOpen((e.target as HTMLDetailsElement).open)}
+              >
                 <summary className="records-list__calendar-summary">
                   <span className="records-list__calendar-toggle">
                     <Icon
@@ -866,7 +878,9 @@ export function HistoryListPanel() {
                       className="records-list__calendar-icon"
                     />
                     <span className="records-list__date-filter-label">
-                      {t('machines:history.filterByDate')}
+                      {selectedDate
+                        ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                        : t('machines:history.filterByDate')}
                     </span>
                     <Icon
                       name="chevronDown"
@@ -882,6 +896,7 @@ export function HistoryListPanel() {
                   onSelect={handleDateChange}
                   locale={i18n.language}
                   allowEmptySelect
+                  onAfterSelect={() => setCalendarOpen(false)}
                 />
               </details>
               {selectedDate ? (

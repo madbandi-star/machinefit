@@ -238,11 +238,12 @@
 }
 
 .history-calendar__day--empty {
-  opacity: 0.28;
+  opacity: 0.45;
   color: var(--color-text-muted);
 }
 
 .history-calendar__day--empty:disabled {
+  opacity: 0.28;
   cursor: not-allowed;
 }
 
@@ -259,9 +260,11 @@
 }
 
 .history-calendar__day--selected {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary) !important;
   background: color-mix(in srgb, var(--color-primary) 14%, var(--glass-bg));
   color: var(--color-primary);
+  opacity: 1 !important;
+  font-weight: 700;
 }
 
 .history-calendar__day--today:not(.history-calendar__day--selected) {
@@ -826,13 +829,52 @@
 }
 
 .history-calendar__day--selectable:not(:disabled) {
-  opacity: 0.7;
+  opacity: 0.85;
   cursor: pointer;
+  color: var(--color-text);
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--glass-border));
 }
 
-.history-calendar__day--selectable:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--glass-border));
-  background: color-mix(in srgb, var(--color-primary) 6%, var(--glass-bg));
+.history-calendar__day--selectable:hover:not(:disabled),
+.history-calendar__day--future:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--glass-bg));
+  opacity: 1;
+}
+
+.history-calendar__day--future:not(:disabled) {
+  color: color-mix(in srgb, var(--color-primary) 70%, var(--color-text));
+}
+
+.history-calendar__day-plus {
+  font-size: 0.55rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+.history-calendar__date-field {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.history-calendar__date-field-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.history-calendar__date-input {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--color-text);
+  font-size: 1rem;
 }
 
 .history-calendar__day-count {

@@ -308,7 +308,10 @@
     "planMissedChangeDate": "Change date",
     "planMissedDelete": "Delete",
     "planMissedDismiss": "Dismiss",
-    "planMissedResolved": "Missed plan resolved."
+    "planMissedResolved": "Missed plan resolved.",
+    "calendarHintPlan": "Tap a future date (dashed +) or pick any date above.",
+    "planPickAnyDate": "Pick any date (future allowed)",
+    "selectedDateLabel": "Selected: {{date}}"
   },
   "records": {
     "subtitle": "Recent recommendations and favorites",
