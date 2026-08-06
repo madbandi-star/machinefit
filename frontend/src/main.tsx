@@ -18,15 +18,16 @@ import { initFrontendSentry } from '@/app/sentry';
 
 /**
  * Bump once when a final PWA cache purge is required; thereafter one-shot only.
- * v41: Ops Monitoring pinned at top of My Page admin tools.
+ * v42: Clear stuck Records-page "updating" loop after display-order deploy.
  */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v41';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v42';
 /** Legacy keys from older bust scripts — mark done so stale HTML never thrash-clears SW. */
 const LEGACY_PWA_BUST_KEYS = [
   'mf-pwa-bust-v29',
   'mf-pwa-bust-v38',
   'mf-pwa-bust-v39',
   'mf-pwa-bust-v40',
+  'mf-pwa-bust-v41',
 ] as const;
 
 async function clearServiceWorkerAndCaches(): Promise<void> {

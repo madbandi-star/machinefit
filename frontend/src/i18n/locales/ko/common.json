@@ -7,6 +7,11 @@
     "retryNow": "🔄 지금 다시 시도",
     "goHome": "홈으로 이동"
   },
+  "routeCrash": {
+    "title": "화면을 불러오지 못했어요",
+    "desc": "잠시 후 다시 시도해 주세요.\n계속되면 아래 새로고침으로 캐시를 지워 주세요.",
+    "reload": "캐시 지우고 다시 열기"
+  },
   "serviceUnavailable": {
     "networkTitle": "네트워크 연결에 문제가 있습니다",
     "serverTitle": "일시적인 서버 오류가 발생했습니다",

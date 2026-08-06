@@ -7,6 +7,11 @@
     "retryNow": "🔄 Try again now",
     "goHome": "Go to home"
   },
+  "routeCrash": {
+    "title": "Couldn't load this screen",
+    "desc": "Please try again in a moment.\nIf it keeps happening, clear the cache below.",
+    "reload": "Clear cache and reopen"
+  },
   "serviceUnavailable": {
     "networkTitle": "Network connection problem",
     "serverTitle": "Temporary server error",

@@ -1,0 +1,44 @@
+.route-crash-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: #0f172a;
+  color: #f3f4f6;
+  text-align: center;
+}
+
+.route-crash-screen__card {
+  width: min(100%, 22rem);
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+}
+
+.route-crash-screen__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.route-crash-screen__desc {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.route-crash-screen__actions {
+  width: 100%;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.route-crash-screen__link {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

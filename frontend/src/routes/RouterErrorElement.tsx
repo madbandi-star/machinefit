@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 import { AppUpdateScreen } from '@/components/feedback/AppUpdateScreen/AppUpdateScreen';
+import { RouteCrashScreen } from '@/components/feedback/RouteCrashScreen/RouteCrashScreen';
 import {
   isChunkLoadError,
   recoverFromChunkError,
@@ -9,7 +10,8 @@ import {
 
 /**
  * Replaces React Router's default "Unexpected Application Error" screen.
- * Never exposes stack traces or ChunkLoadError text to users.
+ * Chunk/deploy cache misses → update recovery UI.
+ * Other failures → crash screen (not the misleading "updating" page).
  */
 export function RouterErrorElement() {
   const error = useRouteError();
@@ -21,7 +23,11 @@ export function RouterErrorElement() {
     void recoverFromChunkError(normalized, 'errorElement');
   }, [isChunk, normalized]);
 
-  return <AppUpdateScreen autoRetry={isChunk} />;
+  if (isChunk) {
+    return <AppUpdateScreen autoRetry />;
+  }
+
+  return <RouteCrashScreen />;
 }
 
 function normalizeRouteError(error: unknown): unknown {

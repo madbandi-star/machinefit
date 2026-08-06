@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AppUpdateScreen } from '@/components/feedback/AppUpdateScreen/AppUpdateScreen';
+import { RouteCrashScreen } from '@/components/feedback/RouteCrashScreen/RouteCrashScreen';
 import {
   isChunkLoadError,
   recoverFromChunkError,
@@ -11,7 +12,7 @@ interface Props {
 }
 
 interface State {
-  showUpdate: boolean;
+  hasError: boolean;
   isChunk: boolean;
 }
 
@@ -20,11 +21,11 @@ interface State {
  * Never surfaces React/router technical messages to the user.
  */
 export class ChunkErrorBoundary extends Component<Props, State> {
-  state: State = { showUpdate: false, isChunk: false };
+  state: State = { hasError: false, isChunk: false };
 
   static getDerivedStateFromError(error: Error): Partial<State> {
     const isChunk = isChunkLoadError(error) || shouldShowUpdateScreen();
-    return { showUpdate: true, isChunk };
+    return { hasError: true, isChunk };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
@@ -41,15 +42,16 @@ export class ChunkErrorBoundary extends Component<Props, State> {
     if (!isChunkLoadError(error)) return;
     void recoverFromChunkError(error, 'ErrorBoundary').then((result) => {
       if (result === 'show-ui') {
-        this.setState({ showUpdate: true, isChunk: true });
+        this.setState({ hasError: true, isChunk: true });
       }
     });
   }
 
   render(): ReactNode {
-    if (this.state.showUpdate) {
-      return <AppUpdateScreen autoRetry={this.state.isChunk} />;
+    if (!this.state.hasError) return this.props.children;
+    if (this.state.isChunk) {
+      return <AppUpdateScreen autoRetry />;
     }
-    return this.props.children;
+    return <RouteCrashScreen />;
   }
 }

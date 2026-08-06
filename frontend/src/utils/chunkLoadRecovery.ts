@@ -298,6 +298,17 @@ export async function updateServiceWorker(): Promise<boolean> {
   }
 }
 
+/** Last-resort: drop every SW registration so the next load fetches fresh HTML/assets. */
+export async function unregisterAllServiceWorkers(): Promise<void> {
+  try {
+    if (!('serviceWorker' in navigator)) return;
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  } catch {
+    /* ignore */
+  }
+}
+
 /** Drop Cache Storage (Workbox precache / runtime / old manifests). Does not touch auth storage. */
 export async function clearStaleAssetCaches(): Promise<void> {
   try {
@@ -392,12 +403,16 @@ export async function recoverFromChunkError(
   await logChunkRecoveryEvent(source, error, retryCount);
 
   try {
-    const updated = await updateServiceWorker();
-    if (!updated) {
+    // After the first soft SW update fails to unstick the tab, fully unregister.
+    if (retryCount >= 2 || source === 'manual') {
+      await unregisterAllServiceWorkers();
       await clearStaleAssetCaches();
     } else {
-      // Still prune outdated caches after a successful SW handoff.
+      const updated = await updateServiceWorker();
       await clearStaleAssetCaches();
+      if (!updated) {
+        await unregisterAllServiceWorkers();
+      }
     }
 
     if (retryCount > 1) {
@@ -405,6 +420,7 @@ export async function recoverFromChunkError(
     }
   } catch {
     try {
+      await unregisterAllServiceWorkers();
       await clearStaleAssetCaches();
     } catch {
       /* ignore */
