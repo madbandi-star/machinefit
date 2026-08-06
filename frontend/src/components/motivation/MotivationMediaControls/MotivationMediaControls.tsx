@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -1004,7 +1005,9 @@ function VideoOverlay({
 
   if (!item) return null;
 
-  return (
+  // Portal to body: header uses transform/backdrop-filter, which would otherwise
+  // trap position:fixed and send compact mode above the viewport.
+  return createPortal(
     <div
       className={`mf-video-overlay${compact ? ' mf-video-overlay--compact' : ''}`}
       role="dialog"
@@ -1143,6 +1146,7 @@ function VideoOverlay({
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

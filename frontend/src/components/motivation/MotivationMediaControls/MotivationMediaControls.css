@@ -1184,11 +1184,16 @@
 }
 
 .mf-video-overlay--compact {
+  /* PiP against the viewport (overlay is portaled to body). */
   inset: auto;
   top: auto;
-  right: 0.75rem;
-  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
   left: auto;
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
+  width: auto;
+  height: auto;
+  align-items: stretch;
+  justify-content: flex-end;
   padding: 0;
   pointer-events: none;
   z-index: 350;
@@ -1197,9 +1202,11 @@
 .mf-video-overlay--compact .mf-video-overlay__panel {
   pointer-events: auto;
   width: min(18.5rem, calc(100vw - 1.5rem));
-  max-height: none;
+  max-height: min(70dvh, 28rem);
+  overflow: auto;
   padding: 0.65rem;
   border-radius: 16px;
+  animation: none;
 }
 
 .mf-video-overlay--compact .mf-video-overlay__brand-copy {
