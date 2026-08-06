@@ -33,6 +33,7 @@ import { opsRouter } from './ops.routes.js';
 import { billingRouter } from './billing.routes.js';
 import { webhookRouter } from './webhook.routes.js';
 import { noticeRouter } from './notice.routes.js';
+import { backupRouter } from './backup.routes.js';
 
 export const apiRouter = Router();
 
@@ -72,3 +73,4 @@ apiRouter.use('/online-pt', onlinePtRouter);
 apiRouter.use('/push', pushNotificationRouter);
 apiRouter.use('/friends', friendRouter);
 apiRouter.use('/notices', noticeRouter);
+apiRouter.use('/backup', backupRouter);

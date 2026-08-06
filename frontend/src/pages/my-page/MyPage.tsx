@@ -214,6 +214,11 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
+          <ListNavLink
+            to={ROUTES.DATA_MANAGEMENT}
+            label={t('myPage.dataManagement')}
+            icon="history"
+          />
           {showAboveMember ? (
             <ListNavLink
               to={ROUTES.MY_GYMS}

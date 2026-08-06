@@ -680,5 +680,33 @@
   },
   "friends": {
     "nav": "친구 관리"
+  },
+  "backup": {
+    "nav": "백업",
+    "title": "시스템 백업",
+    "subtitle": "전체 논리 백업·복구와 자동 백업 일정을 관리합니다.",
+    "systemBackup": "전체 백업",
+    "systemBackupHelp": "공지·기구·브랜드·회원 운동데이터 등 운영 데이터를 ZIP으로 저장합니다. 비밀번호·OAuth·결제 이력은 제외됩니다.",
+    "runBackup": "전체 백업 실행",
+    "backupDone": "백업이 완료되었습니다.",
+    "backupFailed": "백업에 실패했습니다.",
+    "systemRestore": "전체 복구",
+    "systemRestoreHelp": "관리자만 가능합니다. 복구 전 반드시 확인하세요.",
+    "warnTitle": "전체 시스템 데이터가 변경됩니다.",
+    "warnBody": "계속하려면 아래 입력란에 YES를 입력하세요.",
+    "typeYes": "확인 문구",
+    "confirmYesRequired": "YES를 입력해야 복구할 수 있습니다.",
+    "runRestore": "복구 실행",
+    "restoreDone": "복구가 완료되었습니다.",
+    "restoreFailed": "복구에 실패했습니다.",
+    "autoTitle": "자동 백업",
+    "autoEnabled": "매일 자동 백업",
+    "hourUtc": "실행 시각 (UTC 시)",
+    "retention": "보관 일수",
+    "lastAuto": "마지막 자동 백업: {{value}}",
+    "settingsSaved": "자동 백업 설정을 저장했습니다.",
+    "settingsFailed": "설정 저장에 실패했습니다.",
+    "history": "시스템 백업 기록",
+    "historyEmpty": "기록이 없습니다."
   }
 }

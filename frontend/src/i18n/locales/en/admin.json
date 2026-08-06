@@ -680,5 +680,33 @@
       "reports": "Reports",
       "security": "Security"
     }
+  },
+  "backup": {
+    "nav": "Backup",
+    "title": "System backup",
+    "subtitle": "Manage full logical backups, restore, and nightly schedule.",
+    "systemBackup": "Full backup",
+    "systemBackupHelp": "Export notices, machines, brands, and member workout data as ZIP. Passwords, OAuth, and payment history are excluded.",
+    "runBackup": "Run full backup",
+    "backupDone": "Backup completed.",
+    "backupFailed": "Backup failed.",
+    "systemRestore": "Full restore",
+    "systemRestoreHelp": "Admins only. Confirm carefully before restoring.",
+    "warnTitle": "System-wide data will change.",
+    "warnBody": "Type YES below to continue.",
+    "typeYes": "Confirmation",
+    "confirmYesRequired": "You must type YES to restore.",
+    "runRestore": "Run restore",
+    "restoreDone": "Restore completed.",
+    "restoreFailed": "Restore failed.",
+    "autoTitle": "Automatic backup",
+    "autoEnabled": "Daily automatic backup",
+    "hourUtc": "Run hour (UTC)",
+    "retention": "Retention (days)",
+    "lastAuto": "Last automatic backup: {{value}}",
+    "settingsSaved": "Backup settings saved.",
+    "settingsFailed": "Could not save settings.",
+    "history": "System backup history",
+    "historyEmpty": "No history yet."
   }
 }
