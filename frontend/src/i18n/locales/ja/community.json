@@ -125,7 +125,8 @@
     "latest": "Latest",
     "popular": "Popular",
     "views": "Most viewed",
-    "comments": "Most comments"
+    "comments": "Most comments",
+    "votes": "Most wanted"
   },
   "photoAll": "All",
   "photoMyPosts": "My posts",
@@ -159,5 +160,44 @@
   "confirmDeleteComment": "Delete this comment?",
   "commentUpdated": "Comment updated.",
   "commentDeleted": "Comment deleted.",
-  "photoLinkCopied": "Link copied."
+  "photoLinkCopied": "Link copied.",
+  "notices": {
+    "title": "Notices",
+    "subtitle": "Official MachineFit announcements and updates",
+    "filters": "Notice type",
+    "categoryAll": "All",
+    "categories": {
+      "notice": "Notice",
+      "event": "Event",
+      "maintenance": "Maintenance",
+      "update": "Update",
+      "other": "Other"
+    },
+    "searchIn": "Search in",
+    "searchBoth": "Title + body",
+    "searchTitle": "Title",
+    "searchContent": "Body",
+    "searchPlaceholder": "Search",
+    "empty": "No notices yet.",
+    "important": "Important",
+    "pinned": "Pinned",
+    "views": "{{count}} views",
+    "attachments": "Attachments",
+    "prev": "Previous",
+    "next": "Next",
+    "backToList": "List",
+    "homeBannerLabel": "Latest notice",
+    "more": "More",
+    "viewDetail": "View details",
+    "hideToday": "Don't show today",
+    "close": "Close"
+  },
+  "requestSearchPlaceholder": "Search brand, machine, description, author, gym",
+  "requestRejectReason": "Rejection reason",
+  "requestAdminNote": "Admin note",
+  "requestViewMachine": "View registered machine",
+  "requestDelete": "Delete",
+  "requestDeleteConfirm": "Delete this request?",
+  "requestSimilarTitle": "A request already exists — join with “I want this too”",
+  "requestWantThisInstead": "Go to existing request"
 }

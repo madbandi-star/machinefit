@@ -45,7 +45,10 @@
     "viewAll": "查看全部",
     "retry": "重试",
     "confirm": "确认",
-    "close": "关闭"
+    "close": "关闭",
+    "delete": "Delete",
+    "prev": "Previous",
+    "next": "Next"
   },
   "collapse": "收起",
   "expand": "展开",
@@ -93,7 +96,13 @@
     "playlist": "Playlist",
     "trackCount": "{{count}} tracks",
     "videoCount": "{{count}} videos",
-    "manageLibrary": "Manage my music"
+    "manageLibrary": "Manage my music",
+    "prev": "Previous",
+    "nextTrack": "Next track",
+    "shuffle": "Shuffle",
+    "shuffleMode": "Shuffle",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
   },
   "motivationMusic": {
     "title": "Motivation music",
@@ -654,8 +663,25 @@
       "history": "付款记录",
       "toastSuccess": "Premium 已激活。",
       "toastPayCancel": "支付已取消。",
-      "toastCancelled": "当前计费周期结束前仍可使用 Premium。"
-    }
+      "toastCancelled": "当前计费周期结束前仍可使用 Premium。",
+      "freeHint": "Unlock higher gym & member limits with Premium.",
+      "nextBilling": "Next billing",
+      "daysLeft": "Days left",
+      "daysLeftValue": "{{count}} days",
+      "autoRenew": "Auto-renew",
+      "autoRenewOn": "On",
+      "autoRenewOff": "Off (keep until period end)",
+      "resume": "Resume auto-renew",
+      "cancelConfirm": "Cancel subscription? You keep Premium until the current period ends.",
+      "historyTitle": "Payment history",
+      "historyEmpty": "No payments yet.",
+      "invoice": "Invoice",
+      "refunded": "Refunded",
+      "checkoutUnavailable": "Checkout isn’t ready yet. Please try again shortly.",
+      "toastRefunded": "Premium has ended.",
+      "toastResumed": "Auto-renew is on again."
+    },
+    "dataManagement": "Data management"
   },
   "lab": {
     "title": "Lab",
@@ -1556,5 +1582,32 @@
       "copyright": "Copyright",
       "other": "Other"
     }
+  },
+  "routeCrash": {
+    "title": "Couldn't load this screen",
+    "desc": "Please try again in a moment.\nIf it keeps happening, clear the cache below.",
+    "reload": "Clear cache and reopen"
+  },
+  "dataManagement": {
+    "title": "Data management",
+    "subtitle": "Back up your workout data and restore it whenever you need.",
+    "backupTitle": "Backup",
+    "backupHelp": "Save workout logs, favorites, and rest/voice settings as ZIP or JSON. Passwords, login, and payment data are never included.",
+    "backupAction": "Back up",
+    "backupDone": "Backup completed.",
+    "backupFailed": "Backup failed.",
+    "restoreTitle": "Restore",
+    "restoreHelp": "Choose a previous backup file (ZIP/JSON).",
+    "restoreAction": "Restore",
+    "restoreDone": "Restore completed.",
+    "restoreFailed": "Restore failed.",
+    "format": "Format",
+    "historyTitle": "Recent backup / restore",
+    "historyEmpty": "No history yet.",
+    "download": "Download again",
+    "confirmTitle": "Confirm restore",
+    "confirmQuestion": "Merge into your current workout records?",
+    "modeMerge": "① Keep existing data and merge (recommended)",
+    "modeReplace": "② Delete current data and fully restore from backup"
   }
 }

@@ -68,7 +68,7 @@ export default defineConfig({
     spaGitHubPagesFallback(),
     VitePWA({
       // Bump filename when changing SW lifecycle so clients fetch a fresh worker.
-      filename: 'sw-v19.js',
+      filename: 'sw-v20.js',
       registerType: 'autoUpdate',
       // Client registers via virtual:pwa-register (chunkLoadRecovery.initPwaAutoUpdate).
       injectRegister: null,

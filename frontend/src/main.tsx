@@ -18,9 +18,10 @@ import { initFrontendSentry } from '@/app/sentry';
 
 /**
  * Bump once when a final PWA cache purge is required; thereafter one-shot only.
+ * v44: Merge all pending open PRs (i18n/polar/requests/domain).
  * v43: Records HistoryListPanel hooks-order crash (RouteCrashScreen loop).
  */
-const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v43';
+const PWA_CACHE_BUST_KEY = 'mf-pwa-bust-v44';
 /** Legacy keys from older bust scripts — mark done so stale HTML never thrash-clears SW. */
 const LEGACY_PWA_BUST_KEYS = [
   'mf-pwa-bust-v29',
@@ -29,6 +30,7 @@ const LEGACY_PWA_BUST_KEYS = [
   'mf-pwa-bust-v40',
   'mf-pwa-bust-v41',
   'mf-pwa-bust-v42',
+  'mf-pwa-bust-v43',
 ] as const;
 
 async function clearServiceWorkerAndCaches(): Promise<void> {

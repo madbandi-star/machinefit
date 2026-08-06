@@ -262,7 +262,22 @@
     "metaLabel": "Equipment info",
     "metaBrandPlaceholder": "Brand",
     "metaMusclePlaceholder": "Muscle group",
-    "metaMachinePlaceholder": "Machine"
+    "metaMachinePlaceholder": "Machine",
+    "menuAria": "Workout records menu",
+    "deleteDayMenuToday": "🗑️ Delete all of today's workout records",
+    "deleteDayMenuSelected": "🗑️ Delete all workout records for the selected date",
+    "deleteDayTitle": "Delete all workout records",
+    "deleteDayMessage": "This deletes every workout record for the selected date.\n\nDeleted records cannot be restored.",
+    "deleteDayConfirm": "Delete",
+    "deleteDayRemoved": "Workout records were deleted.",
+    "orderControlsLabel": "Change workout order",
+    "orderMenuAria": "Workout order menu",
+    "orderMoveUp": "▲ Move up",
+    "orderMoveDown": "▼ Move down",
+    "orderMoveTop": "⏫ Move to top",
+    "orderMoveBottom": "⏬ Move to bottom",
+    "orderChanged": "Workout order was updated.",
+    "orderChangeFailed": "Could not save the workout order. Please try again."
   },
   "records": {
     "subtitle": "Recent recommendations and favorites",
