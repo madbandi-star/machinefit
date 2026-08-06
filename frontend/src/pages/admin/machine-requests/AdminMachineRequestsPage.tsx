@@ -11,6 +11,7 @@ import {
   type AdminMachineUpsertInput,
   type Brand,
   type MachineRequestImage,
+  type MachineRequestPriority,
 } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
@@ -44,6 +45,7 @@ const REJECT_PRESETS = [
   'notExists',
   'brandCheck',
 ] as const;
+const PRIORITIES: MachineRequestPriority[] = ['low', 'normal', 'high'];
 
 type StatusFilter = 'all' | 'pending' | 'reviewing' | 'added' | 'rejected';
 
@@ -79,6 +81,7 @@ function formatDate(iso: string) {
     day: 'numeric',
   });
 }
+
 
 function isAllowedRegisterImage(file: File): boolean {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
@@ -159,6 +162,10 @@ export function AdminMachineRequestsPage() {
     id: string;
     code: string;
   } | null>(null);
+  const [groupPriority, setGroupPriority] = useState<MachineRequestPriority>('normal');
+  const [groupAssignee, setGroupAssignee] = useState('');
+  const [mergeToBrand, setMergeToBrand] = useState('');
+  const [mergeToMachine, setMergeToMachine] = useState('');
 
   useEffect(() => {
     return () => {
@@ -184,6 +191,7 @@ export function AdminMachineRequestsPage() {
       return URL.createObjectURL(file);
     });
   };
+
 
   const listParams = useMemo(
     () => ({
@@ -245,13 +253,36 @@ export function AdminMachineRequestsPage() {
       adminNote?: string | null;
       rejectReason?: string | null;
       linkedMachineId?: string | null;
+      isHidden?: boolean;
+      priority?: MachineRequestPriority;
+      assigneeUserId?: string | null;
       applyToGroup?: boolean;
       groupBrandName?: string;
       groupMachineName?: string;
-    }) => adminApi.updateMachineRequest(input.id, input),
+    }) => {
+      const { id, ...body } = input;
+      return adminApi.updateMachineRequest(id, body);
+    },
     onSuccess: () => {
       invalidateAll();
       void detailQuery.refetch();
+      showToast(t('saved'), 'success');
+    },
+    onError: () => showToast(t('error'), 'error'),
+  });
+
+  const mergeMutation = useMutation({
+    mutationFn: (input: {
+      fromBrandName: string;
+      fromMachineName: string;
+      toBrandName: string;
+      toMachineName: string;
+    }) => adminApi.mergeMachineRequestGroups(input),
+    onSuccess: () => {
+      setSelected(null);
+      setMergeToBrand('');
+      setMergeToMachine('');
+      invalidateAll();
       showToast(t('saved'), 'success');
     },
     onError: () => showToast(t('error'), 'error'),
@@ -330,6 +361,76 @@ export function AdminMachineRequestsPage() {
     onSettled: () => setUploadProgress(undefined),
   });
 
+
+  const openDetail = (group: AdminMachineRequestGroup) => {
+    setSelected({ brandName: group.brandName, machineName: group.machineName });
+    setAdminNote(group.adminNote ?? '');
+    setRejectReason(group.rejectReason ?? '');
+    setGroupPriority(group.priority ?? 'normal');
+    setGroupAssignee(group.assigneeUserId ?? '');
+    setMergeToBrand('');
+    setMergeToMachine('');
+    setShowRegister(false);
+    clearRegisterImage();
+    setDuplicateMachine(null);
+  };
+
+  useEffect(() => {
+    const d = detailQuery.data;
+    if (!d) return;
+    setGroupPriority(d.priority ?? 'normal');
+    setGroupAssignee(d.assigneeUserId ?? '');
+  }, [detailQuery.data]);
+
+  const openRegister = (detail: AdminMachineRequestGroupDetail) => {
+    clearRegisterImage();
+    if (detail.existingMachineId && detail.existingMachineCode) {
+      setDuplicateMachine({
+        id: detail.existingMachineId,
+        code: detail.existingMachineCode,
+      });
+      setShowRegister(false);
+      return;
+    }
+    setDuplicateMachine(null);
+    const unknown = tCommunity('requestFieldUnknownLabel');
+    const brandLabel = displayText(detail.brandName, unknown);
+    const machineLabel = displayText(detail.machineName, unknown);
+    const suggest = detail.registerSuggest;
+    const fuzzyBrand = brandsQuery.data?.find((b) => {
+      const ko = b.name?.ko?.toLowerCase() ?? '';
+      const en = b.name?.en?.toLowerCase() ?? '';
+      const code = b.code?.toLowerCase() ?? '';
+      const target = brandLabel.toLowerCase();
+      return ko === target || en === target || code === target;
+    });
+    const brandId = suggest?.matchedBrandId || fuzzyBrand?.id || '';
+    const suggestedType = suggest?.machineType as (typeof MACHINE_TYPES)[number] | undefined;
+    const machineType = MACHINE_TYPES.includes(suggestedType as (typeof MACHINE_TYPES)[number])
+      ? (suggestedType as (typeof MACHINE_TYPES)[number])
+      : 'selectorized';
+    const muscleGroup = suggest?.muscleGroup || 'chest';
+    setRegisterForm({
+      brandId,
+      code: suggest?.code ?? '',
+      nameKo: suggest?.nameKo || (machineLabel === unknown ? '' : machineLabel),
+      nameEn: suggest?.nameEn || (machineLabel === unknown ? '' : machineLabel),
+      muscleGroup: MUSCLE_OPTIONS.includes(muscleGroup as (typeof MUSCLE_OPTIONS)[number])
+        ? muscleGroup
+        : 'chest',
+      machineType,
+      descriptionKo:
+        suggest?.descriptionKo ||
+        (displayText(detail.sampleDescription, unknown) === unknown
+          ? ''
+          : displayText(detail.sampleDescription, unknown)),
+      descriptionEn: suggest?.descriptionEn ?? '',
+      isActive: true,
+    });
+    setShowRegister(true);
+    if (suggest) showToast(t('machineRequests.registerSuggestApplied'), 'success');
+  };
+
   const handleRegisterImagePick = (file: File | undefined) => {
     if (!file) return;
     if (!isAllowedRegisterImage(file)) {
@@ -357,52 +458,6 @@ export function AdminMachineRequestsPage() {
     }
   };
 
-  const openDetail = (group: AdminMachineRequestGroup) => {
-    setSelected({ brandName: group.brandName, machineName: group.machineName });
-    setAdminNote(group.adminNote ?? '');
-    setRejectReason(group.rejectReason ?? '');
-    setShowRegister(false);
-    clearRegisterImage();
-    setDuplicateMachine(null);
-  };
-
-  const openRegister = (detail: AdminMachineRequestGroupDetail) => {
-    if (detail.existingMachineId && detail.existingMachineCode) {
-      setDuplicateMachine({
-        id: detail.existingMachineId,
-        code: detail.existingMachineCode,
-      });
-      setShowRegister(false);
-      return;
-    }
-    setDuplicateMachine(null);
-    const unknown = tCommunity('requestFieldUnknownLabel');
-    const brandLabel = displayText(detail.brandName, unknown);
-    const machineLabel = displayText(detail.machineName, unknown);
-    const matchedBrand = brandsQuery.data?.find((b) => {
-      const ko = b.name?.ko?.toLowerCase() ?? '';
-      const en = b.name?.en?.toLowerCase() ?? '';
-      const code = b.code?.toLowerCase() ?? '';
-      const target = brandLabel.toLowerCase();
-      return ko === target || en === target || code === target;
-    });
-    setRegisterForm({
-      brandId: matchedBrand?.id ?? '',
-      code: '',
-      nameKo: machineLabel === unknown ? '' : machineLabel,
-      nameEn: machineLabel === unknown ? '' : machineLabel,
-      muscleGroup: 'chest',
-      machineType: 'selectorized',
-      descriptionKo:
-        displayText(detail.sampleDescription, unknown) === unknown
-          ? ''
-          : displayText(detail.sampleDescription, unknown),
-      descriptionEn: '',
-      isActive: true,
-    });
-    setShowRegister(true);
-  };
-
   const handleUseRequestImage = async (image: MachineRequestImage) => {
     const url = resolveMachineRequestMediaUrl(image.imageUrl || image.thumbUrl);
     if (!url) {
@@ -428,16 +483,14 @@ export function AdminMachineRequestsPage() {
     }
   };
 
-  const closeDetail = () => {
-    setSelected(null);
-    setShowRegister(false);
-    clearRegisterImage();
-  };
 
   useModalAccessibility({
     open: Boolean(selected),
-    onClose: closeDetail,
-    initialFocusSelector: '.admin-req-detail__close',
+    onClose: () => {
+      setSelected(null);
+      setShowRegister(false);
+    },
+                initialFocusSelector: '.admin-req-detail__close',
   });
 
   const unknownLabel = tCommunity('requestFieldUnknownLabel');
@@ -452,8 +505,9 @@ export function AdminMachineRequestsPage() {
         {(
           [
             ['total', statsQuery.data?.total],
-            ['added', statsQuery.data?.added],
+            ['pending', statsQuery.data?.pending],
             ['reviewing', statsQuery.data?.reviewing],
+            ['added', statsQuery.data?.added],
             ['rejected', statsQuery.data?.rejected],
             ['thisMonthRequests', statsQuery.data?.thisMonthRequests],
             ['thisMonthAdded', statsQuery.data?.thisMonthAdded],
@@ -467,6 +521,21 @@ export function AdminMachineRequestsPage() {
           </div>
         ))}
       </div>
+      {statsQuery.data?.topGyms?.length ? (
+        <div className="admin-req-detail__section" style={{ marginTop: 0 }}>
+          <h3>{t('machineRequests.topGyms')}</h3>
+          <ol className="admin-req-popular">
+            {statsQuery.data.topGyms.map((gym) => (
+              <li key={gym.gymName}>
+                <span>
+                  {gym.gymName || t('machineRequests.gymUnknown')} —{' '}
+                  {t('machineRequests.requestCount', { count: gym.requestCount })}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
 
       <AdminPanel title={t('machineRequests.popularTitle')}>
         {popularQuery.isLoading ? (
@@ -582,56 +651,57 @@ export function AdminMachineRequestsPage() {
         </div>
 
         {listQuery.isLoading ? (
-          <Skeleton count={6} height={72} />
+          <Skeleton count={6} height={40} />
         ) : listQuery.data?.items.length ? (
           <>
-            <ul className="admin-req-list">
-              {listQuery.data.items.map((row) => (
-                <li
-                  key={row.groupKey}
-                  className={`admin-req-list__item${
-                    row.requestCount >= 3 ? ' admin-req-list__item--hot' : ''
-                  }`}
-                >
-                  <div className="admin-req-list__main">
-                    <p className="admin-req-list__title">
-                      <span>{displayText(row.brandName, unknownLabel)}</span>
-                      <span className="admin-req-list__dot" aria-hidden>
-                        ·
-                      </span>
-                      <span>{displayText(row.machineName, unknownLabel)}</span>
-                    </p>
-                    <div className="admin-req-list__meta">
-                      <span className={`admin-req-badge ${statusClass(row.status)}`}>
-                        {t(
-                          `machineRequests.status.${row.status === 'approved' ? 'reviewing' : row.status}`
-                        )}
-                      </span>
-                      <span className="admin-req-list__count">
-                        {t('machineRequests.requestCount', { count: row.requestCount })}
-                      </span>
-                      <time dateTime={row.lastRequestedAt}>
-                        {formatDate(row.lastRequestedAt)}
-                      </time>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn btn--secondary btn--sm admin-req-list__action"
-                    onClick={() => openDetail(row)}
-                  >
-                    {t('machineRequests.viewDetail')}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <div className="admin-req-pagination">
-              <Pagination
-                page={page}
-                totalPages={listQuery.data.meta.totalPages}
-                onPageChange={setPage}
-              />
+            <div className="admin-req-table-wrap">
+              <table className="admin-req-table">
+                <thead>
+                  <tr>
+                    <th>{t('machineRequests.columns.lastRequested')}</th>
+                    <th>{t('machineRequests.columns.brand')}</th>
+                    <th>{t('machineRequests.columns.machine')}</th>
+                    <th>{t('machineRequests.columns.count')}</th>
+                    <th>{t('machineRequests.columns.status')}</th>
+                    <th>{t('machineRequests.columns.action')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {listQuery.data.items.map((row) => (
+                    <tr
+                      key={row.groupKey}
+                      className={row.requestCount >= 3 ? 'admin-req-table__row--hot' : undefined}
+                    >
+                      <td>{formatDate(row.lastRequestedAt)}</td>
+                      <td>{displayText(row.brandName, unknownLabel)}</td>
+                      <td>{displayText(row.machineName, unknownLabel)}</td>
+                      <td>
+                        <strong>{row.requestCount}</strong>
+                      </td>
+                      <td>
+                        <span className={`admin-req-badge ${statusClass(row.status)}`}>
+                          {t(`machineRequests.status.${row.status === 'approved' ? 'reviewing' : row.status}`)}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn--secondary btn--sm"
+                          onClick={() => openDetail(row)}
+                        >
+                          {t('machineRequests.viewDetail')}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
+            <Pagination
+              page={page}
+              totalPages={listQuery.data.meta.totalPages}
+              onPageChange={setPage}
+            />
           </>
         ) : (
           <p className="admin-empty">{t('machineRequests.empty')}</p>
@@ -642,458 +712,363 @@ export function AdminMachineRequestsPage() {
         <div
           className="dialog-overlay admin-req-overlay"
           role="presentation"
-          onClick={closeDetail}
+          onClick={() => setSelected(null)}
         >
           <div
-            className="admin-req-detail"
+            className="dialog card admin-catalog-dialog admin-req-detail"
             role="dialog"
             aria-modal="true"
             aria-labelledby="admin-req-detail-title"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="admin-req-detail__header">
+              <h2 id="admin-req-detail-title">{t('machineRequests.detailTitle')}</h2>
+              <button
+                type="button"
+                className="btn btn--secondary btn--sm admin-req-detail__close"
+                onClick={() => setSelected(null)}
+              >
+                {t('machineRequests.close')}
+              </button>
+            </div>
+
             {detailQuery.isLoading || !detail ? (
-              <>
-                <div className="admin-req-detail__header">
-                  <div className="admin-req-detail__heading">
-                    <p className="admin-req-detail__eyebrow">{t('machineRequests.detailTitle')}</p>
-                    <h2 id="admin-req-detail-title">{t('machineRequests.detailTitle')}</h2>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn btn--secondary btn--sm admin-req-detail__close"
-                    onClick={closeDetail}
-                  >
-                    {t('machineRequests.close')}
-                  </button>
-                </div>
-                <div className="admin-req-detail__scroll">
-                  <Skeleton count={5} height={36} />
-                </div>
-              </>
+              <Skeleton count={5} height={36} />
             ) : (
               <>
-                <div className="admin-req-detail__header">
-                  <div className="admin-req-detail__heading">
-                    <p className="admin-req-detail__eyebrow">{t('machineRequests.detailTitle')}</p>
-                    <h2 id="admin-req-detail-title">
-                      {displayText(detail.brandName, unknownLabel)}
-                      <span className="admin-req-list__dot" aria-hidden>
-                        ·
-                      </span>
-                      {displayText(detail.machineName, unknownLabel)}
-                    </h2>
-                    <div className="admin-req-detail__chips">
+                <dl className="admin-req-detail__meta">
+                  <div>
+                    <dt>{t('machineRequests.columns.brand')}</dt>
+                    <dd>{displayText(detail.brandName, unknownLabel)}</dd>
+                  </div>
+                  <div>
+                    <dt>{t('machineRequests.columns.machine')}</dt>
+                    <dd>{displayText(detail.machineName, unknownLabel)}</dd>
+                  </div>
+                  <div>
+                    <dt>{t('machineRequests.columns.count')}</dt>
+                    <dd>{detail.requestCount}</dd>
+                  </div>
+                  <div>
+                    <dt>{t('machineRequests.columns.status')}</dt>
+                    <dd>
                       <span className={`admin-req-badge ${statusClass(detail.status)}`}>
                         {t(
                           `machineRequests.status.${detail.status === 'approved' ? 'reviewing' : detail.status}`
                         )}
                       </span>
-                      <span className="admin-req-chip">
-                        {t('machineRequests.requestCount', { count: detail.requestCount })}
-                      </span>
-                    </div>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t('machineRequests.firstRequested')}</dt>
+                    <dd>{formatDate(detail.firstRequestedAt)}</dd>
+                  </div>
+                  <div>
+                    <dt>{t('machineRequests.lastRequested')}</dt>
+                    <dd>{formatDate(detail.lastRequestedAt)}</dd>
+                  </div>
+                </dl>
+
+                <section className="admin-req-detail__section">
+                  <h3>{t('machineRequests.requesters')}</h3>
+                  <ul className="admin-req-requesters">
+                    {detail.requesters.map((r) => {
+                      const gymLabel =
+                        r.gymChoiceMode === 'unknown'
+                          ? t('machineRequests.gymUnknown')
+                          : r.gymName?.trim() || t('machineRequests.gymUnknown');
+                      const images = requesterImages(r);
+                      return (
+                        <li key={r.requestId}>
+                          <div className="admin-req-requesters__head">
+                            <strong>{r.authorName}</strong>
+                            <span>{formatDate(r.createdAt)}</span>
+                            <span
+                              className={`admin-req-badge ${statusClass(
+                                r.status === 'approved' ? 'reviewing' : r.status
+                              )}`}
+                            >
+                              {t(
+                                `machineRequests.status.${r.status === 'approved' ? 'reviewing' : r.status}`
+                              )}
+                            </span>
+                          </div>
+                          <p>{displayText(r.description, unknownLabel)}</p>
+                          <dl className="admin-req-requesters__meta">
+                            <div>
+                              <dt>{t('machineRequests.gym')}</dt>
+                              <dd>{gymLabel}</dd>
+                            </div>
+                            <div>
+                              <dt>{t('machineRequests.consent')}</dt>
+                              <dd>
+                                {r.commercialUseConsent
+                                  ? t('machineRequests.consentYes')
+                                  : t('machineRequests.consentNo')}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>{t('machineRequests.social')}</dt>
+                              <dd>
+                                ♥ {r.likeCount ?? 0} · 💬 {r.commentCount ?? 0} · 👁{' '}
+                                {r.viewCount ?? 0} · ★ {r.voteCount ?? 0}{' '}
+                                {t('machineRequests.votes')}
+                              </dd>
+                            </div>
+                          </dl>
+                          {images.length ? (
+                            <div className="admin-req-requesters__gallery">
+                              {images.map((img) => {
+                                const preview = resolveMachineRequestMediaUrl(
+                                  img.thumbUrl || img.imageUrl
+                                );
+                                return (
+                                  <div key={img.id} className="admin-req-requesters__shot">
+                                    <a
+                                      href={resolveMachineRequestMediaUrl(img.imageUrl || img.thumbUrl)}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      <img
+                                        src={preview}
+                                        alt=""
+                                        className="admin-req-requesters__img"
+                                      />
+                                    </a>
+                                    <div className="admin-req-requesters__shot-actions">
+                                      <button
+                                        type="button"
+                                        className="btn btn--secondary btn--sm"
+                                        onClick={() => void handleDownloadImage(img, r.authorName)}
+                                      >
+                                        {t('machineRequests.downloadImage')}
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn--secondary btn--sm"
+                                        disabled={registerImageBusy || registerMutation.isPending}
+                                        onClick={() => void handleUseRequestImage(img)}
+                                      >
+                                        {t('machineRequests.useRequestImage')}
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : null}
+                          <div className="admin-req-detail__actions">
+                            <label>
+                              <span>{t('machineRequests.priority')}</span>
+                              <select
+                                className="input"
+                                value={r.priority ?? 'normal'}
+                                disabled={updateMutation.isPending}
+                                onChange={(e) =>
+                                  updateMutation.mutate({
+                                    id: r.requestId,
+                                    priority: e.target.value as MachineRequestPriority,
+                                  })
+                                }
+                              >
+                                {PRIORITIES.map((p) => (
+                                  <option key={p} value={p}>
+                                    {p}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                            <label className="checkbox-label">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(r.isHidden)}
+                                disabled={updateMutation.isPending}
+                                onChange={(e) =>
+                                  updateMutation.mutate({
+                                    id: r.requestId,
+                                    isHidden: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{t('machineRequests.hidePost')}</span>
+                            </label>
+                            <Link
+                              to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
+                                ':requestId',
+                                r.requestId
+                              )}
+                              className="btn btn--secondary btn--sm"
+                            >
+                              {t('machineRequests.openUserPost')}
+                            </Link>
+                            {!r.isHidden ? (
+                              <button
+                                type="button"
+                                className="btn btn--secondary btn--sm"
+                                disabled={updateMutation.isPending}
+                                onClick={() =>
+                                  updateMutation.mutate({
+                                    id: r.requestId,
+                                    isHidden: true,
+                                  })
+                                }
+                              >
+                                {t('machineRequests.hidePost')}
+                              </button>
+                            ) : null}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+
+                {detail.recentComments?.length ? (
+                  <section className="admin-req-detail__section">
+                    <h3>{t('machineRequests.recentComments')}</h3>
+                    <ul className="admin-req-requesters">
+                      {detail.recentComments.map((c) => (
+                        <li key={c.id}>
+                          <div className="admin-req-requesters__head">
+                            <strong>{c.authorName || '—'}</strong>
+                            <span>{formatDate(c.createdAt)}</span>
+                          </div>
+                          <p>{c.content}</p>
+                          <Link
+                            to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
+                              ':requestId',
+                              c.requestId
+                            )}
+                            className="btn btn--secondary btn--sm"
+                          >
+                            {t('machineRequests.openUserPost')}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+
+                <section className="admin-req-detail__section">
+                  <h3>
+                    {t('machineRequests.priority')} / {t('machineRequests.assignee')}
+                  </h3>
+                  <div className="admin-req-filters">
+                    <label>
+                      <span>{t('machineRequests.priority')}</span>
+                      <select
+                        className="input"
+                        value={groupPriority}
+                        onChange={(e) =>
+                          setGroupPriority(e.target.value as MachineRequestPriority)
+                        }
+                      >
+                        {PRIORITIES.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span>{t('machineRequests.assignee')}</span>
+                      <input
+                        className="input"
+                        value={groupAssignee}
+                        onChange={(e) => setGroupAssignee(e.target.value)}
+                        placeholder="uuid"
+                      />
+                    </label>
                   </div>
                   <button
                     type="button"
-                    className="btn btn--secondary btn--sm admin-req-detail__close"
-                    onClick={closeDetail}
+                    className="btn btn--secondary btn--sm"
+                    disabled={updateMutation.isPending || !detail.requesters[0]}
+                    onClick={() =>
+                      updateMutation.mutate({
+                        id: detail.requesters[0].requestId,
+                        priority: groupPriority,
+                        assigneeUserId: groupAssignee.trim() || null,
+                        applyToGroup: true,
+                        groupBrandName: detail.brandName,
+                        groupMachineName: detail.machineName,
+                      })
+                    }
                   >
-                    {t('machineRequests.close')}
+                    {t('brands.save')}
                   </button>
-                </div>
+                </section>
 
-                <div className="admin-req-detail__scroll">
-                  <dl className="admin-req-detail__summary">
-                    <div>
-                      <dt>{t('machineRequests.firstRequested')}</dt>
-                      <dd>{formatDate(detail.firstRequestedAt)}</dd>
-                    </div>
-                    <div>
-                      <dt>{t('machineRequests.lastRequested')}</dt>
-                      <dd>{formatDate(detail.lastRequestedAt)}</dd>
-                    </div>
-                    <div>
-                      <dt>{t('machineRequests.columns.count')}</dt>
-                      <dd>{detail.requestCount}</dd>
-                    </div>
-                  </dl>
+                <section className="admin-req-detail__section">
+                  <h3>{t('machineRequests.merge')}</h3>
+                  <div className="admin-req-filters">
+                    <label>
+                      <span>{t('machineRequests.mergeTo')} (brand)</span>
+                      <input
+                        className="input"
+                        value={mergeToBrand}
+                        onChange={(e) => setMergeToBrand(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      <span>{t('machineRequests.mergeTo')} (machine)</span>
+                      <input
+                        className="input"
+                        value={mergeToMachine}
+                        onChange={(e) => setMergeToMachine(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--sm"
+                    disabled={
+                      mergeMutation.isPending ||
+                      !mergeToBrand.trim() ||
+                      !mergeToMachine.trim()
+                    }
+                    onClick={() =>
+                      mergeMutation.mutate({
+                        fromBrandName: detail.brandName,
+                        fromMachineName: detail.machineName,
+                        toBrandName: mergeToBrand.trim(),
+                        toMachineName: mergeToMachine.trim(),
+                      })
+                    }
+                  >
+                    {t('machineRequests.mergeSubmit')}
+                  </button>
+                </section>
 
-                  <section className="admin-req-detail__section">
-                    <div className="admin-req-detail__section-head">
-                      <h3>{t('machineRequests.requesters')}</h3>
-                      <span className="admin-req-chip">{detail.requesters.length}</span>
-                    </div>
-                    <ul className="admin-req-requesters">
-                      {detail.requesters.map((r) => {
-                        const images = requesterImages(r);
-                        const thumb = resolveMachineRequestMediaUrl(
-                          images[0]?.thumbUrl || r.primaryImageUrl
-                        );
-                        return (
-                          <li key={r.requestId}>
-                            {thumb ? (
-                              <img src={thumb} alt="" className="admin-req-requesters__img" />
-                            ) : (
-                              <span
-                                className="admin-req-requesters__img admin-req-requesters__img--empty"
-                                aria-hidden
-                              >
-                                —
-                              </span>
-                            )}
-                            <div className="admin-req-requesters__body">
-                              <div className="admin-req-requesters__top">
-                                <strong>{r.authorName}</strong>
-                                <time dateTime={r.createdAt}>{formatDate(r.createdAt)}</time>
-                              </div>
-                              <p>{displayText(r.description, unknownLabel)}</p>
-                              {images.length ? (
-                                <div className="admin-req-requesters__gallery">
-                                  {images.map((image) => {
-                                    const preview = resolveMachineRequestMediaUrl(
-                                      image.thumbUrl || image.imageUrl
-                                    );
-                                    return (
-                                      <div key={image.id} className="admin-req-requesters__shot">
-                                        {preview ? (
-                                          <img src={preview} alt="" />
-                                        ) : (
-                                          <span aria-hidden>—</span>
-                                        )}
-                                        <div className="admin-req-requesters__shot-actions">
-                                          <button
-                                            type="button"
-                                            className="btn btn--secondary btn--sm"
-                                            onClick={() => void handleDownloadImage(image, r.authorName)}
-                                          >
-                                            {t('machineRequests.downloadImage')}
-                                          </button>
-                                          <button
-                                            type="button"
-                                            className="btn btn--secondary btn--sm"
-                                            disabled={registerImageBusy || registerMutation.isPending}
-                                            onClick={() => void handleUseRequestImage(image)}
-                                          >
-                                            {t('machineRequests.useRequestImage')}
-                                          </button>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              ) : null}
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </section>
+                <section className="admin-req-detail__section">
+                  <h3>{t('machineRequests.adminNote')}</h3>
+                  <textarea
+                    className="input"
+                    rows={3}
+                    value={adminNote}
+                    onChange={(e) => setAdminNote(e.target.value)}
+                    placeholder={t('machineRequests.adminNotePlaceholder')}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--sm"
+                    disabled={updateMutation.isPending || !detail.requesters[0]}
+                    onClick={() =>
+                      updateMutation.mutate({
+                        id: detail.requesters[0].requestId,
+                        adminNote: adminNote.trim() || null,
+                        applyToGroup: true,
+                        groupBrandName: detail.brandName,
+                        groupMachineName: detail.machineName,
+                      })
+                    }
+                  >
+                    {t('machineRequests.saveNote')}
+                  </button>
+                </section>
 
-                  <section className="admin-req-detail__section">
-                    <h3>{t('machineRequests.adminNote')}</h3>
-                    <textarea
-                      className="input"
-                      rows={2}
-                      value={adminNote}
-                      onChange={(e) => setAdminNote(e.target.value)}
-                      placeholder={t('machineRequests.adminNotePlaceholder')}
-                    />
-                    <button
-                      type="button"
-                      className="btn btn--secondary btn--sm"
-                      disabled={updateMutation.isPending || !detail.requesters[0]}
-                      onClick={() =>
-                        updateMutation.mutate({
-                          id: detail.requesters[0].requestId,
-                          adminNote: adminNote.trim() || null,
-                          applyToGroup: true,
-                          groupBrandName: detail.brandName,
-                          groupMachineName: detail.machineName,
-                        })
-                      }
-                    >
-                      {t('machineRequests.saveNote')}
-                    </button>
-                  </section>
-
-                  {duplicateMachine ? (
-                    <div className="admin-req-duplicate">
-                      <p>{t('machineRequests.alreadyRegistered')}</p>
-                      <Link
-                        className="btn btn--primary btn--sm"
-                        to={`${ROUTES.ADMIN_MACHINES}?q=${encodeURIComponent(duplicateMachine.code)}`}
-                      >
-                        {t('machineRequests.viewExisting')}
-                      </Link>
-                    </div>
-                  ) : null}
-
-                  {showRegister && registerForm ? (
-                    <section className="admin-req-detail__section admin-req-register">
-                      <h3>{t('machineRequests.registerFormTitle')}</h3>
-                      <div className="admin-req-register__grid">
-                        <label>
-                          <span>{t('catalogMachines.brand')}</span>
-                          <select
-                            className="input"
-                            value={registerForm.brandId}
-                            onChange={(e) =>
-                              setRegisterForm((f) => (f ? { ...f, brandId: e.target.value } : f))
-                            }
-                            required
-                          >
-                            <option value="">{t('machineRequests.selectBrand')}</option>
-                            {(brandsQuery.data ?? []).map((b) => (
-                              <option key={b.id} value={b.id}>
-                                {getLocalizedName(b.name, i18n.language, b.code)} ({b.code})
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label>
-                          <span>{t('catalogMachines.code')}</span>
-                          <input
-                            className="input"
-                            value={registerForm.code}
-                            onChange={(e) =>
-                              setRegisterForm((f) => (f ? { ...f, code: e.target.value } : f))
-                            }
-                            required
-                          />
-                        </label>
-                        <label>
-                          <span>{t('catalogMachines.nameKo')}</span>
-                          <input
-                            className="input"
-                            value={registerForm.nameKo}
-                            onChange={(e) =>
-                              setRegisterForm((f) => (f ? { ...f, nameKo: e.target.value } : f))
-                            }
-                            required
-                          />
-                        </label>
-                        <label>
-                          <span>{t('catalogMachines.nameEn')}</span>
-                          <input
-                            className="input"
-                            value={registerForm.nameEn}
-                            onChange={(e) =>
-                              setRegisterForm((f) => (f ? { ...f, nameEn: e.target.value } : f))
-                            }
-                          />
-                        </label>
-                        <label>
-                          <span>{t('catalogMachines.muscleGroup')}</span>
-                          <select
-                            className="input"
-                            value={registerForm.muscleGroup}
-                            onChange={(e) =>
-                              setRegisterForm((f) =>
-                                f ? { ...f, muscleGroup: e.target.value } : f
-                              )
-                            }
-                          >
-                            {MUSCLE_OPTIONS.map((group) => (
-                              <option key={group} value={group}>
-                                {group}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label>
-                          <span>{t('catalogMachines.machineType')}</span>
-                          <select
-                            className="input"
-                            value={registerForm.machineType}
-                            onChange={(e) =>
-                              setRegisterForm((f) =>
-                                f
-                                  ? {
-                                      ...f,
-                                      machineType: e.target.value as (typeof MACHINE_TYPES)[number],
-                                    }
-                                  : f
-                              )
-                            }
-                          >
-                            {MACHINE_TYPES.map((type) => (
-                              <option key={type} value={type}>
-                                {type}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="admin-req-register__full">
-                          <span>{t('catalogMachines.descriptionKo')}</span>
-                          <textarea
-                            className="input"
-                            rows={3}
-                            value={registerForm.descriptionKo}
-                            onChange={(e) =>
-                              setRegisterForm((f) =>
-                                f ? { ...f, descriptionKo: e.target.value } : f
-                              )
-                            }
-                          />
-                        </label>
-                        <label className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={registerForm.isActive}
-                            onChange={(e) =>
-                              setRegisterForm((f) =>
-                                f ? { ...f, isActive: e.target.checked } : f
-                              )
-                            }
-                          />
-                          <span>{t('machineRequests.active')}</span>
-                        </label>
-                      </div>
-
-                      <div className="admin-req-register__image">
-                        <div className="admin-req-register__image-head">
-                          <h4>{t('machineRequests.registerImage')}</h4>
-                          <p>{t('machineRequests.registerImageHint')}</p>
-                        </div>
-                        <div
-                          className={`admin-catalog-image__drop${
-                            registerMutation.isPending ? ' is-busy' : ''
-                          }`}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={(e: DragEvent) => {
-                            e.preventDefault();
-                            const file = e.dataTransfer.files?.[0];
-                            if (file && !registerMutation.isPending) {
-                              handleRegisterImagePick(file);
-                            }
-                          }}
-                        >
-                          {registerImagePreview ? (
-                            <img
-                              key={registerImagePreview}
-                              src={registerImagePreview}
-                              alt=""
-                              className="admin-catalog-image__preview"
-                            />
-                          ) : (
-                            <span className="admin-catalog-image__placeholder">
-                              {t('machineRequests.registerImageDrop')}
-                            </span>
-                          )}
-                          {typeof uploadProgress === 'number' ? (
-                            <div className="admin-catalog-image__progress">
-                              {t('catalogMachines.uploading')} {uploadProgress}%
-                            </div>
-                          ) : null}
-                        </div>
-                        <div className="admin-catalog-image__actions">
-                          <button
-                            type="button"
-                            className="btn btn--secondary btn--sm"
-                            disabled={registerMutation.isPending || registerImageBusy}
-                            onClick={() => registerImageInputRef.current?.click()}
-                          >
-                            {registerImagePreview
-                              ? t('machineRequests.registerImageChange')
-                              : t('machineRequests.registerImagePick')}
-                          </button>
-                          {registerImagePreview ? (
-                            <button
-                              type="button"
-                              className="btn btn--secondary btn--sm"
-                              disabled={registerMutation.isPending}
-                              onClick={clearRegisterImage}
-                            >
-                              {t('machineRequests.registerImageClear')}
-                            </button>
-                          ) : null}
-                          <input
-                            ref={registerImageInputRef}
-                            type="file"
-                            accept={ACCEPT_IMAGE}
-                            hidden
-                            tabIndex={-1}
-                            onChange={(e) => {
-                              handleRegisterImagePick(e.target.files?.[0]);
-                              e.target.value = '';
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="admin-req-detail__actions">
-                        <button
-                          type="button"
-                          className="btn btn--primary"
-                          disabled={
-                            registerMutation.isPending ||
-                            registerImageBusy ||
-                            !registerForm.brandId ||
-                            !registerForm.code.trim() ||
-                            !registerForm.nameKo.trim()
-                          }
-                          onClick={() => registerMutation.mutate(registerForm)}
-                        >
-                          {t('machineRequests.saveMachine')}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => {
-                            setShowRegister(false);
-                            clearRegisterImage();
-                          }}
-                        >
-                          {t('machineRequests.cancel')}
-                        </button>
-                      </div>
-                    </section>
-                  ) : null}
-
-                  <section className="admin-req-detail__section admin-req-detail__section--reject">
-                    <h3>{t('machineRequests.reject')}</h3>
-                    <div className="admin-req-reject-presets">
-                      {REJECT_PRESETS.map((key) => (
-                        <button
-                          key={key}
-                          type="button"
-                          className="btn btn--secondary btn--sm"
-                          onClick={() => setRejectReason(t(`machineRequests.rejectPresets.${key}`))}
-                        >
-                          {t(`machineRequests.rejectPresets.${key}`)}
-                        </button>
-                      ))}
-                    </div>
-                    <textarea
-                      className="input"
-                      rows={2}
-                      value={rejectReason}
-                      onChange={(e) => setRejectReason(e.target.value)}
-                      placeholder={t('machineRequests.rejectPlaceholder')}
-                    />
-                    <button
-                      type="button"
-                      className="btn btn--danger btn--sm"
-                      disabled={updateMutation.isPending || !rejectReason.trim()}
-                      onClick={() =>
-                        updateMutation.mutate({
-                          id: detail.requesters[0].requestId,
-                          status: 'rejected',
-                          rejectReason: rejectReason.trim(),
-                          applyToGroup: true,
-                          groupBrandName: detail.brandName,
-                          groupMachineName: detail.machineName,
-                          adminNote: adminNote.trim() || undefined,
-                        })
-                      }
-                    >
-                      {t('machineRequests.confirmReject')}
-                    </button>
-                  </section>
-                </div>
-
-                <div className="admin-req-detail__footer">
-                  <p className="admin-req-detail__footer-label">{t('machineRequests.statusChange')}</p>
+                <section className="admin-req-detail__section">
+                  <h3>{t('machineRequests.statusChange')}</h3>
                   <div className="admin-req-detail__actions">
                     <button
                       type="button"
@@ -1129,7 +1104,280 @@ export function AdminMachineRequestsPage() {
                       </Link>
                     ) : null}
                   </div>
-                </div>
+                </section>
+
+                <section className="admin-req-detail__section">
+                  <h3>{t('machineRequests.reject')}</h3>
+                  <div className="admin-req-reject-presets">
+                    {REJECT_PRESETS.map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        className="btn btn--secondary btn--sm"
+                        onClick={() => setRejectReason(t(`machineRequests.rejectPresets.${key}`))}
+                      >
+                        {t(`machineRequests.rejectPresets.${key}`)}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    className="input"
+                    rows={2}
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    placeholder={t('machineRequests.rejectPlaceholder')}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn--danger btn--sm"
+                    disabled={updateMutation.isPending || !rejectReason.trim()}
+                    onClick={() =>
+                      updateMutation.mutate({
+                        id: detail.requesters[0].requestId,
+                        status: 'rejected',
+                        rejectReason: rejectReason.trim(),
+                        applyToGroup: true,
+                        groupBrandName: detail.brandName,
+                        groupMachineName: detail.machineName,
+                        adminNote: adminNote.trim() || undefined,
+                      })
+                    }
+                  >
+                    {t('machineRequests.confirmReject')}
+                  </button>
+                </section>
+
+                {duplicateMachine ? (
+                  <div className="admin-req-duplicate">
+                    <p>{t('machineRequests.alreadyRegistered')}</p>
+                    <Link
+                      className="btn btn--primary btn--sm"
+                      to={`${ROUTES.ADMIN_MACHINES}?q=${encodeURIComponent(duplicateMachine.code)}`}
+                    >
+                      {t('machineRequests.viewExisting')}
+                    </Link>
+                  </div>
+                ) : null}
+
+                {showRegister && registerForm ? (
+                  <section className="admin-req-detail__section admin-req-register">
+                    <h3>{t('machineRequests.registerFormTitle')}</h3>
+                    <div className="admin-req-register__grid">
+                      <label>
+                        <span>{t('catalogMachines.brand')}</span>
+                        <select
+                          className="input"
+                          value={registerForm.brandId}
+                          onChange={(e) =>
+                            setRegisterForm((f) => (f ? { ...f, brandId: e.target.value } : f))
+                          }
+                          required
+                        >
+                          <option value="">{t('machineRequests.selectBrand')}</option>
+                          {(brandsQuery.data ?? []).map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {getLocalizedName(b.name, i18n.language, b.code)} ({b.code})
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        <span>{t('catalogMachines.code')}</span>
+                        <input
+                          className="input"
+                          value={registerForm.code}
+                          onChange={(e) =>
+                            setRegisterForm((f) => (f ? { ...f, code: e.target.value } : f))
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        <span>{t('catalogMachines.nameKo')}</span>
+                        <input
+                          className="input"
+                          value={registerForm.nameKo}
+                          onChange={(e) =>
+                            setRegisterForm((f) => (f ? { ...f, nameKo: e.target.value } : f))
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        <span>{t('catalogMachines.nameEn')}</span>
+                        <input
+                          className="input"
+                          value={registerForm.nameEn}
+                          onChange={(e) =>
+                            setRegisterForm((f) => (f ? { ...f, nameEn: e.target.value } : f))
+                          }
+                        />
+                      </label>
+                      <label>
+                        <span>{t('catalogMachines.muscleGroup')}</span>
+                        <select
+                          className="input"
+                          value={registerForm.muscleGroup}
+                          onChange={(e) =>
+                            setRegisterForm((f) =>
+                              f ? { ...f, muscleGroup: e.target.value } : f
+                            )
+                          }
+                        >
+                          {MUSCLE_OPTIONS.map((group) => (
+                            <option key={group} value={group}>
+                              {group}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        <span>{t('catalogMachines.machineType')}</span>
+                        <select
+                          className="input"
+                          value={registerForm.machineType}
+                          onChange={(e) =>
+                            setRegisterForm((f) =>
+                              f
+                                ? {
+                                    ...f,
+                                    machineType: e.target.value as (typeof MACHINE_TYPES)[number],
+                                  }
+                                : f
+                            )
+                          }
+                        >
+                          {MACHINE_TYPES.map((type) => (
+                            <option key={type} value={type}>
+                              {type}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="admin-req-register__full">
+                        <span>{t('catalogMachines.descriptionKo')}</span>
+                        <textarea
+                          className="input"
+                          rows={3}
+                          value={registerForm.descriptionKo}
+                          onChange={(e) =>
+                            setRegisterForm((f) =>
+                              f ? { ...f, descriptionKo: e.target.value } : f
+                            )
+                          }
+                        />
+                      </label>
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={registerForm.isActive}
+                          onChange={(e) =>
+                            setRegisterForm((f) =>
+                              f ? { ...f, isActive: e.target.checked } : f
+                            )
+                          }
+                        />
+                        <span>{t('machineRequests.active')}</span>
+                      </label>
+                    </div>
+                    <div className="admin-req-register__image">
+                      <div className="admin-req-register__image-head">
+                        <h4>{t('machineRequests.registerImage')}</h4>
+                        <p>{t('machineRequests.registerImageHint')}</p>
+                      </div>
+                      <div
+                        className={`admin-catalog-image__drop${
+                          registerMutation.isPending ? ' is-busy' : ''
+                        }`}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e: DragEvent) => {
+                          e.preventDefault();
+                          const file = e.dataTransfer.files?.[0];
+                          if (file && !registerMutation.isPending) {
+                            handleRegisterImagePick(file);
+                          }
+                        }}
+                      >
+                        {registerImagePreview ? (
+                          <img
+                            key={registerImagePreview}
+                            src={registerImagePreview}
+                            alt=""
+                            className="admin-catalog-image__preview"
+                          />
+                        ) : (
+                          <span className="admin-catalog-image__placeholder">
+                            {t('machineRequests.registerImageDrop')}
+                          </span>
+                        )}
+                        {typeof uploadProgress === 'number' ? (
+                          <div className="admin-catalog-image__progress">
+                            {t('catalogMachines.uploading')} {uploadProgress}%
+                          </div>
+                        ) : null}
+                      </div>
+                      <div className="admin-catalog-image__actions">
+                        <button
+                          type="button"
+                          className="btn btn--secondary btn--sm"
+                          disabled={registerMutation.isPending || registerImageBusy}
+                          onClick={() => registerImageInputRef.current?.click()}
+                        >
+                          {registerImagePreview
+                            ? t('machineRequests.registerImageChange')
+                            : t('machineRequests.registerImagePick')}
+                        </button>
+                        {registerImagePreview ? (
+                          <button
+                            type="button"
+                            className="btn btn--secondary btn--sm"
+                            disabled={registerMutation.isPending}
+                            onClick={clearRegisterImage}
+                          >
+                            {t('machineRequests.registerImageClear')}
+                          </button>
+                        ) : null}
+                        <input
+                          ref={registerImageInputRef}
+                          type="file"
+                          accept={ACCEPT_IMAGE}
+                          hidden
+                          tabIndex={-1}
+                          onChange={(e) => {
+                            handleRegisterImagePick(e.target.files?.[0]);
+                            e.target.value = '';
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="admin-req-detail__actions">
+                      <button
+                        type="button"
+                        className="btn btn--primary"
+                        disabled={
+                          registerMutation.isPending ||
+                          registerImageBusy ||
+                          !registerForm.brandId ||
+                          !registerForm.code.trim() ||
+                          !registerForm.nameKo.trim()
+                        }
+                        onClick={() => registerMutation.mutate(registerForm)}
+                      >
+                        {t('machineRequests.saveMachine')}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        onClick={() => {
+                          setShowRegister(false);
+                          clearRegisterImage();
+                        }}
+                      >
+                        {t('machineRequests.cancel')}
+                      </button>
+                    </div>
+                  </section>
+                ) : null}
               </>
             )}
           </div>

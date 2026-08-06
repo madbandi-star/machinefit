@@ -81,7 +81,11 @@ const machineRequests = () =>
   import('@/pages/machine-request-board/MachineRequestBoardPage').then((m) => ({
     default: m.MachineRequestBoardPage,
   }));
-const machineRequestDetail = () =>
+const machineRequestsWrite = () =>
+  import('@/pages/machine-request-board/MachineRequestWritePage').then((m) => ({
+    default: m.MachineRequestWritePage,
+  }));
+const machineRequestsDetail = () =>
   import('@/pages/machine-request-board/MachineRequestDetailPage').then((m) => ({
     default: m.MachineRequestDetailPage,
   }));
@@ -414,7 +418,8 @@ export const router = createBrowserRouter(
         { path: ROUTES.GYM_DETAIL, element: lazyRoute(gymDetail) },
         { path: ROUTES.COMMUNITY, element: lazyRoute(community) },
         { path: ROUTES.MACHINE_REQUESTS, element: lazyRoute(machineRequests) },
-        { path: ROUTES.MACHINE_REQUEST_DETAIL, element: lazyRoute(machineRequestDetail) },
+        { path: ROUTES.MACHINE_REQUESTS_WRITE, element: lazyRoute(machineRequestsWrite) },
+        { path: ROUTES.MACHINE_REQUESTS_DETAIL, element: lazyRoute(machineRequestsDetail) },
         { path: ROUTES.FREE_BOARD, element: lazyRoute(freeBoard) },
         { path: ROUTES.NOTICES, element: lazyRoute(noticesPage) },
         { path: ROUTES.NOTICE_DETAIL, element: lazyRoute(noticeDetailPage) },

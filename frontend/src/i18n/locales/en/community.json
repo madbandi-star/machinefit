@@ -3,11 +3,11 @@
   "freeBoard": "Free Board",
   "freeBoardSubtitle": "General community discussion",
   "machineRequests": "Machine Request Board",
-  "machineRequestsSubtitle": "Request new machines to be added",
+  "machineRequestsSubtitle": "Share machine photos and join the conversation on requests",
   "requestBoardPublicHint": "You can browse everyone’s requests. Tap “I want this too” if you need the same machine.",
   "requestWantThis": "I want this too",
   "requestWantThisDone": "Undo want",
-  "requestWantThisCount": "{{count}} also want this",
+  "requestWantThisCount": "{{count}}",
   "requestWantThisSuccess": "Marked as wanted ({{count}}).",
   "requestWantThisRemoved": "Removed your want ({{count}}).",
   "requestWantThisError": "Could not update your want. Please try again.",
@@ -63,7 +63,7 @@
   "description": "Description",
   "requestPhoto": "Photo attachment",
   "requestPhotoPick": "Choose photos",
-  "requestPhotoHint": "1–5 JPEG/PNG/WebP photos (max 8MB each)",
+  "requestPhotoHint": "Attach 1–5 photos of the machine (required).",
   "requestPhotoRemove": "Remove",
   "requestPhotoRequired": "Please attach at least one photo.",
   "requestPhotoNone": "No photos attached yet.",
@@ -125,7 +125,8 @@
     "latest": "Latest",
     "popular": "Popular",
     "views": "Most viewed",
-    "comments": "Most comments"
+    "comments": "Most comments",
+    "votes": "Most wanted"
   },
   "photoAll": "All",
   "photoMyPosts": "My posts",
@@ -190,5 +191,13 @@
     "viewDetail": "View details",
     "hideToday": "Don't show today",
     "close": "Close"
-  }
+  },
+  "requestSearchPlaceholder": "Search brand, machine, description, author, gym",
+  "requestRejectReason": "Rejection reason",
+  "requestAdminNote": "Admin note",
+  "requestViewMachine": "View registered machine",
+  "requestDelete": "Delete",
+  "requestDeleteConfirm": "Delete this request?",
+  "requestSimilarTitle": "A request already exists — join with “I want this too”",
+  "requestWantThisInstead": "Go to existing request"
 }

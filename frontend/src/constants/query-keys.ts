@@ -65,9 +65,8 @@ export const QUERY_KEYS = {
   posts: ['posts'] as const,
   /** Prefix for invalidating all machine-request list/detail caches. */
   machineRequestsRoot: ['machine-requests'] as const,
-  /** Viewer-scoped: isMine / votedByMe depend on the logged-in user. */
-  machineRequests: (viewerId?: string | null) =>
-    ['machine-requests', 'list', viewerId ?? 'anon'] as const,
+  machineRequests: (params?: Record<string, unknown>) =>
+    ['machine-requests', 'list', params ?? {}] as const,
   machineRequestDetail: (requestId: string, viewerId?: string | null) =>
     ['machine-requests', 'detail', requestId, viewerId ?? 'anon'] as const,
   ownerDashboard: ['owner', 'dashboard'] as const,

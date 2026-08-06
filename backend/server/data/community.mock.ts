@@ -1,4 +1,4 @@
-import type { Post, Comment, MachineRequest } from '@machinefit/shared';
+import type { Post, Comment, MachineRequest, MachineRequestComment } from '@machinefit/shared';
 import type { BoardType } from '@machinefit/shared';
 
 export const mockPosts: Post[] = [
@@ -83,7 +83,12 @@ export const mockMachineRequests: MachineRequest[] = [
     commercialUseConsent: true,
     gymChoiceMode: 'custom',
     gymName: 'Downtown Fitness',
+    likeCount: 0,
+    commentCount: 0,
+    viewCount: 0,
     voteCount: 2,
+    likedByMe: false,
+    imageCount: 0,
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
   },
@@ -98,11 +103,19 @@ export const mockMachineRequests: MachineRequest[] = [
     commercialUseConsent: true,
     gymChoiceMode: 'unknown',
     gymName: null,
+    likeCount: 0,
+    commentCount: 0,
+    viewCount: 0,
     voteCount: 0,
+    likedByMe: false,
+    imageCount: 0,
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     updatedAt: new Date(Date.now() - 86400000).toISOString(),
   },
 ];
+
+export const mockMachineRequestLikes = new Set<string>();
+export const mockMachineRequestComments: MachineRequestComment[] = [];
 
 /** Mock set keys: `vote:${userId}:${requestId}` */
 export const mockMachineRequestVotes = new Set<string>(['vote:user-2:req-1', 'vote:user-3:req-1']);
@@ -115,6 +128,10 @@ export const devOwnerUserIds = new Set<string>();
 
 export function likeKey(userId: string, postId: string) {
   return `${userId}:${postId}`;
+}
+
+export function machineRequestLikeKey(userId: string, requestId: string) {
+  return `${userId}:${requestId}`;
 }
 
 export function filterPosts(boardType?: BoardType) {

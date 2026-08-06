@@ -51,6 +51,20 @@ export interface MachineRequestImage {
 
 export type MachineRequestGymChoiceMode = 'profile' | 'custom' | 'unknown';
 
+export type MachineRequestPriority = 'low' | 'normal' | 'high';
+
+export interface MachineRequestComment {
+  id: string;
+  requestId: string;
+  userId: string;
+  parentId?: string;
+  content: string;
+  isHidden: boolean;
+  authorName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface MachineRequest {
   id: string;
   userId: string;
@@ -58,20 +72,43 @@ export interface MachineRequest {
   machineName: string;
   description: string;
   status: string;
-  adminNote?: string;
+  adminNote?: string | null;
+  rejectReason?: string | null;
   linkedMachineId?: string;
+  linkedMachineCode?: string | null;
   authorName?: string;
   commercialUseConsent?: boolean;
   gymChoiceMode?: MachineRequestGymChoiceMode;
   gymName?: string | null;
   images?: MachineRequestImage[];
   primaryImageUrl?: string;
+  likeCount?: number;
+  commentCount?: number;
+  viewCount?: number;
   /** Number of users who also want this request. */
   voteCount?: number;
+  likedByMe?: boolean;
   /** Whether the current viewer has voted "나도 원함". */
   votedByMe?: boolean;
   /** Whether the current viewer owns this request. */
   isMine?: boolean;
+  isHidden?: boolean;
+  priority?: MachineRequestPriority;
+  imageCount?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface MachineRequestDetail {
+  request: MachineRequest;
+  comments: MachineRequestComment[];
+}
+
+export interface MachineRequestSimilarGroup {
+  brandName: string;
+  machineName: string;
+  requestCount: number;
+  voteCount: number;
+  sampleRequestId: string;
+  primaryImageUrl?: string;
 }

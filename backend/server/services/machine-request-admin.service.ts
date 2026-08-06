@@ -31,6 +31,20 @@ export const machineRequestAdminService = {
     return machineRequestAdminRepository.getGroupDetail(brandName, machineName);
   },
 
+  mergeGroups(
+    fromBrand: string,
+    fromMachine: string,
+    toBrand: string,
+    toMachine: string
+  ) {
+    return machineRequestAdminRepository.mergeGroups(
+      fromBrand,
+      fromMachine,
+      toBrand,
+      toMachine
+    );
+  },
+
   async updateRequest(id: string, input: UpdateMachineRequestAdminInput) {
     const normalized = {
       ...input,

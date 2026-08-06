@@ -34,6 +34,7 @@ import type {
   ModeratePostInput,
   VerifyGymInput,
   UpdateMachineRequestAdminInput,
+  MergeMachineRequestGroupsInput,
   ResolveReportInput,
   ToggleActiveInput,
   AdminBrandUpsertInput,
@@ -247,6 +248,12 @@ export const adminApi = {
   updateMachineRequest: (id: string, input: UpdateMachineRequestAdminInput) =>
     apiClient.patch<ApiResponse<{ updatedCount: number }>>(
       `/admin/machine-requests/${id}`,
+      input
+    ),
+
+  mergeMachineRequestGroups: (input: MergeMachineRequestGroupsInput) =>
+    apiClient.post<ApiResponse<{ updatedCount: number }>>(
+      '/admin/machine-request-groups/merge',
       input
     ),
 

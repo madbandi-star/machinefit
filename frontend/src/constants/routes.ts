@@ -14,7 +14,10 @@ export const ROUTES = {
   RECORDS: '/records',
   COMMUNITY: '/community',
   MACHINE_REQUESTS: '/community/requests',
+  MACHINE_REQUESTS_WRITE: '/community/requests/write',
+  /** @deprecated Prefer MACHINE_REQUESTS_DETAIL */
   MACHINE_REQUEST_DETAIL: '/community/requests/:requestId',
+  MACHINE_REQUESTS_DETAIL: '/community/requests/:requestId',
   FREE_BOARD: '/community/free',
   NOTICES: '/community/notices',
   NOTICE_DETAIL: '/community/notices/:noticeId',

@@ -83,20 +83,7 @@ export const adminGymMachineActionSchema = z.object({
   action: z.enum(['restore', 'force_delete']),
 });
 
-export const updateMachineRequestSchema = z
-  .object({
-    brandName: z.string().trim().min(1).max(100).optional(),
-    machineName: z.string().trim().min(1).max(200).optional(),
-    description: z.string().trim().min(1).max(2000).optional(),
-    gymChoiceMode: machineRequestGymChoiceModeSchema.optional(),
-    gymName: z.string().trim().max(50).optional().nullable(),
-  })
-  .refine((value) => Object.keys(value).length > 0, {
-    message: 'At least one field is required',
-  });
-
 export type CreateMachineRequestInput = z.infer<typeof createMachineRequestSchema>;
-export type UpdateMachineRequestInput = z.infer<typeof updateMachineRequestSchema>;
 export type OwnerApplicationInput = z.infer<typeof ownerApplicationSchema>;
 export type ReviewOwnerApplicationInput = z.infer<typeof reviewOwnerApplicationSchema>;
 export type CreateOwnerGymInput = z.infer<typeof createOwnerGymSchema>;

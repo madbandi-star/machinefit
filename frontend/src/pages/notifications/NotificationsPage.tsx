@@ -51,10 +51,22 @@ function formatPushSenderLabel(
   return null;
 }
 
-function friendNotificationPath(
+function notificationPath(
   type: NotificationType,
   payload?: Record<string, unknown>
 ): string | null {
+  if (
+    type === 'machine_request' ||
+    type === 'machine_request_like' ||
+    type === 'machine_request_comment' ||
+    type === 'machine_request_reply'
+  ) {
+    const requestId = typeof payload?.requestId === 'string' ? payload.requestId : null;
+    if (requestId) {
+      return ROUTES.MACHINE_REQUESTS_DETAIL.replace(':requestId', requestId);
+    }
+    return ROUTES.MACHINE_REQUESTS;
+  }
   if (type === 'friend_request') return ROUTES.FRIENDS_INCOMING;
   if (type === 'friend_accepted' || type === 'friend_removed') {
     const userId = typeof payload?.userId === 'string' ? payload.userId : null;
@@ -132,7 +144,7 @@ export function NotificationsPage() {
                 className={`card notification-item ${n.isRead ? 'notification-item--read' : ''}`}
                 onClick={() => {
                   if (!n.isRead) markReadMutation.mutate(n.id);
-                  const path = friendNotificationPath(n.type, n.payload);
+                  const path = notificationPath(n.type, n.payload);
                   if (path) navigate(path);
                 }}
               >

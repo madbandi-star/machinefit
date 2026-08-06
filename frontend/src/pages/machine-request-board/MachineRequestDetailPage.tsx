@@ -1,25 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import {
-  MACHINE_REQUEST_UNKNOWN_VALUE,
-  type MachineRequestGymChoiceMode,
-} from '@machinefit/shared';
+import { MACHINE_REQUEST_UNKNOWN_VALUE } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
-import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
-import { Icon } from '@/components/icons/Icon';
 import { machineRequestApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { resolveMachineRequestMediaUrl } from '@/utils/machineRequestMediaUrl';
 import '@/styles/components.css';
-import '@/styles/community.css';
+import '@/styles/photo-board.css';
 
 function displayField(value: string | undefined, unknownLabel: string) {
   const trimmed = value?.trim() ?? '';
@@ -27,384 +20,339 @@ function displayField(value: string | undefined, unknownLabel: string) {
   return trimmed;
 }
 
-function getApiErrorCode(error: unknown): string | undefined {
-  if (!axios.isAxiosError(error)) return undefined;
-  const payload = error.response?.data as { error?: { code?: string } } | undefined;
-  return payload?.error?.code;
-}
-
 export function MachineRequestDetailPage() {
-  const { requestId = '' } = useParams<{ requestId: string }>();
+  const { requestId = '' } = useParams();
   const { t } = useTranslation('community');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
-  const authReady = useAuthHydration();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const viewerId = useAuthStore((s) => s.user?.id ?? null);
   const unknownLabel = t('requestFieldUnknownLabel');
 
-  const [editing, setEditing] = useState(false);
-  const [brandName, setBrandName] = useState('');
-  const [machineName, setMachineName] = useState('');
-  const [description, setDescription] = useState('');
-  const [gymChoiceMode, setGymChoiceMode] = useState<MachineRequestGymChoiceMode>('unknown');
-  const [gymName, setGymName] = useState('');
+  const [index, setIndex] = useState(0);
+  const [comment, setComment] = useState('');
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
-  const detailQueryKey = QUERY_KEYS.machineRequestDetail(requestId, viewerId);
-
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: detailQueryKey,
+  const { data, isLoading } = useQuery({
+    queryKey: QUERY_KEYS.machineRequestDetail(requestId),
     queryFn: async () => (await machineRequestApi.get(requestId)).data.data,
-    enabled: Boolean(requestId) && authReady,
+    enabled: Boolean(requestId),
   });
-  const detailLoading = !authReady || isLoading;
 
-  useEffect(() => {
-    if (!data) return;
-    setBrandName(data.brandName);
-    setMachineName(data.machineName);
-    setDescription(data.description);
-    setGymChoiceMode(data.gymChoiceMode ?? 'unknown');
-    setGymName(data.gymName ?? '');
-  }, [data]);
+  const images = data?.request.images ?? [];
+
+  const likeMutation = useMutation({
+    mutationFn: () => machineRequestApi.toggleLike(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(requestId) });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
 
   const voteMutation = useMutation({
-    mutationFn: () => {
-      if (data?.isMine === true) {
-        return Promise.reject(new Error('OWN_REQUEST'));
-      }
-      return machineRequestApi.toggleVote(requestId);
-    },
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
-      const { voted, voteCount } = res.data.data;
-      showToast(
-        voted
-          ? t('requestWantThisSuccess', { count: voteCount })
-          : t('requestWantThisRemoved', { count: voteCount }),
-        'success'
-      );
-    },
-    onError: (error) => {
-      const code = getApiErrorCode(error);
-      if (code === 'OWN_REQUEST' || (error instanceof Error && error.message === 'OWN_REQUEST')) {
-        showToast(t('requestWantThisOwnError'), 'error');
-        return;
-      }
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        showToast(t('loginRequired'), 'error');
-        navigate(ROUTES.LOGIN);
-        return;
-      }
-      showToast(t('requestWantThisError'), 'error');
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: () =>
-      machineRequestApi.update(requestId, {
-        brandName: brandName.trim(),
-        machineName: machineName.trim(),
-        description: description.trim(),
-        gymChoiceMode,
-        gymName: gymChoiceMode === 'unknown' ? null : gymName.trim(),
-      }),
+    mutationFn: () => machineRequestApi.toggleVote(requestId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(requestId) });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
-      setEditing(false);
-      showToast(t('requestUpdateSuccess'), 'success');
     },
-    onError: (error) => {
-      const code = getApiErrorCode(error);
-      if (code === 'FORBIDDEN') {
-        showToast(t('requestOwnerOnlyError'), 'error');
-        return;
-      }
-      if (code === 'NOT_EDITABLE') {
-        showToast(t('requestNotEditable'), 'error');
-        return;
-      }
-      showToast(t('requestUpdateError'), 'error');
-    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
   const deleteMutation = useMutation({
     mutationFn: () => machineRequestApi.remove(requestId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
-      showToast(t('requestDeleteSuccess'), 'success');
+      showToast(t('deleteSuccess'), 'success');
       navigate(ROUTES.MACHINE_REQUESTS);
     },
-    onError: (error) => {
-      const code = getApiErrorCode(error);
-      if (code === 'FORBIDDEN') {
-        showToast(t('requestOwnerOnlyError'), 'error');
-        return;
-      }
-      showToast(t('requestDeleteError'), 'error');
-    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
   });
 
-  const handleWantThis = () => {
+  const commentMutation = useMutation({
+    mutationFn: () =>
+      machineRequestApi.createComment(requestId, {
+        content: comment.trim(),
+        parentId: replyTo ?? undefined,
+      }),
+    onSuccess: () => {
+      setComment('');
+      setReplyTo(null);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestDetail(requestId) });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
+      showToast(t('createSuccess'), 'success');
+    },
+    onError: () => showToast(t('errorGeneric'), 'error'),
+  });
+
+  const requireAuth = (action: () => void) => {
     if (!isAuthenticated) {
       showToast(t('loginRequired'), 'error');
       navigate(ROUTES.LOGIN);
       return;
     }
-    if (data?.isMine === true) {
-      showToast(t('requestWantThisOwnError'), 'error');
-      return;
+    action();
+  };
+
+  const share = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: data
+            ? `${displayField(data.request.brandName, unknownLabel)} · ${displayField(data.request.machineName, unknownLabel)}`
+            : t('machineRequests'),
+          url,
+        });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      showToast(t('photoLinkCopied'), 'success');
+    } catch {
+      showToast(t('errorGeneric'), 'error');
     }
-    voteMutation.mutate();
   };
 
-  const handleDelete = () => {
-    if (!window.confirm(t('requestConfirmDelete'))) return;
-    deleteMutation.mutate();
+  const go = (dir: -1 | 1) => {
+    if (!images.length) return;
+    setIndex((prev) => (prev + dir + images.length) % images.length);
   };
 
-  if (detailLoading) {
+  const formattedDate = useMemo(() => {
+    if (!data?.request.createdAt) return '';
+    try {
+      return new Date(data.request.createdAt).toLocaleString();
+    } catch {
+      return data.request.createdAt;
+    }
+  }, [data?.request.createdAt]);
+
+  if (isLoading || !data) {
     return (
       <PageShell title={t('machineRequests')}>
-        <Skeleton count={4} />
+        <Skeleton count={4} height={96} />
       </PageShell>
     );
   }
 
-  if (isError || !data) {
-    return (
-      <PageShell title={t('machineRequests')}>
-        <QueryErrorMessage onRetry={() => void refetch()} />
-        <Link to={ROUTES.MACHINE_REQUESTS} className="btn btn--secondary btn--block">
-          ← {t('machineRequests')}
-        </Link>
-      </PageShell>
-    );
-  }
-
-  const images = data.images?.length
-    ? data.images
-    : data.primaryImageUrl
-      ? [
-          {
-            id: 'primary',
-            sortOrder: 0,
-            thumbUrl: data.primaryImageUrl,
-            imageUrl: data.primaryImageUrl,
-          },
-        ]
-      : [];
-  const statusLabel = t(`requestStatus_${data.status}`, { defaultValue: data.status });
-  const isMine = data.isMine === true;
-  const voted = data.votedByMe === true;
-  const voteCount = data.voteCount ?? 0;
+  const { request, comments } = data;
+  const title = `${displayField(request.brandName, unknownLabel)} · ${displayField(request.machineName, unknownLabel)}`;
   const gymLabel =
-    data.gymChoiceMode === 'unknown'
+    request.gymChoiceMode === 'unknown'
       ? t('requestGymUnknownLabel')
-      : data.gymName?.trim() || '—';
+      : request.gymName?.trim() || undefined;
+  const statusLabel = t(`requestStatus_${request.status}`, { defaultValue: request.status });
 
   return (
-    <div className="community-board-page machine-request-detail">
-      <PageShell
-        title={t('machineRequests')}
-        subtitle={t('requestDetailSubtitle')}
-        action={
-          <Link to={ROUTES.MACHINE_REQUESTS} className="btn btn--secondary">
-            {t('requestBackToList')}
-          </Link>
-        }
-      >
-        <article className="card machine-request-detail__card">
-          <header className="machine-request-detail__header">
-            <h2 className="machine-request-detail__title">
-              {displayField(data.brandName, unknownLabel)} ·{' '}
-              {displayField(data.machineName, unknownLabel)}
-            </h2>
-            <div className="machine-request-detail__meta">
-              <span className={`board-index-row__status board-index-row__status--${data.status}`}>
-                {statusLabel}
-              </span>
-              {data.authorName ? (
-                <span className="machine-request-detail__author">{data.authorName}</span>
-              ) : null}
-              <time dateTime={data.createdAt}>
-                {new Date(data.createdAt).toLocaleString()}
-              </time>
-              {isMine ? <span className="board-index-row__mine">{t('requestMine')}</span> : null}
-            </div>
-          </header>
-
-          {images.length > 0 ? (
-            <div className="machine-request-detail__gallery" aria-label={t('requestPhoto')}>
-              {images.map((image) => (
-                <img
-                  key={image.id}
-                  src={resolveMachineRequestMediaUrl(image.imageUrl || image.thumbUrl)}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              ))}
-            </div>
-          ) : null}
-
-          {!editing ? (
+    <div className="photo-detail">
+      <PageShell title={title} subtitle={formattedDate}>
+        <div
+          className="photo-detail__gallery"
+          onTouchStart={(e) => {
+            touchStartX.current = e.changedTouches[0]?.clientX ?? null;
+          }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current == null) return;
+            const dx = (e.changedTouches[0]?.clientX ?? 0) - touchStartX.current;
+            touchStartX.current = null;
+            if (Math.abs(dx) < 40) return;
+            go(dx < 0 ? 1 : -1);
+          }}
+        >
+          <div
+            className="photo-detail__track"
+            style={{ transform: `translateX(-${index * 100}%)` }}
+          >
+            {(images.length ? images : [{ id: 'empty', imageUrl: '', thumbUrl: '', sortOrder: 0 }]).map(
+              (image) => (
+                <div key={image.id} className="photo-detail__slide">
+                  {image.imageUrl ? (
+                    <img
+                      src={resolveMachineRequestMediaUrl(image.imageUrl)}
+                      alt={title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : request.primaryImageUrl ? (
+                    <img
+                      src={resolveMachineRequestMediaUrl(request.primaryImageUrl)}
+                      alt={title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="photo-card__placeholder" aria-hidden />
+                  )}
+                </div>
+              )
+            )}
+          </div>
+          {images.length > 1 ? (
             <>
-              <section className="machine-request-detail__section">
-                <h3>{t('description')}</h3>
-                <p className="machine-request-detail__body">
-                  {displayField(data.description, unknownLabel)}
-                </p>
-              </section>
-              <section className="machine-request-detail__section">
-                <h3>{t('requestGymLabel')}</h3>
-                <p className="machine-request-detail__body">{gymLabel}</p>
-              </section>
+              <button
+                type="button"
+                className="photo-detail__nav photo-detail__nav--prev"
+                onClick={() => go(-1)}
+                aria-label={t('photoPrev')}
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                className="photo-detail__nav photo-detail__nav--next"
+                onClick={() => go(1)}
+                aria-label={t('photoNext')}
+              >
+                ›
+              </button>
             </>
-          ) : (
-            <form
-              className="machine-request-detail__edit"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!brandName.trim() || !machineName.trim() || !description.trim()) return;
-                if (gymChoiceMode !== 'unknown' && !gymName.trim()) {
-                  showToast(t('requestGymRequired'), 'error');
-                  return;
-                }
-                updateMutation.mutate();
-              }}
+          ) : null}
+        </div>
+        {images.length > 1 ? (
+          <div className="photo-detail__dots" aria-hidden>
+            {images.map((image, i) => (
+              <span
+                key={image.id}
+                className={`photo-detail__dot${i === index ? ' is-active' : ''}`}
+              />
+            ))}
+          </div>
+        ) : null}
+
+        <div className="photo-detail__actions">
+          <button
+            type="button"
+            className="btn btn--secondary"
+            onClick={() => requireAuth(() => likeMutation.mutate())}
+            disabled={likeMutation.isPending}
+          >
+            {request.likedByMe ? '♥' : '♡'} {request.likeCount ?? 0}
+          </button>
+          <button
+            type="button"
+            className={`btn btn--secondary${request.votedByMe ? ' is-active' : ''}`}
+            onClick={() => requireAuth(() => voteMutation.mutate())}
+            disabled={voteMutation.isPending}
+          >
+            {t('requestWantThis')} · {t('requestWantThisCount', { count: request.voteCount ?? 0 })}
+          </button>
+          <button type="button" className="btn btn--secondary" onClick={() => void share()}>
+            {t('photoShare')}
+          </button>
+          {request.isMine ? (
+            <>
+              <Link
+                to={`${ROUTES.MACHINE_REQUESTS_WRITE}?edit=${request.id}`}
+                className="btn btn--secondary"
+              >
+                {t('requestEdit')}
+              </Link>
+              <button
+                type="button"
+                className="btn btn--danger"
+                disabled={deleteMutation.isPending}
+                onClick={() => {
+                  if (!window.confirm(t('requestDeleteConfirm'))) return;
+                  deleteMutation.mutate();
+                }}
+              >
+                {t('requestDelete')}
+              </button>
+            </>
+          ) : null}
+        </div>
+
+        <div style={{ display: 'grid', gap: '0.35rem' }}>
+          <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+            {t('photoAuthor')}: {request.authorName || '—'} · {t('status')}: {statusLabel}
+            {gymLabel ? ` · ${t('requestGymLabel')}: ${gymLabel}` : ''}
+          </div>
+          <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+            {t('photoViews')}: {request.viewCount ?? 0} · {t('comments')}: {request.commentCount ?? 0}
+          </div>
+          {request.status === 'added' && request.linkedMachineCode ? (
+            <Link
+              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', request.linkedMachineCode)}
+              className="btn btn--primary btn--sm"
+              style={{ justifySelf: 'start' }}
             >
-              <div className="form-row">
-                <label htmlFor="edit-brand">{t('brandName')}</label>
-                <input
-                  id="edit-brand"
-                  className="input"
-                  value={brandName}
-                  onChange={(e) => setBrandName(e.target.value)}
-                  maxLength={100}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="edit-machine">{t('machineName')}</label>
-                <input
-                  id="edit-machine"
-                  className="input"
-                  value={machineName}
-                  onChange={(e) => setMachineName(e.target.value)}
-                  maxLength={200}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="edit-desc">{t('description')}</label>
-                <textarea
-                  id="edit-desc"
-                  className="input"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  maxLength={2000}
-                  rows={5}
-                  required
-                />
-              </div>
-              <fieldset className="form-row community-board-page__choice">
-                <legend>{t('requestGymLabel')}</legend>
-                <label className="checkbox-label">
-                  <input
-                    type="radio"
-                    name="edit-gym"
-                    checked={gymChoiceMode === 'custom'}
-                    onChange={() => setGymChoiceMode('custom')}
-                  />
-                  <span>{t('requestGymChoiceCustom')}</span>
-                </label>
-                {gymChoiceMode === 'custom' ? (
-                  <input
-                    className="input"
-                    value={gymName}
-                    onChange={(e) => setGymName(e.target.value.slice(0, 50))}
-                    maxLength={50}
-                    placeholder={t('requestGymCustomPlaceholder')}
-                    required
-                  />
-                ) : null}
-                <label className="checkbox-label">
-                  <input
-                    type="radio"
-                    name="edit-gym"
-                    checked={gymChoiceMode === 'unknown'}
-                    onChange={() => setGymChoiceMode('unknown')}
-                  />
-                  <span>{t('requestGymChoiceUnknown')}</span>
-                </label>
-              </fieldset>
-              <div className="community-board-page__form-actions">
-                <button
-                  type="submit"
-                  className="btn btn--primary"
-                  disabled={updateMutation.isPending}
-                >
-                  {t('requestSaveEdit')}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={() => setEditing(false)}
-                >
+              {t('requestViewMachine')}
+            </Link>
+          ) : null}
+          {request.rejectReason ? (
+            <p className="photo-detail__feedback photo-detail__feedback--reject">
+              <strong>{t('requestRejectReason')}</strong>: {request.rejectReason}
+            </p>
+          ) : null}
+          {request.adminNote ? (
+            <p className="photo-detail__feedback">
+              <strong>{t('requestAdminNote')}</strong>: {request.adminNote}
+            </p>
+          ) : null}
+          <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
+            {displayField(request.description, unknownLabel)}
+          </p>
+        </div>
+
+        <section className="photo-detail__comments" aria-label={t('comments')}>
+          <h3 className="my-page-section__title">{t('comments')}</h3>
+          <form
+            className="card"
+            style={{ padding: '0.85rem', display: 'grid', gap: '0.5rem' }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!comment.trim()) return;
+              requireAuth(() => commentMutation.mutate());
+            }}
+          >
+            {replyTo ? (
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                {t('photoReplying')}{' '}
+                <button type="button" className="btn btn--secondary" onClick={() => setReplyTo(null)}>
                   {t('cancel')}
                 </button>
               </div>
-            </form>
-          )}
+            ) : null}
+            <textarea
+              className="input"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder={t('writeComment')}
+              rows={3}
+            />
+            <button
+              type="submit"
+              className="btn btn--primary"
+              disabled={commentMutation.isPending || !comment.trim()}
+            >
+              {t('submit')}
+            </button>
+          </form>
 
-          <div className="machine-request-detail__actions">
-            {!isMine ? (
+          {comments.map((item) => (
+            <article
+              key={item.id}
+              className={`photo-comment${item.parentId ? ' photo-comment--reply' : ''}`}
+            >
+              <div className="photo-comment__meta">
+                <strong>{item.authorName || '—'}</strong>
+                <span>{new Date(item.createdAt).toLocaleString()}</span>
+              </div>
+              <p style={{ margin: '0 0 0.35rem', whiteSpace: 'pre-wrap' }}>{item.content}</p>
               <button
                 type="button"
-                className={`btn btn--secondary${voted ? ' is-active' : ''}`}
-                onClick={handleWantThis}
-                disabled={voteMutation.isPending}
+                className="btn btn--secondary"
+                onClick={() => requireAuth(() => setReplyTo(item.id))}
               >
-                <Icon name="users" size={16} aria-hidden />
-                {voted ? t('requestWantThisDone') : t('requestWantThis')} · {voteCount}
+                {t('photoReply')}
               </button>
-            ) : (
-              <span className="machine-request-detail__vote-count">
-                <Icon name="users" size={16} aria-hidden />
-                {t('requestWantThisCount', { count: voteCount })}
-              </span>
-            )}
+            </article>
+          ))}
+        </section>
 
-            {isMine && !editing ? (
-              <>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={() => setEditing(true)}
-                  disabled={data.status === 'added'}
-                >
-                  {t('requestEdit')}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
-                >
-                  {t('deletePost')}
-                </button>
-              </>
-            ) : null}
-          </div>
-        </article>
-
-        <Link
-          to={ROUTES.MACHINE_REQUESTS}
-          className="btn btn--secondary btn--block community-board-page__back"
-        >
-          ← {t('requestBackToList')}
+        <Link to={ROUTES.MACHINE_REQUESTS} className="btn btn--secondary btn--block">
+          {t('photoBackList')}
         </Link>
       </PageShell>
     </div>

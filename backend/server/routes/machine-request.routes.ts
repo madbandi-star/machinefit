@@ -6,6 +6,7 @@ import { machineRequestImagesUpload } from '../middlewares/upload.middleware.js'
 export const machineRequestRouter = Router();
 
 machineRequestRouter.get('/images/:imageId', communityController.getMachineRequestImage);
+machineRequestRouter.get('/similar', communityController.listSimilarMachineRequestGroups);
 machineRequestRouter.get('/', optionalAuthMiddleware, communityController.listMachineRequests);
 machineRequestRouter.get(
   '/:requestId',
@@ -18,18 +19,25 @@ machineRequestRouter.post(
   machineRequestImagesUpload,
   communityController.createMachineRequest
 );
-machineRequestRouter.patch(
-  '/:requestId',
+machineRequestRouter.patch('/:requestId', authMiddleware, communityController.updateMachineRequest);
+machineRequestRouter.delete('/:requestId', authMiddleware, communityController.deleteMachineRequest);
+machineRequestRouter.post(
+  '/:requestId/like',
   authMiddleware,
-  communityController.updateMachineRequest
-);
-machineRequestRouter.delete(
-  '/:requestId',
-  authMiddleware,
-  communityController.deleteMachineRequest
+  communityController.toggleMachineRequestLike
 );
 machineRequestRouter.post(
   '/:requestId/vote',
   authMiddleware,
   communityController.toggleMachineRequestVote
+);
+machineRequestRouter.post(
+  '/:requestId/comments',
+  authMiddleware,
+  communityController.createMachineRequestComment
+);
+machineRequestRouter.delete(
+  '/comments/:commentId',
+  authMiddleware,
+  communityController.deleteMachineRequestComment
 );
