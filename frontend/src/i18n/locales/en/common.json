@@ -96,7 +96,13 @@
     "playlist": "Playlist",
     "trackCount": "{{count}} tracks",
     "videoCount": "{{count}} videos",
-    "manageLibrary": "Manage my music"
+    "manageLibrary": "Manage my music",
+    "prev": "Previous",
+    "nextTrack": "Next track",
+    "shuffle": "Shuffle",
+    "shuffleMode": "Shuffle",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
   },
   "motivationMusic": {
     "title": "Motivation music",
@@ -297,7 +303,6 @@
     "startWithKakao": "Continue with Kakao",
     "startWithGoogle": "Continue with Google",
     "landingLegal": "By signing in, you agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
-
     "loginFeature1": "Body-based recommendations",
     "loginFeature2": "Brand-specific machine settings",
     "loginFeature3": "Workout logs and growth analysis",

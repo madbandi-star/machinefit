@@ -96,7 +96,13 @@
     "playlist": "플레이리스트",
     "trackCount": "{{count}}곡",
     "videoCount": "{{count}}개",
-    "manageLibrary": "내 음악 관리"
+    "manageLibrary": "내 음악 관리",
+    "prev": "이전 곡",
+    "nextTrack": "다음 곡",
+    "shuffle": "랜덤재생",
+    "shuffleMode": "랜덤재생",
+    "moveUp": "위로 이동",
+    "moveDown": "아래로 이동"
   },
   "motivationMusic": {
     "title": "동기부여 음악",
@@ -301,7 +307,6 @@
     "startWithKakao": "카카오로 시작하기",
     "startWithGoogle": "구글로 시작하기",
     "landingLegal": "로그인하면 <terms>이용약관</terms> 및 <privacy>개인정보처리방침</privacy>에 동의하게 됩니다.",
-
     "profileExtrasGoalOnly": "운동 목표로 추천을 맞춤화합니다. 헬스장은 아래 지역 설정에서 함께 입력하세요.",
     "agreeLocationSuffix": "에 동의합니다 (선택)",
     "socialOr": "또는",
