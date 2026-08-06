@@ -7,6 +7,7 @@ import { getPool, warmupDatabase } from './config/database.js';
 import { startMachineTradeExpireJob } from './jobs/machine-trade-expire.job.js';
 import { startOnlinePtOverdueJob } from './jobs/online-pt-overdue.job.js';
 import { startOpsSamplingJob } from './jobs/ops-sampling.job.js';
+import { startNoticePublishJob } from './jobs/notice-publish.job.js';
 import { registerGracefulShutdown } from './lifecycle/shutdown.js';
 import { registerProcessErrorHandlers } from './lifecycle/process-errors.js';
 import { logger } from './utils/logger.js';
@@ -38,6 +39,7 @@ const server: Server = app.listen(env.PORT, '0.0.0.0', () => {
   startMachineTradeExpireJob();
   startOnlinePtOverdueJob();
   startOpsSamplingJob();
+  startNoticePublishJob();
 
   void storageService.ensureMotivationAudioReady().then((result) => {
     // Production logger is WARN+ only — keep these visible on Render.

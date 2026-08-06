@@ -293,6 +293,18 @@ const adminPhotoBoard = () =>
   import('@/pages/admin/photo-board/AdminPhotoBoardPage').then((m) => ({
     default: m.AdminPhotoBoardPage,
   }));
+const noticesPage = () =>
+  import('@/pages/notices/NoticesPage').then((m) => ({ default: m.NoticesPage }));
+const noticeDetailPage = () =>
+  import('@/pages/notices/NoticeDetailPage').then((m) => ({ default: m.NoticeDetailPage }));
+const adminNoticesPage = () =>
+  import('@/pages/admin/notices/AdminNoticesPage').then((m) => ({
+    default: m.AdminNoticesPage,
+  }));
+const adminNoticeEditPage = () =>
+  import('@/pages/admin/notices/AdminNoticeEditPage').then((m) => ({
+    default: m.AdminNoticeEditPage,
+  }));
 const adminMotivation = () =>
   import('@/pages/admin/motivation/AdminMotivationPage').then((m) => ({
     default: m.AdminMotivationPage,
@@ -396,6 +408,8 @@ export const router = createBrowserRouter(
         { path: ROUTES.MACHINE_REQUESTS, element: lazyRoute(machineRequests) },
         { path: ROUTES.MACHINE_REQUEST_DETAIL, element: lazyRoute(machineRequestDetail) },
         { path: ROUTES.FREE_BOARD, element: lazyRoute(freeBoard) },
+        { path: ROUTES.NOTICES, element: lazyRoute(noticesPage) },
+        { path: ROUTES.NOTICE_DETAIL, element: lazyRoute(noticeDetailPage) },
         { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
         { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
         { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
@@ -570,6 +584,9 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_MACHINE_COVERS, element: lazyRoute(adminMachineCovers) },
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
         { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
+        { path: ROUTES.ADMIN_NOTICES, element: lazyRoute(adminNoticesPage) },
+        { path: ROUTES.ADMIN_NOTICE_NEW, element: lazyRoute(adminNoticeEditPage) },
+        { path: ROUTES.ADMIN_NOTICE_EDIT, element: lazyRoute(adminNoticeEditPage) },
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
         { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },

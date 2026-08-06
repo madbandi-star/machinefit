@@ -14,14 +14,18 @@ const LOCAL_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/motivation-audi
 const LOCAL_MOTIVATION_COVER_ROOT = path.resolve(__dirname, '../../uploads/motivation-covers');
 const LOCAL_MUSCLE_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/muscle-group-images');
 const LOCAL_MACHINE_COVER_ROOT = path.resolve(__dirname, '../../uploads/machine-covers');
+const LOCAL_NOTICE_ROOT = path.resolve(__dirname, '../../uploads/notice-attachments');
 
 try {
   mkdirSync(LOCAL_MUSCLE_UPLOAD_ROOT, { recursive: true });
   mkdirSync(LOCAL_MACHINE_COVER_ROOT, { recursive: true });
   mkdirSync(LOCAL_MOTIVATION_COVER_ROOT, { recursive: true });
+  mkdirSync(LOCAL_NOTICE_ROOT, { recursive: true });
 } catch {
   // Best-effort for local/static fallback roots.
 }
+
+let noticeBucketReady: Promise<void> | null = null;
 
 let supabase: SupabaseClient | null | undefined;
 let audioBucketReady: Promise<void> | null = null;
@@ -643,6 +647,130 @@ export const storageService = {
         .join('/')}`,
       provider: 'local',
     };
+  },
+
+  localNoticeUploadRoot: LOCAL_NOTICE_ROOT,
+
+  async ensureNoticeBucket(): Promise<void> {
+    const client = getSupabase();
+    if (!client) return;
+    if (!noticeBucketReady) {
+      noticeBucketReady = (async () => {
+        const bucket = env.NOTICE_ATTACHMENT_BUCKET;
+        const { data, error } = await withRetry(
+          () => client.storage.listBuckets(),
+          { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+        );
+        if (error) {
+          throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+        }
+        const exists = data?.some((item) => item.name === bucket);
+        if (!exists) {
+          const created = await client.storage.createBucket(bucket, {
+            public: true,
+            fileSizeLimit: env.NOTICE_ATTACHMENT_MAX_BYTES,
+          });
+          if (created.error && !/already exists/i.test(created.error.message)) {
+            throw new AppError(
+              500,
+              'STORAGE_ERROR',
+              `Could not create notice attachment bucket "${bucket}"`,
+              created.error.message
+            );
+          }
+        }
+      })().catch((err) => {
+        noticeBucketReady = null;
+        throw err;
+      });
+    }
+    await noticeBucketReady;
+  },
+
+  noticeAttachmentPublicUrl(storagePath: string): string {
+    const encoded = storagePath
+      .split('/')
+      .filter(Boolean)
+      .map(encodeURIComponent)
+      .join('/');
+    return `${publicApiBase()}/media/notice-attachments/${encoded}`;
+  },
+
+  async uploadNoticeAttachment(params: {
+    noticeId: string;
+    fileName: string;
+    mimeType: string;
+    buffer: Buffer;
+  }): Promise<StoredImageObject> {
+    const safeName = params.fileName.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120);
+    const storagePath = `${params.noticeId}/${Date.now()}-${safeName}`;
+    await this.ensureNoticeBucket();
+    const client = getSupabase();
+
+    if (client) {
+      const { error } = await client.storage
+        .from(env.NOTICE_ATTACHMENT_BUCKET)
+        .upload(storagePath, params.buffer, {
+          contentType: params.mimeType,
+          upsert: false,
+        });
+      if (error) {
+        // Fall back to local disk when Supabase rejects the upload.
+        const absolute = path.join(LOCAL_NOTICE_ROOT, storagePath);
+        await mkdir(path.dirname(absolute), { recursive: true });
+        await writeFile(absolute, params.buffer);
+        return {
+          storagePath,
+          publicUrl: this.noticeAttachmentPublicUrl(storagePath),
+          provider: 'local',
+        };
+      }
+      return {
+        storagePath,
+        publicUrl: this.noticeAttachmentPublicUrl(storagePath),
+        provider: 'supabase',
+      };
+    }
+
+    const absolute = path.join(LOCAL_NOTICE_ROOT, storagePath);
+    await mkdir(path.dirname(absolute), { recursive: true });
+    await writeFile(absolute, params.buffer);
+    return {
+      storagePath,
+      publicUrl: this.noticeAttachmentPublicUrl(storagePath),
+      provider: 'local',
+    };
+  },
+
+  async readNoticeAttachment(storagePath: string): Promise<{ buffer: Buffer; mimeType?: string } | null> {
+    const client = getSupabase();
+    if (client) {
+      const { data, error } = await client.storage
+        .from(env.NOTICE_ATTACHMENT_BUCKET)
+        .download(storagePath);
+      if (!error && data) {
+        const buffer = Buffer.from(await data.arrayBuffer());
+        return { buffer };
+      }
+    }
+    try {
+      const buffer = await readFile(path.join(LOCAL_NOTICE_ROOT, storagePath));
+      return { buffer };
+    } catch {
+      return null;
+    }
+  },
+
+  async deleteNoticeAttachment(storagePath: string): Promise<void> {
+    const client = getSupabase();
+    if (client) {
+      await client.storage.from(env.NOTICE_ATTACHMENT_BUCKET).remove([storagePath]);
+    }
+    try {
+      await unlink(path.join(LOCAL_NOTICE_ROOT, storagePath));
+    } catch {
+      // ignore missing local file
+    }
   },
 
   /**

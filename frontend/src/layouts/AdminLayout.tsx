@@ -22,6 +22,7 @@ const ADMIN_LINKS = [
   { to: ROUTES.ADMIN_MODERATION, labelKey: 'moderation', end: false },
   { to: ROUTES.ADMIN_COMPLIANCE, labelKey: 'compliance.nav', end: false },
   { to: ROUTES.ADMIN_PHOTO_BOARD, labelKey: 'photoBoard.nav', end: false },
+  { to: ROUTES.ADMIN_NOTICES, labelKey: 'notices.nav', end: false },
   { to: ROUTES.ADMIN_TRADES, labelKey: 'trades.nav', end: false },
   { to: ROUTES.ADMIN_ONLINE_PT, labelKey: 'onlinePt.nav', end: false },
   { to: ROUTES.ADMIN_PUSH, labelKey: 'push.nav', end: false },

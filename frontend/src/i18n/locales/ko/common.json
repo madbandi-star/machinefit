@@ -45,7 +45,10 @@
     "viewAll": "전체 보기",
     "retry": "다시 시도",
     "confirm": "확인",
-    "close": "닫기"
+    "close": "닫기",
+    "delete": "삭제",
+    "prev": "이전",
+    "next": "다음"
   },
   "collapse": "접기",
   "expand": "펼치기",
