@@ -10,7 +10,23 @@ export function billingPlanToEntitlement(planCode: string | null | undefined): '
 }
 
 export function isLiveSubscriptionStatus(status: SubscriptionStatus | string | null | undefined): boolean {
-  return status === 'ACTIVE' || status === 'TRIAL';
+  return status === 'ACTIVE' || status === 'TRIAL' || status === 'PAUSED';
+}
+
+/** Premium still usable until expire_at even after cancel-at-period-end. */
+export function isPremiumPeriodActive(opts: {
+  status?: string | null;
+  expireAt?: string | Date | null;
+  membershipType?: string | null;
+}): boolean {
+  const membership = String(opts.membershipType ?? '').toUpperCase();
+  if (membership === 'PREMIUM') {
+    if (!opts.expireAt) return true;
+    return new Date(opts.expireAt).getTime() > Date.now();
+  }
+  if (!isLiveSubscriptionStatus(opts.status)) return false;
+  if (!opts.expireAt) return true;
+  return new Date(opts.expireAt).getTime() > Date.now();
 }
 
 export function hasPremiumAccess(opts: {
@@ -18,14 +34,44 @@ export function hasPremiumAccess(opts: {
   entitlementPlan?: string | null;
   subscriptionStatus?: string | null;
   planCode?: string | null;
+  expireAt?: string | Date | null;
+  membershipType?: string | null;
 }): boolean {
   if (roleGrantsPremiumPlan(opts.roleCode)) return true;
-  if (opts.entitlementPlan === 'premium') return true;
+  if (
+    isPremiumPeriodActive({
+      membershipType: opts.membershipType,
+      status: opts.subscriptionStatus,
+      expireAt: opts.expireAt,
+    })
+  ) {
+    return true;
+  }
+  if (opts.entitlementPlan === 'premium') {
+    if (opts.expireAt && new Date(opts.expireAt).getTime() <= Date.now()) return false;
+    return true;
+  }
   if (isLiveSubscriptionStatus(opts.subscriptionStatus)) {
     const code = String(opts.planCode ?? '').toUpperCase();
     return code === 'PREMIUM' || code === 'VIP';
   }
   return false;
+}
+
+export function toMembershipSubscriptionStatus(
+  status: SubscriptionStatus | string | null | undefined,
+  opts?: { cancelAt?: string | null; expireAt?: string | null }
+): 'inactive' | 'trial' | 'active' | 'cancelled' | 'expired' | 'refunded' {
+  const s = String(status ?? '').toUpperCase();
+  if (s === 'TRIAL') return 'trial';
+  if (s === 'EXPIRED') return 'expired';
+  if (s === 'FAILED') return 'inactive';
+  if (s === 'CANCELED' || opts?.cancelAt) {
+    if (opts?.expireAt && new Date(opts.expireAt).getTime() > Date.now()) return 'cancelled';
+    return 'cancelled';
+  }
+  if (s === 'ACTIVE' || s === 'PAUSED' || s === 'PENDING') return 'active';
+  return 'inactive';
 }
 
 export function hasVipAccess(opts: {

@@ -10,6 +10,7 @@ import { startOnlinePtOverdueJob } from './jobs/online-pt-overdue.job.js';
 import { startOpsSamplingJob } from './jobs/ops-sampling.job.js';
 import { startNoticePublishJob } from './jobs/notice-publish.job.js';
 import { startSystemBackupJob } from './jobs/system-backup.job.js';
+import { startPremiumExpireJob } from './jobs/premium-expire.job.js';
 import { registerGracefulShutdown } from './lifecycle/shutdown.js';
 import { registerProcessErrorHandlers } from './lifecycle/process-errors.js';
 import { logger } from './utils/logger.js';
@@ -56,6 +57,7 @@ async function bootstrap(): Promise<void> {
     startOpsSamplingJob();
     startNoticePublishJob();
     startSystemBackupJob();
+    startPremiumExpireJob();
 
     void storageService.ensureMotivationAudioReady().then((result) => {
       // Production logger is WARN+ only — keep these visible on Render.

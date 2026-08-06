@@ -50,7 +50,15 @@ export function createApp() {
       credentials: true,
     })
   );
-  app.use(express.json({ limit: '1mb' }));
+  // Preserve raw body for Polar / Standard Webhooks signature verification.
+  app.use(
+    express.json({
+      limit: '1mb',
+      verify: (req, _res, buf) => {
+        (req as { rawBody?: string }).rawBody = buf.toString('utf8');
+      },
+    })
+  );
   // DR: correlate → soft timeout → refuse new work while draining → rate limit.
   app.use(requestIdMiddleware);
   app.use(requestTimeoutMiddleware);

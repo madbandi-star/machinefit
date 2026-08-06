@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import {
+  applyCouponSchema,
   cancelSubscriptionSchema,
+  createCheckoutSchema,
   startTrialSchema,
 } from '@machinefit/shared';
 import { billingService } from '../services/billing.service.js';
@@ -28,10 +30,26 @@ export async function getSubscriptionStatus(req: Request, res: Response): Promis
   res.json({ success: true, data });
 }
 
+/** Alias: GET /billing/status */
+export const getBillingStatus = getSubscriptionStatus;
+
 export async function startTrial(req: Request, res: Response): Promise<void> {
   const user = requireUser(req);
   const input = startTrialSchema.parse(req.body ?? {});
   const data = await billingService.startTrial(user.userId, input.planCode, input.trialDays);
+  res.status(201).json({ success: true, data });
+}
+
+export async function createCheckout(req: Request, res: Response): Promise<void> {
+  const user = requireUser(req);
+  const input = createCheckoutSchema.parse(req.body ?? {});
+  const data = await billingService.createCheckout(user.userId, {
+    planCode: input.planCode,
+    successUrl: input.successUrl,
+    cancelUrl: input.cancelUrl,
+    couponCode: input.couponCode,
+    email: user.email,
+  });
   res.status(201).json({ success: true, data });
 }
 
@@ -42,6 +60,12 @@ export async function cancelSubscription(req: Request, res: Response): Promise<v
   res.json({ success: true, data });
 }
 
+export async function resumeSubscription(req: Request, res: Response): Promise<void> {
+  const user = requireUser(req);
+  const data = await billingService.resumeSubscription(user.userId);
+  res.json({ success: true, data });
+}
+
 export async function listPaymentHistory(req: Request, res: Response): Promise<void> {
   const user = requireUser(req);
   const limit = Math.min(Number(req.query.limit) || 50, 100);
@@ -49,7 +73,17 @@ export async function listPaymentHistory(req: Request, res: Response): Promise<v
   res.json({ success: true, data });
 }
 
+/** Alias: GET /billing/invoices */
+export const listInvoices = listPaymentHistory;
+
 export async function listPaymentProviders(_req: Request, res: Response): Promise<void> {
   const data = billingService.listPaymentProviders();
+  res.json({ success: true, data });
+}
+
+export async function applyCoupon(req: Request, res: Response): Promise<void> {
+  const user = requireUser(req);
+  const input = applyCouponSchema.parse(req.body ?? {});
+  const data = await billingService.applyCoupon(user.userId, input.code);
   res.json({ success: true, data });
 }

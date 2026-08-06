@@ -74,11 +74,24 @@ const envSchema = z.object({
   DR_ALERT_WEBHOOK_URL: z.string().optional(),
   /**
    * Active payment provider id. Default `dummy` (no real charges).
-   * Swap to toss|portone|lemonsqueezy|polar|stripe|google|apple when adapters are live.
+   * Set `polar` when Polar credentials are configured on Render.
    */
   PAYMENT_PROVIDER: z
     .enum(['dummy', 'toss', 'portone', 'lemonsqueezy', 'polar', 'stripe', 'google', 'apple'])
     .default('dummy'),
+  /** Public frontend origin+path for invite / Polar return URLs. */
+  FRONTEND_BASE_URL: z.string().optional(),
+  /** Polar organization access token (never commit). */
+  POLAR_ACCESS_TOKEN: z.string().optional(),
+  /** Polar webhook signing secret (Standard Webhooks / whsec_). */
+  POLAR_WEBHOOK_SECRET: z.string().optional(),
+  POLAR_ORGANIZATION_ID: z.string().optional(),
+  /** Polar Product ID for MachineFit Premium (monthly). */
+  POLAR_PREMIUM_PRODUCT_ID: z.string().optional(),
+  /** `sandbox` → sandbox-api.polar.sh ; otherwise production. */
+  POLAR_SERVER: z.enum(['sandbox', 'production']).default('production'),
+  POLAR_SUCCESS_URL: z.string().optional(),
+  POLAR_RETURN_URL: z.string().optional(),
 });
 
 export const env = envSchema.parse({

@@ -262,6 +262,14 @@ export const authService = {
     );
     user = { ...user, activeGymId: defaultGym.id, marketingOptIn };
 
+    // 7-day Premium trial on first signup (feature flag signup_trial_auto).
+    try {
+      const { billingService } = await import('./billing.service.js');
+      await billingService.maybeStartSignupTrial(user.id);
+    } catch {
+      // Non-blocking — registration must succeed even if billing tables missing.
+    }
+
     return buildAuthResponse(user);
   },
 

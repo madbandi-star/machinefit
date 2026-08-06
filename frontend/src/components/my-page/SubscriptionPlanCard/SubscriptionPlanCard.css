@@ -1,0 +1,91 @@
+.premium-card__panel {
+  padding: 1.1rem 1.15rem 1.2rem;
+  border-radius: 1rem;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(74, 222, 128, 0.16), transparent 55%),
+    linear-gradient(160deg, #111827 0%, #0b1220 100%);
+  border: 1px solid rgba(74, 222, 128, 0.22);
+}
+
+.premium-card__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(167, 243, 208, 0.85);
+}
+
+.premium-card__title {
+  margin: 0.25rem 0 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+}
+
+.premium-card__price {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.premium-card__status-pill {
+  display: inline-block;
+  margin: 0.85rem 0 0;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #052e1a;
+  background: #4ade80;
+}
+
+.premium-card__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem 0.75rem;
+  margin: 0.95rem 0 0;
+}
+
+.premium-card__meta dt {
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.premium-card__meta dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.premium-card__actions {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.premium-card__muted {
+  margin: 0.75rem 0 0;
+  font-size: 0.88rem;
+  color: rgba(203, 213, 225, 0.85);
+  line-height: 1.45;
+}
+
+.premium-card__history-link {
+  display: block;
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(167, 243, 208, 0.95);
+  text-decoration: none;
+}
+
+.premium-card__history-link:hover {
+  text-decoration: underline;
+}
+
+.premium-card .btn {
+  margin-top: 0.65rem;
+}

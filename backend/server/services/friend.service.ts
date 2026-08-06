@@ -241,6 +241,13 @@ export const friendService = {
     } catch {
       /* friendship is best-effort after referral is logged */
     }
+    // Premium reward: +30 days for referrer and referred (once per referred user).
+    try {
+      const { billingService } = await import('./billing.service.js');
+      await billingService.grantReferralPremiumReward(applied.referrerId, userId);
+    } catch {
+      /* billing reward is best-effort */
+    }
     return { success: true as const, referrerId: applied.referrerId };
   },
 

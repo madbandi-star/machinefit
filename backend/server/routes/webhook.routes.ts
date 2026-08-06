@@ -2,8 +2,8 @@ import { Router } from 'express';
 import * as webhookController from '../controllers/webhook.controller.js';
 
 /**
- * Provider webhook stubs — no auth (signature verified inside provider adapter).
- * Currently mock-only via DummyPaymentProvider parser.
+ * Provider webhooks — no JWT (signature verified inside provider adapter).
+ * Polar: POST /api/v1/webhook/polar
  */
 export const webhookRouter = Router();
 

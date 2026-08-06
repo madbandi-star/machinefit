@@ -1,11 +1,13 @@
 import type {
   ApiResponse,
   BillingPlan,
+  CheckoutSessionResult,
   PaginatedResponse,
   PaymentHistoryItem,
   SubscriptionStatusView,
   UserSubscription,
   AdminSubscriptionRow,
+  Coupon,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
 
@@ -16,16 +18,30 @@ export const billingApi = {
     apiClient.get<ApiResponse<UserSubscription | null>>('/subscription'),
 
   getStatus: () =>
-    apiClient.get<ApiResponse<SubscriptionStatusView>>('/subscription/status'),
+    apiClient.get<ApiResponse<SubscriptionStatusView>>('/billing/status'),
 
   startTrial: (body?: { planCode?: string; trialDays?: number }) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>('/subscription/trial', body ?? {}),
 
+  createCheckout: (body?: {
+    planCode?: string;
+    successUrl?: string;
+    cancelUrl?: string;
+    couponCode?: string;
+  }) =>
+    apiClient.post<ApiResponse<CheckoutSessionResult>>('/billing/create-checkout', body ?? {}),
+
   cancel: (body?: { reason?: string }) =>
-    apiClient.post<ApiResponse<SubscriptionStatusView>>('/subscription/cancel', body ?? {}),
+    apiClient.post<ApiResponse<SubscriptionStatusView>>('/billing/cancel', body ?? {}),
+
+  resume: () =>
+    apiClient.post<ApiResponse<SubscriptionStatusView>>('/billing/resume', {}),
 
   paymentHistory: (params?: { limit?: number }) =>
-    apiClient.get<ApiResponse<PaymentHistoryItem[]>>('/payment/history', { params }),
+    apiClient.get<ApiResponse<PaymentHistoryItem[]>>('/billing/history', { params }),
+
+  applyCoupon: (code: string) =>
+    apiClient.post<ApiResponse<unknown>>('/billing/coupon', { code }),
 
   paymentProviders: () =>
     apiClient.get<
@@ -66,4 +82,32 @@ export const adminBillingApi = {
       `/admin/subscriptions/${userId}/set`,
       body
     ),
+
+  grantTrial: (userId: string, body?: { days?: number; planCode?: string }) =>
+    apiClient.post<ApiResponse<SubscriptionStatusView>>(
+      `/admin/subscriptions/${userId}/grant-trial`,
+      body ?? {}
+    ),
+
+  refund: (
+    userId: string,
+    body: { paymentId?: string; providerPaymentId?: string; reason?: string }
+  ) =>
+    apiClient.post<ApiResponse<SubscriptionStatusView>>(
+      `/admin/subscriptions/${userId}/refund`,
+      body
+    ),
+
+  listCoupons: () => apiClient.get<ApiResponse<Coupon[]>>('/admin/coupons'),
+
+  createCoupon: (body: {
+    code: string;
+    kind: string;
+    value: number;
+    maxRedemptions?: number | null;
+    description?: string | null;
+  }) => apiClient.post<ApiResponse<Coupon>>('/admin/coupons', body),
+
+  deleteCoupon: (code: string) =>
+    apiClient.delete<ApiResponse<{ deleted: boolean }>>(`/admin/coupons/${encodeURIComponent(code)}`),
 };

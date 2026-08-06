@@ -113,6 +113,14 @@ adminRouter.post(
 );
 adminRouter.post('/subscriptions/:userId/end', adminBillingController.adminEndSubscription);
 adminRouter.post('/subscriptions/:userId/set', adminBillingController.adminSetSubscription);
+adminRouter.post(
+  '/subscriptions/:userId/grant-trial',
+  adminBillingController.adminGrantTrial
+);
+adminRouter.post('/subscriptions/:userId/refund', adminBillingController.adminRefund);
+adminRouter.get('/coupons', adminBillingController.adminListCoupons);
+adminRouter.post('/coupons', adminBillingController.adminCreateCoupon);
+adminRouter.delete('/coupons/:code', adminBillingController.adminDeleteCoupon);
 adminRouter.get('/gyms', adminController.listGyms);
 adminRouter.patch('/gyms/:id/verify', adminController.verifyGym);
 adminRouter.get('/brands', adminController.listBrands);
