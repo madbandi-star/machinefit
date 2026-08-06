@@ -6,7 +6,7 @@ import type {
 } from '@machinefit/shared';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { machineCoverImageRepository } from '../repositories/machine-cover-image.repository.js';
-import { processMuscleGroupImage } from './muscle-group-image-process.service.js';
+import { processMachineCoverSquareImage } from './muscle-group-image-process.service.js';
 import { storageService } from './storage.service.js';
 import {
   adminCoverImageLimits,
@@ -104,7 +104,7 @@ export const machineCoverImageService = {
 
     const existing = await machineCoverImageRepository.getByCode(machine.code, targetMuscle);
     const nextVersion = (existing?.version ?? 0) + 1;
-    const processed = await processMuscleGroupImage(params.file.buffer);
+    const processed = await processMachineCoverSquareImage(params.file.buffer);
 
     const apiMainUrl = machineCoverMediaUrl(machine.code, 'main', targetMuscle);
     const apiThumbUrl = machineCoverMediaUrl(machine.code, 'thumb', targetMuscle);
