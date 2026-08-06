@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { Minimize2 } from 'lucide-react';
 import type { VoiceCoachPhase } from '@/utils/voiceCoach';
 import {
   getVoiceCoachCueIcon,
@@ -22,6 +23,11 @@ interface WorkoutDisplayOverlayProps {
   onRestReadyForNextSet?: () => void;
   onStartCount?: () => void;
   showStartCount?: boolean;
+  /** When true, restSeconds/restPaused come from parent (global rest store). */
+  restControlled?: boolean;
+  restPaused?: boolean;
+  onRestPauseToggle?: () => void;
+  onMinimize?: () => void;
   phase: VoiceCoachPhase;
   currentRep: number;
   countdown: number | null;
@@ -60,6 +66,10 @@ export function WorkoutDisplayOverlay({
   onRestReadyForNextSet,
   onStartCount,
   showStartCount = false,
+  restControlled = false,
+  restPaused: controlledRestPaused = false,
+  onRestPauseToggle,
+  onMinimize,
   phase,
   currentRep,
   countdown,
@@ -95,8 +105,8 @@ export function WorkoutDisplayOverlay({
   }, [restPaused]);
 
   useEffect(() => {
-    if (mode !== 'rest') {
-      setRestPaused(false);
+    if (mode !== 'rest' || restControlled) {
+      if (mode !== 'rest') setRestPaused(false);
       return;
     }
 
@@ -155,7 +165,10 @@ export function WorkoutDisplayOverlay({
       cancelled = true;
       if (timer != null) window.clearInterval(timer);
     };
-  }, [mode, restSeconds, restSetNumber, t]);
+  }, [mode, restControlled, restSeconds, restSetNumber, t]);
+
+  const displayRestRemaining = restControlled ? restSeconds : restRemaining;
+  const displayRestPaused = restControlled ? controlledRestPaused : restPaused;
 
   /** Exit rest overlay like count [중지] — do not auto-start the next set. */
   const handleRestStop = () => {
@@ -164,7 +177,11 @@ export function WorkoutDisplayOverlay({
   };
 
   const handleRestPauseToggle = () => {
-    if (restRemaining <= 0 || restCompletedRef.current) return;
+    if (displayRestRemaining <= 0 || restCompletedRef.current) return;
+    if (restControlled) {
+      onRestPauseToggle?.();
+      return;
+    }
     setRestPaused((prev) => !prev);
   };
 
@@ -179,7 +196,7 @@ export function WorkoutDisplayOverlay({
     t('machines:voiceCoach.holdCueShort')
   );
   const status = voiceCoachStatusLabel(t, phase, currentRep, countdown);
-  const showRestPause = mode === 'rest' && restRemaining > 0;
+  const showRestPause = mode === 'rest' && displayRestRemaining > 0;
   const isTextCue =
     Boolean(display.displayNumber) &&
     display.displayNumber !== '!' &&
@@ -196,11 +213,16 @@ export function WorkoutDisplayOverlay({
     (isCountPaused ||
       !isRedundantVoiceCoachStatus(display.displayNumber, status, phase));
 
+  const minimizeLabel =
+    mode === 'rest'
+      ? t('machines:restTimer.minimize')
+      : t('machines:voiceCoach.minimize');
+
   return createPortal(
     <div
       className={`workout-display-overlay workout-display-overlay--${mode}${
         display.turboStage ? ' workout-display-overlay--turbo' : ''
-      }${restPaused || isCountPaused ? ' workout-display-overlay--paused' : ''}`}
+      }${displayRestPaused || isCountPaused ? ' workout-display-overlay--paused' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label={
@@ -223,15 +245,27 @@ export function WorkoutDisplayOverlay({
         </span>
       </div>
 
+      {onMinimize ? (
+        <button
+          type="button"
+          className="workout-display-overlay__minimize"
+          onClick={onMinimize}
+          aria-label={minimizeLabel}
+        >
+          <Minimize2 size={18} aria-hidden />
+          <span>{minimizeLabel}</span>
+        </button>
+      ) : null}
+
       <div className="workout-display-overlay__main">
         {mode === 'rest' ? (
           <>
             <span className="workout-display-overlay__label">
               {t('machines:restTimer.label', { setNumber: restSetNumber })}
-              {restPaused ? ` · ${t('machines:restTimer.paused')}` : ''}
+              {displayRestPaused ? ` · ${t('machines:restTimer.paused')}` : ''}
             </span>
             <strong className="workout-display-overlay__time" aria-live="polite">
-              {formatRestTime(restRemaining)}
+              {formatRestTime(displayRestRemaining)}
             </strong>
           </>
         ) : (
@@ -283,7 +317,7 @@ export function WorkoutDisplayOverlay({
                 className="btn btn--secondary btn--block workout-display-overlay__action"
                 onClick={handleRestPauseToggle}
               >
-                {restPaused
+                {displayRestPaused
                   ? t('machines:restTimer.resume')
                   : t('machines:restTimer.pause')}
               </button>
@@ -293,7 +327,7 @@ export function WorkoutDisplayOverlay({
               className="btn btn--secondary btn--block workout-display-overlay__action"
               onClick={handleRestStop}
             >
-              {restRemaining <= 0
+              {displayRestRemaining <= 0
                 ? t('machines:restTimer.done')
                 : t('machines:voiceCoach.stop')}
             </button>

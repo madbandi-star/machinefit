@@ -1,15 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import '@/styles/recommendation.css';
 
 interface RestTimerBannerProps {
-  seconds: number;
   setNumber: number;
   onDismiss: () => void;
-  /** Fired when rest finishes (timer → 0) — next set ready. */
+  /** Uncontrolled: starts internal countdown from this value. */
+  seconds?: number;
+  /** Controlled remaining seconds (from global store). */
+  remaining?: number;
+  paused?: boolean;
+  onPauseToggle?: () => void;
+  /** Fired when rest finishes (uncontrolled timer → 0). */
   onReadyForNextSet?: () => void;
-  /** Manual voice-count start during rest (does not require set-complete). */
   onStartCount?: () => void;
+  onExpand?: () => void;
+  onMinimize?: () => void;
+  showMinimize?: boolean;
 }
 
 function formatCountdown(totalSeconds: number): string {
@@ -37,13 +45,20 @@ export function RestTimerBanner({
   onDismiss,
   onReadyForNextSet,
   onStartCount,
+  remaining: controlledRemaining,
+  paused: controlledPaused,
+  onPauseToggle,
+  onExpand,
+  onMinimize,
+  showMinimize = false,
 }: RestTimerBannerProps) {
   const { t } = useTranslation('machines');
-  const [remaining, setRemaining] = useState(seconds);
+  const controlled = controlledRemaining != null;
+  const [remaining, setRemaining] = useState(seconds ?? 0);
   const [paused, setPaused] = useState(false);
   const completedRef = useRef(false);
   const pausedRef = useRef(false);
-  const remainingRef = useRef(seconds);
+  const remainingRef = useRef(seconds ?? 0);
   const onReadyRef = useRef(onReadyForNextSet);
   onReadyRef.current = onReadyForNextSet;
 
@@ -56,9 +71,12 @@ export function RestTimerBanner({
   }, [remaining]);
 
   useEffect(() => {
+    if (controlled) return;
+
     completedRef.current = false;
-    setRemaining(seconds);
-    remainingRef.current = seconds;
+    const startSeconds = seconds ?? 0;
+    setRemaining(startSeconds);
+    remainingRef.current = startSeconds;
     setPaused(false);
     pausedRef.current = false;
 
@@ -79,7 +97,7 @@ export function RestTimerBanner({
       onReadyRef.current?.();
     };
 
-    if (seconds <= 0) {
+    if (startSeconds <= 0) {
       finish();
       return () => {
         cancelled = true;
@@ -111,7 +129,18 @@ export function RestTimerBanner({
       cancelled = true;
       if (timer != null) window.clearInterval(timer);
     };
-  }, [seconds, setNumber, t]);
+  }, [controlled, seconds, setNumber, t]);
+
+  const displayRemaining = controlled ? controlledRemaining : remaining;
+  const displayPaused = controlled ? Boolean(controlledPaused) : paused;
+
+  const handlePauseToggle = () => {
+    if (controlled) {
+      onPauseToggle?.();
+      return;
+    }
+    setPaused((value) => !value);
+  };
 
   /** Exit rest UI like count [중지] — do not auto-start the next set. */
   const handleStop = () => {
@@ -124,9 +153,9 @@ export function RestTimerBanner({
       <div className="rest-timer-banner__content">
         <span className="rest-timer-banner__label">
           {t('restTimer.label', { setNumber })}
-          {paused ? ` · ${t('restTimer.paused')}` : ''}
+          {displayPaused ? ` · ${t('restTimer.paused')}` : ''}
         </span>
-        <strong className="rest-timer-banner__time">{formatCountdown(remaining)}</strong>
+        <strong className="rest-timer-banner__time">{formatCountdown(displayRemaining)}</strong>
       </div>
       <div className="rest-timer-banner__actions">
         {onStartCount ? (
@@ -138,13 +167,35 @@ export function RestTimerBanner({
             {t('voiceCoach.start')}
           </button>
         ) : null}
-        {remaining > 0 ? (
+        {displayRemaining > 0 ? (
           <button
             type="button"
             className="btn btn--secondary rest-timer-banner__dismiss"
-            onClick={() => setPaused((value) => !value)}
+            onClick={handlePauseToggle}
           >
-            {paused ? t('restTimer.resume') : t('restTimer.pause')}
+            {displayPaused ? t('restTimer.resume') : t('restTimer.pause')}
+          </button>
+        ) : null}
+        {onExpand ? (
+          <button
+            type="button"
+            className="btn btn--secondary rest-timer-banner__dismiss"
+            onClick={onExpand}
+            aria-label={t('restTimer.expand')}
+          >
+            <Maximize2 size={14} aria-hidden />
+            {t('restTimer.expand')}
+          </button>
+        ) : null}
+        {showMinimize && onMinimize ? (
+          <button
+            type="button"
+            className="btn btn--secondary rest-timer-banner__dismiss"
+            onClick={onMinimize}
+            aria-label={t('restTimer.minimize')}
+          >
+            <Minimize2 size={14} aria-hidden />
+            {t('restTimer.minimize')}
           </button>
         ) : null}
         <button
@@ -152,7 +203,7 @@ export function RestTimerBanner({
           className="btn btn--secondary rest-timer-banner__dismiss"
           onClick={handleStop}
         >
-          {remaining <= 0 ? t('restTimer.done') : t('voiceCoach.stop')}
+          {displayRemaining <= 0 ? t('restTimer.done') : t('voiceCoach.stop')}
         </button>
       </div>
     </div>

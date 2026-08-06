@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,11 +6,11 @@ import {
   restDurationParts,
 } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
-import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { ROUTES } from '@/constants/routes';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
+import { useRestTimerStore } from '@/store/restTimer.store';
 import { useSettingsStore } from '@/store/settings.store';
 import {
   clampVoiceCoachOneMoreCount,
@@ -57,7 +57,10 @@ export function HomeWorkoutToolsSection() {
   const [restSeconds, setRestSeconds] = useState(() =>
     clampRestDurationSeconds(settingsRestSeconds)
   );
-  const [restRunning, setRestRunning] = useState(false);
+  const restSession = useRestTimerStore((s) => s.session);
+  const startRestTimer = useRestTimerStore((s) => s.start);
+  const restRunning = restSession != null;
+  const [countDisplayCompact, setCountDisplayCompact] = useState(false);
 
   const [countValue, setCountValue] = useState(() =>
     clampVoiceCoachTargetReps(settingsTargetReps)
@@ -91,7 +94,12 @@ export function HomeWorkoutToolsSection() {
   });
 
   const restParts = restDurationParts(restSeconds);
-  const showFullscreenCount = fullscreenDisplay && voiceCoach.isRunning;
+  const showFullscreenCount =
+    fullscreenDisplay && !countDisplayCompact && voiceCoach.isRunning;
+
+  useEffect(() => {
+    if (!voiceCoach.isRunning) setCountDisplayCompact(false);
+  }, [voiceCoach.isRunning]);
 
   const startOrStopCount = () => {
     if (voiceCoach.isRunning) {
@@ -118,15 +126,6 @@ export function HomeWorkoutToolsSection() {
 
   return (
     <section className="home-section home-workout-tools" aria-label={t('pages.home.toolsTitle')}>
-      {restRunning ? (
-        <RestTimerBanner
-          seconds={restSeconds}
-          setNumber={1}
-          onDismiss={() => setRestRunning(false)}
-          onReadyForNextSet={() => setRestRunning(false)}
-        />
-      ) : null}
-
       <div className="home-workout-tools__grid">
         <article className="home-tool-card home-tool-card--rest">
           <div className="home-tool-card__header">
@@ -171,7 +170,7 @@ export function HomeWorkoutToolsSection() {
           <button
             type="button"
             className="home-tool-card__cta home-tool-card__cta--rest"
-            onClick={() => setRestRunning(true)}
+            onClick={() => startRestTimer(1, restSeconds)}
             disabled={restRunning}
           >
             <span className="home-tool-card__cta-emoji" aria-hidden>
@@ -338,6 +337,7 @@ export function HomeWorkoutToolsSection() {
           restSeconds={0}
           restSetNumber={1}
           onRestDismiss={() => undefined}
+          onMinimize={() => setCountDisplayCompact(true)}
           phase={voiceCoach.phase}
           currentRep={voiceCoach.currentRep}
           countdown={voiceCoach.countdown}

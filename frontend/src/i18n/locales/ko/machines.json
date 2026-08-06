@@ -109,6 +109,8 @@
     "pause": "일시정지",
     "resume": "다시시작",
     "paused": "일시정지",
+    "minimize": "소형모드",
+    "expand": "전체모드",
     "notificationTitle": "휴식 완료",
     "notificationBody": "{{setNumber}}세트 휴식이 끝났습니다. 다음 세트 준비!"
   },
@@ -116,6 +118,8 @@
     "title": "음성 카운트",
     "desc": "세트 시작 전 카운트다운 후 반복 수를 소리로 세어 줍니다.",
     "enable": "음성 카운트 사용",
+    "minimize": "소형모드",
+    "pinPickers": "세부 피커 고정",
     "on": "켜짐",
     "off": "꺼짐",
     "targetReps": "목표 횟수",

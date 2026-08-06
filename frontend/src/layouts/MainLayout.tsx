@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/Header/Header';
 import { BottomNavigation } from '@/components/layout/BottomNavigation/BottomNavigation';
 import { ConsentRedirect } from '@/components/auth/ConsentRedirect/ConsentRedirect';
+import { GlobalRestTimerHost } from '@/components/recommendation/GlobalRestTimerHost/GlobalRestTimerHost';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
@@ -47,6 +48,7 @@ export function MainLayout() {
     <div className="layout">
       <ConsentRedirect />
       <Header />
+      <GlobalRestTimerHost />
       <main className="layout__main">
         <div className="layout__content">
           <Outlet />

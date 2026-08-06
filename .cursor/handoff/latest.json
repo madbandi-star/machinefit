@@ -1,20 +1,37 @@
 ﻿{
-  "title": "Video overlay Next left / Close right",
-  "summary": "Transport row keeps Next on the left and Close on the right in one line; mobile no longer stacks.",
+  "title": "Rest persist + compact modes + pin pickers + media mini",
+  "summary": "Global rest timer survives navigation; full→compact for rest/count; pin pickers; music/video compact toggles.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
+    "frontend/src/store/restTimer.store.ts",
+    "frontend/src/components/recommendation/GlobalRestTimerHost/GlobalRestTimerHost.tsx",
+    "frontend/src/components/recommendation/RestTimerBanner/RestTimerBanner.tsx",
+    "frontend/src/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay.tsx",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection.tsx",
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
+    "frontend/src/layouts/MainLayout.tsx",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Next left, Close right, single row on desktop and mobile"
+    "Rest continues after navigating away",
+    "Rest/count fullscreen minimize to compact",
+    "Pin pickers checkbox",
+    "Music/video compact toggle keeps playback"
   ],
   "fastChecks": [
-    "rg -n \"grid-template-columns: 1fr 1fr\" frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
+    "rg -n \"useRestTimerStore|GlobalRestTimerHost|mf-music-mini|pinPickers\" frontend/src"
   ],
   "productionChecks": [
-    "After Pages deploy: open video UI, confirm button row"
+    "After Pages deploy: Ctrl+F5 and exercise rest/count/media flows"
   ],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Narrow view stacked Next above Close",
-  "toBe": "One row: Next left, Close right"
+  "asIs": "Rest local to page; no compact toggles; no picker pin; media full-only",
+  "toBe": "Persistent rest + compact UI modes + pinned pickers + media mini"
 }

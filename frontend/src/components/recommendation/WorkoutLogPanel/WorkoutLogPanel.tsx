@@ -18,8 +18,11 @@ import {
   type SettingsActiveSource,
 } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
-import { RestTimerBanner } from '@/components/recommendation/RestTimerBanner/RestTimerBanner';
 import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
+import {
+  registerRestTimerCallbacks,
+  useRestTimerStore,
+} from '@/store/restTimer.store';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
@@ -102,11 +105,11 @@ interface WorkoutLogPanelProps {
   recommendationId?: string;
   suggestedWeightKg?: number;
   /**
-   * Live fit-driven reps (추천/조정). When set, voice-coach 목표 횟수 follows this value.
+   * Live fit-driven reps (추천/조정). When set, voice-coach 목표 ?�수 follows this value.
    * Falls back to settings default when omitted.
    */
   volumeReps?: number;
-  /** Adjustment mode: voice-coach 목표 횟수 edits push 조정횟수. */
+  /** Adjustment mode: voice-coach 목표 ?�수 edits push 조정?�수. */
   onVolumeRepsChange?: (reps: number) => void;
   isAuthenticated: boolean;
   variant?: 'default' | 'compact' | 'history';
@@ -124,7 +127,7 @@ interface WorkoutLogPanelProps {
   showVoiceCoach?: boolean;
   onControlReady?: (control: WorkoutLogPanelControl | null) => void;
   onSavedChange?: (saved: boolean) => void;
-  /** e.g. history card 조정값 — runs before workout log upsert on save. */
+  /** e.g. history card 조정�???runs before workout log upsert on save. */
   onCompanionSave?: () => Promise<void>;
   companionSavePending?: boolean;
 }
@@ -304,7 +307,7 @@ export function WorkoutLogPanel({
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
 
-  // Voice-count pickers seed gap/one-more/hold from Settings; 목표 횟수 follows fit-driven volumeReps.
+  // Voice-count pickers seed gap/one-more/hold from Settings; 목표 ?�수 follows fit-driven volumeReps.
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
   const settingsHydrated = usePersistHydration(useSettingsStore.persist);
   const [voicePickers, setVoicePickers] = useState<VoicePickerSnapshot | null>(null);
@@ -375,16 +378,16 @@ export function WorkoutLogPanel({
   const dismissRestTimer = useCallback(() => {
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
-    setRestTimer(null);
+    useRestTimerStore.getState().stop();
   }, []);
 
   const handleRestReadyForNextSet = useCallback(() => {
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
-    setRestTimer(null);
-    // Manual Start during rest (or an already-running count) wins — do not restart/kill.
+    useRestTimerStore.getState().stop();
+    // Manual Start during rest (or an already-running count) wins ??do not restart/kill.
     if (manualCountStartRef.current || voiceCoachRunningRef.current) return;
-    // Soft-stop only — set-complete already unlocked audio in a user gesture;
+    // Soft-stop only ??set-complete already unlocked audio in a user gesture;
     // ending the session here would mute auto-start (no fresh tap).
     stopVoiceCoach({ keepAudioSession: true });
     if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
@@ -392,15 +395,15 @@ export function WorkoutLogPanel({
   }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
   const startVoiceCoach = useCallback(() => {
     // Count Start must work anytime: before set-complete, mid-rest, during rest tips.
-    // Do NOT unlock here then call start() — start() soft-stops (cancel) first, which
+    // Do NOT unlock here then call start() ??start() soft-stops (cancel) first, which
     // killed the gesture TTS/audio unlock and made the first tap silent. Unlock runs
     // inside useVoiceCoachSession.start() after that soft-stop.
     manualCountStartRef.current = true;
     voiceCoachRunningRef.current = true;
     restSpeechAbortRef.current?.abort();
     restSpeechAbortRef.current = null;
-    // Clear rest UI without going through Skip→onReady (that raced and killed count).
-    setRestTimer(null);
+    // Clear rest UI without going through Skip?�onReady (that raced and killed count).
+    useRestTimerStore.getState().stop();
     void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
       trackFeature('voice_count')
     );
@@ -464,7 +467,10 @@ export function WorkoutLogPanel({
   weightsRef.current = weights;
   const setCountRef = useRef(setCount);
   setCountRef.current = setCount;
-  const [restTimer, setRestTimer] = useState<{ setNumber: number; seconds: number } | null>(null);
+  const restSession = useRestTimerStore((s) => s.session);
+  const startRestTimer = useRestTimerStore((s) => s.start);
+  const stopRestTimer = useRestTimerStore((s) => s.stop);
+  const [countDisplayCompact, setCountDisplayCompact] = useState(false);
   const diaryBytes = getUtf8ByteLength(diary);
   const canLog = isAuthenticated && Boolean(activeGymId) && !isAllGyms && Boolean(activeMemberId);
   const queryEnabled = canLog && (!isFreeWeight || !!queryTargetMuscle);
@@ -503,7 +509,26 @@ export function WorkoutLogPanel({
     : '';
 
   useEffect(() => {
-    if (!restTimer) return;
+    registerRestTimerCallbacks({
+      onReadyForNextSet: handleRestReadyForNextSet,
+      onStartCount: voiceCoachEnabled ? startVoiceCoach : null,
+    });
+    return () => {
+      registerRestTimerCallbacks({
+        onReadyForNextSet: null,
+        onStartCount: null,
+      });
+    };
+  }, [handleRestReadyForNextSet, startVoiceCoach, voiceCoachEnabled]);
+
+  useEffect(() => {
+    if (!voiceCoach.isRunning) {
+      setCountDisplayCompact(false);
+    }
+  }, [voiceCoach.isRunning]);
+
+  useEffect(() => {
+    if (!restSession) return;
     if (!voiceCoachEnabled) return;
     // Never restart rest speech over an active set-count session.
     if (voiceCoachRunningRef.current) return;
@@ -517,7 +542,7 @@ export function WorkoutLogPanel({
       voicePack: voiceCoachPack,
       locale,
       signal: controller.signal,
-      // Always announce rest in pack language (휴식 시작 / Rest).
+      // Always announce rest in pack language (?�식 ?�작 / Rest).
       announceRestStart: true,
     });
 
@@ -526,12 +551,12 @@ export function WorkoutLogPanel({
       if (restSpeechAbortRef.current === controller) {
         restSpeechAbortRef.current = null;
       }
-      // Abort rest tips only — do not stopVoiceCoach() here.
+      // Abort rest tips only ??do not stopVoiceCoach() here.
       // Clearing restTimer / late tip fetch would otherwise cancel auto-started set counting.
     };
   }, [
-    restTimer?.setNumber,
-    restTimer?.seconds,
+    restSession?.sessionId,
+    restSession?.setNumber,
     voiceCoachEnabled,
     voiceRestTipsEnabled,
     hasRestCoaching,
@@ -584,7 +609,7 @@ export function WorkoutLogPanel({
         setWeightsKg: weights,
         setCompleted,
         sets: setCount,
-        // Prefer live 조정/추천 횟수 from parent; never stick on stale voice-coach default.
+        // Prefer live 조정/추천 ?�수 from parent; never stick on stale voice-coach default.
         recommendedReps: effectiveVolumeReps,
       }),
     [weights, setCompleted, setCount, effectiveVolumeReps]
@@ -646,8 +671,8 @@ export function WorkoutLogPanel({
       : buildDefaultSnapshot(suggestedWeightKg);
 
     // Apply fit seed in the same pass as hydrate so completed flags from the
-    // saved log are used — never race with stale setCompletedRef defaults
-    // (that overwrote performed kg after Easy Mode 「조정이 필요해요」).
+    // saved log are used ??never race with stale setCompletedRef defaults
+    // (that overwrote performed kg after Easy Mode ?�조?�이 ?�요?�요??.
     const seedKey =
       suggestedWeightKg != null && suggestedWeightKg > 0
         ? `${hydrateKey}|${suggestedWeightKg}`
@@ -684,10 +709,10 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
   ]);
 
-  // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight
+  // Incomplete sets (-무게kg+, ?�료 ?�님): follow live fit-feedback seed weight
   // when the user changes fit rating / adjusted weight after hydrate.
   // Completed sets keep their logged weight.
-  // Patch history caches for 「총 중량」 display only — do NOT autosave the workout
+  // Patch history caches for ?�총 중량??display only ??do NOT autosave the workout
   // log (that made the 기록 bookmark look pressed when tapping 조정중량 +/-).
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -797,7 +822,7 @@ export function WorkoutLogPanel({
       let personalTipSaved = true;
       // Never touch machine preferences on silent autosaves (set-complete / adjust-seed).
       // Upserting tip alone still rewrites custom_settings from a concurrent DB read and
-      // can restore the previous 조정중량 right after 「조정값 저장」.
+      // can restore the previous 조정중량 right after ?�조?�값 ?�?��?
       const shouldSavePersonalTip =
         showPersonalTip &&
         isAuthenticated &&
@@ -813,7 +838,7 @@ export function WorkoutLogPanel({
               : {}),
           });
           setPersonalTipMemo(savedPrefs.personalTipMemo ?? personalTipMemo.trim());
-          // Patch tip only — do not invalidate prefs (avoids stale customSettings flash).
+          // Patch tip only ??do not invalidate prefs (avoids stale customSettings flash).
           queryClient.setQueryData(
             ['machine-preferences', machineCode, activeGymId, activeMemberId],
             (prev: unknown) => {
@@ -848,7 +873,7 @@ export function WorkoutLogPanel({
           removeLogParams
         )
       );
-      // Keep history list / 「총 중량」 in sync (same prefix as workoutLogsList).
+      // Keep history list / ?�총 중량??in sync (same prefix as workoutLogsList).
       queryClient.setQueriesData<WorkoutLog[]>(
         { queryKey: QUERY_KEYS.workoutLogs },
         (old) => {
@@ -1118,18 +1143,15 @@ export function WorkoutLogPanel({
       if (!wasCompleted && next[index]) {
         if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
           unlockVoiceCoachAudio(voiceCoachPack);
-          setRestTimer({
-            setNumber: index + 1,
-            seconds: clampRestDurationSeconds(restDurationSeconds),
-          });
+          startRestTimer(index + 1, clampRestDurationSeconds(restDurationSeconds));
           void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
             trackFeature('rest_timer')
           );
         } else {
-          setRestTimer(null);
+          stopRestTimer();
         }
       } else if (wasCompleted) {
-        setRestTimer(null);
+        stopRestTimer();
       }
 
       return next;
@@ -1151,18 +1173,15 @@ export function WorkoutLogPanel({
     if (!wasCompleted && next[index]) {
       if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
         unlockVoiceCoachAudio(voiceCoachPack);
-        setRestTimer({
-          setNumber: index + 1,
-          seconds: clampRestDurationSeconds(restDurationSeconds),
-        });
+        startRestTimer(index + 1, clampRestDurationSeconds(restDurationSeconds));
         void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
           trackFeature('rest_timer')
         );
       } else {
-        setRestTimer(null);
+        stopRestTimer();
       }
     } else if (wasCompleted) {
-      setRestTimer(null);
+      stopRestTimer();
     }
 
     saveMutation.mutate({ setCompleted: next, silent: true });
@@ -1453,29 +1472,18 @@ export function WorkoutLogPanel({
     </div>
   );
 
-  const restTimerBanner =
-    restTimer != null && !workoutFullscreenDisplay ? (
-      <RestTimerBanner
-        seconds={restTimer.seconds}
-        setNumber={restTimer.setNumber}
-        onDismiss={dismissRestTimer}
-        onReadyForNextSet={handleRestReadyForNextSet}
-        onStartCount={voiceCoachEnabled ? startVoiceCoach : undefined}
-      />
-    ) : null;
+  const useFullscreenCount =
+    workoutFullscreenDisplay && !countDisplayCompact && voiceCoach.isRunning;
 
-  const showWorkoutDisplayOverlay =
-    workoutFullscreenDisplay && (restTimer != null || voiceCoach.isRunning);
-
-  const workoutDisplayOverlay = showWorkoutDisplayOverlay ? (
+  const workoutDisplayOverlay = useFullscreenCount ? (
     <WorkoutDisplayOverlay
-      mode={voiceCoach.isRunning ? 'count' : 'rest'}
-      restSeconds={restTimer?.seconds ?? 0}
-      restSetNumber={restTimer?.setNumber ?? 0}
+      mode="count"
+      restSeconds={0}
+      restSetNumber={0}
       onRestDismiss={dismissRestTimer}
-      onRestReadyForNextSet={handleRestReadyForNextSet}
       onStartCount={startVoiceCoach}
-      showStartCount={voiceCoachEnabled}
+      showStartCount={false}
+      onMinimize={() => setCountDisplayCompact(true)}
       phase={voiceCoach.phase}
       currentRep={voiceCoach.currentRep}
       countdown={voiceCoach.countdown}
@@ -1530,7 +1538,7 @@ export function WorkoutLogPanel({
       showRestOptionSelectors={!isHistory}
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
-      hideLiveDisplay={workoutFullscreenDisplay && voiceCoach.isRunning}
+      hideLiveDisplay={useFullscreenCount}
     />
   ) : null;
 
@@ -1542,7 +1550,6 @@ export function WorkoutLogPanel({
           className="recommendation-workout-log recommendation-workout-log--history"
           aria-label={t('machines:workoutLog.title')}
         >
-        {restTimerBanner}
         {voiceCoachPanel}
         {targetMusclePicker}
         <div className="history-workout-log__performance">
@@ -1575,7 +1582,6 @@ export function WorkoutLogPanel({
           className="recommendation-workout-log recommendation-workout-log--compact"
           aria-label={t('machines:workoutLog.title')}
         >
-        {restTimerBanner}
         {voiceCoachPanel}
         {targetMusclePicker}
         <div className="recommendation-workout-log__toolbar">
@@ -1597,7 +1603,6 @@ export function WorkoutLogPanel({
     <>
       {workoutDisplayOverlay}
       <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
-      {restTimerBanner}
       {voiceCoachPanel}
       <div className="recommendation-workout-log__header">
         <span className="recommendation-collapsible__label">{t('machines:workoutLog.title')}</span>

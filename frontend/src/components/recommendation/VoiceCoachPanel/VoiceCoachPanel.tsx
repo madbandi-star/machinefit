@@ -129,6 +129,7 @@ export function VoiceCoachPanel({
 
   const [durationCustom, setDurationCustom] = useState(!isVoiceHoldDurationPreset(duration));
   const [customDraft, setCustomDraft] = useState(String(duration));
+  const [pickersPinned, setPickersPinned] = useState(false);
 
   useEffect(() => {
     if (!durationCustom) {
@@ -305,23 +306,38 @@ export function VoiceCoachPanel({
               </>
             ) : null}
 
-            <VoiceCoachPickerGrid
-              flowMode={flowMode}
-              oneMoreEnabled={oneMoreEnabled}
-              targetReps={targetReps}
-              onTargetRepsChange={onTargetRepsChange}
-              repGapMs={repGapMs}
-              onRepGapMsChange={onRepGapMsChange}
-              oneMoreCount={oneMoreCount}
-              onOneMoreCountChange={onOneMoreCountChange}
-              holdDurationSec={holdDurationSec}
-              onHoldDurationSecChange={onHoldDurationSecChange}
-              disabled={isRunning}
-              readOnly={pickersReadOnly}
-              recordsLayout={inlineHoldInPickers}
-              labels="machines"
-              compact={compact}
-            />
+            <label className="voice-coach-panel__check">
+              <input
+                type="checkbox"
+                checked={pickersPinned}
+                onChange={(e) => setPickersPinned(e.target.checked)}
+              />
+              <span>{t('machines:voiceCoach.pinPickers')}</span>
+            </label>
+
+            <div
+              className={`voice-coach-panel__pickers${
+                pickersPinned ? ' voice-coach-panel__pickers--pinned' : ''
+              }${pickersReadOnly ? ' voice-coach-panel__pickers--readonly' : ''}`}
+            >
+              <VoiceCoachPickerGrid
+                flowMode={flowMode}
+                oneMoreEnabled={oneMoreEnabled}
+                targetReps={targetReps}
+                onTargetRepsChange={onTargetRepsChange}
+                repGapMs={repGapMs}
+                onRepGapMsChange={onRepGapMsChange}
+                oneMoreCount={oneMoreCount}
+                onOneMoreCountChange={onOneMoreCountChange}
+                holdDurationSec={holdDurationSec}
+                onHoldDurationSecChange={onHoldDurationSecChange}
+                disabled={isRunning}
+                readOnly={pickersReadOnly}
+                recordsLayout={inlineHoldInPickers}
+                labels="machines"
+                compact={compact}
+              />
+            </div>
 
             {showHoldDurationSeparate ? (
               <div className="voice-coach-panel__hold-duration">

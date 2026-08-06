@@ -1606,6 +1606,31 @@
   margin: 0 auto;
 }
 
+.workout-display-overlay__minimize {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, #0b0f14 72%, transparent);
+  color: var(--color-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.workout-display-overlay__minimize:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  color: var(--color-primary);
+}
+
 .workout-display-overlay__action {
   min-height: 3rem;
   font-size: 1.05rem;
@@ -1688,6 +1713,18 @@
 
 .voice-coach-panel__pickers {
   width: 100%;
+}
+
+.voice-coach-panel__pickers--pinned {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 5;
+  padding: 0.45rem;
+  margin: 0 -0.15rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-surface) 94%, #0b0f14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .voice-coach-panel__pickers--readonly {
