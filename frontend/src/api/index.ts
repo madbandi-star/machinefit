@@ -429,6 +429,10 @@ export const workoutLogApi = {
     logDate: string;
     targetMuscleGroup?: string;
   }) => apiClient.delete<ApiResponse<{ message: string }>>('/workout-logs', { data: body }),
+  removeByDate: (logDate: string, body: { gymId: string; memberId: string }) =>
+    apiClient.delete<
+      ApiResponse<{ message: string; deletedCount: number; logDate: string }>
+    >(`/workout-logs/date/${encodeURIComponent(logDate)}`, { data: body }),
 };
 
 export interface GymDetail extends Gym {

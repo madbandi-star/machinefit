@@ -1,4 +1,10 @@
-import type { UpsertWorkoutLogInput, WorkoutLogListQuery, DeleteWorkoutLogInput, Locale } from '@machinefit/shared';
+import type {
+  UpsertWorkoutLogInput,
+  WorkoutLogListQuery,
+  DeleteWorkoutLogInput,
+  DeleteWorkoutLogsByDateBody,
+  Locale,
+} from '@machinefit/shared';
 import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle, isAllGymsId } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
@@ -278,5 +284,62 @@ export const workoutLogService = {
         growthTimelineService.refreshUser(userId),
       ]);
     }
+  },
+
+  /**
+   * Delete every workout log (and matching history cards) for a single calendar day.
+   * Multi-day / all-time bulk delete is intentionally unsupported.
+   */
+  async removeByDate(
+    userId: string,
+    logDate: string,
+    input: DeleteWorkoutLogsByDateBody
+  ): Promise<{ deletedCount: number; logDate: string }> {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(logDate)) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Invalid date; expected YYYY-MM-DD');
+    }
+
+    await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
+
+    const deletedLogs = await workoutLogRepository.deleteByUserDate(
+      userId,
+      input.gymId,
+      input.memberId,
+      logDate
+    );
+
+    if (deletedLogs.length > 0) {
+      try {
+        const loadById = await resolveWorkoutLoadContexts(userId, deletedLogs, {
+          gymId: input.gymId,
+          memberId: input.memberId,
+        });
+        for (const previous of deletedLogs) {
+          await liftedVolumeService.applyLogDelta({
+            userId,
+            gymId: input.gymId,
+            logDate,
+            previousWeights: previous.setWeightsKg,
+            previousCompleted: previous.setCompleted,
+            previousSets: previous.setCount,
+            previousLoad: loadById.get(previous.id),
+            nextWeights: [],
+            nextCompleted: [],
+            nextSets: 0,
+            nextLoad: null,
+          });
+        }
+      } catch {
+        /* ignore aggregate failure — next snapshot recomputes from logs */
+      }
+
+      growthTimelineService.invalidateUser(userId);
+      void Promise.allSettled([
+        achievementService.refreshUser(userId),
+        growthTimelineService.refreshUser(userId),
+      ]);
+    }
+
+    return { deletedCount: deletedLogs.length, logDate };
   },
 };

@@ -75,11 +75,15 @@ export function HistoryListPanel() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
+  const [pendingDayDelete, setPendingDayDelete] = useState(false);
+  const [dayMenuOpen, setDayMenuOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
   const focusId = searchParams.get('focus') ?? '';
   const logStatus = parseHistoryLogStatus(searchParams.get('logStatus'));
   const memberKey = activeMemberId ?? '';
+  const targetDeleteDate = selectedDate || getTodayDateKey();
+  const usesSelectedDateLabel = Boolean(selectedDate);
 
   const calendarQueryKey = QUERY_KEYS.historyList(activeGymId ?? '', memberKey, {
     limit: HISTORY_LIST_LIMIT,
@@ -295,6 +299,19 @@ export function HistoryListPanel() {
     });
   };
 
+  const invalidateAfterWorkoutDelete = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+      queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] }),
+      queryClient.invalidateQueries({ queryKey: ['user', 'growth-timeline'] }),
+      queryClient.invalidateQueries({ queryKey: ['user', 'lifter-dna'] }),
+      queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] }),
+      queryClient.invalidateQueries({ queryKey: ['user', 'lifted-weight'] }),
+      queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
+    ]);
+  }, [queryClient]);
+
   const deleteMutation = useMutation({
     mutationFn: async ({
       historyId,
@@ -320,12 +337,27 @@ export function HistoryListPanel() {
     },
     onSuccess: async () => {
       setPendingDelete(null);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
-        queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] }),
-      ]);
+      await invalidateAfterWorkoutDelete();
       showToast(t('machines:history.removed'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const deleteDayMutation = useMutation({
+    mutationFn: async (logDate: string) => {
+      if (!activeGymId || !activeMemberId) {
+        throw new Error('Missing gym or member scope');
+      }
+      await workoutLogApi.removeByDate(logDate, {
+        gymId: activeGymId,
+        memberId: activeMemberId,
+      });
+    },
+    onSuccess: async () => {
+      setPendingDayDelete(false);
+      setDayMenuOpen(false);
+      await invalidateAfterWorkoutDelete();
+      showToast(t('machines:history.deleteDayRemoved'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -355,6 +387,11 @@ export function HistoryListPanel() {
       deleteMutation.mutate(pendingDelete);
     }
   };
+
+  const hasCardsOnTargetDate = useMemo(
+    () => allRecordCards.some((card) => card.logDate === targetDeleteDate),
+    [allRecordCards, targetDeleteDate]
+  );
 
   if (isLoading) return <Skeleton count={2} height={120} />;
   if (isError) return <QueryErrorMessage />;
@@ -389,56 +426,89 @@ export function HistoryListPanel() {
       <div className="records-list__toolbar">
         <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
 
-        <div className="records-list__date-filter-block">
-          <div className="records-list__filters">
-            {datesWithData.size > 0 ? (
-              <details className="records-list__calendar-details">
-                <summary className="records-list__calendar-summary">
-                  <span className="records-list__calendar-toggle">
-                    <Icon
-                      name="calendar"
-                      size={14}
-                      className="records-list__calendar-icon"
-                    />
-                    <span className="records-list__date-filter-label">
-                      {t('machines:history.filterByDate')}
+        <div className="records-list__toolbar-end">
+          <div className="records-list__date-filter-block">
+            <div className="records-list__filters">
+              {datesWithData.size > 0 ? (
+                <details className="records-list__calendar-details">
+                  <summary className="records-list__calendar-summary">
+                    <span className="records-list__calendar-toggle">
+                      <Icon
+                        name="calendar"
+                        size={14}
+                        className="records-list__calendar-icon"
+                      />
+                      <span className="records-list__date-filter-label">
+                        {t('machines:history.filterByDate')}
+                      </span>
+                      <Icon
+                        name="chevronDown"
+                        size={16}
+                        className="records-list__calendar-chevron"
+                      />
                     </span>
-                    <Icon
-                      name="chevronDown"
-                      size={16}
-                      className="records-list__calendar-chevron"
-                    />
+                  </summary>
+                  <HistoryDateCalendar
+                    datesWithData={datesWithData}
+                    selectedDate={selectedDate}
+                    onSelect={handleDateChange}
+                    locale={i18n.language}
+                  />
+                </details>
+              ) : (
+                <span className="records-list__calendar-toggle records-list__calendar-toggle--static">
+                  <Icon
+                    name="calendar"
+                    size={14}
+                    className="records-list__calendar-icon"
+                  />
+                  <span className="records-list__date-filter-label">
+                    {t('machines:history.filterByDate')}
                   </span>
-                </summary>
-                <HistoryDateCalendar
-                  datesWithData={datesWithData}
-                  selectedDate={selectedDate}
-                  onSelect={handleDateChange}
-                  locale={i18n.language}
-                />
-              </details>
-            ) : (
-              <span className="records-list__calendar-toggle records-list__calendar-toggle--static">
-                <Icon
-                  name="calendar"
-                  size={14}
-                  className="records-list__calendar-icon"
-                />
-                <span className="records-list__date-filter-label">
-                  {t('machines:history.filterByDate')}
                 </span>
-              </span>
-            )}
-            {selectedDate ? (
-              <button
-                type="button"
-                className="records-list__date-reset"
-                onClick={() => handleDateChange('')}
-              >
-                {t('machines:filterAll')}
-              </button>
-            ) : null}
+              )}
+              {selectedDate ? (
+                <button
+                  type="button"
+                  className="records-list__date-reset"
+                  onClick={() => handleDateChange('')}
+                >
+                  {t('machines:filterAll')}
+                </button>
+              ) : null}
+            </div>
           </div>
+
+          {isAuthenticated && hasCardsOnTargetDate ? (
+            <details
+              className="records-list__day-menu"
+              open={dayMenuOpen}
+              onToggle={(e) => setDayMenuOpen((e.target as HTMLDetailsElement).open)}
+            >
+              <summary
+                className="records-list__day-menu-trigger icon-btn"
+                aria-label={t('machines:history.menuAria')}
+              >
+                <Icon name="moreHorizontal" size={20} />
+              </summary>
+              <div className="records-list__day-menu-panel" role="menu">
+                <button
+                  type="button"
+                  className="records-list__day-menu-item records-list__day-menu-item--danger"
+                  role="menuitem"
+                  disabled={deleteDayMutation.isPending}
+                  onClick={() => {
+                    setDayMenuOpen(false);
+                    setPendingDayDelete(true);
+                  }}
+                >
+                  {usesSelectedDateLabel
+                    ? t('machines:history.deleteDayMenuSelected')
+                    : t('machines:history.deleteDayMenuToday')}
+                </button>
+              </div>
+            </details>
+          ) : null}
         </div>
       </div>
 
@@ -582,6 +652,16 @@ export function HistoryListPanel() {
         dismissTodayKey={HISTORY_DELETE_DISMISS_KEY}
         onClose={() => setPendingDelete(null)}
         onConfirm={confirmDelete}
+      />
+
+      <ConfirmDialog
+        open={pendingDayDelete}
+        title={t('machines:history.deleteDayTitle')}
+        message={t('machines:history.deleteDayMessage')}
+        confirmLabel={t('machines:history.deleteDayConfirm')}
+        confirmVariant="danger"
+        onClose={() => setPendingDayDelete(false)}
+        onConfirm={() => deleteDayMutation.mutate(targetDeleteDate)}
       />
     </div>
   );
