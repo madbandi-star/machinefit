@@ -18,3 +18,13 @@ export interface WorkoutLog {
   createdAt: string;
   updatedAt: string;
 }
+
+/** Persisted per-day card position for the records screen. */
+export interface WorkoutRecordDisplayOrder {
+  gymId: string;
+  memberId: string;
+  logDate: string;
+  machineCode: string;
+  targetMuscleGroup?: TargetMuscleGroup;
+  displayOrder: number;
+}

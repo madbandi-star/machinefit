@@ -18,6 +18,7 @@ import type {
   AuthProviderCode,
   AuthProvidersStatus,
   WorkoutLog,
+  WorkoutRecordDisplayOrder,
   UpsertWorkoutLogInput,
   CreateUserGymInput,
   UpdateUserGymInput,
@@ -429,6 +430,24 @@ export const workoutLogApi = {
     logDate: string;
     targetMuscleGroup?: string;
   }) => apiClient.delete<ApiResponse<{ message: string }>>('/workout-logs', { data: body }),
+  listDisplayOrder: (params: { gymId: string; memberId: string; logDate?: string }) =>
+    apiClient.get<ApiResponse<WorkoutRecordDisplayOrder[]>>('/workout-logs/display-order', {
+      params,
+    }),
+  reorderDisplayOrder: (body: {
+    gymId: string;
+    memberId: string;
+    logDate: string;
+    items: {
+      machineCode: string;
+      targetMuscleGroup?: string;
+      displayOrder: number;
+    }[];
+  }) =>
+    apiClient.put<ApiResponse<{ updatedCount: number; logDate: string }>>(
+      '/workout-logs/display-order',
+      body
+    ),
 };
 
 export interface GymDetail extends Gym {

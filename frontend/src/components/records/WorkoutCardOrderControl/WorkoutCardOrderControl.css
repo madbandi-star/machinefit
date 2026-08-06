@@ -1,0 +1,76 @@
+.workout-card-order {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.workout-card-order__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.workout-card-order__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.workout-card-order__btn:hover:not(:disabled),
+.workout-card-order__btn:focus-visible {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  outline: none;
+}
+
+.workout-card-order__btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.workout-card-order__btn:disabled,
+.workout-card-order__btn--inactive:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.workout-card-order--menu {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.15rem;
+  min-width: 11.5rem;
+  padding: 0.3rem;
+}
+
+.workout-card-order--menu .workout-card-order__btn {
+  justify-content: flex-start;
+  gap: 0.5rem;
+  min-height: 2.4rem;
+  padding: 0.45rem 0.65rem;
+  width: 100%;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.workout-card-order__btn-label {
+  text-align: left;
+}

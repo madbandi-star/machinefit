@@ -17,3 +17,13 @@ export function hapticCountTick(turbo = false): void {
     // Unsupported / blocked — ignore
   }
 }
+
+/** Short tap for UI confirmations (e.g. card reorder). */
+export function hapticTap(): void {
+  if (!canHaptic()) return;
+  try {
+    navigator.vibrate(18);
+  } catch {
+    // Unsupported / blocked — ignore
+  }
+}
