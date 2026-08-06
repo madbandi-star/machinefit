@@ -300,6 +300,57 @@ export const workoutLogRepository = {
     return (result.rowCount ?? 0) > 0;
   },
 
+  /**
+   * Delete all workout logs for one calendar day (sets/diary included in row).
+   * Runs in a transaction with same-day recent_history cleanup; rolls back on any failure.
+   */
+  async deleteByUserDate(
+    userId: string,
+    gymId: string,
+    memberId: string,
+    logDate: string,
+    locale: Locale = 'en'
+  ): Promise<WorkoutLog[]> {
+    const pool = getPool();
+    if (!pool) return [];
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const existing = await client.query<WorkoutLogRow>(
+        `SELECT ${SELECT_FIELDS}
+         FROM workout_logs wl
+         ${MACHINE_JOINS}
+         WHERE wl.user_id = $1 AND wl.gym_id = $2 AND wl.member_id = $3 AND wl.log_date = $4::date
+         FOR UPDATE OF wl`,
+        [userId, gymId, memberId, logDate]
+      );
+
+      await client.query(
+        `DELETE FROM workout_logs
+         WHERE user_id = $1 AND gym_id = $2 AND member_id = $3 AND log_date = $4::date`,
+        [userId, gymId, memberId, logDate]
+      );
+
+      // Cards for that calendar day (app day boundary: Asia/Seoul, matching log_date usage).
+      await client.query(
+        `DELETE FROM recent_history
+         WHERE user_id = $1 AND gym_id = $2 AND member_id = $3
+           AND (viewed_at AT TIME ZONE 'Asia/Seoul')::date = $4::date`,
+        [userId, gymId, memberId, logDate]
+      );
+
+      await client.query('COMMIT');
+      return existing.rows.map((row) => mapRow(row, locale));
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw error;
+    } finally {
+      client.release();
+    }
+  },
+
   async getReferenceWeightKg(
     machineId: string,
     gender: string,
