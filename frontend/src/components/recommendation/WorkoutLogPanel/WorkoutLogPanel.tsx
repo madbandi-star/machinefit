@@ -647,14 +647,19 @@ export function WorkoutLogPanel({
       ? buildSnapshotFromLog(existingLog)
       : buildDefaultSnapshot(suggestedWeightKg);
 
-    // Apply fit seed in the same pass as hydrate so completed flags from the
-    // saved log are used — never race with stale setCompletedRef defaults
-    // (that overwrote performed kg after Easy Mode 「조정이 필요해요」).
+    // New logs only: seed incomplete steppers from fit/recommend weight.
+    // Existing logs must keep saved setWeightsKg — reseeding incomplete sets
+    // after bookmark/memo save wiped user-entered kg (set 「완료」 looked fine
+    // because completed sets are seed-protected).
     const seedKey =
       suggestedWeightKg != null && suggestedWeightKg > 0
         ? `${hydrateKey}|${suggestedWeightKg}`
         : `${hydrateKey}|none`;
-    if (suggestedWeightKg != null && suggestedWeightKg > 0) {
+    if (
+      !existingLog &&
+      suggestedWeightKg != null &&
+      suggestedWeightKg > 0
+    ) {
       snapshot = {
         ...snapshot,
         weights: applySeedToIncompleteWeights(
@@ -779,9 +784,9 @@ export function WorkoutLogPanel({
         memberId: activeMemberId,
         machineCode,
         logDate,
-        setCount: variables?.setCount ?? setCount,
-        setWeightsKg: variables?.setWeightsKg ?? weights,
-        setCompleted: variables?.setCompleted ?? setCompleted,
+        setCount: variables?.setCount ?? setCountRef.current,
+        setWeightsKg: variables?.setWeightsKg ?? weightsRef.current,
+        setCompleted: variables?.setCompleted ?? setCompletedRef.current,
         diary: diary.trim() || undefined,
         ...(recommendationId ? { recommendationId } : {}),
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
