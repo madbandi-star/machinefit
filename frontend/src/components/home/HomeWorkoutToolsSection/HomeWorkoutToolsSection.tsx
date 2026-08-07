@@ -7,6 +7,7 @@ import {
 } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
+import { CountSessionBanner } from '@/components/recommendation/CountSessionBanner/CountSessionBanner';
 import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { ROUTES } from '@/constants/routes';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
@@ -96,6 +97,7 @@ export function HomeWorkoutToolsSection() {
   const restParts = restDurationParts(restSeconds);
   const showFullscreenCount =
     fullscreenDisplay && !countDisplayCompact && voiceCoach.isRunning;
+  const showCompactCount = voiceCoach.isRunning && !showFullscreenCount;
 
   useEffect(() => {
     if (!voiceCoach.isRunning) setCountDisplayCompact(false);
@@ -229,6 +231,8 @@ export function HomeWorkoutToolsSection() {
             </button>
           </div>
 
+          <div id="mf-count-session-slot" className="home-count-session-slot" />
+
           <div className="home-tool-card__cta-row">
             <button
               type="button"
@@ -350,6 +354,23 @@ export function HomeWorkoutToolsSection() {
           onPauseCount={voiceCoach.pause}
           onResumeCount={voiceCoach.resume}
           onStopCount={voiceCoach.stop}
+        />
+      ) : null}
+
+      {showCompactCount ? (
+        <CountSessionBanner
+          phase={voiceCoach.phase}
+          currentRep={voiceCoach.currentRep}
+          countdown={voiceCoach.countdown}
+          turbo={voiceCoach.turbo}
+          intensity={voiceCoach.intensity}
+          isPaused={voiceCoach.isPaused}
+          onPause={voiceCoach.pause}
+          onResume={voiceCoach.resume}
+          onStop={voiceCoach.stop}
+          onExpand={
+            fullscreenDisplay ? () => setCountDisplayCompact(false) : undefined
+          }
         />
       ) : null}
     </section>

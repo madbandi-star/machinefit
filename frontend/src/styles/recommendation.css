@@ -1371,6 +1371,103 @@
   line-height: 1;
 }
 
+.count-session-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, #a78bfa 40%, var(--glass-border));
+  background: color-mix(in srgb, #a78bfa 12%, var(--glass-bg));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.count-session-banner--turbo {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--glass-bg));
+}
+
+.count-session-banner--inline {
+  position: relative;
+  width: 100%;
+  margin: 0 0 0.65rem;
+  z-index: 1;
+}
+
+.count-session-banner--dock {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
+  top: auto;
+  z-index: 340;
+  width: min(22.5rem, calc(100vw - 1.5rem));
+  max-width: calc(var(--app-frame-width, 430px) - 1.5rem);
+  transform: translateX(-50%);
+}
+
+.count-session-banner__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.count-session-banner__meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.count-session-banner__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.count-session-banner__status {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count-session-banner__value {
+  flex-shrink: 0;
+  font-size: clamp(1.75rem, 8vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  transform-origin: center right;
+}
+
+.count-session-banner__actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.count-session-banner__btn {
+  flex: 1 1 auto;
+  min-width: 4.5rem;
+  min-height: 2.35rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
 .rest-timer-banner {
   display: flex;
   flex-direction: column;
