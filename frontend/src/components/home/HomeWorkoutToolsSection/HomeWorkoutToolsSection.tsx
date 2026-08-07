@@ -167,6 +167,9 @@ export function HomeWorkoutToolsSection() {
             </button>
           </div>
 
+          {/* GlobalRestTimerHost portals the compact rest banner here when present. */}
+          <div id="mf-rest-timer-slot" className="home-rest-timer-slot" />
+
           <button
             type="button"
             className="home-tool-card__cta home-tool-card__cta--rest"

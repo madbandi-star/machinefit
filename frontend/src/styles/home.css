@@ -643,6 +643,17 @@
   background: #00c853;
 }
 
+.home-rest-timer-slot:empty {
+  display: none;
+}
+
+.home-rest-timer-slot:not(:empty) {
+  display: block;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
 .home-tool-card--count {
   border-color: color-mix(in srgb, #a78bfa 50%, transparent);
   background:

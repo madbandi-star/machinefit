@@ -18,6 +18,8 @@ interface RestTimerBannerProps {
   onExpand?: () => void;
   onMinimize?: () => void;
   showMinimize?: boolean;
+  /** `inline` = home rest-button slot; `dock` = floating above bottom nav. */
+  placement?: 'inline' | 'dock';
 }
 
 function formatCountdown(totalSeconds: number): string {
@@ -51,6 +53,7 @@ export function RestTimerBanner({
   onExpand,
   onMinimize,
   showMinimize = false,
+  placement = 'dock',
 }: RestTimerBannerProps) {
   const { t } = useTranslation('machines');
   const controlled = controlledRemaining != null;
@@ -149,7 +152,11 @@ export function RestTimerBanner({
   };
 
   return (
-    <div className="rest-timer-banner" role="status" aria-live="polite">
+    <div
+      className={`rest-timer-banner rest-timer-banner--${placement}`}
+      role="status"
+      aria-live="polite"
+    >
       <div className="rest-timer-banner__content">
         <span className="rest-timer-banner__label">
           {t('restTimer.label', { setNumber })}
@@ -184,7 +191,7 @@ export function RestTimerBanner({
             aria-label={t('restTimer.expand')}
           >
             <Maximize2 size={14} aria-hidden />
-            {t('restTimer.expand')}
+            <span className="rest-timer-banner__btn-label">{t('restTimer.expand')}</span>
           </button>
         ) : null}
         {showMinimize && onMinimize ? (
@@ -195,7 +202,7 @@ export function RestTimerBanner({
             aria-label={t('restTimer.minimize')}
           >
             <Minimize2 size={14} aria-hidden />
-            {t('restTimer.minimize')}
+            <span className="rest-timer-banner__btn-label">{t('restTimer.minimize')}</span>
           </button>
         ) : null}
         <button
