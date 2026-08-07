@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { useDraggableFloat } from '@/hooks/useDraggableFloat';
 import {
   ChevronDown,
   ChevronUp,
@@ -35,6 +36,7 @@ import {
   saveShuffleEnabled,
 } from '@/utils/motivationPlaylistOrder';
 import './MotivationMediaControls.css';
+import '@/styles/float-drag.css';
 
 /** Soft volume while the motivation video overlay is open (keeps BGM under YouTube). */
 const VIDEO_MUSIC_DUCK = 0.28;
@@ -349,6 +351,10 @@ export function MotivationMediaControls({
   }, []);
 
   const musicUiRef = useRef<HTMLDivElement | null>(null);
+  const musicDrag = useDraggableFloat({
+    id: 'music-mini',
+    enabled: musicPanelOpen && musicCompact,
+  });
 
   useEffect(() => {
     if (!musicPanelOpen) return;
@@ -680,8 +686,15 @@ export function MotivationMediaControls({
       {musicPanelOpen && musicCompact
         ? createPortal(
             <div
-              ref={musicUiRef}
-              className="mf-music-shell mf-music-shell--compact"
+              ref={(node) => {
+                musicUiRef.current = node;
+                musicDrag.ref.current = node;
+              }}
+              className={`mf-music-shell mf-music-shell--compact${
+                musicDrag.floatClassName ? ` ${musicDrag.floatClassName}` : ''
+              }`}
+              style={musicDrag.style}
+              onPointerDown={musicDrag.onPointerDown}
               role="dialog"
               aria-label={t('motivation.musicPanelTitle')}
             >
@@ -1037,6 +1050,7 @@ function VideoOverlay({
   const item = items[index];
   const embedId = item?.youtubeId;
   const total = items.length;
+  const videoDrag = useDraggableFloat({ id: 'video-mini', enabled: compact });
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -1052,7 +1066,12 @@ function VideoOverlay({
   // trap position:fixed and send compact mode above the viewport.
   return createPortal(
     <div
-      className={`mf-video-overlay${compact ? ' mf-video-overlay--compact' : ''}`}
+      ref={compact ? videoDrag.ref : undefined}
+      className={`mf-video-overlay${compact ? ' mf-video-overlay--compact' : ''}${
+        compact && videoDrag.floatClassName ? ` ${videoDrag.floatClassName}` : ''
+      }`}
+      style={compact ? videoDrag.style : undefined}
+      onPointerDown={compact ? videoDrag.onPointerDown : undefined}
       role="dialog"
       aria-modal={!compact}
       aria-label={t('motivation.videoPanelTitle')}
