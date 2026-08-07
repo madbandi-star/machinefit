@@ -29,6 +29,7 @@ import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/history
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
+import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
 import { planStatusBadgeClass } from '@/utils/workoutPlanCards';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
@@ -211,8 +212,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
   const machineImageUrl = resolveMachineImageUrl(card.machineCode, card.primaryImageUrl);
-  const muscleLabel = muscleGroup
-    ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
+  const resolvedMuscleGroup =
+    muscleGroup ??
+    getHistoryMuscleGroup(card.machineCode, card.muscleGroup, card.targetMuscleGroup);
+  const muscleLabel = resolvedMuscleGroup
+    ? t(`muscleGroups.${resolvedMuscleGroup}`, { defaultValue: resolvedMuscleGroup })
     : null;
 
   const planStatus = card.planStatus;

@@ -9,6 +9,8 @@ export interface WorkoutCard {
   machineCode: string;
   machineName?: string;
   brandName?: string;
+  /** Machine catalog muscle group (selectorized / plate). */
+  muscleGroup?: string;
   recommendationId?: string;
   /** Populated when recommendation_id is set (joined from machine_recommendations). */
   settings?: RecommendationSettings;

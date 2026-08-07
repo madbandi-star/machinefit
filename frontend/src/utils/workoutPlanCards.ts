@@ -24,7 +24,7 @@ export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard
     machineCode: card.machineCode,
     machineName: card.machineName ?? card.machineCode,
     brandName: card.brandName,
-    muscleGroup: card.targetMuscleGroup,
+    muscleGroup: card.muscleGroup,
     targetMuscleGroup: card.targetMuscleGroup,
     recommendationId: card.recommendationId,
     settings: card.settings ?? {},

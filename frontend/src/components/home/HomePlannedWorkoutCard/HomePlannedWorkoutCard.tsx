@@ -18,7 +18,7 @@ function collectMuscleSummary(cards: WorkoutCard[]): string[] {
   const seen = new Set<string>();
   const ordered: string[] = [];
   for (const card of cards) {
-    const muscle = card.targetMuscleGroup;
+    const muscle = card.targetMuscleGroup || card.muscleGroup;
     if (!muscle || seen.has(muscle)) continue;
     seen.add(muscle);
     ordered.push(muscle);

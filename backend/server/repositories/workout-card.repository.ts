@@ -19,6 +19,7 @@ interface WorkoutCardRow {
   machine_code: string;
   machine_name: Record<string, string>;
   brand_name: Record<string, string> | null;
+  muscle_group: string | null;
   recommendation_id: string | null;
   target_muscle_group: string;
   scheduled_date: string | Date;
@@ -98,6 +99,7 @@ function mapCardRow(row: WorkoutCardRow, locale: Locale = 'en'): WorkoutCard {
     brandName: row.brand_name
       ? pickLocalized(row.brand_name, locale) ?? undefined
       : undefined,
+    muscleGroup: row.muscle_group || undefined,
     recommendationId: row.recommendation_id ?? undefined,
     ...(settings ? { settings } : {}),
     targetMuscleGroup: row.target_muscle_group
@@ -142,7 +144,7 @@ const SELECT_FIELDS = `wc.id, wc.gym_id, wc.member_id, wc.machine_id, wc.recomme
               wc.set_weights_kg, wc.set_reps, wc.set_completed, wc.diary, wc.rest_seconds,
               wc.display_order, wc.workout_log_id, wc.source_card_id, wc.template_id,
               wc.started_at, wc.completed_at, wc.created_at, wc.updated_at,
-              m.code AS machine_code, m.name AS machine_name, b.name AS brand_name,
+              m.code AS machine_code, m.name AS machine_name, m.muscle_group, b.name AS brand_name,
               r.seat_position, r.back_pad_position, r.foot_position, r.handle_position,
               r.rom_setting, r.recommended_weight_kg, r.recommended_reps_min, r.recommended_reps_max`;
 
@@ -342,6 +344,7 @@ export const workoutCardRepository = {
                  started_at, completed_at, created_at, updated_at,
                  (SELECT code FROM machines WHERE id = $4) AS machine_code,
                  (SELECT name FROM machines WHERE id = $4) AS machine_name,
+                 (SELECT muscle_group FROM machines WHERE id = $4) AS muscle_group,
                  (SELECT b.name FROM machines m2 LEFT JOIN brands b ON b.id = m2.brand_id WHERE m2.id = $4) AS brand_name`,
       [
         userId,
