@@ -65,8 +65,11 @@ export function MachineDetailPage() {
 
   const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
   const todayDateKey = getTodayDateKey();
-  /** Future plan flow: only add-to-plan — no voice/log/recommend chrome. */
-  const isFuturePlan = Boolean(planDate && planDate > todayDateKey);
+  /**
+   * Plan-add shell (from machines?planDate=…): hide log/recommend chrome.
+   * History clicks use logDate only — keep the same full UI as today cards.
+   */
+  const isFuturePlanAdd = Boolean(planDate && planDate > todayDateKey);
 
   const createPlanMutation = useMutation({
     mutationFn: async () => {
@@ -135,10 +138,10 @@ export function MachineDetailPage() {
     <div className="machine-detail-page">
       {/* Cover image at top for every brand (same layout as free-weight). */}
       <MachineHero machine={machine} selectedMuscle={muscleParam} />
-      {!isFuturePlan && !isFreeWeight && machineCode && isAuthenticated ? (
+      {!isFuturePlanAdd && !isFreeWeight && machineCode && isAuthenticated ? (
         <LastRecommendationSnippet machineCode={machineCode} />
       ) : null}
-      {isFuturePlan && isFreeWeight && machineCode ? (
+      {isFuturePlanAdd && isFreeWeight && machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
           initialMuscle={muscleParam}
@@ -169,7 +172,7 @@ export function MachineDetailPage() {
           >
             {t('machines:history.planAddMachine')}
           </button>
-          {isFuturePlan && planDate ? (
+          {isFuturePlanAdd && planDate ? (
             <div className="machine-detail-plan-actions__secondary">
               <Link
                 to={`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`}
@@ -187,7 +190,7 @@ export function MachineDetailPage() {
           ) : null}
         </div>
       ) : null}
-      {!isFuturePlan && logDate && machineCode && isAuthenticated ? (
+      {!isFuturePlanAdd && logDate && machineCode && isAuthenticated ? (
         <WorkoutLogPanel
           machineCode={machineCode}
           machineName={getLocalizedName(machine.name, i18n.language, machine.code)}
@@ -200,7 +203,7 @@ export function MachineDetailPage() {
           showSaveButton
         />
       ) : null}
-      {!isFuturePlan && machineCode && canTrade ? (
+      {!isFuturePlanAdd && machineCode && canTrade ? (
         <div className="machine-detail-trade-links">
           <Link
             to={`${ROUTES.TRADE_LIST_SELL}?machineCode=${encodeURIComponent(machineCode)}`}
@@ -216,12 +219,15 @@ export function MachineDetailPage() {
           </Link>
         </div>
       ) : null}
-      {!isFuturePlan && machineCode ? (
+      {!isFuturePlanAdd && machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
           initialMuscle={muscleParam}
           syncMuscleToUrl={isFreeWeight}
-          planDate={planDate}
+          planDate={
+            planDate ??
+            (logDate && logDate > todayDateKey ? logDate : null)
+          }
         />
       ) : null}
     </div>
