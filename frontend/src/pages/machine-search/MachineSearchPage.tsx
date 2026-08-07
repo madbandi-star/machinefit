@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { Machine } from '@machinefit/shared';
+import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
@@ -16,9 +17,14 @@ import {
   DEFAULT_SEARCH_MUSCLE_GROUP,
 } from '@/constants/machine-search-defaults';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { brandApi, machineApi } from '@/api';
+import { ROUTES } from '@/constants/routes';
+import { brandApi, machineApi, workoutCardApi } from '@/api';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
+import { useAuthStore } from '@/store/auth.store';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
+import { normalizeDateKey } from '@/utils/historyDate';
 import {
   clearRecentMachineSearches,
   getRecentMachineSearches,
@@ -38,6 +44,13 @@ function resolveBrandParam(raw: string | null): string | null {
   return trimmed;
 }
 
+function planMachineKey(machineCode: string, targetMuscleGroup?: string | null): string {
+  if (isFreeWeightMachineCode(machineCode) && targetMuscleGroup) {
+    return `${machineCode}::${targetMuscleGroup}`;
+  }
+  return machineCode;
+}
+
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,7 +63,17 @@ export function MachineSearchPage() {
     resolveBrandParam(searchParams.get('brand'))
   );
   const [recentSearches, setRecentSearches] = useState(() => getRecentMachineSearches());
-  const planDate = searchParams.get('planDate');
+  const planDateRaw = searchParams.get('planDate');
+  const planDate = planDateRaw ? normalizeDateKey(planDateRaw) : null;
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId } = useActiveMember();
+  const canLoadPlans =
+    Boolean(planDate) &&
+    isAuthenticated &&
+    Boolean(activeGymId) &&
+    Boolean(activeMemberId) &&
+    !isAllGymsId(activeGymId ?? '');
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
@@ -153,6 +176,33 @@ export function MachineSearchPage() {
     staleTime: 10 * 60_000,
   });
 
+  const { data: dayPlans = [] } = useQuery({
+    queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
+      scheduledDate: planDate ?? undefined,
+    }),
+    queryFn: async () => {
+      const res = await workoutCardApi.list({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        scheduledDate: planDate!,
+      });
+      return res.data.data;
+    },
+    enabled: canLoadPlans,
+    staleTime: 30_000,
+  });
+
+  const plannedKeys = useMemo(() => {
+    const keys = new Set<string>();
+    for (const card of dayPlans) {
+      keys.add(planMachineKey(card.machineCode, card.targetMuscleGroup));
+      if (!isFreeWeightMachineCode(card.machineCode)) {
+        keys.add(card.machineCode);
+      }
+    }
+    return keys;
+  }, [dayPlans]);
+
   const { data: favorites, isFetched: favoritesFetched } = useFavoritesList();
   const favoriteByCode = useMemo(() => {
     const map = new Map<string, string>();
@@ -179,10 +229,28 @@ export function MachineSearchPage() {
   });
 
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
+  const recordsForDateUrl = planDate
+    ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
+    : ROUTES.RECORDS;
 
   return (
     <div className="machine-search">
       <PageShell>
+        {planDate ? (
+          <div className="machine-search__plan-banner" role="status">
+            <div className="machine-search__plan-banner-text">
+              <p className="machine-search__plan-banner-title">
+                {t('history.planPickMoreTitle', { date: planDate })}
+              </p>
+              <p className="machine-search__plan-banner-meta">
+                {t('history.planPickMoreCount', { count: dayPlans.length })}
+              </p>
+            </div>
+            <Link to={recordsForDateUrl} className="btn btn--secondary machine-search__plan-banner-done">
+              {t('history.planPickMoreDone')}
+            </Link>
+          </div>
+        ) : null}
         <SearchBar value={query} onChange={handleQueryChange} placeholder={t('searchPlaceholder')} />
         <RecentMachineSearches
           items={recentSearches}
@@ -203,17 +271,26 @@ export function MachineSearchPage() {
           <div
             className={`machine-list machine-list--recommend${isFetching ? ' machine-list--fetching' : ''}`}
           >
-            {data.map((machine) => (
-              <MachineListItem
-                key={machine.id}
-                machine={machine}
-                selectedMuscle={muscleGroup}
-                planDate={planDate}
-                initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
-                initialFavoriteId={favoriteByCode.get(machine.code)}
-                showFavorite
-              />
-            ))}
+            {data.map((machine) => {
+              const alreadyPlanned = plannedKeys.has(
+                planMachineKey(
+                  machine.code,
+                  isFreeWeightMachineCode(machine.code) ? muscleGroup : null
+                )
+              );
+              return (
+                <MachineListItem
+                  key={machine.id}
+                  machine={machine}
+                  selectedMuscle={muscleGroup}
+                  planDate={planDate}
+                  alreadyPlanned={alreadyPlanned}
+                  initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
+                  initialFavoriteId={favoriteByCode.get(machine.code)}
+                  showFavorite
+                />
+              );
+            })}
           </div>
         )}
       </PageShell>

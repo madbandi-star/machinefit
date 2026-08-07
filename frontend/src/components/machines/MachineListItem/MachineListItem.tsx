@@ -28,6 +28,8 @@ interface MachineListItemProps {
   showFavorite?: boolean;
   /** Forwarded as ?planDate= for workout plan creation. */
   planDate?: string | null;
+  /** When true, show that this machine is already on the plan for planDate. */
+  alreadyPlanned?: boolean;
 }
 
 function prefetchMachineDetail(machineCode: string) {
@@ -82,6 +84,7 @@ export function MachineListItem({
   initialFavoriteId,
   showFavorite = !onSelect,
   planDate = null,
+  alreadyPlanned = false,
 }: MachineListItemProps) {
   const { t, i18n } = useTranslation('machines');
   const localizedName = getLocalizedName(machine.name, i18n.language, '');
@@ -148,6 +151,9 @@ export function MachineListItem({
       <div className="machine-list-item__body">
         <p className="machine-list-item__name">
           <span className="machine-list-item__name-text">{localizedName}</span>
+          {alreadyPlanned ? (
+            <span className="machine-list-item__planned-badge">{t('history.planAlreadyAdded')}</span>
+          ) : null}
         </p>
         {showAllFreeWeightMuscles ? (
           <div className="machine-list-item__muscle-list" aria-label={t('targetMuscleLabel')}>
@@ -212,7 +218,7 @@ export function MachineListItem({
   }
 
   return (
-    <div className="machine-list-item">
+    <div className={`machine-list-item${alreadyPlanned ? ' machine-list-item--planned' : ''}`}>
       <Link
         to={detailTo}
         className="machine-list-item__main"
