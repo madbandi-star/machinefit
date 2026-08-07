@@ -1272,6 +1272,12 @@
   color: var(--color-text-muted);
 }
 
+.machine-detail-plan-actions__secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
 .records-list--history .records-list__date-filter-block {
   flex: 0 0 auto;
   width: auto;
