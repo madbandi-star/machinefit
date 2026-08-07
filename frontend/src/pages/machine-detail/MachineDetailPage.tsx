@@ -169,13 +169,21 @@ export function MachineDetailPage() {
           >
             {t('machines:history.planAddMachine')}
           </button>
-          {planDate ? (
-            <Link
-              to={`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`}
-              className="btn btn--secondary btn--block"
-            >
-              {t('machines:history.planAddAnother')}
-            </Link>
+          {isFuturePlan && planDate ? (
+            <div className="machine-detail-plan-actions__secondary">
+              <Link
+                to={`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`}
+                className="btn btn--secondary btn--block"
+              >
+                {t('machines:history.planAddAnother')}
+              </Link>
+              <Link
+                to={`${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`}
+                className="btn btn--secondary btn--block"
+              >
+                {t('machines:history.planViewPlan')}
+              </Link>
+            </div>
           ) : null}
         </div>
       ) : null}
