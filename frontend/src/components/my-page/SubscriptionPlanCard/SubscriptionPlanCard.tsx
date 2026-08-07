@@ -89,9 +89,7 @@ export function SubscriptionPlanCard() {
 
   return (
     <section className="my-page-section premium-card" aria-labelledby="subscription-plan-heading">
-      <div
-        className={`premium-card__panel${isPremium ? ' premium-card__panel--active' : ''}`}
-      >
+      <div className="premium-card__panel">
         <header className="premium-card__header">
           <p className="premium-card__eyebrow">{t('myPage.subscription.memberGrade')}</p>
           <div className="premium-card__title-row">
