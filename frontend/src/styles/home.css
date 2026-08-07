@@ -643,11 +643,13 @@
   background: #00c853;
 }
 
-.home-rest-timer-slot:empty {
+.home-rest-timer-slot:empty,
+.home-count-session-slot:empty {
   display: none;
 }
 
-.home-rest-timer-slot:not(:empty) {
+.home-rest-timer-slot:not(:empty),
+.home-count-session-slot:not(:empty) {
   display: block;
   width: 100%;
   position: relative;

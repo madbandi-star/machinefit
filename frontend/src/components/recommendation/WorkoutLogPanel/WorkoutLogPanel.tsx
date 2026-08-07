@@ -18,6 +18,7 @@ import {
   type SettingsActiveSource,
 } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
+import { CountSessionBanner } from '@/components/recommendation/CountSessionBanner/CountSessionBanner';
 import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
@@ -1474,6 +1475,7 @@ export function WorkoutLogPanel({
 
   const useFullscreenCount =
     workoutFullscreenDisplay && !countDisplayCompact && voiceCoach.isRunning;
+  const useCompactCountDock = voiceCoach.isRunning && countDisplayCompact;
 
   const workoutDisplayOverlay = useFullscreenCount ? (
     <WorkoutDisplayOverlay
@@ -1493,6 +1495,24 @@ export function WorkoutLogPanel({
       onPauseCount={pauseVoiceCoachSession}
       onResumeCount={resumeVoiceCoachSession}
       onStopCount={stopVoiceCoachSession}
+    />
+  ) : null;
+
+  const countSessionBanner = useCompactCountDock ? (
+    <CountSessionBanner
+      phase={voiceCoach.phase}
+      currentRep={voiceCoach.currentRep}
+      countdown={voiceCoach.countdown}
+      turbo={voiceCoach.turbo}
+      intensity={voiceCoach.intensity}
+      isPaused={voiceCoach.isPaused}
+      onPause={pauseVoiceCoachSession}
+      onResume={resumeVoiceCoachSession}
+      onStop={stopVoiceCoachSession}
+      onExpand={
+        workoutFullscreenDisplay ? () => setCountDisplayCompact(false) : undefined
+      }
+      placement="dock"
     />
   ) : null;
 
@@ -1538,7 +1558,7 @@ export function WorkoutLogPanel({
       showRestOptionSelectors={!isHistory}
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
-      hideLiveDisplay={useFullscreenCount}
+      hideLiveDisplay={useFullscreenCount || useCompactCountDock}
     />
   ) : null;
 
@@ -1546,6 +1566,7 @@ export function WorkoutLogPanel({
     return (
       <>
         {workoutDisplayOverlay}
+        {countSessionBanner}
         <section
           className="recommendation-workout-log recommendation-workout-log--history"
           aria-label={t('machines:workoutLog.title')}
@@ -1578,6 +1599,7 @@ export function WorkoutLogPanel({
     return (
       <>
         {workoutDisplayOverlay}
+        {countSessionBanner}
         <section
           className="recommendation-workout-log recommendation-workout-log--compact"
           aria-label={t('machines:workoutLog.title')}
@@ -1602,6 +1624,7 @@ export function WorkoutLogPanel({
   return (
     <>
       {workoutDisplayOverlay}
+      {countSessionBanner}
       <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
       {voiceCoachPanel}
       <div className="recommendation-workout-log__header">
