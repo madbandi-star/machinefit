@@ -24,6 +24,8 @@ interface CountSessionBannerProps {
   onExpand?: () => void;
   /** Prefer home slot when present; otherwise dock above bottom nav. */
   placement?: 'auto' | 'inline' | 'dock';
+  /** Lift dock above an active rest banner so the two do not overlap. */
+  offsetForRest?: boolean;
 }
 
 /**
@@ -42,6 +44,7 @@ export function CountSessionBanner({
   onStop,
   onExpand,
   placement = 'auto',
+  offsetForRest = false,
 }: CountSessionBannerProps) {
   const { t } = useTranslation('machines');
   const display = getVoiceCoachDisplayState(
@@ -76,6 +79,10 @@ export function CountSessionBanner({
     <div
       className={`count-session-banner count-session-banner--${resolvedPlacement}${
         turbo || phase === 'hold' ? ' count-session-banner--turbo' : ''
+      }${
+        resolvedPlacement === 'dock' && offsetForRest
+          ? ' count-session-banner--above-rest'
+          : ''
       }`}
       role="status"
       aria-live="polite"
