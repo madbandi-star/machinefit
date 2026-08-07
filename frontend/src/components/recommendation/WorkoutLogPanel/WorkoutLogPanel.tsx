@@ -956,16 +956,14 @@ export function WorkoutLogPanel({
       const previousLogs = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
       const previousAllLogs = queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey);
 
-      lastHydrateKeyRef.current = '';
-      const snapshot = buildDefaultSnapshot(suggestedWeightKg);
-      applyWorkoutFormSnapshot(snapshot, {
-        setSetCount,
-        setWeights,
-        setSetCompleted,
-        setDiary,
-      });
-      setPlanProtected(buildDefaultCompleted(snapshot.setCount));
-      planProtectedRef.current = buildDefaultCompleted(snapshot.setCount);
+      // Keep set count / weights / completed / diary / tip in the UI after 「기록 해제」.
+      // Only clear the saved-log association so the user can re-save without retyping.
+      const nextHydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|new|`;
+      lastHydrateKeyRef.current = nextHydrateKey;
+      lastAppliedSeedKeyRef.current =
+        suggestedWeightKg != null && suggestedWeightKg > 0
+          ? `${nextHydrateKey}|${suggestedWeightKg}`
+          : `${nextHydrateKey}|none`;
       setBaseline(null);
       queryClient.setQueryData(workoutLogQueryKey, []);
       onSavedChange?.(false);
