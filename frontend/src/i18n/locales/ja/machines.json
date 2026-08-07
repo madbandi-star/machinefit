@@ -284,8 +284,6 @@
     "orderMoveBottom": "⏬ Move to bottom",
     "orderChanged": "Workout order was updated.",
     "orderChangeFailed": "Could not save the workout order. Please try again.",
-    "planStatusPlanned": "Planned",
-    "planStatusCompleted": "Done",
     "planStartWorkout": "Start workout",
     "planStarted": "Workout started.",
     "planAddForDate": "Add workout plan for this date",

@@ -30,7 +30,6 @@ import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
-import { planStatusBadgeClass, resolvePlanStatusBadge } from '@/utils/workoutPlanCards';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 
@@ -219,11 +218,6 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     ? t(`muscleGroups.${resolvedMuscleGroup}`, { defaultValue: resolvedMuscleGroup })
     : null;
 
-  const planBadge = resolvePlanStatusBadge(isWorkoutLogSaved);
-  const planBadgeLabel =
-    planBadge === 'COMPLETED'
-      ? t('machines:history.planStatusCompleted')
-      : t('machines:history.planStatusPlanned');
   const showPlanMenu = Boolean(card.workoutCardId) && (Boolean(onCopyPlan) || Boolean(onMovePlan));
   const hasRecommendationSettings =
     card.settings.recommendedWeightKg != null ||
@@ -460,14 +454,6 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
                 <Link to={resultUrl} className="history-record-card__meta-link">
                   <div className="history-record-card__meta">
-                    <span
-                      className={`history-record-card__plan-badge ${planStatusBadgeClass(planBadge)}`}
-                    >
-                      {planBadgeLabel}
-                    </span>
-                    <span className="history-record-card__meta-divider" aria-hidden>
-                      ·
-                    </span>
                     {muscleLabel ? (
                       <>
                         <span className="history-record-card__meta-item history-record-card__muscle">

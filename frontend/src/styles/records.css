@@ -1176,27 +1176,6 @@
   display: none;
 }
 
-.history-record-card__plan-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.1rem 0.4rem;
-  border-radius: 999px;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1.2;
-}
-
-.history-record-card__plan-badge--planned {
-  color: #1d4ed8;
-  background: color-mix(in srgb, #3b82f6 18%, transparent);
-}
-
-.history-record-card__plan-badge--completed {
-  color: #15803d;
-  background: color-mix(in srgb, #22c55e 18%, transparent);
-}
-
 .history-record-card__plan-start {
   margin-top: 0.55rem;
   width: 100%;

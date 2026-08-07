@@ -102,22 +102,3 @@ export function mergeWorkoutPlanCards(
 export function collectPlanDateKeys(workoutCards: WorkoutCard[]): Set<string> {
   return new Set(workoutCards.map((card) => normalizeDateKey(card.scheduledDate)));
 }
-
-/** Badge surface only exposes 예정 / 완료. */
-export type PlanStatusBadge = 'PLANNED' | 'COMPLETED';
-
-/**
- * Plan status badge mirrors workout-log save state on every record card
- * (today and future):
- * - unsaved → 예정
- * - saved → 완료
- */
-export function resolvePlanStatusBadge(isWorkoutLogSaved: boolean): PlanStatusBadge {
-  return isWorkoutLogSaved ? 'COMPLETED' : 'PLANNED';
-}
-
-export function planStatusBadgeClass(badge: PlanStatusBadge): string {
-  return badge === 'COMPLETED'
-    ? 'history-record-card__plan-badge--completed'
-    : 'history-record-card__plan-badge--planned';
-}
