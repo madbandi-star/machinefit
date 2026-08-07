@@ -490,7 +490,7 @@ export function AdminMachineRequestsPage() {
       setSelected(null);
       setShowRegister(false);
     },
-                initialFocusSelector: '.admin-req-detail__close',
+    initialFocusSelector: '.admin-req-detail__close',
   });
 
   const unknownLabel = tCommunity('requestFieldUnknownLabel');
@@ -654,54 +654,56 @@ export function AdminMachineRequestsPage() {
           <Skeleton count={6} height={40} />
         ) : listQuery.data?.items.length ? (
           <>
-            <div className="admin-req-table-wrap">
-              <table className="admin-req-table">
-                <thead>
-                  <tr>
-                    <th>{t('machineRequests.columns.lastRequested')}</th>
-                    <th>{t('machineRequests.columns.brand')}</th>
-                    <th>{t('machineRequests.columns.machine')}</th>
-                    <th>{t('machineRequests.columns.count')}</th>
-                    <th>{t('machineRequests.columns.status')}</th>
-                    <th>{t('machineRequests.columns.action')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {listQuery.data.items.map((row) => (
-                    <tr
-                      key={row.groupKey}
-                      className={row.requestCount >= 3 ? 'admin-req-table__row--hot' : undefined}
-                    >
-                      <td>{formatDate(row.lastRequestedAt)}</td>
-                      <td>{displayText(row.brandName, unknownLabel)}</td>
-                      <td>{displayText(row.machineName, unknownLabel)}</td>
-                      <td>
-                        <strong>{row.requestCount}</strong>
-                      </td>
-                      <td>
-                        <span className={`admin-req-badge ${statusClass(row.status)}`}>
-                          {t(`machineRequests.status.${row.status === 'approved' ? 'reviewing' : row.status}`)}
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn--secondary btn--sm"
-                          onClick={() => openDetail(row)}
-                        >
-                          {t('machineRequests.viewDetail')}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <ul className="admin-req-list">
+              {listQuery.data.items.map((row) => (
+                <li
+                  key={row.groupKey}
+                  className={`admin-req-list__item${
+                    row.requestCount >= 3 ? ' admin-req-list__item--hot' : ''
+                  }`}
+                >
+                  <div className="admin-req-list__main">
+                    <p className="admin-req-list__title">
+                      {displayText(row.brandName, unknownLabel)}
+                      <span className="admin-req-list__dot" aria-hidden="true">
+                        ·
+                      </span>
+                      {displayText(row.machineName, unknownLabel)}
+                    </p>
+                    <div className="admin-req-list__meta">
+                      <span className={`admin-req-badge ${statusClass(row.status)}`}>
+                        {t(
+                          `machineRequests.status.${
+                            row.status === 'approved' ? 'reviewing' : row.status
+                          }`
+                        )}
+                      </span>
+                      <span className="admin-req-list__count">
+                        {t('machineRequests.requestCount', { count: row.requestCount })}
+                      </span>
+                      <span>
+                        {t('machineRequests.columns.lastRequested')}:{' '}
+                        {formatDate(row.lastRequestedAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn--secondary btn--sm admin-req-list__action"
+                    onClick={() => openDetail(row)}
+                  >
+                    {t('machineRequests.viewDetail')}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="admin-req-pagination">
+              <Pagination
+                page={page}
+                totalPages={listQuery.data.meta.totalPages}
+                onPageChange={setPage}
+              />
             </div>
-            <Pagination
-              page={page}
-              totalPages={listQuery.data.meta.totalPages}
-              onPageChange={setPage}
-            />
           </>
         ) : (
           <p className="admin-empty">{t('machineRequests.empty')}</p>
@@ -715,14 +717,23 @@ export function AdminMachineRequestsPage() {
           onClick={() => setSelected(null)}
         >
           <div
-            className="dialog card admin-catalog-dialog admin-req-detail"
+            className="admin-req-detail"
             role="dialog"
             aria-modal="true"
             aria-labelledby="admin-req-detail-title"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="admin-req-detail__header">
-              <h2 id="admin-req-detail-title">{t('machineRequests.detailTitle')}</h2>
+              <div className="admin-req-detail__heading">
+                <p className="admin-req-detail__eyebrow">{t('machineRequests.detailTitle')}</p>
+                <h2 id="admin-req-detail-title">
+                  {displayText(selected.brandName, unknownLabel)}
+                  <span className="admin-req-list__dot" aria-hidden="true">
+                    ·
+                  </span>
+                  {displayText(selected.machineName, unknownLabel)}
+                </h2>
+              </div>
               <button
                 type="button"
                 className="btn btn--secondary btn--sm admin-req-detail__close"
@@ -733,10 +744,12 @@ export function AdminMachineRequestsPage() {
             </div>
 
             {detailQuery.isLoading || !detail ? (
-              <Skeleton count={5} height={36} />
+              <div className="admin-req-detail__scroll">
+                <Skeleton count={5} height={36} />
+              </div>
             ) : (
-              <>
-                <dl className="admin-req-detail__meta">
+              <div className="admin-req-detail__scroll">
+                <dl className="admin-req-detail__summary">
                   <div>
                     <dt>{t('machineRequests.columns.brand')}</dt>
                     <dd>{displayText(detail.brandName, unknownLabel)}</dd>
@@ -782,7 +795,7 @@ export function AdminMachineRequestsPage() {
                         <li key={r.requestId}>
                           <div className="admin-req-requesters__head">
                             <strong>{r.authorName}</strong>
-                            <span>{formatDate(r.createdAt)}</span>
+                            <time dateTime={r.createdAt}>{formatDate(r.createdAt)}</time>
                             <span
                               className={`admin-req-badge ${statusClass(
                                 r.status === 'approved' ? 'reviewing' : r.status
@@ -857,8 +870,8 @@ export function AdminMachineRequestsPage() {
                               })}
                             </div>
                           ) : null}
-                          <div className="admin-req-detail__actions">
-                            <label>
+                          <div className="admin-req-requesters__actions">
+                            <label className="admin-req-requesters__priority">
                               <span>{t('machineRequests.priority')}</span>
                               <select
                                 className="input"
@@ -1378,7 +1391,7 @@ export function AdminMachineRequestsPage() {
                     </div>
                   </section>
                 ) : null}
-              </>
+              </div>
             )}
           </div>
         </div>
