@@ -219,13 +219,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     ? t(`muscleGroups.${resolvedMuscleGroup}`, { defaultValue: resolvedMuscleGroup })
     : null;
 
-  const planBadge = resolvePlanStatusBadge(card.planStatus);
+  const planBadge = resolvePlanStatusBadge(isWorkoutLogSaved);
   const planBadgeLabel =
-    planBadge === 'PLANNED'
-      ? t('machines:history.planStatusPlanned')
-      : planBadge === 'COMPLETED'
-        ? t('machines:history.planStatusCompleted')
-        : null;
+    planBadge === 'COMPLETED'
+      ? t('machines:history.planStatusCompleted')
+      : t('machines:history.planStatusPlanned');
   const showPlanMenu = Boolean(card.workoutCardId) && (Boolean(onCopyPlan) || Boolean(onMovePlan));
   const hasRecommendationSettings =
     card.settings.recommendedWeightKg != null ||
@@ -462,18 +460,14 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
                 <Link to={resultUrl} className="history-record-card__meta-link">
                   <div className="history-record-card__meta">
-                    {planBadgeLabel && planBadge ? (
-                      <>
-                        <span
-                          className={`history-record-card__plan-badge ${planStatusBadgeClass(planBadge)}`}
-                        >
-                          {planBadgeLabel}
-                        </span>
-                        <span className="history-record-card__meta-divider" aria-hidden>
-                          ·
-                        </span>
-                      </>
-                    ) : null}
+                    <span
+                      className={`history-record-card__plan-badge ${planStatusBadgeClass(planBadge)}`}
+                    >
+                      {planBadgeLabel}
+                    </span>
+                    <span className="history-record-card__meta-divider" aria-hidden>
+                      ·
+                    </span>
                     {muscleLabel ? (
                       <>
                         <span className="history-record-card__meta-item history-record-card__muscle">

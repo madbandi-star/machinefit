@@ -107,17 +107,13 @@ export function collectPlanDateKeys(workoutCards: WorkoutCard[]): Set<string> {
 export type PlanStatusBadge = 'PLANNED' | 'COMPLETED';
 
 /**
- * Collapse workout-card statuses to the two badge values.
- * - PLANNED / IN_PROGRESS → 예정
- * - COMPLETED → 완료
- * - SKIPPED → no badge
+ * Plan status badge mirrors workout-log save state on every record card
+ * (today and future):
+ * - unsaved → 예정
+ * - saved → 완료
  */
-export function resolvePlanStatusBadge(
-  status: WorkoutCardStatus | undefined | null
-): PlanStatusBadge | null {
-  if (status === 'COMPLETED') return 'COMPLETED';
-  if (status === 'PLANNED' || status === 'IN_PROGRESS') return 'PLANNED';
-  return null;
+export function resolvePlanStatusBadge(isWorkoutLogSaved: boolean): PlanStatusBadge {
+  return isWorkoutLogSaved ? 'COMPLETED' : 'PLANNED';
 }
 
 export function planStatusBadgeClass(badge: PlanStatusBadge): string {
