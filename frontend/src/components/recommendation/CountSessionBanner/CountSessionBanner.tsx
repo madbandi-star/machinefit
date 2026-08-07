@@ -1,12 +1,14 @@
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Maximize2 } from 'lucide-react';
+import { useDraggableFloat } from '@/hooks/useDraggableFloat';
 import type { VoiceCoachPhase } from '@/utils/voiceCoach';
 import {
   getVoiceCoachDisplayState,
   voiceCoachStatusLabel,
 } from '@/utils/voiceCoachDisplay';
 import '@/styles/recommendation.css';
+import '@/styles/float-drag.css';
 
 export const COUNT_SESSION_SLOT_ID = 'mf-count-session-slot';
 
@@ -62,6 +64,8 @@ export function CountSessionBanner({
   const resolvedPlacement =
     placement === 'auto' ? (slot ? 'inline' : 'dock') : placement;
   const mountNode = resolvedPlacement === 'inline' && slot ? slot : document.body;
+  const docked = resolvedPlacement === 'dock';
+  const drag = useDraggableFloat({ id: 'count-dock', enabled: docked });
 
   const status = voiceCoachStatusLabel(t, phase, currentRep, countdown);
   const pauseResume =
@@ -77,13 +81,16 @@ export function CountSessionBanner({
 
   const banner = (
     <div
+      ref={docked ? drag.ref : undefined}
       className={`count-session-banner count-session-banner--${resolvedPlacement}${
         turbo || phase === 'hold' ? ' count-session-banner--turbo' : ''
       }${
-        resolvedPlacement === 'dock' && offsetForRest
+        docked && offsetForRest && !drag.isPositioned
           ? ' count-session-banner--above-rest'
           : ''
-      }`}
+      }${docked && drag.floatClassName ? ` ${drag.floatClassName}` : ''}`}
+      style={docked ? drag.style : undefined}
+      onPointerDown={docked ? drag.onPointerDown : undefined}
       role="status"
       aria-live="polite"
     >

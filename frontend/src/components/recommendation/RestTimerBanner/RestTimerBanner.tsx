@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Maximize2, Minimize2 } from 'lucide-react';
+import { useDraggableFloat } from '@/hooks/useDraggableFloat';
 import '@/styles/recommendation.css';
+import '@/styles/float-drag.css';
 
 interface RestTimerBannerProps {
   setNumber: number;
@@ -56,6 +58,8 @@ export function RestTimerBanner({
   placement = 'dock',
 }: RestTimerBannerProps) {
   const { t } = useTranslation('machines');
+  const docked = placement === 'dock';
+  const drag = useDraggableFloat({ id: 'rest-dock', enabled: docked });
   const controlled = controlledRemaining != null;
   const [remaining, setRemaining] = useState(seconds ?? 0);
   const [paused, setPaused] = useState(false);
@@ -153,7 +157,12 @@ export function RestTimerBanner({
 
   return (
     <div
-      className={`rest-timer-banner rest-timer-banner--${placement}`}
+      ref={docked ? drag.ref : undefined}
+      className={`rest-timer-banner rest-timer-banner--${placement}${
+        docked && drag.floatClassName ? ` ${drag.floatClassName}` : ''
+      }`}
+      style={docked ? drag.style : undefined}
+      onPointerDown={docked ? drag.onPointerDown : undefined}
       role="status"
       aria-live="polite"
     >

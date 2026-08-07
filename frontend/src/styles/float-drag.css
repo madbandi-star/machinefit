@@ -1,0 +1,30 @@
+/* Shared drag affordance for floating mini modules */
+.mf-float--draggable {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mf-float--draggable.mf-float--dragging {
+  cursor: grabbing;
+  z-index: 420;
+  transition: none;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
+}
+
+.mf-float--draggable.mf-float--positioned {
+  /* left/top come from inline style; clear default anchors */
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+}
+
+.mf-video-overlay--compact.mf-float--dragging iframe {
+  pointer-events: none;
+}
+
+.mf-music-shell--compact.mf-float--draggable,
+.mf-video-overlay--compact.mf-float--draggable {
+  pointer-events: auto;
+}
