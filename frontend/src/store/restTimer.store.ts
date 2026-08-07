@@ -77,7 +77,8 @@ export const useRestTimerStore = create<RestTimerState>((set, get) => ({
         pausedRemainingSec: null,
         sessionId: sessionCounter,
       },
-      displayOverride: 'auto',
+      // Prefer compact banner first; user can expand to fullscreen.
+      displayOverride: 'compact',
     });
   },
 
