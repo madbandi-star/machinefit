@@ -2910,6 +2910,11 @@
 }
 
 .admin-req-register__image .admin-catalog-image__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
 .admin-req-requesters__head {
   display: flex;
   flex-wrap: wrap;
