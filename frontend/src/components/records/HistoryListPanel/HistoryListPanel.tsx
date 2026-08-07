@@ -763,6 +763,10 @@ export function HistoryListPanel() {
     [allRecordCards, targetDeleteDate]
   );
 
+  const todayDateKey = getTodayDateKey();
+  /** Plan-for-date CTA only when calendar date ≠ today (today uses normal machine browse). */
+  const showPlanAddForDate =
+    Boolean(selectedDate) && normalizeDateKey(selectedDate) !== todayDateKey;
   const planAddUrl = `${ROUTES.MACHINES}?planDate=${encodeURIComponent(targetDeleteDate)}`;
 
   if (isLoading) return <Skeleton count={2} height={120} />;
@@ -834,10 +838,15 @@ export function HistoryListPanel() {
           }
           action={
             <div className="records-list__empty-actions">
-              <Link to={planAddUrl} className="btn btn--primary">
-                {t('machines:history.planAddForDate')}
-              </Link>
-              <Link to={ROUTES.MACHINES} className="btn btn--secondary">
+              {showPlanAddForDate ? (
+                <Link to={planAddUrl} className="btn btn--primary">
+                  {t('machines:history.planAddForDate')}
+                </Link>
+              ) : null}
+              <Link
+                to={ROUTES.MACHINES}
+                className={showPlanAddForDate ? 'btn btn--secondary' : 'btn btn--primary'}
+              >
                 {t('common:emptyState.browseMachines')}
               </Link>
             </div>
@@ -924,14 +933,16 @@ export function HistoryListPanel() {
                 <Icon name="moreHorizontal" size={20} />
               </summary>
               <div className="records-list__day-menu-panel" role="menu">
-                <Link
-                  to={planAddUrl}
-                  className="records-list__day-menu-item"
-                  role="menuitem"
-                  onClick={() => setDayMenuOpen(false)}
-                >
-                  {t('machines:history.planAddForDate')}
-                </Link>
+                {showPlanAddForDate ? (
+                  <Link
+                    to={planAddUrl}
+                    className="records-list__day-menu-item"
+                    role="menuitem"
+                    onClick={() => setDayMenuOpen(false)}
+                  >
+                    {t('machines:history.planAddForDate')}
+                  </Link>
+                ) : null}
                 {canUseWorkoutPlans && hasCardsOnTargetDate ? (
                   <button
                     type="button"
@@ -1003,7 +1014,7 @@ export function HistoryListPanel() {
           title={emptyFilterTitle}
           action={
             <div className="records-list__empty-actions">
-              {selectedDate ? (
+              {showPlanAddForDate ? (
                 <Link to={planAddUrl} className="btn btn--primary">
                   {t('machines:history.planAddForDate')}
                 </Link>
