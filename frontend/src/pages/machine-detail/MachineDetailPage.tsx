@@ -22,7 +22,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
-import { normalizeDateKey } from '@/utils/historyDate';
+import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
@@ -62,6 +62,9 @@ export function MachineDetailPage() {
   });
 
   const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
+  const todayDateKey = getTodayDateKey();
+  /** Future plan flow: only add-to-plan — no voice/log/recommend chrome. */
+  const isFuturePlan = Boolean(planDate && planDate > todayDateKey);
 
   const createPlanMutation = useMutation({
     mutationFn: async () => {
@@ -120,8 +123,18 @@ export function MachineDetailPage() {
     <div className="machine-detail-page">
       {/* Cover image at top for every brand (same layout as free-weight). */}
       <MachineHero machine={machine} selectedMuscle={muscleParam} />
-      {!isFreeWeight && machineCode && isAuthenticated ? (
+      {!isFuturePlan && !isFreeWeight && machineCode && isAuthenticated ? (
         <LastRecommendationSnippet machineCode={machineCode} />
+      ) : null}
+      {isFuturePlan && isFreeWeight && machineCode ? (
+        <RecommendCTA
+          machineCode={machineCode}
+          initialMuscle={muscleParam}
+          syncMuscleToUrl
+          planDate={planDate}
+          showRecommendButton={false}
+          showTradeActions={false}
+        />
       ) : null}
       {canCreatePlan ? (
         <div className="machine-detail-plan-actions">
@@ -131,14 +144,22 @@ export function MachineDetailPage() {
           <button
             type="button"
             className="btn btn--primary btn--block"
-            disabled={createPlanMutation.isPending}
-            onClick={() => createPlanMutation.mutate()}
+            disabled={
+              createPlanMutation.isPending || (isFreeWeight && !muscleParam)
+            }
+            onClick={() => {
+              if (isFreeWeight && !muscleParam) {
+                showToast(t('machines:targetMuscleRequired'), 'error');
+                return;
+              }
+              createPlanMutation.mutate();
+            }}
           >
             {t('machines:history.planAddMachine')}
           </button>
         </div>
       ) : null}
-      {logDate && machineCode && isAuthenticated ? (
+      {!isFuturePlan && logDate && machineCode && isAuthenticated ? (
         <WorkoutLogPanel
           machineCode={machineCode}
           machineName={getLocalizedName(machine.name, i18n.language, machine.code)}
@@ -151,7 +172,7 @@ export function MachineDetailPage() {
           showSaveButton
         />
       ) : null}
-      {machineCode && canTrade ? (
+      {!isFuturePlan && machineCode && canTrade ? (
         <div className="machine-detail-trade-links">
           <Link
             to={`${ROUTES.TRADE_LIST_SELL}?machineCode=${encodeURIComponent(machineCode)}`}
@@ -167,7 +188,7 @@ export function MachineDetailPage() {
           </Link>
         </div>
       ) : null}
-      {machineCode ? (
+      {!isFuturePlan && machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
           initialMuscle={muscleParam}
