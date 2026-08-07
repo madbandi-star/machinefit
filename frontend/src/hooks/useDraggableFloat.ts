@@ -79,6 +79,9 @@ export interface UseDraggableFloatOptions {
    * Use for heavy surfaces like YouTube iframe mini players.
    */
   performanceMode?: 'default' | 'gpu';
+  /** Fired once when drag threshold is crossed / released (gpu mode included). */
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
 }
 
 export interface UseDraggableFloatResult {
@@ -99,6 +102,8 @@ export function useDraggableFloat({
   enabled = true,
   margin = DEFAULT_MARGIN,
   performanceMode = 'default',
+  onDragStart,
+  onDragEnd,
 }: UseDraggableFloatOptions): UseDraggableFloatResult {
   const ref = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState<FloatPosition | null>(() => loadPosition(id));
@@ -118,6 +123,10 @@ export function useDraggableFloat({
   } | null>(null);
   const posRef = useRef(pos);
   posRef.current = pos;
+  const onDragStartRef = useRef(onDragStart);
+  onDragStartRef.current = onDragStart;
+  const onDragEndRef = useRef(onDragEnd);
+  onDragEndRef.current = onDragEnd;
 
   const reclamp = useCallback(() => {
     const el = ref.current;
@@ -172,17 +181,20 @@ export function useDraggableFloat({
         drag.raf = null;
         const dx = drag.pendingLeft - drag.origLeft;
         const dy = drag.pendingTop - drag.origTop;
-        node.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+        // Beat any stylesheet !important leftovers.
+        node.style.setProperty('transform', `translate3d(${dx}px, ${dy}px, 0)`, 'important');
       };
 
       const beginGpuDrag = (node: HTMLElement, drag: NonNullable<typeof dragRef.current>) => {
-        node.classList.add('mf-float--dragging', 'mf-float--positioned', 'mf-float--gpu-drag');
-        node.style.left = `${drag.origLeft}px`;
-        node.style.top = `${drag.origTop}px`;
-        node.style.right = 'auto';
-        node.style.bottom = 'auto';
-        node.style.transform = 'translate3d(0,0,0)';
+        // Do NOT add mf-float--positioned here — its CSS used to force transform:none.
+        node.classList.add('mf-float--dragging', 'mf-float--gpu-drag');
+        node.style.setProperty('left', `${drag.origLeft}px`, 'important');
+        node.style.setProperty('top', `${drag.origTop}px`, 'important');
+        node.style.setProperty('right', 'auto', 'important');
+        node.style.setProperty('bottom', 'auto', 'important');
+        node.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
         node.style.willChange = 'transform';
+        onDragStartRef.current?.();
       };
 
       const onMove = (ev: PointerEvent) => {
@@ -201,6 +213,7 @@ export function useDraggableFloat({
             beginGpuDrag(node, drag);
           } else {
             setIsDragging(true);
+            onDragStartRef.current?.();
           }
         }
 
@@ -248,6 +261,7 @@ export function useDraggableFloat({
         const node = ref.current;
         if (!node) {
           if (performanceMode !== 'gpu') setIsDragging(false);
+          onDragEndRef.current?.();
           return;
         }
 
@@ -261,13 +275,13 @@ export function useDraggableFloat({
             margin
           );
           node.style.willChange = '';
-          node.style.transform = 'none';
-          node.style.left = `${next.left}px`;
-          node.style.top = `${next.top}px`;
-          node.style.right = 'auto';
-          node.style.bottom = 'auto';
+          node.style.removeProperty('transform');
+          node.style.setProperty('left', `${next.left}px`, 'important');
+          node.style.setProperty('top', `${next.top}px`, 'important');
+          node.style.setProperty('right', 'auto', 'important');
+          node.style.setProperty('bottom', 'auto', 'important');
           node.classList.remove('mf-float--dragging', 'mf-float--gpu-drag');
-          // keep mf-float--positioned
+          node.classList.add('mf-float--positioned');
         } else {
           const rectNow = node.getBoundingClientRect();
           next = clampPosition(rectNow.left, rectNow.top, rectNow.width, rectNow.height, margin);
@@ -276,6 +290,7 @@ export function useDraggableFloat({
 
         setPos(next);
         savePosition(id, next);
+        onDragEndRef.current?.();
 
         const suppressClick = (clickEvent: Event) => {
           clickEvent.preventDefault();
@@ -296,7 +311,7 @@ export function useDraggableFloat({
       window.addEventListener('pointercancel', onUp);
     },
     [enabled, id, margin, performanceMode]
-  );
+  ); // onDragStart/End via refs — stable callback identity
 
   const style: CSSProperties | undefined =
     enabled && pos

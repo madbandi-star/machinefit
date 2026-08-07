@@ -17,6 +17,10 @@
   /* left/top come from inline style; clear default anchors */
   right: auto !important;
   bottom: auto !important;
+}
+
+/* Only clear transform when NOT mid gpu-drag (inline translate3d must win). */
+.mf-float--draggable.mf-float--positioned:not(.mf-float--gpu-drag) {
   transform: none !important;
 }
 
@@ -24,18 +28,36 @@
   pointer-events: none;
 }
 
-/* Heavy YouTube surface: hide iframe paint while dragging (audio may continue). */
+/* Heavy YouTube surface: stop compositing the iframe while dragging. */
 .mf-video-overlay--compact.mf-float--gpu-drag {
-  contain: layout style;
+  contain: strict;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.mf-video-overlay--compact.mf-float--gpu-drag .mf-video-overlay__panel {
+  overflow: hidden;
 }
 
 .mf-video-overlay--compact.mf-float--gpu-drag .mf-video-overlay__frame {
-  background: #0b0f14;
+  background: linear-gradient(160deg, #1a2332 0%, #0b0f14 100%);
+  min-height: 9.5rem;
 }
 
-.mf-video-overlay--compact.mf-float--gpu-drag iframe {
-  pointer-events: none;
-  visibility: hidden;
+.mf-video-overlay--compact.mf-float--gpu-drag iframe,
+.mf-video-overlay--compact.mf-float--gpu-drag .mf-video-overlay__glow {
+  display: none !important;
+}
+
+.mf-video-overlay__frame-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 9.5rem;
+  color: var(--color-text-muted, #9aa4b2);
+  font-size: 0.8rem;
+  font-weight: 650;
 }
 
 .mf-music-shell--compact.mf-float--draggable,
