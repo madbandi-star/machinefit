@@ -76,6 +76,8 @@ interface VoiceCoachPanelProps {
   hideLiveDisplay?: boolean;
   /** When true, picker scroll is disabled (display-only). */
   pickersReadOnly?: boolean;
+  /** Notify parent when 「세부 피커 고정」 toggles (blocks external value sync). */
+  onPickersPinnedChange?: (pinned: boolean) => void;
 }
 
 export function VoiceCoachPanel({
@@ -118,6 +120,7 @@ export function VoiceCoachPanel({
   showSessionConfigSelectors = true,
   hideLiveDisplay = false,
   pickersReadOnly = false,
+  onPickersPinnedChange,
 }: VoiceCoachPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const duration = clampVoiceHoldDurationSec(holdDurationSec);
@@ -130,6 +133,12 @@ export function VoiceCoachPanel({
   const [durationCustom, setDurationCustom] = useState(!isVoiceHoldDurationPreset(duration));
   const [customDraft, setCustomDraft] = useState(String(duration));
   const [pickersPinned, setPickersPinned] = useState(false);
+  const pickersLocked = pickersPinned || pickersReadOnly;
+
+  const setPickersPinnedAndNotify = (next: boolean) => {
+    setPickersPinned(next);
+    onPickersPinnedChange?.(next);
+  };
 
   useEffect(() => {
     if (!durationCustom) {
@@ -310,7 +319,7 @@ export function VoiceCoachPanel({
               <input
                 type="checkbox"
                 checked={pickersPinned}
-                onChange={(e) => setPickersPinned(e.target.checked)}
+                onChange={(e) => setPickersPinnedAndNotify(e.target.checked)}
               />
               <span>{t('machines:voiceCoach.pinPickers')}</span>
             </label>
@@ -318,7 +327,7 @@ export function VoiceCoachPanel({
             <div
               className={`voice-coach-panel__pickers${
                 pickersPinned ? ' voice-coach-panel__pickers--pinned' : ''
-              }${pickersReadOnly ? ' voice-coach-panel__pickers--readonly' : ''}`}
+              }${pickersLocked ? ' voice-coach-panel__pickers--readonly' : ''}`}
             >
               <VoiceCoachPickerGrid
                 flowMode={flowMode}
@@ -332,7 +341,7 @@ export function VoiceCoachPanel({
                 holdDurationSec={holdDurationSec}
                 onHoldDurationSecChange={onHoldDurationSecChange}
                 disabled={isRunning}
-                readOnly={pickersReadOnly}
+                readOnly={pickersLocked}
                 recordsLayout={inlineHoldInPickers}
                 labels="machines"
                 compact={compact}
@@ -350,8 +359,9 @@ export function VoiceCoachPanel({
                 <select
                   id="voice-hold-duration"
                   value={durationCustom ? 'custom' : String(duration)}
-                  disabled={isRunning}
+                  disabled={isRunning || pickersLocked}
                   onChange={(e) => {
+                    if (pickersLocked) return;
                     const v = e.target.value;
                     if (v === 'custom') {
                       setDurationCustom(true);
@@ -376,10 +386,14 @@ export function VoiceCoachPanel({
                     min={VOICE_HOLD_DURATION.minSec}
                     max={VOICE_HOLD_DURATION.maxSec}
                     value={customDraft}
-                    disabled={isRunning}
+                    disabled={isRunning || pickersLocked}
                     aria-label={t('machines:voiceCoach.holdDurationCustom')}
-                    onChange={(e) => setCustomDraft(e.target.value)}
+                    onChange={(e) => {
+                      if (pickersLocked) return;
+                      setCustomDraft(e.target.value);
+                    }}
                     onBlur={() => {
+                      if (pickersLocked) return;
                       const next = clampVoiceHoldDurationSec(Number(customDraft));
                       setCustomDraft(String(next));
                       onHoldDurationSecChange(next);

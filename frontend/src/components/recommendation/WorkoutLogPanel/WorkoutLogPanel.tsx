@@ -310,44 +310,60 @@ export function WorkoutLogPanel({
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
   const settingsHydrated = usePersistHydration(useSettingsStore.persist);
   const [voicePickers, setVoicePickers] = useState<VoicePickerSnapshot | null>(null);
+  const [voicePickersPinned, setVoicePickersPinned] = useState(false);
 
   useEffect(() => {
     if (!settingsHydrated) return;
+    setVoicePickersPinned(false);
     setVoicePickers(readVoicePickerSnapshot(volumeReps));
   }, [voiceTargetSeedContext, settingsHydrated]);
 
   useEffect(() => {
+    if (voicePickersPinned) return;
     if (volumeReps == null || volumeReps <= 0) return;
     const next = clampVoiceCoachTargetReps(volumeReps);
     setVoicePickers((prev) => {
       if (!prev || prev.targetReps === next) return prev;
       return { ...prev, targetReps: next };
     });
-  }, [volumeReps]);
+  }, [volumeReps, voicePickersPinned]);
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
+      if (voicePickersPinned) return;
       const next = clampVoiceCoachTargetReps(reps);
       setVoicePickers((prev) => (prev ? { ...prev, targetReps: next } : prev));
       onVolumeRepsChange?.(next);
     },
-    [onVolumeRepsChange]
+    [onVolumeRepsChange, voicePickersPinned]
   );
 
-  const handleVoiceRepGapMsChange = useCallback((ms: number) => {
-    const next = clampVoiceCoachRepGapMs(ms);
-    setVoicePickers((prev) => (prev ? { ...prev, repGapMs: next } : prev));
-  }, []);
+  const handleVoiceRepGapMsChange = useCallback(
+    (ms: number) => {
+      if (voicePickersPinned) return;
+      const next = clampVoiceCoachRepGapMs(ms);
+      setVoicePickers((prev) => (prev ? { ...prev, repGapMs: next } : prev));
+    },
+    [voicePickersPinned]
+  );
 
-  const handleVoiceOneMoreCountChange = useCallback((count: number) => {
-    const next = clampVoiceCoachOneMoreCount(count);
-    setVoicePickers((prev) => (prev ? { ...prev, oneMoreCount: next } : prev));
-  }, []);
+  const handleVoiceOneMoreCountChange = useCallback(
+    (count: number) => {
+      if (voicePickersPinned) return;
+      const next = clampVoiceCoachOneMoreCount(count);
+      setVoicePickers((prev) => (prev ? { ...prev, oneMoreCount: next } : prev));
+    },
+    [voicePickersPinned]
+  );
 
-  const handleVoiceHoldDurationChange = useCallback((sec: number) => {
-    const next = clampVoiceHoldDurationSec(sec);
-    setVoicePickers((prev) => (prev ? { ...prev, holdDurationSec: next } : prev));
-  }, []);
+  const handleVoiceHoldDurationChange = useCallback(
+    (sec: number) => {
+      if (voicePickersPinned) return;
+      const next = clampVoiceHoldDurationSec(sec);
+      setVoicePickers((prev) => (prev ? { ...prev, holdDurationSec: next } : prev));
+    },
+    [voicePickersPinned]
+  );
 
   const voiceSessionTargetReps = voicePickers?.targetReps ?? voiceCoachTargetReps;
   const voiceSessionRepGapMs = voicePickers?.repGapMs ?? voiceCoachRepGapMs;
@@ -1505,6 +1521,7 @@ export function WorkoutLogPanel({
       showSessionConfigSelectors={!isHistory}
       // GlobalCountSessionHost owns live chrome while a session is running.
       hideLiveDisplay={voiceCoach.isRunning}
+      onPickersPinnedChange={setVoicePickersPinned}
     />
   ) : null;
 

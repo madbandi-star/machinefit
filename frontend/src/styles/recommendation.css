@@ -1862,6 +1862,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
+.voice-coach-panel__pickers--pinned.voice-coach-panel__pickers--readonly,
 .voice-coach-panel__pickers--readonly {
   pointer-events: none;
   user-select: none;
