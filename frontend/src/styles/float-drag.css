@@ -24,6 +24,20 @@
   pointer-events: none;
 }
 
+/* Heavy YouTube surface: hide iframe paint while dragging (audio may continue). */
+.mf-video-overlay--compact.mf-float--gpu-drag {
+  contain: layout style;
+}
+
+.mf-video-overlay--compact.mf-float--gpu-drag .mf-video-overlay__frame {
+  background: #0b0f14;
+}
+
+.mf-video-overlay--compact.mf-float--gpu-drag iframe {
+  pointer-events: none;
+  visibility: hidden;
+}
+
 .mf-music-shell--compact.mf-float--draggable,
 .mf-video-overlay--compact.mf-float--draggable {
   pointer-events: auto;

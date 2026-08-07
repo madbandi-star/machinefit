@@ -74,6 +74,11 @@ export interface UseDraggableFloatOptions {
   /** When false, drag is disabled (e.g. inline rest banner). */
   enabled?: boolean;
   margin?: number;
+  /**
+   * `gpu` — update via transform/DOM during drag (no React re-renders).
+   * Use for heavy surfaces like YouTube iframe mini players.
+   */
+  performanceMode?: 'default' | 'gpu';
 }
 
 export interface UseDraggableFloatResult {
@@ -93,6 +98,7 @@ export function useDraggableFloat({
   id,
   enabled = true,
   margin = DEFAULT_MARGIN,
+  performanceMode = 'default',
 }: UseDraggableFloatOptions): UseDraggableFloatResult {
   const ref = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState<FloatPosition | null>(() => loadPosition(id));
@@ -103,19 +109,27 @@ export function useDraggableFloat({
     startY: number;
     origLeft: number;
     origTop: number;
+    width: number;
+    height: number;
     moved: boolean;
+    raf: number | null;
+    pendingLeft: number;
+    pendingTop: number;
   } | null>(null);
+  const posRef = useRef(pos);
+  posRef.current = pos;
 
   const reclamp = useCallback(() => {
     const el = ref.current;
-    if (!el || !pos) return;
+    const current = posRef.current;
+    if (!el || !current) return;
     const rect = el.getBoundingClientRect();
-    const next = clampPosition(pos.left, pos.top, rect.width, rect.height, margin);
-    if (next.left !== pos.left || next.top !== pos.top) {
+    const next = clampPosition(current.left, current.top, rect.width, rect.height, margin);
+    if (next.left !== current.left || next.top !== current.top) {
       setPos(next);
       savePosition(id, next);
     }
-  }, [id, margin, pos]);
+  }, [id, margin]);
 
   useEffect(() => {
     if (!enabled || !pos) return;
@@ -143,7 +157,32 @@ export function useDraggableFloat({
         startY: event.clientY,
         origLeft: rect.left,
         origTop: rect.top,
+        width: rect.width,
+        height: rect.height,
         moved: false,
+        raf: null,
+        pendingLeft: rect.left,
+        pendingTop: rect.top,
+      };
+
+      const applyGpuFrame = () => {
+        const drag = dragRef.current;
+        const node = ref.current;
+        if (!drag || !node) return;
+        drag.raf = null;
+        const dx = drag.pendingLeft - drag.origLeft;
+        const dy = drag.pendingTop - drag.origTop;
+        node.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      };
+
+      const beginGpuDrag = (node: HTMLElement, drag: NonNullable<typeof dragRef.current>) => {
+        node.classList.add('mf-float--dragging', 'mf-float--positioned', 'mf-float--gpu-drag');
+        node.style.left = `${drag.origLeft}px`;
+        node.style.top = `${drag.origTop}px`;
+        node.style.right = 'auto';
+        node.style.bottom = 'auto';
+        node.style.transform = 'translate3d(0,0,0)';
+        node.style.willChange = 'transform';
       };
 
       const onMove = (ev: PointerEvent) => {
@@ -152,19 +191,36 @@ export function useDraggableFloat({
         const dx = ev.clientX - drag.startX;
         const dy = ev.clientY - drag.startY;
         if (!drag.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD_PX) return;
-        drag.moved = true;
-        setIsDragging(true);
+
         const node = ref.current;
         if (!node) return;
-        const { width, height } = node.getBoundingClientRect();
+
+        if (!drag.moved) {
+          drag.moved = true;
+          if (performanceMode === 'gpu') {
+            beginGpuDrag(node, drag);
+          } else {
+            setIsDragging(true);
+          }
+        }
+
         const next = clampPosition(
           drag.origLeft + dx,
           drag.origTop + dy,
-          width,
-          height,
+          drag.width,
+          drag.height,
           margin
         );
-        setPos(next);
+
+        if (performanceMode === 'gpu') {
+          drag.pendingLeft = next.left;
+          drag.pendingTop = next.top;
+          if (drag.raf == null) {
+            drag.raf = window.requestAnimationFrame(applyGpuFrame);
+          }
+        } else {
+          setPos(next);
+        }
         ev.preventDefault();
       };
 
@@ -172,7 +228,9 @@ export function useDraggableFloat({
         const drag = dragRef.current;
         if (!drag || ev.pointerId !== drag.pointerId) return;
         dragRef.current = null;
-        setIsDragging(false);
+        if (drag.raf != null) {
+          window.cancelAnimationFrame(drag.raf);
+        }
         try {
           el.releasePointerCapture(ev.pointerId);
         } catch {
@@ -181,23 +239,51 @@ export function useDraggableFloat({
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
         window.removeEventListener('pointercancel', onUp);
-        if (drag.moved) {
-          const node = ref.current;
-          if (node) {
-            const rectNow = node.getBoundingClientRect();
-            const next = clampPosition(rectNow.left, rectNow.top, rectNow.width, rectNow.height, margin);
-            setPos(next);
-            savePosition(id, next);
-            // Swallow the synthetic click that often follows a touch-drag.
-            const suppressClick = (clickEvent: Event) => {
-              clickEvent.preventDefault();
-              clickEvent.stopPropagation();
-              node.removeEventListener('click', suppressClick, true);
-            };
-            node.addEventListener('click', suppressClick, true);
-            window.setTimeout(() => node.removeEventListener('click', suppressClick, true), 0);
-          }
+
+        if (!drag.moved) {
+          if (performanceMode !== 'gpu') setIsDragging(false);
+          return;
         }
+
+        const node = ref.current;
+        if (!node) {
+          if (performanceMode !== 'gpu') setIsDragging(false);
+          return;
+        }
+
+        let next: FloatPosition;
+        if (performanceMode === 'gpu') {
+          next = clampPosition(
+            drag.pendingLeft,
+            drag.pendingTop,
+            drag.width,
+            drag.height,
+            margin
+          );
+          node.style.willChange = '';
+          node.style.transform = 'none';
+          node.style.left = `${next.left}px`;
+          node.style.top = `${next.top}px`;
+          node.style.right = 'auto';
+          node.style.bottom = 'auto';
+          node.classList.remove('mf-float--dragging', 'mf-float--gpu-drag');
+          // keep mf-float--positioned
+        } else {
+          const rectNow = node.getBoundingClientRect();
+          next = clampPosition(rectNow.left, rectNow.top, rectNow.width, rectNow.height, margin);
+          setIsDragging(false);
+        }
+
+        setPos(next);
+        savePosition(id, next);
+
+        const suppressClick = (clickEvent: Event) => {
+          clickEvent.preventDefault();
+          clickEvent.stopPropagation();
+          node.removeEventListener('click', suppressClick, true);
+        };
+        node.addEventListener('click', suppressClick, true);
+        window.setTimeout(() => node.removeEventListener('click', suppressClick, true), 0);
       };
 
       try {
@@ -209,7 +295,7 @@ export function useDraggableFloat({
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [enabled, id, margin]
+    [enabled, id, margin, performanceMode]
   );
 
   const style: CSSProperties | undefined =
