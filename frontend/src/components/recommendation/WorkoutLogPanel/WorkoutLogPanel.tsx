@@ -852,14 +852,12 @@ export function WorkoutLogPanel({
         trackFeature(variables?.silent ? 'history_save' : 'workout_save')
       );
       let personalTipSaved = true;
-      // Never touch machine preferences on silent/plan autosaves (set-complete / 계획 저장).
-      // Upserting tip alone still rewrites custom_settings from a concurrent DB read and
-      // can restore the previous 조정중량 right after 「조정값 저장」.
+      // Skip tip on silent set-complete autosaves. 「계획 저장」 and explicit save
+      // persist personalTipMemo only (API omits customSettings → keeps 조정중량).
       const shouldSavePersonalTip =
         showPersonalTip &&
         isAuthenticated &&
         !variables?.silent &&
-        !variables?.asPlan &&
         isPersonalTipDirty;
       if (shouldSavePersonalTip) {
         try {
@@ -1242,6 +1240,7 @@ export function WorkoutLogPanel({
   };
 
   const isPlanDirty =
+    isPersonalTipDirty ||
     !existingLog ||
     existingLog.setCount !== setCount ||
     !weightsEqual(existingLog.setWeightsKg ?? [], weights);
@@ -1537,19 +1536,6 @@ export function WorkoutLogPanel({
       </div>
     ) : null;
 
-  const historyMemoSaveButton = isHistory ? (
-    <div className="history-workout-log__memo-save-row">
-      <button
-        type="button"
-        className="btn btn--secondary btn--block history-workout-log__memo-save"
-        onClick={handleSave}
-        disabled={isActionPending || isLoading}
-      >
-        {saveMutation.isPending ? t('machines:history.memoSaving') : t('machines:history.memoSave')}
-      </button>
-    </div>
-  ) : null;
-
   const saveButton = isLogSaved ? (
     <div className="recommendation-workout-log__actions">
       <button
@@ -1680,10 +1666,9 @@ export function WorkoutLogPanel({
           {weightList}
         </div>
         {diaryField}
-        <div className="history-workout-log__memo-actions">
-          {personalTipField}
-          {historyMemoSaveButton}
-        </div>
+        {personalTipField ? (
+          <div className="history-workout-log__memo-actions">{personalTipField}</div>
+        ) : null}
         {showSaveButton ? saveButton : null}
         </section>
       </>
