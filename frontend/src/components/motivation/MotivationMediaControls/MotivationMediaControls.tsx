@@ -348,16 +348,26 @@ export function MotivationMediaControls({
     };
   }, []);
 
+  const musicUiRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (!musicPanelOpen) return;
 
+    // Like the video player: outside taps / nav clicks collapse to compact
+    // instead of dismissing the UI entirely.
     const onPointerDown = (event: MouseEvent) => {
-      if (!panelRef.current?.contains(event.target as Node)) {
-        setMusicPanelOpen(false);
+      const target = event.target as Node;
+      if (panelRef.current?.contains(target) || musicUiRef.current?.contains(target)) {
+        return;
       }
+      setMusicCompact(true);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMusicPanelOpen(false);
+      if (event.key !== 'Escape') return;
+      setMusicCompact((compact) => {
+        if (!compact) return true;
+        return compact;
+      });
     };
 
     document.addEventListener('mousedown', onPointerDown);
@@ -420,13 +430,18 @@ export function MotivationMediaControls({
     }
     if (pendingMusicAction === 'panel') {
       setMusicPanelOpen(true);
+      setMusicCompact(false);
     } else if (pendingMusicAction === 'playAll') {
       setPlayAll(true);
       setMusicIndex(0);
       setMusicPlaying(true);
+      setMusicPanelOpen(true);
+      setMusicCompact(true);
     } else {
       setPlayAll(false);
       setMusicPlaying(true);
+      setMusicPanelOpen(true);
+      setMusicCompact(true);
     }
     setPendingMusicAction(null);
   }, [pendingMusicAction, mediaReady, musicEmpty, showToast, t]);
@@ -438,7 +453,7 @@ export function MotivationMediaControls({
       setPendingVideoOpen(false);
       return;
     }
-    setMusicPanelOpen(false);
+    setMusicCompact(true);
     setVideoIndex(0);
     setVideoOpen(true);
     setPendingVideoOpen(false);
@@ -489,7 +504,8 @@ export function MotivationMediaControls({
   const openMusicPanel = () => {
     requestMedia();
     if (musicPanelOpen) {
-      setMusicPanelOpen(false);
+      // Toggle compact/expanded; do not dismiss (matches video player persistence).
+      setMusicCompact((compact) => !compact);
       return;
     }
     if (!mediaReady) {
@@ -502,6 +518,15 @@ export function MotivationMediaControls({
     }
     setMusicPanelOpen(true);
     setMusicCompact(false);
+  };
+
+  const dismissMusicPanel = () => {
+    // Full → compact; compact X → hide chrome (audio may keep playing).
+    if (!musicCompact) {
+      setMusicCompact(true);
+      return;
+    }
+    setMusicPanelOpen(false);
   };
 
   const selectTrack = (index: number) => {
@@ -588,8 +613,8 @@ export function MotivationMediaControls({
       showToast(t('motivation.videoEmpty'), 'info');
       return;
     }
-    // Keep motivation music playing; volume ducks while the overlay is open.
-    setMusicPanelOpen(false);
+    // Keep motivation music UI as a compact PiP while the video overlay is open.
+    setMusicCompact(true);
     setVideoIndex(0);
     setVideoOpen(true);
     setVideoCompact(false);
@@ -652,47 +677,62 @@ export function MotivationMediaControls({
         )}
       </button>
 
-      {musicPanelOpen && musicCompact ? (
-        <div className="mf-music-mini" role="dialog" aria-label={t('motivation.musicPanelTitle')}>
-          <div className="mf-music-mini__art" aria-hidden="true">
-            <Music2 size={14} />
-          </div>
-          <div className="mf-music-mini__meta">
-            <p className="mf-music-mini__title" title={currentMusic?.title}>
-              {currentMusic?.title ?? t('motivation.musicEmpty')}
-            </p>
-            <p className="mf-music-mini__status">
-              {musicPlaying ? t('motivation.playing') : t('motivation.ready')}
-            </p>
-          </div>
-          <button
-            type="button"
-            className="mf-music-mini__btn"
-            onClick={togglePlayPause}
-            aria-label={musicPlaying ? t('motivation.pause') : t('motivation.play')}
-          >
-            {musicPlaying ? <Pause size={14} /> : <Play size={14} />}
-          </button>
-          <button
-            type="button"
-            className="mf-music-mini__btn"
-            onClick={() => setMusicCompact(false)}
-            aria-label={t('motivation.expandMode')}
-          >
-            <Maximize2 size={14} />
-          </button>
-          <button
-            type="button"
-            className="mf-music-mini__btn"
-            onClick={() => setMusicPanelOpen(false)}
-            aria-label={t('motivation.close')}
-          >
-            <X size={14} />
-          </button>
-        </div>
-      ) : null}
+      {musicPanelOpen && musicCompact
+        ? createPortal(
+            <div
+              ref={musicUiRef}
+              className="mf-music-shell mf-music-shell--compact"
+              role="dialog"
+              aria-label={t('motivation.musicPanelTitle')}
+            >
+              <div className="mf-music-mini">
+                <div className="mf-music-mini__art" aria-hidden="true">
+                  <Music2 size={14} />
+                </div>
+                <div className="mf-music-mini__meta">
+                  <p className="mf-music-mini__title" title={currentMusic?.title}>
+                    {currentMusic?.title ?? t('motivation.musicEmpty')}
+                  </p>
+                  <p className="mf-music-mini__status">
+                    {musicPlaying ? t('motivation.playing') : t('motivation.ready')}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="mf-music-mini__btn"
+                  onClick={togglePlayPause}
+                  aria-label={musicPlaying ? t('motivation.pause') : t('motivation.play')}
+                >
+                  {musicPlaying ? <Pause size={14} /> : <Play size={14} />}
+                </button>
+                <button
+                  type="button"
+                  className="mf-music-mini__btn"
+                  onClick={() => setMusicCompact(false)}
+                  aria-label={t('motivation.expandMode')}
+                >
+                  <Maximize2 size={14} />
+                </button>
+                <button
+                  type="button"
+                  className="mf-music-mini__btn"
+                  onClick={dismissMusicPanel}
+                  aria-label={t('motivation.close')}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
 
-      {musicPanelOpen && !musicCompact ? (
+      {musicPanelOpen && !musicCompact
+        ? createPortal(
+        <div
+          ref={musicUiRef}
+          className="mf-music-shell"
+        >
         <div
           className={`mf-music-popover${musicPlaying ? ' mf-music-popover--playing' : ''}`}
           role="dialog"
@@ -725,7 +765,7 @@ export function MotivationMediaControls({
                 type="button"
                 className="mf-music-popover__close"
                 aria-label={t('motivation.close')}
-                onClick={() => setMusicPanelOpen(false)}
+                onClick={dismissMusicPanel}
               >
                 <X size={16} />
               </button>
@@ -956,7 +996,10 @@ export function MotivationMediaControls({
             </ul>
           </div>
         </div>
-      ) : null}
+        </div>,
+        document.body
+      )
+      : null}
 
       {videoOpen && currentVideo ? (
         <VideoOverlay

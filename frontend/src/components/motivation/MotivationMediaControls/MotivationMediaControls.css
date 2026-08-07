@@ -75,13 +75,44 @@
   position: relative;
 }
 
+/* Portaled to body so header transform cannot trap / dismiss the player. */
+.mf-music-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 360;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(var(--header-height) + 0.65rem) var(--space-md) var(--space-md);
+  pointer-events: none;
+}
+
+.mf-music-shell--compact {
+  inset: auto;
+  top: auto;
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  right: auto;
+  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
+  width: auto;
+  height: auto;
+  padding: 0;
+  z-index: 360;
+}
+
+.mf-music-shell .mf-music-popover,
+.mf-music-shell .mf-music-mini {
+  pointer-events: auto;
+}
+
 .mf-music-popover {
   --mf-music-pad: 0.85rem;
-  position: absolute;
-  top: calc(100% + 0.55rem);
-  right: 0;
-  z-index: 120;
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: 1;
   width: min(21rem, calc(100vw - 1.25rem));
+  max-height: calc(100dvh - var(--header-height) - 1.5rem);
+  overflow: auto;
   padding: var(--mf-music-pad);
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--glass-border));
@@ -95,8 +126,8 @@
   box-shadow: var(--shadow-lg), var(--glow-primary-soft);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  overflow: hidden;
   animation: mf-music-popover-in 180ms ease-out;
+  overscroll-behavior: contain;
 }
 
 .mf-music-popover__glow {
@@ -1105,10 +1136,10 @@
 }
 
 .mf-music-mini {
-  position: absolute;
-  top: calc(100% + 0.45rem);
-  right: 0;
-  z-index: 80;
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 0.45rem;
