@@ -304,6 +304,7 @@ export function WorkoutLogPanel({
   const compact = variant === 'compact' || isHistory;
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
+  const isTodayLog = logDate === getTodayDateKey();
 
   // Voice-count pickers seed gap/one-more/hold from Settings; 목표 횟수 follows fit-driven volumeReps.
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
@@ -863,10 +864,12 @@ export function WorkoutLogPanel({
       );
       invalidateLogSideEffects();
       if (personalTipSaved && !variables?.silent) {
-        showToast(
-          isLogSaved ? t('machines:workoutLog.updated') : t('machines:workoutLog.saved'),
-          'success'
-        );
+        const savedToast = isLogSaved
+          ? t('machines:workoutLog.updated')
+          : isTodayLog
+            ? t('machines:workoutLog.saved')
+            : t('machines:workoutLog.savedOnDate', { date: logDate });
+        showToast(savedToast, 'success');
       }
     },
     onError: () => {
@@ -922,7 +925,12 @@ export function WorkoutLogPanel({
         )
       );
       invalidateLogSideEffects();
-      showToast(t('machines:workoutLog.canceled'), 'success');
+      showToast(
+        isTodayLog
+          ? t('machines:workoutLog.canceled')
+          : t('machines:workoutLog.canceledOnDate', { date: logDate }),
+        'success'
+      );
     },
     onError: (_error, _variables, context) => {
       if (context?.previousLogs !== undefined) {
