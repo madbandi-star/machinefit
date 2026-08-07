@@ -889,20 +889,35 @@
   font-size: var(--history-font-sm);
 }
 
+.history-page-premium .history-calendar {
+  --hc-panel: var(--history-card-bg);
+  --hc-border: var(--history-card-border);
+  --hc-muted: var(--history-text-dim);
+  --hc-radius: var(--history-card-radius);
+  box-shadow: var(--history-shadow-card);
+}
+
 .history-page-premium .history-calendar__month {
-  font-size: var(--history-font-md);
+  font-size: var(--history-font-lg);
 }
 
 .history-page-premium .history-calendar__weekday {
-  font-size: var(--history-font-xs);
+  font-size: var(--history-font-2xs);
 }
 
 .history-page-premium .history-calendar__day-num {
-  font-size: var(--history-font-sm);
+  font-size: var(--history-font-md);
 }
 
+.history-page-premium .history-calendar__chip,
+.history-page-premium .history-calendar__legend-item,
 .history-page-premium .history-calendar__hint {
-  font-size: var(--history-font-xs);
+  font-size: var(--history-font-2xs);
+}
+
+.history-page-premium .records-list__calendar-toggle {
+  border-color: var(--history-card-border);
+  background: color-mix(in srgb, var(--history-card-bg) 70%, transparent);
 }
 
 .history-page-premium .history-record-card .setting-value-card--history-mini .setting-value-card__label,
