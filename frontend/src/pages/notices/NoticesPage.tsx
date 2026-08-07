@@ -58,139 +58,162 @@ export function NoticesPage() {
 
   return (
     <PageShell title={t('community:notices.title')} subtitle={t('community:notices.subtitle')}>
-      <div className="notice-list__toolbar">
-        <div className="notice-list__filters" role="tablist" aria-label={t('community:notices.filters')}>
-          <button
-            type="button"
-            className={`notice-list__chip${!category ? ' is-active' : ''}`}
-            onClick={() =>
-              update((next) => {
-                next.delete('category');
-                next.delete('page');
-              })
-            }
+      <div className="notice-page">
+        <div className="notice-list__toolbar">
+          <div
+            className="notice-list__filters"
+            role="tablist"
+            aria-label={t('community:notices.filters')}
           >
-            {t('community:notices.categoryAll')}
-          </button>
-          {NOTICE_CATEGORIES.map((code) => (
             <button
-              key={code}
               type="button"
-              className={`notice-list__chip${category === code ? ' is-active' : ''}`}
+              className={`notice-list__chip${!category ? ' is-active' : ''}`}
               onClick={() =>
                 update((next) => {
-                  next.set('category', code);
+                  next.delete('category');
                   next.delete('page');
                 })
               }
             >
-              {t(`community:notices.categories.${code}`)}
+              {t('community:notices.categoryAll')}
             </button>
+            {NOTICE_CATEGORIES.map((code) => (
+              <button
+                key={code}
+                type="button"
+                className={`notice-list__chip${category === code ? ' is-active' : ''}`}
+                onClick={() =>
+                  update((next) => {
+                    next.set('category', code);
+                    next.delete('page');
+                  })
+                }
+              >
+                {t(`community:notices.categories.${code}`)}
+              </button>
+            ))}
+          </div>
+          <form
+            className="notice-list__search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              update((next) => {
+                const query = String(fd.get('q') ?? '').trim();
+                const inField = String(fd.get('searchIn') ?? 'both');
+                if (query) next.set('q', query);
+                else next.delete('q');
+                next.set('searchIn', inField);
+                next.delete('page');
+              });
+            }}
+          >
+            <select
+              name="searchIn"
+              defaultValue={searchIn}
+              aria-label={t('community:notices.searchIn')}
+            >
+              <option value="both">{t('community:notices.searchBoth')}</option>
+              <option value="title">{t('community:notices.searchTitle')}</option>
+              <option value="content">{t('community:notices.searchContent')}</option>
+            </select>
+            <input
+              name="q"
+              defaultValue={q}
+              placeholder={t('community:notices.searchPlaceholder')}
+              aria-label={t('community:notices.searchPlaceholder')}
+            />
+            <button type="submit" className="btn btn--secondary">
+              {t('common:actions.search', { defaultValue: 'Search' })}
+            </button>
+          </form>
+        </div>
+
+        {isLoading ? <Skeleton count={4} height={88} /> : null}
+        {isError ? <QueryErrorMessage /> : null}
+
+        {!isLoading && !isError && (data?.items.length ?? 0) === 0 ? (
+          <EmptyState icon="bell" title={t('community:notices.empty')} />
+        ) : null}
+
+        <div className="notice-list">
+          {data?.items.map((item, index) => (
+            <Link
+              key={item.id}
+              to={ROUTES.NOTICE_DETAIL.replace(':noticeId', item.id)}
+              className={[
+                'notice-row',
+                item.isImportant && 'notice-row--important',
+                item.isPinned && !item.isImportant && 'notice-row--pinned',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+            >
+              <div className="notice-row__top">
+                <div className="notice-row__flags">
+                  {item.isImportant ? (
+                    <span className="notice-badge notice-badge--important">
+                      {t('community:notices.important')}
+                    </span>
+                  ) : null}
+                  {item.isPinned ? (
+                    <span className="notice-badge notice-badge--pinned">
+                      {t('community:notices.pinned')}
+                    </span>
+                  ) : null}
+                  {item.isNew ? (
+                    <span className="notice-badge notice-badge--new">
+                      {t('community:notices.new')}
+                    </span>
+                  ) : null}
+                </div>
+                <span className="notice-row__category">
+                  {t(`community:notices.categories.${item.category}`)}
+                </span>
+              </div>
+              <h2 className="notice-row__title">{item.title}</h2>
+              <p className="notice-row__meta">
+                <span className="notice-row__meta-item">
+                  {formatNoticeDate(item.publishAt ?? item.createdAt, i18n.language)}
+                </span>
+                <span className="notice-row__meta-item">
+                  {t('community:notices.views', { count: item.viewCount })}
+                </span>
+              </p>
+            </Link>
           ))}
         </div>
-        <form
-          className="notice-list__search"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const fd = new FormData(e.currentTarget);
-            update((next) => {
-              const query = String(fd.get('q') ?? '').trim();
-              const inField = String(fd.get('searchIn') ?? 'both');
-              if (query) next.set('q', query);
-              else next.delete('q');
-              next.set('searchIn', inField);
-              next.delete('page');
-            });
-          }}
-        >
-          <select name="searchIn" defaultValue={searchIn} aria-label={t('community:notices.searchIn')}>
-            <option value="both">{t('community:notices.searchBoth')}</option>
-            <option value="title">{t('community:notices.searchTitle')}</option>
-            <option value="content">{t('community:notices.searchContent')}</option>
-          </select>
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder={t('community:notices.searchPlaceholder')}
-            aria-label={t('community:notices.searchPlaceholder')}
-          />
-          <button type="submit" className="btn btn--secondary">
-            {t('common:actions.search', { defaultValue: 'Search' })}
-          </button>
-        </form>
+
+        {data && data.total > data.pageSize ? (
+          <div className="notice-list__pager">
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={page <= 1}
+              onClick={() =>
+                update((next) => {
+                  next.set('page', String(page - 1));
+                })
+              }
+            >
+              {t('common:actions.prev', { defaultValue: 'Prev' })}
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={page * data.pageSize >= data.total}
+              onClick={() =>
+                update((next) => {
+                  next.set('page', String(page + 1));
+                })
+              }
+            >
+              {t('common:actions.next', { defaultValue: 'Next' })}
+            </button>
+          </div>
+        ) : null}
       </div>
-
-      {isLoading ? <Skeleton count={4} height={72} /> : null}
-      {isError ? <QueryErrorMessage /> : null}
-
-      {!isLoading && !isError && (data?.items.length ?? 0) === 0 ? (
-        <EmptyState icon="bell" title={t('community:notices.empty')} />
-      ) : null}
-
-      <div className="notice-list">
-        {data?.items.map((item) => (
-          <Link
-            key={item.id}
-            to={ROUTES.NOTICE_DETAIL.replace(':noticeId', item.id)}
-            className="notice-row card--interactive"
-          >
-            <div className="notice-row__title-row">
-              {item.isImportant ? (
-                <span className="notice-badge notice-badge--important">
-                  {t('community:notices.important')}
-                </span>
-              ) : null}
-              {item.isPinned ? (
-                <span className="notice-badge notice-badge--pinned">
-                  {t('community:notices.pinned')}
-                </span>
-              ) : null}
-              {item.isNew ? (
-                <span className="notice-badge notice-badge--new">NEW</span>
-              ) : null}
-              <span className="notice-badge notice-badge--category">
-                {t(`community:notices.categories.${item.category}`)}
-              </span>
-              <h2 className="notice-row__title">{item.title}</h2>
-            </div>
-            <p className="notice-row__meta">
-              <span>{formatNoticeDate(item.publishAt ?? item.createdAt, i18n.language)}</span>
-              <span>
-                {t('community:notices.views', { count: item.viewCount })}
-              </span>
-            </p>
-          </Link>
-        ))}
-      </div>
-
-      {data && data.total > data.pageSize ? (
-        <div className="notice-detail__nav">
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled={page <= 1}
-            onClick={() =>
-              update((next) => {
-                next.set('page', String(page - 1));
-              })
-            }
-          >
-            {t('common:actions.prev', { defaultValue: 'Prev' })}
-          </button>
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled={page * data.pageSize >= data.total}
-            onClick={() =>
-              update((next) => {
-                next.set('page', String(page + 1));
-              })
-            }
-          >
-            {t('common:actions.next', { defaultValue: 'Next' })}
-          </button>
-        </div>
-      ) : null}
     </PageShell>
   );
 }
