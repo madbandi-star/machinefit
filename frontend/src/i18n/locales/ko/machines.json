@@ -260,9 +260,7 @@
     "orderChangeFailed": "운동 순서를 저장하지 못했어요. 다시 시도해 주세요.",
 
     "planStatusPlanned": "예정",
-    "planStatusInProgress": "진행중",
     "planStatusCompleted": "완료",
-    "planStatusSkipped": "건너뜀",
     "planStartWorkout": "운동 시작",
     "planStarted": "운동을 시작했어요.",
     "planAddForDate": "이 날짜에 운동 계획 추가",

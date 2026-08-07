@@ -103,17 +103,25 @@ export function collectPlanDateKeys(workoutCards: WorkoutCard[]): Set<string> {
   return new Set(workoutCards.map((card) => normalizeDateKey(card.scheduledDate)));
 }
 
-export function planStatusBadgeClass(status: WorkoutCardStatus): string {
-  switch (status) {
-    case 'PLANNED':
-      return 'history-record-card__plan-badge--planned';
-    case 'IN_PROGRESS':
-      return 'history-record-card__plan-badge--in-progress';
-    case 'COMPLETED':
-      return 'history-record-card__plan-badge--completed';
-    case 'SKIPPED':
-      return 'history-record-card__plan-badge--skipped';
-    default:
-      return '';
-  }
+/** Badge surface only exposes 예정 / 완료. */
+export type PlanStatusBadge = 'PLANNED' | 'COMPLETED';
+
+/**
+ * Collapse workout-card statuses to the two badge values.
+ * - PLANNED / IN_PROGRESS → 예정
+ * - COMPLETED → 완료
+ * - SKIPPED → no badge
+ */
+export function resolvePlanStatusBadge(
+  status: WorkoutCardStatus | undefined | null
+): PlanStatusBadge | null {
+  if (status === 'COMPLETED') return 'COMPLETED';
+  if (status === 'PLANNED' || status === 'IN_PROGRESS') return 'PLANNED';
+  return null;
+}
+
+export function planStatusBadgeClass(badge: PlanStatusBadge): string {
+  return badge === 'COMPLETED'
+    ? 'history-record-card__plan-badge--completed'
+    : 'history-record-card__plan-badge--planned';
 }
