@@ -326,11 +326,11 @@ export function WorkoutLogPanel({
   const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
   const settingsHydrated = usePersistHydration(useSettingsStore.persist);
   const [voicePickers, setVoicePickers] = useState<VoicePickerSnapshot | null>(null);
-  const [voicePickersPinned, setVoicePickersPinned] = useState(false);
+  const [voicePickersPinned, setVoicePickersPinned] = useState(true);
 
   useEffect(() => {
     if (!settingsHydrated) return;
-    setVoicePickersPinned(false);
+    setVoicePickersPinned(true);
     setVoicePickers(readVoicePickerSnapshot(volumeReps));
   }, [voiceTargetSeedContext, settingsHydrated]);
 

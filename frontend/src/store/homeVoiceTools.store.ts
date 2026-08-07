@@ -44,7 +44,7 @@ function clampPickers(values: HomeVoicePickerValues): HomeVoicePickerValues {
 
 export const useHomeVoiceToolsStore = create<HomeVoiceToolsState>((set, get) => ({
   customized: false,
-  pickersPinned: false,
+  pickersPinned: true,
   pickers: null,
 
   setPickersPinned: (pinned) => set({ pickersPinned: pinned }),
@@ -61,7 +61,7 @@ export const useHomeVoiceToolsStore = create<HomeVoiceToolsState>((set, get) => 
   resetToDefaults: (defaults) =>
     set({
       customized: false,
-      pickersPinned: false,
+      pickersPinned: true,
       pickers: clampPickers(defaults),
     }),
 }));

@@ -132,7 +132,7 @@ export function VoiceCoachPanel({
 
   const [durationCustom, setDurationCustom] = useState(!isVoiceHoldDurationPreset(duration));
   const [customDraft, setCustomDraft] = useState(String(duration));
-  const [pickersPinned, setPickersPinned] = useState(false);
+  const [pickersPinned, setPickersPinned] = useState(true);
   const pickersLocked = pickersPinned || pickersReadOnly;
 
   const setPickersPinnedAndNotify = (next: boolean) => {
