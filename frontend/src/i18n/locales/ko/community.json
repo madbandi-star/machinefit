@@ -181,6 +181,7 @@
     "empty": "등록된 공지가 없습니다.",
     "important": "중요",
     "pinned": "고정",
+    "new": "NEW",
     "views": "조회 {{count}}",
     "attachments": "첨부파일",
     "prev": "이전글",

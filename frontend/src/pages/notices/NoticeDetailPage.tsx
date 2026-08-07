@@ -52,82 +52,96 @@ export function NoticeDetailPage() {
   }
 
   return (
-    <PageShell title={data.title}>
-      <div className="notice-row__title-row" style={{ marginBottom: '0.35rem' }}>
-        {data.isImportant ? (
-          <span className="notice-badge notice-badge--important">
-            {t('community:notices.important')}
-          </span>
+    <PageShell>
+      <div className="notice-page notice-detail">
+        <article
+          className={`notice-detail__article${
+            data.isImportant ? ' notice-detail__article--important' : ''
+          }`}
+        >
+          <div className="notice-detail__flags">
+            {data.isImportant ? (
+              <span className="notice-badge notice-badge--important">
+                {t('community:notices.important')}
+              </span>
+            ) : null}
+            {data.isPinned ? (
+              <span className="notice-badge notice-badge--pinned">
+                {t('community:notices.pinned')}
+              </span>
+            ) : null}
+            <span className="notice-badge notice-badge--category">
+              {t(`community:notices.categories.${data.category}`)}
+            </span>
+          </div>
+
+          <h1 className="notice-detail__title">{data.title}</h1>
+
+          <div className="notice-detail__meta">
+            <span>{formatNoticeDate(data.publishAt ?? data.createdAt, i18n.language)}</span>
+            <span>{t('community:notices.views', { count: data.viewCount })}</span>
+          </div>
+
+          <div
+            className="notice-detail__body"
+            dangerouslySetInnerHTML={{ __html: sanitizeNoticeHtml(data.content) }}
+          />
+        </article>
+
+        {data.attachments.filter((a) => !a.isInlineImage).length > 0 ? (
+          <div className="notice-detail__attachments">
+            <p className="notice-detail__attachments-title">
+              {t('community:notices.attachments')}
+            </p>
+            {data.attachments
+              .filter((a) => !a.isInlineImage)
+              .map((file) => (
+                <button
+                  key={file.id}
+                  type="button"
+                  className="btn btn--secondary notice-detail__attach-btn"
+                  onClick={async () => {
+                    const url = noticeApi.downloadUrl(data.id, file.id);
+                    const res = await apiClient.get(url, { responseType: 'blob' });
+                    const blobUrl = URL.createObjectURL(res.data as Blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = file.fileName;
+                    a.click();
+                    URL.revokeObjectURL(blobUrl);
+                  }}
+                >
+                  {file.fileName}
+                </button>
+              ))}
+          </div>
         ) : null}
-        {data.isPinned ? (
-          <span className="notice-badge notice-badge--pinned">{t('community:notices.pinned')}</span>
-        ) : null}
-        <span className="notice-badge notice-badge--category">
-          {t(`community:notices.categories.${data.category}`)}
-        </span>
-      </div>
 
-      <div className="notice-detail__meta">
-        <span>{formatNoticeDate(data.publishAt ?? data.createdAt, i18n.language)}</span>
-        <span>{t('community:notices.views', { count: data.viewCount })}</span>
-      </div>
-
-      <div
-        className="notice-detail__body"
-        dangerouslySetInnerHTML={{ __html: sanitizeNoticeHtml(data.content) }}
-      />
-
-      {data.attachments.filter((a) => !a.isInlineImage).length > 0 ? (
-        <div className="notice-detail__attachments">
-          <strong>{t('community:notices.attachments')}</strong>
-          {data.attachments
-            .filter((a) => !a.isInlineImage)
-            .map((file) => (
-              <button
-                key={file.id}
-                type="button"
-                className="btn btn--secondary"
-                onClick={async () => {
-                  const url = noticeApi.downloadUrl(data.id, file.id);
-                  const res = await apiClient.get(url, { responseType: 'blob' });
-                  const blobUrl = URL.createObjectURL(res.data as Blob);
-                  const a = document.createElement('a');
-                  a.href = blobUrl;
-                  a.download = file.fileName;
-                  a.click();
-                  URL.revokeObjectURL(blobUrl);
-                }}
-              >
-                {file.fileName}
-              </button>
-            ))}
+        <div className="notice-detail__nav">
+          {data.prevId ? (
+            <Link
+              className="btn btn--secondary notice-detail__nav-prev"
+              to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.prevId)}
+            >
+              {t('community:notices.prev')}
+            </Link>
+          ) : (
+            <span className="notice-detail__nav-spacer notice-detail__nav-prev" />
+          )}
+          <Link className="btn btn--secondary notice-detail__nav-list" to={ROUTES.NOTICES}>
+            {t('community:notices.backToList')}
+          </Link>
+          {data.nextId ? (
+            <Link
+              className="btn btn--secondary notice-detail__nav-next"
+              to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.nextId)}
+            >
+              {t('community:notices.next')}
+            </Link>
+          ) : (
+            <span className="notice-detail__nav-spacer notice-detail__nav-next" />
+          )}
         </div>
-      ) : null}
-
-      <div className="notice-detail__nav">
-        {data.prevId ? (
-          <Link
-            className="btn btn--secondary"
-            to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.prevId)}
-          >
-            {t('community:notices.prev')}
-          </Link>
-        ) : (
-          <span />
-        )}
-        <Link className="btn btn--secondary" to={ROUTES.NOTICES}>
-          {t('community:notices.backToList')}
-        </Link>
-        {data.nextId ? (
-          <Link
-            className="btn btn--secondary"
-            to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.nextId)}
-          >
-            {t('community:notices.next')}
-          </Link>
-        ) : (
-          <span />
-        )}
       </div>
     </PageShell>
   );

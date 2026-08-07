@@ -66,42 +66,47 @@ export function NoticePopup() {
   };
 
   return (
-    <div className="notice-popup-overlay" role="presentation">
+    <div className="notice-popup-overlay" role="presentation" onClick={close}>
       <div
         className="notice-popup"
         role="dialog"
         aria-modal="true"
         aria-labelledby="notice-popup-title"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="notice-row__title-row">
+        <div className="notice-popup__flags">
           {data.isImportant ? (
             <span className="notice-badge notice-badge--important">{t('notices.important')}</span>
           ) : null}
-          <h2 id="notice-popup-title" className="notice-row__title">
-            {data.title}
-          </h2>
+          <span className="notice-badge notice-badge--category">
+            {t(`notices.categories.${data.category}`)}
+          </span>
         </div>
+        <h2 id="notice-popup-title" className="notice-popup__title">
+          {data.title}
+        </h2>
         {data.excerpt ? (
           <div
-            className="notice-detail__body"
-            style={{ marginTop: '0.75rem' }}
+            className="notice-popup__excerpt"
             dangerouslySetInnerHTML={{ __html: sanitizeNoticeHtml(`<p>${data.excerpt}</p>`) }}
           />
         ) : null}
         <div className="notice-popup__actions">
           <Link
             to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.id)}
-            className="btn btn--primary"
+            className="btn btn--primary btn--block"
             onClick={close}
           >
             {t('notices.viewDetail')}
           </Link>
-          <button type="button" className="btn btn--secondary" onClick={hideToday}>
-            {t('notices.hideToday')}
-          </button>
-          <button type="button" className="btn btn--secondary" onClick={close}>
-            {t('notices.close')}
-          </button>
+          <div className="notice-popup__actions-row">
+            <button type="button" className="btn btn--secondary" onClick={hideToday}>
+              {t('notices.hideToday')}
+            </button>
+            <button type="button" className="btn btn--secondary" onClick={close}>
+              {t('notices.close')}
+            </button>
+          </div>
         </div>
       </div>
     </div>

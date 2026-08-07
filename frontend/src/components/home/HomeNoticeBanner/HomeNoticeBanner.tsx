@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Icon } from '@/components/icons/Icon';
 import { noticeApi } from '@/api/notice.api';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/notices.css';
@@ -19,18 +20,22 @@ export function HomeNoticeBanner() {
   if (!data) return null;
 
   return (
-    <div className="home-notice-banner">
+    <div
+      className={`home-notice-banner${data.isImportant ? ' home-notice-banner--important' : ''}`}
+    >
       <Link
         to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.id)}
-        style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0 }}
+        className="home-notice-banner__main"
       >
-        <p className="home-notice-banner__label">{t('notices.homeBannerLabel')}</p>
-        <p className="home-notice-banner__title">
-          {data.isImportant ? '⚠ ' : ''}
-          {data.title}
-        </p>
+        <span className="home-notice-banner__icon" aria-hidden>
+          <Icon name="bell" size={18} />
+        </span>
+        <span className="home-notice-banner__copy">
+          <p className="home-notice-banner__label">{t('notices.homeBannerLabel')}</p>
+          <p className="home-notice-banner__title">{data.title}</p>
+        </span>
       </Link>
-      <Link to={ROUTES.NOTICES} className="btn btn--secondary">
+      <Link to={ROUTES.NOTICES} className="home-notice-banner__more">
         {t('notices.more')}
       </Link>
     </div>
