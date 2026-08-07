@@ -749,7 +749,7 @@
 }
 
 .history-page-premium .recommendation-workout-log__weight-row--history {
-  grid-template-columns: 1.35rem minmax(0, 1fr) auto;
+  grid-template-columns: 1.35rem minmax(0, 1fr) auto auto;
   gap: 0.25rem;
   padding: 0.35rem 0.38rem;
   border-radius: 14px;

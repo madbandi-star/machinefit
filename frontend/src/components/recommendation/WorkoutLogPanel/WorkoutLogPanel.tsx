@@ -84,6 +84,8 @@ interface SaveWorkoutLogVariables {
   setCount?: number;
   /** Skip success toast (e.g. autosave on set complete / seed sync). */
   silent?: boolean;
+  /** 「계획 저장」 — persist sets/weights without complete UI; custom toast. */
+  asPlan?: boolean;
 }
 
 export interface WorkoutLogPanelControl {
@@ -219,13 +221,27 @@ function buildDefaultSnapshot(suggestedWeightKg?: number): WorkoutFormSnapshot {
   };
 }
 
-/** Incomplete sets follow live fit seed; completed sets keep performed kg. */
+/** Incomplete + unplanned sets follow live fit seed; completed/planned keep kg. */
 function applySeedToIncompleteWeights(
   weights: number[],
   completed: boolean[],
-  seedKg: number
+  seedKg: number,
+  planProtected?: boolean[]
 ): number[] {
-  return weights.map((weight, index) => (completed[index] === true ? weight : seedKg));
+  return weights.map((weight, index) =>
+    completed[index] === true || planProtected?.[index] === true ? weight : seedKg
+  );
+}
+
+function isSetPlanSaved(
+  index: number,
+  weight: number,
+  savedWeights: number[] | undefined,
+  savedSetCount: number | undefined
+): boolean {
+  if (savedWeights == null || savedSetCount == null) return false;
+  if (index >= savedSetCount || index >= savedWeights.length) return false;
+  return savedWeights[index] === weight;
 }
 
 function applyWorkoutFormSnapshot(
@@ -455,6 +471,10 @@ export function WorkoutLogPanel({
   const [setCompleted, setSetCompleted] = useState<boolean[]>(() =>
     buildDefaultCompleted(DEFAULT_SET_COUNT)
   );
+  /** Sets locked against live fit-seed overwrite after 「계획 저장」 / existing log. */
+  const [planProtected, setPlanProtected] = useState<boolean[]>(() =>
+    buildDefaultCompleted(DEFAULT_SET_COUNT)
+  );
   const [diary, setDiary] = useState('');
   const [personalTipMemo, setPersonalTipMemo] = useState('');
   const [diaryExpanded, setDiaryExpanded] = useState(diaryDefaultOpen);
@@ -463,6 +483,8 @@ export function WorkoutLogPanel({
   const lastAppliedSeedKeyRef = useRef('');
   const setCompletedRef = useRef(setCompleted);
   setCompletedRef.current = setCompleted;
+  const planProtectedRef = useRef(planProtected);
+  planProtectedRef.current = planProtected;
   const weightsRef = useRef(weights);
   weightsRef.current = weights;
   const setCountRef = useRef(setCount);
@@ -692,10 +714,17 @@ export function WorkoutLogPanel({
       setSetCompleted,
       setDiary,
     });
+    // Existing logs (and later 「계획 저장」) treat kg as plan-protected so live
+    // fit-seed cannot wipe them — same protection as set 「완료」, without UI.
+    const protectedFlags = existingLog
+      ? snapshot.weights.map(() => true)
+      : buildDefaultCompleted(snapshot.setCount);
+    setPlanProtected(protectedFlags);
     // Keep refs in sync for the seed effect in this same commit.
     setCountRef.current = snapshot.setCount;
     weightsRef.current = snapshot.weights;
     setCompletedRef.current = snapshot.setCompleted;
+    planProtectedRef.current = protectedFlags;
     setBaseline(cloneWorkoutFormSnapshot(snapshot));
     lastAppliedSeedKeyRef.current = seedKey;
   }, [
@@ -707,9 +736,9 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
   ]);
 
-  // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight
-  // when the user changes fit rating / adjusted weight after hydrate.
-  // Completed sets keep their logged weight.
+  // Incomplete + unplanned sets follow live fit-feedback seed weight when the
+  // user changes fit rating / adjusted weight after hydrate.
+  // Completed and plan-saved sets keep their logged weight.
   // Patch history caches for 「총 중량」 display only — do NOT autosave the workout
   // log (that made the 기록 bookmark look pressed when tapping 조정중량 +/-).
   useEffect(() => {
@@ -729,11 +758,13 @@ export function WorkoutLogPanel({
       (_, index) =>
         setCompletedRef.current[index] === true || completedFromLog?.[index] === true
     );
+    const protectedFlags = planProtectedRef.current;
     const prevWeights = weightsRef.current;
     const nextWeights = applySeedToIncompleteWeights(
       prevWeights,
       completed,
-      suggestedWeightKg
+      suggestedWeightKg,
+      protectedFlags
     );
     if (weightsEqual(prevWeights, nextWeights)) return;
 
@@ -745,7 +776,8 @@ export function WorkoutLogPanel({
       const nextBaselineWeights = applySeedToIncompleteWeights(
         prev.weights,
         completed,
-        suggestedWeightKg
+        suggestedWeightKg,
+        protectedFlags
       );
       if (weightsEqual(prev.weights, nextBaselineWeights)) return prev;
       return { ...prev, weights: nextBaselineWeights };
@@ -755,11 +787,13 @@ export function WorkoutLogPanel({
       queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey)?.[0] ?? existingLog;
     if (!baseLog) return;
 
-    // Never replace completed performed kg in the history cache.
+    // Never replace completed / plan-protected performed kg in the history cache.
     const baseCompleted = baseLog.setCompleted ?? [];
     const baseWeights = baseLog.setWeightsKg ?? [];
     const patchedWeights = nextWeights.map((weight, index) =>
-      baseCompleted[index] === true ? (baseWeights[index] ?? weight) : weight
+      baseCompleted[index] === true || protectedFlags[index] === true
+        ? (baseWeights[index] ?? weight)
+        : weight
     );
 
     const patchedLog: WorkoutLog = {
@@ -818,13 +852,14 @@ export function WorkoutLogPanel({
         trackFeature(variables?.silent ? 'history_save' : 'workout_save')
       );
       let personalTipSaved = true;
-      // Never touch machine preferences on silent autosaves (set-complete / adjust-seed).
+      // Never touch machine preferences on silent/plan autosaves (set-complete / 계획 저장).
       // Upserting tip alone still rewrites custom_settings from a concurrent DB read and
       // can restore the previous 조정중량 right after 「조정값 저장」.
       const shouldSavePersonalTip =
         showPersonalTip &&
         isAuthenticated &&
         !variables?.silent &&
+        !variables?.asPlan &&
         isPersonalTipDirty;
       if (shouldSavePersonalTip) {
         try {
@@ -885,12 +920,16 @@ export function WorkoutLogPanel({
       );
       invalidateLogSideEffects();
       if (personalTipSaved && !variables?.silent) {
-        const savedToast = isLogSaved
-          ? t('machines:workoutLog.updated')
-          : isTodayLog
-            ? t('machines:workoutLog.saved')
-            : t('machines:workoutLog.savedOnDate', { date: logDate });
-        showToast(savedToast, 'success');
+        if (variables?.asPlan) {
+          showToast(t('machines:workoutLog.planSaved'), 'success');
+        } else {
+          const savedToast = isLogSaved
+            ? t('machines:workoutLog.updated')
+            : isTodayLog
+              ? t('machines:workoutLog.saved')
+              : t('machines:workoutLog.savedOnDate', { date: logDate });
+          showToast(savedToast, 'success');
+        }
       }
     },
     onError: () => {
@@ -925,6 +964,8 @@ export function WorkoutLogPanel({
         setSetCompleted,
         setDiary,
       });
+      setPlanProtected(buildDefaultCompleted(snapshot.setCount));
+      planProtectedRef.current = buildDefaultCompleted(snapshot.setCount);
       setBaseline(null);
       queryClient.setQueryData(workoutLogQueryKey, []);
       onSavedChange?.(false);
@@ -1100,12 +1141,18 @@ export function WorkoutLogPanel({
     setSetCount(next);
     setWeights((prev) => resizeWeights(prev, next, suggestedWeightKg));
     setSetCompleted((prev) => resizeCompleted(prev, next));
+    setPlanProtected((prev) => {
+      const resized = resizeCompleted(prev, next);
+      planProtectedRef.current = resized;
+      return resized;
+    });
   };
 
   const handleWeightChange = (index: number, next: number) => {
     setWeights((prev) => {
       const updated = [...prev];
       updated[index] = next >= 0 ? next : 0;
+      weightsRef.current = updated;
       return updated;
     });
   };
@@ -1122,7 +1169,11 @@ export function WorkoutLogPanel({
 
   const handleApplyWeightToAll = (sourceIndex: number) => {
     const source = weights[sourceIndex] ?? 0;
-    setWeights((prev) => prev.map(() => source));
+    setWeights((prev) => {
+      const updated = prev.map(() => source);
+      weightsRef.current = updated;
+      return updated;
+    });
   };
 
   const handleDiaryChange = (value: string) => {
@@ -1192,6 +1243,57 @@ export function WorkoutLogPanel({
     saveMutation.mutate({ setCompleted: next, silent: true });
   };
 
+  const isPlanDirty =
+    !existingLog ||
+    existingLog.setCount !== setCount ||
+    !weightsEqual(existingLog.setWeightsKg ?? [], weights);
+
+  const handlePlanSave = useCallback(async () => {
+    if (isFreeWeight && !activeTargetMuscle) {
+      showToast(t('machines:targetMuscleRequired'), 'error');
+      return;
+    }
+
+    const nextWeights = [...weightsRef.current];
+    const nextCount = setCountRef.current;
+    const nextProtected = Array.from({ length: nextCount }, () => true);
+
+    try {
+      await saveMutation.mutateAsync({
+        setWeightsKg: nextWeights,
+        setCount: nextCount,
+        setCompleted: [...setCompletedRef.current],
+        asPlan: true,
+      });
+      setPlanProtected(nextProtected);
+      planProtectedRef.current = nextProtected;
+      setBaseline((prev) =>
+        prev
+          ? {
+              ...prev,
+              setCount: nextCount,
+              weights: nextWeights,
+              setCompleted: [...setCompletedRef.current],
+            }
+          : {
+              setCount: nextCount,
+              weights: nextWeights,
+              setCompleted: [...setCompletedRef.current],
+              diary: diary.trim(),
+            }
+      );
+    } catch {
+      // Toast handled by mutation.
+    }
+  }, [
+    activeTargetMuscle,
+    diary,
+    isFreeWeight,
+    saveMutation,
+    showToast,
+    t,
+  ]);
+
   if (!isAuthenticated) {
     return (
       <section
@@ -1252,6 +1354,12 @@ export function WorkoutLogPanel({
       {weights.map((weight, index) => {
         const completed = setCompleted[index] ?? false;
         const previousWeight = index > 0 ? weights[index - 1] : undefined;
+        const planSaved = isSetPlanSaved(
+          index,
+          weight,
+          existingLog?.setWeightsKg,
+          existingLog?.setCount
+        );
         return (
           <div
             key={index}
@@ -1300,17 +1408,35 @@ export function WorkoutLogPanel({
               onChange={(next) => handleWeightChange(index, next)}
             />
             {isHistory ? (
-              <button
-                type="button"
-                className={`recommendation-workout-log__complete-btn${
-                  completed ? ' recommendation-workout-log__complete-btn--completed' : ''
-                }`}
-                onClick={() => handleHistorySetComplete(index)}
-                disabled={isActionPending}
-                aria-pressed={completed}
-              >
-                {t('machines:workoutLog.setComplete')}
-              </button>
+              <>
+                <span
+                  className={`recommendation-workout-log__plan-status${
+                    planSaved
+                      ? ' recommendation-workout-log__plan-status--saved'
+                      : ' recommendation-workout-log__plan-status--unsaved'
+                  }`}
+                  title={
+                    planSaved
+                      ? t('machines:workoutLog.planStatusSaved')
+                      : t('machines:workoutLog.planStatusUnsaved')
+                  }
+                >
+                  {planSaved
+                    ? t('machines:workoutLog.planStatusSaved')
+                    : t('machines:workoutLog.planStatusUnsaved')}
+                </span>
+                <button
+                  type="button"
+                  className={`recommendation-workout-log__complete-btn${
+                    completed ? ' recommendation-workout-log__complete-btn--completed' : ''
+                  }`}
+                  onClick={() => handleHistorySetComplete(index)}
+                  disabled={isActionPending}
+                  aria-pressed={completed}
+                >
+                  {t('machines:workoutLog.setComplete')}
+                </button>
+              </>
             ) : null}
           </div>
         );
@@ -1541,6 +1667,16 @@ export function WorkoutLogPanel({
                 {t('machines:history.performanceTitle', { count: setCount })}
               </span>
               {setCountControl}
+              <button
+                type="button"
+                className="btn btn--secondary history-workout-log__plan-save"
+                onClick={() => void handlePlanSave()}
+                disabled={isActionPending || isLoading || !isPlanDirty}
+              >
+                {saveMutation.isPending && saveMutation.variables?.asPlan
+                  ? t('machines:workoutLog.planSaving')
+                  : t('machines:workoutLog.planSave')}
+              </button>
             </div>
           </div>
           {weightList}

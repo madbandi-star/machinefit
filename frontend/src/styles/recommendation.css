@@ -2434,6 +2434,8 @@
   gap: 0.35rem;
   min-width: 0;
   flex: 1 1 auto;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .history-workout-log__performance-title-row .numeric-stepper {
@@ -2569,7 +2571,7 @@
 
 .recommendation-workout-log__weight-row--history {
   display: grid;
-  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+  grid-template-columns: 1.25rem minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 0.25rem;
   padding: 0.35rem 0.38rem;
@@ -2628,6 +2630,42 @@
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.recommendation-workout-log__plan-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.35rem;
+  min-height: var(--history-control-height, 2.75rem);
+  padding: 0 0.35rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.recommendation-workout-log__plan-status--saved {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.recommendation-workout-log__plan-status--unsaved {
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+}
+
+.history-workout-log__plan-save {
+  flex-shrink: 0;
+  margin-left: auto;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .history-workout-log__diary-grid {
