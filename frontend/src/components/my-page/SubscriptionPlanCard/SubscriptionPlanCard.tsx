@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { billingApi } from '@/api';
 import { usePremium } from '@/providers/PremiumProvider';
@@ -85,26 +84,45 @@ export function SubscriptionPlanCard() {
     }
   };
 
-  const gradeLabel = isPremium
-    ? t('myPage.subscription.gradePremium')
-    : t('myPage.subscription.gradeFree');
+  const benefits = t('myPage.subscription.benefits', { returnObjects: true });
+  const benefitList = Array.isArray(benefits) ? (benefits as string[]) : [];
 
   return (
     <section className="my-page-section premium-card" aria-labelledby="subscription-plan-heading">
-      <div className="premium-card__panel">
+      <div
+        className={`premium-card__panel${isPremium ? ' premium-card__panel--active' : ''}`}
+      >
         <header className="premium-card__header">
           <p className="premium-card__eyebrow">{t('myPage.subscription.memberGrade')}</p>
-          <h3 id="subscription-plan-heading" className="premium-card__title">
-            {gradeLabel}
-          </h3>
-          <p className="premium-card__price">{t('myPage.subscription.priceLine')}</p>
+          <div className="premium-card__title-row">
+            <h3 id="subscription-plan-heading" className="premium-card__title">
+              {isPremium ? (
+                <>
+                  MachineFit{' '}
+                  <span className="premium-card__title-accent">
+                    {t('myPage.subscription.gradePremium')}
+                  </span>
+                </>
+              ) : (
+                t('myPage.subscription.gradeFree')
+              )}
+            </h3>
+            {isPremium && !isLoading ? (
+              <span className="premium-card__status">{t('myPage.subscription.activeBadge')}</span>
+            ) : null}
+          </div>
+          <p className="premium-card__price">
+            <span className="premium-card__price-em">
+              {t('myPage.subscription.priceAmount')}
+            </span>
+            <span> · {t('myPage.subscription.priceCancelAnytime')}</span>
+          </p>
         </header>
 
         {isLoading ? (
           <p className="premium-card__muted">…</p>
         ) : isPremium ? (
           <>
-            <p className="premium-card__status-pill">{t('myPage.subscription.activeBadge')}</p>
             <dl className="premium-card__meta">
               <div>
                 <dt>{t('myPage.subscription.nextBilling')}</dt>
@@ -135,7 +153,7 @@ export function SubscriptionPlanCard() {
               {status?.cancelAt || status?.subscriptionStatus === 'cancelled' ? (
                 <button
                   type="button"
-                  className="btn btn--primary btn--block"
+                  className="btn btn--primary btn--block premium-card__cta"
                   disabled={busy}
                   onClick={() => void resumeSub()}
                 >
@@ -151,48 +169,59 @@ export function SubscriptionPlanCard() {
                   {t('myPage.subscription.cancel')}
                 </button>
               )}
-              <Link
-                to={ROUTES.PAYMENT_HISTORY}
-                className="btn btn--secondary btn--block"
-              >
+              <Link to={ROUTES.PAYMENT_HISTORY} className="btn btn--secondary btn--block">
                 {t('myPage.subscription.history')}
               </Link>
             </div>
           </>
         ) : (
           <>
-            <p className="premium-card__muted">{t('myPage.subscription.freeHint')}</p>
-            <button
-              type="button"
-              className="btn btn--primary btn--block"
-              disabled={busy || status?.paymentReady === false}
-              onClick={() => void startCheckout()}
-            >
-              {status?.paymentReady === false
-                ? t('myPage.subscription.payComingSoon')
-                : t('myPage.subscription.startPremium')}
-            </button>
-            {!status?.trialConsumed ? (
+            <p className="premium-card__lead">{t('myPage.subscription.freeHint')}</p>
+            {benefitList.length > 0 ? (
+              <ul className="premium-card__benefits">
+                {benefitList.map((item) => (
+                  <li key={item} className="premium-card__benefit">
+                    <span className="premium-card__benefit-mark" aria-hidden>
+                      ✓
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <div className="premium-card__actions">
               <button
                 type="button"
-                className="btn btn--secondary btn--block"
-                disabled={busy}
-                onClick={() => {
-                  setBusy(true);
-                  void billingApi
-                    .startTrial({ planCode: 'PREMIUM' })
-                    .then(() => refresh())
-                    .then(() => showToast(t('myPage.subscription.toastSuccess'), 'success'))
-                    .catch(() => showToast(t('errors.submitFailed'), 'error'))
-                    .finally(() => setBusy(false));
-                }}
+                className="btn btn--primary btn--block premium-card__cta"
+                disabled={busy || status?.paymentReady === false}
+                onClick={() => void startCheckout()}
               >
-                {t('myPage.subscription.startTrial')}
+                {status?.paymentReady === false
+                  ? t('myPage.subscription.payComingSoon')
+                  : t('myPage.subscription.startPremium')}
               </button>
-            ) : null}
-            <Link to={ROUTES.PAYMENT_HISTORY} className="premium-card__history-link">
-              {t('myPage.subscription.history')}
-            </Link>
+              {!status?.trialConsumed ? (
+                <button
+                  type="button"
+                  className="btn btn--secondary btn--block"
+                  disabled={busy}
+                  onClick={() => {
+                    setBusy(true);
+                    void billingApi
+                      .startTrial({ planCode: 'PREMIUM' })
+                      .then(() => refresh())
+                      .then(() => showToast(t('myPage.subscription.toastSuccess'), 'success'))
+                      .catch(() => showToast(t('errors.submitFailed'), 'error'))
+                      .finally(() => setBusy(false));
+                  }}
+                >
+                  {t('myPage.subscription.startTrial')}
+                </button>
+              ) : null}
+              <Link to={ROUTES.PAYMENT_HISTORY} className="premium-card__history-link">
+                {t('myPage.subscription.history')}
+              </Link>
+            </div>
           </>
         )}
       </div>
