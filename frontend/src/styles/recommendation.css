@@ -1407,6 +1407,10 @@
   transform: translateX(-50%);
 }
 
+.count-session-banner--dock.count-session-banner--above-rest {
+  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem + 10.5rem);
+}
+
 .count-session-banner__content {
   display: flex;
   flex-direction: row;

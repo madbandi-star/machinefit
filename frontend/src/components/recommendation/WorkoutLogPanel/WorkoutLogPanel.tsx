@@ -18,8 +18,6 @@ import {
   type SettingsActiveSource,
 } from '@machinefit/shared';
 import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
-import { CountSessionBanner } from '@/components/recommendation/CountSessionBanner/CountSessionBanner';
-import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
@@ -288,7 +286,6 @@ export function WorkoutLogPanel({
   const restTimerAfterAllSetsComplete = useSettingsStore(
     (s) => s.restTimerAfterAllSetsComplete
   );
-  const workoutFullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
   const setVoiceCoachEnabled = useSettingsStore((s) => s.setVoiceCoachEnabled);
   const setVoiceCoachOneMore = useSettingsStore((s) => s.setVoiceCoachOneMore);
   const setVoiceCoachAutoAfterRest = useSettingsStore((s) => s.setVoiceCoachAutoAfterRest);
@@ -376,11 +373,6 @@ export function WorkoutLogPanel({
   /** Set synchronously on manual Start so rest-end auto-start cannot kill it. */
   const manualCountStartRef = useRef(false);
   const restSpeechAbortRef = useRef<AbortController | null>(null);
-  const dismissRestTimer = useCallback(() => {
-    restSpeechAbortRef.current?.abort();
-    restSpeechAbortRef.current = null;
-    useRestTimerStore.getState().stop();
-  }, []);
 
   const handleRestReadyForNextSet = useCallback(() => {
     restSpeechAbortRef.current?.abort();
@@ -412,19 +404,9 @@ export function WorkoutLogPanel({
   }, []);
   const voiceCoachStopRef = useRef(voiceCoach.stop);
   voiceCoachStopRef.current = voiceCoach.stop;
-  const voiceCoachPauseRef = useRef(voiceCoach.pause);
-  voiceCoachPauseRef.current = voiceCoach.pause;
-  const voiceCoachResumeRef = useRef(voiceCoach.resume);
-  voiceCoachResumeRef.current = voiceCoach.resume;
   const stopVoiceCoachSession = useCallback(() => {
     manualCountStartRef.current = false;
     voiceCoachStopRef.current();
-  }, []);
-  const pauseVoiceCoachSession = useCallback(() => {
-    voiceCoachPauseRef.current();
-  }, []);
-  const resumeVoiceCoachSession = useCallback(() => {
-    voiceCoachResumeRef.current();
   }, []);
 
   useEffect(() => {
@@ -471,7 +453,6 @@ export function WorkoutLogPanel({
   const restSession = useRestTimerStore((s) => s.session);
   const startRestTimer = useRestTimerStore((s) => s.start);
   const stopRestTimer = useRestTimerStore((s) => s.stop);
-  const [countDisplayCompact, setCountDisplayCompact] = useState(false);
   const diaryBytes = getUtf8ByteLength(diary);
   const canLog = isAuthenticated && Boolean(activeGymId) && !isAllGyms && Boolean(activeMemberId);
   const queryEnabled = canLog && (!isFreeWeight || !!queryTargetMuscle);
@@ -521,12 +502,6 @@ export function WorkoutLogPanel({
       });
     };
   }, [handleRestReadyForNextSet, startVoiceCoach, voiceCoachEnabled]);
-
-  useEffect(() => {
-    if (!voiceCoach.isRunning) {
-      setCountDisplayCompact(false);
-    }
-  }, [voiceCoach.isRunning]);
 
   useEffect(() => {
     if (!restSession) return;
@@ -1473,49 +1448,6 @@ export function WorkoutLogPanel({
     </div>
   );
 
-  const useFullscreenCount =
-    workoutFullscreenDisplay && !countDisplayCompact && voiceCoach.isRunning;
-  const useCompactCountDock = voiceCoach.isRunning && countDisplayCompact;
-
-  const workoutDisplayOverlay = useFullscreenCount ? (
-    <WorkoutDisplayOverlay
-      mode="count"
-      restSeconds={0}
-      restSetNumber={0}
-      onRestDismiss={dismissRestTimer}
-      onStartCount={startVoiceCoach}
-      showStartCount={false}
-      onMinimize={() => setCountDisplayCompact(true)}
-      phase={voiceCoach.phase}
-      currentRep={voiceCoach.currentRep}
-      countdown={voiceCoach.countdown}
-      turbo={voiceCoach.turbo}
-      intensity={voiceCoach.intensity}
-      isCountPaused={voiceCoach.isPaused}
-      onPauseCount={pauseVoiceCoachSession}
-      onResumeCount={resumeVoiceCoachSession}
-      onStopCount={stopVoiceCoachSession}
-    />
-  ) : null;
-
-  const countSessionBanner = useCompactCountDock ? (
-    <CountSessionBanner
-      phase={voiceCoach.phase}
-      currentRep={voiceCoach.currentRep}
-      countdown={voiceCoach.countdown}
-      turbo={voiceCoach.turbo}
-      intensity={voiceCoach.intensity}
-      isPaused={voiceCoach.isPaused}
-      onPause={pauseVoiceCoachSession}
-      onResume={resumeVoiceCoachSession}
-      onStop={stopVoiceCoachSession}
-      onExpand={
-        workoutFullscreenDisplay ? () => setCountDisplayCompact(false) : undefined
-      }
-      placement="dock"
-    />
-  ) : null;
-
   const voiceCoachPanel =
     showVoiceCoach && settingsHydrated && voicePickers ? (
     <VoiceCoachPanel
@@ -1558,15 +1490,14 @@ export function WorkoutLogPanel({
       showRestOptionSelectors={!isHistory}
       showOneMoreAndHoldSelectors={!isHistory}
       showSessionConfigSelectors={!isHistory}
-      hideLiveDisplay={useFullscreenCount || useCompactCountDock}
+      // GlobalCountSessionHost owns live chrome while a session is running.
+      hideLiveDisplay={voiceCoach.isRunning}
     />
   ) : null;
 
   if (isHistory) {
     return (
       <>
-        {workoutDisplayOverlay}
-        {countSessionBanner}
         <section
           className="recommendation-workout-log recommendation-workout-log--history"
           aria-label={t('machines:workoutLog.title')}
@@ -1598,8 +1529,6 @@ export function WorkoutLogPanel({
   if (compact) {
     return (
       <>
-        {workoutDisplayOverlay}
-        {countSessionBanner}
         <section
           className="recommendation-workout-log recommendation-workout-log--compact"
           aria-label={t('machines:workoutLog.title')}
@@ -1623,8 +1552,6 @@ export function WorkoutLogPanel({
 
   return (
     <>
-      {workoutDisplayOverlay}
-      {countSessionBanner}
       <section className="recommendation-workout-log" aria-label={t('machines:workoutLog.title')}>
       {voiceCoachPanel}
       <div className="recommendation-workout-log__header">

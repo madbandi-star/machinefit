@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,8 +7,6 @@ import {
 } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
-import { CountSessionBanner } from '@/components/recommendation/CountSessionBanner/CountSessionBanner';
-import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDisplayOverlay/WorkoutDisplayOverlay';
 import { ROUTES } from '@/constants/routes';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { useRestTimerStore } from '@/store/restTimer.store';
@@ -53,7 +51,6 @@ export function HomeWorkoutToolsSection() {
   const settingsHoldSec = useSettingsStore((s) => s.voiceHoldDurationSec);
   const settingsVoiceEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const settingsLocale = useSettingsStore((s) => s.locale);
-  const fullscreenDisplay = useSettingsStore((s) => s.workoutFullscreenDisplay);
 
   const [restSeconds, setRestSeconds] = useState(() =>
     clampRestDurationSeconds(settingsRestSeconds)
@@ -61,7 +58,6 @@ export function HomeWorkoutToolsSection() {
   const restSession = useRestTimerStore((s) => s.session);
   const startRestTimer = useRestTimerStore((s) => s.start);
   const restRunning = restSession != null;
-  const [countDisplayCompact, setCountDisplayCompact] = useState(false);
 
   const [countValue, setCountValue] = useState(() =>
     clampVoiceCoachTargetReps(settingsTargetReps)
@@ -95,13 +91,6 @@ export function HomeWorkoutToolsSection() {
   });
 
   const restParts = restDurationParts(restSeconds);
-  const showFullscreenCount =
-    fullscreenDisplay && !countDisplayCompact && voiceCoach.isRunning;
-  const showCompactCount = voiceCoach.isRunning && !showFullscreenCount;
-
-  useEffect(() => {
-    if (!voiceCoach.isRunning) setCountDisplayCompact(false);
-  }, [voiceCoach.isRunning]);
 
   const startOrStopCount = () => {
     if (voiceCoach.isRunning) {
@@ -336,42 +325,6 @@ export function HomeWorkoutToolsSection() {
             </div>
           </div>
         </article>
-      ) : null}
-
-      {showFullscreenCount ? (
-        <WorkoutDisplayOverlay
-          mode="count"
-          restSeconds={0}
-          restSetNumber={1}
-          onRestDismiss={() => undefined}
-          onMinimize={() => setCountDisplayCompact(true)}
-          phase={voiceCoach.phase}
-          currentRep={voiceCoach.currentRep}
-          countdown={voiceCoach.countdown}
-          turbo={voiceCoach.turbo}
-          intensity={voiceCoach.intensity}
-          isCountPaused={voiceCoach.isPaused}
-          onPauseCount={voiceCoach.pause}
-          onResumeCount={voiceCoach.resume}
-          onStopCount={voiceCoach.stop}
-        />
-      ) : null}
-
-      {showCompactCount ? (
-        <CountSessionBanner
-          phase={voiceCoach.phase}
-          currentRep={voiceCoach.currentRep}
-          countdown={voiceCoach.countdown}
-          turbo={voiceCoach.turbo}
-          intensity={voiceCoach.intensity}
-          isPaused={voiceCoach.isPaused}
-          onPause={voiceCoach.pause}
-          onResume={voiceCoach.resume}
-          onStop={voiceCoach.stop}
-          onExpand={
-            fullscreenDisplay ? () => setCountDisplayCompact(false) : undefined
-          }
-        />
       ) : null}
     </section>
   );
