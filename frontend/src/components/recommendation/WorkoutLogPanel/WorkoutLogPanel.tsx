@@ -219,16 +219,13 @@ function buildDefaultSnapshot(suggestedWeightKg?: number): WorkoutFormSnapshot {
   };
 }
 
-/** Incomplete + untouched sets follow live fit seed; completed/touched keep kg. */
+/** Incomplete sets follow live fit seed; completed sets keep performed kg. */
 function applySeedToIncompleteWeights(
   weights: number[],
   completed: boolean[],
-  seedKg: number,
-  userTouched?: boolean[]
+  seedKg: number
 ): number[] {
-  return weights.map((weight, index) =>
-    completed[index] === true || userTouched?.[index] === true ? weight : seedKg
-  );
+  return weights.map((weight, index) => (completed[index] === true ? weight : seedKg));
 }
 
 function applyWorkoutFormSnapshot(
@@ -458,10 +455,6 @@ export function WorkoutLogPanel({
   const [setCompleted, setSetCompleted] = useState<boolean[]>(() =>
     buildDefaultCompleted(DEFAULT_SET_COUNT)
   );
-  /** Sets the user edited — seed-protected like completed, without complete UI. */
-  const [userTouchedWeights, setUserTouchedWeights] = useState<boolean[]>(() =>
-    buildDefaultCompleted(DEFAULT_SET_COUNT)
-  );
   const [diary, setDiary] = useState('');
   const [personalTipMemo, setPersonalTipMemo] = useState('');
   const [diaryExpanded, setDiaryExpanded] = useState(diaryDefaultOpen);
@@ -470,13 +463,10 @@ export function WorkoutLogPanel({
   const lastAppliedSeedKeyRef = useRef('');
   const setCompletedRef = useRef(setCompleted);
   setCompletedRef.current = setCompleted;
-  const userTouchedWeightsRef = useRef(userTouchedWeights);
-  userTouchedWeightsRef.current = userTouchedWeights;
   const weightsRef = useRef(weights);
   weightsRef.current = weights;
   const setCountRef = useRef(setCount);
   setCountRef.current = setCount;
-  const silentWeightSaveTimerRef = useRef<number | null>(null);
   const restSession = useRestTimerStore((s) => s.session);
   const startRestTimer = useRestTimerStore((s) => s.start);
   const stopRestTimer = useRestTimerStore((s) => s.stop);
@@ -656,11 +646,6 @@ export function WorkoutLogPanel({
     setBaseline(null);
     setSelectedMuscle(targetMuscleGroup ?? null);
     setPersonalTipMemo('');
-    setUserTouchedWeights(buildDefaultCompleted(DEFAULT_SET_COUNT));
-    if (silentWeightSaveTimerRef.current != null) {
-      window.clearTimeout(silentWeightSaveTimerRef.current);
-      silentWeightSaveTimerRef.current = null;
-    }
   }, [machineCode, logDate, recommendationId, targetMuscleGroup]);
 
   useEffect(() => {
@@ -707,17 +692,10 @@ export function WorkoutLogPanel({
       setSetCompleted,
       setDiary,
     });
-    // Existing log weights are treated as user-owned so live fit-seed cannot
-    // wipe them (same protection as set 「완료」, without flipping complete UI).
-    const touched = existingLog
-      ? snapshot.weights.map(() => true)
-      : buildDefaultCompleted(snapshot.setCount);
-    setUserTouchedWeights(touched);
     // Keep refs in sync for the seed effect in this same commit.
     setCountRef.current = snapshot.setCount;
     weightsRef.current = snapshot.weights;
     setCompletedRef.current = snapshot.setCompleted;
-    userTouchedWeightsRef.current = touched;
     setBaseline(cloneWorkoutFormSnapshot(snapshot));
     lastAppliedSeedKeyRef.current = seedKey;
   }, [
@@ -729,9 +707,9 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
   ]);
 
-  // Incomplete + untouched sets follow live fit-feedback seed weight when the
-  // user changes fit rating / adjusted weight after hydrate.
-  // Completed sets and user-edited (or previously saved) weights keep kg.
+  // Incomplete sets (-무게kg+, 완료 아님): follow live fit-feedback seed weight
+  // when the user changes fit rating / adjusted weight after hydrate.
+  // Completed sets keep their logged weight.
   // Patch history caches for 「총 중량」 display only — do NOT autosave the workout
   // log (that made the 기록 bookmark look pressed when tapping 조정중량 +/-).
   useEffect(() => {
@@ -751,13 +729,11 @@ export function WorkoutLogPanel({
       (_, index) =>
         setCompletedRef.current[index] === true || completedFromLog?.[index] === true
     );
-    const touched = userTouchedWeightsRef.current;
     const prevWeights = weightsRef.current;
     const nextWeights = applySeedToIncompleteWeights(
       prevWeights,
       completed,
-      suggestedWeightKg,
-      touched
+      suggestedWeightKg
     );
     if (weightsEqual(prevWeights, nextWeights)) return;
 
@@ -769,8 +745,7 @@ export function WorkoutLogPanel({
       const nextBaselineWeights = applySeedToIncompleteWeights(
         prev.weights,
         completed,
-        suggestedWeightKg,
-        touched
+        suggestedWeightKg
       );
       if (weightsEqual(prev.weights, nextBaselineWeights)) return prev;
       return { ...prev, weights: nextBaselineWeights };
@@ -780,13 +755,11 @@ export function WorkoutLogPanel({
       queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey)?.[0] ?? existingLog;
     if (!baseLog) return;
 
-    // Never replace completed / user-touched performed kg in the history cache.
+    // Never replace completed performed kg in the history cache.
     const baseCompleted = baseLog.setCompleted ?? [];
     const baseWeights = baseLog.setWeightsKg ?? [];
     const patchedWeights = nextWeights.map((weight, index) =>
-      baseCompleted[index] === true || touched[index] === true
-        ? (baseWeights[index] ?? weight)
-        : weight
+      baseCompleted[index] === true ? (baseWeights[index] ?? weight) : weight
     );
 
     const patchedLog: WorkoutLog = {
@@ -1119,13 +1092,7 @@ export function WorkoutLogPanel({
   ]);
 
   useEffect(() => {
-    return () => {
-      onControlReady?.(null);
-      if (silentWeightSaveTimerRef.current != null) {
-        window.clearTimeout(silentWeightSaveTimerRef.current);
-        silentWeightSaveTimerRef.current = null;
-      }
-    };
+    return () => onControlReady?.(null);
   }, [onControlReady]);
 
   const handleSetCountChange = (value: number) => {
@@ -1133,48 +1100,14 @@ export function WorkoutLogPanel({
     setSetCount(next);
     setWeights((prev) => resizeWeights(prev, next, suggestedWeightKg));
     setSetCompleted((prev) => resizeCompleted(prev, next));
-    setUserTouchedWeights((prev) => resizeCompleted(prev, next));
   };
 
-  const markWeightTouched = useCallback((index: number) => {
-    setUserTouchedWeights((prev) => {
-      if (prev[index] === true) return prev;
-      const next = resizeCompleted(prev, Math.max(prev.length, index + 1));
-      next[index] = true;
-      return next;
-    });
-  }, []);
-
-  const markAllWeightsTouched = useCallback((count: number) => {
-    setUserTouchedWeights(Array.from({ length: count }, () => true));
-  }, []);
-
-  const scheduleSilentWeightSave = useCallback(() => {
-    if (!canLog) return;
-    if (isFreeWeight && !activeTargetMuscle) return;
-    if (silentWeightSaveTimerRef.current != null) {
-      window.clearTimeout(silentWeightSaveTimerRef.current);
-    }
-    silentWeightSaveTimerRef.current = window.setTimeout(() => {
-      silentWeightSaveTimerRef.current = null;
-      saveMutation.mutate({
-        setWeightsKg: [...weightsRef.current],
-        setCount: setCountRef.current,
-        setCompleted: [...setCompletedRef.current],
-        silent: true,
-      });
-    }, 450);
-  }, [activeTargetMuscle, canLog, isFreeWeight, saveMutation]);
-
   const handleWeightChange = (index: number, next: number) => {
-    markWeightTouched(index);
     setWeights((prev) => {
       const updated = [...prev];
       updated[index] = next >= 0 ? next : 0;
-      weightsRef.current = updated;
       return updated;
     });
-    scheduleSilentWeightSave();
   };
 
   const handleApplySuggestedWeight = (index: number) => {
@@ -1189,13 +1122,7 @@ export function WorkoutLogPanel({
 
   const handleApplyWeightToAll = (sourceIndex: number) => {
     const source = weights[sourceIndex] ?? 0;
-    markAllWeightsTouched(Math.max(weights.length, setCount));
-    setWeights((prev) => {
-      const updated = prev.map(() => source);
-      weightsRef.current = updated;
-      return updated;
-    });
-    scheduleSilentWeightSave();
+    setWeights((prev) => prev.map(() => source));
   };
 
   const handleDiaryChange = (value: string) => {
