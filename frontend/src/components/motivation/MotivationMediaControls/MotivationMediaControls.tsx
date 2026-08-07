@@ -1050,11 +1050,14 @@ function VideoOverlay({
   const item = items[index];
   const embedId = item?.youtubeId;
   const total = items.length;
+  const [suspendIframe, setSuspendIframe] = useState(false);
   const videoDrag = useDraggableFloat({
     id: 'video-mini',
     enabled: compact,
     // Avoid React re-renders (YouTube iframe) on every pointer move.
     performanceMode: 'gpu',
+    onDragStart: () => setSuspendIframe(true),
+    onDragEnd: () => setSuspendIframe(false),
   });
 
   useEffect(() => {
@@ -1064,6 +1067,10 @@ function VideoOverlay({
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  useEffect(() => {
+    if (!compact) setSuspendIframe(false);
+  }, [compact]);
 
   if (!item) return null;
 
@@ -1136,7 +1143,7 @@ function VideoOverlay({
         )}
 
         <div className="mf-video-overlay__frame">
-          {embedId ? (
+          {embedId && !(compact && suspendIframe) ? (
             <iframe
               key={embedId}
               title={item.title}
@@ -1144,6 +1151,10 @@ function VideoOverlay({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+          ) : embedId && compact && suspendIframe ? (
+            <div className="mf-video-overlay__frame-placeholder" aria-hidden="true">
+              <Film size={22} />
+            </div>
           ) : (
             <p className="mf-video-overlay__error">{t('motivation.playFailed')}</p>
           )}
