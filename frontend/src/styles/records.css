@@ -415,10 +415,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.18rem;
-  width: 100%;
+  width: min(100%, 2.85rem);
   min-height: var(--hc-day-size);
   aspect-ratio: 1;
-  max-height: 3rem;
+  margin-inline: auto;
   padding: 0.2rem 0 0.28rem;
   border: 1px solid transparent;
   border-radius: 14px;
