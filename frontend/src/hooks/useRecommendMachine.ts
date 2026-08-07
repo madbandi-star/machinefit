@@ -18,6 +18,7 @@ import { useUIStore } from '@/store/ui.store';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import {
+  buildRecordsDateUrl,
   buildRecordsHistoryFocusUrl,
   DuplicateRecommendationError,
   assertNoDuplicateToday,
@@ -216,6 +217,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
             memberId: scope.member.id,
             machineCode,
             targetMuscleGroup: options?.targetMuscleGroup,
+            dateKey: options?.planDate,
           });
         } else {
           input = buildMemberProfileInput(
@@ -244,6 +246,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
             memberId: scope.member.id,
             machineCode,
             targetMuscleGroup: options?.targetMuscleGroup,
+            dateKey: options?.planDate,
           });
         }
       } else {
@@ -267,7 +270,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
     },
     onError: (error: unknown) => {
       if (error instanceof DuplicateRecommendationError) {
-        const isFreeWeight = isFreeWeightMachineCode(error.historyItem.machineCode);
+        const isFreeWeight = isFreeWeightMachineCode(error.machineCode);
         showToast(
           t(
             isFreeWeight
@@ -276,7 +279,12 @@ export function useRecommendMachine(machineCode: string | undefined) {
           ),
           'info'
         );
-        navigate(buildRecordsHistoryFocusUrl(error.historyItem), { replace: true });
+        navigate(
+          error.historyItem
+            ? buildRecordsHistoryFocusUrl(error.historyItem)
+            : buildRecordsDateUrl(error.dateKey),
+          { replace: true }
+        );
         return;
       }
 
