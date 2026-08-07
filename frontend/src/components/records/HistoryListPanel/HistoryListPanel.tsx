@@ -498,18 +498,6 @@ export function HistoryListPanel() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  const startPlanMutation = useMutation({
-    mutationFn: async (workoutCardId: string) => {
-      const res = await workoutCardApi.patchStatus(workoutCardId, { status: 'IN_PROGRESS' });
-      return res.data.data;
-    },
-    onSuccess: async () => {
-      await invalidatePlans();
-      showToast(t('machines:history.planStarted'), 'success');
-    },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
-  });
-
   const movePlanMutation = useMutation({
     mutationFn: async ({ id, scheduledDate }: { id: string; scheduledDate: string }) => {
       const res = await workoutCardApi.moveDate(id, { scheduledDate });
@@ -1079,6 +1067,8 @@ export function HistoryListPanel() {
 
               {isExpanded
                 ? group.items.map((card) => {
+                // Same destinations as today cards: result when a recommendation exists,
+                // otherwise machine detail with logDate (full log / recommend chrome).
                 const resultUrl = card.recommendationId
                   ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', card.machineCode)}?id=${card.recommendationId}&logDate=${encodeURIComponent(card.logDate)}`
                   : `${ROUTES.MACHINE_DETAIL.replace(':machineCode', card.machineCode)}?logDate=${encodeURIComponent(card.logDate)}${
@@ -1155,17 +1145,11 @@ export function HistoryListPanel() {
                     orderTotal={dayOrdered.length}
                     orderDisabled={!canPersistOrder || reorderMutation.isPending}
                     onOrderMove={
-                      canPersistOrder && !card.isPlanOnly
+                      canPersistOrder
                         ? (move) => handleOrderMove(group.dateKey, card, move)
                         : undefined
                     }
                     isReordering={animatingCardId === card.cardId}
-                    onStartPlan={
-                      card.planStatus === 'PLANNED' && card.workoutCardId
-                        ? () => startPlanMutation.mutate(card.workoutCardId!)
-                        : undefined
-                    }
-                    startPlanDisabled={startPlanMutation.isPending}
                     onCopyPlan={
                       card.workoutCardId
                         ? () => promptMoveOrCopy(card, 'copy')
