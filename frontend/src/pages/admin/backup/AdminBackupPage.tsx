@@ -296,7 +296,7 @@ export function AdminBackupPage() {
               />
             </label>
             <div className="admin-backup__dialog-actions">
-              <button type="button" className="btn btn--ghost" onClick={closeWarn}>
+              <button type="button" className="btn btn--secondary" onClick={closeWarn}>
                 {tc('actions.cancel')}
               </button>
               <button
