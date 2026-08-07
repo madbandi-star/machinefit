@@ -2674,10 +2674,11 @@
 }
 
 /* Unsaved plan — draw the eye before the user leaves the card. */
-.history-workout-log__plan-save--attention {
-  color: var(--color-primary-contrast, #fff);
+.btn.history-workout-log__plan-save--attention {
+  color: var(--color-primary-on, #04140c);
   border-color: color-mix(in srgb, var(--color-primary) 70%, transparent);
-  background: var(--color-primary);
+  background: linear-gradient(180deg, #33eb91 0%, var(--color-primary) 100%);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   animation: history-plan-save-attention 1.35s ease-in-out infinite;
   will-change: transform, box-shadow;
 }
@@ -2699,7 +2700,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .history-workout-log__plan-save--attention {
+  .btn.history-workout-log__plan-save--attention {
     animation: none;
     outline: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
     outline-offset: 2px;
