@@ -1050,7 +1050,12 @@ function VideoOverlay({
   const item = items[index];
   const embedId = item?.youtubeId;
   const total = items.length;
-  const videoDrag = useDraggableFloat({ id: 'video-mini', enabled: compact });
+  const videoDrag = useDraggableFloat({
+    id: 'video-mini',
+    enabled: compact,
+    // Avoid React re-renders (YouTube iframe) on every pointer move.
+    performanceMode: 'gpu',
+  });
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
