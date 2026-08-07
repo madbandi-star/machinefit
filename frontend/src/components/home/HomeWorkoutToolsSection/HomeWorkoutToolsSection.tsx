@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,6 +9,7 @@ import { Icon } from '@/components/icons/Icon';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { ROUTES } from '@/constants/routes';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
+import { useHomeVoiceToolsStore } from '@/store/homeVoiceTools.store';
 import { useRestTimerStore } from '@/store/restTimer.store';
 import { useSettingsStore } from '@/store/settings.store';
 import {
@@ -34,7 +35,8 @@ function formatClock(totalSeconds: number): string {
 
 /**
  * Home-only presentational tools (rest timer + rep counter).
- * Local UI state only — does not change workout / recommendation business flows.
+ * Picker defaults come from Settings; once edited on Home they stay in
+ * `homeVoiceTools` store across SPA navigation (independent of pin).
  */
 export function HomeWorkoutToolsSection() {
   const { t } = useTranslation(['common', 'machines']);
@@ -52,6 +54,39 @@ export function HomeWorkoutToolsSection() {
   const settingsVoiceEnabled = useSettingsStore((s) => s.voiceCoachEnabled);
   const settingsLocale = useSettingsStore((s) => s.locale);
 
+  const customized = useHomeVoiceToolsStore((s) => s.customized);
+  const storedPickers = useHomeVoiceToolsStore((s) => s.pickers);
+  const pickersPinned = useHomeVoiceToolsStore((s) => s.pickersPinned);
+  const setPickersPinned = useHomeVoiceToolsStore((s) => s.setPickersPinned);
+  const updatePickers = useHomeVoiceToolsStore((s) => s.updatePickers);
+  const resetToDefaults = useHomeVoiceToolsStore((s) => s.resetToDefaults);
+
+  const settingsDefaults = useMemo(
+    () => ({
+      targetReps: clampVoiceCoachTargetReps(settingsTargetReps),
+      repGapMs: clampVoiceCoachRepGapMs(settingsRepGapMs),
+      oneMoreCount: clampVoiceCoachOneMoreCount(settingsOneMoreCount),
+      holdDurationSec: clampVoiceHoldDurationSec(settingsHoldSec),
+      voiceEnabled: settingsVoiceEnabled,
+    }),
+    [
+      settingsTargetReps,
+      settingsRepGapMs,
+      settingsOneMoreCount,
+      settingsHoldSec,
+      settingsVoiceEnabled,
+    ]
+  );
+
+  const resolvedPickers = customized && storedPickers ? storedPickers : settingsDefaults;
+  const {
+    targetReps,
+    repGapMs,
+    oneMoreCount,
+    holdDurationSec,
+    voiceEnabled,
+  } = resolvedPickers;
+
   const [restSeconds, setRestSeconds] = useState(() =>
     clampRestDurationSeconds(settingsRestSeconds)
   );
@@ -59,22 +94,7 @@ export function HomeWorkoutToolsSection() {
   const startRestTimer = useRestTimerStore((s) => s.start);
   const restRunning = restSession != null;
 
-  const [countValue, setCountValue] = useState(() =>
-    clampVoiceCoachTargetReps(settingsTargetReps)
-  );
   const [detailsOpen, setDetailsOpen] = useState(false);
-
-  const [voiceEnabled, setVoiceEnabled] = useState(settingsVoiceEnabled);
-  const [targetReps, setTargetReps] = useState(() =>
-    clampVoiceCoachTargetReps(settingsTargetReps)
-  );
-  const [repGapMs, setRepGapMs] = useState(() => clampVoiceCoachRepGapMs(settingsRepGapMs));
-  const [oneMoreCount, setOneMoreCount] = useState(() =>
-    clampVoiceCoachOneMoreCount(settingsOneMoreCount)
-  );
-  const [holdDurationSec, setHoldDurationSec] = useState(() =>
-    clampVoiceHoldDurationSec(settingsHoldSec)
-  );
 
   const voiceCoach = useVoiceCoachSession({
     targetReps,
@@ -91,6 +111,7 @@ export function HomeWorkoutToolsSection() {
   });
 
   const restParts = restDurationParts(restSeconds);
+  const pickersLocked = pickersPinned || !voiceEnabled || voiceCoach.isRunning;
 
   const startOrStopCount = () => {
     if (voiceCoach.isRunning) {
@@ -105,14 +126,12 @@ export function HomeWorkoutToolsSection() {
   };
 
   const nudgeCount = (delta: number) => {
-    setCountValue((prev) => {
-      const next = Math.max(
-        VOICE_COACH_TARGET_REPS.minCount,
-        Math.min(VOICE_COACH_TARGET_REPS.maxCount, prev + delta)
-      );
-      setTargetReps(next);
-      return next;
-    });
+    if (pickersPinned) return;
+    const next = Math.max(
+      VOICE_COACH_TARGET_REPS.minCount,
+      Math.min(VOICE_COACH_TARGET_REPS.maxCount, targetReps + delta)
+    );
+    updatePickers(resolvedPickers, { targetReps: next });
   };
 
   return (
@@ -186,7 +205,7 @@ export function HomeWorkoutToolsSection() {
           </div>
 
           <p className="home-tool-card__hero home-tool-card__hero--count" aria-live="polite">
-            {countValue}
+            {targetReps}
             <span className="home-tool-card__unit">{t('pages.home.toolsCountUnit')}</span>
           </p>
 
@@ -196,6 +215,7 @@ export function HomeWorkoutToolsSection() {
               className="home-tool-card__step-btn"
               onClick={() => nudgeCount(-1)}
               aria-label={t('pages.home.toolsDecrease')}
+              disabled={pickersPinned}
             >
               −
             </button>
@@ -204,17 +224,15 @@ export function HomeWorkoutToolsSection() {
               className="home-tool-card__step-btn"
               onClick={() => nudgeCount(1)}
               aria-label={t('pages.home.toolsIncrease')}
+              disabled={pickersPinned}
             >
               +
             </button>
             <button
               type="button"
               className="home-tool-card__step-btn home-tool-card__step-btn--wide"
-              onClick={() => {
-                const next = clampVoiceCoachTargetReps(settingsTargetReps);
-                setCountValue(next);
-                setTargetReps(next);
-              }}
+              onClick={() => resetToDefaults(settingsDefaults)}
+              disabled={pickersPinned}
             >
               {t('pages.home.toolsReset')}
             </button>
@@ -226,10 +244,7 @@ export function HomeWorkoutToolsSection() {
             <button
               type="button"
               className="home-tool-card__cta home-tool-card__cta--count home-tool-card__cta--details"
-              onClick={() => {
-                setDetailsOpen((open) => !open);
-                if (!detailsOpen) setTargetReps(countValue);
-              }}
+              onClick={() => setDetailsOpen((open) => !open)}
               aria-expanded={detailsOpen}
             >
               {detailsOpen
@@ -284,37 +299,64 @@ export function HomeWorkoutToolsSection() {
                   <input
                     type="checkbox"
                     checked={voiceEnabled}
-                    onChange={(e) => setVoiceEnabled(e.target.checked)}
-                    disabled={voiceCoach.isRunning}
+                    onChange={(e) => {
+                      if (pickersPinned) return;
+                      updatePickers(resolvedPickers, { voiceEnabled: e.target.checked });
+                    }}
+                    disabled={voiceCoach.isRunning || pickersPinned}
                   />
                   <span>{t('machines:voiceCoach.on')}</span>
                 </label>
               </div>
 
-              <VoiceCoachPickerGrid
-                flowMode="count_hold"
-                oneMoreEnabled
-                targetReps={targetReps}
-                onTargetRepsChange={(reps) => {
-                  const next = clampVoiceCoachTargetReps(reps);
-                  setTargetReps(next);
-                  setCountValue(next);
-                }}
-                repGapMs={repGapMs}
-                onRepGapMsChange={(ms) => setRepGapMs(clampVoiceCoachRepGapMs(ms))}
-                oneMoreCount={oneMoreCount}
-                onOneMoreCountChange={(count) =>
-                  setOneMoreCount(clampVoiceCoachOneMoreCount(count))
-                }
-                holdDurationSec={holdDurationSec}
-                onHoldDurationSecChange={(sec) =>
-                  setHoldDurationSec(clampVoiceHoldDurationSec(sec))
-                }
-                disabled={!voiceEnabled || voiceCoach.isRunning}
-                recordsLayout
-                labels="settings"
-                compact
-              />
+              <label className="home-tool-details__voice-check home-tool-details__pin-check">
+                <input
+                  type="checkbox"
+                  checked={pickersPinned}
+                  onChange={(e) => setPickersPinned(e.target.checked)}
+                />
+                <span>{t('machines:voiceCoach.pinPickers')}</span>
+              </label>
+
+              <div
+                className={`home-tool-details__pickers${
+                  pickersPinned ? ' home-tool-details__pickers--pinned' : ''
+                }${pickersLocked ? ' home-tool-details__pickers--readonly' : ''}`}
+              >
+                <VoiceCoachPickerGrid
+                  flowMode="count_hold"
+                  oneMoreEnabled
+                  targetReps={targetReps}
+                  onTargetRepsChange={(reps) => {
+                    updatePickers(resolvedPickers, {
+                      targetReps: clampVoiceCoachTargetReps(reps),
+                    });
+                  }}
+                  repGapMs={repGapMs}
+                  onRepGapMsChange={(ms) =>
+                    updatePickers(resolvedPickers, {
+                      repGapMs: clampVoiceCoachRepGapMs(ms),
+                    })
+                  }
+                  oneMoreCount={oneMoreCount}
+                  onOneMoreCountChange={(count) =>
+                    updatePickers(resolvedPickers, {
+                      oneMoreCount: clampVoiceCoachOneMoreCount(count),
+                    })
+                  }
+                  holdDurationSec={holdDurationSec}
+                  onHoldDurationSecChange={(sec) =>
+                    updatePickers(resolvedPickers, {
+                      holdDurationSec: clampVoiceHoldDurationSec(sec),
+                    })
+                  }
+                  disabled={!voiceEnabled || voiceCoach.isRunning}
+                  readOnly={pickersPinned}
+                  recordsLayout
+                  labels="settings"
+                  compact
+                />
+              </div>
 
               <p className="home-tool-details__hint">
                 <span className="home-tool-details__hint-icon" aria-hidden>
