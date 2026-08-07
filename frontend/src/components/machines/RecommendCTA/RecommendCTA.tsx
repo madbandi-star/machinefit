@@ -19,6 +19,10 @@ interface RecommendCTAProps {
   syncMuscleToUrl?: boolean;
   /** Forwarded through recommend → result for workout plan creation. */
   planDate?: string | null;
+  /** Hide the primary recommend CTA (e.g. future-date plan add flow). */
+  showRecommendButton?: boolean;
+  /** Hide sell/buy owner actions under the CTA. */
+  showTradeActions?: boolean;
 }
 
 export function RecommendCTA({
@@ -27,6 +31,8 @@ export function RecommendCTA({
   initialMuscle = null,
   syncMuscleToUrl = false,
   planDate = null,
+  showRecommendButton = true,
+  showTradeActions = true,
 }: RecommendCTAProps) {
   const { t } = useTranslation('machines');
   const { t: tt } = useTranslation('trade');
@@ -99,7 +105,7 @@ export function RecommendCTA({
           </div>
         </div>
       ) : null}
-      {canTrade ? (
+      {showTradeActions && canTrade ? (
         <div className="trade-cta-row" role="group" aria-label={tt('ownerSection')}>
           <button
             type="button"
@@ -121,18 +127,20 @@ export function RecommendCTA({
           </button>
         </div>
       ) : null}
-      <button
-        type="button"
-        className="btn btn--primary btn--block"
-        onClick={handleClick}
-        disabled={isPending}
-      >
-        {isPending
-          ? t('recommendLoading')
-          : isAuthenticated
-            ? t('recommend')
-            : t('recommendLogin')}
-      </button>
+      {showRecommendButton ? (
+        <button
+          type="button"
+          className="btn btn--primary btn--block"
+          onClick={handleClick}
+          disabled={isPending}
+        >
+          {isPending
+            ? t('recommendLoading')
+            : isAuthenticated
+              ? t('recommend')
+              : t('recommendLogin')}
+        </button>
+      ) : null}
     </div>
   );
 }
