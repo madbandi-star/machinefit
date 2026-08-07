@@ -40,6 +40,7 @@ export function HistoryDateCalendar({
   const initialMonth = getInitialCalendarMonth(selectedDate, datesWithData);
   const [viewYear, setViewYear] = useState(initialMonth.year);
   const [viewMonthIndex, setViewMonthIndex] = useState(initialMonth.monthIndex);
+  const [monthDir, setMonthDir] = useState<0 | -1 | 1>(0);
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -59,69 +60,150 @@ export function HistoryDateCalendar({
   );
   const weekdayLabels = useMemo(() => getWeekdayLabels(locale), [locale]);
 
-  const shiftMonth = (delta: number) => {
-    const date = new Date(viewYear, viewMonthIndex + delta, 1);
-    setViewYear(date.getFullYear());
-    setViewMonthIndex(date.getMonth());
-  };
-
   const pickDate = (dateKey: string) => {
     onSelect(dateKey);
     onAfterSelect?.();
   };
 
+  const shiftMonth = (delta: -1 | 1) => {
+    const date = new Date(viewYear, viewMonthIndex + delta, 1);
+    setMonthDir(delta);
+    setViewYear(date.getFullYear());
+    setViewMonthIndex(date.getMonth());
+  };
+
+  const goTodayMonth = () => {
+    const parsed = parseDateKey(todayKey);
+    setMonthDir(0);
+    setViewYear(parsed.year);
+    setViewMonthIndex(parsed.monthIndex);
+    pickDate(todayKey);
+  };
+
+  const openNativePicker = () => {
+    const input = dateInputRef.current;
+    if (!input) return;
+    try {
+      if (typeof input.showPicker === 'function') {
+        input.showPicker();
+        return;
+      }
+    } catch {
+      // fall through to focus/click
+    }
+    input.focus();
+    input.click();
+  };
+
+  const viewingTodayMonth =
+    viewYear === parseDateKey(todayKey).year &&
+    viewMonthIndex === parseDateKey(todayKey).monthIndex;
+
   return (
     <div className="history-calendar" aria-label={t('history.filterByDate')}>
-      {allowEmptySelect ? (
-        <div className="history-calendar__date-field">
-          <label className="history-calendar__date-field-label" htmlFor="history-plan-date-input">
-            {t('history.planPickAnyDate')}
-          </label>
-          <input
-            ref={dateInputRef}
-            id="history-plan-date-input"
-            type="date"
-            className="history-calendar__date-input"
-            value={selectedDate || todayKey}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-                pickDate(value);
-              }
-            }}
-          />
+      <div className="history-calendar__toolbar">
+        <div className="history-calendar__header">
+          <button
+            type="button"
+            className="history-calendar__nav"
+            onClick={() => shiftMonth(-1)}
+            aria-label={t('history.prevMonth')}
+          >
+            <Icon
+              name="chevronRight"
+              size={18}
+              className="history-calendar__nav-icon history-calendar__nav-icon--prev"
+            />
+          </button>
+          <div className="history-calendar__month-wrap">
+            <span
+              key={`${viewYear}-${viewMonthIndex}`}
+              className={[
+                'history-calendar__month',
+                monthDir === -1 && 'history-calendar__month--from-left',
+                monthDir === 1 && 'history-calendar__month--from-right',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              {formatMonthLabel(viewYear, viewMonthIndex, locale)}
+            </span>
+          </div>
+          <button
+            type="button"
+            className="history-calendar__nav"
+            onClick={() => shiftMonth(1)}
+            aria-label={t('history.nextMonth')}
+          >
+            <Icon name="chevronRight" size={18} className="history-calendar__nav-icon" />
+          </button>
         </div>
-      ) : null}
 
-      <div className="history-calendar__header">
-        <button
-          type="button"
-          className="history-calendar__nav"
-          onClick={() => shiftMonth(-1)}
-          aria-label={t('history.prevMonth')}
-        >
-          <Icon name="chevronRight" size={16} className="history-calendar__nav-icon history-calendar__nav-icon--prev" />
-        </button>
-        <span className="history-calendar__month">{formatMonthLabel(viewYear, viewMonthIndex, locale)}</span>
-        <button
-          type="button"
-          className="history-calendar__nav"
-          onClick={() => shiftMonth(1)}
-          aria-label={t('history.nextMonth')}
-        >
-          <Icon name="chevronRight" size={16} className="history-calendar__nav-icon" />
-        </button>
+        <div className="history-calendar__quick">
+          {!viewingTodayMonth || selectedDate !== todayKey ? (
+            <button
+              type="button"
+              className="history-calendar__chip"
+              onClick={goTodayMonth}
+            >
+              {t('history.goToday')}
+            </button>
+          ) : null}
+          {allowEmptySelect ? (
+            <>
+              <button
+                type="button"
+                className="history-calendar__chip history-calendar__chip--ghost"
+                onClick={openNativePicker}
+              >
+                {t('history.planPickAnyDate')}
+              </button>
+              <input
+                ref={dateInputRef}
+                id="history-plan-date-input"
+                type="date"
+                className="history-calendar__date-input-hidden"
+                value={selectedDate || todayKey}
+                tabIndex={-1}
+                aria-hidden
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                    pickDate(value);
+                  }
+                }}
+              />
+            </>
+          ) : null}
+        </div>
       </div>
 
       <div className="history-calendar__weekdays">
-        {weekdayLabels.map((label) => (
-          <span key={label} className="history-calendar__weekday">
+        {weekdayLabels.map((label, index) => (
+          <span
+            key={`${label}-${index}`}
+            className={[
+              'history-calendar__weekday',
+              (index === 0 || index === 6) && 'history-calendar__weekday--weekend',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
             {label}
           </span>
         ))}
       </div>
 
-      <div className="history-calendar__grid">
+      <div
+        key={`${viewYear}-${viewMonthIndex}`}
+        className={[
+          'history-calendar__grid',
+          monthDir === -1 && 'history-calendar__grid--from-left',
+          monthDir === 1 && 'history-calendar__grid--from-right',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
         {cells.map((cell) => {
           const count = dateCounts?.get(cell.dateKey) ?? 0;
           const hasData = datesWithData.has(cell.dateKey) || count > 0;
@@ -129,6 +211,8 @@ export function HistoryDateCalendar({
           const isToday = cell.dateKey === todayKey;
           const canSelect = hasData || allowEmptySelect;
           const isFutureEmpty = allowEmptySelect && !hasData && cell.dateKey > todayKey;
+          const parsed = parseDateKey(cell.dateKey);
+          const isWeekend = new Date(parsed.year, parsed.monthIndex, cell.day).getDay() % 6 === 0;
 
           return (
             <button
@@ -142,6 +226,7 @@ export function HistoryDateCalendar({
                 isFutureEmpty && 'history-calendar__day--future',
                 isSelected && 'history-calendar__day--selected',
                 isToday && 'history-calendar__day--today',
+                isWeekend && 'history-calendar__day--weekend',
               ]
                 .filter(Boolean)
                 .join(' ')}
@@ -172,15 +257,30 @@ export function HistoryDateCalendar({
                 <span className="history-calendar__day-plus" aria-hidden>
                   +
                 </span>
-              ) : null}
+              ) : (
+                <span className="history-calendar__day-marker-slot" aria-hidden />
+              )}
             </button>
           );
         })}
       </div>
 
-      <p className="history-calendar__hint">
-        {allowEmptySelect ? t('history.calendarHintPlan') : t('history.calendarHint')}
-      </p>
+      <div className="history-calendar__legend" aria-hidden>
+        <span className="history-calendar__legend-item">
+          <span className="history-calendar__legend-swatch history-calendar__legend-swatch--today" />
+          {t('history.calendarLegendToday')}
+        </span>
+        <span className="history-calendar__legend-item">
+          <span className="history-calendar__legend-swatch history-calendar__legend-swatch--data" />
+          {t('history.calendarLegendHasData')}
+        </span>
+        {allowEmptySelect ? (
+          <span className="history-calendar__legend-item">
+            <span className="history-calendar__legend-swatch history-calendar__legend-swatch--plan" />
+            {t('history.calendarLegendPlan')}
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }

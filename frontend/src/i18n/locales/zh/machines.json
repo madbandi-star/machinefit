@@ -313,8 +313,12 @@
     "planMissedDelete": "Delete",
     "planMissedDismiss": "Dismiss",
     "planMissedResolved": "Missed plan resolved.",
-    "calendarHintPlan": "Tap a future date (dashed +) or pick any date above.",
-    "planPickAnyDate": "Pick any date (future allowed)",
+    "calendarHintPlan": "Tap a future date or pick any date.",
+    "planPickAnyDate": "Pick date",
+    "goToday": "Today",
+    "calendarLegendToday": "Today",
+    "calendarLegendHasData": "Has records",
+    "calendarLegendPlan": "Add plan",
     "selectedDateLabel": "Selected: {{date}}"
   },
   "records": {
