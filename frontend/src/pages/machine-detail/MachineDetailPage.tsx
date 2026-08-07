@@ -20,6 +20,7 @@ import { ROUTES } from '@/constants/routes';
 import { machineApi, workoutCardApi } from '@/api';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
@@ -48,6 +49,8 @@ export function MachineDetailPage() {
   const { activeMemberId } = useActiveMember();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const { createRecommendationAsync, isPending: isRecommendPending } =
+    useRecommendMachine(machineCode);
 
   const { data: machine, isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!, muscleParam ?? undefined),
@@ -77,6 +80,14 @@ export function MachineDetailPage() {
         throw new Error('missing_scope');
       }
       if (isAllGymsId(activeGymId)) throw new Error('all_gyms');
+      // Create a recommendation (no today-history write) so the plan card gets
+      // the same fit/settings UI and result-page destination as today's cards.
+      const { result } = await createRecommendationAsync({
+        targetMuscleGroup: muscleParam ?? undefined,
+        planDate,
+        skipNavigate: true,
+        skipHistory: true,
+      });
       const res = await workoutCardApi.create({
         gymId: activeGymId,
         memberId: activeMemberId,
@@ -84,7 +95,8 @@ export function MachineDetailPage() {
         scheduledDate: planDate,
         status: 'PLANNED',
         setCount: 1,
-        setWeightsKg: [0],
+        setWeightsKg: [result.settings.recommendedWeightKg ?? 0],
+        recommendationId: result.id,
         ...(muscleParam ? { targetMuscleGroup: muscleParam } : {}),
       });
       return res.data.data;
@@ -102,6 +114,9 @@ export function MachineDetailPage() {
         showToast(t('machines:history.planDuplicateMachine'), 'info');
         return;
       }
+      // Profile / recommend errors already toasted by useRecommendMachine.
+      if (error instanceof Error && error.message.startsWith('missing_')) return;
+      if (getApiErrorCode(error)) return;
       showToast(t('common:errors.submitFailed'), 'error');
     },
   });
@@ -160,7 +175,9 @@ export function MachineDetailPage() {
             type="button"
             className="btn btn--primary btn--block"
             disabled={
-              createPlanMutation.isPending || (isFreeWeight && !muscleParam)
+              createPlanMutation.isPending ||
+              isRecommendPending ||
+              (isFreeWeight && !muscleParam)
             }
             onClick={() => {
               if (isFreeWeight && !muscleParam) {

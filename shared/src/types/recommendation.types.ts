@@ -21,6 +21,11 @@ export interface RecommendationInput {
   gymId?: string;
   /** Active gym member — body stats & logs must belong to this member. */
   memberId?: string;
+  /**
+   * When true, skip writing recent_history (e.g. linking a recommendation
+   * to a future workout plan without polluting today's history).
+   */
+  skipHistory?: boolean;
 }
 
 export interface RecommendationSettings {

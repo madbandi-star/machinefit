@@ -23,6 +23,7 @@ export const recommendationSchema = z
     weightDifficulty: z.number().min(0.1).max(10).optional(),
     gymId: gymIdSchema.optional(),
     memberId: memberIdSchema.optional(),
+    skipHistory: z.boolean().optional(),
   })
   .superRefine((value, ctx) => {
     if ((value.gymId && !value.memberId) || (!value.gymId && value.memberId)) {

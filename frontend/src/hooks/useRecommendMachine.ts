@@ -185,6 +185,12 @@ function buildMemberProfileInput(
 export interface RecommendMachineOptions {
   targetMuscleGroup?: TargetMuscleGroup;
   planDate?: string;
+  /** Create recommendation without navigating to the result page. */
+  skipNavigate?: boolean;
+  /** Skip recent_history write (future plan linking). */
+  skipHistory?: boolean;
+  /** Skip FE duplicate guard (e.g. attaching a rec to an existing plan card). */
+  skipDuplicateCheck?: boolean;
 }
 
 export function useRecommendMachine(machineCode: string | undefined) {
@@ -212,13 +218,15 @@ export function useRecommendMachine(machineCode: string | undefined) {
             gymId: scope.gymId,
             memberId: scope.member.id,
           };
-          await assertNoDuplicateToday({
-            gymId: scope.gymId,
-            memberId: scope.member.id,
-            machineCode,
-            targetMuscleGroup: options?.targetMuscleGroup,
-            dateKey: options?.planDate,
-          });
+          if (!options.skipDuplicateCheck) {
+            await assertNoDuplicateToday({
+              gymId: scope.gymId,
+              memberId: scope.member.id,
+              machineCode,
+              targetMuscleGroup: options?.targetMuscleGroup,
+              dateKey: options?.planDate,
+            });
+          }
         } else {
           input = buildMemberProfileInput(
             machineCode,
@@ -241,23 +249,33 @@ export function useRecommendMachine(machineCode: string | undefined) {
             if (!weightOk) throw new Error('missing_member_weight');
             throw new Error('missing_member_profile');
           }
-          await assertNoDuplicateToday({
-            gymId: scope.gymId,
-            memberId: scope.member.id,
-            machineCode,
-            targetMuscleGroup: options?.targetMuscleGroup,
-            dateKey: options?.planDate,
-          });
+          if (!options.skipDuplicateCheck) {
+            await assertNoDuplicateToday({
+              gymId: scope.gymId,
+              memberId: scope.member.id,
+              machineCode,
+              targetMuscleGroup: options?.targetMuscleGroup,
+              dateKey: options?.planDate,
+            });
+          }
         }
       } else {
         input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup);
       }
 
-      const res = await recommendationApi.create(input);
-      return { result: res.data.data, planDate: options.planDate };
+      const res = await recommendationApi.create({
+        ...input,
+        ...(options.skipHistory ? { skipHistory: true } : {}),
+      });
+      return {
+        result: res.data.data,
+        planDate: options.planDate,
+        skipNavigate: Boolean(options.skipNavigate),
+      };
     },
-    onSuccess: async ({ result, planDate }) => {
+    onSuccess: async ({ result, planDate, skipNavigate }) => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
+      if (skipNavigate) return;
       const params = new URLSearchParams({ id: result.id });
       if (planDate) {
         params.set('planDate', planDate);
@@ -367,6 +385,8 @@ export function useRecommendMachine(machineCode: string | undefined) {
 
   return {
     requestRecommendation: (options?: RecommendMachineOptions) => mutation.mutate(options ?? {}),
+    createRecommendationAsync: (options?: RecommendMachineOptions) =>
+      mutation.mutateAsync(options ?? {}),
     isPending: mutation.isPending,
     isError: mutation.isError,
     reset: mutation.reset,

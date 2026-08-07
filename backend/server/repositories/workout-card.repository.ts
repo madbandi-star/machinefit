@@ -1,5 +1,6 @@
 import type {
   Locale,
+  RecommendationSettings,
   TargetMuscleGroup,
   WorkoutCard,
   WorkoutCardDaySummary,
@@ -36,6 +37,14 @@ interface WorkoutCardRow {
   completed_at: string | null;
   created_at: string;
   updated_at: string;
+  seat_position?: number | null;
+  back_pad_position?: number | null;
+  foot_position?: number | null;
+  handle_position?: number | null;
+  rom_setting?: string | null;
+  recommended_weight_kg?: string | null;
+  recommended_reps_min?: number | null;
+  recommended_reps_max?: number | null;
 }
 
 interface WorkoutCardTemplateRow {
@@ -58,7 +67,28 @@ function formatDateKey(value: string | Date): string {
   return `${y}-${m}-${d}`;
 }
 
+function mapRecommendationSettings(row: WorkoutCardRow): RecommendationSettings | undefined {
+  if (!row.recommendation_id) return undefined;
+  const settings: RecommendationSettings = {};
+  if (row.seat_position != null) settings.seatPosition = row.seat_position;
+  if (row.back_pad_position != null) settings.backPadPosition = row.back_pad_position;
+  if (row.foot_position != null) settings.footPosition = row.foot_position;
+  if (row.handle_position != null) settings.handlePosition = row.handle_position;
+  if (row.rom_setting) settings.romSetting = row.rom_setting;
+  if (row.recommended_weight_kg != null) {
+    settings.recommendedWeightKg = parseFloat(row.recommended_weight_kg);
+  }
+  if (row.recommended_reps_min != null) {
+    settings.recommendedRepsMin = row.recommended_reps_min;
+  }
+  if (row.recommended_reps_max != null) {
+    settings.recommendedRepsMax = row.recommended_reps_max;
+  }
+  return Object.keys(settings).length > 0 ? settings : undefined;
+}
+
 function mapCardRow(row: WorkoutCardRow, locale: Locale = 'en'): WorkoutCard {
+  const settings = mapRecommendationSettings(row);
   return {
     id: row.id,
     gymId: row.gym_id,
@@ -69,6 +99,7 @@ function mapCardRow(row: WorkoutCardRow, locale: Locale = 'en'): WorkoutCard {
       ? pickLocalized(row.brand_name, locale) ?? undefined
       : undefined,
     recommendationId: row.recommendation_id ?? undefined,
+    ...(settings ? { settings } : {}),
     targetMuscleGroup: row.target_muscle_group
       ? (row.target_muscle_group as TargetMuscleGroup)
       : undefined,
@@ -111,10 +142,13 @@ const SELECT_FIELDS = `wc.id, wc.gym_id, wc.member_id, wc.machine_id, wc.recomme
               wc.set_weights_kg, wc.set_reps, wc.set_completed, wc.diary, wc.rest_seconds,
               wc.display_order, wc.workout_log_id, wc.source_card_id, wc.template_id,
               wc.started_at, wc.completed_at, wc.created_at, wc.updated_at,
-              m.code AS machine_code, m.name AS machine_name, b.name AS brand_name`;
+              m.code AS machine_code, m.name AS machine_name, b.name AS brand_name,
+              r.seat_position, r.back_pad_position, r.foot_position, r.handle_position,
+              r.rom_setting, r.recommended_weight_kg, r.recommended_reps_min, r.recommended_reps_max`;
 
 const MACHINE_JOINS = `JOIN machines m ON m.id = wc.machine_id
-       LEFT JOIN brands b ON b.id = m.brand_id`;
+       LEFT JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN machine_recommendations r ON r.id = wc.recommendation_id`;
 
 export type WorkoutCardCreateData = {
   gymId: string;
