@@ -31,7 +31,7 @@ import {
 export const VOICE_HOLD_FLOW_MODES = ['count', 'count_hold', 'hold'] as const;
 export type VoiceHoldFlowMode = (typeof VOICE_HOLD_FLOW_MODES)[number];
 
-export const DEFAULT_VOICE_HOLD_FLOW_MODE: VoiceHoldFlowMode = 'count';
+export const DEFAULT_VOICE_HOLD_FLOW_MODE: VoiceHoldFlowMode = 'count_hold';
 
 export const VOICE_HOLD_DURATION_PRESETS = [3, 5, 10, 15, 20, 30, 45, 60] as const;
 export type VoiceHoldDurationPreset = (typeof VOICE_HOLD_DURATION_PRESETS)[number];

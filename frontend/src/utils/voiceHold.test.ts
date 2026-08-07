@@ -15,11 +15,11 @@ import {
   VOICE_HOLD_FLOW_MODES,
 } from './voiceHold.js';
 
-assert.equal(DEFAULT_VOICE_HOLD_FLOW_MODE, 'count');
+assert.equal(DEFAULT_VOICE_HOLD_FLOW_MODE, 'count_hold');
 assert.deepEqual([...VOICE_HOLD_FLOW_MODES], ['count', 'count_hold', 'hold']);
 assert.ok(VOICE_HOLD_DURATION_PRESETS.includes(10));
 assert.equal(clampVoiceHoldFlowMode('hold'), 'hold');
-assert.equal(clampVoiceHoldFlowMode('nope'), 'count');
+assert.equal(clampVoiceHoldFlowMode('nope'), 'count_hold');
 assert.equal(clampVoiceHoldDurationSec(10), 10);
 assert.equal(clampVoiceHoldDurationSec(0), VOICE_HOLD_DURATION.defaultSec);
 assert.equal(clampVoiceHoldDurationSec(999), VOICE_HOLD_DURATION.maxSec);
