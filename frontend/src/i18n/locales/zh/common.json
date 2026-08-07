@@ -104,7 +104,12 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "compactMode": "Compact",
-    "expandMode": "Expand"
+    "expandMode": "Expand",
+    "cornerMove": "屏幕位置",
+    "cornerTopLeft": "左上",
+    "cornerTopRight": "右上",
+    "cornerBottomLeft": "左下",
+    "cornerBottomRight": "右下"
   },
   "motivationMusic": {
     "title": "Motivation music",

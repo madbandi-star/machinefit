@@ -1217,10 +1217,6 @@
 .mf-video-overlay--compact {
   /* PiP against the viewport (overlay is portaled to body). */
   inset: auto;
-  top: auto;
-  left: auto;
-  right: max(0.75rem, env(safe-area-inset-right, 0px));
-  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
   width: auto;
   height: auto;
   align-items: stretch;
@@ -1228,6 +1224,34 @@
   padding: 0;
   pointer-events: none;
   z-index: 350;
+}
+
+.mf-video-overlay--compact.mf-video-overlay--corner-tl {
+  top: calc(var(--header-height, 4.5rem) + 0.5rem);
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  right: auto;
+  bottom: auto;
+}
+
+.mf-video-overlay--compact.mf-video-overlay--corner-tr {
+  top: calc(var(--header-height, 4.5rem) + 0.5rem);
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  left: auto;
+  bottom: auto;
+}
+
+.mf-video-overlay--compact.mf-video-overlay--corner-bl {
+  top: auto;
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  right: auto;
+  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
+}
+
+.mf-video-overlay--compact.mf-video-overlay--corner-br {
+  top: auto;
+  left: auto;
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
 }
 
 .mf-video-overlay--compact .mf-video-overlay__panel {
@@ -1257,11 +1281,40 @@
 }
 
 .mf-video-overlay__compact-title {
-  margin: 0;
+  margin: 0 0 0.45rem;
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.mf-video-overlay__corners {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.35rem;
+}
+
+.mf-video-overlay__corner-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-text-muted) 35%, transparent);
+  background: color-mix(in srgb, #1a2332 80%, transparent);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.mf-video-overlay__corner-btn:hover {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.mf-video-overlay__corner-btn.is-active {
+  color: var(--color-primary-on, #04140c);
+  border-color: transparent;
+  background: linear-gradient(160deg, #33eb91 0%, var(--color-primary) 100%);
 }

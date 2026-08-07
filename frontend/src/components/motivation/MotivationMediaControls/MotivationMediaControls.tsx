@@ -4,6 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useDraggableFloat } from '@/hooks/useDraggableFloat';
 import {
+  ArrowDownLeft,
+  ArrowDownRight,
+  ArrowUpLeft,
+  ArrowUpRight,
   ChevronDown,
   ChevronUp,
   Film,
@@ -40,6 +44,31 @@ import '@/styles/float-drag.css';
 
 /** Soft volume while the motivation video overlay is open (keeps BGM under YouTube). */
 const VIDEO_MUSIC_DUCK = 0.28;
+
+type VideoMiniCorner = 'tl' | 'tr' | 'bl' | 'br';
+
+const VIDEO_MINI_CORNER_KEY = 'mf-video-mini-corner';
+const VIDEO_MINI_CORNERS: VideoMiniCorner[] = ['tl', 'tr', 'bl', 'br'];
+
+function loadVideoMiniCorner(): VideoMiniCorner {
+  if (typeof window === 'undefined') return 'br';
+  try {
+    const raw = window.localStorage.getItem(VIDEO_MINI_CORNER_KEY);
+    if (raw === 'tl' || raw === 'tr' || raw === 'bl' || raw === 'br') return raw;
+  } catch {
+    // ignore
+  }
+  return 'br';
+}
+
+function saveVideoMiniCorner(corner: VideoMiniCorner): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(VIDEO_MINI_CORNER_KEY, corner);
+  } catch {
+    // ignore
+  }
+}
 
 export function MotivationMediaControls({
   variant = 'default',
@@ -1050,15 +1079,7 @@ function VideoOverlay({
   const item = items[index];
   const embedId = item?.youtubeId;
   const total = items.length;
-  const [suspendIframe, setSuspendIframe] = useState(false);
-  const videoDrag = useDraggableFloat({
-    id: 'video-mini',
-    enabled: compact,
-    // Avoid React re-renders (YouTube iframe) on every pointer move.
-    performanceMode: 'gpu',
-    onDragStart: () => setSuspendIframe(true),
-    onDragEnd: () => setSuspendIframe(false),
-  });
+  const [corner, setCorner] = useState<VideoMiniCorner>(() => loadVideoMiniCorner());
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -1068,22 +1089,33 @@ function VideoOverlay({
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  useEffect(() => {
-    if (!compact) setSuspendIframe(false);
-  }, [compact]);
+  const setMiniCorner = (next: VideoMiniCorner) => {
+    setCorner(next);
+    saveVideoMiniCorner(next);
+  };
 
   if (!item) return null;
+
+  const cornerIcons: Record<VideoMiniCorner, typeof ArrowUpLeft> = {
+    tl: ArrowUpLeft,
+    tr: ArrowUpRight,
+    bl: ArrowDownLeft,
+    br: ArrowDownRight,
+  };
+  const cornerLabels: Record<VideoMiniCorner, string> = {
+    tl: t('motivation.cornerTopLeft'),
+    tr: t('motivation.cornerTopRight'),
+    bl: t('motivation.cornerBottomLeft'),
+    br: t('motivation.cornerBottomRight'),
+  };
 
   // Portal to body: header uses transform/backdrop-filter, which would otherwise
   // trap position:fixed and send compact mode above the viewport.
   return createPortal(
     <div
-      ref={compact ? videoDrag.ref : undefined}
       className={`mf-video-overlay${compact ? ' mf-video-overlay--compact' : ''}${
-        compact && videoDrag.floatClassName ? ` ${videoDrag.floatClassName}` : ''
+        compact ? ` mf-video-overlay--corner-${corner}` : ''
       }`}
-      style={compact ? videoDrag.style : undefined}
-      onPointerDown={compact ? videoDrag.onPointerDown : undefined}
       role="dialog"
       aria-modal={!compact}
       aria-label={t('motivation.videoPanelTitle')}
@@ -1143,7 +1175,7 @@ function VideoOverlay({
         )}
 
         <div className="mf-video-overlay__frame">
-          {embedId && !(compact && suspendIframe) ? (
+          {embedId ? (
             <iframe
               key={embedId}
               title={item.title}
@@ -1151,19 +1183,40 @@ function VideoOverlay({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-          ) : embedId && compact && suspendIframe ? (
-            <div className="mf-video-overlay__frame-placeholder" aria-hidden="true">
-              <Film size={22} />
-            </div>
           ) : (
             <p className="mf-video-overlay__error">{t('motivation.playFailed')}</p>
           )}
         </div>
 
         {compact ? (
-          <p className="mf-video-overlay__compact-title" title={item.title}>
-            {item.title}
-          </p>
+          <>
+            <p className="mf-video-overlay__compact-title" title={item.title}>
+              {item.title}
+            </p>
+            <div
+              className="mf-video-overlay__corners"
+              role="group"
+              aria-label={t('motivation.cornerMove')}
+            >
+              {VIDEO_MINI_CORNERS.map((key) => {
+                const Icon = cornerIcons[key];
+                const active = corner === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`mf-video-overlay__corner-btn${active ? ' is-active' : ''}`}
+                    aria-label={cornerLabels[key]}
+                    aria-pressed={active}
+                    title={cornerLabels[key]}
+                    onClick={() => setMiniCorner(key)}
+                  >
+                    <Icon size={14} aria-hidden />
+                  </button>
+                );
+              })}
+            </div>
+          </>
         ) : (
           <>
             <div

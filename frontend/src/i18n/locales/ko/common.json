@@ -109,7 +109,12 @@
     "moveUp": "위로 이동",
     "moveDown": "아래로 이동",
     "compactMode": "소형모드",
-    "expandMode": "전체모드"
+    "expandMode": "전체모드",
+    "cornerMove": "화면 위치",
+    "cornerTopLeft": "왼쪽 위",
+    "cornerTopRight": "오른쪽 위",
+    "cornerBottomLeft": "왼쪽 아래",
+    "cornerBottomRight": "오른쪽 아래"
   },
   "motivationMusic": {
     "title": "동기부여 음악",
