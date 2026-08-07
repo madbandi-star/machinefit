@@ -215,7 +215,7 @@ export function EasyWizardPage() {
     },
     onError: (error) => {
       if (error instanceof DuplicateRecommendationError) {
-        showDuplicatePickToast(error.historyItem.machineCode);
+        showDuplicatePickToast(error.machineCode);
         setSelected(null);
         setTargetMuscle(null);
         return;

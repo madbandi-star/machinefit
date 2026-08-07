@@ -751,7 +751,7 @@
     "pickerConfirm": "이 기구로 하기",
     "pickerReselect": "다시 기구선택",
     "pickerGoRecords": "기록페이지 이동",
-    "duplicateMachine": "오늘 이 기구 추천이 이미 있어요. 다시 선택해주세요.",
+    "duplicateMachine": "해당 날짜에 이 기구 추천이 이미 있어요. 다시 선택해주세요.",
     "nextRecommend": "다음: 추천 보기",
     "nextLog": "다음: 기록하기",
     "backToMachine": "기구 다시 고르기",
