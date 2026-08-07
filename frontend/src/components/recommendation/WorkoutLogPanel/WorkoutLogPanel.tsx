@@ -1653,9 +1653,17 @@ export function WorkoutLogPanel({
               {setCountControl}
               <button
                 type="button"
-                className="btn btn--secondary history-workout-log__plan-save"
+                className={[
+                  'btn btn--secondary history-workout-log__plan-save',
+                  isPlanDirty && !isActionPending && !isLoading
+                    ? 'history-workout-log__plan-save--attention'
+                    : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
                 onClick={() => void handlePlanSave()}
                 disabled={isActionPending || isLoading || !isPlanDirty}
+                aria-live={isPlanDirty ? 'polite' : undefined}
               >
                 {saveMutation.isPending && saveMutation.variables?.asPlan
                   ? t('machines:workoutLog.planSaving')

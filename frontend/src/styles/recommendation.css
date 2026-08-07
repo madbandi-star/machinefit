@@ -2666,6 +2666,44 @@
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+/* Unsaved plan — draw the eye before the user leaves the card. */
+.history-workout-log__plan-save--attention {
+  color: var(--color-primary-contrast, #fff);
+  border-color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+  background: var(--color-primary);
+  animation: history-plan-save-attention 1.35s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+@keyframes history-plan-save-attention {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--color-primary) 42%, transparent),
+      0 1px 2px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+  55% {
+    transform: scale(1.06);
+    box-shadow:
+      0 0 0 0.45rem color-mix(in srgb, var(--color-primary) 0%, transparent),
+      0 2px 8px color-mix(in srgb, var(--color-primary) 28%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .history-workout-log__plan-save--attention {
+    animation: none;
+    outline: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+    outline-offset: 2px;
+  }
 }
 
 .history-workout-log__diary-grid {
