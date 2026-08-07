@@ -1192,19 +1192,9 @@
   background: color-mix(in srgb, #3b82f6 18%, transparent);
 }
 
-.history-record-card__plan-badge--in-progress {
-  color: #c2410c;
-  background: color-mix(in srgb, #f97316 20%, transparent);
-}
-
 .history-record-card__plan-badge--completed {
   color: #15803d;
   background: color-mix(in srgb, #22c55e 18%, transparent);
-}
-
-.history-record-card__plan-badge--skipped {
-  color: #64748b;
-  background: color-mix(in srgb, #94a3b8 22%, transparent);
 }
 
 .history-record-card__plan-start {

@@ -29,7 +29,7 @@ import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/history
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
-import { planStatusBadgeClass } from '@/utils/workoutPlanCards';
+import { planStatusBadgeClass, resolvePlanStatusBadge } from '@/utils/workoutPlanCards';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 
@@ -215,17 +215,13 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     ? t(`muscleGroups.${muscleGroup}`, { defaultValue: muscleGroup })
     : null;
 
-  const planStatus = card.planStatus;
+  const planBadge = resolvePlanStatusBadge(card.planStatus);
   const planBadgeLabel =
-    planStatus === 'PLANNED'
+    planBadge === 'PLANNED'
       ? t('machines:history.planStatusPlanned')
-      : planStatus === 'IN_PROGRESS'
-        ? t('machines:history.planStatusInProgress')
-        : planStatus === 'COMPLETED'
-          ? t('machines:history.planStatusCompleted')
-          : planStatus === 'SKIPPED'
-            ? t('machines:history.planStatusSkipped')
-            : null;
+      : planBadge === 'COMPLETED'
+        ? t('machines:history.planStatusCompleted')
+        : null;
   const showPlanMenu = Boolean(card.workoutCardId) && (Boolean(onCopyPlan) || Boolean(onMovePlan));
   const hasRecommendationSettings =
     card.settings.recommendedWeightKg != null ||
@@ -462,10 +458,10 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
                 <Link to={resultUrl} className="history-record-card__meta-link">
                   <div className="history-record-card__meta">
-                    {planBadgeLabel && planStatus ? (
+                    {planBadgeLabel && planBadge ? (
                       <>
                         <span
-                          className={`history-record-card__plan-badge ${planStatusBadgeClass(planStatus)}`}
+                          className={`history-record-card__plan-badge ${planStatusBadgeClass(planBadge)}`}
                         >
                           {planBadgeLabel}
                         </span>
