@@ -10,6 +10,7 @@ import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { SubscriptionPlanCard } from '@/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard';
+import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
 import { locationApi, userApi, authApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
@@ -108,23 +109,16 @@ export function MyPage() {
       <PageShell>
         <div className="card profile-card profile-card--compact">
           <dl className="profile-card__fields">
+            <div className="profile-card__row profile-card__row--full">
+              <dt>{t('myPage.memberId')}</dt>
+              <MemberIdEditor displayName={user?.displayName ?? ''} />
+            </div>
             {showMemberLevel ? (
-              <div className="profile-card__pair">
-                <div className="profile-card__row">
-                  <dt>{t('myPage.memberId')}</dt>
-                  <dd>{user?.displayName || '—'}</dd>
-                </div>
-                <div className="profile-card__row">
-                  <dt>{t('myPage.memberLevel')}</dt>
-                  <dd>{user?.roleCode || '—'}</dd>
-                </div>
-              </div>
-            ) : (
               <div className="profile-card__row profile-card__row--full">
-                <dt>{t('myPage.memberId')}</dt>
-                <dd>{user?.displayName || '—'}</dd>
+                <dt>{t('myPage.memberLevel')}</dt>
+                <dd>{user?.roleCode || '—'}</dd>
               </div>
-            )}
+            ) : null}
 
             <div className="profile-card__row profile-card__row--full">
               <dt>{t('myPage.email')}</dt>

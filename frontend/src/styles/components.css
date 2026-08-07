@@ -941,6 +941,66 @@
   white-space: nowrap;
 }
 
+.profile-card__member-id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  min-width: 0;
+}
+
+.profile-card__member-id-value {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+}
+
+.profile-card__member-id-change,
+.profile-card__member-id-save,
+.profile-card__member-id-cancel {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border, rgba(16, 35, 31, 0.12));
+  background: color-mix(in srgb, var(--color-surface, #fff) 88%, transparent);
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.profile-card__member-id-save {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.profile-card__member-id-save:disabled,
+.profile-card__member-id-cancel:disabled,
+.profile-card__member-id-change:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.profile-card__member-id--editing {
+  align-items: center;
+}
+
+.profile-card__member-id-input {
+  flex: 1 1 7rem;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+  min-height: 1.85rem;
+  padding: 0.2rem 0.5rem;
+  font-size: var(--font-size-body-sm);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
 .my-page .page-shell__header--no-subtitle {
   margin-bottom: var(--space-sm);
 }
