@@ -1,4 +1,8 @@
-import type { WorkoutCard, WorkoutCardStatus } from '@machinefit/shared';
+import type {
+  RecommendationSettings,
+  WorkoutCard,
+  WorkoutCardStatus,
+} from '@machinefit/shared';
 import { normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard } from '@/utils/historyRecordsDisplay';
 
@@ -17,6 +21,20 @@ export function buildPlanMatchKey(
   return `${machineCode}:${normalizeDateKey(dateKey)}:${targetMuscleGroup ?? ''}`;
 }
 
+function hasDisplaySettings(settings?: RecommendationSettings | null): boolean {
+  if (!settings) return false;
+  return (
+    settings.recommendedWeightKg != null ||
+    settings.seatPosition != null ||
+    settings.recommendedRepsMin != null ||
+    settings.recommendedRepsMax != null ||
+    settings.backPadPosition != null ||
+    settings.footPosition != null ||
+    settings.handlePosition != null ||
+    settings.romSetting != null
+  );
+}
+
 export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard {
   const logDate = normalizeDateKey(card.scheduledDate);
   return {
@@ -33,6 +51,30 @@ export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard
     planStatus: card.status,
     workoutCardId: card.id,
     isPlanOnly: true,
+  };
+}
+
+/**
+ * Attach plan metadata onto a history/log card without dropping plan settings.
+ * Future plans often create a workout log with no recent_history row, so the
+ * log-backed card has empty settings — keep recommendation settings from the plan
+ * so UI stays aligned with today cards after 「셋팅값 저장하기」.
+ */
+function linkPlanOntoCard(existing: HistoryRecordCard, plan: WorkoutCard): HistoryRecordCard {
+  const fromPlan = workoutCardToHistoryRecord(plan);
+  return {
+    ...existing,
+    planStatus: plan.status,
+    workoutCardId: plan.id,
+    isPlanOnly: false,
+    recommendationId: existing.recommendationId ?? plan.recommendationId,
+    settings: hasDisplaySettings(existing.settings)
+      ? existing.settings
+      : (fromPlan.settings ?? existing.settings),
+    muscleGroup: existing.muscleGroup ?? fromPlan.muscleGroup,
+    brandName: existing.brandName ?? fromPlan.brandName,
+    primaryImageUrl: existing.primaryImageUrl ?? fromPlan.primaryImageUrl,
+    machineName: existing.machineName || fromPlan.machineName,
   };
 }
 
@@ -68,24 +110,14 @@ export function mergeWorkoutPlanCards(
 
     if (plan.status === 'COMPLETED' && historyKeys.has(key)) {
       if (existing) {
-        byKey.set(key, {
-          ...existing,
-          planStatus: plan.status,
-          workoutCardId: plan.id,
-          isPlanOnly: false,
-        });
+        byKey.set(key, linkPlanOntoCard(existing, plan));
       }
       continue;
     }
 
     if (VISIBLE_PLAN_STATUSES.includes(plan.status) || plan.status === 'COMPLETED') {
       if (existing && !existing.isPlanOnly) {
-        byKey.set(key, {
-          ...existing,
-          planStatus: plan.status,
-          workoutCardId: plan.id,
-          isPlanOnly: false,
-        });
+        byKey.set(key, linkPlanOntoCard(existing, plan));
       } else if (existing?.isPlanOnly) {
         byKey.set(key, workoutCardToHistoryRecord(plan));
       } else {

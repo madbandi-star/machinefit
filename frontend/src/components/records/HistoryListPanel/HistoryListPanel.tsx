@@ -1123,7 +1123,11 @@ export function HistoryListPanel() {
 
                 return (
                   <HistoryRecordCard
-                    key={card.cardId}
+                    key={buildWorkoutCardOrderKey(
+                      card.machineCode,
+                      card.logDate,
+                      card.targetMuscleGroup
+                    )}
                     card={card}
                     resultUrl={resultUrl}
                     displayName={displayName}
