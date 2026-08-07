@@ -84,19 +84,22 @@ export function AdminNoticesPage() {
 
   return (
     <div className="admin-page">
-      <div className="admin-page__header">
-        <div>
-          <h1>{t('admin:notices.title')}</h1>
+      <header className="admin-page__header">
+        <div className="admin-page__heading">
+          <h1 className="admin-page__title">{t('admin:notices.title')}</h1>
           <p className="admin-page__subtitle">{t('admin:notices.subtitle')}</p>
         </div>
-        <Link to={ROUTES.ADMIN_NOTICE_NEW} className="btn btn--primary">
-          {t('admin:notices.create')}
-        </Link>
-      </div>
+        <div className="admin-page__actions">
+          <Link to={ROUTES.ADMIN_NOTICE_NEW} className="btn btn--primary">
+            {t('admin:notices.create')}
+          </Link>
+        </div>
+      </header>
 
+      <div className="admin-page__body">
       {stats ? (
-        <div className="admin-panel" style={{ marginBottom: '1rem' }}>
-          <p>
+        <div className="admin-panel">
+          <p className="admin-panel__desc" style={{ marginTop: 0 }}>
             {t('admin:notices.statsLine', {
               published: stats.totalPublished,
               views: stats.totalViews,
@@ -104,7 +107,7 @@ export function AdminNoticesPage() {
             })}
           </p>
           {stats.popular.length > 0 ? (
-            <ul>
+            <ul className="admin-notice-popular">
               {stats.popular.map((item) => (
                 <li key={item.id}>
                   {item.title} ({item.viewCount})
@@ -115,11 +118,13 @@ export function AdminNoticesPage() {
         </div>
       ) : null}
 
-      <div className="notice-list__search" style={{ marginBottom: '0.75rem' }}>
+      <div className="admin-toolbar">
         <input
+          className="input"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t('admin:notices.searchPlaceholder')}
+          aria-label={t('admin:notices.searchPlaceholder')}
         />
       </div>
 
@@ -210,6 +215,7 @@ export function AdminNoticesPage() {
             ))}
           </tbody>
         </table>
+      </div>
       </div>
 
       <ConfirmDialog

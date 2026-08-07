@@ -144,185 +144,215 @@ export function AdminNoticeEditPage() {
 
   return (
     <div className="admin-page">
-      <div className="admin-page__header">
-        <div>
-          <h1>{isNew ? t('admin:notices.create') : t('admin:notices.edit')}</h1>
+      <header className="admin-page__header">
+        <div className="admin-page__heading">
+          <h1 className="admin-page__title">
+            {isNew ? t('admin:notices.create') : t('admin:notices.edit')}
+          </h1>
           <p className="admin-page__subtitle">{t('admin:notices.editSubtitle')}</p>
         </div>
-        <Link to={ROUTES.ADMIN_NOTICES} className="btn btn--secondary">
-          {t('common:actions.back')}
-        </Link>
-      </div>
-
-      <div className="admin-panel" style={{ display: 'grid', gap: '0.85rem' }}>
-        <label>
-          {t('admin:notices.category')}
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as NoticeCategory)}
-          >
-            {NOTICE_CATEGORIES.map((code) => (
-              <option key={code} value={code}>
-                {t(`admin:notices.categories.${code}`)}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          {t('admin:notices.status')}
-          <select value={status} onChange={(e) => setStatus(e.target.value as NoticeStatus)}>
-            {NOTICE_STATUSES.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          {t('admin:notices.publishAt')}
-          <input
-            type="datetime-local"
-            value={publishAt}
-            onChange={(e) => setPublishAt(e.target.value)}
-          />
-        </label>
-
-        <div className="admin-notice-flags">
-          <label>
-            <input type="checkbox" checked={isPinned} onChange={(e) => setIsPinned(e.target.checked)} />
-            {t('admin:notices.pin')}
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={isImportant}
-              onChange={(e) => setIsImportant(e.target.checked)}
-            />
-            {t('admin:notices.important')}
-          </label>
-          <label>
-            <input type="checkbox" checked={isBanner} onChange={(e) => setIsBanner(e.target.checked)} />
-            {t('admin:notices.banner')}
-          </label>
-          <label>
-            <input type="checkbox" checked={isPopup} onChange={(e) => setIsPopup(e.target.checked)} />
-            {t('admin:notices.popup')}
-          </label>
+        <div className="admin-page__actions">
+          <Link to={ROUTES.ADMIN_NOTICES} className="btn btn--secondary">
+            {t('common:actions.back')}
+          </Link>
         </div>
+      </header>
 
-        <div className="admin-notice-lang-tabs">
-          {NOTICE_LANGUAGES.map((code) => (
-            <button
-              key={code}
-              type="button"
-              className={`notice-list__chip${lang === code ? ' is-active' : ''}`}
-              onClick={() => setLang(code)}
-            >
-              {code.toUpperCase()}
-              {translations[code].title ? ' ✓' : ''}
-            </button>
-          ))}
-        </div>
+      <div className="admin-page__body">
+        <div className="admin-panel admin-notice-edit">
+          <div className="admin-form-grid">
+            <label className="admin-form-card">
+              {t('admin:notices.category')}
+              <select
+                className="input"
+                value={category}
+                onChange={(e) => setCategory(e.target.value as NoticeCategory)}
+              >
+                {NOTICE_CATEGORIES.map((code) => (
+                  <option key={code} value={code}>
+                    {t(`admin:notices.categories.${code}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <label>
-          {t('admin:notices.fieldTitle')} ({lang})
-          <input
-            value={translations[lang].title}
-            onChange={(e) =>
-              setTranslations((prev) => ({
-                ...prev,
-                [lang]: { ...prev[lang], title: e.target.value },
-              }))
-            }
-          />
-        </label>
+            <label className="admin-form-card">
+              {t('admin:notices.status')}
+              <select
+                className="input"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as NoticeStatus)}
+              >
+                {NOTICE_STATUSES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <div>
-          <p style={{ margin: '0 0 0.35rem' }}>
-            {t('admin:notices.fieldContent')} ({lang})
-          </p>
-          <RichTextEditor
-            value={translations[lang].content}
-            onChange={(html) =>
-              setTranslations((prev) => ({
-                ...prev,
-                [lang]: { ...prev[lang], content: html },
-              }))
-            }
-            onImageSelect={
-              isNew
-                ? undefined
-                : async (file) => {
-                    await uploadMutation.mutateAsync({ file, inline: true });
-                  }
-            }
-            placeholder={t('admin:notices.contentPlaceholder')}
-          />
-        </div>
+            <label className="admin-form-card">
+              {t('admin:notices.publishAt')}
+              <input
+                className="input"
+                type="datetime-local"
+                value={publishAt}
+                onChange={(e) => setPublishAt(e.target.value)}
+              />
+            </label>
 
-        {!isNew ? (
-          <div>
-            <p style={{ margin: '0 0 0.35rem' }}>{t('admin:notices.attachments')}</p>
-            <input
-              type="file"
-              accept="image/*,.pdf,.zip,application/pdf,application/zip"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                e.target.value = '';
-                if (file) uploadMutation.mutate({ file, inline: false });
-              }}
-            />
-            <ul>
-              {attachments.map((file) => (
-                <li key={file.id}>
-                  {file.fileName} ({Math.round(file.fileSizeBytes / 1024)}KB)
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    style={{ marginLeft: '0.35rem' }}
-                    onClick={async () => {
-                      await noticeApi.deleteAttachment(noticeId!, file.id);
-                      await queryClient.invalidateQueries({
-                        queryKey: ['admin', 'notices', 'detail', noticeId],
-                      });
-                    }}
-                  >
-                    {t('common:actions.delete')}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="admin-form-card admin-form-card--full">
+              <div className="admin-notice-flags">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isPinned}
+                    onChange={(e) => setIsPinned(e.target.checked)}
+                  />
+                  {t('admin:notices.pin')}
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isImportant}
+                    onChange={(e) => setIsImportant(e.target.checked)}
+                  />
+                  {t('admin:notices.important')}
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isBanner}
+                    onChange={(e) => setIsBanner(e.target.checked)}
+                  />
+                  {t('admin:notices.banner')}
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isPopup}
+                    onChange={(e) => setIsPopup(e.target.checked)}
+                  />
+                  {t('admin:notices.popup')}
+                </label>
+              </div>
+            </div>
           </div>
-        ) : (
-          <p className="admin-page__subtitle">{t('admin:notices.saveBeforeAttach')}</p>
-        )}
 
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            className="btn btn--primary"
-            disabled={saveMutation.isPending}
-            onClick={() => saveMutation.mutate()}
-          >
-            {t('common:actions.save')}
-          </button>
+          <div className="admin-notice-lang-tabs admin-tabs admin-tabs--wide">
+            {NOTICE_LANGUAGES.map((code) => (
+              <button
+                key={code}
+                type="button"
+                className={`admin-tabs__btn${lang === code ? ' is-active' : ''}`}
+                onClick={() => setLang(code)}
+              >
+                {code.toUpperCase()}
+                {translations[code].title ? ' ✓' : ''}
+              </button>
+            ))}
+          </div>
+
+          <label className="admin-form-card admin-form-card--full">
+            {t('admin:notices.fieldTitle')} ({lang})
+            <input
+              className="input"
+              value={translations[lang].title}
+              onChange={(e) =>
+                setTranslations((prev) => ({
+                  ...prev,
+                  [lang]: { ...prev[lang], title: e.target.value },
+                }))
+              }
+            />
+          </label>
+
+          <div className="admin-form-card admin-form-card--full">
+            <p className="admin-form-card__label">
+              {t('admin:notices.fieldContent')} ({lang})
+            </p>
+            <RichTextEditor
+              value={translations[lang].content}
+              onChange={(html) =>
+                setTranslations((prev) => ({
+                  ...prev,
+                  [lang]: { ...prev[lang], content: html },
+                }))
+              }
+              onImageSelect={
+                isNew
+                  ? undefined
+                  : async (file) => {
+                      await uploadMutation.mutateAsync({ file, inline: true });
+                    }
+              }
+              placeholder={t('admin:notices.contentPlaceholder')}
+            />
+          </div>
+
           {!isNew ? (
+            <div className="admin-form-card admin-form-card--full">
+              <p className="admin-form-card__label">{t('admin:notices.attachments')}</p>
+              <input
+                type="file"
+                accept="image/*,.pdf,.zip,application/pdf,application/zip"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = '';
+                  if (file) uploadMutation.mutate({ file, inline: false });
+                }}
+              />
+              <ul className="admin-notice-attachments">
+                {attachments.map((file) => (
+                  <li key={file.id}>
+                    <span>
+                      {file.fileName} ({Math.round(file.fileSizeBytes / 1024)}KB)
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      onClick={async () => {
+                        await noticeApi.deleteAttachment(noticeId!, file.id);
+                        await queryClient.invalidateQueries({
+                          queryKey: ['admin', 'notices', 'detail', noticeId],
+                        });
+                      }}
+                    >
+                      {t('common:actions.delete')}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="admin-panel__desc">{t('admin:notices.saveBeforeAttach')}</p>
+          )}
+
+          <div className="admin-page__actions">
             <button
               type="button"
-              className="btn btn--secondary"
-              onClick={() =>
-                noticeApi.publish(noticeId!, { status: 'PUBLISHED' }).then(async () => {
-                  await queryClient.invalidateQueries({ queryKey: ['admin', 'notices'] });
-                  showToast(t('admin:notices.published'), 'success');
-                  setStatus('PUBLISHED');
-                })
-              }
+              className="btn btn--primary"
+              disabled={saveMutation.isPending}
+              onClick={() => saveMutation.mutate()}
             >
-              {t('admin:notices.publishNow')}
+              {t('common:actions.save')}
             </button>
-          ) : null}
+            {!isNew ? (
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() =>
+                  noticeApi.publish(noticeId!, { status: 'PUBLISHED' }).then(async () => {
+                    await queryClient.invalidateQueries({ queryKey: ['admin', 'notices'] });
+                    showToast(t('admin:notices.published'), 'success');
+                    setStatus('PUBLISHED');
+                  })
+                }
+              >
+                {t('admin:notices.publishNow')}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

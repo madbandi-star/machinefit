@@ -67,11 +67,15 @@ export function AdminDashboardPage() {
     { label: t('gymCount'), value: stats?.gymCount ?? 0, to: ROUTES.ADMIN_GYMS },
     { label: t('verifiedGyms'), value: stats?.verifiedGyms ?? 0, to: ROUTES.ADMIN_GYMS },
     { label: t('machineCount'), value: stats?.machineCount ?? 0, to: ROUTES.ADMIN_MACHINES },
+    { label: t('pendingRequests'), value: pendingRequests, to: ROUTES.ADMIN_MODERATION },
+    { label: t('pendingReports'), value: pendingReports, to: ROUTES.ADMIN_MODERATION },
   ];
 
   const menus = [
     { to: ROUTES.ADMIN_OPS, title: t('ops.nav'), desc: t('menu.opsDesc') },
+    { to: ROUTES.ADMIN_BACKUP, title: t('backup.nav'), desc: t('menu.backupDesc') },
     { to: ROUTES.ADMIN_USERS, title: t('users'), desc: t('menu.usersDesc') },
+    { to: ROUTES.ADMIN_SUBSCRIPTIONS, title: t('subscriptions.nav'), desc: t('menu.subscriptionsDesc') },
     { to: ROUTES.ADMIN_GYMS, title: t('gyms'), desc: t('menu.gymsDesc') },
     {
       to: ROUTES.ADMIN_OWNER_APPLICATIONS,
@@ -85,6 +89,11 @@ export function AdminDashboardPage() {
     },
     { to: ROUTES.ADMIN_BRANDS, title: t('brands.nav'), desc: t('menu.brandsDesc') },
     { to: ROUTES.ADMIN_MACHINES, title: t('machines'), desc: t('menu.machinesDesc') },
+    {
+      to: ROUTES.ADMIN_MACHINE_REQUESTS,
+      title: t('machineRequests.nav'),
+      desc: t('menu.machineRequestsDesc'),
+    },
     {
       to: ROUTES.ADMIN_MACHINE_TIPS,
       title: t('machineTips.nav'),
@@ -105,6 +114,7 @@ export function AdminDashboardPage() {
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
     { to: ROUTES.ADMIN_COMPLIANCE, title: t('compliance.nav'), desc: t('menu.complianceDesc') },
     { to: ROUTES.ADMIN_PHOTO_BOARD, title: t('photoBoard.nav'), desc: t('menu.photoBoardDesc') },
+    { to: ROUTES.ADMIN_NOTICES, title: t('notices.nav'), desc: t('menu.noticesDesc') },
     { to: ROUTES.ADMIN_TRADES, title: t('trades.nav'), desc: t('menu.tradesDesc') },
     { to: ROUTES.ADMIN_ONLINE_PT, title: t('onlinePt.nav'), desc: t('menu.onlinePtDesc') },
     { to: ROUTES.ADMIN_PUSH, title: t('push.nav'), desc: t('menu.pushDesc') },
@@ -113,6 +123,18 @@ export function AdminDashboardPage() {
 
   return (
     <AdminPageShell title={t('title')} subtitle={t('subtitle')}>
+      <section className="admin-panel" aria-label={t('overviewTitle')}>
+        <h2 className="admin-panel__title">{t('overviewTitle')}</h2>
+        <div className="admin-stats">
+          {overviewCards.map((card) => (
+            <Link key={card.label} to={card.to} className="admin-stat">
+              <div className="admin-stat__value">{card.value}</div>
+              <div className="admin-stat__label">{card.label}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="admin-panel" aria-label={t('attentionTitle')}>
         <h2 className="admin-panel__title">{t('attentionTitle')}</h2>
         <p className="admin-panel__desc">{t('attentionDesc')}</p>
@@ -127,18 +149,6 @@ export function AdminDashboardPage() {
               <span className="admin-attention__value">
                 {item.value == null ? t('openMenu') : item.value}
               </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="admin-panel" aria-label={t('overviewTitle')}>
-        <h2 className="admin-panel__title">{t('overviewTitle')}</h2>
-        <div className="admin-stats">
-          {overviewCards.map((card) => (
-            <Link key={card.label} to={card.to} className="admin-stat">
-              <div className="admin-stat__value">{card.value}</div>
-              <div className="admin-stat__label">{card.label}</div>
             </Link>
           ))}
         </div>

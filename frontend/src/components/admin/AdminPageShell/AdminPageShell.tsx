@@ -34,7 +34,7 @@ export function AdminPageShell({
         </div>
         {actions ? <div className="admin-page__actions">{actions}</div> : null}
       </header>
-      <div className="admin-page__body">{children}</div>
+      <div className="admin-page__body admin-page__body--stack">{children}</div>
     </div>
   );
 }
