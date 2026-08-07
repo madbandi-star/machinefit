@@ -1,4 +1,4 @@
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -24,6 +24,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
+import { getApiErrorCode } from '@/utils/motivationAudio';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import '@/styles/components.css';
 import '@/styles/machines.css';
@@ -34,6 +35,7 @@ import '@/styles/trade.css';
 export function MachineDetailPage() {
   const { machineCode } = useParams<{ machineCode: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const muscleParam = searchParams.get('muscle') as TargetMuscleGroup | null;
   const logDateParam = searchParams.get('logDate');
   const planDateParam = searchParams.get('planDate');
@@ -86,9 +88,19 @@ export function MachineDetailPage() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
-      showToast(t('machines:history.planCreated'), 'success');
+      showToast(t('machines:history.planCreatedContinue'), 'success');
+      // Return to machine search with the same planDate so more exercises can be added.
+      if (planDate) {
+        navigate(`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`);
+      }
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => {
+      if (getApiErrorCode(error) === 'DUPLICATE_CARD') {
+        showToast(t('machines:history.planDuplicateMachine'), 'info');
+        return;
+      }
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   if (isLoading && !machine) return <Skeleton count={3} height={100} />;
@@ -157,6 +169,14 @@ export function MachineDetailPage() {
           >
             {t('machines:history.planAddMachine')}
           </button>
+          {planDate ? (
+            <Link
+              to={`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`}
+              className="btn btn--secondary btn--block"
+            >
+              {t('machines:history.planAddAnother')}
+            </Link>
+          ) : null}
         </div>
       ) : null}
       {!isFuturePlan && logDate && machineCode && isAuthenticated ? (
