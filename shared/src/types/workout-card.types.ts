@@ -1,5 +1,6 @@
 import type { TargetMuscleGroup } from '../constants/workout-goals.js';
 import type { WorkoutCardStatus } from '../constants/workout-card.js';
+import type { RecommendationSettings } from './recommendation.types.js';
 
 export interface WorkoutCard {
   id: string;
@@ -9,6 +10,8 @@ export interface WorkoutCard {
   machineName?: string;
   brandName?: string;
   recommendationId?: string;
+  /** Populated when recommendation_id is set (joined from machine_recommendations). */
+  settings?: RecommendationSettings;
   targetMuscleGroup?: TargetMuscleGroup;
   scheduledDate: string;
   status: WorkoutCardStatus;

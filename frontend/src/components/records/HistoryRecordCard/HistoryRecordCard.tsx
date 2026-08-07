@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useCallback, useRef, memo, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpDown, Bookmark, ChevronDown, Clock3, Heart, MoreHorizontal, Target, X } from 'lucide-react';
 import { WorkoutCardOrderControl } from '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl';
 import type { WorkoutCardOrderMove } from '@/utils/workoutCardOrder';
@@ -11,7 +12,7 @@ import type {
   TargetMuscleGroup,
 } from '@machinefit/shared';
 import { resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
-import type { FitRating } from '@/api';
+import { workoutCardApi, type FitRating } from '@/api';
 import { SafeImage } from '@/components/media/SafeImage';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
@@ -20,6 +21,8 @@ import {
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
+import { useRecommendMachine } from '@/hooks/useRecommendMachine';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
@@ -98,6 +101,9 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 }: HistoryRecordCardProps) {
   const orderMenuRef = useRef<HTMLDetailsElement>(null);
   const planMenuRef = useRef<HTMLDetailsElement>(null);
+  const planRecEnsureRef = useRef<string | null>(null);
+  const queryClient = useQueryClient();
+  const { createRecommendationAsync } = useRecommendMachine(card.machineCode);
   const canReorder =
     typeof orderIndex === 'number' &&
     typeof orderTotal === 'number' &&
@@ -159,6 +165,40 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   useEffect(() => {
     if (isFocused) setExpanded(true);
   }, [isFocused]);
+
+  // Legacy plan cards created without a recommendation — attach one so fit/settings
+  // and the result-page destination match today's record cards.
+  useEffect(() => {
+    if (!isAuthenticated || !card.isPlanOnly || !card.workoutCardId) return;
+    if (card.recommendationId) return;
+    if (planRecEnsureRef.current === card.workoutCardId) return;
+    planRecEnsureRef.current = card.workoutCardId;
+    const workoutCardId = card.workoutCardId;
+    void (async () => {
+      try {
+        const { result } = await createRecommendationAsync({
+          targetMuscleGroup: card.targetMuscleGroup as TargetMuscleGroup | undefined,
+          planDate: logDate,
+          skipNavigate: true,
+          skipHistory: true,
+          skipDuplicateCheck: true,
+        });
+        await workoutCardApi.update(workoutCardId, { recommendationId: result.id });
+        await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+      } catch {
+        // Leave planRecEnsureRef set so we don't retry-spam on persistent errors.
+      }
+    })();
+  }, [
+    isAuthenticated,
+    card.isPlanOnly,
+    card.workoutCardId,
+    card.recommendationId,
+    card.targetMuscleGroup,
+    logDate,
+    createRecommendationAsync,
+    queryClient,
+  ]);
   const { isFavorited, toggleFavorite, isPending: isFavoritePending, canFavorite } = useFavoriteToggle({
     machineCode: card.machineCode,
     recommendationId: card.recommendationId,

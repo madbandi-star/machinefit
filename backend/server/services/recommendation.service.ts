@@ -216,7 +216,7 @@ export const recommendationService = {
       recommendationRepository.findYoutubeVideos(machineId),
     ]);
 
-    if (userId) {
+    if (userId && !input.skipHistory) {
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');
       const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
       const gymId = input.gymId ?? (await userGymRepository.getActiveGymId(userId));

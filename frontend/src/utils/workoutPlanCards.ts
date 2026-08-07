@@ -27,7 +27,7 @@ export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard
     muscleGroup: card.targetMuscleGroup,
     targetMuscleGroup: card.targetMuscleGroup,
     recommendationId: card.recommendationId,
-    settings: {},
+    settings: card.settings ?? {},
     viewedAt: card.updatedAt || card.createdAt,
     logDate,
     planStatus: card.status,
