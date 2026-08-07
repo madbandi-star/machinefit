@@ -109,7 +109,12 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "compactMode": "Compact",
-    "expandMode": "Expand"
+    "expandMode": "Expand",
+    "cornerMove": "Screen position",
+    "cornerTopLeft": "Top left",
+    "cornerTopRight": "Top right",
+    "cornerBottomLeft": "Bottom left",
+    "cornerBottomRight": "Bottom right"
   },
   "motivationMusic": {
     "title": "Motivation music",
