@@ -10,6 +10,7 @@ import {
 } from '@machinefit/shared';
 import { env } from '../../config/env.js';
 import { AppError } from '../../middlewares/error.middleware.js';
+import { logger } from '../../utils/logger.js';
 import { withRetry } from '../../utils/with-retry.js';
 import type { BackupStorageProvider, BackupStoredObject } from './backup-storage.provider.js';
 
@@ -53,6 +54,10 @@ function normalizePath(storagePath: string): string | null {
   return normalized || null;
 }
 
+function isAlreadyExistsError(message: string | undefined): boolean {
+  return Boolean(message && /already exists/i.test(message));
+}
+
 export class SupabaseBackupStorageProvider implements BackupStorageProvider {
   readonly id = 'supabase';
 
@@ -60,35 +65,51 @@ export class SupabaseBackupStorageProvider implements BackupStorageProvider {
     const client = getSupabase();
     if (!client) return;
     if (!bucketReady) {
+      // Soft-fail: never block admin ZIP download if remote bucket setup fails.
+      // upload() already falls back to local disk when Supabase upload errors.
       bucketReady = (async () => {
         const bucket = env.BACKUP_STORAGE_BUCKET || BACKUP_STORAGE_BUCKET;
-        const { data, error } = await withRetry(() => client.storage.listBuckets(), {
-          maxAttempts: 3,
-          baseDelayMs: 200,
-          label: 'listBuckets',
-        });
-        if (error) {
-          throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
-        }
-        const exists = data?.some((item) => item.name === bucket);
-        if (!exists) {
-          const created = await client.storage.createBucket(bucket, {
-            public: false,
-            fileSizeLimit: BACKUP_MAX_UPLOAD_BYTES,
+        try {
+          const { data, error } = await withRetry(() => client.storage.listBuckets(), {
+            maxAttempts: 3,
+            baseDelayMs: 200,
+            label: 'listBuckets',
           });
-          if (created.error && !/already exists/i.test(created.error.message)) {
-            throw new AppError(
-              500,
-              'STORAGE_ERROR',
-              `Could not create backup bucket "${bucket}"`,
-              created.error.message
-            );
+          if (error) {
+            logger.warn('Backup storage listBuckets failed; using local fallback', {
+              message: error.message,
+            });
+            return;
           }
+          const exists = data?.some((item) => item.name === bucket);
+          if (exists) return;
+
+          // Prefer minimal create options first — some Supabase plans reject large fileSizeLimit.
+          const createAttempts: Array<{ public: boolean; fileSizeLimit?: number }> = [
+            { public: false },
+            { public: false, fileSizeLimit: Math.min(BACKUP_MAX_UPLOAD_BYTES, 50 * 1024 * 1024) },
+            { public: false, fileSizeLimit: BACKUP_MAX_UPLOAD_BYTES },
+          ];
+
+          let lastError: string | null = null;
+          for (const options of createAttempts) {
+            const created = await client.storage.createBucket(bucket, options);
+            if (!created.error || isAlreadyExistsError(created.error.message)) {
+              return;
+            }
+            lastError = created.error.message;
+          }
+
+          logger.warn('Could not create backup bucket; using local fallback', {
+            bucket,
+            message: lastError,
+          });
+        } catch (err) {
+          logger.warn('Backup storage ensureReady failed; using local fallback', {
+            message: err instanceof Error ? err.message : String(err),
+          });
         }
-      })().catch((err) => {
-        bucketReady = null;
-        throw err;
-      });
+      })();
     }
     await bucketReady;
   }
@@ -112,6 +133,11 @@ export class SupabaseBackupStorageProvider implements BackupStorageProvider {
       if (!error) {
         return { storagePath, sizeBytes: params.buffer.length, provider: 'supabase' };
       }
+      logger.warn('Backup Supabase upload failed; using local fallback', {
+        bucket,
+        storagePath,
+        message: error.message,
+      });
     }
 
     const absolute = path.join(LOCAL_BACKUP_ROOT, storagePath);

@@ -722,6 +722,7 @@
     "backupFailed": "Backup failed.",
     "systemRestore": "Full restore",
     "systemRestoreHelp": "Admins only. Confirm carefully before restoring.",
+    "chooseFile": "Choose file",
     "warnTitle": "System-wide data will change.",
     "warnBody": "Type YES below to continue.",
     "typeYes": "Confirmation",

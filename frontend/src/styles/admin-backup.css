@@ -1,0 +1,265 @@
+/* Admin system backup page — mobile + desktop */
+
+.admin-backup__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-backup__panel-head {
+  min-width: 0;
+}
+
+.admin-backup__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-backup__actions .btn {
+  width: 100%;
+  min-height: var(--admin-control-h, 2.25rem);
+}
+
+@media (min-width: 480px) {
+  .admin-backup__actions .btn {
+    width: auto;
+  }
+}
+
+.admin-backup__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.admin-backup__progress-track {
+  flex: 1;
+  min-width: 0;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+  overflow: hidden;
+}
+
+.admin-backup__progress-fill {
+  height: 100%;
+  background: var(--color-primary, #3d8bfd);
+  transition: width 0.25s ease;
+}
+
+.admin-backup__progress-label {
+  flex-shrink: 0;
+  min-width: 2.75rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+.admin-backup__file {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.admin-backup__file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.admin-backup__file .btn {
+  max-width: 100%;
+  min-height: var(--admin-control-h, 2.25rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-backup__file-meta {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-backup__settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-backup__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.admin-backup__check input {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.admin-backup__settings-grid {
+  margin: 0;
+}
+
+.admin-backup__settings-grid .admin-form-card {
+  min-width: 0;
+}
+
+.admin-backup__settings-grid .input,
+.admin-backup__settings-grid select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-backup__meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.admin-backup__history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.admin-backup__history-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.65rem 0.7rem;
+  border-radius: var(--admin-radius-sm, 8px);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 45%, var(--color-surface));
+  min-width: 0;
+}
+
+.admin-backup__history-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.admin-backup__history-action {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+
+.admin-backup__history-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  min-width: 0;
+}
+
+.admin-backup__history-file {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+@media (min-width: 720px) {
+  .admin-backup__history-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    align-items: center;
+  }
+
+  .admin-backup__history-file {
+    max-width: 28rem;
+  }
+}
+
+.admin-backup__dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.05rem;
+}
+
+.admin-backup__dialog-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.admin-backup__dialog-warn {
+  margin: 0;
+  color: var(--color-error, #dc2626);
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.admin-backup__dialog-file {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  word-break: break-all;
+}
+
+.admin-backup__dialog-field {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.admin-backup__dialog-field .input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-backup__dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  margin-top: 0.15rem;
+}
+
+.admin-backup__dialog-actions .btn {
+  flex: 1 1 auto;
+  min-height: var(--admin-control-h, 2.25rem);
+}
+
+@media (min-width: 480px) {
+  .admin-backup__dialog-actions .btn {
+    flex: 0 0 auto;
+  }
+}

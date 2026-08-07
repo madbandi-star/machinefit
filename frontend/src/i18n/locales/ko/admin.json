@@ -722,6 +722,7 @@
     "backupFailed": "백업에 실패했습니다.",
     "systemRestore": "전체 복구",
     "systemRestoreHelp": "관리자만 가능합니다. 복구 전 반드시 확인하세요.",
+    "chooseFile": "파일 선택",
     "warnTitle": "전체 시스템 데이터가 변경됩니다.",
     "warnBody": "계속하려면 아래 입력란에 YES를 입력하세요.",
     "typeYes": "확인 문구",
