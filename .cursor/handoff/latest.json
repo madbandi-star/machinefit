@@ -1,7 +1,7 @@
 {
   "title": "No double-tap back on fresh recommend detail",
   "summary": "Disable detail-page double-tap navigate(-1) unless opened from records with logDate, so search?recommend?detail no longer bounces back to search.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a4a60c47" },
   "changedFiles": [
     "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],

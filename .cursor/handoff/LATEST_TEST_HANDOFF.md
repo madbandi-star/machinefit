@@ -1,22 +1,22 @@
-ï»¿# Test handoff: No double-tap back on fresh recommend detail
+# Test handoff: No double-tap back on fresh recommend detail
 
 ## Summary
-ê¸°êµ¬ê²€ìƒ‰â†’ì¶”ì²œ ìƒì„¸ì—ì„œ ë”ë¸”íƒ­ ì‹œ `navigate(-1)`ë¡œ ê²€ìƒ‰ìœ¼ë¡œ ëŒì•„ê°€ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. ê¸°ë¡(`logDate`)ì—ì„œ ì—° ìƒì„¸ì—ì„œë§Œ ë”ë¸”íƒ­ìœ¼ë¡œ ê¸°ë¡ ëª©ë¡ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.
+±â±¸°Ë»ö¡æÃßÃµ »ó¼¼¿¡¼­ ´õºíÅÇ ½Ã `navigate(-1)`·Î °Ë»öÀ¸·Î µ¹¾Æ°¡´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. ±â·Ï(`logDate`)¿¡¼­ ¿¬ »ó¼¼¿¡¼­¸¸ ´õºíÅÇÀ¸·Î ±â·Ï ¸ñ·ÏÀ¸·Î µ¹¾Æ°©´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: a4a60c47
 
 ## Test focus
-1. Search â†’ recommend â†’ detail: tap/double-tap does NOT return to search
-2. Records â†’ card â†’ detail (with logDate): double-tap still returns to records
+1. Search ¡æ recommend ¡æ detail: tap/double-tap does NOT return to search
+2. Records ¡æ card ¡æ detail (with logDate): double-tap still returns to records
 
 ## Fast checks
 ```bash
 rg -n "recordsReturnDate|enabled: Boolean\\(recordsReturnDate\\)" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| Fresh recommend detail double-tap â†’ search | No back navigation without logDate |
+| Fresh recommend detail double-tap ¡æ search | No back navigation without logDate |
