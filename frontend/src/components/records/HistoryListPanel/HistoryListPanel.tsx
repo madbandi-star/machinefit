@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
+import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
 import { favoriteApi, historyApi, workoutCardApi, workoutLogApi } from '@/api';
 import { fetchWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -121,14 +122,6 @@ function buildTemplateItemsFromLogs(logs: WorkoutLog[]): WorkoutCardTemplateItem
   }));
 }
 
-function promptDateKey(message: string, defaultValue: string): string | null {
-  const raw = window.prompt(message, defaultValue);
-  if (!raw) return null;
-  const trimmed = raw.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
-  return trimmed;
-}
-
 export function HistoryListPanel() {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -138,6 +131,10 @@ export function HistoryListPanel() {
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [pendingDayDelete, setPendingDayDelete] = useState(false);
+  const [pendingDateAction, setPendingDateAction] = useState<{
+    mode: 'move' | 'copy';
+    card: HistoryRecordCardData;
+  } | null>(null);
   const [dayMenuOpen, setDayMenuOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [orderOverrides, setOrderOverrides] = useState<Record<string, string[]>>({});
@@ -886,15 +883,19 @@ export function HistoryListPanel() {
     [activeGymId, activeMemberId, queryClient, workoutCards, workoutLogs]
   );
 
-  const promptMoveOrCopy = useCallback(
-    async (card: HistoryRecordCardData, mode: 'move' | 'copy') => {
+  const openMoveOrCopyPicker = useCallback(
+    (card: HistoryRecordCardData, mode: 'move' | 'copy') => {
       if (!canUseWorkoutPlans) return;
-      const nextDate = promptDateKey(
-        t('machines:history.planDatePrompt'),
-        card.logDate || getTodayDateKey()
-      );
-      if (!nextDate) return;
+      setPendingDateAction({ mode, card });
+    },
+    [canUseWorkoutPlans]
+  );
 
+  const confirmMoveOrCopyDate = useCallback(
+    async (nextDate: string) => {
+      if (!pendingDateAction) return;
+      const { card, mode } = pendingDateAction;
+      setPendingDateAction(null);
       try {
         const id = await ensureWorkoutCardId(card);
         if (mode === 'move') {
@@ -907,10 +908,10 @@ export function HistoryListPanel() {
       }
     },
     [
-      canUseWorkoutPlans,
       copyPlanMutation,
       ensureWorkoutCardId,
       movePlanMutation,
+      pendingDateAction,
       showToast,
       t,
     ]
@@ -1342,12 +1343,12 @@ export function HistoryListPanel() {
                     isReordering={animatingCardId === card.cardId}
                     onCopyPlan={
                       canUseWorkoutPlans
-                        ? () => void promptMoveOrCopy(card, 'copy')
+                        ? () => openMoveOrCopyPicker(card, 'copy')
                         : undefined
                     }
                     onMovePlan={
                       canUseWorkoutPlans
-                        ? () => void promptMoveOrCopy(card, 'move')
+                        ? () => openMoveOrCopyPicker(card, 'move')
                         : undefined
                     }
                     planActionsDisabled={
@@ -1382,6 +1383,24 @@ export function HistoryListPanel() {
         confirmVariant="danger"
         onClose={() => setPendingDayDelete(false)}
         onConfirm={() => deleteDayMutation.mutate(targetDeleteDate)}
+      />
+
+      <PlanDatePickerDialog
+        open={Boolean(pendingDateAction)}
+        title={
+          pendingDateAction?.mode === 'copy'
+            ? t('machines:history.planDateCopyTitle')
+            : t('machines:history.planDateMoveTitle')
+        }
+        message={t('machines:history.planDatePrompt')}
+        initialDate={pendingDateAction?.card.logDate || getTodayDateKey()}
+        confirmLabel={
+          pendingDateAction?.mode === 'copy'
+            ? t('machines:history.planDateCopyConfirm')
+            : t('machines:history.planDateMoveConfirm')
+        }
+        onClose={() => setPendingDateAction(null)}
+        onConfirm={(dateKey) => void confirmMoveOrCopyDate(dateKey)}
       />
     </div>
   );

@@ -11,6 +11,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
 import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import '@/styles/records.css';
 
@@ -129,6 +130,7 @@ export function MissedWorkoutPlansBanner() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
+  const [datePickerCardId, setDatePickerCardId] = useState<string | null>(null);
   const memberKey = activeMemberId ?? '';
   const gymReady =
     isAuthenticated &&
@@ -180,68 +182,83 @@ export function MissedWorkoutPlansBanner() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  if (!gymReady || visible.length === 0) return null;
+  const datePickerCard =
+    datePickerCardId != null
+      ? (visible.find((c) => c.id === datePickerCardId) ??
+        missed.find((c) => c.id === datePickerCardId) ??
+        null)
+      : null;
 
-  const card = visible[0]!;
-  const moreCount = visible.length - 1;
+  if (!gymReady || (visible.length === 0 && !datePickerCard)) return null;
+
+  const card = visible[0] ?? datePickerCard!;
+  const moreCount = Math.max(0, visible.length - 1);
 
   return (
-    <div className="missed-plans-banner" role="status">
-      <div className="missed-plans-banner__body">
-        <p className="missed-plans-banner__title">{t('machines:history.planMissedTitle')}</p>
-        <p className="missed-plans-banner__message">
-          {t('machines:history.planMissedMessage', {
-            name: card.machineName ?? card.machineCode,
-            date: normalizeDateKey(card.scheduledDate),
-            count: moreCount,
-          })}
-        </p>
-      </div>
-      <div className="missed-plans-banner__actions">
-        <button
-          type="button"
-          className="btn btn--primary"
-          disabled={resolveMutation.isPending}
-          onClick={() => resolveMutation.mutate({ id: card.id, action: 'move_today' })}
-        >
-          {t('machines:history.planMissedMoveToday')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={resolveMutation.isPending}
-          onClick={() => {
-            const next = window.prompt(
-              t('machines:history.planDatePrompt'),
-              getTodayDateKey()
-            );
-            if (!next || !/^\d{4}-\d{2}-\d{2}$/.test(next.trim())) return;
-            resolveMutation.mutate({
-              id: card.id,
-              action: 'move_date',
-              scheduledDate: next.trim(),
-            });
-          }}
-        >
-          {t('machines:history.planMissedChangeDate')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={resolveMutation.isPending}
-          onClick={() => resolveMutation.mutate({ id: card.id, action: 'delete' })}
-        >
-          {t('machines:history.planMissedDelete')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={resolveMutation.isPending}
-          onClick={() => resolveMutation.mutate({ id: card.id, action: 'dismiss' })}
-        >
-          {t('machines:history.planMissedDismiss')}
-        </button>
-      </div>
-    </div>
+    <>
+      {visible.length > 0 ? (
+        <div className="missed-plans-banner" role="status">
+          <div className="missed-plans-banner__body">
+            <p className="missed-plans-banner__title">{t('machines:history.planMissedTitle')}</p>
+            <p className="missed-plans-banner__message">
+              {t('machines:history.planMissedMessage', {
+                name: card.machineName ?? card.machineCode,
+                date: normalizeDateKey(card.scheduledDate),
+                count: moreCount,
+              })}
+            </p>
+          </div>
+          <div className="missed-plans-banner__actions">
+            <button
+              type="button"
+              className="btn btn--primary"
+              disabled={resolveMutation.isPending}
+              onClick={() => resolveMutation.mutate({ id: card.id, action: 'move_today' })}
+            >
+              {t('machines:history.planMissedMoveToday')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={resolveMutation.isPending}
+              onClick={() => setDatePickerCardId(card.id)}
+            >
+              {t('machines:history.planMissedChangeDate')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={resolveMutation.isPending}
+              onClick={() => resolveMutation.mutate({ id: card.id, action: 'delete' })}
+            >
+              {t('machines:history.planMissedDelete')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={resolveMutation.isPending}
+              onClick={() => resolveMutation.mutate({ id: card.id, action: 'dismiss' })}
+            >
+              {t('machines:history.planMissedDismiss')}
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      <PlanDatePickerDialog
+        open={Boolean(datePickerCard)}
+        title={t('machines:history.planDateMoveTitle')}
+        message={t('machines:history.planDatePrompt')}
+        initialDate={getTodayDateKey()}
+        confirmLabel={t('machines:history.planDateMoveConfirm')}
+        onClose={() => setDatePickerCardId(null)}
+        onConfirm={(scheduledDate) => {
+          if (!datePickerCard) return;
+          const id = datePickerCard.id;
+          setDatePickerCardId(null);
+          resolveMutation.mutate({ id, action: 'move_date', scheduledDate });
+        }}
+      />
+    </>
   );
 }
