@@ -365,15 +365,15 @@ export function WorkoutLogPanel({
     setVoicePickers(readVoicePickerSnapshot(volumeReps));
   }, [voiceTargetSeedContext, settingsHydrated]);
 
+  // 조정횟수 → 목표횟수 sync (세부 피커 고정과 무관 — 고정 OFF일 때와 동일).
   useEffect(() => {
-    if (voicePickersPinned) return;
     if (volumeReps == null || volumeReps <= 0) return;
     const next = clampVoiceCoachTargetReps(volumeReps);
     setVoicePickers((prev) => {
       if (!prev || prev.targetReps === next) return prev;
       return { ...prev, targetReps: next };
     });
-  }, [volumeReps, voicePickersPinned]);
+  }, [volumeReps]);
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
