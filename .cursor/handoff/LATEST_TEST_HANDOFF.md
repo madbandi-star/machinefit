@@ -1,15 +1,15 @@
-ï»¿# Test handoff: Remove calendar â€œë‚ ì§œ ì§ì ‘ ì„ íƒâ€
+# Test handoff: Remove calendar ¡°³¯Â¥ Á÷Á¢ ¼±ÅÃ¡±
 
 ## Summary
-ê¸°ë¡ í˜ì´ì§€ ì¼ìì¡°íšŒ ìº˜ë¦°ë”ì—ì„œ [ì˜¤ëŠ˜] ì˜†ì˜ [ë‚ ì§œ ì§ì ‘ ì„ íƒ] ì¹©ê³¼ ë„¤ì´í‹°ë¸Œ date inputì„ ì œê±°í–ˆìŠµë‹ˆë‹¤. ë‚ ì§œëŠ” ìº˜ë¦°ë” ì¹¸ìœ¼ë¡œë§Œ ê³ ë¦…ë‹ˆë‹¤.
+±â·Ï ÆäÀÌÁö ÀÏÀÚÁ¶È¸ Ä¶¸°´õ¿¡¼­ [¿À´Ã] ¿·ÀÇ [³¯Â¥ Á÷Á¢ ¼±ÅÃ] Ä¨°ú ³×ÀÌÆ¼ºê date inputÀ» Á¦°ÅÇß½À´Ï´Ù. ³¯Â¥´Â Ä¶¸°´õ Ä­À¸·Î¸¸ °í¸¨´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 9703f67e
 
 ## Test focus
-1. Records â†’ ì¼ìì¡°íšŒ â†’ calendar opens
-2. [ì˜¤ëŠ˜] may still appear; [ë‚ ì§œ ì§ì ‘ ì„ íƒ] is gone
+1. Records ¡æ ÀÏÀÚÁ¶È¸ ¡æ calendar opens
+2. [¿À´Ã] may still appear; [³¯Â¥ Á÷Á¢ ¼±ÅÃ] is gone
 3. Day cells still selectable
 
 ## Fast checks
@@ -17,7 +17,7 @@
 rg -n "planPickAnyDate|openNativePicker|history-plan-date-input" frontend/src/components/records/HistoryDateCalendar || true
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| Today + â€œë‚ ì§œ ì§ì ‘ ì„ íƒâ€ | Today only (when needed); pick days on grid |
+| Today + ¡°³¯Â¥ Á÷Á¢ ¼±ÅÃ¡± | Today only (when needed); pick days on grid |
