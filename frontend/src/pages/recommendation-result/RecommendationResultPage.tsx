@@ -271,20 +271,20 @@ export function RecommendationResultPage() {
 
   // Only from Records (logDate in URL). Fresh recommend has no logDate — double-tap
   // must not navigate(-1) back to machine search.
-  const recordsReturnDate = normalizeDateKey(logDateParam ?? '');
-  const isFreshRecommend = isAuthenticated && !recordsReturnDate;
+  const recordsReturnDate = logDateParam ? normalizeDateKey(logDateParam) : '';
+  const isFreshRecommend = isAuthenticated && !logDateParam;
 
   useEffect(() => {
-    if (!isFreshRecommend || isDismissedToday(RECORDS_NUDGE_DISMISS_KEY)) {
+    if (!isFreshRecommend) {
       setRecordsNudgeVisible(false);
-      setRecordsNavNudge(false);
       return;
     }
-    setRecordsNudgeVisible(true);
+    // Banner may be dismissed for the day; nav green-dot still lights on each fresh recommend.
+    // Do not clear nudge on unmount — it should stay until Records is opened.
+    if (!isDismissedToday(RECORDS_NUDGE_DISMISS_KEY)) {
+      setRecordsNudgeVisible(true);
+    }
     setRecordsNavNudge(true);
-    return () => {
-      setRecordsNavNudge(false);
-    };
   }, [isFreshRecommend, setRecordsNavNudge, result?.id]);
 
   const dismissRecordsNudge = useCallback(() => {

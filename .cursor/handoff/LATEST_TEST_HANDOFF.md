@@ -1,24 +1,24 @@
-# Test handoff: Show Ãß°¡µÊ badge for today¡¯s history/logs too
+ï»¿# Test handoff: Restore Records green-dot on fresh today recommend
 
 ## Summary
-°Ë»ö/¿îµ¿Ãß°¡ ¸ñ·ÏÀÇ ¡¸Ãß°¡µÊ¡¹ÀÌ workout_cards»Ó ¾Æ´Ï¶ó ÇØ´çÀÏ history¡¤workout_logs±îÁö º¸µµ·Ï ÇØ¼­, ¿À´Ã ÃßÃµÀ¸·Î ÀÌ¹Ì ³ÖÀº ±â±¸¿¡µµ ¹Ì·¡¿Í °°ÀÌ ¹èÁö°¡ ºÙ½À´Ï´Ù. ÀÏ¹İ °Ë»öÀº ¿À´Ã ±âÁØÀ¸·Î Ç¥½ÃÇÕ´Ï´Ù.
+ì˜¤ëŠ˜ ìš´ë™ ì¶”ì²œ ì§í›„ í•˜ë‹¨ ê¸°ë¡ ë…¹ìƒ‰ì ì´ ë‹¤ì‹œ ì¼œì§€ë„ë¡, ì¶”ì²œ ì„±ê³µ ì‹œì ì— nudgeë¥¼ ì¼œê³  ê²°ê³¼ í˜ì´ì§€ unmount cleanupì´ ì ì„ ë„ì§€ ì•Šê²Œ ê³ ì³¤ìŠµë‹ˆë‹¤. ë°°ë„ˆ í•˜ë£¨ dismissëŠ” ë°°ë„ˆë§Œ ìˆ¨ê¸°ê³  ë„¤ë¹„ ì ì€ ìƒˆ ì¶”ì²œë§ˆë‹¤ ë‹¤ì‹œ ì¼­ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `166ed3c2`
+- Commit: pending
 
 ## Test focus
-1. ¿À´Ã ÃßÃµÇÑ ±â±¸ ¡æ °Ë»ö: ¡¸Ãß°¡µÊ¡¹
-2. ¿À´Ã ¿îµ¿Ãß°¡·Î ³ÖÀº ±â±¸ ¡æ planDate °Ë»ö: ¡¸Ãß°¡µÊ¡¹
-3. ¹Ì·¡ planDate: ±âÁ¸ ¡¸Ãß°¡µÊ¡¹ À¯Áö
-4. ¹è³Ê count°¡ history+card+log ÇÕ°ú ÀÏÄ¡
+1. ì˜¤ëŠ˜ ê¸°êµ¬ ì¶”ì²œ â†’ ê²°ê³¼ í™”ë©´ì—ì„œ í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì 
+2. ë‹¤ë¥¸ íƒ­ìœ¼ë¡œ ë‚˜ê°€ë„ ê¸°ë¡ íƒ­ ê°€ê¸° ì „ê¹Œì§€ ë…¹ìƒ‰ì  ìœ ì§€
+3. ê¸°ë¡ íƒ­ ì§„ì… ì‹œ ë…¹ìƒ‰ì  í•´ì œ
+4. ë°°ë„ˆ Xë¡œ ë‹«ì•„ë„ ìƒˆ ì¶”ì²œ ì‹œ ë„¤ë¹„ ì ì€ ë‹¤ì‹œ ë™ì‘
 
 ## Fast checks
 ```bash
-rg -n "dayHistory|dayLogs|badgeDate|plannedCount" frontend/src/pages/machine-search/MachineSearchPage.tsx
+rg -n "setRecordsNavNudge|recordsNavNudge" frontend/src/hooks/useRecommendMachine.ts frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¿À´Ã ±â±¸´Â history¿¡¸¸ ÀÖ¾î ¹èÁö ¾øÀ½ | ¿À´Ãµµ history/log/card·Î ¡¸Ãß°¡µÊ¡¹ |
+| ì˜¤ëŠ˜ ì²« ì¶”ì²œ í›„ ë…¹ìƒ‰ì  ì—†ìŒ | ì¶”ì²œ ì„±ê³µ ì‹œ ì¦‰ì‹œ ë…¹ìƒ‰ì  í‘œì‹œÂ·ìœ ì§€ |

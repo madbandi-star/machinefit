@@ -276,6 +276,10 @@ export function useRecommendMachine(machineCode: string | undefined) {
     onSuccess: async ({ result, planDate, skipNavigate }) => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
       if (skipNavigate) return;
+      // Light Records tab as soon as today’s recommend lands (don’t wait on result-page effects).
+      if (!planDate) {
+        useUIStore.getState().setRecordsNavNudge(true);
+      }
       const params = new URLSearchParams({ id: result.id });
       if (planDate) {
         params.set('planDate', planDate);
