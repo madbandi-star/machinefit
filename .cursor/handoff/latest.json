@@ -3,7 +3,7 @@
   "summary": "Records individual cards and the detail record page both use WorkoutLogPanel history layout. Voice coach panel is now rendered after the performance block that contains the plan-save button.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "5c71f8e7"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",

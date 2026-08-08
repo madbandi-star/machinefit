@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `5c71f8e7`
 
 ## Test focus
 1. 기록 페이지 개별 기구 카드: 세트·무게 → 계획 저장 근처 → **그 아래** 음성카운트 → 다이어리/팁
