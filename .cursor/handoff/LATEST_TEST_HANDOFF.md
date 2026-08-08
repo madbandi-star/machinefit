@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Hide log/voice UI on today planDate machine detail
+# Test handoff: Hide log/voice UI on today planDate machine detail
 
 ## Summary
-ê²€ìƒ‰ì—ì„œ `planDate`(ì˜¤ëŠ˜ í¬í•¨)ë¡œ ê¸°êµ¬ ìƒì„¸ì— ë“¤ì–´ì˜¤ë©´ ìŒì„±ì¹´ìš´íŠ¸Â·ìˆ˜í–‰ê¸°ë¡Â·ìš´ë™ì¼ì§€ë¥¼ ìˆ¨ê¸°ê³ , ë¯¸ë˜ì™€ ë™ì¼í•˜ê²Œ ìš´ë™ê³„íš ì¶”ê°€ UIë§Œ ë³´ì´ê²Œ í–ˆìŠµë‹ˆë‹¤. `logDate` ê¸°ë¡ ì§„ì…ì€ ê¸°ì¡´ê³¼ ê°™ìŠµë‹ˆë‹¤.
+°Ë»ö¿¡¼­ `planDate`(¿À´Ã Æ÷ÇÔ)·Î ±â±¸ »ó¼¼¿¡ µé¾î¿À¸é À½¼ºÄ«¿îÆ®¡¤¼öÇà±â·Ï¡¤¿îµ¿ÀÏÁö¸¦ ¼û±â°í, ¹Ì·¡¿Í µ¿ÀÏÇÏ°Ô ¿îµ¿°èÈ¹ Ãß°¡ UI¸¸ º¸ÀÌ°Ô Çß½À´Ï´Ù. `logDate` ±â·Ï ÁøÀÔÀº ±âÁ¸°ú °°½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `af038578`
 
 ## Test focus
-1. ì˜¤ëŠ˜ ìš´ë™ì¶”ê°€ â†’ ê¸°êµ¬ ìƒì„¸: WorkoutLogPanel/ìŒì„±ì¹´ìš´íŠ¸ ì—†ìŒ, ã€Œìš´ë™ ê³„íšì— ì¶”ê°€ã€ë§Œ
-2. ë¯¸ë˜ planDate ìƒì„¸: ë™ì¼í•˜ê²Œ ê³„íš ì¶”ê°€ UI
-3. ê¸°ë¡ì—ì„œ logDateë¡œ ì—° ìƒì„¸: ìˆ˜í–‰ê¸°ë¡Â·ìŒì„± ìœ ì§€
+1. ¿À´Ã ¿îµ¿Ãß°¡ ¡æ ±â±¸ »ó¼¼: WorkoutLogPanel/À½¼ºÄ«¿îÆ® ¾øÀ½, ¡¸¿îµ¿ °èÈ¹¿¡ Ãß°¡¡¹¸¸
+2. ¹Ì·¡ planDate »ó¼¼: µ¿ÀÏÇÏ°Ô °èÈ¹ Ãß°¡ UI
+3. ±â·Ï¿¡¼­ logDate·Î ¿¬ »ó¼¼: ¼öÇà±â·Ï¡¤À½¼º À¯Áö
 
 ## Fast checks
 ```bash
 rg -n "isPlanAddMode|WorkoutLogPanel" frontend/src/pages/machine-detail/MachineDetailPage.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| planDate=ì˜¤ëŠ˜ì´ë©´ ìŒì„±/ìˆ˜í–‰ê¸°ë¡ UI ë…¸ì¶œ | planDateë©´ ì˜¤ëŠ˜Â·ë¯¸ë˜ ëª¨ë‘ ê³„íš ì¶”ê°€ ì…¸ë§Œ |
+| planDate=¿À´ÃÀÌ¸é À½¼º/¼öÇà±â·Ï UI ³ëÃâ | planDate¸é ¿À´Ã¡¤¹Ì·¡ ¸ğµÎ °èÈ¹ Ãß°¡ ¼Ğ¸¸ |
