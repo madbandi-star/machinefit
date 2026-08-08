@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -178,16 +177,6 @@ export function FortuneDashboard({
       <FortuneReveal className="fortune-dashboard__section" delayMs={220}>
         <FortuneQuoteCard oneLiner={fortune.oneLiner} detail={fortune.oneLinerDetail} />
       </FortuneReveal>
-
-      {recommendation.ctas.length ? (
-        <FortuneReveal className="fortune-dashboard__section fortune-dashboard__ctas" delayMs={230}>
-          {recommendation.ctas.map((cta) => (
-            <Link key={cta.href + cta.kind} to={cta.href} className="btn btn--secondary btn--block">
-              {t(cta.labelKey)}
-            </Link>
-          ))}
-        </FortuneReveal>
-      ) : null}
 
       <p className="fortune-dashboard__disclaimer">
         <span aria-hidden>ⓘ</span> {fortune.disclaimer || t('disclaimer')}
