@@ -1526,6 +1526,30 @@ export function WorkoutLogPanel({
     </div>
   );
 
+  const planSaveAttention = isPlanDirty && !isActionPending && !isLoading;
+  const planSaveLabel =
+    saveMutation.isPending && saveMutation.variables?.asPlan
+      ? t('machines:workoutLog.planSaving')
+      : t('machines:workoutLog.planSave');
+
+  const renderPlanSaveButton = (placement: 'header' | 'below-tip') => (
+    <button
+      type="button"
+      className={[
+        'btn btn--secondary history-workout-log__plan-save',
+        placement === 'below-tip' ? 'history-workout-log__plan-save--below-tip' : '',
+        planSaveAttention ? 'history-workout-log__plan-save--attention' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      onClick={() => void handlePlanSave()}
+      disabled={isActionPending || isLoading || !isPlanDirty}
+      aria-live={isPlanDirty ? 'polite' : undefined}
+    >
+      {planSaveLabel}
+    </button>
+  );
+
   const personalTipField =
     isHistory && showPersonalTip && isAuthenticated ? (
       <div className="history-workout-log__personal-tip">
@@ -1539,6 +1563,7 @@ export function WorkoutLogPanel({
           onChange={(e) => handlePersonalTipChange(e.target.value)}
           disabled={isActionPending}
         />
+        {renderPlanSaveButton('below-tip')}
       </div>
     ) : null;
 
@@ -1657,24 +1682,7 @@ export function WorkoutLogPanel({
                 {t('machines:history.performanceTitle', { count: setCount })}
               </span>
               {setCountControl}
-              <button
-                type="button"
-                className={[
-                  'btn btn--secondary history-workout-log__plan-save',
-                  isPlanDirty && !isActionPending && !isLoading
-                    ? 'history-workout-log__plan-save--attention'
-                    : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={() => void handlePlanSave()}
-                disabled={isActionPending || isLoading || !isPlanDirty}
-                aria-live={isPlanDirty ? 'polite' : undefined}
-              >
-                {saveMutation.isPending && saveMutation.variables?.asPlan
-                  ? t('machines:workoutLog.planSaving')
-                  : t('machines:workoutLog.planSave')}
-              </button>
+              {renderPlanSaveButton('header')}
             </div>
           </div>
           {weightList}
