@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `941db8ea`
+- Commit: `eb4f2e80`
 
 ## Test focus
 1. 오늘 추천 후 하단 기록 tip이 「이동해서 / 운동시작」
