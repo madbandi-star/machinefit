@@ -1,7 +1,7 @@
-{
+﻿{
   "title": "Hide data-scarcity messaging on fortune page",
   "summary": "Removed copy that reveals insufficient workout logs or data-driven personalization limits. Why-today and report now use fortune-framed language only; backend logic unchanged.",
-  "git": { "branch": "main", "commit": "PENDING" },
+  "git": { "branch": "main", "commit": "3b2e0d16" },
   "changedFiles": [
     "frontend/src/components/fortune/fortuneContent.ts",
     "frontend/src/components/fortune/FortuneDashboard.tsx",
