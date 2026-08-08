@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `02cfcaaa`
 
 ## Test focus
 1. 날짜 선택 + 기록 없음 → 「템플릿 불러오기」 버튼 표시
