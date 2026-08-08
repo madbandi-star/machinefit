@@ -51,7 +51,7 @@ export function buildFortuneExplain(fortune: FortuneSection): ProseBlock {
     emoji: '🔮',
     leadKey: 'content.fortuneExplainLead',
     leadValues: { keyword: fortune.keywordTitle },
-    lines: [{ key }, { key: 'content.fortuneExplainFooter' }],
+    lines: [{ key }],
   };
 }
 
