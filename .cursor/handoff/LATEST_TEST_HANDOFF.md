@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `457e943d`
 
 ## Test focus
 1. 검색→추천→결과: 배너 + 하단 기록 탭 펄스/팁 표시
