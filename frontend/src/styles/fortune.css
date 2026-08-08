@@ -718,35 +718,41 @@
 }
 
 .fortune-avoid {
-  padding: 0.9rem 1rem;
+  padding: 0.95rem 1rem 1rem;
   border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, #e0a25a 35%, var(--color-border));
-  background: color-mix(in srgb, #fff4e5 70%, var(--color-surface, #fff));
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  border-left: 3px solid color-mix(in srgb, #c47b2b 75%, var(--color-border));
+  background: color-mix(in srgb, var(--color-surface, #fff) 96%, var(--color-surface-alt, #f5f6f8));
+  color: var(--color-text);
 }
 
 .fortune-avoid__eyebrow {
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.4rem;
   font-size: 0.85rem;
   font-weight: 750;
+  color: var(--color-text);
 }
 
 .fortune-avoid__body {
   margin: 0;
-  font-size: 1.02rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 750;
   line-height: 1.4;
+  color: var(--color-text);
 }
 
 .fortune-avoid__detail {
   margin: 0.55rem 0 0;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.55;
+  color: var(--color-text);
 }
 
 .fortune-avoid__detail--muted {
   color: var(--color-text-muted);
   font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 .fortune-prose {
