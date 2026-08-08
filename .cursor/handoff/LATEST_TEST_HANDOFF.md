@@ -1,24 +1,22 @@
-# Test handoff: Records card detail affordance (chevron cues)
+ï»¿# Test handoff: Hug title underline/chevron to name width
 
 ## Summary
-±â·Ï Ä«µåÀÇ ±â±¸ ÀÌ¹ÌÁö¡¤ÀÌ¸§¿¡ ÀÛÀº chevron/¹ØÁÙ affordance¸¦ ³Ö¾î »ó¼¼±â·ÏÀ¸·Î ÀÌµ¿ °¡´ÉÇÔÀ» ÅØ½ºÆ® ¾øÀÌ µå·¯³Â½À´Ï´Ù.
+ê¸°ë¡ ì¹´ë“œ ê¸°êµ¬ ì´ë¦„ ë°‘ì¤„ê³¼ â€ºê°€ ì´ë¦„ ê¸¸ì´ì— ë§ê²Œ ë¶™ë„ë¡ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `ef944380`
+- Commit: `98e9adc7`
 
 ## Test focus
-1. ±â·Ï Ä«µå ½æ³×ÀÏ ¿ìÇÏ´Ü¿¡ ? Ä¨ Ç¥½Ã
-2. ±â±¸ ÀÌ¸§¿¡ ¾ãÀº ¹ØÁÙ + ? Ç¥½Ã
-3. ÅÇ ½Ã »ó¼¼±â·Ï ÆäÀÌÁö ÀÌµ¿ À¯Áö
-4. È­¸é ¹®±¸ Ãß°¡ ¾øÀ½(aria¸¸)
+1. ì§§ì€ ì´ë¦„: ë°‘ì¤„Â·â€ºê°€ ì´ë¦„ ë°”ë¡œ ì˜†ì— ë¶™ìŒ
+2. ê¸´ ì´ë¦„: max-width ì•ˆì—ì„œ ì¤„ì„/2ì¤„ ìœ ì§€
 
 ## Fast checks
 ```bash
-rg -n "thumb-cue|title-cue|openDetailAria" frontend/src/components/records/HistoryRecordCard frontend/src/styles/records.css frontend/src/styles/history-premium.css frontend/src/i18n/locales/ko/machines.json
+rg -n "width: fit-content|flex: 0 1 auto" frontend/src/styles/history-premium.css frontend/src/styles/records.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ÀÌ¹ÌÁö/ÀÌ¸§ÀÌ ¸µÅ©Ã³·³ ¾È º¸ÀÓ | chevron¡¤¹ØÁÙ·Î »ó¼¼ ÀÌµ¿ °¡´É |
+| ë°‘ì¤„Â·â€ºê°€ ì˜¤ë¥¸ìª½ê¹Œì§€ ëŠ˜ì–´ë‚¨ | ì´ë¦„ ê¸¸ì´ì— ë§ê²Œ ë¶™ìŒ |
