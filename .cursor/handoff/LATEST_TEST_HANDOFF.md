@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `0ee64688`
 
 ## Test focus
 1. 추천 결과: 「오늘 운동은 기록에서…」가 「아래 버튼을 눌러 기본값을…」 위에 표시
