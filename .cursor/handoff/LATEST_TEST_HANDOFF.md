@@ -1,23 +1,23 @@
-# Test handoff: Remove calendar ¡°³¯Â¥ Á÷Á¢ ¼±ÅÃ¡±
+ï»¿# Test handoff: Pulse â€œì¡°ì •ê°’ ì €ì¥â€ when adjustments dirty
 
 ## Summary
-±â·Ï ÆäÀÌÁö ÀÏÀÚÁ¶È¸ Ä¶¸°´õ¿¡¼­ [¿À´Ã] ¿·ÀÇ [³¯Â¥ Á÷Á¢ ¼±ÅÃ] Ä¨°ú ³×ÀÌÆ¼ºê date inputÀ» Á¦°ÅÇß½À´Ï´Ù. ³¯Â¥´Â Ä¶¸°´õ Ä­À¸·Î¸¸ °í¸¨´Ï´Ù.
+ì…‹íŒ…ê°’ ì¡°ì • í•„ìš” ì„ íƒ í›„ ì¤‘ëŸ‰Â·ì¶”ì²œíšŸìˆ˜Â·ê°€ë™ë²”ìœ„ë¥¼ ë°”ê¾¸ë©´, ì¡°ì •ê°’ ì €ì¥(ê¸°ë¡ì¹´ë“œ: ì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°) ë²„íŠ¼ì— ê³„íš ì €ì¥ê³¼ ê°™ì€ attention ì• ë‹ˆë©”ì´ì…˜ì´ ì ìš©ë©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: 9703f67e
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ ÀÏÀÚÁ¶È¸ ¡æ calendar opens
-2. [¿À´Ã] may still appear; [³¯Â¥ Á÷Á¢ ¼±ÅÃ] is gone
-3. Day cells still selectable
+1. Records or detail â†’ ì…‹íŒ…ê°’ ì¡°ì • í•„ìš”
+2. Change weight / reps / ROM â†’ save button pulses (green attention)
+3. After save, pulse stops
 
 ## Fast checks
 ```bash
-rg -n "planPickAnyDate|openNativePicker|history-plan-date-input" frontend/src/components/records/HistoryDateCalendar || true
+rg -n "preferencesDirty|save-btn--attention|btn--save-attention" frontend/src/components/recommendation frontend/src/styles/recommendation.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Today + ¡°³¯Â¥ Á÷Á¢ ¼±ÅÃ¡± | Today only (when needed); pick days on grid |
+| Dirty adjustments, static save button | Same pulse attention as plan-save |

@@ -1,19 +1,23 @@
 {
-  "title": "Remove calendar ??? ?? ???",
-  "summary": "Removed the native date-picker chip next to Today on the records day-filter calendar.",
-  "git": { "branch": "main", "commit": "9703f67e" },
+  "title": "Pulse ???? ??? when adjustments dirty",
+  "summary": "When settingsDirty after weight/reps/ROM edits, preferences save controls use the same attention animation as plan-save.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx"
+    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
+    "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "No ??? ?? ??? chip in calendar",
-    "Grid day select still works"
+    "Dirty adjustments pulse save button",
+    "Pulse clears after save"
   ],
   "fastChecks": [
-    "rg -n \"planPickAnyDate|openNativePicker|history-plan-date-input\" frontend/src/components/records/HistoryDateCalendar || true"
+    "rg -n \"preferencesDirty|save-btn--attention|btn--save-attention\" frontend/src/components/recommendation frontend/src/styles/recommendation.css"
   ],
-  "productionChecks": ["Pages deploy + records calendar toolbar"],
+  "productionChecks": ["Pages deploy + adjust settings save pulse"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Today + manual date pick chip",
-  "toBe": "Today only; dates via calendar grid"
+  "asIs": "Static save button after editing adjustments",
+  "toBe": "Plan-save-style attention pulse while dirty"
 }

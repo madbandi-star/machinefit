@@ -474,6 +474,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
               showIntroText={false}
               badButtonSaveMode={badButtonSaveMode}
               onBadSave={handleWorkoutSave}
+              preferencesDirty={fitFeedback.settingsDirty}
               onRating={(rating) => {
                 if (rating === 'bad') setIsEditingAdjustments(true);
                 else setIsEditingAdjustments(false);

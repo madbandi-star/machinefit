@@ -354,6 +354,7 @@ export function RecommendationResultPage() {
                       fitFeedback.showAdjustment ? fitFeedback.savePreferences : undefined
                     }
                     isPreferencesPending={fitFeedback.isPreferencesPending}
+                    preferencesDirty={fitFeedback.settingsDirty}
                   />
                 ) : null}
                 {isAuthenticated ? (

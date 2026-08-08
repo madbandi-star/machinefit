@@ -11,6 +11,8 @@ interface FitFeedbackPanelProps {
   /** Shown only when “셋팅값 조정필요” is selected. */
   onSavePreferences?: () => void;
   isPreferencesPending?: boolean;
+  /** Unsaved adjustment edits — pulses the save control like plan-save attention. */
+  preferencesDirty?: boolean;
   /** When false, hide title/desc intro copy (e.g. records page). */
   showIntroText?: boolean;
   /** Records: bad button shows save label and triggers onBadSave instead of re-rating. */
@@ -24,6 +26,7 @@ export function FitFeedbackPanel({
   isPending = false,
   onSavePreferences,
   isPreferencesPending = false,
+  preferencesDirty = false,
   showIntroText = true,
   badButtonSaveMode = false,
   onBadSave,
@@ -36,6 +39,8 @@ export function FitFeedbackPanel({
   const hasIntro = showIntroText || showSavePreferences;
 
   const showBadAsSave = badButtonSaveMode && savedRating === 'bad';
+  const prefsAttention =
+    preferencesDirty && !isPreferencesPending && !(showBadAsSave && isPending);
 
   const selectRating = (fitRating: FitRating) => {
     if (isPending) return;
@@ -67,9 +72,12 @@ export function FitFeedbackPanel({
               {showSavePreferences ? (
                 <button
                   type="button"
-                  className="btn btn--primary fit-feedback-panel__save-btn"
+                  className={`btn btn--primary fit-feedback-panel__save-btn${
+                    prefsAttention ? ' fit-feedback-panel__save-btn--attention' : ''
+                  }`}
                   disabled={isPreferencesPending}
                   onClick={onSavePreferences}
+                  aria-live={prefsAttention ? 'polite' : undefined}
                 >
                   {isPreferencesPending ? t('feedback.preferencesSaving') : t('feedback.savePreferences')}
                 </button>
@@ -96,7 +104,7 @@ export function FitFeedbackPanel({
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}${
             showBadAsSave ? ' fit-feedback-panel__btn--save' : ''
-          }`}
+          }${showBadAsSave && prefsAttention ? ' fit-feedback-panel__btn--save-attention' : ''}`}
           onClick={() => {
             if (showBadAsSave) {
               if (isPending) return;
@@ -107,6 +115,7 @@ export function FitFeedbackPanel({
           }}
           disabled={isPending || (showBadAsSave && !onBadSave)}
           aria-pressed={savedRating === 'bad'}
+          aria-live={showBadAsSave && prefsAttention ? 'polite' : undefined}
         >
           <Icon name="sliders" size={20} />
           {showBadAsSave ? t('feedback.saveSettings') : t('feedback.bad')}

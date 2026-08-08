@@ -2230,6 +2230,22 @@
   white-space: nowrap;
 }
 
+/* Match plan-save attention when adjustment fields are dirty. */
+.btn.fit-feedback-panel__save-btn--attention,
+.btn.recommendation-settings-panel__save--attention,
+.fit-feedback-panel__btn--save-attention {
+  color: var(--color-primary-on, #04140c);
+  border-color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+  background: linear-gradient(180deg, #33eb91 0%, var(--color-primary) 100%);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  animation: history-plan-save-attention 1.35s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+.fit-feedback-panel__btn--save-attention {
+  border-style: solid;
+}
+
 .fit-feedback-panel__title {
   margin: 0;
   flex: 1 1 auto;
@@ -2732,7 +2748,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn.history-workout-log__plan-save--attention {
+  .btn.history-workout-log__plan-save--attention,
+  .btn.fit-feedback-panel__save-btn--attention,
+  .btn.recommendation-settings-panel__save--attention,
+  .fit-feedback-panel__btn--save-attention {
     animation: none;
     outline: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
     outline-offset: 2px;

@@ -56,6 +56,8 @@ interface RecommendationSettingsPanelProps {
   ) => void;
   onSavePreferences?: () => void;
   isPreferencesPending?: boolean;
+  /** Unsaved adjustment edits — pulses the save button like plan-save attention. */
+  preferencesDirty?: boolean;
 }
 
 function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
@@ -251,6 +253,7 @@ export function RecommendationSettingsPanel({
   onCustomChange,
   onSavePreferences,
   isPreferencesPending = false,
+  preferencesDirty = false,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
@@ -328,14 +331,18 @@ export function RecommendationSettingsPanel({
     t,
   };
 
+  const prefsAttention = preferencesDirty && !isPreferencesPending;
   const saveFooter =
     showAdjustment && onSavePreferences && !adjustmentReadOnly ? (
       <div className="recommendation-settings-panel__save-row">
         <button
           type="button"
-          className="btn btn--primary btn--block"
+          className={`btn btn--primary btn--block${
+            prefsAttention ? ' recommendation-settings-panel__save--attention' : ''
+          }`}
           onClick={onSavePreferences}
           disabled={isPreferencesPending}
+          aria-live={prefsAttention ? 'polite' : undefined}
         >
           {isPreferencesPending ? t('machines:feedback.preferencesSaving') : t('machines:feedback.savePreferences')}
         </button>
