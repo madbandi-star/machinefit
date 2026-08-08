@@ -41,6 +41,8 @@ export function FitFeedbackPanel({
   const showBadAsSave = badButtonSaveMode && savedRating === 'bad';
   const prefsAttention =
     preferencesDirty && !isPreferencesPending && !(showBadAsSave && isPending);
+  // Records: after 「셋팅값 조정 필요」 → 「셋팅값 저장하기」, pulse like plan-save.
+  const badSaveAttention = showBadAsSave && !isPending && !isPreferencesPending;
 
   const selectRating = (fitRating: FitRating) => {
     if (isPending) return;
@@ -104,7 +106,7 @@ export function FitFeedbackPanel({
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}${
             showBadAsSave ? ' fit-feedback-panel__btn--save' : ''
-          }${showBadAsSave && prefsAttention ? ' fit-feedback-panel__btn--save-attention' : ''}`}
+          }${badSaveAttention ? ' fit-feedback-panel__btn--save-attention' : ''}`}
           onClick={() => {
             if (showBadAsSave) {
               if (isPending) return;
@@ -115,7 +117,7 @@ export function FitFeedbackPanel({
           }}
           disabled={isPending || (showBadAsSave && !onBadSave)}
           aria-pressed={savedRating === 'bad'}
-          aria-live={showBadAsSave && prefsAttention ? 'polite' : undefined}
+          aria-live={badSaveAttention ? 'polite' : undefined}
         >
           <Icon name="sliders" size={20} />
           {showBadAsSave ? t('feedback.saveSettings') : t('feedback.bad')}

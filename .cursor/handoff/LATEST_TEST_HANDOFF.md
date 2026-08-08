@@ -1,23 +1,23 @@
-# Test handoff: Fix vertical stack of settings tiles
+ï»¿# Test handoff: Pulse ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ after adjust click
 
 ## Summary
-±â·ÏÄ«µå ¼³Á¤ Å¸ÀÏÀÌ ¼¼·Î·Î ÇÑ ÁÙ¾¿ ½×ÀÌ´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. ±×¸®µå¸¦ `<a>`·Î °¨½ÎÁö ¾Ê°í Å¸ÀÏº° ¸µÅ©·Î ¹Ù²Ù¾ú°í, 3¿­ ±×¸®µå¸¦ °­Á¦ÇÏ¸ç Áß·® full-spanÀ» Á¦°ÅÇß½À´Ï´Ù.
+ê¸°ë¡í˜ì´ì§€ì—ì„œ ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€ë¥¼ ëˆ„ë¥´ë©´ ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ë¡œ ë°”ë€ ë²„íŠ¼ì— ê³„íš ì €ì¥ê³¼ ê°™ì€ attention ì• ë‹ˆë©”ì´ì…˜ì´ ë°”ë¡œ ì ìš©ë©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: 3b96fd34
+- Commit: pending
 
 ## Test focus
-1. Records card: ÃßÃµÁß·® / ÃßÃµÈ½¼ö / °¡µ¿¹üÀ§ in **one horizontal row** (3 columns)
-2. Tap a tile still opens detail (when not adjusting)
-3. Adjust mode still editable without stacking all tiles full-width
+1. Records â†’ card â†’ ì…‹íŒ…ê°’ ì¡°ì • í•„ìš”
+2. Button becomes ì…‹íŒ…ê°’ ì €ì¥í•˜ê¸° and pulses (green)
+3. After save, pulse stops
 
 ## Fast checks
 ```bash
-rg -n "tileHref|history-mini-setting-wrap--link|grid-template-columns: repeat\\(3" frontend/src/components/recommendation/RecommendationSettingsPanel frontend/src/styles/history-premium.css
+rg -n "badSaveAttention|btn--save-attention" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Tiles stacked vertically full-width | 3-column row inside card |
+| Pulse only when fields dirty / overridden by --active | Pulse while in save mode after adjust click |
