@@ -161,7 +161,7 @@
     "afterCheck1": "운동 기록 저장",
     "afterCheck2": "오늘 운동량 확인",
     "afterCheck3": "회복 상태 확인",
-    "reportTitle": "오늘의 헬창 리포트",
+    "reportTitle": "오늘의 헬창운세 정리",
     "report": {
       "stars": "오늘의 운동운은 {{stars}}입니다.",
       "fortune": "키워드 {{keyword}} — {{title}}",

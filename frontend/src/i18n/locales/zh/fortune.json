@@ -161,7 +161,7 @@
     "afterCheck1": "Save the workout log",
     "afterCheck2": "Review today’s volume",
     "afterCheck3": "Check recovery status",
-    "reportTitle": "今日健身报告",
+    "reportTitle": "今日健身运势整理",
     "report": {
       "stars": "Workout luck today: {{stars}}.",
       "fortune": "Keyword {{keyword}} — {{title}}",

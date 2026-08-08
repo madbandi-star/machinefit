@@ -135,7 +135,6 @@ export function FortuneDashboard({
           <TodayRecommendationGrid
             bodyPart={recommendation.bodyPart}
             bodyPartLabel={recommendation.bodyPartLabel}
-            style={recommendation.style}
             styleLabel={recommendation.styleLabel}
             strategyLabel={recommendation.strategyLabel}
             conditionLabel={recommendation.conditionLabel}

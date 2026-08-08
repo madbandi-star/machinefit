@@ -161,7 +161,7 @@
     "afterCheck1": "Save the workout log",
     "afterCheck2": "Review today’s volume",
     "afterCheck3": "Check recovery status",
-    "reportTitle": "Today’s Helchang report",
+    "reportTitle": "Today’s Helchang Fortune summary",
     "report": {
       "stars": "Workout luck today: {{stars}}.",
       "fortune": "Keyword {{keyword}} — {{title}}",
