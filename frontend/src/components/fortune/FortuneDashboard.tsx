@@ -118,7 +118,15 @@ export function FortuneDashboard({
         <FortuneProse block={content.fortuneExplain} />
       </FortuneReveal>
 
+      <FortuneReveal className="fortune-dashboard__section" delayMs={70}>
+        <FortuneProse block={content.pr} />
+      </FortuneReveal>
+
       <FortuneReveal className="fortune-dashboard__section" delayMs={80}>
+        <FortuneProse block={content.recovery} />
+      </FortuneReveal>
+
+      <FortuneReveal className="fortune-dashboard__section" delayMs={100}>
         <p className="fortune-dashboard__section-label">
           <span aria-hidden>✨</span> {t('sectionRecommendVisual')}
         </p>
@@ -135,23 +143,15 @@ export function FortuneDashboard({
         ) : null}
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={100}>
+      <FortuneReveal className="fortune-dashboard__section" delayMs={120}>
         <FortuneProse block={content.why} />
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={120}>
+      <FortuneReveal className="fortune-dashboard__section" delayMs={140}>
         <FortuneProse block={content.strategy} />
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={140}>
-        <FortuneProse block={content.pr} />
-      </FortuneReveal>
-
       <FortuneReveal className="fortune-dashboard__section" delayMs={160}>
-        <FortuneProse block={content.recovery} />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={170}>
         <FortuneAvoidCard label={recommendation.avoidLabel} />
       </FortuneReveal>
 
