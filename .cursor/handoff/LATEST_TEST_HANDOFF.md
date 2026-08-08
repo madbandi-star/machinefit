@@ -1,24 +1,24 @@
-ï»¿# Test handoff: Show ì¶”ê°€ë¨ badge for todayâ€™s history/logs too
+# Test handoff: Show Ãß°¡µÊ badge for today¡¯s history/logs too
 
 ## Summary
-ê²€ìƒ‰/ìš´ë™ì¶”ê°€ ëª©ë¡ì˜ ã€Œì¶”ê°€ë¨ã€ì´ workout_cardsë¿ ì•„ë‹ˆë¼ í•´ë‹¹ì¼ historyÂ·workout_logsê¹Œì§€ ë³´ë„ë¡ í•´ì„œ, ì˜¤ëŠ˜ ì¶”ì²œìœ¼ë¡œ ì´ë¯¸ ë„£ì€ ê¸°êµ¬ì—ë„ ë¯¸ë˜ì™€ ê°™ì´ ë°°ì§€ê°€ ë¶™ìŠµë‹ˆë‹¤. ì¼ë°˜ ê²€ìƒ‰ì€ ì˜¤ëŠ˜ ê¸°ì¤€ìœ¼ë¡œ í‘œì‹œí•©ë‹ˆë‹¤.
+°Ë»ö/¿îµ¿Ãß°¡ ¸ñ·ÏÀÇ ¡¸Ãß°¡µÊ¡¹ÀÌ workout_cards»Ó ¾Æ´Ï¶ó ÇØ´çÀÏ history¡¤workout_logs±îÁö º¸µµ·Ï ÇØ¼­, ¿À´Ã ÃßÃµÀ¸·Î ÀÌ¹Ì ³ÖÀº ±â±¸¿¡µµ ¹Ì·¡¿Í °°ÀÌ ¹èÁö°¡ ºÙ½À´Ï´Ù. ÀÏ¹İ °Ë»öÀº ¿À´Ã ±âÁØÀ¸·Î Ç¥½ÃÇÕ´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `166ed3c2`
 
 ## Test focus
-1. ì˜¤ëŠ˜ ì¶”ì²œí•œ ê¸°êµ¬ â†’ ê²€ìƒ‰: ã€Œì¶”ê°€ë¨ã€
-2. ì˜¤ëŠ˜ ìš´ë™ì¶”ê°€ë¡œ ë„£ì€ ê¸°êµ¬ â†’ planDate ê²€ìƒ‰: ã€Œì¶”ê°€ë¨ã€
-3. ë¯¸ë˜ planDate: ê¸°ì¡´ ã€Œì¶”ê°€ë¨ã€ ìœ ì§€
-4. ë°°ë„ˆ countê°€ history+card+log í•©ê³¼ ì¼ì¹˜
+1. ¿À´Ã ÃßÃµÇÑ ±â±¸ ¡æ °Ë»ö: ¡¸Ãß°¡µÊ¡¹
+2. ¿À´Ã ¿îµ¿Ãß°¡·Î ³ÖÀº ±â±¸ ¡æ planDate °Ë»ö: ¡¸Ãß°¡µÊ¡¹
+3. ¹Ì·¡ planDate: ±âÁ¸ ¡¸Ãß°¡µÊ¡¹ À¯Áö
+4. ¹è³Ê count°¡ history+card+log ÇÕ°ú ÀÏÄ¡
 
 ## Fast checks
 ```bash
 rg -n "dayHistory|dayLogs|badgeDate|plannedCount" frontend/src/pages/machine-search/MachineSearchPage.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ì˜¤ëŠ˜ ê¸°êµ¬ëŠ” historyì—ë§Œ ìˆì–´ ë°°ì§€ ì—†ìŒ | ì˜¤ëŠ˜ë„ history/log/cardë¡œ ã€Œì¶”ê°€ë¨ã€ |
+| ¿À´Ã ±â±¸´Â history¿¡¸¸ ÀÖ¾î ¹èÁö ¾øÀ½ | ¿À´Ãµµ history/log/card·Î ¡¸Ãß°¡µÊ¡¹ |
