@@ -1,7 +1,8 @@
 import { workoutCardService } from '../services/workout-card.service.js';
 import { logger } from '../utils/logger.js';
 
-/** ~60 minutes — same order of magnitude as other background jobs. */
+/** ~60 minutes — same order of magnitude as other background jobs.
+ * Eligible: today’s PLANNED / COMPLETED / IN_PROGRESS cards (not SKIPPED). */
 const INTERVAL_MS = 60 * 60_000;
 
 export function startWorkoutCardReminderJob(): void {

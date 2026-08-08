@@ -1,21 +1,26 @@
-# Test handoff: Unknown push sender label ¡æ ½Ã½ºÅÛ ¾Ë¸²
+ï»¿# Test handoff: Include COMPLETED cards in workout plan reminders
 
 ## Summary
-¾Ë¸²¿¡¼­ ¹ß¼ÛÀÚ Á¤º¸°¡ ¾øÀ» ¶§ º¸ÀÌ´ø ¡¸¹ß¼ÛÀÚ Á¤º¸ ¾øÀ½¡¹À» ¡¸½Ã½ºÅÛ ¾Ë¸²¡¹À¸·Î º¯°æÇß½À´Ï´Ù.
+ìš´ë™ ê³„íš ì•Œë¦¼ ëŒ€ìƒì— ì˜¤ëŠ˜ ë‚ ì§œì˜ COMPLETED(ë° IN_PROGRESS) ì¹´ë“œë„ í¬í•¨í–ˆìŠµë‹ˆë‹¤. ì˜¤ëŠ˜ ìš´ë™ì¶”ê°€ë¡œ ìë™ COMPLETEDëœ ì¹´ë“œë„ ì•Œë¦¼ì´ ê°‘ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `8a5d3416`
+- Commit: pending
 
 ## Test focus
-1. ¹ß¼ÛÀÚ ¾ø´Â Çª½Ã/¾Ë¸² Ç×¸ñ¿¡ ¡¸½Ã½ºÅÛ ¾Ë¸²¡¹ Ç¥½Ã
+1. ì˜¤ëŠ˜ COMPLETED ì¹´ë“œë§Œ ìˆëŠ” ê³„ì • â†’ ì‹œê°„ë‹¹ ì¡ í›„ ìš´ë™ ê³„íš ì•Œë¦¼ ìƒì„±
+2. ì´ë¯¸ ê°™ì€ ë‚  reminder ìˆìœ¼ë©´ ì¤‘ë³µ ì—†ìŒ
+3. SKIPPEDë§Œ ìˆìœ¼ë©´ ì•Œë¦¼ ì—†ìŒ
 
 ## Fast checks
 ```bash
-rg -n "pushSenderUnknown" frontend/src/i18n/locales/ko/notifications.json
+rg -n "COMPLETED|IN_PROGRESS|listUserIdsWithPlannedOnDate" backend/server/repositories/workout-card.repository.ts
 ```
 
-## as-is ¡æ to-be
+## Notes
+- Backend change â†’ **Render redeploy** required.
+
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¹ß¼ÛÀÚ Á¤º¸ ¾øÀ½ | ½Ã½ºÅÛ ¾Ë¸² |
+| ì˜¤ëŠ˜ PLANNEDë§Œ | ì˜¤ëŠ˜ PLANNED / COMPLETED / IN_PROGRESS |

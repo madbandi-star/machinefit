@@ -791,7 +791,10 @@ export const workoutCardRepository = {
     return (result.rowCount ?? 0) > 0;
   },
 
-  /** Users with at least one PLANNED card on the given date. */
+  /**
+   * Users with at least one reminder-eligible card on the given date.
+   * Includes COMPLETED so today’s plan-add (auto-COMPLETED) still gets a reminder.
+   */
   async listUserIdsWithPlannedOnDate(scheduledDate: string): Promise<string[]> {
     const pool = getPool();
     if (!pool) return [];
@@ -799,7 +802,8 @@ export const workoutCardRepository = {
     const result = await pool.query<{ user_id: string }>(
       `SELECT DISTINCT user_id
        FROM workout_cards
-       WHERE status = 'PLANNED' AND scheduled_date = $1::date`,
+       WHERE status IN ('PLANNED', 'COMPLETED', 'IN_PROGRESS')
+         AND scheduled_date = $1::date`,
       [scheduledDate]
     );
     return result.rows.map((r) => r.user_id);
@@ -812,7 +816,9 @@ export const workoutCardRepository = {
     const result = await pool.query<{ count: string }>(
       `SELECT COUNT(*)::text AS count
        FROM workout_cards
-       WHERE user_id = $1 AND status = 'PLANNED' AND scheduled_date = $2::date`,
+       WHERE user_id = $1
+         AND status IN ('PLANNED', 'COMPLETED', 'IN_PROGRESS')
+         AND scheduled_date = $2::date`,
       [userId, scheduledDate]
     );
     return parseInt(result.rows[0]?.count ?? '0', 10) || 0;
