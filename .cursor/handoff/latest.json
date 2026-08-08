@@ -1,7 +1,7 @@
 ﻿{
   "title": "Polish Helchang Fortune detail page IA/UI",
   "summary": "Regrouped the fortune detail dashboard into clearer section bundles (scores / commentary / recommend / action / wrap), flattened nested cards, and strengthened the hero brand+keyword hierarchy. No fortune API or score logic changes.",
-  "git": { "branch": "main", "commit": "PENDING" },
+  "git": { "branch": "main", "commit": "c3a9105e" },
   "changedFiles": [
     "frontend/src/components/fortune/FortuneDashboard.tsx",
     "frontend/src/components/fortune/FortuneHero.tsx",

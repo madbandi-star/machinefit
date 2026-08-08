@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING` (push 후 갱신)
+- Commit: `c3a9105e`
 
 ## Test focus
 1. `/fortune/today` 준비 상태에서 PageShell 제목 중복 없음 (히어로가 브랜드 담당)
