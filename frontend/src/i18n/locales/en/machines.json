@@ -181,7 +181,7 @@
   "feedback": {
     "title": "How did the settings fit?",
     "desc": "Your feedback helps improve future recommendations.",
-    "choicePrompt": "How did the settings fit? Tap a button to choose",
+    "choicePrompt": "Tap a button below to set your default.",
     "tapToChoose": "Tap to choose",
     "actionsLabel": "Recommendation fit feedback",
     "good": "Recommendations fit well",
