@@ -1,38 +1,32 @@
 {
-  "title": "Pillar cards: Hangul + ganzhi interpretation",
-  "summary": "Under ?? ??? ?? ? ?????, year/month/day/hour pillars now show Hangul readings, element/yin-yang meta, role line, combo hint, and stem gym metaphor?not Han characters alone. UI/i18n only; no engine/API change.",
+  "title": "Merge duplicate pillars/ganzhi explain guides",
+  "summary": "Under ??·??, two ?? ??? ??????? blocks (pillars + ganzhi) are merged into one. Copy combines four-pillar structure with stem/branch meaning without duplication. UI/i18n only.",
   "git": {
     "branch": "main",
-    "commit": "b25caee4"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/fortune/reading/FortunePillarCard.tsx",
-    "frontend/src/components/fortune/reading/ganzhiLabels.ts",
     "frontend/src/components/fortune/FortuneTraditionalDetail.tsx",
-    "frontend/src/styles/fortune-reading.css",
     "frontend/src/i18n/locales/ko/fortune.json",
     "frontend/src/i18n/locales/en/fortune.json",
     "frontend/src/i18n/locales/zh/fortune.json",
     "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "Open ??? ???? ? ?? ?? ?? ? ?? ??? ?? ? ?????",
-    "Each pillar shows Hangul (e.g. ??) with Han in parentheses",
-    "Stem/branch lines include ?? + ??",
-    "Role line + comboHint + stemGym metaphor visible",
-    "Hour pillar empty state still shows hourUnknown when missing"
+    "Open ?? ??? ?? ? ??·??",
+    "Only one collapsible ?? ??? ??????? under pillars",
+    "Guide mentions both four pillars and ??/?? meaning in one flow"
   ],
   "fastChecks": [
-    "cd frontend && npx tsc -p tsconfig.json --noEmit",
     "node scripts/i18n-audit.mjs --sync",
-    "rg -n \"FortunePillarCard|ganzhi.lead|fr-pillar\" frontend/src"
+    "rg -n \"FortuneExplainBlock prefix\" frontend/src/components/fortune/FortuneTraditionalDetail.tsx"
   ],
   "productionChecks": [
-    "After Deploy Frontend success: open /fortune/today detail pillars and confirm Hangul + interpretation"
+    "After Deploy Frontend: confirm single explain accordion under ??·??"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Pillars showed bare Han only (e.g. ??) with little beginner context.",
-  "toBe": "Each pillar card shows Hangul+Han, ??/?? meta (?????), role meaning, combo hint, and gym-style stem metaphor."
+  "asIs": "Two identical-titled beginner guides (pillars + ganzhi) stacked under ??·??.",
+  "toBe": "One merged guide covering pillars + stem/branch without duplicate headings or repeated ideas."
 }

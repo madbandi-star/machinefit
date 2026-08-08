@@ -65,8 +65,7 @@ export function FortuneTraditionalDetailPanel({
               emptyLabel={t('detail.hourUnknown')}
             />
           </div>
-          <FortuneExplainBlock prefix="pillars" showFootnote={false} />
-          <FortuneExplainBlock prefix="ganzhi" showFootnote />
+          <FortuneExplainBlock prefix="pillars" />
         </details>
 
         <details className="fr-detail__item">

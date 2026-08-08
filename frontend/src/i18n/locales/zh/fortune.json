@@ -363,19 +363,14 @@
       "tip": "Simply: long plan → year goal → month plan → today’s condition."
     },
     "pillars": {
-      "what": "The four pillars (year/month/day/hour) are the basic structure used to sketch a person’s chart in traditional fortune language.",
-      "look": "They lightly reference roots, environment, self, and possibility — background for reading today’s story, not a professional verdict.",
-      "gym": "Think of them as the broader picture of “what kind of training personality and setting you’re standing on.”",
+      "what": "The four pillars (year/month/day/hour) are the basic structure used to sketch a person’s chart. Each pillar pairs a stem (outward quality of energy) with a branch (the setting/flow it sits in).",
+      "look": "They lightly reference roots, environment, self, and possibility, and separate “what kind of force shows up” from “what environment it moves through” — background for reading today’s story, not a professional verdict.",
+      "gym": "Think of the four pillars as the broader picture of the training personality and setting you’re standing on. Stem ≈ the style of force in today’s session; branch ≈ the flow/setting that force moves in.",
       "fourTitle": "Four pillars in gym metaphors",
       "yearGym": "The background where your training story began",
       "monthGym": "The gym/environment vibe around you",
       "dayGym": "Your basic training personality",
       "hourGym": "Hints about how you might grow next"
-    },
-    "ganzhi": {
-      "what": "Stems describe an outward quality of energy; branches describe the setting/flow it sits in.",
-      "look": "They separate “what kind of force shows up” from “what environment it moves through.”",
-      "gym": "Stem ≈ the style of force in today’s session; branch ≈ the flow/setting that force moves in."
     },
     "shipshin": {
       "what": "Ten-gods language describes role-relationships among energies around you.",
