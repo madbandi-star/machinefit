@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/services/http/axios-client';
 import { resolveBrandMediaUrl } from './brandMediaUrl';
 
 /** Static catalog asset helpers (GitHub Pages `/machinefit/assets/...`). */
@@ -167,6 +168,49 @@ export function resolveMachineImageUrl(
 
   if (primaryImageUrl) return primaryImageUrl;
   return packaged;
+}
+
+/** Public media URL for admin machine covers (optional per-muscle variant). */
+export function machineCoverMediaUrl(
+  machineCode: string,
+  targetMuscleGroup?: string | null
+): string {
+  const base = API_BASE_URL.replace(/\/+$/, '');
+  if (targetMuscleGroup) {
+    return `${base}/media/machine-covers/${encodeURIComponent(machineCode)}/${encodeURIComponent(targetMuscleGroup)}/main`;
+  }
+  return `${base}/media/machine-covers/${encodeURIComponent(machineCode)}/main`;
+}
+
+/**
+ * Records / home cards: prefer API image, then muscle/default cover endpoint, then packaged.
+ * Cover URLs are tried even when search was never opened (plan-add / log-only rows).
+ */
+export function resolveRecordMachineImageUrl(
+  machineCode: string,
+  options?: {
+    primaryImageUrl?: string | null;
+    targetMuscleGroup?: string | null;
+    preferMuscleCover?: boolean;
+  }
+): string | undefined {
+  const preferMuscle = Boolean(options?.preferMuscleCover && options.targetMuscleGroup);
+  if (preferMuscle) {
+    return (
+      resolveMachineImageUrl(
+        machineCode,
+        machineCoverMediaUrl(machineCode, options?.targetMuscleGroup)
+      ) ?? resolveMachineImageUrl(machineCode, options?.primaryImageUrl)
+    );
+  }
+
+  const fromApiOrPackaged = resolveMachineImageUrl(machineCode, options?.primaryImageUrl);
+  if (fromApiOrPackaged) return fromApiOrPackaged;
+
+  if (options?.targetMuscleGroup) {
+    return machineCoverMediaUrl(machineCode, options.targetMuscleGroup);
+  }
+  return machineCoverMediaUrl(machineCode);
 }
 
 export function machinePlaceholderUrl(): string {

@@ -21,7 +21,11 @@ import type {
   SettingsActiveSource,
   TargetMuscleGroup,
 } from '@machinefit/shared';
-import { resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
+import {
+  isFreeWeightMachineCode,
+  resolveWorkoutLogSeedWeightKg,
+  resolveWorkoutLogSeedReps,
+} from '@machinefit/shared';
 import { workoutCardApi, type FitRating } from '@/api';
 import { SafeImage } from '@/components/media/SafeImage';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
@@ -33,7 +37,7 @@ import {
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
+import { machinePlaceholderUrl, resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
 import { formatHistoryDateHeader, formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -222,7 +226,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   const bookmarkActive = isWorkoutLogSaved;
   const bookmarkDirty = Boolean(logControl?.isDirty);
   const bookmarkPending = Boolean(logControl?.isActionPending);
-  const machineImageUrl = resolveMachineImageUrl(card.machineCode, card.primaryImageUrl);
+  const machineImageUrl = resolveRecordMachineImageUrl(card.machineCode, {
+    primaryImageUrl: card.primaryImageUrl,
+    targetMuscleGroup: card.targetMuscleGroup,
+    preferMuscleCover: isFreeWeightMachineCode(card.machineCode),
+  });
   const resolvedMuscleGroup =
     muscleGroup ??
     getHistoryMuscleGroup(card.machineCode, card.muscleGroup, card.targetMuscleGroup);

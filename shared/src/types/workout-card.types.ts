@@ -9,6 +9,8 @@ export interface WorkoutCard {
   machineCode: string;
   machineName?: string;
   brandName?: string;
+  /** Resolved machine / cover image (same chain as machine search). */
+  primaryImageUrl?: string;
   /** Machine catalog muscle group (selectorized / plate). */
   muscleGroup?: string;
   recommendationId?: string;

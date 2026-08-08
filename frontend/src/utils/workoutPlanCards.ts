@@ -44,6 +44,7 @@ export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard
     brandName: card.brandName,
     muscleGroup: card.muscleGroup,
     targetMuscleGroup: card.targetMuscleGroup,
+    primaryImageUrl: card.primaryImageUrl,
     recommendationId: card.recommendationId,
     settings: card.settings ?? {},
     viewedAt: card.updatedAt || card.createdAt,

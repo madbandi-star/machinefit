@@ -46,6 +46,7 @@ interface WorkoutCardRow {
   recommended_weight_kg?: string | null;
   recommended_reps_min?: number | null;
   recommended_reps_max?: number | null;
+  primary_image_url?: string | null;
 }
 
 interface WorkoutCardTemplateRow {
@@ -99,6 +100,7 @@ function mapCardRow(row: WorkoutCardRow, locale: Locale = 'en'): WorkoutCard {
     brandName: row.brand_name
       ? pickLocalized(row.brand_name, locale) ?? undefined
       : undefined,
+    primaryImageUrl: row.primary_image_url ?? undefined,
     muscleGroup: row.muscle_group || undefined,
     recommendationId: row.recommendation_id ?? undefined,
     ...(settings ? { settings } : {}),
@@ -139,6 +141,40 @@ function mapTemplateRow(row: WorkoutCardTemplateRow): WorkoutCardTemplate {
   };
 }
 
+/** Prefer muscle cover → default cover → machine_images (same chain as machine search). */
+const PRIMARY_IMAGE_SQL = `COALESCE(
+              (
+                SELECT CASE
+                  WHEN c.image_url IS NULL THEN NULL
+                  WHEN POSITION('?' IN c.image_url) > 0
+                    THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+                  ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+                END
+                FROM machine_cover_images c
+                WHERE c.machine_id = m.id
+                  AND c.target_muscle_group IS NOT DISTINCT FROM wc.target_muscle_group
+                LIMIT 1
+              ),
+              (
+                SELECT CASE
+                  WHEN c.image_url IS NULL THEN NULL
+                  WHEN POSITION('?' IN c.image_url) > 0
+                    THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+                  ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+                END
+                FROM machine_cover_images c
+                WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
+                LIMIT 1
+              ),
+              (
+                SELECT mi.image_url
+                FROM machine_images mi
+                WHERE mi.machine_id = m.id
+                ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                LIMIT 1
+              )
+            ) AS primary_image_url`;
+
 const SELECT_FIELDS = `wc.id, wc.gym_id, wc.member_id, wc.machine_id, wc.recommendation_id,
               wc.target_muscle_group, wc.scheduled_date, wc.status, wc.set_count,
               wc.set_weights_kg, wc.set_reps, wc.set_completed, wc.diary, wc.rest_seconds,
@@ -146,7 +182,8 @@ const SELECT_FIELDS = `wc.id, wc.gym_id, wc.member_id, wc.machine_id, wc.recomme
               wc.started_at, wc.completed_at, wc.created_at, wc.updated_at,
               m.code AS machine_code, m.name AS machine_name, m.muscle_group, b.name AS brand_name,
               r.seat_position, r.back_pad_position, r.foot_position, r.handle_position,
-              r.rom_setting, r.recommended_weight_kg, r.recommended_reps_min, r.recommended_reps_max`;
+              r.rom_setting, r.recommended_weight_kg, r.recommended_reps_min, r.recommended_reps_max,
+              ${PRIMARY_IMAGE_SQL}`;
 
 const MACHINE_JOINS = `JOIN machines m ON m.id = wc.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
