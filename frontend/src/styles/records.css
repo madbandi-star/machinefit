@@ -770,6 +770,7 @@
   max-width: 100%;
   min-width: 0;
   touch-action: manipulation;
+  /* redeploy stamp: 2026-08-08 */
 }
 
 .history-record-card--logged {

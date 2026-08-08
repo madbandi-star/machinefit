@@ -1,23 +1,22 @@
-# Test handoff: Fix stretched settings tiles on some mobiles
+ï»¿# Test handoff: Redeploy records settings-grid fix
 
 ## Summary
-±â·ÏÄ«µå ÃßÃµÁß·®¡¤ÃßÃµÈ½¼ö¡¤°¡µ¿¹üÀ§°¡ Æ¯Á¤ ¸ğ¹ÙÀÏ¿¡¼­ °¡·Î·Î ±æ°Ô ´Ã¾îÁö´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. `content-visibility:auto` Á¦°Å, ¼³Á¤ ±×¸®µå/Å¸ÀÏ `min-width:0`¡¤Æø Á¦ÇÑ, ºñ±³ Çà ¼¼·Î ½ºÅÃÀ¸·Î ¸ÂÃè½À´Ï´Ù.
+`main`ì— ì´ë¯¸ ë¨¸ì§€ëœ ëª¨ë°”ì¼ ì„¤ì •íƒ€ì¼ ê°€ë¡œëŠ˜ë¦¼ ìˆ˜ì •(`e4040322`)ì„ GitHub Pagesì— ì¬ë°°í¬í•©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: e4040322
+- Commit: pending
 
 ## Test focus
-1. Records on a previously broken narrow Android device/WebView
-2. Weight / reps / ROM tiles stay in a 3-column grid inside the card (no horizontal stretch)
-3. Other card UI still normal; compare/adjust mode still usable
+1. Production records page after Pages deploy success
+2. Weight / reps / ROM tiles stay in card width on previously broken mobile
 
 ## Fast checks
 ```bash
-rg -n "content-visibility|minmax\\(0, 1fr\\)|overflow-x: clip" frontend/src/styles/records.css frontend/src/styles/history-premium.css frontend/src/styles/recommendation.css
+git log -1 --oneline origin/main
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Settings tiles stretched in one long horizontal strip on some phones | Contained 3-column grid within card width |
+| Local/main had fix; live may lag | Pages redeploy triggered from main |

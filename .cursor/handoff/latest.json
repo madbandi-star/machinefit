@@ -1,21 +1,17 @@
 {
-  "title": "Fix stretched settings tiles on some mobiles",
-  "summary": "Contain history settings grid width on flaky mobile WebViews: drop content-visibility:auto, enforce minmax(0,1fr)/min-width:0, stack compare rows vertically.",
-  "git": { "branch": "main", "commit": "e4040322" },
+  "title": "Redeploy records settings-grid fix",
+  "summary": "main already contains the mobile settings-grid containment fix; pushing a frontend path change to re-trigger GitHub Pages deploy.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/styles/records.css",
-    "frontend/src/styles/history-premium.css",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Settings tiles not horizontally stretched on narrow Android",
-    "3-column grid stays inside card"
+    "Pages deploy succeeds",
+    "Settings tiles contained on mobile"
   ],
-  "fastChecks": [
-    "rg -n \"content-visibility|overflow-x: clip|history-mini-setting-wrap\" frontend/src/styles/records.css frontend/src/styles/history-premium.css"
-  ],
-  "productionChecks": ["Pages deploy + repro device settings grid"],
+  "fastChecks": ["git log -1 --oneline origin/main"],
+  "productionChecks": ["GitHub Actions Deploy Frontend success"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Weight/reps/ROM tiles stretch in a long row on some mobiles",
-  "toBe": "Tiles stay in contained 3-column card grid"
+  "asIs": "Fix on main; deploy may not have refreshed",
+  "toBe": "Pages redeploy from main"
 }
