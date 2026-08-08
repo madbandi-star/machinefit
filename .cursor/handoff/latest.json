@@ -3,13 +3,13 @@
   "summary": "Korean short metaphors under ?? ??? ?? now use terse declarative endings: noun phrases end with a period (e.g. ??? ?.), action lines use ~? (e.g. ???.). Covers stemGym, shipshinItems, unseongItems, wuxingItems, comboHint. UI/i18n only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "550dcdae"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/fortune.json"
   ],
   "testFocus": [
-    "Open ?? ??? ?? ? ??·?? pillar cards: stemGym lines end like '??? ?.' not '????'",
+    "Open ?? ??? ?? ? ??ï¿½?? pillar cards: stemGym lines end like '??? ?.' not '????'",
     "?? / ???? / ?? explain item lines use ~? or terse noun endings",
     "No remaining '????' / '?????' on those short item keys"
   ],
