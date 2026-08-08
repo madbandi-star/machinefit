@@ -1,22 +1,23 @@
-# Test handoff: Redeploy records settings-grid fix
+﻿# Test handoff: Fix vertical stack of settings tiles
 
 ## Summary
-`main`�� �̹� ������ ����� ����Ÿ�� ���δø� ����(`e4040322`)�� GitHub Pages�� ������մϴ�.
+기록카드 설정 타일이 세로로 한 줄씩 쌓이던 문제를 수정했습니다. 그리드를 `<a>`로 감싸지 않고 타일별 링크로 바꾸었고, 3열 그리드를 강제하며 중량 full-span을 제거했습니다.
 
 ## Git
 - Branch: `main`
-- Commit: 6ecf9d89
+- Commit: pending
 
 ## Test focus
-1. Production records page after Pages deploy success
-2. Weight / reps / ROM tiles stay in card width on previously broken mobile
+1. Records card: 추천중량 / 추천횟수 / 가동범위 in **one horizontal row** (3 columns)
+2. Tap a tile still opens detail (when not adjusting)
+3. Adjust mode still editable without stacking all tiles full-width
 
 ## Fast checks
 ```bash
-git log -1 --oneline origin/main
+rg -n "tileHref|history-mini-setting-wrap--link|grid-template-columns: repeat\\(3" frontend/src/components/recommendation/RecommendationSettingsPanel frontend/src/styles/history-premium.css
 ```
 
-## as-is �� to-be
+## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| Local/main had fix; live may lag | Pages redeploy triggered from main |
+| Tiles stacked vertically full-width | 3-column row inside card |

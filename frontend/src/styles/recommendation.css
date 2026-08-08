@@ -2345,17 +2345,26 @@
 }
 
 .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-flow: row;
   gap: 0.45rem;
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  align-items: start;
 }
 
 .recommendation-settings-panel--history .history-mini-setting-wrap {
   min-width: 0;
   max-width: 100%;
+  height: auto;
+}
+
+.recommendation-settings-panel--history .history-mini-setting-wrap--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .history-record-card .recommendation-settings-panel--history .setting-value-card--compact {

@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { RecommendationSettings, WeightRecommendationBasis } from '@machinefit/shared';
 import { recommendRepsForGoal, roundRecommendWeightKg } from '@machinefit/shared';
@@ -58,6 +59,12 @@ interface RecommendationSettingsPanelProps {
   isPreferencesPending?: boolean;
   /** Unsaved adjustment edits — pulses the save button like plan-save attention. */
   preferencesDirty?: boolean;
+  /**
+   * History tiles: navigate per-tile (never wrap the whole grid in `<a>` —
+   * some mobile WebViews then stack grid items vertically full-width).
+   */
+  tileHref?: string;
+  tileAriaLabel?: string;
 }
 
 function WeightBasisTrigger({ onClick }: { onClick: () => void }) {
@@ -254,6 +261,8 @@ export function RecommendationSettingsPanel({
   onSavePreferences,
   isPreferencesPending = false,
   preferencesDirty = false,
+  tileHref,
+  tileAriaLabel,
 }: RecommendationSettingsPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const { formatWeight } = useUserUnits();
@@ -382,19 +391,33 @@ export function RecommendationSettingsPanel({
           >
             {items.map((item) => {
               const LucideIcon = HISTORY_LUCIDE_SETTING_ICON[item.key];
+              const card = renderSettingCard(item, {
+                compact: true,
+                highlight: item.isWeight,
+                labelExtra: renderLabelExtra(item),
+                labelIcon: HISTORY_SETTING_ICON[item.key],
+                labelIconNode: LucideIcon ? (
+                  <LucideIcon size={13} strokeWidth={2.25} className="history-mini-setting__lucide" />
+                ) : undefined,
+                historyVariant: true,
+                ...cardOptions,
+              });
+              if (tileHref) {
+                return (
+                  <Link
+                    key={item.key}
+                    to={tileHref}
+                    role="listitem"
+                    className="history-mini-setting-wrap history-mini-setting-wrap--link"
+                    aria-label={tileAriaLabel}
+                  >
+                    {card}
+                  </Link>
+                );
+              }
               return (
                 <div key={item.key} role="listitem" className="history-mini-setting-wrap">
-                  {renderSettingCard(item, {
-                    compact: true,
-                    highlight: item.isWeight,
-                    labelExtra: renderLabelExtra(item),
-                    labelIcon: HISTORY_SETTING_ICON[item.key],
-                    labelIconNode: LucideIcon ? (
-                      <LucideIcon size={13} strokeWidth={2.25} className="history-mini-setting__lucide" />
-                    ) : undefined,
-                    historyVariant: true,
-                    ...cardOptions,
-                  })}
+                  {card}
                 </div>
               );
             })}

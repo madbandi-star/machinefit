@@ -294,6 +294,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
       onCustomChange={
         showAdjustment && !adjustmentReadOnly ? fitFeedback.handleCustomChange : undefined
       }
+      tileHref={showAdjustment ? undefined : resultUrl}
+      tileAriaLabel={t('machines:detail.viewLastResult')}
     />
   );
 
@@ -488,19 +490,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
             />
           ) : null}
           {hasRecommendationSettings ? (
-            <div className="history-record-card__section">
-              {showAdjustment ? (
-                settingsPanel
-              ) : (
-                <Link
-                  to={resultUrl}
-                  className="history-record-card__settings-link"
-                  aria-label={t('machines:detail.viewLastResult')}
-                >
-                  {settingsPanel}
-                </Link>
-              )}
-            </div>
+            <div className="history-record-card__section">{settingsPanel}</div>
           ) : null}
         </>
       ) : null}

@@ -1,17 +1,23 @@
 {
-  "title": "Redeploy records settings-grid fix",
-  "summary": "main already contains the mobile settings-grid containment fix; pushing a frontend path change to re-trigger GitHub Pages deploy.",
-  "git": { "branch": "main", "commit": "6ecf9d89" },
+  "title": "Fix vertical stack of settings tiles",
+  "summary": "Stop wrapping the settings grid in a single <a>; use per-tile links and force a 3-column grid so weight/reps/ROM stay in one row on flaky mobile WebViews.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/history-premium.css",
+    "frontend/src/styles/recommendation.css",
     "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Pages deploy succeeds",
-    "Settings tiles contained on mobile"
+    "Weight/reps/ROM one row of 3",
+    "Tile tap navigates to detail"
   ],
-  "fastChecks": ["git log -1 --oneline origin/main"],
-  "productionChecks": ["GitHub Actions Deploy Frontend success"],
+  "fastChecks": [
+    "rg -n \"tileHref|history-mini-setting-wrap--link\" frontend/src/components"
+  ],
+  "productionChecks": ["Pages deploy + repro device 3-col settings"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Fix on main; deploy may not have refreshed",
-  "toBe": "Pages redeploy from main"
+  "asIs": "Settings tiles stacked vertically full width",
+  "toBe": "Forced 3-column tile row; per-tile links"
 }

@@ -586,26 +586,39 @@
 }
 
 .history-page-premium .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-flow: row;
   gap: var(--history-gap-grid);
-  align-items: stretch;
+  align-items: start;
   width: 100%;
   max-width: 100%;
   min-width: 0;
 }
 
 .history-page-premium .history-mini-setting-wrap {
-  height: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+}
+
+.history-page-premium .history-mini-setting-wrap--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
   min-width: 0;
   max-width: 100%;
 }
 
+.history-page-premium .history-mini-setting-wrap--link:active {
+  opacity: 0.92;
+}
+
 .history-page-premium .history-mini-setting-wrap .setting-value-card--history-mini {
-  height: 100%;
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  height: auto;
   box-sizing: border-box;
 }
 
@@ -998,17 +1011,17 @@
   justify-content: center;
 }
 
-/* Editable compare (셋팅값 조정) — match recent history tile layout */
+/* Keep 중량/횟수/ROM on one row even while adjusting (no full-width weight span). */
 .history-page-premium
   .recommendation-settings-panel--history.recommendation-settings-panel--compare.recommendation-settings-panel--adjusting
   .recommendation-settings-panel__grid--history {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }
 
 .history-page-premium
   .recommendation-settings-panel--history.recommendation-settings-panel--compare.recommendation-settings-panel--adjusting
   .history-mini-setting-wrap:has(.setting-value-card--highlight) {
-  grid-column: 1 / -1;
+  grid-column: auto;
 }
 
 .history-page-premium
