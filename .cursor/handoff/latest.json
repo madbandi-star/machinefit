@@ -1,7 +1,7 @@
 {
   "title": "Pulse ???? ????? after adjust click",
   "summary": "After tapping ??? ?? ?? on records, the save-mode button pulses like plan-save; CSS no longer lets --active override the attention styles.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "ca89761d" },
   "changedFiles": [
     "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
     "frontend/src/styles/recommendation.css"

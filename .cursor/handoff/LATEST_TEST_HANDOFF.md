@@ -1,15 +1,15 @@
-ï»¿# Test handoff: Pulse ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ after adjust click
+# Test handoff: Pulse ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹ after adjust click
 
 ## Summary
-ê¸°ë¡í˜ì´ì§€ì—ì„œ ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€ë¥¼ ëˆ„ë¥´ë©´ ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ë¡œ ë°”ë€ ë²„íŠ¼ì— ê³„íš ì €ì¥ê³¼ ê°™ì€ attention ì• ë‹ˆë©”ì´ì…˜ì´ ë°”ë¡œ ì ìš©ë©ë‹ˆë‹¤.
+±â·ÏÆäÀÌÁö¿¡¼­ ¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹¸¦ ´©¸£¸é ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹·Î ¹Ù²ï ¹öÆ°¿¡ °èÈ¹ ÀúÀå°ú °°Àº attention ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ¹Ù·Î Àû¿ëµË´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: ca89761d
 
 ## Test focus
-1. Records â†’ card â†’ ì…‹íŒ…ê°’ ì¡°ì • í•„ìš”
-2. Button becomes ì…‹íŒ…ê°’ ì €ì¥í•˜ê¸° and pulses (green)
+1. Records ¡æ card ¡æ ¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä
+2. Button becomes ¼ÂÆÃ°ª ÀúÀåÇÏ±â and pulses (green)
 3. After save, pulse stops
 
 ## Fast checks
@@ -17,7 +17,7 @@
 rg -n "badSaveAttention|btn--save-attention" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Pulse only when fields dirty / overridden by --active | Pulse while in save mode after adjust click |
