@@ -1,21 +1,24 @@
-# Test handoff: Records nav tip copy ¡æ ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ
+ï»¿# Test handoff: Draggable full-mode motivation music player
 
 ## Summary
-ÇÏ´Ü ±â·Ï ¹öÆ° nudge tip ¹®±¸¸¦ ¡¸ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ¡¹À¸·Î º¯°æÇß½À´Ï´Ù.
+ë™ê¸°ë¶€ì—¬ ìŒì•… í”Œë ˆì´ì–´ ì „ì²´ ëª¨ë“œì—ì„œë„ ì†Œí˜•(ë¯¸ë‹ˆ)ì²˜ëŸ¼ ë“œë˜ê·¸ë¡œ ìœ„ì¹˜ë¥¼ ì˜®ê¸¸ ìˆ˜ ìˆê²Œ í–ˆìŠµë‹ˆë‹¤. ì „ì²´ ëª¨ë“œëŠ” ìƒë‹¨ íƒ€ì´í‹€ ë°”ë¥¼ í•¸ë“¤ë¡œ ì“°ê³ , ë¯¸ë‹ˆì™€ ìœ„ì¹˜ë¥¼ ê³µìœ í•©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `eb4f2e80`
+- Commit: pending
 
 ## Test focus
-1. ¿À´Ã ÃßÃµ ÈÄ ÇÏ´Ü ±â·Ï tipÀÌ ¡¸ÀÌµ¿ÇØ¼­ / ¿îµ¿½ÃÀÛ¡¹
+1. ì „ì²´ ëª¨ë“œ: ìƒë‹¨ íƒ€ì´í‹€ ë°” ë“œë˜ê·¸ë¡œ ìœ„ì¹˜ ì´ë™Â·ì €ì¥
+2. í”Œë ˆì´ë¦¬ìŠ¤íŠ¸ ìŠ¤í¬ë¡¤ì€ ê·¸ëŒ€ë¡œ ë™ì‘
+3. ë¯¸ë‹ˆë¡œ ì¤„ì˜€ë‹¤/í¼ì³ë„ ìœ„ì¹˜ ìœ ì§€(í´ë¨í”„)
+4. ë²„íŠ¼(ë‹«ê¸°/ìµœì†Œí™”)ì€ ë“œë˜ê·¸ì™€ ì¶©ëŒ ì—†ìŒ
 
 ## Fast checks
 ```bash
-rg -n "recordsNudgeNavTip" frontend/src/i18n/locales/ko/machines.json
+rg -n "musicPanelOpen|top--drag|mf-music-shell" frontend/src/components/motivation/MotivationMediaControls frontend/src/styles/float-drag.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¿À´Ã ¿îµ¿Àº ±â·Ï¿¡¼­ °ü¸® | ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ |
+| ì „ì²´ ëª¨ë“œ ìœ„ì¹˜ ê³ ì • | ìƒë‹¨ ë°” ë“œë˜ê·¸ë¡œ ì´ë™ ê°€ëŠ¥ |

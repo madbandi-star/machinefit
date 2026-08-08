@@ -382,8 +382,17 @@ export function MotivationMediaControls({
   const musicUiRef = useRef<HTMLDivElement | null>(null);
   const musicDrag = useDraggableFloat({
     id: 'music-mini',
-    enabled: musicPanelOpen && musicCompact,
+    enabled: musicPanelOpen,
   });
+
+  // Compact ↔ full changes panel size; reclamp saved left/top to the viewport.
+  useEffect(() => {
+    if (!musicPanelOpen || !musicDrag.isPositioned) return;
+    const id = window.requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [musicCompact, musicPanelOpen, musicDrag.isPositioned]);
 
   useEffect(() => {
     if (!musicPanelOpen) return;
@@ -770,8 +779,14 @@ export function MotivationMediaControls({
       {musicPanelOpen && !musicCompact
         ? createPortal(
         <div
-          ref={musicUiRef}
-          className="mf-music-shell"
+          ref={(node) => {
+            musicUiRef.current = node;
+            musicDrag.ref.current = node;
+          }}
+          className={`mf-music-shell${
+            musicDrag.floatClassName ? ` ${musicDrag.floatClassName}` : ''
+          }`}
+          style={musicDrag.style}
         >
         <div
           className={`mf-music-popover${musicPlaying ? ' mf-music-popover--playing' : ''}`}
@@ -780,7 +795,10 @@ export function MotivationMediaControls({
         >
           <div className="mf-music-popover__glow" aria-hidden="true" />
 
-          <div className="mf-music-popover__top">
+          <div
+            className="mf-music-popover__top mf-music-popover__top--drag"
+            onPointerDown={musicDrag.onPointerDown}
+          >
             <div className="mf-music-popover__brand">
               <span className="mf-music-popover__brand-mark" aria-hidden="true">
                 <Music2 size={14} />

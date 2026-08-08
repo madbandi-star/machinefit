@@ -60,7 +60,7 @@
   font-weight: 650;
 }
 
-.mf-music-shell--compact.mf-float--draggable,
+.mf-music-shell.mf-float--draggable,
 .mf-video-overlay--compact.mf-float--draggable {
   pointer-events: auto;
 }
