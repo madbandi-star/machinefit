@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING` (set after push)
+- Commit: `4aac020e`
 
 ## Test focus
 1. 설정 → 생년월일·탄생시: 년/월/일 스크롤 휠 (네이티브 날짜 창 없음)

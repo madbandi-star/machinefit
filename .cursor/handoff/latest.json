@@ -3,7 +3,7 @@
   "summary": "Replaced native date/time inputs on Settings birth profile with ScrollPicker-based BirthProfileFields (summary strip, Y/M/D + H/M wheels, segmented known/unknown time). Matches body-metrics picker UX.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "4aac020e"
   },
   "changedFiles": [
     "frontend/src/components/settings/BirthProfileFields/BirthProfileFields.tsx",
@@ -15,7 +15,7 @@
     "frontend/src/i18n/locales/ja/common.json"
   ],
   "testFocus": [
-    "Settings ? ????·???: scroll wheels for year/month/day (no native date dialog)",
+    "Settings ? ????????: scroll wheels for year/month/day (no native date dialog)",
     "Time mode toggle: ?? ?? shows hour/minute (5-min step); ??? ?? hides wheels and shows hint",
     "Summary strip updates while scrolling; Save persists and values remain after reload"
   ],
