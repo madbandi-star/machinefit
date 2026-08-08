@@ -1,4 +1,5 @@
 import type {
+  FortuneNarrative,
   FortuneRecommendation,
   FortuneScores,
   FortuneSection,
@@ -44,14 +45,25 @@ const STRATEGY_EXPLAIN: Record<string, string> = {
   HIGH_WEIGHT_LOW_REP: 'content.strategy.highWeight',
 };
 
-export function buildFortuneExplain(fortune: FortuneSection): ProseBlock {
-  const key = KEYWORD_EXPLAIN[fortune.keyword] ?? 'content.keyword.default';
+export function buildFortuneExplain(
+  fortune: FortuneSection,
+  narrative?: FortuneNarrative | null
+): ProseBlock {
+  const keywordKey = KEYWORD_EXPLAIN[fortune.keyword] ?? 'content.keyword.default';
+  if (narrative) {
+    return {
+      eyebrowKey: 'content.fortuneExplainTitle',
+      emoji: '🔮',
+      leadKey: narrative.storyLeadKey,
+      lines: [{ key: narrative.storyBodyKey }, { key: keywordKey }],
+    };
+  }
   return {
     eyebrowKey: 'content.fortuneExplainTitle',
     emoji: '🔮',
     leadKey: 'content.fortuneExplainLead',
     leadValues: { keyword: fortune.keywordTitle },
-    lines: [{ key }],
+    lines: [{ key: keywordKey }],
   };
 }
 

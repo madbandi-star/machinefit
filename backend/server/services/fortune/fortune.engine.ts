@@ -1,12 +1,16 @@
 import {
+  FORTUNE_DISCLAIMER_KO,
   FORTUNE_FALLBACK_CATALOG,
   createFortuneRng,
-  fortuneInt,
   fortunePickOne,
+  pickInBand,
+  type CoreTheme,
   type FortuneContentItem,
   type FortuneDataAnalysis,
   type FortuneMode,
   type FortuneSection,
+  type ThemeDerivation,
+  type TraditionalChart,
 } from '@machinefit/shared';
 
 export interface FortuneEngineInput {
@@ -14,10 +18,12 @@ export interface FortuneEngineInput {
   mode: FortuneMode;
   catalog: FortuneContentItem[];
   analysis: FortuneDataAnalysis;
+  chart: TraditionalChart;
 }
 
 export interface FortuneEngineResult {
   fortune: FortuneSection;
+  coreTheme: CoreTheme;
   keywordCode: string;
   headlineCode: string;
   strategyCode: string;
@@ -32,6 +38,9 @@ export interface FortuneEngineResult {
   baseHealthman: number;
   basePrLuck: number;
   baseRecoveryLuck: number;
+  baseVolumeLuck: number;
+  baseFocusLuck: number;
+  baseChangeLuck: number;
 }
 
 type CatalogItem = {
@@ -68,20 +77,49 @@ function matchesConditions(
   return true;
 }
 
-function pickFiltered(
+function pickAllowed(
   rng: () => number,
   items: CatalogItem[],
-  analysis: FortuneDataAnalysis
-): CatalogItem | undefined {
-  const filtered = items.filter((i) => matchesConditions(i, analysis));
-  return fortunePickOne(rng, filtered.length ? filtered : items);
+  allowedCodes: string[],
+  analysis: FortuneDataAnalysis,
+  fallbackCode: string,
+  fallbackTitle: string,
+  category: string
+): CatalogItem {
+  const allowSet = new Set(allowedCodes);
+  const inAllow = items.filter((i) => allowSet.has(i.code));
+  const filtered = inAllow.filter((i) => matchesConditions(i, analysis));
+  const pool = filtered.length ? filtered : inAllow.length ? inAllow : items;
+  const picked = fortunePickOne(rng, pool);
+  if (picked) return picked;
+  return {
+    code: allowedCodes[0] ?? fallbackCode,
+    title: fallbackTitle,
+    body: '',
+    category,
+    priority: 99,
+  };
 }
 
-const DISCLAIMER =
-  '엔터테인먼트 콘텐츠이며 의료적 진단이나 과학적으로 검증된 운세가 아닙니다.';
+function syntheticFromCodes(
+  category: string,
+  codes: string[],
+  titles: Record<string, string>
+): CatalogItem[] {
+  return codes.map((code, i) => ({
+    category,
+    code,
+    title: titles[code] ?? code,
+    body: '',
+    priority: (i + 1) * 10,
+  }));
+}
 
 export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult {
-  const rng = createFortuneRng(input.seedKey);
+  const rng = createFortuneRng(`${input.seedKey}|theme:${input.chart.coreTheme}`);
+  const derivation: ThemeDerivation = input.chart.derivation;
+  const allow = derivation.allow;
+
   const fromDb: CatalogItem[] = input.catalog.map((c) => ({
     category: c.category,
     code: c.code,
@@ -101,142 +139,149 @@ export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult
           priority: c.priority,
         }));
 
-  // Bias recovery keywords when consecutive training is high.
-  let keywords = byCategory(catalog, 'keyword');
-  if (input.analysis.consecutiveDays >= 4) {
-    const recovery = keywords.filter((k) =>
+  // Soft recovery bias from training load — only within theme allow-list.
+  let keywordPool = byCategory(catalog, 'keyword');
+  if (
+    input.analysis.consecutiveDays >= 4 &&
+    allow.keywords.some((k) =>
+      ['RECOVERY_DAY', 'CARDIO_DAY', 'CONTROL_DAY'].includes(k)
+    )
+  ) {
+    const recovery = keywordPool.filter((k) =>
       ['RECOVERY_DAY', 'CARDIO_DAY', 'CONTROL_DAY'].includes(k.code)
     );
-    if (recovery.length) keywords = recovery;
-  } else if (
-    input.analysis.daysSincePr != null &&
-    input.analysis.daysSincePr >= 10 &&
-    input.analysis.workoutCount7d >= 2
-  ) {
-    const pr = keywords.filter((k) => k.code === 'PR_DAY' || k.code === 'VOLUME_DAY');
-    if (pr.length) keywords = [...pr, ...keywords];
+    if (recovery.length) keywordPool = recovery;
   }
 
-  const keyword = pickFiltered(rng, keywords, input.analysis) ?? {
-    code: 'CONTROL_DAY',
-    title: 'CONTROL DAY',
-    body: '',
-    category: 'keyword',
-    priority: 90,
-  };
+  const keyword = pickAllowed(
+    rng,
+    keywordPool,
+    allow.keywords,
+    input.analysis,
+    'CONTROL_DAY',
+    'CONTROL DAY',
+    'keyword'
+  );
 
-  const headlines = byCategory(catalog, 'headline');
-  const headline =
-    pickFiltered(rng, headlines, input.analysis) ??
-    ({
-      code: 'CONTROL_FOCUS',
-      title: '오늘은 욕심보다 자극에 집중하는 날입니다.',
-      body: '',
-      category: 'headline',
-      priority: 30,
-    } as CatalogItem);
+  const headline = pickAllowed(
+    rng,
+    byCategory(catalog, 'headline'),
+    allow.headlines.length
+      ? allow.headlines
+      : byCategory(catalog, 'headline').map((h) => h.code),
+    input.analysis,
+    'CONTROL_FOCUS',
+    '오늘은 핵심 기운에 맞춰 움직이는 날입니다.',
+    'headline'
+  );
 
-  const strategy =
-    pickFiltered(rng, byCategory(catalog, 'strategy'), input.analysis) ??
-    ({
-      code: 'WEIGHT_HOLD',
-      title: '중량 유지',
-      body: '',
-      category: 'strategy',
-      priority: 50,
-    } as CatalogItem);
+  const strategy = pickAllowed(
+    rng,
+    byCategory(catalog, 'strategy'),
+    allow.strategies,
+    input.analysis,
+    allow.strategies[0] ?? 'WEIGHT_HOLD',
+    '중량 유지',
+    'strategy'
+  );
 
-  const style =
-    pickFiltered(rng, byCategory(catalog, 'style'), input.analysis) ??
-    ({
-      code: 'DUMBBELL',
-      title: '덤벨',
-      body: '',
-      category: 'style',
-      priority: 20,
-    } as CatalogItem);
+  const style = pickAllowed(
+    rng,
+    byCategory(catalog, 'style'),
+    allow.styles,
+    input.analysis,
+    allow.styles[0] ?? 'DUMBBELL',
+    '덤벨',
+    'style'
+  );
 
-  let conditions = byCategory(catalog, 'condition');
-  if (input.analysis.consecutiveDays >= 4) {
-    conditions = conditions.filter((c) =>
-      ['LIGHT', 'RECOVERY', 'REST', 'NORMAL'].includes(c.code)
-    );
-  }
-  const condition =
-    pickFiltered(rng, conditions, input.analysis) ??
-    ({
-      code: 'NORMAL',
-      title: '평소 강도',
-      body: '',
-      category: 'condition',
-      priority: 20,
-    } as CatalogItem);
+  const condition = pickAllowed(
+    rng,
+    byCategory(catalog, 'condition'),
+    allow.conditions,
+    input.analysis,
+    allow.conditions[0] ?? 'NORMAL',
+    '평소 강도',
+    'condition'
+  );
 
-  const avoid =
-    pickFiltered(rng, byCategory(catalog, 'avoid'), input.analysis) ??
-    ({
-      code: 'HEAVY_EGO',
-      title: '무리한 고중량',
-      body: '',
-      category: 'avoid',
-      priority: 10,
-    } as CatalogItem);
+  const avoid = pickAllowed(
+    rng,
+    byCategory(catalog, 'avoid'),
+    allow.avoids,
+    input.analysis,
+    allow.avoids[0] ?? 'HEAVY_EGO',
+    '무리한 고중량',
+    'avoid'
+  );
 
-  const pre =
-    pickFiltered(rng, byCategory(catalog, 'pre_workout'), input.analysis) ??
-    ({
-      code: 'PREP_SETS',
-      title: '충분한 준비세트',
-      body: '준비세트를 충분히 가져가세요.',
-      category: 'pre_workout',
-      priority: 40,
-    } as CatalogItem);
+  const pre = pickAllowed(
+    rng,
+    byCategory(catalog, 'pre_workout'),
+    allow.pre,
+    input.analysis,
+    allow.pre[0] ?? 'PREP_SETS',
+    '충분한 준비세트',
+    'pre_workout'
+  );
 
-  const post =
-    pickFiltered(rng, byCategory(catalog, 'post_workout'), input.analysis) ??
-    ({
-      code: 'STRETCH',
-      title: '스트레칭',
-      body: '운동 후 스트레칭을 추천해요.',
-      category: 'post_workout',
-      priority: 20,
-    } as CatalogItem);
+  const post = pickAllowed(
+    rng,
+    byCategory(catalog, 'post_workout'),
+    allow.post,
+    input.analysis,
+    allow.post[0] ?? 'STRETCH',
+    '스트레칭',
+    'post_workout'
+  );
 
-  const bodyPart =
-    pickFiltered(rng, byCategory(catalog, 'body_part'), input.analysis) ??
-    ({
-      code: 'FULL_BODY',
-      title: '전신',
-      body: '전신',
-      category: 'body_part',
-      priority: 80,
-    } as CatalogItem);
+  const bodyPartItems =
+    byCategory(catalog, 'body_part').length > 0
+      ? byCategory(catalog, 'body_part')
+      : syntheticFromCodes('body_part', allow.bodyParts, {
+          FULL_BODY: '전신',
+          CHEST: '가슴',
+          BACK: '등',
+          SHOULDERS: '어깨',
+          LEGS: '하체',
+          BICEPS: '이두',
+          TRICEPS: '삼두',
+          CORE: '코어',
+        });
 
-  const oneLiner =
-    pickFiltered(rng, byCategory(catalog, 'one_liner'), input.analysis) ??
-    ({
-      code: 'PREP_WINS',
-      title: '기록은 욕심보다 준비에서 나온다.',
-      body: '',
-      category: 'one_liner',
-      priority: 20,
-    } as CatalogItem);
+  const bodyPart = pickAllowed(
+    rng,
+    bodyPartItems,
+    allow.bodyParts,
+    input.analysis,
+    allow.bodyParts[0] ?? 'FULL_BODY',
+    '전신',
+    'body_part'
+  );
 
-  // Stars 1–5; simple mode slightly flatter distribution.
-  let scoreStars = fortuneInt(rng, 2, 5);
+  const oneLiner = pickAllowed(
+    rng,
+    byCategory(catalog, 'one_liner'),
+    allow.oneLiners.length
+      ? allow.oneLiners
+      : byCategory(catalog, 'one_liner').map((o) => o.code),
+    input.analysis,
+    'PREP_WINS',
+    '오늘의 핵심 기운에 맞춰 한 가지에 집중하세요.',
+    'one_liner'
+  );
+
+  let scoreStars = pickInBand(rng, derivation.bands.stars);
   if (input.mode === 'simple') {
-    scoreStars = Math.min(5, Math.max(2, scoreStars));
-  }
-  if (condition.code === 'REST' || keyword.code === 'RECOVERY_DAY') {
-    scoreStars = Math.min(scoreStars, 3);
-  }
-  if (keyword.code === 'PR_DAY') {
-    scoreStars = Math.max(scoreStars, 4);
+    scoreStars = Math.min(derivation.bands.stars[1], Math.max(derivation.bands.stars[0], scoreStars));
   }
 
-  const baseHealthman = fortuneInt(rng, 55, 92);
-  const basePrLuck = fortuneInt(rng, 40, 95);
-  const baseRecoveryLuck = fortuneInt(rng, 25, 90);
+  const baseHealthman = pickInBand(rng, derivation.bands.healthman);
+  const basePrLuck = pickInBand(rng, derivation.bands.prLuck);
+  const baseRecoveryLuck = pickInBand(rng, derivation.bands.recoveryLuck);
+  const baseVolumeLuck = pickInBand(rng, derivation.bands.volumeLuck);
+  const baseFocusLuck = pickInBand(rng, derivation.bands.focusLuck);
+  const baseChangeLuck = pickInBand(rng, derivation.bands.changeLuck);
 
   const fortune: FortuneSection = {
     scoreStars,
@@ -247,11 +292,13 @@ export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult
     strategyLabels: [strategy.title, style.title, condition.title].filter(Boolean),
     oneLiner: oneLiner.title,
     oneLinerDetail: oneLiner.body || undefined,
-    disclaimer: DISCLAIMER,
+    disclaimer: input.chart.disclaimer || FORTUNE_DISCLAIMER_KO,
+    coreTheme: input.chart.coreTheme,
   };
 
   return {
     fortune,
+    coreTheme: input.chart.coreTheme,
     keywordCode: keyword.code,
     headlineCode: headline.code,
     strategyCode: strategy.code,
@@ -266,6 +313,9 @@ export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult
     baseHealthman,
     basePrLuck,
     baseRecoveryLuck,
+    baseVolumeLuck,
+    baseFocusLuck,
+    baseChangeLuck,
   };
 }
 

@@ -1,34 +1,40 @@
 ﻿{
-  "title": "Polish Helchang Fortune detail page IA/UI",
-  "summary": "Regrouped the fortune detail dashboard into clearer section bundles (scores / commentary / recommend / action / wrap), flattened nested cards, and strengthened the hero brand+keyword hierarchy. No fortune API or score logic changes.",
-  "git": { "branch": "main", "commit": "c3a9105e" },
+  "title": "Traditional-structure Helchang Fortune engine (v2)",
+  "summary": "Replaced independent catalog RNG with a theme-first traditional entertainment pipeline (pillars → cycles → one core theme → scores/recs → consistency). Detail UI adds energy-flow strip, extra luck chips, and expandable traditional detail. Workout logs only personalize within theme bounds.",
+  "git": { "branch": "main", "commit": "PENDING" },
   "changedFiles": [
-    "frontend/src/components/fortune/FortuneDashboard.tsx",
-    "frontend/src/components/fortune/FortuneHero.tsx",
+    "shared/src/fortune/traditional/*",
+    "shared/src/types/fortune.types.ts",
+    "shared/src/index.ts",
+    "backend/server/services/fortune/fortune.service.ts",
+    "backend/server/services/fortune/fortune.engine.ts",
+    "backend/server/services/fortune/recommendation.engine.ts",
+    "frontend/src/components/fortune/*",
     "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
     "frontend/src/styles/fortune.css",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json"
+    "frontend/src/i18n/locales/*/fortune.json"
   ],
   "testFocus": [
-    "Detail /fortune/today reads as brand → keyword → section bundles without duplicate page title",
-    "Scores section is open (no heavy outer card); other sections have labeled bundles",
-    "PR/recovery gauges are not links; recommendation tiles stay non-interactive",
-    "Section labels: 오늘의 점수 / 해설 / 추천 / 실천 / 정리"
+    "Same birth+date → same coreTheme / narrative",
+    "RECOVERY_RESET never yields PR_DAY + high prLuck",
+    "Detail page shows 기운의 흐름 + 핵심 기운 + 운세 자세히",
+    "Scores include volume/focus/change; recommendation stays theme-consistent",
+    "No birth profile still gates; missing workout logs still returns fortune"
   ],
   "fastChecks": [
+    "npx tsx shared/src/fortune/traditional/traditional.test.ts",
+    "cd shared && npm run build",
     "cd frontend && npx tsc -p tsconfig.json --noEmit",
-    "rg -n \"fortune-bundle--open|sectionCommentary|fortune-hero__brand\" frontend/src/components/fortune frontend/src/styles/fortune.css frontend/src/i18n/locales/ko/fortune.json",
-    "rg -n \"to=\\{ROUTES\" frontend/src/components/fortune/FortuneDashboard.tsx || true"
+    "node scripts/i18n-audit.mjs --sync",
+    "rg -n \"buildTraditionalChart|enforceFortuneConsistency|FORTUNE_ENGINE_VERSION\" backend/server/services/fortune shared/src/fortune"
   ],
   "productionChecks": [
-    "After Deploy Frontend success: open /fortune/today and scan first viewport + section labels"
+    "After Deploy Frontend + Render backend: open /fortune/today with birth profile set; confirm core theme and flow strip; expand 운세 자세히"
   ],
   "deploy": {
-    "expected": "GitHub Pages Deploy Frontend success on main push"
+    "expected": "GitHub Pages Deploy Frontend success; Render backend redeploy needed for API narrative fields"
   },
-  "asIs": "Stacked emoji-labeled cards, nested panels, duplicate shell title competing with hero",
-  "toBe": "Clear 5-section flow, flatter nested prose, hero brand/keyword hierarchy, open scores strip"
+  "asIs": "Independent catalog RNG picks; no traditional layers; scores could contradict keyword",
+  "toBe": "One core theme from traditional entertainment chart drives story, scores, and recommendations with consistency remap"
 }

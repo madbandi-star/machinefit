@@ -1,5 +1,8 @@
 import {
+  FORTUNE_ENGINE_VERSION,
   buildFortuneSeedKey,
+  buildTraditionalChart,
+  enforceFortuneConsistency,
   hasFortuneBirthProfile,
   type TodayFortuneResponse,
 } from '@machinefit/shared';
@@ -45,7 +48,7 @@ export const fortuneService = {
     const locale = options?.locale?.startsWith('ko')
       ? 'ko'
       : options?.locale?.slice(0, 2) || 'ko';
-    const cacheKey = `${userId}:${dateKey}:${options?.gymId ?? ''}:${options?.memberId ?? ''}:${locale}`;
+    const cacheKey = `${userId}:${dateKey}:${options?.gymId ?? ''}:${options?.memberId ?? ''}:${locale}:${FORTUNE_ENGINE_VERSION}`;
     const hit = cache.get(cacheKey);
     if (hit) return hit;
 
@@ -81,6 +84,14 @@ export const fortuneService = {
       dateKey,
     });
 
+    const chart = buildTraditionalChart({
+      birthDate,
+      birthTime: user.birthTime,
+      birthTimeUnknown,
+      dateKey,
+      gender: user.gender ?? null,
+    });
+
     const from30 = shiftDateKey(dateKey, -29);
     const [logs, catalog] = await Promise.all([
       loadFortuneLogs(userId, from30, {
@@ -96,9 +107,57 @@ export const fortuneService = {
       mode,
       catalog,
       analysis,
+      chart,
     });
-    const scores = computeFortuneScores(fortuneResult, analysis);
-    const recommendation = buildRecommendation(fortuneResult, analysis, catalog);
+    let scores = computeFortuneScores(fortuneResult, analysis, chart.coreTheme);
+    let recommendation = buildRecommendation(
+      fortuneResult,
+      analysis,
+      catalog,
+      chart.coreTheme
+    );
+
+    const consistent = enforceFortuneConsistency({
+      coreTheme: chart.coreTheme,
+      keywordCode: fortuneResult.keywordCode,
+      strategyCode: recommendation.strategy,
+      conditionCode: fortuneResult.conditionCode,
+      avoidCode: fortuneResult.avoidCode,
+      scoreStars: fortuneResult.scoreStars,
+      scores,
+    });
+
+    if (consistent.remapped) {
+      fortuneResult.keywordCode = consistent.keywordCode;
+      fortuneResult.strategyCode = consistent.strategyCode;
+      fortuneResult.conditionCode = consistent.conditionCode;
+      fortuneResult.avoidCode = consistent.avoidCode;
+      fortuneResult.scoreStars = consistent.scoreStars;
+      fortuneResult.fortune.keyword = consistent.keywordCode;
+      fortuneResult.fortune.scoreStars = consistent.scoreStars;
+      const kw = catalog.find(
+        (c) => c.category === 'keyword' && c.code === consistent.keywordCode
+      );
+      if (kw) fortuneResult.fortune.keywordTitle = kw.title;
+      scores = consistent.scores;
+      recommendation = buildRecommendation(
+        fortuneResult,
+        analysis,
+        catalog,
+        chart.coreTheme
+      );
+      // Keep strategy from consistency if nudge flipped it out of theme
+      if (recommendation.strategy !== consistent.strategyCode) {
+        const strat = catalog.find(
+          (c) => c.category === 'strategy' && c.code === consistent.strategyCode
+        );
+        recommendation = {
+          ...recommendation,
+          strategy: consistent.strategyCode,
+          strategyLabel: strat?.title ?? consistent.strategyCode,
+        };
+      }
+    }
 
     const response: TodayFortuneResponse = {
       date: dateKey,
@@ -107,13 +166,10 @@ export const fortuneService = {
       fortune: fortuneResult.fortune,
       scores,
       recommendation,
-      dataAnalysis:
-        analysis.personalizationTier === 'none'
-          ? {
-              ...analysis,
-              // Keep structure but lighter bullets already set in engine.
-            }
-          : analysis,
+      dataAnalysis: analysis,
+      narrative: chart.narrative,
+      traditionalDetail: chart.traditionalDetail,
+      engineVersion: chart.engineVersion,
     };
 
     cache.set(cacheKey, response);

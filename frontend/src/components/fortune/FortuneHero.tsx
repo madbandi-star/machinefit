@@ -14,6 +14,7 @@ interface FortuneHeroProps {
   title: string;
   headline?: string;
   scoreStars: number;
+  coreThemeLabel?: string;
 }
 
 export function FortuneHero({
@@ -24,6 +25,7 @@ export function FortuneHero({
   title,
   headline,
   scoreStars,
+  coreThemeLabel,
 }: FortuneHeroProps) {
   const { t } = useTranslation('fortune');
   const emoji = keywordEmoji(keywordCode);
@@ -51,6 +53,13 @@ export function FortuneHero({
         </span>
         <h1 className="fortune-hero__keyword-text">{keywordTitle}</h1>
       </div>
+
+      {coreThemeLabel ? (
+        <p className="fortune-hero__core-theme">
+          <span className="fortune-hero__core-theme-label">{t('coreThemeLabel')}</span>
+          <span className="fortune-hero__core-theme-value">{coreThemeLabel}</span>
+        </p>
+      ) : null}
 
       <p className="fortune-hero__title">{title}</p>
       {sub ? <p className="fortune-hero__headline">{sub}</p> : null}

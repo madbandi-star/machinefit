@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import type {
   FortuneDataAnalysis,
   FortuneMode,
+  FortuneNarrative,
   FortuneRecommendation,
   FortuneScores,
   FortuneSection,
+  FortuneTraditionalDetail,
 } from '@machinefit/shared';
 import { FortuneAvoidCard } from '@/components/fortune/FortuneAvoidCard';
 import { FortuneBeforeAfter } from '@/components/fortune/FortuneBeforeAfter';
@@ -19,12 +21,14 @@ import {
   buildTryThis,
   buildWhyToday,
 } from '@/components/fortune/fortuneContent';
+import { FortuneFlowStrip } from '@/components/fortune/FortuneFlowStrip';
 import { FortuneHero } from '@/components/fortune/FortuneHero';
 import { FortuneLinearGauge } from '@/components/fortune/FortuneLinearGauge';
 import { FortuneProse } from '@/components/fortune/FortuneProse';
 import { FortuneQuoteCard } from '@/components/fortune/FortuneQuoteCard';
 import { FortuneRadialGauge } from '@/components/fortune/FortuneRadialGauge';
 import { FortuneReveal } from '@/components/fortune/FortuneReveal';
+import { FortuneTraditionalDetailPanel } from '@/components/fortune/FortuneTraditionalDetail';
 import { TodayRecommendationGrid } from '@/components/fortune/TodayRecommendationGrid';
 import {
   healthmanCaptionKey,
@@ -39,6 +43,8 @@ export interface FortuneDashboardProps {
   scores: FortuneScores;
   recommendation: FortuneRecommendation;
   dataAnalysis?: FortuneDataAnalysis | null;
+  narrative?: FortuneNarrative | null;
+  traditionalDetail?: FortuneTraditionalDetail | null;
 }
 
 export function FortuneDashboard({
@@ -47,6 +53,8 @@ export function FortuneDashboard({
   fortune,
   scores,
   recommendation,
+  narrative,
+  traditionalDetail,
 }: FortuneDashboardProps) {
   const { t } = useTranslation('fortune');
 
@@ -55,7 +63,7 @@ export function FortuneDashboard({
 
   const content = useMemo(
     () => ({
-      fortuneExplain: buildFortuneExplain(fortune),
+      fortuneExplain: buildFortuneExplain(fortune, narrative),
       why: buildWhyToday({ recommendation }),
       strategy: buildStrategyExplain(recommendation),
       pr: buildPrExplain(scores),
@@ -64,7 +72,7 @@ export function FortuneDashboard({
       mission: buildMission({ fortune, recommendation }),
       report: buildReport({ fortune, scores, recommendation }),
     }),
-    [fortune, scores, recommendation]
+    [fortune, scores, recommendation, narrative]
   );
 
   return (
@@ -77,7 +85,19 @@ export function FortuneDashboard({
         title={fortune.title}
         headline={fortune.headline}
         scoreStars={fortune.scoreStars}
+        coreThemeLabel={
+          narrative ? t(narrative.coreThemeLabelKey) : undefined
+        }
       />
+
+      {narrative ? (
+        <FortuneReveal className="fortune-dashboard__section" delayMs={30}>
+          <div className="fortune-bundle">
+            <p className="fortune-bundle__label">{t('sectionFlow')}</p>
+            <FortuneFlowStrip narrative={narrative} />
+          </div>
+        </FortuneReveal>
+      ) : null}
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={40}>
         <div className="fortune-bundle fortune-bundle--open">
@@ -107,6 +127,20 @@ export function FortuneDashboard({
                 caption={recoveryCaption ? t(recoveryCaption) : undefined}
                 tone="recovery"
               />
+            </div>
+          </div>
+          <div className="fortune-scores-extra" aria-label={t('sectionExtraScores')}>
+            <div className="fortune-scores-extra__item">
+              <span>{t('volumeLuckLabel')}</span>
+              <strong>{scores.volumeLuck ?? '—'}%</strong>
+            </div>
+            <div className="fortune-scores-extra__item">
+              <span>{t('focusLuckLabel')}</span>
+              <strong>{scores.focusLuck ?? '—'}%</strong>
+            </div>
+            <div className="fortune-scores-extra__item">
+              <span>{t('changeLuckLabel')}</span>
+              <strong>{scores.changeLuck ?? '—'}%</strong>
             </div>
           </div>
         </div>
@@ -159,6 +193,9 @@ export function FortuneDashboard({
           <p className="fortune-bundle__label">{t('sectionWrap')}</p>
           <FortuneProse block={content.report} className="fortune-prose--report" />
           <FortuneQuoteCard oneLiner={fortune.oneLiner} detail={fortune.oneLinerDetail} />
+          {traditionalDetail ? (
+            <FortuneTraditionalDetailPanel detail={traditionalDetail} />
+          ) : null}
         </div>
       </FortuneReveal>
 

@@ -1,28 +1,30 @@
-﻿# Test handoff: Polish Helchang Fortune detail UI
+﻿# Test handoff: Traditional-structure Helchang Fortune engine (v2)
 
 ## Summary
-오늘의 헬창운세 상세 페이지를 점수 → 해설 → 추천 → 실천 → 정리 흐름으로 묶고, 카드-in-카드 중첩을 줄였습니다. 히어로는 브랜드/키워드 위계를 강화했습니다. 운세 계산·API는 변경 없음.
+생년월일·탄생시·오늘 날짜로 전통 운세 요소(엔터테인먼트 구조형)를 계산한 뒤, **핵심 기운 1개** → 스토리 → 운동운/추천으로 파생하도록 엔진을 교체했습니다. UI에 기운 흐름 스트립·세부 점수·「운세 자세히」를 추가했습니다.
 
 ## Git
 - Branch: `main`
-- Commit: `c3a9105e`
+- Commit: `PENDING`
 
 ## Test focus
-1. `/fortune/today` 준비 상태에서 PageShell 제목 중복 없음 (히어로가 브랜드 담당)
-2. 「오늘의 점수」는 열린 레이아웃, 나머지 섹션은 라벨 있는 bundle
-3. PR/회복 게이지 링크 없음, 추천 타일 비인터랙티브 유지
-4. 섹션 라벨: 오늘의 점수 / 해설 / 추천 / 실천 / 정리
+1. 동일 birth+date → 동일 `coreTheme` / narrative
+2. `RECOVERY_RESET`인데 PR_DAY + 높은 PR운이 나오지 않음
+3. `/fortune/today`에 기운 흐름·핵심 기운·자세히 보기 표시
+4. volume/focus/change 점수 존재, 추천이 테마와 모순되지 않음
+5. 운동 로그 없어도 운세 생성
 
 ## Fast checks
 ```bash
+npx tsx shared/src/fortune/traditional/traditional.test.ts
+cd shared && npm run build
 cd frontend && npx tsc -p tsconfig.json --noEmit
-rg -n "fortune-bundle--open|sectionCommentary|fortune-hero__brand" frontend/src/components/fortune frontend/src/styles/fortune.css frontend/src/i18n/locales/ko/fortune.json
-rg -n "to=\{ROUTES" frontend/src/components/fortune/FortuneDashboard.tsx || true
+node scripts/i18n-audit.mjs --sync
 ```
 
-## Production checks (optional after Deploy Frontend success)
-- Pages에서 `/fortune/today` 첫 화면·섹션 라벨 스캔
+## Production checks
+- Frontend Pages + **Render backend** 재배포 후 `/fortune/today` 확인 (narrative API 필드 필요)
 
 ## as-is → to-be
-- as-is: 이모지 라벨·중첩 패널·쉘 제목과 히어로 중복
-- to-be: 5섹션 흐름, 납작한 prose, 브랜드/키워드 히어로, 열린 점수 영역
+- as-is: 카탈로그 독립 RNG, 전통 계층 없음
+- to-be: 전통 구조 → 핵심 기운 1개 → 일관된 운동 운세

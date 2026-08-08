@@ -74,7 +74,8 @@ export function FortuneDetailPage() {
     );
   }
 
-  const { fortune, scores, recommendation, dataAnalysis, mode } = data;
+  const { fortune, scores, recommendation, dataAnalysis, mode, narrative, traditionalDetail } =
+    data;
   if (!fortune || !scores || !recommendation) {
     return (
       <PageShell title={t('fortune:title')}>
@@ -92,6 +93,8 @@ export function FortuneDetailPage() {
         scores={scores}
         recommendation={recommendation}
         dataAnalysis={dataAnalysis}
+        narrative={narrative}
+        traditionalDetail={traditionalDetail}
       />
     </PageShell>
   );

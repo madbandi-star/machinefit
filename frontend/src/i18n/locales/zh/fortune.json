@@ -42,7 +42,7 @@
   "oneLiner": "今日一句话",
   "modeSimple": "简易运势（出生时间未知）",
   "modeFull": "个性化运势",
-  "disclaimer": "仅供娱乐，不构成医疗诊断或科学验证的预测。",
+  "disclaimer": "今日健身运势将传统运势要素重新诠释为运动内容，属于娱乐内容，并非科学验证的预测或医疗诊断。",
   "cta": {
     "records": "开始记录训练",
     "machines": "浏览动作",
@@ -177,5 +177,134 @@
       "close": "One goal: create one different stimulus. Warm up well and save your log after."
     },
     "whyStyleFortune": "{{style}} fits today’s flow — weave it into the session once."
+  },
+  "volumeLuckLabel": "容量运",
+  "focusLuckLabel": "专注运",
+  "changeLuckLabel": "变化运",
+  "sectionFlow": "气运流转",
+  "sectionExtraScores": "细分运动运",
+  "coreThemeLabel": "今日核心气运",
+  "elementPrimary": "主气",
+  "elementSupport": "辅气",
+  "elementWeak": "弱气",
+  "traditionalDetailTitle": "运势详情",
+  "traditionalDetailNote": "以下为娱乐向传统要素解读，非专业命理鉴定。",
+  "element": {
+    "wood": "木",
+    "fire": "火",
+    "earth": "土",
+    "metal": "金",
+    "water": "水"
+  },
+  "layer": {
+    "base": "我的基本气运",
+    "daeun": "长期气运",
+    "seun": "今年气运",
+    "wolun": "本月气运",
+    "today": "今日气运",
+    "shijin": "时辰气运"
+  },
+  "mood": {
+    "expand": "Expansion",
+    "grow": "Growth",
+    "focus": "Focus",
+    "challenge": "Challenge",
+    "recover": "Recovery",
+    "organize": "Organize",
+    "steady": "Steady",
+    "change": "Change",
+    "execute": "Execute",
+    "balance": "Balance"
+  },
+  "yinYang": {
+    "yang": "Yang energy is relatively strong today — lean into action and execution.",
+    "yin": "Yin energy is relatively strong today — lean into focus, recovery, and tidy-up."
+  },
+  "coreTheme": {
+    "GROWTH_EXPAND": "成长与扩展",
+    "FOCUS_BREAKTHROUGH": "专注与突破",
+    "RECOVERY_RESET": "恢复与重整",
+    "CHANGE_STIMULUS": "变化与新刺激",
+    "STABILITY_BALANCE": "稳定与平衡",
+    "ACCUMULATE_STEADY": "累积与坚持",
+    "EXECUTE_PUSH": "执行与推进",
+    "ORGANIZE_TRANSITION": "整理与转换"
+  },
+  "story": {
+    "GROWTH_EXPAND": {
+      "lead": "Today’s core energy is growth and expansion.",
+      "body": "Your base energy and today’s flow support widening your attempts. In training, expand stimulus one step."
+    },
+    "FOCUS_BREAKTHROUGH": {
+      "lead": "Today’s core energy is focus and breakthrough.",
+      "body": "Channel effort into one clear target. Train with precise execution and a deliberate challenge set."
+    },
+    "RECOVERY_RESET": {
+      "lead": "Today’s core energy is recovery and reset.",
+      "body": "Favor pacing over forceful expansion. Lower intensity and prioritize quality, breathing, and recovery."
+    },
+    "CHANGE_STIMULUS": {
+      "lead": "Today’s core energy is change and new stimulus.",
+      "body": "A small twist to a familiar routine fits well. Change equipment, angle, or structure lightly."
+    },
+    "STABILITY_BALANCE": {
+      "lead": "Today’s core energy is stability and balance.",
+      "body": "Keep overall balance rather than pushing one extreme. Train evenly without big jumps."
+    },
+    "ACCUMULATE_STEADY": {
+      "lead": "Today’s core energy is steady accumulation.",
+      "body": "A day for stacking, not finishing in one shot. Build volume with quality reps."
+    },
+    "EXECUTE_PUSH": {
+      "lead": "Today’s core energy is execution and push.",
+      "body": "Momentum favors acting now. Run your planned session with density."
+    },
+    "ORGANIZE_TRANSITION": {
+      "lead": "Today’s core energy is organize and transition.",
+      "body": "Good for closing a chapter and preparing the next. Tidy the routine and set up the next stimulus."
+    }
+  },
+  "detail": {
+    "pillarsYear": "Year pillar",
+    "pillarsMonth": "Month pillar",
+    "pillarsDay": "Day pillar",
+    "pillarsHour": "Hour pillar",
+    "hourUnknown": "Birth time not set",
+    "shipshinLabel": "Ten gods flow",
+    "unseongLabel": "Twelve stages flow",
+    "shinsalLabel": "Spirit hints",
+    "usefulLabel": "Useful / favorable / burden elements",
+    "useful": "Supportive focus {{yong}}, helpful {{hui}}, balance needed around {{ki}}.",
+    "shipshin": {
+      "bijian": "Self-records and friendly rivalry can motivate you.",
+      "geopjae": "Challenge drive may rise — push with controlled pacing.",
+      "siksin": "Routines and repetition build productive momentum.",
+      "sanggwan": "A light break from old methods fits well.",
+      "pyeonjae": "Widening activity range feels natural.",
+      "jeongjae": "Precision and restraint add strength.",
+      "pyeongwan": "Strong push energy — warm up thoroughly.",
+      "jeonggwan": "Rules and discipline help raise quality.",
+      "pyeonin": "Trying a fresh approach fits well.",
+      "jeongin": "Calm foundation-building fits well."
+    },
+    "unseong": {
+      "jangsaeng": "Start-and-grow energy supports you.",
+      "mokyok": "Stimulus shifts are favored.",
+      "gwandae": "Expansion moves feel natural.",
+      "geonrok": "Stable execution on your base is favored.",
+      "jewang": "Peak push energy — warm up well.",
+      "soe": "Pace control and stability matter most.",
+      "byeong": "Prioritize recovery pacing over force.",
+      "sa": "Notice tidy-up and finish quality.",
+      "myo": "Store energy and lean into recovery.",
+      "jeol": "A turning point — good for resetting routines.",
+      "tae": "Preparing new possibilities.",
+      "yang": "Quietly growing your base."
+    },
+    "shinsal": {
+      "dohwa": "Activity and social energy can stimulate you.",
+      "yeokma": "New places, routines, or stimulus shifts fit well.",
+      "hwagae": "Solo focus on skill and form fits well."
+    }
   }
 }

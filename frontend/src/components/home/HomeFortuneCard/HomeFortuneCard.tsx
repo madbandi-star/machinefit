@@ -119,6 +119,12 @@ export function HomeFortuneCard() {
         <p className="home-fortune-card__keyword">{fortune.keywordTitle}</p>
       </div>
 
+      {data.narrative ? (
+        <p className="home-fortune-card__core-theme">
+          {t('coreThemeLabel')} · {t(data.narrative.coreThemeLabelKey)}
+        </p>
+      ) : null}
+
       <p className="home-fortune-card__headline">{fortune.title}</p>
 
       <div className="home-fortune-card__luck" aria-label={`${t('starsLabel')} ${filled} / 5`}>
