@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `cb1b30b1`
 
 ## Test focus
 1. HERO·게이지·donut·추천 카드 정상

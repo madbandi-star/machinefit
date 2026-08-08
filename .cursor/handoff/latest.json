@@ -1,9 +1,9 @@
-{
+﻿{
   "title": "Fortune reading-content enrichment",
   "summary": "Added prose sections to /fortune/today (fortune explain, data narrative, why-today, strategy/PR/recovery commentary, try-this, mission, expanded before/after, Helchang report) without changing API/DB/gauges/charts/animations.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "cb1b30b1"
   },
   "changedFiles": [
     "frontend/src/components/fortune/FortuneDashboard.tsx",
