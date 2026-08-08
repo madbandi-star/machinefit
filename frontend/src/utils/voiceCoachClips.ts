@@ -29,6 +29,8 @@ const SILENT_WAV =
 
 let sharedAudioCtx: AudioContext | null = null;
 let currentSource: AudioBufferSourceNode | null = null;
+/** All started BufferSources — screen-lock can orphan nodes if only currentSource is tracked. */
+const liveSources = new Set<AudioBufferSourceNode>();
 let currentHtmlAudio: HTMLAudioElement | null = null;
 /** HTMLAudio warmed during a user gesture — can play later without a fresh tap. */
 let warmedHtmlAudio: HTMLAudioElement | null = null;
@@ -129,6 +131,42 @@ function settlePendingClip(played: boolean): void {
   settle?.(played);
 }
 
+function hardStopSource(source: AudioBufferSourceNode | null | undefined): void {
+  if (!source) return;
+  try {
+    source.onended = null;
+  } catch {
+    // ignore
+  }
+  try {
+    source.stop();
+  } catch {
+    // already stopped
+  }
+  try {
+    source.disconnect();
+  } catch {
+    // ignore
+  }
+  liveSources.delete(source);
+  if (currentSource === source) currentSource = null;
+}
+
+function stopAllLiveSources(): void {
+  for (const source of [...liveSources]) {
+    hardStopSource(source);
+  }
+  currentSource = null;
+}
+
+function isAudioPlaybackUnsafe(ctx: AudioContext): boolean {
+  if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+    return true;
+  }
+  const state = ctx.state as string;
+  return state === 'suspended' || state === 'interrupted';
+}
+
 export function stopVoiceCoachClips(): void {
   clipGeneration += 1;
   if (currentHtmlAudio) {
@@ -143,20 +181,7 @@ export function stopVoiceCoachClips(): void {
     }
     currentHtmlAudio = null;
   }
-  if (currentSource) {
-    try {
-      currentSource.onended = null;
-      currentSource.stop();
-    } catch {
-      // already stopped
-    }
-    try {
-      currentSource.disconnect();
-    } catch {
-      // ignore
-    }
-    currentSource = null;
-  }
+  stopAllLiveSources();
   // Critical: never leave playVoiceCoachClip() awaiting onended forever after stop.
   settlePendingClip(false);
 }
@@ -264,35 +289,22 @@ export async function playVoiceCoachClip(
   const priorSettle = pendingClipSettle;
   pendingClipSettle = null;
   priorSettle?.(false);
-  if (currentSource || currentHtmlAudio) {
-    // Stop hardware playback only — do not bump generation for our own replace.
-    if (currentHtmlAudio) {
-      try {
-        currentHtmlAudio.onended = null;
-        currentHtmlAudio.onerror = null;
-        currentHtmlAudio.pause();
-        currentHtmlAudio.removeAttribute('src');
-        currentHtmlAudio.load();
-      } catch {
-        // ignore
-      }
-      currentHtmlAudio = null;
+  // Stop hardware playback only — do not bump generation for our own replace.
+  // Must clear ALL live sources: screen-lock watchdogs can null currentSource while
+  // the BufferSource keeps playing, which caused overlapping count numbers.
+  if (currentHtmlAudio) {
+    try {
+      currentHtmlAudio.onended = null;
+      currentHtmlAudio.onerror = null;
+      currentHtmlAudio.pause();
+      currentHtmlAudio.removeAttribute('src');
+      currentHtmlAudio.load();
+    } catch {
+      // ignore
     }
-    if (currentSource) {
-      try {
-        currentSource.onended = null;
-        currentSource.stop();
-      } catch {
-        // ignore
-      }
-      try {
-        currentSource.disconnect();
-      } catch {
-        // ignore
-      }
-      currentSource = null;
-    }
+    currentHtmlAudio = null;
   }
+  stopAllLiveSources();
 
   const generation = clipGeneration;
   const url = voiceCoachClipUrl(key, pack);
@@ -317,16 +329,21 @@ export async function playVoiceCoachClip(
         source.connect(gain);
         gain.connect(ctx.destination);
         currentSource = source;
+        liveSources.add(source);
 
         let settled = false;
+        let endedWatchdog: number | null = null;
+        const startAudioTime = ctx.currentTime;
+        const clipBudgetMs = Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400));
+
         const finish = (value: boolean) => {
           if (settled) return;
           settled = true;
           if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
           signal?.removeEventListener('abort', onAbort);
-          source.onended = null;
-          if (currentSource === source) currentSource = null;
-          if (endedWatchdog) window.clearTimeout(endedWatchdog);
+          if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
+          // Always hard-stop — watchdog must not leave the buffer playing under the next cue.
+          hardStopSource(source);
           resolve(value);
         };
 
@@ -334,16 +351,10 @@ export async function playVoiceCoachClip(
         pendingClipSettle = settleFromStop;
 
         const onAbort = () => {
-          try {
-            source.onended = null;
-            source.stop();
-          } catch {
-            // ignore
-          }
-          if (currentSource === source) currentSource = null;
+          if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
           if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
           settled = true;
-          if (endedWatchdog) window.clearTimeout(endedWatchdog);
+          hardStopSource(source);
           signal?.removeEventListener('abort', onAbort);
           reject(new DOMException('Aborted', 'AbortError'));
         };
@@ -351,11 +362,28 @@ export async function playVoiceCoachClip(
         source.onended = () => finish(true);
         signal?.addEventListener('abort', onAbort, { once: true });
 
-        // Some WebViews skip onended after audio-focus blips — don't hang the coach.
-        const endedWatchdog = window.setTimeout(
-          () => finish(true),
-          Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400))
-        );
+        // Wall-clock watchdog used to fire while the AudioContext was frozen
+        // (screen lock), resolve the await, and start the next rep while the
+        // previous BufferSource kept playing → overlapping "셋/넷/다섯…".
+        const tickWatchdog = () => {
+          if (settled) return;
+          if (isAudioPlaybackUnsafe(ctx)) {
+            void ctx.resume().catch(() => undefined);
+            endedWatchdog = window.setTimeout(tickWatchdog, 200);
+            return;
+          }
+          const audioEnd = startAudioTime + buffer.duration;
+          if (Number.isFinite(ctx.currentTime) && ctx.currentTime + 0.05 < audioEnd) {
+            const remainMs = Math.min(
+              4_000,
+              Math.max(80, (audioEnd - ctx.currentTime) * 1000 + 120)
+            );
+            endedWatchdog = window.setTimeout(tickWatchdog, remainMs);
+            return;
+          }
+          finish(true);
+        };
+        endedWatchdog = window.setTimeout(tickWatchdog, clipBudgetMs);
 
         try {
           source.start(0);
