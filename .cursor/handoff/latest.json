@@ -1,33 +1,25 @@
 {
-  "title": "Friendly plan date picker modal",
-  "summary": "Replace window.prompt date entry for move/copy workout cards with a modal calendar + Today/Tomorrow chips.",
-  "git": { "branch": "main", "commit": "8c66c138" },
+  "title": "Fix plan date picker empty parentheses / ISO display",
+  "summary": "Hide native date input ISO text; show locale-friendly preview without empty weekday parentheses.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
     "frontend/src/i18n/locales/ko/machines.json",
     "frontend/src/i18n/locales/en/machines.json",
     "frontend/src/i18n/locales/ja/machines.json",
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Card menu move/copy opens modal not prompt",
-    "Today/Tomorrow and date input confirm correctly",
-    "Missed plan change date uses modal"
+    "Preview shows 2026년 8월 6일 (목) style",
+    "No empty ()",
+    "Calendar opens from preview button"
   ],
   "fastChecks": [
-    "rg -n \"PlanDatePickerDialog\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "rg -n \"window.prompt\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx || true"
+    "rg -n \"formatPickerDateLabel|plan-date-picker__native\" frontend/src/components/records/PlanDatePickerDialog"
   ],
-  "productionChecks": [
-    "Pages deploy then try move/copy on machine-fit.com/machinefit/"
-  ],
-  "deploy": {
-    "target": "GitHub Pages",
-    "backendRedeployRequired": false
-  },
-  "asIs": "window.prompt YYYY-MM-DD",
-  "toBe": "Modal date picker with quick picks"
+  "productionChecks": ["Pages deploy + hard refresh date picker"],
+  "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
+  "asIs": "2026-08-06() in date field",
+  "toBe": "Locale date label + hidden native picker"
 }

@@ -306,7 +306,7 @@
     "planMoved": "Moved to another date.",
     "planCopied": "Copied to another date.",
     "planDatePrompt": "日付を選択",
-    "planDateInputLabel": "日付を選ぶ",
+    "planDateInputLabel": "カレンダーで選ぶ",
     "planDateToday": "今日",
     "planDateTomorrow": "明日",
     "planDateQuickPicks": "クイック選択",

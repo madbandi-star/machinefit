@@ -1,30 +1,18 @@
-# Test handoff: Friendly plan date picker
+ï»¿# Test handoff: Fix plan date picker display
 
 ## Summary
-Replaced `window.prompt("³¯Â¥ YYYY-MM-DD")` for workout card move/copy (and missed-plan change date) with a modal date picker: locale-friendly preview, Today/Tomorrow chips, native `type="date"` input.
+Date picker no longer shows raw `2026-08-06()` (ISO + empty weekday parens). Shows locale label e.g. `2026ë…„ 8ì›” 6ì¼ (ëª©)`; native date input is visually hidden and opened via â€œë‹¬ë ¥ì—ì„œ ê³ ë¥´ê¸°â€.
 
 ## Git
 - Branch: `main`
-- Commit: `8c66c138`
-
-## Changed
-- `frontend/src/components/records/PlanDatePickerDialog/*` (new)
-- `frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx`
-- `frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/machines.json`
+- Commit: (after push)
 
 ## Test focus
-1. Records ¡æ workout card menu ¡æ ³¯Â¥ º¯°æ / ´Ù¸¥ ³¯Â¥·Î º¹»ç ¡æ modal (not browser prompt)
-2. Today/Tomorrow chips + calendar pick work; confirm moves/copies
-3. Home missed-plan banner ¡æ ³¯Â¥ º¯°æ uses same modal
+1. Move/copy date modal preview is readable Korean (or locale), no empty `()`
+2. Tap preview / â€œë‹¬ë ¥ì—ì„œ ê³ ë¥´ê¸°â€ opens system calendar
+3. Today/Tomorrow still work
 
-## Fast checks
-```bash
-rg -n "PlanDatePickerDialog|window.prompt\\(" frontend/src/components/records frontend/src/components/home/HomePlannedWorkoutCard
-rg -n "planDateMoveTitle|planDateToday" frontend/src/i18n/locales/ko/machines.json
-```
-
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Ugly `prompt` YYYY-MM-DD | Modal with calendar + quick picks |
+| `2026-08-06()` in field | `2026ë…„ 8ì›” 6ì¼ (ëª©)` + calendar affordance |

@@ -2,21 +2,48 @@
   width: min(100%, 22rem);
 }
 
-.plan-date-picker__preview {
+.plan-date-picker__preview-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
   margin: 0 0 0.85rem;
-  font-size: 1.15rem;
+  padding: 0.9rem 0.75rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+}
+
+.plan-date-picker__preview-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.plan-date-picker__preview {
+  margin: 0;
+  font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text);
-  text-align: center;
   line-height: 1.35;
+}
+
+.plan-date-picker__preview-hint {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
 .plan-date-picker__chips {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
-  margin-bottom: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .plan-date-picker__chip {
@@ -37,32 +64,17 @@
   color: var(--color-primary);
 }
 
-.plan-date-picker__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
-}
-
-.plan-date-picker__label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
-.plan-date-picker__input {
-  width: 100%;
-  min-height: 2.75rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 1rem;
-  font-family: inherit;
-}
-
-.plan-date-picker__input:focus {
-  outline: 2px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
-  outline-offset: 1px;
+/* Keep native control for accessibility / showPicker, but hide the ugly ISO text. */
+.plan-date-picker__native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
 }

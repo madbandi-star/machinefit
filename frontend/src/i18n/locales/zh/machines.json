@@ -306,7 +306,7 @@
     "planMoved": "Moved to another date.",
     "planCopied": "Copied to another date.",
     "planDatePrompt": "请选择日期",
-    "planDateInputLabel": "选择日期",
+    "planDateInputLabel": "打开日历选择",
     "planDateToday": "今天",
     "planDateTomorrow": "明天",
     "planDateQuickPicks": "快捷选择",

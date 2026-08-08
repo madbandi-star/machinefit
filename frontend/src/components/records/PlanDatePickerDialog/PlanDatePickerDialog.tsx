@@ -1,11 +1,7 @@
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
-import {
-  formatHistoryDateHeader,
-  getTodayDateKey,
-  normalizeDateKey,
-} from '@/utils/historyDate';
+import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import './PlanDatePickerDialog.css';
 
 function shiftDateKey(dateKey: string, days: number): string {
@@ -16,6 +12,33 @@ function shiftDateKey(dateKey: string, days: number): string {
   const mm = String(date.getMonth() + 1).padStart(2, '0');
   const dd = String(date.getDate()).padStart(2, '0');
   return `${yy}-${mm}-${dd}`;
+}
+
+function parseDateKey(dateKey: string): Date | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return null;
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const date = new Date(y, (m ?? 1) - 1, d ?? 1);
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
+}
+
+/** Human-readable label for the picker (never appends empty "()"). */
+function formatPickerDateLabel(dateKey: string, locale: string): string {
+  const date = parseDateKey(dateKey);
+  if (!date) return dateKey;
+
+  const resolvedLocale = locale?.trim() || 'ko';
+  const datePart = date.toLocaleDateString(resolvedLocale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const weekday = date
+    .toLocaleDateString(resolvedLocale, { weekday: 'short' })
+    .replace(/[().]/g, '')
+    .trim();
+
+  return weekday ? `${datePart} (${weekday})` : datePart;
 }
 
 export interface PlanDatePickerDialogProps {
@@ -43,6 +66,7 @@ export function PlanDatePickerDialog({
   const titleId = useId();
   const messageId = useId();
   const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useModalAccessibility({ open, onClose });
   const today = getTodayDateKey();
   const tomorrow = shiftDateKey(today, 1);
@@ -54,11 +78,26 @@ export function PlanDatePickerDialog({
   }, [open, initialDate, today]);
 
   const friendlyLabel = useMemo(
-    () => formatHistoryDateHeader(value, i18n.language),
+    () => formatPickerDateLabel(value, i18n.language),
     [value, i18n.language]
   );
 
-  const isValid = /^\d{4}-\d{2}-\d{2}$/.test(value);
+  const isValid = Boolean(parseDateKey(value));
+
+  const openNativePicker = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    try {
+      if (typeof el.showPicker === 'function') {
+        el.showPicker();
+        return;
+      }
+    } catch {
+      // fall through — older browsers / blocked by UA
+    }
+    el.focus();
+    el.click();
+  };
 
   if (!open) return null;
 
@@ -82,9 +121,19 @@ export function PlanDatePickerDialog({
           </p>
         ) : null}
 
-        <p className="plan-date-picker__preview" aria-live="polite">
-          {friendlyLabel}
-        </p>
+        <button
+          type="button"
+          className="plan-date-picker__preview-btn"
+          onClick={openNativePicker}
+          aria-controls={inputId}
+        >
+          <span className="plan-date-picker__preview" aria-live="polite">
+            {friendlyLabel}
+          </span>
+          <span className="plan-date-picker__preview-hint">
+            {t('machines:history.planDateInputLabel')}
+          </span>
+        </button>
 
         <div className="plan-date-picker__chips" role="group" aria-label={t('machines:history.planDateQuickPicks')}>
           <button
@@ -103,16 +152,19 @@ export function PlanDatePickerDialog({
           </button>
         </div>
 
-        <label className="plan-date-picker__field" htmlFor={inputId}>
-          <span className="plan-date-picker__label">{t('machines:history.planDateInputLabel')}</span>
-          <input
-            id={inputId}
-            className="plan-date-picker__input"
-            type="date"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-        </label>
+        <input
+          ref={inputRef}
+          id={inputId}
+          className="plan-date-picker__native"
+          type="date"
+          lang={i18n.language}
+          value={isValid ? value : ''}
+          onChange={(e) => {
+            if (e.target.value) setValue(e.target.value);
+          }}
+          tabIndex={-1}
+          aria-hidden="true"
+        />
 
         <div className="dialog__actions">
           <button
