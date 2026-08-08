@@ -5,7 +5,7 @@ Replaced the cramped ⋯ dropdown (template save / delete day / apply template) 
 
 ## Git
 - Branch: `main`
-- Commit: (after push)
+- Commit: `a5d14d0f`
 
 ## Test focus
 1. Records → date row ⋯ → bottom sheet opens
@@ -16,3 +16,4 @@ Replaced the cramped ⋯ dropdown (template save / delete day / apply template) 
 | as-is | to-be |
 |-------|--------|
 | Tiny dropdown + emoji + prompt | Bottom sheet with clear actions |
+

@@ -1,7 +1,7 @@
 ﻿{
   "title": "Records day-actions bottom sheet",
   "summary": "Replace day menu dropdown with bottom sheet UX for template save/apply and delete-all.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a5d14d0f" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.tsx",
     "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css",
@@ -24,3 +24,4 @@
   "asIs": "Ugly details dropdown + prompt",
   "toBe": "Bottom sheet day actions"
 }
+
