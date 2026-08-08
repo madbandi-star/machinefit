@@ -333,6 +333,7 @@
     100dvh - var(--header-height) - var(--bottom-nav-height) - var(--space-md) * 2
   );
   padding-bottom: var(--recommendation-action-height);
+  touch-action: manipulation;
 }
 
 .recommendation-result-page__header {

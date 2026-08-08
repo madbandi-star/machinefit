@@ -1,23 +1,23 @@
-# Test handoff: Day delete removes completed cards too
+ï»¿# Test handoff: Double-tap detail â†’ back to records
 
 ## Summary
-ÀÏÀÚ ÀüÃ¼»èÁ¦ ½Ã COMPLETED ¿îµ¿Ä«µå°¡ ³²¾Æ Ã¥°¥ÇÇ(ÀúÀå)¸¸ ²¨Áö´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. ÇØ´ç ÀÏÀÚÀÇ ·Î±×¡¤È÷½ºÅä¸®¡¤¸ğµç »óÅÂÀÇ workout card¸¦ »èÁ¦ÇÕ´Ï´Ù. **backend º¯°æ ¡æ Render Àç¹èÆ÷ ÇÊ¿ä.**
+ê¸°ë¡ ì¹´ë“œì—ì„œ ì—° ì„¸ë¶€ê¸°ë¡(ì£¼ì˜ì‚¬í•­Â·ìš´ë™íŒ) í˜ì´ì§€ë¥¼ ë”ë¸”íƒ­í•˜ë©´ í•´ë‹¹ ì¼ì ê¸°ë¡ ëª©ë¡ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤. ë²„íŠ¼/ì…ë ¥ ì˜ì—­ì€ ì œì™¸í•©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: e45ad036
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ day ? ¡æ ¿À´Ã/¼±ÅÃÀÏ ÀüÃ¼»èÁ¦ ¡æ È®ÀÎ
-2. ÇØ´ç ÀÏÀÚ Ä«µå°¡ ¸ñ·Ï¿¡¼­ »ç¶óÁü (Ã¥°¥ÇÇ¸¸ ²¨Áø Ã¤ ³²Áö ¾ÊÀ½)
-3. »õ·Î°íÄ§ ÈÄ¿¡µµ º¹±ÍÇÏÁö ¾ÊÀ½
+1. Records â†’ card â†’ detail (tips/warnings)
+2. Double-tap empty/content area â†’ returns to `/records?date=...`
+3. Double-tap on bookmark/favorite/inputs does NOT navigate away
 
 ## Fast checks
 ```bash
-rg -n "DELETE FROM workout_cards|dayCards|status === 'PLANNED'" backend/server/repositories/workout-log.repository.ts frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
+rg -n "useDoubleTapAction|returnToRecords" frontend/src/pages/recommendation-result frontend/src/hooks/useDoubleTapAction.ts
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Logs cleared; COMPLETED cards stay with bookmark off | Day cards fully removed |
+| No double-tap back | Double-tap detail returns to records list for that date |

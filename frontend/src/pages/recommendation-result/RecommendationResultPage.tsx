@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bookmark, ChevronDown, Heart } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
@@ -23,6 +23,7 @@ import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useDoubleTapAction } from '@/hooks/useDoubleTapAction';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
@@ -229,6 +230,21 @@ export function RecommendationResultPage() {
     logControl.remove();
   };
 
+  const returnToRecords = useCallback(() => {
+    const dateKey = normalizeDateKey(logDateParam ?? '');
+    if (dateKey) {
+      navigate(`${ROUTES.RECORDS}?date=${encodeURIComponent(dateKey)}`);
+      return;
+    }
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+    navigate(ROUTES.RECORDS);
+  }, [logDateParam, navigate]);
+
+  const doubleTapBack = useDoubleTapAction(returnToRecords);
+
   const titleHeaderActions =
     isAuthenticated ? (
       <div className="recommendation-result-page__header-actions">
@@ -307,7 +323,11 @@ export function RecommendationResultPage() {
       );
 
   return (
-    <div className="recommendation-result-page recommendation-result-page--inline-actions">
+    <div
+      className="recommendation-result-page recommendation-result-page--inline-actions"
+      onPointerUp={doubleTapBack.onPointerUp}
+      onDoubleClick={doubleTapBack.onDoubleClick}
+    >
       <header className="recommendation-result-page__header">
         <h1 className="recommendation-result-page__title">{machineTitle}</h1>
         {titleHeaderActions}

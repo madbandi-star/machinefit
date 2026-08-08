@@ -1,24 +1,21 @@
 {
-  "title": "Day delete removes completed cards too",
-  "summary": "Day bulk delete now removes COMPLETED workout cards (not only planned) and backend deleteByUserDate also deletes workout_cards for that date. Render redeploy required.",
-  "git": { "branch": "main", "commit": "e45ad036" },
+  "title": "Double-tap detail ? back to records",
+  "summary": "Double-tap/double-click on recommendation result (from records) navigates back to /records?date=..., ignoring interactive controls.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "backend/server/repositories/workout-log.repository.ts",
-    "backend/server/services/workout-log.service.ts"
+    "frontend/src/hooks/useDoubleTapAction.ts",
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Day ? delete removes all cards for that date",
-    "Cards do not remain with bookmark only cleared"
+    "Double-tap detail returns to records",
+    "Interactive controls ignored"
   ],
   "fastChecks": [
-    "rg -n \"DELETE FROM workout_cards|dayCards\" backend/server/repositories/workout-log.repository.ts frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+    "rg -n \"useDoubleTapAction|returnToRecords\" frontend/src/pages/recommendation-result frontend/src/hooks/useDoubleTapAction.ts"
   ],
-  "productionChecks": ["Pages + Render redeploy; day delete on records"],
-  "deploy": {
-    "target": "GitHub Pages + Render API",
-    "backendRedeployRequired": true
-  },
-  "asIs": "Day delete left COMPLETED cards with bookmark off",
-  "toBe": "Day delete removes logs, history, and all workout cards"
+  "productionChecks": ["Pages deploy + mobile double-tap from records detail"],
+  "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
+  "asIs": "No double-tap shortcut back to records",
+  "toBe": "Double-tap detail returns to records for that date"
 }
