@@ -218,7 +218,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     ? t(`muscleGroups.${resolvedMuscleGroup}`, { defaultValue: resolvedMuscleGroup })
     : null;
 
-  const showPlanMenu = Boolean(card.workoutCardId) && (Boolean(onCopyPlan) || Boolean(onMovePlan));
+  const showPlanMenu = Boolean(onCopyPlan) || Boolean(onMovePlan);
   const hasRecommendationSettings =
     card.settings.recommendedWeightKg != null ||
     card.settings.seatPosition != null ||

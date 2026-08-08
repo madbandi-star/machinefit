@@ -808,21 +808,112 @@ export function HistoryListPanel() {
     [deleteMutation]
   );
 
+  const ensureWorkoutCardId = useCallback(
+    async (card: HistoryRecordCardData): Promise<string> => {
+      if (card.workoutCardId) return card.workoutCardId;
+      if (!activeGymId || !activeMemberId) {
+        throw new Error('missing_gym_or_member');
+      }
+
+      const dateKey = normalizeDateKey(card.logDate);
+      const muscleKey = card.targetMuscleGroup ?? '';
+      const existingPlan = (workoutCards ?? []).find(
+        (plan) =>
+          plan.machineCode === card.machineCode &&
+          normalizeDateKey(plan.scheduledDate) === dateKey &&
+          (plan.targetMuscleGroup ?? '') === muscleKey
+      );
+      if (existingPlan) return existingPlan.id;
+
+      const log = (workoutLogs ?? []).find(
+        (item) =>
+          item.machineCode === card.machineCode &&
+          normalizeDateKey(item.logDate) === dateKey &&
+          (item.targetMuscleGroup ?? '') === muscleKey
+      );
+
+      const today = getTodayDateKey();
+      const status = dateKey > today ? 'PLANNED' : 'COMPLETED';
+      const setCount = Math.max(1, log?.setCount ?? 1);
+      const seedWeight = card.settings.recommendedWeightKg ?? 0;
+      const setWeightsKg =
+        log?.setWeightsKg?.length === setCount
+          ? log.setWeightsKg
+          : Array.from({ length: setCount }, () => seedWeight);
+      const setCompleted =
+        log?.setCompleted?.length === setCount
+          ? log.setCompleted
+          : status === 'COMPLETED'
+            ? Array.from({ length: setCount }, () => true)
+            : Array.from({ length: setCount }, () => false);
+
+      try {
+        const res = await workoutCardApi.create({
+          gymId: activeGymId,
+          memberId: activeMemberId,
+          machineCode: card.machineCode,
+          scheduledDate: dateKey,
+          status,
+          setCount,
+          setWeightsKg,
+          setCompleted,
+          ...(log?.diary?.trim() ? { diary: log.diary.trim() } : {}),
+          ...(card.recommendationId ? { recommendationId: card.recommendationId } : {}),
+          ...(card.targetMuscleGroup ? { targetMuscleGroup: card.targetMuscleGroup } : {}),
+        });
+        await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+        return res.data.data.id;
+      } catch (error) {
+        // Card may already exist (race / prior sync) — resolve by listing that date.
+        const listed = await workoutCardApi.list({
+          gymId: activeGymId,
+          memberId: activeMemberId,
+          scheduledDate: dateKey,
+          limit: 100,
+        });
+        const found = (listed.data.data ?? []).find(
+          (plan) =>
+            plan.machineCode === card.machineCode &&
+            (plan.targetMuscleGroup ?? '') === muscleKey
+        );
+        if (found) {
+          await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+          return found.id;
+        }
+        throw error;
+      }
+    },
+    [activeGymId, activeMemberId, queryClient, workoutCards, workoutLogs]
+  );
+
   const promptMoveOrCopy = useCallback(
-    (card: HistoryRecordCardData, mode: 'move' | 'copy') => {
-      if (!card.workoutCardId) return;
+    async (card: HistoryRecordCardData, mode: 'move' | 'copy') => {
+      if (!canUseWorkoutPlans) return;
       const nextDate = promptDateKey(
         t('machines:history.planDatePrompt'),
         card.logDate || getTodayDateKey()
       );
       if (!nextDate) return;
-      if (mode === 'move') {
-        movePlanMutation.mutate({ id: card.workoutCardId, scheduledDate: nextDate });
-      } else {
-        copyPlanMutation.mutate({ id: card.workoutCardId, scheduledDate: nextDate });
+
+      try {
+        const id = await ensureWorkoutCardId(card);
+        if (mode === 'move') {
+          movePlanMutation.mutate({ id, scheduledDate: nextDate });
+        } else {
+          copyPlanMutation.mutate({ id, scheduledDate: nextDate });
+        }
+      } catch {
+        showToast(t('common:errors.submitFailed'), 'error');
       }
     },
-    [copyPlanMutation, movePlanMutation, t]
+    [
+      canUseWorkoutPlans,
+      copyPlanMutation,
+      ensureWorkoutCardId,
+      movePlanMutation,
+      showToast,
+      t,
+    ]
   );
 
   const confirmDelete = () => {
@@ -1250,13 +1341,13 @@ export function HistoryListPanel() {
                     }
                     isReordering={animatingCardId === card.cardId}
                     onCopyPlan={
-                      card.workoutCardId
-                        ? () => promptMoveOrCopy(card, 'copy')
+                      canUseWorkoutPlans
+                        ? () => void promptMoveOrCopy(card, 'copy')
                         : undefined
                     }
                     onMovePlan={
-                      card.workoutCardId
-                        ? () => promptMoveOrCopy(card, 'move')
+                      canUseWorkoutPlans
+                        ? () => void promptMoveOrCopy(card, 'move')
                         : undefined
                     }
                     planActionsDisabled={

@@ -283,7 +283,7 @@
     "planDatePrompt": "날짜 (YYYY-MM-DD)",
     "planMoveDate": "날짜 변경",
     "planCopyDate": "다른 날짜로 복사",
-    "planCardMenuAria": "운동 계획 메뉴",
+    "planCardMenuAria": "운동 기록 메뉴",
     "planSaveTemplate": "템플릿으로 저장",
     "planApplyTemplate": "템플릿 적용",
     "planTemplateNamePrompt": "템플릿 이름",

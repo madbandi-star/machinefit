@@ -283,7 +283,7 @@
     "planDatePrompt": "Date (YYYY-MM-DD)",
     "planMoveDate": "Change date",
     "planCopyDate": "Copy to another date",
-    "planCardMenuAria": "Workout plan menu",
+    "planCardMenuAria": "Workout card menu",
     "planSaveTemplate": "Save as template",
     "planApplyTemplate": "Apply template",
     "planTemplateNamePrompt": "Template name",
