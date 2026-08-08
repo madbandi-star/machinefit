@@ -1,7 +1,7 @@
 {
   "title": "Day delete removes completed cards too",
   "summary": "Day bulk delete now removes COMPLETED workout cards (not only planned) and backend deleteByUserDate also deletes workout_cards for that date. Render redeploy required.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "e45ad036" },
   "changedFiles": [
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
     "backend/server/repositories/workout-log.repository.ts",

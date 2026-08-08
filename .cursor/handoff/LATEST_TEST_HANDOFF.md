@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Day delete removes completed cards too
+# Test handoff: Day delete removes completed cards too
 
 ## Summary
-ì¼ì ì „ì²´ì‚­ì œ ì‹œ COMPLETED ìš´ë™ì¹´ë“œê°€ ë‚¨ì•„ ì±…ê°ˆí”¼(ì €ì¥)ë§Œ êº¼ì§€ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. í•´ë‹¹ ì¼ìì˜ ë¡œê·¸Â·íˆìŠ¤í† ë¦¬Â·ëª¨ë“  ìƒíƒœì˜ workout cardë¥¼ ì‚­ì œí•©ë‹ˆë‹¤. **backend ë³€ê²½ â†’ Render ì¬ë°°í¬ í•„ìš”.**
+ÀÏÀÚ ÀüÃ¼»èÁ¦ ½Ã COMPLETED ¿îµ¿Ä«µå°¡ ³²¾Æ Ã¥°¥ÇÇ(ÀúÀå)¸¸ ²¨Áö´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. ÇØ´ç ÀÏÀÚÀÇ ·Î±×¡¤È÷½ºÅä¸®¡¤¸ğµç »óÅÂÀÇ workout card¸¦ »èÁ¦ÇÕ´Ï´Ù. **backend º¯°æ ¡æ Render Àç¹èÆ÷ ÇÊ¿ä.**
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: e45ad036
 
 ## Test focus
-1. Records â†’ day â‹¯ â†’ ì˜¤ëŠ˜/ì„ íƒì¼ ì „ì²´ì‚­ì œ â†’ í™•ì¸
-2. í•´ë‹¹ ì¼ì ì¹´ë“œê°€ ëª©ë¡ì—ì„œ ì‚¬ë¼ì§ (ì±…ê°ˆí”¼ë§Œ êº¼ì§„ ì±„ ë‚¨ì§€ ì•ŠìŒ)
-3. ìƒˆë¡œê³ ì¹¨ í›„ì—ë„ ë³µê·€í•˜ì§€ ì•ŠìŒ
+1. Records ¡æ day ? ¡æ ¿À´Ã/¼±ÅÃÀÏ ÀüÃ¼»èÁ¦ ¡æ È®ÀÎ
+2. ÇØ´ç ÀÏÀÚ Ä«µå°¡ ¸ñ·Ï¿¡¼­ »ç¶óÁü (Ã¥°¥ÇÇ¸¸ ²¨Áø Ã¤ ³²Áö ¾ÊÀ½)
+3. »õ·Î°íÄ§ ÈÄ¿¡µµ º¹±ÍÇÏÁö ¾ÊÀ½
 
 ## Fast checks
 ```bash
 rg -n "DELETE FROM workout_cards|dayCards|status === 'PLANNED'" backend/server/repositories/workout-log.repository.ts frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Logs cleared; COMPLETED cards stay with bookmark off | Day cards fully removed |
