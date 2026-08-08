@@ -1,21 +1,21 @@
-ï»¿# Test handoff: Line-break records nudge body copy (KO)
+# Test handoff: Line-break records nudge body copy (KO)
 
 ## Summary
-ì„¸ë¶€ ìš´ë™ê¸°ë¡ ì¹´ë“œ ì•ˆë‚´ ë¬¸êµ¬ë¥¼ ã€Œì„¸íŠ¸Â·í…œí”Œë¦¿ì„ã€ ë‹¤ìŒ ì¤„ë°”ê¿ˆìœ¼ë¡œ í‘œì‹œí•˜ë„ë¡ KO ë¬¸êµ¬ì™€ `white-space: pre-line`ì„ ì ìš©í–ˆìŠµë‹ˆë‹¤.
+¼¼ºÎ ¿îµ¿±â·Ï Ä«µå ¾È³» ¹®±¸¸¦ ¡¸¼¼Æ®¡¤ÅÛÇÃ¸´À»¡¹ ´ÙÀ½ ÁÙ¹Ù²ŞÀ¸·Î Ç¥½ÃÇÏµµ·Ï KO ¹®±¸¿Í `white-space: pre-line`À» Àû¿ëÇß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `47580439`
 
 ## Test focus
-1. ì¶”ì²œ ì§í›„ ê²°ê³¼ ì¹´ë“œ nudge bodyê°€ ë‘ ì¤„: ã€Œâ€¦ì„¸íŠ¸Â·í…œí”Œë¦¿ì„ã€ / ã€Œê´€ë¦¬í•  ìˆ˜ ìˆì–´ìš”ã€
+1. ÃßÃµ Á÷ÈÄ °á°ú Ä«µå nudge body°¡ µÎ ÁÙ: ¡¸¡¦¼¼Æ®¡¤ÅÛÇÃ¸´À»¡¹ / ¡¸°ü¸®ÇÒ ¼ö ÀÖ¾î¿ä¡¹
 
 ## Fast checks
 ```bash
 rg -n "recordsNudgeBody|pre-line" frontend/src/i18n/locales/ko/machines.json frontend/src/styles/recommendation.css
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| í•œ ì¤„ | ã€Œì„¸íŠ¸Â·í…œí”Œë¦¿ì„ã€ ë‹¤ìŒ ì¤„ì— ã€Œê´€ë¦¬í•  ìˆ˜ ìˆì–´ìš”ã€ |
+| ÇÑ ÁÙ | ¡¸¼¼Æ®¡¤ÅÛÇÃ¸´À»¡¹ ´ÙÀ½ ÁÙ¿¡ ¡¸°ü¸®ÇÒ ¼ö ÀÖ¾î¿ä¡¹ |
