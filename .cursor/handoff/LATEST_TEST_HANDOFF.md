@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Records green-dot on workout detail page
+# Test handoff: Records green-dot on workout detail page
 
 ## Summary
-ê¸°ë¡ì—ì„œ ì—° ìƒì„¸ìš´ë™ê¸°ë¡ í˜ì´ì§€ì—ì„œë„ í•˜ë‹¨ ê¸°ë¡ ë²„íŠ¼ì— ë…¹ìƒ‰ì ì´ ì¼œì§€ë„ë¡ í–ˆìŠµë‹ˆë‹¤. íŒ ë§í’ì„ ì€ ì‹ ê·œ ì¶”ì²œ ì‹œì—ë§Œ í‘œì‹œë©ë‹ˆë‹¤.
+±â·Ï¿¡¼­ ¿¬ »ó¼¼¿îµ¿±â·Ï ÆäÀÌÁö¿¡¼­µµ ÇÏ´Ü ±â·Ï ¹öÆ°¿¡ ³ì»öÁ¡ÀÌ ÄÑÁöµµ·Ï Çß½À´Ï´Ù. ÆÁ ¸»Ç³¼±Àº ½Å±Ô ÃßÃµ ½Ã¿¡¸¸ Ç¥½ÃµË´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `fdde4ddc`
 
 ## Test focus
-1. ê¸°ë¡ â†’ ìƒì„¸ìš´ë™ê¸°ë¡: í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì (íŒ ì—†ìŒ)
-2. ì˜¤ëŠ˜ ì‹ ê·œ ì¶”ì²œ ê²°ê³¼: ë…¹ìƒ‰ì  + ã€Œì´ë™í•´ì„œ ìš´ë™ì‹œì‘ã€íŒ
-3. ê¸°ë¡ íƒ­ ì§„ì… ì‹œ ë…¹ìƒ‰ì  í•´ì œ
+1. ±â·Ï ¡æ »ó¼¼¿îµ¿±â·Ï: ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡(ÆÁ ¾øÀ½)
+2. ¿À´Ã ½Å±Ô ÃßÃµ °á°ú: ³ì»öÁ¡ + ¡¸ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ¡¹ÆÁ
+3. ±â·Ï ÅÇ ÁøÀÔ ½Ã ³ì»öÁ¡ ÇØÁ¦
 
 ## Fast checks
 ```bash
 rg -n "setRecordsNavNudge|recordsNavNudgeTip|tip: isFreshRecommend" frontend/src/store/ui.store.ts frontend/src/pages/recommendation-result/RecommendationResultPage.tsx frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ê¸°ë¡â†’ìƒì„¸ì—ì„œ ë…¹ìƒ‰ì  ì—†ìŒ | ìƒì„¸ì—ì„œë„ ë…¹ìƒ‰ì  í‘œì‹œ |
+| ±â·Ï¡æ»ó¼¼¿¡¼­ ³ì»öÁ¡ ¾øÀ½ | »ó¼¼¿¡¼­µµ ³ì»öÁ¡ Ç¥½Ã |
