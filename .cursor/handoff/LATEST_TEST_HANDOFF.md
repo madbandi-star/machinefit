@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `56f8b954`
 
 ## Test focus
 1. HERO: 날짜·키워드 이모지·운동운 별 애니메이션

@@ -1,9 +1,9 @@
-{
+﻿{
   "title": "Helchang Fortune dashboard UI overhaul",
   "summary": "Rebuilt /fortune/today as a content dashboard: hero keyword, radial/linear gauges with count-up, SVG equipment donut, workout stats/insight, recommendation grid, avoid/before/after/quote cards, reveal animations + reduced-motion. API/DB/business logic unchanged.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "56f8b954"
   },
   "changedFiles": [
     "frontend/src/pages/fortune/FortuneDetailPage.tsx",
