@@ -3,7 +3,7 @@
   "summary": "Under ??? ??, two beginner guides (yinYang + wuxing) are merged into one explain.energy block with combined copy and no duplicate ideas. UI/i18n only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "e4954727"
   },
   "changedFiles": [
     "frontend/src/components/fortune/reading/FortuneEnergySection.tsx",
