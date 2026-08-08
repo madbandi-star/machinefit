@@ -269,6 +269,7 @@ function duckMotivationMusic(active: boolean): void {
     const el = node as HTMLAudioElement;
     if (el === keepAliveAudio) return;
     if (el.dataset.mfVoiceCoachClip === '1') return;
+    if (el.dataset.mfVoiceCoachGap === '1') return;
     if (active) {
       if (el.dataset.mfVoiceDuck == null) {
         el.dataset.mfVoiceDuck = String(el.volume);
