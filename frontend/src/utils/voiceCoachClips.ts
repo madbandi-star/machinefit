@@ -1,8 +1,13 @@
 /**
- * Pre-recorded Korean voice-coach clips (Web Audio primary, HTMLAudio fallback).
- * Used for countdown / start / reps / one-more so count works when OS TTS is silent.
+ * Pre-recorded Korean voice-coach clips.
+ * Web Audio while the tab is visible; HTMLAudio when screen-locked / hidden
+ * (AudioContext is often suspended by the OS under lock).
  */
 
+import {
+  nudgeVoiceCoachSpeech,
+  voiceCoachShouldPreferHtmlAudio,
+} from '@/utils/voiceCoachAudioSession';
 import {
   getVoiceCoachElementVolume,
   getVoiceCoachVolume,
@@ -165,6 +170,7 @@ export function stopVoiceCoachClips(): void {
     try {
       currentHtmlAudio.onended = null;
       currentHtmlAudio.onerror = null;
+      currentHtmlAudio.onpause = null;
       currentHtmlAudio.pause();
       currentHtmlAudio.removeAttribute('src');
       currentHtmlAudio.load();
@@ -206,6 +212,12 @@ async function loadClipBuffer(url: string, ctx: AudioContext): Promise<AudioBuff
   return task;
 }
 
+function audioContextLooksInterrupted(ctx: AudioContext | null): boolean {
+  if (!ctx) return false;
+  // iOS often flips to "interrupted" on screen lock before visibility catches up.
+  return String(ctx.state || '') === 'interrupted';
+}
+
 function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -214,15 +226,21 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
     }
 
     settlePendingClip(false);
+    nudgeVoiceCoachSpeech();
 
     const audio = warmedHtmlAudio ?? new Audio();
     warmedHtmlAudio = audio;
     audio.preload = 'auto';
     audio.volume = getVoiceCoachElementVolume();
     audio.src = url;
+    audio.setAttribute('playsinline', 'true');
+    (audio as HTMLAudioElement & { playsInline?: boolean }).playsInline = true;
+    // So session ducking never treats coach clips as motivation music.
+    audio.dataset.mfVoiceCoachClip = '1';
     currentHtmlAudio = audio;
 
     let settled = false;
+    let pauseResumeAttempts = 0;
     const finish = (played: boolean) => {
       if (settled) return;
       settled = true;
@@ -230,6 +248,7 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
       signal?.removeEventListener('abort', onAbort);
       audio.onended = null;
       audio.onerror = null;
+      audio.onpause = null;
       try {
         audio.pause();
       } catch {
@@ -246,6 +265,7 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
       try {
         audio.onended = null;
         audio.onerror = null;
+        audio.onpause = null;
         audio.pause();
       } catch {
         // ignore
@@ -259,16 +279,107 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
 
     audio.onended = () => finish(true);
     audio.onerror = () => finish(false);
+    // Lock-screen policies sometimes pause HTMLAudio mid-clip — nudge keep-alive and resume.
+    audio.onpause = () => {
+      if (settled || audio.ended) return;
+      if (pauseResumeAttempts >= 2) return;
+      pauseResumeAttempts += 1;
+      nudgeVoiceCoachSpeech();
+      void audio.play().catch(() => {
+        // leave settled to onended / stop
+      });
+    };
 
     signal?.addEventListener('abort', onAbort, { once: true });
     void audio.play().catch(() => finish(false));
   });
 }
 
+async function playViaWebAudio(
+  url: string,
+  signal: AbortSignal | undefined,
+  generation: number
+): Promise<boolean> {
+  const ctx = await ensureVoiceCoachAudioRunning();
+  if (!ctx || generation !== clipGeneration) return false;
+
+  const buffer = await loadClipBuffer(url, ctx);
+  if (!buffer || generation !== clipGeneration) return false;
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
+  // Context may have been interrupted while we were decoding.
+  if (audioContextLooksInterrupted(ctx) || String(ctx.state || '') === 'suspended') {
+    try {
+      await ctx.resume();
+    } catch {
+      return false;
+    }
+    if (String(ctx.state || '') !== 'running') return false;
+  }
+
+  return new Promise<boolean>((resolve, reject) => {
+    if (generation !== clipGeneration) {
+      resolve(false);
+      return;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const gain = ctx.createGain();
+    gain.gain.value = getVoiceCoachVolume();
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    currentSource = source;
+    liveSources.add(source);
+
+    let settled = false;
+    let endedWatchdog: number | null = null;
+
+    const finish = (value: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
+      signal?.removeEventListener('abort', onAbort);
+      if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
+      // Always hard-stop so a late/frozen BufferSource cannot overlap the next cue
+      // after screen-lock (watchdog used to resolve without source.stop()).
+      hardStopSource(source);
+      resolve(value);
+    };
+
+    const settleFromStop = (value: boolean) => finish(value);
+    pendingClipSettle = settleFromStop;
+
+    const onAbort = () => {
+      if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
+      if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
+      settled = true;
+      hardStopSource(source);
+      signal?.removeEventListener('abort', onAbort);
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+
+    source.onended = () => finish(true);
+    signal?.addEventListener('abort', onAbort, { once: true });
+
+    // Wall-clock watchdog — do not wait forever if the context freezes under lock.
+    endedWatchdog = window.setTimeout(
+      () => finish(true),
+      Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400))
+    );
+
+    try {
+      source.start(0);
+    } catch {
+      finish(false);
+    }
+  });
+}
+
 /**
- * Play a pre-recorded clip via Web Audio so playback keeps working after the
- * long rep-gap (HTMLAudioElement.play() often fails once the user-gesture window ends).
- * Falls back to HTMLAudio when decode/Web Audio fails.
+ * Play a pre-recorded clip.
+ * Visible tab: Web Audio (survives long gaps after the gesture window).
+ * Screen lock / hidden / interrupted: HTMLAudio + Media Session keep-alive.
  *
  * Does NOT call speechManager.cancel() — that used to AbortError an in-flight
  * TTS cue ("준비") / race with rest-tip teardown and kill the whole session.
@@ -293,6 +404,7 @@ export async function playVoiceCoachClip(
     try {
       currentHtmlAudio.onended = null;
       currentHtmlAudio.onerror = null;
+      currentHtmlAudio.onpause = null;
       currentHtmlAudio.pause();
       currentHtmlAudio.removeAttribute('src');
       currentHtmlAudio.load();
@@ -305,83 +417,26 @@ export async function playVoiceCoachClip(
 
   const generation = clipGeneration;
   const url = voiceCoachClipUrl(key, pack);
+  const preferHtml =
+    voiceCoachShouldPreferHtmlAudio() || audioContextLooksInterrupted(sharedAudioCtx);
 
-  const ctx = await ensureVoiceCoachAudioRunning();
-  if (ctx && generation === clipGeneration) {
-    const buffer = await loadClipBuffer(url, ctx);
-    if (buffer && generation === clipGeneration) {
-      if (signal?.aborted) {
-        throw new DOMException('Aborted', 'AbortError');
-      }
-
-      const played = await new Promise<boolean>((resolve, reject) => {
-        if (generation !== clipGeneration) {
-          resolve(false);
-          return;
-        }
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        const gain = ctx.createGain();
-        gain.gain.value = getVoiceCoachVolume();
-        source.connect(gain);
-        gain.connect(ctx.destination);
-        currentSource = source;
-        liveSources.add(source);
-
-        let settled = false;
-        let endedWatchdog: number | null = null;
-
-        const finish = (value: boolean) => {
-          if (settled) return;
-          settled = true;
-          if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
-          signal?.removeEventListener('abort', onAbort);
-          if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
-          // Always hard-stop so a late/frozen BufferSource cannot overlap the next cue
-          // after screen-lock (watchdog used to resolve without source.stop()).
-          hardStopSource(source);
-          resolve(value);
-        };
-
-        const settleFromStop = (value: boolean) => finish(value);
-        pendingClipSettle = settleFromStop;
-
-        const onAbort = () => {
-          if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
-          if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
-          settled = true;
-          hardStopSource(source);
-          signal?.removeEventListener('abort', onAbort);
-          reject(new DOMException('Aborted', 'AbortError'));
-        };
-
-        source.onended = () => finish(true);
-        signal?.addEventListener('abort', onAbort, { once: true });
-
-        // Some WebViews skip onended after audio-focus blips — don't hang the coach.
-        // finish() hard-stops the source so lock/thaw cannot leave orphans playing.
-        endedWatchdog = window.setTimeout(
-          () => finish(true),
-          Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400))
-        );
-
-        try {
-          source.start(0);
-        } catch {
-          finish(false);
-        }
-      });
-      if (played) return true;
-      // Interrupted by stopVoiceCoachClips — do not restart via HTMLAudio.
-      if (generation !== clipGeneration) return false;
-    }
-  }
-
-  if (generation !== clipGeneration || signal?.aborted) {
+  // Screen lock: HTMLAudio + silent keep-alive Media Session path first.
+  if (preferHtml) {
+    const htmlPlayed = await playHtmlAudioClip(url, signal);
+    if (htmlPlayed) return true;
+    if (generation !== clipGeneration) return false;
     if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-    return false;
+    // Fall through to Web Audio best-effort if HTML path failed.
   }
 
+  const played = await playViaWebAudio(url, signal, generation);
+  if (played) return true;
+  // Interrupted by stopVoiceCoachClips — do not restart via HTMLAudio.
+  if (generation !== clipGeneration) return false;
+  if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+
+  // Fallback HTMLAudio when Web Audio failed / unavailable (and we didn't already try).
+  if (preferHtml) return false;
   return playHtmlAudioClip(url, signal);
 }
 
