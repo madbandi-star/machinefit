@@ -8,11 +8,9 @@ import type {
   FortuneScores,
   FortuneSection,
 } from '@machinefit/shared';
-import { EquipmentDonutChart } from '@/components/fortune/EquipmentDonutChart';
 import { FortuneAvoidCard } from '@/components/fortune/FortuneAvoidCard';
 import { FortuneBeforeAfter } from '@/components/fortune/FortuneBeforeAfter';
 import {
-  buildDataNarrative,
   buildFortuneExplain,
   buildMission,
   buildPrExplain,
@@ -21,7 +19,6 @@ import {
   buildStrategyExplain,
   buildTryThis,
   buildWhyToday,
-  dataBulletLines,
 } from '@/components/fortune/fortuneContent';
 import { FortuneHero } from '@/components/fortune/FortuneHero';
 import { FortuneLinearGauge } from '@/components/fortune/FortuneLinearGauge';
@@ -30,7 +27,6 @@ import { FortuneQuoteCard } from '@/components/fortune/FortuneQuoteCard';
 import { FortuneRadialGauge } from '@/components/fortune/FortuneRadialGauge';
 import { FortuneReveal } from '@/components/fortune/FortuneReveal';
 import { TodayRecommendationGrid } from '@/components/fortune/TodayRecommendationGrid';
-import { WorkoutStatsCards } from '@/components/fortune/WorkoutStatsCards';
 import {
   buildEquipmentSlices,
   healthmanCaptionKey,
@@ -80,17 +76,9 @@ export function FortuneDashboard({
   const prCaption = prCaptionKey(scores.prLuck);
   const recoveryCaption = recoveryCaptionKey(scores.recoveryLuck);
 
-  const content = useMemo(() => {
-    const bullets = dataBulletLines(dataAnalysis?.personalizedBullets ?? []);
-    return {
+  const content = useMemo(
+    () => ({
       fortuneExplain: buildFortuneExplain(fortune),
-      dataNarrative: buildDataNarrative({
-        empty: emptyData,
-        sparse,
-        analysis: dataAnalysis,
-        slices,
-      }),
-      dataBullets: emptyData ? [] : bullets,
       why: buildWhyToday({
         empty: emptyData,
         sparse,
@@ -111,8 +99,9 @@ export function FortuneDashboard({
         slices,
         analysis: dataAnalysis,
       }),
-    };
-  }, [fortune, scores, recommendation, dataAnalysis, emptyData, sparse, slices]);
+    }),
+    [fortune, scores, recommendation, dataAnalysis, emptyData, sparse, slices]
+  );
 
   return (
     <div className="fortune-dashboard">
@@ -166,39 +155,6 @@ export function FortuneDashboard({
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={80}>
         <p className="fortune-dashboard__section-label">
-          <span aria-hidden>📊</span> {t('sectionDataVisual')}
-        </p>
-        <p className="fortune-dashboard__section-desc">{t('sectionDataDesc')}</p>
-        {emptyData ? (
-          <div className="fortune-empty">
-            <p className="fortune-empty__title">{t('dataEmptyTitle')}</p>
-            <p className="fortune-empty__body">{t('dataEmptyBody')}</p>
-            <Link to={`${ROUTES.RECORDS}?tab=history`} className="btn btn--primary btn--block">
-              {t('dataEmptyCta')}
-            </Link>
-          </div>
-        ) : (
-          <>
-            <p className="fortune-dashboard__subhead">{t('ratiosTitle')}</p>
-            <EquipmentDonutChart slices={slices} empty={false} />
-            <WorkoutStatsCards
-              workoutCount7d={dataAnalysis!.workoutCount7d}
-              workoutCount30d={dataAnalysis!.workoutCount30d}
-            />
-          </>
-        )}
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={100}>
-        <FortuneProse
-          block={content.dataNarrative}
-          extraBullets={content.dataBullets}
-          className="fortune-prose--data"
-        />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={120}>
-        <p className="fortune-dashboard__section-label">
           <span aria-hidden>✨</span> {t('sectionRecommendVisual')}
         </p>
         <TodayRecommendationGrid
@@ -214,15 +170,15 @@ export function FortuneDashboard({
         ) : null}
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={130}>
+      <FortuneReveal className="fortune-dashboard__section" delayMs={100}>
         <FortuneProse block={content.why} />
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={140}>
+      <FortuneReveal className="fortune-dashboard__section" delayMs={120}>
         <FortuneProse block={content.strategy} />
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={150}>
+      <FortuneReveal className="fortune-dashboard__section" delayMs={140}>
         <FortuneProse block={content.pr} />
       </FortuneReveal>
 
