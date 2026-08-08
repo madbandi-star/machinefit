@@ -11,7 +11,7 @@ interface ToastState {
 interface UIState {
   isLoading: boolean;
   toast: ToastState | null;
-  /** Ephemeral: soft-highlight bottom-nav Records after a fresh recommend. */
+  /** Ephemeral: soft-highlight bottom-nav Records (fresh recommend or plan-add). */
   recordsNavNudge: boolean;
   setLoading: (isLoading: boolean) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;

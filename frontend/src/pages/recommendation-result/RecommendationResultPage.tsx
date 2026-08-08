@@ -147,6 +147,7 @@ export function RecommendationResultPage() {
     onSuccess: async () => {
       setPlanLinked(true);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+      setRecordsNavNudge(true);
       showToast(t('machines:history.planCreated'), 'success');
     },
   });

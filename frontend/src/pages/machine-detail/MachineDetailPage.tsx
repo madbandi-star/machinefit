@@ -49,6 +49,7 @@ export function MachineDetailPage() {
   const { activeMemberId } = useActiveMember();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const setRecordsNavNudge = useUIStore((s) => s.setRecordsNavNudge);
   const { createRecommendationAsync, isPending: isRecommendPending } =
     useRecommendMachine(machineCode);
 
@@ -103,6 +104,8 @@ export function MachineDetailPage() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+      // Same bottom-nav Records green-dot nudge as after saving a workout / fresh recommend.
+      setRecordsNavNudge(true);
       showToast(t('machines:history.planCreatedContinue'), 'success');
       // Return to machine search with the same planDate so more exercises can be added.
       if (planDate) {

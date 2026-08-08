@@ -1,23 +1,23 @@
-# Test handoff: Hide log/voice UI on today planDate machine detail
+ï»¿# Test handoff: Records green-dot nudge after plan add
 
 ## Summary
-°Ë»ö¿¡¼­ `planDate`(¿À´Ã Æ÷ÇÔ)·Î ±â±¸ »ó¼¼¿¡ µé¾î¿À¸é À½¼ºÄ«¿îÆ®¡¤¼öÇà±â·Ï¡¤¿îµ¿ÀÏÁö¸¦ ¼û±â°í, ¹Ì·¡¿Í µ¿ÀÏÇÏ°Ô ¿îµ¿°èÈ¹ Ãß°¡ UI¸¸ º¸ÀÌ°Ô Çß½À´Ï´Ù. `logDate` ±â·Ï ÁøÀÔÀº ±âÁ¸°ú °°½À´Ï´Ù.
+ìš´ë™ì¶”ê°€(ê³„íš ì¶”ê°€) ì„±ê³µ ì‹œì—ë„ í•˜ë‹¨ ê¸°ë¡ íƒ­ì— ê¸°ì¡´ê³¼ ê°™ì€ ë…¹ìƒ‰ì (`recordsNavNudge`)ì´ ë³´ì´ë„ë¡ ì—°ê²°í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `af038578`
+- Commit: pending
 
 ## Test focus
-1. ¿À´Ã ¿îµ¿Ãß°¡ ¡æ ±â±¸ »ó¼¼: WorkoutLogPanel/À½¼ºÄ«¿îÆ® ¾øÀ½, ¡¸¿îµ¿ °èÈ¹¿¡ Ãß°¡¡¹¸¸
-2. ¹Ì·¡ planDate »ó¼¼: µ¿ÀÏÇÏ°Ô °èÈ¹ Ãß°¡ UI
-3. ±â·Ï¿¡¼­ logDate·Î ¿¬ »ó¼¼: ¼öÇà±â·Ï¡¤À½¼º À¯Áö
+1. ê¸°ë¡ â†’ ìš´ë™ì¶”ê°€ â†’ ê¸°êµ¬ ã€Œìš´ë™ ê³„íšì— ì¶”ê°€ã€ â†’ í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì /í„ìŠ¤
+2. ê¸°ë¡ íƒ­ ì§„ì… ì‹œ ë…¹ìƒ‰ì  í•´ì œ
+3. ê¸°ì¡´ ì¶”ì²œ ì§í›„ ë…¹ìƒ‰ì  ë™ì‘ ìœ ì§€
 
 ## Fast checks
 ```bash
-rg -n "isPlanAddMode|WorkoutLogPanel" frontend/src/pages/machine-detail/MachineDetailPage.tsx
+rg -n "setRecordsNavNudge\\(true\\)" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| planDate=¿À´ÃÀÌ¸é À½¼º/¼öÇà±â·Ï UI ³ëÃâ | planDate¸é ¿À´Ã¡¤¹Ì·¡ ¸ğµÎ °èÈ¹ Ãß°¡ ¼Ğ¸¸ |
+| ìš´ë™ì¶”ê°€ í›„ í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì  ì—†ìŒ | ìš´ë™ì¶”ê°€ ì„±ê³µ ì‹œ ì¶”ì²œê³¼ ë™ì¼í•˜ê²Œ ë…¹ìƒ‰ì  í‘œì‹œ |
