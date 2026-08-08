@@ -147,7 +147,7 @@ export function RecommendationResultPage() {
     onSuccess: async () => {
       setPlanLinked(true);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
-      setRecordsNavNudge(true);
+      setRecordsNavNudge(true, { tip: true });
       showToast(t('machines:history.planCreated'), 'success');
     },
   });
@@ -275,17 +275,19 @@ export function RecommendationResultPage() {
   const isFreshRecommend = isAuthenticated && !logDateParam;
 
   useEffect(() => {
-    if (!isFreshRecommend) {
+    if (!isAuthenticated || !result?.id) {
       setRecordsNudgeVisible(false);
       return;
     }
-    // Banner may be dismissed for the day; nav green-dot still lights on each fresh recommend.
-    // Do not clear nudge on unmount — it should stay until Records is opened.
-    if (!isDismissedToday(RECORDS_NUDGE_DISMISS_KEY)) {
+    // Fresh recommend: banner + tip. From Records detail (logDate): green-dot only.
+    if (isFreshRecommend && !isDismissedToday(RECORDS_NUDGE_DISMISS_KEY)) {
       setRecordsNudgeVisible(true);
+    } else {
+      setRecordsNudgeVisible(false);
     }
-    setRecordsNavNudge(true);
-  }, [isFreshRecommend, setRecordsNavNudge, result?.id]);
+    // Do not clear nudge on unmount — keep until Records is opened.
+    setRecordsNavNudge(true, { tip: isFreshRecommend });
+  }, [isAuthenticated, isFreshRecommend, setRecordsNavNudge, result?.id]);
 
   const dismissRecordsNudge = useCallback(() => {
     dismissForToday(RECORDS_NUDGE_DISMISS_KEY);

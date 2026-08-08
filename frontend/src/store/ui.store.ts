@@ -11,12 +11,14 @@ interface ToastState {
 interface UIState {
   isLoading: boolean;
   toast: ToastState | null;
-  /** Ephemeral: soft-highlight bottom-nav Records (fresh recommend or plan-add). */
+  /** Ephemeral: soft-highlight bottom-nav Records (recommend, plan-add, or detail). */
   recordsNavNudge: boolean;
+  /** When true with nudge, show the short tip bubble above Records. */
+  recordsNavNudgeTip: boolean;
   setLoading: (isLoading: boolean) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
-  setRecordsNavNudge: (active: boolean) => void;
+  setRecordsNavNudge: (active: boolean, opts?: { tip?: boolean }) => void;
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -32,6 +34,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   isLoading: false,
   toast: null,
   recordsNavNudge: false,
+  recordsNavNudgeTip: false,
   setLoading: (isLoading) => set({ isLoading }),
   showToast: (message, type = 'info') => {
     clearToastTimer();
@@ -48,5 +51,9 @@ export const useUIStore = create<UIState>((set, get) => ({
     clearToastTimer();
     set({ toast: null });
   },
-  setRecordsNavNudge: (active) => set({ recordsNavNudge: active }),
+  setRecordsNavNudge: (active, opts) =>
+    set({
+      recordsNavNudge: active,
+      recordsNavNudgeTip: active ? Boolean(opts?.tip) : false,
+    }),
 }));

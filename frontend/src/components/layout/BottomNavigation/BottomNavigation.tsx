@@ -92,18 +92,19 @@ export function BottomNavigation() {
   const gymId = useGymStore((s) => s.activeGymId);
   const memberId = useGymStore((s) => s.activeMemberId);
   const recordsNavNudge = useUIStore((s) => s.recordsNavNudge);
+  const recordsNavNudgeTip = useUIStore((s) => s.recordsNavNudgeTip);
   const setRecordsNavNudge = useUIStore((s) => s.setRecordsNavNudge);
   const [showRecordsTip, setShowRecordsTip] = useState(false);
 
   useEffect(() => {
-    if (!recordsNavNudge) {
+    if (!recordsNavNudge || !recordsNavNudgeTip) {
       setShowRecordsTip(false);
       return;
     }
     setShowRecordsTip(true);
     const timer = window.setTimeout(() => setShowRecordsTip(false), NAV_TIP_VISIBLE_MS);
     return () => window.clearTimeout(timer);
-  }, [recordsNavNudge]);
+  }, [recordsNavNudge, recordsNavNudgeTip]);
 
   useEffect(() => {
     if (!recordsNavNudge) return;

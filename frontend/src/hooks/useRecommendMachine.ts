@@ -278,7 +278,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
       if (skipNavigate) return;
       // Light Records tab as soon as today’s recommend lands (don’t wait on result-page effects).
       if (!planDate) {
-        useUIStore.getState().setRecordsNavNudge(true);
+        useUIStore.getState().setRecordsNavNudge(true, { tip: true });
       }
       const params = new URLSearchParams({ id: result.id });
       if (planDate) {

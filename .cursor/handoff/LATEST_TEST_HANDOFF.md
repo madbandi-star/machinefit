@@ -1,23 +1,23 @@
-# Test handoff: Polish Records reorder action pad UI
+ï»¿# Test handoff: Records green-dot on workout detail page
 
 ## Summary
-±â·Ï Ä«µå ¼ø¼­ º¯°æ ¸Ş´º¸¦ ÀÌ¸ğÁö ÅØ½ºÆ® ¸ñ·Ï¿¡¼­ ÂªÀº ¶óº§ÀÇ 2¡¿2 ¾ÆÀÌÄÜ ¾×¼Ç ÆĞµå·Î °³¼±Çß½À´Ï´Ù.
+ê¸°ë¡ì—ì„œ ì—° ìƒì„¸ìš´ë™ê¸°ë¡ í˜ì´ì§€ì—ì„œë„ í•˜ë‹¨ ê¸°ë¡ ë²„íŠ¼ì— ë…¹ìƒ‰ì ì´ ì¼œì§€ë„ë¡ í–ˆìŠµë‹ˆë‹¤. íŒ ë§í’ì„ ì€ ì‹ ê·œ ì¶”ì²œ ì‹œì—ë§Œ í‘œì‹œë©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `0c88fe3b`
+- Commit: pending
 
 ## Test focus
-1. ±â·Ï Ä«µå ¼ø¼­ ¹öÆ° ¡æ 2¡¿2 ÆĞµå(À§·Î/¾Æ·¡·Î/¸Ç À§/¸Ç ¾Æ·¡)
-2. Ã¹/¸¶Áö¸· Ä«µå¿¡¼­ ÇØ´ç ¹öÆ° ºñÈ°¼º
-3. ÅÇ ½Ã ¼ø¼­ º¯°æ¡¤¸Ş´º ´İÈû
+1. ê¸°ë¡ â†’ ìƒì„¸ìš´ë™ê¸°ë¡: í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì (íŒ ì—†ìŒ)
+2. ì˜¤ëŠ˜ ì‹ ê·œ ì¶”ì²œ ê²°ê³¼: ë…¹ìƒ‰ì  + ã€Œì´ë™í•´ì„œ ìš´ë™ì‹œì‘ã€íŒ
+3. ê¸°ë¡ íƒ­ ì§„ì… ì‹œ ë…¹ìƒ‰ì  í•´ì œ
 
 ## Fast checks
 ```bash
-rg -n "orderMoveUpShort|workout-card-order__grid" frontend/src/components/records/WorkoutCardOrderControl frontend/src/i18n/locales/ko/machines.json
+rg -n "setRecordsNavNudge|recordsNavNudgeTip|tip: isFreshRecommend" frontend/src/store/ui.store.ts frontend/src/pages/recommendation-result/RecommendationResultPage.tsx frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ÀÌ¸ğÁö+±ä ÅØ½ºÆ® ¼¼·Î ¸Ş´º | ÂªÀº ¶óº§ 2¡¿2 ¾ÆÀÌÄÜ ¾×¼Ç ÆĞµå |
+| ê¸°ë¡â†’ìƒì„¸ì—ì„œ ë…¹ìƒ‰ì  ì—†ìŒ | ìƒì„¸ì—ì„œë„ ë…¹ìƒ‰ì  í‘œì‹œ |
