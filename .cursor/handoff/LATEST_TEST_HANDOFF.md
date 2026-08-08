@@ -1,21 +1,21 @@
-ï»¿# Test handoff: Records nav tip copy â†’ ì´ë™í•´ì„œ ìš´ë™ì‹œì‘
+# Test handoff: Records nav tip copy ¡æ ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ
 
 ## Summary
-í•˜ë‹¨ ê¸°ë¡ ë²„íŠ¼ nudge tip ë¬¸êµ¬ë¥¼ ã€Œì´ë™í•´ì„œ ìš´ë™ì‹œì‘ã€ìœ¼ë¡œ ë³€ê²½í–ˆìŠµë‹ˆë‹¤.
+ÇÏ´Ü ±â·Ï ¹öÆ° nudge tip ¹®±¸¸¦ ¡¸ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ¡¹À¸·Î º¯°æÇß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `941db8ea`
 
 ## Test focus
-1. ì˜¤ëŠ˜ ì¶”ì²œ í›„ í•˜ë‹¨ ê¸°ë¡ tipì´ ã€Œì´ë™í•´ì„œ / ìš´ë™ì‹œì‘ã€
+1. ¿À´Ã ÃßÃµ ÈÄ ÇÏ´Ü ±â·Ï tipÀÌ ¡¸ÀÌµ¿ÇØ¼­ / ¿îµ¿½ÃÀÛ¡¹
 
 ## Fast checks
 ```bash
 rg -n "recordsNudgeNavTip" frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ì˜¤ëŠ˜ ìš´ë™ì€ ê¸°ë¡ì—ì„œ ê´€ë¦¬ | ì´ë™í•´ì„œ ìš´ë™ì‹œì‘ |
+| ¿À´Ã ¿îµ¿Àº ±â·Ï¿¡¼­ °ü¸® | ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ |
