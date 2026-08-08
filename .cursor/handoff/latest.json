@@ -1,7 +1,7 @@
 {
   "title": "Full Helchang Fortune detail UI reading redesign",
   "summary": "Rebuilt /fortune/today as a single reading flow (hero ? energy ? base ? story ? luck ? guide ? data ? apply ? mission ? quote). Presentation-only; fortune engine/API untouched. Birth fields shown via existing /users/me.",
-  "git": { "branch": "main", "commit": "PENDING" },
+  "git": { "branch": "main", "commit": "e2530537" },
   "changedFiles": [
     "frontend/src/components/fortune/FortuneDashboard.tsx",
     "frontend/src/components/fortune/reading/*",
