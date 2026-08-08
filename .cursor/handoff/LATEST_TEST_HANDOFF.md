@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Card â‹¯ menu portal (not clipped by card)
+# Test handoff: Card ? menu portal (not clipped by card)
 
 ## Summary
-ê¸°êµ¬ ê¸°ë¡ì¹´ë“œ â‹¯ ë©”ë‰´ê°€ ì¹´ë“œì˜ backdrop-filterì— ê°‡í˜€ ì˜ë¦¬ë˜ ë¬¸ì œë¥¼ `document.body` í¬íƒˆë¡œ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤.
+±â±¸ ±â·ÏÄ«µå ? ¸Ş´º°¡ Ä«µåÀÇ backdrop-filter¿¡ °¤Çô Àß¸®´ø ¹®Á¦¸¦ `document.body` Æ÷Å»·Î ¼öÁ¤Çß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 3e32902f
 
 ## Test focus
-1. Mobile: Records â†’ card â‹¯
+1. Mobile: Records ¡æ card ?
 2. Full-screen centered panel (not clipped inside the card)
-3. ë‚ ì§œ ë³€ê²½ / ë‹¤ë¥¸ ë‚ ì§œë¡œ ë³µì‚¬ íƒ­ ê°€ëŠ¥ â†’ date picker opens
+3. ³¯Â¥ º¯°æ / ´Ù¸¥ ³¯Â¥·Î º¹»ç ÅÇ °¡´É ¡æ date picker opens
 
 ## Fast checks
 ```bash
 rg -n "createPortal|document.body" frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Menu clipped inside card; hard to tap | Full viewport overlay via portal |
