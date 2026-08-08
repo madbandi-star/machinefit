@@ -1,16 +1,26 @@
 ﻿{
-  "title": "Date picker defaults to next day",
-  "summary": "Move/copy date picker defaults to card date + 1; missed-plan change defaults to tomorrow.",
-  "git": { "branch": "main", "commit": "2bef5dd4" },
+  "title": "Records day-actions bottom sheet",
+  "summary": "Replace day menu dropdown with bottom sheet UX for template save/apply and delete-all.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/historyDate.ts",
+    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.tsx",
+    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css",
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
-  "testFocus": ["Default date is next day not card date"],
-  "fastChecks": ["rg -n \"shiftDateKey\\(|getTomorrowDateKey\" frontend/src/components/records/HistoryListPanel frontend/src/components/home/HomePlannedWorkoutCard"],
-  "productionChecks": ["Pages deploy + open move/copy picker"],
+  "testFocus": [
+    "Day ⋯ opens bottom sheet",
+    "Template save uses inline form",
+    "Delete day still confirms"
+  ],
+  "fastChecks": [
+    "rg -n \"HistoryDayActionsSheet|window.prompt\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+  ],
+  "productionChecks": ["Pages deploy + open records day menu"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Default = same card date",
-  "toBe": "Default = next day"
+  "asIs": "Ugly details dropdown + prompt",
+  "toBe": "Bottom sheet day actions"
 }

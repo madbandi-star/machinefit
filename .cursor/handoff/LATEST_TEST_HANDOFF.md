@@ -1,17 +1,18 @@
-﻿# Test handoff: Date picker defaults to next day
+﻿# Test handoff: Records day-actions bottom sheet
 
 ## Summary
-Plan date picker default is no longer the card’s current date. Move/copy uses **card date + 1 day**; missed-plan change uses **tomorrow**.
+Replaced the cramped ⋯ dropdown (template save / delete day / apply template) with a bottom sheet: date header, icon rows with hints, inline template name form (no prompt), template chips, danger delete.
 
 ## Git
 - Branch: `main`
-- Commit: `2bef5dd4`
+- Commit: (after push)
 
 ## Test focus
-1. Card → 날짜 변경 / 복사 → default shows next day after that card
-2. Missed banner → 날짜 변경 → default tomorrow
+1. Records → date row ⋯ → bottom sheet opens
+2. Save template → name field in sheet (not browser prompt)
+3. Apply template / delete day still work; confirm dialog for delete
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| Default = card date (e.g. 08-06) | Default = next day |
+| Tiny dropdown + emoji + prompt | Bottom sheet with clear actions |

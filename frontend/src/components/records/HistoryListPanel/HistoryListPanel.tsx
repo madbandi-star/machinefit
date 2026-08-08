@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
 import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
+import { HistoryDayActionsSheet } from '@/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet';
 import { favoriteApi, historyApi, workoutCardApi, workoutLogApi } from '@/api';
 import { fetchWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -18,6 +19,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import {
   collectMuscleGroupsInOrder,
+  formatHistoryDateHeader,
   formatHistoryDateHeaderWithMuscles,
   getTodayDateKey,
   getTomorrowDateKey,
@@ -1110,89 +1112,16 @@ export function HistoryListPanel() {
           </div>
 
           {isAuthenticated ? (
-            <details
-              className="records-list__day-menu"
-              open={dayMenuOpen}
-              onToggle={(e) => setDayMenuOpen((e.target as HTMLDetailsElement).open)}
+            <button
+              type="button"
+              className="records-list__day-menu-trigger icon-btn"
+              aria-label={t('machines:history.menuAria')}
+              aria-haspopup="dialog"
+              aria-expanded={dayMenuOpen}
+              onClick={() => setDayMenuOpen(true)}
             >
-              <summary
-                className="records-list__day-menu-trigger icon-btn"
-                aria-label={t('machines:history.menuAria')}
-              >
-                <Icon name="moreHorizontal" size={20} />
-              </summary>
-              <div className="records-list__day-menu-panel" role="menu">
-                {showPlanAddForDate ? (
-                  <Link
-                    to={planAddUrl}
-                    className="records-list__day-menu-item"
-                    role="menuitem"
-                    onClick={() => setDayMenuOpen(false)}
-                  >
-                    {t('machines:history.planAddForDate')}
-                  </Link>
-                ) : null}
-                {canUseWorkoutPlans && canSaveTemplateForDate ? (
-                  <button
-                    type="button"
-                    className="records-list__day-menu-item"
-                    role="menuitem"
-                    disabled={saveTemplateMutation.isPending}
-                    onClick={() => {
-                      const name = window.prompt(t('machines:history.planTemplateNamePrompt'));
-                      if (!name?.trim()) return;
-                      setDayMenuOpen(false);
-                      saveTemplateMutation.mutate({
-                        name: name.trim(),
-                        fromDate: targetDeleteDate,
-                      });
-                    }}
-                  >
-                    {t('machines:history.planSaveTemplate')}
-                  </button>
-                ) : null}
-                {canUseWorkoutPlans && planTemplates.length > 0 ? (
-                  <div className="records-list__day-menu-templates" role="group">
-                    <p className="records-list__day-menu-label">
-                      {t('machines:history.planApplyTemplate')}
-                    </p>
-                    {planTemplates.map((template) => (
-                      <button
-                        key={template.id}
-                        type="button"
-                        className="records-list__day-menu-item"
-                        role="menuitem"
-                        disabled={applyTemplateMutation.isPending}
-                        onClick={() => {
-                          applyTemplateMutation.mutate({
-                            templateId: template.id,
-                            scheduledDate: targetDeleteDate,
-                          });
-                        }}
-                      >
-                        {template.name}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-                {hasCardsOnTargetDate ? (
-                  <button
-                    type="button"
-                    className="records-list__day-menu-item records-list__day-menu-item--danger"
-                    role="menuitem"
-                    disabled={deleteDayMutation.isPending}
-                    onClick={() => {
-                      setDayMenuOpen(false);
-                      setPendingDayDelete(true);
-                    }}
-                  >
-                    {usesSelectedDateLabel
-                      ? t('machines:history.deleteDayMenuSelected')
-                      : t('machines:history.deleteDayMenuToday')}
-                  </button>
-                ) : null}
-              </div>
-            </details>
+              <Icon name="moreHorizontal" size={20} />
+            </button>
           ) : null}
         </div>
       </div>
@@ -1397,6 +1326,39 @@ export function HistoryListPanel() {
         confirmVariant="danger"
         onClose={() => setPendingDayDelete(false)}
         onConfirm={() => deleteDayMutation.mutate(targetDeleteDate)}
+      />
+
+      <HistoryDayActionsSheet
+        open={dayMenuOpen}
+        dateLabel={formatHistoryDateHeader(targetDeleteDate, i18n.language)}
+        showPlanAdd={showPlanAddForDate}
+        planAddUrl={planAddUrl}
+        canSaveTemplate={canUseWorkoutPlans && canSaveTemplateForDate}
+        templates={canUseWorkoutPlans ? planTemplates : []}
+        canDeleteDay={hasCardsOnTargetDate}
+        deleteLabel={
+          usesSelectedDateLabel
+            ? t('machines:history.deleteDayMenuSelected')
+            : t('machines:history.deleteDayMenuToday')
+        }
+        savingTemplate={saveTemplateMutation.isPending}
+        applyingTemplate={applyTemplateMutation.isPending}
+        onClose={() => setDayMenuOpen(false)}
+        onSaveTemplate={(name) => {
+          setDayMenuOpen(false);
+          saveTemplateMutation.mutate({ name, fromDate: targetDeleteDate });
+        }}
+        onApplyTemplate={(templateId) => {
+          setDayMenuOpen(false);
+          applyTemplateMutation.mutate({
+            templateId,
+            scheduledDate: targetDeleteDate,
+          });
+        }}
+        onDeleteDay={() => {
+          setDayMenuOpen(false);
+          setPendingDayDelete(true);
+        }}
       />
 
       <PlanDatePickerDialog
