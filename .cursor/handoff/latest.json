@@ -1,7 +1,7 @@
 {
   "title": "Detail page uses ??? ???? (no ??? ??)",
   "summary": "Recommendation result page removes the separate save-preferences control and mirrors record-card badButtonSaveMode (??? ?? ?? ? ??? ????).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b7119703" },
   "changedFiles": [
     "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],

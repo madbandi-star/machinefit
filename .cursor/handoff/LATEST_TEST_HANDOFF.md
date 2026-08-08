@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Detail page uses ì…‹íŒ…ê°’ ì €ì¥í•˜ê¸° (no ì¡°ì •ê°’ ì €ì¥)
+# Test handoff: Detail page uses ¼ÂÆÃ°ª ÀúÀåÇÏ±â (no Á¶Á¤°ª ÀúÀå)
 
 ## Summary
-ì„¸ë¶€ê¸°ë¡ í˜ì´ì§€ì˜ ë³„ë„ ã€Œì¡°ì •ê°’ ì €ì¥ã€ ë²„íŠ¼ì„ ì œê±°í•˜ê³ , ê¸°ë¡ì¹´ë“œì™€ ê°™ì´ ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€â†’ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ë¡œ ë°”ë€Œì–´ ì €ì¥í•˜ë„ë¡ ë§ì·„ìŠµë‹ˆë‹¤.
+¼¼ºÎ±â·Ï ÆäÀÌÁöÀÇ º°µµ ¡¸Á¶Á¤°ª ÀúÀå¡¹ ¹öÆ°À» Á¦°ÅÇÏ°í, ±â·ÏÄ«µå¿Í °°ÀÌ ¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹¡æ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹·Î ¹Ù²î¾î ÀúÀåÇÏµµ·Ï ¸ÂÃè½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: b7119703
 
 ## Test focus
-1. Records â†’ card â†’ detail
-2. No separate ã€Œì¡°ì •ê°’ ì €ì¥ã€ in the feedback header
-3. Tap ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€ â†’ button becomes ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ (pulses) â†’ tap saves adjustments
+1. Records ¡æ card ¡æ detail
+2. No separate ¡¸Á¶Á¤°ª ÀúÀå¡¹ in the feedback header
+3. Tap ¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹ ¡æ button becomes ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹ (pulses) ¡æ tap saves adjustments
 
 ## Fast checks
 ```bash
 rg -n "onSavePreferences|badButtonSaveMode|handleSettingsSave" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| Separate ì¡°ì •ê°’ ì €ì¥ on detail | Same badâ†’save button flow as record cards |
+| Separate Á¶Á¤°ª ÀúÀå on detail | Same bad¡æsave button flow as record cards |
