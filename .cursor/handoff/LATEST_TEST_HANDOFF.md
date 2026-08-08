@@ -1,17 +1,17 @@
-ï»¿# Test handoff: Fix missing machine images on Records cards
+# Test handoff: Fix missing machine images on Records cards
 
 ## Summary
-ê²€ìƒ‰ì„ ê±°ì¹˜ì§€ ì•Šì€ ê³„íš/ë¡œê·¸ ì¹´ë“œì—ì„œë„ ê¸°êµ¬ ì´ë¯¸ì§€ê°€ ë‚˜ì˜¤ë„ë¡, workout-cardsÂ·historyì— ì»¤ë²„ ì´ë¯¸ì§€ í•´ì„ì„ ë§ì¶”ê³  ê¸°ë¡ ì¹´ë“œì—ì„œ ì»¤ë²„ URL í´ë°±ì„ ì¶”ê°€í–ˆìŠµë‹ˆë‹¤.
+°Ë»öÀ» °ÅÄ¡Áö ¾ÊÀº °èÈ¹/·Î±× Ä«µå¿¡¼­µµ ±â±¸ ÀÌ¹ÌÁö°¡ ³ª¿Àµµ·Ï, workout-cards¡¤history¿¡ Ä¿¹ö ÀÌ¹ÌÁö ÇØ¼®À» ¸ÂÃß°í ±â·Ï Ä«µå¿¡¼­ Ä¿¹ö URL Æú¹éÀ» Ãß°¡Çß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `5bec939d`
 
 ## Test focus
-1. ìš´ë™ì¶”ê°€ë¡œ ë„£ì€ ì˜¤ëŠ˜/ë¯¸ë˜ ì¹´ë“œ: ì¸ë„¤ì¼ í‘œì‹œ
-2. ììœ ì¤‘ëŸ‰ ë¶€ìœ„ë³„ ì¹´ë“œ: ë¶€ìœ„ ì»¤ë²„ í‘œì‹œ
-3. ê²€ìƒ‰â†’ì¶”ì²œ ê¸°ë¡: ê¸°ì¡´ì²˜ëŸ¼ ì´ë¯¸ì§€ ìœ ì§€
-4. ì´ë¯¸ì§€ ì—†ëŠ” ê¸°êµ¬: placeholderë¡œ í´ë°±
+1. ¿îµ¿Ãß°¡·Î ³ÖÀº ¿À´Ã/¹Ì·¡ Ä«µå: ½æ³×ÀÏ Ç¥½Ã
+2. ÀÚÀ¯Áß·® ºÎÀ§º° Ä«µå: ºÎÀ§ Ä¿¹ö Ç¥½Ã
+3. °Ë»ö¡æÃßÃµ ±â·Ï: ±âÁ¸Ã³·³ ÀÌ¹ÌÁö À¯Áö
+4. ÀÌ¹ÌÁö ¾ø´Â ±â±¸: placeholder·Î Æú¹é
 
 ## Fast checks
 ```bash
@@ -21,7 +21,7 @@ rg -n "primaryImageUrl|PRIMARY_IMAGE_SQL|resolveRecordMachineImageUrl|machineCov
 ## Notes
 - **Render backend redeploy required** (history/workout-cards SQL).
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ê²€ìƒ‰ ì—†ì´ ì¶”ê°€ëœ ì¹´ë“œì— ì´ë¯¸ì§€ ì—†ìŒ | ì»¤ë²„/í´ë°±ìœ¼ë¡œ ì´ë¯¸ì§€ í‘œì‹œ |
+| °Ë»ö ¾øÀÌ Ãß°¡µÈ Ä«µå¿¡ ÀÌ¹ÌÁö ¾øÀ½ | Ä¿¹ö/Æú¹éÀ¸·Î ÀÌ¹ÌÁö Ç¥½Ã |
