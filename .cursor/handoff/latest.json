@@ -1,7 +1,7 @@
-﻿{
+{
   "title": "Friendly plan date picker modal",
   "summary": "Replace window.prompt date entry for move/copy workout cards with a modal calendar + Today/Tomorrow chips.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "8c66c138" },
   "changedFiles": [
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",

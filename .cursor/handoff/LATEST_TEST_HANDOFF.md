@@ -1,11 +1,11 @@
-ï»¿# Test handoff: Friendly plan date picker
+# Test handoff: Friendly plan date picker
 
 ## Summary
-Replaced `window.prompt("ë‚ ì§œ YYYY-MM-DD")` for workout card move/copy (and missed-plan change date) with a modal date picker: locale-friendly preview, Today/Tomorrow chips, native `type="date"` input.
+Replaced `window.prompt("³¯Â¥ YYYY-MM-DD")` for workout card move/copy (and missed-plan change date) with a modal date picker: locale-friendly preview, Today/Tomorrow chips, native `type="date"` input.
 
 ## Git
 - Branch: `main`
-- Commit: (after push)
+- Commit: `8c66c138`
 
 ## Changed
 - `frontend/src/components/records/PlanDatePickerDialog/*` (new)
@@ -14,9 +14,9 @@ Replaced `window.prompt("ë‚ ì§œ YYYY-MM-DD")` for workout card move/copy (and mi
 - `frontend/src/i18n/locales/{ko,en,ja,zh}/machines.json`
 
 ## Test focus
-1. Records â†’ workout card menu â†’ ë‚ ì§œ ë³€ê²½ / ë‹¤ë¥¸ ë‚ ì§œë¡œ ë³µì‚¬ â†’ modal (not browser prompt)
+1. Records ¡æ workout card menu ¡æ ³¯Â¥ º¯°æ / ´Ù¸¥ ³¯Â¥·Î º¹»ç ¡æ modal (not browser prompt)
 2. Today/Tomorrow chips + calendar pick work; confirm moves/copies
-3. Home missed-plan banner â†’ ë‚ ì§œ ë³€ê²½ uses same modal
+3. Home missed-plan banner ¡æ ³¯Â¥ º¯°æ uses same modal
 
 ## Fast checks
 ```bash
@@ -24,7 +24,7 @@ rg -n "PlanDatePickerDialog|window.prompt\\(" frontend/src/components/records fr
 rg -n "planDateMoveTitle|planDateToday" frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Ugly `prompt` YYYY-MM-DD | Modal with calendar + quick picks |
