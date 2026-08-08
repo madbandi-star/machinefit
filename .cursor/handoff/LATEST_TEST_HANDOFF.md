@@ -1,14 +1,14 @@
-ï»¿# Test handoff: Fix vertical stack of settings tiles
+# Test handoff: Fix vertical stack of settings tiles
 
 ## Summary
-ê¸°ë¡ì¹´ë“œ ì„¤ì • íƒ€ì¼ì´ ì„¸ë¡œë¡œ í•œ ì¤„ì”© ìŒ“ì´ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. ê·¸ë¦¬ë“œë¥¼ `<a>`ë¡œ ê°ì‹¸ì§€ ì•Šê³  íƒ€ì¼ë³„ ë§í¬ë¡œ ë°”ê¾¸ì—ˆê³ , 3ì—´ ê·¸ë¦¬ë“œë¥¼ ê°•ì œí•˜ë©° ì¤‘ëŸ‰ full-spanì„ ì œê±°í–ˆìŠµë‹ˆë‹¤.
+±â·ÏÄ«µå ¼³Á¤ Å¸ÀÏÀÌ ¼¼·Î·Î ÇÑ ÁÙ¾¿ ½×ÀÌ´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. ±×¸®µå¸¦ `<a>`·Î °¨½ÎÁö ¾Ê°í Å¸ÀÏº° ¸µÅ©·Î ¹Ù²Ù¾ú°í, 3¿­ ±×¸®µå¸¦ °­Á¦ÇÏ¸ç Áß·® full-spanÀ» Á¦°ÅÇß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 3b96fd34
 
 ## Test focus
-1. Records card: ì¶”ì²œì¤‘ëŸ‰ / ì¶”ì²œíšŸìˆ˜ / ê°€ë™ë²”ìœ„ in **one horizontal row** (3 columns)
+1. Records card: ÃßÃµÁß·® / ÃßÃµÈ½¼ö / °¡µ¿¹üÀ§ in **one horizontal row** (3 columns)
 2. Tap a tile still opens detail (when not adjusting)
 3. Adjust mode still editable without stacking all tiles full-width
 
@@ -17,7 +17,7 @@
 rg -n "tileHref|history-mini-setting-wrap--link|grid-template-columns: repeat\\(3" frontend/src/components/recommendation/RecommendationSettingsPanel frontend/src/styles/history-premium.css
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Tiles stacked vertically full-width | 3-column row inside card |

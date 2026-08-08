@@ -1,7 +1,7 @@
 {
   "title": "Fix vertical stack of settings tiles",
   "summary": "Stop wrapping the settings grid in a single <a>; use per-tile links and force a 3-column grid so weight/reps/ROM stay in one row on flaky mobile WebViews.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "3b96fd34" },
   "changedFiles": [
     "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
