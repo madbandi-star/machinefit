@@ -484,6 +484,58 @@ export const workoutCardRepository = {
     return this.findById(userId, id, locale);
   },
 
+  /**
+   * Keep plan-card diary/sets aligned with workout_logs after 「계획 저장」
+   * so date-copy can snapshot card fields (and logs) together.
+   */
+  async syncFromWorkoutLog(
+    userId: string,
+    data: {
+      gymId: string;
+      memberId: string;
+      machineId: string;
+      scheduledDate: string;
+      targetMuscleGroup: string;
+      setCount: number;
+      setWeightsKg: number[];
+      setCompleted?: boolean[] | null;
+      diary?: string | null;
+      workoutLogId?: string | null;
+    }
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+
+    await pool.query(
+      `UPDATE workout_cards
+       SET set_count = $6,
+           set_weights_kg = $7::jsonb,
+           set_completed = $8::jsonb,
+           diary = $9,
+           workout_log_id = COALESCE($10::uuid, workout_log_id),
+           updated_at = NOW()
+       WHERE user_id = $1
+         AND gym_id = $2
+         AND member_id = $3
+         AND machine_id = $4
+         AND scheduled_date = $5::date
+         AND target_muscle_group = $11`,
+      [
+        userId,
+        data.gymId,
+        data.memberId,
+        data.machineId,
+        data.scheduledDate,
+        data.setCount,
+        JSON.stringify(data.setWeightsKg),
+        data.setCompleted == null ? null : JSON.stringify(data.setCompleted),
+        data.diary ?? null,
+        data.workoutLogId ?? null,
+        data.targetMuscleGroup,
+      ]
+    );
+  },
+
   async updateStatus(
     userId: string,
     id: string,

@@ -7,6 +7,7 @@ import type {
 } from '@machinefit/shared';
 import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle, isAllGymsId } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
+import { workoutCardRepository } from '../repositories/workout-card.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
@@ -119,6 +120,24 @@ export const workoutLogService = {
         setCompleted: input.setCompleted,
         diary: input.diary,
       });
+
+      // Best-effort: mirror diary/sets onto matching workout_card for date-copy.
+      try {
+        await workoutCardRepository.syncFromWorkoutLog(userId, {
+          gymId: input.gymId,
+          memberId: input.memberId,
+          machineId,
+          scheduledDate: logDate,
+          targetMuscleGroup: targetMuscleKey,
+          setCount: input.setCount,
+          setWeightsKg: input.setWeightsKg,
+          setCompleted: input.setCompleted,
+          diary: input.diary ?? null,
+          workoutLogId: saved.id,
+        });
+      } catch {
+        /* card sync must not fail workout save */
+      }
 
       try {
         const loadLogs = [

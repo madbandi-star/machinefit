@@ -442,6 +442,32 @@ export const workoutCardService = {
 
     const status = defaultStatusForDate(input.scheduledDate, input.status);
     const nowIso = new Date().toISOString();
+    const targetMuscleKey = existing.targetMuscleGroup ?? '';
+
+    // Diary/sets often live on workout_logs after 「계획 저장」 while card.diary stays empty.
+    const sourceLog = await workoutLogRepository.findByUserMachineDate(
+      userId,
+      existing.gymId,
+      existing.machineId,
+      existing.scheduledDate,
+      targetMuscleKey,
+      existing.memberId
+    );
+
+    const setCount = sourceLog?.setCount ?? existing.setCount;
+    const setWeightsKg = sourceLog?.setWeightsKg?.length
+      ? sourceLog.setWeightsKg
+      : existing.setWeightsKg;
+    const diary =
+      (existing.diary?.trim() || sourceLog?.diary?.trim() || '') || undefined;
+    const setCompleted =
+      status === 'COMPLETED'
+        ? sourceLog?.setCompleted && sourceLog.setCompleted.length === setCount
+          ? sourceLog.setCompleted
+          : existing.setCompleted && existing.setCompleted.length === setCount
+            ? existing.setCompleted
+            : Array.from({ length: setCount }, () => true)
+        : Array.from({ length: setCount }, () => false);
 
     try {
       const created = await workoutCardRepository.create(
@@ -450,15 +476,15 @@ export const workoutCardService = {
           gymId: existing.gymId,
           memberId: existing.memberId,
           machineId: existing.machineId,
-          recommendationId: existing.recommendationId,
-          targetMuscleGroup: existing.targetMuscleGroup ?? '',
+          recommendationId: existing.recommendationId ?? sourceLog?.recommendationId,
+          targetMuscleGroup: targetMuscleKey,
           scheduledDate: input.scheduledDate,
           status,
-          setCount: existing.setCount,
-          setWeightsKg: existing.setWeightsKg,
+          setCount,
+          setWeightsKg,
           setReps: existing.setReps,
-          setCompleted: existing.setCompleted,
-          diary: existing.diary,
+          setCompleted,
+          diary,
           restSeconds: existing.restSeconds,
           displayOrder: existing.displayOrder,
           sourceCardId: existing.id,
@@ -468,22 +494,38 @@ export const workoutCardService = {
         locale
       );
 
-      if (status === 'COMPLETED') {
-        try {
-          const logId = await upsertLogForCompletedCard(userId, created);
-          const linked = await workoutCardRepository.updateStatus(
-            userId,
-            created.id,
-            { status: 'COMPLETED', workoutLogId: logId, completedAt: nowIso },
-            locale
-          );
-          return stripMachineId(linked ?? created);
-        } catch {
-          return stripMachineId(created);
-        }
+      // Mirror onto workout_logs so history UI (reads diary from logs) shows the copy.
+      try {
+        const log = await workoutLogRepository.upsert(
+          userId,
+          created.gymId,
+          created.memberId,
+          created.machineId,
+          {
+            recommendationId: created.recommendationId,
+            logDate: input.scheduledDate,
+            targetMuscleGroup: targetMuscleKey,
+            setCount,
+            setWeightsKg,
+            setCompleted,
+            diary,
+          }
+        );
+        const linked = await workoutCardRepository.updateStatus(
+          userId,
+          created.id,
+          {
+            status,
+            workoutLogId: log.id,
+            ...(status === 'COMPLETED' ? { completedAt: nowIso } : {}),
+            ...(status === 'IN_PROGRESS' ? { startedAt: nowIso } : {}),
+          },
+          locale
+        );
+        return stripMachineId(linked ?? created);
+      } catch {
+        return stripMachineId(created);
       }
-
-      return stripMachineId(created);
     } catch (error) {
       throwDuplicateCard(error);
     }
