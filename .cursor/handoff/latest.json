@@ -1,32 +1,28 @@
 {
-  "title": "Merge duplicate pillars/ganzhi explain guides",
-  "summary": "Under ??·??, two beginner guide blocks (pillars + ganzhi) are merged into one. Copy combines four-pillar structure with stem/branch meaning without duplication. UI/i18n only.",
+  "title": "Terse to-be tone for fortune detail metaphors",
+  "summary": "Korean short metaphors under ?? ??? ?? now use terse declarative endings: noun phrases end with a period (e.g. ??? ?.), action lines use ~? (e.g. ???.). Covers stemGym, shipshinItems, unseongItems, wuxingItems, comboHint. UI/i18n only.",
   "git": {
     "branch": "main",
-    "commit": "161c0613"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/fortune/FortuneTraditionalDetail.tsx",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json"
+    "frontend/src/i18n/locales/ko/fortune.json"
   ],
   "testFocus": [
-    "Open ?? ??? ?? ? ??·??",
-    "Only one collapsible beginner guide under pillars",
-    "Guide mentions both four pillars and stem/branch meaning in one flow"
+    "Open ?? ??? ?? ? ??·?? pillar cards: stemGym lines end like '??? ?.' not '????'",
+    "?? / ???? / ?? explain item lines use ~? or terse noun endings",
+    "No remaining '????' / '?????' on those short item keys"
   ],
   "fastChecks": [
     "node scripts/i18n-audit.mjs --sync",
-    "rg -n \"FortuneExplainBlock prefix\" frontend/src/components/fortune/FortuneTraditionalDetail.tsx"
+    "rg -n \"????|?????\" frontend/src/i18n/locales/ko/fortune.json"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm single explain accordion under ??·??"
+    "After Deploy Frontend: spot-check pillar stemGym and shipshin/unseong item gym lines"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Two identical-titled beginner guides (pillars + ganzhi) stacked under ??·??.",
-  "toBe": "One merged guide covering pillars + stem/branch without duplicate headings or repeated ideas."
+  "asIs": "Short metaphors used soft endings like '~? ????' / '~?????'.",
+  "toBe": "Short metaphors use terse to-be tone: '??? ?.' / '???.'"
 }
