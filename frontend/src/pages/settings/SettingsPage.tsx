@@ -26,6 +26,8 @@ import {
   type LocationPickerValue,
 } from '@/components/location/LocationPicker/LocationPicker';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
+import { BirthProfileFields } from '@/components/settings/BirthProfileFields/BirthProfileFields';
+import '@/styles/birth-profile.css';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
@@ -461,41 +463,17 @@ export function SettingsPage() {
           title={t('settings.birthProfile')}
           description={t('settings.birthProfileDesc')}
         >
-          <div className="form-stack">
-            <label className="form-field">
-              <span className="form-field__label">{t('settings.birthDate')}</span>
-              <input
-                type="date"
-                className="input"
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
-                max={new Date().toISOString().slice(0, 10)}
-              />
-            </label>
-            <label className="form-field">
-              <span className="form-field__label">{t('settings.birthTime')}</span>
-              <input
-                type="time"
-                className="input"
-                value={birthTime}
-                onChange={(e) => setBirthTime(e.target.value)}
-                disabled={birthTimeUnknown}
-              />
-            </label>
-            <label className="form-check">
-              <input
-                type="checkbox"
-                checked={birthTimeUnknown}
-                onChange={(e) => {
-                  const next = e.target.checked;
-                  setBirthTimeUnknown(next);
-                  if (next) setBirthTime('');
-                }}
-              />
-              <span>{t('settings.birthTimeUnknown')}</span>
-            </label>
-            <p className="form-section__desc">{t('settings.birthProfileHint')}</p>
-          </div>
+          <BirthProfileFields
+            birthDate={birthDate}
+            birthTime={birthTime}
+            birthTimeUnknown={birthTimeUnknown}
+            onBirthDateChange={setBirthDate}
+            onBirthTimeChange={setBirthTime}
+            onBirthTimeUnknownChange={(next) => {
+              setBirthTimeUnknown(next);
+              if (next) setBirthTime('');
+            }}
+          />
           <button
             type="button"
             className="btn btn--primary btn--block"

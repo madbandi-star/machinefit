@@ -1,0 +1,158 @@
+.birth-profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.birth-profile-fields__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-border, #d5dae3) 80%, transparent);
+  border-radius: var(--radius-md, 12px);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-primary, #3b6cff) 8%, transparent),
+      transparent 55%
+    ),
+    color-mix(in srgb, var(--color-surface-alt, #f5f6f8) 88%, var(--color-surface, #fff));
+}
+
+.birth-profile-fields__summary-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+
+.birth-profile-fields__summary-value {
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.birth-profile-fields__summary-sep {
+  margin: 0 0.4rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.birth-profile-fields__block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.birth-profile-fields__block-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.birth-profile-fields__time-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.birth-profile-fields__mode {
+  display: inline-flex;
+  padding: 0.18rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-border, #d5dae3) 90%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt, #f5f6f8) 75%, transparent);
+}
+
+.birth-profile-fields__mode-btn {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 650;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.birth-profile-fields__mode-btn--active {
+  background: var(--color-surface, #fff);
+  color: var(--color-text);
+  box-shadow: 0 1px 2px rgba(20, 24, 32, 0.08);
+}
+
+.birth-profile-fields__mode-btn:focus-visible {
+  outline: 2px solid var(--color-focus, #4c7dff);
+  outline-offset: 2px;
+}
+
+.birth-profile-fields__unknown-hint {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md, 12px);
+  border: 1px dashed color-mix(in srgb, var(--color-border, #d5dae3) 85%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt, #f5f6f8) 72%, transparent);
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.birth-profile-fields__hint {
+  margin: 0;
+}
+
+.birth-profile-fields__pickers {
+  padding: 0.55rem 0.45rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-border, #d5dae3) 75%, transparent);
+  border-radius: var(--radius-md, 12px);
+  background: color-mix(in srgb, var(--color-surface, #fff) 92%, var(--color-surface-alt, #f5f6f8));
+}
+
+.birth-profile-fields__date-grid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.birth-profile-fields .body-metrics-inline__grid--3 {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.birth-profile-fields .body-metrics-inline__grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.birth-profile-fields .scroll-picker__frame {
+  min-height: 148px;
+}
+
+.birth-profile-fields .scroll-picker__item {
+  font-variant-numeric: tabular-nums;
+}
+
+.birth-profile-fields .scroll-picker__item--selected {
+  font-weight: 750;
+}
+
+@media (max-width: 380px) {
+  .birth-profile-fields__time-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .birth-profile-fields__mode {
+    width: 100%;
+  }
+
+  .birth-profile-fields__mode-btn {
+    flex: 1;
+    text-align: center;
+  }
+}

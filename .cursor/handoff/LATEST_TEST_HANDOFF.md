@@ -1,28 +1,28 @@
-# Test handoff: Fix birth date reset + fortune entry points
+ï»¿# Test handoff: Birth date/time scroll pickers
 
 ## Summary
-»ı³â¿ùÀÏ ÀúÀå ÈÄ ÀÔ·ÂÄ­ÀÌ ºñ¿öÁö´ø ¹®Á¦(pg DATE ¡æ Àß¸øµÈ ¹®ÀÚ¿­)¸¦ ¼öÁ¤Çß°í, ¿À´ÃÀÇ ÇïÃ¢¿î¼¼¸¦ È¨ Ä«µå ¿Ü¿¡ ¸¶ÀÌÆäÀÌÁö ÀÎ»çÀÌÆ®¿¡µµ ¸µÅ©Çß½À´Ï´Ù.
+ì„¤ì • ìƒë…„ì›”ì¼Â·íƒ„ìƒì‹œì—ì„œ ë„¤ì´í‹°ë¸Œ date/time ì…ë ¥ì„ ì œê±°í•˜ê³ , ì‹ ì²´ í”„ë¡œí•„ê³¼ ê°™ì€ ScrollPicker íœ  + ìš”ì•½ ìŠ¤íŠ¸ë¦½ + íƒ„ìƒì‹œ ìˆìŒ/ëª¨ë¦„ ì„¸ê·¸ë¨¼íŠ¸ë¡œ UI/UXë¥¼ ê°œì„ í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `c6659adc`
+- Commit: `PENDING` (set after push)
 
 ## Test focus
-1. ¼³Á¤ ¡æ »ı³â¿ùÀÏ¡¤Åº»ı½Ã ÀúÀå ¡æ °ª À¯Áö / »õ·Î°íÄ§ ÈÄ¿¡µµ À¯Áö
-2. È¨ »ó´Ü ¡¸¿À´ÃÀÇ ÇïÃ¢¿î¼¼¡¹ Ä«µå
-3. ¸¶ÀÌÆäÀÌÁö ¡æ ¸Ó½ÅÇÍ ÀÎ»çÀÌÆ® ¡æ ¿À´ÃÀÇ ÇïÃ¢¿î¼¼
+1. ì„¤ì • â†’ ìƒë…„ì›”ì¼Â·íƒ„ìƒì‹œ: ë…„/ì›”/ì¼ ìŠ¤í¬ë¡¤ íœ  (ë„¤ì´í‹°ë¸Œ ë‚ ì§œ ì°½ ì—†ìŒ)
+2. íƒ„ìƒì‹œ: ã€Œì‹œê°„ ì„ íƒã€ì‹œ ì‹œ/ë¶„(5ë¶„ ë‹¨ìœ„) íœ , ã€Œíƒ„ìƒì‹œ ëª¨ë¦„ã€ì‹œ íŒíŠ¸ë§Œ
+3. ìƒë‹¨ ìš”ì•½ì´ ìŠ¤í¬ë¡¤ì— ë”°ë¼ ê°±ì‹ ë˜ê³ , ì €ì¥ í›„ ìƒˆë¡œê³ ì¹¨í•´ë„ ê°’ ìœ ì§€
 
 ## Fast checks
 ```bash
-rg -n "normalizeBirthDate|FORTUNE_TODAY" backend/server/repositories/user.repository.ts frontend/src/pages/my-page/MyPage.tsx
+npm run test:smoke:changed
+rg -n "BirthProfileFields|birth-profile-fields" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/settings/BirthProfileFields/
 ```
 
-## Notes
-- **Render backend redeploy** needed for DATE normalize fix.
-- Åº»ı½Ã ¶Ç´Â ¡¸Åº»ı½Ã ¸ğ¸§¡¹µµ ÀúÀåÇØ¾ß ¿î¼¼°¡ È°¼ºÈ­µË´Ï´Ù.
+## productionChecks
+- Pages ë°°í¬ í›„ ì„ íƒ: Settings `#birth-profile`ì—ì„œ íœ  UI í™•ì¸
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| »ı³â¿ùÀÏ ÀúÀå ÈÄ ÃÊ±âÈ­ | ÀúÀå°ª À¯Áö |
-| ¿î¼¼ À§Ä¡ ºÒ¸íÈ® | È¨ + ¸¶ÀÌÆäÀÌÁö¿¡¼­ ÁøÀÔ |
+| ë„¤ì´í‹°ë¸Œ date/time ë‹¤ì´ì–¼ë¡œê·¸ | ì¸ë¼ì¸ ScrollPicker + ìš”ì•½ |
+| ì²´í¬ë°•ìŠ¤ íƒ„ìƒì‹œ ëª¨ë¦„ | ì„¸ê·¸ë¨¼íŠ¸(ì‹œê°„ ì„ íƒ / ëª¨ë¦„) |
