@@ -1,24 +1,19 @@
 {
-  "title": "Plan date quick picks D+2¡¦D+6 + 1 week",
-  "summary": "Copy/move date picker quick chips now include D+2 through D+6 and one week later, in addition to today/tomorrow.",
-  "git": { "branch": "main", "commit": "6495e4f7" },
+  "title": "Template delete confirm not blocked by day menu",
+  "summary": "Close the day actions sheet before opening template-delete ConfirmDialog so the confirm is not trapped behind z-index 1200 overlay on mobile.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
-    "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
   ],
   "testFocus": [
-    "Date picker shows D+2..D+6 and one-week chips",
-    "Selecting a chip updates preview date"
+    "Day ? ? template delete opens usable confirm",
+    "Confirm/cancel work on mobile"
   ],
   "fastChecks": [
-    "rg -n \"planDateDPlus|planDateInOneWeek|quickPicks\" frontend/src/components/records/PlanDatePickerDialog frontend/src/i18n/locales/ko/machines.json"
+    "rg -n \"onDeleteTemplate|setDayMenuOpen\\(false\\)\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
   ],
-  "productionChecks": ["Pages deploy + copy/move date chips"],
+  "productionChecks": ["Pages deploy + mobile template delete confirm"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Only Today and Tomorrow quick picks",
-  "toBe": "Today, Tomorrow, D+2..D+6, one week later"
+  "asIs": "Confirm dialog behind day menu; delete untappable",
+  "toBe": "Day menu closes first; confirm usable"
 }

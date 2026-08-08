@@ -1,23 +1,23 @@
-# Test handoff: Plan date quick picks D+2¡¦D+6 + 1 week
+ï»¿# Test handoff: Template delete confirm not blocked by day menu
 
 ## Summary
-¿îµ¿ Ä«µå ³¯Â¥ º¯°æ/º¹»ç ´ÙÀÌ¾ó·Î±× ºü¸¥ ¼±ÅÃ¿¡ ¿À´Ã¡¤³»ÀÏ ¿Ü¿¡ D+2~D+6, ÀÏÁÖÀÏµÚ¸¦ Ãß°¡Çß½À´Ï´Ù.
+ì¼ìì¡°íšŒ â‹¯ ë©”ë‰´ì—ì„œ í…œí”Œë¦¿ ì‚­ì œ ì‹œ í™•ì¸ ë‹¤ì´ì–¼ë¡œê·¸ê°€ ë©”ë‰´ ë’¤ì— ê°€ë ¤ì§€ë˜ ë¬¸ì œë¥¼, í™•ì¸ì°½ì„ ë„ìš°ê¸° ì „ì— ë©”ë‰´ë¥¼ ë‹«ì•„ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: 6495e4f7
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ card ? ¡æ ³¯Â¥ º¯°æ ¶Ç´Â ´Ù¸¥ ³¯Â¥·Î º¹»ç
-2. Ä¨: ¿À´Ã, ³»ÀÏ, D+2 ¡¦ D+6, ÀÏÁÖÀÏµÚ
-3. Ä¨ ¼±ÅÃ ½Ã »ó´Ü ³¯Â¥ ¶óº§ÀÌ ÇØ´ç ÀÏÀÚ·Î ¹Ù²î°í È®ÀÎ °¡´É
+1. Mobile (or narrow viewport): Records â†’ day â‹¯ â†’ í…œí”Œë¦¿ ì‚­ì œ
+2. Confirm dialog is visible and tappable (not behind the day menu)
+3. Confirm deletes; cancel dismisses without deleting
 
 ## Fast checks
 ```bash
-rg -n "planDateDPlus|planDateInOneWeek|quickPicks" frontend/src/components/records/PlanDatePickerDialog frontend/src/i18n/locales/ko/machines.json
+rg -n "onDeleteTemplate|setDayMenuOpen\(false\)" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¿À´Ã / ³»ÀÏ¸¸ | ¿À´Ã¡¤³»ÀÏ¡¤D+2~D+6¡¤ÀÏÁÖÀÏµÚ |
+| Confirm behind day sheet; can't tap delete | Day sheet closes; confirm on top and usable |

@@ -1393,6 +1393,7 @@ export function HistoryListPanel() {
         onDeleteTemplate={(templateId) => {
           const template = planTemplates.find((item) => item.id === templateId);
           if (!template) return;
+          setDayMenuOpen(false);
           setPendingTemplateDelete({ id: template.id, name: template.name });
         }}
         onDeleteDay={() => {
