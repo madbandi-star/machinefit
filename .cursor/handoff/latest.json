@@ -1,7 +1,7 @@
 ﻿{
-  "title": "Records day-actions bottom sheet",
-  "summary": "Replace day menu dropdown with bottom sheet UX for template save/apply and delete-all.",
-  "git": { "branch": "main", "commit": "a5d14d0f" },
+  "title": "Day menu — template delete + centered panel",
+  "summary": "일자조회 ⋯에 템플릿 삭제(확인)를 추가하고, 템플릿을 상단에 배치하며 패널을 하단 도킹이 아닌 중앙에 표시합니다.",
+  "git": { "branch": "main", "commit": "6fda5e08" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.tsx",
     "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css",
@@ -12,16 +12,16 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Day ⋯ opens bottom sheet",
-    "Template save uses inline form",
-    "Delete day still confirms"
+    "Day ⋯ opens centered panel",
+    "Templates at top with Apply/Delete",
+    "Delete confirms and removes template"
   ],
   "fastChecks": [
-    "rg -n \"HistoryDayActionsSheet|window.prompt\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+    "npm run test:smoke:changed",
+    "rg -n \"onDeleteTemplate|deleteTemplateMutation|day-actions-sheet-overlay\" frontend/src/components/records"
   ],
-  "productionChecks": ["Pages deploy + open records day menu"],
+  "productionChecks": ["Pages deploy + day menu template delete"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Ugly details dropdown + prompt",
-  "toBe": "Bottom sheet day actions"
+  "asIs": "No template delete; menu stuck at bottom with templates lower",
+  "toBe": "Centered panel; templates on top with apply/delete"
 }
-
