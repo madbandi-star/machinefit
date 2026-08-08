@@ -1,20 +1,25 @@
 {
-  "title": "Pulse ???? ????? after adjust click",
-  "summary": "After tapping ??? ?? ?? on records, the save-mode button pulses like plan-save; CSS no longer lets --active override the attention styles.",
-  "git": { "branch": "main", "commit": "ca89761d" },
+  "title": "Clearer fit-feedback button affordance",
+  "summary": "Make ??? ? ?? / ??? ?? ?? look obviously tappable with choice prompt, tap hints, icon badges, and raised button styling on record cards.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/styles/history-premium.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Adjust click ? save button pulses",
-    "Pulse stops after save"
+    "Buttons look tappable before selection",
+    "Prompt visible on records cards"
   ],
   "fastChecks": [
-    "rg -n \"badSaveAttention|btn--save-attention\" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css"
+    "rg -n \"choicePrompt|tapToChoose|btn--idle\" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/i18n/locales/ko/machines.json"
   ],
-  "productionChecks": ["Pages deploy + records adjust button pulse"],
+  "productionChecks": ["Pages deploy + records feedback buttons"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Weak/no pulse after ??? ?? ??",
-  "toBe": "Plan-save-style pulse while in ??? ???? mode"
+  "asIs": "Unclear whether fit options are buttons",
+  "toBe": "Clear prompt + raised tappable button UI"
 }

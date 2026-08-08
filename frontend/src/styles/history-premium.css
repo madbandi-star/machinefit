@@ -292,6 +292,20 @@
 .history-page-premium .history-record-card .fit-feedback-panel {
   margin-top: 0;
   margin-bottom: 0;
+  padding: 0.55rem 0.55rem 0.6rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--history-card-border, var(--glass-border)) 90%, transparent);
+  background: color-mix(in srgb, rgba(12, 16, 24, 0.55) 70%, transparent);
+}
+
+.history-page-premium .history-record-card .fit-feedback-panel__choice-prompt {
+  margin-bottom: 0.5rem;
+  font-size: var(--history-font-sm, 0.8125rem);
+}
+
+.history-page-premium .history-record-card .fit-feedback-panel__btn {
+  min-height: 3.15rem;
+  padding: 0.5rem 0.55rem;
 }
 
 .history-page-premium .history-record-card .recommendation-workout-log--history {

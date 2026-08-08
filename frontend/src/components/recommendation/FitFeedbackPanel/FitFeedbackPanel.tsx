@@ -63,7 +63,11 @@ export function FitFeedbackPanel({
   }, [isPending, savedRating]);
 
   return (
-    <section className="fit-feedback-panel" aria-label={t('feedback.actionsLabel')} aria-busy={isPending}>
+    <section
+      className={`fit-feedback-panel${showIntroText ? '' : ' fit-feedback-panel--compact'}`}
+      aria-label={t('feedback.actionsLabel')}
+      aria-busy={isPending}
+    >
       {hasIntro ? (
         <div className="fit-feedback-panel__intro">
           {showIntroText || showSavePreferences ? (
@@ -88,25 +92,38 @@ export function FitFeedbackPanel({
           ) : null}
           {showIntroText ? <p className="fit-feedback-panel__desc">{t('feedback.desc')}</p> : null}
         </div>
-      ) : null}
+      ) : (
+        <p className="fit-feedback-panel__choice-prompt">{t('feedback.choicePrompt')}</p>
+      )}
       <div className="fit-feedback-panel__actions" role="group" aria-label={t('feedback.actionsLabel')}>
         <button
           ref={goodRef}
           type="button"
-          className={`fit-feedback-panel__btn${savedRating === 'good' ? ' fit-feedback-panel__btn--active' : ''}`}
+          className={`fit-feedback-panel__btn${savedRating === 'good' ? ' fit-feedback-panel__btn--active' : ''}${
+            savedRating ? '' : ' fit-feedback-panel__btn--idle'
+          }`}
           onClick={() => selectRating('good')}
           disabled={isPending}
           aria-pressed={savedRating === 'good'}
         >
-          <Icon name="circleCheck" size={20} />
-          {t('feedback.good')}
+          <span className="fit-feedback-panel__btn-icon" aria-hidden="true">
+            <Icon name="circleCheck" size={18} />
+          </span>
+          <span className="fit-feedback-panel__btn-copy">
+            <span className="fit-feedback-panel__btn-label">{t('feedback.good')}</span>
+            {!savedRating ? (
+              <span className="fit-feedback-panel__btn-hint">{t('feedback.tapToChoose')}</span>
+            ) : null}
+          </span>
         </button>
         <button
           ref={badRef}
           type="button"
           className={`fit-feedback-panel__btn${savedRating === 'bad' ? ' fit-feedback-panel__btn--active' : ''}${
-            showBadAsSave ? ' fit-feedback-panel__btn--save' : ''
-          }${badSaveAttention ? ' fit-feedback-panel__btn--save-attention' : ''}`}
+            savedRating ? '' : ' fit-feedback-panel__btn--idle'
+          }${showBadAsSave ? ' fit-feedback-panel__btn--save' : ''}${
+            badSaveAttention ? ' fit-feedback-panel__btn--save-attention' : ''
+          }`}
           onClick={() => {
             if (showBadAsSave) {
               if (isPending) return;
@@ -119,8 +136,17 @@ export function FitFeedbackPanel({
           aria-pressed={savedRating === 'bad'}
           aria-live={badSaveAttention ? 'polite' : undefined}
         >
-          <Icon name="sliders" size={20} />
-          {showBadAsSave ? t('feedback.saveSettings') : t('feedback.bad')}
+          <span className="fit-feedback-panel__btn-icon" aria-hidden="true">
+            <Icon name="sliders" size={18} />
+          </span>
+          <span className="fit-feedback-panel__btn-copy">
+            <span className="fit-feedback-panel__btn-label">
+              {showBadAsSave ? t('feedback.saveSettings') : t('feedback.bad')}
+            </span>
+            {!savedRating ? (
+              <span className="fit-feedback-panel__btn-hint">{t('feedback.tapToChoose')}</span>
+            ) : null}
+          </span>
         </button>
       </div>
       {isPending ? (

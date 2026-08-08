@@ -181,6 +181,8 @@
   "feedback": {
     "title": "How did the settings fit?",
     "desc": "Your feedback helps improve future recommendations.",
+    "choicePrompt": "设置合适吗？点按下方按钮进行选择",
+    "tapToChoose": "点按选择",
     "actionsLabel": "Recommendation fit feedback",
     "good": "Recommendations fit well",
     "bad": "Settings need adjustment",

@@ -1,23 +1,23 @@
-# Test handoff: Pulse ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹ after adjust click
+ï»¿# Test handoff: Clearer fit-feedback button affordance
 
 ## Summary
-±â·ÏÆäÀÌÁö¿¡¼­ ¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹¸¦ ´©¸£¸é ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹·Î ¹Ù²ï ¹öÆ°¿¡ °èÈ¹ ÀúÀå°ú °°Àº attention ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ¹Ù·Î Àû¿ëµË´Ï´Ù.
+ê¸°ë¡ì¹´ë“œ ã€Œì¶”ì²œê°’ ì˜ ë§ìŒã€ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€ê°€ ëˆ„ë¥¼ ìˆ˜ ìˆëŠ” ë²„íŠ¼ìœ¼ë¡œ ë³´ì´ë„ë¡, ì„ íƒ ì•ˆë‚´ ë¬¸êµ¬Â·íƒ­ íŒíŠ¸Â·ì•„ì´ì½˜ ë±ƒì§€Â·ì…ì²´ ë²„íŠ¼ ìŠ¤íƒ€ì¼ì„ ì ìš©í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: ca89761d
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ card ¡æ ¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä
-2. Button becomes ¼ÂÆÃ°ª ÀúÀåÇÏ±â and pulses (green)
-3. After save, pulse stops
+1. Records â†’ expanded card: prompt â€œì•„ë˜ ë²„íŠ¼ì„ ëˆŒëŸ¬ ì„ íƒí•˜ì„¸ìš”â€
+2. Both options look raised/tappable with â€œíƒ­í•˜ì—¬ ì„ íƒâ€ until chosen
+3. Selected state still clear; save-attention pulse still works
 
 ## Fast checks
 ```bash
-rg -n "badSaveAttention|btn--save-attention" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css
+rg -n "choicePrompt|tapToChoose|btn--idle|btn-icon" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Pulse only when fields dirty / overridden by --active | Pulse while in save mode after adjust click |
+| Flat labels, unclear if tappable | Prompt + chip buttons with tap hint |

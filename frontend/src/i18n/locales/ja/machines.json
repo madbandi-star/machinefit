@@ -181,6 +181,8 @@
   "feedback": {
     "title": "How did the settings fit?",
     "desc": "Your feedback helps improve future recommendations.",
+    "choicePrompt": "設定は合っていましたか？ボタンをタップして選んでください",
+    "tapToChoose": "タップして選択",
     "actionsLabel": "Recommendation fit feedback",
     "good": "Recommendations fit well",
     "bad": "Settings need adjustment",
