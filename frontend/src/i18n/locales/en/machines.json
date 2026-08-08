@@ -252,6 +252,7 @@
     "selectedDateLabel": "Selected: {{date}}",
     "clearAll": "Clear All",
     "remove": "Remove",
+    "openDetailAria": "Open detail for {{name}}",
     "removed": "The record was deleted.",
     "deleteTitle": "Delete record",
     "deleteMessage": "Delete this recommendation record? Linked workout logs will also be removed and cannot be restored.",

@@ -336,6 +336,30 @@
   color: inherit;
   align-self: stretch;
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.history-page-premium .history-record-card__thumb-link:active .history-record-card__thumb {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--history-card-border));
+  transform: scale(0.985);
+}
+
+.history-page-premium .history-record-card__thumb-cue {
+  position: absolute;
+  right: 0.32rem;
+  bottom: 0.32rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
+  background: color-mix(in srgb, rgba(12, 16, 22, 0.82) 88%, transparent);
+  color: var(--color-primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
 }
 
 .history-page-premium .history-record-card__meta-link {
@@ -349,6 +373,11 @@
   min-width: 0;
   text-decoration: none;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.history-page-premium .history-record-card__title-link:active .history-record-card__title-cue {
+  transform: translateX(2px);
 }
 
 .history-page-premium .history-record-card__hero {
@@ -390,6 +419,7 @@
 }
 
 .history-page-premium .history-record-card__thumb {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -398,12 +428,16 @@
   min-height: 100px;
   max-height: 112px;
   border-radius: 16px;
-  border: 1px solid var(--history-card-border);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--history-card-border));
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, transparent 42%),
     rgba(0, 0, 0, 0.22);
   overflow: hidden;
   flex-shrink: 0;
+  transition:
+    border-color 0.15s ease,
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
 }
 
 .history-page-premium .history-record-card__thumb .muscle-group-icon {
@@ -453,18 +487,55 @@
 }
 
 .history-page-premium .history-record-card__machine-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.12rem;
+  max-width: 100%;
   margin: 0;
   font-size: 1.0625rem;
   font-weight: 800;
   line-height: 1.28;
   letter-spacing: -0.025em;
   color: var(--color-text);
+}
+
+.history-page-premium .history-record-card__machine-name-text {
+  min-width: 0;
+  flex: 1 1 auto;
   word-break: keep-all;
   overflow-wrap: anywhere;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  padding-bottom: 0.02rem;
+  white-space: normal;
+}
+
+.history-page-premium .history-record-card__title-cue {
+  flex-shrink: 0;
+  margin-top: 0.18rem;
+  color: var(--color-primary);
+  opacity: 0.92;
+  transition: transform 0.12s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .history-page-premium .history-record-card__thumb-link:hover .history-record-card__thumb {
+    border-color: color-mix(in srgb, var(--color-primary) 55%, var(--history-card-border));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+
+  .history-page-premium .history-record-card__thumb-link:hover .history-record-card__thumb-cue,
+  .history-page-premium .history-record-card__title-link:hover .history-record-card__title-cue {
+    transform: translateX(2px);
+  }
+
+  .history-page-premium .history-record-card__title-link:hover .history-record-card__machine-name-text {
+    border-bottom-color: color-mix(in srgb, var(--color-primary) 72%, transparent);
+    color: color-mix(in srgb, var(--color-text) 86%, var(--color-primary));
+  }
 }
 
 .history-equipment-meta {
@@ -1203,6 +1274,11 @@
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.85) 0%, transparent 48%),
     rgba(243, 244, 246, 0.95);
+}
+
+[data-theme='light'] .history-page-premium .history-record-card__thumb-cue {
+  background: color-mix(in srgb, #fff 92%, transparent);
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.12);
 }
 
 [data-theme='light'] .history-page-premium .history-record-card__collapse,

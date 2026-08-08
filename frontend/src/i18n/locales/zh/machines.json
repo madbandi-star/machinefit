@@ -245,6 +245,7 @@
     "calendarHint": "Only dotted dates have history records.",
     "clearAll": "Clear All",
     "remove": "Remove",
+    "openDetailAria": "打开{{name}}的详细记录",
     "removed": "The record was deleted.",
     "deleteTitle": "Delete record",
     "deleteMessage": "Delete this recommendation record? Linked workout logs will also be removed and cannot be restored.",

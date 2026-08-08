@@ -1,23 +1,24 @@
-# Test handoff: Records green-dot on workout detail page
+ï»¿# Test handoff: Records card detail affordance (chevron cues)
 
 ## Summary
-±â·Ï¿¡¼­ ¿¬ »ó¼¼¿îµ¿±â·Ï ÆäÀÌÁö¿¡¼­µµ ÇÏ´Ü ±â·Ï ¹öÆ°¿¡ ³ì»öÁ¡ÀÌ ÄÑÁöµµ·Ï Çß½À´Ï´Ù. ÆÁ ¸»Ç³¼±Àº ½Å±Ô ÃßÃµ ½Ã¿¡¸¸ Ç¥½ÃµË´Ï´Ù.
+ê¸°ë¡ ì¹´ë“œì˜ ê¸°êµ¬ ì´ë¯¸ì§€Â·ì´ë¦„ì— ì‘ì€ chevron/ë°‘ì¤„ affordanceë¥¼ ë„£ì–´ ìƒì„¸ê¸°ë¡ìœ¼ë¡œ ì´ë™ ê°€ëŠ¥í•¨ì„ í…ìŠ¤íŠ¸ ì—†ì´ ë“œëŸ¬ëƒˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `fdde4ddc`
+- Commit: pending
 
 ## Test focus
-1. ±â·Ï ¡æ »ó¼¼¿îµ¿±â·Ï: ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡(ÆÁ ¾øÀ½)
-2. ¿À´Ã ½Å±Ô ÃßÃµ °á°ú: ³ì»öÁ¡ + ¡¸ÀÌµ¿ÇØ¼­ ¿îµ¿½ÃÀÛ¡¹ÆÁ
-3. ±â·Ï ÅÇ ÁøÀÔ ½Ã ³ì»öÁ¡ ÇØÁ¦
+1. ê¸°ë¡ ì¹´ë“œ ì¸ë„¤ì¼ ìš°í•˜ë‹¨ì— â€º ì¹© í‘œì‹œ
+2. ê¸°êµ¬ ì´ë¦„ì— ì–‡ì€ ë°‘ì¤„ + â€º í‘œì‹œ
+3. íƒ­ ì‹œ ìƒì„¸ê¸°ë¡ í˜ì´ì§€ ì´ë™ ìœ ì§€
+4. í™”ë©´ ë¬¸êµ¬ ì¶”ê°€ ì—†ìŒ(ariaë§Œ)
 
 ## Fast checks
 ```bash
-rg -n "setRecordsNavNudge|recordsNavNudgeTip|tip: isFreshRecommend" frontend/src/store/ui.store.ts frontend/src/pages/recommendation-result/RecommendationResultPage.tsx frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx
+rg -n "thumb-cue|title-cue|openDetailAria" frontend/src/components/records/HistoryRecordCard frontend/src/styles/records.css frontend/src/styles/history-premium.css frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ±â·Ï¡æ»ó¼¼¿¡¼­ ³ì»öÁ¡ ¾øÀ½ | »ó¼¼¿¡¼­µµ ³ì»öÁ¡ Ç¥½Ã |
+| ì´ë¯¸ì§€/ì´ë¦„ì´ ë§í¬ì²˜ëŸ¼ ì•ˆ ë³´ì„ | chevronÂ·ë°‘ì¤„ë¡œ ìƒì„¸ ì´ë™ ê°€ëŠ¥ |

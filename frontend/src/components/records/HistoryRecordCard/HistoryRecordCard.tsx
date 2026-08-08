@@ -2,7 +2,17 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, useCallback, useRef, memo, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowUpDown, Bookmark, ChevronDown, Clock3, Heart, MoreHorizontal, Target, X } from 'lucide-react';
+import {
+  ArrowUpDown,
+  Bookmark,
+  ChevronDown,
+  ChevronRight,
+  Clock3,
+  Heart,
+  MoreHorizontal,
+  Target,
+  X,
+} from 'lucide-react';
 import { WorkoutCardOrderControl } from '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl';
 import type { WorkoutCardOrderMove } from '@/utils/workoutCardOrder';
 import '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl.css';
@@ -313,7 +323,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
       <header className="history-record-card__header">
         <div className="history-record-card__hero">
           <div className="history-record-card__hero-top">
-            <Link to={resultUrl} className="history-record-card__thumb-link" aria-label={displayName}>
+            <Link
+              to={resultUrl}
+              className="history-record-card__thumb-link"
+              aria-label={t('machines:history.openDetailAria', { name: displayName })}
+            >
               <div className="history-record-card__thumb">
                 <SafeImage
                   src={machineImageUrl || machinePlaceholderUrl()}
@@ -323,6 +337,9 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   width={100}
                   height={100}
                 />
+                <span className="history-record-card__thumb-cue" aria-hidden>
+                  <ChevronRight size={12} strokeWidth={2.6} />
+                </span>
               </div>
             </Link>
 
@@ -427,8 +444,20 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
               </div>
 
               <div className="history-record-card__hero-copy">
-                <Link to={resultUrl} className="history-record-card__title-link">
-                  <h2 className="history-record-card__machine-name">{displayName}</h2>
+                <Link
+                  to={resultUrl}
+                  className="history-record-card__title-link"
+                  aria-label={t('machines:history.openDetailAria', { name: displayName })}
+                >
+                  <h2 className="history-record-card__machine-name">
+                    <span className="history-record-card__machine-name-text">{displayName}</span>
+                    <ChevronRight
+                      className="history-record-card__title-cue"
+                      size={16}
+                      strokeWidth={2.4}
+                      aria-hidden
+                    />
+                  </h2>
                 </Link>
 
                 <Link to={resultUrl} className="history-record-card__meta-link">
