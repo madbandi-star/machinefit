@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `ce0f9860`
 
 ## Test focus
 1. 미래 날짜 그룹 펼침 → 「운동추가」 → `/machines?planDate=해당일`
