@@ -288,6 +288,7 @@
     "planApplyTemplate": "템플릿 적용",
     "planTemplateNamePrompt": "템플릿 이름",
     "planTemplateSaved": "템플릿을 저장했어요.",
+    "planTemplateEmpty": "이 날짜에 저장할 세트·무게 기록이 없어요.",
     "planTemplateApplied": "템플릿을 적용했어요.",
     "planHomeTitle": "오늘의 운동 계획",
     "planHomeCount": "예정 {{count}}개",

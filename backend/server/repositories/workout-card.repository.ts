@@ -281,7 +281,7 @@ export const workoutCardRepository = {
     return result.rows.map((row) => mapCardRow(row, locale));
   },
 
-  /** Snapshot cards for a gym+date (any member) into template items. */
+  /** Snapshot cards (or workout logs) for a gym+date into template items. */
   async listTemplateSourceItems(
     userId: string,
     gymId: string,
@@ -299,19 +299,60 @@ export const workoutCardRepository = {
       [userId, gymId, scheduledDate]
     );
 
-    return result.rows.map((row) => ({
-      machineCode: row.machine_code,
-      targetMuscleGroup: row.target_muscle_group
-        ? (row.target_muscle_group as TargetMuscleGroup)
-        : undefined,
-      setCount: row.set_count,
-      setWeightsKg: row.set_weights_kg,
-      setReps: row.set_reps ?? undefined,
-      diary: row.diary ?? undefined,
-      restSeconds: row.rest_seconds ?? undefined,
-      displayOrder: row.display_order,
-      recommendationId: row.recommendation_id ?? undefined,
-    }));
+    if (result.rows.length > 0) {
+      return result.rows.map((row) => ({
+        machineCode: row.machine_code,
+        targetMuscleGroup: row.target_muscle_group
+          ? (row.target_muscle_group as TargetMuscleGroup)
+          : undefined,
+        setCount: row.set_count,
+        setWeightsKg: row.set_weights_kg,
+        setReps: row.set_reps ?? undefined,
+        diary: row.diary ?? undefined,
+        restSeconds: row.rest_seconds ?? undefined,
+        displayOrder: row.display_order,
+        recommendationId: row.recommendation_id ?? undefined,
+      }));
+    }
+
+    // Records page often has workout_logs without workout_cards — still allow templates.
+    const logResult = await pool.query<{
+      machine_code: string;
+      target_muscle_group: string;
+      set_count: number;
+      set_weights_kg: number[];
+      diary: string | null;
+      recommendation_id: string | null;
+    }>(
+      `SELECT m.code AS machine_code,
+              wl.target_muscle_group,
+              wl.set_count,
+              wl.set_weights_kg,
+              wl.diary,
+              wl.recommendation_id
+       FROM workout_logs wl
+       JOIN machines m ON m.id = wl.machine_id
+       WHERE wl.user_id = $1 AND wl.gym_id = $2 AND wl.log_date = $3::date
+       ORDER BY wl.created_at ASC`,
+      [userId, gymId, scheduledDate]
+    );
+
+    return logResult.rows.map((row, index) => {
+      const setCount = Math.max(1, row.set_count || 1);
+      const weights = Array.isArray(row.set_weights_kg) ? [...row.set_weights_kg] : [];
+      while (weights.length < setCount) weights.push(weights[weights.length - 1] ?? 0);
+      return {
+        machineCode: row.machine_code,
+        targetMuscleGroup: row.target_muscle_group
+          ? (row.target_muscle_group as TargetMuscleGroup)
+          : undefined,
+        setCount,
+        setWeightsKg: weights.slice(0, setCount),
+        diary: row.diary ?? undefined,
+        displayOrder: index,
+        recommendationId: row.recommendation_id ?? undefined,
+      };
+    });
   },
 
   async create(

@@ -44,8 +44,14 @@ import { MissedWorkoutPlansBanner } from '@/components/home/HomePlannedWorkoutCa
 import { isDismissedToday } from '@/utils/dismissToday';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
-import type { WorkoutRecordDisplayOrder } from '@machinefit/shared';
+import type {
+  WorkoutCard,
+  WorkoutCardTemplateItem,
+  WorkoutLog,
+  WorkoutRecordDisplayOrder,
+} from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
+import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
 import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
 import {
@@ -80,6 +86,39 @@ interface PendingDelete {
   targetMuscleGroup?: string;
   workoutCardId?: string;
   isPlanOnly?: boolean;
+}
+
+function normalizeTemplateWeights(setCount: number, weights: number[] | undefined): number[] {
+  const count = Math.max(1, setCount || 1);
+  const next = Array.isArray(weights) ? weights.slice(0, count).map((w) => (Number.isFinite(w) ? w : 0)) : [];
+  while (next.length < count) next.push(next[next.length - 1] ?? 0);
+  return next.length > 0 ? next : [0];
+}
+
+function buildTemplateItemsFromPlans(cards: WorkoutCard[]): WorkoutCardTemplateItem[] {
+  return cards.map((card, index) => ({
+    machineCode: card.machineCode,
+    ...(card.targetMuscleGroup ? { targetMuscleGroup: card.targetMuscleGroup } : {}),
+    setCount: Math.max(1, card.setCount || 1),
+    setWeightsKg: normalizeTemplateWeights(card.setCount, card.setWeightsKg),
+    ...(card.setReps?.length ? { setReps: card.setReps } : {}),
+    ...(card.diary?.trim() ? { diary: card.diary.trim() } : {}),
+    ...(card.restSeconds != null ? { restSeconds: card.restSeconds } : {}),
+    displayOrder: card.displayOrder ?? index,
+    ...(card.recommendationId ? { recommendationId: card.recommendationId } : {}),
+  }));
+}
+
+function buildTemplateItemsFromLogs(logs: WorkoutLog[]): WorkoutCardTemplateItem[] {
+  return logs.map((log, index) => ({
+    machineCode: log.machineCode,
+    ...(log.targetMuscleGroup ? { targetMuscleGroup: log.targetMuscleGroup } : {}),
+    setCount: Math.max(1, log.setCount || 1),
+    setWeightsKg: normalizeTemplateWeights(log.setCount, log.setWeightsKg),
+    ...(log.diary?.trim() ? { diary: log.diary.trim() } : {}),
+    displayOrder: index,
+    ...(log.recommendationId ? { recommendationId: log.recommendationId } : {}),
+  }));
 }
 
 function promptDateKey(message: string, defaultValue: string): string | null {
@@ -524,10 +563,32 @@ export function HistoryListPanel() {
 
   const saveTemplateMutation = useMutation({
     mutationFn: async ({ name, fromDate }: { name: string; fromDate: string }) => {
+      if (!activeGymId) throw new Error('missing_gym');
+      const dateKey = normalizeDateKey(fromDate);
+      const dayPlans = (workoutCards ?? []).filter(
+        (card) => normalizeDateKey(card.scheduledDate) === dateKey
+      );
+      const dayLogs = (workoutLogs ?? []).filter(
+        (log) => normalizeDateKey(log.logDate) === dateKey
+      );
+
+      // Prefer plan cards; fall back to workout logs (records page common case).
+      const items =
+        dayPlans.length > 0
+          ? buildTemplateItemsFromPlans(dayPlans)
+          : buildTemplateItemsFromLogs(dayLogs);
+
+      if (items.length === 0) {
+        const err = new Error('EMPTY_TEMPLATE');
+        (err as Error & { code?: string }).code = 'EMPTY_TEMPLATE';
+        throw err;
+      }
+
       const res = await workoutCardApi.createTemplate({
-        gymId: activeGymId!,
+        gymId: activeGymId,
         name,
-        fromDate,
+        items,
+        fromDate: dateKey,
       });
       return res.data.data;
     },
@@ -535,7 +596,23 @@ export function HistoryListPanel() {
       await invalidatePlans();
       showToast(t('machines:history.planTemplateSaved'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => {
+      const localCode =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code?: string }).code ?? '')
+          : '';
+      const axiosCode =
+        error &&
+        typeof error === 'object' &&
+        'response' in error &&
+        (error as { response?: { data?: { error?: { code?: string } } } }).response?.data
+          ?.error?.code;
+      if (localCode === 'EMPTY_TEMPLATE' || axiosCode === 'EMPTY_TEMPLATE') {
+        showToast(t('machines:history.planTemplateEmpty'), 'error');
+        return;
+      }
+      showToast(getApiErrorMessage(error, t('common:errors.submitFailed')), 'error');
+    },
   });
 
   const applyTemplateMutation = useMutation({
@@ -751,6 +828,15 @@ export function HistoryListPanel() {
     [allRecordCards, targetDeleteDate]
   );
 
+  const canSaveTemplateForDate = useMemo(() => {
+    const dateKey = normalizeDateKey(targetDeleteDate);
+    const hasPlans = (workoutCards ?? []).some(
+      (card) => normalizeDateKey(card.scheduledDate) === dateKey
+    );
+    if (hasPlans) return true;
+    return (workoutLogs ?? []).some((log) => normalizeDateKey(log.logDate) === dateKey);
+  }, [targetDeleteDate, workoutCards, workoutLogs]);
+
   const todayDateKey = getTodayDateKey();
   /** Plan-for-date CTA only when calendar date ≠ today (today uses normal machine browse). */
   const showPlanAddForDate =
@@ -931,7 +1017,7 @@ export function HistoryListPanel() {
                     {t('machines:history.planAddForDate')}
                   </Link>
                 ) : null}
-                {canUseWorkoutPlans && hasCardsOnTargetDate ? (
+                {canUseWorkoutPlans && canSaveTemplateForDate ? (
                   <button
                     type="button"
                     className="records-list__day-menu-item"

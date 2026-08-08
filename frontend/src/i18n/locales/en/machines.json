@@ -288,6 +288,7 @@
     "planApplyTemplate": "Apply template",
     "planTemplateNamePrompt": "Template name",
     "planTemplateSaved": "Template saved.",
+    "planTemplateEmpty": "No set/weight records to save for this date.",
     "planTemplateApplied": "Template applied.",
     "planHomeTitle": "Today's workout plan",
     "planHomeCount": "{{count}} planned",
