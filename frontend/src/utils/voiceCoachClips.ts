@@ -159,14 +159,6 @@ function stopAllLiveSources(): void {
   currentSource = null;
 }
 
-function isAudioPlaybackUnsafe(ctx: AudioContext): boolean {
-  if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
-    return true;
-  }
-  const state = ctx.state as string;
-  return state === 'suspended' || state === 'interrupted';
-}
-
 export function stopVoiceCoachClips(): void {
   clipGeneration += 1;
   if (currentHtmlAudio) {
@@ -238,6 +230,11 @@ function playHtmlAudioClip(url: string, signal?: AbortSignal): Promise<boolean> 
       signal?.removeEventListener('abort', onAbort);
       audio.onended = null;
       audio.onerror = null;
+      try {
+        audio.pause();
+      } catch {
+        // ignore
+      }
       if (currentHtmlAudio === audio) currentHtmlAudio = null;
       resolve(played);
     };
@@ -333,8 +330,6 @@ export async function playVoiceCoachClip(
 
         let settled = false;
         let endedWatchdog: number | null = null;
-        const startAudioTime = ctx.currentTime;
-        const clipBudgetMs = Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400));
 
         const finish = (value: boolean) => {
           if (settled) return;
@@ -342,7 +337,8 @@ export async function playVoiceCoachClip(
           if (pendingClipSettle === settleFromStop) pendingClipSettle = null;
           signal?.removeEventListener('abort', onAbort);
           if (endedWatchdog != null) window.clearTimeout(endedWatchdog);
-          // Always hard-stop — watchdog must not leave the buffer playing under the next cue.
+          // Always hard-stop so a late/frozen BufferSource cannot overlap the next cue
+          // after screen-lock (watchdog used to resolve without source.stop()).
           hardStopSource(source);
           resolve(value);
         };
@@ -362,28 +358,12 @@ export async function playVoiceCoachClip(
         source.onended = () => finish(true);
         signal?.addEventListener('abort', onAbort, { once: true });
 
-        // Wall-clock watchdog used to fire while the AudioContext was frozen
-        // (screen lock), resolve the await, and start the next rep while the
-        // previous BufferSource kept playing → overlapping "셋/넷/다섯…".
-        const tickWatchdog = () => {
-          if (settled) return;
-          if (isAudioPlaybackUnsafe(ctx)) {
-            void ctx.resume().catch(() => undefined);
-            endedWatchdog = window.setTimeout(tickWatchdog, 200);
-            return;
-          }
-          const audioEnd = startAudioTime + buffer.duration;
-          if (Number.isFinite(ctx.currentTime) && ctx.currentTime + 0.05 < audioEnd) {
-            const remainMs = Math.min(
-              4_000,
-              Math.max(80, (audioEnd - ctx.currentTime) * 1000 + 120)
-            );
-            endedWatchdog = window.setTimeout(tickWatchdog, remainMs);
-            return;
-          }
-          finish(true);
-        };
-        endedWatchdog = window.setTimeout(tickWatchdog, clipBudgetMs);
+        // Some WebViews skip onended after audio-focus blips — don't hang the coach.
+        // finish() hard-stops the source so lock/thaw cannot leave orphans playing.
+        endedWatchdog = window.setTimeout(
+          () => finish(true),
+          Math.min(12_000, Math.max(800, buffer.duration * 1000 + 400))
+        );
 
         try {
           source.start(0);

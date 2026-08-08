@@ -67,40 +67,6 @@ export function getActiveVoiceCoachPause(): VoiceCoachPauseController | null {
   return activePause;
 }
 
-/** Wait until the tab is visible again (screen lock / background freeze). */
-async function waitWhileDocumentHidden(signal?: AbortSignal): Promise<void> {
-  if (typeof document === 'undefined') return;
-  if (document.visibilityState !== 'hidden') return;
-  if (signal?.aborted) {
-    throw new DOMException('Aborted', 'AbortError');
-  }
-
-  await new Promise<void>((resolve, reject) => {
-    const onVis = () => {
-      if (document.visibilityState === 'visible') {
-        cleanup();
-        resolve();
-      }
-    };
-    const onAbort = () => {
-      cleanup();
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-    const cleanup = () => {
-      document.removeEventListener('visibilitychange', onVis);
-      signal?.removeEventListener('abort', onAbort);
-    };
-
-    document.addEventListener('visibilitychange', onVis);
-    signal?.addEventListener('abort', onAbort, { once: true });
-
-    if (document.visibilityState !== 'hidden') {
-      cleanup();
-      resolve();
-    }
-  });
-}
-
 /** Abort-aware sleep that freezes while the active voice-coach pause is on. */
 export async function sleepWithVoiceCoachPause(
   ms: number,
@@ -115,7 +81,6 @@ export async function sleepWithVoiceCoachPause(
 
     const pause = getActiveVoiceCoachPause();
     await pause?.waitWhilePaused(signal);
-    await waitWhileDocumentHidden(signal);
 
     if (signal?.aborted) {
       throw new DOMException('Aborted', 'AbortError');
@@ -140,15 +105,13 @@ export async function sleepWithVoiceCoachPause(
       signal?.addEventListener('abort', onAbort, { once: true });
     });
 
-    // If we entered pause / screen-lock during the slice, do not consume remaining time.
+    // If we entered pause during the slice, do not consume remaining time.
     if (getActiveVoiceCoachPause()?.isPaused) {
       continue;
     }
-    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
-      continue;
-    }
 
-    // Cap elapsed so a frozen timer wake does not burn the whole gap at once.
+    // Cap elapsed so a thawed background timer does not burn the whole gap at once
+    // (which stacked the next count cue on top of a still-playing clip).
     const elapsed = performance.now() - started;
     remaining -= Math.min(slice + 16, Math.max(0, elapsed));
   }
