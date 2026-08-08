@@ -1239,8 +1239,12 @@ export function WorkoutLogPanel({
     saveMutation.mutate({ setCompleted: next, silent: true });
   };
 
+  const isDiaryDirty =
+    diary.trim() !== (baseline?.diary ?? existingLog?.diary ?? '').trim();
+
   const isPlanDirty =
     isPersonalTipDirty ||
+    isDiaryDirty ||
     !existingLog ||
     existingLog.setCount !== setCount ||
     !weightsEqual(existingLog.setWeightsKg ?? [], weights);
@@ -1253,6 +1257,7 @@ export function WorkoutLogPanel({
 
     const nextWeights = [...weightsRef.current];
     const nextCount = setCountRef.current;
+    const nextDiary = diary.trim();
     const nextProtected = Array.from({ length: nextCount }, () => true);
 
     try {
@@ -1271,12 +1276,13 @@ export function WorkoutLogPanel({
               setCount: nextCount,
               weights: nextWeights,
               setCompleted: [...setCompletedRef.current],
+              diary: nextDiary,
             }
           : {
               setCount: nextCount,
               weights: nextWeights,
               setCompleted: [...setCompletedRef.current],
-              diary: diary.trim(),
+              diary: nextDiary,
             }
       );
     } catch {
