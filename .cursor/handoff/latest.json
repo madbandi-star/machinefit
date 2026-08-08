@@ -3,7 +3,7 @@
   "summary": "Normalize pg DATE/TIME to YYYY-MM-DD / HH:mm so Settings birth fields stay after save. Added My Page link to ??? ???? (also on Home).",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "c6659adc"
   },
   "changedFiles": [
     "backend/server/repositories/user.repository.ts",
