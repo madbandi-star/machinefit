@@ -12,6 +12,21 @@ export function getTodayDateKey(): string {
   return getLocalDateKey(new Date().toISOString());
 }
 
+/** Shift a YYYY-MM-DD key by calendar days (local). */
+export function shiftDateKey(dateKey: string, days: number): string {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const date = new Date(y, (m ?? 1) - 1, d ?? 1);
+  date.setDate(date.getDate() + days);
+  const yy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+export function getTomorrowDateKey(): string {
+  return shiftDateKey(getTodayDateKey(), 1);
+}
+
 /** Normalize API/log dates to local YYYY-MM-DD for consistent day grouping. */
 export function normalizeDateKey(value: string): string {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;

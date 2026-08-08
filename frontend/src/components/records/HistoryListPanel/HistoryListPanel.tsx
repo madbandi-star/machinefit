@@ -21,6 +21,7 @@ import {
   formatHistoryDateHeaderWithMuscles,
   getTodayDateKey,
   normalizeDateKey,
+  shiftDateKey,
 } from '@/utils/historyDate';
 import {
   buildLoggedWorkoutKey,
@@ -1393,7 +1394,10 @@ export function HistoryListPanel() {
             : t('machines:history.planDateMoveTitle')
         }
         message={t('machines:history.planDatePrompt')}
-        initialDate={pendingDateAction?.card.logDate || getTodayDateKey()}
+        initialDate={shiftDateKey(
+          pendingDateAction?.card.logDate || getTodayDateKey(),
+          1
+        )}
         confirmLabel={
           pendingDateAction?.mode === 'copy'
             ? t('machines:history.planDateCopyConfirm')

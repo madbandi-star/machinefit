@@ -1,18 +1,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
-import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
+import { getTodayDateKey, normalizeDateKey, shiftDateKey } from '@/utils/historyDate';
 import './PlanDatePickerDialog.css';
-
-function shiftDateKey(dateKey: string, days: number): string {
-  const [y, m, d] = dateKey.split('-').map(Number);
-  const date = new Date(y, (m ?? 1) - 1, d ?? 1);
-  date.setDate(date.getDate() + days);
-  const yy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yy}-${mm}-${dd}`;
-}
 
 function parseDateKey(dateKey: string): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return null;

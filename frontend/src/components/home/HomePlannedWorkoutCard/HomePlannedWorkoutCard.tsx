@@ -12,7 +12,7 @@ import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
-import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
+import { getTodayDateKey, getTomorrowDateKey, normalizeDateKey } from '@/utils/historyDate';
 import '@/styles/records.css';
 
 function collectMuscleSummary(cards: WorkoutCard[]): string[] {
@@ -249,7 +249,7 @@ export function MissedWorkoutPlansBanner() {
         open={Boolean(datePickerCard)}
         title={t('machines:history.planDateMoveTitle')}
         message={t('machines:history.planDatePrompt')}
-        initialDate={getTodayDateKey()}
+        initialDate={getTomorrowDateKey()}
         confirmLabel={t('machines:history.planDateMoveConfirm')}
         onClose={() => setDatePickerCardId(null)}
         onConfirm={(scheduledDate) => {
