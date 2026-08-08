@@ -1,28 +1,39 @@
 {
-  "title": "Remove birth picker unit key leak",
-  "summary": "Birth date/time ScrollPicker labels no longer render empty i18n unit keys (settings.birthMonthUnit etc.) under month/day/hour/minute.",
+  "title": "Helchang Fortune dashboard UI overhaul",
+  "summary": "Rebuilt /fortune/today as a content dashboard: hero keyword, radial/linear gauges with count-up, SVG equipment donut, workout stats/insight, recommendation grid, avoid/before/after/quote cards, reveal animations + reduced-motion. API/DB/business logic unchanged.",
   "git": {
     "branch": "main",
-    "commit": "6599df84"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/settings/BirthProfileFields/BirthProfileFields.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/zh/common.json",
-    "frontend/src/i18n/locales/ja/common.json"
+    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/components/fortune/",
+    "frontend/src/hooks/useCountUp.ts",
+    "frontend/src/hooks/usePrefersReducedMotion.ts",
+    "frontend/src/hooks/useRevealOnView.ts",
+    "frontend/src/styles/fortune.css",
+    "frontend/src/i18n/locales/ko/fortune.json",
+    "frontend/src/i18n/locales/en/fortune.json",
+    "frontend/src/i18n/locales/zh/fortune.json",
+    "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "Settings ? ????·???: under ?/?/?/? labels, no settings.* raw keys",
-    "Labels show only ??/?/?/?/? (or locale equivalents)"
+    "Open /fortune/today with birth profile: hero keyword + stars animate",
+    "Scores match API: healthmanIndex gauge, prLuck/recoveryLuck bars (no number mutation)",
+    "Equipment donut + legend from *Ratio30d; empty/sparse states",
+    "Recommendation cards + avoid/before/after/quote; disclaimer at bottom",
+    "prefers-reduced-motion: no looping motion, values still visible"
   ],
   "fastChecks": [
-    "rg -n \"birthMonthUnit|body-metrics-inline__unit\" frontend/src/components/settings/BirthProfileFields/BirthProfileFields.tsx || true"
+    "cd frontend && npx tsc -p tsconfig.json --noEmit",
+    "rg -n \"FortuneDashboard|fortune-gauge|fortune-donut\" frontend/src/pages/fortune/FortuneDetailPage.tsx frontend/src/components/fortune/"
   ],
-  "productionChecks": [],
+  "productionChecks": [
+    "After Pages deploy: /fortune/today visual dashboard"
+  ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend success"
   },
-  "asIs": "Empty unit i18n strings leaked as settings.birthMonthUnit etc. under picker labels",
-  "toBe": "Picker column labels only ? no unit line / no raw keys"
+  "asIs": "Text-report fortune page (lists/stars as plain text)",
+  "toBe": "Fitness content dashboard with gauges, donut, cards, and motion (logic unchanged)"
 }
