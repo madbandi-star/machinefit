@@ -28,6 +28,7 @@ import { formatHistoryDateHeader, formatHistoryTime, normalizeDateKey } from '@/
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
+import { useDoubleTapAction } from '@/hooks/useDoubleTapAction';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
 import { HistoryCardPlanActionsSheet } from '@/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet';
@@ -277,6 +278,12 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     setExpanded((prev) => !prev);
   };
 
+  const collapseDetails = useCallback(() => {
+    setExpanded(false);
+  }, []);
+
+  const doubleTapCollapse = useDoubleTapAction(collapseDetails, { enabled: expanded });
+
   const settingsPanel = (
     <RecommendationSettingsPanel
       settings={card.settings}
@@ -298,6 +305,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
       }${isFocused ? ' history-record-card--focused' : ''}${
         expanded ? '' : ' history-record-card--collapsed'
       }${isReordering ? ' history-record-card--reordering' : ''}`}
+      onPointerUp={doubleTapCollapse.onPointerUp}
+      onDoubleClick={doubleTapCollapse.onDoubleClick}
     >
       <header className="history-record-card__header">
         <div className="history-record-card__hero">

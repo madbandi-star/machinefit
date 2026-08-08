@@ -1,19 +1,20 @@
 {
-  "title": "Collapse details button on record cards",
-  "summary": "Expanded history record cards now show a bottom ??? ?? ??? toggle matching the expand control.",
-  "git": { "branch": "main", "commit": "455aedd7" },
+  "title": "Double-tap record card collapses details",
+  "summary": "Double-tap/double-click on an expanded history record card collapses its details; interactive controls are ignored.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Expanded card has bottom collapse button",
-    "Collapse/expand still work"
+    "Double-tap expanded card collapses details",
+    "Controls ignored"
   ],
   "fastChecks": [
-    "rg -n \"collapseCardDetails\" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
+    "rg -n \"doubleTapCollapse|useDoubleTapAction\" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
-  "productionChecks": ["Pages deploy + records card bottom toggle"],
+  "productionChecks": ["Pages deploy + mobile double-tap collapse on records"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "No bottom collapse when expanded",
-  "toBe": "Bottom collapse details button when expanded"
+  "asIs": "No double-tap collapse on record cards",
+  "toBe": "Double-tap collapses expanded card details"
 }
