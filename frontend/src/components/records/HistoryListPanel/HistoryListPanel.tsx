@@ -135,6 +135,10 @@ export function HistoryListPanel() {
   const showToast = useUIStore((s) => s.showToast);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [pendingDayDelete, setPendingDayDelete] = useState(false);
+  const [pendingTemplateDelete, setPendingTemplateDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [pendingDateAction, setPendingDateAction] = useState<{
     mode: 'move' | 'copy';
     card: HistoryRecordCardData;
@@ -657,6 +661,21 @@ export function HistoryListPanel() {
       setDayMenuOpen(false);
       await invalidatePlans();
       showToast(t('machines:history.planTemplateApplied'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const deleteTemplateMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      await workoutCardApi.deleteTemplate(templateId);
+      return templateId;
+    },
+    onSuccess: async () => {
+      setPendingTemplateDelete(null);
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.workoutCardTemplates(activeGymId ?? ''),
+      });
+      showToast(t('machines:history.planTemplateDeleted'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -1328,6 +1347,21 @@ export function HistoryListPanel() {
         onConfirm={() => deleteDayMutation.mutate(targetDeleteDate)}
       />
 
+      <ConfirmDialog
+        open={Boolean(pendingTemplateDelete)}
+        title={t('machines:history.planTemplateDeleteTitle')}
+        message={t('machines:history.planTemplateDeleteMessage', {
+          name: pendingTemplateDelete?.name ?? '',
+        })}
+        confirmLabel={t('machines:history.planTemplateDeleteConfirm')}
+        confirmVariant="danger"
+        onClose={() => setPendingTemplateDelete(null)}
+        onConfirm={() => {
+          if (!pendingTemplateDelete) return;
+          deleteTemplateMutation.mutate(pendingTemplateDelete.id);
+        }}
+      />
+
       <HistoryDayActionsSheet
         open={dayMenuOpen}
         dateLabel={formatHistoryDateHeader(targetDeleteDate, i18n.language)}
@@ -1343,6 +1377,7 @@ export function HistoryListPanel() {
         }
         savingTemplate={saveTemplateMutation.isPending}
         applyingTemplate={applyTemplateMutation.isPending}
+        deletingTemplate={deleteTemplateMutation.isPending}
         onClose={() => setDayMenuOpen(false)}
         onSaveTemplate={(name) => {
           setDayMenuOpen(false);
@@ -1354,6 +1389,11 @@ export function HistoryListPanel() {
             templateId,
             scheduledDate: targetDeleteDate,
           });
+        }}
+        onDeleteTemplate={(templateId) => {
+          const template = planTemplates.find((item) => item.id === templateId);
+          if (!template) return;
+          setPendingTemplateDelete({ id: template.id, name: template.name });
         }}
         onDeleteDay={() => {
           setDayMenuOpen(false);

@@ -48,8 +48,6 @@ export function HistoryCardPlanActionsSheet({
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="day-actions-sheet__handle" aria-hidden="true" />
-
         <div className="bottom-sheet__header day-actions-sheet__header">
           <div className="day-actions-sheet__heading">
             <p id={titleId} className="day-actions-sheet__title">

@@ -21,9 +21,11 @@ export interface HistoryDayActionsSheetProps {
   deleteLabel: string;
   savingTemplate?: boolean;
   applyingTemplate?: boolean;
+  deletingTemplate?: boolean;
   onClose: () => void;
   onSaveTemplate: (name: string) => void;
   onApplyTemplate: (templateId: string) => void;
+  onDeleteTemplate: (templateId: string) => void;
   onDeleteDay: () => void;
 }
 
@@ -38,9 +40,11 @@ export function HistoryDayActionsSheet({
   deleteLabel,
   savingTemplate = false,
   applyingTemplate = false,
+  deletingTemplate = false,
   onClose,
   onSaveTemplate,
   onApplyTemplate,
+  onDeleteTemplate,
   onDeleteDay,
 }: HistoryDayActionsSheetProps) {
   const { t } = useTranslation(['machines', 'common']);
@@ -60,6 +64,7 @@ export function HistoryDayActionsSheet({
   if (!open) return null;
 
   const hasActions = showPlanAdd || canSaveTemplate || templates.length > 0 || canDeleteDay;
+  const templateBusy = applyingTemplate || deletingTemplate;
 
   return (
     <div className="bottom-sheet-overlay day-actions-sheet-overlay" role="presentation" onClick={onClose}>
@@ -71,8 +76,6 @@ export function HistoryDayActionsSheet({
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="day-actions-sheet__handle" aria-hidden="true" />
-
         <div className="bottom-sheet__header day-actions-sheet__header">
           <div className="day-actions-sheet__heading">
             <p id={titleId} className="day-actions-sheet__title">
@@ -95,25 +98,46 @@ export function HistoryDayActionsSheet({
             <p className="day-actions-sheet__empty">{t('machines:history.dayActionsEmpty')}</p>
           ) : null}
 
-          {showPlanAdd ? (
-            <Link
-              to={planAddUrl}
-              className="day-actions-sheet__row"
-              onClick={onClose}
+          {templates.length > 0 ? (
+            <section
+              className="day-actions-sheet__section day-actions-sheet__section--templates"
+              aria-label={t('machines:history.planApplyTemplate')}
             >
-              <span className="day-actions-sheet__icon" aria-hidden="true">
-                <Icon name="dumbbell" size={20} />
-              </span>
-              <span className="day-actions-sheet__copy">
-                <span className="day-actions-sheet__row-title">
-                  {t('machines:history.planAddForDate')}
-                </span>
-                <span className="day-actions-sheet__row-desc">
-                  {t('machines:history.dayActionsAddPlanHint')}
-                </span>
-              </span>
-              <Icon name="chevronRight" size={18} className="day-actions-sheet__chevron" />
-            </Link>
+              <p className="day-actions-sheet__section-label">
+                {t('machines:history.planApplyTemplate')}
+              </p>
+              <p className="day-actions-sheet__section-hint">
+                {t('machines:history.dayActionsApplyTemplateHint')}
+              </p>
+              <ul className="day-actions-sheet__template-list">
+                {templates.map((template) => (
+                  <li key={template.id} className="day-actions-sheet__template-row">
+                    <span className="day-actions-sheet__template-name">{template.name}</span>
+                    <div className="day-actions-sheet__template-actions">
+                      <button
+                        type="button"
+                        className="btn btn--primary day-actions-sheet__template-btn"
+                        disabled={templateBusy}
+                        onClick={() => onApplyTemplate(template.id)}
+                      >
+                        {t('machines:history.planTemplateApplyAction')}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--secondary day-actions-sheet__template-btn day-actions-sheet__template-btn--danger"
+                        disabled={templateBusy}
+                        aria-label={t('machines:history.planTemplateDeleteActionNamed', {
+                          name: template.name,
+                        })}
+                        onClick={() => onDeleteTemplate(template.id)}
+                      >
+                        {t('machines:history.planTemplateDeleteAction')}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
 
           {canSaveTemplate ? (
@@ -189,30 +213,21 @@ export function HistoryDayActionsSheet({
             )
           ) : null}
 
-          {templates.length > 0 ? (
-            <section className="day-actions-sheet__section" aria-label={t('machines:history.planApplyTemplate')}>
-              <p className="day-actions-sheet__section-label">
-                {t('machines:history.planApplyTemplate')}
-              </p>
-              <p className="day-actions-sheet__section-hint">
-                {t('machines:history.dayActionsApplyTemplateHint')}
-              </p>
-              <ul className="day-actions-sheet__templates">
-                {templates.map((template) => (
-                  <li key={template.id}>
-                    <button
-                      type="button"
-                      className="day-actions-sheet__template"
-                      disabled={applyingTemplate}
-                      onClick={() => onApplyTemplate(template.id)}
-                    >
-                      <Icon name="history" size={16} aria-hidden="true" />
-                      <span>{template.name}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
+          {showPlanAdd ? (
+            <Link to={planAddUrl} className="day-actions-sheet__row" onClick={onClose}>
+              <span className="day-actions-sheet__icon" aria-hidden="true">
+                <Icon name="dumbbell" size={20} />
+              </span>
+              <span className="day-actions-sheet__copy">
+                <span className="day-actions-sheet__row-title">
+                  {t('machines:history.planAddForDate')}
+                </span>
+                <span className="day-actions-sheet__row-desc">
+                  {t('machines:history.dayActionsAddPlanHint')}
+                </span>
+              </span>
+              <Icon name="chevronRight" size={18} className="day-actions-sheet__chevron" />
+            </Link>
           ) : null}
 
           {canDeleteDay ? (
