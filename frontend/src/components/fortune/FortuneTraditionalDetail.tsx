@@ -4,6 +4,7 @@ import type {
   FortuneTraditionalDetail as Detail,
 } from '@machinefit/shared';
 import { FortuneExplainBlock } from '@/components/fortune/reading/FortuneExplainBlock';
+import { FortunePillarCard } from '@/components/fortune/reading/FortunePillarCard';
 
 interface FortuneTraditionalDetailProps {
   detail: Detail;
@@ -36,53 +37,33 @@ export function FortuneTraditionalDetailPanel({
 
         <details className="fr-detail__item" open>
           <summary>{t('detail.pillarsGroup')}</summary>
-          <dl className="fr-detail__grid">
-            <div>
-              <dt>{t('detail.pillarsYear')}</dt>
-              <dd>
-                {detail.yearStem}
-                {detail.yearBranch}
-              </dd>
-            </div>
-            <div>
-              <dt>{t('detail.pillarsMonth')}</dt>
-              <dd>
-                {detail.monthStem}
-                {detail.monthBranch}
-              </dd>
-            </div>
-            <div>
-              <dt>{t('detail.pillarsDay')}</dt>
-              <dd>
-                {detail.dayStem}
-                {detail.dayBranch}
-              </dd>
-            </div>
-            <div>
-              <dt>{t('detail.pillarsHour')}</dt>
-              <dd>
-                {detail.hourStem && detail.hourBranch
-                  ? `${detail.hourStem}${detail.hourBranch}`
-                  : t('detail.hourUnknown')}
-              </dd>
-            </div>
-          </dl>
-          <div className="fr-detail__sub">
-            <p className="fr-detail__sub-title">{t('explain.pillars.fourTitle')}</p>
-            <ul className="fr-detail__sub-list">
-              <li>
-                <strong>{t('detail.pillarsYear')}</strong> — {t('explain.pillars.yearGym')}
-              </li>
-              <li>
-                <strong>{t('detail.pillarsMonth')}</strong> — {t('explain.pillars.monthGym')}
-              </li>
-              <li>
-                <strong>{t('detail.pillarsDay')}</strong> — {t('explain.pillars.dayGym')}
-              </li>
-              <li>
-                <strong>{t('detail.pillarsHour')}</strong> — {t('explain.pillars.hourGym')}
-              </li>
-            </ul>
+          <p className="fr-detail__lead">{t('ganzhi.lead')}</p>
+          <div className="fr-pillar-grid">
+            <FortunePillarCard
+              title={t('detail.pillarsYear')}
+              stemHan={detail.yearStem}
+              branchHan={detail.yearBranch}
+              roleKey="year"
+            />
+            <FortunePillarCard
+              title={t('detail.pillarsMonth')}
+              stemHan={detail.monthStem}
+              branchHan={detail.monthBranch}
+              roleKey="month"
+            />
+            <FortunePillarCard
+              title={t('detail.pillarsDay')}
+              stemHan={detail.dayStem}
+              branchHan={detail.dayBranch}
+              roleKey="day"
+            />
+            <FortunePillarCard
+              title={t('detail.pillarsHour')}
+              stemHan={detail.hourStem}
+              branchHan={detail.hourBranch}
+              roleKey="hour"
+              emptyLabel={t('detail.hourUnknown')}
+            />
           </div>
           <FortuneExplainBlock prefix="pillars" showFootnote={false} />
           <FortuneExplainBlock prefix="ganzhi" showFootnote />

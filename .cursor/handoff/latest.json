@@ -1,24 +1,38 @@
 {
-  "title": "Add beginner gym-metaphor explains to fortune detail accordions",
-  "summary": "Each fortune-detail accordion (and today energy yin/yang + wuxing) ends with a 3-step beginner guide: what it is, what it looks at, and a gym metaphor. Presentation/i18n only; engine/API unchanged.",
-  "git": { "branch": "main", "commit": "61c2f6b5" },
+  "title": "Pillar cards: Hangul + ganzhi interpretation",
+  "summary": "Under ?? ??? ?? ? ??·??, year/month/day/hour pillars now show Hangul readings, element/yin-yang meta, role line, combo hint, and stem gym metaphor?not Han characters alone. UI/i18n only; no engine/API change.",
+  "git": {
+    "branch": "main",
+    "commit": "pending"
+  },
   "changedFiles": [
+    "frontend/src/components/fortune/reading/FortunePillarCard.tsx",
+    "frontend/src/components/fortune/reading/ganzhiLabels.ts",
     "frontend/src/components/fortune/FortuneTraditionalDetail.tsx",
-    "frontend/src/components/fortune/reading/FortuneExplainBlock.tsx",
-    "frontend/src/components/fortune/reading/FortuneEnergySection.tsx",
     "frontend/src/styles/fortune-reading.css",
-    "frontend/src/i18n/locales/*/fortune.json"
+    "frontend/src/i18n/locales/ko/fortune.json",
+    "frontend/src/i18n/locales/en/fortune.json",
+    "frontend/src/i18n/locales/zh/fortune.json",
+    "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "Open ?? ??? and expand each accordion ? explain block at bottom",
-    "Cycles accordion shows time-range comparison",
-    "Shipshin/unseong show item-specific gym one-liner",
-    "Today energy shows yin/yang + wuxing explains"
+    "Open ??? ???? ? ?? ?? ?? ? ?? ??? ?? ? ??·??",
+    "Each pillar shows Hangul (e.g. ??) with Han in parentheses",
+    "Stem/branch lines include ?? + ??",
+    "Role line + comboHint + stemGym metaphor visible",
+    "Hour pillar empty state still shows hourUnknown when missing"
   ],
   "fastChecks": [
     "cd frontend && npx tsc -p tsconfig.json --noEmit",
-    "rg -n \"FortuneExplainBlock|explain.gymTitle\" frontend/src/components/fortune"
+    "node scripts/i18n-audit.mjs --sync",
+    "rg -n \"FortunePillarCard|ganzhi.lead|fr-pillar\" frontend/src"
   ],
-  "asIs": "Detail accordions showed results with little beginner context",
-  "toBe": "Every accordion ends with easy explanation + gym metaphor"
+  "productionChecks": [
+    "After Deploy Frontend success: open /fortune/today detail pillars and confirm Hangul + interpretation"
+  ],
+  "deploy": {
+    "expected": "GitHub Pages frontend deploy on push to main"
+  },
+  "asIs": "Pillars showed bare Han only (e.g. ??) with little beginner context.",
+  "toBe": "Each pillar card shows Hangul+Han, ??/?? meta (??·??), role meaning, combo hint, and gym-style stem metaphor."
 }

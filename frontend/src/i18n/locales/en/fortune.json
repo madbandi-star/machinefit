@@ -451,5 +451,34 @@
       "metal": "Like sharp focus on a clear goal.",
       "water": "Like adjusting intensity and recovering."
     }
+  },
+  "ganzhi": {
+    "lead": "Chinese characters alone are hard — here’s the Korean/English reading, element, and a gym metaphor (for understanding only).",
+    "stemLabel": "Stem",
+    "branchLabel": "Branch",
+    "unknownElement": "energy",
+    "yinYang": {
+      "yang": "Yang",
+      "yin": "Yin"
+    },
+    "role": {
+      "year": "Year pillar ≈ your starting background",
+      "month": "Month pillar ≈ surrounding training environment",
+      "day": "Day pillar ≈ your core training personality",
+      "hour": "Hour pillar ≈ growth direction hints"
+    },
+    "comboHint": "{{stem}} reads as outward {{stemEl}} quality; {{branch}} as the {{branchEl}} setting/flow underneath.",
+    "stemGym": {
+      "jia": "Like bold growth and reaching for new stimulus.",
+      "yi": "Like flexible, fine-tuned growth.",
+      "bing": "Like hot drive and assertive push.",
+      "ding": "Like a focused flame — dense effort.",
+      "wu": "Like holding the center of a steady routine.",
+      "ji": "Like detailing and building a base.",
+      "geng": "Like cutting toward a clear PR-style goal.",
+      "xin": "Like refining form for higher quality.",
+      "ren": "Like riding a big flow and managing pace.",
+      "gui": "Like fine-tuning recovery to how you feel."
+    }
   }
 }
