@@ -14,59 +14,233 @@
   --fortune-accent: color-mix(in srgb, var(--color-primary, #3b6cff) 85%, #1a1f2c);
 }
 
-/* —— Home card (unchanged structure, light polish) —— */
+/* —— Home fortune card —— */
 .home-fortune-card {
+  --home-fortune-radius: 16px;
+  --home-fortune-border: color-mix(in srgb, var(--color-text) 14%, transparent);
+  position: relative;
+  overflow: hidden;
   margin: var(--space-md) 0;
-  padding: var(--space-md);
-  border: 1px solid var(--glass-border, rgba(138, 148, 166, 0.18));
-  border-radius: var(--radius-md, 12px);
+  padding: 1.1rem 1.05rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 24%, var(--home-fortune-border));
+  border-radius: var(--home-fortune-radius);
   background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--color-primary, #3b6cff) 8%, transparent),
-      transparent 55%
+    radial-gradient(
+      120% 80% at 50% -20%,
+      color-mix(in srgb, var(--color-primary) 20%, transparent),
+      transparent 58%
     ),
-    color-mix(in srgb, var(--color-bg-secondary, #f5f6f8) 88%, transparent);
+    color-mix(in srgb, var(--color-surface, #fff) 92%, var(--color-surface-alt, #f5f6f8));
+  color: var(--color-text);
 }
 
-.home-fortune-card__header {
+.home-fortune-card__glow {
+  pointer-events: none;
+  position: absolute;
+  inset: -30% -20% auto;
+  height: 55%;
+  background: radial-gradient(
+    circle at 50% 20%,
+    color-mix(in srgb, var(--color-primary) 18%, transparent),
+    transparent 70%
+  );
+}
+
+.home-fortune-card--pr .home-fortune-card__glow {
+  background: radial-gradient(circle at 50% 20%, color-mix(in srgb, #f5c542 24%, transparent), transparent 70%);
+}
+
+.home-fortune-card--recovery .home-fortune-card__glow {
+  background: radial-gradient(circle at 50% 20%, color-mix(in srgb, #5ac8a8 22%, transparent), transparent 70%);
+}
+
+.home-fortune-card__top {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.35rem;
-  margin-bottom: 0.35rem;
+  gap: 0.35rem 0.75rem;
 }
 
+.home-fortune-card__eyebrow,
 .home-fortune-card__title {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 750;
 }
 
 .home-fortune-card__date,
 .home-fortune-card__muted {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
 }
 
-.home-fortune-card__stars,
-.home-fortune-card__keyword,
-.home-fortune-card__headline,
-.home-fortune-card__body {
-  margin: 0.25rem 0;
+.home-fortune-card__keyword-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.85rem 0 0.45rem;
+  text-align: center;
+}
+
+.home-fortune-card__keyword-emoji {
+  font-size: 1.85rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--color-primary) 22%, transparent));
 }
 
 .home-fortune-card__keyword {
-  font-weight: 700;
+  margin: 0;
+  font-size: clamp(1.35rem, 5vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
 }
 
-.home-fortune-card__scores {
-  margin: 0.5rem 0 0.75rem;
-  padding-left: 1.1rem;
+.home-fortune-card__headline,
+.home-fortune-card__body {
+  position: relative;
+  margin: 0;
+  text-align: center;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.home-fortune-card__body {
+  margin: 0.35rem 0 0.85rem;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+}
+
+.home-fortune-card__luck {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.55rem;
+  margin: 0.75rem 0 0.85rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--home-fortune-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 70%, transparent);
+}
+
+.home-fortune-card__luck-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.home-fortune-card__stars-row {
+  display: inline-flex;
+  gap: 0.08rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.home-fortune-card__star {
+  color: color-mix(in srgb, var(--color-text-muted) 75%, transparent);
+}
+
+.home-fortune-card__star--on {
+  color: #f5b942;
+}
+
+.home-fortune-card__luck-meta {
+  font-size: 0.78rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.home-fortune-card__metrics {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+}
+
+.home-fortune-card__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.55rem 0.45rem;
+  border-radius: 12px;
+  border: 1px solid var(--home-fortune-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 78%, transparent);
+  text-align: center;
+}
+
+.home-fortune-card__metric--primary {
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--home-fortune-border));
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--color-primary) 12%, transparent),
+      transparent 70%
+    ),
+    color-mix(in srgb, var(--color-surface, #fff) 78%, transparent);
+}
+
+.home-fortune-card__metric-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  line-height: 1.25;
+}
+
+.home-fortune-card__metric-value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.home-fortune-card__cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-text);
+  font-size: 0.92rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.home-fortune-card__cta:hover {
+  background: color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
+
+.home-fortune-card--gate {
+  text-align: center;
+}
+
+.home-fortune-card__gate-emoji {
+  margin: 0.65rem 0 0.25rem;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+@media (max-width: 380px) {
+  .home-fortune-card__metrics {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* —— Gate / loading —— */

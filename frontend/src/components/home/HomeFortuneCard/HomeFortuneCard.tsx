@@ -2,6 +2,11 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { fortuneApi } from '@/api/fortune.api';
+import {
+  formatFortuneDate,
+  keywordEmoji,
+  keywordTone,
+} from '@/components/fortune/fortuneVisuals';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
@@ -9,9 +14,20 @@ import { useActiveMember } from '@/hooks/useActiveMember';
 import { getTodayDateKey } from '@/utils/historyDate';
 import { isAllGymsId } from '@machinefit/shared';
 
-function starsText(n: number): string {
-  const filled = Math.min(5, Math.max(0, Math.round(n)));
-  return `${'★'.repeat(filled)}${'☆'.repeat(5 - filled)}`;
+function StarsRow({ score }: { score: number }) {
+  const filled = Math.min(5, Math.max(0, Math.round(score)));
+  return (
+    <span className="home-fortune-card__stars-row" aria-hidden>
+      {Array.from({ length: 5 }, (_, i) => (
+        <span
+          key={i}
+          className={`home-fortune-card__star${i < filled ? ' home-fortune-card__star--on' : ''}`}
+        >
+          {i < filled ? '★' : '☆'}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 export function HomeFortuneCard() {
@@ -42,7 +58,9 @@ export function HomeFortuneCard() {
   if (isLoading) {
     return (
       <section className="home-fortune-card home-fortune-card--loading" aria-busy="true">
-        <h2 className="home-fortune-card__title">{t('title')}</h2>
+        <p className="home-fortune-card__eyebrow">
+          <span aria-hidden>🔥</span> {t('title')}
+        </p>
         <p className="home-fortune-card__muted">…</p>
       </section>
     );
@@ -51,7 +69,9 @@ export function HomeFortuneCard() {
   if (isError) {
     return (
       <section className="home-fortune-card" aria-live="polite">
-        <h2 className="home-fortune-card__title">{t('title')}</h2>
+        <p className="home-fortune-card__eyebrow">
+          <span aria-hidden>🔥</span> {t('title')}
+        </p>
         <p className="home-fortune-card__muted">{t('loadError')}</p>
       </section>
     );
@@ -59,10 +79,15 @@ export function HomeFortuneCard() {
 
   if (!data || data.status === 'needs_birth_profile') {
     return (
-      <section className="home-fortune-card">
-        <h2 className="home-fortune-card__title">{t('title')}</h2>
+      <section className="home-fortune-card home-fortune-card--gate">
+        <p className="home-fortune-card__eyebrow">
+          <span aria-hidden>🔥</span> {t('title')}
+        </p>
+        <p className="home-fortune-card__gate-emoji" aria-hidden>
+          🔮
+        </p>
         <p className="home-fortune-card__body">{t('needsBirth')}</p>
-        <Link to={`${ROUTES.SETTINGS}#birth-profile`} className="btn btn--secondary btn--block">
+        <Link to={`${ROUTES.SETTINGS}#birth-profile`} className="btn btn--primary btn--block">
           {t('enterBirth')}
         </Link>
       </section>
@@ -73,26 +98,59 @@ export function HomeFortuneCard() {
   const scores = data.scores;
   if (!fortune || !scores) return null;
 
+  const emoji = keywordEmoji(fortune.keyword);
+  const tone = keywordTone(fortune.keyword);
+  const filled = Math.min(5, Math.max(0, Math.round(fortune.scoreStars)));
+
   return (
-    <section className="home-fortune-card">
-      <div className="home-fortune-card__header">
-        <h2 className="home-fortune-card__title">{t('title')}</h2>
-        <span className="home-fortune-card__date">
-          {t('subtitle', { date: data.date })}
-        </span>
+    <section className={`home-fortune-card home-fortune-card--ready home-fortune-card--${tone}`}>
+      <div className="home-fortune-card__glow" aria-hidden />
+      <div className="home-fortune-card__top">
+        <p className="home-fortune-card__eyebrow">
+          <span aria-hidden>🔥</span> {t('title')}
+        </p>
+        <span className="home-fortune-card__date">{formatFortuneDate(data.date)}</span>
       </div>
-      <p className="home-fortune-card__stars">
-        {t('starsLabel')} {starsText(fortune.scoreStars)}
-      </p>
-      <p className="home-fortune-card__keyword">{fortune.keywordTitle}</p>
+
+      <div className="home-fortune-card__keyword-block">
+        <span className="home-fortune-card__keyword-emoji" aria-hidden>
+          {emoji}
+        </span>
+        <p className="home-fortune-card__keyword">{fortune.keywordTitle}</p>
+      </div>
+
       <p className="home-fortune-card__headline">{fortune.title}</p>
-      <ul className="home-fortune-card__scores">
-        <li>{t('healthmanIndex', { score: scores.healthmanIndex })}</li>
-        <li>{t('prLuck', { score: scores.prLuck })}</li>
-        <li>{t('recoveryLuck', { score: scores.recoveryLuck })}</li>
-      </ul>
-      <Link to={ROUTES.FORTUNE_TODAY} className="btn btn--secondary btn--block">
+
+      <div className="home-fortune-card__luck" aria-label={`${t('starsLabel')} ${filled} / 5`}>
+        <span className="home-fortune-card__luck-label">{t('starsLabel')}</span>
+        <StarsRow score={fortune.scoreStars} />
+        <span className="home-fortune-card__luck-meta">{filled} / 5</span>
+      </div>
+
+      <div className="home-fortune-card__metrics" aria-label={t('sectionFortuneVisual')}>
+        <div className="home-fortune-card__metric home-fortune-card__metric--primary">
+          <span className="home-fortune-card__metric-label">
+            <span aria-hidden>🔥</span> {t('healthmanIndexLabel')}
+          </span>
+          <strong className="home-fortune-card__metric-value">{scores.healthmanIndex}</strong>
+        </div>
+        <div className="home-fortune-card__metric">
+          <span className="home-fortune-card__metric-label">
+            <span aria-hidden>🏆</span> {t('prLuckLabel')}
+          </span>
+          <strong className="home-fortune-card__metric-value">{scores.prLuck}%</strong>
+        </div>
+        <div className="home-fortune-card__metric">
+          <span className="home-fortune-card__metric-label">
+            <span aria-hidden>🧘</span> {t('recoveryLuckLabel')}
+          </span>
+          <strong className="home-fortune-card__metric-value">{scores.recoveryLuck}%</strong>
+        </div>
+      </div>
+
+      <Link to={ROUTES.FORTUNE_TODAY} className="home-fortune-card__cta">
         {t('viewDetail')}
+        <span aria-hidden>→</span>
       </Link>
     </section>
   );
