@@ -3,7 +3,7 @@
   "summary": "Birth date/time ScrollPicker labels no longer render empty i18n unit keys (settings.birthMonthUnit etc.) under month/day/hour/minute.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "6599df84"
   },
   "changedFiles": [
     "frontend/src/components/settings/BirthProfileFields/BirthProfileFields.tsx",

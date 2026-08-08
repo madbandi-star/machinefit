@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `6599df84`
 
 ## Test focus
 1. 설정 → 생년월일·탄생시: 월/일/시/분 아래 `settings.*` 문자열 없음
