@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending (updated after push)
+- Commit: `8c55d450`
 
 ## Test focus
 1. 마이페이지 → 데이터 관리: 안전 안내 + 백업/복구 카드 레이아웃
