@@ -1,27 +1,29 @@
 {
-  "title": "Show photo board on My Page for member",
-  "summary": "Removed premium_member gate so plain member role also sees ????? in My Page explore links (same as free board).",
+  "title": "Fix birth date reset + fortune entry points",
+  "summary": "Normalize pg DATE/TIME to YYYY-MM-DD / HH:mm so Settings birth fields stay after save. Added My Page link to ??? ???? (also on Home).",
   "git": {
     "branch": "main",
-    "commit": "bc597250"
+    "commit": "PENDING"
   },
   "changedFiles": [
+    "backend/server/repositories/user.repository.ts",
+    "frontend/src/pages/settings/SettingsPage.tsx",
     "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "Login as member ? My Page ? ????? ????? ?? ??",
-    "Tap opens /community/photo",
-    "premium_member+ still see the link"
+    "Settings ? save birth date/time ? fields remain filled after save and refresh",
+    "Home shows ??? ???? card",
+    "My Page ? ??? ???? ? ??? ????"
   ],
   "fastChecks": [
-    "rg -n \"PHOTO_BOARD|showAboveMember\" frontend/src/pages/my-page/MyPage.tsx"
+    "rg -n \"normalizeBirthDate|FORTUNE_TODAY\" backend/server/repositories/user.repository.ts frontend/src/pages/my-page/MyPage.tsx"
   ],
   "productionChecks": [
-    "Pages deploy + Ctrl+F5: member My Page shows photo board"
+    "Render redeploy for user.repository fix + Pages for My Page link"
   ],
   "deploy": {
-    "expected": "FE Pages only"
+    "expected": "FE Pages + Render backend"
   },
-  "asIs": "Photo board My Page link only for premium_member+",
-  "toBe": "Photo board link visible for member and above"
+  "asIs": "Birth date cleared after save; fortune hard to find",
+  "toBe": "Birth persists; fortune on Home + My Page"
 }

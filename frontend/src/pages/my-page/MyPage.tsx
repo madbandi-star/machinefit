@@ -40,6 +40,7 @@ function ListNavLink({ to, label, icon }: { to: string; label: string; icon: Ico
 export function MyPage() {
   const { t } = useTranslation();
   const { t: tc } = useTranslation('community');
+  const { t: tf } = useTranslation('fortune');
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
@@ -185,6 +186,7 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
+          <ListNavLink to={ROUTES.FORTUNE_TODAY} label={tf('title')} icon="flame" />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
           {showAboveMember ? (
             <>

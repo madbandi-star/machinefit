@@ -371,10 +371,14 @@ export function SettingsPage() {
         birthTime: birthTimeUnknown ? null : birthTime.trim() || null,
         birthTimeUnknown,
       }),
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       const updatedUser = res.data.data as User;
       updateUser(updatedUser);
+      setBirthDate(updatedUser.birthDate ?? '');
+      setBirthTime(updatedUser.birthTime ?? '');
+      setBirthTimeUnknown(Boolean(updatedUser.birthTimeUnknown));
       syncUserSettings(updatedUser);
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.me });
       void queryClient.invalidateQueries({ queryKey: ['fortune'] });
       showToast(t('settings.birthProfileSaved'), 'success');
     },

@@ -1,27 +1,28 @@
-# Test handoff: Show photo board on My Page for member
+ï»¿# Test handoff: Fix birth date reset + fortune entry points
 
 ## Summary
-¸¶ÀÌÆäÀÌÁö ¡¸µÑ·¯º¸±â¡¹ÀÇ »çÁø°Ô½ÃÆÇ ¸µÅ©°¡ `premium_member` ÀÌ»ó¸¸ º¸ÀÌ´ø Á¦ÇÑÀ» Á¦°ÅÇÏ°í, `member`µµ ÀÚÀ¯°Ô½ÃÆÇÃ³·³ º¸ÀÌµµ·Ï Çß½À´Ï´Ù.
+ìƒë…„ì›”ì¼ ì €ì¥ í›„ ì…ë ¥ì¹¸ì´ ë¹„ì›Œì§€ë˜ ë¬¸ì œ(pg DATE â†’ ì˜ëª»ëœ ë¬¸ìì—´)ë¥¼ ìˆ˜ì •í–ˆê³ , ì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ë¥¼ í™ˆ ì¹´ë“œ ì™¸ì— ë§ˆì´í˜ì´ì§€ ì¸ì‚¬ì´íŠ¸ì—ë„ ë§í¬í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `bc597250`
+- Commit: `PENDING`
 
 ## Test focus
-1. member °èÁ¤ ¡æ ¸¶ÀÌÆäÀÌÁö ¡æ »çÁø°Ô½ÃÆÇ ¸µÅ© Ç¥½Ã
-2. ¸µÅ© ÁøÀÔ `/community/photo` Á¤»ó
-3. premium ÀÌ»óµµ ±âÁ¸Ã³·³ Ç¥½Ã
+1. ì„¤ì • â†’ ìƒë…„ì›”ì¼Â·íƒ„ìƒì‹œ ì €ì¥ â†’ ê°’ ìœ ì§€ / ìƒˆë¡œê³ ì¹¨ í›„ì—ë„ ìœ ì§€
+2. í™ˆ ìƒë‹¨ ã€Œì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ã€ ì¹´ë“œ
+3. ë§ˆì´í˜ì´ì§€ â†’ ë¨¸ì‹ í• ì¸ì‚¬ì´íŠ¸ â†’ ì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸
 
 ## Fast checks
 ```bash
-rg -n "PHOTO_BOARD|showAboveMember" frontend/src/pages/my-page/MyPage.tsx
+rg -n "normalizeBirthDate|FORTUNE_TODAY" backend/server/repositories/user.repository.ts frontend/src/pages/my-page/MyPage.tsx
 ```
-(±â´ë: PHOTO_BOARD ListNavLink°¡ showAboveMember ¹Û¿¡ ÀÖÀ½)
 
 ## Notes
-- FE Pages only.
+- **Render backend redeploy** needed for DATE normalize fix.
+- íƒ„ìƒì‹œ ë˜ëŠ” ã€Œíƒ„ìƒì‹œ ëª¨ë¦„ã€ë„ ì €ì¥í•´ì•¼ ìš´ì„¸ê°€ í™œì„±í™”ë©ë‹ˆë‹¤.
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| member ¸¶ÀÌÆäÀÌÁö¿¡ »çÁø°Ô½ÃÆÇ ¾øÀ½ | memberµµ »çÁø°Ô½ÃÆÇ ¸µÅ© Ç¥½Ã |
+| ìƒë…„ì›”ì¼ ì €ì¥ í›„ ì´ˆê¸°í™” | ì €ì¥ê°’ ìœ ì§€ |
+| ìš´ì„¸ ìœ„ì¹˜ ë¶ˆëª…í™• | í™ˆ + ë§ˆì´í˜ì´ì§€ì—ì„œ ì§„ì… |

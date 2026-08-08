@@ -7,8 +7,29 @@ import {
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
-function normalizeBirthTime(raw: string | null | undefined): string | null {
-  if (!raw) return null;
+/** pg may return DATE as Date; `<input type="date">` needs YYYY-MM-DD. */
+function normalizeBirthDate(raw: string | Date | null | undefined): string | null {
+  if (raw == null || raw === '') return null;
+  if (raw instanceof Date) {
+    if (Number.isNaN(raw.getTime())) return null;
+    const y = raw.getUTCFullYear();
+    const m = String(raw.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(raw.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  const s = String(raw);
+  const m = s.match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : null;
+}
+
+function normalizeBirthTime(raw: string | Date | null | undefined): string | null {
+  if (raw == null || raw === '') return null;
+  if (raw instanceof Date) {
+    if (Number.isNaN(raw.getTime())) return null;
+    const hh = String(raw.getUTCHours()).padStart(2, '0');
+    const mm = String(raw.getUTCMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  }
   const s = String(raw);
   const m = s.match(/^(\d{2}):(\d{2})/);
   return m ? `${m[1]}:${m[2]}` : null;
@@ -26,8 +47,8 @@ interface UserRow {
   weight_kg: string | null;
   experience_level: string | null;
   age: number | null;
-  birth_date: string | null;
-  birth_time: string | null;
+  birth_date: string | Date | null;
+  birth_time: string | Date | null;
   birth_time_unknown: boolean | null;
   workout_goal: string | null;
   home_gym_id: string | null;
@@ -71,9 +92,7 @@ function mapUser(row: UserRow): User {
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
     experienceLevel: row.experience_level as User['experienceLevel'],
     age: row.age ?? undefined,
-    birthDate: row.birth_date
-      ? String(row.birth_date).slice(0, 10)
-      : null,
+    birthDate: normalizeBirthDate(row.birth_date),
     birthTime: normalizeBirthTime(row.birth_time),
     birthTimeUnknown: Boolean(row.birth_time_unknown),
     workoutGoal: row.workout_goal as User['workoutGoal'],
