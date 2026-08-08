@@ -1,3 +1,4 @@
+import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,26 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { getTodayDateKey } from '@/utils/historyDate';
 import { isAllGymsId } from '@machinefit/shared';
+
+const EXPANDED_KEY = 'machinefit.homeFortuneExpanded';
+
+function readExpandedPreference(): boolean {
+  try {
+    const raw = localStorage.getItem(EXPANDED_KEY);
+    if (raw === null) return true;
+    return raw === '1';
+  } catch {
+    return true;
+  }
+}
+
+function writeExpandedPreference(expanded: boolean) {
+  try {
+    localStorage.setItem(EXPANDED_KEY, expanded ? '1' : '0');
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
 
 function StarsRow({ score }: { score: number }) {
   const filled = Math.min(5, Math.max(0, Math.round(score)));
@@ -30,11 +51,73 @@ function StarsRow({ score }: { score: number }) {
   );
 }
 
+function FortuneCardShell({
+  className,
+  expanded,
+  onToggle,
+  peek,
+  children,
+}: {
+  className: string;
+  expanded: boolean;
+  onToggle: () => void;
+  peek?: ReactNode;
+  children: ReactNode;
+}) {
+  const { t } = useTranslation(['fortune', 'common']);
+
+  return (
+    <section className={className}>
+      <button
+        type="button"
+        className="home-fortune-card__toggle"
+        aria-expanded={expanded}
+        aria-controls="home-fortune-card-body"
+        onClick={onToggle}
+      >
+        <span className="home-fortune-card__toggle-main">
+          <span className="home-fortune-card__eyebrow">
+            <span aria-hidden>🔥</span> {t('fortune:title')}
+          </span>
+          {!expanded && peek ? (
+            <span className="home-fortune-card__peek">{peek}</span>
+          ) : null}
+        </span>
+        <span className="home-fortune-card__toggle-meta">
+          <span className="home-fortune-card__toggle-label">
+            {expanded ? t('common:collapse') : t('common:expand')}
+          </span>
+          <span
+            className={`home-fortune-card__chevron${expanded ? ' is-open' : ''}`}
+            aria-hidden
+          >
+            ▾
+          </span>
+        </span>
+      </button>
+      {expanded ? (
+        <div id="home-fortune-card-body" className="home-fortune-card__body-wrap">
+          {children}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 export function HomeFortuneCard() {
   const { t, i18n } = useTranslation('fortune');
   const { activeGymId } = useActiveGym();
   const { activeMemberId } = useActiveMember();
   const today = getTodayDateKey();
+  const [expanded, setExpanded] = useState(readExpandedPreference);
+
+  const toggleExpanded = () => {
+    setExpanded((prev) => {
+      const next = !prev;
+      writeExpandedPreference(next);
+      return next;
+    });
+  };
 
   const gymId =
     activeGymId && !isAllGymsId(activeGymId) ? activeGymId : undefined;
@@ -57,32 +140,40 @@ export function HomeFortuneCard() {
 
   if (isLoading) {
     return (
-      <section className="home-fortune-card home-fortune-card--loading" aria-busy="true">
-        <p className="home-fortune-card__eyebrow">
-          <span aria-hidden>🔥</span> {t('title')}
+      <FortuneCardShell
+        className="home-fortune-card home-fortune-card--loading"
+        expanded={expanded}
+        onToggle={toggleExpanded}
+      >
+        <p className="home-fortune-card__muted" aria-busy="true">
+          …
         </p>
-        <p className="home-fortune-card__muted">…</p>
-      </section>
+      </FortuneCardShell>
     );
   }
 
   if (isError) {
     return (
-      <section className="home-fortune-card" aria-live="polite">
-        <p className="home-fortune-card__eyebrow">
-          <span aria-hidden>🔥</span> {t('title')}
+      <FortuneCardShell
+        className="home-fortune-card"
+        expanded={expanded}
+        onToggle={toggleExpanded}
+      >
+        <p className="home-fortune-card__muted" aria-live="polite">
+          {t('loadError')}
         </p>
-        <p className="home-fortune-card__muted">{t('loadError')}</p>
-      </section>
+      </FortuneCardShell>
     );
   }
 
   if (!data || data.status === 'needs_birth_profile') {
     return (
-      <section className="home-fortune-card home-fortune-card--gate">
-        <p className="home-fortune-card__eyebrow">
-          <span aria-hidden>🔥</span> {t('title')}
-        </p>
+      <FortuneCardShell
+        className="home-fortune-card home-fortune-card--gate"
+        expanded={expanded}
+        onToggle={toggleExpanded}
+        peek={<span aria-hidden>🔮</span>}
+      >
         <p className="home-fortune-card__gate-emoji" aria-hidden>
           🔮
         </p>
@@ -90,7 +181,7 @@ export function HomeFortuneCard() {
         <Link to={`${ROUTES.SETTINGS}#birth-profile`} className="btn btn--primary btn--block">
           {t('enterBirth')}
         </Link>
-      </section>
+      </FortuneCardShell>
     );
   }
 
@@ -103,12 +194,18 @@ export function HomeFortuneCard() {
   const filled = Math.min(5, Math.max(0, Math.round(fortune.scoreStars)));
 
   return (
-    <section className={`home-fortune-card home-fortune-card--ready home-fortune-card--${tone}`}>
+    <FortuneCardShell
+      className={`home-fortune-card home-fortune-card--ready home-fortune-card--${tone}`}
+      expanded={expanded}
+      onToggle={toggleExpanded}
+      peek={
+        <>
+          <span aria-hidden>{emoji}</span> {fortune.keywordTitle}
+        </>
+      }
+    >
       <div className="home-fortune-card__glow" aria-hidden />
       <div className="home-fortune-card__top">
-        <p className="home-fortune-card__eyebrow">
-          <span aria-hidden>🔥</span> {t('title')}
-        </p>
         <span className="home-fortune-card__date">{formatFortuneDate(data.date)}</span>
       </div>
 
@@ -158,6 +255,6 @@ export function HomeFortuneCard() {
         {t('viewDetail')}
         <span aria-hidden>→</span>
       </Link>
-    </section>
+    </FortuneCardShell>
   );
 }

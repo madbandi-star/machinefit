@@ -1,23 +1,24 @@
-# Test handoff: Merge energy-section explain guides
+# Test handoff: Collapsible home fortune card
 
 ## Summary
-Under ??? ??, two ?? ??? ??????? blocks (yinYang + wuxing) are merged into one `explain.energy` guide. UI/i18n only.
+Homepage ??? ???? section can be collapsed/expanded from the card header. Last state is saved in localStorage. UI only.
 
 ## Git
 - Branch: `main`
-- Commit: e4954727
+- Commit: pending
 
 ## Test focus
-1. ??? ???? ? ??? ??
-2. ?? ??? ??????? appears **once**
-3. Copy covers ?? + ?? without duplicate headings
+1. Home ? fortune card header shows ??/???
+2. Collapse hides body; ready state shows keyword peek
+3. Expand restores metrics + ??? ?? CTA
+4. Reload keeps last open/closed state
 
 ## Fast checks
 ```bash
-node scripts/i18n-audit.mjs --sync
-rg -n "FortuneExplainBlock prefix" frontend/src/components/fortune/reading/FortuneEnergySection.tsx
+cd frontend && npx tsc -p tsconfig.json --noEmit
+rg -n "home-fortune-card__toggle|machinefit.homeFortuneExpanded" frontend/src
 ```
 
 ## As-is ? To-be
-- **As-is**: Two identical-titled explain blocks
-- **To-be**: One merged energy explain block
+- **As-is**: Fortune card always fully open
+- **To-be**: Toggleable open/closed with persisted preference

@@ -1,32 +1,30 @@
 {
-  "title": "Merge yinYang/wuxing explain under Today's Energy",
-  "summary": "Under ??? ??, two beginner guides (yinYang + wuxing) are merged into one explain.energy block with combined copy and no duplicate ideas. UI/i18n only.",
+  "title": "Collapsible home fortune card",
+  "summary": "Homepage ??? ???? card can expand/collapse via header toggle. Preference persists in localStorage. Collapsed peek shows keyword when ready. UI only.",
   "git": {
     "branch": "main",
-    "commit": "e4954727"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/fortune/reading/FortuneEnergySection.tsx",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json"
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "frontend/src/styles/fortune.css"
   ],
   "testFocus": [
-    "Open ??? ???? ? ??? ??",
-    "Only one ?? ??? ??????? accordion",
-    "Expanded guide covers both ?? and ?? in one flow"
+    "Home page: toggle ??/??? on fortune card",
+    "Collapsed: header + keyword peek (ready) / header only otherwise",
+    "Expanded: full card content + CTA still works",
+    "Reload page: last open/closed state remembered"
   ],
   "fastChecks": [
-    "node scripts/i18n-audit.mjs --sync",
-    "rg -n \"FortuneExplainBlock prefix\" frontend/src/components/fortune/reading/FortuneEnergySection.tsx"
+    "cd frontend && npx tsc -p tsconfig.json --noEmit",
+    "rg -n \"home-fortune-card__toggle|machinefit.homeFortuneExpanded\" frontend/src"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm single explain under ??? ??"
+    "After Deploy Frontend: toggle collapse on home fortune section"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Two same-titled beginner guides (yinYang + wuxing) under ??? ??.",
-  "toBe": "One merged explain.energy guide covering yin/yang + five elements."
+  "asIs": "Home fortune card always fully expanded.",
+  "toBe": "Header toggle collapses/expands the section; preference persists."
 }
