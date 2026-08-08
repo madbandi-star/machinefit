@@ -1717,7 +1717,6 @@ export function WorkoutLogPanel({
           className="recommendation-workout-log recommendation-workout-log--history"
           aria-label={t('machines:workoutLog.title')}
         >
-        {voiceCoachPanel}
         {targetMusclePicker}
         <div className="history-workout-log__performance">
           <div className="history-workout-log__performance-header">
@@ -1731,6 +1730,8 @@ export function WorkoutLogPanel({
           </div>
           {weightList}
         </div>
+        {/* Below 「계획 저장」 / performance block on Records + detail pages. */}
+        {voiceCoachPanel}
         {diaryField}
         {personalTipField ? (
           <div className="history-workout-log__memo-actions">{personalTipField}</div>

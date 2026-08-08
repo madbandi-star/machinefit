@@ -2150,7 +2150,8 @@
 }
 
 .recommendation-workout-log--history .voice-coach-panel {
-  margin-top: 0.15rem;
+  /* Sits below performance / 「계획 저장」 on Records + detail. */
+  margin-top: 0.55rem;
 }
 
 .recommendation-workout-log__muscle-picker {

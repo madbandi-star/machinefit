@@ -1,27 +1,27 @@
-# Test handoff: Fix missing machine images on Records cards
+ï»¿# Test handoff: Move voice count below plan-save on Records
 
 ## Summary
-°Ë»öÀ» °ÅÄ¡Áö ¾ÊÀº °èÈ¹/·Î±× Ä«µå¿¡¼­µµ ±â±¸ ÀÌ¹ÌÁö°¡ ³ª¿Àµµ·Ï, workout-cards¡¤history¿¡ Ä¿¹ö ÀÌ¹ÌÁö ÇØ¼®À» ¸ÂÃß°í ±â·Ï Ä«µå¿¡¼­ Ä¿¹ö URL Æú¹éÀ» Ãß°¡Çß½À´Ï´Ù.
+ê¸°ë¡ í˜ì´ì§€ ê°œë³„ ê¸°êµ¬ ì¹´ë“œì™€ ì„¸ë¶€ ê¸°ë¡ í˜ì´ì§€ì—ì„œ ìŒì„±ì¹´ìš´íŠ¸ ì˜ì—­ì„ ê³„íšì €ì¥ ë²„íŠ¼(ìˆ˜í–‰ ê¸°ë¡ ë¸”ë¡) ì•„ë˜ë¡œ ì´ë™í–ˆìŠµë‹ˆë‹¤. ë‘˜ ë‹¤ `WorkoutLogPanel` history ë³€í˜•ì„ ê³µìœ í•©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `5bec939d`
+- Commit: `PENDING`
 
 ## Test focus
-1. ¿îµ¿Ãß°¡·Î ³ÖÀº ¿À´Ã/¹Ì·¡ Ä«µå: ½æ³×ÀÏ Ç¥½Ã
-2. ÀÚÀ¯Áß·® ºÎÀ§º° Ä«µå: ºÎÀ§ Ä¿¹ö Ç¥½Ã
-3. °Ë»ö¡æÃßÃµ ±â·Ï: ±âÁ¸Ã³·³ ÀÌ¹ÌÁö À¯Áö
-4. ÀÌ¹ÌÁö ¾ø´Â ±â±¸: placeholder·Î Æú¹é
+1. ê¸°ë¡ í˜ì´ì§€ ê°œë³„ ê¸°êµ¬ ì¹´ë“œ: ì„¸íŠ¸Â·ë¬´ê²Œ â†’ ê³„íš ì €ì¥ ê·¼ì²˜ â†’ **ê·¸ ì•„ë˜** ìŒì„±ì¹´ìš´íŠ¸ â†’ ë‹¤ì´ì–´ë¦¬/íŒ
+2. ì„¸ë¶€ ê¸°ë¡ í˜ì´ì§€: ë™ì¼ ìˆœì„œ
+3. ìŒì„±ì¹´ìš´íŠ¸ ì‹œì‘/ì¤‘ì§€, ê³„íš ì €ì¥ ë™ì‘ ìœ ì§€
 
 ## Fast checks
 ```bash
-rg -n "primaryImageUrl|PRIMARY_IMAGE_SQL|resolveRecordMachineImageUrl|machineCoverMediaUrl" shared/src/types/workout-card.types.ts backend/server/repositories/workout-card.repository.ts backend/server/repositories/history.repository.ts frontend/src/utils/catalogAssets.ts frontend/src/utils/workoutPlanCards.ts frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx
+rg -n "Below ã€Œê³„íš ì €ì¥ã€|voiceCoachPanel" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx
+rg -n "recommendation-workout-log--history .voice-coach-panel" frontend/src/styles/recommendation.css
 ```
 
 ## Notes
-- **Render backend redeploy required** (history/workout-cards SQL).
+- FE Pages only (no Render).
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| °Ë»ö ¾øÀÌ Ãß°¡µÈ Ä«µå¿¡ ÀÌ¹ÌÁö ¾øÀ½ | Ä¿¹ö/Æú¹éÀ¸·Î ÀÌ¹ÌÁö Ç¥½Ã |
+| ìŒì„±ì¹´ìš´íŠ¸ê°€ ê³„íšì €ì¥/ì„¸íŠ¸ ìœ„ | ìŒì„±ì¹´ìš´íŠ¸ê°€ ê³„íšì €ì¥Â·ìˆ˜í–‰ê¸°ë¡ ë¸”ë¡ ì•„ë˜ |
