@@ -1,32 +1,27 @@
-# Test handoff: Today¡¯s Helchang Fortune v1
+ï»¿# Test handoff: Show photo board on My Page for member
 
 ## Summary
-¿À´ÃÀÇ ÇïÃ¢¿î¼¼ v1: »ı³â¿ùÀÏ/Åº»ı½Ã(¸ğ¸§=°£´Ü ¿î¼¼), seed ±â¹İ Fortune + ¿îµ¿ µ¥ÀÌÅÍ ºĞ¼® + ÃßÃµ 3°èÃş, È¨ Ä«µå/»ó¼¼, °ü¸®ÀÚ ÄÜÅÙÃ÷ CRUD. **Render ¸¶ÀÌ±×·¹ÀÌ¼Ç 105 ÇÊ¼ö.**
+ë§ˆì´í˜ì´ì§€ ã€Œë‘˜ëŸ¬ë³´ê¸°ã€ì˜ ì‚¬ì§„ê²Œì‹œíŒ ë§í¬ê°€ `premium_member` ì´ìƒë§Œ ë³´ì´ë˜ ì œí•œì„ ì œê±°í•˜ê³ , `member`ë„ ììœ ê²Œì‹œíŒì²˜ëŸ¼ ë³´ì´ë„ë¡ í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `824945e3`
+- Commit: `PENDING`
 
 ## Test focus
-1. ¼³Á¤ ¡æ »ı³â¿ùÀÏ + Åº»ı½Ã(¶Ç´Â ¸ğ¸§) ÀúÀå ¡æ È¨ Ä«µå ³ëÃâ
-2. °°Àº ³¯ »õ·Î°íÄ§ ¡æ µ¿ÀÏ °á°ú
-3. »ó¼¼: ¡¸¿À´ÃÀÇ ¿î¼¼¡¹¿Í ¡¸³» ¿îµ¿ µ¥ÀÌÅÍ ºĞ¼®¡¹ ºĞ¸®
-4. `/admin/fortune` ÄÜÅÙÃ÷ Ãß°¡/¼öÁ¤/ºñÈ°¼º
-5. »ı³â ¹ÌÀÔ·Â ¡æ ¼³Á¤ `#birth-profile` CTA
-6. API ¿À·ù ½Ã Ä«µå°¡ ¾Û ÀüÃ¼¸¦ ±úÁö ¾ÊÀ½
+1. member ê³„ì • â†’ ë§ˆì´í˜ì´ì§€ â†’ ì‚¬ì§„ê²Œì‹œíŒ ë§í¬ í‘œì‹œ
+2. ë§í¬ ì§„ì… `/community/photo` ì •ìƒ
+3. premium ì´ìƒë„ ê¸°ì¡´ì²˜ëŸ¼ í‘œì‹œ
 
 ## Fast checks
 ```bash
-rg -n "fortune/today|fortune_content_items|buildFortuneSeedKey|HomeFortuneCard" database/migrations/105_user_birth_and_fortune_content.sql backend/server/routes/fortune.routes.ts shared/src/utils/fortune-seed.ts frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx
-cd shared && npx vitest run src/utils/fortune-seed.test.ts
+rg -n "PHOTO_BOARD|showAboveMember" frontend/src/pages/my-page/MyPage.tsx
 ```
+(ê¸°ëŒ€: PHOTO_BOARD ListNavLinkê°€ showAboveMember ë°–ì— ìˆìŒ)
 
 ## Notes
-- **Render backend redeploy + migration 105 required**
-- Birth not required at signup
-- Entertainment disclaimer on fortune UI
+- FE Pages only.
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ÇïÃ¢¿î¼¼ ¾øÀ½ | ÀÏÀÏ ¿î¼¼+µ¥ÀÌÅÍºĞ¼®+°ü¸®ÀÚ Ä«Å»·Î±× |
+| member ë§ˆì´í˜ì´ì§€ì— ì‚¬ì§„ê²Œì‹œíŒ ì—†ìŒ | memberë„ ì‚¬ì§„ê²Œì‹œíŒ ë§í¬ í‘œì‹œ |

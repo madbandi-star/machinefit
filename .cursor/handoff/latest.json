@@ -1,42 +1,27 @@
 {
-  "title": "Today?s Helchang Fortune v1",
-  "summary": "Added birth date/time (unknown allowed) on users + Settings, deterministic Fortune/Analytics/Recommendation engines, GET /fortune/today, home card + detail page, and admin fortune-content CRUD. Requires DB migration 105 on Render.",
+  "title": "Show photo board on My Page for member",
+  "summary": "Removed premium_member gate so plain member role also sees ????? in My Page explore links (same as free board).",
   "git": {
     "branch": "main",
-    "commit": "824945e3"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "database/migrations/105_user_birth_and_fortune_content.sql",
-    "shared/src/types/fortune.types.ts",
-    "shared/src/utils/fortune-seed.ts",
-    "shared/src/validators/fortune.schema.ts",
-    "shared/src/validators/user.schema.ts",
-    "backend/server/services/fortune/",
-    "backend/server/repositories/fortune-content.repository.ts",
-    "backend/server/routes/fortune.routes.ts",
-    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
-    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx"
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "Settings ? birth date + time or unknown ? save ? home shows fortune card",
-    "Same day refresh ? identical fortune",
-    "Detail page separates ?? vs ??? ?? sections",
-    "Admin /admin/fortune create/edit/disable content",
-    "No birth profile ? CTA to settings#birth-profile"
+    "Login as member ? My Page ? ????? ????? ?? ??",
+    "Tap opens /community/photo",
+    "premium_member+ still see the link"
   ],
   "fastChecks": [
-    "rg -n \"fortune/today|fortune_content_items|buildFortuneSeedKey|HomeFortuneCard\" database/migrations/105_user_birth_and_fortune_content.sql backend/server/routes/fortune.routes.ts shared/src/utils/fortune-seed.ts frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "cd shared && npx vitest run src/utils/fortune-seed.test.ts"
+    "rg -n \"PHOTO_BOARD|showAboveMember\" frontend/src/pages/my-page/MyPage.tsx"
   ],
   "productionChecks": [
-    "Render: apply migration 105 then redeploy API",
-    "Pages Ctrl+F5: home fortune card + detail + settings birth"
+    "Pages deploy + Ctrl+F5: member My Page shows photo board"
   ],
   "deploy": {
-    "expected": "FE Pages + Render backend migration/redeploy REQUIRED"
+    "expected": "FE Pages only"
   },
-  "asIs": "No Helchang Fortune feature; users had age only",
-  "toBe": "Daily deterministic fortune + workout analytics + admin catalog; birth profile on users"
+  "asIs": "Photo board My Page link only for premium_member+",
+  "toBe": "Photo board link visible for member and above"
 }
