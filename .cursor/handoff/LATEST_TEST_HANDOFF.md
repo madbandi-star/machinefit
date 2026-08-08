@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `cc876a67`
 
 ## Test focus
 1. 기록 카드 핏 피드백 미선택 상태: choicePrompt 문구가 「아래 버튼을 눌러 기본값을 설정하세요.」
