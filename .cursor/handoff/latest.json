@@ -1,9 +1,9 @@
 {
   "title": "Pillar cards: Hangul + ganzhi interpretation",
-  "summary": "Under ?? ??? ?? ? ??·??, year/month/day/hour pillars now show Hangul readings, element/yin-yang meta, role line, combo hint, and stem gym metaphor?not Han characters alone. UI/i18n only; no engine/API change.",
+  "summary": "Under ?? ??? ?? ? ?????, year/month/day/hour pillars now show Hangul readings, element/yin-yang meta, role line, combo hint, and stem gym metaphor?not Han characters alone. UI/i18n only; no engine/API change.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "b25caee4"
   },
   "changedFiles": [
     "frontend/src/components/fortune/reading/FortunePillarCard.tsx",
@@ -16,7 +16,7 @@
     "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "Open ??? ???? ? ?? ?? ?? ? ?? ??? ?? ? ??·??",
+    "Open ??? ???? ? ?? ?? ?? ? ?? ??? ?? ? ?????",
     "Each pillar shows Hangul (e.g. ??) with Han in parentheses",
     "Stem/branch lines include ?? + ??",
     "Role line + comboHint + stemGym metaphor visible",
@@ -34,5 +34,5 @@
     "expected": "GitHub Pages frontend deploy on push to main"
   },
   "asIs": "Pillars showed bare Han only (e.g. ??) with little beginner context.",
-  "toBe": "Each pillar card shows Hangul+Han, ??/?? meta (??·??), role meaning, combo hint, and gym-style stem metaphor."
+  "toBe": "Each pillar card shows Hangul+Han, ??/?? meta (?????), role meaning, combo hint, and gym-style stem metaphor."
 }
