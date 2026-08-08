@@ -1,16 +1,16 @@
-ï»¿# Test handoff: Include COMPLETED cards in workout plan reminders
+# Test handoff: Include COMPLETED cards in workout plan reminders
 
 ## Summary
-ìš´ë™ ê³„íš ì•Œë¦¼ ëŒ€ìƒì— ì˜¤ëŠ˜ ë‚ ì§œì˜ COMPLETED(ë° IN_PROGRESS) ì¹´ë“œë„ í¬í•¨í–ˆìŠµë‹ˆë‹¤. ì˜¤ëŠ˜ ìš´ë™ì¶”ê°€ë¡œ ìë™ COMPLETEDëœ ì¹´ë“œë„ ì•Œë¦¼ì´ ê°‘ë‹ˆë‹¤.
+¿îµ¿ °èÈ¹ ¾Ë¸² ´ë»ó¿¡ ¿À´Ã ³¯Â¥ÀÇ COMPLETED(¹× IN_PROGRESS) Ä«µåµµ Æ÷ÇÔÇß½À´Ï´Ù. ¿À´Ã ¿îµ¿Ãß°¡·Î ÀÚµ¿ COMPLETEDµÈ Ä«µåµµ ¾Ë¸²ÀÌ °©´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `397ad5ae`
 
 ## Test focus
-1. ì˜¤ëŠ˜ COMPLETED ì¹´ë“œë§Œ ìˆëŠ” ê³„ì • â†’ ì‹œê°„ë‹¹ ì¡ í›„ ìš´ë™ ê³„íš ì•Œë¦¼ ìƒì„±
-2. ì´ë¯¸ ê°™ì€ ë‚  reminder ìˆìœ¼ë©´ ì¤‘ë³µ ì—†ìŒ
-3. SKIPPEDë§Œ ìˆìœ¼ë©´ ì•Œë¦¼ ì—†ìŒ
+1. ¿À´Ã COMPLETED Ä«µå¸¸ ÀÖ´Â °èÁ¤ ¡æ ½Ã°£´ç Àâ ÈÄ ¿îµ¿ °èÈ¹ ¾Ë¸² »ı¼º
+2. ÀÌ¹Ì °°Àº ³¯ reminder ÀÖÀ¸¸é Áßº¹ ¾øÀ½
+3. SKIPPED¸¸ ÀÖÀ¸¸é ¾Ë¸² ¾øÀ½
 
 ## Fast checks
 ```bash
@@ -18,9 +18,9 @@ rg -n "COMPLETED|IN_PROGRESS|listUserIdsWithPlannedOnDate" backend/server/reposi
 ```
 
 ## Notes
-- Backend change â†’ **Render redeploy** required.
+- Backend change ¡æ **Render redeploy** required.
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ì˜¤ëŠ˜ PLANNEDë§Œ | ì˜¤ëŠ˜ PLANNED / COMPLETED / IN_PROGRESS |
+| ¿À´Ã PLANNED¸¸ | ¿À´Ã PLANNED / COMPLETED / IN_PROGRESS |
