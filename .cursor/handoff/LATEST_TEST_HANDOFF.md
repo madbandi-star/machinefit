@@ -1,15 +1,15 @@
-ï»¿# Test handoff: Double-tap record card collapses details
+# Test handoff: Double-tap record card collapses details
 
 ## Summary
-ê¸°ë¡ í˜ì´ì§€ì—ì„œ í¼ì³ì§„ ìš´ë™ê¸°ë¡ì¹´ë“œë¥¼ ë”ë¸”íƒ­í•˜ë©´ ìƒì„¸ ë‚´ìš©ì´ ì ‘í™ë‹ˆë‹¤. ë²„íŠ¼/ë§í¬/ì…ë ¥ ì˜ì—­ì€ ì œì™¸í•©ë‹ˆë‹¤.
+±â·Ï ÆäÀÌÁö¿¡¼­ ÆîÃÄÁø ¿îµ¿±â·ÏÄ«µå¸¦ ´õºíÅÇÇÏ¸é »ó¼¼ ³»¿ëÀÌ Á¢Èü´Ï´Ù. ¹öÆ°/¸µÅ©/ÀÔ·Â ¿µ¿ªÀº Á¦¿ÜÇÕ´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 047f859a
 
 ## Test focus
-1. Records â†’ expand a card
-2. Double-tap non-control area â†’ details collapse
+1. Records ¡æ expand a card
+2. Double-tap non-control area ¡æ details collapse
 3. Double-tap on bookmark/buttons/links does not collapse via this gesture
 
 ## Fast checks
@@ -17,7 +17,7 @@
 rg -n "doubleTapCollapse|useDoubleTapAction" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Collapse only via header/bottom button | Double-tap also collapses expanded card |

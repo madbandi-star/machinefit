@@ -1,7 +1,7 @@
 {
   "title": "Double-tap record card collapses details",
   "summary": "Double-tap/double-click on an expanded history record card collapses its details; interactive controls are ignored.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "047f859a" },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
     "frontend/src/styles/records.css"
