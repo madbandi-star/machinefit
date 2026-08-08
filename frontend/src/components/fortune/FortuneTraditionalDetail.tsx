@@ -85,7 +85,7 @@ export function FortuneTraditionalDetailPanel({
             </ul>
           </div>
           <FortuneExplainBlock prefix="pillars" showFootnote={false} />
-          <FortuneExplainBlock prefix="ganzhi" showDivider={false} />
+          <FortuneExplainBlock prefix="ganzhi" showFootnote />
         </details>
 
         <details className="fr-detail__item">

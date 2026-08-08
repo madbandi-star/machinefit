@@ -5,7 +5,9 @@ export interface FortuneExplainBlockProps {
   prefix: string;
   showTimeRangeChart?: boolean;
   showFootnote?: boolean;
-  showDivider?: boolean;
+  /** When true (default), guide is collapsed until the user expands it. */
+  collapsible?: boolean;
+  defaultOpen?: boolean;
 }
 
 /**
@@ -16,13 +18,13 @@ export function FortuneExplainBlock({
   prefix,
   showTimeRangeChart = false,
   showFootnote = true,
-  showDivider = true,
+  collapsible = true,
+  defaultOpen = false,
 }: FortuneExplainBlockProps) {
   const { t } = useTranslation('fortune');
 
-  return (
-    <aside className="fr-explain" aria-label={t('explain.ariaLabel')}>
-      {showDivider ? <div className="fr-explain__divider" aria-hidden /> : null}
+  const body = (
+    <>
       <p className="fr-explain__heading">📖 {t('explain.whatTitle')}</p>
       <p className="fr-explain__text">{t(`explain.${prefix}.what`)}</p>
       <p className="fr-explain__heading">{t('explain.lookTitle')}</p>
@@ -58,6 +60,24 @@ export function FortuneExplainBlock({
       {showFootnote ? (
         <p className="fr-explain__footnote">{t('explain.metaphorNote')}</p>
       ) : null}
-    </aside>
+    </>
+  );
+
+  if (!collapsible) {
+    return (
+      <aside className="fr-explain" aria-label={t('explain.ariaLabel')}>
+        <div className="fr-explain__divider" aria-hidden />
+        {body}
+      </aside>
+    );
+  }
+
+  return (
+    <details className="fr-explain fr-explain--collapsible" open={defaultOpen || undefined}>
+      <summary className="fr-explain__summary">
+        📖 {t('explain.whatTitle')}
+      </summary>
+      <div className="fr-explain__panel">{body}</div>
+    </details>
   );
 }

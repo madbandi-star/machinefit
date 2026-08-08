@@ -654,6 +654,46 @@
   min-width: 0;
 }
 
+.fr-explain--collapsible {
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt, #f5f6f8) 40%, transparent);
+  padding: 0.35rem 0.65rem;
+}
+
+.fr-explain__summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.86rem;
+  font-weight: 780;
+  line-height: 1.35;
+  padding: 0.35rem 0;
+  color: var(--color-text);
+}
+
+.fr-explain__summary::-webkit-details-marker {
+  display: none;
+}
+
+.fr-explain__summary::before {
+  content: '▸ ';
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.fr-explain--collapsible[open] > .fr-explain__summary::before {
+  content: '▾ ';
+}
+
+.fr-explain__panel {
+  padding: 0.15rem 0 0.45rem;
+}
+
+.fr-explain__panel .fr-explain__heading:first-child {
+  /* Title already in summary — hide duplicate first heading */
+  display: none;
+}
+
 .fr-explain__divider {
   height: 1px;
   margin: 0 0 0.7rem;
