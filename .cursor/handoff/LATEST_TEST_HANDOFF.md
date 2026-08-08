@@ -1,11 +1,11 @@
-ï»¿# Test handoff: Redeploy records settings-grid fix
+# Test handoff: Redeploy records settings-grid fix
 
 ## Summary
-`main`ì— ì´ë¯¸ ë¨¸ì§€ëœ ëª¨ë°”ì¼ ì„¤ì •íƒ€ì¼ ê°€ë¡œëŠ˜ë¦¼ ìˆ˜ì •(`e4040322`)ì„ GitHub Pagesì— ì¬ë°°í¬í•©ë‹ˆë‹¤.
+`main`¿¡ ÀÌ¹Ì ¸ÓÁöµÈ ¸ğ¹ÙÀÏ ¼³Á¤Å¸ÀÏ °¡·Î´Ã¸² ¼öÁ¤(`e4040322`)À» GitHub Pages¿¡ Àç¹èÆ÷ÇÕ´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 6ecf9d89
 
 ## Test focus
 1. Production records page after Pages deploy success
@@ -16,7 +16,7 @@
 git log -1 --oneline origin/main
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Local/main had fix; live may lag | Pages redeploy triggered from main |

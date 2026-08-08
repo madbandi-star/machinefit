@@ -1,7 +1,7 @@
 {
   "title": "Redeploy records settings-grid fix",
   "summary": "main already contains the mobile settings-grid containment fix; pushing a frontend path change to re-trigger GitHub Pages deploy.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "6ecf9d89" },
   "changedFiles": [
     "frontend/src/styles/records.css"
   ],
