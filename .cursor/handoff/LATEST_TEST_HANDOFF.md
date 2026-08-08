@@ -1,22 +1,25 @@
-# Test handoff: No double-tap back on fresh recommend detail
+ï»¿# Test handoff: Data management page UX refresh
 
 ## Summary
-±â±¸°Ë»ö¡æÃßÃµ »ó¼¼¿¡¼­ ´õºíÅÇ ½Ã `navigate(-1)`·Î °Ë»öÀ¸·Î µ¹¾Æ°¡´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. ±â·Ï(`logDate`)¿¡¼­ ¿¬ »ó¼¼¿¡¼­¸¸ ´õºíÅÇÀ¸·Î ±â·Ï ¸ñ·ÏÀ¸·Î µ¹¾Æ°©´Ï´Ù.
+ë§ˆì´í˜ì´ì§€ ë°ì´í„° ê´€ë¦¬(`/settings/data`) UIë¥¼ ì•¡ì…˜ ì¹´ë“œÂ·í˜•ì‹ ì„¸ê·¸ë¨¼íŠ¸Â·ë“œë¡­ì¡´Â·ìƒíƒœ ì¹©Â·ë³µêµ¬ í™•ì¸ ëª¨ë‹¬ë¡œ ì¬êµ¬ì„±í–ˆìŠµë‹ˆë‹¤. ë°±ì—…/ë³µêµ¬ API ë™ì‘ì€ ë™ì¼í•©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: a4a60c47
+- Commit: pending (updated after push)
 
 ## Test focus
-1. Search ¡æ recommend ¡æ detail: tap/double-tap does NOT return to search
-2. Records ¡æ card ¡æ detail (with logDate): double-tap still returns to records
+1. ë§ˆì´í˜ì´ì§€ â†’ ë°ì´í„° ê´€ë¦¬: ì•ˆì „ ì•ˆë‚´ + ë°±ì—…/ë³µêµ¬ ì¹´ë“œ ë ˆì´ì•„ì›ƒ
+2. í˜•ì‹ ZIP/JSON ì„¸ê·¸ë¨¼íŠ¸ ì „í™˜ í›„ ë°±ì—… ë²„íŠ¼ ë™ì‘
+3. ë³µêµ¬: íŒŒì¼ ì„ íƒ/ë“œë¡­ â†’ ë³‘í•©Â·ì™„ì „ë³µì› ì˜µì…˜ ëª¨ë‹¬ â†’ ë³µêµ¬
+4. ìµœê·¼ ê¸°ë¡: ìƒíƒœ ì¹©Â·ë‹¤ì‹œ ë°›ê¸° ë²„íŠ¼ í‘œì‹œ
 
 ## Fast checks
 ```bash
-rg -n "recordsReturnDate|enabled: Boolean\\(recordsReturnDate\\)" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
+rg -n "data-mgmt__dropzone|formatZip|modeMergeTitle" frontend/src/pages/settings/DataManagementPage.tsx frontend/src/i18n/locales/ko/common.json
+Test-Path frontend/src/styles/data-management.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Fresh recommend detail double-tap ¡æ search | No back navigation without logDate |
+| ì›ì‹œ select / file input / plain list | ì¹´ë“œí˜• ë°±ì—…Â·ë“œë¡­ì¡´ ë³µêµ¬Â·ìƒíƒœ ì¹© ì´ë ¥Â·ì„ íƒí˜• ë³µêµ¬ ëª¨ë‹¬ |

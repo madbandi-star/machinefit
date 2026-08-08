@@ -1,19 +1,34 @@
 {
-  "title": "No double-tap back on fresh recommend detail",
-  "summary": "Disable detail-page double-tap navigate(-1) unless opened from records with logDate, so search?recommend?detail no longer bounces back to search.",
-  "git": { "branch": "main", "commit": "a4a60c47" },
+  "title": "Data management page UX refresh",
+  "summary": "????? ??? ??(/settings/data) UI? ?? ??·?? ????·???·?? ?·?? ?? ??? ???????. ??/?? API ??? ?????.",
+  "git": {
+    "branch": "main",
+    "commit": "pending"
+  },
   "changedFiles": [
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
+    "frontend/src/pages/settings/DataManagementPage.tsx",
+    "frontend/src/styles/data-management.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Fresh recommend detail stays on page when tapped",
-    "Records detail double-tap still returns to records"
+    "????? ? ??? ??: ?? ?? + ??/?? ?? ????",
+    "?? ZIP/JSON ???? ?? ? ?? ?? ??",
+    "??: ?? ??/?? ? ??·???? ?? ?? ? ??",
+    "?? ??: ?? ?·?? ?? ?? ??"
   ],
   "fastChecks": [
-    "rg -n \"recordsReturnDate|enabled: Boolean\" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
+    "rg -n \"data-mgmt__dropzone|formatZip|modeMergeTitle\" frontend/src/pages/settings/DataManagementPage.tsx frontend/src/i18n/locales/ko/common.json",
+    "Test-Path frontend/src/styles/data-management.css"
   ],
-  "productionChecks": ["Pages deploy + search?recommend?detail tap"],
-  "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Tap/double-tap on fresh recommend detail returned to search",
-  "toBe": "Double-tap back only when opened from records with logDate"
+  "productionChecks": [
+    "GitHub Pages ?? ? /settings/data ?? ???(Ctrl+F5)? ? UI ??"
+  ],
+  "deploy": {
+    "expected": "Deploy Frontend success after push to main"
+  },
+  "asIs": "?? select/file input/plain list? ??·?? ??? ???",
+  "toBe": "??? ??·??? ??·?? ? ??·??? ?? ??? ??? ?? UI"
 }
