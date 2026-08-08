@@ -59,13 +59,26 @@ export function PlanDatePickerDialog({
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useModalAccessibility({ open, onClose });
   const today = getTodayDateKey();
-  const tomorrow = shiftDateKey(today, 1);
   const [value, setValue] = useState(() => normalizeDateKey(initialDate) || today);
 
   useEffect(() => {
     if (!open) return;
     setValue(normalizeDateKey(initialDate) || today);
   }, [open, initialDate, today]);
+
+  const quickPicks = useMemo(
+    () =>
+      [0, 1, 2, 3, 4, 5, 6, 7].map((offset) => {
+        const dateKey = offset === 0 ? today : shiftDateKey(today, offset);
+        let label: string;
+        if (offset === 0) label = t('machines:history.planDateToday');
+        else if (offset === 1) label = t('machines:history.planDateTomorrow');
+        else if (offset === 7) label = t('machines:history.planDateInOneWeek');
+        else label = t('machines:history.planDateDPlus', { n: offset });
+        return { offset, dateKey, label };
+      }),
+    [t, today]
+  );
 
   const friendlyLabel = useMemo(
     () => formatPickerDateLabel(value, i18n.language),
@@ -126,20 +139,16 @@ export function PlanDatePickerDialog({
         </button>
 
         <div className="plan-date-picker__chips" role="group" aria-label={t('machines:history.planDateQuickPicks')}>
-          <button
-            type="button"
-            className={`plan-date-picker__chip${value === today ? ' is-active' : ''}`}
-            onClick={() => setValue(today)}
-          >
-            {t('machines:history.planDateToday')}
-          </button>
-          <button
-            type="button"
-            className={`plan-date-picker__chip${value === tomorrow ? ' is-active' : ''}`}
-            onClick={() => setValue(tomorrow)}
-          >
-            {t('machines:history.planDateTomorrow')}
-          </button>
+          {quickPicks.map((pick) => (
+            <button
+              key={pick.offset}
+              type="button"
+              className={`plan-date-picker__chip${value === pick.dateKey ? ' is-active' : ''}`}
+              onClick={() => setValue(pick.dateKey)}
+            >
+              {pick.label}
+            </button>
+          ))}
         </div>
 
         <input

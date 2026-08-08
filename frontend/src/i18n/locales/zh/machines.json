@@ -315,6 +315,8 @@
     "planDateInputLabel": "打开日历选择",
     "planDateToday": "今天",
     "planDateTomorrow": "明天",
+    "planDateDPlus": "D+{{n}}",
+    "planDateInOneWeek": "一周后",
     "planDateQuickPicks": "快捷选择",
     "planDateMoveTitle": "更改日期",
     "planDateCopyTitle": "复制到其他日期",

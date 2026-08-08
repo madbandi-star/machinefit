@@ -315,6 +315,8 @@
     "planDateInputLabel": "カレンダーで選ぶ",
     "planDateToday": "今日",
     "planDateTomorrow": "明日",
+    "planDateDPlus": "D+{{n}}",
+    "planDateInOneWeek": "1週間後",
     "planDateQuickPicks": "クイック選択",
     "planDateMoveTitle": "日付を変更",
     "planDateCopyTitle": "別の日付にコピー",

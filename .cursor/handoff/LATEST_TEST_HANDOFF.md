@@ -1,27 +1,23 @@
-﻿# Test handoff: Day menu — template delete + centered panel
+﻿# Test handoff: Plan date quick picks D+2…D+6 + 1 week
 
 ## Summary
-일자조회 ⋯ 메뉴에서 템플릿을 상단에 두고 적용/삭제를 제공하며, 패널을 화면 하단 도킹 대신 중앙에 표시합니다.
+운동 카드 날짜 변경/복사 다이얼로그 빠른 선택에 오늘·내일 외에 D+2~D+6, 일주일뒤를 추가했습니다.
 
 ## Git
 - Branch: `main`
-- Commit: `6fda5e08`
+- Commit: (pending push)
 
 ## Test focus
-1. Records → 일자조회 ⋯ → 패널이 화면 중앙에 뜸
-2. 템플릿 목록이 상단, 각 행에 적용 / 삭제
-3. 삭제 → 확인 후 목록에서 사라짐
-4. 템플릿으로 저장 / 운동 추가 / 일자 삭제는 그대로 동작
+1. Records → card ⋯ → 날짜 변경 또는 다른 날짜로 복사
+2. 칩: 오늘, 내일, D+2 … D+6, 일주일뒤
+3. 칩 선택 시 상단 날짜 라벨이 해당 일자로 바뀌고 확인 가능
 
 ## Fast checks
 ```bash
-npm run test:smoke:changed
-rg -n "onDeleteTemplate|deleteTemplateMutation|day-actions-sheet-overlay" frontend/src/components/records
+rg -n "planDateDPlus|planDateInOneWeek|quickPicks" frontend/src/components/records/PlanDatePickerDialog frontend/src/i18n/locales/ko/machines.json
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| 템플릿 적용만 있고 삭제 없음 | 템플릿별 적용 + 삭제(확인) |
-| 메뉴가 화면 최하단에 붙음 | 화면 중앙 패널 |
-| 템플릿 영역이 아래쪽 | 템플릿 섹션이 상단 |
+| 오늘 / 내일만 | 오늘·내일·D+2~D+6·일주일뒤 |

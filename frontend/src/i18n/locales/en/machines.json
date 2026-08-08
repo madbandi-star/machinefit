@@ -290,6 +290,8 @@
     "planDateInputLabel": "Open calendar",
     "planDateToday": "Today",
     "planDateTomorrow": "Tomorrow",
+    "planDateDPlus": "D+{{n}}",
+    "planDateInOneWeek": "In 1 week",
     "planDateQuickPicks": "Quick picks",
     "planDateMoveTitle": "Change date",
     "planDateCopyTitle": "Copy to another date",

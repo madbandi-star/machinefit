@@ -1,27 +1,24 @@
 ﻿{
-  "title": "Day menu — template delete + centered panel",
-  "summary": "일자조회 ⋯에 템플릿 삭제(확인)를 추가하고, 템플릿을 상단에 배치하며 패널을 하단 도킹이 아닌 중앙에 표시합니다.",
-  "git": { "branch": "main", "commit": "6fda5e08" },
+  "title": "Plan date quick picks D+2…D+6 + 1 week",
+  "summary": "Copy/move date picker quick chips now include D+2 through D+6 and one week later, in addition to today/tomorrow.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.tsx",
-    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
+    "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",
     "frontend/src/i18n/locales/ko/machines.json",
     "frontend/src/i18n/locales/en/machines.json",
     "frontend/src/i18n/locales/ja/machines.json",
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Day ⋯ opens centered panel",
-    "Templates at top with Apply/Delete",
-    "Delete confirms and removes template"
+    "Date picker shows D+2..D+6 and one-week chips",
+    "Selecting a chip updates preview date"
   ],
   "fastChecks": [
-    "npm run test:smoke:changed",
-    "rg -n \"onDeleteTemplate|deleteTemplateMutation|day-actions-sheet-overlay\" frontend/src/components/records"
+    "rg -n \"planDateDPlus|planDateInOneWeek|quickPicks\" frontend/src/components/records/PlanDatePickerDialog frontend/src/i18n/locales/ko/machines.json"
   ],
-  "productionChecks": ["Pages deploy + day menu template delete"],
+  "productionChecks": ["Pages deploy + copy/move date chips"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "No template delete; menu stuck at bottom with templates lower",
-  "toBe": "Centered panel; templates on top with apply/delete"
+  "asIs": "Only Today and Tomorrow quick picks",
+  "toBe": "Today, Tomorrow, D+2..D+6, one week later"
 }
