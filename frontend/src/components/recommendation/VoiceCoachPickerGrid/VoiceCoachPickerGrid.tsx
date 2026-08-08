@@ -112,21 +112,31 @@ export function VoiceCoachPickerGrid({
     return null;
   }
 
-  const pickerLocked = disabled || readOnly;
+  // 「세부 피커 고정」(readOnly): keep 목표횟수 editable; lock the other three.
+  // `disabled` (e.g. session running) still locks every picker including target reps.
+  const targetRepsLocked = disabled;
+  const otherPickersLocked = disabled || readOnly;
+  const allLocked = targetRepsLocked && otherPickersLocked;
 
   return (
     <div
       className={`body-metrics-inline voice-coach-panel__pickers${
         disabled ? ' body-metrics-inline--disabled' : ''
-      }${readOnly ? ' voice-coach-panel__pickers--readonly' : ''}${className ? ` ${className}` : ''}`}
+      }${readOnly && !disabled ? ' voice-coach-panel__pickers--readonly' : ''}${
+        className ? ` ${className}` : ''
+      }`}
       role="group"
       aria-label={copy.group}
-      aria-disabled={pickerLocked || undefined}
+      aria-disabled={allLocked || undefined}
     >
       <div className={`body-metrics-inline__grid${pickerGridColumnClass(pickerColumnCount)}`}>
         {showCountControls ? (
           <>
-            <div className="body-metrics-inline__cell">
+            <div
+              className={`body-metrics-inline__cell${
+                !targetRepsLocked ? ' body-metrics-inline__cell--interactive' : ''
+              }`}
+            >
               <span className="body-metrics-inline__label">
                 {copy.targetReps}
                 <span className="body-metrics-inline__unit">{copy.targetRepsUnit}</span>
@@ -134,7 +144,7 @@ export function VoiceCoachPickerGrid({
               <ScrollPicker
                 value={clampVoiceCoachTargetReps(targetReps)}
                 onChange={(next) => {
-                  if (pickerLocked) return;
+                  if (targetRepsLocked) return;
                   onTargetRepsChange(clampVoiceCoachTargetReps(next));
                 }}
                 min={VOICE_COACH_TARGET_REPS.minCount}
@@ -154,7 +164,7 @@ export function VoiceCoachPickerGrid({
               <ScrollPicker
                 value={gapSec}
                 onChange={(sec) => {
-                  if (pickerLocked) return;
+                  if (otherPickersLocked) return;
                   onRepGapMsChange(clampVoiceCoachRepGapMs(sec * 1000));
                 }}
                 min={VOICE_COACH_REP_GAP.minMs / 1000}
@@ -175,7 +185,7 @@ export function VoiceCoachPickerGrid({
                 <ScrollPicker
                   value={clampVoiceCoachOneMoreCount(oneMoreCount)}
                   onChange={(next) => {
-                    if (pickerLocked) return;
+                    if (otherPickersLocked) return;
                     onOneMoreCountChange(next);
                   }}
                   min={VOICE_COACH_ONE_MORE.minCount}
@@ -199,7 +209,7 @@ export function VoiceCoachPickerGrid({
             <ScrollPicker
               value={duration}
               onChange={(sec) => {
-                if (pickerLocked) return;
+                if (otherPickersLocked) return;
                 onHoldDurationSecChange(clampVoiceHoldDurationSec(sec));
               }}
               min={VOICE_HOLD_DURATION.minSec}

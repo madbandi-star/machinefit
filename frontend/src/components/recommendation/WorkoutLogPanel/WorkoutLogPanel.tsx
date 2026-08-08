@@ -377,12 +377,12 @@ export function WorkoutLogPanel({
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
-      if (voicePickersPinned) return;
+      // 목표횟수는 「세부 피커 고정」이어도 수정 가능 (간격/하나더/버텨는 고정 유지).
       const next = clampVoiceCoachTargetReps(reps);
       setVoicePickers((prev) => (prev ? { ...prev, targetReps: next } : prev));
       onVolumeRepsChange?.(next);
     },
-    [onVolumeRepsChange, voicePickersPinned]
+    [onVolumeRepsChange]
   );
 
   const handleVoiceRepGapMsChange = useCallback(

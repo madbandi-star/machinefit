@@ -1065,6 +1065,11 @@
   user-select: none;
 }
 
+.home-tool-details__pickers--readonly .body-metrics-inline__cell--interactive {
+  pointer-events: auto;
+  user-select: auto;
+}
+
 .home-tool-details__voice .body-metrics-inline {
   margin: 0;
 }

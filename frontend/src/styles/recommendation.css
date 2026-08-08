@@ -1869,6 +1869,12 @@
   user-select: none;
 }
 
+/* 「세부 피커 고정」: 목표횟수만 예외적으로 스크롤 가능 */
+.voice-coach-panel__pickers--readonly .body-metrics-inline__cell--interactive {
+  pointer-events: auto;
+  user-select: auto;
+}
+
 .voice-coach-panel__check {
   display: inline-flex;
   align-items: center;
