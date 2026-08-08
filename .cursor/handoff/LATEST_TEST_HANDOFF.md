@@ -1,15 +1,15 @@
-ï»¿# Test handoff: Pulse â€œì¡°ì •ê°’ ì €ì¥â€ when adjustments dirty
+# Test handoff: Pulse ¡°Á¶Á¤°ª ÀúÀå¡± when adjustments dirty
 
 ## Summary
-ì…‹íŒ…ê°’ ì¡°ì • í•„ìš” ì„ íƒ í›„ ì¤‘ëŸ‰Â·ì¶”ì²œíšŸìˆ˜Â·ê°€ë™ë²”ìœ„ë¥¼ ë°”ê¾¸ë©´, ì¡°ì •ê°’ ì €ì¥(ê¸°ë¡ì¹´ë“œ: ì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°) ë²„íŠ¼ì— ê³„íš ì €ì¥ê³¼ ê°™ì€ attention ì• ë‹ˆë©”ì´ì…˜ì´ ì ìš©ë©ë‹ˆë‹¤.
+¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä ¼±ÅÃ ÈÄ Áß·®¡¤ÃßÃµÈ½¼ö¡¤°¡µ¿¹üÀ§¸¦ ¹Ù²Ù¸é, Á¶Á¤°ª ÀúÀå(±â·ÏÄ«µå: ¼ÂÆÃ°ª ÀúÀåÇÏ±â) ¹öÆ°¿¡ °èÈ¹ ÀúÀå°ú °°Àº attention ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ Àû¿ëµË´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 5ac6cdfa
 
 ## Test focus
-1. Records or detail â†’ ì…‹íŒ…ê°’ ì¡°ì • í•„ìš”
-2. Change weight / reps / ROM â†’ save button pulses (green attention)
+1. Records or detail ¡æ ¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä
+2. Change weight / reps / ROM ¡æ save button pulses (green attention)
 3. After save, pulse stops
 
 ## Fast checks
@@ -17,7 +17,7 @@
 rg -n "preferencesDirty|save-btn--attention|btn--save-attention" frontend/src/components/recommendation frontend/src/styles/recommendation.css
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Dirty adjustments, static save button | Same pulse attention as plan-save |
