@@ -689,12 +689,10 @@ export function HistoryListPanel() {
         gymId: activeGymId,
         memberId: activeMemberId,
       });
-      const dayPlans = (workoutCards ?? []).filter(
-        (card) =>
-          normalizeDateKey(card.scheduledDate) === logDate &&
-          (card.status === 'PLANNED' || card.status === 'IN_PROGRESS' || card.status === 'SKIPPED')
+      const dayCards = (workoutCards ?? []).filter(
+        (card) => normalizeDateKey(card.scheduledDate) === logDate
       );
-      await Promise.allSettled(dayPlans.map((card) => workoutCardApi.remove(card.id)));
+      await Promise.allSettled(dayCards.map((card) => workoutCardApi.remove(card.id)));
     },
     onSuccess: async () => {
       setPendingDayDelete(false);

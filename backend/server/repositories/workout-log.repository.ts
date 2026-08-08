@@ -341,6 +341,14 @@ export const workoutLogRepository = {
         [userId, gymId, memberId, logDate]
       );
 
+      // Planned + completed workout cards for the same calendar day.
+      await client.query(
+        `DELETE FROM workout_cards
+         WHERE user_id = $1 AND gym_id = $2 AND member_id = $3
+           AND scheduled_date = $4::date`,
+        [userId, gymId, memberId, logDate]
+      );
+
       await client.query('COMMIT');
       return existing.rows.map((row) => mapRow(row, locale));
     } catch (error) {

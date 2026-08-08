@@ -1,19 +1,24 @@
 {
-  "title": "Card ? menu portal (not clipped by card)",
-  "summary": "Portal HistoryCardPlanActionsSheet to document.body so mobile record-card backdrop-filter no longer clips the move/copy menu.",
-  "git": { "branch": "main", "commit": "3e32902f" },
+  "title": "Day delete removes completed cards too",
+  "summary": "Day bulk delete now removes COMPLETED workout cards (not only planned) and backend deleteByUserDate also deletes workout_cards for that date. Render redeploy required.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx"
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "backend/server/repositories/workout-log.repository.ts",
+    "backend/server/services/workout-log.service.ts"
   ],
   "testFocus": [
-    "Card ? opens full-screen panel on mobile",
-    "Move/copy buttons tappable"
+    "Day ? delete removes all cards for that date",
+    "Cards do not remain with bookmark only cleared"
   ],
   "fastChecks": [
-    "rg -n \"createPortal|document.body\" frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx"
+    "rg -n \"DELETE FROM workout_cards|dayCards\" backend/server/repositories/workout-log.repository.ts frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
   ],
-  "productionChecks": ["Pages deploy + mobile card ? menu"],
-  "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Menu trapped/clipped inside card",
-  "toBe": "Body-portaled full viewport overlay"
+  "productionChecks": ["Pages + Render redeploy; day delete on records"],
+  "deploy": {
+    "target": "GitHub Pages + Render API",
+    "backendRedeployRequired": true
+  },
+  "asIs": "Day delete left COMPLETED cards with bookmark off",
+  "toBe": "Day delete removes logs, history, and all workout cards"
 }

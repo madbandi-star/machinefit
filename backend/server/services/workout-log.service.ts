@@ -306,7 +306,7 @@ export const workoutLogService = {
   },
 
   /**
-   * Delete every workout log (and matching history cards) for a single calendar day.
+   * Delete every workout log, history row, and workout card for a single calendar day.
    * Multi-day / all-time bulk delete is intentionally unsupported.
    */
   async removeByDate(

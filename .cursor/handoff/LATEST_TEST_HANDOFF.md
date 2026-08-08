@@ -1,23 +1,23 @@
-# Test handoff: Card ? menu portal (not clipped by card)
+ï»¿# Test handoff: Day delete removes completed cards too
 
 ## Summary
-±â±¸ ±â·ÏÄ«µå ? ¸Ş´º°¡ Ä«µåÀÇ backdrop-filter¿¡ °¤Çô Àß¸®´ø ¹®Á¦¸¦ `document.body` Æ÷Å»·Î ¼öÁ¤Çß½À´Ï´Ù.
+ì¼ì ì „ì²´ì‚­ì œ ì‹œ COMPLETED ìš´ë™ì¹´ë“œê°€ ë‚¨ì•„ ì±…ê°ˆí”¼(ì €ì¥)ë§Œ êº¼ì§€ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. í•´ë‹¹ ì¼ìì˜ ë¡œê·¸Â·íˆìŠ¤í† ë¦¬Â·ëª¨ë“  ìƒíƒœì˜ workout cardë¥¼ ì‚­ì œí•©ë‹ˆë‹¤. **backend ë³€ê²½ â†’ Render ì¬ë°°í¬ í•„ìš”.**
 
 ## Git
 - Branch: `main`
-- Commit: 3e32902f
+- Commit: pending
 
 ## Test focus
-1. Mobile: Records ¡æ card ?
-2. Full-screen centered panel (not clipped inside the card)
-3. ³¯Â¥ º¯°æ / ´Ù¸¥ ³¯Â¥·Î º¹»ç ÅÇ °¡´É ¡æ date picker opens
+1. Records â†’ day â‹¯ â†’ ì˜¤ëŠ˜/ì„ íƒì¼ ì „ì²´ì‚­ì œ â†’ í™•ì¸
+2. í•´ë‹¹ ì¼ì ì¹´ë“œê°€ ëª©ë¡ì—ì„œ ì‚¬ë¼ì§ (ì±…ê°ˆí”¼ë§Œ êº¼ì§„ ì±„ ë‚¨ì§€ ì•ŠìŒ)
+3. ìƒˆë¡œê³ ì¹¨ í›„ì—ë„ ë³µê·€í•˜ì§€ ì•ŠìŒ
 
 ## Fast checks
 ```bash
-rg -n "createPortal|document.body" frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx
+rg -n "DELETE FROM workout_cards|dayCards|status === 'PLANNED'" backend/server/repositories/workout-log.repository.ts frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Menu clipped inside card; hard to tap | Full viewport overlay via portal |
+| Logs cleared; COMPLETED cards stay with bookmark off | Day cards fully removed |
