@@ -3,7 +3,7 @@
   "summary": "On Records cards and detail, voice coach now renders after the diary/personal-tip block that ends with the full-width ??? ??? button ? not above the workout-plan memo textbox.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "caf701b2"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
