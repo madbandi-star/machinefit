@@ -1,16 +1,17 @@
-﻿# Test handoff: Fortune AVOID contrast
+﻿# Test handoff: Hide data-scarcity fortune messaging
 
 ## Summary
-TODAY'S AVOID 카드의 흐린 앰버 배경을 제거하고, 일반 surface + 왼쪽 액센트 + 명확한 텍스트 색으로 가독성을 개선했습니다.
+헬창운세 UI에서 「기록이 부족하다 / 쌓이면 분석한다」류 문구를 제거했습니다. 추천·리포트는 운세 톤으로만 말하고, API 데이터 기반 계산은 그대로입니다.
 
 ## Git
 - Branch: `main`
-- Commit: `dc5f8227`
+- Commit: `PENDING`
 
 ## Test focus
-1. `/fortune/today` TODAY'S AVOID 본문·설명이 배경 대비로 잘 읽힘
+1. 데이터 부족/개인화 제한 문구 없음
+2. 왜 오늘 이 운동인가 / 헬창 리포트는 스타일·부위 안내만 표시
 
 ## Fast checks
 ```bash
-rg -n "fortune-avoid" frontend/src/styles/fortune.css
+rg -n "충분하지|기록이 쌓|Personalization is limited|dataLimited" frontend/src/components/fortune frontend/src/i18n/locales/ko/fortune.json || true
 ```

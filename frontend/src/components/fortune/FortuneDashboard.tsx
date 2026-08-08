@@ -28,7 +28,6 @@ import { FortuneRadialGauge } from '@/components/fortune/FortuneRadialGauge';
 import { FortuneReveal } from '@/components/fortune/FortuneReveal';
 import { TodayRecommendationGrid } from '@/components/fortune/TodayRecommendationGrid';
 import {
-  buildEquipmentSlices,
   healthmanCaptionKey,
   prCaptionKey,
   recoveryCaptionKey,
@@ -50,28 +49,8 @@ export function FortuneDashboard({
   fortune,
   scores,
   recommendation,
-  dataAnalysis,
 }: FortuneDashboardProps) {
   const { t } = useTranslation('fortune');
-  const slices = useMemo(
-    () =>
-      dataAnalysis
-        ? buildEquipmentSlices(dataAnalysis)
-        : buildEquipmentSlices({
-            barbellRatio30d: 0,
-            dumbbellRatio30d: 0,
-            machineRatio30d: 0,
-            cableRatio30d: 0,
-            bodyweightRatio30d: 0,
-          }),
-    [dataAnalysis]
-  );
-  const emptyData = !dataAnalysis || dataAnalysis.logCount30d <= 0;
-  const sparse =
-    Boolean(dataAnalysis) &&
-    !emptyData &&
-    dataAnalysis!.workoutCount30d > 0 &&
-    dataAnalysis!.workoutCount30d <= 2;
 
   const prCaption = prCaptionKey(scores.prLuck);
   const recoveryCaption = recoveryCaptionKey(scores.recoveryLuck);
@@ -79,28 +58,15 @@ export function FortuneDashboard({
   const content = useMemo(
     () => ({
       fortuneExplain: buildFortuneExplain(fortune),
-      why: buildWhyToday({
-        empty: emptyData,
-        sparse,
-        recommendation,
-        analysis: dataAnalysis,
-        slices,
-      }),
+      why: buildWhyToday({ recommendation }),
       strategy: buildStrategyExplain(recommendation),
       pr: buildPrExplain(scores),
       recovery: buildRecoveryExplain(scores),
       tryThis: buildTryThis(recommendation),
       mission: buildMission({ fortune, recommendation }),
-      report: buildReport({
-        fortune,
-        scores,
-        recommendation,
-        empty: emptyData,
-        slices,
-        analysis: dataAnalysis,
-      }),
+      report: buildReport({ fortune, scores, recommendation }),
     }),
-    [fortune, scores, recommendation, dataAnalysis, emptyData, sparse, slices]
+    [fortune, scores, recommendation]
   );
 
   return (

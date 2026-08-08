@@ -1,12 +1,20 @@
 {
-  "title": "Fortune AVOID card contrast fix",
-  "summary": "TODAY'S AVOID used a washed amber background that hurt readability; switched to surface colors + left accent and explicit text color.",
-  "git": { "branch": "main", "commit": "dc5f8227" },
-  "changedFiles": ["frontend/src/styles/fortune.css"],
-  "testFocus": ["TODAY'S AVOID text is readable against card background"],
-  "fastChecks": ["rg -n \"fortune-avoid\" frontend/src/styles/fortune.css"],
-  "productionChecks": [],
-  "deploy": { "expected": "GitHub Pages Deploy Frontend success" },
-  "asIs": "Low-contrast amber wash on AVOID card",
-  "toBe": "Neutral surface + accent border, clear text"
+  "title": "Hide data-scarcity messaging on fortune page",
+  "summary": "Removed copy that reveals insufficient workout logs or data-driven personalization limits. Why-today and report now use fortune-framed language only; backend logic unchanged.",
+  "git": { "branch": "main", "commit": "PENDING" },
+  "changedFiles": [
+    "frontend/src/components/fortune/fortuneContent.ts",
+    "frontend/src/components/fortune/FortuneDashboard.tsx",
+    "frontend/src/i18n/locales/*/fortune.json"
+  ],
+  "testFocus": [
+    "No phrases about insufficient logs / data growing / limited personalization",
+    "Why-today and Helchang report still show style/body guidance",
+    "Scores and recommendations still from API"
+  ],
+  "fastChecks": [
+    "rg -n \"?Limited|dataLimited|????|??? ?|Personalization is limited\" frontend/src/components/fortune frontend/src/i18n/locales/ko/fortune.json || true"
+  ],
+  "asIs": "UI admitted sparse data / log-based reasoning",
+  "toBe": "Fortune-framed copy only; data influence stays behind the scenes"
 }
