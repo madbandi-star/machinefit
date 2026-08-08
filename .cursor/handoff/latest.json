@@ -1,7 +1,7 @@
 {
   "title": "Clearer fit-feedback button affordance",
   "summary": "Make ??? ? ?? / ??? ?? ?? look obviously tappable with choice prompt, tap hints, icon badges, and raised button styling on record cards.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c85f7329" },
   "changedFiles": [
     "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
     "frontend/src/styles/recommendation.css",

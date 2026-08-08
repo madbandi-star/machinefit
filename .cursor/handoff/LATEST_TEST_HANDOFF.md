@@ -1,15 +1,15 @@
-ï»¿# Test handoff: Clearer fit-feedback button affordance
+# Test handoff: Clearer fit-feedback button affordance
 
 ## Summary
-ê¸°ë¡ì¹´ë“œ ã€Œì¶”ì²œê°’ ì˜ ë§ìŒã€ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€ê°€ ëˆ„ë¥¼ ìˆ˜ ìˆëŠ” ë²„íŠ¼ìœ¼ë¡œ ë³´ì´ë„ë¡, ì„ íƒ ì•ˆë‚´ ë¬¸êµ¬Â·íƒ­ íŒíŠ¸Â·ì•„ì´ì½˜ ë±ƒì§€Â·ì…ì²´ ë²„íŠ¼ ìŠ¤íƒ€ì¼ì„ ì ìš©í–ˆìŠµë‹ˆë‹¤.
+±â·ÏÄ«µå ¡¸ÃßÃµ°ª Àß ¸ÂÀ½¡¹¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹°¡ ´©¸¦ ¼ö ÀÖ´Â ¹öÆ°À¸·Î º¸ÀÌµµ·Ï, ¼±ÅÃ ¾È³» ¹®±¸¡¤ÅÇ ÈùÆ®¡¤¾ÆÀÌÄÜ ¹îÁö¡¤ÀÔÃ¼ ¹öÆ° ½ºÅ¸ÀÏÀ» Àû¿ëÇß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: c85f7329
 
 ## Test focus
-1. Records â†’ expanded card: prompt â€œì•„ë˜ ë²„íŠ¼ì„ ëˆŒëŸ¬ ì„ íƒí•˜ì„¸ìš”â€
-2. Both options look raised/tappable with â€œíƒ­í•˜ì—¬ ì„ íƒâ€ until chosen
+1. Records ¡æ expanded card: prompt ¡°¾Æ·¡ ¹öÆ°À» ´­·¯ ¼±ÅÃÇÏ¼¼¿ä¡±
+2. Both options look raised/tappable with ¡°ÅÇÇÏ¿© ¼±ÅÃ¡± until chosen
 3. Selected state still clear; save-attention pulse still works
 
 ## Fast checks
@@ -17,7 +17,7 @@
 rg -n "choicePrompt|tapToChoose|btn--idle|btn-icon" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Flat labels, unclear if tappable | Prompt + chip buttons with tap hint |
