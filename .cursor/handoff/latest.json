@@ -1,36 +1,19 @@
 {
-  "title": "Full Helchang Fortune detail UI reading redesign",
-  "summary": "Rebuilt /fortune/today as a single reading flow (hero ? energy ? base ? story ? luck ? guide ? data ? apply ? mission ? quote). Presentation-only; fortune engine/API untouched. Birth fields shown via existing /users/me.",
-  "git": { "branch": "main", "commit": "e2530537" },
+  "title": "Fix broken Apply fortune section layout",
+  "summary": "Moved the apply section out of the 2-column grid (full width), hardened overflow wrapping, and shortened the section title so long Korean copy no longer breaks the card.",
+  "git": { "branch": "main", "commit": "PENDING" },
   "changedFiles": [
     "frontend/src/components/fortune/FortuneDashboard.tsx",
-    "frontend/src/components/fortune/reading/*",
-    "frontend/src/components/fortune/FortuneTraditionalDetail.tsx",
-    "frontend/src/components/fortune/fortuneVisuals.ts",
-    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
     "frontend/src/styles/fortune-reading.css",
     "frontend/src/i18n/locales/*/fortune.json"
   ],
   "testFocus": [
-    "First viewport shows core theme + stars + one-liner",
-    "Sections follow reading IA without duplicate old bundles",
-    "Data section empty-state when no logs; fortune still rich",
-    "Apply section separates fortune vs data",
-    "Traditional detail accordion expands pillars/cycles",
-    "No backend/shared fortune math changes in this commit"
+    "Apply section is full-width under data section",
+    "Long personalized text wraps without horizontal overflow on mobile/desktop"
   ],
   "fastChecks": [
-    "cd frontend && npx tsc -p tsconfig.json --noEmit",
-    "node scripts/i18n-audit.mjs --sync",
-    "rg -n \"fr-page|FortuneReadingHero|sectionApply\" frontend/src/components/fortune frontend/src/styles/fortune-reading.css",
-    "git diff --stat HEAD~1 -- shared/src/fortune backend/server/services/fortune || true"
+    "rg -n \"FortuneApplySection|fr-apply\" frontend/src/components/fortune/FortuneDashboard.tsx frontend/src/styles/fortune-reading.css"
   ],
-  "productionChecks": [
-    "After Pages deploy: open /fortune/today and walk sections on mobile width"
-  ],
-  "deploy": {
-    "expected": "GitHub Pages Deploy Frontend success (FE-only)"
-  },
-  "asIs": "Mixed old/new cards, scores before story, data not in flow",
-  "toBe": "One reading narrative from hero to mission with unified section shells"
+  "asIs": "Apply squeezed in 2-col grid ? overflow/break",
+  "toBe": "Full-width stacked apply blocks with safe text wrap"
 }

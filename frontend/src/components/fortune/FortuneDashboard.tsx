@@ -96,15 +96,14 @@ export function FortuneDashboard({
         delayMs={110}
       />
 
-      <div className="fr-page__grid">
-        <FortuneDataSection dataAnalysis={dataAnalysis} delayMs={130} />
-        <FortuneApplySection
-          narrative={narrative}
-          recommendation={recommendation}
-          dataAnalysis={dataAnalysis}
-          delayMs={145}
-        />
-      </div>
+      <FortuneDataSection dataAnalysis={dataAnalysis} delayMs={130} />
+
+      <FortuneApplySection
+        narrative={narrative}
+        recommendation={recommendation}
+        dataAnalysis={dataAnalysis}
+        delayMs={145}
+      />
 
       <FortuneSection title={`🎯 ${t('sectionMission')}`} delayMs={160} tone="action">
         <p className="fr-mission">{missionText}</p>
