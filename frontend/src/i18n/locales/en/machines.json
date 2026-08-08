@@ -70,7 +70,12 @@
     "duplicate": "You already have a recommendation for this muscle on that date. Check Records, or pick another muscle.",
     "duplicateMachine": "You already have a recommendation for this machine on that date. Open it from Records.",
     "findGyms": "Find Gyms with This Machine",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "recordsNudgeTitle": "Continue today’s workout in Records",
+    "recordsNudgeBody": "Manage sets and templates from the Records tab below",
+    "recordsNudgeCta": "Open Records",
+    "recordsNudgeClose": "Dismiss tip",
+    "recordsNudgeNavTip": "Manage today’s workout here"
   },
   "workoutLog": {
     "title": "Workout log",

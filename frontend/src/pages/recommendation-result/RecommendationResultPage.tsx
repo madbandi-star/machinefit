@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, ChevronDown, Heart } from 'lucide-react';
+import { Bookmark, ChevronDown, Heart, X } from 'lucide-react';
 import type { RecommendationResult } from '@machinefit/shared';
 import { isAllGymsId, isFreeWeightMachineCode, resolveWorkoutLogSeedWeightKg, resolveWorkoutLogSeedReps } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -33,6 +33,10 @@ import { ROUTES } from '@/constants/routes';
 import { getLocalDateKey, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
+import { buildRecordsDateUrl } from '@/utils/recommendationDuplicate';
+import { dismissForToday, isDismissedToday } from '@/utils/dismissToday';
+
+const RECORDS_NUDGE_DISMISS_KEY = 'machinefit-result-records-nudge';
 import '@/styles/components.css';
 import '@/styles/recommendation.css';
 import '@/styles/history-premium.css';
@@ -92,12 +96,14 @@ export function RecommendationResultPage() {
   const { activeMemberId } = useActiveMember();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const setRecordsNavNudge = useUIStore((s) => s.setRecordsNavNudge);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const [bodyExpanded, setBodyExpanded] = useState(true);
   const [planLinked, setPlanLinked] = useState(false);
   const [isEditingAdjustments, setIsEditingAdjustments] = useState(false);
   const [prefsSavedLocally, setPrefsSavedLocally] = useState(false);
+  const [recordsNudgeVisible, setRecordsNudgeVisible] = useState(false);
 
   const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
   const today = getTodayDateKey();
@@ -265,6 +271,27 @@ export function RecommendationResultPage() {
   // Only from Records (logDate in URL). Fresh recommend has no logDate — double-tap
   // must not navigate(-1) back to machine search.
   const recordsReturnDate = normalizeDateKey(logDateParam ?? '');
+  const isFreshRecommend = isAuthenticated && !recordsReturnDate;
+
+  useEffect(() => {
+    if (!isFreshRecommend || isDismissedToday(RECORDS_NUDGE_DISMISS_KEY)) {
+      setRecordsNudgeVisible(false);
+      setRecordsNavNudge(false);
+      return;
+    }
+    setRecordsNudgeVisible(true);
+    setRecordsNavNudge(true);
+    return () => {
+      setRecordsNavNudge(false);
+    };
+  }, [isFreshRecommend, setRecordsNavNudge, result?.id]);
+
+  const dismissRecordsNudge = useCallback(() => {
+    dismissForToday(RECORDS_NUDGE_DISMISS_KEY);
+    setRecordsNudgeVisible(false);
+    setRecordsNavNudge(false);
+  }, [setRecordsNavNudge]);
+
   const returnToRecords = useCallback(() => {
     if (!recordsReturnDate) return;
     navigate(`${ROUTES.RECORDS}?date=${encodeURIComponent(recordsReturnDate)}`);
@@ -388,6 +415,35 @@ export function RecommendationResultPage() {
                       fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
                     }
                   />
+                ) : null}
+                {recordsNudgeVisible ? (
+                  <div className="recommendation-result-page__records-nudge" role="status">
+                    <div className="recommendation-result-page__records-nudge-text">
+                      <p className="recommendation-result-page__records-nudge-title">
+                        {t('machines:recommendation.recordsNudgeTitle')}
+                      </p>
+                      <p className="recommendation-result-page__records-nudge-body">
+                        {t('machines:recommendation.recordsNudgeBody')}
+                      </p>
+                    </div>
+                    <div className="recommendation-result-page__records-nudge-actions">
+                      <Link
+                        to={buildRecordsDateUrl(resultLogDate || today)}
+                        className="btn btn--secondary recommendation-result-page__records-nudge-cta"
+                        onClick={() => setRecordsNavNudge(false)}
+                      >
+                        {t('machines:recommendation.recordsNudgeCta')}
+                      </Link>
+                      <button
+                        type="button"
+                        className="recommendation-result-page__records-nudge-close"
+                        aria-label={t('machines:recommendation.recordsNudgeClose')}
+                        onClick={dismissRecordsNudge}
+                      >
+                        <X size={16} strokeWidth={2.25} aria-hidden />
+                      </button>
+                    </div>
+                  </div>
                 ) : null}
                 {isAuthenticated ? (
                   <ActiveSettingsSourceBanner

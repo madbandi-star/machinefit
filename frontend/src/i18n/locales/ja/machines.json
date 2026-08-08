@@ -70,7 +70,12 @@
     "duplicate": "You already have a recommendation for this muscle on that date. Check Records, or pick another muscle.",
     "duplicateMachine": "You already have a recommendation for this machine on that date. Open it from Records.",
     "findGyms": "Find Gyms with This Machine",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "recordsNudgeTitle": "今日のトレーニングは記録で続けられます",
+    "recordsNudgeBody": "下の記録タブでセットやテンプレートを管理できます",
+    "recordsNudgeCta": "記録を見る",
+    "recordsNudgeClose": "案内を閉じる",
+    "recordsNudgeNavTip": "ここで今日のトレーニングを管理"
   },
   "workoutLog": {
     "title": "Workout log",

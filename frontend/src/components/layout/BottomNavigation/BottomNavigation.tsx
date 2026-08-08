@@ -1,10 +1,11 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import type { MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon, type IconName } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
+import { useUIStore } from '@/store/ui.store';
 import { queryClient } from '@/app/providers/QueryProvider';
 import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
@@ -21,6 +22,8 @@ const NAV_ITEMS: {
   { to: ROUTES.RECORDS, icon: 'records', labelKey: 'nav.records', requireAuth: true },
   { to: ROUTES.MY_PAGE, icon: 'user', labelKey: 'nav.myPage', requireAuth: true },
 ];
+
+const NAV_TIP_VISIBLE_MS = 6000;
 
 function prefetchForRoute(to: string, gymId: string | null, memberId: string | null, isAuthenticated: boolean) {
   if (to === ROUTES.MACHINES) {
@@ -82,12 +85,32 @@ function prefetchForRoute(to: string, gymId: string | null, memberId: string | n
 }
 
 export function BottomNavigation() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['common', 'machines']);
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const gymId = useGymStore((s) => s.activeGymId);
   const memberId = useGymStore((s) => s.activeMemberId);
+  const recordsNavNudge = useUIStore((s) => s.recordsNavNudge);
+  const setRecordsNavNudge = useUIStore((s) => s.setRecordsNavNudge);
+  const [showRecordsTip, setShowRecordsTip] = useState(false);
+
+  useEffect(() => {
+    if (!recordsNavNudge) {
+      setShowRecordsTip(false);
+      return;
+    }
+    setShowRecordsTip(true);
+    const timer = window.setTimeout(() => setShowRecordsTip(false), NAV_TIP_VISIBLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [recordsNavNudge]);
+
+  useEffect(() => {
+    if (!recordsNavNudge) return;
+    if (location.pathname === ROUTES.RECORDS || location.pathname.startsWith(`${ROUTES.RECORDS}/`)) {
+      setRecordsNavNudge(false);
+    }
+  }, [location.pathname, recordsNavNudge, setRecordsNavNudge]);
 
   const handleNavClick = (
     event: MouseEvent<HTMLAnchorElement>,
@@ -95,6 +118,9 @@ export function BottomNavigation() {
     to: string
   ) => {
     prefetchForRoute(to, gymId, memberId, isAuthenticated);
+    if (to === ROUTES.RECORDS) {
+      setRecordsNavNudge(false);
+    }
     if (requireAuth && !isAuthenticated) {
       event.preventDefault();
       navigate(ROUTES.LOGIN, { state: { from: location } });
@@ -103,25 +129,37 @@ export function BottomNavigation() {
 
   return (
     <nav className="bottom-nav" aria-label={t('nav.main')}>
-      {NAV_ITEMS.map(({ to, icon, labelKey, requireAuth }) => (
-        <NavLink
-          key={to}
-          to={to}
-          onClick={(e) => handleNavClick(e, requireAuth, to)}
-          onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
-          onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
-          className={({ isActive }) =>
-            ['bottom-nav__item', isActive ? 'bottom-nav__item--active' : '']
-              .filter(Boolean)
-              .join(' ')
-          }
-        >
-          <span className="bottom-nav__icon-wrap">
-            <Icon name={icon} size={20} />
-          </span>
-          <span className="bottom-nav__label">{t(labelKey)}</span>
-        </NavLink>
-      ))}
+      {NAV_ITEMS.map(({ to, icon, labelKey, requireAuth }) => {
+        const isRecordsNudge = to === ROUTES.RECORDS && recordsNavNudge;
+        return (
+          <NavLink
+            key={to}
+            to={to}
+            onClick={(e) => handleNavClick(e, requireAuth, to)}
+            onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
+            onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
+            className={({ isActive }) =>
+              [
+                'bottom-nav__item',
+                isActive ? 'bottom-nav__item--active' : '',
+                isRecordsNudge ? 'bottom-nav__item--nudge' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')
+            }
+          >
+            <span className="bottom-nav__icon-wrap">
+              {isRecordsNudge && showRecordsTip ? (
+                <span className="bottom-nav__nudge-tip" role="status">
+                  {t('machines:recommendation.recordsNudgeNavTip')}
+                </span>
+              ) : null}
+              <Icon name={icon} size={20} />
+            </span>
+            <span className="bottom-nav__label">{t(labelKey)}</span>
+          </NavLink>
+        );
+      })}
     </nav>
   );
 }

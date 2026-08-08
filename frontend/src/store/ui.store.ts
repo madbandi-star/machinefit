@@ -11,9 +11,12 @@ interface ToastState {
 interface UIState {
   isLoading: boolean;
   toast: ToastState | null;
+  /** Ephemeral: soft-highlight bottom-nav Records after a fresh recommend. */
+  recordsNavNudge: boolean;
   setLoading: (isLoading: boolean) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
+  setRecordsNavNudge: (active: boolean) => void;
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -28,6 +31,7 @@ function clearToastTimer() {
 export const useUIStore = create<UIState>((set, get) => ({
   isLoading: false,
   toast: null,
+  recordsNavNudge: false,
   setLoading: (isLoading) => set({ isLoading }),
   showToast: (message, type = 'info') => {
     clearToastTimer();
@@ -44,4 +48,5 @@ export const useUIStore = create<UIState>((set, get) => ({
     clearToastTimer();
     set({ toast: null });
   },
+  setRecordsNavNudge: (active) => set({ recordsNavNudge: active }),
 }));
