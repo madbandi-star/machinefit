@@ -84,9 +84,17 @@
 
 .fortune-dashboard {
   --fortune-reveal-delay: 0ms;
+  --fortune-card-radius: 14px;
+  --fortune-card-border: color-mix(in srgb, var(--color-text) 16%, transparent);
+  --fortune-card-bg: color-mix(
+    in srgb,
+    var(--color-surface, #fff) 92%,
+    var(--color-surface-alt, #f5f6f8)
+  );
+  --fortune-card-pad: 1rem 1.05rem;
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
+  gap: 1rem;
   max-width: 720px;
   margin: 0 auto;
   padding-bottom: 1.5rem;
@@ -133,12 +141,28 @@
 
 .fortune-dashboard__disclaimer {
   margin: 0.25rem 0 0;
-  padding: 0.65rem 0.75rem;
-  border-radius: var(--radius-md, 12px);
-  background: color-mix(in srgb, var(--color-surface-alt, #f5f6f8) 80%, transparent);
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--fortune-card-radius);
+  border: 1px solid var(--fortune-card-border);
+  background: var(--fortune-card-bg);
   color: var(--color-text-muted);
   font-size: 0.78rem;
   line-height: 1.45;
+}
+
+.fortune-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: var(--fortune-card-pad);
+  border-radius: var(--fortune-card-radius);
+  border: 1px solid var(--fortune-card-border);
+  background: var(--fortune-card-bg);
+}
+
+.fortune-prose-row {
+  display: grid;
+  gap: 0.75rem;
 }
 
 /* —— Reveal —— */
@@ -320,9 +344,9 @@
   align-items: center;
   gap: 0.35rem;
   padding: 1rem 0.75rem 0.85rem;
-  border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
-  background: color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+  border-radius: calc(var(--fortune-card-radius) - 2px);
+  border: 1px solid var(--fortune-card-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 88%, transparent);
 }
 
 .fortune-gauge__emoji {
@@ -418,9 +442,9 @@
   flex-direction: column;
   gap: 0.45rem;
   padding: 0.85rem 0.9rem;
-  border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
-  background: color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+  border-radius: calc(var(--fortune-card-radius) - 2px);
+  border: 1px solid var(--fortune-card-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 88%, transparent);
   color: inherit;
   text-decoration: none;
 }
@@ -682,9 +706,9 @@
   gap: 0.25rem;
   min-height: 7.2rem;
   padding: 0.85rem 0.8rem;
-  border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
-  background: color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+  border-radius: calc(var(--fortune-card-radius) - 2px);
+  border: 1px solid var(--fortune-card-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 86%, transparent);
   color: inherit;
   text-decoration: none;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -718,11 +742,17 @@
 }
 
 .fortune-avoid {
-  padding: 0.95rem 1rem 1rem;
-  border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
-  border-left: 3px solid color-mix(in srgb, #c47b2b 75%, var(--color-border));
-  background: color-mix(in srgb, var(--color-surface, #fff) 96%, var(--color-surface-alt, #f5f6f8));
+  padding: var(--fortune-card-pad);
+  border-radius: var(--fortune-card-radius);
+  border: 1px solid var(--fortune-card-border);
+  border-left: 3px solid color-mix(in srgb, #d4923a 80%, var(--color-border));
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, #d4923a 10%, transparent),
+      transparent 55%
+    ),
+    var(--fortune-card-bg);
   color: var(--color-text);
 }
 
@@ -749,14 +779,12 @@
   color: var(--color-text);
 }
 
-.fortune-avoid__detail--muted {
-  color: var(--color-text-muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
-}
-
 .fortune-prose {
-  padding: 0.15rem 0.1rem 0.25rem;
+  padding: var(--fortune-card-pad);
+  border-radius: var(--fortune-card-radius);
+  border: 1px solid var(--fortune-card-border);
+  background: var(--fortune-card-bg);
+  color: var(--color-text);
 }
 
 .fortune-prose__eyebrow {
@@ -823,16 +851,14 @@
 }
 
 .fortune-prose--mission {
-  padding: 0.95rem 1rem;
-  border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--fortune-card-border));
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--color-primary) 8%, transparent),
+      color-mix(in srgb, var(--color-primary) 12%, transparent),
       transparent 60%
     ),
-    color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+    var(--fortune-card-bg);
 }
 
 .fortune-prose--mission .fortune-prose__body p {
@@ -841,8 +867,7 @@
 }
 
 .fortune-prose--report {
-  padding: 1rem 0.15rem 0.25rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 22%, var(--fortune-card-border));
 }
 
 .fortune-prose--report .fortune-prose__body p {
@@ -858,26 +883,28 @@
 
 .fortune-ba {
   display: grid;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .fortune-ba__card {
-  padding: 0.95rem 1rem;
-  border-radius: var(--radius-md, 12px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
-  background: color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+  padding: var(--fortune-card-pad);
+  border-radius: var(--fortune-card-radius);
+  border: 1px solid var(--fortune-card-border);
+  background: var(--fortune-card-bg);
 }
 
 .fortune-ba__card--before {
+  border-color: color-mix(in srgb, #ff8a4c 35%, var(--fortune-card-border));
   background:
-    linear-gradient(135deg, color-mix(in srgb, #ff8a4c 10%, transparent), transparent 55%),
-    color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+    linear-gradient(135deg, color-mix(in srgb, #ff8a4c 12%, transparent), transparent 55%),
+    var(--fortune-card-bg);
 }
 
 .fortune-ba__card--after {
+  border-color: color-mix(in srgb, #5ac8a8 35%, var(--fortune-card-border));
   background:
     linear-gradient(135deg, color-mix(in srgb, #5ac8a8 12%, transparent), transparent 55%),
-    color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+    var(--fortune-card-bg);
 }
 
 .fortune-ba__eyebrow,
@@ -906,11 +933,11 @@
 .fortune-quote {
   margin: 0;
   padding: 1.25rem 1.1rem;
-  border-radius: calc(var(--radius-md, 12px) + 2px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: var(--fortune-card-radius);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--fortune-card-border));
   background:
-    radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 60%),
-    color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+    radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 60%),
+    var(--fortune-card-bg);
   text-align: center;
   animation: fortune-quote-in 0.55s ease both;
 }
@@ -1019,6 +1046,15 @@
   .fortune-scores__hero .fortune-gauge {
     flex: 1;
     justify-content: center;
+  }
+
+  .fortune-prose-row {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .fortune-prose-row .fortune-prose {
+    height: 100%;
   }
 
   .fortune-donut {

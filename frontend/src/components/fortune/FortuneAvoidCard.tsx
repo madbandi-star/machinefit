@@ -13,9 +13,6 @@ export function FortuneAvoidCard({ label }: FortuneAvoidCardProps) {
       </p>
       <p className="fortune-avoid__body">{label}</p>
       <p className="fortune-avoid__detail">{t('content.avoidBody', { avoid: label })}</p>
-      <p className="fortune-avoid__detail fortune-avoid__detail--muted">
-        {t('content.avoidFooter')}
-      </p>
     </aside>
   );
 }

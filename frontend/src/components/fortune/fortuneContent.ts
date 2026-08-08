@@ -82,10 +82,7 @@ export function buildStrategyExplain(recommendation: FortuneRecommendation): Pro
     emoji: '📈',
     leadKey: 'content.strategyLead',
     leadValues: { strategy: recommendation.strategyLabel },
-    lines: [
-      { key, values: { strategy: recommendation.strategyLabel } },
-      { key: 'content.strategyFooter' },
-    ],
+    lines: [{ key, values: { strategy: recommendation.strategyLabel } }],
   };
 }
 

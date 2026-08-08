@@ -81,35 +81,37 @@ export function FortuneDashboard({
       />
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={40}>
-        <p className="fortune-dashboard__section-label">
-          <span aria-hidden>🔮</span> {t('sectionFortuneVisual')}
-        </p>
-        <div className="fortune-scores">
-          <div className="fortune-scores__hero">
-            <FortuneRadialGauge
-              value={scores.healthmanIndex}
-              label={t('healthmanIndexLabel')}
-              emoji="🔥"
-              caption={t(healthmanCaptionKey(scores.healthmanIndex))}
-              tone="primary"
-            />
-          </div>
-          <div className="fortune-scores__side">
-            <FortuneLinearGauge
-              value={scores.prLuck}
-              label={t('prLuckLabel')}
-              emoji="🏆"
-              caption={prCaption ? t(prCaption) : undefined}
-              tone="pr"
-              to={ROUTES.ACHIEVEMENTS}
-            />
-            <FortuneLinearGauge
-              value={scores.recoveryLuck}
-              label={t('recoveryLuckLabel')}
-              emoji="🧘"
-              caption={recoveryCaption ? t(recoveryCaption) : undefined}
-              tone="recovery"
-            />
+        <div className="fortune-panel">
+          <p className="fortune-dashboard__section-label">
+            <span aria-hidden>🔮</span> {t('sectionFortuneVisual')}
+          </p>
+          <div className="fortune-scores">
+            <div className="fortune-scores__hero">
+              <FortuneRadialGauge
+                value={scores.healthmanIndex}
+                label={t('healthmanIndexLabel')}
+                emoji="🔥"
+                caption={t(healthmanCaptionKey(scores.healthmanIndex))}
+                tone="primary"
+              />
+            </div>
+            <div className="fortune-scores__side">
+              <FortuneLinearGauge
+                value={scores.prLuck}
+                label={t('prLuckLabel')}
+                emoji="🏆"
+                caption={prCaption ? t(prCaption) : undefined}
+                tone="pr"
+                to={ROUTES.ACHIEVEMENTS}
+              />
+              <FortuneLinearGauge
+                value={scores.recoveryLuck}
+                label={t('recoveryLuckLabel')}
+                emoji="🧘"
+                caption={recoveryCaption ? t(recoveryCaption) : undefined}
+                tone="recovery"
+              />
+            </div>
           </div>
         </div>
       </FortuneReveal>
@@ -119,28 +121,29 @@ export function FortuneDashboard({
       </FortuneReveal>
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={70}>
-        <FortuneProse block={content.pr} />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={80}>
-        <FortuneProse block={content.recovery} />
+        <div className="fortune-prose-row">
+          <FortuneProse block={content.pr} />
+          <FortuneProse block={content.recovery} />
+        </div>
       </FortuneReveal>
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={100}>
-        <p className="fortune-dashboard__section-label">
-          <span aria-hidden>✨</span> {t('sectionRecommendVisual')}
-        </p>
-        <TodayRecommendationGrid
-          bodyPart={recommendation.bodyPart}
-          bodyPartLabel={recommendation.bodyPartLabel}
-          style={recommendation.style}
-          styleLabel={recommendation.styleLabel}
-          strategyLabel={recommendation.strategyLabel}
-          conditionLabel={recommendation.conditionLabel}
-        />
-        {fortune.strategyLabels.length ? (
-          <p className="fortune-dashboard__tags">{fortune.strategyLabels.join(' · ')}</p>
-        ) : null}
+        <div className="fortune-panel">
+          <p className="fortune-dashboard__section-label">
+            <span aria-hidden>✨</span> {t('sectionRecommendVisual')}
+          </p>
+          <TodayRecommendationGrid
+            bodyPart={recommendation.bodyPart}
+            bodyPartLabel={recommendation.bodyPartLabel}
+            style={recommendation.style}
+            styleLabel={recommendation.styleLabel}
+            strategyLabel={recommendation.strategyLabel}
+            conditionLabel={recommendation.conditionLabel}
+          />
+          {fortune.strategyLabels.length ? (
+            <p className="fortune-dashboard__tags">{fortune.strategyLabels.join(' · ')}</p>
+          ) : null}
+        </div>
       </FortuneReveal>
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={120}>
