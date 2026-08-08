@@ -25,8 +25,14 @@ import {
 } from '@machinefit/shared';
 import { workoutCardRepository } from '../repositories/workout-card.repository.js';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
+import { historyRepository } from '../repositories/history.repository.js';
+import { workoutRecordOrderRepository } from '../repositories/workout-record-order.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
+import { liftedVolumeService } from './lifted-volume.service.js';
+import { resolveWorkoutLoadContexts } from './workout-load.service.js';
+import { growthTimelineService } from './growth-timeline.service.js';
+import { achievementService } from './achievement.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 function todayDateKey(): string {
@@ -410,20 +416,161 @@ export const workoutCardService = {
       throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
     }
 
+    const fromDate = existing.scheduledDate;
+    const toDate = input.scheduledDate;
+    if (fromDate === toDate) {
+      return stripMachineId(existing);
+    }
+
+    const targetMuscleKey = existing.targetMuscleGroup ?? '';
+
     try {
       const moved = await workoutCardRepository.moveDate(
         userId,
         id,
-        input.scheduledDate,
+        toDate,
         locale
       );
       if (!moved) {
         throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
       }
 
+      // Records UI merges workout_logs + recent_history by date. Moving only the
+      // plan card left the source-date row behind — move/remove those too.
+      const sourceLog = await workoutLogRepository.findByUserMachineDate(
+        userId,
+        existing.gymId,
+        existing.machineId,
+        fromDate,
+        targetMuscleKey,
+        existing.memberId
+      );
+
+      if (sourceLog) {
+        const targetLog = await workoutLogRepository.findByUserMachineDate(
+          userId,
+          existing.gymId,
+          existing.machineId,
+          toDate,
+          targetMuscleKey,
+          existing.memberId
+        );
+
+        try {
+          const loadById = await resolveWorkoutLoadContexts(
+            userId,
+            targetLog ? [sourceLog, targetLog] : [sourceLog],
+            { gymId: existing.gymId, memberId: existing.memberId }
+          );
+
+          // Remove volume from the old date.
+          await liftedVolumeService.applyLogDelta({
+            userId,
+            gymId: existing.gymId,
+            logDate: fromDate,
+            previousWeights: sourceLog.setWeightsKg,
+            previousCompleted: sourceLog.setCompleted,
+            previousSets: sourceLog.setCount,
+            previousLoad: loadById.get(sourceLog.id),
+            nextWeights: [],
+            nextCompleted: [],
+            nextSets: 0,
+            nextLoad: null,
+          });
+
+          const saved = await workoutLogRepository.upsert(
+            userId,
+            existing.gymId,
+            existing.memberId,
+            existing.machineId,
+            {
+              recommendationId:
+                existing.recommendationId ?? sourceLog.recommendationId,
+              logDate: toDate,
+              targetMuscleGroup: targetMuscleKey,
+              setCount: sourceLog.setCount,
+              setWeightsKg: sourceLog.setWeightsKg,
+              setCompleted: sourceLog.setCompleted,
+              diary: sourceLog.diary,
+            }
+          );
+
+          // Add volume on the new date (replace any pre-existing target log).
+          await liftedVolumeService.applyLogDelta({
+            userId,
+            gymId: existing.gymId,
+            logDate: toDate,
+            previousWeights: targetLog?.setWeightsKg ?? [],
+            previousCompleted: targetLog?.setCompleted,
+            previousSets: targetLog?.setCount ?? 0,
+            previousLoad: targetLog ? loadById.get(targetLog.id) ?? null : null,
+            nextWeights: sourceLog.setWeightsKg,
+            nextCompleted: sourceLog.setCompleted,
+            nextSets: sourceLog.setCount,
+            nextLoad: null,
+          });
+
+          await workoutLogRepository.deleteByUserMachineDate(
+            userId,
+            existing.gymId,
+            existing.memberId,
+            existing.machineId,
+            fromDate,
+            targetMuscleKey
+          );
+
+          await workoutCardRepository.syncFromWorkoutLog(userId, {
+            gymId: existing.gymId,
+            memberId: existing.memberId,
+            machineId: existing.machineId,
+            scheduledDate: toDate,
+            targetMuscleGroup: targetMuscleKey,
+            setCount: sourceLog.setCount,
+            setWeightsKg: sourceLog.setWeightsKg,
+            setCompleted: sourceLog.setCompleted,
+            diary: sourceLog.diary ?? null,
+            workoutLogId: saved.id,
+          });
+        } catch {
+          /* log/volume move is best-effort after card date change */
+        }
+
+        growthTimelineService.invalidateUser(userId);
+        void Promise.allSettled([
+          achievementService.refreshUser(userId),
+          growthTimelineService.refreshUser(userId),
+        ]);
+      }
+
+      try {
+        await historyRepository.removeForMachineDate(
+          userId,
+          existing.gymId,
+          existing.memberId,
+          existing.machineId,
+          fromDate
+        );
+      } catch {
+        /* history cleanup must not fail move */
+      }
+
+      try {
+        await workoutRecordOrderRepository.removeForCard(
+          userId,
+          existing.gymId,
+          existing.memberId,
+          fromDate,
+          existing.machineId,
+          targetMuscleKey
+        );
+      } catch {
+        /* display-order cleanup must not fail move */
+      }
+
       // Status rules: COMPLETED stays COMPLETED even when moved to future;
       // PLANNED stays PLANNED. No automatic status flip on move.
-      return stripMachineId(moved);
+      const refreshed = await workoutCardRepository.findById(userId, id, locale);
+      return stripMachineId(refreshed ?? moved);
     } catch (error) {
       throwDuplicateCard(error);
     }

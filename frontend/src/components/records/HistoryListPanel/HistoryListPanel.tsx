@@ -543,7 +543,12 @@ export function HistoryListPanel() {
       return res.data.data;
     },
     onSuccess: async () => {
-      await invalidatePlans();
+      await Promise.all([
+        invalidatePlans(),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+        queryClient.invalidateQueries({ queryKey: displayOrderQueryKey }),
+      ]);
       showToast(t('machines:history.planMoved'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),

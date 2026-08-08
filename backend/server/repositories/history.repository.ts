@@ -214,4 +214,22 @@ export const historyRepository = {
       userId,
     ]);
   },
+
+  /** Remove history rows for one machine on a Seoul calendar day (records list key). */
+  async removeForMachineDate(
+    userId: string,
+    gymId: string,
+    memberId: string,
+    machineId: string,
+    logDate: string
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query(
+      `DELETE FROM recent_history
+       WHERE user_id = $1 AND gym_id = $2 AND member_id = $3 AND machine_id = $4
+         AND (viewed_at AT TIME ZONE 'Asia/Seoul')::date = $5::date`,
+      [userId, gymId, memberId, machineId, logDate]
+    );
+  },
 };
