@@ -1,7 +1,7 @@
-ï»¿{
-  "title": "Plan date quick picks D+2â€¦D+6 + 1 week",
+{
+  "title": "Plan date quick picks D+2¡¦D+6 + 1 week",
   "summary": "Copy/move date picker quick chips now include D+2 through D+6 and one week later, in addition to today/tomorrow.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "6495e4f7" },
   "changedFiles": [
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",

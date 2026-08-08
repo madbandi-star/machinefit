@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Plan date quick picks D+2â€¦D+6 + 1 week
+# Test handoff: Plan date quick picks D+2¡¦D+6 + 1 week
 
 ## Summary
-ìš´ë™ ì¹´ë“œ ë‚ ì§œ ë³€ê²½/ë³µì‚¬ ë‹¤ì´ì–¼ë¡œê·¸ ë¹ ë¥¸ ì„ íƒì— ì˜¤ëŠ˜Â·ë‚´ì¼ ì™¸ì— D+2~D+6, ì¼ì£¼ì¼ë’¤ë¥¼ ì¶”ê°€í–ˆìŠµë‹ˆë‹¤.
+¿îµ¿ Ä«µå ³¯Â¥ º¯°æ/º¹»ç ´ÙÀÌ¾ó·Î±× ºü¸¥ ¼±ÅÃ¿¡ ¿À´Ã¡¤³»ÀÏ ¿Ü¿¡ D+2~D+6, ÀÏÁÖÀÏµÚ¸¦ Ãß°¡Çß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: (pending push)
+- Commit: 6495e4f7
 
 ## Test focus
-1. Records â†’ card â‹¯ â†’ ë‚ ì§œ ë³€ê²½ ë˜ëŠ” ë‹¤ë¥¸ ë‚ ì§œë¡œ ë³µì‚¬
-2. ì¹©: ì˜¤ëŠ˜, ë‚´ì¼, D+2 â€¦ D+6, ì¼ì£¼ì¼ë’¤
-3. ì¹© ì„ íƒ ì‹œ ìƒë‹¨ ë‚ ì§œ ë¼ë²¨ì´ í•´ë‹¹ ì¼ìë¡œ ë°”ë€Œê³  í™•ì¸ ê°€ëŠ¥
+1. Records ¡æ card ? ¡æ ³¯Â¥ º¯°æ ¶Ç´Â ´Ù¸¥ ³¯Â¥·Î º¹»ç
+2. Ä¨: ¿À´Ã, ³»ÀÏ, D+2 ¡¦ D+6, ÀÏÁÖÀÏµÚ
+3. Ä¨ ¼±ÅÃ ½Ã »ó´Ü ³¯Â¥ ¶óº§ÀÌ ÇØ´ç ÀÏÀÚ·Î ¹Ù²î°í È®ÀÎ °¡´É
 
 ## Fast checks
 ```bash
 rg -n "planDateDPlus|planDateInOneWeek|quickPicks" frontend/src/components/records/PlanDatePickerDialog frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ì˜¤ëŠ˜ / ë‚´ì¼ë§Œ | ì˜¤ëŠ˜Â·ë‚´ì¼Â·D+2~D+6Â·ì¼ì£¼ì¼ë’¤ |
+| ¿À´Ã / ³»ÀÏ¸¸ | ¿À´Ã¡¤³»ÀÏ¡¤D+2~D+6¡¤ÀÏÁÖÀÏµÚ |
