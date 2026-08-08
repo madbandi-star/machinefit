@@ -1,27 +1,27 @@
-ï»¿# Test handoff: Show photo board on My Page for member
+# Test handoff: Show photo board on My Page for member
 
 ## Summary
-ë§ˆì´í˜ì´ì§€ ã€Œë‘˜ëŸ¬ë³´ê¸°ã€ì˜ ì‚¬ì§„ê²Œì‹œíŒ ë§í¬ê°€ `premium_member` ì´ìƒë§Œ ë³´ì´ë˜ ì œí•œì„ ì œê±°í•˜ê³ , `member`ë„ ììœ ê²Œì‹œíŒì²˜ëŸ¼ ë³´ì´ë„ë¡ í–ˆìŠµë‹ˆë‹¤.
+¸¶ÀÌÆäÀÌÁö ¡¸µÑ·¯º¸±â¡¹ÀÇ »çÁø°Ô½ÃÆÇ ¸µÅ©°¡ `premium_member` ÀÌ»ó¸¸ º¸ÀÌ´ø Á¦ÇÑÀ» Á¦°ÅÇÏ°í, `member`µµ ÀÚÀ¯°Ô½ÃÆÇÃ³·³ º¸ÀÌµµ·Ï Çß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `bc597250`
 
 ## Test focus
-1. member ê³„ì • â†’ ë§ˆì´í˜ì´ì§€ â†’ ì‚¬ì§„ê²Œì‹œíŒ ë§í¬ í‘œì‹œ
-2. ë§í¬ ì§„ì… `/community/photo` ì •ìƒ
-3. premium ì´ìƒë„ ê¸°ì¡´ì²˜ëŸ¼ í‘œì‹œ
+1. member °èÁ¤ ¡æ ¸¶ÀÌÆäÀÌÁö ¡æ »çÁø°Ô½ÃÆÇ ¸µÅ© Ç¥½Ã
+2. ¸µÅ© ÁøÀÔ `/community/photo` Á¤»ó
+3. premium ÀÌ»óµµ ±âÁ¸Ã³·³ Ç¥½Ã
 
 ## Fast checks
 ```bash
 rg -n "PHOTO_BOARD|showAboveMember" frontend/src/pages/my-page/MyPage.tsx
 ```
-(ê¸°ëŒ€: PHOTO_BOARD ListNavLinkê°€ showAboveMember ë°–ì— ìˆìŒ)
+(±â´ë: PHOTO_BOARD ListNavLink°¡ showAboveMember ¹Û¿¡ ÀÖÀ½)
 
 ## Notes
 - FE Pages only.
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| member ë§ˆì´í˜ì´ì§€ì— ì‚¬ì§„ê²Œì‹œíŒ ì—†ìŒ | memberë„ ì‚¬ì§„ê²Œì‹œíŒ ë§í¬ í‘œì‹œ |
+| member ¸¶ÀÌÆäÀÌÁö¿¡ »çÁø°Ô½ÃÆÇ ¾øÀ½ | memberµµ »çÁø°Ô½ÃÆÇ ¸µÅ© Ç¥½Ã |

@@ -3,7 +3,7 @@
   "summary": "Removed premium_member gate so plain member role also sees ????? in My Page explore links (same as free board).",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "bc597250"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx"
