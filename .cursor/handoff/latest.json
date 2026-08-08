@@ -1,7 +1,7 @@
-ï»¿{
+{
   "title": "Traditional-structure Helchang Fortune engine (v2)",
-  "summary": "Replaced independent catalog RNG with a theme-first traditional entertainment pipeline (pillars â†’ cycles â†’ one core theme â†’ scores/recs â†’ consistency). Detail UI adds energy-flow strip, extra luck chips, and expandable traditional detail. Workout logs only personalize within theme bounds.",
-  "git": { "branch": "main", "commit": "PENDING" },
+  "summary": "Replaced independent catalog RNG with a theme-first traditional entertainment pipeline (pillars ¡æ cycles ¡æ one core theme ¡æ scores/recs ¡æ consistency). Detail UI adds energy-flow strip, extra luck chips, and expandable traditional detail. Workout logs only personalize within theme bounds.",
+  "git": { "branch": "main", "commit": "8eb0f6d1" },
   "changedFiles": [
     "shared/src/fortune/traditional/*",
     "shared/src/types/fortune.types.ts",
@@ -16,9 +16,9 @@
     "frontend/src/i18n/locales/*/fortune.json"
   ],
   "testFocus": [
-    "Same birth+date â†’ same coreTheme / narrative",
+    "Same birth+date ¡æ same coreTheme / narrative",
     "RECOVERY_RESET never yields PR_DAY + high prLuck",
-    "Detail page shows ê¸°ìš´ì˜ íë¦„ + í•µì‹¬ ê¸°ìš´ + ìš´ì„¸ ìì„¸íˆ",
+    "Detail page shows ±â¿îÀÇ Èå¸§ + ÇÙ½É ±â¿î + ¿î¼¼ ÀÚ¼¼È÷",
     "Scores include volume/focus/change; recommendation stays theme-consistent",
     "No birth profile still gates; missing workout logs still returns fortune"
   ],
@@ -30,7 +30,7 @@
     "rg -n \"buildTraditionalChart|enforceFortuneConsistency|FORTUNE_ENGINE_VERSION\" backend/server/services/fortune shared/src/fortune"
   ],
   "productionChecks": [
-    "After Deploy Frontend + Render backend: open /fortune/today with birth profile set; confirm core theme and flow strip; expand ìš´ì„¸ ìì„¸íˆ"
+    "After Deploy Frontend + Render backend: open /fortune/today with birth profile set; confirm core theme and flow strip; expand ¿î¼¼ ÀÚ¼¼È÷"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend success; Render backend redeploy needed for API narrative fields"
