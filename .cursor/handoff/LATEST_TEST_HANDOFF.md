@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `8925858f`
 
 ## Test focus
 1. 수행 세트/무게가 있는 날 템플릿 저장 → payload에 동일 세트/무게
