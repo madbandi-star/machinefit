@@ -1,19 +1,19 @@
 {
-  "title": "Detail page uses ??? ???? (no ??? ??)",
-  "summary": "Recommendation result page removes the separate save-preferences control and mirrors record-card badButtonSaveMode (??? ?? ?? ? ??? ????).",
-  "git": { "branch": "main", "commit": "b7119703" },
+  "title": "No double-tap back on fresh recommend detail",
+  "summary": "Disable detail-page double-tap navigate(-1) unless opened from records with logDate, so search?recommend?detail no longer bounces back to search.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],
   "testFocus": [
-    "No ??? ?? on detail",
-    "Bad button becomes ??? ???? and saves"
+    "Fresh recommend detail stays on page when tapped",
+    "Records detail double-tap still returns to records"
   ],
   "fastChecks": [
-    "rg -n \"onSavePreferences|badButtonSaveMode|handleSettingsSave\" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
+    "rg -n \"recordsReturnDate|enabled: Boolean\" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],
-  "productionChecks": ["Pages deploy + detail adjust/save flow"],
+  "productionChecks": ["Pages deploy + search?recommend?detail tap"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Separate ??? ?? on detail page",
-  "toBe": "Record-card style ??? ???? on the bad button"
+  "asIs": "Tap/double-tap on fresh recommend detail returned to search",
+  "toBe": "Double-tap back only when opened from records with logDate"
 }

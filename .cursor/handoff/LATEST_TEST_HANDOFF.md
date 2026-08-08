@@ -1,23 +1,22 @@
-# Test handoff: Detail page uses ¼ÂÆÃ°ª ÀúÀåÇÏ±â (no Á¶Á¤°ª ÀúÀå)
+ï»¿# Test handoff: No double-tap back on fresh recommend detail
 
 ## Summary
-¼¼ºÎ±â·Ï ÆäÀÌÁöÀÇ º°µµ ¡¸Á¶Á¤°ª ÀúÀå¡¹ ¹öÆ°À» Á¦°ÅÇÏ°í, ±â·ÏÄ«µå¿Í °°ÀÌ ¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹¡æ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹·Î ¹Ù²î¾î ÀúÀåÇÏµµ·Ï ¸ÂÃè½À´Ï´Ù.
+ê¸°êµ¬ê²€ìƒ‰â†’ì¶”ì²œ ìƒì„¸ì—ì„œ ë”ë¸”íƒ­ ì‹œ `navigate(-1)`ë¡œ ê²€ìƒ‰ìœ¼ë¡œ ëŒì•„ê°€ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. ê¸°ë¡(`logDate`)ì—ì„œ ì—° ìƒì„¸ì—ì„œë§Œ ë”ë¸”íƒ­ìœ¼ë¡œ ê¸°ë¡ ëª©ë¡ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: b7119703
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ card ¡æ detail
-2. No separate ¡¸Á¶Á¤°ª ÀúÀå¡¹ in the feedback header
-3. Tap ¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹ ¡æ button becomes ¡¸¼ÂÆÃ°ª ÀúÀåÇÏ±â¡¹ (pulses) ¡æ tap saves adjustments
+1. Search â†’ recommend â†’ detail: tap/double-tap does NOT return to search
+2. Records â†’ card â†’ detail (with logDate): double-tap still returns to records
 
 ## Fast checks
 ```bash
-rg -n "onSavePreferences|badButtonSaveMode|handleSettingsSave" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
+rg -n "recordsReturnDate|enabled: Boolean\\(recordsReturnDate\\)" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Separate Á¶Á¤°ª ÀúÀå on detail | Same bad¡æsave button flow as record cards |
+| Fresh recommend detail double-tap â†’ search | No back navigation without logDate |

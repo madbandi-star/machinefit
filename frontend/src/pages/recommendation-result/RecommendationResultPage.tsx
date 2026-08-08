@@ -262,20 +262,17 @@ export function RecommendationResultPage() {
     logControl.remove();
   };
 
+  // Only from Records (logDate in URL). Fresh recommend has no logDate — double-tap
+  // must not navigate(-1) back to machine search.
+  const recordsReturnDate = normalizeDateKey(logDateParam ?? '');
   const returnToRecords = useCallback(() => {
-    const dateKey = normalizeDateKey(logDateParam ?? '');
-    if (dateKey) {
-      navigate(`${ROUTES.RECORDS}?date=${encodeURIComponent(dateKey)}`);
-      return;
-    }
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      navigate(-1);
-      return;
-    }
-    navigate(ROUTES.RECORDS);
-  }, [logDateParam, navigate]);
+    if (!recordsReturnDate) return;
+    navigate(`${ROUTES.RECORDS}?date=${encodeURIComponent(recordsReturnDate)}`);
+  }, [recordsReturnDate, navigate]);
 
-  const doubleTapBack = useDoubleTapAction(returnToRecords);
+  const doubleTapBack = useDoubleTapAction(returnToRecords, {
+    enabled: Boolean(recordsReturnDate),
+  });
 
   const titleHeaderActions =
     isAuthenticated ? (
