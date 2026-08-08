@@ -429,22 +429,17 @@
       "look": "How a long plan connects down to today’s condition.",
       "gym": "Like long program → year goal → month focus → today’s readiness."
     },
-    "yinYang": {
-      "what": "Yin/Yang splits energy character into calmer recovery vs active push.",
-      "look": "Whether today leans toward action or tidy-up/recovery.",
-      "gym": "Training and recovery need balance — Yang leans execute, Yin leans reset."
-    },
-    "wuxing": {
-      "what": "Five elements classify five traditional energy flavors.",
-      "look": "Which flavor leads today — not a strength test.",
-      "gym": "Wood grow · Fire drive · Earth steady · Metal focus · Water recover — fun metaphors only."
-    },
     "wuxingItems": {
       "wood": "Like gradual growth and expanding stimulus.",
       "fire": "Like high drive and assertive sessions.",
       "earth": "Like steady routine and balance.",
       "metal": "Like sharp focus on a clear goal.",
       "water": "Like adjusting intensity and recovering."
+    },
+    "energy": {
+      "what": "Yin/Yang splits energy into calmer recovery vs active push, while the five elements classify five traditional energy flavors.",
+      "look": "Whether today leans toward action or tidy-up/recovery, and which element flavor leads — not a strength test.",
+      "gym": "Yang leans execute, Yin leans reset; Wood grow · Fire drive · Earth steady · Metal focus · Water recover — fun metaphors for training/recovery balance."
     }
   },
   "ganzhi": {

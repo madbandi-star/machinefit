@@ -87,8 +87,7 @@ export function FortuneEnergySection({ narrative, delayMs = 40 }: FortuneEnergyS
           </ul>
         </div>
       </div>
-      <FortuneExplainBlock prefix="yinYang" showFootnote={false} />
-      <FortuneExplainBlock prefix="wuxing" />
+      <FortuneExplainBlock prefix="energy" />
     </FortuneSection>
   );
 }
