@@ -9,6 +9,18 @@ import {
   invokeRestTimerStartCount,
   useRestTimerStore,
 } from '@/store/restTimer.store';
+import { useVoiceCoachSessionStore } from '@/store/voiceCoachSession.store';
+import { publishRestLockScreen } from '@/utils/workoutLockScreen';
+
+function publishRestLockScreenIfIdleCount(options: {
+  setNumber: number;
+  remainingSec: number;
+  paused: boolean;
+}): void {
+  // Count takes priority on the lock screen when both are active.
+  if (useVoiceCoachSessionStore.getState().isRunning()) return;
+  publishRestLockScreen(options);
+}
 
 const REST_TIMER_SLOT_ID = 'mf-rest-timer-slot';
 
@@ -49,6 +61,7 @@ export function GlobalRestTimerHost() {
   const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
   const completedRef = useRef(false);
   const prevPathRef = useRef(location.pathname);
+  const lastLockSecRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (prevPathRef.current !== location.pathname) {
@@ -83,13 +96,29 @@ export function GlobalRestTimerHost() {
 
     setRemaining(getRemainingSec());
     setPaused(isPaused());
+    lastLockSecRef.current = null;
+    publishRestLockScreenIfIdleCount({
+      setNumber: session.setNumber,
+      remainingSec: getRemainingSec(),
+      paused: isPaused(),
+    });
 
     const timer = window.setInterval(() => {
       const state = useRestTimerStore.getState();
       if (!state.session) return;
       const next = state.getRemainingSec();
+      const nextPaused = state.isPaused();
       setRemaining(next);
-      setPaused(state.isPaused());
+      setPaused(nextPaused);
+      // Lock screen: update once per second (MediaMetadata rewrite is relatively heavy).
+      if (lastLockSecRef.current !== next) {
+        lastLockSecRef.current = next;
+        publishRestLockScreenIfIdleCount({
+          setNumber: state.session.setNumber,
+          remainingSec: next,
+          paused: nextPaused,
+        });
+      }
       if (next <= 0 && !state.isPaused() && !completedRef.current) {
         completedRef.current = true;
         void notifyRestComplete(

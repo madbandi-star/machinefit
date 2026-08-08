@@ -1,4 +1,9 @@
 import { create } from 'zustand';
+import {
+  acquireRestLockScreenSession,
+  publishRestLockScreen,
+  releaseRestLockScreenSession,
+} from '@/utils/workoutLockScreen';
 
 export type RestTimerDisplayOverride = 'auto' | 'compact' | 'full';
 
@@ -80,6 +85,17 @@ export const useRestTimerStore = create<RestTimerState>((set, get) => ({
       // Prefer compact banner first; user can expand to fullscreen.
       displayOverride: 'compact',
     });
+    // Gesture turn: keep Media Session alive so lock screen can show rest time.
+    void acquireRestLockScreenSession().then(() => {
+      const state = get();
+      if (!state.session) return;
+      // Host tick also publishes; this covers the gesture-start moment.
+      publishRestLockScreen({
+        setNumber: state.session.setNumber,
+        remainingSec: state.getRemainingSec(),
+        paused: state.isPaused(),
+      });
+    });
   },
 
   pause: () => {
@@ -107,12 +123,16 @@ export const useRestTimerStore = create<RestTimerState>((set, get) => ({
     });
   },
 
-  stop: () => set({ session: null, displayOverride: 'auto' }),
+  stop: () => {
+    set({ session: null, displayOverride: 'auto' });
+    void releaseRestLockScreenSession();
+  },
 
   complete: () => {
     const { session } = get();
     if (!session) return;
     set({ session: null, displayOverride: 'auto' });
+    void releaseRestLockScreenSession();
     callbacks.onReadyForNextSet?.();
   },
 

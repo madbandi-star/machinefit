@@ -16,6 +16,24 @@ import {
   VoiceCoachPauseController,
 } from '@/utils/voiceCoachPause';
 import type { VoiceHoldFlowMode } from '@/utils/voiceHold';
+import { publishCountLockScreen } from '@/utils/workoutLockScreen';
+
+function publishLiveCountLockScreen(
+  state: Pick<
+    VoiceCoachSessionState,
+    'phase' | 'currentRep' | 'countdown' | 'turbo' | 'intensity' | 'isPaused'
+  >
+): void {
+  if (state.phase === 'idle' || state.phase === 'done') return;
+  publishCountLockScreen({
+    phase: state.phase,
+    currentRep: state.currentRep,
+    countdown: state.countdown,
+    turbo: state.turbo,
+    intensity: state.intensity,
+    isPaused: state.isPaused,
+  });
+}
 
 export type CountDisplayOverride = 'auto' | 'compact' | 'full';
 
@@ -118,6 +136,7 @@ export const useVoiceCoachSessionStore = create<VoiceCoachSessionState>((set, ge
     speechManager.cancel();
     stopVoiceCoachClips();
     set({ isPaused: true });
+    publishLiveCountLockScreen({ ...get(), isPaused: true });
   },
 
   resume: () => {
@@ -125,6 +144,7 @@ export const useVoiceCoachSessionStore = create<VoiceCoachSessionState>((set, ge
     pauseController.resume();
     set({ isPaused: false });
     void ensureVoiceCoachAudioRunning();
+    publishLiveCountLockScreen({ ...get(), isPaused: false });
   },
 
   start: (config) => {
@@ -213,6 +233,8 @@ export const useVoiceCoachSessionStore = create<VoiceCoachSessionState>((set, ge
               patch.intensity = 0;
             }
             set(patch);
+            const live = { ...get(), ...patch };
+            publishLiveCountLockScreen(live);
           },
         });
       } catch (error) {

@@ -24,6 +24,22 @@ let wakeLock: WakeLockSentinelLike | null = null;
 let sessionActive = false;
 let visibilityBound = false;
 let mediaHandlersBound = false;
+/** Ref-count owners so rest timer can keep Media Session after count ends. */
+const mediaSessionOwners = new Set<string>();
+
+export type WorkoutLockScreenMetadata = {
+  title: string;
+  artist?: string;
+  album?: string;
+};
+
+const DEFAULT_LOCK_META: Required<WorkoutLockScreenMetadata> = {
+  title: 'MachineFit',
+  artist: 'MachineFit',
+  album: 'Workout',
+};
+
+let lockScreenMeta: Required<WorkoutLockScreenMetadata> = { ...DEFAULT_LOCK_META };
 
 /** Build a short silent WAV so the OS treats us as an active media session. */
 function buildSilentWavObjectUrl(seconds = 2): string {
@@ -198,21 +214,58 @@ async function releaseWakeLock(): Promise<void> {
   wakeLock = null;
 }
 
+function applyMediaSessionMetadata(): void {
+  if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: lockScreenMeta.title,
+      artist: lockScreenMeta.artist,
+      album: lockScreenMeta.album,
+    });
+  } catch {
+    // ignore
+  }
+}
+
 function setMediaSessionPlaying(playing: boolean): void {
   if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
   try {
     if (playing) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: 'MachineFit Voice Coach',
-        artist: 'MachineFit',
-        album: 'Workout',
-      });
+      applyMediaSessionMetadata();
       navigator.mediaSession.playbackState = 'playing';
     } else if (navigator.mediaSession.playbackState === 'playing') {
       navigator.mediaSession.playbackState = 'none';
     }
   } catch {
     // ignore
+  }
+}
+
+/**
+ * Update lock-screen Now Playing text (title = primary glance value).
+ * Does not clobber on watchdog — watchdog only re-applies current meta.
+ */
+export function setWorkoutLockScreenMetadata(
+  meta: WorkoutLockScreenMetadata | null
+): void {
+  if (meta) {
+    lockScreenMeta = {
+      title: String(meta.title || DEFAULT_LOCK_META.title).slice(0, 80),
+      artist: String(meta.artist || DEFAULT_LOCK_META.artist).slice(0, 80),
+      album: String(meta.album || DEFAULT_LOCK_META.album).slice(0, 80),
+    };
+  } else {
+    lockScreenMeta = { ...DEFAULT_LOCK_META };
+  }
+  if (sessionActive) {
+    applyMediaSessionMetadata();
+    try {
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
+    } catch {
+      // ignore
+    }
   }
 }
 
@@ -321,8 +374,12 @@ function unbindVisibility(): void {
   visibilityBound = false;
 }
 
-/** Call from a user-gesture before/at voice-coach start. */
-export async function beginVoiceCoachAudioSession(): Promise<void> {
+async function ensureMediaSessionStarted(): Promise<void> {
+  if (sessionActive) {
+    void startSilentKeepAlive();
+    setMediaSessionPlaying(true);
+    return;
+  }
   sessionActive = true;
   bindVisibility();
   bindMediaSessionHandlers();
@@ -336,7 +393,9 @@ export async function beginVoiceCoachAudioSession(): Promise<void> {
   void acquireWakeLock();
 }
 
-export async function endVoiceCoachAudioSession(): Promise<void> {
+async function teardownMediaSessionIfUnused(): Promise<void> {
+  if (mediaSessionOwners.size > 0) return;
+  if (!sessionActive) return;
   sessionActive = false;
   stopResumeWatchdog();
   stopSilentKeepAlive();
@@ -345,6 +404,33 @@ export async function endVoiceCoachAudioSession(): Promise<void> {
   unbindMediaSessionHandlers();
   await releaseWakeLock();
   unbindVisibility();
+  lockScreenMeta = { ...DEFAULT_LOCK_META };
+}
+
+/**
+ * Acquire shared Media Session / silent keep-alive for lock-screen display.
+ * Owners: `voice` (count/hold), `rest` (rest timer).
+ */
+export async function acquireWorkoutMediaSession(owner: string): Promise<void> {
+  const key = String(owner || '').trim() || 'anon';
+  mediaSessionOwners.add(key);
+  await ensureMediaSessionStarted();
+}
+
+/** Release one owner; tears down Media Session when none remain. */
+export async function releaseWorkoutMediaSession(owner: string): Promise<void> {
+  const key = String(owner || '').trim() || 'anon';
+  mediaSessionOwners.delete(key);
+  await teardownMediaSessionIfUnused();
+}
+
+/** Call from a user-gesture before/at voice-coach start. */
+export async function beginVoiceCoachAudioSession(): Promise<void> {
+  await acquireWorkoutMediaSession('voice');
+}
+
+export async function endVoiceCoachAudioSession(): Promise<void> {
+  await releaseWorkoutMediaSession('voice');
 }
 
 export function isVoiceCoachAudioSessionActive(): boolean {

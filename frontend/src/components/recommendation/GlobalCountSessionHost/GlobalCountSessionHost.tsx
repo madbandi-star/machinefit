@@ -5,6 +5,12 @@ import { WorkoutDisplayOverlay } from '@/components/recommendation/WorkoutDispla
 import { useRestTimerStore } from '@/store/restTimer.store';
 import { useSettingsStore } from '@/store/settings.store';
 import { useVoiceCoachSessionStore } from '@/store/voiceCoachSession.store';
+import {
+  acquireCountLockScreenSession,
+  publishCountLockScreen,
+  publishRestLockScreen,
+  releaseCountLockScreenSession,
+} from '@/utils/workoutLockScreen';
 
 /**
  * Layout-level count host so voice counting survives route changes.
@@ -39,6 +45,38 @@ export function GlobalCountSessionHost() {
       }
     }
   }, [location.pathname, minimize]);
+
+  useEffect(() => {
+    if (!isRunning) {
+      void releaseCountLockScreenSession().then(() => {
+        // Hand lock-screen UI back to rest timer if it is still running.
+        const rest = useRestTimerStore.getState();
+        if (!rest.session) return;
+        publishRestLockScreen({
+          setNumber: rest.session.setNumber,
+          remainingSec: rest.getRemainingSec(),
+          paused: rest.isPaused(),
+        });
+      });
+      return;
+    }
+    void acquireCountLockScreenSession();
+    return () => {
+      void releaseCountLockScreenSession();
+    };
+  }, [isRunning, sessionId]);
+
+  useEffect(() => {
+    if (!isRunning) return;
+    publishCountLockScreen({
+      phase,
+      currentRep,
+      countdown,
+      turbo,
+      intensity,
+      isPaused,
+    });
+  }, [isRunning, phase, currentRep, countdown, turbo, intensity, isPaused]);
 
   if (!isRunning) return null;
 
