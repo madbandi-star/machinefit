@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Collapse details button on record cards
+# Test handoff: Collapse details button on record cards
 
 ## Summary
-ê¸°ë¡ í˜ì´ì§€ ê°œë³„ ìš´ë™ê¸°ë¡ì¹´ë“œ í•˜ë‹¨ì— í¼ì¹œ ìƒíƒœì¼ ë•Œ ã€Œìƒì„¸ ë‚´ìš© ì ‘ê¸°ã€ ë²„íŠ¼ì„ ì¶”ê°€í–ˆìŠµë‹ˆë‹¤. ì ‘íŒ ìƒíƒœì˜ ã€Œìƒì„¸ ë‚´ìš© í¼ì¹˜ê¸°ã€ëŠ” ê·¸ëŒ€ë¡œì…ë‹ˆë‹¤.
+±â·Ï ÆäÀÌÁö °³º° ¿îµ¿±â·ÏÄ«µå ÇÏ´Ü¿¡ ÆîÄ£ »óÅÂÀÏ ¶§ ¡¸»ó¼¼ ³»¿ë Á¢±â¡¹ ¹öÆ°À» Ãß°¡Çß½À´Ï´Ù. Á¢Èù »óÅÂÀÇ ¡¸»ó¼¼ ³»¿ë ÆîÄ¡±â¡¹´Â ±×´ë·ÎÀÔ´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 455aedd7
 
 ## Test focus
-1. Records â†’ expand a card (or open already expanded)
-2. Bottom shows ã€Œìƒì„¸ ë‚´ìš© ì ‘ê¸°ã€ â†’ tap collapses details
-3. Collapsed card still shows ã€Œìƒì„¸ ë‚´ìš© í¼ì¹˜ê¸°ã€ at bottom
+1. Records ¡æ expand a card (or open already expanded)
+2. Bottom shows ¡¸»ó¼¼ ³»¿ë Á¢±â¡¹ ¡æ tap collapses details
+3. Collapsed card still shows ¡¸»ó¼¼ ³»¿ë ÆîÄ¡±â¡¹ at bottom
 
 ## Fast checks
 ```bash
 rg -n "collapseCardDetails" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Only expand at bottom when collapsed | Collapse button at bottom when expanded too |

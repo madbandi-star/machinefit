@@ -1,7 +1,7 @@
 {
   "title": "Collapse details button on record cards",
   "summary": "Expanded history record cards now show a bottom ??? ?? ??? toggle matching the expand control.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "455aedd7" },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
