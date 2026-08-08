@@ -1,7 +1,7 @@
 {
   "title": "Remove mission and one-liner sections from fortune page",
   "summary": "Removed ??? ?? ?? and ??? ??? UI blocks from the fortune detail reading page. Engine/API unchanged; disclaimer remains.",
-  "git": { "branch": "main", "commit": "PENDING" },
+  "git": { "branch": "main", "commit": "ef3b4008" },
   "changedFiles": ["frontend/src/components/fortune/FortuneDashboard.tsx"],
   "testFocus": [
     "No ?? mission section and no ?? one-liner closing block on /fortune/today",
