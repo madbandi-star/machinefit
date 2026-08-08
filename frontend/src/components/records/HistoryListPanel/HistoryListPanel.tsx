@@ -100,30 +100,65 @@ function normalizeTemplateWeights(setCount: number, weights: number[] | undefine
   return next.length > 0 ? next : [0];
 }
 
-function buildTemplateItemsFromPlans(cards: WorkoutCard[]): WorkoutCardTemplateItem[] {
-  return cards.map((card, index) => ({
-    machineCode: card.machineCode,
-    ...(card.targetMuscleGroup ? { targetMuscleGroup: card.targetMuscleGroup } : {}),
-    setCount: Math.max(1, card.setCount || 1),
-    setWeightsKg: normalizeTemplateWeights(card.setCount, card.setWeightsKg),
-    ...(card.setReps?.length ? { setReps: card.setReps } : {}),
-    ...(card.diary?.trim() ? { diary: card.diary.trim() } : {}),
-    ...(card.restSeconds != null ? { restSeconds: card.restSeconds } : {}),
-    displayOrder: card.displayOrder ?? index,
-    ...(card.recommendationId ? { recommendationId: card.recommendationId } : {}),
-  }));
+function templateMatchKey(machineCode: string, targetMuscleGroup?: string | null): string {
+  return `${machineCode}:${targetMuscleGroup ?? ''}`;
 }
 
-function buildTemplateItemsFromLogs(logs: WorkoutLog[]): WorkoutCardTemplateItem[] {
-  return logs.map((log, index) => ({
-    machineCode: log.machineCode,
-    ...(log.targetMuscleGroup ? { targetMuscleGroup: log.targetMuscleGroup } : {}),
-    setCount: Math.max(1, log.setCount || 1),
-    setWeightsKg: normalizeTemplateWeights(log.setCount, log.setWeightsKg),
-    ...(log.diary?.trim() ? { diary: log.diary.trim() } : {}),
-    displayOrder: index,
-    ...(log.recommendationId ? { recommendationId: log.recommendationId } : {}),
-  }));
+/** Prefer workout_logs for performed sets/weights; keep plan card order/meta when present. */
+function buildTemplateItemsFromDay(
+  cards: WorkoutCard[],
+  logs: WorkoutLog[]
+): WorkoutCardTemplateItem[] {
+  const logByKey = new Map<string, WorkoutLog>();
+  for (const log of logs) {
+    logByKey.set(templateMatchKey(log.machineCode, log.targetMuscleGroup), log);
+  }
+
+  const usedKeys = new Set<string>();
+  const items: WorkoutCardTemplateItem[] = [];
+
+  cards.forEach((card, index) => {
+    const key = templateMatchKey(card.machineCode, card.targetMuscleGroup);
+    usedKeys.add(key);
+    const log = logByKey.get(key);
+    const setCount = Math.max(1, log?.setCount || card.setCount || 1);
+    const setWeightsKg = normalizeTemplateWeights(
+      setCount,
+      log?.setWeightsKg?.length ? log.setWeightsKg : card.setWeightsKg
+    );
+    const diary = (log?.diary?.trim() || card.diary?.trim() || '') || undefined;
+    items.push({
+      machineCode: card.machineCode,
+      ...(card.targetMuscleGroup ? { targetMuscleGroup: card.targetMuscleGroup } : {}),
+      setCount,
+      setWeightsKg,
+      ...(card.setReps?.length ? { setReps: card.setReps.slice(0, setCount) } : {}),
+      ...(diary ? { diary } : {}),
+      ...(card.restSeconds != null ? { restSeconds: card.restSeconds } : {}),
+      displayOrder: card.displayOrder ?? index,
+      ...(card.recommendationId || log?.recommendationId
+        ? { recommendationId: card.recommendationId ?? log?.recommendationId }
+        : {}),
+    });
+  });
+
+  logs.forEach((log) => {
+    const key = templateMatchKey(log.machineCode, log.targetMuscleGroup);
+    if (usedKeys.has(key)) return;
+    usedKeys.add(key);
+    const setCount = Math.max(1, log.setCount || 1);
+    items.push({
+      machineCode: log.machineCode,
+      ...(log.targetMuscleGroup ? { targetMuscleGroup: log.targetMuscleGroup } : {}),
+      setCount,
+      setWeightsKg: normalizeTemplateWeights(setCount, log.setWeightsKg),
+      ...(log.diary?.trim() ? { diary: log.diary.trim() } : {}),
+      displayOrder: items.length,
+      ...(log.recommendationId ? { recommendationId: log.recommendationId } : {}),
+    });
+  });
+
+  return items;
 }
 
 export function HistoryListPanel() {
@@ -598,11 +633,8 @@ export function HistoryListPanel() {
         (log) => normalizeDateKey(log.logDate) === dateKey
       );
 
-      // Prefer plan cards; fall back to workout logs (records page common case).
-      const items =
-        dayPlans.length > 0
-          ? buildTemplateItemsFromPlans(dayPlans)
-          : buildTemplateItemsFromLogs(dayLogs);
+      // Merge plans + logs; performed sets/weights prefer workout_logs.
+      const items = buildTemplateItemsFromDay(dayPlans, dayLogs);
 
       if (items.length === 0) {
         const err = new Error('EMPTY_TEMPLATE');
@@ -659,7 +691,11 @@ export function HistoryListPanel() {
     },
     onSuccess: async () => {
       setDayMenuOpen(false);
-      await invalidatePlans();
+      await Promise.all([
+        invalidatePlans(),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+      ]);
       showToast(t('machines:history.planTemplateApplied'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),

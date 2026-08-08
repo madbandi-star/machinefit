@@ -23,6 +23,10 @@ export interface HistoryRecordCard {
   workoutCardId?: string;
   /** True when this row exists only as a workout_cards plan (no history/log yet). */
   isPlanOnly?: boolean;
+  /** From linked workout_cards — seeds 「수행 세트/무게」 when no workout_log yet. */
+  planSetCount?: number;
+  planSetWeightsKg?: number[];
+  planDiary?: string;
 }
 
 function buildFreeWeightCardKey(

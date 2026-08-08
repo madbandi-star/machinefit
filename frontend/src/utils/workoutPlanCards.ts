@@ -51,6 +51,9 @@ export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard
     planStatus: card.status,
     workoutCardId: card.id,
     isPlanOnly: true,
+    planSetCount: Math.max(1, card.setCount || 1),
+    planSetWeightsKg: Array.isArray(card.setWeightsKg) ? [...card.setWeightsKg] : undefined,
+    planDiary: card.diary,
   };
 }
 
@@ -75,6 +78,9 @@ function linkPlanOntoCard(existing: HistoryRecordCard, plan: WorkoutCard): Histo
     brandName: existing.brandName ?? fromPlan.brandName,
     primaryImageUrl: existing.primaryImageUrl ?? fromPlan.primaryImageUrl,
     machineName: existing.machineName || fromPlan.machineName,
+    planSetCount: fromPlan.planSetCount ?? existing.planSetCount,
+    planSetWeightsKg: fromPlan.planSetWeightsKg ?? existing.planSetWeightsKg,
+    planDiary: fromPlan.planDiary ?? existing.planDiary,
   };
 }
 

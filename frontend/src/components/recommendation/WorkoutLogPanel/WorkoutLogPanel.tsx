@@ -131,6 +131,16 @@ interface WorkoutLogPanelProps {
   /** e.g. history card 조정값 — runs before workout log upsert on save. */
   onCompanionSave?: () => Promise<void>;
   companionSavePending?: boolean;
+  /**
+   * Plan/template seed used when no workout_log exists yet
+   * (applied template / plan-only card with setCount·weights on workout_cards).
+   */
+  planSeed?: {
+    setCount: number;
+    setWeightsKg: number[];
+    setCompleted?: boolean[];
+    diary?: string;
+  };
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -221,6 +231,26 @@ function buildDefaultSnapshot(suggestedWeightKg?: number): WorkoutFormSnapshot {
   };
 }
 
+function buildSnapshotFromPlanSeed(planSeed: {
+  setCount: number;
+  setWeightsKg: number[];
+  setCompleted?: boolean[];
+  diary?: string;
+}): WorkoutFormSnapshot {
+  const setCount = Math.max(MIN_SET_COUNT, Math.min(MAX_SET_COUNT, planSeed.setCount || DEFAULT_SET_COUNT));
+  const weights = resizeWeights(
+    Array.isArray(planSeed.setWeightsKg) ? planSeed.setWeightsKg : [],
+    setCount,
+    planSeed.setWeightsKg?.[0]
+  );
+  return {
+    setCount,
+    weights,
+    setCompleted: resizeCompleted(planSeed.setCompleted ?? [], setCount),
+    diary: planSeed.diary ?? '',
+  };
+}
+
 /** Incomplete + unplanned sets follow live fit seed; completed/planned keep kg. */
 function applySeedToIncompleteWeights(
   weights: number[],
@@ -282,6 +312,7 @@ export function WorkoutLogPanel({
   onSavedChange,
   onCompanionSave,
   companionSavePending = false,
+  planSeed,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -629,7 +660,14 @@ export function WorkoutLogPanel({
       }),
     [weights, setCompleted, setCount, effectiveVolumeReps]
   );
-  const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}`;
+  const hasPlanSeed =
+    Boolean(planSeed) &&
+    Math.max(1, planSeed?.setCount ?? 0) >= MIN_SET_COUNT &&
+    Array.isArray(planSeed?.setWeightsKg);
+  const planSeedKey = hasPlanSeed
+    ? `${planSeed!.setCount}|${planSeed!.setWeightsKg.join(',')}|${planSeed!.diary ?? ''}`
+    : '';
+  const hydrateKey = `${machineCode}|${logDate}|${activeTargetMuscle ?? ''}|${existingLog?.id ?? 'new'}|${existingLog?.updatedAt ?? ''}|${planSeedKey}`;
 
   const isPersonalTipDirty =
     showPersonalTip &&
@@ -683,10 +721,12 @@ export function WorkoutLogPanel({
     lastHydrateKeyRef.current = hydrateKey;
     let snapshot = existingLog
       ? buildSnapshotFromLog(existingLog)
-      : buildDefaultSnapshot(suggestedWeightKg);
+      : hasPlanSeed && planSeed
+        ? buildSnapshotFromPlanSeed(planSeed)
+        : buildDefaultSnapshot(suggestedWeightKg);
 
     // New logs only: seed incomplete steppers from fit/recommend weight.
-    // Existing logs must keep saved setWeightsKg — reseeding incomplete sets
+    // Existing logs / plan seeds must keep setWeightsKg — reseeding incomplete sets
     // after bookmark/memo save wiped user-entered kg (set 「완료」 looked fine
     // because completed sets are seed-protected).
     const seedKey =
@@ -695,6 +735,7 @@ export function WorkoutLogPanel({
         : `${hydrateKey}|none`;
     if (
       !existingLog &&
+      !hasPlanSeed &&
       suggestedWeightKg != null &&
       suggestedWeightKg > 0
     ) {
@@ -714,11 +755,12 @@ export function WorkoutLogPanel({
       setSetCompleted,
       setDiary,
     });
-    // Existing logs (and later 「계획 저장」) treat kg as plan-protected so live
+    // Existing logs / plan seeds treat kg as plan-protected so live
     // fit-seed cannot wipe them — same protection as set 「완료」, without UI.
-    const protectedFlags = existingLog
-      ? snapshot.weights.map(() => true)
-      : buildDefaultCompleted(snapshot.setCount);
+    const protectedFlags =
+      existingLog || hasPlanSeed
+        ? snapshot.weights.map(() => true)
+        : buildDefaultCompleted(snapshot.setCount);
     setPlanProtected(protectedFlags);
     // Keep refs in sync for the seed effect in this same commit.
     setCountRef.current = snapshot.setCount;
@@ -734,6 +776,8 @@ export function WorkoutLogPanel({
     hydrateKey,
     existingLog,
     suggestedWeightKg,
+    hasPlanSeed,
+    planSeed,
   ]);
 
   // Incomplete + unplanned sets follow live fit-feedback seed weight when the

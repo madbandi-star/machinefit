@@ -542,6 +542,15 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         }
         onCompanionSave={canUseFitFeedback ? handleCompanionSave : undefined}
         companionSavePending={fitFeedback.isPreferencesPending}
+        planSeed={
+          card.planSetCount != null && card.planSetWeightsKg?.length
+            ? {
+                setCount: card.planSetCount,
+                setWeightsKg: card.planSetWeightsKg,
+                ...(card.planDiary ? { diary: card.planDiary } : {}),
+              }
+            : undefined
+        }
       />
 
       {expanded ? (

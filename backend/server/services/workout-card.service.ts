@@ -896,6 +896,7 @@ export const workoutCardService = {
     }
 
     const status = defaultStatusForDate(input.scheduledDate);
+    const nowIso = new Date().toISOString();
     const created: WorkoutCard[] = [];
 
     for (const item of template.items) {
@@ -903,6 +904,19 @@ export const workoutCardService = {
         item.machineCode,
         item.targetMuscleGroup
       );
+      const setCount = Math.max(1, item.setCount || 1);
+      const setWeightsKg =
+        item.setWeightsKg?.length === setCount
+          ? item.setWeightsKg
+          : Array.from(
+              { length: setCount },
+              (_, i) => item.setWeightsKg?.[i] ?? item.setWeightsKg?.[item.setWeightsKg.length - 1] ?? 0
+            );
+      const setCompleted =
+        status === 'COMPLETED'
+          ? Array.from({ length: setCount }, () => true)
+          : Array.from({ length: setCount }, () => false);
+
       try {
         const card = await workoutCardRepository.create(
           userId,
@@ -914,36 +928,51 @@ export const workoutCardService = {
             targetMuscleGroup: targetMuscleKey,
             scheduledDate: input.scheduledDate,
             status,
-            setCount: item.setCount,
-            setWeightsKg: item.setWeightsKg,
+            setCount,
+            setWeightsKg,
             setReps: item.setReps,
+            setCompleted,
             diary: item.diary,
             restSeconds: item.restSeconds,
             displayOrder: item.displayOrder,
             templateId: template.id,
-            completedAt: status === 'COMPLETED' ? new Date().toISOString() : null,
+            startedAt: status === 'IN_PROGRESS' ? nowIso : null,
+            completedAt: status === 'COMPLETED' ? nowIso : null,
           },
           locale
         );
 
-        if (status === 'COMPLETED') {
-          try {
-            const logId = await upsertLogForCompletedCard(userId, card);
-            const linked = await workoutCardRepository.updateStatus(
-              userId,
-              card.id,
-              {
-                status: 'COMPLETED',
-                workoutLogId: logId,
-                completedAt: new Date().toISOString(),
-              },
-              locale
-            );
-            created.push(stripMachineId(linked ?? card));
-          } catch {
-            created.push(stripMachineId(card));
-          }
-        } else {
+        // Mirror sets/weights onto workout_logs so history 「수행 세트/무게」 hydrates
+        // (same pattern as copy — UI reads logs, not plan cards alone).
+        try {
+          const log = await workoutLogRepository.upsert(
+            userId,
+            card.gymId,
+            card.memberId,
+            card.machineId,
+            {
+              recommendationId: card.recommendationId,
+              logDate: input.scheduledDate,
+              targetMuscleGroup: targetMuscleKey,
+              setCount,
+              setWeightsKg,
+              setCompleted,
+              diary: item.diary,
+            }
+          );
+          const linked = await workoutCardRepository.updateStatus(
+            userId,
+            card.id,
+            {
+              status,
+              workoutLogId: log.id,
+              ...(status === 'COMPLETED' ? { completedAt: nowIso } : {}),
+              ...(status === 'IN_PROGRESS' ? { startedAt: nowIso } : {}),
+            },
+            locale
+          );
+          created.push(stripMachineId(linked ?? card));
+        } catch {
           created.push(stripMachineId(card));
         }
       } catch (error) {

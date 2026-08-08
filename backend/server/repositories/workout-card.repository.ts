@@ -281,7 +281,7 @@ export const workoutCardRepository = {
     return result.rows.map((row) => mapCardRow(row, locale));
   },
 
-  /** Snapshot cards (or workout logs) for a gym+date into template items. */
+  /** Snapshot cards + logs for a gym+date; performed sets/weights prefer workout_logs. */
   async listTemplateSourceItems(
     userId: string,
     gymId: string,
@@ -299,23 +299,6 @@ export const workoutCardRepository = {
       [userId, gymId, scheduledDate]
     );
 
-    if (result.rows.length > 0) {
-      return result.rows.map((row) => ({
-        machineCode: row.machine_code,
-        targetMuscleGroup: row.target_muscle_group
-          ? (row.target_muscle_group as TargetMuscleGroup)
-          : undefined,
-        setCount: row.set_count,
-        setWeightsKg: row.set_weights_kg,
-        setReps: row.set_reps ?? undefined,
-        diary: row.diary ?? undefined,
-        restSeconds: row.rest_seconds ?? undefined,
-        displayOrder: row.display_order,
-        recommendationId: row.recommendation_id ?? undefined,
-      }));
-    }
-
-    // Records page often has workout_logs without workout_cards — still allow templates.
     const logResult = await pool.query<{
       machine_code: string;
       target_muscle_group: string;
@@ -337,22 +320,65 @@ export const workoutCardRepository = {
       [userId, gymId, scheduledDate]
     );
 
-    return logResult.rows.map((row, index) => {
-      const setCount = Math.max(1, row.set_count || 1);
-      const weights = Array.isArray(row.set_weights_kg) ? [...row.set_weights_kg] : [];
-      while (weights.length < setCount) weights.push(weights[weights.length - 1] ?? 0);
-      return {
+    const normalizeWeights = (setCount: number, raw: number[] | null | undefined) => {
+      const count = Math.max(1, setCount || 1);
+      const weights = Array.isArray(raw) ? [...raw] : [];
+      while (weights.length < count) weights.push(weights[weights.length - 1] ?? 0);
+      return weights.slice(0, count);
+    };
+
+    const logByKey = new Map<string, (typeof logResult.rows)[number]>();
+    for (const row of logResult.rows) {
+      logByKey.set(`${row.machine_code}:${row.target_muscle_group ?? ''}`, row);
+    }
+
+    const usedKeys = new Set<string>();
+    const items: WorkoutCardTemplateItem[] = [];
+
+    for (const row of result.rows) {
+      const key = `${row.machine_code}:${row.target_muscle_group ?? ''}`;
+      usedKeys.add(key);
+      const log = logByKey.get(key);
+      const setCount = Math.max(1, log?.set_count || row.set_count || 1);
+      const setWeightsKg = normalizeWeights(
+        setCount,
+        log?.set_weights_kg?.length ? log.set_weights_kg : row.set_weights_kg
+      );
+      const diary = (log?.diary?.trim() || row.diary?.trim() || '') || undefined;
+      items.push({
         machineCode: row.machine_code,
         targetMuscleGroup: row.target_muscle_group
           ? (row.target_muscle_group as TargetMuscleGroup)
           : undefined,
         setCount,
-        setWeightsKg: weights.slice(0, setCount),
+        setWeightsKg,
+        setReps: row.set_reps ?? undefined,
+        diary,
+        restSeconds: row.rest_seconds ?? undefined,
+        displayOrder: row.display_order,
+        recommendationId: row.recommendation_id ?? log?.recommendation_id ?? undefined,
+      });
+    }
+
+    logResult.rows.forEach((row, index) => {
+      const key = `${row.machine_code}:${row.target_muscle_group ?? ''}`;
+      if (usedKeys.has(key)) return;
+      usedKeys.add(key);
+      const setCount = Math.max(1, row.set_count || 1);
+      items.push({
+        machineCode: row.machine_code,
+        targetMuscleGroup: row.target_muscle_group
+          ? (row.target_muscle_group as TargetMuscleGroup)
+          : undefined,
+        setCount,
+        setWeightsKg: normalizeWeights(setCount, row.set_weights_kg),
         diary: row.diary ?? undefined,
-        displayOrder: index,
+        displayOrder: items.length > 0 ? items.length : index,
         recommendationId: row.recommendation_id ?? undefined,
-      };
+      });
     });
+
+    return items;
   },
 
   async create(
