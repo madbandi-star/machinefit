@@ -54,6 +54,7 @@ import type {
 } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
+import { getApiErrorCode } from '@/utils/motivationAudio';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
 import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
 import {
@@ -549,7 +550,13 @@ export function HistoryListPanel() {
       ]);
       showToast(t('machines:history.planMoved'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => {
+      if (getApiErrorCode(error) === 'DUPLICATE_CARD') {
+        showToast(t('machines:history.planDuplicateMachine'), 'info');
+        return;
+      }
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   const copyPlanMutation = useMutation({
@@ -565,7 +572,13 @@ export function HistoryListPanel() {
       ]);
       showToast(t('machines:history.planCopied'), 'success');
     },
-    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+    onError: (error) => {
+      if (getApiErrorCode(error) === 'DUPLICATE_CARD') {
+        showToast(t('machines:history.planDuplicateMachine'), 'info');
+        return;
+      }
+      showToast(t('common:errors.submitFailed'), 'error');
+    },
   });
 
   const saveTemplateMutation = useMutation({

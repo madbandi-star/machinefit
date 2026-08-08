@@ -273,7 +273,7 @@
     "planViewPlan": "View workout plan",
     "planCreated": "Workout plan added.",
     "planCreatedContinue": "Added. You can keep picking more exercises.",
-    "planDuplicateMachine": "This machine is already on that date.",
+    "planDuplicateMachine": "This workout is already on that date.",
     "planAlreadyAdded": "Added",
     "planPickMoreTitle": "Plan for {{date}}",
     "planPickMoreCount": "{{count}} so far · add as many as you want",

@@ -273,7 +273,7 @@
     "planViewPlan": "운동 계획 보기",
     "planCreated": "운동 계획을 추가했어요.",
     "planCreatedContinue": "추가했어요. 다른 운동도 이어서 고를 수 있어요.",
-    "planDuplicateMachine": "이 날짜에 이미 같은 기구가 있어요.",
+    "planDuplicateMachine": "선택한 날짜에 이미 이 운동이 등록되어 있어요.",
     "planAlreadyAdded": "추가됨",
     "planPickMoreTitle": "{{date}} 운동 계획",
     "planPickMoreCount": "현재 {{count}}개 · 원하는 만큼 더 추가하세요",
