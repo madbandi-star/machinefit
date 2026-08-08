@@ -378,7 +378,7 @@
     "voiceCountMode_ai_accel_turbo": "AI 가속 + 터보",
     "voiceRestTips": "휴식 중 주의사항·운동팁",
     "restDuration": "휴식 시간",
-    "restDurationDesc": "세트 완료 후 휴식 타이머 길이입니다. 분은 1분, 초는 5초 단위입니다. 기본값은 1분 30초입니다.",
+    "restDurationDesc": "세트 완료 후 휴식 타이머 길이입니다. 분은 1분, 초는 5초 단위입니다. 기본값은 2분입니다.",
     "restDurationMinutes": "분",
     "restDurationSeconds": "초",
     "restDurationMinutesLabel": "휴식 분",

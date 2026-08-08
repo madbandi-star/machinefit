@@ -378,7 +378,7 @@
     "voiceCountMode_ai_accel_turbo": "AI accel + turbo",
     "voiceRestTips": "Speak cautions & tips during rest",
     "restDuration": "Rest time",
-    "restDurationDesc": "Countdown length after you complete a set. Minutes step by 1, seconds by 5. Default is 1 minute 30 seconds.",
+    "restDurationDesc": "Countdown length after you complete a set. Minutes step by 1, seconds by 5. Default is 2 minutes.",
     "restDurationMinutes": "min",
     "restDurationSeconds": "sec",
     "restDurationMinutesLabel": "Rest minutes",

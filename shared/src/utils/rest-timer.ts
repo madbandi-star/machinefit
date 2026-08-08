@@ -1,8 +1,8 @@
 import type { WorkoutGoal } from '../constants/workout-goals.js';
 
-/** Default rest between sets: 1 min 30 sec (matches prior hypertrophy baseline). */
+/** Default rest between sets: 2 minutes. */
 export const REST_DURATION = {
-  defaultSeconds: 90,
+  defaultSeconds: 120,
   minSeconds: 0,
   /** Cap at 30 minutes. */
   maxSeconds: 30 * 60,
