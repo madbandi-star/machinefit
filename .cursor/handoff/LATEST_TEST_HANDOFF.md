@@ -1,23 +1,23 @@
-ï»¿# Test handoff: Records green-dot nudge after plan add
+# Test handoff: Records green-dot nudge after plan add
 
 ## Summary
-ìš´ë™ì¶”ê°€(ê³„íš ì¶”ê°€) ì„±ê³µ ì‹œì—ë„ í•˜ë‹¨ ê¸°ë¡ íƒ­ì— ê¸°ì¡´ê³¼ ê°™ì€ ë…¹ìƒ‰ì (`recordsNavNudge`)ì´ ë³´ì´ë„ë¡ ì—°ê²°í–ˆìŠµë‹ˆë‹¤.
+¿îµ¿Ãß°¡(°èÈ¹ Ãß°¡) ¼º°ø ½Ã¿¡µµ ÇÏ´Ü ±â·Ï ÅÇ¿¡ ±âÁ¸°ú °°Àº ³ì»öÁ¡(`recordsNavNudge`)ÀÌ º¸ÀÌµµ·Ï ¿¬°áÇß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `18ef5d36`
 
 ## Test focus
-1. ê¸°ë¡ â†’ ìš´ë™ì¶”ê°€ â†’ ê¸°êµ¬ ã€Œìš´ë™ ê³„íšì— ì¶”ê°€ã€ â†’ í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì /í„ìŠ¤
-2. ê¸°ë¡ íƒ­ ì§„ì… ì‹œ ë…¹ìƒ‰ì  í•´ì œ
-3. ê¸°ì¡´ ì¶”ì²œ ì§í›„ ë…¹ìƒ‰ì  ë™ì‘ ìœ ì§€
+1. ±â·Ï ¡æ ¿îµ¿Ãß°¡ ¡æ ±â±¸ ¡¸¿îµ¿ °èÈ¹¿¡ Ãß°¡¡¹ ¡æ ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡/ÆŞ½º
+2. ±â·Ï ÅÇ ÁøÀÔ ½Ã ³ì»öÁ¡ ÇØÁ¦
+3. ±âÁ¸ ÃßÃµ Á÷ÈÄ ³ì»öÁ¡ µ¿ÀÛ À¯Áö
 
 ## Fast checks
 ```bash
 rg -n "setRecordsNavNudge\\(true\\)" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ìš´ë™ì¶”ê°€ í›„ í•˜ë‹¨ ê¸°ë¡ì— ë…¹ìƒ‰ì  ì—†ìŒ | ìš´ë™ì¶”ê°€ ì„±ê³µ ì‹œ ì¶”ì²œê³¼ ë™ì¼í•˜ê²Œ ë…¹ìƒ‰ì  í‘œì‹œ |
+| ¿îµ¿Ãß°¡ ÈÄ ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡ ¾øÀ½ | ¿îµ¿Ãß°¡ ¼º°ø ½Ã ÃßÃµ°ú µ¿ÀÏÇÏ°Ô ³ì»öÁ¡ Ç¥½Ã |
