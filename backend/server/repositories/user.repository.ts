@@ -7,6 +7,13 @@ import {
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
+function normalizeBirthTime(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const s = String(raw);
+  const m = s.match(/^(\d{2}):(\d{2})/);
+  return m ? `${m[1]}:${m[2]}` : null;
+}
+
 interface UserRow {
   id: string;
   role_id: string;
@@ -19,6 +26,9 @@ interface UserRow {
   weight_kg: string | null;
   experience_level: string | null;
   age: number | null;
+  birth_date: string | null;
+  birth_time: string | null;
+  birth_time_unknown: boolean | null;
   workout_goal: string | null;
   home_gym_id: string | null;
   home_gym_name: string | null;
@@ -61,6 +71,11 @@ function mapUser(row: UserRow): User {
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
     experienceLevel: row.experience_level as User['experienceLevel'],
     age: row.age ?? undefined,
+    birthDate: row.birth_date
+      ? String(row.birth_date).slice(0, 10)
+      : null,
+    birthTime: normalizeBirthTime(row.birth_time),
+    birthTimeUnknown: Boolean(row.birth_time_unknown),
     workoutGoal: row.workout_goal as User['workoutGoal'],
     homeGymId: row.home_gym_id ?? undefined,
     homeGymName: row.home_gym_name ?? undefined,
@@ -338,6 +353,9 @@ export const userRepository = {
       heightCm?: number;
       weightKg?: number;
       age?: number;
+      birthDate?: string | null;
+      birthTime?: string | null;
+      birthTimeUnknown?: boolean;
       workoutGoal?: User['workoutGoal'];
       homeGymId?: string | null;
       homeGymName?: string | null;
@@ -372,6 +390,22 @@ export const userRepository = {
     if (data.age !== undefined) {
       fields.push(`age = $${index++}`);
       values.push(data.age);
+    }
+    if (data.birthDate !== undefined) {
+      fields.push(`birth_date = $${index++}`);
+      values.push(data.birthDate);
+    }
+    if (data.birthTimeUnknown !== undefined) {
+      fields.push(`birth_time_unknown = $${index++}`);
+      values.push(data.birthTimeUnknown);
+      if (data.birthTimeUnknown) {
+        fields.push(`birth_time = $${index++}`);
+        values.push(null);
+      }
+    }
+    if (data.birthTime !== undefined && data.birthTimeUnknown !== true) {
+      fields.push(`birth_time = $${index++}`);
+      values.push(data.birthTime);
     }
     if (data.workoutGoal !== undefined) {
       fields.push(`workout_goal = $${index++}`);

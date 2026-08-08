@@ -45,7 +45,26 @@
     "tradesDesc": "거래글·신고·통계를 관리합니다.",
     "onlinePtDesc": "온라인 PT 트레이너·질문·정산을 관리합니다.",
     "pushDesc": "푸시 알림을 작성·발송합니다.",
-    "friendsDesc": "친구 관계·신고·스팸을 관리합니다."
+    "friendsDesc": "친구 관계·신고·스팸을 관리합니다.",
+    "fortuneDesc": "오늘의 헬창운세 문구·키워드·전략을 관리합니다."
+  },
+  "fortuneAdmin": {
+    "nav": "헬창운세",
+    "desc": "운세 카탈로그 문구를 추가·수정합니다. 활성 항목만 사용자 운세에 사용됩니다.",
+    "create": "새 콘텐츠",
+    "edit": "콘텐츠 수정",
+    "category": "카테고리",
+    "allCategories": "전체 카테고리",
+    "code": "코드 (UPPER_SNAKE)",
+    "titleField": "제목",
+    "body": "본문",
+    "priority": "우선순위",
+    "active": "활성",
+    "includeInactive": "비활성 포함",
+    "dataConditions": "data_conditions JSON (선택)",
+    "scoreWeights": "score_weights JSON (선택)",
+    "invalidJson": "JSON 형식이 올바르지 않아요.",
+    "deleteConfirm": "이 운세 콘텐츠를 삭제할까요?"
   },
   "compliance": {
     "nav": "컴플라이언스"

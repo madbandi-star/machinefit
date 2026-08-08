@@ -1,26 +1,32 @@
-# Test handoff: Voice count below plan-save (after tip)
+ï»¿# Test handoff: Todayâ€™s Helchang Fortune v1
 
 ## Summary
-±â·Ï/¼¼ºÎ ±â·Ï¿¡¼­ À½¼ºÄ«¿îÆ®¸¦ ÀÏÁö¡¤ÆÁ ºí·Ï(ÇÏ´Ü¿¡ ¡¸°èÈ¹ ÀúÀå¡¹) **¾Æ·¡**·Î ¿Å°å½À´Ï´Ù. ÀÌÀü¿¡´Â ¼öÇà±â·Ï Á÷ÈÄ(=¿îµ¿°èÈ¹ ¸Ş¸ğ À§)¿¡ ÀÖ¾î Àß¸øµÈ À§Ä¡¿´½À´Ï´Ù.
+ì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ v1: ìƒë…„ì›”ì¼/íƒ„ìƒì‹œ(ëª¨ë¦„=ê°„ë‹¨ ìš´ì„¸), seed ê¸°ë°˜ Fortune + ìš´ë™ ë°ì´í„° ë¶„ì„ + ì¶”ì²œ 3ê³„ì¸µ, í™ˆ ì¹´ë“œ/ìƒì„¸, ê´€ë¦¬ì ì½˜í…ì¸  CRUD. **Render ë§ˆì´ê·¸ë ˆì´ì…˜ 105 í•„ìˆ˜.**
 
 ## Git
 - Branch: `main`
-- Commit: `caf701b2`
+- Commit: `PENDING`
 
 ## Test focus
-1. ±â·Ï °³º° Ä«µå ¼ø¼­: ¼¼Æ®/¹«°Ô ¡æ ÀÏÁö ¸Ş¸ğ ¡æ ÆÁ + °èÈ¹ ÀúÀå ¡æ **À½¼ºÄ«¿îÆ®**
-2. ¼¼ºÎ ±â·Ï ÆäÀÌÁö µ¿ÀÏ
-3. À½¼º/°èÈ¹ ÀúÀå µ¿ÀÛ À¯Áö
+1. ì„¤ì • â†’ ìƒë…„ì›”ì¼ + íƒ„ìƒì‹œ(ë˜ëŠ” ëª¨ë¦„) ì €ì¥ â†’ í™ˆ ì¹´ë“œ ë…¸ì¶œ
+2. ê°™ì€ ë‚  ìƒˆë¡œê³ ì¹¨ â†’ ë™ì¼ ê²°ê³¼
+3. ìƒì„¸: ã€Œì˜¤ëŠ˜ì˜ ìš´ì„¸ã€ì™€ ã€Œë‚´ ìš´ë™ ë°ì´í„° ë¶„ì„ã€ ë¶„ë¦¬
+4. `/admin/fortune` ì½˜í…ì¸  ì¶”ê°€/ìˆ˜ì •/ë¹„í™œì„±
+5. ìƒë…„ ë¯¸ì…ë ¥ â†’ ì„¤ì • `#birth-profile` CTA
+6. API ì˜¤ë¥˜ ì‹œ ì¹´ë“œê°€ ì•± ì „ì²´ë¥¼ ê¹¨ì§€ ì•ŠìŒ
 
 ## Fast checks
 ```bash
-rg -n "After diary / tip|voiceCoachPanel" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx
+rg -n "fortune/today|fortune_content_items|buildFortuneSeedKey|HomeFortuneCard" database/migrations/105_user_birth_and_fortune_content.sql backend/server/routes/fortune.routes.ts shared/src/utils/fortune-seed.ts frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx
+cd shared && npx vitest run src/utils/fortune-seed.test.ts
 ```
 
 ## Notes
-- FE Pages only.
+- **Render backend redeploy + migration 105 required**
+- Birth not required at signup
+- Entertainment disclaimer on fortune UI
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| À½¼ºÄ«¿îÆ®°¡ ¿îµ¿°èÈ¹ ¸Ş¸ğ À§ | °èÈ¹ ÀúÀå ¹öÆ° ¾Æ·¡ |
+| í—¬ì°½ìš´ì„¸ ì—†ìŒ | ì¼ì¼ ìš´ì„¸+ë°ì´í„°ë¶„ì„+ê´€ë¦¬ì ì¹´íƒˆë¡œê·¸ |

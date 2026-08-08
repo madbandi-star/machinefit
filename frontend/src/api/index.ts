@@ -167,6 +167,9 @@ export const userApi = {
     heightCm?: number;
     weightKg?: number;
     age?: number;
+    birthDate?: string | null;
+    birthTime?: string | null;
+    birthTimeUnknown?: boolean;
     workoutGoal?: WorkoutGoal;
     homeGymId?: string | null;
     homeGymName?: string | null;

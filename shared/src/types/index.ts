@@ -37,3 +37,4 @@ export * from './billing.types.js';
 export * from './notice.types.js';
 export * from './backup.types.js';
 export * from './workout-card.types.js';
+export * from './fortune.types.js';

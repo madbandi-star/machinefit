@@ -62,6 +62,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { to: ROUTES.ADMIN_COMPLIANCE, labelKey: 'compliance.nav', icon: 'circleCheck' },
       { to: ROUTES.ADMIN_PHOTO_BOARD, labelKey: 'photoBoard.nav', icon: 'camera' },
       { to: ROUTES.ADMIN_NOTICES, labelKey: 'notices.nav', icon: 'bell' },
+      { to: ROUTES.ADMIN_FORTUNE, labelKey: 'fortuneAdmin.nav', icon: 'flame' },
       { to: ROUTES.ADMIN_TRADES, labelKey: 'trades.nav', icon: 'store' },
       { to: ROUTES.ADMIN_ONLINE_PT, labelKey: 'onlinePt.nav', icon: 'dumbbell' },
       { to: ROUTES.ADMIN_PUSH, labelKey: 'push.nav', icon: 'bell' },

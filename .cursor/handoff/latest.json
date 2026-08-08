@@ -1,28 +1,42 @@
 {
-  "title": "Voice count below plan-save (after tip)",
-  "summary": "On Records cards and detail, voice coach now renders after the diary/personal-tip block that ends with the full-width ??? ??? button ? not above the workout-plan memo textbox.",
+  "title": "Today?s Helchang Fortune v1",
+  "summary": "Added birth date/time (unknown allowed) on users + Settings, deterministic Fortune/Analytics/Recommendation engines, GET /fortune/today, home card + detail page, and admin fortune-content CRUD. Requires DB migration 105 on Render.",
   "git": {
     "branch": "main",
-    "commit": "caf701b2"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css"
+    "database/migrations/105_user_birth_and_fortune_content.sql",
+    "shared/src/types/fortune.types.ts",
+    "shared/src/utils/fortune-seed.ts",
+    "shared/src/validators/fortune.schema.ts",
+    "shared/src/validators/user.schema.ts",
+    "backend/server/services/fortune/",
+    "backend/server/repositories/fortune-content.repository.ts",
+    "backend/server/routes/fortune.routes.ts",
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx"
   ],
   "testFocus": [
-    "Records card: order is sets/weights ? diary memo ? tip + ?? ?? ? voice count",
-    "Detail record page: same order",
-    "Voice start/stop and plan-save still work"
+    "Settings ? birth date + time or unknown ? save ? home shows fortune card",
+    "Same day refresh ? identical fortune",
+    "Detail page separates ?? vs ??? ?? sections",
+    "Admin /admin/fortune create/edit/disable content",
+    "No birth profile ? CTA to settings#birth-profile"
   ],
   "fastChecks": [
-    "rg -n \"After diary / tip|voiceCoachPanel\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
+    "rg -n \"fortune/today|fortune_content_items|buildFortuneSeedKey|HomeFortuneCard\" database/migrations/105_user_birth_and_fortune_content.sql backend/server/routes/fortune.routes.ts shared/src/utils/fortune-seed.ts frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "cd shared && npx vitest run src/utils/fortune-seed.test.ts"
   ],
   "productionChecks": [
-    "After Pages + Ctrl+F5: voice is under ?? ??, not above ???? memo"
+    "Render: apply migration 105 then redeploy API",
+    "Pages Ctrl+F5: home fortune card + detail + settings birth"
   ],
   "deploy": {
-    "expected": "FE Pages only"
+    "expected": "FE Pages + Render backend migration/redeploy REQUIRED"
   },
-  "asIs": "Voice sat above diary/plan memo textbox",
-  "toBe": "Voice sits below tip-area ?? ?? button"
+  "asIs": "No Helchang Fortune feature; users had age only",
+  "toBe": "Daily deterministic fortune + workout analytics + admin catalog; birth profile on users"
 }

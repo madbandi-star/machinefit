@@ -165,6 +165,11 @@ export function SettingsPage() {
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
   const [age, setAge] = useState(user?.age ?? DEFAULT_AGE);
+  const [birthDate, setBirthDate] = useState(user?.birthDate ?? '');
+  const [birthTime, setBirthTime] = useState(user?.birthTime ?? '');
+  const [birthTimeUnknown, setBirthTimeUnknown] = useState(
+    Boolean(user?.birthTimeUnknown)
+  );
   const [gender, setGender] = useState<Gender | undefined>(user?.gender);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
     user?.experienceLevel ?? 'intermediate'
@@ -215,7 +220,13 @@ export function SettingsPage() {
 
   useEffect(() => {
     const hash = location.hash;
-    if (hash !== '#location-settings' && hash !== '#body-metrics') return;
+    if (
+      hash !== '#location-settings' &&
+      hash !== '#body-metrics' &&
+      hash !== '#birth-profile'
+    ) {
+      return;
+    }
     const id = hash.slice(1);
     const timer = window.setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -293,6 +304,9 @@ export function SettingsPage() {
     else setHeightCm(DEFAULT_HEIGHT_CM);
     setWeightKg(user?.weightKg ?? DEFAULT_WEIGHT_KG);
     setAge(user?.age ?? DEFAULT_AGE);
+    setBirthDate(user?.birthDate ?? '');
+    setBirthTime(user?.birthTime ?? '');
+    setBirthTimeUnknown(Boolean(user?.birthTimeUnknown));
     setGender(user?.gender);
     if (user?.experienceLevel) setExperienceLevel(user.experienceLevel);
     setWorkoutGoal(user?.workoutGoal);
@@ -309,6 +323,9 @@ export function SettingsPage() {
     user?.heightCm,
     user?.weightKg,
     user?.age,
+    user?.birthDate,
+    user?.birthTime,
+    user?.birthTimeUnknown,
     user?.gender,
     user?.experienceLevel,
     user?.workoutGoal,
@@ -343,6 +360,23 @@ export function SettingsPage() {
       if (returnTo) {
         navigate(returnTo, { replace: true });
       }
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
+
+  const birthMutation = useMutation({
+    mutationFn: () =>
+      userApi.updateMe({
+        birthDate: birthDate.trim() || null,
+        birthTime: birthTimeUnknown ? null : birthTime.trim() || null,
+        birthTimeUnknown,
+      }),
+    onSuccess: (res) => {
+      const updatedUser = res.data.data as User;
+      updateUser(updatedUser);
+      syncUserSettings(updatedUser);
+      void queryClient.invalidateQueries({ queryKey: ['fortune'] });
+      showToast(t('settings.birthProfileSaved'), 'success');
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
@@ -415,6 +449,71 @@ export function SettingsPage() {
             disabled={mutation.isPending}
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
+          </button>
+        </SettingsCollapsibleSection>
+
+        <SettingsCollapsibleSection
+          id="birth-profile"
+          title={t('settings.birthProfile')}
+          description={t('settings.birthProfileDesc')}
+        >
+          <div className="form-stack">
+            <label className="form-field">
+              <span className="form-field__label">{t('settings.birthDate')}</span>
+              <input
+                type="date"
+                className="input"
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+                max={new Date().toISOString().slice(0, 10)}
+              />
+            </label>
+            <label className="form-field">
+              <span className="form-field__label">{t('settings.birthTime')}</span>
+              <input
+                type="time"
+                className="input"
+                value={birthTime}
+                onChange={(e) => setBirthTime(e.target.value)}
+                disabled={birthTimeUnknown}
+              />
+            </label>
+            <label className="form-check">
+              <input
+                type="checkbox"
+                checked={birthTimeUnknown}
+                onChange={(e) => {
+                  const next = e.target.checked;
+                  setBirthTimeUnknown(next);
+                  if (next) setBirthTime('');
+                }}
+              />
+              <span>{t('settings.birthTimeUnknown')}</span>
+            </label>
+            <p className="form-section__desc">{t('settings.birthProfileHint')}</p>
+          </div>
+          <button
+            type="button"
+            className="btn btn--primary btn--block"
+            style={{ marginTop: 'var(--space-md)' }}
+            onClick={() => {
+              if (!birthDate.trim()) {
+                showToast(t('settings.birthDateRequired'), 'error');
+                return;
+              }
+              if (!birthTimeUnknown && !birthTime.trim()) {
+                showToast(t('settings.birthTimeRequired'), 'error');
+                return;
+              }
+              birthMutation.mutate();
+            }}
+            disabled={birthMutation.isPending}
+          >
+            {birthMutation.isPending ? (
+              <span className="btn__spinner" aria-hidden />
+            ) : (
+              t('actions.save')
+            )}
           </button>
         </SettingsCollapsibleSection>
 

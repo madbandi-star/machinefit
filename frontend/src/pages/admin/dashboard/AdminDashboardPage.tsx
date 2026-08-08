@@ -115,6 +115,7 @@ export function AdminDashboardPage() {
     { to: ROUTES.ADMIN_COMPLIANCE, title: t('compliance.nav'), desc: t('menu.complianceDesc') },
     { to: ROUTES.ADMIN_PHOTO_BOARD, title: t('photoBoard.nav'), desc: t('menu.photoBoardDesc') },
     { to: ROUTES.ADMIN_NOTICES, title: t('notices.nav'), desc: t('menu.noticesDesc') },
+    { to: ROUTES.ADMIN_FORTUNE, title: t('fortuneAdmin.nav'), desc: t('menu.fortuneDesc') },
     { to: ROUTES.ADMIN_TRADES, title: t('trades.nav'), desc: t('menu.tradesDesc') },
     { to: ROUTES.ADMIN_ONLINE_PT, title: t('onlinePt.nav'), desc: t('menu.onlinePtDesc') },
     { to: ROUTES.ADMIN_PUSH, title: t('push.nav'), desc: t('menu.pushDesc') },

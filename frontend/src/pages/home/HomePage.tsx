@@ -6,6 +6,7 @@ import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSecti
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { HomeNoticeBanner } from '@/components/home/HomeNoticeBanner/HomeNoticeBanner';
 import { HomePlannedWorkoutCard } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
+import { HomeFortuneCard } from '@/components/home/HomeFortuneCard/HomeFortuneCard';
 import { NoticePopup } from '@/components/notices/NoticePopup/NoticePopup';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
@@ -20,6 +21,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import { peekPersistedIsAuthenticated } from '@/utils/peekPersistedAuth';
 import '@/styles/home.css';
+import '@/styles/fortune.css';
 
 export function HomePage() {
   const authReady = useAuthHydration();
@@ -84,6 +86,7 @@ export function HomePage() {
       {showProfileBanner && <ProfileIncompleteBanner />}
       <HomeNoticeBanner />
       <NoticePopup />
+      <HomeFortuneCard />
       <HomePlannedWorkoutCard />
       <HomeWorkoutToolsSection />
       <RecentMachinesRow />

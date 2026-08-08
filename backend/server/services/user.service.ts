@@ -1,7 +1,8 @@
-import type { UpdateProfileInput } from '@machinefit/shared';
+import { ageFromBirthDate, type UpdateProfileInput } from '@machinefit/shared';
 import { userRepository } from '../repositories/user.repository.js';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { fortuneService } from './fortune/fortune.service.js';
 
 export const userService = {
   async getMe(userId: string) {
@@ -30,9 +31,24 @@ export const userService = {
   },
 
   async updateMe(userId: string, input: UpdateProfileInput) {
-    const user = await userRepository.updateProfile(userId, input);
+    const payload: UpdateProfileInput = { ...input };
+    if (payload.birthDate && payload.age === undefined) {
+      const derived = ageFromBirthDate(payload.birthDate);
+      if (derived != null) payload.age = derived;
+    }
+    if (payload.birthTimeUnknown === true) {
+      payload.birthTime = null;
+    }
+    const user = await userRepository.updateProfile(userId, payload);
     if (!user) {
       throw new AppError(404, 'NOT_FOUND', 'User not found');
+    }
+    if (
+      payload.birthDate !== undefined ||
+      payload.birthTime !== undefined ||
+      payload.birthTimeUnknown !== undefined
+    ) {
+      fortuneService.invalidateUser(userId);
     }
     return user;
   },

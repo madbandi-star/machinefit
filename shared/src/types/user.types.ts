@@ -17,6 +17,11 @@ export interface User {
   heightCm?: number;
   weightKg?: number;
   age?: number;
+  /** YYYY-MM-DD — required (with birth time or unknown) for 헬창운세. */
+  birthDate?: string | null;
+  /** HH:mm wall-clock; null when unknown. */
+  birthTime?: string | null;
+  birthTimeUnknown?: boolean;
   workoutGoal?: WorkoutGoal;
   homeGymId?: string;
   homeGymName?: string;

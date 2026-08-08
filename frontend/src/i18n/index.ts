@@ -14,6 +14,7 @@ import koOnlinePt from './locales/ko/online-pt.json';
 import koPush from './locales/ko/push.json';
 import koFriends from './locales/ko/friends.json';
 import koEquipment from './locales/ko/equipment.json';
+import koFortune from './locales/ko/fortune.json';
 
 type NamespaceBundle = Record<string, unknown>;
 
@@ -29,6 +30,7 @@ const NS_LIST = [
   'push',
   'friends',
   'equipment',
+  'fortune',
 ] as const;
 
 const loadedLocales = new Set<string>([DEFAULT_LOCALE]);
@@ -63,6 +65,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push,
         friends,
         equipment,
+        fortune,
       ] = await Promise.all([
         import('./locales/en/common.json'),
         import('./locales/en/machines.json'),
@@ -75,6 +78,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         import('./locales/en/push.json'),
         import('./locales/en/friends.json'),
         import('./locales/en/equipment.json'),
+        import('./locales/en/fortune.json'),
       ]);
       return {
         common: common.default,
@@ -88,6 +92,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push: push.default,
         friends: friends.default,
         equipment: equipment.default,
+        fortune: fortune.default,
       };
     }
     case 'ja': {
@@ -103,6 +108,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push,
         friends,
         equipment,
+        fortune,
       ] = await Promise.all([
         import('./locales/ja/common.json'),
         import('./locales/ja/machines.json'),
@@ -115,6 +121,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         import('./locales/ja/push.json'),
         import('./locales/ja/friends.json'),
         import('./locales/ja/equipment.json'),
+        import('./locales/ja/fortune.json'),
       ]);
       return {
         common: common.default,
@@ -128,6 +135,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push: push.default,
         friends: friends.default,
         equipment: equipment.default,
+        fortune: fortune.default,
       };
     }
     case 'zh': {
@@ -143,6 +151,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push,
         friends,
         equipment,
+        fortune,
       ] = await Promise.all([
         import('./locales/zh/common.json'),
         import('./locales/zh/machines.json'),
@@ -155,6 +164,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         import('./locales/zh/push.json'),
         import('./locales/zh/friends.json'),
         import('./locales/zh/equipment.json'),
+        import('./locales/zh/fortune.json'),
       ]);
       return {
         common: common.default,
@@ -168,6 +178,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push: push.default,
         friends: friends.default,
         equipment: equipment.default,
+        fortune: fortune.default,
       };
     }
     case 'ko':
@@ -184,6 +195,7 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         push: koPush,
         friends: koFriends,
         equipment: koEquipment,
+        fortune: koFortune,
       };
   }
 }
@@ -222,6 +234,7 @@ void i18n
         push: koPush,
         friends: koFriends,
         equipment: koEquipment,
+        fortune: koFortune,
       },
     },
     lng: DEFAULT_LOCALE,

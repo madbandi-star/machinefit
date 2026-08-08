@@ -197,6 +197,10 @@ const growthTimeline = () =>
 const lab = () => import('@/pages/lab/LabPage').then((m) => ({ default: m.LabPage }));
 const settings = () =>
   import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage }));
+const fortuneToday = () =>
+  import('@/pages/fortune/FortuneDetailPage').then((m) => ({
+    default: m.FortuneDetailPage,
+  }));
 const linkedLogins = () =>
   import('@/pages/settings/LinkedLoginsPage').then((m) => ({
     default: m.LinkedLoginsPage,
@@ -308,6 +312,10 @@ const noticeDetailPage = () =>
 const adminNoticesPage = () =>
   import('@/pages/admin/notices/AdminNoticesPage').then((m) => ({
     default: m.AdminNoticesPage,
+  }));
+const adminFortunePage = () =>
+  import('@/pages/admin/fortune/AdminFortunePage').then((m) => ({
+    default: m.AdminFortunePage,
   }));
 const adminNoticeEditPage = () =>
   import('@/pages/admin/notices/AdminNoticeEditPage').then((m) => ({
@@ -459,6 +467,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.TRAINER_APPLY, element: lazyRoute(trainerApply) },
             { path: ROUTES.GROWTH_ANALYSIS, element: lazyRoute(growth) },
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
+            { path: ROUTES.FORTUNE_TODAY, element: lazyRoute(fortuneToday) },
             { path: ROUTES.LINKED_LOGINS, element: lazyRoute(linkedLogins) },
             { path: ROUTES.DATA_MANAGEMENT, element: lazyRoute(dataManagementPage) },
             { path: ROUTES.PRIVACY_RIGHTS, element: lazyRoute(privacyRightsPage) },
@@ -602,6 +611,7 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_NOTICES, element: lazyRoute(adminNoticesPage) },
         { path: ROUTES.ADMIN_NOTICE_NEW, element: lazyRoute(adminNoticeEditPage) },
         { path: ROUTES.ADMIN_NOTICE_EDIT, element: lazyRoute(adminNoticeEditPage) },
+        { path: ROUTES.ADMIN_FORTUNE, element: lazyRoute(adminFortunePage) },
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
         { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },

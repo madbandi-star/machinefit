@@ -20,6 +20,7 @@ import {
 } from '@machinefit/shared';
 import { validateBody } from '../middlewares/validate.middleware.js';
 import * as backupController from '../controllers/backup.controller.js';
+import * as adminFortuneController from '../controllers/admin-fortune.controller.js';
 
 export const adminRouter = Router();
 
@@ -59,6 +60,11 @@ adminRouter.post(
 adminRouter.delete('/catalog/machines/:id/image', adminCatalogController.clearMachineImage);
 
 adminRouter.get('/dashboard', adminController.dashboard);
+
+adminRouter.get('/fortune-content', adminFortuneController.listFortuneContent);
+adminRouter.post('/fortune-content', adminFortuneController.createFortuneContent);
+adminRouter.patch('/fortune-content/:id', adminFortuneController.updateFortuneContent);
+adminRouter.delete('/fortune-content/:id', adminFortuneController.deleteFortuneContent);
 adminRouter.get('/motivation-media', motivationMediaController.listAdmin);
 adminRouter.put('/motivation-media', motivationMediaController.replace);
 adminRouter.post(

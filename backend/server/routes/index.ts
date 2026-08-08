@@ -35,6 +35,7 @@ import { billingRouter } from './billing.routes.js';
 import { webhookRouter } from './webhook.routes.js';
 import { noticeRouter } from './notice.routes.js';
 import { backupRouter } from './backup.routes.js';
+import { fortuneRouter } from './fortune.routes.js';
 import * as webhookController from '../controllers/webhook.controller.js';
 
 export const apiRouter = Router();
@@ -70,6 +71,7 @@ apiRouter.use('/workout-logs', workoutLogRouter);
 /** Spec alias: DELETE /workout-records/date/:date (same handlers as /workout-logs). */
 apiRouter.use('/workout-records', workoutLogRouter);
 apiRouter.use('/workout-cards', workoutCardRouter);
+apiRouter.use('/fortune', fortuneRouter);
 apiRouter.use('/motivation-media', motivationMediaRouter);
 apiRouter.use('/live', liveDashboardRouter);
 apiRouter.use('/locations', locationRouter);
