@@ -37,9 +37,7 @@ export function FortuneHero({
       data-keyword={keywordCode}
     >
       <div className="fortune-hero__glow" aria-hidden />
-      <p className="fortune-hero__eyebrow">
-        <span aria-hidden>🔥</span> {t('title')}
-      </p>
+      <p className="fortune-hero__brand">{t('title')}</p>
       <p className="fortune-hero__date">{formatFortuneDate(date)}</p>
       {mode ? (
         <p className="fortune-hero__mode">
@@ -51,10 +49,10 @@ export function FortuneHero({
         <span className="fortune-hero__keyword-emoji" aria-hidden>
           {emoji}
         </span>
-        <span className="fortune-hero__keyword-text">{keywordTitle}</span>
+        <h1 className="fortune-hero__keyword-text">{keywordTitle}</h1>
       </div>
 
-      <h1 className="fortune-hero__title">{title}</h1>
+      <p className="fortune-hero__title">{title}</p>
       {sub ? <p className="fortune-hero__headline">{sub}</p> : null}
 
       <FortuneStarsRow scoreStars={scoreStars} label={t('starsLabel')} />

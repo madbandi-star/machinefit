@@ -1,20 +1,34 @@
 ﻿{
-  "title": "Hide data-scarcity messaging on fortune page",
-  "summary": "Removed copy that reveals insufficient workout logs or data-driven personalization limits. Why-today and report now use fortune-framed language only; backend logic unchanged.",
-  "git": { "branch": "main", "commit": "3b2e0d16" },
+  "title": "Polish Helchang Fortune detail page IA/UI",
+  "summary": "Regrouped the fortune detail dashboard into clearer section bundles (scores / commentary / recommend / action / wrap), flattened nested cards, and strengthened the hero brand+keyword hierarchy. No fortune API or score logic changes.",
+  "git": { "branch": "main", "commit": "PENDING" },
   "changedFiles": [
-    "frontend/src/components/fortune/fortuneContent.ts",
     "frontend/src/components/fortune/FortuneDashboard.tsx",
-    "frontend/src/i18n/locales/*/fortune.json"
+    "frontend/src/components/fortune/FortuneHero.tsx",
+    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/styles/fortune.css",
+    "frontend/src/i18n/locales/ko/fortune.json",
+    "frontend/src/i18n/locales/en/fortune.json",
+    "frontend/src/i18n/locales/zh/fortune.json",
+    "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "No phrases about insufficient logs / data growing / limited personalization",
-    "Why-today and Helchang report still show style/body guidance",
-    "Scores and recommendations still from API"
+    "Detail /fortune/today reads as brand → keyword → section bundles without duplicate page title",
+    "Scores section is open (no heavy outer card); other sections have labeled bundles",
+    "PR/recovery gauges are not links; recommendation tiles stay non-interactive",
+    "Section labels: 오늘의 점수 / 해설 / 추천 / 실천 / 정리"
   ],
   "fastChecks": [
-    "rg -n \"?Limited|dataLimited|????|??? ?|Personalization is limited\" frontend/src/components/fortune frontend/src/i18n/locales/ko/fortune.json || true"
+    "cd frontend && npx tsc -p tsconfig.json --noEmit",
+    "rg -n \"fortune-bundle--open|sectionCommentary|fortune-hero__brand\" frontend/src/components/fortune frontend/src/styles/fortune.css frontend/src/i18n/locales/ko/fortune.json",
+    "rg -n \"to=\\{ROUTES\" frontend/src/components/fortune/FortuneDashboard.tsx || true"
   ],
-  "asIs": "UI admitted sparse data / log-based reasoning",
-  "toBe": "Fortune-framed copy only; data influence stays behind the scenes"
+  "productionChecks": [
+    "After Deploy Frontend success: open /fortune/today and scan first viewport + section labels"
+  ],
+  "deploy": {
+    "expected": "GitHub Pages Deploy Frontend success on main push"
+  },
+  "asIs": "Stacked emoji-labeled cards, nested panels, duplicate shell title competing with hero",
+  "toBe": "Clear 5-section flow, flatter nested prose, hero brand/keyword hierarchy, open scores strip"
 }

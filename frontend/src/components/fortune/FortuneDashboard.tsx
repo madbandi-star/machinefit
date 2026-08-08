@@ -31,7 +31,6 @@ import {
   prCaptionKey,
   recoveryCaptionKey,
 } from '@/components/fortune/fortuneVisuals';
-import { ROUTES } from '@/constants/routes';
 
 export interface FortuneDashboardProps {
   date: string;
@@ -81,10 +80,8 @@ export function FortuneDashboard({
       />
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={40}>
-        <div className="fortune-panel">
-          <p className="fortune-dashboard__section-label">
-            <span aria-hidden>🔮</span> {t('sectionFortuneVisual')}
-          </p>
+        <div className="fortune-bundle fortune-bundle--open">
+          <p className="fortune-bundle__label">{t('sectionFortuneVisual')}</p>
           <div className="fortune-scores">
             <div className="fortune-scores__hero">
               <FortuneRadialGauge
@@ -102,7 +99,6 @@ export function FortuneDashboard({
                 emoji="🏆"
                 caption={prCaption ? t(prCaption) : undefined}
                 tone="pr"
-                to={ROUTES.ACHIEVEMENTS}
               />
               <FortuneLinearGauge
                 value={scores.recoveryLuck}
@@ -117,21 +113,19 @@ export function FortuneDashboard({
       </FortuneReveal>
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={60}>
-        <FortuneProse block={content.fortuneExplain} />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={70}>
-        <div className="fortune-prose-row">
-          <FortuneProse block={content.pr} />
-          <FortuneProse block={content.recovery} />
+        <div className="fortune-bundle">
+          <p className="fortune-bundle__label">{t('sectionCommentary')}</p>
+          <FortuneProse block={content.fortuneExplain} className="fortune-prose--accent-fortune" />
+          <div className="fortune-prose-row">
+            <FortuneProse block={content.pr} className="fortune-prose--accent-pr" />
+            <FortuneProse block={content.recovery} className="fortune-prose--accent-recovery" />
+          </div>
         </div>
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={100}>
-        <div className="fortune-panel">
-          <p className="fortune-dashboard__section-label">
-            <span aria-hidden>✨</span> {t('sectionRecommendVisual')}
-          </p>
+      <FortuneReveal className="fortune-dashboard__section" delayMs={90}>
+        <div className="fortune-bundle">
+          <p className="fortune-bundle__label">{t('sectionRecommendVisual')}</p>
           <TodayRecommendationGrid
             bodyPart={recommendation.bodyPart}
             bodyPartLabel={recommendation.bodyPartLabel}
@@ -142,42 +136,30 @@ export function FortuneDashboard({
           {fortune.strategyLabels.length ? (
             <p className="fortune-dashboard__tags">{fortune.strategyLabels.join(' · ')}</p>
           ) : null}
+          <FortuneProse block={content.why} />
+          <FortuneProse block={content.strategy} />
+          <FortuneAvoidCard label={recommendation.avoidLabel} />
         </div>
       </FortuneReveal>
 
       <FortuneReveal className="fortune-dashboard__section" delayMs={120}>
-        <FortuneProse block={content.why} />
+        <div className="fortune-bundle">
+          <p className="fortune-bundle__label">{t('sectionAction')}</p>
+          <FortuneProse block={content.tryThis} numbered />
+          <FortuneProse block={content.mission} className="fortune-prose--mission" />
+          <FortuneBeforeAfter
+            preBody={recommendation.preWorkoutBody}
+            postBody={recommendation.postWorkoutBody}
+          />
+        </div>
       </FortuneReveal>
 
-      <FortuneReveal className="fortune-dashboard__section" delayMs={140}>
-        <FortuneProse block={content.strategy} />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={160}>
-        <FortuneAvoidCard label={recommendation.avoidLabel} />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={180}>
-        <FortuneProse block={content.tryThis} numbered />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={190}>
-        <FortuneProse block={content.mission} className="fortune-prose--mission" />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={200}>
-        <FortuneBeforeAfter
-          preBody={recommendation.preWorkoutBody}
-          postBody={recommendation.postWorkoutBody}
-        />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={210}>
-        <FortuneProse block={content.report} className="fortune-prose--report" />
-      </FortuneReveal>
-
-      <FortuneReveal className="fortune-dashboard__section" delayMs={220}>
-        <FortuneQuoteCard oneLiner={fortune.oneLiner} detail={fortune.oneLinerDetail} />
+      <FortuneReveal className="fortune-dashboard__section" delayMs={150}>
+        <div className="fortune-bundle">
+          <p className="fortune-bundle__label">{t('sectionWrap')}</p>
+          <FortuneProse block={content.report} className="fortune-prose--report" />
+          <FortuneQuoteCard oneLiner={fortune.oneLiner} detail={fortune.oneLinerDetail} />
+        </div>
       </FortuneReveal>
 
       <p className="fortune-dashboard__disclaimer">

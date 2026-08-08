@@ -84,7 +84,7 @@ export function FortuneDetailPage() {
   }
 
   return (
-    <PageShell title={t('fortune:title')}>
+    <PageShell>
       <FortuneDashboard
         date={data.date}
         mode={mode}
