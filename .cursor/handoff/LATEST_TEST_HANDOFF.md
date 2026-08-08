@@ -1,24 +1,24 @@
-ï»¿# Test handoff: Records card detail affordance (chevron cues)
+# Test handoff: Records card detail affordance (chevron cues)
 
 ## Summary
-ê¸°ë¡ ì¹´ë“œì˜ ê¸°êµ¬ ì´ë¯¸ì§€Â·ì´ë¦„ì— ì‘ì€ chevron/ë°‘ì¤„ affordanceë¥¼ ë„£ì–´ ìƒì„¸ê¸°ë¡ìœ¼ë¡œ ì´ë™ ê°€ëŠ¥í•¨ì„ í…ìŠ¤íŠ¸ ì—†ì´ ë“œëŸ¬ëƒˆìŠµë‹ˆë‹¤.
+±â·Ï Ä«µåÀÇ ±â±¸ ÀÌ¹ÌÁö¡¤ÀÌ¸§¿¡ ÀÛÀº chevron/¹ØÁÙ affordance¸¦ ³Ö¾î »ó¼¼±â·ÏÀ¸·Î ÀÌµ¿ °¡´ÉÇÔÀ» ÅØ½ºÆ® ¾øÀÌ µå·¯³Â½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `ef944380`
 
 ## Test focus
-1. ê¸°ë¡ ì¹´ë“œ ì¸ë„¤ì¼ ìš°í•˜ë‹¨ì— â€º ì¹© í‘œì‹œ
-2. ê¸°êµ¬ ì´ë¦„ì— ì–‡ì€ ë°‘ì¤„ + â€º í‘œì‹œ
-3. íƒ­ ì‹œ ìƒì„¸ê¸°ë¡ í˜ì´ì§€ ì´ë™ ìœ ì§€
-4. í™”ë©´ ë¬¸êµ¬ ì¶”ê°€ ì—†ìŒ(ariaë§Œ)
+1. ±â·Ï Ä«µå ½æ³×ÀÏ ¿ìÇÏ´Ü¿¡ ? Ä¨ Ç¥½Ã
+2. ±â±¸ ÀÌ¸§¿¡ ¾ãÀº ¹ØÁÙ + ? Ç¥½Ã
+3. ÅÇ ½Ã »ó¼¼±â·Ï ÆäÀÌÁö ÀÌµ¿ À¯Áö
+4. È­¸é ¹®±¸ Ãß°¡ ¾øÀ½(aria¸¸)
 
 ## Fast checks
 ```bash
 rg -n "thumb-cue|title-cue|openDetailAria" frontend/src/components/records/HistoryRecordCard frontend/src/styles/records.css frontend/src/styles/history-premium.css frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ì´ë¯¸ì§€/ì´ë¦„ì´ ë§í¬ì²˜ëŸ¼ ì•ˆ ë³´ì„ | chevronÂ·ë°‘ì¤„ë¡œ ìƒì„¸ ì´ë™ ê°€ëŠ¥ |
+| ÀÌ¹ÌÁö/ÀÌ¸§ÀÌ ¸µÅ©Ã³·³ ¾È º¸ÀÓ | chevron¡¤¹ØÁÙ·Î »ó¼¼ ÀÌµ¿ °¡´É |
