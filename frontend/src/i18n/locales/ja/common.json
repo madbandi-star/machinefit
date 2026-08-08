@@ -417,7 +417,16 @@
     "deleteAccountConfirmMessage": "You will be signed out immediately and cannot log in with this account.",
     "deleteAccountConfirm": "Delete account",
     "accountDeleted": "Your account has been deleted.",
-    "languageDesc": "アプリの言語をすぐに変更できます。再読み込みは不要です。"
+    "languageDesc": "アプリの言語をすぐに変更できます。再読み込みは不要です。",
+    "birthProfile": "Birth date & time",
+    "birthProfileDesc": "Used for Today’s Helchang Fortune. Not required at signup.",
+    "birthProfileHint": "If you don’t know birth time, check “Unknown birth time” for a simple fortune. Entertainment only — not medical advice.",
+    "birthProfileSaved": "Birth date & time saved.",
+    "birthDate": "Birth date",
+    "birthTime": "Birth time",
+    "birthTimeUnknown": "Unknown birth time",
+    "birthDateRequired": "Please enter your birth date.",
+    "birthTimeRequired": "Enter birth time or choose “Unknown birth time”."
   },
   "legal": {
     "termsTitle": "Terms of Service",

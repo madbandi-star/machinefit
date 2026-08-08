@@ -45,7 +45,8 @@
     "tradesDesc": "Manage listings, reports, and trade stats.",
     "onlinePtDesc": "Manage online PT trainers, Q&A, and payouts.",
     "pushDesc": "Compose and send push notifications.",
-    "friendsDesc": "Manage friendships, reports, and spam."
+    "friendsDesc": "Manage friendships, reports, and spam.",
+    "fortuneDesc": "Manage Helchang Fortune phrases, keywords, and strategies."
   },
   "users": "Users",
   "subscriptions": {
@@ -739,5 +740,23 @@
     "settingsFailed": "Could not save settings.",
     "history": "System backup history",
     "historyEmpty": "No history yet."
+  },
+  "fortuneAdmin": {
+    "nav": "Helchang Fortune",
+    "desc": "Add or edit fortune catalog copy. Only active items are used for users.",
+    "create": "New content",
+    "edit": "Edit content",
+    "category": "Category",
+    "allCategories": "All categories",
+    "code": "Code (UPPER_SNAKE)",
+    "titleField": "Title",
+    "body": "Body",
+    "priority": "Priority",
+    "active": "Active",
+    "includeInactive": "Include inactive",
+    "dataConditions": "data_conditions JSON (optional)",
+    "scoreWeights": "score_weights JSON (optional)",
+    "invalidJson": "Invalid JSON.",
+    "deleteConfirm": "Delete this fortune content item?"
   }
 }
