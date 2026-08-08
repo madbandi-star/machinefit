@@ -15,10 +15,7 @@ import { FortuneEnergySection } from '@/components/fortune/reading/FortuneEnergy
 import { FortuneGuideSection } from '@/components/fortune/reading/FortuneGuideSection';
 import { FortuneLuckSection } from '@/components/fortune/reading/FortuneLuckSection';
 import { FortuneReadingHero } from '@/components/fortune/reading/FortuneReadingHero';
-import { FortuneSection } from '@/components/fortune/reading/FortuneSection';
 import { FortuneStorySection } from '@/components/fortune/reading/FortuneStorySection';
-import { FortuneReveal } from '@/components/fortune/FortuneReveal';
-import { buildMission } from '@/components/fortune/fortuneContent';
 
 export interface FortuneDashboardProps {
   date: string;
@@ -51,12 +48,6 @@ export function FortuneDashboard({
   const coreThemeLabel = narrative
     ? t(narrative.coreThemeLabelKey)
     : fortune.keywordTitle;
-  const mission = buildMission({ fortune, recommendation });
-  const missionText = t(mission.lines[0]?.key ?? 'content.mission.default', {
-    style: recommendation.styleLabel,
-    body: recommendation.bodyPartLabel,
-    strategy: recommendation.strategyLabel,
-  });
 
   return (
     <div className="fr-page">
@@ -104,18 +95,6 @@ export function FortuneDashboard({
         dataAnalysis={dataAnalysis}
         delayMs={145}
       />
-
-      <FortuneSection title={`🎯 ${t('sectionMission')}`} delayMs={160} tone="action">
-        <p className="fr-mission">{missionText}</p>
-      </FortuneSection>
-
-      <FortuneReveal className="fr-closing" delayMs={175}>
-        <p className="fr-closing__label">💬 {t('oneLiner')}</p>
-        <p className="fr-closing__quote">{fortune.oneLiner}</p>
-        {fortune.oneLinerDetail ? (
-          <p className="fr-closing__detail">{fortune.oneLinerDetail}</p>
-        ) : null}
-      </FortuneReveal>
 
       <p className="fr-disclaimer">
         <span aria-hidden>ⓘ</span> {fortune.disclaimer || t('disclaimer')}

@@ -1,19 +1,15 @@
 {
-  "title": "Fix broken Apply fortune section layout",
-  "summary": "Moved the apply section out of the 2-column grid (full width), hardened overflow wrapping, and shortened the section title so long Korean copy no longer breaks the card.",
-  "git": { "branch": "main", "commit": "bb985b69" },
-  "changedFiles": [
-    "frontend/src/components/fortune/FortuneDashboard.tsx",
-    "frontend/src/styles/fortune-reading.css",
-    "frontend/src/i18n/locales/*/fortune.json"
-  ],
+  "title": "Remove mission and one-liner sections from fortune page",
+  "summary": "Removed ??? ?? ?? and ??? ??? UI blocks from the fortune detail reading page. Engine/API unchanged; disclaimer remains.",
+  "git": { "branch": "main", "commit": "PENDING" },
+  "changedFiles": ["frontend/src/components/fortune/FortuneDashboard.tsx"],
   "testFocus": [
-    "Apply section is full-width under data section",
-    "Long personalized text wraps without horizontal overflow on mobile/desktop"
+    "No ?? mission section and no ?? one-liner closing block on /fortune/today",
+    "Disclaimer still shows at bottom"
   ],
   "fastChecks": [
-    "rg -n \"FortuneApplySection|fr-apply\" frontend/src/components/fortune/FortuneDashboard.tsx frontend/src/styles/fortune-reading.css"
+    "rg -n \"sectionMission|fr-closing|buildMission\" frontend/src/components/fortune/FortuneDashboard.tsx || true"
   ],
-  "asIs": "Apply squeezed in 2-col grid ? overflow/break",
-  "toBe": "Full-width stacked apply blocks with safe text wrap"
+  "asIs": "Mission + one-liner shown after apply section",
+  "toBe": "Page ends after apply section + disclaimer"
 }
