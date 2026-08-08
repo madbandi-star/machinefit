@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `7718b147`
 
 ## Test focus
 1. 기록 카드: 세부 피커 고정 ON + 조정횟수 변경 → 목표횟수 동일 값으로 갱신
