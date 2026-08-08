@@ -1,15 +1,24 @@
 {
-  "title": "Remove mission and one-liner sections from fortune page",
-  "summary": "Removed ??? ?? ?? and ??? ??? UI blocks from the fortune detail reading page. Engine/API unchanged; disclaimer remains.",
-  "git": { "branch": "main", "commit": "ef3b4008" },
-  "changedFiles": ["frontend/src/components/fortune/FortuneDashboard.tsx"],
+  "title": "Add beginner gym-metaphor explains to fortune detail accordions",
+  "summary": "Each fortune-detail accordion (and today energy yin/yang + wuxing) ends with a 3-step beginner guide: what it is, what it looks at, and a gym metaphor. Presentation/i18n only; engine/API unchanged.",
+  "git": { "branch": "main", "commit": "61c2f6b5" },
+  "changedFiles": [
+    "frontend/src/components/fortune/FortuneTraditionalDetail.tsx",
+    "frontend/src/components/fortune/reading/FortuneExplainBlock.tsx",
+    "frontend/src/components/fortune/reading/FortuneEnergySection.tsx",
+    "frontend/src/styles/fortune-reading.css",
+    "frontend/src/i18n/locales/*/fortune.json"
+  ],
   "testFocus": [
-    "No ?? mission section and no ?? one-liner closing block on /fortune/today",
-    "Disclaimer still shows at bottom"
+    "Open ?? ??? and expand each accordion ? explain block at bottom",
+    "Cycles accordion shows time-range comparison",
+    "Shipshin/unseong show item-specific gym one-liner",
+    "Today energy shows yin/yang + wuxing explains"
   ],
   "fastChecks": [
-    "rg -n \"sectionMission|fr-closing|buildMission\" frontend/src/components/fortune/FortuneDashboard.tsx || true"
+    "cd frontend && npx tsc -p tsconfig.json --noEmit",
+    "rg -n \"FortuneExplainBlock|explain.gymTitle\" frontend/src/components/fortune"
   ],
-  "asIs": "Mission + one-liner shown after apply section",
-  "toBe": "Page ends after apply section + disclaimer"
+  "asIs": "Detail accordions showed results with little beginner context",
+  "toBe": "Every accordion ends with easy explanation + gym metaphor"
 }
