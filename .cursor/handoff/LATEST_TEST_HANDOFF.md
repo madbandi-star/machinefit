@@ -1,23 +1,23 @@
-﻿# Test handoff: Day-group Add exercise CTA on Records
+﻿# Test handoff: Today add-exercise uses planDate for 추가됨 badges
 
 ## Summary
-기록 페이지 날짜 그룹(펼친 상태) 하단에 「운동추가」를 추가했습니다. 미래 날짜는 `planDate` 검색(이 날짜에 운동계획추가와 동일), 오늘은 일반 검색 페이지로 이동합니다.
+기록 페이지 오늘 「운동추가」도 검색 URL에 `planDate=오늘`을 포함해, 이미 등록된 기구에 미래와 동일하게 「추가됨」 라벨이 보이게 했습니다.
 
 ## Git
 - Branch: `main`
-- Commit: `ce0f9860`
+- Commit: pending
 
 ## Test focus
-1. 미래 날짜 그룹 펼침 → 「운동추가」 → `/machines?planDate=해당일`
-2. 오늘 날짜 그룹 펼침 → 「운동추가」 → `/machines` (planDate 없음)
-3. 과거 날짜 그룹에는 「운동추가」 없음
+1. 오늘 날짜 「운동추가」 → URL에 `planDate=오늘`
+2. 오늘 이미 있는 기구에 「추가됨」 배지 표시
+3. 미래 「운동추가」 동작/배지 회귀 없음
 
 ## Fast checks
 ```bash
-rg -n "planAddExercise|dayAddExerciseUrl|records-list__day-add" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx frontend/src/i18n/locales/ko/machines.json
+rg -n "Include planDate for today|planDate=\\$\\{encodeURIComponent\\(groupDateKey\\)\\}" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| 날짜 그룹 내 운동추가 진입점 없음 | 오늘·미래 날짜 카드 영역 하단에 「운동추가」 |
+| 오늘 운동추가에 「추가됨」 없음 | 오늘도 planDate로 「추가됨」 표시 |

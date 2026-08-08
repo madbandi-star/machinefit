@@ -1173,9 +1173,11 @@ export function HistoryListPanel() {
             const showDayAddExercise =
               isAuthenticated &&
               (isTodayGroup || (isFutureGroup && canUseWorkoutPlans));
-            const dayAddExerciseUrl = isFutureGroup
-              ? `${ROUTES.MACHINES}?planDate=${encodeURIComponent(groupDateKey)}`
-              : ROUTES.MACHINES;
+            // Include planDate for today too so search shows 「추가됨」 on already-added machines.
+            const dayAddExerciseUrl =
+              isTodayGroup || isFutureGroup
+                ? `${ROUTES.MACHINES}?planDate=${encodeURIComponent(groupDateKey)}`
+                : ROUTES.MACHINES;
             return (
             <section
               key={group.dateKey}
