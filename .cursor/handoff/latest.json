@@ -3,7 +3,7 @@
   "summary": "Plan-add from machine detail and planDate plan-card creation on recommendation save now seed setCount=3 with three recommended weights, matching WorkoutLogPanel default after search recommend.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "ec5a4bc8"
   },
   "changedFiles": [
     "frontend/src/pages/machine-detail/MachineDetailPage.tsx",

@@ -1,27 +1,27 @@
-ï»¿# Test handoff: Default plan-add cards to 3 sets
+# Test handoff: Default plan-add cards to 3 sets
 
 ## Summary
-ê¸°êµ¬ ìƒì„¸ ê³„íš ì¶”ê°€ì™€ planDate ì¶”ì²œ ê²°ê³¼ì—ì„œ ë§Œë“œëŠ” `workout_card`ê°€ `setCount: 1`ì´ë˜ ê²ƒì„, ê²€ìƒ‰â†’ì¶”ì²œâ†’ê¸°ë¡ê³¼ ê°™ì´ **3ì„¸íŠ¸ + ì¶”ì²œì¤‘ëŸ‰ 3ì¹¸**ìœ¼ë¡œ ë§ì·„ìŠµë‹ˆë‹¤.
+±â±¸ »ó¼¼ °èÈ¹ Ãß°¡¿Í planDate ÃßÃµ °á°ú¿¡¼­ ¸¸µå´Â `workout_card`°¡ `setCount: 1`ÀÌ´ø °ÍÀ», °Ë»ö¡æÃßÃµ¡æ±â·Ï°ú °°ÀÌ **3¼¼Æ® + ÃßÃµÁß·® 3Ä­**À¸·Î ¸ÂÃè½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `ec5a4bc8`
 
 ## Test focus
-1. ê¸°ë¡ â†’ ìš´ë™ ì¶”ê°€(`planDate`) â†’ ê¸°êµ¬ ìƒì„¸ â†’ ê³„íšì— ì¶”ê°€ â†’ ê¸°ë¡ ì¹´ë“œ: ìˆ˜í–‰ ì„¸íŠ¸ **3**
-2. `planDate` ì¡ê³  ì¶”ì²œ í›„ ê¸°ë¡ ì €ì¥ â†’ ê³„íš/ê¸°ë¡ ì¹´ë“œ ì„¸íŠ¸ **3** (1 ì•„ë‹˜)
-3. ì¼ë°˜ ì˜¤ëŠ˜ ê²€ìƒ‰ ì¶”ì²œ(ê³„íš ì—†ì´)ì€ ê¸°ì¡´ì²˜ëŸ¼ ê¸°ë³¸ 3 ìœ ì§€
+1. ±â·Ï ¡æ ¿îµ¿ Ãß°¡(`planDate`) ¡æ ±â±¸ »ó¼¼ ¡æ °èÈ¹¿¡ Ãß°¡ ¡æ ±â·Ï Ä«µå: ¼öÇà ¼¼Æ® **3**
+2. `planDate` Àâ°í ÃßÃµ ÈÄ ±â·Ï ÀúÀå ¡æ °èÈ¹/±â·Ï Ä«µå ¼¼Æ® **3** (1 ¾Æ´Ô)
+3. ÀÏ¹İ ¿À´Ã °Ë»ö ÃßÃµ(°èÈ¹ ¾øÀÌ)Àº ±âÁ¸Ã³·³ ±âº» 3 À¯Áö
 
 ## Fast checks
 ```bash
 rg -n "defaultSetCount = 3|setCount: 1" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
-(ê¸°ëŒ€: `defaultSetCount = 3` ìˆìŒ, í•´ë‹¹ create ê²½ë¡œì— `setCount: 1` ì—†ìŒ)
+(±â´ë: `defaultSetCount = 3` ÀÖÀ½, ÇØ´ç create °æ·Î¿¡ `setCount: 1` ¾øÀ½)
 
 ## Notes
-- FE Pages only. ì´ë¯¸ ë§Œë“¤ì–´ì§„ 1ì„¸íŠ¸ ê³„íš ì¹´ë“œëŠ” ìë™ ë³€ê²½ë˜ì§€ ì•ŠìŒ.
+- FE Pages only. ÀÌ¹Ì ¸¸µé¾îÁø 1¼¼Æ® °èÈ¹ Ä«µå´Â ÀÚµ¿ º¯°æµÇÁö ¾ÊÀ½.
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
-| ê³„íš ì¶”ê°€/planDate ì¹´ë“œ createê°€ 1ì„¸íŠ¸ | ë™ì¼ ê²½ë¡œê°€ 3ì„¸íŠ¸ ê¸°ë³¸ |
+| °èÈ¹ Ãß°¡/planDate Ä«µå create°¡ 1¼¼Æ® | µ¿ÀÏ °æ·Î°¡ 3¼¼Æ® ±âº» |
