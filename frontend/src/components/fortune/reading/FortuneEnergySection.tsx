@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { FortuneNarrative } from '@machinefit/shared';
+import { FortuneExplainBlock } from '@/components/fortune/reading/FortuneExplainBlock';
 import { FortuneSection } from '@/components/fortune/reading/FortuneSection';
 import { elementBars, yinYangDisplay } from '@/components/fortune/fortuneVisuals';
 
@@ -73,8 +74,21 @@ export function FortuneEnergySection({ narrative, delayMs = 40 }: FortuneEnergyS
               mood: t(narrative.layers.find((l) => l.key === 'today')?.moodKey ?? 'mood.steady'),
             })}
           </p>
+          <ul className="fr-el-hints">
+            {bars.map((b) => (
+              <li key={`hint-${b.key}`}>
+                <strong>
+                  {ELEMENT_HAN[b.key]} {t(`element.${b.key}`)}
+                </strong>
+                {' — '}
+                {t(`explain.wuxingItems.${b.key}`)}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+      <FortuneExplainBlock prefix="yinYang" showFootnote={false} />
+      <FortuneExplainBlock prefix="wuxing" showDivider={false} />
     </FortuneSection>
   );
 }

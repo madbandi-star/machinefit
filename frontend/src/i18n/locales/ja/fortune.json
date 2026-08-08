@@ -347,5 +347,109 @@
     "focusLow": "Simplify the plan and protect pacing.",
     "changeHigh": "A light new stimulus fits well today.",
     "changeLow": "Stability over big changes fits better today."
+  },
+  "explain": {
+    "ariaLabel": "Beginner guide to this fortune element",
+    "whatTitle": "What is this?",
+    "lookTitle": "What does it look at?",
+    "gymTitle": "In gym terms",
+    "metaphorNote": "Gym metaphors are for understanding only — not real athletic ability or science.",
+    "timeRangeTitle": "Understand by time range",
+    "timeRange": {
+      "daeun": "Long-term training direction",
+      "seun": "This year’s training goal",
+      "wolun": "This month’s training focus",
+      "iljin": "Today’s training condition",
+      "tip": "Simply: long plan → year goal → month plan → today’s condition."
+    },
+    "pillars": {
+      "what": "The four pillars (year/month/day/hour) are the basic structure used to sketch a person’s chart in traditional fortune language.",
+      "look": "They lightly reference roots, environment, self, and possibility — background for reading today’s story, not a professional verdict.",
+      "gym": "Think of them as the broader picture of “what kind of training personality and setting you’re standing on.”",
+      "fourTitle": "Four pillars in gym metaphors",
+      "yearGym": "The background where your training story began",
+      "monthGym": "The gym/environment vibe around you",
+      "dayGym": "Your basic training personality",
+      "hourGym": "Hints about how you might grow next"
+    },
+    "ganzhi": {
+      "what": "Stems describe an outward quality of energy; branches describe the setting/flow it sits in.",
+      "look": "They separate “what kind of force shows up” from “what environment it moves through.”",
+      "gym": "Stem ≈ the style of force in today’s session; branch ≈ the flow/setting that force moves in."
+    },
+    "shipshin": {
+      "what": "Ten-gods language describes role-relationships among energies around you.",
+      "look": "Supportive, competitive, challenging, teaching roles — as symbolic cues.",
+      "gym": "Like training partners, rivals, or coaches around you — metaphor only, not real people."
+    },
+    "shipshinItems": {
+      "bijian": "Like a training buddy with a similar vibe.",
+      "geopjae": "Like a rival pushing your records.",
+      "siksin": "Like turning effort into visible results.",
+      "sanggwan": "Like trying a new method instead of copying everyone.",
+      "pyeonjae": "Like moving first to catch opportunities.",
+      "jeongjae": "Like showing up daily and stacking consistency.",
+      "pyeongwan": "Like pushing into heavier challenges.",
+      "jeonggwan": "Like sticking to a planned routine.",
+      "pyeonin": "Like exploring a new cue or form.",
+      "jeongin": "Like learning with a coach’s help."
+    },
+    "unseong": {
+      "what": "The twelve stages describe a growth cycle of energy.",
+      "look": "Whether the vibe is closer to start, growth, peak, recovery, or transition.",
+      "gym": "Like prepare → grow → peak feel → recover → prepare again. Not a real PR ranking."
+    },
+    "unseongItems": {
+      "jangsaeng": "Like first adapting to a new stimulus.",
+      "mokyok": "Like habits and body starting to change.",
+      "gwandae": "Like skill and confidence rising.",
+      "geonrok": "Like running your own routine solidly.",
+      "jewang": "Like a high-energy peak phase.",
+      "soe": "Like needing more recovery after a peak.",
+      "byeong": "Like prioritizing recovery over force.",
+      "sa": "Like closing one block and prepping the next.",
+      "myo": "Like a storage/rest phase before the next push.",
+      "jeol": "Like resetting the plan for a new block.",
+      "tae": "Like a new goal beginning to form.",
+      "yang": "Like a new habit quietly settling in."
+    },
+    "shinsal": {
+      "what": "Spirit-hints are optional flavor cues layered onto today’s flow.",
+      "look": "Activity, change, or deep focus cues — never the whole decision alone.",
+      "gym": "Yeokma ≈ change of routine/place; Hwagae ≈ solo skill focus; Dohwa ≈ lively social energy."
+    },
+    "useful": {
+      "what": "Useful / favorable / burden elements describe supportive vs balancing directions in traditional language.",
+      "look": "Whether today’s flow feels harmonious or needs balance — not medical advice.",
+      "gym": "Think: helpful stimulus to complement, supportive assist, and a direction to not overpush.",
+      "yongLabel": "Useful",
+      "huiLabel": "Favorable",
+      "kiLabel": "Burden",
+      "yongGym": "stimulus worth complementing",
+      "huiGym": "helpful assist vibe",
+      "kiGym": "direction to balance, not force"
+    },
+    "cycles": {
+      "what": "Long-term, year, month, and day flows are layered time ranges — not just one day.",
+      "look": "How a long plan connects down to today’s condition.",
+      "gym": "Like long program → year goal → month focus → today’s readiness."
+    },
+    "yinYang": {
+      "what": "Yin/Yang splits energy character into calmer recovery vs active push.",
+      "look": "Whether today leans toward action or tidy-up/recovery.",
+      "gym": "Training and recovery need balance — Yang leans execute, Yin leans reset."
+    },
+    "wuxing": {
+      "what": "Five elements classify five traditional energy flavors.",
+      "look": "Which flavor leads today — not a strength test.",
+      "gym": "Wood grow · Fire drive · Earth steady · Metal focus · Water recover — fun metaphors only."
+    },
+    "wuxingItems": {
+      "wood": "Like gradual growth and expanding stimulus.",
+      "fire": "Like high drive and assertive sessions.",
+      "earth": "Like steady routine and balance.",
+      "metal": "Like sharp focus on a clear goal.",
+      "water": "Like adjusting intensity and recovering."
+    }
   }
 }

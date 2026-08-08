@@ -3,6 +3,7 @@ import type {
   FortuneNarrative,
   FortuneTraditionalDetail as Detail,
 } from '@machinefit/shared';
+import { FortuneExplainBlock } from '@/components/fortune/reading/FortuneExplainBlock';
 
 interface FortuneTraditionalDetailProps {
   detail: Detail;
@@ -19,6 +20,13 @@ export function FortuneTraditionalDetailPanel({
     narrative?.layers.filter((l) =>
       ['daeun', 'seun', 'wolun', 'today', 'shijin'].includes(l.key)
     ) ?? [];
+
+  const shipshinExtra = t(`explain.shipshinItems.${detail.shipshin}`, {
+    defaultValue: '',
+  });
+  const unseongExtra = t(`explain.unseongItems.${detail.unseong}`, {
+    defaultValue: '',
+  });
 
   return (
     <details className="fr-detail">
@@ -59,16 +67,43 @@ export function FortuneTraditionalDetailPanel({
               </dd>
             </div>
           </dl>
+          <div className="fr-detail__sub">
+            <p className="fr-detail__sub-title">{t('explain.pillars.fourTitle')}</p>
+            <ul className="fr-detail__sub-list">
+              <li>
+                <strong>{t('detail.pillarsYear')}</strong> — {t('explain.pillars.yearGym')}
+              </li>
+              <li>
+                <strong>{t('detail.pillarsMonth')}</strong> — {t('explain.pillars.monthGym')}
+              </li>
+              <li>
+                <strong>{t('detail.pillarsDay')}</strong> — {t('explain.pillars.dayGym')}
+              </li>
+              <li>
+                <strong>{t('detail.pillarsHour')}</strong> — {t('explain.pillars.hourGym')}
+              </li>
+            </ul>
+          </div>
+          <FortuneExplainBlock prefix="pillars" showFootnote={false} />
+          <FortuneExplainBlock prefix="ganzhi" showDivider={false} />
         </details>
 
         <details className="fr-detail__item">
           <summary>{t('detail.shipshinLabel')}</summary>
           <p>{t(detail.shipshinHintKey)}</p>
+          {shipshinExtra ? (
+            <p className="fr-detail__item-gym">💪 {shipshinExtra}</p>
+          ) : null}
+          <FortuneExplainBlock prefix="shipshin" />
         </details>
 
         <details className="fr-detail__item">
           <summary>{t('detail.unseongLabel')}</summary>
           <p>{t(detail.unseongHintKey)}</p>
+          {unseongExtra ? (
+            <p className="fr-detail__item-gym">💪 {unseongExtra}</p>
+          ) : null}
+          <FortuneExplainBlock prefix="unseong" />
         </details>
 
         <details className="fr-detail__item">
@@ -78,6 +113,7 @@ export function FortuneTraditionalDetailPanel({
               ? detail.shinsalHintKeys.map((k) => t(k)).join(' · ')
               : t('detail.shinsalNone')}
           </p>
+          <FortuneExplainBlock prefix="shinsal" />
         </details>
 
         <details className="fr-detail__item">
@@ -89,6 +125,23 @@ export function FortuneTraditionalDetailPanel({
               ki: t(`element.${detail.kishin}`),
             })}
           </p>
+          <div className="fr-detail__sub">
+            <ul className="fr-detail__sub-list">
+              <li>
+                <strong>{t('explain.useful.yongLabel')}</strong> —{' '}
+                {t(`element.${detail.yongshin}`)} · {t('explain.useful.yongGym')}
+              </li>
+              <li>
+                <strong>{t('explain.useful.huiLabel')}</strong> —{' '}
+                {t(`element.${detail.huishin}`)} · {t('explain.useful.huiGym')}
+              </li>
+              <li>
+                <strong>{t('explain.useful.kiLabel')}</strong> —{' '}
+                {t(`element.${detail.kishin}`)} · {t('explain.useful.kiGym')}
+              </li>
+            </ul>
+          </div>
+          <FortuneExplainBlock prefix="useful" />
         </details>
 
         {cycleLayers.length ? (
@@ -103,6 +156,7 @@ export function FortuneTraditionalDetailPanel({
                 </li>
               ))}
             </ul>
+            <FortuneExplainBlock prefix="cycles" showTimeRangeChart />
           </details>
         ) : null}
       </div>
