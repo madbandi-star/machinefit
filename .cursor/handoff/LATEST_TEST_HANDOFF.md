@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `f0df99ee`
 
 ## Test focus
 1. 음악 전체 패널에서 X → 음악 중지 + 패널 닫힘 (소형으로 안 바뀜)
