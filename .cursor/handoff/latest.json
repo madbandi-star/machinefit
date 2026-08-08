@@ -3,7 +3,7 @@
   "summary": "Homepage ??? ???? card can expand/collapse via header toggle. Preference persists in localStorage. Collapsed peek shows keyword when ready. UI only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a090e2f6"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
