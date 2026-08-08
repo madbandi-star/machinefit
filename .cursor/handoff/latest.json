@@ -1,9 +1,9 @@
-{
+﻿{
   "title": "Hide MY WORKOUT DATA sections on fortune page",
   "summary": "Removed MY WORKOUT DATA chart/stats block and ? ?? ??? ?? prose from /fortune/today. TODAY'S RECOMMENDATION and everything below unchanged.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "ad588863"
   },
   "changedFiles": [
     "frontend/src/components/fortune/FortuneDashboard.tsx"

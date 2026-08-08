@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: `PENDING`
+- Commit: `ad588863`
 
 ## Test focus
 1. MY WORKOUT DATA / donut / 데이터 분석 섹션 없음
