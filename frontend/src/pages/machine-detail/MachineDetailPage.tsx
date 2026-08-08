@@ -89,14 +89,17 @@ export function MachineDetailPage() {
         skipNavigate: true,
         skipHistory: true,
       });
+      // Match WorkoutLogPanel default (search → recommend → log), not a single-set stub.
+      const defaultSetCount = 3;
+      const seedKg = result.settings.recommendedWeightKg ?? 0;
       const res = await workoutCardApi.create({
         gymId: activeGymId,
         memberId: activeMemberId,
         machineCode,
         scheduledDate: planDate,
         status: 'PLANNED',
-        setCount: 1,
-        setWeightsKg: [result.settings.recommendedWeightKg ?? 0],
+        setCount: defaultSetCount,
+        setWeightsKg: Array.from({ length: defaultSetCount }, () => seedKg),
         recommendationId: result.id,
         ...(muscleParam ? { targetMuscleGroup: muscleParam } : {}),
       });

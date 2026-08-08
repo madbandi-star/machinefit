@@ -1,29 +1,28 @@
 {
-  "title": "Move voice count below plan-save on Records",
-  "summary": "Records individual cards and the detail record page both use WorkoutLogPanel history layout. Voice coach panel is now rendered after the performance block that contains the plan-save button.",
+  "title": "Default plan-add cards to 3 sets",
+  "summary": "Plan-add from machine detail and planDate plan-card creation on recommendation save now seed setCount=3 with three recommended weights, matching WorkoutLogPanel default after search recommend.",
   "git": {
     "branch": "main",
-    "commit": "5c71f8e7"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],
   "testFocus": [
-    "Records page: open an individual machine card ? voice count is below ?? ?? (after sets/weights)",
-    "Records detail page: same order ? performance/plan-save, then voice count, then diary/tip",
-    "Voice count still starts/stops and plan-save still works"
+    "Records ? add exercise (planDate) ? machine detail ? ??? ?? ? open Records card: ?? ?? is 3",
+    "Recommend with planDate ? save workout ? plan card / records show 3 sets (not 1)",
+    "Plain today search recommend without plan still defaults to 3 as before"
   ],
   "fastChecks": [
-    "rg -n \"Below ??? ???|voiceCoachPanel\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "rg -n \"recommendation-workout-log--history .voice-coach-panel\" frontend/src/styles/recommendation.css"
+    "rg -n \"defaultSetCount = 3|setCount: 1\" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],
   "productionChecks": [
-    "After Pages deploy + Ctrl+F5: verify Records card and detail voice-count order"
+    "After Pages deploy + Ctrl+F5: plan-add card shows 3 sets"
   ],
   "deploy": {
     "expected": "FE Pages only (no backend)"
   },
-  "asIs": "Voice count appeared above sets/weights and plan-save on Records and detail",
-  "toBe": "Voice count appears below plan-save / performance block on Records and detail"
+  "asIs": "Plan-add / planDate card create hardcoded setCount: 1",
+  "toBe": "Those creates use setCount: 3 with three seed weights"
 }

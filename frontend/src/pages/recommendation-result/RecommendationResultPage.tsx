@@ -129,14 +129,17 @@ export function RecommendationResultPage() {
 
   const createPlanMutation = useMutation({
     mutationFn: async (item: RecommendationResult) => {
+      // Match WorkoutLogPanel default (search → recommend → log), not a single-set stub.
+      const defaultSetCount = 3;
+      const seedKg = item.settings.recommendedWeightKg ?? 0;
       const res = await workoutCardApi.create({
         gymId: activeGymId!,
         memberId: activeMemberId!,
         machineCode: item.machineCode,
         scheduledDate: planDate!,
         status: 'PLANNED',
-        setCount: 1,
-        setWeightsKg: [item.settings.recommendedWeightKg ?? 0],
+        setCount: defaultSetCount,
+        setWeightsKg: Array.from({ length: defaultSetCount }, () => seedKg),
         recommendationId: item.id,
         ...(item.targetMuscleGroup
           ? { targetMuscleGroup: item.targetMuscleGroup }
