@@ -227,6 +227,7 @@
     "emptySaved": "운동 기록을 저장한 추천이 없습니다.",
     "emptyUnsaved": "운동 기록을 저장하지 않은 추천이 없습니다.",
     "emptyOnDate": "선택한 날짜에 기록이 없습니다.",
+    "planTemplateLoadAction": "템플릿 불러오기",
     "logStatusLabel": "기록 저장 여부",
     "logStatusAll": "모두",
     "logStatusSaved": "저장됨",

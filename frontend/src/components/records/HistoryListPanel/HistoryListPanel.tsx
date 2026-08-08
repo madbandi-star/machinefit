@@ -1017,91 +1017,18 @@ export function HistoryListPanel() {
   if (isError) return <QueryErrorMessage />;
 
   const hasAnyRecords = allRecordCards.length > 0;
+  const isEmptyList = !hasAnyRecords || displayCards.length === 0;
+  const isEmptyOnDate =
+    Boolean(selectedDate) &&
+    (logStatus === 'all' || !hasAnyRecords) &&
+    isEmptyList;
+  const showLoadTemplateOnEmpty = canUseWorkoutPlans && isEmptyOnDate;
 
-  if (!hasAnyRecords) {
-    return (
-      <div className="records-list records-list--history history-page-premium">
-        {canUseWorkoutPlans ? <MissedWorkoutPlansBanner /> : null}
-        <div className="records-list__toolbar">
-          <div className="records-list__toolbar-end">
-            <div className="records-list__date-filter-block">
-              <div className="records-list__filters">
-                <details
-                  className="records-list__calendar-details"
-                  open={calendarOpen}
-                  onToggle={(e) => setCalendarOpen((e.target as HTMLDetailsElement).open)}
-                >
-                  <summary className="records-list__calendar-summary">
-                    <span className="records-list__calendar-toggle">
-                      <Icon
-                        name="calendar"
-                        size={14}
-                        className="records-list__calendar-icon"
-                      />
-                      <span className="records-list__date-filter-label">
-                        {selectedDate
-                          ? t('machines:history.selectedDateLabel', { date: selectedDate })
-                          : t('machines:history.filterByDate')}
-                      </span>
-                      <Icon
-                        name="chevronDown"
-                        size={16}
-                        className="records-list__calendar-chevron"
-                      />
-                    </span>
-                  </summary>
-                  <HistoryDateCalendar
-                    datesWithData={datesWithData}
-                    dateCounts={dateCounts}
-                    selectedDate={selectedDate}
-                    onSelect={handleDateChange}
-                    locale={i18n.language}
-                    allowEmptySelect
-                    onAfterSelect={() => setCalendarOpen(false)}
-                  />
-                </details>
-                {selectedDate ? (
-                  <button
-                    type="button"
-                    className="records-list__date-reset"
-                    onClick={() => handleDateChange('')}
-                  >
-                    {t('machines:filterAll')}
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </div>
-        <EmptyState
-          icon="history"
-          title={
-            selectedDate
-              ? t('machines:history.emptyOnDate')
-              : t('machines:history.empty')
-          }
-          action={
-            <div className="records-list__empty-actions">
-              {showPlanAddForDate ? (
-                <Link to={planAddUrl} className="btn btn--primary">
-                  {t('machines:history.planAddForDate')}
-                </Link>
-              ) : null}
-              <Link
-                to={ROUTES.MACHINES}
-                className={showPlanAddForDate ? 'btn btn--secondary' : 'btn btn--primary'}
-              >
-                {t('common:emptyState.browseMachines')}
-              </Link>
-            </div>
-          }
-        />
-      </div>
-    );
-  }
-
-  const emptyFilterTitle =
-    logStatus === 'saved'
+  const emptyFilterTitle = !hasAnyRecords
+    ? selectedDate
+      ? t('machines:history.emptyOnDate')
+      : t('machines:history.empty')
+    : logStatus === 'saved'
       ? t('machines:history.emptySaved')
       : logStatus === 'unsaved'
         ? t('machines:history.emptyUnsaved')
@@ -1109,11 +1036,60 @@ export function HistoryListPanel() {
           ? t('machines:history.emptyOnDate')
           : t('machines:history.empty');
 
+  const emptyActions = (
+    <div className="records-list__empty-actions">
+      {showLoadTemplateOnEmpty ? (
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={() => setDayMenuOpen(true)}
+        >
+          {t('machines:history.planTemplateLoadAction')}
+        </button>
+      ) : null}
+      {showPlanAddForDate ? (
+        <Link
+          to={planAddUrl}
+          className={showLoadTemplateOnEmpty ? 'btn btn--secondary' : 'btn btn--primary'}
+        >
+          {t('machines:history.planAddForDate')}
+        </Link>
+      ) : null}
+      {!hasAnyRecords ? (
+        <Link
+          to={ROUTES.MACHINES}
+          className={
+            showLoadTemplateOnEmpty || showPlanAddForDate
+              ? 'btn btn--secondary'
+              : 'btn btn--primary'
+          }
+        >
+          {t('common:emptyState.browseMachines')}
+        </Link>
+      ) : selectedDate || logStatus !== 'all' ? (
+        <button
+          type="button"
+          className="btn btn--secondary"
+          onClick={() => {
+            updateSearchParams((next) => {
+              next.delete('date');
+              next.delete('logStatus');
+            });
+          }}
+        >
+          {t('machines:filterAll')}
+        </button>
+      ) : null}
+    </div>
+  );
+
   return (
     <div className="records-list records-list--history history-page-premium">
       {canUseWorkoutPlans ? <MissedWorkoutPlansBanner /> : null}
       <div className="records-list__toolbar">
-        <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
+        {hasAnyRecords ? (
+          <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />
+        ) : null}
 
         <div className="records-list__toolbar-end">
           <div className="records-list__date-filter-block">
@@ -1164,7 +1140,7 @@ export function HistoryListPanel() {
             </div>
           </div>
 
-          {isAuthenticated ? (
+          {isAuthenticated && canUseWorkoutPlans ? (
             <button
               type="button"
               className="records-list__day-menu-trigger icon-btn"
@@ -1179,33 +1155,11 @@ export function HistoryListPanel() {
         </div>
       </div>
 
-      {displayCards.length === 0 ? (
+      {isEmptyList ? (
         <EmptyState
           icon="history"
           title={emptyFilterTitle}
-          action={
-            <div className="records-list__empty-actions">
-              {showPlanAddForDate ? (
-                <Link to={planAddUrl} className="btn btn--primary">
-                  {t('machines:history.planAddForDate')}
-                </Link>
-              ) : null}
-              {selectedDate || logStatus !== 'all' ? (
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={() => {
-                    updateSearchParams((next) => {
-                      next.delete('date');
-                      next.delete('logStatus');
-                    });
-                  }}
-                >
-                  {t('machines:filterAll')}
-                </button>
-              ) : undefined}
-            </div>
-          }
+          action={emptyActions}
         />
       ) : (
         <>

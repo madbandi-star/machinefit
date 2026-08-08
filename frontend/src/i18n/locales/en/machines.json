@@ -227,6 +227,7 @@
     "emptySaved": "No recommendations with saved workout logs.",
     "emptyUnsaved": "No recommendations without saved workout logs.",
     "emptyOnDate": "No records on the selected date.",
+    "planTemplateLoadAction": "Load template",
     "logStatusLabel": "Workout log status",
     "logStatusAll": "All",
     "logStatusSaved": "Saved",
