@@ -1,23 +1,22 @@
-﻿# Test handoff: Today add-exercise uses planDate for 추가됨 badges
+﻿# Test handoff: Reorder records nudge + fix bottom-nav tip bubble
 
 ## Summary
-기록 페이지 오늘 「운동추가」도 검색 URL에 `planDate=오늘`을 포함해, 이미 등록된 기구에 미래와 동일하게 「추가됨」 라벨이 보이게 했습니다.
+추천 결과에서 기록 안내 배너를 핏 피드백(기본값 설정) 위로 옮기고, 하단 기록 탭 팁을 아이콘에 갇히지 않는 2줄 말풍선으로 고쳤습니다.
 
 ## Git
 - Branch: `main`
-- Commit: `45ec12a2`
+- Commit: pending
 
 ## Test focus
-1. 오늘 날짜 「운동추가」 → URL에 `planDate=오늘`
-2. 오늘 이미 있는 기구에 「추가됨」 배지 표시
-3. 미래 「운동추가」 동작/배지 회귀 없음
+1. 추천 결과: 「오늘 운동은 기록에서…」가 「아래 버튼을 눌러 기본값을…」 위에 표시
+2. 하단 기록 탭 팁이 2줄 말풍선으로 표시(글자 세로 일자 나열 아님)
 
 ## Fast checks
 ```bash
-rg -n "Include planDate for today|planDate=\\$\\{encodeURIComponent\\(groupDateKey\\)\\}" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
+rg -n "recordsNudgeVisible|bottom-nav__nudge-tip|pre-line" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx frontend/src/components/layout/BottomNavigation
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| 오늘 운동추가에 「추가됨」 없음 | 오늘도 planDate로 「추가됨」 표시 |
+| 기록 배너가 핏 피드백 아래 + 네비 팁 깨짐 | 기록 배너 위쪽 + 2줄 말풍선 팁 |

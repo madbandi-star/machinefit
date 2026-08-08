@@ -148,12 +148,12 @@ export function BottomNavigation() {
                 .join(' ')
             }
           >
+            {isRecordsNudge && showRecordsTip ? (
+              <span className="bottom-nav__nudge-tip" role="status">
+                {t('machines:recommendation.recordsNudgeNavTip')}
+              </span>
+            ) : null}
             <span className="bottom-nav__icon-wrap">
-              {isRecordsNudge && showRecordsTip ? (
-                <span className="bottom-nav__nudge-tip" role="status">
-                  {t('machines:recommendation.recordsNudgeNavTip')}
-                </span>
-              ) : null}
               <Icon name={icon} size={20} />
             </span>
             <span className="bottom-nav__label">{t(labelKey)}</span>

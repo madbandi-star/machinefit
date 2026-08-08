@@ -399,23 +399,6 @@ export function RecommendationResultPage() {
           {bodyExpanded ? (
             <>
               <div className="history-record-card__section">
-                {isAuthenticated ? (
-                  <FitFeedbackPanel
-                    savedRating={fitFeedback.savedRating}
-                    showIntroText={false}
-                    badButtonSaveMode={badButtonSaveMode}
-                    onBadSave={handleSettingsSave}
-                    preferencesDirty={fitFeedback.settingsDirty}
-                    onRating={(rating) => {
-                      if (rating === 'bad') setIsEditingAdjustments(true);
-                      else setIsEditingAdjustments(false);
-                      fitFeedback.handleRating(rating);
-                    }}
-                    isPending={
-                      fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
-                    }
-                  />
-                ) : null}
                 {recordsNudgeVisible ? (
                   <div className="recommendation-result-page__records-nudge" role="status">
                     <div className="recommendation-result-page__records-nudge-text">
@@ -444,6 +427,23 @@ export function RecommendationResultPage() {
                       </button>
                     </div>
                   </div>
+                ) : null}
+                {isAuthenticated ? (
+                  <FitFeedbackPanel
+                    savedRating={fitFeedback.savedRating}
+                    showIntroText={false}
+                    badButtonSaveMode={badButtonSaveMode}
+                    onBadSave={handleSettingsSave}
+                    preferencesDirty={fitFeedback.settingsDirty}
+                    onRating={(rating) => {
+                      if (rating === 'bad') setIsEditingAdjustments(true);
+                      else setIsEditingAdjustments(false);
+                      fitFeedback.handleRating(rating);
+                    }}
+                    isPending={
+                      fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
+                    }
+                  />
                 ) : null}
                 {isAuthenticated ? (
                   <ActiveSettingsSourceBanner
