@@ -1,24 +1,21 @@
-# Test handoff: Draggable full-mode motivation music player
+ï»¿# Test handoff: Unknown push sender label â†’ ì‹œìŠ¤í…œ ì•Œë¦¼
 
 ## Summary
-µ¿±âºÎ¿© À½¾Ç ÇÃ·¹ÀÌ¾î ÀüÃ¼ ¸ğµå¿¡¼­µµ ¼ÒÇü(¹Ì´Ï)Ã³·³ µå·¡±×·Î À§Ä¡¸¦ ¿Å±æ ¼ö ÀÖ°Ô Çß½À´Ï´Ù. ÀüÃ¼ ¸ğµå´Â »ó´Ü Å¸ÀÌÆ² ¹Ù¸¦ ÇÚµé·Î ¾²°í, ¹Ì´Ï¿Í À§Ä¡¸¦ °øÀ¯ÇÕ´Ï´Ù.
+ì•Œë¦¼ì—ì„œ ë°œì†¡ì ì •ë³´ê°€ ì—†ì„ ë•Œ ë³´ì´ë˜ ã€Œë°œì†¡ì ì •ë³´ ì—†ìŒã€ì„ ã€Œì‹œìŠ¤í…œ ì•Œë¦¼ã€ìœ¼ë¡œ ë³€ê²½í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `2efde888`
+- Commit: pending
 
 ## Test focus
-1. ÀüÃ¼ ¸ğµå: »ó´Ü Å¸ÀÌÆ² ¹Ù µå·¡±×·Î À§Ä¡ ÀÌµ¿¡¤ÀúÀå
-2. ÇÃ·¹ÀÌ¸®½ºÆ® ½ºÅ©·ÑÀº ±×´ë·Î µ¿ÀÛ
-3. ¹Ì´Ï·Î ÁÙ¿´´Ù/ÆîÃÄµµ À§Ä¡ À¯Áö(Å¬·¥ÇÁ)
-4. ¹öÆ°(´İ±â/ÃÖ¼ÒÈ­)Àº µå·¡±×¿Í Ãæµ¹ ¾øÀ½
+1. ë°œì†¡ì ì—†ëŠ” í‘¸ì‹œ/ì•Œë¦¼ í•­ëª©ì— ã€Œì‹œìŠ¤í…œ ì•Œë¦¼ã€ í‘œì‹œ
 
 ## Fast checks
 ```bash
-rg -n "musicPanelOpen|top--drag|mf-music-shell" frontend/src/components/motivation/MotivationMediaControls frontend/src/styles/float-drag.css
+rg -n "pushSenderUnknown" frontend/src/i18n/locales/ko/notifications.json
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ÀüÃ¼ ¸ğµå À§Ä¡ °íÁ¤ | »ó´Ü ¹Ù µå·¡±×·Î ÀÌµ¿ °¡´É |
+| ë°œì†¡ì ì •ë³´ ì—†ìŒ | ì‹œìŠ¤í…œ ì•Œë¦¼ |
