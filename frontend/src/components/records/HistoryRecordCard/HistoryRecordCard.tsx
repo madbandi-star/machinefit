@@ -24,12 +24,13 @@ import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
-import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
+import { formatHistoryDateHeader, formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
+import { HistoryCardPlanActionsSheet } from '@/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 
@@ -100,7 +101,6 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   planActionsDisabled = false,
 }: HistoryRecordCardProps) {
   const orderMenuRef = useRef<HTMLDetailsElement>(null);
-  const planMenuRef = useRef<HTMLDetailsElement>(null);
   const planRecEnsureRef = useRef<string | null>(null);
   const queryClient = useQueryClient();
   const { createRecommendationAsync } = useRecommendMachine(card.machineCode);
@@ -111,6 +111,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     Boolean(onOrderMove);
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [expanded, setExpanded] = useState(isFocused);
+  const [planActionsOpen, setPlanActionsOpen] = useState(false);
   const [logControl, setLogControl] = useState<WorkoutLogPanelControl | null>(null);
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const logDate = normalizeDateKey(card.logDate);
@@ -339,50 +340,17 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   </details>
                 ) : null}
                 {showPlanMenu ? (
-                  <details ref={planMenuRef} className="history-record-card__order-menu">
-                    <summary
-                      className="history-record-card__order-trigger"
-                      aria-label={t('machines:history.planCardMenuAria')}
-                    >
-                      <MoreHorizontal size={16} strokeWidth={2.25} aria-hidden />
-                    </summary>
-                    <div className="history-record-card__order-panel" role="menu">
-                      <div className="workout-card-order workout-card-order--menu">
-                        {onMovePlan ? (
-                          <button
-                            type="button"
-                            className="workout-card-order__btn"
-                            role="menuitem"
-                            disabled={planActionsDisabled}
-                            onClick={() => {
-                              if (planMenuRef.current) planMenuRef.current.open = false;
-                              onMovePlan();
-                            }}
-                          >
-                            <span className="workout-card-order__btn-label">
-                              {t('machines:history.planMoveDate')}
-                            </span>
-                          </button>
-                        ) : null}
-                        {onCopyPlan ? (
-                          <button
-                            type="button"
-                            className="workout-card-order__btn"
-                            role="menuitem"
-                            disabled={planActionsDisabled}
-                            onClick={() => {
-                              if (planMenuRef.current) planMenuRef.current.open = false;
-                              onCopyPlan();
-                            }}
-                          >
-                            <span className="workout-card-order__btn-label">
-                              {t('machines:history.planCopyDate')}
-                            </span>
-                          </button>
-                        ) : null}
-                      </div>
-                    </div>
-                  </details>
+                  <button
+                    type="button"
+                    className="history-record-card__order-trigger"
+                    aria-label={t('machines:history.planCardMenuAria')}
+                    aria-haspopup="dialog"
+                    aria-expanded={planActionsOpen}
+                    disabled={planActionsDisabled}
+                    onClick={() => setPlanActionsOpen(true)}
+                  >
+                    <MoreHorizontal size={16} strokeWidth={2.25} aria-hidden />
+                  </button>
                 ) : null}
                 <button
                   type="button"
@@ -589,6 +557,18 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
           <ChevronDown size={16} strokeWidth={2.25} aria-hidden />
         </button>
       ) : null}
+
+      <HistoryCardPlanActionsSheet
+        open={planActionsOpen}
+        machineName={displayName}
+        currentDateLabel={formatHistoryDateHeader(logDate, i18n.language)}
+        canMove={Boolean(onMovePlan)}
+        canCopy={Boolean(onCopyPlan)}
+        disabled={planActionsDisabled}
+        onClose={() => setPlanActionsOpen(false)}
+        onMove={() => onMovePlan?.()}
+        onCopy={() => onCopyPlan?.()}
+      />
     </article>
   );
 });
