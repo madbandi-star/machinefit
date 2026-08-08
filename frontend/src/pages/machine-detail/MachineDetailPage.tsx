@@ -192,12 +192,6 @@ export function MachineDetailPage() {
           {isFuturePlanAdd && planDate ? (
             <div className="machine-detail-plan-actions__secondary">
               <Link
-                to={`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`}
-                className="btn btn--secondary btn--block"
-              >
-                {t('machines:history.planAddAnother')}
-              </Link>
-              <Link
                 to={`${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`}
                 className="btn btn--secondary btn--block"
               >
