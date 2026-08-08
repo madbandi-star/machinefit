@@ -1,21 +1,19 @@
 {
-  "title": "Double-tap detail ? back to records",
-  "summary": "Double-tap/double-click on recommendation result (from records) navigates back to /records?date=..., ignoring interactive controls.",
-  "git": { "branch": "main", "commit": "b6895290" },
+  "title": "Collapse details button on record cards",
+  "summary": "Expanded history record cards now show a bottom ??? ?? ??? toggle matching the expand control.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/hooks/useDoubleTapAction.ts",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
   "testFocus": [
-    "Double-tap detail returns to records",
-    "Interactive controls ignored"
+    "Expanded card has bottom collapse button",
+    "Collapse/expand still work"
   ],
   "fastChecks": [
-    "rg -n \"useDoubleTapAction|returnToRecords\" frontend/src/pages/recommendation-result frontend/src/hooks/useDoubleTapAction.ts"
+    "rg -n \"collapseCardDetails\" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
   ],
-  "productionChecks": ["Pages deploy + mobile double-tap from records detail"],
+  "productionChecks": ["Pages deploy + records card bottom toggle"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "No double-tap shortcut back to records",
-  "toBe": "Double-tap detail returns to records for that date"
+  "asIs": "No bottom collapse when expanded",
+  "toBe": "Bottom collapse details button when expanded"
 }

@@ -1,23 +1,23 @@
-# Test handoff: Double-tap detail ¡æ back to records
+ï»¿# Test handoff: Collapse details button on record cards
 
 ## Summary
-±â·Ï Ä«µå¿¡¼­ ¿¬ ¼¼ºÎ±â·Ï(ÁÖÀÇ»çÇ×¡¤¿îµ¿ÆÁ) ÆäÀÌÁö¸¦ ´õºíÅÇÇÏ¸é ÇØ´ç ÀÏÀÚ ±â·Ï ¸ñ·ÏÀ¸·Î µ¹¾Æ°©´Ï´Ù. ¹öÆ°/ÀÔ·Â ¿µ¿ªÀº Á¦¿ÜÇÕ´Ï´Ù.
+ê¸°ë¡ í˜ì´ì§€ ê°œë³„ ìš´ë™ê¸°ë¡ì¹´ë“œ í•˜ë‹¨ì— í¼ì¹œ ìƒíƒœì¼ ë•Œ ã€Œìƒì„¸ ë‚´ìš© ì ‘ê¸°ã€ ë²„íŠ¼ì„ ì¶”ê°€í–ˆìŠµë‹ˆë‹¤. ì ‘íŒ ìƒíƒœì˜ ã€Œìƒì„¸ ë‚´ìš© í¼ì¹˜ê¸°ã€ëŠ” ê·¸ëŒ€ë¡œì…ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: b6895290
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ card ¡æ detail (tips/warnings)
-2. Double-tap empty/content area ¡æ returns to `/records?date=...`
-3. Double-tap on bookmark/favorite/inputs does NOT navigate away
+1. Records â†’ expand a card (or open already expanded)
+2. Bottom shows ã€Œìƒì„¸ ë‚´ìš© ì ‘ê¸°ã€ â†’ tap collapses details
+3. Collapsed card still shows ã€Œìƒì„¸ ë‚´ìš© í¼ì¹˜ê¸°ã€ at bottom
 
 ## Fast checks
 ```bash
-rg -n "useDoubleTapAction|returnToRecords" frontend/src/pages/recommendation-result frontend/src/hooks/useDoubleTapAction.ts
+rg -n "collapseCardDetails" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| No double-tap back | Double-tap detail returns to records list for that date |
+| Only expand at bottom when collapsed | Collapse button at bottom when expanded too |

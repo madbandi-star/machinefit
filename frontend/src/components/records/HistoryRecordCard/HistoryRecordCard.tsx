@@ -544,7 +544,24 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         companionSavePending={fitFeedback.isPreferencesPending}
       />
 
-      {!expanded ? (
+      {expanded ? (
+        <button
+          type="button"
+          className="history-record-card__body-toggle"
+          aria-expanded={true}
+          onClick={() => setExpanded(false)}
+        >
+          <span className="history-record-card__body-toggle-label">
+            {t('common:collapseCardDetails')}
+          </span>
+          <ChevronDown
+            size={16}
+            strokeWidth={2.25}
+            className="history-record-card__collapse-icon history-record-card__collapse-icon--open"
+            aria-hidden
+          />
+        </button>
+      ) : (
         <button
           type="button"
           className="history-record-card__body-toggle"
@@ -556,7 +573,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
           </span>
           <ChevronDown size={16} strokeWidth={2.25} aria-hidden />
         </button>
-      ) : null}
+      )}
 
       <HistoryCardPlanActionsSheet
         open={planActionsOpen}
