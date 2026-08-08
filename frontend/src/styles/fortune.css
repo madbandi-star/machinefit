@@ -737,6 +737,119 @@
   line-height: 1.4;
 }
 
+.fortune-avoid__detail {
+  margin: 0.55rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.fortune-avoid__detail--muted {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+}
+
+.fortune-prose {
+  padding: 0.15rem 0.1rem 0.25rem;
+}
+
+.fortune-prose__eyebrow {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.fortune-prose__lead {
+  margin: 0 0 0.55rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.fortune-prose__body p {
+  margin: 0 0 0.55rem;
+  color: var(--color-text);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.fortune-prose__body p:last-child {
+  margin-bottom: 0;
+}
+
+.fortune-prose__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.fortune-prose__list--numbered {
+  list-style: decimal;
+}
+
+.fortune-prose__bullets {
+  margin: 0.65rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.fortune-prose__checks,
+.fortune-ba__checks {
+  list-style: none;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.fortune-prose__checks li,
+.fortune-ba__checks li {
+  display: flex;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.fortune-prose--mission {
+  padding: 0.95rem 1rem;
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-primary) 8%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+}
+
+.fortune-prose--mission .fortune-prose__body p {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.fortune-prose--report {
+  padding: 1rem 0.15rem 0.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
+.fortune-prose--report .fortune-prose__body p {
+  margin-bottom: 0.7rem;
+}
+
+.fortune-ba__expand {
+  margin: 0.55rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .fortune-ba {
   display: grid;
   gap: 0.65rem;

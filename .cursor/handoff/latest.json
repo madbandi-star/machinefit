@@ -1,39 +1,31 @@
-﻿{
-  "title": "Helchang Fortune dashboard UI overhaul",
-  "summary": "Rebuilt /fortune/today as a content dashboard: hero keyword, radial/linear gauges with count-up, SVG equipment donut, workout stats/insight, recommendation grid, avoid/before/after/quote cards, reveal animations + reduced-motion. API/DB/business logic unchanged.",
+{
+  "title": "Fortune reading-content enrichment",
+  "summary": "Added prose sections to /fortune/today (fortune explain, data narrative, why-today, strategy/PR/recovery commentary, try-this, mission, expanded before/after, Helchang report) without changing API/DB/gauges/charts/animations.",
   "git": {
     "branch": "main",
-    "commit": "56f8b954"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
-    "frontend/src/components/fortune/",
-    "frontend/src/hooks/useCountUp.ts",
-    "frontend/src/hooks/usePrefersReducedMotion.ts",
-    "frontend/src/hooks/useRevealOnView.ts",
+    "frontend/src/components/fortune/FortuneDashboard.tsx",
+    "frontend/src/components/fortune/fortuneContent.ts",
+    "frontend/src/components/fortune/FortuneProse.tsx",
+    "frontend/src/components/fortune/FortuneBeforeAfter.tsx",
+    "frontend/src/components/fortune/FortuneAvoidCard.tsx",
     "frontend/src/styles/fortune.css",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json"
+    "frontend/src/i18n/locales/*/fortune.json"
   ],
   "testFocus": [
-    "Open /fortune/today with birth profile: hero keyword + stars animate",
-    "Scores match API: healthmanIndex gauge, prLuck/recoveryLuck bars (no number mutation)",
-    "Equipment donut + legend from *Ratio30d; empty/sparse states",
-    "Recommendation cards + avoid/before/after/quote; disclaimer at bottom",
-    "prefers-reduced-motion: no looping motion, values still visible"
+    "Existing hero/gauges/donut/cards still render",
+    "New prose sections appear with keyword/strategy-specific copy",
+    "Empty/sparse data: no invented stats; limited personalization copy",
+    "Report uses API stars/ratios/labels only; disclaimer still at bottom"
   ],
   "fastChecks": [
     "cd frontend && npx tsc -p tsconfig.json --noEmit",
-    "rg -n \"FortuneDashboard|fortune-gauge|fortune-donut\" frontend/src/pages/fortune/FortuneDetailPage.tsx frontend/src/components/fortune/"
+    "rg -n \"FortuneProse|buildFortuneExplain|content.reportTitle\" frontend/src/components/fortune/"
   ],
-  "productionChecks": [
-    "After Pages deploy: /fortune/today visual dashboard"
-  ],
-  "deploy": {
-    "expected": "GitHub Pages Deploy Frontend success"
-  },
-  "asIs": "Text-report fortune page (lists/stars as plain text)",
-  "toBe": "Fitness content dashboard with gauges, donut, cards, and motion (logic unchanged)"
+  "productionChecks": ["After Pages: /fortune/today scroll through new prose sections"],
+  "deploy": { "expected": "GitHub Pages Deploy Frontend success" },
+  "asIs": "Pretty dashboard with thin reading content",
+  "toBe": "Same visuals + layered commentary/report for actionable reading"
 }

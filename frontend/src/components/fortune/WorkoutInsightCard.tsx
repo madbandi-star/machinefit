@@ -5,15 +5,14 @@ import { topEquipment } from '@/components/fortune/fortuneVisuals';
 interface WorkoutInsightCardProps {
   bullets: string[];
   slices: EquipmentSlice[];
-  styleLabel?: string;
   sparse: boolean;
   empty: boolean;
 }
 
+/** Compact insight tile — kept for reuse; dashboard prose uses FortuneProse. */
 export function WorkoutInsightCard({
   bullets,
   slices,
-  styleLabel,
   sparse,
   empty,
 }: WorkoutInsightCardProps) {
@@ -57,11 +56,6 @@ export function WorkoutInsightCard({
             <li key={line}>{line}</li>
           ))}
         </ul>
-      ) : null}
-      {styleLabel ? (
-        <p className="fortune-insight__bridge">
-          {t('insightBridgeStyle', { style: styleLabel })}
-        </p>
       ) : null}
     </div>
   );
