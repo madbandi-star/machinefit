@@ -2150,7 +2150,7 @@
 }
 
 .recommendation-workout-log--history .voice-coach-panel {
-  /* Sits below performance / 「계획 저장」 on Records + detail. */
+  /* Below diary/tip 「계획 저장」 on Records + detail. */
   margin-top: 0.55rem;
 }
 

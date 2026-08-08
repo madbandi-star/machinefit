@@ -1730,12 +1730,12 @@ export function WorkoutLogPanel({
           </div>
           {weightList}
         </div>
-        {/* Below 「계획 저장」 / performance block on Records + detail pages. */}
-        {voiceCoachPanel}
         {diaryField}
         {personalTipField ? (
           <div className="history-workout-log__memo-actions">{personalTipField}</div>
         ) : null}
+        {/* After diary / tip + 「계획 저장」(below-tip) on Records + detail. */}
+        {voiceCoachPanel}
         {showSaveButton ? saveButton : null}
         </section>
       </>

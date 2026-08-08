@@ -1,28 +1,28 @@
 {
-  "title": "Default plan-add cards to 3 sets",
-  "summary": "Plan-add from machine detail and planDate plan-card creation on recommendation save now seed setCount=3 with three recommended weights, matching WorkoutLogPanel default after search recommend.",
+  "title": "Voice count below plan-save (after tip)",
+  "summary": "On Records cards and detail, voice coach now renders after the diary/personal-tip block that ends with the full-width ??? ??? button ? not above the workout-plan memo textbox.",
   "git": {
     "branch": "main",
-    "commit": "ec5a4bc8"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Records ? add exercise (planDate) ? machine detail ? ??? ?? ? open Records card: ?? ?? is 3",
-    "Recommend with planDate ? save workout ? plan card / records show 3 sets (not 1)",
-    "Plain today search recommend without plan still defaults to 3 as before"
+    "Records card: order is sets/weights ? diary memo ? tip + ?? ?? ? voice count",
+    "Detail record page: same order",
+    "Voice start/stop and plan-save still work"
   ],
   "fastChecks": [
-    "rg -n \"defaultSetCount = 3|setCount: 1\" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
+    "rg -n \"After diary / tip|voiceCoachPanel\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
   "productionChecks": [
-    "After Pages deploy + Ctrl+F5: plan-add card shows 3 sets"
+    "After Pages + Ctrl+F5: voice is under ?? ??, not above ???? memo"
   ],
   "deploy": {
-    "expected": "FE Pages only (no backend)"
+    "expected": "FE Pages only"
   },
-  "asIs": "Plan-add / planDate card create hardcoded setCount: 1",
-  "toBe": "Those creates use setCount: 3 with three seed weights"
+  "asIs": "Voice sat above diary/plan memo textbox",
+  "toBe": "Voice sits below tip-area ?? ?? button"
 }

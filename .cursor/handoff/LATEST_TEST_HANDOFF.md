@@ -1,27 +1,26 @@
-# Test handoff: Default plan-add cards to 3 sets
+ï»¿# Test handoff: Voice count below plan-save (after tip)
 
 ## Summary
-±â±¸ »ó¼¼ °èÈ¹ Ãß°¡¿Í planDate ÃßÃµ °á°ú¿¡¼­ ¸¸µå´Â `workout_card`°¡ `setCount: 1`ÀÌ´ø °ÍÀ», °Ë»ö¡æÃßÃµ¡æ±â·Ï°ú °°ÀÌ **3¼¼Æ® + ÃßÃµÁß·® 3Ä­**À¸·Î ¸ÂÃè½À´Ï´Ù.
+ê¸°ë¡/ì„¸ë¶€ ê¸°ë¡ì—ì„œ ìŒì„±ì¹´ìš´íŠ¸ë¥¼ ì¼ì§€Â·íŒ ë¸”ë¡(í•˜ë‹¨ì— ã€Œê³„íš ì €ì¥ã€) **ì•„ë˜**ë¡œ ì˜®ê²¼ìŠµë‹ˆë‹¤. ì´ì „ì—ëŠ” ìˆ˜í–‰ê¸°ë¡ ì§í›„(=ìš´ë™ê³„íš ë©”ëª¨ ìœ„)ì— ìˆì–´ ì˜ëª»ëœ ìœ„ì¹˜ì˜€ìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `ec5a4bc8`
+- Commit: `PENDING`
 
 ## Test focus
-1. ±â·Ï ¡æ ¿îµ¿ Ãß°¡(`planDate`) ¡æ ±â±¸ »ó¼¼ ¡æ °èÈ¹¿¡ Ãß°¡ ¡æ ±â·Ï Ä«µå: ¼öÇà ¼¼Æ® **3**
-2. `planDate` Àâ°í ÃßÃµ ÈÄ ±â·Ï ÀúÀå ¡æ °èÈ¹/±â·Ï Ä«µå ¼¼Æ® **3** (1 ¾Æ´Ô)
-3. ÀÏ¹İ ¿À´Ã °Ë»ö ÃßÃµ(°èÈ¹ ¾øÀÌ)Àº ±âÁ¸Ã³·³ ±âº» 3 À¯Áö
+1. ê¸°ë¡ ê°œë³„ ì¹´ë“œ ìˆœì„œ: ì„¸íŠ¸/ë¬´ê²Œ â†’ ì¼ì§€ ë©”ëª¨ â†’ íŒ + ê³„íš ì €ì¥ â†’ **ìŒì„±ì¹´ìš´íŠ¸**
+2. ì„¸ë¶€ ê¸°ë¡ í˜ì´ì§€ ë™ì¼
+3. ìŒì„±/ê³„íš ì €ì¥ ë™ì‘ ìœ ì§€
 
 ## Fast checks
 ```bash
-rg -n "defaultSetCount = 3|setCount: 1" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
+rg -n "After diary / tip|voiceCoachPanel" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx
 ```
-(±â´ë: `defaultSetCount = 3` ÀÖÀ½, ÇØ´ç create °æ·Î¿¡ `setCount: 1` ¾øÀ½)
 
 ## Notes
-- FE Pages only. ÀÌ¹Ì ¸¸µé¾îÁø 1¼¼Æ® °èÈ¹ Ä«µå´Â ÀÚµ¿ º¯°æµÇÁö ¾ÊÀ½.
+- FE Pages only.
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| °èÈ¹ Ãß°¡/planDate Ä«µå create°¡ 1¼¼Æ® | µ¿ÀÏ °æ·Î°¡ 3¼¼Æ® ±âº» |
+| ìŒì„±ì¹´ìš´íŠ¸ê°€ ìš´ë™ê³„íš ë©”ëª¨ ìœ„ | ê³„íš ì €ì¥ ë²„íŠ¼ ì•„ë˜ |
