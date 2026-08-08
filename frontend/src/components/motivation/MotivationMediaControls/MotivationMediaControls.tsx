@@ -556,12 +556,10 @@ export function MotivationMediaControls({
   };
 
   const dismissMusicPanel = () => {
-    // Full → compact; compact X → hide chrome (audio may keep playing).
-    if (!musicCompact) {
-      setMusicCompact(true);
-      return;
-    }
+    // X always stops playback and closes the player (use Minimize for compact PiP).
+    stopMusic();
     setMusicPanelOpen(false);
+    setMusicCompact(false);
   };
 
   const selectTrack = (index: number) => {
