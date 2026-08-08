@@ -32,7 +32,9 @@
   transition:
     background-color 0.15s ease,
     color 0.15s ease,
-    transform 0.12s ease;
+    border-color 0.15s ease,
+    transform 0.12s ease,
+    opacity 0.15s ease;
 }
 
 .workout-card-order__btn:hover:not(:disabled),
@@ -43,34 +45,100 @@
 }
 
 .workout-card-order__btn:active:not(:disabled) {
-  transform: scale(0.94);
+  transform: scale(0.96);
 }
 
 .workout-card-order__btn:disabled,
 .workout-card-order__btn--inactive:disabled {
-  opacity: 0.32;
+  opacity: 0.34;
   cursor: not-allowed;
 }
 
+/* Action pad opened from the record card reorder trigger */
 .workout-card-order--menu {
+  display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.15rem;
+  gap: 0.55rem;
   min-width: 11.5rem;
-  padding: 0.3rem;
+  padding: 0.7rem 0.7rem 0.65rem;
+}
+
+.workout-card-order__title {
+  margin: 0;
+  padding: 0 0.15rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.workout-card-order__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
 }
 
 .workout-card-order--menu .workout-card-order__btn {
-  justify-content: flex-start;
-  gap: 0.5rem;
-  min-height: 2.4rem;
-  padding: 0.45rem 0.65rem;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.28rem;
   width: 100%;
-  font-size: 0.8125rem;
-  line-height: 1.3;
+  min-width: 0;
+  min-height: 3.55rem;
+  padding: 0.55rem 0.4rem 0.5rem;
+  border-radius: 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 85%, transparent);
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--color-bg-secondary, #f3f4f6) 88%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface, #fff) 92%, transparent) 100%
+    );
+  color: var(--color-text);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent);
+}
+
+.workout-card-order--menu .workout-card-order__btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+.workout-card-order--menu .workout-card-order__btn-label {
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+}
+
+.workout-card-order--menu .workout-card-order__btn:hover:not(:disabled),
+.workout-card-order--menu .workout-card-order__btn:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface, #fff));
   color: var(--color-text);
 }
 
-.workout-card-order__btn-label {
-  text-align: left;
+.workout-card-order--menu .workout-card-order__btn:hover:not(:disabled) .workout-card-order__btn-icon,
+.workout-card-order--menu .workout-card-order__btn:focus-visible .workout-card-order__btn-icon {
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.workout-card-order--menu .workout-card-order__btn:disabled,
+.workout-card-order--menu .workout-card-order__btn--inactive:disabled {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.workout-card-order--menu .workout-card-order__btn:disabled .workout-card-order__btn-icon {
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  color: var(--color-text-muted);
 }

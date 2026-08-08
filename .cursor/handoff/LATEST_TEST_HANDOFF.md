@@ -1,26 +1,23 @@
-# Test handoff: Include COMPLETED cards in workout plan reminders
+ï»¿# Test handoff: Polish Records reorder action pad UI
 
 ## Summary
-¿îµ¿ °èÈ¹ ¾Ë¸² ´ë»ó¿¡ ¿À´Ã ³¯Â¥ÀÇ COMPLETED(¹× IN_PROGRESS) Ä«µåµµ Æ÷ÇÔÇß½À´Ï´Ù. ¿À´Ã ¿îµ¿Ãß°¡·Î ÀÚµ¿ COMPLETEDµÈ Ä«µåµµ ¾Ë¸²ÀÌ °©´Ï´Ù.
+ê¸°ë¡ ì¹´ë“œ ìˆœì„œ ë³€ê²½ ë©”ë‰´ë¥¼ ì´ëª¨ì§€ í…ìŠ¤íŠ¸ ëª©ë¡ì—ì„œ ì§§ì€ ë¼ë²¨ì˜ 2Ã—2 ì•„ì´ì½˜ ì•¡ì…˜ íŒ¨ë“œë¡œ ê°œì„ í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `397ad5ae`
+- Commit: pending
 
 ## Test focus
-1. ¿À´Ã COMPLETED Ä«µå¸¸ ÀÖ´Â °èÁ¤ ¡æ ½Ã°£´ç Àâ ÈÄ ¿îµ¿ °èÈ¹ ¾Ë¸² »ı¼º
-2. ÀÌ¹Ì °°Àº ³¯ reminder ÀÖÀ¸¸é Áßº¹ ¾øÀ½
-3. SKIPPED¸¸ ÀÖÀ¸¸é ¾Ë¸² ¾øÀ½
+1. ê¸°ë¡ ì¹´ë“œ ìˆœì„œ ë²„íŠ¼ â†’ 2Ã—2 íŒ¨ë“œ(ìœ„ë¡œ/ì•„ë˜ë¡œ/ë§¨ ìœ„/ë§¨ ì•„ë˜)
+2. ì²«/ë§ˆì§€ë§‰ ì¹´ë“œì—ì„œ í•´ë‹¹ ë²„íŠ¼ ë¹„í™œì„±
+3. íƒ­ ì‹œ ìˆœì„œ ë³€ê²½Â·ë©”ë‰´ ë‹«í˜
 
 ## Fast checks
 ```bash
-rg -n "COMPLETED|IN_PROGRESS|listUserIdsWithPlannedOnDate" backend/server/repositories/workout-card.repository.ts
+rg -n "orderMoveUpShort|workout-card-order__grid" frontend/src/components/records/WorkoutCardOrderControl frontend/src/i18n/locales/ko/machines.json
 ```
 
-## Notes
-- Backend change ¡æ **Render redeploy** required.
-
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¿À´Ã PLANNED¸¸ | ¿À´Ã PLANNED / COMPLETED / IN_PROGRESS |
+| ì´ëª¨ì§€+ê¸´ í…ìŠ¤íŠ¸ ì„¸ë¡œ ë©”ë‰´ | ì§§ì€ ë¼ë²¨ 2Ã—2 ì•„ì´ì½˜ ì•¡ì…˜ íŒ¨ë“œ |
