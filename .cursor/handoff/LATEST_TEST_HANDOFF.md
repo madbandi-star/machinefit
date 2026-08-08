@@ -1,14 +1,14 @@
-ï»¿# Test handoff: Template delete confirm not blocked by day menu
+# Test handoff: Template delete confirm not blocked by day menu
 
 ## Summary
-ì¼ìì¡°íšŒ â‹¯ ë©”ë‰´ì—ì„œ í…œí”Œë¦¿ ì‚­ì œ ì‹œ í™•ì¸ ë‹¤ì´ì–¼ë¡œê·¸ê°€ ë©”ë‰´ ë’¤ì— ê°€ë ¤ì§€ë˜ ë¬¸ì œë¥¼, í™•ì¸ì°½ì„ ë„ìš°ê¸° ì „ì— ë©”ë‰´ë¥¼ ë‹«ì•„ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤.
+ÀÏÀÚÁ¶È¸ ? ¸Ş´º¿¡¼­ ÅÛÇÃ¸´ »èÁ¦ ½Ã È®ÀÎ ´ÙÀÌ¾ó·Î±×°¡ ¸Ş´º µÚ¿¡ °¡·ÁÁö´ø ¹®Á¦¸¦, È®ÀÎÃ¢À» ¶ç¿ì±â Àü¿¡ ¸Ş´º¸¦ ´İ¾Æ ¼öÁ¤Çß½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: b096ba2a
 
 ## Test focus
-1. Mobile (or narrow viewport): Records â†’ day â‹¯ â†’ í…œí”Œë¦¿ ì‚­ì œ
+1. Mobile (or narrow viewport): Records ¡æ day ? ¡æ ÅÛÇÃ¸´ »èÁ¦
 2. Confirm dialog is visible and tappable (not behind the day menu)
 3. Confirm deletes; cancel dismisses without deleting
 
@@ -17,7 +17,7 @@
 rg -n "onDeleteTemplate|setDayMenuOpen\(false\)" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Confirm behind day sheet; can't tap delete | Day sheet closes; confirm on top and usable |
