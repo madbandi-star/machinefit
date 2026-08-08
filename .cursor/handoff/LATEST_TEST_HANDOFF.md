@@ -1,24 +1,21 @@
-# Test handoff: Restore Records green-dot on fresh today recommend
+ï»¿# Test handoff: Records nav tip copy â†’ ì´ë™í•´ì„œ ìš´ë™ì‹œì‘
 
 ## Summary
-¿À´Ã ¿îµ¿ ÃßÃµ Á÷ÈÄ ÇÏ´Ü ±â·Ï ³ì»öÁ¡ÀÌ ´Ù½Ã ÄÑÁöµµ·Ï, ÃßÃµ ¼º°ø ½ÃÁ¡¿¡ nudge¸¦ ÄÑ°í °á°ú ÆäÀÌÁö unmount cleanupÀÌ Á¡À» ²ôÁö ¾Ê°Ô °íÃÆ½À´Ï´Ù. ¹è³Ê ÇÏ·ç dismiss´Â ¹è³Ê¸¸ ¼û±â°í ³×ºñ Á¡Àº »õ ÃßÃµ¸¶´Ù ´Ù½Ã ÄÕ´Ï´Ù.
+í•˜ë‹¨ ê¸°ë¡ ë²„íŠ¼ nudge tip ë¬¸êµ¬ë¥¼ ã€Œì´ë™í•´ì„œ ìš´ë™ì‹œì‘ã€ìœ¼ë¡œ ë³€ê²½í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `150ae612`
+- Commit: pending
 
 ## Test focus
-1. ¿À´Ã ±â±¸ ÃßÃµ ¡æ °á°ú È­¸é¿¡¼­ ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡
-2. ´Ù¸¥ ÅÇÀ¸·Î ³ª°¡µµ ±â·Ï ÅÇ °¡±â Àü±îÁö ³ì»öÁ¡ À¯Áö
-3. ±â·Ï ÅÇ ÁøÀÔ ½Ã ³ì»öÁ¡ ÇØÁ¦
-4. ¹è³Ê X·Î ´İ¾Æµµ »õ ÃßÃµ ½Ã ³×ºñ Á¡Àº ´Ù½Ã µ¿ÀÛ
+1. ì˜¤ëŠ˜ ì¶”ì²œ í›„ í•˜ë‹¨ ê¸°ë¡ tipì´ ã€Œì´ë™í•´ì„œ / ìš´ë™ì‹œì‘ã€
 
 ## Fast checks
 ```bash
-rg -n "setRecordsNavNudge|recordsNavNudge" frontend/src/hooks/useRecommendMachine.ts frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
+rg -n "recordsNudgeNavTip" frontend/src/i18n/locales/ko/machines.json
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¿À´Ã Ã¹ ÃßÃµ ÈÄ ³ì»öÁ¡ ¾øÀ½ | ÃßÃµ ¼º°ø ½Ã Áï½Ã ³ì»öÁ¡ Ç¥½Ã¡¤À¯Áö |
+| ì˜¤ëŠ˜ ìš´ë™ì€ ê¸°ë¡ì—ì„œ ê´€ë¦¬ | ì´ë™í•´ì„œ ìš´ë™ì‹œì‘ |
