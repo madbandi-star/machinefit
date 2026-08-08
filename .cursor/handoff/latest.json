@@ -3,7 +3,7 @@
   "summary": "Added birth date/time (unknown allowed) on users + Settings, deterministic Fortune/Analytics/Recommendation engines, GET /fortune/today, home card + detail page, and admin fortune-content CRUD. Requires DB migration 105 on Render.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "824945e3"
   },
   "changedFiles": [
     "database/migrations/105_user_birth_and_fortune_content.sql",
