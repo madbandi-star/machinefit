@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `45ec12a2`
 
 ## Test focus
 1. 오늘 날짜 「운동추가」 → URL에 `planDate=오늘`
