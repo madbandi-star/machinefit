@@ -1,23 +1,21 @@
-# Test handoff: Records green-dot nudge after plan add
+ï»¿# Test handoff: Line-break records nudge body copy (KO)
 
 ## Summary
-¿îµ¿Ãß°¡(°èÈ¹ Ãß°¡) ¼º°ø ½Ã¿¡µµ ÇÏ´Ü ±â·Ï ÅÇ¿¡ ±âÁ¸°ú °°Àº ³ì»öÁ¡(`recordsNavNudge`)ÀÌ º¸ÀÌµµ·Ï ¿¬°áÇß½À´Ï´Ù.
+ì„¸ë¶€ ìš´ë™ê¸°ë¡ ì¹´ë“œ ì•ˆë‚´ ë¬¸êµ¬ë¥¼ ã€Œì„¸íŠ¸Â·í…œí”Œë¦¿ì„ã€ ë‹¤ìŒ ì¤„ë°”ê¿ˆìœ¼ë¡œ í‘œì‹œí•˜ë„ë¡ KO ë¬¸êµ¬ì™€ `white-space: pre-line`ì„ ì ìš©í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `18ef5d36`
+- Commit: pending
 
 ## Test focus
-1. ±â·Ï ¡æ ¿îµ¿Ãß°¡ ¡æ ±â±¸ ¡¸¿îµ¿ °èÈ¹¿¡ Ãß°¡¡¹ ¡æ ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡/ÆŞ½º
-2. ±â·Ï ÅÇ ÁøÀÔ ½Ã ³ì»öÁ¡ ÇØÁ¦
-3. ±âÁ¸ ÃßÃµ Á÷ÈÄ ³ì»öÁ¡ µ¿ÀÛ À¯Áö
+1. ì¶”ì²œ ì§í›„ ê²°ê³¼ ì¹´ë“œ nudge bodyê°€ ë‘ ì¤„: ã€Œâ€¦ì„¸íŠ¸Â·í…œí”Œë¦¿ì„ã€ / ã€Œê´€ë¦¬í•  ìˆ˜ ìˆì–´ìš”ã€
 
 ## Fast checks
 ```bash
-rg -n "setRecordsNavNudge\\(true\\)" frontend/src/pages/machine-detail/MachineDetailPage.tsx frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
+rg -n "recordsNudgeBody|pre-line" frontend/src/i18n/locales/ko/machines.json frontend/src/styles/recommendation.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ¿îµ¿Ãß°¡ ÈÄ ÇÏ´Ü ±â·Ï¿¡ ³ì»öÁ¡ ¾øÀ½ | ¿îµ¿Ãß°¡ ¼º°ø ½Ã ÃßÃµ°ú µ¿ÀÏÇÏ°Ô ³ì»öÁ¡ Ç¥½Ã |
+| í•œ ì¤„ | ã€Œì„¸íŠ¸Â·í…œí”Œë¦¿ì„ã€ ë‹¤ìŒ ì¤„ì— ã€Œê´€ë¦¬í•  ìˆ˜ ìˆì–´ìš”ã€ |
