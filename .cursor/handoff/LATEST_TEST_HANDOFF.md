@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `99f14a1e`
 
 ## Test focus
 1. 미래 날짜 `planDate`로 기구 상세: 「다른 운동도 추가」 없음
