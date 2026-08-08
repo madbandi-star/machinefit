@@ -1,22 +1,12 @@
-﻿{
-  "title": "Hide MY WORKOUT DATA sections on fortune page",
-  "summary": "Removed MY WORKOUT DATA chart/stats block and ? ?? ??? ?? prose from /fortune/today. TODAY'S RECOMMENDATION and everything below unchanged.",
-  "git": {
-    "branch": "main",
-    "commit": "ad588863"
-  },
-  "changedFiles": [
-    "frontend/src/components/fortune/FortuneDashboard.tsx"
-  ],
-  "testFocus": [
-    "No MY WORKOUT DATA / donut / ? ?? ??? ?? sections",
-    "TODAY'S RECOMMENDATION and following sections still render"
-  ],
-  "fastChecks": [
-    "rg -n \"sectionDataVisual|EquipmentDonutChart|dataNarrative\" frontend/src/components/fortune/FortuneDashboard.tsx || true"
-  ],
+{
+  "title": "Fortune AVOID card contrast fix",
+  "summary": "TODAY'S AVOID used a washed amber background that hurt readability; switched to surface colors + left accent and explicit text color.",
+  "git": { "branch": "main", "commit": "dc5f8227" },
+  "changedFiles": ["frontend/src/styles/fortune.css"],
+  "testFocus": ["TODAY'S AVOID text is readable against card background"],
+  "fastChecks": ["rg -n \"fortune-avoid\" frontend/src/styles/fortune.css"],
   "productionChecks": [],
   "deploy": { "expected": "GitHub Pages Deploy Frontend success" },
-  "asIs": "Data chart + data analysis prose shown",
-  "toBe": "Those two blocks removed; recommend onward kept"
+  "asIs": "Low-contrast amber wash on AVOID card",
+  "toBe": "Neutral surface + accent border, clear text"
 }

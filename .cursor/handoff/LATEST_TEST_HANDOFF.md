@@ -1,22 +1,16 @@
-﻿# Test handoff: Hide MY WORKOUT DATA sections
+﻿# Test handoff: Fortune AVOID contrast
 
 ## Summary
-`/fortune/today`에서 📊 MY WORKOUT DATA(차트/통계)와 📊 내 운동 데이터 분석 본문을 제거했습니다. ✨ TODAY'S RECOMMENDATION 이후는 그대로입니다.
+TODAY'S AVOID 카드의 흐린 앰버 배경을 제거하고, 일반 surface + 왼쪽 액센트 + 명확한 텍스트 색으로 가독성을 개선했습니다.
 
 ## Git
 - Branch: `main`
-- Commit: `ad588863`
+- Commit: `dc5f8227`
 
 ## Test focus
-1. MY WORKOUT DATA / donut / 데이터 분석 섹션 없음
-2. TODAY'S RECOMMENDATION부터 하단까지 정상
+1. `/fortune/today` TODAY'S AVOID 본문·설명이 배경 대비로 잘 읽힘
 
 ## Fast checks
 ```bash
-rg -n "sectionDataVisual|EquipmentDonutChart|dataNarrative" frontend/src/components/fortune/FortuneDashboard.tsx || true
+rg -n "fortune-avoid" frontend/src/styles/fortune.css
 ```
-
-## as-is → to-be
-| as-is | to-be |
-|-------|--------|
-| 데이터 차트+분석 표시 | 해당 두 영역 제거, 추천 이하 유지 |
