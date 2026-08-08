@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isAllGymsId } from '@machinefit/shared';
+import { userApi } from '@/api';
 import { fortuneApi } from '@/api/fortune.api';
 import { FortuneDashboard } from '@/components/fortune/FortuneDashboard';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -12,6 +13,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { getTodayDateKey } from '@/utils/historyDate';
 import '@/styles/fortune.css';
+import '@/styles/fortune-reading.css';
 
 export function FortuneDetailPage() {
   const { t, i18n } = useTranslation(['fortune', 'common']);
@@ -36,12 +38,21 @@ export function FortuneDetailPage() {
     staleTime: 5 * 60_000,
   });
 
+  const { data: me } = useQuery({
+    queryKey: QUERY_KEYS.me,
+    queryFn: async () => {
+      const res = await userApi.getMe();
+      return res.data.data;
+    },
+    staleTime: 5 * 60_000,
+  });
+
   if (isLoading) {
     return (
       <PageShell title={t('fortune:title')}>
-        <div className="fortune-dashboard fortune-dashboard--loading">
-          <Skeleton count={1} height={220} />
-          <Skeleton count={3} height={96} />
+        <div className="fr-page fr-page--loading">
+          <Skeleton count={1} height={240} />
+          <Skeleton count={3} height={120} />
         </div>
       </PageShell>
     );
@@ -95,6 +106,9 @@ export function FortuneDetailPage() {
         dataAnalysis={dataAnalysis}
         narrative={narrative}
         traditionalDetail={traditionalDetail}
+        birthDate={me?.birthDate}
+        birthTime={me?.birthTime}
+        birthTimeUnknown={me?.birthTimeUnknown}
       />
     </PageShell>
   );

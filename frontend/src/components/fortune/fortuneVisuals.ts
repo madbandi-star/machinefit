@@ -110,6 +110,57 @@ export function formatFortuneDate(isoDate: string): string {
   return `${m[1]}.${m[2]}.${m[3]}`;
 }
 
+export function parseFortuneDateParts(isoDate: string): {
+  year: number;
+  month: number;
+  day: number;
+} | null {
+  const m = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return null;
+  return { year: Number(m[1]), month: Number(m[2]), day: Number(m[3]) };
+}
+
+/** Display-only yin/yang split from narrative polarity (not engine output). */
+export function yinYangDisplay(yinYang: 'yin' | 'yang'): { yang: number; yin: number } {
+  return yinYang === 'yang' ? { yang: 68, yin: 32 } : { yang: 34, yin: 66 };
+}
+
+const ELEMENT_ORDER = ['wood', 'fire', 'earth', 'metal', 'water'] as const;
+
+/** Display-only element bars from primary/support/weak ranks. */
+export function elementBars(rank: {
+  primary: string;
+  support: string;
+  weak: string;
+}): Array<{ key: (typeof ELEMENT_ORDER)[number]; value: number }> {
+  return ELEMENT_ORDER.map((key) => {
+    if (key === rank.primary) return { key, value: 88 };
+    if (key === rank.support) return { key, value: 66 };
+    if (key === rank.weak) return { key, value: 28 };
+    return { key, value: 48 };
+  });
+}
+
+/** Map 0–100 score to 1–5 stars for compact luck dashboard. */
+export function scoreToStars(score: number): number {
+  if (score >= 85) return 5;
+  if (score >= 70) return 4;
+  if (score >= 50) return 3;
+  if (score >= 30) return 2;
+  return 1;
+}
+
+export function formatBirthDateDisplay(isoDate: string): string {
+  const m = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return isoDate;
+  return `${m[1]}.${m[2]}.${m[3]}`;
+}
+
+export function formatBirthTimeDisplay(hhmm: string | null | undefined, unknown?: boolean): string {
+  if (unknown || !hhmm?.trim()) return '';
+  return hhmm.trim().slice(0, 5);
+}
+
 export function bodyPartHref(bodyPart: string): string {
   const muscle: Record<string, string> = {
     CHEST: 'chest',
