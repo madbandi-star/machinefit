@@ -96,6 +96,8 @@ export function RecommendationResultPage() {
   const [workoutLogSavedOverride, setWorkoutLogSavedOverride] = useState<boolean | null>(null);
   const [bodyExpanded, setBodyExpanded] = useState(true);
   const [planLinked, setPlanLinked] = useState(false);
+  const [isEditingAdjustments, setIsEditingAdjustments] = useState(false);
+  const [prefsSavedLocally, setPrefsSavedLocally] = useState(false);
 
   const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
   const today = getTodayDateKey();
@@ -194,6 +196,36 @@ export function RecommendationResultPage() {
     enabled: isAuthenticated && !!result?.id,
   });
   const { formatWeight } = useUserUnits();
+
+  useEffect(() => {
+    setIsEditingAdjustments(false);
+    setPrefsSavedLocally(false);
+  }, [result?.id]);
+
+  useEffect(() => {
+    if (fitFeedback.savedRating !== 'bad') {
+      setIsEditingAdjustments(false);
+    }
+  }, [fitFeedback.savedRating]);
+
+  const hasSavedPreferences =
+    prefsSavedLocally ||
+    fitFeedback.hasSavedPreferences ||
+    Boolean(
+      result?.adjustedSettings && Object.keys(result.adjustedSettings).length > 0
+    );
+  const showAdjustment = fitFeedback.showAdjustment;
+  const adjustmentReadOnly = showAdjustment && hasSavedPreferences && !isEditingAdjustments;
+  const canSavePreferences = showAdjustment && !adjustmentReadOnly;
+  const badButtonSaveMode = fitFeedback.savedRating === 'bad' && canSavePreferences;
+
+  const handleSettingsSave = useCallback(() => {
+    if (!canSavePreferences || fitFeedback.isPreferencesPending) return;
+    void fitFeedback.savePreferencesAsync(() => {
+      setPrefsSavedLocally(true);
+      setIsEditingAdjustments(false);
+    });
+  }, [canSavePreferences, fitFeedback]);
 
   const handleToggleFavorite = (event: MouseEvent<HTMLButtonElement>) => {
     event.currentTarget.blur();
@@ -346,15 +378,18 @@ export function RecommendationResultPage() {
                 {isAuthenticated ? (
                   <FitFeedbackPanel
                     savedRating={fitFeedback.savedRating}
-                    onRating={fitFeedback.handleRating}
+                    showIntroText={false}
+                    badButtonSaveMode={badButtonSaveMode}
+                    onBadSave={handleSettingsSave}
+                    preferencesDirty={fitFeedback.settingsDirty}
+                    onRating={(rating) => {
+                      if (rating === 'bad') setIsEditingAdjustments(true);
+                      else setIsEditingAdjustments(false);
+                      fitFeedback.handleRating(rating);
+                    }}
                     isPending={
                       fitFeedback.isFeedbackPending || fitFeedback.isPreferencesPending
                     }
-                    onSavePreferences={
-                      fitFeedback.showAdjustment ? fitFeedback.savePreferences : undefined
-                    }
-                    isPreferencesPending={fitFeedback.isPreferencesPending}
-                    preferencesDirty={fitFeedback.settingsDirty}
                   />
                 ) : null}
                 {isAuthenticated ? (
@@ -362,15 +397,14 @@ export function RecommendationResultPage() {
                     activeSource={fitFeedback.activeSource}
                     aiSettings={result.aiRecommendedSettings ?? result.settings}
                     adjustedSettings={
-                      fitFeedback.showAdjustment
+                      showAdjustment
                         ? (fitFeedback.displayAdjustedSettings ?? result.adjustedSettings)
                         : null
                     }
                     formatWeight={formatWeight}
-                    showAdjustedCompare={fitFeedback.showAdjustment}
+                    showAdjustedCompare={showAdjustment}
                     pendingAdjustment={
-                      fitFeedback.showAdjustment &&
-                      fitFeedback.customSettings.recommendedWeightKg == null
+                      showAdjustment && fitFeedback.customSettings.recommendedWeightKg == null
                     }
                   />
                 ) : null}
@@ -378,12 +412,13 @@ export function RecommendationResultPage() {
                   settings={result.aiRecommendedSettings ?? result.settings}
                   weightBasis={result.weightBasis}
                   variant="history"
-                  showAdjustment={fitFeedback.showAdjustment}
-                  customSettings={
-                    fitFeedback.showAdjustment ? fitFeedback.customSettings : undefined
-                  }
+                  showAdjustment={showAdjustment}
+                  adjustmentReadOnly={adjustmentReadOnly}
+                  customSettings={showAdjustment ? fitFeedback.customSettings : undefined}
                   onCustomChange={
-                    fitFeedback.showAdjustment ? fitFeedback.handleCustomChange : undefined
+                    showAdjustment && !adjustmentReadOnly
+                      ? fitFeedback.handleCustomChange
+                      : undefined
                   }
                 />
               </div>

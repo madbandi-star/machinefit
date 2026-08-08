@@ -1,25 +1,19 @@
 {
-  "title": "Clearer fit-feedback button affordance",
-  "summary": "Make ??? ? ?? / ??? ?? ?? look obviously tappable with choice prompt, tap hints, icon badges, and raised button styling on record cards.",
-  "git": { "branch": "main", "commit": "c85f7329" },
+  "title": "Detail page uses ??? ???? (no ??? ??)",
+  "summary": "Recommendation result page removes the separate save-preferences control and mirrors record-card badButtonSaveMode (??? ?? ?? ? ??? ????).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/styles/history-premium.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],
   "testFocus": [
-    "Buttons look tappable before selection",
-    "Prompt visible on records cards"
+    "No ??? ?? on detail",
+    "Bad button becomes ??? ???? and saves"
   ],
   "fastChecks": [
-    "rg -n \"choicePrompt|tapToChoose|btn--idle\" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/i18n/locales/ko/machines.json"
+    "rg -n \"onSavePreferences|badButtonSaveMode|handleSettingsSave\" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx"
   ],
-  "productionChecks": ["Pages deploy + records feedback buttons"],
+  "productionChecks": ["Pages deploy + detail adjust/save flow"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Unclear whether fit options are buttons",
-  "toBe": "Clear prompt + raised tappable button UI"
+  "asIs": "Separate ??? ?? on detail page",
+  "toBe": "Record-card style ??? ???? on the bad button"
 }

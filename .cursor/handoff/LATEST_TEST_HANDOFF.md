@@ -1,23 +1,23 @@
-# Test handoff: Clearer fit-feedback button affordance
+ï»¿# Test handoff: Detail page uses ì…‹íŒ…ê°’ ì €ì¥í•˜ê¸° (no ì¡°ì •ê°’ ì €ì¥)
 
 ## Summary
-±â·ÏÄ«µå ¡¸ÃßÃµ°ª Àß ¸ÂÀ½¡¹¡¸¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä¡¹°¡ ´©¸¦ ¼ö ÀÖ´Â ¹öÆ°À¸·Î º¸ÀÌµµ·Ï, ¼±ÅÃ ¾È³» ¹®±¸¡¤ÅÇ ÈùÆ®¡¤¾ÆÀÌÄÜ ¹îÁö¡¤ÀÔÃ¼ ¹öÆ° ½ºÅ¸ÀÏÀ» Àû¿ëÇß½À´Ï´Ù.
+ì„¸ë¶€ê¸°ë¡ í˜ì´ì§€ì˜ ë³„ë„ ã€Œì¡°ì •ê°’ ì €ì¥ã€ ë²„íŠ¼ì„ ì œê±°í•˜ê³ , ê¸°ë¡ì¹´ë“œì™€ ê°™ì´ ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€â†’ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ë¡œ ë°”ë€Œì–´ ì €ì¥í•˜ë„ë¡ ë§ì·„ìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: c85f7329
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ expanded card: prompt ¡°¾Æ·¡ ¹öÆ°À» ´­·¯ ¼±ÅÃÇÏ¼¼¿ä¡±
-2. Both options look raised/tappable with ¡°ÅÇÇÏ¿© ¼±ÅÃ¡± until chosen
-3. Selected state still clear; save-attention pulse still works
+1. Records â†’ card â†’ detail
+2. No separate ã€Œì¡°ì •ê°’ ì €ì¥ã€ in the feedback header
+3. Tap ã€Œì…‹íŒ…ê°’ ì¡°ì • í•„ìš”ã€ â†’ button becomes ã€Œì…‹íŒ…ê°’ ì €ì¥í•˜ê¸°ã€ (pulses) â†’ tap saves adjustments
 
 ## Fast checks
 ```bash
-rg -n "choicePrompt|tapToChoose|btn--idle|btn-icon" frontend/src/components/recommendation/FitFeedbackPanel frontend/src/styles/recommendation.css frontend/src/i18n/locales/ko/machines.json
+rg -n "onSavePreferences|badButtonSaveMode|handleSettingsSave" frontend/src/pages/recommendation-result/RecommendationResultPage.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Flat labels, unclear if tappable | Prompt + chip buttons with tap hint |
+| Separate ì¡°ì •ê°’ ì €ì¥ on detail | Same badâ†’save button flow as record cards |
