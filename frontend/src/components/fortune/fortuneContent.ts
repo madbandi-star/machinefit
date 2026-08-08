@@ -98,7 +98,7 @@ export function buildPrExplain(scores: FortuneScores): ProseBlock {
     emoji: '🏆',
     leadKey: 'content.prLead',
     leadValues: { score },
-    lines: [{ key }, { key: 'content.prDisclaimer' }],
+    lines: [{ key }],
   };
 }
 
