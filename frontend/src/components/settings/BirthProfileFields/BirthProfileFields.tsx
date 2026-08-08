@@ -74,8 +74,7 @@ export function BirthProfileFields({
   const safeDay = Math.min(day, maxDay);
 
   const hour = timeParts?.hour ?? 12;
-  const minute = timeParts ? Math.round(timeParts.minute / 5) * 5 : 0;
-  const safeMinute = Math.min(55, Math.max(0, minute));
+  const safeMinute = timeParts ? Math.min(59, Math.max(0, timeParts.minute)) : 0;
 
   const commitDate = (nextYear: number, nextMonth: number, nextDay: number) => {
     onBirthDateChange(formatDateIso(nextYear, nextMonth, nextDay));
@@ -242,8 +241,8 @@ export function BirthProfileFields({
                   value={timeParts ? safeMinute : undefined}
                   onChange={(next) => commitTime(hour, next)}
                   min={0}
-                  max={55}
-                  step={5}
+                  max={59}
+                  step={1}
                   defaultValue={0}
                   initializeOnMount={!timeParts}
                   ariaLabel={t('settings.birthMinute')}
