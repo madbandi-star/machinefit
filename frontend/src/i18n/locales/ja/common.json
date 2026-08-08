@@ -434,15 +434,10 @@
     "birthTimeKnown": "Pick time",
     "birthTimeUnknownHint": "Without birth time you’ll get a simple fortune. You can change this later.",
     "birthYear": "Year",
-    "birthYearUnit": "",
     "birthMonth": "Month",
-    "birthMonthUnit": "",
     "birthDay": "Day",
-    "birthDayUnit": "",
     "birthHour": "Hour",
-    "birthHourUnit": "",
-    "birthMinute": "Minute",
-    "birthMinuteUnit": ""
+    "birthMinute": "Minute"
   },
   "legal": {
     "termsTitle": "Terms of Service",

@@ -1,36 +1,11 @@
 {
-  "generatedAt": "2026-08-08T12:53:02.760Z",
+  "generatedAt": "2026-08-08T13:00:09.482Z",
   "invalidJson": [],
   "missing": [],
   "empty": [
     {
       "locale": "en",
       "ns": "common",
-      "key": "settings.birthYearUnit"
-    },
-    {
-      "locale": "en",
-      "ns": "common",
-      "key": "settings.birthMonthUnit"
-    },
-    {
-      "locale": "en",
-      "ns": "common",
-      "key": "settings.birthDayUnit"
-    },
-    {
-      "locale": "en",
-      "ns": "common",
-      "key": "settings.birthHourUnit"
-    },
-    {
-      "locale": "en",
-      "ns": "common",
-      "key": "settings.birthMinuteUnit"
-    },
-    {
-      "locale": "en",
-      "ns": "common",
       "key": "growthAnalysis.daily.kpi.logs"
     },
     {
@@ -41,62 +16,12 @@
     {
       "locale": "ja",
       "ns": "common",
-      "key": "settings.birthYearUnit"
-    },
-    {
-      "locale": "ja",
-      "ns": "common",
-      "key": "settings.birthMonthUnit"
-    },
-    {
-      "locale": "ja",
-      "ns": "common",
-      "key": "settings.birthDayUnit"
-    },
-    {
-      "locale": "ja",
-      "ns": "common",
-      "key": "settings.birthHourUnit"
-    },
-    {
-      "locale": "ja",
-      "ns": "common",
-      "key": "settings.birthMinuteUnit"
-    },
-    {
-      "locale": "ja",
-      "ns": "common",
       "key": "growthAnalysis.daily.kpi.logs"
     },
     {
       "locale": "ja",
       "ns": "common",
       "key": "growthAnalysis.kpi.times"
-    },
-    {
-      "locale": "zh",
-      "ns": "common",
-      "key": "settings.birthYearUnit"
-    },
-    {
-      "locale": "zh",
-      "ns": "common",
-      "key": "settings.birthMonthUnit"
-    },
-    {
-      "locale": "zh",
-      "ns": "common",
-      "key": "settings.birthDayUnit"
-    },
-    {
-      "locale": "zh",
-      "ns": "common",
-      "key": "settings.birthHourUnit"
-    },
-    {
-      "locale": "zh",
-      "ns": "common",
-      "key": "settings.birthMinuteUnit"
     },
     {
       "locale": "zh",

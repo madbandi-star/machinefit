@@ -111,12 +111,6 @@ export function BirthProfileFields({
     }
   }, [birthTimeUnknown, timeParts, hour, safeMinute, i18n.language, t]);
 
-  const yearUnit = t('settings.birthYearUnit');
-  const monthUnit = t('settings.birthMonthUnit');
-  const dayUnit = t('settings.birthDayUnit');
-  const hourUnit = t('settings.birthHourUnit');
-  const minuteUnit = t('settings.birthMinuteUnit');
-
   return (
     <div className="birth-profile-fields">
       <div className="birth-profile-fields__summary" aria-live="polite">
@@ -137,12 +131,7 @@ export function BirthProfileFields({
         >
           <div className="body-metrics-inline__grid body-metrics-inline__grid--3 birth-profile-fields__date-grid">
             <div className="body-metrics-inline__cell birth-profile-fields__cell--year">
-              <span className="body-metrics-inline__label">
-                {t('settings.birthYear')}
-                {yearUnit ? (
-                  <span className="body-metrics-inline__unit">{yearUnit}</span>
-                ) : null}
-              </span>
+              <span className="body-metrics-inline__label">{t('settings.birthYear')}</span>
               <ScrollPicker
                 value={dateParts?.year}
                 onChange={(next) => commitDate(next, month, safeDay)}
@@ -156,12 +145,7 @@ export function BirthProfileFields({
               />
             </div>
             <div className="body-metrics-inline__cell">
-              <span className="body-metrics-inline__label">
-                {t('settings.birthMonth')}
-                {monthUnit ? (
-                  <span className="body-metrics-inline__unit">{monthUnit}</span>
-                ) : null}
-              </span>
+              <span className="body-metrics-inline__label">{t('settings.birthMonth')}</span>
               <ScrollPicker
                 value={dateParts?.month}
                 onChange={(next) => commitDate(year, next, safeDay)}
@@ -175,12 +159,7 @@ export function BirthProfileFields({
               />
             </div>
             <div className="body-metrics-inline__cell">
-              <span className="body-metrics-inline__label">
-                {t('settings.birthDay')}
-                {dayUnit ? (
-                  <span className="body-metrics-inline__unit">{dayUnit}</span>
-                ) : null}
-              </span>
+              <span className="body-metrics-inline__label">{t('settings.birthDay')}</span>
               <ScrollPicker
                 value={dateParts ? safeDay : undefined}
                 onChange={(next) => commitDate(year, month, next)}
@@ -244,12 +223,7 @@ export function BirthProfileFields({
           >
             <div className="body-metrics-inline__grid body-metrics-inline__grid--2">
               <div className="body-metrics-inline__cell">
-                <span className="body-metrics-inline__label">
-                  {t('settings.birthHour')}
-                  {hourUnit ? (
-                    <span className="body-metrics-inline__unit">{hourUnit}</span>
-                  ) : null}
-                </span>
+                <span className="body-metrics-inline__label">{t('settings.birthHour')}</span>
                 <ScrollPicker
                   value={timeParts?.hour}
                   onChange={(next) => commitTime(next, safeMinute)}
@@ -263,12 +237,7 @@ export function BirthProfileFields({
                 />
               </div>
               <div className="body-metrics-inline__cell">
-                <span className="body-metrics-inline__label">
-                  {t('settings.birthMinute')}
-                  {minuteUnit ? (
-                    <span className="body-metrics-inline__unit">{minuteUnit}</span>
-                  ) : null}
-                </span>
+                <span className="body-metrics-inline__label">{t('settings.birthMinute')}</span>
                 <ScrollPicker
                   value={timeParts ? safeMinute : undefined}
                   onChange={(next) => commitTime(hour, next)}

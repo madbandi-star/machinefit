@@ -1,34 +1,28 @@
 {
-  "title": "Birth date/time scroll pickers in Settings",
-  "summary": "Replaced native date/time inputs on Settings birth profile with ScrollPicker-based BirthProfileFields (summary strip, Y/M/D + H/M wheels, segmented known/unknown time). Matches body-metrics picker UX.",
+  "title": "Remove birth picker unit key leak",
+  "summary": "Birth date/time ScrollPicker labels no longer render empty i18n unit keys (settings.birthMonthUnit etc.) under month/day/hour/minute.",
   "git": {
     "branch": "main",
-    "commit": "4aac020e"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/components/settings/BirthProfileFields/BirthProfileFields.tsx",
-    "frontend/src/styles/birth-profile.css",
-    "frontend/src/pages/settings/SettingsPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/zh/common.json",
     "frontend/src/i18n/locales/ja/common.json"
   ],
   "testFocus": [
-    "Settings ? ????????: scroll wheels for year/month/day (no native date dialog)",
-    "Time mode toggle: ?? ?? shows hour/minute (5-min step); ??? ?? hides wheels and shows hint",
-    "Summary strip updates while scrolling; Save persists and values remain after reload"
+    "Settings ? ????·???: under ?/?/?/? labels, no settings.* raw keys",
+    "Labels show only ??/?/?/?/? (or locale equivalents)"
   ],
   "fastChecks": [
-    "npm run test:smoke:changed",
-    "rg -n \"BirthProfileFields|birth-profile-fields\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/settings/BirthProfileFields/"
+    "rg -n \"birthMonthUnit|body-metrics-inline__unit\" frontend/src/components/settings/BirthProfileFields/BirthProfileFields.tsx || true"
   ],
-  "productionChecks": [
-    "Optional after Pages deploy: open Settings #birth-profile and confirm scroll pickers"
-  ],
+  "productionChecks": [],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend success"
   },
-  "asIs": "Native <input type=date/time> dialogs looked poor and inconsistent across mobile browsers",
-  "toBe": "Inline ScrollPicker wheels with summary + known/unknown segmented control, consistent with body metrics"
+  "asIs": "Empty unit i18n strings leaked as settings.birthMonthUnit etc. under picker labels",
+  "toBe": "Picker column labels only ? no unit line / no raw keys"
 }
