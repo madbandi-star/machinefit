@@ -1,26 +1,16 @@
 ﻿{
-  "title": "Fix plan date picker empty parentheses / ISO display",
-  "summary": "Hide native date input ISO text; show locale-friendly preview without empty weekday parentheses.",
-  "git": { "branch": "main", "commit": "52164126" },
+  "title": "Date picker defaults to next day",
+  "summary": "Move/copy date picker defaults to card date + 1; missed-plan change defaults to tomorrow.",
+  "git": { "branch": "main", "commit": "2bef5dd4" },
   "changedFiles": [
-    "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
-    "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/utils/historyDate.ts",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
   ],
-  "testFocus": [
-    "Preview shows 2026??8??6??(紐? style",
-    "No empty ()",
-    "Calendar opens from preview button"
-  ],
-  "fastChecks": [
-    "rg -n \"formatPickerDateLabel|plan-date-picker__native\" frontend/src/components/records/PlanDatePickerDialog"
-  ],
-  "productionChecks": ["Pages deploy + hard refresh date picker"],
+  "testFocus": ["Default date is next day not card date"],
+  "fastChecks": ["rg -n \"shiftDateKey\\(|getTomorrowDateKey\" frontend/src/components/records/HistoryListPanel frontend/src/components/home/HomePlannedWorkoutCard"],
+  "productionChecks": ["Pages deploy + open move/copy picker"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "2026-08-06() in date field",
-  "toBe": "Locale date label + hidden native picker"
+  "asIs": "Default = same card date",
+  "toBe": "Default = next day"
 }
-
