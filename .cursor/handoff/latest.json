@@ -1,6 +1,6 @@
 {
   "title": "Merge duplicate pillars/ganzhi explain guides",
-  "summary": "Under ????, two ?? ??? ??????? blocks (pillars + ganzhi) are merged into one. Copy combines four-pillar structure with stem/branch meaning without duplication. UI/i18n only.",
+  "summary": "Under ??·??, two beginner guide blocks (pillars + ganzhi) are merged into one. Copy combines four-pillar structure with stem/branch meaning without duplication. UI/i18n only.",
   "git": {
     "branch": "main",
     "commit": "161c0613"
@@ -13,20 +13,20 @@
     "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "Open ?? ??? ?? ? ????",
-    "Only one collapsible ?? ??? ??????? under pillars",
-    "Guide mentions both four pillars and ??/?? meaning in one flow"
+    "Open ?? ??? ?? ? ??·??",
+    "Only one collapsible beginner guide under pillars",
+    "Guide mentions both four pillars and stem/branch meaning in one flow"
   ],
   "fastChecks": [
     "node scripts/i18n-audit.mjs --sync",
     "rg -n \"FortuneExplainBlock prefix\" frontend/src/components/fortune/FortuneTraditionalDetail.tsx"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm single explain accordion under ????"
+    "After Deploy Frontend: confirm single explain accordion under ??·??"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Two identical-titled beginner guides (pillars + ganzhi) stacked under ????.",
+  "asIs": "Two identical-titled beginner guides (pillars + ganzhi) stacked under ??·??.",
   "toBe": "One merged guide covering pillars + stem/branch without duplicate headings or repeated ideas."
 }
