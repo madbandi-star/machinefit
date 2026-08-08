@@ -1,11 +1,11 @@
-ï»¿# Test handoff: Fix stretched settings tiles on some mobiles
+# Test handoff: Fix stretched settings tiles on some mobiles
 
 ## Summary
-ê¸°ë¡ì¹´ë“œ ì¶”ì²œì¤‘ëŸ‰Â·ì¶”ì²œíšŸìˆ˜Â·ê°€ë™ë²”ìœ„ê°€ íŠ¹ì • ëª¨ë°”ì¼ì—ì„œ ê°€ë¡œë¡œ ê¸¸ê²Œ ëŠ˜ì–´ì§€ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. `content-visibility:auto` ì œê±°, ì„¤ì • ê·¸ë¦¬ë“œ/íƒ€ì¼ `min-width:0`Â·í­ ì œí•œ, ë¹„êµ í–‰ ì„¸ë¡œ ìŠ¤íƒìœ¼ë¡œ ë§ì·„ìŠµë‹ˆë‹¤.
+±â·ÏÄ«µå ÃßÃµÁß·®¡¤ÃßÃµÈ½¼ö¡¤°¡µ¿¹üÀ§°¡ Æ¯Á¤ ¸ğ¹ÙÀÏ¿¡¼­ °¡·Î·Î ±æ°Ô ´Ã¾îÁö´ø ¹®Á¦¸¦ ¼öÁ¤Çß½À´Ï´Ù. `content-visibility:auto` Á¦°Å, ¼³Á¤ ±×¸®µå/Å¸ÀÏ `min-width:0`¡¤Æø Á¦ÇÑ, ºñ±³ Çà ¼¼·Î ½ºÅÃÀ¸·Î ¸ÂÃè½À´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: e4040322
 
 ## Test focus
 1. Records on a previously broken narrow Android device/WebView
@@ -17,7 +17,7 @@
 rg -n "content-visibility|minmax\\(0, 1fr\\)|overflow-x: clip" frontend/src/styles/records.css frontend/src/styles/history-premium.css frontend/src/styles/recommendation.css
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | Settings tiles stretched in one long horizontal strip on some phones | Contained 3-column grid within card width |

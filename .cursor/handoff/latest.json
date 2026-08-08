@@ -1,7 +1,7 @@
 {
   "title": "Fix stretched settings tiles on some mobiles",
   "summary": "Contain history settings grid width on flaky mobile WebViews: drop content-visibility:auto, enforce minmax(0,1fr)/min-width:0, stack compare rows vertically.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "e4040322" },
   "changedFiles": [
     "frontend/src/styles/records.css",
     "frontend/src/styles/history-premium.css",
