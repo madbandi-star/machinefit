@@ -18,13 +18,17 @@ import {
 } from '@/constants/machine-search-defaults';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { brandApi, machineApi, workoutCardApi } from '@/api';
+import { brandApi, historyApi, machineApi, workoutCardApi, workoutLogApi } from '@/api';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
-import { normalizeDateKey } from '@/utils/historyDate';
+import {
+  getLocalDayRange,
+  getTodayDateKey,
+  normalizeDateKey,
+} from '@/utils/historyDate';
 import {
   clearRecentMachineSearches,
   getRecentMachineSearches,
@@ -68,8 +72,11 @@ export function MachineSearchPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
   const { activeMemberId } = useActiveMember();
-  const canLoadPlans =
-    Boolean(planDate) &&
+  // Plan-add uses planDate; plain search still marks today’s already-added machines.
+  const badgeDate = planDate ?? (isAuthenticated ? getTodayDateKey() : null);
+  const dayRange = badgeDate ? getLocalDayRange(badgeDate) : null;
+  const canLoadDayMarks =
+    Boolean(badgeDate) &&
     isAuthenticated &&
     Boolean(activeGymId) &&
     Boolean(activeMemberId) &&
@@ -178,30 +185,81 @@ export function MachineSearchPage() {
 
   const { data: dayPlans = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
-      scheduledDate: planDate ?? undefined,
+      scheduledDate: badgeDate ?? undefined,
     }),
     queryFn: async () => {
       const res = await workoutCardApi.list({
         gymId: activeGymId!,
         memberId: activeMemberId!,
-        scheduledDate: planDate!,
+        scheduledDate: badgeDate!,
       });
       return res.data.data;
     },
-    enabled: canLoadPlans,
+    enabled: canLoadDayMarks,
     staleTime: 30_000,
   });
 
-  const plannedKeys = useMemo(() => {
+  // Today’s recommends live in history (not only workout_cards). Future plan-add is cards-only.
+  const { data: dayHistory = [] } = useQuery({
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', activeMemberId ?? '', {
+      from: badgeDate ?? undefined,
+      to: badgeDate ?? undefined,
+      limit: 100,
+    }),
+    queryFn: async () => {
+      const res = await historyApi.list(activeGymId!, {
+        memberId: activeMemberId!,
+        from: dayRange!.from,
+        to: dayRange!.to,
+        limit: 100,
+      });
+      return res.data.data;
+    },
+    enabled: canLoadDayMarks && Boolean(dayRange),
+    staleTime: 30_000,
+  });
+
+  const { data: dayLogs = [] } = useQuery({
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', activeMemberId ?? '', {
+      from: badgeDate ?? undefined,
+      to: badgeDate ?? undefined,
+      limit: 100,
+    }),
+    queryFn: async () => {
+      const res = await workoutLogApi.list({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        logDate: badgeDate!,
+        limit: 100,
+      });
+      return res.data.data;
+    },
+    enabled: canLoadDayMarks,
+    staleTime: 30_000,
+  });
+
+  const { plannedKeys, plannedCount } = useMemo(() => {
     const keys = new Set<string>();
-    for (const card of dayPlans) {
-      keys.add(planMachineKey(card.machineCode, card.targetMuscleGroup));
-      if (!isFreeWeightMachineCode(card.machineCode)) {
-        keys.add(card.machineCode);
+    const items = new Set<string>();
+    const add = (machineCode: string, targetMuscleGroup?: string | null) => {
+      const itemKey = planMachineKey(machineCode, targetMuscleGroup);
+      items.add(itemKey);
+      keys.add(itemKey);
+      if (!isFreeWeightMachineCode(machineCode)) {
+        keys.add(machineCode);
       }
+    };
+    for (const card of dayPlans) {
+      add(card.machineCode, card.targetMuscleGroup);
     }
-    return keys;
-  }, [dayPlans]);
+    for (const item of dayHistory) {
+      add(item.machineCode, item.targetMuscleGroup);
+    }
+    for (const log of dayLogs) {
+      add(log.machineCode, log.targetMuscleGroup);
+    }
+    return { plannedKeys: keys, plannedCount: items.size };
+  }, [dayPlans, dayHistory, dayLogs]);
 
   const { data: favorites, isFetched: favoritesFetched } = useFavoritesList();
   const favoriteByCode = useMemo(() => {
@@ -243,7 +301,7 @@ export function MachineSearchPage() {
                 {t('history.planPickMoreTitle', { date: planDate })}
               </p>
               <p className="machine-search__plan-banner-meta">
-                {t('history.planPickMoreCount', { count: dayPlans.length })}
+                {t('history.planPickMoreCount', { count: plannedCount })}
               </p>
             </div>
             <Link to={recordsForDateUrl} className="btn btn--secondary machine-search__plan-banner-done">

@@ -1,21 +1,24 @@
-# Test handoff: Line-break records nudge body copy (KO)
+ï»¿# Test handoff: Show ì¶”ê°€ë¨ badge for todayâ€™s history/logs too
 
 ## Summary
-¼¼ºÎ ¿îµ¿±â·Ï Ä«µå ¾È³» ¹®±¸¸¦ ¡¸¼¼Æ®¡¤ÅÛÇÃ¸´À»¡¹ ´ÙÀ½ ÁÙ¹Ù²ŞÀ¸·Î Ç¥½ÃÇÏµµ·Ï KO ¹®±¸¿Í `white-space: pre-line`À» Àû¿ëÇß½À´Ï´Ù.
+ê²€ìƒ‰/ìš´ë™ì¶”ê°€ ëª©ë¡ì˜ ã€Œì¶”ê°€ë¨ã€ì´ workout_cardsë¿ ì•„ë‹ˆë¼ í•´ë‹¹ì¼ historyÂ·workout_logsê¹Œì§€ ë³´ë„ë¡ í•´ì„œ, ì˜¤ëŠ˜ ì¶”ì²œìœ¼ë¡œ ì´ë¯¸ ë„£ì€ ê¸°êµ¬ì—ë„ ë¯¸ë˜ì™€ ê°™ì´ ë°°ì§€ê°€ ë¶™ìŠµë‹ˆë‹¤. ì¼ë°˜ ê²€ìƒ‰ì€ ì˜¤ëŠ˜ ê¸°ì¤€ìœ¼ë¡œ í‘œì‹œí•©ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: `47580439`
+- Commit: pending
 
 ## Test focus
-1. ÃßÃµ Á÷ÈÄ °á°ú Ä«µå nudge body°¡ µÎ ÁÙ: ¡¸¡¦¼¼Æ®¡¤ÅÛÇÃ¸´À»¡¹ / ¡¸°ü¸®ÇÒ ¼ö ÀÖ¾î¿ä¡¹
+1. ì˜¤ëŠ˜ ì¶”ì²œí•œ ê¸°êµ¬ â†’ ê²€ìƒ‰: ã€Œì¶”ê°€ë¨ã€
+2. ì˜¤ëŠ˜ ìš´ë™ì¶”ê°€ë¡œ ë„£ì€ ê¸°êµ¬ â†’ planDate ê²€ìƒ‰: ã€Œì¶”ê°€ë¨ã€
+3. ë¯¸ë˜ planDate: ê¸°ì¡´ ã€Œì¶”ê°€ë¨ã€ ìœ ì§€
+4. ë°°ë„ˆ countê°€ history+card+log í•©ê³¼ ì¼ì¹˜
 
 ## Fast checks
 ```bash
-rg -n "recordsNudgeBody|pre-line" frontend/src/i18n/locales/ko/machines.json frontend/src/styles/recommendation.css
+rg -n "dayHistory|dayLogs|badgeDate|plannedCount" frontend/src/pages/machine-search/MachineSearchPage.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| ÇÑ ÁÙ | ¡¸¼¼Æ®¡¤ÅÛÇÃ¸´À»¡¹ ´ÙÀ½ ÁÙ¿¡ ¡¸°ü¸®ÇÒ ¼ö ÀÖ¾î¿ä¡¹ |
+| ì˜¤ëŠ˜ ê¸°êµ¬ëŠ” historyì—ë§Œ ìˆì–´ ë°°ì§€ ì—†ìŒ | ì˜¤ëŠ˜ë„ history/log/cardë¡œ ã€Œì¶”ê°€ë¨ã€ |
