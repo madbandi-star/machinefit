@@ -1,23 +1,23 @@
-# Test handoff: Double-tap record card collapses details
+ï»¿# Test handoff: Remove calendar â€œë‚ ì§œ ì§ì ‘ ì„ íƒâ€
 
 ## Summary
-±â·Ï ÆäÀÌÁö¿¡¼­ ÆîÃÄÁø ¿îµ¿±â·ÏÄ«µå¸¦ ´õºíÅÇÇÏ¸é »ó¼¼ ³»¿ëÀÌ Á¢Èü´Ï´Ù. ¹öÆ°/¸µÅ©/ÀÔ·Â ¿µ¿ªÀº Á¦¿ÜÇÕ´Ï´Ù.
+ê¸°ë¡ í˜ì´ì§€ ì¼ìì¡°íšŒ ìº˜ë¦°ë”ì—ì„œ [ì˜¤ëŠ˜] ì˜†ì˜ [ë‚ ì§œ ì§ì ‘ ì„ íƒ] ì¹©ê³¼ ë„¤ì´í‹°ë¸Œ date inputì„ ì œê±°í–ˆìŠµë‹ˆë‹¤. ë‚ ì§œëŠ” ìº˜ë¦°ë” ì¹¸ìœ¼ë¡œë§Œ ê³ ë¦…ë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: 047f859a
+- Commit: pending
 
 ## Test focus
-1. Records ¡æ expand a card
-2. Double-tap non-control area ¡æ details collapse
-3. Double-tap on bookmark/buttons/links does not collapse via this gesture
+1. Records â†’ ì¼ìì¡°íšŒ â†’ calendar opens
+2. [ì˜¤ëŠ˜] may still appear; [ë‚ ì§œ ì§ì ‘ ì„ íƒ] is gone
+3. Day cells still selectable
 
 ## Fast checks
 ```bash
-rg -n "doubleTapCollapse|useDoubleTapAction" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx
+rg -n "planPickAnyDate|openNativePicker|history-plan-date-input" frontend/src/components/records/HistoryDateCalendar || true
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Collapse only via header/bottom button | Double-tap also collapses expanded card |
+| Today + â€œë‚ ì§œ ì§ì ‘ ì„ íƒâ€ | Today only (when needed); pick days on grid |

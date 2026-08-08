@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import {
@@ -41,7 +41,6 @@ export function HistoryDateCalendar({
   const [viewYear, setViewYear] = useState(initialMonth.year);
   const [viewMonthIndex, setViewMonthIndex] = useState(initialMonth.monthIndex);
   const [monthDir, setMonthDir] = useState<0 | -1 | 1>(0);
-  const dateInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -78,21 +77,6 @@ export function HistoryDateCalendar({
     setViewYear(parsed.year);
     setViewMonthIndex(parsed.monthIndex);
     pickDate(todayKey);
-  };
-
-  const openNativePicker = () => {
-    const input = dateInputRef.current;
-    if (!input) return;
-    try {
-      if (typeof input.showPicker === 'function') {
-        input.showPicker();
-        return;
-      }
-    } catch {
-      // fall through to focus/click
-    }
-    input.focus();
-    input.click();
   };
 
   const viewingTodayMonth =
@@ -139,8 +123,8 @@ export function HistoryDateCalendar({
           </button>
         </div>
 
-        <div className="history-calendar__quick">
-          {!viewingTodayMonth || selectedDate !== todayKey ? (
+        {!viewingTodayMonth || selectedDate !== todayKey ? (
+          <div className="history-calendar__quick">
             <button
               type="button"
               className="history-calendar__chip"
@@ -148,34 +132,8 @@ export function HistoryDateCalendar({
             >
               {t('history.goToday')}
             </button>
-          ) : null}
-          {allowEmptySelect ? (
-            <>
-              <button
-                type="button"
-                className="history-calendar__chip history-calendar__chip--ghost"
-                onClick={openNativePicker}
-              >
-                {t('history.planPickAnyDate')}
-              </button>
-              <input
-                ref={dateInputRef}
-                id="history-plan-date-input"
-                type="date"
-                className="history-calendar__date-input-hidden"
-                value={selectedDate || todayKey}
-                tabIndex={-1}
-                aria-hidden
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-                    pickDate(value);
-                  }
-                }}
-              />
-            </>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="history-calendar__weekdays">

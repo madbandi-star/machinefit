@@ -1,20 +1,19 @@
 {
-  "title": "Double-tap record card collapses details",
-  "summary": "Double-tap/double-click on an expanded history record card collapses its details; interactive controls are ignored.",
-  "git": { "branch": "main", "commit": "047f859a" },
+  "title": "Remove calendar ??? ?? ???",
+  "summary": "Removed the native date-picker chip next to Today on the records day-filter calendar.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/styles/records.css"
+    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx"
   ],
   "testFocus": [
-    "Double-tap expanded card collapses details",
-    "Controls ignored"
+    "No ??? ?? ??? chip in calendar",
+    "Grid day select still works"
   ],
   "fastChecks": [
-    "rg -n \"doubleTapCollapse|useDoubleTapAction\" frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx"
+    "rg -n \"planPickAnyDate|openNativePicker|history-plan-date-input\" frontend/src/components/records/HistoryDateCalendar || true"
   ],
-  "productionChecks": ["Pages deploy + mobile double-tap collapse on records"],
+  "productionChecks": ["Pages deploy + records calendar toolbar"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "No double-tap collapse on record cards",
-  "toBe": "Double-tap collapses expanded card details"
+  "asIs": "Today + manual date pick chip",
+  "toBe": "Today only; dates via calendar grid"
 }
