@@ -849,8 +849,9 @@
 
 .history-record-card__title-link {
   min-width: 0;
-  flex: 1 1 auto;
-  display: block;
+  max-width: 100%;
+  flex: 0 1 auto;
+  display: inline-flex;
   text-decoration: none;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
@@ -880,6 +881,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.15rem;
+  width: fit-content;
   max-width: 100%;
   margin: 0;
   font-size: 0.875rem;
@@ -888,7 +890,9 @@
 }
 
 .history-record-card__machine-name-text {
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

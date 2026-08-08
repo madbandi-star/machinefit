@@ -468,8 +468,9 @@
 }
 
 .history-page-premium .history-record-card__hero-aside .history-record-card__title-link {
-  display: block;
-  width: 100%;
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -487,9 +488,10 @@
 }
 
 .history-page-premium .history-record-card__machine-name {
-  display: flex;
+  display: inline-flex;
   align-items: flex-start;
   gap: 0.12rem;
+  width: fit-content;
   max-width: 100%;
   margin: 0;
   font-size: 1.0625rem;
@@ -500,8 +502,10 @@
 }
 
 .history-page-premium .history-record-card__machine-name-text {
+  flex: 0 1 auto;
   min-width: 0;
-  flex: 1 1 auto;
+  width: fit-content;
+  max-width: 100%;
   word-break: keep-all;
   overflow-wrap: anywhere;
   display: -webkit-box;
