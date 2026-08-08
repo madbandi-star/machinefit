@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `8d272aed`
 
 ## Test focus
 1. 기록 카드 음성코치: 세부 피커 고정 ON → 목표횟수 스크롤 가능
