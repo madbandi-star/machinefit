@@ -5,7 +5,7 @@ Date picker no longer shows raw `2026-08-06()` (ISO + empty weekday parens). Sho
 
 ## Git
 - Branch: `main`
-- Commit: (after push)
+- Commit: `52164126`
 
 ## Test focus
 1. Move/copy date modal preview is readable Korean (or locale), no empty `()`
@@ -16,3 +16,4 @@ Date picker no longer shows raw `2026-08-06()` (ISO + empty weekday parens). Sho
 | as-is | to-be |
 |-------|--------|
 | `2026-08-06()` in field | `2026년 8월 6일 (목)` + calendar affordance |
+

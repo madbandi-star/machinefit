@@ -1,7 +1,7 @@
-{
+﻿{
   "title": "Fix plan date picker empty parentheses / ISO display",
   "summary": "Hide native date input ISO text; show locale-friendly preview without empty weekday parentheses.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "52164126" },
   "changedFiles": [
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.tsx",
     "frontend/src/components/records/PlanDatePickerDialog/PlanDatePickerDialog.css",
@@ -11,7 +11,7 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Preview shows 2026년 8월 6일 (목) style",
+    "Preview shows 2026??8??6??(紐? style",
     "No empty ()",
     "Calendar opens from preview button"
   ],
@@ -23,3 +23,4 @@
   "asIs": "2026-08-06() in date field",
   "toBe": "Locale date label + hidden native picker"
 }
+
