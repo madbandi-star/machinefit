@@ -1,23 +1,23 @@
-﻿# Test handoff: Remove add-another-exercise plan CTA
+﻿# Test handoff: Day-group Add exercise CTA on Records
 
 ## Summary
-미래 운동계획 추가 화면에서 「다른 운동도 추가」 버튼을 제거하고 「운동 계획에 추가」「운동계획보기」만 남겼습니다.
+기록 페이지 날짜 그룹(펼친 상태) 하단에 「운동추가」를 추가했습니다. 미래 날짜는 `planDate` 검색(이 날짜에 운동계획추가와 동일), 오늘은 일반 검색 페이지로 이동합니다.
 
 ## Git
 - Branch: `main`
-- Commit: `99f14a1e`
+- Commit: pending
 
 ## Test focus
-1. 미래 날짜 `planDate`로 기구 상세: 「다른 운동도 추가」 없음
-2. 「운동 계획에 추가」「운동계획보기」는 그대로 동작
+1. 미래 날짜 그룹 펼침 → 「운동추가」 → `/machines?planDate=해당일`
+2. 오늘 날짜 그룹 펼침 → 「운동추가」 → `/machines` (planDate 없음)
+3. 과거 날짜 그룹에는 「운동추가」 없음
 
 ## Fast checks
 ```bash
-rg -n "planAddAnother" frontend/src/pages/machine-detail/MachineDetailPage.tsx
-# expect: no matches
+rg -n "planAddExercise|dayAddExerciseUrl|records-list__day-add" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx frontend/src/i18n/locales/ko/machines.json
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 |-------|--------|
-| 3버튼 (다른 운동도 추가 포함) | 2버튼 (추가 + 계획보기) |
+| 날짜 그룹 내 운동추가 진입점 없음 | 오늘·미래 날짜 카드 영역 하단에 「운동추가」 |

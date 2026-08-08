@@ -283,6 +283,7 @@
     "planStartWorkout": "운동 시작",
     "planStarted": "운동을 시작했어요.",
     "planAddForDate": "이 날짜에 운동 계획 추가",
+    "planAddExercise": "운동추가",
     "planAddMachine": "운동 계획에 추가",
     "planAddMachineHint": "{{date}} 운동 계획으로 추가합니다.",
     "planAddAnother": "다른 운동도 추가",

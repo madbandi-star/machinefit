@@ -306,6 +306,7 @@
     "planStartWorkout": "Start workout",
     "planStarted": "Workout started.",
     "planAddForDate": "Add workout plan for this date",
+    "planAddExercise": "添加运动",
     "planAddMachine": "Add to workout plan",
     "planAddMachineHint": "Add to the plan for {{date}}.",
     "planAddAnother": "Add another exercise",

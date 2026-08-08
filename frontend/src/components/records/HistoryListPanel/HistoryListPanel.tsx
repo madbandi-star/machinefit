@@ -1167,6 +1167,15 @@ export function HistoryListPanel() {
 
           {groupedCards.map((group) => {
             const isExpanded = expandedDates.has(group.dateKey);
+            const groupDateKey = normalizeDateKey(group.dateKey);
+            const isTodayGroup = groupDateKey === todayDateKey;
+            const isFutureGroup = groupDateKey > todayDateKey;
+            const showDayAddExercise =
+              isAuthenticated &&
+              (isTodayGroup || (isFutureGroup && canUseWorkoutPlans));
+            const dayAddExerciseUrl = isFutureGroup
+              ? `${ROUTES.MACHINES}?planDate=${encodeURIComponent(groupDateKey)}`
+              : ROUTES.MACHINES;
             return (
             <section
               key={group.dateKey}
@@ -1308,6 +1317,17 @@ export function HistoryListPanel() {
                 );
               })
                 : null}
+
+              {showDayAddExercise && isExpanded ? (
+                <div className="records-list__day-add">
+                  <Link
+                    to={dayAddExerciseUrl}
+                    className="btn btn--secondary records-list__day-add-btn"
+                  >
+                    {t('machines:history.planAddExercise')}
+                  </Link>
+                </div>
+              ) : null}
             </section>
             );
           })}

@@ -1304,6 +1304,19 @@
   line-height: 1.3;
 }
 
+.records-list__day-add {
+  display: flex;
+  justify-content: stretch;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.records-list__day-add-btn {
+  width: 100%;
+  min-height: 2.35rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
 .saved-settings-card {
   display: flex;
   flex-direction: column;
