@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
@@ -34,7 +35,7 @@ export function HistoryCardPlanActionsSheet({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       className="bottom-sheet-overlay day-actions-sheet-overlay"
       role="presentation"
@@ -122,6 +123,7 @@ export function HistoryCardPlanActionsSheet({
           ) : null}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

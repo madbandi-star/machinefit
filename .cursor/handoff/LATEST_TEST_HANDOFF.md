@@ -1,23 +1,23 @@
-# Test handoff: Template delete confirm not blocked by day menu
+ï»¿# Test handoff: Card â‹¯ menu portal (not clipped by card)
 
 ## Summary
-ÀÏÀÚÁ¶È¸ ? ¸Ş´º¿¡¼­ ÅÛÇÃ¸´ »èÁ¦ ½Ã È®ÀÎ ´ÙÀÌ¾ó·Î±×°¡ ¸Ş´º µÚ¿¡ °¡·ÁÁö´ø ¹®Á¦¸¦, È®ÀÎÃ¢À» ¶ç¿ì±â Àü¿¡ ¸Ş´º¸¦ ´İ¾Æ ¼öÁ¤Çß½À´Ï´Ù.
+ê¸°êµ¬ ê¸°ë¡ì¹´ë“œ â‹¯ ë©”ë‰´ê°€ ì¹´ë“œì˜ backdrop-filterì— ê°‡í˜€ ì˜ë¦¬ë˜ ë¬¸ì œë¥¼ `document.body` í¬íƒˆë¡œ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: b096ba2a
+- Commit: pending
 
 ## Test focus
-1. Mobile (or narrow viewport): Records ¡æ day ? ¡æ ÅÛÇÃ¸´ »èÁ¦
-2. Confirm dialog is visible and tappable (not behind the day menu)
-3. Confirm deletes; cancel dismisses without deleting
+1. Mobile: Records â†’ card â‹¯
+2. Full-screen centered panel (not clipped inside the card)
+3. ë‚ ì§œ ë³€ê²½ / ë‹¤ë¥¸ ë‚ ì§œë¡œ ë³µì‚¬ íƒ­ ê°€ëŠ¥ â†’ date picker opens
 
 ## Fast checks
 ```bash
-rg -n "onDeleteTemplate|setDayMenuOpen\(false\)" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
+rg -n "createPortal|document.body" frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Confirm behind day sheet; can't tap delete | Day sheet closes; confirm on top and usable |
+| Menu clipped inside card; hard to tap | Full viewport overlay via portal |

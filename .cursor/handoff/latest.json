@@ -1,19 +1,19 @@
 {
-  "title": "Template delete confirm not blocked by day menu",
-  "summary": "Close the day actions sheet before opening template-delete ConfirmDialog so the confirm is not trapped behind z-index 1200 overlay on mobile.",
-  "git": { "branch": "main", "commit": "b096ba2a" },
+  "title": "Card ? menu portal (not clipped by card)",
+  "summary": "Portal HistoryCardPlanActionsSheet to document.body so mobile record-card backdrop-filter no longer clips the move/copy menu.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+    "frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx"
   ],
   "testFocus": [
-    "Day ? ? template delete opens usable confirm",
-    "Confirm/cancel work on mobile"
+    "Card ? opens full-screen panel on mobile",
+    "Move/copy buttons tappable"
   ],
   "fastChecks": [
-    "rg -n \"onDeleteTemplate|setDayMenuOpen\\(false\\)\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+    "rg -n \"createPortal|document.body\" frontend/src/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet.tsx"
   ],
-  "productionChecks": ["Pages deploy + mobile template delete confirm"],
+  "productionChecks": ["Pages deploy + mobile card ? menu"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Confirm dialog behind day menu; delete untappable",
-  "toBe": "Day menu closes first; confirm usable"
+  "asIs": "Menu trapped/clipped inside card",
+  "toBe": "Body-portaled full viewport overlay"
 }
