@@ -766,8 +766,9 @@
   background: var(--glass-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  content-visibility: auto;
-  contain-intrinsic-size: auto 220px;
+  /* content-visibility:auto broke settings-grid width on some Android WebViews */
+  max-width: 100%;
+  min-width: 0;
   touch-action: manipulation;
 }
 

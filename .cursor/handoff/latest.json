@@ -1,23 +1,21 @@
 {
-  "title": "Pulse ???? ??? when adjustments dirty",
-  "summary": "When settingsDirty after weight/reps/ROM edits, preferences save controls use the same attention animation as plan-save.",
-  "git": { "branch": "main", "commit": "5ac6cdfa" },
+  "title": "Fix stretched settings tiles on some mobiles",
+  "summary": "Contain history settings grid width on flaky mobile WebViews: drop content-visibility:auto, enforce minmax(0,1fr)/min-width:0, stack compare rows vertically.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/recommendation/FitFeedbackPanel/FitFeedbackPanel.tsx",
-    "frontend/src/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel.tsx",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/records.css",
+    "frontend/src/styles/history-premium.css",
     "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Dirty adjustments pulse save button",
-    "Pulse clears after save"
+    "Settings tiles not horizontally stretched on narrow Android",
+    "3-column grid stays inside card"
   ],
   "fastChecks": [
-    "rg -n \"preferencesDirty|save-btn--attention|btn--save-attention\" frontend/src/components/recommendation frontend/src/styles/recommendation.css"
+    "rg -n \"content-visibility|overflow-x: clip|history-mini-setting-wrap\" frontend/src/styles/records.css frontend/src/styles/history-premium.css"
   ],
-  "productionChecks": ["Pages deploy + adjust settings save pulse"],
+  "productionChecks": ["Pages deploy + repro device settings grid"],
   "deploy": { "target": "GitHub Pages", "backendRedeployRequired": false },
-  "asIs": "Static save button after editing adjustments",
-  "toBe": "Plan-save-style attention pulse while dirty"
+  "asIs": "Weight/reps/ROM tiles stretch in a long row on some mobiles",
+  "toBe": "Tiles stay in contained 3-column card grid"
 }

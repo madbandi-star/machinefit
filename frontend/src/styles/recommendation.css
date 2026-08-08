@@ -2338,10 +2338,24 @@
 }
 
 /* History record — settings grid */
+.recommendation-settings-panel--history {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 .recommendation-settings-panel--history .recommendation-settings-panel__grid--history {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.45rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.recommendation-settings-panel--history .history-mini-setting-wrap {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .history-record-card .recommendation-settings-panel--history .setting-value-card--compact {
@@ -2366,29 +2380,37 @@
   height: 12px;
 }
 
+/* Stack recommend/adjust vertically — side-by-side forced overflow on narrow WebViews. */
 .history-record-card .setting-value-card__value-row--compare {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   align-items: stretch;
+  min-width: 0;
+  width: 100%;
 }
 
 .history-record-card .setting-value-card__compare-block {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.35rem;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .history-record-card .setting-value-card__compare-block--adjust {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
-  padding-top: 0;
-  padding-left: 0.35rem;
-  border-top: none;
-  border-left: 1px solid color-mix(in srgb, var(--glass-border) 85%, transparent);
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+  padding-top: 0.35rem;
+  padding-left: 0;
+  border-top: 1px solid color-mix(in srgb, var(--glass-border) 85%, transparent);
+  border-left: none;
 }
 
 .history-record-card .setting-value-card__compare-label {

@@ -1,23 +1,23 @@
-# Test handoff: Pulse ¡°Á¶Á¤°ª ÀúÀå¡± when adjustments dirty
+ï»¿# Test handoff: Fix stretched settings tiles on some mobiles
 
 ## Summary
-¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä ¼±ÅÃ ÈÄ Áß·®¡¤ÃßÃµÈ½¼ö¡¤°¡µ¿¹üÀ§¸¦ ¹Ù²Ù¸é, Á¶Á¤°ª ÀúÀå(±â·ÏÄ«µå: ¼ÂÆÃ°ª ÀúÀåÇÏ±â) ¹öÆ°¿¡ °èÈ¹ ÀúÀå°ú °°Àº attention ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ Àû¿ëµË´Ï´Ù.
+ê¸°ë¡ì¹´ë“œ ì¶”ì²œì¤‘ëŸ‰Â·ì¶”ì²œíšŸìˆ˜Â·ê°€ë™ë²”ìœ„ê°€ íŠ¹ì • ëª¨ë°”ì¼ì—ì„œ ê°€ë¡œë¡œ ê¸¸ê²Œ ëŠ˜ì–´ì§€ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤. `content-visibility:auto` ì œê±°, ì„¤ì • ê·¸ë¦¬ë“œ/íƒ€ì¼ `min-width:0`Â·í­ ì œí•œ, ë¹„êµ í–‰ ì„¸ë¡œ ìŠ¤íƒìœ¼ë¡œ ë§ì·„ìŠµë‹ˆë‹¤.
 
 ## Git
 - Branch: `main`
-- Commit: 5ac6cdfa
+- Commit: pending
 
 ## Test focus
-1. Records or detail ¡æ ¼ÂÆÃ°ª Á¶Á¤ ÇÊ¿ä
-2. Change weight / reps / ROM ¡æ save button pulses (green attention)
-3. After save, pulse stops
+1. Records on a previously broken narrow Android device/WebView
+2. Weight / reps / ROM tiles stay in a 3-column grid inside the card (no horizontal stretch)
+3. Other card UI still normal; compare/adjust mode still usable
 
 ## Fast checks
 ```bash
-rg -n "preferencesDirty|save-btn--attention|btn--save-attention" frontend/src/components/recommendation frontend/src/styles/recommendation.css
+rg -n "content-visibility|minmax\\(0, 1fr\\)|overflow-x: clip" frontend/src/styles/records.css frontend/src/styles/history-premium.css frontend/src/styles/recommendation.css
 ```
 
-## as-is ¡æ to-be
+## as-is â†’ to-be
 | as-is | to-be |
 |-------|--------|
-| Dirty adjustments, static save button | Same pulse attention as plan-save |
+| Settings tiles stretched in one long horizontal strip on some phones | Contained 3-column grid within card width |
