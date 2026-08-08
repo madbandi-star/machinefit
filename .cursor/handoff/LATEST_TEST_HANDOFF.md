@@ -1,15 +1,15 @@
-ï»¿# Test handoff: Double-tap detail â†’ back to records
+# Test handoff: Double-tap detail ¡æ back to records
 
 ## Summary
-ê¸°ë¡ ì¹´ë“œì—ì„œ ì—° ì„¸ë¶€ê¸°ë¡(ì£¼ì˜ì‚¬í•­Â·ìš´ë™íŒ) í˜ì´ì§€ë¥¼ ë”ë¸”íƒ­í•˜ë©´ í•´ë‹¹ ì¼ì ê¸°ë¡ ëª©ë¡ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤. ë²„íŠ¼/ì…ë ¥ ì˜ì—­ì€ ì œì™¸í•©ë‹ˆë‹¤.
+±â·Ï Ä«µå¿¡¼­ ¿¬ ¼¼ºÎ±â·Ï(ÁÖÀÇ»çÇ×¡¤¿îµ¿ÆÁ) ÆäÀÌÁö¸¦ ´õºíÅÇÇÏ¸é ÇØ´ç ÀÏÀÚ ±â·Ï ¸ñ·ÏÀ¸·Î µ¹¾Æ°©´Ï´Ù. ¹öÆ°/ÀÔ·Â ¿µ¿ªÀº Á¦¿ÜÇÕ´Ï´Ù.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: b6895290
 
 ## Test focus
-1. Records â†’ card â†’ detail (tips/warnings)
-2. Double-tap empty/content area â†’ returns to `/records?date=...`
+1. Records ¡æ card ¡æ detail (tips/warnings)
+2. Double-tap empty/content area ¡æ returns to `/records?date=...`
 3. Double-tap on bookmark/favorite/inputs does NOT navigate away
 
 ## Fast checks
@@ -17,7 +17,7 @@
 rg -n "useDoubleTapAction|returnToRecords" frontend/src/pages/recommendation-result frontend/src/hooks/useDoubleTapAction.ts
 ```
 
-## as-is â†’ to-be
+## as-is ¡æ to-be
 | as-is | to-be |
 |-------|--------|
 | No double-tap back | Double-tap detail returns to records list for that date |

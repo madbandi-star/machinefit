@@ -1,7 +1,7 @@
 {
   "title": "Double-tap detail ? back to records",
   "summary": "Double-tap/double-click on recommendation result (from records) navigates back to /records?date=..., ignoring interactive controls.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "b6895290" },
   "changedFiles": [
     "frontend/src/hooks/useDoubleTapAction.ts",
     "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
