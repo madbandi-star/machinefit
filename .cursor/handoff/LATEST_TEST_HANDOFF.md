@@ -1,26 +1,24 @@
-# Test handoff ? Tighten Records header ? toolbar gap
+# Test handoff ? Widen summary ? date gap (Records)
 
 ## Summary
-?? ????? ? ??(??? ?)? `[??][???]??` ?? ?? ?? ??? ??.
+?? ??? ??(???·????)? ? ???? ?? ??? ?? ??. ?? ?? ??? ??? ??.
 
 ## Git
 - branch: `main`
-- commit: e16a10cc
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/pages/records/RecordsPage.tsx`
+- `frontend/src/styles/history-premium.css`
 - `frontend/src/styles/records.css`
 
 ## Test focus
-1. Records ? toolbar close under MachineFit header
-2. Favorites top spacing unchanged
-3. Missed-plans banner (if any) still OK
+1. Records with summary ? first date heading has a comfortable gap (not cramped)
 
 ## Fast checks
 ```bash
-rg -n "records-page--history" frontend/src/pages/records/RecordsPage.tsx frontend/src/styles/records.css
+rg -n "history-dashboard \+ \.records-list__date-group" frontend/src/styles/history-premium.css frontend/src/styles/records.css
 ```
 
 ## as-is ? to-be
-- **as-is:** Large empty band above filter toolbar
-- **to-be:** Tight top padding on Records only
+- **as-is:** Nearly touching (margin-top: -0.55rem)
+- **to-be:** Comfortable spacing (margin-top: 0.35rem + list gap)

@@ -1,28 +1,26 @@
 {
-  "title": "Tighten Records header-to-toolbar gap",
-  "summary": "Records page: reduce space above the [??]/[???]/???? toolbar under the app header. CSS + records-page--history marker.",
+  "title": "Widen summary-to-date gap on Records",
+  "summary": "Records history: give a bit more vertical space between the summary metric cards and the first workout date (was pulled too tight).",
   "git": {
     "branch": "main",
-    "commit": "e16a10cc"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/records/RecordsPage.tsx",
+    "frontend/src/styles/history-premium.css",
     "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Records page: toolbar sits close under MachineFit header",
-    "Favorites page top spacing unchanged",
-    "Missed-plans banner (if shown) still readable above toolbar"
+    "Records with summary stats ? gap above first date is comfortable (not cramped, not a large empty band)"
   ],
   "fastChecks": [
-    "rg -n \"records-page--history\" frontend/src/pages/records/RecordsPage.tsx frontend/src/styles/records.css"
+    "rg -n \"history-dashboard \\+ \\.records-list__date-group\" frontend/src/styles/history-premium.css frontend/src/styles/records.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: open Records, confirm less empty space above [??]/[???]"
+    "After Deploy Frontend: confirm summary-to-date spacing on Records"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Wide empty band between app header and filter toolbar on Records.",
-  "toBe": "Toolbar sits close under the header (content padding-top ~0.15rem)."
+  "asIs": "Summary cards and first date nearly touching (negative margin).",
+  "toBe": "Comfortable ~0.7rem gap between summary and first date heading."
 }

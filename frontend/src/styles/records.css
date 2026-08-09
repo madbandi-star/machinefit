@@ -1161,14 +1161,14 @@ body:has(.records-page--history) .layout__content {
 }
 
 .records-list--history .history-dashboard + .records-list__date-group {
-  margin-top: -0.55rem;
+  margin-top: 0.35rem;
 }
 
 .records-list--history
   .history-dashboard
   + .records-list__date-group
   .records-list__date-toggle {
-  padding-top: 0.05rem;
+  padding-top: 0.12rem;
 }
 
 .records-list__toolbar-end {
