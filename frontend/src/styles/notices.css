@@ -11,126 +11,150 @@
 
 /* ——— Home banner (single-line) ——— */
 .home-notice-banner {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0;
-  min-height: 2.25rem;
+  gap: 0.55rem;
+  min-width: 0;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.55rem 0.4rem 0.5rem;
   overflow: hidden;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--glass-border));
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
   background:
-    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 55%),
     linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--color-primary) 8%, var(--glass-bg)) 0%,
-      var(--glass-bg) 72%
+      110deg,
+      color-mix(in srgb, var(--color-primary) 14%, var(--glass-bg)) 0%,
+      var(--glass-bg) 48%
     );
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(var(--glass-blur, 12px));
   -webkit-backdrop-filter: blur(var(--glass-blur, 12px));
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease,
+    transform 0.16s ease;
   animation: notice-fade-up 0.28s ease-out;
 }
 
-.home-notice-banner--important {
-  border-color: color-mix(in srgb, var(--color-error, #ef5350) 40%, var(--glass-border));
+.home-notice-banner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 78%, #fff);
+}
+
+.home-notice-banner:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 36%, var(--glass-border));
   background:
-    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--color-error, #ef5350) 16%, transparent), transparent 55%),
     linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--color-error, #ef5350) 8%, var(--glass-bg)) 0%,
-      var(--glass-bg) 72%
+      110deg,
+      color-mix(in srgb, var(--color-primary) 20%, var(--glass-bg)) 0%,
+      var(--glass-bg) 52%
     );
 }
 
-.home-notice-banner__main {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex: 1;
-  min-width: 0;
-  padding: 0.35rem 0.55rem 0.35rem 0.5rem;
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.15s ease;
+.home-notice-banner:active {
+  transform: scale(0.995);
 }
 
-.home-notice-banner__main:hover {
-  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+.home-notice-banner:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+  outline-offset: 2px;
 }
 
-.home-notice-banner__icon {
+.home-notice-banner--important {
+  border-color: color-mix(in srgb, var(--color-error, #ef5350) 38%, var(--glass-border));
+  background:
+    linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--color-error, #ef5350) 14%, var(--glass-bg)) 0%,
+      var(--glass-bg) 48%
+    );
+}
+
+.home-notice-banner--important::before {
+  background: color-mix(in srgb, var(--color-error, #ef5350) 85%, #fff);
+}
+
+.home-notice-banner--important:hover {
+  border-color: color-mix(in srgb, var(--color-error, #ef5350) 48%, var(--glass-border));
+  background:
+    linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--color-error, #ef5350) 20%, var(--glass-bg)) 0%,
+      var(--glass-bg) 52%
+    );
+}
+
+.home-notice-banner__badge {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-  width: 1.35rem;
-  height: 1.35rem;
+  align-items: center;
+  gap: 0.28rem;
+  margin-left: 0.35rem;
+  padding: 0.22rem 0.48rem;
   border-radius: 999px;
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-}
-
-.home-notice-banner--important .home-notice-banner__icon {
-  color: var(--color-error, #ef5350);
-  background: color-mix(in srgb, var(--color-error, #ef5350) 14%, transparent);
-}
-
-.home-notice-banner__line {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.home-notice-banner__label {
-  flex-shrink: 0;
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--color-text-muted);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: color-mix(in srgb, var(--color-primary) 82%, var(--color-text));
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.01em;
   white-space: nowrap;
-}
-
-.home-notice-banner__sep {
-  flex-shrink: 0;
-  color: var(--color-text-muted);
-  font-size: 0.72rem;
   line-height: 1;
 }
 
+.home-notice-banner--important .home-notice-banner__badge {
+  border-color: color-mix(in srgb, var(--color-error, #ef5350) 32%, transparent);
+  background: color-mix(in srgb, var(--color-error, #ef5350) 12%, transparent);
+  color: color-mix(in srgb, var(--color-error, #ef5350) 78%, var(--color-text));
+}
+
 .home-notice-banner__title {
-  margin: 0;
+  flex: 1;
   min-width: 0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  line-height: 1.2;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.25;
   color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.home-notice-banner__more {
+.home-notice-banner__go {
   display: inline-flex;
-  align-items: center;
   flex-shrink: 0;
-  align-self: stretch;
-  padding: 0 0.75rem;
-  border: none;
-  border-left: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
-  background: transparent;
-  color: var(--color-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.15s ease;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+  transition:
+    color 0.16s ease,
+    background 0.16s ease,
+    transform 0.16s ease;
 }
 
-.home-notice-banner__more:hover {
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+.home-notice-banner:hover .home-notice-banner__go {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  transform: translateX(1px);
+}
+
+.home-notice-banner--important:hover .home-notice-banner__go {
+  color: var(--color-error, #ef5350);
+  background: color-mix(in srgb, var(--color-error, #ef5350) 12%, transparent);
 }
 
 /* ——— List ——— */

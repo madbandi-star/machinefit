@@ -1,22 +1,22 @@
-# Test handoff: Single-line home notice banner
+# Test handoff: Home notice UI polish
 
 ## Summary
-Home ?? ?? banner is one horizontal line (icon � label � title � more). UI/CSS only.
+Removed ??? from home latest-notice. Restyled as one clean tappable row (badge + title + chevron). UI/CSS only.
 
 ## Git
 - Branch: `main`
-- Commit: 056df640
+- Commit: pending
 
 ## Test focus
-1. Home notice is single-line height
-2. Long title ellipsizes; ??? / title links work
-3. Important notice still distinct
+1. No ??? on home notice
+2. Whole banner opens notice detail
+3. Compact single-line UI; important styling still clear
 
 ## Fast checks
 ```bash
-rg -n "home-notice-banner__line|home-notice-banner__copy" frontend/src
+rg -n "home-notice-banner__more|notices.more" frontend/src/components/home/HomeNoticeBanner
 ```
 
 ## As-is ? To-be
-- **As-is**: Two-line label+title with large icon
-- **To-be**: One compact row
+- **As-is**: Cluttered pill + ???
+- **To-be**: Clean glass row, no more link

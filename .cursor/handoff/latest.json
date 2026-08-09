@@ -1,28 +1,29 @@
 {
-  "title": "Single-line home notice banner",
-  "summary": "Home latest-notice banner is compacted to one horizontal line: icon � label � title � more. Smaller padding/icon; title ellipsizes. UI/CSS only.",
+  "title": "Home notice banner UI polish + remove more",
+  "summary": "Removes ??? from the home notice banner. Whole row links to notice detail. Restyled as a compact glass row with badge, ellipsized title, and chevron. UI/CSS only.",
   "git": {
     "branch": "main",
-    "commit": "056df640"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeNoticeBanner/HomeNoticeBanner.tsx",
     "frontend/src/styles/notices.css"
   ],
   "testFocus": [
-    "Home: notice banner is one row tall",
-    "Long titles ellipsize; ??? still works",
-    "Important notice styling still readable"
+    "Home notice has no ??? text",
+    "Tap row opens notice detail",
+    "Single-line layout with badge + title + chevron",
+    "Important notice uses red accent/badge"
   ],
   "fastChecks": [
-    "rg -n \"home-notice-banner__line|home-notice-banner__copy\" frontend/src"
+    "rg -n \"home-notice-banner__more|notices.more\" frontend/src/components/home/HomeNoticeBanner"
   ],
   "productionChecks": [
-    "After Deploy Frontend: home notice fits a single line"
+    "After Deploy Frontend: home notice looks compact and has no more link"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Notice banner used two text lines + large icon, taking vertical space.",
-  "toBe": "Single compact row with ellipsized title."
+  "asIs": "Pill banner with ??? side link looked cluttered.",
+  "toBe": "Clean single-row tappable banner without ???."
 }

@@ -20,27 +20,18 @@ export function HomeNoticeBanner() {
   if (!data) return null;
 
   return (
-    <div
+    <Link
+      to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.id)}
       className={`home-notice-banner${data.isImportant ? ' home-notice-banner--important' : ''}`}
     >
-      <Link
-        to={ROUTES.NOTICE_DETAIL.replace(':noticeId', data.id)}
-        className="home-notice-banner__main"
-      >
-        <span className="home-notice-banner__icon" aria-hidden>
-          <Icon name="bell" size={14} />
-        </span>
-        <span className="home-notice-banner__line">
-          <span className="home-notice-banner__label">{t('notices.homeBannerLabel')}</span>
-          <span className="home-notice-banner__sep" aria-hidden>
-            ·
-          </span>
-          <span className="home-notice-banner__title">{data.title}</span>
-        </span>
-      </Link>
-      <Link to={ROUTES.NOTICES} className="home-notice-banner__more">
-        {t('notices.more')}
-      </Link>
-    </div>
+      <span className="home-notice-banner__badge">
+        <Icon name="bell" size={12} aria-hidden />
+        {t('notices.homeBannerLabel')}
+      </span>
+      <span className="home-notice-banner__title">{data.title}</span>
+      <span className="home-notice-banner__go" aria-hidden>
+        <Icon name="chevronRight" size={16} />
+      </span>
+    </Link>
   );
 }
