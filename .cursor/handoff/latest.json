@@ -1,27 +1,27 @@
 {
-  "title": "Glowing attention dot on incomplete Complete button",
-  "summary": "Incomplete [??] keeps muted gray button color, with a primary green corner dot (records-nav style). Next unfinished set?s dot gently pulses/glows; completed has no dot.",
+  "title": "Rollback green glow dot on incomplete Complete",
+  "summary": "Removed the green corner glow-dot on incomplete [??]. Restored muted gray button + soft gray pulse for the next unfinished set.",
   "git": {
     "branch": "main",
-    "commit": "47f572c6"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Incomplete [??] = gray button + green top-right glowing dot",
-    "Next incomplete dot pulses; other incomplete dots stay lit but static",
-    "Completed [??] = green button, no corner dot"
+    "Incomplete [??] has no green corner dot",
+    "Still muted gray; next unfinished set soft gray pulse",
+    "Completed stays green"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--47f572c6::after|workout-complete-dot-glow\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--pending::after|workout-complete-dot-glow|workout-complete-nudge\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm corner glow dot on incomplete Complete"
+    "After Deploy Frontend: confirm no green glow dot on incomplete Complete"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Incomplete Complete had gray pulse on whole button.",
-  "toBe": "Gray button + records-nav style glowing corner dot."
+  "asIs": "Green glowing corner dot on incomplete Complete.",
+  "toBe": "No corner dot; gray button + soft gray pulse only."
 }

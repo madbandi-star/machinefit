@@ -2799,7 +2799,6 @@
 }
 
 .recommendation-workout-log__complete-btn {
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2817,7 +2816,6 @@
   cursor: pointer;
   touch-action: manipulation;
   white-space: nowrap;
-  overflow: visible;
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
@@ -2833,22 +2831,6 @@
   background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
 }
 
-/* Records-nav style attention dot (top-right) while incomplete. */
-.recommendation-workout-log__complete-btn--pending::after {
-  content: '';
-  position: absolute;
-  top: 0.18rem;
-  right: 0.18rem;
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 999px;
-  background: var(--color-primary);
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--glass-bg, #0b1018) 90%, transparent),
-    0 0 6px color-mix(in srgb, var(--color-primary) 55%, transparent);
-  pointer-events: none;
-}
-
 .recommendation-workout-log__complete-btn--pending:hover:not(:disabled),
 .recommendation-workout-log__complete-btn--pending:focus-visible:not(:disabled) {
   border-color: color-mix(in srgb, var(--color-text) 28%, var(--glass-border));
@@ -2861,55 +2843,48 @@
   transform: scale(0.96);
 }
 
-/* Next incomplete set: breathe the corner dot (same idea as bottom-nav records nudge). */
-.recommendation-workout-log__complete-btn--nudge:not(:disabled)::after {
-  animation: workout-complete-dot-glow 1.6s ease-in-out infinite;
+/* Soft cue for the next incomplete set only — avoid animating every unfinished button. */
+.recommendation-workout-log__complete-btn--nudge:not(:disabled) {
+  animation: workout-complete-nudge 2.8s ease-in-out infinite;
+  will-change: box-shadow, border-color, background-color;
 }
 
-.recommendation-workout-log__complete-btn--nudge:hover:not(:disabled)::after,
-.recommendation-workout-log__complete-btn--nudge:focus-visible:not(:disabled)::after,
-.recommendation-workout-log__complete-btn--nudge:active:not(:disabled)::after {
+.recommendation-workout-log__complete-btn--nudge:hover:not(:disabled),
+.recommendation-workout-log__complete-btn--nudge:focus-visible:not(:disabled),
+.recommendation-workout-log__complete-btn--nudge:active:not(:disabled) {
   animation: none;
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--glass-bg, #0b1018) 90%, transparent),
-    0 0 8px color-mix(in srgb, var(--color-primary) 65%, transparent);
 }
 
 .recommendation-workout-log__complete-btn--completed {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  animation: none;
 }
 
-.recommendation-workout-log__complete-btn--completed::after {
-  content: none;
-}
-
-@keyframes workout-complete-dot-glow {
+@keyframes workout-complete-nudge {
   0%,
   100% {
-    transform: scale(1);
-    opacity: 0.85;
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--glass-bg, #0b1018) 90%, transparent),
-      0 0 4px color-mix(in srgb, var(--color-primary) 40%, transparent);
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--glass-border);
+    background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
+    color: var(--color-text-muted);
   }
   50% {
-    transform: scale(1.18);
-    opacity: 1;
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--glass-bg, #0b1018) 90%, transparent),
-      0 0 10px color-mix(in srgb, var(--color-primary) 80%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-text-muted) 16%, transparent);
+    border-color: color-mix(in srgb, var(--color-text) 30%, var(--glass-border));
+    background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+    color: var(--color-text);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .recommendation-workout-log__complete-btn--nudge:not(:disabled)::after {
+  .recommendation-workout-log__complete-btn--nudge:not(:disabled) {
     animation: none;
-    opacity: 1;
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--glass-bg, #0b1018) 90%, transparent),
-      0 0 8px color-mix(in srgb, var(--color-primary) 65%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-text) 28%, var(--glass-border));
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
   }
 }
 
