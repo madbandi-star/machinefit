@@ -5,7 +5,7 @@ Home ??? ???? card adds ???? ????? under ??? ??. Hides the section for the rest 
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 3992e6ab
 
 ## Test focus
 1. Ready card shows dismiss under detail CTA
