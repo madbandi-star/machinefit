@@ -1,27 +1,27 @@
 {
-  "title": "Incomplete Complete button uses amber, not green",
-  "summary": "4381b775/nudge [??] buttons no longer use primary green (looked completed). Incomplete = amber action cue; green reserved for completed only.",
+  "title": "Incomplete Complete button back to muted gray",
+  "summary": "Pending/nudge [??] uses muted gray again (not amber/green). Green remains only for completed state; soft gray pulse still cues the next unfinished set.",
   "git": {
     "branch": "main",
-    "commit": "4381b775"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Incomplete [??] looks amber/warm, not green",
+    "Incomplete [??] looks gray/muted",
     "Completed [??] still green",
-    "Next incomplete still gently pulses in amber"
+    "Next incomplete still gently pulses in gray"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--4381b775|complete-4381b775|workout-complete-nudge\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--pending|workout-complete-nudge\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm incomplete vs completed color distinction on Records cards"
+    "After Deploy Frontend: confirm incomplete gray vs completed green"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Incomplete Complete buttons used green and looked finished.",
-  "toBe": "Incomplete = amber cue; completed = green."
+  "asIs": "Incomplete Complete used amber.",
+  "toBe": "Incomplete = muted gray; completed = green."
 }

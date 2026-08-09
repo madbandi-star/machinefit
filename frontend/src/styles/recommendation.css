@@ -2824,20 +2824,19 @@
     transform 0.15s ease;
 }
 
-/* Incomplete = amber “needs action”. Green is reserved for --completed only. */
+/* Incomplete stays muted gray; green is reserved for --completed only. */
 .recommendation-workout-log__complete-btn--pending {
-  --complete-pending: #f0a24a;
-  border-color: color-mix(in srgb, var(--complete-pending) 45%, var(--glass-border));
-  color: color-mix(in srgb, var(--complete-pending) 88%, var(--color-text));
-  background: color-mix(in srgb, var(--complete-pending) 10%, transparent);
+  border-color: var(--glass-border);
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
 }
 
 .recommendation-workout-log__complete-btn--pending:hover:not(:disabled),
 .recommendation-workout-log__complete-btn--pending:focus-visible:not(:disabled) {
-  border-color: color-mix(in srgb, var(--complete-pending) 70%, var(--glass-border));
-  color: var(--complete-pending);
-  background: color-mix(in srgb, var(--complete-pending) 16%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--complete-pending) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-text) 28%, var(--glass-border));
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text-muted) 14%, transparent);
 }
 
 .recommendation-workout-log__complete-btn--pending:active:not(:disabled) {
@@ -2866,26 +2865,26 @@
 @keyframes workout-complete-nudge {
   0%,
   100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, #f0a24a 0%, transparent);
-    border-color: color-mix(in srgb, #f0a24a 45%, var(--glass-border));
-    background: color-mix(in srgb, #f0a24a 10%, transparent);
-    color: color-mix(in srgb, #f0a24a 88%, var(--color-text));
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--glass-border);
+    background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
+    color: var(--color-text-muted);
   }
   50% {
-    box-shadow: 0 0 0 4px color-mix(in srgb, #f0a24a 16%, transparent);
-    border-color: color-mix(in srgb, #f0a24a 72%, var(--glass-border));
-    background: color-mix(in srgb, #f0a24a 16%, transparent);
-    color: #f0a24a;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-text-muted) 16%, transparent);
+    border-color: color-mix(in srgb, var(--color-text) 30%, var(--glass-border));
+    background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+    color: var(--color-text);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .recommendation-workout-log__complete-btn--nudge:not(:disabled) {
     animation: none;
-    box-shadow: 0 0 0 3px color-mix(in srgb, #f0a24a 14%, transparent);
-    border-color: color-mix(in srgb, #f0a24a 65%, var(--glass-border));
-    color: #f0a24a;
-    background: color-mix(in srgb, #f0a24a 14%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-text) 28%, var(--glass-border));
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
   }
 }
 
