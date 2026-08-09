@@ -31,19 +31,21 @@ export function FortuneReadingHero({
   return (
     <header className={`fr-hero fr-hero--${tone}`}>
       <div className="fr-hero__glow" aria-hidden />
-      <p className="fr-hero__brand">🔮 {t('title')}</p>
-      {parts ? (
-        <p className="fr-hero__date">
-          {t('dateLong', { year: parts.year, month: parts.month, day: parts.day })}
-        </p>
-      ) : (
-        <p className="fr-hero__date">{date}</p>
-      )}
-      {mode ? (
-        <p className="fr-hero__mode">
-          {mode === 'simple' ? t('modeSimple') : t('modeFull')}
-        </p>
-      ) : null}
+      <div className="fr-hero__intro">
+        <p className="fr-hero__brand">🔮 {t('title')}</p>
+        {parts ? (
+          <p className="fr-hero__date">
+            {t('dateLong', { year: parts.year, month: parts.month, day: parts.day })}
+          </p>
+        ) : (
+          <p className="fr-hero__date">{date}</p>
+        )}
+        {mode ? (
+          <p className="fr-hero__mode">
+            {mode === 'simple' ? t('modeSimple') : t('modeFull')}
+          </p>
+        ) : null}
+      </div>
 
       <div className="fr-hero__core">
         <span className="fr-hero__emoji" aria-hidden>
@@ -53,7 +55,10 @@ export function FortuneReadingHero({
         <h1 className="fr-hero__core-value">「{coreThemeLabel}」</h1>
       </div>
 
-      <FortuneStarsRow scoreStars={scoreStars} label={t('starsLabel')} />
+      <div className="fr-hero__aside">
+        <FortuneStarsRow scoreStars={scoreStars} label={t('starsLabel')} />
+      </div>
+
       <p className="fr-hero__line">{oneLiner}</p>
     </header>
   );

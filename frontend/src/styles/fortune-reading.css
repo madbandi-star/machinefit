@@ -27,12 +27,8 @@
   min-width: 0;
 }
 
-@media (min-width: 840px) {
-  .fr-page__grid {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-}
+/* Multi-column layouts only on desktop (see bottom @media 900px).
+   Avoid viewport 520–840px rules while content is still in the 430px app frame. */
 
 /* —— Section shell —— */
 .fr-section {
@@ -337,17 +333,6 @@
   gap: 0.55rem;
 }
 
-@media (min-width: 520px) {
-  .fr-luck-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (min-width: 840px) {
-  .fr-luck-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
 
 .fr-luck-card {
   padding: 0.8rem 0.85rem;
@@ -391,11 +376,6 @@
   gap: 0.55rem;
 }
 
-@media (min-width: 520px) {
-  .fr-guide-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 
 .fr-tile {
   padding: 0.8rem 0.85rem;
@@ -622,11 +602,6 @@
   gap: 0.55rem;
 }
 
-@media (min-width: 560px) {
-  .fr-pillar-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 
 .fr-pillar {
   box-sizing: border-box;
@@ -855,5 +830,201 @@
   .fr-bar__fill {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* Keep shared chart widgets single-column while the app frame is still 430px */
+@media (min-width: 720px) and (max-width: 899px) {
+  .fr-page .fortune-donut {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* —— Desktop reading layout (mobile rules above stay untouched) —— */
+@media (min-width: 900px) {
+  /* Widen only the fortune reading route beyond the 430px member frame */
+  body:has(.fr-page) #root,
+  body:has(.fr-page) .layout,
+  body:has(.fr-page) .layout__content {
+    max-width: min(960px, calc(100vw - 2.5rem));
+  }
+
+  body:has(.fr-page) .layout__content {
+    padding-inline: 1.75rem;
+  }
+
+  body:has(.fr-page) #root {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--glass-border) 65%, transparent),
+      0 28px 90px rgba(0, 0, 0, 0.22);
+    border-radius: 0;
+  }
+
+  .fr-page {
+    --fr-radius: 18px;
+    --fr-pad: 1.25rem 1.4rem;
+    --fr-gap: 1.15rem;
+    max-width: none;
+    padding: 0.25rem 0 2.75rem;
+  }
+
+  .fr-page__grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .fr-section {
+    box-shadow: 0 12px 32px rgba(8, 12, 20, 0.07);
+  }
+
+  .fr-section__title {
+    font-size: 1.14rem;
+  }
+
+  .fr-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(13rem, 0.65fr);
+    column-gap: 1.75rem;
+    row-gap: 0.45rem;
+    align-items: center;
+    text-align: left;
+    padding: 1.85rem 2rem 1.65rem;
+  }
+
+  .fr-hero__intro {
+    grid-column: 1 / -1;
+  }
+
+  .fr-hero__brand {
+    font-size: 1.45rem;
+  }
+
+  .fr-hero__core {
+    margin: 0.35rem 0 0;
+  }
+
+  .fr-hero__emoji {
+    font-size: 2.85rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .fr-hero__core-value {
+    font-size: clamp(1.7rem, 2.4vw, 2.15rem);
+  }
+
+  .fr-hero__aside {
+    justify-self: stretch;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.1rem 1rem;
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--fr-border));
+    background:
+      radial-gradient(
+        120% 100% at 50% 0%,
+        color-mix(in srgb, var(--color-primary) 12%, transparent),
+        transparent 70%
+      ),
+      color-mix(in srgb, var(--color-surface, #fff) 72%, transparent);
+  }
+
+  .fr-hero__aside .fortune-stars,
+  .fr-hero .fortune-stars {
+    margin-top: 0;
+  }
+
+  .fr-hero__line {
+    grid-column: 1 / -1;
+    margin-top: 0.65rem;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 44rem;
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .fr-luck-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .fr-luck-card {
+    padding: 0.95rem 1rem;
+    min-height: 100%;
+  }
+
+  .fr-guide-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .fr-tile {
+    min-height: 6rem;
+    padding: 0.95rem 1rem;
+  }
+
+  .fr-pillar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .fr-apply {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1.15fr);
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .fr-apply__arrow {
+    align-self: center;
+    transform: rotate(-90deg);
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .fr-apply__block {
+    padding: 0.95rem 1.05rem;
+    height: 100%;
+  }
+
+  .fr-story p {
+    font-size: 1.02rem;
+    line-height: 1.7;
+    max-width: 46rem;
+  }
+
+  .fr-energy__summary,
+  .fr-base__harmony {
+    font-size: 0.95rem;
+  }
+
+  .fr-closing {
+    padding: 1.45rem 1.6rem;
+  }
+
+  .fr-closing__quote {
+    font-size: 1.3rem;
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .fr-disclaimer {
+    max-width: 40rem;
+    margin-inline: auto;
+    font-size: 0.78rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  body:has(.fr-page) #root,
+  body:has(.fr-page) .layout,
+  body:has(.fr-page) .layout__content {
+    max-width: min(1040px, calc(100vw - 3rem));
+  }
+
+  .fr-pillar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

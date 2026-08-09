@@ -1,27 +1,30 @@
 {
-  "title": "Home fortune card defaults collapsed",
-  "summary": "Home ??? ???? starts collapsed when no localStorage preference exists. Previously defaulted open. UI only.",
+  "title": "Desktop polish for fortune reading page",
+  "summary": "Fortune /today keeps mobile layout; desktop (?900px) widens beyond the 430px frame and uses a reading layout (hero split, 2-col energy/base, 3-col luck/guide, horizontal apply). Mid-width viewport multi-col inside the phone frame was removed.",
   "git": {
     "branch": "main",
-    "commit": "0621d9e8"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx"
+    "frontend/src/components/fortune/reading/FortuneReadingHero.tsx",
+    "frontend/src/styles/fortune-reading.css"
   ],
   "testFocus": [
-    "Clear localStorage key machinefit.homeFortuneExpanded (or use fresh profile)",
-    "Home fortune card loads collapsed",
-    "Expand still persists across reload"
+    "Mobile / narrow: fortune page looks unchanged (single column, 430 frame)",
+    "Desktop ?900px: page widens (~960px), hero is split, sections use wider grids",
+    "Apply section shows horizontal flow with rotated arrows",
+    "No cramped 2-col grids inside 430px phone frame on wide viewports"
   ],
   "fastChecks": [
-    "rg -n \"if \\(raw === null\\) return false\" frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx"
+    "rg -n \"min-width: 900px|body:has\\\\(\\\\.fr-page\\\\)\" frontend/src/styles/fortune-reading.css",
+    "cd frontend && npx tsc -p tsconfig.json --noEmit"
   ],
   "productionChecks": [
-    "After Deploy Frontend: first visit / cleared preference shows collapsed fortune"
+    "After Deploy Frontend: compare mobile vs desktop /fortune/today"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Fortune card defaulted expanded when preference missing.",
-  "toBe": "Fortune card defaults collapsed when preference missing."
+  "asIs": "Desktop kept the 430px phone strip with premature multi-column grids.",
+  "toBe": "Desktop widens and uses a polished reading layout; mobile unchanged."
 }
