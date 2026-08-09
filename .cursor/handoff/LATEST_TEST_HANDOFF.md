@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: 56017c8a
 
 ## Changed files
 - `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx` (new)

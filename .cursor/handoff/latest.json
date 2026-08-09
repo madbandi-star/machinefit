@@ -3,7 +3,7 @@
   "summary": "???? now opens a fullscreen modal calendar (HistoryDateCalendarDialog) instead of expanding inline under the toolbar. Date pick still filters the list and closes the dialog.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "56017c8a"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
