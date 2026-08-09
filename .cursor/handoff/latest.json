@@ -3,7 +3,7 @@
   "summary": "Removed the green corner glow-dot on incomplete [??]. Restored muted gray button + soft gray pulse for the next unfinished set.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "d8f4b4c9"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
@@ -14,7 +14,7 @@
     "Completed stays green"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--pending::after|workout-complete-dot-glow|workout-complete-nudge\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--d8f4b4c9::after|workout-complete-dot-glow|workout-complete-nudge\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
     "After Deploy Frontend: confirm no green glow dot on incomplete Complete"
