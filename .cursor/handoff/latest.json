@@ -1,29 +1,27 @@
 {
-  "title": "Home notice banner UI polish + remove more",
-  "summary": "Removes ??? from the home notice banner. Whole row links to notice detail. Restyled as a compact glass row with badge, ellipsized title, and chevron. UI/CSS only.",
+  "title": "Tighten home section vertical gaps",
+  "summary": "Home page section gap reduced (space-md ? space-sm) and home fortune card vertical margins removed so notice/fortune/tools/recent/favorites sit closer. CSS only.",
   "git": {
     "branch": "main",
-    "commit": "425bf615"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/home/HomeNoticeBanner/HomeNoticeBanner.tsx",
-    "frontend/src/styles/notices.css"
+    "frontend/src/styles/home.css",
+    "frontend/src/styles/fortune.css"
   ],
   "testFocus": [
-    "Home notice has no ??? text",
-    "Tap row opens notice detail",
-    "Single-line layout with badge + title + chevron",
-    "Important notice uses red accent/badge"
+    "Home: smaller gaps between notice ? fortune ? tools ? recent ? favorites",
+    "Fortune card no longer adds extra top/bottom margin beyond page gap"
   ],
   "fastChecks": [
-    "rg -n \"home-notice-banner__more|notices.more\" frontend/src/components/home/HomeNoticeBanner"
+    "rg -n \"home-page \\{|home-fortune-card \\{\" -A 4 frontend/src/styles/home.css frontend/src/styles/fortune.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: home notice looks compact and has no more link"
+    "After Deploy Frontend: visually confirm tighter home section spacing"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Pill banner with ??? side link looked cluttered.",
-  "toBe": "Clean single-row tappable banner without ???."
+  "asIs": "16px page gap plus fortune card margins made sections feel sparse.",
+  "toBe": "8px page gap; fortune margins zeroed so blocks sit closer."
 }

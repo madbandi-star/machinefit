@@ -1,22 +1,23 @@
-# Test handoff: Home notice UI polish
+# Test handoff: Tighten home section gaps
 
 ## Summary
-Removed ??? from home latest-notice. Restyled as one clean tappable row (badge + title + chevron). UI/CSS only.
+Home vertical spacing tightened: page gap `space-md` ? `space-sm`, fortune card top/bottom margins removed. CSS only.
 
 ## Git
 - Branch: `main`
-- Commit: 425bf615
+- Commit: pending
 
 ## Test focus
-1. No ??? on home notice
-2. Whole banner opens notice detail
-3. Compact single-line UI; important styling still clear
+1. notice ? fortune closer
+2. fortune ? rest/count tools closer
+3. tools ? recent closer
+4. recent ? favorites closer
 
 ## Fast checks
 ```bash
-rg -n "home-notice-banner__more|notices.more" frontend/src/components/home/HomeNoticeBanner
+rg -n "gap: var\\(--space-sm\\)|margin: 0" frontend/src/styles/home.css frontend/src/styles/fortune.css
 ```
 
 ## As-is ? To-be
-- **As-is**: Cluttered pill + ???
-- **To-be**: Clean glass row, no more link
+- **As-is**: Large gaps from page gap + fortune margins
+- **To-be**: Tighter consistent section spacing
