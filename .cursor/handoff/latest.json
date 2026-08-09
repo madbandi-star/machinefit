@@ -3,7 +3,7 @@
   "summary": "Records history: reduce vertical space between [???/???/?] summary dashboard and the first workout date heading. CSS only (history-dashboard + first date-group).",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "ecd44a9b"
   },
   "changedFiles": [
     "frontend/src/styles/history-premium.css",

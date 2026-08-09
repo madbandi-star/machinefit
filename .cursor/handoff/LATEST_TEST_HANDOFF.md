@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING (set after push)
+- commit: `ecd44a9b`
 
 ## Changed files
 - `frontend/src/styles/history-premium.css`
