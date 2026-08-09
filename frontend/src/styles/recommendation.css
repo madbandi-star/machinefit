@@ -2151,7 +2151,7 @@
 
 .recommendation-workout-log--history .voice-coach-panel {
   /* Below diary/tip 「계획 저장」 on Records + detail. */
-  margin-top: 0.55rem;
+  margin-top: 0.2rem;
 }
 
 .recommendation-workout-log__muscle-picker {
@@ -3084,7 +3084,8 @@
 }
 
 .history-workout-log__personal-tip-input {
-  min-height: 4.5rem;
+  min-height: 2.85rem;
+  max-height: none;
 }
 
 .history-workout-log__personal-tip-hint {

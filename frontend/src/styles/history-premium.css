@@ -1021,6 +1021,15 @@
   line-height: 1.45;
 }
 
+.history-page-premium .history-workout-log__personal-tip-input {
+  min-height: 2.85rem;
+}
+
+/* Flex gap on --history is 12px; pull voice coach closer under 계획 저장. */
+.history-page-premium .recommendation-workout-log--history .voice-coach-panel {
+  margin-top: calc(0.15rem - var(--history-gap-grid, 12px));
+}
+
 /* Typography — toolbar, calendar, settings, workout log (scoped overrides) */
 .history-page-premium .history-log-status-filter__item {
   font-size: var(--history-font-sm);

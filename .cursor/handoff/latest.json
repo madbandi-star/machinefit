@@ -1,33 +1,29 @@
 {
-  "title": "Show ??? label on unfinished set Complete button",
-  "summary": "History set button label is now ??? when incomplete and ?? when completed. Button min-width slightly widened for the longer label.",
+  "title": "Shrink personal tip to 2 lines; tighten plan-save to voice gap",
+  "summary": "Records card ??? ? textarea is 2 rows (was visually ~5 via min-height). Gap between ?? ?? and voice count panel tightened.",
   "git": {
     "branch": "main",
-    "commit": "3a50f8ea"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json",
     "frontend/src/styles/recommendation.css",
     "frontend/src/styles/history-premium.css"
   ],
   "testFocus": [
-    "Incomplete set button shows ???",
-    "After tap, label becomes ?? (green)",
-    "Toggle back shows ??? again"
+    "Records card ? ??? ? looks ~2 lines tall",
+    "?? ?? sits close above ?? ???",
+    "Diary/memo textarea height unchanged"
   ],
   "fastChecks": [
-    "rg -n \"setIncomplete|setComplete\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/i18n/locales/ko/machines.json"
+    "rg -n \"personal-tip-input|rows=\\{2\\}|voice-coach-panel\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/styles/recommendation.css frontend/src/styles/history-premium.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm incomplete sets say ???"
+    "After Deploy Frontend: confirm tip height and tighter spacing under ?? ??"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Incomplete sets still showed ?? on the button.",
-  "toBe": "Incomplete = ???; completed = ??."
+  "asIs": "Personal tip ~5 lines; large gap above voice coach.",
+  "toBe": "Personal tip ~2 lines; tight gap under ?? ??."
 }

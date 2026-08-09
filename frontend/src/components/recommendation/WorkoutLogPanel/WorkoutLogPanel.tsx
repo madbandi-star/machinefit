@@ -1617,7 +1617,7 @@ export function WorkoutLogPanel({
         <textarea
           id={`${idPrefix}-personal-tip`}
           className="input history-workout-log__memo-input history-workout-log__personal-tip-input"
-          rows={3}
+          rows={2}
           value={personalTipMemo}
           placeholder={t('machines:history.personalTipPlaceholder')}
           aria-label={t('machines:history.personalTipPlaceholder')}
