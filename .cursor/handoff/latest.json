@@ -3,7 +3,7 @@
   "summary": "Records history page date-to-date vertical spacing reduced (section gap 24px?10px, tighter date headings). CSS only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "2f6146cb"
   },
   "changedFiles": [
     "frontend/src/styles/history-premium.css",

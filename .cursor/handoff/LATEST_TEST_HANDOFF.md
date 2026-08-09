@@ -5,7 +5,7 @@ Records page date-group vertical spacing tightened (24px ? 10px section gap). CS
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 2f6146cb
 
 ## Test focus
 1. Records with 2+ dates ? less empty space between days
