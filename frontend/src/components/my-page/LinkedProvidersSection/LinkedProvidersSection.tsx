@@ -147,8 +147,8 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
   const linkedItems = status?.items.filter((item) => item.linked) ?? [];
   const linkedCount = linkedItems.length;
   const linkedProvider = linkedItems[0]?.provider;
-  /** Unlink only when another sign-in method remains (password or a second provider). */
-  const canUnlink = linkedCount > 1 || Boolean(status?.hasPassword);
+  /** Unlink only when another social provider remains linked. */
+  const canUnlink = linkedCount > 1;
 
   const runConnect = async (provider: AuthProviderCode) => {
     if (linkedProvider && linkedProvider !== provider) {

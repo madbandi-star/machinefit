@@ -40,7 +40,6 @@ interface UserRow {
   role_id: string;
   role_code: RoleCode;
   email: string;
-  password_hash: string | null;
   display_name: string;
   gender: string | null;
   height_cm: string | null;
@@ -134,27 +133,13 @@ const USER_SELECT = `
 `;
 
 export const userRepository = {
-  async findByEmail(email: string): Promise<(User & { passwordHash: string | null }) | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const pool = getPool();
     if (!pool) return null;
 
-    const result = await pool.query<UserRow & { password_hash: string | null }>(
-      `${USER_SELECT} WHERE u.email = $1`,
-      [email]
-    );
+    const result = await pool.query<UserRow>(`${USER_SELECT} WHERE u.email = $1`, [email]);
     if (!result.rows[0]) return null;
-    return { ...mapUser(result.rows[0]), passwordHash: result.rows[0].password_hash };
-  },
-
-  async hasPassword(userId: string): Promise<boolean> {
-    const pool = getPool();
-    if (!pool) return false;
-    const result = await pool.query<{ has_password: boolean }>(
-      `SELECT (password_hash IS NOT NULL AND password_hash <> '') AS has_password
-       FROM users WHERE id = $1`,
-      [userId]
-    );
-    return Boolean(result.rows[0]?.has_password);
+    return mapUser(result.rows[0]);
   },
 
   async findById(id: string): Promise<User | null> {
@@ -170,7 +155,6 @@ export const userRepository = {
 
   async create(data: {
     email: string;
-    passwordHash: string | null;
     displayName: string;
     gender?: Gender;
     languageCode?: string;
@@ -207,17 +191,16 @@ export const userRepository = {
 
     const result = await pool.query<UserRow>(
       `INSERT INTO users (
-         role_id, email, password_hash, display_name, gender, language_id,
+         role_id, email, display_name, gender, language_id,
          unit_height, unit_weight, height_cm, weight_kg, age, workout_goal,
          home_gym_id, home_gym_name, experience_level, marketing_opt_in, location_opt_in,
          avatar_url
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
        RETURNING *`,
       [
         roleId,
         data.email,
-        data.passwordHash,
         data.displayName,
         data.gender ?? null,
         languageId,

@@ -80,6 +80,8 @@ interface SocialLoginButtonsProps {
   variant?: 'default' | 'landing';
   /** Ordered providers to show. Defaults to Kakao → Google. */
   providers?: AuthProviderCode[];
+  /** Shown disabled with "coming soon" label (e.g. Apple). */
+  comingSoonProviders?: AuthProviderCode[];
   onCredential: (
     provider: AuthProviderCode,
     credential: OAuthCredentialPayload
@@ -92,18 +94,20 @@ export function SocialLoginButtons({
   showDivider = true,
   variant = 'default',
   providers = DEFAULT_LOGIN_PROVIDERS,
+  comingSoonProviders = [],
   onCredential,
   onClientError,
 }: SocialLoginButtonsProps) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState<AuthProviderCode | null>(null);
+  const comingSoon = new Set(comingSoonProviders);
 
   const visibleProviders = providers.filter((p) =>
     (AUTH_PROVIDERS as readonly string[]).includes(p)
   );
 
   const handleClick = async (provider: AuthProviderCode) => {
-    if (disabled || busy) return;
+    if (disabled || busy || comingSoon.has(provider)) return;
     setBusy(provider);
     try {
       if (!isOAuthProviderConfigured(provider)) {
@@ -136,8 +140,10 @@ export function SocialLoginButtons({
       <div className="social-auth__list" role="group" aria-label={t('auth.socialLoginGroup')}>
         {visibleProviders.map((provider) => {
           const meta = PROVIDER_META[provider];
-          const label =
-            busy === provider
+          const isComingSoon = comingSoon.has(provider);
+          const label = isComingSoon
+            ? t('auth.socialComingSoon', { provider: meta.label })
+            : busy === provider
               ? t('auth.socialConnecting')
               : variant === 'landing'
                 ? t(meta.startKey, { provider: meta.label })
@@ -146,9 +152,10 @@ export function SocialLoginButtons({
             <button
               key={provider}
               type="button"
-              className={`social-auth__btn ${meta.className}`}
-              disabled={Boolean(disabled || busy)}
+              className={`social-auth__btn ${meta.className}${isComingSoon ? ' social-auth__btn--soon' : ''}`}
+              disabled={Boolean(disabled || busy || isComingSoon)}
               aria-busy={busy === provider}
+              aria-disabled={isComingSoon || undefined}
               onClick={() => void handleClick(provider)}
             >
               <span className="social-auth__mark" aria-hidden>

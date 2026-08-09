@@ -70,15 +70,13 @@ function auth(token) {
   };
 }
 
-const login = await api('/auth/login', {
-  method: 'POST',
-  body: { email: EMAIL, password: PASSWORD },
-});
-if (login.status !== 200 || !login.data?.tokens?.accessToken) {
-  console.error('Login failed', login.status, login.json);
+const token = process.env.QA_ACCESS_TOKEN;
+if (!token) {
+  console.error(
+    'Password login removed (social-only). Set QA_ACCESS_TOKEN from a Kakao/Google session.'
+  );
   process.exit(1);
 }
-const token = login.data.tokens.accessToken;
 const client = auth(token);
 const me = await client.me();
 const gyms = await client.gyms();

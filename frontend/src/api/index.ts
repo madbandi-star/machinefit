@@ -73,28 +73,6 @@ export const recommendationApi = {
 };
 
 export const authApi = {
-  login: (email: string, password: string) =>
-    apiClient.post('/auth/login', { email, password }),
-  register: (data: {
-    email: string;
-    password: string;
-    displayName: string;
-    gender: Gender;
-    unitHeight?: 'cm' | 'ft_in';
-    unitWeight?: 'kg' | 'lb';
-    heightCm: number;
-    weightKg: number;
-    age: number;
-    workoutGoal: WorkoutGoal;
-    homeGymId?: string;
-    homeGymName?: string;
-    experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'professional';
-    agreeTerms: boolean;
-    agreePrivacy: boolean;
-    agreeMarketing?: boolean;
-    agreeLocation?: boolean;
-    legalVersion?: string;
-  }) => apiClient.post('/auth/register', data),
   /**
    * Social OAuth login — existing users authenticate; new identities return
    * `needs_consent` + pendingToken for the terms agreement step.

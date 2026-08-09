@@ -22,17 +22,12 @@ function spaGitHubPagesFallback(): Plugin {
   };
 }
 
-/** Ship demo password in the client bundle only when demo-auth is explicitly on. */
-const demoPasswordForClient =
-  process.env.VITE_DEMO_AUTH === 'true' ? 'demo1234' : '';
-
 const appVersion = pkg.version || '0.1.0';
 const buildId = process.env.GITHUB_SHA?.slice(0, 7) || new Date().toISOString();
 
 export default defineConfig({
   base: '/machinefit/',
   define: {
-    __MF_DEMO_PASSWORD__: JSON.stringify(demoPasswordForClient),
     __MF_APP_VERSION__: JSON.stringify(appVersion),
     __MF_BUILD_ID__: JSON.stringify(buildId),
   },

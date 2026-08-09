@@ -149,8 +149,10 @@ Base URL: `http://localhost:3001/api/v1`
 | `GET /machines` | List machines |
 | `GET /brands` | List brands |
 | `POST /recommendations` | Generate recommendation |
-| `POST /auth/register` | Register |
-| `POST /auth/login` | Login |
+| `POST /auth/kakao` | Kakao OAuth login |
+| `POST /auth/google` | Google OAuth login |
+| `POST /auth/apple` | Apple OAuth login (when enabled) |
+| `POST /auth/oauth/complete` | Complete social signup after terms |
 | `GET /users/me` | Current user profile |
 | `GET /favorites` | List favorites (auth) |
 | `POST /favorites` | Add favorite (auth) |

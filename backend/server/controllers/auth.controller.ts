@@ -1,7 +1,5 @@
 import type { Request, Response } from 'express';
 import {
-  registerSchema,
-  loginSchema,
   marketingPrefSchema,
   oauthCredentialSchema,
   oauthCompleteSchema,
@@ -12,7 +10,6 @@ import {
 } from '@machinefit/shared';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
-import { getRequestIp, getRequestUserAgent } from '../utils/request-meta.util.js';
 import {
   clearRefreshCookie,
   getRefreshCookie,
@@ -81,21 +78,6 @@ function sendOAuthResult(res: Response, result: OAuthLoginResult): void {
       versions: result.versions,
     },
   });
-}
-
-export async function register(req: Request, res: Response): Promise<void> {
-  const input = registerSchema.parse(req.body);
-  const result = await authService.register(input);
-  sendAuthResult(res, 201, result);
-}
-
-export async function login(req: Request, res: Response): Promise<void> {
-  const input = loginSchema.parse(req.body);
-  const result = await authService.login(input, {
-    ipAddress: getRequestIp(req),
-    userAgent: getRequestUserAgent(req),
-  });
-  sendAuthResult(res, 200, result);
 }
 
 export async function oauthLogin(req: Request, res: Response): Promise<void> {

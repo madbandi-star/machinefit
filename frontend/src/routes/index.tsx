@@ -155,8 +155,6 @@ const adminFriends = () =>
   }));
 const login = () =>
   import('@/pages/auth/login/LoginPage').then((m) => ({ default: m.LoginPage }));
-const register = () =>
-  import('@/pages/auth/register/RegisterPage').then((m) => ({ default: m.RegisterPage }));
 const authTerms = () =>
   import('@/pages/auth/terms/TermsAgreementPage').then((m) => ({
     default: m.TermsAgreementPage,
@@ -549,7 +547,7 @@ export const router = createBrowserRouter(
       errorElement: <RouterErrorElement />,
       children: [
         { path: ROUTES.LOGIN, element: lazyRoute(login) },
-        { path: ROUTES.REGISTER, element: lazyRoute(register) },
+        { path: '/register', element: <Navigate to={ROUTES.LOGIN} replace /> },
       ],
     },
     {

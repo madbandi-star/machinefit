@@ -26,17 +26,13 @@ try {
     console.log('✅ Login page renders');
   }
 
-  // Register page fields (Phase 2 #3)
+  // Legacy /register redirects to social login landing
   await page.goto(`${SITE}/register`, { waitUntil: 'networkidle' });
-  const regText = await page.locator('body').innerText();
-  const regChecks = [
-    { label: 'age field', ok: /나이|Age/i.test(regText) },
-    { label: 'workout goal', ok: /목표|Goal/i.test(regText) },
-    { label: 'home gym', ok: /헬스장|Gym/i.test(regText) },
-  ];
-  for (const c of regChecks) {
-    if (c.ok) console.log(`✅ Register: ${c.label}`);
-    else issue('bug', 'Register', `Missing ${c.label} on register page`);
+  const regUrl = page.url();
+  if (/\/login|\/$|machinefit\/?$/i.test(regUrl) || /카카오|Google|Kakao/i.test(await page.locator('body').innerText())) {
+    console.log('✅ /register redirects to social login');
+  } else {
+    issue('bug', 'Register', `Expected redirect to social login, got ${regUrl}`);
   }
 
   // Machine search (guest)

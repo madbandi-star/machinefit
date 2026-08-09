@@ -49,7 +49,7 @@ async function bootstrap(): Promise<void> {
     logger.info(`Liveness (Render): ${env.API_BASE_PATH}/health`);
     logger.info(`DR probes: /health /ready /live`);
     if (!getPool()) {
-      logger.info('Dev mode: admin@machinefit.com / admin123');
+      logger.info('Dev mode: in-memory users only (no DATABASE_URL) — use OAuth against a DB for login');
     }
 
     void warmupDatabase();

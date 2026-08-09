@@ -60,7 +60,6 @@ const EXCLUDED_TABLES = [
 ] as const;
 
 const SENSITIVE_USER_COLUMNS = new Set([
-  'password_hash',
   'password',
   'refresh_token',
   'access_token',

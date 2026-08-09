@@ -2,8 +2,6 @@ import { Router } from 'express';
 import * as authController from '../controllers/auth.controller.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
 import {
-  registerSchema,
-  loginSchema,
   oauthCredentialSchema,
   oauthCompleteSchema,
   consentAcceptSchema,
@@ -11,9 +9,6 @@ import {
 import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
 
 export const authRouter = Router();
-
-authRouter.post('/register', validateBody(registerSchema), authController.register);
-authRouter.post('/login', validateBody(loginSchema), authController.login);
 
 /** Social login — provider path: google | kakao | apple */
 authRouter.post(

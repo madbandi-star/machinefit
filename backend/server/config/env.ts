@@ -46,18 +46,6 @@ const envSchema = z.object({
   NOTICE_ATTACHMENT_MAX_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
   /** Private Supabase Storage bucket for user/system backup files. */
   BACKUP_STORAGE_BUCKET: z.string().default('backup'),
-  /**
-   * When true, registration forces DEMO_PASSWORD (demo/staging convenience).
-   * Defaults to false in production, true otherwise. Override with DEMO_AUTH=true|false.
-   */
-  DEMO_AUTH: z
-    .enum(['true', 'false'])
-    .optional()
-    .transform((v) => {
-      if (v === 'true') return true;
-      if (v === 'false') return false;
-      return process.env.NODE_ENV !== 'production';
-    }),
   /** OAuth / social login (optional — endpoints error when unset). */
   GOOGLE_CLIENT_ID: z.string().optional(),
   KAKAO_REST_API_KEY: z.string().optional(),

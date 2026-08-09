@@ -1,13 +1,12 @@
 -- Gym seed data (requires machines, countries, and a seed owner user)
 -- Uses a placeholder owner UUID; in production, link to real owner users.
 
--- Seed owner user (dev only — password: GymOwner123!)
-INSERT INTO users (id, role_id, email, password_hash, display_name, language_id)
+-- Seed owner user (dev only — social-login era: no password_hash column)
+INSERT INTO users (id, role_id, email, display_name, language_id)
 SELECT
   '00000000-0000-4000-a000-000000000001',
   r.id,
   'owner@machinefit.dev',
-  '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G2oXj8KzqG5qGi',
   'Demo Gym Owner',
   l.id
 FROM roles r, languages l
@@ -15,12 +14,11 @@ WHERE r.code = 'owner' AND l.code = 'en'
 ON CONFLICT (email) DO NOTHING;
 
 -- Fallback: use member role if owner role seed hasn't run
-INSERT INTO users (id, role_id, email, password_hash, display_name)
+INSERT INTO users (id, role_id, email, display_name)
 SELECT
   '00000000-0000-4000-a000-000000000001',
   r.id,
   'owner@machinefit.dev',
-  '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G2oXj8KzqG5qGi',
   'Demo Gym Owner'
 FROM roles r
 WHERE r.code = 'member'

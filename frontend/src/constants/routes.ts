@@ -42,7 +42,8 @@ export const ROUTES = {
   TRADE_REPORTS: '/my-page/trade/reports',
   TRADE_STATS: '/my-page/trade/stats',
   LOGIN: '/login',
-  REGISTER: '/register',
+  /** @deprecated Local signup removed — redirects to login. */
+  REGISTER: '/login',
   /** Staged OAuth signup / legal version reconsent. */
   AUTH_TERMS: '/auth/terms',
   TERMS: '/terms',

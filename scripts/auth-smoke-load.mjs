@@ -89,75 +89,64 @@ async function api(path, options = {}) {
 let accessToken = null;
 let user = null;
 
-if (!EMAIL || !PASSWORD) {
-  if (REQUIRE_AUTH) {
-    fail('auth chain', 'SMOKE_EMAIL / SMOKE_PASSWORD required (REQUIRE_AUTH=1)');
-  } else {
-    skip('auth chain', 'set SMOKE_EMAIL + SMOKE_PASSWORD to enable');
-  }
+if (process.env.SMOKE_ACCESS_TOKEN) {
+  accessToken = process.env.SMOKE_ACCESS_TOKEN;
+  pass('auth token', 'SMOKE_ACCESS_TOKEN');
+} else if (REQUIRE_AUTH) {
+  fail(
+    'auth chain',
+    'Password login removed (social-only). Set SMOKE_ACCESS_TOKEN for authenticated probes.'
+  );
 } else {
-  const login = await api('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email: EMAIL, password: PASSWORD }),
+  skip('auth chain', 'social-login only — set SMOKE_ACCESS_TOKEN to probe authenticated routes');
+}
+
+if (accessToken) {
+  const me = await api('/users/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
-  accessToken = login.json?.data?.tokens?.accessToken ?? null;
-  user = login.json?.data?.user ?? null;
-  if (login.status === 200 && accessToken) {
-    pass('login', user?.email ?? EMAIL);
+  if (me.status === 200 && me.json?.data) pass('GET /users/me', me.json.data.email ?? 'ok');
+  else fail('GET /users/me', `status=${me.status}`);
+
+  const history = await api('/workout-logs?gymId=all&limit=5', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (history.status === 200) {
+    const n = Array.isArray(history.json?.data) ? history.json.data.length : 0;
+    pass('GET /workout-logs', `${n} rows`);
+  } else if (history.status === 400) {
+    pass('GET /workout-logs (auth ok)', `status=400 validation`);
   } else {
-    fail('login', `status=${login.status} ${JSON.stringify(login.json?.error ?? login.json)}`);
+    fail('GET /workout-logs', `status=${history.status}`);
   }
 
-  if (accessToken) {
-    const me = await api('/users/me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    if (me.status === 200 && me.json?.data) pass('GET /users/me', me.json.data.email ?? 'ok');
-    else fail('GET /users/me', `status=${me.status}`);
+  const machinesAuthed = await api('/machines?limit=1', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const items = machinesAuthed.json?.data?.items ?? machinesAuthed.json?.data ?? [];
+  const machineCode = Array.isArray(items) && items[0]?.code ? items[0].code : null;
 
-    const history = await api('/workout-logs?gymId=all&limit=5', {
+  const gymId = me.json?.data?.activeGymId ?? me.json?.data?.gymId ?? null;
+  const memberId = me.json?.data?.activeMemberId ?? me.json?.data?.memberId ?? null;
+  if (machineCode && gymId && memberId) {
+    const today = new Date().toISOString().slice(0, 10);
+    const upsert = await api('/workout-logs', {
+      method: 'PUT',
       headers: { Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify({
+        gymId,
+        memberId,
+        machineCode,
+        logDate: today,
+        setCount: 1,
+        setWeightsKg: [10],
+        setCompleted: [true],
+      }),
     });
-    // gymId=all may require no memberId per schema
-    if (history.status === 200) {
-      const n = Array.isArray(history.json?.data) ? history.json.data.length : 0;
-      pass('GET /workout-logs', `${n} rows`);
-    } else if (history.status === 400) {
-      // Scope validation — still proves auth works
-      pass('GET /workout-logs (auth ok)', `status=400 validation`);
-    } else {
-      fail('GET /workout-logs', `status=${history.status}`);
-    }
-
-    const machines = await api('/machines?limit=1', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const items = machines.json?.data?.items ?? machines.json?.data ?? [];
-    const machineCode = Array.isArray(items) && items[0]?.code ? items[0].code : null;
-
-    // Optional upsert when gym/member context is available on profile
-    const gymId = me.json?.data?.activeGymId ?? me.json?.data?.gymId ?? null;
-    const memberId = me.json?.data?.activeMemberId ?? me.json?.data?.memberId ?? null;
-    if (machineCode && gymId && memberId) {
-      const today = new Date().toISOString().slice(0, 10);
-      const upsert = await api('/workout-logs', {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({
-          gymId,
-          memberId,
-          machineCode,
-          logDate: today,
-          setCount: 1,
-          setWeightsKg: [10],
-          setCompleted: [true],
-        }),
-      });
-      if (upsert.status === 200) pass('PUT /workout-logs', machineCode);
-      else fail('PUT /workout-logs', `status=${upsert.status} ${JSON.stringify(upsert.json?.error)}`);
-    } else {
-      skip('PUT /workout-logs', 'no active gym/member on profile — history/auth still checked');
-    }
+    if (upsert.status === 200) pass('PUT /workout-logs', machineCode);
+    else fail('PUT /workout-logs', `status=${upsert.status} ${JSON.stringify(upsert.json?.error)}`);
+  } else {
+    skip('PUT /workout-logs', 'no active gym/member on profile — history/auth still checked');
   }
 }
 

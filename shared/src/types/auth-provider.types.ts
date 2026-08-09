@@ -15,6 +15,4 @@ export interface AuthProviderLink {
 
 export interface AuthProvidersStatus {
   items: AuthProviderLink[];
-  /** True when the user can still sign in with email/password. */
-  hasPassword: boolean;
 }

@@ -1,9 +1,9 @@
 import type { RoleCode } from '@machinefit/shared';
 
+/** In-memory users when DATABASE_URL is unset (local API smoke only). */
 export interface DevUser {
   id: string;
   email: string;
-  passwordHash: string;
   displayName: string;
   roleCode: RoleCode;
   isActive: boolean;
@@ -26,7 +26,10 @@ export function findDevUserByEmail(email: string): DevUser | undefined {
   return devUsers.get(email);
 }
 
-export function updateDevUser(id: string, patch: Partial<Pick<DevUser, 'roleCode' | 'isActive' | 'displayName'>>): DevUser | null {
+export function updateDevUser(
+  id: string,
+  patch: Partial<Pick<DevUser, 'roleCode' | 'isActive' | 'displayName'>>
+): DevUser | null {
   const user = findDevUserById(id);
   if (!user) return null;
   if (patch.roleCode) user.roleCode = patch.roleCode;

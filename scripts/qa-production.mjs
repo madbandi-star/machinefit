@@ -114,28 +114,33 @@ try {
   fail('FW machines for biceps filter', e.message);
 }
 
-// Auth validation
+// Legacy password auth must be gone (social-login only).
 try {
   const badLogin = await api('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email: 'invalid@test.com', password: 'wrong' }),
   });
-  if (badLogin.status === 401 || badLogin.status === 400) pass('Auth rejects bad login', `status=${badLogin.status}`);
-  else fail('Auth rejects bad login', `status=${badLogin.status}`);
+  if (badLogin.status === 404 || badLogin.status === 405) {
+    pass('Legacy /auth/login removed', `status=${badLogin.status}`);
+  } else {
+    fail('Legacy /auth/login removed', `status=${badLogin.status}`);
+  }
 } catch (e) {
-  fail('Auth rejects bad login', e.message);
+  fail('Legacy /auth/login removed', e.message);
 }
 
-// Register validation (missing fields)
 try {
   const badReg = await api('/auth/register', {
     method: 'POST',
     body: JSON.stringify({ email: 'x@y.com', password: '12345678' }),
   });
-  if (badReg.status === 400) pass('Register validates required fields', '400');
-  else fail('Register validates required fields', `status=${badReg.status} ${JSON.stringify(badReg.json)}`);
+  if (badReg.status === 404 || badReg.status === 405) {
+    pass('Legacy /auth/register removed', `status=${badReg.status}`);
+  } else {
+    fail('Legacy /auth/register removed', `status=${badReg.status} ${JSON.stringify(badReg.json)}`);
+  }
 } catch (e) {
-  fail('Register validates required fields', e.message);
+  fail('Legacy /auth/register removed', e.message);
 }
 
 // Protected route without token

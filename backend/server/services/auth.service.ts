@@ -1,10 +1,7 @@
 import {
   Role,
-  DEMO_PASSWORD,
   LEGAL_DOC_VERSION,
   LEGAL_DOC_VERSIONS,
-  type RegisterInput,
-  type LoginInput,
   type User,
   type RoleCode,
   type OAuthCompleteInput,
@@ -15,7 +12,6 @@ import { getPool } from '../config/database.js';
 import { env } from '../config/env.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
-import { hashPassword, comparePassword } from '../utils/hash.util.js';
 import {
   signAccessToken,
   signRefreshToken,
@@ -23,7 +19,7 @@ import {
   signOAuthPendingToken,
   verifyOAuthPendingToken,
 } from '../utils/jwt.util.js';
-import { devUsers, findDevUserByEmail, findDevUserById } from '../data/dev-users.js';
+import { findDevUserById } from '../data/dev-users.js';
 import { notificationService } from './notification.service.js';
 import crypto from 'crypto';
 
@@ -147,215 +143,7 @@ async function applyConsentBundle(
   ]);
 }
 
-async function resolveRegisterPasswordHash(plainPassword: string): Promise<string> {
-  if (env.DEMO_AUTH) {
-    return hashPassword(DEMO_PASSWORD);
-  }
-  return hashPassword(plainPassword);
-}
-
 export const authService = {
-  async register(input: RegisterInput) {
-    if (!input.agreeTerms || !input.agreePrivacy) {
-      throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
-    }
-
-    const pool = getPool();
-    const passwordHash = await resolveRegisterPasswordHash(input.password);
-    const marketingOptIn = Boolean(input.agreeMarketing);
-    const locationOptIn = Boolean(input.agreeLocation);
-    const legalVersion = input.legalVersion || LEGAL_DOC_VERSION;
-
-    if (!pool) {
-      if (devUsers.has(input.email)) {
-        throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
-      }
-      const id = crypto.randomUUID();
-      devUsers.set(input.email, {
-        id,
-        email: input.email,
-        passwordHash,
-        displayName: input.displayName,
-        roleCode: Role.MEMBER,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-      });
-      void notificationService.notify(
-        id,
-        'system',
-        { en: 'Welcome to MachineFit!', ko: 'MachineFit에 오신 것을 환영합니다!' },
-        {
-          en: 'Get personalized machine settings for your body.',
-          ko: '체형에 맞는 기구 설정을 받아보세요.',
-        }
-      );
-      return buildAuthResponse({
-        id,
-        roleId: 'dev-role',
-        email: input.email,
-        displayName: input.displayName,
-        roleCode: Role.MEMBER,
-        gender: input.gender,
-        unitHeight: input.unitHeight ?? 'cm',
-        unitWeight: input.unitWeight ?? 'kg',
-        heightCm: input.heightCm,
-        weightKg: input.weightKg,
-        age: input.age,
-        workoutGoal: input.workoutGoal,
-        homeGymId: input.homeGymId,
-        homeGymName: input.homeGymName,
-        experienceLevel: input.experienceLevel,
-        marketingOptIn,
-        locationOptIn,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-    }
-
-    if (await userRepository.emailExists(input.email)) {
-      throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
-    }
-
-    let user;
-    try {
-      user = await userRepository.create({
-        email: input.email,
-        passwordHash,
-        displayName: input.displayName,
-        gender: input.gender,
-        languageCode: input.languageCode,
-        unitHeight: input.unitHeight,
-        unitWeight: input.unitWeight,
-        heightCm: input.heightCm,
-        weightKg: input.weightKg,
-        age: input.age,
-        workoutGoal: input.workoutGoal,
-        homeGymId: input.homeGymId ?? null,
-        homeGymName: input.homeGymName ?? null,
-        experienceLevel: input.experienceLevel,
-        marketingOptIn,
-        locationOptIn,
-      });
-      await userRepository.recordConsents(user.id, [
-        { type: 'terms', version: legalVersion, agreed: true },
-        { type: 'privacy', version: legalVersion, agreed: true },
-        { type: 'marketing', version: legalVersion, agreed: marketingOptIn },
-        { type: 'location', version: legalVersion, agreed: locationOptIn },
-        { type: 'push_service', version: legalVersion, agreed: true },
-      ]);
-    } catch (error) {
-      const pgCode =
-        error && typeof error === 'object' && 'code' in error
-          ? String((error as { code: unknown }).code)
-          : '';
-      if (pgCode === '23505') {
-        throw new AppError(409, 'EMAIL_EXISTS', 'Email already registered');
-      }
-      throw error;
-    }
-
-    const { userGymRepository } = await import('../repositories/user-gym.repository.js');
-    const defaultGym = await userGymRepository.ensureDefaultGym(
-      user.id,
-      user.homeGymName ?? undefined
-    );
-    user = { ...user, activeGymId: defaultGym.id, marketingOptIn };
-
-    // 7-day Premium trial on first signup (feature flag signup_trial_auto).
-    try {
-      const { billingService } = await import('./billing.service.js');
-      await billingService.maybeStartSignupTrial(user.id);
-    } catch {
-      // Non-blocking — registration must succeed even if billing tables missing.
-    }
-
-    return buildAuthResponse(user);
-  },
-
-  async login(
-    input: LoginInput,
-    meta?: { ipAddress?: string | null; userAgent?: string | null }
-  ) {
-    const pool = getPool();
-    const { complianceRepository } = await import('../repositories/compliance.repository.js');
-
-    if (!pool) {
-      const user = findDevUserByEmail(input.email);
-      if (!user || !user.isActive || !(await comparePassword(input.password, user.passwordHash))) {
-        await complianceRepository.recordLoginEvent({
-          email: input.email,
-          success: false,
-          failureReason: 'INVALID_CREDENTIALS',
-          ipAddress: meta?.ipAddress,
-          userAgent: meta?.userAgent,
-        });
-        throw new AppError(401, 'INVALID_CREDENTIALS', 'Invalid email or password');
-      }
-      await complianceRepository.recordLoginEvent({
-        userId: user.id,
-        email: user.email,
-        success: true,
-        ipAddress: meta?.ipAddress,
-        userAgent: meta?.userAgent,
-      });
-      return buildAuthResponse({
-        id: user.id,
-        roleId: 'dev-role',
-        email: user.email,
-        displayName: user.displayName,
-        roleCode: user.roleCode,
-        unitHeight: 'cm',
-        unitWeight: 'kg',
-        marketingOptIn: false,
-        isActive: user.isActive,
-        createdAt: user.createdAt,
-        updatedAt: user.createdAt,
-      });
-    }
-
-    const user = await userRepository.findByEmail(input.email);
-    if (
-      !user ||
-      !user.passwordHash ||
-      !(await comparePassword(input.password, user.passwordHash))
-    ) {
-      await complianceRepository.recordLoginEvent({
-        userId: user?.id,
-        email: input.email,
-        success: false,
-        failureReason: 'INVALID_CREDENTIALS',
-        ipAddress: meta?.ipAddress,
-        userAgent: meta?.userAgent,
-      });
-      throw new AppError(401, 'INVALID_CREDENTIALS', 'Invalid email or password');
-    }
-
-    if (!user.isActive) {
-      await complianceRepository.recordLoginEvent({
-        userId: user.id,
-        email: user.email,
-        success: false,
-        failureReason: 'ACCOUNT_DISABLED',
-        ipAddress: meta?.ipAddress,
-        userAgent: meta?.userAgent,
-      });
-      throw new AppError(403, 'ACCOUNT_DISABLED', 'Account is disabled');
-    }
-
-    await userRepository.updateLastLogin(user.id);
-    await complianceRepository.recordLoginEvent({
-      userId: user.id,
-      email: user.email,
-      success: true,
-      ipAddress: meta?.ipAddress,
-      userAgent: meta?.userAgent,
-    });
-
-    const { passwordHash: _, ...safeUser } = user;
-    return buildAuthResponse(safeUser);
-  },
-
   async refresh(refreshToken: string) {
     let payload: { userId: string };
     try {
@@ -426,14 +214,10 @@ export const authService = {
   async deactivateAccount(userId: string) {
     const pool = getPool();
     if (!pool) {
-      for (const [email, user] of devUsers.entries()) {
-        if (user.id === userId) {
-          user.isActive = false;
-          devUsers.set(email, user);
-          return { message: 'Account deactivated' };
-        }
-      }
-      throw new AppError(404, 'NOT_FOUND', 'User not found');
+      const { updateDevUser } = await import('../data/dev-users.js');
+      const user = updateDevUser(userId, { isActive: false });
+      if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
+      return { message: 'Account deactivated' };
     }
     const ok = await userRepository.deactivateAccount(userId);
     if (!ok) throw new AppError(404, 'NOT_FOUND', 'User not found or already deactivated');
@@ -556,7 +340,6 @@ export const authService = {
     try {
       let user = await userRepository.create({
         email,
-        passwordHash: null,
         displayName: displayName.slice(0, 100),
         avatarUrl: pending.avatarUrl ?? undefined,
         experienceLevel: 'beginner',
@@ -574,6 +357,14 @@ export const authService = {
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');
       const defaultGym = await userGymRepository.ensureDefaultGym(user.id);
       user = { ...user, activeGymId: defaultGym.id };
+
+      // 7-day Premium trial on first social signup (feature flag signup_trial_auto).
+      try {
+        const { billingService } = await import('./billing.service.js');
+        await billingService.maybeStartSignupTrial(user.id);
+      } catch {
+        // Non-blocking — signup must succeed even if billing tables missing.
+      }
 
       await userRepository.updateLastLogin(user.id);
       const refreshed = await userRepository.findById(user.id);
@@ -633,9 +424,7 @@ export const authService = {
     const { AUTH_PROVIDERS } = await import('@machinefit/shared');
     const linked = await authProviderRepository.findByUserId(userId);
     const byProvider = new Map(linked.map((row) => [row.provider, row]));
-    const hasPassword = await userRepository.hasPassword(userId);
     return {
-      hasPassword,
       items: AUTH_PROVIDERS.map((provider) => {
         const row = byProvider.get(provider);
         return {
@@ -724,8 +513,7 @@ export const authService = {
     }
 
     const providerCount = await authProviderRepository.countByUserId(userId);
-    const hasPassword = await userRepository.hasPassword(userId);
-    if (providerCount <= 1 && !hasPassword) {
+    if (providerCount <= 1) {
       throw new AppError(
         400,
         'LAST_LOGIN_METHOD',

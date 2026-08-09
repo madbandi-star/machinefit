@@ -90,7 +90,7 @@ export function MyPage() {
     // Clear local session + go home in the same turn so AuthGuard cannot
     // bounce /my-page → /login → /home (that flash loop felt like flicker).
     void authApi.logout().catch(() => undefined);
-    clearLocalSession({ clearCredentials: true });
+    clearLocalSession();
     navigate(ROUTES.HOME, { replace: true });
   };
 

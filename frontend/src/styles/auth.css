@@ -948,3 +948,8 @@
   padding-top: 1.25rem !important;
   padding-bottom: 2rem !important;
 }
+
+.social-auth__btn--soon {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

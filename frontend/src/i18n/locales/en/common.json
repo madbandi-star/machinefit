@@ -334,7 +334,8 @@
     "socialConnecting": "Connecting…",
     "socialNotConfigured": "Social login is not configured yet.",
     "socialCancelled": "Login was cancelled.",
-    "socialFailed": "Social login failed. Please try again."
+    "socialFailed": "Social login failed. Please try again.",
+    "socialComingSoon": "{{provider}} Sign In (Coming soon)"
   },
   "settings": {
     "language": "Language",
@@ -458,7 +459,7 @@
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "Email, password hash, display name, gender, height/weight/age, goals, optional location/GPS, workouts, friends, notifications, photos, trades, and PT-related data.",
+      "s1Body": "Email, display name, gender, height/weight/age, goals, optional location/GPS, workouts, friends, notifications, photos, trades, and PT-related data.",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",

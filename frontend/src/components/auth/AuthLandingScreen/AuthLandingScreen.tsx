@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons/SocialLoginButtons';
@@ -63,13 +62,8 @@ function FeatureChartIcon() {
   );
 }
 
-interface AuthLandingScreenProps {
-  /** Optional demo email form slot (login page only). */
-  demoSlot?: ReactNode;
-}
-
 /** Shared marketing + social login landing for `/` (guest) and `/login`. */
-export function AuthLandingScreen({ demoSlot }: AuthLandingScreenProps) {
+export function AuthLandingScreen() {
   const { t } = useTranslation();
   const { oauthPending, handleOAuth, handleOAuthClientError } = useSocialAuthLogin();
 
@@ -134,12 +128,12 @@ export function AuthLandingScreen({ demoSlot }: AuthLandingScreenProps) {
           <SocialLoginButtons
             variant="landing"
             showDivider={false}
-            providers={['kakao', 'google']}
+            providers={['kakao', 'google', 'apple']}
+            comingSoonProviders={['apple']}
             onCredential={handleOAuth}
             onClientError={handleOAuthClientError}
           />
         )}
-        {demoSlot}
       </div>
 
       <p className="auth-landing__legal">

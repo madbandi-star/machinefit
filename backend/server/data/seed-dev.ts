@@ -1,62 +1,34 @@
-import { DEMO_PASSWORD, Role } from '@machinefit/shared';
+import crypto from 'node:crypto';
+import { Role } from '@machinefit/shared';
 import { devUsers } from './dev-users.js';
-import { hashPassword } from '../utils/hash.util.js';
 
-let seeded = false;
-
+/**
+ * Seed in-memory users when DATABASE_URL is unset.
+ * Password login was removed — these rows exist only for non-DB local smoke of
+ * role-gated routes if something still looks them up by id.
+ */
 export async function seedDevUsers(): Promise<void> {
-  if (seeded) return;
-  seeded = true;
+  const now = new Date().toISOString();
+  const seeds: Array<{
+    email: string;
+    displayName: string;
+    roleCode: (typeof Role)[keyof typeof Role];
+  }> = [
+    { email: 'admin@machinefit.com', displayName: 'Admin', roleCode: Role.ADMIN },
+    { email: 'demo@machinefit.com', displayName: 'Demo Member', roleCode: Role.MEMBER },
+    { email: 'premium@machinefit.com', displayName: 'Premium Demo', roleCode: Role.MEMBER },
+    { email: 'vip@machinefit.com', displayName: 'VIP Demo', roleCode: Role.MEMBER },
+  ];
 
-  if (!devUsers.has('admin@machinefit.com')) {
-    const adminHash = await hashPassword(DEMO_PASSWORD);
-    devUsers.set('admin@machinefit.com', {
-      id: 'admin-dev-1',
-      email: 'admin@machinefit.com',
-      passwordHash: adminHash,
-      displayName: 'Admin',
-      roleCode: Role.ADMIN,
+  for (const seed of seeds) {
+    if (devUsers.has(seed.email)) continue;
+    devUsers.set(seed.email, {
+      id: crypto.randomUUID(),
+      email: seed.email,
+      displayName: seed.displayName,
+      roleCode: seed.roleCode,
       isActive: true,
-      createdAt: new Date().toISOString(),
-    });
-  }
-
-  if (!devUsers.has('demo@machinefit.com')) {
-    const memberHash = await hashPassword(DEMO_PASSWORD);
-    devUsers.set('demo@machinefit.com', {
-      id: 'demo-dev-1',
-      email: 'demo@machinefit.com',
-      passwordHash: memberHash,
-      displayName: 'Demo User',
-      roleCode: Role.MEMBER,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    });
-  }
-
-  if (!devUsers.has('demo_premium@gmail.com')) {
-    const premiumHash = await hashPassword(DEMO_PASSWORD);
-    devUsers.set('demo_premium@gmail.com', {
-      id: 'demo-premium-1',
-      email: 'demo_premium@gmail.com',
-      passwordHash: premiumHash,
-      displayName: 'Demo Premium',
-      roleCode: Role.PREMIUM_MEMBER,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    });
-  }
-
-  if (!devUsers.has('demo_vip@gmail.com')) {
-    const vipHash = await hashPassword(DEMO_PASSWORD);
-    devUsers.set('demo_vip@gmail.com', {
-      id: 'demo-vip-1',
-      email: 'demo_vip@gmail.com',
-      passwordHash: vipHash,
-      displayName: 'Demo VIP',
-      roleCode: Role.VIP_MEMBER,
-      isActive: true,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
     });
   }
 }

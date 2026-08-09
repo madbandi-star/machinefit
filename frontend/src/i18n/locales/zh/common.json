@@ -335,7 +335,8 @@
     "email": "邮箱",
     "password": "密码",
     "displayName": "昵称",
-    "loginFailed": "登录失败。"
+    "loginFailed": "登录失败。",
+    "socialComingSoon": "{{provider}} 登录（即将推出）"
   },
   "settings": {
     "language": "Language",
@@ -459,7 +460,7 @@
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "Email, password hash, display name, gender, height/weight/age, goals, optional location/GPS, workouts, friends, notifications, photos, trades, and PT-related data.",
+      "s1Body": "Email, display name, gender, height/weight/age, goals, optional location/GPS, workouts, friends, notifications, photos, trades, and PT-related data.",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
