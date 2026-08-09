@@ -28,11 +28,14 @@ export function HomeNoticeBanner() {
         className="home-notice-banner__main"
       >
         <span className="home-notice-banner__icon" aria-hidden>
-          <Icon name="bell" size={18} />
+          <Icon name="bell" size={14} />
         </span>
-        <span className="home-notice-banner__copy">
-          <p className="home-notice-banner__label">{t('notices.homeBannerLabel')}</p>
-          <p className="home-notice-banner__title">{data.title}</p>
+        <span className="home-notice-banner__line">
+          <span className="home-notice-banner__label">{t('notices.homeBannerLabel')}</span>
+          <span className="home-notice-banner__sep" aria-hidden>
+            ·
+          </span>
+          <span className="home-notice-banner__title">{data.title}</span>
         </span>
       </Link>
       <Link to={ROUTES.NOTICES} className="home-notice-banner__more">

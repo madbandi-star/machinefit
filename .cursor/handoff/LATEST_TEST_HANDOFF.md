@@ -1,25 +1,22 @@
-# Test handoff: Home fortune dismiss for today
+# Test handoff: Single-line home notice banner
 
 ## Summary
-Home ??? ???? card adds ???? ????? under ??? ??. Hides the section for the rest of the local day (localStorage date). UI only.
+Home ?? ?? banner is one horizontal line (icon · label · title · more). UI/CSS only.
 
 ## Git
 - Branch: `main`
-- Commit: 3992e6ab
+- Commit: pending
 
 ## Test focus
-1. Ready card shows dismiss under detail CTA
-2. Click ? section gone immediately
-3. Same-day reload ? still hidden
-4. Next day (or change stored date) ? shows again
+1. Home notice is single-line height
+2. Long title ellipsizes; ??? / title links work
+3. Important notice still distinct
 
 ## Fast checks
 ```bash
-cd frontend && npx tsc -p tsconfig.json --noEmit
-node scripts/i18n-audit.mjs --sync
-rg -n "dismissToday|homeFortuneHiddenDate" frontend/src
+rg -n "home-notice-banner__line|home-notice-banner__copy" frontend/src
 ```
 
 ## As-is ? To-be
-- **As-is**: Fortune block always on home when available
-- **To-be**: Can hide for today only
+- **As-is**: Two-line label+title with large icon
+- **To-be**: One compact row

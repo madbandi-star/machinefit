@@ -1,35 +1,28 @@
 {
-  "title": "Home fortune dismiss for today",
-  "summary": "Adds ???? ????? under ??? ?? on the home fortune card. Clicking hides the whole section for the rest of the local calendar day via localStorage date key. UI only.",
+  "title": "Single-line home notice banner",
+  "summary": "Home latest-notice banner is compacted to one horizontal line: icon · label · title · more. Smaller padding/icon; title ellipsizes. UI/CSS only.",
   "git": {
     "branch": "main",
-    "commit": "3992e6ab"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "frontend/src/styles/fortune.css",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json"
+    "frontend/src/components/home/HomeNoticeBanner/HomeNoticeBanner.tsx",
+    "frontend/src/styles/notices.css"
   ],
   "testFocus": [
-    "Home ready fortune card: button below ??? ?? labeled ??? ????",
-    "Click dismiss ? section disappears immediately",
-    "Reload same day ? still hidden",
-    "Change localStorage date or wait until next day ? section returns"
+    "Home: notice banner is one row tall",
+    "Long titles ellipsize; ??? still works",
+    "Important notice styling still readable"
   ],
   "fastChecks": [
-    "cd frontend && npx tsc -p tsconfig.json --noEmit",
-    "node scripts/i18n-audit.mjs --sync",
-    "rg -n \"dismissToday|homeFortuneHiddenDate\" frontend/src"
+    "rg -n \"home-notice-banner__line|home-notice-banner__copy\" frontend/src"
   ],
   "productionChecks": [
-    "After Deploy Frontend: dismiss home fortune and confirm it stays hidden today"
+    "After Deploy Frontend: home notice fits a single line"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Home fortune card always visible when data loads.",
-  "toBe": "User can hide the home fortune block for the rest of today."
+  "asIs": "Notice banner used two text lines + large icon, taking vertical space.",
+  "toBe": "Single compact row with ellipsized title."
 }
