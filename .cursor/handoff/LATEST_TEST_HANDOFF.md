@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: 3a12c68b
 
 ## Changed files
 - `frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx`

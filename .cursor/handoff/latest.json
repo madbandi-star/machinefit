@@ -3,7 +3,7 @@
   "summary": "??? ?? ??? checkbox moved into the voice coach header, left of the ??/?? switch. Removed from the controls body.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "3a12c68b"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
