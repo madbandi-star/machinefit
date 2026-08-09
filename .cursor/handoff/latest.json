@@ -3,7 +3,7 @@
   "summary": "Removes ??? from the home notice banner. Whole row links to notice detail. Restyled as a compact glass row with badge, ellipsized title, and chevron. UI/CSS only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "425bf615"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeNoticeBanner/HomeNoticeBanner.tsx",

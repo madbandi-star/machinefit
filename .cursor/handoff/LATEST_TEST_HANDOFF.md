@@ -5,7 +5,7 @@ Removed ??? from home latest-notice. Restyled as one clean tappable row (badge +
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 425bf615
 
 ## Test focus
 1. No ??? on home notice
