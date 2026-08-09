@@ -1,9 +1,9 @@
 {
   "title": "Incomplete Complete button uses amber, not green",
-  "summary": "Pending/nudge [??] buttons no longer use primary green (looked completed). Incomplete = amber action cue; green reserved for completed only.",
+  "summary": "4381b775/nudge [??] buttons no longer use primary green (looked completed). Incomplete = amber action cue; green reserved for completed only.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "4381b775"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
@@ -14,7 +14,7 @@
     "Next incomplete still gently pulses in amber"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--pending|complete-pending|workout-complete-nudge\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--4381b775|complete-4381b775|workout-complete-nudge\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
     "After Deploy Frontend: confirm incomplete vs completed color distinction on Records cards"
