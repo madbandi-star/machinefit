@@ -1496,7 +1496,9 @@ export function WorkoutLogPanel({
                       : t('machines:workoutLog.setCompletePendingAria', { number: index + 1 })
                   }
                 >
-                  {t('machines:workoutLog.setComplete')}
+                  {completed
+                    ? t('machines:workoutLog.setComplete')
+                    : t('machines:workoutLog.setIncomplete')}
                 </button>
               </>
             ) : null}

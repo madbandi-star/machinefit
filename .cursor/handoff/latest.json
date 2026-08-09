@@ -1,27 +1,33 @@
 {
-  "title": "Rollback green glow dot on incomplete Complete",
-  "summary": "Removed the green corner glow-dot on incomplete [??]. Restored muted gray button + soft gray pulse for the next unfinished set.",
+  "title": "Show ??? label on unfinished set Complete button",
+  "summary": "History set button label is now ??? when incomplete and ?? when completed. Button min-width slightly widened for the longer label.",
   "git": {
     "branch": "main",
-    "commit": "d8f4b4c9"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/styles/history-premium.css"
   ],
   "testFocus": [
-    "Incomplete [??] has no green corner dot",
-    "Still muted gray; next unfinished set soft gray pulse",
-    "Completed stays green"
+    "Incomplete set button shows ???",
+    "After tap, label becomes ?? (green)",
+    "Toggle back shows ??? again"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--d8f4b4c9::after|workout-complete-dot-glow|workout-complete-nudge\" frontend/src/styles/recommendation.css"
+    "rg -n \"setIncomplete|setComplete\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/i18n/locales/ko/machines.json"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm no green glow dot on incomplete Complete"
+    "After Deploy Frontend: confirm incomplete sets say ???"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Green glowing corner dot on incomplete Complete.",
-  "toBe": "No corner dot; gray button + soft gray pulse only."
+  "asIs": "Incomplete sets still showed ?? on the button.",
+  "toBe": "Incomplete = ???; completed = ??."
 }

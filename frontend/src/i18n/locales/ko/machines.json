@@ -104,6 +104,7 @@
     "diaryTagsLabel": "추천 태그",
     "setCompletedHint": "세트 완료 시 라벨을 탭하세요",
     "setComplete": "완료",
+    "setIncomplete": "미완료",
     "setCompletePendingAria": "{{number}}세트 완료 처리",
     "setCompleteDoneAria": "{{number}}세트 완료됨, 탭하면 취소",
     "planSave": "계획 저장",
