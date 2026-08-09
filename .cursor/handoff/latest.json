@@ -3,7 +3,7 @@
   "summary": "History set button label is now ??? when incomplete and ?? when completed. Button min-width slightly widened for the longer label.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "3a50f8ea"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
