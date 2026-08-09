@@ -1,32 +1,28 @@
 {
-  "title": "Gentle nudge animation on incomplete set Complete button",
-  "summary": "History workout cards: incomplete [??] buttons get a soft 728c2e0c style; only the next unfinished set gently pulses to invite completion. Completed buttons stay static. Respects prefers-reduced-motion.",
+  "title": "Add bottom Close button on records calendar dialog",
+  "summary": "Fullscreen ???? calendar now has a full-width Close button at the bottom (thumb-friendly). Top X remains as secondary escape.",
   "git": {
     "branch": "main",
-    "commit": "728c2e0c"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css"
   ],
   "testFocus": [
-    "Records card with incomplete sets ? only the next [??] softly pulses",
-    "Tap complete ? pulse moves to next incomplete set; completed style is static",
-    "Hover/focus pauses animation; reduced-motion shows static highlight only"
+    "Records ? ???? ? bottom ?? closes dialog",
+    "Top X / backdrop / date select still close",
+    "Bottom button respects safe-area on notched phones"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--nudge|workout-complete-nudge|nextIncompleteSetIndex\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/styles/recommendation.css"
+    "rg -n \"history-calendar-dialog__close-bottom|history-calendar-dialog__footer\" frontend/src/components/records/HistoryDateCalendarDialog/"
   ],
   "productionChecks": [
-    "After Deploy Frontend: open Records expanded card, confirm gentle complete-button cue"
+    "After Deploy Frontend: open calendar, tap bottom Close"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Incomplete [??] buttons looked muted with no cue to tap.",
-  "toBe": "Next incomplete [??] gently breathes; other 728c2e0c buttons tinted but static."
+  "asIs": "Only top-right X to dismiss the fullscreen calendar.",
+  "toBe": "Full-width bottom Close button + top X still available."
 }

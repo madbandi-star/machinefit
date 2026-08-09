@@ -77,6 +77,16 @@ export function HistoryDateCalendarDialog({
             onAfterSelect={onClose}
           />
         </div>
+
+        <footer className="history-calendar-dialog__footer">
+          <button
+            type="button"
+            className="btn btn--secondary btn--block history-calendar-dialog__close-bottom"
+            onClick={onClose}
+          >
+            {t('common:actions.close')}
+          </button>
+        </footer>
       </div>
     </div>,
     document.body

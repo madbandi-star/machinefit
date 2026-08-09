@@ -1,28 +1,26 @@
-# Test handoff ? Incomplete [??] nudge animation
+# Test handoff ? Bottom Close on records calendar
 
 ## Summary
-???? ?????? **???** `[??]`? ???? ??. ???? ??? ?? 1?? pulse, ??? ??? ????? ??.
+???? ???? ?? ??? **??** ?? ?? (?? ??). ?? X? ??.
 
 ## Git
 - branch: `main`
-- commit: 728c2e0c
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx`
-- `frontend/src/styles/recommendation.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/machines.json`
+- `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx`
+- `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css`
 
 ## Test focus
-1. Records ? expand card ? next incomplete `[??]` soft pulse
-2. Complete a set ? pulse moves to next unfinished set
-3. All complete ? no pulse
-4. Hover/focus pauses animation; `prefers-reduced-motion` ? static highlight
+1. Records ? ???? ? ?? ??
+2. ?? X / ?? / ?? ??? ??
+3. ?? ?? safe-area
 
 ## Fast checks
 ```bash
-rg -n "complete-btn--nudge|workout-complete-nudge|nextIncompleteSetIndex" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/styles/recommendation.css
+rg -n "history-calendar-dialog__close-bottom|history-calendar-dialog__footer" frontend/src/components/records/HistoryDateCalendarDialog/
 ```
 
 ## as-is ? to-be
-- **as-is:** Incomplete complete buttons had no affordance animation
-- **to-be:** Soft primary breathe on next incomplete only
+- **as-is:** ?? X??? ??
+- **to-be:** ?? ??? ?? + ?? X
