@@ -1380,11 +1380,11 @@
 }
 
 .records-list--history .records-list__date-group {
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .records-list--history .records-list__date-heading {
-  padding: 0.25rem 0 0.45rem;
+  padding: 0.1rem 0 0.25rem;
   font-size: 0.8125rem;
   line-height: 1.3;
 }
