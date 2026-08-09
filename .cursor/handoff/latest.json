@@ -3,7 +3,7 @@
   "summary": "Records history: give a bit more vertical space between the summary metric cards and the first workout date (was pulled too tight).",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "3c1185bf"
   },
   "changedFiles": [
     "frontend/src/styles/history-premium.css",
