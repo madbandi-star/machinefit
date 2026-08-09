@@ -1,24 +1,25 @@
-# Test handoff: Collapsible home fortune card
+# Test handoff: Home fortune dismiss for today
 
 ## Summary
-Homepage ??? ???? section can be collapsed/expanded from the card header. Last state is saved in localStorage. UI only.
+Home ??? ???? card adds ???? ????? under ??? ??. Hides the section for the rest of the local day (localStorage date). UI only.
 
 ## Git
 - Branch: `main`
-- Commit: a090e2f6
+- Commit: pending
 
 ## Test focus
-1. Home ? fortune card header shows ??/???
-2. Collapse hides body; ready state shows keyword peek
-3. Expand restores metrics + ??? ?? CTA
-4. Reload keeps last open/closed state
+1. Ready card shows dismiss under detail CTA
+2. Click ? section gone immediately
+3. Same-day reload ? still hidden
+4. Next day (or change stored date) ? shows again
 
 ## Fast checks
 ```bash
 cd frontend && npx tsc -p tsconfig.json --noEmit
-rg -n "home-fortune-card__toggle|machinefit.homeFortuneExpanded" frontend/src
+node scripts/i18n-audit.mjs --sync
+rg -n "dismissToday|homeFortuneHiddenDate" frontend/src
 ```
 
 ## As-is ? To-be
-- **As-is**: Fortune card always fully open
-- **To-be**: Toggleable open/closed with persisted preference
+- **As-is**: Fortune block always on home when available
+- **To-be**: Can hide for today only

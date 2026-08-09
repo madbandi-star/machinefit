@@ -279,6 +279,12 @@
   line-height: 1.1;
 }
 
+.home-fortune-card__actions {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+}
+
 .home-fortune-card__cta {
   position: relative;
   display: flex;
@@ -298,6 +304,29 @@
 
 .home-fortune-card__cta:hover {
   background: color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
+
+.home-fortune-card__dismiss {
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.home-fortune-card__dismiss:hover {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+}
+
+.home-fortune-card__dismiss:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+  outline-offset: 2px;
 }
 
 .home-fortune-card--gate {

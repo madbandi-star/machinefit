@@ -470,5 +470,6 @@
       "ren": "Like riding a big flow and managing pace.",
       "gui": "Like fine-tuning recovery to how you feel."
     }
-  }
+  },
+  "dismissToday": "Hide for today"
 }

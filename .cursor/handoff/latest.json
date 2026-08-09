@@ -1,30 +1,35 @@
 {
-  "title": "Collapsible home fortune card",
-  "summary": "Homepage ??? ???? card can expand/collapse via header toggle. Preference persists in localStorage. Collapsed peek shows keyword when ready. UI only.",
+  "title": "Home fortune dismiss for today",
+  "summary": "Adds ???? ????? under ??? ?? on the home fortune card. Clicking hides the whole section for the rest of the local calendar day via localStorage date key. UI only.",
   "git": {
     "branch": "main",
-    "commit": "a090e2f6"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "frontend/src/styles/fortune.css"
+    "frontend/src/styles/fortune.css",
+    "frontend/src/i18n/locales/ko/fortune.json",
+    "frontend/src/i18n/locales/en/fortune.json",
+    "frontend/src/i18n/locales/zh/fortune.json",
+    "frontend/src/i18n/locales/ja/fortune.json"
   ],
   "testFocus": [
-    "Home page: toggle ??/??? on fortune card",
-    "Collapsed: header + keyword peek (ready) / header only otherwise",
-    "Expanded: full card content + CTA still works",
-    "Reload page: last open/closed state remembered"
+    "Home ready fortune card: button below ??? ?? labeled ??? ????",
+    "Click dismiss ? section disappears immediately",
+    "Reload same day ? still hidden",
+    "Change localStorage date or wait until next day ? section returns"
   ],
   "fastChecks": [
     "cd frontend && npx tsc -p tsconfig.json --noEmit",
-    "rg -n \"home-fortune-card__toggle|machinefit.homeFortuneExpanded\" frontend/src"
+    "node scripts/i18n-audit.mjs --sync",
+    "rg -n \"dismissToday|homeFortuneHiddenDate\" frontend/src"
   ],
   "productionChecks": [
-    "After Deploy Frontend: toggle collapse on home fortune section"
+    "After Deploy Frontend: dismiss home fortune and confirm it stays hidden today"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Home fortune card always fully expanded.",
-  "toBe": "Header toggle collapses/expands the section; preference persists."
+  "asIs": "Home fortune card always visible when data loads.",
+  "toBe": "User can hide the home fortune block for the rest of today."
 }

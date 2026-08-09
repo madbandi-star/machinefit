@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,7 @@ import { getTodayDateKey } from '@/utils/historyDate';
 import { isAllGymsId } from '@machinefit/shared';
 
 const EXPANDED_KEY = 'machinefit.homeFortuneExpanded';
+const HIDDEN_DATE_KEY = 'machinefit.homeFortuneHiddenDate';
 
 function readExpandedPreference(): boolean {
   try {
@@ -30,6 +31,22 @@ function readExpandedPreference(): boolean {
 function writeExpandedPreference(expanded: boolean) {
   try {
     localStorage.setItem(EXPANDED_KEY, expanded ? '1' : '0');
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
+
+function isHiddenForDate(dateKey: string): boolean {
+  try {
+    return localStorage.getItem(HIDDEN_DATE_KEY) === dateKey;
+  } catch {
+    return false;
+  }
+}
+
+function hideForDate(dateKey: string) {
+  try {
+    localStorage.setItem(HIDDEN_DATE_KEY, dateKey);
   } catch {
     /* ignore quota / private mode */
   }
@@ -110,6 +127,11 @@ export function HomeFortuneCard() {
   const { activeMemberId } = useActiveMember();
   const today = getTodayDateKey();
   const [expanded, setExpanded] = useState(readExpandedPreference);
+  const [hiddenToday, setHiddenToday] = useState(() => isHiddenForDate(today));
+
+  useEffect(() => {
+    setHiddenToday(isHiddenForDate(today));
+  }, [today]);
 
   const toggleExpanded = () => {
     setExpanded((prev) => {
@@ -117,6 +139,11 @@ export function HomeFortuneCard() {
       writeExpandedPreference(next);
       return next;
     });
+  };
+
+  const dismissForToday = () => {
+    hideForDate(today);
+    setHiddenToday(true);
   };
 
   const gymId =
@@ -136,7 +163,10 @@ export function HomeFortuneCard() {
     },
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
+    enabled: !hiddenToday,
   });
+
+  if (hiddenToday) return null;
 
   if (isLoading) {
     return (
@@ -251,10 +281,19 @@ export function HomeFortuneCard() {
         </div>
       </div>
 
-      <Link to={ROUTES.FORTUNE_TODAY} className="home-fortune-card__cta">
-        {t('viewDetail')}
-        <span aria-hidden>→</span>
-      </Link>
+      <div className="home-fortune-card__actions">
+        <Link to={ROUTES.FORTUNE_TODAY} className="home-fortune-card__cta">
+          {t('viewDetail')}
+          <span aria-hidden>→</span>
+        </Link>
+        <button
+          type="button"
+          className="home-fortune-card__dismiss"
+          onClick={dismissForToday}
+        >
+          {t('dismissToday')}
+        </button>
+      </div>
     </FortuneCardShell>
   );
 }
