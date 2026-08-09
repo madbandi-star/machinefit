@@ -3,7 +3,7 @@
   "summary": "Home ??? ???? starts collapsed when no localStorage preference exists. Previously defaulted open. UI only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "0621d9e8"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx"

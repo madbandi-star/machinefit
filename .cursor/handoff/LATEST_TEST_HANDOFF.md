@@ -5,7 +5,7 @@ Home ??? ???? defaults to collapsed when no saved preference. UI only.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 0621d9e8
 
 ## Test focus
 1. Clear `machinefit.homeFortuneExpanded` (or fresh browser)
