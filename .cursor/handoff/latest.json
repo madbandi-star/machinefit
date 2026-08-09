@@ -3,7 +3,7 @@
   "summary": "Fullscreen ???? calendar now has a full-width Close button at the bottom (thumb-friendly). Top X remains as secondary escape.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "997673cf"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
