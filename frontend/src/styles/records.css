@@ -83,27 +83,18 @@
   width: 100%;
 }
 
-.records-list__calendar-details {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-}
-
-.records-list__calendar-summary {
+.records-list__calendar-trigger {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  align-self: flex-end;
   gap: var(--space-xs);
   min-width: 0;
-  list-style: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
   user-select: none;
-}
-
-.records-list__calendar-summary::-webkit-details-marker {
-  display: none;
+  color: inherit;
 }
 
 .records-list__calendar-toggle {
@@ -121,15 +112,19 @@
     color 0.15s ease;
 }
 
-.records-list__calendar-details[open] .records-list__calendar-toggle {
+.records-list__calendar-trigger.is-open .records-list__calendar-toggle,
+.records-list__calendar-trigger:hover .records-list__calendar-toggle {
   border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   color: var(--color-primary);
 }
 
-.records-list__calendar-details[open] .records-list__calendar-icon,
-.records-list__calendar-details[open] .records-list__date-filter-label,
-.records-list__calendar-details[open] .records-list__calendar-chevron {
+.records-list__calendar-trigger.is-open .records-list__calendar-icon,
+.records-list__calendar-trigger.is-open .records-list__date-filter-label,
+.records-list__calendar-trigger.is-open .records-list__calendar-chevron,
+.records-list__calendar-trigger:hover .records-list__calendar-icon,
+.records-list__calendar-trigger:hover .records-list__date-filter-label,
+.records-list__calendar-trigger:hover .records-list__calendar-chevron {
   color: inherit;
 }
 
@@ -139,13 +134,8 @@
   transition: transform 0.2s ease;
 }
 
-.records-list__calendar-details[open] .records-list__calendar-chevron {
+.records-list__calendar-trigger.is-open .records-list__calendar-chevron {
   transform: rotate(180deg);
-}
-
-.records-list__calendar-details .history-calendar {
-  margin-top: var(--space-xs);
-  width: 100%;
 }
 
 .records-list__date-selected {
@@ -1342,49 +1332,9 @@
   flex-wrap: nowrap;
 }
 
-.records-list--history .records-list__calendar-details {
+.records-list--history .records-list__calendar-trigger {
   width: auto;
-}
-
-.records-list--history .records-list__calendar-summary {
-  align-self: auto;
   justify-content: flex-end;
-}
-
-.records-list--history .records-list__toolbar:has(.records-list__calendar-details[open]) {
-  flex-wrap: wrap;
-}
-
-.records-list--history
-  .records-list__toolbar:has(.records-list__calendar-details[open])
-  .records-list__date-filter-block {
-  width: 100%;
-  margin-left: 0;
-}
-
-.records-list--history
-  .records-list__toolbar:has(.records-list__calendar-details[open])
-  .records-list__filters {
-  width: 100%;
-}
-
-.records-list--history
-  .records-list__toolbar:has(.records-list__calendar-details[open])
-  .records-list__calendar-details {
-  width: 100%;
-}
-
-.records-list--history
-  .records-list__toolbar:has(.records-list__calendar-details[open])
-  .records-list__calendar-summary {
-  width: 100%;
-  justify-content: flex-end;
-}
-
-.records-list--history
-  .records-list__toolbar:has(.records-list__calendar-details[open])
-  .history-calendar {
-  width: 100%;
 }
 
 .records-list__calendar-icon {

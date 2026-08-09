@@ -1,30 +1,31 @@
-# Test handoff ? Tighten summary ? date gap (Records)
+# Test handoff ? Fullscreen records date calendar
 
 ## Summary
-?? ????? `[???][???]?[????]` ?? ??? ? ???? ?? ?? ??? ??. CSS only.
+?? ??? **????** ?? ? ??? ?? ?? **?? ?? ??** ??? ??. ?? ?? ? ??? ?? ?? ??.
 
 ## Git
 - branch: `main`
-- commit: `ecd44a9b`
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/styles/history-premium.css`
+- `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx` (new)
+- `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css` (new)
+- `frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx`
 - `frontend/src/styles/records.css`
+- `frontend/src/styles/history-premium.css`
 
 ## Test focus
-1. Records with cards ? summary metrics visible; gap above first date heading looks tight (not a large empty band).
-2. Toolbar `[??][???]?` still usable.
-3. Multiple date groups still readable (prior date-to-date tighten intact).
+1. Records ? ???? ? ??(? ???)? ??? ??
+2. ?? ? ? ?? ?? + `?date=` ??
+3. X / ?? / Escape? ??
+4. ?? ? ????? ?? ??
 
-## Fast checks (no Pages wait)
+## Fast checks
 ```bash
-rg -n "history-dashboard \+ \.records-list__date-group" frontend/src/styles/history-premium.css frontend/src/styles/records.css
-rg -n "records-list--history" frontend/src/styles/records.css | head -n 20
+rg -n "HistoryDateCalendarDialog" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
+rg -n "history-calendar-dialog" frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css
 ```
 
-## Production checks
-After Deploy Frontend success: open Records and confirm summary sits close to first date.
-
 ## as-is ? to-be
-- **as-is:** Wide empty space between summary stats and workout date.
-- **to-be:** Tight spacing via list gap + stronger negative margin on first date group after `.history-dashboard`.
+- **as-is:** Toolbar ?? ?? ??? ??
+- **to-be:** Fullscreen calendar dialog

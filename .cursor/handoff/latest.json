@@ -1,29 +1,33 @@
 {
-  "title": "Tighten summary stats to date gap on Records",
-  "summary": "Records history: reduce vertical space between [???/???/?] summary dashboard and the first workout date heading. CSS only (history-dashboard + first date-group).",
+  "title": "Records date filter opens fullscreen calendar",
+  "summary": "???? now opens a fullscreen modal calendar (HistoryDateCalendarDialog) instead of expanding inline under the toolbar. Date pick still filters the list and closes the dialog.",
   "git": {
     "branch": "main",
-    "commit": "ecd44a9b"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/styles/history-premium.css",
-    "frontend/src/styles/records.css"
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/styles/records.css",
+    "frontend/src/styles/history-premium.css"
   ],
   "testFocus": [
-    "Records page with summary stats visible ? gap above first date heading is tight",
-    "Toolbar / filter row spacing still usable",
-    "Date-to-date gaps still look like prior tighten"
+    "Records ? tap ???? ? calendar covers the screen with large day cells",
+    "Pick a date ? dialog closes and list filters",
+    "Close (X / backdrop / Escape) without selecting",
+    "Clear date (??) still works when a date is selected"
   ],
   "fastChecks": [
-    "rg -n \"history-dashboard \\+ \\.records-list__date-group\" frontend/src/styles/history-premium.css frontend/src/styles/records.css",
-    "rg -n \"records-list--history\" frontend/src/styles/records.css | head -n 20"
+    "rg -n \"HistoryDateCalendarDialog\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "rg -n \"history-calendar-dialog\" frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm summary cards sit close to first date on Records"
+    "After Deploy Frontend: open Records, tap ????, confirm fullscreen calendar"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Wide empty band between summary metric cards and the first workout date.",
-  "toBe": "Summary and first date sit close (negative margin pull + smaller list gap)."
+  "asIs": "???? expanded a small inline calendar under the toolbar.",
+  "toBe": "???? opens a fullscreen calendar dialog; selecting a date closes it and filters."
 }

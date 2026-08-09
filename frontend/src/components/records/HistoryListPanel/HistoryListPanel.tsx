@@ -41,7 +41,7 @@ import {
   type HistoryRecordCard as HistoryRecordCardData,
 } from '@/utils/historyRecordsDisplay';
 import { mergeWorkoutPlanCards } from '@/utils/workoutPlanCards';
-import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
+import { HistoryDateCalendarDialog } from '@/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog';
 import { HistorySummaryStats } from '@/components/records/HistorySummaryStats/HistorySummaryStats';
 import { HistoryRecordCard } from '@/components/records/HistoryRecordCard/HistoryRecordCard';
 import { MissedWorkoutPlansBanner } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
@@ -1094,40 +1094,31 @@ export function HistoryListPanel() {
         <div className="records-list__toolbar-end">
           <div className="records-list__date-filter-block">
             <div className="records-list__filters">
-              <details
-                className="records-list__calendar-details"
-                open={calendarOpen}
-                onToggle={(e) => setCalendarOpen((e.target as HTMLDetailsElement).open)}
+              <button
+                type="button"
+                className={`records-list__calendar-trigger${calendarOpen ? ' is-open' : ''}`}
+                aria-haspopup="dialog"
+                aria-expanded={calendarOpen}
+                onClick={() => setCalendarOpen(true)}
               >
-                <summary className="records-list__calendar-summary">
-                  <span className="records-list__calendar-toggle">
-                    <Icon
-                      name="calendar"
-                      size={14}
-                      className="records-list__calendar-icon"
-                    />
-                    <span className="records-list__date-filter-label">
-                      {selectedDate
-                        ? t('machines:history.selectedDateLabel', { date: selectedDate })
-                        : t('machines:history.filterByDate')}
-                    </span>
-                    <Icon
-                      name="chevronDown"
-                      size={16}
-                      className="records-list__calendar-chevron"
-                    />
+                <span className="records-list__calendar-toggle">
+                  <Icon
+                    name="calendar"
+                    size={14}
+                    className="records-list__calendar-icon"
+                  />
+                  <span className="records-list__date-filter-label">
+                    {selectedDate
+                      ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                      : t('machines:history.filterByDate')}
                   </span>
-                </summary>
-                <HistoryDateCalendar
-                  datesWithData={datesWithData}
-                  dateCounts={dateCounts}
-                  selectedDate={selectedDate}
-                  onSelect={handleDateChange}
-                  locale={i18n.language}
-                  allowEmptySelect
-                  onAfterSelect={() => setCalendarOpen(false)}
-                />
-              </details>
+                  <Icon
+                    name="chevronDown"
+                    size={16}
+                    className="records-list__calendar-chevron"
+                  />
+                </span>
+              </button>
               {selectedDate ? (
                 <button
                   type="button"
@@ -1370,6 +1361,17 @@ export function HistoryListPanel() {
           if (!pendingTemplateDelete) return;
           deleteTemplateMutation.mutate(pendingTemplateDelete.id);
         }}
+      />
+
+      <HistoryDateCalendarDialog
+        open={calendarOpen}
+        datesWithData={datesWithData}
+        dateCounts={dateCounts}
+        selectedDate={selectedDate}
+        locale={i18n.language}
+        allowEmptySelect
+        onSelect={handleDateChange}
+        onClose={() => setCalendarOpen(false)}
       />
 
       <HistoryDayActionsSheet

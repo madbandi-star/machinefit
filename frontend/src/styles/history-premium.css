@@ -1027,8 +1027,7 @@
 }
 
 .history-page-premium .records-list__date-filter-label,
-.history-page-premium .records-list__date-selected,
-.history-page-premium .records-list__calendar-summary {
+.history-page-premium .records-list__date-selected {
   font-size: var(--history-font-sm);
 }
 
