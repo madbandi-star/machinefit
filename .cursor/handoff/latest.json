@@ -1,27 +1,27 @@
 {
-  "title": "Incomplete Complete button back to muted gray",
-  "summary": "a1298980/nudge [??] uses muted gray again (not amber/green). Green remains only for completed state; soft gray pulse still cues the next unfinished set.",
+  "title": "Glowing attention dot on incomplete Complete button",
+  "summary": "Incomplete [??] keeps muted gray button color, with a primary green corner dot (records-nav style). Next unfinished set?s dot gently pulses/glows; completed has no dot.",
   "git": {
     "branch": "main",
-    "commit": "a1298980"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Incomplete [??] looks gray/muted",
-    "Completed [??] still green",
-    "Next incomplete still gently pulses in gray"
+    "Incomplete [??] = gray button + green top-right glowing dot",
+    "Next incomplete dot pulses; other incomplete dots stay lit but static",
+    "Completed [??] = green button, no corner dot"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--a1298980|workout-complete-nudge\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--pending::after|workout-complete-dot-glow\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm incomplete gray vs completed green"
+    "After Deploy Frontend: confirm corner glow dot on incomplete Complete"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Incomplete Complete used amber.",
-  "toBe": "Incomplete = muted gray; completed = green."
+  "asIs": "Incomplete Complete had gray pulse on whole button.",
+  "toBe": "Gray button + records-nav style glowing corner dot."
 }
