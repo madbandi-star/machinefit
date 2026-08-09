@@ -1,9 +1,18 @@
 /* Records & saved settings — mobile-first compact layouts */
 
+/* Pull [모두]/[저장됨] toolbar closer under the app header title bar. */
+body:has(.records-page--history) .layout__content {
+  padding-top: 0.15rem;
+}
+
+.records-page--history {
+  margin-top: 0;
+}
+
 .records-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 0;
 }
 
 .records-page__gym {
@@ -1125,6 +1134,11 @@
   margin-top: 0;
   margin-bottom: 0;
   padding-block: 0;
+}
+
+.records-list--history > .records-list__toolbar:first-child,
+.records-list--history > .missed-plans-banner:first-child {
+  margin-top: 0;
 }
 
 .records-list--history .history-log-status-filter {

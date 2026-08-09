@@ -1,33 +1,28 @@
 {
-  "title": "Records date filter opens fullscreen calendar",
-  "summary": "???? now opens a fullscreen modal calendar (HistoryDateCalendarDialog) instead of expanding inline under the toolbar. Date pick still filters the list and closes the dialog.",
+  "title": "Tighten Records header-to-toolbar gap",
+  "summary": "Records page: reduce space above the [??]/[???]/???? toolbar under the app header. CSS + records-page--history marker.",
   "git": {
     "branch": "main",
-    "commit": "56017c8a"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/styles/records.css",
-    "frontend/src/styles/history-premium.css"
+    "frontend/src/pages/records/RecordsPage.tsx",
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Records ? tap ???? ? calendar covers the screen with large day cells",
-    "Pick a date ? dialog closes and list filters",
-    "Close (X / backdrop / Escape) without selecting",
-    "Clear date (??) still works when a date is selected"
+    "Records page: toolbar sits close under MachineFit header",
+    "Favorites page top spacing unchanged",
+    "Missed-plans banner (if shown) still readable above toolbar"
   ],
   "fastChecks": [
-    "rg -n \"HistoryDateCalendarDialog\" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "rg -n \"history-calendar-dialog\" frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css"
+    "rg -n \"records-page--history\" frontend/src/pages/records/RecordsPage.tsx frontend/src/styles/records.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: open Records, tap ????, confirm fullscreen calendar"
+    "After Deploy Frontend: open Records, confirm less empty space above [??]/[???]"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "???? expanded a small inline calendar under the toolbar.",
-  "toBe": "???? opens a fullscreen calendar dialog; selecting a date closes it and filters."
+  "asIs": "Wide empty band between app header and filter toolbar on Records.",
+  "toBe": "Toolbar sits close under the header (content padding-top ~0.15rem)."
 }

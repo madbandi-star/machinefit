@@ -1,31 +1,26 @@
-# Test handoff ? Fullscreen records date calendar
+# Test handoff ? Tighten Records header ? toolbar gap
 
 ## Summary
-?? ??? **????** ?? ? ??? ?? ?? **?? ?? ??** ??? ??. ?? ?? ? ??? ?? ?? ??.
+?? ????? ? ??(??? ?)? `[??][???]??` ?? ?? ?? ??? ??.
 
 ## Git
 - branch: `main`
-- commit: 56017c8a
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx` (new)
-- `frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css` (new)
-- `frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx`
+- `frontend/src/pages/records/RecordsPage.tsx`
 - `frontend/src/styles/records.css`
-- `frontend/src/styles/history-premium.css`
 
 ## Test focus
-1. Records ? ???? ? ??(? ???)? ??? ??
-2. ?? ? ? ?? ?? + `?date=` ??
-3. X / ?? / Escape? ??
-4. ?? ? ????? ?? ??
+1. Records ? toolbar close under MachineFit header
+2. Favorites top spacing unchanged
+3. Missed-plans banner (if any) still OK
 
 ## Fast checks
 ```bash
-rg -n "HistoryDateCalendarDialog" frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx
-rg -n "history-calendar-dialog" frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css
+rg -n "records-page--history" frontend/src/pages/records/RecordsPage.tsx frontend/src/styles/records.css
 ```
 
 ## as-is ? to-be
-- **as-is:** Toolbar ?? ?? ??? ??
-- **to-be:** Fullscreen calendar dialog
+- **as-is:** Large empty band above filter toolbar
+- **to-be:** Tight top padding on Records only
