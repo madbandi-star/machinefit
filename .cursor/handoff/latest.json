@@ -3,7 +3,7 @@
   "summary": "Fortune /today keeps mobile layout; desktop (?900px) widens beyond the 430px frame and uses a reading layout (hero split, 2-col energy/base, 3-col luck/guide, horizontal apply). Mid-width viewport multi-col inside the phone frame was removed.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "3150f626"
   },
   "changedFiles": [
     "frontend/src/components/fortune/reading/FortuneReadingHero.tsx",

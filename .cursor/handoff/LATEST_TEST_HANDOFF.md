@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 3150f626
 
 ## Test focus
 1. Phone / DevTools mobile: same stacked look as before
