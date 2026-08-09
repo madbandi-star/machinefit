@@ -48,12 +48,21 @@ export const ROUTES = {
   AUTH_TERMS: '/auth/terms',
   TERMS: '/terms',
   PRIVACY: '/privacy',
+  /** Alias → e-commerce & refund policy */
+  REFUND: '/refund',
   LEGAL_LOCATION: '/legal/location',
+  /** Alias → location policy */
+  LOCATION_POLICY: '/location-policy',
   LEGAL_MARKETING: '/legal/marketing',
   LEGAL_COMMERCE: '/legal/commerce',
   LEGAL_COMMUNITY: '/legal/community',
+  /** Alias → community policy */
+  COMMUNITY_POLICY: '/community-policy',
   LEGAL_COPYRIGHT: '/legal/copyright',
+  /** Alias → copyright policy */
+  COPYRIGHT_POLICY: '/copyright',
   LEGAL_AI: '/legal/ai-disclaimer',
+  LEGAL_SECURITY: '/security',
   PRIVACY_RIGHTS: '/settings/privacy-rights',
   SUPPORT: '/support',
   SUPPORT_DETAIL: '/support/:ticketId',

@@ -1,17 +1,19 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LEGAL_DOC_VERSION } from '@machinefit/shared';
+import { LEGAL_DOC_VERSIONS } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/legal.css';
 
 export function TermsPage() {
   const { t } = useTranslation();
+  const version = LEGAL_DOC_VERSIONS.terms;
+
   return (
     <PageShell title={t('legal.termsTitle')}>
       <article className="legal-doc">
         <p className="legal-doc__meta">
-          {t('legal.version', { version: LEGAL_DOC_VERSION })}
+          {t('legal.version', { version })} · {t('legal.regionKr')}
         </p>
         <p className="legal-doc__lead">{t('legal.termsLead')}</p>
         <h2>{t('legal.terms.s1Title')}</h2>
@@ -24,8 +26,12 @@ export function TermsPage() {
         <p>{t('legal.terms.s4Body')}</p>
         <h2>{t('legal.terms.s5Title')}</h2>
         <p>{t('legal.terms.s5Body')}</p>
+        <h2>{t('legal.terms.s6Title')}</h2>
+        <p>{t('legal.terms.s6Body')}</p>
         <p className="legal-doc__nav">
           <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
+          {' · '}
+          <Link to={ROUTES.REFUND}>{t('legal.footer.refund')}</Link>
         </p>
       </article>
     </PageShell>

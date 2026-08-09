@@ -335,7 +335,10 @@
     "socialNotConfigured": "Social login is not configured yet.",
     "socialCancelled": "Login was cancelled.",
     "socialFailed": "Social login failed. Please try again.",
-    "socialComingSoon": "{{provider}} Sign In (Coming soon)"
+    "socialComingSoon": "{{provider}} Sign In (Coming soon)",
+    "agreeAge14": "I am 14 years of age or older",
+    "agreeAge14Required": "You must be 14 or older to join",
+    "trialNoticeSignup": "After signup you may receive a Premium free trial (e.g. 7 days) per policy. See the e-commerce & refund policy for details."
   },
   "settings": {
     "language": "Language",
@@ -433,9 +436,9 @@
     "marketingOptIn": "Receive event and promotion notifications",
     "marketingSaved": "Notification preference saved.",
     "deleteAccount": "Delete account",
-    "deleteAccountDesc": "Deactivates your account and signs you out. Your display name is anonymized.",
+    "deleteAccountDesc": "We deactivate your account so you cannot sign in. Email and display name are anonymized and location data is deleted. Workout logs and posts may be retained for a limited period for operations and disputes.",
     "deleteAccountConfirmTitle": "Delete your account?",
-    "deleteAccountConfirmMessage": "You will be signed out immediately and cannot log in with this account.",
+    "deleteAccountConfirmMessage": "You will be signed out immediately and the same social login may be restricted. If you have an active paid subscription, cancel it in the app/payment provider as well.",
     "deleteAccountConfirm": "Delete account",
     "accountDeleted": "Your account has been deleted."
   },
@@ -454,22 +457,28 @@
       "s4Title": "4. Disclaimer",
       "s4Body": "Recommendations and AI insights are estimates. Liability is limited to the extent permitted by law.",
       "s5Title": "5. Contact",
-      "s5Body": "For terms or service questions, contact the operator through in-app channels."
+      "s5Body": "For terms or service questions, contact the operator through in-app channels.",
+      "s6Title": "6. Paid plans & trials",
+      "s6Body": "Paid memberships, free trials, renewals, and cancellations follow the e-commerce & refund policy and checkout notices. A free trial may start automatically for new accounts."
     },
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "Email, display name, gender, height/weight/age, goals, optional location/GPS, workouts, friends, notifications, photos, trades, and PT-related data.",
+      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, gender/height/weight/age (when entered), workout goals, optional location (GPS/region), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), and access logs (IP/UA).",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
-      "s3Body": "On account deletion we deactivate the account and anonymize identifiers, keeping only what law requires.",
+      "s3Body": "On withdrawal we deactivate the account, anonymize identifiers such as email/display name, and delete location data. Workout logs and posts may be retained for a limited period for operations and disputes; records required by law (e.g. payments/access) are kept only for the required period.",
       "s4Title": "4. Processors",
-      "s4Body": "Hosting (e.g. Render, GitHub Pages) and embeds (YouTube) may process data as needed to run the service.",
+      "s4Body": "To run the service we may process or transfer data via hosting (e.g. Render), frontend hosting (e.g. GitHub Pages), DB/storage (e.g. Supabase), social login (Kakao/Google/Apple), payment processors (e.g. Polar), optional error monitoring (Sentry), and YouTube embeds. Sensitive payment details are handled by the payment provider.",
       "s5Title": "5. Your rights",
-      "s5Body": "You can withdraw marketing consent and delete your account in Settings. Contact us for further access requests.",
+      "s5Body": "In Settings > Privacy Rights Center you can view data, withdraw consents, download JSON, and delete your account. For further correction/erasure/restriction requests, contact support.",
       "s6Title": "6. Children",
-      "s6Body": "We do not knowingly collect data from users under 14; registration is blocked for that age group."
+      "s6Body": "We do not knowingly collect data from users under 14; registration is blocked for that age group.",
+      "s7Title": "7. Security & contact",
+      "s7Body": "We apply access control, encrypted transport, and role separation. See the security notice page for details. Privacy inquiries: support@machinefit.app or in-app support. The privacy officer’s name/contact will be listed here after business registration is finalized.",
+      "s8Title": "8. Change history",
+      "s8Body": "This policy applies from 2026-08-10. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-04-09)"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",
@@ -499,18 +508,18 @@
       "s4Body": "Use in-app Support for marketing consent questions."
     },
     "commerceTitle": "Commerce & refund policy",
-    "commerceLead": "Payments, refunds, and withdrawal notices for Online PT and paid features.",
+    "commerceLead": "Payment, free trial, cancellation, refunds, and cooling-off for Premium and other paid features.",
     "commerce": {
-      "s1Title": "1. Demo payments",
-      "s1Body": "Online PT tickets currently use demo checkout (not a real card charge). No tax invoice is issued.",
-      "s2Title": "2. Purchase history",
-      "s2Body": "Ticket balances and order status are available in Online PT / wallet screens.",
-      "s3Title": "3. Refunds",
-      "s3Body": "In demo mode, refunds restore ticket credits (including auto-refund). Real PG refunds will follow when payments go live.",
-      "s4Title": "4. Withdrawal",
-      "s4Body": "Once digital counseling content is delivered, withdrawal may be limited under applicable rules.",
-      "s5Title": "5. Paid membership",
-      "s5Body": "Premium plans are currently granted/seeded; in-app paid checkout is not live yet."
+      "s1Title": "1. Paid services & checkout",
+      "s1Body": "Paid memberships such as MachineFit Premium may be charged via Polar or another payment processor. Some Online PT credits may still be demo (not a real card charge). The amount shown at checkout controls.",
+      "s2Title": "2. Orders & history",
+      "s2Body": "Subscription and payment status are available under My Page billing. Card numbers are stored by the payment provider, not in our app database.",
+      "s3Title": "3. Free trial",
+      "s3Body": "New accounts may receive an automatic Premium trial (e.g. 7 days) per operating policy. Whether paid renewal starts after the trial follows the notice at signup/checkout. You may cancel during the trial.",
+      "s4Title": "4. Cancel, refunds, cooling-off",
+      "s4Body": "Cancel renewals in My Page; future renewals stop after cancellation. For digital/period services, cooling-off may be limited once delivery starts, as allowed by law. Request refunds via in-app Support (billing) or the support email.",
+      "s5Title": "5. Business info & contact",
+      "s5Body": "Seller/business details appear in the app footer business notice. Blank fields will be filled after business/mail-order registration. Contact support for payment issues."
     },
     "communityTitle": "Community & UGC policy",
     "communityLead": "Rules for posts, comments, photos, and listings.",
@@ -551,6 +560,31 @@
       "s3Body": "You are responsible for injuries during training to the extent permitted by law.",
       "s4Title": "4. Expert vs AI",
       "s4Body": "Trainer answers and automated guidance should be understood separately. Seek a professional if unsure."
+    },
+    "securityTitle": "Security measures",
+    "securityLead": "How MachineFit protects personal data and what users should do.",
+    "securityDoc": {
+      "s1Title": "1. Access control",
+      "s1Body": "APIs are protected with authentication and role checks. Admin and gym-owner features require elevated permissions.",
+      "s2Title": "2. Transit & storage",
+      "s2Body": "The service is served over HTTPS. Refresh tokens are protected (e.g. HttpOnly cookies). Social credentials are handled as tokens/links, not local passwords.",
+      "s3Title": "3. Monitoring",
+      "s3Body": "We may review ops logs and optional monitoring tools for abuse. If a breach is confirmed we act and notify as required by law.",
+      "s4Title": "4. User tips",
+      "s4Body": "Lock your device and sign out on shared devices. Contact support if you notice suspicious access."
+    },
+    "footer": {
+      "businessTitle": "Business information",
+      "tradeName": "Trade name",
+      "representative": "Representative",
+      "registrationNumber": "Business registration no.",
+      "mailOrderNumber": "Mail-order registration no.",
+      "address": "Business address",
+      "supportEmail": "Support",
+      "pending": "To be filled after registration",
+      "refund": "Refunds / cooling-off",
+      "community": "Community policy",
+      "security": "Security"
     }
   },
   "pages": {
@@ -1535,7 +1569,7 @@
       "ai": "AI recommendations are for reference only and may contain errors.\nThey do not replace medical judgment.",
       "health": "Stop training and seek a professional if you feel pain or unwell.",
       "pt": "Online PT is coaching reference, not medical practice. Injury risk remains with you.",
-      "commerce": "Checkout is demo-only (no real charge). Refunds restore ticket credits.",
+      "commerce": "Paid memberships may be billed via a payment processor (e.g. Polar). Online PT demo credits may not be a real charge. See the e-commerce & refund policy for cancel/refund rules.",
       "sponsored": "This content may include advertising or sponsorship.",
       "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
       "learnMore": "Learn more"

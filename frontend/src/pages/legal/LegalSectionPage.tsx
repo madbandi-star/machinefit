@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LEGAL_DOC_VERSION } from '@machinefit/shared';
+import { LEGAL_DOC_VERSIONS } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/legal.css';
@@ -11,16 +11,24 @@ type DocKey =
   | 'commerce'
   | 'community'
   | 'copyright'
-  | 'aiDisclaimer';
+  | 'aiDisclaimer'
+  | 'security';
 
 const DOC_META: Record<
   DocKey,
-  { titleKey: string; leadKey: string; sections: string[]; nav?: Array<{ to: string; labelKey: string }> }
+  {
+    titleKey: string;
+    leadKey: string;
+    sections: string[];
+    versionKey: keyof typeof LEGAL_DOC_VERSIONS;
+    nav?: Array<{ to: string; labelKey: string }>;
+  }
 > = {
   location: {
     titleKey: 'legal.locationTitle',
     leadKey: 'legal.locationLead',
     sections: ['s1', 's2', 's3', 's4', 's5'],
+    versionKey: 'location',
     nav: [
       { to: ROUTES.PRIVACY, labelKey: 'legal.privacyTitle' },
       { to: ROUTES.TERMS, labelKey: 'legal.termsTitle' },
@@ -30,6 +38,7 @@ const DOC_META: Record<
     titleKey: 'legal.marketingTitle',
     leadKey: 'legal.marketingLead',
     sections: ['s1', 's2', 's3', 's4'],
+    versionKey: 'marketing',
     nav: [
       { to: ROUTES.PRIVACY, labelKey: 'legal.privacyTitle' },
       { to: ROUTES.TERMS, labelKey: 'legal.termsTitle' },
@@ -39,25 +48,42 @@ const DOC_META: Record<
     titleKey: 'legal.commerceTitle',
     leadKey: 'legal.commerceLead',
     sections: ['s1', 's2', 's3', 's4', 's5'],
-    nav: [{ to: ROUTES.LEGAL_AI, labelKey: 'legal.aiTitle' }],
+    versionKey: 'commerce',
+    nav: [
+      { to: ROUTES.LEGAL_AI, labelKey: 'legal.aiTitle' },
+      { to: ROUTES.SUPPORT, labelKey: 'support.title' },
+    ],
   },
   community: {
     titleKey: 'legal.communityTitle',
     leadKey: 'legal.communityLead',
     sections: ['s1', 's2', 's3', 's4', 's5'],
+    versionKey: 'community',
     nav: [{ to: ROUTES.LEGAL_COPYRIGHT, labelKey: 'legal.copyrightTitle' }],
   },
   copyright: {
     titleKey: 'legal.copyrightTitle',
     leadKey: 'legal.copyrightLead',
     sections: ['s1', 's2', 's3', 's4', 's5'],
+    versionKey: 'copyright',
     nav: [{ to: ROUTES.SUPPORT, labelKey: 'support.title' }],
   },
   aiDisclaimer: {
     titleKey: 'legal.aiTitle',
     leadKey: 'legal.aiLead',
     sections: ['s1', 's2', 's3', 's4'],
+    versionKey: 'ai',
     nav: [{ to: ROUTES.LEGAL_COMMERCE, labelKey: 'legal.commerceTitle' }],
+  },
+  security: {
+    titleKey: 'legal.securityTitle',
+    leadKey: 'legal.securityLead',
+    sections: ['s1', 's2', 's3', 's4'],
+    versionKey: 'security',
+    nav: [
+      { to: ROUTES.PRIVACY, labelKey: 'legal.privacyTitle' },
+      { to: ROUTES.SUPPORT, labelKey: 'support.title' },
+    ],
   },
 };
 
@@ -68,18 +94,20 @@ const NS: Record<DocKey, string> = {
   community: 'communityDoc',
   copyright: 'copyright',
   aiDisclaimer: 'ai',
+  security: 'securityDoc',
 };
 
 export function LegalSectionPage({ doc }: { doc: DocKey }) {
   const { t } = useTranslation();
   const meta = DOC_META[doc];
   const ns = NS[doc];
+  const version = LEGAL_DOC_VERSIONS[meta.versionKey];
 
   return (
     <PageShell title={t(meta.titleKey)}>
       <article className="legal-doc">
         <p className="legal-doc__meta">
-          {t('legal.version', { version: LEGAL_DOC_VERSION })} · {t('legal.regionKr')}
+          {t('legal.version', { version })} · {t('legal.regionKr')}
         </p>
         <p className="legal-doc__lead">{t(meta.leadKey)}</p>
         {meta.sections.map((s) => (
@@ -88,7 +116,7 @@ export function LegalSectionPage({ doc }: { doc: DocKey }) {
             <p>{t(`legal.${ns}.${s}Body`)}</p>
           </section>
         ))}
-        {meta.nav && meta.nav.length > 0 && (
+        {meta.nav && meta.nav.length > 0 ? (
           <p className="legal-doc__nav">
             {meta.nav.map((n, i) => (
               <span key={n.to}>
@@ -97,7 +125,7 @@ export function LegalSectionPage({ doc }: { doc: DocKey }) {
               </span>
             ))}
           </p>
-        )}
+        ) : null}
       </article>
     </PageShell>
   );
@@ -120,4 +148,7 @@ export function CopyrightLegalPage() {
 }
 export function AiDisclaimerLegalPage() {
   return <LegalSectionPage doc="aiDisclaimer" />;
+}
+export function SecurityLegalPage() {
+  return <LegalSectionPage doc="security" />;
 }

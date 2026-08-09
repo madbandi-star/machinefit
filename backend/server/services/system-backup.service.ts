@@ -61,10 +61,13 @@ const EXCLUDED_TABLES = [
 
 const SENSITIVE_USER_COLUMNS = new Set([
   'password',
+  'password_hash',
   'refresh_token',
   'access_token',
   'token',
   'secret',
+  'polar_customer_id',
+  'polar_subscription_id',
 ]);
 
 async function tableExists(client: pg.PoolClient, table: string): Promise<boolean> {

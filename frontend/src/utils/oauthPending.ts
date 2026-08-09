@@ -20,6 +20,8 @@ export interface TermsCheckState {
   agreePrivacy: boolean;
   agreeLocation: boolean;
   agreeMarketing: boolean;
+  /** KR PIPA: user attests they are 14+ (required for signup). */
+  agreeAge14: boolean;
 }
 
 const DEFAULT_CHECKS: TermsCheckState = {
@@ -28,6 +30,7 @@ const DEFAULT_CHECKS: TermsCheckState = {
   agreePrivacy: false,
   agreeLocation: false,
   agreeMarketing: false,
+  agreeAge14: false,
 };
 
 export function saveOAuthPending(session: OAuthPendingSession): void {

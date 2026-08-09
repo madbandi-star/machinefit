@@ -367,6 +367,8 @@ const communityLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CommunityLegalPage }));
 const copyrightLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CopyrightLegalPage }));
+const securityLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.SecurityLegalPage }));
 const aiLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.AiDisclaimerLegalPage }));
 const privacyRightsPage = () =>
@@ -407,11 +409,16 @@ export const router = createBrowserRouter(
         { path: ROUTES.HOME, element: <HomePage /> },
         { path: ROUTES.TERMS, element: lazyRoute(termsPage) },
         { path: ROUTES.PRIVACY, element: lazyRoute(privacyPage) },
+        { path: ROUTES.REFUND, element: lazyRoute(commerceLegalPage) },
         { path: ROUTES.LEGAL_LOCATION, element: lazyRoute(locationLegalPage) },
+        { path: ROUTES.LOCATION_POLICY, element: lazyRoute(locationLegalPage) },
         { path: ROUTES.LEGAL_MARKETING, element: lazyRoute(marketingLegalPage) },
         { path: ROUTES.LEGAL_COMMERCE, element: lazyRoute(commerceLegalPage) },
         { path: ROUTES.LEGAL_COMMUNITY, element: lazyRoute(communityLegalPage) },
+        { path: ROUTES.COMMUNITY_POLICY, element: lazyRoute(communityLegalPage) },
         { path: ROUTES.LEGAL_COPYRIGHT, element: lazyRoute(copyrightLegalPage) },
+        { path: ROUTES.COPYRIGHT_POLICY, element: lazyRoute(copyrightLegalPage) },
+        { path: ROUTES.LEGAL_SECURITY, element: lazyRoute(securityLegalPage) },
         { path: ROUTES.LEGAL_AI, element: lazyRoute(aiLegalPage) },
         { path: ROUTES.MACHINES, element: lazyRoute(machineSearch) },
         { path: ROUTES.BRANDS, element: lazyRoute(brandList) },

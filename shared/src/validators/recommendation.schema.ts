@@ -18,7 +18,7 @@ export const recommendationSchema = z
     unitHeight: z.enum(['cm', 'ft_in']).optional(),
     unitWeight: z.enum(['kg', 'lb']).optional(),
     targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
-    age: z.number().int().min(13).max(100).optional(),
+    age: z.number().int().min(14).max(100).optional(),
     workoutGoal: z.enum(WORKOUT_GOALS).optional(),
     weightDifficulty: z.number().min(0.1).max(10).optional(),
     gymId: gymIdSchema.optional(),

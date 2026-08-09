@@ -113,7 +113,12 @@ async function buildAuthResponse(user: User) {
 }
 
 function currentLegalVersions() {
-  return { ...LEGAL_DOC_VERSIONS };
+  return {
+    terms: LEGAL_DOC_VERSIONS.terms,
+    privacy: LEGAL_DOC_VERSIONS.privacy,
+    location: LEGAL_DOC_VERSIONS.location,
+    marketing: LEGAL_DOC_VERSIONS.marketing,
+  };
 }
 
 async function applyConsentBundle(
@@ -125,6 +130,11 @@ async function applyConsentBundle(
     privacyVersion?: string;
     locationVersion?: string;
     marketingVersion?: string;
+  },
+  meta?: {
+    ipAddress?: string | null;
+    userAgent?: string | null;
+    source?: string;
   }
 ) {
   const termsVersion = input.termsVersion || LEGAL_DOC_VERSIONS.terms;
@@ -134,13 +144,27 @@ async function applyConsentBundle(
   const marketingOptIn = Boolean(input.agreeMarketing);
   const locationOptIn = Boolean(input.agreeLocation);
 
-  await userRepository.recordConsents(userId, [
+  const items = [
     { type: 'terms', version: termsVersion, agreed: true },
     { type: 'privacy', version: privacyVersion, agreed: true },
     { type: 'marketing', version: marketingVersion, agreed: marketingOptIn },
     { type: 'location', version: locationVersion, agreed: locationOptIn },
     { type: 'push_service', version: termsVersion, agreed: true },
-  ]);
+  ];
+
+  await userRepository.recordConsents(userId, items);
+
+  try {
+    const { complianceRepository } = await import('../repositories/compliance.repository.js');
+    await complianceRepository.recordConsentMeta(userId, items, {
+      regionCode: 'KR',
+      ipAddress: meta?.ipAddress,
+      userAgent: meta?.userAgent,
+      source: meta?.source ?? 'app',
+    });
+  } catch {
+    // Non-blocking — consent versions already persisted on users/user_consents.
+  }
 }
 
 export const authService = {
@@ -299,7 +323,10 @@ export const authService = {
     };
   },
 
-  async completeOAuthSignup(input: OAuthCompleteInput) {
+  async completeOAuthSignup(
+    input: OAuthCompleteInput,
+    meta?: { ipAddress?: string | null; userAgent?: string | null }
+  ) {
     if (!input.agreeTerms || !input.agreePrivacy) {
       throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
     }
@@ -321,7 +348,7 @@ export const authService = {
       if (!user || !user.isActive) {
         throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
       }
-      await applyConsentBundle(user.id, input);
+      await applyConsentBundle(user.id, input, meta);
       const refreshed = await userRepository.findById(user.id);
       if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
       await userRepository.updateLastLogin(refreshed.id);
@@ -352,7 +379,7 @@ export const authService = {
         providerUserId: pending.providerUserId,
         providerEmail: pending.providerEmail,
       });
-      await applyConsentBundle(user.id, input);
+      await applyConsentBundle(user.id, input, { ...meta, source: 'oauth_signup' });
 
       const { userGymRepository } = await import('../repositories/user-gym.repository.js');
       const defaultGym = await userGymRepository.ensureDefaultGym(user.id);
@@ -394,7 +421,7 @@ export const authService = {
         if (raced) {
           const user = await userRepository.findById(raced.userId);
           if (user?.isActive) {
-            await applyConsentBundle(user.id, input);
+            await applyConsentBundle(user.id, input, meta);
             const refreshed = await userRepository.findById(user.id);
             if (refreshed) return buildAuthResponse(refreshed);
           }
@@ -405,7 +432,11 @@ export const authService = {
     }
   },
 
-  async acceptConsents(userId: string, input: ConsentAcceptInput) {
+  async acceptConsents(
+    userId: string,
+    input: ConsentAcceptInput,
+    meta?: { ipAddress?: string | null; userAgent?: string | null }
+  ) {
     if (!input.agreeTerms || !input.agreePrivacy) {
       throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
     }
@@ -413,7 +444,7 @@ export const authService = {
     if (!user || !user.isActive) {
       throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
     }
-    await applyConsentBundle(userId, input);
+    await applyConsentBundle(userId, input, { ...meta, source: 'consent_update' });
     const refreshed = await userRepository.findById(userId);
     if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
     return buildAuthResponse(refreshed);

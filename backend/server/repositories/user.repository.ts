@@ -322,6 +322,10 @@ export const userRepository = {
            height_cm = NULL,
            weight_kg = NULL,
            age = NULL,
+           birth_date = NULL,
+           birth_time = NULL,
+           birth_time_unknown = FALSE,
+           experience_level = NULL,
            workout_goal = NULL,
            home_gym_id = NULL,
            home_gym_name = NULL,
@@ -330,6 +334,11 @@ export const userRepository = {
       [userId]
     );
     await pool.query(`DELETE FROM user_locations WHERE user_id = $1`, [userId]).catch(() => null);
+    // Keep auth_providers rows so the same social identity cannot silently recreate
+    // an active session on this user id; strip provider email from the link.
+    await pool
+      .query(`UPDATE auth_providers SET provider_email = NULL WHERE user_id = $1`, [userId])
+      .catch(() => null);
     await this.deleteRefreshTokens(userId);
     return (result.rowCount ?? 0) > 0;
   },

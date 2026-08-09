@@ -10,6 +10,7 @@ import {
 } from '@machinefit/shared';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { getRequestIp, getRequestUserAgent } from '../utils/request-meta.util.js';
 import {
   clearRefreshCookie,
   getRefreshCookie,
@@ -92,7 +93,10 @@ export async function oauthLogin(req: Request, res: Response): Promise<void> {
 
 export async function completeOAuthSignup(req: Request, res: Response): Promise<void> {
   const input = oauthCompleteSchema.parse(req.body);
-  const result = await authService.completeOAuthSignup(input);
+  const result = await authService.completeOAuthSignup(input, {
+    ipAddress: getRequestIp(req),
+    userAgent: getRequestUserAgent(req),
+  });
   sendAuthResult(res, 201, result);
 }
 
@@ -101,7 +105,10 @@ export async function acceptConsents(req: Request, res: Response): Promise<void>
     throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   }
   const input = consentAcceptSchema.parse(req.body);
-  const result = await authService.acceptConsents(req.user.userId, input);
+  const result = await authService.acceptConsents(req.user.userId, input, {
+    ipAddress: getRequestIp(req),
+    userAgent: getRequestUserAgent(req),
+  });
   sendAuthResult(res, 200, result);
 }
 

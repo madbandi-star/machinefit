@@ -336,7 +336,10 @@
     "password": "パスワード",
     "displayName": "表示名",
     "loginFailed": "ログインに失敗しました。",
-    "socialComingSoon": "{{provider}}ログイン（準備中）"
+    "socialComingSoon": "{{provider}}ログイン（準備中）",
+    "agreeAge14": "満14歳以上です",
+    "agreeAge14Required": "満14歳以上のみ登録できます",
+    "trialNoticeSignup": "登録完了時、運営方針によりPremium無料体験（例: 7日）が付与される場合があります。詳細は電子商取引・返金ポリシーをご確認ください。"
   },
   "settings": {
     "language": "Language",
@@ -413,9 +416,9 @@
     "marketingOptIn": "Receive event and promotion notifications",
     "marketingSaved": "Notification preference saved.",
     "deleteAccount": "Delete account",
-    "deleteAccountDesc": "Deactivates your account and signs you out. Your display name is anonymized.",
+    "deleteAccountDesc": "アカウントを無効化しログインできなくします。メール・表示名は匿名化され、位置情報は削除されます。運動記録等は一定期間保管される場合があります。",
     "deleteAccountConfirmTitle": "Delete your account?",
-    "deleteAccountConfirmMessage": "You will be signed out immediately and cannot log in with this account.",
+    "deleteAccountConfirmMessage": "直ちにログアウトされ、同じソーシャルログインの再利用が制限される場合があります。有料サブスクがある場合は決済側でも解約を確認してください。",
     "deleteAccountConfirm": "Delete account",
     "accountDeleted": "Your account has been deleted.",
     "languageDesc": "アプリの言語をすぐに変更できます。再読み込みは不要です。",
@@ -455,22 +458,28 @@
       "s4Title": "4. Disclaimer",
       "s4Body": "Recommendations and AI insights are estimates. Liability is limited to the extent permitted by law.",
       "s5Title": "5. Contact",
-      "s5Body": "For terms or service questions, contact the operator through in-app channels."
+      "s5Body": "For terms or service questions, contact the operator through in-app channels.",
+      "s6Title": "6. 有料・無料体験",
+      "s6Body": "有料メンバーシップ・無料体験・更新・解約は電子商取引・返金ポリシーおよび決済画面の告知に従います。新規登録時に無料体験が自動付与される場合があります。"
     },
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "Email, display name, gender, height/weight/age, goals, optional location/GPS, workouts, friends, notifications, photos, trades, and PT-related data.",
+      "s1Body": "ソーシャルログイン識別子・メール（提供時）、表示名、アバターURL、性別・身長・体重・年齢（入力時）、運動目標、位置（任意）、運動記録、友人・通知・写真・取引・オンラインPT、決済・サブスクのメタデータ（カード番号は決済事業者保管）、アクセスログを処理する場合があります。",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
-      "s3Body": "On account deletion we deactivate the account and anonymize identifiers, keeping only what law requires.",
+      "s3Body": "退会時はアカウントを無効化し、メール・表示名などを匿名化し、位置情報を削除します。運動記録等は運用・紛争対応のため一定期間保管されることがあり、法令上必要な記録のみ所定期間保管します。",
       "s4Title": "4. Processors",
-      "s4Body": "Hosting (e.g. Render, GitHub Pages) and embeds (YouTube) may process data as needed to run the service.",
+      "s4Body": "ホスティング（例: Render）、フロント配信（例: GitHub Pages）、DB/ストレージ（例: Supabase）、ソーシャルログイン（Kakao/Google/Apple）、決済代行（Polar等）、任意のエラー監視（Sentry）、YouTube埋め込み等で個人データが処理・国外移転される場合があります。",
       "s5Title": "5. Your rights",
-      "s5Body": "You can withdraw marketing consent and delete your account in Settings. Contact us for further access requests.",
+      "s5Body": "設定 > 個人情報権利センターで閲覧・同意撤回・JSONダウンロード・退会が可能です。追加の訂正・削除等はサポートへお問い合わせください。",
       "s6Title": "6. Children",
-      "s6Body": "We do not knowingly collect data from users under 14; registration is blocked for that age group."
+      "s6Body": "満14歳未満の個人情報は収集せず、当該年齢の登録は制限されます。",
+      "s7Title": "7. 安全管理・問い合わせ",
+      "s7Body": "アクセス制御・暗号化通信・権限分離などの安全管理措置を適用します。詳細はセキュリティ案内を参照してください。個人情報に関する問い合わせは support@machinefit.app またはアプリ内サポートへ。個人情報保護責任者の氏名・連絡先は事業者登録確定後に本方針へ記載します。",
+      "s8Title": "8. 変更履歴",
+      "s8Body": "本方針は2026-08-10から適用されます。変更時はサービス内告知および本ページの改定日でお知らせします。（以前: 2026-04-09）"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",
@@ -500,18 +509,18 @@
       "s4Body": "Use in-app Support for marketing consent questions."
     },
     "commerceTitle": "Commerce & refund policy",
-    "commerceLead": "Payments, refunds, and withdrawal notices for Online PT and paid features.",
+    "commerceLead": "有料サービス（Premium等）の決済・無料体験・解約・返金・クーリングオフに関する案内です。",
     "commerce": {
-      "s1Title": "1. Demo payments",
-      "s1Body": "Online PT tickets currently use demo checkout (not a real card charge). No tax invoice is issued.",
-      "s2Title": "2. Purchase history",
-      "s2Body": "Ticket balances and order status are available in Online PT / wallet screens.",
-      "s3Title": "3. Refunds",
-      "s3Body": "In demo mode, refunds restore ticket credits (including auto-refund). Real PG refunds will follow when payments go live.",
-      "s4Title": "4. Withdrawal",
-      "s4Body": "Once digital counseling content is delivered, withdrawal may be limited under applicable rules.",
-      "s5Title": "5. Paid membership",
-      "s5Body": "Premium plans are currently granted/seeded; in-app paid checkout is not live yet."
+      "s1Title": "1. 有料サービス・決済",
+      "s1Body": "MachineFit Premium等はPolar等の決済代行で課金される場合があります。オンラインPTの一部はデモクレジットのことがあり、その場合は実カード課金ではありません。",
+      "s2Title": "2. 購入・履歴",
+      "s2Body": "サブスク・決済状態はマイページの課金履歴で確認できます。カード番号は決済事業者に保管され、アプリDBには保存しません。",
+      "s3Title": "3. 無料体験",
+      "s3Body": "新規登録時、運営方針によりPremium無料体験（例: 7日）が自動付与される場合があります。体験後の有料転換・自動更新は登録/決済画面の告知に従い、体験中も解約できます。",
+      "s4Title": "4. 解約・返金・クーリングオフ",
+      "s4Body": "マイページから更新を解約できます。デジタル/期間制サービスの性質上、提供開始後は法令が認める範囲でクーリングオフが制限される場合があります。返金はアプリ内お問い合わせまたはサポートメールへ。",
+      "s5Title": "5. 事業者・問い合わせ",
+      "s5Body": "販売者情報はアプリ下部の事業者表示に従います。未記入項目は届出完了後に更新します。"
     },
     "communityTitle": "Community & UGC policy",
     "communityLead": "Rules for posts, comments, photos, and listings.",
@@ -552,6 +561,31 @@
       "s3Body": "You are responsible for injuries during training to the extent permitted by law.",
       "s4Title": "4. Expert vs AI",
       "s4Body": "Trainer answers and automated guidance should be understood separately. Seek a professional if unsure."
+    },
+    "securityTitle": "セキュリティ措置",
+    "securityLead": "How MachineFit protects personal data and what users should do.",
+    "securityDoc": {
+      "s1Title": "1. Access control",
+      "s1Body": "APIs are protected with authentication and role checks. Admin and gym-owner features require elevated permissions.",
+      "s2Title": "2. Transit & storage",
+      "s2Body": "The service is served over HTTPS. Refresh tokens are protected (e.g. HttpOnly cookies). Social credentials are handled as tokens/links, not local passwords.",
+      "s3Title": "3. Monitoring",
+      "s3Body": "We may review ops logs and optional monitoring tools for abuse. If a breach is confirmed we act and notify as required by law.",
+      "s4Title": "4. User tips",
+      "s4Body": "Lock your device and sign out on shared devices. Contact support if you notice suspicious access."
+    },
+    "footer": {
+      "businessTitle": "事業者情報",
+      "tradeName": "Trade name",
+      "representative": "Representative",
+      "registrationNumber": "Business registration no.",
+      "mailOrderNumber": "Mail-order registration no.",
+      "address": "Business address",
+      "supportEmail": "Support",
+      "pending": "届出後に記載",
+      "refund": "返金・クーリングオフ",
+      "community": "コミュニティポリシー",
+      "security": "セキュリティ"
     }
   },
   "pages": {
@@ -1536,7 +1570,7 @@
       "ai": "AI recommendations are for reference only and may contain errors.\nThey do not replace medical judgment.",
       "health": "Stop training and seek a professional if you feel pain or unwell.",
       "pt": "Online PT is coaching reference, not medical practice. Injury risk remains with you.",
-      "commerce": "Checkout is demo-only (no real charge). Refunds restore ticket credits.",
+      "commerce": "有料メンバーシップは決済代行（Polar等）で課金される場合があります。オンラインPTデモクレジットは実課金でない場合があります。解約・返金は電子商取引・返金ポリシーを確認してください。",
       "sponsored": "This content may include advertising or sponsorship.",
       "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
       "learnMore": "Learn more"

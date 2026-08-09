@@ -2,14 +2,53 @@
  * Per-document legal versions. Bump a field when that document’s copy changes.
  * Required reconsent is gated on `terms` + `privacy` matching these values.
  */
+/**
+ * Per-document versions. Consent re-check uses terms/privacy/location/marketing.
+ * commerce/community/copyright/ai/security are display-only (footer/legal pages).
+ */
 export const LEGAL_DOC_VERSIONS = {
-  terms: '2026-07-25',
-  privacy: '2026-07-25',
-  location: '2026-07-25',
-  marketing: '2026-07-25',
+  terms: '2026-08-10',
+  privacy: '2026-08-10',
+  location: '2026-08-10',
+  marketing: '2026-08-10',
+  commerce: '2026-08-10',
+  community: '2026-08-10',
+  copyright: '2026-08-10',
+  ai: '2026-08-10',
+  security: '2026-08-10',
 } as const;
 
-export type LegalConsentVersionKey = keyof typeof LEGAL_DOC_VERSIONS;
+/** Consent fields persisted / compared for needsConsent. */
+export const LEGAL_CONSENT_VERSION_KEYS = [
+  'terms',
+  'privacy',
+  'location',
+  'marketing',
+] as const;
+
+/**
+ * Platform operator disclosure for e-commerce footer.
+ * Fill real values before paid production open — do not invent registration numbers.
+ */
+export const BUSINESS_OPERATOR = {
+  serviceName: 'MachineFit',
+  /** 상호 — set when registered */
+  tradeName: '',
+  /** 대표자 */
+  representative: '',
+  /** 사업자등록번호 */
+  businessRegistrationNumber: '',
+  /** 통신판매업 신고번호 */
+  mailOrderRegistrationNumber: '',
+  /** 사업장 주소 */
+  address: '',
+  /** 고객센터 이메일 */
+  supportEmail: 'support@machinefit.app',
+  /** 고객센터 전화 (선택) */
+  supportPhone: '',
+} as const;
+
+export type LegalConsentVersionKey = (typeof LEGAL_CONSENT_VERSION_KEYS)[number];
 
 /** @deprecated Prefer LEGAL_DOC_VERSIONS — kept for existing call sites. */
 export const LEGAL_DOC_VERSION = LEGAL_DOC_VERSIONS.terms;

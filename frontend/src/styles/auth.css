@@ -540,6 +540,17 @@
   background: color-mix(in srgb, #fff 8%, transparent);
 }
 
+.terms-agree__trial {
+  margin: 0.75rem 0 0;
+  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid color-mix(in srgb, var(--color-primary, #39ff14) 28%, transparent);
+  background: color-mix(in srgb, var(--color-primary, #39ff14) 8%, transparent);
+  color: var(--color-text-muted, #9ca3af);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
 .terms-agree__secure {
   display: flex;
   align-items: center;

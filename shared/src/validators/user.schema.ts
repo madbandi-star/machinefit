@@ -27,7 +27,8 @@ export const updateProfileSchema = z
     gender: genderSchema.optional(),
     heightCm: z.number().min(100).max(250).optional(),
     weightKg: z.number().min(30).max(300).optional(),
-    age: z.number().int().min(13).max(100).optional(),
+    /** KR PIPA: under 14 requires guardian consent — we block under 14. */
+    age: z.number().int().min(14).max(100).optional(),
     birthDate: birthDateSchema.optional(),
     birthTime: birthTimeSchema.optional(),
     birthTimeUnknown: z.boolean().optional(),

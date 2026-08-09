@@ -138,15 +138,20 @@ export function TermsAgreementPage() {
           agreePrivacy: value,
           agreeLocation: value,
           agreeMarketing: value,
+          agreeAge14: value,
         };
       }
       const requiredAndOptional =
-        next.agreeTerms && next.agreePrivacy && next.agreeLocation && next.agreeMarketing;
+        next.agreeTerms &&
+        next.agreePrivacy &&
+        next.agreeLocation &&
+        next.agreeMarketing &&
+        next.agreeAge14;
       return { ...next, agreeAll: requiredAndOptional };
     });
   };
 
-  const requiredOk = checks.agreeTerms && checks.agreePrivacy;
+  const requiredOk = checks.agreeTerms && checks.agreePrivacy && checks.agreeAge14;
 
   const finishAuth = (user: User, tokens: AuthTokens) => {
     clearOAuthPending();
@@ -269,7 +274,25 @@ export function TermsAgreementPage() {
           onChange={(v) => setField('agreeMarketing', v)}
           checkLabel={`${t('auth.optional')} ${t('legal.marketingTitle')}`}
         />
+        <div className="terms-agree__item">
+          <span className="terms-agree__item-icon" aria-hidden>
+            <ShieldCheck size={18} strokeWidth={2} />
+          </span>
+          <div className="terms-agree__item-text">
+            <span className="terms-agree__badge terms-agree__badge--required">
+              {t('auth.required')}
+            </span>
+            <span className="terms-agree__item-title">{t('auth.agreeAge14')}</span>
+          </div>
+          <ConsentCheck
+            checked={checks.agreeAge14}
+            onChange={(v) => setField('agreeAge14', v)}
+            label={`${t('auth.required')} ${t('auth.agreeAge14')}`}
+          />
+        </div>
       </div>
+
+      {isSignup ? <p className="terms-agree__trial">{t('auth.trialNoticeSignup')}</p> : null}
 
       <p className="terms-agree__secure">
         <Lock size={14} strokeWidth={2.25} aria-hidden />
