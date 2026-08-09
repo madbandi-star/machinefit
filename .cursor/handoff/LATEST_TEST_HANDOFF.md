@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: 728c2e0c
 
 ## Changed files
 - `frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx`

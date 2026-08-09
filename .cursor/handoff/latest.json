@@ -1,9 +1,9 @@
 {
   "title": "Gentle nudge animation on incomplete set Complete button",
-  "summary": "History workout cards: incomplete [??] buttons get a soft pending style; only the next unfinished set gently pulses to invite completion. Completed buttons stay static. Respects prefers-reduced-motion.",
+  "summary": "History workout cards: incomplete [??] buttons get a soft 728c2e0c style; only the next unfinished set gently pulses to invite completion. Completed buttons stay static. Respects prefers-reduced-motion.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "728c2e0c"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
@@ -28,5 +28,5 @@
     "expected": "GitHub Pages frontend deploy on push to main"
   },
   "asIs": "Incomplete [??] buttons looked muted with no cue to tap.",
-  "toBe": "Next incomplete [??] gently breathes; other pending buttons tinted but static."
+  "toBe": "Next incomplete [??] gently breathes; other 728c2e0c buttons tinted but static."
 }
