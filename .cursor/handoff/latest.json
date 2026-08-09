@@ -1,28 +1,27 @@
 {
-  "title": "Add bottom Close button on records calendar dialog",
-  "summary": "Fullscreen ???? calendar now has a full-width Close button at the bottom (thumb-friendly). Top X remains as secondary escape.",
+  "title": "Incomplete Complete button uses amber, not green",
+  "summary": "Pending/nudge [??] buttons no longer use primary green (looked completed). Incomplete = amber action cue; green reserved for completed only.",
   "git": {
     "branch": "main",
-    "commit": "997673cf"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css"
+    "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Records ? ???? ? bottom ?? closes dialog",
-    "Top X / backdrop / date select still close",
-    "Bottom button respects safe-area on notched phones"
+    "Incomplete [??] looks amber/warm, not green",
+    "Completed [??] still green",
+    "Next incomplete still gently pulses in amber"
   ],
   "fastChecks": [
-    "rg -n \"history-calendar-dialog__close-bottom|history-calendar-dialog__footer\" frontend/src/components/records/HistoryDateCalendarDialog/"
+    "rg -n \"complete-btn--pending|complete-pending|workout-complete-nudge\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: open calendar, tap bottom Close"
+    "After Deploy Frontend: confirm incomplete vs completed color distinction on Records cards"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Only top-right X to dismiss the fullscreen calendar.",
-  "toBe": "Full-width bottom Close button + top X still available."
+  "asIs": "Incomplete Complete buttons used green and looked finished.",
+  "toBe": "Incomplete = amber cue; completed = green."
 }
