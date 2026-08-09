@@ -168,16 +168,26 @@ export function VoiceCoachPanel({
           <span className="voice-coach-panel__title">{t('machines:voiceCoach.title')}</span>
           <p className="voice-coach-panel__desc">{t('machines:voiceCoach.desc')}</p>
         </div>
-        <label className="voice-coach-panel__switch">
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(e) => onEnabledChange(e.target.checked)}
-            disabled={isRunning}
-            aria-label={t('machines:voiceCoach.enable')}
-          />
-          <span>{enabled ? t('machines:voiceCoach.on') : t('machines:voiceCoach.off')}</span>
-        </label>
+        <div className="voice-coach-panel__header-end">
+          <label className="voice-coach-panel__check voice-coach-panel__check--header">
+            <input
+              type="checkbox"
+              checked={pickersPinned}
+              onChange={(e) => setPickersPinnedAndNotify(e.target.checked)}
+            />
+            <span>{t('machines:voiceCoach.pinPickers')}</span>
+          </label>
+          <label className="voice-coach-panel__switch">
+            <input
+              type="checkbox"
+              checked={enabled}
+              onChange={(e) => onEnabledChange(e.target.checked)}
+              disabled={isRunning}
+              aria-label={t('machines:voiceCoach.enable')}
+            />
+            <span>{enabled ? t('machines:voiceCoach.on') : t('machines:voiceCoach.off')}</span>
+          </label>
+        </div>
       </div>
 
       {enabled ? (
@@ -314,15 +324,6 @@ export function VoiceCoachPanel({
                 ) : null}
               </>
             ) : null}
-
-            <label className="voice-coach-panel__check">
-              <input
-                type="checkbox"
-                checked={pickersPinned}
-                onChange={(e) => setPickersPinnedAndNotify(e.target.checked)}
-              />
-              <span>{t('machines:voiceCoach.pinPickers')}</span>
-            </label>
 
             <div
               className={`voice-coach-panel__pickers${

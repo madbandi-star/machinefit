@@ -1,29 +1,28 @@
 {
-  "title": "Shrink personal tip to 2 lines; tighten plan-save to voice gap",
-  "summary": "Records card ??? ? textarea is 2 rows (was visually ~5 via min-height). Gap between ?? ?? and voice count panel tightened.",
+  "title": "Move pin-pickers checkbox next to voice on/off",
+  "summary": "??? ?? ??? checkbox moved into the voice coach header, left of the ??/?? switch. Removed from the controls body.",
   "git": {
     "branch": "main",
-    "commit": "2cf7ce91"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/styles/history-premium.css"
+    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
+    "frontend/src/styles/recommendation.css"
   ],
   "testFocus": [
-    "Records card ? ??? ? looks ~2 lines tall",
-    "?? ?? sits close above ?? ???",
-    "Diary/memo textarea height unchanged"
+    "Voice coach header shows [?? ?? ??] then [??] on the right",
+    "Pin still locks pickers; enable still toggles panel",
+    "Records compact layout still readable"
   ],
   "fastChecks": [
-    "rg -n \"personal-tip-input|rows=\\{2\\}|voice-coach-panel\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/styles/recommendation.css frontend/src/styles/history-premium.css"
+    "rg -n \"header-end|check--header|pinPickers\" frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm tip height and tighter spacing under ?? ??"
+    "After Deploy Frontend: confirm pin checkbox is left of ?? on Records voice panel"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Personal tip ~5 lines; large gap above voice coach.",
-  "toBe": "Personal tip ~2 lines; tight gap under ?? ??."
+  "asIs": "?? ?? ?? lived in the controls body under other options.",
+  "toBe": "?? ?? ?? sits in the header immediately left of ??."
 }
