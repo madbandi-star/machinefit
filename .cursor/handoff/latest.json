@@ -3,7 +3,7 @@
   "summary": "Records page: reduce space above the [??]/[???]/???? toolbar under the app header. CSS + records-page--history marker.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "e16a10cc"
   },
   "changedFiles": [
     "frontend/src/pages/records/RecordsPage.tsx",
