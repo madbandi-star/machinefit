@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: a1298980
 
 ## Changed files
 - `frontend/src/styles/recommendation.css`
@@ -17,7 +17,7 @@
 
 ## Fast checks
 ```bash
-rg -n "complete-btn--pending|workout-complete-nudge" frontend/src/styles/recommendation.css
+rg -n "complete-btn--a1298980|workout-complete-nudge" frontend/src/styles/recommendation.css
 ```
 
 ## as-is ? to-be

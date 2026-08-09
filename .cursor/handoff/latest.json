@@ -1,9 +1,9 @@
 {
   "title": "Incomplete Complete button back to muted gray",
-  "summary": "Pending/nudge [??] uses muted gray again (not amber/green). Green remains only for completed state; soft gray pulse still cues the next unfinished set.",
+  "summary": "a1298980/nudge [??] uses muted gray again (not amber/green). Green remains only for completed state; soft gray pulse still cues the next unfinished set.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "a1298980"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
@@ -14,7 +14,7 @@
     "Next incomplete still gently pulses in gray"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--pending|workout-complete-nudge\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--a1298980|workout-complete-nudge\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
     "After Deploy Frontend: confirm incomplete gray vs completed green"
