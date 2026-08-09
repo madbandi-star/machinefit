@@ -10,9 +10,7 @@ import type {
 } from '@machinefit/shared';
 import { FortuneApplySection } from '@/components/fortune/reading/FortuneApplySection';
 import { FortuneBaseSection } from '@/components/fortune/reading/FortuneBaseSection';
-import { FortuneDataSection } from '@/components/fortune/reading/FortuneDataSection';
 import { FortuneEnergySection } from '@/components/fortune/reading/FortuneEnergySection';
-import { FortuneGuideSection } from '@/components/fortune/reading/FortuneGuideSection';
 import { FortuneLuckSection } from '@/components/fortune/reading/FortuneLuckSection';
 import { FortuneReadingHero } from '@/components/fortune/reading/FortuneReadingHero';
 import { FortuneStorySection } from '@/components/fortune/reading/FortuneStorySection';
@@ -81,19 +79,11 @@ export function FortuneDashboard({
         delayMs={90}
       />
 
-      <FortuneGuideSection
-        recommendation={recommendation}
-        narrative={narrative}
-        delayMs={110}
-      />
-
-      <FortuneDataSection dataAnalysis={dataAnalysis} delayMs={130} />
-
       <FortuneApplySection
         narrative={narrative}
         recommendation={recommendation}
         dataAnalysis={dataAnalysis}
-        delayMs={145}
+        delayMs={110}
       />
 
       <p className="fr-disclaimer">

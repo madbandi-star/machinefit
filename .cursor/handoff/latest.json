@@ -1,30 +1,28 @@
 {
-  "title": "Desktop polish for fortune reading page",
-  "summary": "Fortune /today keeps mobile layout; desktop (?900px) widens beyond the 430px frame and uses a reading layout (hero split, 2-col energy/base, 3-col luck/guide, horizontal apply). Mid-width viewport multi-col inside the phone frame was removed.",
+  "title": "Remove fortune guide and data sections",
+  "summary": "Removed ???? ?? ???? and ???? ? ?? ?????? from the fortune today reading page. Apply section retained. UI only.",
   "git": {
     "branch": "main",
-    "commit": "3150f626"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/fortune/reading/FortuneReadingHero.tsx",
-    "frontend/src/styles/fortune-reading.css"
+    "frontend/src/components/fortune/FortuneDashboard.tsx",
+    "frontend/src/components/fortune/reading/FortuneGuideSection.tsx",
+    "frontend/src/components/fortune/reading/FortuneDataSection.tsx"
   ],
   "testFocus": [
-    "Mobile / narrow: fortune page looks unchanged (single column, 430 frame)",
-    "Desktop ?900px: page widens (~960px), hero is split, sections use wider grids",
-    "Apply section shows horizontal flow with rotated arrows",
-    "No cramped 2-col grids inside 430px phone frame on wide viewports"
+    "Open /fortune/today ? no guide or my-data sections",
+    "Hero, energy, base, story, luck, apply, disclaimer still present"
   ],
   "fastChecks": [
-    "rg -n \"min-width: 900px|body:has\\\\(\\\\.fr-page\\\\)\" frontend/src/styles/fortune-reading.css",
-    "cd frontend && npx tsc -p tsconfig.json --noEmit"
+    "rg -n \"FortuneGuideSection|FortuneDataSection|sectionGuide|sectionMyData\" frontend/src/components/fortune"
   ],
   "productionChecks": [
-    "After Deploy Frontend: compare mobile vs desktop /fortune/today"
+    "After Deploy Frontend: confirm those two sections are gone on fortune today"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Desktop kept the 430px phone strip with premature multi-column grids.",
-  "toBe": "Desktop widens and uses a polished reading layout; mobile unchanged."
+  "asIs": "Fortune page showed workout guide and my-data analysis sections.",
+  "toBe": "Those two sections are removed from the reading flow."
 }
