@@ -2816,12 +2816,74 @@
   cursor: pointer;
   touch-action: manipulation;
   white-space: nowrap;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.recommendation-workout-log__complete-btn--pending {
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--glass-border));
+  color: color-mix(in srgb, var(--color-primary) 72%, var(--color-text-muted));
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+}
+
+.recommendation-workout-log__complete-btn--pending:hover:not(:disabled),
+.recommendation-workout-log__complete-btn--pending:focus-visible:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--glass-border));
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.recommendation-workout-log__complete-btn--pending:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Soft cue for the next incomplete set only — avoid animating every unfinished button. */
+.recommendation-workout-log__complete-btn--nudge:not(:disabled) {
+  animation: workout-complete-nudge 2.8s ease-in-out infinite;
+  will-change: box-shadow, border-color, background-color;
+}
+
+.recommendation-workout-log__complete-btn--nudge:hover:not(:disabled),
+.recommendation-workout-log__complete-btn--nudge:focus-visible:not(:disabled),
+.recommendation-workout-log__complete-btn--nudge:active:not(:disabled) {
+  animation: none;
 }
 
 .recommendation-workout-log__complete-btn--completed {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  animation: none;
+}
+
+@keyframes workout-complete-nudge {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 0%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 32%, var(--glass-border));
+    background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 58%, var(--glass-border));
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recommendation-workout-log__complete-btn--nudge:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 50%, var(--glass-border));
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
 }
 
 .recommendation-workout-log__plan-status {

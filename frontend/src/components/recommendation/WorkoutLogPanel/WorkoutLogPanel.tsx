@@ -1392,6 +1392,11 @@ export function WorkoutLogPanel({
     />
   );
 
+  const nextIncompleteSetIndex = useMemo(
+    () => setCompleted.findIndex((done) => done !== true),
+    [setCompleted]
+  );
+
   const weightList = (
     <div
       className={`recommendation-workout-log__weight-list${
@@ -1407,6 +1412,7 @@ export function WorkoutLogPanel({
           existingLog?.setWeightsKg,
           existingLog?.setCount
         );
+        const nudgeComplete = isHistory && !completed && index === nextIncompleteSetIndex;
         return (
           <div
             key={index}
@@ -1475,11 +1481,20 @@ export function WorkoutLogPanel({
                 <button
                   type="button"
                   className={`recommendation-workout-log__complete-btn${
-                    completed ? ' recommendation-workout-log__complete-btn--completed' : ''
+                    completed
+                      ? ' recommendation-workout-log__complete-btn--completed'
+                      : ' recommendation-workout-log__complete-btn--pending'
+                  }${
+                    nudgeComplete ? ' recommendation-workout-log__complete-btn--nudge' : ''
                   }`}
                   onClick={() => handleHistorySetComplete(index)}
                   disabled={isActionPending}
                   aria-pressed={completed}
+                  aria-label={
+                    completed
+                      ? t('machines:workoutLog.setCompleteDoneAria', { number: index + 1 })
+                      : t('machines:workoutLog.setCompletePendingAria', { number: index + 1 })
+                  }
                 >
                   {t('machines:workoutLog.setComplete')}
                 </button>

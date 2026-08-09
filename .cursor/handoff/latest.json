@@ -1,26 +1,32 @@
 {
-  "title": "Widen summary-to-date gap on Records",
-  "summary": "Records history: give a bit more vertical space between the summary metric cards and the first workout date (was pulled too tight).",
+  "title": "Gentle nudge animation on incomplete set Complete button",
+  "summary": "History workout cards: incomplete [??] buttons get a soft pending style; only the next unfinished set gently pulses to invite completion. Completed buttons stay static. Respects prefers-reduced-motion.",
   "git": {
     "branch": "main",
-    "commit": "3c1185bf"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/styles/history-premium.css",
-    "frontend/src/styles/records.css"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Records with summary stats ? gap above first date is comfortable (not cramped, not a large empty band)"
+    "Records card with incomplete sets ? only the next [??] softly pulses",
+    "Tap complete ? pulse moves to next incomplete set; completed style is static",
+    "Hover/focus pauses animation; reduced-motion shows static highlight only"
   ],
   "fastChecks": [
-    "rg -n \"history-dashboard \\+ \\.records-list__date-group\" frontend/src/styles/history-premium.css frontend/src/styles/records.css"
+    "rg -n \"complete-btn--nudge|workout-complete-nudge|nextIncompleteSetIndex\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm summary-to-date spacing on Records"
+    "After Deploy Frontend: open Records expanded card, confirm gentle complete-button cue"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Summary cards and first date nearly touching (negative margin).",
-  "toBe": "Comfortable ~0.7rem gap between summary and first date heading."
+  "asIs": "Incomplete [??] buttons looked muted with no cue to tap.",
+  "toBe": "Next incomplete [??] gently breathes; other pending buttons tinted but static."
 }

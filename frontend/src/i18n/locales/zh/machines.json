@@ -104,6 +104,8 @@
     "diaryTagsLabel": "Quick tags",
     "setCompletedHint": "Tap set label when done",
     "setComplete": "Done",
+    "setCompletePendingAria": "Mark set {{number}} complete",
+    "setCompleteDoneAria": "Set {{number}} complete, tap to undo",
     "planSave": "Save plan",
     "planSaving": "Saving plan...",
     "planSaved": "Set/weight plan, diary, and personal tip saved.",
