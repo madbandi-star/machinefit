@@ -1,27 +1,27 @@
 {
-  "title": "Tighten home section vertical gaps",
-  "summary": "Home page section gap reduced (space-md ? space-sm) and home fortune card vertical margins removed so notice/fortune/tools/recent/favorites sit closer. CSS only.",
+  "title": "Home fortune card defaults collapsed",
+  "summary": "Home ??? ???? starts collapsed when no localStorage preference exists. Previously defaulted open. UI only.",
   "git": {
     "branch": "main",
-    "commit": "a9cc79a3"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/styles/home.css",
-    "frontend/src/styles/fortune.css"
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx"
   ],
   "testFocus": [
-    "Home: smaller gaps between notice ? fortune ? tools ? recent ? favorites",
-    "Fortune card no longer adds extra top/bottom margin beyond page gap"
+    "Clear localStorage key machinefit.homeFortuneExpanded (or use fresh profile)",
+    "Home fortune card loads collapsed",
+    "Expand still persists across reload"
   ],
   "fastChecks": [
-    "rg -n \"home-page \\{|home-fortune-card \\{\" -A 4 frontend/src/styles/home.css frontend/src/styles/fortune.css"
+    "rg -n \"if \\(raw === null\\) return false\" frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx"
   ],
   "productionChecks": [
-    "After Deploy Frontend: visually confirm tighter home section spacing"
+    "After Deploy Frontend: first visit / cleared preference shows collapsed fortune"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "16px page gap plus fortune card margins made sections feel sparse.",
-  "toBe": "8px page gap; fortune margins zeroed so blocks sit closer."
+  "asIs": "Fortune card defaulted expanded when preference missing.",
+  "toBe": "Fortune card defaults collapsed when preference missing."
 }

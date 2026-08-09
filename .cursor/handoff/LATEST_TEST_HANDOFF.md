@@ -1,23 +1,22 @@
-# Test handoff: Tighten home section gaps
+# Test handoff: Home fortune defaults collapsed
 
 ## Summary
-Home vertical spacing tightened: page gap `space-md` ? `space-sm`, fortune card top/bottom margins removed. CSS only.
+Home ??? ???? defaults to collapsed when no saved preference. UI only.
 
 ## Git
 - Branch: `main`
-- Commit: a9cc79a3
+- Commit: pending
 
 ## Test focus
-1. notice ? fortune closer
-2. fortune ? rest/count tools closer
-3. tools ? recent closer
-4. recent ? favorites closer
+1. Clear `machinefit.homeFortuneExpanded` (or fresh browser)
+2. Card opens collapsed
+3. Expand ? reload still expanded (preference saved)
 
 ## Fast checks
 ```bash
-rg -n "gap: var\\(--space-sm\\)|margin: 0" frontend/src/styles/home.css frontend/src/styles/fortune.css
+rg -n "if \\(raw === null\\) return false" frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx
 ```
 
 ## As-is ? To-be
-- **As-is**: Large gaps from page gap + fortune margins
-- **To-be**: Tighter consistent section spacing
+- **As-is**: Default open
+- **To-be**: Default collapsed

@@ -21,10 +21,10 @@ const HIDDEN_DATE_KEY = 'machinefit.homeFortuneHiddenDate';
 function readExpandedPreference(): boolean {
   try {
     const raw = localStorage.getItem(EXPANDED_KEY);
-    if (raw === null) return true;
+    if (raw === null) return false;
     return raw === '1';
   } catch {
-    return true;
+    return false;
   }
 }
 
