@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: 2cf7ce91
 
 ## Changed files
 - `frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx`
@@ -24,4 +24,4 @@ rg -n "personal-tip-input|rows=\{2\}|voice-coach-panel" frontend/src/components/
 
 ## as-is ? to-be
 - **as-is:** Tip ~5? + ?? ?? ??
-- **to-be:** Tip 2? + ????·?? ?? ???
+- **to-be:** Tip 2? + ?????? ?? ???

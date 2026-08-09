@@ -3,7 +3,7 @@
   "summary": "Records card ??? ? textarea is 2 rows (was visually ~5 via min-height). Gap between ?? ?? and voice count panel tightened.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "2cf7ce91"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
