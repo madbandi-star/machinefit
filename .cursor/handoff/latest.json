@@ -3,7 +3,7 @@
   "summary": "Incomplete [??] keeps muted gray button color, with a primary green corner dot (records-nav style). Next unfinished set?s dot gently pulses/glows; completed has no dot.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "47f572c6"
   },
   "changedFiles": [
     "frontend/src/styles/recommendation.css"
@@ -14,7 +14,7 @@
     "Completed [??] = green button, no corner dot"
   ],
   "fastChecks": [
-    "rg -n \"complete-btn--pending::after|workout-complete-dot-glow\" frontend/src/styles/recommendation.css"
+    "rg -n \"complete-btn--47f572c6::after|workout-complete-dot-glow\" frontend/src/styles/recommendation.css"
   ],
   "productionChecks": [
     "After Deploy Frontend: confirm corner glow dot on incomplete Complete"
