@@ -1,27 +1,29 @@
 {
-  "title": "Tighten gaps between records date groups",
-  "summary": "Records history page date-to-date vertical spacing reduced (section gap 24px?10px, tighter date headings). CSS only.",
+  "title": "Tighten summary stats to date gap on Records",
+  "summary": "Records history: reduce vertical space between [???/???/?] summary dashboard and the first workout date heading. CSS only (history-dashboard + first date-group).",
   "git": {
     "branch": "main",
-    "commit": "2f6146cb"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/styles/history-premium.css",
     "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Records page with multiple date groups ? gaps between days look tighter",
-    "Cards within a day still readable"
+    "Records page with summary stats visible ? gap above first date heading is tight",
+    "Toolbar / filter row spacing still usable",
+    "Date-to-date gaps still look like prior tighten"
   ],
   "fastChecks": [
-    "rg -n \"history-gap-section|records-list__date-group\" frontend/src/styles/history-premium.css frontend/src/styles/records.css"
+    "rg -n \"history-dashboard \\+ \\.records-list__date-group\" frontend/src/styles/history-premium.css frontend/src/styles/records.css",
+    "rg -n \"records-list--history\" frontend/src/styles/records.css | head -n 20"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm date groups sit closer on Records"
+    "After Deploy Frontend: confirm summary cards sit close to first date on Records"
   ],
   "deploy": {
     "expected": "GitHub Pages frontend deploy on push to main"
   },
-  "asIs": "Large 24px gaps between date sections on records history.",
-  "toBe": "Tighter ~10px gaps between date sections."
+  "asIs": "Wide empty band between summary metric cards and the first workout date.",
+  "toBe": "Summary and first date sit close (negative margin pull + smaller list gap)."
 }

@@ -134,17 +134,18 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: -0.35rem;
+  margin-top: -0.15rem;
+  margin-bottom: 0;
   width: 100%;
   --history-metric-gap: 4px;
 }
 
 .history-page-premium .history-dashboard + .records-list__date-group {
-  margin-top: -0.35rem;
+  margin-top: -0.55rem;
 }
 
 .history-page-premium .history-dashboard + .records-list__date-group .records-list__date-toggle {
-  padding-top: 0.12rem;
+  padding-top: 0.05rem;
 }
 
 .history-dashboard__grid {
