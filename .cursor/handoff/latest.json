@@ -1,9 +1,9 @@
 {
   "title": "Single-line home notice banner",
-  "summary": "Home latest-notice banner is compacted to one horizontal line: icon · label · title · more. Smaller padding/icon; title ellipsizes. UI/CSS only.",
+  "summary": "Home latest-notice banner is compacted to one horizontal line: icon ï¿½ label ï¿½ title ï¿½ more. Smaller padding/icon; title ellipsizes. UI/CSS only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "056df640"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeNoticeBanner/HomeNoticeBanner.tsx",

@@ -1,11 +1,11 @@
 # Test handoff: Single-line home notice banner
 
 ## Summary
-Home ?? ?? banner is one horizontal line (icon · label · title · more). UI/CSS only.
+Home ?? ?? banner is one horizontal line (icon ï¿½ label ï¿½ title ï¿½ more). UI/CSS only.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 056df640
 
 ## Test focus
 1. Home notice is single-line height
