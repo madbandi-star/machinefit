@@ -5,7 +5,7 @@ Removed ???? ?? ???? and ???? ? ?? ?????? from fortune today. Apply section kept
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: c3d694ae
 
 ## Test focus
 1. `/fortune/today` has no guide / my-data blocks
