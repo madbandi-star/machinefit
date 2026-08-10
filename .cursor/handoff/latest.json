@@ -1,26 +1,28 @@
 {
-  "title": "Fix backup restore gym_members column typo",
-  "summary": "User backup restore failed with `column gm.user_gym_id does not exist`. scopeOwned now joins gym_members.gym_id (and owner_user_id). Verified for display_name ?èÎ©î?¥Ìä∏4885.",
+  "title": "Fix Render boot 57014 migration lock timeout",
+  "summary": "Render start failed with canceling statement due to statement timeout (57014) because session pg_advisory_lock orphaned under PgBouncer. Boot migrate now skips the lock when nothing is pending and uses pg_advisory_xact_lock + SET LOCAL statement_timeout=0 when applying.",
   "git": {
     "branch": "main",
-    "commit": "7a86bc5d"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "backend/server/services/backup.service.ts"
+    "backend/server/db/run-pending-migrations.ts"
   ],
   "testFocus": [
-    "Member ?èÎ©î?¥Ìä∏4885 ??My Page ???∞Ïù¥?∞Í?Î¶???Î≥µÍµ¨?òÍ∏∞ succeeds without user_gym_id error",
-    "Restore still only applies rows owned by that user gym/member scope"
+    "Render backend start succeeds (no Auto-migrate failed / 57014)",
+    "Logs show Auto-migrate complete: no pending files when DB is up to date"
   ],
   "fastChecks": [
-    "rg -n \"gm.gym_id|user_gym_id|scopeOwned\" backend/server/services/backup.service.ts"
+    "rg -n \"pg_advisory_xact_lock|statement_timeout|pending.length\" backend/server/db/run-pending-migrations.ts",
+    "rg -n \"pg_advisory_lock\\(\" backend/server/db/run-pending-migrations.ts; echo expect_no_session_lock"
   ],
   "productionChecks": [
-    "After Render backend redeploy: retry restore for ?èÎ©î?¥Ìä∏4885"
+    "Render Deploy: service starts; npm start does not exit 1",
+    "Optional: API /health returns ok after redeploy"
   ],
   "deploy": {
-    "expected": "Render backend redeploy required (backend change)"
+    "expected": "Push main ? Render backend redeploy; start must succeed"
   },
-  "asIs": "Restore SQL referenced non-existent gm.user_gym_id.",
-  "toBe": "Restore SQL uses gm.gym_id + owner_user_id ownership check."
+  "asIs": "Boot acquired session advisory lock; under PgBouncer the lock could stick on an idle backend; next deploy waited then hit 30s statement_timeout 57014 and refused to start.",
+  "toBe": "No lock when migrations already applied; pending applies use transaction-scoped advisory lock and no 30s migrate timeout."
 }
