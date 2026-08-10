@@ -27,13 +27,13 @@ export const adminRepository = {
   async dashboard() {
     const pool = getPool();
     const devUserCount = listDevUsers().length;
-    const pendingRequests = mockMachineRequests.filter((r) => r.status === 'pending').length;
     const pendingReports = mockReports.filter((r) => r.status === 'pending').length;
     const hiddenPosts = mockPosts.filter((p) => p.isHidden).length;
 
     let userCount = devUserCount + 3;
     let gymCount = MOCK_GYMS.length;
     let verifiedGyms = MOCK_GYMS.filter((g) => g.isVerified).length;
+    let pendingRequests = mockMachineRequests.filter((r) => r.status === 'pending').length;
     if (pool) {
       const count = await pool.query<{ count: string }>(
         'SELECT COUNT(*)::text AS count FROM users'
@@ -46,6 +46,12 @@ export const adminRepository = {
       );
       gymCount = parseInt(gymStats.rows[0]?.total ?? '0', 10);
       verifiedGyms = parseInt(gymStats.rows[0]?.verified ?? '0', 10);
+      const pending = await pool.query<{ count: string }>(
+        `SELECT COUNT(*)::text AS count
+         FROM machine_requests
+         WHERE status = 'pending' AND is_hidden = FALSE`
+      );
+      pendingRequests = parseInt(pending.rows[0]?.count ?? '0', 10);
     }
 
     return {

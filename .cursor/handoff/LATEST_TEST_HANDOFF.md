@@ -1,34 +1,31 @@
-# Test handoff ??Remove FitZone mock gyms from admin
+# Test handoff — Clear machine-request mock seeds
 
 ## Summary
-관리자 ?�스???�이지가 DB가 ?�니??`MOCK_GYMS`(FitZone Gangnam ??�???�� 보여주던 문제�??�정?�습?�다. ?�제 `gyms` ?�이블을 조회?�니?? mock/seed ?��???비웠?�니??
+관리자 기구요청용 mock 시드(`req-1` Hammer Strength Pullover, `req-2` Cybex VR3)와 투표 더미를 제거했습니다. 대시보드 `pendingRequests`는 DB `machine_requests` pending 카운트를 사용합니다.
 
 ## Git
 - branch: `main`
-- commit: (push ??갱신)
+- commit: (push 후 갱신)
 
 ## Changed files
+- `backend/server/data/community.mock.ts`
 - `backend/server/repositories/admin.repository.ts`
-- `backend/server/services/admin.service.ts`
-- `backend/server/controllers/admin.controller.ts`
-- `backend/server/data/mock.ts`
-- `backend/server/repositories/gym-directory.repository.ts`
-- `database/seeds/gyms.sql`
 
 ## Test focus
-1. 관리자 > ?�스?�에 FitZone / Iron Temple / PowerHouse ?�음
-2. ?�록???�영 ?�스?�이 ?�으�?�?목록
-3. (?�을 ?? ?�증 ?��????�제 DB??반영
+1. 관리자 기구요청에 샘플 2건(Downtown Fitness 등) 없음
+2. 실사용자 요청만 보이거나 빈 목록
+3. 대시보드 대기 요청 수 = DB pending
 
 ## Fast checks
 ```bash
-rg -n "FitZone" backend/server/data/mock.ts
-rg -n "FROM gyms" backend/server/repositories/admin.repository.ts
+rg -n "req-1|Pullover Machine|Downtown Fitness" backend/server/data/community.mock.ts
+# no matches
+rg -n "FROM machine_requests" backend/server/repositories/admin.repository.ts
 ```
 
 ## Note
-**Render backend ?�배???�요.**
+**Render backend 재배포 필요.**
 
-## as-is ??to-be
-- **as-is:** ?��? 3�???�� ?�시
-- **to-be:** ?�데?�터�?(?�재 DB gyms=0?�면 �??�면)
+## as-is → to-be
+- **as-is:** mock 2건 + 대시보드 mock 카운트
+- **to-be:** mock 비움 + 대시보드 DB 카운트

@@ -71,54 +71,13 @@ export const mockMachineRequestImages = new Map<
   }
 >();
 
-export const mockMachineRequests: MachineRequest[] = [
-  {
-    id: 'req-1',
-    userId: 'user-1',
-    brandName: 'Hammer Strength',
-    machineName: 'Pullover Machine',
-    description: 'Would love to see settings for the Hammer Strength pullover.',
-    status: 'pending',
-    authorName: 'FitnessFan',
-    commercialUseConsent: true,
-    gymChoiceMode: 'custom',
-    gymName: 'Downtown Fitness',
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    voteCount: 2,
-    likedByMe: false,
-    imageCount: 0,
-    createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-  },
-  {
-    id: 'req-2',
-    userId: 'user-2',
-    brandName: 'Cybex',
-    machineName: 'VR3 Seated Row',
-    description: 'Popular machine at my gym, please add Cybex VR3 series.',
-    status: 'pending',
-    authorName: 'TallLifter',
-    commercialUseConsent: true,
-    gymChoiceMode: 'unknown',
-    gymName: null,
-    likeCount: 0,
-    commentCount: 0,
-    viewCount: 0,
-    voteCount: 0,
-    likedByMe: false,
-    imageCount: 0,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-];
+export const mockMachineRequests: MachineRequest[] = [];
 
 export const mockMachineRequestLikes = new Set<string>();
 export const mockMachineRequestComments: MachineRequestComment[] = [];
 
 /** Mock set keys: `vote:${userId}:${requestId}` */
-export const mockMachineRequestVotes = new Set<string>(['vote:user-2:req-1', 'vote:user-3:req-1']);
+export const mockMachineRequestVotes = new Set<string>();
 
 export function machineRequestVoteKey(userId: string, requestId: string) {
   return `vote:${userId}:${requestId}`;
