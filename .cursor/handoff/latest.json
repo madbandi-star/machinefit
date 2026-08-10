@@ -1,33 +1,35 @@
 {
-  "title": "Polish admin Helchang Fortune UI",
-  "summary": "Admin ???? ???? labeled form grid + ???? ? + ???? ??? ??? ???. fortune.css? ?? ?? admin ???? admin-fortune.css? ??.",
+  "title": "Polish admin data retention UI",
+  "summary": "??? ??·?? ??(??/??/??/??) 4??? AdminPanel·? ??·??? ?·?? ??? ???. ?????? ?? ?? ??.",
   "git": {
     "branch": "main",
-    "commit": "f143d3e4"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
-    "frontend/src/styles/admin-fortune.css",
-    "frontend/src/styles/fortune.css",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionPage.tsx",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionScheduledPage.tsx",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionLogsPage.tsx",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionAuditPage.tsx",
+    "frontend/src/styles/admin-data-retention.css",
     "frontend/src/i18n/locales/ko/admin.json",
     "frontend/src/i18n/locales/en/admin.json",
     "frontend/src/i18n/locales/ja/admin.json",
     "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Admin ? ????: ???? ? ????? ??",
-    "? ??? ?? / ?? / ??",
-    "??????? ?? ???"
+    "?? ??·???? ?·?? ??·?? ????/??",
+    "?? ??: ?? ?·?? ??/?? (??? ??)",
+    "?? ??·?? ?? ?? ???"
   ],
   "fastChecks": [
-    "rg -n \"admin-fortune|AdminPanel|categories\" frontend/src/pages/admin/fortune/AdminFortunePage.tsx frontend/src/styles/admin-fortune.css"
+    "rg -n \"admin-retention|AdminPanel\" frontend/src/pages/admin/data-retention frontend/src/styles/admin-data-retention.css"
   ],
   "productionChecks": [
-    "After Pages: open /admin/fortune and verify form + list layout"
+    "After Pages: open /admin/data-retention and related subpages"
   ],
   "deploy": {
     "expected": "Push main ? GitHub Pages FE only"
   },
-  "asIs": "Bare stacked form, raw category codes, cramped table, styles in fortune.css.",
-  "toBe": "Admin panels, labeled fields, category chips, card/grid rows, dedicated CSS."
+  "asIs": "Wide raw tables, ON/OFF text, mobile cards missing hold actions.",
+  "toBe": "Structured cards/rows, status pills, split detail panel, hold form on all breakpoints."
 }

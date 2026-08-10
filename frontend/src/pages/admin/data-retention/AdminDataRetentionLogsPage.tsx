@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { dataRetentionApi } from '@/api/data-retention.api';
 import '@/styles/admin.css';
+import '@/styles/admin-data-retention.css';
 
 export function AdminDataRetentionLogsPage() {
   const { t } = useTranslation('admin');
@@ -30,35 +32,56 @@ export function AdminDataRetentionLogsPage() {
       title={t('dataRetention.logsTitle')}
       subtitle={t('dataRetention.logsSubtitle')}
     >
-      <section className="admin-panel">
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>{t('dataRetention.logTime')}</th>
-                <th>{t('dataRetention.logAction')}</th>
-                <th>{t('dataRetention.colName')}</th>
-                <th>{t('dataRetention.logResult')}</th>
-                <th>{t('dataRetention.logRows')}</th>
-                <th>{t('dataRetention.logError')}</th>
-              </tr>
-            </thead>
-            <tbody>
+      <div className="admin-retention">
+        <AdminPanel
+          title={t('dataRetention.logsList')}
+          count={items.length}
+          countLabel={t('listCount', { count: items.length })}
+        >
+          {items.length === 0 ? (
+            <div className="admin-empty">{t('dataRetention.emptyLogs')}</div>
+          ) : (
+            <div className="admin-retention__list">
               {items.map((log) => (
-                <tr key={log.id}>
-                  <td>{new Date(log.createdAt).toLocaleString()}</td>
-                  <td>{log.action}</td>
-                  <td>{log.policyCode ?? '—'}</td>
-                  <td>{log.success ? 'OK' : 'FAIL'}</td>
-                  <td>{log.rowsAffected}</td>
-                  <td>{log.errorMessage ?? '—'}</td>
-                </tr>
+                <article key={log.id} className="admin-retention__row admin-retention__row--static">
+                  <div className="admin-retention__main">
+                    <div className="admin-retention__title-row">
+                      <h3 className="admin-retention__name">{log.policyCode ?? '—'}</h3>
+                      <span
+                        className={`admin-status-pill${log.success ? ' is-active' : ' is-danger'}`}
+                      >
+                        {log.success
+                          ? t('dataRetention.logOk')
+                          : t('dataRetention.logFail')}
+                      </span>
+                    </div>
+                    <p className="admin-retention__sub">
+                      {new Date(log.createdAt).toLocaleString()} · {log.action}
+                    </p>
+                    {log.errorMessage ? (
+                      <p className="admin-retention__sub">{log.errorMessage}</p>
+                    ) : null}
+                  </div>
+                  <dl className="admin-retention__facts">
+                    <div className="admin-retention__fact">
+                      <dt>{t('dataRetention.logRows')}</dt>
+                      <dd>{log.rowsAffected}</dd>
+                    </div>
+                    <div className="admin-retention__fact">
+                      <dt>{t('dataRetention.logResult')}</dt>
+                      <dd>
+                        {log.success
+                          ? t('dataRetention.logOk')
+                          : t('dataRetention.logFail')}
+                      </dd>
+                    </div>
+                  </dl>
+                </article>
               ))}
-            </tbody>
-          </table>
-          {items.length === 0 && <p className="admin-muted">{t('dataRetention.emptyLogs')}</p>}
-        </div>
-      </section>
+            </div>
+          )}
+        </AdminPanel>
+      </div>
     </AdminPageShell>
   );
 }

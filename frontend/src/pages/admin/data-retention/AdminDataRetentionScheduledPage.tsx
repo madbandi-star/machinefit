@@ -2,16 +2,32 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { dataRetentionApi } from '@/api/data-retention.api';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
+import '@/styles/admin-data-retention.css';
 
 function ddayLabel(days: number, t: (k: string, o?: Record<string, unknown>) => string) {
   if (days < 0) return t('dataRetention.ddayOverdue', { n: Math.abs(days) });
   if (days === 0) return t('dataRetention.ddayToday');
   return t('dataRetention.dday', { n: days });
 }
+
+function ddayPillClass(days: number): string {
+  if (days < 0) return 'admin-status-pill is-danger';
+  if (days <= 7) return 'admin-status-pill is-pending';
+  return 'admin-status-pill is-active';
+}
+
+const WINDOWS = [
+  ['today', 'dataRetention.windowToday'],
+  ['7d', 'dataRetention.window7'],
+  ['30d', 'dataRetention.window30'],
+  ['90d', 'dataRetention.window90'],
+  ['all', 'dataRetention.windowAll'],
+] as const;
 
 export function AdminDataRetentionScheduledPage() {
   const { t } = useTranslation('admin');
@@ -69,62 +85,69 @@ export function AdminDataRetentionScheduledPage() {
       title={t('dataRetention.scheduledTitle')}
       subtitle={t('dataRetention.scheduledSubtitle')}
     >
-      <section className="admin-panel">
-        <div className="admin-filters">
-          {(
-            [
-              ['today', 'dataRetention.windowToday'],
-              ['7d', 'dataRetention.window7'],
-              ['30d', 'dataRetention.window30'],
-              ['90d', 'dataRetention.window90'],
-              ['all', 'dataRetention.windowAll'],
-            ] as const
-          ).map(([value, labelKey]) => (
-            <button
-              key={value}
-              type="button"
-              className={`btn ${window === value ? 'btn--primary' : 'btn--secondary'}`}
-              onClick={() => setWindow(value)}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
-        <p className="admin-muted">
-          {t('dataRetention.totalCount', { n: query.data?.total ?? 0 })}
-        </p>
+      <div className="admin-retention">
+        <AdminPanel
+          title={t('dataRetention.scheduledList')}
+          count={query.data?.total ?? items.length}
+          countLabel={t('dataRetention.totalCount', { n: query.data?.total ?? 0 })}
+        >
+          <div className="admin-retention__chips" role="group" aria-label={t('dataRetention.window')}>
+            {WINDOWS.map(([value, labelKey]) => (
+              <button
+                key={value}
+                type="button"
+                className={`admin-retention__chip${window === value ? ' admin-retention__chip--active' : ''}`}
+                aria-pressed={window === value}
+                onClick={() => setWindow(value)}
+              >
+                {t(labelKey)}
+              </button>
+            ))}
+          </div>
 
-        <div className="admin-table-wrap admin-table-wrap--desktop">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>{t('dataRetention.colName')}</th>
-                <th>{t('dataRetention.subject')}</th>
-                <th>{t('dataRetention.scheduledAt')}</th>
-                <th>{t('dataRetention.colSampleDday')}</th>
-                <th>{t('dataRetention.status')}</th>
-                <th>{t('dataRetention.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
+          {items.length === 0 ? (
+            <div className="admin-empty">{t('dataRetention.emptyScheduled')}</div>
+          ) : (
+            <div className="admin-retention__list">
               {items.map((r) => (
-                <tr key={r.id}>
-                  <td>
-                    <strong>{r.policyName}</strong>
-                    <div className="admin-muted">{r.policyCode}</div>
-                  </td>
-                  <td>{r.userDisplayName ?? r.subjectId.slice(0, 8)}</td>
-                  <td>{r.scheduledDeletionAt.slice(0, 10)}</td>
-                  <td>{ddayLabel(r.daysRemaining, t)}</td>
-                  <td>
-                    {r.status}
-                    {r.hold ? ` · ${t('dataRetention.onHold')}` : ''}
-                  </td>
-                  <td>
+                <article key={r.id} className="admin-retention__row admin-retention__row--static">
+                  <div className="admin-retention__main">
+                    <div className="admin-retention__title-row">
+                      <h3 className="admin-retention__name">{r.policyName}</h3>
+                      {r.hold ? (
+                        <span className="admin-status-pill is-pending">
+                          {t('dataRetention.onHold')}
+                        </span>
+                      ) : (
+                        <span className="admin-status-pill is-verified">{r.status}</span>
+                      )}
+                    </div>
+                    <p className="admin-retention__code">{r.policyCode}</p>
+                    <p className="admin-retention__sub">
+                      {t('dataRetention.subject')}:{' '}
+                      {r.userDisplayName ?? r.subjectId.slice(0, 8)}
+                    </p>
+                  </div>
+                  <dl className="admin-retention__facts">
+                    <div className="admin-retention__fact">
+                      <dt>{t('dataRetention.scheduledAt')}</dt>
+                      <dd>{r.scheduledDeletionAt.slice(0, 10)}</dd>
+                    </div>
+                    <div className="admin-retention__fact">
+                      <dt>{t('dataRetention.colSampleDday')}</dt>
+                      <dd>
+                        <span className={ddayPillClass(r.daysRemaining)}>
+                          {ddayLabel(r.daysRemaining, t)}
+                        </span>
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="admin-retention__actions">
                     {r.hold ? (
                       <button
                         type="button"
-                        className="btn btn--secondary"
+                        className="btn btn--secondary btn--sm"
+                        disabled={holdMutation.isPending}
                         onClick={() =>
                           holdMutation.mutate({
                             id: r.id,
@@ -138,75 +161,67 @@ export function AdminDataRetentionScheduledPage() {
                     ) : (
                       <button
                         type="button"
-                        className="btn btn--secondary"
+                        className="btn btn--secondary btn--sm"
                         onClick={() => setHoldId(r.id)}
                       >
                         {t('dataRetention.setHold')}
                       </button>
                     )}
-                  </td>
-                </tr>
+                  </div>
+                </article>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          )}
 
-        <div className="admin-card-list admin-card-list--mobile">
-          {items.map((r) => (
-            <div key={r.id} className="admin-card">
-              <strong>{r.policyName}</strong>
-              <div>
-                {r.scheduledDeletionAt.slice(0, 10)} · {ddayLabel(r.daysRemaining, t)}
-              </div>
-              <div>
-                {r.status}
-                {r.hold ? ` · ${t('dataRetention.onHold')}` : ''}
+          {holdId ? (
+            <div className="admin-retention__hold">
+              <h3 className="admin-retention__hold-title">{t('dataRetention.setHold')}</h3>
+              <label className="admin-form-card">
+                <span className="admin-form-card__label">{t('dataRetention.holdReason')}</span>
+                <input
+                  className="input"
+                  type="text"
+                  value={holdReason}
+                  onChange={(e) => setHoldReason(e.target.value)}
+                />
+              </label>
+              <label className="admin-form-card">
+                <span className="admin-form-card__label">{t('dataRetention.holdUntil')}</span>
+                <input
+                  className="input"
+                  type="datetime-local"
+                  value={holdUntil}
+                  onChange={(e) => setHoldUntil(e.target.value)}
+                />
+              </label>
+              <div className="admin-retention__actions">
+                <button
+                  type="button"
+                  className="btn btn--primary btn--sm"
+                  disabled={!holdReason.trim() || !holdUntil || holdMutation.isPending}
+                  onClick={() =>
+                    holdMutation.mutate({
+                      id: holdId,
+                      hold: true,
+                      holdReason,
+                      holdUntil: new Date(holdUntil).toISOString(),
+                    })
+                  }
+                >
+                  {t('dataRetention.confirmHold')}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--secondary btn--sm"
+                  onClick={() => setHoldId(null)}
+                >
+                  {t('dataRetention.cancel')}
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-
-        {holdId && (
-          <div className="admin-panel" style={{ marginTop: 16 }}>
-            <h3 className="admin-panel__title">{t('dataRetention.setHold')}</h3>
-            <input
-              type="text"
-              placeholder={t('dataRetention.holdReason')}
-              value={holdReason}
-              onChange={(e) => setHoldReason(e.target.value)}
-            />
-            <input
-              type="datetime-local"
-              value={holdUntil}
-              onChange={(e) => setHoldUntil(e.target.value)}
-            />
-            <div className="admin-row__actions">
-              <button
-                type="button"
-                className="btn btn--primary"
-                disabled={!holdReason.trim() || !holdUntil}
-                onClick={() =>
-                  holdMutation.mutate({
-                    id: holdId,
-                    hold: true,
-                    holdReason,
-                    holdUntil: new Date(holdUntil).toISOString(),
-                  })
-                }
-              >
-                {t('dataRetention.confirmHold')}
-              </button>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => setHoldId(null)}
-              >
-                {t('dataRetention.cancel')}
-              </button>
-            </div>
-          </div>
-        )}
-      </section>
+          ) : null}
+        </AdminPanel>
+      </div>
     </AdminPageShell>
   );
 }

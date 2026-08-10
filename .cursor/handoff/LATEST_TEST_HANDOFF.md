@@ -1,31 +1,30 @@
-# Test handoff ??Admin Helchang Fortune UI polish
+# Test handoff — Admin data retention UI polish
 
 ## Summary
-관리자 ?�창?�세 UI ?�리: labeled form, 카테고리 �? 구조??목록, `admin-fortune.css` 분리.
+데이터 보존·삭제 관리 4화면 UI 정리: KPI/칩/구조화 행/상세 패널, 전용 CSS.
 
 ## Git
 - branch: `main`
-- commit: `f143d3e4`
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/pages/admin/fortune/AdminFortunePage.tsx`
-- `frontend/src/styles/admin-fortune.css`
-- `frontend/src/styles/fortune.css` (orphan admin rules removed)
+- `frontend/src/pages/admin/data-retention/*.tsx` (4)
+- `frontend/src/styles/admin-data-retention.css`
 - `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json`
 
 ## Test focus
-1. 카테고리 칩·비?�성 ?�함 ?�터
-2. ?�성/?�정/??��
-3. 모바?�·데?�크???�이?�웃
+1. 정책 목록 선택 → 상세/기간 변경
+2. 삭제 예정 보류 (모바일 포함)
+3. 이력·감사 로그 표시
 
 ## Fast checks
 ```bash
-rg -n "admin-fortune|AdminPanel|categories" frontend/src/pages/admin/fortune/AdminFortunePage.tsx frontend/src/styles/admin-fortune.css
+rg -n "admin-retention|AdminPanel" frontend/src/pages/admin/data-retention frontend/src/styles/admin-data-retention.css
 ```
 
-## as-is ??to-be
-- **as-is:** placeholder-only form + raw table
-- **to-be:** AdminPanel form/list + chips + labeled facts
+## as-is → to-be
+- **as-is:** 조밀한 테이블 + 영문 ON/OFF
+- **to-be:** 카드/행 + 뱃지 + 선택 상세 패널
 
 ## Note
-FE only ??Pages deploy.
+FE only — Pages deploy.
