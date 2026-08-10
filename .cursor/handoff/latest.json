@@ -1,32 +1,33 @@
 {
-  "title": "Polish admin subscriptions UI",
-  "summary": "Admin ?? ???? ?? ??? ?????? ?? ?(??? ?? / ???? 3?)?? ??. API?? ??? ??.",
+  "title": "Polish admin Helchang Fortune UI",
+  "summary": "Admin ???? ???? labeled form grid + ???? ? + ???? ??? ??? ???. fortune.css? ?? ?? admin ???? admin-fortune.css? ??.",
   "git": {
     "branch": "main",
-    "commit": "d28e4519"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx",
-    "frontend/src/styles/admin-subscriptions.css",
+    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
+    "frontend/src/styles/admin-fortune.css",
+    "frontend/src/styles/fortune.css",
     "frontend/src/i18n/locales/ko/admin.json",
     "frontend/src/i18n/locales/en/admin.json",
     "frontend/src/i18n/locales/ja/admin.json",
     "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Admin ? ??: ???? ??? ?? select ??",
-    "??? ?? ?? / 30? ?? / ?? ?? ??",
-    "??????? ???? ???"
+    "Admin ? ????: ???? ? ??·??? ??",
+    "? ??? ?? / ?? / ??",
+    "???·???? ?? ???"
   ],
   "fastChecks": [
-    "rg -n \"admin-subs|STATUS_CHIPS|statusPillClass\" frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx frontend/src/styles/admin-subscriptions.css"
+    "rg -n \"admin-fortune|AdminPanel|categories\" frontend/src/pages/admin/fortune/AdminFortunePage.tsx frontend/src/styles/admin-fortune.css"
   ],
   "productionChecks": [
-    "After Pages deploy: open /admin/subscriptions and verify chips + row layout"
+    "After Pages: open /admin/fortune and verify form + list layout"
   ],
   "deploy": {
     "expected": "Push main ? GitHub Pages FE only"
   },
-  "asIs": "Cramped list with raw English status and dense meta dump.",
-  "toBe": "Toolbar + status chips + labeled facts + semantic pills."
+  "asIs": "Bare stacked form, raw category codes, cramped table, styles in fortune.css.",
+  "toBe": "Admin panels, labeled fields, category chips, card/grid rows, dedicated CSS."
 }

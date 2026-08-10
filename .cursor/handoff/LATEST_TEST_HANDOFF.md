@@ -1,30 +1,31 @@
-# Test handoff ??Admin subscriptions UI polish
+# Test handoff — Admin Helchang Fortune UI polish
 
 ## Summary
-관리자 구독 ?�이지 UI ?�리: 검???�바, ?�태 �? 구조?�된 ?�원 ???�랜/체험/만료), semantic ?�태 뱃�?. 기능 ?�일.
+관리자 헬창운세 UI 정리: labeled form, 카테고리 칩, 구조화 목록, `admin-fortune.css` 분리.
 
 ## Git
 - branch: `main`
-- commit: `d28e4519`
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx`
-- `frontend/src/styles/admin-subscriptions.css`
+- `frontend/src/pages/admin/fortune/AdminFortunePage.tsx`
+- `frontend/src/styles/admin-fortune.css`
+- `frontend/src/styles/fortune.css` (orphan admin rules removed)
 - `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json`
 
 ## Test focus
-1. 검?�·상??칩·기?� ?�태 select
-2. ?�랜 변�?/ 30???�장 / 구독 종료
-3. 모바?�·데?�크???�이?�웃
+1. 카테고리 칩·비활성 포함 필터
+2. 생성/수정/삭제
+3. 모바일·데스크톱 레이아웃
 
 ## Fast checks
 ```bash
-rg -n "admin-subs|STATUS_CHIPS|statusPillClass" frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx frontend/src/styles/admin-subscriptions.css
+rg -n "admin-fortune|AdminPanel|categories" frontend/src/pages/admin/fortune/AdminFortunePage.tsx frontend/src/styles/admin-fortune.css
 ```
 
-## as-is ??to-be
-- **as-is:** ?�문 raw ?�태 + meta ?�프 + ?�라??flex
-- **to-be:** �??�터 + ?�벨/�?fact + ?�스?�톱 3??
+## as-is → to-be
+- **as-is:** placeholder-only form + raw table
+- **to-be:** AdminPanel form/list + chips + labeled facts
 
 ## Note
-FE only ??Pages deploy.
+FE only — Pages deploy.

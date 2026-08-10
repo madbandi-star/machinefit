@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import type { FortuneContentCategory, FortuneContentItem } from '@machinefit/shared';
 import { adminFortuneApi } from '@/api/fortune.api';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
+import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
-import '@/styles/fortune.css';
+import '@/styles/admin-fortune.css';
 
 const CATEGORIES: FortuneContentCategory[] = [
   'keyword',
@@ -48,6 +49,10 @@ function parseJsonObject(raw: string): Record<string, unknown> | null | undefine
   } catch {
     return null;
   }
+}
+
+function categoryLabel(t: (key: string, opts?: { defaultValue?: string }) => string, category: string) {
+  return t(`fortuneAdmin.categories.${category}`, { defaultValue: category });
 }
 
 export function AdminFortunePage() {
@@ -106,7 +111,7 @@ export function AdminFortunePage() {
       return adminFortuneApi.create(payload);
     },
     onSuccess: async () => {
-      showToast(t('common:actions.save'), 'success');
+      showToast(t('fortuneAdmin.saved'), 'success');
       setForm(emptyForm);
       setEditing(null);
       await queryClient.invalidateQueries({ queryKey: ['admin', 'fortune-content'] });
@@ -125,207 +130,303 @@ export function AdminFortunePage() {
     onSuccess: async () => {
       setPendingDelete(null);
       await queryClient.invalidateQueries({ queryKey: ['admin', 'fortune-content'] });
-      showToast(t('common:actions.delete'), 'success');
+      showToast(t('fortuneAdmin.deleted'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
   const rows = listQuery.data ?? [];
-  const title = useMemo(() => t('fortuneAdmin.nav'), [t]);
+  const activeCount = useMemo(() => rows.filter((r) => r.isActive).length, [rows]);
+
+  const startEdit = (row: FortuneContentItem) => {
+    setEditing(row);
+    setForm({
+      category: row.category,
+      code: row.code,
+      locale: row.locale,
+      title: row.title,
+      body: row.body,
+      priority: row.priority,
+      isActive: row.isActive,
+      dataConditionsText: row.dataConditions
+        ? JSON.stringify(row.dataConditions, null, 2)
+        : '',
+      scoreWeightsText: row.scoreWeights
+        ? JSON.stringify(row.scoreWeights, null, 2)
+        : '',
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetForm = () => {
+    setEditing(null);
+    setForm(emptyForm);
+  };
 
   return (
-    <AdminPageShell title={title}>
-      <p className="form-section__desc">{t('fortuneAdmin.desc')}</p>
-
-      <div className="admin-fortune-filters">
-        <select
-          className="input"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          aria-label={t('fortuneAdmin.category')}
+    <AdminPageShell title={t('fortuneAdmin.nav')} subtitle={t('fortuneAdmin.desc')}>
+      <div className="admin-fortune">
+        <AdminPanel
+          title={editing ? t('fortuneAdmin.edit') : t('fortuneAdmin.create')}
+          desc={
+            editing
+              ? t('fortuneAdmin.editHint', { code: editing.code })
+              : t('fortuneAdmin.createHint')
+          }
         >
-          <option value="">{t('fortuneAdmin.allCategories')}</option>
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        <label className="form-check">
-          <input
-            type="checkbox"
-            checked={includeInactive}
-            onChange={(e) => setIncludeInactive(e.target.checked)}
-          />
-          <span>{t('fortuneAdmin.includeInactive')}</span>
-        </label>
-      </div>
+          <form
+            className="admin-fortune__form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              saveMutation.mutate();
+            }}
+          >
+            <div className="admin-form-grid">
+              <label className="admin-form-card">
+                <span className="admin-form-card__label">{t('fortuneAdmin.category')}</span>
+                <select
+                  className="input"
+                  value={form.category}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      category: e.target.value as FortuneContentCategory,
+                    }))
+                  }
+                  required
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {categoryLabel(t, c)}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-      <form
-        className="admin-fortune-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          saveMutation.mutate();
-        }}
-      >
-        <h3>{editing ? t('fortuneAdmin.edit') : t('fortuneAdmin.create')}</h3>
-        <select
-          className="input"
-          value={form.category}
-          onChange={(e) =>
-            setForm((prev) => ({
-              ...prev,
-              category: e.target.value as FortuneContentCategory,
-            }))
-          }
-          required
+              <label className="admin-form-card">
+                <span className="admin-form-card__label">{t('fortuneAdmin.code')}</span>
+                <input
+                  className="input"
+                  value={form.code}
+                  onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
+                  placeholder="UPPER_SNAKE"
+                  required
+                />
+              </label>
+
+              <label className="admin-form-card admin-form-card--full">
+                <span className="admin-form-card__label">{t('fortuneAdmin.titleField')}</span>
+                <input
+                  className="input"
+                  value={form.title}
+                  onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                  required
+                />
+              </label>
+
+              <label className="admin-form-card admin-form-card--full">
+                <span className="admin-form-card__label">{t('fortuneAdmin.body')}</span>
+                <textarea
+                  className="input admin-fortune__textarea"
+                  value={form.body}
+                  onChange={(e) => setForm((prev) => ({ ...prev, body: e.target.value }))}
+                  rows={4}
+                />
+              </label>
+
+              <label className="admin-form-card">
+                <span className="admin-form-card__label">{t('fortuneAdmin.priority')}</span>
+                <input
+                  className="input"
+                  type="number"
+                  value={form.priority}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, priority: Number(e.target.value) || 0 }))
+                  }
+                />
+              </label>
+
+              <label className="admin-form-card admin-fortune__check-card">
+                <span className="admin-form-card__label">{t('fortuneAdmin.active')}</span>
+                <span className="admin-fortune__check">
+                  <input
+                    type="checkbox"
+                    checked={form.isActive}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, isActive: e.target.checked }))
+                    }
+                  />
+                  <span>{t('fortuneAdmin.activeHint')}</span>
+                </span>
+              </label>
+
+              <label className="admin-form-card admin-form-card--full">
+                <span className="admin-form-card__label">{t('fortuneAdmin.dataConditions')}</span>
+                <textarea
+                  className="input admin-fortune__textarea admin-fortune__textarea--code"
+                  value={form.dataConditionsText}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, dataConditionsText: e.target.value }))
+                  }
+                  placeholder="{}"
+                  rows={3}
+                  spellCheck={false}
+                />
+              </label>
+
+              <label className="admin-form-card admin-form-card--full">
+                <span className="admin-form-card__label">{t('fortuneAdmin.scoreWeights')}</span>
+                <textarea
+                  className="input admin-fortune__textarea admin-fortune__textarea--code"
+                  value={form.scoreWeightsText}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, scoreWeightsText: e.target.value }))
+                  }
+                  placeholder="{}"
+                  rows={3}
+                  spellCheck={false}
+                />
+              </label>
+            </div>
+
+            <div className="admin-fortune__form-actions">
+              <button
+                type="submit"
+                className="btn btn--primary"
+                disabled={saveMutation.isPending}
+              >
+                {t('common:actions.save')}
+              </button>
+              {editing ? (
+                <button type="button" className="btn btn--secondary" onClick={resetForm}>
+                  {t('common:actions.cancel')}
+                </button>
+              ) : null}
+            </div>
+          </form>
+        </AdminPanel>
+
+        <AdminPanel
+          title={t('fortuneAdmin.listTitle')}
+          count={rows.length}
+          countLabel={t('fortuneAdmin.listCount', {
+            total: rows.length,
+            active: activeCount,
+          })}
         >
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        <input
-          className="input"
-          placeholder={t('fortuneAdmin.code')}
-          value={form.code}
-          onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
-          required
-        />
-        <input
-          className="input"
-          placeholder={t('fortuneAdmin.titleField')}
-          value={form.title}
-          onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-          required
-        />
-        <textarea
-          className="input"
-          placeholder={t('fortuneAdmin.body')}
-          value={form.body}
-          onChange={(e) => setForm((prev) => ({ ...prev, body: e.target.value }))}
-        />
-        <input
-          className="input"
-          type="number"
-          placeholder={t('fortuneAdmin.priority')}
-          value={form.priority}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, priority: Number(e.target.value) || 0 }))
-          }
-        />
-        <label className="form-check">
-          <input
-            type="checkbox"
-            checked={form.isActive}
-            onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
-          />
-          <span>{t('fortuneAdmin.active')}</span>
-        </label>
-        <textarea
-          className="input"
-          placeholder={t('fortuneAdmin.dataConditions')}
-          value={form.dataConditionsText}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, dataConditionsText: e.target.value }))
-          }
-        />
-        <textarea
-          className="input"
-          placeholder={t('fortuneAdmin.scoreWeights')}
-          value={form.scoreWeightsText}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, scoreWeightsText: e.target.value }))
-          }
-        />
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button type="submit" className="btn btn--primary" disabled={saveMutation.isPending}>
-            {t('common:actions.save')}
-          </button>
-          {editing ? (
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => {
-                setEditing(null);
-                setForm(emptyForm);
-              }}
+          <div className="admin-fortune__toolbar">
+            <div
+              className="admin-fortune__chips"
+              role="group"
+              aria-label={t('fortuneAdmin.category')}
             >
-              {t('common:actions.cancel')}
-            </button>
+              <button
+                type="button"
+                className={`admin-fortune__chip${category === '' ? ' admin-fortune__chip--active' : ''}`}
+                aria-pressed={category === ''}
+                onClick={() => setCategory('')}
+              >
+                {t('fortuneAdmin.allCategories')}
+              </button>
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`admin-fortune__chip${category === c ? ' admin-fortune__chip--active' : ''}`}
+                  aria-pressed={category === c}
+                  onClick={() => setCategory(c)}
+                >
+                  {categoryLabel(t, c)}
+                </button>
+              ))}
+            </div>
+            <label className="admin-fortune__check admin-fortune__check--toolbar">
+              <input
+                type="checkbox"
+                checked={includeInactive}
+                onChange={(e) => setIncludeInactive(e.target.checked)}
+              />
+              <span>{t('fortuneAdmin.includeInactive')}</span>
+            </label>
+          </div>
+
+          {listQuery.isLoading ? <Skeleton count={4} height={56} /> : null}
+          {listQuery.isError ? (
+            <QueryErrorMessage onRetry={() => void listQuery.refetch()} />
           ) : null}
-        </div>
-      </form>
 
-      {listQuery.isLoading ? <Skeleton count={4} height={40} /> : null}
-      {listQuery.isError ? <QueryErrorMessage onRetry={() => void listQuery.refetch()} /> : null}
-
-      {!listQuery.isLoading && !listQuery.isError ? (
-        <table className="admin-fortune-table">
-          <thead>
-            <tr>
-              <th>{t('fortuneAdmin.category')}</th>
-              <th>{t('fortuneAdmin.code')}</th>
-              <th>{t('fortuneAdmin.titleField')}</th>
-              <th>{t('fortuneAdmin.priority')}</th>
-              <th>{t('fortuneAdmin.active')}</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row: FortuneContentItem) => (
-              <tr key={row.id}>
-                <td>{row.category}</td>
-                <td>{row.code}</td>
-                <td>
-                  <div>{row.title}</div>
-                  {row.body ? (
-                    <div style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
-                      {row.body.slice(0, 80)}
+          {!listQuery.isLoading && !listQuery.isError ? (
+            rows.length === 0 ? (
+              <div className="admin-empty">{t('fortuneAdmin.empty')}</div>
+            ) : (
+              <div className="admin-fortune__list">
+                <div className="admin-fortune__head" aria-hidden>
+                  <span>{t('fortuneAdmin.colContent')}</span>
+                  <span>{t('fortuneAdmin.colMeta')}</span>
+                  <span>{t('fortuneAdmin.colActions')}</span>
+                </div>
+                {rows.map((row) => (
+                  <article
+                    key={row.id}
+                    className={`admin-fortune__row${row.isActive ? '' : ' admin-fortune__row--inactive'}`}
+                  >
+                    <div className="admin-fortune__content">
+                      <div className="admin-fortune__title-row">
+                        <h3 className="admin-fortune__title">{row.title}</h3>
+                        <span
+                          className={`admin-status-pill${row.isActive ? ' is-active' : ' is-inactive'}`}
+                        >
+                          {row.isActive
+                            ? t('fortuneAdmin.active')
+                            : t('fortuneAdmin.inactive')}
+                        </span>
+                      </div>
+                      <p className="admin-fortune__code">{row.code}</p>
+                      {row.body ? (
+                        <p className="admin-fortune__body-preview">
+                          {row.body.length > 120 ? `${row.body.slice(0, 120)}…` : row.body}
+                        </p>
+                      ) : null}
                     </div>
-                  ) : null}
-                </td>
-                <td>{row.priority}</td>
-                <td>{row.isActive ? 'Y' : 'N'}</td>
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    onClick={() => {
-                      setEditing(row);
-                      setForm({
-                        category: row.category,
-                        code: row.code,
-                        locale: row.locale,
-                        title: row.title,
-                        body: row.body,
-                        priority: row.priority,
-                        isActive: row.isActive,
-                        dataConditionsText: row.dataConditions
-                          ? JSON.stringify(row.dataConditions, null, 2)
-                          : '',
-                        scoreWeightsText: row.scoreWeights
-                          ? JSON.stringify(row.scoreWeights, null, 2)
-                          : '',
-                      });
-                    }}
-                  >
-                    {t('fortuneAdmin.edit')}
-                  </button>{' '}
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    onClick={() => setPendingDelete(row.id)}
-                  >
-                    {t('common:actions.delete')}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : null}
+
+                    <dl className="admin-fortune__facts">
+                      <div className="admin-fortune__fact">
+                        <dt>{t('fortuneAdmin.category')}</dt>
+                        <dd>{categoryLabel(t, row.category)}</dd>
+                      </div>
+                      <div className="admin-fortune__fact">
+                        <dt>{t('fortuneAdmin.priority')}</dt>
+                        <dd>{row.priority}</dd>
+                      </div>
+                      <div className="admin-fortune__fact">
+                        <dt>{t('fortuneAdmin.locale')}</dt>
+                        <dd>{row.locale}</dd>
+                      </div>
+                    </dl>
+
+                    <div className="admin-fortune__actions">
+                      <button
+                        type="button"
+                        className="btn btn--secondary btn--sm"
+                        onClick={() => startEdit(row)}
+                      >
+                        {t('fortuneAdmin.edit')}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--ghost btn--sm admin-fortune__delete"
+                        onClick={() => setPendingDelete(row.id)}
+                      >
+                        {t('common:actions.delete')}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )
+          ) : null}
+        </AdminPanel>
+      </div>
 
       <ConfirmDialog
         open={Boolean(pendingDelete)}

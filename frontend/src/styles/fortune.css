@@ -1702,35 +1702,3 @@
     transform: none;
   }
 }
-
-/* —— Admin —— */
-.admin-fortune-form {
-  display: grid;
-  gap: 0.65rem;
-  margin-bottom: var(--space-lg);
-}
-
-.admin-fortune-form textarea {
-  min-height: 4.5rem;
-}
-
-.admin-fortune-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.admin-fortune-table th,
-.admin-fortune-table td {
-  border-bottom: 1px solid var(--glass-border, rgba(138, 148, 166, 0.18));
-  padding: 0.45rem 0.35rem;
-  text-align: left;
-  vertical-align: top;
-}
-
-.admin-fortune-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: var(--space-md);
-}
