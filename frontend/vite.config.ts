@@ -22,8 +22,32 @@ function spaGitHubPagesFallback(): Plugin {
   };
 }
 
+function optionalSentryPlugin(): Plugin | null {
+  if (!process.env.SENTRY_AUTH_TOKEN || !process.env.SENTRY_ORG || !process.env.SENTRY_PROJECT) {
+    return null;
+  }
+  try {
+    const { sentryVitePlugin } = require('@sentry/vite-plugin') as {
+      sentryVitePlugin: (opts: Record<string, unknown>) => Plugin;
+    };
+    return sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      release: { name: buildId },
+      sourcemaps: { filesToDeleteAfterUpload: ['**/*.map'] },
+      errorHandler: () => {
+        /* soft-fail: keep GitHub Pages deploy green */
+      },
+    });
+  } catch {
+    return null;
+  }
+}
+
 const appVersion = pkg.version || '0.1.0';
 const buildId = process.env.GITHUB_SHA?.slice(0, 7) || new Date().toISOString();
+const sentryPlugin = optionalSentryPlugin();
 
 export default defineConfig({
   base: '/machinefit/',
@@ -43,6 +67,7 @@ export default defineConfig({
   build: {
     target: 'es2020',
     cssCodeSplit: true,
+    sourcemap: Boolean(process.env.SENTRY_AUTH_TOKEN),
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -91,6 +116,7 @@ export default defineConfig({
         ],
       },
     }),
+    ...(sentryPlugin ? [sentryPlugin] : []),
   ],
   server: {
     port: 5173,

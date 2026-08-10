@@ -39,6 +39,12 @@ export class ChunkErrorBoundary extends Component<Props, State> {
         meta: { componentStack: info.componentStack?.slice(0, 2000) },
       });
     });
+    void import('@/app/sentry').then(({ captureFrontendException }) =>
+      captureFrontendException(error, {
+        source: 'react-error-boundary',
+        componentStack: info.componentStack?.slice(0, 2000),
+      })
+    );
     if (!isChunkLoadError(error)) return;
     void recoverFromChunkError(error, 'ErrorBoundary').then((result) => {
       if (result === 'show-ui') {

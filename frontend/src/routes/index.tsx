@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ComponentType } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 import { Role } from '@machinefit/shared';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
@@ -416,7 +417,7 @@ const adminSubscriptionsPage = () =>
     default: m.AdminSubscriptionsPage,
   }));
 
-export const router = createBrowserRouter(
+export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
   [
     {
       element: <RootOutlet />,

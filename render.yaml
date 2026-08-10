@@ -41,6 +41,12 @@ services:
         value: '1'
       - key: DATABASE_URL
         sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_ENVIRONMENT
+        value: production
+      - key: SENTRY_TRACES_SAMPLE_RATE
+        value: '0.05'
       # Optional pool / ops tuning for higher concurrency (defaults in code):
       # DATABASE_POOL_MAX=10
       # OPS_API_SAMPLE_RATE=0.05

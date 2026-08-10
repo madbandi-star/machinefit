@@ -1,25 +1,46 @@
 {
-  "title": "Show alert occurrence time with seconds",
-  "summary": "?????? ?? ?? ????(?:?:?) ??? ??.",
+  "title": "Sentry free-tier FE/BE monitoring wiring",
+  "summary": "?? Sentry ?? ??: scrubbing, sampling, ErrorBoundary/Express 500 ??, Router tracing, CI source maps soft-fail. DSN? Render/GitHub Secrets?? ??.",
   "git": {
     "branch": "main",
-    "commit": "d1e3e03b"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/ops/AdminOpsPage.tsx"
+    "frontend/src/app/sentry.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/routes/index.tsx",
+    "frontend/src/routes/RouterErrorElement.tsx",
+    "frontend/src/components/feedback/ChunkErrorBoundary/ChunkErrorBoundary.tsx",
+    "frontend/src/store/auth.store.ts",
+    "frontend/src/app/providers/AuthHydrationProvider.tsx",
+    "frontend/vite.config.ts",
+    "frontend/package.json",
+    "frontend/src/vite-env.d.ts",
+    "backend/server/ops/sentry.ts",
+    "backend/server/index.ts",
+    "backend/server/app.ts",
+    "backend/server/middlewares/error.middleware.ts",
+    "backend/server/lifecycle/process-errors.ts",
+    "backend/server/config/env.ts",
+    ".github/workflows/frontend-deploy.yml",
+    "render.yaml",
+    "config/env/.env.example",
+    "docs/OPS_HARDENING.md"
   ],
   "testFocus": [
-    "?? ?? ?? ??? ????? ????"
+    "DSN ?? ? ?? ??",
+    "DSN ?? ? Issues? FE/BE ?? ??",
+    "PWA/???/?? API ?? ??"
   ],
   "fastChecks": [
-    "rg -n \"fmtDateTime\\(a.createdAt\\)\" frontend/src/pages/admin/ops/AdminOpsPage.tsx"
+    "rg -n \"VITE_SENTRY_DSN|initFrontendSentry|attachSentryExpressErrorHandler\" frontend/src backend/server .github/workflows/frontend-deploy.yml"
   ],
   "productionChecks": [
-    "After Pages: /admin/ops alerts tab shows datetime with seconds"
+    "Set Render SENTRY_DSN + GitHub VITE_SENTRY_DSN then redeploy"
   ],
   "deploy": {
-    "expected": "Push main ? GitHub Pages FE"
+    "expected": "Push main. Needs Render env + GitHub secret for live events."
   },
-  "asIs": "Alerts list had no occurrence time.",
-  "toBe": "Table with createdAt formatted to include H:M:S."
+  "asIs": "Sentry packages present but weak scrubbing/user/router/CI wiring.",
+  "toBe": "Free-tier ready: enable via DSN secrets only."
 }

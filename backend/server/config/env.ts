@@ -56,8 +56,12 @@ const envSchema = z.object({
   REQUEST_TIMEOUT_MS: z.coerce.number().int().min(0).default(30_000),
   /** Grace period for in-flight requests on SIGTERM (ms). */
   SHUTDOWN_GRACE_MS: z.coerce.number().int().positive().default(15_000),
-  /** Optional Sentry DSN — enables alert channel when set. */
+  /** Optional Sentry DSN — enables error/performance monitoring when set. */
   SENTRY_DSN: z.string().optional(),
+  /** Overrides NODE_ENV / MF_DEPLOY_ENV for Sentry environment tag. */
+  SENTRY_ENVIRONMENT: z.string().optional(),
+  /** 0–1; default 0.05 in production when unset (see ops/sentry.ts). */
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).optional(),
   /** Optional webhook URL for critical DR alerts (Slack/Discord compatible). */
   DR_ALERT_WEBHOOK_URL: z.string().optional(),
   /**

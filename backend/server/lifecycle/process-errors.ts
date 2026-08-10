@@ -28,6 +28,12 @@ export function registerProcessErrorHandlers(): void {
 
 async function ingestFatal(title: string, message: string, stack?: string): Promise<void> {
   try {
+    const { captureSentryException } = await import('../ops/sentry.js');
+    await captureSentryException(new Error(`${title}: ${message}`), { stack, source: 'process' });
+  } catch {
+    /* ignore */
+  }
+  try {
     const { opsService } = await import('../services/ops.service.js');
     await opsService.ingest(
       [

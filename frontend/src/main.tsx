@@ -66,7 +66,6 @@ function markPwaBustComplete(): void {
 async function boot() {
   installGlobalChunkErrorHandlers();
   installOpsTelemetry();
-  void initFrontendSentry();
   pruneStaleChunkRetryState();
 
   // Strip one-shot recover query so shares/bookmarks stay clean after reload.
@@ -98,6 +97,8 @@ async function boot() {
   }
 
   initPwaAutoUpdate();
+
+  await initFrontendSentry();
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>

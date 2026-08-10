@@ -9,6 +9,10 @@ interface ImportMetaEnv {
   readonly VITE_APP_VERSION?: string;
   /** Optional Sentry DSN (browser). When unset, Sentry stays disabled. */
   readonly VITE_SENTRY_DSN?: string;
+  readonly VITE_SENTRY_ENVIRONMENT?: string;
+  readonly VITE_SENTRY_TRACES_SAMPLE_RATE?: string;
+  /** When true, send browser events in Vite dev (default off). */
+  readonly VITE_SENTRY_ENABLE_DEV?: string;
   /** Google Identity Services client ID (web). */
   readonly VITE_GOOGLE_CLIENT_ID?: string;
   /** Kakao JavaScript key. */

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { User, AuthTokens } from '@machinefit/shared';
+import { setSentryUser } from '@/app/sentry';
 
 interface AuthState {
   user: User | null;
@@ -80,7 +81,10 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       tokens: null,
       isAuthenticated: false,
-      setAuth: (user, tokens) => set({ user, tokens, isAuthenticated: true }),
+      setAuth: (user, tokens) => {
+        setSentryUser({ id: user.id });
+        set({ user, tokens, isAuthenticated: true });
+      },
       updateTokens: (tokens) =>
         set((state) => ({
           tokens: {
@@ -91,11 +95,16 @@ export const useAuthStore = create<AuthState>()(
           },
           isAuthenticated: state.user != null,
         })),
-      clearAuth: () => set({ user: null, tokens: null, isAuthenticated: false }),
+      clearAuth: () => {
+        setSentryUser(null);
+        set({ user: null, tokens: null, isAuthenticated: false });
+      },
       updateUser: (partial) =>
-        set((state) => ({
-          user: state.user ? { ...state.user, ...partial } : null,
-        })),
+        set((state) => {
+          const next = state.user ? { ...state.user, ...partial } : null;
+          if (next?.id) setSentryUser({ id: next.id });
+          return { user: next };
+        }),
     }),
     {
       name: 'machinefit-auth',

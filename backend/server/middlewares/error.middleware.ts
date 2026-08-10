@@ -60,6 +60,19 @@ export function errorMiddleware(
         message: err.message,
         durationMs,
       });
+      void import('../ops/sentry.js')
+        .then(({ captureSentryException }) =>
+          captureSentryException(err, {
+            requestId,
+            method: req.method,
+            url: req.originalUrl,
+            userId,
+            statusCode: err.statusCode,
+            code: err.code,
+            durationMs,
+          })
+        )
+        .catch(() => undefined);
     }
     res.status(err.statusCode).json({
       success: false,

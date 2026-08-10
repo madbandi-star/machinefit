@@ -52,6 +52,9 @@ jobs:
           VITE_GOOGLE_CLIENT_ID: 600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com
           # Kakao JavaScript key (public; embedded in SPA bundle).
           VITE_KAKAO_JS_KEY: ec1d5c905cdad5a5e273e3d78423ca35
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_SENTRY_ENVIRONMENT: production
+          VITE_SENTRY_TRACES_SAMPLE_RATE: '0.05'
 
       - name: Build frontend
         working-directory: frontend
@@ -60,6 +63,14 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_GOOGLE_CLIENT_ID: 600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com
           VITE_KAKAO_JS_KEY: ec1d5c905cdad5a5e273e3d78423ca35
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_SENTRY_ENVIRONMENT: production
+          VITE_SENTRY_TRACES_SAMPLE_RATE: '0.05'
+          # Optional source map upload (soft-fail in vite plugin if missing/invalid)
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          GITHUB_SHA: ${{ github.sha }}
 
       - uses: actions/configure-pages@v5
 

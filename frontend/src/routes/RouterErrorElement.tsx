@@ -19,6 +19,9 @@ export function RouterErrorElement() {
   const isChunk = isChunkLoadError(normalized) || shouldShowUpdateScreen();
 
   useEffect(() => {
+    void import('@/app/sentry').then(({ captureFrontendException }) =>
+      captureFrontendException(normalized, { source: 'react-router-error-element' })
+    );
     if (!isChunk) return;
     void recoverFromChunkError(normalized, 'errorElement');
   }, [isChunk, normalized]);

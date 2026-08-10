@@ -24,6 +24,10 @@ function useRunAuthHydration(): boolean {
   useEffect(() => {
     const unsub = useAuthStore.persist.onFinishHydration(() => {
       setHydrated(true);
+      const { user } = useAuthStore.getState();
+      if (user?.id) {
+        void import('@/app/sentry').then(({ setSentryUser }) => setSentryUser({ id: user.id }));
+      }
       // Guests (and in-memory sessions) become ready in the same turn as persist hydrate.
       if (initialSessionReady(true)) {
         setSessionReady(true);

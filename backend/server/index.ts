@@ -21,9 +21,10 @@ import { initSentry } from './ops/sentry.js';
 import { storageService } from './services/storage.service.js';
 
 registerProcessErrorHandlers();
-void initSentry();
 
 async function bootstrap(): Promise<void> {
+  await initSentry();
+
   try {
     assertProductionSafety();
   } catch (err) {

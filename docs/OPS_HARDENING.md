@@ -27,20 +27,24 @@ CONCURRENCY=20 DURATION_SEC=15 SMOKE_EMAIL=… SMOKE_PASSWORD=… \
 
 Flow: `/health` → `/ready` → machines → login → `/users/me` → workout history → optional upsert.
 
-## 3. Sentry
+## 3. Sentry (optional, free Developer plan)
 
 | Side | Env | Package |
 |------|-----|---------|
-| Backend | `SENTRY_DSN` | `@sentry/node` (init in `ops/sentry.ts`) |
-| Frontend | `VITE_SENTRY_DSN` | `@sentry/react` (init in `app/sentry.ts`) |
+| Backend | `SENTRY_DSN` (+ optional `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`) | `@sentry/node` (`ops/sentry.ts`) |
+| Frontend | `VITE_SENTRY_DSN` (+ optional `VITE_SENTRY_ENVIRONMENT`, `VITE_SENTRY_TRACES_SAMPLE_RATE`) | `@sentry/react` (`app/sentry.ts`) |
+| Source maps (CI) | `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | `@sentry/vite-plugin` (soft-fail) |
 
-When DSN is unset, init is a no-op. Errors also flow through existing Ops ingest / `dr-alerts`.
+When DSN is unset, init is a no-op. PII scrubbing strips Authorization/Cookie/tokens; user context is **id only**. Default traces sample rate **5%** in production. Health/ready/live/warmup are not traced. Dev browser events are off unless `VITE_SENTRY_ENABLE_DEV=true`.
 
-### Enable
+### Enable (free)
 
-1. Create Sentry projects (Node + React)
-2. Render: `SENTRY_DSN=…`
-3. GitHub Pages build secret / workflow: `VITE_SENTRY_DSN=…`
+1. Create two Sentry projects: `machinefit-frontend`, `machinefit-backend` (Developer plan).
+2. Render → Environment: `SENTRY_DSN=<backend DSN>`, `SENTRY_ENVIRONMENT=production`, `SENTRY_TRACES_SAMPLE_RATE=0.05`
+3. GitHub → Secrets: `VITE_SENTRY_DSN=<frontend DSN>`; optional source maps: `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
+4. Redeploy backend (Render) + push frontend (Pages workflow embeds `VITE_SENTRY_DSN`)
+
+Errors also flow through existing Ops ingest / `dr-alerts`.
 
 ## 4. Demo password invalidation
 
