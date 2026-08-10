@@ -2101,7 +2101,7 @@
 .easy-dup__callout {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   padding: 0.95rem 1rem;
   border-radius: 1.05rem;
   border: 1px solid color-mix(in srgb, var(--color-warning, #ffb020) 40%, var(--glass-border));
@@ -2113,17 +2113,18 @@
     ),
     var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
+  overflow: visible;
 }
 
 .easy-dup__eyebrow {
   align-self: flex-start;
   margin: 0;
-  padding: 0.2rem 0.55rem;
+  padding: 0.28rem 0.55rem;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.02em;
-  line-height: 1.2;
+  line-height: 1.45;
   color: color-mix(in srgb, var(--color-warning, #ffb020) 92%, var(--color-text));
   background: color-mix(in srgb, var(--color-warning, #ffb020) 16%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-warning, #ffb020) 35%, transparent);
@@ -2133,24 +2134,29 @@
   margin: 0;
   font-size: 1.08rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+  overflow: visible;
 }
 
 .easy-dup__body {
   margin: 0;
   font-size: 0.88rem;
   color: var(--color-text-muted);
-  line-height: 1.4;
+  line-height: 1.5;
+  overflow: visible;
 }
 
 .easy-btn.easy-dup__cta {
-  min-height: 4.1rem;
-  padding: 0.85rem 1rem;
+  min-height: 4.25rem;
+  padding: 0.9rem 1rem;
   border-radius: 1.1rem;
   gap: 0.65rem;
   justify-content: flex-start;
+  align-items: center;
   text-align: left;
+  line-height: 1.45;
+  overflow: visible;
   background: #e53935;
   color: #fff;
   box-shadow:
@@ -2178,29 +2184,48 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.15rem;
+  gap: 0.2rem;
   min-width: 0;
   flex: 1 1 auto;
+  overflow: visible;
 }
 
 .easy-dup__cta-text strong {
+  display: block;
   font-size: 1.02rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+  overflow: visible;
 }
 
 .easy-dup__cta-text span {
+  display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.5;
   opacity: 0.92;
+  overflow: visible;
 }
 
 .easy-dup__secondary {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+}
+
+/* Korean glyph descenders (e.g. 구) clip with tight button line-height. */
+.easy-dup__secondary .easy-btn {
+  line-height: 1.45;
+  overflow: visible;
+  padding-top: 0.95rem;
+  padding-bottom: 0.95rem;
+}
+
+.easy-dup__secondary .easy-btn--ghost {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+  line-height: 1.45;
 }
 
 @keyframes easy-dup-enter {
