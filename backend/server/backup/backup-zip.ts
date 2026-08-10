@@ -51,42 +51,61 @@ export async function packBackupArchive(params: {
   };
 }
 
+function hasZipMagic(buffer: Buffer): boolean {
+  // PK\x03\x04 (local file) or PK\x05\x06 (empty archive) or PK\x07\x08
+  return buffer.length >= 2 && buffer[0] === 0x50 && buffer[1] === 0x4b;
+}
+
+function parseJsonBackupPayload(buffer: Buffer): { payload: unknown; manifest: BackupManifest | null } {
+  // Strip UTF-8 BOM if present (common on Windows-saved JSON).
+  const text = buffer.toString('utf8').replace(/^\uFEFF/, '');
+  return { payload: JSON.parse(text) as unknown, manifest: null };
+}
+
 export async function unpackBackupArchive(
   buffer: Buffer,
-  fileNameHint?: string
+  _fileNameHint?: string
 ): Promise<{ payload: unknown; manifest: BackupManifest | null }> {
-  const looksZip =
-    (fileNameHint && /\.zip$/i.test(fileNameHint)) ||
-    (buffer.length >= 4 && buffer[0] === 0x50 && buffer[1] === 0x4b);
-
-  if (!looksZip) {
-    const text = buffer.toString('utf8');
-    return { payload: JSON.parse(text) as unknown, manifest: null };
+  // Prefer magic bytes over extension. JSON exports often download as *.zip when
+  // Content-Disposition is hidden by CORS, so the filename alone is unreliable.
+  if (!hasZipMagic(buffer)) {
+    return parseJsonBackupPayload(buffer);
   }
 
-  const zip = await JSZip.loadAsync(buffer);
-  const manifestFile = zip.file(BACKUP_MANIFEST_NAME);
-  let manifest: BackupManifest | null = null;
-  if (manifestFile) {
-    const parsed = backupManifestSchema.safeParse(JSON.parse(await manifestFile.async('string')));
-    if (parsed.success) manifest = parsed.data;
-  }
+  try {
+    const zip = await JSZip.loadAsync(buffer);
+    const manifestFile = zip.file(BACKUP_MANIFEST_NAME);
+    let manifest: BackupManifest | null = null;
+    if (manifestFile) {
+      const parsed = backupManifestSchema.safeParse(JSON.parse(await manifestFile.async('string')));
+      if (parsed.success) manifest = parsed.data;
+    }
 
-  const payloadName = manifest?.payload_file || BACKUP_PAYLOAD_NAME;
-  const payloadFile =
-    zip.file(payloadName) ||
-    zip.file(BACKUP_PAYLOAD_NAME) ||
-    Object.values(zip.files).find((f) => !f.dir && /\.json$/i.test(f.name) && !f.name.includes('manifest'));
+    const payloadName = manifest?.payload_file || BACKUP_PAYLOAD_NAME;
+    const payloadFile =
+      zip.file(payloadName) ||
+      zip.file(BACKUP_PAYLOAD_NAME) ||
+      Object.values(zip.files).find(
+        (f) => !f.dir && /\.json$/i.test(f.name) && !f.name.includes('manifest')
+      );
 
-  if (!payloadFile) {
-    throw new Error('Backup archive is missing backup.json');
-  }
-  const payloadText = await payloadFile.async('string');
-  if (manifest?.checksum_sha256) {
-    const actual = createHash('sha256').update(payloadText).digest('hex');
-    if (actual !== manifest.checksum_sha256) {
-      throw new Error('Backup file checksum mismatch — file may be corrupted');
+    if (!payloadFile) {
+      throw new Error('Backup archive is missing backup.json');
+    }
+    const payloadText = await payloadFile.async('string');
+    if (manifest?.checksum_sha256) {
+      const actual = createHash('sha256').update(payloadText).digest('hex');
+      if (actual !== manifest.checksum_sha256) {
+        throw new Error('Backup file checksum mismatch — file may be corrupted');
+      }
+    }
+    return { payload: JSON.parse(payloadText) as unknown, manifest };
+  } catch (zipErr) {
+    // Last resort: content was labeled/saved as zip but is plain JSON.
+    try {
+      return parseJsonBackupPayload(buffer);
+    } catch {
+      throw zipErr instanceof Error ? zipErr : new Error('Could not read backup file');
     }
   }
-  return { payload: JSON.parse(payloadText) as unknown, manifest };
 }

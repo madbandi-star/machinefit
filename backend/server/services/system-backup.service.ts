@@ -241,7 +241,10 @@ export const systemBackupService = {
       userId: adminId,
       type: 'SYSTEM',
       action: 'RESTORE',
-      format: /\.zip$/i.test(file.originalname || '') ? 'zip' : 'json',
+      format:
+        file.buffer.length >= 2 && file.buffer[0] === 0x50 && file.buffer[1] === 0x4b
+          ? 'zip'
+          : 'json',
       restoreMode: 'replace',
       meta: { confirm: true },
     });

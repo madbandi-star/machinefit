@@ -48,6 +48,8 @@ export function createApp() {
     cors({
       origin: env.CORS_ORIGIN.split(',').map((o) => o.trim()),
       credentials: true,
+      // SPA fetch() cannot read these unless exposed (JSON backups were saved as *.zip).
+      exposedHeaders: ['Content-Disposition', 'X-Backup-Job-Id', 'X-Backup-Progress'],
     })
   );
   // Preserve raw body for Polar / Standard Webhooks signature verification.

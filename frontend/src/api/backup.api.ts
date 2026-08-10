@@ -39,8 +39,12 @@ async function downloadBlob(
     throw new Error(message);
   }
   const disposition = res.headers.get('Content-Disposition') || '';
-  const match = /filename="([^"]+)"/i.exec(disposition);
-  const fileName = match?.[1] || 'machinefit_backup.zip';
+  const match = /filename\*?=(?:UTF-8''|")?([^\";]+)/i.exec(disposition);
+  const contentType = res.headers.get('Content-Type') || '';
+  const fallbackName = /json/i.test(contentType)
+    ? 'machinefit_backup.json'
+    : 'machinefit_backup.zip';
+  const fileName = match?.[1] ? decodeURIComponent(match[1].replace(/"/g, '')) : fallbackName;
   const jobId = res.headers.get('X-Backup-Job-Id');
   const blob = await res.blob();
   return { blob, fileName, jobId };

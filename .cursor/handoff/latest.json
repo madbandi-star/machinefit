@@ -1,28 +1,31 @@
 {
-  "title": "Fix Render boot 57014 migration lock timeout",
-  "summary": "Render start failed with canceling statement due to statement timeout (57014) because session pg_advisory_lock orphaned under PgBouncer. Boot migrate now skips the lock when nothing is pending and uses pg_advisory_xact_lock + SET LOCAL statement_timeout=0 when applying.",
+  "title": "Fix JSON backup restore misread as ZIP",
+  "summary": "JSON backups failed restore with JSZip 'Can't find end of central directory' because CORS hid Content-Disposition and the file was saved as *.zip; unpack then trusted the extension. Unpack now uses ZIP magic bytes (with JSON fallback), CORS exposes Content-Disposition, and the SPA falls back to .json from Content-Type.",
   "git": {
     "branch": "main",
-    "commit": "3ffca86d"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "backend/server/db/run-pending-migrations.ts"
+    "backend/server/backup/backup-zip.ts",
+    "backend/server/app.ts",
+    "backend/server/services/backup.service.ts",
+    "backend/server/services/system-backup.service.ts",
+    "frontend/src/api/backup.api.ts"
   ],
   "testFocus": [
-    "Render backend start succeeds (no Auto-migrate failed / 57014)",
-    "Logs show Auto-migrate complete: no pending files when DB is up to date"
+    "Export format=JSON then restore that file (even if named .zip) succeeds",
+    "ZIP restore still works",
+    "Newly exported JSON downloads with .json name after FE+BE deploy"
   ],
   "fastChecks": [
-    "rg -n \"pg_advisory_xact_lock|statement_timeout|pending.length\" backend/server/db/run-pending-migrations.ts",
-    "rg -n \"pg_advisory_lock\\(\" backend/server/db/run-pending-migrations.ts; echo expect_no_session_lock"
+    "rg -n \"hasZipMagic|exposedHeaders|machinefit_backup.json\" backend/server/backup/backup-zip.ts backend/server/app.ts frontend/src/api/backup.api.ts"
   ],
   "productionChecks": [
-    "Render Deploy: service starts; npm start does not exit 1",
-    "Optional: API /health returns ok after redeploy"
+    "After Pages + Render redeploy: JSON backup ? restore merge succeeds without JSZip central directory error"
   ],
   "deploy": {
-    "expected": "Push main ? Render backend redeploy; start must succeed"
+    "expected": "Push main ? GitHub Pages FE + Render BE redeploy"
   },
-  "asIs": "Boot acquired session advisory lock; under PgBouncer the lock could stick on an idle backend; next deploy waited then hit 30s statement_timeout 57014 and refused to start.",
-  "toBe": "No lock when migrations already applied; pending applies use transaction-scoped advisory lock and no 30s migrate timeout."
+  "asIs": "JSON content saved/uploaded as *.zip was forced through JSZip and failed.",
+  "toBe": "Non-PK buffers parse as JSON; ZIP only when magic bytes match; download filename uses Content-Type/CORS headers."
 }
