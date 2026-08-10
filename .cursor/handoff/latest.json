@@ -3,7 +3,7 @@
   "summary": "?? Sentry ?? ??: scrubbing, sampling, ErrorBoundary/Express 500 ??, Router tracing, CI source maps soft-fail. DSN? Render/GitHub Secrets?? ??.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "9ae889af"
   },
   "changedFiles": [
     "frontend/src/app/sentry.ts",
