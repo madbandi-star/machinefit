@@ -1,30 +1,28 @@
-# Test handoff ??Admin data retention UI polish
+# Test handoff — Fix withdrawn schedule sync
 
 ## Summary
-?�이??보존·??�� 관�?4?�면 UI ?�리: KPI/�?구조?????�세 ?�널, ?�용 CSS.
+관리자 **데이터 보존·삭제**의 **탈퇴 계정 스케줄 동기화**가 DB 타입 충돌(Postgres `42P08`)로 실패하던 문제를 수정했습니다. `subject_id`(varchar)와 `user_id`(uuid)에 같은 `$3`를 쓰지 않고 `$3::text` / `$4::uuid`로 분리했습니다.
 
 ## Git
 - branch: `main`
-- commit: `cce46fa5`
+- commit: (push 후 갱신)
 
 ## Changed files
-- `frontend/src/pages/admin/data-retention/*.tsx` (4)
-- `frontend/src/styles/admin-data-retention.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json`
+- `backend/server/repositories/data-retention.repository.ts`
 
 ## Test focus
-1. ?�책 목록 ?�택 ???�세/기간 변�?
-2. ??�� ?�정 보류 (모바???�함)
-3. ?�력·감사 로그 ?�시
+1. 관리자 > 데이터 보존·삭제 > **탈퇴 계정 스케줄 동기화** 클릭 → 성공 토스트 (`n`건 반영)
+2. 요약 KPI / 삭제 예정 목록에 탈퇴 계정 스케줄이 보이는지
 
 ## Fast checks
 ```bash
-rg -n "admin-retention|AdminPanel" frontend/src/pages/admin/data-retention frontend/src/styles/admin-data-retention.css
+rg -n "\$3::text,\$4::uuid" backend/server/repositories/data-retention.repository.ts
 ```
 
-## as-is ??to-be
-- **as-is:** 조�????�이�?+ ?�문 ON/OFF
-- **to-be:** 카드/??+ 뱃�? + ?�택 ?�세 ?�널
+## Production checks
+- **Render backend redeploy 필요** (backend-only 변경)
+- 배포 후 동일 버튼으로 재확인
 
-## Note
-FE only ??Pages deploy.
+## as-is → to-be
+- **as-is:** 버튼 클릭 시 "처리하지 못했어요…" 일반 오류
+- **to-be:** 동기화 성공 + upsert 건수 토스트

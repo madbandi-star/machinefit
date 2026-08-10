@@ -532,11 +532,12 @@ export const dataRetentionRepository = {
       const scheduled = addRetentionPeriod(start, policy.periodValue, policy.periodUnit);
       const status =
         scheduled.getTime() <= Date.now() ? 'DELETE_SCHEDULED' : 'RETENTION';
+      // subject_id is varchar, user_id is uuid — reuse of one $n causes PG 42P08.
       await pool.query(
         `INSERT INTO data_retention_records (
            policy_id, policy_version, subject_type, subject_id, user_id,
            retention_start_at, scheduled_deletion_at, status
-         ) VALUES ($1,$2,'user',$3,$3,$4,$5,$6)
+         ) VALUES ($1,$2,'user',$3::text,$4::uuid,$5,$6,$7)
          ON CONFLICT (policy_id, subject_type, subject_id)
          DO UPDATE SET
            scheduled_deletion_at = EXCLUDED.scheduled_deletion_at,
@@ -549,7 +550,15 @@ export const dataRetentionRepository = {
              ELSE EXCLUDED.status
            END,
            updated_at = NOW()`,
-        [policy.id, policy.currentVersion, u.id, start.toISOString(), scheduled.toISOString(), status]
+        [
+          policy.id,
+          policy.currentVersion,
+          u.id,
+          u.id,
+          start.toISOString(),
+          scheduled.toISOString(),
+          status,
+        ]
       );
       upserted += 1;
     }

@@ -1,35 +1,26 @@
 {
-  "title": "Polish admin data retention UI",
-  "summary": "??? ???? ??(??/??/??/??) 4??? AdminPanel? ????? ??? ??? ???. ?????? ?? ?? ??.",
+  "title": "Fix withdrawn schedule sync (PG 42P08)",
+  "summary": "Admin ?? ?? ??? ???? subject_id(varchar)? user_id(uuid)? ?? bind ????? ?? Postgres 42P08? ???? ??? ?? ????? ??.",
   "git": {
     "branch": "main",
-    "commit": "cce46fa5"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionScheduledPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionLogsPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionAuditPage.tsx",
-    "frontend/src/styles/admin-data-retention.css",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "backend/server/repositories/data-retention.repository.ts"
   ],
   "testFocus": [
-    "?? ?????? ??? ???? ????/??",
-    "?? ??: ?? ??? ??/?? (??? ??)",
-    "?? ???? ?? ?? ???"
+    "??? > ??? ??·?? > ?? ?? ??? ??? ??? ?? ???? ??? ?",
+    "??? ? ??/?? ?? ??? ?? ?? ???? ?????"
   ],
   "fastChecks": [
-    "rg -n \"admin-retention|AdminPanel\" frontend/src/pages/admin/data-retention frontend/src/styles/admin-data-retention.css"
+    "rg -n \"\\$3::text,\\$4::uuid\" backend/server/repositories/data-retention.repository.ts"
   ],
   "productionChecks": [
-    "After Pages: open /admin/data-retention and related subpages"
+    "Render backend redeploy ? POST /admin/data-retention/sync-withdrawn ??"
   ],
   "deploy": {
-    "expected": "Push main ? GitHub Pages FE only"
+    "expected": "Push main ? Pages FE (no FE change). Backend needs Render redeploy."
   },
-  "asIs": "Wide raw tables, ON/OFF text, mobile cards missing hold actions.",
-  "toBe": "Structured cards/rows, status pills, split detail panel, hold form on all breakpoints."
+  "asIs": "Sync button shows generic error toast (Postgres 42P08 inconsistent types for $3).",
+  "toBe": "Sync succeeds and returns upserted count; success toast with n."
 }
