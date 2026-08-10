@@ -3,7 +3,7 @@
   "summary": "Admin full restore failed with invalid input syntax for type json while upserting workout_logs. node-pg was binding JS arrays as Postgres arrays into jsonb columns; restore now JSON.stringifies json/jsonb object values and surfaces the real error message.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "8d4b92f9"
   },
   "changedFiles": [
     "backend/server/services/system-backup.service.ts"
