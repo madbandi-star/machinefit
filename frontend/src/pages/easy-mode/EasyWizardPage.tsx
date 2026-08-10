@@ -18,6 +18,7 @@ import {
   workoutLogApi,
   type FitRating,
 } from '@/api';
+import { EasyDuplicateReplacePanel } from '@/components/easy-mode/EasyDuplicateReplacePanel';
 import { EasyMachinePicker } from '@/components/easy-mode/EasyMachinePicker';
 import { EasyWizardShell } from '@/components/easy-mode/EasyWizardShell';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
@@ -38,6 +39,8 @@ import { resolveMachineImageUrl, machinePlaceholderUrl } from '@/utils/catalogAs
 import {
   assertNoDuplicateToday,
   DuplicateRecommendationError,
+  findDuplicateToday,
+  removeDuplicateTodayRecommendation,
 } from '@/utils/recommendationDuplicate';
 import type { EasyMachinePickResult } from '@/components/easy-mode/EasyMachinePicker';
 import '@/styles/easy-mode.css';
@@ -88,6 +91,9 @@ export function EasyWizardPage() {
   const [weights, setWeights] = useState<number[]>([0, 0, 0]);
   const [completed, setCompleted] = useState<boolean[]>([false, false, false]);
   const [savedMachineName, setSavedMachineName] = useState('');
+  /** Step-1 gate when “다음: 추천 보기” hits an existing same-day recommendation. */
+  const [step1Duplicate, setStep1Duplicate] = useState<DuplicateRecommendationError | null>(null);
+  const [replacePending, setReplacePending] = useState(false);
 
   const preferenceScope =
     isRealGym && activeGymId && activeMemberId
@@ -125,15 +131,24 @@ export function EasyWizardPage() {
     if (mode !== 'easy') navigate(ROUTES.MY_PAGE, { replace: true });
   }, [mode, navigate]);
 
-  const showDuplicatePickToast = (machineCode: string) => {
-    showToast(
-      t(
-        isFreeWeightMachineCode(machineCode)
-          ? 'machines:recommendation.duplicate'
-          : 'easyMode.duplicateMachine'
-      ),
-      'info'
-    );
+  const invalidateAfterDuplicateRemove = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['easy-history'] }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
+      queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
+    ]);
+  };
+
+  const applyMachinePick = (pick: EasyMachinePickResult) => {
+    setSelected({
+      code: pick.code,
+      name: pick.name,
+      brandName: pick.brandName,
+    });
+    setTargetMuscle(pick.targetMuscle);
+    setStep1Duplicate(null);
   };
 
   const confirmMachinePick = async (pick: EasyMachinePickResult): Promise<boolean> => {
@@ -147,18 +162,50 @@ export function EasyWizardPage() {
         });
       } catch (error) {
         if (error instanceof DuplicateRecommendationError) {
-          showDuplicatePickToast(pick.code);
           return false;
         }
       }
     }
-    setSelected({
-      code: pick.code,
-      name: pick.name,
-      brandName: pick.brandName,
-    });
-    setTargetMuscle(pick.targetMuscle);
+    applyMachinePick(pick);
     return true;
+  };
+
+  const replaceExistingAndContinue = async (pick: EasyMachinePickResult): Promise<boolean> => {
+    if (!activeGymId || !activeMemberId) {
+      showToast(t('easyMode.needGym'), 'info');
+      return false;
+    }
+    setReplacePending(true);
+    try {
+      const match =
+        (await findDuplicateToday({
+          gymId: activeGymId,
+          memberId: activeMemberId,
+          machineCode: pick.code,
+          targetMuscleGroup: pick.targetMuscle ?? undefined,
+        })) ?? null;
+      if (match) {
+        await removeDuplicateTodayRecommendation({
+          gymId: activeGymId,
+          memberId: activeMemberId,
+          machineCode: pick.code,
+          dateKey: match.dateKey,
+          targetMuscleGroup: pick.targetMuscle ?? undefined,
+          historyItem: match.historyItem,
+          workoutCardId: match.workoutCardId,
+        });
+        await invalidateAfterDuplicateRemove();
+      }
+      applyMachinePick(pick);
+      showToast(t('easyMode.duplicateRemoved'), 'success');
+      createRecommend.mutate(pick);
+      return true;
+    } catch (error) {
+      showToast(getApiErrorMessage(error, t('easyMode.duplicateRemoveFailed')), 'error');
+      return false;
+    } finally {
+      setReplacePending(false);
+    }
   };
 
   const createRecommend = useMutation({
@@ -201,6 +248,7 @@ export function EasyWizardPage() {
       return res.data.data;
     },
     onSuccess: (data) => {
+      setStep1Duplicate(null);
       setRecommendation(data);
       const settings = data.settings;
       setAdjWeight(settings.recommendedWeightKg);
@@ -216,9 +264,7 @@ export function EasyWizardPage() {
     },
     onError: (error) => {
       if (error instanceof DuplicateRecommendationError) {
-        showDuplicatePickToast(error.machineCode);
-        setSelected(null);
-        setTargetMuscle(null);
+        setStep1Duplicate(error);
         return;
       }
       const msg = getApiErrorMessage(error, t('easyMode.recommendFailed'));
@@ -402,6 +448,7 @@ export function EasyWizardPage() {
   });
 
   const openPicker = (code?: string | null) => {
+    setStep1Duplicate(null);
     setPickerInitialCode(code ?? null);
     setPickerOpen(true);
   };
@@ -469,6 +516,13 @@ export function EasyWizardPage() {
         if (step === 1) {
           createRecommend.mutate(pick);
         }
+        return true;
+      }}
+      onReplaceExisting={async (pick) => {
+        const accepted = await replaceExistingAndContinue(pick);
+        if (!accepted) return false;
+        setPickerOpen(false);
+        setPickerInitialCode(null);
         return true;
       }}
     />
@@ -661,8 +715,9 @@ export function EasyWizardPage() {
           step={1}
           onBack={() => navigate(ROUTES.EASY)}
           onClose={() => navigate(ROUTES.EASY)}
+          hideFooter={Boolean(step1Duplicate)}
           primaryLabel={t('easyMode.nextRecommend')}
-          primaryDisabled={!canGoRecommend}
+          primaryDisabled={!canGoRecommend || replacePending}
           primaryPending={createRecommend.isPending}
           primaryHint={
             !activeGymId
@@ -741,6 +796,24 @@ export function EasyWizardPage() {
                       ›
                     </span>
                   </button>
+                ) : null}
+
+                {step1Duplicate && selected ? (
+                  <EasyDuplicateReplacePanel
+                    pending={replacePending || createRecommend.isPending}
+                    onReplace={() => {
+                      void replaceExistingAndContinue({
+                        code: selected.code,
+                        name: selected.name,
+                        brandName: selected.brandName,
+                        targetMuscle,
+                      });
+                    }}
+                    onPickAnother={() => openPicker()}
+                    onGoRecords={() =>
+                      navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`)
+                    }
+                  />
                 ) : null}
 
                 {recentMachines.length > 0 ? (

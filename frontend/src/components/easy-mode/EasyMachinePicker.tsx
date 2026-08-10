@@ -9,6 +9,7 @@ import {
   type TargetMuscleGroup,
 } from '@machinefit/shared';
 import { brandApi, machineApi } from '@/api';
+import { EasyDuplicateReplacePanel } from '@/components/easy-mode/EasyDuplicateReplacePanel';
 import { BrandFilterChips } from '@/components/machines/BrandFilterChips/BrandFilterChips';
 import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
@@ -39,6 +40,11 @@ interface EasyMachinePickerProps {
   onClose: () => void;
   /** Return false to keep the detail view (e.g. duplicate recommendation). */
   onConfirm: (pick: EasyMachinePickResult) => boolean | Promise<boolean>;
+  /**
+   * Delete today's existing recommendation for this machine and continue.
+   * Shown as a prominent CTA when confirm is rejected for duplicate.
+   */
+  onReplaceExisting?: (pick: EasyMachinePickResult) => boolean | Promise<boolean>;
   /** Open directly on detail for a known code (recent/favorites). */
   initialCode?: string | null;
 }
@@ -47,6 +53,7 @@ export function EasyMachinePicker({
   open,
   onClose,
   onConfirm,
+  onReplaceExisting,
   initialCode = null,
 }: EasyMachinePickerProps) {
   const { t, i18n } = useTranslation(['common', 'machines']);
@@ -59,6 +66,7 @@ export function EasyMachinePicker({
   const [targetMuscle, setTargetMuscle] = useState<TargetMuscleGroup | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [confirmPending, setConfirmPending] = useState(false);
+  const [replacePending, setReplacePending] = useState(false);
   /** Shown under confirm after duplicate / rejected confirm. */
   const [showReselect, setShowReselect] = useState(false);
 
@@ -71,6 +79,7 @@ export function EasyMachinePicker({
     setTargetMuscle(null);
     setShowReselect(false);
     setConfirmPending(false);
+    setReplacePending(false);
 
     if (!initialCode) return;
     let cancelled = false;
@@ -153,27 +162,49 @@ export function EasyMachinePicker({
     setShowReselect(false);
   };
 
-  const confirm = async () => {
-    if (!detail || confirmPending) return;
-    if (needsMuscle && !targetMuscle) return;
+  const buildPick = (): EasyMachinePickResult | null => {
+    if (!detail) return null;
+    if (needsMuscle && !targetMuscle) return null;
     const name = getLocalizedName(detail.name, i18n.language, detail.code);
     const brand =
       detail.brandName && !isFreeWeightMachineCode(detail.code)
         ? getLocalizedName(detail.brandName, i18n.language, '')
         : undefined;
+    return {
+      code: detail.code,
+      name,
+      brandName: brand || undefined,
+      targetMuscle: needsMuscle ? targetMuscle : null,
+    };
+  };
+
+  const confirm = async () => {
+    if (!detail || confirmPending || replacePending) return;
+    const pick = buildPick();
+    if (!pick) return;
     setConfirmPending(true);
     try {
-      const accepted = await onConfirm({
-        code: detail.code,
-        name,
-        brandName: brand || undefined,
-        targetMuscle: needsMuscle ? targetMuscle : null,
-      });
+      const accepted = await onConfirm(pick);
       if (accepted === false) {
         setShowReselect(true);
       }
     } finally {
       setConfirmPending(false);
+    }
+  };
+
+  const replaceExisting = async () => {
+    if (!onReplaceExisting || replacePending || confirmPending) return;
+    const pick = buildPick();
+    if (!pick) return;
+    setReplacePending(true);
+    try {
+      const accepted = await onReplaceExisting(pick);
+      if (accepted === false) {
+        setShowReselect(true);
+      }
+    } finally {
+      setReplacePending(false);
     }
   };
 
@@ -277,35 +308,50 @@ export function EasyMachinePicker({
 
       {detail && !detailLoading ? (
         <div className="easy-picker__footer">
-          <button
-            type="button"
-            className="easy-btn easy-btn--primary"
-            disabled={!canConfirm || confirmPending}
-            onClick={() => void confirm()}
-          >
-            {confirmPending ? t('easyMode.working') : t('easyMode.pickerConfirm')}
-          </button>
-          {showReselect ? (
+          {showReselect && onReplaceExisting ? (
+            <EasyDuplicateReplacePanel
+              compact
+              pending={replacePending}
+              onReplace={() => void replaceExisting()}
+              onPickAnother={goBackToList}
+              onGoRecords={() => {
+                onClose();
+                navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`);
+              }}
+            />
+          ) : (
             <>
               <button
                 type="button"
-                className="easy-btn easy-btn--secondary"
-                onClick={goBackToList}
+                className="easy-btn easy-btn--primary"
+                disabled={!canConfirm || confirmPending || replacePending}
+                onClick={() => void confirm()}
               >
-                {t('easyMode.pickerReselect')}
+                {confirmPending ? t('easyMode.working') : t('easyMode.pickerConfirm')}
               </button>
-              <button
-                type="button"
-                className="easy-btn easy-btn--ghost"
-                onClick={() => {
-                  onClose();
-                  navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`);
-                }}
-              >
-                {t('easyMode.pickerGoRecords')}
-              </button>
+              {showReselect ? (
+                <>
+                  <button
+                    type="button"
+                    className="easy-btn easy-btn--secondary"
+                    onClick={goBackToList}
+                  >
+                    {t('easyMode.pickerReselect')}
+                  </button>
+                  <button
+                    type="button"
+                    className="easy-btn easy-btn--ghost"
+                    onClick={() => {
+                      onClose();
+                      navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`);
+                    }}
+                  >
+                    {t('easyMode.pickerGoRecords')}
+                  </button>
+                </>
+              ) : null}
             </>
-          ) : null}
+          )}
         </div>
       ) : null}
     </div>

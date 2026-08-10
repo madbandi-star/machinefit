@@ -1,6 +1,6 @@
 import type { TargetMuscleGroup } from '@machinefit/shared';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
-import { historyApi, workoutCardApi, type HistoryItem } from '@/api';
+import { historyApi, workoutCardApi, workoutLogApi, type HistoryItem } from '@/api';
 import { ROUTES } from '@/constants/routes';
 import {
   getLocalDateKey,
@@ -11,6 +11,7 @@ import {
 
 export class DuplicateRecommendationError extends Error {
   readonly historyItem: HistoryItem | null;
+  readonly workoutCardId: string | null;
   readonly dateKey: string;
   readonly machineCode: string;
 
@@ -18,10 +19,12 @@ export class DuplicateRecommendationError extends Error {
     dateKey: string;
     machineCode: string;
     historyItem?: HistoryItem | null;
+    workoutCardId?: string | null;
   }) {
     super('duplicate_recommendation');
     this.name = 'DuplicateRecommendationError';
     this.historyItem = params.historyItem ?? null;
+    this.workoutCardId = params.workoutCardId ?? null;
     this.dateKey = params.dateKey;
     this.machineCode = params.machineCode;
   }
@@ -46,15 +49,22 @@ function isSameFreeWeightMuscle(
   return cardMuscle === requestedMuscle;
 }
 
-/** Block a second recommendation for the same machine (or free-weight muscle) on a date. */
-export async function assertNoDuplicateToday(params: {
+export type TodayDuplicateMatch = {
+  dateKey: string;
+  machineCode: string;
+  historyItem: HistoryItem | null;
+  workoutCardId: string | null;
+};
+
+/** Look up an existing same-day recommendation for this machine (or free-weight muscle). */
+export async function findDuplicateToday(params: {
   gymId: string;
   memberId: string;
   machineCode: string;
   targetMuscleGroup?: TargetMuscleGroup;
   /** YYYY-MM-DD plan/log date. Defaults to today. */
   dateKey?: string;
-}): Promise<void> {
+}): Promise<TodayDuplicateMatch | null> {
   try {
     const dateKey = normalizeDateKey(params.dateKey ?? getTodayDateKey());
     const { from, to } = getLocalDayRange(dateKey);
@@ -81,46 +91,121 @@ export async function assertNoDuplicateToday(params: {
     );
 
     if (isFreeWeightMachineCode(params.machineCode)) {
-      if (requestedMuscle) {
-        const sameMuscleHistory = dayHistory.find((item) =>
-          isSameFreeWeightMuscle(requestedMuscle, item.targetMuscleGroup)
-        );
-        if (sameMuscleHistory) {
-          throw new DuplicateRecommendationError({
-            dateKey,
-            machineCode: params.machineCode,
-            historyItem: sameMuscleHistory,
-          });
-        }
-        const sameMuscleCard = dayCards.find((card) =>
-          isSameFreeWeightMuscle(requestedMuscle, card.targetMuscleGroup)
-        );
-        if (sameMuscleCard) {
-          throw new DuplicateRecommendationError({
-            dateKey,
-            machineCode: params.machineCode,
-          });
-        }
-      }
-      return;
-    }
+      if (!requestedMuscle) return null;
 
-    if (dayHistory.length > 0) {
-      throw new DuplicateRecommendationError({
+      const sameMuscleHistory = dayHistory.find((item) =>
+        isSameFreeWeightMuscle(requestedMuscle, item.targetMuscleGroup)
+      );
+      const sameMuscleCard = dayCards.find((card) =>
+        isSameFreeWeightMuscle(requestedMuscle, card.targetMuscleGroup)
+      );
+
+      if (!sameMuscleHistory && !sameMuscleCard) return null;
+
+      return {
         dateKey,
         machineCode: params.machineCode,
-        historyItem: dayHistory[0],
-      });
+        historyItem: sameMuscleHistory ?? null,
+        workoutCardId: sameMuscleCard?.id ?? null,
+      };
     }
 
-    if (dayCards.length > 0) {
-      throw new DuplicateRecommendationError({
-        dateKey,
-        machineCode: params.machineCode,
-      });
-    }
-  } catch (error) {
-    if (error instanceof DuplicateRecommendationError) throw error;
+    if (dayHistory.length === 0 && dayCards.length === 0) return null;
+
+    return {
+      dateKey,
+      machineCode: params.machineCode,
+      historyItem: dayHistory[0] ?? null,
+      workoutCardId: dayCards[0]?.id ?? null,
+    };
+  } catch {
     // History/card lookup is best-effort — never block recommend for gym/network issues.
+    return null;
+  }
+}
+
+/** Block a second recommendation for the same machine (or free-weight muscle) on a date. */
+export async function assertNoDuplicateToday(params: {
+  gymId: string;
+  memberId: string;
+  machineCode: string;
+  targetMuscleGroup?: TargetMuscleGroup;
+  /** YYYY-MM-DD plan/log date. Defaults to today. */
+  dateKey?: string;
+}): Promise<void> {
+  const match = await findDuplicateToday(params);
+  if (!match) return;
+  throw new DuplicateRecommendationError(match);
+}
+
+/**
+ * Remove today's recommendation trail for a machine so easy-mode can create a fresh one.
+ * Mirrors Records delete: plan card, history row, and workout log when present.
+ */
+export async function removeDuplicateTodayRecommendation(params: {
+  gymId: string;
+  memberId: string;
+  machineCode: string;
+  dateKey: string;
+  targetMuscleGroup?: TargetMuscleGroup;
+  historyItem?: HistoryItem | null;
+  workoutCardId?: string | null;
+}): Promise<void> {
+  const dateKey = normalizeDateKey(params.dateKey);
+  let historyId = params.historyItem?.id ?? null;
+  let workoutCardId = params.workoutCardId ?? null;
+
+  if (!historyId || !workoutCardId) {
+    const fresh = await findDuplicateToday({
+      gymId: params.gymId,
+      memberId: params.memberId,
+      machineCode: params.machineCode,
+      targetMuscleGroup: params.targetMuscleGroup,
+      dateKey,
+    });
+    if (fresh) {
+      historyId = historyId ?? fresh.historyItem?.id ?? null;
+      workoutCardId = workoutCardId ?? fresh.workoutCardId;
+    }
+  }
+
+  if (workoutCardId && !historyId) {
+    await workoutCardApi.remove(workoutCardId);
+    try {
+      await workoutLogApi.remove({
+        gymId: params.gymId,
+        memberId: params.memberId,
+        machineCode: params.machineCode,
+        logDate: dateKey,
+        ...(params.targetMuscleGroup ? { targetMuscleGroup: params.targetMuscleGroup } : {}),
+      });
+    } catch {
+      /* workout log may not exist */
+    }
+    return;
+  }
+
+  if (historyId) {
+    await historyApi.remove(historyId);
+  }
+
+  try {
+    await workoutLogApi.remove({
+      gymId: params.gymId,
+      memberId: params.memberId,
+      machineCode: params.machineCode,
+      logDate: dateKey,
+      ...(params.targetMuscleGroup ? { targetMuscleGroup: params.targetMuscleGroup } : {}),
+    });
+  } catch {
+    /* workout log may not exist */
+  }
+
+  if (workoutCardId) {
+    try {
+      await workoutCardApi.remove(workoutCardId);
+    } catch {
+      /* plan may already be gone */
+    }
   }
 }
