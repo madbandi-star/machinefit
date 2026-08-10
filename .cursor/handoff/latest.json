@@ -3,7 +3,7 @@
   "summary": "My Page hides ??? ?? for plain member. Route /settings/data and /backup/* APIs require PREMIUM_MEMBER+ (same pattern as photo board).",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "bc0eca48"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",
