@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { fortuneTodayQuerySchema } from '@machinefit/shared';
 import { fortuneService } from '../services/fortune/fortune.service.js';
+import { gymScopeService } from '../services/gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 export async function getTodayFortune(
@@ -15,6 +16,14 @@ export async function getTodayFortune(
     const parsed = fortuneTodayQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Invalid query');
+    }
+
+    if (parsed.data.gymId && parsed.data.memberId) {
+      await gymScopeService.resolveMemberForWrite(
+        userId,
+        parsed.data.gymId,
+        parsed.data.memberId
+      );
     }
 
     const data = await fortuneService.getToday(userId, {

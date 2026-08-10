@@ -7,6 +7,7 @@ import { preferenceRepository } from '../repositories/preference.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { gymScopeService } from '../services/gym-scope.service.js';
 import { resolveRequestLocale } from '../utils/locale.util.js';
 
 const feedbackSchema = z.object({
@@ -47,6 +48,15 @@ function resolvePreferenceScope(source: { gymId?: string; memberId?: string }) {
   return undefined;
 }
 
+async function assertPreferenceScope(
+  userId: string,
+  source: { gymId?: string; memberId?: string }
+): Promise<void> {
+  if (source.gymId && source.memberId) {
+    await gymScopeService.resolveMemberForWrite(userId, source.gymId, source.memberId);
+  }
+}
+
 export async function submitFeedback(req: Request, res: Response): Promise<void> {
   const userId = req.user!.userId;
   const input = feedbackSchema.parse(req.body);
@@ -63,6 +73,7 @@ export async function submitFeedback(req: Request, res: Response): Promise<void>
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
   }
 
+  await assertPreferenceScope(userId, input);
   await feedbackRepository.upsert(userId, input.recommendationId, machineId, input.fitRating);
 
   // Sync machine-level active source with fit feedback.
@@ -106,6 +117,7 @@ export async function upsertPreference(req: Request, res: Response): Promise<voi
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
   }
 
+  await assertPreferenceScope(userId, body);
   const saved = await preferenceRepository.upsert(
     userId,
     machineId,
@@ -138,6 +150,7 @@ export async function getPreference(req: Request, res: Response): Promise<void> 
     throw new AppError(404, 'NOT_FOUND', 'Machine not found');
   }
 
+  await assertPreferenceScope(userId, scopeQuery);
   const prefs = await preferenceRepository.findByUserMachine(
     userId,
     machineId,
@@ -157,6 +170,7 @@ export async function getPreferenceBatch(req: Request, res: Response): Promise<v
   const userId = req.user!.userId;
   const machineCodes = parseCsvQueryParam(req.query.codes);
   const scopeQuery = preferenceScopeSchema.parse(req.query);
+  await assertPreferenceScope(userId, scopeQuery);
   const preferencesByMachine = await preferenceRepository.findByUserMachineCodes(
     userId,
     machineCodes,

@@ -25,6 +25,7 @@ import { env } from '../config/env.js';
 import { billingRepository } from '../repositories/billing.repository.js';
 import {
   getPaymentProvider,
+  getWebhookPaymentProvider,
   isPolarConfigured,
   listPaymentProviderMeta,
 } from '../payments/provider.factory.js';
@@ -322,6 +323,13 @@ export async function maybeStartSignupTrial(userId: string): Promise<void> {
   }
 }
 
+/** Reuse Polar checkout URL briefly to blunt double-click duplicate sessions. */
+const recentCheckoutByUser = new Map<
+  string,
+  { result: CheckoutSessionResult; expiresAt: number }
+>();
+const CHECKOUT_REUSE_MS = 60_000;
+
 export async function createCheckout(
   userId: string,
   input: {
@@ -340,6 +348,12 @@ export async function createCheckout(
   const planCode = requirePlanCode(input.planCode ?? 'PREMIUM');
   if (planCode === 'FREE') {
     throw new AppError(400, 'INVALID_PLAN', 'Cannot checkout FREE plan');
+  }
+
+  const reuseKey = `${userId}:${planCode}:${input.couponCode ?? ''}`;
+  const cached = recentCheckoutByUser.get(reuseKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.result;
   }
 
   const status = await getSubscriptionStatus(userId);
@@ -386,12 +400,17 @@ export async function createCheckout(
     throw new AppError(503, 'CHECKOUT_FAILED', result.message || 'Failed to create checkout');
   }
 
-  return {
+  const session: CheckoutSessionResult = {
     checkoutUrl: result.checkoutUrl,
     orderId: result.orderId,
     provider: String(result.provider),
     ready: true,
   };
+  recentCheckoutByUser.set(reuseKey, {
+    result: session,
+    expiresAt: Date.now() + CHECKOUT_REUSE_MS,
+  });
+  return session;
 }
 
 /**
@@ -931,8 +950,7 @@ export async function handleProviderWebhook(
   headers: Record<string, string | string[] | undefined>,
   rawBody: string
 ): Promise<{ ok: boolean; handled: boolean; events: number; skipped: number }> {
-  const verifier =
-    providerId === 'polar' ? getPaymentProvider('polar') : getPaymentProvider(providerId);
+  const verifier = getWebhookPaymentProvider(providerId);
   const verified = await verifier.verifyWebhook(headers, rawBody);
   if (!verified.ok) {
     await billingRepository.insertBillingLog({

@@ -81,3 +81,21 @@ export const webhookRateLimit = rateLimit({
   legacyHeaders: false,
   message: rateLimitJson,
 });
+
+/** Community posts/comments/reports — spam resistance. */
+export const contentWriteRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitJson,
+});
+
+/** Search endpoints — scraping resistance (shared NAT friendly). */
+export const searchRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitJson,
+});

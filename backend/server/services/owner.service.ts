@@ -37,6 +37,33 @@ function requirePaymentForApply(): boolean {
   return process.env.OWNER_APPLY_REQUIRE_PAYMENT === 'true';
 }
 
+/** Platform gym (directory) — must be owner_id or active gym_owner_permissions. */
+async function assertPlatformGymOperator(userId: string, gymId: string): Promise<void> {
+  const pool = getPool();
+  if (!pool) {
+    const gym = MOCK_GYMS.find(
+      (g) => (g.id === gymId || g.slug === gymId) && (g.ownerId === userId || devOwnerUserIds.has(userId))
+    );
+    if (!gym) throw new AppError(403, 'FORBIDDEN', 'Not allowed to manage this gym');
+    return;
+  }
+
+  const result = await pool.query(
+    `SELECT 1
+     FROM gyms g
+     LEFT JOIN gym_owner_permissions p
+       ON p.gym_id = g.id AND p.user_id = $2 AND p.status = 'active'
+     WHERE (g.id::text = $1 OR g.slug = $1)
+       AND g.is_active = TRUE
+       AND (g.owner_id = $2 OR p.id IS NOT NULL)
+     LIMIT 1`,
+    [gymId, userId]
+  );
+  if (!result.rows[0]) {
+    throw new AppError(403, 'FORBIDDEN', 'Not allowed to manage this gym');
+  }
+}
+
 function adminNotifyEmail(): string | undefined {
   return process.env.ADMIN_NOTIFY_EMAIL?.trim() || process.env.SMTP_USER?.trim() || undefined;
 }
@@ -343,6 +370,7 @@ export const ownerService = {
   },
 
   async getGymMachines(userId: string, gymId: string): Promise<GymMachine[]> {
+    await assertPlatformGymOperator(userId, gymId);
     const pool = getPool();
     if (!pool) {
       const gym = getOwnerGyms(userId).find((g) => g.id === gymId || g.slug === gymId);
@@ -362,6 +390,7 @@ export const ownerService = {
     gymId: string,
     input: AddGymMachineInput
   ): Promise<GymMachine> {
+    await assertPlatformGymOperator(userId, gymId);
     const pool = getPool();
     if (!pool) {
       const gym = MOCK_GYMS.find(
@@ -397,6 +426,7 @@ export const ownerService = {
   },
 
   async removeGymMachine(userId: string, gymId: string, itemId: string): Promise<void> {
+    await assertPlatformGymOperator(userId, gymId);
     const pool = getPool();
     if (!pool) {
       const gym = MOCK_GYMS.find(

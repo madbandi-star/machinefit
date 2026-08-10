@@ -196,7 +196,12 @@ export const recommendationRepository = {
 
     const row = result.rows[0];
     // Bound recommendations are private to the owner (IDOR: unauthenticated UUID fetch).
-    if (row.user_id && row.user_id !== viewerUserId) {
+    if (row.user_id) {
+      if (row.user_id !== viewerUserId) {
+        throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this recommendation');
+      }
+    } else if (viewerUserId) {
+      // Anonymous rows must not leak biometrics to arbitrary authenticated clients.
       throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this recommendation');
     }
     return {

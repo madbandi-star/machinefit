@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { gymIdSchema, memberIdSchema } from '@machinefit/shared';
 import { lifterDnaService } from '../services/lifter-dna.service.js';
+import { gymScopeService } from '../services/gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 const scopeQuerySchema = z
@@ -23,6 +24,9 @@ export async function getLifterDnaSnapshot(req: Request, res: Response): Promise
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const locale = String(req.headers['accept-language'] ?? 'ko').slice(0, 2);
   const scope = scopeQuerySchema.parse(req.query);
+  if (scope.gymId && scope.memberId) {
+    await gymScopeService.resolveMemberForWrite(req.user.userId, scope.gymId, scope.memberId);
+  }
   const data = await lifterDnaService.getSnapshot(req.user.userId, locale, scope);
   res.json({ success: true, data });
 }

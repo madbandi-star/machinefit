@@ -75,9 +75,24 @@ export class DummyPaymentProvider implements PaymentProvider {
   }
 
   async verifyWebhook(
-    _headers: Record<string, string | string[] | undefined>,
+    headers: Record<string, string | string[] | undefined>,
     rawBody: string
   ): Promise<WebhookVerifyResult> {
+    // Dev-only escape hatch: require shared secret header so unsigned POSTs cannot grant Premium.
+    const expected = process.env.DUMMY_WEBHOOK_SECRET?.trim();
+    if (!expected) {
+      return {
+        ok: false,
+        reason: 'DUMMY_WEBHOOK_SECRET is required for dummy webhooks',
+        events: [],
+      };
+    }
+    const providedHeader = headers['x-machinefit-webhook-secret'];
+    const provided = Array.isArray(providedHeader) ? providedHeader[0] : providedHeader;
+    if (!provided || provided !== expected) {
+      return { ok: false, reason: 'Invalid dummy webhook secret', events: [] };
+    }
+
     let parsed: Record<string, unknown> = {};
     try {
       parsed = rawBody ? (JSON.parse(rawBody) as Record<string, unknown>) : {};

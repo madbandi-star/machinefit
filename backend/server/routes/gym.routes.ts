@@ -2,12 +2,13 @@ import { Router } from 'express';
 import * as gymController from '../controllers/gym.controller.js';
 import * as gymInventoryController from '../controllers/gym-inventory.controller.js';
 import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
+import { searchRateLimit } from '../middlewares/rate-limit.middleware.js';
 
 export const gymRouter = Router();
 
 gymRouter.get('/', gymController.listGyms);
-gymRouter.get('/directory', gymController.searchGymDirectory);
-gymRouter.get('/nearby', gymController.nearbyGyms);
+gymRouter.get('/directory', searchRateLimit, gymController.searchGymDirectory);
+gymRouter.get('/nearby', searchRateLimit, gymController.nearbyGyms);
 gymRouter.get('/:gymId', gymController.getGym);
 gymRouter.get('/:gymId/machines', gymController.getGymMachines);
 

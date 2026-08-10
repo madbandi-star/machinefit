@@ -2,6 +2,7 @@ import 'dotenv/config';
 import type { Server } from 'node:http';
 import { createApp } from './app.js';
 import { env } from './config/env.js';
+import { assertProductionSafety } from './config/production-guards.js';
 import { seedDevUsers } from './data/seed-dev.js';
 import { getPool, warmupDatabase } from './config/database.js';
 import { runPendingMigrations, shouldAutoMigrateOnBoot } from './db/run-pending-migrations.js';
@@ -23,6 +24,15 @@ registerProcessErrorHandlers();
 void initSentry();
 
 async function bootstrap(): Promise<void> {
+  try {
+    assertProductionSafety();
+  } catch (err) {
+    logger.error('Refusing to start — production safety check failed', {
+      message: err instanceof Error ? err.message : String(err),
+    });
+    process.exit(1);
+  }
+
   if (shouldAutoMigrateOnBoot()) {
     try {
       await runPendingMigrations();

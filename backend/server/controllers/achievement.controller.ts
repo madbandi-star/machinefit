@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { gymIdSchema, memberIdSchema } from '@machinefit/shared';
 import { achievementService } from '../services/achievement.service.js';
+import { gymScopeService } from '../services/gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 const rankingQuerySchema = z.object({
@@ -26,6 +27,9 @@ const scopeQuerySchema = z
 export async function getAchievementSnapshot(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const scope = scopeQuerySchema.parse(req.query);
+  if (scope.gymId && scope.memberId) {
+    await gymScopeService.resolveMemberForWrite(req.user.userId, scope.gymId, scope.memberId);
+  }
   const data = await achievementService.getSnapshot(req.user.userId, scope);
   res.json({ success: true, data });
 }

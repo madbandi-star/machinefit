@@ -30,7 +30,7 @@ export type OpsReport = {
 };
 
 export const opsApi = {
-  health: () => apiClient.get<ApiResponse<OpsHealthSnapshot>>('/ops/health'),
+  health: () => apiClient.get<ApiResponse<OpsHealthSnapshot>>('/ops/admin/health'),
 
   dashboard: (range: OpsRange = '30d') =>
     apiClient.get<ApiResponse<OpsDashboardSnapshot>>('/ops/admin/dashboard', {

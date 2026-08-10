@@ -1,9 +1,5 @@
 import type { Request, Response } from 'express';
-import {
-  getDatabaseUrlDiag,
-  probeDatabaseConnection,
-  warmupDatabase,
-} from '../config/database.js';
+import { probeDatabaseConnection, warmupDatabase } from '../config/database.js';
 import { getBuildTime, getBuildVersion, getUptimeSec } from '../ops/ops-runtime.js';
 
 /**
@@ -31,24 +27,12 @@ export async function healthCheck(_req: Request, res: Response): Promise<void> {
 export async function warmup(_req: Request, res: Response): Promise<void> {
   const ok = await warmupDatabase();
   const probe = await probeDatabaseConnection(5_000);
-  const urlDiag = getDatabaseUrlDiag();
+  // Keep public response minimal — host/userPrefix belong in admin ops, not the open internet.
   res.status(200).json({
     success: true,
     data: {
       status: ok ? 'warm' : 'unavailable',
       database: probe.ok ? 'connected' : 'error',
-      // Password-safe diagnostics to debug Render DATABASE_URL issues.
-      db: {
-        ok: probe.ok,
-        code: probe.code,
-        hint: probe.hint,
-        detail: probe.detail,
-        host: urlDiag.host,
-        port: urlDiag.port,
-        database: urlDiag.database,
-        userPrefix: urlDiag.userPrefix,
-        hasPgbouncerParam: urlDiag.hasPgbouncerParam,
-      },
       timestamp: new Date().toISOString(),
     },
   });

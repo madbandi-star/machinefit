@@ -10,13 +10,13 @@ opsRouter.post('/ingest', optionalAuthMiddleware, (req, res, next) => {
   void opsController.ingest(req, res, next);
 });
 
-/** Detailed health (also used by ops dashboard). */
-opsRouter.get('/health', (req, res, next) => {
-  void opsController.healthDetailed(req, res, next);
-});
-
 const admin = Router();
 admin.use(authMiddleware, requireMinRole(Role.ADMIN));
+
+/** Detailed health — admin only (infra/memory/DB shape must not be public). */
+admin.get('/health', (req, res, next) => {
+  void opsController.healthDetailed(req, res, next);
+});
 admin.get('/dashboard', (req, res, next) => {
   void opsController.dashboard(req, res, next);
 });
