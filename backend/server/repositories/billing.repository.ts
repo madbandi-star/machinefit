@@ -168,10 +168,53 @@ export const billingRepository = {
     const pool = getPool();
     if (!pool) return;
     await pool.query(
-      `UPDATE users SET trial_consumed_at = COALESCE(trial_consumed_at, NOW()), updated_at = NOW()
+      `UPDATE users SET
+         trial_consumed_at = COALESCE(trial_consumed_at, NOW()),
+         trial_used = TRUE,
+         updated_at = NOW()
        WHERE id = $1`,
       [userId]
     );
+  },
+
+  /** True if any durable identity already consumed a free trial. */
+  async hasTrialIdentityConsumed(identityKeys: string[]): Promise<boolean> {
+    const pool = getPool();
+    if (!pool || identityKeys.length === 0) return false;
+    try {
+      const result = await pool.query<{ ok: boolean }>(
+        `SELECT EXISTS(
+           SELECT 1 FROM trial_identity_ledger WHERE identity_key = ANY($1::text[])
+         ) AS ok`,
+        [identityKeys]
+      );
+      return Boolean(result.rows[0]?.ok);
+    } catch {
+      // Migration 108 not applied yet — fall back to per-user trial_consumed_at.
+      return false;
+    }
+  },
+
+  async recordTrialIdentities(
+    userId: string,
+    identities: Array<{ key: string; kind: 'oauth' | 'email' }>,
+    source = 'trial'
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool || identities.length === 0) return;
+    for (const identity of identities) {
+      try {
+        await pool.query(
+          `INSERT INTO trial_identity_ledger (identity_key, identity_kind, user_id, source)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (identity_key) DO UPDATE SET
+             user_id = COALESCE(trial_identity_ledger.user_id, EXCLUDED.user_id)`,
+          [identity.key, identity.kind, userId, source]
+        );
+      } catch {
+        // Soft-fail when ledger table is missing.
+      }
+    }
   },
 
   async setEntitlementPlan(userId: string, plan: 'free' | 'premium'): Promise<void> {

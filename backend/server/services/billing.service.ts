@@ -244,6 +244,54 @@ export async function syncUserEntitlementPlan(userId: string): Promise<void> {
   await pushMembershipCache(userId, live);
 }
 
+function isUsableTrialEmail(email: string | null | undefined): email is string {
+  if (!email) return false;
+  const normalized = email.trim().toLowerCase();
+  if (!normalized || !normalized.includes('@')) return false;
+  if (normalized.endsWith('@users.local')) return false;
+  if (normalized.endsWith('@invalid.local')) return false;
+  if (normalized.startsWith('deleted+')) return false;
+  return true;
+}
+
+async function collectTrialIdentities(
+  userId: string
+): Promise<Array<{ key: string; kind: 'oauth' | 'email' }>> {
+  const identities: Array<{ key: string; kind: 'oauth' | 'email' }> = [];
+  const seen = new Set<string>();
+
+  const push = (key: string, kind: 'oauth' | 'email') => {
+    if (seen.has(key)) return;
+    seen.add(key);
+    identities.push({ key, kind });
+  };
+
+  try {
+    const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+    const links = await authProviderRepository.findByUserId(userId);
+    for (const link of links) {
+      push(`oauth:${link.provider}:${link.providerUserId}`, 'oauth');
+      if (isUsableTrialEmail(link.providerEmail)) {
+        push(`email:${link.providerEmail.trim().toLowerCase()}`, 'email');
+      }
+    }
+  } catch {
+    // auth_providers table may be missing in early boot — OAuth check skipped.
+  }
+
+  try {
+    const { userRepository } = await import('../repositories/user.repository.js');
+    const user = await userRepository.findById(userId);
+    if (user && isUsableTrialEmail(user.email)) {
+      push(`email:${user.email.trim().toLowerCase()}`, 'email');
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return identities;
+}
+
 export async function startTrial(
   userId: string,
   planCodeRaw: string = 'PREMIUM',
@@ -262,6 +310,20 @@ export async function startTrial(
   const consumed = await billingRepository.getTrialConsumedAt(userId);
   if (consumed) {
     throw new AppError(409, 'TRIAL_CONSUMED', 'Trial already consumed for this account');
+  }
+
+  // Cross-account abuse: same OAuth id / email after deactivate + re-signup.
+  const identities = await collectTrialIdentities(userId);
+  if (
+    identities.length > 0 &&
+    (await billingRepository.hasTrialIdentityConsumed(identities.map((i) => i.key)))
+  ) {
+    await billingRepository.markTrialConsumed(userId);
+    throw new AppError(
+      409,
+      'TRIAL_CONSUMED',
+      'Trial already consumed for this login identity'
+    );
   }
 
   const live = await billingRepository.getLiveSubscription(userId);
@@ -302,11 +364,12 @@ export async function startTrial(
   });
 
   await billingRepository.markTrialConsumed(userId);
+  await billingRepository.recordTrialIdentities(userId, identities, 'trial');
   await pushMembershipCache(userId, created, { subscriptionStatus: 'trial' });
   await billingRepository.insertBillingLog({
     userId,
     eventType: 'trial.started',
-    payload: { trialDays, planCode },
+    payload: { trialDays, planCode, identityCount: identities.length },
   });
 
   return getSubscriptionStatus(userId);
@@ -320,6 +383,30 @@ export async function maybeStartSignupTrial(userId: string): Promise<void> {
     await startTrial(userId, 'PREMIUM', 7);
   } catch {
     // Already consumed / active — ignore
+  }
+}
+
+/**
+ * Before account anonymization: persist OAuth/email keys so a later re-signup
+ * cannot claim another free trial after auth_providers are purged.
+ */
+export async function snapshotTrialIdentitiesOnDeactivate(userId: string): Promise<void> {
+  try {
+    const consumed = await billingRepository.getTrialConsumedAt(userId);
+    if (!consumed) {
+      // Still snapshot if trial_used is set without timestamp (legacy rows).
+      const pool = (await import('../config/database.js')).getPool();
+      if (!pool) return;
+      const row = await pool.query<{ trial_used: boolean }>(
+        `SELECT trial_used FROM users WHERE id = $1`,
+        [userId]
+      );
+      if (!row.rows[0]?.trial_used) return;
+    }
+    const identities = await collectTrialIdentities(userId);
+    await billingRepository.recordTrialIdentities(userId, identities, 'deactivate');
+  } catch {
+    /* non-blocking */
   }
 }
 
@@ -1019,6 +1106,7 @@ export const billingService = {
   getSubscriptionStatus,
   startTrial,
   maybeStartSignupTrial,
+  snapshotTrialIdentitiesOnDeactivate,
   createCheckout,
   cancelSubscription,
   resumeSubscription,

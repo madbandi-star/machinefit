@@ -243,6 +243,13 @@ export const authService = {
       if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
       return { message: 'Account deactivated' };
     }
+    // Capture trial identity keys before email anonymization / later OAuth purge.
+    try {
+      const { billingService } = await import('./billing.service.js');
+      await billingService.snapshotTrialIdentitiesOnDeactivate(userId);
+    } catch {
+      /* non-blocking */
+    }
     const ok = await userRepository.deactivateAccount(userId);
     if (!ok) throw new AppError(404, 'NOT_FOUND', 'User not found or already deactivated');
     return { message: 'Account deactivated' };

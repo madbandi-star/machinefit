@@ -33,7 +33,7 @@ Remaining items are HIGH/MEDIUM operational warnings (trial re-signup abuse, ful
 | H6 | `/warmup` host/userPrefix leak | **FIXED** | DB shape on public endpoint | Minimal status only |
 | H7 | Checkout double-click sessions | **FIXED** | New Polar session every click | 60s reuse cache per user/plan/coupon |
 | H8 | Content/search rate limits | **FIXED** | Only global 3000/15m | `contentWriteRateLimit` + `searchRateLimit` |
-| H9 | Trial re-signup abuse | **OPEN** | New OAuth user → new 7-day trial | Needs durable identity / policy [운영·법률] |
+| H9 | Trial re-signup abuse | **FIXED** | New OAuth user → new 7-day trial | `trial_identity_ledger` (oauth/email) survives deactivate + purge |
 | H10 | `requirePremium` unused on routes | **OPEN** | Entitlement mostly PLAN_LIMIT / cache | Mount selectively without changing product matrix — follow-up |
 
 ## MEDIUM
@@ -64,7 +64,7 @@ Remaining items are HIGH/MEDIUM operational warnings (trial re-signup abuse, ful
 |------|------|
 | 총 주요 검사 테마 | 40+ |
 | CRITICAL found | 4 → 0 open |
-| HIGH found | 10 → 2 open (H9, H10) |
+| HIGH found | 10 → 1 open (H10) |
 | MEDIUM open | 5 |
 | PASS (no fix needed) | Authz core workouts/community, CORS, secrets in FE, PWA bound recovery |
 
@@ -78,7 +78,8 @@ Remaining items are HIGH/MEDIUM operational warnings (trial re-signup abuse, ful
 | `backend/server/index.ts` | Call production guards | C3, C4 |
 | `backend/server/payments/provider.factory.ts` | No Dummy fallback in prod | C1, C2 |
 | `backend/server/payments/providers/dummy/dummy.provider.ts` | Require shared secret | C1 |
-| `backend/server/services/billing.service.ts` | Webhook resolver + checkout reuse | C1, H7 |
+| `backend/server/services/billing.service.ts` | Webhook resolver + checkout reuse; trial identity ledger | C1, H7, H9 |
+| `database/migrations/108_trial_identity_ledger.sql` | Durable trial identity keys | H9 |
 | `backend/server/controllers/feedback.controller.ts` | Scope ownership | H1 |
 | `backend/server/controllers/fortune.controller.ts` | Scope ownership | H2 |
 | `backend/server/controllers/lifter-dna.controller.ts` | Scope ownership | H2 |
@@ -116,7 +117,6 @@ Remaining items are HIGH/MEDIUM operational warnings (trial re-signup abuse, ful
 ## 법률 / 운영 잔여
 
 - 사업자·통신판매 실값, 약관 변호사 검수 → LEGAL_AUDIT_REPORT
-- Trial abuse (H9) 정책 확정
 - Staging에서 백업 복구 리허설
 - 실기기 모바일 QA
 
