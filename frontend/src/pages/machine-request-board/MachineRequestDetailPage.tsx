@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { MACHINE_REQUEST_UNKNOWN_VALUE } from '@machinefit/shared';
+import { MACHINE_REQUEST_UNKNOWN_VALUE, Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { machineRequestApi } from '@/api';
@@ -27,6 +27,8 @@ export function MachineRequestDetailPage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = hasMinRole(user?.roleCode, Role.ADMIN);
   const unknownLabel = t('requestFieldUnknownLabel');
 
   const [index, setIndex] = useState(0);
@@ -241,25 +243,25 @@ export function MachineRequestDetailPage() {
             {t('photoShare')}
           </button>
           {request.isMine ? (
-            <>
-              <Link
-                to={`${ROUTES.MACHINE_REQUESTS_WRITE}?edit=${request.id}`}
-                className="btn btn--secondary"
-              >
-                {t('requestEdit')}
-              </Link>
-              <button
-                type="button"
-                className="btn btn--danger"
-                disabled={deleteMutation.isPending}
-                onClick={() => {
-                  if (!window.confirm(t('requestDeleteConfirm'))) return;
-                  deleteMutation.mutate();
-                }}
-              >
-                {t('requestDelete')}
-              </button>
-            </>
+            <Link
+              to={`${ROUTES.MACHINE_REQUESTS_WRITE}?edit=${request.id}`}
+              className="btn btn--secondary"
+            >
+              {t('requestEdit')}
+            </Link>
+          ) : null}
+          {request.isMine || isAdmin ? (
+            <button
+              type="button"
+              className="btn btn--danger"
+              disabled={deleteMutation.isPending}
+              onClick={() => {
+                if (!window.confirm(t('requestDeleteConfirm'))) return;
+                deleteMutation.mutate();
+              }}
+            >
+              {t('requestDelete')}
+            </button>
           ) : null}
         </div>
 

@@ -1,28 +1,25 @@
-# Test handoff ??Fix withdrawn schedule sync
+# Test handoff — Admin delete on machine-request board
 
 ## Summary
-관리자 **?�이??보존·??��**??**?�퇴 계정 ?��?�??�기??*가 DB ?�??충돌(Postgres `42P08`)�??�패?�던 문제�??�정?�습?�다. `subject_id`(varchar)?� `user_id`(uuid)??같�? `$3`�??��? ?�고 `$3::text` / `$4::uuid`�?분리?�습?�다.
+기구요청 게시판 상세에서 **admin**도 게시글을 삭제할 수 있게 UI를 맞춤 (자유/사진 게시판과 동일 권한 의도). 백엔드 `deleteMachineRequest`는 이미 admin soft-hide를 지원.
 
 ## Git
 - branch: `main`
-- commit: (push ??갱신)
+- commit: (push 후 갱신)
 
 ## Changed files
-- `backend/server/repositories/data-retention.repository.ts`
+- `frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx`
 
 ## Test focus
-1. 관리자 > ?�이??보존·??�� > **?�퇴 계정 ?��?�??�기??* ?�릭 ???�공 ?�스??(`n`�?반영)
-2. ?�약 KPI / ??�� ?�정 목록???�퇴 계정 ?��?줄이 보이?��?
+1. admin으로 타인 기구요청 상세 → **삭제** 버튼 보임
+2. 확인 후 삭제 → 목록 복귀, 해당 글 비노출
+3. 작성자 본인 → 수정+삭제 유지 / 비관리자 타인 글 → 삭제 없음
 
 ## Fast checks
 ```bash
-rg -n "\$3::text,\$4::uuid" backend/server/repositories/data-retention.repository.ts
+rg -n "isMine || isAdmin|hasMinRole\(user\?\.roleCode, Role.ADMIN\)" frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx
 ```
 
-## Production checks
-- **Render backend redeploy ?�요** (backend-only 변�?
-- 배포 ???�일 버튼?�로 ?�확??
-
-## as-is ??to-be
-- **as-is:** 버튼 ?�릭 ??"처리?��? 못했?�요?? ?�반 ?�류
-- **to-be:** ?�기???�공 + upsert 건수 ?�스??
+## as-is → to-be
+- **as-is:** `isMine`만 삭제 가능
+- **to-be:** `isMine || isAdmin` 삭제 가능
