@@ -1,27 +1,30 @@
-# Test handoff ??Fix admin system restore JSON bind
+# Test handoff — Admin subscriptions UI polish
 
 ## Summary
-관리자 ?�체 복구가 `invalid input syntax for type json`�??�패. `workout_logs.set_weights_kg` ??jsonb 배열??node-pg가 PG 배열�?바인?�해??발생. json/jsonb 컬럼?� `JSON.stringify` ???�입.
+관리자 구독 페이지 UI 정리: 검색 툴바, 상태 칩, 구조화된 회원 행(플랜/체험/만료), semantic 상태 뱃지. 기능 동일.
 
 ## Git
 - branch: `main`
-- commit: `8d4b92f9`
+- commit: PENDING
 
 ## Changed files
-- `backend/server/services/system-backup.service.ts`
+- `frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx`
+- `frontend/src/styles/admin-subscriptions.css`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json`
 
 ## Test focus
-1. 관리자 ?�스??백업 ZIP?�로 ?�체 복구(YES) ?�공
-2. ?�패 ???�스??로그???�제 ?�이�??�류 문구 ?�출
+1. 검색·상태 칩·기타 상태 select
+2. 플랜 변경 / 30일 연장 / 구독 종료
+3. 모바일·데스크톱 레이아웃
 
 ## Fast checks
 ```bash
-rg -n "bindRowValues|loadJsonColumns|JSON.stringify" backend/server/services/system-backup.service.ts
+rg -n "admin-subs|STATUS_CHIPS|statusPillClass" frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx frontend/src/styles/admin-subscriptions.css
 ```
 
-## as-is ??to-be
-- **as-is:** workout_logs upsert �?json 구문 ?�류 ??RESTORE_FAILED
-- **to-be:** jsonb 배열 ?�상 복구
+## as-is → to-be
+- **as-is:** 영문 raw 상태 + meta 덤프 + 인라인 flex
+- **to-be:** 칩 필터 + 라벨/값 fact + 데스크톱 3열
 
 ## Note
-Backend only ??Render redeploy required.
+FE only — Pages deploy.

@@ -1,26 +1,32 @@
 {
-  "title": "Fix system restore jsonb array bind error",
-  "summary": "Admin full restore failed with invalid input syntax for type json while upserting workout_logs. node-pg was binding JS arrays as Postgres arrays into jsonb columns; restore now JSON.stringifies json/jsonb object values and surfaces the real error message.",
+  "title": "Polish admin subscriptions UI",
+  "summary": "Admin ?? ???? ?? ?·?? ??·???? ?? ?(??? ?? / ???? 3?)?? ??. API·?? ??? ??.",
   "git": {
     "branch": "main",
-    "commit": "8d4b92f9"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "backend/server/services/system-backup.service.ts"
+    "frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx",
+    "frontend/src/styles/admin-subscriptions.css",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Admin system backup ZIP ? full restore with YES succeeds",
-    "Failed job error_message no longer invalid input syntax for type json on workout_logs"
+    "Admin ? ??: ??·?? ?·?? ?? select ??",
+    "??? ?? ?? / 30? ?? / ?? ?? ??",
+    "???·???? ???? ???"
   ],
   "fastChecks": [
-    "rg -n \"bindRowValues|loadJsonColumns|JSON.stringify\" backend/server/services/system-backup.service.ts"
+    "rg -n \"admin-subs|STATUS_CHIPS|statusPillClass\" frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx frontend/src/styles/admin-subscriptions.css"
   ],
   "productionChecks": [
-    "After Render redeploy: Admin ? ??? ?? ? ?? ?? succeeds"
+    "After Pages deploy: open /admin/subscriptions and verify chips + row layout"
   ],
   "deploy": {
-    "expected": "Push main ? Render backend redeploy"
+    "expected": "Push main ? GitHub Pages FE only"
   },
-  "asIs": "System restore failed at workout_logs jsonb array columns (progress ~70).",
-  "toBe": "json/jsonb values serialized correctly; restore completes."
+  "asIs": "Cramped list with raw English status and dense meta dump.",
+  "toBe": "Toolbar + status chips + labeled facts + semantic pills."
 }
