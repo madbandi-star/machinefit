@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BUSINESS_OPERATOR } from '@machinefit/shared';
+import { BUSINESS_OPERATOR, Role, hasMinRole } from '@machinefit/shared';
 import { Header } from '@/components/layout/Header/Header';
 import { BottomNavigation } from '@/components/layout/BottomNavigation/BottomNavigation';
 import { ConsentRedirect } from '@/components/auth/ConsentRedirect/ConsentRedirect';
@@ -21,6 +21,9 @@ function isHomePath(pathname: string): boolean {
 
 function BusinessFooterBlock() {
   const { t } = useTranslation();
+  const roleCode = useAuthStore((s) => s.user?.roleCode);
+  if (!hasMinRole(roleCode, Role.ADMIN)) return null;
+
   const rows: Array<{ label: string; value: string; href?: string }> = [
     { label: t('legal.footer.tradeName'), value: BUSINESS_OPERATOR.tradeName },
     { label: t('legal.footer.representative'), value: BUSINESS_OPERATOR.representative },
