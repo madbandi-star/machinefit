@@ -3,7 +3,7 @@
   "summary": "Render start failed with canceling statement due to statement timeout (57014) because session pg_advisory_lock orphaned under PgBouncer. Boot migrate now skips the lock when nothing is pending and uses pg_advisory_xact_lock + SET LOCAL statement_timeout=0 when applying.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "3ffca86d"
   },
   "changedFiles": [
     "backend/server/db/run-pending-migrations.ts"

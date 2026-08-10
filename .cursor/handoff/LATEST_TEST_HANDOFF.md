@@ -1,11 +1,11 @@
-# Test handoff — Fix Render boot migration lock timeout (57014)
+# Test handoff â Fix Render boot migration lock timeout (57014)
 
 ## Summary
 Render `npm start` failed with `canceling statement due to statement timeout` (`57014`) during auto-migrate. Cause: session `pg_advisory_lock` orphaned under PgBouncer transaction pooling. Fix: skip lock when no pending migrations; use `pg_advisory_xact_lock` + `SET LOCAL statement_timeout = 0` when applying.
 
 ## Git
 - branch: `main`
-- commit: PENDING (filled after push)
+- commit: `3ffca86d`
 
 ## Changed files
 - `backend/server/db/run-pending-migrations.ts`
@@ -24,8 +24,8 @@ rg -n "pg_advisory_lock\(" backend/server/db/run-pending-migrations.ts || true
 - After Render redeploy: service healthy; `start` does not crash
 - Optional: hit API health endpoint
 
-## as-is → to-be
-- **as-is:** Boot waits on orphaned session advisory lock → 30s timeout → refuse start
+## as-is â to-be
+- **as-is:** Boot waits on orphaned session advisory lock â 30s timeout â refuse start
 - **to-be:** No lock if nothing pending; pending uses xact lock + long migrate timeout
 
 ## Note
