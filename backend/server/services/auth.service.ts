@@ -2,6 +2,8 @@ import {
   Role,
   LEGAL_DOC_VERSION,
   LEGAL_DOC_VERSIONS,
+  generateRandomUsername,
+  validateUsername,
   type User,
   type RoleCode,
   type OAuthCompleteInput,
@@ -325,16 +327,12 @@ export const authService = {
       return { status: 'authenticated', user: auth.user, tokens: auth.tokens };
     }
 
-    const displayName =
-      credential.displayName?.trim() ||
-      identity.displayName?.trim() ||
-      `${provider.charAt(0).toUpperCase()}${provider.slice(1)} User`;
-
+    // Do not stage provider profile names — username is assigned only at account create.
     const pendingToken = signOAuthPendingToken({
       provider,
       providerUserId: identity.providerUserId,
       providerEmail: identity.providerEmail,
-      displayName: displayName.slice(0, 100),
+      displayName: null,
       avatarUrl: identity.avatarUrl,
     });
 
@@ -345,7 +343,7 @@ export const authService = {
       identity: {
         provider,
         email: identity.providerEmail,
-        displayName: displayName.slice(0, 100),
+        displayName: null,
       },
       versions: currentLegalVersions(),
     };
@@ -388,16 +386,12 @@ export const authService = {
       pending.providerUserId,
       pending.providerEmail
     );
-    const displayName =
-      pending.displayName?.trim() ||
-      `${pending.provider.charAt(0).toUpperCase()}${pending.provider.slice(1)} User`;
 
     try {
-      let user = await userRepository.create({
+      // MachineFit-generated username only — never pending/provider profile names.
+      let user = await createOAuthUserWithRandomUsername({
         email,
-        displayName: displayName.slice(0, 100),
         avatarUrl: pending.avatarUrl ?? undefined,
-        experienceLevel: 'beginner',
         marketingOptIn: Boolean(input.agreeMarketing),
         locationOptIn: Boolean(input.agreeLocation),
       });
@@ -584,6 +578,54 @@ export const authService = {
     return this.listProviders(userId);
   },
 };
+
+/**
+ * Assign a MachineFit random username and INSERT the user.
+ * Retries on display_name unique collisions (race / duplicate check miss).
+ */
+async function createOAuthUserWithRandomUsername(input: {
+  email: string;
+  avatarUrl?: string | null;
+  marketingOptIn: boolean;
+  locationOptIn: boolean;
+}): Promise<User> {
+  const maxAttempts = 32;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const candidate = generateRandomUsername();
+    const validated = validateUsername(candidate);
+    if (!validated.ok) continue;
+    const taken = await userRepository.isDisplayNameTaken(validated.normalized);
+    if (taken) continue;
+    try {
+      return await userRepository.create({
+        email: input.email,
+        displayName: validated.normalized,
+        avatarUrl: input.avatarUrl ?? undefined,
+        experienceLevel: 'beginner',
+        marketingOptIn: input.marketingOptIn,
+        locationOptIn: input.locationOptIn,
+      });
+    } catch (error: unknown) {
+      const code =
+        error && typeof error === 'object' && 'code' in error
+          ? String((error as { code?: string }).code)
+          : '';
+      const constraint =
+        error && typeof error === 'object' && 'constraint' in error
+          ? String((error as { constraint?: string }).constraint)
+          : '';
+      // Username unique race — retry with a new random name.
+      if (
+        code === '23505' &&
+        (constraint.includes('display_name') || constraint.includes('uq_users_display_name'))
+      ) {
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new AppError(500, 'USERNAME_ALLOCATION_FAILED', 'Could not allocate a unique username');
+}
 
 /** Prefer provider email when free; otherwise synthetic (never auto-merge accounts). */
 async function allocateOAuthUserEmail(

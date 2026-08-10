@@ -95,6 +95,7 @@ export const adminRepository = {
       const user = updateDevUser(userId, {
         roleCode: input.roleCode,
         isActive: input.isActive,
+        displayName: input.displayName,
       });
       if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
       return {
@@ -128,6 +129,22 @@ export const adminRepository = {
         input.isActive,
         userId,
       ]);
+    }
+    if (input.displayName !== undefined) {
+      const { applyUsernameChange } = await import('../services/user.service.js');
+      const normalized = await applyUsernameChange(userId, input.displayName);
+      try {
+        await userRepository.updateProfile(userId, { displayName: normalized });
+      } catch (error: unknown) {
+        const code =
+          error && typeof error === 'object' && 'code' in error
+            ? String((error as { code?: string }).code)
+            : '';
+        if (code === '23505') {
+          throw new AppError(409, 'USERNAME_TAKEN', 'Username is already in use');
+        }
+        throw error;
+      }
     }
     const user = await userRepository.findById(userId);
     if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');

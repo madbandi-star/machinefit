@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ASSIGNABLE_ROLE_CODES, type RoleCode } from '@machinefit/shared';
+import {
+  ASSIGNABLE_ROLE_CODES,
+  USERNAME_MAX_LENGTH,
+  validateUsername,
+  type RoleCode,
+} from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
@@ -18,6 +23,8 @@ export function AdminUsersPage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [page, setPage] = useState(1);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draftUsername, setDraftUsername] = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: [...QUERY_KEYS.adminUsers, page, PAGE_SIZE],
@@ -32,13 +39,16 @@ export function AdminUsersPage() {
       id,
       roleCode,
       isActive,
+      displayName,
     }: {
       id: string;
       roleCode?: RoleCode;
       isActive?: boolean;
-    }) => adminApi.updateUser(id, { roleCode, isActive }),
+      displayName?: string;
+    }) => adminApi.updateUser(id, { roleCode, isActive, displayName }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminUsers });
+      setEditingId(null);
       showToast(t('saved'), 'success');
     },
     onError: () => showToast(t('error'), 'error'),
@@ -68,7 +78,17 @@ export function AdminUsersPage() {
               <div key={user.id} className="card admin-table__row">
                 <div className="admin-table__primary">
                   <div className="admin-table__title-row">
-                    <strong>{user.displayName}</strong>
+                    {editingId === user.id ? (
+                      <input
+                        className="input"
+                        value={draftUsername}
+                        maxLength={USERNAME_MAX_LENGTH}
+                        onChange={(e) => setDraftUsername(e.target.value)}
+                        aria-label={t('username')}
+                      />
+                    ) : (
+                      <strong>{user.displayName}</strong>
+                    )}
                     <span
                       className={`admin-status-pill${user.isActive ? ' is-active' : ' is-inactive'}`}
                     >
@@ -78,6 +98,47 @@ export function AdminUsersPage() {
                   <p className="admin-table__meta">{user.email}</p>
                 </div>
                 <div className="admin-table__actions">
+                  {editingId === user.id ? (
+                    <>
+                      <button
+                        type="button"
+                        className="btn btn--primary"
+                        disabled={updateMutation.isPending}
+                        onClick={() => {
+                          const validated = validateUsername(draftUsername);
+                          if (!validated.ok) {
+                            showToast(t('usernameInvalid'), 'error');
+                            return;
+                          }
+                          updateMutation.mutate({
+                            id: user.id,
+                            displayName: validated.normalized,
+                          });
+                        }}
+                      >
+                        {t('saveUsername')}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        disabled={updateMutation.isPending}
+                        onClick={() => setEditingId(null)}
+                      >
+                        {t('cancelUsername')}
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      onClick={() => {
+                        setEditingId(user.id);
+                        setDraftUsername(user.displayName);
+                      }}
+                    >
+                      {t('editUsername')}
+                    </button>
+                  )}
                   <label className="admin-role-select">
                     <span className="visually-hidden">{t('role')}</span>
                     <select

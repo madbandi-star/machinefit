@@ -514,4 +514,27 @@ export const userRepository = {
     const result = await pool.query('SELECT 1 FROM users WHERE email = $1', [email]);
     return result.rows.length > 0;
   },
+
+  /** Case-insensitive check among active users (MachineFit public username). */
+  async isDisplayNameTaken(displayName: string, excludeUserId?: string): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    const result = excludeUserId
+      ? await pool.query(
+          `SELECT 1 FROM users
+           WHERE is_active = TRUE
+             AND lower(display_name) = lower($1)
+             AND id <> $2
+           LIMIT 1`,
+          [displayName, excludeUserId]
+        )
+      : await pool.query(
+          `SELECT 1 FROM users
+           WHERE is_active = TRUE
+             AND lower(display_name) = lower($1)
+           LIMIT 1`,
+          [displayName]
+        );
+    return result.rows.length > 0;
+  },
 };

@@ -1,21 +1,47 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import {
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+  normalizeUsername,
+  validateUsername,
+} from '@machinefit/shared';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 
-const DISPLAY_NAME_MIN = 2;
-const DISPLAY_NAME_MAX = 100;
-
-function normalizeDisplayName(value: string): string {
-  return value.trim().replace(/\s+/g, ' ');
-}
-
 type MemberIdEditorProps = {
   displayName: string;
 };
+
+function mapUsernameError(code: string | undefined, fallback: string): string {
+  switch (code) {
+    case 'USERNAME_TAKEN':
+      return 'myPage.memberIdTaken';
+    case 'USERNAME_TOO_SHORT':
+    case 'USERNAME_EMPTY':
+      return 'auth.displayNameMin';
+    case 'USERNAME_TOO_LONG':
+      return 'myPage.memberIdTooLong';
+    case 'USERNAME_HAS_SPACE':
+    case 'USERNAME_INVALID_CHARS':
+      return 'myPage.memberIdInvalidChars';
+    case 'USERNAME_REAL_NAME_LIKE':
+      return 'myPage.memberIdRealName';
+    case 'USERNAME_PHONE_LIKE':
+    case 'USERNAME_EMAIL_LIKE':
+      return 'myPage.memberIdPersonalInfo';
+    case 'USERNAME_PROFANITY':
+    case 'USERNAME_IMPERSONATION':
+    case 'USERNAME_RESERVED':
+      return 'myPage.memberIdForbidden';
+    default:
+      return fallback;
+  }
+}
 
 export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
   const { t } = useTranslation();
@@ -53,8 +79,12 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
       setDraft(user.displayName);
       showToast(t('myPage.memberIdChanged'), 'success');
     },
-    onError: () => {
-      showToast(t('errors.submitFailed'), 'error');
+    onError: (error) => {
+      const payload = axios.isAxiosError(error)
+        ? (error.response?.data as { error?: { code?: string; message?: string } } | undefined)
+        : undefined;
+      const key = mapUsernameError(payload?.error?.code, 'errors.submitFailed');
+      showToast(t(key), 'error');
     },
   });
 
@@ -71,23 +101,20 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
 
   const saveEdit = () => {
     if (mutation.isPending) return;
-    const next = normalizeDisplayName(draft);
-    if (next.length < DISPLAY_NAME_MIN) {
-      showToast(t('auth.displayNameMin'), 'error');
-      inputRef.current?.focus();
-      return;
-    }
-    if (next.length > DISPLAY_NAME_MAX) {
-      showToast(t('myPage.memberIdTooLong'), 'error');
-      inputRef.current?.focus();
-      return;
-    }
-    if (next === normalizeDisplayName(displayName)) {
+    // Legacy usernames may predate stricter rules — unchanged values stay as-is.
+    if (normalizeUsername(draft) === normalizeUsername(displayName)) {
       setEditing(false);
       setDraft(displayName);
       return;
     }
-    mutation.mutate(next);
+    const validated = validateUsername(draft);
+    if (!validated.ok) {
+      const key = mapUsernameError(`USERNAME_${validated.code}`, 'errors.submitFailed');
+      showToast(t(key), 'error');
+      inputRef.current?.focus();
+      return;
+    }
+    mutation.mutate(validated.normalized);
   };
 
   if (!editing) {
@@ -115,8 +142,8 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
         className="input profile-card__member-id-input"
         type="text"
         value={draft}
-        maxLength={DISPLAY_NAME_MAX}
-        autoComplete="nickname"
+        maxLength={USERNAME_MAX_LENGTH}
+        autoComplete="off"
         enterKeyHint="done"
         disabled={mutation.isPending}
         placeholder={t('myPage.memberIdPlaceholder')}
@@ -132,6 +159,9 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
           }
         }}
       />
+      <p className="profile-card__member-id-rules">
+        {t('myPage.memberIdRules', { min: USERNAME_MIN_LENGTH, max: USERNAME_MAX_LENGTH })}
+      </p>
       <button
         type="button"
         className="profile-card__member-id-save"

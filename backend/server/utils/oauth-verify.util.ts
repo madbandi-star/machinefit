@@ -32,7 +32,8 @@ async function verifyGoogleIdToken(idToken: string): Promise<VerifiedOAuthIdenti
       provider: 'google',
       providerUserId: sub,
       providerEmail: typeof payload.email === 'string' ? payload.email : null,
-      displayName: typeof payload.name === 'string' ? payload.name : null,
+      // Never map provider profile name → MachineFit username (privacy minimization).
+      displayName: null,
       avatarUrl: typeof payload.picture === 'string' ? payload.picture : null,
     };
   } catch (error) {
@@ -65,7 +66,7 @@ async function verifyGoogleAccessToken(accessToken: string): Promise<VerifiedOAu
     provider: 'google',
     providerUserId: data.sub,
     providerEmail: data.email ?? null,
-    displayName: data.name ?? null,
+    displayName: null,
     avatarUrl: data.picture ?? null,
   };
 }
@@ -124,7 +125,8 @@ async function verifyKakaoAccessToken(accessToken: string): Promise<VerifiedOAut
     provider: 'kakao',
     providerUserId: String(data.id),
     providerEmail: data.kakao_account?.email ?? null,
-    displayName: data.kakao_account?.profile?.nickname ?? null,
+    // Kakao nickname must not become MachineFit public username.
+    displayName: null,
     avatarUrl: data.kakao_account?.profile?.profile_image_url ?? null,
   };
 }

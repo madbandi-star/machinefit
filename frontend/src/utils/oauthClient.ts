@@ -255,7 +255,7 @@ async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
   });
 }
 
-async function requestAppleIdToken(): Promise<{ idToken: string; displayName?: string }> {
+async function requestAppleIdToken(): Promise<{ idToken: string }> {
   const clientId = import.meta.env.VITE_APPLE_CLIENT_ID?.trim();
   if (!clientId) throw new OAuthClientError('Apple client id missing', 'NOT_CONFIGURED');
 
@@ -282,10 +282,8 @@ async function requestAppleIdToken(): Promise<{ idToken: string; displayName?: s
     const result = await window.AppleID.auth.signIn();
     const idToken = result.authorization?.id_token;
     if (!idToken) throw new OAuthClientError('Apple token missing', 'TOKEN_MISSING');
-    const first = result.user?.name?.firstName?.trim() ?? '';
-    const last = result.user?.name?.lastName?.trim() ?? '';
-    const displayName = `${first} ${last}`.trim() || undefined;
-    return { idToken, displayName };
+    // Do not forward Apple name — MachineFit assigns a random username server-side.
+    return { idToken };
   } catch (error) {
     if (error instanceof OAuthClientError) throw error;
     throw new OAuthClientError('Apple login cancelled', 'CANCELLED');

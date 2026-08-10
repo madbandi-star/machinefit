@@ -10,6 +10,8 @@ const roleCodeSchema = z.custom<RoleCode>(
 export const updateUserAdminSchema = z.object({
   roleCode: roleCodeSchema.optional(),
   isActive: z.boolean().optional(),
+  /** Public username (display_name). Same validateUsername() rules as member self-change. */
+  displayName: z.string().min(2).max(32).optional(),
 });
 
 export const moderatePostSchema = z.object({

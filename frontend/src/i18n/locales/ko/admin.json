@@ -473,6 +473,11 @@
   "error": "처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
   "listCount": "{{count}}건",
   "noUsers": "등록된 사용자가 없습니다.",
+  "username": "아이디",
+  "editUsername": "아이디 변경",
+  "saveUsername": "아이디 저장",
+  "cancelUsername": "취소",
+  "usernameInvalid": "사용할 수 없는 아이디예요.",
   "enable": "활성화",
   "disable": "비활성화",
   "muscleImages": {

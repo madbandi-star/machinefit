@@ -160,7 +160,11 @@ export function TermsAgreementPage() {
     updateUser({ ...user, needsConsent: false });
     syncUserSettings(user);
     syncGymScopeAfterAuth(user);
-    showToast(isSignup ? t('auth.accountCreated') : t('auth.consentUpdated'), 'success');
+    if (isSignup) {
+      navigate(ROUTES.AUTH_SIGNUP_COMPLETE, { replace: true });
+      return;
+    }
+    showToast(t('auth.consentUpdated'), 'success');
     navigate(ROUTES.HOME, { replace: true });
   };
 

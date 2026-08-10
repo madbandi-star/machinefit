@@ -73,6 +73,7 @@
 - 탈퇴 후 ~30일: workout/favorites/friends/UGC 등 hard purge, `auth_providers` 삭제(재가입 가능), `data_purged_at` 기록
 - 결제·동의 증빙·users 행은 유지 (법정 기간 [법률전문가 확인 필요])
 - `trial_identity_ledger`: 무료체험 악용 방지용 OAuth/이메일 키(해시 아님, 정규화 문자열). 탈퇴·purge 후에도 유지. 개인정보 최소 원칙상 체험 이력 확인 목적만.
+- 공개 아이디(`users.display_name`): 소셜 provider 실명/닉네임과 분리. 신규 소셜 가입 시 머신핏 랜덤 생성. 상세: `docs/USERNAME_PRIVACY_DATA_FLOW.md`
 
 ## 6. 문서 정합
 

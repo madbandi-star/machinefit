@@ -22,6 +22,10 @@ export const oauthCredentialSchema = z
     accessToken: z.string().min(1).optional(),
     authorizationCode: z.string().min(1).optional(),
     redirectUri: z.string().url().optional(),
+    /**
+     * @deprecated Ignored. Social profile names must not become MachineFit usernames.
+     * Kept optional so older clients do not fail schema validation.
+     */
     displayName: z.string().min(1).max(100).optional(),
   })
   .refine((v) => Boolean(v.idToken || v.accessToken || v.authorizationCode), {

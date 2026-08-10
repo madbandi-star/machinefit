@@ -46,6 +46,8 @@ export const ROUTES = {
   REGISTER: '/login',
   /** Staged OAuth signup / legal version reconsent. */
   AUTH_TERMS: '/auth/terms',
+  /** After OAuth signup: show MachineFit-generated username. */
+  AUTH_SIGNUP_COMPLETE: '/auth/signup-complete',
   TERMS: '/terms',
   PRIVACY: '/privacy',
   /** Alias → e-commerce & refund policy */

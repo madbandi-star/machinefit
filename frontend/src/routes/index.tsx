@@ -159,6 +159,10 @@ const authTerms = () =>
   import('@/pages/auth/terms/TermsAgreementPage').then((m) => ({
     default: m.TermsAgreementPage,
   }));
+const authSignupComplete = () =>
+  import('@/pages/auth/signup-complete/SignupCompletePage').then((m) => ({
+    default: m.SignupCompletePage,
+  }));
 const growth = () =>
   import('@/pages/growth-analysis/GrowthAnalysisPage').then((m) => ({
     default: m.GrowthAnalysisPage,
@@ -565,6 +569,15 @@ export const router = createBrowserRouter(
       ),
       errorElement: <RouterErrorElement />,
       children: [{ path: ROUTES.AUTH_TERMS, element: lazyRoute(authTerms) }],
+    },
+    {
+      element: (
+        <AuthGuard>
+          <AuthLayout />
+        </AuthGuard>
+      ),
+      errorElement: <RouterErrorElement />,
+      children: [{ path: ROUTES.AUTH_SIGNUP_COMPLETE, element: lazyRoute(authSignupComplete) }],
     },
     {
       element: (
