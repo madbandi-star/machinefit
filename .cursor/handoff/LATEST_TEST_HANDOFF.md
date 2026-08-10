@@ -1,25 +1,25 @@
-# Test handoff — Easy mode X → normal mode
+# Test handoff ??Easy mode X ??normal mode
 
 ## Summary
-이지모드 마법사 우측상단 **X**가 `/easy`(이지 홈)으로 가던 것을 **보통모드 + 홈**으로 바꿨습니다. 왼쪽 ← 는 기존 뒤로가기 유지.
+?��?모드 마법???�측?�단 **X**가 `/easy`(?��? ???�로 가??것을 **보통모드 + ??*?�로 바꿨?�니?? ?�쪽 ????기존 ?�로가�??��?.
 
 ## Git
 - branch: `main`
-- commit: (push 후 갱신)
+- commit: (push ??갱신)
 
 ## Changed files
 - `frontend/src/pages/easy-mode/EasyWizardPage.tsx`
 
 ## Test focus
-1. 마법사 1·2·3단계 X → 보통모드 홈
-2. 평가(rate) 화면 X도 동일
-3. ← 는 이전 단계/이지 홈 유지
+1. 마법??1·2·3?�계 X ??보통모드 ??
+2. ?��?(rate) ?�면 X???�일
+3. ?????�전 ?�계/?��? ???��?
 
 ## Fast checks
 ```bash
 rg -n "exitToNormalMode" frontend/src/pages/easy-mode/EasyWizardPage.tsx
 ```
 
-## as-is → to-be
-- **as-is:** X ≈ 뒤로 (이지 홈)
+## as-is ??to-be
+- **as-is:** X ???�로 (?��? ??
 - **to-be:** X = 보통모드 종료
