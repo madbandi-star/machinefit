@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import type { BackupRetentionDays } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { backupApi } from '@/api/backup.api';
@@ -8,6 +9,15 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
 import '@/styles/admin-backup.css';
+
+function getRestoreErrorMessage(error: unknown): string | undefined {
+  if (axios.isAxiosError(error)) {
+    const payload = error.response?.data as { error?: { message?: string } } | undefined;
+    return payload?.error?.message;
+  }
+  if (error instanceof Error) return error.message;
+  return undefined;
+}
 
 function ProgressBar({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(100, value));
@@ -105,8 +115,9 @@ export function AdminBackupPage() {
       });
       showToast(t('backup.restoreDone'), 'success');
       void queryClient.invalidateQueries({ queryKey: ['admin-backup-history'] });
-    } catch {
-      showToast(t('backup.restoreFailed'), 'error');
+    } catch (error) {
+      const message = getRestoreErrorMessage(error);
+      showToast(message || t('backup.restoreFailed'), 'error');
     } finally {
       setBusy(null);
       setProgress(0);

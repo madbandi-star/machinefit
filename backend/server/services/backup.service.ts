@@ -55,10 +55,14 @@ async function scopeOwned(
 function migrateUserPayload(raw: unknown): UserBackupPayload {
   const parsed = userBackupPayloadSchema.safeParse(raw);
   if (!parsed.success) {
+    const first = parsed.error.issues[0];
+    const hint = first
+      ? `${first.path.join('.') || 'payload'}: ${first.message}`
+      : 'schema validation failed';
     throw new AppError(
       400,
       'BACKUP_INVALID',
-      'Backup JSON schema validation failed',
+      `Backup file is invalid (${hint})`,
       parsed.error.flatten()
     );
   }
@@ -432,6 +436,8 @@ export const backupService = {
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
+        // Pool default statement_timeout is 30s — restore may need longer.
+        await client.query(`SET LOCAL statement_timeout = '120000'`);
         await backupRepository.updateProgress(job.id, 25);
 
         if (mode === 'replace') {
@@ -449,9 +455,19 @@ export const backupService = {
         await backupRepository.updateProgress(job.id, 40);
 
         // Safe profile fields only (never password / oauth / payment).
+        // Skip display_name when it would violate active-username uniqueness (migration 109).
         await client.query(
           `UPDATE users SET
-             display_name = COALESCE($2, display_name),
+             display_name = CASE
+               WHEN $2::text IS NULL OR btrim($2::text) = '' THEN display_name
+               WHEN EXISTS (
+                 SELECT 1 FROM users u2
+                 WHERE u2.is_active = TRUE
+                   AND lower(u2.display_name) = lower(btrim($2::text))
+                   AND u2.id <> users.id
+               ) THEN display_name
+               ELSE left(btrim($2::text), 100)
+             END,
              gender = COALESCE($3, gender),
              birth_date = COALESCE($4::date, birth_date),
              height_cm = COALESCE($5, height_cm),
@@ -563,15 +579,35 @@ export const backupService = {
           const rec = await client.query<{ id: string }>(
             `SELECT id::text AS id FROM machine_recommendations
              WHERE machine_id = $1 AND user_id = $2
+               AND gym_id = $3 AND member_id = $4
              ORDER BY created_at DESC LIMIT 1`,
-            [item.machineId, userId]
+            [item.machineId, userId, item.gymId, item.memberId]
           );
-          const recommendationId = rec.rows[0]?.id;
+          let recommendationId = rec.rows[0]?.id;
+          if (!recommendationId) {
+            // Fallback for older rows without gym/member on recommendations.
+            const fallback = await client.query<{ id: string }>(
+              `SELECT id::text AS id FROM machine_recommendations
+               WHERE machine_id = $1 AND user_id = $2
+               ORDER BY created_at DESC LIMIT 1`,
+              [item.machineId, userId]
+            );
+            recommendationId = fallback.rows[0]?.id;
+          }
           if (!recommendationId) continue;
           await client.query(
             `INSERT INTO recent_history (
                user_id, gym_id, member_id, machine_id, recommendation_id, source, viewed_at
-             ) VALUES ($1, $2, $3, $4, $5, 'backup', COALESCE($6::timestamptz, NOW()))`,
+             ) VALUES ($1, $2, $3, $4, $5, 'backup', COALESCE($6::timestamptz, NOW()))
+             ON CONFLICT (user_id, gym_id, member_id, recommendation_id)
+             DO UPDATE SET
+               viewed_at = GREATEST(
+                 recent_history.viewed_at,
+                 EXCLUDED.viewed_at
+               ),
+               machine_id = EXCLUDED.machine_id,
+               source = EXCLUDED.source,
+               updated_at = NOW()`,
             [
               userId,
               item.gymId,
@@ -631,9 +667,9 @@ export const backupService = {
       const message = err instanceof Error ? err.message : 'Restore failed';
       await backupRepository.completeFailed(job.id, message);
       logger.error('User restore failed', { userId, jobId: job.id, message });
-      throw err instanceof AppError
-        ? err
-        : new AppError(500, 'RESTORE_FAILED', 'Restore failed', message);
+      if (err instanceof AppError) throw err;
+      // Surface DB/unique errors so the client toast is actionable.
+      throw new AppError(500, 'RESTORE_FAILED', message);
     }
   },
 };

@@ -13,7 +13,11 @@ export function requestTimeoutMiddleware(req: Request, res: Response, next: Next
     url.endsWith('/ready') ||
     url.endsWith('/live') ||
     url.endsWith('/liveness') ||
-    url.includes('/media/')
+    url.includes('/media/') ||
+    // Backup/restore can exceed the soft deadline while parsing + applying ZIP.
+    url.includes('/backup/') ||
+    url.includes('/system-backup') ||
+    url.includes('/system-restore')
   ) {
     next();
     return;

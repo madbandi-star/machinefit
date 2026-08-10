@@ -266,6 +266,7 @@ export const systemBackupService = {
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
+        await client.query(`SET LOCAL statement_timeout = '120000'`);
         await backupRepository.updateProgress(job.id, 20);
 
         // Restore notices (safe replace of notice content)

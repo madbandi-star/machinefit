@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import { Download, FileArchive, History, ShieldCheck, Upload } from 'lucide-react';
 import type { BackupRestoreMode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -9,6 +10,16 @@ import { useSettingsStore } from '@/store/settings.store';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/data-management.css';
+
+function getRestoreErrorMessage(error: unknown): string | undefined {
+  if (axios.isAxiosError(error)) {
+    if (error.code === 'ECONNABORTED') return undefined;
+    const payload = error.response?.data as { error?: { message?: string } } | undefined;
+    return payload?.error?.message;
+  }
+  if (error instanceof Error) return error.message;
+  return undefined;
+}
 
 function ProgressBar({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(100, value));
@@ -156,8 +167,9 @@ export function DataManagementPage() {
       void queryClient.invalidateQueries({ queryKey: ['backup-history'] });
       void queryClient.invalidateQueries({ queryKey: ['workout-logs'] });
       void queryClient.invalidateQueries({ queryKey: ['favorites'] });
-    } catch {
-      showToast(t('dataManagement.restoreFailed'), 'error');
+    } catch (error) {
+      const message = getRestoreErrorMessage(error);
+      showToast(message || t('dataManagement.restoreFailed'), 'error');
     } finally {
       setBusy(null);
       setProgress(0);

@@ -100,7 +100,8 @@ export const backupApi = {
       const res = await apiClient.post<
         ApiResponse<BackupImportResult & { jobId: string }>
       >('/backup/import', form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        // Let axios set multipart boundary; large restores need a longer timeout.
+        timeout: 120_000,
       });
       params.onProgress?.(100);
       return res.data.data;
@@ -158,7 +159,7 @@ export const backupApi = {
       const res = await apiClient.post<
         ApiResponse<{ jobId: string; restoredTables: string[] }>
       >('/admin/system-restore', form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 120_000,
       });
       params.onProgress?.(100);
       return res.data.data;
