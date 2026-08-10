@@ -27,15 +27,15 @@ type TabId =
 const TABS: TabId[] = [
   'overview',
   'errors',
+  'logs',
+  'alerts',
   'server',
   'api',
   'users',
   'pages',
   'features',
   'db',
-  'logs',
   'audit',
-  'alerts',
   'reports',
   'security',
 ];

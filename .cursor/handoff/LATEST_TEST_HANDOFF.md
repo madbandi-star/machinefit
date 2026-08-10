@@ -1,25 +1,19 @@
-# Test handoff ??Easy mode X ??normal mode
+# Test handoff — Ops tab order
 
 ## Summary
-?��?모드 마법???�측?�단 **X**가 `/easy`(?��? ???�로 가??것을 **보통모드 + ??*?�로 바꿨?�니?? ?�쪽 ????기존 ?�로가�??��?.
+운영모니터링 탭을 **대시보드 → 오류 → 로그 → 알림** 순으로 붙였습니다.
 
 ## Git
 - branch: `main`
-- commit: (push ??갱신)
+- commit: (push 후 갱신)
 
 ## Changed files
-- `frontend/src/pages/easy-mode/EasyWizardPage.tsx`
+- `frontend/src/pages/admin/ops/AdminOpsPage.tsx`
 
 ## Test focus
-1. 마법??1·2·3?�계 X ??보통모드 ??
-2. ?��?(rate) ?�면 X???�일
-3. ?????�전 ?�계/?��? ???��?
+1. `/admin/ops` 탭 바가 오류 옆 로그, 그 옆 알림인지 확인
 
 ## Fast checks
 ```bash
-rg -n "exitToNormalMode" frontend/src/pages/easy-mode/EasyWizardPage.tsx
+rg -n "'errors',|'logs',|'alerts'," frontend/src/pages/admin/ops/AdminOpsPage.tsx
 ```
-
-## as-is ??to-be
-- **as-is:** X ???�로 (?��? ??
-- **to-be:** X = 보통모드 종료
