@@ -340,7 +340,18 @@
     "socialComingSoon": "{{provider}} 登录（即将推出）",
     "agreeAge14": "我已年满 14 周岁",
     "agreeAge14Required": "未满 14 周岁无法注册",
-    "trialNoticeSignup": "注册完成后可能按政策提供 Premium 免费试用（如 7 天）。详情见电商与退款政策。"
+    "trialNoticeSignup": "注册完成后可能按政策提供 Premium 免费试用（如 7 天）。详情见电商与退款政策。",
+    "termsAgreeDescRejoin": "Welcome back. You'll join as a new member, separate from any previous account.",
+    "rejoinTitle": "Welcome back to MachineFit.",
+    "rejoinBody": "You'll join as a new member. A new ID is generated automatically.",
+    "rejoinNoRestore": "Previous workout history, favorites, and settings are not restored.",
+    "signupCompleteTitle": "Your MachineFit account is ready.",
+    "signupCompleteLead": "Welcome! You can start logging workouts right away.",
+    "signupCompleteIdLabel": "Your ID",
+    "signupCompleteIdHint": "This ID was generated automatically by MachineFit.",
+    "signupCompleteChangeHint": "You can change it anytime on My Page.",
+    "signupCompleteChangeCta": "Change ID",
+    "signupCompleteHomeCta": "Go home"
   },
   "settings": {
     "language": "Language",
@@ -760,7 +771,13 @@
       "toastRefunded": "Premium has ended.",
       "toastResumed": "Auto-renew is on again."
     },
-    "dataManagement": "Data management"
+    "dataManagement": "Data management",
+    "memberIdTaken": "That ID is already taken.",
+    "memberIdInvalidChars": "Only Korean, letters, numbers, and underscore are allowed. No spaces.",
+    "memberIdRealName": "Real-name-like IDs are not allowed.",
+    "memberIdPersonalInfo": "Phone- or email-shaped IDs are not allowed.",
+    "memberIdForbidden": "That ID is not allowed.",
+    "memberIdRules": "{{min}}–{{max}} chars; Korean, letters, numbers, underscore"
   },
   "lab": {
     "title": "Lab",

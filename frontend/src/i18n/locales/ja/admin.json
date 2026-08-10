@@ -881,5 +881,10 @@
     },
     "cancel": "Cancel"
   },
-  "dataRetentionNav": {}
+  "dataRetentionNav": {},
+  "username": "Username",
+  "editUsername": "Edit username",
+  "saveUsername": "Save username",
+  "cancelUsername": "Cancel",
+  "usernameInvalid": "That username is not allowed."
 }
