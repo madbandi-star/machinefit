@@ -149,10 +149,15 @@ export async function refresh(req: Request, res: Response): Promise<void> {
 
 export async function logout(req: Request, res: Response): Promise<void> {
   const cookieToken = getRefreshCookie(req);
+  const bodyToken =
+    typeof req.body?.refreshToken === 'string' && req.body.refreshToken.trim()
+      ? req.body.refreshToken.trim()
+      : undefined;
   if (req.user) {
     await authService.logout(req.user.userId);
-  } else if (cookieToken) {
-    await authService.logoutByRefreshToken(cookieToken);
+  } else if (bodyToken || cookieToken) {
+    // Pages→Render often blocks third-party cookies; accept body refresh for revoke.
+    await authService.logoutByRefreshToken(bodyToken || cookieToken!);
   }
   clearRefreshCookie(res);
   res.json({ success: true, data: { message: 'Logged out' } });

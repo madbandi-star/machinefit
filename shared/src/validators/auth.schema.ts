@@ -44,6 +44,9 @@ export const oauthCompleteSchema = z.object({
   agreePrivacy: z
     .boolean()
     .refine((v) => v === true, { message: 'Privacy policy must be accepted' }),
+  agreeAge14: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Age attestation (14+) is required' }),
   agreeMarketing: z.boolean().optional().default(false),
   agreeLocation: z.boolean().optional().default(false),
   termsVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.terms),
@@ -60,6 +63,9 @@ export const consentAcceptSchema = z.object({
   agreePrivacy: z
     .boolean()
     .refine((v) => v === true, { message: 'Privacy policy must be accepted' }),
+  agreeAge14: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Age attestation (14+) is required' }),
   agreeMarketing: z.boolean().optional().default(false),
   agreeLocation: z.boolean().optional().default(false),
   termsVersion: z.string().min(1).max(32).optional().default(LEGAL_DOC_VERSIONS.terms),

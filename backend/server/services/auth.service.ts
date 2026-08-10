@@ -128,6 +128,7 @@ async function applyConsentBundle(
   input: {
     agreeMarketing?: boolean;
     agreeLocation?: boolean;
+    agreeAge14?: boolean;
     termsVersion?: string;
     privacyVersion?: string;
     locationVersion?: string;
@@ -152,6 +153,8 @@ async function applyConsentBundle(
     { type: 'marketing', version: marketingVersion, agreed: marketingOptIn },
     { type: 'location', version: locationVersion, agreed: locationOptIn },
     { type: 'push_service', version: termsVersion, agreed: true },
+    // Attestation only — not a legal opinion that the user is 14+ [법률 검토 필요]
+    { type: 'age14', version: termsVersion, agreed: Boolean(input.agreeAge14) },
   ];
 
   await userRepository.recordConsents(userId, items);
@@ -184,11 +187,9 @@ export const authService = {
     if (pool) {
       const valid = await userRepository.hasValidRefreshToken(payload.userId, tokenHash);
       if (!valid) {
-        // Migrate legacy JWTs issued before server-side persistence.
-        const storedCount = await userRepository.countRefreshTokens(payload.userId);
-        if (storedCount > 0) {
-          throw new AppError(401, 'INVALID_TOKEN', 'Refresh token revoked or expired');
-        }
+        // Never allow refresh when the presented token is absent from the store.
+        // (Legacy empty-store bypass let logout wipe rows then reuse old JWTs.)
+        throw new AppError(401, 'INVALID_TOKEN', 'Refresh token revoked or expired');
       }
     }
 
@@ -223,7 +224,10 @@ export const authService = {
     await userRepository.deleteRefreshTokens(userId);
   },
 
-  /** Revoke a single refresh token when access JWT is already expired. */
+  /**
+   * Revoke sessions when access JWT is already expired.
+   * A valid refresh token logs the user out on all devices for that account.
+   */
   async logoutByRefreshToken(refreshToken: string) {
     let payload: { userId: string };
     try {
@@ -231,10 +235,7 @@ export const authService = {
     } catch {
       return;
     }
-    await userRepository.deleteRefreshTokenByHash(
-      payload.userId,
-      hashRefreshToken(refreshToken)
-    );
+    await userRepository.deleteRefreshTokens(payload.userId);
   },
 
   async deactivateAccount(userId: string) {
@@ -244,6 +245,13 @@ export const authService = {
       const user = updateDevUser(userId, { isActive: false });
       if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
       return { message: 'Account deactivated' };
+    }
+    // Stop paid renewals before anonymizing — do not leave Polar charging a withdrawn user.
+    try {
+      const { billingService } = await import('./billing.service.js');
+      await billingService.cancelSubscriptionOnWithdraw(userId);
+    } catch {
+      /* non-blocking — withdraw must proceed; ops can reconcile failed PG cancel */
     }
     // Capture trial identity keys before email anonymization / later OAuth purge.
     try {
@@ -343,18 +351,22 @@ export const authService = {
     }
 
     // Do not stage provider profile names — username is assigned only at account create.
-    const pendingToken = signOAuthPendingToken({
+    const pending = signOAuthPendingToken({
       provider,
       providerUserId: identity.providerUserId,
       providerEmail: identity.providerEmail,
       displayName: null,
       avatarUrl: identity.avatarUrl,
     });
+    const { oauthPendingRepository } = await import(
+      '../repositories/oauth-pending.repository.js'
+    );
+    await oauthPendingRepository.register(pending.jti, pending.expiresAt);
 
     return {
       status: 'needs_consent',
       reason: isRejoin ? 'rejoin' : 'signup',
-      pendingToken,
+      pendingToken: pending.token,
       identity: {
         provider,
         email: identity.providerEmail,
@@ -371,12 +383,31 @@ export const authService = {
     if (!input.agreeTerms || !input.agreePrivacy) {
       throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
     }
+    if (!input.agreeAge14) {
+      throw new AppError(
+        400,
+        'CONSENT_REQUIRED',
+        'Age attestation (14+) is required to create an account'
+      );
+    }
 
     let pending;
     try {
       pending = verifyOAuthPendingToken(input.pendingToken);
     } catch {
       throw new AppError(401, 'INVALID_TOKEN', 'Signup session expired. Please sign in again.');
+    }
+
+    const { oauthPendingRepository } = await import(
+      '../repositories/oauth-pending.repository.js'
+    );
+    const consumed = await oauthPendingRepository.consume(pending.jti);
+    if (!consumed) {
+      throw new AppError(
+        401,
+        'INVALID_TOKEN',
+        'Signup session already used or expired. Please sign in again.'
+      );
     }
 
     const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
@@ -482,6 +513,13 @@ export const authService = {
     if (!input.agreeTerms || !input.agreePrivacy) {
       throw new AppError(400, 'CONSENT_REQUIRED', 'Terms and privacy policy must be accepted');
     }
+    if (!input.agreeAge14) {
+      throw new AppError(
+        400,
+        'CONSENT_REQUIRED',
+        'Age attestation (14+) is required'
+      );
+    }
     const user = await userRepository.findById(userId);
     if (!user || !user.isActive) {
       throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
@@ -524,6 +562,11 @@ export const authService = {
     }
 
     const identity = await verifyOAuthCredential(provider, credential);
+    // Repair legacy/withdrawn live links the same way login does.
+    await authProviderRepository.releaseInactiveProviderLink(
+      provider,
+      identity.providerUserId
+    );
     const existingForProvider = await authProviderRepository.findByProviderUserId(
       provider,
       identity.providerUserId

@@ -533,6 +533,47 @@ export async function cancelSubscription(userId: string): Promise<SubscriptionSt
   return getSubscriptionStatus(userId);
 }
 
+/**
+ * Best-effort cancel at withdraw. Never throws for "no subscription".
+ * Stops Polar renewals so withdrawn accounts are not charged again.
+ */
+export async function cancelSubscriptionOnWithdraw(userId: string): Promise<void> {
+  const liveRaw = await billingRepository.getLiveSubscription(userId);
+  if (!liveRaw) return;
+  const live = await expireIfNeeded(liveRaw);
+  if (!live) return;
+
+  try {
+    if (live.providerSubscriptionId && live.paymentProvider === 'polar') {
+      const provider = getPaymentProvider(live.paymentProvider);
+      // Stop renewals (Polar: cancel_at_period_end). Local entitlement ends immediately on withdraw.
+      await provider.cancelSubscription(live.providerSubscriptionId, { atPeriodEnd: true });
+    }
+  } catch (err) {
+    await billingRepository.insertBillingLog({
+      userId,
+      eventType: 'subscription.cancel_on_withdraw_failed',
+      payload: { error: String(err).slice(0, 300), providerSubId: live.providerSubscriptionId },
+    });
+  }
+
+  const now = new Date();
+  await billingRepository.updateSubscription(live.id, {
+    cancelAt: now,
+    status: 'CANCELED',
+    expireAt: now,
+  });
+  await pushMembershipCache(userId, null, {
+    subscriptionStatus: 'cancelled',
+    forceExpire: true,
+  });
+  await billingRepository.insertBillingLog({
+    userId,
+    eventType: 'subscription.cancel_on_withdraw',
+    payload: { provider: live.paymentProvider },
+  });
+}
+
 export async function resumeSubscription(userId: string): Promise<SubscriptionStatusView> {
   const latest = await billingRepository.getLatestSubscription(userId);
   if (!latest?.providerSubscriptionId) {
@@ -1109,6 +1150,7 @@ export const billingService = {
   snapshotTrialIdentitiesOnDeactivate,
   createCheckout,
   cancelSubscription,
+  cancelSubscriptionOnWithdraw,
   resumeSubscription,
   listPaymentHistory,
   listPaymentProviders,

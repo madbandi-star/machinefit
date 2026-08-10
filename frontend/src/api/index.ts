@@ -91,6 +91,7 @@ export const authApi = {
     pendingToken: string;
     agreeTerms: boolean;
     agreePrivacy: boolean;
+    agreeAge14: boolean;
     agreeMarketing?: boolean;
     agreeLocation?: boolean;
     termsVersion?: string;
@@ -101,6 +102,7 @@ export const authApi = {
   acceptConsents: (data: {
     agreeTerms: boolean;
     agreePrivacy: boolean;
+    agreeAge14: boolean;
     agreeMarketing?: boolean;
     agreeLocation?: boolean;
     termsVersion?: string;
@@ -129,7 +131,9 @@ export const authApi = {
   /** Refresh via HttpOnly cookie (optional legacy body for migration). */
   refresh: (refreshToken?: string) =>
     apiClient.post('/auth/refresh', refreshToken ? { refreshToken } : {}),
-  logout: () => apiClient.post('/auth/logout'),
+  /** Prefer sending refreshToken so Pages→Render can revoke when cookies are blocked. */
+  logout: (refreshToken?: string) =>
+    apiClient.post('/auth/logout', refreshToken ? { refreshToken } : {}),
   deactivateAccount: () => apiClient.delete('/auth/me'),
   updateMarketingPref: (marketingOptIn: boolean) =>
     apiClient.patch('/auth/me/marketing', { marketingOptIn }),

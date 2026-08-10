@@ -15,8 +15,9 @@ export function clearLocalSession(): void {
 
 /** Full client logout + clear OAuth staging so landing does not re-enter redirect flows. */
 export async function performLogout(): Promise<void> {
+  const refreshToken = useAuthStore.getState().tokens?.refreshToken;
   try {
-    await authApi.logout();
+    await authApi.logout(refreshToken ?? undefined);
   } catch {
     /* still clear local session */
   }

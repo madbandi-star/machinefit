@@ -174,6 +174,7 @@ export function TermsAgreementPage() {
       const body = {
         agreeTerms: checks.agreeTerms,
         agreePrivacy: checks.agreePrivacy,
+        agreeAge14: checks.agreeAge14,
         agreeLocation: checks.agreeLocation,
         agreeMarketing: checks.agreeMarketing,
         termsVersion: LEGAL_DOC_VERSIONS.terms,
