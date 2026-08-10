@@ -1,18 +1,18 @@
-# Test handoff — Fix withdrawn schedule sync
+# Test handoff ??Fix withdrawn schedule sync
 
 ## Summary
-관리자 **데이터 보존·삭제**의 **탈퇴 계정 스케줄 동기화**가 DB 타입 충돌(Postgres `42P08`)로 실패하던 문제를 수정했습니다. `subject_id`(varchar)와 `user_id`(uuid)에 같은 `$3`를 쓰지 않고 `$3::text` / `$4::uuid`로 분리했습니다.
+관리자 **?�이??보존·??��**??**?�퇴 계정 ?��?�??�기??*가 DB ?�??충돌(Postgres `42P08`)�??�패?�던 문제�??�정?�습?�다. `subject_id`(varchar)?� `user_id`(uuid)??같�? `$3`�??��? ?�고 `$3::text` / `$4::uuid`�?분리?�습?�다.
 
 ## Git
 - branch: `main`
-- commit: (push 후 갱신)
+- commit: (push ??갱신)
 
 ## Changed files
 - `backend/server/repositories/data-retention.repository.ts`
 
 ## Test focus
-1. 관리자 > 데이터 보존·삭제 > **탈퇴 계정 스케줄 동기화** 클릭 → 성공 토스트 (`n`건 반영)
-2. 요약 KPI / 삭제 예정 목록에 탈퇴 계정 스케줄이 보이는지
+1. 관리자 > ?�이??보존·??�� > **?�퇴 계정 ?��?�??�기??* ?�릭 ???�공 ?�스??(`n`�?반영)
+2. ?�약 KPI / ??�� ?�정 목록???�퇴 계정 ?��?줄이 보이?��?
 
 ## Fast checks
 ```bash
@@ -20,9 +20,9 @@ rg -n "\$3::text,\$4::uuid" backend/server/repositories/data-retention.repositor
 ```
 
 ## Production checks
-- **Render backend redeploy 필요** (backend-only 변경)
-- 배포 후 동일 버튼으로 재확인
+- **Render backend redeploy ?�요** (backend-only 변�?
+- 배포 ???�일 버튼?�로 ?�확??
 
-## as-is → to-be
-- **as-is:** 버튼 클릭 시 "처리하지 못했어요…" 일반 오류
-- **to-be:** 동기화 성공 + upsert 건수 토스트
+## as-is ??to-be
+- **as-is:** 버튼 ?�릭 ??"처리?��? 못했?�요?? ?�반 ?�류
+- **to-be:** ?�기???�공 + upsert 건수 ?�스??
