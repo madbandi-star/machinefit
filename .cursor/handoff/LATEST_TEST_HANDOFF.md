@@ -1,11 +1,11 @@
-# Test handoff — Admin subscriptions UI polish
+# Test handoff ??Admin subscriptions UI polish
 
 ## Summary
-관리자 구독 페이지 UI 정리: 검색 툴바, 상태 칩, 구조화된 회원 행(플랜/체험/만료), semantic 상태 뱃지. 기능 동일.
+관리자 구독 ?�이지 UI ?�리: 검???�바, ?�태 �? 구조?�된 ?�원 ???�랜/체험/만료), semantic ?�태 뱃�?. 기능 ?�일.
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: `d28e4519`
 
 ## Changed files
 - `frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx`
@@ -13,18 +13,18 @@
 - `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json`
 
 ## Test focus
-1. 검색·상태 칩·기타 상태 select
-2. 플랜 변경 / 30일 연장 / 구독 종료
-3. 모바일·데스크톱 레이아웃
+1. 검?�·상??칩·기?� ?�태 select
+2. ?�랜 변�?/ 30???�장 / 구독 종료
+3. 모바?�·데?�크???�이?�웃
 
 ## Fast checks
 ```bash
 rg -n "admin-subs|STATUS_CHIPS|statusPillClass" frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx frontend/src/styles/admin-subscriptions.css
 ```
 
-## as-is → to-be
-- **as-is:** 영문 raw 상태 + meta 덤프 + 인라인 flex
-- **to-be:** 칩 필터 + 라벨/값 fact + 데스크톱 3열
+## as-is ??to-be
+- **as-is:** ?�문 raw ?�태 + meta ?�프 + ?�라??flex
+- **to-be:** �??�터 + ?�벨/�?fact + ?�스?�톱 3??
 
 ## Note
-FE only — Pages deploy.
+FE only ??Pages deploy.
