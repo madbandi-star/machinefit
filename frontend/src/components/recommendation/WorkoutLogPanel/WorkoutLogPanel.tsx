@@ -34,7 +34,7 @@ import {
   stopVoiceCoach,
 } from '@/utils/voiceCoach';
 import { clampVoiceHoldDurationSec } from '@/utils/voiceHold';
-import { Check } from 'lucide-react';
+import { Check, PenLine } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -1607,6 +1607,10 @@ export function WorkoutLogPanel({
       disabled={isActionPending || isLoading || !isPlanDirty}
       aria-live={isPlanDirty ? 'polite' : undefined}
     >
+      <span className="history-workout-log__plan-save-lead" aria-hidden="true">
+        <span className="history-workout-log__plan-save-note">📋</span>
+        <PenLine className="history-workout-log__plan-save-pen" strokeWidth={2.75} />
+      </span>
       {planSaveLabel}
     </button>
   );
