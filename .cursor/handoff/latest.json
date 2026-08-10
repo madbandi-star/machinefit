@@ -3,7 +3,7 @@
   "summary": "???? mock ??(req-1/req-2)? ?? ??? ???, ???? pendingRequests? DB machine_requests ???? ??.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a6c02137"
   },
   "changedFiles": [
     "backend/server/data/community.mock.ts",
