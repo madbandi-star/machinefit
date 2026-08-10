@@ -32,23 +32,32 @@ export const adminRepository = {
     const hiddenPosts = mockPosts.filter((p) => p.isHidden).length;
 
     let userCount = devUserCount + 3;
+    let gymCount = MOCK_GYMS.length;
+    let verifiedGyms = MOCK_GYMS.filter((g) => g.isVerified).length;
     if (pool) {
       const count = await pool.query<{ count: string }>(
         'SELECT COUNT(*)::text AS count FROM users'
       );
       userCount = parseInt(count.rows[0]?.count ?? '0', 10);
+      const gymStats = await pool.query<{ total: string; verified: string }>(
+        `SELECT COUNT(*)::text AS total,
+                COUNT(*) FILTER (WHERE is_verified = TRUE)::text AS verified
+         FROM gyms`
+      );
+      gymCount = parseInt(gymStats.rows[0]?.total ?? '0', 10);
+      verifiedGyms = parseInt(gymStats.rows[0]?.verified ?? '0', 10);
     }
 
     return {
       userCount,
-      gymCount: MOCK_GYMS.length,
+      gymCount,
       machineCount: MOCK_MACHINES.length,
       brandCount: MOCK_BRANDS.length,
       postCount: mockPosts.length,
       pendingRequests,
       pendingReports,
       hiddenPosts,
-      verifiedGyms: MOCK_GYMS.filter((g) => g.isVerified).length,
+      verifiedGyms,
     };
   },
 
@@ -151,19 +160,96 @@ export const adminRepository = {
     return user;
   },
 
-  listGyms(): Gym[] {
-    return MOCK_GYMS.map(({ photos: _p, machines: _m, ...gym }) => ({
-      ...gym,
-      machineCount: MOCK_GYMS.find((g) => g.id === gym.id)?.machines.length ?? 0,
+  async listGyms(): Promise<Gym[]> {
+    const pool = getPool();
+    if (!pool) {
+      return MOCK_GYMS.map(({ photos: _p, machines: _m, ...gym }) => ({
+        ...gym,
+        machineCount: _m.length,
+      }));
+    }
+
+    const result = await pool.query<{
+      id: string;
+      owner_id: string;
+      slug: string | null;
+      name: string;
+      description: Record<string, string> | null;
+      address: string;
+      city: string | null;
+      country_id: string;
+      country_code: string | null;
+      latitude: string | null;
+      longitude: string | null;
+      phone: string | null;
+      website_url: string | null;
+      business_hours: Gym['businessHours'] | null;
+      amenities: Record<string, boolean> | null;
+      is_verified: boolean;
+      is_active: boolean;
+      machine_count: string;
+    }>(
+      `SELECT g.id, g.owner_id, g.slug, g.name, g.description, g.address, g.city, g.country_id,
+              c.code AS country_code,
+              g.latitude::text, g.longitude::text, g.phone, g.website_url,
+              g.business_hours, g.amenities, g.is_verified, g.is_active,
+              COALESCE(mc.machine_count, '0') AS machine_count
+       FROM gyms g
+       LEFT JOIN countries c ON c.id = g.country_id
+       LEFT JOIN (
+         SELECT gym_id, COUNT(*)::text AS machine_count
+         FROM gym_machines
+         WHERE deleted_at IS NULL
+         GROUP BY gym_id
+       ) mc ON mc.gym_id = g.id
+       ORDER BY g.created_at DESC NULLS LAST, g.name ASC`
+    );
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      ownerId: row.owner_id,
+      slug: row.slug ?? undefined,
+      name: row.name,
+      description: row.description ?? undefined,
+      address: row.address,
+      city: row.city ?? undefined,
+      countryId: row.country_id,
+      countryCode: row.country_code ?? undefined,
+      latitude: row.latitude ? parseFloat(row.latitude) : undefined,
+      longitude: row.longitude ? parseFloat(row.longitude) : undefined,
+      phone: row.phone ?? undefined,
+      websiteUrl: row.website_url ?? undefined,
+      businessHours: row.business_hours ?? undefined,
+      amenities: row.amenities ?? undefined,
+      isVerified: row.is_verified,
+      isActive: row.is_active,
+      machineCount: parseInt(row.machine_count, 10),
     }));
   },
 
-  verifyGym(gymId: string, input: VerifyGymInput): Gym {
-    const gym = MOCK_GYMS.find((g) => g.id === gymId || g.slug === gymId);
+  async verifyGym(gymId: string, input: VerifyGymInput): Promise<Gym> {
+    const pool = getPool();
+    if (!pool) {
+      const gym = MOCK_GYMS.find((g) => g.id === gymId || g.slug === gymId);
+      if (!gym) throw new AppError(404, 'NOT_FOUND', 'Gym not found');
+      gym.isVerified = input.isVerified;
+      const { photos: _p, machines: _m, ...rest } = gym;
+      return rest;
+    }
+
+    const updated = await pool.query<{ id: string }>(
+      `UPDATE gyms
+       SET is_verified = $1, updated_at = NOW()
+       WHERE id::text = $2 OR slug = $2
+       RETURNING id`,
+      [input.isVerified, gymId]
+    );
+    if (!updated.rows[0]) throw new AppError(404, 'NOT_FOUND', 'Gym not found');
+
+    const gyms = await this.listGyms();
+    const gym = gyms.find((g) => g.id === updated.rows[0].id);
     if (!gym) throw new AppError(404, 'NOT_FOUND', 'Gym not found');
-    gym.isVerified = input.isVerified;
-    const { photos: _p, machines: _m, ...rest } = gym;
-    return rest;
+    return gym;
   },
 
   listBrands(): Brand[] {

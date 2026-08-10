@@ -1,4 +1,4 @@
-import type { Brand, Machine, Gym, GymMachine, GymPhoto, BusinessHours } from '@machinefit/shared';
+import type { Brand, Machine, Gym, GymMachine, GymPhoto } from '@machinefit/shared';
 import { MACHINE_CODES, BRAND_CODES } from '@machinefit/shared';
 import {
   CATALOG_BRANDS,
@@ -415,91 +415,5 @@ export interface MockGym extends Gym {
   machines: GymMachine[];
 }
 
-const DEFAULT_HOURS: BusinessHours = {
-  mon: { open: '06:00', close: '22:00' },
-  tue: { open: '06:00', close: '22:00' },
-  wed: { open: '06:00', close: '22:00' },
-  thu: { open: '06:00', close: '22:00' },
-  fri: { open: '06:00', close: '22:00' },
-  sat: { open: '08:00', close: '20:00' },
-  sun: { open: '08:00', close: '18:00' },
-};
-
-export const MOCK_GYMS: MockGym[] = [
-  {
-    id: 'gym-1',
-    ownerId: 'owner-1',
-    slug: 'fitzone-gangnam',
-    name: 'FitZone Gangnam',
-    description: { en: 'Premium strength training gym in Gangnam', ko: '강남 프리미엄 근력 트레이닝 체육관' },
-    address: '123 Teheran-ro, Gangnam-gu',
-    city: 'Seoul',
-    countryId: 'kr',
-    countryCode: 'KR',
-    latitude: 37.4979,
-    longitude: 127.0276,
-    phone: '+82-2-1234-5678',
-    websiteUrl: 'https://fitzone.example.com',
-    businessHours: DEFAULT_HOURS,
-    amenities: { parking: true, shower: true, '24h': false },
-    isVerified: true,
-    isActive: true,
-    machineCount: 4,
-    photos: [{ id: 'p1', gymId: 'gym-1', photoUrl: 'https://placehold.co/600x400/111/ffd400?text=FitZone', sortOrder: 0 }],
-    machines: [
-      { id: 'gm1', gymId: 'gym-1', machineId: '1', machineCode: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, machineName: 'Iso-Lateral High Row', muscleGroup: 'back', quantity: 2, isAvailable: true, floorZone: 'Upper Body', isVerified: true },
-      { id: 'gm2', gymId: 'gym-1', machineId: '2', machineCode: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, machineName: 'Selectorized Chest Press', muscleGroup: 'chest', quantity: 1, isAvailable: true, floorZone: 'Upper Body', isVerified: true },
-      { id: 'gm3', gymId: 'gym-1', machineId: '3', machineCode: MACHINE_CODES.HS_LEG_EXTENSION, machineName: 'Leg Extension', muscleGroup: 'legs', quantity: 2, isAvailable: true, floorZone: 'Lower Body', isVerified: true },
-      { id: 'gm4', gymId: 'gym-1', machineId: '5', machineCode: MACHINE_CODES.HS_SHOULDER_PRESS, machineName: 'Shoulder Press', muscleGroup: 'shoulders', quantity: 1, isAvailable: true, floorZone: 'Upper Body', isVerified: true },
-    ],
-  },
-  {
-    id: 'gym-2',
-    ownerId: 'owner-2',
-    slug: 'iron-temple-seoul',
-    name: 'Iron Temple Seoul',
-    description: { en: 'Hardcore strength gym', ko: '하드코어 근력 체육관' },
-    address: '45 Olympic-ro, Songpa-gu',
-    city: 'Seoul',
-    countryId: 'kr',
-    countryCode: 'KR',
-    latitude: 37.5145,
-    longitude: 127.1059,
-    phone: '+82-2-9876-5432',
-    businessHours: DEFAULT_HOURS,
-    amenities: { parking: true, shower: true, '24h': true },
-    isVerified: true,
-    isActive: true,
-    machineCount: 3,
-    photos: [{ id: 'p2', gymId: 'gym-2', photoUrl: 'https://placehold.co/600x400/111/ffd400?text=Iron+Temple', sortOrder: 0 }],
-    machines: [
-      { id: 'gm5', gymId: 'gym-2', machineId: '1', machineCode: MACHINE_CODES.HS_ISO_LATERAL_HIGH_ROW, machineName: 'Iso-Lateral High Row', muscleGroup: 'back', quantity: 1, isAvailable: true, isVerified: true },
-      { id: 'gm6', gymId: 'gym-2', machineId: '4', machineCode: MACHINE_CODES.HS_LEG_CURL, machineName: 'Leg Curl', muscleGroup: 'legs', quantity: 2, isAvailable: true, isVerified: true },
-      { id: 'gm7', gymId: 'gym-2', machineId: '2', machineCode: MACHINE_CODES.HS_SELECTORIZED_CHEST_PRESS, machineName: 'Selectorized Chest Press', muscleGroup: 'chest', quantity: 1, isAvailable: false, notes: 'Under maintenance', isVerified: true },
-    ],
-  },
-  {
-    id: 'gym-3',
-    ownerId: 'owner-3',
-    slug: 'powerhouse-nyc',
-    name: 'PowerHouse NYC',
-    description: { en: 'Midtown Manhattan fitness center', ko: '맨해튼 미드타운 피트니스 센터' },
-    address: '350 5th Ave',
-    city: 'New York',
-    countryId: 'us',
-    countryCode: 'US',
-    latitude: 40.7484,
-    longitude: -73.9857,
-    phone: '+1-212-555-0100',
-    businessHours: DEFAULT_HOURS,
-    amenities: { parking: false, shower: true, '24h': false },
-    isVerified: true,
-    isActive: true,
-    machineCount: 2,
-    photos: [{ id: 'p3', gymId: 'gym-3', photoUrl: 'https://placehold.co/600x400/111/ffd400?text=PowerHouse', sortOrder: 0 }],
-    machines: [
-      { id: 'gm8', gymId: 'gym-3', machineId: '3', machineCode: MACHINE_CODES.HS_LEG_EXTENSION, machineName: 'Leg Extension', muscleGroup: 'legs', quantity: 3, isAvailable: true, isVerified: true },
-      { id: 'gm9', gymId: 'gym-3', machineId: '5', machineCode: MACHINE_CODES.HS_SHOULDER_PRESS, machineName: 'Shoulder Press', muscleGroup: 'shoulders', quantity: 1, isAvailable: true, isVerified: true },
-    ],
-  },
-];
+/** Empty by default — no FitZone / Iron Temple / PowerHouse demo gyms in prod. */
+export const MOCK_GYMS: MockGym[] = [];

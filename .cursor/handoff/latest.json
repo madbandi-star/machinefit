@@ -1,31 +1,33 @@
 {
-  "title": "Remove ops monitoring from My Page admin tools",
-  "summary": "????? ??? ???? ?? ???? ?? ??. ??? ????(/admin/ops) ??? ??.",
+  "title": "Stop serving FitZone mock gyms on admin",
+  "summary": "??? ??? ??? MOCK_GYMS(FitZone ?)? ?? ???? ??? DB gyms ??? ??. mock/seed ?? ??? ??.",
   "git": {
     "branch": "main",
-    "commit": "b70ae6d4"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "backend/server/repositories/admin.repository.ts",
+    "backend/server/services/admin.service.ts",
+    "backend/server/controllers/admin.controller.ts",
+    "backend/server/data/mock.ts",
+    "backend/server/repositories/gym-directory.repository.ts",
+    "database/seeds/gyms.sql"
   ],
   "testFocus": [
-    "admin ????? ??? ??? ?? ???? ??",
-    "??? ???? ??? ??",
-    "??? ????/?????? ?? ???? ?? ??"
+    "??? > ???: FitZone/Iron Temple/PowerHouse ???",
+    "??? ??? ??? ? ??",
+    "?? ??? DB gyms ?? ?? ??"
   ],
   "fastChecks": [
-    "rg -n \"opsMonitoring|ADMIN_OPS\" frontend/src/pages/my-page/MyPage.tsx"
+    "rg -n \"FitZone|MOCK_GYMS\" backend/server/data/mock.ts backend/server/repositories/admin.repository.ts",
+    "rg -n \"async listGyms\" backend/server/repositories/admin.repository.ts"
   ],
   "productionChecks": [
-    "After Pages: My Page admin tools shows only Admin Dashboard"
+    "Render backend redeploy ? /admin/gyms ??"
   ],
   "deploy": {
-    "expected": "Push main ? GitHub Pages FE"
+    "expected": "Push main. Backend needs Render redeploy."
   },
-  "asIs": "My Page admin tools had Ops Monitoring + Admin Dashboard.",
-  "toBe": "My Page admin tools has Admin Dashboard only; ops still via admin nav."
+  "asIs": "Admin gyms page always showed 3 mock gyms (FitZone etc).",
+  "toBe": "Admin gyms lists real gyms table rows only (currently empty)."
 }

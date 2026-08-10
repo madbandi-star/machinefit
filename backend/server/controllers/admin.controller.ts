@@ -40,7 +40,7 @@ export async function updateUser(req: Request, res: Response): Promise<void> {
 }
 
 export async function listGyms(_req: Request, res: Response): Promise<void> {
-  const gyms = adminService.listGyms();
+  const gyms = await adminService.listGyms();
   res.json({ success: true, data: gyms });
 }
 

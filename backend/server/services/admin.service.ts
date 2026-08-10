@@ -27,7 +27,7 @@ export const adminService = {
   },
 
   async verifyGym(gymId: string, input: VerifyGymInput, _adminId: string) {
-    const gym = adminRepository.verifyGym(gymId, input);
+    const gym = await adminRepository.verifyGym(gymId, input);
     if (input.isVerified && gym.ownerId) {
       await notificationService.notify(
         gym.ownerId,

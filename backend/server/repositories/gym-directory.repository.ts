@@ -50,14 +50,6 @@ const MOCK_DIRECTORY: GymDirectoryEntry[] = [
     cityName: '수원시',
     locationLabel: '경기도 수원시',
   },
-  {
-    id: '00000000-0000-4000-8000-00000000d00c',
-    name: '머신핏GYM 강남점',
-    stateName: '서울특별시',
-    cityName: '강남구',
-    districtName: '역삼동',
-    locationLabel: '서울특별시 강남구 역삼동',
-  },
 ];
 
 function locationLabel(parts: Array<string | null | undefined>): string | undefined {
