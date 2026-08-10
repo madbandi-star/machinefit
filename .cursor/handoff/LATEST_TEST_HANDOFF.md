@@ -1,27 +1,27 @@
-# Test handoff — Remove ops monitoring from My Page
+# Test handoff ??Remove ops monitoring from My Page
 
 ## Summary
-마이페이지 **관리자 도구**에서 **운영 모니터링** 메뉴를 제거했습니다. `/admin/ops` 라우트·관리자 대시보드/사이드바 진입은 그대로입니다.
+마이?�이지 **관리자 ?�구**?�서 **?�영 모니?�링** 메뉴�??�거?�습?�다. `/admin/ops` ?�우?�·�?리자 ?�?�보???�이?�바 진입?� 그�?로입?�다.
 
 ## Git
 - branch: `main`
-- commit: (push 후 갱신)
+- commit: (push ??갱신)
 
 ## Changed files
 - `frontend/src/pages/my-page/MyPage.tsx`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json` (`opsMonitoring` 키 제거)
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json` (`opsMonitoring` ???�거)
 
 ## Test focus
-1. admin 마이페이지 → 관리자 도구에 운영 모니터링 없음
-2. 관리자 대시보드만 표시
-3. 관리자 대시보드/사이드바에서 운영 모니터링 접근 가능
+1. admin 마이?�이지 ??관리자 ?�구???�영 모니?�링 ?�음
+2. 관리자 ?�?�보?�만 ?�시
+3. 관리자 ?�?�보???�이?�바?�서 ?�영 모니?�링 ?�근 가??
 
 ## Fast checks
 ```bash
 rg -n "opsMonitoring|ADMIN_OPS" frontend/src/pages/my-page/MyPage.tsx
 ```
-(매치 없어야 함)
+(매치 ?�어????
 
-## as-is → to-be
-- **as-is:** 마이페이지에 운영 모니터링 + 대시보드
-- **to-be:** 대시보드만
+## as-is ??to-be
+- **as-is:** 마이?�이지???�영 모니?�링 + ?�?�보??
+- **to-be:** ?�?�보?�만
