@@ -69,6 +69,33 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { to: ROUTES.ADMIN_FRIENDS, labelKey: 'friends.nav', icon: 'users' },
     ],
   },
+  {
+    id: 'data',
+    labelKey: 'navGroup.data',
+    items: [
+      {
+        to: ROUTES.ADMIN_DATA_RETENTION,
+        labelKey: 'dataRetention.nav',
+        icon: 'shield',
+        end: true,
+      },
+      {
+        to: ROUTES.ADMIN_DATA_RETENTION_SCHEDULED,
+        labelKey: 'dataRetention.navScheduled',
+        icon: 'history',
+      },
+      {
+        to: ROUTES.ADMIN_DATA_RETENTION_LOGS,
+        labelKey: 'dataRetention.navLogs',
+        icon: 'monitor',
+      },
+      {
+        to: ROUTES.ADMIN_DATA_RETENTION_AUDIT,
+        labelKey: 'dataRetention.navAudit',
+        icon: 'circleCheck',
+      },
+    ],
+  },
 ];
 
 function AdminNavLinks({

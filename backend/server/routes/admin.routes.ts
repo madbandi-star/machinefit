@@ -21,6 +21,7 @@ import {
 import { validateBody } from '../middlewares/validate.middleware.js';
 import * as backupController from '../controllers/backup.controller.js';
 import * as adminFortuneController from '../controllers/admin-fortune.controller.js';
+import * as dataRetentionAdminController from '../controllers/data-retention-admin.controller.js';
 
 export const adminRouter = Router();
 
@@ -180,3 +181,16 @@ adminRouter.put(
     void backupController.updateBackupSettings(req, res).catch(next);
   }
 );
+
+/** Data retention / deletion policy management */
+adminRouter.get('/data-retention/summary', dataRetentionAdminController.getSummary);
+adminRouter.get('/data-retention/policies', dataRetentionAdminController.listPolicies);
+adminRouter.post('/data-retention/policies', dataRetentionAdminController.createPolicy);
+adminRouter.get('/data-retention/policies/:id', dataRetentionAdminController.getPolicy);
+adminRouter.patch('/data-retention/policies/:id', dataRetentionAdminController.updatePolicy);
+adminRouter.get('/data-retention/scheduled', dataRetentionAdminController.listScheduled);
+adminRouter.get('/data-retention/deletion-logs', dataRetentionAdminController.listDeletionLogs);
+adminRouter.get('/data-retention/consents', dataRetentionAdminController.listConsentCatalog);
+adminRouter.post('/data-retention/consents', dataRetentionAdminController.createConsent);
+adminRouter.post('/data-retention/records/:id/hold', dataRetentionAdminController.setHold);
+adminRouter.post('/data-retention/sync-withdrawn', dataRetentionAdminController.syncWithdrawn);

@@ -27,4 +27,5 @@ export {
 export * from './content-safety.js';
 export * from './fortune-seed.js';
 export * from './username.js';
+export * from './retention-schedule.js';
 export { FORTUNE_FALLBACK_CATALOG, type FortuneFallbackItem } from '../data/fortune-fallback-catalog.js';

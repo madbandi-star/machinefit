@@ -391,6 +391,22 @@ const adminCompliancePage = () =>
   import('@/pages/admin/compliance/AdminCompliancePage').then((m) => ({
     default: m.AdminCompliancePage,
   }));
+const adminDataRetentionPage = () =>
+  import('@/pages/admin/data-retention/AdminDataRetentionPage').then((m) => ({
+    default: m.AdminDataRetentionPage,
+  }));
+const adminDataRetentionScheduledPage = () =>
+  import('@/pages/admin/data-retention/AdminDataRetentionScheduledPage').then((m) => ({
+    default: m.AdminDataRetentionScheduledPage,
+  }));
+const adminDataRetentionLogsPage = () =>
+  import('@/pages/admin/data-retention/AdminDataRetentionLogsPage').then((m) => ({
+    default: m.AdminDataRetentionLogsPage,
+  }));
+const adminDataRetentionAuditPage = () =>
+  import('@/pages/admin/data-retention/AdminDataRetentionAuditPage').then((m) => ({
+    default: m.AdminDataRetentionAuditPage,
+  }));
 const adminOpsPage = () =>
   import('@/pages/admin/ops/AdminOpsPage').then((m) => ({
     default: m.AdminOpsPage,
@@ -635,6 +651,19 @@ export const router = createBrowserRouter(
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },
         { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
         { path: ROUTES.ADMIN_COMPLIANCE, element: lazyRoute(adminCompliancePage) },
+        { path: ROUTES.ADMIN_DATA_RETENTION, element: lazyRoute(adminDataRetentionPage) },
+        {
+          path: ROUTES.ADMIN_DATA_RETENTION_SCHEDULED,
+          element: lazyRoute(adminDataRetentionScheduledPage),
+        },
+        {
+          path: ROUTES.ADMIN_DATA_RETENTION_LOGS,
+          element: lazyRoute(adminDataRetentionLogsPage),
+        },
+        {
+          path: ROUTES.ADMIN_DATA_RETENTION_AUDIT,
+          element: lazyRoute(adminDataRetentionAuditPage),
+        },
         { path: ROUTES.ADMIN_OPS, element: lazyRoute(adminOpsPage) },
         { path: ROUTES.ADMIN_BACKUP, element: lazyRoute(adminBackupPage) },
         { path: ROUTES.ADMIN_SUBSCRIPTIONS, element: lazyRoute(adminSubscriptionsPage) },

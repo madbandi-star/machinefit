@@ -613,6 +613,7 @@ export type { OwnerDashboardStats, OwnerApplyResult } from './community.api';
 export { trainerApi } from './trainer.api';
 export type { TrainerApplyResult } from './trainer.api';
 export { complianceApi } from './compliance.api';
+export { dataRetentionApi } from './data-retention.api';
 export { adminApi, notificationApi, motivationMediaApi, muscleGroupImageApi } from './admin.api';
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
 export { photoBoardApi } from './photo-board.api';
