@@ -1022,6 +1022,9 @@ export function EasyWizardPage() {
 
   // step 3
   const completedSetCount = completed.slice(0, setCount).filter(Boolean).length;
+  const nextIncompleteSetIndex = completed
+    .slice(0, setCount)
+    .findIndex((done) => done !== true);
   const recommendedWeight = recommendation?.settings.recommendedWeightKg;
   const recommendedReps = recommendation ? repsLabel(recommendation.settings) : null;
   const saveDisabled = !activeGymId || !activeMemberId || saveLog.isPending;
@@ -1111,6 +1114,7 @@ export function EasyWizardPage() {
         <div className="easy-s3-sets">
           {weights.slice(0, setCount).map((w, index) => {
             const isDone = completed[index] ?? false;
+            const nudgeComplete = !isDone && index === nextIncompleteSetIndex;
             return (
               <div
                 key={index}
@@ -1140,8 +1144,15 @@ export function EasyWizardPage() {
                 </div>
                 <button
                   type="button"
-                  className={`easy-s3-set__done${isDone ? ' easy-s3-set__done--on' : ''}`}
+                  className={`easy-s3-set__done${
+                    isDone ? ' easy-s3-set__done--on' : ' easy-s3-set__done--pending'
+                  }${nudgeComplete ? ' easy-s3-set__done--nudge' : ''}`}
                   aria-pressed={isDone}
+                  aria-label={
+                    isDone
+                      ? t('machines:workoutLog.setCompleteDoneAria', { number: index + 1 })
+                      : t('machines:workoutLog.setCompletePendingAria', { number: index + 1 })
+                  }
                   onClick={() => {
                     setCompleted((prev) => {
                       const copy = [...prev];
@@ -1150,7 +1161,9 @@ export function EasyWizardPage() {
                     });
                   }}
                 >
-                  {t('easyMode.doneSet')}
+                  {isDone
+                    ? t('machines:workoutLog.setComplete')
+                    : t('machines:workoutLog.setIncomplete')}
                 </button>
               </div>
             );

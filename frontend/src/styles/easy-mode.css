@@ -1062,35 +1062,100 @@
   max-width: 100%;
 }
 
+/* Mirror records machine-card complete btn (pending / completed / nudge). */
 .easy-s3-set__done {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   align-self: stretch;
+  min-width: 3.25rem;
   min-height: 2.75rem;
-  padding: 0.45rem 0.35rem;
+  padding: 0.45rem 0.4rem;
   border-radius: 0.75rem;
   border: 1px solid var(--glass-border);
-  background: var(--color-surface-alt);
+  background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
   color: var(--color-text-muted);
-  font-size: 0.78rem;
-  font-weight: 800;
-  line-height: 1.15;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
   cursor: pointer;
   text-align: center;
+  touch-action: manipulation;
+  white-space: nowrap;
   box-sizing: border-box;
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.easy-s3-set__done--pending {
+  border-color: var(--glass-border);
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
+}
+
+.easy-s3-set__done--pending:hover,
+.easy-s3-set__done--pending:focus-visible {
+  border-color: color-mix(in srgb, var(--color-text) 28%, var(--glass-border));
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+}
+
+.easy-s3-set__done--pending:active {
+  transform: scale(0.96);
+}
+
+.easy-s3-set__done--nudge {
+  animation: easy-s3-complete-nudge 2.8s ease-in-out infinite;
+  will-change: box-shadow, border-color, background-color;
+}
+
+.easy-s3-set__done--nudge:hover,
+.easy-s3-set__done--nudge:focus-visible,
+.easy-s3-set__done--nudge:active {
+  animation: none;
 }
 
 .easy-s3-set__done--on {
   border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
-  color: var(--color-primary-text);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  animation: none;
 }
 
-.easy-s3-set__done:active {
-  transform: scale(0.97);
+.easy-s3-set__done--on:active {
+  transform: scale(0.96);
+}
+
+@keyframes easy-s3-complete-nudge {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--glass-border);
+    background: color-mix(in srgb, var(--color-text-muted) 6%, transparent);
+    color: var(--color-text-muted);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-text-muted) 16%, transparent);
+    border-color: color-mix(in srgb, var(--color-text) 30%, var(--glass-border));
+    background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+    color: var(--color-text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .easy-s3-set__done--nudge {
+    animation: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-text) 28%, var(--glass-border));
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+  }
 }
 
 .easy-tile-grid {
