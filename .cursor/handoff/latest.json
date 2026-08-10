@@ -1,30 +1,27 @@
 {
-  "title": "Sentry production smoke verified (FE+BE)",
-  "summary": "Sent intentional smoke events: frontend via ingest (accepted), backend via temporary /ops/sentry-smoke (HTTP 500) then removed the route.",
+  "title": "Purge demo/admin dummy accounts from production DB",
+  "summary": "Hard-deleted admin@machinefit.com, demo1?3, demo_test2@gmail.com and related rows via scripts/purge-target-accounts.mjs. demo_test@gmail.com was not present (demo_test2 was).",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/routes/ops.routes.ts",
-    ".cursor/handoff/latest.json",
-    ".cursor/handoff/LATEST_TEST_HANDOFF.md"
+    "scripts/purge-target-accounts.mjs"
   ],
   "testFocus": [
-    "Sentry machinefit-frontend Issues shows frontend smoke",
-    "Sentry machinefit-backend Issues shows backend smoke",
-    "GET /api/v1/ops/sentry-smoke is gone (404)"
+    "Those emails/display names no longer in users",
+    "Other admins (madbandi / kakao) still active",
+    "Login with deleted accounts fails"
   ],
   "fastChecks": [
-    "rg -n \"sentry-smoke\" backend/server/routes/ops.routes.ts; echo exit:$?"
+    "node scripts/purge-target-accounts.mjs"
   ],
   "productionChecks": [
-    "Confirm both Sentry projects have smoke issues",
-    "curl smoke URL should 404 after cleanup deploy"
+    "Confirm leftoverTargets empty; admin role still exists for real operators"
   ],
   "deploy": {
-    "expected": "Push removes smoke route; Render redeploy"
+    "expected": "DB-only change; no FE/BE redeploy required for purge. Script commit optional."
   },
-  "asIs": "DSN secrets set; live capture unproven",
-  "toBe": "FE+BE smoke events sent; temporary smoke route removed"
+  "asIs": "Demo/admin@machinefit.com accounts present in prod",
+  "toBe": "Those accounts and related data removed; ops script retained"
 }
