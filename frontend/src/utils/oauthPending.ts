@@ -6,6 +6,8 @@ const CHECKS_KEY = 'mf_terms_checks';
 export interface OAuthPendingSession {
   pendingToken: string;
   identity: OAuthPendingIdentity;
+  /** signup = first-time; rejoin = previously WITHDRAWN social subject (still new MachineFit user). */
+  reason?: 'signup' | 'rejoin';
   versions?: {
     terms: string;
     privacy: string;

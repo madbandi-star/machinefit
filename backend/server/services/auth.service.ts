@@ -253,8 +253,8 @@ export const authService = {
       /* non-blocking */
     }
     const ok = await userRepository.deactivateAccount(userId);
-    if (!ok) throw new AppError(404, 'NOT_FOUND', 'User not found or already deactivated');
-    return { message: 'Account deactivated' };
+    if (!ok) throw new AppError(404, 'NOT_FOUND', 'User not found or already withdrawn');
+    return { message: 'Account withdrawn' };
   },
 
   async setMarketingOptIn(userId: string, marketingOptIn: boolean) {
@@ -284,47 +284,62 @@ export const authService = {
     const { complianceRepository } = await import('../repositories/compliance.repository.js');
 
     const identity = await verifyOAuthCredential(provider, credential);
-    const existingLink = await authProviderRepository.findByProviderUserId(
+    let existingLink = await authProviderRepository.findByProviderUserId(
       provider,
       identity.providerUserId
     );
+    let isRejoin = false;
 
     if (existingLink) {
       const user = await userRepository.findById(existingLink.userId);
-      if (!user || !user.isActive) {
+      if (user?.isActive) {
+        await userRepository.updateLastLogin(user.id);
         await complianceRepository
           .recordLoginEvent({
-            userId: existingLink.userId,
-            email: user?.email ?? identity.providerEmail,
-            success: false,
-            failureReason: 'ACCOUNT_INACTIVE',
+            userId: user.id,
+            email: user.email,
+            success: true,
             ipAddress: meta?.ipAddress,
             userAgent: meta?.userAgent,
           })
           .catch(() => undefined);
-        throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
+        const auth = await buildAuthResponse(user);
+        if (auth.user.needsConsent) {
+          return {
+            status: 'needs_consent',
+            reason: 'version_update',
+            user: auth.user,
+            tokens: auth.tokens,
+            versions: currentLegalVersions(),
+          };
+        }
+        return { status: 'authenticated', user: auth.user, tokens: auth.tokens };
       }
-      await userRepository.updateLastLogin(user.id);
+
+      // WITHDRAWN / inactive: release social subject so a NEW MachineFit user can be created.
+      await authProviderRepository.releaseInactiveProviderLink(
+        provider,
+        identity.providerUserId
+      );
+      isRejoin = true;
+      existingLink = null;
       await complianceRepository
         .recordLoginEvent({
-          userId: user.id,
-          email: user.email,
-          success: true,
+          userId: user?.id ?? null,
+          email: identity.providerEmail,
+          success: false,
+          failureReason: 'WITHDRAWN_REJOIN_STARTED',
           ipAddress: meta?.ipAddress,
           userAgent: meta?.userAgent,
         })
         .catch(() => undefined);
-      const auth = await buildAuthResponse(user);
-      if (auth.user.needsConsent) {
-        return {
-          status: 'needs_consent',
-          reason: 'version_update',
-          user: auth.user,
-          tokens: auth.tokens,
-          versions: currentLegalVersions(),
-        };
-      }
-      return { status: 'authenticated', user: auth.user, tokens: auth.tokens };
+    }
+
+    if (!isRejoin) {
+      isRejoin = await authProviderRepository.hasWithdrawalHistory(
+        provider,
+        identity.providerUserId
+      );
     }
 
     // Do not stage provider profile names — username is assigned only at account create.
@@ -338,7 +353,7 @@ export const authService = {
 
     return {
       status: 'needs_consent',
-      reason: 'signup',
+      reason: isRejoin ? 'rejoin' : 'signup',
       pendingToken,
       identity: {
         provider,
@@ -365,20 +380,25 @@ export const authService = {
     }
 
     const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
-    const existingLink = await authProviderRepository.findByProviderUserId(
+    let existingLink = await authProviderRepository.findByProviderUserId(
       pending.provider,
       pending.providerUserId
     );
     if (existingLink) {
       const user = await userRepository.findById(existingLink.userId);
-      if (!user || !user.isActive) {
-        throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
+      if (user?.isActive) {
+        await applyConsentBundle(user.id, input, meta);
+        const refreshed = await userRepository.findById(user.id);
+        if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
+        await userRepository.updateLastLogin(refreshed.id);
+        return buildAuthResponse(refreshed);
       }
-      await applyConsentBundle(user.id, input, meta);
-      const refreshed = await userRepository.findById(user.id);
-      if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
-      await userRepository.updateLastLogin(refreshed.id);
-      return buildAuthResponse(refreshed);
+      // Stale link on WITHDRAWN user — release and create a brand-new account.
+      await authProviderRepository.releaseInactiveProviderLink(
+        pending.provider,
+        pending.providerUserId
+      );
+      existingLink = null;
     }
 
     const email = await allocateOAuthUserEmail(

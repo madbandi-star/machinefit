@@ -89,7 +89,7 @@ async function purgeDeactivatedUserData(userId: string): Promise<void> {
     ).catch(() => null);
   }
 
-  // OAuth links — after grace, allow a fresh signup with the same social identity
+  // OAuth links — normally already removed at withdraw; delete leftovers for legacy rows.
   await deleteForUser('auth_providers', userId);
 
   // Mark purge done so we don't re-scan forever (column from migration 107)

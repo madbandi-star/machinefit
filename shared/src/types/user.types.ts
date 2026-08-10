@@ -92,7 +92,8 @@ export type OAuthLoginResult =
     }
   | {
       status: 'needs_consent';
-      reason: 'signup';
+      /** Fresh social signup, or rejoin after WITHDRAWN (still a NEW MachineFit user). */
+      reason: 'signup' | 'rejoin';
       pendingToken: string;
       identity: OAuthPendingIdentity;
       versions: {

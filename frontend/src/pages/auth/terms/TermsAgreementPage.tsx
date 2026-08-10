@@ -116,6 +116,7 @@ export function TermsAgreementPage() {
   const [checks, setChecks] = useState<TermsCheckState>(() => loadTermsChecks());
   const pending = loadOAuthPending();
   const isSignup = Boolean(pending?.pendingToken);
+  const isRejoin = pending?.reason === 'rejoin';
   const canStay = isSignup || (isAuthenticated && needsConsent);
 
   useEffect(() => {
@@ -221,8 +222,20 @@ export function TermsAgreementPage() {
         />
       </h1>
       <p className="terms-agree__desc">
-        {isSignup ? t('auth.termsAgreeDescSignup') : t('auth.termsAgreeDescUpdate')}
+        {isRejoin
+          ? t('auth.termsAgreeDescRejoin')
+          : isSignup
+            ? t('auth.termsAgreeDescSignup')
+            : t('auth.termsAgreeDescUpdate')}
       </p>
+
+      {isRejoin ? (
+        <aside className="terms-agree__rejoin" role="note">
+          <p className="terms-agree__rejoin-title">{t('auth.rejoinTitle')}</p>
+          <p>{t('auth.rejoinBody')}</p>
+          <p>{t('auth.rejoinNoRestore')}</p>
+        </aside>
+      ) : null}
 
       <div className="terms-agree__card" role="group" aria-label={t('auth.consentGroup')}>
         <div className="terms-agree__all">

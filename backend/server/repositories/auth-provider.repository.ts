@@ -110,4 +110,60 @@ export const authProviderRepository = {
     );
     return Number(result.rows[0]?.count ?? 0);
   },
+
+  /** True if this social subject previously withdrew (archive table). */
+  async hasWithdrawalHistory(
+    provider: AuthProviderCode,
+    providerUserId: string
+  ): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    try {
+      const result = await pool.query(
+        `SELECT 1 FROM auth_provider_withdrawals
+         WHERE provider = $1 AND provider_user_id = $2
+         LIMIT 1`,
+        [provider, providerUserId]
+      );
+      return result.rows.length > 0;
+    } catch {
+      return false;
+    }
+  },
+
+  /**
+   * Detach a live OAuth link that points at a withdrawn/inactive user so re-signup can proceed.
+   * Archives the row when possible.
+   */
+  async releaseInactiveProviderLink(
+    provider: AuthProviderCode,
+    providerUserId: string
+  ): Promise<{ released: boolean; withdrawnUserId: string | null }> {
+    const pool = getPool();
+    if (!pool) return { released: false, withdrawnUserId: null };
+    const link = await this.findByProviderUserId(provider, providerUserId);
+    if (!link) return { released: false, withdrawnUserId: null };
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      try {
+        await client.query(
+          `INSERT INTO auth_provider_withdrawals (user_id, provider, provider_user_id, provider_email)
+           VALUES ($1, $2, $3, $4)`,
+          [link.userId, link.provider, link.providerUserId, link.providerEmail]
+        );
+      } catch {
+        /* archive optional / duplicate OK */
+      }
+      await client.query(`DELETE FROM auth_providers WHERE id = $1`, [link.id]);
+      await client.query('COMMIT');
+      return { released: true, withdrawnUserId: link.userId };
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => null);
+      throw error;
+    } finally {
+      client.release();
+    }
+  },
 };

@@ -59,21 +59,23 @@
 
 ## 5. 파기·탈퇴 (구현)
 
-`user.repository.deactivateAccount` (즉시):
+`user.repository.deactivateAccount` (즉시, WITHDRAWN):
 
-- 로그인 불가(`is_active=false`), 리프레시 토큰 삭제
-- 이메일·표시명 익명화, 생체·프로필·출생정보·위치동의 해제
-- `user_locations` 삭제, `auth_providers.provider_email` NULL (링크 유지 → 동일 소셜로 해당 계정 재활성 로그인 차단)
+- 로그인 불가(`is_active=false`, `account_status=WITHDRAWN`), 리프레시 토큰 삭제
+- 이메일·표시명 익명화(`탈퇴회원`), 생체·프로필·출생정보·위치동의 해제
+- `user_locations` 삭제
+- `auth_providers` → `auth_provider_withdrawals` 아카이브 후 **즉시 삭제** (동일 소셜로 **신규** 재가입 가능; 기존 계정 복구 아님)
+- 상세: `docs/WITHDRAWAL_REJOIN_DATA_FLOW.md`
 
 `privacyRetentionService` (일일 잡, `DATA_RETENTION` 운영 기본값):
 
 - GPS 좌표 ~30일 후 NULL (시군구 유지)
 - 동의 IP/UA ~1년 후 NULL
 - `auth_login_events` ~1년 후 DELETE
-- 탈퇴 후 ~30일: workout/favorites/friends/UGC 등 hard purge, `auth_providers` 삭제(재가입 가능), `data_purged_at` 기록
-- 결제·동의 증빙·users 행은 유지 (법정 기간 [법률전문가 확인 필요])
-- `trial_identity_ledger`: 무료체험 악용 방지용 OAuth/이메일 키(해시 아님, 정규화 문자열). 탈퇴·purge 후에도 유지. 개인정보 최소 원칙상 체험 이력 확인 목적만.
-- 공개 아이디(`users.display_name`): 소셜 provider 실명/닉네임과 분리. 신규 소셜 가입 시 머신핏 랜덤 생성. 상세: `docs/USERNAME_PRIVACY_DATA_FLOW.md`
+- 탈퇴 후 ~30일: workout/favorites/friends/UGC 등 hard purge, 잔여 `auth_providers` 삭제, `data_purged_at` 기록
+- 결제·동의 증빙·users 행·`auth_provider_withdrawals`는 유지 (법정 기간 [법률전문가 확인 필요])
+- `trial_identity_ledger`: 무료체험 악용 방지용 OAuth/이메일 키. 탈퇴·purge 후에도 유지.
+- 공개 아이디(`users.display_name`): 소셜 provider 실명/닉네임과 분리. 신규·재가입 시 머신핏 랜덤 생성. 상세: `docs/USERNAME_PRIVACY_DATA_FLOW.md`
 
 ## 6. 문서 정합
 

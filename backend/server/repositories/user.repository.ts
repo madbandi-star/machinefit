@@ -305,42 +305,77 @@ export const userRepository = {
     return this.findById(userId);
   },
 
+  /**
+   * Member withdrawal (WITHDRAWN):
+   * - Immediately end access (is_active=false, tokens cleared)
+   * - Discard public username → '탈퇴회원' (frees prior username for others via partial unique index)
+   * - Archive + delete auth_providers so the same social subject can re-signup as a NEW user
+   * - Keep users row / payments / consents for retention (hard purge of workouts etc. is separate job)
+   */
   async deactivateAccount(userId: string): Promise<boolean> {
     const pool = getPool();
     if (!pool) return false;
-    const result = await pool.query(
-      `UPDATE users
-       SET is_active = FALSE,
-           deactivated_at = NOW(),
-           email = 'deleted+' || id::text || '@invalid.local',
-           display_name = '탈퇴회원',
-           avatar_url = NULL,
-           marketing_opt_in = FALSE,
-           location_opt_in = FALSE,
-           push_service_opt_in = FALSE,
-           gender = NULL,
-           height_cm = NULL,
-           weight_kg = NULL,
-           age = NULL,
-           birth_date = NULL,
-           birth_time = NULL,
-           birth_time_unknown = FALSE,
-           experience_level = NULL,
-           workout_goal = NULL,
-           home_gym_id = NULL,
-           home_gym_name = NULL,
-           timezone = NULL
-       WHERE id = $1 AND is_active = TRUE`,
-      [userId]
-    );
-    await pool.query(`DELETE FROM user_locations WHERE user_id = $1`, [userId]).catch(() => null);
-    // Keep auth_providers rows so the same social identity cannot silently recreate
-    // an active session on this user id; strip provider email from the link.
-    await pool
-      .query(`UPDATE auth_providers SET provider_email = NULL WHERE user_id = $1`, [userId])
-      .catch(() => null);
-    await this.deleteRefreshTokens(userId);
-    return (result.rowCount ?? 0) > 0;
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await client.query(
+        `UPDATE users
+         SET is_active = FALSE,
+             account_status = 'WITHDRAWN',
+             deactivated_at = NOW(),
+             email = 'deleted+' || id::text || '@invalid.local',
+             display_name = '탈퇴회원',
+             avatar_url = NULL,
+             marketing_opt_in = FALSE,
+             location_opt_in = FALSE,
+             push_service_opt_in = FALSE,
+             gender = NULL,
+             height_cm = NULL,
+             weight_kg = NULL,
+             age = NULL,
+             birth_date = NULL,
+             birth_time = NULL,
+             birth_time_unknown = FALSE,
+             experience_level = NULL,
+             workout_goal = NULL,
+             home_gym_id = NULL,
+             home_gym_name = NULL,
+             timezone = NULL,
+             updated_at = NOW()
+         WHERE id = $1 AND is_active = TRUE
+         RETURNING id`,
+        [userId]
+      );
+      if ((result.rowCount ?? 0) === 0) {
+        await client.query('ROLLBACK');
+        return false;
+      }
+
+      await client.query(`DELETE FROM user_locations WHERE user_id = $1`, [userId]);
+
+      // Archive OAuth subjects for audit / rejoin detection, then free the unique live link.
+      try {
+        await client.query(
+          `INSERT INTO auth_provider_withdrawals (user_id, provider, provider_user_id, provider_email)
+           SELECT user_id, provider, provider_user_id, provider_email
+           FROM auth_providers
+           WHERE user_id = $1`,
+          [userId]
+        );
+      } catch {
+        // Table may be missing before migration 110 — still detach live links below.
+      }
+      await client.query(`DELETE FROM auth_providers WHERE user_id = $1`, [userId]);
+      await client.query(`DELETE FROM refresh_tokens WHERE user_id = $1`, [userId]);
+
+      await client.query('COMMIT');
+      return true;
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => null);
+      throw error;
+    } finally {
+      client.release();
+    }
   },
 
   async listMarketingOptInUserIds(userIds: string[]): Promise<Set<string>> {

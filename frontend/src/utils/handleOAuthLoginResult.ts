@@ -57,19 +57,20 @@ export function handleOAuthLoginResult(opts: HandleOAuthOptions): void {
     return;
   }
 
-  if (result.reason === 'signup') {
-    saveOAuthPending({
-      pendingToken: result.pendingToken,
-      identity: result.identity,
-      versions: result.versions,
-    });
+  if (result.reason === 'version_update') {
+    clearOAuthPending();
+    opts.setAuth(result.user, result.tokens);
+    opts.syncUser(result.user);
     opts.navigate(ROUTES.AUTH_TERMS, { replace: true });
     return;
   }
 
-  // version_update — session issued, gate to terms
-  clearOAuthPending();
-  opts.setAuth(result.user, result.tokens);
-  opts.syncUser(result.user);
+  // signup | rejoin — no session yet; stage pending token for consent → new user create
+  saveOAuthPending({
+    pendingToken: result.pendingToken,
+    identity: result.identity,
+    reason: result.reason,
+    versions: result.versions,
+  });
   opts.navigate(ROUTES.AUTH_TERMS, { replace: true });
 }

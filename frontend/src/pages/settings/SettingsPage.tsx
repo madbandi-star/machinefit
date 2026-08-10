@@ -40,6 +40,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import { clearGymScope } from '@/utils/syncGymScope';
+import { clearOAuthPending } from '@/utils/oauthPending';
 import { resolveHomeGymName } from '@/utils/resolveHomeGymName';
 import { fetchDefaultMemberId } from '@/utils/gymMemberDefault';
 import { VOICE_COACH_VOLUME } from '@/utils/voiceCoachVolume';
@@ -158,8 +159,9 @@ export function SettingsPage() {
     onSuccess: () => {
       clearAuth();
       clearGymScope();
+      clearOAuthPending();
       showToast(t('settings.accountDeleted'), 'success');
-      navigate(ROUTES.HOME, { replace: true });
+      navigate(ROUTES.LOGIN, { replace: true });
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
