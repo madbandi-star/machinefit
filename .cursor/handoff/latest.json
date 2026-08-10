@@ -3,7 +3,7 @@
   "summary": "JSON backups failed restore with JSZip 'Can't find end of central directory' because CORS hid Content-Disposition and the file was saved as *.zip; unpack then trusted the extension. Unpack now uses ZIP magic bytes (with JSON fallback), CORS exposes Content-Disposition, and the SPA falls back to .json from Content-Type.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "39dbffcc"
   },
   "changedFiles": [
     "backend/server/backup/backup-zip.ts",

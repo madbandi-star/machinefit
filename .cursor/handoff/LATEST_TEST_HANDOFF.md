@@ -1,11 +1,11 @@
-# Test handoff — Fix JSON backup restore (JSZip central directory)
+# Test handoff ??Fix JSON backup restore (JSZip central directory)
 
 ## Summary
-JSON 복구 시 `Can't find end of central directory` 발생. CORS로 `Content-Disposition`이 안 보여 JSON이 `*.zip`으로 저장되고, 서버가 확장자만 보고 ZIP으로 파싱함. 매직바이트 판별 + CORS expose + FE Content-Type 폴백으로 수정.
+JSON 복구 ??`Can't find end of central directory` 발생. CORS�?`Content-Disposition`????보여 JSON??`*.zip`?�로 ?�?�되�? ?�버가 ?�장?�만 보고 ZIP?�로 ?�싱?? 매직바이???�별 + CORS expose + FE Content-Type ?�백?�로 ?�정.
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: `39dbffcc`
 
 ## Changed files
 - `backend/server/backup/backup-zip.ts`
@@ -15,18 +15,18 @@ JSON 복구 시 `Can't find end of central directory` 발생. CORS로 `Content-D
 - `frontend/src/api/backup.api.ts`
 
 ## Test focus
-1. JSON 백업 파일 복구 성공 (파일명이 `.zip`이어도 JSON 내용이면 성공)
-2. ZIP 복구는 기존처럼 성공
-3. 새 JSON보내기 파일명이 `.json`으로 저장되는지 (FE+BE 배포 후)
+1. JSON 백업 ?�일 복구 ?�공 (?�일명이 `.zip`?�어??JSON ?�용?�면 ?�공)
+2. ZIP 복구??기존처럼 ?�공
+3. ??JSON보내�??�일명이 `.json`?�로 ?�?�되?��? (FE+BE 배포 ??
 
 ## Fast checks
 ```bash
 rg -n "hasZipMagic|exposedHeaders|machinefit_backup.json" backend/server/backup/backup-zip.ts backend/server/app.ts frontend/src/api/backup.api.ts
 ```
 
-## as-is → to-be
-- **as-is:** JSON 내용 + `.zip` 이름 → JSZip 실패
-- **to-be:** PK 매직 없으면 JSON 파싱; ZIP은 매직바이트일 때만
+## as-is ??to-be
+- **as-is:** JSON ?�용 + `.zip` ?�름 ??JSZip ?�패
+- **to-be:** PK 매직 ?�으�?JSON ?�싱; ZIP?� 매직바이?�일 ?�만
 
 ## Note
 Backend + frontend. Render + GitHub Pages both needed for full fix; BE alone unblocks restore of already-misnamed JSON files.
