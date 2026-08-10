@@ -87,8 +87,25 @@ export async function oauthLogin(req: Request, res: Response): Promise<void> {
     throw new AppError(400, 'VALIDATION_ERROR', 'Unsupported OAuth provider');
   }
   const credential = oauthCredentialSchema.parse(req.body);
-  const result = await authService.loginWithOAuth(providerParam, credential);
-  sendOAuthResult(res, result);
+  try {
+    const result = await authService.loginWithOAuth(providerParam, credential, {
+      ipAddress: getRequestIp(req),
+      userAgent: getRequestUserAgent(req),
+    });
+    sendOAuthResult(res, result);
+  } catch (err) {
+    // Best-effort failure log for ops/security (non-blocking path inside service too).
+    const { complianceRepository } = await import('../repositories/compliance.repository.js');
+    await complianceRepository
+      .recordLoginEvent({
+        success: false,
+        failureReason: err instanceof AppError ? err.code : 'OAUTH_LOGIN_FAILED',
+        ipAddress: getRequestIp(req),
+        userAgent: getRequestUserAgent(req),
+      })
+      .catch(() => undefined);
+    throw err;
+  }
 }
 
 export async function completeOAuthSignup(req: Request, res: Response): Promise<void> {

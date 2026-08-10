@@ -145,13 +145,14 @@ export function PrivacyRightsPage() {
       <section className="form-section">
         <h3 className="form-section__title">{t('compliance.rights.exportTitle')}</h3>
         <p className="form-section__desc">{t('compliance.rights.exportDesc')}</p>
+        <p className="form-section__desc">{t('compliance.rights.exportIncludes')}</p>
         <button
           type="button"
           className="btn btn--secondary"
           disabled={exportMutation.isPending}
           onClick={() => exportMutation.mutate()}
         >
-          {t('compliance.rights.exportCta')}
+          {exportMutation.isPending ? '...' : t('compliance.rights.exportCta')}
         </button>
       </section>
 

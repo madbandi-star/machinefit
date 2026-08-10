@@ -267,10 +267,12 @@ export const authService = {
 
   async loginWithOAuth(
     provider: import('@machinefit/shared').AuthProviderCode,
-    credential: import('@machinefit/shared').OAuthCredentialInput
+    credential: import('@machinefit/shared').OAuthCredentialInput,
+    meta?: { ipAddress?: string | null; userAgent?: string | null }
   ): Promise<OAuthLoginResult> {
     const { verifyOAuthCredential } = await import('../utils/oauth-verify.util.js');
     const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
+    const { complianceRepository } = await import('../repositories/compliance.repository.js');
 
     const identity = await verifyOAuthCredential(provider, credential);
     const existingLink = await authProviderRepository.findByProviderUserId(
@@ -281,9 +283,28 @@ export const authService = {
     if (existingLink) {
       const user = await userRepository.findById(existingLink.userId);
       if (!user || !user.isActive) {
+        await complianceRepository
+          .recordLoginEvent({
+            userId: existingLink.userId,
+            email: user?.email ?? identity.providerEmail,
+            success: false,
+            failureReason: 'ACCOUNT_INACTIVE',
+            ipAddress: meta?.ipAddress,
+            userAgent: meta?.userAgent,
+          })
+          .catch(() => undefined);
         throw new AppError(401, 'UNAUTHORIZED', 'Account is inactive');
       }
       await userRepository.updateLastLogin(user.id);
+      await complianceRepository
+        .recordLoginEvent({
+          userId: user.id,
+          email: user.email,
+          success: true,
+          ipAddress: meta?.ipAddress,
+          userAgent: meta?.userAgent,
+        })
+        .catch(() => undefined);
       const auth = await buildAuthResponse(user);
       if (auth.user.needsConsent) {
         return {

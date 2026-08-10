@@ -31,13 +31,13 @@
 
 | # | 항목 | 상태 |
 |---|------|------|
-| R1 | 탈퇴 시 workout/UGC/친구 hard purge 또는 TTL 배치 | 소프트삭제+익명화만 구현 |
-| R2 | 동의·로그인 로그 IP 법정 보관기간 정책 문서화 + 자동 파기 잡 | 기록은 됨, TTL 미구현 |
-| R3 | YouTube 클릭-투-플레이로 제3자 쿠키 최소화 | 임베드 사용 중 |
-| R4 | 위치: 장기 보관은 시군구만, GPS TTL | 동의 시에만 저장·탈퇴 시 삭제 |
-| R5 | 약관/방침 전문을 변호사 검수본으로 교체 | 서비스 정합 초안 반영됨 |
-| R6 | auth/로그인·결제 엔드포인트별 더 촘은 rate limit | 전역 3000/15분만 존재 |
-| R7 | 데이터 내보내기 UI 체크리스트 정합 확인 | API·Privacy Rights Center 존재 |
+| R1 | 탈퇴 시 workout/UGC/친구 hard purge 또는 TTL 배치 | **구현** — 탈퇴 30일 후 `privacy-retention` 잡 (`DATA_RETENTION`) |
+| R2 | 동의·로그인 로그 IP 법정 보관기간 정책 문서화 + 자동 파기 잡 | **구현** — 동의 IP/UA 1년 scrub, 로그인 이벤트 1년 삭제 + OAuth 기록 |
+| R3 | YouTube 클릭-투-플레이로 제3자 쿠키 최소화 | **구현** — MotivationMediaControls facade |
+| R4 | 위치: 장기 보관은 시군구만, GPS TTL | **구현** — GPS 30일 후 좌표 NULL, 시군구 유지 |
+| R5 | 약관/방침 전문을 변호사 검수본으로 교체 | 서비스 정합 초안 반영됨 (변호사 검수 대기) |
+| R6 | auth/로그인·결제 엔드포인트별 더 촘은 rate limit | **구현** — auth 60/15m, session 120, checkout 30, webhook 600 |
+| R7 | 데이터 내보내기 UI 체크리스트 정합 확인 | **강화** — workout/favorites/payments/login/providers 포함 |
 
 ### 🟡 법률전문가 확인
 

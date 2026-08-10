@@ -274,12 +274,59 @@ export const complianceRepository = {
       [userId]
     );
 
+    const workoutLogs = await pool
+      .query(
+        `SELECT id, machine_id, log_date, set_count, set_weights_kg, created_at
+         FROM workout_logs WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT 500`,
+        [userId]
+      )
+      .catch(() => ({ rows: [] as unknown[] }));
+
+    const favorites = await pool
+      .query(
+        `SELECT machine_id, created_at FROM favorites WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT 200`,
+        [userId]
+      )
+      .catch(() => ({ rows: [] as unknown[] }));
+
+    const providers = await pool
+      .query(
+        `SELECT provider, provider_email, created_at FROM auth_providers WHERE user_id = $1`,
+        [userId]
+      )
+      .catch(() => ({ rows: [] as unknown[] }));
+
+    const paymentHistory = await pool
+      .query(
+        `SELECT id, amount_cents, currency, status, payment_provider, created_at
+         FROM payment_history WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT 100`,
+        [userId]
+      )
+      .catch(() => ({ rows: [] as unknown[] }));
+
+    const loginEvents = await pool
+      .query(
+        `SELECT success, failure_reason, created_at
+         FROM auth_login_events WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT 50`,
+        [userId]
+      )
+      .catch(() => ({ rows: [] as unknown[] }));
+
     return {
       exportedAt: new Date().toISOString(),
       regionHint: 'KR',
       notice:
-        'This export is provided for personal data access/portability. It may omit binary media blobs.',
+        'This export is provided for personal data access/portability. Binary media blobs (photos) are omitted. Login events exclude IP/UA in this download.',
       summary,
+      linkedProviders: providers.rows,
+      workoutLogs: workoutLogs.rows,
+      favorites: favorites.rows,
+      paymentHistory: paymentHistory.rows,
+      recentLoginEvents: loginEvents.rows,
       supportTickets: tickets.rows,
     };
   },
@@ -494,6 +541,32 @@ export const complianceRepository = {
         input.userAgent ?? null,
       ]
     );
+  },
+
+  /** Null IP/UA on old consent rows; keep type/version/agreed for audit. */
+  async scrubConsentIpMetaOlderThan(ttlDays: number): Promise<number> {
+    const pool = getPool();
+    if (!pool || ttlDays < 1) return 0;
+    const result = await pool.query(
+      `UPDATE user_consents
+       SET ip_address = NULL,
+           user_agent = NULL
+       WHERE agreed_at < NOW() - ($1::text || ' days')::interval
+         AND (ip_address IS NOT NULL OR user_agent IS NOT NULL)`,
+      [String(ttlDays)]
+    );
+    return result.rowCount ?? 0;
+  },
+
+  async deleteLoginEventsOlderThan(ttlDays: number): Promise<number> {
+    const pool = getPool();
+    if (!pool || ttlDays < 1) return 0;
+    const result = await pool.query(
+      `DELETE FROM auth_login_events
+       WHERE created_at < NOW() - ($1::text || ' days')::interval`,
+      [String(ttlDays)]
+    );
+    return result.rowCount ?? 0;
   },
 
   async createCommunityReport(input: {

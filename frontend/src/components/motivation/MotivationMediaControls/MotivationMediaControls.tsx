@@ -1096,6 +1096,12 @@ function VideoOverlay({
   const embedId = item?.youtubeId;
   const total = items.length;
   const [corner, setCorner] = useState<VideoMiniCorner>(() => loadVideoMiniCorner());
+  /** Click-to-play: defer YouTube iframe (and third-party cookies) until explicit play. */
+  const [iframeReady, setIframeReady] = useState(false);
+
+  useEffect(() => {
+    setIframeReady(false);
+  }, [embedId, index]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -1191,7 +1197,7 @@ function VideoOverlay({
         )}
 
         <div className="mf-video-overlay__frame">
-          {embedId ? (
+          {embedId && iframeReady ? (
             <iframe
               key={embedId}
               title={item.title}
@@ -1199,6 +1205,25 @@ function VideoOverlay({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+          ) : embedId ? (
+            <button
+              type="button"
+              className="mf-video-overlay__facade"
+              onClick={() => setIframeReady(true)}
+              aria-label={t('motivation.clickToPlay')}
+            >
+              <img
+                className="mf-video-overlay__facade-thumb"
+                src={`https://i.ytimg.com/vi/${embedId}/hqdefault.jpg`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="mf-video-overlay__facade-play" aria-hidden="true">
+                <Film size={28} />
+              </span>
+              <span className="mf-video-overlay__facade-label">{t('motivation.clickToPlay')}</span>
+            </button>
           ) : (
             <p className="mf-video-overlay__error">{t('motivation.playFailed')}</p>
           )}

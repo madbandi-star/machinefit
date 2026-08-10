@@ -955,6 +955,61 @@
   display: block;
 }
 
+.mf-video-overlay__facade {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: #05080c;
+  color: #fff;
+}
+
+.mf-video-overlay__facade-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+}
+
+.mf-video-overlay__facade-play {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary, #39ff14) 88%, #000);
+  color: #0b0f14;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.mf-video-overlay__facade-label {
+  position: absolute;
+  z-index: 1;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mf-video-overlay__facade:hover .mf-video-overlay__facade-play,
+.mf-video-overlay__facade:focus-visible .mf-video-overlay__facade-play {
+  transform: scale(1.05);
+}
+
 .mf-video-overlay__error {
   margin: 0;
   display: grid;

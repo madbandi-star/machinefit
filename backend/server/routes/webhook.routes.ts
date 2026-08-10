@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as webhookController from '../controllers/webhook.controller.js';
+import { webhookRateLimit } from '../middlewares/rate-limit.middleware.js';
 
 /**
  * Provider webhooks — no JWT (signature verified inside provider adapter).
@@ -7,4 +8,4 @@ import * as webhookController from '../controllers/webhook.controller.js';
  */
 export const webhookRouter = Router();
 
-webhookRouter.post('/:provider', webhookController.handleWebhook);
+webhookRouter.post('/:provider', webhookRateLimit, webhookController.handleWebhook);

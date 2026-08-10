@@ -7,12 +7,17 @@ import {
   consentAcceptSchema,
 } from '@machinefit/shared';
 import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
+import {
+  authSessionRateLimit,
+  authStrictRateLimit,
+} from '../middlewares/rate-limit.middleware.js';
 
 export const authRouter = Router();
 
 /** Social login — provider path: google | kakao | apple */
 authRouter.post(
   '/google',
+  authStrictRateLimit,
   validateBody(oauthCredentialSchema),
   (req, res, next) => {
     req.params.provider = 'google';
@@ -21,6 +26,7 @@ authRouter.post(
 );
 authRouter.post(
   '/kakao',
+  authStrictRateLimit,
   validateBody(oauthCredentialSchema),
   (req, res, next) => {
     req.params.provider = 'kakao';
@@ -29,6 +35,7 @@ authRouter.post(
 );
 authRouter.post(
   '/apple',
+  authStrictRateLimit,
   validateBody(oauthCredentialSchema),
   (req, res, next) => {
     req.params.provider = 'apple';
@@ -39,6 +46,7 @@ authRouter.post(
 /** Finish OAuth signup after terms acceptance (pending token). */
 authRouter.post(
   '/oauth/complete',
+  authStrictRateLimit,
   validateBody(oauthCompleteSchema),
   authController.completeOAuthSignup
 );
@@ -46,12 +54,13 @@ authRouter.post(
 /** Accept/update required consents (version bump) while authenticated. */
 authRouter.post(
   '/consents',
+  authSessionRateLimit,
   authMiddleware,
   validateBody(consentAcceptSchema),
   authController.acceptConsents
 );
 
-authRouter.post('/refresh', authController.refresh);
+authRouter.post('/refresh', authSessionRateLimit, authController.refresh);
 /** Optional auth: clear cookie even when access JWT already expired. */
 authRouter.post('/logout', optionalAuthMiddleware, authController.logout);
 authRouter.delete('/me', authMiddleware, authController.deactivateAccount);

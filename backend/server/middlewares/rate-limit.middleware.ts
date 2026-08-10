@@ -29,14 +29,55 @@ function shouldSkipRateLimit(req: Request): boolean {
   return false;
 }
 
+const rateLimitJson = {
+  success: false as const,
+  error: { code: 'RATE_LIMIT', message: 'Too many requests' },
+};
+
 export const rateLimitMiddleware = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 3_000,
   standardHeaders: true,
   legacyHeaders: false,
   skip: shouldSkipRateLimit,
-  message: {
-    success: false,
-    error: { code: 'RATE_LIMIT', message: 'Too many requests' },
-  },
+  message: rateLimitJson,
+});
+
+/** OAuth login / signup complete — brute-force & credential stuffing resistance. */
+export const authStrictRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitJson,
+});
+
+/** Consent accept / refresh — slightly looser than login. */
+export const authSessionRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitJson,
+});
+
+/** Checkout / trial start — prevent spam checkout sessions. */
+export const billingCheckoutRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitJson,
+});
+
+/**
+ * Provider webhooks — allow retries but cap abuse.
+ * Signature verification remains the primary authz.
+ */
+export const webhookRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 600,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitJson,
 });

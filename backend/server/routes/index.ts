@@ -37,6 +37,7 @@ import { noticeRouter } from './notice.routes.js';
 import { backupRouter } from './backup.routes.js';
 import { fortuneRouter } from './fortune.routes.js';
 import * as webhookController from '../controllers/webhook.controller.js';
+import { webhookRateLimit } from '../middlewares/rate-limit.middleware.js';
 
 export const apiRouter = Router();
 
@@ -46,7 +47,11 @@ apiRouter.use(complianceRouter);
 apiRouter.use(billingRouter);
 apiRouter.use('/webhook', webhookRouter);
 /** Spec alias: POST /api/v1/polar/webhook */
-apiRouter.post('/polar/webhook', webhookController.handlePolarWebhook);
+apiRouter.post(
+  '/polar/webhook',
+  webhookRateLimit,
+  webhookController.handlePolarWebhook
+);
 apiRouter.use('/auth', authRouter);
 /** Spec alias: /me/providers (same handlers as /auth/me/providers). */
 apiRouter.use('/me', meRouter);

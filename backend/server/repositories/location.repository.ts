@@ -430,6 +430,25 @@ export const locationRepository = {
     return this.getUserLocation(userId);
   },
 
+  /**
+   * Clear precise GPS after TTL while keeping region (시·군·구) for rankings/gyms.
+   * Returns number of rows cleared.
+   */
+  async clearStaleGpsCoordinates(ttlDays: number): Promise<number> {
+    const pool = getPool();
+    if (!pool || ttlDays < 1) return 0;
+    const result = await pool.query(
+      `UPDATE user_locations
+       SET latitude = NULL,
+           longitude = NULL,
+           updated_at = NOW()
+       WHERE latitude IS NOT NULL
+         AND updated_at < NOW() - ($1::text || ' days')::interval`,
+      [String(ttlDays)]
+    );
+    return result.rowCount ?? 0;
+  },
+
   /** Nearest district (dong) when available, else nearest city within radius. */
   async reverseGeocode(lat: number, lng: number, locale = 'ko'): Promise<ReverseGeocodeResult | null> {
     const pool = getPool();

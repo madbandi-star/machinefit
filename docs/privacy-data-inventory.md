@@ -59,12 +59,19 @@
 
 ## 5. 파기·탈퇴 (구현)
 
-`user.repository.deactivateAccount`:
+`user.repository.deactivateAccount` (즉시):
 
-- 즉시 로그인 불가(`is_active=false`), 리프레시 토큰 삭제
+- 로그인 불가(`is_active=false`), 리프레시 토큰 삭제
 - 이메일·표시명 익명화, 생체·프로필·출생정보·위치동의 해제
 - `user_locations` 삭제, `auth_providers.provider_email` NULL (링크 유지 → 동일 소셜로 해당 계정 재활성 로그인 차단)
-- 운동기록·UGC·결제·동의/로그인 로그의 정책상 분리 보관 — hard purge 배치 미구현 → 오픈 전 권장/법률 검토
+
+`privacyRetentionService` (일일 잡, `DATA_RETENTION` 운영 기본값):
+
+- GPS 좌표 ~30일 후 NULL (시군구 유지)
+- 동의 IP/UA ~1년 후 NULL
+- `auth_login_events` ~1년 후 DELETE
+- 탈퇴 후 ~30일: workout/favorites/friends/UGC 등 hard purge, `auth_providers` 삭제(재가입 가능), `data_purged_at` 기록
+- 결제·동의 증빙·users 행은 유지 (법정 기간 [법률전문가 확인 필요])
 
 ## 6. 문서 정합
 
