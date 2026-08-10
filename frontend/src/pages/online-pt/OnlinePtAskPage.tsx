@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { onlinePtApi } from '@/api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -56,6 +57,7 @@ export function OnlinePtAskPage() {
 
   return (
     <PageShell title={t('ask')} subtitle={t('title')}>
+      <LegalDisclaimerBanner variant="pt" compact />
       <form
         className="opt-form"
         onSubmit={(e) => {

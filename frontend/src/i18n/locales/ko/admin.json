@@ -529,7 +529,8 @@
     "tipsEn": "운동팁 (영문)",
     "linesPlaceholder": "한 줄에 한 항목",
     "warningsCount": "주의 {{count}}",
-    "tipsCount": "팁 {{count}}"
+    "tipsCount": "팁 {{count}}",
+    "medicalSafetyNote": "의료 진단·치료·질환명·처방처럼 읽히는 문구는 등록하지 마세요. 일반적인 운동 안전·사용 팁만 작성합니다."
   },
   "machineCovers": {
     "nav": "머신 대표 이미지",

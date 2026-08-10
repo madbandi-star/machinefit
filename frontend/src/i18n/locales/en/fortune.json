@@ -119,7 +119,7 @@
       "volumeUp": "Add a little volume via sets/reps rather than a big jump in load.",
       "weightHold": "Hold load steady and prioritize form and range.",
       "slowControl": "Move slowly through a full range and feel the stimulus.",
-      "highWeight": "Warm up well, then use lower reps. Skip reckless max attempts.",
+      "highWeight": "Warm up well, then use lower reps. Reckless max attempts aren't recommended.",
       "default": "Today’s strategy is {{strategy}}. Pick one goal — stimulus, quality, or volume — and execute."
     },
     "strategyFooter": "Strategies are guides; today’s condition matters more.",

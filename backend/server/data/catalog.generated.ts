@@ -101,7 +101,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "체스트 프레스에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "손잡이가 가슴 중앙 높이에 오도록 시트 높이를 맞추세요. 그런 다음, 등받이에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 손잡이를 앞쪽으로 밀어내며 가슴을 모아 주세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 가슴에 힘이 들어오는지 확인하세요.",
@@ -125,28 +125,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
         "If the Chest Press is too heavy, compensation may appear before the chest can work well.",
-        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -155,7 +155,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 가슴을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "삼두와 앞어깨가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 어깨 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -180,13 +180,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Chest Press, learn the adjustment levers and start position before adding weight.",
@@ -198,7 +198,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -230,7 +230,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "숄더 프레스에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "손잡이가 귀와 어깨 사이 높이에 오도록 시트를 맞추세요. 그런 다음, 등받이에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 손잡이를 위로 밀어 올리며, 어깨로 버틴다는 느낌을 유지하세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 어깨에 힘이 들어오는지 확인하세요.",
@@ -254,28 +254,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
         "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-        "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+        "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -284,7 +284,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 어깨를 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "삼두와 상부 가슴이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 목과 어깨 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -309,13 +309,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 숄더 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 어깨로 손잡이를 위로 밀어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "어깨보다 목과 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Shoulder Press, learn the adjustment levers and start position before adding weight.",
@@ -327,7 +327,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -359,7 +359,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "랫 풀다운에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "무릎 패드가 허벅지를 단단히 잡도록 높이를 맞추세요. 그런 다음, 시트와 허벅지 패드에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 팔꿈치를 아래로 끌어내리며, 손잡이를 윗가슴 쪽으로 당기세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 광배근에 힘이 들어오는지 확인하세요.",
@@ -383,28 +383,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "랫 풀다운에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
         "If the Lat Pulldown is too heavy, compensation may appear before the lats can work well.",
-        "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+        "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -413,7 +413,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 광배근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "이두와 중부 등이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 어깨와 팔꿈치 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -438,13 +438,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 랫 풀다운의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 아래로 끌어내려 손잡이를 윗가슴 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "광배근보다 어깨와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 허벅지 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Lat Pulldown, learn the adjustment levers and start position before adding weight.",
@@ -456,7 +456,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and thigh pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -488,7 +488,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "시티드 로우에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "가슴을 세우고 손잡이가 배꼽과 명치 사이에 오도록 앉으세요. 그런 다음, 시트에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 팔꿈치를 뒤로 보내며, 손잡이를 갈비뼈 쪽으로 당기세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 중부 등에 힘이 들어오는지 확인하세요.",
@@ -512,28 +512,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "시티드 로우에서 너무 무거운 무게를 고르면, 목표인 중부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-        "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 놓을 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and elbows, then reassess load and position.",
         "If the Seated Row is too heavy, compensation may appear before the mid-back can work well.",
-        "You should avoid leaning back to create momentum; never force extra range through pain.",
+        "You should avoid leaning back to create momentum; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you release.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -542,7 +542,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 중부 등을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "광배근과 이두가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 허리와 팔꿈치 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -567,13 +567,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 시티드 로우의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 뒤로 보내 손잡이를 갈비뼈 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "중부 등보다 허리와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Seated Row, learn the adjustment levers and start position before adding weight.",
@@ -585,7 +585,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -617,7 +617,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "레그 프레스에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "발판 중앙에 발을 골반 너비로 두고, 무릎이 발끝 방향을 보게 맞추세요. 그런 다음, 등받이와 발판에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 뒤꿈치로 발판을 밀어내며, 무릎과 엉덩이를 함께 펴세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 허벅지와 둔근에 힘이 들어오는지 확인하세요.",
@@ -641,28 +641,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
         "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -671,7 +671,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 허벅지와 둔근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "햄스트링과 종아리가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 무릎과 허리 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -696,13 +696,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치로 발판을 밀어 무릎과 엉덩이를 함께 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허벅지와 둔근보다 무릎과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Press, learn the adjustment levers and start position before adding weight.",
@@ -714,7 +714,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -746,13 +746,13 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "레그 익스텐션에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "무릎 축이 머신 회전축과 맞고, 발목 패드가 발목 앞쪽에 오게 조절하세요. 그런 다음, 시트와 등받이에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 발등을 몸쪽으로 살짝 당긴 채, 무릎을 펴며 패드를 들어 올리세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 대퇴사두근에 힘이 들어오는지 확인하세요.",
         "돌아올 때는 무게에 끌려가지 말고, 무게가 완전히 떨어지기 전까지, 허벅지 힘으로 천천히 내려오세요.",
         "반복 사이에는, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
-        "세트 중간에도, 반동으로 차올리지 않고 통증 없는 범위에서 펴고 있는지 계속 점검하세요.",
+        "세트 중간에도, 반동으로 차올리지 않고 편안한 가동범위에서 펴고 있는지 계속 점검하세요.",
         "마지막 반복은 속도를 더 늦춰, 시작 자세와 같은 정렬로 조용히 마무리하세요."
       ],
       "en": [
@@ -764,34 +764,34 @@ export const CATALOG_MACHINES: Machine[] = [
         "Pause for about one second at the hardest point and confirm tension in the quadriceps.",
         "Do not let the weight pull you back; lower with thigh control before the weight stack fully rests.",
         "Between reps, exhale as you extend and inhale as you bend.",
-        "Keep checking that you avoid kicking with momentum and stay within a pain-free range throughout the set.",
+        "Keep checking that you avoid kicking with momentum and stay within a comfortable range throughout the set.",
         "Finish the last rep slowly and return to the same aligned start position."
       ]
     },
     "warnings": {
       "ko": [
-        "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
         "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-        "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+        "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -800,7 +800,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 대퇴사두근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "무릎 주변 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 무릎 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -825,13 +825,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 무릎을 펴며 발목 패드를 들어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "대퇴사두근보다 무릎 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Extension, learn the adjustment levers and start position before adding weight.",
@@ -843,7 +843,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -875,7 +875,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "레그 컬에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "무릎 축을 머신 회전축에 맞추고, 패드가 발목 뒤쪽에 닿게 조절하세요. 그런 다음, 시트와 패드에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 뒤꿈치를 엉덩이 쪽으로 끌어당기며, 허벅지 뒤쪽을 수축하세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 햄스트링에 힘이 들어오는지 확인하세요.",
@@ -899,28 +899,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
         "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -929,7 +929,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 햄스트링을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "종아리와 둔근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 무릎 뒤쪽과 허리 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -954,13 +954,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치를 엉덩이 쪽으로 끌어당겨 허벅지 뒤쪽을 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "햄스트링보다 무릎 뒤쪽과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Curl, learn the adjustment levers and start position before adding weight.",
@@ -972,7 +972,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and pads setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1004,7 +1004,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "펙 플라이에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "손잡이가 어깨선과 비슷한 높이에 오고, 팔꿈치가 살짝 굽도록 시트를 맞추세요. 그런 다음, 시트와 등받이에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 큰 나무를 감싸듯 팔을 모아, 손잡이를 가슴 앞에서 가까이 가져오세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 가슴 안쪽과 전체 가슴에 힘이 들어오는지 확인하세요.",
@@ -1028,28 +1028,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
         "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you close and inhale as you open.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1058,7 +1058,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 가슴 안쪽과 전체 가슴을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "앞어깨가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 어깨 앞쪽과 팔꿈치 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -1083,13 +1083,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 펙 플라이의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔을 둥글게 모아 손잡이를 가슴 앞에서 가까이 가져오는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴 안쪽과 전체 가슴보다 어깨 앞쪽과 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Pec Fly, learn the adjustment levers and start position before adding weight.",
@@ -1101,7 +1101,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1133,7 +1133,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "어브도미널에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "등을 패드에 붙이고, 손잡이나 패드가 편하게 몸통을 잡도록 위치를 맞추세요. 그런 다음, 시트와 몸통 패드에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 갈비뼈를 골반 쪽으로 말아 내리며, 복부를 짧게 수축하세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 복직근과 깊은 코어에 힘이 들어오는지 확인하세요.",
@@ -1157,28 +1157,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "어브도미널에서 너무 무거운 무게를 고르면, 목표인 복직근과 깊은 코어보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 말아 내릴 때 숨을 길게 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and neck, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and neck, then reassess load and position.",
         "If the Abdominal is too heavy, compensation may appear before the rectus abdominis and deep core can work well.",
-        "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through pain.",
+        "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale fully as you crunch and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1187,7 +1187,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 복직근과 깊은 코어를 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "고관절 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 허리와 목 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -1212,13 +1212,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 어브도미널의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 갈비뼈를 골반 쪽으로 말아 내려 복부를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "복직근과 깊은 코어보다 허리와 목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 몸통 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Abdominal, learn the adjustment levers and start position before adding weight.",
@@ -1230,7 +1230,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and torso pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1262,7 +1262,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "백 익스텐션에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "골반이 패드에 안정적으로 닿고, 발이 발판에 단단히 놓이도록 맞추세요. 그런 다음, 패드와 발판에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 엉덩이와 허리 뒤쪽에 힘을 주며, 몸통을 천천히 펴세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 허리 기립근과 둔근에 힘이 들어오는지 확인하세요.",
@@ -1286,28 +1286,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 골반에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 골반에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "백 익스텐션에서 너무 무거운 무게를 고르면, 목표인 허리 기립근과 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 동안 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and pelvis, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and pelvis, then reassess load and position.",
         "If the Back Extension is too heavy, compensation may appear before the spinal erectors and glutes can work well.",
-        "You should avoid over-arching at the top and compressing the low back; never force extra range through pain.",
+        "You should avoid over-arching at the top and compressing the low back; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you fold.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1316,7 +1316,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 허리 기립근과 둔근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "햄스트링이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 허리와 골반 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -1341,13 +1341,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 백 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 엉덩이와 허리 뒤쪽 힘으로 몸통을 천천히 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허리 기립근과 둔근보다 허리와 골반이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 패드와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Back Extension, learn the adjustment levers and start position before adding weight.",
@@ -1359,7 +1359,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1391,7 +1391,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "바이셉스 컬에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "팔꿈치가 패드의 회전축과 맞고, 겨드랑이가 편하게 고정되도록 앉으세요. 그런 다음, 시트와 팔 패드에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 손잡이를 어깨 쪽으로 말아 올리며, 이두를 끝까지 조이세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 이두근에 힘이 들어오는지 확인하세요.",
@@ -1415,28 +1415,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1445,7 +1445,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 이두근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "전완과 팔꿈치 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 팔꿈치와 손목 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -1470,13 +1470,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 바이셉스 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 손잡이를 어깨 쪽으로 말아 올려 이두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "이두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Biceps Curl, learn the adjustment levers and start position before adding weight.",
@@ -1488,7 +1488,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1520,7 +1520,7 @@ export const CATALOG_MACHINES: Machine[] = [
       "ko": [
         "트라이셉스 익스텐션에 앉기 전에, 핀 무게와 조절 레버가 안전하게 고정됐는지 확인하고 주변에 걸리는 물건이 없는지 살펴보세요.",
         "팔꿈치가 패드나 손잡이 축과 잘 맞고, 어깨가 편하게 내려가도록 앉으세요. 그런 다음, 시트와 팔 지지부에 몸이 흔들리지 않게 붙이세요.",
-        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요.",
+        "첫 반복은 가볍게 시작해서, 사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요.",
         "손잡이나 패드를 잡은 뒤, 발과 골반을 안정시키고 복부에 살짝 힘을 주세요.",
         "동작을 시작할 때는 반동을 만들지 말고, 팔꿈치를 고정한 채 손잡이를 밀어, 팔 뒤쪽을 길게 수축하세요.",
         "가장 힘든 지점에서 1초 정도 멈춰, 삼두근에 힘이 들어오는지 확인하세요.",
@@ -1544,28 +1544,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "트라이셉스 익스텐션에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Triceps Extension is too heavy, compensation may appear before the triceps can work well.",
-        "You should avoid flaring the elbows or bending the wrists back; never force extra range through pain.",
+        "You should avoid flaring the elbows or bending the wrists back; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1574,7 +1574,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "시작 전에 삼두근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
         "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
         "팔꿈치 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+        "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
         "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
         "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
         "세트 사이에는 팔꿈치와 손목 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -1599,13 +1599,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 트라이셉스 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 고정하고 손잡이를 밀어 삼두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "삼두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 지지부 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Triceps Extension, learn the adjustment levers and start position before adding weight.",
@@ -1617,7 +1617,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm support setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1673,28 +1673,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 뒤쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 뒤쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "아이소 레터럴 하이 로우에서 너무 무거운 무게를 고르면, 목표인 상부 등과 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "몸통을 패드에서 떼어 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "몸통을 패드에서 떼어 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the rear shoulders and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the rear shoulders and elbows, then reassess load and position.",
         "If the Iso-Lateral High Row is too heavy, compensation may appear before the upper back and lats can work well.",
-        "You should avoid lifting your torso off the pad for momentum; never force extra range through pain.",
+        "You should avoid lifting your torso off the pad for momentum; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you return upward.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1728,13 +1728,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 아이소 레터럴 하이 로우의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 대각선 아래로 끌어내려 손잡이를 윗가슴 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "상부 등과 광배근보다 어깨 뒤쪽과 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 가슴 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Iso-Lateral High Row, learn the adjustment levers and start position before adding weight.",
@@ -1746,7 +1746,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and chest pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -1802,28 +1802,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "셀렉터라이즈드 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
         "If the Selectorized Chest Press is too heavy, compensation may appear before the chest can work well.",
-        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1857,13 +1857,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 셀렉터라이즈드 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Selectorized Chest Press, learn the adjustment levers and start position before adding weight.",
@@ -1875,7 +1875,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -1913,7 +1913,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "가장 힘든 지점에서 1초 정도 멈춰, 대퇴사두근에 힘이 들어오는지 확인하세요.",
         "돌아올 때는 무게에 끌려가지 말고, 무게가 완전히 떨어지기 전까지, 허벅지 힘으로 천천히 내려오세요.",
         "반복 사이에는, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
-        "세트 중간에도, 반동으로 차올리지 않고 통증 없는 범위에서 펴고 있는지 계속 점검하세요.",
+        "세트 중간에도, 반동으로 차올리지 않고 편안한 가동범위에서 펴고 있는지 계속 점검하세요.",
         "마지막 반복은 속도를 더 늦춰, 시작 자세와 같은 정렬로 조용히 마무리하세요."
       ],
       "en": [
@@ -1925,34 +1925,34 @@ export const CATALOG_MACHINES: Machine[] = [
         "Pause for about one second at the hardest point and confirm tension in the quadriceps.",
         "Do not let the weight pull you back; lower with thigh control before the weight stack fully rests.",
         "Between reps, exhale as you extend and inhale as you bend.",
-        "Keep checking that you avoid kicking with momentum and stay within a pain-free range throughout the set.",
+        "Keep checking that you avoid kicking with momentum and stay within a comfortable range throughout the set.",
         "Finish the last rep slowly and return to the same aligned start position."
       ]
     },
     "warnings": {
       "ko": [
-        "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
         "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-        "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+        "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -1986,13 +1986,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 무릎을 펴며 발목 패드를 들어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "대퇴사두근보다 무릎 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Extension, learn the adjustment levers and start position before adding weight.",
@@ -2004,7 +2004,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -2060,28 +2060,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
         "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2115,13 +2115,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치를 엉덩이 쪽으로 끌어당겨 허벅지 뒤쪽을 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "햄스트링보다 무릎 뒤쪽과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Curl, learn the adjustment levers and start position before adding weight.",
@@ -2133,7 +2133,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and pads setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -2189,28 +2189,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
         "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-        "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+        "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2244,13 +2244,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 숄더 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 어깨로 손잡이를 위로 밀어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "어깨보다 목과 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Shoulder Press, learn the adjustment levers and start position before adding weight.",
@@ -2262,7 +2262,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -2318,28 +2318,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "아이소 레터럴 로우에서 너무 무거운 무게를 고르면, 목표인 중부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-        "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 놓을 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and elbows, then reassess load and position.",
         "If the Iso-Lateral Row is too heavy, compensation may appear before the mid-back can work well.",
-        "You should avoid leaning back to create momentum; never force extra range through pain.",
+        "You should avoid leaning back to create momentum; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you release.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2373,13 +2373,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 아이소 레터럴 로우의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 뒤로 보내 손잡이를 갈비뼈 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "중부 등보다 허리와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Iso-Lateral Row, learn the adjustment levers and start position before adding weight.",
@@ -2391,7 +2391,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -2447,28 +2447,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "아이소 레터럴 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
         "If the Iso-Lateral Chest Press is too heavy, compensation may appear before the chest can work well.",
-        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2502,13 +2502,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 아이소 레터럴 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Iso-Lateral Chest Press, learn the adjustment levers and start position before adding weight.",
@@ -2520,7 +2520,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -2576,28 +2576,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "아이소 레터럴 인클라인 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
         "If the Iso-Lateral Incline Chest Press is too heavy, compensation may appear before the chest can work well.",
-        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2631,13 +2631,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 아이소 레터럴 인클라인 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Iso-Lateral Incline Chest Press, learn the adjustment levers and start position before adding weight.",
@@ -2649,7 +2649,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -2705,28 +2705,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "랫 풀다운에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
         "If the Lat Pulldown is too heavy, compensation may appear before the lats can work well.",
-        "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+        "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2760,13 +2760,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 랫 풀다운의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 아래로 끌어내려 손잡이를 윗가슴 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "광배근보다 어깨와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 허벅지 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Lat Pulldown, learn the adjustment levers and start position before adding weight.",
@@ -2778,7 +2778,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and thigh pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -2834,28 +2834,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
         "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -2889,13 +2889,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치로 발판을 밀어 무릎과 엉덩이를 함께 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허벅지와 둔근보다 무릎과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Press, learn the adjustment levers and start position before adding weight.",
@@ -2907,7 +2907,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -2963,28 +2963,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "브이 스쿼트에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
         "If the V-Squat is too heavy, compensation may appear before the quads and glutes can work well.",
-        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3018,13 +3018,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 브이 스쿼트의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치로 발판을 밀어 무릎과 엉덩이를 함께 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허벅지와 둔근보다 무릎과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the V-Squat, learn the adjustment levers and start position before adding weight.",
@@ -3036,7 +3036,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -3092,28 +3092,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
         "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you close and inhale as you open.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3147,13 +3147,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 펙 플라이의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔을 둥글게 모아 손잡이를 가슴 앞에서 가까이 가져오는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴 안쪽과 전체 가슴보다 어깨 앞쪽과 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Pec Fly, learn the adjustment levers and start position before adding weight.",
@@ -3165,7 +3165,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -3221,28 +3221,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3276,13 +3276,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 바이셉스 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 손잡이를 어깨 쪽으로 말아 올려 이두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "이두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Biceps Curl, learn the adjustment levers and start position before adding weight.",
@@ -3294,7 +3294,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -3350,28 +3350,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "트라이셉스 익스텐션에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Triceps Extension is too heavy, compensation may appear before the triceps can work well.",
-        "You should avoid flaring the elbows or bending the wrists back; never force extra range through pain.",
+        "You should avoid flaring the elbows or bending the wrists back; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3405,13 +3405,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 트라이셉스 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 고정하고 손잡이를 밀어 삼두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "삼두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 지지부 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Triceps Extension, learn the adjustment levers and start position before adding weight.",
@@ -3423,7 +3423,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm support setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "intermediate"
@@ -3479,28 +3479,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
         "If the Chest Press is too heavy, compensation may appear before the chest can work well.",
-        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3534,13 +3534,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Chest Press, learn the adjustment levers and start position before adding weight.",
@@ -3552,7 +3552,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -3608,28 +3608,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
         "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-        "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+        "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3663,13 +3663,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 숄더 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 어깨로 손잡이를 위로 밀어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "어깨보다 목과 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Shoulder Press, learn the adjustment levers and start position before adding weight.",
@@ -3681,7 +3681,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -3737,28 +3737,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "랫 풀다운에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
         "If the Lat Pulldown is too heavy, compensation may appear before the lats can work well.",
-        "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+        "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3792,13 +3792,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 랫 풀다운의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 아래로 끌어내려 손잡이를 윗가슴 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "광배근보다 어깨와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 허벅지 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Lat Pulldown, learn the adjustment levers and start position before adding weight.",
@@ -3810,7 +3810,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and thigh pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -3866,28 +3866,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "시티드 로우에서 너무 무거운 무게를 고르면, 목표인 중부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-        "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 놓을 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and elbows, then reassess load and position.",
         "If the Seated Row is too heavy, compensation may appear before the mid-back can work well.",
-        "You should avoid leaning back to create momentum; never force extra range through pain.",
+        "You should avoid leaning back to create momentum; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you release.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -3921,13 +3921,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 시티드 로우의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 뒤로 보내 손잡이를 갈비뼈 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "중부 등보다 허리와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Seated Row, learn the adjustment levers and start position before adding weight.",
@@ -3939,7 +3939,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -3995,28 +3995,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
         "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4050,13 +4050,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치로 발판을 밀어 무릎과 엉덩이를 함께 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허벅지와 둔근보다 무릎과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Press, learn the adjustment levers and start position before adding weight.",
@@ -4068,7 +4068,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4106,7 +4106,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "가장 힘든 지점에서 1초 정도 멈춰, 대퇴사두근에 힘이 들어오는지 확인하세요.",
         "돌아올 때는 무게에 끌려가지 말고, 무게가 완전히 떨어지기 전까지, 허벅지 힘으로 천천히 내려오세요.",
         "반복 사이에는, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
-        "세트 중간에도, 반동으로 차올리지 않고 통증 없는 범위에서 펴고 있는지 계속 점검하세요.",
+        "세트 중간에도, 반동으로 차올리지 않고 편안한 가동범위에서 펴고 있는지 계속 점검하세요.",
         "마지막 반복은 속도를 더 늦춰, 시작 자세와 같은 정렬로 조용히 마무리하세요."
       ],
       "en": [
@@ -4118,34 +4118,34 @@ export const CATALOG_MACHINES: Machine[] = [
         "Pause for about one second at the hardest point and confirm tension in the quadriceps.",
         "Do not let the weight pull you back; lower with thigh control before the weight stack fully rests.",
         "Between reps, exhale as you extend and inhale as you bend.",
-        "Keep checking that you avoid kicking with momentum and stay within a pain-free range throughout the set.",
+        "Keep checking that you avoid kicking with momentum and stay within a comfortable range throughout the set.",
         "Finish the last rep slowly and return to the same aligned start position."
       ]
     },
     "warnings": {
       "ko": [
-        "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
         "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-        "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+        "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4179,13 +4179,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 무릎을 펴며 발목 패드를 들어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "대퇴사두근보다 무릎 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Extension, learn the adjustment levers and start position before adding weight.",
@@ -4197,7 +4197,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4253,28 +4253,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
         "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4308,13 +4308,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치를 엉덩이 쪽으로 끌어당겨 허벅지 뒤쪽을 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "햄스트링보다 무릎 뒤쪽과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Curl, learn the adjustment levers and start position before adding weight.",
@@ -4326,7 +4326,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and pads setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4382,28 +4382,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
         "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you close and inhale as you open.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4437,13 +4437,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 펙 플라이의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔을 둥글게 모아 손잡이를 가슴 앞에서 가까이 가져오는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴 안쪽과 전체 가슴보다 어깨 앞쪽과 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Pec Fly, learn the adjustment levers and start position before adding weight.",
@@ -4455,7 +4455,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4511,28 +4511,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "어브도미널에서 너무 무거운 무게를 고르면, 목표인 복직근과 깊은 코어보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 말아 내릴 때 숨을 길게 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and neck, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and neck, then reassess load and position.",
         "If the Abdominal is too heavy, compensation may appear before the rectus abdominis and deep core can work well.",
-        "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through pain.",
+        "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale fully as you crunch and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4566,13 +4566,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 어브도미널의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 갈비뼈를 골반 쪽으로 말아 내려 복부를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "복직근과 깊은 코어보다 허리와 목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 몸통 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Abdominal, learn the adjustment levers and start position before adding weight.",
@@ -4584,7 +4584,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and torso pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4640,28 +4640,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 골반에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 골반에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "백 익스텐션에서 너무 무거운 무게를 고르면, 목표인 허리 기립근과 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 동안 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and pelvis, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and pelvis, then reassess load and position.",
         "If the Back Extension is too heavy, compensation may appear before the spinal erectors and glutes can work well.",
-        "You should avoid over-arching at the top and compressing the low back; never force extra range through pain.",
+        "You should avoid over-arching at the top and compressing the low back; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you fold.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4695,13 +4695,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 백 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 엉덩이와 허리 뒤쪽 힘으로 몸통을 천천히 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허리 기립근과 둔근보다 허리와 골반이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 패드와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Back Extension, learn the adjustment levers and start position before adding weight.",
@@ -4713,7 +4713,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4769,28 +4769,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4824,13 +4824,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 바이셉스 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 손잡이를 어깨 쪽으로 말아 올려 이두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "이두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Biceps Curl, learn the adjustment levers and start position before adding weight.",
@@ -4842,7 +4842,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -4898,28 +4898,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "트라이셉스 프레스에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "몸을 앞으로 접어 체중으로 누르지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "몸을 앞으로 접어 체중으로 누르지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 누를 때 숨을 내쉬고, 올라올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
         "If the Triceps Press is too heavy, compensation may appear before the triceps can work well.",
-        "You should avoid folding forward and using bodyweight to press; never force extra range through pain.",
+        "You should avoid folding forward and using bodyweight to press; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press down and inhale as you rise.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -4953,13 +4953,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 트라이셉스 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 손잡이를 아래로 눌러 팔꿈치를 펴고 삼두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "삼두근보다 어깨와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 손잡이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Triceps Press, learn the adjustment levers and start position before adding weight.",
@@ -4971,7 +4971,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and handles setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5027,28 +5027,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
         "If the Chest Press is too heavy, compensation may appear before the chest can work well.",
-        "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+        "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5082,13 +5082,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 체스트 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 가슴으로 손잡이를 밀어내는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴보다 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Chest Press, learn the adjustment levers and start position before adding weight.",
@@ -5100,7 +5100,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5156,28 +5156,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
         "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-        "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+        "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5211,13 +5211,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 숄더 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 어깨로 손잡이를 위로 밀어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "어깨보다 목과 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Shoulder Press, learn the adjustment levers and start position before adding weight.",
@@ -5229,7 +5229,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5285,28 +5285,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "랫 머신에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
         "If the Lat Machine is too heavy, compensation may appear before the lats can work well.",
-        "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+        "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5340,13 +5340,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 랫 머신의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 아래로 끌어내려 손잡이를 윗가슴 쪽으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "광배근보다 어깨와 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 허벅지 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Lat Machine, learn the adjustment levers and start position before adding weight.",
@@ -5358,7 +5358,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and thigh pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5414,28 +5414,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "로우 로우에서 너무 무거운 무게를 고르면, 목표인 광배근과 하부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-        "가슴을 과하게 들거나 몸을 뒤로 던지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "가슴을 과하게 들거나 몸을 뒤로 던지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당기며 숨을 내쉬고, 돌아가며 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the low back and front shoulder, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the low back and front shoulder, then reassess load and position.",
         "If the Low Row is too heavy, compensation may appear before the lats and lower mid-back can work well.",
-        "You should avoid throwing the torso back or over-lifting the chest; never force extra range through pain.",
+        "You should avoid throwing the torso back or over-lifting the chest; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale through the pull and inhale on the return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5469,13 +5469,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 로우 로우의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 몸통 가까이 뒤로 보내 낮은 방향으로 당기는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "광배근과 하부 등보다 허리와 어깨 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 몸통 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Low Row, learn the adjustment levers and start position before adding weight.",
@@ -5487,7 +5487,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and torso pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5543,28 +5543,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
         "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+        "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you press and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5598,13 +5598,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 프레스의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치로 발판을 밀어 무릎과 엉덩이를 함께 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허벅지와 둔근보다 무릎과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 등받이와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Press, learn the adjustment levers and start position before adding weight.",
@@ -5616,7 +5616,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your back pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5654,7 +5654,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "가장 힘든 지점에서 1초 정도 멈춰, 대퇴사두근에 힘이 들어오는지 확인하세요.",
         "돌아올 때는 무게에 끌려가지 말고, 무게가 완전히 떨어지기 전까지, 허벅지 힘으로 천천히 내려오세요.",
         "반복 사이에는, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
-        "세트 중간에도, 반동으로 차올리지 않고 통증 없는 범위에서 펴고 있는지 계속 점검하세요.",
+        "세트 중간에도, 반동으로 차올리지 않고 편안한 가동범위에서 펴고 있는지 계속 점검하세요.",
         "마지막 반복은 속도를 더 늦춰, 시작 자세와 같은 정렬로 조용히 마무리하세요."
       ],
       "en": [
@@ -5666,34 +5666,34 @@ export const CATALOG_MACHINES: Machine[] = [
         "Pause for about one second at the hardest point and confirm tension in the quadriceps.",
         "Do not let the weight pull you back; lower with thigh control before the weight stack fully rests.",
         "Between reps, exhale as you extend and inhale as you bend.",
-        "Keep checking that you avoid kicking with momentum and stay within a pain-free range throughout the set.",
+        "Keep checking that you avoid kicking with momentum and stay within a comfortable range throughout the set.",
         "Finish the last rep slowly and return to the same aligned start position."
       ]
     },
     "warnings": {
       "ko": [
-        "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
         "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-        "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+        "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5727,13 +5727,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 무릎을 펴며 발목 패드를 들어 올리는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "대퇴사두근보다 무릎 앞쪽이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Extension, learn the adjustment levers and start position before adding weight.",
@@ -5745,7 +5745,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5801,28 +5801,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
         "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+        "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5856,13 +5856,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 레그 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 뒤꿈치를 엉덩이 쪽으로 끌어당겨 허벅지 뒤쪽을 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "햄스트링보다 무릎 뒤쪽과 허리가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Leg Curl, learn the adjustment levers and start position before adding weight.",
@@ -5874,7 +5874,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and pads setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -5930,28 +5930,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
         "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+        "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you close and inhale as you open.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -5985,13 +5985,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 펙 플라이의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔을 둥글게 모아 손잡이를 가슴 앞에서 가까이 가져오는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "가슴 안쪽과 전체 가슴보다 어깨 앞쪽과 팔꿈치가 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 등받이 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Pec Fly, learn the adjustment levers and start position before adding weight.",
@@ -6003,7 +6003,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and back pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -6059,28 +6059,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "어브도미널에서 너무 무거운 무게를 고르면, 목표인 복직근과 깊은 코어보다 보상 동작이 먼저 나올 수 있습니다.",
-        "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 말아 내릴 때 숨을 길게 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and neck, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and neck, then reassess load and position.",
         "If the Abdominal is too heavy, compensation may appear before the rectus abdominis and deep core can work well.",
-        "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through pain.",
+        "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale fully as you crunch and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -6114,13 +6114,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 어브도미널의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 갈비뼈를 골반 쪽으로 말아 내려 복부를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "복직근과 깊은 코어보다 허리와 목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 몸통 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Abdominal, learn the adjustment levers and start position before adding weight.",
@@ -6132,7 +6132,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and torso pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -6188,28 +6188,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "허리와 골반에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "허리와 골반에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "로워 백에서 너무 무거운 무게를 고르면, 목표인 허리 기립근과 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 동안 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the lower back and pelvis, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the lower back and pelvis, then reassess load and position.",
         "If the Lower Back is too heavy, compensation may appear before the spinal erectors and glutes can work well.",
-        "You should avoid over-arching at the top and compressing the low back; never force extra range through pain.",
+        "You should avoid over-arching at the top and compressing the low back; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you fold.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -6243,13 +6243,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 로워 백의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 엉덩이와 허리 뒤쪽 힘으로 몸통을 천천히 펴는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "허리 기립근과 둔근보다 허리와 골반이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 패드와 발판 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Lower Back, learn the adjustment levers and start position before adding weight.",
@@ -6261,7 +6261,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your pad and footplate setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -6317,28 +6317,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+        "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -6372,13 +6372,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 바이셉스 컬의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 손잡이를 어깨 쪽으로 말아 올려 이두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "이두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 패드 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Biceps Curl, learn the adjustment levers and start position before adding weight.",
@@ -6390,7 +6390,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm pad setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -6446,28 +6446,28 @@ export const CATALOG_MACHINES: Machine[] = [
     },
     "warnings": {
       "ko": [
-        "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+        "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
         "트라이셉스 익스텐션에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-        "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+        "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+        "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
         "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
         "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
         "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
         "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
         "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-        "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+        "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
       ],
       "en": [
-        "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+        "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
         "If the Triceps Extension is too heavy, compensation may appear before the triceps can work well.",
-        "You should avoid flaring the elbows or bending the wrists back; never force extra range through pain.",
+        "You should avoid flaring the elbows or bending the wrists back; never force extra range through discomfort.",
         "Swinging through the guided path can shift stress from the target muscles to the joints.",
         "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
         "Do not hold your breath for long; exhale as you extend and inhale as you return.",
         "If the stack or plates slam loudly, you are probably losing control of the repetition.",
         "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
         "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-        "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+        "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
       ]
     },
     "tips": {
@@ -6501,13 +6501,13 @@ export const CATALOG_MACHINES: Machine[] = [
         "처음 쓰는 날에는 트라이셉스 익스텐션의 조절 레버와 시작 위치를 먼저 익히고, 바로 무겁게 시작하지 마세요.",
         "빈 무게나 가장 가벼운 핀으로 5회 정도 연습하면서, 팔꿈치를 고정하고 손잡이를 밀어 삼두를 수축하는 동작의 감각을 확인하세요.",
         "시트가 애매하면 손잡이나 패드가 몸에 맞는 높이를 먼저 찾고, 그다음 무게를 고르세요.",
-        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 날 관절 반응을 확인하세요.",
+        "처음 2주는 10회씩 2세트 정도로 충분하며, 다음 운동 전까지 컨디션을 확인해 보세요.",
         "삼두근보다 팔꿈치와 손목이 먼저 피곤하면, 무게를 낮추고 범위를 줄이세요.",
         "반복 횟수를 세는 것보다, 돌아오는 속도를 조절하는 데 집중하면 자세가 빨리 좋아집니다.",
         "운동 전에는 한 번 크게 숨을 마시고, 첫 반복에서 몸이 들뜨지 않는지 느껴 보세요.",
         "헬스장 직원이나 트레이너가 있다면, 시트와 팔 지지부 설정이 맞는지 한 번만 확인받아도 좋습니다.",
         "세트가 끝나면 바로 일어나지 말고, 무게가 완전히 멈춘 뒤 천천히 손잡이를 놓으세요.",
-        "기록할 때는 무게와 횟수뿐 아니라, 통증 없이 편했던 시트 위치도 함께 적어 두세요."
+        "기록할 때는 무게와 횟수뿐 아니라, 편하게 느껴졌던 시트 위치도 함께 적어 두세요."
       ],
       "en": [
         "On your first day with the Triceps Extension, learn the adjustment levers and start position before adding weight.",
@@ -6519,7 +6519,7 @@ export const CATALOG_MACHINES: Machine[] = [
         "Before the first rep, take one full breath and notice whether your body lifts or shifts.",
         "If staff or a trainer is nearby, ask them to check your seat and arm support setting once.",
         "After the set, wait until the weight stops moving before releasing the handles slowly.",
-        "When you log the workout, record not only weight and reps but also the seat setting that felt pain-free."
+        "When you log the workout, record not only weight and reps but also the seat setting that felt comfortable."
       ]
     },
     "recommendedExperience": "beginner"
@@ -6544,7 +6544,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 가슴을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "삼두와 앞어깨가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 어깨 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6566,28 +6566,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
           "If the Chest Press is too heavy, compensation may appear before the chest can work well.",
-          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6609,7 +6609,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 어깨를 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "삼두와 상부 가슴이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 목과 어깨 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6631,28 +6631,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
           "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-          "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+          "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6673,7 +6673,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 광배근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "이두와 중부 등이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 어깨와 팔꿈치 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6695,28 +6695,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "랫 풀다운에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
           "If the Lat Pulldown is too heavy, compensation may appear before the lats can work well.",
-          "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+          "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6738,7 +6738,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 중부 등을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "광배근과 이두가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 허리와 팔꿈치 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6760,28 +6760,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "시티드 로우에서 너무 무거운 무게를 고르면, 목표인 중부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-          "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 놓을 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and elbows, then reassess load and position.",
           "If the Seated Row is too heavy, compensation may appear before the mid-back can work well.",
-          "You should avoid leaning back to create momentum; never force extra range through pain.",
+          "You should avoid leaning back to create momentum; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you release.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6804,7 +6804,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 허벅지와 둔근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "햄스트링과 종아리가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 무릎과 허리 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6826,28 +6826,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
           "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6869,7 +6869,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 대퇴사두근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "무릎 주변 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 무릎 앞쪽 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6891,28 +6891,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
           "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-          "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+          "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6934,7 +6934,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 햄스트링을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "종아리와 둔근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 무릎 뒤쪽과 허리 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -6956,28 +6956,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
           "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -6999,7 +6999,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 가슴 안쪽과 전체 가슴을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "앞어깨가 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 어깨 앞쪽과 팔꿈치 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -7021,28 +7021,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
           "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you close and inhale as you open.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7064,7 +7064,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 복직근과 깊은 코어를 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "고관절 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 허리와 목 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -7086,28 +7086,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "어브도미널에서 너무 무거운 무게를 고르면, 목표인 복직근과 깊은 코어보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 말아 내릴 때 숨을 길게 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and neck, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and neck, then reassess load and position.",
           "If the Abdominal is too heavy, compensation may appear before the rectus abdominis and deep core can work well.",
-          "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through pain.",
+          "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale fully as you crunch and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7130,7 +7130,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 허리 기립근과 둔근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "햄스트링이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 허리와 골반 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -7152,28 +7152,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 골반에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 골반에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "백 익스텐션에서 너무 무거운 무게를 고르면, 목표인 허리 기립근과 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 동안 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and pelvis, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and pelvis, then reassess load and position.",
           "If the Back Extension is too heavy, compensation may appear before the spinal erectors and glutes can work well.",
-          "You should avoid over-arching at the top and compressing the low back; never force extra range through pain.",
+          "You should avoid over-arching at the top and compressing the low back; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you fold.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7194,7 +7194,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 이두근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "전완과 팔꿈치 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 팔꿈치와 손목 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -7216,28 +7216,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7258,7 +7258,7 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
           "시작 전에 삼두근을 손으로 가볍게 터치해 보면, 수축 위치를 느끼는 데 도움이 됩니다.",
           "올리는 구간은 1초에서 2초, 돌아오는 구간은 2초에서 3초로 조금 더 길게 가져가세요.",
           "팔꿈치 안정근이 너무 먼저 지치면, 손에 힘을 조금 빼고 목표 근육으로 움직임을 다시 시작하세요.",
-          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 관절 정렬을 편하게 만드세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
+          "'사이벡스 장비의 조절 포인트를 먼저 맞추고, 자세가 자연스럽게 느껴지도록 맞추세요'라는 기준을 두고, 좌우 속도가 달라지지 않게 보세요.",
           "끝 지점에서 관절을 세게 잠그기보다, 근육이 계속 버티는 느낌을 남겨 두세요.",
           "거울이 있다면 어깨와 골반 높이가 한쪽으로 치우치지 않는지 한 세트에 한 번 확인하세요.",
           "세트 사이에는 팔꿈치와 손목 주변을 가볍게 움직여, 다음 세트의 긴장을 낮추세요.",
@@ -7280,28 +7280,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "트라이셉스 익스텐션에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "사이벡스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Triceps Extension is too heavy, compensation may appear before the triceps can work well.",
-          "You should avoid flaring the elbows or bending the wrists back; never force extra range through pain.",
+          "You should avoid flaring the elbows or bending the wrists back; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Cybex machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7345,28 +7345,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 뒤쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 뒤쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "아이소 레터럴 하이 로우에서 너무 무거운 무게를 고르면, 목표인 상부 등과 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "몸통을 패드에서 떼어 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "몸통을 패드에서 떼어 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the rear shoulders and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the rear shoulders and elbows, then reassess load and position.",
           "If the Iso-Lateral High Row is too heavy, compensation may appear before the upper back and lats can work well.",
-          "You should avoid lifting your torso off the pad for momentum; never force extra range through pain.",
+          "You should avoid lifting your torso off the pad for momentum; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you return upward.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7410,28 +7410,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "셀렉터라이즈드 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
           "If the Selectorized Chest Press is too heavy, compensation may appear before the chest can work well.",
-          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7475,28 +7475,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
           "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-          "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+          "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7540,28 +7540,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
           "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7605,28 +7605,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
           "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-          "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+          "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7670,28 +7670,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "아이소 레터럴 로우에서 너무 무거운 무게를 고르면, 목표인 중부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-          "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 놓을 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and elbows, then reassess load and position.",
           "If the Iso-Lateral Row is too heavy, compensation may appear before the mid-back can work well.",
-          "You should avoid leaning back to create momentum; never force extra range through pain.",
+          "You should avoid leaning back to create momentum; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you release.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7735,28 +7735,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "아이소 레터럴 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
           "If the Iso-Lateral Chest Press is too heavy, compensation may appear before the chest can work well.",
-          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7800,28 +7800,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "아이소 레터럴 인클라인 체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
           "If the Iso-Lateral Incline Chest Press is too heavy, compensation may appear before the chest can work well.",
-          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7864,28 +7864,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "랫 풀다운에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
           "If the Lat Pulldown is too heavy, compensation may appear before the lats can work well.",
-          "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+          "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7930,28 +7930,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
           "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -7996,28 +7996,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "브이 스쿼트에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
           "If the V-Squat is too heavy, compensation may appear before the quads and glutes can work well.",
-          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8061,28 +8061,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
           "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you close and inhale as you open.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8125,28 +8125,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8189,28 +8189,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "트라이셉스 익스텐션에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "해머 스트렝스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Triceps Extension is too heavy, compensation may appear before the triceps can work well.",
-          "You should avoid flaring the elbows or bending the wrists back; never force extra range through pain.",
+          "You should avoid flaring the elbows or bending the wrists back; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Hammer Strength machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8254,28 +8254,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
           "If the Chest Press is too heavy, compensation may appear before the chest can work well.",
-          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8319,28 +8319,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
           "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-          "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+          "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8383,28 +8383,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "랫 풀다운에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
           "If the Lat Pulldown is too heavy, compensation may appear before the lats can work well.",
-          "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+          "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8448,28 +8448,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "시티드 로우에서 너무 무거운 무게를 고르면, 목표인 중부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-          "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "몸통을 뒤로 젖혀 반동을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 놓을 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and elbows, then reassess load and position.",
           "If the Seated Row is too heavy, compensation may appear before the mid-back can work well.",
-          "You should avoid leaning back to create momentum; never force extra range through pain.",
+          "You should avoid leaning back to create momentum; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you release.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8514,28 +8514,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
           "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8579,28 +8579,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
           "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-          "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+          "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8644,28 +8644,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
           "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8709,28 +8709,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
           "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you close and inhale as you open.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8774,28 +8774,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "어브도미널에서 너무 무거운 무게를 고르면, 목표인 복직근과 깊은 코어보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 말아 내릴 때 숨을 길게 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and neck, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and neck, then reassess load and position.",
           "If the Abdominal is too heavy, compensation may appear before the rectus abdominis and deep core can work well.",
-          "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through pain.",
+          "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale fully as you crunch and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8840,28 +8840,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 골반에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 골반에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "백 익스텐션에서 너무 무거운 무게를 고르면, 목표인 허리 기립근과 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 동안 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and pelvis, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and pelvis, then reassess load and position.",
           "If the Back Extension is too heavy, compensation may appear before the spinal erectors and glutes can work well.",
-          "You should avoid over-arching at the top and compressing the low back; never force extra range through pain.",
+          "You should avoid over-arching at the top and compressing the low back; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you fold.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8904,28 +8904,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -8969,28 +8969,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "트라이셉스 프레스에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "몸을 앞으로 접어 체중으로 누르지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "몸을 앞으로 접어 체중으로 누르지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "라이프 피트니스 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 누를 때 숨을 내쉬고, 올라올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
           "If the Triceps Press is too heavy, compensation may appear before the triceps can work well.",
-          "You should avoid folding forward and using bodyweight to press; never force extra range through pain.",
+          "You should avoid folding forward and using bodyweight to press; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Life Fitness machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press down and inhale as you rise.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9034,28 +9034,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "체스트 프레스에서 너무 무거운 무게를 고르면, 목표인 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 몸통보다 너무 깊게 뒤로 빠지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the shoulder, then reassess load and position.",
           "If the Chest Press is too heavy, compensation may appear before the chest can work well.",
-          "You should avoid letting the elbows drift too far behind the torso; never force extra range through pain.",
+          "You should avoid letting the elbows drift too far behind the torso; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9099,28 +9099,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "목과 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "목과 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "숄더 프레스에서 너무 무거운 무게를 고르면, 목표인 어깨보다 보상 동작이 먼저 나올 수 있습니다.",
-          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "허리를 과하게 젖혀 무게를 밀지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어 올릴 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the neck and front shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the neck and front shoulder, then reassess load and position.",
           "If the Shoulder Press is too heavy, compensation may appear before the shoulders can work well.",
-          "You should avoid arching the lower back to drive the weight; never force extra range through pain.",
+          "You should avoid arching the lower back to drive the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press up and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9163,28 +9163,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨와 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨와 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "랫 머신에서 너무 무거운 무게를 고르면, 목표인 광배근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목 뒤로 당기지 말고, 가슴 앞쪽으로 자연스럽게 당기게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 올릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the shoulders and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the shoulders and elbows, then reassess load and position.",
           "If the Lat Machine is too heavy, compensation may appear before the lats can work well.",
-          "You should pull in front of the body rather than behind the neck; never force extra range through pain.",
+          "You should pull in front of the body rather than behind the neck; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you pull and inhale as you rise.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9229,28 +9229,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 어깨 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 어깨 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "로우 로우에서 너무 무거운 무게를 고르면, 목표인 광배근과 하부 등보다 보상 동작이 먼저 나올 수 있습니다.",
-          "가슴을 과하게 들거나 몸을 뒤로 던지지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "가슴을 과하게 들거나 몸을 뒤로 던지지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당기며 숨을 내쉬고, 돌아가며 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the low back and front shoulder, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the low back and front shoulder, then reassess load and position.",
           "If the Low Row is too heavy, compensation may appear before the lats and lower mid-back can work well.",
-          "You should avoid throwing the torso back or over-lifting the chest; never force extra range through pain.",
+          "You should avoid throwing the torso back or over-lifting the chest; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale through the pull and inhale on the return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9295,28 +9295,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 프레스에서 너무 무거운 무게를 고르면, 목표인 허벅지와 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "무릎을 잠그거나 골반이 말릴 정도로 깊게 내리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀어낼 때 숨을 내쉬고, 내려올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the knees and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the knees and lower back, then reassess load and position.",
           "If the Leg Press is too heavy, compensation may appear before the quads and glutes can work well.",
-          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through pain.",
+          "You should avoid locking the knees or lowering until the pelvis tucks under; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you press and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9360,28 +9360,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 앞쪽에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 앞쪽에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 익스텐션에서 너무 무거운 무게를 고르면, 목표인 대퇴사두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "반동으로 차올리지 말고, 통증 없는 범위에서 펴게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "반동으로 차올리지 말고, 편안한 가동범위에서 펴게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 순간 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front of the knee, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front of the knee, then reassess load and position.",
           "If the Leg Extension is too heavy, compensation may appear before the quadriceps can work well.",
-          "You should avoid kicking with momentum and stay within a pain-free range; never force extra range through pain.",
+          "You should avoid kicking with momentum and stay within a comfortable range; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you bend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9425,28 +9425,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "무릎 뒤쪽과 허리에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "무릎 뒤쪽과 허리에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "레그 컬에서 너무 무거운 무게를 고르면, 목표인 햄스트링보다 보상 동작이 먼저 나올 수 있습니다.",
-          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "골반이 뜨거나 허리가 꺾일 정도로 당기지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 당길 때 숨을 내쉬고, 펼 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the back of the knee and lower back, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the back of the knee and lower back, then reassess load and position.",
           "If the Leg Curl is too heavy, compensation may appear before the hamstrings can work well.",
-          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through pain.",
+          "You should avoid curling so hard that the pelvis lifts or low back arches; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you extend.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9490,28 +9490,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "어깨 앞쪽과 팔꿈치에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "어깨 앞쪽과 팔꿈치에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "펙 플라이에서 너무 무거운 무게를 고르면, 목표인 가슴 안쪽과 전체 가슴보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔을 너무 뒤로 벌려 어깨 앞쪽을 밀어내지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 모을 때 숨을 내쉬고, 벌릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the front shoulder and elbows, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the front shoulder and elbows, then reassess load and position.",
           "If the Pec Fly is too heavy, compensation may appear before the inner and overall chest can work well.",
-          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through pain.",
+          "You should avoid opening so far that the front shoulder is pushed forward; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you close and inhale as you open.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9555,28 +9555,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "어브도미널에서 너무 무거운 무게를 고르면, 목표인 복직근과 깊은 코어보다 보상 동작이 먼저 나올 수 있습니다.",
-          "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "목을 당기거나 고관절 힘으로 접지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 말아 내릴 때 숨을 길게 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and neck, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and neck, then reassess load and position.",
           "If the Abdominal is too heavy, compensation may appear before the rectus abdominis and deep core can work well.",
-          "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through pain.",
+          "You should avoid pulling with the neck or folding mostly from the hip flexors; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale fully as you crunch and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9621,28 +9621,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "허리와 골반에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "허리와 골반에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "로워 백에서 너무 무거운 무게를 고르면, 목표인 허리 기립근과 둔근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "정점에서 허리를 과하게 젖혀 압박을 만들지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 펴는 동안 숨을 내쉬고, 접는 동안 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the lower back and pelvis, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the lower back and pelvis, then reassess load and position.",
           "If the Lower Back is too heavy, compensation may appear before the spinal erectors and glutes can work well.",
-          "You should avoid over-arching at the top and compressing the low back; never force extra range through pain.",
+          "You should avoid over-arching at the top and compressing the low back; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you fold.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9685,28 +9685,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "바이셉스 컬에서 너무 무거운 무게를 고르면, 목표인 이두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "어깨를 들거나 몸을 뒤로 젖혀 무게를 올리지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 올릴 때 숨을 내쉬고, 내릴 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Biceps Curl is too heavy, compensation may appear before the biceps can work well.",
-          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through pain.",
+          "You should avoid lifting the shoulders or leaning back to move the weight; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you curl and inhale as you lower.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }
@@ -9749,28 +9749,28 @@ export const CATALOG_SETTINGS: Record<string, MockSettingRule[]> = {
       },
       "warnings": {
         "ko": [
-          "팔꿈치와 손목에 날카로운 통증이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
+          "팔꿈치와 손목에 날카롭거나 강한 불편감이 느껴지면, 즉시 멈추고 무게와 자세를 다시 확인하세요.",
           "트라이셉스 익스텐션에서 너무 무거운 무게를 고르면, 목표인 삼두근보다 보상 동작이 먼저 나올 수 있습니다.",
-          "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 통증을 참고 더 깊거나 더 멀리 움직이지 마세요.",
-          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 관절 부담이 커질 수 있습니다.",
+          "팔꿈치가 옆으로 벌어지거나 손목이 꺾이지 않게 해야 하며, 불편함을 참고 억지로 더 깊거나 더 멀리 움직이지 마세요.",
+          "반동으로 움직이면 머신 궤적이 몸을 대신 밀어 주기 때문에, 움직임 통제가 어려워질 수 있습니다.",
           "테크노짐 장비라도 시트 위치가 맞지 않으면, 편한 궤적이 바로 불편한 궤적으로 바뀔 수 있습니다.",
           "호흡을 오래 참으면 목과 얼굴에 힘이 몰리니, 밀 때 숨을 내쉬고, 돌아올 때 숨을 들이마시세요.",
           "무게 스택이나 플레이트가 크게 부딪히면, 반복을 조절하지 못하고 있다는 신호입니다.",
           "손목이나 발목이 꺾인 채 버티면, 작은 관절에 먼저 피로가 쌓일 수 있습니다.",
           "피로가 올라와 자세가 무너지면, 정해 둔 횟수보다 안전한 반복에서 세트를 끝내세요.",
-          "수술 이력이나 현재 통증이 있다면, 이 머신을 무리해서 쓰기 전에 전문가에게 확인하세요."
+          "운동 중 불편하거나 무리한 느낌이 들면 즉시 중단하고, 무게와 자세를 다시 확인해 주세요."
         ],
         "en": [
-          "Stop immediately if you feel sharp pain in the elbows and wrists, then reassess load and position.",
+          "Stop immediately if you feel sharp discomfort in the elbows and wrists, then reassess load and position.",
           "If the Triceps Extension is too heavy, compensation may appear before the triceps can work well.",
-          "You should avoid flaring the elbows or bending the wrists back; never force extra range through pain.",
+          "You should avoid flaring the elbows or bending the wrists back; never force extra range through discomfort.",
           "Swinging through the guided path can shift stress from the target muscles to the joints.",
           "Even on a Technogym machine, a poor seat setting can turn a comfortable path into an awkward one.",
           "Do not hold your breath for long; exhale as you extend and inhale as you return.",
           "If the stack or plates slam loudly, you are probably losing control of the repetition.",
           "Bent wrists, ankles, or a loose grip can make small joints fatigue before the target muscle.",
           "When fatigue breaks your form, stop the set at the last safe repetition instead of chasing the number.",
-          "If you have a surgery history or current pain, get professional guidance before loading this machine hard."
+          "If you feel uncomfortable or overly strained, stop immediately and reassess load and position."
         ]
       }
     }

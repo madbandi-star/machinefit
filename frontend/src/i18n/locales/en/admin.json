@@ -428,7 +428,8 @@
     "tipsEn": "Tips (English)",
     "linesPlaceholder": "One item per line",
     "warningsCount": "{{count}} warnings",
-    "tipsCount": "{{count}} tips"
+    "tipsCount": "{{count}} tips",
+    "medicalSafetyNote": "Do not write copy that reads like medical diagnosis, treatment, disease names, or prescriptions. Use general fitness safety tips only."
   },
   "machineCovers": {
     "nav": "Machine cover images",

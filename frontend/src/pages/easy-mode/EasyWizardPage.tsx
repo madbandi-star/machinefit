@@ -20,6 +20,7 @@ import {
 } from '@/api';
 import { EasyMachinePicker } from '@/components/easy-mode/EasyMachinePicker';
 import { EasyWizardShell } from '@/components/easy-mode/EasyWizardShell';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { useActiveGym } from '@/hooks/useActiveGym';
@@ -866,6 +867,7 @@ export function EasyWizardPage() {
 
         <details className="easy-details" open>
           <summary>{t('easyMode.moreDetails')}</summary>
+          <p className="easy-sub">{t('compliance.disclaimer.fitnessNote')}</p>
           {(recommendation.tips ?? []).slice(0, 3).map((tip) => (
             <p key={tip} className="easy-sub">
               {tip}
@@ -881,6 +883,7 @@ export function EasyWizardPage() {
             {t('easyMode.repsUnit')}
           </p>
         </details>
+        <LegalDisclaimerBanner variant="health" compact />
       </EasyWizardShell>
     );
   }

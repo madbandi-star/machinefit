@@ -43,7 +43,7 @@ export const WORKOUT_GOAL_WEIGHT_MULTIPLIERS: Record<WorkoutGoal, number> = {
   /** Fat-loss / metabolic work → endurance-biased relative load. */
   diet: 0.88,
   conditioning: 0.85,
-  /** Rehab: submaximal, pain-free loading (conservative). */
+  /** Gentle adaptation: submaximal, comfortable ROM (conservative fitness load). */
   rehab: 0.7,
   posture: 0.82,
 };
@@ -188,9 +188,9 @@ function buildGoalTip(
       case 'conditioning':
         return `목표: 컨디셔닝 — ${repLabel}, 짧은 휴식으로 전신 펌핑.`;
       case 'rehab':
-        return `목표: 재활 — ${repLabel}, 가벼운 중량·통증 없는 범위.`;
+        return `목표: 가벼운 적응 — ${repLabel}, 가벼운 중량·편안한 가동범위(참고).`;
       case 'posture':
-        return `목표: 체형 — ${repLabel}, 가동범위와 정렬을 우선하세요.`;
+        return `목표: 자세·가동 중심 — ${repLabel}, 가동범위와 안정적인 자세를 우선해 보세요(참고).`;
       case 'hypertrophy':
       default:
         return `목표: 근비대 — ${repLabel}, 마지막 세트 RIR 1~2 (Schoenfeld 등).`;
@@ -205,9 +205,9 @@ function buildGoalTip(
     case 'conditioning':
       return `Goal: conditioning — ${repLabel}, shorter rest, full-body pump.`;
     case 'rehab':
-      return `Goal: rehab — ${repLabel}, light load, pain-free range.`;
+      return `Goal: easy adaptation — ${repLabel}, light load, comfortable ROM (reference).`;
     case 'posture':
-      return `Goal: posture — ${repLabel}, prioritize ROM and alignment.`;
+      return `Goal: form & mobility focus — ${repLabel}, prioritize ROM and stable form (reference).`;
     case 'hypertrophy':
     default:
       return `Goal: hypertrophy — ${repLabel}, last sets near RIR 1–2 (Schoenfeld et al.).`;

@@ -155,6 +155,9 @@ export function AdminMachineTipsPage() {
       backLabel={t('admin:backToAdmin')}
     >
       <div className="admin-machine-tips-page">
+        <p className="admin-muted" role="note">
+          {t('admin:machineTips.medicalSafetyNote')}
+        </p>
         <form
           className="admin-machine-tips-toolbar"
           onSubmit={(e) => {

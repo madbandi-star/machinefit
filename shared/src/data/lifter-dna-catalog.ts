@@ -451,8 +451,8 @@ export const LIFTER_DNA_RECO_TEMPLATES: {
     id: 'rest-more',
     when: 'lowRest',
     text: {
-      ko: '최근 휴식이 부족합니다. 회복 시간을 확보하세요.',
-      en: 'Rest looks short — protect recovery days.',
+      ko: '최근 휴식 간격이 짧은 편이에요. 회복 시간을 넉넉히 두는 것을 고려해 보세요.',
+      en: 'Recent rest gaps look short — consider leaving more recovery time.',
     },
   },
   {
@@ -499,8 +499,8 @@ export const LIFTER_DNA_RECO_TEMPLATES: {
     id: 'more-pull',
     when: 'lowPull',
     text: {
-      ko: 'Pull 비중을 높이면 자세와 균형에 도움이 됩니다.',
-      en: 'More pull work helps posture and balance.',
+      ko: 'Pull 비중을 높이면 상·하체 밸런스 구성에 참고가 될 수 있어요.',
+      en: 'More pull work can help balance your push/pull volume mix.',
     },
   },
   {

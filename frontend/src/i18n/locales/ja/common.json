@@ -255,8 +255,8 @@
       "strength": "Strength",
       "diet": "Fat loss",
       "conditioning": "Conditioning",
-      "rehab": "Rehab",
-      "posture": "Posture"
+      "rehab": "Easy adaptation",
+      "posture": "Form & mobility focus"
     },
     "homeGym": "Home gym",
     "homeGymDesc": "After choosing a region, type 2+ characters to autocomplete gym names.",
@@ -1247,7 +1247,7 @@
             "recovery": {
               "above": "Recent daily volume dropped. Recover, then build back up.",
               "near": "Volume decreased. Resume within a comfortable range.",
-              "below": "Signs of overload. Consider a lighter recovery week."
+              "below": "Your recent training load rose quickly. Consider a lighter week."
             },
             "maintain": {
               "above": "Ahead of similar users. Keep your current pace.",
@@ -1587,12 +1587,13 @@
   "compliance": {
     "disclaimer": {
       "ai": "AI recommendations are for reference only and may contain errors.\nThey do not replace medical judgment.",
-      "health": "Stop training and seek a professional if you feel pain or unwell.",
+      "health": "MachineFit workout info, machine settings, recommendations, and analysis are general fitness references — not medical diagnosis, treatment, prescription, or counseling. If you feel pain or unusual symptoms, stop and consult a healthcare professional.",
       "pt": "Online PT is coaching reference, not medical practice. Injury risk remains with you.",
       "commerce": "有料メンバーシップは決済代行（Polar等）で課金される場合があります。オンラインPTデモクレジットは実課金でない場合があります。解約・返金は電子商取引・返金ポリシーを確認してください。",
       "sponsored": "This content may include advertising or sponsorship.",
       "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
-      "learnMore": "Learn more"
+      "learnMore": "Learn more",
+      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment."
     },
     "sponsoredBadge": "Ad",
     "rights": {

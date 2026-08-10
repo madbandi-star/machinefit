@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { onlinePtApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -97,6 +98,7 @@ export function OnlinePtQuestionPage() {
   return (
     <div className="opt-shell">
       <PageShell>
+        <LegalDisclaimerBanner variant="pt" compact />
         <div className="opt-thread">
           <header className="opt-thread-hero">
             <p className="opt-hero-kicker">Online PT</p>

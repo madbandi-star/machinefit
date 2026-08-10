@@ -574,6 +574,7 @@ export function RecommendationResultPage() {
             </button>
           )}
         </article>
+        <LegalDisclaimerBanner variant="health" compact pageBottom />
         <LegalDisclaimerBanner variant="ai" compact pageBottom />
       </div>
     </div>
