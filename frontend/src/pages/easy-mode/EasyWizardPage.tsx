@@ -807,83 +807,142 @@ export function EasyWizardPage() {
   if (step === 2 && recommendation) {
     const ai = recommendation.aiRecommendedSettings ?? recommendation.settings;
     const settings = recommendation.settings;
+    const machineCode = recommendation.machineCode || selected?.code || '';
+    const machineName = recommendation.machineName || selected?.name || '';
+    const brandName = recommendation.brandName || selected?.brandName;
+    const weightLabel =
+      settings.recommendedWeightKg != null ? String(settings.recommendedWeightKg) : '—';
+    const repsText = repsLabel(settings);
+    const settingRows = [
+      settings.seatPosition != null && {
+        key: 'seat',
+        label: t('easyMode.seat'),
+        value: String(settings.seatPosition),
+      },
+      settings.backPadPosition != null && {
+        key: 'pad',
+        label: t('easyMode.backPad'),
+        value: String(settings.backPadPosition),
+      },
+      settings.footPosition != null && {
+        key: 'foot',
+        label: t('easyMode.foot'),
+        value: String(settings.footPosition),
+      },
+    ].filter(Boolean) as Array<{ key: string; label: string; value: string }>;
+    const tips = (recommendation.tips ?? []).slice(0, 3);
+    const warnings = (recommendation.warnings ?? []).slice(0, 2);
+    const aiDiffers =
+      ai.recommendedWeightKg !== settings.recommendedWeightKg ||
+      ai.recommendedRepsMin !== settings.recommendedRepsMin ||
+      ai.recommendedRepsMax !== settings.recommendedRepsMax;
+    const hasDetails = tips.length > 0 || warnings.length > 0 || aiDiffers;
+
     return (
       <EasyWizardShell
         step={2}
         onBack={() => setStep(1)}
         onClose={() => navigate(ROUTES.EASY)}
         primaryLabel={t('easyMode.nextLog')}
+        primaryHint={t('easyMode.fitLaterHint')}
         onPrimary={() => {
           const seed = settings.recommendedWeightKg ?? 0;
           setWeights((prev) => prev.map(() => seed));
           setStep(3);
         }}
       >
-        <div className="easy-section-head">
-          <h2 className="easy-heading">{recommendation.machineName || selected?.name}</h2>
-          <p className="easy-sub">{t('easyMode.s2Title')}</p>
-        </div>
+        <div className="easy-s2">
+          <section className="easy-s2-hero" aria-labelledby="easy-s2-title">
+            <div className="easy-s2-machine">
+              <img
+                className="easy-s2-machine__thumb"
+                src={resolveMachineImageUrl(machineCode) || machinePlaceholderUrl()}
+                alt=""
+                width={72}
+                height={72}
+              />
+              <div className="easy-s2-machine__body">
+                <p className="easy-s2-machine__badge">{t('easyMode.s2Recommended')}</p>
+                <h2 id="easy-s2-title" className="easy-s2-machine__name">
+                  {machineName}
+                </h2>
+                {brandName ? <p className="easy-s2-machine__meta">{brandName}</p> : null}
+                {recommendation.targetMuscleGroup ? (
+                  <p className="easy-s2-machine__meta">
+                    {t(`machines:muscleGroups.${recommendation.targetMuscleGroup}`, {
+                      defaultValue: recommendation.targetMuscleGroup,
+                    })}
+                  </p>
+                ) : null}
+              </div>
+            </div>
 
-        <div className="easy-metrics">
-          <div className="easy-metric">
-            <p className="easy-metric__label">{t('easyMode.weight')}</p>
-            <p className="easy-metric__value">
-              {settings.recommendedWeightKg != null ? `${settings.recommendedWeightKg}` : '—'}
-              <span className="easy-metric__unit">kg</span>
-            </p>
-          </div>
-          <div className="easy-metric">
-            <p className="easy-metric__label">{t('easyMode.reps')}</p>
-            <p className="easy-metric__value">{repsLabel(settings)}</p>
-          </div>
-        </div>
+            <p className="easy-s2-hero__lead">{t('easyMode.s2Title')}</p>
 
-        <div className="easy-settings-list">
-          {[
-            settings.seatPosition != null && {
-              label: t('easyMode.seat'),
-              value: String(settings.seatPosition),
-            },
-            settings.backPadPosition != null && {
-              label: t('easyMode.backPad'),
-              value: String(settings.backPadPosition),
-            },
-            settings.footPosition != null && {
-              label: t('easyMode.foot'),
-              value: String(settings.footPosition),
-            },
-          ]
-            .filter(Boolean)
-            .slice(0, 3)
-            .map((row) =>
-              row ? (
-                <div key={row.label} className="easy-setting-row">
-                  <span className="easy-setting-row__label">{row.label}</span>
-                  <strong className="easy-setting-row__value">{row.value}</strong>
-                </div>
-              ) : null
-            )}
-        </div>
+            <div
+              className="easy-s2-plan"
+              aria-label={`${t('easyMode.weight')} ${weightLabel} kg · ${t('easyMode.reps')} ${repsText}`}
+            >
+              <div className="easy-s2-plan__metric">
+                <span className="easy-s2-plan__label">{t('easyMode.weight')}</span>
+                <span className="easy-s2-plan__value">
+                  {weightLabel}
+                  <span className="easy-s2-plan__unit">kg</span>
+                </span>
+              </div>
+              <div className="easy-s2-plan__divider" aria-hidden />
+              <div className="easy-s2-plan__metric">
+                <span className="easy-s2-plan__label">{t('easyMode.reps')}</span>
+                <span className="easy-s2-plan__value">
+                  {repsText}
+                  <span className="easy-s2-plan__unit">{t('easyMode.repsUnit')}</span>
+                </span>
+              </div>
+            </div>
+          </section>
 
-        <details className="easy-details" open>
-          <summary>{t('easyMode.moreDetails')}</summary>
-          <p className="easy-sub">{t('compliance.disclaimer.fitnessNote')}</p>
-          {(recommendation.tips ?? []).slice(0, 3).map((tip) => (
-            <p key={tip} className="easy-sub">
-              {tip}
-            </p>
-          ))}
-          {(recommendation.warnings ?? []).slice(0, 2).map((w) => (
-            <p key={w} className="easy-hint">
-              {w}
-            </p>
-          ))}
-          <p className="easy-sub">
-            {t('easyMode.aiWeight')}: {ai.recommendedWeightKg ?? '—'} kg · {repsLabel(ai)}{' '}
-            {t('easyMode.repsUnit')}
-          </p>
-        </details>
-        <LegalDisclaimerBanner variant="health" compact />
+          {settingRows.length > 0 ? (
+            <section className="easy-s2-settings" aria-label={t('easyMode.s2Settings')}>
+              <p className="easy-list__label">{t('easyMode.s2Settings')}</p>
+              <div
+                className={`easy-s2-settings__grid easy-s2-settings__grid--${settingRows.length}`}
+              >
+                {settingRows.map((row) => (
+                  <div key={row.key} className="easy-s2-setting">
+                    <span className="easy-s2-setting__label">{row.label}</span>
+                    <strong className="easy-s2-setting__value">{row.value}</strong>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          {hasDetails ? (
+            <details className="easy-s2-details">
+              <summary>{t('easyMode.moreDetails')}</summary>
+              <div className="easy-s2-details__body">
+                {tips.map((tip) => (
+                  <p key={tip} className="easy-s2-tip">
+                    {tip}
+                  </p>
+                ))}
+                {warnings.map((w) => (
+                  <p key={w} className="easy-s2-warning">
+                    {w}
+                  </p>
+                ))}
+                {aiDiffers ? (
+                  <p className="easy-s2-ai">
+                    {t('easyMode.aiWeight')}: {ai.recommendedWeightKg ?? '—'} kg · {repsLabel(ai)}{' '}
+                    {t('easyMode.repsUnit')}
+                  </p>
+                ) : null}
+              </div>
+            </details>
+          ) : null}
+
+          <LegalDisclaimerBanner variant="health" compact />
+        </div>
       </EasyWizardShell>
     );
   }
