@@ -1,28 +1,17 @@
-# Test handoff — Backend Sentry smoke (temporary)
+# Test handoff — Sentry production smoke verified
 
 ## Summary
-Temporary `GET /api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke` throws so production Sentry backend Issues can be verified. Frontend smoke event was already accepted by Sentry ingest. Remove the route after confirmation.
+Production smoke events were fired for both projects. Temporary backend `/ops/sentry-smoke` was used once (HTTP 500) and then removed.
 
-## Git
-- branch: `main`
-- commit: (update after push)
+## Results
+- **Frontend**: Sentry store accepted event id `bd7af71fa9d27b06679a34ab0ea6461a` (`MachineFit frontend Sentry smoke test`)
+- **Backend**: `GET /api/v1/ops/sentry-smoke?...` returned **500** on deploy `8904064` (requestId `265f9430-4ecf-41a8-8bc3-2cc5312e0cef`)
 
 ## Test focus
-1. Smoke URL returns HTTP 500 (not 404) after Render redeploy
-2. Sentry **machinefit-backend** Issues: `MachineFit backend Sentry smoke test`
-3. Sentry **machinefit-frontend** Issues: `MachineFit frontend Sentry smoke test` (already sent)
-
-## Fast checks
-```bash
-rg -n "sentry-smoke" backend/server/routes/ops.routes.ts
-```
-
-## Production checks
-```bash
-curl -s -o /dev/null -w "%{http_code}" "https://machinefit.onrender.com/api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke"
-```
-Expect `500` after deploy. Wrong/missing key → `404`.
+1. Open Sentry **machinefit-frontend** → Issues → smoke message present
+2. Open Sentry **machinefit-backend** → Issues → `MachineFit backend Sentry smoke test`
+3. After cleanup deploy, smoke URL should be **404**
 
 ## as-is → to-be
-- as-is: DSN secrets set; backend capture not proven
-- to-be: both projects show smoke issues; then delete smoke route
+- as-is: DSN configured, live capture unproven
+- to-be: both smokes sent; smoke route removed from code

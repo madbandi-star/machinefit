@@ -5,18 +5,6 @@ import * as opsController from '../controllers/ops.controller.js';
 
 export const opsRouter = Router();
 
-/**
- * One-shot Sentry wiring check. Returns 404 unless ?key= matches.
- * Remove after production verification.
- */
-opsRouter.get('/sentry-smoke', (req, res, next) => {
-  if (String(req.query.key ?? '') !== 'mf-ops-sentry-smoke') {
-    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Not found' } });
-    return;
-  }
-  next(new Error('MachineFit backend Sentry smoke test'));
-});
-
 /** Public/authenticated ingest — never require admin (clients report telemetry). */
 opsRouter.post('/ingest', optionalAuthMiddleware, (req, res, next) => {
   void opsController.ingest(req, res, next);

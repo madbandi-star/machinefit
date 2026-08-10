@@ -1,27 +1,30 @@
 {
-  "title": "Backend Sentry smoke route (temporary)",
-  "summary": "Added GET /api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke to throw once for Sentry Issues verification. Frontend smoke already accepted by Sentry. Remove route after confirm.",
+  "title": "Sentry production smoke verified (FE+BE)",
+  "summary": "Sent intentional smoke events: frontend via ingest (accepted), backend via temporary /ops/sentry-smoke (HTTP 500) then removed the route.",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/routes/ops.routes.ts"
+    "backend/server/routes/ops.routes.ts",
+    ".cursor/handoff/latest.json",
+    ".cursor/handoff/LATEST_TEST_HANDOFF.md"
   ],
   "testFocus": [
-    "GET /api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke returns 500",
-    "machinefit-backend Issues shows MachineFit backend Sentry smoke test",
-    "machinefit-frontend Issues shows MachineFit frontend Sentry smoke test"
+    "Sentry machinefit-frontend Issues shows frontend smoke",
+    "Sentry machinefit-backend Issues shows backend smoke",
+    "GET /api/v1/ops/sentry-smoke is gone (404)"
   ],
   "fastChecks": [
-    "rg -n \"sentry-smoke\" backend/server/routes/ops.routes.ts"
+    "rg -n \"sentry-smoke\" backend/server/routes/ops.routes.ts; echo exit:$?"
   ],
   "productionChecks": [
-    "curl -s -o NUL -w %{http_code} https://machinefit.onrender.com/api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke"
+    "Confirm both Sentry projects have smoke issues",
+    "curl smoke URL should 404 after cleanup deploy"
   ],
   "deploy": {
-    "expected": "Push main triggers Render backend redeploy; then hit smoke URL"
+    "expected": "Push removes smoke route; Render redeploy"
   },
-  "asIs": "Sentry DSN secrets set but backend live capture unverified",
-  "toBe": "Both FE/BE Issues receive intentional smoke events"
+  "asIs": "DSN secrets set; live capture unproven",
+  "toBe": "FE+BE smoke events sent; temporary smoke route removed"
 }
