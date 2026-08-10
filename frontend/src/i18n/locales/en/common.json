@@ -583,6 +583,7 @@
       "address": "Business address",
       "supportEmail": "Support",
       "pending": "To be filled after registration",
+      "pendingNotice": "Trade name, representative, registration numbers, and address will appear here after business registration is complete.",
       "refund": "Refunds / cooling-off",
       "community": "Community policy",
       "security": "Security"

@@ -21,40 +21,54 @@ function isHomePath(pathname: string): boolean {
 
 function BusinessFooterBlock() {
   const { t } = useTranslation();
-  const pending = t('legal.footer.pending');
-  const rows: Array<{ label: string; value: string }> = [
-    { label: t('legal.footer.tradeName'), value: BUSINESS_OPERATOR.tradeName || pending },
-    { label: t('legal.footer.representative'), value: BUSINESS_OPERATOR.representative || pending },
+  const rows: Array<{ label: string; value: string; href?: string }> = [
+    { label: t('legal.footer.tradeName'), value: BUSINESS_OPERATOR.tradeName },
+    { label: t('legal.footer.representative'), value: BUSINESS_OPERATOR.representative },
     {
       label: t('legal.footer.registrationNumber'),
-      value: BUSINESS_OPERATOR.businessRegistrationNumber || pending,
+      value: BUSINESS_OPERATOR.businessRegistrationNumber,
     },
     {
       label: t('legal.footer.mailOrderNumber'),
-      value: BUSINESS_OPERATOR.mailOrderRegistrationNumber || pending,
+      value: BUSINESS_OPERATOR.mailOrderRegistrationNumber,
     },
-    { label: t('legal.footer.address'), value: BUSINESS_OPERATOR.address || pending },
-    {
-      label: t('legal.footer.supportEmail'),
-      value: BUSINESS_OPERATOR.supportEmail || pending,
-    },
-  ];
+    { label: t('legal.footer.address'), value: BUSINESS_OPERATOR.address },
+  ].filter((row) => Boolean(row.value.trim()));
+
+  const supportEmail = BUSINESS_OPERATOR.supportEmail.trim();
+  const hasBusinessFields = rows.length > 0;
 
   return (
     <div className="legal-footer__business">
       <p className="legal-footer__business-title">{t('legal.footer.businessTitle')}</p>
-      <ul className="legal-footer__business-list">
-        {rows.map((row) => (
-          <li key={row.label}>
-            <span>{row.label}</span>
-            {row.label === t('legal.footer.supportEmail') && BUSINESS_OPERATOR.supportEmail ? (
-              <a href={`mailto:${BUSINESS_OPERATOR.supportEmail}`}>{row.value}</a>
-            ) : (
-              <span>{row.value}</span>
-            )}
-          </li>
-        ))}
-      </ul>
+      {hasBusinessFields ? (
+        <dl className="legal-footer__business-list">
+          {rows.map((row) => (
+            <div key={row.label} className="legal-footer__business-row">
+              <dt>{row.label}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          ))}
+          {supportEmail ? (
+            <div className="legal-footer__business-row">
+              <dt>{t('legal.footer.supportEmail')}</dt>
+              <dd>
+                <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : (
+        <div className="legal-footer__business-pending">
+          <p>{t('legal.footer.pendingNotice')}</p>
+          {supportEmail ? (
+            <p className="legal-footer__business-contact">
+              <span>{t('legal.footer.supportEmail')}</span>
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+            </p>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

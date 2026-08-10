@@ -584,6 +584,7 @@
       "address": "Business address",
       "supportEmail": "Support",
       "pending": "届出後に記載",
+      "pendingNotice": "事業者登録・通信販売届出完了後、商号・代表者・登録番号・住所をこの領域に表示します。",
       "refund": "返金・クーリングオフ",
       "community": "コミュニティポリシー",
       "security": "セキュリティ"

@@ -584,6 +584,7 @@
       "address": "Business address",
       "supportEmail": "Support",
       "pending": "登记后填写",
+      "pendingNotice": "完成经营者登记与通信销售备案后，将在此显示商号、代表人、登记号与地址。",
       "refund": "退款/撤回要约",
       "community": "社区政策",
       "security": "安全说明"
