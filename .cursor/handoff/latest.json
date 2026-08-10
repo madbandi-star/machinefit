@@ -1,22 +1,22 @@
 {
   "title": "Fix backup restore gym_members column typo",
-  "summary": "User backup restore failed with `column gm.user_gym_id does not exist`. scopeOwned now joins gym_members.gym_id (and owner_user_id). Verified for display_name 핏메이트4885.",
+  "summary": "User backup restore failed with `column gm.user_gym_id does not exist`. scopeOwned now joins gym_members.gym_id (and owner_user_id). Verified for display_name ?�메?�트4885.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "7a86bc5d"
   },
   "changedFiles": [
     "backend/server/services/backup.service.ts"
   ],
   "testFocus": [
-    "Member 핏메이트4885 → My Page → 데이터관리 → 복구하기 succeeds without user_gym_id error",
+    "Member ?�메?�트4885 ??My Page ???�이?��?�???복구?�기 succeeds without user_gym_id error",
     "Restore still only applies rows owned by that user gym/member scope"
   ],
   "fastChecks": [
     "rg -n \"gm.gym_id|user_gym_id|scopeOwned\" backend/server/services/backup.service.ts"
   ],
   "productionChecks": [
-    "After Render backend redeploy: retry restore for 핏메이트4885"
+    "After Render backend redeploy: retry restore for ?�메?�트4885"
   ],
   "deploy": {
     "expected": "Render backend redeploy required (backend change)"
