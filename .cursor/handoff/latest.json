@@ -1,46 +1,27 @@
 {
-  "title": "Sentry free-tier FE/BE monitoring wiring",
-  "summary": "?? Sentry ?? ??: scrubbing, sampling, ErrorBoundary/Express 500 ??, Router tracing, CI source maps soft-fail. DSN? Render/GitHub Secrets?? ??.",
+  "title": "Backend Sentry smoke route (temporary)",
+  "summary": "Added GET /api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke to throw once for Sentry Issues verification. Frontend smoke already accepted by Sentry. Remove route after confirm.",
   "git": {
     "branch": "main",
-    "commit": "9ae889af"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/app/sentry.ts",
-    "frontend/src/main.tsx",
-    "frontend/src/routes/index.tsx",
-    "frontend/src/routes/RouterErrorElement.tsx",
-    "frontend/src/components/feedback/ChunkErrorBoundary/ChunkErrorBoundary.tsx",
-    "frontend/src/store/auth.store.ts",
-    "frontend/src/app/providers/AuthHydrationProvider.tsx",
-    "frontend/vite.config.ts",
-    "frontend/package.json",
-    "frontend/src/vite-env.d.ts",
-    "backend/server/ops/sentry.ts",
-    "backend/server/index.ts",
-    "backend/server/app.ts",
-    "backend/server/middlewares/error.middleware.ts",
-    "backend/server/lifecycle/process-errors.ts",
-    "backend/server/config/env.ts",
-    ".github/workflows/frontend-deploy.yml",
-    "render.yaml",
-    "config/env/.env.example",
-    "docs/OPS_HARDENING.md"
+    "backend/server/routes/ops.routes.ts"
   ],
   "testFocus": [
-    "DSN ?? ? ?? ??",
-    "DSN ?? ? Issues? FE/BE ?? ??",
-    "PWA/???/?? API ?? ??"
+    "GET /api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke returns 500",
+    "machinefit-backend Issues shows MachineFit backend Sentry smoke test",
+    "machinefit-frontend Issues shows MachineFit frontend Sentry smoke test"
   ],
   "fastChecks": [
-    "rg -n \"VITE_SENTRY_DSN|initFrontendSentry|attachSentryExpressErrorHandler\" frontend/src backend/server .github/workflows/frontend-deploy.yml"
+    "rg -n \"sentry-smoke\" backend/server/routes/ops.routes.ts"
   ],
   "productionChecks": [
-    "Set Render SENTRY_DSN + GitHub VITE_SENTRY_DSN then redeploy"
+    "curl -s -o NUL -w %{http_code} https://machinefit.onrender.com/api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke"
   ],
   "deploy": {
-    "expected": "Push main. Needs Render env + GitHub secret for live events."
+    "expected": "Push main triggers Render backend redeploy; then hit smoke URL"
   },
-  "asIs": "Sentry packages present but weak scrubbing/user/router/CI wiring.",
-  "toBe": "Free-tier ready: enable via DSN secrets only."
+  "asIs": "Sentry DSN secrets set but backend live capture unverified",
+  "toBe": "Both FE/BE Issues receive intentional smoke events"
 }

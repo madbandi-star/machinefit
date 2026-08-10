@@ -1,23 +1,28 @@
-# Test handoff ??Sentry free-tier wiring
+# Test handoff â€” Backend Sentry smoke (temporary)
 
 ## Summary
-MachineFit??**Sentry ë¬´ë£Œ(Developer)** ëª¨ë‹ˆ?°ë§??ìµœì†Œ ë³€ê²½ìœ¼ë¡??°ê²°?ˆìŠµ?ˆë‹¤. DSN???†ìœ¼ë©?ê¸°ì¡´ì²˜ëŸ¼ no-op?…ë‹ˆ??
-
-## Operator steps (?„ìˆ˜)
-1. sentry.io ë¬´ë£Œ ê°€?????„ë¡œ?íŠ¸ 2ê°? `machinefit-frontend`, `machinefit-backend`
-2. **Render** env: `SENTRY_DSN` (backend DSN), `SENTRY_ENVIRONMENT=production`, `SENTRY_TRACES_SAMPLE_RATE=0.05`
-3. **GitHub Secrets**: `VITE_SENTRY_DSN` (frontend DSN)
-4. (? íƒ) source maps: `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
-5. Render ?¬ë°°??+ main FE ë°°í¬ ??Sentry Issues ?•ì¸
+Temporary `GET /api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke` throws so production Sentry backend Issues can be verified. Frontend smoke event was already accepted by Sentry ingest. Remove the route after confirmation.
 
 ## Git
 - branch: `main`
-- commit: (push ??ê°±ì‹ )
+- commit: (update after push)
 
 ## Test focus
-1. DSN ?†ì´ ë¡œê·¸?????´ì?ëª¨ë“œ ?•ìƒ
-2. DSN ?¤ì • ???˜ë„??FE/BE ?¤ë¥˜ê°€ Issues???œì‹œ
-3. ?´ë©”/? í°???´ë²¤?¸ì— ?†ëŠ”ì§€
+1. Smoke URL returns HTTP 500 (not 404) after Render redeploy
+2. Sentry **machinefit-backend** Issues: `MachineFit backend Sentry smoke test`
+3. Sentry **machinefit-frontend** Issues: `MachineFit frontend Sentry smoke test` (already sent)
 
-## Note
-Render + GitHub Secrets ?†ì´???€?œë³´?œì— ?´ë²¤?¸ê? ???¤ì–´?µë‹ˆ??
+## Fast checks
+```bash
+rg -n "sentry-smoke" backend/server/routes/ops.routes.ts
+```
+
+## Production checks
+```bash
+curl -s -o /dev/null -w "%{http_code}" "https://machinefit.onrender.com/api/v1/ops/sentry-smoke?key=mf-ops-sentry-smoke"
+```
+Expect `500` after deploy. Wrong/missing key â†’ `404`.
+
+## as-is â†’ to-be
+- as-is: DSN secrets set; backend capture not proven
+- to-be: both projects show smoke issues; then delete smoke route
