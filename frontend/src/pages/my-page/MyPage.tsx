@@ -329,11 +329,6 @@ export function MyPage() {
           <h3 className="my-page-section__title">{t('myPage.adminTools')}</h3>
           <nav className="list-nav" aria-label={t('myPage.adminTools')}>
             <ListNavLink
-              to={ROUTES.ADMIN_OPS}
-              label={t('myPage.opsMonitoring')}
-              icon="monitor"
-            />
-            <ListNavLink
               to={ROUTES.ADMIN}
               label={t('myPage.adminDashboard')}
               icon="shield"

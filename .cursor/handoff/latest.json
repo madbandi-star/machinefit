@@ -1,27 +1,31 @@
 {
-  "title": "Admin can delete machine-request posts",
-  "summary": "???? ???? admin? ?? ??? ???? UI ???? isMine||isAdmin?? ??. ???? ?? admin soft-hide? ??.",
+  "title": "Remove ops monitoring from My Page admin tools",
+  "summary": "????? ??? ???? ?? ???? ?? ??. ??? ????(/admin/ops) ??? ??.",
   "git": {
     "branch": "main",
-    "commit": "a1a54bad"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx"
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "admin?? ?? ???? ?? ?? ? ?? ?? ??",
-    "?? ?? ? ???? ???? ???? ???(soft-hide)",
-    "??? ??? ???? ??+?? ??"
+    "admin ????? ??? ??? ?? ???? ??",
+    "??? ???? ??? ??",
+    "??? ????/?????? ?? ???? ?? ??"
   ],
   "fastChecks": [
-    "rg -n \"isMine || isAdmin|hasMinRole\\(user\\?\\.roleCode, Role.ADMIN\\)\" frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx"
+    "rg -n \"opsMonitoring|ADMIN_OPS\" frontend/src/pages/my-page/MyPage.tsx"
   ],
   "productionChecks": [
-    "After Pages: admin opens /community/requests/:id of another user and deletes"
+    "After Pages: My Page admin tools shows only Admin Dashboard"
   ],
   "deploy": {
     "expected": "Push main ? GitHub Pages FE"
   },
-  "asIs": "Delete only when request.isMine; admins see no delete button.",
-  "toBe": "Admin sees delete on others' machine requests; API soft-hides."
+  "asIs": "My Page admin tools had Ops Monitoring + Admin Dashboard.",
+  "toBe": "My Page admin tools has Admin Dashboard only; ops still via admin nav."
 }

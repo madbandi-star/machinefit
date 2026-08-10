@@ -1,25 +1,27 @@
-# Test handoff ??Admin delete on machine-request board
+# Test handoff — Remove ops monitoring from My Page
 
 ## Summary
-기구?�청 게시???�세?�서 **admin**??게시글????��?????�게 UI�?맞춤 (?�유/?�진 게시?�과 ?�일 권한 ?�도). 백엔??`deleteMachineRequest`???��? admin soft-hide�?지??
+마이페이지 **관리자 도구**에서 **운영 모니터링** 메뉴를 제거했습니다. `/admin/ops` 라우트·관리자 대시보드/사이드바 진입은 그대로입니다.
 
 ## Git
 - branch: `main`
-- commit: (push ??갱신)
+- commit: (push 후 갱신)
 
 ## Changed files
-- `frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx`
+- `frontend/src/pages/my-page/MyPage.tsx`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json` (`opsMonitoring` 키 제거)
 
 ## Test focus
-1. admin?�로 ?�??기구?�청 ?�세 ??**??��** 버튼 보임
-2. ?�인 ????�� ??목록 복�?, ?�당 글 비노�?
-3. ?�성??본인 ???�정+??�� ?��? / 비�?리자 ?�??글 ????�� ?�음
+1. admin 마이페이지 → 관리자 도구에 운영 모니터링 없음
+2. 관리자 대시보드만 표시
+3. 관리자 대시보드/사이드바에서 운영 모니터링 접근 가능
 
 ## Fast checks
 ```bash
-rg -n "isMine || isAdmin|hasMinRole\(user\?\.roleCode, Role.ADMIN\)" frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx
+rg -n "opsMonitoring|ADMIN_OPS" frontend/src/pages/my-page/MyPage.tsx
 ```
+(매치 없어야 함)
 
-## as-is ??to-be
-- **as-is:** `isMine`�???�� 가??
-- **to-be:** `isMine || isAdmin` ??�� 가??
+## as-is → to-be
+- **as-is:** 마이페이지에 운영 모니터링 + 대시보드
+- **to-be:** 대시보드만
