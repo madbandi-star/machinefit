@@ -1,25 +1,25 @@
 {
-  "title": "Reorder ops tabs: errors, logs, alerts",
-  "summary": "?????? ? ??? ???? ? ?? ? ?? ? ?? ??? ?? ??.",
+  "title": "Show alert occurrence time with seconds",
+  "summary": "?????? ?? ?? ????(?:?:?) ??? ??.",
   "git": {
     "branch": "main",
-    "commit": "8cad298c"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/pages/admin/ops/AdminOpsPage.tsx"
   ],
   "testFocus": [
-    "??? ?????? ?: ?? ?? ???? ??, ??? ??"
+    "?? ?? ?? ??? ????? ????"
   ],
   "fastChecks": [
-    "rg -n \"'errors',|'logs',|'alerts',\" frontend/src/pages/admin/ops/AdminOpsPage.tsx"
+    "rg -n \"fmtDateTime\\(a.createdAt\\)\" frontend/src/pages/admin/ops/AdminOpsPage.tsx"
   ],
   "productionChecks": [
-    "After Pages: /admin/ops tab order"
+    "After Pages: /admin/ops alerts tab shows datetime with seconds"
   ],
   "deploy": {
     "expected": "Push main ? GitHub Pages FE"
   },
-  "asIs": "errors ? later logs ? later alerts",
-  "toBe": "errors, logs, alerts contiguous after overview"
+  "asIs": "Alerts list had no occurrence time.",
+  "toBe": "Table with createdAt formatted to include H:M:S."
 }

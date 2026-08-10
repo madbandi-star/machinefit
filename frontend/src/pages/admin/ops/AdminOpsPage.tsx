@@ -60,6 +60,22 @@ function fmtMs(n: number | null | undefined): string {
   return `${Math.round(n)}ms`;
 }
 
+/** Always include hour:minute:second for ops timestamps. */
+function fmtDateTime(value: string | null | undefined): string {
+  if (!value) return '—';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleString(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+}
+
 function SeriesBars({
   points,
   tone,
@@ -899,23 +915,41 @@ export function AdminOpsPage() {
           <section className="admin-panel">
             <h2 className="admin-panel__title">{t('ops.alertsTitle')}</h2>
             <p className="admin-panel__desc">{t('ops.alertsChannels')}</p>
-            <ul className="admin-ops__list">
-              {(alertsQ.data ?? d?.openAlerts ?? []).map((a) => (
-                <li key={a.id}>
-                  <span>
-                    <span className={`admin-ops__sev is-${a.severity}`}>{a.severity}</span>{' '}
-                    {a.title} — {a.message}
-                  </span>
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    onClick={() => ackAlert.mutate(a.id)}
-                  >
-                    {t('ops.ack')}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="admin-table-wrap">
+              <table className="admin-ops__table">
+                <thead>
+                  <tr>
+                    <th>{t('ops.time')}</th>
+                    <th>{t('ops.severity')}</th>
+                    <th>{t('ops.message')}</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {(alertsQ.data ?? d?.openAlerts ?? []).map((a) => (
+                    <tr key={a.id}>
+                      <td className="admin-ops__mono">{fmtDateTime(a.createdAt)}</td>
+                      <td>
+                        <span className={`admin-ops__sev is-${a.severity}`}>{a.severity}</span>
+                      </td>
+                      <td>
+                        <div>{a.title}</div>
+                        <div className="admin-ops__mono">{a.message}</div>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn--secondary"
+                          onClick={() => ackAlert.mutate(a.id)}
+                        >
+                          {t('ops.ack')}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </section>
         )}
 
