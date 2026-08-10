@@ -1,30 +1,27 @@
-# Test handoff ??Hide data management for member
+# Test handoff — Fix admin system restore JSON bind
 
 ## Summary
-member ?�급 마이?�이지?�서 ?�이??관�?메뉴 ?��?. `/settings/data` ?�우?��? `/backup/*` API??`PREMIUM_MEMBER` ?�상�?
+관리자 전체 복구가 `invalid input syntax for type json`로 실패. `workout_logs.set_weights_kg` 등 jsonb 배열을 node-pg가 PG 배열로 바인딩해서 발생. json/jsonb 컬럼은 `JSON.stringify` 후 삽입.
 
 ## Git
 - branch: `main`
-- commit: `bc0eca48`
+- commit: PENDING
 
 ## Changed files
-- `frontend/src/pages/my-page/MyPage.tsx`
-- `frontend/src/routes/index.tsx`
-- `backend/server/routes/backup.routes.ts`
+- `backend/server/services/system-backup.service.ts`
 
 ## Test focus
-1. member: 개인 ?�정???�이??관�??�음
-2. member: `/settings/data` 직접 ?�근 차단
-3. premium_member+: 메뉴·백업 ?�상
+1. 관리자 시스템 백업 ZIP으로 전체 복구(YES) 성공
+2. 실패 시 토스트/로그에 실제 테이블 오류 문구 노출
 
 ## Fast checks
 ```bash
-rg -n "DATA_MANAGEMENT|showAboveMember|PREMIUM_MEMBER" frontend/src/pages/my-page/MyPage.tsx frontend/src/routes/index.tsx backend/server/routes/backup.routes.ts
+rg -n "bindRowValues|loadJsonColumns|JSON.stringify" backend/server/services/system-backup.service.ts
 ```
 
-## as-is ??to-be
-- **as-is:** member???�이??관�??�출
-- **to-be:** member ?��? + ?�우??API 가??
+## as-is → to-be
+- **as-is:** workout_logs upsert 중 json 구문 오류 → RESTORE_FAILED
+- **to-be:** jsonb 배열 정상 복구
 
 ## Note
-FE + BE 배포 ?�요.
+Backend only — Render redeploy required.

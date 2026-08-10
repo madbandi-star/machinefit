@@ -1,29 +1,26 @@
 {
-  "title": "Hide data management menu for member role",
-  "summary": "My Page hides ??? ?? for plain member. Route /settings/data and /backup/* APIs require PREMIUM_MEMBER+ (same pattern as photo board).",
+  "title": "Fix system restore jsonb array bind error",
+  "summary": "Admin full restore failed with invalid input syntax for type json while upserting workout_logs. node-pg was binding JS arrays as Postgres arrays into jsonb columns; restore now JSON.stringifies json/jsonb object values and surfaces the real error message.",
   "git": {
     "branch": "main",
-    "commit": "bc0eca48"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/routes/index.tsx",
-    "backend/server/routes/backup.routes.ts"
+    "backend/server/services/system-backup.service.ts"
   ],
   "testFocus": [
-    "member: My Page personal settings has no ??? ?? link",
-    "member: direct /settings/data is blocked by AuthGuard",
-    "premium_member+: menu visible and backup API still works"
+    "Admin system backup ZIP ? full restore with YES succeeds",
+    "Failed job error_message no longer invalid input syntax for type json on workout_logs"
   ],
   "fastChecks": [
-    "rg -n \"DATA_MANAGEMENT|showAboveMember|PREMIUM_MEMBER\" frontend/src/pages/my-page/MyPage.tsx frontend/src/routes/index.tsx backend/server/routes/backup.routes.ts"
+    "rg -n \"bindRowValues|loadJsonColumns|JSON.stringify\" backend/server/services/system-backup.service.ts"
   ],
   "productionChecks": [
-    "After Pages + Render: member account cannot open data management; premium can"
+    "After Render redeploy: Admin ? ??? ?? ? ?? ?? succeeds"
   ],
   "deploy": {
-    "expected": "Push main ? Pages FE + Render BE (backup route role gate)"
+    "expected": "Push main ? Render backend redeploy"
   },
-  "asIs": "Member saw and could open ??? ?? / call backup APIs.",
-  "toBe": "Member menu hidden; route + /backup API require PREMIUM_MEMBER+."
+  "asIs": "System restore failed at workout_logs jsonb array columns (progress ~70).",
+  "toBe": "json/jsonb values serialized correctly; restore completes."
 }

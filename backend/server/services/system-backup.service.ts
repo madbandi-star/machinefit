@@ -265,6 +265,7 @@ export const systemBackupService = {
 
       const restoredTables: string[] = [];
       const byTable = new Map(parsed.data.tables.map((t) => [t.table, t.rows]));
+      const jsonColumnCache = new Map<string, Set<string>>();
 
       const client = await pool.connect();
       try {
@@ -276,20 +277,22 @@ export const systemBackupService = {
         if (byTable.has('notices') && (await tableExists(client, 'notices'))) {
           await client.query(`DELETE FROM notice_attachments`);
           await client.query(`DELETE FROM notice_translations`);
-          await client.query(`DELETE FROM notice_views`);
+          if (await tableExists(client, 'notice_views')) {
+            await client.query(`DELETE FROM notice_views`);
+          }
           await client.query(`DELETE FROM notices`);
           for (const row of byTable.get('notices') ?? []) {
-            await insertRow(client, 'notices', row);
+            await insertRow(client, 'notices', row, jsonColumnCache);
           }
           restoredTables.push('notices');
           for (const row of byTable.get('notice_translations') ?? []) {
-            await insertRow(client, 'notice_translations', row);
+            await insertRow(client, 'notice_translations', row, jsonColumnCache);
           }
           if ((byTable.get('notice_translations') ?? []).length) {
             restoredTables.push('notice_translations');
           }
           for (const row of byTable.get('notice_attachments') ?? []) {
-            await insertRow(client, 'notice_attachments', row);
+            await insertRow(client, 'notice_attachments', row, jsonColumnCache);
           }
           if ((byTable.get('notice_attachments') ?? []).length) {
             restoredTables.push('notice_attachments');
@@ -302,7 +305,12 @@ export const systemBackupService = {
         for (const table of ['brands', 'machines', 'machine_images', 'machine_settings'] as const) {
           if (!byTable.has(table) || !(await tableExists(client, table))) continue;
           for (const row of byTable.get(table) ?? []) {
-            await upsertById(client, table, row);
+            try {
+              await upsertById(client, table, row, jsonColumnCache);
+            } catch (err) {
+              const detail = err instanceof Error ? err.message : String(err);
+              throw new Error(`Restore failed on ${table}: ${detail}`);
+            }
           }
           restoredTables.push(table);
         }
@@ -317,14 +325,19 @@ export const systemBackupService = {
         ] as const) {
           if (!byTable.has(table) || !(await tableExists(client, table))) continue;
           for (const row of byTable.get(table) ?? []) {
-            await upsertById(client, table, row);
+            try {
+              await upsertById(client, table, row, jsonColumnCache);
+            } catch (err) {
+              const detail = err instanceof Error ? err.message : String(err);
+              throw new Error(`Restore failed on ${table}: ${detail}`);
+            }
           }
           restoredTables.push(table);
         }
 
         if (byTable.has('backup_settings') && (await tableExists(client, 'backup_settings'))) {
           for (const row of byTable.get('backup_settings') ?? []) {
-            await upsertById(client, 'backup_settings', row);
+            await upsertById(client, 'backup_settings', row, jsonColumnCache);
           }
           restoredTables.push('backup_settings');
         }
@@ -332,7 +345,11 @@ export const systemBackupService = {
         await client.query('COMMIT');
         await backupRepository.updateProgress(job.id, 95);
       } catch (err) {
-        await client.query('ROLLBACK');
+        try {
+          await client.query('ROLLBACK');
+        } catch {
+          /* ignore */
+        }
         throw err;
       } finally {
         client.release();
@@ -349,7 +366,7 @@ export const systemBackupService = {
       logger.error('System restore failed', { jobId: job.id, message });
       throw err instanceof AppError
         ? err
-        : new AppError(500, 'RESTORE_FAILED', 'System restore failed', message);
+        : new AppError(500, 'RESTORE_FAILED', message);
     }
   },
 
@@ -381,31 +398,75 @@ export const systemBackupService = {
   },
 };
 
+async function loadJsonColumns(
+  client: pg.PoolClient,
+  table: string,
+  cache: Map<string, Set<string>>
+): Promise<Set<string>> {
+  const hit = cache.get(table);
+  if (hit) return hit;
+  const { rows } = await client.query<{ column_name: string }>(
+    `SELECT column_name
+       FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = $1
+        AND udt_name IN ('json', 'jsonb')`,
+    [table]
+  );
+  const set = new Set(rows.map((r) => r.column_name));
+  cache.set(table, set);
+  return set;
+}
+
+/**
+ * node-pg binds JS arrays as Postgres array literals. That breaks jsonb columns
+ * like workout_logs.set_weights_kg ("invalid input syntax for type json").
+ * Objects/arrays for json/jsonb must be sent as JSON text.
+ */
+function bindRowValues(
+  row: Record<string, unknown>,
+  keys: string[],
+  jsonColumns: Set<string>
+): unknown[] {
+  return keys.map((key) => {
+    const value = row[key];
+    if (value === null || value === undefined) return value;
+    if (jsonColumns.has(key) && typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return value;
+  });
+}
+
 async function insertRow(
   client: pg.PoolClient,
   table: string,
-  row: Record<string, unknown>
+  row: Record<string, unknown>,
+  jsonColumnCache: Map<string, Set<string>>
 ): Promise<void> {
   const keys = Object.keys(row).filter((k) => row[k] !== undefined);
   if (!keys.length) return;
+  const jsonColumns = await loadJsonColumns(client, table, jsonColumnCache);
   const cols = keys.map((k) => `"${k}"`).join(', ');
   const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
   await client.query(
     `INSERT INTO ${table} (${cols}) VALUES (${placeholders}) ON CONFLICT DO NOTHING`,
-    keys.map((k) => row[k])
+    bindRowValues(row, keys, jsonColumns)
   );
 }
 
 async function upsertById(
   client: pg.PoolClient,
   table: string,
-  row: Record<string, unknown>
+  row: Record<string, unknown>,
+  jsonColumnCache: Map<string, Set<string>>
 ): Promise<void> {
   const keys = Object.keys(row).filter((k) => row[k] !== undefined);
   if (!keys.length || row.id == null) {
-    await insertRow(client, table, row);
+    await insertRow(client, table, row, jsonColumnCache);
     return;
   }
+  const jsonColumns = await loadJsonColumns(client, table, jsonColumnCache);
   const cols = keys.map((k) => `"${k}"`).join(', ');
   const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
   const updates = keys
@@ -413,12 +474,13 @@ async function upsertById(
     .map((k) => `"${k}" = EXCLUDED."${k}"`)
     .join(', ');
   if (!updates) {
-    await insertRow(client, table, row);
+    await insertRow(client, table, row, jsonColumnCache);
     return;
   }
   await client.query(
     `INSERT INTO ${table} (${cols}) VALUES (${placeholders})
      ON CONFLICT (id) DO UPDATE SET ${updates}`,
-    keys.map((k) => row[k])
+    bindRowValues(row, keys, jsonColumns)
   );
 }
+
