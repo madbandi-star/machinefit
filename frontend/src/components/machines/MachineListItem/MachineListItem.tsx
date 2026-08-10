@@ -202,7 +202,7 @@ export function MachineListItem({
 
   if (onSelect) {
     return (
-      <div className="machine-list-item">
+      <div className={`machine-list-item${alreadyPlanned ? ' machine-list-item--planned' : ''}`}>
         <button
           type="button"
           className="machine-list-item__main"

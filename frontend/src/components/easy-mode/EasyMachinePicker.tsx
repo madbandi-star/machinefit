@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
+  isAllGymsId,
   isFreeWeightMachineCode,
   TARGET_MUSCLE_GROUPS,
   type Machine,
   type TargetMuscleGroup,
 } from '@machinefit/shared';
-import { brandApi, machineApi } from '@/api';
+import { brandApi, historyApi, machineApi, workoutCardApi, workoutLogApi } from '@/api';
 import { EasyDuplicateReplacePanel } from '@/components/easy-mode/EasyDuplicateReplacePanel';
 import { BrandFilterChips } from '@/components/machines/BrandFilterChips/BrandFilterChips';
 import { FilterChips } from '@/components/machines/FilterChips/FilterChips';
@@ -23,8 +24,11 @@ import {
   DEFAULT_SEARCH_BRAND_CODE,
   DEFAULT_SEARCH_MUSCLE_GROUP,
 } from '@/constants/machine-search-defaults';
+import { useActiveGym } from '@/hooks/useActiveGym';
+import { useActiveMember } from '@/hooks/useActiveMember';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { getTodayDateKey } from '@/utils/historyDate';
+import { useAuthStore } from '@/store/auth.store';
+import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/machines.css';
 
@@ -49,6 +53,13 @@ interface EasyMachinePickerProps {
   initialCode?: string | null;
 }
 
+function planMachineKey(machineCode: string, targetMuscleGroup?: string | null): string {
+  if (isFreeWeightMachineCode(machineCode) && targetMuscleGroup) {
+    return `${machineCode}::${targetMuscleGroup}`;
+  }
+  return machineCode;
+}
+
 export function EasyMachinePicker({
   open,
   onClose,
@@ -58,6 +69,9 @@ export function EasyMachinePicker({
 }: EasyMachinePickerProps) {
   const { t, i18n } = useTranslation(['common', 'machines']);
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { activeGymId } = useActiveGym();
+  const { activeMemberId } = useActiveMember();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebouncedValue(query, 250);
   const [muscleGroup, setMuscleGroup] = useState<string | null>(DEFAULT_SEARCH_MUSCLE_GROUP);
@@ -69,6 +83,16 @@ export function EasyMachinePicker({
   const [replacePending, setReplacePending] = useState(false);
   /** Shown under confirm after duplicate / rejected confirm. */
   const [showReselect, setShowReselect] = useState(false);
+
+  const badgeDate = isAuthenticated ? getTodayDateKey() : null;
+  const dayRange = badgeDate ? getLocalDayRange(badgeDate) : null;
+  const canLoadDayMarks =
+    open &&
+    Boolean(badgeDate) &&
+    isAuthenticated &&
+    Boolean(activeGymId) &&
+    Boolean(activeMemberId) &&
+    !isAllGymsId(activeGymId ?? '');
 
   useEffect(() => {
     if (!open) return;
@@ -125,6 +149,80 @@ export function EasyMachinePicker({
     staleTime: 10 * 60_000,
     enabled: open,
   });
+
+  const { data: dayPlans = [] } = useQuery({
+    queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
+      scheduledDate: badgeDate ?? undefined,
+    }),
+    queryFn: async () => {
+      const res = await workoutCardApi.list({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        scheduledDate: badgeDate!,
+      });
+      return res.data.data;
+    },
+    enabled: canLoadDayMarks,
+    staleTime: 30_000,
+  });
+
+  const { data: dayHistory = [] } = useQuery({
+    queryKey: QUERY_KEYS.historyList(activeGymId ?? '', activeMemberId ?? '', {
+      from: badgeDate ?? undefined,
+      to: badgeDate ?? undefined,
+      limit: 100,
+    }),
+    queryFn: async () => {
+      const res = await historyApi.list(activeGymId!, {
+        memberId: activeMemberId!,
+        from: dayRange!.from,
+        to: dayRange!.to,
+        limit: 100,
+      });
+      return res.data.data;
+    },
+    enabled: canLoadDayMarks && Boolean(dayRange),
+    staleTime: 30_000,
+  });
+
+  const { data: dayLogs = [] } = useQuery({
+    queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', activeMemberId ?? '', {
+      from: badgeDate ?? undefined,
+      to: badgeDate ?? undefined,
+      limit: 100,
+    }),
+    queryFn: async () => {
+      const res = await workoutLogApi.list({
+        gymId: activeGymId!,
+        memberId: activeMemberId!,
+        logDate: badgeDate!,
+        limit: 100,
+      });
+      return res.data.data;
+    },
+    enabled: canLoadDayMarks,
+    staleTime: 30_000,
+  });
+
+  const plannedKeys = useMemo(() => {
+    const keys = new Set<string>();
+    const add = (machineCode: string, targetMuscleGroup?: string | null) => {
+      keys.add(planMachineKey(machineCode, targetMuscleGroup));
+      if (!isFreeWeightMachineCode(machineCode)) {
+        keys.add(machineCode);
+      }
+    };
+    for (const card of dayPlans) {
+      add(card.machineCode, card.targetMuscleGroup);
+    }
+    for (const item of dayHistory) {
+      add(item.machineCode, item.targetMuscleGroup);
+    }
+    for (const log of dayLogs) {
+      add(log.machineCode, log.targetMuscleGroup);
+    }
+    return keys;
+  }, [dayPlans, dayHistory, dayLogs]);
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [...QUERY_KEYS.machines, 'easy-picker', debouncedQuery, muscleGroup, brandCode],
@@ -281,25 +379,34 @@ export function EasyMachinePicker({
               <MachineEmptyState hasQuery={hasFilters} />
             ) : (
               <div className={`machine-list${isFetching ? ' machine-list--fetching' : ''}`}>
-                {data.map((machine) => (
-                  <MachineListItem
-                    key={machine.id}
-                    machine={machine}
-                    selectedMuscle={muscleGroup}
-                    onSelect={(m) => {
-                      setDetail(m);
-                      if (
-                        isFreeWeightMachineCode(m.code) &&
-                        muscleGroup &&
-                        (TARGET_MUSCLE_GROUPS as readonly string[]).includes(muscleGroup)
-                      ) {
-                        setTargetMuscle(muscleGroup as TargetMuscleGroup);
-                      } else {
-                        setTargetMuscle(null);
-                      }
-                    }}
-                  />
-                ))}
+                {data.map((machine) => {
+                  const alreadyPlanned = plannedKeys.has(
+                    planMachineKey(
+                      machine.code,
+                      isFreeWeightMachineCode(machine.code) ? muscleGroup : null
+                    )
+                  );
+                  return (
+                    <MachineListItem
+                      key={machine.id}
+                      machine={machine}
+                      selectedMuscle={muscleGroup}
+                      alreadyPlanned={alreadyPlanned}
+                      onSelect={(m) => {
+                        setDetail(m);
+                        if (
+                          isFreeWeightMachineCode(m.code) &&
+                          muscleGroup &&
+                          (TARGET_MUSCLE_GROUPS as readonly string[]).includes(muscleGroup)
+                        ) {
+                          setTargetMuscle(muscleGroup as TargetMuscleGroup);
+                        } else {
+                          setTargetMuscle(null);
+                        }
+                      }}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>
