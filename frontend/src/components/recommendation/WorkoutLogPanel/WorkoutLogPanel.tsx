@@ -13,11 +13,12 @@ import {
   isAllGymsId,
   computePerformedTotalWeightKg,
   type TargetMuscleGroup,
+  type WorkoutCardVoicePrefs,
   type WorkoutLog,
   type RecommendationSettings,
   type SettingsActiveSource,
 } from '@machinefit/shared';
-import { workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
+import { workoutCardApi, workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
@@ -27,13 +28,23 @@ import {
 } from '@/store/restTimer.store';
 import {
   clampVoiceCoachOneMoreCount,
+  clampVoiceCoachPrepCount,
   clampVoiceCoachRepGapMs,
   clampVoiceCoachTargetReps,
+  clampVoiceCountMode,
+  normalizeVoiceCoachPack,
   unlockVoiceCoachAudio,
   speakRestTipsAndWarnings,
   stopVoiceCoach,
+  type VoiceCoachPack,
+  type VoiceCoachPrepCount,
+  type VoiceCountMode,
 } from '@/utils/voiceCoach';
-import { clampVoiceHoldDurationSec } from '@/utils/voiceHold';
+import {
+  clampVoiceHoldDurationSec,
+  clampVoiceHoldFlowMode,
+  type VoiceHoldFlowMode,
+} from '@/utils/voiceHold';
 import { Check, PenLine } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
@@ -42,6 +53,7 @@ import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { formatHistoryDateHeader, getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { useSettingsStore } from '@/store/settings.store';
+import { useCardVoicePrefsStore } from '@/store/cardVoicePrefs.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-tags';
@@ -50,28 +62,15 @@ import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
 import { getWeightStepKg } from '@/utils/weightStep';
 import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, upsertWorkoutLogInCache } from '@/utils/workoutLogCache';
 import { buildWorkoutLogSavedQueryKey } from '@/hooks/useWorkoutLogSaved';
+import {
+  buildCardVoicePrefsKey,
+  captureWorkoutCardVoicePrefs,
+  pickersFromVoicePrefs,
+  sessionFromVoicePrefs,
+  type CardVoiceSessionSnapshot,
+  type VoicePickerSnapshot,
+} from '@/utils/workoutCardVoicePrefs';
 import '@/styles/recommendation.css';
-
-interface VoicePickerSnapshot {
-  targetReps: number;
-  repGapMs: number;
-  oneMoreCount: number;
-  holdDurationSec: number;
-}
-
-function readVoicePickerSnapshot(seedTargetReps?: number): VoicePickerSnapshot {
-  const settings = useSettingsStore.getState();
-  const targetReps =
-    seedTargetReps != null && seedTargetReps > 0
-      ? clampVoiceCoachTargetReps(seedTargetReps)
-      : clampVoiceCoachTargetReps(settings.voiceCoachTargetReps);
-  return {
-    targetReps,
-    repGapMs: clampVoiceCoachRepGapMs(settings.voiceCoachRepGapMs),
-    oneMoreCount: clampVoiceCoachOneMoreCount(settings.voiceCoachOneMoreCount),
-    holdDurationSec: clampVoiceHoldDurationSec(settings.voiceHoldDurationSec),
-  };
-}
 
 const DEFAULT_SET_COUNT = 3;
 const MIN_SET_COUNT = 1;
@@ -141,6 +140,13 @@ interface WorkoutLogPanelProps {
     setCompleted?: boolean[];
     diary?: string;
   };
+  /** Linked workout_cards id — used to persist voicePrefs on plan save / picker edits. */
+  workoutCardId?: string;
+  /**
+   * Restored voice pickers + session snapshot (template / plan card).
+   * Applied as card-scoped overrides — does not write global settings.
+   */
+  voicePrefsSeed?: WorkoutCardVoicePrefs;
 }
 
 function buildDefaultWeights(count: number, fallback?: number): number[] {
@@ -313,6 +319,8 @@ export function WorkoutLogPanel({
   onCompanionSave,
   companionSavePending = false,
   planSeed,
+  workoutCardId,
+  voicePrefsSeed,
 }: WorkoutLogPanelProps) {
   const { t } = useTranslation(['machines', 'common']);
   const locale = useSettingsStore((s) => s.locale);
@@ -344,6 +352,7 @@ export function WorkoutLogPanel({
   const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const setLiveCardVoicePrefs = useCardVoicePrefsStore((s) => s.setPrefs);
   const { activeGymId } = useActiveGym();
   const { activeMemberId } = useActiveMember();
   const isAllGyms = isAllGymsId(activeGymId);
@@ -352,28 +361,59 @@ export function WorkoutLogPanel({
   const showPersonalTip = showPersonalTipMemo ?? isHistory;
   const logDate = normalizeDateKey(logDateProp ?? getTodayDateKey());
   const isTodayLog = logDate === getTodayDateKey();
+  const cardVoicePrefsKey = buildCardVoicePrefsKey(
+    machineCode,
+    logDate,
+    targetMuscleGroup
+  );
 
-  // Voice-count pickers seed gap/one-more/hold from Settings; 목표 횟수 follows fit-driven volumeReps.
-  const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}`;
+  // Voice-count pickers seed gap/one-more/hold from Settings (or template voicePrefsSeed).
+  const voicePrefsSeedKey = voicePrefsSeed ? JSON.stringify(voicePrefsSeed) : '';
+  const voiceTargetSeedContext = `${machineCode}|${logDate}|${recommendationId ?? ''}|${voicePrefsSeedKey}`;
   const settingsHydrated = usePersistHydration(useSettingsStore.persist);
   const [voicePickers, setVoicePickers] = useState<VoicePickerSnapshot | null>(null);
   const [voicePickersPinned, setVoicePickersPinned] = useState(true);
+  const [cardVoiceSession, setCardVoiceSession] = useState<CardVoiceSessionSnapshot | null>(
+    null
+  );
+
+  const lastPatchedVoicePrefsRef = useRef<string>('');
 
   useEffect(() => {
     if (!settingsHydrated) return;
     setVoicePickersPinned(true);
-    setVoicePickers(readVoicePickerSnapshot(volumeReps));
-  }, [voiceTargetSeedContext, settingsHydrated]);
+    const nextPickers = pickersFromVoicePrefs(voicePrefsSeed, volumeReps);
+    setVoicePickers(nextPickers);
+    // History (and any seeded card) keeps session fields card-scoped so template
+    // restore does not mutate / depend on live global settings defaults.
+    if (isHistory || voicePrefsSeed) {
+      const nextSession = sessionFromVoicePrefs(voicePrefsSeed);
+      setCardVoiceSession(nextSession);
+      lastPatchedVoicePrefsRef.current = JSON.stringify(
+        captureWorkoutCardVoicePrefs({
+          pickers: nextPickers,
+          session: nextSession,
+        })
+      );
+    } else {
+      setCardVoiceSession(null);
+      lastPatchedVoicePrefsRef.current = '';
+    }
+    // volumeReps: seed-time only (same as prior readVoicePickerSnapshot behavior).
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- remount/context via voiceTargetSeedContext
+  }, [voiceTargetSeedContext, settingsHydrated, isHistory, voicePrefsSeed]);
 
   // 조정횟수 → 목표횟수 sync (세부 피커 고정과 무관 — 고정 OFF일 때와 동일).
   useEffect(() => {
     if (volumeReps == null || volumeReps <= 0) return;
+    // Template/card seed already set targetReps — don't clobber with fit seed.
+    if (voicePrefsSeed?.targetReps != null) return;
     const next = clampVoiceCoachTargetReps(volumeReps);
     setVoicePickers((prev) => {
       if (!prev || prev.targetReps === next) return prev;
       return { ...prev, targetReps: next };
     });
-  }, [volumeReps]);
+  }, [volumeReps, voicePrefsSeed?.targetReps]);
 
   const handleVoiceTargetRepsChange = useCallback(
     (reps: number) => {
@@ -412,23 +452,167 @@ export function WorkoutLogPanel({
     [voicePickersPinned]
   );
 
+  const patchCardVoiceSession = useCallback(
+    (patch: Partial<CardVoiceSessionSnapshot>) => {
+      setCardVoiceSession((prev) => {
+        const base = prev ?? sessionFromVoicePrefs(voicePrefsSeed);
+        return { ...base, ...patch };
+      });
+    },
+    [voicePrefsSeed]
+  );
+
+  const handleCardVoiceEnabledChange = useCallback(
+    (enabled: boolean) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ voiceEnabled: enabled });
+        return;
+      }
+      setVoiceCoachEnabled(enabled);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCoachEnabled, voicePrefsSeed]
+  );
+
+  const handleCardOneMoreEnabledChange = useCallback(
+    (enabled: boolean) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ oneMoreEnabled: enabled });
+        return;
+      }
+      setVoiceCoachOneMore(enabled);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCoachOneMore, voicePrefsSeed]
+  );
+
+  const handleCardAutoAfterRestChange = useCallback(
+    (enabled: boolean) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ autoAfterRest: enabled });
+        return;
+      }
+      setVoiceCoachAutoAfterRest(enabled);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCoachAutoAfterRest, voicePrefsSeed]
+  );
+
+  const handleCardRestTipsEnabledChange = useCallback(
+    (enabled: boolean) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ restTipsEnabled: enabled });
+        return;
+      }
+      setVoiceRestTipsEnabled(enabled);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceRestTipsEnabled, voicePrefsSeed]
+  );
+
+  const handleCardPrepCountChange = useCallback(
+    (count: VoiceCoachPrepCount) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ prepCount: clampVoiceCoachPrepCount(count) });
+        return;
+      }
+      setVoiceCoachPrepCount(count);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCoachPrepCount, voicePrefsSeed]
+  );
+
+  const handleCardVoicePackChange = useCallback(
+    (pack: VoiceCoachPack) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ voicePack: normalizeVoiceCoachPack(pack) });
+        return;
+      }
+      setVoiceCoachPack(pack);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCoachPack, voicePrefsSeed]
+  );
+
+  const handleCardCountModeChange = useCallback(
+    (mode: VoiceCountMode) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ countMode: clampVoiceCountMode(mode) });
+        return;
+      }
+      setVoiceCountMode(mode);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCountMode, voicePrefsSeed]
+  );
+
+  const handleCardFlowModeChange = useCallback(
+    (mode: VoiceHoldFlowMode) => {
+      if (isHistory || voicePrefsSeed) {
+        patchCardVoiceSession({ flowMode: clampVoiceHoldFlowMode(mode) });
+        return;
+      }
+      setVoiceCoachFlowMode(mode);
+    },
+    [isHistory, patchCardVoiceSession, setVoiceCoachFlowMode, voicePrefsSeed]
+  );
+
+  const effectiveVoiceSession = cardVoiceSession;
   const voiceSessionTargetReps = voicePickers?.targetReps ?? voiceCoachTargetReps;
   const voiceSessionRepGapMs = voicePickers?.repGapMs ?? voiceCoachRepGapMs;
   const voiceSessionOneMoreCount = voicePickers?.oneMoreCount ?? voiceCoachOneMoreCount;
   const voiceSessionHoldDurationSec = voicePickers?.holdDurationSec ?? voiceHoldDurationSec;
+  const sessionVoiceEnabled = effectiveVoiceSession?.voiceEnabled ?? voiceCoachEnabled;
+  const sessionOneMoreEnabled = effectiveVoiceSession?.oneMoreEnabled ?? voiceCoachOneMore;
+  const sessionAutoAfterRest =
+    effectiveVoiceSession?.autoAfterRest ?? voiceCoachAutoAfterRest;
+  const sessionRestTipsEnabled =
+    effectiveVoiceSession?.restTipsEnabled ?? voiceRestTipsEnabled;
+  const sessionPrepCount = (effectiveVoiceSession?.prepCount ??
+    voiceCoachPrepCount) as VoiceCoachPrepCount;
+  const sessionVoicePack = (effectiveVoiceSession?.voicePack ??
+    voiceCoachPack) as VoiceCoachPack;
+  const sessionCountMode = (effectiveVoiceSession?.countMode ??
+    voiceCountMode) as VoiceCountMode;
+  const sessionFlowMode = (effectiveVoiceSession?.flowMode ??
+    voiceCoachFlowMode) as VoiceHoldFlowMode;
+
+  const captureCurrentVoicePrefs = useCallback((): WorkoutCardVoicePrefs | null => {
+    if (!voicePickers) return null;
+    return captureWorkoutCardVoicePrefs({
+      pickers: voicePickers,
+      session: effectiveVoiceSession,
+    });
+  }, [effectiveVoiceSession, voicePickers]);
+
+  // Keep ephemeral map warm for template save (even before plan save / PATCH).
+  useEffect(() => {
+    const prefs = captureCurrentVoicePrefs();
+    if (!prefs) return;
+    setLiveCardVoicePrefs(cardVoicePrefsKey, prefs);
+  }, [captureCurrentVoicePrefs, cardVoicePrefsKey, setLiveCardVoicePrefs]);
+
+  // Persist onto workout_cards so reload / template fromDate restore works.
+  useEffect(() => {
+    if (!workoutCardId || !settingsHydrated) return;
+    const prefs = captureCurrentVoicePrefs();
+    if (!prefs) return;
+    const serialized = JSON.stringify(prefs);
+    if (serialized === lastPatchedVoicePrefsRef.current) return;
+    const timer = window.setTimeout(() => {
+      lastPatchedVoicePrefsRef.current = serialized;
+      void workoutCardApi.update(workoutCardId, { voicePrefs: prefs }).catch(() => {
+        lastPatchedVoicePrefsRef.current = '';
+      });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [captureCurrentVoicePrefs, settingsHydrated, workoutCardId]);
 
   const voiceCoach = useVoiceCoachSession({
     targetReps: voiceSessionTargetReps,
-    oneMoreEnabled: voiceCoachOneMore,
+    oneMoreEnabled: sessionOneMoreEnabled,
     oneMoreCount: voiceSessionOneMoreCount,
     repGapMs: voiceSessionRepGapMs,
-    prepCount: voiceCoachPrepCount,
-    voicePack: voiceCoachPack,
-    countMode: voiceCountMode,
-    flowMode: voiceCoachFlowMode,
+    prepCount: sessionPrepCount,
+    voicePack: sessionVoicePack,
+    countMode: sessionCountMode,
+    flowMode: sessionFlowMode,
     holdDurationSec: voiceSessionHoldDurationSec,
     locale,
-    enabled: voiceCoachEnabled,
+    enabled: sessionVoiceEnabled,
   });
   const voiceCoachStartRef = useRef(voiceCoach.start);
   voiceCoachStartRef.current = voiceCoach.start;
@@ -447,9 +631,9 @@ export function WorkoutLogPanel({
     // Soft-stop only — set-complete already unlocked audio in a user gesture;
     // ending the session here would mute auto-start (no fresh tap).
     stopVoiceCoach({ keepAudioSession: true });
-    if (!voiceCoachEnabled || !voiceCoachAutoAfterRest) return;
+    if (!sessionVoiceEnabled || !sessionAutoAfterRest) return;
     voiceCoachStartRef.current();
-  }, [voiceCoachAutoAfterRest, voiceCoachEnabled]);
+  }, [sessionAutoAfterRest, sessionVoiceEnabled]);
   const startVoiceCoach = useCallback(() => {
     // Count Start must work anytime: before set-complete, mid-rest, during rest tips.
     // Do NOT unlock here then call start() — start() soft-stops (cancel) first, which
@@ -528,8 +712,8 @@ export function WorkoutLogPanel({
   const queryEnabled = canLog && (!isFreeWeight || !!queryTargetMuscle);
 
   const needsFetchedCoaching =
-    voiceCoachEnabled &&
-    voiceRestTipsEnabled &&
+    sessionVoiceEnabled &&
+    sessionRestTipsEnabled &&
     Boolean(recommendationId) &&
     tipsProp == null &&
     warningsProp == null;
@@ -563,7 +747,7 @@ export function WorkoutLogPanel({
   useEffect(() => {
     registerRestTimerCallbacks({
       onReadyForNextSet: handleRestReadyForNextSet,
-      onStartCount: voiceCoachEnabled ? startVoiceCoach : null,
+      onStartCount: sessionVoiceEnabled ? startVoiceCoach : null,
     });
     return () => {
       registerRestTimerCallbacks({
@@ -571,21 +755,21 @@ export function WorkoutLogPanel({
         onStartCount: null,
       });
     };
-  }, [handleRestReadyForNextSet, startVoiceCoach, voiceCoachEnabled]);
+  }, [handleRestReadyForNextSet, startVoiceCoach, sessionVoiceEnabled]);
 
   useEffect(() => {
     if (!restSession) return;
-    if (!voiceCoachEnabled) return;
+    if (!sessionVoiceEnabled) return;
     // Never restart rest speech over an active set-count session.
     if (voiceCoachRunningRef.current) return;
 
-    const includeTips = voiceRestTipsEnabled && hasRestCoaching;
+    const includeTips = sessionRestTipsEnabled && hasRestCoaching;
     const controller = new AbortController();
     restSpeechAbortRef.current = controller;
     void speakRestTipsAndWarnings({
       warnings: includeTips ? coachingWarningsRef.current : [],
       tips: includeTips ? coachingTipsRef.current : [],
-      voicePack: voiceCoachPack,
+      voicePack: sessionVoicePack,
       locale,
       signal: controller.signal,
       // Always announce rest in pack language (휴식 시작 / Rest).
@@ -603,12 +787,12 @@ export function WorkoutLogPanel({
   }, [
     restSession?.sessionId,
     restSession?.setNumber,
-    voiceCoachEnabled,
-    voiceRestTipsEnabled,
+    sessionVoiceEnabled,
+    sessionRestTipsEnabled,
     hasRestCoaching,
     restCoachingFingerprint,
     locale,
-    voiceCoachPack,
+    sessionVoicePack,
   ]);
 
 
@@ -1239,7 +1423,7 @@ export function WorkoutLogPanel({
 
       if (!wasCompleted && next[index]) {
         if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
-          unlockVoiceCoachAudio(voiceCoachPack);
+          unlockVoiceCoachAudio(sessionVoicePack);
           startRestTimer(index + 1, clampRestDurationSeconds(restDurationSeconds));
           void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
             trackFeature('rest_timer')
@@ -1269,7 +1453,7 @@ export function WorkoutLogPanel({
 
     if (!wasCompleted && next[index]) {
       if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
-        unlockVoiceCoachAudio(voiceCoachPack);
+        unlockVoiceCoachAudio(sessionVoicePack);
         startRestTimer(index + 1, clampRestDurationSeconds(restDurationSeconds));
         void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
           trackFeature('rest_timer')
@@ -1304,6 +1488,7 @@ export function WorkoutLogPanel({
     const nextCount = setCountRef.current;
     const nextDiary = diary.trim();
     const nextProtected = Array.from({ length: nextCount }, () => true);
+    const voicePrefs = captureCurrentVoicePrefs();
 
     try {
       await saveMutation.mutateAsync({
@@ -1312,6 +1497,18 @@ export function WorkoutLogPanel({
         setCompleted: [...setCompletedRef.current],
         asPlan: true,
       });
+      if (voicePrefs) {
+        setLiveCardVoicePrefs(cardVoicePrefsKey, voicePrefs);
+        if (workoutCardId) {
+          try {
+            lastPatchedVoicePrefsRef.current = JSON.stringify(voicePrefs);
+            await workoutCardApi.update(workoutCardId, { voicePrefs });
+            await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
+          } catch {
+            // Sets/weights already saved; voice prefs stay in live store for template save.
+          }
+        }
+      }
       setPlanProtected(nextProtected);
       planProtectedRef.current = nextProtected;
       setBaseline((prev) =>
@@ -1335,11 +1532,16 @@ export function WorkoutLogPanel({
     }
   }, [
     activeTargetMuscle,
+    captureCurrentVoicePrefs,
+    cardVoicePrefsKey,
     diary,
     isFreeWeight,
+    queryClient,
     saveMutation,
+    setLiveCardVoicePrefs,
     showToast,
     t,
+    workoutCardId,
   ]);
 
   if (!isAuthenticated) {
@@ -1688,30 +1890,30 @@ export function WorkoutLogPanel({
     showVoiceCoach && settingsHydrated && voicePickers ? (
     <VoiceCoachPanel
       key={voiceTargetSeedContext}
-      enabled={voiceCoachEnabled}
-      onEnabledChange={setVoiceCoachEnabled}
+      enabled={sessionVoiceEnabled}
+      onEnabledChange={handleCardVoiceEnabledChange}
       targetReps={voicePickers.targetReps}
       onTargetRepsChange={handleVoiceTargetRepsChange}
       repGapMs={voicePickers.repGapMs}
       onRepGapMsChange={handleVoiceRepGapMsChange}
-      prepCount={voiceCoachPrepCount}
-      onPrepCountChange={setVoiceCoachPrepCount}
-      voicePack={voiceCoachPack}
-      onVoicePackChange={setVoiceCoachPack}
-      countMode={voiceCountMode}
-      onCountModeChange={setVoiceCountMode}
-      flowMode={voiceCoachFlowMode}
-      onFlowModeChange={setVoiceCoachFlowMode}
+      prepCount={sessionPrepCount}
+      onPrepCountChange={handleCardPrepCountChange}
+      voicePack={sessionVoicePack}
+      onVoicePackChange={handleCardVoicePackChange}
+      countMode={sessionCountMode}
+      onCountModeChange={handleCardCountModeChange}
+      flowMode={sessionFlowMode}
+      onFlowModeChange={handleCardFlowModeChange}
       holdDurationSec={voicePickers.holdDurationSec}
       onHoldDurationSecChange={handleVoiceHoldDurationChange}
-      oneMoreEnabled={voiceCoachOneMore}
-      onOneMoreChange={isHistory ? () => {} : setVoiceCoachOneMore}
+      oneMoreEnabled={sessionOneMoreEnabled}
+      onOneMoreChange={isHistory ? () => {} : handleCardOneMoreEnabledChange}
       oneMoreCount={voicePickers.oneMoreCount}
       onOneMoreCountChange={handleVoiceOneMoreCountChange}
-      autoStartAfterRest={voiceCoachAutoAfterRest}
-      onAutoStartAfterRestChange={setVoiceCoachAutoAfterRest}
-      restTipsEnabled={voiceRestTipsEnabled}
-      onRestTipsEnabledChange={setVoiceRestTipsEnabled}
+      autoStartAfterRest={sessionAutoAfterRest}
+      onAutoStartAfterRestChange={handleCardAutoAfterRestChange}
+      restTipsEnabled={sessionRestTipsEnabled}
+      onRestTipsEnabledChange={handleCardRestTipsEnabledChange}
       phase={voiceCoach.phase}
       currentRep={voiceCoach.currentRep}
       countdown={voiceCoach.countdown}

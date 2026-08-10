@@ -55,6 +55,7 @@ export function workoutCardToHistoryRecord(card: WorkoutCard): HistoryRecordCard
     planSetCount: Math.max(1, card.setCount || 1),
     planSetWeightsKg: Array.isArray(card.setWeightsKg) ? [...card.setWeightsKg] : undefined,
     planDiary: card.diary,
+    planVoicePrefs: card.voicePrefs,
   };
 }
 
@@ -82,6 +83,7 @@ function linkPlanOntoCard(existing: HistoryRecordCard, plan: WorkoutCard): Histo
     planSetCount: fromPlan.planSetCount ?? existing.planSetCount,
     planSetWeightsKg: fromPlan.planSetWeightsKg ?? existing.planSetWeightsKg,
     planDiary: fromPlan.planDiary ?? existing.planDiary,
+    planVoicePrefs: fromPlan.planVoicePrefs ?? existing.planVoicePrefs,
   };
 }
 

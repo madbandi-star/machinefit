@@ -2,6 +2,26 @@ import type { TargetMuscleGroup } from '../constants/workout-goals.js';
 import type { WorkoutCardStatus } from '../constants/workout-card.js';
 import type { RecommendationSettings } from './recommendation.types.js';
 
+/**
+ * Per-card voice-count snapshot for templates / plan hydrate.
+ * Card-local pickers + settings-style session fields at save time.
+ * String enums are clamped on the client when restoring.
+ */
+export interface WorkoutCardVoicePrefs {
+  targetReps?: number;
+  repGapMs?: number;
+  oneMoreCount?: number;
+  holdDurationSec?: number;
+  voiceEnabled?: boolean;
+  voicePack?: string;
+  countMode?: string;
+  prepCount?: number;
+  flowMode?: string;
+  oneMoreEnabled?: boolean;
+  autoAfterRest?: boolean;
+  restTipsEnabled?: boolean;
+}
+
 export interface WorkoutCard {
   id: string;
   gymId: string;
@@ -25,6 +45,8 @@ export interface WorkoutCard {
   setCompleted?: boolean[];
   diary?: string;
   restSeconds?: number;
+  /** Voice-count pickers + session snapshot for this card/plan. */
+  voicePrefs?: WorkoutCardVoicePrefs;
   displayOrder: number;
   workoutLogId?: string;
   sourceCardId?: string;
@@ -45,6 +67,7 @@ export interface WorkoutCardTemplateItem {
   restSeconds?: number;
   displayOrder: number;
   recommendationId?: string;
+  voicePrefs?: WorkoutCardVoicePrefs;
 }
 
 export interface WorkoutCardTemplate {

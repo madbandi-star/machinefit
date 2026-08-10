@@ -588,6 +588,8 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
               }
             : undefined
         }
+        workoutCardId={card.workoutCardId}
+        voicePrefsSeed={card.planVoicePrefs}
       />
 
       {expanded ? (

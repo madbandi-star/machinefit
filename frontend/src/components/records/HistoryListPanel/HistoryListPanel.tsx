@@ -55,6 +55,7 @@ import type {
   WorkoutRecordDisplayOrder,
 } from '@machinefit/shared';
 import { useUIStore } from '@/store/ui.store';
+import { useCardVoicePrefsStore } from '@/store/cardVoicePrefs.store';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import { getApiErrorCode } from '@/utils/motivationAudio';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
@@ -71,6 +72,7 @@ import {
   toReorderPayloadItems,
   type WorkoutCardOrderMove,
 } from '@/utils/workoutCardOrder';
+import { resolveVoicePrefsForTemplate } from '@/utils/workoutCardVoicePrefs';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
@@ -107,7 +109,8 @@ function templateMatchKey(machineCode: string, targetMuscleGroup?: string | null
 /** Prefer workout_logs for performed sets/weights; keep plan card order/meta when present. */
 function buildTemplateItemsFromDay(
   cards: WorkoutCard[],
-  logs: WorkoutLog[]
+  logs: WorkoutLog[],
+  fromDate: string
 ): WorkoutCardTemplateItem[] {
   const logByKey = new Map<string, WorkoutLog>();
   for (const log of logs) {
@@ -116,6 +119,8 @@ function buildTemplateItemsFromDay(
 
   const usedKeys = new Set<string>();
   const items: WorkoutCardTemplateItem[] = [];
+  const liveByKey = useCardVoicePrefsStore.getState().byKey;
+  const dateKey = normalizeDateKey(fromDate);
 
   cards.forEach((card, index) => {
     const key = templateMatchKey(card.machineCode, card.targetMuscleGroup);
@@ -127,6 +132,13 @@ function buildTemplateItemsFromDay(
       log?.setWeightsKg?.length ? log.setWeightsKg : card.setWeightsKg
     );
     const diary = (log?.diary?.trim() || card.diary?.trim() || '') || undefined;
+    const voicePrefs = resolveVoicePrefsForTemplate({
+      machineCode: card.machineCode,
+      logDate: dateKey,
+      targetMuscleGroup: card.targetMuscleGroup,
+      cardVoicePrefs: card.voicePrefs,
+      liveByKey,
+    });
     items.push({
       machineCode: card.machineCode,
       ...(card.targetMuscleGroup ? { targetMuscleGroup: card.targetMuscleGroup } : {}),
@@ -139,6 +151,7 @@ function buildTemplateItemsFromDay(
       ...(card.recommendationId || log?.recommendationId
         ? { recommendationId: card.recommendationId ?? log?.recommendationId }
         : {}),
+      voicePrefs,
     });
   });
 
@@ -147,6 +160,12 @@ function buildTemplateItemsFromDay(
     if (usedKeys.has(key)) return;
     usedKeys.add(key);
     const setCount = Math.max(1, log.setCount || 1);
+    const voicePrefs = resolveVoicePrefsForTemplate({
+      machineCode: log.machineCode,
+      logDate: dateKey,
+      targetMuscleGroup: log.targetMuscleGroup,
+      liveByKey,
+    });
     items.push({
       machineCode: log.machineCode,
       ...(log.targetMuscleGroup ? { targetMuscleGroup: log.targetMuscleGroup } : {}),
@@ -155,6 +174,7 @@ function buildTemplateItemsFromDay(
       ...(log.diary?.trim() ? { diary: log.diary.trim() } : {}),
       displayOrder: items.length,
       ...(log.recommendationId ? { recommendationId: log.recommendationId } : {}),
+      voicePrefs,
     });
   });
 
@@ -634,7 +654,8 @@ export function HistoryListPanel() {
       );
 
       // Merge plans + logs; performed sets/weights prefer workout_logs.
-      const items = buildTemplateItemsFromDay(dayPlans, dayLogs);
+      // Voice prefs: live card pickers + settings snapshot (or persisted card.voicePrefs).
+      const items = buildTemplateItemsFromDay(dayPlans, dayLogs, dateKey);
 
       if (items.length === 0) {
         const err = new Error('EMPTY_TEMPLATE');
@@ -914,6 +935,13 @@ export function HistoryListPanel() {
             : Array.from({ length: setCount }, () => false);
 
       try {
+        const voicePrefs = resolveVoicePrefsForTemplate({
+          machineCode: card.machineCode,
+          logDate: dateKey,
+          targetMuscleGroup: card.targetMuscleGroup,
+          cardVoicePrefs: card.planVoicePrefs,
+          liveByKey: useCardVoicePrefsStore.getState().byKey,
+        });
         const res = await workoutCardApi.create({
           gymId: activeGymId,
           memberId: activeMemberId,
@@ -926,6 +954,7 @@ export function HistoryListPanel() {
           ...(log?.diary?.trim() ? { diary: log.diary.trim() } : {}),
           ...(card.recommendationId ? { recommendationId: card.recommendationId } : {}),
           ...(card.targetMuscleGroup ? { targetMuscleGroup: card.targetMuscleGroup } : {}),
+          voicePrefs,
         });
         await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
         return res.data.data.id;

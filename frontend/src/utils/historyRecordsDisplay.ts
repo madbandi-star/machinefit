@@ -1,5 +1,10 @@
 import type { HistoryItem } from '@/api';
-import type { TargetMuscleGroup, WorkoutCardStatus, WorkoutLog } from '@machinefit/shared';
+import type {
+  TargetMuscleGroup,
+  WorkoutCardStatus,
+  WorkoutCardVoicePrefs,
+  WorkoutLog,
+} from '@machinefit/shared';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { getLocalDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { buildLoggedWorkoutKey } from '@/utils/historyLogStatus';
@@ -27,6 +32,8 @@ export interface HistoryRecordCard {
   planSetCount?: number;
   planSetWeightsKg?: number[];
   planDiary?: string;
+  /** Voice pickers + session snapshot from workout_cards / templates. */
+  planVoicePrefs?: WorkoutCardVoicePrefs;
 }
 
 function buildFreeWeightCardKey(

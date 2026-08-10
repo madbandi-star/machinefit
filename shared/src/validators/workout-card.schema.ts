@@ -19,6 +19,26 @@ const diarySchema = z
 
 const statusSchema = z.enum(WORKOUT_CARD_STATUSES);
 
+/** Optional voice-count prefs on cards / template items (clamped client-side). */
+export const workoutCardVoicePrefsSchema = z
+  .object({
+    targetReps: z.number().int().min(1).max(100).optional(),
+    repGapMs: z.number().int().min(800).max(10000).optional(),
+    oneMoreCount: z.number().int().min(0).max(20).optional(),
+    holdDurationSec: z.number().int().min(1).max(600).optional(),
+    voiceEnabled: z.boolean().optional(),
+    voicePack: z.string().trim().min(1).max(40).optional(),
+    countMode: z.string().trim().min(1).max(40).optional(),
+    prepCount: z.number().int().min(0).max(20).optional(),
+    flowMode: z.string().trim().min(1).max(40).optional(),
+    oneMoreEnabled: z.boolean().optional(),
+    autoAfterRest: z.boolean().optional(),
+    restTipsEnabled: z.boolean().optional(),
+  })
+  .strict();
+
+export type WorkoutCardVoicePrefsInput = z.infer<typeof workoutCardVoicePrefsSchema>;
+
 export const workoutCardListQuerySchema = z.object({
   gymId: gymIdSchema,
   memberId: memberIdSchema,
@@ -48,6 +68,7 @@ export const createWorkoutCardSchema = z
     setCompleted: z.array(z.boolean()).optional(),
     diary: diarySchema,
     restSeconds: z.number().int().min(0).max(7200).optional(),
+    voicePrefs: workoutCardVoicePrefsSchema.optional(),
     displayOrder: z.number().int().min(0).max(499).optional(),
     targetMuscleGroup: z.enum(TARGET_MUSCLE_GROUPS).optional(),
     templateId: z.string().uuid().optional(),
@@ -86,6 +107,7 @@ export const updateWorkoutCardSchema = z
     setCompleted: z.array(z.boolean()).optional(),
     diary: diarySchema,
     restSeconds: z.number().int().min(0).max(7200).nullable().optional(),
+    voicePrefs: workoutCardVoicePrefsSchema.nullable().optional(),
     displayOrder: z.number().int().min(0).max(499).optional(),
     recommendationId: z.string().uuid().nullable().optional(),
   })
@@ -135,6 +157,7 @@ export const createWorkoutCardTemplateSchema = z.object({
         restSeconds: z.number().int().min(0).max(7200).optional(),
         displayOrder: z.number().int().min(0).max(499).default(0),
         recommendationId: z.string().uuid().optional(),
+        voicePrefs: workoutCardVoicePrefsSchema.optional(),
       })
     )
     .optional(),

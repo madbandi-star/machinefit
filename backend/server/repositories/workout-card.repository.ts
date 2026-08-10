@@ -7,6 +7,7 @@ import type {
   WorkoutCardStatus,
   WorkoutCardTemplate,
   WorkoutCardTemplateItem,
+  WorkoutCardVoicePrefs,
 } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { pickLocalized } from '../utils/localize.util.js';
@@ -30,6 +31,7 @@ interface WorkoutCardRow {
   set_completed: boolean[] | null;
   diary: string | null;
   rest_seconds: number | null;
+  voice_prefs: WorkoutCardVoicePrefs | null;
   display_order: number;
   workout_log_id: string | null;
   source_card_id: string | null;
@@ -118,6 +120,7 @@ function mapCardRow(row: WorkoutCardRow, locale: Locale = 'en'): WorkoutCard {
         : undefined,
     diary: row.diary ?? undefined,
     restSeconds: row.rest_seconds ?? undefined,
+    voicePrefs: row.voice_prefs ?? undefined,
     displayOrder: row.display_order,
     workoutLogId: row.workout_log_id ?? undefined,
     sourceCardId: row.source_card_id ?? undefined,
@@ -178,6 +181,7 @@ const PRIMARY_IMAGE_SQL = `COALESCE(
 const SELECT_FIELDS = `wc.id, wc.gym_id, wc.member_id, wc.machine_id, wc.recommendation_id,
               wc.target_muscle_group, wc.scheduled_date, wc.status, wc.set_count,
               wc.set_weights_kg, wc.set_reps, wc.set_completed, wc.diary, wc.rest_seconds,
+              wc.voice_prefs,
               wc.display_order, wc.workout_log_id, wc.source_card_id, wc.template_id,
               wc.started_at, wc.completed_at, wc.created_at, wc.updated_at,
               m.code AS machine_code, m.name AS machine_name, m.muscle_group, b.name AS brand_name,
@@ -203,6 +207,7 @@ export type WorkoutCardCreateData = {
   setCompleted?: boolean[];
   diary?: string;
   restSeconds?: number;
+  voicePrefs?: WorkoutCardVoicePrefs | null;
   displayOrder?: number;
   sourceCardId?: string;
   templateId?: string;
@@ -218,6 +223,7 @@ export type WorkoutCardUpdateData = {
   setCompleted?: boolean[] | null;
   diary?: string | null;
   restSeconds?: number | null;
+  voicePrefs?: WorkoutCardVoicePrefs | null;
   displayOrder?: number;
   recommendationId?: string | null;
 };
@@ -392,6 +398,7 @@ export const workoutCardRepository = {
         setReps: row.set_reps ?? undefined,
         diary,
         restSeconds: row.rest_seconds ?? undefined,
+        voicePrefs: row.voice_prefs ?? undefined,
         displayOrder: row.display_order,
         recommendationId: row.recommendation_id ?? log?.recommendation_id ?? undefined,
       });
@@ -435,16 +442,16 @@ export const workoutCardRepository = {
       `INSERT INTO workout_cards (
          user_id, gym_id, member_id, machine_id, recommendation_id, target_muscle_group,
          scheduled_date, status, set_count, set_weights_kg, set_reps, set_completed,
-         diary, rest_seconds, display_order, source_card_id, template_id,
+         diary, rest_seconds, voice_prefs, display_order, source_card_id, template_id,
          started_at, completed_at, workout_log_id
        )
        VALUES (
          $1, $2, $3, $4, $5, $6, $7::date, $8, $9, $10::jsonb, $11::jsonb, $12::jsonb,
-         $13, $14, $15, $16, $17, $18, $19, $20
+         $13, $14, $15::jsonb, $16, $17, $18, $19, $20, $21
        )
        RETURNING id, gym_id, member_id, machine_id, recommendation_id, target_muscle_group,
                  scheduled_date, status, set_count, set_weights_kg, set_reps, set_completed,
-                 diary, rest_seconds, display_order, workout_log_id, source_card_id, template_id,
+                 diary, rest_seconds, voice_prefs, display_order, workout_log_id, source_card_id, template_id,
                  started_at, completed_at, created_at, updated_at,
                  (SELECT code FROM machines WHERE id = $4) AS machine_code,
                  (SELECT name FROM machines WHERE id = $4) AS machine_name,
@@ -465,6 +472,7 @@ export const workoutCardRepository = {
         setCompleted ? JSON.stringify(setCompleted) : null,
         data.diary ?? null,
         data.restSeconds ?? null,
+        data.voicePrefs ? JSON.stringify(data.voicePrefs) : null,
         data.displayOrder ?? 0,
         data.sourceCardId ?? null,
         data.templateId ?? null,
@@ -522,6 +530,14 @@ export const workoutCardRepository = {
     if (data.restSeconds !== undefined) {
       params.push(data.restSeconds);
       sets.push(`rest_seconds = $${params.length}`);
+    }
+    if (data.voicePrefs !== undefined) {
+      if (data.voicePrefs === null) {
+        sets.push(`voice_prefs = NULL`);
+      } else {
+        params.push(JSON.stringify(data.voicePrefs));
+        sets.push(`voice_prefs = $${params.length}::jsonb`);
+      }
     }
     if (data.displayOrder !== undefined) {
       params.push(data.displayOrder);
