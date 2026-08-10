@@ -1,29 +1,27 @@
 {
-  "title": "Clear admin machine-request mock seeds",
-  "summary": "???? mock ??(req-1/req-2)? ?? ??? ???, ???? pendingRequests? DB machine_requests ???? ??.",
+  "title": "Easy mode X exits to normal mode",
+  "summary": "???? ??? ???? X? ?? ??? ???? ??? ????(?) ???? ??.",
   "git": {
     "branch": "main",
-    "commit": "a6c02137"
+    "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/data/community.mock.ts",
-    "backend/server/repositories/admin.repository.ts"
+    "frontend/src/pages/easy-mode/EasyWizardPage.tsx"
   ],
   "testFocus": [
-    "??? ????: Hammer Strength Pullover / Cybex VR3 ?? ??",
-    "???? ?? (?? ? ??)",
-    "???? pendingRequests? ? DB pending ?? ??"
+    "?? ??? 1/2/3?? ? ?? ?? X ? ???? ?",
+    "? ????? ???? (?? ?/?? ??)",
+    "?? ???? normal? ????"
   ],
   "fastChecks": [
-    "rg -n \"req-1|Pullover Machine|Downtown Fitness\" backend/server/data/community.mock.ts",
-    "rg -n \"FROM machine_requests\" backend/server/repositories/admin.repository.ts"
+    "rg -n \"exitToNormalMode\" frontend/src/pages/easy-mode/EasyWizardPage.tsx"
   ],
   "productionChecks": [
-    "Render backend redeploy ? /admin/machine-requests ? ???? ???? ?"
+    "After Pages: open /easy wizard, tap X, land on normal home"
   ],
   "deploy": {
-    "expected": "Push main. Backend needs Render redeploy."
+    "expected": "Push main ? GitHub Pages FE"
   },
-  "asIs": "Mock had 2 pending machine requests; dashboard counted mocks.",
-  "toBe": "Empty mock seeds; dashboard pending from DB."
+  "asIs": "X navigated to /easy (felt like back).",
+  "toBe": "X sets mode=normal and navigates to home."
 }

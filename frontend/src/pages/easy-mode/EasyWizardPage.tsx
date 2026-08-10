@@ -73,6 +73,7 @@ export function EasyWizardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mode = useEasyModeStore((s) => s.mode);
+  const setMode = useEasyModeStore((s) => s.setMode);
   const user = useAuthStore((s) => s.user);
   const showToast = useUIStore((s) => s.showToast);
   const weightDifficulty = useSettingsStore((s) => s.weightDifficulty);
@@ -558,6 +559,11 @@ export function EasyWizardPage() {
     navigate(`${ROUTES.RECORDS}?tab=history&date=${getTodayDateKey()}`);
   };
 
+  const exitToNormalMode = () => {
+    setMode('normal');
+    navigate(ROUTES.HOME);
+  };
+
   if (mode !== 'easy') return null;
 
   const picker = (
@@ -652,7 +658,7 @@ export function EasyWizardPage() {
             <button
               type="button"
               className="easy-shell__icon-btn"
-              onClick={() => setStep('done')}
+              onClick={exitToNormalMode}
               aria-label={t('easyMode.close')}
             >
               ✕
@@ -774,7 +780,7 @@ export function EasyWizardPage() {
         <EasyWizardShell
           step={1}
           onBack={() => navigate(ROUTES.EASY)}
-          onClose={() => navigate(ROUTES.EASY)}
+          onClose={exitToNormalMode}
           hideFooter={Boolean(step1Duplicate)}
           primaryLabel={t('easyMode.nextRecommend')}
           primaryDisabled={!canGoRecommend || replacePending}
@@ -975,7 +981,7 @@ export function EasyWizardPage() {
       <EasyWizardShell
         step={2}
         onBack={() => setStep(1)}
-        onClose={() => navigate(ROUTES.EASY)}
+        onClose={exitToNormalMode}
         primaryLabel={t('easyMode.nextLog')}
         primaryHint={t('easyMode.fitLaterHint')}
         onPrimary={() => {
@@ -1094,7 +1100,7 @@ export function EasyWizardPage() {
     <EasyWizardShell
       step={3}
       onBack={() => setStep(2)}
-      onClose={() => navigate(ROUTES.EASY)}
+      onClose={exitToNormalMode}
       hideFooter
     >
       <div className="easy-s3">

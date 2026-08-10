@@ -1,31 +1,25 @@
-# Test handoff ??Clear machine-request mock seeds
+# Test handoff — Easy mode X → normal mode
 
 ## Summary
-관리자 기구?�청??mock ?�드(`req-1` Hammer Strength Pullover, `req-2` Cybex VR3)?� ?�표 ?��?�??�거?�습?�다. ?�?�보??`pendingRequests`??DB `machine_requests` pending 카운?��? ?�용?�니??
+이지모드 마법사 우측상단 **X**가 `/easy`(이지 홈)으로 가던 것을 **보통모드 + 홈**으로 바꿨습니다. 왼쪽 ← 는 기존 뒤로가기 유지.
 
 ## Git
 - branch: `main`
-- commit: (push ??갱신)
+- commit: (push 후 갱신)
 
 ## Changed files
-- `backend/server/data/community.mock.ts`
-- `backend/server/repositories/admin.repository.ts`
+- `frontend/src/pages/easy-mode/EasyWizardPage.tsx`
 
 ## Test focus
-1. 관리자 기구?�청???�플 2�?Downtown Fitness ?? ?�음
-2. ?�사?�자 ?�청�?보이거나 �?목록
-3. ?�?�보???��??�청 ??= DB pending
+1. 마법사 1·2·3단계 X → 보통모드 홈
+2. 평가(rate) 화면 X도 동일
+3. ← 는 이전 단계/이지 홈 유지
 
 ## Fast checks
 ```bash
-rg -n "req-1|Pullover Machine|Downtown Fitness" backend/server/data/community.mock.ts
-# no matches
-rg -n "FROM machine_requests" backend/server/repositories/admin.repository.ts
+rg -n "exitToNormalMode" frontend/src/pages/easy-mode/EasyWizardPage.tsx
 ```
 
-## Note
-**Render backend ?�배???�요.**
-
-## as-is ??to-be
-- **as-is:** mock 2�?+ ?�?�보??mock 카운??
-- **to-be:** mock 비�? + ?�?�보??DB 카운??
+## as-is → to-be
+- **as-is:** X ≈ 뒤로 (이지 홈)
+- **to-be:** X = 보통모드 종료
