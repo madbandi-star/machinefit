@@ -1,31 +1,29 @@
 {
-  "title": "Fix JSON backup restore misread as ZIP",
-  "summary": "JSON backups failed restore with JSZip 'Can't find end of central directory' because CORS hid Content-Disposition and the file was saved as *.zip; unpack then trusted the extension. Unpack now uses ZIP magic bytes (with JSON fallback), CORS exposes Content-Disposition, and the SPA falls back to .json from Content-Type.",
+  "title": "Hide data management menu for member role",
+  "summary": "My Page hides ??? ?? for plain member. Route /settings/data and /backup/* APIs require PREMIUM_MEMBER+ (same pattern as photo board).",
   "git": {
     "branch": "main",
-    "commit": "39dbffcc"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "backend/server/backup/backup-zip.ts",
-    "backend/server/app.ts",
-    "backend/server/services/backup.service.ts",
-    "backend/server/services/system-backup.service.ts",
-    "frontend/src/api/backup.api.ts"
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/routes/index.tsx",
+    "backend/server/routes/backup.routes.ts"
   ],
   "testFocus": [
-    "Export format=JSON then restore that file (even if named .zip) succeeds",
-    "ZIP restore still works",
-    "Newly exported JSON downloads with .json name after FE+BE deploy"
+    "member: My Page personal settings has no ??? ?? link",
+    "member: direct /settings/data is blocked by AuthGuard",
+    "premium_member+: menu visible and backup API still works"
   ],
   "fastChecks": [
-    "rg -n \"hasZipMagic|exposedHeaders|machinefit_backup.json\" backend/server/backup/backup-zip.ts backend/server/app.ts frontend/src/api/backup.api.ts"
+    "rg -n \"DATA_MANAGEMENT|showAboveMember|PREMIUM_MEMBER\" frontend/src/pages/my-page/MyPage.tsx frontend/src/routes/index.tsx backend/server/routes/backup.routes.ts"
   ],
   "productionChecks": [
-    "After Pages + Render redeploy: JSON backup ? restore merge succeeds without JSZip central directory error"
+    "After Pages + Render: member account cannot open data management; premium can"
   ],
   "deploy": {
-    "expected": "Push main ? GitHub Pages FE + Render BE redeploy"
+    "expected": "Push main ? Pages FE + Render BE (backup route role gate)"
   },
-  "asIs": "JSON content saved/uploaded as *.zip was forced through JSZip and failed.",
-  "toBe": "Non-PK buffers parse as JSON; ZIP only when magic bytes match; download filename uses Content-Type/CORS headers."
+  "asIs": "Member saw and could open ??? ?? / call backup APIs.",
+  "toBe": "Member menu hidden; route + /backup API require PREMIUM_MEMBER+."
 }

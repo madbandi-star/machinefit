@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { backupExportSchema, backupImportMetaSchema } from '@machinefit/shared';
-import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { Role, backupExportSchema, backupImportMetaSchema } from '@machinefit/shared';
+import { authMiddleware, requireMinRole } from '../middlewares/auth.middleware.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
 import { backupUpload } from '../middlewares/upload.middleware.js';
 import * as backupController from '../controllers/backup.controller.js';
 
 export const backupRouter = Router();
 
-backupRouter.use(authMiddleware);
+backupRouter.use(authMiddleware, requireMinRole(Role.PREMIUM_MEMBER));
 
 /** POST /backup/export — download user backup (zip|json) */
 backupRouter.post('/export', validateBody(backupExportSchema), (req, res, next) => {

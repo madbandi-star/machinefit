@@ -1,32 +1,30 @@
-# Test handoff ??Fix JSON backup restore (JSZip central directory)
+# Test handoff — Hide data management for member
 
 ## Summary
-JSON 복구 ??`Can't find end of central directory` 발생. CORS�?`Content-Disposition`????보여 JSON??`*.zip`?�로 ?�?�되�? ?�버가 ?�장?�만 보고 ZIP?�로 ?�싱?? 매직바이???�별 + CORS expose + FE Content-Type ?�백?�로 ?�정.
+member 등급 마이페이지에서 데이터 관리 메뉴 숨김. `/settings/data` 라우트와 `/backup/*` API는 `PREMIUM_MEMBER` 이상만.
 
 ## Git
 - branch: `main`
-- commit: `39dbffcc`
+- commit: PENDING
 
 ## Changed files
-- `backend/server/backup/backup-zip.ts`
-- `backend/server/app.ts`
-- `backend/server/services/backup.service.ts`
-- `backend/server/services/system-backup.service.ts`
-- `frontend/src/api/backup.api.ts`
+- `frontend/src/pages/my-page/MyPage.tsx`
+- `frontend/src/routes/index.tsx`
+- `backend/server/routes/backup.routes.ts`
 
 ## Test focus
-1. JSON 백업 ?�일 복구 ?�공 (?�일명이 `.zip`?�어??JSON ?�용?�면 ?�공)
-2. ZIP 복구??기존처럼 ?�공
-3. ??JSON보내�??�일명이 `.json`?�로 ?�?�되?��? (FE+BE 배포 ??
+1. member: 개인 설정에 데이터 관리 없음
+2. member: `/settings/data` 직접 접근 차단
+3. premium_member+: 메뉴·백업 정상
 
 ## Fast checks
 ```bash
-rg -n "hasZipMagic|exposedHeaders|machinefit_backup.json" backend/server/backup/backup-zip.ts backend/server/app.ts frontend/src/api/backup.api.ts
+rg -n "DATA_MANAGEMENT|showAboveMember|PREMIUM_MEMBER" frontend/src/pages/my-page/MyPage.tsx frontend/src/routes/index.tsx backend/server/routes/backup.routes.ts
 ```
 
-## as-is ??to-be
-- **as-is:** JSON ?�용 + `.zip` ?�름 ??JSZip ?�패
-- **to-be:** PK 매직 ?�으�?JSON ?�싱; ZIP?� 매직바이?�일 ?�만
+## as-is → to-be
+- **as-is:** member도 데이터 관리 노출
+- **to-be:** member 숨김 + 라우트/API 가드
 
 ## Note
-Backend + frontend. Render + GitHub Pages both needed for full fix; BE alone unblocks restore of already-misnamed JSON files.
+FE + BE 배포 필요.

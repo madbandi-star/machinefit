@@ -472,6 +472,7 @@ export const router = createBrowserRouter(
             { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
             { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
             { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
+            { path: ROUTES.DATA_MANAGEMENT, element: lazyRoute(dataManagementPage) },
           ],
         },
         {
@@ -499,7 +500,6 @@ export const router = createBrowserRouter(
             { path: ROUTES.SETTINGS, element: lazyRoute(settings) },
             { path: ROUTES.FORTUNE_TODAY, element: lazyRoute(fortuneToday) },
             { path: ROUTES.LINKED_LOGINS, element: lazyRoute(linkedLogins) },
-            { path: ROUTES.DATA_MANAGEMENT, element: lazyRoute(dataManagementPage) },
             { path: ROUTES.PRIVACY_RIGHTS, element: lazyRoute(privacyRightsPage) },
             { path: ROUTES.SUPPORT, element: lazyRoute(supportPage) },
             { path: ROUTES.SUPPORT_DETAIL, element: lazyRoute(supportDetailPage) },
