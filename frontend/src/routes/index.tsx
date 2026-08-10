@@ -456,9 +456,6 @@ export const router = createBrowserRouter(
         { path: ROUTES.FREE_BOARD, element: lazyRoute(freeBoard) },
         { path: ROUTES.NOTICES, element: lazyRoute(noticesPage) },
         { path: ROUTES.NOTICE_DETAIL, element: lazyRoute(noticeDetailPage) },
-        { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
-        { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
-        { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
         { path: ROUTES.POST_DETAIL, element: lazyRoute(postDetail) },
         { path: ROUTES.TRADE_LIST_SELL, element: lazyRoute(tradeList) },
         { path: ROUTES.TRADE_LIST_BUY, element: lazyRoute(tradeList) },
@@ -468,6 +465,14 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.HISTORY,
           element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
+        },
+        {
+          element: <AuthGuard minRole={Role.PREMIUM_MEMBER} />,
+          children: [
+            { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
+            { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
+            { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
+          ],
         },
         {
           element: <AuthGuard />,

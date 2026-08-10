@@ -247,7 +247,9 @@ export function MyPage() {
             />
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} icon="message" />
-          <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+          {showAboveMember ? (
+            <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+          ) : null}
         </nav>
       </section>
 

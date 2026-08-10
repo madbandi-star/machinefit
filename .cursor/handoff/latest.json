@@ -1,28 +1,31 @@
 {
-  "title": "Move pin-pickers checkbox next to voice on/off",
-  "summary": "??? ?? ??? checkbox moved into the voice coach header, left of the ??/?? switch. Removed from the controls body.",
+  "title": "Hide photo board for member role",
+  "summary": "Plain `member` users no longer see photo board links (My Page, Community). Routes require premium_member+; API list/write endpoints require PREMIUM_MEMBER.",
   "git": {
     "branch": "main",
-    "commit": "3a12c68b"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx",
-    "frontend/src/styles/recommendation.css"
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/pages/community/CommunityPage.tsx",
+    "frontend/src/routes/index.tsx",
+    "backend/server/routes/photo-board.routes.ts"
   ],
   "testFocus": [
-    "Voice coach header shows [?? ?? ??] then [??] on the right",
-    "Pin still locks pickers; enable still toggles panel",
-    "Records compact layout still readable"
+    "Login as member → no photo board on My Page / Community",
+    "Direct /community/photo as member → redirected home",
+    "premium_member+ still sees and opens photo board",
+    "Admin photo board moderation unchanged"
   ],
   "fastChecks": [
-    "rg -n \"header-end|check--header|pinPickers\" frontend/src/components/recommendation/VoiceCoachPanel/VoiceCoachPanel.tsx frontend/src/styles/recommendation.css"
+    "rg -n \"PHOTO_BOARD|PREMIUM_MEMBER|showAboveMember|showPhotoBoard\" frontend/src/pages/my-page/MyPage.tsx frontend/src/pages/community/CommunityPage.tsx frontend/src/routes/index.tsx backend/server/routes/photo-board.routes.ts"
   ],
   "productionChecks": [
-    "After Deploy Frontend: confirm pin checkbox is left of ?? on Records voice panel"
+    "After Deploy Frontend + Render API: member cannot open photo board; premium can"
   ],
   "deploy": {
-    "expected": "GitHub Pages frontend deploy on push to main"
+    "expected": "GitHub Pages FE + Render backend redeploy needed for API guard"
   },
-  "asIs": "?? ?? ?? lived in the controls body under other options.",
-  "toBe": "?? ?? ?? sits in the header immediately left of ??."
+  "asIs": "member could see and open photo board.",
+  "toBe": "Photo board hidden/blocked for member; premium_member+ only."
 }

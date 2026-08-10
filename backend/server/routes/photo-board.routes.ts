@@ -3,37 +3,46 @@ import { Role } from '@machinefit/shared';
 import * as photoBoardController from '../controllers/photo-board.controller.js';
 import {
   authMiddleware,
-  optionalAuthMiddleware,
   requireMinRole,
 } from '../middlewares/auth.middleware.js';
 import { photoBoardImagesUpload } from '../middlewares/upload.middleware.js';
 
 export const photoBoardRouter = Router();
 
+const requirePremiumMember = [authMiddleware, requireMinRole(Role.PREMIUM_MEMBER)] as const;
+
 photoBoardRouter.get('/images/:imageId', photoBoardController.getImage);
-photoBoardRouter.get('/posts', optionalAuthMiddleware, photoBoardController.listPosts);
-photoBoardRouter.get('/posts/:postId', optionalAuthMiddleware, photoBoardController.getPost);
+photoBoardRouter.get('/posts', ...requirePremiumMember, photoBoardController.listPosts);
+photoBoardRouter.get('/posts/:postId', ...requirePremiumMember, photoBoardController.getPost);
 photoBoardRouter.post(
   '/posts',
-  authMiddleware,
+  ...requirePremiumMember,
   photoBoardImagesUpload,
   photoBoardController.createPost
 );
-photoBoardRouter.patch('/posts/:postId', authMiddleware, photoBoardController.updatePost);
-photoBoardRouter.delete('/posts/:postId', authMiddleware, photoBoardController.deletePost);
-photoBoardRouter.post('/posts/:postId/like', authMiddleware, photoBoardController.toggleLike);
-photoBoardRouter.post('/posts/:postId/comments', authMiddleware, photoBoardController.createComment);
+photoBoardRouter.patch('/posts/:postId', ...requirePremiumMember, photoBoardController.updatePost);
+photoBoardRouter.delete('/posts/:postId', ...requirePremiumMember, photoBoardController.deletePost);
+photoBoardRouter.post(
+  '/posts/:postId/like',
+  ...requirePremiumMember,
+  photoBoardController.toggleLike
+);
+photoBoardRouter.post(
+  '/posts/:postId/comments',
+  ...requirePremiumMember,
+  photoBoardController.createComment
+);
 photoBoardRouter.patch(
   '/comments/:commentId',
-  authMiddleware,
+  ...requirePremiumMember,
   photoBoardController.updateComment
 );
 photoBoardRouter.delete(
   '/comments/:commentId',
-  authMiddleware,
+  ...requirePremiumMember,
   photoBoardController.deleteComment
 );
-photoBoardRouter.post('/reports', authMiddleware, photoBoardController.createReport);
+photoBoardRouter.post('/reports', ...requirePremiumMember, photoBoardController.createReport);
 
 photoBoardRouter.get(
   '/admin/reports',
