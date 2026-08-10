@@ -44,7 +44,10 @@ async function scopeOwned(
   const { rows } = await client.query(
     `SELECT 1
      FROM user_gyms ug
-     JOIN gym_members gm ON gm.id = $3 AND gm.user_gym_id = ug.id
+     JOIN gym_members gm
+       ON gm.id = $3
+      AND gm.gym_id = ug.id
+      AND gm.owner_user_id = ug.user_id
      WHERE ug.id = $2 AND ug.user_id = $1
      LIMIT 1`,
     [userId, gymId, memberId]

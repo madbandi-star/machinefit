@@ -1,31 +1,26 @@
 {
-  "title": "Hide photo board for member role",
-  "summary": "Plain `member` users no longer see photo board links (My Page, Community). Routes require premium_member+; API list/write endpoints require PREMIUM_MEMBER.",
+  "title": "Fix backup restore gym_members column typo",
+  "summary": "User backup restore failed with `column gm.user_gym_id does not exist`. scopeOwned now joins gym_members.gym_id (and owner_user_id). Verified for display_name 핏메이트4885.",
   "git": {
     "branch": "main",
-    "commit": "126ce803"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/pages/community/CommunityPage.tsx",
-    "frontend/src/routes/index.tsx",
-    "backend/server/routes/photo-board.routes.ts"
+    "backend/server/services/backup.service.ts"
   ],
   "testFocus": [
-    "Login as member ??no photo board on My Page / Community",
-    "Direct /community/photo as member ??redirected home",
-    "premium_member+ still sees and opens photo board",
-    "Admin photo board moderation unchanged"
+    "Member 핏메이트4885 → My Page → 데이터관리 → 복구하기 succeeds without user_gym_id error",
+    "Restore still only applies rows owned by that user gym/member scope"
   ],
   "fastChecks": [
-    "rg -n \"PHOTO_BOARD|PREMIUM_MEMBER|showAboveMember|showPhotoBoard\" frontend/src/pages/my-page/MyPage.tsx frontend/src/pages/community/CommunityPage.tsx frontend/src/routes/index.tsx backend/server/routes/photo-board.routes.ts"
+    "rg -n \"gm.gym_id|user_gym_id|scopeOwned\" backend/server/services/backup.service.ts"
   ],
   "productionChecks": [
-    "After Deploy Frontend + Render API: member cannot open photo board; premium can"
+    "After Render backend redeploy: retry restore for 핏메이트4885"
   ],
   "deploy": {
-    "expected": "GitHub Pages FE + Render backend redeploy needed for API guard"
+    "expected": "Render backend redeploy required (backend change)"
   },
-  "asIs": "member could see and open photo board.",
-  "toBe": "Photo board hidden/blocked for member; premium_member+ only."
+  "asIs": "Restore SQL referenced non-existent gm.user_gym_id.",
+  "toBe": "Restore SQL uses gm.gym_id + owner_user_id ownership check."
 }
