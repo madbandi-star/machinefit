@@ -3,7 +3,7 @@
   "summary": "Plain `member` users no longer see photo board links (My Page, Community). Routes require premium_member+; API list/write endpoints require PREMIUM_MEMBER.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "126ce803"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",
@@ -12,8 +12,8 @@
     "backend/server/routes/photo-board.routes.ts"
   ],
   "testFocus": [
-    "Login as member → no photo board on My Page / Community",
-    "Direct /community/photo as member → redirected home",
+    "Login as member ??no photo board on My Page / Community",
+    "Direct /community/photo as member ??redirected home",
     "premium_member+ still sees and opens photo board",
     "Admin photo board moderation unchanged"
   ],
