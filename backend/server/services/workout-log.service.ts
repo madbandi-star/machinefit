@@ -8,6 +8,7 @@ import type {
 import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle, isAllGymsId } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { workoutCardRepository } from '../repositories/workout-card.repository.js';
+import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
@@ -137,6 +138,22 @@ export const workoutLogService = {
         });
       } catch {
         /* card sync must not fail workout save */
+      }
+
+      // Ensure Records can show this machine: recommend usually writes history,
+      // but easy-mode / edge paths may save a log without a recent_history row.
+      if (input.recommendationId) {
+        try {
+          await historyRepository.record(
+            userId,
+            input.gymId,
+            input.memberId,
+            machineId,
+            input.recommendationId
+          );
+        } catch {
+          /* history mirror must not fail workout save */
+        }
       }
 
       try {

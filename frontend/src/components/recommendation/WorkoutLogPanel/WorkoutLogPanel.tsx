@@ -640,7 +640,8 @@ export function WorkoutLogPanel({
     },
     enabled: queryEnabled,
     staleTime: Infinity,
-    refetchOnMount: false,
+    // Allow remount refetch after invalidate (e.g. easy-mode save → Records).
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });

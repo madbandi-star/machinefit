@@ -8,6 +8,7 @@ import {
   type RecommendationSettings,
   type SettingsActiveSource,
   type TargetMuscleGroup,
+  type WorkoutLog,
 } from '@machinefit/shared';
 import {
   favoriteApi,
@@ -33,9 +34,13 @@ import { useUIStore } from '@/store/ui.store';
 import { ROUTES } from '@/constants/routes';
 import { setHistoryLiveAdjustedPrefs } from '@/utils/historyLiveAdjustedPrefs';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { getTodayDateKey } from '@/utils/historyDate';
+import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import { resolveMachineImageUrl, machinePlaceholderUrl } from '@/utils/catalogAssets';
+import {
+  getWorkoutLogQueryTargetMuscle,
+  upsertWorkoutLogInCache,
+} from '@/utils/workoutLogCache';
 import {
   assertNoDuplicateToday,
   DuplicateRecommendationError,
@@ -430,11 +435,66 @@ export function EasyWizardPage() {
       const res = await workoutLogApi.upsert(body);
       return res.data.data;
     },
-    onSuccess: async () => {
+    onSuccess: async (savedLog) => {
       setSavedMachineName(selected?.name ?? '');
       setCompleted(Array.from({ length: setCount }, () => true));
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
+
+      // Mirror WorkoutLogPanel: patch Records caches so normal-mode history
+      // shows sets immediately (staleTime: Infinity + no remount refetch).
+      if (selected && activeGymId && activeMemberId && savedLog) {
+        const logDate = normalizeDateKey(savedLog.logDate ?? getTodayDateKey());
+        const queryTargetMuscle = getWorkoutLogQueryTargetMuscle(
+          selected.code,
+          targetMuscle
+        );
+        const removeLogParams = {
+          machineCode: selected.code,
+          logDate,
+          targetMuscleGroup: queryTargetMuscle,
+        };
+        const normalizedLog: WorkoutLog = { ...savedLog, logDate };
+
+        queryClient.setQueryData(
+          QUERY_KEYS.workoutLogToday(
+            activeGymId,
+            activeMemberId,
+            selected.code,
+            logDate,
+            queryTargetMuscle
+          ),
+          [normalizedLog]
+        );
+        queryClient.setQueryData(
+          QUERY_KEYS.workoutLogsAll(activeGymId, activeMemberId),
+          (old: WorkoutLog[] | undefined) =>
+            upsertWorkoutLogInCache(old, normalizedLog, removeLogParams)
+        );
+        queryClient.setQueryData(
+          QUERY_KEYS.workoutLogsList(activeGymId, activeMemberId, { limit: 200 }),
+          (old: WorkoutLog[] | undefined) =>
+            upsertWorkoutLogInCache(old ?? [], normalizedLog, removeLogParams)
+        );
+        queryClient.setQueriesData<WorkoutLog[]>(
+          { queryKey: QUERY_KEYS.workoutLogs },
+          (old) => {
+            if (!Array.isArray(old) || old.length === 0) return old;
+            const sample = old[0];
+            if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
+              return old;
+            }
+            return upsertWorkoutLogInCache(old, normalizedLog, removeLogParams);
+          }
+        );
+      }
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
+        queryClient.invalidateQueries({ queryKey: ['easy-history'] }),
+        queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
+      ]);
+
       const settings = recommendation?.settings;
       setAdjWeight(settings?.recommendedWeightKg);
       setAdjReps(settings?.recommendedRepsMin ?? settings?.recommendedRepsMax);
