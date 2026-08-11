@@ -14,6 +14,7 @@ import { startSystemBackupJob } from './jobs/system-backup.job.js';
 import { startPremiumExpireJob } from './jobs/premium-expire.job.js';
 import { startWorkoutCardReminderJob } from './jobs/workout-card-reminder.job.js';
 import { startPrivacyRetentionJob } from './jobs/privacy-retention.job.js';
+import { startPolarCancelRetryJob } from './jobs/polar-cancel-retry.job.js';
 import { registerGracefulShutdown } from './lifecycle/shutdown.js';
 import { registerProcessErrorHandlers } from './lifecycle/process-errors.js';
 import { logger } from './utils/logger.js';
@@ -73,6 +74,7 @@ async function bootstrap(): Promise<void> {
     startPremiumExpireJob();
     startWorkoutCardReminderJob();
     startPrivacyRetentionJob();
+    startPolarCancelRetryJob();
 
     void storageService.ensureMotivationAudioReady().then((result) => {
       // Production logger is WARN+ only — keep these visible on Render.

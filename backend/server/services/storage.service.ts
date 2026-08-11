@@ -7,6 +7,7 @@ import WebSocket from 'ws';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { publicApiBase } from '../utils/public-api-base.js';
+import { mediaAccessQuery } from '../utils/media-token.util.js';
 import { withRetry } from '../utils/with-retry.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -96,7 +97,7 @@ async function ensureAudioBucket(): Promise<void> {
       if (!exists) {
         // Keep create options minimal — strict MIME allowlists break on some Supabase projects.
         const created = await client.storage.createBucket(bucket, {
-          public: true,
+          public: false,
           fileSizeLimit: env.MOTIVATION_AUDIO_MAX_BYTES,
         });
         if (created.error && !/already exists/i.test(created.error.message)) {
@@ -109,7 +110,7 @@ async function ensureAudioBucket(): Promise<void> {
         }
       } else {
         // Best-effort public flag — do not fail boot if update is denied.
-        const updated = await client.storage.updateBucket(bucket, { public: true });
+        const updated = await client.storage.updateBucket(bucket, { public: false });
         if (updated.error && !/not allowed|forbidden|policy/i.test(updated.error.message)) {
           // Non-fatal for private buckets: API proxy still streams via service role.
         }
@@ -196,7 +197,38 @@ export function motivationAudioPublicUrl(storagePath: string): string {
     .filter(Boolean)
     .map(encodeURIComponent)
     .join('/');
-  return `${publicApiBase()}/media/motivation-audio/${encoded}`;
+  const base = `${publicApiBase()}/media/motivation-audio/${encoded}`;
+  return `${base}?${mediaAccessQuery('audio', storagePath)}`;
+}
+
+const AUDIO_MEDIA_MARKER = '/media/motivation-audio/';
+
+/** Re-sign a stored /media/motivation-audio URL so HMAC is not expired in DB rows. */
+export function refreshMotivationAudioMediaUrl(url: string): string {
+  const trimmed = url.trim();
+  const idx = trimmed.indexOf(AUDIO_MEDIA_MARKER);
+  if (idx < 0) return trimmed;
+  const after = trimmed.slice(idx + AUDIO_MEDIA_MARKER.length).split('?')[0] ?? '';
+  const storagePath = after
+    .split('/')
+    .filter(Boolean)
+    .map((part) => {
+      try {
+        return decodeURIComponent(part);
+      } catch {
+        return part;
+      }
+    })
+    .join('/');
+  if (!storagePath) return trimmed;
+  return motivationAudioPublicUrl(storagePath);
+}
+
+export function stripMotivationAudioMediaToken(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed.includes(AUDIO_MEDIA_MARKER)) return trimmed;
+  const q = trimmed.indexOf('?');
+  return q >= 0 ? trimmed.slice(0, q) : trimmed;
 }
 
 export function motivationCoverPublicUrl(storagePath: string): string {

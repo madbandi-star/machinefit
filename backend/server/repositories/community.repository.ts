@@ -1347,15 +1347,18 @@ export const communityRepository = {
       file_size_bytes: number | null;
       created_at: Date | string;
       has_blob: boolean;
+      is_hidden: boolean;
     }>(
-      `SELECT mime_type, file_size_bytes, created_at,
-              (${variant === 'thumb' ? 'thumbnail_data' : 'image_data'} IS NOT NULL) AS has_blob
-       FROM machine_request_images
-       WHERE id = $1`,
+      `SELECT i.mime_type, i.file_size_bytes, i.created_at,
+              (${variant === 'thumb' ? 'i.thumbnail_data' : 'i.image_data'} IS NOT NULL) AS has_blob,
+              COALESCE(mr.is_hidden, FALSE) AS is_hidden
+       FROM machine_request_images i
+       JOIN machine_requests mr ON mr.id = i.request_id
+       WHERE i.id = $1`,
       [imageId]
     );
     const row = result.rows[0];
-    if (!row?.has_blob) return null;
+    if (!row?.has_blob || row.is_hidden) return null;
     const stamp =
       row.created_at instanceof Date
         ? row.created_at.toISOString()
@@ -1379,14 +1382,17 @@ export const communityRepository = {
       mime_type: string;
       image_data: Buffer;
       thumbnail_data: Buffer;
+      is_hidden: boolean;
     }>(
-      `SELECT mime_type, image_data, thumbnail_data
-       FROM machine_request_images
-       WHERE id = $1`,
+      `SELECT i.mime_type, i.image_data, i.thumbnail_data,
+              COALESCE(mr.is_hidden, FALSE) AS is_hidden
+       FROM machine_request_images i
+       JOIN machine_requests mr ON mr.id = i.request_id
+       WHERE i.id = $1`,
       [imageId]
     );
     const row = result.rows[0];
-    if (!row) throw new AppError(404, 'NOT_FOUND', 'Image not found');
+    if (!row || row.is_hidden) throw new AppError(404, 'NOT_FOUND', 'Image not found');
     return {
       mimeType: row.mime_type,
       data: variant === 'thumb' ? row.thumbnail_data : row.image_data,

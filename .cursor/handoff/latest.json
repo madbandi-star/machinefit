@@ -1,15 +1,26 @@
 {
-  "title": "Move data management under Settings reset",
-  "summary": "데이터관리 is a Settings submenu below 설정값 초기화, removed from My Page 개인설정.",
+  "title": "Fix Polar paid mapping, refund lock, withdraw cancel, audio HMAC",
+  "summary": "Premium only on order.paid/cycled. Refund lock. Polar revoke retry on withdraw. Motivation audio HMAC + private bucket. Request images honor is_hidden. PITR drill docs.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx"
+    "backend/server/payments/polar/polar-event-map.ts",
+    "backend/server/payments/webhook-activate-policy.ts",
+    "backend/server/payments/providers/polar/polar.provider.ts",
+    "backend/server/services/billing.service.ts",
+    "backend/server/repositories/billing.repository.ts",
+    "backend/server/jobs/polar-cancel-retry.job.ts",
+    "backend/server/utils/media-token.util.ts",
+    "backend/server/services/storage.service.ts",
+    "backend/server/controllers/motivation-audio-media.controller.ts",
+    "backend/server/repositories/community.repository.ts",
+    "database/migrations/118_polar_cancel_retries.sql",
+    "docs/BACKUP_RESTORE.md",
+    "docs/POLAR_PREMIUM.md"
   ],
-  "testFocus": ["Settings page: reset then data management"],
-  "fastChecks": ["rg DATA_MANAGEMENT frontend/src/pages/settings/SettingsPage.tsx"],
-  "productionChecks": ["Pages: Settings after reset opens /settings/data"],
-  "deploy": { "expected": "Pages FE" },
-  "asIs": "데이터관리 on My Page",
-  "toBe": "데이터관리 under Settings reset"
+  "testFocus": ["Polar webhook mapping", "refund lock", "audio HMAC 401"],
+  "fastChecks": ["npx tsx backend/server/payments/polar/polar-event-map.test.ts"],
+  "productionChecks": ["Render migrate 118; Polar sandbox unpaid order does not grant Premium"],
+  "deploy": { "expected": "Pages FE + Render backend (migration 118)" },
+  "asIs": "order.created granted Premium; withdraw Polar cancel swallowed; open audio URLs",
+  "toBe": "paid events only; Polar revoke retry; HMAC audio"
 }

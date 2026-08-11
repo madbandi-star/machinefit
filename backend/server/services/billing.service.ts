@@ -30,6 +30,9 @@ import {
   listPaymentProviderMeta,
 } from '../payments/provider.factory.js';
 import type { WebhookEvent } from '../payments/provider.interface.js';
+import { decidePremiumActivation } from '../payments/webhook-activate-policy.js';
+import { notifyDrAlert } from '../ops/dr-alerts.js';
+import { userRepository } from '../repositories/user.repository.js';
 
 const PLAN_CODES: readonly string[] = ['FREE', 'PREMIUM', 'VIP'];
 const REFERRAL_REWARD_DAYS = 30;
@@ -537,24 +540,74 @@ export async function cancelSubscription(userId: string): Promise<SubscriptionSt
  * Best-effort cancel at withdraw. Never throws for "no subscription".
  * Stops Polar renewals so withdrawn accounts are not charged again.
  */
+function isRealPolarSubscriptionId(id: string | null | undefined): boolean {
+  if (!id?.trim()) return false;
+  if (id.startsWith('polar_pending_')) return false;
+  if (id.startsWith('admin_ext_')) return false;
+  return true;
+}
+
+function polarCancelAlreadyGone(err: unknown): boolean {
+  const msg = String(err).toLowerCase();
+  return (
+    msg.includes('404') ||
+    msg.includes('not found') ||
+    msg.includes('already canceled') ||
+    msg.includes('already cancelled') ||
+    msg.includes('revoked')
+  );
+}
+
+async function revokePolarSubscriptionNow(
+  userId: string,
+  providerSubscriptionId: string,
+  opts?: { enqueueOnFail?: boolean }
+): Promise<boolean> {
+  try {
+    const provider = getPaymentProvider('polar');
+    await provider.cancelSubscription(providerSubscriptionId, { atPeriodEnd: false });
+    await billingRepository.insertBillingLog({
+      userId,
+      eventType: 'subscription.cancel_on_withdraw',
+      payload: { providerSubId: providerSubscriptionId },
+    });
+    return true;
+  } catch (err) {
+    if (polarCancelAlreadyGone(err)) {
+      await billingRepository.insertBillingLog({
+        userId,
+        eventType: 'subscription.cancel_on_withdraw',
+        payload: { providerSubId: providerSubscriptionId, alreadyGone: true },
+      });
+      return true;
+    }
+    await billingRepository.insertBillingLog({
+      userId,
+      eventType: 'subscription.cancel_on_withdraw_failed',
+      payload: { error: String(err).slice(0, 300), providerSubId: providerSubscriptionId },
+    });
+    if (opts?.enqueueOnFail !== false) {
+      await billingRepository.enqueuePolarCancelRetry(userId, providerSubscriptionId, String(err));
+      await notifyDrAlert({
+        alertKey: 'polar_cancel_on_withdraw_failed',
+        severity: 'critical',
+        title: 'Polar cancel after withdraw failed',
+        message: `user=${userId} sub=${providerSubscriptionId}`,
+        meta: { userId, providerSubscriptionId },
+      });
+    }
+    return false;
+  }
+}
+
 export async function cancelSubscriptionOnWithdraw(userId: string): Promise<void> {
   const liveRaw = await billingRepository.getLiveSubscription(userId);
   if (!liveRaw) return;
   const live = await expireIfNeeded(liveRaw);
   if (!live) return;
 
-  try {
-    if (live.providerSubscriptionId && live.paymentProvider === 'polar') {
-      const provider = getPaymentProvider(live.paymentProvider);
-      // Stop renewals (Polar: cancel_at_period_end). Local entitlement ends immediately on withdraw.
-      await provider.cancelSubscription(live.providerSubscriptionId, { atPeriodEnd: true });
-    }
-  } catch (err) {
-    await billingRepository.insertBillingLog({
-      userId,
-      eventType: 'subscription.cancel_on_withdraw_failed',
-      payload: { error: String(err).slice(0, 300), providerSubId: live.providerSubscriptionId },
-    });
+  if (live.paymentProvider === 'polar' && isRealPolarSubscriptionId(live.providerSubscriptionId)) {
+    await revokePolarSubscriptionNow(userId, live.providerSubscriptionId as string);
   }
 
   const now = new Date();
@@ -1001,6 +1054,15 @@ export async function applyWebhookEvent(event: WebhookEvent): Promise<{ handled:
       event.type === 'subscription.renewed') &&
     userId
   ) {
+    const user = await userRepository.findById(userId);
+    const gate = await billingRepository.getUserBillingGate(userId);
+    const accountWithdrawn = Boolean(user && !user.isActive);
+    const decision = decidePremiumActivation({
+      eventType: event.type,
+      membershipStatus: gate?.subscriptionStatus,
+      accountWithdrawn,
+    });
+
     if (event.type === 'payment.succeeded' || event.type === 'subscription.renewed') {
       const orderId =
         event.orderId ??
@@ -1026,7 +1088,37 @@ export async function applyWebhookEvent(event: WebhookEvent): Promise<{ handled:
       }
     }
 
-    await activatePremiumFromWebhook(userId, event);
+    if (decision.activate) {
+      await activatePremiumFromWebhook(userId, event);
+    } else if (
+      event.type === 'subscription.updated' &&
+      !accountWithdrawn &&
+      gate?.subscriptionStatus !== 'refunded'
+    ) {
+      const live = await billingRepository.getLiveSubscription(userId);
+      if (live && event.currentPeriodEnd) {
+        await billingRepository.updateSubscription(live.id, {
+          expireAt: new Date(event.currentPeriodEnd),
+          cancelAt: event.cancelAtPeriodEnd ? new Date() : undefined,
+          clearCancelAt: !event.cancelAtPeriodEnd,
+        });
+        const updated = await billingRepository.getLatestSubscription(userId);
+        await pushMembershipCache(userId, updated, {
+          subscriptionStatus: event.cancelAtPeriodEnd ? 'cancelled' : 'active',
+        });
+      }
+      await billingRepository.insertBillingLog({
+        userId,
+        eventType: 'webhook.ignored_unpaid_activate',
+        payload: { type: event.type, reason: decision.reason },
+      });
+    } else {
+      await billingRepository.insertBillingLog({
+        userId,
+        eventType: 'webhook.skipped_activate',
+        payload: { type: event.type, reason: decision.reason },
+      });
+    }
     return { handled: true };
   }
 
@@ -1117,6 +1209,40 @@ export async function handleProviderWebhook(
   };
 }
 
+const POLAR_CANCEL_RETRY_MAX = 24;
+
+/** Retry Polar immediate cancel after withdraw. */
+export async function processPolarCancelRetries(): Promise<number> {
+  const due = await billingRepository.listDuePolarCancelRetries(20);
+  let done = 0;
+  for (const row of due) {
+    const ok = await revokePolarSubscriptionNow(row.userId, row.providerSubscriptionId, {
+      enqueueOnFail: false,
+    });
+    if (ok) {
+      await billingRepository.markPolarCancelRetryDone(row.id);
+      done += 1;
+      continue;
+    }
+    const attempts = row.attempts + 1;
+    if (attempts >= POLAR_CANCEL_RETRY_MAX) {
+      await notifyDrAlert({
+        alertKey: 'polar_cancel_retry_exhausted',
+        severity: 'critical',
+        title: 'Polar cancel retries exhausted',
+        message: `user=${row.userId} sub=${row.providerSubscriptionId}`,
+        meta: { userId: row.userId, providerSubscriptionId: row.providerSubscriptionId },
+      });
+    }
+    await billingRepository.bumpPolarCancelRetry(
+      row.id,
+      attempts,
+      `retry ${attempts}/${POLAR_CANCEL_RETRY_MAX}`
+    );
+  }
+  return done;
+}
+
 /** Daily scheduler: expire past-due Premium memberships. */
 export async function expireOverduePremiums(): Promise<number> {
   const rows = await billingRepository.listExpiredPremiumUsers(500);
@@ -1170,4 +1296,5 @@ export const billingService = {
   syncUserEntitlementPlan,
   handleProviderWebhook,
   expireOverduePremiums,
+  processPolarCancelRetries,
 };

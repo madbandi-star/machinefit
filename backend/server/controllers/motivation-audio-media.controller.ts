@@ -38,6 +38,9 @@ export async function serveMotivationAudio(req: Request, res: Response, next: Ne
       return;
     }
 
+    const { assertMediaAccess } = await import('../utils/media-token.util.js');
+    assertMediaAccess('audio', storagePath, req.query.mexp, req.query.msig);
+
     const file = await storageService.readMotivationAudio(storagePath);
     if (!file) {
       // Help diagnose missing Storage config / wiped ephemeral uploads.

@@ -151,7 +151,11 @@ Then add `@sentry/node` / `@sentry/react` and call `Sentry.captureException` fro
 
 ---
 
-## 8. Further improvements
+## 8. Postgres PITR drill
+
+See `docs/BACKUP_RESTORE.md` §11. Logical ZIP backups do not replace Supabase Point-in-Time Recovery. Enable PITR on the production project and restore into a **separate** project before attaching Render.
+
+## 9. Further improvements
 
 - Install `@sentry/node` + `@sentry/react` when DSN is live  
 - Redis-backed circuit breaker for multi-instance  
@@ -160,7 +164,7 @@ Then add `@sentry/node` / `@sentry/react` and call `Sentry.captureException` fro
 
 ---
 
-## 9. Files touched (high level)
+## 10. Files touched (high level)
 
 - `backend/server/lifecycle/*`, `middlewares/request-id|timeout|drain-guard`, `utils/logger|with-retry`
 - `backend/server/services/dr-health.service.ts`, `routes/probe.routes.ts`

@@ -148,3 +148,13 @@ Validated by `userBackupPayloadSchema` / `systemBackupPayloadSchema` in `@machin
 3. Confirm bucket `backup` exists (private).
 4. Set auto-backup hour/retention in Admin → Backup.
 5. Smoke: member backup/restore + admin system backup.
+
+## 11. Supabase PITR 복구 드릴 (유료 오픈 전)
+
+앱 ZIP 백업(`backup` private 버킷)은 논리 백업이다. 실수 DELETE / 마이그레이션 사고는 **Postgres PITR**이 필요하다.
+
+1. Supabase Dashboard → Project → Database → Backups → **Point in Time Recovery** On (Pro 이상).
+2. 복구 목표 시각(KST)과 대상 프로젝트를 적는다. 프로덕션에 덮어쓰지 말고 **복구 전용 프로젝트**로 restore.
+3. 복구 DB URL을 스테이징 Render에만 연결 → `/ready` 200, 로그인, 결제 status, 관리자 백업 history 확인.
+4. 통과 시각·담당자를 `docs` 또는 운영 위키에 남긴다. 분기마다 1회.
+5. 앱 `POST /admin/system-restore` (`confirmText=YES`)는 카탈로그/공지 논리 복구용이며 PITR 대체가 아니다.

@@ -751,4 +751,94 @@ export const billingRepository = {
     }));
     return { items, total };
   },
+
+  async getUserBillingGate(
+    userId: string
+  ): Promise<{ isActive: boolean; subscriptionStatus: string | null } | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const result = await pool.query<{ is_active: boolean; subscription_status: string | null }>(
+      `SELECT is_active, subscription_status FROM users WHERE id = $1`,
+      [userId]
+    );
+    const row = result.rows[0];
+    if (!row) return null;
+    return {
+      isActive: Boolean(row.is_active),
+      subscriptionStatus: row.subscription_status ? String(row.subscription_status) : null,
+    };
+  },
+
+  async enqueuePolarCancelRetry(
+    userId: string,
+    providerSubscriptionId: string,
+    lastError: string
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query(
+      `INSERT INTO polar_cancel_retries (
+         user_id, provider_subscription_id, attempts, last_error, next_attempt_at
+       ) VALUES ($1, $2, 0, $3, NOW() + INTERVAL '1 minute')
+       ON CONFLICT (provider_subscription_id) DO UPDATE SET
+         user_id = EXCLUDED.user_id,
+         last_error = EXCLUDED.last_error,
+         completed_at = NULL,
+         next_attempt_at = NOW() + INTERVAL '1 minute',
+         updated_at = NOW()`,
+      [userId, providerSubscriptionId, lastError.slice(0, 500)]
+    );
+  },
+
+  async listDuePolarCancelRetries(
+    limit = 20
+  ): Promise<Array<{ id: string; userId: string; providerSubscriptionId: string; attempts: number }>> {
+    const pool = getPool();
+    if (!pool) return [];
+    const result = await pool.query<{
+      id: string;
+      user_id: string;
+      provider_subscription_id: string;
+      attempts: number;
+    }>(
+      `SELECT id, user_id, provider_subscription_id, attempts
+       FROM polar_cancel_retries
+       WHERE completed_at IS NULL AND next_attempt_at <= NOW()
+       ORDER BY next_attempt_at ASC
+       LIMIT $1`,
+      [limit]
+    );
+    return result.rows.map((row) => ({
+      id: String(row.id),
+      userId: String(row.user_id),
+      providerSubscriptionId: String(row.provider_subscription_id),
+      attempts: Number(row.attempts ?? 0),
+    }));
+  },
+
+  async markPolarCancelRetryDone(id: string): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    await pool.query(
+      `UPDATE polar_cancel_retries
+       SET completed_at = NOW(), updated_at = NOW()
+       WHERE id = $1`,
+      [id]
+    );
+  },
+
+  async bumpPolarCancelRetry(id: string, attempts: number, lastError: string): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    const minutes = Math.min(360, Math.max(1, 2 ** Math.min(attempts, 8)));
+    await pool.query(
+      `UPDATE polar_cancel_retries
+       SET attempts = $2,
+           last_error = $3,
+           next_attempt_at = NOW() + ($4::int * INTERVAL '1 minute'),
+           updated_at = NOW()
+       WHERE id = $1`,
+      [id, attempts, lastError.slice(0, 500), minutes]
+    );
+  },
 };

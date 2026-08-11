@@ -1,15 +1,32 @@
-import type { ReplaceMotivationMediaInput } from '@machinefit/shared';
+import type { MotivationMediaItem, ReplaceMotivationMediaInput } from '@machinefit/shared';
 import { motivationMediaRepository } from '../repositories/motivation-media.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { extractYoutubeId } from '../utils/youtube.util.js';
+import {
+  refreshMotivationAudioMediaUrl,
+  stripMotivationAudioMediaToken,
+} from './storage.service.js';
+
+function withFreshAudioUrls(bundle: {
+  music: MotivationMediaItem[];
+  video: MotivationMediaItem[];
+}): { music: MotivationMediaItem[]; video: MotivationMediaItem[] } {
+  return {
+    music: bundle.music.map((item) => ({
+      ...item,
+      mediaUrl: refreshMotivationAudioMediaUrl(item.mediaUrl),
+    })),
+    video: bundle.video,
+  };
+}
 
 export const motivationMediaService = {
-  listPlaylist() {
-    return motivationMediaRepository.listPlaylist();
+  async listPlaylist() {
+    return withFreshAudioUrls(await motivationMediaRepository.listPlaylist());
   },
 
-  listAdmin() {
-    return motivationMediaRepository.listAdmin();
+  async listAdmin() {
+    return withFreshAudioUrls(await motivationMediaRepository.listAdmin());
   },
 
   async replace(input: ReplaceMotivationMediaInput) {
@@ -40,7 +57,21 @@ export const motivationMediaService = {
       }
     }
 
-    const items = await motivationMediaRepository.replaceType(input.mediaType, input.items);
-    return { mediaType: input.mediaType, items };
+    const persistItems =
+      input.mediaType === 'music'
+        ? input.items.map((slot) => ({
+            ...slot,
+            mediaUrl: stripMotivationAudioMediaToken(slot.mediaUrl),
+          }))
+        : input.items;
+    const items = await motivationMediaRepository.replaceType(input.mediaType, persistItems);
+    const signed =
+      input.mediaType === 'music'
+        ? items.map((item) => ({
+            ...item,
+            mediaUrl: refreshMotivationAudioMediaUrl(item.mediaUrl),
+          }))
+        : items;
+    return { mediaType: input.mediaType, items: signed };
   },
 };

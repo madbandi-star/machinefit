@@ -41,8 +41,10 @@ https://<your-api>.onrender.com/api/v1/webhook/polar
 3. Secret 복사 → `POLAR_WEBHOOK_SECRET` (`whsec_…` 권장)
 4. Subscribe at least:
 
-- `subscription.created` / `subscription.updated` / `subscription.canceled` / `subscription.revoked` / `subscription.cycled`
+- `subscription.canceled` / `subscription.revoked` / `subscription.cycled`
 - `order.paid` / `order.refunded` / `order.failed`
+
+`order.created` and generic `subscription.updated` are **not** treated as payment. Premium is granted only on `order.paid` or `subscription.cycled`/`renewed`. After `refunded`, only a new `order.paid` may restore Premium. Withdrawn accounts never reactivate.
 
 서명 검증: Standard Webhooks (`webhook-id` / `webhook-timestamp` / `webhook-signature`).  
 중복 이벤트는 `webhook_events` PK로 무시.

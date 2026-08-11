@@ -4,6 +4,7 @@
  * POLAR_PREMIUM_PRODUCT_ID (or plan_master.polar_product_id).
  */
 import { env } from '../../../config/env.js';
+import { mapPolarEventType } from '../../polar/polar-event-map.js';
 import { verifyPolarWebhookSignature } from '../../polar/webhook-signature.js';
 import type {
   CheckoutInput,
@@ -41,36 +42,6 @@ function pickAmountCents(data: PolarJson): number | undefined {
   const amount = data.amount ?? data.total_amount ?? data.net_amount;
   if (typeof amount === 'number') return Math.round(amount);
   return undefined;
-}
-
-function mapPolarEventType(type: string): WebhookEvent['type'] {
-  switch (type) {
-    case 'subscription.created':
-      return 'subscription.created';
-    case 'subscription.updated':
-    case 'subscription.active':
-    case 'subscription.uncanceled':
-    case 'subscription.resumed':
-      return 'subscription.updated';
-    case 'subscription.canceled':
-      return 'subscription.canceled';
-    case 'subscription.revoked':
-      return 'subscription.revoked';
-    case 'subscription.cycled':
-    case 'subscription.renewed':
-      return 'subscription.renewed';
-    case 'order.paid':
-    case 'order.created':
-      return 'payment.succeeded';
-    case 'order.refunded':
-    case 'refund.created':
-      return 'payment.refunded';
-    case 'order.failed':
-    case 'subscription.past_due':
-      return 'payment.failed';
-    default:
-      return 'unknown';
-  }
 }
 
 export class PolarPaymentProvider implements PaymentProvider {
@@ -197,9 +168,14 @@ export class PolarPaymentProvider implements PaymentProvider {
     opts?: { atPeriodEnd?: boolean }
   ): Promise<{ ok: boolean }> {
     const atPeriodEnd = opts?.atPeriodEnd !== false;
-    await this.request('PATCH', `/subscriptions/${providerSubscriptionId}`, {
-      cancel_at_period_end: atPeriodEnd,
-    });
+    if (atPeriodEnd) {
+      await this.request('PATCH', `/subscriptions/${providerSubscriptionId}`, {
+        cancel_at_period_end: true,
+      });
+      return { ok: true };
+    }
+    // Immediate revoke so withdrawn accounts are not billed again.
+    await this.request('DELETE', `/subscriptions/${providerSubscriptionId}`);
     return { ok: true };
   }
 
