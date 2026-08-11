@@ -16,27 +16,41 @@ export function useMuscleGroupImagesQuery() {
   });
 }
 
-export function useMuscleGroupImageMap(): Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>> {
-  const { data } = useMuscleGroupImagesQuery();
-  return useMemo(() => {
-    const map: Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>> = {};
+export function useMuscleGroupImageMap(): {
+  map: Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>>;
+  /** True once the catalog query has settled at least once (success or error). */
+  ready: boolean;
+} {
+  const { data, isPending } = useMuscleGroupImagesQuery();
+  const map = useMemo(() => {
+    const next: Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>> = {};
     for (const item of data ?? []) {
-      map[item.muscleGroup] = item;
+      next[item.muscleGroup] = item;
     }
-    return map;
+    return next;
   }, [data]);
+
+  // Avoid painting bundled seed PNGs before admin covers arrive (search-page flash).
+  // isPending = no cached data yet in React Query v5.
+  return { map, ready: !isPending };
 }
 
-/** Prefer admin-uploaded URL; fall back to bundled static PNG. */
+/**
+ * Prefer admin-uploaded URL.
+ * Bundled seed PNG is only used after the catalog is ready and that group has no remote asset —
+ * otherwise callers should show a neutral fallback while loading.
+ */
 export function resolveMuscleGroupDisplayUrl(
   group: string,
   remoteMap?: Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>>,
-  preferThumb = false
+  preferThumb = false,
+  options?: { allowSeedFallback?: boolean }
 ): string | undefined {
   const remote = remoteMap?.[group as MuscleGroupImageKey];
   const remoteUrl = preferThumb
     ? remote?.thumbnailUrl || remote?.imageUrl
     : remote?.imageUrl || remote?.thumbnailUrl;
   if (remoteUrl) return remoteUrl;
+  if (options?.allowSeedFallback === false) return undefined;
   return getMuscleGroupImage(group);
 }

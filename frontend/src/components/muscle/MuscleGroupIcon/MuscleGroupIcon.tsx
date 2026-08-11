@@ -1,4 +1,4 @@
-import { useState, type ImgHTMLAttributes } from 'react';
+import { useEffect, useState, type ImgHTMLAttributes } from 'react';
 import type { MuscleGroup } from '@/constants/muscle-groups';
 import {
   resolveMuscleGroupDisplayUrl,
@@ -41,10 +41,17 @@ export function MuscleGroupIcon({
   style,
   ...props
 }: MuscleGroupIconProps) {
-  const remoteMap = useMuscleGroupImageMap();
+  const { map: remoteMap, ready } = useMuscleGroupImageMap();
   const preferThumb = size <= 64;
-  const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb);
+  const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb, {
+    // Never flash bundled seed art while waiting for admin cover URLs.
+    allowSeedFallback: ready,
+  });
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
 
   if (!src || failed) {
     return (

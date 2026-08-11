@@ -9,7 +9,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { queryClient } from '@/app/providers/QueryProvider';
-import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
+import { brandApi, favoriteApi, historyApi, machineApi, muscleGroupImageApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
 import './BottomNavigation.css';
 
@@ -41,6 +41,12 @@ function prefetchForRoute(to: string, gymId: string | null, memberId: string | n
         const res = await machineApi.list({ limit: 100 });
         return res.data.data.items;
       },
+      staleTime: 5 * 60_000,
+    });
+    // Avoid seed→admin cover flash on FilterChips MuscleGroupIcon.
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.muscleGroupImages,
+      queryFn: async () => (await muscleGroupImageApi.list()).data.data.items,
       staleTime: 5 * 60_000,
     });
   }
