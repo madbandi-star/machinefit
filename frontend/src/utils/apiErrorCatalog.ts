@@ -24,6 +24,8 @@ const CODE_TO_KEY: Record<string, string> = {
   COUPON_USED: 'errors.validationError',
   CONTENT_POLICY_VIOLATION: 'errors.contentPolicyViolation',
   AGE_RESTRICTED: 'errors.ageRestricted',
+  USAGE_LIMIT: 'errors.usageLimit',
+  PLAN_LIMIT: 'errors.usageLimit',
 };
 
 export function translateApiErrorCode(code: string | undefined, t: TFunction): string | null {

@@ -1,7 +1,13 @@
-import type { AuthProviderCode } from '@machinefit/shared';
+import {
+  generateOAuthCsrfToken,
+  oauthCsrfMatches,
+  type AuthProviderCode,
+} from '@machinefit/shared';
 
 const KAKAO_OAUTH_INTENT_KEY = 'mf_kakao_oauth_intent';
 const KAKAO_OAUTH_REDIRECT_KEY = 'mf_kakao_oauth_redirect';
+const KAKAO_OAUTH_STATE_KEY = 'mf_kakao_oauth_state';
+const APPLE_OAUTH_NONCE_KEY = 'mf_apple_oauth_nonce';
 
 /** Prevents double exchange when AuthLanding remounts (layout chrome swap / StrictMode). */
 const consumedKakaoCodes = new Set<string>();
@@ -56,6 +62,7 @@ declare global {
           scope: string;
           redirectURI: string;
           usePopup: boolean;
+          nonce?: string;
         }) => void;
         signIn: () => Promise<{
           authorization?: { id_token?: string; code?: string };
@@ -74,6 +81,7 @@ export class OAuthClientError extends Error {
       | 'CANCELLED'
       | 'SCRIPT_LOAD_FAILED'
       | 'TOKEN_MISSING'
+      | 'STATE_MISMATCH'
       | 'UNKNOWN'
   ) {
     super(message);
@@ -87,6 +95,7 @@ export type OAuthCredentialPayload = {
   authorizationCode?: string;
   redirectUri?: string;
   displayName?: string;
+  nonce?: string;
 };
 
 export function isOAuthProviderConfigured(provider: AuthProviderCode): boolean {
@@ -128,17 +137,19 @@ export async function requestOAuthCredential(
   return requestAppleIdToken();
 }
 
+export type KakaoConsumeResult =
+  | { ok: true; code: string; redirectUri: string; intent: KakaoOAuthIntent }
+  | { ok: false; reason: 'none' | 'error' | 'state_mismatch' | 'replay' };
+
 /** Read ?code= after Kakao redirect; clears the query from the address bar. */
-export function consumeKakaoAuthorizationCode(): {
-  code: string;
-  redirectUri: string;
-  intent: KakaoOAuthIntent;
-} | null {
+export function consumeKakaoAuthorizationCode(): KakaoConsumeResult {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   const error = params.get('error');
+  const returnedState = params.get('state');
   const intentRaw = sessionStorage.getItem(KAKAO_OAUTH_INTENT_KEY);
   const redirectUri = sessionStorage.getItem(KAKAO_OAUTH_REDIRECT_KEY);
+  const expectedState = sessionStorage.getItem(KAKAO_OAUTH_STATE_KEY);
 
   const stripOauthParams = () => {
     params.delete('code');
@@ -149,36 +160,46 @@ export function consumeKakaoAuthorizationCode(): {
     window.history.replaceState({}, '', next);
   };
 
+  const clearStaging = () => {
+    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
+    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+    sessionStorage.removeItem(KAKAO_OAUTH_STATE_KEY);
+  };
+
   // Always scrub leftover OAuth query params — even without intent — so refresh/back
   // doesn't keep a sticky ?code= that remounts/handlers keep noticing.
   if (!intentRaw || !redirectUri) {
     if (code || error) stripOauthParams();
-    return null;
+    return { ok: false, reason: 'none' };
   }
 
   if (error) {
-    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
-    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+    clearStaging();
     stripOauthParams();
-    return null;
+    return { ok: false, reason: 'error' };
   }
 
-  if (!code) return null;
+  if (!code) return { ok: false, reason: 'none' };
+
+  if (!oauthCsrfMatches(expectedState, returnedState)) {
+    clearStaging();
+    stripOauthParams();
+    return { ok: false, reason: 'state_mismatch' };
+  }
 
   // Same authorization code must only be exchanged once (layout remounts / StrictMode).
   if (consumedKakaoCodes.has(code)) {
-    sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
-    sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+    clearStaging();
     stripOauthParams();
-    return null;
+    return { ok: false, reason: 'replay' };
   }
   consumedKakaoCodes.add(code);
 
-  sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
-  sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+  clearStaging();
   stripOauthParams();
 
   return {
+    ok: true,
     code,
     redirectUri,
     intent: intentRaw === 'connect' ? 'connect' : 'login',
@@ -189,6 +210,8 @@ export function consumeKakaoAuthorizationCode(): {
 export function clearKakaoOAuthStaging(): void {
   sessionStorage.removeItem(KAKAO_OAUTH_INTENT_KEY);
   sessionStorage.removeItem(KAKAO_OAUTH_REDIRECT_KEY);
+  sessionStorage.removeItem(KAKAO_OAUTH_STATE_KEY);
+  sessionStorage.removeItem(APPLE_OAUTH_NONCE_KEY);
 }
 
 async function ensureKakaoSdk(): Promise<void> {
@@ -214,13 +237,16 @@ async function requestKakaoAuthorize(intent: KakaoOAuthIntent): Promise<never> {
     intent === 'connect'
       ? getKakaoRedirectUri('/settings/linked-logins')
       : getKakaoRedirectUri('/');
+  const state = generateOAuthCsrfToken();
   sessionStorage.setItem(KAKAO_OAUTH_INTENT_KEY, intent);
   sessionStorage.setItem(KAKAO_OAUTH_REDIRECT_KEY, redirectUri);
+  sessionStorage.setItem(KAKAO_OAUTH_STATE_KEY, state);
 
   // Nickname only — email requires Biz app permission.
   window.Kakao.Auth.authorize({
     redirectUri,
     scope: 'profile_nickname',
+    state,
   });
 
   // Page navigates away; keep the promise pending.
@@ -255,7 +281,7 @@ async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
   });
 }
 
-async function requestAppleIdToken(): Promise<{ idToken: string }> {
+async function requestAppleIdToken(): Promise<{ idToken: string; nonce: string }> {
   const clientId = import.meta.env.VITE_APPLE_CLIENT_ID?.trim();
   if (!clientId) throw new OAuthClientError('Apple client id missing', 'NOT_CONFIGURED');
 
@@ -271,20 +297,26 @@ async function requestAppleIdToken(): Promise<{ idToken: string }> {
     throw new OAuthClientError('Apple SDK unavailable', 'SCRIPT_LOAD_FAILED');
   }
 
+  const nonce = generateOAuthCsrfToken();
+  sessionStorage.setItem(APPLE_OAUTH_NONCE_KEY, nonce);
+
   window.AppleID.auth.init({
     clientId,
     scope: 'name email',
     redirectURI,
     usePopup: true,
+    nonce,
   });
 
   try {
     const result = await window.AppleID.auth.signIn();
     const idToken = result.authorization?.id_token;
     if (!idToken) throw new OAuthClientError('Apple token missing', 'TOKEN_MISSING');
+    sessionStorage.removeItem(APPLE_OAUTH_NONCE_KEY);
     // Do not forward Apple name — MachineFit assigns a random username server-side.
-    return { idToken };
+    return { idToken, nonce };
   } catch (error) {
+    sessionStorage.removeItem(APPLE_OAUTH_NONCE_KEY);
     if (error instanceof OAuthClientError) throw error;
     throw new OAuthClientError('Apple login cancelled', 'CANCELLED');
   }

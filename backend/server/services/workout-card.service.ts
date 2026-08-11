@@ -28,7 +28,7 @@ import { workoutLogRepository } from '../repositories/workout-log.repository.js'
 import { historyRepository } from '../repositories/history.repository.js';
 import { workoutRecordOrderRepository } from '../repositories/workout-record-order.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
-import { trackUsageSafe } from './usage.service.js';
+import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { resolveWorkoutLoadContexts } from './workout-load.service.js';
@@ -182,6 +182,7 @@ export const workoutCardService = {
       input.gymId,
       input.memberId
     );
+    await assertUsageAllowed(userId, 'exercise_card_create');
     const { machineId, targetMuscleKey } = await resolveMachineAndMuscle(
       input.machineCode,
       input.targetMuscleGroup
@@ -286,6 +287,7 @@ export const workoutCardService = {
     }
 
     assertSafeUgc(input.diary);
+    await assertUsageAllowed(userId, 'exercise_card_update');
 
     const updated = await workoutCardRepository.update(
       userId,
@@ -892,6 +894,8 @@ export const workoutCardService = {
     }
 
     assertSafeUgc(input.name, ...items.map((item) => item.diary));
+    await assertUsageAllowed(userId, 'template_create');
+    await assertUsageAllowed(userId, 'template_save');
 
     const createdTemplate = await workoutCardRepository.createTemplate(userId, {
       gymId: input.gymId,
@@ -931,6 +935,7 @@ export const workoutCardService = {
     if (!template) {
       throw new AppError(404, 'NOT_FOUND', 'Template not found');
     }
+    await assertUsageAllowed(userId, 'template_use');
 
     const status = defaultStatusForDate(input.scheduledDate);
     const nowIso = new Date().toISOString();

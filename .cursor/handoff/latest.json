@@ -1,37 +1,31 @@
 {
-  "title": "Phase 1 under-14 signup gate (DOB + KST age)",
-  "summary": "OAuth complete requires birthDate; server computes 만 나이 in Asia/Seoul and refuses users INSERT if under 14. Age-only profile PATCH is rejected. Gym facility members under 14 unchanged.",
+  "title": "OAuth state/nonce + usage write gates",
+  "summary": "Kakao CSRF state and Apple OIDC nonce are enforced. Workout card/log/template mutations call assertUsageAllowed; production seeds still have limits_enforced=false so behavior is unchanged until ops turns enforcement on.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "shared/src/utils/age-from-birth-date.ts",
-    "shared/src/utils/age-from-birth-date.test.ts",
-    "shared/src/validators/auth.schema.ts",
-    "shared/src/validators/user.schema.ts",
-    "shared/src/constants/legal.ts",
-    "backend/server/services/age-verification.service.ts",
-    "backend/server/services/auth.service.ts",
-    "backend/server/services/user.service.ts",
-    "backend/server/repositories/user.repository.ts",
-    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/utils/oauthClient.ts",
+    "backend/server/utils/oauth-verify.util.ts",
+    "backend/server/services/usage.service.ts",
+    "backend/server/services/workout-card.service.ts",
+    "backend/server/services/workout-log.service.ts",
+    "backend/server/services/template-share.service.ts",
+    "shared/src/utils/oauth-csrf.ts",
+    "shared/src/validators/auth.schema.ts"
   ],
   "testFocus": [
-    "Signup DOB required; under-14 block / AGE_RESTRICTED no user INSERT",
-    "PATCH age without birthDate rejected",
-    "Privacy 2026-08-13 reconsent",
-    "Gym members under 14 still allowed"
+    "Kakao state mismatch does not complete login",
+    "Apple requires nonce",
+    "Usage gate no-op until limits_enforced"
   ],
   "fastChecks": [
-    "npx tsx shared/src/utils/age-from-birth-date.test.ts",
-    "npx tsx shared/src/validators/auth.schema.test.ts",
-    "npx tsx backend/server/services/age-verification.service.test.ts"
+    "npx tsx shared/src/utils/oauth-csrf.test.ts",
+    "npx tsx backend/server/services/usage-limit-decision.test.ts"
   ],
   "productionChecks": [
-    "Pages: terms signup DOB + under-14 copy",
-    "Render: POST /auth/oauth/complete without birthDate fails"
+    "Kakao login still works on Pages",
+    "Render: workout card create still succeeds with default policy"
   ],
-  "deploy": { "expected": "Push main; Pages FE; Render BE for auth gate" },
-  "asIs": "agreeAge14 checkbox created platform accounts",
-  "toBe": "Required DOB + server KST age; under-14 never INSERTs users"
+  "deploy": { "expected": "Push main; Pages FE; Render BE" },
+  "asIs": "No OAuth state/nonce; usage check unused by features",
+  "toBe": "Kakao state + Apple nonce; writes gated by usage policy"
 }

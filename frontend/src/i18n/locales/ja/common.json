@@ -182,7 +182,8 @@
     "emailExists": "このメールアドレスは既に登録されています。",
     "invalidCredentials": "メールまたはパスワードが正しくありません。",
     "tokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
-    "ageRestricted": "満14歳未満は登録できません。"
+    "ageRestricted": "満14歳未満は登録できません。",
+    "usageLimit": "利用上限に達しました。しばらくしてから再試行するか、プランを確認してください。"
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -335,6 +336,7 @@
     "socialNotConfigured": "Social login is not configured yet.",
     "socialCancelled": "Login was cancelled.",
     "socialFailed": "Social login failed. Please try again.",
+    "oauthStateMismatch": "ログイン要求の有効期限が切れたか無効です。もう一度お試しください。",
     "loginTitle": "ログイン",
     "registerTitle": "新規登録",
     "email": "メール",

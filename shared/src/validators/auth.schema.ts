@@ -23,6 +23,8 @@ export const oauthCredentialSchema = z
     accessToken: z.string().min(1).optional(),
     authorizationCode: z.string().min(1).optional(),
     redirectUri: z.string().url().optional(),
+    /** OIDC nonce for Apple (and Google idToken). Required by server for Apple. */
+    nonce: z.string().min(16).max(128).optional(),
     /**
      * @deprecated Ignored. Social profile names must not become MachineFit usernames.
      * Kept optional so older clients do not fail schema validation.

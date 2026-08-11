@@ -182,7 +182,8 @@
     "emailExists": "该邮箱已被注册。",
     "invalidCredentials": "邮箱或密码不正确。",
     "tokenExpired": "登录已过期，请重新登录。",
-    "ageRestricted": "未满14周岁无法注册。"
+    "ageRestricted": "未满14周岁无法注册。",
+    "usageLimit": "已达使用上限。请稍后再试或查看套餐。"
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -335,6 +336,7 @@
     "socialNotConfigured": "Social login is not configured yet.",
     "socialCancelled": "Login was cancelled.",
     "socialFailed": "Social login failed. Please try again.",
+    "oauthStateMismatch": "登录请求已过期或无效，请重试。",
     "loginTitle": "登录",
     "registerTitle": "注册",
     "email": "邮箱",

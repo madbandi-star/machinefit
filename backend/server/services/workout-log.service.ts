@@ -11,7 +11,7 @@ import { workoutCardRepository } from '../repositories/workout-card.repository.j
 import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
-import { trackUsageSafe } from './usage.service.js';
+import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { achievementService } from './achievement.service.js';
 import { growthTimelineService } from './growth-timeline.service.js';
@@ -104,6 +104,7 @@ export const workoutLogService = {
 
     const logDate = input.logDate ?? todayDateKey();
     assertSafeUgc(input.diary);
+    await assertUsageAllowed(userId, 'exercise_record_save');
 
     const previous = await workoutLogRepository.findByUserMachineDate(
       userId,

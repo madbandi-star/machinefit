@@ -86,6 +86,10 @@ export function useSocialAuthLogin() {
       showToast(t('auth.socialCancelled'), 'info');
       return;
     }
+    if (error.code === 'STATE_MISMATCH') {
+      showToast(t('auth.oauthStateMismatch'), 'error');
+      return;
+    }
     showToast(t('auth.socialFailed'), 'error');
   };
 
@@ -93,7 +97,14 @@ export function useSocialAuthLogin() {
     // Scrub orphan Kakao params even when this mount is not the code consumer.
     if (kakaoCodeHandled.current) return;
     const pending = consumeKakaoAuthorizationCode();
-    if (!pending || pending.intent !== 'login') return;
+    if (!pending.ok) {
+      if (pending.reason === 'state_mismatch') {
+        kakaoCodeHandled.current = true;
+        showToast(t('auth.oauthStateMismatch'), 'error');
+      }
+      return;
+    }
+    if (pending.intent !== 'login') return;
     kakaoCodeHandled.current = true;
     void handleOAuth('kakao', {
       authorizationCode: pending.code,

@@ -59,7 +59,14 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
   useEffect(() => {
     if (kakaoConnectHandled.current) return;
     const pending = consumeKakaoAuthorizationCode();
-    if (!pending || pending.intent !== 'connect') return;
+    if (!pending.ok) {
+      if (pending.reason === 'state_mismatch') {
+        kakaoConnectHandled.current = true;
+        showToast(t('auth.oauthStateMismatch'), 'error');
+      }
+      return;
+    }
+    if (pending.intent !== 'connect') return;
     kakaoConnectHandled.current = true;
     setBusyProvider('kakao');
     void authApi
@@ -248,8 +255,13 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
 
 function oauthClientErrorKey(
   code: OAuthClientError['code']
-): 'auth.socialNotConfigured' | 'auth.socialCancelled' | 'auth.socialFailed' {
+):
+  | 'auth.socialNotConfigured'
+  | 'auth.socialCancelled'
+  | 'auth.oauthStateMismatch'
+  | 'auth.socialFailed' {
   if (code === 'NOT_CONFIGURED') return 'auth.socialNotConfigured';
   if (code === 'CANCELLED') return 'auth.socialCancelled';
+  if (code === 'STATE_MISMATCH') return 'auth.oauthStateMismatch';
   return 'auth.socialFailed';
 }

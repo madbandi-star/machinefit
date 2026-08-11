@@ -1,28 +1,22 @@
-﻿# Test handoff — Phase 1 under-14 signup gate (birth date + KST age)
+﻿# Test handoff — OAuth CSRF + usage write gates
 
 ## Summary
-OAuth complete now requires `birthDate`. The server computes 만 나이 in `Asia/Seoul` and does not INSERT a `users` row if under 14. `agreeAge14` alone is not enough. Profile PATCH cannot set `age` without `birthDate`. Gym facility members under 14 are unchanged.
+Kakao authorize now sends and checks `state`. Apple ID tokens require a client `nonce` verified by jose. Workout card/log/template writes call `assertUsageAllowed` (no-op while `limits_enforced=false`).
 
 ## Test focus
-1. New signup: terms page requires DOB; under-14 shows block UI and does not call complete (or 403 `AGE_RESTRICTED` if forced)
-2. POST `/auth/oauth/complete` without `birthDate` → validation error; with under-14 DOB + `agreeAge14: true` → 403, no user row
-3. Rejoin uses the same complete endpoint / DOB gate
-4. PATCH `/users/me` `{ "age": 20 }` without birthDate → 400
-5. Privacy 2026-08-13: s1 signup DOB required; s6 server KST age; reconsent for older privacy versions
-6. Gym member create with under-14 birthDate still allowed
+1. Kakao login: return URL with wrong `?state=` must not exchange the code; toast `oauthStateMismatch`
+2. Apple login (when enabled): missing/wrong nonce → 400 `OAUTH_NONCE_REQUIRED` / invalid token
+3. With default DB policy (`limits_enforced=false`): create workout card still 201
+4. If ops turns enforcement on and free_daily_limit=0: POST workout-card → 402 `USAGE_LIMIT`; photo board still works for MEMBER
+5. Gym/member add still uses `PLAN_LIMIT`, not usage
 
 ## as-is → to-be
-- as-is: checkbox `agreeAge14` created the account
-- to-be: required DOB + server KST full years; under-14 never creates a platform user
+- as-is: Kakao state unused; Apple no nonce; usage check was advisory-only
+- to-be: Kakao state bind; Apple nonce; write APIs gated by admin usage policy
 
 ## Fast checks
 ```
-npx tsx shared/src/utils/age-from-birth-date.test.ts
+npx tsx shared/src/utils/oauth-csrf.test.ts
 npx tsx shared/src/validators/auth.schema.test.ts
-npx tsx backend/server/services/age-verification.service.test.ts
-rg -n "assertPlatformAgeEligible|AGE_RESTRICTED|signupBirthDate" backend shared frontend/src
+npx tsx backend/server/services/usage-limit-decision.test.ts
 ```
-
-## Production checks (after Pages + Render)
-- Social signup flow: DOB field, under-14 block copy
-- Existing users with privacyVersion 2026-08-12 prompted to re-accept (2026-08-13)

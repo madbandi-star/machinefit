@@ -187,7 +187,8 @@
     "emailExists": "This email is already registered.",
     "invalidCredentials": "Please check your email or password and try again.",
     "tokenExpired": "Your session expired. Please sign in again.",
-    "ageRestricted": "You must be 14 or older to create an account."
+    "ageRestricted": "You must be 14 or older to create an account.",
+    "usageLimit": "You've reached a usage limit. Try again later or check your plan."
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -351,6 +352,7 @@
     "socialNotConfigured": "Social login is not configured yet.",
     "socialCancelled": "Login was cancelled.",
     "socialFailed": "Social login failed. Please try again.",
+    "oauthStateMismatch": "That sign-in request expired or was invalid. Please try again.",
     "socialComingSoon": "{{provider}} Sign In (Coming soon)",
     "agreeAge14": "The birth date I entered is mine, and I am 14 or older",
     "agreeAge14Required": "You must be 14 or older to join",

@@ -20,7 +20,7 @@ import { AppError } from '../middlewares/error.middleware.js';
 import { templateShareRepository } from '../repositories/template-share.repository.js';
 import { workoutCardRepository } from '../repositories/workout-card.repository.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
-import { trackUsageSafe } from './usage.service.js';
+import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
 
 function assertShareableTemplate(template: {
   userId: string;
@@ -85,6 +85,7 @@ export const templateShareService = {
     if (!template.payload.length) {
       throw new AppError(400, 'EMPTY_TEMPLATE', 'Template has no items to share');
     }
+    await assertUsageAllowed(userId, 'template_create');
 
     return templateShareRepository.publish(userId, input, {
       payload: template.payload,
@@ -109,6 +110,8 @@ export const templateShareService = {
   },
 
   async download(postId: string, userId: string): Promise<TemplateShareDownloadResult> {
+    await assertUsageAllowed(userId, 'template_download');
+    await assertUsageAllowed(userId, 'template_save');
     const result = await templateShareRepository.download(postId, userId);
     trackUsageSafe(userId, 'template_download');
     trackUsageSafe(userId, 'template_save');

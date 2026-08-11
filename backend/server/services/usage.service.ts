@@ -12,11 +12,16 @@ import { userRepository } from '../repositories/user.repository.js';
 import { billingService } from './billing.service.js';
 import { decideUsageLimit } from './usage-limit-decision.js';
 import { logger } from '../utils/logger.js';
+import { AppError } from '../middlewares/error.middleware.js';
 
-/**
- * Fire-and-forget usage increment. Never throws to callers.
- * Does not alter feature business logic.
- */
+/** Codes that must not lock users out even if a policy is enforced. */
+const USAGE_GATE_EXCLUDED = new Set(['login']);
+
+export async function assertUsageAllowed(userId: string, featureCode: string): Promise<void> {
+  await usageService.assertUsageAllowed(userId, featureCode);
+}
+
+/** Fire-and-forget usage increment. Never throws to callers. */
 export function trackUsageSafe(
   userId: string | null | undefined,
   featureCode: string,
@@ -57,9 +62,8 @@ export const usageService = {
   },
 
   /**
-   * Policy check for future enforcement. Current seeds keep limitsEnforced=false
-   * so this always allows unless an admin turns enforcement ON.
-   * Feature handlers do NOT call this yet — wire later when monetization starts.
+   * Policy check. Seeds keep limitsEnforced=false so this allows until ops
+   * turns enforcement ON and sets numeric limits.
    */
   async checkUsageLimit(
     userId: string,
@@ -117,5 +121,22 @@ export const usageService = {
       reason: decision.reason,
       limitsEnforced: policy.limitsEnforced,
     };
+  },
+
+  /**
+   * Block a mutating feature when admin enforcement is on and the user is over quota.
+   * No-op while limitsEnforced=false (current production seed).
+   */
+  async assertUsageAllowed(userId: string, featureCode: string): Promise<void> {
+    if (!userId || USAGE_GATE_EXCLUDED.has(featureCode)) return;
+    const result = await this.checkUsageLimit(userId, featureCode);
+    if (result.allowed) return;
+    throw new AppError(402, 'USAGE_LIMIT', 'Usage limit exceeded', {
+      featureCode: result.featureCode,
+      reason: result.reason,
+      remainingDaily: result.remainingDaily,
+      remainingMonthly: result.remainingMonthly,
+      planTier: result.planTier,
+    });
   },
 };

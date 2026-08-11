@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import assert from 'node:assert/strict';
 import { decideUsageLimit } from './usage-limit-decision.js';
 
 const base = {
@@ -64,6 +65,41 @@ const base = {
   });
   assert.equal(r.allowed, true);
   assert.equal(r.reason, 'LIMITS_NOT_ENFORCED');
+}
+
+{
+  const r = decideUsageLimit({
+    ...base,
+    limitsEnforced: true,
+    freeMonthlyLimit: 10,
+    monthlyUsage: 10,
+  });
+  assert.equal(r.allowed, false);
+  assert.equal(r.reason, 'MONTHLY_LIMIT_EXCEEDED');
+}
+
+{
+  const r = decideUsageLimit({
+    ...base,
+    planTier: 'PREMIUM',
+    limitsEnforced: true,
+    premiumDailyLimit: 100,
+    dailyUsage: 3,
+  });
+  assert.equal(r.allowed, true);
+  assert.equal(r.remainingDaily, 97);
+}
+
+{
+  const r = decideUsageLimit({
+    ...base,
+    isActive: false,
+    limitsEnforced: true,
+    freeDailyLimit: 1,
+    dailyUsage: 99,
+  });
+  assert.equal(r.allowed, true);
+  assert.equal(r.reason, 'FEATURE_DISABLED');
 }
 
 console.log('usage-limit-decision ok');

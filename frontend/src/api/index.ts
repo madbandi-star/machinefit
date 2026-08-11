@@ -83,6 +83,7 @@ export const authApi = {
       accessToken?: string;
       authorizationCode?: string;
       redirectUri?: string;
+      nonce?: string;
       displayName?: string;
     }
   ) => apiClient.post(`/auth/${provider}`, credential),
@@ -119,6 +120,7 @@ export const authApi = {
       accessToken?: string;
       authorizationCode?: string;
       redirectUri?: string;
+      nonce?: string;
       displayName?: string;
     }
   ) =>

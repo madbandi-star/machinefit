@@ -14,7 +14,10 @@ export interface VerifiedOAuthIdentity {
 const googleJwks = createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'));
 const appleJwks = createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'));
 
-async function verifyGoogleIdToken(idToken: string): Promise<VerifiedOAuthIdentity> {
+async function verifyGoogleIdToken(
+  idToken: string,
+  nonce?: string
+): Promise<VerifiedOAuthIdentity> {
   const clientId = env.GOOGLE_CLIENT_ID;
   if (!clientId) {
     throw new AppError(503, 'OAUTH_NOT_CONFIGURED', 'Google login is not configured');
@@ -23,6 +26,7 @@ async function verifyGoogleIdToken(idToken: string): Promise<VerifiedOAuthIdenti
     const { payload } = await jwtVerify(idToken, googleJwks, {
       issuer: ['https://accounts.google.com', 'accounts.google.com'],
       audience: clientId,
+      ...(nonce ? { nonce } : {}),
     });
     const sub = typeof payload.sub === 'string' ? payload.sub : null;
     if (!sub) {
@@ -71,15 +75,19 @@ async function verifyGoogleAccessToken(accessToken: string): Promise<VerifiedOAu
   };
 }
 
-async function verifyAppleIdToken(idToken: string): Promise<VerifiedOAuthIdentity> {
+async function verifyAppleIdToken(idToken: string, nonce?: string): Promise<VerifiedOAuthIdentity> {
   const clientId = env.APPLE_CLIENT_ID;
   if (!clientId) {
     throw new AppError(503, 'OAUTH_NOT_CONFIGURED', 'Apple login is not configured');
+  }
+  if (!nonce) {
+    throw new AppError(400, 'OAUTH_NONCE_REQUIRED', 'Apple login requires nonce');
   }
   try {
     const { payload } = await jwtVerify(idToken, appleJwks, {
       issuer: 'https://appleid.apple.com',
       audience: clientId,
+      nonce,
     });
     const sub = typeof payload.sub === 'string' ? payload.sub : null;
     if (!sub) {
@@ -187,10 +195,11 @@ export async function verifyOAuthCredential(
     accessToken?: string;
     authorizationCode?: string;
     redirectUri?: string;
+    nonce?: string;
   }
 ): Promise<VerifiedOAuthIdentity> {
   if (provider === 'google') {
-    if (input.idToken) return verifyGoogleIdToken(input.idToken);
+    if (input.idToken) return verifyGoogleIdToken(input.idToken, input.nonce);
     if (input.accessToken) return verifyGoogleAccessToken(input.accessToken);
     throw new AppError(400, 'OAUTH_TOKEN_REQUIRED', 'Google login requires idToken or accessToken');
   }
@@ -198,7 +207,7 @@ export async function verifyOAuthCredential(
     if (!input.idToken) {
       throw new AppError(400, 'OAUTH_TOKEN_REQUIRED', 'Apple login requires idToken');
     }
-    return verifyAppleIdToken(input.idToken);
+    return verifyAppleIdToken(input.idToken, input.nonce);
   }
   let accessToken = input.accessToken;
   if (!accessToken && input.authorizationCode) {

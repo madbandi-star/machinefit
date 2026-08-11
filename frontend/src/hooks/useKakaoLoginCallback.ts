@@ -33,7 +33,7 @@ export function useKakaoLoginCallback() {
   useEffect(() => {
     if (handled.current) return;
     const pending = consumeKakaoAuthorizationCode();
-    if (!pending || pending.intent !== 'login') return;
+    if (!pending.ok || pending.intent !== 'login') return;
     handled.current = true;
 
     void authApi
