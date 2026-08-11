@@ -61,106 +61,123 @@ export function TemplateShareHubPage() {
 
   return (
     <PageShell title={t('templateShare.title')} subtitle={t('templateShare.subtitle')}>
-      <form className="tpl-share-search" onSubmit={onSearch}>
-        <input
-          className="input"
-          value={draftQ}
-          onChange={(e) => setDraftQ(e.target.value)}
-          placeholder={t('templateShare.searchPlaceholder')}
-          aria-label={t('templateShare.searchPlaceholder')}
-        />
-        <button type="submit" className="btn btn--primary">
-          {t('templateShare.search')}
-        </button>
-      </form>
+      <div className="tpl-share-page">
+        <div className="tpl-share-controls">
+          <form className="tpl-share-search" onSubmit={onSearch}>
+            <input
+              className="input"
+              value={draftQ}
+              onChange={(e) => setDraftQ(e.target.value)}
+              placeholder={t('templateShare.searchPlaceholder')}
+              aria-label={t('templateShare.searchPlaceholder')}
+            />
+            <button type="submit" className="btn btn--primary">
+              {t('templateShare.search')}
+            </button>
+          </form>
 
-      <div className="tpl-share-filters" role="tablist" aria-label={t('templateShare.sortLabel')}>
-        {SORTS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            role="tab"
-            aria-selected={sort === key}
-            className={['tpl-share-filters__chip', sort === key && 'is-active']
-              .filter(Boolean)
-              .join(' ')}
-            onClick={() => setSort(key)}
-          >
-            {t(`templateShare.sort.${key}`)}
-          </button>
-        ))}
-      </div>
+          <div className="tpl-share-filters" role="tablist" aria-label={t('templateShare.sortLabel')}>
+            {SORTS.map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={sort === key}
+                className={['tpl-share-filters__chip', sort === key && 'is-active']
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={() => setSort(key)}
+              >
+                {t(`templateShare.sort.${key}`)}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {listQuery.isLoading ? <Skeleton count={4} height={140} /> : null}
-      {listQuery.isError ? (
-        <QueryErrorMessage
-          message={
-            isTemplateShareApiMissing(listQuery.error)
-              ? t('templateShare.apiUnavailable')
-              : undefined
-          }
-          onRetry={() => void listQuery.refetch()}
-        />
-      ) : null}
-
-      {!listQuery.isLoading && !listQuery.isError ? (
-        <>
-          {(listQuery.data?.items.length ?? 0) === 0 ? (
-            <p className="empty-state">{t('templateShare.empty')}</p>
-          ) : (
-            <div className="tpl-share-grid">
-              {listQuery.data!.items.map((item) => (
-                <Link
-                  key={item.id}
-                  to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(':postId', item.id)}
-                  className="tpl-share-card"
-                >
-                  <div className="tpl-share-card__media">
-                    {item.thumbnailUrl ? (
-                      <img src={item.thumbnailUrl} alt="" loading="lazy" />
-                    ) : (
-                      <span className="tpl-share-card__placeholder">
-                        {t('templateShare.noThumb')}
-                      </span>
-                    )}
-                    {item.badges?.length ? (
-                      <div className="tpl-share-card__badges">
-                        {item.badges.map((b) => (
-                          <span key={b.key} className="tpl-share-badge">
-                            {b.label}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="tpl-share-card__body">
-                    <h3 className="tpl-share-card__title">{item.title}</h3>
-                    <p className="tpl-share-card__author">👤 {item.authorName}</p>
-                    <div className="tpl-share-card__stats">
-                      <span>❤️ {item.likeCount}</span>
-                      <span>📥 {item.downloadCount}</span>
-                      <span>🏋️ {item.useCount}</span>
-                      <span>💬 {item.commentCount}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-          <Pagination
-            page={page}
-            totalPages={Math.max(
-              1,
-              Math.ceil((listQuery.data?.total ?? 0) / (listQuery.data?.pageSize ?? 12))
-            )}
-            onPageChange={(next) => {
-              const sp = new URLSearchParams(params);
-              sp.set('page', String(next));
-              setParams(sp);
-            }}
+        {listQuery.isLoading ? <Skeleton count={4} height={78} /> : null}
+        {listQuery.isError ? (
+          <QueryErrorMessage
+            message={
+              isTemplateShareApiMissing(listQuery.error)
+                ? t('templateShare.apiUnavailable')
+                : undefined
+            }
+            onRetry={() => void listQuery.refetch()}
           />
-        </>
-      ) : null}
+        ) : null}
+
+        {!listQuery.isLoading && !listQuery.isError ? (
+          <>
+            {(listQuery.data?.items.length ?? 0) === 0 ? (
+              <p className="tpl-share-empty">{t('templateShare.empty')}</p>
+            ) : (
+              <div className="tpl-share-list">
+                {listQuery.data!.items.map((item) => {
+                  const badge = item.badges?.[0];
+                  return (
+                    <Link
+                      key={item.id}
+                      to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(':postId', item.id)}
+                      className="tpl-share-row"
+                    >
+                      <div className="tpl-share-row__thumb" aria-hidden>
+                        {item.thumbnailUrl ? (
+                          <img src={item.thumbnailUrl} alt="" loading="lazy" />
+                        ) : (
+                          <span className="tpl-share-row__thumb-fallback">
+                            {t(`templateShare.category.${item.category}`)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="tpl-share-row__body">
+                        <h3 className="tpl-share-row__title">
+                          {badge ? (
+                            <span className="tpl-share-row__badge">{badge.label}</span>
+                          ) : null}
+                          {item.title}
+                        </h3>
+                        <p className="tpl-share-row__meta">
+                          {item.authorName}
+                          {' · '}
+                          {t(`templateShare.difficulty.${item.difficulty}`)}
+                          {' · '}
+                          {t('templateShare.exerciseCount', { count: item.itemCount })}
+                        </p>
+                        <div className="tpl-share-row__stats">
+                          <span>
+                            {t('templateShare.statLikes')} {item.likeCount}
+                          </span>
+                          <span>
+                            {t('templateShare.statDownloads')} {item.downloadCount}
+                          </span>
+                          <span>
+                            {t('templateShare.statUses')} {item.useCount}
+                          </span>
+                          <span>
+                            {t('templateShare.statComments')} {item.commentCount}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+            <Pagination
+              page={page}
+              totalPages={Math.max(
+                1,
+                Math.ceil((listQuery.data?.total ?? 0) / (listQuery.data?.pageSize ?? 12))
+              )}
+              onPageChange={(next) => {
+                const sp = new URLSearchParams(params);
+                sp.set('page', String(next));
+                setParams(sp);
+              }}
+            />
+          </>
+        ) : null}
+      </div>
     </PageShell>
   );
 }

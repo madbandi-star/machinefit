@@ -109,7 +109,9 @@ export function TemplateShareDetailPage() {
   if (detailQuery.isLoading) {
     return (
       <PageShell title={t('templateShare.title')}>
-        <Skeleton count={4} height={88} />
+        <div className="tpl-share-page">
+          <Skeleton count={4} height={88} />
+        </div>
       </PageShell>
     );
   }
@@ -117,7 +119,9 @@ export function TemplateShareDetailPage() {
   if (detailQuery.isError || !post) {
     return (
       <PageShell title={t('templateShare.title')}>
-        <QueryErrorMessage onRetry={() => void detailQuery.refetch()} />
+        <div className="tpl-share-page">
+          <QueryErrorMessage onRetry={() => void detailQuery.refetch()} />
+        </div>
       </PageShell>
     );
   }
@@ -129,147 +133,174 @@ export function TemplateShareDetailPage() {
   };
 
   return (
-    <PageShell title={post.title} subtitle={`${t('templateShare.author')}: ${post.authorName}`}>
-      {post.thumbnailUrl ? (
-        <div className="tpl-share-card__media" style={{ borderRadius: '0.75rem', marginBottom: '1rem' }}>
-          <img src={post.thumbnailUrl} alt="" />
+    <PageShell
+      title={post.title}
+      subtitle={`${t('templateShare.author')}: ${post.authorName}`}
+    >
+      <div className="tpl-share-page tpl-share-detail">
+        {post.thumbnailUrl ? (
+          <div className="tpl-share-detail__hero">
+            <img src={post.thumbnailUrl} alt="" />
+          </div>
+        ) : null}
+
+        <div className="tpl-share-detail__meta">
+          <span className="tpl-share-detail__chip">
+            {t(`templateShare.difficulty.${post.difficulty}`)}
+          </span>
+          <span className="tpl-share-detail__chip">
+            {t(`templateShare.category.${post.category}`)}
+          </span>
+          {post.tags.map((tag) => (
+            <span key={tag} className="tpl-share-detail__chip">
+              #{tag}
+            </span>
+          ))}
         </div>
-      ) : null}
 
-      <div className="tpl-share-detail__stats">
-        <span>❤️ {post.likeCount}</span>
-        <span>📥 {post.downloadCount}</span>
-        <span>🏋️ {post.useCount}</span>
-        <span>👁 {post.viewCount}</span>
-        <span>💬 {post.commentCount}</span>
-      </div>
+        <div className="tpl-share-detail__stats">
+          <span>
+            {t('templateShare.statLikes')} {post.likeCount}
+          </span>
+          <span>
+            {t('templateShare.statDownloads')} {post.downloadCount}
+          </span>
+          <span>
+            {t('templateShare.statUses')} {post.useCount}
+          </span>
+          <span>
+            {t('templateShare.statViews')} {post.viewCount}
+          </span>
+          <span>
+            {t('templateShare.statComments')} {post.commentCount}
+          </span>
+        </div>
 
-      {post.description ? <p style={{ whiteSpace: 'pre-wrap' }}>{post.description}</p> : null}
+        {post.description ? <p className="tpl-share-detail__desc">{post.description}</p> : null}
 
-      <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-        {t(`templateShare.difficulty.${post.difficulty}`)} · {t(`templateShare.category.${post.category}`)}
-        {post.tags.length ? ` · ${post.tags.map((tag) => `#${tag}`).join(' ')}` : ''}
-      </p>
+        <h3 className="tpl-share-detail__section-title">{t('templateShare.workoutList')}</h3>
+        <ol className="tpl-share-items">
+          {post.items.map((item, idx) => (
+            <li key={`${item.machineCode}-${idx}`}>
+              <span className="tpl-share-items__name">
+                {idx + 1}. {item.machineCode}
+              </span>
+              <div className="tpl-share-items__sub">
+                {item.setCount}
+                {t('templateShare.sets')} · {item.setWeightsKg.join('/')}kg
+                {item.restSeconds != null
+                  ? ` · ${t('templateShare.restSeconds', { n: item.restSeconds })}`
+                  : ''}
+                {item.voicePrefs ? ` · ${t('templateShare.hasVoice')}` : ''}
+              </div>
+            </li>
+          ))}
+        </ol>
 
-      <h3>{t('templateShare.workoutList')}</h3>
-      <ol className="tpl-share-items">
-        {post.items.map((item, idx) => (
-          <li key={`${item.machineCode}-${idx}`}>
-            <strong>
-              {idx + 1}. {item.machineCode}
-            </strong>
-            <div>
-              {item.setCount}
-              {t('templateShare.sets')} · {item.setWeightsKg.join('/')}kg
-              {item.restSeconds != null ? ` · rest ${item.restSeconds}s` : ''}
-              {item.voicePrefs ? ` · ${t('templateShare.hasVoice')}` : ''}
-            </div>
-          </li>
-        ))}
-      </ol>
-
-      <div className="tpl-share-detail__actions">
-        <button
-          type="button"
-          className="btn btn--primary"
-          disabled={!isAuthenticated || !post.canDownload || downloadMutation.isPending}
-          onClick={() => downloadMutation.mutate()}
-        >
-          {post.downloadedByMe ? t('templateShare.downloadedAlready') : t('templateShare.download')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={!isAuthenticated || likeMutation.isPending}
-          onClick={() => likeMutation.mutate()}
-        >
-          {post.likedByMe ? t('templateShare.unlike') : t('templateShare.like')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={!isAuthenticated || favMutation.isPending}
-          onClick={() => favMutation.mutate()}
-        >
-          {post.favoritedByMe ? t('templateShare.unfavorite') : t('templateShare.favorite')}
-        </button>
-        <button type="button" className="btn btn--ghost" onClick={shareUrl}>
-          {t('templateShare.copyLink')}
-        </button>
-      </div>
-
-      {isAuthenticated ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-          <select
-            className="input"
-            value={reportReason}
-            onChange={(e) => setReportReason(e.target.value as TemplateShareReportReason)}
-            aria-label={t('templateShare.report')}
-          >
-            {TEMPLATE_SHARE_REPORT_REASONS.map((reason) => (
-              <option key={reason} value={reason}>
-                {t(`templateShare.reportReasons.${reason}`)}
-              </option>
-            ))}
-          </select>
+        <div className="tpl-share-detail__actions">
           <button
             type="button"
-            className="btn btn--ghost"
-            disabled={reportMutation.isPending}
-            onClick={() => {
-              if (window.confirm(t('templateShare.reportConfirm'))) reportMutation.mutate();
-            }}
+            className="btn btn--primary"
+            disabled={!isAuthenticated || !post.canDownload || downloadMutation.isPending}
+            onClick={() => downloadMutation.mutate()}
           >
-            {t('templateShare.report')}
+            {post.downloadedByMe
+              ? t('templateShare.downloadedAlready')
+              : t('templateShare.download')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--secondary"
+            disabled={!isAuthenticated || likeMutation.isPending}
+            onClick={() => likeMutation.mutate()}
+          >
+            {post.likedByMe ? t('templateShare.unlike') : t('templateShare.like')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--secondary"
+            disabled={!isAuthenticated || favMutation.isPending}
+            onClick={() => favMutation.mutate()}
+          >
+            {post.favoritedByMe ? t('templateShare.unfavorite') : t('templateShare.favorite')}
+          </button>
+          <button type="button" className="btn btn--ghost" onClick={shareUrl}>
+            {t('templateShare.copyLink')}
           </button>
         </div>
-      ) : (
-        <p>
-          <Link to={ROUTES.LOGIN}>{tc('nav.login')}</Link> {t('templateShare.loginHint')}
-        </p>
-      )}
 
-      <h3>{t('templateShare.comments')}</h3>
-      {isAuthenticated ? (
-        <form onSubmit={onComment} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-          <input
-            className="input"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder={t('templateShare.commentPlaceholder')}
-          />
-          <button type="submit" className="btn btn--primary" disabled={commentMutation.isPending}>
-            {t('templateShare.commentSubmit')}
-          </button>
-        </form>
-      ) : null}
-
-      <div className="tpl-share-comments">
-        {(commentsQuery.data ?? []).map((c) => (
-          <div key={c.id} className="tpl-share-comment">
-            <div className="tpl-share-comment__meta">
-              <span>
-                {c.authorName}
-                {c.userId === userId ? ` · ${t('templateShare.me')}` : ''}
-              </span>
-              <span>{new Date(c.createdAt).toLocaleString()}</span>
-            </div>
-            <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{c.content}</p>
-            {c.canDelete ? (
-              <button
-                type="button"
-                className="btn btn--ghost btn--sm"
-                style={{ marginTop: '0.35rem' }}
-                onClick={() => deleteCommentMutation.mutate(c.id)}
-              >
-                {tc('actions.delete')}
-              </button>
-            ) : null}
+        {isAuthenticated ? (
+          <div className="tpl-share-detail__report">
+            <select
+              className="input"
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value as TemplateShareReportReason)}
+              aria-label={t('templateShare.report')}
+            >
+              {TEMPLATE_SHARE_REPORT_REASONS.map((reason) => (
+                <option key={reason} value={reason}>
+                  {t(`templateShare.reportReasons.${reason}`)}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              disabled={reportMutation.isPending}
+              onClick={() => {
+                if (window.confirm(t('templateShare.reportConfirm'))) reportMutation.mutate();
+              }}
+            >
+              {t('templateShare.report')}
+            </button>
           </div>
-        ))}
-        {(commentsQuery.data?.length ?? 0) === 0 ? (
-          <p className="empty-state">{t('templateShare.noComments')}</p>
+        ) : (
+          <p className="tpl-share-detail__login-hint">
+            <Link to={ROUTES.LOGIN}>{tc('nav.login')}</Link> {t('templateShare.loginHint')}
+          </p>
+        )}
+
+        <h3 className="tpl-share-detail__section-title">{t('templateShare.comments')}</h3>
+        {isAuthenticated ? (
+          <form className="tpl-share-comment-form" onSubmit={onComment}>
+            <input
+              className="input"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder={t('templateShare.commentPlaceholder')}
+            />
+            <button type="submit" className="btn btn--primary" disabled={commentMutation.isPending}>
+              {t('templateShare.commentSubmit')}
+            </button>
+          </form>
         ) : null}
+
+        <div className="tpl-share-comments">
+          {(commentsQuery.data ?? []).map((c) => (
+            <div key={c.id} className="tpl-share-comment">
+              <div className="tpl-share-comment__meta">
+                <span>
+                  {c.authorName}
+                  {c.userId === userId ? ` · ${t('templateShare.me')}` : ''}
+                </span>
+                <span>{new Date(c.createdAt).toLocaleString()}</span>
+              </div>
+              <p className="tpl-share-comment__body">{c.content}</p>
+              {c.canDelete ? (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  onClick={() => deleteCommentMutation.mutate(c.id)}
+                >
+                  {tc('actions.delete')}
+                </button>
+              ) : null}
+            </div>
+          ))}
+          {(commentsQuery.data?.length ?? 0) === 0 ? (
+            <p className="tpl-share-empty">{t('templateShare.noComments')}</p>
+          ) : null}
+        </div>
       </div>
     </PageShell>
   );
