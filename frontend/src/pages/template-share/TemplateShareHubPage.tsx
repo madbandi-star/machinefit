@@ -8,6 +8,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
+import { Icon } from '@/components/icons/Icon';
 import { templateShareApi } from '@/api/template-share.api';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
@@ -59,8 +60,28 @@ export function TemplateShareHubPage() {
     setParams(sp);
   };
 
+  const clearSearch = () => {
+    setDraftQ('');
+    const sp = new URLSearchParams(params);
+    sp.delete('q');
+    sp.set('page', '1');
+    setParams(sp);
+  };
+
+  const total = listQuery.data?.total ?? 0;
+  const items = listQuery.data?.items ?? [];
+  const hasQuery = Boolean(q.trim());
+
   return (
-    <PageShell title={t('templateShare.title')} subtitle={t('templateShare.subtitle')}>
+    <PageShell
+      title={t('templateShare.title')}
+      subtitle={t('templateShare.subtitle')}
+      action={
+        <Link to={ROUTES.MY_TEMPLATES} className="tpl-share-header-action">
+          {t('templateShare.myTemplatesShort')}
+        </Link>
+      }
+    >
       <div className="tpl-share-page">
         <div className="tpl-share-controls">
           <form className="tpl-share-search" onSubmit={onSearch}>
@@ -76,14 +97,14 @@ export function TemplateShareHubPage() {
             </button>
           </form>
 
-          <div className="tpl-share-filters" role="tablist" aria-label={t('templateShare.sortLabel')}>
+          <div className="tpl-share-sort" role="tablist" aria-label={t('templateShare.sortLabel')}>
             {SORTS.map((key) => (
               <button
                 key={key}
                 type="button"
                 role="tab"
                 aria-selected={sort === key}
-                className={['tpl-share-filters__chip', sort === key && 'is-active']
+                className={['tpl-share-sort__btn', sort === key && 'is-active']
                   .filter(Boolean)
                   .join(' ')}
                 onClick={() => setSort(key)}
@@ -108,11 +129,34 @@ export function TemplateShareHubPage() {
 
         {!listQuery.isLoading && !listQuery.isError ? (
           <>
-            {(listQuery.data?.items.length ?? 0) === 0 ? (
-              <p className="tpl-share-empty">{t('templateShare.empty')}</p>
+            <div className="tpl-share-toolbar">
+              <p className="tpl-share-result-count">
+                {t('templateShare.resultCount', { count: total })}
+              </p>
+            </div>
+
+            {items.length === 0 ? (
+              <div className="tpl-share-empty-box">
+                <p className="tpl-share-empty-box__title">
+                  {hasQuery ? t('templateShare.emptySearchTitle') : t('templateShare.emptyTitle')}
+                </p>
+                <p className="tpl-share-empty-box__text">
+                  {hasQuery ? t('templateShare.emptySearch') : t('templateShare.empty')}
+                </p>
+                <div className="tpl-share-empty-box__actions">
+                  {hasQuery ? (
+                    <button type="button" className="btn btn--secondary btn--sm" onClick={clearSearch}>
+                      {t('templateShare.clearSearch')}
+                    </button>
+                  ) : null}
+                  <Link to={ROUTES.MY_TEMPLATES} className="btn btn--primary btn--sm">
+                    {t('templateShare.emptyCtaMy')}
+                  </Link>
+                </div>
+              </div>
             ) : (
               <div className="tpl-share-list">
-                {listQuery.data!.items.map((item) => {
+                {items.map((item) => {
                   const badge = item.badges?.[0];
                   return (
                     <Link
@@ -125,17 +169,17 @@ export function TemplateShareHubPage() {
                           <img src={item.thumbnailUrl} alt="" loading="lazy" />
                         ) : (
                           <span className="tpl-share-row__thumb-fallback">
-                            {t(`templateShare.category.${item.category}`)}
+                            <Icon name="dumbbell" size={18} />
                           </span>
                         )}
                       </div>
                       <div className="tpl-share-row__body">
-                        <h3 className="tpl-share-row__title">
+                        <div className="tpl-share-row__title-row">
                           {badge ? (
                             <span className="tpl-share-row__badge">{badge.label}</span>
                           ) : null}
-                          {item.title}
-                        </h3>
+                          <h3 className="tpl-share-row__title">{item.title}</h3>
+                        </div>
                         <p className="tpl-share-row__meta">
                           {item.authorName}
                           {' · '}
@@ -165,10 +209,7 @@ export function TemplateShareHubPage() {
             )}
             <Pagination
               page={page}
-              totalPages={Math.max(
-                1,
-                Math.ceil((listQuery.data?.total ?? 0) / (listQuery.data?.pageSize ?? 12))
-              )}
+              totalPages={Math.max(1, Math.ceil(total / (listQuery.data?.pageSize ?? 12)))}
               onPageChange={(next) => {
                 const sp = new URLSearchParams(params);
                 sp.set('page', String(next));
