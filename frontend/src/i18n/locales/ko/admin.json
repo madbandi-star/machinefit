@@ -52,7 +52,8 @@
     "pushDesc": "푸시 알림을 작성·발송합니다.",
     "friendsDesc": "친구 관계·신고·스팸을 관리합니다.",
     "fortuneDesc": "오늘의 헬창운세 문구·키워드·전략을 관리합니다.",
-    "dataRetentionDesc": "데이터 보존·삭제 정책을 관리합니다."
+    "dataRetentionDesc": "데이터 보존·삭제 정책을 관리합니다.",
+    "templateShareDesc": "공유 템플릿·신고·통계를 관리합니다."
   },
   "fortuneAdmin": {
     "nav": "헬창운세",
@@ -1018,5 +1019,36 @@
     },
     "cancel": "취소"
   },
-  "dataRetentionNav": {}
+  "dataRetentionNav": {},
+  "templateShare": {
+    "nav": "템플릿 공유관 관리",
+    "title": "템플릿 공유관 관리",
+    "subtitle": "공개 템플릿·신고·통계를 관리합니다.",
+    "stats": "통계",
+    "published": "공개",
+    "hidden": "비공개",
+    "downloads": "받아가기",
+    "uses": "실제 사용",
+    "likes": "좋아요",
+    "comments": "댓글",
+    "openReports": "미처리 신고",
+    "filterStatus": "상태 필터",
+    "allStatus": "전체 상태",
+    "statusPublished": "공개",
+    "statusHidden": "숨김",
+    "statusRemoved": "삭제됨",
+    "colTitle": "제목",
+    "colAuthor": "작성자",
+    "colStatus": "상태",
+    "colActions": "관리",
+    "colReason": "사유",
+    "publish": "공개",
+    "hide": "강제 비공개",
+    "remove": "삭제 처리",
+    "reports": "신고",
+    "action": "조치 완료",
+    "dismiss": "기각",
+    "updated": "상태를 변경했습니다.",
+    "reportResolved": "신고를 처리했습니다."
+  }
 }

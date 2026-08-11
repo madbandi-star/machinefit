@@ -78,6 +78,22 @@ const community = () =>
   import('@/pages/community/CommunityPage').then((m) => ({ default: m.CommunityPage }));
 const postDetail = () =>
   import('@/pages/community/PostDetailPage').then((m) => ({ default: m.PostDetailPage }));
+const templateShareHub = () =>
+  import('@/pages/template-share/TemplateShareHubPage').then((m) => ({
+    default: m.TemplateShareHubPage,
+  }));
+const templateShareDetail = () =>
+  import('@/pages/template-share/TemplateShareDetailPage').then((m) => ({
+    default: m.TemplateShareDetailPage,
+  }));
+const myTemplates = () =>
+  import('@/pages/template-share/MyTemplatesPage').then((m) => ({
+    default: m.MyTemplatesPage,
+  }));
+const adminTemplateShare = () =>
+  import('@/pages/admin/template-share/AdminTemplateSharePage').then((m) => ({
+    default: m.AdminTemplateSharePage,
+  }));
 const machineRequests = () =>
   import('@/pages/machine-request-board/MachineRequestBoardPage').then((m) => ({
     default: m.MachineRequestBoardPage,
@@ -474,6 +490,8 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.MACHINE_REQUESTS_WRITE, element: lazyRoute(machineRequestsWrite) },
         { path: ROUTES.MACHINE_REQUESTS_DETAIL, element: lazyRoute(machineRequestsDetail) },
         { path: ROUTES.FREE_BOARD, element: lazyRoute(freeBoard) },
+        { path: ROUTES.TEMPLATE_SHARE, element: lazyRoute(templateShareHub) },
+        { path: ROUTES.TEMPLATE_SHARE_DETAIL, element: lazyRoute(templateShareDetail) },
         { path: ROUTES.NOTICES, element: lazyRoute(noticesPage) },
         { path: ROUTES.NOTICE_DETAIL, element: lazyRoute(noticeDetailPage) },
         { path: ROUTES.POST_DETAIL, element: lazyRoute(postDetail) },
@@ -504,6 +522,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.RECOMMEND, element: lazyRoute(recommendForm) },
             { path: ROUTES.RECOMMEND_RESULT, element: lazyRoute(recommendResult) },
             { path: ROUTES.MY_PAGE, element: lazyRoute(myPage) },
+            { path: ROUTES.MY_TEMPLATES, element: lazyRoute(myTemplates) },
             { path: ROUTES.PAYMENT_HISTORY, element: lazyRoute(paymentHistory) },
             { path: ROUTES.MY_GYMS, element: lazyRoute(gymMemberManage) },
             { path: ROUTES.LIFTED_WEIGHT, element: lazyRoute(liftedWeight) },
@@ -667,6 +686,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_MACHINE_COVERS, element: lazyRoute(adminMachineCovers) },
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
         { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
+        { path: ROUTES.ADMIN_TEMPLATE_SHARE, element: lazyRoute(adminTemplateShare) },
         { path: ROUTES.ADMIN_NOTICES, element: lazyRoute(adminNoticesPage) },
         { path: ROUTES.ADMIN_NOTICE_NEW, element: lazyRoute(adminNoticeEditPage) },
         { path: ROUTES.ADMIN_NOTICE_EDIT, element: lazyRoute(adminNoticeEditPage) },

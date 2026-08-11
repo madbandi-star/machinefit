@@ -52,7 +52,8 @@
     "dataRetentionDesc": "Manage retention and deletion policies.",
     "bannersDesc": "Register promo banners and control placements.",
     "bannerSlotsDesc": "Manage where banners can appear.",
-    "bannerStatsDesc": "View impressions, clicks, and CTR."
+    "bannerStatsDesc": "View impressions, clicks, and CTR.",
+    "templateShareDesc": "管理共享模板、举报与统计。"
   },
   "users": "Users",
   "subscriptions": {
@@ -1018,5 +1019,36 @@
   "editUsername": "Edit username",
   "saveUsername": "Save username",
   "cancelUsername": "Cancel",
-  "usernameInvalid": "That username is not allowed."
+  "usernameInvalid": "That username is not allowed.",
+  "templateShare": {
+    "nav": "模板共享馆管理",
+    "title": "模板共享馆管理",
+    "subtitle": "Moderate shared templates, reports, and stats.",
+    "stats": "Stats",
+    "published": "Published",
+    "hidden": "Hidden",
+    "downloads": "Downloads",
+    "uses": "Uses",
+    "likes": "Likes",
+    "comments": "Comments",
+    "openReports": "Open reports",
+    "filterStatus": "Status filter",
+    "allStatus": "All statuses",
+    "statusPublished": "Published",
+    "statusHidden": "Hidden",
+    "statusRemoved": "Removed",
+    "colTitle": "Title",
+    "colAuthor": "Author",
+    "colStatus": "Status",
+    "colActions": "Actions",
+    "colReason": "Reason",
+    "publish": "Publish",
+    "hide": "Force hide",
+    "remove": "Remove",
+    "reports": "Reports",
+    "action": "Actioned",
+    "dismiss": "Dismiss",
+    "updated": "Status updated.",
+    "reportResolved": "Report resolved."
+  }
 }

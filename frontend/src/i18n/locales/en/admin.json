@@ -52,7 +52,8 @@
     "dataRetentionDesc": "Manage retention and deletion policies.",
     "bannersDesc": "Register promo banners and control placements.",
     "bannerSlotsDesc": "Manage where banners can appear.",
-    "bannerStatsDesc": "View impressions, clicks, and CTR."
+    "bannerStatsDesc": "View impressions, clicks, and CTR.",
+    "templateShareDesc": "Moderate shared templates, reports, and stats."
   },
   "fortuneAdmin": {
     "nav": "Helchang Fortune",
@@ -1018,5 +1019,36 @@
     },
     "cancel": "Cancel"
   },
-  "dataRetentionNav": {}
+  "dataRetentionNav": {},
+  "templateShare": {
+    "nav": "Template Share Hub",
+    "title": "Template Share Hub admin",
+    "subtitle": "Moderate shared templates, reports, and stats.",
+    "stats": "Stats",
+    "published": "Published",
+    "hidden": "Hidden",
+    "downloads": "Downloads",
+    "uses": "Uses",
+    "likes": "Likes",
+    "comments": "Comments",
+    "openReports": "Open reports",
+    "filterStatus": "Status filter",
+    "allStatus": "All statuses",
+    "statusPublished": "Published",
+    "statusHidden": "Hidden",
+    "statusRemoved": "Removed",
+    "colTitle": "Title",
+    "colAuthor": "Author",
+    "colStatus": "Status",
+    "colActions": "Actions",
+    "colReason": "Reason",
+    "publish": "Publish",
+    "hide": "Force hide",
+    "remove": "Remove",
+    "reports": "Reports",
+    "action": "Actioned",
+    "dismiss": "Dismiss",
+    "updated": "Status updated.",
+    "reportResolved": "Report resolved."
+  }
 }

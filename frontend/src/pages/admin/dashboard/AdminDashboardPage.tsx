@@ -114,6 +114,11 @@ export function AdminDashboardPage() {
     { to: ROUTES.ADMIN_MODERATION, title: t('moderation'), desc: t('menu.moderationDesc') },
     { to: ROUTES.ADMIN_COMPLIANCE, title: t('compliance.nav'), desc: t('menu.complianceDesc') },
     { to: ROUTES.ADMIN_PHOTO_BOARD, title: t('photoBoard.nav'), desc: t('menu.photoBoardDesc') },
+    {
+      to: ROUTES.ADMIN_TEMPLATE_SHARE,
+      title: t('templateShare.nav'),
+      desc: t('menu.templateShareDesc'),
+    },
     { to: ROUTES.ADMIN_NOTICES, title: t('notices.nav'), desc: t('menu.noticesDesc') },
     { to: ROUTES.ADMIN_BANNERS, title: t('banners.nav'), desc: t('menu.bannersDesc') },
     { to: ROUTES.ADMIN_BANNER_SLOTS, title: t('banners.navSlots'), desc: t('menu.bannerSlotsDesc') },
