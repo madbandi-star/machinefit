@@ -94,16 +94,16 @@
 
 .home-session-timer__row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem 0.75rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
 }
 
 .home-session-timer__display {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  width: 100%;
   min-width: 0;
 }
 
@@ -112,6 +112,15 @@
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--color-text-muted);
+}
+
+.home-session-timer__time-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .home-session-timer__time {
@@ -137,16 +146,16 @@
 }
 
 .home-session-timer__ended {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.1rem;
-  min-width: 5.5rem;
-  margin-right: 0.15rem;
+  gap: 0.05rem;
+  margin-left: auto;
+  text-align: right;
 }
 
 .home-session-timer__ended-label {
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--color-text-muted);
@@ -154,7 +163,7 @@
 
 .home-session-timer__ended-time {
   font-variant-numeric: tabular-nums;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: 0.02em;

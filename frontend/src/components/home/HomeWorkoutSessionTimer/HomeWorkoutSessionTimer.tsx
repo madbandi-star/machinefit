@@ -91,23 +91,24 @@ export function HomeWorkoutSessionTimer() {
       <div className="home-session-timer__row">
         <div className="home-session-timer__display" aria-live="polite" aria-atomic="true">
           <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
-          <span className="home-session-timer__time" data-status={status}>
-            {showEndedSummary ? '00:00:00' : display}
-          </span>
+          <div className="home-session-timer__time-line">
+            <span className="home-session-timer__time" data-status={status}>
+              {showEndedSummary ? '00:00:00' : display}
+            </span>
+            {showEndedSummary && endedDisplay ? (
+              <span
+                className="home-session-timer__ended"
+                aria-label={`${t('pages.home.sessionTimerEndedLabel')} ${endedDisplay}`}
+              >
+                <span className="home-session-timer__ended-label">
+                  {t('pages.home.sessionTimerEndedLabel')}
+                </span>
+                <span className="home-session-timer__ended-time">{endedDisplay}</span>
+              </span>
+            ) : null}
+          </div>
         </div>
         <div className="home-session-timer__actions">
-          {showEndedSummary && endedDisplay ? (
-            <div
-              className="home-session-timer__ended"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              <span className="home-session-timer__ended-label">
-                {t('pages.home.sessionTimerEndedLabel')}
-              </span>
-              <span className="home-session-timer__ended-time">{endedDisplay}</span>
-            </div>
-          ) : null}
           <button
             type="button"
             className="btn btn--primary home-session-timer__btn"
