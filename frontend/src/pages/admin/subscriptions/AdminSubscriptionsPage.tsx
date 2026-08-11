@@ -117,6 +117,7 @@ export function AdminSubscriptionsPage() {
       userId,
       planCode,
       status: nextStatus,
+      confirmText,
     }: {
       userId: string;
       planCode: BillingPlanCode;
