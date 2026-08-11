@@ -20,5 +20,6 @@ export * from './achievements.js';
 export * from './machine-request.js';
 export * from './notice.js';
 export * from './banner.js';
+export * from './template-share.js';
 export * from './backup.js';
 export * from './workout-card.js';

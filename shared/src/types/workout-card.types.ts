@@ -75,6 +75,17 @@ export interface WorkoutCardTemplate {
   gymId?: string;
   name: string;
   items: WorkoutCardTemplateItem[];
+  /** TRUE for user-authored templates; FALSE for share-hub downloads. */
+  isOriginal?: boolean;
+  canShare?: boolean;
+  originalTemplateId?: string | null;
+  sourceTemplateId?: string | null;
+  sourceSharePostId?: string | null;
+  originAuthorName?: string | null;
+  originTitle?: string | null;
+  /** Public share post id when this original was published. */
+  sharePostId?: string | null;
+  sharePostStatus?: 'published' | 'hidden' | 'removed' | null;
   createdAt: string;
   updatedAt: string;
 }

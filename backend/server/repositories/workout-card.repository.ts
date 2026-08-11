@@ -58,6 +58,29 @@ interface WorkoutCardTemplateRow {
   payload: WorkoutCardTemplateItem[];
   created_at: string;
   updated_at: string;
+  is_original?: boolean | null;
+  original_template_id?: string | null;
+  source_template_id?: string | null;
+  source_share_post_id?: string | null;
+  origin_author_name?: string | null;
+  origin_title?: string | null;
+  share_post_id?: string | null;
+  share_post_status?: string | null;
+}
+
+/** Full lineage row for share eligibility / usage tracking. */
+export interface WorkoutCardTemplateShareCheck {
+  id: string;
+  userId: string;
+  gymId?: string;
+  name: string;
+  payload: WorkoutCardTemplateItem[];
+  isOriginal: boolean;
+  originalTemplateId: string | null;
+  sourceTemplateId: string | null;
+  sourceSharePostId: string | null;
+  originAuthorName: string | null;
+  originTitle: string | null;
 }
 
 function formatDateKey(value: string | Date): string {
@@ -132,13 +155,46 @@ function mapCardRow(row: WorkoutCardRow, locale: Locale = 'en'): WorkoutCard {
   };
 }
 
+const TEMPLATE_SELECT = `
+  t.id, t.gym_id, t.name, t.payload, t.created_at, t.updated_at,
+  COALESCE(t.is_original, TRUE) AS is_original,
+  t.original_template_id, t.source_template_id, t.source_share_post_id,
+  t.origin_author_name, t.origin_title,
+  tsp.id AS share_post_id, tsp.status AS share_post_status
+`;
+
+function canShareTemplate(row: {
+  is_original?: boolean | null;
+  original_template_id?: string | null;
+  source_template_id?: string | null;
+  source_share_post_id?: string | null;
+}): boolean {
+  return (
+    (row.is_original ?? true) === true &&
+    !row.source_share_post_id &&
+    !row.original_template_id &&
+    !row.source_template_id
+  );
+}
+
 function mapTemplateRow(row: WorkoutCardTemplateRow): WorkoutCardTemplate {
   const items = Array.isArray(row.payload) ? row.payload : [];
+  const isOriginal = row.is_original ?? true;
   return {
     id: row.id,
     gymId: row.gym_id ?? undefined,
     name: row.name,
     items,
+    isOriginal,
+    canShare: canShareTemplate(row),
+    originalTemplateId: row.original_template_id ?? null,
+    sourceTemplateId: row.source_template_id ?? null,
+    sourceSharePostId: row.source_share_post_id ?? null,
+    originAuthorName: row.origin_author_name ?? null,
+    originTitle: row.origin_title ?? null,
+    sharePostId: row.share_post_id ?? null,
+    sharePostStatus:
+      (row.share_post_status as WorkoutCardTemplate['sharePostStatus']) ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -785,13 +841,63 @@ export const workoutCardRepository = {
     if (!pool) throw new Error('Database not configured');
 
     const result = await pool.query<WorkoutCardTemplateRow>(
-      `INSERT INTO workout_card_templates (user_id, gym_id, name, payload)
-       VALUES ($1, $2, $3, $4::jsonb)
-       RETURNING id, gym_id, name, payload, created_at, updated_at`,
+      `INSERT INTO workout_card_templates (
+         user_id, gym_id, name, payload,
+         is_original, original_template_id, source_template_id, source_share_post_id,
+         origin_author_name, origin_title
+       )
+       VALUES ($1, $2, $3, $4::jsonb, TRUE, NULL, NULL, NULL, NULL, NULL)
+       RETURNING id, gym_id, name, payload, created_at, updated_at,
+                 is_original, original_template_id, source_template_id, source_share_post_id,
+                 origin_author_name, origin_title`,
       [userId, data.gymId ?? null, data.name, JSON.stringify(data.items)]
     );
     const row = result.rows[0];
     if (!row) throw new Error('Failed to create template');
+    return mapTemplateRow(row);
+  },
+
+  /**
+   * Insert a downloaded (non-original) template copy from a share-hub post.
+   */
+  async createDownloadedTemplate(
+    userId: string,
+    data: {
+      name: string;
+      items: WorkoutCardTemplateItem[];
+      originalTemplateId: string | null;
+      sourceTemplateId: string | null;
+      sourceSharePostId: string;
+      originAuthorName: string;
+      originTitle: string;
+    }
+  ): Promise<WorkoutCardTemplate> {
+    const pool = getPool();
+    if (!pool) throw new Error('Database not configured');
+
+    const result = await pool.query<WorkoutCardTemplateRow>(
+      `INSERT INTO workout_card_templates (
+         user_id, gym_id, name, payload,
+         is_original, original_template_id, source_template_id, source_share_post_id,
+         origin_author_name, origin_title
+       )
+       VALUES ($1, NULL, $2, $3::jsonb, FALSE, $4, $5, $6, $7, $8)
+       RETURNING id, gym_id, name, payload, created_at, updated_at,
+                 is_original, original_template_id, source_template_id, source_share_post_id,
+                 origin_author_name, origin_title`,
+      [
+        userId,
+        data.name,
+        JSON.stringify(data.items),
+        data.originalTemplateId,
+        data.sourceTemplateId,
+        data.sourceSharePostId,
+        data.originAuthorName,
+        data.originTitle,
+      ]
+    );
+    const row = result.rows[0];
+    if (!row) throw new Error('Failed to create downloaded template');
     return mapTemplateRow(row);
   },
 
@@ -803,14 +909,15 @@ export const workoutCardRepository = {
     let gymFilter = '';
     if (gymId) {
       params.push(gymId);
-      gymFilter = ` AND (gym_id IS NULL OR gym_id = $${params.length})`;
+      gymFilter = ` AND (t.gym_id IS NULL OR t.gym_id = $${params.length})`;
     }
 
     const result = await pool.query<WorkoutCardTemplateRow>(
-      `SELECT id, gym_id, name, payload, created_at, updated_at
-       FROM workout_card_templates
-       WHERE user_id = $1${gymFilter}
-       ORDER BY created_at DESC`,
+      `SELECT ${TEMPLATE_SELECT}
+       FROM workout_card_templates t
+       LEFT JOIN template_share_posts tsp ON tsp.source_template_id = t.id
+       WHERE t.user_id = $1${gymFilter}
+       ORDER BY t.created_at DESC`,
       params
     );
     return result.rows.map(mapTemplateRow);
@@ -824,13 +931,60 @@ export const workoutCardRepository = {
     if (!pool) return null;
 
     const result = await pool.query<WorkoutCardTemplateRow>(
-      `SELECT id, gym_id, name, payload, created_at, updated_at
+      `SELECT ${TEMPLATE_SELECT}
+       FROM workout_card_templates t
+       LEFT JOIN template_share_posts tsp ON tsp.source_template_id = t.id
+       WHERE t.id = $1 AND t.user_id = $2`,
+      [id, userId]
+    );
+    const row = result.rows[0];
+    return row ? mapTemplateRow(row) : null;
+  },
+
+  /** Full lineage for share-hub publish checks (owned by userId). */
+  async getTemplateForShareCheck(
+    userId: string,
+    id: string
+  ): Promise<WorkoutCardTemplateShareCheck | null> {
+    const pool = getPool();
+    if (!pool) return null;
+
+    const result = await pool.query<{
+      id: string;
+      user_id: string;
+      gym_id: string | null;
+      name: string;
+      payload: WorkoutCardTemplateItem[];
+      is_original: boolean;
+      original_template_id: string | null;
+      source_template_id: string | null;
+      source_share_post_id: string | null;
+      origin_author_name: string | null;
+      origin_title: string | null;
+    }>(
+      `SELECT id, user_id, gym_id, name, payload,
+              COALESCE(is_original, TRUE) AS is_original,
+              original_template_id, source_template_id, source_share_post_id,
+              origin_author_name, origin_title
        FROM workout_card_templates
        WHERE id = $1 AND user_id = $2`,
       [id, userId]
     );
     const row = result.rows[0];
-    return row ? mapTemplateRow(row) : null;
+    if (!row) return null;
+    return {
+      id: row.id,
+      userId: row.user_id,
+      gymId: row.gym_id ?? undefined,
+      name: row.name,
+      payload: Array.isArray(row.payload) ? row.payload : [],
+      isOriginal: row.is_original,
+      originalTemplateId: row.original_template_id,
+      sourceTemplateId: row.source_template_id,
+      sourceSharePostId: row.source_share_post_id,
+      originAuthorName: row.origin_author_name,
+      originTitle: row.origin_title,
+    };
   },
 
   async deleteTemplate(userId: string, id: string): Promise<boolean> {

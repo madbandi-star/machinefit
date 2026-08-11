@@ -35,6 +35,7 @@ import { growthTimelineService } from './growth-timeline.service.js';
 import { achievementService } from './achievement.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
+import { templateShareRepository } from '../repositories/template-share.repository.js';
 
 function todayDateKey(): string {
   const now = new Date();
@@ -382,6 +383,23 @@ export const workoutCardService = {
         locale
       );
       if (!updated) throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
+
+      if (existing.templateId) {
+        const template = await workoutCardRepository.findTemplateById(
+          userId,
+          existing.templateId
+        );
+        if (template?.sourceSharePostId) {
+          await templateShareRepository.recordUsage({
+            postId: template.sourceSharePostId,
+            userId,
+            userTemplateId: template.id,
+            workoutLogId,
+            usedOnDate: existing.scheduledDate,
+          });
+        }
+      }
+
       return stripMachineId(updated);
     }
 
@@ -988,6 +1006,21 @@ export const workoutCardService = {
       } catch (error) {
         throwDuplicateCard(error);
       }
+    }
+
+    if (
+      status === 'COMPLETED' &&
+      template.sourceSharePostId &&
+      created.length > 0
+    ) {
+      const workoutLogId = created.find((c) => c.workoutLogId)?.workoutLogId;
+      await templateShareRepository.recordUsage({
+        postId: template.sourceSharePostId,
+        userId,
+        userTemplateId: template.id,
+        workoutLogId: workoutLogId ?? null,
+        usedOnDate: input.scheduledDate,
+      });
     }
 
     return created;
