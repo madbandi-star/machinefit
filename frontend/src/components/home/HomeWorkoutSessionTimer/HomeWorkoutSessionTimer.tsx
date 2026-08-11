@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import {
   formatWorkoutSessionElapsed,
+  formatWorkoutSessionLap,
   getWorkoutSessionElapsedMs,
   useWorkoutSessionTimerStore,
 } from '@/store/workoutSessionTimer.store';
 
 /**
- * Home-only workout session timer: display + exactly two buttons.
+ * Home workout session timer: start/pause/resume/end + iPhone-style LAP splits.
  * Elapsed time is timestamp-based; pause gaps are excluded. Persists across refresh/navigation.
  */
 export function HomeWorkoutSessionTimer() {
@@ -17,9 +18,11 @@ export function HomeWorkoutSessionTimer() {
   const status = useWorkoutSessionTimerStore((s) => s.status);
   const segmentStartedAtMs = useWorkoutSessionTimerStore((s) => s.segmentStartedAtMs);
   const accumulatedMs = useWorkoutSessionTimerStore((s) => s.accumulatedMs);
+  const laps = useWorkoutSessionTimerStore((s) => s.laps);
   const start = useWorkoutSessionTimerStore((s) => s.start);
   const pause = useWorkoutSessionTimerStore((s) => s.pause);
   const resume = useWorkoutSessionTimerStore((s) => s.resume);
+  const lap = useWorkoutSessionTimerStore((s) => s.lap);
   const end = useWorkoutSessionTimerStore((s) => s.end);
 
   const [nowMs, setNowMs] = useState(() => Date.now());
@@ -60,6 +63,8 @@ export function HomeWorkoutSessionTimer() {
   );
   const display = formatWorkoutSessionElapsed(elapsedMs);
   const isIdle = status === 'idle';
+  const isRunning = status === 'running';
+  const showLapButton = status === 'running' || status === 'paused';
 
   const primaryLabel =
     status === 'running'
@@ -79,29 +84,60 @@ export function HomeWorkoutSessionTimer() {
       className="home-session-timer"
       aria-label={t('pages.home.sessionTimerTitle')}
     >
-      <div className="home-session-timer__display" aria-live="polite" aria-atomic="true">
-        <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
-        <span className="home-session-timer__time" data-status={status}>
-          {display}
-        </span>
+      <div className="home-session-timer__row">
+        <div className="home-session-timer__display" aria-live="polite" aria-atomic="true">
+          <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
+          <span className="home-session-timer__time" data-status={status}>
+            {display}
+          </span>
+        </div>
+        <div className="home-session-timer__actions">
+          <button
+            type="button"
+            className="btn btn--primary home-session-timer__btn"
+            onClick={handlePrimary}
+          >
+            {primaryLabel}
+          </button>
+          {showLapButton ? (
+            <button
+              type="button"
+              className="btn btn--secondary home-session-timer__btn home-session-timer__btn--lap"
+              disabled={!isRunning}
+              onClick={lap}
+              aria-label={t('pages.home.sessionTimerLapAria')}
+            >
+              {t('pages.home.sessionTimerLap')}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="btn btn--secondary home-session-timer__btn"
+            disabled={isIdle}
+            onClick={end}
+          >
+            {t('pages.home.sessionTimerEnd')}
+          </button>
+        </div>
       </div>
-      <div className="home-session-timer__actions">
-        <button
-          type="button"
-          className="btn btn--primary home-session-timer__btn"
-          onClick={handlePrimary}
-        >
-          {primaryLabel}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary home-session-timer__btn"
-          disabled={isIdle}
-          onClick={end}
-        >
-          {t('pages.home.sessionTimerEnd')}
-        </button>
-      </div>
+
+      {laps.length > 0 ? (
+        <ol className="home-session-timer__laps" aria-label={t('pages.home.sessionTimerLaps')}>
+          {laps.map((item) => (
+            <li key={`${item.index}-${item.recordedAtMs}`} className="home-session-timer__lap">
+              <span className="home-session-timer__lap-index">
+                {t('pages.home.sessionTimerLapItem', { n: item.index })}
+              </span>
+              <span className="home-session-timer__lap-split">
+                {formatWorkoutSessionLap(item.splitMs)}
+              </span>
+              <span className="home-session-timer__lap-total">
+                {formatWorkoutSessionElapsed(item.totalElapsedMs)}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : null}
     </section>
   );
 }
