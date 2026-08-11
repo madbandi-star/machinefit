@@ -9,6 +9,7 @@ import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
 import { WorkoutMonthCalendar } from '@/components/my-page/WorkoutMonthCalendar/WorkoutMonthCalendar';
+import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { SubscriptionPlanCard } from '@/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard';
 import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
@@ -339,6 +340,8 @@ export function MyPage() {
           </nav>
         </section>
       ) : null}
+
+      <BannerSlot slot="MY_BOTTOM" />
 
       <div className="my-page__actions">
         <ShareAppButton />

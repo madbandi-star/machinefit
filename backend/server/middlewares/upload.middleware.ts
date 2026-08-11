@@ -5,7 +5,11 @@ import { muscleGroupImageLimits } from '../config/muscle-group-image.js';
 import { machineTradeImageLimits } from '../config/machine-trade-image.js';
 import { machineRequestImageLimits } from '../config/machine-request-image.js';
 import { photoBoardImageLimits } from '../config/photo-board-image.js';
-import { BACKUP_MAX_UPLOAD_BYTES, NOTICE_MAX_ATTACHMENT_BYTES } from '@machinefit/shared';
+import {
+  BACKUP_MAX_UPLOAD_BYTES,
+  BANNER_MAX_IMAGE_BYTES,
+  NOTICE_MAX_ATTACHMENT_BYTES,
+} from '@machinefit/shared';
 import { AppError } from './error.middleware.js';
 
 function makeUpload(maxBytes: number): RequestHandler {
@@ -103,4 +107,5 @@ export const machineRequestImagesUpload: RequestHandler = makeMultiUpload(
 );
 
 export const noticeAttachmentUpload: RequestHandler = makeUpload(NOTICE_MAX_ATTACHMENT_BYTES);
+export const bannerImageUpload: RequestHandler = makeUpload(BANNER_MAX_IMAGE_BYTES);
 export const backupUpload: RequestHandler = makeUpload(BACKUP_MAX_UPLOAD_BYTES);

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import '@/styles/components.css';
@@ -36,6 +37,7 @@ export function CommunityPage() {
           </Link>
         ) : null}
       </div>
+      <BannerSlot slot="COMMUNITY_BOTTOM" />
     </PageShell>
   );
 }

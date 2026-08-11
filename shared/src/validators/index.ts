@@ -28,6 +28,7 @@ export * from './compliance.schema.js';
 export * from './inspection.schema.js';
 export * from './billing.schema.js';
 export * from './notice.schema.js';
+export * from './banner.schema.js';
 export * from './backup.schema.js';
 export * from './workout-card.schema.js';
 export * from './fortune.schema.js';

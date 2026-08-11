@@ -15,17 +15,20 @@ const LOCAL_MOTIVATION_COVER_ROOT = path.resolve(__dirname, '../../uploads/motiv
 const LOCAL_MUSCLE_UPLOAD_ROOT = path.resolve(__dirname, '../../uploads/muscle-group-images');
 const LOCAL_MACHINE_COVER_ROOT = path.resolve(__dirname, '../../uploads/machine-covers');
 const LOCAL_NOTICE_ROOT = path.resolve(__dirname, '../../uploads/notice-attachments');
+const LOCAL_BANNER_ROOT = path.resolve(__dirname, '../../uploads/banner-images');
 
 try {
   mkdirSync(LOCAL_MUSCLE_UPLOAD_ROOT, { recursive: true });
   mkdirSync(LOCAL_MACHINE_COVER_ROOT, { recursive: true });
   mkdirSync(LOCAL_MOTIVATION_COVER_ROOT, { recursive: true });
   mkdirSync(LOCAL_NOTICE_ROOT, { recursive: true });
+  mkdirSync(LOCAL_BANNER_ROOT, { recursive: true });
 } catch {
   // Best-effort for local/static fallback roots.
 }
 
 let noticeBucketReady: Promise<void> | null = null;
+let bannerBucketReady: Promise<void> | null = null;
 
 let supabase: SupabaseClient | null | undefined;
 let audioBucketReady: Promise<void> | null = null;
@@ -768,6 +771,131 @@ export const storageService = {
     }
     try {
       await unlink(path.join(LOCAL_NOTICE_ROOT, storagePath));
+    } catch {
+      // ignore missing local file
+    }
+  },
+
+  localBannerUploadRoot: LOCAL_BANNER_ROOT,
+
+  async ensureBannerBucket(): Promise<void> {
+    const client = getSupabase();
+    if (!client) return;
+    if (!bannerBucketReady) {
+      bannerBucketReady = (async () => {
+        const bucket = env.BANNER_IMAGE_BUCKET;
+        const { data, error } = await withRetry(
+          () => client.storage.listBuckets(),
+          { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+        );
+        if (error) {
+          throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+        }
+        const exists = data?.some((item) => item.name === bucket);
+        if (!exists) {
+          const created = await client.storage.createBucket(bucket, {
+            public: true,
+            fileSizeLimit: env.BANNER_IMAGE_MAX_BYTES,
+            allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+          });
+          if (created.error && !/already exists/i.test(created.error.message)) {
+            throw new AppError(
+              500,
+              'STORAGE_ERROR',
+              `Could not create banner image bucket "${bucket}"`,
+              created.error.message
+            );
+          }
+        }
+      })().catch((err) => {
+        bannerBucketReady = null;
+        throw err;
+      });
+    }
+    await bannerBucketReady;
+  },
+
+  bannerImagePublicUrl(storagePath: string): string {
+    const encoded = storagePath
+      .split('/')
+      .filter(Boolean)
+      .map(encodeURIComponent)
+      .join('/');
+    return `${publicApiBase()}/media/banner-images/${encoded}`;
+  },
+
+  async uploadBannerImage(params: {
+    bannerId: string;
+    kind: 'desktop' | 'mobile';
+    fileName: string;
+    mimeType: string;
+    buffer: Buffer;
+  }): Promise<StoredImageObject> {
+    const safeName = params.fileName.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120);
+    const storagePath = `${params.bannerId}/${params.kind}/${Date.now()}-${safeName}`;
+    await this.ensureBannerBucket();
+    const client = getSupabase();
+
+    if (client) {
+      const { error } = await client.storage
+        .from(env.BANNER_IMAGE_BUCKET)
+        .upload(storagePath, params.buffer, {
+          contentType: params.mimeType,
+          upsert: false,
+        });
+      if (error) {
+        const absolute = path.join(LOCAL_BANNER_ROOT, storagePath);
+        await mkdir(path.dirname(absolute), { recursive: true });
+        await writeFile(absolute, params.buffer);
+        return {
+          storagePath,
+          publicUrl: this.bannerImagePublicUrl(storagePath),
+          provider: 'local',
+        };
+      }
+      return {
+        storagePath,
+        publicUrl: this.bannerImagePublicUrl(storagePath),
+        provider: 'supabase',
+      };
+    }
+
+    const absolute = path.join(LOCAL_BANNER_ROOT, storagePath);
+    await mkdir(path.dirname(absolute), { recursive: true });
+    await writeFile(absolute, params.buffer);
+    return {
+      storagePath,
+      publicUrl: this.bannerImagePublicUrl(storagePath),
+      provider: 'local',
+    };
+  },
+
+  async readBannerImage(storagePath: string): Promise<{ buffer: Buffer; mimeType?: string } | null> {
+    const client = getSupabase();
+    if (client) {
+      const { data, error } = await client.storage
+        .from(env.BANNER_IMAGE_BUCKET)
+        .download(storagePath);
+      if (!error && data) {
+        const buffer = Buffer.from(await data.arrayBuffer());
+        return { buffer };
+      }
+    }
+    try {
+      const buffer = await readFile(path.join(LOCAL_BANNER_ROOT, storagePath));
+      return { buffer };
+    } catch {
+      return null;
+    }
+  },
+
+  async deleteBannerImage(storagePath: string): Promise<void> {
+    const client = getSupabase();
+    if (client) {
+      await client.storage.from(env.BANNER_IMAGE_BUCKET).remove([storagePath]);
+    }
+    try {
+      await unlink(path.join(LOCAL_BANNER_ROOT, storagePath));
     } catch {
       // ignore missing local file
     }

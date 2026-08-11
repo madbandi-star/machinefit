@@ -44,6 +44,8 @@ const envSchema = z.object({
   MACHINE_COVER_IMAGE_BUCKET: z.string().default('machine-cover-images'),
   NOTICE_ATTACHMENT_BUCKET: z.string().default('notice-attachments'),
   NOTICE_ATTACHMENT_MAX_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
+  BANNER_IMAGE_BUCKET: z.string().default('banner-images'),
+  BANNER_IMAGE_MAX_BYTES: z.coerce.number().int().positive().default(5 * 1024 * 1024),
   /** Private Supabase Storage bucket for user/system backup files. */
   BACKUP_STORAGE_BUCKET: z.string().default('backup'),
   /** OAuth / social login (optional — endpoints error when unset). */

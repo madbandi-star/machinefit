@@ -55,6 +55,16 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     ],
   },
   {
+    id: 'ads',
+    labelKey: 'navGroup.ads',
+    items: [
+      { to: ROUTES.ADMIN_BANNERS, labelKey: 'banners.navList', end: true, icon: 'flag' },
+      { to: ROUTES.ADMIN_BANNER_NEW, labelKey: 'banners.navCreate', icon: 'pencil' },
+      { to: ROUTES.ADMIN_BANNER_SLOTS, labelKey: 'banners.navSlots', icon: 'mapPin' },
+      { to: ROUTES.ADMIN_BANNER_STATS, labelKey: 'banners.navStats', icon: 'monitor' },
+    ],
+  },
+  {
     id: 'community',
     labelKey: 'navGroup.community',
     items: [

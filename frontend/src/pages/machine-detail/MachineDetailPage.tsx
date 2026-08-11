@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { MachineHero } from '@/components/machines/MachineHero/MachineHero';
 import { LastRecommendationSnippet } from '@/components/machines/LastRecommendationSnippet/LastRecommendationSnippet';
 import { RecommendCTA } from '@/components/machines/RecommendCTA/RecommendCTA';
+import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { WorkoutLogPanel } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -247,6 +248,7 @@ export function MachineDetailPage() {
           }
         />
       ) : null}
+      <BannerSlot slot="MACHINE_BOTTOM" />
     </div>
   );
 }

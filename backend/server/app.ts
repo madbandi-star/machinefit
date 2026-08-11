@@ -19,6 +19,7 @@ import { serveBrandAssetImage } from './controllers/brand-asset-media.controller
 import { serveMotivationAudio } from './controllers/motivation-audio-media.controller.js';
 import { serveMotivationCover } from './controllers/motivation-cover-media.controller.js';
 import { serveNoticeAttachment } from './controllers/notice-media.controller.js';
+import { serveBannerImage } from './controllers/banner-media.controller.js';
 import { attachSentryExpressErrorHandler } from './ops/sentry.js';
 
 export function createApp() {
@@ -134,6 +135,10 @@ export function createApp() {
 
   app.use(`${env.API_BASE_PATH}/media/notice-attachments`, (req, res, next) => {
     void serveNoticeAttachment(req, res, next);
+  });
+
+  app.use(`${env.API_BASE_PATH}/media/banner-images`, (req, res, next) => {
+    void serveBannerImage(req, res, next);
   });
 
   app.use(env.API_BASE_PATH, apiRouter);

@@ -324,6 +324,22 @@ const adminNoticeEditPage = () =>
   import('@/pages/admin/notices/AdminNoticeEditPage').then((m) => ({
     default: m.AdminNoticeEditPage,
   }));
+const adminBannersPage = () =>
+  import('@/pages/admin/banners/AdminBannersPage').then((m) => ({
+    default: m.AdminBannersPage,
+  }));
+const adminBannerEditPage = () =>
+  import('@/pages/admin/banners/AdminBannerEditPage').then((m) => ({
+    default: m.AdminBannerEditPage,
+  }));
+const adminBannerSlotsPage = () =>
+  import('@/pages/admin/banners/AdminBannerSlotsPage').then((m) => ({
+    default: m.AdminBannerSlotsPage,
+  }));
+const adminBannerStatsPage = () =>
+  import('@/pages/admin/banners/AdminBannerStatsPage').then((m) => ({
+    default: m.AdminBannerStatsPage,
+  }));
 const adminMotivation = () =>
   import('@/pages/admin/motivation/AdminMotivationPage').then((m) => ({
     default: m.AdminMotivationPage,
@@ -654,6 +670,11 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_NOTICES, element: lazyRoute(adminNoticesPage) },
         { path: ROUTES.ADMIN_NOTICE_NEW, element: lazyRoute(adminNoticeEditPage) },
         { path: ROUTES.ADMIN_NOTICE_EDIT, element: lazyRoute(adminNoticeEditPage) },
+        { path: ROUTES.ADMIN_BANNERS, element: lazyRoute(adminBannersPage) },
+        { path: ROUTES.ADMIN_BANNER_NEW, element: lazyRoute(adminBannerEditPage) },
+        { path: ROUTES.ADMIN_BANNER_SLOTS, element: lazyRoute(adminBannerSlotsPage) },
+        { path: ROUTES.ADMIN_BANNER_STATS, element: lazyRoute(adminBannerStatsPage) },
+        { path: ROUTES.ADMIN_BANNER_EDIT, element: lazyRoute(adminBannerEditPage) },
         { path: ROUTES.ADMIN_FORTUNE, element: lazyRoute(adminFortunePage) },
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
         { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },

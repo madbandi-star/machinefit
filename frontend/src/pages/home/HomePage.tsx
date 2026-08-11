@@ -11,6 +11,7 @@ import { HomeFortuneCard } from '@/components/home/HomeFortuneCard/HomeFortuneCa
 import { NoticePopup } from '@/components/notices/NoticePopup/NoticePopup';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
 import { FavoriteMachinesRow } from '@/components/home/FavoriteMachinesRow/FavoriteMachinesRow';
+import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/InstallPromptBanner';
 import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
 import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
@@ -93,6 +94,7 @@ export function HomePage() {
       <HomeWorkoutToolsSection />
       <RecentMachinesRow />
       <FavoriteMachinesRow />
+      <BannerSlot slot="MAIN_BOTTOM" />
     </div>
   );
 }
