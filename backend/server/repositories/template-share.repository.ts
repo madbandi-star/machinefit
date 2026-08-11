@@ -221,7 +221,7 @@ function buildSearchFilter(
       OR p.description ILIKE $${idx}
       OR array_to_string(p.tags, ' ') ILIKE $${idx}
       OR p.payload::text ILIKE $${idx}
-      OR to_tsvector('simple', coalesce(p.title, '') || ' ' || coalesce(p.description, '') || ' ' || coalesce(array_to_string(p.tags, ' '), ''))
+      OR to_tsvector('simple', coalesce(p.title, '') || ' ' || coalesce(p.description, ''))
          @@ plainto_tsquery('simple', $${idx + 1})
     )`,
     nextIdx: startIdx + 2,

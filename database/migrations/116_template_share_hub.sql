@@ -60,10 +60,16 @@ CREATE INDEX IF NOT EXISTS idx_template_share_posts_public_list
 CREATE INDEX IF NOT EXISTS idx_template_share_posts_author
   ON template_share_posts (author_user_id, created_at DESC);
 
+-- GIN FTS on title/description only.
+-- Do NOT use array_to_string(tags, ...) here: it is STABLE, not IMMUTABLE (42P17).
+-- Tag search is covered by ILIKE + a separate array GIN index below.
 CREATE INDEX IF NOT EXISTS idx_template_share_posts_search
   ON template_share_posts USING gin (
-    to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(description, '') || ' ' || coalesce(array_to_string(tags, ' '), ''))
+    to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(description, ''))
   );
+
+CREATE INDEX IF NOT EXISTS idx_template_share_posts_tags
+  ON template_share_posts USING gin (tags);
 
 DROP TRIGGER IF EXISTS trg_template_share_posts_updated_at ON template_share_posts;
 CREATE TRIGGER trg_template_share_posts_updated_at
