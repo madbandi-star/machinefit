@@ -9,6 +9,8 @@
 
 ## Backend (Render)
 
+Paid **Always On** (not Free). Idle spin-down does not apply. Closed 2026-08-11.
+
 1. **Build Command** (exact): `npm run build:render`  
    Do not prefix with another `npm ci` / `npm install`.
 2. **Start Command**: `npm run start --workspace=backend`

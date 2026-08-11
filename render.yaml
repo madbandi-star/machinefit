@@ -6,8 +6,10 @@
 # Do not prefix with `npm ci` / `npm install` (that duplicates work; old
 # monorepo installs also OOMed when frontend was a workspace).
 #
-# 1k concurrent readiness (ops — apply in Render Dashboard, not Blueprint free):
-# - Plan: Standard or Pro (Starter 0.5CPU/512MB is insufficient for 1k)
+# Production API is paid Always On (operator confirmed 2026-08-11).
+# Do not revert to free — Free idle spin-down is closed as an ops item.
+# 1k concurrent readiness (ops — apply in Render Dashboard):
+# - Plan: Standard or Pro (Starter is Always On but 0.5CPU/512MB is insufficient for 1k)
 # - Instances: 2–4 with autoscale on CPU ≥70%
 # - Health Check Path: /api/v1/health (liveness — always 200 while process up)
 # - Optional readiness (do NOT use as Render healthCheckPath): /ready or /api/v1/ready
@@ -23,7 +25,7 @@
 services:
   - type: web
     name: machinefit-api
-    plan: free
+    plan: starter
     runtime: node
     buildCommand: npm run build:render
     startCommand: npm run start --workspace=backend
