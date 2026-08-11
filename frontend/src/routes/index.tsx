@@ -1,7 +1,7 @@
 import { lazy, Suspense, type ComponentType } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
-import { Role } from '@machinefit/shared';
+import { Role, FREE_OPEN_MEMBER_FEATURES_MIN_ROLE } from '@machinefit/shared';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
@@ -521,7 +521,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
           element: <Navigate to={`${ROUTES.RECORDS}?tab=history`} replace />,
         },
         {
-          element: <AuthGuard minRole={Role.PREMIUM_MEMBER} />,
+          element: <AuthGuard minRole={FREE_OPEN_MEMBER_FEATURES_MIN_ROLE} />,
           children: [
             { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
             { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },

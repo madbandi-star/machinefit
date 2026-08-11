@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Role } from '@machinefit/shared';
+import { Role, FREE_OPEN_MEMBER_FEATURES_MIN_ROLE } from '@machinefit/shared';
 import * as photoBoardController from '../controllers/photo-board.controller.js';
 import {
   authMiddleware,
@@ -9,40 +9,44 @@ import { photoBoardImagesUpload } from '../middlewares/upload.middleware.js';
 
 export const photoBoardRouter = Router();
 
-const requirePremiumMember = [authMiddleware, requireMinRole(Role.PREMIUM_MEMBER)] as const;
+/** Free-open: MEMBER+. Paid later → requirePremium() (see FREE_OPEN_MEMBER_FEATURES_MIN_ROLE). */
+const requirePhotoBoardMember = [
+  authMiddleware,
+  requireMinRole(FREE_OPEN_MEMBER_FEATURES_MIN_ROLE),
+] as const;
 
 photoBoardRouter.get('/images/:imageId', photoBoardController.getImage);
-photoBoardRouter.get('/posts', ...requirePremiumMember, photoBoardController.listPosts);
-photoBoardRouter.get('/posts/:postId', ...requirePremiumMember, photoBoardController.getPost);
+photoBoardRouter.get('/posts', ...requirePhotoBoardMember, photoBoardController.listPosts);
+photoBoardRouter.get('/posts/:postId', ...requirePhotoBoardMember, photoBoardController.getPost);
 photoBoardRouter.post(
   '/posts',
-  ...requirePremiumMember,
+  ...requirePhotoBoardMember,
   photoBoardImagesUpload,
   photoBoardController.createPost
 );
-photoBoardRouter.patch('/posts/:postId', ...requirePremiumMember, photoBoardController.updatePost);
-photoBoardRouter.delete('/posts/:postId', ...requirePremiumMember, photoBoardController.deletePost);
+photoBoardRouter.patch('/posts/:postId', ...requirePhotoBoardMember, photoBoardController.updatePost);
+photoBoardRouter.delete('/posts/:postId', ...requirePhotoBoardMember, photoBoardController.deletePost);
 photoBoardRouter.post(
   '/posts/:postId/like',
-  ...requirePremiumMember,
+  ...requirePhotoBoardMember,
   photoBoardController.toggleLike
 );
 photoBoardRouter.post(
   '/posts/:postId/comments',
-  ...requirePremiumMember,
+  ...requirePhotoBoardMember,
   photoBoardController.createComment
 );
 photoBoardRouter.patch(
   '/comments/:commentId',
-  ...requirePremiumMember,
+  ...requirePhotoBoardMember,
   photoBoardController.updateComment
 );
 photoBoardRouter.delete(
   '/comments/:commentId',
-  ...requirePremiumMember,
+  ...requirePhotoBoardMember,
   photoBoardController.deleteComment
 );
-photoBoardRouter.post('/reports', ...requirePremiumMember, photoBoardController.createReport);
+photoBoardRouter.post('/reports', ...requirePhotoBoardMember, photoBoardController.createReport);
 
 photoBoardRouter.get(
   '/admin/reports',

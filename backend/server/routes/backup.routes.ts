@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { Role, backupExportSchema, backupImportMetaSchema } from '@machinefit/shared';
+import {
+  FREE_OPEN_MEMBER_FEATURES_MIN_ROLE,
+  backupExportSchema,
+  backupImportMetaSchema,
+} from '@machinefit/shared';
 import { authMiddleware, requireMinRole } from '../middlewares/auth.middleware.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
 import { backupUpload } from '../middlewares/upload.middleware.js';
@@ -7,7 +11,8 @@ import * as backupController from '../controllers/backup.controller.js';
 
 export const backupRouter = Router();
 
-backupRouter.use(authMiddleware, requireMinRole(Role.PREMIUM_MEMBER));
+/** Free-open: MEMBER+. Paid later → requirePremium() (see FREE_OPEN_MEMBER_FEATURES_MIN_ROLE). */
+backupRouter.use(authMiddleware, requireMinRole(FREE_OPEN_MEMBER_FEATURES_MIN_ROLE));
 
 /** POST /backup/export — download user backup (zip|json) */
 backupRouter.post('/export', validateBody(backupExportSchema), (req, res, next) => {

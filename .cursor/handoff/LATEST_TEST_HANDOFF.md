@@ -1,14 +1,14 @@
-# Test handoff — Demo account purge
+# Test handoff — Photo board & backup open to MEMBER
 
 ## Summary
-Production DB hard-purged: `admin@machinefit.com`, `demo1`–`demo3`, `demo_test2@gmail.com` (+ related rows).  
-`demo_test@gmail.com` was **not** in DB; closest match `demo_test2@gmail.com` was removed.
+Free-open: photo board and user backup are available to all logged-in members (`FREE_OPEN_MEMBER_FEATURES_MIN_ROLE = member`). Admin photo moderation unchanged. Other My Page “above member” links stay premium-gated.
 
 ## Test focus
-1. Login with deleted emails fails
-2. Remaining admins still work (`madbandi@gmail.com`, kakao admin)
-3. Dry-run `node scripts/purge-target-accounts.mjs` returns matched: 0 for those targets
+1. Member login → Community → 사진게시판 visible and posts load (not 403)
+2. My Page → 데이터 관리 visible; export/history works
+3. Logged-out → those URLs redirect to login
+4. Member still does **not** see lab / friends / gyms / push compose (still premium+)
 
 ## as-is → to-be
-- as-is: dummy/demo accounts in prod
-- to-be: accounts + related data removed; purge script kept for ops
+- as-is: `requireMinRole(PREMIUM_MEMBER)` blocked Polar-paid `member` role
+- to-be: login-only gate; paid conversion later via constant + `requirePremium()`

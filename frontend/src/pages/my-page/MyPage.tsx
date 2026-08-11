@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Role, hasExactRole, hasMinRole } from '@machinefit/shared';
+import { FREE_OPEN_MEMBER_FEATURES_MIN_ROLE, Role, hasExactRole, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Icon, type IconName } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
@@ -57,6 +57,10 @@ export function MyPage() {
   const isTrainer = hasMinRole(roleCode, Role.TRAINER);
   /** Hidden for plain `member`; visible for premium_member and above. */
   const showAboveMember = hasMinRole(roleCode, Role.PREMIUM_MEMBER);
+  const showPhotoBoardAndBackup = hasMinRole(
+    roleCode,
+    FREE_OPEN_MEMBER_FEATURES_MIN_ROLE
+  );
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -211,7 +215,7 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
-          {showAboveMember ? (
+          {showPhotoBoardAndBackup ? (
             <ListNavLink
               to={ROUTES.DATA_MANAGEMENT}
               label={t('myPage.dataManagement')}
@@ -260,7 +264,7 @@ export function MyPage() {
             label={tc('templateShare.myTemplates')}
             icon="history"
           />
-          {showAboveMember ? (
+          {showPhotoBoardAndBackup ? (
             <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
           ) : null}
         </nav>

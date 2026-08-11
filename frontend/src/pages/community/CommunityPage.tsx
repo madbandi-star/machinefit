@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Role, hasMinRole } from '@machinefit/shared';
+import { FREE_OPEN_MEMBER_FEATURES_MIN_ROLE, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { ROUTES } from '@/constants/routes';
@@ -12,8 +12,7 @@ export function CommunityPage() {
   const { t } = useTranslation();
   const { t: tc } = useTranslation('community');
   const roleCode = useAuthStore((s) => s.user?.roleCode);
-  /** Hidden for plain `member`; visible for premium_member and above. */
-  const showPhotoBoard = hasMinRole(roleCode, Role.PREMIUM_MEMBER);
+  const showPhotoBoard = hasMinRole(roleCode, FREE_OPEN_MEMBER_FEATURES_MIN_ROLE);
 
   return (
     <PageShell title={t('nav.community')} subtitle="Connect with the MachineFit community">

@@ -1,27 +1,36 @@
 {
-  "title": "Purge demo/admin dummy accounts from production DB",
-  "summary": "Hard-deleted admin@machinefit.com, demo1?3, demo_test2@gmail.com and related rows via scripts/purge-target-accounts.mjs. demo_test@gmail.com was not present (demo_test2 was).",
+  "title": "Open photo board and user backup to MEMBER (free-open)",
+  "summary": "Photo board and user backup/data-management are login-only (MEMBER+) for free launch with ads. Polar/premium role no longer required. Flip FREE_OPEN_MEMBER_FEATURES_MIN_ROLE + requirePremium() later for paid.",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "scripts/purge-target-accounts.mjs"
+    "shared/src/constants/free-open.ts",
+    "shared/src/constants/index.ts",
+    "backend/server/routes/photo-board.routes.ts",
+    "backend/server/routes/backup.routes.ts",
+    "frontend/src/routes/index.tsx",
+    "frontend/src/pages/community/CommunityPage.tsx",
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "Those emails/display names no longer in users",
-    "Other admins (madbandi / kakao) still active",
-    "Login with deleted accounts fails"
+    "Logged-in member can open /community/photo and list/create posts",
+    "Logged-in member can open /settings/data and call backup export",
+    "Guest still redirected to login",
+    "Admin photo-board moderation still ADMIN-only",
+    "My Page other premium-only links (lab, friends, gyms) still hidden for member"
   ],
   "fastChecks": [
-    "node scripts/purge-target-accounts.mjs"
+    "rg -n \"FREE_OPEN_MEMBER_FEATURES_MIN_ROLE|requirePhotoBoardMember\" shared backend/server/routes frontend/src/routes frontend/src/pages"
   ],
   "productionChecks": [
-    "Confirm leftoverTargets empty; admin role still exists for real operators"
+    "After Render redeploy: member JWT can GET /api/v1/photo-board/posts (not 403)",
+    "After Pages deploy: member sees photo board on community + my page"
   ],
   "deploy": {
-    "expected": "DB-only change; no FE/BE redeploy required for purge. Script commit optional."
+    "expected": "Push main: FE Pages + BE Render (API gate change)"
   },
-  "asIs": "Demo/admin@machinefit.com accounts present in prod",
-  "toBe": "Those accounts and related data removed; ops script retained"
+  "asIs": "Photo board and backup required premium_member role; Polar-paid members blocked",
+  "toBe": "Any logged-in MEMBER can use photo board and user backup"
 }
