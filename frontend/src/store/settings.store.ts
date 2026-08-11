@@ -90,7 +90,8 @@ export const SETTINGS_DEFAULTS = {
   restDurationSeconds: REST_DURATION.defaultSeconds,
   /** When false, skip rest timer after the final completed set. */
   restTimerAfterAllSetsComplete: true,
-  workoutFullscreenDisplay: true,
+  /** Full-screen rest/count overlay. Default compact (소형모드) banner. */
+  workoutFullscreenDisplay: false,
   weightDifficulty: WEIGHT_DIFFICULTY_DEFAULT,
 } as const;
 
@@ -203,17 +204,27 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'machinefit-settings',
-      /** v1: rest-tips voice default changed to off (was historically on for many installs). */
-      version: 1,
+      /**
+       * v1: rest-tips voice default changed to off (was historically on for many installs).
+       * v2: workout fullscreen display default → compact (소형모드) for count/rest.
+       */
+      version: 2,
       migrate: (persistedState, fromVersion) => {
         const state = (persistedState ?? {}) as Partial<SettingsState>;
+        let next = { ...state };
         if (fromVersion < 1) {
-          return {
-            ...state,
+          next = {
+            ...next,
             voiceRestTipsEnabled: SETTINGS_DEFAULTS.voiceRestTipsEnabled,
           };
         }
-        return state;
+        if (fromVersion < 2) {
+          next = {
+            ...next,
+            workoutFullscreenDisplay: SETTINGS_DEFAULTS.workoutFullscreenDisplay,
+          };
+        }
+        return next;
       },
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<SettingsState>;

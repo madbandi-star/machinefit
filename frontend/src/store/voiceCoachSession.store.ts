@@ -172,7 +172,7 @@ export const useVoiceCoachSessionStore = create<VoiceCoachSessionState>((set, ge
       isPaused: false,
       sessionId: thisSessionId,
       config,
-      // Fresh start follows workoutFullscreenDisplay via host "auto".
+      // Fresh start uses displayOverride "auto" → compact unless user expands to full.
       displayOverride: 'auto',
     });
 
