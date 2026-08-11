@@ -82,6 +82,74 @@
   background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
+.home-session-timer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+}
+
+.home-session-timer__display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.home-session-timer__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+.home-session-timer__time {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.home-session-timer__time[data-status='running'] {
+  color: var(--color-primary);
+}
+
+.home-session-timer__actions {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  min-width: min(100%, 14rem);
+}
+
+.home-session-timer__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.home-session-timer__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 380px) {
+  .home-session-timer__time {
+    font-size: 1.35rem;
+  }
+
+  .home-session-timer__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+}
+
 .home-guest {
   position: relative;
   overflow: hidden;

@@ -6,6 +6,7 @@ import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSecti
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { HomeNoticeBanner } from '@/components/home/HomeNoticeBanner/HomeNoticeBanner';
 import { HomePlannedWorkoutCard } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
+import { HomeWorkoutSessionTimer } from '@/components/home/HomeWorkoutSessionTimer/HomeWorkoutSessionTimer';
 import { HomeFortuneCard } from '@/components/home/HomeFortuneCard/HomeFortuneCard';
 import { NoticePopup } from '@/components/notices/NoticePopup/NoticePopup';
 import { RecentMachinesRow } from '@/components/home/RecentMachinesRow/RecentMachinesRow';
@@ -88,6 +89,7 @@ export function HomePage() {
       <NoticePopup />
       <HomeFortuneCard />
       <HomePlannedWorkoutCard />
+      <HomeWorkoutSessionTimer />
       <HomeWorkoutToolsSection />
       <RecentMachinesRow />
       <FavoriteMachinesRow />
