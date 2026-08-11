@@ -63,35 +63,47 @@ export const adminBillingApi = {
   getUser: (userId: string) =>
     apiClient.get<ApiResponse<SubscriptionStatusView>>(`/admin/subscriptions/${userId}`),
 
-  extend: (userId: string, body: { days: number; planCode?: string }) =>
+  extend: (
+    userId: string,
+    body: { days: number; planCode?: string; confirmText: string }
+  ) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>(
       `/admin/subscriptions/${userId}/extend`,
       body
     ),
 
-  end: (userId: string) =>
+  end: (userId: string, body: { confirmText: string }) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>(
-      `/admin/subscriptions/${userId}/end`
+      `/admin/subscriptions/${userId}/end`,
+      body
     ),
 
   set: (
     userId: string,
-    body: { planCode: string; status: string; days?: number }
+    body: { planCode: string; status: string; days?: number; confirmText: string }
   ) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>(
       `/admin/subscriptions/${userId}/set`,
       body
     ),
 
-  grantTrial: (userId: string, body?: { days?: number; planCode?: string }) =>
+  grantTrial: (
+    userId: string,
+    body: { days?: number; planCode?: string; confirmText: string }
+  ) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>(
       `/admin/subscriptions/${userId}/grant-trial`,
-      body ?? {}
+      body
     ),
 
   refund: (
     userId: string,
-    body: { paymentId?: string; providerPaymentId?: string; reason?: string }
+    body: {
+      paymentId?: string;
+      providerPaymentId?: string;
+      reason?: string;
+      confirmText: string;
+    }
   ) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>(
       `/admin/subscriptions/${userId}/refund`,

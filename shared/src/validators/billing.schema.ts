@@ -5,6 +5,14 @@ import {
   PAYMENT_PROVIDER_IDS,
   SUBSCRIPTION_STATUSES,
 } from '../types/billing.types.js';
+import { ADMIN_BILLING_STEP_UP_CONFIRM } from '../constants/billing.js';
+
+const adminStepUpConfirmText = z
+  .string()
+  .trim()
+  .refine((value) => value.toUpperCase() === ADMIN_BILLING_STEP_UP_CONFIRM, {
+    message: `Type ${ADMIN_BILLING_STEP_UP_CONFIRM} to confirm`,
+  });
 
 export const startTrialSchema = z.object({
   planCode: z.enum(BILLING_PLAN_CODES).default('PREMIUM'),
@@ -33,6 +41,7 @@ export type ApplyCouponInput = z.infer<typeof applyCouponSchema>;
 export const adminExtendSubscriptionSchema = z.object({
   days: z.number().int().min(1).max(365),
   planCode: z.enum(BILLING_PLAN_CODES).optional(),
+  confirmText: adminStepUpConfirmText,
 });
 export type AdminExtendSubscriptionInput = z.infer<typeof adminExtendSubscriptionSchema>;
 
@@ -40,6 +49,7 @@ export const adminSetSubscriptionSchema = z.object({
   planCode: z.enum(BILLING_PLAN_CODES),
   status: z.enum(SUBSCRIPTION_STATUSES),
   days: z.number().int().min(1).max(365).optional(),
+  confirmText: adminStepUpConfirmText,
 });
 export type AdminSetSubscriptionInput = z.infer<typeof adminSetSubscriptionSchema>;
 
@@ -65,6 +75,7 @@ export type AdminCreateCouponInput = z.infer<typeof adminCreateCouponSchema>;
 export const adminGrantTrialSchema = z.object({
   days: z.number().int().min(1).max(90).default(7),
   planCode: z.enum(BILLING_PLAN_CODES).default('PREMIUM'),
+  confirmText: adminStepUpConfirmText,
 });
 export type AdminGrantTrialInput = z.infer<typeof adminGrantTrialSchema>;
 
@@ -72,7 +83,13 @@ export const adminRefundSchema = z.object({
   paymentId: z.string().uuid().optional(),
   providerPaymentId: z.string().min(1).optional(),
   reason: z.string().max(500).optional(),
+  confirmText: adminStepUpConfirmText,
 });
+
+export const adminEndSubscriptionSchema = z.object({
+  confirmText: adminStepUpConfirmText,
+});
+export type AdminEndSubscriptionInput = z.infer<typeof adminEndSubscriptionSchema>;
 export type AdminRefundInput = z.infer<typeof adminRefundSchema>;
 
 export const paymentProviderIdSchema = z.enum(PAYMENT_PROVIDER_IDS);

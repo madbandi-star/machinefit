@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import {
   adminCreateCouponSchema,
+  adminEndSubscriptionSchema,
   adminExtendSubscriptionSchema,
   adminGrantTrialSchema,
   adminListSubscriptionsQuerySchema,
@@ -54,6 +55,7 @@ export async function adminExtendSubscription(req: Request, res: Response): Prom
 
 export async function adminEndSubscription(req: Request, res: Response): Promise<void> {
   const userId: string = String(req.params.userId ?? '');
+  adminEndSubscriptionSchema.parse(req.body ?? {});
   const data = await billingService.adminEndSubscription(userId);
   writeAdminAudit(req, { action: 'admin.subscription.end', targetType: 'user', targetId: userId });
   res.json({ success: true, data });

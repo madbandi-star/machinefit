@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import type { PoolClient } from 'pg';
 import {
   USAGE_COLUMN_BY_FEATURE,
   type UsageFeatureCode,
@@ -46,6 +48,105 @@ const EMPTY_COUNTERS: UsageCounterRow = {
 };
 
 const FIXED_COLUMNS = new Set(Object.values(USAGE_COLUMN_BY_FEATURE));
+
+function advisoryLockKeys(userId: string, featureCode: string, dateKey: string): [number, number] {
+  const buf = createHash('sha256').update(`usage:${userId}:${featureCode}:${dateKey}`).digest();
+  return [buf.readInt32BE(0), buf.readInt32BE(4)];
+}
+
+function readCount(row: Record<string, unknown> | undefined, column: string | undefined, extraKey: string): number {
+  if (column && row && row[column] != null) return Number(row[column] ?? 0);
+  const extras = row?.extras;
+  if (extras && typeof extras === 'object' && extras !== null && !Array.isArray(extras)) {
+    return Number((extras as Record<string, unknown>)[extraKey] ?? 0);
+  }
+  if (typeof extras === 'string') {
+    try {
+      const parsed = JSON.parse(extras) as Record<string, unknown>;
+      return Number(parsed[extraKey] ?? 0);
+    } catch {
+      return 0;
+    }
+  }
+  return 0;
+}
+
+async function applyIncrement(
+  client: PoolClient,
+  userId: string,
+  featureCode: string,
+  amount: number,
+  dateKey: string,
+  monthKey: string
+): Promise<void> {
+  const column = USAGE_COLUMN_BY_FEATURE[featureCode as UsageFeatureCode];
+  if (column && FIXED_COLUMNS.has(column)) {
+    await client.query(
+      `INSERT INTO user_usage_daily (user_id, usage_date, ${column}, active_flag)
+       VALUES ($1, $2::date, $3, TRUE)
+       ON CONFLICT (user_id, usage_date) DO UPDATE SET
+         ${column} = user_usage_daily.${column} + EXCLUDED.${column},
+         active_flag = TRUE,
+         updated_at = NOW()`,
+      [userId, dateKey, amount]
+    );
+    await client.query(
+      `INSERT INTO user_usage_monthly (user_id, usage_month, ${column}, active_days)
+       VALUES ($1, $2, $3, 1)
+       ON CONFLICT (user_id, usage_month) DO UPDATE SET
+         ${column} = user_usage_monthly.${column} + EXCLUDED.${column},
+         updated_at = NOW()`,
+      [userId, monthKey, amount]
+    );
+  } else {
+    await client.query(
+      `INSERT INTO user_usage_daily (user_id, usage_date, extras, active_flag)
+       VALUES ($1, $2::date, jsonb_build_object($3::text, $4::int), TRUE)
+       ON CONFLICT (user_id, usage_date) DO UPDATE SET
+         extras = jsonb_set(
+           COALESCE(user_usage_daily.extras, '{}'::jsonb),
+           ARRAY[$3::text],
+           to_jsonb(
+             COALESCE((user_usage_daily.extras->>$3)::int, 0) + $4
+           ),
+           true
+         ),
+         active_flag = TRUE,
+         updated_at = NOW()`,
+      [userId, dateKey, featureCode, amount]
+    );
+    await client.query(
+      `INSERT INTO user_usage_monthly (user_id, usage_month, extras, active_days)
+       VALUES ($1, $2, jsonb_build_object($3::text, $4::int), 1)
+       ON CONFLICT (user_id, usage_month) DO UPDATE SET
+         extras = jsonb_set(
+           COALESCE(user_usage_monthly.extras, '{}'::jsonb),
+           ARRAY[$3::text],
+           to_jsonb(
+             COALESCE((user_usage_monthly.extras->>$3)::int, 0) + $4
+           ),
+           true
+         ),
+         updated_at = NOW()`,
+      [userId, monthKey, featureCode, amount]
+    );
+  }
+
+  await client.query(
+    `UPDATE user_usage_monthly m
+     SET active_days = sub.cnt,
+         updated_at = NOW()
+     FROM (
+       SELECT COUNT(*)::int AS cnt
+       FROM user_usage_daily d
+       WHERE d.user_id = $1
+         AND d.active_flag = TRUE
+         AND to_char(d.usage_date, 'YYYY-MM') = $2
+     ) sub
+     WHERE m.user_id = $1 AND m.usage_month = $2`,
+    [userId, monthKey]
+  );
+}
 
 function pool() {
   const p = getPool();
@@ -111,81 +212,78 @@ export const usageRepository = {
   ): Promise<void> {
     const dateKey = seoulDateKey(at);
     const monthKey = seoulMonthKey(at);
-    const column = USAGE_COLUMN_BY_FEATURE[featureCode as UsageFeatureCode];
-    const p = pool();
-    const client = await p.connect();
+    const client = await pool().connect();
     try {
       await client.query('BEGIN');
+      await applyIncrement(client, userId, featureCode, amount, dateKey, monthKey);
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  },
 
-      if (column && FIXED_COLUMNS.has(column)) {
-        await client.query(
-          `INSERT INTO user_usage_daily (user_id, usage_date, ${column}, active_flag)
-           VALUES ($1, $2::date, $3, TRUE)
-           ON CONFLICT (user_id, usage_date) DO UPDATE SET
-             ${column} = user_usage_daily.${column} + EXCLUDED.${column},
-             active_flag = TRUE,
-             updated_at = NOW()`,
-          [userId, dateKey, amount]
-        );
-        await client.query(
-          `INSERT INTO user_usage_monthly (user_id, usage_month, ${column}, active_days)
-           VALUES ($1, $2, $3, 1)
-           ON CONFLICT (user_id, usage_month) DO UPDATE SET
-             ${column} = user_usage_monthly.${column} + EXCLUDED.${column},
-             updated_at = NOW()`,
-          [userId, monthKey, amount]
-        );
-      } else {
-        await client.query(
-          `INSERT INTO user_usage_daily (user_id, usage_date, extras, active_flag)
-           VALUES ($1, $2::date, jsonb_build_object($3::text, $4::int), TRUE)
-           ON CONFLICT (user_id, usage_date) DO UPDATE SET
-             extras = jsonb_set(
-               COALESCE(user_usage_daily.extras, '{}'::jsonb),
-               ARRAY[$3::text],
-               to_jsonb(
-                 COALESCE((user_usage_daily.extras->>$3)::int, 0) + $4
-               ),
-               true
-             ),
-             active_flag = TRUE,
-             updated_at = NOW()`,
-          [userId, dateKey, featureCode, amount]
-        );
-        await client.query(
-          `INSERT INTO user_usage_monthly (user_id, usage_month, extras, active_days)
-           VALUES ($1, $2, jsonb_build_object($3::text, $4::int), 1)
-           ON CONFLICT (user_id, usage_month) DO UPDATE SET
-             extras = jsonb_set(
-               COALESCE(user_usage_monthly.extras, '{}'::jsonb),
-               ARRAY[$3::text],
-               to_jsonb(
-                 COALESCE((user_usage_monthly.extras->>$3)::int, 0) + $4
-               ),
-               true
-             ),
-             updated_at = NOW()`,
-          [userId, monthKey, featureCode, amount]
-        );
-      }
+  /**
+   * Atomic check+increment under pg advisory lock (same transaction).
+   * Prevents concurrent creates from all passing a prior SELECT then inserting.
+   */
+  async consumeIfUnderLimit(input: {
+    userId: string;
+    featureCode: string;
+    dailyLimit: number | null;
+    monthlyLimit: number | null;
+    amount?: number;
+    at?: Date;
+  }): Promise<{ ok: true } | { ok: false; reason: 'DAILY_LIMIT_EXCEEDED' | 'MONTHLY_LIMIT_EXCEEDED' }> {
+    const amount = input.amount ?? 1;
+    const at = input.at ?? new Date();
+    const dateKey = seoulDateKey(at);
+    const monthKey = seoulMonthKey(at);
+    const column = USAGE_COLUMN_BY_FEATURE[input.featureCode as UsageFeatureCode];
+    const [k1, k2] = advisoryLockKeys(input.userId, input.featureCode, dateKey);
+    const client = await pool().connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('SELECT pg_advisory_xact_lock($1, $2)', [k1, k2]);
 
-      // active_days: count distinct active daily rows in the month (recompute cheaply)
       await client.query(
-        `UPDATE user_usage_monthly m
-         SET active_days = sub.cnt,
-             updated_at = NOW()
-         FROM (
-           SELECT COUNT(*)::int AS cnt
-           FROM user_usage_daily d
-           WHERE d.user_id = $1
-             AND d.active_flag = TRUE
-             AND to_char(d.usage_date, 'YYYY-MM') = $2
-         ) sub
-         WHERE m.user_id = $1 AND m.usage_month = $2`,
-        [userId, monthKey]
+        `INSERT INTO user_usage_daily (user_id, usage_date, active_flag)
+         VALUES ($1, $2::date, TRUE)
+         ON CONFLICT (user_id, usage_date) DO NOTHING`,
+        [input.userId, dateKey]
+      );
+      await client.query(
+        `INSERT INTO user_usage_monthly (user_id, usage_month, active_days)
+         VALUES ($1, $2, 0)
+         ON CONFLICT (user_id, usage_month) DO NOTHING`,
+        [input.userId, monthKey]
       );
 
+      const dailyRow = await client.query<Record<string, unknown>>(
+        `SELECT * FROM user_usage_daily WHERE user_id = $1 AND usage_date = $2::date FOR UPDATE`,
+        [input.userId, dateKey]
+      );
+      const monthlyRow = await client.query<Record<string, unknown>>(
+        `SELECT * FROM user_usage_monthly WHERE user_id = $1 AND usage_month = $2 FOR UPDATE`,
+        [input.userId, monthKey]
+      );
+      const dailyUsage = readCount(dailyRow.rows[0], column, input.featureCode);
+      const monthlyUsage = readCount(monthlyRow.rows[0], column, input.featureCode);
+
+      if (input.dailyLimit != null && dailyUsage + amount > input.dailyLimit) {
+        await client.query('ROLLBACK');
+        return { ok: false, reason: 'DAILY_LIMIT_EXCEEDED' };
+      }
+      if (input.monthlyLimit != null && monthlyUsage + amount > input.monthlyLimit) {
+        await client.query('ROLLBACK');
+        return { ok: false, reason: 'MONTHLY_LIMIT_EXCEEDED' };
+      }
+
+      await applyIncrement(client, input.userId, input.featureCode, amount, dateKey, monthKey);
       await client.query('COMMIT');
+      return { ok: true };
     } catch (err) {
       await client.query('ROLLBACK');
       throw err;

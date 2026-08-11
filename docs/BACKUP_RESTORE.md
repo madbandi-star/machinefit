@@ -158,3 +158,11 @@ Validated by `userBackupPayloadSchema` / `systemBackupPayloadSchema` in `@machin
 3. 복구 DB URL을 스테이징 Render에만 연결 → `/ready` 200, 로그인, 결제 status, 관리자 백업 history 확인.
 4. 통과 시각·담당자를 `docs` 또는 운영 위키에 남긴다. 분기마다 1회.
 5. 앱 `POST /admin/system-restore` (`confirmText=YES`)는 카탈로그/공지 논리 복구용이며 PITR 대체가 아니다.
+
+### system-restore 훈련 (분기 1회)
+
+1. 스테이징에서 전체 백업 ZIP 받기 (`POST /admin/system-backup`).
+2. 스테이징 공지/카탈로그를 일부 바꾼 뒤 `confirmText=YES`로 restore.
+3. YES 없이 호출 → 400 `CONFIRM_REQUIRED`.
+4. 복구 후 공지·카탈로그가 백업 시점과 일치하는지 확인.
+5. 관리자 구독 부여는 확인 문구 `GRANT`가 필요하다 (`ADMIN_BILLING_STEP_UP_CONFIRM`).

@@ -1,7 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { BillingPlanCode, SubscriptionStatus } from '@machinefit/shared';
+import {
+  ADMIN_BILLING_STEP_UP_CONFIRM,
+  type BillingPlanCode,
+  type SubscriptionStatus,
+} from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
@@ -55,6 +59,16 @@ export function AdminSubscriptionsPage() {
   const [q, setQ] = useState('');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string>('');
+  const [stepUpText, setStepUpText] = useState('');
+
+  const requireStepUp = (): string | null => {
+    const value = stepUpText.trim().toUpperCase();
+    if (value !== ADMIN_BILLING_STEP_UP_CONFIRM) {
+      showToast(t('subscriptions.stepUpRequired'), 'error');
+      return null;
+    }
+    return ADMIN_BILLING_STEP_UP_CONFIRM;
+  };
 
   const params = useMemo(
     () => ({
@@ -79,8 +93,8 @@ export function AdminSubscriptionsPage() {
   };
 
   const extendMutation = useMutation({
-    mutationFn: ({ userId, days }: { userId: string; days: number }) =>
-      adminBillingApi.extend(userId, { days }),
+    mutationFn: ({ userId, days, confirmText }: { userId: string; days: number; confirmText: string }) =>
+      adminBillingApi.extend(userId, { days, confirmText }),
     onSuccess: () => {
       invalidate();
       showToast(t('subscriptions.extended'), 'success');
@@ -89,7 +103,8 @@ export function AdminSubscriptionsPage() {
   });
 
   const endMutation = useMutation({
-    mutationFn: (userId: string) => adminBillingApi.end(userId),
+    mutationFn: ({ userId, confirmText }: { userId: string; confirmText: string }) =>
+      adminBillingApi.end(userId, { confirmText }),
     onSuccess: () => {
       invalidate();
       showToast(t('subscriptions.ended'), 'success');
@@ -106,7 +121,8 @@ export function AdminSubscriptionsPage() {
       userId: string;
       planCode: BillingPlanCode;
       status: SubscriptionStatus;
-    }) => adminBillingApi.set(userId, { planCode, status: nextStatus, days: 30 }),
+      confirmText: string;
+    }) => adminBillingApi.set(userId, { planCode, status: nextStatus, days: 30, confirmText }),
     onSuccess: () => {
       invalidate();
       showToast(t('subscriptions.updated'), 'success');
@@ -143,6 +159,17 @@ export function AdminSubscriptionsPage() {
   return (
     <AdminPageShell title={t('subscriptions.nav')} subtitle={t('subscriptions.desc')}>
       <div className="admin-subs">
+        <p className="admin-subs__stepup-help">{t('subscriptions.stepUpHint')}</p>
+        <label className="admin-subs__stepup">
+          <span>{t('subscriptions.stepUpLabel')}</span>
+          <input
+            className="input"
+            value={stepUpText}
+            onChange={(e) => setStepUpText(e.target.value)}
+            placeholder={t('subscriptions.stepUpPlaceholder')}
+            autoComplete="off"
+          />
+        </label>
         <div className="admin-toolbar admin-subs__toolbar">
           <input
             className="input"
@@ -249,10 +276,13 @@ export function AdminSubscriptionsPage() {
                           const value = e.target.value as BillingPlanCode | '';
                           e.target.value = '';
                           if (!value) return;
+                          const confirmText = requireStepUp();
+                          if (!confirmText) return;
                           setMutation.mutate({
                             userId: row.userId,
                             planCode: value,
                             status: value === 'FREE' ? 'CANCELED' : 'ACTIVE',
+                            confirmText,
                           });
                         }}
                       >
@@ -265,9 +295,11 @@ export function AdminSubscriptionsPage() {
                         type="button"
                         className="btn btn--secondary btn--sm"
                         disabled={busy}
-                        onClick={() =>
-                          extendMutation.mutate({ userId: row.userId, days: 30 })
-                        }
+                        onClick={() => {
+                          const confirmText = requireStepUp();
+                          if (!confirmText) return;
+                          extendMutation.mutate({ userId: row.userId, days: 30, confirmText });
+                        }}
                       >
                         {t('subscriptions.extend30')}
                       </button>
@@ -276,8 +308,10 @@ export function AdminSubscriptionsPage() {
                         className="btn btn--ghost btn--sm admin-subs__end"
                         disabled={busy}
                         onClick={() => {
+                          const confirmText = requireStepUp();
+                          if (!confirmText) return;
                           if (window.confirm(t('subscriptions.endConfirm'))) {
-                            endMutation.mutate(row.userId);
+                            endMutation.mutate({ userId: row.userId, confirmText });
                           }
                         }}
                       >

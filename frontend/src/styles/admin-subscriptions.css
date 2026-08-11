@@ -11,6 +11,25 @@
   margin: 0;
 }
 
+.admin-subs__stepup-help {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.admin-subs__stepup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.admin-subs__stepup .input {
+  max-width: 12rem;
+}
+
 .admin-subs__filters {
   display: flex;
   flex-wrap: wrap;

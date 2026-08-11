@@ -100,6 +100,9 @@ export function hasAdminAccess(roleCode?: string | null): boolean {
   return hasMinRole(roleCode as RoleCode, Role.ADMIN);
 }
 
+/** Admin billing mutations must send this confirmText (step-up). */
+export const ADMIN_BILLING_STEP_UP_CONFIRM = 'GRANT';
+
 export function defaultTrialDays(planCode: BillingPlanCode | string): number {
   const code = String(planCode).toUpperCase();
   if (code === 'VIP') return 14;

@@ -37,6 +37,11 @@ export const usageService = {
   async recordUsage(userId: string, featureCode: string, amount = 1): Promise<void> {
     if (!userId || !featureCode || amount <= 0) return;
     const code = featureCode.slice(0, 80);
+    if (!USAGE_GATE_EXCLUDED.has(code)) {
+      const policy = await usagePolicyRepository.findByCode(code);
+      // When enforcement is on, assertUsageAllowed already consumed the quota atomically.
+      if (policy?.limitsEnforced && policy.isActive) return;
+    }
     await usageRepository.incrementUsage(userId, code, Math.min(amount, 100));
   },
 
@@ -130,12 +135,28 @@ export const usageService = {
   async assertUsageAllowed(userId: string, featureCode: string): Promise<void> {
     if (!userId || USAGE_GATE_EXCLUDED.has(featureCode)) return;
     const result = await this.checkUsageLimit(userId, featureCode);
-    if (result.allowed) return;
+    if (!result.allowed) {
+      throw new AppError(402, 'USAGE_LIMIT', 'Usage limit exceeded', {
+        featureCode: result.featureCode,
+        reason: result.reason,
+        remainingDaily: result.remainingDaily,
+        remainingMonthly: result.remainingMonthly,
+        planTier: result.planTier,
+      });
+    }
+    if (!result.limitsEnforced || result.planTier === 'ADMIN') return;
+    const consumed = await usageRepository.consumeIfUnderLimit({
+      userId,
+      featureCode,
+      dailyLimit: result.dailyLimit,
+      monthlyLimit: result.monthlyLimit,
+    });
+    if (consumed.ok) return;
     throw new AppError(402, 'USAGE_LIMIT', 'Usage limit exceeded', {
       featureCode: result.featureCode,
-      reason: result.reason,
-      remainingDaily: result.remainingDaily,
-      remainingMonthly: result.remainingMonthly,
+      reason: consumed.reason,
+      remainingDaily: consumed.reason === 'DAILY_LIMIT_EXCEEDED' ? 0 : result.remainingDaily,
+      remainingMonthly: consumed.reason === 'MONTHLY_LIMIT_EXCEEDED' ? 0 : result.remainingMonthly,
       planTier: result.planTier,
     });
   },

@@ -1,26 +1,18 @@
 {
-  "title": "Fix Polar paid mapping, refund lock, withdraw cancel, audio HMAC",
-  "summary": "Premium only on order.paid/cycled. Refund lock. Polar revoke retry on withdraw. Motivation audio HMAC + private bucket. Request images honor is_hidden. PITR drill docs.",
+  "title": "Atomic usage consume, Polar drill tests, admin GRANT step-up",
+  "summary": "limits_enforced uses advisory lock + FOR UPDATE consume. Admin billing requires GRANT. Polar webhook scenarios tested; PITR/restore drill documented.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/payments/polar/polar-event-map.ts",
-    "backend/server/payments/webhook-activate-policy.ts",
-    "backend/server/payments/providers/polar/polar.provider.ts",
-    "backend/server/services/billing.service.ts",
-    "backend/server/repositories/billing.repository.ts",
-    "backend/server/jobs/polar-cancel-retry.job.ts",
-    "backend/server/utils/media-token.util.ts",
-    "backend/server/services/storage.service.ts",
-    "backend/server/controllers/motivation-audio-media.controller.ts",
-    "backend/server/repositories/community.repository.ts",
-    "database/migrations/118_polar_cancel_retries.sql",
-    "docs/BACKUP_RESTORE.md",
-    "docs/POLAR_PREMIUM.md"
+    "backend/server/repositories/usage.repository.ts",
+    "backend/server/services/usage.service.ts",
+    "shared/src/validators/billing.schema.ts",
+    "frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx",
+    "docs/POLAR_SANDBOX_WEBHOOK_DRILL.md"
   ],
-  "testFocus": ["Polar webhook mapping", "refund lock", "audio HMAC 401"],
-  "fastChecks": ["npx tsx backend/server/payments/polar/polar-event-map.test.ts"],
-  "productionChecks": ["Render migrate 118; Polar sandbox unpaid order does not grant Premium"],
-  "deploy": { "expected": "Pages FE + Render backend (migration 118)" },
-  "asIs": "order.created granted Premium; withdraw Polar cancel swallowed; open audio URLs",
-  "toBe": "paid events only; Polar revoke retry; HMAC audio"
+  "testFocus": ["GRANT required on admin billing", "polar-webhook-scenarios"],
+  "fastChecks": ["npx tsx backend/server/payments/polar-webhook-scenarios.test.ts"],
+  "productionChecks": ["Polar sandbox A–G in docs/POLAR_SANDBOX_WEBHOOK_DRILL.md"],
+  "deploy": { "expected": "Pages FE + Render backend" },
+  "asIs": "check-then-act usage; one-click admin grant",
+  "toBe": "atomic consume; GRANT step-up"
 }
