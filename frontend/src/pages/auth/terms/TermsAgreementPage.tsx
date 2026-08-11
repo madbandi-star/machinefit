@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   Check,
@@ -20,6 +20,7 @@ import {
   type User,
 } from '@machinefit/shared';
 import { authApi } from '@/api';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
@@ -112,6 +113,7 @@ function ConsentRow({
 export function TermsAgreementPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const setAuth = useAuthStore((s) => s.setAuth);
   const updateUser = useAuthStore((s) => s.updateUser);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -167,10 +169,13 @@ export function TermsAgreementPage() {
   const finishAuth = (user: User, tokens: AuthTokens) => {
     clearOAuthPending();
     clearTermsChecks();
-    setAuth(user, tokens);
-    updateUser({ ...user, needsConsent: false });
-    syncUserSettings(user);
-    syncGymScopeAfterAuth(user);
+    const next = { ...user, needsConsent: false };
+    void queryClient.cancelQueries({ queryKey: QUERY_KEYS.me });
+    queryClient.setQueryData(QUERY_KEYS.me, next);
+    setAuth(next, tokens);
+    updateUser(next);
+    syncUserSettings(next);
+    syncGymScopeAfterAuth(next);
     if (isSignup) {
       navigate(ROUTES.AUTH_SIGNUP_COMPLETE, { replace: true });
       return;

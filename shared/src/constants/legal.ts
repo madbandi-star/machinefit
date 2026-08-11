@@ -6,6 +6,18 @@
  * Per-document versions. Consent re-check uses terms/privacy/location/marketing.
  * commerce/community/copyright/ai/security/illegalUse are display-only (footer/legal pages).
  */
+/**
+ * Stored ISO date versions compare lexicographically. A newer stamp still
+ * satisfies an older server constant (Pages/Render skew after a doc bump).
+ */
+export function legalVersionSatisfies(
+  stored: string | null | undefined,
+  current: string
+): boolean {
+  if (!stored) return false;
+  return stored >= current;
+}
+
 export const LEGAL_DOC_VERSIONS = {
   terms: '2026-08-14',
   privacy: '2026-08-14',

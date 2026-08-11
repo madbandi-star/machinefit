@@ -1,5 +1,6 @@
 import {
   LEGAL_DOC_VERSIONS,
+  legalVersionSatisfies,
   yearsSinceBirthDate,
   type RoleCode,
   type User,
@@ -290,11 +291,11 @@ export const userRepository = {
     );
   },
 
-  /** Required consents (terms + privacy) match current legal versions. */
+  /** Required consents (terms + privacy) meet or exceed current legal versions. */
   needsRequiredConsent(user: Pick<User, 'termsVersion' | 'privacyVersion'>): boolean {
     return (
-      user.termsVersion !== LEGAL_DOC_VERSIONS.terms ||
-      user.privacyVersion !== LEGAL_DOC_VERSIONS.privacy
+      !legalVersionSatisfies(user.termsVersion, LEGAL_DOC_VERSIONS.terms) ||
+      !legalVersionSatisfies(user.privacyVersion, LEGAL_DOC_VERSIONS.privacy)
     );
   },
 

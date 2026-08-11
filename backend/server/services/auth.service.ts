@@ -142,8 +142,8 @@ async function applyConsentBundle(
     source?: string;
   }
 ) {
-  const termsVersion = input.termsVersion || LEGAL_DOC_VERSIONS.terms;
-  const privacyVersion = input.privacyVersion || LEGAL_DOC_VERSIONS.privacy;
+  const termsVersion = LEGAL_DOC_VERSIONS.terms;
+  const privacyVersion = LEGAL_DOC_VERSIONS.privacy;
   const locationVersion = input.locationVersion || LEGAL_DOC_VERSIONS.location;
   const marketingVersion = input.marketingVersion || LEGAL_DOC_VERSIONS.marketing;
   const marketingOptIn = Boolean(input.agreeMarketing);

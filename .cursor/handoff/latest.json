@@ -1,25 +1,24 @@
 {
-  "title": "Fix Render backend tsc",
-  "summary": "Remove unused banner userId, drop duplicate assert import, verify OIDC nonce on JWT payload (jose v5 has no nonce option), exclude tests from backend tsc.",
+  "title": "Fix terms consent redirect loop",
+  "summary": "Stop /auth/terms bounce: sync React Query /me after accept, stamp server legal versions, accept newer stored version dates when Pages/Render skew.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/services/banner.service.ts",
-    "backend/server/controllers/banner.controller.ts",
-    "backend/server/utils/oauth-verify.util.ts",
-    "backend/server/services/usage-limit-decision.test.ts",
-    "backend/tsconfig.json"
+    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
+    "backend/server/services/auth.service.ts",
+    "backend/server/repositories/user.repository.ts",
+    "shared/src/constants/legal.ts"
   ],
   "testFocus": [
-    "Render backend build success",
-    "OAuth nonce still rejected when missing/mismatched"
+    "Agree and continue leaves terms page",
+    "Home does not bounce back to /auth/terms"
   ],
   "fastChecks": [
-    "npx tsc --noEmit -p backend/tsconfig.json"
+    "npx tsx --test shared/src/constants/legal.test.ts"
   ],
   "productionChecks": [
-    "Render deploy for this commit is live"
+    "On Pages: complete consent and land on home"
   ],
-  "deploy": { "expected": "Push main; Render BE rebuild" },
-  "asIs": "Render tsc exit 2",
-  "toBe": "Backend build succeeds"
+  "deploy": { "expected": "Push main; Pages FE + Render BE" },
+  "asIs": "Terms continue loops to the same page",
+  "toBe": "Consent persist + cache so continue reaches home"
 }

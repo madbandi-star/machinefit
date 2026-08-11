@@ -1,19 +1,18 @@
-﻿# Test handoff — Render tsc fix
+﻿# Test handoff — consent page loop
 
 ## Summary
-Backend `tsc` failed on Render (`fa063dff`): unused `userId`, duplicate `assert` import in a test compiled by `tsc`, jose v5 `JWTVerifyOptions` has no `nonce`. Fixed those and excluded `*.test.ts` from the backend build.
+Agreeing on `/auth/terms` bounced back because cached `/me` still had `needsConsent: true`, and Pages vs Render legal-version mismatch made the server keep the flag. After accept we now write `/me` cache, stamp server legal versions, and treat newer stored dates as satisfied.
 
 ## Test focus
-1. Render Deploy Backend for this commit is `success`
-2. Apple/Google login still works (nonce checked on JWT payload, not jose options)
-3. Banner click still 204; events store null user_id
+1. Logged-in user with outdated terms: agree → continue → home (not back to terms)
+2. New OAuth signup: agree + DOB → signup complete, then home stays home
+3. Repeat continue does not return to `/auth/terms`
 
 ## as-is → to-be
-- as-is: Render build exit 2 on `tsc`
-- to-be: `npm run build` in backend succeeds; nonce still enforced in payload
+- as-is: continue → same terms page
+- to-be: continue → home / signup-complete and stay there
 
 ## Fast checks
 ```
-npm run typecheck --workspace=backend
+npx tsx --test shared/src/constants/legal.test.ts
 ```
-(Local may still miss `jszip`/`sanitize-html` if backend node_modules incomplete; Render `npm ci` has them.)
