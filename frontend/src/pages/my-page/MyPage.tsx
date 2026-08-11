@@ -245,13 +245,6 @@ export function MyPage() {
             icon="history"
           />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
-          {showPhotoBoardAndBackup ? (
-            <ListNavLink
-              to={ROUTES.DATA_MANAGEMENT}
-              label={t('myPage.dataManagement')}
-              icon="history"
-            />
-          ) : null}
           {showAboveMember ? (
             <ListNavLink
               to={ROUTES.MY_GYMS}

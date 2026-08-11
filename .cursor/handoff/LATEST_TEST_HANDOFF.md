@@ -1,17 +1,17 @@
-﻿# Test handoff — My templates under Personal settings
+﻿# Test handoff — Data management under Settings reset
 
 ## Summary
-My templates moved from My Page 커뮤니티 to 개인설정, above Settings.
+데이터관리 left My Page 개인설정. It is a Settings collapsible directly under 설정값 초기화 (still member-gated).
 
 ## Test focus
-1. 커뮤니티 no longer lists 내 템플릿
-2. 개인설정 first item is 내 템플릿, then 설정
+1. My Page 개인설정 has no 데이터관리
+2. Settings: after 설정값 초기화, 데이터관리 section → `/settings/data`
 
 ## as-is → to-be
-- as-is: 내 템플릿 in 커뮤니티
-- to-be: 내 템플릿 in 개인설정 above 설정
+- as-is: 데이터관리 on My Page under 설정
+- to-be: 데이터관리 on Settings page below reset
 
 ## Fast checks
 ```
-rg MY_TEMPLATES frontend/src/pages/my-page/MyPage.tsx -B 5 -A 8
+rg DATA_MANAGEMENT frontend/src/pages/my-page/MyPage.tsx frontend/src/pages/settings/SettingsPage.tsx
 ```

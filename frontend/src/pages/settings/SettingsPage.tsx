@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, LocationVisibility, WorkoutGoal } from '@machinefit/shared';
+import { FREE_OPEN_MEMBER_FEATURES_MIN_ROLE, hasMinRole } from '@machinefit/shared';
 import {
   REST_DURATION,
   restDurationFromParts,
@@ -73,6 +74,7 @@ export function SettingsPage() {
   const returnTo = (location.state as SettingsLocationState | null)?.returnTo;
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
+  const showDataManagement = hasMinRole(user?.roleCode, FREE_OPEN_MEMBER_FEATURES_MIN_ROLE);
   const updateUser = useAuthStore((s) => s.updateUser);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const showToast = useUIStore((s) => s.showToast);
@@ -923,6 +925,17 @@ export function SettingsPage() {
             {t('settings.reset')}
           </button>
         </SettingsCollapsibleSection>
+
+        {showDataManagement ? (
+          <SettingsCollapsibleSection
+            title={t('myPage.dataManagement')}
+            description={t('dataManagement.subtitle')}
+          >
+            <Link to={ROUTES.DATA_MANAGEMENT} className="btn btn--secondary btn--block">
+              {t('dataManagement.title')}
+            </Link>
+          </SettingsCollapsibleSection>
+        ) : null}
 
         <SettingsCollapsibleSection
           title={t('settings.deleteAccount')}

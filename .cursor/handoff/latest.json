@@ -1,12 +1,15 @@
 {
-  "title": "Move My templates into Personal settings",
-  "summary": "My Page: 내 템플릿 sits in 개인설정 above 설정, not in 커뮤니티.",
+  "title": "Move data management under Settings reset",
+  "summary": "데이터관리 is a Settings submenu below 설정값 초기화, removed from My Page 개인설정.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": ["Personal settings: My templates then Settings"],
-  "fastChecks": ["rg MY_TEMPLATES frontend/src/pages/my-page/MyPage.tsx"],
-  "productionChecks": ["Pages My Page 개인설정 order"],
+  "changedFiles": [
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx"
+  ],
+  "testFocus": ["Settings page: reset then data management"],
+  "fastChecks": ["rg DATA_MANAGEMENT frontend/src/pages/settings/SettingsPage.tsx"],
+  "productionChecks": ["Pages: Settings after reset opens /settings/data"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "내 템플릿 in 커뮤니티",
-  "toBe": "내 템플릿 above 설정 in 개인설정"
+  "asIs": "데이터관리 on My Page",
+  "toBe": "데이터관리 under Settings reset"
 }
