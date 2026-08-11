@@ -179,7 +179,7 @@ export const bannerService = {
     return bannerRepository.listPublicForSlot(slotKey);
   },
 
-  async recordEvent(body: BannerEventBody, userId?: string | null): Promise<void> {
+  async recordEvent(body: BannerEventBody): Promise<void> {
     // Fire-and-forget friendly: ignore missing banners quietly for public clients.
     const banner = await bannerRepository.getById(body.bannerId);
     if (!banner) return;

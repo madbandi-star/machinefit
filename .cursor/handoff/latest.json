@@ -1,36 +1,25 @@
 {
-  "title": "CASE legal/privacy/ops sweep",
-  "summary": "Close remaining CASE rows in code: marketing-gated banners, HMAC media, CSRF Origin, hide unlicensed PNGs, legal footers, admin audit expansion, banner event TTL, refund/copyright copy. Do not invent business registration numbers.",
+  "title": "Fix Render backend tsc",
+  "summary": "Remove unused banner userId, drop duplicate assert import, verify OIDC nonce on JWT payload (jose v5 has no nonce option), exclude tests from backend tsc.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/utils/csrf-origin.util.ts",
-    "backend/server/utils/media-token.util.ts",
-    "backend/server/controllers/admin.controller.ts",
-    "backend/server/controllers/admin-billing.controller.ts",
-    "backend/server/services/privacy-retention.service.ts",
-    "frontend/src/utils/catalogAssets.ts",
-    "frontend/src/components/banners/BannerSlot/BannerSlot.tsx",
-    "frontend/src/components/layout/LegalFooter/LegalFooter.tsx",
-    "frontend/src/layouts/AuthLayout.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "shared/src/constants/legal.ts"
+    "backend/server/services/banner.service.ts",
+    "backend/server/controllers/banner.controller.ts",
+    "backend/server/utils/oauth-verify.util.ts",
+    "backend/server/services/usage-limit-decision.test.ts",
+    "backend/tsconfig.json"
   ],
   "testFocus": [
-    "Legal footer on guest home and login",
-    "Banners only with marketingOptIn; events store null user_id",
-    "Unsigned photo GET 401",
-    "HS packaged PNG not shown",
-    "Admin audit on role/coupon"
+    "Render backend build success",
+    "OAuth nonce still rejected when missing/mismatched"
   ],
   "fastChecks": [
-    "npm run i18n:audit",
-    "npx tsx --test backend/server/utils/csrf-origin.util.test.ts backend/server/utils/media-token.util.test.ts"
+    "npx tsc --noEmit -p backend/tsconfig.json"
   ],
   "productionChecks": [
-    "Pages guest footer links open legal docs",
-    "Render: photo image without mexp/msig returns 401"
+    "Render deploy for this commit is live"
   ],
-  "deploy": { "expected": "Push main; Pages FE; Render BE required" },
-  "asIs": "CASE rows partial: banners logged user_id, unauth media, PNG catalog, thin legal copy",
-  "toBe": "CASE rows code-closed except operator-filled business numbers"
+  "deploy": { "expected": "Push main; Render BE rebuild" },
+  "asIs": "Render tsc exit 2",
+  "toBe": "Backend build succeeds"
 }

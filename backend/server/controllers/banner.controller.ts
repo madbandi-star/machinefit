@@ -133,7 +133,7 @@ export async function getPublicSlot(req: Request, res: Response): Promise<void> 
 export async function recordBannerEvent(req: Request, res: Response): Promise<void> {
   const body = req.body as BannerEventBody;
   // Respond immediately-ish; still await to keep ordering simple but cheap.
-  await bannerService.recordEvent(body, null);
+  await bannerService.recordEvent(body);
   res.status(204).end();
 }
 

@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import assert from 'node:assert/strict';
 import { decideUsageLimit } from './usage-limit-decision.js';
 
 const base = {

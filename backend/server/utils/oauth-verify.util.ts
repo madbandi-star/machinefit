@@ -1,7 +1,31 @@
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import type { AuthProviderCode } from '@machinefit/shared';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
+
+function nonceEquals(left: string, right: string): boolean {
+  const a = Buffer.from(left, 'utf8');
+  const b = Buffer.from(right, 'utf8');
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/** jose v5 JWTVerifyOptions has no `nonce`; Apple may hash the raw nonce. */
+function assertJwtNonce(payloadNonce: unknown, expectedRaw: string): void {
+  if (typeof payloadNonce !== 'string' || !payloadNonce) {
+    throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Token missing nonce');
+  }
+  const shaHex = createHash('sha256').update(expectedRaw).digest('hex');
+  const shaB64 = createHash('sha256').update(expectedRaw).digest('base64url');
+  if (
+    nonceEquals(payloadNonce, expectedRaw) ||
+    nonceEquals(payloadNonce, shaHex) ||
+    nonceEquals(payloadNonce, shaB64)
+  ) {
+    return;
+  }
+  throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Token nonce mismatch');
+}
 
 export interface VerifiedOAuthIdentity {
   provider: AuthProviderCode;
@@ -26,8 +50,8 @@ async function verifyGoogleIdToken(
     const { payload } = await jwtVerify(idToken, googleJwks, {
       issuer: ['https://accounts.google.com', 'accounts.google.com'],
       audience: clientId,
-      ...(nonce ? { nonce } : {}),
     });
+    if (nonce) assertJwtNonce(payload.nonce, nonce);
     const sub = typeof payload.sub === 'string' ? payload.sub : null;
     if (!sub) {
       throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Google token missing subject');
@@ -83,20 +107,12 @@ async function verifyAppleIdToken(idToken: string, nonce?: string): Promise<Veri
   if (!nonce) {
     throw new AppError(400, 'OAUTH_NONCE_REQUIRED', 'Apple login requires nonce');
   }
-  const { createHash } = await import('node:crypto');
-  const nonceSha256 = createHash('sha256').update(nonce).digest('hex');
   try {
     const { payload } = await jwtVerify(idToken, appleJwks, {
       issuer: 'https://appleid.apple.com',
       audience: clientId,
-      nonce,
-    }).catch(async () =>
-      jwtVerify(idToken, appleJwks, {
-        issuer: 'https://appleid.apple.com',
-        audience: clientId,
-        nonce: nonceSha256,
-      })
-    );
+    });
+    assertJwtNonce(payload.nonce, nonce);
     const sub = typeof payload.sub === 'string' ? payload.sub : null;
     if (!sub) {
       throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Apple token missing subject');

@@ -1,22 +1,19 @@
-﻿# Test handoff — CASE legal/privacy/ops sweep
+﻿# Test handoff — Render tsc fix
 
 ## Summary
-Remaining CASE rows are closed in code: marketing-gated banners (no user_id), HMAC media URLs, cookie CSRF Origin, unlicensed HS/wordmark PNGs hidden, legal footers on guest/login/easy, admin audit on remaining mutations, banner-event 90-day purge, refund restriction copy, Inter/Lucide + placeholder copyright. Business registration numbers are still blank on purpose (footer pending notice).
+Backend `tsc` failed on Render (`fa063dff`): unused `userId`, duplicate `assert` import in a test compiled by `tsc`, jose v5 `JWTVerifyOptions` has no `nonce`. Fixed those and excluded `*.test.ts` from the backend build.
 
 ## Test focus
-1. Guest home + `/login`: legal footer links (terms/privacy/refund/copyright) visible
-2. Marketing opt-out: home BannerSlot hidden; opt-in: banners show; click log has no user_id
-3. Photo/trade/request image URL without `mexp`/`msig` → 401
-4. Hammer Strength catalog tiles use placeholder/SVG, not packaged product PNG
-5. Cookie refresh from a foreign Origin → 403 `CSRF_REJECTED`
-6. Admin: change user role / create coupon / notice — row in admin audit logs
+1. Render Deploy Backend for this commit is `success`
+2. Apple/Google login still works (nonce checked on JWT payload, not jose options)
+3. Banner click still 204; events store null user_id
 
 ## as-is → to-be
-- as-is: CASE table still “부분/문제” (banner user_id, unauth photos, no guest footer, PNG catalog, thin terms)
-- to-be: those items code-closed; 사업자번호 still 운영 기입; 법률 입증(DOB 자가신고) is out of scope
+- as-is: Render build exit 2 on `tsc`
+- to-be: `npm run build` in backend succeeds; nonce still enforced in payload
 
 ## Fast checks
 ```
-npm run i18n:audit
-npx tsx --test backend/server/utils/csrf-origin.util.test.ts backend/server/utils/media-token.util.test.ts backend/server/services/age-verification.service.test.ts
+npm run typecheck --workspace=backend
 ```
+(Local may still miss `jszip`/`sanitize-html` if backend node_modules incomplete; Render `npm ci` has them.)
