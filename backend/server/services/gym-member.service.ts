@@ -8,6 +8,7 @@ import { subscriptionService } from './subscription.service.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getPool } from '../config/database.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 
 export const gymMemberService = {
   async list(userId: string, gymId: string) {
@@ -20,6 +21,7 @@ export const gymMemberService = {
   async create(userId: string, gymId: string, input: CreateGymMemberInput) {
     await gymScopeService.assertOwned(userId, gymId);
     await subscriptionService.assertCanAddMember(userId, gymId);
+    assertSafeUgc(input.name, input.memo);
 
     const email = input.email?.trim() || undefined;
 
@@ -78,6 +80,7 @@ export const gymMemberService = {
 
   async update(userId: string, gymId: string, memberId: string, input: UpdateGymMemberInput) {
     await gymScopeService.resolveMemberForWrite(userId, gymId, memberId);
+    assertSafeUgc(input.name, input.memo);
 
     // Only include keys present in the validated body so omitted optionals are not cleared.
     const patch: {

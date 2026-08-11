@@ -17,6 +17,7 @@ import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { findDevUserById } from '../data/dev-users.js';
 import { onlinePtRepository } from '../repositories/online-pt.repository.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { notificationService } from './notification.service.js';
 
 async function loadUser(userId: string): Promise<{ id: string; roleCode: RoleCode; displayName: string }> {
@@ -191,6 +192,7 @@ export const onlinePtService = {
   },
 
   async createQuestion(memberId: string, input: CreateOnlinePtQuestionInput) {
+    assertSafeUgc(input.title, input.body);
     const member = await loadUser(memberId);
     if (!hasMinRole(member.roleCode, Role.MEMBER)) {
       throw new AppError(403, 'FORBIDDEN', 'Members only');
@@ -314,6 +316,7 @@ export const onlinePtService = {
     questionId: string,
     input: CreateOnlinePtAnswerInput
   ) {
+    assertSafeUgc(input.body);
     const trainer = await loadUser(trainerId);
     assertTrainerRole(trainer.roleCode);
     const q = await onlinePtRepository.getQuestion(questionId);
@@ -383,6 +386,7 @@ export const onlinePtService = {
     questionId: string,
     input: CreateOnlinePtFollowupInput
   ) {
+    assertSafeUgc(input.body);
     const q = await this.getQuestion(questionId, memberId);
     if (!q.canFollowup) {
       throw new AppError(400, 'FOLLOWUP_NOT_ALLOWED', 'Follow-up not allowed');
@@ -425,6 +429,7 @@ export const onlinePtService = {
     questionId: string,
     input: CreateOnlinePtReviewInput
   ) {
+    assertSafeUgc(input.body);
     const q = await this.getQuestion(questionId, memberId);
     if (!q.canReview) {
       throw new AppError(400, 'REVIEW_NOT_ALLOWED', 'Review not allowed');

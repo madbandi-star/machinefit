@@ -172,6 +172,7 @@
     "notFound": "未找到。",
     "submitFailed": "保存失败，请重试。",
     "validationError": "请检查输入内容。",
+    "contentPolicyViolation": "包含不允许的用语，请修改后再试。",
     "serverError": "服务器错误。",
     "recommendValidation": "Check the details needed for a recommendation (height, weight, target muscle, etc.).",
     "networkError": "网络错误，请检查连接。",

@@ -177,6 +177,7 @@
     "notFound": "찾을 수 없어요.",
     "submitFailed": "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
     "validationError": "입력값을 확인해 주세요.",
+    "contentPolicyViolation": "사용할 수 없는 표현이 포함되어 있어요. 내용을 수정해 주세요.",
     "serverError": "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "recommendValidation": "추천에 필요한 정보(키·몸무게·운동 부위 등)를 확인해 주세요.",
     "networkError": "네트워크 오류예요. 연결을 확인해 주세요.",

@@ -172,6 +172,7 @@
     "notFound": "見つかりませんでした。",
     "submitFailed": "保存に失敗しました。もう一度お試しください。",
     "validationError": "入力内容を確認してください。",
+    "contentPolicyViolation": "使用できない表現が含まれています。内容を修正してください。",
     "serverError": "サーバーエラーが発生しました。",
     "recommendValidation": "Check the details needed for a recommendation (height, weight, target muscle, etc.).",
     "networkError": "ネットワークエラーです。接続を確認してください。",

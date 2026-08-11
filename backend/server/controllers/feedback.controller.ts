@@ -8,6 +8,7 @@ import { machineRepository } from '../repositories/machine.repository.js';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { gymScopeService } from '../services/gym-scope.service.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { resolveRequestLocale } from '../utils/locale.util.js';
 
 const feedbackSchema = z.object({
@@ -118,6 +119,7 @@ export async function upsertPreference(req: Request, res: Response): Promise<voi
   }
 
   await assertPreferenceScope(userId, body);
+  assertSafeUgc(body.personalTipMemo);
   const saved = await preferenceRepository.upsert(
     userId,
     machineId,

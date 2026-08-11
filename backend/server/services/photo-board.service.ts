@@ -13,6 +13,7 @@ import type {
 import { isAllowedPhotoBoardImage, photoBoardImageLimits } from '../config/photo-board-image.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { photoBoardRepository } from '../repositories/photo-board.repository.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { notificationService } from './notification.service.js';
 
 async function processPhoto(buffer: Buffer) {
@@ -78,6 +79,7 @@ export const photoBoardService = {
     input: CreatePhotoPostInput,
     files: Express.Multer.File[]
   ) {
+    assertSafeUgc(input.title, input.content, ...(input.tags ?? []));
     const limits = photoBoardImageLimits();
     if (!files.length) throw new AppError(400, 'IMAGES_REQUIRED', 'At least one image is required');
     if (files.length > limits.maxCount) {
@@ -99,6 +101,7 @@ export const photoBoardService = {
   },
 
   updatePost(postId: string, userId: string, role: RoleCode, input: UpdatePhotoPostInput) {
+    assertSafeUgc(input.title, input.content, ...(input.tags ?? []));
     return photoBoardRepository.updatePost(postId, userId, role, input);
   },
 
@@ -129,6 +132,7 @@ export const photoBoardService = {
   },
 
   async createComment(postId: string, userId: string, input: CreatePhotoCommentInput) {
+    assertSafeUgc(input.content);
     const result = await photoBoardRepository.createComment(postId, userId, input);
     if (result.authorId !== userId) {
       const isReply = Boolean(input.parentId);
@@ -154,6 +158,7 @@ export const photoBoardService = {
   },
 
   updateComment(commentId: string, userId: string, input: UpdatePhotoCommentInput) {
+    assertSafeUgc(input.content);
     return photoBoardRepository.updateComment(commentId, userId, input);
   },
 
@@ -162,6 +167,7 @@ export const photoBoardService = {
   },
 
   createReport(reporterId: string, input: CreatePhotoReportInput) {
+    assertSafeUgc(input.description);
     return photoBoardRepository.createReport(reporterId, input);
   },
 

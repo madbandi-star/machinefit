@@ -22,6 +22,7 @@ const CODE_TO_KEY: Record<string, string> = {
   NO_SUBSCRIPTION: 'errors.notFound',
   COUPON_NOT_FOUND: 'errors.notFound',
   COUPON_USED: 'errors.validationError',
+  CONTENT_POLICY_VIOLATION: 'errors.contentPolicyViolation',
 };
 
 export function translateApiErrorCode(code: string | undefined, t: TFunction): string | null {

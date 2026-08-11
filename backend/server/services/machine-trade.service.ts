@@ -13,6 +13,7 @@ import { machineTradeRepository } from '../repositories/machine-trade.repository
 import { userRepository } from '../repositories/user.repository.js';
 import { findDevUserById } from '../data/dev-users.js';
 import { getPool } from '../config/database.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { notificationService } from './notification.service.js';
 
 async function processTradeImage(buffer: Buffer) {
@@ -74,6 +75,7 @@ export const machineTradeService = {
   },
 
   async create(sellerId: string, input: CreateMachineTradeInput, files: Express.Multer.File[]) {
+    assertSafeUgc(input.description, input.regionLabel);
     const limits = machineTradeImageLimits();
     if (files.length > limits.maxCount) {
       throw new AppError(400, 'TOO_MANY_FILES', `Max ${limits.maxCount} images`);
@@ -101,6 +103,7 @@ export const machineTradeService = {
   },
 
   update(tradeId: string, userId: string, role: RoleCode, input: UpdateMachineTradeInput) {
+    assertSafeUgc(input.description, input.regionLabel);
     return machineTradeRepository.update(tradeId, userId, role, input);
   },
 
@@ -142,6 +145,7 @@ export const machineTradeService = {
   },
 
   createReport(tradeId: string, reporterId: string, input: CreateTradeReportInput) {
+    assertSafeUgc(input.description);
     return machineTradeRepository.createReport(tradeId, reporterId, input);
   },
 

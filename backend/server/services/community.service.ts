@@ -7,7 +7,6 @@ import type {
   UpdateCommentInput,
   UpdateMachineRequestInput,
 } from '@machinefit/shared';
-import { findBlockedContentMatch } from '@machinefit/shared';
 import {
   isAllowedMachineRequestImage,
   machineRequestImageLimits,
@@ -19,20 +18,8 @@ import {
 import { userRepository } from '../repositories/user.repository.js';
 import { complianceRepository } from '../repositories/compliance.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { notificationService } from './notification.service.js';
-
-function assertSafeUgc(...parts: Array<string | undefined>) {
-  for (const part of parts) {
-    if (!part) continue;
-    if (findBlockedContentMatch(part)) {
-      throw new AppError(
-        400,
-        'CONTENT_POLICY_VIOLATION',
-        'Content violates community guidelines'
-      );
-    }
-  }
-}
 
 async function processMachineRequestPhoto(buffer: Buffer): Promise<ProcessedMachineRequestImage> {
   const limits = machineRequestImageLimits();
@@ -208,7 +195,7 @@ export const communityService = {
     roleCode: RoleCode,
     input: UpdateMachineRequestInput
   ) {
-    assertSafeUgc(input.brandName, input.machineName, input.description);
+    assertSafeUgc(input.brandName, input.machineName, input.description, input.gymName);
     return communityRepository.updateMachineRequest(requestId, userId, roleCode, input);
   },
 
@@ -225,7 +212,7 @@ export const communityService = {
     input: CreateMachineRequestInput,
     files: Express.Multer.File[]
   ) {
-    assertSafeUgc(input.brandName, input.machineName, input.description);
+    assertSafeUgc(input.brandName, input.machineName, input.description, input.gymName);
     if (!input.commercialUseConsent) {
       throw new AppError(
         400,
@@ -268,6 +255,7 @@ export const communityService = {
     postId: string,
     input: { reason: string; description?: string }
   ) {
+    assertSafeUgc(input.description);
     const post = await communityRepository.getPost(postId);
     if (!post) throw new AppError(404, 'NOT_FOUND', 'Post not found');
     return complianceRepository.createCommunityReport({
@@ -283,6 +271,7 @@ export const communityService = {
     commentId: string,
     input: { reason: string; description?: string }
   ) {
+    assertSafeUgc(input.description);
     return complianceRepository.createCommunityReport({
       reporterId,
       commentId,

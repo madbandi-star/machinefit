@@ -12,6 +12,7 @@ import {
 } from '@machinefit/shared';
 import { AppError } from '../middlewares/error.middleware.js';
 import { friendRepository } from '../repositories/friend.repository.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { notificationService } from './notification.service.js';
 
 const APP_BASE = process.env.FRONTEND_BASE_URL?.replace(/\/$/, '') || SITE_APP_URL
@@ -43,6 +44,7 @@ export const friendService = {
   },
 
   async sendRequest(fromUserId: string, input: CreateFriendRequestInput) {
+    assertSafeUgc(input.message);
     const toUserId = input.toUserId;
     if (fromUserId === toUserId) {
       throw new AppError(400, 'VALIDATION_ERROR', '자기 자신에게 친구 요청을 보낼 수 없습니다');
@@ -257,6 +259,7 @@ export const friendService = {
     reason: string,
     description?: string | null
   ) {
+    assertSafeUgc(description);
     if (reporterId === reportedUserId) {
       throw new AppError(400, 'VALIDATION_ERROR', '자기 자신을 신고할 수 없습니다');
     }

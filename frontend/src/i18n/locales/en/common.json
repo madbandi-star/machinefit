@@ -177,6 +177,7 @@
     "notFound": "We couldn't find that.",
     "submitFailed": "We couldn't complete that. Please try again in a moment.",
     "validationError": "Please check your input.",
+    "contentPolicyViolation": "That text includes words we can't allow. Please edit and try again.",
     "serverError": "A server error occurred. Please try again later.",
     "recommendValidation": "Check the details needed for a recommendation (height, weight, target muscle, etc.).",
     "networkError": "Network error. Please check your connection.",

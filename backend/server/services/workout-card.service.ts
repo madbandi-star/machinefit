@@ -34,6 +34,7 @@ import { resolveWorkoutLoadContexts } from './workout-load.service.js';
 import { growthTimelineService } from './growth-timeline.service.js';
 import { achievementService } from './achievement.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 
 function todayDateKey(): string {
   const now = new Date();
@@ -188,6 +189,7 @@ export const workoutCardService = {
     const nowIso = new Date().toISOString();
     const completedAt = status === 'COMPLETED' ? nowIso : null;
     const startedAt = status === 'IN_PROGRESS' ? nowIso : null;
+    assertSafeUgc(input.diary);
 
     try {
       const created = await workoutCardRepository.create(
@@ -277,6 +279,8 @@ export const workoutCardService = {
         'setCompleted length must match setCount'
       );
     }
+
+    assertSafeUgc(input.diary);
 
     const updated = await workoutCardRepository.update(
       userId,
@@ -861,6 +865,8 @@ export const workoutCardService = {
         'Template requires items or fromDate with cards'
       );
     }
+
+    assertSafeUgc(input.name, ...items.map((item) => item.diary));
 
     return workoutCardRepository.createTemplate(userId, {
       gymId: input.gymId,

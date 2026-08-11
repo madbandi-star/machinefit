@@ -70,6 +70,7 @@ import {
   type CardVoiceSessionSnapshot,
   type VoicePickerSnapshot,
 } from '@/utils/workoutCardVoicePrefs';
+import { resolveApiErrorMessage } from '@/utils/getApiErrorMessage';
 import '@/styles/recommendation.css';
 
 const DEFAULT_SET_COUNT = 3;
@@ -1117,9 +1118,12 @@ export function WorkoutLogPanel({
               };
             }
           );
-        } catch {
+        } catch (error) {
           personalTipSaved = false;
-          showToast(t('machines:history.personalTipSaveFailed'), 'error');
+          showToast(
+            resolveApiErrorMessage(error, t, 'machines:history.personalTipSaveFailed'),
+            'error'
+          );
         }
       }
 
@@ -1159,10 +1163,10 @@ export function WorkoutLogPanel({
         }
       }
     },
-    onError: () => {
+    onError: (error) => {
       const current = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
       onSavedChange?.(Boolean(current?.[0]));
-      showToast(t('common:errors.submitFailed'), 'error');
+      showToast(resolveApiErrorMessage(error, t, 'common:errors.submitFailed'), 'error');
     },
   });
 

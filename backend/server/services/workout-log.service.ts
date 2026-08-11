@@ -16,6 +16,7 @@ import { achievementService } from './achievement.service.js';
 import { growthTimelineService } from './growth-timeline.service.js';
 import { resolveWorkoutLoadContexts } from './workout-load.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { assertSafeUgc } from '../utils/content-safety.util.js';
 
 function todayDateKey(): string {
   const now = new Date();
@@ -101,6 +102,7 @@ export const workoutLogService = {
     }
 
     const logDate = input.logDate ?? todayDateKey();
+    assertSafeUgc(input.diary);
 
     const previous = await workoutLogRepository.findByUserMachineDate(
       userId,
