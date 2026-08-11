@@ -42,10 +42,11 @@ export const updateProfileSchema = z
     experienceLevel: experienceLevelSchema.optional(),
     /**
      * Client attests all required profile-data consent checkboxes were checked.
-     * Required when first saving (or after version bump) body/birth fields.
+     * Required when first saving (or after version bump) body/birth/location-gym fields.
      */
     bodyMetricsConsent: z.literal(true).optional(),
     birthProfileConsent: z.literal(true).optional(),
+    locationGymConsent: z.literal(true).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.birthTimeUnknown === true && data.birthTime != null) {

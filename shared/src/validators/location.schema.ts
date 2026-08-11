@@ -15,6 +15,11 @@ export const locationInputSchema = z.object({
 
 export const userLocationUpsertSchema = locationInputSchema.extend({
   visibility: locationVisibilitySchema.optional().default('gym'),
+  /**
+   * Client attests required location/home-gym consent checkboxes were checked.
+   * Required when first saving (or after version bump) region location data.
+   */
+  locationGymConsent: z.literal(true).optional(),
 });
 
 export const reverseGeocodeSchema = z.object({

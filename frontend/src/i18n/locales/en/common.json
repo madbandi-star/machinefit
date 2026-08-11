@@ -496,6 +496,20 @@
       "checkAge14": "I confirm I am at least 14 years old and that false information may restrict service use.",
       "doneTitle": "Birth profile consent on file",
       "doneBody": "Consent version {{version}} is recorded. You can withdraw or request deletion in the privacy rights center."
+    },
+    "consentLocation": {
+      "title": "Location & home gym processing consent (required)",
+      "intro": "We process the personal information below for region-based features and home gym settings. Without consent we cannot save it.",
+      "noticePurpose": "Purpose: region-based recommendations/search, home gym display, location visibility settings, and service quality",
+      "noticeItems": "Items: country/region/city/district (administrative area only — no member GPS), postal code (optional), home gym, location visibility",
+      "noticeRetention": "Retention: until account withdrawal (or longer if required by law)",
+      "noticeDisposal": "Disposal: securely destroyed without delay when retention ends, on withdrawal, or upon a valid deletion request (items under legal hold are segregated then destroyed)",
+      "noticeThirdParty": "Third parties: not provided in principle, except where required by law. See the privacy policy for details.",
+      "checkPurpose": "I agree to the purpose and items of collection/use.",
+      "checkRetention": "I have reviewed and agree to the retention and disposal notice.",
+      "checkRights": "I understand I can request access, correction, deletion, or suspension of processing.",
+      "doneTitle": "Location & home gym consent on file",
+      "doneBody": "Consent version {{version}} is recorded. You can withdraw or request deletion in the privacy rights center."
     }
   },
   "legal": {

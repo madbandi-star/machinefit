@@ -180,6 +180,9 @@ export function SettingsPage() {
   const [birthConsentChecks, setBirthConsentChecks] = useState<ProfileConsentChecks>(() =>
     emptyProfileConsentChecks('birthProfile')
   );
+  const [locationConsentChecks, setLocationConsentChecks] = useState<ProfileConsentChecks>(() =>
+    emptyProfileConsentChecks('locationGym')
+  );
   const [gender, setGender] = useState<Gender | undefined>(user?.gender);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
     user?.experienceLevel ?? 'intermediate'
@@ -215,6 +218,14 @@ export function SettingsPage() {
         c.consentType === 'birth_profile' &&
         c.agreed &&
         legalVersionSatisfies(c.version, LEGAL_DOC_VERSIONS.birthProfile)
+    )
+  );
+  const locationGymConsentDone = Boolean(
+    consentsQuery.data?.some(
+      (c) =>
+        c.consentType === 'location_gym' &&
+        c.agreed &&
+        legalVersionSatisfies(c.version, LEGAL_DOC_VERSIONS.locationGym)
     )
   );
 
@@ -270,6 +281,9 @@ export function SettingsPage() {
 
   const locationGymSaveMutation = useMutation({
     mutationFn: async () => {
+      const consentPayload = locationGymConsentDone
+        ? {}
+        : { locationGymConsent: true as const };
       if (locationDraft.countryCode) {
         await locationApi.upsertMine({
           countryCode: locationDraft.countryCode,
@@ -281,6 +295,7 @@ export function SettingsPage() {
           latitude: null,
           longitude: null,
           visibility: locationDraft.visibility ?? 'gym',
+          ...consentPayload,
         });
       } else {
         await locationApi.clearMine();
@@ -288,6 +303,7 @@ export function SettingsPage() {
       const res = await userApi.updateMe({
         homeGymId: homeGym.homeGymId ?? null,
         homeGymName: homeGym.homeGymName?.trim() || null,
+        ...consentPayload,
       });
 
       // Home header reads active user_gyms.name — keep it in sync with settings home gym.
@@ -311,6 +327,7 @@ export function SettingsPage() {
       updateUser(updatedUser);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userGyms });
+      void queryClient.invalidateQueries({ queryKey: ['privacy-consents', user?.id] });
       showToast(t('location.locationGymSaved'), 'success');
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
@@ -603,11 +620,27 @@ export function SettingsPage() {
               <option value="gym">{t('location.visibilityGym')}</option>
             </select>
           </label>
+          <ProfileDataConsentBlock
+            variant="locationGym"
+            checks={locationConsentChecks}
+            onChange={setLocationConsentChecks}
+            alreadyAgreed={locationGymConsentDone}
+            versionLabel={LEGAL_DOC_VERSIONS.locationGym}
+          />
           <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
             <button
               type="button"
               className="btn btn--primary btn--block"
-              onClick={() => locationGymSaveMutation.mutate()}
+              onClick={() => {
+                if (
+                  !locationGymConsentDone &&
+                  !allProfileConsentsChecked('locationGym', locationConsentChecks)
+                ) {
+                  showToast(t('settings.consentRequiredToast'), 'error');
+                  return;
+                }
+                locationGymSaveMutation.mutate();
+              }}
               disabled={
                 locationGymSaveMutation.isPending ||
                 (!locationDraft.countryCode && !homeGym.homeGymId && !homeGym.homeGymName)

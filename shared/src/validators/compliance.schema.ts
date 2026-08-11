@@ -17,7 +17,7 @@ export const consentUpdateSchema = z.object({
   legalVersion: z.string().min(1).max(32).optional(),
 });
 
-/** Record feature-scoped profile data processing consent (body metrics / birth). */
+/** Record feature-scoped profile data processing consent (body / birth / location-gym). */
 export const featureConsentSchema = z.object({
   consentType: z.enum(PROFILE_FEATURE_CONSENT_TYPES),
   agreed: z.literal(true),

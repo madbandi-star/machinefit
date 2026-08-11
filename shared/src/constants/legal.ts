@@ -32,10 +32,11 @@ export const LEGAL_DOC_VERSIONS = {
   illegalUse: '2026-08-11',
   /**
    * Feature-scoped consents (settings profile forms).
-   * Not part of needsRequiredConsent — gated on save of body/birth fields only.
+   * Not part of needsRequiredConsent — gated on save of body/birth/location-gym fields only.
    */
   bodyMetrics: '2026-08-16',
   birthProfile: '2026-08-16',
+  locationGym: '2026-08-16',
 } as const;
 
 /** Consent fields persisted / compared for needsConsent. */
@@ -87,19 +88,29 @@ export const CONSENT_TYPES = [
   'push_service',
   'body_metrics',
   'birth_profile',
+  'location_gym',
 ] as const;
 export type ConsentType = (typeof CONSENT_TYPES)[number];
 
 /** Profile-field feature consents (settings save gates). */
-export const PROFILE_FEATURE_CONSENT_TYPES = ['body_metrics', 'birth_profile'] as const;
+export const PROFILE_FEATURE_CONSENT_TYPES = [
+  'body_metrics',
+  'birth_profile',
+  'location_gym',
+] as const;
 export type ProfileFeatureConsentType = (typeof PROFILE_FEATURE_CONSENT_TYPES)[number];
 
 export function profileFeatureConsentVersion(
   type: ProfileFeatureConsentType
 ): string {
-  return type === 'body_metrics'
-    ? LEGAL_DOC_VERSIONS.bodyMetrics
-    : LEGAL_DOC_VERSIONS.birthProfile;
+  switch (type) {
+    case 'body_metrics':
+      return LEGAL_DOC_VERSIONS.bodyMetrics;
+    case 'birth_profile':
+      return LEGAL_DOC_VERSIONS.birthProfile;
+    case 'location_gym':
+      return LEGAL_DOC_VERSIONS.locationGym;
+  }
 }
 
 export const LEGAL_DOC_TYPES = [

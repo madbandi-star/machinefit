@@ -162,6 +162,7 @@ export const userApi = {
     experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
     bodyMetricsConsent?: true;
     birthProfileConsent?: true;
+    locationGymConsent?: true;
   }) => apiClient.patch<ApiResponse<User>>('/users/me', data),
 };
 

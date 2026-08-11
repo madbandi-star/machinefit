@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/profile-data-consent.css';
 
-export type ProfileConsentVariant = 'bodyMetrics' | 'birthProfile';
+export type ProfileConsentVariant = 'bodyMetrics' | 'birthProfile' | 'locationGym';
 
 export type ProfileConsentChecks = {
   purpose: boolean;
@@ -22,6 +22,12 @@ type ProfileDataConsentBlockProps = {
   /** When true, show compact “already agreed” state. */
   alreadyAgreed?: boolean;
   versionLabel?: string;
+};
+
+const VARIANT_I18N_PREFIX: Record<ProfileConsentVariant, string> = {
+  bodyMetrics: 'settings.consentBody',
+  birthProfile: 'settings.consentBirth',
+  locationGym: 'settings.consentLocation',
 };
 
 function ConsentCheckRow({
@@ -84,8 +90,8 @@ export function emptyProfileConsentChecks(
 }
 
 /**
- * Required legal notices + checkboxes before saving body metrics or birth profile.
- * Feature-scoped — does not replace global terms/privacy reconsent.
+ * Required legal notices + checkboxes before saving body metrics, birth profile,
+ * or location/home gym. Feature-scoped — does not replace global terms/privacy reconsent.
  */
 export function ProfileDataConsentBlock({
   variant,
@@ -95,8 +101,7 @@ export function ProfileDataConsentBlock({
   versionLabel,
 }: ProfileDataConsentBlockProps) {
   const { t } = useTranslation();
-  const prefix =
-    variant === 'bodyMetrics' ? 'settings.consentBody' : 'settings.consentBirth';
+  const prefix = VARIANT_I18N_PREFIX[variant];
 
   if (alreadyAgreed) {
     return (

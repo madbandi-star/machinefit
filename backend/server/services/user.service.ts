@@ -73,6 +73,7 @@ export const userService = {
     const {
       bodyMetricsConsent,
       birthProfileConsent,
+      locationGymConsent,
       ...fieldInput
     } = input;
     const payload: UpdateProfileInput = { ...fieldInput };
@@ -150,6 +151,31 @@ export const userService = {
             : []),
         ];
         await userRepository.recordConsents(userId, items);
+      }
+    }
+
+    // Clearing home gym (null) does not require consent — only setting values.
+    const setsHomeGym =
+      (payload.homeGymId !== undefined && payload.homeGymId !== null) ||
+      (payload.homeGymName !== undefined && payload.homeGymName !== null);
+    if (setsHomeGym) {
+      const version = profileFeatureConsentVersion('location_gym');
+      const already = await userRepository.hasAgreedConsent(
+        userId,
+        'location_gym',
+        version
+      );
+      if (!already && locationGymConsent !== true) {
+        throw new AppError(
+          400,
+          'CONSENT_REQUIRED',
+          'Location and home gym processing consent is required'
+        );
+      }
+      if (locationGymConsent === true) {
+        await userRepository.recordConsents(userId, [
+          { type: 'location_gym', version, agreed: true },
+        ]);
       }
     }
 

@@ -6,7 +6,9 @@ import type {
   UserLocation,
   UserLocationUpsertInput,
 } from '@machinefit/shared';
+import { profileFeatureConsentVersion } from '@machinefit/shared';
 import { locationRepository } from '../repositories/location.repository.js';
+import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
 export const locationService = {
@@ -35,22 +37,44 @@ export const locationService = {
     input: UserLocationUpsertInput,
     locale = 'ko'
   ): Promise<UserLocation> {
+    const { locationGymConsent, ...fields } = input;
     // Never persist member GPS. Region hierarchy only.
-    input = { ...input, latitude: null, longitude: null };
+    const locationInput = { ...fields, latitude: null, longitude: null };
 
-    if (input.countryCode) {
-      const states = await locationRepository.listStates(input.countryCode);
-      if (input.stateId && !states.some((s) => s.id === input.stateId)) {
+    // Clearing via upsert (no country) does not require consent.
+    if (locationInput.countryCode) {
+      const version = profileFeatureConsentVersion('location_gym');
+      const already = await userRepository.hasAgreedConsent(
+        userId,
+        'location_gym',
+        version
+      );
+      if (!already && locationGymConsent !== true) {
+        throw new AppError(
+          400,
+          'CONSENT_REQUIRED',
+          'Location and home gym processing consent is required'
+        );
+      }
+      if (locationGymConsent === true) {
+        await userRepository.recordConsents(userId, [
+          { type: 'location_gym', version, agreed: true },
+        ]);
+      }
+
+      const states = await locationRepository.listStates(locationInput.countryCode);
+      if (locationInput.stateId && !states.some((s) => s.id === locationInput.stateId)) {
         throw new AppError(400, 'VALIDATION_ERROR', 'Invalid state for country');
       }
-      if (input.cityId && input.stateId) {
-        const cities = await locationRepository.listCities(input.stateId);
-        if (!cities.some((c) => c.id === input.cityId)) {
+      if (locationInput.cityId && locationInput.stateId) {
+        const cities = await locationRepository.listCities(locationInput.stateId);
+        if (!cities.some((c) => c.id === locationInput.cityId)) {
           throw new AppError(400, 'VALIDATION_ERROR', 'Invalid city for state');
         }
       }
     }
-    return locationRepository.upsertUserLocation(userId, input, locale);
+
+    return locationRepository.upsertUserLocation(userId, locationInput, locale);
   },
 
   clearUserLocation(userId: string): Promise<UserLocation> {
