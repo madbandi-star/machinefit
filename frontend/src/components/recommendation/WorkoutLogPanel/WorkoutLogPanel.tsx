@@ -649,13 +649,20 @@ export function WorkoutLogPanel({
     void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
       trackFeature('voice_count')
     );
+    void import('@/utils/usageTelemetry').then(({ trackUsage }) => trackUsage('voice_count'));
     voiceCoachStartRef.current();
   }, []);
   const voiceCoachStopRef = useRef(voiceCoach.stop);
   voiceCoachStopRef.current = voiceCoach.stop;
   const stopVoiceCoachSession = useCallback(() => {
+    const wasRunning = voiceCoachRunningRef.current;
     manualCountStartRef.current = false;
     voiceCoachStopRef.current();
+    if (wasRunning) {
+      void import('@/utils/usageTelemetry').then(({ trackUsage }) =>
+        trackUsage('voice_count_complete')
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -1432,6 +1439,9 @@ export function WorkoutLogPanel({
           void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
             trackFeature('rest_timer')
           );
+          void import('@/utils/usageTelemetry').then(({ trackUsage }) =>
+            trackUsage('rest_timer')
+          );
         } else {
           stopRestTimer();
         }
@@ -1461,6 +1471,9 @@ export function WorkoutLogPanel({
         startRestTimer(index + 1, clampRestDurationSeconds(restDurationSeconds));
         void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
           trackFeature('rest_timer')
+        );
+        void import('@/utils/usageTelemetry').then(({ trackUsage }) =>
+          trackUsage('rest_timer')
         );
       } else {
         stopRestTimer();

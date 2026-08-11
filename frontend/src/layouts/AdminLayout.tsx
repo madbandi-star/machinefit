@@ -81,6 +81,20 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     ],
   },
   {
+    id: 'ops-usage',
+    labelKey: 'navGroup.opsUsage',
+    items: [
+      { to: ROUTES.ADMIN_USAGE_STATS, labelKey: 'usage.navStats', icon: 'monitor' },
+      { to: ROUTES.ADMIN_USAGE_USERS, labelKey: 'usage.navUsers', icon: 'users' },
+      { to: ROUTES.ADMIN_USAGE_POLICIES, labelKey: 'usage.navPolicies', icon: 'shield' },
+      {
+        to: ROUTES.ADMIN_USAGE_POLICY_HISTORY,
+        labelKey: 'usage.navHistory',
+        icon: 'history',
+      },
+    ],
+  },
+  {
     id: 'data',
     labelKey: 'navGroup.data',
     items: [

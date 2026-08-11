@@ -28,6 +28,7 @@ import { workoutLogRepository } from '../repositories/workout-log.repository.js'
 import { historyRepository } from '../repositories/history.repository.js';
 import { workoutRecordOrderRepository } from '../repositories/workout-record-order.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
+import { trackUsageSafe } from './usage.service.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { resolveWorkoutLoadContexts } from './workout-load.service.js';
@@ -227,12 +228,15 @@ export const workoutCardService = {
             { status: 'COMPLETED', workoutLogId: logId, completedAt },
             locale
           );
+          trackUsageSafe(userId, 'exercise_card_create');
           return stripMachineId(linked ?? created);
         } catch {
+          trackUsageSafe(userId, 'exercise_card_create');
           return stripMachineId(created);
         }
       }
 
+      trackUsageSafe(userId, 'exercise_card_create');
       return stripMachineId(created);
     } catch (error) {
       throwDuplicateCard(error);
@@ -302,6 +306,8 @@ export const workoutCardService = {
     if (!updated) {
       throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
     }
+
+    trackUsageSafe(userId, 'exercise_card_update');
 
     // Keep linked workout log in sync when completed card sets change.
     if (updated.status === 'COMPLETED') {
@@ -708,6 +714,7 @@ export const workoutCardService = {
     if (!deleted) {
       throw new AppError(404, 'NOT_FOUND', 'Workout card not found');
     }
+    // Card delete is not billed separately; keep tracking out of destroy path for now.
   },
 
   async listMissed(
@@ -886,11 +893,14 @@ export const workoutCardService = {
 
     assertSafeUgc(input.name, ...items.map((item) => item.diary));
 
-    return workoutCardRepository.createTemplate(userId, {
+    const createdTemplate = await workoutCardRepository.createTemplate(userId, {
       gymId: input.gymId,
       name: input.name,
       items,
     });
+    trackUsageSafe(userId, 'template_create');
+    trackUsageSafe(userId, 'template_save');
+    return createdTemplate;
   },
 
   async listTemplates(
@@ -1023,6 +1033,7 @@ export const workoutCardService = {
       });
     }
 
+    trackUsageSafe(userId, 'template_use');
     return created;
   },
 

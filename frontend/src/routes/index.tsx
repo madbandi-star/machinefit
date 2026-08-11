@@ -442,6 +442,22 @@ const adminDataRetentionAuditPage = () =>
   import('@/pages/admin/data-retention/AdminDataRetentionAuditPage').then((m) => ({
     default: m.AdminDataRetentionAuditPage,
   }));
+const adminUsageStatsPage = () =>
+  import('@/pages/admin/usage/AdminUsageStatsPage').then((m) => ({
+    default: m.AdminUsageStatsPage,
+  }));
+const adminUsageUsersPage = () =>
+  import('@/pages/admin/usage/AdminUsageUsersPage').then((m) => ({
+    default: m.AdminUsageUsersPage,
+  }));
+const adminUsagePoliciesPage = () =>
+  import('@/pages/admin/usage/AdminUsagePoliciesPage').then((m) => ({
+    default: m.AdminUsagePoliciesPage,
+  }));
+const adminUsagePolicyHistoryPage = () =>
+  import('@/pages/admin/usage/AdminUsagePolicyHistoryPage').then((m) => ({
+    default: m.AdminUsagePolicyHistoryPage,
+  }));
 const adminOpsPage = () =>
   import('@/pages/admin/ops/AdminOpsPage').then((m) => ({
     default: m.AdminOpsPage,
@@ -713,6 +729,13 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         {
           path: ROUTES.ADMIN_DATA_RETENTION_AUDIT,
           element: lazyRoute(adminDataRetentionAuditPage),
+        },
+        { path: ROUTES.ADMIN_USAGE_STATS, element: lazyRoute(adminUsageStatsPage) },
+        { path: ROUTES.ADMIN_USAGE_USERS, element: lazyRoute(adminUsageUsersPage) },
+        { path: ROUTES.ADMIN_USAGE_POLICIES, element: lazyRoute(adminUsagePoliciesPage) },
+        {
+          path: ROUTES.ADMIN_USAGE_POLICY_HISTORY,
+          element: lazyRoute(adminUsagePolicyHistoryPage),
         },
         { path: ROUTES.ADMIN_OPS, element: lazyRoute(adminOpsPage) },
         { path: ROUTES.ADMIN_BACKUP, element: lazyRoute(adminBackupPage) },

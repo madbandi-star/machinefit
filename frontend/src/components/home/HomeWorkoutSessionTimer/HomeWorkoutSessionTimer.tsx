@@ -78,8 +78,10 @@ export function HomeWorkoutSessionTimer() {
         : t('pages.home.sessionTimerStart');
 
   const handlePrimary = () => {
-    if (status === 'idle') start();
-    else if (status === 'running') pause();
+    if (status === 'idle') {
+      start();
+      void import('@/utils/usageTelemetry').then(({ trackUsage }) => trackUsage('timer_start'));
+    } else if (status === 'running') pause();
     else resume();
   };
 
@@ -120,7 +122,12 @@ export function HomeWorkoutSessionTimer() {
               type="button"
               className="btn btn--secondary home-session-timer__btn home-session-timer__btn--lap"
               disabled={!isRunning}
-              onClick={lap}
+              onClick={() => {
+                lap();
+                void import('@/utils/usageTelemetry').then(({ trackUsage }) =>
+                  trackUsage('lap_record')
+                );
+              }}
               aria-label={t('pages.home.sessionTimerLapAria')}
             >
               {t('pages.home.sessionTimerLap')}
@@ -130,7 +137,10 @@ export function HomeWorkoutSessionTimer() {
             type="button"
             className="btn btn--secondary home-session-timer__btn"
             disabled={isIdle}
-            onClick={end}
+            onClick={() => {
+              end();
+              void import('@/utils/usageTelemetry').then(({ trackUsage }) => trackUsage('timer_end'));
+            }}
           >
             {t('pages.home.sessionTimerEnd')}
           </button>

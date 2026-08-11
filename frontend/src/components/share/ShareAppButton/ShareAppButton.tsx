@@ -20,6 +20,16 @@ export function ShareAppButton({ variant = 'block' }: ShareAppButtonProps) {
     };
     const markShared = () => {
       void import('@/utils/opsTelemetry').then(({ trackFeature }) => trackFeature('share'));
+      void import('@/utils/usageTelemetry').then(({ trackUsage }) => {
+        const path = typeof location !== 'undefined' ? location.pathname : '';
+        if (/^\/(lifter-dna|growth-|lifted-weight|achievements)/.test(path)) {
+          trackUsage('insight_share');
+        } else if (/^\/(live|my-page\/lab)/.test(path)) {
+          trackUsage('lab_share');
+        } else {
+          trackUsage('insight_share');
+        }
+      });
     };
 
     if (typeof navigator !== 'undefined' && navigator.share) {

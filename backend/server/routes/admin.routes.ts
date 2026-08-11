@@ -22,6 +22,7 @@ import { validateBody } from '../middlewares/validate.middleware.js';
 import * as backupController from '../controllers/backup.controller.js';
 import * as adminFortuneController from '../controllers/admin-fortune.controller.js';
 import * as dataRetentionAdminController from '../controllers/data-retention-admin.controller.js';
+import * as usageController from '../controllers/usage.controller.js';
 
 export const adminRouter = Router();
 
@@ -194,3 +195,12 @@ adminRouter.get('/data-retention/consents', dataRetentionAdminController.listCon
 adminRouter.post('/data-retention/consents', dataRetentionAdminController.createConsent);
 adminRouter.post('/data-retention/records/:id/hold', dataRetentionAdminController.setHold);
 adminRouter.post('/data-retention/sync-withdrawn', dataRetentionAdminController.syncWithdrawn);
+
+/** Usage stats + service policies */
+adminRouter.get('/usage/summary', usageController.getSummary);
+adminRouter.get('/usage/timeseries', usageController.getTimeseries);
+adminRouter.get('/usage/users', usageController.listUsers);
+adminRouter.get('/usage/users/:userId', usageController.getUser);
+adminRouter.get('/usage/policies', usageController.listPolicies);
+adminRouter.get('/usage/policies/history', usageController.listHistory);
+adminRouter.put('/usage/policies/:policyId', usageController.updatePolicy);

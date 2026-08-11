@@ -11,6 +11,7 @@ import { workoutCardRepository } from '../repositories/workout-card.repository.j
 import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
+import { trackUsageSafe } from './usage.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { achievementService } from './achievement.service.js';
 import { growthTimelineService } from './growth-timeline.service.js';
@@ -237,6 +238,7 @@ export const workoutLogService = {
           });
       }
 
+      trackUsageSafe(userId, 'exercise_record_save');
       return saved;
     } catch (error) {
       const pgCode =
@@ -292,6 +294,8 @@ export const workoutLogService = {
     if (!deleted) {
       throw new AppError(404, 'NOT_FOUND', 'Workout log not found');
     }
+
+    trackUsageSafe(userId, 'exercise_record_delete');
 
     if (previous) {
       try {

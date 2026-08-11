@@ -20,6 +20,7 @@ import { AppError } from '../middlewares/error.middleware.js';
 import { templateShareRepository } from '../repositories/template-share.repository.js';
 import { workoutCardRepository } from '../repositories/workout-card.repository.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
+import { trackUsageSafe } from './usage.service.js';
 
 function assertShareableTemplate(template: {
   userId: string;
@@ -88,6 +89,9 @@ export const templateShareService = {
     return templateShareRepository.publish(userId, input, {
       payload: template.payload,
       sourceTemplateId: template.id,
+    }).then((result) => {
+      trackUsageSafe(userId, 'template_create');
+      return result;
     });
   },
 
@@ -105,7 +109,10 @@ export const templateShareService = {
   },
 
   async download(postId: string, userId: string): Promise<TemplateShareDownloadResult> {
-    return templateShareRepository.download(postId, userId);
+    const result = await templateShareRepository.download(postId, userId);
+    trackUsageSafe(userId, 'template_download');
+    trackUsageSafe(userId, 'template_save');
+    return result;
   },
 
   toggleLike(postId: string, userId: string) {

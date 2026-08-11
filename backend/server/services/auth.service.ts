@@ -23,6 +23,7 @@ import {
 } from '../utils/jwt.util.js';
 import { findDevUserById } from '../data/dev-users.js';
 import { notificationService } from './notification.service.js';
+import { trackUsageSafe } from './usage.service.js';
 import crypto from 'crypto';
 
 function hashRefreshToken(token: string): string {
@@ -302,6 +303,7 @@ export const authService = {
       const user = await userRepository.findById(existingLink.userId);
       if (user?.isActive) {
         await userRepository.updateLastLogin(user.id);
+        trackUsageSafe(user.id, 'login');
         await complianceRepository
           .recordLoginEvent({
             userId: user.id,
@@ -422,6 +424,7 @@ export const authService = {
         const refreshed = await userRepository.findById(user.id);
         if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
         await userRepository.updateLastLogin(refreshed.id);
+        trackUsageSafe(refreshed.id, 'login');
         return buildAuthResponse(refreshed);
       }
       // Stale link on WITHDRAWN user — release and create a brand-new account.
@@ -467,6 +470,7 @@ export const authService = {
       }
 
       await userRepository.updateLastLogin(user.id);
+      trackUsageSafe(user.id, 'login');
       const refreshed = await userRepository.findById(user.id);
       if (!refreshed) throw new AppError(500, 'INTERNAL', 'Failed to load created user');
 

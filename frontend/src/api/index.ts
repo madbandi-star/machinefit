@@ -618,6 +618,7 @@ export { trainerApi } from './trainer.api';
 export type { TrainerApplyResult } from './trainer.api';
 export { complianceApi } from './compliance.api';
 export { dataRetentionApi } from './data-retention.api';
+export { usageApi, adminUsageApi } from './usage.api';
 export { adminApi, notificationApi, motivationMediaApi, muscleGroupImageApi } from './admin.api';
 export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
 export { photoBoardApi } from './photo-board.api';
