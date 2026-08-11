@@ -9,6 +9,7 @@ import {
 } from '@machinefit/shared';
 import { billingService } from '../services/billing.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { writeAdminAudit } from '../utils/admin-audit.util.js';
 
 export async function adminListSubscriptions(req: Request, res: Response): Promise<void> {
   const query = adminListSubscriptionsQuerySchema.parse(req.query);
@@ -88,11 +89,22 @@ export async function adminCreateCoupon(req: Request, res: Response): Promise<vo
     ...input,
     createdBy: req.user?.userId,
   });
+  writeAdminAudit(req, {
+    action: 'admin.coupon.create',
+    targetType: 'coupon',
+    targetId: data.code,
+    meta: { kind: input.kind, value: input.value },
+  });
   res.status(201).json({ success: true, data });
 }
 
 export async function adminDeleteCoupon(req: Request, res: Response): Promise<void> {
   const code = String(req.params.code ?? '');
   await billingService.adminDeleteCoupon(code);
+  writeAdminAudit(req, {
+    action: 'admin.coupon.delete',
+    targetType: 'coupon',
+    targetId: code,
+  });
   res.json({ success: true, data: { deleted: true } });
 }

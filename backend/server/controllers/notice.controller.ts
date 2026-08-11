@@ -13,6 +13,7 @@ import { getValidatedQuery } from '../middlewares/validate.middleware.js';
 import { storageService } from '../services/storage.service.js';
 import { noticeRepository } from '../repositories/notice.repository.js';
 import { createHash } from 'node:crypto';
+import { writeAdminAudit } from '../utils/admin-audit.util.js';
 
 function getParam(value: string | string[] | undefined): string {
   return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
@@ -72,6 +73,11 @@ export async function createNotice(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const body = req.body as CreateNoticeInput;
   const data = await noticeService.create(req.user.userId, req.user.roleCode, body);
+  writeAdminAudit(req, {
+    action: 'admin.notice.create',
+    targetType: 'notice',
+    targetId: data.id,
+  });
   res.status(201).json({ success: true, data });
 }
 
@@ -80,6 +86,7 @@ export async function updateNotice(req: Request, res: Response): Promise<void> {
   const id = getParam(req.params.id);
   const body = req.body as UpdateNoticeInput;
   const data = await noticeService.update(id, req.user.roleCode, body);
+  writeAdminAudit(req, { action: 'admin.notice.update', targetType: 'notice', targetId: id });
   res.json({ success: true, data });
 }
 
@@ -87,6 +94,7 @@ export async function deleteNotice(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const id = getParam(req.params.id);
   await noticeService.remove(id, req.user.roleCode);
+  writeAdminAudit(req, { action: 'admin.notice.delete', targetType: 'notice', targetId: id });
   res.json({ success: true, data: { message: 'Deleted' } });
 }
 
@@ -95,6 +103,12 @@ export async function publishNotice(req: Request, res: Response): Promise<void> 
   const id = getParam(req.params.id);
   const body = req.body as NoticePublishBody;
   const data = await noticeService.publish(id, req.user.roleCode, body);
+  writeAdminAudit(req, {
+    action: 'admin.notice.publish',
+    targetType: 'notice',
+    targetId: id,
+    meta: { publishAt: body.publishAt ?? null },
+  });
   res.json({ success: true, data });
 }
 
@@ -103,6 +117,12 @@ export async function pinNotice(req: Request, res: Response): Promise<void> {
   const id = getParam(req.params.id);
   const body = req.body as NoticeFlagBody;
   const data = await noticeService.setPinned(id, req.user.roleCode, body.value);
+  writeAdminAudit(req, {
+    action: 'admin.notice.pin',
+    targetType: 'notice',
+    targetId: id,
+    meta: { value: body.value },
+  });
   res.json({ success: true, data });
 }
 
@@ -111,6 +131,12 @@ export async function importantNotice(req: Request, res: Response): Promise<void
   const id = getParam(req.params.id);
   const body = req.body as NoticeFlagBody;
   const data = await noticeService.setImportant(id, req.user.roleCode, body.value);
+  writeAdminAudit(req, {
+    action: 'admin.notice.important',
+    targetType: 'notice',
+    targetId: id,
+    meta: { value: body.value },
+  });
   res.json({ success: true, data });
 }
 
@@ -119,6 +145,12 @@ export async function bannerNotice(req: Request, res: Response): Promise<void> {
   const id = getParam(req.params.id);
   const body = req.body as NoticeFlagBody;
   const data = await noticeService.setBanner(id, req.user.roleCode, body.value);
+  writeAdminAudit(req, {
+    action: 'admin.notice.banner',
+    targetType: 'notice',
+    targetId: id,
+    meta: { value: body.value },
+  });
   res.json({ success: true, data });
 }
 

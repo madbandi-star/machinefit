@@ -8,14 +8,14 @@
  */
 export const LEGAL_DOC_VERSIONS = {
   terms: '2026-08-10',
-  privacy: '2026-08-11',
+  privacy: '2026-08-12',
   location: '2026-08-11',
   marketing: '2026-08-10',
   commerce: '2026-08-10',
   community: '2026-08-10',
   copyright: '2026-08-10',
   ai: '2026-08-10',
-  security: '2026-08-10',
+  security: '2026-08-12',
   /** Display-only notice — not part of consent re-check. */
   illegalUse: '2026-08-11',
 } as const;

@@ -20,6 +20,7 @@ import { trainerApplicationService } from '../services/trainer-application.servi
 import { gymInventoryService } from '../services/gym-inventory.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getParam } from '../utils/params.util.js';
+import { writeAdminAudit } from '../utils/admin-audit.util.js';
 
 export async function dashboard(_req: Request, res: Response): Promise<void> {
   const stats = await adminService.dashboard();
@@ -35,7 +36,18 @@ export async function listUsers(req: Request, res: Response): Promise<void> {
 
 export async function updateUser(req: Request, res: Response): Promise<void> {
   const input = updateUserAdminSchema.parse(req.body);
-  const user = await adminService.updateUser(getParam(req.params.id), input);
+  const targetId = getParam(req.params.id);
+  const user = await adminService.updateUser(targetId, input);
+  writeAdminAudit(req, {
+    action: 'admin.user.update',
+    targetType: 'user',
+    targetId,
+    meta: {
+      roleCode: input.roleCode,
+      isActive: input.isActive,
+      displayNameChanged: input.displayName !== undefined,
+    },
+  });
   res.json({ success: true, data: user });
 }
 

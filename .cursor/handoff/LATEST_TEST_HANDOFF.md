@@ -1,20 +1,18 @@
-﻿# Test handoff — Stop member GPS collect/store/send
+﻿# Test handoff — Privacy copy + admin audit + refresh token disclosure
 
 ## Summary
-User current location (GPS) is no longer read in the browser, not sent to MachineFit APIs, and not stored on `user_locations`. Gym search uses name + 시군구 dropdown. Facility catalog coordinates are unchanged.
+Privacy policy now discloses SMTP/Resend, banner click user_id, and refresh token storage (HttpOnly cookie + sessionStorage). Admin mutations for user role, banners, notices, and coupons write `admin_audit_logs`. Security notice matches actual refresh storage (not cookie-only).
 
 ## Test focus
-1. Gym Finder: no 「내 주변」; region filter + search still returns gyms
-2. Settings 지역·헬스장: no GPS button / locationOptIn checkbox; save works with dropdown
-3. `GET /api/v1/gyms/nearby` → 404
-4. `POST /api/v1/locations/reverse-geocode` → 404
-5. `PUT /locations/me` with latitude/longitude still saves region only (GPS null)
-6. Signup terms: no GPS location consent row
-7. After Render migrate 119, existing `user_locations` GPS columns are null
+1. /privacy s1 mentions banner events + sessionStorage refresh; s4 mentions SMTP/Resend
+2. /legal/security s2 describes memory access token + cookie + sessionStorage fallback
+3. Admin PATCH user role → admin_audit_logs action `admin.user.update`
+4. Admin create/delete banner, notice, coupon → matching audit actions
+5. Existing users with privacyVersion 2026-08-11 are prompted to re-accept privacy (version 2026-08-12)
 
 ## as-is → to-be
-- as-is: GPS to nearby/reverse-geocode + optional DB store
-- to-be: no member GPS; manual region only
+- as-is: processors/token storage omitted; role/banner/notice/coupon unaudited; security said HttpOnly-only
+- to-be: disclosed; audited; docs match Pages→Render cookie fallback
 
 ## Fast checks
-`rg -n "getCurrentPosition|navigator.geolocation|/gyms/nearby" frontend backend --glob "*.{ts,tsx}"`
+`rg -n "writeAdminAudit|admin.user.update|SMTP 또는 Resend|sessionStorage" backend frontend/src/i18n/locales/ko/common.json`

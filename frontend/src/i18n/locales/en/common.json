@@ -479,13 +479,13 @@
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, gender/height/weight/age/birth date/birth time (when entered, e.g. fortune), workout goals, optional region (city/district selected by you; we do not collect GPS coordinates), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), and access logs (IP/UA). Gym-owner facility member lists (name/email/birth date) are for facility management and may include members under 14; that is not a MachineFit account.",
+      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, gender/height/weight/age/birth date/birth time (when entered, e.g. fortune), workout goals, optional region (city/district selected by you; we do not collect GPS coordinates), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), access logs (IP/UA), banner impression/click events for signed-in users (user id), and session refresh tokens (browser sessionStorage and an HttpOnly cookie). Gym-owner facility member lists (name/email/birth date) are for facility management and may include members under 14; that is not a MachineFit account.",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
       "s3Body": "On withdrawal we deactivate the account, anonymize identifiers such as email/display name, and delete location data and social login links. About 30 days later we hard-purge workouts, favorites, friends, posts, photos, trades, online PT, support tickets, templates, gym member lists you own, and uploaded files. Payment/subscription records, consent evidence, and trial-abuse identity keys are kept longer as required. We do not collect or store member GPS coordinates. Consent/login IP/UA are scrubbed after about 1 year.",
       "s4Title": "4. Processors",
-      "s4Body": "To run the service we may process or transfer data via hosting (e.g. Render), frontend hosting (e.g. GitHub Pages), DB/storage (e.g. Supabase), social login (Kakao/Google/Apple), payment processors (e.g. Polar), optional error monitoring (Sentry), and YouTube embeds. Sensitive payment details are handled by the payment provider.",
+      "s4Body": "To run the service we may process or transfer data via hosting (e.g. Render), frontend hosting (e.g. GitHub Pages), DB/storage (e.g. Supabase), social login (Kakao/Google/Apple), payment processors (e.g. Polar), optional error monitoring (Sentry), email delivery (SMTP or Resend when configured), and YouTube embeds. Sensitive payment details are handled by the payment provider.",
       "s5Title": "5. Your rights",
       "s5Body": "In Settings > Privacy Rights Center you can view data, withdraw consents, download JSON, and delete your account. For further correction/erasure/restriction requests, contact support.",
       "s6Title": "6. Children",
@@ -493,7 +493,7 @@
       "s7Title": "7. Security & contact",
       "s7Body": "We apply access control, encrypted transport, and role separation. See the security notice page for details. Privacy inquiries: support@machinefit.app or in-app support. The privacy officer’s name/contact will be listed here after business registration is finalized.",
       "s8Title": "8. Change history",
-      "s8Body": "This policy applies from 2026-08-11. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-08-10)"
+      "s8Body": "This policy applies from 2026-08-12. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-08-11)"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",
@@ -582,7 +582,7 @@
       "s1Title": "1. Access control",
       "s1Body": "APIs are protected with authentication and role checks. Admin and gym-owner features require elevated permissions.",
       "s2Title": "2. Transit & storage",
-      "s2Body": "The service is served over HTTPS. Refresh tokens are protected (e.g. HttpOnly cookies). Social credentials are handled as tokens/links, not local passwords.",
+      "s2Body": "The service is served over HTTPS. Access tokens stay in memory only. Refresh tokens are stored as an HttpOnly cookie on the API host when the browser allows it, and also in sessionStorage as a fallback when GitHub Pages → Render blocks third-party cookies. Closing the tab clears sessionStorage. Social credentials are tokens/links, not local passwords.",
       "s3Title": "3. Monitoring",
       "s3Body": "We may review ops logs and optional monitoring tools for abuse. If a breach is confirmed we act and notify as required by law.",
       "s4Title": "4. User tips",

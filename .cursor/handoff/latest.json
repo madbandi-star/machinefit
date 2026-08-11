@@ -1,46 +1,30 @@
 {
-  "title": "Stop collecting member GPS",
-  "summary": "MachineFit no longer reads browser geolocation, does not send user coordinates to the API, and does not store GPS on user_locations. Region (시군구) is manual. Facility catalog coords unchanged.",
+  "title": "Privacy disclosure, admin audit logs, refresh token docs",
+  "summary": "Privacy/security copy now matches SMTP/Resend, banner user_id, and dual refresh storage. Admin role/banner/notice/coupon writes audit logs.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/gym-finder/GymFinderPage.tsx",
-    "frontend/src/components/location/LocationPicker/LocationPicker.tsx",
-    "frontend/src/components/settings/HomeGymField/HomeGymField.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
-    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
-    "frontend/src/api/index.ts",
-    "frontend/src/app/sentry.ts",
-    "backend/server/routes/gym.routes.ts",
-    "backend/server/routes/location.routes.ts",
-    "backend/server/controllers/gym.controller.ts",
-    "backend/server/controllers/location.controller.ts",
-    "backend/server/services/gym.service.ts",
-    "backend/server/services/location.service.ts",
-    "backend/server/repositories/gym-directory.repository.ts",
-    "backend/server/middlewares/error.middleware.ts",
-    "backend/server/ops/sentry.ts",
-    "shared/src/utils/redact-geo-url.ts",
-    "shared/src/constants/legal.ts",
-    "database/migrations/119_clear_user_gps_coordinates.sql",
     "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/i18n/locales/en/common.json",
+    "shared/src/constants/legal.ts",
+    "backend/server/utils/admin-audit.util.ts",
+    "backend/server/controllers/admin.controller.ts",
+    "backend/server/controllers/banner.controller.ts",
+    "backend/server/controllers/notice.controller.ts",
+    "backend/server/controllers/admin-billing.controller.ts"
   ],
   "testFocus": [
-    "Gym Finder has no Near Me / GPS; region dropdown search still works",
-    "Settings location save never sends lat/lng",
-    "GET /gyms/nearby and POST /locations/reverse-geocode are gone (404)",
-    "PUT /locations/me with lat/lng stores null GPS",
-    "Signup has no GPS location consent checkbox"
+    "Privacy 2026-08-12 reconsent",
+    "Admin audit rows for role/banner/notice/coupon",
+    "Security page describes sessionStorage fallback"
   ],
   "fastChecks": [
-    "rg -n \"getCurrentPosition|navigator.geolocation|/gyms/nearby|reverse-geocode\" frontend backend --glob \"*.{ts,tsx}\" | rg -v \"location.repository|reverseGeocodeSchema\""
+    "rg -n \"writeAdminAudit\" backend/server/controllers"
   ],
   "productionChecks": [
-    "Render applies migration 119 (null user_locations GPS)",
-    "Pages: Gym Finder has no 내 주변 button"
+    "Pages privacy/security text",
+    "Render: admin_audit_logs after admin coupon create"
   ],
-  "deploy": { "expected": "Push main; Pages FE; Render BE+migration 119" },
-  "asIs": "Browser GPS sent to nearby/reverse-geocode and stored on user_locations",
-  "toBe": "No member GPS collect/store/send; manual region only"
+  "deploy": { "expected": "Push main; Pages FE copy; Render BE audit" },
+  "asIs": "Missing processors/token disclosure; unaudited admin ops; cookie-only security copy",
+  "toBe": "Disclosed and audited; security matches implementation"
 }
