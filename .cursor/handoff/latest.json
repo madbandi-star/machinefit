@@ -1,12 +1,17 @@
 {
-  "title": "Move photo board under free board",
-  "summary": "My Page 더보기: Photo board nav item sits directly below Free board.",
+  "title": "Rename My Page 더보기 to 커뮤니티",
+  "summary": "myPage.explore label is 커뮤니티 / Community in all locales.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": ["My Page 더보기 order: free board then photo board"],
-  "fastChecks": ["rg FREE_BOARD frontend/src/pages/my-page/MyPage.tsx -A 6"],
-  "productionChecks": ["Pages: My Page 더보기 list order"],
+  "changedFiles": [
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
+  ],
+  "testFocus": ["My Page section title is 커뮤니티"],
+  "fastChecks": ["rg '\"explore\": \"커뮤니티\"' frontend/src/i18n/locales/ko/common.json"],
+  "productionChecks": ["Pages My Page heading"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Photo board after my templates",
-  "toBe": "Photo board after free board"
+  "asIs": "Section titled 더보기",
+  "toBe": "Section titled 커뮤니티"
 }

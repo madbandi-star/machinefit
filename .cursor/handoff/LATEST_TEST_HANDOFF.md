@@ -1,16 +1,17 @@
-﻿# Test handoff — My Page 더보기 photo board order
+﻿# Test handoff — My Page section rename
 
 ## Summary
-On My Page → 더보기, Photo board is now directly under Free board (then template share / my templates).
+My Page section title `myPage.explore` is now 커뮤니티 (Community / コミュニティ / 社区), not 더보기.
 
 ## Test focus
-1. My Page → 더보기: 자유게시판 바로 아래 사진게시판
+1. My Page: heading under account/explore block reads 커뮤니티
+2. EN locale: Community
 
 ## as-is → to-be
-- as-is: photo board under my templates
-- to-be: photo board under free board
+- as-is: 더보기
+- to-be: 커뮤니티
 
 ## Fast checks
 ```
-rg "FREE_BOARD" frontend/src/pages/my-page/MyPage.tsx -A 8
+rg "explore" frontend/src/i18n/locales/ko/common.json
 ```
