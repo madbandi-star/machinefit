@@ -49,6 +49,13 @@ export const updateProfileSchema = z
         path: ['birthTime'],
       });
     }
+    if (data.age != null && (data.birthDate === undefined || data.birthDate === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'age cannot be set without birthDate',
+        path: ['age'],
+      });
+    }
     if (data.birthDate) {
       const years = yearsSinceBirthDate(data.birthDate);
       if (years == null || years < MIN_PLATFORM_AGE) {
@@ -56,12 +63,6 @@ export const updateProfileSchema = z
           code: z.ZodIssueCode.custom,
           message: `Must be at least ${MIN_PLATFORM_AGE} years old`,
           path: ['birthDate'],
-        });
-      } else if (data.age != null && data.age < MIN_PLATFORM_AGE) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Must be at least ${MIN_PLATFORM_AGE} years old`,
-          path: ['age'],
         });
       }
     }

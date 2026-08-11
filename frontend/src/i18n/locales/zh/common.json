@@ -181,7 +181,8 @@
     "unknown": "发生错误。",
     "emailExists": "该邮箱已被注册。",
     "invalidCredentials": "邮箱或密码不正确。",
-    "tokenExpired": "登录已过期，请重新登录。"
+    "tokenExpired": "登录已过期，请重新登录。",
+    "ageRestricted": "未满14周岁无法注册。"
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -341,8 +342,13 @@
     "displayName": "昵称",
     "loginFailed": "登录失败。",
     "socialComingSoon": "{{provider}} 登录（即将推出）",
-    "agreeAge14": "我已年满 14 周岁",
+    "agreeAge14": "所填出生日期为本人所有，且已年满 14 周岁",
     "agreeAge14Required": "未满 14 周岁无法注册",
+    "signupBirthDate": "出生日期",
+    "signupBirthDateHint": "周岁按韩国时间（Asia/Seoul）计算。仅勾选同意无法完成注册。",
+    "ageRestrictedTitle": "未满 14 周岁无法注册",
+    "ageRestrictedBody": "MachineFit 账号仅限 14 周岁以上。场馆会员名册与此无关。",
+    "ageRestrictedBack": "返回登录",
     "trialNoticeSignup": "注册完成后可能按政策提供 Premium 免费试用（如 7 天）。详情见电商与退款政策。",
     "termsAgreeDescRejoin": "Welcome back. You'll join as a new member, separate from any previous account.",
     "rejoinTitle": "Welcome back to MachineFit.",
@@ -421,7 +427,7 @@
     "resetConfirm": "Reset",
     "resetDone": "Settings restored to defaults.",
     "birthProfile": "出生日期与时间",
-    "birthProfileDesc": "用于今日健身运势。注册时非必填。",
+    "birthProfileDesc": "用于今日健身运势。出生日期已在注册时收集，可在此补充出生时辰。",
     "birthProfileHint": "不知道出生时间可选「出生时间未知」以查看简易运势。仅供娱乐，非医疗建议。",
     "birthProfileSaved": "已保存出生日期与时间。",
     "birthDate": "出生日期",
@@ -480,7 +486,7 @@
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "可能处理社交登录标识与邮箱（若提供）、显示名、头像URL、性别/身高/体重/年龄/出生日期/出生时辰（若填写，如运势）、运动目标、可选位置、运动记录、好友/通知/照片/交易/在线PT、支付/订阅元数据（卡号由支付方保管）及访问日志。健身房店主登记的场馆会员名册（姓名/邮箱/出生日期等）用于场馆管理，可能包含未满14岁的场馆会员（不等于 MachineFit 账号）。",
+      "s1Body": "可能处理社交登录标识与邮箱（若提供）、显示名、头像URL、注册时必填的出生日期（用于确认已满14周岁，不收集居民登记号）、性别/身高/体重/年龄/出生时辰（若填写，如运势）、运动目标、可选位置、运动记录、好友/通知/照片/交易/在线PT、支付/订阅元数据（卡号由支付方保管）及访问日志。健身房店主登记的场馆会员名册（姓名/邮箱/出生日期等）用于场馆管理，可能包含未满14岁的场馆会员（不等于 MachineFit 账号）。",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
@@ -490,11 +496,11 @@
       "s5Title": "5. Your rights",
       "s5Body": "可在设置 > 个人信息权利中心查看、撤回同意、下载 JSON 并注销。其他更正/删除请求请联系客服。",
       "s6Title": "6. Children",
-      "s6Body": "MachineFit 账号（社交注册）不接受未满14周岁。资料中的年龄与出生日期须满14岁。店主录入的场馆会员出生日期仅用于场馆管理，不能据此创建 MachineFit 账号。",
+      "s6Body": "MachineFit 账号（社交注册）不接受未满14周岁。注册时服务器按韩国时间根据出生日期计算周岁，未满14岁则不创建会员记录。仅勾选同意不足以完成注册。店主录入的场馆会员出生日期仅用于场馆管理，不能据此创建 MachineFit 账号。",
       "s7Title": "7. 安全措施与联系",
       "s7Body": "我们采取访问控制、加密传输与权限分离等安全措施。详情见安全说明页。隐私相关咨询：support@machinefit.app 或应用内客服。个人信息保护负责人姓名与联系方式将在完成经营者登记后载入本政策。",
       "s8Title": "8. 变更记录",
-      "s8Body": "本政策自 2026-08-11 起适用。变更时将通过应用内公告及本页修订日期告知。（此前：2026-08-10）"
+      "s8Body": "本政策自 2026-08-13 起适用。变更时将通过应用内公告及本页修订日期告知。（此前：2026-08-12）"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",

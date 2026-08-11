@@ -186,7 +186,8 @@
     "unknown": "Something went wrong.",
     "emailExists": "This email is already registered.",
     "invalidCredentials": "Please check your email or password and try again.",
-    "tokenExpired": "Your session expired. Please sign in again."
+    "tokenExpired": "Your session expired. Please sign in again.",
+    "ageRestricted": "You must be 14 or older to create an account."
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -351,8 +352,13 @@
     "socialCancelled": "Login was cancelled.",
     "socialFailed": "Social login failed. Please try again.",
     "socialComingSoon": "{{provider}} Sign In (Coming soon)",
-    "agreeAge14": "I am 14 years of age or older",
+    "agreeAge14": "The birth date I entered is mine, and I am 14 or older",
     "agreeAge14Required": "You must be 14 or older to join",
+    "signupBirthDate": "Date of birth",
+    "signupBirthDateHint": "Age is calculated in Korea time (Asia/Seoul). A checkbox alone is not enough to join.",
+    "ageRestrictedTitle": "Under 14 cannot join",
+    "ageRestrictedBody": "MachineFit accounts are only for ages 14+. Gym facility member lists are separate.",
+    "ageRestrictedBack": "Back to login",
     "trialNoticeSignup": "After signup you may receive a Premium free trial (e.g. 7 days) per policy. See the e-commerce & refund policy for details."
   },
   "settings": {
@@ -421,7 +427,7 @@
     "resetConfirm": "Reset",
     "resetDone": "Settings restored to defaults.",
     "birthProfile": "Birth date & time",
-    "birthProfileDesc": "Used for Today’s Helchang Fortune. Not required at signup.",
+    "birthProfileDesc": "Used for Today’s Helchang Fortune. Birth date is collected at signup; you can add birth time here.",
     "birthProfileHint": "If you don’t know birth time, check “Unknown birth time” for a simple fortune. Entertainment only — not medical advice.",
     "birthProfileSaved": "Birth date & time saved.",
     "birthDate": "Birth date",
@@ -479,9 +485,9 @@
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, gender/height/weight/age/birth date/birth time (when entered, e.g. fortune), workout goals, optional region (city/district selected by you; we do not collect GPS coordinates), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), access logs (IP/UA), banner impression/click events for signed-in users (user id), and session refresh tokens (browser sessionStorage and an HttpOnly cookie). Gym-owner facility member lists (name/email/birth date) are for facility management and may include members under 14; that is not a MachineFit account.",
+      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, date of birth required at signup (to confirm age 14+; we do not collect resident registration numbers), gender/height/weight/age/birth time (when entered, e.g. fortune), workout goals, optional region (city/district selected by you; we do not collect GPS coordinates), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), access logs (IP/UA), banner impression/click events for signed-in users (user id), and session refresh tokens (browser sessionStorage and an HttpOnly cookie). Gym-owner facility member lists (name/email/birth date) are for facility management and may include members under 14; that is not a MachineFit account.",
       "s2Title": "2. Purposes",
-      "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
+      "s2Body": "Authentication, confirming age 14+, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
       "s3Body": "On withdrawal we deactivate the account, anonymize identifiers such as email/display name, and delete location data and social login links. About 30 days later we hard-purge workouts, favorites, friends, posts, photos, trades, online PT, support tickets, templates, gym member lists you own, and uploaded files. Payment/subscription records, consent evidence, and trial-abuse identity keys are kept longer as required. We do not collect or store member GPS coordinates. Consent/login IP/UA are scrubbed after about 1 year.",
       "s4Title": "4. Processors",
@@ -489,11 +495,11 @@
       "s5Title": "5. Your rights",
       "s5Body": "In Settings > Privacy Rights Center you can view data, withdraw consents, download JSON, and delete your account. For further correction/erasure/restriction requests, contact support.",
       "s6Title": "6. Children",
-      "s6Body": "MachineFit accounts (social signup) are not available under age 14. Age and birth date on the profile must be 14+. Gym-owner facility member birth dates are an exception for facility management only and do not create a MachineFit account.",
+      "s6Body": "MachineFit accounts (social signup) are not available under age 14. At signup we compute full years from date of birth in Korea time on the server and do not create a user if under 14. A checkbox alone is not sufficient. Gym-owner facility member birth dates are an exception for facility management only and do not create a MachineFit account.",
       "s7Title": "7. Security & contact",
       "s7Body": "We apply access control, encrypted transport, and role separation. See the security notice page for details. Privacy inquiries: support@machinefit.app or in-app support. The privacy officer’s name/contact will be listed here after business registration is finalized.",
       "s8Title": "8. Change history",
-      "s8Body": "This policy applies from 2026-08-12. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-08-11)"
+      "s8Body": "This policy applies from 2026-08-13. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-08-12)"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",

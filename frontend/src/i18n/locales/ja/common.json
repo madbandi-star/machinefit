@@ -181,7 +181,8 @@
     "unknown": "エラーが発生しました。",
     "emailExists": "このメールアドレスは既に登録されています。",
     "invalidCredentials": "メールまたはパスワードが正しくありません。",
-    "tokenExpired": "セッションの有効期限が切れました。再度ログインしてください。"
+    "tokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
+    "ageRestricted": "満14歳未満は登録できません。"
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -341,8 +342,13 @@
     "displayName": "表示名",
     "loginFailed": "ログインに失敗しました。",
     "socialComingSoon": "{{provider}}ログイン（準備中）",
-    "agreeAge14": "満14歳以上です",
+    "agreeAge14": "入力した生年月日は本人のもので、満14歳以上です",
     "agreeAge14Required": "満14歳以上のみ登録できます",
+    "signupBirthDate": "生年月日",
+    "signupBirthDateHint": "満年齢は韓国時間（Asia/Seoul）で計算します。チェックだけでは登録できません。",
+    "ageRestrictedTitle": "満14歳未満は登録できません",
+    "ageRestrictedBody": "MachineFitアカウントは満14歳以上のみ作成できます。ジム施設の会員名簿とは別です。",
+    "ageRestrictedBack": "ログインに戻る",
     "trialNoticeSignup": "登録完了時、運営方針によりPremium無料体験（例: 7日）が付与される場合があります。詳細は電子商取引・返金ポリシーをご確認ください。",
     "termsAgreeDescRejoin": "Welcome back. You'll join as a new member, separate from any previous account.",
     "rejoinTitle": "Welcome back to MachineFit.",
@@ -438,7 +444,7 @@
     "accountDeleted": "Your account has been deleted.",
     "languageDesc": "アプリの言語をすぐに変更できます。再読み込みは不要です。",
     "birthProfile": "Birth date & time",
-    "birthProfileDesc": "Used for Today’s Helchang Fortune. Not required at signup.",
+    "birthProfileDesc": "今日のヘルチャン運勢に使います。生年月日は登録時に入力済みで、出生時刻はここで追加できます。",
     "birthProfileHint": "If you don’t know birth time, check “Unknown birth time” for a simple fortune. Entertainment only — not medical advice.",
     "birthProfileSaved": "Birth date & time saved.",
     "birthDate": "Birth date",
@@ -480,7 +486,7 @@
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "ソーシャルログイン識別子・メール（提供時）、表示名、アバターURL、性別・身長・体重・年齢・生年月日・出生時刻（入力時、占い等）、運動目標、位置（任意）、運動記録、友人・通知・写真・取引・オンラインPT、決済・サブスクのメタデータ（カード番号は決済事業者保管）、アクセスログを処理する場合があります。ジムオーナーが登録する施設会員名簿（氏名・メール・生年月日等）は施設管理用で、満14歳未満の施設会員が含まれることがあります（MachineFitアカウントではありません）。",
+      "s1Body": "ソーシャルログイン識別子・メール（提供時）、表示名、アバターURL、登録時必須の生年月日（満14歳確認用。住民登録番号は収集しません）、性別・身長・体重・年齢・出生時刻（入力時、占い等）、運動目標、位置（任意）、運動記録、友人・通知・写真・取引・オンラインPT、決済・サブスクのメタデータ（カード番号は決済事業者保管）、アクセスログを処理する場合があります。ジムオーナーが登録する施設会員名簿（氏名・メール・生年月日等）は施設管理用で、満14歳未満の施設会員が含まれることがあります（MachineFitアカウントではありません）。",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
@@ -490,11 +496,11 @@
       "s5Title": "5. Your rights",
       "s5Body": "設定 > 個人情報権利センターで閲覧・同意撤回・JSONダウンロード・退会が可能です。追加の訂正・削除等はサポートへお問い合わせください。",
       "s6Title": "6. Children",
-      "s6Body": "MachineFitアカウント（ソーシャル登録）は満14歳未満を受け付けません。プロフィールの年齢・生年月日は14歳以上である必要があります。ジムオーナーが入力する施設会員の生年月日は施設管理用の例外であり、当該児童のMachineFitアカウント作成はできません。",
+      "s6Body": "MachineFitアカウント（ソーシャル登録）は満14歳未満を受け付けません。登録時に生年月日から韓国時間の満年齢をサーバーで計算し、14歳未満なら会員レコードを作成しません。チェックだけでは登録できません。ジムオーナーが入力する施設会員の生年月日は施設管理用の例外であり、当該児童のMachineFitアカウント作成はできません。",
       "s7Title": "7. 安全管理・問い合わせ",
       "s7Body": "アクセス制御・暗号化通信・権限分離などの安全管理措置を適用します。詳細はセキュリティ案内を参照してください。個人情報に関する問い合わせは support@machinefit.app またはアプリ内サポートへ。個人情報保護責任者の氏名・連絡先は事業者登録確定後に本方針へ記載します。",
       "s8Title": "8. 変更履歴",
-      "s8Body": "本方針は2026-08-11から適用されます。変更時はサービス内告知および本ページの改定日でお知らせします。（以前: 2026-08-10）"
+      "s8Body": "本方針は2026-08-13から適用されます。変更時はサービス内告知および本ページの改定日でお知らせします。（以前: 2026-08-12）"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",

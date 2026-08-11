@@ -72,7 +72,10 @@ export const userService = {
     if (payload.displayName !== undefined) {
       payload.displayName = await applyUsernameChange(userId, payload.displayName);
     }
-    if (payload.birthDate && payload.age === undefined) {
+    if (payload.age !== undefined && !payload.birthDate) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'age cannot be set without birthDate');
+    }
+    if (payload.birthDate) {
       const derived = ageFromBirthDate(payload.birthDate);
       if (derived == null) {
         throw new AppError(400, 'AGE_RESTRICTED', 'Must be at least 14 years old');

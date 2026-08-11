@@ -24,6 +24,7 @@ import {
 import { findDevUserById } from '../data/dev-users.js';
 import { notificationService } from './notification.service.js';
 import { trackUsageSafe } from './usage.service.js';
+import { assertPlatformAgeEligible } from './age-verification.service.js';
 import crypto from 'crypto';
 
 function hashRefreshToken(token: string): string {
@@ -400,26 +401,27 @@ export const authService = {
       throw new AppError(401, 'INVALID_TOKEN', 'Signup session expired. Please sign in again.');
     }
 
-    const { oauthPendingRepository } = await import(
-      '../repositories/oauth-pending.repository.js'
-    );
-    const consumed = await oauthPendingRepository.consume(pending.jti);
-    if (!consumed) {
-      throw new AppError(
-        401,
-        'INVALID_TOKEN',
-        'Signup session already used or expired. Please sign in again.'
-      );
-    }
-
     const { authProviderRepository } = await import('../repositories/auth-provider.repository.js');
     let existingLink = await authProviderRepository.findByProviderUserId(
       pending.provider,
       pending.providerUserId
     );
+
+    const { oauthPendingRepository } = await import(
+      '../repositories/oauth-pending.repository.js'
+    );
+
     if (existingLink) {
       const user = await userRepository.findById(existingLink.userId);
       if (user?.isActive) {
+        const consumed = await oauthPendingRepository.consume(pending.jti);
+        if (!consumed) {
+          throw new AppError(
+            401,
+            'INVALID_TOKEN',
+            'Signup session already used or expired. Please sign in again.'
+          );
+        }
         await applyConsentBundle(user.id, input, meta);
         const refreshed = await userRepository.findById(user.id);
         if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
@@ -435,6 +437,18 @@ export const authService = {
       existingLink = null;
     }
 
+    // Gate BEFORE consume so a typo can be corrected; under-14 never INSERTs a user.
+    const { ageYears } = assertPlatformAgeEligible(input.birthDate);
+
+    const consumed = await oauthPendingRepository.consume(pending.jti);
+    if (!consumed) {
+      throw new AppError(
+        401,
+        'INVALID_TOKEN',
+        'Signup session already used or expired. Please sign in again.'
+      );
+    }
+
     const email = await allocateOAuthUserEmail(
       pending.provider,
       pending.providerUserId,
@@ -448,6 +462,8 @@ export const authService = {
         avatarUrl: pending.avatarUrl ?? undefined,
         marketingOptIn: Boolean(input.agreeMarketing),
         locationOptIn: Boolean(input.agreeLocation),
+        birthDate: input.birthDate,
+        age: ageYears,
       });
       await authProviderRepository.create({
         userId: user.id,
@@ -655,6 +671,8 @@ async function createOAuthUserWithRandomUsername(input: {
   avatarUrl?: string | null;
   marketingOptIn: boolean;
   locationOptIn: boolean;
+  birthDate: string;
+  age: number;
 }): Promise<User> {
   const maxAttempts = 32;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
@@ -671,6 +689,8 @@ async function createOAuthUserWithRandomUsername(input: {
         experienceLevel: 'beginner',
         marketingOptIn: input.marketingOptIn,
         locationOptIn: input.locationOptIn,
+        birthDate: input.birthDate,
+        age: input.age,
       });
     } catch (error: unknown) {
       const code =

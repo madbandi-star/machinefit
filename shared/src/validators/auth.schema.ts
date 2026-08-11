@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { LEGAL_DOC_VERSIONS } from '../constants/legal.js';
+import { ISO_DATE_YMD } from '../utils/age-from-birth-date.js';
 
 export const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1).optional(),
@@ -38,6 +39,8 @@ export const oauthCredentialSchema = z
 /** Complete OAuth signup after required terms acceptance. */
 export const oauthCompleteSchema = z.object({
   pendingToken: z.string().min(1),
+  /** Required. Server computes 만 나이 in Asia/Seoul — agreeAge14 alone is not enough. */
+  birthDate: z.string().regex(ISO_DATE_YMD, 'YYYY-MM-DD'),
   agreeTerms: z
     .boolean()
     .refine((v) => v === true, { message: 'Terms of service must be accepted' }),

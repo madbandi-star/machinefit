@@ -163,6 +163,7 @@ export const userRepository = {
     heightCm?: number;
     weightKg?: number;
     age?: number;
+    birthDate?: string | null;
     workoutGoal?: User['workoutGoal'];
     homeGymId?: string | null;
     homeGymName?: string | null;
@@ -192,11 +193,11 @@ export const userRepository = {
     const result = await pool.query<UserRow>(
       `INSERT INTO users (
          role_id, email, display_name, gender, language_id,
-         unit_height, unit_weight, height_cm, weight_kg, age, workout_goal,
+         unit_height, unit_weight, height_cm, weight_kg, age, birth_date, workout_goal,
          home_gym_id, home_gym_name, experience_level, marketing_opt_in, location_opt_in,
          avatar_url
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
        RETURNING *`,
       [
         roleId,
@@ -209,6 +210,7 @@ export const userRepository = {
         data.heightCm ?? null,
         data.weightKg ?? null,
         data.age ?? null,
+        data.birthDate ?? null,
         data.workoutGoal ?? null,
         data.homeGymId ?? null,
         data.homeGymName ?? null,

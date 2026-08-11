@@ -1,30 +1,37 @@
 {
-  "title": "Privacy disclosure, admin audit logs, refresh token docs",
-  "summary": "Privacy/security copy now matches SMTP/Resend, banner user_id, and dual refresh storage. Admin role/banner/notice/coupon writes audit logs.",
+  "title": "Phase 1 under-14 signup gate (DOB + KST age)",
+  "summary": "OAuth complete requires birthDate; server computes 만 나이 in Asia/Seoul and refuses users INSERT if under 14. Age-only profile PATCH is rejected. Gym facility members under 14 unchanged.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
+    "shared/src/utils/age-from-birth-date.ts",
+    "shared/src/utils/age-from-birth-date.test.ts",
+    "shared/src/validators/auth.schema.ts",
+    "shared/src/validators/user.schema.ts",
     "shared/src/constants/legal.ts",
-    "backend/server/utils/admin-audit.util.ts",
-    "backend/server/controllers/admin.controller.ts",
-    "backend/server/controllers/banner.controller.ts",
-    "backend/server/controllers/notice.controller.ts",
-    "backend/server/controllers/admin-billing.controller.ts"
+    "backend/server/services/age-verification.service.ts",
+    "backend/server/services/auth.service.ts",
+    "backend/server/services/user.service.ts",
+    "backend/server/repositories/user.repository.ts",
+    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Privacy 2026-08-12 reconsent",
-    "Admin audit rows for role/banner/notice/coupon",
-    "Security page describes sessionStorage fallback"
+    "Signup DOB required; under-14 block / AGE_RESTRICTED no user INSERT",
+    "PATCH age without birthDate rejected",
+    "Privacy 2026-08-13 reconsent",
+    "Gym members under 14 still allowed"
   ],
   "fastChecks": [
-    "rg -n \"writeAdminAudit\" backend/server/controllers"
+    "npx tsx shared/src/utils/age-from-birth-date.test.ts",
+    "npx tsx shared/src/validators/auth.schema.test.ts",
+    "npx tsx backend/server/services/age-verification.service.test.ts"
   ],
   "productionChecks": [
-    "Pages privacy/security text",
-    "Render: admin_audit_logs after admin coupon create"
+    "Pages: terms signup DOB + under-14 copy",
+    "Render: POST /auth/oauth/complete without birthDate fails"
   ],
-  "deploy": { "expected": "Push main; Pages FE copy; Render BE audit" },
-  "asIs": "Missing processors/token disclosure; unaudited admin ops; cookie-only security copy",
-  "toBe": "Disclosed and audited; security matches implementation"
+  "deploy": { "expected": "Push main; Pages FE; Render BE for auth gate" },
+  "asIs": "agreeAge14 checkbox created platform accounts",
+  "toBe": "Required DOB + server KST age; under-14 never INSERTs users"
 }

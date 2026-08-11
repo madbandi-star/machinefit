@@ -12,7 +12,13 @@ import {
   ShieldCheck,
   ShieldUser,
 } from 'lucide-react';
-import { LEGAL_DOC_VERSIONS, type AuthTokens, type User } from '@machinefit/shared';
+import {
+  LEGAL_DOC_VERSIONS,
+  MIN_PLATFORM_AGE,
+  yearsSinceBirthDate,
+  type AuthTokens,
+  type User,
+} from '@machinefit/shared';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -113,10 +119,17 @@ export function TermsAgreementPage() {
   const showToast = useUIStore((s) => s.showToast);
 
   const [checks, setChecks] = useState<TermsCheckState>(() => loadTermsChecks());
+  const [birthDate, setBirthDate] = useState('');
+  const [ageBlocked, setAgeBlocked] = useState(false);
   const pending = loadOAuthPending();
   const isSignup = Boolean(pending?.pendingToken);
   const isRejoin = pending?.reason === 'rejoin';
   const canStay = isSignup || (isAuthenticated && needsConsent);
+  const now = new Date();
+  const todayYmd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const ageYears = yearsSinceBirthDate(birthDate);
+  const under14 = Boolean(birthDate && (ageYears == null || ageYears < MIN_PLATFORM_AGE));
+  const showAgeBlock = isSignup && (under14 || ageBlocked);
 
   useEffect(() => {
     if (!canStay) {
@@ -147,7 +160,9 @@ export function TermsAgreementPage() {
     });
   };
 
-  const requiredOk = checks.agreeTerms && checks.agreePrivacy && checks.agreeAge14;
+  const dobOk = !isSignup || (Boolean(birthDate) && ageYears != null && ageYears >= MIN_PLATFORM_AGE);
+  const requiredOk =
+    checks.agreeTerms && checks.agreePrivacy && checks.agreeAge14 && dobOk && !showAgeBlock;
 
   const finishAuth = (user: User, tokens: AuthTokens) => {
     clearOAuthPending();
@@ -180,6 +195,7 @@ export function TermsAgreementPage() {
       if (isSignup && pending) {
         return authApi.completeOAuthSignup({
           pendingToken: pending.pendingToken,
+          birthDate,
           ...body,
         });
       }
@@ -190,6 +206,14 @@ export function TermsAgreementPage() {
       finishAuth(user, tokens);
     },
     onError: (error) => {
+      const code = axios.isAxiosError(error)
+        ? (error.response?.data as { error?: { code?: string } } | undefined)?.error?.code
+        : undefined;
+      if (code === 'AGE_RESTRICTED') {
+        setAgeBlocked(true);
+        showToast(t('errors.ageRestricted'), 'error');
+        return;
+      }
       const message = getApiErrorMessage(error);
       showToast(message || t('auth.consentFailed'), 'error');
       if (axios.isAxiosError(error) && error.response?.status === 401 && isSignup) {
@@ -278,6 +302,29 @@ export function TermsAgreementPage() {
           onChange={(v) => setField('agreeMarketing', v)}
           checkLabel={`${t('auth.optional')} ${t('legal.marketingTitle')}`}
         />
+        {isSignup ? (
+          <div className="terms-agree__dob">
+            <label className="terms-agree__dob-label" htmlFor="signup-birth-date">
+              <span className="terms-agree__badge terms-agree__badge--required">
+                {t('auth.required')}
+              </span>
+              <span>{t('auth.signupBirthDate')}</span>
+            </label>
+            <p className="terms-agree__dob-hint">{t('auth.signupBirthDateHint')}</p>
+            <input
+              id="signup-birth-date"
+              type="date"
+              className="terms-agree__dob-input"
+              value={birthDate}
+              max={todayYmd}
+              onChange={(e) => {
+                setAgeBlocked(false);
+                setBirthDate(e.target.value);
+              }}
+              required
+            />
+          </div>
+        ) : null}
         <div className="terms-agree__item">
           <span className="terms-agree__item-icon" aria-hidden>
             <ShieldCheck size={18} strokeWidth={2} />
@@ -295,6 +342,24 @@ export function TermsAgreementPage() {
           />
         </div>
       </div>
+
+      {showAgeBlock ? (
+        <aside className="terms-agree__age-block" role="alert">
+          <p className="terms-agree__age-block-title">{t('auth.ageRestrictedTitle')}</p>
+          <p>{t('auth.ageRestrictedBody')}</p>
+          <button
+            type="button"
+            className="terms-agree__age-block-back"
+            onClick={() => {
+              clearOAuthPending();
+              clearTermsChecks();
+              navigate(ROUTES.LOGIN, { replace: true });
+            }}
+          >
+            {t('auth.ageRestrictedBack')}
+          </button>
+        </aside>
+      ) : null}
 
       <aside className="terms-agree__notice" role="note">
         <p className="terms-agree__notice-title">{t('legal.illegalUseTitle')}</p>
@@ -315,14 +380,16 @@ export function TermsAgreementPage() {
         <span>{t('auth.termsSecureNotice')}</span>
       </p>
 
-      <button
-        type="button"
-        className="terms-agree__submit"
-        disabled={!requiredOk || mutation.isPending}
-        onClick={() => mutation.mutate()}
-      >
-        {mutation.isPending ? '...' : t('auth.termsAgreeContinue')}
-      </button>
+      {showAgeBlock ? null : (
+        <button
+          type="button"
+          className="terms-agree__submit"
+          disabled={!requiredOk || mutation.isPending}
+          onClick={() => mutation.mutate()}
+        >
+          {mutation.isPending ? '...' : t('auth.termsAgreeContinue')}
+        </button>
+      )}
     </section>
   );
 }

@@ -88,6 +88,7 @@ export const authApi = {
   ) => apiClient.post(`/auth/${provider}`, credential),
   completeOAuthSignup: (data: {
     pendingToken: string;
+    birthDate: string;
     agreeTerms: boolean;
     agreePrivacy: boolean;
     agreeAge14: boolean;
