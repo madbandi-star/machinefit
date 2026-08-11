@@ -19,6 +19,7 @@ export function HomeWorkoutSessionTimer() {
   const segmentStartedAtMs = useWorkoutSessionTimerStore((s) => s.segmentStartedAtMs);
   const accumulatedMs = useWorkoutSessionTimerStore((s) => s.accumulatedMs);
   const laps = useWorkoutSessionTimerStore((s) => s.laps);
+  const lastEndedElapsedMs = useWorkoutSessionTimerStore((s) => s.lastEndedElapsedMs);
   const start = useWorkoutSessionTimerStore((s) => s.start);
   const pause = useWorkoutSessionTimerStore((s) => s.pause);
   const resume = useWorkoutSessionTimerStore((s) => s.resume);
@@ -65,6 +66,9 @@ export function HomeWorkoutSessionTimer() {
   const isIdle = status === 'idle';
   const isRunning = status === 'running';
   const showLapButton = status === 'running' || status === 'paused';
+  const showEndedSummary = isIdle && lastEndedElapsedMs != null;
+  const endedDisplay =
+    lastEndedElapsedMs != null ? formatWorkoutSessionElapsed(lastEndedElapsedMs) : null;
 
   const primaryLabel =
     status === 'running'
@@ -88,10 +92,22 @@ export function HomeWorkoutSessionTimer() {
         <div className="home-session-timer__display" aria-live="polite" aria-atomic="true">
           <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
           <span className="home-session-timer__time" data-status={status}>
-            {display}
+            {showEndedSummary ? '00:00:00' : display}
           </span>
         </div>
         <div className="home-session-timer__actions">
+          {showEndedSummary && endedDisplay ? (
+            <div
+              className="home-session-timer__ended"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span className="home-session-timer__ended-label">
+                {t('pages.home.sessionTimerEndedLabel')}
+              </span>
+              <span className="home-session-timer__ended-time">{endedDisplay}</span>
+            </div>
+          ) : null}
           <button
             type="button"
             className="btn btn--primary home-session-timer__btn"

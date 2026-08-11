@@ -650,6 +650,7 @@
       "sessionTimerPause": "Pause",
       "sessionTimerResume": "Resume",
       "sessionTimerEnd": "End workout",
+      "sessionTimerEndedLabel": "Workout time",
       "sessionTimerLap": "Lap",
       "sessionTimerLapAria": "Record lap",
       "sessionTimerLaps": "Lap times",

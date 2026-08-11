@@ -651,6 +651,7 @@
       "sessionTimerPause": "一時停止",
       "sessionTimerResume": "再開",
       "sessionTimerEnd": "運動終了",
+      "sessionTimerEndedLabel": "運動時間",
       "sessionTimerLap": "ラップ",
       "sessionTimerLapAria": "ラップを記録",
       "sessionTimerLaps": "ラップ記録",

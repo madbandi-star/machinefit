@@ -651,6 +651,7 @@
       "sessionTimerPause": "暂停",
       "sessionTimerResume": "继续",
       "sessionTimerEnd": "结束运动",
+      "sessionTimerEndedLabel": "运动时间",
       "sessionTimerLap": "计圈",
       "sessionTimerLapAria": "记录计圈",
       "sessionTimerLaps": "计圈记录",

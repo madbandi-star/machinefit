@@ -650,6 +650,7 @@
       "sessionTimerPause": "일시정지",
       "sessionTimerResume": "운동 재개",
       "sessionTimerEnd": "운동 종료",
+      "sessionTimerEndedLabel": "운동 시간",
       "sessionTimerLap": "랩",
       "sessionTimerLapAria": "랩 기록",
       "sessionTimerLaps": "랩 기록",

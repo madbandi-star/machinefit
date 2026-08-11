@@ -28,6 +28,11 @@ type WorkoutSessionTimerState = {
   laps: WorkoutSessionLap[];
   /** Cumulative elapsed at the last lap (0 before first lap). */
   lastLapTotalMs: number;
+  /**
+   * Final elapsed of the last ended session (pause gaps excluded).
+   * Shown in the idle right panel until the next start.
+   */
+  lastEndedElapsedMs: number | null;
   start: () => void;
   pause: () => void;
   resume: () => void;
@@ -86,6 +91,7 @@ export const useWorkoutSessionTimerStore = create<WorkoutSessionTimerState>()(
       accumulatedMs: 0,
       laps: [],
       lastLapTotalMs: 0,
+      lastEndedElapsedMs: null,
 
       start: () => {
         const { status } = get();
@@ -96,6 +102,7 @@ export const useWorkoutSessionTimerStore = create<WorkoutSessionTimerState>()(
           accumulatedMs: 0,
           laps: [],
           lastLapTotalMs: 0,
+          lastEndedElapsedMs: null,
         });
       },
 
@@ -139,10 +146,15 @@ export const useWorkoutSessionTimerStore = create<WorkoutSessionTimerState>()(
       },
 
       end: () => {
+        const state = get();
+        if (state.status === 'idle') return;
+        const now = Date.now();
+        const endedElapsedMs = getWorkoutSessionElapsedMs(state, now);
         set({
           status: 'idle',
           segmentStartedAtMs: null,
           accumulatedMs: 0,
+          lastEndedElapsedMs: endedElapsedMs,
           // Keep laps until the next start so the session can be reviewed.
         });
       },

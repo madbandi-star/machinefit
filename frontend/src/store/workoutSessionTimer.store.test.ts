@@ -3,6 +3,7 @@ import {
   formatWorkoutSessionElapsed,
   formatWorkoutSessionLap,
   getWorkoutSessionElapsedMs,
+  useWorkoutSessionTimerStore,
 } from './workoutSessionTimer.store';
 
 assert.equal(formatWorkoutSessionElapsed(0), '00:00:00');
@@ -90,5 +91,30 @@ const elapsedAfterResume = getWorkoutSessionElapsedMs(
 );
 assert.equal(elapsedAfterResume, 30_000);
 assert.equal(elapsedAfterResume - elapsedBeforePause, 10_000);
+
+// End stores final elapsed for the right-side summary
+const endStart = Date.parse('2026-08-11T13:00:00.000Z');
+const sessionEndAt = Date.parse('2026-08-11T13:05:30.000Z');
+const originalNow = Date.now;
+Date.now = () => sessionEndAt;
+useWorkoutSessionTimerStore.setState({
+  status: 'running',
+  segmentStartedAtMs: endStart,
+  accumulatedMs: 0,
+  lastEndedElapsedMs: null,
+  laps: [],
+});
+useWorkoutSessionTimerStore.getState().end();
+const ended = useWorkoutSessionTimerStore.getState();
+assert.equal(ended.status, 'idle');
+assert.equal(ended.lastEndedElapsedMs, 330_000);
+assert.equal(ended.segmentStartedAtMs, null);
+assert.equal(ended.accumulatedMs, 0);
+
+// Start clears ended summary
+Date.now = () => Date.parse('2026-08-11T13:06:00.000Z');
+useWorkoutSessionTimerStore.getState().start();
+assert.equal(useWorkoutSessionTimerStore.getState().lastEndedElapsedMs, null);
+Date.now = originalNow;
 
 console.log('workoutSessionTimer.store.test.ts: ok');
