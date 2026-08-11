@@ -19,8 +19,8 @@ export function legalVersionSatisfies(
 }
 
 export const LEGAL_DOC_VERSIONS = {
-  terms: '2026-08-14',
-  privacy: '2026-08-14',
+  terms: '2026-08-15',
+  privacy: '2026-08-15',
   location: '2026-08-11',
   marketing: '2026-08-10',
   commerce: '2026-08-14',
@@ -57,7 +57,7 @@ export const BUSINESS_OPERATOR = {
   /** 사업장 주소 */
   address: '',
   /** 고객센터 이메일 */
-  supportEmail: 'support@machinefit.app',
+  supportEmail: 'machinefit.official@gmail.com',
   /** 고객센터 전화 (선택) */
   supportPhone: '',
 } as const;
