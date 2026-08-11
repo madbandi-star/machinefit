@@ -65,20 +65,26 @@
   white-space: nowrap;
 }
 
-.bottom-nav__item--nudge {
+.bottom-nav__item--nudge,
+.bottom-nav__item--plan {
   color: var(--color-primary);
   position: relative;
   overflow: visible;
   z-index: 2;
 }
 
-.bottom-nav__item--nudge .bottom-nav__icon-wrap {
+.bottom-nav__item--nudge .bottom-nav__icon-wrap,
+.bottom-nav__item--plan .bottom-nav__icon-wrap {
   position: relative;
   color: var(--color-primary);
+}
+
+.bottom-nav__item--nudge .bottom-nav__icon-wrap {
   animation: bottom-nav-nudge-pulse 1.6s ease-in-out infinite;
 }
 
-.bottom-nav__item--nudge .bottom-nav__icon-wrap::after {
+.bottom-nav__item--nudge .bottom-nav__icon-wrap::after,
+.bottom-nav__item--plan .bottom-nav__icon-wrap::after {
   content: '';
   position: absolute;
   top: 0.1rem;

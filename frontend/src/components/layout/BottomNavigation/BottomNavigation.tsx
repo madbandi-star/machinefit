@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { queryClient } from '@/app/providers/QueryProvider';
 import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
@@ -94,6 +95,8 @@ export function BottomNavigation() {
   const recordsNavNudge = useUIStore((s) => s.recordsNavNudge);
   const recordsNavNudgeTip = useUIStore((s) => s.recordsNavNudgeTip);
   const setRecordsNavNudge = useUIStore((s) => s.setRecordsNavNudge);
+  const { count: todayPlanCount } = useTodayActivePlanCount();
+  const hasTodayPlans = todayPlanCount > 0;
   const [showRecordsTip, setShowRecordsTip] = useState(false);
 
   useEffect(() => {
@@ -132,6 +135,7 @@ export function BottomNavigation() {
     <nav className="bottom-nav" aria-label={t('nav.main')}>
       {NAV_ITEMS.map(({ to, icon, labelKey, requireAuth }) => {
         const isRecordsNudge = to === ROUTES.RECORDS && recordsNavNudge;
+        const isRecordsPlanDot = to === ROUTES.RECORDS && hasTodayPlans && !recordsNavNudge;
         return (
           <NavLink
             key={to}
@@ -144,9 +148,15 @@ export function BottomNavigation() {
                 'bottom-nav__item',
                 isActive ? 'bottom-nav__item--active' : '',
                 isRecordsNudge ? 'bottom-nav__item--nudge' : '',
+                isRecordsPlanDot ? 'bottom-nav__item--plan' : '',
               ]
                 .filter(Boolean)
                 .join(' ')
+            }
+            title={
+              isRecordsPlanDot
+                ? t('machines:history.planHomeNavAria', { count: todayPlanCount })
+                : undefined
             }
           >
             {isRecordsNudge && showRecordsTip ? (

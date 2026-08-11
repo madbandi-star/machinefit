@@ -364,6 +364,8 @@
     "planHomeTitle": "Today's workout plan",
     "planHomeCount": "{{count}} planned",
     "planHomeOpenRecords": "Open records",
+    "planHomeDismissToday": "今日は非表示",
+    "planHomeNavAria": "今日の運動計画 {{count}}件",
     "planMissedTitle": "You have missed workout plans",
     "planMissedMessage": "{{name}} ({{date}}){{count, plural, =0 {} other { and # more}}}",
     "planMissedMoveToday": "Move to today",
