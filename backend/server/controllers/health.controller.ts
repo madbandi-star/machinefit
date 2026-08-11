@@ -19,6 +19,9 @@ export async function healthCheck(_req: Request, res: Response): Promise<void> {
       version: getBuildVersion(),
       buildTime: getBuildTime(),
       uptimeSec: getUptimeSec(),
+      features: {
+        templateShare: true,
+      },
     },
   });
 }

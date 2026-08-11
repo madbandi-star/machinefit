@@ -25,13 +25,33 @@ jobs:
           DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$DEPLOY_HOOK" ]; then
-            echo "::warning::RENDER_DEPLOY_HOOK_URL secret is not set."
+            echo "::error::RENDER_DEPLOY_HOOK_URL secret is not set — backend was NOT redeployed."
             echo "Manual deploy: Render → machinefit-api → Manual Deploy"
             echo "To enable auto-deploy:"
             echo "  1) Render → machinefit-api → Settings → Deploy Hook → copy URL"
             echo "  2) GitHub → Settings → Secrets → Actions → add RENDER_DEPLOY_HOOK_URL"
             echo "See docs/DEPLOY.md"
-            exit 0
+            exit 1
           fi
           curl -fsSL -X POST "$DEPLOY_HOOK"
           echo "Render deploy triggered successfully."
+
+      - name: Verify template-shares route (best-effort)
+        if: success()
+        run: |
+          set +e
+          for i in $(seq 1 18); do
+            CODE="$(curl -sS -o /tmp/tpl.json -w "%{http_code}" \
+              "https://machinefit.onrender.com/api/v1/template-shares?page=1&pageSize=1&sort=latest" \
+              || echo 000)"
+            echo "attempt ${i}: template-shares HTTP ${CODE}"
+            if [ "$CODE" != "404" ] && [ "$CODE" != "000" ]; then
+              echo "template-shares route is live (HTTP ${CODE})."
+              exit 0
+            fi
+            HEALTH="$(curl -fsSL "https://machinefit.onrender.com/api/v1/health" 2>/dev/null || true)"
+            echo "health: $(printf '%s' "$HEALTH" | tr -d '\n' | cut -c1-160)"
+            sleep 20
+          done
+          echo "::warning::Deploy hook fired but /template-shares still 404. Check Render build logs."
+          exit 0

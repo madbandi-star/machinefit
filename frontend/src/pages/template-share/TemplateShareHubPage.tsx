@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import type { TemplateShareSort } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -13,6 +14,14 @@ import '@/styles/components.css';
 import '@/styles/template-share.css';
 
 const SORTS: TemplateShareSort[] = ['popular', 'latest', 'uses', 'downloads', 'likes'];
+
+function isTemplateShareApiMissing(error: unknown): boolean {
+  if (!axios.isAxiosError(error)) return false;
+  const status = error.response?.status;
+  if (status === 404 || status === 502 || status === 503) return true;
+  const body = error.response?.data;
+  return typeof body === 'string' && body.includes('Cannot GET');
+}
 
 export function TemplateShareHubPage() {
   const { t } = useTranslation('community');
@@ -27,6 +36,10 @@ export function TemplateShareHubPage() {
     queryFn: async () => {
       const res = await templateShareApi.list({ page, pageSize: 12, sort, q: q || undefined });
       return res.data.data;
+    },
+    retry: (failureCount, error) => {
+      if (isTemplateShareApiMissing(error)) return false;
+      return failureCount < 2;
     },
   });
 
@@ -79,7 +92,16 @@ export function TemplateShareHubPage() {
       </div>
 
       {listQuery.isLoading ? <Skeleton count={4} height={140} /> : null}
-      {listQuery.isError ? <QueryErrorMessage onRetry={() => void listQuery.refetch()} /> : null}
+      {listQuery.isError ? (
+        <QueryErrorMessage
+          message={
+            isTemplateShareApiMissing(listQuery.error)
+              ? t('templateShare.apiUnavailable')
+              : undefined
+          }
+          onRetry={() => void listQuery.refetch()}
+        />
+      ) : null}
 
       {!listQuery.isLoading && !listQuery.isError ? (
         <>

@@ -295,6 +295,7 @@
     "publish": "공개하기",
     "published": "템플릿을 공유관에 공개했습니다.",
     "shareBlocked": "받아온 템플릿은 다시 공유할 수 없습니다.",
+    "apiUnavailable": "템플릿 공유 서버가 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.",
     "templateDeleted": "템플릿을 삭제했습니다.",
     "deleteTitle": "템플릿 삭제",
     "deleteMessage": "이 템플릿을 삭제할까요? 이미 공유된 글은 별도로 관리됩니다."

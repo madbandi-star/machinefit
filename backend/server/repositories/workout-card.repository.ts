@@ -163,6 +163,25 @@ const TEMPLATE_SELECT = `
   tsp.id AS share_post_id, tsp.status AS share_post_status
 `;
 
+/** Pre-migration 116 select — keeps My Templates usable if share tables lag. */
+const LEGACY_TEMPLATE_SELECT = `
+  t.id, t.gym_id, t.name, t.payload, t.created_at, t.updated_at,
+  TRUE AS is_original,
+  NULL::uuid AS original_template_id,
+  NULL::uuid AS source_template_id,
+  NULL::uuid AS source_share_post_id,
+  NULL::text AS origin_author_name,
+  NULL::text AS origin_title,
+  NULL::uuid AS share_post_id,
+  NULL::text AS share_post_status
+`;
+
+function isMissingTemplateShareSchema(err: unknown): boolean {
+  const code = (err as { code?: string } | null)?.code;
+  // undefined_table | undefined_column
+  return code === '42P01' || code === '42703';
+}
+
 function canShareTemplate(row: {
   is_original?: boolean | null;
   original_template_id?: string | null;
@@ -912,15 +931,27 @@ export const workoutCardRepository = {
       gymFilter = ` AND (t.gym_id IS NULL OR t.gym_id = $${params.length})`;
     }
 
-    const result = await pool.query<WorkoutCardTemplateRow>(
-      `SELECT ${TEMPLATE_SELECT}
-       FROM workout_card_templates t
-       LEFT JOIN template_share_posts tsp ON tsp.source_template_id = t.id
-       WHERE t.user_id = $1${gymFilter}
-       ORDER BY t.created_at DESC`,
-      params
-    );
-    return result.rows.map(mapTemplateRow);
+    try {
+      const result = await pool.query<WorkoutCardTemplateRow>(
+        `SELECT ${TEMPLATE_SELECT}
+         FROM workout_card_templates t
+         LEFT JOIN template_share_posts tsp ON tsp.source_template_id = t.id
+         WHERE t.user_id = $1${gymFilter}
+         ORDER BY t.created_at DESC`,
+        params
+      );
+      return result.rows.map(mapTemplateRow);
+    } catch (err) {
+      if (!isMissingTemplateShareSchema(err)) throw err;
+      const result = await pool.query<WorkoutCardTemplateRow>(
+        `SELECT ${LEGACY_TEMPLATE_SELECT}
+         FROM workout_card_templates t
+         WHERE t.user_id = $1${gymFilter}
+         ORDER BY t.created_at DESC`,
+        params
+      );
+      return result.rows.map(mapTemplateRow);
+    }
   },
 
   async findTemplateById(
@@ -930,15 +961,27 @@ export const workoutCardRepository = {
     const pool = getPool();
     if (!pool) return null;
 
-    const result = await pool.query<WorkoutCardTemplateRow>(
-      `SELECT ${TEMPLATE_SELECT}
-       FROM workout_card_templates t
-       LEFT JOIN template_share_posts tsp ON tsp.source_template_id = t.id
-       WHERE t.id = $1 AND t.user_id = $2`,
-      [id, userId]
-    );
-    const row = result.rows[0];
-    return row ? mapTemplateRow(row) : null;
+    try {
+      const result = await pool.query<WorkoutCardTemplateRow>(
+        `SELECT ${TEMPLATE_SELECT}
+         FROM workout_card_templates t
+         LEFT JOIN template_share_posts tsp ON tsp.source_template_id = t.id
+         WHERE t.id = $1 AND t.user_id = $2`,
+        [id, userId]
+      );
+      const row = result.rows[0];
+      return row ? mapTemplateRow(row) : null;
+    } catch (err) {
+      if (!isMissingTemplateShareSchema(err)) throw err;
+      const result = await pool.query<WorkoutCardTemplateRow>(
+        `SELECT ${LEGACY_TEMPLATE_SELECT}
+         FROM workout_card_templates t
+         WHERE t.id = $1 AND t.user_id = $2`,
+        [id, userId]
+      );
+      const row = result.rows[0];
+      return row ? mapTemplateRow(row) : null;
+    }
   },
 
   /** Full lineage for share-hub publish checks (owned by userId). */

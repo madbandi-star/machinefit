@@ -295,6 +295,7 @@
     "publish": "Publish",
     "published": "Template published to the hub.",
     "shareBlocked": "Taken templates cannot be re-shared.",
+    "apiUnavailable": "Template share API is not ready yet. Please try again in a moment.",
     "templateDeleted": "Template deleted.",
     "deleteTitle": "Delete template",
     "deleteMessage": "Delete this template? Existing share posts are managed separately."

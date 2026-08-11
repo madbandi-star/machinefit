@@ -2,13 +2,14 @@ import { FormEvent, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import type {
   PublishTemplateShareInput,
   TemplateShareCategory,
   TemplateShareDifficulty,
   WorkoutCardTemplate,
 } from '@machinefit/shared';
-import { TEMPLATE_SHARE_CATEGORIES, TEMPLATE_SHARE_DIFFICULTIES } from '@machinefit/shared';
+import { isAllGymsId, TEMPLATE_SHARE_CATEGORIES, TEMPLATE_SHARE_DIFFICULTIES } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -23,12 +24,22 @@ import { getApiErrorCode } from '@/utils/motivationAudio';
 import '@/styles/components.css';
 import '@/styles/template-share.css';
 
+function isTemplateShareApiMissing(error: unknown): boolean {
+  if (!axios.isAxiosError(error)) return false;
+  const status = error.response?.status;
+  if (status === 404 || status === 502 || status === 503) return true;
+  const body = error.response?.data;
+  return typeof body === 'string' && /Cannot (GET|POST)/i.test(body);
+}
+
 export function MyTemplatesPage() {
   const { t } = useTranslation('community');
   const { t: tc } = useTranslation('common');
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { activeGymId } = useActiveGym();
+  const templatesGymId =
+    activeGymId && !isAllGymsId(activeGymId) ? activeGymId : undefined;
   const [shareTarget, setShareTarget] = useState<WorkoutCardTemplate | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
@@ -38,10 +49,10 @@ export function MyTemplatesPage() {
   const [tags, setTags] = useState('');
 
   const templatesQuery = useQuery({
-    queryKey: QUERY_KEYS.workoutCardTemplates(activeGymId ?? ''),
+    queryKey: QUERY_KEYS.workoutCardTemplates(templatesGymId ?? ''),
     queryFn: async () => {
       const res = await workoutCardApi.listTemplates({
-        gymId: activeGymId ?? undefined,
+        gymId: templatesGymId,
       });
       return res.data.data ?? [];
     },
@@ -69,15 +80,20 @@ export function MyTemplatesPage() {
     onSuccess: async (res) => {
       setShareTarget(null);
       await queryClient.invalidateQueries({ queryKey: ['template-shares'] });
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCardTemplates(activeGymId ?? '') });
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.workoutCardTemplates(templatesGymId ?? ''),
+      });
       showToast(t('templateShare.published'), 'success');
-      // navigate-friendly: keep user on page with link
       void res;
     },
     onError: (err) => {
       const code = getApiErrorCode(err);
       if (code === 'SHARE_NOT_ALLOWED') {
         showToast(t('templateShare.shareBlocked'), 'error');
+        return;
+      }
+      if (isTemplateShareApiMissing(err)) {
+        showToast(t('templateShare.apiUnavailable'), 'error');
         return;
       }
       showToast(tc('errors.submitFailed'), 'error');
@@ -89,7 +105,7 @@ export function MyTemplatesPage() {
     onSuccess: async () => {
       setDeleteId(null);
       await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.workoutCardTemplates(activeGymId ?? ''),
+        queryKey: QUERY_KEYS.workoutCardTemplates(templatesGymId ?? ''),
       });
       showToast(t('templateShare.templateDeleted'), 'success');
     },
