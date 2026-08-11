@@ -65,6 +65,8 @@ export const ROUTES = {
   COPYRIGHT_POLICY: '/copyright',
   LEGAL_AI: '/legal/ai-disclaimer',
   LEGAL_SECURITY: '/security',
+  /** Illegal use & cooperation with authorities (display-only notice). */
+  LEGAL_ILLEGAL_USE: '/legal/illegal-use',
   PRIVACY_RIGHTS: '/settings/privacy-rights',
   SUPPORT: '/support',
   SUPPORT_DETAIL: '/support/:ticketId',

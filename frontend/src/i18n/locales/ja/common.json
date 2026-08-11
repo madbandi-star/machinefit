@@ -319,6 +319,8 @@
     "startWithKakao": "Continue with Kakao",
     "startWithGoogle": "Continue with Google",
     "landingLegal": "By signing in, you agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "landingIllegalUseNotice": "<doc>違法利用および関係機関への協力</doc>に関する案内をご確認ください。",
+    "illegalUseNotice": "MachineFitは違法・不正利用を禁止し、必要な場合は関係機関に協力することがあります。詳細は<doc>案内全文</doc>をご確認ください。",
     "loginFeature1": "Body-based recommendations",
     "loginFeature2": "Brand-specific machine settings",
     "loginFeature3": "Workout logs and growth analysis",
@@ -587,6 +589,18 @@
       "s4Title": "4. User tips",
       "s4Body": "Lock your device and sign out on shared devices. Contact support if you notice suspicious access."
     },
+    "illegalUseTitle": "違法利用および関係機関への協力",
+    "illegalUseLead": "Notice on lawful use of MachineFit and cooperation with authorities when illegal or abusive use is involved.",
+    "illegalUseDoc": {
+      "s1Title": "1. Lawful use",
+      "s1Body": "Users must use MachineFit only for lawful purposes under applicable laws and these terms, and must not use the service for illegal acts or to infringe others’ rights.",
+      "s2Title": "2. Restrictions and data review",
+      "s2Body": "If MachineFit confirms or reasonably suspects illegal or abusive use, it may restrict or suspend the user’s access and, where necessary, retain and review related data.",
+      "s3Title": "3. Cooperation with authorities",
+      "s3Body": "If such conduct appears to violate law or involve crime, MachineFit may report it to the relevant authorities and, within the scope required for investigation, provide materials and other necessary cooperation as permitted by law.",
+      "s4Title": "4. User responsibility",
+      "s4Body": "Users must comply with applicable laws when using MachineFit. All liability arising from illegal use rests with the user concerned."
+    },
     "footer": {
       "businessTitle": "事業者情報",
       "tradeName": "Trade name",
@@ -599,7 +613,8 @@
       "pendingNotice": "事業者登録・通信販売届出完了後、商号・代表者・登録番号・住所をこの領域に表示します。",
       "refund": "返金・クーリングオフ",
       "community": "コミュニティポリシー",
-      "security": "セキュリティ"
+      "security": "セキュリティ",
+      "illegalUse": "違法利用・関係機関協力"
     }
   },
   "pages": {

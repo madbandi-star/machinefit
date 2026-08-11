@@ -124,6 +124,7 @@ export function MainLayout() {
             <Link to={ROUTES.LEGAL_COMMUNITY}>{t('legal.footer.community')}</Link>
             <Link to={ROUTES.LEGAL_COPYRIGHT}>{t('legal.copyrightTitle')}</Link>
             <Link to={ROUTES.LEGAL_SECURITY}>{t('legal.footer.security')}</Link>
+            <Link to={ROUTES.LEGAL_ILLEGAL_USE}>{t('legal.footer.illegalUse')}</Link>
             <Link to={ROUTES.LEGAL_AI}>{t('legal.aiTitle')}</Link>
             <Link to={ROUTES.SUPPORT}>{t('support.title')}</Link>
           </div>

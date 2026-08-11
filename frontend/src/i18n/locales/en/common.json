@@ -335,6 +335,8 @@
     "startWithKakao": "Continue with Kakao",
     "startWithGoogle": "Continue with Google",
     "landingLegal": "By signing in, you agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "landingIllegalUseNotice": "Please review our notice on <doc>Illegal use & cooperation with authorities</doc>.",
+    "illegalUseNotice": "MachineFit prohibits illegal or abusive use and may cooperate with authorities when required. Read the <doc>full notice</doc>.",
     "loginFeature1": "Body-based recommendations",
     "loginFeature2": "Brand-specific machine settings",
     "loginFeature3": "Workout logs and growth analysis",
@@ -586,6 +588,18 @@
       "s4Title": "4. User tips",
       "s4Body": "Lock your device and sign out on shared devices. Contact support if you notice suspicious access."
     },
+    "illegalUseTitle": "Illegal use & cooperation with authorities",
+    "illegalUseLead": "Notice on lawful use of MachineFit and cooperation with authorities when illegal or abusive use is involved.",
+    "illegalUseDoc": {
+      "s1Title": "1. Lawful use",
+      "s1Body": "Users must use MachineFit only for lawful purposes under applicable laws and these terms, and must not use the service for illegal acts or to infringe others’ rights.",
+      "s2Title": "2. Restrictions and data review",
+      "s2Body": "If MachineFit confirms or reasonably suspects illegal or abusive use, it may restrict or suspend the user’s access and, where necessary, retain and review related data.",
+      "s3Title": "3. Cooperation with authorities",
+      "s3Body": "If such conduct appears to violate law or involve crime, MachineFit may report it to the relevant authorities and, within the scope required for investigation, provide materials and other necessary cooperation as permitted by law.",
+      "s4Title": "4. User responsibility",
+      "s4Body": "Users must comply with applicable laws when using MachineFit. All liability arising from illegal use rests with the user concerned."
+    },
     "footer": {
       "businessTitle": "Business information",
       "tradeName": "Trade name",
@@ -598,7 +612,8 @@
       "pendingNotice": "Trade name, representative, registration numbers, and address will appear here after business registration is complete.",
       "refund": "Refunds / cooling-off",
       "community": "Community policy",
-      "security": "Security"
+      "security": "Security",
+      "illegalUse": "Illegal use & authorities"
     }
   },
   "pages": {

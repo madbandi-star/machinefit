@@ -12,6 +12,8 @@ const LEGAL_PREFIXES = [
   ROUTES.LEGAL_COMMUNITY,
   ROUTES.LEGAL_COPYRIGHT,
   ROUTES.LEGAL_AI,
+  ROUTES.LEGAL_SECURITY,
+  ROUTES.LEGAL_ILLEGAL_USE,
 ];
 
 function isLegalDocPath(pathname: string): boolean {

@@ -12,7 +12,8 @@ type DocKey =
   | 'community'
   | 'copyright'
   | 'aiDisclaimer'
-  | 'security';
+  | 'security'
+  | 'illegalUse';
 
 const DOC_META: Record<
   DocKey,
@@ -85,6 +86,16 @@ const DOC_META: Record<
       { to: ROUTES.SUPPORT, labelKey: 'support.title' },
     ],
   },
+  illegalUse: {
+    titleKey: 'legal.illegalUseTitle',
+    leadKey: 'legal.illegalUseLead',
+    sections: ['s1', 's2', 's3', 's4'],
+    versionKey: 'illegalUse',
+    nav: [
+      { to: ROUTES.TERMS, labelKey: 'legal.termsTitle' },
+      { to: ROUTES.SUPPORT, labelKey: 'support.title' },
+    ],
+  },
 };
 
 const NS: Record<DocKey, string> = {
@@ -95,6 +106,7 @@ const NS: Record<DocKey, string> = {
   copyright: 'copyright',
   aiDisclaimer: 'ai',
   security: 'securityDoc',
+  illegalUse: 'illegalUseDoc',
 };
 
 export function LegalSectionPage({ doc }: { doc: DocKey }) {
@@ -151,4 +163,7 @@ export function AiDisclaimerLegalPage() {
 }
 export function SecurityLegalPage() {
   return <LegalSectionPage doc="security" />;
+}
+export function IllegalUseLegalPage() {
+  return <LegalSectionPage doc="illegalUse" />;
 }

@@ -4,7 +4,7 @@
  */
 /**
  * Per-document versions. Consent re-check uses terms/privacy/location/marketing.
- * commerce/community/copyright/ai/security are display-only (footer/legal pages).
+ * commerce/community/copyright/ai/security/illegalUse are display-only (footer/legal pages).
  */
 export const LEGAL_DOC_VERSIONS = {
   terms: '2026-08-10',
@@ -16,6 +16,8 @@ export const LEGAL_DOC_VERSIONS = {
   copyright: '2026-08-10',
   ai: '2026-08-10',
   security: '2026-08-10',
+  /** Display-only notice — not part of consent re-check. */
+  illegalUse: '2026-08-11',
 } as const;
 
 /** Consent fields persisted / compared for needsConsent. */

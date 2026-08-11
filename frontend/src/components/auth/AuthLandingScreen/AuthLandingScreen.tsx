@@ -145,6 +145,14 @@ export function AuthLandingScreen() {
           }}
         />
       </p>
+      <p className="auth-landing__legal auth-landing__legal--notice">
+        <Trans
+          i18nKey="auth.landingIllegalUseNotice"
+          components={{
+            doc: <Link to={ROUTES.LEGAL_ILLEGAL_USE} className="auth-landing__legal-link" />,
+          }}
+        />
+      </p>
     </section>
   );
 }

@@ -319,6 +319,8 @@
     "startWithKakao": "Continue with Kakao",
     "startWithGoogle": "Continue with Google",
     "landingLegal": "By signing in, you agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "landingIllegalUseNotice": "请查阅有关<doc>非法使用及配合有关机关</doc>的说明。",
+    "illegalUseNotice": "MachineFit 禁止非法或不当使用，必要时可配合有关机关。详情请查看<doc>完整说明</doc>。",
     "loginFeature1": "Body-based recommendations",
     "loginFeature2": "Brand-specific machine settings",
     "loginFeature3": "Workout logs and growth analysis",
@@ -587,6 +589,18 @@
       "s4Title": "4. User tips",
       "s4Body": "Lock your device and sign out on shared devices. Contact support if you notice suspicious access."
     },
+    "illegalUseTitle": "非法使用及配合有关机关",
+    "illegalUseLead": "Notice on lawful use of MachineFit and cooperation with authorities when illegal or abusive use is involved.",
+    "illegalUseDoc": {
+      "s1Title": "1. Lawful use",
+      "s1Body": "Users must use MachineFit only for lawful purposes under applicable laws and these terms, and must not use the service for illegal acts or to infringe others’ rights.",
+      "s2Title": "2. Restrictions and data review",
+      "s2Body": "If MachineFit confirms or reasonably suspects illegal or abusive use, it may restrict or suspend the user’s access and, where necessary, retain and review related data.",
+      "s3Title": "3. Cooperation with authorities",
+      "s3Body": "If such conduct appears to violate law or involve crime, MachineFit may report it to the relevant authorities and, within the scope required for investigation, provide materials and other necessary cooperation as permitted by law.",
+      "s4Title": "4. User responsibility",
+      "s4Body": "Users must comply with applicable laws when using MachineFit. All liability arising from illegal use rests with the user concerned."
+    },
     "footer": {
       "businessTitle": "经营者信息",
       "tradeName": "Trade name",
@@ -599,7 +613,8 @@
       "pendingNotice": "完成经营者登记与通信销售备案后，将在此显示商号、代表人、登记号与地址。",
       "refund": "退款/撤回要约",
       "community": "社区政策",
-      "security": "安全说明"
+      "security": "安全说明",
+      "illegalUse": "非法使用及机关配合"
     }
   },
   "pages": {

@@ -310,6 +310,18 @@ export function TermsAgreementPage() {
         </div>
       </div>
 
+      <aside className="terms-agree__notice" role="note">
+        <p className="terms-agree__notice-title">{t('legal.illegalUseTitle')}</p>
+        <p>
+          <Trans
+            i18nKey="auth.illegalUseNotice"
+            components={{
+              doc: <Link to={ROUTES.LEGAL_ILLEGAL_USE} className="terms-agree__notice-link" />,
+            }}
+          />
+        </p>
+      </aside>
+
       {isSignup ? <p className="terms-agree__trial">{t('auth.trialNoticeSignup')}</p> : null}
 
       <p className="terms-agree__secure">

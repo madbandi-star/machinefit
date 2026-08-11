@@ -374,6 +374,8 @@ const copyrightLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.CopyrightLegalPage }));
 const securityLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.SecurityLegalPage }));
+const illegalUseLegalPage = () =>
+  import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.IllegalUseLegalPage }));
 const aiLegalPage = () =>
   import('@/pages/legal/LegalSectionPage').then((m) => ({ default: m.AiDisclaimerLegalPage }));
 const privacyRightsPage = () =>
@@ -440,6 +442,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.LEGAL_COPYRIGHT, element: lazyRoute(copyrightLegalPage) },
         { path: ROUTES.COPYRIGHT_POLICY, element: lazyRoute(copyrightLegalPage) },
         { path: ROUTES.LEGAL_SECURITY, element: lazyRoute(securityLegalPage) },
+        { path: ROUTES.LEGAL_ILLEGAL_USE, element: lazyRoute(illegalUseLegalPage) },
         { path: ROUTES.LEGAL_AI, element: lazyRoute(aiLegalPage) },
         { path: ROUTES.MACHINES, element: lazyRoute(machineSearch) },
         { path: ROUTES.BRANDS, element: lazyRoute(brandList) },
