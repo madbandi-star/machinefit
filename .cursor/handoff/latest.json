@@ -1,12 +1,12 @@
 {
-  "title": "Move Community between Insights and Settings",
-  "summary": "My Page: 머신핏 인사이트 then 커뮤니티 then 개인설정.",
+  "title": "Move My templates into Personal settings",
+  "summary": "My Page: 내 템플릿 sits in 개인설정 above 설정, not in 커뮤니티.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
-  "testFocus": ["Section order Insights → Community → Personal settings"],
-  "fastChecks": ["rg myPage.explore frontend/src/pages/my-page/MyPage.tsx"],
-  "productionChecks": ["Pages My Page scroll order"],
+  "testFocus": ["Personal settings: My templates then Settings"],
+  "fastChecks": ["rg MY_TEMPLATES frontend/src/pages/my-page/MyPage.tsx"],
+  "productionChecks": ["Pages My Page 개인설정 order"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Community after personal settings",
-  "toBe": "Community between insights and personal settings"
+  "asIs": "내 템플릿 in 커뮤니티",
+  "toBe": "내 템플릿 above 설정 in 개인설정"
 }

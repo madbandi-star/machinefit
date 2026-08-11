@@ -233,17 +233,17 @@ export function MyPage() {
             label={tc('templateShare.title')}
             icon="dumbbell"
           />
-          <ListNavLink
-            to={ROUTES.MY_TEMPLATES}
-            label={tc('templateShare.myTemplates')}
-            icon="history"
-          />
         </nav>
       </section>
 
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
+          <ListNavLink
+            to={ROUTES.MY_TEMPLATES}
+            label={tc('templateShare.myTemplates')}
+            icon="history"
+          />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showPhotoBoardAndBackup ? (
             <ListNavLink
