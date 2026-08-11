@@ -167,6 +167,14 @@ export const bannerService = {
     return updated;
   },
 
+  async deleteSlot(id: string, roleCode: string | undefined): Promise<void> {
+    assertAdmin(roleCode);
+    const existing = await bannerRepository.getSlotById(id);
+    if (!existing) throw new AppError(404, 'NOT_FOUND', 'Slot not found');
+    const ok = await bannerRepository.deleteSlot(id);
+    if (!ok) throw new AppError(404, 'NOT_FOUND', 'Slot not found');
+  },
+
   async listPublic(slotKey: string): Promise<PublicBanner[]> {
     return bannerRepository.listPublicForSlot(slotKey);
   },

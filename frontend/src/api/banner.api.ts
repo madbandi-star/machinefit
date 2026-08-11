@@ -67,6 +67,9 @@ export const bannerApi = {
   updateSlot: (id: string, body: UpdateBannerSlotInput) =>
     apiClient.put<ApiResponse<BannerSlot>>(`/banners/admin/slots/${id}`, body),
 
+  removeSlot: (id: string) =>
+    apiClient.delete<ApiResponse<{ message: string }>>(`/banners/admin/slots/${id}`),
+
   stats: () => apiClient.get<ApiResponse<BannerAdminStats>>('/banners/admin/stats'),
 
   statsRows: () => apiClient.get<ApiResponse<BannerStatsRow[]>>('/banners/admin/stats/rows'),

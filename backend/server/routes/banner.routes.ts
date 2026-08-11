@@ -56,6 +56,11 @@ admin.put(
   validateBody(updateBannerSlotSchema),
   bannerController.updateSlot
 );
+admin.delete(
+  '/slots/:id',
+  validateParams(z.object({ id: z.string().uuid() })),
+  bannerController.deleteSlot
+);
 
 admin.get('/', validateQuery(bannerListQuerySchema), bannerController.listAdminBanners);
 admin.post('/', validateBody(createBannerSchema), bannerController.createBanner);

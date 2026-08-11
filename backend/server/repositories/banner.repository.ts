@@ -425,6 +425,27 @@ export const bannerRepository = {
     return this.getSlotByKey(result.rows[0].slot_key);
   },
 
+  async getSlotById(id: string): Promise<BannerSlot | null> {
+    const pool = requirePool();
+    const result = await pool.query<SlotRow>(
+      `SELECT s.*,
+         (SELECT COUNT(*)::int FROM banner_slot_assignments a
+          JOIN banners b ON b.id = a.banner_id AND b.deleted_at IS NULL
+          WHERE a.slot_id = s.id) AS assigned_banner_count
+       FROM banner_slots s
+       WHERE s.id = $1`,
+      [id]
+    );
+    return result.rows[0] ? mapSlot(result.rows[0]) : null;
+  },
+
+  /** Hard-delete slot; assignments cascade, event slot_id set null. */
+  async deleteSlot(id: string): Promise<boolean> {
+    const pool = requirePool();
+    const result = await pool.query(`DELETE FROM banner_slots WHERE id = $1 RETURNING id`, [id]);
+    return (result.rowCount ?? 0) > 0;
+  },
+
   async listPublicForSlot(slotKey: string): Promise<PublicBanner[]> {
     const pool = requirePool();
     const result = await pool.query<

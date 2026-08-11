@@ -2,10 +2,11 @@ import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { BannerSlotStatus } from '@machinefit/shared';
+import type { BannerSlot, BannerSlotStatus } from '@machinefit/shared';
 import { bannerApi } from '@/api/banner.api';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
@@ -19,6 +20,7 @@ export function AdminBannerSlotsPage() {
   const [slotKey, setSlotKey] = useState('');
   const [slotName, setSlotName] = useState('');
   const [description, setDescription] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<BannerSlot | null>(null);
 
   const slotsQuery = useQuery({
     queryKey: ['admin', 'banner-slots'],
@@ -49,6 +51,17 @@ export function AdminBannerSlotsPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'banner-slots'] });
       showToast(t('admin:banners.slotUpdated'), 'success');
+    },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => bannerApi.removeSlot(id),
+    onSuccess: async () => {
+      setDeleteTarget(null);
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'banner-slots'] });
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
+      showToast(t('admin:banners.slotDeleted'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -143,20 +156,29 @@ export function AdminBannerSlotsPage() {
                     </td>
                     <td>{slot.assignedBannerCount}</td>
                     <td>
-                      <button
-                        type="button"
-                        className="btn btn--secondary btn--sm"
-                        onClick={() =>
-                          updateMutation.mutate({
-                            id: slot.id,
-                            status: slot.status === 'active' ? 'inactive' : 'active',
-                          })
-                        }
-                      >
-                        {slot.status === 'active'
-                          ? t('admin:banners.deactivate')
-                          : t('admin:banners.activate')}
-                      </button>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        <button
+                          type="button"
+                          className="btn btn--secondary btn--sm"
+                          onClick={() =>
+                            updateMutation.mutate({
+                              id: slot.id,
+                              status: slot.status === 'active' ? 'inactive' : 'active',
+                            })
+                          }
+                        >
+                          {slot.status === 'active'
+                            ? t('admin:banners.deactivate')
+                            : t('admin:banners.activate')}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn--ghost btn--sm"
+                          onClick={() => setDeleteTarget(slot)}
+                        >
+                          {t('common:actions.delete')}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -165,6 +187,26 @@ export function AdminBannerSlotsPage() {
           </div>
         ) : null}
       </div>
+
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        title={t('admin:banners.slotDeleteTitle')}
+        message={
+          deleteTarget
+            ? t('admin:banners.slotDeleteMessage', {
+                name: deleteTarget.slotName,
+                key: deleteTarget.slotKey,
+                count: deleteTarget.assignedBannerCount,
+              })
+            : ''
+        }
+        confirmLabel={t('common:actions.delete')}
+        confirmVariant="danger"
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
+        }}
+      />
     </div>
   );
 }

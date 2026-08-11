@@ -89,6 +89,13 @@ export async function updateSlot(req: Request, res: Response): Promise<void> {
   res.json({ success: true, data });
 }
 
+export async function deleteSlot(req: Request, res: Response): Promise<void> {
+  const id = getParam(req.params.id);
+  if (!id) throw new AppError(400, 'INVALID_ID', 'Slot id is required');
+  await bannerService.deleteSlot(id, req.user?.roleCode);
+  res.json({ success: true, data: { message: 'Slot deleted' } });
+}
+
 export async function getPublicSlot(req: Request, res: Response): Promise<void> {
   const slotKey = getParam(req.params.slotKey);
   const data = await bannerService.listPublic(slotKey);
