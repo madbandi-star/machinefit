@@ -4,6 +4,7 @@ import {
   DEFAULT_LEGAL_REGION,
   LEGAL_DOC_TYPES,
   LEGAL_REGIONS,
+  PROFILE_FEATURE_CONSENT_TYPES,
   SUPPORT_CATEGORIES,
   SUPPORT_TICKET_STATUSES,
 } from '../constants/legal.js';
@@ -14,6 +15,13 @@ export const consentUpdateSchema = z.object({
   pushServiceOptIn: z.boolean().optional(),
   regionCode: z.enum(LEGAL_REGIONS).optional(),
   legalVersion: z.string().min(1).max(32).optional(),
+});
+
+/** Record feature-scoped profile data processing consent (body metrics / birth). */
+export const featureConsentSchema = z.object({
+  consentType: z.enum(PROFILE_FEATURE_CONSENT_TYPES),
+  agreed: z.literal(true),
+  regionCode: z.enum(LEGAL_REGIONS).optional(),
 });
 
 export const createSupportTicketSchema = z.object({

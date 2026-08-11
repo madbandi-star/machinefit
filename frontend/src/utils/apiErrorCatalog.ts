@@ -24,6 +24,7 @@ const CODE_TO_KEY: Record<string, string> = {
   COUPON_USED: 'errors.validationError',
   CONTENT_POLICY_VIOLATION: 'errors.contentPolicyViolation',
   AGE_RESTRICTED: 'errors.ageRestricted',
+  CONSENT_REQUIRED: 'settings.consentRequiredToast',
   USAGE_LIMIT: 'errors.usageLimit',
   PLAN_LIMIT: 'errors.usageLimit',
   CSRF_REJECTED: 'errors.csrfRejected',

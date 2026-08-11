@@ -299,6 +299,24 @@ export const userRepository = {
     );
   },
 
+  /** True when user has an agreed row for consent_type at a version >= required. */
+  async hasAgreedConsent(
+    userId: string,
+    consentType: string,
+    minVersion: string
+  ): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    const { rows } = await pool.query<{ version: string }>(
+      `SELECT version FROM user_consents
+       WHERE user_id = $1 AND consent_type = $2 AND agreed = TRUE
+       ORDER BY version DESC
+       LIMIT 20`,
+      [userId, consentType]
+    );
+    return rows.some((r) => legalVersionSatisfies(r.version, minVersion));
+  },
+
   async setMarketingOptIn(userId: string, optIn: boolean): Promise<User | null> {
     const pool = getPool();
     if (!pool) return null;

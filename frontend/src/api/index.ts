@@ -160,6 +160,8 @@ export const userApi = {
     unitHeight?: 'cm' | 'ft_in';
     unitWeight?: 'kg' | 'lb';
     experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'professional';
+    bodyMetricsConsent?: true;
+    birthProfileConsent?: true;
   }) => apiClient.patch<ApiResponse<User>>('/users/me', data),
 };
 

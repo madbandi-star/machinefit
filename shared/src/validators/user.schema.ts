@@ -40,6 +40,12 @@ export const updateProfileSchema = z
     unitHeight: z.enum(['cm', 'ft_in']).optional(),
     unitWeight: z.enum(['kg', 'lb']).optional(),
     experienceLevel: experienceLevelSchema.optional(),
+    /**
+     * Client attests all required profile-data consent checkboxes were checked.
+     * Required when first saving (or after version bump) body/birth fields.
+     */
+    bodyMetricsConsent: z.literal(true).optional(),
+    birthProfileConsent: z.literal(true).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.birthTimeUnknown === true && data.birthTime != null) {

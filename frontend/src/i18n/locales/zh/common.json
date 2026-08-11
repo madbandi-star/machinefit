@@ -465,7 +465,39 @@
     "deleteAccountConfirmMessage": "注销后将无法使用 MachineFit。\n\n• 立即处理：匿名化邮箱/昵称等标识、删除位置、解除社交登录。\n• 约30天后删除：运动记录、收藏、好友、帖子、照片、交易、在线PT、工单、模板、您名下的场馆会员名册、上传文件。\n• 保留：支付/订阅凭证、同意记录、防滥用试用标识（再注册时限制试用）。\n• 再注册不会恢复旧账号。注销时会尝试取消付费订阅。",
     "deleteAccountConfirm": "Delete account",
     "accountDeleted": "Your account has been deleted.",
-    "languageDesc": "可立即切换应用语言，无需刷新。"
+    "languageDesc": "可立即切换应用语言，无需刷新。",
+    "consentRequiredToast": "개인정보 수집·이용 등 필수 동의 항목을 모두 체크해 주세요.",
+    "consentRightsLink": "개인정보 권리 센터",
+    "consentBody": {
+      "title": "신체정보 수집·이용 동의 (필수)",
+      "intro": "맞춤 운동 추천을 위해 아래 개인정보를 처리합니다. 동의하지 않으면 해당 정보를 저장할 수 없습니다.",
+      "noticePurpose": "수집·이용 목적: 운동 추천·기록·회원 서비스 제공 및 품질 개선",
+      "noticeItems": "수집 항목: 키, 몸무게, 성별, 운동 경력, 운동 목표, 표시 단위",
+      "noticeRetention": "보유 기간: 회원 탈퇴 시까지(관련 법령에 따라 일정 기간 보관이 필요한 경우 해당 기간)",
+      "noticeDisposal": "파기: 보유 기간 종료·탈퇴·삭제 요청 시 복구 불가능한 방법으로 지체 없이 파기(법령상 보관 의무가 있는 정보는 별도 분리 보관 후 파기)",
+      "noticeThirdParty": "제3자 제공: 원칙적으로 제공하지 않으며, 법령에 따른 요청이 있는 경우에 한합니다. 자세한 내용은 개인정보 처리방침을 확인하세요.",
+      "checkPurpose": "수집·이용 목적과 항목에 동의합니다.",
+      "checkRetention": "보유 기간·파기 절차에 대한 안내를 확인했고 이에 동의합니다.",
+      "checkRights": "열람·정정·삭제·처리정지 등 권리를 행사할 수 있음을 확인했습니다.",
+      "doneTitle": "신체정보 처리 동의 완료",
+      "doneBody": "현재 버전({{version}}) 동의가 기록되어 있습니다. 철회·삭제는 개인정보 권리 센터에서 요청할 수 있습니다."
+    },
+    "consentBirth": {
+      "title": "생년월일·탄생시 수집·이용 동의 (필수)",
+      "intro": "헬창운세 등 콘텐츠 제공 및 연령 확인을 위해 아래 개인정보를 처리합니다. 동의하지 않으면 저장할 수 없습니다.",
+      "noticePurpose": "수집·이용 목적: 연령 확인, 운세·엔터테인먼트 콘텐츠 제공, 회원 맞춤 안내",
+      "noticeItems": "Items: birth date, birth time (or unknown)",
+      "noticeRetention": "Retention: until account withdrawal (or longer if required by law)",
+      "noticeDisposal": "Disposal: securely destroyed without delay when retention ends, on withdrawal, or upon a valid deletion request (items under legal hold are segregated then destroyed)",
+      "noticeThirdParty": "Third parties: not provided in principle, except where required by law. See the privacy policy for details.",
+      "checkPurpose": "I agree to the purpose and items of collection/use.",
+      "checkRetention": "I have reviewed and agree to the retention and disposal notice.",
+      "checkRights": "I understand I can request access, correction, deletion, or suspension of processing.",
+      "checkEntertainment": "I understand fortune content is entertainment only and not medical, legal, or financial advice.",
+      "checkAge14": "I confirm I am at least 14 years old and that false information may restrict service use.",
+      "doneTitle": "Birth profile consent on file",
+      "doneBody": "Consent version {{version}} is recorded. You can withdraw or request deletion in the privacy rights center."
+    }
   },
   "legal": {
     "termsTitle": "Terms of Service",

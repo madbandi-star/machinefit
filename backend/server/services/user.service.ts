@@ -1,6 +1,8 @@
 import {
   ageFromBirthDate,
+  LEGAL_DOC_VERSIONS,
   normalizeUsername,
+  profileFeatureConsentVersion,
   usernameUniqueKey,
   validateUsername,
   type UpdateProfileInput,
@@ -68,7 +70,12 @@ export const userService = {
   },
 
   async updateMe(userId: string, input: UpdateProfileInput) {
-    const payload: UpdateProfileInput = { ...input };
+    const {
+      bodyMetricsConsent,
+      birthProfileConsent,
+      ...fieldInput
+    } = input;
+    const payload: UpdateProfileInput = { ...fieldInput };
     if (payload.displayName !== undefined) {
       payload.displayName = await applyUsernameChange(userId, payload.displayName);
     }
@@ -85,16 +92,73 @@ export const userService = {
     if (payload.birthTimeUnknown === true) {
       payload.birthTime = null;
     }
+
+    const touchesBodyMetrics =
+      payload.heightCm !== undefined ||
+      payload.weightKg !== undefined ||
+      payload.gender !== undefined ||
+      payload.age !== undefined ||
+      payload.experienceLevel !== undefined ||
+      payload.workoutGoal !== undefined ||
+      payload.unitHeight !== undefined ||
+      payload.unitWeight !== undefined;
+    const touchesBirth =
+      payload.birthDate !== undefined ||
+      payload.birthTime !== undefined ||
+      payload.birthTimeUnknown !== undefined;
+
+    if (touchesBodyMetrics) {
+      const version = profileFeatureConsentVersion('body_metrics');
+      const already = await userRepository.hasAgreedConsent(
+        userId,
+        'body_metrics',
+        version
+      );
+      if (!already && bodyMetricsConsent !== true) {
+        throw new AppError(
+          400,
+          'CONSENT_REQUIRED',
+          'Body metrics processing consent is required'
+        );
+      }
+      if (bodyMetricsConsent === true) {
+        await userRepository.recordConsents(userId, [
+          { type: 'body_metrics', version, agreed: true },
+        ]);
+      }
+    }
+
+    if (touchesBirth) {
+      const version = profileFeatureConsentVersion('birth_profile');
+      const already = await userRepository.hasAgreedConsent(
+        userId,
+        'birth_profile',
+        version
+      );
+      if (!already && birthProfileConsent !== true) {
+        throw new AppError(
+          400,
+          'CONSENT_REQUIRED',
+          'Birth profile processing consent is required'
+        );
+      }
+      if (birthProfileConsent === true) {
+        const items = [
+          { type: 'birth_profile', version, agreed: true },
+          ...(payload.birthDate
+            ? [{ type: 'age14', version: LEGAL_DOC_VERSIONS.terms, agreed: true }]
+            : []),
+        ];
+        await userRepository.recordConsents(userId, items);
+      }
+    }
+
     try {
       const user = await userRepository.updateProfile(userId, payload);
       if (!user) {
         throw new AppError(404, 'NOT_FOUND', 'User not found');
       }
-      if (
-        payload.birthDate !== undefined ||
-        payload.birthTime !== undefined ||
-        payload.birthTimeUnknown !== undefined
-      ) {
+      if (touchesBirth) {
         fortuneService.invalidateUser(userId);
       }
       return user;

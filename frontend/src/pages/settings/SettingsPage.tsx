@@ -3,9 +3,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ExperienceLevel, Gender, LocationVisibility, WorkoutGoal } from '@machinefit/shared';
-import { FREE_OPEN_MEMBER_FEATURES_MIN_ROLE, hasMinRole } from '@machinefit/shared';
 import {
+  FREE_OPEN_MEMBER_FEATURES_MIN_ROLE,
+  LEGAL_DOC_VERSIONS,
   REST_DURATION,
+  hasMinRole,
+  legalVersionSatisfies,
   restDurationFromParts,
   restDurationParts,
 } from '@machinefit/shared';
@@ -28,7 +31,15 @@ import {
 } from '@/components/location/LocationPicker/LocationPicker';
 import { ScrollPicker } from '@/components/form/ScrollPicker/ScrollPicker';
 import { BirthProfileFields } from '@/components/settings/BirthProfileFields/BirthProfileFields';
+import {
+  ProfileDataConsentBlock,
+  allProfileConsentsChecked,
+  emptyProfileConsentChecks,
+  type ProfileConsentChecks,
+} from '@/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock';
 import '@/styles/birth-profile.css';
+import '@/styles/profile-data-consent.css';
+import { complianceApi } from '@/api/compliance.api';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
 import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
@@ -163,6 +174,12 @@ export function SettingsPage() {
   const [birthTimeUnknown, setBirthTimeUnknown] = useState(
     Boolean(user?.birthTimeUnknown)
   );
+  const [bodyConsentChecks, setBodyConsentChecks] = useState<ProfileConsentChecks>(() =>
+    emptyProfileConsentChecks('bodyMetrics')
+  );
+  const [birthConsentChecks, setBirthConsentChecks] = useState<ProfileConsentChecks>(() =>
+    emptyProfileConsentChecks('birthProfile')
+  );
   const [gender, setGender] = useState<Gender | undefined>(user?.gender);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
     user?.experienceLevel ?? 'intermediate'
@@ -176,6 +193,30 @@ export function SettingsPage() {
   const [draftUnitHeight, setDraftUnitHeight] = useState(unitHeight);
   const [draftUnitWeight, setDraftUnitWeight] = useState(unitWeight);
   const [locationDraft, setLocationDraft] = useState<LocationPickerValue>(emptyLocationValue());
+
+  const consentsQuery = useQuery({
+    queryKey: ['privacy-consents', user?.id],
+    queryFn: async () => (await complianceApi.listConsents()).data.data,
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  });
+
+  const bodyMetricsConsentDone = Boolean(
+    consentsQuery.data?.some(
+      (c) =>
+        c.consentType === 'body_metrics' &&
+        c.agreed &&
+        legalVersionSatisfies(c.version, LEGAL_DOC_VERSIONS.bodyMetrics)
+    )
+  );
+  const birthProfileConsentDone = Boolean(
+    consentsQuery.data?.some(
+      (c) =>
+        c.consentType === 'birth_profile' &&
+        c.agreed &&
+        legalVersionSatisfies(c.version, LEGAL_DOC_VERSIONS.birthProfile)
+    )
+  );
 
   const meQuery = useQuery({
     queryKey: QUERY_KEYS.me,
@@ -341,6 +382,7 @@ export function SettingsPage() {
         unitWeight: draftUnitWeight,
         experienceLevel,
         workoutGoal,
+        ...(bodyMetricsConsentDone ? {} : { bodyMetricsConsent: true as const }),
       }),
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
@@ -348,6 +390,7 @@ export function SettingsPage() {
       setUnitHeight(draftUnitHeight);
       setUnitWeight(draftUnitWeight);
       syncUserSettings(updatedUser);
+      void queryClient.invalidateQueries({ queryKey: ['privacy-consents', user?.id] });
       showToast(t('auth.profileSaved'), 'success');
       if (returnTo) {
         navigate(returnTo, { replace: true });
@@ -362,6 +405,7 @@ export function SettingsPage() {
         birthDate: birthDate.trim() || null,
         birthTime: birthTimeUnknown ? null : birthTime.trim() || null,
         birthTimeUnknown,
+        ...(birthProfileConsentDone ? {} : { birthProfileConsent: true as const }),
       }),
     onSuccess: async (res) => {
       const updatedUser = res.data.data as User;
@@ -371,6 +415,7 @@ export function SettingsPage() {
       setBirthTimeUnknown(Boolean(updatedUser.birthTimeUnknown));
       syncUserSettings(updatedUser);
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.me });
+      void queryClient.invalidateQueries({ queryKey: ['privacy-consents', user?.id] });
       void queryClient.invalidateQueries({ queryKey: ['fortune'] });
       showToast(t('settings.birthProfileSaved'), 'success');
     },
@@ -430,6 +475,13 @@ export function SettingsPage() {
               }}
             />
           </div>
+          <ProfileDataConsentBlock
+            variant="bodyMetrics"
+            checks={bodyConsentChecks}
+            onChange={setBodyConsentChecks}
+            alreadyAgreed={bodyMetricsConsentDone}
+            versionLabel={LEGAL_DOC_VERSIONS.bodyMetrics}
+          />
           <button
             type="button"
             className="btn btn--primary btn--block"
@@ -438,6 +490,13 @@ export function SettingsPage() {
               if (!workoutGoal) {
                 setWorkoutGoalInvalid(true);
                 showToast(t('auth.workoutGoalRequired'), 'error');
+                return;
+              }
+              if (
+                !bodyMetricsConsentDone &&
+                !allProfileConsentsChecked('bodyMetrics', bodyConsentChecks)
+              ) {
+                showToast(t('settings.consentRequiredToast'), 'error');
                 return;
               }
               mutation.mutate();
@@ -464,6 +523,13 @@ export function SettingsPage() {
               if (next) setBirthTime('');
             }}
           />
+          <ProfileDataConsentBlock
+            variant="birthProfile"
+            checks={birthConsentChecks}
+            onChange={setBirthConsentChecks}
+            alreadyAgreed={birthProfileConsentDone}
+            versionLabel={LEGAL_DOC_VERSIONS.birthProfile}
+          />
           <button
             type="button"
             className="btn btn--primary btn--block"
@@ -475,6 +541,13 @@ export function SettingsPage() {
               }
               if (!birthTimeUnknown && !birthTime.trim()) {
                 showToast(t('settings.birthTimeRequired'), 'error');
+                return;
+              }
+              if (
+                !birthProfileConsentDone &&
+                !allProfileConsentsChecked('birthProfile', birthConsentChecks)
+              ) {
+                showToast(t('settings.consentRequiredToast'), 'error');
                 return;
               }
               birthMutation.mutate();
