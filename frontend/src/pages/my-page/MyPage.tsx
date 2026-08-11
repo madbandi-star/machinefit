@@ -8,6 +8,7 @@ import { Icon, type IconName } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
+import { WorkoutMonthCalendar } from '@/components/my-page/WorkoutMonthCalendar/WorkoutMonthCalendar';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { SubscriptionPlanCard } from '@/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard';
 import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
@@ -161,6 +162,8 @@ export function MyPage() {
         </div>
 
         <SubscriptionPlanCard />
+
+        <WorkoutMonthCalendar />
 
       {user && locationQuery.isFetched && !locationQuery.data?.isSet ? (
         <section className="my-page-section">

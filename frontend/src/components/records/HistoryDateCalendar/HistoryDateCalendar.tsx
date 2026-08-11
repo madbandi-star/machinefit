@@ -19,6 +19,11 @@ interface HistoryDateCalendarProps {
   locale: string;
   /** When true (default), empty days are selectable (e.g. future plan dates). */
   allowEmptySelect?: boolean;
+  /**
+   * When true (default: same as allowEmptySelect), show plan “+” on future empty days
+   * and the plan legend. Set false for read-only workout calendars.
+   */
+  showPlanHints?: boolean;
   /** Fires when the visible month changes (for calendar-summary fetches). */
   onVisibleMonthChange?: (year: number, monthIndex: number) => void;
   /** Called after a day is chosen (e.g. close parent `<details>`). */
@@ -32,9 +37,11 @@ export function HistoryDateCalendar({
   onSelect,
   locale,
   allowEmptySelect = true,
+  showPlanHints,
   onVisibleMonthChange,
   onAfterSelect,
 }: HistoryDateCalendarProps) {
+  const planHints = showPlanHints ?? allowEmptySelect;
   const { t } = useTranslation('machines');
   const todayKey = getTodayDateKey();
   const initialMonth = getInitialCalendarMonth(selectedDate, datesWithData);
@@ -168,7 +175,7 @@ export function HistoryDateCalendar({
           const isSelected = selectedDate === cell.dateKey;
           const isToday = cell.dateKey === todayKey;
           const canSelect = hasData || allowEmptySelect;
-          const isFutureEmpty = allowEmptySelect && !hasData && cell.dateKey > todayKey;
+          const isFutureEmpty = planHints && allowEmptySelect && !hasData && cell.dateKey > todayKey;
           const parsed = parseDateKey(cell.dateKey);
           const isWeekend = new Date(parsed.year, parsed.monthIndex, cell.day).getDay() % 6 === 0;
 
@@ -232,7 +239,7 @@ export function HistoryDateCalendar({
           <span className="history-calendar__legend-swatch history-calendar__legend-swatch--data" />
           {t('history.calendarLegendHasData')}
         </span>
-        {allowEmptySelect ? (
+        {planHints ? (
           <span className="history-calendar__legend-item">
             <span className="history-calendar__legend-swatch history-calendar__legend-swatch--plan" />
             {t('history.calendarLegendPlan')}
