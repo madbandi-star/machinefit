@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TemplateShareReportReason } from '@machinefit/shared';
@@ -35,6 +35,7 @@ export function TemplateShareDetailPage() {
   const { postId = '' } = useParams<{ postId: string }>();
   const { t } = useTranslation('community');
   const { t: tc } = useTranslation('common');
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -57,7 +58,7 @@ export function TemplateShareDetailPage() {
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ['template-shares', postId] });
     await queryClient.invalidateQueries({ queryKey: ['template-shares'] });
-    await queryClient.invalidateQueries({ queryKey: ['workout-card-templates'] });
+    await queryClient.invalidateQueries({ queryKey: ['workout-cards', 'templates'] });
   };
 
   const downloadMutation = useMutation({
@@ -70,6 +71,7 @@ export function TemplateShareDetailPage() {
           : t('templateShare.downloaded'),
         'success'
       );
+      navigate(`${ROUTES.MY_TEMPLATES}#received`, { replace: false });
     },
     onError: () => showToast(tc('errors.submitFailed'), 'error'),
   });
@@ -346,16 +348,20 @@ export function TemplateShareDetailPage() {
         </section>
 
         <div className="tpl-share-sticky-cta">
-          <button
-            type="button"
-            className="btn btn--primary"
-            disabled={!isAuthenticated || !post.canDownload || downloadMutation.isPending}
-            onClick={() => downloadMutation.mutate()}
-          >
-            {post.downloadedByMe
-              ? t('templateShare.downloadedAlready')
-              : t('templateShare.download')}
-          </button>
+          {post.downloadedByMe ? (
+            <Link to={`${ROUTES.MY_TEMPLATES}#received`} className="btn btn--primary">
+              {t('templateShare.viewInMyTemplates')}
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="btn btn--primary"
+              disabled={!isAuthenticated || !post.canDownload || downloadMutation.isPending}
+              onClick={() => downloadMutation.mutate()}
+            >
+              {t('templateShare.download')}
+            </button>
+          )}
         </div>
       </div>
     </PageShell>

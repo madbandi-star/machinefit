@@ -9,7 +9,7 @@ import type {
   TemplateShareDifficulty,
   WorkoutCardTemplate,
 } from '@machinefit/shared';
-import { isAllGymsId, TEMPLATE_SHARE_CATEGORIES, TEMPLATE_SHARE_DIFFICULTIES } from '@machinefit/shared';
+import { TEMPLATE_SHARE_CATEGORIES, TEMPLATE_SHARE_DIFFICULTIES } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -18,7 +18,6 @@ import { workoutCardApi } from '@/api/workout-card.api';
 import { templateShareApi } from '@/api/template-share.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
-import { useActiveGym } from '@/hooks/useActiveGym';
 import { useUIStore } from '@/store/ui.store';
 import { getApiErrorCode } from '@/utils/motivationAudio';
 import '@/styles/components.css';
@@ -37,9 +36,6 @@ export function MyTemplatesPage() {
   const { t: tc } = useTranslation('common');
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
-  const { activeGymId } = useActiveGym();
-  const templatesGymId =
-    activeGymId && !isAllGymsId(activeGymId) ? activeGymId : undefined;
   const [shareTarget, setShareTarget] = useState<WorkoutCardTemplate | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
@@ -49,11 +45,9 @@ export function MyTemplatesPage() {
   const [tags, setTags] = useState('');
 
   const templatesQuery = useQuery({
-    queryKey: QUERY_KEYS.workoutCardTemplates(templatesGymId ?? ''),
+    queryKey: QUERY_KEYS.workoutCardTemplates(),
     queryFn: async () => {
-      const res = await workoutCardApi.listTemplates({
-        gymId: templatesGymId,
-      });
+      const res = await workoutCardApi.listTemplates();
       return res.data.data ?? [];
     },
   });
@@ -81,7 +75,7 @@ export function MyTemplatesPage() {
       setShareTarget(null);
       await queryClient.invalidateQueries({ queryKey: ['template-shares'] });
       await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.workoutCardTemplates(templatesGymId ?? ''),
+        queryKey: QUERY_KEYS.workoutCardTemplates(),
       });
       showToast(t('templateShare.published'), 'success');
     },
@@ -104,7 +98,7 @@ export function MyTemplatesPage() {
     onSuccess: async () => {
       setDeleteId(null);
       await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.workoutCardTemplates(templatesGymId ?? ''),
+        queryKey: QUERY_KEYS.workoutCardTemplates(),
       });
       showToast(t('templateShare.templateDeleted'), 'success');
     },
@@ -232,7 +226,7 @@ export function MyTemplatesPage() {
               )}
             </section>
 
-            <section className="tpl-share-mine__section">
+            <section id="received" className="tpl-share-mine__section">
               <h3 className="tpl-share-mine__heading">
                 <span>{t('templateShare.sectionReceived')}</span>
                 <span className="tpl-share-mine__heading-count">{received.length}</span>
@@ -256,15 +250,19 @@ export function MyTemplatesPage() {
                         </span>
                         <span className="tpl-share-mine__name">{tpl.name}</span>
                         <span className="tpl-share-mine__sub">
+                          {t('templateShare.exerciseCount', { count: tpl.items.length })}
                           {tpl.originTitle
-                            ? t('templateShare.originLine', {
+                            ? ` · ${t('templateShare.originLine', {
                                 title: tpl.originTitle,
                                 author: tpl.originAuthorName || '—',
-                              })
-                            : t('templateShare.originUnknown')}
+                              })}`
+                            : ` · ${t('templateShare.originUnknown')}`}
                         </span>
                       </div>
                       <div className="tpl-share-mine__actions">
+                        <Link to={ROUTES.RECORDS} className="btn btn--primary btn--sm">
+                          {t('templateShare.useInRecords')}
+                        </Link>
                         {tpl.sourceSharePostId ? (
                           <Link
                             to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(

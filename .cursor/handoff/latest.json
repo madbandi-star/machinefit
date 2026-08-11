@@ -1,24 +1,19 @@
 {
-  "title": "Fix terms consent redirect loop",
-  "summary": "Stop /auth/terms bounce: sync React Query /me after accept, stamp server legal versions, accept newer stored version dates when Pages/Render skew.",
+  "title": "Show received share-hub templates",
+  "summary": "After taking a template, navigate to My templates#received. List all copies (not gym-filtered). Link to Records to use them.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
-    "backend/server/services/auth.service.ts",
-    "backend/server/repositories/user.repository.ts",
-    "shared/src/constants/legal.ts"
+    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
+    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
+    "frontend/src/i18n/locales/ko/community.json"
   ],
   "testFocus": [
-    "Agree and continue leaves terms page",
-    "Home does not bounce back to /auth/terms"
+    "Download navigates to received list",
+    "Received templates visible without matching gym"
   ],
-  "fastChecks": [
-    "npx tsx --test shared/src/constants/legal.test.ts"
-  ],
-  "productionChecks": [
-    "On Pages: complete consent and land on home"
-  ],
-  "deploy": { "expected": "Push main; Pages FE + Render BE" },
-  "asIs": "Terms continue loops to the same page",
-  "toBe": "Consent persist + cache so continue reaches home"
+  "fastChecks": ["npm run i18n:audit"],
+  "productionChecks": ["Take a template on Pages and confirm /my-page/templates#received"],
+  "deploy": { "expected": "Pages FE" },
+  "asIs": "Taken templates had no obvious list",
+  "toBe": "Download opens My templates received section"
 }
