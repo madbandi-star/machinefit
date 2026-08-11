@@ -19,6 +19,7 @@ export function startPrivacyRetentionJob(): void {
           stats.gpsCleared +
           stats.consentIpScrubbed +
           stats.loginEventsDeleted +
+          stats.bannerEventsDeleted +
           stats.accountsPurged;
         if (total > 0) {
           logger.warn('[privacy-retention] pass complete', stats);

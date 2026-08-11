@@ -88,6 +88,8 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
 export async function getImage(req: Request, res: Response): Promise<void> {
   const variant = req.query.variant === 'main' ? 'main' : 'thumb';
   const imageId = getParam(req.params.imageId);
+  const { assertMediaAccess } = await import('../utils/media-token.util.js');
+  assertMediaAccess('photo', imageId, req.query.mexp, req.query.msig);
   const meta = await photoBoardService.getImageMeta(imageId, variant);
   if (!meta) throw new AppError(404, 'NOT_FOUND', 'Image not found');
   const etag = `"pbi-${meta.etagToken}"`;

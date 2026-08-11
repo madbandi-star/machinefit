@@ -1,4 +1,5 @@
 import { env } from '../config/env.js';
+import { mediaAccessQuery } from './media-token.util.js';
 
 export function publicApiBase(): string {
   if (env.PUBLIC_API_BASE_URL?.trim()) {
@@ -33,16 +34,16 @@ export function brandAssetMediaUrl(brandCode: string, kind: 'logo' | 'hero'): st
 }
 
 export function photoBoardImageUrl(imageId: string, variant: 'main' | 'thumb' = 'thumb'): string {
-  return `${publicApiBase()}/photo-board/images/${encodeURIComponent(imageId)}?variant=${variant}`;
+  return `${publicApiBase()}/photo-board/images/${encodeURIComponent(imageId)}?variant=${variant}&${mediaAccessQuery('photo', imageId)}`;
 }
 
 export function machineTradeImageUrl(imageId: string, variant: 'full' | 'thumb' = 'thumb'): string {
-  return `${publicApiBase()}/machine-trades/images/${encodeURIComponent(imageId)}?variant=${variant}`;
+  return `${publicApiBase()}/machine-trades/images/${encodeURIComponent(imageId)}?variant=${variant}&${mediaAccessQuery('trade', imageId)}`;
 }
 
 export function machineRequestImageUrl(
   imageId: string,
   variant: 'full' | 'thumb' = 'thumb'
 ): string {
-  return `${publicApiBase()}/machine-requests/images/${encodeURIComponent(imageId)}?variant=${variant}`;
+  return `${publicApiBase()}/machine-requests/images/${encodeURIComponent(imageId)}?variant=${variant}&${mediaAccessQuery('request', imageId)}`;
 }

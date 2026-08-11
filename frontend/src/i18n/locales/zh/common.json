@@ -183,7 +183,8 @@
     "invalidCredentials": "邮箱或密码不正确。",
     "tokenExpired": "登录已过期，请重新登录。",
     "ageRestricted": "未满14周岁无法注册。",
-    "usageLimit": "已达使用上限。请稍后再试或查看套餐。"
+    "usageLimit": "已达使用上限。请稍后再试或查看套餐。",
+    "csrfRejected": "请求来源不被允许，无法处理。"
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -483,8 +484,17 @@
       "s5Title": "5. Contact",
       "s5Body": "For terms or service questions, contact the operator through in-app channels.",
       "s6Title": "6. 付费与试用",
-      "s6Body": "付费会员、免费试用、续订与取消以电商与退款政策及结账告知为准。新账户可能自动开始试用。"
+      "s6Body": "付费会员、免费试用、续订与取消以电商与退款政策及结账告知为准。新账户可能自动开始试用。",
+      "s7Title": "7. 注销",
+      "s7Body": "注销后无法登录，标识信息会被匿名化。约30天后删除运动记录、帖子与上传文件。支付与同意记录可能依法保留。再次注册视为新会员。",
+      "s8Title": "8. 禁止行为",
+      "s8Body": "禁止盗用账号、未经授权抓取、干扰服务、侵权内容及规避支付。",
+      "s9Title": "9. 知识产权",
+      "s9Body": "界面与推荐逻辑归运营方。品牌与器械照片归各权利人，有效投诉后将下架。",
+      "s10Title": "10. 准据法",
+      "s10Body": "本条款适用大韩民国法律。经营者登记信息将在登记完成后载于页脚。联系：support@machinefit.app"
     },
+    "cookieNotice": "不使用广告或分析 Cookie。仅用会话存储和（浏览器允许时）HttpOnly Cookie 维持登录。",
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
@@ -502,7 +512,7 @@
       "s7Title": "7. 安全措施与联系",
       "s7Body": "我们采取访问控制、加密传输与权限分离等安全措施。详情见安全说明页。隐私相关咨询：support@machinefit.app 或应用内客服。个人信息保护负责人姓名与联系方式将在完成经营者登记后载入本政策。",
       "s8Title": "8. 变更记录",
-      "s8Body": "本政策自 2026-08-13 起适用。变更时将通过应用内公告及本页修订日期告知。（此前：2026-08-12）"
+      "s8Body": "本政策自 2026-08-14 起适用。变更时将通过应用内公告及本页修订日期告知。（此前：2026-08-13）"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",
@@ -541,7 +551,7 @@
       "s3Title": "3. 免费试用",
       "s3Body": "新用户可能按运营政策自动获得 Premium 试用（如 7 天）。试用后是否付费续订以注册/结账告知为准，试用期间可取消。",
       "s4Title": "4. 取消、退款与撤回",
-      "s4Body": "可在我的页面取消续订。数字/期限服务在开始提供后，依法可能限制撤回。退款请通过应用内客服（账单）或客服邮箱申请。",
+      "s4Body": "可在我的页面取消续订。数字/期限服务一旦开始提供，除电商法等规定的例外外，撤回与退款受限，已开始的使用期间原则上不予退款。重复或错误扣款请联系客服。",
       "s5Title": "5. 经营者与联系",
       "s5Body": "销售者信息见应用页脚经营者公示。空白项将在完成登记后更新。"
     },
@@ -563,7 +573,7 @@
     "copyrightLead": "Rights for machine/brand images, YouTube, and user uploads.",
     "copyright": {
       "s1Title": "1. Machine & brand images",
-      "s1Body": "Catalog images are for reference; rights belong to respective owners. We review takedown requests.",
+      "s1Body": "目录图片为运营方上传的参考资料，不虚构许可来源。权利不明的图片在有效投诉后立即下架。品牌标志与产品照片权利归各权利人。",
       "s2Title": "2. YouTube",
       "s2Body": "Embedded videos are subject to YouTube terms; processing is disclosed in the Privacy Policy.",
       "s3Title": "3. User uploads",
@@ -571,7 +581,9 @@
       "s4Title": "4. Infringement reports",
       "s4Body": "Use Support (copyright) or content report reason copyright.",
       "s5Title": "5. Trademarks",
-      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer."
+      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
+      "s6Title": "6. UI 字体与图标",
+      "s6Body": "界面使用 Inter（SIL Open Font License）与 Lucide 图标。无许可文件的厂商实拍/字标 PNG 不在目录中展示，改为原创 SVG 或占位图。"
     },
     "aiTitle": "AI & health disclaimer",
     "aiLead": "Reference-only notices for recommendations, insights, and Online PT.",

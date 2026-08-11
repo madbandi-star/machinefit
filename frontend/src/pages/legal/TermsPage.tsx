@@ -28,6 +28,14 @@ export function TermsPage() {
         <p>{t('legal.terms.s5Body')}</p>
         <h2>{t('legal.terms.s6Title')}</h2>
         <p>{t('legal.terms.s6Body')}</p>
+        <h2>{t('legal.terms.s7Title')}</h2>
+        <p>{t('legal.terms.s7Body')}</p>
+        <h2>{t('legal.terms.s8Title')}</h2>
+        <p>{t('legal.terms.s8Body')}</p>
+        <h2>{t('legal.terms.s9Title')}</h2>
+        <p>{t('legal.terms.s9Body')}</p>
+        <h2>{t('legal.terms.s10Title')}</h2>
+        <p>{t('legal.terms.s10Body')}</p>
         <p className="legal-doc__nav">
           <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
           {' · '}

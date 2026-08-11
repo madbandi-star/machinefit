@@ -9,6 +9,8 @@ export const DATA_RETENTION = {
   consentIpMetaDays: 365,
   /** Delete auth_login_events older than this. */
   loginEventsDays: 365,
+  /** Delete banner impression/click rows (session id only). */
+  bannerEventsDays: 90,
   /**
    * After deactivate, wait this many days then hard-purge non-legal-hold user data
    * (workouts, favorites, friends, UGC). Payments/consents retained longer.

@@ -3,6 +3,7 @@ import { getPool } from '../config/database.js';
 import { complianceRepository } from '../repositories/compliance.repository.js';
 import { dataRetentionRepository } from '../repositories/data-retention.repository.js';
 import { locationRepository } from '../repositories/location.repository.js';
+import { bannerRepository } from '../repositories/banner.repository.js';
 import { logger } from '../utils/logger.js';
 
 async function tableExists(table: string): Promise<boolean> {
@@ -262,6 +263,7 @@ export const privacyRetentionService = {
     gpsCleared: number;
     consentIpScrubbed: number;
     loginEventsDeleted: number;
+    bannerEventsDeleted: number;
     accountsPurged: number;
     schedulesUpserted: number;
   }> {
@@ -271,15 +273,17 @@ export const privacyRetentionService = {
         gpsCleared: 0,
         consentIpScrubbed: 0,
         loginEventsDeleted: 0,
+        bannerEventsDeleted: 0,
         accountsPurged: 0,
         schedulesUpserted: 0,
       };
     }
 
-    const [gpsDays, consentIpDays, loginDays, purgeDays] = await Promise.all([
+    const [gpsDays, consentIpDays, loginDays, bannerDays, purgeDays] = await Promise.all([
       resolveDays('user_locations_gps', DATA_RETENTION.gpsCoordinatesDays),
       resolveDays('consent_ip_meta', DATA_RETENTION.consentIpMetaDays),
       resolveDays('auth_login_events', DATA_RETENTION.loginEventsDays),
+      resolveDays('banner_events', DATA_RETENTION.bannerEventsDays),
       resolveDays('deactivated_account_purge', DATA_RETENTION.deactivatedAccountPurgeDays),
     ]);
 
@@ -295,6 +299,15 @@ export const privacyRetentionService = {
       await complianceRepository.scrubConsentIpMetaOlderThan(consentIpDays);
     const loginEventsDeleted =
       await complianceRepository.deleteLoginEventsOlderThan(loginDays);
+
+    let bannerEventsDeleted = 0;
+    try {
+      if (await tableExists('banner_events')) {
+        bannerEventsDeleted = await bannerRepository.deleteEventsOlderThan(bannerDays);
+      }
+    } catch (err) {
+      logger.warn('[privacy-retention] banner event cleanup skipped', { err: String(err) });
+    }
 
     if (gpsCleared > 0) {
       await dataRetentionRepository.insertDeletionLog({
@@ -318,6 +331,14 @@ export const privacyRetentionService = {
         success: true,
         rowsAffected: loginEventsDeleted,
         meta: { policyCode: 'auth_login_events', days: loginDays },
+      });
+    }
+    if (bannerEventsDeleted > 0) {
+      await dataRetentionRepository.insertDeletionLog({
+        action: 'auto_delete_banner_events',
+        success: true,
+        rowsAffected: bannerEventsDeleted,
+        meta: { policyCode: 'banner_events', days: bannerDays },
       });
     }
 
@@ -407,6 +428,7 @@ export const privacyRetentionService = {
       gpsCleared,
       consentIpScrubbed,
       loginEventsDeleted,
+      bannerEventsDeleted,
       accountsPurged,
       schedulesUpserted,
     };

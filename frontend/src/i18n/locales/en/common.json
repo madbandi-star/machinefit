@@ -188,7 +188,8 @@
     "invalidCredentials": "Please check your email or password and try again.",
     "tokenExpired": "Your session expired. Please sign in again.",
     "ageRestricted": "You must be 14 or older to create an account.",
-    "usageLimit": "You've reached a usage limit. Try again later or check your plan."
+    "usageLimit": "You've reached a usage limit. Try again later or check your plan.",
+    "csrfRejected": "This request was blocked because its origin is not allowed."
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -474,7 +475,7 @@
       "s1Title": "1. Nature of the service",
       "s1Body": "MachineFit provides machine-setting suggestions, workout logging, and community features for reference. It is not medical advice.",
       "s2Title": "2. Accounts",
-      "s2Body": "You must provide accurate information and keep your account secure. Users under 14 may not register.",
+      "s2Body": "You must provide accurate information and keep your account secure. Platform accounts require age 14+. At signup we compute full years from your date of birth in Korea time on the server.",
       "s3Title": "3. User content",
       "s3Body": "You are responsible for photos, posts, and listings you upload. Unlawful content may be reported and removed.",
       "s4Title": "4. Disclaimer",
@@ -482,12 +483,21 @@
       "s5Title": "5. Contact",
       "s5Body": "For terms or service questions, contact the operator through in-app channels.",
       "s6Title": "6. Paid plans & trials",
-      "s6Body": "Paid memberships, free trials, renewals, and cancellations follow the e-commerce & refund policy and checkout notices. A free trial may start automatically for new accounts."
+      "s6Body": "Paid memberships, free trials, renewals, and cancellations follow the e-commerce & refund policy and checkout notices. A free trial may start automatically for new accounts.",
+      "s7Title": "7. Withdrawal",
+      "s7Body": "On withdrawal you cannot sign in and identifiers are anonymized. About 30 days later workouts, posts, and uploads are deleted. Payment and consent records may be kept as required by law. Rejoining creates a new account.",
+      "s8Title": "8. Prohibited use",
+      "s8Body": "Account theft, unauthorized scraping, disruption, unlawful or infringing content, and payment circumvention are forbidden. We may restrict access and cooperate with authorities.",
+      "s9Title": "9. Intellectual property",
+      "s9Body": "UI, recommendation logic, and catalog structure belong to the operator. Brand and machine photos belong to their rights holders and are removed on a valid complaint.",
+      "s10Title": "10. Governing law",
+      "s10Body": "These terms are governed by the laws of the Republic of Korea. Business registration details will appear in the footer after registration is complete. Contact: support@machinefit.app"
     },
+    "cookieNotice": "We do not use advertising or analytics cookies. Session storage and an HttpOnly cookie (when the browser allows it) keep you signed in.",
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
-      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, date of birth required at signup (to confirm age 14+; we do not collect resident registration numbers), gender/height/weight/age/birth time (when entered, e.g. fortune), workout goals, optional region (city/district selected by you; we do not collect GPS coordinates), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), access logs (IP/UA), banner impression/click events for signed-in users (user id), and session refresh tokens (browser sessionStorage and an HttpOnly cookie). Gym-owner facility member lists (name/email/birth date) are for facility management and may include members under 14; that is not a MachineFit account.",
+      "s1Body": "We may process social login identifiers and email (when provided), display name, avatar URL, date of birth required at signup (to confirm age 14+; we do not collect resident registration numbers), gender/height/weight/age/birth time (when entered, e.g. fortune), workout goals, optional region (city/district selected by you; we do not collect GPS coordinates), workout logs and plan cards, friends/notifications/photos/trades/online PT, payment/subscription metadata (card numbers stay with the payment provider), access logs (IP/UA), banner impression/click events (session id only; we do not store member user id), and session refresh tokens (browser sessionStorage and an HttpOnly cookie). Gym-owner facility member lists (name/email/birth date) are for facility management and may include members under 14; that is not a MachineFit account.",
       "s2Title": "2. Purposes",
       "s2Body": "Authentication, confirming age 14+, machine recommendations, logging and insights, community/friends, support, and (if consented) marketing notifications.",
       "s3Title": "3. Retention",
@@ -501,7 +511,7 @@
       "s7Title": "7. Security & contact",
       "s7Body": "We apply access control, encrypted transport, and role separation. See the security notice page for details. Privacy inquiries: support@machinefit.app or in-app support. The privacy officer’s name/contact will be listed here after business registration is finalized.",
       "s8Title": "8. Change history",
-      "s8Body": "This policy applies from 2026-08-13. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-08-12)"
+      "s8Body": "This policy applies from 2026-08-14. Changes will be announced in-app and by updating the revision date on this page. (Previous: 2026-08-13)"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",
@@ -540,7 +550,7 @@
       "s3Title": "3. Free trial",
       "s3Body": "New accounts may receive an automatic Premium trial (e.g. 7 days) per operating policy. Whether paid renewal starts after the trial follows the notice at signup/checkout. You may cancel during the trial.",
       "s4Title": "4. Cancel, refunds, cooling-off",
-      "s4Body": "Cancel renewals in My Page; future renewals stop after cancellation. For digital/period services, cooling-off may be limited once delivery starts, as allowed by law. Request refunds via in-app Support (billing) or the support email.",
+      "s4Body": "Cancel renewals in My Page; future renewals stop after cancellation. Digital/period services are generally non-refundable once delivery has started, except where e-commerce law requires otherwise. Duplicate or erroneous charges: contact Support (billing).",
       "s5Title": "5. Business info & contact",
       "s5Body": "Seller/business details appear in the app footer business notice. Blank fields will be filled after business/mail-order registration. Contact support for payment issues."
     },
@@ -562,7 +572,7 @@
     "copyrightLead": "Rights for machine/brand images, YouTube, and user uploads.",
     "copyright": {
       "s1Title": "1. Machine & brand images",
-      "s1Body": "Catalog images are for reference; rights belong to respective owners. We review takedown requests.",
+      "s1Body": "Catalog images are operator-uploaded references. We do not invent license credits. Unclear rights are taken down on a valid complaint. Logos and product photos belong to their owners.",
       "s2Title": "2. YouTube",
       "s2Body": "Embedded videos are subject to YouTube terms; processing is disclosed in the Privacy Policy.",
       "s3Title": "3. User uploads",
@@ -570,7 +580,9 @@
       "s4Title": "4. Infringement reports",
       "s4Body": "Use Support (copyright) or content report reason copyright.",
       "s5Title": "5. Trademarks",
-      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer."
+      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
+      "s6Title": "6. UI fonts & icons",
+      "s6Body": "The UI uses Inter (SIL Open Font License) and Lucide icons. Manufacturer product photos and wordmark PNGs without a license file are not shown in the catalog; we use original SVGs or a placeholder. Admin-uploaded covers are the operator’s responsibility and are removed on a valid complaint."
     },
     "aiTitle": "AI & health disclaimer",
     "aiLead": "Reference-only notices for recommendations, insights, and Online PT.",

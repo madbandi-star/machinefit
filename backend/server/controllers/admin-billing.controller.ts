@@ -43,12 +43,19 @@ export async function adminExtendSubscription(req: Request, res: Response): Prom
     input.days,
     input.planCode
   );
+  writeAdminAudit(req, {
+    action: 'admin.subscription.extend',
+    targetType: 'user',
+    targetId: userId,
+    meta: { days: input.days, planCode: input.planCode },
+  });
   res.json({ success: true, data });
 }
 
 export async function adminEndSubscription(req: Request, res: Response): Promise<void> {
   const userId: string = String(req.params.userId ?? '');
   const data = await billingService.adminEndSubscription(userId);
+  writeAdminAudit(req, { action: 'admin.subscription.end', targetType: 'user', targetId: userId });
   res.json({ success: true, data });
 }
 
@@ -61,6 +68,12 @@ export async function adminSetSubscription(req: Request, res: Response): Promise
     input.status,
     input.days
   );
+  writeAdminAudit(req, {
+    action: 'admin.subscription.set',
+    targetType: 'user',
+    targetId: userId,
+    meta: { planCode: input.planCode, status: input.status, days: input.days },
+  });
   res.json({ success: true, data });
 }
 
@@ -68,6 +81,12 @@ export async function adminGrantTrial(req: Request, res: Response): Promise<void
   const userId: string = String(req.params.userId ?? '');
   const input = adminGrantTrialSchema.parse(req.body ?? {});
   const data = await billingService.adminGrantTrial(userId, input.days, input.planCode);
+  writeAdminAudit(req, {
+    action: 'admin.subscription.grant_trial',
+    targetType: 'user',
+    targetId: userId,
+    meta: { days: input.days, planCode: input.planCode },
+  });
   res.json({ success: true, data });
 }
 
@@ -75,6 +94,11 @@ export async function adminRefund(req: Request, res: Response): Promise<void> {
   const userId: string = String(req.params.userId ?? '');
   const input = adminRefundSchema.parse(req.body ?? {});
   const data = await billingService.adminRefund(userId, input);
+  writeAdminAudit(req, {
+    action: 'admin.subscription.refund',
+    targetType: 'user',
+    targetId: userId,
+  });
   res.json({ success: true, data });
 }
 

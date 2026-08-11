@@ -57,13 +57,34 @@ const authSessionStorage = {
 };
 
 /**
- * Trim high-sensitivity fields from sessionStorage. Keep height/weight so home
- * profile gates don't flash "incomplete" after refresh before /me returns.
+ * SessionStorage must not hold body/contact PII. /me hydrates the rest after boot.
  */
 function sanitizePersistedUser(user: User | null): User | null {
   if (!user) return null;
-  const { age: _a, ...safe } = user;
-  return safe;
+  return {
+    id: user.id,
+    roleId: user.roleId,
+    roleCode: user.roleCode,
+    email: '',
+    displayName: user.displayName,
+    unitHeight: user.unitHeight,
+    unitWeight: user.unitWeight,
+    languageCode: user.languageCode,
+    subscriptionPlan: user.subscriptionPlan,
+    activeGymId: user.activeGymId,
+    homeGymName: user.homeGymName,
+    marketingOptIn: user.marketingOptIn,
+    locationOptIn: user.locationOptIn,
+    pushServiceOptIn: user.pushServiceOptIn,
+    termsVersion: user.termsVersion,
+    privacyVersion: user.privacyVersion,
+    locationVersion: user.locationVersion,
+    marketingVersion: user.marketingVersion,
+    needsConsent: user.needsConsent,
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
 }
 
 /** Persist refresh only — never write the short-lived access JWT to storage. */
@@ -108,7 +129,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'machinefit-auth',
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => authSessionStorage),
       partialize: (state) => ({
         user: sanitizePersistedUser(state.user),

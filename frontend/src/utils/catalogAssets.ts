@@ -10,10 +10,19 @@ const BRAND_SLUGS: Record<string, string> = {
   TECHNOGYM: 'technogym',
 };
 
-/** Brands whose chip should show a wide wordmark logo instead of icon+text. */
-const BRAND_WORDMARK_FILES: Record<string, string> = {
-  LIFE_FITNESS: 'life_fitness_wordmark.png',
-};
+/** Packaged third-party product photos without a license file — do not serve. */
+const UNLICENSED_PACKAGED_PHOTOS = new Set<string>([
+  'HS_ISO_LATERAL_HIGH_ROW',
+  'HS_ISO_LATERAL_ROW',
+  'HS_LAT_PULLDOWN',
+  'HS_ISO_LATERAL_CHEST_PRESS',
+  'HS_ISO_LATERAL_INCLINE_CHEST_PRESS',
+  'HS_SHOULDER_PRESS',
+  'HS_LEG_PRESS',
+  'HS_LEG_EXTENSION',
+  'HS_LEG_CURL',
+  'HS_V_SQUAT',
+]);
 
 /** Packaged SVGs under `public/assets/machines/**` — only these local paths are emitted. */
 const KNOWN_MACHINE_ASSETS = new Set<string>([
@@ -79,16 +88,12 @@ export function brandAssetSlug(brandCode: string): string | null {
 }
 
 /** True when search brand chips should render a full wordmark (no companion text). */
-export function brandUsesWordmarkChip(brandCode: string): boolean {
-  return Boolean(BRAND_WORDMARK_FILES[brandCode]);
+export function brandUsesWordmarkChip(_brandCode: string): boolean {
+  return false;
 }
 
-/** Prefer packaged wordmark asset for supported brands; else API logo / mark SVG. */
+/** Prefer operator SVG / API logo. Do not ship unlicensed brand wordmark PNGs. */
 export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null): string | undefined {
-  const wordmarkFile = BRAND_WORDMARK_FILES[brandCode];
-  if (wordmarkFile) {
-    return `${assetBase()}assets/brands/${wordmarkFile}`;
-  }
   if (logoUrl) {
     const resolved = resolveBrandMediaUrl(logoUrl) || logoUrl;
     // Guard against accidental cross-brand media URLs (e.g. wrong admin mapping).
@@ -111,21 +116,6 @@ export function resolveBrandLogoUrl(brandCode: string, logoUrl?: string | null):
   return `${assetBase()}assets/brands/${slug}.svg`;
 }
 
-/** Packaged machine image extension overrides (default `.svg`). */
-/** Redeploy note: HS photo covers resolve via MACHINE_ASSET_EXT → png. */
-const MACHINE_ASSET_EXT: Record<string, string> = {
-  HS_ISO_LATERAL_HIGH_ROW: 'png',
-  HS_ISO_LATERAL_ROW: 'png',
-  HS_LAT_PULLDOWN: 'png',
-  HS_ISO_LATERAL_CHEST_PRESS: 'png',
-  HS_ISO_LATERAL_INCLINE_CHEST_PRESS: 'png',
-  HS_SHOULDER_PRESS: 'png',
-  HS_LEG_PRESS: 'png',
-  HS_LEG_EXTENSION: 'png',
-  HS_LEG_CURL: 'png',
-  HS_V_SQUAT: 'png',
-};
-
 function brandSlugForMachineCode(machineCode: string): string | null {
   const prefix = machineCode.split('_')[0];
   if (prefix === 'HS') return 'hammer_strength';
@@ -137,10 +127,15 @@ function brandSlugForMachineCode(machineCode: string): string | null {
 
 function packagedMachineAssetUrl(machineCode: string): string | undefined {
   if (!KNOWN_MACHINE_ASSETS.has(machineCode)) return undefined;
+  if (UNLICENSED_PACKAGED_PHOTOS.has(machineCode)) return undefined;
   const brandSlug = brandSlugForMachineCode(machineCode);
   if (!brandSlug) return undefined;
-  const ext = MACHINE_ASSET_EXT[machineCode] ?? 'svg';
-  return `${assetBase()}assets/machines/${brandSlug}/${machineCode.toLowerCase()}.${ext}`;
+  return `${assetBase()}assets/machines/${brandSlug}/${machineCode.toLowerCase()}.svg`;
+}
+
+function isUnlicensedPackagedPhotoUrl(url: string): boolean {
+  return /\/assets\/machines\/[^/]+\/hs_[^/]+\.png(\?|$)/i.test(url)
+    || /\/assets\/brands\/life_fitness_wordmark\.png(\?|$)/i.test(url);
 }
 
 function isAdminMachineCoverUrl(url: string): boolean {
@@ -148,26 +143,29 @@ function isAdminMachineCoverUrl(url: string): boolean {
 }
 
 /**
- * Prefer API primaryImageUrl, but never keep a stale catalog `.svg` when we ship a
- * packaged PNG for that machine (Render DB may still point at deleted SVGs).
- * Admin-uploaded machine covers always win.
+ * Admin-uploaded covers win. Packaged catalog is original SVGs only —
+ * unlicensed third-party product PNGs fall back to placeholder.
  */
 export function resolveMachineImageUrl(
   machineCode: string,
   primaryImageUrl?: string | null
 ): string | undefined {
-  const packaged = packagedMachineAssetUrl(machineCode);
-
   if (primaryImageUrl && isAdminMachineCoverUrl(primaryImageUrl)) {
     return primaryImageUrl;
   }
 
-  if (MACHINE_ASSET_EXT[machineCode] === 'png' && packaged) {
-    return packaged;
+  const packaged = packagedMachineAssetUrl(machineCode);
+  if (packaged) return packaged;
+
+  if (
+    primaryImageUrl &&
+    !isUnlicensedPackagedPhotoUrl(primaryImageUrl) &&
+    primaryImageUrl.toLowerCase().endsWith('.svg')
+  ) {
+    return primaryImageUrl;
   }
 
-  if (primaryImageUrl) return primaryImageUrl;
-  return packaged;
+  return machinePlaceholderUrl();
 }
 
 /** Public media URL for admin machine covers (optional per-muscle variant). */

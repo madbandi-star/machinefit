@@ -195,6 +195,8 @@ export async function listSimilarMachineRequestGroups(req: Request, res: Respons
 export async function getMachineRequestImage(req: Request, res: Response): Promise<void> {
   const variant = req.query.variant === 'full' ? 'full' : 'thumb';
   const imageId = getParam(req.params.imageId);
+  const { assertMediaAccess } = await import('../utils/media-token.util.js');
+  assertMediaAccess('request', imageId, req.query.mexp, req.query.msig);
   const meta = await communityService.getMachineRequestImageMeta(imageId, variant);
   if (!meta) throw new AppError(404, 'NOT_FOUND', 'Image not found');
   const etag = `"mri-${meta.etagToken}"`;

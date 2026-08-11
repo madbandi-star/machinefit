@@ -135,7 +135,12 @@ export async function refresh(req: Request, res: Response): Promise<void> {
     req.body && typeof req.body === 'object' && typeof req.body.refreshToken === 'string'
       ? (req.body.refreshToken as string)
       : undefined;
-  const refreshToken = fromCookie || fromBody;
+  // Prefer body token (Pages→Render). Cookie-only refresh needs Origin allowlist.
+  if (fromCookie && !fromBody) {
+    const { assertCsrfOrigin } = await import('../utils/csrf-origin.util.js');
+    assertCsrfOrigin(req);
+  }
+  const refreshToken = fromBody || fromCookie;
   if (!refreshToken) {
     throw new AppError(400, 'VALIDATION_ERROR', 'Refresh token required');
   }
@@ -153,6 +158,10 @@ export async function logout(req: Request, res: Response): Promise<void> {
     typeof req.body?.refreshToken === 'string' && req.body.refreshToken.trim()
       ? req.body.refreshToken.trim()
       : undefined;
+  if (cookieToken && !bodyToken && !req.user) {
+    const { assertCsrfOrigin } = await import('../utils/csrf-origin.util.js');
+    assertCsrfOrigin(req);
+  }
   if (req.user) {
     await authService.logout(req.user.userId);
   } else if (bodyToken || cookieToken) {

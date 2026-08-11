@@ -183,7 +183,8 @@
     "invalidCredentials": "メールまたはパスワードが正しくありません。",
     "tokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
     "ageRestricted": "満14歳未満は登録できません。",
-    "usageLimit": "利用上限に達しました。しばらくしてから再試行するか、プランを確認してください。"
+    "usageLimit": "利用上限に達しました。しばらくしてから再試行するか、プランを確認してください。",
+    "csrfRejected": "リクエスト元が許可されていないため処理できません。"
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",
@@ -483,8 +484,17 @@
       "s5Title": "5. Contact",
       "s5Body": "For terms or service questions, contact the operator through in-app channels.",
       "s6Title": "6. 有料・無料体験",
-      "s6Body": "有料メンバーシップ・無料体験・更新・解約は電子商取引・返金ポリシーおよび決済画面の告知に従います。新規登録時に無料体験が自動付与される場合があります。"
+      "s6Body": "有料メンバーシップ・無料体験・更新・解約は電子商取引・返金ポリシーおよび決済画面の告知に従います。新規登録時に無料体験が自動付与される場合があります。",
+      "s7Title": "7. 退会",
+      "s7Body": "退会後はログインできず識別情報は匿名化されます。約30日後に運動記録・投稿・アップロードが削除されます。決済・同意記録は法令により残る場合があります。再登録は新規会員です。",
+      "s8Title": "8. 禁止行為",
+      "s8Body": "アカウント盗用、無断クロール、障害誘発、権利侵害コンテンツ、決済回避を禁じます。",
+      "s9Title": "9. 知的財産",
+      "s9Body": "UI・推薦ロジックの権利は運営者にあります。ブランド・マシン画像の権利は各権利者にあり、申告があれば削除します。",
+      "s10Title": "10. 準拠法",
+      "s10Body": "本規約は大韓民国法に従います。事業者登録情報は確定後にフッターへ記載します。問い合わせ: support@machinefit.app"
     },
+    "cookieNotice": "広告・分析クッキーは使いません。ログイン維持のためセッション保存と（許可時）HttpOnly Cookieのみ使います。",
     "privacyLead": "How we collect and use personal data.",
     "privacy": {
       "s1Title": "1. Data we collect",
@@ -502,7 +512,7 @@
       "s7Title": "7. 安全管理・問い合わせ",
       "s7Body": "アクセス制御・暗号化通信・権限分離などの安全管理措置を適用します。詳細はセキュリティ案内を参照してください。個人情報に関する問い合わせは support@machinefit.app またはアプリ内サポートへ。個人情報保護責任者の氏名・連絡先は事業者登録確定後に本方針へ記載します。",
       "s8Title": "8. 変更履歴",
-      "s8Body": "本方針は2026-08-13から適用されます。変更時はサービス内告知および本ページの改定日でお知らせします。（以前: 2026-08-12）"
+      "s8Body": "本方針は2026-08-14から適用されます。変更時はサービス内告知および本ページの改定日でお知らせします。（以前: 2026-08-13）"
     },
     "regionKr": "Primary region: Korea (expandable)",
     "locationTitle": "Location Terms",
@@ -541,7 +551,7 @@
       "s3Title": "3. 無料体験",
       "s3Body": "新規登録時、運営方針によりPremium無料体験（例: 7日）が自動付与される場合があります。体験後の有料転換・自動更新は登録/決済画面の告知に従い、体験中も解約できます。",
       "s4Title": "4. 解約・返金・クーリングオフ",
-      "s4Body": "マイページから更新を解約できます。デジタル/期間制サービスの性質上、提供開始後は法令が認める範囲でクーリングオフが制限される場合があります。返金はアプリ内お問い合わせまたはサポートメールへ。",
+      "s4Body": "マイページから更新を解約できます。デジタル/期間制サービスは提供開始後、電子商取引法等の例外を除きクーリングオフ・返金が制限され、開始済み利用期間の返金は原則不可です。誤課金はお問い合わせへ。",
       "s5Title": "5. 事業者・問い合わせ",
       "s5Body": "販売者情報はアプリ下部の事業者表示に従います。未記入項目は届出完了後に更新します。"
     },
@@ -563,7 +573,7 @@
     "copyrightLead": "Rights for machine/brand images, YouTube, and user uploads.",
     "copyright": {
       "s1Title": "1. Machine & brand images",
-      "s1Body": "Catalog images are for reference; rights belong to respective owners. We review takedown requests.",
+      "s1Body": "カタログ画像は運営者がアップロードした参考資料です。ライセンス表記を捏造しません。権利が不明な画像は申告があれば直ちに取り下げます。ブランドロゴ・製品写真の権利は各権利者にあります。",
       "s2Title": "2. YouTube",
       "s2Body": "Embedded videos are subject to YouTube terms; processing is disclosed in the Privacy Policy.",
       "s3Title": "3. User uploads",
@@ -571,7 +581,9 @@
       "s4Title": "4. Infringement reports",
       "s4Body": "Use Support (copyright) or content report reason copyright.",
       "s5Title": "5. Trademarks",
-      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer."
+      "s5Body": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
+      "s6Title": "6. UIフォント・アイコン",
+      "s6Body": "UIは Inter（SIL Open Font License）と Lucide アイコンを使用します。ライセンスファイルのないメーカー実写・ワードマークPNGはカタログに出さず、オリジナルSVGまたはプレースホルダーに置き換えます。"
     },
     "aiTitle": "AI & health disclaimer",
     "aiLead": "Reference-only notices for recommendations, insights, and Online PT.",

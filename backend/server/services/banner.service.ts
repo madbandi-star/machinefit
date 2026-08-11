@@ -187,7 +187,7 @@ export const bannerService = {
       bannerId: body.bannerId,
       slotKey: body.slotKey,
       eventType: body.eventType,
-      userId,
+      userId: null,
       sessionId: body.sessionId,
     });
   },

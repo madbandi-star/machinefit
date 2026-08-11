@@ -60,6 +60,11 @@ export async function verifyGym(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = verifyGymSchema.parse(req.body);
   const gym = await adminService.verifyGym(getParam(req.params.id), input, req.user.userId);
+  writeAdminAudit(req, {
+    action: 'admin.gym.verify',
+    targetType: 'gym',
+    targetId: getParam(req.params.id),
+  });
   res.json({ success: true, data: gym });
 }
 
@@ -70,7 +75,9 @@ export async function listBrands(_req: Request, res: Response): Promise<void> {
 
 export async function updateBrand(req: Request, res: Response): Promise<void> {
   const input = toggleActiveSchema.parse(req.body);
-  const brand = adminService.updateBrand(getParam(req.params.id), input);
+  const id = getParam(req.params.id);
+  const brand = adminService.updateBrand(id, input);
+  writeAdminAudit(req, { action: 'admin.brand.update', targetType: 'brand', targetId: id });
   res.json({ success: true, data: brand });
 }
 
@@ -81,7 +88,9 @@ export async function listMachines(_req: Request, res: Response): Promise<void> 
 
 export async function updateMachine(req: Request, res: Response): Promise<void> {
   const input = toggleActiveSchema.parse(req.body);
-  const machine = adminService.updateMachine(getParam(req.params.id), input);
+  const id = getParam(req.params.id);
+  const machine = adminService.updateMachine(id, input);
+  writeAdminAudit(req, { action: 'admin.machine.update', targetType: 'machine', targetId: id });
   res.json({ success: true, data: machine });
 }
 
@@ -92,7 +101,9 @@ export async function listPosts(_req: Request, res: Response): Promise<void> {
 
 export async function moderatePost(req: Request, res: Response): Promise<void> {
   const input = moderatePostSchema.parse(req.body);
-  const post = adminService.moderatePost(getParam(req.params.id), input);
+  const id = getParam(req.params.id);
+  const post = adminService.moderatePost(id, input);
+  writeAdminAudit(req, { action: 'admin.post.moderate', targetType: 'post', targetId: id });
   res.json({ success: true, data: post });
 }
 
@@ -134,12 +145,22 @@ export async function mergeMachineRequestGroups(req: Request, res: Response): Pr
     input.toBrandName,
     input.toMachineName
   );
+  writeAdminAudit(req, {
+    action: 'admin.machine_request.merge',
+    targetType: 'machine_request_group',
+    meta: {
+      from: `${input.fromBrandName}/${input.fromMachineName}`,
+      to: `${input.toBrandName}/${input.toMachineName}`,
+    },
+  });
   res.json({ success: true, data: result });
 }
 
 export async function updateMachineRequest(req: Request, res: Response): Promise<void> {
   const input = updateMachineRequestAdminSchema.parse(req.body);
-  const result = await machineRequestAdminService.updateRequest(getParam(req.params.id), input);
+  const id = getParam(req.params.id);
+  const result = await machineRequestAdminService.updateRequest(id, input);
+  writeAdminAudit(req, { action: 'admin.machine_request.update', targetType: 'machine_request', targetId: id });
   res.json({ success: true, data: result });
 }
 
@@ -151,7 +172,9 @@ export async function listReports(_req: Request, res: Response): Promise<void> {
 export async function resolveReport(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = resolveReportSchema.parse(req.body);
-  const report = await adminService.resolveReport(getParam(req.params.id), input, req.user.userId);
+  const id = getParam(req.params.id);
+  const report = await adminService.resolveReport(id, input, req.user.userId);
+  writeAdminAudit(req, { action: 'admin.report.resolve', targetType: 'report', targetId: id });
   res.json({ success: true, data: report });
 }
 
@@ -166,11 +189,9 @@ export async function listOwnerApplications(req: Request, res: Response): Promis
 export async function reviewOwnerApplication(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = reviewOwnerApplicationSchema.parse(req.body);
-  const item = await ownerService.reviewApplication(
-    getParam(req.params.id),
-    req.user.userId,
-    input
-  );
+  const id = getParam(req.params.id);
+  const item = await ownerService.reviewApplication(id, req.user.userId, input);
+  writeAdminAudit(req, { action: 'admin.owner_application.review', targetType: 'owner_application', targetId: id });
   res.json({ success: true, data: item });
 }
 
@@ -185,11 +206,13 @@ export async function listTrainerApplications(req: Request, res: Response): Prom
 export async function reviewTrainerApplication(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const input = reviewTrainerApplicationSchema.parse(req.body);
-  const item = await trainerApplicationService.reviewApplication(
-    getParam(req.params.id),
-    req.user.userId,
-    input
-  );
+  const id = getParam(req.params.id);
+  const item = await trainerApplicationService.reviewApplication(id, req.user.userId, input);
+  writeAdminAudit(req, {
+    action: 'admin.trainer_application.review',
+    targetType: 'trainer_application',
+    targetId: id,
+  });
   res.json({ success: true, data: item });
 }
 
@@ -207,5 +230,10 @@ export async function gymInventoryAction(req: Request, res: Response): Promise<v
   } else {
     await gymInventoryService.adminForceDelete(itemId);
   }
+  writeAdminAudit(req, {
+    action: `admin.gym_inventory.${input.action}`,
+    targetType: 'gym_machine',
+    targetId: itemId,
+  });
   res.json({ success: true, data: { message: input.action === 'restore' ? 'Restored' : 'Deleted' } });
 }

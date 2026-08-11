@@ -614,4 +614,14 @@ export const bannerRepository = {
       })),
     }));
   },
+
+  async deleteEventsOlderThan(days: number): Promise<number> {
+    const pool = getPool();
+    if (!pool || days <= 0) return 0;
+    const result = await pool.query(
+      `DELETE FROM banner_events WHERE created_at < NOW() - ($1::text || ' days')::interval`,
+      [String(days)]
+    );
+    return result.rowCount ?? 0;
+  },
 };

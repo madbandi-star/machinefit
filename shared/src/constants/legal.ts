@@ -7,13 +7,13 @@
  * commerce/community/copyright/ai/security/illegalUse are display-only (footer/legal pages).
  */
 export const LEGAL_DOC_VERSIONS = {
-  terms: '2026-08-10',
-  privacy: '2026-08-13',
+  terms: '2026-08-14',
+  privacy: '2026-08-14',
   location: '2026-08-11',
   marketing: '2026-08-10',
-  commerce: '2026-08-10',
+  commerce: '2026-08-14',
   community: '2026-08-10',
-  copyright: '2026-08-10',
+  copyright: '2026-08-14',
   ai: '2026-08-10',
   security: '2026-08-12',
   /** Display-only notice — not part of consent re-check. */

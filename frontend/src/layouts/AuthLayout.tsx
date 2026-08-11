@@ -1,7 +1,9 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import { LegalFooter } from '@/components/layout/LegalFooter/LegalFooter';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/layout.css';
 import '@/styles/auth.css';
+import '@/styles/legal.css';
 
 export function AuthLayout() {
   const location = useLocation();
@@ -22,6 +24,7 @@ export function AuthLayout() {
         >
           <Outlet />
         </div>
+        <LegalFooter compact />
       </main>
     </div>
   );

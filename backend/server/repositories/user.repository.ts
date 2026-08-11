@@ -1,5 +1,6 @@
 import {
   LEGAL_DOC_VERSIONS,
+  yearsSinceBirthDate,
   type RoleCode,
   type User,
   type Gender,
@@ -90,7 +91,7 @@ function mapUser(row: UserRow): User {
     heightCm: row.height_cm ? parseFloat(row.height_cm) : undefined,
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
     experienceLevel: row.experience_level as User['experienceLevel'],
-    age: row.age ?? undefined,
+    age: yearsSinceBirthDate(normalizeBirthDate(row.birth_date)) ?? row.age ?? undefined,
     birthDate: normalizeBirthDate(row.birth_date),
     birthTime: normalizeBirthTime(row.birth_time),
     birthTimeUnknown: Boolean(row.birth_time_unknown),

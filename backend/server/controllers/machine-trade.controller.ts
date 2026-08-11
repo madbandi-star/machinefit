@@ -114,6 +114,8 @@ export async function republishTrade(req: Request, res: Response): Promise<void>
 export async function getImage(req: Request, res: Response): Promise<void> {
   const variant = req.query.variant === 'full' ? 'full' : 'thumb';
   const imageId = getParam(req.params.imageId);
+  const { assertMediaAccess } = await import('../utils/media-token.util.js');
+  assertMediaAccess('trade', imageId, req.query.mexp, req.query.msig);
   const meta = await machineTradeService.getImageMeta(imageId, variant);
   if (!meta) throw new AppError(404, 'NOT_FOUND', 'Image not found');
   const etag = `"mti-${meta.etagToken}"`;

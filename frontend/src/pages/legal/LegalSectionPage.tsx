@@ -65,7 +65,7 @@ const DOC_META: Record<
   copyright: {
     titleKey: 'legal.copyrightTitle',
     leadKey: 'legal.copyrightLead',
-    sections: ['s1', 's2', 's3', 's4', 's5'],
+    sections: ['s1', 's2', 's3', 's4', 's5', 's6'],
     versionKey: 'copyright',
     nav: [{ to: ROUTES.SUPPORT, labelKey: 'support.title' }],
   },

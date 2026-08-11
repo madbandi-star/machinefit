@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BannerSlotKey, PublicBanner } from '@machinefit/shared';
 import { bannerApi } from '@/api/banner.api';
 import { SponsoredBadge } from '@/components/compliance/LegalDisclaimerBanner';
+import { useAuthStore } from '@/store/auth.store';
 import '@/styles/banners.css';
 
 function sessionId(): string {
@@ -59,6 +60,7 @@ interface BannerSlotProps {
 export function BannerSlot({ slot, maxVisible = 1, className }: BannerSlotProps) {
   const regionId = useId();
   const impressed = useRef(new Set<string>());
+  const marketingOptIn = useAuthStore((s) => Boolean(s.user?.marketingOptIn));
 
   const { data: banners = [] } = useQuery({
     queryKey: ['banners', 'public', slot],
@@ -66,21 +68,23 @@ export function BannerSlot({ slot, maxVisible = 1, className }: BannerSlotProps)
       const res = await bannerApi.listPublic(slot);
       return res.data.data?.banners ?? [];
     },
+    enabled: marketingOptIn,
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 
-  const visible = banners.slice(0, Math.max(1, maxVisible));
+  const visible = marketingOptIn ? banners.slice(0, Math.max(1, maxVisible)) : [];
 
   useEffect(() => {
+    if (!marketingOptIn) return;
     for (const banner of visible) {
       if (impressed.current.has(banner.id)) continue;
       impressed.current.add(banner.id);
       trackEvent(banner, 'impression');
     }
-  }, [visible]);
+  }, [visible, marketingOptIn]);
 
-  if (visible.length === 0) return null;
+  if (!marketingOptIn || visible.length === 0) return null;
 
   return (
     <aside

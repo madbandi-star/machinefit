@@ -83,12 +83,20 @@ async function verifyAppleIdToken(idToken: string, nonce?: string): Promise<Veri
   if (!nonce) {
     throw new AppError(400, 'OAUTH_NONCE_REQUIRED', 'Apple login requires nonce');
   }
+  const { createHash } = await import('node:crypto');
+  const nonceSha256 = createHash('sha256').update(nonce).digest('hex');
   try {
     const { payload } = await jwtVerify(idToken, appleJwks, {
       issuer: 'https://appleid.apple.com',
       audience: clientId,
       nonce,
-    });
+    }).catch(async () =>
+      jwtVerify(idToken, appleJwks, {
+        issuer: 'https://appleid.apple.com',
+        audience: clientId,
+        nonce: nonceSha256,
+      })
+    );
     const sub = typeof payload.sub === 'string' ? payload.sub : null;
     if (!sub) {
       throw new AppError(401, 'OAUTH_INVALID_TOKEN', 'Apple token missing subject');

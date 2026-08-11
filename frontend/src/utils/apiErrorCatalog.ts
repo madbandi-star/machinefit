@@ -26,6 +26,7 @@ const CODE_TO_KEY: Record<string, string> = {
   AGE_RESTRICTED: 'errors.ageRestricted',
   USAGE_LIMIT: 'errors.usageLimit',
   PLAN_LIMIT: 'errors.usageLimit',
+  CSRF_REJECTED: 'errors.csrfRejected',
 };
 
 export function translateApiErrorCode(code: string | undefined, t: TFunction): string | null {

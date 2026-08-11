@@ -38,6 +38,19 @@
   font-weight: 600;
 }
 
+.legal-footer--landing {
+  margin-top: auto;
+  background: transparent;
+}
+
+.legal-footer__cookies {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-muted, #9ca3af);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
 .legal-footer {
   display: grid;
   gap: 0.65rem;
