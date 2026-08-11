@@ -1,17 +1,16 @@
-﻿# Test handoff — My Page section rename
+﻿# Test handoff — My Page community section order
 
 ## Summary
-My Page section title `myPage.explore` is now 커뮤니티 (Community / コミュニティ / 社区), not 더보기.
+My Page section order is now 머신핏 인사이트 → 커뮤니티 → 개인설정.
 
 ## Test focus
-1. My Page: heading under account/explore block reads 커뮤니티
-2. EN locale: Community
+1. Scroll My Page: Community sits between Insights and Personal settings
 
 ## as-is → to-be
-- as-is: 더보기
-- to-be: 커뮤니티
+- as-is: Insights → Personal settings → Community
+- to-be: Insights → Community → Personal settings
 
 ## Fast checks
 ```
-rg "explore" frontend/src/i18n/locales/ko/common.json
+rg "quickLinks|explore|personalSettings" frontend/src/pages/my-page/MyPage.tsx
 ```

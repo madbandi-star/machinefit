@@ -1,17 +1,12 @@
 {
-  "title": "Rename My Page 더보기 to 커뮤니티",
-  "summary": "myPage.explore label is 커뮤니티 / Community in all locales.",
+  "title": "Move Community between Insights and Settings",
+  "summary": "My Page: 머신핏 인사이트 then 커뮤니티 then 개인설정.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
-  ],
-  "testFocus": ["My Page section title is 커뮤니티"],
-  "fastChecks": ["rg '\"explore\": \"커뮤니티\"' frontend/src/i18n/locales/ko/common.json"],
-  "productionChecks": ["Pages My Page heading"],
+  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
+  "testFocus": ["Section order Insights → Community → Personal settings"],
+  "fastChecks": ["rg myPage.explore frontend/src/pages/my-page/MyPage.tsx"],
+  "productionChecks": ["Pages My Page scroll order"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Section titled 더보기",
-  "toBe": "Section titled 커뮤니티"
+  "asIs": "Community after personal settings",
+  "toBe": "Community between insights and personal settings"
 }

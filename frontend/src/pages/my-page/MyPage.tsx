@@ -212,35 +212,6 @@ export function MyPage() {
       </section>
 
       <section className="my-page-section">
-        <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
-        <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
-          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
-          {showPhotoBoardAndBackup ? (
-            <ListNavLink
-              to={ROUTES.DATA_MANAGEMENT}
-              label={t('myPage.dataManagement')}
-              icon="history"
-            />
-          ) : null}
-          {showAboveMember ? (
-            <ListNavLink
-              to={ROUTES.MY_GYMS}
-              label={t(
-                isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
-              )}
-              icon="building"
-            />
-          ) : null}
-          {showAboveMember ? (
-            <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsManage')} icon="users" />
-          ) : null}
-          {showAboveMember ? (
-            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} icon="bell" />
-          ) : null}
-        </nav>
-      </section>
-
-      <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.explore')}</h3>
         <nav className="list-nav" aria-label={t('myPage.explore')}>
           {SHOW_GYMS_LINK && (
@@ -267,6 +238,35 @@ export function MyPage() {
             label={tc('templateShare.myTemplates')}
             icon="history"
           />
+        </nav>
+      </section>
+
+      <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
+          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
+          {showPhotoBoardAndBackup ? (
+            <ListNavLink
+              to={ROUTES.DATA_MANAGEMENT}
+              label={t('myPage.dataManagement')}
+              icon="history"
+            />
+          ) : null}
+          {showAboveMember ? (
+            <ListNavLink
+              to={ROUTES.MY_GYMS}
+              label={t(
+                isTrainer ? 'myPage.gymMemberManage' : 'myPage.gymMemberManageMember'
+              )}
+              icon="building"
+            />
+          ) : null}
+          {showAboveMember ? (
+            <ListNavLink to={ROUTES.FRIENDS} label={t('myPage.friendsManage')} icon="users" />
+          ) : null}
+          {showAboveMember ? (
+            <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} icon="bell" />
+          ) : null}
         </nav>
       </section>
 
