@@ -2,6 +2,7 @@ export * from './unit-converter.js';
 export * from './machine-code.js';
 export * from './utf8-bytes.js';
 export * from './age-from-birth-date.js';
+export * from './redact-geo-url.js';
 export * from './recommend-weight.js';
 export * from './recommend-volume.js';
 export * from './daily-insights.js';

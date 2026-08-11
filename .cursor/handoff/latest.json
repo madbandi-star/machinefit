@@ -1,35 +1,46 @@
 {
-  "title": "Age 14 server gate and expanded withdraw purge",
-  "summary": "Platform age/birthDate must be 14+. Gym facility members exempt. Withdrawal 30-day purge covers UGC, trades, PT, support, templates, owner gyms, storage; legal-hold rows kept and disclosed.",
+  "title": "Stop collecting member GPS",
+  "summary": "MachineFit no longer reads browser geolocation, does not send user coordinates to the API, and does not store GPS on user_locations. Region (시군구) is manual. Facility catalog coords unchanged.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "shared/src/utils/age-from-birth-date.ts",
-    "shared/src/validators/user.schema.ts",
-    "shared/src/validators/gym-member.schema.ts",
+    "frontend/src/pages/gym-finder/GymFinderPage.tsx",
+    "frontend/src/components/location/LocationPicker/LocationPicker.tsx",
+    "frontend/src/components/settings/HomeGymField/HomeGymField.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
+    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
+    "frontend/src/api/index.ts",
+    "frontend/src/app/sentry.ts",
+    "backend/server/routes/gym.routes.ts",
+    "backend/server/routes/location.routes.ts",
+    "backend/server/controllers/gym.controller.ts",
+    "backend/server/controllers/location.controller.ts",
+    "backend/server/services/gym.service.ts",
+    "backend/server/services/location.service.ts",
+    "backend/server/repositories/gym-directory.repository.ts",
+    "backend/server/middlewares/error.middleware.ts",
+    "backend/server/ops/sentry.ts",
+    "shared/src/utils/redact-geo-url.ts",
     "shared/src/constants/legal.ts",
-    "database/migrations/118_users_age_min_14.sql",
-    "backend/server/services/user.service.ts",
-    "backend/server/services/privacy-retention.service.ts",
-    "backend/server/services/storage.service.ts",
+    "database/migrations/119_clear_user_gps_coordinates.sql",
     "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json",
-    "docs/privacy-data-inventory.md"
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Under-14 birthDate on profile returns 400",
-    "Gym member child DOB still saves",
-    "Privacy and withdraw copy match purge keep/delete"
+    "Gym Finder has no Near Me / GPS; region dropdown search still works",
+    "Settings location save never sends lat/lng",
+    "GET /gyms/nearby and POST /locations/reverse-geocode are gone (404)",
+    "PUT /locations/me with lat/lng stores null GPS",
+    "Signup has no GPS location consent checkbox"
   ],
   "fastChecks": [
-    "rg -n \"MIN_PLATFORM_AGE|users_age_check|removeUserOwnedObjects\" shared database backend"
+    "rg -n \"getCurrentPosition|navigator.geolocation|/gyms/nearby|reverse-geocode\" frontend backend --glob \"*.{ts,tsx}\" | rg -v \"location.repository|reverseGeocodeSchema\""
   ],
   "productionChecks": [
-    "Render applies migration 118 on boot",
-    "Privacy version bump 2026-08-11 triggers reconsent"
+    "Render applies migration 119 (null user_locations GPS)",
+    "Pages: Gym Finder has no 내 주변 button"
   ],
-  "deploy": { "expected": "Push main; Render backend for migration + purge; Pages for copy" },
-  "asIs": "Age 13 CHECK; incomplete 30-day purge vs privacy text",
-  "toBe": "14+ account gate; purge aligned with policy"
+  "deploy": { "expected": "Push main; Pages FE; Render BE+migration 119" },
+  "asIs": "Browser GPS sent to nearby/reverse-geocode and stored on user_locations",
+  "toBe": "No member GPS collect/store/send; manual region only"
 }

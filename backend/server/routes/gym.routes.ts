@@ -8,7 +8,6 @@ export const gymRouter = Router();
 
 gymRouter.get('/', gymController.listGyms);
 gymRouter.get('/directory', searchRateLimit, gymController.searchGymDirectory);
-gymRouter.get('/nearby', searchRateLimit, gymController.nearbyGyms);
 gymRouter.get('/:gymId', gymController.getGym);
 gymRouter.get('/:gymId/machines', gymController.getGymMachines);
 

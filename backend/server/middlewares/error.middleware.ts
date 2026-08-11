@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import { redactGeoFromUrl } from '@machinefit/shared';
 import { logger } from '../utils/logger.js';
 
 export class AppError extends Error {
@@ -53,7 +54,7 @@ export function errorMiddleware(
       logger.error('AppError', {
         requestId,
         method: req.method,
-        url: req.originalUrl,
+        url: redactGeoFromUrl(req.originalUrl),
         userId,
         ip: req.ip,
         code: err.code,
@@ -65,7 +66,7 @@ export function errorMiddleware(
           captureSentryException(err, {
             requestId,
             method: req.method,
-            url: req.originalUrl,
+            url: redactGeoFromUrl(req.originalUrl),
             userId,
             statusCode: err.statusCode,
             code: err.code,
@@ -103,7 +104,7 @@ export function errorMiddleware(
   logger.error('Unhandled API error', {
     requestId,
     method: req.method,
-    url: req.originalUrl,
+    url: redactGeoFromUrl(req.originalUrl),
     userId,
     ip: req.ip,
     message: err.message,
@@ -116,7 +117,7 @@ export function errorMiddleware(
       captureSentryException(err, {
         requestId,
         method: req.method,
-        url: req.originalUrl,
+        url: redactGeoFromUrl(req.originalUrl),
         userId,
         durationMs,
       })
@@ -137,7 +138,7 @@ export function errorMiddleware(
                 stack: err.stack,
                 severity: 'high',
                 source: 'backend',
-                url: req.originalUrl,
+                url: redactGeoFromUrl(req.originalUrl),
                 fingerprint: requestId ? `req:${requestId}` : undefined,
               },
               meta: {

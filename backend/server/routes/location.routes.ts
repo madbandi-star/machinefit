@@ -9,7 +9,6 @@ locationRouter.get('/countries', locationController.listCountries);
 locationRouter.get('/countries/:countryCode/states', locationController.listStates);
 locationRouter.get('/states/:stateId/cities', locationController.listCities);
 locationRouter.get('/cities/:cityId/districts', locationController.listDistricts);
-locationRouter.post('/reverse-geocode', locationController.reverseGeocode);
 
 locationRouter.get('/me', authMiddleware, locationController.getMyLocation);
 locationRouter.put('/me', authMiddleware, locationController.upsertMyLocation);

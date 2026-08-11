@@ -9,7 +9,7 @@
 export const LEGAL_DOC_VERSIONS = {
   terms: '2026-08-10',
   privacy: '2026-08-11',
-  location: '2026-08-10',
+  location: '2026-08-11',
   marketing: '2026-08-10',
   commerce: '2026-08-10',
   community: '2026-08-10',

@@ -298,7 +298,6 @@ export function TradeWritePage() {
               setRegionTouched(false);
             }}
             showDistrict
-            showGps
             required={false}
           />
         </div>

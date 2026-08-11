@@ -9,7 +9,6 @@ import {
   FileText,
   Lock,
   Mail,
-  MapPin,
   ShieldCheck,
   ShieldUser,
 } from 'lucide-react';
@@ -137,17 +136,13 @@ export function TermsAgreementPage() {
           agreeAll: value,
           agreeTerms: value,
           agreePrivacy: value,
-          agreeLocation: value,
+          agreeLocation: false,
           agreeMarketing: value,
           agreeAge14: value,
         };
       }
       const requiredAndOptional =
-        next.agreeTerms &&
-        next.agreePrivacy &&
-        next.agreeLocation &&
-        next.agreeMarketing &&
-        next.agreeAge14;
+        next.agreeTerms && next.agreePrivacy && next.agreeMarketing && next.agreeAge14;
       return { ...next, agreeAll: requiredAndOptional };
     });
   };
@@ -175,7 +170,7 @@ export function TermsAgreementPage() {
         agreeTerms: checks.agreeTerms,
         agreePrivacy: checks.agreePrivacy,
         agreeAge14: checks.agreeAge14,
-        agreeLocation: checks.agreeLocation,
+        agreeLocation: false,
         agreeMarketing: checks.agreeMarketing,
         termsVersion: LEGAL_DOC_VERSIONS.terms,
         privacyVersion: LEGAL_DOC_VERSIONS.privacy,
@@ -273,15 +268,6 @@ export function TermsAgreementPage() {
           checked={checks.agreePrivacy}
           onChange={(v) => setField('agreePrivacy', v)}
           checkLabel={`${t('auth.required')} ${t('legal.privacyTitle')}`}
-        />
-        <ConsentRow
-          icon={<MapPin size={18} strokeWidth={2} />}
-          required={false}
-          title={t('legal.locationTitle')}
-          docTo={ROUTES.LEGAL_LOCATION}
-          checked={checks.agreeLocation}
-          onChange={(v) => setField('agreeLocation', v)}
-          checkLabel={`${t('auth.optional')} ${t('legal.locationTitle')}`}
         />
         <ConsentRow
           icon={<Mail size={18} strokeWidth={2} />}

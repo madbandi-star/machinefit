@@ -3,7 +3,6 @@ import type {
   LocationCountry,
   LocationDistrict,
   LocationState,
-  ReverseGeocodeResult,
   UserLocation,
   UserLocationUpsertInput,
 } from '@machinefit/shared';
@@ -36,24 +35,8 @@ export const locationService = {
     input: UserLocationUpsertInput,
     locale = 'ko'
   ): Promise<UserLocation> {
-    const hasCoordinates =
-      input.latitude != null &&
-      input.longitude != null &&
-      Number.isFinite(input.latitude) &&
-      Number.isFinite(input.longitude);
-
-    // Precise GPS storage requires location_opt_in (compliance). Manual region pick without coords is allowed.
-    if (hasCoordinates) {
-      const { userRepository } = await import('../repositories/user.repository.js');
-      const user = await userRepository.findById(userId);
-      if (!user?.locationOptIn) {
-        throw new AppError(
-          403,
-          'LOCATION_CONSENT_REQUIRED',
-          'Location consent is required to store GPS coordinates'
-        );
-      }
-    }
+    // Never persist member GPS. Region hierarchy only.
+    input = { ...input, latitude: null, longitude: null };
 
     if (input.countryCode) {
       const states = await locationRepository.listStates(input.countryCode);
@@ -72,14 +55,6 @@ export const locationService = {
 
   clearUserLocation(userId: string): Promise<UserLocation> {
     return locationRepository.deleteUserLocation(userId);
-  },
-
-  reverseGeocode(
-    latitude: number,
-    longitude: number,
-    locale = 'ko'
-  ): Promise<ReverseGeocodeResult | null> {
-    return locationRepository.reverseGeocode(latitude, longitude, locale);
   },
 
   adminUpsertCountry: locationRepository.adminUpsertCountry.bind(locationRepository),

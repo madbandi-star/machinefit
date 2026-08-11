@@ -3,7 +3,7 @@
  * No-ops when VITE_SENTRY_DSN is unset. Never throws into app boot.
  */
 import { useEffect } from 'react';
-import type { User } from '@machinefit/shared';
+import { redactGeoFromUrl, type User } from '@machinefit/shared';
 
 const dsn = (import.meta.env.VITE_SENTRY_DSN as string | undefined)?.trim();
 const envName =
@@ -28,6 +28,12 @@ function scrubEvent(event: Record<string, unknown>): Record<string, unknown> | n
     if (request) {
       delete request.cookies;
       delete request.data;
+      if (typeof request.url === 'string') {
+        request.url = redactGeoFromUrl(request.url);
+      }
+      if (typeof request.query_string === 'string') {
+        request.query_string = redactGeoFromUrl(`?${request.query_string}`).replace(/^\?/, '');
+      }
       const headers = request.headers;
       if (headers && typeof headers === 'object') {
         for (const key of Object.keys(headers as Record<string, unknown>)) {
@@ -88,7 +94,13 @@ export async function initFrontendSentry(): Promise<void> {
           if (data) {
             delete data.request_body;
             delete data.response_body;
+            if (typeof data.url === 'string') {
+              data.url = redactGeoFromUrl(data.url);
+            }
           }
+        }
+        if (typeof breadcrumb.message === 'string') {
+          breadcrumb.message = redactGeoFromUrl(breadcrumb.message);
         }
         return breadcrumb;
       },

@@ -1,16 +1,20 @@
-﻿# Test handoff — Age 14 server gate + withdraw purge
+﻿# Test handoff — Stop member GPS collect/store/send
 
 ## Summary
-Platform accounts now reject under-14 age/birthDate (DB CHECK + Zod). Gym facility members may still be under 14 (documented). 30-day withdraw purge now deletes trades/PT/support/templates/owner gym rosters/storage, while keeping payments, consents, trial ledger.
+User current location (GPS) is no longer read in the browser, not sent to MachineFit APIs, and not stored on `user_locations`. Gym search uses name + 시군구 dropdown. Facility catalog coordinates are unchanged.
 
 ## Test focus
-1. PATCH /users/me with birthDate of a 13-year-old → 400
-2. age: 14 + child birthDate → 400
-3. Gym member create with child birthDate still allowed
-4. Privacy /privacy s3 lists expanded purge + trial ledger keep
-5. Settings withdraw confirm lists deleted vs kept
-6. After Render migrate 118, users.age < 14 cannot be stored
+1. Gym Finder: no 「내 주변」; region filter + search still returns gyms
+2. Settings 지역·헬스장: no GPS button / locationOptIn checkbox; save works with dropdown
+3. `GET /api/v1/gyms/nearby` → 404
+4. `POST /api/v1/locations/reverse-geocode` → 404
+5. `PUT /locations/me` with latitude/longitude still saves region only (GPS null)
+6. Signup terms: no GPS location consent row
+7. After Render migrate 119, existing `user_locations` GPS columns are null
 
 ## as-is → to-be
-- as-is: checkbox-only age; purge missed gym/trades/PT/files
-- to-be: server 14+ for accounts; purge matches privacy copy
+- as-is: GPS to nearby/reverse-geocode + optional DB store
+- to-be: no member GPS; manual region only
+
+## Fast checks
+`rg -n "getCurrentPosition|navigator.geolocation|/gyms/nearby" frontend backend --glob "*.{ts,tsx}"`

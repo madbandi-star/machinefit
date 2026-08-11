@@ -449,7 +449,7 @@ export const locationRepository = {
     return result.rowCount ?? 0;
   },
 
-  /** Nearest district (dong) when available, else nearest city within radius. */
+  /** Unused by HTTP: member GPS is not accepted. Kept for catalog admin tools if needed. */
   async reverseGeocode(lat: number, lng: number, locale = 'ko'): Promise<ReverseGeocodeResult | null> {
     const pool = getPool();
     if (!pool) return null;

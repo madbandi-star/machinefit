@@ -15,14 +15,12 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi, machineApi } from '@/api';
 import { SearchableSelect } from '@/components/form/SearchableSelect/SearchableSelect';
 import { getLocalizedName } from '@/utils/localizedName';
-import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/gym.css';
 
 export function GymFinderPage() {
   const { t, i18n } = useTranslation('gyms');
   const [searchParams, setSearchParams] = useSearchParams();
-  const showToast = useUIStore((s) => s.showToast);
 
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [machineCode, setMachineCode] = useState(searchParams.get('machineCode') ?? '');
@@ -33,8 +31,6 @@ export function GymFinderPage() {
     cityId: searchParams.get('cityId'),
     districtId: searchParams.get('districtId'),
   }));
-  const [nearbyCoords, setNearbyCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [locating, setLocating] = useState(false);
 
   const { data: machines } = useQuery({
     queryKey: QUERY_KEYS.machines,
@@ -53,16 +49,8 @@ export function GymFinderPage() {
       region.stateId,
       region.cityId,
       region.districtId,
-      nearbyCoords,
     ],
     queryFn: async () => {
-      if (nearbyCoords) {
-        const res = await gymApi.nearby(nearbyCoords.lat, nearbyCoords.lng, {
-          radius: 50,
-          machineCode: machineCode || undefined,
-        });
-        return { items: res.data.data, meta: { total: res.data.data.length } };
-      }
       const params: Record<string, string | number> = { limit: 20 };
       if (query) params.q = query;
       if (machineCode) params.machineCode = machineCode;
@@ -75,24 +63,6 @@ export function GymFinderPage() {
     },
   });
 
-  const handleNearMe = () => {
-    if (!navigator.geolocation) {
-      showToast(t('locationError'), 'error');
-      return;
-    }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setNearbyCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLocating(false);
-      },
-      () => {
-        showToast(t('locationError'), 'error');
-        setLocating(false);
-      }
-    );
-  };
-
   const machineSelectOptions = useMemo(
     () =>
       (machines ?? []).map((machine) => ({
@@ -103,7 +73,6 @@ export function GymFinderPage() {
   );
 
   const handleSearch = () => {
-    setNearbyCoords(null);
     const params = new URLSearchParams();
     if (query) params.set('q', query);
     if (machineCode) params.set('machineCode', machineCode);
@@ -130,7 +99,6 @@ export function GymFinderPage() {
             onChange={setRegion}
             showDistrict
             showVisibility={false}
-            showGps={false}
             required={false}
           />
         </div>
@@ -148,21 +116,6 @@ export function GymFinderPage() {
           <button className="btn btn--primary" onClick={handleSearch}>
             {t('actions.search')}
           </button>
-          <button
-            className="btn btn--secondary"
-            onClick={handleNearMe}
-            disabled={locating}
-          >
-            {locating ? t('locating') : t('nearMe')}
-          </button>
-          {nearbyCoords && (
-            <button
-              className="btn btn--secondary"
-              onClick={() => setNearbyCoords(null)}
-            >
-              ✕
-            </button>
-          )}
         </div>
       </div>
 

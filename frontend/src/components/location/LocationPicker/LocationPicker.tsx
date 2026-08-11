@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { LocationRef, LocationVisibility } from '@machinefit/shared';
@@ -23,11 +23,11 @@ interface LocationPickerProps {
   onChange: (value: LocationPickerValue) => void;
   showDistrict?: boolean;
   showVisibility?: boolean;
+  /** @deprecated User GPS is not collected. Ignored. */
   showGps?: boolean;
-  /** When false, GPS button asks for consent instead of reading coordinates. */
+  /** @deprecated User GPS is not collected. Ignored. */
   locationOptIn?: boolean;
   onNeedLocationConsent?: () => void;
-  /** Rendered above the GPS button (e.g. location consent checkbox). */
   beforeGps?: ReactNode;
   required?: boolean;
   disabled?: boolean;
@@ -71,18 +71,12 @@ export function LocationPicker({
   onChange,
   showDistrict = true,
   showVisibility = false,
-  showGps = true,
-  locationOptIn = true,
-  onNeedLocationConsent,
-  beforeGps,
   required = false,
   disabled = false,
 }: LocationPickerProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
   const isKr = value.countryCode === 'KR' || locale.startsWith('ko');
-  const [gpsBusy, setGpsBusy] = useState(false);
-  const [gpsError, setGpsError] = useState('');
 
   const labelState = isKr ? t('location.stateKr') : t('location.state');
   const labelCity = isKr ? t('location.cityKr') : t('location.city');
@@ -140,54 +134,6 @@ export function LocationPicker({
     locale,
   ]);
 
-  const handleGps = () => {
-    setGpsError('');
-    if (!locationOptIn) {
-      setGpsError(t('compliance.rights.locationConsentRequired'));
-      onNeedLocationConsent?.();
-      return;
-    }
-    if (!navigator.geolocation) {
-      setGpsError(t('location.gpsUnsupported'));
-      return;
-    }
-    setGpsBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const res = await locationApi.reverseGeocode({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          });
-          const hit = res.data.data;
-          if (!hit?.countryCode) {
-            setGpsError(t('location.gpsNoMatch'));
-            return;
-          }
-          onChange({
-            ...value,
-            countryCode: hit.countryCode,
-            stateId: hit.stateId,
-            cityId: hit.cityId,
-            districtId: hit.districtId,
-            districtName: hit.districtName ?? '',
-            latitude: hit.latitude ?? pos.coords.latitude,
-            longitude: hit.longitude ?? pos.coords.longitude,
-          });
-        } catch {
-          setGpsError(t('location.gpsFailed'));
-        } finally {
-          setGpsBusy(false);
-        }
-      },
-      () => {
-        setGpsBusy(false);
-        setGpsError(t('location.gpsDenied'));
-      },
-      { enableHighAccuracy: false, timeout: 12000 }
-    );
-  };
-
   const districts = districtsQuery.data ?? [];
   const hasDistrictCatalog = districts.length > 0;
 
@@ -213,6 +159,8 @@ export function LocationPicker({
               cityId: null,
               districtId: null,
               districtName: '',
+              latitude: null,
+              longitude: null,
             });
           }}
         >
@@ -242,6 +190,8 @@ export function LocationPicker({
               cityId: null,
               districtId: null,
               districtName: '',
+              latitude: null,
+              longitude: null,
             });
           }}
         >
@@ -269,6 +219,8 @@ export function LocationPicker({
               cityId: e.target.value || null,
               districtId: null,
               districtName: '',
+              latitude: null,
+              longitude: null,
             });
           }}
         >
@@ -296,6 +248,8 @@ export function LocationPicker({
                   ...value,
                   districtId: id,
                   districtName: hit ? nameOf(hit.name, locale) : '',
+                  latitude: null,
+                  longitude: null,
                 });
               }}
             >
@@ -318,6 +272,8 @@ export function LocationPicker({
                   ...value,
                   districtId: null,
                   districtName: e.target.value,
+                  latitude: null,
+                  longitude: null,
                 })
               }
               placeholder={t('location.districtNamePlaceholder')}
@@ -351,21 +307,6 @@ export function LocationPicker({
         </label>
       )}
 
-      {showGps && (
-        <div className="location-picker__gps">
-          {beforeGps}
-          <button
-            type="button"
-            className="btn btn--secondary btn--block"
-            disabled={disabled || gpsBusy}
-            onClick={handleGps}
-          >
-            {gpsBusy ? t('location.gpsLoading') : t('location.useCurrent')}
-          </button>
-          {gpsError && <p className="location-picker__error">{gpsError}</p>}
-          <p className="location-picker__hint">{t('location.gpsHint')}</p>
-        </div>
-      )}
     </div>
   );
 }

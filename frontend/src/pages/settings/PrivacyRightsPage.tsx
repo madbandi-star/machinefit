@@ -122,15 +122,6 @@ export function PrivacyRightsPage() {
         <label className="consent-row">
           <input
             type="checkbox"
-            checked={Boolean(p?.locationOptIn)}
-            disabled={consentMutation.isPending}
-            onChange={(e) => consentMutation.mutate({ locationOptIn: e.target.checked })}
-          />
-          <span>{t('compliance.rights.locationOptIn')}</span>
-        </label>
-        <label className="consent-row">
-          <input
-            type="checkbox"
             checked={p?.pushServiceOptIn !== false}
             disabled={consentMutation.isPending}
             onChange={(e) => consentMutation.mutate({ pushServiceOptIn: e.target.checked })}

@@ -75,11 +75,7 @@ export const gymDirectoryRepository = {
     const limit = query.limit;
     const q = query.q.trim();
     const brandFilter = query.brand?.trim() || null;
-    const hasCoords =
-      typeof query.latitude === 'number' &&
-      Number.isFinite(query.latitude) &&
-      typeof query.longitude === 'number' &&
-      Number.isFinite(query.longitude);
+    const hasCoords = false;
 
     if (!pool) {
       const lowered = q.toLowerCase();

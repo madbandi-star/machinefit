@@ -49,15 +49,4 @@ export const gymService = {
     return gymRepository.getMachines(gym.id);
   },
 
-  async nearby(lat: number, lng: number, radius = 10, machineCode?: string) {
-    const { items } = await gymRepository.findMany({
-      page: 1,
-      limit: 50,
-      lat,
-      lng,
-      radius,
-      machineCode,
-    });
-    return items;
-  },
 };

@@ -17,9 +17,6 @@ export interface HomeGymLocationFilter {
   stateId?: string | null;
   cityId?: string | null;
   districtId?: string | null;
-  /** When set (GPS or reverse-geocode), directory results sort by distance. */
-  latitude?: number | null;
-  longitude?: number | null;
 }
 
 interface HomeGymFieldProps {
@@ -60,22 +57,11 @@ export function HomeGymField({
     if (locationFilter?.cityId) params.cityId = locationFilter.cityId;
     if (locationFilter?.stateId) params.stateId = locationFilter.stateId;
     if (locationFilter?.countryCode) params.countryCode = locationFilter.countryCode;
-    if (
-      typeof locationFilter?.latitude === 'number' &&
-      Number.isFinite(locationFilter.latitude) &&
-      typeof locationFilter?.longitude === 'number' &&
-      Number.isFinite(locationFilter.longitude)
-    ) {
-      params.latitude = locationFilter.latitude;
-      params.longitude = locationFilter.longitude;
-    }
     return params;
   }, [
     locationFilter?.cityId,
     locationFilter?.countryCode,
     locationFilter?.districtId,
-    locationFilter?.latitude,
-    locationFilter?.longitude,
     locationFilter?.stateId,
   ]);
 

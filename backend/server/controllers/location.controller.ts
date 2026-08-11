@@ -4,7 +4,6 @@ import {
   adminLocationCountrySchema,
   adminLocationDistrictSchema,
   adminLocationStateSchema,
-  reverseGeocodeSchema,
   userLocationUpsertSchema,
 } from '@machinefit/shared';
 import { locationService } from '../services/location.service.js';
@@ -37,12 +36,6 @@ export async function listDistricts(req: Request, res: Response): Promise<void> 
   const cityId = String(req.params.cityId || '');
   if (!cityId) throw new AppError(400, 'VALIDATION_ERROR', 'cityId required');
   const data = await locationService.listDistricts(cityId);
-  res.json({ success: true, data });
-}
-
-export async function reverseGeocode(req: Request, res: Response): Promise<void> {
-  const body = reverseGeocodeSchema.parse(req.body);
-  const data = await locationService.reverseGeocode(body.latitude, body.longitude, localeOf(req));
   res.json({ success: true, data });
 }
 

@@ -4,6 +4,7 @@
  * Failures never take down the Express process.
  */
 import type { Express, ErrorRequestHandler } from 'express';
+import { redactGeoFromUrl } from '@machinefit/shared';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
 
@@ -23,6 +24,15 @@ function scrubEvent(event: {
     if (event.request) {
       delete event.request.cookies;
       delete event.request.data;
+      if (typeof event.request.url === 'string') {
+        event.request.url = redactGeoFromUrl(event.request.url);
+      }
+      if (typeof event.request.query_string === 'string') {
+        event.request.query_string = redactGeoFromUrl(`?${event.request.query_string}`).replace(
+          /^\?/,
+          ''
+        );
+      }
       const headers = event.request.headers;
       if (headers && typeof headers === 'object') {
         for (const key of Object.keys(headers as Record<string, unknown>)) {

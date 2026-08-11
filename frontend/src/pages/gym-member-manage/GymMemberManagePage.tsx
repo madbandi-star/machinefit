@@ -407,7 +407,6 @@ export function GymMemberManagePage() {
                       });
                     }}
                     showDistrict
-                    showGps
                     required
                   />
                 </div>
@@ -427,8 +426,6 @@ export function GymMemberManagePage() {
                       stateId: gymForm.location.stateId,
                       cityId: gymForm.location.cityId,
                       districtId: gymForm.location.districtId,
-                      latitude: gymForm.location.latitude,
-                      longitude: gymForm.location.longitude,
                     }}
                   />
                 </div>

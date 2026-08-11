@@ -37,7 +37,6 @@ import type {
   LocationCity,
   LocationDistrict,
   UserLocation,
-  ReverseGeocodeResult,
   UserLocationUpsertInput,
   LiveDashboardSnapshot,
   LiveRankingResponse,
@@ -465,8 +464,6 @@ export const gymApi = {
     cityId?: string;
     districtId?: string;
     countryCode?: string;
-    latitude?: number;
-    longitude?: number;
     brand?: string;
   }) =>
     apiClient.get<ApiResponse<PaginatedResponse<GymDirectoryEntry>>>('/gyms/directory', {
@@ -474,10 +471,6 @@ export const gymApi = {
     }),
   getById: (idOrSlug: string) =>
     apiClient.get<ApiResponse<GymDetail>>(`/gyms/${idOrSlug}`),
-  nearby: (lat: number, lng: number, params?: { radius?: number; machineCode?: string }) =>
-    apiClient.get<ApiResponse<Gym[]>>('/gyms/nearby', {
-      params: { lat, lng, ...params },
-    }),
   listInventory: (gymId: string, params?: { brandCode?: string; q?: string }) =>
     apiClient.get<ApiResponse<GymInventoryResponse>>(`/gyms/${gymId}/inventory`, { params }),
   addInventory: (
@@ -585,8 +578,6 @@ export const locationApi = {
     apiClient.get<ApiResponse<LocationCity[]>>(`/locations/states/${stateId}/cities`),
   districts: (cityId: string) =>
     apiClient.get<ApiResponse<LocationDistrict[]>>(`/locations/cities/${cityId}/districts`),
-  reverseGeocode: (body: { latitude: number; longitude: number }) =>
-    apiClient.post<ApiResponse<ReverseGeocodeResult | null>>('/locations/reverse-geocode', body),
   getMine: () => apiClient.get<ApiResponse<UserLocation>>('/locations/me'),
   upsertMine: (body: UserLocationUpsertInput) =>
     apiClient.put<ApiResponse<UserLocation>>('/locations/me', body),

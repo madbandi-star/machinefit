@@ -141,19 +141,6 @@ export function SettingsPage() {
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
 
-  const locationConsentMutation = useMutation({
-    mutationFn: (optIn: boolean) =>
-      import('@/api/compliance.api').then(({ complianceApi }) =>
-        complianceApi.updateConsents({ locationOptIn: optIn })
-      ),
-    onSuccess: (res) => {
-      const next = Boolean(res.data.data?.locationOptIn);
-      updateUser({ locationOptIn: next });
-      showToast(t('compliance.rights.saved'), 'success');
-    },
-    onError: () => showToast(t('errors.submitFailed'), 'error'),
-  });
-
   const deleteAccountMutation = useMutation({
     mutationFn: () => authApi.deactivateAccount(),
     onSuccess: () => {
@@ -216,8 +203,8 @@ export function SettingsPage() {
       districtId: loc.districtId,
       districtName: loc.districtName ?? '',
       postalCode: loc.postalCode ?? '',
-      latitude: loc.latitude ?? null,
-      longitude: loc.longitude ?? null,
+      latitude: null,
+      longitude: null,
       visibility: loc.visibility ?? 'gym',
     });
   }, [locationQuery.data]);
@@ -248,9 +235,8 @@ export function SettingsPage() {
           districtId: locationDraft.districtId,
           districtName: locationDraft.districtName || null,
           postalCode: locationDraft.postalCode || null,
-          // GPS coords require location_opt_in; otherwise save region hierarchy only.
-          latitude: user?.locationOptIn ? locationDraft.latitude : null,
-          longitude: user?.locationOptIn ? locationDraft.longitude : null,
+          latitude: null,
+          longitude: null,
           visibility: locationDraft.visibility ?? 'gym',
         });
       } else {
@@ -510,34 +496,6 @@ export function SettingsPage() {
             value={locationDraft}
             onChange={setLocationDraft}
             showDistrict
-            showGps
-            locationOptIn={Boolean(user?.locationOptIn)}
-            onNeedLocationConsent={() =>
-              showToast(t('compliance.rights.locationConsentRequired'), 'error')
-            }
-            beforeGps={
-              <label className="checkbox-label location-picker__consent">
-                <input
-                  type="checkbox"
-                  checked={Boolean(user?.locationOptIn)}
-                  disabled={locationConsentMutation.isPending}
-                  onChange={(e) => locationConsentMutation.mutate(e.target.checked)}
-                />
-                <span>
-                  {t('compliance.rights.locationOptIn')} (
-                  <a
-                    href={`#${ROUTES.LEGAL_LOCATION}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate(ROUTES.LEGAL_LOCATION);
-                    }}
-                  >
-                    {t('legal.locationTitle')}
-                  </a>
-                  )
-                </span>
-              </label>
-            }
             required={false}
           />
           <div className="form-stack" style={{ marginTop: 'var(--space-md)' }}>
@@ -549,8 +507,6 @@ export function SettingsPage() {
                 stateId: locationDraft.stateId,
                 cityId: locationDraft.cityId,
                 districtId: locationDraft.districtId,
-                latitude: locationDraft.latitude,
-                longitude: locationDraft.longitude,
               }}
             />
           </div>
