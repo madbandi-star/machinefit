@@ -11,7 +11,6 @@ import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/
 import { WorkoutMonthCalendar } from '@/components/my-page/WorkoutMonthCalendar/WorkoutMonthCalendar';
 import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
-import { SubscriptionPlanCard } from '@/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard';
 import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
 import { locationApi, userApi, authApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -161,8 +160,6 @@ export function MyPage() {
             </div>
           </dl>
         </div>
-
-        <SubscriptionPlanCard />
 
         <WorkoutMonthCalendar />
 

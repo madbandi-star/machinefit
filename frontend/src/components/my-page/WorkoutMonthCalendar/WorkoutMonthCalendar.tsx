@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
+import { Icon } from '@/components/icons/Icon';
 import { fetchWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -26,6 +27,7 @@ function monthRange(year: number, monthIndex: number): { from: string; to: strin
 /**
  * Monthly workout calendar for My Page.
  * Marks days that have existing workout logs; does not invent duration or alter save logic.
+ * Collapsed by default to keep the profile above the fold uncluttered.
  */
 export function WorkoutMonthCalendar() {
   const { t, i18n } = useTranslation();
@@ -34,6 +36,7 @@ export function WorkoutMonthCalendar() {
   const { activeGymId } = useActiveGym();
   const { activeMemberId, memberScopeReady } = useActiveMember();
 
+  const [expanded, setExpanded] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const now = new Date();
@@ -61,7 +64,7 @@ export function WorkoutMonthCalendar() {
         from: range.from,
         to: range.to,
       }),
-    enabled: canFetch,
+    enabled: canFetch && expanded,
     staleTime: 30_000,
   });
 
@@ -93,43 +96,67 @@ export function WorkoutMonthCalendar() {
   const showEmptyMessage = Boolean(selectedDate) && !datesWithData.has(selectedDate);
 
   return (
-    <section className="my-page-section mypage-workout-calendar" aria-labelledby="mypage-workout-calendar-title">
-      <h3 id="mypage-workout-calendar-title" className="my-page-section__title">
-        {t('myPage.workoutCalendar')}
-      </h3>
-      <p className="mypage-workout-calendar__desc">{t('myPage.workoutCalendarDesc')}</p>
-
-      {!canFetch ? (
-        <p className="mypage-workout-calendar__hint">{t('myPage.workoutCalendarNeedGym')}</p>
-      ) : (
-        <p className="mypage-workout-calendar__summary">
-          {t('myPage.workoutCalendarDays', { month: monthLabel, count: workoutDaysCount })}
-        </p>
-      )}
-
-      <div
-        className={[
-          'mypage-workout-calendar__panel',
-          isFetching && 'mypage-workout-calendar__panel--loading',
-        ]
-          .filter(Boolean)
-          .join(' ')}
+    <section
+      className={`my-page-section mypage-workout-calendar my-page-section--collapsible${
+        expanded ? ' my-page-section--expanded' : ''
+      }`}
+    >
+      <button
+        type="button"
+        className="my-page-section__toggle"
+        onClick={() => setExpanded((value) => !value)}
+        aria-expanded={expanded}
+        aria-controls="mypage-workout-calendar-body"
       >
-        <HistoryDateCalendar
-          datesWithData={datesWithData}
-          selectedDate={selectedDate}
-          onSelect={handleSelect}
-          locale={i18n.language}
-          allowEmptySelect
-          showPlanHints={false}
-          onVisibleMonthChange={handleVisibleMonthChange}
+        <h3 id="mypage-workout-calendar-title" className="my-page-section__title">
+          {t('myPage.workoutCalendar')}
+        </h3>
+        <Icon
+          name="chevronDown"
+          size={18}
+          className={`my-page-section__chevron${expanded ? ' my-page-section__chevron--open' : ''}`}
+          aria-hidden
         />
-      </div>
+        <span className="visually-hidden">{expanded ? t('collapse') : t('expand')}</span>
+      </button>
 
-      {canFetch && showEmptyMessage ? (
-        <p className="mypage-workout-calendar__empty" role="status">
-          {t('myPage.workoutCalendarNoLogs')}
-        </p>
+      {expanded ? (
+        <div id="mypage-workout-calendar-body">
+          <p className="mypage-workout-calendar__desc">{t('myPage.workoutCalendarDesc')}</p>
+
+          {!canFetch ? (
+            <p className="mypage-workout-calendar__hint">{t('myPage.workoutCalendarNeedGym')}</p>
+          ) : (
+            <p className="mypage-workout-calendar__summary">
+              {t('myPage.workoutCalendarDays', { month: monthLabel, count: workoutDaysCount })}
+            </p>
+          )}
+
+          <div
+            className={[
+              'mypage-workout-calendar__panel',
+              isFetching && 'mypage-workout-calendar__panel--loading',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            <HistoryDateCalendar
+              datesWithData={datesWithData}
+              selectedDate={selectedDate}
+              onSelect={handleSelect}
+              locale={i18n.language}
+              allowEmptySelect
+              showPlanHints={false}
+              onVisibleMonthChange={handleVisibleMonthChange}
+            />
+          </div>
+
+          {canFetch && showEmptyMessage ? (
+            <p className="mypage-workout-calendar__empty" role="status">
+              {t('myPage.workoutCalendarNoLogs')}
+            </p>
+          ) : null}
+        </div>
       ) : null}
     </section>
   );
