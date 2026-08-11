@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { mkdirSync } from 'node:fs';
-import { mkdir, writeFile, unlink, readFile } from 'node:fs/promises';
+import { mkdir, writeFile, unlink, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import WebSocket from 'ws';
@@ -359,6 +359,47 @@ export const storageService = {
       buffer,
       mimeType: data.type || mimeFromAudioPath(normalized),
     };
+  },
+
+  /** Best-effort delete of user-prefixed motivation audio (withdraw purge). */
+  async removeUserOwnedObjects(userId: string): Promise<number> {
+    const prefix = userId.replace(/[^a-zA-Z0-9-]/g, '');
+    if (!prefix || prefix !== userId) return 0;
+    let removed = 0;
+    const client = getSupabase();
+    if (client) {
+      try {
+        await ensureAudioBucket();
+        const { data } = await client.storage
+          .from(env.MOTIVATION_AUDIO_BUCKET)
+          .list(prefix, { limit: 1000 });
+        const paths = (data ?? [])
+          .map((f) => f.name)
+          .filter(Boolean)
+          .map((name) => `${prefix}/${name}`);
+        if (paths.length > 0) {
+          await client.storage.from(env.MOTIVATION_AUDIO_BUCKET).remove(paths);
+          removed += paths.length;
+        }
+      } catch {
+        /* ignore storage failures during purge */
+      }
+    }
+    try {
+      const dir = path.join(LOCAL_UPLOAD_ROOT, prefix);
+      const names = await readdir(dir);
+      for (const name of names) {
+        try {
+          await unlink(path.join(dir, name));
+          removed += 1;
+        } catch {
+          /* ignore */
+        }
+      }
+    } catch {
+      /* missing local dir */
+    }
+    return removed;
   },
 
   async deleteMotivationAudio(storagePath: string | null | undefined): Promise<void> {

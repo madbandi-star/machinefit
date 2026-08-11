@@ -19,17 +19,17 @@
 |--------|------|-----------|------|-----------|------|-----------|
 | 소셜 식별자·이메일 | 계정 인증 | OAuth | `auth_providers`, `users.email` | 탈퇴 시 계정 비활성·이메일 익명화, provider_email 제거(링크 유지로 재로그인 차단) | 본인·관리자 | Kakao/Google/Apple |
 | 표시명·아바타 URL | 프로필 표시 | OAuth/입력 | `users` | 탈퇴 시 익명화·NULL | 본인·공개 범위 | 호스팅/DB |
-| 성별·키·몸무게·나이 | 추천·기록 | 프로필 입력 | `users` | 탈퇴 시 NULL | 본인 | Supabase 등 |
-| 생년월일·출생시간 | 운세 등 | 프로필 입력 | `users.birth_*` | 탈퇴 시 NULL | 본인 | 동일 |
+| 성별·키·몸무게·나이 | 추천·기록 | 프로필 입력 | `users` | 탈퇴 시 NULL; 플랫폼 `age` ≥ 14 | 본인 | Supabase 등 |
+| 생년월일·출생시간 | 운세 등 | 프로필 입력 | `users.birth_*` | 탈퇴 시 NULL; 만 14세 미만 거부 | 본인 | 동일 |
 | 운동 목표·경험 | 추천 | 입력 | `users` | 탈퇴 시 NULL | 본인 | 동일 |
 | 위치(시군구·GPS) | 주변 헬스장·랭킹 | GPS/수동 | `user_locations` | 동의철회·탈퇴 시 DELETE | 본인 | 동일 |
 | 운동 기록 | 기록·분석 | 앱 이용 | `workout_logs` 등 | 탈퇴 후 일정 기간 운영·분쟁용 보관 가능 [법률전문가 확인 필요] | 본인·권한자 | 동일 |
-| 커뮤니티 UGC | 게시·거래 | 작성 | posts/photos/trades | 작성자 삭제·관리자 숨김; 탈퇴 시 hard purge는 후속 | 공개·관리자 | 동일 |
+| 커뮤니티 UGC | 게시·거래 | 작성 | posts/photos/trades | 작성자 삭제·관리자 숨김; 탈퇴 후 ~30일 hard purge | 공개·관리자 | 동일 |
 | 친구·차단·신고 | 소셜 | 앱 | `friend_*` | 계정 비활성과 연동; hard purge 후속 | 당사자·관리자 | 동일 |
 | 결제·구독 메타 | 유료 제공·정산 | Polar 웹훅 | `subscriptions`, `payment_history` | 전자상거래·세무 법정 보관 [법률전문가 확인 필요] | 본인·관리자 | Polar(국외 가능) |
 | 동의 기록 | 증빙 | 가입/설정 | `user_consents` (+IP/UA) | 분쟁·감사 기간 보관 [법률전문가 확인 필요] | 관리자 | 호스팅 |
 | 접속·로그인 로그 | 보안 | 인증 | `auth_login_events` | 보안·감사 기간 [법률전문가 확인 필요] | 관리자 | 호스팅 |
-| 헬스장 회원(오너) | 회원관리 | 오너 입력 | `gym_members` | 오너·회원 정책; 플랫폼 탈퇴와 별개일 수 있음 | 해당 헬스장 권한 | 동일 |
+| 헬스장 회원(오너) | 회원관리 | 오너 입력 | `gym_members` | 시설 회원(만 14세 미만 가능, 계정 아님). 오너 탈퇴 후 ~30일 퍼지 시 오너 명부 삭제 | 해당 헬스장 권한 | 동일 |
 | 고객문의 | 지원 | 문의하기 | `support_tickets*` | 처리 후 운영 정책 | 본인·관리자 | 동일 |
 
 ## 3. 처리 위탁·국외 이전 (확인 가능한 범위)
@@ -53,7 +53,7 @@
 |------|-----------|-----|------|
 | 이용약관 | 필수 | `/auth/terms` | `user_consents` + users 버전 |
 | 개인정보처리방침 | 필수 | 동일 | 동일 |
-| 만 14세 이상 확인 | 필수(가입) | 체크박스 | 클라이언트 입증 + 서버 age≥14 |
+| 만 14세 이상 확인 | 필수(가입) | 체크박스 + 프로필 생년월일/나이 서버 검증 | `user_consents` age14 + `users.age`/`birth_date` ≥ 14 |
 | 위치 | 선택 | 동일 | 동의 시에만 GPS 저장 |
 | 마케팅 | 선택 | 동일 | `marketing_opt_in` |
 
@@ -72,9 +72,9 @@
 - GPS 좌표 ~30일 후 NULL (시군구 유지)
 - 동의 IP/UA ~1년 후 NULL
 - `auth_login_events` ~1년 후 DELETE
-- 탈퇴 후 ~30일: workout/favorites/friends/UGC 등 hard purge, 잔여 `auth_providers` 삭제, `data_purged_at` 기록
+- 탈퇴 후 ~30일: workout/favorites/friends/UGC/trades/PT/support/templates, 오너 `gym_members`/`user_gyms`, Storage·백업 파일 hard purge, 잔여 `auth_providers` 삭제, `data_purged_at` 기록
 - 결제·동의 증빙·users 행·`auth_provider_withdrawals`는 유지 (법정 기간 [법률전문가 확인 필요])
-- `trial_identity_ledger`: 무료체험 악용 방지용 OAuth/이메일 키. 탈퇴·purge 후에도 유지.
+- `trial_identity_ledger`: 무료체험 악용 방지용 OAuth/이메일 키. 탈퇴·purge 후에도 유지(방침에 명시).
 - 공개 아이디(`users.display_name`): 소셜 provider 실명/닉네임과 분리. 신규·재가입 시 머신핏 랜덤 생성. 상세: `docs/USERNAME_PRIVACY_DATA_FLOW.md`
 
 ## 6. 문서 정합

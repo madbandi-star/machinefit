@@ -74,7 +74,10 @@ export const userService = {
     }
     if (payload.birthDate && payload.age === undefined) {
       const derived = ageFromBirthDate(payload.birthDate);
-      if (derived != null) payload.age = derived;
+      if (derived == null) {
+        throw new AppError(400, 'AGE_RESTRICTED', 'Must be at least 14 years old');
+      }
+      payload.age = derived;
     }
     if (payload.birthTimeUnknown === true) {
       payload.birthTime = null;

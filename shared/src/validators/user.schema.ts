@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { WORKOUT_GOALS } from '../constants/workout-goals.js';
+import { MIN_PLATFORM_AGE, yearsSinceBirthDate } from '../utils/age-from-birth-date.js';
 
 export const experienceLevelSchema = z.enum([
   'beginner',
@@ -29,7 +30,7 @@ export const updateProfileSchema = z
     heightCm: z.number().min(100).max(250).optional(),
     weightKg: z.number().min(30).max(300).optional(),
     /** KR PIPA: under 14 requires guardian consent — we block under 14. */
-    age: z.number().int().min(14).max(100).optional(),
+    age: z.number().int().min(MIN_PLATFORM_AGE).max(100).optional(),
     birthDate: birthDateSchema.optional(),
     birthTime: birthTimeSchema.optional(),
     birthTimeUnknown: z.boolean().optional(),
@@ -47,6 +48,22 @@ export const updateProfileSchema = z
         message: 'birthTime must be null when birthTimeUnknown is true',
         path: ['birthTime'],
       });
+    }
+    if (data.birthDate) {
+      const years = yearsSinceBirthDate(data.birthDate);
+      if (years == null || years < MIN_PLATFORM_AGE) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Must be at least ${MIN_PLATFORM_AGE} years old`,
+          path: ['birthDate'],
+        });
+      } else if (data.age != null && data.age < MIN_PLATFORM_AGE) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Must be at least ${MIN_PLATFORM_AGE} years old`,
+          path: ['age'],
+        });
+      }
     }
   });
 

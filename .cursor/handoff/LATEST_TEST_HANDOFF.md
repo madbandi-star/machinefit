@@ -1,14 +1,16 @@
-# Test handoff — Photo board & backup open to MEMBER
+﻿# Test handoff — Age 14 server gate + withdraw purge
 
 ## Summary
-Free-open: photo board and user backup are available to all logged-in members (`FREE_OPEN_MEMBER_FEATURES_MIN_ROLE = member`). Admin photo moderation unchanged. Other My Page “above member” links stay premium-gated.
+Platform accounts now reject under-14 age/birthDate (DB CHECK + Zod). Gym facility members may still be under 14 (documented). 30-day withdraw purge now deletes trades/PT/support/templates/owner gym rosters/storage, while keeping payments, consents, trial ledger.
 
 ## Test focus
-1. Member login → Community → 사진게시판 visible and posts load (not 403)
-2. My Page → 데이터 관리 visible; export/history works
-3. Logged-out → those URLs redirect to login
-4. Member still does **not** see lab / friends / gyms / push compose (still premium+)
+1. PATCH /users/me with birthDate of a 13-year-old → 400
+2. age: 14 + child birthDate → 400
+3. Gym member create with child birthDate still allowed
+4. Privacy /privacy s3 lists expanded purge + trial ledger keep
+5. Settings withdraw confirm lists deleted vs kept
+6. After Render migrate 118, users.age < 14 cannot be stored
 
 ## as-is → to-be
-- as-is: `requireMinRole(PREMIUM_MEMBER)` blocked Polar-paid `member` role
-- to-be: login-only gate; paid conversion later via constant + `requirePremium()`
+- as-is: checkbox-only age; purge missed gym/trades/PT/files
+- to-be: server 14+ for accounts; purge matches privacy copy

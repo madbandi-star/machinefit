@@ -8,7 +8,7 @@
  */
 export const LEGAL_DOC_VERSIONS = {
   terms: '2026-08-10',
-  privacy: '2026-08-10',
+  privacy: '2026-08-11',
   location: '2026-08-10',
   marketing: '2026-08-10',
   commerce: '2026-08-10',

@@ -1,36 +1,35 @@
 {
-  "title": "Open photo board and user backup to MEMBER (free-open)",
-  "summary": "Photo board and user backup/data-management are login-only (MEMBER+) for free launch with ads. Polar/premium role no longer required. Flip FREE_OPEN_MEMBER_FEATURES_MIN_ROLE + requirePremium() later for paid.",
-  "git": {
-    "branch": "main",
-    "commit": "pending"
-  },
+  "title": "Age 14 server gate and expanded withdraw purge",
+  "summary": "Platform age/birthDate must be 14+. Gym facility members exempt. Withdrawal 30-day purge covers UGC, trades, PT, support, templates, owner gyms, storage; legal-hold rows kept and disclosed.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "shared/src/constants/free-open.ts",
-    "shared/src/constants/index.ts",
-    "backend/server/routes/photo-board.routes.ts",
-    "backend/server/routes/backup.routes.ts",
-    "frontend/src/routes/index.tsx",
-    "frontend/src/pages/community/CommunityPage.tsx",
-    "frontend/src/pages/my-page/MyPage.tsx"
+    "shared/src/utils/age-from-birth-date.ts",
+    "shared/src/validators/user.schema.ts",
+    "shared/src/validators/gym-member.schema.ts",
+    "shared/src/constants/legal.ts",
+    "database/migrations/118_users_age_min_14.sql",
+    "backend/server/services/user.service.ts",
+    "backend/server/services/privacy-retention.service.ts",
+    "backend/server/services/storage.service.ts",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json",
+    "docs/privacy-data-inventory.md"
   ],
   "testFocus": [
-    "Logged-in member can open /community/photo and list/create posts",
-    "Logged-in member can open /settings/data and call backup export",
-    "Guest still redirected to login",
-    "Admin photo-board moderation still ADMIN-only",
-    "My Page other premium-only links (lab, friends, gyms) still hidden for member"
+    "Under-14 birthDate on profile returns 400",
+    "Gym member child DOB still saves",
+    "Privacy and withdraw copy match purge keep/delete"
   ],
   "fastChecks": [
-    "rg -n \"FREE_OPEN_MEMBER_FEATURES_MIN_ROLE|requirePhotoBoardMember\" shared backend/server/routes frontend/src/routes frontend/src/pages"
+    "rg -n \"MIN_PLATFORM_AGE|users_age_check|removeUserOwnedObjects\" shared database backend"
   ],
   "productionChecks": [
-    "After Render redeploy: member JWT can GET /api/v1/photo-board/posts (not 403)",
-    "After Pages deploy: member sees photo board on community + my page"
+    "Render applies migration 118 on boot",
+    "Privacy version bump 2026-08-11 triggers reconsent"
   ],
-  "deploy": {
-    "expected": "Push main: FE Pages + BE Render (API gate change)"
-  },
-  "asIs": "Photo board and backup required premium_member role; Polar-paid members blocked",
-  "toBe": "Any logged-in MEMBER can use photo board and user backup"
+  "deploy": { "expected": "Push main; Render backend for migration + purge; Pages for copy" },
+  "asIs": "Age 13 CHECK; incomplete 30-day purge vs privacy text",
+  "toBe": "14+ account gate; purge aligned with policy"
 }
