@@ -254,6 +254,9 @@ export function MyPage() {
             />
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} icon="message" />
+          {showPhotoBoardAndBackup ? (
+            <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+          ) : null}
           <ListNavLink
             to={ROUTES.TEMPLATE_SHARE}
             label={tc('templateShare.title')}
@@ -264,9 +267,6 @@ export function MyPage() {
             label={tc('templateShare.myTemplates')}
             icon="history"
           />
-          {showPhotoBoardAndBackup ? (
-            <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
-          ) : null}
         </nav>
       </section>
 

@@ -1,19 +1,12 @@
 {
-  "title": "Show received share-hub templates",
-  "summary": "After taking a template, navigate to My templates#received. List all copies (not gym-filtered). Link to Records to use them.",
+  "title": "Move photo board under free board",
+  "summary": "My Page 더보기: Photo board nav item sits directly below Free board.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
-    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
-    "frontend/src/i18n/locales/ko/community.json"
-  ],
-  "testFocus": [
-    "Download navigates to received list",
-    "Received templates visible without matching gym"
-  ],
-  "fastChecks": ["npm run i18n:audit"],
-  "productionChecks": ["Take a template on Pages and confirm /my-page/templates#received"],
+  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
+  "testFocus": ["My Page 더보기 order: free board then photo board"],
+  "fastChecks": ["rg FREE_BOARD frontend/src/pages/my-page/MyPage.tsx -A 6"],
+  "productionChecks": ["Pages: My Page 더보기 list order"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Taken templates had no obvious list",
-  "toBe": "Download opens My templates received section"
+  "asIs": "Photo board after my templates",
+  "toBe": "Photo board after free board"
 }
