@@ -7,6 +7,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
+import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { queryClient } from '@/app/providers/QueryProvider';
 import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
@@ -92,11 +93,19 @@ export function BottomNavigation() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const gymId = useGymStore((s) => s.activeGymId);
   const memberId = useGymStore((s) => s.activeMemberId);
+  const uiHydrated = usePersistHydration(useUIStore.persist);
   const recordsNavNudge = useUIStore((s) => s.recordsNavNudge);
   const recordsNavNudgeTip = useUIStore((s) => s.recordsNavNudgeTip);
+  const recordsPlanDotSeenKey = useUIStore((s) => s.recordsPlanDotSeenKey);
   const setRecordsNavNudge = useUIStore((s) => s.setRecordsNavNudge);
-  const { count: todayPlanCount } = useTodayActivePlanCount();
+  const markRecordsPlanDotSeen = useUIStore((s) => s.markRecordsPlanDotSeen);
+  const { count: todayPlanCount, planSignature } = useTodayActivePlanCount();
   const hasTodayPlans = todayPlanCount > 0;
+  const planDotDismissed =
+    planSignature != null && planSignature === recordsPlanDotSeenKey;
+  const isOnRecords =
+    location.pathname === ROUTES.RECORDS ||
+    location.pathname.startsWith(`${ROUTES.RECORDS}/`);
   const [showRecordsTip, setShowRecordsTip] = useState(false);
 
   useEffect(() => {
@@ -111,10 +120,17 @@ export function BottomNavigation() {
 
   useEffect(() => {
     if (!recordsNavNudge) return;
-    if (location.pathname === ROUTES.RECORDS || location.pathname.startsWith(`${ROUTES.RECORDS}/`)) {
+    if (isOnRecords) {
       setRecordsNavNudge(false);
     }
-  }, [location.pathname, recordsNavNudge, setRecordsNavNudge]);
+  }, [isOnRecords, recordsNavNudge, setRecordsNavNudge]);
+
+  // Visiting Records turns off today's plan green-dot until the plan set changes.
+  useEffect(() => {
+    if (!isOnRecords || !planSignature) return;
+    if (planSignature === recordsPlanDotSeenKey) return;
+    markRecordsPlanDotSeen(planSignature);
+  }, [isOnRecords, planSignature, recordsPlanDotSeenKey, markRecordsPlanDotSeen]);
 
   const handleNavClick = (
     event: MouseEvent<HTMLAnchorElement>,
@@ -124,6 +140,7 @@ export function BottomNavigation() {
     prefetchForRoute(to, gymId, memberId, isAuthenticated);
     if (to === ROUTES.RECORDS) {
       setRecordsNavNudge(false);
+      if (planSignature) markRecordsPlanDotSeen(planSignature);
     }
     if (requireAuth && !isAuthenticated) {
       event.preventDefault();
@@ -135,7 +152,14 @@ export function BottomNavigation() {
     <nav className="bottom-nav" aria-label={t('nav.main')}>
       {NAV_ITEMS.map(({ to, icon, labelKey, requireAuth }) => {
         const isRecordsNudge = to === ROUTES.RECORDS && recordsNavNudge;
-        const isRecordsPlanDot = to === ROUTES.RECORDS && hasTodayPlans && !recordsNavNudge;
+        // Wait for UI persist hydrate so a previously dismissed plan-dot does not flash on.
+        const isRecordsPlanDot =
+          to === ROUTES.RECORDS &&
+          uiHydrated &&
+          !isOnRecords &&
+          hasTodayPlans &&
+          !recordsNavNudge &&
+          !planDotDismissed;
         return (
           <NavLink
             key={to}

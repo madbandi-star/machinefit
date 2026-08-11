@@ -11,6 +11,11 @@ import { getTodayDateKey } from '@/utils/historyDate';
 /** Count of today's PLANNED / IN_PROGRESS workout cards for the active gym+member. */
 export function useTodayActivePlanCount(): {
   count: number;
+  /**
+   * Stable signature of today's active plans (date + gym/member + card ids).
+   * Used to dismiss the Records nav green dot until the plan set changes.
+   */
+  planSignature: string | null;
   gymReady: boolean;
   isLoading: boolean;
 } {
@@ -42,13 +47,20 @@ export function useTodayActivePlanCount(): {
     staleTime: 30_000,
   });
 
-  const count = useMemo(
+  const activePlanIds = useMemo(
     () =>
-      todayCards.filter(
-        (card) => card.status === 'PLANNED' || card.status === 'IN_PROGRESS'
-      ).length,
+      todayCards
+        .filter((card) => card.status === 'PLANNED' || card.status === 'IN_PROGRESS')
+        .map((card) => card.id)
+        .sort(),
     [todayCards]
   );
 
-  return { count, gymReady, isLoading };
+  const count = activePlanIds.length;
+  const planSignature =
+    gymReady && count > 0
+      ? `${today}|${activeGymId}|${memberKey}|${activePlanIds.join(',')}`
+      : null;
+
+  return { count, planSignature, gymReady, isLoading };
 }
