@@ -1,20 +1,20 @@
-﻿# Test handoff — Rejoin terms agreement UI
+﻿# Test handoff — Profile consent required-row cards
 
 ## Summary
-탈퇴 후 재가입 약관 동의 화면 UI를 머신핏 블랙·그린에 맞춰 정리했습니다. 문구는 그대로입니다.
+지역·헬스장(및 동일 블록) 필수 동의 3행을 캡처처럼 카드형으로 바꿨습니다. 문구·로직은 그대로입니다.
 
 ## Test focus
-1. 탈퇴 → 같은 소셜로 재로그인 → 약관 동의 화면
-2. 상단: MachineFit + 「약관에 동의해 주세요」+ 재가입 환영 카드(새 회원 / 복구 안 됨)
-3. 전체 동의 한 줄 탭, 각 항목 탭, 「전문 보기」로 문서 이동
-4. 신규 가입(재가입 아님)도 생년월일·체험 안내가 보이는지
+1. 설정 → 지역·헬스장 저장 전 동의 영역
+2. 목적 / 보유·파기 / 권리 3행: 체크 · 필수 · 문구 · 우측 아이콘
+3. 체크 시 초록 하이라이트
+4. 신체/출생 동의 블록도 같은 스타일인지
 
 ## Fast checks
 ```
-rg terms-agree--rejoin frontend/src/pages/auth/terms/TermsAgreementPage.tsx
-rg terms-agree__rejoin-facts frontend/src/styles/auth.css
+rg profile-consent__row-icon frontend/src/styles/profile-data-consent.css
+rg "FileText|CalendarDays|ShieldUser" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx
 ```
 
 ## as-is → to-be
-- as-is: 슬레이트 배경, 항상 켜진 초록 체크, 회색 재가입 박스, 화살표만 있는 문서 링크
-- to-be: 블랙+그린, 환영 카드, 행 전체 탭, 「전문 보기」
+- as-is: 단순 체크+배지+텍스트
+- to-be: 테두리 카드 + 우측 아이콘(문서/달력/방패)

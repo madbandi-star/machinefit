@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { CalendarDays, Check, FileText, ShieldCheck, ShieldUser, Sparkles } from 'lucide-react';
 import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/profile-data-consent.css';
@@ -36,29 +38,48 @@ function ConsentCheckRow({
   checked,
   onChange,
   label,
+  icon,
   required = true,
 }: {
   id: string;
   checked: boolean;
   onChange: (v: boolean) => void;
   label: string;
+  icon: ReactNode;
   required?: boolean;
 }) {
   const { t } = useTranslation();
   return (
-    <label className="profile-consent__row" htmlFor={id}>
-      <input
-        id={id}
-        type="checkbox"
-        className="profile-consent__check"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span className="profile-consent__row-text">
+    <label
+      className={`profile-consent__row${checked ? ' profile-consent__row--on' : ''}`}
+      htmlFor={id}
+    >
+      <span className="profile-consent__check-wrap" aria-hidden={!checked}>
+        <input
+          id={id}
+          type="checkbox"
+          className="profile-consent__check"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        {checked ? (
+          <span className="profile-consent__check-mark" aria-hidden>
+            <Check size={12} strokeWidth={3.5} />
+          </span>
+        ) : null}
+      </span>
+      <span className="profile-consent__row-body">
         {required ? (
           <span className="profile-consent__badge">{t('auth.required')}</span>
-        ) : null}
-        {label}
+        ) : (
+          <span className="profile-consent__badge profile-consent__badge--optional">
+            {t('auth.optional')}
+          </span>
+        )}
+        <span className="profile-consent__row-label">{label}</span>
+      </span>
+      <span className="profile-consent__row-icon" aria-hidden>
+        {icon}
       </span>
     </label>
   );
@@ -152,18 +173,21 @@ export function ProfileDataConsentBlock({
           checked={checks.purpose}
           onChange={set('purpose')}
           label={t(`${prefix}.checkPurpose`)}
+          icon={<FileText size={20} strokeWidth={2} />}
         />
         <ConsentCheckRow
           id={`${variant}-retention`}
           checked={checks.retention}
           onChange={set('retention')}
           label={t(`${prefix}.checkRetention`)}
+          icon={<CalendarDays size={20} strokeWidth={2} />}
         />
         <ConsentCheckRow
           id={`${variant}-rights`}
           checked={checks.rights}
           onChange={set('rights')}
           label={t(`${prefix}.checkRights`)}
+          icon={<ShieldUser size={20} strokeWidth={2} />}
         />
         {variant === 'birthProfile' ? (
           <>
@@ -172,12 +196,14 @@ export function ProfileDataConsentBlock({
               checked={Boolean(checks.entertainment)}
               onChange={set('entertainment')}
               label={t(`${prefix}.checkEntertainment`)}
+              icon={<Sparkles size={20} strokeWidth={2} />}
             />
             <ConsentCheckRow
               id={`${variant}-age14`}
               checked={Boolean(checks.age14)}
               onChange={set('age14')}
               label={t(`${prefix}.checkAge14`)}
+              icon={<ShieldCheck size={20} strokeWidth={2} />}
             />
           </>
         ) : null}
