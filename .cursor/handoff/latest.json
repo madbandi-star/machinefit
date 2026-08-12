@@ -1,7 +1,7 @@
 {
   "title": "Rejoin copy line breaks",
   "summary": "Added Korean line breaks for rejoin terms desc and the two rejoin fact lines; facts use white-space pre-line.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a5f088fa" },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/styles/auth.css"
