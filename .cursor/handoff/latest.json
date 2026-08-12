@@ -1,7 +1,7 @@
 {
   "title": "Tighten home fortune card spacing",
   "summary": "Removed YYYY.MM.DD from home Helchang fortune card and reduced gaps so the expanded card reads denser at a glance.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "102dd2c7" },
   "changedFiles": [
     "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
     "frontend/src/styles/fortune.css"
