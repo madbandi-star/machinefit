@@ -1,26 +1,28 @@
 {
-  "title": "Helchang Power page UI polish",
-  "summary": "Removed points subtitle; redesigned /points with balance hero and clearer ledger rows.",
-  "git": { "branch": "main", "commit": "9300b1b9" },
+  "title": "Rejoin terms DOB + welcome alignment",
+  "summary": "Replaced overflowing native date input with year/month/day scroll pickers on signup/rejoin terms; centered rejoin welcome block and clipped horizontal overflow.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/points/PointsPage.tsx",
-    "frontend/src/pages/points/PointsPage.css",
+    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
+    "frontend/src/pages/auth/terms/SignupBirthDateField.tsx",
+    "frontend/src/styles/auth.css",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ja/common.json",
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "내 헬창력: no '적립·사용 내역을 확인하세요' subtitle",
-    "Hero shows current Power + lifetime earned",
-    "Ledger rows: +/- badge, description, time, signed amount"
+    "Rejoin/signup terms: DOB pickers fit viewport (no right overflow)",
+    "Rejoin welcome card: icon + title centered, facts stacked cleanly",
+    "Selecting year/month/day sets birthDate and enables continue when other consents OK"
   ],
   "fastChecks": [
-    "rg points.subtitle frontend/src/pages/points/PointsPage.tsx || true",
-    "rg points-hero frontend/src/pages/points/PointsPage.css"
+    "rg SignupBirthDateField frontend/src/pages/auth/terms",
+    "rg terms-agree__rejoin-head frontend/src/styles/auth.css",
+    "rg type=\"date\" frontend/src/pages/auth/terms/TermsAgreementPage.tsx || true"
   ],
-  "productionChecks": ["Pages /points"],
+  "productionChecks": ["Pages: rejoin terms flow"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Generic card + list-nav + subtitle",
-  "toBe": "Hero + ledger UI, no subtitle"
+  "asIs": "Native date input overflow + misaligned rejoin welcome",
+  "toBe": "Scroll pickers + centered rejoin welcome, no overflow"
 }

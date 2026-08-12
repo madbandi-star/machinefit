@@ -35,6 +35,7 @@ import {
   saveTermsChecks,
   type TermsCheckState,
 } from '@/utils/oauthPending';
+import { SignupBirthDateField } from '@/pages/auth/terms/SignupBirthDateField';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/auth.css';
 
@@ -315,28 +316,24 @@ export function TermsAgreementPage() {
         />
         {isSignup ? (
           <div className="terms-agree__dob">
-            <label className="terms-agree__dob-label" htmlFor="signup-birth-date">
+            <div className="terms-agree__dob-label">
               <span className="terms-agree__badge terms-agree__badge--required">
                 {t('auth.required')}
               </span>
               <span>{t('auth.signupBirthDate')}</span>
-            </label>
+            </div>
             <GuideProse
               className="terms-agree__dob-hint"
               text={t('auth.signupBirthDateHint')}
               variant="compact"
             />
-            <input
-              id="signup-birth-date"
-              type="date"
-              className="terms-agree__dob-input"
+            <SignupBirthDateField
               value={birthDate}
-              max={todayYmd}
-              onChange={(e) => {
+              maxYmd={todayYmd}
+              onChange={(next) => {
                 setAgeBlocked(false);
-                setBirthDate(e.target.value);
+                setBirthDate(next);
               }}
-              required
             />
           </div>
         ) : null}

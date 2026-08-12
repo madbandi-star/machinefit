@@ -349,6 +349,8 @@
     "agreeAge14Required": "満14歳以上のみ登録できます",
     "signupBirthDate": "生年月日",
     "signupBirthDateHint": "満年齢は韓国時間（Asia/Seoul）で計算します。チェックだけでは登録できません。",
+    "signupBirthDateSelected": "選択した生年月日",
+    "signupBirthDateUnset": "年・月・日をスクロールして選んでください",
     "ageRestrictedTitle": "満14歳未満は登録できません",
     "ageRestrictedBody": "MachineFitアカウントは満14歳以上のみ作成できます。ジム施設の会員名簿とは別です。",
     "ageRestrictedBack": "ログインに戻る",

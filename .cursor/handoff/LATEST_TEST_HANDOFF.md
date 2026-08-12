@@ -1,19 +1,20 @@
-﻿# Test handoff — Helchang Power page UI polish
+﻿# Test handoff — Rejoin terms DOB + welcome alignment
 
 ## Summary
-내 헬창력 부제 「적립·사용 내역을 확인하세요.」 삭제. 잔액 히어로 + 내역 리스트로 UI 개선.
+재가입/가입 약관 화면의 생년월일을 스크롤 피커로 교체(우측 넘침 제거), 「다시 머신핏을…」 환영 영역 가로·세로 정렬 정리.
 
 ## Test focus
-1. 부제 없음
-2. 상단: 현재 헬창력 + 누적 적립
-3. 내역: +/− 구분, 설명·시간·금액
+1. 생년월일 UI가 화면 밖으로 안 나감
+2. 재가입 환영 카드: 아이콘·제목 중앙, 안내 문단 정렬
+3. 연/월/일 선택 후 다른 필수 동의와 함께 계속 가능
 
 ## Fast checks
 ```
-rg points.subtitle frontend/src/pages/points/PointsPage.tsx || true
-rg points-hero frontend/src/pages/points/PointsPage.css
+rg SignupBirthDateField frontend/src/pages/auth/terms
+rg terms-agree__rejoin-head frontend/src/styles/auth.css
+rg 'type="date"' frontend/src/pages/auth/terms/TermsAgreementPage.tsx || true
 ```
 
 ## as-is → to-be
-- as-is: card + list-nav + subtitle
-- to-be: hero + ledger, no subtitle
+- as-is: native date 넘침 + 환영 영역 정렬 불량
+- to-be: 피커 + 정렬된 환영 카드

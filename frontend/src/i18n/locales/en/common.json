@@ -359,6 +359,8 @@
     "agreeAge14Required": "You must be 14 or older to join",
     "signupBirthDate": "Date of birth",
     "signupBirthDateHint": "Age is calculated in Korea time (Asia/Seoul). A checkbox alone is not enough to join.",
+    "signupBirthDateSelected": "Selected date of birth",
+    "signupBirthDateUnset": "Scroll to choose year, month, and day",
     "ageRestrictedTitle": "Under 14 cannot join",
     "ageRestrictedBody": "MachineFit accounts are only for ages 14+. Gym facility member lists are separate.",
     "ageRestrictedBack": "Back to login",

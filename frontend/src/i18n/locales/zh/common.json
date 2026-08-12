@@ -349,6 +349,8 @@
     "agreeAge14Required": "未满 14 周岁无法注册",
     "signupBirthDate": "出生日期",
     "signupBirthDateHint": "周岁按韩国时间（Asia/Seoul）计算。仅勾选同意无法完成注册。",
+    "signupBirthDateSelected": "已选出生日期",
+    "signupBirthDateUnset": "请滚动选择年、月、日",
     "ageRestrictedTitle": "未满 14 周岁无法注册",
     "ageRestrictedBody": "MachineFit 账号仅限 14 周岁以上。场馆会员名册与此无关。",
     "ageRestrictedBack": "返回登录",

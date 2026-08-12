@@ -336,10 +336,12 @@
   --terms-accent: var(--color-primary, #00e676);
   box-sizing: border-box;
   position: relative;
+  width: 100%;
   max-width: 26.5rem;
   margin: 0 auto;
-  padding: 0.35rem 0.35rem 1.5rem;
+  padding: 0.35rem 0.15rem 1.5rem;
   color: var(--color-text, #f0f4f8);
+  overflow-x: clip;
 }
 
 .terms-agree::before {
@@ -417,31 +419,38 @@
 }
 
 .terms-agree__rejoin {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
   margin: 0 0 1rem;
-  padding: 0.95rem 1rem;
+  padding: 1.15rem 1rem 1.05rem;
   border-radius: var(--radius-md, 16px);
   border: 1px solid color-mix(in srgb, var(--terms-accent) 28%, transparent);
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--terms-accent) 10%, transparent), transparent 70%),
     color-mix(in srgb, #fff 4%, transparent);
   font-size: 0.875rem;
-  line-height: 1.7;
+  line-height: 1.65;
   word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .terms-agree__rejoin-head {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 0.7rem;
+  text-align: center;
 }
 
 .terms-agree__rejoin-icon {
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 2.15rem;
-  height: 2.15rem;
-  border-radius: 0.7rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.85rem;
   color: var(--terms-accent);
   background: color-mix(in srgb, var(--terms-accent) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--terms-accent) 28%, transparent);
@@ -449,32 +458,56 @@
 
 .terms-agree__rejoin-title {
   margin: 0;
-  font-size: 0.95rem;
-  font-weight: 750;
-  letter-spacing: -0.02em;
+  max-width: 18.5rem;
+  font-size: 1rem;
+  font-weight: 780;
+  letter-spacing: -0.025em;
   line-height: 1.45;
   color: #fff;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .terms-agree__rejoin-facts {
-  margin: 0.75rem 0 0;
-  padding: 0.7rem 0.85rem 0.7rem 1.15rem;
-  border-radius: 12px;
-  background: color-mix(in srgb, #000 28%, transparent);
+  list-style: none;
+  margin: 0.95rem 0 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  color: color-mix(in srgb, #fff 72%, transparent);
+  gap: 0.55rem;
+  text-align: left;
 }
 
 .terms-agree__rejoin-facts li {
-  padding-left: 0.15rem;
+  position: relative;
+  margin: 0;
+  padding: 0.7rem 0.85rem 0.7rem 2.1rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, #000 28%, transparent);
+  color: color-mix(in srgb, #fff 74%, transparent);
+  line-height: 1.55;
+}
+
+.terms-agree__rejoin-facts li::before {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  top: 1.05rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--terms-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--terms-accent) 18%, transparent);
 }
 
 .terms-agree__card {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   margin-bottom: 1rem;
   padding: 0.2rem 0.35rem 0.35rem;
   border-radius: var(--radius-lg, 20px);
@@ -483,6 +516,7 @@
   box-shadow: var(--shadow-md, 0 4px 20px rgba(0, 0, 0, 0.45));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  overflow-x: clip;
 }
 
 .terms-agree__all {
@@ -1114,7 +1148,8 @@
 }
 
 .layout__content--terms-agree {
-  padding: 1.5rem 1.15rem 2.25rem !important;
+  padding: 1.5rem 1rem 2.25rem !important;
+  overflow-x: clip;
 }
 
 .social-auth__btn--soon {
@@ -1157,38 +1192,111 @@
 }
 
 .terms-agree__dob {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  padding: 0.85rem 0 0.35rem;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0.15rem 0 0.15rem;
+  padding: 0.95rem 0.55rem 0.85rem;
+  border-top: 1px solid color-mix(in srgb, #fff 10%, transparent);
+  overflow-x: clip;
 }
 
 .terms-agree__dob-label {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.45rem;
-  font-weight: 700;
+  font-weight: 750;
   font-size: 0.95rem;
+  color: #fff;
 }
 
 .terms-agree__dob-hint {
   margin: 0;
   font-size: 0.8rem;
-  line-height: 1.7;
+  line-height: 1.55;
   opacity: 0.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.terms-agree__dob-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.terms-agree__dob-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, #000 22%, transparent);
+  border: 1px solid color-mix(in srgb, #fff 8%, transparent);
+}
+
+.terms-agree__dob-summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, #fff 55%, transparent);
+}
+
+.terms-agree__dob-summary-value {
+  font-size: 0.98rem;
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  color: #fff;
   word-break: keep-all;
 }
 
-.terms-agree__dob-input {
+.terms-agree__dob-pickers {
   width: 100%;
-  min-height: 2.75rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, #fff 14%, transparent);
-  background: color-mix(in srgb, #fff 6%, transparent);
+  min-width: 0;
+}
+
+.terms-agree__dob-pickers .body-metrics-inline__grid {
+  gap: 0.4rem;
+  padding: 0.55rem 0.35rem 0.5rem;
+  border: 1px solid color-mix(in srgb, #fff 12%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, #000 28%, transparent);
+}
+
+.terms-agree__dob-pickers .body-metrics-inline__cell {
+  min-width: 0;
+}
+
+.terms-agree__dob-pickers .body-metrics-inline__label {
+  color: color-mix(in srgb, #fff 62%, transparent);
+  font-size: 0.72rem;
+}
+
+.terms-agree__dob-pickers .scroll-picker__frame {
+  background: transparent;
+}
+
+.terms-agree__dob-pickers .scroll-picker__highlight {
+  border-color: color-mix(in srgb, var(--terms-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--terms-accent) 12%, transparent);
+}
+
+.terms-agree__dob-pickers .scroll-picker__item {
+  color: color-mix(in srgb, #fff 48%, transparent);
+}
+
+.terms-agree__dob-pickers .scroll-picker__item--selected {
   color: #fff;
-  font-size: 1rem;
+  font-weight: 780;
 }
 
 .terms-agree__age-block {
