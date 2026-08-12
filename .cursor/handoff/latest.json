@@ -1,7 +1,7 @@
 {
   "title": "Remove lifetime spent from Helchang Power page",
   "summary": "Points page lifetime line shows only cumulative earned Power; spent segment removed.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "cbcc130a" },
   "changedFiles": [
     "frontend/src/pages/points/PointsPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
