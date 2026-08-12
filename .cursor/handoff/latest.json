@@ -1,21 +1,17 @@
 {
-  "title": "Tighten home fortune card spacing",
-  "summary": "Removed YYYY.MM.DD from home Helchang fortune card and reduced gaps so the expanded card reads denser at a glance.",
-  "git": { "branch": "main", "commit": "102dd2c7" },
-  "changedFiles": [
-    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "frontend/src/styles/fortune.css"
-  ],
+  "title": "My Page menu: points under templates",
+  "summary": "Moved 내 헬창력 under 내 템플릿 in personal settings; changed 템플릿 공유관 icon from dumbbell to share so it differs from machine requests.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
   "testFocus": [
-    "Home fortune expanded: no date top-right",
-    "Keyword / luck / metrics / actions spacing tighter"
+    "My Page → 개인설정: 내 템플릿 then 내 헬창력",
+    "Explore: 템플릿 공유관 uses share icon, not dumbbell"
   ],
   "fastChecks": [
-    "rg home-fortune-card__date frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true",
-    "rg \"gap: 0.4rem\" frontend/src/styles/fortune.css"
+    "rg -n \"MY_TEMPLATES|POINTS|TEMPLATE_SHARE\" frontend/src/pages/my-page/MyPage.tsx"
   ],
-  "productionChecks": ["Pages home fortune card"],
+  "productionChecks": ["Pages /my-page menu order and icons"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Wide gaps + date top-right",
-  "toBe": "Tighter stack, no date"
+  "asIs": "Points in quick links; template share same dumbbell as machine requests",
+  "toBe": "Points under my templates; template share = share icon"
 }

@@ -227,11 +227,6 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.FORTUNE_TODAY} label={tf('title')} icon="flame" />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
-          <ListNavLink
-            to={ROUTES.POINTS}
-            label={t('points.myPoints')}
-            icon="trendingUp"
-          />
           {showAboveMember ? (
             <>
               <ListNavLink
@@ -270,7 +265,7 @@ export function MyPage() {
           <ListNavLink
             to={ROUTES.TEMPLATE_SHARE}
             label={tc('templateShare.title')}
-            icon="dumbbell"
+            icon="share"
           />
         </nav>
       </section>
@@ -282,6 +277,11 @@ export function MyPage() {
             to={ROUTES.MY_TEMPLATES}
             label={tc('templateShare.myTemplates')}
             icon="history"
+          />
+          <ListNavLink
+            to={ROUTES.POINTS}
+            label={t('points.myPoints')}
+            icon="trendingUp"
           />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showAboveMember ? (

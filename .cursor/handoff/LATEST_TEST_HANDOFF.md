@@ -1,14 +1,13 @@
-﻿# Test handoff — Tighten home fortune card spacing
+﻿# Test handoff — My Page menu: points under templates
 
 ## Summary
-홈 오늘의 헬창운세: 우측 상단 날짜 제거, 영역 간 간격 축소.
+마이페이지에서 내 헬창력을 개인설정의 내 템플릿 아래로 이동. 템플릿 공유관 아이콘을 `share`로 변경(기구요청 `dumbbell`과 구분).
 
 ## Test focus
-1. 펼친 카드에 YYYY.MM.DD 없음
-2. 키워드·별점·지표·버튼 사이 공백이 이전보다 좁음
+1. 개인설정: 내 템플릿 → 내 헬창력 → 설정…
+2. 둘러보기: 템플릿 공유관 아이콘 ≠ 기구요청
 
 ## Fast checks
 ```
-rg home-fortune-card__date frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true
-rg "gap: 0.4rem" frontend/src/styles/fortune.css
+rg -n "MY_TEMPLATES|POINTS|TEMPLATE_SHARE" frontend/src/pages/my-page/MyPage.tsx
 ```
