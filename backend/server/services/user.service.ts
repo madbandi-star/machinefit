@@ -106,9 +106,7 @@ export const userService = {
       payload.gender !== undefined ||
       payload.age !== undefined ||
       payload.experienceLevel !== undefined ||
-      payload.workoutGoal !== undefined ||
-      payload.unitHeight !== undefined ||
-      payload.unitWeight !== undefined;
+      payload.workoutGoal !== undefined;
     const touchesBirth =
       payload.birthDate !== undefined ||
       payload.birthTime !== undefined ||

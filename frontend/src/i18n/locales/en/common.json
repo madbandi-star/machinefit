@@ -470,6 +470,7 @@
     "deleteAccountConfirm": "Withdraw",
     "accountDeleted": "Membership withdrawal is complete.",
     "consentRequiredToast": "Please check all required personal-data consent items.",
+    "consentBirthRequiredToast": "Please check all required birth-profile consent items. (Separate from body-metrics consent.)",
     "consentCheckAll": "Select all required consents",
     "consentRightsLink": "Privacy rights center",
     "consentBody": {

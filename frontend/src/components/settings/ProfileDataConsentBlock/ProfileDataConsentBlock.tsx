@@ -183,6 +183,7 @@ export function ProfileDataConsentBlock({
           onToggle={toggleAll}
           label={t('settings.consentCheckAll')}
           icon={<ShieldCheck size={20} strokeWidth={2} />}
+          required={false}
         />
         <ConsentCheckRow
           checked={checks.purpose}

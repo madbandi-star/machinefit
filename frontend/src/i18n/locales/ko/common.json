@@ -438,6 +438,7 @@
     "ageFromBirthHint": "나이 {{age}}세 · 생년월일에서 자동 계산됩니다.",
     "ageSetInBirthHint": "나이는 아래 「생년월일·탄생시」에서 설정하면 자동으로 반영됩니다.",
     "consentRequiredToast": "개인정보 수집·이용 등 필수 동의 항목을 모두 체크해 주세요.",
+    "consentBirthRequiredToast": "생년월일·탄생시 필수 동의 항목을 모두 체크해 주세요. (신체정보 동의와는 별개입니다)",
     "consentCheckAll": "필수 동의 항목 전체 선택",
     "consentRightsLink": "개인정보 권리 센터",
     "consentBody": {

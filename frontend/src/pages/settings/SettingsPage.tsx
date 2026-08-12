@@ -564,7 +564,7 @@ export function SettingsPage() {
                 !birthProfileConsentDone &&
                 !allProfileConsentsChecked('birthProfile', birthConsentChecks)
               ) {
-                showToast(t('settings.consentRequiredToast'), 'error');
+                showToast(t('settings.consentBirthRequiredToast'), 'error');
                 return;
               }
               birthMutation.mutate({
@@ -955,7 +955,12 @@ export function SettingsPage() {
             type="button"
             className="btn btn--primary btn--block"
             style={{ marginTop: 'var(--space-md)' }}
-            onClick={() => mutation.mutate()}
+            onClick={() =>
+              mutation.mutate({
+                unitHeight: draftUnitHeight,
+                unitWeight: draftUnitWeight,
+              })
+            }
             disabled={mutation.isPending}
           >
             {mutation.isPending ? <span className="btn__spinner" aria-hidden /> : t('actions.save')}
