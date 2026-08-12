@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, Check, FileText, ShieldCheck, ShieldUser, Sparkles } from 'lucide-react';
@@ -21,7 +21,7 @@ export type ProfileConsentChecks = {
 type ProfileDataConsentBlockProps = {
   variant: ProfileConsentVariant;
   checks: ProfileConsentChecks;
-  onChange: (next: ProfileConsentChecks) => void;
+  onChange: Dispatch<SetStateAction<ProfileConsentChecks>>;
   /** When true, show compact “already agreed” state. */
   alreadyAgreed?: boolean;
   versionLabel?: string;
@@ -34,39 +34,30 @@ const VARIANT_I18N_PREFIX: Record<ProfileConsentVariant, string> = {
 };
 
 function ConsentCheckRow({
-  id,
   checked,
-  onChange,
+  onToggle,
   label,
   icon,
   required = true,
 }: {
-  id: string;
   checked: boolean;
-  onChange: (v: boolean) => void;
+  onToggle: () => void;
   label: string;
   icon: ReactNode;
   required?: boolean;
 }) {
   const { t } = useTranslation();
   return (
-    <label
+    <button
+      type="button"
       className={`profile-consent__row${checked ? ' profile-consent__row--on' : ''}`}
-      htmlFor={id}
+      aria-pressed={checked}
+      onClick={onToggle}
     >
-      <span className="profile-consent__check-wrap" aria-hidden={!checked}>
-        <input
-          id={id}
-          type="checkbox"
-          className="profile-consent__check"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-        />
-        {checked ? (
-          <span className="profile-consent__check-mark" aria-hidden>
-            <Check size={12} strokeWidth={3.5} />
-          </span>
-        ) : null}
+      <span className="profile-consent__check-wrap" aria-hidden>
+        <span className={`profile-consent__check${checked ? ' profile-consent__check--on' : ''}`}>
+          {checked ? <Check size={12} strokeWidth={3.5} /> : null}
+        </span>
       </span>
       <span className="profile-consent__row-body">
         {required ? (
@@ -81,7 +72,7 @@ function ConsentCheckRow({
       <span className="profile-consent__row-icon" aria-hidden>
         {icon}
       </span>
-    </label>
+    </button>
   );
 }
 
@@ -111,6 +102,19 @@ export function emptyProfileConsentChecks(
   return { purpose: false, retention: false, rights: false };
 }
 
+function fullyChecked(variant: ProfileConsentVariant): ProfileConsentChecks {
+  if (variant === 'birthProfile') {
+    return {
+      purpose: true,
+      retention: true,
+      rights: true,
+      entertainment: true,
+      age14: true,
+    };
+  }
+  return { purpose: true, retention: true, rights: true };
+}
+
 /**
  * Required legal notices + checkboxes before saving body metrics, birth profile,
  * or location/home gym. Feature-scoped — does not replace global terms/privacy reconsent.
@@ -124,6 +128,7 @@ export function ProfileDataConsentBlock({
 }: ProfileDataConsentBlockProps) {
   const { t } = useTranslation();
   const prefix = VARIANT_I18N_PREFIX[variant];
+  const allOn = allProfileConsentsChecked(variant, checks);
 
   if (alreadyAgreed) {
     return (
@@ -143,10 +148,15 @@ export function ProfileDataConsentBlock({
     );
   }
 
-  const set =
+  const toggle =
     (key: keyof ProfileConsentChecks) =>
-    (value: boolean) =>
-      onChange({ ...checks, [key]: value });
+    () => {
+      onChange((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
+
+  const toggleAll = () => {
+    onChange(allOn ? emptyProfileConsentChecks(variant) : fullyChecked(variant));
+  };
 
   return (
     <aside
@@ -169,39 +179,40 @@ export function ProfileDataConsentBlock({
 
       <div className="profile-consent__checks">
         <ConsentCheckRow
-          id={`${variant}-purpose`}
+          checked={allOn}
+          onToggle={toggleAll}
+          label={t('settings.consentCheckAll')}
+          icon={<ShieldCheck size={20} strokeWidth={2} />}
+        />
+        <ConsentCheckRow
           checked={checks.purpose}
-          onChange={set('purpose')}
+          onToggle={toggle('purpose')}
           label={t(`${prefix}.checkPurpose`)}
           icon={<FileText size={20} strokeWidth={2} />}
         />
         <ConsentCheckRow
-          id={`${variant}-retention`}
           checked={checks.retention}
-          onChange={set('retention')}
+          onToggle={toggle('retention')}
           label={t(`${prefix}.checkRetention`)}
           icon={<CalendarDays size={20} strokeWidth={2} />}
         />
         <ConsentCheckRow
-          id={`${variant}-rights`}
           checked={checks.rights}
-          onChange={set('rights')}
+          onToggle={toggle('rights')}
           label={t(`${prefix}.checkRights`)}
           icon={<ShieldUser size={20} strokeWidth={2} />}
         />
         {variant === 'birthProfile' ? (
           <>
             <ConsentCheckRow
-              id={`${variant}-entertainment`}
               checked={Boolean(checks.entertainment)}
-              onChange={set('entertainment')}
+              onToggle={toggle('entertainment')}
               label={t(`${prefix}.checkEntertainment`)}
               icon={<Sparkles size={20} strokeWidth={2} />}
             />
             <ConsentCheckRow
-              id={`${variant}-age14`}
               checked={Boolean(checks.age14)}
-              onChange={set('age14')}
+              onToggle={toggle('age14')}
               label={t(`${prefix}.checkAge14`)}
               icon={<ShieldCheck size={20} strokeWidth={2} />}
             />

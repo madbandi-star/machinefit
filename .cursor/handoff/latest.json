@@ -1,21 +1,28 @@
 {
-  "title": "Rejoin copy line breaks",
-  "summary": "Added Korean line breaks for rejoin terms desc and the two rejoin fact lines; facts use white-space pre-line.",
-  "git": { "branch": "main", "commit": "a5f088fa" },
+  "title": "Fix birth-profile consent save",
+  "summary": "Birth/settings consent rows use reliable button toggles with functional state updates, plus an agree-all control; save sends birthProfileConsent via mutate variables so consent is not dropped.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
+    "frontend/src/styles/profile-data-consent.css",
+    "frontend/src/pages/settings/SettingsPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/styles/auth.css"
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Rejoin terms header desc: break after 감사합니다.",
-    "Rejoin facts: breaks after 가입됩니다. and after 설정은"
+    "Settings → 생년월일·탄생시: tap 필수 전체 선택 (or each row), save succeeds",
+    "No consentRequiredToast when all required rows are on",
+    "After save, consent block shows done state"
   ],
   "fastChecks": [
-    "rg \"감사합니다.\\\\n\\\\n이전\" frontend/src/i18n/locales/ko/common.json",
-    "rg white-space:\\s*pre-line frontend/src/styles/auth.css"
+    "rg consentCheckAll frontend/src",
+    "rg birthProfileConsent frontend/src/pages/settings/SettingsPage.tsx",
+    "rg \"onChange\\(\\(prev\\)\" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
   ],
-  "productionChecks": ["Pages: rejoin terms KO copy wrapping"],
-  "deploy": { "expected": "Pages FE" },
-  "asIs": "Single-line rejoin sentences",
-  "toBe": "Requested line breaks in KO rejoin copy"
+  "productionChecks": ["Pages settings birth profile save"],
+  "deploy": { "expected": "Pages FE (+ Render if API touched — FE only here)" },
+  "asIs": "Checked consents still blocked save with consent toast",
+  "toBe": "Agree-all / toggles stick; save sends consent and persists"
 }

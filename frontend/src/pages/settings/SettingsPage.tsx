@@ -389,19 +389,7 @@ export function SettingsPage() {
   ]);
 
   const mutation = useMutation({
-    mutationFn: () =>
-      userApi.updateMe({
-        heightCm,
-        weightKg,
-        // Age is derived from birthDate in the birth-profile section.
-        // Sending age alone fails Zod/server validation (age requires birthDate).
-        gender,
-        unitHeight: draftUnitHeight,
-        unitWeight: draftUnitWeight,
-        experienceLevel,
-        workoutGoal,
-        ...(bodyMetricsConsentDone ? {} : { bodyMetricsConsent: true as const }),
-      }),
+    mutationFn: (payload: Parameters<typeof userApi.updateMe>[0]) => userApi.updateMe(payload),
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
       updateUser(updatedUser);
@@ -419,13 +407,7 @@ export function SettingsPage() {
   });
 
   const birthMutation = useMutation({
-    mutationFn: () =>
-      userApi.updateMe({
-        birthDate: birthDate.trim() || null,
-        birthTime: birthTimeUnknown ? null : birthTime.trim() || null,
-        birthTimeUnknown,
-        ...(birthProfileConsentDone ? {} : { birthProfileConsent: true as const }),
-      }),
+    mutationFn: (payload: Parameters<typeof userApi.updateMe>[0]) => userApi.updateMe(payload),
     onSuccess: async (res) => {
       const updatedUser = res.data.data as User;
       updateUser(updatedUser);
@@ -524,7 +506,17 @@ export function SettingsPage() {
                 showToast(t('settings.consentRequiredToast'), 'error');
                 return;
               }
-              mutation.mutate();
+              mutation.mutate({
+                heightCm,
+                weightKg,
+                // Age is derived from birthDate in the birth-profile section.
+                gender,
+                unitHeight: draftUnitHeight,
+                unitWeight: draftUnitWeight,
+                experienceLevel,
+                workoutGoal,
+                ...(bodyMetricsConsentDone ? {} : { bodyMetricsConsent: true as const }),
+              });
             }}
             disabled={mutation.isPending}
           >
@@ -575,7 +567,12 @@ export function SettingsPage() {
                 showToast(t('settings.consentRequiredToast'), 'error');
                 return;
               }
-              birthMutation.mutate();
+              birthMutation.mutate({
+                birthDate: birthDate.trim() || null,
+                birthTime: birthTimeUnknown ? null : birthTime.trim() || null,
+                birthTimeUnknown,
+                ...(birthProfileConsentDone ? {} : { birthProfileConsent: true as const }),
+              });
             }}
             disabled={birthMutation.isPending}
           >

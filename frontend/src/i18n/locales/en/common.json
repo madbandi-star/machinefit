@@ -469,8 +469,9 @@
     "deleteAccountConfirmMessage": "Withdrawal ends your MachineFit access.\n\n• Immediate: anonymize email/name, delete region/home-gym/body/birth fields, unlink live social logins, clear session tokens. We attempt to cancel paid subscriptions.\n• About 30 days later: workouts, favorites, friends, posts, photos, trades, online PT, tickets, templates, achievements, feature-usage counters, ops activity/access logs linked to you, gym member lists you own, uploads.\n• Kept longer (no auto-expiry job; deleted when purpose ends / law allows): payment/subscription evidence, consent records, trial-abuse identity keys, social-provider identifier archive (rejoin/audit/dispute).\n• Rejoining does not restore the old account.",
     "deleteAccountConfirm": "Withdraw",
     "accountDeleted": "Membership withdrawal is complete.",
-    "consentRequiredToast": "개인정보 수집·이용 등 필수 동의 항목을 모두 체크해 주세요.",
-    "consentRightsLink": "개인정보 권리 센터",
+    "consentRequiredToast": "Please check all required personal-data consent items.",
+    "consentCheckAll": "Select all required consents",
+    "consentRightsLink": "Privacy rights center",
     "consentBody": {
       "title": "신체정보 수집·이용 동의 (필수)",
       "intro": "맞춤 운동 추천을 위해 아래 개인정보를 처리합니다. 동의하지 않으면 해당 정보를 저장할 수 없습니다.",
