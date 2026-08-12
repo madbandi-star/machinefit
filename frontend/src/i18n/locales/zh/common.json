@@ -1836,15 +1836,15 @@
     "modeReplaceDesc": "清除服务器上的当前训练数据，并用备份内容替换。此操作无法撤销。"
   },
   "points": {
-    "title": "My points",
+    "title": "My Hellchang Power",
     "subtitle": "Review earn and spend history.",
-    "myPoints": "My points",
+    "myPoints": "My Hellchang Power",
     "navDesc": "Earn and spend history",
-    "balanceLabel": "Current balance",
-    "lifetime": "Lifetime earned {{earned}}P · spent {{spent}}P",
-    "historyTitle": "Point history",
-    "empty": "No point history yet.",
-    "earnedToast": "+{{points}}P earned!",
+    "balanceLabel": "Current Power",
+    "lifetime": "Lifetime earned {{earned}}Power · spent {{spent}}Power",
+    "historyTitle": "Power history",
+    "empty": "No Power history yet.",
+    "earnedToast": "+{{points}}Power earned!",
     "unit": "Power"
   }
 }
