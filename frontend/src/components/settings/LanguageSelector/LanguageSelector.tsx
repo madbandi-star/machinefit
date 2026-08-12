@@ -1,9 +1,10 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  LOCALES,
   LOCALE_FLAGS,
   LOCALE_LABELS,
+  UI_LOCALES,
+  clampToUiLocale,
 } from '@machinefit/shared';
 import type { Locale } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
@@ -25,10 +26,11 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
   const compact = variant === 'compact';
 
   const handleSelect = (newLocale: Locale) => {
-    setLocale(newLocale);
+    const next = clampToUiLocale(newLocale);
+    setLocale(next);
     void (async () => {
-      await ensureLocaleResources(newLocale);
-      await i18n.changeLanguage(newLocale);
+      await ensureLocaleResources(next);
+      await i18n.changeLanguage(next);
     })();
     setOpen(false);
   };
@@ -88,7 +90,7 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
           role="listbox"
           aria-label={t('settings.language')}
         >
-          {LOCALES.map((code) => (
+          {UI_LOCALES.map((code) => (
             <li key={code} role="presentation">
               <button
                 type="button"

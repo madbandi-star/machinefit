@@ -1,20 +1,19 @@
-﻿# Test handoff — Body metrics height/weight pair pickers
+﻿# Test handoff — Remove ja/zh from UI language picker
 
 ## Summary
-신체 정보에서 나이가 빠진 뒤에도 3열 그리드가 남아 키·몸무게 UI가 어색했습니다. 2열 트윈 카드로 맞췄습니다.
+상단·설정 언어 선택에서 일본어·중국어를 제거했습니다. 이미 ja/zh로 저장된 UI 언어는 영어로 맞춥니다.
 
 ## Test focus
-1. 설정 → 신체 정보
-2. 키 / 몸무게가 같은 폭의 두 카드
-3. 빈 세 번째 칸 없음
-4. 스크롤·저장 정상
+1. 헤더 언어 드롭다운: 한국어 / English만
+2. 설정 → 언어: 동일
+3. (선택) localStorage `machinefit-settings`에 locale ja였다면 새로고침 후 en
 
 ## Fast checks
 ```
-rg body-metrics-inline--pair frontend/src/styles/components.css
-rg body-metrics-inline__grid--2 frontend/src/components/settings/BodyMetricsFields/BodyMetricsFields.tsx
+rg UI_LOCALES shared/src/constants/locales.ts
+rg UI_LOCALES frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx
 ```
 
 ## as-is → to-be
-- as-is: 3열 그리드에 키·몸무게만 → 빈 칸 / 답답함
-- to-be: 2열 카드형 피커, 단위 뱃지, 선택값 강조
+- as-is: ko / en / ja / zh
+- to-be: ko / en only

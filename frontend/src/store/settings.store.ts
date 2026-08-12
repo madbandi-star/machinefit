@@ -8,6 +8,7 @@ import {
   REST_DURATION,
   WEIGHT_DIFFICULTY_DEFAULT,
   clampRestDurationSeconds,
+  clampToUiLocale,
   clampWeightDifficulty,
 } from '@machinefit/shared';
 import {
@@ -51,15 +52,13 @@ function getDefaultTimezone(): string {
   }
 }
 
-/** Browser language → app Locale; falls back to Korean. */
+/** Browser language → app UI Locale; ja/zh fall back to English. */
 function detectBrowserLocale(): Locale {
   try {
     const nav = (navigator.language || navigator.languages?.[0] || '')
       .split('-')[0]
       ?.toLowerCase();
-    if (nav === 'en' || nav === 'ja' || nav === 'zh' || nav === 'ko') {
-      return nav;
-    }
+    return clampToUiLocale(nav);
   } catch {
     /* ignore */
   }
@@ -160,7 +159,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       ...SETTINGS_DEFAULTS,
       timezone: getDefaultTimezone(),
-      setLocale: (locale) => set({ locale }),
+      setLocale: (locale) => set({ locale: clampToUiLocale(locale) }),
       setUnitHeight: (unitHeight) => set({ unitHeight }),
       setUnitWeight: (unitWeight) => set({ unitWeight }),
       setTimezone: (timezone) => set({ timezone }),
@@ -238,6 +237,7 @@ export const useSettingsStore = create<SettingsState>()(
         return {
           ...current,
           ...p,
+          locale: clampToUiLocale(p.locale ?? current.locale),
           voiceCountMode: clampVoiceCountMode(p.voiceCountMode ?? current.voiceCountMode),
           voiceCoachPrepCount: clampVoiceCoachPrepCount(
             p.voiceCoachPrepCount ?? current.voiceCoachPrepCount
