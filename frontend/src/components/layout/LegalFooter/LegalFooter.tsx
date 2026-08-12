@@ -1,9 +1,23 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BUSINESS_OPERATOR, Role, hasMinRole } from '@machinefit/shared';
+import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import '@/styles/legal.css';
+
+function SupportContact({ email }: { email: string }) {
+  const { t } = useTranslation();
+  return (
+    <a className="legal-footer__support" href={`mailto:${email}`}>
+      <Icon name="mail" size={14} className="legal-footer__support-icon" />
+      <span className="legal-footer__support-copy">
+        <span className="legal-footer__support-label">{t('legal.footer.supportEmail')}</span>
+        <span className="legal-footer__support-email">{email}</span>
+      </span>
+    </a>
+  );
+}
 
 function BusinessFooterBlock() {
   const { t } = useTranslation();
@@ -14,18 +28,7 @@ function BusinessFooterBlock() {
   // Non-admin (and guests): customer center email only — hide operator registration fields.
   if (!isAdmin) {
     if (!supportEmail) return null;
-    return (
-      <div className="legal-footer__business">
-        <dl className="legal-footer__business-list">
-          <div className="legal-footer__business-row">
-            <dt>{t('legal.footer.supportEmail')}</dt>
-            <dd>
-              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
-            </dd>
-          </div>
-        </dl>
-      </div>
-    );
+    return <SupportContact email={supportEmail} />;
   }
 
   const rows: Array<{ label: string; value: string }> = [
@@ -55,26 +58,11 @@ function BusinessFooterBlock() {
               <dd>{row.value}</dd>
             </div>
           ))}
-          {supportEmail ? (
-            <div className="legal-footer__business-row">
-              <dt>{t('legal.footer.supportEmail')}</dt>
-              <dd>
-                <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
-              </dd>
-            </div>
-          ) : null}
         </dl>
       ) : (
-        <div className="legal-footer__business-pending">
-          <p>{t('legal.footer.pendingNotice')}</p>
-          {supportEmail ? (
-            <p className="legal-footer__business-contact">
-              <span>{t('legal.footer.supportEmail')}</span>
-              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
-            </p>
-          ) : null}
-        </div>
+        <p className="legal-footer__business-pending">{t('legal.footer.pendingNotice')}</p>
       )}
+      {supportEmail ? <SupportContact email={supportEmail} /> : null}
     </div>
   );
 }

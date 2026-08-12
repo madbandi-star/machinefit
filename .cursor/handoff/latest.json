@@ -1,18 +1,15 @@
 {
-  "title": "Atomic usage consume, Polar drill tests, admin GRANT step-up",
-  "summary": "limits_enforced uses advisory lock + FOR UPDATE consume. Admin billing requires GRANT. Polar webhook scenarios tested; PITR/restore drill documented.",
+  "title": "Clean up footer support email UI",
+  "summary": "Customer-center email in the page footer is a compact mail chip instead of a two-column definition list box.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/repositories/usage.repository.ts",
-    "backend/server/services/usage.service.ts",
-    "shared/src/validators/billing.schema.ts",
-    "frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx",
-    "docs/POLAR_SANDBOX_WEBHOOK_DRILL.md"
+    "frontend/src/components/layout/LegalFooter/LegalFooter.tsx",
+    "frontend/src/styles/legal.css"
   ],
-  "testFocus": ["GRANT required on admin billing", "polar-webhook-scenarios"],
-  "fastChecks": ["npx tsx backend/server/payments/polar-webhook-scenarios.test.ts"],
-  "productionChecks": ["Polar sandbox A–G in docs/POLAR_SANDBOX_WEBHOOK_DRILL.md"],
-  "deploy": { "expected": "Pages FE + Render backend" },
-  "asIs": "check-then-act usage; one-click admin grant",
-  "toBe": "atomic consume; GRANT step-up"
+  "testFocus": ["Footer support chip mailto"],
+  "fastChecks": ["rg legal-footer__support frontend/src/styles/legal.css"],
+  "productionChecks": ["Pages: footer support chip on home/settings"],
+  "deploy": { "expected": "Pages FE" },
+  "asIs": "dl box with 고객센터 | email",
+  "toBe": "mail icon chip with label + email"
 }
