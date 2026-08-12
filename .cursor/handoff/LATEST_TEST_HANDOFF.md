@@ -1,19 +1,17 @@
-﻿# Test handoff — Fortune birth-gate UI polish
+﻿# Test handoff — Home latest notice always on top
 
 ## Summary
-생년월일 미입력 시 `/fortune/today` 게이트(및 홈 운세 카드 게이트) UI를 운세 히어로 톤에 맞게 개선했습니다.
+홈 `[최신 공지]`를 `home-page` 최상단으로 올렸습니다. 프로필 설정 필요 배너·헬스장 선택 등보다 위에 옵니다.
 
 ## Test focus
-1. 생년월일 없는 계정으로 `/fortune/today` → 히어로·잠금 프리뷰·CTA·안내 문구
-2. CTA → 설정 `#birth-profile`
-3. 홈 운세 카드 게이트도 제목+본문+노트
+1. 프로필 미완료 + 공지 있는 계정: 공지가 프로필 CTA보다 위
+2. 프리미엄 등 헬스장 선택 노출 시에도 공지가 그 위
 
 ## Fast checks
 ```
-rg FortuneBirthGate frontend/src/pages/fortune/FortuneDetailPage.tsx
-rg fr-gate frontend/src/styles/fortune-reading.css
+rg -n "HomeNoticeBanner|ProfileIncompleteBanner" frontend/src/pages/home/HomePage.tsx
 ```
 
 ## as-is → to-be
-- as-is: 이모지 + 한 줄 문구 + 버튼
-- to-be: 히어로 구성 + 잠금 프리뷰 리스트 + 탄생시 모름 안내 + CTA
+- as-is: ProfileIncompleteBanner → HomeNoticeBanner
+- to-be: HomeNoticeBanner first, then gym / install / profile banner

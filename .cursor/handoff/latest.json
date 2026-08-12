@@ -1,29 +1,17 @@
 {
-  "title": "Fortune birth-gate UI polish",
-  "summary": "Redesigned the needs-birth empty state on /fortune/today (and home fortune gate) with hero, locked preview list, clearer CTA/note matching fortune reading visuals.",
-  "git": { "branch": "main", "commit": "7c7c5eb3" },
-  "changedFiles": [
-    "frontend/src/components/fortune/FortuneBirthGate.tsx",
-    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
-    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "frontend/src/styles/fortune-reading.css",
-    "frontend/src/styles/fortune.css",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json"
-  ],
+  "title": "Home latest notice always on top",
+  "summary": "HomeNoticeBanner renders first on the home page so latest notice sits above gym selectors, install prompt, and profile-incomplete banner.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/pages/home/HomePage.tsx"],
   "testFocus": [
-    "Visit /fortune/today without birth profile: new hero + locked previews + CTA",
-    "CTA goes to Settings #birth-profile",
-    "Home fortune card gate shows headline + note (not bare emoji)"
+    "Home with incomplete profile + active notice: notice row is above profile setup banner",
+    "Notice remains above gym/member selectors when those show"
   ],
   "fastChecks": [
-    "rg FortuneBirthGate frontend/src/pages/fortune/FortuneDetailPage.tsx",
-    "rg fr-gate frontend/src/styles/fortune-reading.css"
+    "rg -n \"HomeNoticeBanner|ProfileIncompleteBanner\" frontend/src/pages/home/HomePage.tsx"
   ],
-  "productionChecks": ["Pages: /fortune/today gate UI"],
+  "productionChecks": ["Pages home: notice above profile CTA"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Emoji + one paragraph + button",
-  "toBe": "Hero unlock composition + preview locks + note + CTA"
+  "asIs": "ProfileIncompleteBanner above HomeNoticeBanner",
+  "toBe": "HomeNoticeBanner is first child of home-page"
 }

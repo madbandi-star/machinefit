@@ -76,6 +76,8 @@ export function HomePage() {
 
   return (
     <div className="home-page">
+      <HomeNoticeBanner />
+
       {showGymMemberSelectors && (
         <div className="home-gym-selector">
           <GymSelector />
@@ -86,7 +88,6 @@ export function HomePage() {
       <InstallPromptBanner />
 
       {showProfileBanner && <ProfileIncompleteBanner />}
-      <HomeNoticeBanner />
       <NoticePopup />
       <HomeFortuneCard />
       <HomePlannedWorkoutCard />
