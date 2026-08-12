@@ -35,3 +35,4 @@ export * from './workout-card.schema.js';
 export * from './fortune.schema.js';
 export * from './data-retention.schema.js';
 export * from './usage.schema.js';
+export * from './points.schema.js';

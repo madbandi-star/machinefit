@@ -25,3 +25,4 @@ export * from './template-share.js';
 export * from './backup.js';
 export * from './workout-card.js';
 export * from './usage.js';
+export * from './points.js';

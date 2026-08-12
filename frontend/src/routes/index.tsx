@@ -458,6 +458,18 @@ const adminUsagePolicyHistoryPage = () =>
   import('@/pages/admin/usage/AdminUsagePolicyHistoryPage').then((m) => ({
     default: m.AdminUsagePolicyHistoryPage,
   }));
+const adminPointsPoliciesPage = () =>
+  import('@/pages/admin/points/AdminPointsPoliciesPage').then((m) => ({
+    default: m.AdminPointsPoliciesPage,
+  }));
+const adminPointsUsersPage = () =>
+  import('@/pages/admin/points/AdminPointsUsersPage').then((m) => ({
+    default: m.AdminPointsUsersPage,
+  }));
+const pointsPage = () =>
+  import('@/pages/points/PointsPage').then((m) => ({
+    default: m.PointsPage,
+  }));
 const adminOpsPage = () =>
   import('@/pages/admin/ops/AdminOpsPage').then((m) => ({
     default: m.AdminOpsPage,
@@ -546,6 +558,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.LIFTER_DNA, element: lazyRoute(lifterDna) },
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
+            { path: ROUTES.POINTS, element: lazyRoute(pointsPage) },
             { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
             { path: ROUTES.LAB, element: lazyRoute(lab) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
@@ -736,6 +749,14 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         {
           path: ROUTES.ADMIN_USAGE_POLICY_HISTORY,
           element: lazyRoute(adminUsagePolicyHistoryPage),
+        },
+        {
+          path: ROUTES.ADMIN_POINTS_POLICIES,
+          element: lazyRoute(adminPointsPoliciesPage),
+        },
+        {
+          path: ROUTES.ADMIN_POINTS_USERS,
+          element: lazyRoute(adminPointsUsersPage),
         },
         { path: ROUTES.ADMIN_OPS, element: lazyRoute(adminOpsPage) },
         { path: ROUTES.ADMIN_BACKUP, element: lazyRoute(adminBackupPage) },

@@ -42,3 +42,4 @@ export * from './workout-card.types.js';
 export * from './fortune.types.js';
 export * from './data-retention.types.js';
 export * from './usage.types.js';
+export * from './points.types.js';

@@ -39,6 +39,7 @@ import { backupRouter } from './backup.routes.js';
 import { fortuneRouter } from './fortune.routes.js';
 import { templateShareRouter } from './template-share.routes.js';
 import { usageRouter } from './usage.routes.js';
+import { pointsRouter } from './points.routes.js';
 import * as webhookController from '../controllers/webhook.controller.js';
 import { webhookRateLimit } from '../middlewares/rate-limit.middleware.js';
 
@@ -93,4 +94,5 @@ apiRouter.use('/notices', noticeRouter);
 apiRouter.use('/banners', bannerRouter);
 apiRouter.use('/template-shares', templateShareRouter);
 apiRouter.use('/usage', usageRouter);
+apiRouter.use('/points', pointsRouter);
 apiRouter.use('/backup', backupRouter);

@@ -1832,5 +1832,16 @@
     "modeMergeDesc": "今の記録を残したまま、バックアップ内容を合わせます。",
     "modeReplaceTitle": "現在のデータを削除して完全復元",
     "modeReplaceDesc": "サーバー上の現在の運動データを消し、バックアップ内容に置き換えます。元に戻せません。"
+  },
+  "points": {
+    "title": "My points",
+    "subtitle": "Review earn and spend history.",
+    "myPoints": "My points",
+    "navDesc": "Earn and spend history",
+    "balanceLabel": "Current balance",
+    "lifetime": "Lifetime earned {{earned}}P · spent {{spent}}P",
+    "historyTitle": "Point history",
+    "empty": "No point history yet.",
+    "earnedToast": "+{{points}}P earned!"
   }
 }

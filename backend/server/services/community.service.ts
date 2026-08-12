@@ -20,6 +20,7 @@ import { complianceRepository } from '../repositories/compliance.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { notificationService } from './notification.service.js';
+import { awardPointsSafe } from './points.service.js';
 
 async function processMachineRequestPhoto(buffer: Buffer): Promise<ProcessedMachineRequestImage> {
   const limits = machineRequestImageLimits();
@@ -82,7 +83,19 @@ export const communityService = {
   async createPost(userId: string, input: CreatePostInput) {
     assertSafeUgc(input.title, input.content);
     const user = await userRepository.findById(userId);
-    return communityRepository.createPost(userId, user?.displayName ?? 'User', input);
+    const post = await communityRepository.createPost(
+      userId,
+      user?.displayName ?? 'User',
+      input
+    );
+    awardPointsSafe({
+      userId,
+      actionCode: 'community_post',
+      referenceType: 'post',
+      referenceId: post.id,
+      idempotencyKey: `community_post:post:${post.id}`,
+    });
+    return post;
   },
 
   async deletePost(postId: string, userId: string, roleCode: RoleCode) {
@@ -92,7 +105,20 @@ export const communityService = {
   async createComment(postId: string, userId: string, input: CreateCommentInput) {
     assertSafeUgc(input.content);
     const user = await userRepository.findById(userId);
-    return communityRepository.createComment(postId, userId, user?.displayName ?? 'User', input);
+    const comment = await communityRepository.createComment(
+      postId,
+      userId,
+      user?.displayName ?? 'User',
+      input
+    );
+    awardPointsSafe({
+      userId,
+      actionCode: 'community_comment',
+      referenceType: 'comment',
+      referenceId: comment.id,
+      idempotencyKey: `community_comment:comment:${comment.id}`,
+    });
+    return comment;
   },
 
   async updateComment(commentId: string, userId: string, input: UpdateCommentInput) {
@@ -104,8 +130,18 @@ export const communityService = {
     await communityRepository.deleteComment(commentId, userId, roleCode);
   },
 
-  toggleLike(postId: string, userId: string) {
-    return communityRepository.toggleLike(postId, userId);
+  async toggleLike(postId: string, userId: string) {
+    const result = await communityRepository.toggleLike(postId, userId);
+    if (result.liked) {
+      awardPointsSafe({
+        userId,
+        actionCode: 'community_like',
+        referenceType: 'post',
+        referenceId: postId,
+        idempotencyKey: `community_like:post:${postId}:${userId}`,
+      });
+    }
+    return result;
   },
 
   listMachineRequests(query: MachineRequestListQuery, viewerId?: string) {

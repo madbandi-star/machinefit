@@ -23,6 +23,7 @@ import * as backupController from '../controllers/backup.controller.js';
 import * as adminFortuneController from '../controllers/admin-fortune.controller.js';
 import * as dataRetentionAdminController from '../controllers/data-retention-admin.controller.js';
 import * as usageController from '../controllers/usage.controller.js';
+import * as pointsController from '../controllers/points.controller.js';
 
 export const adminRouter = Router();
 
@@ -204,3 +205,10 @@ adminRouter.get('/usage/users/:userId', usageController.getUser);
 adminRouter.get('/usage/policies', usageController.listPolicies);
 adminRouter.get('/usage/policies/history', usageController.listHistory);
 adminRouter.put('/usage/policies/:policyId', usageController.updatePolicy);
+
+/** Points ledger + policies */
+adminRouter.get('/points/policies', pointsController.adminListPolicies);
+adminRouter.put('/points/policies/:policyId', pointsController.adminUpdatePolicy);
+adminRouter.get('/points/users', pointsController.adminListUsersWithPoints);
+adminRouter.get('/points/users/:userId', pointsController.adminGetUserPoints);
+adminRouter.post('/points/adjust', pointsController.adminAdjustPoints);

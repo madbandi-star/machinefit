@@ -13,6 +13,7 @@ import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
 import { locationApi, userApi, authApi } from '@/api';
+import { pointsApi } from '@/api/points.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -80,6 +81,30 @@ export function MyPage() {
     enabled: Boolean(user),
     staleTime: 60_000,
   });
+
+  const pointsQuery = useQuery({
+    queryKey: QUERY_KEYS.pointsBalance,
+    queryFn: async () => (await pointsApi.getMine()).data.data,
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  });
+
+  useEffect(() => {
+    const balance = pointsQuery.data?.balance;
+    if (balance == null || !user?.id) return;
+    const key = `mf-points-balance:${user.id}`;
+    try {
+      const prevRaw = sessionStorage.getItem(key);
+      const prev = prevRaw == null ? null : Number(prevRaw);
+      if (prev != null && Number.isFinite(prev) && balance > prev) {
+        const delta = balance - prev;
+        showToast(t('points.earnedToast', { points: delta }), 'success');
+      }
+      sessionStorage.setItem(key, String(balance));
+    } catch {
+      /* ignore storage */
+    }
+  }, [pointsQuery.data?.balance, showToast, t, user?.id]);
 
   const homeGymDisplay =
     resolveHomeGymName(meQuery.data ?? user, activeGym, gyms) || t('myPage.homeGymUnset');
@@ -162,6 +187,14 @@ export function MyPage() {
               <dt>{t('myPage.homeGym')}</dt>
               <dd>{homeGymDisplay}</dd>
             </div>
+            <div className="profile-card__row profile-card__row--full">
+              <dt>{t('points.myPoints')}</dt>
+              <dd>
+                <Link to={ROUTES.POINTS} className="profile-card__email-value">
+                  {(pointsQuery.data?.balance ?? 0).toLocaleString()}P
+                </Link>
+              </dd>
+            </div>
           </dl>
         </div>
 
@@ -193,6 +226,11 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.FORTUNE_TODAY} label={tf('title')} icon="flame" />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
+          <ListNavLink
+            to={ROUTES.POINTS}
+            label={t('points.myPoints')}
+            icon="trendingUp"
+          />
           {showAboveMember ? (
             <>
               <ListNavLink

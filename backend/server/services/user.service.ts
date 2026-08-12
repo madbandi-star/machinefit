@@ -11,6 +11,7 @@ import { userRepository } from '../repositories/user.repository.js';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { fortuneService } from './fortune/fortune.service.js';
+import { awardPointsSafe } from './points.service.js';
 
 function usernameError(code: string, message: string): AppError {
   return new AppError(400, code, message);
@@ -186,6 +187,20 @@ export const userService = {
       }
       if (touchesBirth) {
         fortuneService.invalidateUser(userId);
+      }
+      if (
+        user.heightCm != null &&
+        user.weightKg != null &&
+        user.gender &&
+        user.workoutGoal
+      ) {
+        awardPointsSafe({
+          userId,
+          actionCode: 'profile_complete',
+          referenceType: 'user',
+          referenceId: userId,
+          idempotencyKey: `profile_complete:user:${userId}`,
+        });
       }
       return user;
     } catch (error: unknown) {

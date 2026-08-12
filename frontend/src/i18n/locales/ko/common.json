@@ -1826,5 +1826,16 @@
     "modeMergeDesc": "지금 있는 기록을 그대로 두고, 백업 내용을 합칩니다.",
     "modeReplaceTitle": "현재 데이터 삭제 후 완전 복원",
     "modeReplaceDesc": "지금 서버에 있는 운동 데이터를 지우고 백업 내용으로 바꿉니다. 되돌릴 수 없어요."
+  },
+  "points": {
+    "title": "내 포인트",
+    "subtitle": "적립·사용 내역을 확인하세요.",
+    "myPoints": "내 포인트",
+    "navDesc": "적립·사용 내역",
+    "balanceLabel": "현재 잔액",
+    "lifetime": "누적 적립 {{earned}}P · 누적 사용 {{spent}}P",
+    "historyTitle": "포인트 내역",
+    "empty": "아직 포인트 내역이 없어요.",
+    "earnedToast": "+{{points}}P 적립!"
   }
 }

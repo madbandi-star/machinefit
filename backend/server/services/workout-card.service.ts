@@ -29,6 +29,7 @@ import { historyRepository } from '../repositories/history.repository.js';
 import { workoutRecordOrderRepository } from '../repositories/workout-record-order.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
+import { awardPointsSafe } from './points.service.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { resolveWorkoutLoadContexts } from './workout-load.service.js';
@@ -230,14 +231,35 @@ export const workoutCardService = {
             locale
           );
           trackUsageSafe(userId, 'exercise_card_create');
+          awardPointsSafe({
+            userId,
+            actionCode: 'workout_card_create',
+            referenceType: 'workout_card',
+            referenceId: created.id,
+            idempotencyKey: `workout_card_create:workout_card:${created.id}`,
+          });
           return stripMachineId(linked ?? created);
         } catch {
           trackUsageSafe(userId, 'exercise_card_create');
+          awardPointsSafe({
+            userId,
+            actionCode: 'workout_card_create',
+            referenceType: 'workout_card',
+            referenceId: created.id,
+            idempotencyKey: `workout_card_create:workout_card:${created.id}`,
+          });
           return stripMachineId(created);
         }
       }
 
       trackUsageSafe(userId, 'exercise_card_create');
+      awardPointsSafe({
+        userId,
+        actionCode: 'workout_card_create',
+        referenceType: 'workout_card',
+        referenceId: created.id,
+        idempotencyKey: `workout_card_create:workout_card:${created.id}`,
+      });
       return stripMachineId(created);
     } catch (error) {
       throwDuplicateCard(error);
@@ -310,6 +332,15 @@ export const workoutCardService = {
     }
 
     trackUsageSafe(userId, 'exercise_card_update');
+    if (updated.status === 'COMPLETED') {
+      awardPointsSafe({
+        userId,
+        actionCode: 'workout_complete',
+        referenceType: 'workout_card',
+        referenceId: updated.id,
+        idempotencyKey: `workout_complete:workout_card:${updated.id}`,
+      });
+    }
 
     // Keep linked workout log in sync when completed card sets change.
     if (updated.status === 'COMPLETED') {
@@ -904,6 +935,13 @@ export const workoutCardService = {
     });
     trackUsageSafe(userId, 'template_create');
     trackUsageSafe(userId, 'template_save');
+    awardPointsSafe({
+      userId,
+      actionCode: 'template_create',
+      referenceType: 'workout_template',
+      referenceId: createdTemplate.id,
+      idempotencyKey: `template_create:workout_template:${createdTemplate.id}`,
+    });
     return createdTemplate;
   },
 
@@ -1039,6 +1077,13 @@ export const workoutCardService = {
     }
 
     trackUsageSafe(userId, 'template_use');
+    awardPointsSafe({
+      userId,
+      actionCode: 'template_use',
+      referenceType: 'workout_template',
+      referenceId: template.id,
+      idempotencyKey: `template_use:apply:${userId}:${template.id}:${created[0]?.id ?? input.scheduledDate}`,
+    });
     return created;
   },
 

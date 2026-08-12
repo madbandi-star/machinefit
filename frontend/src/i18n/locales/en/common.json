@@ -1826,5 +1826,16 @@
     "modeMergeDesc": "Leave your current records in place and combine them with the backup.",
     "modeReplaceTitle": "Delete current data and fully restore",
     "modeReplaceDesc": "Wipe your current workout data on the server and replace it with the backup. This cannot be undone."
+  },
+  "points": {
+    "title": "My points",
+    "subtitle": "Review earn and spend history.",
+    "myPoints": "My points",
+    "navDesc": "Earn and spend history",
+    "balanceLabel": "Current balance",
+    "lifetime": "Lifetime earned {{earned}}P · spent {{spent}}P",
+    "historyTitle": "Point history",
+    "empty": "No point history yet.",
+    "earnedToast": "+{{points}}P earned!"
   }
 }

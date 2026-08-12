@@ -1832,5 +1832,16 @@
     "modeMergeDesc": "保留当前记录，并与备份内容合并。",
     "modeReplaceTitle": "删除当前数据并完全恢复",
     "modeReplaceDesc": "清除服务器上的当前训练数据，并用备份内容替换。此操作无法撤销。"
+  },
+  "points": {
+    "title": "My points",
+    "subtitle": "Review earn and spend history.",
+    "myPoints": "My points",
+    "navDesc": "Earn and spend history",
+    "balanceLabel": "Current balance",
+    "lifetime": "Lifetime earned {{earned}}P · spent {{spent}}P",
+    "historyTitle": "Point history",
+    "empty": "No point history yet.",
+    "earnedToast": "+{{points}}P earned!"
   }
 }

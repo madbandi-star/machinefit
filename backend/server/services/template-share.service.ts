@@ -21,6 +21,7 @@ import { templateShareRepository } from '../repositories/template-share.reposito
 import { workoutCardRepository } from '../repositories/workout-card.repository.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
+import { awardPointsSafe } from './points.service.js';
 
 function assertShareableTemplate(template: {
   userId: string;
@@ -92,6 +93,13 @@ export const templateShareService = {
       sourceTemplateId: template.id,
     }).then((result) => {
       trackUsageSafe(userId, 'template_create');
+      awardPointsSafe({
+        userId,
+        actionCode: 'template_share',
+        referenceType: 'template_share',
+        referenceId: result.id,
+        idempotencyKey: `template_share:template_share:${result.id}`,
+      });
       return result;
     });
   },
@@ -115,6 +123,13 @@ export const templateShareService = {
     const result = await templateShareRepository.download(postId, userId);
     trackUsageSafe(userId, 'template_download');
     trackUsageSafe(userId, 'template_save');
+    awardPointsSafe({
+      userId,
+      actionCode: 'template_download',
+      referenceType: 'template_share',
+      referenceId: postId,
+      idempotencyKey: `template_download:template_share:${postId}:${userId}`,
+    });
     return result;
   },
 

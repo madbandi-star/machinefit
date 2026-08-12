@@ -63,9 +63,11 @@ async function purgeDeactivatedUserData(userId: string): Promise<number> {
   rowsAffected += await deleteForUser('user_lifted_badges', userId);
   rowsAffected += await deleteForUser('machine_recommendations', userId);
 
-  // Usage / ops identity-linked rows (users row is kept, so ON DELETE CASCADE does not run)
+  // Usage / ops / points identity-linked rows (users row is kept, so ON DELETE CASCADE may not run for all)
   rowsAffected += await deleteForUser('user_usage_daily', userId);
   rowsAffected += await deleteForUser('user_usage_monthly', userId);
+  rowsAffected += await deleteForUser('point_transactions', userId);
+  rowsAffected += await deleteForUser('user_points', userId);
   rowsAffected += await deleteForUser('ops_user_activity_daily', userId);
   if (await tableExists('ops_app_logs')) {
     const r = await pool.query(`DELETE FROM ops_app_logs WHERE user_id = $1`, [userId]);

@@ -12,6 +12,8 @@ import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
+import { awardPointsSafe } from './points.service.js';
+import { getPool } from '../config/database.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
 import { achievementService } from './achievement.service.js';
 import { growthTimelineService } from './growth-timeline.service.js';
@@ -240,6 +242,63 @@ export const workoutLogService = {
       }
 
       trackUsageSafe(userId, 'exercise_record_save');
+      awardPointsSafe({
+        userId,
+        actionCode: 'workout_log_save',
+        referenceType: 'workout_log',
+        referenceId: saved.id,
+        idempotencyKey: `workout_log_save:workout_log:${saved.id}`,
+      });
+      if (nextAllDone && !prevAllDone && input.setCount > 0) {
+        const seoulDay = logDate || new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+        awardPointsSafe({
+          userId,
+          actionCode: 'workout_complete',
+          referenceType: 'workout_log',
+          referenceId: saved.id,
+          idempotencyKey: `workout_complete:workout_log:${saved.id}`,
+        });
+        awardPointsSafe({
+          userId,
+          actionCode: 'daily_workout_done',
+          referenceType: 'day',
+          referenceId: seoulDay,
+          idempotencyKey: `daily_workout_done:day:${seoulDay}`,
+        });
+        void (async () => {
+          try {
+            const pool = getPool();
+            if (!pool) return;
+            const { rows } = await pool.query<{ d: string }>(
+              `SELECT DISTINCT log_date::text AS d FROM workout_logs
+               WHERE user_id = $1 AND log_date >= (CURRENT_DATE - 14)
+               ORDER BY d DESC LIMIT 14`,
+              [userId]
+            );
+            const days = new Set(rows.map((r) => r.d.slice(0, 10)));
+            let streak = 0;
+            const cursor = new Date(`${seoulDay}T12:00:00Z`);
+            for (let i = 0; i < 14; i++) {
+              const key = cursor.toISOString().slice(0, 10);
+              if (!days.has(key)) break;
+              streak += 1;
+              cursor.setUTCDate(cursor.getUTCDate() - 1);
+            }
+            if (streak >= 2) {
+              awardPointsSafe({
+                userId,
+                actionCode: 'workout_streak',
+                referenceType: 'day',
+                referenceId: seoulDay,
+                idempotencyKey: `workout_streak:day:${seoulDay}`,
+                description: `${streak}-day streak`,
+              });
+            }
+          } catch {
+            /* streak bonus must not fail save */
+          }
+        })();
+      }
       return saved;
     } catch (error) {
       const pgCode =

@@ -4,6 +4,7 @@ import { favoriteRepository } from '../repositories/favorite.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { awardPointsSafe } from './points.service.js';
 
 export const favoriteService = {
   async list(
@@ -38,7 +39,22 @@ export const favoriteService = {
     if (!machineId) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${machineCode}`);
     }
-    return favoriteRepository.add(userId, gymId, memberId, machineId, recommendationId, locale);
+    const favorite = await favoriteRepository.add(
+      userId,
+      gymId,
+      memberId,
+      machineId,
+      recommendationId,
+      locale
+    );
+    awardPointsSafe({
+      userId,
+      actionCode: 'favorite_add',
+      referenceType: 'machine',
+      referenceId: machineCode,
+      idempotencyKey: `favorite_add:machine:${userId}:${machineCode}`,
+    });
+    return favorite;
   },
 
   async remove(userId: string, favoriteId: string) {

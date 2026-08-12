@@ -81,6 +81,7 @@ export const ROUTES = {
   LIFTER_DNA: '/my-page/lifter-dna',
   LIVE_DASHBOARD: '/my-page/live',
   ACHIEVEMENTS: '/my-page/achievements',
+  POINTS: '/my-page/points',
   GROWTH_TIMELINE: '/my-page/growth-timeline',
   /** Research / experiment lab (My Page). */
   LAB: '/my-page/lab',
@@ -166,6 +167,8 @@ export const ROUTES = {
   ADMIN_USAGE_USERS: '/admin/usage/users',
   ADMIN_USAGE_POLICIES: '/admin/usage/policies',
   ADMIN_USAGE_POLICY_HISTORY: '/admin/usage/policies/history',
+  ADMIN_POINTS_POLICIES: '/admin/points/policies',
+  ADMIN_POINTS_USERS: '/admin/points/users',
   ADMIN_OPS: '/admin/ops',
   ADMIN_SUBSCRIPTIONS: '/admin/subscriptions',
   SCAN: '/scan',

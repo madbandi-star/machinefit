@@ -24,6 +24,7 @@ import {
 import { findDevUserById } from '../data/dev-users.js';
 import { notificationService } from './notification.service.js';
 import { trackUsageSafe } from './usage.service.js';
+import { awardPointsSafe } from './points.service.js';
 import { assertPlatformAgeEligible } from './age-verification.service.js';
 import crypto from 'crypto';
 
@@ -305,6 +306,13 @@ export const authService = {
       if (user?.isActive) {
         await userRepository.updateLastLogin(user.id);
         trackUsageSafe(user.id, 'login');
+        awardPointsSafe({
+          userId: user.id,
+          actionCode: 'first_login',
+          referenceType: 'user',
+          referenceId: user.id,
+          idempotencyKey: `first_login:user:${user.id}`,
+        });
         await complianceRepository
           .recordLoginEvent({
             userId: user.id,
@@ -427,6 +435,13 @@ export const authService = {
         if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'User not found');
         await userRepository.updateLastLogin(refreshed.id);
         trackUsageSafe(refreshed.id, 'login');
+        awardPointsSafe({
+          userId: refreshed.id,
+          actionCode: 'first_login',
+          referenceType: 'user',
+          referenceId: refreshed.id,
+          idempotencyKey: `first_login:user:${refreshed.id}`,
+        });
         return buildAuthResponse(refreshed);
       }
       // Stale link on WITHDRAWN user — release and create a brand-new account.
@@ -487,6 +502,20 @@ export const authService = {
 
       await userRepository.updateLastLogin(user.id);
       trackUsageSafe(user.id, 'login');
+      awardPointsSafe({
+        userId: user.id,
+        actionCode: 'signup_complete',
+        referenceType: 'user',
+        referenceId: user.id,
+        idempotencyKey: `signup_complete:user:${user.id}`,
+      });
+      awardPointsSafe({
+        userId: user.id,
+        actionCode: 'first_login',
+        referenceType: 'user',
+        referenceId: user.id,
+        idempotencyKey: `first_login:user:${user.id}`,
+      });
       const refreshed = await userRepository.findById(user.id);
       if (!refreshed) throw new AppError(500, 'INTERNAL', 'Failed to load created user');
 
