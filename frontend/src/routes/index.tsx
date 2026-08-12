@@ -558,6 +558,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.LIFTER_DNA, element: lazyRoute(lifterDna) },
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
+            { path: ROUTES.POINTS, element: lazyRoute(pointsPage) },
             { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
             { path: ROUTES.LAB, element: lazyRoute(lab) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
@@ -594,10 +595,6 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.ONLINE_PT_MANAGE, element: lazyRoute(onlinePtManage) },
             { path: ROUTES.ONLINE_PT_WALLET, element: lazyRoute(onlinePtWallet) },
           ],
-        },
-        {
-          element: <AuthGuard minRole={Role.ADMIN} />,
-          children: [{ path: ROUTES.POINTS, element: lazyRoute(pointsPage) }],
         },
         {
           element: <AuthGuard minRole={Role.OWNER} />,
