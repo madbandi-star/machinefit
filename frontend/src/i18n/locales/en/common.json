@@ -433,6 +433,8 @@
     "birthProfileDesc": "Used for Today’s Helchang Fortune. Birth date is collected at signup; you can add birth time here.",
     "birthProfileHint": "If you don’t know birth time, check “Unknown birth time” for a simple fortune. Entertainment only — not medical advice.",
     "birthProfileSaved": "Birth date & time saved.",
+    "ageFromBirthHint": "Age {{age}} · calculated from your birth date.",
+    "ageSetInBirthHint": "Age is set automatically from Birth date & time below.",
     "birthDate": "Birth date",
     "birthTime": "Birth time",
     "birthTimeUnknown": "Unknown birth time",

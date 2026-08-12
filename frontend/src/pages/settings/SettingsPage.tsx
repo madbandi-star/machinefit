@@ -42,12 +42,13 @@ import '@/styles/profile-data-consent.css';
 import { complianceApi } from '@/api/compliance.api';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { VoiceCoachPickerGrid } from '@/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid';
-import { DEFAULT_AGE, DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
+import { DEFAULT_HEIGHT_CM, DEFAULT_WEIGHT_KG } from '@/constants/body-metrics-defaults';
 import { authApi, locationApi, userApi, userGymApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { SETTINGS_DEFAULTS, useSettingsStore } from '@/store/settings.store';
+import { resolveApiErrorMessage } from '@/utils/apiErrorCatalog';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { syncUserSettings } from '@/utils/syncUserSettings';
@@ -168,7 +169,6 @@ export function SettingsPage() {
 
   const [heightCm, setHeightCm] = useState(user?.heightCm ?? DEFAULT_HEIGHT_CM);
   const [weightKg, setWeightKg] = useState(user?.weightKg ?? DEFAULT_WEIGHT_KG);
-  const [age, setAge] = useState(user?.age ?? DEFAULT_AGE);
   const [birthDate, setBirthDate] = useState(user?.birthDate ?? '');
   const [birthTime, setBirthTime] = useState(user?.birthTime ?? '');
   const [birthTimeUnknown, setBirthTimeUnknown] = useState(
@@ -330,7 +330,8 @@ export function SettingsPage() {
       void queryClient.invalidateQueries({ queryKey: ['privacy-consents', user?.id] });
       showToast(t('location.locationGymSaved'), 'success');
     },
-    onError: () => showToast(t('errors.submitFailed'), 'error'),
+    onError: (error) =>
+      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error'),
   });
 
   const locationClearMutation = useMutation({
@@ -346,14 +347,14 @@ export function SettingsPage() {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userLocation });
       showToast(t('location.cleared'), 'success');
     },
-    onError: () => showToast(t('errors.submitFailed'), 'error'),
+    onError: (error) =>
+      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error'),
   });
 
   useEffect(() => {
     if (user?.heightCm != null) setHeightCm(user.heightCm);
     else setHeightCm(DEFAULT_HEIGHT_CM);
     setWeightKg(user?.weightKg ?? DEFAULT_WEIGHT_KG);
-    setAge(user?.age ?? DEFAULT_AGE);
     setBirthDate(user?.birthDate ?? '');
     setBirthTime(user?.birthTime ?? '');
     setBirthTimeUnknown(Boolean(user?.birthTimeUnknown));
@@ -372,7 +373,6 @@ export function SettingsPage() {
   }, [
     user?.heightCm,
     user?.weightKg,
-    user?.age,
     user?.birthDate,
     user?.birthTime,
     user?.birthTimeUnknown,
@@ -393,7 +393,8 @@ export function SettingsPage() {
       userApi.updateMe({
         heightCm,
         weightKg,
-        age,
+        // Age is derived from birthDate in the birth-profile section.
+        // Sending age alone fails Zod/server validation (age requires birthDate).
         gender,
         unitHeight: draftUnitHeight,
         unitWeight: draftUnitWeight,
@@ -413,7 +414,8 @@ export function SettingsPage() {
         navigate(returnTo, { replace: true });
       }
     },
-    onError: () => showToast(t('errors.submitFailed'), 'error'),
+    onError: (error) =>
+      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error'),
   });
 
   const birthMutation = useMutation({
@@ -436,7 +438,8 @@ export function SettingsPage() {
       void queryClient.invalidateQueries({ queryKey: ['fortune'] });
       showToast(t('settings.birthProfileSaved'), 'success');
     },
-    onError: () => showToast(t('errors.submitFailed'), 'error'),
+    onError: (error) =>
+      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error'),
   });
 
   const restParts = restDurationParts(restDurationSeconds);
@@ -466,16 +469,21 @@ export function SettingsPage() {
               unitWeight={draftUnitWeight}
               heightCm={heightCm}
               weightKg={weightKg}
-              age={age}
               onHeightCmChange={(value) => {
                 if (value != null) setHeightCm(value);
               }}
               onWeightKgChange={(value) => {
                 if (value != null) setWeightKg(value);
               }}
-              onAgeChange={setAge}
               pickerSize="default"
             />
+            {user?.age != null ? (
+              <p className="form-section__desc">
+                {t('settings.ageFromBirthHint', { age: user.age })}
+              </p>
+            ) : (
+              <p className="form-section__desc">{t('settings.ageSetInBirthHint')}</p>
+            )}
             <ExperienceSelector
               value={experienceLevel}
               onChange={(value) => {

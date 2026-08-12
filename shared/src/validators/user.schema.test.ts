@@ -3,8 +3,14 @@ import { describe, it } from 'node:test';
 import { updateProfileSchema } from './user.schema.js';
 
 describe('updateProfileSchema age gate', () => {
-  it('rejects age without birthDate', () => {
-    const parsed = updateProfileSchema.safeParse({ age: 20 });
+  it('allows age without birthDate in payload (server strips orphan age)', () => {
+    // Older clients send age with body metrics; service drops it when birthDate omitted.
+    const parsed = updateProfileSchema.safeParse({ age: 20, heightCm: 170 });
+    assert.equal(parsed.success, true);
+  });
+
+  it('rejects age when birthDate is explicitly null', () => {
+    const parsed = updateProfileSchema.safeParse({ age: 20, birthDate: null });
     assert.equal(parsed.success, false);
   });
 

@@ -81,7 +81,12 @@ export const userService = {
     if (payload.displayName !== undefined) {
       payload.displayName = await applyUsernameChange(userId, payload.displayName);
     }
-    if (payload.age !== undefined && !payload.birthDate) {
+    // Age is derived from birthDate only. Drop orphan age fields from older clients
+    // so body-metrics saves (height/weight/…) are not rejected by the age gate.
+    if (payload.age !== undefined && payload.birthDate === undefined) {
+      delete payload.age;
+    }
+    if (payload.age !== undefined && payload.birthDate === null) {
       throw new AppError(400, 'VALIDATION_ERROR', 'age cannot be set without birthDate');
     }
     if (payload.birthDate) {

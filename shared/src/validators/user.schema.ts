@@ -56,7 +56,9 @@ export const updateProfileSchema = z
         path: ['birthTime'],
       });
     }
-    if (data.age != null && (data.birthDate === undefined || data.birthDate === null)) {
+    // Standalone `age` (no birthDate in payload) is stripped server-side — do not
+    // reject here so body-metrics updates from older clients still validate.
+    if (data.age != null && data.birthDate === null) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'age cannot be set without birthDate',

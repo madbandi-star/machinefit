@@ -511,7 +511,9 @@
       "checkRights": "I understand I can request access, correction, deletion, or suspension of processing.",
       "doneTitle": "Location & home gym consent on file",
       "doneBody": "Consent version {{version}} is recorded. You can withdraw or request deletion in the privacy rights center."
-    }
+    },
+    "ageFromBirthHint": "Age {{age}} · calculated from your birth date.",
+    "ageSetInBirthHint": "Age is set automatically from Birth date & time below."
   },
   "legal": {
     "termsTitle": "Terms of Service",

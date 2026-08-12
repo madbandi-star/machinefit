@@ -433,6 +433,8 @@
     "birthProfileDesc": "오늘의 헬창운세에 사용됩니다. 가입 시 생년월일은 이미 받았으며, 탄생시는 여기서 추가할 수 있어요.",
     "birthProfileHint": "탄생시를 모르면 「탄생시 모름」을 선택하면 간단 운세를 볼 수 있어요. 엔터테인먼트 콘텐츠이며 의료적 진단이 아닙니다.",
     "birthProfileSaved": "생년월일·탄생시를 저장했어요.",
+    "ageFromBirthHint": "나이 {{age}}세 · 생년월일에서 자동 계산됩니다.",
+    "ageSetInBirthHint": "나이는 아래 「생년월일·탄생시」에서 설정하면 자동으로 반영됩니다.",
     "consentRequiredToast": "개인정보 수집·이용 등 필수 동의 항목을 모두 체크해 주세요.",
     "consentRightsLink": "개인정보 권리 센터",
     "consentBody": {
