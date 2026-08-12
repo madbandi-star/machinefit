@@ -1,7 +1,7 @@
 {
   "title": "Helchang Power page UI polish",
   "summary": "Removed points subtitle; redesigned /points with balance hero and clearer ledger rows.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9300b1b9" },
   "changedFiles": [
     "frontend/src/pages/points/PointsPage.tsx",
     "frontend/src/pages/points/PointsPage.css",
