@@ -1,7 +1,7 @@
 {
   "title": "Fully revert fortune birth-gate polish",
   "summary": "Restored /fortune/today needs-birth empty state to simple 🔮 + copy + CTA; removed FortuneBirthGate component and gate i18n/CSS.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "618363c5" },
   "changedFiles": [
     "frontend/src/pages/fortune/FortuneDetailPage.tsx",
     "frontend/src/components/fortune/FortuneBirthGate.tsx",
