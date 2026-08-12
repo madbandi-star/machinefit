@@ -1,7 +1,7 @@
 {
   "title": "Fortune birth-gate UI polish",
-  "summary": "Redesigned the needs-birth empty state on /fortune/today (and home fortune gate) with hero, locked preview list, clearer CTA/note — matching fortune reading visuals.",
-  "git": { "branch": "main", "commit": "pending" },
+  "summary": "Redesigned the needs-birth empty state on /fortune/today (and home fortune gate) with hero, locked preview list, clearer CTA/note ??matching fortune reading visuals.",
+  "git": { "branch": "main", "commit": "7c7c5eb3" },
   "changedFiles": [
     "frontend/src/components/fortune/FortuneBirthGate.tsx",
     "frontend/src/pages/fortune/FortuneDetailPage.tsx",
