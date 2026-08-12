@@ -6,12 +6,9 @@ import { pointsApi } from '@/api/points.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import '@/styles/components.css';
 
-function formatPoints(n: number): string {
-  return `${n.toLocaleString()} P`;
-}
-
 export function PointsPage() {
   const { t } = useTranslation();
+  const unit = t('points.unit');
 
   const summaryQuery = useQuery({
     queryKey: QUERY_KEYS.pointsBalance,
@@ -39,7 +36,8 @@ export function PointsPage() {
       <div className="card" style={{ marginBottom: 'var(--space-md)' }}>
         <p className="form-section__desc">{t('points.balanceLabel')}</p>
         <p style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>
-          {formatPoints(summary?.balance ?? 0)}
+          {(summary?.balance ?? 0).toLocaleString()}
+          {unit}
         </p>
         <p className="form-section__desc" style={{ marginTop: 'var(--space-sm)' }}>
           {t('points.lifetime', {
@@ -73,7 +71,8 @@ export function PointsPage() {
                   }}
                 >
                   {positive ? '+' : ''}
-                  {tx.points}P
+                  {tx.points}
+                  {unit}
                 </span>
               </li>
             );

@@ -1844,6 +1844,7 @@
     "lifetime": "Lifetime earned {{earned}}P · spent {{spent}}P",
     "historyTitle": "Point history",
     "empty": "No point history yet.",
-    "earnedToast": "+{{points}}P earned!"
+    "earnedToast": "+{{points}}P earned!",
+    "unit": "Power"
   }
 }

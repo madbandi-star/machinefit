@@ -85,11 +85,12 @@ export function MyPage() {
   const pointsQuery = useQuery({
     queryKey: QUERY_KEYS.pointsBalance,
     queryFn: async () => (await pointsApi.getMine()).data.data,
-    enabled: Boolean(user),
+    enabled: Boolean(user) && isAdmin,
     staleTime: 30_000,
   });
 
   useEffect(() => {
+    if (!isAdmin) return;
     const balance = pointsQuery.data?.balance;
     if (balance == null || !user?.id) return;
     const key = `mf-points-balance:${user.id}`;
@@ -104,7 +105,7 @@ export function MyPage() {
     } catch {
       /* ignore storage */
     }
-  }, [pointsQuery.data?.balance, showToast, t, user?.id]);
+  }, [isAdmin, pointsQuery.data?.balance, showToast, t, user?.id]);
 
   const homeGymDisplay =
     resolveHomeGymName(meQuery.data ?? user, activeGym, gyms) || t('myPage.homeGymUnset');
@@ -187,14 +188,17 @@ export function MyPage() {
               <dt>{t('myPage.homeGym')}</dt>
               <dd>{homeGymDisplay}</dd>
             </div>
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('points.myPoints')}</dt>
-              <dd>
-                <Link to={ROUTES.POINTS} className="profile-card__email-value">
-                  {(pointsQuery.data?.balance ?? 0).toLocaleString()}P
-                </Link>
-              </dd>
-            </div>
+            {isAdmin ? (
+              <div className="profile-card__row profile-card__row--full">
+                <dt>{t('points.myPoints')}</dt>
+                <dd>
+                  <Link to={ROUTES.POINTS} className="profile-card__email-value">
+                    {(pointsQuery.data?.balance ?? 0).toLocaleString()}
+                    {t('points.unit')}
+                  </Link>
+                </dd>
+              </div>
+            ) : null}
           </dl>
         </div>
 
@@ -226,11 +230,13 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.FORTUNE_TODAY} label={tf('title')} icon="flame" />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
-          <ListNavLink
-            to={ROUTES.POINTS}
-            label={t('points.myPoints')}
-            icon="trendingUp"
-          />
+          {isAdmin ? (
+            <ListNavLink
+              to={ROUTES.POINTS}
+              label={t('points.myPoints')}
+              icon="trendingUp"
+            />
+          ) : null}
           {showAboveMember ? (
             <>
               <ListNavLink
