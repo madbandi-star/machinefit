@@ -1,13 +1,13 @@
 {
   "title": "Revert home fortune gate visual extras",
   "summary": "Home Helchang fortune needs-birth card restored to crystal-ball emoji and no unknown-birth-time note; those extras came from an earlier gate polish.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "fd655463" },
   "changedFiles": [
     "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
     "frontend/src/styles/fortune.css"
   ],
   "testFocus": [
-    "Home fortune gate: 🔮 emoji again, no '탄생시를 몰라도' line",
+    "Home fortune gate: ?뵰 emoji again, no '?꾩깮?쒕? 紐곕씪?? line",
     "needsBirth body + enterBirth CTA remain"
   ],
   "fastChecks": [
@@ -17,5 +17,5 @@
   "productionChecks": ["Pages home fortune gate"],
   "deploy": { "expected": "Pages FE" },
   "asIs": "CSS orb + gateHeadline + gateNote on home card",
-  "toBe": "🔮 + needsBirth + CTA only on home card"
+  "toBe": "?뵰 + needsBirth + CTA only on home card"
 }
