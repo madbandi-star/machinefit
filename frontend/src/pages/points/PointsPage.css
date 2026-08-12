@@ -1,0 +1,252 @@
+.points-page {
+  --points-radius: 16px;
+  --points-border: color-mix(in srgb, var(--color-text) 11%, transparent);
+  --points-in: var(--color-success, #1a7f37);
+  --points-out: var(--color-danger, #b42318);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+.points-page--loading {
+  gap: 0.85rem;
+}
+
+.points-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 1.55rem 1.2rem 1.4rem;
+  border-radius: calc(var(--points-radius) + 2px);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--points-border));
+  background:
+    radial-gradient(120% 80% at 50% -18%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 58%),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--color-surface, #fff) 96%, transparent),
+      color-mix(in srgb, var(--color-surface-alt, #f5f6f8) 88%, transparent)
+    );
+  box-shadow: 0 14px 34px rgba(8, 12, 20, 0.08);
+  animation: points-in 0.55s ease both;
+}
+
+.points-hero__glow {
+  pointer-events: none;
+  position: absolute;
+  inset: -28% -12% auto;
+  height: 58%;
+  background: radial-gradient(
+    circle at 50% 35%,
+    color-mix(in srgb, var(--color-primary) 18%, transparent),
+    transparent 70%
+  );
+}
+
+.points-hero__mark {
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0 auto 0.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--color-primary) 88%, #052e16);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+.points-hero__label,
+.points-hero__balance,
+.points-hero__lifetime {
+  position: relative;
+  margin: 0;
+}
+
+.points-hero__label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text-muted);
+}
+
+.points-hero__balance {
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35rem;
+  line-height: 1;
+}
+
+.points-hero__value {
+  font-size: clamp(2.1rem, 8vw, 2.75rem);
+  font-weight: 820;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.points-hero__unit {
+  font-size: 1rem;
+  font-weight: 750;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+}
+
+.points-hero__lifetime {
+  margin-top: 0.7rem;
+  font-size: 0.86rem;
+  color: var(--color-text-muted);
+  word-break: keep-all;
+}
+
+.points-ledger {
+  animation: points-in 0.55s ease 0.06s both;
+}
+
+.points-ledger__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.points-ledger__title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.points-ledger__count {
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+}
+
+.points-ledger__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.points-tx {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--points-radius);
+  border: 1px solid var(--points-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 94%, var(--color-surface-alt, #f5f6f8));
+  box-shadow: 0 6px 16px rgba(8, 12, 20, 0.04);
+}
+
+.points-tx__badge {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.points-tx--in .points-tx__badge {
+  color: var(--points-in);
+  background: color-mix(in srgb, var(--points-in) 12%, transparent);
+}
+
+.points-tx--out .points-tx__badge {
+  color: var(--points-out);
+  background: color-mix(in srgb, var(--points-out) 12%, transparent);
+}
+
+.points-tx__body {
+  min-width: 0;
+}
+
+.points-tx__desc {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.points-tx__time {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.points-tx__amount {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.points-tx--in .points-tx__amount {
+  color: var(--points-in);
+}
+
+.points-tx--out .points-tx__amount {
+  color: var(--points-out);
+}
+
+.points-tx__unit {
+  margin-left: 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.points-empty {
+  padding: 1.4rem 1.1rem;
+  text-align: center;
+  border-radius: var(--points-radius);
+  border: 1px dashed color-mix(in srgb, var(--color-text) 16%, transparent);
+  background: color-mix(in srgb, var(--color-surface, #fff) 88%, var(--color-surface-alt, #f5f6f8));
+}
+
+.points-empty__title {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  word-break: keep-all;
+}
+
+@keyframes points-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .points-hero,
+  .points-ledger {
+    animation: none;
+  }
+}

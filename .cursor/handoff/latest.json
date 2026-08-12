@@ -1,23 +1,26 @@
 {
-  "title": "Remove lifetime spent from Helchang Power page",
-  "summary": "Points page lifetime line shows only cumulative earned Power; spent segment removed.",
-  "git": { "branch": "main", "commit": "cbcc130a" },
+  "title": "Helchang Power page UI polish",
+  "summary": "Removed points subtitle; redesigned /points with balance hero and clearer ledger rows.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/pages/points/PointsPage.tsx",
+    "frontend/src/pages/points/PointsPage.css",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ja/common.json",
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "내 헬창력: shows 누적 적립 NPower only, no 누적 사용"
+    "내 헬창력: no '적립·사용 내역을 확인하세요' subtitle",
+    "Hero shows current Power + lifetime earned",
+    "Ledger rows: +/- badge, description, time, signed amount"
   ],
   "fastChecks": [
-    "rg \"누적 적립\" frontend/src/i18n/locales/ko/common.json",
-    "rg lifetimeSpent frontend/src/pages/points/PointsPage.tsx || true"
+    "rg points.subtitle frontend/src/pages/points/PointsPage.tsx || true",
+    "rg points-hero frontend/src/pages/points/PointsPage.css"
   ],
   "productionChecks": ["Pages /points"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "누적 적립 · 누적 사용",
-  "toBe": "누적 적립 only"
+  "asIs": "Generic card + list-nav + subtitle",
+  "toBe": "Hero + ledger UI, no subtitle"
 }
