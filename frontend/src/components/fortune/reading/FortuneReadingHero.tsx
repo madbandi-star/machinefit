@@ -11,7 +11,6 @@ interface FortuneReadingHeroProps {
   keywordCode: string;
   coreThemeLabel: string;
   scoreStars: number;
-  oneLiner: string;
   mode?: 'full' | 'simple';
 }
 
@@ -20,7 +19,6 @@ export function FortuneReadingHero({
   keywordCode,
   coreThemeLabel,
   scoreStars,
-  oneLiner,
   mode,
 }: FortuneReadingHeroProps) {
   const { t } = useTranslation('fortune');
@@ -58,8 +56,6 @@ export function FortuneReadingHero({
       <div className="fr-hero__aside">
         <FortuneStarsRow scoreStars={scoreStars} label={t('starsLabel')} />
       </div>
-
-      <p className="fr-hero__line">{oneLiner}</p>
     </header>
   );
 }

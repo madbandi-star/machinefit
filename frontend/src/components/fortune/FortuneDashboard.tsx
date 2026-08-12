@@ -50,7 +50,6 @@ export function FortuneDashboard({
         keywordCode={fortune.keyword}
         coreThemeLabel={coreThemeLabel}
         scoreStars={fortune.scoreStars}
-        oneLiner={fortune.title || fortune.oneLiner}
         mode={mode}
       />
 

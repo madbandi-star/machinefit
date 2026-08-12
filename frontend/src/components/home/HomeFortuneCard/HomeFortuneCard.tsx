@@ -248,8 +248,6 @@ export function HomeFortuneCard() {
         </p>
       ) : null}
 
-      <p className="home-fortune-card__headline">{fortune.title}</p>
-
       <div className="home-fortune-card__luck" aria-label={`${t('starsLabel')} ${filled} / 5`}>
         <span className="home-fortune-card__luck-label">{t('starsLabel')}</span>
         <StarsRow score={fortune.scoreStars} />
