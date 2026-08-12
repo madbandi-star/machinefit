@@ -1,7 +1,7 @@
 {
   "title": "Home profile/fortune copy tweaks",
   "summary": "Home profile-incomplete banner drops the Settings-please sentence; Korean fortune needsBirth copy shortened on home (shared key).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "31d3fa8a" },
   "changedFiles": [
     "frontend/src/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner.tsx",
     "frontend/src/i18n/locales/ko/common.json",
