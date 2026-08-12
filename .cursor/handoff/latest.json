@@ -1,7 +1,7 @@
 {
   "title": "Fix birth-profile consent save",
   "summary": "Birth/settings consent rows use reliable button toggles with functional state updates, plus an agree-all control; save sends birthProfileConsent via mutate variables so consent is not dropped.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "d3b93018" },
   "changedFiles": [
     "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
     "frontend/src/styles/profile-data-consent.css",
