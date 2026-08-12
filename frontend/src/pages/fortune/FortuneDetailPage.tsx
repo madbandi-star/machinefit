@@ -1,13 +1,14 @@
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isAllGymsId } from '@machinefit/shared';
 import { userApi } from '@/api';
 import { fortuneApi } from '@/api/fortune.api';
-import { FortuneBirthGate } from '@/components/fortune/FortuneBirthGate';
 import { FortuneDashboard } from '@/components/fortune/FortuneDashboard';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { getTodayDateKey } from '@/utils/historyDate';
@@ -70,8 +71,16 @@ export function FortuneDetailPage() {
 
   if (!data || data.status === 'needs_birth_profile') {
     return (
-      <PageShell>
-        <FortuneBirthGate />
+      <PageShell title={t('fortune:title')}>
+        <div className="fortune-gate">
+          <p className="fortune-gate__emoji" aria-hidden>
+            🔮
+          </p>
+          <p>{t('fortune:needsBirth')}</p>
+          <Link to={`${ROUTES.SETTINGS}#birth-profile`} className="btn btn--primary btn--block">
+            {t('fortune:enterBirth')}
+          </Link>
+        </div>
       </PageShell>
     );
   }

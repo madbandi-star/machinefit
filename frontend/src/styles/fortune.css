@@ -352,6 +352,19 @@
   }
 }
 
+/* —— Gate / loading —— */
+.fortune-gate {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.25rem 0.25rem 0.5rem;
+  text-align: center;
+}
+
+.fortune-gate__emoji {
+  margin: 0;
+  font-size: 2rem;
+}
+
 .fortune-dashboard {
   --fortune-reveal-delay: 0ms;
   --fortune-card-radius: 16px;

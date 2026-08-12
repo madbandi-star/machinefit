@@ -1,21 +1,27 @@
 {
-  "title": "Revert home fortune gate visual extras",
-  "summary": "Home Helchang fortune needs-birth card restored to crystal-ball emoji and no unknown-birth-time note; those extras came from an earlier gate polish.",
-  "git": { "branch": "main", "commit": "fd655463" },
+  "title": "Fully revert fortune birth-gate polish",
+  "summary": "Restored /fortune/today needs-birth empty state to simple 🔮 + copy + CTA; removed FortuneBirthGate component and gate i18n/CSS.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
-    "frontend/src/styles/fortune.css"
+    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/components/fortune/FortuneBirthGate.tsx",
+    "frontend/src/styles/fortune-reading.css",
+    "frontend/src/styles/fortune.css",
+    "frontend/src/i18n/locales/ko/fortune.json",
+    "frontend/src/i18n/locales/en/fortune.json",
+    "frontend/src/i18n/locales/ja/fortune.json",
+    "frontend/src/i18n/locales/zh/fortune.json"
   ],
   "testFocus": [
-    "Home fortune gate: ?뵰 emoji again, no '?꾩깮?쒕? 紐곕씪?? line",
-    "needsBirth body + enterBirth CTA remain"
+    "/fortune/today without birth: simple gate only (no custom orb, no unknown-time note, no locked previews)",
+    "Home fortune gate still simple from prior revert"
   ],
   "fastChecks": [
-    "rg gateNote frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true",
-    "rg home-fortune-card__gate-emoji frontend/src/styles/fortune.css"
+    "rg FortuneBirthGate frontend/src || true",
+    "rg fortune-gate frontend/src/pages/fortune/FortuneDetailPage.tsx"
   ],
-  "productionChecks": ["Pages home fortune gate"],
+  "productionChecks": ["Pages /fortune/today gate"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "CSS orb + gateHeadline + gateNote on home card",
-  "toBe": "?뵰 + needsBirth + CTA only on home card"
+  "asIs": "Polished fr-gate unlock UI on fortune detail",
+  "toBe": "Original fortune-gate (emoji + needsBirth + CTA)"
 }

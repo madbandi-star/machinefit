@@ -1,18 +1,18 @@
-﻿# Test handoff — Revert home fortune gate visual extras
+﻿# Test handoff — Fully revert fortune birth-gate polish
 
 ## Summary
-홈 `[오늘의 헬창운세]` 미입력 카드에서 CSS 구슬·「탄생시를 몰라도…」문구를 제거해 이전처럼 🔮 + 본문 + CTA만 보이게 복구했습니다. (`/fortune/today` 게이트 페이지 개선은 유지)
+`/fortune/today` 생년월일 미입력 화면도 홈과 같이 원래 심플 UI(🔮 + 문구 + CTA)로 되돌렸습니다. `FortuneBirthGate`·관련 문구/CSS 제거.
 
 ## Test focus
-1. 홈 운세 게이트: 🔮, `needsBirth` 문구, 입력 CTA
-2. 「탄생시를 몰라도…」 없음
+1. `/fortune/today` 게이트: 커스텀 구슬·잠금 프리뷰·「탄생시를 몰라도…」 없음
+2. 홈 운세 게이트도 심플 유지
 
 ## Fast checks
 ```
-rg gateNote frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true
-rg home-fortune-card__gate-emoji frontend/src/styles/fortune.css
+rg FortuneBirthGate frontend/src || true
+rg fortune-gate frontend/src/pages/fortune/FortuneDetailPage.tsx
 ```
 
 ## as-is → to-be
-- as-is: 커스텀 구슬 + 헤드라인 + gateNote
-- to-be: 🔮 + needsBirth + CTA
+- as-is: 히어로 게이트 폴리스
+- to-be: 기존 fortune-gate
