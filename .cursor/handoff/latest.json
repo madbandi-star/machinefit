@@ -1,38 +1,20 @@
 {
-  "title": "Guide copy readability UI",
-  "summary": "In-app informational copy keeps the same wording; paragraphs, line-height, hierarchy, and caution boxes make legal/settings/footer guides skimmable on PC and mobile.",
+  "title": "Delete-account confirm spacing tweak",
+  "summary": "In the Korean withdraw confirm “남는 것” line, tighten two compound nouns: 남용방지 식별키 and 소셜제공자 식별자.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/splitGuideBlocks.ts",
-    "frontend/src/components/content/GuideProse/GuideProse.tsx",
-    "frontend/src/components/content/GuideProse/GuideProse.css",
-    "frontend/src/pages/legal/TermsPage.tsx",
-    "frontend/src/pages/legal/PrivacyPage.tsx",
-    "frontend/src/pages/legal/LegalSectionPage.tsx",
-    "frontend/src/pages/legal/LegalDocSection.tsx",
-    "frontend/src/styles/legal.css",
-    "frontend/src/styles/components.css",
-    "frontend/src/components/layout/PageContainer/PageShell.tsx",
-    "frontend/src/components/layout/LegalFooter/LegalFooter.tsx",
-    "frontend/src/components/compliance/LegalDisclaimerBanner.tsx",
-    "frontend/src/components/feedback/ConfirmDialog/ConfirmDialog.tsx",
-    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx"
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/utils/splitGuideBlocks.test.ts"
   ],
   "testFocus": [
-    "Legal pages: terms/privacy/commerce — same sentences, paragraph breaks, caution boxes",
-    "Settings delete-account confirm: bullets as a list, left-aligned",
-    "Footer cookie notice: 2–3 readable paragraphs",
-    "Mobile: extra inset, line-height, no edge-to-edge blob"
+    "Settings → 회원탈퇴 confirm: 남는 것 line shows 무료체험 남용방지 식별키 and 소셜제공자 식별자"
   ],
   "fastChecks": [
     "npx tsx frontend/src/utils/splitGuideBlocks.test.ts",
-    "rg GuideProse frontend/src/pages/legal frontend/src/components/content/GuideProse"
+    "rg \"남용방지 식별키\" frontend/src/i18n/locales/ko/common.json"
   ],
-  "productionChecks": [
-    "Pages: /terms and /privacy paragraph structure",
-    "Pages: footer cookie notice wrapping"
-  ],
+  "productionChecks": ["Pages: settings delete-account confirm copy"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Guide strings rendered as one tight paragraph (legal-doc line-height 1.55, no sentence grouping).",
-  "toBe": "Same wording in GuideProse: ~2 sentences per paragraph, caution notes, lists, line-height ~1.8."
+  "asIs": "무료체험 남용 방지 식별키 / 소셜 제공자 식별자",
+  "toBe": "무료체험 남용방지 식별키 / 소셜제공자 식별자"
 }
