@@ -486,6 +486,7 @@
   background: color-mix(in srgb, #000 28%, transparent);
   color: color-mix(in srgb, #fff 74%, transparent);
   line-height: 1.55;
+  white-space: pre-line;
 }
 
 .terms-agree__rejoin-facts li::before {

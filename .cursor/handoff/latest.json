@@ -1,28 +1,21 @@
 {
-  "title": "Rejoin terms DOB + welcome alignment",
-  "summary": "Replaced overflowing native date input with year/month/day scroll pickers on signup/rejoin terms; centered rejoin welcome block and clipped horizontal overflow.",
-  "git": { "branch": "main", "commit": "18161db4" },
+  "title": "Rejoin copy line breaks",
+  "summary": "Added Korean line breaks for rejoin terms desc and the two rejoin fact lines; facts use white-space pre-line.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
-    "frontend/src/pages/auth/terms/SignupBirthDateField.tsx",
-    "frontend/src/styles/auth.css",
     "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/styles/auth.css"
   ],
   "testFocus": [
-    "Rejoin/signup terms: DOB pickers fit viewport (no right overflow)",
-    "Rejoin welcome card: icon + title centered, facts stacked cleanly",
-    "Selecting year/month/day sets birthDate and enables continue when other consents OK"
+    "Rejoin terms header desc: break after 감사합니다.",
+    "Rejoin facts: breaks after 가입됩니다. and after 설정은"
   ],
   "fastChecks": [
-    "rg SignupBirthDateField frontend/src/pages/auth/terms",
-    "rg terms-agree__rejoin-head frontend/src/styles/auth.css",
-    "rg type=\"date\" frontend/src/pages/auth/terms/TermsAgreementPage.tsx || true"
+    "rg \"감사합니다.\\\\n\\\\n이전\" frontend/src/i18n/locales/ko/common.json",
+    "rg white-space:\\s*pre-line frontend/src/styles/auth.css"
   ],
-  "productionChecks": ["Pages: rejoin terms flow"],
+  "productionChecks": ["Pages: rejoin terms KO copy wrapping"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Native date input overflow + misaligned rejoin welcome",
-  "toBe": "Scroll pickers + centered rejoin welcome, no overflow"
+  "asIs": "Single-line rejoin sentences",
+  "toBe": "Requested line breaks in KO rejoin copy"
 }
