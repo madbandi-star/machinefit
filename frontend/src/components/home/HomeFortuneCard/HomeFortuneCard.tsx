@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { fortuneApi } from '@/api/fortune.api';
 import {
-  formatFortuneDate,
   keywordEmoji,
   keywordTone,
 } from '@/components/fortune/fortuneVisuals';
@@ -235,9 +234,6 @@ export function HomeFortuneCard() {
       }
     >
       <div className="home-fortune-card__glow" aria-hidden />
-      <div className="home-fortune-card__top">
-        <span className="home-fortune-card__date">{formatFortuneDate(data.date)}</span>
-      </div>
 
       <div className="home-fortune-card__keyword-block">
         <span className="home-fortune-card__keyword-emoji" aria-hidden>

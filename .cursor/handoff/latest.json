@@ -1,28 +1,21 @@
 {
-  "title": "Fix birth-profile consent save",
-  "summary": "Birth/settings consent rows use reliable button toggles with functional state updates, plus an agree-all control; save sends birthProfileConsent via mutate variables so consent is not dropped.",
-  "git": { "branch": "main", "commit": "d3b93018" },
+  "title": "Tighten home fortune card spacing",
+  "summary": "Removed YYYY.MM.DD from home Helchang fortune card and reduced gaps so the expanded card reads denser at a glance.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
-    "frontend/src/styles/profile-data-consent.css",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "frontend/src/styles/fortune.css"
   ],
   "testFocus": [
-    "Settings → 생년월일·탄생시: tap 필수 전체 선택 (or each row), save succeeds",
-    "No consentRequiredToast when all required rows are on",
-    "After save, consent block shows done state"
+    "Home fortune expanded: no date top-right",
+    "Keyword / luck / metrics / actions spacing tighter"
   ],
   "fastChecks": [
-    "rg consentCheckAll frontend/src",
-    "rg birthProfileConsent frontend/src/pages/settings/SettingsPage.tsx",
-    "rg \"onChange\\(\\(prev\\)\" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
+    "rg home-fortune-card__date frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true",
+    "rg \"gap: 0.4rem\" frontend/src/styles/fortune.css"
   ],
-  "productionChecks": ["Pages settings birth profile save"],
-  "deploy": { "expected": "Pages FE (+ Render if API touched — FE only here)" },
-  "asIs": "Checked consents still blocked save with consent toast",
-  "toBe": "Agree-all / toggles stick; save sends consent and persists"
+  "productionChecks": ["Pages home fortune card"],
+  "deploy": { "expected": "Pages FE" },
+  "asIs": "Wide gaps + date top-right",
+  "toBe": "Tighter stack, no date"
 }

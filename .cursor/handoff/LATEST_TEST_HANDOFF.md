@@ -1,15 +1,14 @@
-﻿# Test handoff — Fix birth-profile consent save
+﻿# Test handoff — Tighten home fortune card spacing
 
 ## Summary
-생년월일·탄생시 필수 동의를 체크해도 저장이 거절되던 문제를 수정. 동의 행을 버튼 토글+함수형 state로 바꾸고, 「필수 전체 선택」추가, 저장 시 `birthProfileConsent`를 mutate 인자로 확실히 전달.
+홈 오늘의 헬창운세: 우측 상단 날짜 제거, 영역 간 간격 축소.
 
 ## Test focus
-1. 설정 → 생년월일·탄생시: 필수 전체 선택 후 저장 성공
-2. 동의 토스트 없이 저장됨
-3. 저장 후 동의 완료 UI
+1. 펼친 카드에 YYYY.MM.DD 없음
+2. 키워드·별점·지표·버튼 사이 공백이 이전보다 좁음
 
 ## Fast checks
 ```
-rg consentCheckAll frontend/src
-rg birthProfileConsent frontend/src/pages/settings/SettingsPage.tsx
+rg home-fortune-card__date frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true
+rg "gap: 0.4rem" frontend/src/styles/fortune.css
 ```
