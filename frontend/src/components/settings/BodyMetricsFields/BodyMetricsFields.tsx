@@ -112,13 +112,19 @@ export function BodyMetricsFields({
   const heightUnitLabel = unitHeight === 'cm' ? 'cm' : 'ft/in';
   const weightUnitLabel = unitWeight === 'kg' ? 'kg' : 'lb';
 
+  const showAge = Boolean(onAgeChange);
+
   return (
     <div
       className={`body-metrics-inline${
         heightInvalid || weightInvalid || ageInvalid ? ' body-metrics-inline--invalid' : ''
-      }`}
+      }${showAge ? '' : ' body-metrics-inline--pair'}`}
     >
-      <div className="body-metrics-inline__grid">
+      <div
+        className={`body-metrics-inline__grid${
+          showAge ? ' body-metrics-inline__grid--3' : ' body-metrics-inline__grid--2'
+        }`}
+      >
         <div
           className={`body-metrics-inline__cell${
             heightInvalid ? ' body-metrics-inline__cell--invalid' : ''

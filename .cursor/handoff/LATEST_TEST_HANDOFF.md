@@ -1,20 +1,20 @@
-﻿# Test handoff — Profile consent required-row cards
+﻿# Test handoff — Body metrics height/weight pair pickers
 
 ## Summary
-지역·헬스장(및 동일 블록) 필수 동의 3행을 캡처처럼 카드형으로 바꿨습니다. 문구·로직은 그대로입니다.
+신체 정보에서 나이가 빠진 뒤에도 3열 그리드가 남아 키·몸무게 UI가 어색했습니다. 2열 트윈 카드로 맞췄습니다.
 
 ## Test focus
-1. 설정 → 지역·헬스장 저장 전 동의 영역
-2. 목적 / 보유·파기 / 권리 3행: 체크 · 필수 · 문구 · 우측 아이콘
-3. 체크 시 초록 하이라이트
-4. 신체/출생 동의 블록도 같은 스타일인지
+1. 설정 → 신체 정보
+2. 키 / 몸무게가 같은 폭의 두 카드
+3. 빈 세 번째 칸 없음
+4. 스크롤·저장 정상
 
 ## Fast checks
 ```
-rg profile-consent__row-icon frontend/src/styles/profile-data-consent.css
-rg "FileText|CalendarDays|ShieldUser" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx
+rg body-metrics-inline--pair frontend/src/styles/components.css
+rg body-metrics-inline__grid--2 frontend/src/components/settings/BodyMetricsFields/BodyMetricsFields.tsx
 ```
 
 ## as-is → to-be
-- as-is: 단순 체크+배지+텍스트
-- to-be: 테두리 카드 + 우측 아이콘(문서/달력/방패)
+- as-is: 3열 그리드에 키·몸무게만 → 빈 칸 / 답답함
+- to-be: 2열 카드형 피커, 단위 뱃지, 선택값 강조

@@ -1,22 +1,22 @@
 {
-  "title": "Profile consent required-row cards",
-  "summary": "The three required consent checkboxes (purpose/retention/rights) are individual cards with badge, copy, and right-side icons, matching the capture layout.",
+  "title": "Body metrics height/weight pair pickers",
+  "summary": "After age was removed, height/weight still used a 3-column grid. They are now a balanced 2-column twin-card picker layout.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
-    "frontend/src/styles/profile-data-consent.css"
+    "frontend/src/components/settings/BodyMetricsFields/BodyMetricsFields.tsx",
+    "frontend/src/styles/components.css"
   ],
   "testFocus": [
-    "Settings → 지역·헬스장 동의: 3 required rows are cards with icons",
-    "Tap checkbox toggles checked green state",
-    "Body/birth consent blocks use the same row style"
+    "Settings → 신체 정보: height + weight are two equal cards, no empty third column",
+    "Scroll pickers still change heightCm/weightKg and save works",
+    "If age picker is used elsewhere (onAgeChange), 3-column layout still works"
   ],
   "fastChecks": [
-    "rg profile-consent__row-icon frontend/src/styles/profile-data-consent.css",
-    "rg FileText|CalendarDays|ShieldUser frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
+    "rg body-metrics-inline--pair frontend/src/styles/components.css",
+    "rg body-metrics-inline__grid--2 frontend/src/components/settings/BodyMetricsFields/BodyMetricsFields.tsx"
   ],
-  "productionChecks": ["Pages: settings location consent required rows"],
+  "productionChecks": ["Pages: settings body metrics pickers"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Plain checkbox + badge + text, no card/icon.",
-  "toBe": "Bordered cards: check · 필수 · label · category icon."
+  "asIs": "3-col grid with only height+weight → empty column / cramped look",
+  "toBe": "2-col twin cards with clearer labels and larger selected value"
 }
