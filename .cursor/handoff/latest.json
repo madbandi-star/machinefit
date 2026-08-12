@@ -1,7 +1,7 @@
 {
   "title": "Move workout calendar above Insights",
   "summary": "My Page workout calendar now sits directly above MachineFit Insights; location nudge no longer sits between them.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "7d8700ad" },
   "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
   "testFocus": [
     "My Page order: profile → (location nudge) → calendar → 머신핏 인사이트",
