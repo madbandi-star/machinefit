@@ -26,3 +26,4 @@ export * from './backup.js';
 export * from './workout-card.js';
 export * from './usage.js';
 export * from './points.js';
+export * from './push-consent.js';

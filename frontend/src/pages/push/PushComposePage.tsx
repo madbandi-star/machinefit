@@ -3,9 +3,12 @@ import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
-  PUSH_KINDS,
+  PUSH_MARKETING_KINDS,
+  PUSH_SERVICE_KINDS,
   ROLE_CODES,
   Role,
+  detectMarketingContent,
+  getPushConsentCategoryForKind,
   hasMinRole,
   type PushAudienceInput,
   type PushAudienceType,
@@ -198,6 +201,10 @@ export function PushComposePage() {
     return t(`presets.${preset}`);
   }, [preset, selectedMemberId, memberQuery, suggested, selectedIds.length, t]);
 
+  const consentCategory = getPushConsentCategoryForKind(kind);
+  const marketingAsServiceWarning =
+    consentCategory === 'service' && detectMarketingContent(title, body);
+
   const sendMutation = useMutation({
     mutationFn: (audience: PushAudienceInput) =>
       pushNotificationApi.send({
@@ -215,6 +222,7 @@ export function PushComposePage() {
           delivered: data.delivered,
           failed: data.failed,
           skipped: data.skipped,
+          consentExcluded: data.consentExcluded ?? 0,
         }),
         'success'
       );
@@ -242,7 +250,9 @@ export function PushComposePage() {
           else if (code === 'NOT_FOUND') message = t('recipientNotFound');
           else if (code === 'AMBIGUOUS_USER') message = t('ambiguousUser');
           else if (code === 'INVALID_RECIPIENT') message = t('invalidRecipient');
-          else if (code === 'VALIDATION_ERROR') message = t('validationError');
+          else if (code === 'MARKETING_CONTENT_AS_SERVICE') {
+            message = t('marketingContentAsService');
+          } else if (code === 'VALIDATION_ERROR') message = t('validationError');
           else {
             const raw = getApiErrorMessage(error, t('error'));
             message =
@@ -347,6 +357,40 @@ export function PushComposePage() {
     );
   }
 
+  const audienceForPreview = useMemo(() => buildAudience(), [
+    preset,
+    roleCode,
+    gymId,
+    location,
+    selectedIds,
+    userIdInput,
+    selectedMemberId,
+    memberQuery,
+    caps,
+  ]);
+
+  const previewQuery = useQuery({
+    queryKey: [
+      'push',
+      'audience-preview',
+      kind,
+      title,
+      body,
+      audienceForPreview,
+    ],
+    queryFn: async () =>
+      (
+        await pushNotificationApi.previewAudience({
+          kind,
+          title: title.trim(),
+          body: body.trim(),
+          audience: audienceForPreview!,
+        })
+      ).data.data,
+    enabled: Boolean(audienceForPreview) && tab === 'compose',
+    staleTime: 15_000,
+  });
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     const audience = buildAudience();
@@ -356,6 +400,10 @@ export function PushComposePage() {
     }
     if (!title.trim() || !body.trim()) {
       showToast(t('error'), 'error');
+      return;
+    }
+    if (marketingAsServiceWarning) {
+      showToast(t('marketingContentAsService'), 'error');
       return;
     }
     sendMutation.mutate(audience);
@@ -647,23 +695,94 @@ export function PushComposePage() {
                 </div>
               </header>
 
-              <div className="push-kind-row" role="radiogroup" aria-label={t('kind')}>
-                {PUSH_KINDS.map((k) => (
-                  <label
-                    key={k}
-                    className={`push-kind-pill${kind === k ? ' is-selected' : ''}`}
-                  >
-                    <input
-                      type="radio"
-                      name="push-kind"
-                      value={k}
-                      checked={kind === k}
-                      onChange={() => setKind(k)}
-                    />
-                    <span>{t(`kinds.${k}`)}</span>
-                  </label>
-                ))}
+              <p className="push-hint">
+                {consentCategory === 'marketing'
+                  ? t('consentHintMarketing')
+                  : t('consentHintService')}
+              </p>
+
+              <div className="push-kind-groups">
+                <div>
+                  <p className="push-meta">{t('kindGroupMarketing')}</p>
+                  <div className="push-kind-row" role="radiogroup" aria-label={t('kindGroupMarketing')}>
+                    {PUSH_MARKETING_KINDS.map((k) => (
+                      <label
+                        key={k}
+                        className={`push-kind-pill${kind === k ? ' is-selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="push-kind"
+                          value={k}
+                          checked={kind === k}
+                          onChange={() => setKind(k)}
+                        />
+                        <span>{t(`kinds.${k}`)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="push-meta">{t('kindGroupService')}</p>
+                  <div className="push-kind-row" role="radiogroup" aria-label={t('kindGroupService')}>
+                    {PUSH_SERVICE_KINDS.map((k) => (
+                      <label
+                        key={k}
+                        className={`push-kind-pill${kind === k ? ' is-selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="push-kind"
+                          value={k}
+                          checked={kind === k}
+                          onChange={() => setKind(k)}
+                        />
+                        <span>{t(`kinds.${k}`)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
+
+              {marketingAsServiceWarning ? (
+                <p className="push-hint" role="alert" style={{ color: 'var(--color-danger, #b42318)' }}>
+                  {t('marketingContentAsService')}
+                </p>
+              ) : null}
+
+              {audienceForPreview && previewQuery.data ? (
+                <div className="push-audience-stats" aria-live="polite">
+                  <p className="push-meta">{t('audienceStatsTitle')}</p>
+                  <ul className="push-audience-stats__list">
+                    <li>
+                      {t('audienceStatsResolved', {
+                        count: previewQuery.data.resolvedCount,
+                      })}
+                    </li>
+                    <li>
+                      {t('audienceStatsConsentOk', {
+                        count: previewQuery.data.consentEligibleCount,
+                        category:
+                          previewQuery.data.consentCategory === 'marketing'
+                            ? t('consentLabelMarketing')
+                            : t('consentLabelService'),
+                      })}
+                    </li>
+                    <li>
+                      {t('audienceStatsExcluded', {
+                        count: previewQuery.data.consentExcludedCount,
+                      })}
+                    </li>
+                    <li>
+                      <strong>
+                        {t('audienceStatsFinal', {
+                          count: previewQuery.data.finalCount,
+                        })}
+                      </strong>
+                    </li>
+                  </ul>
+                </div>
+              ) : null}
 
               <div className="push-field">
                 <label htmlFor="push-title">{t('titleLabel')}</label>
@@ -721,7 +840,11 @@ export function PushComposePage() {
               <button
                 type="submit"
                 className="push-btn push-btn-primary push-btn-block"
-                disabled={sendMutation.isPending}
+                disabled={
+                  sendMutation.isPending ||
+                  marketingAsServiceWarning ||
+                  (previewQuery.data != null && previewQuery.data.finalCount === 0)
+                }
               >
                 {sendMutation.isPending ? t('sending') : t('send')}
               </button>
@@ -768,6 +891,9 @@ export function PushComposePage() {
                     </div>
                     <span className="push-history-item__stat">
                       {c.successCount}/{c.recipientCount}
+                      {c.skippedConsentCount
+                        ? ` · −${c.skippedConsentCount}`
+                        : ''}
                     </span>
                     <p className="push-history-item__body">{c.body}</p>
                     <button

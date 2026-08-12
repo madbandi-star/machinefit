@@ -8,6 +8,10 @@ export const pushNotificationRouter = Router();
 pushNotificationRouter.use(authMiddleware, requireMinRole(Role.MEMBER));
 
 pushNotificationRouter.get('/capabilities', pushNotificationController.getCapabilities);
+pushNotificationRouter.post(
+  '/audience-preview',
+  pushNotificationController.previewAudience
+);
 pushNotificationRouter.post('/send', pushNotificationController.sendPush);
 pushNotificationRouter.get('/campaigns', pushNotificationController.listCampaigns);
 pushNotificationRouter.get(

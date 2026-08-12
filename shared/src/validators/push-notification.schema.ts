@@ -28,4 +28,12 @@ export const pushSendSchema = z.object({
   audience: pushAudienceSchema,
 });
 
+export const pushAudiencePreviewSchema = z.object({
+  kind: z.enum(PUSH_KINDS),
+  title: z.string().trim().max(120).optional().default(''),
+  body: z.string().trim().max(2000).optional().default(''),
+  audience: pushAudienceSchema,
+});
+
 export type PushSendSchemaInput = z.infer<typeof pushSendSchema>;
+export type PushAudiencePreviewSchemaInput = z.infer<typeof pushAudiencePreviewSchema>;

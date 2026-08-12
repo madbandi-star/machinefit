@@ -96,5 +96,17 @@
   "logFail": "Failed",
   "viewLogs": "View logs",
   "hideLogs": "Hide",
-  "adminAll": "All campaigns (admin)"
+  "adminAll": "All campaigns (admin)",
+  "kindGroupMarketing": "Event / promotion (marketing consent required)",
+  "kindGroupService": "Service notice (non-marketing consent required)",
+  "consentHintMarketing": "Sent only to users who opted in to event/promotion alerts. Opt-outs are removed at final send.",
+  "consentHintService": "Sent only to users who opted in to service (non-marketing) alerts. Opt-outs are removed at final send.",
+  "consentLabelMarketing": "marketing consent",
+  "consentLabelService": "service consent",
+  "audienceStatsTitle": "Audience preview (live consent)",
+  "audienceStatsResolved": "Resolved candidates: {{count}}",
+  "audienceStatsConsentOk": "Passed {{category}}: {{count}}",
+  "audienceStatsExcluded": "Excluded by consent: {{count}}",
+  "audienceStatsFinal": "Final recipients: {{count}}",
+  "marketingContentAsService": "Marketing/promotional copy cannot be sent as a service notice. Choose an event/promotion kind or rewrite the message."
 }

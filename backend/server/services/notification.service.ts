@@ -1,10 +1,15 @@
 import type { Notification, NotificationType, RoleCode } from '@machinefit/shared';
-import { Role, isRoleCode } from '@machinefit/shared';
+import {
+  Role,
+  getPushConsentCategoryForNotificationType,
+  isRoleCode,
+} from '@machinefit/shared';
 import { findDevUserById } from '../data/dev-users.js';
 import { getPool } from '../config/database.js';
 import { notificationRepository } from '../repositories/notification.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { userLoginIdFromEmail } from '../utils/user-login-id.util.js';
+import { logger } from '../utils/logger.js';
 
 const PUSH_NOTIFICATION_TYPES = new Set<NotificationType>([
   'push_general',
@@ -112,13 +117,25 @@ export const notificationService = {
     return notificationRepository.markAllRead(userId);
   },
 
-  notify(
+  async notify(
     userId: string,
     type: Parameters<typeof notificationRepository.create>[1],
     title: Parameters<typeof notificationRepository.create>[2],
     body?: Parameters<typeof notificationRepository.create>[3],
     payload?: Parameters<typeof notificationRepository.create>[4]
   ) {
+    const category = getPushConsentCategoryForNotificationType(type);
+    if (category) {
+      const ok = await userRepository.userHasPushConsent(userId, category);
+      if (!ok) {
+        logger.info('notification.consent_blocked', {
+          type,
+          category,
+          // no user PII
+        });
+        return null;
+      }
+    }
     return notificationRepository.create(userId, type, title, body, payload);
   },
 };

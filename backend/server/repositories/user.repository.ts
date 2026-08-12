@@ -413,6 +413,42 @@ export const userRepository = {
     return new Set(result.rows.map((r) => r.id));
   },
 
+  /** Service (non-marketing) push — NULL treated as opted-in (DB default TRUE). */
+  async listPushServiceOptInUserIds(userIds: string[]): Promise<Set<string>> {
+    const pool = getPool();
+    if (!pool || userIds.length === 0) return new Set();
+    const result = await pool.query<{ id: string }>(
+      `SELECT id::text AS id FROM users
+       WHERE id = ANY($1::uuid[])
+         AND is_active = TRUE
+         AND COALESCE(push_service_opt_in, TRUE) = TRUE`,
+      [userIds]
+    );
+    return new Set(result.rows.map((r) => r.id));
+  },
+
+  async userHasPushConsent(
+    userId: string,
+    category: 'marketing' | 'service'
+  ): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    if (category === 'marketing') {
+      const { rows } = await pool.query<{ ok: boolean }>(
+        `SELECT (is_active = TRUE AND marketing_opt_in = TRUE) AS ok
+         FROM users WHERE id = $1`,
+        [userId]
+      );
+      return Boolean(rows[0]?.ok);
+    }
+    const { rows } = await pool.query<{ ok: boolean }>(
+      `SELECT (is_active = TRUE AND COALESCE(push_service_opt_in, TRUE) = TRUE) AS ok
+       FROM users WHERE id = $1`,
+      [userId]
+    );
+    return Boolean(rows[0]?.ok);
+  },
+
   async updateProfile(
     userId: string,
     data: {

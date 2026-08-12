@@ -1,4 +1,5 @@
 import type { RoleCode } from './api.types.js';
+import type { PushConsentCategory } from '../constants/push-consent.js';
 
 /** Extensible message kinds for role-based push. */
 export const PUSH_KINDS = [
@@ -97,6 +98,11 @@ export interface PushCampaign {
   audienceFilter: Record<string, unknown>;
   recipientCount: number;
   successCount: number;
+  /** marketing | service — consent gate applied at send time */
+  consentCategory?: PushConsentCategory | null;
+  /** Recipients removed for missing consent at send time */
+  skippedConsentCount?: number;
+  failedCount?: number;
   createdAt: string;
 }
 
@@ -104,5 +110,26 @@ export interface PushSendResult {
   campaign: PushCampaign;
   delivered: number;
   failed: number;
+  /** Total skipped (resolve + consent) */
   skipped: number;
+  /** Audience size before consent filter */
+  resolvedCount: number;
+  /** Removed solely due to missing consent */
+  consentExcluded: number;
+  consentCategory: PushConsentCategory;
+}
+
+/** Dry-run audience + consent counts for compose UI. */
+export interface PushAudiencePreview {
+  consentCategory: PushConsentCategory;
+  /** Recipients after role/audience resolve, before consent */
+  resolvedCount: number;
+  /** Still eligible after live consent check */
+  consentEligibleCount: number;
+  /** Excluded by missing required consent */
+  consentExcludedCount: number;
+  /** Final send target (= consentEligibleCount, capped later by max) */
+  finalCount: number;
+  /** True when service kind body looks like marketing */
+  marketingContentBlocked: boolean;
 }

@@ -1116,10 +1116,9 @@ export const workoutCardService = {
         );
         if (count <= 0) continue;
 
-        const { notificationRepository } = await import(
-          '../repositories/notification.repository.js'
-        );
-        await notificationRepository.create(
+        // Service consent gate via notificationService.notify (push_schedule).
+        const { notificationService } = await import('./notification.service.js');
+        const createdNotif = await notificationService.notify(
           userId,
           'push_schedule',
           {
@@ -1136,7 +1135,7 @@ export const workoutCardService = {
             plannedCount: count,
           }
         );
-        created += 1;
+        if (createdNotif) created += 1;
       } catch {
         /* push/notification unavailable — continue */
       }

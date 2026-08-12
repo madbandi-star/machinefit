@@ -1,10 +1,13 @@
 import type { Request, Response } from 'express';
-import { pushSendSchema } from '@machinefit/shared';
+import { pushAudiencePreviewSchema, pushSendSchema } from '@machinefit/shared';
 import { AppError } from '../middlewares/error.middleware.js';
 import { pushNotificationService } from '../services/push-notification.service.js';
 import { getParam } from '../utils/params.util.js';
 
-function requireUser(req: Request): { userId: string; roleCode: NonNullable<Request['user']>['roleCode'] } {
+function requireUser(req: Request): {
+  userId: string;
+  roleCode: NonNullable<Request['user']>['roleCode'];
+} {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   return { userId: req.user.userId, roleCode: req.user.roleCode };
 }
@@ -12,6 +15,13 @@ function requireUser(req: Request): { userId: string; roleCode: NonNullable<Requ
 export async function getCapabilities(req: Request, res: Response): Promise<void> {
   const { userId, roleCode } = requireUser(req);
   const data = await pushNotificationService.getCapabilities(userId, roleCode);
+  res.json({ success: true, data });
+}
+
+export async function previewAudience(req: Request, res: Response): Promise<void> {
+  const { userId, roleCode } = requireUser(req);
+  const input = pushAudiencePreviewSchema.parse(req.body);
+  const data = await pushNotificationService.previewAudience(userId, input, roleCode);
   res.json({ success: true, data });
 }
 

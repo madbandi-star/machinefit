@@ -1,8 +1,11 @@
 import type {
   ApiResponse,
+  PushAudiencePreview,
   PushCampaign,
   PushComposeCapabilities,
   PushDeliveryLog,
+  PushKind,
+  PushAudienceInput,
   PushSendInput,
   PushSendResult,
 } from '@machinefit/shared';
@@ -11,6 +14,16 @@ import { apiClient } from '@/services/http/axios-client';
 export const pushNotificationApi = {
   capabilities: () =>
     apiClient.get<ApiResponse<PushComposeCapabilities>>('/push/capabilities'),
+
+  previewAudience: (input: {
+    kind: PushKind;
+    title?: string;
+    body?: string;
+    audience: PushAudienceInput;
+  }) =>
+    apiClient.post<ApiResponse<PushAudiencePreview>>('/push/audience-preview', input, {
+      timeout: 60_000,
+    }),
 
   send: (input: PushSendInput) =>
     // Large audiences (all_users / role) can exceed the default 15s axios timeout

@@ -1,9 +1,13 @@
 import {
   Role,
+  assertServiceKindContentAllowed,
+  getPushConsentCategoryForKind,
   hasMinRole,
   isRoleCode,
   type NotificationType,
+  type PushAudiencePreview,
   type PushComposeCapabilities,
+  type PushConsentCategory,
   type PushKind,
   type PushSendInput,
   type PushSendResult,
@@ -23,6 +27,7 @@ import {
 } from './push-audience.service.js';
 import { notificationRepository } from '../repositories/notification.repository.js';
 import { userLoginIdFromEmail } from '../utils/user-login-id.util.js';
+import { logger } from '../utils/logger.js';
 
 const KIND_TO_NOTIFICATION_TYPE: Record<PushKind, NotificationType> = {
   general: 'push_general',
@@ -38,6 +43,12 @@ interface PushSenderProfile {
   roleCode: RoleCode;
   displayName: string;
   loginId: string;
+}
+
+interface ConsentFilterResult<T extends { id: string }> {
+  recipients: T[];
+  consentExcluded: number;
+  consentCategory: PushConsentCategory;
 }
 
 async function loadSender(
@@ -81,7 +92,10 @@ async function loadSender(
   throw new AppError(404, 'NOT_FOUND', 'User not found');
 }
 
-function audienceFilterPayload(audience: PushSendInput['audience']): Record<string, unknown> {
+function audienceFilterPayload(
+  audience: PushSendInput['audience'],
+  consentCategory: PushConsentCategory
+): Record<string, unknown> {
   return {
     type: audience.type,
     roleCode: audience.roleCode ?? null,
@@ -92,7 +106,54 @@ function audienceFilterPayload(audience: PushSendInput['audience']): Record<stri
     districtId: audience.districtId ?? null,
     userIds: audience.userIds ?? null,
     query: audience.query ?? null,
+    consentCategory,
+    consentGate: 'live_at_send',
   };
+}
+
+/**
+ * Final consent gate — always uses current DB flags (never cached audience lists).
+ * No audience-type exemption (including member_exact / admin picks).
+ */
+export async function filterRecipientsByPushConsent<T extends { id: string }>(
+  recipients: T[],
+  category: PushConsentCategory
+): Promise<ConsentFilterResult<T>> {
+  if (recipients.length === 0) {
+    return { recipients: [], consentExcluded: 0, consentCategory: category };
+  }
+
+  const ids = recipients.map((r) => r.id);
+  const allowed =
+    category === 'marketing'
+      ? await userRepository.listMarketingOptInUserIds(ids)
+      : await userRepository.listPushServiceOptInUserIds(ids);
+
+  const kept = recipients.filter((r) => allowed.has(r.id));
+  const consentExcluded = recipients.length - kept.length;
+
+  if (consentExcluded > 0) {
+    logger.info('push.consent_filtered', {
+      category,
+      resolved: recipients.length,
+      eligible: kept.length,
+      excluded: consentExcluded,
+      // No PII — counts only
+    });
+  }
+
+  return { recipients: kept, consentExcluded, consentCategory: category };
+}
+
+function rejectMarketingAsService(kind: PushKind, title: string, body: string): void {
+  const check = assertServiceKindContentAllowed(kind, title, body);
+  if (!check.ok) {
+    throw new AppError(
+      400,
+      'MARKETING_CONTENT_AS_SERVICE',
+      'Marketing/promotional content cannot be sent as a service (non-marketing) notification. Choose an event/promotion kind, or rewrite the message.'
+    );
+  }
 }
 
 export const pushNotificationService = {
@@ -102,6 +163,48 @@ export const pushNotificationService = {
   ): Promise<PushComposeCapabilities> {
     const sender = await loadSender(senderId, fallbackRole);
     return pushAudienceService.getCapabilities(sender.id, sender.roleCode);
+  },
+
+  async previewAudience(
+    senderId: string,
+    input: {
+      kind: PushKind;
+      title?: string;
+      body?: string;
+      audience: PushSendInput['audience'];
+    },
+    fallbackRole?: RoleCode
+  ): Promise<PushAudiencePreview> {
+    const sender = await loadSender(senderId, fallbackRole);
+    const meta = getPushComposeMeta(sender.roleCode);
+    if (!meta.canCompose) {
+      throw new AppError(403, 'FORBIDDEN', 'Cannot compose push notifications');
+    }
+
+    const consentCategory = getPushConsentCategoryForKind(input.kind);
+    const marketingContentBlocked =
+      assertServiceKindContentAllowed(
+        input.kind,
+        input.title ?? '',
+        input.body ?? ''
+      ).ok === false;
+
+    const { recipients } = await pushAudienceService.resolveRecipients(
+      sender.id,
+      sender.roleCode,
+      input.audience
+    );
+    const resolvedCount = recipients.length;
+    const filtered = await filterRecipientsByPushConsent(recipients, consentCategory);
+
+    return {
+      consentCategory,
+      resolvedCount,
+      consentEligibleCount: filtered.recipients.length,
+      consentExcludedCount: filtered.consentExcluded,
+      finalCount: marketingContentBlocked ? 0 : filtered.recipients.length,
+      marketingContentBlocked,
+    };
   },
 
   async send(
@@ -116,31 +219,35 @@ export const pushNotificationService = {
       throw new AppError(403, 'FORBIDDEN', 'Cannot compose push notifications');
     }
 
+    rejectMarketingAsService(input.kind, input.title, input.body);
+
+    const consentCategory = getPushConsentCategoryForKind(input.kind);
+
     let { recipients, skipped: resolveSkipped } =
       await pushAudienceService.resolveRecipients(
         sender.id,
         sender.roleCode,
         input.audience
       );
+    const resolvedCount = recipients.length;
 
-    // Marketing-style kinds require marketing_opt_in (compliance P1).
-    // Friend-to-friend member_exact is exempt — treated as direct user message.
-    const marketingKinds = new Set(['general', 'event']);
-    if (
-      marketingKinds.has(input.kind) &&
-      input.audience.type !== 'member_exact' &&
-      recipients.length > 0
-    ) {
-      const allowed = await userRepository.listMarketingOptInUserIds(
-        recipients.map((r) => r.id)
-      );
-      const before = recipients.length;
-      recipients = recipients.filter((r) => allowed.has(r.id));
-      resolveSkipped += before - recipients.length;
-    }
+    // Live consent re-check immediately before delivery (no cached opt-in lists).
+    const consentFiltered = await filterRecipientsByPushConsent(
+      recipients,
+      consentCategory
+    );
+    recipients = consentFiltered.recipients;
+    const consentExcluded = consentFiltered.consentExcluded;
+    const skipped = resolveSkipped + consentExcluded;
 
     if (recipients.length === 0) {
-      throw new AppError(400, 'NO_RECIPIENTS', 'No eligible recipients for this audience');
+      throw new AppError(
+        400,
+        'NO_RECIPIENTS',
+        consentExcluded > 0
+          ? 'No eligible recipients after consent filtering'
+          : 'No eligible recipients for this audience'
+      );
     }
 
     if (
@@ -159,9 +266,12 @@ export const pushNotificationService = {
       imageUrl: input.imageUrl,
       deepLink: input.deepLink,
       audienceType: input.audience.type,
-      audienceFilter: audienceFilterPayload(input.audience),
+      audienceFilter: audienceFilterPayload(input.audience, consentCategory),
       recipientCount: 0,
       successCount: 0,
+      consentCategory,
+      skippedConsentCount: consentExcluded,
+      failedCount: 0,
     });
 
     const notifType = KIND_TO_NOTIFICATION_TYPE[input.kind];
@@ -176,14 +286,12 @@ export const pushNotificationService = {
       senderRole: sender.roleCode,
       senderDisplayName: sender.displayName,
       senderLoginId: sender.loginId,
+      consentCategory,
     };
 
     let delivered = 0;
     let failed = 0;
-    const skipped = resolveSkipped;
 
-    // Batch fan-out: N sequential inserts were taking 45–60s for ~120 users and
-    // the browser client aborted at 15s ("send appears broken").
     try {
       delivered = await notificationRepository.createMany(
         recipients.map((recipient) => ({
@@ -208,7 +316,6 @@ export const pushNotificationService = {
         }))
       );
     } catch {
-      // Fall back to per-recipient so partial delivery is still possible.
       delivered = 0;
       failed = 0;
       const logs: CreatePushDeliveryLogInput[] = [];
@@ -247,15 +354,29 @@ export const pushNotificationService = {
       await pushNotificationRepository.createDeliveryLogs(logs);
     }
 
+    logger.info('push.campaign_sent', {
+      campaignId: campaign.id,
+      kind: input.kind,
+      consentCategory,
+      resolvedCount,
+      consentExcluded,
+      delivered,
+      failed,
+      audienceType: input.audience.type,
+    });
+
     const updated =
       (await pushNotificationRepository.updateCampaignCounts(
         campaign.id,
         recipients.length,
-        delivered
+        delivered,
+        { failedCount: failed, skippedConsentCount: consentExcluded }
       )) ?? {
         ...campaign,
         recipientCount: recipients.length,
         successCount: delivered,
+        failedCount: failed,
+        skippedConsentCount: consentExcluded,
       };
 
     return {
@@ -263,6 +384,9 @@ export const pushNotificationService = {
       delivered,
       failed,
       skipped,
+      resolvedCount,
+      consentExcluded,
+      consentCategory,
     };
   },
 

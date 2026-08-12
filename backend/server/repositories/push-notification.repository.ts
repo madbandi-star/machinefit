@@ -1,6 +1,7 @@
 import type {
   PushAudienceType,
   PushCampaign,
+  PushConsentCategory,
   PushDeliveryLog,
   PushKind,
   RoleCode,
@@ -20,6 +21,9 @@ export interface CreatePushCampaignInput {
   audienceFilter: Record<string, unknown>;
   recipientCount?: number;
   successCount?: number;
+  consentCategory?: PushConsentCategory | null;
+  skippedConsentCount?: number;
+  failedCount?: number;
 }
 
 export interface CreatePushDeliveryLogInput {
@@ -50,6 +54,9 @@ function mapCampaign(row: {
   audience_filter: Record<string, unknown> | string;
   recipient_count: number;
   success_count: number;
+  consent_category?: string | null;
+  skipped_consent_count?: number | null;
+  failed_count?: number | null;
   created_at: string | Date;
 }): PushCampaign {
   const filter =
@@ -69,6 +76,9 @@ function mapCampaign(row: {
     audienceFilter: filter,
     recipientCount: Number(row.recipient_count) || 0,
     successCount: Number(row.success_count) || 0,
+    consentCategory: (row.consent_category as PushConsentCategory | null) ?? null,
+    skippedConsentCount: Number(row.skipped_consent_count) || 0,
+    failedCount: Number(row.failed_count) || 0,
     createdAt:
       typeof row.created_at === 'string'
         ? row.created_at
@@ -130,6 +140,9 @@ export const pushNotificationRepository = {
         audienceFilter: input.audienceFilter,
         recipientCount: input.recipientCount ?? 0,
         successCount: input.successCount ?? 0,
+        consentCategory: input.consentCategory ?? null,
+        skippedConsentCount: input.skippedConsentCount ?? 0,
+        failedCount: input.failedCount ?? 0,
         createdAt: new Date().toISOString(),
       };
       mockCampaigns.unshift(campaign);
@@ -139,8 +152,9 @@ export const pushNotificationRepository = {
     const result = await pool.query(
       `INSERT INTO push_campaigns (
          sender_id, sender_role, kind, title, body, image_url, deep_link,
-         audience_type, audience_filter, recipient_count, success_count
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$11)
+         audience_type, audience_filter, recipient_count, success_count,
+         consent_category, skipped_consent_count, failed_count
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$11,$12,$13,$14)
        RETURNING *`,
       [
         input.senderId,
@@ -154,6 +168,9 @@ export const pushNotificationRepository = {
         JSON.stringify(input.audienceFilter ?? {}),
         input.recipientCount ?? 0,
         input.successCount ?? 0,
+        input.consentCategory ?? null,
+        input.skippedConsentCount ?? 0,
+        input.failedCount ?? 0,
       ]
     );
     return mapCampaign(result.rows[0]);
@@ -162,7 +179,8 @@ export const pushNotificationRepository = {
   async updateCampaignCounts(
     campaignId: string,
     recipientCount: number,
-    successCount: number
+    successCount: number,
+    extras?: { failedCount?: number; skippedConsentCount?: number }
   ): Promise<PushCampaign | null> {
     const pool = getPool();
     if (!pool) {
@@ -170,15 +188,28 @@ export const pushNotificationRepository = {
       if (!c) return null;
       c.recipientCount = recipientCount;
       c.successCount = successCount;
+      if (extras?.failedCount != null) c.failedCount = extras.failedCount;
+      if (extras?.skippedConsentCount != null) {
+        c.skippedConsentCount = extras.skippedConsentCount;
+      }
       return c;
     }
 
     const result = await pool.query(
       `UPDATE push_campaigns
-       SET recipient_count = $2, success_count = $3
+       SET recipient_count = $2,
+           success_count = $3,
+           failed_count = COALESCE($4, failed_count),
+           skipped_consent_count = COALESCE($5, skipped_consent_count)
        WHERE id = $1
        RETURNING *`,
-      [campaignId, recipientCount, successCount]
+      [
+        campaignId,
+        recipientCount,
+        successCount,
+        extras?.failedCount ?? null,
+        extras?.skippedConsentCount ?? null,
+      ]
     );
     return result.rows[0] ? mapCampaign(result.rows[0]) : null;
   },
