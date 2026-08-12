@@ -199,8 +199,6 @@ export function MyPage() {
           </dl>
         </div>
 
-        <WorkoutMonthCalendar />
-
       {user && locationQuery.isFetched && !locationQuery.data?.isSet ? (
         <section className="my-page-section">
           <div className="card" style={{ padding: '1rem' }}>
@@ -221,6 +219,8 @@ export function MyPage() {
       ) : null}
 
       <MemberProfileRequests />
+
+      <WorkoutMonthCalendar />
 
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>

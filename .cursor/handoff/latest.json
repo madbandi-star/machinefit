@@ -1,25 +1,17 @@
 {
-  "title": "My Page workout calendar header copy",
-  "summary": "Expanded workout calendar shows one-line heading (title + month + workout days) and removes the glance description.",
-  "git": { "branch": "main", "commit": "3cdcb75f" },
-  "changedFiles": [
-    "frontend/src/components/my-page/WorkoutMonthCalendar/WorkoutMonthCalendar.tsx",
-    "frontend/src/styles/components.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
-  ],
+  "title": "Move workout calendar above Insights",
+  "summary": "My Page workout calendar now sits directly above MachineFit Insights; location nudge no longer sits between them.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
   "testFocus": [
-    "Expand workout calendar: one-line '운동 캘린더 YYYY년 M월 운동일 N일'",
-    "No '운동을 기록한 날을 한눈에 확인하세요.'"
+    "My Page order: profile → (location nudge) → calendar → 머신핏 인사이트",
+    "No region nudge between calendar and insights"
   ],
   "fastChecks": [
-    "rg workoutCalendarHeading frontend/src",
-    "rg workoutCalendarDesc frontend/src || true"
+    "rg -n \"WorkoutMonthCalendar|quickLinks|myPageNudge\" frontend/src/pages/my-page/MyPage.tsx"
   ],
-  "productionChecks": ["Pages /my-page calendar expand"],
+  "productionChecks": ["Pages /my-page section order"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Title + desc + separate summary lines",
-  "toBe": "Single heading line; desc removed"
+  "asIs": "Calendar then location nudge then Insights",
+  "toBe": "Calendar immediately above Insights"
 }
