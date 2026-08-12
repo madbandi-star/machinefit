@@ -1,11 +1,32 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BUSINESS_OPERATOR } from '@machinefit/shared';
+import { BUSINESS_OPERATOR, Role, hasMinRole } from '@machinefit/shared';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/store/auth.store';
 import '@/styles/legal.css';
 
 function BusinessFooterBlock() {
   const { t } = useTranslation();
+  const roleCode = useAuthStore((s) => s.user?.roleCode);
+  const isAdmin = hasMinRole(roleCode, Role.ADMIN);
+  const supportEmail = BUSINESS_OPERATOR.supportEmail.trim();
+
+  // Non-admin (and guests): customer center email only — hide operator registration fields.
+  if (!isAdmin) {
+    if (!supportEmail) return null;
+    return (
+      <div className="legal-footer__business">
+        <dl className="legal-footer__business-list">
+          <div className="legal-footer__business-row">
+            <dt>{t('legal.footer.supportEmail')}</dt>
+            <dd>
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    );
+  }
 
   const rows: Array<{ label: string; value: string }> = [
     { label: t('legal.footer.tradeName'), value: BUSINESS_OPERATOR.tradeName },
@@ -21,7 +42,6 @@ function BusinessFooterBlock() {
     { label: t('legal.footer.address'), value: BUSINESS_OPERATOR.address },
   ].filter((row) => Boolean(row.value.trim()));
 
-  const supportEmail = BUSINESS_OPERATOR.supportEmail.trim();
   const hasBusinessFields = rows.length > 0;
 
   return (
