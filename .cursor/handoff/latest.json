@@ -1,27 +1,23 @@
 {
-  "title": "Fully revert fortune birth-gate polish",
-  "summary": "Restored /fortune/today needs-birth empty state to simple 🔮 + copy + CTA; removed FortuneBirthGate component and gate i18n/CSS.",
-  "git": { "branch": "main", "commit": "618363c5" },
+  "title": "Remove lifetime spent from Helchang Power page",
+  "summary": "Points page lifetime line shows only cumulative earned Power; spent segment removed.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
-    "frontend/src/components/fortune/FortuneBirthGate.tsx",
-    "frontend/src/styles/fortune-reading.css",
-    "frontend/src/styles/fortune.css",
-    "frontend/src/i18n/locales/ko/fortune.json",
-    "frontend/src/i18n/locales/en/fortune.json",
-    "frontend/src/i18n/locales/ja/fortune.json",
-    "frontend/src/i18n/locales/zh/fortune.json"
+    "frontend/src/pages/points/PointsPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "/fortune/today without birth: simple gate only (no custom orb, no unknown-time note, no locked previews)",
-    "Home fortune gate still simple from prior revert"
+    "내 헬창력: shows 누적 적립 NPower only, no 누적 사용"
   ],
   "fastChecks": [
-    "rg FortuneBirthGate frontend/src || true",
-    "rg fortune-gate frontend/src/pages/fortune/FortuneDetailPage.tsx"
+    "rg \"누적 적립\" frontend/src/i18n/locales/ko/common.json",
+    "rg lifetimeSpent frontend/src/pages/points/PointsPage.tsx || true"
   ],
-  "productionChecks": ["Pages /fortune/today gate"],
+  "productionChecks": ["Pages /points"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Polished fr-gate unlock UI on fortune detail",
-  "toBe": "Original fortune-gate (emoji + needsBirth + CTA)"
+  "asIs": "누적 적립 · 누적 사용",
+  "toBe": "누적 적립 only"
 }

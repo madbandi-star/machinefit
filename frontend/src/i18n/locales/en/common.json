@@ -1836,7 +1836,7 @@
     "myPoints": "My Hellchang Power",
     "navDesc": "Earn and spend history",
     "balanceLabel": "Current Power",
-    "lifetime": "Lifetime earned {{earned}}Power · spent {{spent}}Power",
+    "lifetime": "Lifetime earned {{earned}}Power",
     "historyTitle": "Power history",
     "empty": "No Power history yet.",
     "earnedToast": "+{{points}}Power earned!",

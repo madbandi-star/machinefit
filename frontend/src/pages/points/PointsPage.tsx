@@ -42,7 +42,6 @@ export function PointsPage() {
         <p className="form-section__desc" style={{ marginTop: 'var(--space-sm)' }}>
           {t('points.lifetime', {
             earned: summary?.lifetimeEarned ?? 0,
-            spent: summary?.lifetimeSpent ?? 0,
           })}
         </p>
       </div>

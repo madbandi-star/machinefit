@@ -1836,7 +1836,7 @@
     "myPoints": "내 헬창력",
     "navDesc": "적립·사용 내역",
     "balanceLabel": "현재 헬창력",
-    "lifetime": "누적 적립 {{earned}}Power · 누적 사용 {{spent}}Power",
+    "lifetime": "누적 적립 {{earned}}Power",
     "historyTitle": "헬창력 내역",
     "empty": "아직 헬창력 내역이 없어요.",
     "earnedToast": "+{{points}}Power 적립!",
