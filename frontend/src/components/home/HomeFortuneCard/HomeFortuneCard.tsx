@@ -202,19 +202,15 @@ export function HomeFortuneCard() {
         className="home-fortune-card home-fortune-card--gate"
         expanded={expanded}
         onToggle={toggleExpanded}
-        peek={<span aria-hidden>✦</span>}
+        peek={<span aria-hidden>🔮</span>}
       >
-        <div className="home-fortune-card__gate-head">
-          <span className="home-fortune-card__gate-mark" aria-hidden>
-            ✦
-          </span>
-          <h3 className="home-fortune-card__gate-title">{t('gateHeadline')}</h3>
-        </div>
+        <p className="home-fortune-card__gate-emoji" aria-hidden>
+          🔮
+        </p>
         <p className="home-fortune-card__body">{t('needsBirth')}</p>
         <Link to={`${ROUTES.SETTINGS}#birth-profile`} className="btn btn--primary btn--block">
           {t('enterBirth')}
         </Link>
-        <p className="home-fortune-card__gate-note">{t('gateNote')}</p>
       </FortuneCardShell>
     );
   }

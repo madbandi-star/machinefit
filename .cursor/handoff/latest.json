@@ -1,25 +1,21 @@
 {
-  "title": "Home profile/fortune copy tweaks",
-  "summary": "Home profile-incomplete banner drops the Settings-please sentence; Korean fortune needsBirth copy shortened on home (shared key).",
-  "git": { "branch": "main", "commit": "31d3fa8a" },
+  "title": "Revert home fortune gate visual extras",
+  "summary": "Home Helchang fortune needs-birth card restored to crystal-ball emoji and no unknown-birth-time note; those extras came from an earlier gate polish.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json",
-    "frontend/src/i18n/locales/ko/fortune.json"
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "frontend/src/styles/fortune.css"
   ],
   "testFocus": [
-    "Home profile banner: no '설정에서 입력해 주세요'",
-    "Home fortune gate KO: '생년월일과 탄생시를 입력하면, 헬창운세를 확인할 수 있어요.'"
+    "Home fortune gate: 🔮 emoji again, no '탄생시를 몰라도' line",
+    "needsBirth body + enterBirth CTA remain"
   ],
   "fastChecks": [
-    "rg profileIncompleteBody frontend/src/i18n/locales/ko/common.json",
-    "rg \"입력하면, 헬창운세\" frontend/src/i18n/locales/ko/fortune.json"
+    "rg gateNote frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx || true",
+    "rg home-fortune-card__gate-emoji frontend/src/styles/fortune.css"
   ],
-  "productionChecks": ["Pages home copy"],
+  "productionChecks": ["Pages home fortune gate"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "설정에서 입력해 주세요 + longer fortune needsBirth",
-  "toBe": "Shorter profile body; updated KO needsBirth"
+  "asIs": "CSS orb + gateHeadline + gateNote on home card",
+  "toBe": "🔮 + needsBirth + CTA only on home card"
 }

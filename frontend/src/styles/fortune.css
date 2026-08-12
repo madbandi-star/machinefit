@@ -330,52 +330,19 @@
 }
 
 .home-fortune-card--gate {
-  text-align: left;
+  text-align: center;
 }
 
-.home-fortune-card__gate-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  margin: 0.35rem 0 0.55rem;
-}
-
-.home-fortune-card__gate-mark {
-  flex-shrink: 0;
-  width: 2.35rem;
-  height: 2.35rem;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 0.95rem;
-  color: #f4fff8;
-  background:
-    radial-gradient(circle at 35% 30%, #fff 0%, transparent 42%),
-    linear-gradient(160deg, color-mix(in srgb, var(--color-primary) 55%, #1a1f18), #111511);
-  box-shadow: 0 6px 14px color-mix(in srgb, var(--color-primary) 22%, transparent);
-}
-
-.home-fortune-card__gate-title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 780;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
-  word-break: keep-all;
+.home-fortune-card__gate-emoji {
+  margin: 0.65rem 0 0.25rem;
+  font-size: 2rem;
+  line-height: 1;
 }
 
 .home-fortune-card--gate .home-fortune-card__body {
   margin: 0 0 0.85rem;
   color: var(--color-text-muted);
   line-height: 1.5;
-  word-break: keep-all;
-}
-
-.home-fortune-card--gate .home-fortune-card__gate-note {
-  margin: 0.55rem 0 0;
-  font-size: 0.78rem;
-  line-height: 1.4;
-  color: var(--color-text-muted);
   word-break: keep-all;
 }
 
