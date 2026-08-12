@@ -706,6 +706,7 @@
       "quickActionsLabel": "빠른 실행",
       "quickSearch": "기구 검색",
       "profileIncomplete": "프로필 설정 필요",
+      "profileIncompleteBody": "맞춤 추천을 위해 키·몸무게가 필요해요.",
       "completeProfile": "설정하기",
       "recentMachines": "최근 기록",
       "recentEmptyAction": "기구 검색하기",

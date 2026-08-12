@@ -16,7 +16,7 @@ export function ProfileIncompleteBanner() {
     <div className="profile-incomplete-banner" role="status">
       <div className="profile-incomplete-banner__text">
         <strong>{t('pages.home.profileIncomplete')}</strong>
-        {t('auth.profileRequiredForRecommend')}
+        {t('pages.home.profileIncompleteBody')}
       </div>
       <Link
         to={`${ROUTES.SETTINGS}#body-metrics`}

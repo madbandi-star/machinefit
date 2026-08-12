@@ -1,17 +1,18 @@
-﻿# Test handoff — Home latest notice always on top
+﻿# Test handoff — Home profile/fortune copy tweaks
 
 ## Summary
-홈 `[최신 공지]`를 `home-page` 최상단으로 올렸습니다. 프로필 설정 필요 배너·헬스장 선택 등보다 위에 옵니다.
+홈 `[프로필 설정 필요]`에서 「설정에서 입력해 주세요.」를 제거했고, 헬창운세 안내 KO 문구를 짧게 바꿨습니다.
 
 ## Test focus
-1. 프로필 미완료 + 공지 있는 계정: 공지가 프로필 CTA보다 위
-2. 프리미엄 등 헬스장 선택 노출 시에도 공지가 그 위
+1. 프로필 배너: `맞춤 추천을 위해 키·몸무게가 필요해요.`만 (설정에서… 없음)
+2. 홈 운세: `생년월일과 탄생시를 입력하면, 헬창운세를 확인할 수 있어요.`
 
 ## Fast checks
 ```
-rg -n "HomeNoticeBanner|ProfileIncompleteBanner" frontend/src/pages/home/HomePage.tsx
+rg profileIncompleteBody frontend/src/i18n/locales/ko/common.json
+rg "입력하면, 헬창운세" frontend/src/i18n/locales/ko/fortune.json
 ```
 
 ## as-is → to-be
-- as-is: ProfileIncompleteBanner → HomeNoticeBanner
-- to-be: HomeNoticeBanner first, then gym / install / profile banner
+- as-is: …필요해요. 설정에서 입력해 주세요. / …오늘의 헬창운세를…
+- to-be: …필요해요. / …입력하면, 헬창운세를…

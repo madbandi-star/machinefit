@@ -706,6 +706,7 @@
       "quickActionsLabel": "Quick actions",
       "quickSearch": "Search machines",
       "profileIncomplete": "Profile setup needed",
+      "profileIncompleteBody": "We need your height and weight for recommendations.",
       "completeProfile": "Go to Settings",
       "recentMachines": "Recent machines",
       "recentEmptyAction": "Search machines",
