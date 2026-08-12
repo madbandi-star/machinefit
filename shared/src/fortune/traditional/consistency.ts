@@ -7,6 +7,12 @@ export interface ConsistencyInput {
   strategyCode: string;
   conditionCode: string;
   avoidCode: string;
+  styleCode: string;
+  bodyPartCode: string;
+  preCode: string;
+  postCode: string;
+  headlineCode: string;
+  oneLinerCode: string;
   scoreStars: number;
   scores: {
     healthmanIndex: number;
@@ -23,46 +29,75 @@ export interface ConsistencyResult {
   strategyCode: string;
   conditionCode: string;
   avoidCode: string;
+  styleCode: string;
+  bodyPartCode: string;
+  preCode: string;
+  postCode: string;
+  headlineCode: string;
+  oneLinerCode: string;
   scoreStars: number;
   scores: ConsistencyInput['scores'];
   remapped: boolean;
 }
 
-function firstAllowed(allow: string[], current: string, fallback: string): string {
+function clampCode(allow: string[], current: string, fallback: string): string {
   if (allow.includes(current)) return current;
   return allow[0] ?? fallback;
 }
 
 /**
- * Force remap — never re-roll with RNG — so outputs stay deterministic.
+ * Force remap — never re-roll with RNG — so outputs stay deterministic
+ * and every narrative field stays inside the same core theme pack.
  */
 export function enforceFortuneConsistency(input: ConsistencyInput): ConsistencyResult {
   const { allow, bands } = deriveFromTheme(input.coreTheme);
   let remapped = false;
 
-  let keywordCode = input.keywordCode;
-  if (!allow.keywords.includes(keywordCode)) {
-    keywordCode = allow.keywords[0];
-    remapped = true;
-  }
+  const track = (next: string, prev: string): string => {
+    if (next !== prev) remapped = true;
+    return next;
+  };
 
-  let strategyCode = input.strategyCode;
-  if (!allow.strategies.includes(strategyCode)) {
-    strategyCode = allow.strategies[0];
-    remapped = true;
-  }
-
-  let conditionCode = input.conditionCode;
-  if (!allow.conditions.includes(conditionCode)) {
-    conditionCode = allow.conditions[0];
-    remapped = true;
-  }
-
-  let avoidCode = input.avoidCode;
-  if (!allow.avoids.includes(avoidCode)) {
-    avoidCode = allow.avoids[0];
-    remapped = true;
-  }
+  let keywordCode = track(
+    clampCode(allow.keywords, input.keywordCode, 'CONTROL_DAY'),
+    input.keywordCode
+  );
+  let strategyCode = track(
+    clampCode(allow.strategies, input.strategyCode, 'WEIGHT_HOLD'),
+    input.strategyCode
+  );
+  let conditionCode = track(
+    clampCode(allow.conditions, input.conditionCode, 'NORMAL'),
+    input.conditionCode
+  );
+  let avoidCode = track(
+    clampCode(allow.avoids, input.avoidCode, 'HEAVY_EGO'),
+    input.avoidCode
+  );
+  let styleCode = track(
+    clampCode(allow.styles, input.styleCode, 'DUMBBELL'),
+    input.styleCode
+  );
+  let bodyPartCode = track(
+    clampCode(allow.bodyParts, input.bodyPartCode, 'FULL_BODY'),
+    input.bodyPartCode
+  );
+  let preCode = track(
+    clampCode(allow.pre, input.preCode, 'PREP_SETS'),
+    input.preCode
+  );
+  let postCode = track(
+    clampCode(allow.post, input.postCode, 'STRETCH'),
+    input.postCode
+  );
+  let headlineCode = track(
+    clampCode(allow.headlines, input.headlineCode, allow.headlines[0] ?? 'CONTROL_FOCUS'),
+    input.headlineCode
+  );
+  let oneLinerCode = track(
+    clampCode(allow.oneLiners, input.oneLinerCode, allow.oneLiners[0] ?? 'PREP_WINS'),
+    input.oneLinerCode
+  );
 
   let scoreStars = input.scoreStars;
   if (scoreStars < bands.stars[0] || scoreStars > bands.stars[1]) {
@@ -90,21 +125,34 @@ export function enforceFortuneConsistency(input: ConsistencyInput): ConsistencyR
     remapped = true;
   }
 
-  // Hard narrative guards
+  // Hard narrative guards — recovery themes must never push PR language.
   if (
     input.coreTheme === 'RECOVERY_RESET' &&
     (keywordCode === 'PR_DAY' || strategyCode === 'PR_CHALLENGE')
   ) {
-    keywordCode = firstAllowed(allow.keywords, 'RECOVERY_DAY', 'RECOVERY_DAY');
-    strategyCode = firstAllowed(allow.strategies, 'WEIGHT_HOLD', 'WEIGHT_HOLD');
+    keywordCode = clampCode(allow.keywords, 'RECOVERY_DAY', 'RECOVERY_DAY');
+    strategyCode = clampCode(allow.strategies, 'WEIGHT_HOLD', 'WEIGHT_HOLD');
     remapped = true;
   }
 
   if (
     (input.coreTheme === 'EXECUTE_PUSH' || input.coreTheme === 'FOCUS_BREAKTHROUGH') &&
-    keywordCode === 'RECOVERY_DAY'
+    (keywordCode === 'RECOVERY_DAY' || conditionCode === 'REST')
   ) {
-    keywordCode = firstAllowed(allow.keywords, allow.keywords[0], 'PR_DAY');
+    keywordCode = clampCode(allow.keywords, allow.keywords[0], 'PR_DAY');
+    conditionCode = clampCode(allow.conditions, 'NORMAL', 'NORMAL');
+    remapped = true;
+  }
+
+  // Body-part keywords should match body recommendation when both are specific.
+  const keywordBody: Record<string, string> = {
+    LEG_DAY: 'LEGS',
+    CHEST_DAY: 'CHEST',
+    BACK_DAY: 'BACK',
+  };
+  const forcedBody = keywordBody[keywordCode];
+  if (forcedBody && allow.bodyParts.includes(forcedBody) && bodyPartCode !== forcedBody) {
+    bodyPartCode = forcedBody;
     remapped = true;
   }
 
@@ -113,6 +161,12 @@ export function enforceFortuneConsistency(input: ConsistencyInput): ConsistencyR
     strategyCode,
     conditionCode,
     avoidCode,
+    styleCode,
+    bodyPartCode,
+    preCode,
+    postCode,
+    headlineCode,
+    oneLinerCode,
     scoreStars,
     scores,
     remapped,

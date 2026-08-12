@@ -71,7 +71,7 @@ export function FortuneEnergySection({ narrative, delayMs = 40 }: FortuneEnergyS
             {t('energyWorkoutBridge', {
               primary: t(`element.${narrative.element.primary}`),
               support: t(`element.${narrative.element.support}`),
-              mood: t(narrative.layers.find((l) => l.key === 'today')?.moodKey ?? 'mood.steady'),
+              mood: t(narrative.coreThemeLabelKey),
             })}
           </p>
           <ul className="fr-el-hints">

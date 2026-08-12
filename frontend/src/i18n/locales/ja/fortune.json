@@ -197,12 +197,12 @@
     "water": "水"
   },
   "layer": {
-    "base": "基本の気",
-    "daeun": "長期の気",
-    "seun": "今年の気",
-    "wolun": "今月の気",
-    "today": "今日の気",
-    "shijin": "時の気"
+    "base": "Your base energy",
+    "daeun": "Long-term training direction",
+    "seun": "This year’s training flow",
+    "wolun": "This month’s training direction",
+    "today": "Today’s training condition",
+    "shijin": "Hour flow"
   },
   "mood": {
     "expand": "Expansion",
@@ -217,8 +217,8 @@
     "balance": "Balance"
   },
   "yinYang": {
-    "yang": "Yang energy is relatively strong today — lean into action and execution.",
-    "yin": "Yin energy is relatively strong today — lean into focus, recovery, and tidy-up."
+    "yang": "Yang energy feels relatively stronger today — activity may stand out more.",
+    "yin": "Yin energy feels relatively stronger today — fine detail and tidy-up may carry more weight."
   },
   "coreTheme": {
     "GROWTH_EXPAND": "成長と拡張",
@@ -232,36 +232,36 @@
   },
   "story": {
     "GROWTH_EXPAND": {
-      "lead": "Today’s core energy is growth and expansion.",
-      "body": "Your base energy and today’s flow support widening your attempts. In training, expand stimulus one step."
+      "lead": "Today’s overall fortune is “growth & expansion.”",
+      "body": "Wood-like stretch energy favors widening stimulus. Training direction: expand one variable — volume, range, or a new angle."
     },
     "FOCUS_BREAKTHROUGH": {
-      "lead": "Today’s core energy is focus and breakthrough.",
-      "body": "Channel effort into one clear target. Train with precise execution and a deliberate challenge set."
+      "lead": "Today’s overall fortune is “focus & breakthrough.”",
+      "body": "Metal-like focus favors precision over ego loading. Training direction: control and accuracy — one clear target set."
     },
     "RECOVERY_RESET": {
-      "lead": "Today’s core energy is recovery and reset.",
-      "body": "Favor pacing over forceful expansion. Lower intensity and prioritize quality, breathing, and recovery."
+      "lead": "Today’s overall fortune is “recovery & reset.”",
+      "body": "Water-like pacing favors reset over force. Training direction: dial intensity down — quality, breath, and recovery first."
     },
     "CHANGE_STIMULUS": {
-      "lead": "Today’s core energy is change and new stimulus.",
-      "body": "A small twist to a familiar routine fits well. Change equipment, angle, or structure lightly."
+      "lead": "Today’s overall fortune is “change & new stimulus.”",
+      "body": "A light twist to familiar work fits. Training direction: change equipment, angle, or structure — not just heavier weight."
     },
     "STABILITY_BALANCE": {
-      "lead": "Today’s core energy is stability and balance.",
-      "body": "Keep overall balance rather than pushing one extreme. Train evenly without big jumps."
+      "lead": "Today’s overall fortune is “stability & balance.”",
+      "body": "Earth-like centering favors even work. Training direction: avoid one-sided jumps — keep basics and balance."
     },
     "ACCUMULATE_STEADY": {
-      "lead": "Today’s core energy is steady accumulation.",
-      "body": "A day for stacking, not finishing in one shot. Build volume with quality reps."
+      "lead": "Today’s overall fortune is “accumulate steadily.”",
+      "body": "A stacking day, not a one-shot finish. Training direction: build volume with clean reps."
     },
     "EXECUTE_PUSH": {
-      "lead": "Today’s core energy is execution and push.",
-      "body": "Momentum favors acting now. Run your planned session with density."
+      "lead": "Today’s overall fortune is “execute & push.”",
+      "body": "Fire-like drive favors doing the plan. Training direction: warm up well, then run the session with density."
     },
     "ORGANIZE_TRANSITION": {
-      "lead": "Today’s core energy is organize and transition.",
-      "body": "Good for closing a chapter and preparing the next. Tidy the routine and set up the next stimulus."
+      "lead": "Today’s overall fortune is “organize & transition.”",
+      "body": "Good for closing and preparing the next step. Training direction: tidy the routine — moderate intensity, set up next stimulus."
     }
   },
   "detail": {
@@ -323,12 +323,12 @@
   "yinYangYang": "陽",
   "yinYangYin": "陰",
   "wuxingLabel": "五行",
-  "energyWorkoutBridge": "Today {{primary}} leads with {{support}} in support — train with a “{{mood}}” flow.",
+  "energyWorkoutBridge": "Today {{primary}} leads with {{support}} in support — so today’s training core is a “{{mood}}” flow.",
   "birthDateLabel": "生年月日",
   "birthTimeLabel": "誕生時刻",
   "birthTimeUnknown": "誕生時刻不明",
-  "baseHarmony": "Your base energy (“{{base}}”) and today’s energy (“{{today}}”) blend fairly naturally.",
-  "storyClose": "The core today is “{{theme}}”. Use keyword {{keyword}} as a cue — one fitting action beats a forced jump.",
+  "baseHarmony": "Use your base energy (“{{base}}”) and today’s condition (“{{today}}”) as context for the core theme. Longer cycles are background; today’s action follows today’s condition.",
+  "storyClose": "Bottom line: today’s core is “{{theme}}” → practice one thing around keyword {{keyword}}.",
   "guideThemeBridge": "This guide follows today’s core energy: “{{theme}}”.",
   "dataEmptyForFortune": "Not enough workout logs yet. Enjoy the fortune as-is — start logging today to unlock your patterns.",
   "dataTopMuscle": "Often trained: {{muscle}}",

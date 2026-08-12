@@ -10,6 +10,12 @@ export interface ThemeScoreBands {
   stars: [number, number];
 }
 
+/**
+ * Catalog allow-lists must use codes that exist in
+ * `fortune_content_items` seed / fallback catalog.
+ * Empty lists are not allowed for narrative categories — they caused
+ * theme-blind fallback to the full catalog.
+ */
 export interface ThemeCatalogAllow {
   keywords: string[];
   strategies: string[];
@@ -40,6 +46,11 @@ const ALL_BODY = [
   'FULL_BODY',
 ];
 
+/**
+ * One coherent pack per core theme:
+ * 총운(headline) → 키워드 → 전략/컨디션 → 추천 → 주의 → 한마디
+ * Codes match migration 105 / fallback catalog only.
+ */
 const DERIVE: Record<CoreTheme, ThemeDerivation> = {
   GROWTH_EXPAND: {
     bands: {
@@ -55,13 +66,13 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       keywords: ['VOLUME_DAY', 'DUMBBELL_DAY', 'FREE_WEIGHT_DAY', 'CONTROL_DAY'],
       strategies: ['VOLUME_UP', 'PYRAMID', 'SUPER_SET'],
       styles: ALL_STYLES,
-      conditions: ['NORMAL', 'HIGH'],
-      avoids: ['SKIP_WARMUP', 'RANDOM_ROUTINE'],
-      pre: ['PREP_SETS', 'MOBILITY'],
-      post: ['STRETCH', 'WALK'],
+      conditions: ['NORMAL', 'AGGRESSIVE'],
+      avoids: ['NO_WARMUP_HEAVY', 'SAME_MUSCLE_VOLUME'],
+      pre: ['PREP_SETS', 'MOBILITY', 'DYNAMIC_WARMUP'],
+      post: ['STRETCH', 'LIGHT_CARDIO', 'HYDRATION'],
       bodyParts: ALL_BODY,
-      headlines: [],
-      oneLiners: [],
+      headlines: ['VOLUME_BUILD', 'FREE_WEIGHT', 'DUMBBELL_COMPAT'],
+      oneLiners: ['ONE_MORE_SET', 'CHANGE_STIMULUS'],
     },
   },
   FOCUS_BREAKTHROUGH: {
@@ -78,13 +89,13 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       keywords: ['PR_DAY', 'CONTROL_DAY', 'DROP_SET_DAY'],
       strategies: ['PR_CHALLENGE', 'HIGH_WEIGHT_LOW_REP', 'SLOW_CONTROL'],
       styles: ['BARBELL', 'DUMBBELL', 'FREE_WEIGHT'],
-      conditions: ['HIGH', 'NORMAL'],
-      avoids: ['HEAVY_EGO', 'SKIP_WARMUP'],
-      pre: ['PREP_SETS', 'MOBILITY'],
-      post: ['STRETCH'],
-      bodyParts: ALL_BODY.filter((b) => b !== 'FULL_BODY').concat('FULL_BODY'),
-      headlines: [],
-      oneLiners: [],
+      conditions: ['AGGRESSIVE', 'NORMAL'],
+      avoids: ['HEAVY_EGO', 'NO_WARMUP_HEAVY'],
+      pre: ['PREP_SETS', 'MOBILITY', 'GRADUAL'],
+      post: ['STRETCH', 'COOLDOWN'],
+      bodyParts: ALL_BODY,
+      headlines: ['CONTROL_FOCUS', 'PR_PUSH'],
+      oneLiners: ['CONTROL_FIRST', 'PREP_WINS'],
     },
   },
   RECOVERY_RESET: {
@@ -102,12 +113,12 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       strategies: ['WEIGHT_HOLD', 'SLOW_CONTROL'],
       styles: ['MACHINE', 'CABLE', 'BODYWEIGHT'],
       conditions: ['LIGHT', 'RECOVERY', 'REST', 'NORMAL'],
-      avoids: ['HEAVY_EGO', 'DROP_SET_SPAM', 'MAX_ATTEMPT'],
-      pre: ['MOBILITY', 'PREP_SETS'],
-      post: ['STRETCH', 'WALK', 'SLEEP'],
+      avoids: ['HEAVY_EGO', 'PR_WHEN_FATIGUED', 'SKIP_REST'],
+      pre: ['MOBILITY', 'WARMUP_LIGHT', 'GRADUAL'],
+      post: ['STRETCH', 'RECOVERY_FOCUS', 'HYDRATION'],
       bodyParts: ['FULL_BODY', 'CORE', 'LEGS', 'BACK'],
-      headlines: [],
-      oneLiners: [],
+      headlines: ['RECOVERY_LISTEN', 'LIGHT_START'],
+      oneLiners: ['LISTEN_BODY'],
     },
   },
   CHANGE_STIMULUS: {
@@ -124,13 +135,13 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       keywords: ['DUMBBELL_DAY', 'SUPER_SET_DAY', 'FREE_WEIGHT_DAY', 'DROP_SET_DAY'],
       strategies: ['SUPER_SET', 'DROP_SET', 'VOLUME_UP'],
       styles: ['DUMBBELL', 'FREE_WEIGHT', 'CABLE', 'BARBELL'],
-      conditions: ['NORMAL', 'HIGH'],
-      avoids: ['SAME_ROUTINE', 'HEAVY_EGO'],
-      pre: ['MOBILITY', 'PREP_SETS'],
-      post: ['STRETCH'],
+      conditions: ['NORMAL', 'AGGRESSIVE'],
+      avoids: ['SAME_MUSCLE_VOLUME', 'HEAVY_EGO'],
+      pre: ['MOBILITY', 'PREP_SETS', 'DYNAMIC_WARMUP'],
+      post: ['STRETCH', 'LIGHT_CARDIO'],
       bodyParts: ALL_BODY,
-      headlines: [],
-      oneLiners: [],
+      headlines: ['FREE_WEIGHT', 'DUMBBELL_COMPAT', 'VOLUME_BUILD'],
+      oneLiners: ['CHANGE_STIMULUS', 'ONE_MORE_SET'],
     },
   },
   STABILITY_BALANCE: {
@@ -148,12 +159,12 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       strategies: ['WEIGHT_HOLD', 'SLOW_CONTROL', 'PYRAMID'],
       styles: ALL_STYLES,
       conditions: ['NORMAL', 'LIGHT'],
-      avoids: ['HEAVY_EGO', 'RANDOM_ROUTINE'],
-      pre: ['PREP_SETS', 'MOBILITY'],
-      post: ['STRETCH', 'WALK'],
+      avoids: ['HEAVY_EGO', 'SAME_MUSCLE_VOLUME'],
+      pre: ['PREP_SETS', 'MOBILITY', 'WARMUP_LIGHT'],
+      post: ['STRETCH', 'COOLDOWN', 'HYDRATION'],
       bodyParts: ALL_BODY,
-      headlines: [],
-      oneLiners: [],
+      headlines: ['MACHINE_STEADY', 'CONTROL_FOCUS', 'LIGHT_START'],
+      oneLiners: ['CONTROL_FIRST', 'LISTEN_BODY'],
     },
   },
   ACCUMULATE_STEADY: {
@@ -170,13 +181,13 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       keywords: ['VOLUME_DAY', 'CONTROL_DAY', 'LEG_DAY', 'BACK_DAY', 'CHEST_DAY'],
       strategies: ['VOLUME_UP', 'PYRAMID', 'WEIGHT_HOLD'],
       styles: ALL_STYLES,
-      conditions: ['NORMAL', 'HIGH'],
-      avoids: ['SKIP_WARMUP', 'MAX_ATTEMPT'],
-      pre: ['PREP_SETS'],
-      post: ['STRETCH'],
+      conditions: ['NORMAL', 'AGGRESSIVE'],
+      avoids: ['NO_WARMUP_HEAVY', 'PR_WHEN_FATIGUED'],
+      pre: ['PREP_SETS', 'GRADUAL', 'DYNAMIC_WARMUP'],
+      post: ['STRETCH', 'HYDRATION'],
       bodyParts: ALL_BODY,
-      headlines: [],
-      oneLiners: [],
+      headlines: ['VOLUME_BUILD', 'MACHINE_STEADY', 'CONTROL_FOCUS'],
+      oneLiners: ['ONE_MORE_SET', 'PREP_WINS'],
     },
   },
   EXECUTE_PUSH: {
@@ -193,13 +204,13 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       keywords: ['PR_DAY', 'VOLUME_DAY', 'DROP_SET_DAY', 'SUPER_SET_DAY'],
       strategies: ['PR_CHALLENGE', 'HIGH_WEIGHT_LOW_REP', 'DROP_SET', 'VOLUME_UP'],
       styles: ['BARBELL', 'DUMBBELL', 'FREE_WEIGHT'],
-      conditions: ['HIGH', 'NORMAL'],
-      avoids: ['SKIP_WARMUP', 'LONG_REST_CHAT'],
-      pre: ['PREP_SETS'],
-      post: ['STRETCH', 'WALK'],
+      conditions: ['AGGRESSIVE', 'NORMAL'],
+      avoids: ['NO_WARMUP_HEAVY', 'SKIP_REST'],
+      pre: ['PREP_SETS', 'DYNAMIC_WARMUP', 'GRADUAL'],
+      post: ['STRETCH', 'LIGHT_CARDIO', 'HYDRATION'],
       bodyParts: ALL_BODY,
-      headlines: [],
-      oneLiners: [],
+      headlines: ['PR_PUSH', 'VOLUME_BUILD', 'FREE_WEIGHT'],
+      oneLiners: ['PREP_WINS', 'ONE_MORE_SET'],
     },
   },
   ORGANIZE_TRANSITION: {
@@ -217,12 +228,12 @@ const DERIVE: Record<CoreTheme, ThemeDerivation> = {
       strategies: ['WEIGHT_HOLD', 'SLOW_CONTROL'],
       styles: ['MACHINE', 'CABLE', 'DUMBBELL', 'BODYWEIGHT'],
       conditions: ['NORMAL', 'LIGHT', 'RECOVERY'],
-      avoids: ['HEAVY_EGO', 'RANDOM_ROUTINE', 'MAX_ATTEMPT'],
-      pre: ['MOBILITY', 'PREP_SETS'],
-      post: ['STRETCH', 'SLEEP'],
+      avoids: ['HEAVY_EGO', 'PR_WHEN_FATIGUED', 'SAME_MUSCLE_VOLUME'],
+      pre: ['MOBILITY', 'PREP_SETS', 'WARMUP_LIGHT'],
+      post: ['STRETCH', 'RECOVERY_FOCUS', 'COOLDOWN'],
       bodyParts: ALL_BODY,
-      headlines: [],
-      oneLiners: [],
+      headlines: ['LIGHT_START', 'CONTROL_FOCUS', 'MACHINE_STEADY', 'RECOVERY_LISTEN'],
+      oneLiners: ['LISTEN_BODY', 'CONTROL_FIRST'],
     },
   },
 };
@@ -235,11 +246,39 @@ export function clampToBand(value: number, band: [number, number]): number {
   return Math.min(band[1], Math.max(band[0], Math.round(value)));
 }
 
-export function pickInBand(
-  rng: () => number,
-  band: [number, number]
-): number {
+export function pickInBand(rng: () => number, band: [number, number]): number {
   const [lo, hi] = band;
   if (hi <= lo) return lo;
   return lo + Math.floor(rng() * (hi - lo + 1));
+}
+
+/** True when every narrative code sits inside the theme allow-list. */
+export function isThemePackConsistent(
+  theme: CoreTheme,
+  pack: {
+    keywordCode: string;
+    strategyCode: string;
+    conditionCode: string;
+    avoidCode: string;
+    styleCode: string;
+    bodyPartCode: string;
+    preCode: string;
+    postCode: string;
+    headlineCode: string;
+    oneLinerCode: string;
+  }
+): boolean {
+  const { allow } = deriveFromTheme(theme);
+  return (
+    allow.keywords.includes(pack.keywordCode) &&
+    allow.strategies.includes(pack.strategyCode) &&
+    allow.conditions.includes(pack.conditionCode) &&
+    allow.avoids.includes(pack.avoidCode) &&
+    allow.styles.includes(pack.styleCode) &&
+    allow.bodyParts.includes(pack.bodyPartCode) &&
+    allow.pre.includes(pack.preCode) &&
+    allow.post.includes(pack.postCode) &&
+    allow.headlines.includes(pack.headlineCode) &&
+    allow.oneLiners.includes(pack.oneLinerCode)
+  );
 }

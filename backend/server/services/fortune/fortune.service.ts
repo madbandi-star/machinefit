@@ -14,7 +14,7 @@ import {
   computeWorkoutAnalytics,
   loadFortuneLogs,
 } from './workout-analytics.engine.js';
-import { runFortuneEngine } from './fortune.engine.js';
+import { labelForCode, runFortuneEngine } from './fortune.engine.js';
 import { buildRecommendation, computeFortuneScores } from './recommendation.engine.js';
 
 const cache = new TtlCache<TodayFortuneResponse>(10 * 60_000);
@@ -110,54 +110,65 @@ export const fortuneService = {
       chart,
     });
     let scores = computeFortuneScores(fortuneResult, analysis, chart.coreTheme);
-    let recommendation = buildRecommendation(
+
+    const consistent = enforceFortuneConsistency({
+      coreTheme: chart.coreTheme,
+      keywordCode: fortuneResult.keywordCode,
+      strategyCode: fortuneResult.strategyCode,
+      conditionCode: fortuneResult.conditionCode,
+      avoidCode: fortuneResult.avoidCode,
+      styleCode: fortuneResult.styleCode,
+      bodyPartCode: fortuneResult.bodyPartCode,
+      preCode: fortuneResult.preCode,
+      postCode: fortuneResult.postCode,
+      headlineCode: fortuneResult.headlineCode,
+      oneLinerCode: fortuneResult.oneLinerCode,
+      scoreStars: fortuneResult.scoreStars,
+      scores,
+    });
+
+    fortuneResult.keywordCode = consistent.keywordCode;
+    fortuneResult.strategyCode = consistent.strategyCode;
+    fortuneResult.conditionCode = consistent.conditionCode;
+    fortuneResult.avoidCode = consistent.avoidCode;
+    fortuneResult.styleCode = consistent.styleCode;
+    fortuneResult.bodyPartCode = consistent.bodyPartCode;
+    fortuneResult.preCode = consistent.preCode;
+    fortuneResult.postCode = consistent.postCode;
+    fortuneResult.headlineCode = consistent.headlineCode;
+    fortuneResult.oneLinerCode = consistent.oneLinerCode;
+    fortuneResult.scoreStars = consistent.scoreStars;
+    fortuneResult.fortune.keyword = consistent.keywordCode;
+    fortuneResult.fortune.scoreStars = consistent.scoreStars;
+    fortuneResult.fortune.coreTheme = chart.coreTheme;
+
+    const kw = labelForCode(catalog, 'keyword', consistent.keywordCode);
+    fortuneResult.fortune.keywordTitle = kw.title;
+
+    const headline = labelForCode(catalog, 'headline', consistent.headlineCode);
+    fortuneResult.fortune.title = headline.title;
+    fortuneResult.fortune.headline = headline.body || headline.title;
+
+    const strategy = labelForCode(catalog, 'strategy', consistent.strategyCode);
+    const style = labelForCode(catalog, 'style', consistent.styleCode);
+    const condition = labelForCode(catalog, 'condition', consistent.conditionCode);
+    fortuneResult.fortune.strategyLabels = [
+      strategy.title,
+      style.title,
+      condition.title,
+    ].filter(Boolean);
+
+    const oneLiner = labelForCode(catalog, 'one_liner', consistent.oneLinerCode);
+    fortuneResult.fortune.oneLiner = oneLiner.title;
+    fortuneResult.fortune.oneLinerDetail = oneLiner.body || undefined;
+
+    scores = consistent.scores;
+    const recommendation = buildRecommendation(
       fortuneResult,
       analysis,
       catalog,
       chart.coreTheme
     );
-
-    const consistent = enforceFortuneConsistency({
-      coreTheme: chart.coreTheme,
-      keywordCode: fortuneResult.keywordCode,
-      strategyCode: recommendation.strategy,
-      conditionCode: fortuneResult.conditionCode,
-      avoidCode: fortuneResult.avoidCode,
-      scoreStars: fortuneResult.scoreStars,
-      scores,
-    });
-
-    if (consistent.remapped) {
-      fortuneResult.keywordCode = consistent.keywordCode;
-      fortuneResult.strategyCode = consistent.strategyCode;
-      fortuneResult.conditionCode = consistent.conditionCode;
-      fortuneResult.avoidCode = consistent.avoidCode;
-      fortuneResult.scoreStars = consistent.scoreStars;
-      fortuneResult.fortune.keyword = consistent.keywordCode;
-      fortuneResult.fortune.scoreStars = consistent.scoreStars;
-      const kw = catalog.find(
-        (c) => c.category === 'keyword' && c.code === consistent.keywordCode
-      );
-      if (kw) fortuneResult.fortune.keywordTitle = kw.title;
-      scores = consistent.scores;
-      recommendation = buildRecommendation(
-        fortuneResult,
-        analysis,
-        catalog,
-        chart.coreTheme
-      );
-      // Keep strategy from consistency if nudge flipped it out of theme
-      if (recommendation.strategy !== consistent.strategyCode) {
-        const strat = catalog.find(
-          (c) => c.category === 'strategy' && c.code === consistent.strategyCode
-        );
-        recommendation = {
-          ...recommendation,
-          strategy: consistent.strategyCode,
-          strategyLabel: strat?.title ?? consistent.strategyCode,
-        };
-      }
-    }
 
     const response: TodayFortuneResponse = {
       date: dateKey,

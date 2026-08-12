@@ -26,10 +26,11 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.round(n)));
 }
 
-function inAllow(code: string, allow: string[]): boolean {
-  return allow.includes(code);
-}
-
+/**
+ * Luck scores stay inside theme bands.
+ * Soft analytics nudges are intentionally tiny and never rewrite narrative codes —
+ * workout history belongs in dataAnalysis / apply section, not fortune picks.
+ */
 export function computeFortuneScores(
   fortune: FortuneEngineResult,
   analysis: FortuneDataAnalysis,
@@ -45,23 +46,7 @@ export function computeFortuneScores(
   let focusLuck = fortune.baseFocusLuck;
   let changeLuck = fortune.baseChangeLuck;
 
-  // Soft analytics — never intended to invert theme bands (clamped after).
-  if (analysis.workoutCount7d >= 4) {
-    recoveryLuck -= 6;
-    healthman += 2;
-  } else if (analysis.workoutCount7d <= 1 && analysis.logCount30d > 0) {
-    recoveryLuck += 5;
-  }
-  if (analysis.consecutiveDays >= 4) {
-    recoveryLuck -= 8;
-    prLuck -= 5;
-    volumeLuck -= 4;
-  }
-  if (analysis.daysSincePr != null && analysis.daysSincePr >= 10) {
-    prLuck += 6;
-  } else if (analysis.daysSincePr != null && analysis.daysSincePr <= 2) {
-    prLuck -= 4;
-  }
+  // Tiny display polish only — clamped to theme bands afterward.
   if (analysis.personalizationTier === 'none') {
     healthman = clamp((healthman + 70) / 2, 50, 88);
   }
@@ -90,58 +75,20 @@ export function computeFortuneScores(
   };
 }
 
+/**
+ * Recommendation is pure fortune (theme pack). Do not rewrite style / body /
+ * strategy from workout ratios — that mixed “운세” with “데이터 처방”.
+ */
 export function buildRecommendation(
   fortune: FortuneEngineResult,
-  analysis: FortuneDataAnalysis,
+  _analysis: FortuneDataAnalysis,
   catalog: FortuneContentItem[],
   theme?: CoreTheme
 ): FortuneRecommendation {
-  const allow = deriveFromTheme(theme ?? fortune.coreTheme).allow;
-
-  // Data-driven style nudge — only if still in theme allow-list.
-  let styleCode = fortune.styleCode;
-  if (analysis.personalizationTier !== 'none' && analysis.logCount30d >= 7) {
-    let nudged = styleCode;
-    if (analysis.barbellRatio30d >= 50 && analysis.dumbbellRatio30d < 25) {
-      nudged = 'DUMBBELL';
-    } else if (analysis.machineRatio30d >= 55) {
-      nudged =
-        analysis.dumbbellRatio30d < analysis.barbellRatio30d
-          ? 'DUMBBELL'
-          : 'FREE_WEIGHT';
-    } else if (analysis.dumbbellRatio30d >= 50) {
-      nudged = 'BARBELL';
-    }
-    if (inAllow(nudged, allow.styles)) styleCode = nudged;
-  }
-
-  let bodyPartCode = fortune.bodyPartCode;
-  if (analysis.lowMuscleGroup) {
-    const map: Record<string, string> = {
-      chest: 'CHEST',
-      back: 'BACK',
-      shoulders: 'SHOULDERS',
-      legs: 'LEGS',
-      quads: 'LEGS',
-      hamstrings: 'LEGS',
-      glutes: 'LEGS',
-      biceps: 'BICEPS',
-      triceps: 'TRICEPS',
-      core: 'CORE',
-      abs: 'CORE',
-    };
-    const mapped = map[analysis.lowMuscleGroup.toLowerCase()];
-    if (mapped && inAllow(mapped, allow.bodyParts)) bodyPartCode = mapped;
-  }
-
-  // Strategy stays theme-bound. Consecutive-day soft nudge only if allowed.
-  let strategyCode = fortune.strategyCode;
-  if (
-    analysis.consecutiveDays >= 4 &&
-    inAllow('WEIGHT_HOLD', allow.strategies)
-  ) {
-    strategyCode = 'WEIGHT_HOLD';
-  }
+  void theme;
+  const styleCode = fortune.styleCode;
+  const bodyPartCode = fortune.bodyPartCode;
+  const strategyCode = fortune.strategyCode;
 
   const style = labelForCode(catalog, 'style', styleCode);
   const strategy = labelForCode(catalog, 'strategy', strategyCode);

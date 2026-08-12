@@ -77,6 +77,10 @@ function matchesConditions(
   return true;
 }
 
+/**
+ * Theme-first pick: never fall back to the full category catalog.
+ * That theme-blind fallback was the main source of contradictory copy.
+ */
 function pickAllowed(
   rng: () => number,
   items: CatalogItem[],
@@ -86,16 +90,20 @@ function pickAllowed(
   fallbackTitle: string,
   category: string
 ): CatalogItem {
-  const allowSet = new Set(allowedCodes);
+  const allowList = allowedCodes.length ? allowedCodes : [fallbackCode];
+  const allowSet = new Set(allowList);
   const inAllow = items.filter((i) => allowSet.has(i.code));
   const filtered = inAllow.filter((i) => matchesConditions(i, analysis));
-  const pool = filtered.length ? filtered : inAllow.length ? inAllow : items;
+  const pool = filtered.length ? filtered : inAllow;
   const picked = fortunePickOne(rng, pool);
   if (picked) return picked;
+
+  const code = allowList[0] ?? fallbackCode;
+  const fromCatalog = items.find((i) => i.code === code);
   return {
-    code: allowedCodes[0] ?? fallbackCode,
-    title: fallbackTitle,
-    body: '',
+    code,
+    title: fromCatalog?.title ?? fallbackTitle,
+    body: fromCatalog?.body ?? '',
     category,
     priority: 99,
   };
@@ -139,26 +147,14 @@ export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult
           priority: c.priority,
         }));
 
-  // Soft recovery bias from training load — only within theme allow-list.
-  let keywordPool = byCategory(catalog, 'keyword');
-  if (
-    input.analysis.consecutiveDays >= 4 &&
-    allow.keywords.some((k) =>
-      ['RECOVERY_DAY', 'CARDIO_DAY', 'CONTROL_DAY'].includes(k)
-    )
-  ) {
-    const recovery = keywordPool.filter((k) =>
-      ['RECOVERY_DAY', 'CARDIO_DAY', 'CONTROL_DAY'].includes(k.code)
-    );
-    if (recovery.length) keywordPool = recovery;
-  }
-
+  // Fortune picks are theme-bound only. Workout history must not shrink
+  // or rewrite the narrative pool (data stays in dataAnalysis / apply UI).
   const keyword = pickAllowed(
     rng,
-    keywordPool,
+    byCategory(catalog, 'keyword'),
     allow.keywords,
     input.analysis,
-    'CONTROL_DAY',
+    allow.keywords[0] ?? 'CONTROL_DAY',
     'CONTROL DAY',
     'keyword'
   );
@@ -166,11 +162,9 @@ export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult
   const headline = pickAllowed(
     rng,
     byCategory(catalog, 'headline'),
-    allow.headlines.length
-      ? allow.headlines
-      : byCategory(catalog, 'headline').map((h) => h.code),
+    allow.headlines,
     input.analysis,
-    'CONTROL_FOCUS',
+    allow.headlines[0] ?? 'CONTROL_FOCUS',
     '오늘은 핵심 기운에 맞춰 움직이는 날입니다.',
     'headline'
   );
@@ -262,18 +256,19 @@ export function runFortuneEngine(input: FortuneEngineInput): FortuneEngineResult
   const oneLiner = pickAllowed(
     rng,
     byCategory(catalog, 'one_liner'),
-    allow.oneLiners.length
-      ? allow.oneLiners
-      : byCategory(catalog, 'one_liner').map((o) => o.code),
+    allow.oneLiners,
     input.analysis,
-    'PREP_WINS',
+    allow.oneLiners[0] ?? 'PREP_WINS',
     '오늘의 핵심 기운에 맞춰 한 가지에 집중하세요.',
     'one_liner'
   );
 
   let scoreStars = pickInBand(rng, derivation.bands.stars);
   if (input.mode === 'simple') {
-    scoreStars = Math.min(derivation.bands.stars[1], Math.max(derivation.bands.stars[0], scoreStars));
+    scoreStars = Math.min(
+      derivation.bands.stars[1],
+      Math.max(derivation.bands.stars[0], scoreStars)
+    );
   }
 
   const baseHealthman = pickInBand(rng, derivation.bands.healthman);

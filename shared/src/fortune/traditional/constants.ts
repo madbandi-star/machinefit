@@ -3,7 +3,7 @@
  * Not a professional 사주 solver — solar approximations for narrative consistency.
  */
 
-export const FORTUNE_ENGINE_VERSION = 'v2';
+export const FORTUNE_ENGINE_VERSION = 'v3';
 
 export const STEMS = [
   'jia',
