@@ -10,6 +10,10 @@
   color: var(--color-text-muted);
   margin-bottom: var(--space-lg);
   font-size: var(--font-size-body-sm);
+  line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  max-width: 38rem;
 }
 
 .page-shell__header {
@@ -139,6 +143,12 @@
   gap: 0.5rem;
 }
 
+.dialog.card {
+  width: min(100%, 26.5rem);
+  max-height: min(88dvh, 42rem);
+  overflow: auto;
+}
+
 .dialog__title {
   margin-bottom: 0.5rem;
 }
@@ -147,8 +157,10 @@
   font-size: 0.9rem;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
-  line-height: 1.5;
-  white-space: pre-line;
+  line-height: 1.7;
+  text-align: left;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .dialog__dismiss {
@@ -177,7 +189,7 @@
 }
 
 .dialog--danger .dialog__message {
-  text-align: center;
+  text-align: left;
 }
 
 .dialog--danger .dialog__actions {
@@ -424,6 +436,9 @@
   font-size: 0.85rem;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .form-row-group {

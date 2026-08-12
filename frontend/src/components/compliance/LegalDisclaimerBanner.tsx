@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { ROUTES } from '@/constants/routes';
 import './LegalDisclaimerBanner.css';
 
@@ -38,7 +39,7 @@ export function LegalDisclaimerBanner({
         .join(' ')}
       role="note"
     >
-      <p>{t(`compliance.disclaimer.${variant}`)}</p>
+      <GuideProse text={t(`compliance.disclaimer.${variant}`)} variant="compact" />
       <Link to={VARIANT_TO_ROUTE[variant]}>{t('compliance.disclaimer.learnMore')}</Link>
     </aside>
   );

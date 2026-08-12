@@ -316,7 +316,7 @@
   margin: 0;
   max-width: 22rem;
   font-size: 0.9375rem;
-  line-height: 1.55;
+  line-height: 1.7;
   color: color-mix(in srgb, #fff 72%, var(--color-brand-titanium));
   word-break: keep-all;
 }

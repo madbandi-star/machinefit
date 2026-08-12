@@ -6,6 +6,7 @@ import type { SupportCategory, SupportTicketStatus } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Icon } from '@/components/icons/Icon';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { complianceApi } from '@/api/compliance.api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -81,7 +82,7 @@ export function SupportPage() {
         <div className="settings-stack">
           <section className="form-section">
             <h2 className="form-section__title">{t('support.newTitle')}</h2>
-            <p className="form-section__desc">{t('support.newDesc')}</p>
+            <GuideProse className="form-section__desc" text={t('support.newDesc')} variant="muted" />
 
             <form className="form-stack" onSubmit={handleSubmit}>
               <label className="form-field">
@@ -141,7 +142,7 @@ export function SupportPage() {
 
           <section className="form-section">
             <h2 className="form-section__title">{t('support.myTickets')}</h2>
-            <p className="form-section__desc">{t('support.myTicketsDesc')}</p>
+            <GuideProse className="form-section__desc" text={t('support.myTicketsDesc')} variant="muted" />
 
             {listQuery.isLoading ? (
               <Skeleton count={3} height={64} />

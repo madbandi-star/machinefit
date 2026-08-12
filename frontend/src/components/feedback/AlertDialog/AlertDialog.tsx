@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/components.css';
 
@@ -36,9 +37,9 @@ export function AlertDialog({
         <h3 id="alert-dialog-title" className="dialog__title">
           {title}
         </h3>
-        <p id="alert-dialog-message" className="dialog__message">
-          {message}
-        </p>
+        <div id="alert-dialog-message" className="dialog__message">
+          <GuideProse text={message} variant="dialog" />
+        </div>
         <div className="dialog__actions">
           <button type="button" className="btn btn--primary btn--block" onClick={onClose}>
             {confirmLabel ?? t('actions.confirm')}

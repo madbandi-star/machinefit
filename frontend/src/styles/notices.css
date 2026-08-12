@@ -416,13 +416,14 @@
 .notice-detail__body {
   margin-top: 1.1rem;
   font-size: 0.95rem;
-  line-height: 1.7;
-  word-break: break-word;
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   color: color-mix(in srgb, var(--color-text) 92%, var(--color-text-muted));
 }
 
 .notice-detail__body p {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.9rem;
 }
 
 .notice-detail__body p:last-child {

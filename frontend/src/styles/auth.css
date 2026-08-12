@@ -40,7 +40,7 @@
 .auth-hero__desc {
   font-size: 0.875rem;
   color: color-mix(in srgb, var(--color-text-muted) 88%, var(--color-text));
-  line-height: 1.55;
+  line-height: 1.7;
   margin: 0;
   white-space: pre-line;
   word-break: keep-all;
@@ -379,10 +379,12 @@
 .terms-agree__desc {
   margin: 0 0 1.35rem;
   font-size: 0.875rem;
-  line-height: 1.55;
-  text-align: center;
+  line-height: 1.75;
+  text-align: left;
   color: color-mix(in srgb, #fff 62%, transparent);
   word-break: keep-all;
+  overflow-wrap: break-word;
+  padding-inline: 0.2rem;
 }
 
 .terms-agree__card {
@@ -542,13 +544,14 @@
 
 .terms-agree__notice {
   margin: 0.85rem 0 0;
-  padding: 0.75rem 0.85rem;
+  padding: 0.8rem 0.95rem;
   border-radius: var(--radius-md, 0.5rem);
   border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
   background: color-mix(in srgb, currentColor 5%, transparent);
   color: var(--color-text-muted, #9ca3af);
   font-size: 0.84rem;
-  line-height: 1.5;
+  line-height: 1.7;
+  word-break: keep-all;
 }
 
 .terms-agree__notice-title {
@@ -571,13 +574,14 @@
 
 .terms-agree__trial {
   margin: 0.75rem 0 0;
-  padding: 0.65rem 0.8rem;
+  padding: 0.7rem 0.9rem;
   border-radius: var(--radius-md, 0.5rem);
   border: 1px solid color-mix(in srgb, var(--color-primary, #39ff14) 28%, transparent);
   background: color-mix(in srgb, var(--color-primary, #39ff14) 8%, transparent);
   color: var(--color-text-muted, #9ca3af);
   font-size: 0.82rem;
-  line-height: 1.45;
+  line-height: 1.7;
+  word-break: keep-all;
 }
 
 .terms-agree__secure {
@@ -1034,11 +1038,12 @@
 
 .terms-agree__rejoin {
   margin: 0 0 1rem;
-  padding: 0.9rem 1rem;
+  padding: 0.95rem 1.05rem;
   border-radius: 12px;
   background: color-mix(in srgb, currentColor 7%, transparent);
   font-size: 0.9rem;
-  line-height: 1.45;
+  line-height: 1.7;
+  word-break: keep-all;
 }
 
 .terms-agree__rejoin-title {
@@ -1070,8 +1075,9 @@
 .terms-agree__dob-hint {
   margin: 0;
   font-size: 0.8rem;
-  line-height: 1.4;
+  line-height: 1.7;
   opacity: 0.75;
+  word-break: keep-all;
 }
 
 .terms-agree__dob-input {
@@ -1091,7 +1097,8 @@
   border-radius: 12px;
   background: color-mix(in srgb, #c62828 12%, transparent);
   font-size: 0.9rem;
-  line-height: 1.5;
+  line-height: 1.7;
+  word-break: keep-all;
 }
 
 .terms-agree__age-block-title {

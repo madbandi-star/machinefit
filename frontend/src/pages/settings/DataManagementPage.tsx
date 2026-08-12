@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { Download, FileArchive, History, ShieldCheck, Upload } from 'lucide-react';
 import type { BackupRestoreMode } from '@machinefit/shared';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { backupApi } from '@/api/backup.api';
 import { useSettingsStore } from '@/store/settings.store';
@@ -200,7 +201,11 @@ export function DataManagementPage() {
           <ShieldCheck className="data-mgmt__notice-icon" size={22} aria-hidden />
           <div className="data-mgmt__notice-body">
             <p className="data-mgmt__notice-title">{t('dataManagement.safetyTitle')}</p>
-            <p className="data-mgmt__notice-text">{t('dataManagement.safetyBody')}</p>
+            <GuideProse
+              className="data-mgmt__notice-text"
+              text={t('dataManagement.safetyBody')}
+              variant="compact"
+            />
           </div>
         </aside>
 
@@ -213,7 +218,11 @@ export function DataManagementPage() {
               <h2 id="data-mgmt-backup-title" className="data-mgmt__card-title">
                 {t('dataManagement.backupTitle')}
               </h2>
-              <p className="data-mgmt__card-desc">{t('dataManagement.backupHelp')}</p>
+              <GuideProse
+                className="data-mgmt__card-desc"
+                text={t('dataManagement.backupHelp')}
+                variant="muted"
+              />
             </div>
           </div>
 
@@ -269,7 +278,11 @@ export function DataManagementPage() {
               <h2 id="data-mgmt-restore-title" className="data-mgmt__card-title">
                 {t('dataManagement.restoreTitle')}
               </h2>
-              <p className="data-mgmt__card-desc">{t('dataManagement.restoreHelp')}</p>
+              <GuideProse
+                className="data-mgmt__card-desc"
+                text={t('dataManagement.restoreHelp')}
+                variant="muted"
+              />
             </div>
           </div>
 

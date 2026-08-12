@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { complianceApi } from '@/api/compliance.api';
@@ -68,7 +69,7 @@ export function PrivacyRightsPage() {
     <PageShell title={t('compliance.rights.title')} subtitle={t('compliance.rights.subtitle')}>
       <section className="legal-doc">
         <h2>{t('compliance.rights.viewTitle')}</h2>
-        <p className="legal-doc__lead">{t('compliance.rights.viewDesc')}</p>
+        <GuideProse text={t('compliance.rights.viewDesc')} variant="lead" />
         {p && (
           <dl className="privacy-summary">
             <div>
@@ -135,8 +136,8 @@ export function PrivacyRightsPage() {
 
       <section className="form-section">
         <h3 className="form-section__title">{t('compliance.rights.exportTitle')}</h3>
-        <p className="form-section__desc">{t('compliance.rights.exportDesc')}</p>
-        <p className="form-section__desc">{t('compliance.rights.exportIncludes')}</p>
+        <GuideProse className="form-section__desc" text={t('compliance.rights.exportDesc')} variant="muted" />
+        <GuideProse className="form-section__desc" text={t('compliance.rights.exportIncludes')} variant="muted" />
         <button
           type="button"
           className="btn btn--secondary"

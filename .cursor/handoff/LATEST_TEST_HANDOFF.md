@@ -1,18 +1,20 @@
-﻿# Test handoff — Footer support contact UI
+﻿# Test handoff — Guide copy readability UI
 
 ## Summary
-페이지 하단 고객센터 이메일을 표 형태 박스에서 메일 아이콘 칩으로 바꿨습니다. 탭하면 mailto입니다.
+안내글 **문구는 그대로** 두고, 문단 분리·줄간격·제목 구분·주의 박스만 적용했습니다. 약관/개인정보/설정 안내/푸터 쿠키 고지가 한 덩어리로 보이지 않아야 합니다.
 
 ## Test focus
-1. 비관리자 푸터: 고객센터 + 이메일이 한 줄 칩
-2. 관리자: 사업자 정보 카드 안에 같은 칩
-3. 클릭 시 메일 앱
+1. `/terms`, `/privacy`, `/commerce` — 문장 내용은 동일, 문단이 나뉨, 주의 문장은 왼쪽 강조 박스
+2. 설정 → 회원탈퇴 확인 — `•` 항목이 목록, 왼쪽 정렬
+3. 페이지 하단 쿠키 안내 — 2~3문단, 좌우 여백
+4. 모바일 폭에서 본문이 화면 끝에 붙지 않고 line-height가 넉넉함
 
 ## Fast checks
 ```
-rg legal-footer__support frontend/src/components/layout/LegalFooter/LegalFooter.tsx frontend/src/styles/legal.css
+npx tsx frontend/src/utils/splitGuideBlocks.test.ts
+rg GuideProse frontend/src/pages/legal frontend/src/components/content/GuideProse
 ```
 
 ## as-is → to-be
-- as-is: 고객센터 | 이메일이 dl 2열 박스
-- to-be: 메일 아이콘 + 라벨 + 주소 칩
+- as-is: 안내글이 한 덩어리 `<p>` (line-height 1.55)
+- to-be: 같은 문구를 GuideProse가 문단/목록/주의박스로 보여 줌

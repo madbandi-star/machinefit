@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/profile-data-consent.css';
 
@@ -107,9 +108,11 @@ export function ProfileDataConsentBlock({
     return (
       <aside className="profile-consent profile-consent--done" role="status">
         <p className="profile-consent__done-title">{t(`${prefix}.doneTitle`)}</p>
-        <p className="profile-consent__done-body">
-          {t(`${prefix}.doneBody`, { version: versionLabel ?? '' })}
-        </p>
+        <GuideProse
+          className="profile-consent__done-body"
+          text={t(`${prefix}.doneBody`, { version: versionLabel ?? '' })}
+          variant="compact"
+        />
         <p className="profile-consent__links">
           <Link to={ROUTES.PRIVACY}>{t('legal.privacyTitle')}</Link>
           <span aria-hidden>·</span>
@@ -132,7 +135,7 @@ export function ProfileDataConsentBlock({
     >
       <header className="profile-consent__header">
         <h3 className="profile-consent__title">{t(`${prefix}.title`)}</h3>
-        <p className="profile-consent__intro">{t(`${prefix}.intro`)}</p>
+        <GuideProse className="profile-consent__intro" text={t(`${prefix}.intro`)} variant="muted" />
       </header>
 
       <ul className="profile-consent__notice-list">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { dismissForToday } from '@/utils/dismissToday';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/components.css';
@@ -86,9 +87,9 @@ export function ConfirmDialog({
         <h3 id="confirm-dialog-title" className="dialog__title">
           {title}
         </h3>
-        <p id="confirm-dialog-message" className="dialog__message">
-          {message}
-        </p>
+        <div id="confirm-dialog-message" className="dialog__message">
+          <GuideProse text={message} variant="dialog" />
+        </div>
         {dismissTodayKey ? (
           <label className="checkbox-label dialog__dismiss">
             <input

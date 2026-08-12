@@ -1,15 +1,38 @@
 {
-  "title": "Clean up footer support email UI",
-  "summary": "Customer-center email in the page footer is a compact mail chip instead of a two-column definition list box.",
+  "title": "Guide copy readability UI",
+  "summary": "In-app informational copy keeps the same wording; paragraphs, line-height, hierarchy, and caution boxes make legal/settings/footer guides skimmable on PC and mobile.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/src/utils/splitGuideBlocks.ts",
+    "frontend/src/components/content/GuideProse/GuideProse.tsx",
+    "frontend/src/components/content/GuideProse/GuideProse.css",
+    "frontend/src/pages/legal/TermsPage.tsx",
+    "frontend/src/pages/legal/PrivacyPage.tsx",
+    "frontend/src/pages/legal/LegalSectionPage.tsx",
+    "frontend/src/pages/legal/LegalDocSection.tsx",
+    "frontend/src/styles/legal.css",
+    "frontend/src/styles/components.css",
+    "frontend/src/components/layout/PageContainer/PageShell.tsx",
     "frontend/src/components/layout/LegalFooter/LegalFooter.tsx",
-    "frontend/src/styles/legal.css"
+    "frontend/src/components/compliance/LegalDisclaimerBanner.tsx",
+    "frontend/src/components/feedback/ConfirmDialog/ConfirmDialog.tsx",
+    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx"
   ],
-  "testFocus": ["Footer support chip mailto"],
-  "fastChecks": ["rg legal-footer__support frontend/src/styles/legal.css"],
-  "productionChecks": ["Pages: footer support chip on home/settings"],
+  "testFocus": [
+    "Legal pages: terms/privacy/commerce — same sentences, paragraph breaks, caution boxes",
+    "Settings delete-account confirm: bullets as a list, left-aligned",
+    "Footer cookie notice: 2–3 readable paragraphs",
+    "Mobile: extra inset, line-height, no edge-to-edge blob"
+  ],
+  "fastChecks": [
+    "npx tsx frontend/src/utils/splitGuideBlocks.test.ts",
+    "rg GuideProse frontend/src/pages/legal frontend/src/components/content/GuideProse"
+  ],
+  "productionChecks": [
+    "Pages: /terms and /privacy paragraph structure",
+    "Pages: footer cookie notice wrapping"
+  ],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "dl box with 고객센터 | email",
-  "toBe": "mail icon chip with label + email"
+  "asIs": "Guide strings rendered as one tight paragraph (legal-doc line-height 1.55, no sentence grouping).",
+  "toBe": "Same wording in GuideProse: ~2 sentences per paragraph, caution notes, lists, line-height ~1.8."
 }

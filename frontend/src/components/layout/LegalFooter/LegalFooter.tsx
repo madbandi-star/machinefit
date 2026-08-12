@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BUSINESS_OPERATOR, Role, hasMinRole } from '@machinefit/shared';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
@@ -87,7 +88,11 @@ export function LegalFooter({ compact = false }: { compact?: boolean }) {
       </div>
       <BusinessFooterBlock />
       <p className="legal-footer__trademark">{t('compliance.disclaimer.trademark')}</p>
-      <p className="legal-footer__cookies">{t('legal.cookieNotice')}</p>
+      <GuideProse
+        className="legal-footer__cookies"
+        text={t('legal.cookieNotice')}
+        variant="compact"
+      />
     </footer>
   );
 }

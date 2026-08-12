@@ -27,8 +27,10 @@
 .profile-consent__done-body {
   margin: 0;
   font-size: 0.82rem;
-  line-height: 1.45;
+  line-height: 1.7;
   color: var(--color-text-muted, #999);
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .profile-consent__done-title {
@@ -41,12 +43,13 @@
   margin: 0 0 0.75rem;
   padding-left: 1.1rem;
   font-size: 0.8rem;
-  line-height: 1.5;
+  line-height: 1.7;
   color: var(--color-text-muted, #aaa);
+  word-break: keep-all;
 }
 
 .profile-consent__notice-list li + li {
-  margin-top: 0.25rem;
+  margin-top: 0.4rem;
 }
 
 .profile-consent__checks {
@@ -62,7 +65,7 @@
   gap: 0.55rem;
   cursor: pointer;
   font-size: 0.84rem;
-  line-height: 1.4;
+  line-height: 1.65;
 }
 
 .profile-consent__check {

@@ -20,6 +20,7 @@ import {
   type User,
 } from '@machinefit/shared';
 import { authApi } from '@/api';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -246,19 +247,23 @@ export function TermsAgreementPage() {
           }}
         />
       </h1>
-      <p className="terms-agree__desc">
-        {isRejoin
-          ? t('auth.termsAgreeDescRejoin')
-          : isSignup
-            ? t('auth.termsAgreeDescSignup')
-            : t('auth.termsAgreeDescUpdate')}
-      </p>
+      <GuideProse
+        className="terms-agree__desc"
+        text={
+          isRejoin
+            ? t('auth.termsAgreeDescRejoin')
+            : isSignup
+              ? t('auth.termsAgreeDescSignup')
+              : t('auth.termsAgreeDescUpdate')
+        }
+        variant="muted"
+      />
 
       {isRejoin ? (
         <aside className="terms-agree__rejoin" role="note">
           <p className="terms-agree__rejoin-title">{t('auth.rejoinTitle')}</p>
-          <p>{t('auth.rejoinBody')}</p>
-          <p>{t('auth.rejoinNoRestore')}</p>
+          <GuideProse text={t('auth.rejoinBody')} variant="compact" />
+          <GuideProse text={t('auth.rejoinNoRestore')} variant="compact" />
         </aside>
       ) : null}
 
@@ -315,7 +320,11 @@ export function TermsAgreementPage() {
               </span>
               <span>{t('auth.signupBirthDate')}</span>
             </label>
-            <p className="terms-agree__dob-hint">{t('auth.signupBirthDateHint')}</p>
+            <GuideProse
+              className="terms-agree__dob-hint"
+              text={t('auth.signupBirthDateHint')}
+              variant="compact"
+            />
             <input
               id="signup-birth-date"
               type="date"
@@ -351,7 +360,7 @@ export function TermsAgreementPage() {
       {showAgeBlock ? (
         <aside className="terms-agree__age-block" role="alert">
           <p className="terms-agree__age-block-title">{t('auth.ageRestrictedTitle')}</p>
-          <p>{t('auth.ageRestrictedBody')}</p>
+          <GuideProse text={t('auth.ageRestrictedBody')} variant="compact" />
           <button
             type="button"
             className="terms-agree__age-block-back"
@@ -378,7 +387,9 @@ export function TermsAgreementPage() {
         </p>
       </aside>
 
-      {isSignup ? <p className="terms-agree__trial">{t('auth.trialNoticeSignup')}</p> : null}
+      {isSignup ? (
+        <GuideProse className="terms-agree__trial" text={t('auth.trialNoticeSignup')} variant="compact" />
+      ) : null}
 
       <p className="terms-agree__secure">
         <Lock size={14} strokeWidth={2.25} aria-hidden />

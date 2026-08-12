@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LEGAL_DOC_VERSIONS } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { ROUTES } from '@/constants/routes';
+import { LegalDocSection } from './LegalDocSection';
 import '@/styles/legal.css';
 
 type DocKey =
@@ -121,12 +123,13 @@ export function LegalSectionPage({ doc }: { doc: DocKey }) {
         <p className="legal-doc__meta">
           {t('legal.version', { version })} · {t('legal.regionKr')}
         </p>
-        <p className="legal-doc__lead">{t(meta.leadKey)}</p>
+        <GuideProse text={t(meta.leadKey)} variant="lead" />
         {meta.sections.map((s) => (
-          <section key={s}>
-            <h2>{t(`legal.${ns}.${s}Title`)}</h2>
-            <p>{t(`legal.${ns}.${s}Body`)}</p>
-          </section>
+          <LegalDocSection
+            key={s}
+            title={t(`legal.${ns}.${s}Title`)}
+            body={t(`legal.${ns}.${s}Body`)}
+          />
         ))}
         {meta.nav && meta.nav.length > 0 ? (
           <p className="legal-doc__nav">

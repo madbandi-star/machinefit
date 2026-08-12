@@ -1,6 +1,7 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { Icon } from '@/components/icons/Icon';
 
 export interface SettingsCollapsibleSectionProps {
@@ -58,7 +59,13 @@ export function SettingsCollapsibleSection({
 
       {expanded ? (
         <div id={bodyId} className="settings-collapsible-section__body">
-          {description ? <div className="form-section__desc">{description}</div> : null}
+          {description ? (
+            typeof description === 'string' ? (
+              <GuideProse className="form-section__desc" text={description} variant="muted" />
+            ) : (
+              <div className="form-section__desc">{description}</div>
+            )
+          ) : null}
           {children}
         </div>
       ) : null}

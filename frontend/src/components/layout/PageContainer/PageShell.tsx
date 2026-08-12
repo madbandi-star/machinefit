@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import '@/styles/components.css';
 
 interface PageShellProps {
@@ -25,7 +26,11 @@ export function PageShell({ title, subtitle, action, children }: PageShellProps)
                 title
               )
             ) : null}
-            {subtitle && <p className="page-subtitle">{subtitle}</p>}
+            {subtitle ? (
+              <div className="page-subtitle">
+                <GuideProse text={subtitle} variant="subtitle" />
+              </div>
+            ) : null}
           </div>
           {action}
         </div>

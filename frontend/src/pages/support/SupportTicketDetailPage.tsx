@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { SupportTicketStatus } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
+import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { complianceApi } from '@/api/compliance.api';
 import { ROUTES } from '@/constants/routes';
@@ -143,7 +144,7 @@ export function SupportTicketDetailPage() {
           {ticket.status !== 'closed' ? (
             <section className="form-section">
               <h2 className="form-section__title">{t('support.reply')}</h2>
-              <p className="form-section__desc">{t('support.replyDesc')}</p>
+              <GuideProse className="form-section__desc" text={t('support.replyDesc')} variant="muted" />
               <form className="form-stack" onSubmit={handleReply}>
                 <label className="form-field">
                   <span className="form-field__label visually-hidden">{t('support.reply')}</span>
