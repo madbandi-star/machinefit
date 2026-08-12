@@ -4,14 +4,12 @@ import type {
   FortuneMode,
   FortuneNarrative,
   FortuneRecommendation,
-  FortuneScores,
   FortuneSection as FortuneSectionData,
   FortuneTraditionalDetail,
 } from '@machinefit/shared';
 import { FortuneApplySection } from '@/components/fortune/reading/FortuneApplySection';
 import { FortuneBaseSection } from '@/components/fortune/reading/FortuneBaseSection';
 import { FortuneEnergySection } from '@/components/fortune/reading/FortuneEnergySection';
-import { FortuneLuckSection } from '@/components/fortune/reading/FortuneLuckSection';
 import { FortuneReadingHero } from '@/components/fortune/reading/FortuneReadingHero';
 import { FortuneStorySection } from '@/components/fortune/reading/FortuneStorySection';
 
@@ -19,7 +17,6 @@ export interface FortuneDashboardProps {
   date: string;
   mode?: FortuneMode;
   fortune: FortuneSectionData;
-  scores: FortuneScores;
   recommendation: FortuneRecommendation;
   dataAnalysis?: FortuneDataAnalysis | null;
   narrative?: FortuneNarrative | null;
@@ -33,7 +30,6 @@ export function FortuneDashboard({
   date,
   mode,
   fortune,
-  scores,
   recommendation,
   dataAnalysis,
   narrative,
@@ -73,17 +69,11 @@ export function FortuneDashboard({
 
       <FortuneStorySection fortune={fortune} narrative={narrative} delayMs={70} />
 
-      <FortuneLuckSection
-        scores={scores}
-        scoreStars={fortune.scoreStars}
-        delayMs={90}
-      />
-
       <FortuneApplySection
         narrative={narrative}
         recommendation={recommendation}
         dataAnalysis={dataAnalysis}
-        delayMs={110}
+        delayMs={90}
       />
 
       <p className="fr-disclaimer">
