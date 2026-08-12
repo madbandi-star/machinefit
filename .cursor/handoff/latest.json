@@ -1,23 +1,29 @@
 {
-  "title": "Remove ja/zh from UI language picker",
-  "summary": "Header and settings language dropdowns only offer Korean and English. Existing ja/zh UI locale prefs clamp to English.",
-  "git": { "branch": "main", "commit": "346b8128" },
+  "title": "Fortune birth-gate UI polish",
+  "summary": "Redesigned the needs-birth empty state on /fortune/today (and home fortune gate) with hero, locked preview list, clearer CTA/note — matching fortune reading visuals.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "shared/src/constants/locales.ts",
-    "frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx",
-    "frontend/src/store/settings.store.ts"
+    "frontend/src/components/fortune/FortuneBirthGate.tsx",
+    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "frontend/src/styles/fortune-reading.css",
+    "frontend/src/styles/fortune.css",
+    "frontend/src/i18n/locales/ko/fortune.json",
+    "frontend/src/i18n/locales/en/fortune.json",
+    "frontend/src/i18n/locales/ja/fortune.json",
+    "frontend/src/i18n/locales/zh/fortune.json"
   ],
   "testFocus": [
-    "Header language menu: only 한국어 / English",
-    "Settings → language: same two options",
-    "If persisted locale was ja/zh, app shows English after reload"
+    "Visit /fortune/today without birth profile: new hero + locked previews + CTA",
+    "CTA goes to Settings #birth-profile",
+    "Home fortune card gate shows headline + note (not bare emoji)"
   ],
   "fastChecks": [
-    "rg UI_LOCALES shared/src/constants/locales.ts",
-    "rg UI_LOCALES frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx"
+    "rg FortuneBirthGate frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "rg fr-gate frontend/src/styles/fortune-reading.css"
   ],
-  "productionChecks": ["Pages: header + settings language menus"],
-  "deploy": { "expected": "Pages FE (+ shared rebuild in Pages build)" },
-  "asIs": "Language menus listed ko/en/ja/zh",
-  "toBe": "Language menus list ko/en only; ja/zh prefs → en"
+  "productionChecks": ["Pages: /fortune/today gate UI"],
+  "deploy": { "expected": "Pages FE" },
+  "asIs": "Emoji + one paragraph + button",
+  "toBe": "Hero unlock composition + preview locks + note + CTA"
 }
