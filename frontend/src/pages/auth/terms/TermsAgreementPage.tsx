@@ -9,6 +9,7 @@ import {
   FileText,
   Lock,
   Mail,
+  RotateCcw,
   ShieldCheck,
   ShieldUser,
 } from 'lucide-react';
@@ -43,26 +44,14 @@ function getApiErrorMessage(error: unknown): string | undefined {
   return payload?.error?.message;
 }
 
-function ConsentCheck({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (next: boolean) => void;
-  label: string;
-}) {
+function ConsentMark({ checked }: { checked: boolean }) {
   return (
-    <button
-      type="button"
+    <span
       className={`terms-agree__check${checked ? ' terms-agree__check--on' : ''}`}
-      role="checkbox"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
+      aria-hidden
     >
-      {checked ? <Check size={14} strokeWidth={3} aria-hidden /> : null}
-    </button>
+      {checked ? <Check size={14} strokeWidth={3} /> : null}
+    </span>
   );
 }
 
@@ -86,26 +75,31 @@ function ConsentRow({
   const { t } = useTranslation();
   return (
     <div className="terms-agree__item">
-      <span className="terms-agree__item-icon" aria-hidden>
-        {icon}
-      </span>
-      <div className="terms-agree__item-text">
-        <span
-          className={`terms-agree__badge${
-            required ? ' terms-agree__badge--required' : ' terms-agree__badge--optional'
-          }`}
-        >
-          {required ? t('auth.required') : t('auth.optional')}
-        </span>
-        <span className="terms-agree__item-title">{title}</span>
-      </div>
-      <ConsentCheck checked={checked} onChange={onChange} label={checkLabel} />
-      <Link
-        to={docTo}
-        className="terms-agree__doc"
-        aria-label={`${title} ${t('auth.termsViewDoc')}`}
+      <button
+        type="button"
+        className="terms-agree__item-hit"
+        aria-pressed={checked}
+        aria-label={checkLabel}
+        onClick={() => onChange(!checked)}
       >
-        <ChevronRight size={18} strokeWidth={2.25} aria-hidden />
+        <span className="terms-agree__item-icon" aria-hidden>
+          {icon}
+        </span>
+        <span className="terms-agree__item-text">
+          <span
+            className={`terms-agree__badge${
+              required ? ' terms-agree__badge--required' : ' terms-agree__badge--optional'
+            }`}
+          >
+            {required ? t('auth.required') : t('auth.optional')}
+          </span>
+          <span className="terms-agree__item-title">{title}</span>
+        </span>
+        <ConsentMark checked={checked} />
+      </button>
+      <Link to={docTo} className="terms-agree__doc">
+        <span>{t('auth.termsViewDoc')}</span>
+        <ChevronRight size={16} strokeWidth={2.25} aria-hidden />
       </Link>
     </div>
   );
@@ -232,56 +226,63 @@ export function TermsAgreementPage() {
   if (!canStay) return null;
 
   return (
-    <section className="terms-agree" aria-labelledby="terms-agree-title">
-      <div className="terms-agree__hero" aria-hidden>
-        <span className="terms-agree__hero-icon">
-          <ShieldCheck size={36} strokeWidth={1.75} />
-        </span>
-      </div>
-
-      <h1 id="terms-agree-title" className="terms-agree__title">
-        <Trans
-          i18nKey="auth.termsAgreeTitle"
-          components={{
-            highlight: <span className="terms-agree__title-accent" />,
-          }}
+    <section
+      className={`terms-agree${isRejoin ? ' terms-agree--rejoin' : ''}`}
+      aria-labelledby="terms-agree-title"
+    >
+      <header className="terms-agree__header">
+        <p className="terms-agree__brand" aria-hidden>
+          Machine<span>Fit</span>
+        </p>
+        <h1 id="terms-agree-title" className="terms-agree__title">
+          <Trans
+            i18nKey="auth.termsAgreeTitle"
+            components={{
+              highlight: <span className="terms-agree__title-accent" />,
+            }}
+          />
+        </h1>
+        <GuideProse
+          className="terms-agree__desc"
+          text={
+            isRejoin
+              ? t('auth.termsAgreeDescRejoin')
+              : isSignup
+                ? t('auth.termsAgreeDescSignup')
+                : t('auth.termsAgreeDescUpdate')
+          }
+          variant="muted"
         />
-      </h1>
-      <GuideProse
-        className="terms-agree__desc"
-        text={
-          isRejoin
-            ? t('auth.termsAgreeDescRejoin')
-            : isSignup
-              ? t('auth.termsAgreeDescSignup')
-              : t('auth.termsAgreeDescUpdate')
-        }
-        variant="muted"
-      />
+      </header>
 
       {isRejoin ? (
         <aside className="terms-agree__rejoin" role="note">
-          <p className="terms-agree__rejoin-title">{t('auth.rejoinTitle')}</p>
-          <GuideProse text={t('auth.rejoinBody')} variant="compact" />
-          <GuideProse text={t('auth.rejoinNoRestore')} variant="compact" />
+          <div className="terms-agree__rejoin-head">
+            <span className="terms-agree__rejoin-icon" aria-hidden>
+              <RotateCcw size={18} strokeWidth={2.2} />
+            </span>
+            <p className="terms-agree__rejoin-title">{t('auth.rejoinTitle')}</p>
+          </div>
+          <ul className="terms-agree__rejoin-facts">
+            <li>{t('auth.rejoinBody')}</li>
+            <li>{t('auth.rejoinNoRestore')}</li>
+          </ul>
         </aside>
       ) : null}
 
       <div className="terms-agree__card" role="group" aria-label={t('auth.consentGroup')}>
-        <div className="terms-agree__all">
-          <span className="terms-agree__all-mark" aria-hidden>
-            <Check size={16} strokeWidth={3} />
-          </span>
+        <button
+          type="button"
+          className={`terms-agree__all${checks.agreeAll ? ' terms-agree__all--on' : ''}`}
+          aria-pressed={checks.agreeAll}
+          onClick={() => setField('agreeAll', !checks.agreeAll)}
+        >
           <div className="terms-agree__all-text">
             <strong>{t('auth.agreeAll')}</strong>
             <span>{t('auth.agreeAllDesc')}</span>
           </div>
-          <ConsentCheck
-            checked={checks.agreeAll}
-            onChange={(v) => setField('agreeAll', v)}
-            label={t('auth.agreeAll')}
-          />
-        </div>
+          <ConsentMark checked={checks.agreeAll} />
+        </button>
 
         <div className="terms-agree__divider" aria-hidden />
 
@@ -340,20 +341,24 @@ export function TermsAgreementPage() {
           </div>
         ) : null}
         <div className="terms-agree__item">
-          <span className="terms-agree__item-icon" aria-hidden>
-            <ShieldCheck size={18} strokeWidth={2} />
-          </span>
-          <div className="terms-agree__item-text">
-            <span className="terms-agree__badge terms-agree__badge--required">
-              {t('auth.required')}
+          <button
+            type="button"
+            className="terms-agree__item-hit"
+            aria-pressed={checks.agreeAge14}
+            aria-label={`${t('auth.required')} ${t('auth.agreeAge14')}`}
+            onClick={() => setField('agreeAge14', !checks.agreeAge14)}
+          >
+            <span className="terms-agree__item-icon" aria-hidden>
+              <ShieldCheck size={18} strokeWidth={2} />
             </span>
-            <span className="terms-agree__item-title">{t('auth.agreeAge14')}</span>
-          </div>
-          <ConsentCheck
-            checked={checks.agreeAge14}
-            onChange={(v) => setField('agreeAge14', v)}
-            label={`${t('auth.required')} ${t('auth.agreeAge14')}`}
-          />
+            <span className="terms-agree__item-text">
+              <span className="terms-agree__badge terms-agree__badge--required">
+                {t('auth.required')}
+              </span>
+              <span className="terms-agree__item-title">{t('auth.agreeAge14')}</span>
+            </span>
+            <ConsentMark checked={checks.agreeAge14} />
+          </button>
         </div>
       </div>
 
@@ -375,37 +380,39 @@ export function TermsAgreementPage() {
         </aside>
       ) : null}
 
-      <aside className="terms-agree__notice" role="note">
-        <p className="terms-agree__notice-title">{t('legal.illegalUseTitle')}</p>
-        <p>
-          <Trans
-            i18nKey="auth.illegalUseNotice"
-            components={{
-              doc: <Link to={ROUTES.LEGAL_ILLEGAL_USE} className="terms-agree__notice-link" />,
-            }}
-          />
+      <div className="terms-agree__bottom">
+        <aside className="terms-agree__notice" role="note">
+          <p className="terms-agree__notice-title">{t('legal.illegalUseTitle')}</p>
+          <p>
+            <Trans
+              i18nKey="auth.illegalUseNotice"
+              components={{
+                doc: <Link to={ROUTES.LEGAL_ILLEGAL_USE} className="terms-agree__notice-link" />,
+              }}
+            />
+          </p>
+        </aside>
+
+        {isSignup ? (
+          <GuideProse className="terms-agree__trial" text={t('auth.trialNoticeSignup')} variant="compact" />
+        ) : null}
+
+        <p className="terms-agree__secure">
+          <Lock size={14} strokeWidth={2.25} aria-hidden />
+          <span>{t('auth.termsSecureNotice')}</span>
         </p>
-      </aside>
 
-      {isSignup ? (
-        <GuideProse className="terms-agree__trial" text={t('auth.trialNoticeSignup')} variant="compact" />
-      ) : null}
-
-      <p className="terms-agree__secure">
-        <Lock size={14} strokeWidth={2.25} aria-hidden />
-        <span>{t('auth.termsSecureNotice')}</span>
-      </p>
-
-      {showAgeBlock ? null : (
-        <button
-          type="button"
-          className="terms-agree__submit"
-          disabled={!requiredOk || mutation.isPending}
-          onClick={() => mutation.mutate()}
-        >
-          {mutation.isPending ? '...' : t('auth.termsAgreeContinue')}
-        </button>
-      )}
+        {showAgeBlock ? null : (
+          <button
+            type="button"
+            className="terms-agree__submit"
+            disabled={!requiredOk || mutation.isPending}
+            onClick={() => mutation.mutate()}
+          >
+            {mutation.isPending ? '...' : t('auth.termsAgreeContinue')}
+          </button>
+        )}
+      </div>
     </section>
   );
 }

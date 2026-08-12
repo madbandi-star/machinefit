@@ -1,20 +1,23 @@
 {
-  "title": "Delete-account confirm spacing tweak",
-  "summary": "In the Korean withdraw confirm “남는 것” line, tighten two compound nouns: 남용방지 식별키 and 소셜제공자 식별자.",
+  "title": "Rejoin terms agreement UI",
+  "summary": "The post-withdraw terms/rejoin consent screen now matches MachineFit black+green, with a welcome card, clickable consent rows, and visible 전문 보기 links. Copy is unchanged.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/utils/splitGuideBlocks.test.ts"
+    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
+    "frontend/src/styles/auth.css"
   ],
   "testFocus": [
-    "Settings → 회원탈퇴 confirm: 남는 것 line shows 무료체험 남용방지 식별키 and 소셜제공자 식별자"
+    "Rejoin OAuth → /auth/terms: welcome card + terms title + consents",
+    "전체 동의 toggles all required+marketing",
+    "전문 보기 opens legal docs",
+    "New signup (non-rejoin) still shows DOB + trial notice"
   ],
   "fastChecks": [
-    "npx tsx frontend/src/utils/splitGuideBlocks.test.ts",
-    "rg \"남용방지 식별키\" frontend/src/i18n/locales/ko/common.json"
+    "rg terms-agree--rejoin frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
+    "rg terms-agree__rejoin-facts frontend/src/styles/auth.css"
   ],
-  "productionChecks": ["Pages: settings delete-account confirm copy"],
+  "productionChecks": ["Pages: rejoin terms screen after withdraw+login"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "무료체험 남용 방지 식별키 / 소셜 제공자 식별자",
-  "toBe": "무료체험 남용방지 식별키 / 소셜제공자 식별자"
+  "asIs": "Slate #121826 page, always-on fake check, gray rejoin blob, chevron-only doc links.",
+  "toBe": "Brand black+green, welcome fact card, row-tap consents, 전문 보기 text."
 }
