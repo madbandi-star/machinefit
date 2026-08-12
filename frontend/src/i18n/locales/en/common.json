@@ -776,7 +776,7 @@
     "homeGym": "Gym",
     "homeGymUnset": "Gym not set",
     "workoutCalendar": "Workout calendar",
-    "workoutCalendarDesc": "See the days you logged workouts at a glance.",
+    "workoutCalendarHeading": "Workout calendar {{month}} · {{count}} days",
     "workoutCalendarDays": "{{month}}: {{count}} workout days",
     "workoutCalendarNoLogs": "No workout records.",
     "workoutCalendarNeedGym": "Select a gym and member to see workout days on the calendar.",

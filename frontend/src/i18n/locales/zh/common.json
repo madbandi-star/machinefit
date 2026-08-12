@@ -777,7 +777,7 @@
     "homeGym": "Gym",
     "homeGymUnset": "Gym not set",
     "workoutCalendar": "训练日历",
-    "workoutCalendarDesc": "一眼查看已记录训练的日期。",
+    "workoutCalendarHeading": "训练日历 {{month}} 训练日 {{count}} 天",
     "workoutCalendarDays": "{{month}} 训练日 {{count}} 天",
     "workoutCalendarNoLogs": "没有训练记录。",
     "workoutCalendarNeedGym": "选择健身房和会员后，可在日历中查看训练日。",

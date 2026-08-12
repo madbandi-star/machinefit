@@ -1056,24 +1056,21 @@
   }
 }
 
-.mypage-workout-calendar__desc {
-  margin: 0 0 var(--space-sm);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  line-height: 1.45;
-}
-
-.mypage-workout-calendar__summary,
 .mypage-workout-calendar__hint {
   margin: 0 0 var(--space-sm);
   font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.mypage-workout-calendar__hint {
   font-weight: 500;
   color: var(--color-text-muted);
+}
+
+.mypage-workout-calendar.my-page-section--expanded .my-page-section__title {
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
 }
 
 .mypage-workout-calendar__panel {

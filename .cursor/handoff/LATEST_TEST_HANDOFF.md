@@ -1,13 +1,14 @@
-﻿# Test handoff — My Page menu: points under templates
+﻿# Test handoff — My Page workout calendar header copy
 
 ## Summary
-마이페이지에서 내 헬창력을 개인설정의 내 템플릿 아래로 이동. 템플릿 공유관 아이콘을 `share`로 변경(기구요청 `dumbbell`과 구분).
+운동 캘린더 펼침 시 제목을 `운동 캘린더 {{month}} 운동일 {{count}}일` 한 줄로 표시. 안내 문구 삭제.
 
 ## Test focus
-1. 개인설정: 내 템플릿 → 내 헬창력 → 설정…
-2. 둘러보기: 템플릿 공유관 아이콘 ≠ 기구요청
+1. 펼치면 한 줄 헤딩
+2. 「운동을 기록한 날을…」없음
 
 ## Fast checks
 ```
-rg -n "MY_TEMPLATES|POINTS|TEMPLATE_SHARE" frontend/src/pages/my-page/MyPage.tsx
+rg workoutCalendarHeading frontend/src
+rg workoutCalendarDesc frontend/src || true
 ```

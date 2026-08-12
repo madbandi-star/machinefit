@@ -109,7 +109,12 @@ export function WorkoutMonthCalendar() {
         aria-controls="mypage-workout-calendar-body"
       >
         <h3 id="mypage-workout-calendar-title" className="my-page-section__title">
-          {t('myPage.workoutCalendar')}
+          {expanded && canFetch
+            ? t('myPage.workoutCalendarHeading', {
+                month: monthLabel,
+                count: workoutDaysCount,
+              })
+            : t('myPage.workoutCalendar')}
         </h3>
         <Icon
           name="chevronDown"
@@ -122,15 +127,9 @@ export function WorkoutMonthCalendar() {
 
       {expanded ? (
         <div id="mypage-workout-calendar-body">
-          <p className="mypage-workout-calendar__desc">{t('myPage.workoutCalendarDesc')}</p>
-
           {!canFetch ? (
             <p className="mypage-workout-calendar__hint">{t('myPage.workoutCalendarNeedGym')}</p>
-          ) : (
-            <p className="mypage-workout-calendar__summary">
-              {t('myPage.workoutCalendarDays', { month: monthLabel, count: workoutDaysCount })}
-            </p>
-          )}
+          ) : null}
 
           <div
             className={[

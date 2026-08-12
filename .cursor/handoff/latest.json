@@ -1,17 +1,25 @@
 {
-  "title": "My Page menu: points under templates",
-  "summary": "Moved 내 헬창력 under 내 템플릿 in personal settings; changed 템플릿 공유관 icon from dumbbell to share so it differs from machine requests.",
-  "git": { "branch": "main", "commit": "2e9c7666" },
-  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
+  "title": "My Page workout calendar header copy",
+  "summary": "Expanded workout calendar shows one-line heading (title + month + workout days) and removes the glance description.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/components/my-page/WorkoutMonthCalendar/WorkoutMonthCalendar.tsx",
+    "frontend/src/styles/components.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
+  ],
   "testFocus": [
-    "My Page → 개인설정: 내 템플릿 then 내 헬창력",
-    "Explore: 템플릿 공유관 uses share icon, not dumbbell"
+    "Expand workout calendar: one-line '운동 캘린더 YYYY년 M월 운동일 N일'",
+    "No '운동을 기록한 날을 한눈에 확인하세요.'"
   ],
   "fastChecks": [
-    "rg -n \"MY_TEMPLATES|POINTS|TEMPLATE_SHARE\" frontend/src/pages/my-page/MyPage.tsx"
+    "rg workoutCalendarHeading frontend/src",
+    "rg workoutCalendarDesc frontend/src || true"
   ],
-  "productionChecks": ["Pages /my-page menu order and icons"],
+  "productionChecks": ["Pages /my-page calendar expand"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Points in quick links; template share same dumbbell as machine requests",
-  "toBe": "Points under my templates; template share = share icon"
+  "asIs": "Title + desc + separate summary lines",
+  "toBe": "Single heading line; desc removed"
 }

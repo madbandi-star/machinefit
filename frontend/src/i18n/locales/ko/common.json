@@ -776,7 +776,7 @@
     "homeGym": "헬스장",
     "homeGymUnset": "헬스장 미설정",
     "workoutCalendar": "운동 캘린더",
-    "workoutCalendarDesc": "운동을 기록한 날을 한눈에 확인하세요.",
+    "workoutCalendarHeading": "운동 캘린더 {{month}} 운동일 {{count}}일",
     "workoutCalendarDays": "{{month}} 운동일 {{count}}일",
     "workoutCalendarNoLogs": "운동 기록이 없습니다.",
     "workoutCalendarNeedGym": "헬스장과 회원을 선택하면 운동 기록을 캘린더에서 볼 수 있어요.",
